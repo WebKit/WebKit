@@ -1,3 +1,40 @@
+2019-09-12  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] webkit_settings_set_user_agent() allows content forbidden in HTTP headers
+        https://bugs.webkit.org/show_bug.cgi?id=201077
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a function to validate whether a string contains a valid value
+        which can be used in a HTTP User-Agent header.
+
+        Covered by new WebCore API test HTTPParsers.ValidateUserAgentValues.
+
+        * platform/glib/UserAgentGLib.cpp:
+        (WebCore::standardUserAgent): Assert that the returned string is a valid User-Agent.
+        (WebCore::standardUserAgentForURL): Ditto.
+        * platform/network/HTTPParsers.cpp: Added a series of helper functions which skip over
+        characters of a string, which can be used to scan over the different elements of an
+        User-Agent value; all of them receive the position from the input string where to start
+        scanning, updating it to the position right after the scanned item (this follow the
+        convention already in use by other functions in the source file). Each of them has
+        been annotated with the RFC number and section which contains the definition of the
+        scanned item, and the corresponding BNF rules to make the code easier to follow.
+        (WebCore::skipWhile): Added.
+        (WebCore::isVisibleCharacter): Added.
+        (WebCore::isOctectInFieldContentCharacter): Added.
+        (WebCore::isCommentTextCharacter): Added.
+        (WebCore::isHTTPTokenCharacter): Added.
+        (WebCore::isValidHTTPToken): Refactored to use the new isHTTPTokenCharacter()
+        helper function instead of having the test inside the loop.
+        (WebCore::skipCharacter): Added.
+        (WebCore::skipQuotedPair): Added.
+        (WebCore::skipComment): Added.
+        (WebCore::skipHTTPToken): Added.
+        (WebCore::skipUserAgentProduct): Added.
+        (WebCore::isValidUserAgentHeaderValue): Added.
+        * platform/network/HTTPParsers.h: Add prototype for isValidUserAgentHeaderValue().
+
 2019-09-12  Mark Lam  <mark.lam@apple.com>
 
         Harden JSC against the abuse of runtime options.

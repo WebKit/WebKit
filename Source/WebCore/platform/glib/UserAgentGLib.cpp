@@ -125,21 +125,30 @@ String standardUserAgent(const String& applicationName, const String& applicatio
     // browsers that are "Safari" but not running on OS X are the Safari iOS browser. Getting this
     // wrong can cause sites to load the wrong JavaScript, CSS, or custom fonts. In some cases
     // sites won't load resources at all.
-    if (applicationName.isEmpty())
-        return standardUserAgentStatic();
 
-    String finalApplicationVersion = applicationVersion;
-    if (finalApplicationVersion.isEmpty())
-        finalApplicationVersion = versionForUAString();
-
-    return standardUserAgentStatic() + ' ' + applicationName + '/' + finalApplicationVersion;
+    String userAgent;
+    if (applicationName.isEmpty()) {
+        userAgent = standardUserAgentStatic();
+    } else {
+        String finalApplicationVersion = applicationVersion;
+        if (finalApplicationVersion.isEmpty())
+            finalApplicationVersion = versionForUAString();
+        userAgent = standardUserAgentStatic() + ' ' + applicationName + '/' + finalApplicationVersion;
+    }
+    ASSERT(isValidUserAgentHeaderValue(userAgent));
+    return userAgent;
 }
 
 String standardUserAgentForURL(const URL& url)
 {
     auto quirks = UserAgentQuirks::quirksForURL(url);
     // The null string means we don't need a specific UA for the given URL.
-    return quirks.isEmpty() ? String() : buildUserAgentString(quirks);
+    if (quirks.isEmpty())
+        return String();
+
+    String userAgent(buildUserAgentString(quirks));
+    ASSERT(isValidUserAgentHeaderValue(userAgent));
+    return userAgent;
 }
 
 } // namespace WebCore

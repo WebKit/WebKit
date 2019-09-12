@@ -1,3 +1,14 @@
+2019-09-12  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] webkit_settings_set_user_agent() allows content forbidden in HTTP headers
+        https://bugs.webkit.org/show_bug.cgi?id=201077
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/CMakeLists.txt: Add missing HTTPParsers.cpp to be built into TestWebCore.
+        * TestWebKitAPI/Tests/WebCore/HTTPParsers.cpp:
+        (TestWebKitAPI::TEST): Add tests for WebCore::isValidUserAgentHeaderValue().
+
 2019-09-12  Mark Lam  <mark.lam@apple.com>
 
         Harden JSC against the abuse of runtime options.

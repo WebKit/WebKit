@@ -56,4 +56,34 @@ TEST(HTTPParsers, ParseCrossOriginResourcePolicyHeader)
     EXPECT_TRUE(parseCrossOriginResourcePolicyHeader("") == CrossOriginResourcePolicy::Invalid);
 }
 
+TEST(HTTPParsers, ValidateUserAgentValues)
+{
+    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari"));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari WebKit"));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari/10.0"));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari WebKit/163"));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari/10.0 WebKit"));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari/10.0 WebKit/163"));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari/10.0 WebKit/163 (Mozilla; like Gecko)"));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari (comment (nested comment))"));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari () (<- Empty comment)"));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari (left paren \\( as quoted pair)"));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("!#$%&'*+-.^_`|~ (non-alphanumeric token characters)"));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("0123456789 (numeric token characters)"));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("a (single character token)"));
+
+    EXPECT_FALSE(isValidUserAgentHeaderValue(" "));
+    EXPECT_FALSE(isValidUserAgentHeaderValue(" Safari (leading whitespace)"));
+    EXPECT_FALSE(isValidUserAgentHeaderValue("Safari (trailing whitespace) "));
+    EXPECT_FALSE(isValidUserAgentHeaderValue("\nSafari (leading newline)"));
+    EXPECT_FALSE(isValidUserAgentHeaderValue("Safari (trailing newline)\n"));
+    EXPECT_FALSE(isValidUserAgentHeaderValue("Safari/ (no version token after slash)"));
+    EXPECT_FALSE(isValidUserAgentHeaderValue("Safari (unterminated comment"));
+    EXPECT_FALSE(isValidUserAgentHeaderValue("Safari unopened commanent)"));
+    EXPECT_FALSE(isValidUserAgentHeaderValue("\x1B (contains control character)"));
+    EXPECT_FALSE(isValidUserAgentHeaderValue("Safari/\n10.0 (embeded newline)"));
+    EXPECT_FALSE(isValidUserAgentHeaderValue("WPE\\ WebKit (quoted pair in token)"));
+    EXPECT_FALSE(isValidUserAgentHeaderValue("/123 (missing product token)"));
+}
+
 } // namespace TestWebKitAPI
