@@ -703,7 +703,7 @@ void FrameLoader::receivedFirstData()
 
     double delay;
     String urlString;
-    if (!parseHTTPRefresh(documentLoader.response().httpHeaderField(HTTPHeaderName::Refresh), delay, urlString))
+    if (!parseMetaHTTPEquivRefresh(documentLoader.response().httpHeaderField(HTTPHeaderName::Refresh), delay, urlString))
         return;
     auto completedURL = urlString.isEmpty() ? document.url() : document.completeURL(urlString);
     if (!WTF::protocolIsJavaScript(completedURL))

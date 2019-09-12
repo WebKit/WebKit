@@ -73,7 +73,6 @@ bool isValidHTTPHeaderValue(const String&);
 bool isValidAcceptHeaderValue(const String&);
 bool isValidLanguageHeaderValue(const String&);
 bool isValidHTTPToken(const String&);
-bool parseHTTPRefresh(const String& refresh, double& delay, String& url);
 Optional<WallTime> parseHTTPDate(const String&);
 String filenameFromHTTPContentDisposition(const String&);
 String extractMIMETypeFromMediaType(const String&);
