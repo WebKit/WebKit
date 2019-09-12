@@ -73,7 +73,7 @@ public:
     WEBCORE_EXPORT ResourceRequestCachePolicy cachePolicy() const;
     WEBCORE_EXPORT void setCachePolicy(ResourceRequestCachePolicy cachePolicy);
     
-    double timeoutInterval() const; // May return 0 when using platform default.
+    WEBCORE_EXPORT double timeoutInterval() const; // May return 0 when using platform default.
     void setTimeoutInterval(double timeoutInterval);
     
     WEBCORE_EXPORT const URL& firstPartyForCookies() const;

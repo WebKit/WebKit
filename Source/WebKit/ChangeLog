@@ -1,3 +1,19 @@
+2019-09-11  Keith Rollin  <krollin@apple.com>
+
+        Log timeoutValue passed on to CFNetwork
+        https://bugs.webkit.org/show_bug.cgi?id=201701
+        <rdar://problem/55279683>
+
+        Reviewed by Chris Dumez.
+
+        We occasionally see cases where resource-loads into CFNetwork take a
+        long time. Rather than timing out after the default of 60s, they stay
+        pending for many minutes. To better understand why this is happening,
+        log the timeoutValue we pass to CFNetwork when loading resources.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+
 2019-09-11  Youenn Fablet  <youenn@apple.com>
 
         Protect UserMediaRequest when stopping it

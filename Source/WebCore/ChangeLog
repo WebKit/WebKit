@@ -1,3 +1,17 @@
+2019-09-11  Keith Rollin  <krollin@apple.com>
+
+        Log timeoutValue passed on to CFNetwork
+        https://bugs.webkit.org/show_bug.cgi?id=201701
+        <rdar://problem/55279683>
+
+        Reviewed by Chris Dumez.
+
+        Export ResourceRequest::timeoutValue for use in WebKit.
+
+        No new tests -- no new or changed functionality.
+
+        * platform/network/ResourceRequestBase.h:
+
 2019-09-11  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Remove null from the standard library
