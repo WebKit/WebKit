@@ -1,3 +1,14 @@
+2019-09-11  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: checkerboard has too much contrast in dark mode
+        https://bugs.webkit.org/show_bug.cgi?id=201670
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CanvasTabContentView.css:
+        (.content-view.canvas > .preview > img, .content-view.canvas .preview-container > canvas): Deleted.
+        Don't force a `background-color: white;` in dark mode.
+
 2019-09-11  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Elements: don't show Changes panel when selecting text node
