@@ -150,7 +150,7 @@ EXPRESSION: 123n
 {
   "_type": "bigint",
   "_description": "123n",
-  "_value": "<filtered 123n>"
+  "_value": "123n [BigInt Not Enabled in Web Inspector]"
 }
 
 -----------------------------------------------------
