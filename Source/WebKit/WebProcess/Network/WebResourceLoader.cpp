@@ -184,7 +184,9 @@ void WebResourceLoader::didReceiveData(const IPC::DataReference& data, int64_t e
     ASSERT_WITH_MESSAGE(!m_isProcessingNetworkResponse, "Network process should not send data until we've validated the response");
 
     if (UNLIKELY(m_interceptController.isIntercepting(m_coreLoader->identifier()))) {
-        m_interceptController.defer(m_coreLoader->identifier(), [this, protectedThis = makeRef(*this), data, encodedDataLength]() mutable {
+        auto buffer = WebCore::SharedBuffer::create(data.data(), data.size());
+        m_interceptController.defer(m_coreLoader->identifier(), [this, protectedThis = makeRef(*this), buffer = WTFMove(buffer), encodedDataLength]() mutable {
+            IPC::DataReference data(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
             if (m_coreLoader)
                 didReceiveData(data, encodedDataLength);
         });

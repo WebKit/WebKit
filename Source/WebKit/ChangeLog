@@ -1,3 +1,15 @@
+2019-09-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Crashes when intercept response continues with original content
+        https://bugs.webkit.org/show_bug.cgi?id=201707
+        <rdar://problem/55261857>
+
+        Reviewed by David Kilzer.
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveData):
+        Copy the data for the callback since the deferral may run it much later.
+
 2019-09-12  Youenn Fablet  <youenn@apple.com>
 
         Use typed identifiers for IDB connection identifiers
