@@ -1,3 +1,20 @@
+2019-09-12  Brady Eidson  <beidson@apple.com>
+
+        PDF exporting on iOS should include URL rects.
+        <rdar://problem/54900133> and https://bugs.webkit.org/show_bug.cgi?id=201693
+
+        Reviewed by Tim Horton.
+
+        Turns out that PDF exporting on iOS works fine.
+
+        Tracking back through history it was disabled at least pre-2014.
+
+        It was almost certainly disabled because it didn't work way back then,
+        but it works great now.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setURLForRect): Remove the iOS platform exclusion.
+
 2019-09-12  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] webkit_settings_set_user_agent() allows content forbidden in HTTP headers

@@ -1,3 +1,13 @@
+2019-09-12  Brady Eidson  <beidson@apple.com>
+
+        PDF exporting on iOS should include URL rects.
+        <rdar://problem/54900133> and https://bugs.webkit.org/show_bug.cgi?id=201693
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PDFSnapshot.mm:
+        (TestWebKitAPI::TEST): Enable on iOS.
+
 2019-09-12  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] webkit_settings_set_user_agent() allows content forbidden in HTTP headers
