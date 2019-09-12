@@ -1759,15 +1759,16 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         if (event.type === WI.TreeOutline.Event.ElementRemoved) {
             let selectedTreeElement = this._breakpointsTreeOutline.selectedTreeElement;
-            console.assert(selectedTreeElement);
-            if (selectedTreeElement.representedObject === WI.debuggerManager.assertionFailuresBreakpoint || !WI.debuggerManager.isBreakpointRemovable(selectedTreeElement.representedObject)) {
-                const skipUnrevealed = true;
-                const dontPopulate = true;
-                let treeElementToSelect = selectedTreeElement.traverseNextTreeElement(skipUnrevealed, dontPopulate);
-                if (treeElementToSelect) {
-                    const omitFocus = true;
-                    const selectedByUser = true;
-                    treeElementToSelect.select(omitFocus, selectedByUser);
+            if (selectedTreeElement) {
+                if (selectedTreeElement.representedObject === WI.debuggerManager.assertionFailuresBreakpoint || !WI.debuggerManager.isBreakpointRemovable(selectedTreeElement.representedObject)) {
+                    const skipUnrevealed = true;
+                    const dontPopulate = true;
+                    let treeElementToSelect = selectedTreeElement.traverseNextTreeElement(skipUnrevealed, dontPopulate);
+                    if (treeElementToSelect) {
+                        const omitFocus = true;
+                        const selectedByUser = true;
+                        treeElementToSelect.select(omitFocus, selectedByUser);
+                    }
                 }
             }
         }
