@@ -83,6 +83,14 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         return InspectorFrontendHost.supportsShowCertificate && window.NetworkAgent && NetworkAgent.getSerializedCertificate;
     }
 
+    static supportsLocalResourceOverrides()
+    {
+        if (!WI.settings.experimentalEnableSourcesTab.value)
+            return false;
+
+        return window.NetworkAgent && InspectorBackend.domains.Network && InspectorBackend.domains.Network.setInterceptionEnabled;
+    }
+
     static synthesizeImportError(message)
     {
         message = WI.UIString("HAR Import Error: %s").format(message);
@@ -96,11 +104,6 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         consoleMessage.shouldRevealConsole = true;
 
         WI.consoleLogViewController.appendConsoleMessage(consoleMessage);
-    }
-
-    static supportsLocalResourceOverrides()
-    {
-        return window.NetworkAgent && InspectorBackend.domains.Network && InspectorBackend.domains.Network.setInterceptionEnabled;
     }
 
     // Target
