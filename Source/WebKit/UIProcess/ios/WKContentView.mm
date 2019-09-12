@@ -36,7 +36,6 @@
 #import "PageClientImplIOS.h"
 #import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
-#import "RemoteScrollingCoordinatorProxy.h"
 #import "SmartMagnificationController.h"
 #import "UIKitSPI.h"
 #import "VersionChecks.h"
@@ -404,8 +403,6 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
         velocityData = { 0, 0, 0, timestamp };
     }
 
-    WebKit::RemoteScrollingCoordinatorProxy* scrollingCoordinator = _page->scrollingCoordinatorProxy();
-
     CGRect unobscuredContentRectRespectingInputViewBounds = [self _computeUnobscuredContentRectRespectingInputViewBounds:unobscuredContentRect inputViewBounds:inputViewBounds];
     WebCore::FloatRect fixedPositionRectForLayout = _page->computeCustomFixedPositionRect(unobscuredContentRect, unobscuredContentRectRespectingInputViewBounds, _page->customFixedPositionRect(), zoomScale, WebCore::FrameView::LayoutViewportConstraint::ConstrainedToDocumentRect);
 
@@ -430,12 +427,13 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
     LOG_WITH_STREAM(VisibleRects, stream << "-[WKContentView didUpdateVisibleRect]" << visibleContentRectUpdateInfo.dump());
 
     bool wasStableState = _page->inStableState();
+
     _page->updateVisibleContentRects(visibleContentRectUpdateInfo);
 
-    _sizeChangedSinceLastVisibleContentRectUpdate = NO;
+    auto layoutViewport = _page->unconstrainedLayoutViewportRect();
+    _page->adjustLayersForLayoutViewport(layoutViewport);
 
-    WebCore::FloatRect layoutViewport = _page->computeCustomFixedPositionRect(_page->unobscuredContentRect(), _page->unobscuredContentRectRespectingInputViewBounds(), _page->customFixedPositionRect(), zoomScale, WebCore::FrameView::LayoutViewportConstraint::Unconstrained);
-    scrollingCoordinator->viewportChangedViaDelegatedScrolling(_page->unobscuredContentRect().location(), layoutViewport, zoomScale);
+    _sizeChangedSinceLastVisibleContentRectUpdate = NO;
 
     drawingArea->updateDebugIndicator();
     

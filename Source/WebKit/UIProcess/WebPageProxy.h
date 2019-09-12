@@ -661,6 +661,9 @@ public:
 
     WebCore::FloatRect computeCustomFixedPositionRect(const WebCore::FloatRect& unobscuredContentRect, const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds, const WebCore::FloatRect& currentCustomFixedPositionRect, double displayedContentScale, WebCore::FrameView::LayoutViewportConstraint = WebCore::FrameView::LayoutViewportConstraint::Unconstrained) const;
 
+    WebCore::FloatRect unconstrainedLayoutViewportRect() const;
+    void adjustLayersForLayoutViewport(const WebCore::FloatRect& layoutViewport);
+
     void scrollingNodeScrollViewWillStartPanGesture();
     void scrollingNodeScrollViewDidScroll();
     void scrollingNodeScrollWillStartScroll();

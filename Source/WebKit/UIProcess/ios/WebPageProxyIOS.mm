@@ -46,6 +46,7 @@
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #import "RemoteLayerTreeTransaction.h"
+#import "RemoteScrollingCoordinatorProxy.h"
 #import "UIKitSPI.h"
 #import "UserData.h"
 #import "VersionChecks.h"
@@ -272,6 +273,19 @@ WebCore::FloatRect WebPageProxy::computeCustomFixedPositionRect(const FloatRect&
     if (layoutViewportRect != currentCustomFixedPositionRect)
         LOG_WITH_STREAM(VisibleRects, stream << "WebPageProxy::computeCustomFixedPositionRect: new layout viewport  " << layoutViewportRect);
     return layoutViewportRect;
+}
+
+FloatRect WebPageProxy::unconstrainedLayoutViewportRect() const
+{
+    return computeCustomFixedPositionRect(unobscuredContentRect(), unobscuredContentRectRespectingInputViewBounds(), customFixedPositionRect(), displayedContentScale(), FrameView::LayoutViewportConstraint::Unconstrained);
+}
+
+void WebPageProxy::adjustLayersForLayoutViewport(const FloatRect& layoutViewport)
+{
+    if (!m_scrollingCoordinatorProxy)
+        return;
+
+    m_scrollingCoordinatorProxy->viewportChangedViaDelegatedScrolling(unobscuredContentRect().location(), layoutViewport, displayedContentScale());
 }
 
 void WebPageProxy::scrollingNodeScrollViewWillStartPanGesture()

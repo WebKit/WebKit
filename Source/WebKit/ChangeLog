@@ -257,6 +257,34 @@
         https://bugs.webkit.org/show_bug.cgi?id=201655
         https://trac.webkit.org/changeset/249768
 
+2019-09-11  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (iOS 13): Top fixed element on apple.com flickers in size while pinching in
+        https://bugs.webkit.org/show_bug.cgi?id=201668
+        rdar://problem/51934041
+
+        Reviewed by Frédéric Wang.
+
+        The UI process can have transient state that pushes scrolling-tree-managed layers into custom
+        locations while pinch-zooming. We have to apply this state both when the visible rects
+        in the UI process change (existing code in -[WKContentView didUpdateVisibleRect:...]) and when
+        we get new layers from the web process (added in RemoteLayerTreeDrawingAreaProxy::commitLayerTree()
+        in this patch).
+
+        Move some code into WebPageProxy to create functions that we can call from both places.
+
+        For manual testing, visit a page with fixed banners, pinch in slightly, then pinch out and,
+        while keeping your fingers down, move the contents around.
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:contentInsets:unobscuredRectInScrollViewCoordinates:obscuredInsets:unobscuredSafeAreaInsets:inputViewBounds:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::unconstrainedLayoutViewportRect const):
+        (WebKit::WebPageProxy::adjustLayersForLayoutViewport):
+
 2019-09-11  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (245006): can't scroll in "read more" view in Eventbrite app
