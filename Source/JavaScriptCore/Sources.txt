@@ -733,7 +733,6 @@ runtime/CodeSpecializationKind.cpp
 runtime/CommonIdentifiers.cpp
 runtime/CommonSlowPaths.cpp
 runtime/CompilationResult.cpp
-tools/CompilerTimingScope.cpp
 runtime/Completion.cpp
 runtime/ConfigFile.cpp
 runtime/ConsoleClient.cpp
@@ -813,6 +812,7 @@ runtime/JSAsyncFunction.cpp
 runtime/JSAsyncGeneratorFunction.cpp
 runtime/JSBigInt.cpp
 runtime/JSBoundFunction.cpp
+runtime/JSCConfig.cpp
 runtime/JSCJSValue.cpp
 runtime/JSCPtrTag.cpp
 runtime/JSCallee.cpp
@@ -984,6 +984,7 @@ JSCBuiltins.cpp
 tools/CellList.cpp
 tools/CodeProfile.cpp
 tools/CodeProfiling.cpp
+tools/CompilerTimingScope.cpp
 tools/FunctionOverrides.cpp
 tools/FunctionWhitelist.cpp
 tools/HeapVerifier.cpp

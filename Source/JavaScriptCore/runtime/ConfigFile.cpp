@@ -465,7 +465,7 @@ void ConfigFile::parse()
             WTF::setDataFile(logPathname);
 
         if (!jscOptionsBuilder.isEmpty()) {
-            Options::enableRestrictedOptions(true);
+            JSC::Config::enableRestrictedOptions();
             Options::setOptions(jscOptionsBuilder.toString().utf8().data());
         }
     } else

@@ -87,7 +87,7 @@ TEST(WKWebView, DiagnosticLoggingDelegateAfterClose)
 
 TEST(WKWebView, DiagnosticLoggingDictionary)
 {
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:[WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals"]]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:[WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES]]);
     auto testLoggingDelegate = adoptNS([TestLoggingDelegate new]);
     [webView _setDiagnosticLoggingDelegate:testLoggingDelegate.get()];
     [webView configuration].preferences._diagnosticLoggingEnabled = YES;

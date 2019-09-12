@@ -301,7 +301,6 @@ static EncodedJSValue JSC_HOST_CALL functionJSCStack(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionGCAndSweep(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionFullGC(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionEdenGC(ExecState*);
-static EncodedJSValue JSC_HOST_CALL functionForceGCSlowPaths(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionHeapSize(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateMemoryFootprint(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionResetMemoryPeak(ExecState*);
@@ -520,7 +519,6 @@ protected:
         addFunction(vm, "gc", functionGCAndSweep, 0);
         addFunction(vm, "fullGC", functionFullGC, 0);
         addFunction(vm, "edenGC", functionEdenGC, 0);
-        addFunction(vm, "forceGCSlowPaths", functionForceGCSlowPaths, 0);
         addFunction(vm, "gcHeapSize", functionHeapSize, 0);
         addFunction(vm, "MemoryFootprint", functionCreateMemoryFootprint, 0);
         addFunction(vm, "resetMemoryPeak", functionResetMemoryPeak, 0);
@@ -1370,14 +1368,6 @@ EncodedJSValue JSC_HOST_CALL functionEdenGC(ExecState* exec)
     return JSValue::encode(jsNumber(vm.heap.sizeAfterLastEdenCollection()));
 }
 
-EncodedJSValue JSC_HOST_CALL functionForceGCSlowPaths(ExecState*)
-{
-    // It's best for this to be the first thing called in the 
-    // JS program so the option is set to true before we JIT.
-    Options::forceGCSlowPaths() = true;
-    return JSValue::encode(jsUndefined());
-}
-
 EncodedJSValue JSC_HOST_CALL functionHeapSize(ExecState* exec)
 {
     VM& vm = exec->vm();
@@ -2123,10 +2113,10 @@ EncodedJSValue JSC_HOST_CALL functionJSCOptions(ExecState* exec)
 {
     VM& vm = exec->vm();
     JSObject* optionsObject = constructEmptyObject(exec);
-#define FOR_EACH_OPTION(type_, name_, defaultValue_, availability_, description_) \
+#define READ_OPTION(type_, name_, defaultValue_, availability_, description_) \
     addOption(vm, optionsObject, Identifier::fromString(vm, #name_), Options::name_());
-    JSC_OPTIONS(FOR_EACH_OPTION)
-#undef FOR_EACH_OPTION
+    FOR_EACH_JSC_OPTION(READ_OPTION)
+#undef READ_OPTION
     return JSValue::encode(optionsObject);
 }
 
@@ -3098,7 +3088,7 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
 int jscmain(int argc, char** argv)
 {
     // Need to override and enable restricted options before we start parsing options below.
-    Options::enableRestrictedOptions(true);
+    Config::enableRestrictedOptions();
 
     WTF::initializeMainThread();
 

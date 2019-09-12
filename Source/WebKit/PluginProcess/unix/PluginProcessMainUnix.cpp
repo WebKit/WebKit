@@ -73,6 +73,7 @@ public:
         if (!strcmp(argv[1], "-scanPlugin")) {
             ASSERT(argc == 3);
 #if PLUGIN_ARCHITECTURE(UNIX)
+            InitializeWebKit2();
             exit(NetscapePluginModule::scanPlugin(argv[2]) ? EXIT_SUCCESS : EXIT_FAILURE);
 #else
             exit(EXIT_FAILURE);

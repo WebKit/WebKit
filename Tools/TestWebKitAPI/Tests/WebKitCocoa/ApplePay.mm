@@ -94,7 +94,7 @@ TEST(ApplePay, ApplePayAvailableByDefault)
 
     auto messageHandler = adoptNS([[TestApplePayAvailableScriptMessageHandler alloc] initWithAPIsAvailableExpectation:YES canMakePaymentsExpectation:YES]);
 
-    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals"];
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [configuration.userContentController addScriptMessageHandler:messageHandler.get() name:@"testApplePay"];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
@@ -112,7 +112,7 @@ TEST(ApplePay, ApplePayAvailableInUnrestrictedClients)
     auto messageHandler = adoptNS([[TestApplePayAvailableScriptMessageHandler alloc] initWithAPIsAvailableExpectation:YES canMakePaymentsExpectation:YES]);
     auto userScript = adoptNS([[WKUserScript alloc] initWithSource:userScriptSource injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES]);
 
-    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals"];
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [configuration.userContentController addUserScript:userScript.get()];
     [configuration.userContentController addScriptMessageHandler:messageHandler.get() name:@"testApplePay"];
 
@@ -135,7 +135,7 @@ TEST(ApplePay, UserScriptAtDocumentStartDisablesApplePay)
     auto messageHandler = adoptNS([[TestApplePayAvailableScriptMessageHandler alloc] initWithAPIsAvailableExpectation:NO canMakePaymentsExpectation:NO]);
     auto userScript = adoptNS([[WKUserScript alloc] initWithSource:userScriptSource injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES]);
 
-    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals"];
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [configuration.userContentController addUserScript:userScript.get()];
     [configuration.userContentController addScriptMessageHandler:messageHandler.get() name:@"testApplePay"];
 
@@ -156,7 +156,7 @@ TEST(ApplePay, UserScriptAtDocumentEndDisablesApplePay)
     auto messageHandler = adoptNS([[TestApplePayAvailableScriptMessageHandler alloc] initWithAPIsAvailableExpectation:NO canMakePaymentsExpectation:NO]);
     auto userScript = adoptNS([[WKUserScript alloc] initWithSource:userScriptSource injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES]);
     
-    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals"];
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [configuration.userContentController addUserScript:userScript.get()];
     [configuration.userContentController addScriptMessageHandler:messageHandler.get() name:@"testApplePay"];
     
@@ -176,7 +176,7 @@ TEST(ApplePay, UserAgentScriptEvaluationDisablesApplePay)
 
     auto messageHandler = adoptNS([[TestApplePayAvailableScriptMessageHandler alloc] initWithAPIsAvailableExpectation:YES canMakePaymentsExpectation:NO]);
 
-    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals"];
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [configuration.userContentController addScriptMessageHandler:messageHandler.get() name:@"testApplePay"];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
@@ -197,7 +197,7 @@ TEST(ApplePay, UserAgentScriptEvaluationDisablesApplePayInExistingObjects)
 
     auto messageHandler = adoptNS([[TestApplePayAvailableScriptMessageHandler alloc] initWithAPIsAvailableExpectation:YES canMakePaymentsExpectation:NO]);
 
-    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals"];
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [configuration.userContentController addScriptMessageHandler:messageHandler.get() name:@"testApplePay"];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
@@ -221,7 +221,7 @@ static void runActiveSessionTest(NSURL *url, BOOL shouldBlockScripts)
     auto messageHandler = adoptNS([[TestApplePayActiveSessionScriptMessageHandler alloc] init]);
     auto userScript = adoptNS([[WKUserScript alloc] initWithSource:userScriptSource injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES]);
 
-    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals"];
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [configuration.userContentController addScriptMessageHandler:messageHandler.get() name:@"testApplePay"];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);

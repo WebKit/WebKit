@@ -314,6 +314,8 @@ static const wstring& fontsPath()
 
 static void initialize()
 {
+    JSC::Config::configureForTesting();
+
     if (HMODULE webKitModule = LoadLibrary(WEBKITDLL))
         if (FARPROC dllRegisterServer = GetProcAddress(webKitModule, "DllRegisterServer"))
             dllRegisterServer();

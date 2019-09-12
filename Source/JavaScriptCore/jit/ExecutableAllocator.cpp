@@ -92,52 +92,41 @@ namespace JSC {
 using namespace WTF;
 
 #if defined(FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB) && FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB > 0
-static const size_t fixedExecutableMemoryPoolSize = FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB * 1024 * 1024;
+static constexpr size_t fixedExecutableMemoryPoolSize = FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB * 1024 * 1024;
 #elif CPU(ARM)
-static const size_t fixedExecutableMemoryPoolSize = 16 * 1024 * 1024;
+static constexpr size_t fixedExecutableMemoryPoolSize = 16 * 1024 * 1024;
 #elif CPU(ARM64)
-static const size_t fixedExecutableMemoryPoolSize = 128 * 1024 * 1024;
+static constexpr size_t fixedExecutableMemoryPoolSize = 128 * 1024 * 1024;
 #elif CPU(X86_64)
-static const size_t fixedExecutableMemoryPoolSize = 1024 * 1024 * 1024;
+static constexpr size_t fixedExecutableMemoryPoolSize = 1024 * 1024 * 1024;
 #else
-static const size_t fixedExecutableMemoryPoolSize = 32 * 1024 * 1024;
+static constexpr size_t fixedExecutableMemoryPoolSize = 32 * 1024 * 1024;
 #endif
 
 #if CPU(ARM)
-static const double executablePoolReservationFraction = 0.15;
+static constexpr double executablePoolReservationFraction = 0.15;
 #else
-static const double executablePoolReservationFraction = 0.25;
+static constexpr double executablePoolReservationFraction = 0.25;
 #endif
 
-#if ENABLE(SEPARATED_WX_HEAP)
-JS_EXPORT_PRIVATE bool useFastPermisionsJITCopy { false };
-JS_EXPORT_PRIVATE JITWriteSeparateHeapsFunction jitWriteSeparateHeapsFunction;
-#endif
-
-#if !USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION) && HAVE(REMAP_JIT)
-static uintptr_t startOfFixedWritableMemoryPool;
-#endif
-
-class FixedVMPoolExecutableAllocator;
-static FixedVMPoolExecutableAllocator* allocator = nullptr;
-
-static bool s_isJITEnabled = true;
 static bool isJITEnabled()
 {
+    bool jitEnabled = !g_jscConfig.jitDisabled;
 #if PLATFORM(IOS_FAMILY) && (CPU(ARM64) || CPU(ARM))
-    return processHasEntitlement("dynamic-codesigning") && s_isJITEnabled;
+    return processHasEntitlement("dynamic-codesigning") && jitEnabled;
 #else
-    return s_isJITEnabled;
+    return jitEnabled;
 #endif
 }
 
 void ExecutableAllocator::setJITEnabled(bool enabled)
 {
-    ASSERT(!allocator);
-    if (s_isJITEnabled == enabled)
+    bool jitEnabled = !g_jscConfig.jitDisabled;
+    ASSERT(!g_jscConfig.fixedVMPoolExecutableAllocator);
+    if (jitEnabled == enabled)
         return;
 
-    s_isJITEnabled = enabled;
+    g_jscConfig.jitDisabled = !enabled;
 
 #if PLATFORM(IOS_FAMILY) && (CPU(ARM64) || CPU(ARM))
     if (!enabled) {
@@ -193,7 +182,7 @@ public:
 #else // not ENABLE(FAST_JIT_PERMISSIONS) or ENABLE(SEPARATED_WX_HEAP)
 #if ENABLE(FAST_JIT_PERMISSIONS)
             if (os_thread_self_restrict_rwx_is_supported()) {
-                useFastPermisionsJITCopy = true;
+                g_jscConfig.useFastPermisionsJITCopy = true;
                 os_thread_self_restrict_rwx_to_rx();
             } else
 #endif
@@ -212,15 +201,15 @@ public:
 
             void* reservationEnd = reinterpret_cast<uint8_t*>(reservationBase) + reservationSize;
 
-            m_memoryStart = MacroAssemblerCodePtr<ExecutableMemoryPtrTag>(tagCodePtr<ExecutableMemoryPtrTag>(reservationBase));
-            m_memoryEnd = MacroAssemblerCodePtr<ExecutableMemoryPtrTag>(tagCodePtr<ExecutableMemoryPtrTag>(reservationEnd));
+            g_jscConfig.startExecutableMemory = tagCodePtr<ExecutableMemoryPtrTag>(reservationBase);
+            g_jscConfig.endExecutableMemory = tagCodePtr<ExecutableMemoryPtrTag>(reservationEnd);
         }
     }
 
     virtual ~FixedVMPoolExecutableAllocator();
 
-    void* memoryStart() { return m_memoryStart.untaggedExecutableAddress(); }
-    void* memoryEnd() { return m_memoryEnd.untaggedExecutableAddress(); }
+    void* memoryStart() { return untagCodePtr<ExecutableMemoryPtrTag>(g_jscConfig.startExecutableMemory); }
+    void* memoryEnd() { return untagCodePtr<ExecutableMemoryPtrTag>(g_jscConfig.endExecutableMemory); }
     bool isJITPC(void* pc) { return memoryStart() <= pc && pc < memoryEnd(); }
 
 protected:
@@ -302,7 +291,7 @@ private:
         memset_s(&writableAddr, sizeof(writableAddr), 0, sizeof(writableAddr));
 
 #if ENABLE(SEPARATED_WX_HEAP)
-        jitWriteSeparateHeapsFunction = reinterpret_cast<JITWriteSeparateHeapsFunction>(writeThunk.code().executableAddress());
+        g_jscConfig.jitWriteSeparateHeaps = reinterpret_cast<JITWriteSeparateHeapsFunction>(writeThunk.code().executableAddress());
 #endif
     }
 
@@ -381,12 +370,12 @@ private:
 #else // not CPU(ARM64) && USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
     static void genericWriteToJITRegion(off_t offset, const void* data, size_t dataSize)
     {
-        memcpy((void*)(startOfFixedWritableMemoryPool + offset), data, dataSize);
+        memcpy((void*)(g_jscConfig.startOfFixedWritableMemoryPool + offset), data, dataSize);
     }
 
     MacroAssemblerCodeRef<JITThunkPtrTag> jitWriteThunkGenerator(void* address, void*, size_t)
     {
-        startOfFixedWritableMemoryPool = reinterpret_cast<uintptr_t>(address);
+        g_jscConfig.startOfFixedWritableMemoryPool = reinterpret_cast<uintptr_t>(address);
         void* function = reinterpret_cast<void*>(&genericWriteToJITRegion);
 #if CPU(ARM_THUMB2)
         // Handle thumb offset
@@ -407,8 +396,6 @@ private:
 
 private:
     PageReservation m_reservation;
-    MacroAssemblerCodePtr<ExecutableMemoryPtrTag> m_memoryStart;
-    MacroAssemblerCodePtr<ExecutableMemoryPtrTag> m_memoryEnd;
 };
 
 FixedVMPoolExecutableAllocator::~FixedVMPoolExecutableAllocator()
@@ -418,13 +405,14 @@ FixedVMPoolExecutableAllocator::~FixedVMPoolExecutableAllocator()
 
 void ExecutableAllocator::initializeUnderlyingAllocator()
 {
-    ASSERT(!allocator);
-    allocator = new FixedVMPoolExecutableAllocator();
-    CodeProfiling::notifyAllocator(allocator);
+    RELEASE_ASSERT(!g_jscConfig.fixedVMPoolExecutableAllocator);
+    g_jscConfig.fixedVMPoolExecutableAllocator = new FixedVMPoolExecutableAllocator();
+    CodeProfiling::notifyAllocator(g_jscConfig.fixedVMPoolExecutableAllocator);
 }
 
 bool ExecutableAllocator::isValid() const
 {
+    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return Base::isValid();
     return !!allocator->bytesReserved();
@@ -432,6 +420,7 @@ bool ExecutableAllocator::isValid() const
 
 bool ExecutableAllocator::underMemoryPressure()
 {
+    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return Base::underMemoryPressure();
     return allocator->bytesAllocated() > allocator->bytesReserved() / 2;
@@ -439,6 +428,7 @@ bool ExecutableAllocator::underMemoryPressure()
 
 double ExecutableAllocator::memoryPressureMultiplier(size_t addedMemoryUsage)
 {
+    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return Base::memoryPressureMultiplier(addedMemoryUsage);
     ASSERT(allocator->bytesAllocated() <= allocator->bytesReserved());
@@ -458,6 +448,7 @@ double ExecutableAllocator::memoryPressureMultiplier(size_t addedMemoryUsage)
 
 RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(size_t sizeInBytes, void* ownerUID, JITCompilationEffort effort)
 {
+    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return Base::allocate(sizeInBytes, ownerUID, effort);
     if (Options::logExecutableAllocation()) {
@@ -495,19 +486,18 @@ RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(size_t sizeInBytes,
         return nullptr;
     }
 
-#if CPU(ARM64E)
     void* start = allocator->memoryStart();
     void* end = allocator->memoryEnd();
     void* resultStart = result->start().untaggedPtr();
     void* resultEnd = result->end().untaggedPtr();
     RELEASE_ASSERT(start <= resultStart && resultStart < end);
     RELEASE_ASSERT(start < resultEnd && resultEnd <= end);
-#endif
     return result;
 }
 
 bool ExecutableAllocator::isValidExecutableMemory(const AbstractLocker& locker, void* address)
 {
+    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return Base::isValidExecutableMemory(locker, address);
     return allocator->isInAllocatedMemory(locker, address);
@@ -515,6 +505,7 @@ bool ExecutableAllocator::isValidExecutableMemory(const AbstractLocker& locker, 
 
 Lock& ExecutableAllocator::getLock() const
 {
+    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return Base::getLock();
     return allocator->getLock();
@@ -522,6 +513,7 @@ Lock& ExecutableAllocator::getLock() const
 
 size_t ExecutableAllocator::committedByteCount()
 {
+    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return Base::committedByteCount();
     return allocator->bytesCommitted();
@@ -530,6 +522,7 @@ size_t ExecutableAllocator::committedByteCount()
 #if ENABLE(META_ALLOCATOR_PROFILE)
 void ExecutableAllocator::dumpProfile()
 {
+    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return;
     allocator->dumpProfile();
@@ -538,6 +531,7 @@ void ExecutableAllocator::dumpProfile()
 
 void* startOfFixedExecutableMemoryPoolImpl()
 {
+    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return nullptr;
     return allocator->memoryStart();
@@ -545,6 +539,7 @@ void* startOfFixedExecutableMemoryPoolImpl()
 
 void* endOfFixedExecutableMemoryPoolImpl()
 {
+    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return nullptr;
     return allocator->memoryEnd();
@@ -552,12 +547,13 @@ void* endOfFixedExecutableMemoryPoolImpl()
 
 bool isJITPC(void* pc)
 {
+    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     return allocator && allocator->isJITPC(pc);
 }
 
 void dumpJITMemory(const void* dst, const void* src, size_t size)
 {
-    ASSERT(Options::dumpJITMemoryPath());
+    RELEASE_ASSERT(Options::dumpJITMemoryPath());
 
 #if OS(DARWIN)
     static int fd = -1;
@@ -635,17 +631,15 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
 
 namespace JSC {
 
-static ExecutableAllocator* executableAllocator;
-
 void ExecutableAllocator::initialize()
 {
-    executableAllocator = new ExecutableAllocator;
+    g_jscConfig.executableAllocator = new ExecutableAllocator;
 }
 
 ExecutableAllocator& ExecutableAllocator::singleton()
 {
-    ASSERT(executableAllocator);
-    return *executableAllocator;
+    ASSERT(g_jscConfig.executableAllocator);
+    return *g_jscConfig.executableAllocator;
 }
 
 } // namespace JSC

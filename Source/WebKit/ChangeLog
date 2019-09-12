@@ -1,3 +1,46 @@
+2019-09-12  Mark Lam  <mark.lam@apple.com>
+
+        Harden JSC against the abuse of runtime options.
+        https://bugs.webkit.org/show_bug.cgi?id=201597
+        <rdar://problem/55167068>
+
+        Reviewed by Filip Pizlo.
+
+        Linux parts contributed by Carlos Garcia Campos <cgarcia@igalia.com>.
+
+        1. Add plumbing to allow WK2 tests to configureJSCForTesting().
+        2. Removed the call enable Options::useBigInt in WebInspectorUI.
+           WebInspectorUI doesn't really need it for now.
+
+        * PluginProcess/unix/PluginProcessMainUnix.cpp:
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+        * Shared/unix/AuxiliaryProcessMain.cpp:
+        (WebKit::AuxiliaryProcessMainBase::parseCommandLine):
+        * Shared/unix/AuxiliaryProcessMain.h:
+        (WebKit::AuxiliaryProcessMain):
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationSetShouldConfigureJSCForTesting):
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration configureJSCForTesting]):
+        (-[_WKProcessPoolConfiguration setConfigureJSCForTesting:]):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        (WebKit::ProcessLauncher::Client::shouldConfigureJSCForTesting const):
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::shouldConfigureJSCForTesting const):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::WebInspectorUI):
+
 2019-09-12  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Fix accidental copies in NetworkLoadChecker.cpp

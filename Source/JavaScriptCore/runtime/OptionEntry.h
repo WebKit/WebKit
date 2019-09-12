@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,42 +25,60 @@
 
 #pragma once
 
-#include "JSObject.h"
-#include "Options.h"
+#include "GCLogging.h"
+#include <wtf/PrintStream.h>
 
 namespace JSC {
 
-class JSDollarVM final : public JSNonFinalObject {
-public:
-    typedef JSNonFinalObject Base;
-    
-    DECLARE_EXPORT_INFO;
-    
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        RELEASE_ASSERT(Options::useDollarVM());
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-    }
-
-    static JSDollarVM* create(VM& vm, Structure* structure)
-    {
-        RELEASE_ASSERT(Options::useDollarVM());
-        JSDollarVM* instance = new (NotNull, allocateCell<JSDollarVM>(vm.heap)) JSDollarVM(vm, structure);
-        instance->finishCreation(vm);
-        return instance;
-    }
-    
+class OptionRange {
 private:
-    JSDollarVM(VM& vm, Structure* structure)
-        : Base(vm, structure)
-    {
-        RELEASE_ASSERT(Options::useDollarVM());
+    enum RangeState { Uninitialized, InitError, Normal, Inverted };
+public:
+    OptionRange& operator= (const int& rhs)
+    { // Only needed for initialization
+        if (!rhs) {
+            m_state = Uninitialized;
+            m_rangeString = 0;
+            m_lowLimit = 0;
+            m_highLimit = 0;
+        }
+        return *this;
     }
 
+    bool init(const char*);
+    bool isInRange(unsigned);
+    const char* rangeString() const { return (m_state > InitError) ? m_rangeString : s_nullRangeStr; }
+    
+    void dump(PrintStream& out) const;
 
-    void finishCreation(VM&);
-    void addFunction(VM&, JSGlobalObject*, const char* name, NativeFunction, unsigned arguments);
-    void addConstructibleFunction(VM&, JSGlobalObject*, const char* name, NativeFunction, unsigned arguments);
+private:
+    static const char* const s_nullRangeStr;
+
+    RangeState m_state;
+    const char* m_rangeString;
+    unsigned m_lowLimit;
+    unsigned m_highLimit;
+};
+
+// For storing for an option value:
+union OptionEntry {
+    using Bool = bool;
+    using Unsigned = unsigned;
+    using Double = double;
+    using Int32 = int32_t;
+    using Size = size_t;
+    using OptionRange = JSC::OptionRange;
+    using OptionString = const char*;
+    using GCLogLevel = GCLogging::Level;
+
+    bool valBool;
+    unsigned valUnsigned;
+    double valDouble;
+    int32_t valInt32;
+    size_t valSize;
+    OptionRange valOptionRange;
+    const char* valOptionString;
+    GCLogging::Level valGCLogLevel;
 };
 
 } // namespace JSC

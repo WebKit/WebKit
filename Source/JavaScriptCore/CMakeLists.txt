@@ -842,6 +842,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSArrayBufferView.h
     runtime/JSArrayBufferViewInlines.h
     runtime/JSBigInt.h
+    runtime/JSCConfig.h
     runtime/JSCInlines.h
     runtime/JSCJSValue.h
     runtime/JSCJSValueInlines.h
@@ -918,7 +919,9 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ObjectInitializationScope.h
     runtime/ObjectPrototype.h
     runtime/Operations.h
+    runtime/OptionEntry.h
     runtime/Options.h
+    runtime/OptionsList.h
     runtime/ParseInt.h
     runtime/PrivateName.h
     runtime/ProgramExecutable.h

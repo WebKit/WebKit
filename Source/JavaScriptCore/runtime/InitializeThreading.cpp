@@ -33,6 +33,7 @@
 #include "ExecutableAllocator.h"
 #include "Heap.h"
 #include "Identifier.h"
+#include "JSCConfig.h"
 #include "JSCPtrTag.h"
 #include "JSDateMath.h"
 #include "JSGlobalObject.h"
@@ -62,6 +63,9 @@ void initializeThreading()
     static std::once_flag initializeThreadingOnceFlag;
 
     std::call_once(initializeThreadingOnceFlag, []{
+        RELEASE_ASSERT(!g_jscConfig.initializeThreadingHasBeenCalled);
+        g_jscConfig.initializeThreadingHasBeenCalled = true;
+
         WTF::initializeThreading();
         Options::initialize();
 

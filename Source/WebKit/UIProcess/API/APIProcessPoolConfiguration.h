@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -147,6 +147,8 @@ public:
     bool shouldCaptureDisplayInUIProcess() const { return m_shouldCaptureDisplayInUIProcess; }
     void setShouldCaptureDisplayInUIProcess(bool shouldCaptureDisplayInUIProcess) { m_shouldCaptureDisplayInUIProcess = shouldCaptureDisplayInUIProcess; }
 
+    bool shouldConfigureJSCForTesting() const { return m_shouldConfigureJSCForTesting; }
+    void setShouldConfigureJSCForTesting(bool value) { m_shouldConfigureJSCForTesting = value; }
     bool isJITEnabled() const { return m_isJITEnabled; }
     void setJITEnabled(bool enabled) { m_isJITEnabled = enabled; }
     
@@ -218,6 +220,7 @@ private:
     bool m_usesWebProcessCache { false };
     bool m_clientWouldBenefitFromAutomaticProcessPrewarming { false };
     WTF::String m_customWebContentServiceBundleIdentifier;
+    bool m_shouldConfigureJSCForTesting { false };
     bool m_isJITEnabled { true };
     bool m_usesSingleWebProcess { false };
     uint32_t m_downloadMonitorSpeedMultiplier { 1 };

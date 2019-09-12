@@ -30,6 +30,7 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import <JavaScriptCore/JSCConfig.h>
 #import <WebKit/WKPreferencesRef.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
@@ -617,6 +618,8 @@ TEST(WebKit, ApplicationCacheDirectories)
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS_FAMILY)
 TEST(WebKit, MediaCache)
 {
+    JSC::Config::configureForTesting();
+
     std::atomic<bool> done = false;
     using namespace TestWebKitAPI;
     RetainPtr<NSData> data = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"]];

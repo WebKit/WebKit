@@ -63,6 +63,7 @@ void injectInternalsObject(JSContextRef context)
     ScriptExecutionContext* scriptContext = globalObject->scriptExecutionContext();
     if (is<Document>(*scriptContext)) {
         globalObject->putDirect(vm, Identifier::fromString(vm, Internals::internalsId), toJS(exec, globalObject, Internals::create(downcast<Document>(*scriptContext))));
+        Options::useDollarVM() = true;
         globalObject->exposeDollarVM(vm);
     }
 }

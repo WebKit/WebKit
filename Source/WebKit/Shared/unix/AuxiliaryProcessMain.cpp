@@ -26,8 +26,10 @@
 #include "config.h"
 #include "AuxiliaryProcessMain.h"
 
+#include <JavaScriptCore/Options.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <stdlib.h>
+#include <string.h>
 
 namespace WebKit {
 
@@ -39,6 +41,10 @@ bool AuxiliaryProcessMainBase::parseCommandLine(int argc, char** argv)
 
     m_parameters.processIdentifier = makeObjectIdentifier<WebCore::ProcessIdentifierType>(atoll(argv[1]));
     m_parameters.connectionIdentifier = atoi(argv[2]);
+#if ENABLE(DEVELOPER_MODE)
+    if (argc > 3 && !strcmp(argv[3], "--configure-jsc-for-testing"))
+        JSC::Config::configureForTesting();
+#endif
     return true;
 }
 

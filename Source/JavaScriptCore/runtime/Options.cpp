@@ -56,19 +56,6 @@
 
 namespace JSC {
 
-namespace {
-#ifdef NDEBUG
-bool restrictedOptionsEnabled = false;
-#else
-bool restrictedOptionsEnabled = true;
-#endif
-}
-
-void Options::enableRestrictedOptions(bool enableOrNot)
-{
-    restrictedOptionsEnabled = enableOrNot;
-}
-    
 static bool parse(const char* string, bool& value)
 {
     if (equalLettersIgnoringASCIICase(string, "true") || equalLettersIgnoringASCIICase(string, "yes") || !strcmp(string, "1")) {
@@ -148,7 +135,7 @@ static bool parse(const char* string, GCLogging::Level& value)
 bool Options::isAvailable(Options::ID id, Options::Availability availability)
 {
     if (availability == Availability::Restricted)
-        return restrictedOptionsEnabled;
+        return g_jscConfig.restrictedOptionsEnabled;
     ASSERT(availability == Availability::Configurable);
     
     UNUSED_PARAM(id);
@@ -295,15 +282,12 @@ void OptionRange::dump(PrintStream& out) const
     out.print(m_rangeString);
 }
 
-Options::Entry Options::s_options[Options::numberOfOptions];
-Options::Entry Options::s_defaultOptions[Options::numberOfOptions];
-
 // Realize the names for each of the options:
 const Options::EntryInfo Options::s_optionsInfo[Options::numberOfOptions] = {
-#define FOR_EACH_OPTION(type_, name_, defaultValue_, availability_, description_) \
-    { #name_, description_, Options::Type::type_##Type, Availability::availability_ },
-    JSC_OPTIONS(FOR_EACH_OPTION)
-#undef FOR_EACH_OPTION
+#define FILL_OPTION_INFO(type_, name_, defaultValue_, availability_, description_) \
+    { #name_, description_, Options::Type::type_, Availability::availability_ },
+    FOR_EACH_JSC_OPTION(FILL_OPTION_INFO)
+#undef FILL_OPTION_INFO
 };
 
 static void scaleJITPolicy()
@@ -332,7 +316,7 @@ static void scaleJITPolicy()
     const int numberOfOptionsToScale = sizeof(optionsToScale) / sizeof(OptionToScale);
     for (int i = 0; i < numberOfOptionsToScale; i++) {
         Option option(optionsToScale[i].id);
-        ASSERT(option.type() == Options::Type::int32Type);
+        ASSERT(option.type() == Options::Type::Int32);
         option.int32Val() *= scaleFactor;
         option.int32Val() = std::max(option.int32Val(), optionsToScale[i].minVal);
     }
@@ -529,12 +513,15 @@ void Options::initialize()
     std::call_once(
         initializeOptionsOnceFlag,
         [] {
+#ifndef NDEBUG
+            Config::enableRestrictedOptions();
+#endif
             // Initialize each of the options with their default values:
-#define FOR_EACH_OPTION(type_, name_, defaultValue_, availability_, description_) \
-            name_() = defaultValue_;                                    \
+#define INIT_OPTION(type_, name_, defaultValue_, availability_, description_) \
+            name_() = defaultValue_; \
             name_##Default() = defaultValue_;
-            JSC_OPTIONS(FOR_EACH_OPTION)
-#undef FOR_EACH_OPTION
+            FOR_EACH_JSC_OPTION(INIT_OPTION)
+#undef INIT_OPTION
 
             overrideDefaults();
                 
@@ -555,16 +542,16 @@ void Options::initialize()
             if (hasBadOptions && Options::validateOptions())
                 CRASH();
 #else // PLATFORM(COCOA)
-#define FOR_EACH_OPTION(type_, name_, defaultValue_, availability_, description_) \
+#define OVERRIDE_OPTION_WITH_HEURISTICS(type_, name_, defaultValue_, availability_, description_) \
             overrideOptionWithHeuristic(name_(), name_##ID, "JSC_" #name_, Availability::availability_);
-            JSC_OPTIONS(FOR_EACH_OPTION)
-#undef FOR_EACH_OPTION
+            FOR_EACH_JSC_OPTION(OVERRIDE_OPTION_WITH_HEURISTICS)
+#undef OVERRIDE_OPTION_WITH_HEURISTICS
 #endif // PLATFORM(COCOA)
 
-#define FOR_EACH_OPTION(aliasedName_, unaliasedName_, equivalence_) \
+#define OVERRIDE_ALIASED_OPTION_WITH_HEURISTICS(aliasedName_, unaliasedName_, equivalence_) \
             overrideAliasedOptionWithHeuristic("JSC_" #aliasedName_);
-            JSC_ALIASED_OPTIONS(FOR_EACH_OPTION)
-#undef FOR_EACH_OPTION
+            FOR_EACH_JSC_ALIASED_OPTION(OVERRIDE_ALIASED_OPTION_WITH_HEURISTICS)
+#undef OVERRIDE_ALIASED_OPTION_WITH_HEURISTICS
 
 #if 0
                 ; // Deconfuse editors that do auto indentation
@@ -642,6 +629,7 @@ static bool isSeparator(char c)
 
 bool Options::setOptions(const char* optionsStr)
 {
+    RELEASE_ASSERT(!g_jscConfig.isPermanentlyFrozen);
     Vector<char*> options;
 
     size_t length = strlen(optionsStr);
@@ -736,13 +724,13 @@ bool Options::setOptionWithoutAlias(const char* arg)
 
     // For each option, check if the specify arg is a match. If so, set the arg
     // if the value makes sense. Otherwise, move on to checking the next option.
-#define FOR_EACH_OPTION(type_, name_, defaultValue_, availability_, description_) \
+#define SET_OPTION_IF_MATCH(type_, name_, defaultValue_, availability_, description_) \
     if (strlen(#name_) == static_cast<size_t>(equalStr - arg)      \
         && !strncmp(arg, #name_, equalStr - arg)) {                \
         if (Availability::availability_ != Availability::Normal     \
             && !isAvailable(name_##ID, Availability::availability_)) \
             return false;                                          \
-        type_ value;                                               \
+        OptionEntry::type_ value;                                  \
         value = (defaultValue_);                                   \
         bool success = parse(valueStr, value);                     \
         if (success) {                                             \
@@ -754,8 +742,8 @@ bool Options::setOptionWithoutAlias(const char* arg)
         return false;                                              \
     }
 
-    JSC_OPTIONS(FOR_EACH_OPTION)
-#undef FOR_EACH_OPTION
+    FOR_EACH_JSC_OPTION(SET_OPTION_IF_MATCH)
+#undef SET_OPTION_IF_MATCH
 
     return false; // No option matched.
 }
@@ -798,7 +786,7 @@ bool Options::setAliasedOption(const char* arg)
         return setOptionWithoutAlias(unaliasedOption.utf8().data());   \
     }
 
-    JSC_ALIASED_OPTIONS(FOR_EACH_OPTION)
+    FOR_EACH_JSC_ALIASED_OPTION(FOR_EACH_OPTION)
 #undef FOR_EACH_OPTION
 
     IGNORE_WARNINGS_END
@@ -890,26 +878,26 @@ void Options::ensureOptionsAreCoherent()
 void Option::dump(StringBuilder& builder) const
 {
     switch (type()) {
-    case Options::Type::boolType:
-        builder.append(m_entry.boolVal ? "true" : "false");
+    case Options::Type::Bool:
+        builder.append(m_entry.valBool ? "true" : "false");
         break;
-    case Options::Type::unsignedType:
-        builder.appendNumber(m_entry.unsignedVal);
+    case Options::Type::Unsigned:
+        builder.appendNumber(m_entry.valUnsigned);
         break;
-    case Options::Type::sizeType:
-        builder.appendNumber(m_entry.sizeVal);
+    case Options::Type::Size:
+        builder.appendNumber(m_entry.valSize);
         break;
-    case Options::Type::doubleType:
-        builder.appendFixedPrecisionNumber(m_entry.doubleVal);
+    case Options::Type::Double:
+        builder.appendFixedPrecisionNumber(m_entry.valDouble);
         break;
-    case Options::Type::int32Type:
-        builder.appendNumber(m_entry.int32Val);
+    case Options::Type::Int32:
+        builder.appendNumber(m_entry.valInt32);
         break;
-    case Options::Type::optionRangeType:
-        builder.append(m_entry.optionRangeVal.rangeString());
+    case Options::Type::OptionRange:
+        builder.append(m_entry.valOptionRange.rangeString());
         break;
-    case Options::Type::optionStringType: {
-        const char* option = m_entry.optionStringVal;
+    case Options::Type::OptionString: {
+        const char* option = m_entry.valOptionString;
         if (!option)
             option = "";
         builder.append('"');
@@ -917,8 +905,8 @@ void Option::dump(StringBuilder& builder) const
         builder.append('"');
         break;
     }
-    case Options::Type::gcLogLevelType: {
-        builder.append(GCLogging::levelAsString(m_entry.gcLogLevelVal));
+    case Options::Type::GCLogLevel: {
+        builder.append(GCLogging::levelAsString(m_entry.valGCLogLevel));
         break;
     }
     }
@@ -927,26 +915,25 @@ void Option::dump(StringBuilder& builder) const
 bool Option::operator==(const Option& other) const
 {
     switch (type()) {
-    case Options::Type::boolType:
-        return m_entry.boolVal == other.m_entry.boolVal;
-    case Options::Type::unsignedType:
-        return m_entry.unsignedVal == other.m_entry.unsignedVal;
-    case Options::Type::sizeType:
-        return m_entry.sizeVal == other.m_entry.sizeVal;
-    case Options::Type::doubleType:
-        return (m_entry.doubleVal == other.m_entry.doubleVal) || (std::isnan(m_entry.doubleVal) && std::isnan(other.m_entry.doubleVal));
-    case Options::Type::int32Type:
-        return m_entry.int32Val == other.m_entry.int32Val;
-    case Options::Type::optionRangeType:
-        return m_entry.optionRangeVal.rangeString() == other.m_entry.optionRangeVal.rangeString();
-    case Options::Type::optionStringType:
-        return (m_entry.optionStringVal == other.m_entry.optionStringVal)
-            || (m_entry.optionStringVal && other.m_entry.optionStringVal && !strcmp(m_entry.optionStringVal, other.m_entry.optionStringVal));
-    case Options::Type::gcLogLevelType:
-        return m_entry.gcLogLevelVal == other.m_entry.gcLogLevelVal;
+    case Options::Type::Bool:
+        return m_entry.valBool == other.m_entry.valBool;
+    case Options::Type::Unsigned:
+        return m_entry.valUnsigned == other.m_entry.valUnsigned;
+    case Options::Type::Size:
+        return m_entry.valSize == other.m_entry.valSize;
+    case Options::Type::Double:
+        return (m_entry.valDouble == other.m_entry.valDouble) || (std::isnan(m_entry.valDouble) && std::isnan(other.m_entry.valDouble));
+    case Options::Type::Int32:
+        return m_entry.valInt32 == other.m_entry.valInt32;
+    case Options::Type::OptionRange:
+        return m_entry.valOptionRange.rangeString() == other.m_entry.valOptionRange.rangeString();
+    case Options::Type::OptionString:
+        return (m_entry.valOptionString == other.m_entry.valOptionString)
+            || (m_entry.valOptionString && other.m_entry.valOptionString && !strcmp(m_entry.valOptionString, other.m_entry.valOptionString));
+    case Options::Type::GCLogLevel:
+        return m_entry.valGCLogLevel == other.m_entry.valGCLogLevel;
     }
     return false;
 }
 
 } // namespace JSC
-

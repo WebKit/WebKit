@@ -1,3 +1,42 @@
+2019-09-12  Mark Lam  <mark.lam@apple.com>
+
+        Harden JSC against the abuse of runtime options.
+        https://bugs.webkit.org/show_bug.cgi?id=201597
+        <rdar://problem/55167068>
+
+        Reviewed by Filip Pizlo.
+
+        Linux parts contributed by Carlos Garcia Campos <cgarcia@igalia.com>.
+        Windows parts contributed by Fujii Hironori <Hironori.Fujii@sony.com>.
+
+        Call JSC::Config::configureForTesting() in test harnesses or at the top of tests
+        to disable the hardening on test runs.  Tests rely on setting options to enable
+        test features.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpRenderTree):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (initialize):
+        * TestWebKitAPI/PlatformUtilities.cpp:
+        (TestWebKitAPI::Util::createContextWithInjectedBundle):
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp:
+        (main):
+        * TestWebKitAPI/Tests/WebKitCocoa/ApplePay.mm:
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::runActiveSessionTest):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewDiagnosticLogging.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/mac/MediaPlaybackSleepAssertion.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/WKWebViewConfigurationExtras.h:
+        * TestWebKitAPI/WKWebViewConfigurationExtras.mm:
+        (+[WKWebViewConfiguration _test_configurationWithTestPlugInClassName:]):
+        (+[WKWebViewConfiguration _test_configurationWithTestPlugInClassName:configureJSCForTesting:]):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::generateContextConfiguration const):
+
 2019-09-12  Keith Rollin  <krollin@apple.com>
 
         Fix PDFKit references in TestWebKitAPI

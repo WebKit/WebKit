@@ -57,10 +57,10 @@ int AuxiliaryProcessMain(int argc, char** argv)
     if (!auxiliaryMain.platformInitialize())
         return EXIT_FAILURE;
 
-    InitializeWebKit2();
-
     if (!auxiliaryMain.parseCommandLine(argc, argv))
         return EXIT_FAILURE;
+
+    InitializeWebKit2();
 
     initializeAuxiliaryProcess<AuxiliaryProcessType>(auxiliaryMain.takeInitializationParameters());
     RunLoop::run();

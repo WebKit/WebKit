@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,6 +90,8 @@ WK_EXPORT void WKContextConfigurationSetProcessSwapsOnWindowOpenWithOpener(WKCon
 WK_EXPORT int64_t WKContextConfigurationDiskCacheSizeOverride(WKContextConfigurationRef configuration) WK_C_API_DEPRECATED;
 WK_EXPORT void WKContextConfigurationSetDiskCacheSizeOverride(WKContextConfigurationRef configuration, int64_t size) WK_C_API_DEPRECATED;
     
+WK_EXPORT void WKContextConfigurationSetShouldConfigureJSCForTesting(WKContextConfigurationRef configuration, bool value);
+
 #ifdef __cplusplus
 }
 #endif

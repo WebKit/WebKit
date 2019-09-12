@@ -31,7 +31,7 @@
  * @title: JSCOptions
  *
  * JavaScript options allow changing the behavior of the JavaScript engine.
- * They affect the way the engine works, so it's encouraged to set the options
+ * They affect the way the engine works, so the options must be set
  * at the very beginning of the program execution, before any other JavaScript
  * API call. Most of the options are only useful for testing and debugging.
  * Only a few of them are documented; you can use the undocumented options at
@@ -166,9 +166,9 @@ static void valueToGValue(GCLogging::Level value, GValue* gValue)
 
 static gboolean jscOptionsSetValue(const char* option, const GValue* value)
 {
-#define FOR_EACH_OPTION(type_, name_, defaultValue_, availability_, description_) \
+#define SET_OPTION_VALUE(type_, name_, defaultValue_, availability_, description_) \
     if (!g_strcmp0(#name_, option)) {                                   \
-        type_ valueToSet;                                               \
+        OptionEntry::type_ valueToSet;                                  \
         if (!valueFromGValue(value, valueToSet))                        \
             return FALSE;                                               \
         Options::name_() = valueToSet;                                  \
@@ -176,24 +176,24 @@ static gboolean jscOptionsSetValue(const char* option, const GValue* value)
     }
 
     Options::initialize();
-    JSC_OPTIONS(FOR_EACH_OPTION)
-#undef FOR_EACH_OPTION
+    FOR_EACH_JSC_OPTION(SET_OPTION_VALUE)
+#undef SET_OPTION_VALUE
 
     return FALSE;
 }
 
 static gboolean jscOptionsGetValue(const char* option, GValue* value)
 {
-#define FOR_EACH_OPTION(type_, name_, defaultValue_, availability_, description_) \
+#define GET_OPTION_VALUE(type_, name_, defaultValue_, availability_, description_) \
     if (!g_strcmp0(#name_, option)) {                                   \
-        type_ valueToGet = Options::name_();                            \
+        OptionEntry::type_ valueToGet = Options::name_();               \
         valueToGValue(valueToGet, value);                               \
         return TRUE;                                                    \
     }
 
     Options::initialize();
-    JSC_OPTIONS(FOR_EACH_OPTION)
-#undef FOR_EACH_OPTION
+    FOR_EACH_JSC_OPTION(GET_OPTION_VALUE)
+#undef GET_OPTION_VALUE
 
     return FALSE;
 }
@@ -614,18 +614,18 @@ void jsc_options_foreach(JSCOptionsFunc function, gpointer userData)
 {
     g_return_if_fail(function);
 
-#define FOR_EACH_OPTION(type_, name_, defaultValue_, availability_, description_) \
+#define VISIT_OPTION(type_, name_, defaultValue_, availability_, description_) \
     if (Options::Availability::availability_ == Options::Availability::Normal \
         || Options::isAvailable(Options::name_##ID, Options::Availability::availability_)) { \
-        type_ defaultValue { };                                         \
+        OptionEntry::type_ defaultValue { };                            \
         auto optionType = jscOptionsType(defaultValue);                 \
         if (function (#name_, optionType, description_, userData))      \
             return;                                                     \
     }
 
     Options::initialize();
-    JSC_OPTIONS(FOR_EACH_OPTION)
-#undef FOR_EACH_OPTION
+    FOR_EACH_JSC_OPTION(VISIT_OPTION)
+#undef VISIT_OPTION
 }
 
 static gboolean setOptionEntry(const char* optionNameFull, const char* value, gpointer, GError** error)
@@ -664,7 +664,7 @@ GOptionGroup* jsc_options_get_option_group(void)
     g_option_group_set_translation_domain(group, GETTEXT_PACKAGE);
 
     GArray* entries = g_array_new(TRUE, TRUE, sizeof(GOptionEntry));
-#define FOR_EACH_OPTION(type_, name_, defaultValue_, availability_, description_) \
+#define REGISTER_OPTION(type_, name_, defaultValue_, availability_, description_) \
     if (Options::Availability::availability_ == Options::Availability::Normal \
         || Options::isAvailable(Options::name_##ID, Options::Availability::availability_)) { \
         GUniquePtr<char> name(g_strdup_printf("jsc-%s", #name_));       \
@@ -678,8 +678,8 @@ GOptionGroup* jsc_options_get_option_group(void)
     }
 
     Options::initialize();
-    JSC_OPTIONS(FOR_EACH_OPTION)
-#undef FOR_EACH_OPTION
+    FOR_EACH_JSC_OPTION(REGISTER_OPTION)
+#undef REGISTER_OPTION
 
     g_option_group_add_entries(group, reinterpret_cast<GOptionEntry*>(entries->data));
     return group;

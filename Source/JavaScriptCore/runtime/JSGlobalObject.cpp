@@ -1822,6 +1822,7 @@ ExecState* JSGlobalObject::globalExec()
 
 void JSGlobalObject::exposeDollarVM(VM& vm)
 {
+    RELEASE_ASSERT(g_jscConfig.restrictedOptionsEnabled && Options::useDollarVM());
     if (hasOwnProperty(globalExec(), vm.propertyNames->builtinNames().dollarVMPrivateName()))
         return;
 

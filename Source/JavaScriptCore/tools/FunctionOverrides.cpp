@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -102,11 +102,13 @@ FunctionOverrides& FunctionOverrides::overrides()
     
 FunctionOverrides::FunctionOverrides(const char* overridesFileName)
 {
+    RELEASE_ASSERT(g_jscConfig.restrictedOptionsEnabled);
     parseOverridesInFile(holdLock(m_lock), overridesFileName);
 }
 
 void FunctionOverrides::reinstallOverrides()
 {
+    RELEASE_ASSERT(g_jscConfig.restrictedOptionsEnabled);
     FunctionOverrides& overrides = FunctionOverrides::overrides();
     auto locker = holdLock(overrides.m_lock);
     const char* overridesFileName = Options::functionOverrides();
@@ -143,7 +145,8 @@ static void initializeOverrideInfo(const SourceCode& origCode, const String& new
     
 bool FunctionOverrides::initializeOverrideFor(const SourceCode& origCode, FunctionOverrides::OverrideInfo& result)
 {
-    ASSERT(Options::functionOverrides());
+    RELEASE_ASSERT(g_jscConfig.restrictedOptionsEnabled);
+    RELEASE_ASSERT(Options::functionOverrides());
     FunctionOverrides& overrides = FunctionOverrides::overrides();
 
     String sourceString = origCode.view().toString();
@@ -235,6 +238,7 @@ static String parseClause(const char* keyword, size_t keywordLength, FILE* file,
 
 void FunctionOverrides::parseOverridesInFile(const AbstractLocker&, const char* fileName)
 {
+    RELEASE_ASSERT(g_jscConfig.restrictedOptionsEnabled);
     if (!fileName)
         return;
     

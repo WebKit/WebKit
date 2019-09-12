@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -100,6 +100,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_shouldTakeUIBackgroundAssertion = this->m_shouldTakeUIBackgroundAssertion;
     copy->m_shouldCaptureAudioInUIProcess = this->m_shouldCaptureAudioInUIProcess;
     copy->m_shouldCaptureDisplayInUIProcess = this->m_shouldCaptureDisplayInUIProcess;
+    copy->m_shouldConfigureJSCForTesting = this->m_shouldConfigureJSCForTesting;
     copy->m_isJITEnabled = this->m_isJITEnabled;
     copy->m_downloadMonitorSpeedMultiplier = this->m_downloadMonitorSpeedMultiplier;
 #if PLATFORM(IOS_FAMILY)

@@ -1,3 +1,16 @@
+2019-09-12  Mark Lam  <mark.lam@apple.com>
+
+        Harden JSC against the abuse of runtime options.
+        https://bugs.webkit.org/show_bug.cgi?id=201597
+        <rdar://problem/55167068>
+
+        Reviewed by Filip Pizlo.
+
+        Remove the call to forceGCSlowPaths().  This utility function will be removed.
+        The modern way to set the required option is to use //@ requireOptions.
+
+        * stress/ftl-try-catch-oom-error-lazy-slow-path.js:
+
 2019-09-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add StringCodePointAt intrinsic

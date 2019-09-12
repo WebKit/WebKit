@@ -3741,6 +3741,9 @@ int main(int argc, char** argv)
 {
     g_test_init(&argc, &argv, nullptr);
 
+    // options should always be the first test, since changing options
+    // is not allowed after the first VM instance is created.
+    g_test_add_func("/jsc/options", testsJSCOptions);
     g_test_add_func("/jsc/basic", testJSCBasic);
     g_test_add_func("/jsc/types", testJSCTypes);
     g_test_add_func("/jsc/global-object", testJSCGlobalObject);
@@ -3755,7 +3758,6 @@ int main(int argc, char** argv)
     g_test_add_func("/jsc/garbage-collector", testJSCGarbageCollector);
     g_test_add_func("/jsc/weak-value", testJSCWeakValue);
     g_test_add_func("/jsc/vm", testsJSCVirtualMachine);
-    g_test_add_func("/jsc/options", testsJSCOptions);
 #ifdef G_DEFINE_AUTOPTR_CLEANUP_FUNC
     g_test_add_func("/jsc/autocleanups", testsJSCAutocleanups);
 #endif

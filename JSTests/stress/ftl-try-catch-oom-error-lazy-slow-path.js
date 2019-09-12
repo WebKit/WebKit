@@ -1,4 +1,6 @@
-forceGCSlowPaths(); // Force OOM error in FTL MakeRope to happen in a lazy slow path.
+//@ requireOptions("--forceGCSlowPaths=true")
+
+// We require --forceGCSlowPaths=true to force OOM error in FTL MakeRope to happen in a lazy slow path.
 
 function assert(b) {
     if (!b)

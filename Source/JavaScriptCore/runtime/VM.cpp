@@ -470,6 +470,9 @@ VM::VM(VMType vmType, HeapType heapType)
         ensureShadowChicken();
 
     VMInspector::instance().add(this);
+
+    if (!g_jscConfig.disabledFreezingForTesting)
+        Config::permanentlyFreeze();
 }
 
 static ReadWriteLock s_destructionLock;

@@ -51,8 +51,6 @@ WebInspectorUI::WebInspectorUI(WebPage& page)
     : m_page(page)
     , m_frontendAPIDispatcher(page)
 {
-    JSC::Options::useBigInt() = true;
-        
     RuntimeEnabledFeatures::sharedFeatures().setInspectorAdditionsEnabled(true);
     RuntimeEnabledFeatures::sharedFeatures().setImageBitmapOffscreenCanvasEnabled(true);
 #if ENABLE(WEBGL2)

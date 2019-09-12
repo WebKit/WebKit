@@ -503,6 +503,8 @@ WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfigurat
             WKContextConfigurationSetProcessSwapsOnWindowOpenWithOpener(configuration.get(), true);
     }
 
+    WKContextConfigurationSetShouldConfigureJSCForTesting(configuration.get(), true);
+
     return configuration;
 }
 

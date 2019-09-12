@@ -113,6 +113,12 @@ void ProcessLauncher::launchProcess()
             prefixArgs.append(arg.utf8());
         nargs += prefixArgs.size();
     }
+
+    bool configureJSCForTesting = false;
+    if (m_launchOptions.processType == ProcessLauncher::ProcessType::Web && m_client && m_client->shouldConfigureJSCForTesting()) {
+        configureJSCForTesting = true;
+        nargs++;
+    }
 #endif
 
     char** argv = g_newa(char*, nargs);
@@ -125,6 +131,10 @@ void ProcessLauncher::launchProcess()
     argv[i++] = const_cast<char*>(realExecutablePath.data());
     argv[i++] = processIdentifier.get();
     argv[i++] = webkitSocket.get();
+#if ENABLE(DEVELOPER_MODE)
+    if (configureJSCForTesting)
+        argv[i++] = const_cast<char*>("--configure-jsc-for-testing");
+#endif
 #if ENABLE(NETSCAPE_PLUGIN_API)
     argv[i++] = const_cast<char*>(realPluginPath.data());
 #else

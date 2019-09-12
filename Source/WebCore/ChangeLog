@@ -1,3 +1,20 @@
+2019-09-12  Mark Lam  <mark.lam@apple.com>
+
+        Harden JSC against the abuse of runtime options.
+        https://bugs.webkit.org/show_bug.cgi?id=201597
+        <rdar://problem/55167068>
+
+        Reviewed by Filip Pizlo.
+
+        No new tests.  Covered by existing tests.
+
+        Enable Options::useDollarVM before we tell the JSGlobalObject to exposeDollarVM().
+        The $vm utility is now hardened to require that Options::useDollarVM be
+        enabled in order for it to be used.
+
+        * testing/js/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::injectInternalsObject):
+
 2019-09-12  Youenn Fablet  <youenn@apple.com>
 
         Use typed identifiers for IDB connection identifiers

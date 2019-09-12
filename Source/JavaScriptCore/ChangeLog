@@ -1,3 +1,336 @@
+2019-09-12  Mark Lam  <mark.lam@apple.com>
+
+        Harden JSC against the abuse of runtime options.
+        https://bugs.webkit.org/show_bug.cgi?id=201597
+        <rdar://problem/55167068>
+
+        Reviewed by Filip Pizlo.
+
+        Linux parts contributed by Carlos Garcia Campos <cgarcia@igalia.com>.
+
+        1. Introduce a JSC::Config struct that will be protected as ReadOnly once the
+           first VM instance is constructed.  The end of the VM constructor calls
+           Config::permanentlyFreeze() which will make the Config ReadOnly.
+
+           Note: this is currently only supported for OS(DARWIN) and OS(LINUX).
+           OS(WINDOWS) will need to implement some missing pieces before it can enable
+           this hardening (see FIXME in JSCConfig.cpp).
+
+           The hardening strategy here is to put immutable global values into the Config.
+           Any modifications that need to be made to these values must be done before the
+           first VM instance is done instantiating.  This ensures that no script will
+           ever run while the Config is still writable.
+
+           Also, the policy for this hardening is that a process is opted in by default.
+           If there's a valid need to disable this hardening (e.g. for some test
+           environments), the relevant process will need to opt itself out by calling
+           Config::configureForTesting().
+
+           The jsc shell, WK2 UI and WebContent processes are opted in by default.
+           Only test processes may be opt out.
+
+        2. Put all JSC::Options in the Config.  This enforces the invariant that options
+           can only be changed before we instantiate a VM.  Once a VM is instantiated,
+           the options are immutable.
+
+        3. Remove functionForceGCSlowPaths() from the jsc shell.  Setting
+           Options::forceGCSlowPaths this way is no longer allowed.
+
+        4. Re-factored the Options code (Options.h) into:
+           - OptionEntry.h: the data structure that stores the option values.
+           - OptionsList.h: the list of options.
+           - Options.h: the Options singleton object which is the interface for accessing options.
+
+           Renamed the JSC_OPTIONS macro to FOR_EACH_JSC_OPTION, because
+           "FOR_EACH_JSC_OPTION(SET_OPTION_VALUE)" reads a lot better than
+           "JSC_OPTIONS(FOR_EACH_OPTION)".
+
+        5. Change testapi to call Config::configureForTesting().  Parts of testapi makes
+           use of setting options in its tests.  Hence, this hardening is disabled for
+           testapi.
+
+           Note: the jsc shell does enable this hardening.
+
+        6. Put ExecutableAllocator's immutable globals in the Config.
+
+        7. RELEASE_ASSERT that restrictedOptionsEnabled in order to use the
+           FunctionOverrides test utility.
+
+        8. RELEASE_ASSERT that Options::useDollarVM() is enabled in order to use the $vm.
+
+           We must RELEASE_ASSERT(Options::useDollarVM()) in all JSDollarVM functions
+           that are non-trivial at an eye's glance.  This includes (but is not limited to):
+               constructors
+               create() factory
+               createStructure() factory
+               finishCreation()
+               HOST_CALL or operation functions
+               Constructors and methods of utility and test classes
+
+           The only exception are some constexpr constructors used for instantiating
+           globals (since these must have trivial constructors) e.g. DOMJITAttribute.
+           Instead, these constructors should always be ALWAYS_INLINE.
+
+        * API/glib/JSCOptions.cpp:
+        (jscOptionsSetValue):
+        (jscOptionsGetValue):
+        (jsc_options_foreach):
+        (jsc_options_get_option_group):
+        * API/tests/testapi.c:
+        (main):
+        * API/tests/testapi.cpp:
+        (configureJSCForTesting):
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * jit/ExecutableAllocator.cpp:
+        (JSC::isJITEnabled):
+        (JSC::ExecutableAllocator::setJITEnabled):
+        (JSC::ExecutableAllocator::initializeUnderlyingAllocator):
+        (JSC::ExecutableAllocator::isValid const):
+        (JSC::ExecutableAllocator::underMemoryPressure):
+        (JSC::ExecutableAllocator::memoryPressureMultiplier):
+        (JSC::ExecutableAllocator::allocate):
+        (JSC::ExecutableAllocator::isValidExecutableMemory):
+        (JSC::ExecutableAllocator::getLock const):
+        (JSC::ExecutableAllocator::committedByteCount):
+        (JSC::ExecutableAllocator::dumpProfile):
+        (JSC::startOfFixedExecutableMemoryPoolImpl):
+        (JSC::endOfFixedExecutableMemoryPoolImpl):
+        (JSC::isJITPC):
+        (JSC::dumpJITMemory):
+        (JSC::ExecutableAllocator::initialize):
+        (JSC::ExecutableAllocator::singleton):
+        * jit/ExecutableAllocator.h:
+        (JSC::performJITMemcpy):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionJSCOptions):
+        (jscmain):
+        (functionForceGCSlowPaths): Deleted.
+        * runtime/ConfigFile.cpp:
+        (JSC::ConfigFile::parse):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+        * runtime/JSCConfig.cpp: Added.
+        (JSC::Config::disableFreezingForTesting):
+        (JSC::Config::enableRestrictedOptions):
+        (JSC::Config::permanentlyFreeze):
+        * runtime/JSCConfig.h: Added.
+        (JSC::Config::configureForTesting):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::exposeDollarVM):
+        * runtime/OptionEntry.h: Added.
+        (JSC::OptionRange::operator= ):
+        (JSC::OptionRange::rangeString const):
+        * runtime/Options.cpp:
+        (JSC::Options::isAvailable):
+        (JSC::scaleJITPolicy):
+        (JSC::Options::initialize):
+        (JSC::Options::setOptions):
+        (JSC::Options::setOptionWithoutAlias):
+        (JSC::Options::setAliasedOption):
+        (JSC::Option::dump const):
+        (JSC::Option::operator== const):
+        (): Deleted.
+        (JSC::Options::enableRestrictedOptions): Deleted.
+        * runtime/Options.h:
+        (JSC::Option::Option):
+        (JSC::Option::defaultOption const):
+        (JSC::Option::boolVal):
+        (JSC::Option::unsignedVal):
+        (JSC::Option::doubleVal):
+        (JSC::Option::int32Val):
+        (JSC::Option::optionRangeVal):
+        (JSC::Option::optionStringVal):
+        (JSC::Option::gcLogLevelVal):
+        (JSC::OptionRange::operator= ): Deleted.
+        (JSC::OptionRange::rangeString const): Deleted.
+        * runtime/OptionsList.h: Added.
+        (JSC::countNumberOfJSCOptions):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * tools/FunctionOverrides.cpp:
+        (JSC::FunctionOverrides::FunctionOverrides):
+        (JSC::FunctionOverrides::reinstallOverrides):
+        (JSC::FunctionOverrides::initializeOverrideFor):
+        (JSC::FunctionOverrides::parseOverridesInFile):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSDollarVMCallFrame::JSDollarVMCallFrame):
+        (JSC::JSDollarVMCallFrame::createStructure):
+        (JSC::JSDollarVMCallFrame::create):
+        (JSC::JSDollarVMCallFrame::finishCreation):
+        (JSC::JSDollarVMCallFrame::addProperty):
+        (JSC::Element::Element):
+        (JSC::Element::create):
+        (JSC::Element::createStructure):
+        (JSC::Root::Root):
+        (JSC::Root::create):
+        (JSC::Root::createStructure):
+        (JSC::SimpleObject::SimpleObject):
+        (JSC::SimpleObject::create):
+        (JSC::SimpleObject::createStructure):
+        (JSC::ImpureGetter::ImpureGetter):
+        (JSC::ImpureGetter::createStructure):
+        (JSC::ImpureGetter::create):
+        (JSC::ImpureGetter::finishCreation):
+        (JSC::ImpureGetter::getOwnPropertySlot):
+        (JSC::CustomGetter::CustomGetter):
+        (JSC::CustomGetter::createStructure):
+        (JSC::CustomGetter::create):
+        (JSC::CustomGetter::getOwnPropertySlot):
+        (JSC::CustomGetter::customGetter):
+        (JSC::CustomGetter::customGetterAcessor):
+        (JSC::RuntimeArray::create):
+        (JSC::RuntimeArray::destroy):
+        (JSC::RuntimeArray::getOwnPropertySlot):
+        (JSC::RuntimeArray::getOwnPropertySlotByIndex):
+        (JSC::RuntimeArray::createPrototype):
+        (JSC::RuntimeArray::createStructure):
+        (JSC::RuntimeArray::finishCreation):
+        (JSC::RuntimeArray::RuntimeArray):
+        (JSC::RuntimeArray::lengthGetter):
+        (JSC::DOMJITNode::DOMJITNode):
+        (JSC::DOMJITNode::createStructure):
+        (JSC::DOMJITNode::checkSubClassSnippet):
+        (JSC::DOMJITNode::create):
+        (JSC::DOMJITGetter::DOMJITGetter):
+        (JSC::DOMJITGetter::createStructure):
+        (JSC::DOMJITGetter::create):
+        (JSC::DOMJITGetter::DOMJITAttribute::DOMJITAttribute):
+        (JSC::DOMJITGetter::DOMJITAttribute::slowCall):
+        (JSC::DOMJITGetter::DOMJITAttribute::callDOMGetter):
+        (JSC::DOMJITGetter::customGetter):
+        (JSC::DOMJITGetter::finishCreation):
+        (JSC::DOMJITGetterComplex::DOMJITGetterComplex):
+        (JSC::DOMJITGetterComplex::createStructure):
+        (JSC::DOMJITGetterComplex::create):
+        (JSC::DOMJITGetterComplex::DOMJITAttribute::DOMJITAttribute):
+        (JSC::DOMJITGetterComplex::DOMJITAttribute::slowCall):
+        (JSC::DOMJITGetterComplex::DOMJITAttribute::callDOMGetter):
+        (JSC::DOMJITGetterComplex::functionEnableException):
+        (JSC::DOMJITGetterComplex::customGetter):
+        (JSC::DOMJITGetterComplex::finishCreation):
+        (JSC::DOMJITFunctionObject::DOMJITFunctionObject):
+        (JSC::DOMJITFunctionObject::createStructure):
+        (JSC::DOMJITFunctionObject::create):
+        (JSC::DOMJITFunctionObject::functionWithTypeCheck):
+        (JSC::DOMJITFunctionObject::functionWithoutTypeCheck):
+        (JSC::DOMJITFunctionObject::checkSubClassSnippet):
+        (JSC::DOMJITFunctionObject::finishCreation):
+        (JSC::DOMJITCheckSubClassObject::DOMJITCheckSubClassObject):
+        (JSC::DOMJITCheckSubClassObject::createStructure):
+        (JSC::DOMJITCheckSubClassObject::create):
+        (JSC::DOMJITCheckSubClassObject::functionWithTypeCheck):
+        (JSC::DOMJITCheckSubClassObject::functionWithoutTypeCheck):
+        (JSC::DOMJITCheckSubClassObject::finishCreation):
+        (JSC::DOMJITGetterBaseJSObject::DOMJITGetterBaseJSObject):
+        (JSC::DOMJITGetterBaseJSObject::createStructure):
+        (JSC::DOMJITGetterBaseJSObject::create):
+        (JSC::DOMJITGetterBaseJSObject::DOMJITAttribute::DOMJITAttribute):
+        (JSC::DOMJITGetterBaseJSObject::DOMJITAttribute::slowCall):
+        (JSC::DOMJITGetterBaseJSObject::DOMJITAttribute::callDOMGetter):
+        (JSC::DOMJITGetterBaseJSObject::customGetter):
+        (JSC::DOMJITGetterBaseJSObject::finishCreation):
+        (JSC::JSTestCustomGetterSetter::JSTestCustomGetterSetter):
+        (JSC::JSTestCustomGetterSetter::create):
+        (JSC::JSTestCustomGetterSetter::createStructure):
+        (JSC::customSetAccessor):
+        (JSC::customSetValue):
+        (JSC::JSTestCustomGetterSetter::finishCreation):
+        (JSC::Element::handleOwner):
+        (JSC::Element::finishCreation):
+        (JSC::WasmStreamingParser::WasmStreamingParser):
+        (JSC::WasmStreamingParser::create):
+        (JSC::WasmStreamingParser::createStructure):
+        (JSC::WasmStreamingParser::finishCreation):
+        (JSC::functionWasmStreamingParserAddBytes):
+        (JSC::functionWasmStreamingParserFinalize):
+        (JSC::functionCrash):
+        (JSC::functionBreakpoint):
+        (JSC::functionDFGTrue):
+        (JSC::functionFTLTrue):
+        (JSC::functionCpuMfence):
+        (JSC::functionCpuRdtsc):
+        (JSC::functionCpuCpuid):
+        (JSC::functionCpuPause):
+        (JSC::functionCpuClflush):
+        (JSC::CallerFrameJITTypeFunctor::CallerFrameJITTypeFunctor):
+        (JSC::getExecutableForFunction):
+        (JSC::functionLLintTrue):
+        (JSC::functionJITTrue):
+        (JSC::functionNoInline):
+        (JSC::functionGC):
+        (JSC::functionEdenGC):
+        (JSC::functionDumpSubspaceHashes):
+        (JSC::functionCallFrame):
+        (JSC::functionCodeBlockForFrame):
+        (JSC::codeBlockFromArg):
+        (JSC::functionCodeBlockFor):
+        (JSC::functionDumpSourceFor):
+        (JSC::functionDumpBytecodeFor):
+        (JSC::doPrint):
+        (JSC::functionDataLog):
+        (JSC::functionPrint):
+        (JSC::functionDumpCallFrame):
+        (JSC::functionDumpStack):
+        (JSC::functionDumpRegisters):
+        (JSC::functionDumpCell):
+        (JSC::functionIndexingMode):
+        (JSC::functionInlineCapacity):
+        (JSC::functionValue):
+        (JSC::functionGetPID):
+        (JSC::functionHaveABadTime):
+        (JSC::functionIsHavingABadTime):
+        (JSC::functionCreateGlobalObject):
+        (JSC::functionCreateProxy):
+        (JSC::functionCreateRuntimeArray):
+        (JSC::functionCreateNullRopeString):
+        (JSC::functionCreateImpureGetter):
+        (JSC::functionCreateCustomGetterObject):
+        (JSC::functionCreateDOMJITNodeObject):
+        (JSC::functionCreateDOMJITGetterObject):
+        (JSC::functionCreateDOMJITGetterComplexObject):
+        (JSC::functionCreateDOMJITFunctionObject):
+        (JSC::functionCreateDOMJITCheckSubClassObject):
+        (JSC::functionCreateDOMJITGetterBaseJSObject):
+        (JSC::functionCreateWasmStreamingParser):
+        (JSC::functionSetImpureGetterDelegate):
+        (JSC::functionCreateBuiltin):
+        (JSC::functionGetPrivateProperty):
+        (JSC::functionCreateRoot):
+        (JSC::functionCreateElement):
+        (JSC::functionGetElement):
+        (JSC::functionCreateSimpleObject):
+        (JSC::functionGetHiddenValue):
+        (JSC::functionSetHiddenValue):
+        (JSC::functionShadowChickenFunctionsOnStack):
+        (JSC::functionSetGlobalConstRedeclarationShouldNotThrow):
+        (JSC::functionFindTypeForExpression):
+        (JSC::functionReturnTypeFor):
+        (JSC::functionFlattenDictionaryObject):
+        (JSC::functionDumpBasicBlockExecutionRanges):
+        (JSC::functionHasBasicBlockExecuted):
+        (JSC::functionBasicBlockExecutionCount):
+        (JSC::functionEnableExceptionFuzz):
+        (JSC::changeDebuggerModeWhenIdle):
+        (JSC::functionEnableDebuggerModeWhenIdle):
+        (JSC::functionDisableDebuggerModeWhenIdle):
+        (JSC::functionDeleteAllCodeWhenIdle):
+        (JSC::functionGlobalObjectCount):
+        (JSC::functionGlobalObjectForObject):
+        (JSC::functionGetGetterSetter):
+        (JSC::functionLoadGetterFromGetterSetter):
+        (JSC::functionCreateCustomTestGetterSetter):
+        (JSC::functionDeltaBetweenButterflies):
+        (JSC::functionTotalGCTime):
+        (JSC::functionParseCount):
+        (JSC::functionIsWasmSupported):
+        (JSC::JSDollarVM::finishCreation):
+        (JSC::JSDollarVM::addFunction):
+        (JSC::JSDollarVM::addConstructibleFunction):
+        * tools/JSDollarVM.h:
+
 2019-09-11  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: instrument WebGPUDevice instead of GPUCanvasContext

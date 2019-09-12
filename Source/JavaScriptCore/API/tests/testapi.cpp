@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/StringCommon.h>
 
+extern "C" void configureJSCForTesting();
 extern "C" int testCAPIViaCpp(const char* filter);
 
 class APIString {
@@ -587,6 +588,11 @@ void TestAPI::promiseEarlyHandledRejections()
 
     callFunction("(function () { const p = Promise.reject(); Promise.resolve().then(() => { p.catch(() => {}); }); })");
     check(!callbackCalled, "unhandled rejection callback should not be called for asynchronous early-handled rejection");
+}
+
+void configureJSCForTesting()
+{
+    JSC::Config::configureForTesting();
 }
 
 #define RUN(test) do {                                 \
