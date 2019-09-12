@@ -1,0 +1,3809 @@
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: undefined
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: result
+
+-----------------------------------------------------
+EXPRESSION: null
+{
+  "_type": "object",
+  "_subtype": "null",
+  "_description": "null",
+  "_value": null
+}
+
+-----------------------------------------------------
+EXPRESSION: undefined
+{
+  "_type": "undefined",
+  "_description": "undefined"
+}
+
+-----------------------------------------------------
+EXPRESSION: Symbol()
+{
+  "_type": "symbol",
+  "_objectId": "<filtered>",
+  "_description": "Symbol()"
+}
+
+-----------------------------------------------------
+EXPRESSION: Symbol("test")
+{
+  "_type": "symbol",
+  "_objectId": "<filtered>",
+  "_description": "Symbol(test)"
+}
+
+-----------------------------------------------------
+EXPRESSION: true
+{
+  "_type": "boolean",
+  "_description": "true",
+  "_value": true
+}
+
+-----------------------------------------------------
+EXPRESSION: false
+{
+  "_type": "boolean",
+  "_description": "false",
+  "_value": false
+}
+
+-----------------------------------------------------
+EXPRESSION: 0
+{
+  "_type": "number",
+  "_description": "0",
+  "_value": 0
+}
+
+-----------------------------------------------------
+EXPRESSION: -0
+{
+  "_type": "number",
+  "_description": "-0",
+  "_value": 0
+}
+
+-----------------------------------------------------
+EXPRESSION: 1
+{
+  "_type": "number",
+  "_description": "1",
+  "_value": 1
+}
+
+-----------------------------------------------------
+EXPRESSION: -1
+{
+  "_type": "number",
+  "_description": "-1",
+  "_value": -1
+}
+
+-----------------------------------------------------
+EXPRESSION: 1.234
+{
+  "_type": "number",
+  "_description": "1.234",
+  "_value": 1.234
+}
+
+-----------------------------------------------------
+EXPRESSION: -1.234
+{
+  "_type": "number",
+  "_description": "-1.234",
+  "_value": -1.234
+}
+
+-----------------------------------------------------
+EXPRESSION: 1e3
+{
+  "_type": "number",
+  "_description": "1000",
+  "_value": 1000
+}
+
+-----------------------------------------------------
+EXPRESSION: Number.MAX_VALUE
+{
+  "_type": "number",
+  "_description": "1.7976931348623157e+308",
+  "_value": 1.7976931348623157e+308
+}
+
+-----------------------------------------------------
+EXPRESSION: Number.MIN_VALUE
+{
+  "_type": "number",
+  "_description": "5e-324",
+  "_value": 5e-324
+}
+
+-----------------------------------------------------
+EXPRESSION: NaN
+{
+  "_type": "number",
+  "_description": "NaN",
+  "_value": null
+}
+
+-----------------------------------------------------
+EXPRESSION: Infinity
+{
+  "_type": "number",
+  "_description": "Infinity",
+  "_value": null
+}
+
+-----------------------------------------------------
+EXPRESSION: -Infinity
+{
+  "_type": "number",
+  "_description": "-Infinity",
+  "_value": null
+}
+
+-----------------------------------------------------
+EXPRESSION: 123n
+{
+  "_type": "bigint",
+  "_description": "123n",
+  "_value": "<filtered 123n>"
+}
+
+-----------------------------------------------------
+EXPRESSION: ''
+{
+  "_type": "string",
+  "_description": "",
+  "_value": ""
+}
+
+-----------------------------------------------------
+EXPRESSION: '"'
+{
+  "_type": "string",
+  "_description": "\"",
+  "_value": "\""
+}
+
+-----------------------------------------------------
+EXPRESSION: "'"
+{
+  "_type": "string",
+  "_description": "'",
+  "_value": "'"
+}
+
+-----------------------------------------------------
+EXPRESSION: `template`
+{
+  "_type": "string",
+  "_description": "template",
+  "_value": "template"
+}
+
+-----------------------------------------------------
+EXPRESSION: "string"
+{
+  "_type": "string",
+  "_description": "string",
+  "_value": "string"
+}
+
+-----------------------------------------------------
+EXPRESSION: "Unicode…"
+{
+  "_type": "string",
+  "_description": "Unicode…",
+  "_value": "Unicode…"
+}
+
+-----------------------------------------------------
+EXPRESSION: "I wish I had something to put here."
+{
+  "_type": "string",
+  "_description": "I wish I had something to put here.",
+  "_value": "I wish I had something to put here."
+}
+
+-----------------------------------------------------
+EXPRESSION: (function(){})
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function (){}"
+}
+
+-----------------------------------------------------
+EXPRESSION: function foo(){}; foo
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function foo(){}"
+}
+
+-----------------------------------------------------
+EXPRESSION: function myFunction(a, b) { console.log(a, b); }; myFunction
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function myFunction(a, b) { console.log(a, b); }"
+}
+
+-----------------------------------------------------
+EXPRESSION: function myTarget(a, b) { console.log(a, b); }; myTarget.bind(null)
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function myTarget() {\n    [native code]\n}"
+}
+
+-----------------------------------------------------
+EXPRESSION: Array.prototype.push
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function push() {\n    [native code]\n}"
+}
+
+-----------------------------------------------------
+EXPRESSION: window.setTimeout
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function setTimeout() {\n    [native code]\n}"
+}
+
+-----------------------------------------------------
+EXPRESSION: Object.getOwnPropertyDescriptor({ get getter() { return 1 } }, "getter").get
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function () { return 1 }"
+}
+
+-----------------------------------------------------
+EXPRESSION: Object.getOwnPropertyDescriptor({ set setter(v) { console.log(v); } }, "setter").set
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function (v) { console.log(v); }"
+}
+
+-----------------------------------------------------
+EXPRESSION: / /
+{
+  "_type": "object",
+  "_subtype": "regexp",
+  "_objectId": "<filtered>",
+  "_description": "/ /",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "regexp",
+    "_description": "/ /",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "lastIndex",
+        "_type": "number",
+        "_value": "0"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: /(?:)/
+{
+  "_type": "object",
+  "_subtype": "regexp",
+  "_objectId": "<filtered>",
+  "_description": "/(?:)/",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "regexp",
+    "_description": "/(?:)/",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "lastIndex",
+        "_type": "number",
+        "_value": "0"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: /^r(e)g[e]{1,}x+/
+{
+  "_type": "object",
+  "_subtype": "regexp",
+  "_objectId": "<filtered>",
+  "_description": "/^r(e)g[e]{1,}x+/",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "regexp",
+    "_description": "/^r(e)g[e]{1,}x+/",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "lastIndex",
+        "_type": "number",
+        "_value": "0"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: /^r(e)g[e]{1,}x+/ig
+{
+  "_type": "object",
+  "_subtype": "regexp",
+  "_objectId": "<filtered>",
+  "_description": "/^r(e)g[e]{1,}x+/gi",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "regexp",
+    "_description": "/^r(e)g[e]{1,}x+/gi",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "lastIndex",
+        "_type": "number",
+        "_value": "0"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new RegExp("")
+{
+  "_type": "object",
+  "_subtype": "regexp",
+  "_objectId": "<filtered>",
+  "_description": "/(?:)/",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "regexp",
+    "_description": "/(?:)/",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "lastIndex",
+        "_type": "number",
+        "_value": "0"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new RegExp("test", "i")
+{
+  "_type": "object",
+  "_subtype": "regexp",
+  "_objectId": "<filtered>",
+  "_description": "/test/i",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "regexp",
+    "_description": "/test/i",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "lastIndex",
+        "_type": "number",
+        "_value": "0"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: []
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 0,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 0,
+    "_properties": [],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [0, -0, 1, 2]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 4,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 4,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "1",
+        "_type": "number",
+        "_value": "-0"
+      },
+      {
+        "_name": "2",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "3",
+        "_type": "number",
+        "_value": "2"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [[1],[2],[3]]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 3,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 3,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "object",
+        "_subtype": "array",
+        "_valuePreview": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 1,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "number",
+              "_value": "1"
+            }
+          ],
+          "_entries": null
+        }
+      },
+      {
+        "_name": "1",
+        "_type": "object",
+        "_subtype": "array",
+        "_valuePreview": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 1,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "number",
+              "_value": "2"
+            }
+          ],
+          "_entries": null
+        }
+      },
+      {
+        "_name": "2",
+        "_type": "object",
+        "_subtype": "array",
+        "_valuePreview": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 1,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "number",
+              "_value": "3"
+            }
+          ],
+          "_entries": null
+        }
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [true, 1, 1.234, "string", /regex/]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 5,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 5,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "boolean",
+        "_value": "true"
+      },
+      {
+        "_name": "1",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "2",
+        "_type": "number",
+        "_value": "1.234"
+      },
+      {
+        "_name": "3",
+        "_type": "string",
+        "_value": "string"
+      },
+      {
+        "_name": "4",
+        "_type": "object",
+        "_subtype": "regexp",
+        "_value": "/regex/"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [[null]]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "object",
+        "_subtype": "array",
+        "_valuePreview": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 1,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "object",
+              "_subtype": "null",
+              "_value": "null"
+            }
+          ],
+          "_entries": null
+        }
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [[undefined]]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "object",
+        "_subtype": "array",
+        "_valuePreview": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 1,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "undefined",
+              "_value": "undefined"
+            }
+          ],
+          "_entries": null
+        }
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [{a:1}, {b:2}, {c:2}]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 3,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 3,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "object",
+        "_valuePreview": {
+          "_type": "object",
+          "_description": "Object",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
+            {
+              "_name": "a",
+              "_type": "number",
+              "_value": "1"
+            }
+          ],
+          "_entries": null
+        }
+      },
+      {
+        "_name": "1",
+        "_type": "object",
+        "_valuePreview": {
+          "_type": "object",
+          "_description": "Object",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
+            {
+              "_name": "b",
+              "_type": "number",
+              "_value": "2"
+            }
+          ],
+          "_entries": null
+        }
+      },
+      {
+        "_name": "2",
+        "_type": "object",
+        "_valuePreview": {
+          "_type": "object",
+          "_description": "Object",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
+            {
+              "_name": "c",
+              "_type": "number",
+              "_value": "2"
+            }
+          ],
+          "_entries": null
+        }
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [[{a:1}, {b:2}, {c:2}]]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "object",
+        "_subtype": "array",
+        "_valuePreview": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 3,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "object",
+              "_valuePreview": {
+                "_type": "object",
+                "_description": "Object",
+                "_lossless": true,
+                "_overflow": false,
+                "_properties": [
+                  {
+                    "_name": "a",
+                    "_type": "number",
+                    "_value": "1"
+                  }
+                ],
+                "_entries": null
+              }
+            },
+            {
+              "_name": "1",
+              "_type": "object",
+              "_valuePreview": {
+                "_type": "object",
+                "_description": "Object",
+                "_lossless": true,
+                "_overflow": false,
+                "_properties": [
+                  {
+                    "_name": "b",
+                    "_type": "number",
+                    "_value": "2"
+                  }
+                ],
+                "_entries": null
+              }
+            },
+            {
+              "_name": "2",
+              "_type": "object",
+              "_valuePreview": {
+                "_type": "object",
+                "_description": "Object",
+                "_lossless": true,
+                "_overflow": false,
+                "_properties": [
+                  {
+                    "_name": "c",
+                    "_type": "number",
+                    "_value": "2"
+                  }
+                ],
+                "_entries": null
+              }
+            }
+          ],
+          "_entries": null
+        }
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: arr = []; arr[0] = arr; arr
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "object",
+        "_subtype": "array",
+        "_value": "Array"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: arr = []; arr.length = 100; arr
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 100,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 100,
+    "_properties": [],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: arr = []; arr.length = 100; arr.fill(1)
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 100,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": false,
+    "_overflow": true,
+    "_size": 100,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "1",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "2",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "3",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "4",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "5",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "6",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "7",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "8",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "9",
+        "_type": "number",
+        "_value": "1"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: arr = []; arr.length = 100; arr[10] = 1; arr
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 100,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 100,
+    "_properties": [
+      {
+        "_name": "10",
+        "_type": "number",
+        "_value": "1"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: a = null; (function() { a = arguments; })(1, "2", /3/); a
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Arguments",
+  "_size": 3,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Arguments",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 3,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "1",
+        "_type": "string",
+        "_value": "2"
+      },
+      {
+        "_name": "2",
+        "_type": "object",
+        "_subtype": "regexp",
+        "_value": "/3/"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new Int32Array(new ArrayBuffer(16))
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Int32Array",
+  "_size": 4,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Int32Array",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 4,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "1",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "2",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "3",
+        "_type": "number",
+        "_value": "0"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new Uint8ClampedArray(12)
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Uint8ClampedArray",
+  "_size": 12,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Uint8ClampedArray",
+    "_lossless": false,
+    "_overflow": true,
+    "_size": 12,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "1",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "2",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "3",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "4",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "5",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "6",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "7",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "8",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "9",
+        "_type": "number",
+        "_value": "0"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: var intArray = new Int32Array(new ArrayBuffer(16)); for (var i = 0; i < intArray.length; ++i) intArray[i] = i; intArray
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Int32Array",
+  "_size": 4,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Int32Array",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 4,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "1",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "2",
+        "_type": "number",
+        "_value": "2"
+      },
+      {
+        "_name": "3",
+        "_type": "number",
+        "_value": "3"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: var buffer = new ArrayBuffer(10000000); var int8View = new Int8Array(buffer); int8View
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Int8Array",
+  "_size": 10000000,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Int8Array",
+    "_lossless": false,
+    "_overflow": true,
+    "_size": 10000000,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "1",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "2",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "3",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "4",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "5",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "6",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "7",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "8",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "9",
+        "_type": "number",
+        "_value": "0"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: ({})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: ({a: 1})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "a",
+        "_type": "number",
+        "_value": "1"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: ({a: 1, b: 0, c: -0, d: 456n})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "a",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "b",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "c",
+        "_type": "number",
+        "_value": "-0"
+      },
+      {
+        "_name": "d",
+        "_type": "bigint",
+        "_value": "456n"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: ({a: 1, b: "string", c: /regex/, d: Symbol("sym")})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "a",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "b",
+        "_type": "string",
+        "_value": "string"
+      },
+      {
+        "_name": "c",
+        "_type": "object",
+        "_subtype": "regexp",
+        "_value": "/regex/"
+      },
+      {
+        "_name": "d",
+        "_type": "symbol",
+        "_value": "Symbol(sym)"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: o = {a:1}; o.b = o; o
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "a",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "b",
+        "_type": "object",
+        "_value": "Object"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: ({a:function a(){}, b:function b(){}, get getter(){}, set setter(v){}})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "a",
+        "_type": "function",
+        "_value": ""
+      },
+      {
+        "_name": "b",
+        "_type": "function",
+        "_value": ""
+      },
+      {
+        "_name": "getter",
+        "_type": "accessor"
+      },
+      {
+        "_name": "setter",
+        "_type": "accessor"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: function Foo() {}; new Foo
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Foo",
+  "_preview": {
+    "_type": "object",
+    "_description": "Foo",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: var Foo2 = function() {}; new Foo2
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Foo2",
+  "_preview": {
+    "_type": "object",
+    "_description": "Foo2",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: var namespace = {}; namespace.Foo3 = function() {}; new namespace.Foo3
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: function Bar() { this._x = 5 }; Bar.prototype = {constructor: Bar, get x() {return this._x;}}; new Bar
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Bar",
+  "_preview": {
+    "_type": "object",
+    "_description": "Bar",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "_x",
+        "_type": "number",
+        "_value": "5"
+      },
+      {
+        "_name": "constructor",
+        "_type": "function",
+        "_value": ""
+      },
+      {
+        "_name": "x",
+        "_type": "accessor"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: function Bar2() { this._x = 5 }; Bar.prototype = {get x() {return this._x;}}; new Bar2
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Bar2",
+  "_preview": {
+    "_type": "object",
+    "_description": "Bar2",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "_x",
+        "_type": "number",
+        "_value": "5"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new ArrayBuffer(16)
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "ArrayBuffer",
+  "_preview": {
+    "_type": "object",
+    "_description": "ArrayBuffer",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "byteLength",
+        "_type": "number",
+        "_value": "16"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new DataView(new ArrayBuffer(16))
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "DataView",
+  "_preview": {
+    "_type": "object",
+    "_description": "DataView",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "byteOffset",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "byteLength",
+        "_type": "number",
+        "_value": "16"
+      },
+      {
+        "_name": "buffer",
+        "_type": "object",
+        "_value": "ArrayBuffer"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: obj = {}; obj["prop"] = 1; obj[Symbol()] = 2; obj[Symbol("sym")] = 3; obj[Symbol("sym")] = 4; obj[Symbol.iterator] = Symbol(); obj
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "prop",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "Symbol()",
+        "_type": "number",
+        "_value": "2"
+      },
+      {
+        "_name": "Symbol(sym)",
+        "_type": "number",
+        "_value": "3"
+      },
+      {
+        "_name": "Symbol(sym)",
+        "_type": "number",
+        "_value": "4"
+      },
+      {
+        "_name": "Symbol(Symbol.iterator)",
+        "_type": "symbol",
+        "_value": "Symbol()"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: error = null; try { [].x.x; } catch (e) { error = e; }; error
+{
+  "_type": "object",
+  "_subtype": "error",
+  "_objectId": "<filtered>",
+  "_description": "TypeError: undefined is not an object (evaluating '[].x.x')",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "error",
+    "_description": "TypeError: undefined is not an object (evaluating '[].x.x')",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "message",
+        "_type": "string",
+        "_value": "undefined is not an object (evaluating '[].x.x')"
+      },
+      {
+        "_name": "line",
+        "_type": "number",
+        "_value": "3"
+      },
+      {
+        "_name": "column",
+        "_type": "number",
+        "_value": "25"
+      },
+      {
+        "_name": "stack",
+        "_type": "string",
+        "_value": "global code\nevaluateWithScopeExtension@[native code]\n\n_wrapCall"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: error = null; try { eval("if()"); } catch (e) { error = e; }; error
+{
+  "_type": "object",
+  "_subtype": "error",
+  "_objectId": "<filtered>",
+  "_description": "SyntaxError: Unexpected token ')'",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "error",
+    "_description": "SyntaxError: Unexpected token ')'",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "message",
+        "_type": "string",
+        "_value": "Unexpected token ')'"
+      },
+      {
+        "_name": "line",
+        "_type": "number",
+        "_value": "3"
+      },
+      {
+        "_name": "column",
+        "_type": "number",
+        "_value": "25"
+      },
+      {
+        "_name": "stack",
+        "_type": "string",
+        "_value": "eval@[native code]\nglobal code\nevaluateWithScopeExtension@[native code]\n\n_wrapCall"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: error = null; try { document.createTextNode("").splitText(100); } catch (e) { error = e; }; error
+{
+  "_type": "object",
+  "_subtype": "error",
+  "_objectId": "<filtered>",
+  "_description": "IndexSizeError: The index is not in the allowed range.",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "error",
+    "_description": "IndexSizeError: The index is not in the allowed range.",
+    "_lossless": false,
+    "_overflow": true,
+    "_properties": [
+      {
+        "_name": "line",
+        "_type": "number",
+        "_value": "3"
+      },
+      {
+        "_name": "column",
+        "_type": "number",
+        "_value": "58"
+      },
+      {
+        "_name": "stack",
+        "_type": "string",
+        "_value": "splitText@[native code]\nglobal code\nevaluateWithScopeExtension@[native code]\n\n_wrapCall"
+      },
+      {
+        "_name": "code",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "name",
+        "_type": "string",
+        "_value": "IndexSizeError"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new Map
+{
+  "_type": "object",
+  "_subtype": "map",
+  "_objectId": "<filtered>",
+  "_description": "Map",
+  "_size": 0,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "map",
+    "_description": "Map",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 0,
+    "_properties": [],
+    "_entries": []
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: map = new Map; map.set(1, 2); map.set("key", "value"); map
+{
+  "_type": "object",
+  "_subtype": "map",
+  "_objectId": "<filtered>",
+  "_description": "Map",
+  "_size": 2,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "map",
+    "_description": "Map",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 2,
+    "_properties": [],
+    "_entries": [
+      {
+        "_key": {
+          "_type": "number",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        },
+        "_value": {
+          "_type": "number",
+          "_description": "2",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_key": {
+          "_type": "string",
+          "_description": "key",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        },
+        "_value": {
+          "_type": "string",
+          "_description": "value",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: map = new Map; map.set({a:1}, {b:2}); map.set(document.body, [1,2]); map
+{
+  "_type": "object",
+  "_subtype": "map",
+  "_objectId": "<filtered>",
+  "_description": "Map",
+  "_size": 2,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "map",
+    "_description": "Map",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 2,
+    "_properties": [],
+    "_entries": [
+      {
+        "_key": {
+          "_type": "object",
+          "_description": "Object",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
+            {
+              "_name": "a",
+              "_type": "number",
+              "_value": "1"
+            }
+          ],
+          "_entries": null
+        },
+        "_value": {
+          "_type": "object",
+          "_description": "Object",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
+            {
+              "_name": "b",
+              "_type": "number",
+              "_value": "2"
+            }
+          ],
+          "_entries": null
+        }
+      },
+      {
+        "_key": {
+          "_type": "object",
+          "_subtype": "node",
+          "_description": "<body>",
+          "_lossless": false,
+          "_overflow": true,
+          "_properties": [
+            {
+              "_name": "aLink",
+              "_type": "string",
+              "_value": ""
+            },
+            {
+              "_name": "background",
+              "_type": "string",
+              "_value": ""
+            },
+            {
+              "_name": "bgColor",
+              "_type": "string",
+              "_value": ""
+            },
+            {
+              "_name": "link",
+              "_type": "string",
+              "_value": ""
+            },
+            {
+              "_name": "text",
+              "_type": "string",
+              "_value": ""
+            }
+          ],
+          "_entries": null
+        },
+        "_value": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 2,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "number",
+              "_value": "1"
+            },
+            {
+              "_name": "1",
+              "_type": "number",
+              "_value": "2"
+            }
+          ],
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: map = new Map; for (var i = 0; i <= 100; i++) map.set(i, i); map
+{
+  "_type": "object",
+  "_subtype": "map",
+  "_objectId": "<filtered>",
+  "_description": "Map",
+  "_size": 101,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "map",
+    "_description": "Map",
+    "_lossless": false,
+    "_overflow": true,
+    "_size": 101,
+    "_properties": [],
+    "_entries": [
+      {
+        "_key": {
+          "_type": "number",
+          "_description": "0",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        },
+        "_value": {
+          "_type": "number",
+          "_description": "0",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_key": {
+          "_type": "number",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        },
+        "_value": {
+          "_type": "number",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_key": {
+          "_type": "number",
+          "_description": "2",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        },
+        "_value": {
+          "_type": "number",
+          "_description": "2",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_key": {
+          "_type": "number",
+          "_description": "3",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        },
+        "_value": {
+          "_type": "number",
+          "_description": "3",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_key": {
+          "_type": "number",
+          "_description": "4",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        },
+        "_value": {
+          "_type": "number",
+          "_description": "4",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: map = new Map; map.set(map, map); map
+{
+  "_type": "object",
+  "_subtype": "map",
+  "_objectId": "<filtered>",
+  "_description": "Map",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "map",
+    "_description": "Map",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [],
+    "_entries": [
+      {
+        "_key": {
+          "_type": "object",
+          "_subtype": "map",
+          "_description": "Map",
+          "_lossless": false,
+          "_overflow": true,
+          "_size": 1,
+          "_properties": [],
+          "_entries": []
+        },
+        "_value": {
+          "_type": "object",
+          "_subtype": "map",
+          "_description": "Map",
+          "_lossless": false,
+          "_overflow": true,
+          "_size": 1,
+          "_properties": [],
+          "_entries": []
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: map = new WeakMap; strongKey = {id:1}; map.set(strongKey, [1,2]); map
+{
+  "_type": "object",
+  "_subtype": "weakmap",
+  "_objectId": "<filtered>",
+  "_description": "WeakMap",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "weakmap",
+    "_description": "WeakMap",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [],
+    "_entries": [
+      {
+        "_key": {
+          "_type": "object",
+          "_description": "Object",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
+            {
+              "_name": "id",
+              "_type": "number",
+              "_value": "1"
+            }
+          ],
+          "_entries": null
+        },
+        "_value": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 2,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "number",
+              "_value": "1"
+            },
+            {
+              "_name": "1",
+              "_type": "number",
+              "_value": "2"
+            }
+          ],
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new Set
+{
+  "_type": "object",
+  "_subtype": "set",
+  "_objectId": "<filtered>",
+  "_description": "Set",
+  "_size": 0,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "set",
+    "_description": "Set",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 0,
+    "_properties": [],
+    "_entries": []
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: set = new Set; set.add(1); set.add(2); set.add("key"); set
+{
+  "_type": "object",
+  "_subtype": "set",
+  "_objectId": "<filtered>",
+  "_description": "Set",
+  "_size": 3,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "set",
+    "_description": "Set",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 3,
+    "_properties": [],
+    "_entries": [
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "2",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "string",
+          "_description": "key",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: set = new Set; set.add({a:1}); set.add(document.body); set.add([1,2]); set
+{
+  "_type": "object",
+  "_subtype": "set",
+  "_objectId": "<filtered>",
+  "_description": "Set",
+  "_size": 3,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "set",
+    "_description": "Set",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 3,
+    "_properties": [],
+    "_entries": [
+      {
+        "_value": {
+          "_type": "object",
+          "_description": "Object",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
+            {
+              "_name": "a",
+              "_type": "number",
+              "_value": "1"
+            }
+          ],
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "object",
+          "_subtype": "node",
+          "_description": "<body>",
+          "_lossless": false,
+          "_overflow": true,
+          "_properties": [
+            {
+              "_name": "aLink",
+              "_type": "string",
+              "_value": ""
+            },
+            {
+              "_name": "background",
+              "_type": "string",
+              "_value": ""
+            },
+            {
+              "_name": "bgColor",
+              "_type": "string",
+              "_value": ""
+            },
+            {
+              "_name": "link",
+              "_type": "string",
+              "_value": ""
+            },
+            {
+              "_name": "text",
+              "_type": "string",
+              "_value": ""
+            }
+          ],
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 2,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "number",
+              "_value": "1"
+            },
+            {
+              "_name": "1",
+              "_type": "number",
+              "_value": "2"
+            }
+          ],
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set
+{
+  "_type": "object",
+  "_subtype": "set",
+  "_objectId": "<filtered>",
+  "_description": "Set",
+  "_size": 101,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "set",
+    "_description": "Set",
+    "_lossless": false,
+    "_overflow": true,
+    "_size": 101,
+    "_properties": [],
+    "_entries": [
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "0",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "2",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "3",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "4",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: set = new Set; set.add(set); set
+{
+  "_type": "object",
+  "_subtype": "set",
+  "_objectId": "<filtered>",
+  "_description": "Set",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "set",
+    "_description": "Set",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [],
+    "_entries": [
+      {
+        "_value": {
+          "_type": "object",
+          "_subtype": "set",
+          "_description": "Set",
+          "_lossless": false,
+          "_overflow": true,
+          "_size": 1,
+          "_properties": [],
+          "_entries": []
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: set = new WeakSet; strongKey = {id:1}; set.add(strongKey); set
+{
+  "_type": "object",
+  "_subtype": "weakset",
+  "_objectId": "<filtered>",
+  "_description": "WeakSet",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "weakset",
+    "_description": "WeakSet",
+    "_lossless": true,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [],
+    "_entries": [
+      {
+        "_value": {
+          "_type": "object",
+          "_description": "Object",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
+            {
+              "_name": "id",
+              "_type": "number",
+              "_value": "1"
+            }
+          ],
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: "a"[Symbol.iterator]()
+{
+  "_type": "object",
+  "_subtype": "iterator",
+  "_objectId": "<filtered>",
+  "_description": "String Iterator",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "iterator",
+    "_description": "String Iterator",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "string",
+        "_type": "string",
+        "_value": "a",
+        "_internal": true
+      }
+    ],
+    "_entries": [
+      {
+        "_value": {
+          "_type": "string",
+          "_description": "a",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: "long string"[Symbol.iterator]()
+{
+  "_type": "object",
+  "_subtype": "iterator",
+  "_objectId": "<filtered>",
+  "_description": "String Iterator",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "iterator",
+    "_description": "String Iterator",
+    "_lossless": false,
+    "_overflow": true,
+    "_properties": [
+      {
+        "_name": "string",
+        "_type": "string",
+        "_value": "long string",
+        "_internal": true
+      }
+    ],
+    "_entries": [
+      {
+        "_value": {
+          "_type": "string",
+          "_description": "l",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "string",
+          "_description": "o",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "string",
+          "_description": "n",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "string",
+          "_description": "g",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "string",
+          "_description": " ",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [][Symbol.iterator]()
+{
+  "_type": "object",
+  "_subtype": "iterator",
+  "_objectId": "<filtered>",
+  "_description": "Array Iterator",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "iterator",
+    "_description": "Array Iterator",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "array",
+        "_type": "object",
+        "_subtype": "array",
+        "_valuePreview": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 0,
+          "_properties": [],
+          "_entries": null
+        },
+        "_internal": true
+      },
+      {
+        "_name": "kind",
+        "_type": "string",
+        "_value": "value",
+        "_internal": true
+      }
+    ],
+    "_entries": []
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [1][Symbol.iterator]()
+{
+  "_type": "object",
+  "_subtype": "iterator",
+  "_objectId": "<filtered>",
+  "_description": "Array Iterator",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "iterator",
+    "_description": "Array Iterator",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "array",
+        "_type": "object",
+        "_subtype": "array",
+        "_valuePreview": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 1,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "number",
+              "_value": "1"
+            }
+          ],
+          "_entries": null
+        },
+        "_internal": true
+      },
+      {
+        "_name": "kind",
+        "_type": "string",
+        "_value": "value",
+        "_internal": true
+      }
+    ],
+    "_entries": [
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [1, "two", 3, "four", 5, "size"][Symbol.iterator]()
+{
+  "_type": "object",
+  "_subtype": "iterator",
+  "_objectId": "<filtered>",
+  "_description": "Array Iterator",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "iterator",
+    "_description": "Array Iterator",
+    "_lossless": false,
+    "_overflow": true,
+    "_properties": [
+      {
+        "_name": "array",
+        "_type": "object",
+        "_subtype": "array",
+        "_value": "Array",
+        "_internal": true
+      },
+      {
+        "_name": "kind",
+        "_type": "string",
+        "_value": "value",
+        "_internal": true
+      }
+    ],
+    "_entries": [
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "string",
+          "_description": "two",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "3",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "string",
+          "_description": "four",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "5",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [1, "two", 3, "four", 5, "size"].keys()
+{
+  "_type": "object",
+  "_subtype": "iterator",
+  "_objectId": "<filtered>",
+  "_description": "Array Iterator",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "iterator",
+    "_description": "Array Iterator",
+    "_lossless": false,
+    "_overflow": true,
+    "_properties": [
+      {
+        "_name": "array",
+        "_type": "object",
+        "_subtype": "array",
+        "_value": "Array",
+        "_internal": true
+      },
+      {
+        "_name": "kind",
+        "_type": "string",
+        "_value": "key",
+        "_internal": true
+      }
+    ],
+    "_entries": [
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "0",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "2",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "3",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "4",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [1, "two", 3, "four", 5, "size"].entries()
+{
+  "_type": "object",
+  "_subtype": "iterator",
+  "_objectId": "<filtered>",
+  "_description": "Array Iterator",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "iterator",
+    "_description": "Array Iterator",
+    "_lossless": false,
+    "_overflow": true,
+    "_properties": [
+      {
+        "_name": "array",
+        "_type": "object",
+        "_subtype": "array",
+        "_value": "Array",
+        "_internal": true
+      },
+      {
+        "_name": "kind",
+        "_type": "string",
+        "_value": "key+value",
+        "_internal": true
+      }
+    ],
+    "_entries": [
+      {
+        "_value": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 2,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "number",
+              "_value": "0"
+            },
+            {
+              "_name": "1",
+              "_type": "number",
+              "_value": "1"
+            }
+          ],
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 2,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "number",
+              "_value": "1"
+            },
+            {
+              "_name": "1",
+              "_type": "string",
+              "_value": "two"
+            }
+          ],
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 2,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "number",
+              "_value": "2"
+            },
+            {
+              "_name": "1",
+              "_type": "number",
+              "_value": "3"
+            }
+          ],
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 2,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "number",
+              "_value": "3"
+            },
+            {
+              "_name": "1",
+              "_type": "string",
+              "_value": "four"
+            }
+          ],
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 2,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "number",
+              "_value": "4"
+            },
+            {
+              "_name": "1",
+              "_type": "number",
+              "_value": "5"
+            }
+          ],
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: map = new Map; map.set(1, 2); map.set("key", "value"); map.values()
+{
+  "_type": "object",
+  "_subtype": "iterator",
+  "_objectId": "<filtered>",
+  "_description": "Map Iterator",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "iterator",
+    "_description": "Map Iterator",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "map",
+        "_type": "object",
+        "_subtype": "map",
+        "_value": "Map",
+        "_internal": true
+      },
+      {
+        "_name": "kind",
+        "_type": "string",
+        "_value": "value",
+        "_internal": true
+      }
+    ],
+    "_entries": [
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "2",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "string",
+          "_description": "value",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: map.keys()
+{
+  "_type": "object",
+  "_subtype": "iterator",
+  "_objectId": "<filtered>",
+  "_description": "Map Iterator",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "iterator",
+    "_description": "Map Iterator",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "map",
+        "_type": "object",
+        "_subtype": "map",
+        "_value": "Map",
+        "_internal": true
+      },
+      {
+        "_name": "kind",
+        "_type": "string",
+        "_value": "key",
+        "_internal": true
+      }
+    ],
+    "_entries": [
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "string",
+          "_description": "key",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: map.entries()
+{
+  "_type": "object",
+  "_subtype": "iterator",
+  "_objectId": "<filtered>",
+  "_description": "Map Iterator",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "iterator",
+    "_description": "Map Iterator",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "map",
+        "_type": "object",
+        "_subtype": "map",
+        "_value": "Map",
+        "_internal": true
+      },
+      {
+        "_name": "kind",
+        "_type": "string",
+        "_value": "key+value",
+        "_internal": true
+      }
+    ],
+    "_entries": [
+      {
+        "_value": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 2,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "number",
+              "_value": "1"
+            },
+            {
+              "_name": "1",
+              "_type": "number",
+              "_value": "2"
+            }
+          ],
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 2,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "string",
+              "_value": "key"
+            },
+            {
+              "_name": "1",
+              "_type": "string",
+              "_value": "value"
+            }
+          ],
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set.values()
+{
+  "_type": "object",
+  "_subtype": "iterator",
+  "_objectId": "<filtered>",
+  "_description": "Set Iterator",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "iterator",
+    "_description": "Set Iterator",
+    "_lossless": false,
+    "_overflow": true,
+    "_properties": [
+      {
+        "_name": "set",
+        "_type": "object",
+        "_subtype": "set",
+        "_value": "Set",
+        "_internal": true
+      },
+      {
+        "_name": "kind",
+        "_type": "string",
+        "_value": "value",
+        "_internal": true
+      }
+    ],
+    "_entries": [
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "0",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "2",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "3",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "4",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: map.entries()
+{
+  "_type": "object",
+  "_subtype": "iterator",
+  "_objectId": "<filtered>",
+  "_description": "Map Iterator",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "iterator",
+    "_description": "Map Iterator",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "map",
+        "_type": "object",
+        "_subtype": "map",
+        "_value": "Map",
+        "_internal": true
+      },
+      {
+        "_name": "kind",
+        "_type": "string",
+        "_value": "key+value",
+        "_internal": true
+      }
+    ],
+    "_entries": [
+      {
+        "_value": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 2,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "number",
+              "_value": "1"
+            },
+            {
+              "_name": "1",
+              "_type": "number",
+              "_value": "2"
+            }
+          ],
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 2,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "string",
+              "_value": "key"
+            },
+            {
+              "_name": "1",
+              "_type": "string",
+              "_value": "value"
+            }
+          ],
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: x = undefined; (function() { x = arguments; })(1, "two"); x[Symbol.iterator]()
+{
+  "_type": "object",
+  "_subtype": "iterator",
+  "_objectId": "<filtered>",
+  "_description": "Array Iterator",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "iterator",
+    "_description": "Array Iterator",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "array",
+        "_type": "object",
+        "_subtype": "array",
+        "_valuePreview": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Arguments",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 2,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "number",
+              "_value": "1"
+            },
+            {
+              "_name": "1",
+              "_type": "string",
+              "_value": "two"
+            }
+          ],
+          "_entries": null
+        },
+        "_internal": true
+      },
+      {
+        "_name": "kind",
+        "_type": "string",
+        "_value": "value",
+        "_internal": true
+      }
+    ],
+    "_entries": [
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "string",
+          "_description": "two",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: iter = [1, 2][Symbol.iterator](); iter["return"] = function(){}; iter
+{
+  "_type": "object",
+  "_subtype": "iterator",
+  "_objectId": "<filtered>",
+  "_description": "Array Iterator",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "iterator",
+    "_description": "Array Iterator",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "array",
+        "_type": "object",
+        "_subtype": "array",
+        "_valuePreview": {
+          "_type": "object",
+          "_subtype": "array",
+          "_description": "Array",
+          "_lossless": true,
+          "_overflow": false,
+          "_size": 2,
+          "_properties": [
+            {
+              "_name": "0",
+              "_type": "number",
+              "_value": "1"
+            },
+            {
+              "_name": "1",
+              "_type": "number",
+              "_value": "2"
+            }
+          ],
+          "_entries": null
+        },
+        "_internal": true
+      },
+      {
+        "_name": "kind",
+        "_type": "string",
+        "_value": "value",
+        "_internal": true
+      }
+    ],
+    "_entries": [
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_value": {
+          "_type": "number",
+          "_description": "2",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new Promise(function(){})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Promise",
+  "_preview": {
+    "_type": "object",
+    "_description": "Promise",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "status",
+        "_type": "string",
+        "_value": "pending",
+        "_internal": true
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: Promise.reject()
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Promise",
+  "_preview": {
+    "_type": "object",
+    "_description": "Promise",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "status",
+        "_type": "string",
+        "_value": "rejected",
+        "_internal": true
+      },
+      {
+        "_name": "result",
+        "_type": "undefined",
+        "_value": "undefined",
+        "_internal": true
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: Promise.reject("result")
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Promise",
+  "_preview": {
+    "_type": "object",
+    "_description": "Promise",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "status",
+        "_type": "string",
+        "_value": "rejected",
+        "_internal": true
+      },
+      {
+        "_name": "result",
+        "_type": "string",
+        "_value": "result",
+        "_internal": true
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: Promise.resolve()
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Promise",
+  "_preview": {
+    "_type": "object",
+    "_description": "Promise",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "status",
+        "_type": "string",
+        "_value": "resolved",
+        "_internal": true
+      },
+      {
+        "_name": "result",
+        "_type": "undefined",
+        "_value": "undefined",
+        "_internal": true
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: Promise.resolve({result:1})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Promise",
+  "_preview": {
+    "_type": "object",
+    "_description": "Promise",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "status",
+        "_type": "string",
+        "_value": "resolved",
+        "_internal": true
+      },
+      {
+        "_name": "result",
+        "_type": "object",
+        "_valuePreview": {
+          "_type": "object",
+          "_description": "Object",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": [
+            {
+              "_name": "result",
+              "_type": "number",
+              "_value": "1"
+            }
+          ],
+          "_entries": null
+        },
+        "_internal": true
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new Proxy({x:1, y:1}, {handler: true})
+{
+  "_type": "object",
+  "_subtype": "proxy",
+  "_objectId": "<filtered>",
+  "_description": "Proxy",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "proxy",
+    "_description": "Proxy",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "x",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "y",
+        "_type": "number",
+        "_value": "1"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new Proxy(new Proxy({foo:1, bar:1}, {}), {})
+{
+  "_type": "object",
+  "_subtype": "proxy",
+  "_objectId": "<filtered>",
+  "_description": "Proxy",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "proxy",
+    "_description": "Proxy",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "foo",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "bar",
+        "_type": "number",
+        "_value": "1"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: Person = class Person { constructor(name){} get fullName(){} methodName(p1, p2){} }; Person
+{
+  "_type": "function",
+  "_subtype": "class",
+  "_objectId": "<filtered>",
+  "_description": "class Person",
+  "_classPrototype": {
+    "_type": "object",
+    "_objectId": "<filtered>",
+    "_description": "Person"
+  },
+  "_functionDescription": "class Person { constructor(name){} get fullName(){} methodName(p1, p2){} }"
+}
+
+-----------------------------------------------------
+EXPRESSION: Person.prototype.methodName
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function methodName(p1, p2){}"
+}
+
+-----------------------------------------------------
+EXPRESSION: new Person
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Person",
+  "_preview": {
+    "_type": "object",
+    "_description": "Person",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: Alpha = class A { methodA(){} }; Beta = class B extends Alpha { methodB(){} }; Beta
+{
+  "_type": "function",
+  "_subtype": "class",
+  "_objectId": "<filtered>",
+  "_description": "class B",
+  "_classPrototype": {
+    "_type": "object",
+    "_objectId": "<filtered>",
+    "_description": "B"
+  },
+  "_functionDescription": "class B extends Alpha { methodB(){} }"
+}
+
+-----------------------------------------------------
+EXPRESSION: [Beta]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "function",
+        "_subtype": "class",
+        "_value": "class B"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: Object.seal({})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: Object.freeze({})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
+  }
+}
+

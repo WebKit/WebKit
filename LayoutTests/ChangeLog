@@ -1,5 +1,11 @@
 2019-09-12  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed test gardening, rebaseline inspector/model/remote-object.html for WK1 after r249808.
+
+        * platform/mac-wk1/inspector/model/remote-object-expected.txt: Added.
+
+2019-09-12  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed test gardening, rebaseline inspector/model/remote-object.html after r249808.
 
         * inspector/model/remote-object-expected.txt:
