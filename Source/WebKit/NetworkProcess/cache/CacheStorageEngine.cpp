@@ -89,7 +89,12 @@ void Engine::from(NetworkProcess& networkProcess, PAL::SessionID sessionID, Func
 
 void Engine::destroyEngine(NetworkProcess& networkProcess, PAL::SessionID sessionID)
 {
+#if !USE(SOUP)
+    // Soup based ports destroy the default session right before the process exits to avoid leaking
+    // network resources like the cookies database.
     ASSERT(sessionID != PAL::SessionID::defaultSessionID());
+#endif
+
     networkProcess.removeCacheEngine(sessionID);
 }
 

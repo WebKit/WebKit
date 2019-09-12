@@ -1,3 +1,15 @@
+2019-09-12  Charlie Turner  <cturner@igalia.com>
+
+        [GTK] Allow CacheStore::destroyEngine to destroy default engine for soup.
+        https://bugs.webkit.org/show_bug.cgi?id=201690
+
+        Reviewed by Carlos Garcia Campos.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::destroyEngine): As we do for
+        NetworkProcess::destroySession, also allow destroying the engine
+        for the default session for the same reason.
+
 2019-09-12  Youenn Fablet  <youenn@apple.com>
 
         Use WebProcess processIdentifier to identify Service Worker connections
