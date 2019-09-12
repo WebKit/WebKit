@@ -56,6 +56,7 @@ class SWServerToContextConnection;
 enum class ServiceWorkerRegistrationState : uint8_t;
 enum class ServiceWorkerState : uint8_t;
 struct ExceptionData;
+struct MessageWithMessagePorts;
 struct ServiceWorkerClientQueryOptions;
 struct ServiceWorkerContextData;
 struct ServiceWorkerFetchResult;
@@ -86,6 +87,7 @@ public:
         virtual void setRegistrationUpdateViaCache(ServiceWorkerRegistrationIdentifier, ServiceWorkerUpdateViaCache) = 0;
         virtual void notifyClientsOfControllerChange(const HashSet<DocumentIdentifier>& contextIdentifiers, const ServiceWorkerData& newController) = 0;
         virtual void registrationReady(uint64_t registrationReadyRequestIdentifier, ServiceWorkerRegistrationData&&) = 0;
+        virtual void postMessageToServiceWorkerClient(DocumentIdentifier, const MessageWithMessagePorts&, ServiceWorkerIdentifier, const String& sourceOrigin) = 0;
 
         virtual void serverToContextConnectionCreated(SWServerToContextConnection&) = 0;
 
@@ -93,7 +95,7 @@ public:
         const SWServer& server() const { return m_server; }
 
     protected:
-        WEBCORE_EXPORT explicit Connection(SWServer&);
+        WEBCORE_EXPORT Connection(SWServer&, Identifier);
 
         WEBCORE_EXPORT void finishFetchingScriptInServer(const ServiceWorkerFetchResult&);
         WEBCORE_EXPORT void addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier);

@@ -29,11 +29,13 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "FormDataReference.h"
+#include "Logging.h"
 #include "NetworkProcess.h"
 #include "ServiceWorkerFetchTask.h"
 #include "ServiceWorkerFetchTaskMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebSWContextManagerConnectionMessages.h"
+#include <WebCore/SWServer.h>
 #include <WebCore/ServiceWorkerContextData.h>
 
 namespace WebKit {
@@ -44,9 +46,13 @@ WebSWServerToContextConnection::WebSWServerToContextConnection(NetworkProcess& n
     , m_ipcConnection(WTFMove(connection))
     , m_networkProcess(networkProcess)
 {
+    m_networkProcess->registerSWContextConnection(*this);
 }
 
-WebSWServerToContextConnection::~WebSWServerToContextConnection() = default;
+WebSWServerToContextConnection::~WebSWServerToContextConnection()
+{
+    m_networkProcess->unregisterSWContextConnection(*this);
+}
 
 IPC::Connection* WebSWServerToContextConnection::messageSenderConnection() const
 {
@@ -63,6 +69,12 @@ void WebSWServerToContextConnection::connectionClosed()
     auto fetches = WTFMove(m_ongoingFetches);
     for (auto& fetch : fetches.values())
         fetch->fail(ResourceError { errorDomainWebKitInternal, 0, { }, "Service Worker context closed"_s });
+}
+
+void WebSWServerToContextConnection::postMessageToServiceWorkerClient(PAL::SessionID sessionID, const ServiceWorkerClientIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
+{
+    if (auto* connection = m_networkProcess->swServerForSession(sessionID).connection(destinationIdentifier.serverConnectionIdentifier))
+        connection->postMessageToServiceWorkerClient(destinationIdentifier.contextIdentifier, message, sourceIdentifier, sourceOrigin);
 }
 
 void WebSWServerToContextConnection::installServiceWorkerContext(const ServiceWorkerContextData& data, PAL::SessionID sessionID, const String& userAgent)
@@ -117,7 +129,17 @@ void WebSWServerToContextConnection::didFinishSkipWaiting(uint64_t callbackID)
 
 void WebSWServerToContextConnection::connectionMayNoLongerBeNeeded()
 {
-    m_networkProcess->swContextConnectionMayNoLongerBeNeeded(*this);
+    if (m_networkProcess->needsServerToContextConnectionForRegistrableDomain(registrableDomain()))
+        return;
+
+    RELEASE_LOG(ServiceWorker, "Service worker process is no longer needed, terminating it");
+    terminate();
+
+    m_networkProcess->forEachSWServer([&](auto& server) {
+        server.markAllWorkersForRegistrableDomainAsTerminated(registrableDomain());
+    });
+
+    connectionClosed();
 }
 
 void WebSWServerToContextConnection::setThrottleState(bool isThrottleable)

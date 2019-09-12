@@ -137,7 +137,7 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
 
 #if ENABLE(SERVICE_WORKER)
     if (decoder.messageReceiverName() == Messages::WebSWClientConnection::messageReceiverName()) {
-        auto serviceWorkerConnection = m_swConnectionsByIdentifier.get(makeObjectIdentifier<SWServerConnectionIdentifierType>(decoder.destinationID()));
+        auto serviceWorkerConnection = m_swConnectionsBySession.get(PAL::SessionID { decoder.destinationID() });
         if (serviceWorkerConnection)
             serviceWorkerConnection->didReceiveMessage(connection, decoder);
         return;
@@ -200,7 +200,7 @@ void NetworkProcessConnection::didClose(IPC::Connection&)
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    auto swConnections = std::exchange(m_swConnectionsByIdentifier, { });
+    auto swConnections = std::exchange(m_swConnectionsBySession, { });
     for (auto& connection : swConnections.values())
         connection->connectionToServerLost();
 #endif
@@ -263,25 +263,6 @@ WebSWClientConnection& NetworkProcessConnection::serviceWorkerConnectionForSessi
     return *m_swConnectionsBySession.ensure(sessionID, [sessionID] {
         return WebSWClientConnection::create(sessionID);
     }).iterator->value;
-}
-
-void NetworkProcessConnection::removeSWClientConnection(WebSWClientConnection& connection)
-{
-    ASSERT(m_swConnectionsByIdentifier.contains(connection.serverConnectionIdentifier()));
-    m_swConnectionsByIdentifier.remove(connection.serverConnectionIdentifier());
-}
-
-SWServerConnectionIdentifier NetworkProcessConnection::initializeSWClientConnection(WebSWClientConnection& connection)
-{
-    ASSERT(connection.sessionID().isValid());
-    SWServerConnectionIdentifier identifier;
-    bool result = m_connection->sendSync(Messages::NetworkConnectionToWebProcess::EstablishSWServerConnection(connection.sessionID()), Messages::NetworkConnectionToWebProcess::EstablishSWServerConnection::Reply(identifier), 0);
-    ASSERT_UNUSED(result, result);
-
-    ASSERT(!m_swConnectionsByIdentifier.contains(identifier));
-    m_swConnectionsByIdentifier.add(identifier, &connection);
-
-    return identifier;
 }
 #endif
 

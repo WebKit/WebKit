@@ -68,6 +68,7 @@ class NetworkSocketChannel;
 class NetworkSocketStream;
 class WebIDBConnectionToClient;
 class WebSWServerConnection;
+class WebSWServerToContextConnection;
 typedef uint64_t ResourceLoadIdentifier;
 
 namespace NetworkCache {
@@ -208,7 +209,8 @@ private:
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    void establishSWServerConnection(PAL::SessionID, CompletionHandler<void(WebCore::SWServerConnectionIdentifier&&)>&&);
+    void establishSWServerConnection(PAL::SessionID);
+    void establishSWContextConnection(WebCore::RegistrableDomain&&);
     void unregisterSWConnections();
 #endif
 
@@ -319,7 +321,8 @@ private:
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    HashMap<WebCore::SWServerConnectionIdentifier, WeakPtr<WebSWServerConnection>> m_swConnections;
+    HashMap<PAL::SessionID, WeakPtr<WebSWServerConnection>> m_swConnections;
+    RefPtr<WebSWServerToContextConnection> m_swContextConnection;
 #endif
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)

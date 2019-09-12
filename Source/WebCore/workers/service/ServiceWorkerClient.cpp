@@ -99,9 +99,9 @@ ExceptionOr<void> ServiceWorkerClient::postMessage(ScriptExecutionContext& conte
 
     MessageWithMessagePorts message = { messageData.releaseReturnValue(), portsOrException.releaseReturnValue() };
     auto sourceIdentifier = downcast<ServiceWorkerGlobalScope>(context).thread().identifier();
-    callOnMainThread([message = WTFMove(message), destinationIdentifier = identifier(), sourceIdentifier, sourceOrigin = context.origin().isolatedCopy()] () mutable {
+    callOnMainThread([sessionID = context.sessionID(), message = WTFMove(message), destinationIdentifier = identifier(), sourceIdentifier, sourceOrigin = context.origin().isolatedCopy()] () mutable {
         if (auto* connection = SWContextManager::singleton().connection())
-            connection->postMessageToServiceWorkerClient(destinationIdentifier, WTFMove(message), sourceIdentifier, sourceOrigin);
+            connection->postMessageToServiceWorkerClient(sessionID, destinationIdentifier, message, sourceIdentifier, sourceOrigin);
     });
 
     return { };
