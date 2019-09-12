@@ -259,7 +259,6 @@
 		515BE1711D428E4B00DD7C68 /* StoreBlobThenDelete.mm in Sources */ = {isa = PBXBuildFile; fileRef = 515BE1701D428BD100DD7C68 /* StoreBlobThenDelete.mm */; };
 		516281252325C18000BB7E42 /* TestPDFDocument.mm in Sources */ = {isa = PBXBuildFile; fileRef = 516281242325C17B00BB7E42 /* TestPDFDocument.mm */; };
 		516281272325C19800BB7E42 /* PDFSnapshot.mm in Sources */ = {isa = PBXBuildFile; fileRef = 516281262325C19100BB7E42 /* PDFSnapshot.mm */; };
-		516281292325C45400BB7E42 /* PDFKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 516281282325C45400BB7E42 /* PDFKit.framework */; };
 		5165FE04201EE620009F7EC3 /* MessagePortProviders.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5165FE03201EE617009F7EC3 /* MessagePortProviders.mm */; };
 		51714EB41CF8C78C004723C4 /* WebProcessKillIDBCleanup-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */; };
 		51714EB51CF8C78C004723C4 /* WebProcessKillIDBCleanup-2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51714EB31CF8C761004723C4 /* WebProcessKillIDBCleanup-2.html */; };
@@ -2578,7 +2577,6 @@
 				5CFACF63226F73C60056C7D0 /* libboringssl.a in Frameworks */,
 				7C83E03F1D0A61A000FEBCF3 /* libicucore.dylib in Frameworks */,
 				578CBD67204FB2C80083B9F2 /* LocalAuthentication.framework in Frameworks */,
-				516281292325C45400BB7E42 /* PDFKit.framework in Frameworks */,
 				7A010BCD1D877C0D00EDE72A /* QuartzCore.framework in Frameworks */,
 				574F55D2204D47F0002948C6 /* Security.framework in Frameworks */,
 			);

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "TestPDFDocument.h"
 
+#if HAVE(PDFKIT)
+
 #import <WebCore/ColorMac.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 
@@ -174,3 +176,5 @@ TestPDFPage* TestPDFDocument::page(size_t index)
 }
 
 } // namespace TestWebKitAPI
+
+#endif // HAVE(PDFKIT)

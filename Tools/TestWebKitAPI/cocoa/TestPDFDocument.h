@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if HAVE(PDFKIT)
+
 #import <PDFKit/PDFKit.h>
 #import <wtf/RefCounted.h>
 #import <wtf/RetainPtr.h>
@@ -87,3 +89,4 @@ private:
 };
 
 } // namespace TestWebKitAPI
+#endif // HAVE(PDFKIT)

@@ -45,7 +45,13 @@ WK_AUTHKIT_LDFLAGS_IOS_SINCE_13 = -framework AuthKit;
 WK_AUTHKIT_LDFLAGS_macosx = $(WK_AUTHKIT_LDFLAGS$(WK_MACOS_1015));
 WK_AUTHKIT_LDFLAGS_MACOS_SINCE_1015 = -framework AuthKit;
 
-OTHER_LDFLAGS = $(inherited) $(UNEXPORTED_SYMBOL_LDFLAGS) -lgtest -force_load $(BUILT_PRODUCTS_DIR)/libTestWebKitAPI.a -framework JavaScriptCore -framework WebKit -lWebCoreTestSupport $(WK_AUTHKIT_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM);
+WK_PDFKIT_LDFLAGS = $(WK_PDFKIT_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_PDFKIT_LDFLAGS_macosx = -framework PDFKit;
+WK_PDFKIT_LDFLAGS_maccatalyst = -framework PDFKit;
+WK_PDFKIT_LDFLAGS_iphoneos = -framework PDFKit;
+WK_PDFKIT_LDFLAGS_iphonesimulator = -framework PDFKit;
+
+OTHER_LDFLAGS = $(inherited) $(UNEXPORTED_SYMBOL_LDFLAGS) -lgtest -force_load $(BUILT_PRODUCTS_DIR)/libTestWebKitAPI.a -framework JavaScriptCore -framework WebKit -lWebCoreTestSupport $(WK_AUTHKIT_LDFLAGS) $(WK_PDFKIT_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM);
 OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework Cocoa -framework Carbon;
 
 // FIXME: This should not be built on iOS. Instead we should create and use a TestWebKitAPI application.

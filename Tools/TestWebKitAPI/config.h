@@ -104,3 +104,7 @@
 #if !PLATFORM(APPLETV)
 #define HAVE_SSL 1
 #endif
+
+#if PLATFORM(MAC) || PLATFORM(IOS)
+#define HAVE_PDFKIT 1
+#endif

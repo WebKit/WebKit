@@ -25,6 +25,8 @@
 
 #import "config.h"
 
+#if HAVE(PDFKIT)
+
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestPDFDocument.h"
@@ -236,3 +238,4 @@ TEST(PDFSnapshot, InlineLinks)
 
 }
 
+#endif // HAVE(PDFKIT)
