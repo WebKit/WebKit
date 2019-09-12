@@ -1,3 +1,14 @@
+2019-09-12  Russell Epstein  <repstein@apple.com>
+
+        Layout Test http/tests/xmlhttprequest/xmlhttprequest-overridemimetype-invalidstaterror.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=199075
+
+        Reviewed by Youenn Fablet.
+
+        Currently, this test includes js-test.js twice, which is causing the test to be flaky.
+
+        * http/tests/xmlhttprequest/xmlhttprequest-overridemimetype-invalidstaterror.html: Removed second instance.
+
 2019-09-11  Youenn Fablet  <youenn@apple.com>
 
         Disable DTLS10
