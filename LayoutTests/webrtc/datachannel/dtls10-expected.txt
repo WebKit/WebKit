@@ -1,0 +1,4 @@
+
+PASS Verify regular clients can connect with each other 
+PASS Verify regular clients cannot connect with DTLS1-only clients 
+

@@ -1,3 +1,14 @@
+2019-09-11  Youenn Fablet  <youenn@apple.com>
+
+        Disable DTLS1.0
+        https://bugs.webkit.org/show_bug.cgi?id=201679
+
+        Reviewed by Alex Christensen.
+
+        * Source/webrtc/rtc_base/opensslstreamadapter.cc:
+        Set minimum version to DTLS1.2 when DTLS1.2 is supported.
+        This makes sure any client will never downgrade to DTLS1.0.
+
 2019-08-29  Keith Rollin  <krollin@apple.com>
 
         Update .xcconfig symbols to reflect the current set of past and future product versions.

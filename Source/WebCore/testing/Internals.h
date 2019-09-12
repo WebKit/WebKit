@@ -541,6 +541,7 @@ public:
     void clearPeerConnectionFactory();
     void applyRotationForOutgoingVideoSources(RTCPeerConnection&);
     void setEnableWebRTCEncryption(bool);
+    void setUseDTLS10(bool);
 #endif
 
     String getImageSourceURL(Element&);

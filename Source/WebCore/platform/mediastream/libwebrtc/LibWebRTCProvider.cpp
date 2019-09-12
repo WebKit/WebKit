@@ -306,6 +306,20 @@ void LibWebRTCProvider::setEnableWebRTCEncryption(bool enableWebRTCEncryption)
 
     webrtc::PeerConnectionFactoryInterface::Options options;
     options.disable_encryption = !enableWebRTCEncryption;
+    options.ssl_max_version = m_useDTLS10 ? rtc::SSL_PROTOCOL_DTLS_10 : rtc::SSL_PROTOCOL_DTLS_12;
+    m_factory->SetOptions(options);
+}
+
+void LibWebRTCProvider::setUseDTLS10(bool useDTLS10)
+{
+    m_useDTLS10 = useDTLS10;
+
+    auto* factory = this->factory();
+    if (!factory)
+        return;
+
+    webrtc::PeerConnectionFactoryInterface::Options options;
+    options.ssl_max_version = useDTLS10 ? rtc::SSL_PROTOCOL_DTLS_10 : rtc::SSL_PROTOCOL_DTLS_12;
     m_factory->SetOptions(options);
 }
 

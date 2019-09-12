@@ -1,3 +1,13 @@
+2019-09-11  Youenn Fablet  <youenn@apple.com>
+
+        Disable DTLS10
+        https://bugs.webkit.org/show_bug.cgi?id=201679
+
+        Reviewed by Alex Christensen.
+
+        * webrtc/datachannel/dtls10-expected.txt: Added.
+        * webrtc/datachannel/dtls10.html: Added.
+
 2019-09-11  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Ensure structs/arrays with pointers as fields are disallowed

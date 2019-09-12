@@ -118,6 +118,7 @@ public:
 
     void setEnableLogging(bool);
     void setEnableWebRTCEncryption(bool);
+    void setUseDTLS10(bool);
 
     virtual std::unique_ptr<rtc::PacketSocketFactory> createSocketFactory(PAL::SessionID, String&& /* userAgent */) { return nullptr; }
 
@@ -138,6 +139,7 @@ protected:
     bool m_disableNonLocalhostConnections { false };
     bool m_supportsVP8 { false };
     bool m_enableLogging { true };
+    bool m_useDTLS10 { false };
 #endif
 };
 

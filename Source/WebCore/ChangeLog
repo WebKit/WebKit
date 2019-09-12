@@ -1,3 +1,24 @@
+2019-09-11  Youenn Fablet  <youenn@apple.com>
+
+        Disable DTLS1.0
+        https://bugs.webkit.org/show_bug.cgi?id=201679
+
+        Reviewed by Alex Christensen.
+
+        Add an option to force to use DTLS1.0 and nothing else.
+        Add internals API to enter in that mode to verify that normal configurations cannot communicate with DTLS1.0.
+
+        Test: webrtc/datachannel/dtls10.html
+
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::LibWebRTCProvider::setEnableWebRTCEncryption):
+        (WebCore::LibWebRTCProvider::setUseDTLS10):
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setUseDTLS10):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-09-11  Keith Rollin  <krollin@apple.com>
 
         Log timeoutValue passed on to CFNetwork

@@ -1031,6 +1031,10 @@ SSL_CTX* OpenSSLStreamAdapter::SetupSSLContext() {
       break;
     case SSL_PROTOCOL_TLS_12:
     default:
+#if defined(WEBRTC_WEBKIT_BUILD)
+      SSL_CTX_set_min_proto_version(
+          ctx, ssl_mode_ == SSL_MODE_DTLS ? DTLS1_2_VERSION : TLS1_2_VERSION);
+#endif
       SSL_CTX_set_max_proto_version(
           ctx, ssl_mode_ == SSL_MODE_DTLS ? DTLS1_2_VERSION : TLS1_2_VERSION);
       break;
