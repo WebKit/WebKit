@@ -1,3 +1,27 @@
+2019-09-12  Saam Barati  <sbarati@apple.com>
+
+        [WHLSL] Slim down WSLMatrix and inline constructors in native code
+        https://bugs.webkit.org/show_bug.cgi?id=201568
+
+        Reviewed by Robin Morisset.
+
+        Before, our WSL Matrix in MSL had templates to figure out how we're 
+        constructing it. For example, with a list of elements, or a list of
+        columns. However, we can remove this template code since when we're
+        emitting Metal code, we know exactly how we're constructing the WSL
+        matrix. So the NativeFunctionWriter now inlines the proper stores
+        into the WSLMatrix elements.
+        
+        This patch speeds up Metal compile times in boids by ~4ms (16%) with
+        a p-value of 0.0001.
+
+        Covered by existing tests.
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLMetalCodeGenerator.cpp:
+        (WebCore::WHLSL::Metal::metalCodePrologue):
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::inlineNativeFunction):
+
 2019-09-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Text indicator for an image link on the front page of apple.com looks wrong

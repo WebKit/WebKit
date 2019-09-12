@@ -182,13 +182,33 @@ void inlineNativeFunction(StringBuilder& stringBuilder, AST::NativeFunctionDecla
         }
 
         if (auto* matrixType = asMatrixType(returnType)) {
-            stringBuilder.append(metalReturnTypeName, '(');
-            for (size_t i = 0; i < args.size(); ++i) {
-                if (i)
-                    stringBuilder.append(", ");
-                stringBuilder.append(args[i]);
+            // We're either constructing with all individual elements, or with
+            // vectors for each column.
+
+            stringBuilder.append('(');
+            if (args.size() == matrixType->numberOfMatrixColumns()) {
+                // Constructing with vectors for each column.
+                for (size_t i = 0; i < args.size(); ++i) {
+                    if (i)
+                        stringBuilder.append(", ");
+                    stringBuilder.append(resultName, ".columns[", i, "] = ", args[i]);
+                }
+            } else {
+                // Constructing with all elements.
+                RELEASE_ASSERT(args.size() == matrixType->numberOfMatrixColumns() * matrixType->numberOfMatrixRows());
+
+                size_t argNumber = 0;
+                for (size_t i = 0; i < matrixType->numberOfMatrixColumns(); ++i) {
+                    for (size_t j = 0; j < matrixType->numberOfMatrixRows(); ++j) {
+                        if (argNumber)
+                            stringBuilder.append(", ");
+                        stringBuilder.append(resultName, ".columns[", i, "][", j, "] = ", args[argNumber]);
+                        ++argNumber;
+                    }
+                }
             }
-            stringBuilder.append(')');
+
+            stringBuilder.append(", ", resultName, ')');
             return;
         }
 
