@@ -346,29 +346,6 @@ void InjectedBundle::setJavaScriptCanAccessClipboard(WebPageGroupProxy* pageGrou
         (*iter)->settings().setJavaScriptCanAccessClipboard(enabled);
 }
 
-void InjectedBundle::setPrivateBrowsingEnabled(WebPageGroupProxy* pageGroup, WebPage* page, bool enabled)
-{
-    ASSERT(!hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
-
-    PAL::SessionID newSessionID = PAL::SessionID::legacyPrivateSessionID();
-    if (enabled) {
-        auto currentSessionID = page->corePage()->sessionID();
-        if (currentSessionID == PAL::SessionID::legacyPrivateSessionID())
-            return;
-        m_initialSessionID = currentSessionID;
-        WebProcess::singleton().ensureLegacyPrivateBrowsingSessionInNetworkProcess();
-    } else {
-        if (!m_initialSessionID)
-            return;
-        newSessionID = *std::exchange(m_initialSessionID, WTF::nullopt);
-    }
-
-    PageGroup::pageGroup(pageGroup->identifier())->setSessionIDForTesting(newSessionID);
-
-    auto webStorageNameSpaceProvider = WebStorageNamespaceProvider::getOrCreate(*pageGroup);
-    webStorageNameSpaceProvider->setSessionIDForTesting(newSessionID);
-}
-
 void InjectedBundle::setPopupBlockingEnabled(WebPageGroupProxy* pageGroup, bool enabled)
 {
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();

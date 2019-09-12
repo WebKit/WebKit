@@ -599,11 +599,6 @@ void WebProcess::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
     m_fullKeyboardAccessEnabled = fullKeyboardAccessEnabled;
 }
 
-void WebProcess::ensureLegacyPrivateBrowsingSessionInNetworkProcess()
-{
-    ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::EnsureLegacyPrivateBrowsingSession(), 0);
-}
-
 #if ENABLE(NETSCAPE_PLUGIN_API)
 PluginProcessConnectionManager& WebProcess::pluginProcessConnectionManager()
 {

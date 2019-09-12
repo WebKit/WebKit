@@ -201,8 +201,6 @@ private:
 
     void createSocketChannel(PAL::SessionID, const WebCore::ResourceRequest&, const String& protocol, uint64_t identifier);
 
-    void ensureLegacyPrivateBrowsingSession();
-
 #if ENABLE(INDEXED_DATABASE)
     // Messages handlers (Modern IDB).
     void establishIDBConnectionToServer(PAL::SessionID);

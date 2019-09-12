@@ -1,3 +1,19 @@
+2019-09-12  Chris Dumez  <cdumez@apple.com>
+
+        [WKTR] Drop TestRunner.setPrivateBrowsingEnabled_DEPRECATED()
+        https://bugs.webkit.org/show_bug.cgi?id=201546
+
+        Reviewed by Alex Christensen.
+
+        Drop TestRunner.setPrivateBrowsingEnabled_DEPRECATED() from WebKitTestRunner as it does not do
+        the right thing for WebKit2 and tests have been rewritten to not use it.
+
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::addPage):
+        (WebCore::PageGroup::setSessionIDForTesting): Deleted.
+        * page/PageGroup.h:
+        (): Deleted.
+
 2019-09-12  Saam Barati  <sbarati@apple.com>
 
         [WHLSL] Slim down WSLMatrix and inline constructors in native code

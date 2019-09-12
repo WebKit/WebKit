@@ -122,11 +122,9 @@ Ref<StorageNamespace> StorageNamespaceImpl::copy(Page& newPage)
     return adoptRef(*new StorageNamespaceImpl(m_storageType, WebPage::fromCorePage(newPage).sessionStorageNamespaceIdentifier(), WebPage::fromCorePage(newPage).identifier(), m_topLevelOrigin.get(), m_quotaInBytes, newPage.sessionID()));
 }
 
-void StorageNamespaceImpl::setSessionIDForTesting(PAL::SessionID sessionID)
+void StorageNamespaceImpl::setSessionIDForTesting(PAL::SessionID)
 {
-    m_sessionID = sessionID;
-    for (auto storageAreaMap : m_storageAreaMaps.values())
-        storageAreaMap->disconnect();
+    ASSERT_NOT_REACHED();
 }
 
 PageIdentifier StorageNamespaceImpl::sessionStoragePageID() const

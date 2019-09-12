@@ -207,8 +207,6 @@ public:
 
     void setCacheModel(CacheModel);
 
-    void ensureLegacyPrivateBrowsingSessionInNetworkProcess();
-
     void pageDidEnterWindow(WebCore::PageIdentifier);
     void pageWillLeaveWindow(WebCore::PageIdentifier);
 

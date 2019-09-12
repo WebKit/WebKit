@@ -55,8 +55,6 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     CreateSocketStream(URL url, PAL::SessionID sessionID, String cachePartition, uint64_t identifier)
     CreateSocketChannel(PAL::SessionID sessionID, WebCore::ResourceRequest request, String protocol, uint64_t identifier)
 
-    EnsureLegacyPrivateBrowsingSession()
-
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     RemoveStorageAccessForFrame(PAL::SessionID sessionID, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID);
     ClearPageSpecificDataForResourceLoadStatistics(PAL::SessionID sessionID, WebCore::PageIdentifier pageID);

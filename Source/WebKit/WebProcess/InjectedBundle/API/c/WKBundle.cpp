@@ -166,11 +166,6 @@ void WKBundleSetJavaScriptCanAccessClipboard(WKBundleRef bundleRef, WKBundlePage
     WebKit::toImpl(bundleRef)->setJavaScriptCanAccessClipboard(WebKit::toImpl(pageGroupRef), enabled);
 }
 
-void WKBundleSetPrivateBrowsingEnabled(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, WKBundlePageRef pageRef, bool enabled)
-{
-    WebKit::toImpl(bundleRef)->setPrivateBrowsingEnabled(WebKit::toImpl(pageGroupRef), WebKit::toImpl(pageRef), enabled);
-}
-
 void WKBundleSetPopupBlockingEnabled(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)
 {
     WebKit::toImpl(bundleRef)->setPopupBlockingEnabled(WebKit::toImpl(pageGroupRef), enabled);

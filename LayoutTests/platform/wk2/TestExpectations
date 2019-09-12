@@ -88,6 +88,19 @@ platform/mac/fast/text/attributed-substring-from-range-in-textfield.html
 platform/mac/fast/text/attributed-substring-from-range.html
 platform/mac/fast/text/justified-text-rect.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=115274
+# testRunner.setPrivateBrowsingEnabled_DEPRECATED() doesn't work with NetworkProcess and is WebKitLegacy only.
+http/tests/security/appcache-in-private-browsing.html [ Skip ]
+http/tests/security/appcache-switching-private-browsing.html [ Skip ]
+http/tests/security/cookies/first-party-cookie-allow-xslt.xml [ Skip ]
+http/tests/security/cookies/third-party-cookie-blocking-xslt.xml [ Skip ]
+http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Skip ]
+http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Skip ]
+http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Skip ]
+http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Skip ]
+plugins/private-browsing-mode-2.html [ Skip ]
+storage/websql/private-browsing-noread-nowrite.html [ Skip ]
+
 # [WebKit2] WebKitTestRunner doesn't support emulating pressing a tab key during IME composition
 webkit.org/b/188428 editing/input/press-tab-during-ime-composition.html
 

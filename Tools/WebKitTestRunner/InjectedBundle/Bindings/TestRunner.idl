@@ -104,10 +104,6 @@ interface TestRunner {
     void setNavigationGesturesEnabled(boolean value);
     void setIgnoresViewportScaleLimits(boolean value);
     void setShouldDownloadUndisplayableMIMETypes(boolean value);
-    
-    // DEPRECATED: Use <!-- webkit-test-runner [ useEphemeralSession=true ] --> instead, or
-    // testRunner.setShouldSwapToEphemeralSessionOnNextNavigation() / testRunner.setShouldSwapToDefaultSessionOnNextNavigation().
-    void setPrivateBrowsingEnabled_DEPRECATED(boolean value);
 
     // Special DOM functions.
     void clearBackForwardList();

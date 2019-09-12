@@ -679,11 +679,6 @@ void NetworkConnectionToWebProcess::setCaptureExtraNetworkLoadMetricsEnabled(boo
         loader->disableExtraNetworkLoadMetricsCapture();
 }
 
-void NetworkConnectionToWebProcess::ensureLegacyPrivateBrowsingSession()
-{
-    m_networkProcess->addWebsiteDataStore(WebsiteDataStoreParameters::legacyPrivateSessionParameters());
-}
-
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 void NetworkConnectionToWebProcess::removeStorageAccessForFrame(PAL::SessionID sessionID, FrameIdentifier frameID, PageIdentifier pageID)
 {
