@@ -64,7 +64,7 @@ void LayoutState::layoutFormattingContextSubtree(const Box& layoutRoot)
 {
     RELEASE_ASSERT(layoutRoot.establishesFormattingContext());
     auto formattingContext = createFormattingContext(layoutRoot);
-    formattingContext->layout();
+    formattingContext->layoutInFlowContent();
     formattingContext->layoutOutOfFlowContent();
 }
 

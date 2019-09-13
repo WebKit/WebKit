@@ -46,7 +46,7 @@ class InlineFormattingContext : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
 public:
     InlineFormattingContext(const Box& formattingContextRoot, InlineFormattingState&);
-    void layout() override;
+    void layoutInFlowContent() override;
 
 private:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;

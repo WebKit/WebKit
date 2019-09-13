@@ -62,7 +62,7 @@ static inline const Box* nextInPreOrder(const Box& layoutBox, const Container& s
     return nullptr;
 }
 
-void InlineFormattingContext::layout()
+void InlineFormattingContext::layoutInFlowContent()
 {
     if (!is<Container>(root()))
         return;
@@ -241,7 +241,7 @@ void InlineFormattingContext::layoutFormattingContextRoot(const Box& root, UsedH
     formattingState().displayBox(root).setTopLeft({ 0, 0 });
     // Swich over to the new formatting context (the one that the root creates).
     auto formattingContext = layoutState().createFormattingContext(root);
-    formattingContext->layout();
+    formattingContext->layoutInFlowContent();
     // Come back and finalize the root's height and margin.
     computeHeightAndMargin(root);
     // Now that we computed the root's height, we can go back and layout the out-of-flow content.

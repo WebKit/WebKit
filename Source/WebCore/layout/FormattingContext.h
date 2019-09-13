@@ -49,7 +49,7 @@ public:
     FormattingContext(const Box& formattingContextRoot, FormattingState&);
     virtual ~FormattingContext();
 
-    virtual void layout() = 0;
+    virtual void layoutInFlowContent() = 0;
     void layoutOutOfFlowContent();
 
     struct IntrinsicWidthConstraints {

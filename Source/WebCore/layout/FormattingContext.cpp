@@ -140,8 +140,7 @@ void FormattingContext::layoutOutOfFlowContent()
         computeOutOfFlowHorizontalGeometry(*outOfFlowBox);
 
         auto formattingContext = layoutState().createFormattingContext(*outOfFlowBox);
-        formattingContext->layout();
-
+        formattingContext->layoutInFlowContent();
         computeOutOfFlowVerticalGeometry(*outOfFlowBox);
         formattingContext->layoutOutOfFlowContent();
     }

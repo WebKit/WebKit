@@ -57,7 +57,7 @@ TableFormattingContext::TableFormattingContext(const Box& formattingContextRoot,
 {
 }
 
-void TableFormattingContext::layout()
+void TableFormattingContext::layoutInFlowContent()
 {
     auto& grid = formattingState().tableGrid();
     auto& cellList = grid.cells();
@@ -96,9 +96,10 @@ void TableFormattingContext::layoutTableCellBox(const Box& cellLayoutBox, const 
     cellDisplayBox.setContentBoxWidth(column.logicalWidth() - cellDisplayBox.horizontalMarginBorderAndPadding());
 
     ASSERT(cellLayoutBox.establishesBlockFormattingContext());
-    layoutState().createFormattingContext(cellLayoutBox)->layout();
+    layoutState().createFormattingContext(cellLayoutBox)->layoutInFlowContent();
     cellDisplayBox.setVerticalMargin({ { }, { } });
     cellDisplayBox.setContentBoxHeight(geometry().tableCellHeightAndMargin(cellLayoutBox).height);
+    // FIXME: Check what to do with out-of-flow content.
 }
 
 void TableFormattingContext::positionTableCells()

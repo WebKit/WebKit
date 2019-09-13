@@ -49,7 +49,7 @@ BlockFormattingContext::BlockFormattingContext(const Box& formattingContextRoot,
 {
 }
 
-void BlockFormattingContext::layout()
+void BlockFormattingContext::layoutInFlowContent()
 {
     // 9.4.1 Block formatting contexts
     // In a block formatting context, boxes are laid out one after the other, vertically, beginning at the top of a containing block.
@@ -169,8 +169,7 @@ void BlockFormattingContext::layoutFormattingContextRoot(FloatingContext& floati
     computeStaticHorizontalPosition(layoutBox);
     // Swich over to the new formatting context (the one that the root creates).
     auto formattingContext = layoutState().createFormattingContext(layoutBox);
-    formattingContext->layout();
-
+    formattingContext->layoutInFlowContent();
     // Come back and finalize the root's geometry.
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Compute] -> [Height][Margin] -> for layoutBox(" << &layoutBox << ")");
     computeHeightAndMargin(layoutBox);

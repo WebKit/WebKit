@@ -49,7 +49,7 @@ class BlockFormattingContext : public FormattingContext {
 public:
     BlockFormattingContext(const Box& formattingContextRoot, BlockFormattingState&);
 
-    void layout() override;
+    void layoutInFlowContent() override;
 
 private:
     void layoutFormattingContextRoot(FloatingContext&, const Box&);
