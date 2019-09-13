@@ -116,17 +116,8 @@ JS_EXPORT_PRIVATE bool isJITPC(void* pc);
 
 JS_EXPORT_PRIVATE void dumpJITMemory(const void*, const void*, size_t);
 
-struct GigacageAssertScope {
-    GigacageAssertScope(const void *src)
-        : src(src)
-    { }
-    ~GigacageAssertScope() { RELEASE_ASSERT(!Gigacage::contains(src)); }
-    const void* src;
-};
-
 static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n)
 {
-    GigacageAssertScope assertScope(src);
 #if CPU(ARM64)
     static constexpr size_t instructionSize = sizeof(unsigned);
     RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(dst) == dst);
@@ -144,6 +135,7 @@ static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n
         {
             os_thread_self_restrict_rwx_to_rw();
             memcpy(dst, src, n);
+            RELEASE_ASSERT(!Gigacage::contains(src));
             os_thread_self_restrict_rwx_to_rx();
             return dst;
         }
@@ -155,6 +147,7 @@ static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n
             // memcpy that takes an offset into the JIT region as its destination (first) parameter.
             off_t offset = (off_t)((uintptr_t)dst - startOfFixedExecutableMemoryPool<uintptr_t>());
             retagCodePtr<JITThunkPtrTag, CFunctionPtrTag>(g_jscConfig.jitWriteSeparateHeaps)(offset, src, n);
+            RELEASE_ASSERT(!Gigacage::contains(src));
             return dst;
         }
 #endif
