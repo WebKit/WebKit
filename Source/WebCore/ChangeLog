@@ -1,3 +1,25 @@
+2019-09-12  Chris Dumez  <cdumez@apple.com>
+
+        Node.replaceChild()'s pre-replacement validations are not done in the right order
+        https://bugs.webkit.org/show_bug.cgi?id=201741
+
+        Reviewed by Geoffrey Garen.
+
+        Node.replaceChild()'s pre-replacement validations are not done in the right order (spec order):
+        - https://dom.spec.whatwg.org/#concept-node-replace
+
+        In particular, we do not do check 3 (If child’s parent is not parent, then throw a
+        "NotFoundError" DOMException.) at the right time, because we were making this check
+        *after* checkPreReplacementValidity(), instead of *during*.
+
+        No new tests, rebaselined existing test.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::checkAcceptChild):
+        (WebCore::ContainerNode::ensurePreInsertionValidity):
+        (WebCore::checkPreReplacementValidity):
+        (WebCore::ContainerNode::replaceChild):
+
 2019-09-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r249801.

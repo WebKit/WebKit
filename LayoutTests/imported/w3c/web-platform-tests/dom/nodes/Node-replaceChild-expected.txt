@@ -1,15 +1,9 @@
 
 PASS Should check the 'parent' type before checking whether 'child' is a child of 'parent' 
 PASS Should check that 'node' is not an ancestor of 'parent' before checking whether 'child' is a child of 'parent' 
-FAIL Should check whether 'child' is a child of 'parent' before checking whether 'node' is of a type that can have a parent. assert_throws: function "function () {
-      insertFunc.call(parent, node, child);
-    }" threw object "HierarchyRequestError: The operation would yield an incorrect node tree." that is not a DOMException NotFoundError: property "code" is equal to 3, expected 8
-FAIL Should check whether 'child' is a child of 'parent' before checking whether 'node' is of a type that can have a parent of the type that 'parent' is. assert_throws: function "function () {
-    insertFunc.call(parent, node, child);
-  }" threw object "HierarchyRequestError: The operation would yield an incorrect node tree." that is not a DOMException NotFoundError: property "code" is equal to 3, expected 8
-FAIL Should check whether 'child' is a child of 'parent' before checking whether 'node' can be inserted into the document given the kids the document has right now. assert_throws: function "function () {
-    insertFunc.call(parent, node, child);
-  }" threw object "HierarchyRequestError: The operation would yield an incorrect node tree." that is not a DOMException NotFoundError: property "code" is equal to 3, expected 8
+PASS Should check whether 'child' is a child of 'parent' before checking whether 'node' is of a type that can have a parent. 
+PASS Should check whether 'child' is a child of 'parent' before checking whether 'node' is of a type that can have a parent of the type that 'parent' is. 
+PASS Should check whether 'child' is a child of 'parent' before checking whether 'node' can be inserted into the document given the kids the document has right now. 
 PASS Passing null to replaceChild should throw a TypeError. 
 PASS If child's parent is not the context node, a NotFoundError exception should be thrown 
 PASS If the context node is not a node that can contain children, a HierarchyRequestError exception should be thrown 

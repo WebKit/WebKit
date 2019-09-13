@@ -311,7 +311,8 @@ static bool containsIncludingHostElements(const Node& possibleAncestor, const No
     return false;
 }
 
-static inline ExceptionOr<void> checkAcceptChild(ContainerNode& newParent, Node& newChild, const Node* refChild, Document::AcceptChildOperation operation)
+enum class ShouldValidateChildParent { No, Yes };
+static inline ExceptionOr<void> checkAcceptChild(ContainerNode& newParent, Node& newChild, const Node* refChild, Document::AcceptChildOperation operation, ShouldValidateChildParent shouldValidateChildParent)
 {
     if (containsIncludingHostElements(newChild, newParent))
         return Exception { HierarchyRequestError };
@@ -320,7 +321,7 @@ static inline ExceptionOr<void> checkAcceptChild(ContainerNode& newParent, Node&
     if ((newChild.isElementNode() || newChild.isTextNode()) && newParent.isElementNode()) {
         ASSERT(!newParent.isDocumentTypeNode());
         ASSERT(isChildTypeAllowed(newParent, newChild));
-        if (operation == Document::AcceptChildOperation::InsertOrAdd && refChild && refChild->parentNode() != &newParent)
+        if (shouldValidateChildParent == ShouldValidateChildParent::Yes && refChild && refChild->parentNode() != &newParent)
             return Exception { NotFoundError };
         return { };
     }
@@ -330,7 +331,7 @@ static inline ExceptionOr<void> checkAcceptChild(ContainerNode& newParent, Node&
     if (newChild.isPseudoElement())
         return Exception { HierarchyRequestError };
 
-    if (operation == Document::AcceptChildOperation::InsertOrAdd && refChild && refChild->parentNode() != &newParent)
+    if (shouldValidateChildParent == ShouldValidateChildParent::Yes && refChild && refChild->parentNode() != &newParent)
         return Exception { NotFoundError };
 
     if (is<Document>(newParent)) {
@@ -354,13 +355,13 @@ static inline ExceptionOr<void> checkAcceptChildGuaranteedNodeTypes(ContainerNod
 // https://dom.spec.whatwg.org/#concept-node-ensure-pre-insertion-validity
 ExceptionOr<void> ContainerNode::ensurePreInsertionValidity(Node& newChild, Node* refChild)
 {
-    return checkAcceptChild(*this, newChild, refChild, Document::AcceptChildOperation::InsertOrAdd);
+    return checkAcceptChild(*this, newChild, refChild, Document::AcceptChildOperation::InsertOrAdd, ShouldValidateChildParent::Yes);
 }
 
 // https://dom.spec.whatwg.org/#concept-node-replace
-static inline ExceptionOr<void> checkPreReplacementValidity(ContainerNode& newParent, Node& newChild, Node& oldChild)
+static inline ExceptionOr<void> checkPreReplacementValidity(ContainerNode& newParent, Node& newChild, Node& oldChild, ShouldValidateChildParent shouldValidateChildParent)
 {
-    return checkAcceptChild(newParent, newChild, &oldChild, Document::AcceptChildOperation::Replace);
+    return checkAcceptChild(newParent, newChild, &oldChild, Document::AcceptChildOperation::Replace, shouldValidateChildParent);
 }
 
 ExceptionOr<void> ContainerNode::insertBefore(Node& newChild, Node* refChild)
@@ -489,13 +490,9 @@ ExceptionOr<void> ContainerNode::replaceChild(Node& newChild, Node& oldChild)
     Ref<ContainerNode> protectedThis(*this);
 
     // Make sure replacing the old child with the new is ok
-    auto validityResult = checkPreReplacementValidity(*this, newChild, oldChild);
+    auto validityResult = checkPreReplacementValidity(*this, newChild, oldChild, ShouldValidateChildParent::Yes);
     if (validityResult.hasException())
         return validityResult.releaseException();
-
-    // NotFoundError: Raised if oldChild is not a child of this node.
-    if (oldChild.parentNode() != this)
-        return Exception { NotFoundError };
 
     RefPtr<Node> refChild = oldChild.nextSibling();
     if (refChild.get() == &newChild)
@@ -511,7 +508,7 @@ ExceptionOr<void> ContainerNode::replaceChild(Node& newChild, Node& oldChild)
 
     // Do this one more time because collectChildrenAndRemoveFromOldParent() fires a MutationEvent.
     for (auto& child : targets) {
-        validityResult = checkPreReplacementValidity(*this, child, oldChild);
+        validityResult = checkPreReplacementValidity(*this, child, oldChild, ShouldValidateChildParent::No);
         if (validityResult.hasException())
             return validityResult.releaseException();
     }
@@ -529,7 +526,7 @@ ExceptionOr<void> ContainerNode::replaceChild(Node& newChild, Node& oldChild)
 
         // Does this one more time because removeChild() fires a MutationEvent.
         for (auto& child : targets) {
-            validityResult = checkPreReplacementValidity(*this, child, oldChild);
+            validityResult = checkPreReplacementValidity(*this, child, oldChild, ShouldValidateChildParent::No);
             if (validityResult.hasException())
                 return validityResult.releaseException();
         }
