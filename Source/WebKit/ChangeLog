@@ -1,3 +1,16 @@
+2019-09-13  Alex Christensen  <achristensen@webkit.org>
+
+        AuxiliaryProcessProxy::sendWithAsyncReply should queue up messages if sent while the process is starting like it does messages without replies
+        https://bugs.webkit.org/show_bug.cgi?id=201746
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::sendMessage):
+        (WebKit::AuxiliaryProcessProxy::didFinishLaunching):
+        * UIProcess/AuxiliaryProcessProxy.h:
+        (WebKit::AuxiliaryProcessProxy::sendWithAsyncReply):
+
 2019-09-13  Youenn Fablet  <youenn@apple.com>
 
         Use WebProcess processIdentifier to identify Service Worker connections
