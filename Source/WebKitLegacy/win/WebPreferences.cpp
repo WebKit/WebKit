@@ -286,11 +286,7 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitUseHighResolutionTimersPreferenceKey), kCFBooleanTrue);
 
-#if USE(CG)
     CFDictionaryAddValue(defaults, CFSTR(WebKitAcceleratedCompositingEnabledPreferenceKey), kCFBooleanTrue);
-#else
-    CFDictionaryAddValue(defaults, CFSTR(WebKitAcceleratedCompositingEnabledPreferenceKey), kCFBooleanFalse);
-#endif
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitShowDebugBordersPreferenceKey), kCFBooleanFalse);
 
@@ -1740,12 +1736,10 @@ HRESULT WebPreferences::acceleratedCompositingEnabled(_Out_ BOOL* enabled)
 {
     if (!enabled)
         return E_POINTER;
+    *enabled = boolValueForKey(WebKitAcceleratedCompositingEnabledPreferenceKey);
 #if USE(CA)
-    *enabled = CACFLayerTreeHost::acceleratedCompositingAvailable() && boolValueForKey(WebKitAcceleratedCompositingEnabledPreferenceKey);
-#else
-    *enabled = TRUE;
+    *enabled = *enabled && CACFLayerTreeHost::acceleratedCompositingAvailable();
 #endif
-
     return S_OK;
 }
 
