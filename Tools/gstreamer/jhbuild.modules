@@ -80,6 +80,7 @@
 
     <branch hash="sha256:654adef33380d604112f702c2927574cfc285e31307b79e584113858838bb0fd" module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" repo="gstreamer" version="1.16.0">
       <patch file="gst-plugins-good-scaletempo-Advertise-interleaved-layout-in-caps-temp.patch" strip="1"/> <!-- Merged upstream, should be shipped in 1.16.1 -->
+      <patch file="gst-plugins-good-glibc-2.30-compat.patch" strip="1"/> <!-- Merged upstream, should be shipped in 1.16.1 -->
     </branch>
   </meson>
 
