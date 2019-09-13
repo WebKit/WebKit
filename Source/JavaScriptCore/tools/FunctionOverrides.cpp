@@ -89,11 +89,18 @@ namespace JSC {
      it uses the 'with' keyword instead of the 'override' keyword.
  */
 
+struct FunctionOverridesAssertScope {
+    FunctionOverridesAssertScope() { RELEASE_ASSERT(g_jscConfig.restrictedOptionsEnabled); }
+    ~FunctionOverridesAssertScope() { RELEASE_ASSERT(g_jscConfig.restrictedOptionsEnabled); }
+};
+
 FunctionOverrides& FunctionOverrides::overrides()
 {
+    FunctionOverridesAssertScope assertScope;
     static LazyNeverDestroyed<FunctionOverrides> overrides;
     static std::once_flag initializeListFlag;
     std::call_once(initializeListFlag, [] {
+        FunctionOverridesAssertScope assertScope;
         const char* overridesFileName = Options::functionOverrides();
         overrides.construct(overridesFileName);
     });
@@ -102,13 +109,13 @@ FunctionOverrides& FunctionOverrides::overrides()
     
 FunctionOverrides::FunctionOverrides(const char* overridesFileName)
 {
-    RELEASE_ASSERT(g_jscConfig.restrictedOptionsEnabled);
+    FunctionOverridesAssertScope assertScope;
     parseOverridesInFile(holdLock(m_lock), overridesFileName);
 }
 
 void FunctionOverrides::reinstallOverrides()
 {
-    RELEASE_ASSERT(g_jscConfig.restrictedOptionsEnabled);
+    FunctionOverridesAssertScope assertScope;
     FunctionOverrides& overrides = FunctionOverrides::overrides();
     auto locker = holdLock(overrides.m_lock);
     const char* overridesFileName = Options::functionOverrides();
@@ -118,6 +125,7 @@ void FunctionOverrides::reinstallOverrides()
 
 static void initializeOverrideInfo(const SourceCode& origCode, const String& newBody, FunctionOverrides::OverrideInfo& info)
 {
+    FunctionOverridesAssertScope assertScope;
     String origProviderStr = origCode.provider()->source().toString();
     unsigned origStart = origCode.startOffset();
     unsigned origFunctionStart = origProviderStr.reverseFind("function", origStart);
@@ -145,7 +153,7 @@ static void initializeOverrideInfo(const SourceCode& origCode, const String& new
     
 bool FunctionOverrides::initializeOverrideFor(const SourceCode& origCode, FunctionOverrides::OverrideInfo& result)
 {
-    RELEASE_ASSERT(g_jscConfig.restrictedOptionsEnabled);
+    FunctionOverridesAssertScope assertScope;
     RELEASE_ASSERT(Options::functionOverrides());
     FunctionOverrides& overrides = FunctionOverrides::overrides();
 
@@ -165,6 +173,7 @@ bool FunctionOverrides::initializeOverrideFor(const SourceCode& origCode, Functi
     }
 
     initializeOverrideInfo(origCode, newBody, result);
+    RELEASE_ASSERT(Options::functionOverrides());
     return true;
 }
 
@@ -192,6 +201,7 @@ static bool hasDisallowedCharacters(const char* str, size_t length)
 
 static String parseClause(const char* keyword, size_t keywordLength, FILE* file, const char* line, char* buffer, size_t bufferSize)
 {
+    FunctionOverridesAssertScope assertScope;
     const char* keywordPos = strstr(line, keyword);
     if (!keywordPos)
         FAIL_WITH_ERROR(SYNTAX_ERROR, ("Expecting '", keyword, "' clause:\n", line, "\n"));
@@ -238,7 +248,7 @@ static String parseClause(const char* keyword, size_t keywordLength, FILE* file,
 
 void FunctionOverrides::parseOverridesInFile(const AbstractLocker&, const char* fileName)
 {
-    RELEASE_ASSERT(g_jscConfig.restrictedOptionsEnabled);
+    FunctionOverridesAssertScope assertScope;
     if (!fileName)
         return;
     

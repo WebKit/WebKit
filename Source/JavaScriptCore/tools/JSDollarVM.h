@@ -30,6 +30,11 @@
 
 namespace JSC {
 
+struct DollarVMAssertScope {
+    DollarVMAssertScope() { RELEASE_ASSERT(Options::useDollarVM()); }
+    ~DollarVMAssertScope() { RELEASE_ASSERT(Options::useDollarVM()); }
+};
+
 class JSDollarVM final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
@@ -38,13 +43,13 @@ public:
     
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        RELEASE_ASSERT(Options::useDollarVM());
+        DollarVMAssertScope assertScope;
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
     static JSDollarVM* create(VM& vm, Structure* structure)
     {
-        RELEASE_ASSERT(Options::useDollarVM());
+        DollarVMAssertScope assertScope;
         JSDollarVM* instance = new (NotNull, allocateCell<JSDollarVM>(vm.heap)) JSDollarVM(vm, structure);
         instance->finishCreation(vm);
         return instance;
@@ -54,7 +59,7 @@ private:
     JSDollarVM(VM& vm, Structure* structure)
         : Base(vm, structure)
     {
-        RELEASE_ASSERT(Options::useDollarVM());
+        DollarVMAssertScope assertScope;
     }
 
 
