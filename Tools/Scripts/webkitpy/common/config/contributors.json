@@ -4192,7 +4192,8 @@
       "expertise" : "Core KHTML contributor, The QtWebKit Port, Text Layout, JavaScript DOM bindings, Code generation in general, XML, SVG (Scalable Vector Graphics)",
       "nicks" : [
          "wildfox"
-      ]
+      ],
+      "status" : "committer"
    },
    "Nils Barth" : {
       "emails" : [
