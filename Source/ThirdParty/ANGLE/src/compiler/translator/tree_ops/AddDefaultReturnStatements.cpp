@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -9,6 +9,7 @@
 
 #include "compiler/translator/tree_ops/AddDefaultReturnStatements.h"
 
+#include "compiler/translator/Compiler.h"
 #include "compiler/translator/IntermNode.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/util.h"
@@ -39,7 +40,7 @@ bool NeedsReturnStatement(TIntermFunctionDefinition *node, TType *returnType)
 
 }  // anonymous namespace
 
-void AddDefaultReturnStatements(TIntermBlock *root)
+bool AddDefaultReturnStatements(TCompiler *compiler, TIntermBlock *root)
 {
     TType returnType;
     for (TIntermNode *node : *root->getSequence())
@@ -53,6 +54,8 @@ void AddDefaultReturnStatements(TIntermBlock *root)
             bodyNode->getSequence()->push_back(branch);
         }
     }
+
+    return compiler->validateAST(root);
 }
 
 }  // namespace sh

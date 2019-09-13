@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2013-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -52,6 +52,7 @@ enum class BlockType
 
     // Required in OpenGL ES 3.1 extension GL_OES_shader_io_blocks.
     // TODO(jiawei.shao@intel.com): add BLOCK_OUT.
+    // Also used in GLSL
     BLOCK_IN
 };
 
@@ -67,6 +68,8 @@ struct ShaderVariable
     ~ShaderVariable();
     ShaderVariable(const ShaderVariable &other);
     ShaderVariable &operator=(const ShaderVariable &other);
+    bool operator==(const ShaderVariable &other) const;
+    bool operator!=(const ShaderVariable &other) const { return !operator==(other); }
 
     bool isArrayOfArrays() const { return arraySizes.size() >= 2u; }
     bool isArray() const { return !arraySizes.empty(); }
@@ -136,7 +139,7 @@ struct ShaderVariable
         return hasParentArrayIndex() ? flattenedOffsetInParentArrays : 0;
     }
 
-    void setParentArrayIndex(int index) { flattenedOffsetInParentArrays = index; }
+    void setParentArrayIndex(int indexIn) { flattenedOffsetInParentArrays = indexIn; }
 
     bool hasParentArrayIndex() const { return flattenedOffsetInParentArrays != -1; }
 
@@ -152,114 +155,59 @@ struct ShaderVariable
     // Only applies to interface block fields. Kept here for simplicity.
     bool isRowMajorLayout;
 
-  protected:
-    bool isSameVariableAtLinkTime(const ShaderVariable &other,
-                                  bool matchPrecision,
-                                  bool matchName) const;
-
-    bool operator==(const ShaderVariable &other) const;
-    bool operator!=(const ShaderVariable &other) const { return !operator==(other); }
-
-    int flattenedOffsetInParentArrays;
-};
-
-// A variable with an integer location to pass back to the GL API: either uniform (can have location
-// in GLES3.1+), vertex shader input or fragment shader output.
-struct VariableWithLocation : public ShaderVariable
-{
-    VariableWithLocation();
-    ~VariableWithLocation();
-    VariableWithLocation(const VariableWithLocation &other);
-    VariableWithLocation &operator=(const VariableWithLocation &other);
-    bool operator==(const VariableWithLocation &other) const;
-    bool operator!=(const VariableWithLocation &other) const { return !operator==(other); }
-
+    // VariableWithLocation
     int location;
-};
 
-struct Uniform : public VariableWithLocation
-{
-    Uniform();
-    ~Uniform();
-    Uniform(const Uniform &other);
-    Uniform &operator=(const Uniform &other);
-    bool operator==(const Uniform &other) const;
-    bool operator!=(const Uniform &other) const { return !operator==(other); }
-
+    // Uniform
     int binding;
+    // Decide whether two uniforms are the same at shader link time,
+    // assuming one from vertex shader and the other from fragment shader.
+    // GLSL ES Spec 3.00.3, section 4.3.5.
+    // GLSL ES Spec 3.10.4, section 4.4.5
+    bool isSameUniformAtLinkTime(const ShaderVariable &other) const;
     GLenum imageUnitFormat;
     int offset;
     bool readonly;
     bool writeonly;
 
-    // Decide whether two uniforms are the same at shader link time,
-    // assuming one from vertex shader and the other from fragment shader.
-    // GLSL ES Spec 3.00.3, section 4.3.5.
-    // GLSL ES Spec 3.10.4, section 4.4.5
-    bool isSameUniformAtLinkTime(const Uniform &other) const;
-};
-
-struct Attribute : public VariableWithLocation
-{
-    Attribute();
-    ~Attribute();
-    Attribute(const Attribute &other);
-    Attribute &operator=(const Attribute &other);
-    bool operator==(const Attribute &other) const;
-    bool operator!=(const Attribute &other) const { return !operator==(other); }
-};
-
-struct OutputVariable : public VariableWithLocation
-{
-    OutputVariable();
-    ~OutputVariable();
-    OutputVariable(const OutputVariable &other);
-    OutputVariable &operator=(const OutputVariable &other);
-    bool operator==(const OutputVariable &other) const;
-    bool operator!=(const OutputVariable &other) const { return !operator==(other); }
-
+    // OutputVariable
     // From EXT_blend_func_extended.
     int index;
-};
 
-struct InterfaceBlockField : public ShaderVariable
-{
-    InterfaceBlockField();
-    ~InterfaceBlockField();
-    InterfaceBlockField(const InterfaceBlockField &other);
-    InterfaceBlockField &operator=(const InterfaceBlockField &other);
-    bool operator==(const InterfaceBlockField &other) const;
-    bool operator!=(const InterfaceBlockField &other) const { return !operator==(other); }
-
+    // InterfaceBlockField
     // Decide whether two InterfaceBlock fields are the same at shader
     // link time, assuming one from vertex shader and the other from
     // fragment shader.
     // See GLSL ES Spec 3.00.3, sec 4.3.7.
-    bool isSameInterfaceBlockFieldAtLinkTime(const InterfaceBlockField &other) const;
-};
+    bool isSameInterfaceBlockFieldAtLinkTime(const ShaderVariable &other) const;
 
-struct Varying : public VariableWithLocation
-{
-    Varying();
-    ~Varying();
-    Varying(const Varying &other);
-    Varying &operator=(const Varying &other);
-    bool operator==(const Varying &other) const;
-    bool operator!=(const Varying &other) const { return !operator==(other); }
-
+    // Varying
+    InterpolationType interpolation;
+    bool isInvariant;
     // Decide whether two varyings are the same at shader link time,
     // assuming one from vertex shader and the other from fragment shader.
     // Invariance needs to match only in ESSL1. Relevant spec sections:
     // GLSL ES 3.00.4, sections 4.6.1 and 4.3.9.
     // GLSL ES 1.00.17, section 4.6.4.
-    bool isSameVaryingAtLinkTime(const Varying &other, int shaderVersion) const;
-
+    bool isSameVaryingAtLinkTime(const ShaderVariable &other, int shaderVersion) const;
     // Deprecated version of isSameVaryingAtLinkTime, which assumes ESSL1.
-    bool isSameVaryingAtLinkTime(const Varying &other) const;
+    bool isSameVaryingAtLinkTime(const ShaderVariable &other) const;
 
-    InterpolationType interpolation;
-    bool isInvariant;
+  protected:
+    bool isSameVariableAtLinkTime(const ShaderVariable &other,
+                                  bool matchPrecision,
+                                  bool matchName) const;
+
+    int flattenedOffsetInParentArrays;
 };
+
+// TODO: anglebug.com/3899
+// For backwards compatibility for other codebases (e.g., chromium/src/gpu/command_buffer/service)
+using Uniform             = ShaderVariable;
+using Attribute           = ShaderVariable;
+using OutputVariable      = ShaderVariable;
+using InterfaceBlockField = ShaderVariable;
+using Varying             = ShaderVariable;
 
 struct InterfaceBlock
 {
@@ -294,7 +242,7 @@ struct InterfaceBlock
     bool staticUse;
     bool active;
     BlockType blockType;
-    std::vector<InterfaceBlockField> fields;
+    std::vector<ShaderVariable> fields;
 };
 
 struct WorkGroupSize

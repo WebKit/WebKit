@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <sstream>
 
-#include "../perf_tests/third_party/perf/perf_test.h"
+#include "../perf_tests/third_party/perf/perf_result_reporter.h"
 #include "ANGLEPerfTestArgs.h"
 #include "common/platform.h"
 #include "common/system_utils.h"
@@ -108,6 +108,10 @@ class GLMark2Benchmark : public testing::TestWithParam<GLMark2BenchmarkTestParam
             default:
                 break;
         }
+        std::string story = kBenchmarks[std::get<1>(GetParam())].name;
+        mReporter = std::make_unique<perf_test::PerfResultReporter>("glmark2_" + mBackend, story);
+        mReporter->RegisterImportantMetric(".fps", "fps");
+        mReporter->RegisterImportantMetric(".score", "score");
     }
 
     void run()
@@ -121,7 +125,7 @@ class GLMark2Benchmark : public testing::TestWithParam<GLMark2BenchmarkTestParam
         const BenchmarkInfo benchmarkInfo = kBenchmarks[std::get<1>(GetParam())];
         const char *benchmark             = benchmarkInfo.glmark2Config;
         const char *benchmarkName         = benchmarkInfo.name;
-        bool completeRun      = benchmark == nullptr || benchmark[0] == '\0';
+        bool completeRun                  = benchmark == nullptr || benchmark[0] == '\0';
 
         Optional<std::string> cwd = GetCWD();
 
@@ -244,9 +248,7 @@ class GLMark2Benchmark : public testing::TestWithParam<GLMark2BenchmarkTestParam
 
             if (!completeRun)
             {
-                const std::string kBenchmarkPrefix = "glmark2_";
-                perf_test::PrintResult(kBenchmarkPrefix + benchmarkName, '_' + mBackend, "fps", fps,
-                                       "", true);
+                mReporter->AddResult(".fps", fps);
             }
         }
 
@@ -260,11 +262,12 @@ class GLMark2Benchmark : public testing::TestWithParam<GLMark2BenchmarkTestParam
 
         if (completeRun)
         {
-            perf_test::PrintResult("glmark2", '_' + mBackend, "score", score, "", true);
+            mReporter->AddResult(".score", score);
         }
     }
 
     std::string mBackend = "invalid";
+    std::unique_ptr<perf_test::PerfResultReporter> mReporter;
 };
 
 TEST_P(GLMark2Benchmark, Run)

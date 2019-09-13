@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -26,7 +26,9 @@ constexpr const ImmutableString kReturnValueVariableName("angle_return");
 class ArrayReturnValueToOutParameterTraverser : private TIntermTraverser
 {
   public:
-    static void apply(TIntermNode *root, TSymbolTable *symbolTable);
+    ANGLE_NO_DISCARD static bool apply(TCompiler *compiler,
+                                       TIntermNode *root,
+                                       TSymbolTable *symbolTable);
 
   private:
     ArrayReturnValueToOutParameterTraverser(TSymbolTable *symbolTable);
@@ -72,11 +74,13 @@ TIntermAggregate *ArrayReturnValueToOutParameterTraverser::createReplacementCall
     return replacementCall;
 }
 
-void ArrayReturnValueToOutParameterTraverser::apply(TIntermNode *root, TSymbolTable *symbolTable)
+bool ArrayReturnValueToOutParameterTraverser::apply(TCompiler *compiler,
+                                                    TIntermNode *root,
+                                                    TSymbolTable *symbolTable)
 {
     ArrayReturnValueToOutParameterTraverser arrayReturnValueToOutParam(symbolTable);
     root->traverse(&arrayReturnValueToOutParam);
-    arrayReturnValueToOutParam.updateTree();
+    return arrayReturnValueToOutParam.updateTree(compiler, root);
 }
 
 ArrayReturnValueToOutParameterTraverser::ArrayReturnValueToOutParameterTraverser(
@@ -220,9 +224,11 @@ bool ArrayReturnValueToOutParameterTraverser::visitBinary(Visit visit, TIntermBi
 
 }  // namespace
 
-void ArrayReturnValueToOutParameter(TIntermNode *root, TSymbolTable *symbolTable)
+bool ArrayReturnValueToOutParameter(TCompiler *compiler,
+                                    TIntermNode *root,
+                                    TSymbolTable *symbolTable)
 {
-    ArrayReturnValueToOutParameterTraverser::apply(root, symbolTable);
+    return ArrayReturnValueToOutParameterTraverser::apply(compiler, root, symbolTable);
 }
 
 }  // namespace sh

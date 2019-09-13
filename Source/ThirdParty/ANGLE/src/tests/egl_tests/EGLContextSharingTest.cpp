@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -33,7 +33,7 @@ class EGLContextSharingTest : public ANGLETest
   public:
     EGLContextSharingTest() : mContexts{EGL_NO_CONTEXT, EGL_NO_CONTEXT}, mTexture(0) {}
 
-    void TearDown() override
+    void testTearDown() override
     {
         glDeleteTextures(1, &mTexture);
 
@@ -49,8 +49,6 @@ class EGLContextSharingTest : public ANGLETest
 
         // Set default test state to not give an error on shutdown.
         getEGLWindow()->makeCurrent();
-
-        ANGLETest::TearDown();
     }
 
     EGLContext mContexts[2];

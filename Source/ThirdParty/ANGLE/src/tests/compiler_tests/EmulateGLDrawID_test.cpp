@@ -7,9 +7,9 @@
 //   Test for ANGLE_draw_id extension
 //
 
-#include "compiler/translator/tree_ops/EmulateGLDrawID.h"
 #include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
+#include "compiler/translator/tree_ops/EmulateMultiDrawShaderBuiltins.h"
 #include "gtest/gtest.h"
 #include "tests/test_utils/compiler_test.h"
 

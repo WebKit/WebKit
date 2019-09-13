@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -28,9 +28,15 @@ bool IsFuchsia();
 // Android devices
 bool IsNexus5X();
 bool IsNexus6P();
+bool IsNexus9();
 bool IsPixelXL();
 bool IsPixel2();
 bool IsNVIDIAShield();
+
+// Desktop devices.
+bool IsIntel();
+bool IsAMD();
+bool IsNVIDIA();
 
 bool IsPlatformAvailable(const PlatformParameters &param);
 
@@ -121,6 +127,26 @@ bool IsConfigSupported(const PlatformParameters &param);
 
 // Returns shared test system information. Can be used globally in the tests.
 SystemInfo *GetTestSystemInfo();
+
+// Returns a list of all enabled test platform names. For use in configuration enumeration.
+std::vector<std::string> GetAvailableTestPlatformNames();
+
+// Active config (e.g. ES2_Vulkan).
+extern std::string gSelectedConfig;
+
+// Use a separate isolated process per test config. This works around driver flakiness when using
+// multiple APIs/windows/etc in the same process.
+extern bool gSeparateProcessPerConfig;
 }  // namespace angle
+
+#define ANGLE_SKIP_TEST_IF(COND)                                  \
+    do                                                            \
+    {                                                             \
+        if (COND)                                                 \
+        {                                                         \
+            std::cout << "Test skipped: " #COND "." << std::endl; \
+            return;                                               \
+        }                                                         \
+    } while (0)
 
 #endif  // ANGLE_TEST_INSTANTIATE_H_

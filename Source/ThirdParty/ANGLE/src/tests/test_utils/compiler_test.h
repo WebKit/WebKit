@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -10,6 +10,7 @@
 #define TESTS_TEST_UTILS_COMPILER_TEST_H_
 
 #include <map>
+#include <regex>
 #include <vector>
 
 #include "gtest/gtest.h"
@@ -65,6 +66,9 @@ class MatchOutputCodeTest : public testing::Test
     }
 
     bool foundInCode(ShShaderOutput output, const char *stringToFind) const;
+    bool foundInCodeRegex(ShShaderOutput output,
+                          const std::regex &regexToFind,
+                          std::smatch *match = nullptr) const;
 
     // Test that the strings are found in the specified output in the specified order.
     bool foundInCodeInOrder(ShShaderOutput output, std::vector<const char *> stringsToFind);
@@ -76,6 +80,7 @@ class MatchOutputCodeTest : public testing::Test
 
     // Test that the string is found in all outputs
     bool foundInCode(const char *stringToFind) const;
+    bool foundInCodeRegex(const std::regex &regexToFind, std::smatch *match = nullptr) const;
 
     // Test that the string occurs for exactly expectedOccurrences times in all outputs
     bool foundInCode(const char *stringToFind, const int expectedOccurrences) const;

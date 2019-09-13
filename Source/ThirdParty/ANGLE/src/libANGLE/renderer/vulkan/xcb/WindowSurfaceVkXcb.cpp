@@ -29,7 +29,7 @@ angle::Result WindowSurfaceVkXcb::createSurfaceVk(vk::Context *context, gl::Exte
     createInfo.sType      = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;
     createInfo.flags      = 0;
     createInfo.connection = mXcbConnection;
-    createInfo.window     = mNativeWindowType;
+    createInfo.window     = static_cast<xcb_window_t>(mNativeWindowType);
     ANGLE_VK_TRY(context, vkCreateXcbSurfaceKHR(context->getRenderer()->getInstance(), &createInfo,
                                                 nullptr, &mSurface));
 
@@ -39,10 +39,11 @@ angle::Result WindowSurfaceVkXcb::createSurfaceVk(vk::Context *context, gl::Exte
 angle::Result WindowSurfaceVkXcb::getCurrentWindowSize(vk::Context *context,
                                                        gl::Extents *extentsOut)
 {
-    xcb_get_geometry_cookie_t cookie = xcb_get_geometry(mXcbConnection, mNativeWindowType);
+    xcb_get_geometry_cookie_t cookie =
+        xcb_get_geometry(mXcbConnection, static_cast<xcb_drawable_t>(mNativeWindowType));
     xcb_get_geometry_reply_t *reply  = xcb_get_geometry_reply(mXcbConnection, cookie, nullptr);
     ASSERT(reply);
-    *extentsOut = gl::Extents(reply->width, reply->height, 0);
+    *extentsOut = gl::Extents(reply->width, reply->height, 1);
     free(reply);
     return angle::Result::Continue;
 }

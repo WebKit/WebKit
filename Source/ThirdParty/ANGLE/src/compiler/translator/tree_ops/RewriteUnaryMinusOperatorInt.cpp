@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -19,7 +19,7 @@ namespace
 class Traverser : public TIntermTraverser
 {
   public:
-    static void Apply(TIntermNode *root);
+    ANGLE_NO_DISCARD static bool Apply(TCompiler *compiler, TIntermNode *root);
 
   private:
     Traverser();
@@ -30,7 +30,7 @@ class Traverser : public TIntermTraverser
 };
 
 // static
-void Traverser::Apply(TIntermNode *root)
+bool Traverser::Apply(TCompiler *compiler, TIntermNode *root)
 {
     Traverser traverser;
     do
@@ -39,9 +39,14 @@ void Traverser::Apply(TIntermNode *root)
         root->traverse(&traverser);
         if (traverser.mFound)
         {
-            traverser.updateTree();
+            if (!traverser.updateTree(compiler, root))
+            {
+                return false;
+            }
         }
     } while (traverser.mFound);
+
+    return true;
 }
 
 Traverser::Traverser() : TIntermTraverser(true, false, false) {}
@@ -102,9 +107,9 @@ bool Traverser::visitUnary(Visit visit, TIntermUnary *node)
 
 }  // anonymous namespace
 
-void RewriteUnaryMinusOperatorInt(TIntermNode *root)
+bool RewriteUnaryMinusOperatorInt(TCompiler *compiler, TIntermNode *root)
 {
-    Traverser::Apply(root);
+    return Traverser::Apply(compiler, root);
 }
 
 }  // namespace sh

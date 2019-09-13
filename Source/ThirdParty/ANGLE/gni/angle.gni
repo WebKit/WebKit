@@ -2,6 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import("//build/config/dcheck_always_on.gni")
 import("//build/config/sanitizers/sanitizers.gni")
 import("//build/config/ui.gni")  # import the use_x11 variable
 import("//build_overrides/angle.gni")
@@ -12,19 +13,15 @@ if (is_android) {
 }
 
 if (build_with_chromium) {
-  angle_root = "//third_party/angle"
-
   import("//ui/ozone/ozone.gni")
 } else {
-  angle_root = "//"
-
   declare_args() {
     ozone_platform_gbm = false
   }
 }
 
 # Subdirectory to place data files (e.g. layer JSON files).
-data_dir = "angledata"
+angle_data_dir = "angledata"
 
 declare_args() {
   if (current_cpu == "arm64" || current_cpu == "x64" ||
@@ -49,7 +46,13 @@ declare_args() {
         (angle_64bit_current_cpu && android64_ndk_api_level >= 26)
   }
   angle_shared_libvulkan = false
-  angle_libs_suffix = ""
+
+  # Default to using "_angle" suffix on Android
+  if (is_android) {
+    angle_libs_suffix = "_angle"
+  } else {
+    angle_libs_suffix = ""
+  }
 }
 
 declare_args() {
@@ -66,7 +69,6 @@ declare_args() {
   angle_enable_null = true
   angle_enable_essl = true
   angle_enable_glsl = true
-  angle_force_thread_safety = false
 }
 
 declare_args() {
@@ -76,18 +78,19 @@ declare_args() {
 
   # Disable the layers in ubsan builds because of really slow builds.
   angle_enable_vulkan_validation_layers =
-      angle_enable_vulkan && !is_ubsan && !is_tsan && !is_asan
+      angle_enable_vulkan && !is_ubsan && !is_tsan && !is_asan &&
+      (is_debug || dcheck_always_on)
 
   if (angle_enable_vulkan) {
     # Enable Vulkan GPU trace event capability
     angle_enable_vulkan_gpu_trace_events = false
 
-    # Disallow non-conformant configurations in official builds.
-    angle_vulkan_conformant_configs_only = is_official_build
-
     # Enable custom (cpu-side) secondary command buffers
     angle_enable_custom_vulkan_cmd_buffers = true
   }
+
+  # Disable overlay by default
+  angle_enable_overlay = false
 }
 
 if (is_win) {
@@ -95,14 +98,22 @@ if (is_win) {
 }
 
 angle_common_configs = [
+  angle_root + ":better_linux_stack_traces",
   angle_root + ":extra_warnings",
   angle_root + ":internal_config",
 ]
 
 angle_remove_configs = [ "//build/config/compiler:default_include_dirs" ]
+angle_better_stack_traces =
+    (is_debug || dcheck_always_on) && is_linux && !is_asan && !is_cfi
 
 if (is_clang) {
   angle_remove_configs += [ "//build/config/clang:find_bad_constructs" ]
+
+  # Disabled to enable better stack traces.
+  if (angle_better_stack_traces) {
+    angle_remove_configs += [ "//build/config/gcc:symbol_visibility_hidden" ]
+  }
 }
 
 set_defaults("angle_executable") {
@@ -229,6 +240,7 @@ template("angle_test") {
 
     configs += invoker.configs
     configs -= invoker.suppressed_configs
+    configs -= [ angle_root + ":extra_warnings" ]
 
     if (is_linux && !is_component_build) {
       # Set rpath to find shared libs in a non-component build.

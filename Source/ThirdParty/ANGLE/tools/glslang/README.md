@@ -14,7 +14,7 @@ to run [`scripts/run_code_generation.py`](../../scripts/run_code_generation.py)
 to update the compiled shader binaries.
 
 Please update both Windows and Linux binaries at the same time. Use two CLs. One
-for each platform. Note that we don't currently suport Mac on Vulkan. If we do
+for each platform. Note that we don't currently support Mac on Vulkan. If we do
 we should add a glslang download for Mac as well.
 
 Contact jmadill or syouseffi for any help with the validator or updating the binaries.

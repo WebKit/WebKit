@@ -1,3 +1,7 @@
+# This file is used to manage the dependencies of the ANGLE git repo. It is
+# used by gclient to determine what version of each dependency to check out, and
+# where.
+
 vars = {
   'android_git': 'https://android.googlesource.com',
   'chromium_git': 'https://chromium.googlesource.com',
@@ -8,17 +12,21 @@ vars = {
   # This variable is overrided in Chromium's DEPS file.
   'build_with_chromium': False,
 
+  # By default, do not check out angle-internal. This can be overridden e.g. with custom_vars.
+  # We overload Chromium's 'src-internal' for infra simplicity.
+  'checkout_src_internal': False,
+
   # Current revision of dEQP.
-  'deqp_revision': '66a49e0a43f7af654ee1de8a3b1bcaf6c0d14aa4',
+  'deqp_revision': 'd3eef28e67ce6795ba3a2124aaa977819729d45f',
 
   # Current revision of glslang, the Khronos SPIRV compiler.
-  'glslang_revision': '86c72c9486a97da534f97e56b8f7ae06cd1b580b',
+  'glslang_revision': '664ad418f8455159fb066e9e27d159f191f976a9',
 
   # Current revision fo the SPIRV-Headers Vulkan support library.
-  'spirv_headers_revision': '2434b89345a50c018c84f42a310b0fad4f3fd94f',
+  'spirv_headers_revision': '123dc278f204f8e833e1a88d31c46d0edf81d4b2',
 
   # Current revision of SPIRV-Tools for Vulkan.
-  'spirv_tools_revision': 'c8b09744c6a15f3586c26351376bf5c6f656e89f',
+  'spirv_tools_revision': '7f7236f1eba0afae2669ea777896f0435be4c96d',
 
   # Current revision of Khronos Vulkan-Headers.
   'vulkan_headers_revision': '982f0f84dccf6f281b48318c77261a9028000126',
@@ -35,18 +43,23 @@ vars = {
 
 deps = {
 
+  '{angle_root}/angle-internal': {
+    'url': 'https://chrome-internal.googlesource.com/angle/angle-internal.git@05522f9eb159afbbe35a246d5027893c56926a76',
+    'condition': 'checkout_src_internal',
+  },
+
   '{angle_root}/build': {
-    'url': '{chromium_git}/chromium/src/build.git@54ea0e7fd122348de2f73ac21d1b6eafb9b78969',
+    'url': '{chromium_git}/chromium/src/build.git@af1bbc9483aed572f1ea1a32e43bb504c3edb357',
     'condition': 'not build_with_chromium',
   },
 
   '{angle_root}/buildtools': {
-    'url': '{chromium_git}/chromium/src/buildtools.git@d5c58b84d50d256968271db459cd29b22bff1ba2',
+    'url': '{chromium_git}/chromium/src/buildtools.git@74cfb57006f83cfe050817526db359d5c8a11628',
     'condition': 'not build_with_chromium',
   },
 
   '{angle_root}/testing': {
-    'url': '{chromium_git}/chromium/src/testing@32e614b7ec7b2b741351c1b8470aaf30c2f532fa',
+    'url': '{chromium_git}/chromium/src/testing@78e8d947158ba72b0e457abc9ea3fb30c2252646',
     'condition': 'not build_with_chromium',
   },
 
@@ -61,13 +74,13 @@ deps = {
   },
 
   '{angle_root}/third_party/fuchsia-sdk': {
-    'url': '{chromium_git}/chromium/src/third_party/fuchsia-sdk.git@8e8db13b538ecb251e5ce9d5c781fc142f9752fd',
+    'url': '{chromium_git}/chromium/src/third_party/fuchsia-sdk.git@5fd29151cf35c0813c33cc368a7c78389e3f5caa',
     'condition': 'checkout_fuchsia and not build_with_chromium',
   },
 
   # glmark2 is a GPL3-licensed OpenGL ES 2.0 benchmark. We use it for testing.
   '{angle_root}/third_party/glmark2/src': {
-    'url': '{chromium_git}/external/github.com/glmark2/glmark2@c4b3ff5a481348e8bdc2b71ee275864db91e40b1',
+    'url': '{chromium_git}/external/github.com/glmark2/glmark2@9e01aef1a786b28aca73135a5b00f85c357e8f5e',
   },
 
   '{angle_root}/third_party/glslang/src': {
@@ -76,12 +89,12 @@ deps = {
   },
 
   '{angle_root}/third_party/googletest': {
-    'url': '{chromium_git}/chromium/src/third_party/googletest@d5024103c8a8977156ee800eb1c84d92dffe9fdf',
+    'url': '{chromium_git}/chromium/src/third_party/googletest@c721b68ddecc18bbc6b763b2fe8ab802c22f228a',
     'condition': 'not build_with_chromium',
   },
 
   '{angle_root}/third_party/googletest/src': {
-    'url': '{chromium_git}/external/github.com/google/googletest.git@9997a830ee5589c2da79198bc3b60d1c47e50118',
+    'url': '{chromium_git}/external/github.com/google/googletest.git@3f5b5b8f8493a03fa25f1e4a7eae7678514a431d',
     'condition': 'not build_with_chromium',
   },
 
@@ -97,17 +110,17 @@ deps = {
   },
 
   '{angle_root}/third_party/jsoncpp': {
-    'url': '{chromium_git}/chromium/src/third_party/jsoncpp@fd0ac8ce63a47e99b71a58f1489136fbb19c9137',
+    'url': '{chromium_git}/chromium/src/third_party/jsoncpp@48246a099549ab325c01f69f24a34fc72e5c42e4',
     'condition': 'not build_with_chromium',
    },
 
   '{angle_root}/third_party/jsoncpp/source': {
-    'url' : '{chromium_git}/external/github.com/open-source-parsers/jsoncpp@f572e8e42e22cfcf5ab0aea26574f408943edfa4',
+    'url' : '{chromium_git}/external/github.com/open-source-parsers/jsoncpp@645250b6690785be60ab6780ce4b58698d884d11',
     'condition': 'not build_with_chromium',
    },
 
   '{angle_root}/third_party/Python-Markdown': {
-    'url': '{chromium_git}/chromium/src/third_party/Python-Markdown@b08af21eb795e522e1b972cb85bff59edb1ae209',
+    'url': '{chromium_git}/chromium/src/third_party/Python-Markdown@36657c103ce5964733bbbb29377085e9cc1a9472',
     'condition': 'not build_with_chromium',
   },
 
@@ -164,7 +177,7 @@ deps = {
   },
 
   '{angle_root}/third_party/yasm': {
-    'url': '{chromium_git}/chromium/src/third_party/yasm@86b6058141a42aed51bbd8bb9f9d54d199d9dbd0',
+    'url': '{chromium_git}/chromium/src/third_party/yasm@15439370afd9df5359a0ff12244c2ccb2111c787',
     'condition': 'not build_with_chromium',
   },
 
@@ -174,17 +187,22 @@ deps = {
   },
 
   '{angle_root}/third_party/zlib': {
-    'url': '{chromium_git}/chromium/src/third_party/zlib@f95aeb0fa7f136ef4a457a6d9ba6f3c2701a444b',
+    'url': '{chromium_git}/chromium/src/third_party/zlib@0044d0424c7f7d15436541ed1ecc89479b8bfda4',
     'condition': 'not build_with_chromium',
   },
 
   '{angle_root}/tools/clang': {
-    'url': '{chromium_git}/chromium/src/tools/clang.git@210f1dc3ebf8504ae246d925e9110ec427eef43f',
+    'url': '{chromium_git}/chromium/src/tools/clang.git@2fef805e5b05b26a8c87c47865590b5f43218611',
     'condition': 'not build_with_chromium',
   },
 
   '{angle_root}/tools/md_browser': {
-    'url': '{chromium_git}/chromium/src/tools/md_browser@e9462696241f3ca832890473173e03e7bcfe6adc',
+    'url': '{chromium_git}/chromium/src/tools/md_browser@0bfd826f8566a99923e64a782908faca72bc457c',
+    'condition': 'not build_with_chromium',
+  },
+
+  '{angle_root}/tools/memory': {
+    'url': '{chromium_git}/chromium/src/tools/memory@89552acb6e60f528fe3c98eac7b445d4c34183ee',
     'condition': 'not build_with_chromium',
   },
 }
@@ -326,6 +344,9 @@ hooks = [
 ]
 
 recursedeps = [
+  # angle-internal has its own DEPS file to pull additional internal repos
+  '{angle_root}/angle-internal',
+
   # buildtools provides clang_format.
   '{angle_root}/buildtools',
 ]

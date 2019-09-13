@@ -63,7 +63,7 @@
 /* Copy the first part of user declarations.  */
 
 //
-// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -84,6 +84,9 @@
 #pragma warning(disable: 4505)
 #pragma warning(disable: 4701)
 #pragma warning(disable: 4702)
+#endif
+#if defined(__clang__)
+#pragma clang diagnostic ignored "-Wunreachable-code"
 #endif
 
 #include "angle_gl.h"
@@ -131,6 +134,7 @@ extern int yydebug;
 
 #define YYLTYPE TSourceLoc
 #define YYLTYPE_IS_DECLARED 1
+#define YYLTYPE_IS_TRIVIAL 1
 
 
 
@@ -406,20 +410,23 @@ extern void yyerror(YYLTYPE* yylloc, TParseContext* context, void *scanner, cons
     }  \
 } while (0)
 
+// TODO(http://anglebug.com/3819): Update for GL version specific validation
 #define ES2_ONLY(S, L) do {  \
-    if (context->getShaderVersion() != 100) {  \
+    if (context->getShaderVersion() != 100 && !IsDesktopGLSpec(context->getShaderSpec())) {  \
         context->error(L, " supported in GLSL ES 1.00 only", S);  \
     }  \
 } while (0)
 
+// TODO(http://anglebug.com/3819): Update for GL version specific validation
 #define ES3_OR_NEWER(TOKEN, LINE, REASON) do {  \
-    if (context->getShaderVersion() < 300) {  \
+    if (context->getShaderVersion() < 300 && !IsDesktopGLSpec(context->getShaderSpec())) {  \
         context->error(LINE, REASON " supported in GLSL ES 3.00 and above only", TOKEN);  \
     }  \
 } while (0)
 
+// TODO(http://anglebug.com/3819): Update for GL version specific validation
 #define ES3_1_ONLY(TOKEN, LINE, REASON) do {  \
-    if (context->getShaderVersion() != 310) {  \
+    if (context->getShaderVersion() != 310 && !IsDesktopGLSpec(context->getShaderSpec())) {  \
         context->error(LINE, REASON " supported in GLSL ES 3.10 only", TOKEN);  \
     }  \
 } while (0)
@@ -739,37 +746,37 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   253,   253,   254,   257,   264,   267,   272,   277,   282,
-     287,   296,   302,   305,   308,   311,   314,   317,   323,   330,
-     336,   339,   347,   350,   356,   359,   365,   369,   376,   384,
-     387,   390,   396,   399,   402,   405,   412,   413,   414,   415,
-     423,   424,   427,   430,   437,   438,   441,   447,   448,   452,
-     459,   460,   463,   466,   469,   475,   476,   479,   485,   486,
-     493,   494,   501,   502,   509,   510,   516,   517,   523,   524,
-     530,   531,   537,   538,   544,   545,   546,   547,   551,   552,
-     553,   557,   561,   565,   569,   576,   579,   585,   592,   599,
-     602,   605,   609,   613,   617,   621,   625,   632,   639,   642,
-     649,   657,   674,   684,   687,   693,   697,   701,   705,   712,
-     719,   722,   726,   730,   735,   742,   746,   750,   754,   759,
-     766,   770,   776,   779,   785,   789,   796,   802,   806,   810,
-     813,   816,   825,   830,   834,   837,   840,   843,   846,   850,
-     853,   857,   860,   863,   866,   869,   872,   879,   886,   889,
-     892,   898,   905,   908,   914,   917,   920,   923,   929,   932,
-     939,   944,   951,   956,   967,   970,   973,   976,   979,   982,
-     986,   990,   994,   998,  1002,  1006,  1010,  1014,  1018,  1022,
-    1026,  1030,  1034,  1038,  1042,  1046,  1050,  1054,  1058,  1062,
-    1066,  1073,  1076,  1079,  1082,  1085,  1088,  1091,  1094,  1097,
-    1100,  1103,  1106,  1109,  1112,  1115,  1118,  1121,  1124,  1127,
-    1130,  1133,  1136,  1146,  1153,  1160,  1163,  1166,  1169,  1172,
-    1175,  1178,  1181,  1184,  1187,  1190,  1193,  1196,  1199,  1202,
-    1210,  1210,  1213,  1213,  1219,  1222,  1228,  1231,  1238,  1242,
-    1248,  1251,  1257,  1261,  1265,  1266,  1272,  1273,  1274,  1275,
-    1276,  1277,  1278,  1282,  1286,  1286,  1286,  1293,  1294,  1298,
-    1298,  1299,  1299,  1304,  1308,  1315,  1319,  1326,  1327,  1331,
-    1337,  1341,  1350,  1350,  1357,  1360,  1366,  1370,  1376,  1376,
-    1381,  1381,  1385,  1385,  1393,  1396,  1402,  1405,  1411,  1415,
-    1422,  1425,  1428,  1431,  1434,  1442,  1448,  1454,  1457,  1463,
-    1463
+       0,   251,   251,   252,   255,   262,   265,   270,   275,   280,
+     285,   294,   300,   303,   306,   309,   312,   315,   321,   328,
+     334,   337,   345,   348,   354,   357,   363,   367,   374,   382,
+     385,   388,   394,   397,   400,   403,   410,   411,   412,   413,
+     421,   422,   425,   428,   435,   436,   439,   445,   446,   450,
+     457,   458,   461,   464,   467,   473,   474,   477,   483,   484,
+     491,   492,   499,   500,   507,   508,   514,   515,   521,   522,
+     528,   529,   535,   536,   542,   543,   544,   545,   549,   550,
+     551,   555,   559,   563,   567,   574,   577,   583,   590,   597,
+     600,   603,   607,   611,   615,   619,   623,   630,   637,   640,
+     647,   655,   672,   682,   685,   691,   695,   699,   703,   710,
+     717,   720,   724,   728,   733,   740,   744,   748,   752,   757,
+     764,   768,   774,   777,   783,   787,   794,   800,   804,   808,
+     811,   814,   823,   828,   832,   835,   838,   841,   844,   848,
+     851,   855,   858,   861,   864,   867,   870,   877,   884,   887,
+     890,   896,   903,   906,   912,   915,   918,   921,   927,   930,
+     937,   942,   949,   954,   965,   968,   971,   974,   977,   980,
+     984,   988,   992,   996,  1000,  1004,  1008,  1012,  1016,  1020,
+    1024,  1028,  1032,  1036,  1040,  1044,  1048,  1052,  1056,  1060,
+    1064,  1071,  1074,  1077,  1080,  1083,  1086,  1089,  1092,  1095,
+    1098,  1101,  1104,  1107,  1110,  1113,  1116,  1119,  1122,  1125,
+    1128,  1131,  1134,  1144,  1151,  1158,  1161,  1164,  1167,  1170,
+    1173,  1176,  1179,  1182,  1185,  1188,  1191,  1194,  1197,  1200,
+    1208,  1208,  1211,  1211,  1217,  1220,  1226,  1229,  1236,  1240,
+    1246,  1249,  1255,  1259,  1263,  1264,  1270,  1271,  1272,  1273,
+    1274,  1275,  1276,  1280,  1284,  1284,  1284,  1291,  1292,  1296,
+    1296,  1297,  1297,  1302,  1306,  1313,  1317,  1324,  1325,  1329,
+    1335,  1339,  1348,  1348,  1355,  1358,  1364,  1368,  1374,  1374,
+    1379,  1379,  1383,  1383,  1391,  1394,  1400,  1403,  1409,  1413,
+    1420,  1423,  1426,  1429,  1432,  1440,  1446,  1452,  1455,  1461,
+    1461
 };
 #endif
 
@@ -3736,7 +3743,7 @@ yyreduce:
   case 151:
 
     {
-       ES3_OR_NEWER("layout", (yylsp[-3]), "qualifier");
+        ES3_OR_NEWER("layout", (yylsp[-3]), "qualifier");
         (yyval.interm.layoutQualifier) = (yyvsp[-1].interm.layoutQualifier);
     }
 
@@ -5200,4 +5207,3 @@ yyreturn:
 int glslang_parse(TParseContext* context) {
     return yyparse(context, context->getScanner());
 }
- 

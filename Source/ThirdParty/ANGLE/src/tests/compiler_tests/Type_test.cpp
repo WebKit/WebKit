@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2018 The ANGLE Project Authors. All rights reserved.
+// Copyright 2018 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -43,17 +43,24 @@ TEST(Type, VectorAndMatrixMangledNameConsistent)
 // Verify that basic type mangled names are unique.
 TEST(Type, BaseTypeMangledNamesUnique)
 {
-    std::set<char> uniqueNames;
+    // Types have either a 0-prefix or a 1-prefix
+    std::set<char> uniqueNames0;
+    std::set<char> uniqueNames1;
     for (int i = static_cast<int>(EbtVoid); i < static_cast<int>(EbtLast); ++i)
     {
         if (i == static_cast<int>(EbtStruct) || i == static_cast<int>(EbtInterfaceBlock))
         {
             continue;
         }
-        char mangledName = GetBasicMangledName(static_cast<TBasicType>(i));
-        if (mangledName != '{')
+        TBasicMangledName typeName(static_cast<TBasicType>(i));
+        char *mangledName = typeName.getName();
+        static_assert(TBasicMangledName::mangledNameSize == 2, "Mangled name size is not 2");
+        if (mangledName[0] != '{')
         {
-            ASSERT_TRUE(uniqueNames.insert(mangledName).second);
+            if (mangledName[0] == '0')
+                ASSERT_TRUE(uniqueNames0.insert(mangledName[1]).second);
+            if (mangledName[0] == '1')
+                ASSERT_TRUE(uniqueNames1.insert(mangledName[1]).second);
         }
     }
 }

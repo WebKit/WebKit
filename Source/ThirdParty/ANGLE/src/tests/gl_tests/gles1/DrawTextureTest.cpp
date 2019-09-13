@@ -28,19 +28,14 @@ class DrawTextureTest : public ANGLETest
         setConfigDepthBits(24);
     }
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
         mTexture.reset(new GLTexture());
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, mTexture->get());
     }
 
-    void TearDown() override
-    {
-        mTexture.reset();
-        ANGLETest::TearDown();
-    }
+    void testTearDown() override { mTexture.reset(); }
 
     std::unique_ptr<GLTexture> mTexture;
 };
@@ -138,4 +133,4 @@ TEST_P(DrawTextureTest, ColorArrayNotUsed)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
-ANGLE_INSTANTIATE_TEST(DrawTextureTest, ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES());
+ANGLE_INSTANTIATE_TEST(DrawTextureTest, ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES(), ES1_VULKAN());

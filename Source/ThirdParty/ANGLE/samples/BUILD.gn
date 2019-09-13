@@ -28,9 +28,9 @@ angle_static_library("sample_util") {
     "sample_util/tga_utils.h",
   ]
   data_deps = [
-    "../:libEGL${angle_libs_suffix}",
-    "../:libGLESv1_CM${angle_libs_suffix}",
-    "../:libGLESv2${angle_libs_suffix}",
+    "../:libEGL",
+    "../:libGLESv1_CM",
+    "../:libGLESv2",
   ]
   public_deps = [
     "../:angle_common",

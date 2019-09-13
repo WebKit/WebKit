@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -98,8 +98,9 @@ ImmutableString TOutputGLSL::translateTextureFunction(const ImmutableString &nam
         // Extensions
         "texture2DLodEXT", "textureLod", "texture2DProjLodEXT", "textureProjLod",
         "textureCubeLodEXT", "textureLod", "texture2DGradEXT", "textureGrad",
-        "texture2DProjGradEXT", "textureProjGrad", "textureCubeGradEXT", "textureGrad", nullptr,
-        nullptr};
+        "texture2DProjGradEXT", "textureProjGrad", "textureCubeGradEXT", "textureGrad", "texture3D",
+        "texture", "texture3DProj", "textureProj", "texture3DLod", "textureLod", "texture3DProjLod",
+        "textureProjLod", nullptr, nullptr};
     const char **mapping =
         (sh::IsGLSL130OrNewer(getShaderOutput())) ? legacyToCoreRename : simpleRename;
 

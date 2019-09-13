@@ -60,10 +60,8 @@ class SwizzleTest : public ANGLETest
         }
     }
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         constexpr char kVS[] = R"(precision highp float;
 attribute vec4 position;
 varying vec2 texcoord;
@@ -93,12 +91,10 @@ void main()
         ASSERT_GL_NO_ERROR();
     }
 
-    void TearDown() override
+    void testTearDown() override
     {
         glDeleteProgram(mProgram);
         glDeleteTextures(1, &mTexture);
-
-        ANGLETest::TearDown();
     }
 
     template <typename T>
@@ -204,10 +200,8 @@ void main()
 class SwizzleIntegerTest : public SwizzleTest
 {
   protected:
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         constexpr char kVS[] =
             "#version 300 es\n"
             "precision highp float;\n"
@@ -293,6 +287,7 @@ TEST_P(SwizzleTest, RGBA32F_2D)
 
 TEST_P(SwizzleTest, RGB32F_2D)
 {
+    ANGLE_SKIP_TEST_IF(IsVulkan());  // anglebug.com/2898 - float textures
     GLfloat data[] = {0.1f, 0.2f, 0.3f};
     init2DTexture(GL_RGB32F, GL_RGB, GL_FLOAT, data);
     runTest2D();
@@ -328,6 +323,7 @@ TEST_P(SwizzleTest, D16_2D)
 
 TEST_P(SwizzleTest, D24_2D)
 {
+    ANGLE_SKIP_TEST_IF(IsVulkan() && IsAMD() && IsWindows());  // anglebug.com/3545
     GLuint data[] = {0xFFFF};
     init2DTexture(GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, data);
     runTest2D();
@@ -386,7 +382,7 @@ TEST_P(SwizzleTest, LA32F_2D)
     runTest2D();
 }
 
-#include "media/pixel.inl"
+#include "media/pixel.inc"
 
 TEST_P(SwizzleTest, CompressedDXT_2D)
 {
@@ -399,6 +395,7 @@ TEST_P(SwizzleTest, CompressedDXT_2D)
 
 TEST_P(SwizzleIntegerTest, RGB8UI_2D)
 {
+    ANGLE_SKIP_TEST_IF(IsVulkan());  // anglebug.com/3196 - integer textures
     GLubyte data[] = {77, 66, 55};
     init2DTexture(GL_RGB8UI, GL_RGB_INTEGER, GL_UNSIGNED_BYTE, data);
     runTest2D();
@@ -435,13 +432,7 @@ TEST_P(SwizzleTest, SubUpdate)
     EXPECT_PIXEL_COLOR_EQ(0, 0, expectedUpdateData);
 }
 
-// Use this to select which configurations (e.g. which renderer, which GLES major version) these
-// tests should be run against.
-ANGLE_INSTANTIATE_TEST(SwizzleTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGL(3, 3), ES3_OPENGLES());
-ANGLE_INSTANTIATE_TEST(SwizzleIntegerTest,
-                       ES3_D3D11(),
-                       ES3_OPENGL(),
-                       ES3_OPENGL(3, 3),
-                       ES3_OPENGLES());
+ANGLE_INSTANTIATE_TEST(SwizzleTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES(), ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST(SwizzleIntegerTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES(), ES3_VULKAN());
 
 }  // namespace

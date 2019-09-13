@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -37,6 +37,7 @@ class ProgramPipeline;
 class Renderbuffer;
 class Sampler;
 class Shader;
+class Semaphore;
 class Texture;
 
 template <typename HandleAllocatorType>
@@ -58,17 +59,17 @@ class ResourceManagerBase : angle::NonCopyable
     size_t mRefCount;
 };
 
-template <typename ResourceType, typename HandleAllocatorType, typename ImplT>
+template <typename ResourceType, typename HandleAllocatorType, typename ImplT, typename IDType>
 class TypedResourceManager : public ResourceManagerBase<HandleAllocatorType>
 {
   public:
     TypedResourceManager() {}
 
-    void deleteObject(const Context *context, GLuint handle);
-    ANGLE_INLINE bool isHandleGenerated(GLuint handle) const
+    void deleteObject(const Context *context, IDType handle);
+    ANGLE_INLINE bool isHandleGenerated(IDType handle) const
     {
         // Zero is always assumed to have been generated implicitly.
-        return handle == 0 || mObjectMap.contains(handle);
+        return GetIDValue(handle) == 0 || mObjectMap.contains(handle);
     }
 
   protected:
@@ -77,7 +78,7 @@ class TypedResourceManager : public ResourceManagerBase<HandleAllocatorType>
     // Inlined in the header for performance.
     template <typename... ArgTypes>
     ANGLE_INLINE ResourceType *checkObjectAllocation(rx::GLImplFactory *factory,
-                                                     GLuint handle,
+                                                     IDType handle,
                                                      ArgTypes... args)
     {
         ResourceType *value = mObjectMap.query(handle);
@@ -86,7 +87,7 @@ class TypedResourceManager : public ResourceManagerBase<HandleAllocatorType>
             return value;
         }
 
-        if (handle == 0)
+        if (GetIDValue(handle) == 0)
         {
             return nullptr;
         }
@@ -96,19 +97,19 @@ class TypedResourceManager : public ResourceManagerBase<HandleAllocatorType>
 
     void reset(const Context *context) override;
 
-    ResourceMap<ResourceType> mObjectMap;
+    ResourceMap<ResourceType, IDType> mObjectMap;
 
   private:
     template <typename... ArgTypes>
     ResourceType *checkObjectAllocationImpl(rx::GLImplFactory *factory,
-                                            GLuint handle,
+                                            IDType handle,
                                             ArgTypes... args)
     {
         ResourceType *object = ImplT::AllocateNewObject(factory, handle, args...);
 
         if (!mObjectMap.contains(handle))
         {
-            this->mHandleAllocator.reserve(handle);
+            this->mHandleAllocator.reserve(GetIDValue(handle));
         }
         mObjectMap.assign(handle, object);
 
@@ -116,19 +117,19 @@ class TypedResourceManager : public ResourceManagerBase<HandleAllocatorType>
     }
 };
 
-class BufferManager : public TypedResourceManager<Buffer, HandleAllocator, BufferManager>
+class BufferManager : public TypedResourceManager<Buffer, HandleAllocator, BufferManager, BufferID>
 {
   public:
-    GLuint createBuffer();
-    Buffer *getBuffer(GLuint handle) const;
+    BufferID createBuffer();
+    Buffer *getBuffer(BufferID handle) const;
 
-    ANGLE_INLINE Buffer *checkBufferAllocation(rx::GLImplFactory *factory, GLuint handle)
+    ANGLE_INLINE Buffer *checkBufferAllocation(rx::GLImplFactory *factory, BufferID handle)
     {
         return checkObjectAllocation(factory, handle);
     }
 
     // TODO(jmadill): Investigate design which doesn't expose these methods publicly.
-    static Buffer *AllocateNewObject(rx::GLImplFactory *factory, GLuint handle);
+    static Buffer *AllocateNewObject(rx::GLImplFactory *factory, BufferID handle);
     static void DeleteObject(const Context *context, Buffer *buffer);
 
   protected:
@@ -140,50 +141,58 @@ class ShaderProgramManager : public ResourceManagerBase<HandleAllocator>
   public:
     ShaderProgramManager();
 
-    GLuint createShader(rx::GLImplFactory *factory,
-                        const Limitations &rendererLimitations,
-                        ShaderType type);
-    void deleteShader(const Context *context, GLuint shader);
-    Shader *getShader(GLuint handle) const;
+    ShaderProgramID createShader(rx::GLImplFactory *factory,
+                                 const Limitations &rendererLimitations,
+                                 ShaderType type);
+    void deleteShader(const Context *context, ShaderProgramID shader);
+    Shader *getShader(ShaderProgramID handle) const;
 
-    GLuint createProgram(rx::GLImplFactory *factory);
-    void deleteProgram(const Context *context, GLuint program);
+    ShaderProgramID createProgram(rx::GLImplFactory *factory);
+    void deleteProgram(const Context *context, ShaderProgramID program);
 
-    ANGLE_INLINE Program *getProgram(GLuint handle) const { return mPrograms.query(handle); }
+    ANGLE_INLINE Program *getProgram(ShaderProgramID handle) const
+    {
+        return mPrograms.query(handle);
+    }
 
   protected:
     ~ShaderProgramManager() override;
 
   private:
-    template <typename ObjectType>
-    void deleteObject(const Context *context, ResourceMap<ObjectType> *objectMap, GLuint id);
+    template <typename ObjectType, typename IDType>
+    void deleteObject(const Context *context,
+                      ResourceMap<ObjectType, IDType> *objectMap,
+                      IDType id);
 
     void reset(const Context *context) override;
 
-    ResourceMap<Shader> mShaders;
-    ResourceMap<Program> mPrograms;
+    ResourceMap<Shader, ShaderProgramID> mShaders;
+    ResourceMap<Program, ShaderProgramID> mPrograms;
 };
 
-class TextureManager : public TypedResourceManager<Texture, HandleAllocator, TextureManager>
+class TextureManager
+    : public TypedResourceManager<Texture, HandleAllocator, TextureManager, TextureID>
 {
   public:
-    GLuint createTexture();
-    ANGLE_INLINE Texture *getTexture(GLuint handle) const
+    TextureID createTexture();
+    ANGLE_INLINE Texture *getTexture(TextureID handle) const
     {
-        ASSERT(mObjectMap.query(0) == nullptr);
+        ASSERT(mObjectMap.query({0}) == nullptr);
         return mObjectMap.query(handle);
     }
 
-    void signalAllTexturesDirty(const Context *context) const;
+    void signalAllTexturesDirty() const;
 
     ANGLE_INLINE Texture *checkTextureAllocation(rx::GLImplFactory *factory,
-                                                 GLuint handle,
+                                                 TextureID handle,
                                                  TextureType type)
     {
         return checkObjectAllocation(factory, handle, type);
     }
 
-    static Texture *AllocateNewObject(rx::GLImplFactory *factory, GLuint handle, TextureType type);
+    static Texture *AllocateNewObject(rx::GLImplFactory *factory,
+                                      TextureID handle,
+                                      TextureType type);
     static void DeleteObject(const Context *context, Texture *texture);
 
     void enableHandleAllocatorLogging();
@@ -192,45 +201,48 @@ class TextureManager : public TypedResourceManager<Texture, HandleAllocator, Tex
     ~TextureManager() override {}
 };
 
-class RenderbufferManager
-    : public TypedResourceManager<Renderbuffer, HandleAllocator, RenderbufferManager>
+class RenderbufferManager : public TypedResourceManager<Renderbuffer,
+                                                        HandleAllocator,
+                                                        RenderbufferManager,
+                                                        RenderbufferID>
 {
   public:
-    GLuint createRenderbuffer();
-    Renderbuffer *getRenderbuffer(GLuint handle) const;
+    RenderbufferID createRenderbuffer();
+    Renderbuffer *getRenderbuffer(RenderbufferID handle) const;
 
-    Renderbuffer *checkRenderbufferAllocation(rx::GLImplFactory *factory, GLuint handle)
+    Renderbuffer *checkRenderbufferAllocation(rx::GLImplFactory *factory, RenderbufferID handle)
     {
         return checkObjectAllocation(factory, handle);
     }
 
-    static Renderbuffer *AllocateNewObject(rx::GLImplFactory *factory, GLuint handle);
+    static Renderbuffer *AllocateNewObject(rx::GLImplFactory *factory, RenderbufferID handle);
     static void DeleteObject(const Context *context, Renderbuffer *renderbuffer);
 
   protected:
     ~RenderbufferManager() override {}
 };
 
-class SamplerManager : public TypedResourceManager<Sampler, HandleAllocator, SamplerManager>
+class SamplerManager
+    : public TypedResourceManager<Sampler, HandleAllocator, SamplerManager, SamplerID>
 {
   public:
-    GLuint createSampler();
-    Sampler *getSampler(GLuint handle) const;
-    bool isSampler(GLuint sampler) const;
+    SamplerID createSampler();
+    Sampler *getSampler(SamplerID handle) const;
+    bool isSampler(SamplerID sampler) const;
 
-    Sampler *checkSamplerAllocation(rx::GLImplFactory *factory, GLuint handle)
+    Sampler *checkSamplerAllocation(rx::GLImplFactory *factory, SamplerID handle)
     {
         return checkObjectAllocation(factory, handle);
     }
 
-    static Sampler *AllocateNewObject(rx::GLImplFactory *factory, GLuint handle);
+    static Sampler *AllocateNewObject(rx::GLImplFactory *factory, SamplerID handle);
     static void DeleteObject(const Context *context, Sampler *sampler);
 
   protected:
     ~SamplerManager() override {}
 };
 
-class SyncManager : public TypedResourceManager<Sync, HandleAllocator, SyncManager>
+class SyncManager : public TypedResourceManager<Sync, HandleAllocator, SyncManager, GLuint>
 {
   public:
     GLuint createSync(rx::GLImplFactory *factory);
@@ -247,38 +259,38 @@ class PathManager : public ResourceManagerBase<HandleRangeAllocator>
   public:
     PathManager();
 
-    angle::Result createPaths(Context *context, GLsizei range, GLuint *numCreated);
-    void deletePaths(GLuint first, GLsizei range);
-    Path *getPath(GLuint handle) const;
-    bool hasPath(GLuint handle) const;
+    angle::Result createPaths(Context *context, GLsizei range, PathID *numCreated);
+    void deletePaths(PathID first, GLsizei range);
+    Path *getPath(PathID handle) const;
+    bool hasPath(PathID handle) const;
 
   protected:
     ~PathManager() override;
     void reset(const Context *context) override;
 
   private:
-    ResourceMap<Path> mPaths;
+    ResourceMap<Path, PathID> mPaths;
 };
 
 class FramebufferManager
-    : public TypedResourceManager<Framebuffer, HandleAllocator, FramebufferManager>
+    : public TypedResourceManager<Framebuffer, HandleAllocator, FramebufferManager, FramebufferID>
 {
   public:
-    GLuint createFramebuffer();
-    Framebuffer *getFramebuffer(GLuint handle) const;
+    FramebufferID createFramebuffer();
+    Framebuffer *getFramebuffer(FramebufferID handle) const;
     void setDefaultFramebuffer(Framebuffer *framebuffer);
 
-    void invalidateFramebufferComplenessCache(const Context *context) const;
+    void invalidateFramebufferCompletenessCache() const;
 
     Framebuffer *checkFramebufferAllocation(rx::GLImplFactory *factory,
                                             const Caps &caps,
-                                            GLuint handle)
+                                            FramebufferID handle)
     {
         return checkObjectAllocation<const Caps &>(factory, handle, caps);
     }
 
     static Framebuffer *AllocateNewObject(rx::GLImplFactory *factory,
-                                          GLuint handle,
+                                          FramebufferID handle,
                                           const Caps &caps);
     static void DeleteObject(const Context *context, Framebuffer *framebuffer);
 
@@ -286,19 +298,22 @@ class FramebufferManager
     ~FramebufferManager() override {}
 };
 
-class ProgramPipelineManager
-    : public TypedResourceManager<ProgramPipeline, HandleAllocator, ProgramPipelineManager>
+class ProgramPipelineManager : public TypedResourceManager<ProgramPipeline,
+                                                           HandleAllocator,
+                                                           ProgramPipelineManager,
+                                                           ProgramPipelineID>
 {
   public:
-    GLuint createProgramPipeline();
-    ProgramPipeline *getProgramPipeline(GLuint handle) const;
+    ProgramPipelineID createProgramPipeline();
+    ProgramPipeline *getProgramPipeline(ProgramPipelineID handle) const;
 
-    ProgramPipeline *checkProgramPipelineAllocation(rx::GLImplFactory *factory, GLuint handle)
+    ProgramPipeline *checkProgramPipelineAllocation(rx::GLImplFactory *factory,
+                                                    ProgramPipelineID handle)
     {
         return checkObjectAllocation(factory, handle);
     }
 
-    static ProgramPipeline *AllocateNewObject(rx::GLImplFactory *factory, GLuint handle);
+    static ProgramPipeline *AllocateNewObject(rx::GLImplFactory *factory, ProgramPipelineID handle);
     static void DeleteObject(const Context *context, ProgramPipeline *pipeline);
 
   protected:
@@ -310,9 +325,9 @@ class MemoryObjectManager : public ResourceManagerBase<HandleAllocator>
   public:
     MemoryObjectManager();
 
-    GLuint createMemoryObject(rx::GLImplFactory *factory);
-    void deleteMemoryObject(const Context *context, GLuint handle);
-    MemoryObject *getMemoryObject(GLuint handle) const;
+    MemoryObjectID createMemoryObject(rx::GLImplFactory *factory);
+    void deleteMemoryObject(const Context *context, MemoryObjectID handle);
+    MemoryObject *getMemoryObject(MemoryObjectID handle) const;
 
   protected:
     ~MemoryObjectManager() override;
@@ -320,7 +335,25 @@ class MemoryObjectManager : public ResourceManagerBase<HandleAllocator>
   private:
     void reset(const Context *context) override;
 
-    ResourceMap<MemoryObject> mMemoryObjects;
+    ResourceMap<MemoryObject, MemoryObjectID> mMemoryObjects;
+};
+
+class SemaphoreManager : public ResourceManagerBase<HandleAllocator>
+{
+  public:
+    SemaphoreManager();
+
+    SemaphoreID createSemaphore(rx::GLImplFactory *factory);
+    void deleteSemaphore(const Context *context, SemaphoreID handle);
+    Semaphore *getSemaphore(SemaphoreID handle) const;
+
+  protected:
+    ~SemaphoreManager() override;
+
+  private:
+    void reset(const Context *context) override;
+
+    ResourceMap<Semaphore, SemaphoreID> mSemaphores;
 };
 
 }  // namespace gl

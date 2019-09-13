@@ -23,7 +23,7 @@
 #include "libANGLE/renderer/gl/RendererGL.h"
 #include "libANGLE/renderer/gl/ShaderGL.h"
 #include "libANGLE/renderer/gl/StateManagerGL.h"
-#include "libANGLE/renderer/gl/WorkaroundsGL.h"
+#include "platform/FeaturesGL.h"
 #include "platform/Platform.h"
 
 namespace rx
@@ -31,13 +31,13 @@ namespace rx
 
 ProgramGL::ProgramGL(const gl::ProgramState &data,
                      const FunctionsGL *functions,
-                     const WorkaroundsGL &workarounds,
+                     const angle::FeaturesGL &features,
                      StateManagerGL *stateManager,
                      bool enablePathRendering,
                      const std::shared_ptr<RendererGL> &renderer)
     : ProgramImpl(data),
       mFunctions(functions),
-      mWorkarounds(workarounds),
+      mFeatures(features),
       mStateManager(stateManager),
       mEnablePathRendering(enablePathRendering),
       mMultiviewBaseViewLayerIndexUniformLocation(-1),
@@ -104,8 +104,8 @@ void ProgramGL::save(const gl::Context *context, gl::BinaryOutputStream *stream)
 void ProgramGL::reapplyUBOBindingsIfNeeded(const gl::Context *context)
 {
     // Re-apply UBO bindings to work around driver bugs.
-    const WorkaroundsGL &workaroundsGL = GetImplAs<ContextGL>(context)->getWorkaroundsGL();
-    if (workaroundsGL.reapplyUBOBindingsAfterUsingBinaryProgram)
+    const angle::FeaturesGL &features = GetImplAs<ContextGL>(context)->getFeaturesGL();
+    if (features.reapplyUBOBindingsAfterUsingBinaryProgram.enabled)
     {
         const auto &blocks = mState.getUniformBlocks();
         for (size_t blockIndex : mState.getActiveUniformBlockBindingsMask())
@@ -256,23 +256,18 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
                 &transformFeedbackVaryings[0], mState.getTransformFeedbackBufferMode());
         }
 
-        const ShaderGL *vertexShaderGL =
-            GetImplAs<ShaderGL>(mState.getAttachedShader(gl::ShaderType::Vertex));
-        const ShaderGL *fragmentShaderGL =
-            GetImplAs<ShaderGL>(mState.getAttachedShader(gl::ShaderType::Fragment));
-        const ShaderGL *geometryShaderGL = rx::SafeGetImplAs<ShaderGL, gl::Shader>(
-            mState.getAttachedShader(gl::ShaderType::Geometry));
-
-        // Attach the shaders
-        mFunctions->attachShader(mProgramID, vertexShaderGL->getShaderID());
-        mFunctions->attachShader(mProgramID, fragmentShaderGL->getShaderID());
-        if (geometryShaderGL)
+        for (const gl::ShaderType shaderType : gl::kAllGraphicsShaderTypes)
         {
-            mFunctions->attachShader(mProgramID, geometryShaderGL->getShaderID());
+            const ShaderGL *shaderGL =
+                rx::SafeGetImplAs<ShaderGL, gl::Shader>(mState.getAttachedShader(shaderType));
+            if (shaderGL)
+            {
+                mFunctions->attachShader(mProgramID, shaderGL->getShaderID());
+            }
         }
 
         // Bind attribute locations to match the GL layer.
-        for (const sh::Attribute &attribute : mState.getAttributes())
+        for (const sh::ShaderVariable &attribute : mState.getAttributes())
         {
             if (!attribute.active || attribute.isBuiltIn())
             {
@@ -288,7 +283,8 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
         // Otherwise shader-assigned locations will work.
         if (context->getExtensions().blendFuncExtended)
         {
-            if (mState.getAttachedShader(gl::ShaderType::Fragment)->getShaderVersion() == 100)
+            gl::Shader *fragmentShader = mState.getAttachedShader(gl::ShaderType::Fragment);
+            if (fragmentShader && fragmentShader->getShaderVersion() == 100)
             {
                 // TODO(http://anglebug.com/2833): The bind done below is only valid in case the
                 // compiler transforms the shader outputs to the angle/webgl prefixed ones. If we
@@ -354,7 +350,7 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
                     if (outputLocation.arrayIndex == 0 && outputLocation.used() &&
                         !outputLocation.ignored)
                     {
-                        const sh::OutputVariable &outputVar =
+                        const sh::ShaderVariable &outputVar =
                             mState.getOutputVariables()[outputLocation.index];
                         if (outputVar.location == -1)
                         {
@@ -364,7 +360,8 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
                             // set either.
                             ASSERT(outputVar.index == -1);
                             mFunctions->bindFragDataLocationIndexed(
-                                mProgramID, static_cast<int>(outputLocationIndex), 0, outputVar.mappedName.c_str());
+                                mProgramID, static_cast<int>(outputLocationIndex), 0,
+                                outputVar.mappedName.c_str());
                         }
                     }
                 }
@@ -376,7 +373,7 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
                     if (outputLocation.arrayIndex == 0 && outputLocation.used() &&
                         !outputLocation.ignored)
                     {
-                        const sh::OutputVariable &outputVar =
+                        const sh::ShaderVariable &outputVar =
                             mState.getOutputVariables()[outputLocation.index];
                         if (outputVar.location == -1 || outputVar.index == -1)
                         {
@@ -386,7 +383,8 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
                             // the index set either.
                             ASSERT(outputVar.index == -1);
                             mFunctions->bindFragDataLocationIndexed(
-                                mProgramID, static_cast<int>(outputLocationIndex), 1, outputVar.mappedName.c_str());
+                                mProgramID, static_cast<int>(outputLocationIndex), 1,
+                                outputVar.mappedName.c_str());
                         }
                     }
                 }
@@ -432,19 +430,14 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
         }
         else
         {
-            const ShaderGL *vertexShaderGL =
-                GetImplAs<ShaderGL>(mState.getAttachedShader(gl::ShaderType::Vertex));
-            const ShaderGL *fragmentShaderGL =
-                GetImplAs<ShaderGL>(mState.getAttachedShader(gl::ShaderType::Fragment));
-            const ShaderGL *geometryShaderGL = rx::SafeGetImplAs<ShaderGL, gl::Shader>(
-                mState.getAttachedShader(gl::ShaderType::Geometry));
-
-            // Detach the shaders
-            mFunctions->detachShader(mProgramID, vertexShaderGL->getShaderID());
-            mFunctions->detachShader(mProgramID, fragmentShaderGL->getShaderID());
-            if (geometryShaderGL)
+            for (const gl::ShaderType shaderType : gl::kAllGraphicsShaderTypes)
             {
-                mFunctions->detachShader(mProgramID, geometryShaderGL->getShaderID());
+                const ShaderGL *shaderGL =
+                    rx::SafeGetImplAs<ShaderGL>(mState.getAttachedShader(shaderType));
+                if (shaderGL)
+                {
+                    mFunctions->detachShader(mProgramID, shaderGL->getShaderID());
+                }
             }
         }
         // Verify the link
@@ -453,7 +446,7 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
             return angle::Result::Incomplete;
         }
 
-        if (mWorkarounds.alwaysCallUseProgramAfterLink)
+        if (mFeatures.alwaysCallUseProgramAfterLink.enabled)
         {
             mStateManager->forceUseProgram(mProgramID);
         }
@@ -470,7 +463,7 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
         return std::make_unique<LinkEventNativeParallel>(postLinkImplTask, mFunctions, mProgramID);
     }
     else if (workerPool->isAsync() &&
-             (!mWorkarounds.dontRelinkProgramsInParallel || !mLinkedInParallel))
+             (!mFeatures.dontRelinkProgramsInParallel.enabled || !mLinkedInParallel))
     {
         mLinkedInParallel = true;
         return std::make_unique<LinkEventGL>(workerPool, linkTask, postLinkImplTask);

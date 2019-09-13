@@ -66,10 +66,8 @@ class ReadPixelsPBOTest : public ReadPixelsTest
   protected:
     ReadPixelsPBOTest() : mPBO(0), mTexture(0), mFBO(0) {}
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         glGenBuffers(1, &mPBO);
         glGenFramebuffers(1, &mFBO);
 
@@ -94,13 +92,11 @@ class ReadPixelsPBOTest : public ReadPixelsTest
         ASSERT_GL_NO_ERROR();
     }
 
-    void TearDown() override
+    void testTearDown() override
     {
         glDeleteBuffers(1, &mPBO);
         glDeleteTextures(1, &mTexture);
         glDeleteFramebuffers(1, &mFBO);
-
-        ANGLETest::TearDown();
     }
 
     GLuint mPBO     = 0;
@@ -282,9 +278,9 @@ class ReadPixelsPBODrawTest : public ReadPixelsPBOTest
   protected:
     ReadPixelsPBODrawTest() : mProgram(0), mPositionVBO(0) {}
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ReadPixelsPBOTest::SetUp();
+        ReadPixelsPBOTest::testSetUp();
 
         constexpr char kVS[] =
             "attribute vec4 aTest; attribute vec2 aPosition; varying vec4 vTest;\n"
@@ -311,11 +307,11 @@ class ReadPixelsPBODrawTest : public ReadPixelsPBOTest
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
-    void TearDown() override
+    void testTearDown() override
     {
         glDeleteProgram(mProgram);
         glDeleteBuffers(1, &mPositionVBO);
-        ReadPixelsPBOTest::TearDown();
+        ReadPixelsPBOTest::testTearDown();
     }
 
     GLuint mProgram;
@@ -376,10 +372,8 @@ class ReadPixelsMultisampleTest : public ReadPixelsTest
   protected:
     ReadPixelsMultisampleTest() : mFBO(0), mRBO(0), mPBO(0) {}
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         glGenFramebuffers(1, &mFBO);
         glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
 
@@ -395,10 +389,8 @@ class ReadPixelsMultisampleTest : public ReadPixelsTest
         ASSERT_GL_NO_ERROR();
     }
 
-    void TearDown() override
+    void testTearDown() override
     {
-        ANGLETest::TearDown();
-
         glDeleteFramebuffers(1, &mFBO);
         glDeleteRenderbuffers(1, &mRBO);
         glDeleteBuffers(1, &mPBO);
@@ -455,21 +447,17 @@ class ReadPixelsTextureTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         glGenTextures(1, &mTexture);
         glGenFramebuffers(1, &mFBO);
         glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
     }
 
-    void TearDown() override
+    void testTearDown() override
     {
         glDeleteFramebuffers(1, &mFBO);
         glDeleteTextures(1, &mTexture);
-
-        ANGLETest::TearDown();
     }
 
     void initTexture(GLenum textureTarget,
@@ -667,10 +655,8 @@ class ReadPixelsErrorTest : public ReadPixelsTest
   protected:
     ReadPixelsErrorTest() : mTexture(0), mFBO(0) {}
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         glGenTextures(1, &mTexture);
         glBindTexture(GL_TEXTURE_2D, mTexture);
         glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 4, 1);
@@ -683,10 +669,8 @@ class ReadPixelsErrorTest : public ReadPixelsTest
         ASSERT_GL_NO_ERROR();
     }
 
-    void TearDown() override
+    void testTearDown() override
     {
-        ANGLETest::TearDown();
-
         glDeleteTextures(1, &mTexture);
         glDeleteFramebuffers(1, &mFBO);
     }
@@ -714,6 +698,14 @@ TEST_P(ReadPixelsErrorTest, ReadBufferIsNone)
 ANGLE_INSTANTIATE_TEST(ReadPixelsTest, ES2_D3D11(), ES2_OPENGL(), ES2_OPENGLES(), ES2_VULKAN());
 ANGLE_INSTANTIATE_TEST(ReadPixelsPBOTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
 ANGLE_INSTANTIATE_TEST(ReadPixelsPBODrawTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
-ANGLE_INSTANTIATE_TEST(ReadPixelsMultisampleTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
+ANGLE_INSTANTIATE_TEST(ReadPixelsMultisampleTest,
+                       ES3_D3D11(),
+                       ES3_OPENGL(),
+                       ES3_OPENGLES(),
+                       ES3_VULKAN());
 ANGLE_INSTANTIATE_TEST(ReadPixelsTextureTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
-ANGLE_INSTANTIATE_TEST(ReadPixelsErrorTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
+ANGLE_INSTANTIATE_TEST(ReadPixelsErrorTest,
+                       ES3_D3D11(),
+                       ES3_OPENGL(),
+                       ES3_OPENGLES(),
+                       ES3_VULKAN());

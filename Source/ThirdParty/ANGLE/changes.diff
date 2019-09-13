@@ -1,128 +1,16 @@
-diff --git a/include/EGL/eglplatform.h b/include/EGL/eglplatform.h
-index 543f8e5cb..bfd9bd68e 100644
---- a/include/EGL/eglplatform.h
-+++ b/include/EGL/eglplatform.h
-@@ -110,7 +110,7 @@ typedef void*                           EGLNativeDisplayType;
- typedef struct egl_native_pixmap_t*     EGLNativePixmapType;
- typedef struct ANativeWindow*           EGLNativeWindowType;
- 
--#elif defined(USE_OZONE)
-+#elif defined(USE_OZONE) || defined(USE_SYSTEM_EGL)
- 
- typedef intptr_t EGLNativeDisplayType;
- typedef intptr_t EGLNativePixmapType;
-diff --git a/include/GLSLANG/ShaderLang.h b/include/GLSLANG/ShaderLang.h
-index c804715d2..1e5ee2979 100644
---- a/include/GLSLANG/ShaderLang.h
-+++ b/include/GLSLANG/ShaderLang.h
-@@ -8,7 +8,11 @@
- 
- #include <stddef.h>
- 
--#include "KHR/khrplatform.h"
-+#if defined(__APPLE__)
-+#include "khrplatform.h"
-+#else
-+#include "../KHR/khrplatform.h"
-+#endif
- 
- #include <array>
- #include <map>
-diff --git a/src/common/PoolAlloc.cpp b/src/common/PoolAlloc.cpp
-index b6e3702f8..e0eb53388 100644
---- a/src/common/PoolAlloc.cpp
-+++ b/src/common/PoolAlloc.cpp
-@@ -55,7 +55,7 @@ PoolAllocator::PoolAllocator(int growthIncrement, int allocationAlignment)
-         mAlignment &= ~(minAlign - 1);
-         if (mAlignment < minAlign)
-             mAlignment = minAlign;
--        mAlignment     = gl::ceilPow2(mAlignment);
-+        mAlignment     = gl::ceilPow2(static_cast<unsigned int>(mAlignment));
-         mAlignmentMask = mAlignment - 1;
- 
- #if !defined(ANGLE_DISABLE_POOL_ALLOC)
-diff --git a/src/common/debug.h b/src/common/debug.h
-index 64783687b..3bfafb5b9 100644
---- a/src/common/debug.h
-+++ b/src/common/debug.h
-@@ -248,7 +248,7 @@ std::ostream &FmtHex(std::ostream &os, T value)
- #    define EVENT(message, ...) (void(0))
- #endif
- 
--#if defined(COMPILER_GCC) || defined(__clang__)
-+#if defined(__GNUC__) || defined(__clang__)
- #    define ANGLE_CRASH() __builtin_trap()
- #else
- #    define ANGLE_CRASH() ((void)(*(volatile char *)0 = 0)), __assume(0)
-@@ -336,7 +336,7 @@ std::ostream &FmtHex(std::ostream &os, T value)
- #    define ANGLE_ENABLE_STRUCT_PADDING_WARNINGS \
-         _Pragma("clang diagnostic push") _Pragma("clang diagnostic error \"-Wpadded\"")
- #    define ANGLE_DISABLE_STRUCT_PADDING_WARNINGS _Pragma("clang diagnostic pop")
--#elif defined(COMPILER_GCC)
-+#elif defined(__GNUC__)
- #    define ANGLE_ENABLE_STRUCT_PADDING_WARNINGS \
-         _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic error \"-Wpadded\"")
- #    define ANGLE_DISABLE_STRUCT_PADDING_WARNINGS _Pragma("GCC diagnostic pop")
-diff --git a/src/common/mathutil.h b/src/common/mathutil.h
-index edf63dd15..6573dd589 100644
---- a/src/common/mathutil.h
-+++ b/src/common/mathutil.h
-@@ -967,7 +967,7 @@ inline uint32_t BitfieldReverse(uint32_t value)
- }
- 
- // Count the 1 bits.
--#if defined(_M_IX86) || defined(_M_X64)
-+#if defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
- #    define ANGLE_HAS_BITCOUNT_32
- inline int BitCount(uint32_t bits)
- {
-diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
-index 84be99016..295b8f1a0 100644
---- a/src/common/utilities.cpp
-+++ b/src/common/utilities.cpp
-@@ -617,11 +617,16 @@ bool IsTriangleMode(PrimitiveMode drawMode)
- 
- namespace priv
- {
--const angle::PackedEnumMap<PrimitiveMode, bool> gLineModes = {
--    {{PrimitiveMode::LineLoop, true},
--     {PrimitiveMode::LineStrip, true},
--     {PrimitiveMode::LineStripAdjacency, true},
--     {PrimitiveMode::Lines, true}}};
-+const angle::PackedEnumMap<PrimitiveMode, bool>& gLineModes()
-+{
-+    static const angle::PackedEnumMap<PrimitiveMode, bool> modes {
-+        { PrimitiveMode::LineLoop, true },
-+        { PrimitiveMode::LineStrip, true },
-+        { PrimitiveMode::LineStripAdjacency, true },
-+        { PrimitiveMode::Lines, true }
-+    };
-+    return modes;
-+};
- }  // namespace priv
- 
- bool IsIntegerFormat(GLenum unsizedFormat)
-diff --git a/src/common/utilities.h b/src/common/utilities.h
-index 9dcb06e8a..7a1429a43 100644
---- a/src/common/utilities.h
-+++ b/src/common/utilities.h
-@@ -78,12 +78,12 @@ bool IsTriangleMode(PrimitiveMode drawMode);
- 
- namespace priv
- {
--extern const angle::PackedEnumMap<PrimitiveMode, bool> gLineModes;
-+extern const angle::PackedEnumMap<PrimitiveMode, bool>& gLineModes();
- }  // namespace priv
- 
- ANGLE_INLINE bool IsLineMode(PrimitiveMode primitiveMode)
- {
--    return priv::gLineModes[primitiveMode];
-+    return priv::gLineModes()[primitiveMode];
- }
- 
- bool IsIntegerFormat(GLenum unsizedFormat);
+From e4a3241f67b63b2c3b5ac018236ad9e7d07adbe8 Mon Sep 17 00:00:00 2001
+From: Don <don.j.olmstead@gmail.com>
+Date: Thu, 9 May 2019 12:12:42 -0700
+Subject: [PATCH 1/2] Add licensing clarification
+
+---
+ src/compiler/preprocessor/ExpressionParser.cpp | 2 ++
+ src/compiler/translator/glslang_tab.cpp        | 2 ++
+ src/compiler/translator/glslang_tab.h          | 2 ++
+ 3 files changed, 6 insertions(+)
+
 diff --git a/src/compiler/preprocessor/ExpressionParser.cpp b/src/compiler/preprocessor/ExpressionParser.cpp
-index 461c2145d..5da6a22d6 100644
+index 1b71ef7..5c2b9e7 100644
 --- a/src/compiler/preprocessor/ExpressionParser.cpp
 +++ b/src/compiler/preprocessor/ExpressionParser.cpp
 @@ -1,5 +1,7 @@
@@ -133,127 +21,8 @@ index 461c2145d..5da6a22d6 100644
  /* Bison implementation for Yacc-like parsers in C
  
     Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
-diff --git a/src/compiler/preprocessor/Tokenizer.cpp b/src/compiler/preprocessor/Tokenizer.cpp
-index 2ce67b738..429026e98 100644
---- a/src/compiler/preprocessor/Tokenizer.cpp
-+++ b/src/compiler/preprocessor/Tokenizer.cpp
-@@ -700,8 +700,6 @@ IF YOU MODIFY THIS FILE YOU ALSO NEED TO RUN generate_parser.sh.
- #if defined(__clang__)
- // Flex uses `/*FALLTHROUGH*/` instead of dedicated statements.
- #    pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
--// Flex isn't semi-colon clean.
--#    pragma clang diagnostic ignored "-Wextra-semi-stmt"
- #endif
- 
- // Workaround for flex using the register keyword, deprecated in C++11.
-diff --git a/src/compiler/preprocessor/Tokenizer.l b/src/compiler/preprocessor/Tokenizer.l
-index 94db185ef..3df736713 100644
---- a/src/compiler/preprocessor/Tokenizer.l
-+++ b/src/compiler/preprocessor/Tokenizer.l
-@@ -41,8 +41,6 @@ IF YOU MODIFY THIS FILE YOU ALSO NEED TO RUN generate_parser.sh.
- #if defined(__clang__)
- // Flex uses `/*FALLTHROUGH*/` instead of dedicated statements.
- #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
--// Flex isn't semi-colon clean.
--#pragma clang diagnostic ignored "-Wextra-semi-stmt"
- #endif
- 
- // Workaround for flex using the register keyword, deprecated in C++11.
-diff --git a/src/compiler/translator/ShaderVars.cpp b/src/compiler/translator/ShaderVars.cpp
-index 202ed2111..2c2592ffb 100644
---- a/src/compiler/translator/ShaderVars.cpp
-+++ b/src/compiler/translator/ShaderVars.cpp
-@@ -112,7 +112,7 @@ unsigned int ShaderVariable::getInnerArraySizeProduct() const
-     unsigned int arraySizeProduct = 1u;
-     for (size_t index = 1; index < arraySizes.size(); ++index)
-     {
--        arraySizeProduct *= getNestedArraySize(index);
-+        arraySizeProduct *= getNestedArraySize(static_cast<unsigned int>(index));
-     }
-     return arraySizeProduct;
- }
-diff --git a/src/compiler/translator/TranslatorHLSL.h b/src/compiler/translator/TranslatorHLSL.h
-index bb8b7f285..1a9f6167e 100644
---- a/src/compiler/translator/TranslatorHLSL.h
-+++ b/src/compiler/translator/TranslatorHLSL.h
-@@ -16,7 +16,9 @@ class TranslatorHLSL : public TCompiler
- {
-   public:
-     TranslatorHLSL(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output);
-+#ifdef ANGLE_ENABLE_HLSL
-     TranslatorHLSL *getAsTranslatorHLSL() override { return this; }
-+#endif
- 
-     bool hasShaderStorageBlock(const std::string &interfaceBlockName) const;
-     unsigned int getShaderStorageBlockRegister(const std::string &interfaceBlockName) const;
-diff --git a/src/compiler/translator/TranslatorVulkan.cpp b/src/compiler/translator/TranslatorVulkan.cpp
-index 19b6847e4..1c4ea950c 100644
---- a/src/compiler/translator/TranslatorVulkan.cpp
-+++ b/src/compiler/translator/TranslatorVulkan.cpp
-@@ -195,7 +195,7 @@ TIntermBinary *CreateDriverUniformRef(const TVariable *driverUniforms, const cha
- 
-     TIntermSymbol *angleUniformsRef = new TIntermSymbol(driverUniforms);
-     TConstantUnion *uniformIndex    = new TConstantUnion;
--    uniformIndex->setIConst(fieldIndex);
-+    uniformIndex->setIConst(static_cast<int>(fieldIndex));
-     TIntermConstantUnion *indexRef =
-         new TIntermConstantUnion(uniformIndex, *StaticType::GetBasic<EbtInt>());
-     return new TIntermBinary(EOpIndexDirectInterfaceBlock, angleUniformsRef, indexRef);
-diff --git a/src/compiler/translator/blocklayout.cpp b/src/compiler/translator/blocklayout.cpp
-index 7d0609ec8..898be505f 100644
---- a/src/compiler/translator/blocklayout.cpp
-+++ b/src/compiler/translator/blocklayout.cpp
-@@ -258,18 +258,18 @@ void Std140BlockEncoder::getBlockLayoutInfo(GLenum type,
-     if (gl::IsMatrixType(type))
-     {
-         baseAlignment = getTypeBaseAlignment(type, isRowMajorMatrix);
--        matrixStride  = getTypeBaseAlignment(type, isRowMajorMatrix);
-+        matrixStride  = static_cast<int>(getTypeBaseAlignment(type, isRowMajorMatrix));
- 
-         if (!arraySizes.empty())
-         {
-             const int numRegisters = gl::MatrixRegisterCount(type, isRowMajorMatrix);
--            arrayStride            = getTypeBaseAlignment(type, isRowMajorMatrix) * numRegisters;
-+            arrayStride            = static_cast<int>(getTypeBaseAlignment(type, isRowMajorMatrix) * numRegisters);
-         }
-     }
-     else if (!arraySizes.empty())
-     {
--        baseAlignment = getTypeBaseAlignment(type, false);
--        arrayStride   = getTypeBaseAlignment(type, false);
-+        baseAlignment = static_cast<int>(getTypeBaseAlignment(type, false));
-+        arrayStride   = static_cast<int>(getTypeBaseAlignment(type, false));
-     }
-     else
-     {
-diff --git a/src/compiler/translator/glslang.l b/src/compiler/translator/glslang.l
-index 8af29a8a7..c6aa91d52 100644
---- a/src/compiler/translator/glslang.l
-+++ b/src/compiler/translator/glslang.l
-@@ -40,8 +40,6 @@ WHICH GENERATES THE GLSL ES LEXER (glslang_lex.cpp).
- #endif
- #if defined(__clang__)
- #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
--// Flex isn't semi-colon clean.
--#pragma clang diagnostic ignored "-Wextra-semi-stmt"
- #endif
- }
- 
-diff --git a/src/compiler/translator/glslang_lex.cpp b/src/compiler/translator/glslang_lex.cpp
-index 2bf0ab37b..f35e05ada 100644
---- a/src/compiler/translator/glslang_lex.cpp
-+++ b/src/compiler/translator/glslang_lex.cpp
-@@ -25,8 +25,6 @@
- #endif
- #if defined(__clang__)
- #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
--// Flex isn't semi-colon clean.
--#pragma clang diagnostic ignored "-Wextra-semi-stmt"
- #endif
- 
- 
 diff --git a/src/compiler/translator/glslang_tab.cpp b/src/compiler/translator/glslang_tab.cpp
-index a60203b85..56c7fbd9b 100644
+index e49325c..5fe7c49 100644
 --- a/src/compiler/translator/glslang_tab.cpp
 +++ b/src/compiler/translator/glslang_tab.cpp
 @@ -1,5 +1,7 @@
@@ -265,7 +34,7 @@ index a60203b85..56c7fbd9b 100644
  
     Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
 diff --git a/src/compiler/translator/glslang_tab.h b/src/compiler/translator/glslang_tab.h
-index e05076fcb..19be0f89d 100644
+index 5ffee8a..3774e91 100644
 --- a/src/compiler/translator/glslang_tab.h
 +++ b/src/compiler/translator/glslang_tab.h
 @@ -1,5 +1,7 @@
@@ -276,272 +45,48 @@ index e05076fcb..19be0f89d 100644
  /* Bison interface for Yacc-like parsers in C
  
     Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
-diff --git a/src/libANGLE/Image.cpp b/src/libANGLE/Image.cpp
-index d94d311a9..3c077c365 100644
---- a/src/libANGLE/Image.cpp
-+++ b/src/libANGLE/Image.cpp
-@@ -162,7 +162,7 @@ gl::Format ExternalImageSibling::getAttachmentFormat(GLenum binding,
+-- 
+2.19.0.605.g01d371f741-goog
+
+
+From 4b85bdc63dfe66cb25abab5ddd1c475fd68e3ecf Mon Sep 17 00:00:00 2001
+From: James Darpinian <jdarpinian@chromium.org>
+Date: Wed, 11 Sep 2019 18:12:01 -0700
+Subject: [PATCH 2/2] Disable -Wglobal-constructors false positives
+
+---
+ src/common/utilities.cpp | 3 +++
+ src/libANGLE/State.cpp   | 3 +++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
+index a3f0faa..e463694 100644
+--- a/src/common/utilities.cpp
++++ b/src/common/utilities.cpp
+@@ -6,6 +6,9 @@
  
- GLsizei ExternalImageSibling::getAttachmentSamples(const gl::ImageIndex &imageIndex) const
- {
--    return mImplementation->getSamples();
-+    return static_cast<GLsizei>(mImplementation->getSamples());
- }
+ // utilities.cpp: Conversion functions and other utility routines.
  
- bool ExternalImageSibling::isRenderable(const gl::Context *context,
-diff --git a/src/libANGLE/MemoryProgramCache.cpp b/src/libANGLE/MemoryProgramCache.cpp
-index 9c549220a..0fc080521 100644
---- a/src/libANGLE/MemoryProgramCache.cpp
-+++ b/src/libANGLE/MemoryProgramCache.cpp
-@@ -134,7 +134,7 @@ angle::Result MemoryProgramCache::getProgram(const Context *context,
-     if (get(context, *hashOut, &binaryProgram))
-     {
-         angle::Result result = program->loadBinary(context, GL_PROGRAM_BINARY_ANGLE,
--                                                   binaryProgram.data(), binaryProgram.size());
-+                                                   binaryProgram.data(), static_cast<int>(binaryProgram.size()));
-         ANGLE_HISTOGRAM_BOOLEAN("GPU.ANGLE.ProgramCache.LoadBinarySuccess",
-                                 result == angle::Result::Continue);
-         ANGLE_TRY(result);
-diff --git a/src/libANGLE/Platform.cpp b/src/libANGLE/Platform.cpp
-index 6cbbd1e80..e987ff0eb 100644
---- a/src/libANGLE/Platform.cpp
-+++ b/src/libANGLE/Platform.cpp
-@@ -15,12 +15,17 @@
- namespace
- {
- // TODO(jmadill): Make methods owned by egl::Display.
--angle::PlatformMethods g_platformMethods;
-+angle::PlatformMethods& g_platformMethods()
-+{
-+    static angle::PlatformMethods platformMethods;
-+    return platformMethods;
-+}
++// Older clang versions have a false positive on this warning here.
++#pragma clang diagnostic ignored "-Wglobal-constructors"
 +
- }  // anonymous namespace
- 
- angle::PlatformMethods *ANGLEPlatformCurrent()
- {
--    return &g_platformMethods;
-+    return &g_platformMethods();
- }
- 
- bool ANGLE_APIENTRY ANGLEGetDisplayPlatform(angle::EGLDisplayType display,
-@@ -53,13 +58,13 @@ bool ANGLE_APIENTRY ANGLEGetDisplayPlatform(angle::EGLDisplayType display,
-     }
- 
-     // TODO(jmadill): Store platform methods in display.
--    g_platformMethods.context = context;
--    *platformMethodsOut       = &g_platformMethods;
-+    g_platformMethods().context = context;
-+    *platformMethodsOut       = &g_platformMethods();
-     return true;
- }
- 
- void ANGLE_APIENTRY ANGLEResetDisplayPlatform(angle::EGLDisplayType display)
- {
-     // TODO(jmadill): Store platform methods in display.
--    g_platformMethods = angle::PlatformMethods();
-+    g_platformMethods() = angle::PlatformMethods();
- }
+ #include "common/utilities.h"
+ #include <GLSLANG/ShaderVars.h>
+ #include "common/mathutil.h"
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index 7223bb9de..9e47bda44 100644
+index b15fcfc..dca047a 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
-@@ -216,20 +216,24 @@ void State::setGenericBufferBinding<BufferBinding::ElementArray>(const Context *
-     mDirtyObjects.set(DIRTY_OBJECT_VERTEX_ARRAY);
- }
+@@ -6,6 +6,9 @@
  
--const angle::PackedEnumMap<BufferBinding, State::BufferBindingSetter> State::kBufferSetters = {{
--    GetBufferBindingSetter<BufferBinding::Array>(),
--    GetBufferBindingSetter<BufferBinding::AtomicCounter>(),
--    GetBufferBindingSetter<BufferBinding::CopyRead>(),
--    GetBufferBindingSetter<BufferBinding::CopyWrite>(),
--    GetBufferBindingSetter<BufferBinding::DispatchIndirect>(),
--    GetBufferBindingSetter<BufferBinding::DrawIndirect>(),
--    GetBufferBindingSetter<BufferBinding::ElementArray>(),
--    GetBufferBindingSetter<BufferBinding::PixelPack>(),
--    GetBufferBindingSetter<BufferBinding::PixelUnpack>(),
--    GetBufferBindingSetter<BufferBinding::ShaderStorage>(),
--    GetBufferBindingSetter<BufferBinding::TransformFeedback>(),
--    GetBufferBindingSetter<BufferBinding::Uniform>(),
--}};
-+const angle::PackedEnumMap<BufferBinding, State::BufferBindingSetter>& State::kBufferSetters()
-+{
-+    static const angle::PackedEnumMap<BufferBinding, State::BufferBindingSetter> setters {{
-+        GetBufferBindingSetter<BufferBinding::Array>(),
-+        GetBufferBindingSetter<BufferBinding::AtomicCounter>(),
-+        GetBufferBindingSetter<BufferBinding::CopyRead>(),
-+        GetBufferBindingSetter<BufferBinding::CopyWrite>(),
-+        GetBufferBindingSetter<BufferBinding::DispatchIndirect>(),
-+        GetBufferBindingSetter<BufferBinding::DrawIndirect>(),
-+        GetBufferBindingSetter<BufferBinding::ElementArray>(),
-+        GetBufferBindingSetter<BufferBinding::PixelPack>(),
-+        GetBufferBindingSetter<BufferBinding::PixelUnpack>(),
-+        GetBufferBindingSetter<BufferBinding::ShaderStorage>(),
-+        GetBufferBindingSetter<BufferBinding::TransformFeedback>(),
-+        GetBufferBindingSetter<BufferBinding::Uniform>(),
-+    }};
-+    return setters;
-+}
+ // State.cpp: Implements the State class, encapsulating raw GL state.
  
- State::State(ContextID contextIn,
-              const State *shareContextState,
-@@ -1214,7 +1218,7 @@ void State::detachSampler(const Context *context, GLuint sampler)
-     {
-         if (mSamplers[i].id() == sampler)
-         {
--            setSamplerBinding(context, i, nullptr);
-+            setSamplerBinding(context, static_cast<GLuint>(i), nullptr);
-         }
-     }
- }
-diff --git a/src/libANGLE/State.h b/src/libANGLE/State.h
-index bec9a5e09..5a49431f3 100644
---- a/src/libANGLE/State.h
-+++ b/src/libANGLE/State.h
-@@ -318,7 +318,7 @@ class State : angle::NonCopyable
-     //// Typed buffer binding point manipulation ////
-     ANGLE_INLINE void setBufferBinding(const Context *context, BufferBinding target, Buffer *buffer)
-     {
--        (this->*(kBufferSetters[target]))(context, buffer);
-+        (this->*(kBufferSetters()[target]))(context, buffer);
-     }
++// Older clang versions have a false positive on this warning here.
++#pragma clang diagnostic ignored "-Wglobal-constructors"
++
+ #include "libANGLE/State.h"
  
-     ANGLE_INLINE Buffer *getTargetBuffer(BufferBinding target) const
-@@ -693,7 +693,7 @@ class State : angle::NonCopyable
-     static_assert(DIRTY_OBJECT_MAX == 9, "check DIRTY_OBJECT_MAX");
- 
-     // Dispatch table for buffer update functions.
--    static const angle::PackedEnumMap<BufferBinding, BufferBindingSetter> kBufferSetters;
-+    static const angle::PackedEnumMap<BufferBinding, BufferBindingSetter>& kBufferSetters();
- 
-     Version mClientVersion;
-     ContextID mContext;
-diff --git a/src/libANGLE/VertexArray.cpp b/src/libANGLE/VertexArray.cpp
-index f14876668..56a783f8a 100644
---- a/src/libANGLE/VertexArray.cpp
-+++ b/src/libANGLE/VertexArray.cpp
-@@ -193,7 +193,7 @@ bool VertexArray::detachBuffer(const Context *context, GLuint bufferName)
-             }
-             else
-             {
--                ASSERT(binding.getBoundAttributesMask() == AttributesMask(1ull << bindingIndex));
-+                ASSERT(binding.getBoundAttributesMask() == AttributesMask(1u << bindingIndex));
-                 setDirtyAttribBit(bindingIndex, DIRTY_ATTRIB_POINTER);
-             }
- 
-diff --git a/src/libANGLE/renderer/gl/ProgramGL.cpp b/src/libANGLE/renderer/gl/ProgramGL.cpp
-index e819ba8df..996aa7e1e 100644
---- a/src/libANGLE/renderer/gl/ProgramGL.cpp
-+++ b/src/libANGLE/renderer/gl/ProgramGL.cpp
-@@ -364,7 +364,7 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
-                             // set either.
-                             ASSERT(outputVar.index == -1);
-                             mFunctions->bindFragDataLocationIndexed(
--                                mProgramID, outputLocationIndex, 0, outputVar.mappedName.c_str());
-+                                mProgramID, static_cast<int>(outputLocationIndex), 0, outputVar.mappedName.c_str());
-                         }
-                     }
-                 }
-@@ -386,7 +386,7 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
-                             // the index set either.
-                             ASSERT(outputVar.index == -1);
-                             mFunctions->bindFragDataLocationIndexed(
--                                mProgramID, outputLocationIndex, 1, outputVar.mappedName.c_str());
-+                                mProgramID, static_cast<int>(outputLocationIndex), 1, outputVar.mappedName.c_str());
-                         }
-                     }
-                 }
-diff --git a/src/libANGLE/validationES3.cpp b/src/libANGLE/validationES3.cpp
-index 1acb57843..94db8b545 100644
---- a/src/libANGLE/validationES3.cpp
-+++ b/src/libANGLE/validationES3.cpp
-@@ -4166,7 +4166,7 @@ bool ValidateBindFragDataLocationIndexedEXT(Context *context,
-         context->validationError(GL_INVALID_OPERATION, kES3Required);
-         return false;
-     }
--    if (index < 0 || index > 1)
-+    if (index > 1)
-     {
-         // This error is not explicitly specified but the spec does say that "<index> may be zero or
-         // one to specify that the color be used as either the first or second color input to the
-diff --git a/src/tests/compiler_tests/QualificationOrder_test.cpp b/src/tests/compiler_tests/QualificationOrder_test.cpp
-index c0249dbb9..f8b1c5fdc 100644
---- a/src/tests/compiler_tests/QualificationOrder_test.cpp
-+++ b/src/tests/compiler_tests/QualificationOrder_test.cpp
-@@ -429,7 +429,7 @@ TEST_F(QualificationOrderFragmentShaderTest, InvalidFunctionParametersInvariant)
-         "}\n"
-         "void main()\n"
-         "{\n"
--        "	gl_FragColor = vec4(foo0(value));\n"
-+        "    gl_FragColor = vec4(foo0(value));\n"
-         "}\n";
- 
-     if (compile(shaderString))
-@@ -449,7 +449,7 @@ TEST_F(QualificationOrderFragmentShaderTest, InvalidFunctionParametersAttribute)
-         "}\n"
-         "void main()\n"
-         "{\n"
--        "	gl_FragColor = vec4(foo0(value));\n"
-+        "    gl_FragColor = vec4(foo0(value));\n"
-         "}\n";
- 
-     if (compile(shaderString))
-@@ -469,7 +469,7 @@ TEST_F(QualificationOrderFragmentShaderTest, InvalidFunctionParametersVarying)
-         "}\n"
-         "void main()\n"
-         "{\n"
--        "	gl_FragColor = vec4(foo0(value));\n"
-+        "    gl_FragColor = vec4(foo0(value));\n"
-         "}\n";
- 
-     if (compile(shaderString))
-@@ -491,7 +491,7 @@ TEST_F(QualificationOrderFragmentShaderTest, InvalidFunctionParametersLayout)
-         "out vec4 colorOUT;\n"
-         "void main()\n"
-         "{\n"
--        "	colorOUT = vec4(foo0(value));\n"
-+        "    colorOUT = vec4(foo0(value));\n"
-         "}\n";
- 
-     if (compile(shaderString))
-@@ -513,7 +513,7 @@ TEST_F(QualificationOrderFragmentShaderTest, InvalidFunctionParametersCentroidIn
-         "out vec4 colorOUT;\n"
-         "void main()\n"
-         "{\n"
--        "	colorOUT = vec4(foo0(value));\n"
-+        "    colorOUT = vec4(foo0(value));\n"
-         "}\n";
- 
-     if (compile(shaderString))
-@@ -535,7 +535,7 @@ TEST_F(QualificationOrderFragmentShaderTest, InvalidFunctionParametersFlatIn)
-         "out vec4 colorOUT;\n"
-         "void main()\n"
-         "{\n"
--        "	colorOUT = vec4(foo0(value));\n"
-+        "    colorOUT = vec4(foo0(value));\n"
-         "}\n";
- 
-     if (compile(shaderString))
-diff --git a/src/tests/perf_tests/MultiviewPerf.cpp b/src/tests/perf_tests/MultiviewPerf.cpp
-index df6408d02..9144dfa36 100644
---- a/src/tests/perf_tests/MultiviewPerf.cpp
-+++ b/src/tests/perf_tests/MultiviewPerf.cpp
-@@ -276,7 +276,7 @@ void MultiviewCPUBoundBenchmark::initializeBenchmark()
-         "{\n"
-         "   vec4 v = vPosition;\n"
-         "   v.xy += uOffset;\n"
--        "	gl_Position = v;\n"
-+        "   gl_Position = v;\n"
-         "}\n";
- 
-     const std::string fs =
-@@ -374,7 +374,7 @@ void MultiviewGPUBoundBenchmark::initializeBenchmark()
-         "   frag_Col3 = vert_Col3;\n"
-         "   frag_Col4 = vert_Col4;\n"
-         "   frag_Col5 = vert_Col5;\n"
--        "	gl_Position = vPosition;\n"
-+        "   gl_Position = vPosition;\n"
-         "}\n";
- 
-     const std::string &fs =
+ #include <string.h>
+-- 
+2.19.0.605.g01d371f741-goog
+

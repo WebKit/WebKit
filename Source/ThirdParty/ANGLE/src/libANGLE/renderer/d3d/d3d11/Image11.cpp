@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -373,7 +373,7 @@ angle::Result Image11::copyFromFramebuffer(const gl::Context *context,
                                            const gl::Rectangle &sourceArea,
                                            const gl::Framebuffer *sourceFBO)
 {
-    const gl::FramebufferAttachment *srcAttachment = sourceFBO->getReadColorbuffer();
+    const gl::FramebufferAttachment *srcAttachment = sourceFBO->getReadColorAttachment();
     ASSERT(srcAttachment);
 
     GLenum sourceInternalFormat = srcAttachment->getFormat().info->sizedInternalFormat;
@@ -383,7 +383,7 @@ angle::Result Image11::copyFromFramebuffer(const gl::Context *context,
     if (d3d11Format.texFormat == mDXGIFormat && sourceInternalFormat == mInternalFormat)
     {
         RenderTarget11 *rt11 = nullptr;
-        ANGLE_TRY(srcAttachment->getRenderTarget(context, &rt11));
+        ANGLE_TRY(srcAttachment->getRenderTarget(context, 0, &rt11));
         ASSERT(rt11->getTexture().get());
 
         TextureHelper11 textureHelper  = rt11->getTexture();
@@ -520,6 +520,7 @@ angle::Result Image11::getStagingTexture(const gl::Context *context,
 void Image11::releaseStagingTexture()
 {
     mStagingTexture.reset();
+    mStagingTextureSubresourceVerifier.reset();
 }
 
 angle::Result Image11::createStagingTexture(const gl::Context *context)
@@ -577,6 +578,7 @@ angle::Result Image11::createStagingTexture(const gl::Context *context)
 
             mStagingTexture.setDebugName("Image11::StagingTexture3D");
             mStagingSubresource = D3D11CalcSubresource(lodOffset, 0, lodOffset + 1);
+            mStagingTextureSubresourceVerifier.setDesc(desc);
         }
         break;
 
@@ -615,6 +617,7 @@ angle::Result Image11::createStagingTexture(const gl::Context *context)
 
             mStagingTexture.setDebugName("Image11::StagingTexture2D");
             mStagingSubresource = D3D11CalcSubresource(lodOffset, 0, lodOffset + 1);
+            mStagingTextureSubresourceVerifier.setDesc(desc);
         }
         break;
 
@@ -642,6 +645,17 @@ angle::Result Image11::map(const gl::Context *context,
     ANGLE_TRY(
         mRenderer->mapResource(context, stagingTexture->get(), subresourceIndex, mapType, 0, map));
 
+    if (!mStagingTextureSubresourceVerifier.wrap(mapType, map))
+    {
+        ID3D11DeviceContext *deviceContext = mRenderer->getDeviceContext();
+        deviceContext->Unmap(mStagingTexture.get(), mStagingSubresource);
+        Context11 *context11 = GetImplAs<Context11>(context);
+        context11->handleError(GL_OUT_OF_MEMORY,
+                               "Failed to allocate staging texture mapping verifier buffer.",
+                               __FILE__, ANGLE_FUNCTION, __LINE__);
+        return angle::Result::Stop;
+    }
+
     mDirty = true;
 
     return angle::Result::Continue;
@@ -651,6 +665,7 @@ void Image11::unmap()
 {
     if (mStagingTexture.valid())
     {
+        mStagingTextureSubresourceVerifier.unwrap();
         ID3D11DeviceContext *deviceContext = mRenderer->getDeviceContext();
         deviceContext->Unmap(mStagingTexture.get(), mStagingSubresource);
     }

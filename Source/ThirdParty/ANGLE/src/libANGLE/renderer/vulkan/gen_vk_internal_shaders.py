@@ -24,7 +24,7 @@ out_file_h = 'vk_internal_shaders_autogen.h'
 out_file_gni = 'vk_internal_shaders_autogen.gni'
 
 is_windows = platform.system() == 'Windows'
-is_linux  = platform.system() == 'Linux'
+is_linux = platform.system() == 'Linux'
 
 # Templates for the generated files:
 template_shader_library_cpp = u"""// GENERATED FILE - DO NOT EDIT.
@@ -157,33 +157,41 @@ angle_vulkan_internal_shaders = [
 ]
 """
 
+
 # Gets the constant variable name for a generated shader.
 def get_var_name(output, prefix='k'):
     return prefix + output.replace(".", "_")
+
 
 # Gets the namespace name given to constants generated from shader_file
 def get_namespace_name(shader_file):
     return get_var_name(os.path.basename(shader_file), '')
 
+
 # Gets the namespace name given to constants generated from shader_file
 def get_variation_table_name(shader_file, prefix='k'):
     return get_var_name(os.path.basename(shader_file), prefix) + '_shaders'
+
 
 # Gets the internal ID string for a particular shader.
 def get_shader_id(shader):
     file = os.path.splitext(os.path.basename(shader))[0]
     return file.replace(".", "_")
 
+
 # Returns the name of the generated SPIR-V file for a shader.
 def get_output_path(name):
     return os.path.join('shaders', 'gen', name + ".inc")
+
 
 # Finds a path to GN's out directory
 def get_linux_glslang_exe_path():
     return '../../../../tools/glslang/glslang_validator'
 
+
 def get_win_glslang_exe_path():
     return get_linux_glslang_exe_path() + '.exe'
+
 
 def get_glslang_exe_path():
     glslang_exe = get_win_glslang_exe_path() if is_windows else get_linux_glslang_exe_path()
@@ -197,11 +205,14 @@ def gen_shader_blob_entry(shader):
     var_name = get_var_name(os.path.basename(shader))[0:-4]
     return "{%s, %s}" % (var_name, "sizeof(%s)" % var_name)
 
+
 def slash(s):
     return s.replace('\\', '/')
 
+
 def gen_shader_include(shader):
     return '#include "libANGLE/renderer/vulkan/%s"' % slash(shader)
+
 
 def get_shader_variations(shader):
     variation_file = shader + '.json'
@@ -227,10 +238,12 @@ def get_shader_variations(shader):
 
         return (flags, enums)
 
+
 def get_variation_bits(flags, enums):
     flags_bits = len(flags)
     enum_bits = [(len(enum[1]) - 1).bit_length() for enum in enums]
     return (flags_bits, enum_bits)
+
 
 def next_enum_variation(enums, enum_indices):
     """Loop through indices from [0, 0, ...] to [L0-1, L1-1, ...]
@@ -242,24 +255,29 @@ def next_enum_variation(enums, enum_indices):
         # if current digit has room, increment it.
         if current + 1 < len(enums[i][1]):
             enum_indices[i] = current + 1
-            return True;
+            return True
         # otherwise reset it to 0 and carry to the next digit.
         enum_indices[i] = 0
 
     # if this is reached, the number has overflowed and the loop is finished.
     return False
 
+
 compact_newlines_regex = re.compile(r"\n\s*\n", re.MULTILINE)
+
+
 def cleanup_preprocessed_shader(shader_text):
     return compact_newlines_regex.sub('\n\n', shader_text.strip())
 
+
 class CompileQueue:
+
     class AppendPreprocessorOutput:
+
         def __init__(self, shader_file, preprocessor_args, output_path):
             # Asynchronously launch the preprocessor job.
-            self.process = subprocess.Popen(preprocessor_args,
-                                            stdout=subprocess.PIPE,
-                                            stderr=subprocess.PIPE)
+            self.process = subprocess.Popen(
+                preprocessor_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             # Store the file name for output to be appended to.
             self.output_path = output_path
             # Store info for error description.
@@ -268,22 +286,27 @@ class CompileQueue:
         def wait(self, queue):
             (out, err) = self.process.communicate()
             if self.process.returncode == 0:
+                # Use unix line endings.
+                out = out.replace('\r\n', '\n')
+                # Clean up excessive empty lines.
+                out = cleanup_preprocessed_shader(out)
+                # Comment it out!
+                out = '\n'.join([('// ' + line).strip() for line in out.splitlines()])
                 # Append preprocessor output to the output file.
                 with open(self.output_path, 'ab') as incfile:
-                    incfile.write('\n\n#if 0  // Generated from:\n')
-                    incfile.write(cleanup_preprocessed_shader(out.replace('\r\n', '\n')))
-                    incfile.write('\n#endif  // Preprocessed code\n')
+                    incfile.write('\n\n// Generated from:\n//\n')
+                    incfile.write(out + '\n')
                 out = None
             return (out, err, self.process.returncode, None,
                     "Error running preprocessor on " + self.shader_file)
 
     class CompileToSPIRV:
+
         def __init__(self, shader_file, shader_basename, variation_string, output_path,
                      compile_args, preprocessor_args):
             # Asynchronously launch the compile job.
-            self.process = subprocess.Popen(compile_args,
-                                            stdout=subprocess.PIPE,
-                                            stderr=subprocess.PIPE)
+            self.process = subprocess.Popen(
+                compile_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             # Store info for launching the preprocessor.
             self.preprocessor_args = preprocessor_args
             self.output_path = output_path
@@ -296,9 +319,9 @@ class CompileQueue:
             (out, err) = self.process.communicate()
             if self.process.returncode == 0:
                 # Insert the preprocessor job in the queue.
-                queue.append(CompileQueue.AppendPreprocessorOutput(self.shader_file,
-                                                                   self.preprocessor_args,
-                                                                   self.output_path))
+                queue.append(
+                    CompileQueue.AppendPreprocessorOutput(self.shader_file, self.preprocessor_args,
+                                                          self.output_path))
             # If all the output says is the source file name, don't bother printing it.
             if out.strip() == self.shader_file:
                 out = None
@@ -341,8 +364,8 @@ class CompileQueue:
 
         return exception_description
 
-    def add_job(self, shader_file, shader_basename, variation_string, output_path,
-                compile_args, preprocessor_args):
+    def add_job(self, shader_file, shader_basename, variation_string, output_path, compile_args,
+                preprocessor_args):
         # If the queue is full, wait until there is at least one slot available.
         while len(self.queue) >= self.thread_count:
             exception = self._wait_first(False)
@@ -352,9 +375,9 @@ class CompileQueue:
                 raise Exception(exception)
 
         # Add a compile job
-        self.queue.append(CompileQueue.CompileToSPIRV(shader_file, shader_basename,
-                                                      variation_string, output_path,
-                                                      compile_args, preprocessor_args))
+        self.queue.append(
+            CompileQueue.CompileToSPIRV(shader_file, shader_basename, variation_string,
+                                        output_path, compile_args, preprocessor_args))
 
     def finish(self):
         exception = self._wait_all(False)
@@ -362,8 +385,20 @@ class CompileQueue:
         if exception is not None:
             raise Exception(exception)
 
+
+# If the option is just a string, that's the name.  Otherwise, it could be
+# [ name, arg1, ..., argN ].  In that case, name is option[0] and option[1:] are extra arguments
+# that need to be passed to glslang_validator for this variation.
+def get_variation_name(option):
+    return option if isinstance(option, unicode) else option[0]
+
+
+def get_variation_args(option):
+    return [] if isinstance(option, unicode) else option[1:]
+
+
 def compile_variation(glslang_path, compile_queue, shader_file, shader_basename, flags, enums,
-        flags_active, enum_indices, flags_bits, enum_bits, output_shaders):
+                      flags_active, enum_indices, flags_bits, enum_bits, output_shaders):
 
     glslang_args = [glslang_path]
 
@@ -374,9 +409,12 @@ def compile_variation(glslang_path, compile_queue, shader_file, shader_basename,
     # takes up as few bits as needed to count that many enum values.
     variation_bits = 0
     variation_string = ''
+    variation_extra_args = []
     for f in range(len(flags)):
         if flags_active & (1 << f):
-            flag_name = flags[f]
+            flag = flags[f]
+            flag_name = get_variation_name(flag)
+            variation_extra_args += get_variation_args(flag)
             glslang_args.append('-D' + flag_name + '=1')
 
             variation_bits |= 1 << f
@@ -385,7 +423,9 @@ def compile_variation(glslang_path, compile_queue, shader_file, shader_basename,
     current_bit_start = flags_bits
 
     for e in range(len(enums)):
-        enum_name = enums[e][1][enum_indices[e]]
+        enum = enums[e][1][enum_indices[e]]
+        enum_name = get_variation_name(enum)
+        variation_extra_args += get_variation_args(enum)
         glslang_args.append('-D' + enum_name + '=1')
 
         variation_bits |= enum_indices[e] << current_bit_start
@@ -398,22 +438,34 @@ def compile_variation(glslang_path, compile_queue, shader_file, shader_basename,
 
     if glslang_path is not None:
         glslang_preprocessor_output_args = glslang_args + ['-E']
-        glslang_preprocessor_output_args.append(shader_file)           # Input GLSL shader
+        glslang_preprocessor_output_args.append(shader_file)  # Input GLSL shader
 
-        glslang_args += ['-V']                                         # Output mode is Vulkan
-        glslang_args += ['--variable-name', get_var_name(output_name)] # C-style variable name
-        glslang_args += ['-o', output_path]                            # Output file
-        glslang_args.append(shader_file)                               # Input GLSL shader
+        glslang_args += variation_extra_args
+
+        glslang_args += ['-V']  # Output mode is Vulkan
+        glslang_args += ['--variable-name', get_var_name(output_name)]  # C-style variable name
+        glslang_args += ['-o', output_path]  # Output file
+        glslang_args.append(shader_file)  # Input GLSL shader
 
         compile_queue.add_job(shader_file, shader_basename, variation_string, output_path,
                               glslang_args, glslang_preprocessor_output_args)
 
+
 class ShaderAndVariations:
+
     def __init__(self, shader_file):
         self.shader_file = shader_file
         (self.flags, self.enums) = get_shader_variations(shader_file)
         get_variation_bits(self.flags, self.enums)
         (self.flags_bits, self.enum_bits) = get_variation_bits(self.flags, self.enums)
+        # Maximum index value has all flags set and all enums at max value.
+        max_index = (1 << self.flags_bits) - 1
+        current_bit_start = self.flags_bits
+        for (name, values), bits in zip(self.enums, self.enum_bits):
+            max_index |= (len(values) - 1) << current_bit_start
+            current_bit_start += bits
+        # Minimum array size is one more than the maximum value.
+        self.array_len = max_index + 1
 
 
 def get_variation_definition(shader_and_variation):
@@ -422,14 +474,16 @@ def get_variation_definition(shader_and_variation):
     enums = shader_and_variation.enums
     flags_bits = shader_and_variation.flags_bits
     enum_bits = shader_and_variation.enum_bits
+    array_len = shader_and_variation.array_len
 
     namespace_name = get_namespace_name(shader_file)
 
     definition = 'namespace %s\n{\n' % namespace_name
     if len(flags) > 0:
         definition += 'enum flags\n{\n'
-        definition += ''.join(['k%s = 0x%08X,\n' % (flags[f], 1 << f) for f in range(len(flags))])
-        definition += 'kFlagsMask = 0x%08X,\n' % ((1 << flags_bits) - 1)
+        definition += ''.join([
+            'k%s = 0x%08X,\n' % (get_variation_name(flags[f]), 1 << f) for f in range(len(flags))
+        ])
         definition += '};\n'
 
     current_bit_start = flags_bits
@@ -438,14 +492,18 @@ def get_variation_definition(shader_and_variation):
         enum = enums[e]
         enum_name = enum[0]
         definition += 'enum %s\n{\n' % enum_name
-        definition += ''.join(['k%s = 0x%08X,\n' %
-            (enum[1][v], v << current_bit_start) for v in range(len(enum[1]))])
-        definition += 'k%sMask = 0x%08X,\n' % (enum_name, ((1 << enum_bits[e]) - 1) << current_bit_start)
+        definition += ''.join([
+            'k%s = 0x%08X,\n' % (get_variation_name(enum[1][v]), v << current_bit_start)
+            for v in range(len(enum[1]))
+        ])
         definition += '};\n'
         current_bit_start += enum_bits[e]
 
+    definition += 'constexpr size_t kArrayLen = 0x%08X;\n' % array_len
+
     definition += '}  // namespace %s\n' % namespace_name
     return definition
+
 
 def get_shader_table_h(shader_and_variation):
     shader_file = shader_and_variation.shader_file
@@ -458,30 +516,18 @@ def get_shader_table_h(shader_and_variation):
 
     namespace_name = "InternalShader::" + get_namespace_name(shader_file)
 
-    first_or = True
-    if len(flags) > 0:
-        table += '%s::kFlagsMask' % namespace_name
-        first_or = False
-
-    for e in range(len(enums)):
-        enum = enums[e]
-        enum_name = enums[e][0]
-        if not first_or:
-            table += ' | '
-        table += '%s::k%sMask' % (namespace_name, enum_name)
-        first_or = False
-
-    if first_or:
-        table += '1'
+    table += '%s::kArrayLen' % namespace_name
 
     table += '];'
     return table
+
 
 def get_shader_table_cpp(shader_and_variation):
     shader_file = shader_and_variation.shader_file
     enums = shader_and_variation.enums
     flags_bits = shader_and_variation.flags_bits
     enum_bits = shader_and_variation.enum_bits
+    array_len = shader_and_variation.array_len
 
     # Cache max and mask value of each enum to quickly know when a possible variation is invalid
     enum_maxes = []
@@ -499,10 +545,7 @@ def get_shader_table_cpp(shader_and_variation):
 
     table = 'constexpr ShaderBlob %s[] = {\n' % table_name
 
-    # The last possible variation is every flag enabled and every enum at max
-    last_variation = ((1 << flags_bits) - 1) | reduce(lambda x, y: x|y, enum_maxes, 0)
-
-    for variation in range(last_variation + 1):
+    for variation in range(array_len):
         # if any variation is invalid, output an empty entry
         if any([(variation & enum_masks[e]) > enum_maxes[e] for e in range(len(enums))]):
             table += '{nullptr, 0}, // 0x%08X\n' % variation
@@ -513,6 +556,7 @@ def get_shader_table_cpp(shader_and_variation):
     table += '};'
     return table
 
+
 def get_get_function_h(shader_and_variation):
     shader_file = shader_and_variation.shader_file
 
@@ -522,6 +566,7 @@ def get_get_function_h(shader_and_variation):
     definition += '(Context *context, uint32_t shaderFlags, RefCounted<ShaderAndSerial> **shaderOut);'
 
     return definition
+
 
 def get_get_function_cpp(shader_and_variation):
     shader_file = shader_and_variation.shader_file
@@ -535,9 +580,10 @@ def get_get_function_cpp(shader_and_variation):
     definition = 'angle::Result ShaderLibrary::%s' % function_name
     definition += '(Context *context, uint32_t shaderFlags, RefCounted<ShaderAndSerial> **shaderOut)\n{\n'
     definition += 'return GetShader(context, %s, %s, ArraySize(%s), shaderFlags, shaderOut);\n}\n' % (
-            member_table_name, constant_table_name, constant_table_name)
+        member_table_name, constant_table_name, constant_table_name)
 
     return definition
+
 
 def get_destroy_call(shader_and_variation):
     shader_file = shader_and_variation.shader_file
@@ -547,6 +593,10 @@ def get_destroy_call(shader_and_variation):
     destroy = 'for (RefCounted<ShaderAndSerial> &shader : %s)\n' % table_name
     destroy += '{\nshader.get().destroy(device);\n}'
     return destroy
+
+
+def shader_path(shader):
+    return '"src/libANGLE/renderer/vulkan/%s"' % slash(shader)
 
 
 def main():
@@ -564,9 +614,11 @@ def main():
         shader_files_to_compile = [f for f in shader_files_to_compile if f.find(sys.argv[1]) != -1]
 
     valid_extensions = ['.vert', '.frag', '.comp']
-    input_shaders = sorted([os.path.join(shaders_dir, shader)
+    input_shaders = sorted([
+        os.path.join(shaders_dir, shader)
         for shader in os.listdir(shaders_dir)
-        if any([os.path.splitext(shader)[1] == ext for ext in valid_extensions])])
+        if any([os.path.splitext(shader)[1] == ext for ext in valid_extensions])
+    ])
     if print_inputs:
         glslang_binaries = [get_linux_glslang_exe_path(), get_win_glslang_exe_path()]
         glslang_binary_hashes = [path + '.sha1' for path in glslang_binaries]
@@ -582,7 +634,9 @@ def main():
 
     output_shaders = []
 
-    input_shaders_and_variations = [ShaderAndVariations(shader_file) for shader_file in input_shaders]
+    input_shaders_and_variations = [
+        ShaderAndVariations(shader_file) for shader_file in input_shaders
+    ]
 
     compile_queue = CompileQueue()
 
@@ -604,8 +658,9 @@ def main():
             # a number where each bit says whether a flag is active or not,
             # with values in [0, 2^len(flags))
             for flags_active in range(1 << len(flags)):
-                compile_variation(glslang_path, compile_queue, shader_file, output_name, flags,
-                        enums, flags_active, enum_indices, flags_bits, enum_bits, output_shaders)
+                compile_variation(glslang_path if do_compile else None, compile_queue, shader_file,
+                                  output_name, flags, enums, flags_active, enum_indices,
+                                  flags_bits, enum_bits, output_shaders)
 
             if not next_enum_variation(enums, enum_indices):
                 break
@@ -622,51 +677,50 @@ def main():
     # STEP 2: Consolidate the .inc files into an auto-generated cpp/h library.
     with open(out_file_cpp, 'w') as outfile:
         includes = "\n".join([gen_shader_include(shader) for shader in output_shaders])
-        shader_tables_cpp = '\n'.join([get_shader_table_cpp(s)
-            for s in input_shaders_and_variations])
-        shader_destroy_calls = '\n'.join([get_destroy_call(s)
-            for s in input_shaders_and_variations])
-        shader_get_functions_cpp = '\n'.join([get_get_function_cpp(s)
-            for s in input_shaders_and_variations])
+        shader_tables_cpp = '\n'.join(
+            [get_shader_table_cpp(s) for s in input_shaders_and_variations])
+        shader_destroy_calls = '\n'.join(
+            [get_destroy_call(s) for s in input_shaders_and_variations])
+        shader_get_functions_cpp = '\n'.join(
+            [get_get_function_cpp(s) for s in input_shaders_and_variations])
 
         outcode = template_shader_library_cpp.format(
-            script_name = __file__,
-            copyright_year = date.today().year,
-            out_file_name = out_file_cpp,
-            input_file_name = 'shaders/src/*',
-            internal_shader_includes = includes,
-            shader_tables_cpp = shader_tables_cpp,
-            shader_destroy_calls = shader_destroy_calls,
-            shader_get_functions_cpp = shader_get_functions_cpp)
+            script_name=__file__,
+            copyright_year=date.today().year,
+            out_file_name=out_file_cpp,
+            input_file_name='shaders/src/*',
+            internal_shader_includes=includes,
+            shader_tables_cpp=shader_tables_cpp,
+            shader_destroy_calls=shader_destroy_calls,
+            shader_get_functions_cpp=shader_get_functions_cpp)
         outfile.write(outcode)
         outfile.close()
 
     with open(out_file_h, 'w') as outfile:
-        shader_variation_definitions = '\n'.join([get_variation_definition(s)
-            for s in input_shaders_and_variations])
-        shader_get_functions_h = '\n'.join([get_get_function_h(s)
-            for s in input_shaders_and_variations])
-        shader_tables_h = '\n'.join([get_shader_table_h(s)
-            for s in input_shaders_and_variations])
+        shader_variation_definitions = '\n'.join(
+            [get_variation_definition(s) for s in input_shaders_and_variations])
+        shader_get_functions_h = '\n'.join(
+            [get_get_function_h(s) for s in input_shaders_and_variations])
+        shader_tables_h = '\n'.join([get_shader_table_h(s) for s in input_shaders_and_variations])
         outcode = template_shader_library_h.format(
-            script_name = __file__,
-            copyright_year = date.today().year,
-            out_file_name = out_file_h,
-            input_file_name = 'shaders/src/*',
-            shader_variation_definitions = shader_variation_definitions,
-            shader_get_functions_h = shader_get_functions_h,
-            shader_tables_h = shader_tables_h)
+            script_name=__file__,
+            copyright_year=date.today().year,
+            out_file_name=out_file_h,
+            input_file_name='shaders/src/*',
+            shader_variation_definitions=shader_variation_definitions,
+            shader_get_functions_h=shader_get_functions_h,
+            shader_tables_h=shader_tables_h)
         outfile.write(outcode)
         outfile.close()
 
     # STEP 3: Create a gni file with the generated files.
     with io.open(out_file_gni, 'w', newline='\n') as outfile:
         outcode = template_shader_includes_gni.format(
-            script_name = __file__,
-            copyright_year = date.today().year,
-            out_file_name = out_file_gni,
-            input_file_name = 'shaders/src/*',
-            shaders_list = ',\n'.join(['  "' + slash(shader) + '"' for shader in output_shaders]))
+            script_name=__file__,
+            copyright_year=date.today().year,
+            out_file_name=out_file_gni,
+            input_file_name='shaders/src/*',
+            shaders_list=',\n'.join([shader_path(shader) for shader in output_shaders]))
         outfile.write(outcode)
         outfile.close()
 

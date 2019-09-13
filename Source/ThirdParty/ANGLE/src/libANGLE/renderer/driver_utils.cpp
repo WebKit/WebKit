@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -9,6 +9,12 @@
 #include <algorithm>
 
 #include "libANGLE/renderer/driver_utils.h"
+
+#include "common/platform.h"
+
+#if defined(ANGLE_PLATFORM_ANDROID)
+#    include <sys/system_properties.h>
+#endif
 
 namespace rx
 {
@@ -121,10 +127,14 @@ const char *GetVendorString(uint32_t vendorId)
     {
         case VENDOR_ID_AMD:
             return "Advanced Micro Devices";
-        case VENDOR_ID_NVIDIA:
-            return "NVIDIA";
+        case VENDOR_ID_ARM:
+            return "ARM";
+        case VENDOR_ID_GOOGLE:
+            return "Google";
         case VENDOR_ID_INTEL:
             return "Intel";
+        case VENDOR_ID_NVIDIA:
+            return "NVIDIA";
         case VENDOR_ID_QUALCOMM:
             return "Qualcomm";
         default:
@@ -133,5 +143,54 @@ const char *GetVendorString(uint32_t vendorId)
             return "Unknown";
     }
 }
+
+int GetAndroidSDKVersion()
+{
+#if defined(ANGLE_PLATFORM_ANDROID)
+    char apiVersion[PROP_VALUE_MAX];
+    int length = __system_property_get("ro.build.version.sdk", apiVersion);
+    if (length == 0)
+    {
+        return 0;
+    }
+    return atoi(apiVersion);
+#else
+    return 0;
+#endif
+}
+
+OSVersion::OSVersion() {}
+OSVersion::OSVersion(int major, int minor, int patch)
+    : majorVersion(major), minorVersion(minor), patchVersion(patch)
+{}
+
+bool operator==(const OSVersion &a, const OSVersion &b)
+{
+    return std::tie(a.majorVersion, a.minorVersion, a.patchVersion) ==
+           std::tie(b.majorVersion, b.minorVersion, b.patchVersion);
+}
+bool operator!=(const OSVersion &a, const OSVersion &b)
+{
+    return std::tie(a.majorVersion, a.minorVersion, a.patchVersion) !=
+           std::tie(b.majorVersion, b.minorVersion, b.patchVersion);
+}
+bool operator<(const OSVersion &a, const OSVersion &b)
+{
+    return std::tie(a.majorVersion, a.minorVersion, a.patchVersion) <
+           std::tie(b.majorVersion, b.minorVersion, b.patchVersion);
+}
+bool operator>=(const OSVersion &a, const OSVersion &b)
+{
+    return std::tie(a.majorVersion, a.minorVersion, a.patchVersion) >=
+           std::tie(b.majorVersion, b.minorVersion, b.patchVersion);
+}
+
+#if !defined(ANGLE_PLATFORM_APPLE)
+OSVersion GetMacOSVersion()
+{
+    // Return a default version
+    return OSVersion(0, 0, 0);
+}
+#endif
 
 }  // namespace rx

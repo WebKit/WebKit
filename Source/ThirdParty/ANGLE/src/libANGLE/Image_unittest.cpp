@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -37,7 +37,7 @@ TEST(ImageTest, RefCounting)
     // Create a texture and an EGL image that uses the texture as its source
     rx::MockTextureImpl *textureImpl = new rx::MockTextureImpl();
     EXPECT_CALL(mockGLFactory, createTexture(_)).WillOnce(Return(textureImpl));
-    gl::Texture *texture = new gl::Texture(&mockGLFactory, 1, gl::TextureType::_2D);
+    gl::Texture *texture = new gl::Texture(&mockGLFactory, {1}, gl::TextureType::_2D);
     texture->addRef();
 
     EXPECT_CALL(mockEGLFactory, createImage(_, _, _, _))
@@ -57,7 +57,7 @@ TEST(ImageTest, RefCounting)
     // Create a renderbuffer and set it as a target of the EGL image
     rx::MockRenderbufferImpl *renderbufferImpl = new rx::MockRenderbufferImpl();
     EXPECT_CALL(mockGLFactory, createRenderbuffer(_)).WillOnce(Return(renderbufferImpl));
-    gl::Renderbuffer *renderbuffer = new gl::Renderbuffer(&mockGLFactory, 1);
+    gl::Renderbuffer *renderbuffer = new gl::Renderbuffer(&mockGLFactory, {1});
     renderbuffer->addRef();
 
     EXPECT_CALL(*renderbufferImpl, setStorageEGLImageTarget(_, _))
@@ -106,7 +106,7 @@ TEST(ImageTest, RespecificationReleasesReferences)
     // Create a texture and an EGL image that uses the texture as its source
     rx::MockTextureImpl *textureImpl = new rx::MockTextureImpl();
     EXPECT_CALL(mockGLFactory, createTexture(_)).WillOnce(Return(textureImpl));
-    gl::Texture *texture = new gl::Texture(&mockGLFactory, 1, gl::TextureType::_2D);
+    gl::Texture *texture = new gl::Texture(&mockGLFactory, {1}, gl::TextureType::_2D);
     texture->addRef();
 
     gl::PixelUnpackState defaultUnpackState;

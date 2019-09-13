@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -49,10 +49,10 @@ struct LinkProgramParams final : public RenderTestParams
         threadOption = threadOptionIn;
     }
 
-    std::string suffix() const override
+    std::string story() const override
     {
         std::stringstream strstr;
-        strstr << RenderTestParams::suffix();
+        strstr << RenderTestParams::story();
 
         if (taskOption == TaskOption::CompileOnly)
         {
@@ -86,7 +86,7 @@ struct LinkProgramParams final : public RenderTestParams
 
 std::ostream &operator<<(std::ostream &os, const LinkProgramParams &params)
 {
-    os << params.suffix().substr(1);
+    os << params.backendAndStory().substr(1);
     return os;
 }
 
@@ -191,7 +191,7 @@ LinkProgramParams LinkProgramD3D9Params(TaskOption taskOption, ThreadOption thre
 LinkProgramParams LinkProgramOpenGLOrGLESParams(TaskOption taskOption, ThreadOption threadOption)
 {
     LinkProgramParams params(taskOption, threadOption);
-    params.eglParameters = OPENGL_OR_GLES(false);
+    params.eglParameters = OPENGL_OR_GLES();
     return params;
 }
 
@@ -204,6 +204,8 @@ LinkProgramParams LinkProgramVulkanParams(TaskOption taskOption, ThreadOption th
 
 TEST_P(LinkProgramBenchmark, Run)
 {
+    // TODO(crbug.com/997674) crashes on Win10 FYI x64 Exp Release (Intel HD 630)
+    ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel());
     run();
 }
 

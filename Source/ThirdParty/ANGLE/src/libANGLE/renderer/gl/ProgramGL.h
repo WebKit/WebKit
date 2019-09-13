@@ -13,7 +13,11 @@
 #include <vector>
 
 #include "libANGLE/renderer/ProgramImpl.h"
-#include "libANGLE/renderer/gl/WorkaroundsGL.h"
+
+namespace angle
+{
+struct FeaturesGL;
+}  // namespace angle
 
 namespace rx
 {
@@ -27,7 +31,7 @@ class ProgramGL : public ProgramImpl
   public:
     ProgramGL(const gl::ProgramState &data,
               const FunctionsGL *functions,
-              const WorkaroundsGL &workarounds,
+              const angle::FeaturesGL &features,
               StateManagerGL *stateManager,
               bool enablePathRendering,
               const std::shared_ptr<RendererGL> &renderer);
@@ -147,7 +151,7 @@ class ProgramGL : public ProgramImpl
     GLint uniLoc(GLint glLocation) const { return mUniformRealLocationMap[glLocation]; }
 
     const FunctionsGL *mFunctions;
-    const WorkaroundsGL &mWorkarounds;
+    const angle::FeaturesGL &mFeatures;
     StateManagerGL *mStateManager;
 
     std::vector<GLint> mUniformRealLocationMap;

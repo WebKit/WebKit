@@ -22,11 +22,13 @@ os.chdir(os.path.join(script_dir, '..'))
 
 out_dir = 'out'
 
+
 # Generate the VS solutions for any valid directory.
 def generate_projects(dirname):
     args = ['gn.bat', 'gen', dirname, '--ide=' + target_ide, '--sln=' + solution_name]
     print('Running "' + ' '.join(args) + '"')
     subprocess.call(args)
+
 
 for potential_dir in os.listdir(out_dir):
     path = os.path.join(out_dir, potential_dir)

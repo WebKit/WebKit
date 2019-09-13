@@ -215,6 +215,10 @@
 2546 ANDROID VULKAN : dEQP-EGL.functional.resize.pixel_density.* = SKIP
 2546 ANDROID VULKAN : dEQP-EGL.functional.wide_color.window* = SKIP
 
+// Robustness failures on multiple platforms
+3711 : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds.reset_status.reads.* = FAIL
+3711 : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds.reset_status.writes.* = FAIL
+
 // ES 1 tests
 2306 WIN : dEQP-EGL.functional.color_clears.single_context.gles1* = FAIL
 2306 WIN : dEQP-EGL.functional.color_clears.multi_context.gles1* = FAIL

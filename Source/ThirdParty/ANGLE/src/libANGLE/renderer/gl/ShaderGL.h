@@ -14,7 +14,6 @@
 namespace rx
 {
 class RendererGL;
-struct WorkaroundsGL;
 enum class MultiviewImplementationTypeGL;
 
 class ShaderGL : public ShaderImpl

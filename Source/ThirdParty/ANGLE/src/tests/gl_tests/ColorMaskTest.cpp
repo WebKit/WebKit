@@ -25,22 +25,15 @@ class ColorMaskTest : public ANGLETest
         setConfigDepthBits(24);
     }
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         mProgram = CompileProgram(essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
         ASSERT_NE(0u, mProgram) << "shader compilation failed.";
 
         mColorUniform = glGetUniformLocation(mProgram, essl1_shaders::ColorUniform());
     }
 
-    void TearDown() override
-    {
-        glDeleteProgram(mProgram);
-
-        ANGLETest::TearDown();
-    }
+    void testTearDown() override { glDeleteProgram(mProgram); }
 
     GLuint mProgram     = 0;
     GLint mColorUniform = -1;
@@ -83,7 +76,6 @@ TEST_P(ColorMaskTest, AMDZeroColorMaskBug)
 ANGLE_INSTANTIATE_TEST(ColorMaskTest,
                        ES2_D3D9(),
                        ES2_D3D11(),
-                       ES2_D3D11_FL9_3(),
                        ES2_OPENGL(),
                        ES3_OPENGL(),
                        ES2_OPENGLES(),

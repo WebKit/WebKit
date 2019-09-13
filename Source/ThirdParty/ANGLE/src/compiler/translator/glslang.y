@@ -1,6 +1,6 @@
 /*
 //
-// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -15,7 +15,7 @@ WHICH GENERATES THE GLSL ES PARSER (glslang_tab.cpp AND glslang_tab.h).
 
 %{
 //
-// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -36,6 +36,9 @@ WHICH GENERATES THE GLSL ES PARSER (glslang_tab.cpp AND glslang_tab.h).
 #pragma warning(disable: 4505)
 #pragma warning(disable: 4701)
 #pragma warning(disable: 4702)
+#endif
+#if defined(__clang__)
+#pragma clang diagnostic ignored "-Wunreachable-code"
 #endif
 
 #include "angle_gl.h"
@@ -58,6 +61,7 @@ using namespace sh;
 %code requires {
 #define YYLTYPE TSourceLoc
 #define YYLTYPE_IS_DECLARED 1
+#define YYLTYPE_IS_TRIVIAL 1
 }
 
 %union {
@@ -135,20 +139,14 @@ extern void yyerror(YYLTYPE* yylloc, TParseContext* context, void *scanner, cons
     }  \
 } while (0)
 
-#define ES2_ONLY(S, L) {  \
-    if (context->getShaderVersion() != 100) do {  \
+#define ES2_ONLY(S, L) do {  \
+    if (context->getShaderVersion() != 100) {  \
         context->error(L, " supported in GLSL ES 1.00 only", S);  \
     }  \
 } while (0)
 
 #define ES3_OR_NEWER(TOKEN, LINE, REASON) do {  \
     if (context->getShaderVersion() < 300) {  \
-        context->error(LINE, REASON " supported in GLSL ES 3.00 and above only", TOKEN);  \
-    }  \
-} while (0)
-
-#define ES3_OR_NEWER_OR_MULTIVIEW(TOKEN, LINE, REASON) do {  \
-    if (context->getShaderVersion() < 300 && !context->isExtensionEnabled(TExtension::OVR_multiview)) {  \
         context->error(LINE, REASON " supported in GLSL ES 3.00 and above only", TOKEN);  \
     }  \
 } while (0)
@@ -896,7 +894,7 @@ precision_qualifier
 
 layout_qualifier
     : LAYOUT LEFT_PAREN layout_qualifier_id_list RIGHT_PAREN {
-        ES3_OR_NEWER_OR_MULTIVIEW("layout", @1, "qualifier");
+        ES3_OR_NEWER("layout", @1, "qualifier");
         $$ = $3;
     }
     ;

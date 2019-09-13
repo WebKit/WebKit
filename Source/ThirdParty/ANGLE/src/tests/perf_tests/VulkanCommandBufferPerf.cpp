@@ -6,7 +6,7 @@
 //   Performance benchmark for Vulkan Primary/Secondary Command Buffer implementations.
 //  Can run just these tests by adding "--gtest_filter=VulkanCommandBufferPerfTest*"
 //   option to angle_white_box_perftests.
-//  When running on Android, use logcat to view output.
+//  When running on Android with run_angle_white_box_perftests, use "-v" option.
 
 #include "ANGLEPerfTest.h"
 #include "common/platform.h"
@@ -59,7 +59,7 @@ using CommandBufferImpl = void (*)(sample_info &info,
 struct CommandBufferTestParams
 {
     CommandBufferImpl CBImplementation;
-    std::string suffix;
+    std::string story;
     int frames  = NUM_FRAMES;
     int buffers = NUM_CMD_BUFFERS;
 };
@@ -89,7 +89,7 @@ class VulkanCommandBufferPerfTest : public ANGLEPerfTest,
 };
 
 VulkanCommandBufferPerfTest::VulkanCommandBufferPerfTest()
-    : ANGLEPerfTest("VulkanCommandBufferPerfTest", GetParam().suffix, GetParam().frames)
+    : ANGLEPerfTest("VulkanCommandBufferPerfTest", "", GetParam().story, GetParam().frames)
 {
     mInfo             = {};
     mSampleTitle      = "Draw Textured Cube";
@@ -564,7 +564,7 @@ CommandBufferTestParams PrimaryCBHundredIndividualParams()
 {
     CommandBufferTestParams params;
     params.CBImplementation = PrimaryCommandBufferBenchmarkHundredIndividual;
-    params.suffix           = "_PrimaryCB_Submit_100_With_1_Draw";
+    params.story            = "_PrimaryCB_Submit_100_With_1_Draw";
     return params;
 }
 
@@ -572,7 +572,7 @@ CommandBufferTestParams PrimaryCBOneWithOneHundredParams()
 {
     CommandBufferTestParams params;
     params.CBImplementation = PrimaryCommandBufferBenchmarkOneWithOneHundred;
-    params.suffix           = "_PrimaryCB_Submit_1_With_100_Draw";
+    params.story            = "_PrimaryCB_Submit_1_With_100_Draw";
     return params;
 }
 
@@ -580,7 +580,7 @@ CommandBufferTestParams SecondaryCBParams()
 {
     CommandBufferTestParams params;
     params.CBImplementation = SecondaryCommandBufferBenchmark;
-    params.suffix           = "_SecondaryCB_Submit_1_With_100_Draw_In_Individual_Secondary";
+    params.story            = "_SecondaryCB_Submit_1_With_100_Draw_In_Individual_Secondary";
     return params;
 }
 
@@ -588,7 +588,7 @@ CommandBufferTestParams CommandPoolDestroyParams()
 {
     CommandBufferTestParams params;
     params.CBImplementation = CommandPoolDestroyBenchmark;
-    params.suffix           = "_Reset_CBs_With_Destroy_Command_Pool";
+    params.story            = "_Reset_CBs_With_Destroy_Command_Pool";
     return params;
 }
 
@@ -596,7 +596,7 @@ CommandBufferTestParams CommandPoolHardResetParams()
 {
     CommandBufferTestParams params;
     params.CBImplementation = CommandPoolHardResetBenchmark;
-    params.suffix           = "_Reset_CBs_With_Hard_Reset_Command_Pool";
+    params.story            = "_Reset_CBs_With_Hard_Reset_Command_Pool";
     return params;
 }
 
@@ -604,7 +604,7 @@ CommandBufferTestParams CommandPoolSoftResetParams()
 {
     CommandBufferTestParams params;
     params.CBImplementation = CommandPoolSoftResetBenchmark;
-    params.suffix           = "_Reset_CBs_With_Soft_Reset_Command_Pool";
+    params.story            = "_Reset_CBs_With_Soft_Reset_Command_Pool";
     return params;
 }
 
@@ -612,7 +612,7 @@ CommandBufferTestParams CommandBufferExplicitHardResetParams()
 {
     CommandBufferTestParams params;
     params.CBImplementation = CommandBufferExplicitHardResetBenchmark;
-    params.suffix           = "_Reset_CBs_With_Explicit_Hard_Reset_Command_Buffers";
+    params.story            = "_Reset_CBs_With_Explicit_Hard_Reset_Command_Buffers";
     return params;
 }
 
@@ -620,7 +620,7 @@ CommandBufferTestParams CommandBufferExplicitSoftResetParams()
 {
     CommandBufferTestParams params;
     params.CBImplementation = CommandBufferExplicitSoftResetBenchmark;
-    params.suffix           = "_Reset_CBs_With_Explicit_Soft_Reset_Command_Buffers";
+    params.story            = "_Reset_CBs_With_Explicit_Soft_Reset_Command_Buffers";
     return params;
 }
 
@@ -628,7 +628,7 @@ CommandBufferTestParams CommandBufferImplicitResetParams()
 {
     CommandBufferTestParams params;
     params.CBImplementation = CommandBufferImplicitResetBenchmark;
-    params.suffix           = "_Reset_CBs_With_Implicit_Reset_Command_Buffers";
+    params.story            = "_Reset_CBs_With_Implicit_Reset_Command_Buffers";
     return params;
 }
 

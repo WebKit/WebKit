@@ -741,6 +741,48 @@ class DispatchTableGL : angle::NonCopyable
     // GL_EXT_discard_framebuffer
     PFNGLDISCARDFRAMEBUFFEREXTPROC discardFramebufferEXT = nullptr;
 
+    // GL_EXT_memory_object
+    PFNGLBUFFERSTORAGEMEMEXTPROC bufferStorageMemEXT = nullptr;
+    PFNGLCREATEMEMORYOBJECTSEXTPROC createMemoryObjectsEXT = nullptr;
+    PFNGLDELETEMEMORYOBJECTSEXTPROC deleteMemoryObjectsEXT = nullptr;
+    PFNGLGETMEMORYOBJECTPARAMETERIVEXTPROC getMemoryObjectParameterivEXT = nullptr;
+    PFNGLGETUNSIGNEDBYTEI_VEXTPROC getUnsignedBytei_vEXT = nullptr;
+    PFNGLGETUNSIGNEDBYTEVEXTPROC getUnsignedBytevEXT = nullptr;
+    PFNGLISMEMORYOBJECTEXTPROC isMemoryObjectEXT = nullptr;
+    PFNGLMEMORYOBJECTPARAMETERIVEXTPROC memoryObjectParameterivEXT = nullptr;
+    PFNGLNAMEDBUFFERSTORAGEMEMEXTPROC namedBufferStorageMemEXT = nullptr;
+    PFNGLTEXSTORAGEMEM2DEXTPROC texStorageMem2DEXT = nullptr;
+    PFNGLTEXSTORAGEMEM2DMULTISAMPLEEXTPROC texStorageMem2DMultisampleEXT = nullptr;
+    PFNGLTEXSTORAGEMEM3DEXTPROC texStorageMem3DEXT = nullptr;
+    PFNGLTEXSTORAGEMEM3DMULTISAMPLEEXTPROC texStorageMem3DMultisampleEXT = nullptr;
+    PFNGLTEXTURESTORAGEMEM2DEXTPROC textureStorageMem2DEXT = nullptr;
+    PFNGLTEXTURESTORAGEMEM2DMULTISAMPLEEXTPROC textureStorageMem2DMultisampleEXT = nullptr;
+    PFNGLTEXTURESTORAGEMEM3DEXTPROC textureStorageMem3DEXT = nullptr;
+    PFNGLTEXTURESTORAGEMEM3DMULTISAMPLEEXTPROC textureStorageMem3DMultisampleEXT = nullptr;
+
+    // GL_EXT_memory_object_fd
+    PFNGLIMPORTMEMORYFDEXTPROC importMemoryFdEXT = nullptr;
+
+    // GL_EXT_memory_object_win32
+    PFNGLIMPORTMEMORYWIN32HANDLEEXTPROC importMemoryWin32HandleEXT = nullptr;
+    PFNGLIMPORTMEMORYWIN32NAMEEXTPROC importMemoryWin32NameEXT = nullptr;
+
+    // GL_EXT_semaphore
+    PFNGLDELETESEMAPHORESEXTPROC deleteSemaphoresEXT = nullptr;
+    PFNGLGENSEMAPHORESEXTPROC genSemaphoresEXT = nullptr;
+    PFNGLGETSEMAPHOREPARAMETERUI64VEXTPROC getSemaphoreParameterui64vEXT = nullptr;
+    PFNGLISSEMAPHOREEXTPROC isSemaphoreEXT = nullptr;
+    PFNGLSEMAPHOREPARAMETERUI64VEXTPROC semaphoreParameterui64vEXT = nullptr;
+    PFNGLSIGNALSEMAPHOREEXTPROC signalSemaphoreEXT = nullptr;
+    PFNGLWAITSEMAPHOREEXTPROC waitSemaphoreEXT = nullptr;
+
+    // GL_EXT_semaphore_fd
+    PFNGLIMPORTSEMAPHOREFDEXTPROC importSemaphoreFdEXT = nullptr;
+
+    // GL_EXT_semaphore_win32
+    PFNGLIMPORTSEMAPHOREWIN32HANDLEEXTPROC importSemaphoreWin32HandleEXT = nullptr;
+    PFNGLIMPORTSEMAPHOREWIN32NAMEEXTPROC importSemaphoreWin32NameEXT = nullptr;
+
     // GL_KHR_parallel_shader_compile
     PFNGLMAXSHADERCOMPILERTHREADSKHRPROC maxShaderCompilerThreadsKHR = nullptr;
 

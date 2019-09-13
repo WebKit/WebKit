@@ -27,10 +27,8 @@ class PackUnpackTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         // Fragment Shader source
         constexpr char kSNormFS[] = R"(#version 300 es
 precision mediump float;
@@ -93,15 +91,13 @@ void main()
         glClearBufferfv(GL_COLOR, 0, color);
     }
 
-    void TearDown() override
+    void testTearDown() override
     {
         glDeleteTextures(1, &mOffscreenTexture2D);
         glDeleteFramebuffers(1, &mOffscreenFramebuffer);
         glDeleteProgram(mSNormProgram);
         glDeleteProgram(mUNormProgram);
         glDeleteProgram(mHalfProgram);
-
-        ANGLETest::TearDown();
     }
 
     void compareBeforeAfter(GLuint program, float input1, float input2)
@@ -238,15 +234,5 @@ TEST_P(PackUnpackTest, PackUnpackSnormOverflow)
     compareBeforeAfter(mSNormProgram, 67000.0f, -67000.0f, 1.0f, -1.0f);
 }
 
-// Use this to select which configurations (e.g. which renderer, which GLES major version) these
-// tests should be run against.
-ANGLE_INSTANTIATE_TEST(PackUnpackTest,
-                       ES3_OPENGL(3, 3),
-                       ES3_OPENGL(4, 0),
-                       ES3_OPENGL(4, 1),
-                       ES3_OPENGL(4, 2),
-                       ES3_OPENGL(4, 3),
-                       ES3_OPENGL(4, 4),
-                       ES3_OPENGL(4, 5),
-                       ES3_OPENGLES());
+ANGLE_INSTANTIATE_TEST(PackUnpackTest, ES3_OPENGL(), ES3_OPENGLES());
 }  // namespace

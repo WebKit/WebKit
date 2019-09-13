@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -16,8 +16,8 @@
 #include "libANGLE/renderer/d3d/d3d9/RenderTarget9.h"
 #include "libANGLE/renderer/d3d/d3d9/formatutils9.h"
 #include "libANGLE/renderer/driver_utils.h"
+#include "platform/FeaturesD3D.h"
 #include "platform/Platform.h"
-#include "platform/WorkaroundsD3D.h"
 
 #include "third_party/systeminfo/SystemInfo.h"
 
@@ -658,6 +658,10 @@ void GenerateCaps(IDirect3D9 *d3d9,
     extensions->mapBuffer         = false;
     extensions->mapBufferRange    = false;
 
+    // D3D does not allow depth textures to have more than one mipmap level OES_depth_texture
+    // allows for that so we can't implement full support with the D3D9 back end.
+    extensions->depthTextureOES = false;
+
     // textureRG is emulated and not performant.
     extensions->textureRG = false;
 
@@ -673,7 +677,8 @@ void GenerateCaps(IDirect3D9 *d3d9,
         // Disable depth texture support on AMD cards (See ANGLE issue 839)
         if (IsAMD(adapterId.VendorId))
         {
-            extensions->depthTextures = false;
+            extensions->depthTextureANGLE = false;
+            extensions->depthTextureOES   = false;
         }
     }
     else
@@ -709,15 +714,19 @@ void GenerateCaps(IDirect3D9 *d3d9,
     // https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_robustness.txt
     extensions->robustBufferAccessBehavior = false;
     extensions->blendMinMax                = true;
+    // Although according to
     // https://docs.microsoft.com/en-us/windows/desktop/direct3ddxgi/format-support-for-direct3d-feature-level-9-1-hardware
-    extensions->floatBlend                 = false;
-    extensions->framebufferBlit            = true;
-    extensions->framebufferMultisample     = true;
-    extensions->instancedArraysANGLE       = deviceCaps.PixelShaderVersion >= D3DPS_VERSION(3, 0);
+    // D3D9 doesn't have full blending capability for RGBA32F. But turns out it could provide
+    // correct blending result in reality. As a result of some regression reports by client app, we
+    // decided to turn floatBlend on for D3D9
+    extensions->floatBlend             = true;
+    extensions->framebufferBlit        = true;
+    extensions->framebufferMultisample = true;
+    extensions->instancedArraysANGLE   = deviceCaps.PixelShaderVersion >= D3DPS_VERSION(3, 0);
     // D3D9 requires at least one attribute that has a divisor of 0, which isn't required by the EXT
     // extension
-    extensions->instancedArraysEXT         = false;
-    extensions->packReverseRowOrder        = true;
+    extensions->instancedArraysEXT  = false;
+    extensions->packReverseRowOrder = true;
     extensions->standardDerivatives =
         (deviceCaps.PS20Caps.Caps & D3DPS20CAPS_GRADIENTINSTRUCTIONS) != 0;
     extensions->shaderTextureLOD       = true;
@@ -752,6 +761,9 @@ void GenerateCaps(IDirect3D9 *d3d9,
     // D3D9 cannot support packing more than one variable to a single varying.
     // TODO(jmadill): Implement more sophisticated component packing in D3D9.
     limitations->noFlexibleVaryingPacking = true;
+
+    // D3D9 does not support vertex attribute aliasing
+    limitations->noVertexAttributeAliasing = true;
 }
 
 }  // namespace d3d9_gl
@@ -791,21 +803,21 @@ void MakeValidSize(bool isImage,
     *levelOffset = upsampleCount;
 }
 
-angle::WorkaroundsD3D GenerateWorkarounds()
+void InitializeFeatures(angle::FeaturesD3D *features)
 {
-    angle::WorkaroundsD3D workarounds;
-    workarounds.mrtPerfWorkaround                = true;
-    workarounds.setDataFasterThanImageUpload     = false;
-    workarounds.useInstancedPointSpriteEmulation = false;
+    features->mrtPerfWorkaround.enabled                = true;
+    features->setDataFasterThanImageUpload.enabled     = false;
+    features->useInstancedPointSpriteEmulation.enabled = false;
 
     // TODO(jmadill): Disable workaround when we have a fixed compiler DLL.
-    workarounds.expandIntegerPowExpressions = true;
+    features->expandIntegerPowExpressions.enabled = true;
+
+    // Never clear for robust resource init.  This matches Chrome's texture clearning behaviour.
+    features->allowClearForRobustResourceInit.enabled = false;
 
     // Call platform hooks for testing overrides.
     auto *platform = ANGLEPlatformCurrent();
-    platform->overrideWorkaroundsD3D(platform, &workarounds);
-
-    return workarounds;
+    platform->overrideWorkaroundsD3D(platform, features);
 }
 
 }  // namespace d3d9

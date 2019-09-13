@@ -8,6 +8,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "common/angleutils.h"
 #include "common/debug.h"
@@ -207,19 +208,44 @@ inline Token ParseToken(const std::string &word)
     return kTokenWord;
 }
 
-// reference name can have the last character as *.
-inline bool NamesMatching(const std::string &ref, const std::string &testName)
+// reference name can have *.
+inline bool NamesMatching(const char *ref, const char *testName)
 {
-    size_t len = ref.length();
-    if (len == 0)
-        return false;
-    if (ref[len - 1] == '*')
+    // Find the first * in ref.
+    const char *firstWildcard = strchr(ref, '*');
+
+    // If there are no wildcards, match the strings precisely.
+    if (firstWildcard == nullptr)
     {
-        if (testName.length() > len - 1 && ref.compare(0, len - 1, testName, 0, len - 1) == 0)
-            return true;
+        return strcmp(ref, testName) == 0;
+    }
+
+    // Otherwise, match up to the wildcard first.
+    size_t preWildcardLen = firstWildcard - ref;
+    if (strncmp(ref, testName, preWildcardLen) != 0)
+    {
         return false;
     }
-    return (ref == testName);
+
+    const char *postWildcardRef = ref + preWildcardLen + 1;
+
+    // As a small optimization, if the wildcard is the last character in ref, accept the match
+    // already.
+    if (postWildcardRef[0] == '\0')
+    {
+        return true;
+    }
+
+    // Try to match the wildcard with a number of characters.
+    for (size_t matchSize = 0; testName[matchSize] != '\0'; ++matchSize)
+    {
+        if (NamesMatching(postWildcardRef, testName + matchSize))
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 }  // anonymous namespace
@@ -278,7 +304,7 @@ int32_t GPUTestExpectationsParser::getTestExpectation(const std::string &testNam
     GPUTestExpectationEntry *foundEntry = nullptr;
     for (size_t i = 0; i < mEntries.size(); ++i)
     {
-        if (NamesMatching(mEntries[i].testName, testName))
+        if (NamesMatching(mEntries[i].testName.c_str(), testName.c_str()))
         {
             size_t expectationLen = mEntries[i].testName.length();
             // The longest/most specific matching expectation overrides any others.
@@ -324,9 +350,9 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig &config,
         SplitString(lineData, kWhitespaceASCII, KEEP_WHITESPACE, SPLIT_WANT_NONEMPTY);
     int32_t stage = kLineParserBegin;
     GPUTestExpectationEntry entry;
-    entry.lineNumber  = lineNumber;
-    entry.used        = false;
-    bool skipLine     = false;
+    entry.lineNumber = lineNumber;
+    entry.used       = false;
+    bool skipLine    = false;
     for (size_t i = 0; i < tokens.size() && !skipLine; ++i)
     {
         Token token = ParseToken(tokens[i]);

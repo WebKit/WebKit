@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -989,6 +989,16 @@ WorkerContext *DisplayGLX::createWorkerContext(std::string *infoLog)
     mWorkerPbufferPool.pop_back();
 
     return new WorkerContextGLX(context, &mGLX, workerPbuffer);
+}
+
+void DisplayGLX::initializeFrontendFeatures(angle::FrontendFeatures *features) const
+{
+    mRenderer->initializeFrontendFeatures(features);
+}
+
+void DisplayGLX::populateFeatureList(angle::FeatureList *features)
+{
+    mRenderer->getFeatures().populateFeatureList(features);
 }
 
 }  // namespace rx

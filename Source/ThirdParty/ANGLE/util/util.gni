@@ -1,4 +1,4 @@
-# Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+# Copyright 2014 The ANGLE Project Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -24,6 +24,7 @@ util_sources = [
   "util/OSWindow.cpp",
   "util/OSWindow.h",
   "util/Timer.h",
+  "util/Timer.cpp",
 ]
 
 util_win_sources = [
@@ -33,28 +34,17 @@ util_win_sources = [
   "util/windows/win32/Win32Window.cpp",
   "util/windows/win32/Win32Window.h",
   "util/windows/Windows_system_utils.cpp",
-  "util/windows/WindowsTimer.cpp",
-  "util/windows/WindowsTimer.h",
   "util/windows/WGLWindow.h",
 ]
 
 util_win_shared_sources = [ "util/windows/WGLWindow.cpp" ]
 
-util_winrt_sources = [
-  "util/windows/winrt/WinRT_system_utils.cpp",
-  "util/windows/winrt/WinRTPixmap.cpp",
-  "util/windows/winrt/WinRTWindow.cpp",
-  "util/windows/winrt/WinRTWindow.h",
-  "util/windows/Windows_system_utils.cpp",
-  "util/windows/WindowsTimer.cpp",
-  "util/windows/WindowsTimer.h",
-]
-
-util_linux_sources = [
-  "util/posix/PosixTimer.cpp",
-  "util/posix/PosixTimer.h",
+util_posix_sources = [
+  "util/posix/Posix_crash_handler.cpp",
   "util/posix/Posix_system_utils.cpp",
 ]
+
+util_linux_sources = util_posix_sources
 
 util_x11_sources = [
   "util/x11/X11Pixmap.cpp",
@@ -63,13 +53,10 @@ util_x11_sources = [
   "util/x11/X11Window.h",
 ]
 
-util_fuchsia_sources = [
-  "util/posix/PosixTimer.cpp",
-  "util/posix/PosixTimer.h",
-  "util/posix/Posix_system_utils.cpp",
-  "util/fuchsia/ScenicWindow.cpp",
-  "util/fuchsia/ScenicWindow.h",
-]
+util_fuchsia_sources = util_posix_sources + [
+                         "util/fuchsia/ScenicWindow.cpp",
+                         "util/fuchsia/ScenicWindow.h",
+                       ]
 
 util_ozone_sources = [
   "util/ozone/OzonePixmap.cpp",
@@ -78,19 +65,18 @@ util_ozone_sources = [
 ]
 
 util_osx_sources = [
-  "util/osx/OSXTimer.cpp",
-  "util/osx/OSXTimer.h",
   "util/osx/OSXPixmap.mm",
   "util/osx/OSXPixmap.h",
   "util/osx/OSXWindow.mm",
   "util/osx/OSXWindow.h",
+  "util/posix/Posix_crash_handler.cpp",
   "util/posix/Posix_system_utils.cpp",
 ]
 
-util_android_sources = [
-  "util/android/AndroidPixmap.cpp",
-  "util/android/AndroidWindow.cpp",
-  "util/android/AndroidWindow.h",
-  "util/android/third_party/android_native_app_glue.c",
-  "util/android/third_party/android_native_app_glue.h",
-]
+util_android_sources = util_posix_sources + [
+                         "util/android/AndroidPixmap.cpp",
+                         "util/android/AndroidWindow.cpp",
+                         "util/android/AndroidWindow.h",
+                         "util/android/third_party/android_native_app_glue.c",
+                         "util/android/third_party/android_native_app_glue.h",
+                       ]

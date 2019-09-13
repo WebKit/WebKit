@@ -18,14 +18,12 @@ import shutil
 import subprocess
 import sys
 
-
 gn_args = """is_clang = true
 is_debug = false
 angle_enable_vulkan = true"""
 
-
 is_windows = platform.system() == 'Windows'
-is_linux  = platform.system() == 'Linux'
+is_linux = platform.system() == 'Linux'
 
 
 def find_file_in_path(filename):

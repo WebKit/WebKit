@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -23,6 +23,8 @@
 #include "libANGLE/LoggingAnnotator.h"
 #include "libANGLE/MemoryProgramCache.h"
 #include "libANGLE/Version.h"
+#include "platform/Feature.h"
+#include "platform/FrontendFeatures.h"
 
 namespace gl
 {
@@ -53,6 +55,8 @@ struct DisplayState final : private angle::NonCopyable
 
     EGLLabelKHR label;
     SurfaceSet surfaceSet;
+    std::vector<std::string> featureOverridesEnabled;
+    std::vector<std::string> featureOverridesDisabled;
 };
 
 // Constant coded here as a sanity limit.
@@ -72,6 +76,7 @@ class Display final : public LabeledObject, angle::NonCopyable
     static Display *GetDisplayFromDevice(Device *device, const AttributeMap &attribMap);
     static Display *GetDisplayFromNativeDisplay(EGLNativeDisplayType nativeDisplay,
                                                 const AttributeMap &attribMap);
+    static Display *GetExistingDisplayFromNativeDisplay(EGLNativeDisplayType nativeDisplay);
 
     static const ClientExtensions &GetClientExtensions();
     static const std::string &GetClientExtensionString();
@@ -105,7 +110,8 @@ class Display final : public LabeledObject, angle::NonCopyable
     Error createStream(const AttributeMap &attribs, Stream **outStream);
 
     Error createContext(const Config *configuration,
-                        const gl::Context *shareContext,
+                        gl::Context *shareContext,
+                        const EGLenum clientType,
                         const AttributeMap &attribs,
                         gl::Context **outContext);
 
@@ -155,6 +161,8 @@ class Display final : public LabeledObject, angle::NonCopyable
     bool areBlobCacheFuncsSet() const { return mBlobCache.areBlobCacheFuncsSet(); }
     BlobCache &getBlobCache() { return mBlobCache; }
 
+    static EGLClientBuffer GetNativeClientBuffer(const struct AHardwareBuffer *buffer);
+
     Error waitClient(const gl::Context *context);
     Error waitNative(const gl::Context *context, EGLint engine);
 
@@ -181,6 +189,7 @@ class Display final : public LabeledObject, angle::NonCopyable
 
     rx::DisplayImpl *getImplementation() const { return mImplementation; }
     Device *getDevice() const;
+    Surface *getWGLSurface() const;
     EGLenum getPlatform() const { return mPlatform; }
 
     gl::Version getMaxSupportedESVersion() const;
@@ -189,6 +198,14 @@ class Display final : public LabeledObject, angle::NonCopyable
 
     typedef std::set<gl::Context *> ContextSet;
     const ContextSet &getContextSet() { return mContextSet; }
+
+    const angle::FrontendFeatures &getFrontendFeatures() { return mFrontendFeatures; }
+
+    const angle::FeatureList &getFeatures() const { return mFeatures; }
+
+    const char *queryStringi(const EGLint name, const EGLint index);
+
+    EGLAttrib queryAttrib(const EGLint attribute);
 
   private:
     Display(EGLenum platform, EGLNativeDisplayType displayId, Device *eglDevice);
@@ -199,6 +216,7 @@ class Display final : public LabeledObject, angle::NonCopyable
 
     void initDisplayExtensions();
     void initVendorString();
+    void initializeFrontendFeatures();
 
     DisplayState mState;
     rx::DisplayImpl *mImplementation;
@@ -230,6 +248,7 @@ class Display final : public LabeledObject, angle::NonCopyable
     std::string mVendorString;
 
     Device *mDevice;
+    Surface *mSurface;
     EGLenum mPlatform;
     angle::LoggingAnnotator mAnnotator;
 
@@ -237,6 +256,10 @@ class Display final : public LabeledObject, angle::NonCopyable
     BlobCache mBlobCache;
     gl::MemoryProgramCache mMemoryProgramCache;
     size_t mGlobalTextureShareGroupUsers;
+
+    angle::FrontendFeatures mFrontendFeatures;
+
+    angle::FeatureList mFeatures;
 };
 
 }  // namespace egl

@@ -30,8 +30,8 @@ void GetOperatingSystemVersionNumbers(int32_t *majorVersion, int32_t *minorVersi
     if (@available(macOS 10.10, *))
     {
         NSOperatingSystemVersion version = [[NSProcessInfo processInfo] operatingSystemVersion];
-        *majorVersion                    = version.majorVersion;
-        *minorVersion                    = version.minorVersion;
+        *majorVersion                    = static_cast<int32_t>(version.majorVersion);
+        *minorVersion                    = static_cast<int32_t>(version.minorVersion);
     }
     else
     {

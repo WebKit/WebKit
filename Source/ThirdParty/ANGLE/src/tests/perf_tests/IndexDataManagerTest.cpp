@@ -158,13 +158,13 @@ class IndexDataManagerPerfTest : public ANGLEPerfTest
 };
 
 IndexDataManagerPerfTest::IndexDataManagerPerfTest()
-    : ANGLEPerfTest("IndexDataManger", "_run", kIterationsPerStep),
+    : ANGLEPerfTest("IndexDataManager", "", "_run", kIterationsPerStep),
       mIndexDataManager(&mMockBufferFactory),
       mIndexCount(4000),
       mBufferSize(mIndexCount * sizeof(GLushort)),
       mMockBufferFactory(mBufferSize, gl::DrawElementsType::UnsignedShort),
       mMockGLFactory(&mMockBufferFactory),
-      mIndexBuffer(&mMockGLFactory, 1)
+      mIndexBuffer(&mMockGLFactory, {1})
 {
     std::vector<GLushort> indexData(mIndexCount);
     for (GLsizei index = 0; index < mIndexCount; ++index)

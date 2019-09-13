@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2013-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -34,6 +34,6 @@ void CopyBGRA8ToRGBA8(const uint8_t *source, uint8_t *dest);
 
 }  // namespace angle
 
-#include "copyimage.inl"
+#include "copyimage.inc"
 
 #endif  // IMAGEUTIL_COPYIMAGE_H_

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -24,6 +24,10 @@ namespace rx
 class EGLImplFactory;
 class ImageImpl;
 class ExternalImageSiblingImpl;
+
+// Used for distinguishing dirty bit messages from gl::Texture/rx::TexureImpl/gl::Image.
+constexpr size_t kTextureImageImplObserverMessageIndex = 0;
+constexpr size_t kTextureImageSiblingMessageIndex      = 1;
 }  // namespace rx
 
 namespace egl
@@ -34,7 +38,7 @@ class Display;
 // Only currently Renderbuffers and Textures can be bound with images. This makes the relationship
 // explicit, and also ensures that an image sibling can determine if it's been initialized or not,
 // which is important for the robust resource init extension with Textures and EGLImages.
-class ImageSibling : public gl::FramebufferAttachmentObject
+class ImageSibling : public gl::FramebufferAttachmentObject, public angle::ObserverInterface
 {
   public:
     ImageSibling();
@@ -48,12 +52,20 @@ class ImageSibling : public gl::FramebufferAttachmentObject
                       GLenum binding,
                       const gl::ImageIndex &imageIndex) const override;
 
+    // ObserverInterface implementation
+    void onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message) override
+    {
+        // default to no-op.
+    }
+
   protected:
     // Set the image target of this sibling
     void setTargetImage(const gl::Context *context, egl::Image *imageTarget);
 
     // Orphan all EGL image sources and targets
     angle::Result orphanImages(const gl::Context *context);
+
+    void notifySiblings(angle::SubjectMessage message);
 
   private:
     friend class Image;
@@ -165,6 +177,8 @@ class Image final : public RefCountObject, public LabeledObject
     // Called from ImageSibling only to notify the image that a sibling (source or target) has
     // been respecified and state tracking should be updated.
     angle::Result orphanSibling(const gl::Context *context, ImageSibling *sibling);
+
+    void notifySiblings(const ImageSibling *notifier, angle::SubjectMessage message);
 
     ImageState mState;
     rx::ImageImpl *mImplementation;

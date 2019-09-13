@@ -44,7 +44,7 @@ enum Image2DMethod
     IMAGE2DSTORE
 };
 
-Image2DHLSLGroup image2DHLSLGroup(const sh::Uniform &uniform)
+Image2DHLSLGroup image2DHLSLGroup(const sh::ShaderVariable &uniform)
 {
     GLenum format = uniform.imageUnitFormat;
     bool readonly = uniform.readonly;
@@ -325,7 +325,7 @@ std::string getImage2DGroupReturnType(Image2DHLSLGroup group, Image2DMethod meth
     }
 }
 
-std::string getImageMetadataLayer(Image2DHLSLGroup group)
+std::string getImageMetadata(Image2DHLSLGroup group)
 {
     switch (group)
     {
@@ -334,13 +334,13 @@ std::string getImageMetadataLayer(Image2DHLSLGroup group)
         case IMAGE2D_R_SNORM:
         case IMAGE2D_R_UINT4:
         case IMAGE2D_R_INT4:
-            return "readonlyImageMetadata[imageIndex - readonlyImageIndexStart].layer";
+            return "readonlyImageMetadata[imageIndex - readonlyImageIndexStart]";
         case IMAGE2D_W_FLOAT4:
         case IMAGE2D_W_UNORM:
         case IMAGE2D_W_SNORM:
         case IMAGE2D_W_UINT4:
         case IMAGE2D_W_INT4:
-            return "imageMetadata[imageIndex - imageIndexStart].layer";
+            return "imageMetadata[imageIndex - imageIndexStart]";
         default:
             UNREACHABLE();
             return "unknown image method";
@@ -390,7 +390,8 @@ void OutputImage2DSizeFunction(std::ostringstream &out,
                                unsigned int texture3DCount,
                                unsigned int texture2DArrayCount,
                                const std::string &offsetStr,
-                               const std::string &declarationStr)
+                               const std::string &declarationStr,
+                               bool getDimensionsIgnoresBaseLevel)
 {
     out << getImage2DGroupReturnType(textureGroup, IMAGE2DSIZE) << " "
         << Image2DHLSLGroupFunctionName(textureGroup, IMAGE2DSIZE) << "(";
@@ -404,7 +405,17 @@ void OutputImage2DSizeFunction(std::ostringstream &out,
         if (texture2DCount == totalCount)
         {
             out << "    const uint index = imageIndex -  " << offsetStr << "2D;\n";
-            out << "    " << declarationStr << "2D[index].GetDimensions(width, height);\n";
+            if (getDimensionsIgnoresBaseLevel)
+            {
+                out << "    uint levelCount;\n";
+                out << "    const uint level = " << getImageMetadata(textureGroup) << ".level;\n";
+                out << "    " << declarationStr
+                    << "2D[index].GetDimensions(level, width, height, levelCount);\n";
+            }
+            else
+            {
+                out << "    " << declarationStr << "2D[index].GetDimensions(width, height);\n";
+            }
         }
         else
         {
@@ -519,7 +530,7 @@ void OutputImage2DLoadFunction(std::ostringstream &out,
         {
             out << "    const uint index = imageIndex -  " << offsetStr << "3D;\n";
             out << "    result = " << declarationStr << "3D[index][uint3(p.x, p.y, "
-                << getImageMetadataLayer(textureGroup) << ")];\n";
+                << getImageMetadata(textureGroup) << ".layer)];\n";
         }
         else
         {
@@ -543,7 +554,7 @@ void OutputImage2DLoadFunction(std::ostringstream &out,
             out << "    {\n";
             out << "        const uint index = imageIndex -  " << offsetStr << "3D;\n";
             out << "        result = " << declarationStr << "3D[index][uint3(p.x, p.y, "
-                << getImageMetadataLayer(textureGroup) << ")];\n";
+                << getImageMetadata(textureGroup) << ".layer)];\n";
             out << "    }\n";
         }
     }
@@ -554,7 +565,7 @@ void OutputImage2DLoadFunction(std::ostringstream &out,
         {
             out << "    const uint index = imageIndex -  " << offsetStr << "2DArray;\n";
             out << "    result = " << declarationStr << "2DArray[index][uint3(p.x, p.y, "
-                << getImageMetadataLayer(textureGroup) << ")];\n";
+                << getImageMetadata(textureGroup) << ".layer)];\n";
         }
         else
         {
@@ -562,7 +573,7 @@ void OutputImage2DLoadFunction(std::ostringstream &out,
             out << "    {\n";
             out << "        const uint index = imageIndex -  " << offsetStr << "2DArray;\n";
             out << "        result = " << declarationStr << "2DArray[index][uint3(p.x, p.y, "
-                << getImageMetadataLayer(textureGroup) << ")];\n";
+                << getImageMetadata(textureGroup) << ".layer)];\n";
             out << "    }\n";
         }
     }
@@ -610,7 +621,7 @@ void OutputImage2DStoreFunction(std::ostringstream &out,
         {
             out << "    const uint index = imageIndex -  " << offsetStr << "3D;\n";
             out << "    " << declarationStr << "3D[index][uint3(p.x, p.y, "
-                << getImageMetadataLayer(textureGroup) << ")] = data;\n";
+                << getImageMetadata(textureGroup) << ".layer)] = data;\n";
         }
         else
         {
@@ -634,7 +645,7 @@ void OutputImage2DStoreFunction(std::ostringstream &out,
             out << "    {\n";
             out << "        const uint index = imageIndex -  " << offsetStr << "3D;\n";
             out << "        " << declarationStr << "3D[index][uint3(p.x, p.y, "
-                << getImageMetadataLayer(textureGroup) << ")] = data;\n";
+                << getImageMetadata(textureGroup) << ".layer)] = data;\n";
             out << "    }\n";
         }
     }
@@ -645,7 +656,7 @@ void OutputImage2DStoreFunction(std::ostringstream &out,
         {
             out << "    const uint index = imageIndex -  " << offsetStr << "2DArray;\n";
             out << "    " << declarationStr << "2DArray[index][uint3(p.x, p.y, "
-                << getImageMetadataLayer(textureGroup) << ")] = data;\n";
+                << getImageMetadata(textureGroup) << ".layer)] = data;\n";
         }
         else
         {
@@ -653,7 +664,7 @@ void OutputImage2DStoreFunction(std::ostringstream &out,
             out << "    {\n";
             out << "        const uint index = imageIndex -  " << offsetStr << "2DArray;\n";
             out << "        " << declarationStr << "2DArray[index][uint3(p.x, p.y, "
-                << getImageMetadataLayer(textureGroup) << ")] = data;\n";
+                << getImageMetadata(textureGroup) << ".layer)] = data;\n";
             out << "    }\n";
         }
     }
@@ -690,7 +701,7 @@ void OutputHLSLImage2DUniformGroup(ProgramD3D &programD3D,
                                    gl::ShaderType shaderType,
                                    std::ostringstream &out,
                                    const Image2DHLSLGroup textureGroup,
-                                   const std::vector<sh::Uniform> &group,
+                                   const std::vector<sh::ShaderVariable> &group,
                                    const gl::ImageUnitTextureTypeMap &image2DBindLayout,
                                    unsigned int *groupTextureRegisterIndex,
                                    unsigned int *groupRWTextureRegisterIndex,
@@ -704,7 +715,7 @@ void OutputHLSLImage2DUniformGroup(ProgramD3D &programD3D,
     }
 
     unsigned int texture2DCount = 0, texture3DCount = 0, texture2DArrayCount = 0;
-    for (const sh::Uniform &uniform : group)
+    for (const sh::ShaderVariable &uniform : group)
     {
         if (!programD3D.hasNamedUniform(uniform.name))
         {
@@ -765,7 +776,7 @@ void OutputHLSLImage2DUniformGroup(ProgramD3D &programD3D,
             << " " << declarationStr << "2DArray[" << texture2DArrayCount << "]"
             << " : register(" << registerStr << texture2DArrayRegisterIndex << ");\n";
     }
-    for (const sh::Uniform &uniform : group)
+    for (const sh::ShaderVariable &uniform : group)
     {
         if (!programD3D.hasNamedUniform(uniform.name))
         {
@@ -814,13 +825,15 @@ void OutputHLSLImage2DUniformGroup(ProgramD3D &programD3D,
         out << "};\n";
     }
 
-    gl::Shader *shaderGL       = programData.getAttachedShader(shaderType);
-    const ShaderD3D *shaderD3D = GetImplAs<ShaderD3D>(shaderGL);
+    gl::Shader *shaderGL                     = programData.getAttachedShader(shaderType);
+    const ShaderD3D *shaderD3D               = GetImplAs<ShaderD3D>(shaderGL);
+    const bool getDimensionsIgnoresBaseLevel = programD3D.usesGetDimensionsIgnoresBaseLevel();
 
     if (shaderD3D->useImage2DFunction(Image2DHLSLGroupFunctionName(textureGroup, IMAGE2DSIZE)))
     {
         OutputImage2DSizeFunction(out, textureGroup, totalCount, texture2DCount, texture3DCount,
-                                  texture2DArrayCount, offsetStr, declarationStr);
+                                  texture2DArrayCount, offsetStr, declarationStr,
+                                  getDimensionsIgnoresBaseLevel);
     }
     if (shaderD3D->useImage2DFunction(Image2DHLSLGroupFunctionName(textureGroup, IMAGE2DLOAD)))
     {
@@ -843,13 +856,13 @@ std::string generateShaderForImage2DBindSignature(
     ProgramD3D &programD3D,
     const gl::ProgramState &programData,
     gl::ShaderType shaderType,
-    std::vector<sh::Uniform> &image2DUniforms,
+    std::vector<sh::ShaderVariable> &image2DUniforms,
     const gl::ImageUnitTextureTypeMap &image2DBindLayout)
 {
-    std::vector<std::vector<sh::Uniform>> groupedImage2DUniforms(IMAGE2D_MAX + 1);
+    std::vector<std::vector<sh::ShaderVariable>> groupedImage2DUniforms(IMAGE2D_MAX + 1);
     unsigned int image2DTexture2DCount = 0, image2DTexture3DCount = 0,
                  image2DTexture2DArrayCount = 0;
-    for (sh::Uniform &image2D : image2DUniforms)
+    for (sh::ShaderVariable &image2D : image2DUniforms)
     {
         for (unsigned int index = 0; index < image2D.getArraySizeProduct(); index++)
         {

@@ -1,4 +1,4 @@
-# Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+# Copyright 2014 The ANGLE Project Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -29,6 +29,7 @@ angle_end2end_tests_sources = [
   "gl_tests/DepthStencilTest.cpp",
   "gl_tests/DifferentStencilMasksTest.cpp",
   "gl_tests/DiscardFramebufferEXTTest.cpp",
+  "gl_tests/DrawBaseVertexBaseInstanceTest.cpp",
   "gl_tests/DrawBuffersTest.cpp",
   "gl_tests/DrawElementsTest.cpp",
   "gl_tests/DXT1CompressedTextureTest.cpp",
@@ -80,9 +81,10 @@ angle_end2end_tests_sources = [
   "gl_tests/MipmapTest.cpp",
   "gl_tests/MultiDrawTest.cpp",
   "gl_tests/MultisampleCompatibilityTest.cpp",
+  "gl_tests/MultisampleTest.cpp",
   "gl_tests/MultithreadingTest.cpp",
   "gl_tests/MultiviewDrawTest.cpp",
-  "gl_tests/media/pixel.inl",
+  "gl_tests/media/pixel.inc",
   "gl_tests/PackUnpackTest.cpp",
   "gl_tests/PathRenderingTest.cpp",
   "gl_tests/PbufferTest.cpp",
@@ -104,6 +106,7 @@ angle_end2end_tests_sources = [
   "gl_tests/RobustClientMemoryTest.cpp",
   "gl_tests/RobustResourceInitTest.cpp",
   "gl_tests/SamplersTest.cpp",
+  "gl_tests/SemaphoreTest.cpp",
   "gl_tests/ShaderStorageBufferTest.cpp",
   "gl_tests/SimpleOperationTest.cpp",
   "gl_tests/SixteenBppTextureTest.cpp",
@@ -112,6 +115,7 @@ angle_end2end_tests_sources = [
   "gl_tests/StateChangeTest.cpp",
   "gl_tests/SwizzleTest.cpp",
   "gl_tests/SyncQueriesTest.cpp",
+  "gl_tests/TextureExternalUpdateTest.cpp",
   "gl_tests/TextureMultisampleTest.cpp",
   "gl_tests/TextureRectangleTest.cpp",
   "gl_tests/TextureTest.cpp",
@@ -127,10 +131,12 @@ angle_end2end_tests_sources = [
   "gl_tests/WebGLCompatibilityTest.cpp",
   "gl_tests/WebGLFramebufferTest.cpp",
   "gl_tests/WebGLReadOutsideFramebufferTest.cpp",
+  "egl_tests/EGLBackwardsCompatibleContextTest.cpp",
   "egl_tests/EGLBlobCacheTest.cpp",
   "egl_tests/EGLChooseConfigTest.cpp",
   "egl_tests/EGLContextCompatibilityTest.cpp",
   "egl_tests/EGLContextSharingTest.cpp",
+  "egl_tests/EGLCreateContextAttribsTest.cpp",
   "egl_tests/EGLDebugTest.cpp",
   "egl_tests/EGLProgramCacheControlTest.cpp",
   "egl_tests/EGLQueryContextTest.cpp",

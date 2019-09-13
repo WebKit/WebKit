@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 The ANGLE Project Authors. All rights reserved.
+// Copyright 2017 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -116,11 +116,11 @@ bool WrapSwitchStatementsInBlocksTraverser::visitSwitch(Visit, TIntermSwitch *no
 }  // anonymous namespace
 
 // Wrap switch statements in the AST into blocks when needed.
-void WrapSwitchStatementsInBlocks(TIntermBlock *root)
+bool WrapSwitchStatementsInBlocks(TCompiler *compiler, TIntermBlock *root)
 {
     WrapSwitchStatementsInBlocksTraverser traverser;
     root->traverse(&traverser);
-    traverser.updateTree();
+    return traverser.updateTree(compiler, root);
 }
 
 }  // namespace sh

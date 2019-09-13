@@ -38,7 +38,7 @@ class VulkanPipelineCachePerfTest : public ANGLEPerfTest
 };
 
 VulkanPipelineCachePerfTest::VulkanPipelineCachePerfTest()
-    : ANGLEPerfTest("VulkanPipelineCachePerf", "", kIterationsPerStep)
+    : ANGLEPerfTest("VulkanPipelineCachePerf", "", "", kIterationsPerStep)
 {}
 
 VulkanPipelineCachePerfTest::~VulkanPipelineCachePerfTest()
@@ -86,12 +86,14 @@ void VulkanPipelineCachePerfTest::step()
     const vk::GraphicsPipelineDesc *desc = nullptr;
     vk::PipelineHelper *result           = nullptr;
     gl::AttributesMask am;
+    gl::ComponentTypeMask ctm;
 
     for (unsigned int iteration = 0; iteration < kIterationsPerStep; ++iteration)
     {
         for (const auto &hit : mCacheHits)
         {
-            (void)mCache.getPipeline(VK_NULL_HANDLE, pc, rp, pl, am, &sm, &sm, hit, &desc, &result);
+            (void)mCache.getPipeline(VK_NULL_HANDLE, pc, rp, pl, am, ctm, &sm, &sm, hit, &desc,
+                                     &result);
         }
     }
 
@@ -99,7 +101,8 @@ void VulkanPipelineCachePerfTest::step()
          ++missCount, ++mMissIndex)
     {
         const auto &miss = mCacheMisses[mMissIndex];
-        (void)mCache.getPipeline(VK_NULL_HANDLE, pc, rp, pl, am, &sm, &sm, miss, &desc, &result);
+        (void)mCache.getPipeline(VK_NULL_HANDLE, pc, rp, pl, am, ctm, &sm, &sm, miss, &desc,
+                                 &result);
     }
 }
 

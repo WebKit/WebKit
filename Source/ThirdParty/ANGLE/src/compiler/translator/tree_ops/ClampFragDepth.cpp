@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 The ANGLE Project Authors. All rights reserved.
+// Copyright 2017 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -12,7 +12,7 @@
 
 #include "compiler/translator/ImmutableString.h"
 #include "compiler/translator/SymbolTable.h"
-#include "compiler/translator/tree_util/BuiltIn_autogen.h"
+#include "compiler/translator/tree_util/BuiltIn.h"
 #include "compiler/translator/tree_util/FindSymbolNode.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/tree_util/RunAtTheEndOfShader.h"
@@ -20,12 +20,12 @@
 namespace sh
 {
 
-void ClampFragDepth(TIntermBlock *root, TSymbolTable *symbolTable)
+bool ClampFragDepth(TCompiler *compiler, TIntermBlock *root, TSymbolTable *symbolTable)
 {
     // Only clamp gl_FragDepth if it's used in the shader.
     if (!FindSymbolNode(root, ImmutableString("gl_FragDepth")))
     {
-        return;
+        return true;
     }
 
     TIntermSymbol *fragDepthNode = new TIntermSymbol(BuiltInVariable::gl_FragDepth());
@@ -48,7 +48,7 @@ void ClampFragDepth(TIntermBlock *root, TSymbolTable *symbolTable)
     // gl_FragDepth = clamp(gl_FragDepth, 0.0, 1.0)
     TIntermBinary *assignFragDepth = new TIntermBinary(EOpAssign, fragDepthNode, clampedFragDepth);
 
-    RunAtTheEndOfShader(root, assignFragDepth, symbolTable);
+    return RunAtTheEndOfShader(compiler, root, assignFragDepth, symbolTable);
 }
 
 }  // namespace sh

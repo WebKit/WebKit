@@ -1,11 +1,12 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
 
 #include "compiler/translator/tree_ops/AddAndTrueToLoopCondition.h"
 
+#include "compiler/translator/Compiler.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
 
@@ -49,10 +50,11 @@ class AddAndTrueToLoopConditionTraverser : public TIntermTraverser
 
 }  // anonymous namespace
 
-void AddAndTrueToLoopCondition(TIntermNode *root)
+bool AddAndTrueToLoopCondition(TCompiler *compiler, TIntermNode *root)
 {
     AddAndTrueToLoopConditionTraverser traverser;
     root->traverse(&traverser);
+    return compiler->validateAST(root);
 }
 
 }  // namespace sh

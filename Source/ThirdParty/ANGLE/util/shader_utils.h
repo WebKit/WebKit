@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -52,6 +52,7 @@ namespace essl1_shaders
 
 ANGLE_UTIL_EXPORT const char *PositionAttrib();
 ANGLE_UTIL_EXPORT const char *ColorUniform();
+ANGLE_UTIL_EXPORT const char *Texture2DUniform();
 
 namespace vs
 {
@@ -65,6 +66,10 @@ ANGLE_UTIL_EXPORT const char *Simple();
 // A shader that passes through attribute a_position, setting it to gl_Position and varying
 // v_position.
 ANGLE_UTIL_EXPORT const char *Passthrough();
+
+// A shader that simply passes through attribute a_position, setting it to gl_Position and varying
+// texcoord.
+ANGLE_UTIL_EXPORT const char *Texture2D();
 
 }  // namespace vs
 
@@ -86,6 +91,9 @@ ANGLE_UTIL_EXPORT const char *Green();
 
 // A shader that fills with 100% opaque blue.
 ANGLE_UTIL_EXPORT const char *Blue();
+
+// A shader that samples the texture
+ANGLE_UTIL_EXPORT const char *Texture2D();
 
 }  // namespace fs
 }  // namespace essl1_shaders
@@ -115,6 +123,12 @@ namespace fs
 
 // A shader that fills with 100% opaque red.
 ANGLE_UTIL_EXPORT const char *Red();
+
+// A shader that fills with 100% opaque green.
+ANGLE_UTIL_EXPORT const char *Green();
+
+// A shader that fills with 100% opaque blue.
+ANGLE_UTIL_EXPORT const char *Blue();
 
 }  // namespace fs
 }  // namespace essl3_shaders

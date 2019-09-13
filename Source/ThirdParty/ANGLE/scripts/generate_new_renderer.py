@@ -1,6 +1,6 @@
 #!/usr/bin/python2
 #
-# Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
+# Copyright 2015 The ANGLE Project Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 #
@@ -109,10 +109,12 @@ $ImplMethodDefinitions
 }  // namespace rx
 """
 
+
 def generate_impl_declaration(impl_stub):
     # ensure the wrapped lines are aligned vertically
     temp = re.sub(r'\n        ', '\n', impl_stub)
     return temp + ' override;\n'
+
 
 def generate_impl_definition(impl_stub, typed_impl):
     function_signature = impl_stub.strip()
@@ -150,14 +152,16 @@ def generate_impl_definition(impl_stub, typed_impl):
         else:
             return_statement = '    return ' + return_type + '();\n'
 
-    body = '{\n' + '    UNIMPLEMENTED();\n' + return_statement +'}\n'
+    body = '{\n' + '    UNIMPLEMENTED();\n' + return_statement + '}\n'
 
     return '\n' + function_signature + body
+
 
 def get_constructor_args(constructor):
     params = re.search(r'\((.*)\)', constructor).group(1)
     args = ', '.join(re.findall(r'[^\w]?(\w+)(?:\,|$)', params))
     return params, args
+
 
 def parse_impl_header(base_impl):
     impl_h_file_path = base_impl + '.h'
@@ -172,7 +176,7 @@ def parse_impl_header(base_impl):
     for line in impl_h_file:
         clean_line = line.strip()
 
-        match = re.search(r'^(?:explicit )?(' + base_impl + r'\([^\)]*\))', clean_line);
+        match = re.search(r'^(?:explicit )?(' + base_impl + r'\([^\)]*\))', clean_line)
         if match:
             constructor = match.group(1)
 
@@ -200,6 +204,7 @@ def parse_impl_header(base_impl):
 
     return impl_stubs, private_impl_stubs, constructor
 
+
 def get_base_class(base_impl):
     impl_h_file_path = base_impl + '.h'
     with open(impl_h_file_path, 'r') as impl_h_file:
@@ -208,6 +213,7 @@ def get_base_class(base_impl):
             if match:
                 return match.group(1)
     return False
+
 
 for impl_class in impl_classes:
 

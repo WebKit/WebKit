@@ -167,7 +167,7 @@ void android_app_post_exec_cmd(struct android_app* android_app, int8_t cmd) {
     }
 }
 
-void app_dummy() {
+void app_dummy(void) {
 
 }
 

@@ -69,6 +69,18 @@
             <param><ptype>EGLint</ptype> <name>limit</name></param>
             <param><ptype>EGLint</ptype> <name>mode</name></param>
         </command>
+        <command>
+            <proto><ptype>const char *</ptype> <name>eglQueryStringiANGLE</name></proto>
+            <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
+            <param><ptype>EGLint</ptype> <name>name</name></param>
+            <param><ptype>EGLint</ptype> <name>index</name></param>
+        </command>
+        <command>
+            <proto><ptype>EGLBoolean</ptype> <name>eglDisplayAttribANGLE</name></proto>
+            <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
+            <param><ptype>EGLint</ptype> <name>attribute</name></param>
+            <param><ptype>EGLAttrib *</ptype> <name>value</name></param>
+        </command>
     </commands>
     <!-- SECTION: ANGLE extension interface definitions -->
     <extensions>
@@ -76,6 +88,12 @@
             <require>
                 <command name="eglCreateDeviceANGLE"/>
                 <command name="eglReleaseDeviceANGLE"/>
+            </require>
+        </extension>
+        <extension name="EGL_ANGLE_feature_control" supported="egl">
+            <require>
+                <command name="eglQueryStringiANGLE"/>
+                <command name="eglQueryDisplayAttribANGLE"/>
             </require>
         </extension>
         <extension name="EGL_ANGLE_stream_producer_d3d_texture" supported="egl">

@@ -115,12 +115,19 @@ TEST_P(AtomicCounterBufferTest31, OffsetNotAllSpecifiedWithSameValue)
 // Tests atomic counter reads using compute shaders. Used as a sanity check for the translator.
 TEST_P(AtomicCounterBufferTest31, AtomicCounterReadCompute)
 {
+    // Skipping due to a bug on the Qualcomm Vulkan Android driver.
+    // http://anglebug.com/3726
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsVulkan());
+
     // Skipping due to a bug on the Adreno OpenGLES Android driver.
     // http://anglebug.com/2925
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsAdreno() && IsOpenGLES());
 
     constexpr char kComputeShaderSource[] = R"(#version 310 es
 layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
+
+void atomicCounterInFunction(in atomic_uint counter[3]);
+
 layout(binding = 0, offset = 8) uniform atomic_uint ac[3];
 
 void atomicCounterInFunction(in atomic_uint counter[3])
@@ -141,6 +148,10 @@ void main()
 // Test atomic counter read.
 TEST_P(AtomicCounterBufferTest31, AtomicCounterRead)
 {
+    // Skipping due to a bug on the Qualcomm Vulkan Android driver.
+    // http://anglebug.com/3726
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsVulkan());
+
     // Skipping test while we work on enabling atomic counter buffer support in th D3D renderer.
     // http://anglebug.com/1729
     ANGLE_SKIP_TEST_IF(IsD3D11());
@@ -177,6 +188,10 @@ TEST_P(AtomicCounterBufferTest31, AtomicCounterRead)
 // Test atomic counter increment and decrement.
 TEST_P(AtomicCounterBufferTest31, AtomicCounterIncrementAndDecrement)
 {
+    // Skipping due to a bug on the Qualcomm Vulkan Android driver.
+    // http://anglebug.com/3726
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsVulkan());
+
     constexpr char kCS[] =
         "#version 310 es\n"
         "layout(local_size_x=1, local_size_y=1, local_size_z=1) in;\n"
@@ -202,7 +217,7 @@ TEST_P(AtomicCounterBufferTest31, AtomicCounterIncrementAndDecrement)
     glDispatchCompute(1, 1, 1);
     EXPECT_GL_NO_ERROR();
 
-    glMemoryBarrier(GL_ATOMIC_COUNTER_BARRIER_BIT);
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
 
     glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicCounterBuffer);
     void *mappedBuffer =
@@ -218,6 +233,10 @@ TEST_P(AtomicCounterBufferTest31, AtomicCounterIncrementAndDecrement)
 // Tests multiple atomic counter buffers.
 TEST_P(AtomicCounterBufferTest31, AtomicCounterMultipleBuffers)
 {
+    // Skipping due to a bug on the Qualcomm Vulkan Android driver.
+    // http://anglebug.com/3726
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsVulkan());
+
     GLint maxAtomicCounterBuffers = 0;
     glGetIntegerv(GL_MAX_COMPUTE_ATOMIC_COUNTER_BUFFERS, &maxAtomicCounterBuffers);
     constexpr unsigned int kBufferCount = 3;
@@ -255,7 +274,7 @@ void main()
     glDispatchCompute(1, 1, 1);
     EXPECT_GL_NO_ERROR();
 
-    glMemoryBarrier(GL_ATOMIC_COUNTER_BARRIER_BIT);
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
 
     for (unsigned int ii = 0; ii < kBufferCount; ++ii)
     {
@@ -267,6 +286,158 @@ void main()
     }
 }
 
+// Test atomic counter array of array.
+TEST_P(AtomicCounterBufferTest31, AtomicCounterArrayOfArray)
+{
+    // Fails on D3D.  Some counters are double-incremented while some are untouched, hinting at a
+    // bug in index translation.  http://anglebug.com/3783
+    ANGLE_SKIP_TEST_IF(IsD3D11());
+
+    // Nvidia's OpenGL driver fails to compile the shader.  http://anglebug.com/3791
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsNVIDIA());
+
+    // Intel's Windows OpenGL driver crashes in this test.  http://anglebug.com/3791
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsWindows());
+
+    // Skipping due to a bug on the Qualcomm Vulkan Android driver.
+    // http://anglebug.com/3726
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsVulkan());
+
+    constexpr char kCS[] = R"(#version 310 es
+layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
+layout(binding = 0) uniform atomic_uint ac[7][5][3];
+
+void f0(in atomic_uint ac)
+{
+    atomicCounterIncrement(ac);
+}
+
+void f1(in atomic_uint ac[3])
+{
+    atomicCounterIncrement(ac[0]);
+    f0(ac[1]);
+    int index = 2;
+    f0(ac[index]);
+}
+
+void f2(in atomic_uint ac[5][3])
+{
+    // Increment all in ac[0], ac[1] and ac[2]
+    for (int i = 0; i < 3; ++i)
+    {
+        for (int j = 0; j < 2; ++j)
+        {
+            f0(ac[i][j]);
+        }
+        f0(ac[i][2]);
+    }
+
+    // Increment all in ac[3]
+    f1(ac[3]);
+
+    // Increment all in ac[4]
+    for (int i = 0; i < 2; ++i)
+    {
+        atomicCounterIncrement(ac[4][i]);
+    }
+    f0(ac[4][2]);
+}
+
+void f3(in atomic_uint ac[7][5][3])
+{
+    // Increment all in ac[0], ac[1], ac[2] and ac[3]
+    f2(ac[0]);
+    for (int i = 1; i < 4; ++i)
+    {
+        f2(ac[i]);
+    }
+
+    // Increment all in ac[5][0], ac[5][1], ac[5][2] and ac[5][3]
+    for (int i = 0; i < 4; ++i)
+    {
+        f1(ac[5][i]);
+    }
+
+    // Increment all in ac[5][4][0], ac[5][4][1] and ac[5][4][2]
+    f0(ac[5][4][0]);
+    for (int i = 1; i < 3; ++i)
+    {
+        f0(ac[5][4][i]);
+    }
+
+    // Increment all in ac[6]
+    for (int i = 0; i < 5; ++i)
+    {
+        for (int j = 0; j < 2; ++j)
+        {
+            atomicCounterIncrement(ac[6][i][j]);
+        }
+        atomicCounterIncrement(ac[6][i][2]);
+    }
+}
+
+void main()
+{
+    // Increment all in ac except ac[4]
+    f3(ac);
+
+    // Increment all in ac[4]
+    f2(ac[4]);
+})";
+
+    constexpr uint32_t kAtomicCounterRows  = 7;
+    constexpr uint32_t kAtomicCounterCols  = 5;
+    constexpr uint32_t kAtomicCounterDepth = 3;
+    constexpr uint32_t kAtomicCounterCount =
+        kAtomicCounterRows * kAtomicCounterCols * kAtomicCounterDepth;
+
+    GLint maxAtomicCounters = 0;
+    glGetIntegerv(GL_MAX_COMPUTE_ATOMIC_COUNTERS, &maxAtomicCounters);
+    EXPECT_GL_NO_ERROR();
+
+    // Required minimum is 8 by the spec
+    EXPECT_GE(maxAtomicCounters, 8);
+    ANGLE_SKIP_TEST_IF(static_cast<uint32_t>(maxAtomicCounters) < kAtomicCounterCount);
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
+    glUseProgram(program.get());
+
+    // The initial value of atomic counters is 0, 1, 2, ...
+    unsigned int bufferData[kAtomicCounterCount] = {};
+    for (uint32_t index = 0; index < kAtomicCounterCount; ++index)
+    {
+        bufferData[index] = index;
+    }
+
+    GLBuffer atomicCounterBuffer;
+    glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicCounterBuffer);
+    glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(bufferData), bufferData, GL_STATIC_DRAW);
+
+    glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, atomicCounterBuffer);
+
+    glDispatchCompute(1, 1, 1);
+    EXPECT_GL_NO_ERROR();
+
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+
+    unsigned int result[kAtomicCounterCount] = {};
+    glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicCounterBuffer);
+    void *mappedBuffer =
+        glMapBufferRange(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(bufferData), GL_MAP_READ_BIT);
+    memcpy(result, mappedBuffer, sizeof(bufferData));
+    glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
+
+    for (uint32_t index = 0; index < kAtomicCounterCount; ++index)
+    {
+        EXPECT_EQ(result[index], bufferData[index] + 1) << "index " << index;
+    }
+}
+
+// TODO(syoussefi): re-enable tests on Vulkan once http://anglebug.com/3738 is resolved.  The issue
+// is with WGL where if a Vulkan test is run first in the shard, it causes crashes when an OpenGL
+// test is run afterwards.  AtomicCounter* tests are alphabetically first, and having them not run
+// on Vulkan makes every shard our bots currently make do have at least some OpenGL test run before
+// any Vulkan test.
 ANGLE_INSTANTIATE_TEST(AtomicCounterBufferTest,
                        ES3_OPENGL(),
                        ES3_OPENGLES(),

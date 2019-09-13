@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -13,6 +13,7 @@
 
 #include "compiler/translator/tree_ops/EmulateGLFragColorBroadcast.h"
 
+#include "compiler/translator/Compiler.h"
 #include "compiler/translator/Symbol.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
@@ -36,7 +37,7 @@ class GLFragColorBroadcastTraverser : public TIntermTraverser
           mShaderVersion(shaderVersion)
     {}
 
-    void broadcastGLFragColor(TIntermBlock *root);
+    ANGLE_NO_DISCARD bool broadcastGLFragColor(TCompiler *compiler, TIntermBlock *root);
 
     bool isGLFragColorUsed() const { return mGLFragColorUsed; }
 
@@ -79,12 +80,12 @@ void GLFragColorBroadcastTraverser::visitSymbol(TIntermSymbol *node)
     }
 }
 
-void GLFragColorBroadcastTraverser::broadcastGLFragColor(TIntermBlock *root)
+bool GLFragColorBroadcastTraverser::broadcastGLFragColor(TCompiler *compiler, TIntermBlock *root)
 {
     ASSERT(mMaxDrawBuffers > 1);
     if (!mGLFragColorUsed)
     {
-        return;
+        return true;
     }
 
     TIntermBlock *broadcastBlock = new TIntermBlock();
@@ -96,14 +97,15 @@ void GLFragColorBroadcastTraverser::broadcastGLFragColor(TIntermBlock *root)
     {
         broadcastBlock->appendStatement(constructGLFragDataAssignNode(colorIndex));
     }
-    RunAtTheEndOfShader(root, broadcastBlock, mSymbolTable);
+    return RunAtTheEndOfShader(compiler, root, broadcastBlock, mSymbolTable);
 }
 
 }  // namespace
 
-void EmulateGLFragColorBroadcast(TIntermBlock *root,
+bool EmulateGLFragColorBroadcast(TCompiler *compiler,
+                                 TIntermBlock *root,
                                  int maxDrawBuffers,
-                                 std::vector<sh::OutputVariable> *outputVariables,
+                                 std::vector<sh::ShaderVariable> *outputVariables,
                                  TSymbolTable *symbolTable,
                                  int shaderVersion)
 {
@@ -112,8 +114,15 @@ void EmulateGLFragColorBroadcast(TIntermBlock *root,
     root->traverse(&traverser);
     if (traverser.isGLFragColorUsed())
     {
-        traverser.updateTree();
-        traverser.broadcastGLFragColor(root);
+        if (!traverser.updateTree(compiler, root))
+        {
+            return false;
+        }
+        if (!traverser.broadcastGLFragColor(compiler, root))
+        {
+            return false;
+        }
+
         for (auto &var : *outputVariables)
         {
             if (var.name == "gl_FragColor")
@@ -126,6 +135,8 @@ void EmulateGLFragColorBroadcast(TIntermBlock *root,
             }
         }
     }
+
+    return true;
 }
 
 }  // namespace sh

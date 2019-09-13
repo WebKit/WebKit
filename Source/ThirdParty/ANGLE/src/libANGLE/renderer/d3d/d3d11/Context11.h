@@ -68,6 +68,12 @@ class Context11 : public ContextD3D, public MultisampleTextureInitializer
     // Memory object creation.
     MemoryObjectImpl *createMemoryObject() override;
 
+    // Semaphore creation.
+    SemaphoreImpl *createSemaphore() override;
+
+    // Overlay creation.
+    OverlayImpl *createOverlay(const gl::OverlayState &state) override;
+
     // Flush and finish.
     angle::Result flush(const gl::Context *context) override;
     angle::Result finish(const gl::Context *context) override;
@@ -82,6 +88,12 @@ class Context11 : public ContextD3D, public MultisampleTextureInitializer
                                       GLint first,
                                       GLsizei count,
                                       GLsizei instanceCount) override;
+    angle::Result drawArraysInstancedBaseInstance(const gl::Context *context,
+                                                  gl::PrimitiveMode mode,
+                                                  GLint first,
+                                                  GLsizei count,
+                                                  GLsizei instanceCount,
+                                                  GLuint baseInstance) override;
 
     angle::Result drawElements(const gl::Context *context,
                                gl::PrimitiveMode mode,
@@ -94,6 +106,14 @@ class Context11 : public ContextD3D, public MultisampleTextureInitializer
                                         gl::DrawElementsType type,
                                         const void *indices,
                                         GLsizei instances) override;
+    angle::Result drawElementsInstancedBaseVertexBaseInstance(const gl::Context *context,
+                                                              gl::PrimitiveMode mode,
+                                                              GLsizei count,
+                                                              gl::DrawElementsType type,
+                                                              const void *indices,
+                                                              GLsizei instances,
+                                                              GLint baseVertex,
+                                                              GLuint baseInstance) override;
     angle::Result drawRangeElements(const gl::Context *context,
                                     gl::PrimitiveMode mode,
                                     GLuint start,
@@ -176,7 +196,9 @@ class Context11 : public ContextD3D, public MultisampleTextureInitializer
                                    GLsizei indexCount,
                                    gl::DrawElementsType indexType,
                                    const void *indices,
-                                   GLsizei instanceCount);
+                                   GLsizei instanceCount,
+                                   GLint baseVertex,
+                                   GLuint baseInstance);
 
     Renderer11 *mRenderer;
     IncompleteTextureSet mIncompleteTextures;

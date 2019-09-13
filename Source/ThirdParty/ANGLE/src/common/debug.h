@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2010 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -44,10 +44,11 @@ using LogSeverity = int;
 // Note: the log severities are used to index into the array of names,
 // see g_logSeverityNames.
 constexpr LogSeverity LOG_EVENT          = 0;
-constexpr LogSeverity LOG_WARN           = 1;
-constexpr LogSeverity LOG_ERR            = 2;
-constexpr LogSeverity LOG_FATAL          = 3;
-constexpr LogSeverity LOG_NUM_SEVERITIES = 4;
+constexpr LogSeverity LOG_INFO           = 1;
+constexpr LogSeverity LOG_WARN           = 2;
+constexpr LogSeverity LOG_ERR            = 3;
+constexpr LogSeverity LOG_FATAL          = 4;
+constexpr LogSeverity LOG_NUM_SEVERITIES = 5;
 
 void Trace(LogSeverity severity, const char *message);
 
@@ -188,6 +189,8 @@ std::ostream &FmtHex(std::ostream &os, T value)
 // better to have compact code for these operations.
 #define COMPACT_ANGLE_LOG_EX_EVENT(ClassName, ...) \
     ::gl::ClassName(__FUNCTION__, __LINE__, ::gl::LOG_EVENT, ##__VA_ARGS__)
+#define COMPACT_ANGLE_LOG_EX_INFO(ClassName, ...) \
+    ::gl::ClassName(__FUNCTION__, __LINE__, ::gl::LOG_INFO, ##__VA_ARGS__)
 #define COMPACT_ANGLE_LOG_EX_WARN(ClassName, ...) \
     ::gl::ClassName(__FUNCTION__, __LINE__, ::gl::LOG_WARN, ##__VA_ARGS__)
 #define COMPACT_ANGLE_LOG_EX_ERR(ClassName, ...) \
@@ -196,6 +199,7 @@ std::ostream &FmtHex(std::ostream &os, T value)
     ::gl::ClassName(__FUNCTION__, __LINE__, ::gl::LOG_FATAL, ##__VA_ARGS__)
 
 #define COMPACT_ANGLE_LOG_EVENT COMPACT_ANGLE_LOG_EX_EVENT(LogMessage)
+#define COMPACT_ANGLE_LOG_INFO COMPACT_ANGLE_LOG_EX_INFO(LogMessage)
 #define COMPACT_ANGLE_LOG_WARN COMPACT_ANGLE_LOG_EX_WARN(LogMessage)
 #define COMPACT_ANGLE_LOG_ERR COMPACT_ANGLE_LOG_EX_ERR(LogMessage)
 #define COMPACT_ANGLE_LOG_FATAL COMPACT_ANGLE_LOG_EX_FATAL(LogMessage)
@@ -229,6 +233,7 @@ std::ostream &FmtHex(std::ostream &os, T value)
 #    define ANGLE_ENABLE_ASSERTS
 #endif
 
+#define INFO() ANGLE_LOG(INFO)
 #define WARN() ANGLE_LOG(WARN)
 #define ERR() ANGLE_LOG(ERR)
 #define FATAL() ANGLE_LOG(FATAL)
@@ -236,19 +241,19 @@ std::ostream &FmtHex(std::ostream &os, T value)
 // A macro to log a performance event around a scope.
 #if defined(ANGLE_TRACE_ENABLED)
 #    if defined(_MSC_VER)
-#        define EVENT(message, ...)                                                      \
-            gl::ScopedPerfEventHelper scopedPerfEventHelper##__LINE__("%s" message "\n", \
-                                                                      __FUNCTION__, __VA_ARGS__)
+#        define EVENT(function, message, ...)                                                      \
+            gl::ScopedPerfEventHelper scopedPerfEventHelper##__LINE__("%s(" message ")", function, \
+                                                                      __VA_ARGS__)
 #    else
-#        define EVENT(message, ...)                                                          \
-            gl::ScopedPerfEventHelper scopedPerfEventHelper("%s" message "\n", __FUNCTION__, \
+#        define EVENT(function, message, ...)                                            \
+            gl::ScopedPerfEventHelper scopedPerfEventHelper("%s(" message ")", function, \
                                                             ##__VA_ARGS__)
 #    endif  // _MSC_VER
 #else
 #    define EVENT(message, ...) (void(0))
 #endif
 
-#if defined(__GNUC__) || defined(__clang__)
+#if defined(__GNUC__)
 #    define ANGLE_CRASH() __builtin_trap()
 #else
 #    define ANGLE_CRASH() ((void)(*(volatile char *)0 = 0)), __assume(0)
@@ -275,10 +280,10 @@ std::ostream &FmtHex(std::ostream &os, T value)
 
 // A macro asserting a condition and outputting failures to the debug log
 #if defined(ANGLE_ENABLE_ASSERTS)
-#    define ASSERT(expression)                                                               \
-        (expression ? static_cast<void>(0)                                                   \
-                    : (FATAL() << "\t! Assert failed in " << __FUNCTION__ << "(" << __LINE__ \
-                               << "): " << #expression))
+#    define ASSERT(expression)                                                                \
+        (expression ? static_cast<void>(0)                                                    \
+                    : (FATAL() << "\t! Assert failed in " << __FUNCTION__ << " (" << __FILE__ \
+                               << ":" << __LINE__ << "): " << #expression))
 #else
 #    define ASSERT(condition) ANGLE_EAT_STREAM_PARAMETERS << !(condition)
 #endif  // defined(ANGLE_ENABLE_ASSERTS)

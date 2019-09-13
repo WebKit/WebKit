@@ -40,8 +40,6 @@ class PointSpritesTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    virtual void SetUp() { ANGLETest::SetUp(); }
-
     float s2p(float s) { return (s + 1.0f) * 0.5f * (GLfloat)windowWidth; }
 
     void testPointCoordAndPointSizeCompliance(GLProgram program)
@@ -546,7 +544,6 @@ TEST_P(PointSpritesTest, PointSizeAboveMaxIsClamped)
 ANGLE_INSTANTIATE_TEST(PointSpritesTest,
                        ES2_D3D9(),
                        ES2_D3D11(),
-                       ES2_D3D11_FL9_3(),
                        ES2_OPENGL(),
                        ES2_OPENGLES(),
                        ES2_VULKAN());

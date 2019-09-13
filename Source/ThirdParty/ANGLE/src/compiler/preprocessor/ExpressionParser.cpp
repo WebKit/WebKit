@@ -70,7 +70,7 @@
 /* Copy the first part of user declarations.  */
 
 //
-// Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -86,6 +86,9 @@
 #    endif
 #elif defined(_MSC_VER)
 #    pragma warning(disable : 4065 4244 4701 4702)
+#endif
+#if defined(__clang__)
+#    pragma clang diagnostic ignored "-Wunreachable-code"
 #endif
 
 #include "ExpressionParser.h"
@@ -457,9 +460,9 @@ static const yytype_uint8 yytranslate[] = {
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_uint16 yyrline[] = {0,   108, 108, 115, 116, 127, 127, 148, 148, 169,
-                                        172, 175, 178, 181, 184, 187, 190, 193, 196, 221,
-                                        243, 246, 249, 275, 302, 305, 308, 311, 323, 326};
+static const yytype_uint16 yyrline[] = {0,   111, 111, 118, 119, 130, 130, 151, 151, 172,
+                                        175, 178, 181, 184, 187, 190, 193, 196, 199, 224,
+                                        246, 249, 252, 278, 305, 308, 311, 314, 326, 329};
 #endif
 
 #if YYDEBUG || YYERROR_VERBOSE || 0

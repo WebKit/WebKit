@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 The ANGLE Project Authors. All rights reserved.
+// Copyright 2017 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -49,7 +49,7 @@ TEST_F(AtomicCounterTest, BasicAtomicCounterDeclaration)
         FAIL() << "Shader compilation failed, expecting success:\n" << mInfoLog;
     }
 
-    std::vector<sh::Uniform> counters = getUniforms();
+    std::vector<sh::ShaderVariable> counters = getUniforms();
 
     EXPECT_EQ(std::string("a"), counters[0].name);
     EXPECT_EQ(2, counters[0].binding);

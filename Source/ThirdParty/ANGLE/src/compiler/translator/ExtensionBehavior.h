@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2010 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -34,8 +34,11 @@ enum class TExtension
     OES_EGL_image_external_essl3,
     OES_standard_derivatives,
     OES_texture_storage_multisample_2d_array,
+    OES_texture_3D,
+    OVR_multiview,
     OVR_multiview2,
     ANGLE_multi_draw,
+    ANGLE_base_vertex_base_instance
 };
 
 enum TBehavior

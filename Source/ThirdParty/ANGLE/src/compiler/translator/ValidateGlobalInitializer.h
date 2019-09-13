@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -13,7 +13,10 @@ namespace sh
 class TIntermTyped;
 
 // Returns true if the initializer is valid.
-bool ValidateGlobalInitializer(TIntermTyped *initializer, int shaderVersion, bool *warning);
+bool ValidateGlobalInitializer(TIntermTyped *initializer,
+                               int shaderVersion,
+                               bool isWebGL,
+                               bool *warning);
 
 }  // namespace sh
 

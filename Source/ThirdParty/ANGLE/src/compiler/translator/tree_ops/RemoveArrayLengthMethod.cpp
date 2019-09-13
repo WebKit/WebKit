@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 The ANGLE Project Authors. All rights reserved.
+// Copyright 2017 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -68,7 +68,7 @@ bool RemoveArrayLengthTraverser::visitUnary(Visit visit, TIntermUnary *node)
 
 }  // anonymous namespace
 
-void RemoveArrayLengthMethod(TIntermBlock *root)
+bool RemoveArrayLengthMethod(TCompiler *compiler, TIntermBlock *root)
 {
     RemoveArrayLengthTraverser traverser;
     do
@@ -76,8 +76,15 @@ void RemoveArrayLengthMethod(TIntermBlock *root)
         traverser.nextIteration();
         root->traverse(&traverser);
         if (traverser.foundArrayLength())
-            traverser.updateTree();
+        {
+            if (!traverser.updateTree(compiler, root))
+            {
+                return false;
+            }
+        }
     } while (traverser.foundArrayLength());
+
+    return true;
 }
 
 }  // namespace sh

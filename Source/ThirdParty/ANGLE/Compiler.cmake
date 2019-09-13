@@ -4,6 +4,20 @@
 # declarations are in the same ordering as the original .gn file
 
 set(angle_translator_sources
+    include/EGL/egl.h
+    include/EGL/eglext.h
+    include/EGL/eglplatform.h
+    include/GLES2/gl2.h
+    include/GLES2/gl2ext.h
+    include/GLES2/gl2platform.h
+    include/GLES3/gl3.h
+    include/GLES3/gl3platform.h
+    include/GLES3/gl31.h
+    include/GLES3/gl32.h
+    include/GLSLANG/ShaderLang.h
+    include/GLSLANG/ShaderVars.h
+    include/KHR/khrplatform.h
+    include/angle_gl.h
     src/compiler/translator/BaseTypes.h
     src/compiler/translator/BuiltInFunctionEmulator.cpp
     src/compiler/translator/BuiltInFunctionEmulator.h
@@ -31,7 +45,6 @@ set(angle_translator_sources
     src/compiler/translator/FunctionLookup.h
     src/compiler/translator/HashNames.cpp
     src/compiler/translator/HashNames.h
-    src/compiler/translator/ImmutableString.cpp
     src/compiler/translator/ImmutableString.h
     src/compiler/translator/ImmutableStringBuilder.cpp
     src/compiler/translator/ImmutableStringBuilder.h
@@ -52,7 +65,9 @@ set(angle_translator_sources
     src/compiler/translator/OutputTree.h
     src/compiler/translator/ParseContext.cpp
     src/compiler/translator/ParseContext.h
-    src/compiler/translator/ParseContext_autogen.h
+    src/compiler/translator/ParseContext_interm.h
+    src/compiler/translator/ParseContext_complete_autogen.h
+    src/compiler/translator/ParseContext_ESSL_autogen.h
     src/compiler/translator/PoolAlloc.cpp
     src/compiler/translator/PoolAlloc.h
     src/compiler/translator/Pragma.h
@@ -66,7 +81,6 @@ set(angle_translator_sources
     src/compiler/translator/Symbol.h
     src/compiler/translator/SymbolTable.cpp
     src/compiler/translator/SymbolTable.h
-    src/compiler/translator/SymbolTable_autogen.cpp
     src/compiler/translator/SymbolTable_autogen.h
     src/compiler/translator/SymbolUniqueId.cpp
     src/compiler/translator/SymbolUniqueId.h
@@ -91,8 +105,6 @@ set(angle_translator_sources
     src/compiler/translator/blocklayout.cpp
     src/compiler/translator/blocklayout.h
     src/compiler/translator/glslang.h
-    src/compiler/translator/glslang.l
-    src/compiler/translator/glslang.y
     src/compiler/translator/glslang_lex.cpp
     src/compiler/translator/glslang_tab.cpp
     src/compiler/translator/glslang_tab.h
@@ -111,10 +123,10 @@ set(angle_translator_sources
     src/compiler/translator/tree_ops/DeclareAndInitBuiltinsForInstancedMultiview.cpp
     src/compiler/translator/tree_ops/DeferGlobalInitializers.cpp
     src/compiler/translator/tree_ops/DeferGlobalInitializers.h
-    src/compiler/translator/tree_ops/EmulateGLDrawID.cpp
-    src/compiler/translator/tree_ops/EmulateGLDrawID.h
     src/compiler/translator/tree_ops/EmulateGLFragColorBroadcast.cpp
     src/compiler/translator/tree_ops/EmulateGLFragColorBroadcast.h
+    src/compiler/translator/tree_ops/EmulateMultiDrawShaderBuiltins.cpp
+    src/compiler/translator/tree_ops/EmulateMultiDrawShaderBuiltins.h
     src/compiler/translator/tree_ops/EmulatePrecision.cpp
     src/compiler/translator/tree_ops/EmulatePrecision.h
     src/compiler/translator/tree_ops/ExpandIntegerPowExpressions.cpp
@@ -125,6 +137,8 @@ set(angle_translator_sources
     src/compiler/translator/tree_ops/InitializeVariables.h
     src/compiler/translator/tree_ops/NameEmbeddedUniformStructs.cpp
     src/compiler/translator/tree_ops/NameEmbeddedUniformStructs.h
+    src/compiler/translator/tree_ops/NameNamelessUniformBuffers.cpp
+    src/compiler/translator/tree_ops/NameNamelessUniformBuffers.h
     src/compiler/translator/tree_ops/PruneEmptyCases.cpp
     src/compiler/translator/tree_ops/PruneEmptyCases.h
     src/compiler/translator/tree_ops/PruneNoOps.cpp
@@ -141,16 +155,25 @@ set(angle_translator_sources
     src/compiler/translator/tree_ops/RemovePow.h
     src/compiler/translator/tree_ops/RemoveUnreferencedVariables.cpp
     src/compiler/translator/tree_ops/RemoveUnreferencedVariables.h
+    src/compiler/translator/tree_ops/RewriteAtomicCounters.cpp
+    src/compiler/translator/tree_ops/RewriteAtomicCounters.h
     src/compiler/translator/tree_ops/RewriteAtomicFunctionExpressions.cpp
     src/compiler/translator/tree_ops/RewriteAtomicFunctionExpressions.h
+    src/compiler/translator/tree_ops/RewriteCubeMapSamplersAs2DArray.cpp
+    src/compiler/translator/tree_ops/RewriteCubeMapSamplersAs2DArray.h
+    src/compiler/translator/tree_ops/RewriteDfdy.cpp
+    src/compiler/translator/tree_ops/RewriteDfdy.h
     src/compiler/translator/tree_ops/RewriteDoWhile.cpp
     src/compiler/translator/tree_ops/RewriteDoWhile.h
     src/compiler/translator/tree_ops/RewriteExpressionsWithShaderStorageBlock.cpp
     src/compiler/translator/tree_ops/RewriteExpressionsWithShaderStorageBlock.h
     src/compiler/translator/tree_ops/RewriteStructSamplers.cpp
     src/compiler/translator/tree_ops/RewriteStructSamplers.h
+    src/compiler/translator/tree_ops/RewriteStructSamplersOld.cpp
     src/compiler/translator/tree_ops/RewriteRepeatedAssignToSwizzled.cpp
     src/compiler/translator/tree_ops/RewriteRepeatedAssignToSwizzled.h
+    src/compiler/translator/tree_ops/RewriteRowMajorMatrices.cpp
+    src/compiler/translator/tree_ops/RewriteRowMajorMatrices.h
     src/compiler/translator/tree_ops/RewriteTexelFetchOffset.cpp
     src/compiler/translator/tree_ops/RewriteTexelFetchOffset.h
     src/compiler/translator/tree_ops/RewriteUnaryMinusOperatorFloat.cpp
@@ -171,7 +194,11 @@ set(angle_translator_sources
     src/compiler/translator/tree_ops/UseInterfaceBlockFields.h
     src/compiler/translator/tree_ops/VectorizeVectorScalarArithmetic.cpp
     src/compiler/translator/tree_ops/VectorizeVectorScalarArithmetic.h
-    src/compiler/translator/tree_util/BuiltIn_autogen.h
+    src/compiler/translator/tree_util/BuiltIn.h
+    src/compiler/translator/tree_util/BuiltIn_complete_autogen.h
+    src/compiler/translator/tree_util/BuiltIn_ESSL_autogen.h
+    src/compiler/translator/tree_util/FindFunction.cpp
+    src/compiler/translator/tree_util/FindFunction.h
     src/compiler/translator/tree_util/FindMain.cpp
     src/compiler/translator/tree_util/FindMain.h
     src/compiler/translator/tree_util/FindSymbolNode.cpp
@@ -185,11 +212,17 @@ set(angle_translator_sources
     src/compiler/translator/tree_util/NodeSearch.h
     src/compiler/translator/tree_util/ReplaceVariable.cpp
     src/compiler/translator/tree_util/ReplaceVariable.h
+    src/compiler/translator/tree_util/ReplaceShadowingVariables.cpp
+    src/compiler/translator/tree_util/ReplaceShadowingVariables.h
     src/compiler/translator/tree_util/RunAtTheEndOfShader.cpp
     src/compiler/translator/tree_util/RunAtTheEndOfShader.h
     src/compiler/translator/tree_util/Visit.h
     src/third_party/compiler/ArrayBoundsClamper.cpp
     src/third_party/compiler/ArrayBoundsClamper.h
+    # Added by conditional statement later in compiler.gni
+    src/compiler/translator/ImmutableString_autogen.cpp
+    src/compiler/translator/SymbolTable_autogen.cpp
+
 )
 
 set(angle_translator_essl_sources
@@ -280,7 +313,6 @@ set(angle_preprocessor_sources
     src/compiler/preprocessor/DirectiveParser.h
     src/compiler/preprocessor/ExpressionParser.cpp
     src/compiler/preprocessor/ExpressionParser.h
-    src/compiler/preprocessor/ExpressionParser.y
     src/compiler/preprocessor/Input.cpp
     src/compiler/preprocessor/Input.h
     src/compiler/preprocessor/Lexer.cpp
@@ -296,6 +328,6 @@ set(angle_preprocessor_sources
     src/compiler/preprocessor/Token.h
     src/compiler/preprocessor/Tokenizer.cpp
     src/compiler/preprocessor/Tokenizer.h
-    src/compiler/preprocessor/Tokenizer.l
     src/compiler/preprocessor/numeric_lex.h
 )
+

@@ -348,4 +348,23 @@ TEST(MathUtilTest, RangeIteration)
     EXPECT_EQ(range.length(), expected);
 }
 
+// Tests for float32 to float16 conversion
+TEST(MathUtilTest, Float32ToFloat16)
+{
+    ASSERT_EQ(float32ToFloat16(0.0f), 0x0000);
+    ASSERT_EQ(float32ToFloat16(-0.0f), 0x8000);
+
+    float inf = std::numeric_limits<float>::infinity();
+
+    ASSERT_EQ(float32ToFloat16(inf), 0x7C00);
+    ASSERT_EQ(float32ToFloat16(-inf), 0xFC00);
+
+    // Check that NaN is converted to a value in one of the float16 NaN ranges
+    float nan      = std::numeric_limits<float>::quiet_NaN();
+    uint16_t nan16 = float32ToFloat16(nan);
+    ASSERT_TRUE(nan16 > 0xFC00 || (nan16 < 0x8000 && nan16 > 0x7C00));
+
+    ASSERT_EQ(float32ToFloat16(1.0f), 0x3C00);
+}
+
 }  // anonymous namespace

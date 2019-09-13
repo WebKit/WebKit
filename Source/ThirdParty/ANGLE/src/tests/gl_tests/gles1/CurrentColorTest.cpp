@@ -75,4 +75,4 @@ TEST_P(CurrentColorTest, Set)
     EXPECT_NEAR(1.0f / 3.0f, floatColor.A, epsilon);
 }
 
-ANGLE_INSTANTIATE_TEST(CurrentColorTest, ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES());
+ANGLE_INSTANTIATE_TEST(CurrentColorTest, ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES(), ES1_VULKAN());

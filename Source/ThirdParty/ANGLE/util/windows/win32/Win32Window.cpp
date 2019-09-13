@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -486,7 +486,6 @@ LRESULT CALLBACK Win32Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LP
 
 Win32Window::Win32Window()
     : mIsVisible(false),
-      mSetVisibleTimer(CreateTimer()),
       mIsMouseInWindow(false),
       mNativeWindow(0),
       mParentWindow(0),
@@ -496,10 +495,9 @@ Win32Window::Win32Window()
 Win32Window::~Win32Window()
 {
     destroy();
-    delete mSetVisibleTimer;
 }
 
-bool Win32Window::initialize(const std::string &name, size_t width, size_t height)
+bool Win32Window::initialize(const std::string &name, int width, int height)
 {
     destroy();
 
@@ -611,7 +609,7 @@ bool Win32Window::takeScreenshot(uint8_t *pixelData)
     // for a while before issuing screenshot if window was just made visible.
     {
         static const double WAIT_WINDOW_VISIBLE_MS = 0.5;  // Half a second for the animation
-        double timeSinceVisible                    = mSetVisibleTimer->getElapsedTime();
+        double timeSinceVisible                    = mSetVisibleTimer.getElapsedTime();
 
         if (timeSinceVisible < WAIT_WINDOW_VISIBLE_MS)
         {
@@ -804,8 +802,8 @@ void Win32Window::setVisible(bool isVisible)
 
     if (isVisible)
     {
-        mSetVisibleTimer->stop();
-        mSetVisibleTimer->start();
+        mSetVisibleTimer.stop();
+        mSetVisibleTimer.start();
     }
 }
 

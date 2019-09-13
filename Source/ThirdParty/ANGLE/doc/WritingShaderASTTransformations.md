@@ -21,7 +21,7 @@ If you're only interested in function declarations or global variables, they're 
 
 TIntermTraverser has member functions to insert and replace nodes. To remove a node, replace it with an empty list. Usually visit functions queue replacements and then updateTree() is called after the traversal is complete - this way the replacement doesn't affect the current traversal. For some transformations of nested AST structures you may need to do multiple traversals.
 
-**BuiltIn_autogen.h**: With the helpers here you can easily and cheaply create references to built-in variables that are stored as constexpr.
+**BuiltIn.h**: With the helpers here you can easily and cheaply create references to built-in variables that are stored as constexpr.
 
 **IntermNode_utils.h**: These utilities can do things like create a zero node with an arbitrary type, create bool nodes, index nodes, or operations on temporary variables.
 

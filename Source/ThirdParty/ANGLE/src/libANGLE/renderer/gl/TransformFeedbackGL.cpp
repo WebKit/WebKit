@@ -15,7 +15,6 @@
 #include "libANGLE/renderer/gl/FunctionsGL.h"
 #include "libANGLE/renderer/gl/ProgramGL.h"
 #include "libANGLE/renderer/gl/StateManagerGL.h"
-#include "libANGLE/renderer/gl/WorkaroundsGL.h"
 #include "libANGLE/renderer/gl/renderergl_utils.h"
 
 namespace rx
@@ -68,12 +67,6 @@ angle::Result TransformFeedbackGL::pause(const gl::Context *context)
 angle::Result TransformFeedbackGL::resume(const gl::Context *context)
 {
     mStateManager->onTransformFeedbackStateChange();
-    return angle::Result::Continue;
-}
-
-angle::Result TransformFeedbackGL::bindGenericBuffer(const gl::Context *context,
-                                                     const gl::BindingPointer<gl::Buffer> &binding)
-{
     return angle::Result::Continue;
 }
 

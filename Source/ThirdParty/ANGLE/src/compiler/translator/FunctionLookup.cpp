@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2018 The ANGLE Project Authors. All rights reserved.
+// Copyright 2018 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -8,6 +8,7 @@
 //
 
 #include "compiler/translator/FunctionLookup.h"
+#include "compiler/translator/ImmutableStringBuilder.h"
 
 namespace sh
 {
@@ -18,6 +19,27 @@ namespace
 const char kFunctionMangledNameSeparator = '(';
 
 constexpr const ImmutableString kEmptyName("");
+
+// Helper function for GetMangledNames
+// Gets all ordered combinations of elements in list[currentIndex, end]
+std::vector<std::vector<int>> GetImplicitConversionCombinations(const std::vector<int> &list)
+{
+    std::vector<std::vector<int>> target;
+    target.push_back(std::vector<int>());
+
+    for (size_t currentIndex = 0; currentIndex < list.size(); currentIndex++)
+    {
+        size_t prevIterSize = target.size();
+        for (size_t copyIndex = 0; copyIndex < prevIterSize; copyIndex++)
+        {
+            std::vector<int> combination = target[copyIndex];
+            combination.push_back(list[currentIndex]);
+            target.push_back(combination);
+        }
+    }
+
+    return target;
+}
 
 }  // anonymous namespace
 
@@ -63,6 +85,60 @@ ImmutableString TFunctionLookup::GetMangledName(const char *functionName,
         newName += argument->getAsTyped()->getType().getMangledName();
     }
     return ImmutableString(newName);
+}
+
+std::vector<ImmutableString> GetMangledNames(const char *functionName,
+                                             const TIntermSequence &arguments)
+{
+    std::vector<ImmutableString> target;
+
+    std::vector<int> indexes;
+    for (int i = 0; i < static_cast<int>(arguments.size()); i++)
+    {
+        TIntermNode *argument = arguments[i];
+        TBasicType argType    = argument->getAsTyped()->getType().getBasicType();
+        if (argType == EbtInt || argType == EbtUInt)
+        {
+            indexes.push_back(i);
+        }
+    }
+
+    std::vector<std::vector<int>> combinations = GetImplicitConversionCombinations(indexes);
+    for (const std::vector<int> &combination : combinations)
+    {
+        // combination: ordered list of indexes for arguments that should be converted to float
+        std::string newName(functionName);
+        newName += kFunctionMangledNameSeparator;
+        // combination[currentIndex] represents index of next argument to be converted
+        int currentIndex = 0;
+        for (int i = 0; i < (int)arguments.size(); i++)
+        {
+            TIntermNode *argument = arguments[i];
+
+            if (currentIndex != static_cast<int>(combination.size()) &&
+                combination[currentIndex] == i)
+            {
+                // Convert
+                TType type = argument->getAsTyped()->getType();
+                type.setBasicType(EbtFloat);
+                newName += type.getMangledName();
+                currentIndex++;
+            }
+            else
+            {
+                // Don't convert
+                newName += argument->getAsTyped()->getType().getMangledName();
+            }
+        }
+        target.push_back(ImmutableString(newName));
+    }
+
+    return target;
+}
+
+std::vector<ImmutableString> TFunctionLookup::getMangledNamesForImplicitConversions() const
+{
+    return GetMangledNames(mName.data(), mArguments);
 }
 
 bool TFunctionLookup::isConstructor() const

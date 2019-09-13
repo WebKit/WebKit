@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2012 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -769,7 +769,7 @@ angle::Result Image9::copyFromTexStorage(const gl::Context *context,
                                          TextureStorage *source)
 {
     RenderTargetD3D *renderTarget = nullptr;
-    ANGLE_TRY(source->getRenderTarget(context, imageIndex, &renderTarget));
+    ANGLE_TRY(source->getRenderTarget(context, imageIndex, 0, &renderTarget));
 
     gl::Rectangle sourceArea(0, 0, mWidth, mHeight);
     return copyFromRTInternal(GetImplAs<Context9>(context), gl::Offset(), sourceArea, renderTarget);
@@ -780,11 +780,11 @@ angle::Result Image9::copyFromFramebuffer(const gl::Context *context,
                                           const gl::Rectangle &sourceArea,
                                           const gl::Framebuffer *source)
 {
-    const gl::FramebufferAttachment *srcAttachment = source->getReadColorbuffer();
+    const gl::FramebufferAttachment *srcAttachment = source->getReadColorAttachment();
     ASSERT(srcAttachment);
 
     RenderTargetD3D *renderTarget = nullptr;
-    ANGLE_TRY(srcAttachment->getRenderTarget(context, &renderTarget));
+    ANGLE_TRY(srcAttachment->getRenderTarget(context, 0, &renderTarget));
     ASSERT(renderTarget);
     return copyFromRTInternal(GetImplAs<Context9>(context), destOffset, sourceArea, renderTarget);
 }

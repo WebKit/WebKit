@@ -8,13 +8,7 @@
 #include <stdio.h>
 #include <vector>
 
-#if defined(ANDROID)
-#    include <android/log.h>
-#endif
-
 namespace {
-
-namespace base {
 
 std::string FormatString(const char *fmt, va_list vararg) {
   static std::vector<char> buffer(512);
@@ -41,14 +35,14 @@ std::string StringPrintf(const char *fmt, ...) {
   return result;
 }
 
-std::string UintToString(unsigned int value) {
-  return StringPrintf("%u", value);
+std::string NumberToString(size_t value)
+{
+    return StringPrintf("%u", value);
 }
 
-std::string DoubleToString(double value) {
-  return StringPrintf("%.10lf", value);
-}
-
+std::string NumberToString(double value)
+{
+    return StringPrintf("%.10lf", value);
 }
 
 std::string ResultsToString(const std::string& measurement,
@@ -62,10 +56,9 @@ std::string ResultsToString(const std::string& measurement,
   // <*>RESULT <graph_name>: <trace_name>= <value> <units>
   // <*>RESULT <graph_name>: <trace_name>= {<mean>, <std deviation>} <units>
   // <*>RESULT <graph_name>: <trace_name>= [<value>,value,value,...,] <units>
-  return base::StringPrintf("%sRESULT %s%s: %s= %s%s%s %s\n",
-         important ? "*" : "", measurement.c_str(), modifier.c_str(),
-         trace.c_str(), prefix.c_str(), values.c_str(), suffix.c_str(),
-         units.c_str());
+  return StringPrintf("%sRESULT %s%s: %s= %s%s%s %s\n", important ? "*" : "", measurement.c_str(),
+                      modifier.c_str(), trace.c_str(), prefix.c_str(), values.c_str(),
+                      suffix.c_str(), units.c_str());
 }
 
 void PrintResultsImpl(const std::string& measurement,
@@ -77,15 +70,8 @@ void PrintResultsImpl(const std::string& measurement,
                       const std::string& units,
                       bool important) {
   fflush(stdout);
-#if defined(ANDROID)
-  __android_log_print(
-      ANDROID_LOG_INFO, "ANGLE", "%s",
-      ResultsToString(measurement, modifier, trace, values, prefix, suffix, units, important)
-          .c_str());
-#else
   printf("%s", ResultsToString(measurement, modifier, trace, values,
                                prefix, suffix, units, important).c_str());
-#endif  // defined(ANDROID)
   fflush(stdout);
 }
 
@@ -99,14 +85,8 @@ void PrintResult(const std::string& measurement,
                  size_t value,
                  const std::string& units,
                  bool important) {
-  PrintResultsImpl(measurement,
-                   modifier,
-                   trace,
-                   base::UintToString(static_cast<unsigned int>(value)),
-                   std::string(),
-                   std::string(),
-                   units,
-                   important);
+    PrintResultsImpl(measurement, modifier, trace, NumberToString(value), std::string(),
+                     std::string(), units, important);
 }
 
 void PrintResult(const std::string& measurement,
@@ -115,14 +95,8 @@ void PrintResult(const std::string& measurement,
                  double value,
                  const std::string& units,
                  bool important) {
-  PrintResultsImpl(measurement,
-                   modifier,
-                   trace,
-                   base::DoubleToString(value),
-                   std::string(),
-                   std::string(),
-                   units,
-                   important);
+    PrintResultsImpl(measurement, modifier, trace, NumberToString(value), std::string(),
+                     std::string(), units, important);
 }
 
 void AppendResult(std::string& output,
@@ -132,15 +106,8 @@ void AppendResult(std::string& output,
                   size_t value,
                   const std::string& units,
                   bool important) {
-  output += ResultsToString(
-      measurement,
-      modifier,
-      trace,
-      base::UintToString(static_cast<unsigned int>(value)),
-      std::string(),
-      std::string(),
-      units,
-      important);
+    output += ResultsToString(measurement, modifier, trace, NumberToString(value), std::string(),
+                              std::string(), units, important);
 }
 
 void PrintResult(const std::string& measurement,

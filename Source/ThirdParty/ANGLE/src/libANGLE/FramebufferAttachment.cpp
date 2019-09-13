@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -24,8 +24,9 @@ namespace gl
 
 ////// FramebufferAttachment::Target Implementation //////
 
-const GLsizei FramebufferAttachment::kDefaultNumViews    = 1;
-const GLint FramebufferAttachment::kDefaultBaseViewIndex = 0;
+const GLsizei FramebufferAttachment::kDefaultNumViews             = 1;
+const GLint FramebufferAttachment::kDefaultBaseViewIndex          = 0;
+const GLint FramebufferAttachment::kDefaultRenderToTextureSamples = 0;
 
 FramebufferAttachment::Target::Target() : mBinding(GL_NONE), mTextureIndex() {}
 
@@ -51,7 +52,8 @@ FramebufferAttachment::FramebufferAttachment()
       mResource(nullptr),
       mNumViews(kDefaultNumViews),
       mIsMultiview(false),
-      mBaseViewIndex(kDefaultBaseViewIndex)
+      mBaseViewIndex(kDefaultBaseViewIndex),
+      mRenderToTextureSamples(kDefaultRenderToTextureSamples)
 {}
 
 FramebufferAttachment::FramebufferAttachment(const Context *context,
@@ -62,7 +64,7 @@ FramebufferAttachment::FramebufferAttachment(const Context *context,
     : mResource(nullptr)
 {
     attach(context, type, binding, textureIndex, resource, kDefaultNumViews, kDefaultBaseViewIndex,
-           false);
+           false, kDefaultRenderToTextureSamples);
 }
 
 FramebufferAttachment::FramebufferAttachment(FramebufferAttachment &&other)
@@ -79,6 +81,7 @@ FramebufferAttachment &FramebufferAttachment::operator=(FramebufferAttachment &&
     std::swap(mNumViews, other.mNumViews);
     std::swap(mIsMultiview, other.mIsMultiview);
     std::swap(mBaseViewIndex, other.mBaseViewIndex);
+    std::swap(mRenderToTextureSamples, other.mRenderToTextureSamples);
     return *this;
 }
 
@@ -110,7 +113,8 @@ void FramebufferAttachment::attach(const Context *context,
                                    FramebufferAttachmentObject *resource,
                                    GLsizei numViews,
                                    GLuint baseViewIndex,
-                                   bool isMultiview)
+                                   bool isMultiview,
+                                   GLsizei samples)
 {
     if (resource == nullptr)
     {
@@ -118,11 +122,12 @@ void FramebufferAttachment::attach(const Context *context,
         return;
     }
 
-    mType          = type;
-    mTarget        = Target(binding, textureIndex);
-    mNumViews      = numViews;
-    mBaseViewIndex = baseViewIndex;
-    mIsMultiview   = isMultiview;
+    mType                   = type;
+    mTarget                 = Target(binding, textureIndex);
+    mNumViews               = numViews;
+    mBaseViewIndex          = baseViewIndex;
+    mIsMultiview            = isMultiview;
+    mRenderToTextureSamples = samples;
     resource->onAttach(context);
 
     if (mResource != nullptr)
@@ -238,7 +243,8 @@ FramebufferAttachmentObject *FramebufferAttachment::getResource() const
 bool FramebufferAttachment::operator==(const FramebufferAttachment &other) const
 {
     if (mResource != other.mResource || mType != other.mType || mNumViews != other.mNumViews ||
-        mIsMultiview != other.mIsMultiview || mBaseViewIndex != other.mBaseViewIndex)
+        mIsMultiview != other.mIsMultiview || mBaseViewIndex != other.mBaseViewIndex ||
+        mRenderToTextureSamples != other.mRenderToTextureSamples)
     {
         return false;
     }
@@ -285,9 +291,11 @@ angle::Result FramebufferAttachmentObject::getAttachmentRenderTarget(
     const Context *context,
     GLenum binding,
     const ImageIndex &imageIndex,
+    GLsizei samples,
     rx::FramebufferAttachmentRenderTarget **rtOut) const
 {
-    return getAttachmentImpl()->getAttachmentRenderTarget(context, binding, imageIndex, rtOut);
+    return getAttachmentImpl()->getAttachmentRenderTarget(context, binding, imageIndex, samples,
+                                                          rtOut);
 }
 
 angle::Result FramebufferAttachmentObject::initializeContents(const Context *context,

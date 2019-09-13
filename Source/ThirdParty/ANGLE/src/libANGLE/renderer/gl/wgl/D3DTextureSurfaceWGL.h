@@ -1,5 +1,5 @@
 
-// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -20,7 +20,6 @@ class FunctionsGL;
 class FunctionsWGL;
 class DisplayWGL;
 class StateManagerGL;
-struct WorkaroundsGL;
 
 class D3DTextureSurfaceWGL : public SurfaceWGL
 {
@@ -42,7 +41,7 @@ class D3DTextureSurfaceWGL : public SurfaceWGL
 
     egl::Error initialize(const egl::Display *display) override;
     egl::Error makeCurrent(const gl::Context *context) override;
-    egl::Error unMakeCurrent() override;
+    egl::Error unMakeCurrent(const gl::Context *context) override;
 
     egl::Error swap(const gl::Context *context) override;
     egl::Error postSubBuffer(const gl::Context *context,

@@ -93,4 +93,4 @@ TEST_P(AlphaFuncTest, SetFuncGetInt)
     EXPECT_EQ(std::numeric_limits<GLint>::max(), alphaTestVal);
 }
 
-ANGLE_INSTANTIATE_TEST(AlphaFuncTest, ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES());
+ANGLE_INSTANTIATE_TEST(AlphaFuncTest, ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES(), ES1_VULKAN());

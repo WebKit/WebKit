@@ -183,10 +183,10 @@ if (!is_android) {
 
     # The layer JSON files are part of the necessary data deps.
     outputs = [
-      "$root_out_dir/$data_dir/VkICD_mock_icd.json",
+      "$root_out_dir/$angle_data_dir/VkICD_mock_icd.json",
     ]
     data = outputs
-    args += [ rebase_path("$root_out_dir/$data_dir", root_build_dir) ] +
+    args += [ rebase_path("$root_out_dir/$angle_data_dir", root_build_dir) ] +
             rebase_path(sources, root_build_dir)
   }
 }

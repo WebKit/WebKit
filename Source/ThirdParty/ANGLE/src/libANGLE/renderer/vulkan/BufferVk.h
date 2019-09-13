@@ -19,6 +19,27 @@ namespace rx
 {
 class RendererVk;
 
+// Conversion buffers hold translated index and vertex data.
+struct ConversionBuffer
+{
+    ConversionBuffer(RendererVk *renderer,
+                     VkBufferUsageFlags usageFlags,
+                     size_t initialSize,
+                     size_t alignment);
+    ~ConversionBuffer();
+
+    ConversionBuffer(ConversionBuffer &&other);
+
+    // One state value determines if we need to re-stream vertex data.
+    bool dirty;
+
+    // One additional state value keeps the last allocation offset.
+    VkDeviceSize lastAllocationOffset;
+
+    // The conversion is stored in a dynamic buffer.
+    vk::DynamicBuffer data;
+};
+
 class BufferVk : public BufferImpl
 {
   public:
@@ -58,6 +79,8 @@ class BufferVk : public BufferImpl
 
     GLint64 getSize() const { return mState.getSize(); }
 
+    void onDataChanged() override;
+
     const vk::BufferHelper &getBuffer() const
     {
         ASSERT(mBuffer.valid());
@@ -71,7 +94,12 @@ class BufferVk : public BufferImpl
     }
 
     angle::Result mapImpl(ContextVk *contextVk, void **mapPtr);
-    angle::Result unmapImpl(ContextVk *contextVk);
+    angle::Result mapRangeImpl(ContextVk *contextVk,
+                               VkDeviceSize offset,
+                               VkDeviceSize length,
+                               GLbitfield access,
+                               void **mapPtr);
+    void unmapImpl(ContextVk *contextVk);
 
     // Calls copyBuffer internally.
     angle::Result copyToBuffer(ContextVk *contextVk,
@@ -79,14 +107,39 @@ class BufferVk : public BufferImpl
                                uint32_t copyCount,
                                const VkBufferCopy *copies);
 
+    ConversionBuffer *getVertexConversionBuffer(RendererVk *renderer,
+                                                angle::FormatID formatID,
+                                                GLuint stride,
+                                                size_t offset);
+
   private:
     angle::Result setDataImpl(ContextVk *contextVk,
                               const uint8_t *data,
                               size_t size,
                               size_t offset);
-    void release(RendererVk *renderer);
+    void release(ContextVk *context);
+    void markConversionBuffersDirty();
+
+    struct VertexConversionBuffer : public ConversionBuffer
+    {
+        VertexConversionBuffer(RendererVk *renderer,
+                               angle::FormatID formatIDIn,
+                               GLuint strideIn,
+                               size_t offsetIn);
+        ~VertexConversionBuffer();
+
+        VertexConversionBuffer(VertexConversionBuffer &&other);
+
+        // The conversion is identified by the triple of {format, stride, offset}.
+        angle::FormatID formatID;
+        GLuint stride;
+        size_t offset;
+    };
 
     vk::BufferHelper mBuffer;
+
+    // A cache of converted vertex data.
+    std::vector<VertexConversionBuffer> mVertexConversionBuffers;
 };
 
 }  // namespace rx

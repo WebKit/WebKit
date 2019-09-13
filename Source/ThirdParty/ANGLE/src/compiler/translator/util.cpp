@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2010 The ANGLE Project Authors. All rights reserved.
+// Copyright 2010 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -453,7 +453,8 @@ GLenum GLVariablePrecision(const TType &type)
             case EbpLow:
                 return GL_LOW_FLOAT;
             case EbpUndefined:
-            // Should be defined as the default precision by the parser
+                // Desktop specs do not use precision
+                return GL_NONE;
             default:
                 UNREACHABLE();
         }
@@ -469,7 +470,8 @@ GLenum GLVariablePrecision(const TType &type)
             case EbpLow:
                 return GL_LOW_INT;
             case EbpUndefined:
-            // Should be defined as the default precision by the parser
+                // Desktop specs do not use precision
+                return GL_NONE;
             default:
                 UNREACHABLE();
         }
@@ -707,6 +709,11 @@ bool IsBuiltinFragmentInputVariable(TQualifier qualifier)
     return false;
 }
 
+bool IsShaderOutput(TQualifier qualifier)
+{
+    return IsVaryingOut(qualifier) || IsBuiltinOutputVariable(qualifier);
+}
+
 bool IsOutputESSL(ShShaderOutput output)
 {
     return output == SH_ESSL_OUTPUT;
@@ -811,6 +818,119 @@ GLenum GetImageInternalFormatType(TLayoutImageInternalFormat iifq)
         default:
             return GL_NONE;
     }
+}
+
+bool IsSpecWithFunctionBodyNewScope(ShShaderSpec shaderSpec, int shaderVersion)
+{
+    return (shaderVersion == 100 && !sh::IsWebGLBasedSpec(shaderSpec));
+}
+
+ImplicitTypeConversion GetConversion(TBasicType t1, TBasicType t2)
+{
+    if (t1 == t2)
+        return ImplicitTypeConversion::Same;
+
+    switch (t1)
+    {
+        case EbtInt:
+            switch (t2)
+            {
+                case EbtInt:
+                    UNREACHABLE();
+                    break;
+                case EbtUInt:
+                    return ImplicitTypeConversion::Invalid;
+                case EbtFloat:
+                    return ImplicitTypeConversion::Left;
+                default:
+                    return ImplicitTypeConversion::Invalid;
+            }
+            break;
+        case EbtUInt:
+            switch (t2)
+            {
+                case EbtInt:
+                    return ImplicitTypeConversion::Invalid;
+                case EbtUInt:
+                    UNREACHABLE();
+                    break;
+                case EbtFloat:
+                    return ImplicitTypeConversion::Left;
+                default:
+                    return ImplicitTypeConversion::Invalid;
+            }
+            break;
+        case EbtFloat:
+            switch (t2)
+            {
+                case EbtInt:
+                case EbtUInt:
+                    return ImplicitTypeConversion::Right;
+                case EbtFloat:
+                    UNREACHABLE();
+                    break;
+                default:
+                    return ImplicitTypeConversion::Invalid;
+            }
+            break;
+        default:
+            return ImplicitTypeConversion::Invalid;
+    }
+    return ImplicitTypeConversion::Invalid;
+}
+
+bool IsValidImplicitConversion(sh::ImplicitTypeConversion conversion, TOperator op)
+{
+    switch (conversion)
+    {
+        case sh::ImplicitTypeConversion::Same:
+            return true;
+        case sh::ImplicitTypeConversion::Left:
+            switch (op)
+            {
+                case EOpEqual:
+                case EOpNotEqual:
+                case EOpLessThan:
+                case EOpGreaterThan:
+                case EOpLessThanEqual:
+                case EOpGreaterThanEqual:
+                case EOpAdd:
+                case EOpSub:
+                case EOpMul:
+                case EOpDiv:
+                    return true;
+                default:
+                    break;
+            }
+            break;
+        case sh::ImplicitTypeConversion::Right:
+            switch (op)
+            {
+                case EOpAssign:
+                case EOpInitialize:
+                case EOpEqual:
+                case EOpNotEqual:
+                case EOpLessThan:
+                case EOpGreaterThan:
+                case EOpLessThanEqual:
+                case EOpGreaterThanEqual:
+                case EOpAdd:
+                case EOpSub:
+                case EOpMul:
+                case EOpDiv:
+                case EOpAddAssign:
+                case EOpSubAssign:
+                case EOpMulAssign:
+                case EOpDivAssign:
+                    return true;
+                default:
+                    break;
+            }
+            break;
+        case sh::ImplicitTypeConversion::Invalid:
+            break;
+    }
+    return false;
 }
 
 }  // namespace sh

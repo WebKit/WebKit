@@ -47,27 +47,27 @@ TEST_F(ResourceManagerTest, ReallocateBoundTexture)
 {
     EXPECT_CALL(mMockFactory, createTexture(_)).Times(1).RetiresOnSaturation();
 
-    mTextureManager->checkTextureAllocation(&mMockFactory, 1, TextureType::_2D);
-    GLuint newTexture = mTextureManager->createTexture();
-    EXPECT_NE(1u, newTexture);
+    mTextureManager->checkTextureAllocation(&mMockFactory, {1}, TextureType::_2D);
+    TextureID newTexture = mTextureManager->createTexture();
+    EXPECT_NE(1u, newTexture.value);
 }
 
 TEST_F(ResourceManagerTest, ReallocateBoundBuffer)
 {
     EXPECT_CALL(mMockFactory, createBuffer(_)).Times(1).RetiresOnSaturation();
 
-    mBufferManager->checkBufferAllocation(&mMockFactory, 1);
-    GLuint newBuffer = mBufferManager->createBuffer();
-    EXPECT_NE(1u, newBuffer);
+    mBufferManager->checkBufferAllocation(&mMockFactory, {1});
+    BufferID newBuffer = mBufferManager->createBuffer();
+    EXPECT_NE(1u, newBuffer.value);
 }
 
 TEST_F(ResourceManagerTest, ReallocateBoundRenderbuffer)
 {
     EXPECT_CALL(mMockFactory, createRenderbuffer(_)).Times(1).RetiresOnSaturation();
 
-    mRenderbuffermanager->checkRenderbufferAllocation(&mMockFactory, 1);
-    GLuint newRenderbuffer = mRenderbuffermanager->createRenderbuffer();
-    EXPECT_NE(1u, newRenderbuffer);
+    mRenderbuffermanager->checkRenderbufferAllocation(&mMockFactory, {1});
+    RenderbufferID newRenderbuffer = mRenderbuffermanager->createRenderbuffer();
+    EXPECT_NE(1u, newRenderbuffer.value);
 }
 
 }  // anonymous namespace

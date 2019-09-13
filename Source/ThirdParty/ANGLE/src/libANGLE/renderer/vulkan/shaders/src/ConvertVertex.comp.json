@@ -10,14 +10,19 @@
         "IsAligned"
     ],
     "Conversion": [
-        "IntToInt",
+        "SintToSint",
         "UintToUint",
-        "IntToFloat",
+        "SintToFloat",
         "UintToFloat",
         "SnormToFloat",
         "UnormToFloat",
         "FixedToFloat",
-        "FloatToFloat"
+        "FloatToFloat",
+        "A2BGR10SintToSint",
+        "A2BGR10UintToUint",
+        "A2BGR10SintToFloat",
+        "A2BGR10UintToFloat",
+        "A2BGR10SnormToFloat"
     ]
 }
 

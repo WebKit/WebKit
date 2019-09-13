@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -44,6 +44,7 @@ class BufferState final : angle::NonCopyable
     GLint64 getMapOffset() const { return mMapOffset; }
     GLint64 getMapLength() const { return mMapLength; }
     GLint64 getSize() const { return mSize; }
+    bool isBoundForTransformFeedback() const { return mTransformFeedbackIndexedBindingCount != 0; }
 
   private:
     friend class Buffer;
@@ -69,7 +70,7 @@ class Buffer final : public RefCountObject,
                      public angle::Subject
 {
   public:
-    Buffer(rx::GLImplFactory *factory, GLuint id);
+    Buffer(rx::GLImplFactory *factory, BufferID id);
     ~Buffer() override;
     void onDestroy(const Context *context) override;
 
@@ -99,8 +100,7 @@ class Buffer final : public RefCountObject,
     angle::Result unmap(const Context *context, GLboolean *result);
 
     // These are called when another operation changes Buffer data.
-    void onTransformFeedback(const Context *context);
-    void onPixelPack(const Context *context);
+    void onDataChanged();
 
     angle::Result getIndexRange(const gl::Context *context,
                                 DrawElementsType type,
@@ -139,9 +139,7 @@ class Buffer final : public RefCountObject,
     void onNonTFBindingChanged(int incr) { mState.mBindingCount += incr; }
 
     // angle::ObserverInterface implementation.
-    void onSubjectStateChange(const gl::Context *context,
-                              angle::SubjectIndex index,
-                              angle::SubjectMessage message) override;
+    void onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message) override;
 
   private:
     BufferState mState;

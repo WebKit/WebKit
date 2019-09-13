@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -126,6 +126,9 @@ struct InternalFormat
     // extension formats are conservatively not included.
     bool isRequiredRenderbufferFormat(const Version &version) const;
 
+    bool isInt() const;
+    bool isDepthOrStencil() const;
+
     bool operator==(const InternalFormat &other) const;
     bool operator!=(const InternalFormat &other) const;
 
@@ -153,6 +156,7 @@ struct InternalFormat
     bool compressed;
     GLuint compressedBlockWidth;
     GLuint compressedBlockHeight;
+    GLuint compressedBlockDepth;
 
     GLenum format;
     GLenum type;
@@ -252,12 +256,8 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                                   GLuint components,
                                   bool pureInteger);
 
-ANGLE_INLINE angle::FormatID GetVertexFormatID(const VertexAttribute &attrib)
-{
-    return GetVertexFormatID(attrib.type, attrib.normalized, attrib.size, attrib.pureInteger);
-}
-
 angle::FormatID GetVertexFormatID(const VertexAttribute &attrib, VertexAttribType currentValueType);
+angle::FormatID GetCurrentValueFormatID(VertexAttribType currentValueType);
 const VertexFormat &GetVertexFormatFromID(angle::FormatID vertexFormatID);
 size_t GetVertexFormatSize(angle::FormatID vertexFormatID);
 
@@ -270,9 +270,40 @@ bool ValidES3Format(GLenum format);
 bool ValidES3Type(GLenum type);
 bool ValidES3FormatCombination(GLenum format, GLenum type, GLenum internalFormat);
 
+// Implemented in format_map_desktop.cpp
+bool ValidDesktopFormat(GLenum format);
+bool ValidDesktopType(GLenum type);
+bool ValidDesktopFormatCombination(GLenum format, GLenum type, GLenum internalFormat);
+
 // Implemented in es3_copy_conversion_table_autogen.cpp
 bool ValidES3CopyConversion(GLenum textureFormat, GLenum framebufferFormat);
 
+ANGLE_INLINE ComponentType GetVertexAttributeComponentType(bool pureInteger, VertexAttribType type)
+{
+    if (pureInteger)
+    {
+        switch (type)
+        {
+            case VertexAttribType::Byte:
+            case VertexAttribType::Short:
+            case VertexAttribType::Int:
+                return ComponentType::Int;
+
+            case VertexAttribType::UnsignedByte:
+            case VertexAttribType::UnsignedShort:
+            case VertexAttribType::UnsignedInt:
+                return ComponentType::UnsignedInt;
+
+            default:
+                UNREACHABLE();
+                return ComponentType::NoType;
+        }
+    }
+    else
+    {
+        return ComponentType::Float;
+    }
+}
 }  // namespace gl
 
 #endif  // LIBANGLE_FORMATUTILS_H_

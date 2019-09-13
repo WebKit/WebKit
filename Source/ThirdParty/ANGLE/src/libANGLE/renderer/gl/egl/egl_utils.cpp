@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 The ANGLE Project Authors. All rights reserved.
+// Copyright 2017 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -28,7 +28,7 @@ AttributeVector TrimAttributeMap(const egl::AttributeMap &attributes,
         if (attributes.contains(forwardAttrib))
         {
             result.push_back(forwardAttrib);
-            result.push_back(attributes.get(forwardAttrib));
+            result.push_back(static_cast<int>(attributes.get(forwardAttrib)));
         }
     }
     return result;

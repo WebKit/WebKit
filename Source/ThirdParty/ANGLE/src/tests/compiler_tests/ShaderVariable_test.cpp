@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -85,7 +85,7 @@ TEST(ShaderVariableTest, IsSameUniformWithDifferentFieldOrder)
     //   float y;
     // };
     // uniform A uni;
-    Uniform vx_a;
+    ShaderVariable vx_a;
     vx_a.name       = "uni";
     vx_a.mappedName = "m_uni";
     vx_a.structName = "A";
@@ -106,7 +106,7 @@ TEST(ShaderVariableTest, IsSameUniformWithDifferentFieldOrder)
     //   float x;
     // };
     // uniform A uni;
-    Uniform fx_a;
+    ShaderVariable fx_a;
     fx_a.name       = "uni";
     fx_a.mappedName = "m_uni";
     fx_a.structName = "A";
@@ -132,7 +132,7 @@ TEST(ShaderVariableTest, IsSameUniformWithDifferentStructNames)
     //   float y;
     // };
     // uniform A uni;
-    Uniform vx_a;
+    ShaderVariable vx_a;
     vx_a.name       = "uni";
     vx_a.mappedName = "m_uni";
     vx_a.structName = "A";
@@ -153,7 +153,7 @@ TEST(ShaderVariableTest, IsSameUniformWithDifferentStructNames)
     //   float y;
     // };
     // uniform B uni;
-    Uniform fx_a;
+    ShaderVariable fx_a;
     fx_a.name       = "uni";
     fx_a.mappedName = "m_uni";
     {
@@ -181,7 +181,7 @@ TEST(ShaderVariableTest, IsSameUniformWithDifferentStructNames)
 TEST(ShaderVariableTest, IsSameVaryingWithDifferentInvariance)
 {
     // invariant varying float vary;
-    Varying vx;
+    ShaderVariable vx;
     vx.type        = GL_FLOAT;
     vx.precision   = GL_MEDIUM_FLOAT;
     vx.name        = "vary";
@@ -190,7 +190,7 @@ TEST(ShaderVariableTest, IsSameVaryingWithDifferentInvariance)
     vx.isInvariant = true;
 
     // varying float vary;
-    Varying fx;
+    ShaderVariable fx;
     fx.type        = GL_FLOAT;
     fx.precision   = GL_MEDIUM_FLOAT;
     fx.name        = "vary";
@@ -292,8 +292,8 @@ TEST(ShaderVariableTest, InvariantLeakAcrossShaders)
         "}"};
 
     EXPECT_TRUE(sh::Compile(compiler, program1, 1, SH_VARIABLES));
-    const std::vector<sh::Varying> *varyings = sh::GetOutputVaryings(compiler);
-    for (const sh::Varying &varying : *varyings)
+    const std::vector<sh::ShaderVariable> *varyings = sh::GetOutputVaryings(compiler);
+    for (const sh::ShaderVariable &varying : *varyings)
     {
         if (varying.name == "v_varying")
         {
@@ -302,7 +302,7 @@ TEST(ShaderVariableTest, InvariantLeakAcrossShaders)
     }
     EXPECT_TRUE(sh::Compile(compiler, program2, 1, SH_VARIABLES));
     varyings = sh::GetOutputVaryings(compiler);
-    for (const sh::Varying &varying : *varyings)
+    for (const sh::ShaderVariable &varying : *varyings)
     {
         if (varying.name == "v_varying")
         {
@@ -334,8 +334,8 @@ TEST(ShaderVariableTest, GlobalInvariantLeakAcrossShaders)
         "}"};
 
     EXPECT_TRUE(sh::Compile(compiler, program1, 1, SH_VARIABLES));
-    const std::vector<sh::Varying> *varyings = sh::GetOutputVaryings(compiler);
-    for (const sh::Varying &varying : *varyings)
+    const std::vector<sh::ShaderVariable> *varyings = sh::GetOutputVaryings(compiler);
+    for (const sh::ShaderVariable &varying : *varyings)
     {
         if (varying.name == "v_varying")
         {
@@ -344,7 +344,7 @@ TEST(ShaderVariableTest, GlobalInvariantLeakAcrossShaders)
     }
     EXPECT_TRUE(sh::Compile(compiler, program2, 1, SH_VARIABLES));
     varyings = sh::GetOutputVaryings(compiler);
-    for (const sh::Varying &varying : *varyings)
+    for (const sh::ShaderVariable &varying : *varyings)
     {
         if (varying.name == "v_varying")
         {
@@ -380,8 +380,8 @@ TEST(ShaderVariableTest, BuiltinInvariantVarying)
         "}"};
 
     EXPECT_TRUE(sh::Compile(compiler, program1, 1, SH_VARIABLES));
-    const std::vector<sh::Varying> *varyings = sh::GetOutputVaryings(compiler);
-    for (const sh::Varying &varying : *varyings)
+    const std::vector<sh::ShaderVariable> *varyings = sh::GetOutputVaryings(compiler);
+    for (const sh::ShaderVariable &varying : *varyings)
     {
         if (varying.name == "gl_Position")
         {
@@ -390,7 +390,7 @@ TEST(ShaderVariableTest, BuiltinInvariantVarying)
     }
     EXPECT_TRUE(sh::Compile(compiler, program2, 1, SH_VARIABLES));
     varyings = sh::GetOutputVaryings(compiler);
-    for (const sh::Varying &varying : *varyings)
+    for (const sh::ShaderVariable &varying : *varyings)
     {
         if (varying.name == "gl_Position")
         {
@@ -405,7 +405,7 @@ TEST(ShaderVariableTest, BuiltinInvariantVarying)
 TEST(ShaderVariableTest, IsSameVaryingWithDifferentName)
 {
     // Varying float vary1;
-    Varying vx;
+    ShaderVariable vx;
     vx.type        = GL_FLOAT;
     vx.precision   = GL_MEDIUM_FLOAT;
     vx.name        = "vary1";
@@ -414,7 +414,7 @@ TEST(ShaderVariableTest, IsSameVaryingWithDifferentName)
     vx.isInvariant = false;
 
     // Varying float vary2;
-    Varying fx;
+    ShaderVariable fx;
     fx.type        = GL_FLOAT;
     fx.precision   = GL_MEDIUM_FLOAT;
     fx.name        = "vary2";

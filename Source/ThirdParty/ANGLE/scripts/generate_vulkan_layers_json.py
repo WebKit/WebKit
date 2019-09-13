@@ -3,7 +3,6 @@
 # Copyright 2016 The ANGLE Project Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
-
 """Generate copies of the Vulkan layers JSON files, with no paths, forcing
 Vulkan to use the default search path to look for layers."""
 
@@ -60,8 +59,7 @@ def main():
 
         # Update the path.
         if not data_key in data:
-            raise Exception(
-                "Could not find '%s' key in %s" % (data_key, json_fname))
+            raise Exception("Could not find '%s' key in %s" % (data_key, json_fname))
 
         # The standard validation layer has no library path.
         if 'library_path' in data[data_key]:
@@ -93,8 +91,7 @@ def main():
 
     # For each *.json.in template files in source dir generate actual json file
     # in target dir
-    if (set(glob_slash(os.path.join(source_dir, '*.json.in'))) !=
-            set(json_in_files)):
+    if (set(glob_slash(os.path.join(source_dir, '*.json.in'))) != set(json_in_files)):
         print('.json.in list in gn file is out-of-date', file=sys.stderr)
         return 1
     for json_in_name in json_in_files:
@@ -111,6 +108,7 @@ def main():
                                     relative_path_prefix + layer_lib_name)
                 line = line.replace('@VK_VERSION@', '1.1.' + vk_version)
                 json_out_file.write(line)
+
 
 if __name__ == '__main__':
     sys.exit(main())

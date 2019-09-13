@@ -1,4 +1,4 @@
-	// 7.11.3188
+	// 7.12.3226
 	 #pragma once
 const uint32_t kImageClear_frag_00000015[] = {
 	0x07230203,0x00010000,0x00080007,0x00000012,0x00000000,0x00020011,0x00000001,0x0006000b,
@@ -20,17 +20,17 @@ const uint32_t kImageClear_frag_00000015[] = {
 	0x000100fd,0x00010038
 };
 
-#if 0  // Generated from:
-#version 450 core
-
-layout(push_constant)uniform PushConstants {
-       uvec4 clearColor;
-} params;
-
-layout(location = 5)out uvec4 colorOut;
-
-void main()
-{
-    colorOut = params . clearColor;
-}
-#endif  // Preprocessed code
+// Generated from:
+//
+// #version 450 core
+//
+// layout(push_constant)uniform PushConstants {
+//        uvec4 clearColor;
+// } params;
+//
+// layout(location = 5)out uvec4 colorOut;
+//
+// void main()
+// {
+//     colorOut = params . clearColor;
+// }

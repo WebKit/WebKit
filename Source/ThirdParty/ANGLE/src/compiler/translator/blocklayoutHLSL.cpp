@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2013-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -155,7 +155,7 @@ void HLSLVariableRegisterCount(const ShaderVarType &variable, HLSLBlockEncoder *
     }
 }
 
-unsigned int HLSLVariableRegisterCount(const Uniform &variable, ShShaderOutput outputType)
+unsigned int HLSLVariableRegisterCount(const ShaderVariable &variable, ShShaderOutput outputType)
 {
     HLSLBlockEncoder encoder(HLSLBlockEncoder::GetStrategyFor(outputType), true);
     HLSLVariableRegisterCount(variable, &encoder);

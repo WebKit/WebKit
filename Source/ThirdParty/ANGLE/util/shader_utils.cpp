@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -277,6 +277,11 @@ const char *ColorUniform()
     return "u_color";
 }
 
+const char *Texture2DUniform()
+{
+    return "u_tex2D";
+}
+
 namespace vs
 {
 
@@ -313,6 +318,21 @@ void main()
 {
     gl_Position = a_position;
     v_position = a_position;
+})";
+}
+
+// A shader that simply passes through attribute a_position, setting it to gl_Position and varying
+// texcoord.
+const char *Texture2D()
+{
+    return R"(precision highp float;
+attribute vec4 a_position;
+varying vec2 v_texCoord;
+
+void main()
+{
+    gl_Position = vec4(a_position.xy, 0.0, 1.0);
+    v_texCoord = a_position.xy * 0.5 + vec2(0.5);
 })";
 }
 
@@ -384,6 +404,19 @@ void main()
 })";
 }
 
+// A shader that samples the texture.
+const char *Texture2D()
+{
+    return R"(precision mediump float;
+uniform sampler2D u_tex;
+varying vec2 v_texCoord;
+
+void main()
+{
+    gl_FragColor = texture2D(u_tex, v_texCoord);
+})";
+}
+
 }  // namespace fs
 }  // namespace essl1_shaders
 
@@ -447,6 +480,30 @@ out vec4 my_FragColor;
 void main()
 {
     my_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+}
+
+// A shader that fills with 100% opaque green.
+const char *Green()
+{
+    return R"(#version 300 es
+precision highp float;
+out vec4 my_FragColor;
+void main()
+{
+    my_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+})";
+}
+
+// A shader that fills with 100% opaque blue.
+const char *Blue()
+{
+    return R"(#version 300 es
+precision highp float;
+out vec4 my_FragColor;
+void main()
+{
+    my_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
 })";
 }
 

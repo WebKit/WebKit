@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -111,10 +111,11 @@ class MockTextureImpl : public TextureImpl
     MOCK_METHOD2(bindTexImage, angle::Result(const gl::Context *, egl::Surface *));
     MOCK_METHOD1(releaseTexImage, angle::Result(const gl::Context *));
 
-    MOCK_METHOD4(getAttachmentRenderTarget,
+    MOCK_METHOD5(getAttachmentRenderTarget,
                  angle::Result(const gl::Context *,
                                GLenum,
                                const gl::ImageIndex &,
+                               GLsizei,
                                FramebufferAttachmentRenderTarget **));
 
     MOCK_METHOD6(setStorageMultisample,

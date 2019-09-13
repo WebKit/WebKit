@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 The ANGLE Project Authors. All rights reserved.
+// Copyright 2017 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -35,11 +35,11 @@ struct DrawElementsPerfParams final : public DrawCallPerfParams
         numTris        = 2;
     }
 
-    std::string suffix() const override
+    std::string story() const override
     {
         std::stringstream strstr;
 
-        strstr << DrawCallPerfParams::suffix();
+        strstr << DrawCallPerfParams::story();
 
         if (indexBufferChanged)
         {
@@ -60,7 +60,7 @@ struct DrawElementsPerfParams final : public DrawCallPerfParams
 
 std::ostream &operator<<(std::ostream &os, const DrawElementsPerfParams &params)
 {
-    os << params.suffix().substr(1);
+    os << params.backendAndStory().substr(1);
     return os;
 }
 
@@ -148,7 +148,7 @@ void DrawElementsPerfBenchmark::initializeBenchmark()
     // Set the viewport
     glViewport(0, 0, getWindow()->getWidth(), getWindow()->getHeight());
 
-    if (params.useFBO)
+    if (params.offscreen)
     {
         CreateColorFBO(getWindow()->getWidth(), getWindow()->getHeight(), &mTexture, &mFBO);
     }
@@ -237,7 +237,8 @@ DrawElementsPerfParams DrawElementsPerfOpenGLOrGLESParams(bool indexBufferChange
                                                           GLenum indexType)
 {
     DrawElementsPerfParams params;
-    params.eglParameters      = angle::egl_platform::OPENGL_OR_GLES(useNullDevice);
+    params.eglParameters = useNullDevice ? angle::egl_platform::OPENGL_OR_GLES_NULL()
+                                         : angle::egl_platform::OPENGL_OR_GLES();
     params.indexBufferChanged = indexBufferChanged;
     params.type               = indexType;
 

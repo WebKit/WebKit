@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -79,7 +79,8 @@ class FramebufferAttachment final
                 FramebufferAttachmentObject *resource,
                 GLsizei numViews,
                 GLuint baseViewIndex,
-                bool isMultiview);
+                bool isMultiview,
+                GLsizei samples);
 
     // Helper methods
     GLuint getRedSize() const;
@@ -115,12 +116,17 @@ class FramebufferAttachment final
     bool isMultiview() const;
     GLint getBaseViewIndex() const;
 
+    GLsizei getRenderToTextureSamples() const { return mRenderToTextureSamples; }
+
     // The size of the underlying resource the attachment points to. The 'depth' value will
     // correspond to a 3D texture depth or the layer count of a 2D array texture. For Surfaces and
     // Renderbuffers, it will always be 1.
     Extents getSize() const;
     Format getFormat() const;
     GLsizei getSamples() const;
+    // This will always return the actual sample count of the attachment even if
+    // render_to_texture extension is active on this FBattachment object.
+    GLsizei getResourceSamples() const;
     GLenum type() const { return mType; }
     bool isAttached() const { return mType != GL_NONE; }
     bool isRenderable(const Context *context) const;
@@ -135,12 +141,12 @@ class FramebufferAttachment final
 
     // "T" must be static_castable from FramebufferAttachmentRenderTarget
     template <typename T>
-    angle::Result getRenderTarget(const Context *context, T **rtOut) const
+    angle::Result getRenderTarget(const Context *context, GLsizei samples, T **rtOut) const
     {
         static_assert(std::is_base_of<rx::FramebufferAttachmentRenderTarget, T>(),
                       "Invalid RenderTarget class.");
         return getRenderTargetImpl(
-            context, reinterpret_cast<rx::FramebufferAttachmentRenderTarget **>(rtOut));
+            context, samples, reinterpret_cast<rx::FramebufferAttachmentRenderTarget **>(rtOut));
     }
 
     bool operator==(const FramebufferAttachment &other) const;
@@ -148,9 +154,11 @@ class FramebufferAttachment final
 
     static const GLsizei kDefaultNumViews;
     static const GLint kDefaultBaseViewIndex;
+    static const GLint kDefaultRenderToTextureSamples;
 
   private:
     angle::Result getRenderTargetImpl(const Context *context,
+                                      GLsizei samples,
                                       rx::FramebufferAttachmentRenderTarget **rtOut) const;
 
     // A framebuffer attachment points to one of three types of resources: Renderbuffers,
@@ -181,6 +189,7 @@ class FramebufferAttachment final
     GLsizei mNumViews;
     bool mIsMultiview;
     GLint mBaseViewIndex;
+    GLsizei mRenderToTextureSamples;
 };
 
 // A base class for objects that FBO Attachments may point to.
@@ -208,6 +217,7 @@ class FramebufferAttachmentObject : public angle::Subject
     angle::Result getAttachmentRenderTarget(const Context *context,
                                             GLenum binding,
                                             const ImageIndex &imageIndex,
+                                            GLsizei samples,
                                             rx::FramebufferAttachmentRenderTarget **rtOut) const;
 
     angle::Result initializeContents(const Context *context, const ImageIndex &imageIndex);
@@ -236,17 +246,24 @@ inline Format FramebufferAttachment::getFormat() const
 
 inline GLsizei FramebufferAttachment::getSamples() const
 {
+    return (mRenderToTextureSamples != kDefaultRenderToTextureSamples) ? getRenderToTextureSamples()
+                                                                       : getResourceSamples();
+}
+
+inline GLsizei FramebufferAttachment::getResourceSamples() const
+{
     ASSERT(mResource);
     return mResource->getAttachmentSamples(mTarget.textureIndex());
 }
 
 inline angle::Result FramebufferAttachment::getRenderTargetImpl(
     const Context *context,
+    GLsizei samples,
     rx::FramebufferAttachmentRenderTarget **rtOut) const
 {
     ASSERT(mResource);
     return mResource->getAttachmentRenderTarget(context, mTarget.binding(), mTarget.textureIndex(),
-                                                rtOut);
+                                                samples, rtOut);
 }
 
 inline bool FramebufferAttachment::isRenderable(const Context *context) const

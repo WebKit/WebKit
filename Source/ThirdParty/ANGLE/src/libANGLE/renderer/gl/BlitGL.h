@@ -16,6 +16,11 @@
 
 #include <map>
 
+namespace angle
+{
+struct FeaturesGL;
+}  // namespace angle
+
 namespace gl
 {
 class Framebuffer;
@@ -30,13 +35,12 @@ class FunctionsGL;
 class RenderbufferGL;
 class StateManagerGL;
 class TextureGL;
-struct WorkaroundsGL;
 
 class BlitGL : angle::NonCopyable
 {
   public:
     BlitGL(const FunctionsGL *functions,
-           const WorkaroundsGL &workarounds,
+           const angle::FeaturesGL &features,
            StateManagerGL *stateManager);
     ~BlitGL();
 
@@ -71,7 +75,7 @@ class BlitGL : angle::NonCopyable
                                  TextureGL *source,
                                  size_t sourceLevel,
                                  GLenum sourceComponentType,
-                                 TextureGL *dest,
+                                 GLuint destID,
                                  gl::TextureTarget destTarget,
                                  size_t destLevel,
                                  GLenum destComponentType,
@@ -88,14 +92,17 @@ class BlitGL : angle::NonCopyable
     angle::Result copySubTextureCPUReadback(const gl::Context *context,
                                             TextureGL *source,
                                             size_t sourceLevel,
-                                            GLenum sourceComponentType,
+                                            GLenum sourceSizedInternalFormat,
                                             TextureGL *dest,
                                             gl::TextureTarget destTarget,
                                             size_t destLevel,
                                             GLenum destFormat,
                                             GLenum destType,
+                                            const gl::Extents &sourceSize,
                                             const gl::Rectangle &sourceArea,
                                             const gl::Offset &destOffset,
+                                            bool needsLumaWorkaround,
+                                            GLenum lumaFormat,
                                             bool unpackFlipY,
                                             bool unpackPremultiplyAlpha,
                                             bool unpackUnmultiplyAlpha);
@@ -119,6 +126,10 @@ class BlitGL : angle::NonCopyable
 
     angle::Result clearFramebuffer(FramebufferGL *source);
 
+    angle::Result clearRenderableTextureAlphaToOne(GLuint texture,
+                                                   gl::TextureTarget target,
+                                                   size_t level);
+
     angle::Result initializeResources();
 
   private:
@@ -126,7 +137,7 @@ class BlitGL : angle::NonCopyable
     void setScratchTextureParameter(GLenum param, GLenum value);
 
     const FunctionsGL *mFunctions;
-    const WorkaroundsGL &mWorkarounds;
+    const angle::FeaturesGL &mFeatures;
     StateManagerGL *mStateManager;
 
     struct BlitProgram
@@ -142,11 +153,15 @@ class BlitGL : angle::NonCopyable
     enum class BlitProgramType
     {
         FLOAT_TO_FLOAT,
+        FLOAT_TO_FLOAT_EXTERNAL,
         FLOAT_TO_UINT,
+        FLOAT_TO_UINT_EXTERNAL,
         UINT_TO_UINT,
     };
 
-    static BlitProgramType getBlitProgramType(GLenum sourceComponentType, GLenum destComponentType);
+    static BlitProgramType getBlitProgramType(gl::TextureType sourceTextureType,
+                                              GLenum sourceComponentType,
+                                              GLenum destComponentType);
     angle::Result getBlitProgram(const gl::Context *context,
                                  BlitProgramType type,
                                  BlitProgram **program);

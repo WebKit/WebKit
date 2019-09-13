@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2018 The ANGLE Project Authors. All rights reserved.
+// Copyright 2018 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -16,14 +16,14 @@
 #include "libANGLE/queryutils.h"
 #include "libANGLE/validationES.h"
 
-#define ANGLE_VALIDATE_IS_GLES1(context)                                \
-    do                                                                  \
-    {                                                                   \
-        if (context->getClientMajorVersion() > 1)                       \
-        {                                                               \
-            context->validationError(GL_INVALID_OPERATION, kGLES1Only); \
-            return false;                                               \
-        }                                                               \
+#define ANGLE_VALIDATE_IS_GLES1(context)                                                        \
+    do                                                                                          \
+    {                                                                                           \
+        if (context->getClientType() != EGL_OPENGL_API && context->getClientMajorVersion() > 1) \
+        {                                                                                       \
+            context->validationError(GL_INVALID_OPERATION, kGLES1Only);                         \
+            return false;                                                                       \
+        }                                                                                       \
     } while (0)
 
 namespace gl
@@ -1462,37 +1462,39 @@ bool ValidateQueryMatrixxOES(Context *context, GLfixed *mantissa, GLint *exponen
     return true;
 }
 
-bool ValidateGenFramebuffersOES(Context *context, GLsizei n, GLuint *framebuffers)
+bool ValidateGenFramebuffersOES(Context *context, GLsizei n, FramebufferID *framebuffers)
 {
     UNIMPLEMENTED();
     return true;
 }
 
-bool ValidateDeleteFramebuffersOES(Context *context, GLsizei n, const GLuint *framebuffers)
+bool ValidateDeleteFramebuffersOES(Context *context, GLsizei n, const FramebufferID *framebuffers)
 {
     UNIMPLEMENTED();
     return true;
 }
 
-bool ValidateGenRenderbuffersOES(Context *context, GLsizei n, GLuint *renderbuffers)
+bool ValidateGenRenderbuffersOES(Context *context, GLsizei n, RenderbufferID *renderbuffers)
 {
     UNIMPLEMENTED();
     return true;
 }
 
-bool ValidateDeleteRenderbuffersOES(Context *context, GLsizei n, const GLuint *renderbuffers)
+bool ValidateDeleteRenderbuffersOES(Context *context,
+                                    GLsizei n,
+                                    const RenderbufferID *renderbuffers)
 {
     UNIMPLEMENTED();
     return true;
 }
 
-bool ValidateBindFramebufferOES(Context *context, GLenum target, GLuint framebuffer)
+bool ValidateBindFramebufferOES(Context *context, GLenum target, FramebufferID framebuffer)
 {
     UNIMPLEMENTED();
     return true;
 }
 
-bool ValidateBindRenderbufferOES(Context *context, GLenum target, GLuint renderbuffer)
+bool ValidateBindRenderbufferOES(Context *context, GLenum target, RenderbufferID renderbuffer)
 {
     UNIMPLEMENTED();
     return true;
@@ -1508,7 +1510,7 @@ bool ValidateFramebufferRenderbufferOES(Context *context,
                                         GLenum target,
                                         GLenum attachment,
                                         GLenum rbtarget,
-                                        GLuint renderbuffer)
+                                        RenderbufferID renderbuffer)
 {
     UNIMPLEMENTED();
     return true;
@@ -1518,7 +1520,7 @@ bool ValidateFramebufferTexture2DOES(Context *context,
                                      GLenum target,
                                      GLenum attachment,
                                      TextureTarget textarget,
-                                     GLuint texture,
+                                     TextureID texture,
                                      GLint level)
 {
     UNIMPLEMENTED();
@@ -1550,13 +1552,13 @@ bool ValidateGetRenderbufferParameterivOES(Context *context,
     return true;
 }
 
-bool ValidateIsFramebufferOES(Context *context, GLuint framebuffer)
+bool ValidateIsFramebufferOES(Context *context, FramebufferID framebuffer)
 {
     UNIMPLEMENTED();
     return true;
 }
 
-bool ValidateIsRenderbufferOES(Context *context, GLuint renderbuffer)
+bool ValidateIsRenderbufferOES(Context *context, RenderbufferID renderbuffer)
 {
     UNIMPLEMENTED();
     return true;

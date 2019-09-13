@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -86,43 +86,44 @@ class WaitableCompileEventD3D final : public WaitableCompileEvent
 };
 
 ShaderD3D::ShaderD3D(const gl::ShaderState &data,
-                     const angle::WorkaroundsD3D &workarounds,
+                     const angle::FeaturesD3D &features,
                      const gl::Extensions &extensions)
     : ShaderImpl(data), mAdditionalOptions(0)
 {
     uncompile();
 
-    if (workarounds.expandIntegerPowExpressions)
+    if (features.expandIntegerPowExpressions.enabled)
     {
         mAdditionalOptions |= SH_EXPAND_SELECT_HLSL_INTEGER_POW_EXPRESSIONS;
     }
 
-    if (workarounds.getDimensionsIgnoresBaseLevel)
+    if (features.getDimensionsIgnoresBaseLevel.enabled)
     {
         mAdditionalOptions |= SH_HLSL_GET_DIMENSIONS_IGNORES_BASE_LEVEL;
     }
 
-    if (workarounds.preAddTexelFetchOffsets)
+    if (features.preAddTexelFetchOffsets.enabled)
     {
         mAdditionalOptions |= SH_REWRITE_TEXELFETCHOFFSET_TO_TEXELFETCH;
     }
-    if (workarounds.rewriteUnaryMinusOperator)
+    if (features.rewriteUnaryMinusOperator.enabled)
     {
         mAdditionalOptions |= SH_REWRITE_INTEGER_UNARY_MINUS_OPERATOR;
     }
-    if (workarounds.emulateIsnanFloat)
+    if (features.emulateIsnanFloat.enabled)
     {
         mAdditionalOptions |= SH_EMULATE_ISNAN_FLOAT_FUNCTION;
     }
-    if (workarounds.skipVSConstantRegisterZero && mData.getShaderType() == gl::ShaderType::Vertex)
+    if (features.skipVSConstantRegisterZero.enabled &&
+        mData.getShaderType() == gl::ShaderType::Vertex)
     {
         mAdditionalOptions |= SH_SKIP_D3D_CONSTANT_REGISTER_ZERO;
     }
-    if (workarounds.forceAtomicValueResolution)
+    if (features.forceAtomicValueResolution.enabled)
     {
         mAdditionalOptions |= SH_FORCE_ATOMIC_VALUE_RESOLUTION;
     }
-    if (extensions.multiview2)
+    if (extensions.multiview || extensions.multiview2)
     {
         mAdditionalOptions |= SH_INITIALIZE_BUILTINS_FOR_INSTANCED_MULTIVIEW;
     }
@@ -150,6 +151,7 @@ void ShaderD3D::uncompile()
     mUsesMultipleRenderTargets   = false;
     mUsesFragColor               = false;
     mUsesFragData                = false;
+    mUsesSecondaryColor          = false;
     mUsesFragCoord               = false;
     mUsesFrontFacing             = false;
     mUsesPointSize               = false;
@@ -270,14 +272,15 @@ std::shared_ptr<WaitableCompileEvent> ShaderD3D::compile(const gl::Context *cont
         const std::string &translatedSource = mData.getTranslatedSource();
 
         mUsesMultipleRenderTargets = translatedSource.find("GL_USES_MRT") != std::string::npos;
-        mUsesFragColor   = translatedSource.find("GL_USES_FRAG_COLOR") != std::string::npos;
-        mUsesFragData    = translatedSource.find("GL_USES_FRAG_DATA") != std::string::npos;
-        mUsesFragCoord   = translatedSource.find("GL_USES_FRAG_COORD") != std::string::npos;
-        mUsesFrontFacing = translatedSource.find("GL_USES_FRONT_FACING") != std::string::npos;
-        mUsesPointSize   = translatedSource.find("GL_USES_POINT_SIZE") != std::string::npos;
-        mUsesPointCoord  = translatedSource.find("GL_USES_POINT_COORD") != std::string::npos;
-        mUsesDepthRange  = translatedSource.find("GL_USES_DEPTH_RANGE") != std::string::npos;
-        mUsesFragDepth   = translatedSource.find("GL_USES_FRAG_DEPTH") != std::string::npos;
+        mUsesFragColor      = translatedSource.find("GL_USES_FRAG_COLOR") != std::string::npos;
+        mUsesFragData       = translatedSource.find("GL_USES_FRAG_DATA") != std::string::npos;
+        mUsesSecondaryColor = translatedSource.find("GL_USES_SECONDARY_COLOR") != std::string::npos;
+        mUsesFragCoord      = translatedSource.find("GL_USES_FRAG_COORD") != std::string::npos;
+        mUsesFrontFacing    = translatedSource.find("GL_USES_FRONT_FACING") != std::string::npos;
+        mUsesPointSize      = translatedSource.find("GL_USES_POINT_SIZE") != std::string::npos;
+        mUsesPointCoord     = translatedSource.find("GL_USES_POINT_COORD") != std::string::npos;
+        mUsesDepthRange     = translatedSource.find("GL_USES_DEPTH_RANGE") != std::string::npos;
+        mUsesFragDepth      = translatedSource.find("GL_USES_FRAG_DEPTH") != std::string::npos;
         mHasANGLEMultiviewEnabled =
             translatedSource.find("GL_ANGLE_MULTIVIEW_ENABLED") != std::string::npos;
         mUsesVertexID = translatedSource.find("GL_USES_VERTEX_ID") != std::string::npos;

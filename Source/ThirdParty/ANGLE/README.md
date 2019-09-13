@@ -10,19 +10,21 @@ underway, and future plans include compute shader support (ES 3.1) and MacOS sup
 
 |                |  Direct3D 9   |  Direct3D 11     |   Desktop GL   |    GL ES      |    Vulkan     |
 |----------------|:-------------:|:----------------:|:--------------:|:-------------:|:-------------:|
-| OpenGL ES 2.0  |    complete   |    complete      |    complete    |   complete    |  in progress  |
-| OpenGL ES 3.0  |               |    complete      |    complete    |  in progress  |  not started  |
-| OpenGL ES 3.1  |               |   not started    |   in progress  |  in progress  |  not started  |
+| OpenGL ES 2.0  |    complete   |    complete      |    complete    |   complete    |    complete   |
+| OpenGL ES 3.0  |               |    complete      |    complete    |   complete    |  in progress  |
+| OpenGL ES 3.1  |               |   in progress    |    complete    |   complete    |  in progress  |
+| OpenGL ES 3.2  |               |                  |    planned     |    planned    |    planned    |
 
 ### Platform support via backing renderers
 
 |             |    Direct3D 9  |   Direct3D 11  |   Desktop GL  |    GL ES    |   Vulkan    |
 |------------:|:--------------:|:--------------:|:-------------:|:-----------:|:-----------:|
-| Windows     |    complete    |    complete    |   complete    |   complete  | in progress |
-| Linux       |                |                |   complete    |             | in progress |
-| Mac OS X    |                |                |  in progress  |             |             |
+| Windows     |    complete    |    complete    |   complete    |   complete  |   complete  |
+| Linux       |                |                |   complete    |             |   complete  |
+| Mac OS X    |                |                |   complete    |             |             |
 | Chrome OS   |                |                |               |   complete  |   planned   |
-| Android     |                |                |               |   complete  | in progress |
+| Android     |                |                |               |   complete  |   complete  |
+| Fuchsia     |                |                |               |             | in progress |
 
 ANGLE v1.0.772 was certified compliant by passing the ES 2.0.3 conformance tests in October 2011.
 ANGLE also provides an implementation of the EGL 1.4 specification.

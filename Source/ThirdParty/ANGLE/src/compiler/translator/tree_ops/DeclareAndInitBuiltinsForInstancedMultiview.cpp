@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 The ANGLE Project Authors. All rights reserved.
+// Copyright 2017 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -9,10 +9,11 @@
 
 #include "compiler/translator/tree_ops/DeclareAndInitBuiltinsForInstancedMultiview.h"
 
+#include "compiler/translator/Compiler.h"
 #include "compiler/translator/StaticType.h"
 #include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/tree_ops/InitializeVariables.h"
-#include "compiler/translator/tree_util/BuiltIn_autogen.h"
+#include "compiler/translator/tree_util/BuiltIn.h"
 #include "compiler/translator/tree_util/FindMain.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
@@ -122,7 +123,8 @@ void SelectViewIndexInVertexShader(const TVariable *viewID,
 
 }  // namespace
 
-void DeclareAndInitBuiltinsForInstancedMultiview(TIntermBlock *root,
+bool DeclareAndInitBuiltinsForInstancedMultiview(TCompiler *compiler,
+                                                 TIntermBlock *root,
                                                  unsigned numberOfViews,
                                                  GLenum shaderType,
                                                  ShCompileOptions compileOptions,
@@ -137,7 +139,10 @@ void DeclareAndInitBuiltinsForInstancedMultiview(TIntermBlock *root,
                       new TType(EbtUInt, EbpHigh, viewIDQualifier), SymbolType::AngleInternal);
 
     DeclareGlobalVariable(root, viewID);
-    ReplaceVariable(root, BuiltInVariable::gl_ViewID_OVR(), viewID);
+    if (!ReplaceVariable(compiler, root, BuiltInVariable::gl_ViewID_OVR(), viewID))
+    {
+        return false;
+    }
     if (shaderType == GL_VERTEX_SHADER)
     {
         // Replacing gl_InstanceID with InstanceID should happen before adding the initializers of
@@ -147,7 +152,10 @@ void DeclareAndInitBuiltinsForInstancedMultiview(TIntermBlock *root,
             new TVariable(symbolTable, kInstanceIDVariableName, instanceIDVariableType,
                           SymbolType::AngleInternal);
         DeclareGlobalVariable(root, instanceID);
-        ReplaceVariable(root, BuiltInVariable::gl_InstanceID(), instanceID);
+        if (!ReplaceVariable(compiler, root, BuiltInVariable::gl_InstanceID(), instanceID))
+        {
+            return false;
+        }
 
         TIntermSequence *initializers = new TIntermSequence();
         InitializeViewIDAndInstanceID(viewID, instanceID, numberOfViews, *symbolTable,
@@ -181,6 +189,8 @@ void DeclareAndInitBuiltinsForInstancedMultiview(TIntermBlock *root,
         TIntermBlock *mainBody = FindMainBody(root);
         mainBody->getSequence()->insert(mainBody->getSequence()->begin(), initializersBlock);
     }
+
+    return compiler->validateAST(root);
 }
 
 }  // namespace sh

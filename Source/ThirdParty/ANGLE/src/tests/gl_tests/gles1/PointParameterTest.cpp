@@ -153,4 +153,4 @@ TEST_P(PointParameterTest, Set)
     EXPECT_EQ(3.0f, params[2]);
 }
 
-ANGLE_INSTANTIATE_TEST(PointParameterTest, ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES());
+ANGLE_INSTANTIATE_TEST(PointParameterTest, ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES(), ES1_VULKAN());

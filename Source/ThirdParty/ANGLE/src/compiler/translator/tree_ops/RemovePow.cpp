@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -86,7 +86,7 @@ bool RemovePowTraverser::visitAggregate(Visit visit, TIntermAggregate *node)
 
 }  // namespace
 
-void RemovePow(TIntermNode *root, TSymbolTable *symbolTable)
+bool RemovePow(TCompiler *compiler, TIntermNode *root, TSymbolTable *symbolTable)
 {
     RemovePowTraverser traverser(symbolTable);
     // Iterate as necessary, and reset the traverser between iterations.
@@ -94,8 +94,13 @@ void RemovePow(TIntermNode *root, TSymbolTable *symbolTable)
     {
         traverser.nextIteration();
         root->traverse(&traverser);
-        traverser.updateTree();
+        if (!traverser.updateTree(compiler, root))
+        {
+            return false;
+        }
     } while (traverser.needAnotherIteration());
+
+    return true;
 }
 
 }  // namespace sh

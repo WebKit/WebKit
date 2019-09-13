@@ -29,18 +29,21 @@ if sys.platform == 'win32':
 
 scores = []
 
+
 # Danke to http://stackoverflow.com/a/27758326
 def mean(data):
     """Return the sample arithmetic mean of data."""
     n = len(data)
     if n < 1:
         raise ValueError('mean requires at least one data point')
-    return float(sum(data))/float(n) # in Python 2 use sum(data)/float(n)
+    return float(sum(data)) / float(n)  # in Python 2 use sum(data)/float(n)
+
 
 def sum_of_square_deviations(data, c):
     """Return sum of square deviations of sequence data."""
-    ss = sum((float(x)-c)**2 for x in data)
+    ss = sum((float(x) - c)**2 for x in data)
     return ss
+
 
 def coefficient_of_variation(data):
     """Calculates the population coefficient of variation."""
@@ -49,9 +52,10 @@ def coefficient_of_variation(data):
         raise ValueError('variance requires at least two data points')
     c = mean(data)
     ss = sum_of_square_deviations(data, c)
-    pvar = ss/n # the population variance
-    stddev = (pvar**0.5) # population standard deviation
+    pvar = ss / n  # the population variance
+    stddev = (pvar**0.5)  # population standard deviation
     return stddev / c
+
 
 def truncated_list(data, n):
     """Compute a truncated list, n is truncation size"""
@@ -59,13 +63,16 @@ def truncated_list(data, n):
         raise ValueError('list not large enough to truncate')
     return sorted(data)[n:-n]
 
+
 def truncated_mean(data, n):
     """Compute a truncated mean, n is truncation size"""
     return mean(truncated_list(data, n))
 
+
 def truncated_cov(data, n):
     """Compute a truncated coefficient of variation, n is truncation size"""
     return coefficient_of_variation(truncated_list(data, n))
+
 
 # Find most recent binary
 newest_binary = None
@@ -96,8 +103,12 @@ if len(sys.argv) >= 2:
 print('Using test executable: ' + perftests_path)
 print('Test name: ' + test_name)
 
+
 def get_results(metric, extra_args=[]):
-    process = subprocess.Popen([perftests_path, '--gtest_filter=' + test_name] + extra_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process = subprocess.Popen(
+        [perftests_path, '--gtest_filter=' + test_name] + extra_args,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE)
     output, err = process.communicate()
 
     m = re.search(r'Running (\d+) tests', output)
@@ -106,14 +117,17 @@ def get_results(metric, extra_args=[]):
         print(output)
         sys.exit(3)
 
-    pattern = metric + r'= ([0-9.]+)'
+    # Results are reported in the format:
+    # name_backend.metric: story= value units.
+    pattern = r'\.' + metric + r':.*= ([0-9.]+)'
     m = re.findall(pattern, output)
-    if m is None:
+    if not m:
         print("Did not find the metric '%s' in the test output:" % metric)
         print(output)
         sys.exit(1)
 
     return [float(value) for value in m]
+
 
 # Calibrate the number of steps
 steps = get_results("steps", ["--calibration"])[0]

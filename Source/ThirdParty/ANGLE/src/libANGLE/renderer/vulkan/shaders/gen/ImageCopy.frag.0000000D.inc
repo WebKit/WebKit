@@ -1,4 +1,4 @@
-	// 7.11.3188
+	// 7.12.3226
 	 #pragma once
 const uint32_t kImageCopy_frag_0000000D[] = {
 	0x07230203,0x00010000,0x00080007,0x0000009e,0x00000000,0x00020011,0x00000001,0x0006000b,
@@ -132,79 +132,79 @@ const uint32_t kImageCopy_frag_0000000D[] = {
 	0x0000009d,0x0000006c,0x0003003e,0x0000009c,0x0000009d,0x000100fd,0x00010038
 };
 
-#if 0  // Generated from:
-#version 450 core
-
-#extension GL_EXT_samplerless_texture_functions : require
-
-layout(set = 0, binding = 0)uniform utexture2DArray src;
-layout(location = 0)out ivec4 dest;
-
-layout(push_constant)uniform PushConstants {
-
-    ivec2 srcOffset;
-    ivec2 destOffset;
-    int srcMip;
-    int srcLayer;
-
-    bool flipY;
-
-    bool premultiplyAlpha;
-    bool unmultiplyAlpha;
-
-    bool destHasLuminance;
-    bool destIsAlpha;
-
-    int destDefaultChannelsMask;
-} params;
-
-void main()
-{
-    ivec2 destSubImageCoords = ivec2(gl_FragCoord . xy)- params . destOffset;
-
-    ivec2 srcSubImageCoords = destSubImageCoords;
-
-    if(params . flipY)
-        srcSubImageCoords . y = - srcSubImageCoords . y;
-
-          uvec4 srcValue = texelFetch(src, ivec3(params . srcOffset + srcSubImageCoords, params . srcLayer), params . srcMip);
-
-    if(params . premultiplyAlpha)
-    {
-        srcValue . rgb *= srcValue . a;
-    }
-    else if(params . unmultiplyAlpha && srcValue . a > 0)
-    {
-        srcValue . rgb /= srcValue . a;
-    }
-
-           ivec4 destValue = ivec4(srcValue);
-
-    if(params . destHasLuminance)
-    {
-        destValue . rg = destValue . ra;
-    }
-    else if(params . destIsAlpha)
-    {
-        destValue . r = destValue . a;
-    }
-    else
-    {
-        int defaultChannelsMask = params . destDefaultChannelsMask;
-        if((defaultChannelsMask & 2)!= 0)
-        {
-            destValue . g = 0;
-        }
-        if((defaultChannelsMask & 4)!= 0)
-        {
-            destValue . b = 0;
-        }
-        if((defaultChannelsMask & 8)!= 0)
-        {
-            destValue . a = 1;
-        }
-    }
-
-    dest = destValue;
-}
-#endif  // Preprocessed code
+// Generated from:
+//
+// #version 450 core
+//
+// #extension GL_EXT_samplerless_texture_functions : require
+//
+// layout(set = 0, binding = 0)uniform utexture2DArray src;
+// layout(location = 0)out ivec4 dest;
+//
+// layout(push_constant)uniform PushConstants {
+//
+//     ivec2 srcOffset;
+//     ivec2 destOffset;
+//     int srcMip;
+//     int srcLayer;
+//
+//     bool flipY;
+//
+//     bool premultiplyAlpha;
+//     bool unmultiplyAlpha;
+//
+//     bool destHasLuminance;
+//     bool destIsAlpha;
+//
+//     int destDefaultChannelsMask;
+// } params;
+//
+// void main()
+// {
+//     ivec2 destSubImageCoords = ivec2(gl_FragCoord . xy)- params . destOffset;
+//
+//     ivec2 srcSubImageCoords = destSubImageCoords;
+//
+//     if(params . flipY)
+//         srcSubImageCoords . y = - srcSubImageCoords . y;
+//
+//           uvec4 srcValue = texelFetch(src, ivec3(params . srcOffset + srcSubImageCoords, params . srcLayer), params . srcMip);
+//
+//     if(params . premultiplyAlpha)
+//     {
+//         srcValue . rgb *= srcValue . a;
+//     }
+//     else if(params . unmultiplyAlpha && srcValue . a > 0)
+//     {
+//         srcValue . rgb /= srcValue . a;
+//     }
+//
+//            ivec4 destValue = ivec4(srcValue);
+//
+//     if(params . destHasLuminance)
+//     {
+//         destValue . rg = destValue . ra;
+//     }
+//     else if(params . destIsAlpha)
+//     {
+//         destValue . r = destValue . a;
+//     }
+//     else
+//     {
+//         int defaultChannelsMask = params . destDefaultChannelsMask;
+//         if((defaultChannelsMask & 2)!= 0)
+//         {
+//             destValue . g = 0;
+//         }
+//         if((defaultChannelsMask & 4)!= 0)
+//         {
+//             destValue . b = 0;
+//         }
+//         if((defaultChannelsMask & 8)!= 0)
+//         {
+//             destValue . a = 1;
+//         }
+//     }
+//
+//     dest = destValue;
+// }

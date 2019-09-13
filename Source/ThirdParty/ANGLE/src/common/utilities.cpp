@@ -1,10 +1,13 @@
 //
-// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
 
 // utilities.cpp: Conversion functions and other utility routines.
+
+// Older clang versions have a false positive on this warning here.
+#pragma clang diagnostic ignored "-Wglobal-constructors"
 
 #include "common/utilities.h"
 #include <GLSLANG/ShaderVars.h>
@@ -422,6 +425,20 @@ bool IsSamplerType(GLenum type)
     return false;
 }
 
+bool IsSamplerCubeType(GLenum type)
+{
+    switch (type)
+    {
+        case GL_SAMPLER_CUBE:
+        case GL_INT_SAMPLER_CUBE:
+        case GL_UNSIGNED_INT_SAMPLER_CUBE:
+        case GL_SAMPLER_CUBE_SHADOW:
+            return true;
+    }
+
+    return false;
+}
+
 bool IsImageType(GLenum type)
 {
     switch (type)
@@ -617,16 +634,11 @@ bool IsTriangleMode(PrimitiveMode drawMode)
 
 namespace priv
 {
-const angle::PackedEnumMap<PrimitiveMode, bool>& gLineModes()
-{
-    static const angle::PackedEnumMap<PrimitiveMode, bool> modes {
-        { PrimitiveMode::LineLoop, true },
-        { PrimitiveMode::LineStrip, true },
-        { PrimitiveMode::LineStripAdjacency, true },
-        { PrimitiveMode::Lines, true }
-    };
-    return modes;
-};
+const angle::PackedEnumMap<PrimitiveMode, bool> gLineModes = {
+    {{PrimitiveMode::LineLoop, true},
+     {PrimitiveMode::LineStrip, true},
+     {PrimitiveMode::LineStripAdjacency, true},
+     {PrimitiveMode::Lines, true}}};
 }  // namespace priv
 
 bool IsIntegerFormat(GLenum unsizedFormat)
@@ -775,8 +787,16 @@ std::string ParseResourceName(const std::string &name, std::vector<unsigned int>
     return name.substr(0, baseNameLength);
 }
 
+std::string StripLastArrayIndex(const std::string &name)
+{
+    size_t strippedNameLength = name.find_last_of('[');
+    ASSERT(strippedNameLength != std::string::npos && name.back() == ']');
+    return name.substr(0, strippedNameLength);
+}
+
 const sh::ShaderVariable *FindShaderVarField(const sh::ShaderVariable &var,
-                                             const std::string &fullName)
+                                             const std::string &fullName,
+                                             GLuint *fieldIndexOut)
 {
     if (var.fields.empty())
     {
@@ -797,11 +817,12 @@ const sh::ShaderVariable *FindShaderVarField(const sh::ShaderVariable &var,
     {
         return nullptr;
     }
-    for (const auto &field : var.fields)
+    for (size_t field = 0; field < var.fields.size(); ++field)
     {
-        if (field.name == fieldName)
+        if (var.fields[field].name == fieldName)
         {
-            return &field;
+            *fieldIndexOut = static_cast<GLuint>(field);
+            return &var.fields[field];
         }
     }
     return nullptr;
@@ -896,6 +917,22 @@ unsigned int ElementTypeSize(GLenum elementType)
     }
 }
 
+PipelineType GetPipelineType(ShaderType type)
+{
+    switch (type)
+    {
+        case ShaderType::Vertex:
+        case ShaderType::Fragment:
+        case ShaderType::Geometry:
+            return PipelineType::GraphicsPipeline;
+        case ShaderType::Compute:
+            return PipelineType::ComputePipeline;
+        default:
+            UNREACHABLE();
+            return PipelineType::GraphicsPipeline;
+    }
+}
+
 }  // namespace gl
 
 namespace egl
@@ -957,6 +994,7 @@ bool IsExternalImageTarget(EGLenum target)
     switch (target)
     {
         case EGL_NATIVE_BUFFER_ANDROID:
+        case EGL_D3D11_TEXTURE_ANGLE:
             return true;
 
         default:

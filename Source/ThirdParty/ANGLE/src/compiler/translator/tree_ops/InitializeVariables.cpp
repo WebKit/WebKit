@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -8,6 +8,7 @@
 
 #include "angle_gl.h"
 #include "common/debug.h"
+#include "compiler/translator/Compiler.h"
 #include "compiler/translator/StaticType.h"
 #include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/tree_util/FindMain.h"
@@ -159,7 +160,8 @@ void AddArrayZeroInitSequence(const TIntermTyped *initializedNode,
     }
 }
 
-void InsertInitCode(TIntermSequence *mainBody,
+void InsertInitCode(TCompiler *compiler,
+                    TIntermSequence *mainBody,
                     const InitVariableList &variables,
                     TSymbolTable *symbolTable,
                     int shaderVersion,
@@ -283,7 +285,8 @@ TIntermSequence *CreateInitCode(const TIntermTyped *initializedSymbol,
     return initCode;
 }
 
-void InitializeUninitializedLocals(TIntermBlock *root,
+bool InitializeUninitializedLocals(TCompiler *compiler,
+                                   TIntermBlock *root,
                                    int shaderVersion,
                                    bool canUseLoopsToInitialize,
                                    bool highPrecisionSupported,
@@ -292,10 +295,11 @@ void InitializeUninitializedLocals(TIntermBlock *root,
     InitializeLocalsTraverser traverser(shaderVersion, symbolTable, canUseLoopsToInitialize,
                                         highPrecisionSupported);
     root->traverse(&traverser);
-    traverser.updateTree();
+    return traverser.updateTree(compiler, root);
 }
 
-void InitializeVariables(TIntermBlock *root,
+bool InitializeVariables(TCompiler *compiler,
+                         TIntermBlock *root,
                          const InitVariableList &vars,
                          TSymbolTable *symbolTable,
                          int shaderVersion,
@@ -304,8 +308,10 @@ void InitializeVariables(TIntermBlock *root,
                          bool highPrecisionSupported)
 {
     TIntermBlock *body = FindMainBody(root);
-    InsertInitCode(body->getSequence(), vars, symbolTable, shaderVersion, extensionBehavior,
-                   canUseLoopsToInitialize, highPrecisionSupported);
+    InsertInitCode(compiler, body->getSequence(), vars, symbolTable, shaderVersion,
+                   extensionBehavior, canUseLoopsToInitialize, highPrecisionSupported);
+
+    return compiler->validateAST(root);
 }
 
 }  // namespace sh

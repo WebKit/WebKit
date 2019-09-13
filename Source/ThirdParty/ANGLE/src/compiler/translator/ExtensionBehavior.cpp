@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 The ANGLE Project Authors. All rights reserved.
+// Copyright 2017 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -29,8 +29,11 @@
     OP(OES_EGL_image_external_essl3)             \
     OP(OES_standard_derivatives)                 \
     OP(OES_texture_storage_multisample_2d_array) \
+    OP(OES_texture_3D)                           \
+    OP(OVR_multiview)                            \
     OP(OVR_multiview2)                           \
-    OP(ANGLE_multi_draw)
+    OP(ANGLE_multi_draw)                         \
+    OP(ANGLE_base_vertex_base_instance)
 
 namespace sh
 {

@@ -26,8 +26,13 @@
     PROC(Context)                \
     PROC(Framebuffer)            \
     PROC(MemoryObject)           \
+    PROC(Query)                  \
+    PROC(Overlay)                \
     PROC(Program)                \
+    PROC(Sampler)                \
+    PROC(Semaphore)              \
     PROC(Texture)                \
+    PROC(TransformFeedback)      \
     PROC(VertexArray)
 
 #define ANGLE_PRE_DECLARE_OBJECT(OBJ) class OBJ;
@@ -41,6 +46,7 @@ class Image;
 namespace gl
 {
 struct Box;
+class DummyOverlay;
 struct Extents;
 struct RasterizerState;
 struct Rectangle;
@@ -83,9 +89,6 @@ bool GetAvailableValidationLayers(const std::vector<VkLayerProperties> &layerPro
                                   bool mustHaveLayers,
                                   VulkanLayerVector *enabledLayerNames);
 
-extern const char *g_VkLoaderLayersPathEnv;
-extern const char *g_VkICDPathEnv;
-
 enum class TextureDimension
 {
     TEX_2D,
@@ -97,6 +100,15 @@ enum class TextureDimension
 namespace vk
 {
 struct Format;
+
+extern const char *gLoaderLayersPathEnv;
+extern const char *gLoaderICDFilenamesEnv;
+
+enum class ICD
+{
+    Default,
+    Mock,
+};
 
 // Abstracts error handling. Implemented by both ContextVk for GL and DisplayVk for EGL errors.
 class Context : angle::NonCopyable
@@ -126,7 +138,6 @@ using PrimaryCommandBuffer = priv::CommandBuffer;
 
 VkImageAspectFlags GetDepthStencilAspectFlags(const angle::Format &format);
 VkImageAspectFlags GetFormatAspectFlags(const angle::Format &format);
-VkImageAspectFlags GetDepthStencilAspectFlagsForCopy(bool copyDepth, bool copyStencil);
 
 template <typename T>
 struct ImplTypeHelper;
@@ -141,6 +152,12 @@ struct ImplTypeHelper<gl::OBJ>         \
 // clang-format on
 
 ANGLE_GL_OBJECTS_X(ANGLE_IMPL_TYPE_HELPER_GL)
+
+template <>
+struct ImplTypeHelper<gl::DummyOverlay>
+{
+    using ImplType = OverlayVk;
+};
 
 template <>
 struct ImplTypeHelper<egl::Display>
@@ -163,14 +180,34 @@ GetImplType<T> *GetImpl(const T *glObject)
     return GetImplAs<GetImplType<T>>(glObject);
 }
 
-class GarbageObject final
+template <>
+inline OverlayVk *GetImpl(const gl::DummyOverlay *glObject)
+{
+    return nullptr;
+}
+
+class GarbageObjectBase
 {
   public:
     template <typename ObjectT>
-    GarbageObject(Serial serial, const ObjectT &object)
-        : mSerial(serial),
-          mHandleType(HandleTypeHelper<ObjectT>::kHandleType),
+    GarbageObjectBase(const ObjectT &object)
+        : mHandleType(HandleTypeHelper<ObjectT>::kHandleType),
           mHandle(reinterpret_cast<VkDevice>(object.getHandle()))
+    {}
+    GarbageObjectBase();
+
+    void destroy(VkDevice device);
+
+  private:
+    HandleType mHandleType;
+    VkDevice mHandle;
+};
+
+class GarbageObject final : public GarbageObjectBase
+{
+  public:
+    template <typename ObjectT>
+    GarbageObject(Serial serial, const ObjectT &object) : GarbageObjectBase(object), mSerial(serial)
     {}
 
     GarbageObject();
@@ -178,15 +215,12 @@ class GarbageObject final
     GarbageObject &operator=(const GarbageObject &other);
 
     bool destroyIfComplete(VkDevice device, Serial completedSerial);
-    void destroy(VkDevice device);
 
   private:
     // TODO(jmadill): Since many objects will have the same serial, it might be more efficient to
     // store the serial outside of the garbage object itself. We could index ranges of garbage
     // objects in the Renderer, using a circular buffer.
     Serial mSerial;
-    HandleType mHandleType;
-    VkDevice mHandle;
 };
 
 class MemoryProperties final : angle::NonCopyable
@@ -292,6 +326,8 @@ angle::Result InitShaderAndSerial(Context *context,
                                   const uint32_t *shaderCode,
                                   size_t shaderCodeSize);
 
+gl::TextureType Get2DTextureType(uint32_t layerCount, GLint samples);
+
 enum class RecordingMode
 {
     Start,
@@ -301,11 +337,11 @@ enum class RecordingMode
 // Helper class to handle RAII patterns for initialization. Requires that T have a destroy method
 // that takes a VkDevice and returns void.
 template <typename T>
-class Scoped final : angle::NonCopyable
+class DeviceScoped final : angle::NonCopyable
 {
   public:
-    Scoped(VkDevice device) : mDevice(device) {}
-    ~Scoped() { mVar.destroy(mDevice); }
+    DeviceScoped(VkDevice device) : mDevice(device) {}
+    ~DeviceScoped() { mVar.destroy(mDevice); }
 
     const T &get() const { return mVar; }
     T &get() { return mVar; }
@@ -314,6 +350,25 @@ class Scoped final : angle::NonCopyable
 
   private:
     VkDevice mDevice;
+    T mVar;
+};
+
+// Similar to DeviceScoped, but releases objects instead of destroying them. Requires that T have a
+// release method that takes a ContextVk * and returns void.
+template <typename T>
+class ContextScoped final : angle::NonCopyable
+{
+  public:
+    ContextScoped(ContextVk *contextVk) : mContextVk(contextVk) {}
+    ~ContextScoped() { mVar.release(mContextVk); }
+
+    const T &get() const { return mVar; }
+    T &get() { return mVar; }
+
+    T &&release() { return std::move(mVar); }
+
+  private:
+    ContextVk *mContextVk;
     T mVar;
 };
 
@@ -443,6 +498,23 @@ class Shared final : angle::NonCopyable
 
     void reset(VkDevice device) { set(device, nullptr); }
 
+    template <typename RecyclerT>
+    void resetAndRecycle(RecyclerT *recycler)
+    {
+        if (mRefCounted)
+        {
+            mRefCounted->releaseRef();
+            if (!mRefCounted->isReferenced())
+            {
+                ASSERT(mRefCounted->get().valid());
+                recycler->recycle(std::move(mRefCounted->get()));
+                SafeDelete(mRefCounted);
+            }
+
+            mRefCounted = nullptr;
+        }
+    }
+
     bool isReferenced() const
     {
         // If reference is zero, the object should have been deleted.  I.e. if the object is not
@@ -465,6 +537,44 @@ class Shared final : angle::NonCopyable
   private:
     RefCounted<T> *mRefCounted;
 };
+
+template <typename T>
+class Recycler final : angle::NonCopyable
+{
+  public:
+    Recycler() = default;
+
+    void recycle(T &&garbageObject) { mObjectFreeList.emplace_back(std::move(garbageObject)); }
+
+    void fetch(T *outObject)
+    {
+        ASSERT(!empty());
+        *outObject = std::move(mObjectFreeList.back());
+        mObjectFreeList.pop_back();
+    }
+
+    void destroy(VkDevice device)
+    {
+        for (T &object : mObjectFreeList)
+        {
+            object.destroy(device);
+        }
+    }
+
+    bool empty() const { return mObjectFreeList.empty(); }
+
+  private:
+    std::vector<T> mObjectFreeList;
+};
+
+bool SamplerNameContainsNonZeroArrayElement(const std::string &name);
+std::string GetMappedSamplerName(const std::string &originalName);
+
+// A vector of image views, such as one per level or one per layer.
+using ImageViewVector = std::vector<vk::ImageView>;
+// A vector of vector of image views.  Primary index is layer, secondary index is level.
+using LayerLevelImageViewVector = std::vector<ImageViewVector>;
+
 }  // namespace vk
 
 // List of function pointers for used extensions.
@@ -481,6 +591,9 @@ extern PFN_vkDestroyDebugReportCallbackEXT vkDestroyDebugReportCallbackEXT;
 
 // VK_KHR_get_physical_device_properties2
 extern PFN_vkGetPhysicalDeviceProperties2KHR vkGetPhysicalDeviceProperties2KHR;
+
+// VK_KHR_external_semaphore_fd
+extern PFN_vkImportSemaphoreFdKHR vkImportSemaphoreFdKHR;
 
 // Lazily load entry points for each extension as necessary.
 void InitDebugUtilsEXTFunctions(VkInstance instance);
@@ -500,6 +613,8 @@ extern PFN_vkGetMemoryAndroidHardwareBufferANDROID vkGetMemoryAndroidHardwareBuf
 void InitExternalMemoryHardwareBufferANDROIDFunctions(VkInstance instance);
 #endif
 
+void InitExternalSemaphoreFdFunctions(VkInstance instance);
+
 namespace gl_vk
 {
 VkRect2D GetRect(const gl::Rectangle &source);
@@ -507,10 +622,11 @@ VkFilter GetFilter(const GLenum filter);
 VkSamplerMipmapMode GetSamplerMipmapMode(const GLenum filter);
 VkSamplerAddressMode GetSamplerAddressMode(const GLenum wrap);
 VkPrimitiveTopology GetPrimitiveTopology(gl::PrimitiveMode mode);
-VkCullModeFlags GetCullMode(const gl::RasterizerState &rasterState);
+VkCullModeFlagBits GetCullMode(const gl::RasterizerState &rasterState);
 VkFrontFace GetFrontFace(GLenum frontFace, bool invertCullFace);
 VkSampleCountFlagBits GetSamples(GLint sampleCount);
 VkComponentSwizzle GetSwizzle(const GLenum swizzle);
+VkCompareOp GetCompareOp(const GLenum compareFunc);
 
 constexpr angle::PackedEnumMap<gl::DrawElementsType, VkIndexType> kIndexTypeMap = {
     {gl::DrawElementsType::UnsignedByte, VK_INDEX_TYPE_UINT16},
@@ -518,11 +634,19 @@ constexpr angle::PackedEnumMap<gl::DrawElementsType, VkIndexType> kIndexTypeMap 
     {gl::DrawElementsType::UnsignedInt, VK_INDEX_TYPE_UINT32},
 };
 
+constexpr gl::ShaderMap<VkShaderStageFlagBits> kShaderStageMap = {
+    {gl::ShaderType::Vertex, VK_SHADER_STAGE_VERTEX_BIT},
+    {gl::ShaderType::Fragment, VK_SHADER_STAGE_FRAGMENT_BIT},
+    {gl::ShaderType::Geometry, VK_SHADER_STAGE_GEOMETRY_BIT},
+    {gl::ShaderType::Compute, VK_SHADER_STAGE_COMPUTE_BIT},
+};
+
 void GetOffset(const gl::Offset &glOffset, VkOffset3D *vkOffset);
 void GetExtent(const gl::Extents &glExtent, VkExtent3D *vkExtent);
 VkImageType GetImageType(gl::TextureType textureType);
 VkImageViewType GetImageViewType(gl::TextureType textureType);
 VkColorComponentFlags GetColorComponentFlags(bool red, bool green, bool blue, bool alpha);
+VkShaderStageFlags GetShaderStageFlags(gl::ShaderBitSet activeShaders);
 
 void GetViewport(const gl::Rectangle &viewport,
                  float nearPlane,
@@ -530,7 +654,22 @@ void GetViewport(const gl::Rectangle &viewport,
                  bool invertViewport,
                  GLint renderAreaHeight,
                  VkViewport *viewportOut);
+
+void GetExtentsAndLayerCount(gl::TextureType textureType,
+                             const gl::Extents &extents,
+                             VkExtent3D *extentsOut,
+                             uint32_t *layerCountOut);
 }  // namespace gl_vk
+
+namespace vk_gl
+{
+// Find set bits in sampleCounts and add the corresponding sample count to the set.
+void AddSampleCounts(VkSampleCountFlags sampleCounts, gl::SupportedSampleSet *outSet);
+// Return the maximum sample count with a bit set in |sampleCounts|.
+GLuint GetMaxSampleCount(VkSampleCountFlags sampleCounts);
+// Return a supported sample count that's at least as large as the requested one.
+GLuint GetSampleCount(VkSampleCountFlags supportedCounts, GLuint requestedCount);
+}  // namespace vk_gl
 
 }  // namespace rx
 

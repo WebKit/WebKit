@@ -25,15 +25,13 @@ class SyncQueriesTest : public ANGLETest
         setConfigDepthBits(24);
     }
 
-    void TearDown() override
+    void testTearDown() override
     {
         if (mQuery != 0)
         {
             glDeleteQueriesEXT(1, &mQuery);
             mQuery = 0;
         }
-
-        ANGLETest::TearDown();
     }
 
     GLuint mQuery = 0;

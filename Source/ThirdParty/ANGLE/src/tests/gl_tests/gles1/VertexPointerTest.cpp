@@ -64,4 +64,4 @@ TEST_P(VertexPointerTest, AssignRetrieve)
     }
 }
 
-ANGLE_INSTANTIATE_TEST(VertexPointerTest, ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES());
+ANGLE_INSTANTIATE_TEST(VertexPointerTest, ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES(), ES1_VULKAN());

@@ -5,6 +5,7 @@
 //
 
 #include "test_utils/ANGLETest.h"
+#include "test_utils/gl_raii.h"
 
 using namespace angle;
 
@@ -21,10 +22,8 @@ class CubeMapTextureTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    virtual void SetUp()
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         mProgram = CompileProgram(essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
         if (mProgram == 0)
         {
@@ -45,12 +44,9 @@ class CubeMapTextureTest : public ANGLETest
         ASSERT_GL_NO_ERROR();
     }
 
-    virtual void TearDown()
-    {
-        glDeleteProgram(mProgram);
+    void testTearDown() override { glDeleteProgram(mProgram); }
 
-        ANGLETest::TearDown();
-    }
+    void runSampleCoordinateTransformTest(const char *shader);
 
     GLuint mProgram;
     GLint mColorLocation;
@@ -119,14 +115,211 @@ TEST_P(CubeMapTextureTest, RenderToFacesConsecutively)
     EXPECT_GL_NO_ERROR();
 }
 
+void CubeMapTextureTest::runSampleCoordinateTransformTest(const char *shader)
+{
+    // Fails to compile the shader.  anglebug.com/3776
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsWindows());
+
+    constexpr GLsizei kCubeFaceCount            = 6;
+    constexpr GLsizei kCubeFaceSectionCount     = 4;
+    constexpr GLsizei kCubeFaceSectionCountSqrt = 2;
+
+    constexpr GLColor faceColors[kCubeFaceCount][kCubeFaceSectionCount] = {
+        {GLColor(255, 0, 0, 255), GLColor(191, 0, 0, 255), GLColor(127, 0, 0, 255),
+         GLColor(63, 0, 0, 255)},
+        {GLColor(0, 255, 0, 255), GLColor(0, 191, 0, 255), GLColor(0, 127, 0, 255),
+         GLColor(0, 63, 0, 255)},
+        {GLColor(0, 0, 255, 255), GLColor(0, 0, 191, 255), GLColor(0, 0, 127, 255),
+         GLColor(0, 0, 63, 255)},
+        {GLColor(255, 63, 0, 255), GLColor(191, 127, 0, 255), GLColor(127, 191, 0, 255),
+         GLColor(63, 255, 0, 255)},
+        {GLColor(0, 255, 63, 255), GLColor(0, 191, 127, 255), GLColor(0, 127, 191, 255),
+         GLColor(0, 63, 255, 255)},
+        {GLColor(63, 0, 255, 255), GLColor(127, 0, 191, 255), GLColor(191, 0, 127, 255),
+         GLColor(255, 0, 63, 255)},
+    };
+
+    constexpr GLsizei kTextureSize = 32;
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, tex);
+    for (GLenum face = 0; face < kCubeFaceCount; face++)
+    {
+        std::vector<GLColor> faceData(kTextureSize * kTextureSize);
+
+        // Create the face with four sections, each with a solid color from |faceColors|.
+        for (size_t row = 0; row < kTextureSize / kCubeFaceSectionCountSqrt; ++row)
+        {
+            for (size_t col = 0; col < kTextureSize / kCubeFaceSectionCountSqrt; ++col)
+            {
+                for (size_t srow = 0; srow < kCubeFaceSectionCountSqrt; ++srow)
+                {
+                    for (size_t scol = 0; scol < kCubeFaceSectionCountSqrt; ++scol)
+                    {
+                        size_t r = row + srow * kTextureSize / kCubeFaceSectionCountSqrt;
+                        size_t c = col + scol * kTextureSize / kCubeFaceSectionCountSqrt;
+                        size_t s = srow * kCubeFaceSectionCountSqrt + scol;
+                        faceData[r * kTextureSize + c] = faceColors[face][s];
+                    }
+                }
+            }
+        }
+
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_RGBA, kTextureSize, kTextureSize,
+                     0, GL_RGBA, GL_UNSIGNED_BYTE, faceData.data());
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    EXPECT_GL_NO_ERROR();
+
+    GLTexture fboTex;
+    glBindTexture(GL_TEXTURE_2D, fboTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kCubeFaceCount, kCubeFaceSectionCount, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboTex, 0);
+    EXPECT_GL_NO_ERROR();
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), shader);
+    glUseProgram(program);
+
+    GLint texCubeLocation = glGetUniformLocation(program, "texCube");
+    ASSERT_NE(-1, texCubeLocation);
+    glUniform1i(texCubeLocation, 0);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+
+    for (GLenum face = 0; face < kCubeFaceCount; face++)
+    {
+        // The following table defines the translation from textureCube coordinates to coordinates
+        // in each face.  The framebuffer has width 6 and height 4.  Every column corresponding to
+        // an x value represents one cube face.  The values in rows are samples from the four
+        // sections of the face.
+        //
+        // Major    Axis Direction Target    sc  tc  ma
+        //  +rx  TEXTURE_CUBE_MAP_POSITIVE_X −rz −ry rx
+        //  −rx  TEXTURE_CUBE_MAP_NEGATIVE_X  rz −ry rx
+        //  +ry  TEXTURE_CUBE_MAP_POSITIVE_Y  rx  rz ry
+        //  −ry  TEXTURE_CUBE_MAP_NEGATIVE_Y  rx −rz ry
+        //  +rz  TEXTURE_CUBE_MAP_POSITIVE_Z  rx −ry rz
+        //  −rz  TEXTURE_CUBE_MAP_NEGATIVE_Z −rx −ry rz
+        //
+        // This table is used only to determine the direction of growth for s and t.  The shader
+        // always generates (row,col) coordinates (0, 0), (0, 1), (1, 0), (1, 1) which is the order
+        // the data is uploaded to the faces, but based on the table above, the sample order would
+        // be different.
+        constexpr size_t faceSampledSections[kCubeFaceCount][kCubeFaceSectionCount] = {
+            {3, 2, 1, 0}, {2, 3, 0, 1}, {0, 1, 2, 3}, {2, 3, 0, 1}, {2, 3, 0, 1}, {3, 2, 1, 0},
+        };
+
+        for (size_t section = 0; section < kCubeFaceSectionCount; ++section)
+        {
+            const GLColor sectionColor = faceColors[face][faceSampledSections[face][section]];
+
+            EXPECT_PIXEL_COLOR_EQ(face, section, sectionColor)
+                << "face " << face << ", section " << section;
+        }
+    }
+    EXPECT_GL_NO_ERROR();
+}
+
+// Verify that cube map sampling follows the rules that map cubemap coordinates to coordinates
+// within each face.  See section 3.7.5 of GLES2.0 (Cube Map Texture Selection).
+TEST_P(CubeMapTextureTest, SampleCoordinateTransform)
+{
+    // Create a program that samples from 6x4 directions of the cubemap, draw and verify that the
+    // colors match the right color from |faceColors|.
+    constexpr char kFS[] = R"(precision mediump float;
+
+uniform samplerCube texCube;
+
+const mat4 coordInSection = mat4(
+    vec4(-0.5, -0.5, 0, 0),
+    vec4( 0.5, -0.5, 0, 0),
+    vec4(-0.5,  0.5, 0, 0),
+    vec4( 0.5,  0.5, 0, 0)
+);
+
+void main()
+{
+    vec3 coord;
+    if (gl_FragCoord.x < 2.0)
+    {
+        coord.x = gl_FragCoord.x < 1.0 ? 1.0 : -1.0;
+        coord.zy = coordInSection[int(gl_FragCoord.y)].xy;
+    }
+    else if (gl_FragCoord.x < 4.0)
+    {
+        coord.y = gl_FragCoord.x < 3.0 ? 1.0 : -1.0;
+        coord.xz = coordInSection[int(gl_FragCoord.y)].xy;
+    }
+    else
+    {
+        coord.z = gl_FragCoord.x < 5.0 ? 1.0 : -1.0;
+        coord.xy = coordInSection[int(gl_FragCoord.y)].xy;
+    }
+
+    gl_FragColor = textureCube(texCube, coord);
+})";
+
+    runSampleCoordinateTransformTest(kFS);
+}
+
+// On Android Vulkan, unequal x and y derivatives cause this test to fail.
+TEST_P(CubeMapTextureTest, SampleCoordinateTransformGrad)
+{
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsVulkan());  // anglebug.com/3814
+    ANGLE_SKIP_TEST_IF(IsD3D11());                  // anglebug.com/3856
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_texture_lod"));
+
+    constexpr char kFS[] = R"(#extension GL_EXT_shader_texture_lod : require
+precision mediump float;
+
+uniform samplerCube texCube;
+
+const mat4 coordInSection = mat4(
+    vec4(-0.5, -0.5, 0, 0),
+    vec4( 0.5, -0.5, 0, 0),
+    vec4(-0.5,  0.5, 0, 0),
+    vec4( 0.5,  0.5, 0, 0)
+);
+
+void main()
+{
+    vec3 coord;
+    if (gl_FragCoord.x < 2.0)
+    {
+        coord.x = gl_FragCoord.x < 1.0 ? 1.0 : -1.0;
+        coord.zy = coordInSection[int(gl_FragCoord.y)].xy;
+    }
+    else if (gl_FragCoord.x < 4.0)
+    {
+        coord.y = gl_FragCoord.x < 3.0 ? 1.0 : -1.0;
+        coord.xz = coordInSection[int(gl_FragCoord.y)].xy;
+    }
+    else
+    {
+        coord.z = gl_FragCoord.x < 5.0 ? 1.0 : -1.0;
+        coord.xy = coordInSection[int(gl_FragCoord.y)].xy;
+    }
+
+    gl_FragColor = textureCubeGradEXT(texCube, coord,
+                                      vec3(10.0, 10.0, 0.0), vec3(0.0, 10.0, 10.0));
+})";
+
+    runSampleCoordinateTransformTest(kFS);
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST(CubeMapTextureTest,
                        ES2_D3D11(),
-                       ES2_D3D11_FL10_0(),
-                       ES2_D3D11_FL9_3(),
                        ES2_OPENGL(),
                        ES3_OPENGL(),
                        ES2_OPENGLES(),
                        ES3_OPENGLES(),
-                       ES2_VULKAN());
+                       ES2_VULKAN(),
+                       ES3_VULKAN());

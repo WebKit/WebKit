@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -29,7 +29,7 @@ namespace gl
 class Query final : public RefCountObject, public LabeledObject
 {
   public:
-    Query(rx::QueryImpl *impl, GLuint id);
+    Query(rx::QueryImpl *impl, QueryID id);
     ~Query() override;
     void onDestroy(const Context *context) override;
 
@@ -47,8 +47,7 @@ class Query final : public RefCountObject, public LabeledObject
 
     QueryType getType() const;
 
-    rx::QueryImpl *getImplementation();
-    const rx::QueryImpl *getImplementation() const;
+    rx::QueryImpl *getImplementation() const;
 
   private:
     rx::QueryImpl *mQuery;

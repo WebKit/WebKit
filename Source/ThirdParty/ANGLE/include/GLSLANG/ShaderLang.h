@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -8,11 +8,7 @@
 
 #include <stddef.h>
 
-#if defined(__APPLE__) && !defined(BUILDING_WITH_CMAKE)
-#include "khrplatform.h"
-#else
-#include "../KHR/khrplatform.h"
-#endif
+#include "KHR/khrplatform.h"
 
 #include <array>
 #include <map>
@@ -30,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 206
+#define ANGLE_SH_VERSION 216
 
 enum ShShaderSpec
 {
@@ -42,6 +38,9 @@ enum ShShaderSpec
 
     SH_GLES3_1_SPEC,
     SH_WEBGL3_SPEC,
+
+    SH_GL_CORE_SPEC,
+    SH_GL_COMPATIBILITY_SPEC,
 };
 
 enum ShShaderOutput
@@ -234,7 +233,7 @@ const ShCompileOptions SH_INITIALIZE_BUILTINS_FOR_INSTANCED_MULTIVIEW = UINT64_C
 
 // With the flag enabled the GLSL/ESSL vertex shader is modified to include code for viewport
 // selection in the following way:
-// - Code to enable the extension NV_viewport_array2 is included.
+// - Code to enable the extension ARB_shader_viewport_layer_array/NV_viewport_array2 is included.
 // - Code to select the viewport index or layer is inserted at the beginning of main after
 // ViewID_OVR's initialization.
 // - A declaration of the uniform multiviewBaseViewLayerIndex.
@@ -285,6 +284,26 @@ const ShCompileOptions SH_INIT_SHARED_VARIABLES = UINT64_C(1) << 41;
 // http://anglebug.com/3246
 const ShCompileOptions SH_FORCE_ATOMIC_VALUE_RESOLUTION = UINT64_C(1) << 42;
 
+// Rewrite gl_BaseVertex and gl_BaseInstance as uniform int
+const ShCompileOptions SH_EMULATE_GL_BASE_VERTEX_BASE_INSTANCE = UINT64_C(1) << 43;
+
+// Emulate seamful cube map sampling for OpenGL ES2.0.  Currently only applies to the Vulkan
+// backend, as is done after samplers are moved out of structs.  Can likely be made to work on
+// the other backends as well.
+const ShCompileOptions SH_EMULATE_SEAMFUL_CUBE_MAP_SAMPLING = UINT64_C(1) << 44;
+
+// If requested, validates the AST after every transformation.  Useful for debugging.
+const ShCompileOptions SH_VALIDATE_AST = UINT64_C(1) << 46;
+
+// Use old version of RewriteStructSamplers, which doesn't produce as many
+// sampler arrays in parameters. This causes a few tests to pass on Android.
+const ShCompileOptions SH_USE_OLD_REWRITE_STRUCT_SAMPLERS = UINT64_C(1) << 47;
+
+// This flag works around a inconsistent behavior in Mac AMD driver where gl_VertexID doesn't
+// include base vertex value. It replaces gl_VertexID with (gl_VertexID + angle_BaseVertex)
+// when angle_BaseVertex is available.
+const ShCompileOptions SH_ADD_BASE_VERTEX_TO_VERTEX_ID = UINT64_C(1) << 48;
+
 // Defines alternate strategies for implementing array index clamping.
 enum ShArrayIndexClampingStrategy
 {
@@ -330,12 +349,16 @@ struct ShBuiltInResources
     int EXT_shader_framebuffer_fetch;
     int NV_shader_framebuffer_fetch;
     int ARM_shader_framebuffer_fetch;
+    int OVR_multiview;
     int OVR_multiview2;
+    int EXT_multisampled_render_to_texture;
     int EXT_YUV_target;
     int EXT_geometry_shader;
     int OES_texture_storage_multisample_2d_array;
+    int OES_texture_3D;
     int ANGLE_texture_multisample;
     int ANGLE_multi_draw;
+    int ANGLE_base_vertex_base_instance;
 
     // Set to 1 to enable replacing GL_EXT_draw_buffers #extension directives
     // with GL_NV_draw_buffers in ESSL output. This flag can be used to emulate
@@ -590,12 +613,12 @@ const std::map<std::string, std::string> *GetNameHashingMap(const ShHandle handl
 // Returns NULL on failure.
 // Parameters:
 // handle: Specifies the compiler
-const std::vector<sh::Uniform> *GetUniforms(const ShHandle handle);
-const std::vector<sh::Varying> *GetVaryings(const ShHandle handle);
-const std::vector<sh::Varying> *GetInputVaryings(const ShHandle handle);
-const std::vector<sh::Varying> *GetOutputVaryings(const ShHandle handle);
-const std::vector<sh::Attribute> *GetAttributes(const ShHandle handle);
-const std::vector<sh::OutputVariable> *GetOutputVariables(const ShHandle handle);
+const std::vector<sh::ShaderVariable> *GetUniforms(const ShHandle handle);
+const std::vector<sh::ShaderVariable> *GetVaryings(const ShHandle handle);
+const std::vector<sh::ShaderVariable> *GetInputVaryings(const ShHandle handle);
+const std::vector<sh::ShaderVariable> *GetOutputVaryings(const ShHandle handle);
+const std::vector<sh::ShaderVariable> *GetAttributes(const ShHandle handle);
+const std::vector<sh::ShaderVariable> *GetOutputVariables(const ShHandle handle);
 const std::vector<sh::InterfaceBlock> *GetInterfaceBlocks(const ShHandle handle);
 const std::vector<sh::InterfaceBlock> *GetUniformBlocks(const ShHandle handle);
 const std::vector<sh::InterfaceBlock> *GetShaderStorageBlocks(const ShHandle handle);
@@ -667,6 +690,14 @@ int GetGeometryShaderMaxVertices(const ShHandle handle);
 inline bool IsWebGLBasedSpec(ShShaderSpec spec)
 {
     return (spec == SH_WEBGL_SPEC || spec == SH_WEBGL2_SPEC || spec == SH_WEBGL3_SPEC);
+}
+
+//
+// Helper function to identify DesktopGL specs
+//
+inline bool IsDesktopGLSpec(ShShaderSpec spec)
+{
+    return spec == SH_GL_CORE_SPEC || spec == SH_GL_COMPATIBILITY_SPEC;
 }
 }  // namespace sh
 

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -64,8 +64,7 @@ class Diagnostics
         PP_INVALID_LINE_NUMBER,
         PP_INVALID_FILE_NUMBER,
         PP_INVALID_LINE_DIRECTIVE,
-        PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL1,
-        PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL3,
+        PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL,
         PP_UNDEFINED_SHIFT,
         PP_TOKENIZER_ERROR,
         PP_ERROR_END,

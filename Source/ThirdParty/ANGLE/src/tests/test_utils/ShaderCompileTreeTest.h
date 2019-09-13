@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -38,8 +38,8 @@ class ShaderCompileTreeTest : public testing::Test
 
     bool hasWarning() const;
 
-    const std::vector<sh::Uniform> &getUniforms() const;
-    const std::vector<sh::Attribute> &getAttributes() const;
+    const std::vector<sh::ShaderVariable> &getUniforms() const;
+    const std::vector<sh::ShaderVariable> &getAttributes() const;
 
     virtual void initResources(ShBuiltInResources *resources) {}
     virtual ::GLenum getShaderType() const     = 0;

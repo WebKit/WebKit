@@ -19,73 +19,114 @@ namespace vk
 {
 namespace InternalShader
 {
+namespace BlitResolve_frag
+{
+enum flags
+{
+    kSrcIsArray = 0x00000001,
+    kIsResolve  = 0x00000002,
+};
+enum Blit
+{
+    kBlitColorFloat   = 0x00000000,
+    kBlitColorInt     = 0x00000004,
+    kBlitColorUint    = 0x00000008,
+    kBlitDepth        = 0x0000000C,
+    kBlitStencil      = 0x00000010,
+    kBlitDepthStencil = 0x00000014,
+};
+constexpr size_t kArrayLen = 0x00000018;
+}  // namespace BlitResolve_frag
+
+namespace BlitResolveStencilNoExport_comp
+{
+enum flags
+{
+    kSrcIsArray = 0x00000001,
+    kIsResolve  = 0x00000002,
+};
+constexpr size_t kArrayLen = 0x00000004;
+}  // namespace BlitResolveStencilNoExport_comp
+
 namespace BufferUtils_comp
 {
 enum flags
 {
     kIsAligned = 0x00000001,
-    kFlagsMask = 0x00000001,
 };
 enum Function
 {
-    kIsClear      = 0x00000000,
-    kIsCopy       = 0x00000002,
-    kFunctionMask = 0x00000002,
+    kIsClear = 0x00000000,
+    kIsCopy  = 0x00000002,
 };
 enum Format
 {
-    kIsFloat    = 0x00000000,
-    kIsInt      = 0x00000004,
-    kIsUint     = 0x00000008,
-    kFormatMask = 0x0000000C,
+    kIsFloat = 0x00000000,
+    kIsSint  = 0x00000004,
+    kIsUint  = 0x00000008,
 };
+constexpr size_t kArrayLen = 0x0000000C;
 }  // namespace BufferUtils_comp
+
+namespace ConvertIndex_comp
+{
+enum flags
+{
+    kIsPrimitiveRestartEnabled = 0x00000001,
+};
+constexpr size_t kArrayLen = 0x00000002;
+}  // namespace ConvertIndex_comp
 
 namespace ConvertVertex_comp
 {
 enum flags
 {
     kIsAligned = 0x00000001,
-    kFlagsMask = 0x00000001,
 };
 enum Conversion
 {
-    kIntToInt       = 0x00000000,
-    kUintToUint     = 0x00000002,
-    kIntToFloat     = 0x00000004,
-    kUintToFloat    = 0x00000006,
-    kSnormToFloat   = 0x00000008,
-    kUnormToFloat   = 0x0000000A,
-    kFixedToFloat   = 0x0000000C,
-    kFloatToFloat   = 0x0000000E,
-    kConversionMask = 0x0000000E,
+    kSintToSint          = 0x00000000,
+    kUintToUint          = 0x00000002,
+    kSintToFloat         = 0x00000004,
+    kUintToFloat         = 0x00000006,
+    kSnormToFloat        = 0x00000008,
+    kUnormToFloat        = 0x0000000A,
+    kFixedToFloat        = 0x0000000C,
+    kFloatToFloat        = 0x0000000E,
+    kA2BGR10SintToSint   = 0x00000010,
+    kA2BGR10UintToUint   = 0x00000012,
+    kA2BGR10SintToFloat  = 0x00000014,
+    kA2BGR10UintToFloat  = 0x00000016,
+    kA2BGR10SnormToFloat = 0x00000018,
 };
+constexpr size_t kArrayLen = 0x0000001A;
 }  // namespace ConvertVertex_comp
 
 namespace FullScreenQuad_vert
-{}  // namespace FullScreenQuad_vert
+{
+constexpr size_t kArrayLen = 0x00000001;
+}  // namespace FullScreenQuad_vert
 
 namespace ImageClear_frag
 {
 enum AttachmentIndex
 {
-    kAttachment0         = 0x00000000,
-    kAttachment1         = 0x00000001,
-    kAttachment2         = 0x00000002,
-    kAttachment3         = 0x00000003,
-    kAttachment4         = 0x00000004,
-    kAttachment5         = 0x00000005,
-    kAttachment6         = 0x00000006,
-    kAttachment7         = 0x00000007,
-    kAttachmentIndexMask = 0x00000007,
+    kAttachment0 = 0x00000000,
+    kAttachment1 = 0x00000001,
+    kAttachment2 = 0x00000002,
+    kAttachment3 = 0x00000003,
+    kAttachment4 = 0x00000004,
+    kAttachment5 = 0x00000005,
+    kAttachment6 = 0x00000006,
+    kAttachment7 = 0x00000007,
 };
 enum Format
 {
-    kIsFloat    = 0x00000000,
-    kIsInt      = 0x00000008,
-    kIsUint     = 0x00000010,
-    kFormatMask = 0x00000018,
+    kIsFloat = 0x00000000,
+    kIsSint  = 0x00000008,
+    kIsUint  = 0x00000010,
 };
+constexpr size_t kArrayLen = 0x00000018;
 }  // namespace ImageClear_frag
 
 namespace ImageCopy_frag
@@ -93,23 +134,47 @@ namespace ImageCopy_frag
 enum flags
 {
     kSrcIsArray = 0x00000001,
-    kFlagsMask  = 0x00000001,
 };
 enum SrcFormat
 {
-    kSrcIsFloat    = 0x00000000,
-    kSrcIsInt      = 0x00000002,
-    kSrcIsUint     = 0x00000004,
-    kSrcFormatMask = 0x00000006,
+    kSrcIsFloat = 0x00000000,
+    kSrcIsSint  = 0x00000002,
+    kSrcIsUint  = 0x00000004,
 };
 enum DestFormat
 {
-    kDestIsFloat    = 0x00000000,
-    kDestIsInt      = 0x00000008,
-    kDestIsUint     = 0x00000010,
-    kDestFormatMask = 0x00000018,
+    kDestIsFloat = 0x00000000,
+    kDestIsSint  = 0x00000008,
+    kDestIsUint  = 0x00000010,
 };
+constexpr size_t kArrayLen = 0x00000016;
 }  // namespace ImageCopy_frag
+
+namespace OverlayCull_comp
+{
+enum SubgroupSize
+{
+    kIs8x4 = 0x00000000,
+    kIs8x8 = 0x00000001,
+};
+enum SubgroupOp
+{
+    kSupportsBallot     = 0x00000000,
+    kSupportsArithmetic = 0x00000002,
+    kSupportsNone       = 0x00000004,
+};
+constexpr size_t kArrayLen = 0x00000006;
+}  // namespace OverlayCull_comp
+
+namespace OverlayDraw_comp
+{
+enum SubgroupSize
+{
+    kIs8x4 = 0x00000000,
+    kIs8x8 = 0x00000001,
+};
+constexpr size_t kArrayLen = 0x00000002;
+}  // namespace OverlayDraw_comp
 
 }  // namespace InternalShader
 
@@ -121,9 +186,18 @@ class ShaderLibrary final : angle::NonCopyable
 
     void destroy(VkDevice device);
 
+    angle::Result getBlitResolve_frag(Context *context,
+                                      uint32_t shaderFlags,
+                                      RefCounted<ShaderAndSerial> **shaderOut);
+    angle::Result getBlitResolveStencilNoExport_comp(Context *context,
+                                                     uint32_t shaderFlags,
+                                                     RefCounted<ShaderAndSerial> **shaderOut);
     angle::Result getBufferUtils_comp(Context *context,
                                       uint32_t shaderFlags,
                                       RefCounted<ShaderAndSerial> **shaderOut);
+    angle::Result getConvertIndex_comp(Context *context,
+                                       uint32_t shaderFlags,
+                                       RefCounted<ShaderAndSerial> **shaderOut);
     angle::Result getConvertVertex_comp(Context *context,
                                         uint32_t shaderFlags,
                                         RefCounted<ShaderAndSerial> **shaderOut);
@@ -136,23 +210,33 @@ class ShaderLibrary final : angle::NonCopyable
     angle::Result getImageCopy_frag(Context *context,
                                     uint32_t shaderFlags,
                                     RefCounted<ShaderAndSerial> **shaderOut);
+    angle::Result getOverlayCull_comp(Context *context,
+                                      uint32_t shaderFlags,
+                                      RefCounted<ShaderAndSerial> **shaderOut);
+    angle::Result getOverlayDraw_comp(Context *context,
+                                      uint32_t shaderFlags,
+                                      RefCounted<ShaderAndSerial> **shaderOut);
 
   private:
     RefCounted<ShaderAndSerial>
-        mBufferUtils_comp_shaders[InternalShader::BufferUtils_comp::kFlagsMask |
-                                  InternalShader::BufferUtils_comp::kFunctionMask |
-                                  InternalShader::BufferUtils_comp::kFormatMask];
+        mBlitResolve_frag_shaders[InternalShader::BlitResolve_frag::kArrayLen];
+    RefCounted<ShaderAndSerial> mBlitResolveStencilNoExport_comp_shaders
+        [InternalShader::BlitResolveStencilNoExport_comp::kArrayLen];
     RefCounted<ShaderAndSerial>
-        mConvertVertex_comp_shaders[InternalShader::ConvertVertex_comp::kFlagsMask |
-                                    InternalShader::ConvertVertex_comp::kConversionMask];
-    RefCounted<ShaderAndSerial> mFullScreenQuad_vert_shaders[1];
+        mBufferUtils_comp_shaders[InternalShader::BufferUtils_comp::kArrayLen];
     RefCounted<ShaderAndSerial>
-        mImageClear_frag_shaders[InternalShader::ImageClear_frag::kAttachmentIndexMask |
-                                 InternalShader::ImageClear_frag::kFormatMask];
+        mConvertIndex_comp_shaders[InternalShader::ConvertIndex_comp::kArrayLen];
     RefCounted<ShaderAndSerial>
-        mImageCopy_frag_shaders[InternalShader::ImageCopy_frag::kFlagsMask |
-                                InternalShader::ImageCopy_frag::kSrcFormatMask |
-                                InternalShader::ImageCopy_frag::kDestFormatMask];
+        mConvertVertex_comp_shaders[InternalShader::ConvertVertex_comp::kArrayLen];
+    RefCounted<ShaderAndSerial>
+        mFullScreenQuad_vert_shaders[InternalShader::FullScreenQuad_vert::kArrayLen];
+    RefCounted<ShaderAndSerial>
+        mImageClear_frag_shaders[InternalShader::ImageClear_frag::kArrayLen];
+    RefCounted<ShaderAndSerial> mImageCopy_frag_shaders[InternalShader::ImageCopy_frag::kArrayLen];
+    RefCounted<ShaderAndSerial>
+        mOverlayCull_comp_shaders[InternalShader::OverlayCull_comp::kArrayLen];
+    RefCounted<ShaderAndSerial>
+        mOverlayDraw_comp_shaders[InternalShader::OverlayDraw_comp::kArrayLen];
 };
 }  // namespace vk
 }  // namespace rx

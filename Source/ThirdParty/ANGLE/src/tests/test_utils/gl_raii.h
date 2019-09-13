@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -30,11 +30,17 @@ class GLWrapper : angle::NonCopyable
 
     // The move-constructor and move-assignment operators are necessary so that the data within a
     // GLWrapper object can be relocated.
-    GLWrapper(GLWrapper &&rht) : mHandle(rht.mHandle) { rht.mHandle = 0u; }
+    GLWrapper(GLWrapper &&rht)
+        : mGenFunc(rht.mGenFunc), mDeleteFunc(rht.mDeleteFunc), mHandle(rht.mHandle)
+    {
+        rht.mHandle = 0u;
+    }
     GLWrapper &operator=(GLWrapper &&rht)
     {
         if (this != &rht)
         {
+            mGenFunc    = rht.mGenFunc;
+            mDeleteFunc = rht.mDeleteFunc;
             std::swap(mHandle, rht.mHandle);
         }
         return *this;
@@ -100,6 +106,11 @@ class GLSampler : public GLWrapper
 {
   public:
     GLSampler() : GLWrapper(&glGenSamplers, &glDeleteSamplers) {}
+};
+class GLSemaphore : public GLWrapper
+{
+  public:
+    GLSemaphore() : GLWrapper(&glGenSemaphoresEXT, &glDeleteSemaphoresEXT) {}
 };
 class GLTransformFeedback : public GLWrapper
 {

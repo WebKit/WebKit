@@ -113,16 +113,14 @@ template_es3_combo_type_case = """                case {type}:
 
 
 def parse_type_case(type, result):
-    return template_simple_case.format(
-        key = type, result = result)
+    return template_simple_case.format(key=type, result=result)
 
 
 def parse_format_case(format, type_map):
     type_cases = ""
     for type, internal_format in sorted(type_map.iteritems()):
         type_cases += parse_type_case(type, internal_format)
-    return template_format_case.format(
-        format = format, type_cases = type_cases)
+    return template_format_case.format(format=format, type_cases=type_cases)
 
 
 def main():
@@ -188,21 +186,20 @@ def main():
                 internal_format_cases += "                        case " + internal_format + ":\n"
 
             this_type_cases += template_es3_combo_type_case.format(
-                type = type, internal_format_cases = internal_format_cases)
+                type=type, internal_format_cases=internal_format_cases)
 
-        es3_combo_cases += template_format_case.format(
-            format = format, type_cases = this_type_cases)
+        es3_combo_cases += template_format_case.format(format=format, type_cases=this_type_cases)
 
     with open('format_map_autogen.cpp', 'wt') as out_file:
         output_cpp = template_cpp.format(
-            script_name = sys.argv[0],
-            data_source_name = input_script,
-            es3_data_source_name = combo_data_file,
-            copyright_year = date.today().year,
-            format_cases = format_cases,
-            es3_format_cases = es3_format_cases,
-            es3_type_cases = es3_type_cases,
-            es3_combo_cases = es3_combo_cases)
+            script_name=sys.argv[0],
+            data_source_name=input_script,
+            es3_data_source_name=combo_data_file,
+            copyright_year=date.today().year,
+            format_cases=format_cases,
+            es3_format_cases=es3_format_cases,
+            es3_type_cases=es3_type_cases,
+            es3_combo_cases=es3_combo_cases)
         out_file.write(output_cpp)
     return 0
 

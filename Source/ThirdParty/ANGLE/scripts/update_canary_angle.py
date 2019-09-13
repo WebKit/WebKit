@@ -39,12 +39,15 @@ if newest_folder is None:
 
 source_folder = newest_folder
 
+
 # Is a folder a chrome binary directory?
 def is_chrome_bin(str):
     chrome_file = os.path.join(chrome_folder, str)
     return os.path.isdir(chrome_file) and all([char.isdigit() or char == '.' for char in str])
 
-sorted_chrome_bins = sorted([folder for folder in os.listdir(chrome_folder) if is_chrome_bin(folder)], reverse=True)
+
+sorted_chrome_bins = sorted(
+    [folder for folder in os.listdir(chrome_folder) if is_chrome_bin(folder)], reverse=True)
 
 dest_folder = os.path.join(chrome_folder, sorted_chrome_bins[0])
 

@@ -1,8 +1,9 @@
-# Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+# Copyright 2014 The ANGLE Project Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 angle_white_box_tests_sources = [
+  "egl_tests/EGLFeatureControlTest.cpp",
   "util_tests/PrintSystemInfoTest.cpp",
   "test_utils/angle_test_configs.cpp",
   "test_utils/angle_test_configs.h",
@@ -19,4 +20,8 @@ angle_white_box_tests_win_sources = [
   "gl_tests/D3D11InputLayoutCacheTest.cpp",
   "gl_tests/D3DTextureTest.cpp",
   "gl_tests/ErrorMessages.cpp",
+]
+angle_white_box_tests_vulkan_sources = [
+  "gl_tests/VulkanFormatTablesTest.cpp",
+  "gl_tests/VulkanUniformUpdatesTest.cpp",
 ]

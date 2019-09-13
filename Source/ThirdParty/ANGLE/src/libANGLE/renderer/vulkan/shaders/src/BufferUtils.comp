@@ -12,7 +12,7 @@
 //                  need for bound checking
 //   - Format:
 //     * IsFloat
-//     * IsInt
+//     * IsSint
 //     * IsUint
 //   - Function:
 //     * IsClear: the buffer will be cleared
@@ -27,7 +27,7 @@ layout (local_size_x = 64, local_size_y = 1, local_size_z = 1) in;
 #define ADD_TYPE_PREFIX(type) type
 #define BUFFER_FORMAT rgba32f
 #define GVEC4 vec4
-#elif IsInt
+#elif IsSint
 #define ADD_TYPE_PREFIX(type) i ## type
 #define BUFFER_FORMAT rgba32i
 #define GVEC4 ivec4

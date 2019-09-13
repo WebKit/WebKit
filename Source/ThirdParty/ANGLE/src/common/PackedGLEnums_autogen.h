@@ -17,6 +17,7 @@
 #include <angle_gl.h>
 
 #include <cstdint>
+#include <ostream>
 
 namespace gl
 {
@@ -42,6 +43,7 @@ enum class AlphaTestFunc : uint8_t
 template <>
 AlphaTestFunc FromGLenum<AlphaTestFunc>(GLenum from);
 GLenum ToGLenum(AlphaTestFunc from);
+std::ostream &operator<<(std::ostream &os, AlphaTestFunc value);
 
 enum class BufferBinding : uint8_t
 {
@@ -65,6 +67,7 @@ enum class BufferBinding : uint8_t
 template <>
 BufferBinding FromGLenum<BufferBinding>(GLenum from);
 GLenum ToGLenum(BufferBinding from);
+std::ostream &operator<<(std::ostream &os, BufferBinding value);
 
 enum class BufferUsage : uint8_t
 {
@@ -85,6 +88,7 @@ enum class BufferUsage : uint8_t
 template <>
 BufferUsage FromGLenum<BufferUsage>(GLenum from);
 GLenum ToGLenum(BufferUsage from);
+std::ostream &operator<<(std::ostream &os, BufferUsage value);
 
 enum class ClientVertexArrayType : uint8_t
 {
@@ -101,6 +105,7 @@ enum class ClientVertexArrayType : uint8_t
 template <>
 ClientVertexArrayType FromGLenum<ClientVertexArrayType>(GLenum from);
 GLenum ToGLenum(ClientVertexArrayType from);
+std::ostream &operator<<(std::ostream &os, ClientVertexArrayType value);
 
 enum class CullFaceMode : uint8_t
 {
@@ -115,6 +120,7 @@ enum class CullFaceMode : uint8_t
 template <>
 CullFaceMode FromGLenum<CullFaceMode>(GLenum from);
 GLenum ToGLenum(CullFaceMode from);
+std::ostream &operator<<(std::ostream &os, CullFaceMode value);
 
 enum class FilterMode : uint8_t
 {
@@ -131,6 +137,7 @@ enum class FilterMode : uint8_t
 template <>
 FilterMode FromGLenum<FilterMode>(GLenum from);
 GLenum ToGLenum(FilterMode from);
+std::ostream &operator<<(std::ostream &os, FilterMode value);
 
 enum class FogMode : uint8_t
 {
@@ -145,6 +152,7 @@ enum class FogMode : uint8_t
 template <>
 FogMode FromGLenum<FogMode>(GLenum from);
 GLenum ToGLenum(FogMode from);
+std::ostream &operator<<(std::ostream &os, FogMode value);
 
 enum class GraphicsResetStatus : uint8_t
 {
@@ -160,6 +168,7 @@ enum class GraphicsResetStatus : uint8_t
 template <>
 GraphicsResetStatus FromGLenum<GraphicsResetStatus>(GLenum from);
 GLenum ToGLenum(GraphicsResetStatus from);
+std::ostream &operator<<(std::ostream &os, GraphicsResetStatus value);
 
 enum class HandleType : uint8_t
 {
@@ -172,6 +181,7 @@ enum class HandleType : uint8_t
 template <>
 HandleType FromGLenum<HandleType>(GLenum from);
 GLenum ToGLenum(HandleType from);
+std::ostream &operator<<(std::ostream &os, HandleType value);
 
 enum class HintSetting : uint8_t
 {
@@ -186,6 +196,29 @@ enum class HintSetting : uint8_t
 template <>
 HintSetting FromGLenum<HintSetting>(GLenum from);
 GLenum ToGLenum(HintSetting from);
+std::ostream &operator<<(std::ostream &os, HintSetting value);
+
+enum class ImageLayout : uint8_t
+{
+    Undefined                      = 0,
+    General                        = 1,
+    ColorAttachment                = 2,
+    DepthStencilAttachment         = 3,
+    DepthStencilReadOnlyAttachment = 4,
+    ShaderReadOnly                 = 5,
+    TransferSrc                    = 6,
+    TransferDst                    = 7,
+    DepthReadOnlyStencilAttachment = 8,
+    DepthAttachmentStencilReadOnly = 9,
+
+    InvalidEnum = 10,
+    EnumCount   = 10,
+};
+
+template <>
+ImageLayout FromGLenum<ImageLayout>(GLenum from);
+GLenum ToGLenum(ImageLayout from);
+std::ostream &operator<<(std::ostream &os, ImageLayout value);
 
 enum class LightParameter : uint8_t
 {
@@ -208,6 +241,7 @@ enum class LightParameter : uint8_t
 template <>
 LightParameter FromGLenum<LightParameter>(GLenum from);
 GLenum ToGLenum(LightParameter from);
+std::ostream &operator<<(std::ostream &os, LightParameter value);
 
 enum class LogicalOperation : uint8_t
 {
@@ -235,6 +269,7 @@ enum class LogicalOperation : uint8_t
 template <>
 LogicalOperation FromGLenum<LogicalOperation>(GLenum from);
 GLenum ToGLenum(LogicalOperation from);
+std::ostream &operator<<(std::ostream &os, LogicalOperation value);
 
 enum class MaterialParameter : uint8_t
 {
@@ -252,6 +287,7 @@ enum class MaterialParameter : uint8_t
 template <>
 MaterialParameter FromGLenum<MaterialParameter>(GLenum from);
 GLenum ToGLenum(MaterialParameter from);
+std::ostream &operator<<(std::ostream &os, MaterialParameter value);
 
 enum class MatrixType : uint8_t
 {
@@ -266,6 +302,7 @@ enum class MatrixType : uint8_t
 template <>
 MatrixType FromGLenum<MatrixType>(GLenum from);
 GLenum ToGLenum(MatrixType from);
+std::ostream &operator<<(std::ostream &os, MatrixType value);
 
 enum class PointParameter : uint8_t
 {
@@ -281,8 +318,9 @@ enum class PointParameter : uint8_t
 template <>
 PointParameter FromGLenum<PointParameter>(GLenum from);
 GLenum ToGLenum(PointParameter from);
+std::ostream &operator<<(std::ostream &os, PointParameter value);
 
-enum class ProvokingVertex : uint8_t
+enum class ProvokingVertexConvention : uint8_t
 {
     FirstVertexConvention = 0,
     LastVertexConvention  = 1,
@@ -292,8 +330,9 @@ enum class ProvokingVertex : uint8_t
 };
 
 template <>
-ProvokingVertex FromGLenum<ProvokingVertex>(GLenum from);
-GLenum ToGLenum(ProvokingVertex from);
+ProvokingVertexConvention FromGLenum<ProvokingVertexConvention>(GLenum from);
+GLenum ToGLenum(ProvokingVertexConvention from);
+std::ostream &operator<<(std::ostream &os, ProvokingVertexConvention value);
 
 enum class QueryType : uint8_t
 {
@@ -312,6 +351,7 @@ enum class QueryType : uint8_t
 template <>
 QueryType FromGLenum<QueryType>(GLenum from);
 GLenum ToGLenum(QueryType from);
+std::ostream &operator<<(std::ostream &os, QueryType value);
 
 enum class ShaderType : uint8_t
 {
@@ -327,6 +367,7 @@ enum class ShaderType : uint8_t
 template <>
 ShaderType FromGLenum<ShaderType>(GLenum from);
 GLenum ToGLenum(ShaderType from);
+std::ostream &operator<<(std::ostream &os, ShaderType value);
 
 enum class ShadingModel : uint8_t
 {
@@ -340,6 +381,7 @@ enum class ShadingModel : uint8_t
 template <>
 ShadingModel FromGLenum<ShadingModel>(GLenum from);
 GLenum ToGLenum(ShadingModel from);
+std::ostream &operator<<(std::ostream &os, ShadingModel value);
 
 enum class TextureCombine : uint8_t
 {
@@ -359,6 +401,7 @@ enum class TextureCombine : uint8_t
 template <>
 TextureCombine FromGLenum<TextureCombine>(GLenum from);
 GLenum ToGLenum(TextureCombine from);
+std::ostream &operator<<(std::ostream &os, TextureCombine value);
 
 enum class TextureEnvMode : uint8_t
 {
@@ -376,6 +419,7 @@ enum class TextureEnvMode : uint8_t
 template <>
 TextureEnvMode FromGLenum<TextureEnvMode>(GLenum from);
 GLenum ToGLenum(TextureEnvMode from);
+std::ostream &operator<<(std::ostream &os, TextureEnvMode value);
 
 enum class TextureEnvParameter : uint8_t
 {
@@ -406,6 +450,7 @@ enum class TextureEnvParameter : uint8_t
 template <>
 TextureEnvParameter FromGLenum<TextureEnvParameter>(GLenum from);
 GLenum ToGLenum(TextureEnvParameter from);
+std::ostream &operator<<(std::ostream &os, TextureEnvParameter value);
 
 enum class TextureEnvTarget : uint8_t
 {
@@ -419,6 +464,7 @@ enum class TextureEnvTarget : uint8_t
 template <>
 TextureEnvTarget FromGLenum<TextureEnvTarget>(GLenum from);
 GLenum ToGLenum(TextureEnvTarget from);
+std::ostream &operator<<(std::ostream &os, TextureEnvTarget value);
 
 enum class TextureOp : uint8_t
 {
@@ -434,6 +480,7 @@ enum class TextureOp : uint8_t
 template <>
 TextureOp FromGLenum<TextureOp>(GLenum from);
 GLenum ToGLenum(TextureOp from);
+std::ostream &operator<<(std::ostream &os, TextureOp value);
 
 enum class TextureSrc : uint8_t
 {
@@ -449,6 +496,7 @@ enum class TextureSrc : uint8_t
 template <>
 TextureSrc FromGLenum<TextureSrc>(GLenum from);
 GLenum ToGLenum(TextureSrc from);
+std::ostream &operator<<(std::ostream &os, TextureSrc value);
 
 enum class TextureTarget : uint8_t
 {
@@ -473,6 +521,7 @@ enum class TextureTarget : uint8_t
 template <>
 TextureTarget FromGLenum<TextureTarget>(GLenum from);
 GLenum ToGLenum(TextureTarget from);
+std::ostream &operator<<(std::ostream &os, TextureTarget value);
 
 enum class TextureType : uint8_t
 {
@@ -492,6 +541,7 @@ enum class TextureType : uint8_t
 template <>
 TextureType FromGLenum<TextureType>(GLenum from);
 GLenum ToGLenum(TextureType from);
+std::ostream &operator<<(std::ostream &os, TextureType value);
 
 enum class VertexArrayType : uint8_t
 {
@@ -508,6 +558,7 @@ enum class VertexArrayType : uint8_t
 template <>
 VertexArrayType FromGLenum<VertexArrayType>(GLenum from);
 GLenum ToGLenum(VertexArrayType from);
+std::ostream &operator<<(std::ostream &os, VertexArrayType value);
 
 enum class WrapMode : uint8_t
 {
@@ -523,6 +574,7 @@ enum class WrapMode : uint8_t
 template <>
 WrapMode FromGLenum<WrapMode>(GLenum from);
 GLenum ToGLenum(WrapMode from);
+std::ostream &operator<<(std::ostream &os, WrapMode value);
 
 }  // namespace gl
 

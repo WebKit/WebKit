@@ -28,7 +28,7 @@ ANGLE_INLINE bool ValidateUniform2f(Context *context, GLint location, GLfloat x,
     return ValidateUniform(context, GL_FLOAT_VEC2, location, 1);
 }
 
-ANGLE_INLINE bool ValidateBindBuffer(Context *context, BufferBinding target, GLuint buffer)
+ANGLE_INLINE bool ValidateBindBuffer(Context *context, BufferBinding target, BufferID buffer)
 {
     if (!context->isValidBufferBinding(target))
     {
@@ -95,7 +95,7 @@ ANGLE_INLINE bool ValidateVertexAttribPointer(Context *context,
     // is bound, zero is bound to the ARRAY_BUFFER buffer object binding point,
     // and the pointer argument is not NULL.
     bool nullBufferAllowed = context->getState().areClientArraysEnabled() &&
-                             context->getState().getVertexArray()->id() == 0;
+                             context->getState().getVertexArray()->id().value == 0;
     if (!nullBufferAllowed && context->getState().getTargetBuffer(BufferBinding::Array) == 0 &&
         ptr != nullptr)
     {
@@ -124,7 +124,7 @@ ANGLE_INLINE bool ValidateVertexAttribPointer(Context *context,
 
 void RecordBindTextureTypeError(Context *context, TextureType target);
 
-ANGLE_INLINE bool ValidateBindTexture(Context *context, TextureType target, GLuint texture)
+ANGLE_INLINE bool ValidateBindTexture(Context *context, TextureType target, TextureID texture)
 {
     if (!context->getStateCache().isValidBindTextureType(target))
     {
@@ -132,7 +132,7 @@ ANGLE_INLINE bool ValidateBindTexture(Context *context, TextureType target, GLui
         return false;
     }
 
-    if (texture == 0)
+    if (texture.value == 0)
     {
         return true;
     }
@@ -153,6 +153,24 @@ ANGLE_INLINE bool ValidateBindTexture(Context *context, TextureType target, GLui
 
     return true;
 }
+
+// Validation of all Tex[Sub]Image2D parameters except TextureTarget.
+bool ValidateES2TexImageParametersBase(Context *context,
+                                       TextureTarget target,
+                                       GLint level,
+                                       GLenum internalformat,
+                                       bool isCompressed,
+                                       bool isSubImage,
+                                       GLint xoffset,
+                                       GLint yoffset,
+                                       GLsizei width,
+                                       GLsizei height,
+                                       GLint border,
+                                       GLenum format,
+                                       GLenum type,
+                                       GLsizei imageSize,
+                                       const void *pixels);
+
 }  // namespace gl
 
 #endif  // LIBANGLE_VALIDATION_ES2_H_

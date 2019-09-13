@@ -30,9 +30,8 @@ enum class CommandID : uint16_t
     // Invalid cmd used to mark end of sequence of commands
     Invalid = 0,
     BeginQuery,
-    BindComputeDescriptorSets,
     BindComputePipeline,
-    BindGraphicsDescriptorSets,
+    BindDescriptorSets,
     BindGraphicsPipeline,
     BindIndexBuffer,
     BindVertexBuffers,
@@ -45,17 +44,23 @@ enum class CommandID : uint16_t
     CopyImage,
     CopyImageToBuffer,
     Dispatch,
+    DispatchIndirect,
     Draw,
     DrawIndexed,
     DrawIndexedInstanced,
+    DrawIndexedInstancedBaseVertexBaseInstance,
     DrawInstanced,
+    DrawInstancedBaseInstance,
     EndQuery,
+    ExecutionBarrier,
+    FillBuffer,
     ImageBarrier,
     MemoryBarrier,
     PipelineBarrier,
     PushConstants,
     ResetEvent,
     ResetQueryPool,
+    ResolveImage,
     SetEvent,
     WaitEvents,
     WriteTimestamp,
@@ -74,20 +79,15 @@ struct BindPipelineParams
 };
 VERIFY_4_BYTE_ALIGNMENT(BindPipelineParams)
 
-struct BindGraphicsDescriptorSetParams
+struct BindDescriptorSetParams
 {
     VkPipelineLayout layout;
+    VkPipelineBindPoint pipelineBindPoint;
     uint32_t firstSet;
     uint32_t descriptorSetCount;
     uint32_t dynamicOffsetCount;
 };
-VERIFY_4_BYTE_ALIGNMENT(BindGraphicsDescriptorSetParams)
-
-struct BindComputeDescriptorSetParams
-{
-    VkPipelineLayout layout;
-};
-VERIFY_4_BYTE_ALIGNMENT(BindComputeDescriptorSetParams)
+VERIFY_4_BYTE_ALIGNMENT(BindDescriptorSetParams)
 
 struct BindIndexBufferParams
 {
@@ -198,6 +198,15 @@ struct DrawInstancedParams
 };
 VERIFY_4_BYTE_ALIGNMENT(DrawInstancedParams)
 
+struct DrawInstancedBaseInstanceParams
+{
+    uint32_t vertexCount;
+    uint32_t instanceCount;
+    uint32_t firstVertex;
+    uint32_t firstInstance;
+};
+VERIFY_4_BYTE_ALIGNMENT(DrawInstancedBaseInstanceParams)
+
 struct DrawIndexedParams
 {
     uint32_t indexCount;
@@ -211,6 +220,16 @@ struct DrawIndexedInstancedParams
 };
 VERIFY_4_BYTE_ALIGNMENT(DrawIndexedInstancedParams)
 
+struct DrawIndexedInstancedBaseVertexBaseInstanceParams
+{
+    uint32_t indexCount;
+    uint32_t instanceCount;
+    uint32_t firstIndex;
+    int32_t vertexOffset;
+    uint32_t firstInstance;
+};
+VERIFY_4_BYTE_ALIGNMENT(DrawIndexedInstancedBaseVertexBaseInstanceParams)
+
 struct DispatchParams
 {
     uint32_t groupCountX;
@@ -218,6 +237,22 @@ struct DispatchParams
     uint32_t groupCountZ;
 };
 VERIFY_4_BYTE_ALIGNMENT(DispatchParams)
+
+struct DispatchIndirectParams
+{
+    VkBuffer buffer;
+    VkDeviceSize offset;
+};
+VERIFY_4_BYTE_ALIGNMENT(DispatchIndirectParams)
+
+struct FillBufferParams
+{
+    VkBuffer dstBuffer;
+    VkDeviceSize dstOffset;
+    VkDeviceSize size;
+    uint32_t data;
+};
+VERIFY_4_BYTE_ALIGNMENT(FillBufferParams)
 
 struct MemoryBarrierParams
 {
@@ -237,6 +272,12 @@ struct PipelineBarrierParams
     uint32_t imageMemoryBarrierCount;
 };
 VERIFY_4_BYTE_ALIGNMENT(PipelineBarrierParams)
+
+struct ExecutionBarrierParams
+{
+    VkPipelineStageFlags stageMask;
+};
+VERIFY_4_BYTE_ALIGNMENT(ExecutionBarrierParams)
 
 struct ImageBarrierParams
 {
@@ -278,6 +319,14 @@ struct ResetQueryPoolParams
     uint32_t queryCount;
 };
 VERIFY_4_BYTE_ALIGNMENT(ResetQueryPoolParams)
+
+struct ResolveImageParams
+{
+    VkImage srcImage;
+    VkImage dstImage;
+    VkImageResolve region;
+};
+VERIFY_4_BYTE_ALIGNMENT(ResolveImageParams)
 
 struct BeginQueryParams
 {
@@ -338,17 +387,15 @@ class SecondaryCommandBuffer final : angle::NonCopyable
     // Add commands
     void beginQuery(VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags);
 
-    void bindComputeDescriptorSets(const PipelineLayout &layout,
-                                   const VkDescriptorSet *descriptorSets);
-
     void bindComputePipeline(const Pipeline &pipeline);
 
-    void bindGraphicsDescriptorSets(const PipelineLayout &layout,
-                                    uint32_t firstSet,
-                                    uint32_t descriptorSetCount,
-                                    const VkDescriptorSet *descriptorSets,
-                                    uint32_t dynamicOffsetCount,
-                                    const uint32_t *dynamicOffsets);
+    void bindDescriptorSets(const PipelineLayout &layout,
+                            VkPipelineBindPoint pipelineBindPoint,
+                            uint32_t firstSet,
+                            uint32_t descriptorSetCount,
+                            const VkDescriptorSet *descriptorSets,
+                            uint32_t dynamicOffsetCount,
+                            const uint32_t *dynamicOffsets);
 
     void bindGraphicsPipeline(const Pipeline &pipeline);
 
@@ -364,7 +411,7 @@ class SecondaryCommandBuffer final : angle::NonCopyable
                    const Image &dstImage,
                    VkImageLayout dstImageLayout,
                    uint32_t regionCount,
-                   const VkImageBlit *pRegions,
+                   const VkImageBlit *regions,
                    VkFilter filter);
 
     void clearAttachments(uint32_t attachmentCount,
@@ -410,15 +457,33 @@ class SecondaryCommandBuffer final : angle::NonCopyable
 
     void dispatch(uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ);
 
+    void dispatchIndirect(const Buffer &buffer, VkDeviceSize offset);
+
     void draw(uint32_t vertexCount, uint32_t firstVertex);
 
     void drawIndexed(uint32_t indexCount);
 
     void drawIndexedInstanced(uint32_t indexCount, uint32_t instanceCount);
+    void drawIndexedInstancedBaseVertexBaseInstance(uint32_t indexCount,
+                                                    uint32_t instanceCount,
+                                                    uint32_t firstIndex,
+                                                    int32_t vertexOffset,
+                                                    uint32_t firstInstance);
 
     void drawInstanced(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex);
+    void drawInstancedBaseInstance(uint32_t vertexCount,
+                                   uint32_t instanceCount,
+                                   uint32_t firstVertex,
+                                   uint32_t firstInstance);
 
     void endQuery(VkQueryPool queryPool, uint32_t query);
+
+    void executionBarrier(VkPipelineStageFlags stageMask);
+
+    void fillBuffer(const Buffer &dstBuffer,
+                    VkDeviceSize dstOffset,
+                    VkDeviceSize size,
+                    uint32_t data);
 
     void imageBarrier(VkPipelineStageFlags srcStageMask,
                       VkPipelineStageFlags dstStageMask,
@@ -448,6 +513,13 @@ class SecondaryCommandBuffer final : angle::NonCopyable
 
     void resetQueryPool(VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount);
 
+    void resolveImage(const Image &srcImage,
+                      VkImageLayout srcImageLayout,
+                      const Image &dstImage,
+                      VkImageLayout dstImageLayout,
+                      uint32_t regionCount,
+                      const VkImageResolve *regions);
+
     void setEvent(VkEvent event, VkPipelineStageFlags stageMask);
 
     void waitEvents(uint32_t eventCount,
@@ -469,6 +541,9 @@ class SecondaryCommandBuffer final : angle::NonCopyable
 
     // Parse the cmds in this cmd buffer into given primary cmd buffer for execution
     void executeCommands(VkCommandBuffer cmdBuffer);
+
+    // Calculate memory usage of this command buffer for diagnostics.
+    void getMemoryUsageStats(size_t *usedMemoryOut, size_t *allocatedMemoryOut) const;
 
     // Traverse the list of commands and build a summary for diagnostics.
     std::string dumpCommands(const char *separator) const;
@@ -494,6 +569,7 @@ class SecondaryCommandBuffer final : angle::NonCopyable
     // The SecondaryCommandBuffer is valid if it's been initialized
     bool valid() const { return mAllocator != nullptr; }
 
+    static bool CanKnowIfEmpty() { return true; }
     bool empty() const { return mCommands.size() == 0 || mCommands[0]->id == CommandID::Invalid; }
 
   private:
@@ -600,40 +676,28 @@ ANGLE_INLINE void SecondaryCommandBuffer::bindComputePipeline(const Pipeline &pi
     paramStruct->pipeline = pipeline.getHandle();
 }
 
-ANGLE_INLINE void SecondaryCommandBuffer::bindGraphicsDescriptorSets(
-    const PipelineLayout &layout,
-    uint32_t firstSet,
-    uint32_t descriptorSetCount,
-    const VkDescriptorSet *descriptorSets,
-    uint32_t dynamicOffsetCount,
-    const uint32_t *dynamicOffsets)
+ANGLE_INLINE void SecondaryCommandBuffer::bindDescriptorSets(const PipelineLayout &layout,
+                                                             VkPipelineBindPoint pipelineBindPoint,
+                                                             uint32_t firstSet,
+                                                             uint32_t descriptorSetCount,
+                                                             const VkDescriptorSet *descriptorSets,
+                                                             uint32_t dynamicOffsetCount,
+                                                             const uint32_t *dynamicOffsets)
 {
     size_t descSize   = descriptorSetCount * sizeof(VkDescriptorSet);
     size_t offsetSize = dynamicOffsetCount * sizeof(uint32_t);
     uint8_t *writePtr;
-    BindGraphicsDescriptorSetParams *paramStruct = initCommand<BindGraphicsDescriptorSetParams>(
-        CommandID::BindGraphicsDescriptorSets, descSize + offsetSize, &writePtr);
+    BindDescriptorSetParams *paramStruct = initCommand<BindDescriptorSetParams>(
+        CommandID::BindDescriptorSets, descSize + offsetSize, &writePtr);
     // Copy params into memory
     paramStruct->layout             = layout.getHandle();
+    paramStruct->pipelineBindPoint  = pipelineBindPoint;
     paramStruct->firstSet           = firstSet;
     paramStruct->descriptorSetCount = descriptorSetCount;
     paramStruct->dynamicOffsetCount = dynamicOffsetCount;
     // Copy variable sized data
     writePtr = storePointerParameter(writePtr, descriptorSets, descSize);
     storePointerParameter(writePtr, dynamicOffsets, offsetSize);
-}
-
-ANGLE_INLINE void SecondaryCommandBuffer::bindComputeDescriptorSets(
-    const PipelineLayout &layout,
-    const VkDescriptorSet *descriptorSets)
-{
-    uint8_t *writePtr;
-    BindComputeDescriptorSetParams *paramStruct = initCommand<BindComputeDescriptorSetParams>(
-        CommandID::BindComputeDescriptorSets, sizeof(VkDescriptorSet), &writePtr);
-    // Copy params into memory
-    paramStruct->layout = layout.getHandle();
-    // Copy variable sized data
-    storePointerParameter(writePtr, descriptorSets, sizeof(VkDescriptorSet));
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::bindGraphicsPipeline(const Pipeline &pipeline)
@@ -676,7 +740,7 @@ ANGLE_INLINE void SecondaryCommandBuffer::blitImage(const Image &srcImage,
                                                     const Image &dstImage,
                                                     VkImageLayout dstImageLayout,
                                                     uint32_t regionCount,
-                                                    const VkImageBlit *pRegions,
+                                                    const VkImageBlit *regions,
                                                     VkFilter filter)
 {
     // Currently ANGLE uses limited params so verify those assumptions and update if they change
@@ -687,7 +751,7 @@ ANGLE_INLINE void SecondaryCommandBuffer::blitImage(const Image &srcImage,
     paramStruct->srcImage        = srcImage.getHandle();
     paramStruct->dstImage        = dstImage.getHandle();
     paramStruct->filter          = filter;
-    paramStruct->region          = pRegions[0];
+    paramStruct->region          = regions[0];
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::clearAttachments(uint32_t attachmentCount,
@@ -809,6 +873,15 @@ ANGLE_INLINE void SecondaryCommandBuffer::dispatch(uint32_t groupCountX,
     paramStruct->groupCountZ    = groupCountZ;
 }
 
+ANGLE_INLINE void SecondaryCommandBuffer::dispatchIndirect(const Buffer &buffer,
+                                                           VkDeviceSize offset)
+{
+    DispatchIndirectParams *paramStruct =
+        initCommand<DispatchIndirectParams>(CommandID::DispatchIndirect);
+    paramStruct->buffer = buffer.getHandle();
+    paramStruct->offset = offset;
+}
+
 ANGLE_INLINE void SecondaryCommandBuffer::draw(uint32_t vertexCount, uint32_t firstVertex)
 {
     DrawParams *paramStruct  = initCommand<DrawParams>(CommandID::Draw);
@@ -830,6 +903,22 @@ ANGLE_INLINE void SecondaryCommandBuffer::drawIndexedInstanced(uint32_t indexCou
     paramStruct->indexCount    = indexCount;
     paramStruct->instanceCount = instanceCount;
 }
+ANGLE_INLINE void SecondaryCommandBuffer::drawIndexedInstancedBaseVertexBaseInstance(
+    uint32_t indexCount,
+    uint32_t instanceCount,
+    uint32_t firstIndex,
+    int32_t vertexOffset,
+    uint32_t firstInstance)
+{
+    DrawIndexedInstancedBaseVertexBaseInstanceParams *paramStruct =
+        initCommand<DrawIndexedInstancedBaseVertexBaseInstanceParams>(
+            CommandID::DrawIndexedInstancedBaseVertexBaseInstance);
+    paramStruct->indexCount    = indexCount;
+    paramStruct->instanceCount = instanceCount;
+    paramStruct->firstIndex    = firstIndex;
+    paramStruct->vertexOffset  = vertexOffset;
+    paramStruct->firstInstance = firstInstance;
+}
 
 ANGLE_INLINE void SecondaryCommandBuffer::drawInstanced(uint32_t vertexCount,
                                                         uint32_t instanceCount,
@@ -841,11 +930,43 @@ ANGLE_INLINE void SecondaryCommandBuffer::drawInstanced(uint32_t vertexCount,
     paramStruct->firstVertex         = firstVertex;
 }
 
+ANGLE_INLINE void SecondaryCommandBuffer::drawInstancedBaseInstance(uint32_t vertexCount,
+                                                                    uint32_t instanceCount,
+                                                                    uint32_t firstVertex,
+                                                                    uint32_t firstInstance)
+{
+    DrawInstancedBaseInstanceParams *paramStruct =
+        initCommand<DrawInstancedBaseInstanceParams>(CommandID::DrawInstancedBaseInstance);
+    paramStruct->vertexCount   = vertexCount;
+    paramStruct->instanceCount = instanceCount;
+    paramStruct->firstVertex   = firstVertex;
+    paramStruct->firstInstance = firstInstance;
+}
+
 ANGLE_INLINE void SecondaryCommandBuffer::endQuery(VkQueryPool queryPool, uint32_t query)
 {
     EndQueryParams *paramStruct = initCommand<EndQueryParams>(CommandID::EndQuery);
     paramStruct->queryPool      = queryPool;
     paramStruct->query          = query;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::executionBarrier(VkPipelineStageFlags stageMask)
+{
+    ExecutionBarrierParams *paramStruct =
+        initCommand<ExecutionBarrierParams>(CommandID::ExecutionBarrier);
+    paramStruct->stageMask = stageMask;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::fillBuffer(const Buffer &dstBuffer,
+                                                     VkDeviceSize dstOffset,
+                                                     VkDeviceSize size,
+                                                     uint32_t data)
+{
+    FillBufferParams *paramStruct = initCommand<FillBufferParams>(CommandID::FillBuffer);
+    paramStruct->dstBuffer        = dstBuffer.getHandle();
+    paramStruct->dstOffset        = dstOffset;
+    paramStruct->size             = size;
+    paramStruct->data             = data;
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::imageBarrier(
@@ -932,6 +1053,23 @@ ANGLE_INLINE void SecondaryCommandBuffer::resetQueryPool(VkQueryPool queryPool,
     paramStruct->queryPool  = queryPool;
     paramStruct->firstQuery = firstQuery;
     paramStruct->queryCount = queryCount;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::resolveImage(const Image &srcImage,
+                                                       VkImageLayout srcImageLayout,
+                                                       const Image &dstImage,
+                                                       VkImageLayout dstImageLayout,
+                                                       uint32_t regionCount,
+                                                       const VkImageResolve *regions)
+{
+    // Currently ANGLE uses limited params so verify those assumptions and update if they change.
+    ASSERT(srcImageLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+    ASSERT(dstImageLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+    ASSERT(regionCount == 1);
+    ResolveImageParams *paramStruct = initCommand<ResolveImageParams>(CommandID::ResolveImage);
+    paramStruct->srcImage           = srcImage.getHandle();
+    paramStruct->dstImage           = dstImage.getHandle();
+    paramStruct->region             = regions[0];
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::setEvent(VkEvent event, VkPipelineStageFlags stageMask)

@@ -2,6 +2,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+# Override for angle_root
+angle_root = "//"
+
 # Overrides for ANGLE's dependencies
 angle_glslang_dir = "//third_party/glslang/src"
 angle_googletest_dir = "//third_party/googletest/src"

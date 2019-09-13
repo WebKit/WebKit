@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -25,7 +25,8 @@ bool X11Pixmap::initialize(EGLNativeDisplayType display, size_t width, size_t he
     int screen  = DefaultScreen(mDisplay);
     Window root = RootWindow(mDisplay, screen);
 
-    mPixmap = XCreatePixmap(mDisplay, root, width, height, depth);
+    mPixmap = XCreatePixmap(mDisplay, root, static_cast<unsigned int>(width),
+                            static_cast<unsigned int>(height), depth);
 
     return mPixmap != 0;
 }

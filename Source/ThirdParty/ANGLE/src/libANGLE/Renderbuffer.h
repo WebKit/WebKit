@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2010 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -64,7 +64,7 @@ class RenderbufferState final : angle::NonCopyable
 class Renderbuffer final : public RefCountObject, public egl::ImageSibling, public LabeledObject
 {
   public:
-    Renderbuffer(rx::GLImplFactory *implFactory, GLuint id);
+    Renderbuffer(rx::GLImplFactory *implFactory, RenderbufferID id);
     ~Renderbuffer() override;
 
     void onDestroy(const Context *context) override;

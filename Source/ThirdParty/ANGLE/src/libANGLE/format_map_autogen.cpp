@@ -311,6 +311,8 @@ GLenum GetSizedFormatInternal(GLenum format, GLenum type)
                     return GL_RGB8;
                 case GL_UNSIGNED_INT_10F_11F_11F_REV:
                     return GL_R11F_G11F_B10F;
+                case GL_UNSIGNED_INT_2_10_10_10_REV:
+                    return GL_RGB10_UNORM_ANGLEX;
                 case GL_UNSIGNED_INT_5_9_9_9_REV:
                     return GL_RGB9_E5;
                 case GL_UNSIGNED_SHORT:
@@ -699,6 +701,17 @@ bool ValidES3FormatCombination(GLenum format, GLenum type, GLenum internalFormat
                     }
                     break;
                 }
+                case GL_UNSIGNED_INT_2_10_10_10_REV:
+                {
+                    switch (internalFormat)
+                    {
+                        case GL_RGB:
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                }
                 case GL_SHORT:
                 {
                     switch (internalFormat)
@@ -935,6 +948,7 @@ bool ValidES3FormatCombination(GLenum format, GLenum type, GLenum internalFormat
                 {
                     switch (internalFormat)
                     {
+                        case GL_RGBA:
                         case GL_RGB10_A2:
                         case GL_RGB5_A1:
                             return true;

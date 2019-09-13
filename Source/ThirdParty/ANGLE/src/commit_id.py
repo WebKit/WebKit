@@ -14,8 +14,10 @@ usage = """\
 Usage: commit_id.py check <angle_dir>                - check if git is present
        commit_id.py gen <angle_dir> <file_to_write>  - generate commit.h"""
 
+
 def grab_output(command, cwd):
     return sp.Popen(command, stdout=sp.PIPE, shell=True, cwd=cwd).communicate()[0].strip()
+
 
 if len(sys.argv) < 3:
     sys.exit(usage)
@@ -46,8 +48,8 @@ except:
 
 hfile = open(output_file, 'w')
 
-hfile.write('#define ANGLE_COMMIT_HASH "%s"\n'    % commit_id)
+hfile.write('#define ANGLE_COMMIT_HASH "%s"\n' % commit_id)
 hfile.write('#define ANGLE_COMMIT_HASH_SIZE %d\n' % commit_id_size)
-hfile.write('#define ANGLE_COMMIT_DATE "%s"\n'    % commit_date)
+hfile.write('#define ANGLE_COMMIT_DATE "%s"\n' % commit_date)
 
 hfile.close()

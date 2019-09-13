@@ -16,7 +16,7 @@ RendererEGL::RendererEGL(std::unique_ptr<FunctionsGL> functionsGL,
                          DisplayEGL *display,
                          EGLContext context,
                          const native_egl::AttributeVector attribs)
-    : RendererGL(std::move(functionsGL), attribMap),
+    : RendererGL(std::move(functionsGL), attribMap, display),
       mDisplay(display),
       mContext(context),
       mAttribs(attribs)

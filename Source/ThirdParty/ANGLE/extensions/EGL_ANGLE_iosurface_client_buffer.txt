@@ -21,7 +21,7 @@ Status
     Draft
 
 Version
-    Version 2, Apr 1, 2019
+    Version 3, Aug 13, 2019
 
 Number
 
@@ -96,6 +96,7 @@ Additions to Chapter 3 of the EGL 1.4 Specification (EGL Functions and Errors)
     GL_UNSIGNED_BYTE           GL_RED
     GL_UNSIGNED_SHORT          GL_R16UI
     GL_UNSIGNED_BYTE           GL_RG
+    GL_UNSIGNED_BYTE           GL_RGB
     GL_UNSIGNED_BYTE           GL_BGRA_EXT
     GL_HALF_FLOAT              GL_RGBA
     ---------------------------------------------------------------------------
@@ -110,9 +111,14 @@ Additions to Chapter 3 of the EGL 1.4 Specification (EGL Functions and Errors)
 
 Issues
 
-    There are no issues, please move on.
+    1. Can RGB formats be supported?
+
+    RESOLVED: Support for RGB internal formats is added in version 3. Surfaces
+    with an RGB format will ensure that the alpha channel of the IOSurface is
+    reset to 1.0 when it is used.
 
 Revision History
 
     Version 1, 2017/12/06 - first draft.
     Version 2, 2019/04/01 - Allow MakeCurrent.
+    Version 3, 2019/08/13 - Allow RGB internal formats

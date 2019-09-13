@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -182,6 +182,7 @@ angle::Result TextureStorage9_2D::getSurfaceLevel(const gl::Context *context,
 
 angle::Result TextureStorage9_2D::getRenderTarget(const gl::Context *context,
                                                   const gl::ImageIndex &index,
+                                                  GLsizei samples,
                                                   RenderTargetD3D **outRT)
 {
     ASSERT(index.getLevelIndex() < getLevelCount());
@@ -305,10 +306,12 @@ angle::Result TextureStorage9_EGLImage::getSurfaceLevel(const gl::Context *conte
 
 angle::Result TextureStorage9_EGLImage::getRenderTarget(const gl::Context *context,
                                                         const gl::ImageIndex &index,
+                                                        GLsizei samples,
                                                         RenderTargetD3D **outRT)
 {
     ASSERT(!index.hasLayer());
     ASSERT(index.getLevelIndex() == 0);
+    ASSERT(samples == 0);
 
     return mImage->getRenderTarget(context, outRT);
 }
@@ -430,10 +433,12 @@ angle::Result TextureStorage9_Cube::getSurfaceLevel(const gl::Context *context,
 
 angle::Result TextureStorage9_Cube::getRenderTarget(const gl::Context *context,
                                                     const gl::ImageIndex &index,
+                                                    GLsizei samples,
                                                     RenderTargetD3D **outRT)
 {
     ASSERT(outRT);
     ASSERT(index.getLevelIndex() == 0);
+    ASSERT(samples == 0);
 
     ASSERT(index.getType() == gl::TextureType::CubeMap &&
            gl::IsCubeMapFaceTarget(index.getTarget()));

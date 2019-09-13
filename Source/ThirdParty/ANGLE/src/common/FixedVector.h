@@ -64,12 +64,15 @@ class FixedVector final
 
     bool empty() const;
     size_type size() const;
-    size_type max_size() const;
+    static constexpr size_type max_size();
 
     void clear();
 
     void push_back(const value_type &value);
     void push_back(value_type &&value);
+
+    template <class... Args>
+    void emplace_back(Args &&... args);
 
     void pop_back();
     reference back();
@@ -233,7 +236,7 @@ typename FixedVector<T, N, Storage>::size_type FixedVector<T, N, Storage>::size(
 }
 
 template <class T, size_t N, class Storage>
-typename FixedVector<T, N, Storage>::size_type FixedVector<T, N, Storage>::max_size() const
+constexpr typename FixedVector<T, N, Storage>::size_type FixedVector<T, N, Storage>::max_size()
 {
     return N;
 }
@@ -257,6 +260,15 @@ void FixedVector<T, N, Storage>::push_back(value_type &&value)
 {
     ASSERT(mSize < N);
     mStorage[mSize] = std::move(value);
+    mSize++;
+}
+
+template <class T, size_t N, class Storage>
+template <class... Args>
+void FixedVector<T, N, Storage>::emplace_back(Args &&... args)
+{
+    ASSERT(mSize < N);
+    new (&mStorage[mSize]) T{std::forward<Args>(args)...};
     mSize++;
 }
 

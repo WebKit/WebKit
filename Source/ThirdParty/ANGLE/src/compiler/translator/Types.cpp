@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -454,10 +454,13 @@ const char *TType::buildMangledName() const
 {
     TString mangledName(1, GetSizeMangledName(primarySize, secondarySize));
 
-    char basicMangledName = GetBasicMangledName(type);
-    if (basicMangledName != '{')
+    TBasicMangledName typeName(type);
+    char *basicMangledName = typeName.getName();
+    static_assert(TBasicMangledName::mangledNameSize == 2, "Mangled name size is not 2");
+    if (basicMangledName[0] != '{')
     {
-        mangledName += basicMangledName;
+        mangledName += basicMangledName[0];
+        mangledName += basicMangledName[1];
     }
     else
     {
@@ -711,6 +714,19 @@ void TType::toArrayElementType()
         mArraySizes->pop_back();
         invalidateMangledName();
     }
+}
+
+void TType::toArrayBaseType()
+{
+    if (mArraySizes == nullptr)
+    {
+        return;
+    }
+    if (mArraySizes->size() > 0)
+    {
+        mArraySizes->clear();
+    }
+    invalidateMangledName();
 }
 
 void TType::setInterfaceBlock(const TInterfaceBlock *interfaceBlockIn)

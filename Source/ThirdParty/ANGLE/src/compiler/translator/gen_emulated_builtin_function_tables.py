@@ -22,7 +22,7 @@ template_emulated_builtin_functions_hlsl = """// GENERATED FILE - DO NOT EDIT.
 //   HLSL code for emulating GLSL builtin functions not present in HLSL.
 
 #include "compiler/translator/BuiltInFunctionEmulator.h"
-#include "compiler/translator/tree_util/BuiltIn_autogen.h"
+#include "compiler/translator/tree_util/BuiltIn.h"
 
 namespace sh
 {{
@@ -60,20 +60,23 @@ const char *FindHLSLFunction(int uniqueId)
 }}  // namespace sh
 """
 
+
 def reject_duplicate_keys(pairs):
     found_keys = {}
     for key, value in pairs:
         if key in found_keys:
-           raise ValueError("duplicate key: %r" % (key,))
+            raise ValueError("duplicate key: %r" % (key,))
         else:
-           found_keys[key] = value
+            found_keys[key] = value
     return found_keys
+
 
 def load_json(path):
     with open(path) as map_file:
         file_data = map_file.read()
         map_file.close()
         return json.loads(file_data, object_pairs_hook=reject_duplicate_keys)
+
 
 def enum_type(arg):
     # handle 'argtype argname' and 'out argtype argname'
@@ -89,22 +92,24 @@ def enum_type(arg):
         return 'UI' + arg_type[2:] + suffix
     return arg_type.capitalize() + suffix
 
+
 def gen_emulated_function(data):
 
-   func = ""
-   if 'comment' in data:
-      func += "".join([ "// " + line + "\n" for line in data['comment'] ])
+    func = ""
+    if 'comment' in data:
+        func += "".join(["// " + line + "\n" for line in data['comment']])
 
-   sig = data['return_type'] + ' ' + data['op'] + '_emu(' + ', '.join(data['args']) + ')'
-   body = [ sig, '{' ] + ['    ' + line for line in data['body']] + ['}']
+    sig = data['return_type'] + ' ' + data['op'] + '_emu(' + ', '.join(data['args']) + ')'
+    body = [sig, '{'] + ['    ' + line for line in data['body']] + ['}']
 
-   func += "{\n"
-   func += "BuiltInId::" + data['op'] + "_" + "_".join([enum_type(arg) for arg in data['args']]) + ",\n"
-   if 'helper' in data:
-      func += '"' + '\\n"\n"'.join(data['helper']) + '\\n"\n'
-   func += '"' + '\\n"\n"'.join(body) + '\\n"\n'
-   func += "},\n"
-   return [ func ]
+    func += "{\n"
+    func += "BuiltInId::" + data['op'] + "_" + "_".join([enum_type(arg) for arg in data['args']
+                                                        ]) + ",\n"
+    if 'helper' in data:
+        func += '"' + '\\n"\n"'.join(data['helper']) + '\\n"\n'
+    func += '"' + '\\n"\n"'.join(body) + '\\n"\n'
+    func += "},\n"
+    return [func]
 
 
 def main():
@@ -130,17 +135,17 @@ def main():
     emulated_functions = []
 
     for item in hlsl_json:
-       emulated_functions += gen_emulated_function(item)
+        emulated_functions += gen_emulated_function(item)
 
     hlsl_gen = template_emulated_builtin_functions_hlsl.format(
-       script_name = sys.argv[0],
-       data_source_name = input_script,
-       copyright_year = date.today().year,
-       emulated_functions = "".join(emulated_functions))
+        script_name=sys.argv[0],
+        data_source_name=input_script,
+        copyright_year=date.today().year,
+        emulated_functions="".join(emulated_functions))
 
     with open(hlsl_fname, 'wt') as f:
-       f.write(hlsl_gen)
-       f.close()
+        f.write(hlsl_gen)
+        f.close()
 
     return 0
 

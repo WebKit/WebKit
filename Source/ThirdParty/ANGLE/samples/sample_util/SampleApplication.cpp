@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -47,8 +47,8 @@ SampleApplication::SampleApplication(std::string name,
                                      char **argv,
                                      EGLint glesMajorVersion,
                                      EGLint glesMinorVersion,
-                                     size_t width,
-                                     size_t height)
+                                     uint32_t width,
+                                     uint32_t height)
     : mName(std::move(name)),
       mWidth(width),
       mHeight(height),
@@ -56,9 +56,7 @@ SampleApplication::SampleApplication(std::string name,
       mEGLWindow(nullptr),
       mOSWindow(nullptr)
 {
-    mPlatformParams.majorVersion = glesMajorVersion;
-    mPlatformParams.minorVersion = glesMinorVersion;
-    mPlatformParams.renderer     = EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE;
+    mPlatformParams.renderer = EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE;
 
     if (argc > 1 && strncmp(argv[1], kUseAngleArg, strlen(kUseAngleArg)) == 0)
     {
@@ -66,11 +64,11 @@ SampleApplication::SampleApplication(std::string name,
     }
 
     // Load EGL library so we can initialize the display.
-    mEntryPointsLib.reset(angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME));
+    mEntryPointsLib.reset(
+        angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME, angle::SearchType::ApplicationDir));
 
     mEGLWindow = EGLWindow::New(glesMajorVersion, glesMinorVersion);
-    mTimer.reset(CreateTimer());
-    mOSWindow = OSWindow::New();
+    mOSWindow  = OSWindow::New();
 }
 
 SampleApplication::~SampleApplication()
@@ -159,12 +157,12 @@ int SampleApplication::run()
         result   = -1;
     }
 
-    mTimer->start();
+    mTimer.start();
     double prevTime = 0.0;
 
     while (mRunning)
     {
-        double elapsedTime = mTimer->getElapsedTime();
+        double elapsedTime = mTimer.getElapsedTime();
         double deltaTime   = elapsedTime - prevTime;
 
         step(static_cast<float>(deltaTime), elapsedTime);

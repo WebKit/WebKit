@@ -56,11 +56,11 @@ struct InstancingPerfParams final : public RenderTestParams
         instancingEnabled = true;
     }
 
-    std::string suffix() const override
+    std::string story() const override
     {
         std::stringstream strstr;
 
-        strstr << RenderTestParams::suffix();
+        strstr << RenderTestParams::story();
 
         if (!instancingEnabled)
         {
@@ -77,7 +77,7 @@ struct InstancingPerfParams final : public RenderTestParams
 
 std::ostream &operator<<(std::ostream &os, const InstancingPerfParams &params)
 {
-    os << params.suffix().substr(1);
+    os << params.backendAndStory().substr(1);
     return os;
 }
 
@@ -276,7 +276,7 @@ void InstancingPerfBenchmark::drawBenchmark()
     // Animatino makes the test more interesting visually, but also eats up many CPU cycles.
     if (params.animationEnabled)
     {
-        float time = static_cast<float>(mTimer->getElapsedTime());
+        float time = static_cast<float>(mTimer.getElapsedTime());
 
         for (size_t pointIndex = 0; pointIndex < mTranslateData.size(); ++pointIndex)
         {
@@ -340,7 +340,7 @@ InstancingPerfParams InstancingPerfD3D9Params()
 InstancingPerfParams InstancingPerfOpenGLOrGLESParams()
 {
     InstancingPerfParams params;
-    params.eglParameters = OPENGL_OR_GLES(false);
+    params.eglParameters = OPENGL_OR_GLES();
     return params;
 }
 

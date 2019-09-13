@@ -22,16 +22,6 @@
 #include "tcuTestLog.hpp"
 #include "util/system_utils.h"
 
-#if (DE_OS == DE_OS_WIN32)
-#    include <Windows.h>
-#elif (DE_OS == DE_OS_UNIX) || (DE_OS == DE_OS_OSX)
-#    include <sys/stat.h>
-#    include <sys/types.h>
-#    include <sys/unistd.h>
-#elif (DE_OS == DE_OS_ANDROID)
-#    include <sys/stat.h>
-#endif
-
 tcu::Platform *CreateANGLEPlatform(angle::LogErrorFunc logErrorFunc);
 
 namespace
@@ -45,61 +35,27 @@ tcu::TestContext *g_testCtx          = nullptr;
 tcu::TestPackageRoot *g_root         = nullptr;
 tcu::RandomOrderExecutor *g_executor = nullptr;
 
-const char *g_dEQPDataSearchDirs[] = {
-    "../../../third_party/deqp/src/data",
-    "../../sdcard/chromium_tests_root/third_party/angle/third_party/deqp/src/data",
-    "../../third_party/angle/third_party/deqp/src/data",
-    "../../third_party/deqp/src/data",
-    "../third_party/deqp/src/data",
-    "data",
-    "third_party/deqp/src/data",
+const char *kDataPaths[] = {
+    ".",
+    "../../sdcard/chromium_tests_root",
+    "../../sdcard/chromium_tests_root/third_party/angle/third_party/deqp/src",
+    "../../third_party/angle/third_party/deqp/src",
+    "../../third_party/deqp/src",
+    "third_party/deqp/src",
 };
-
-// TODO(jmadill): upstream to dEQP?
-#if (DE_OS == DE_OS_WIN32)
-deBool deIsDir(const char *filename)
-{
-    WIN32_FILE_ATTRIBUTE_DATA fileInformation;
-
-    BOOL result = GetFileAttributesExA(filename, GetFileExInfoStandard, &fileInformation);
-    if (result)
-    {
-        DWORD attribs = fileInformation.dwFileAttributes;
-        return (attribs != INVALID_FILE_ATTRIBUTES) && ((attribs & FILE_ATTRIBUTE_DIRECTORY) > 0);
-    }
-
-    return false;
-}
-#elif (DE_OS == DE_OS_UNIX) || (DE_OS == DE_OS_OSX) || (DE_OS == DE_OS_ANDROID)
-deBool deIsDir(const char *filename)
-{
-    struct stat st;
-    int result = stat(filename, &st);
-    return result == 0 && ((st.st_mode & S_IFDIR) == S_IFDIR);
-}
-#else
-#    error TODO(jmadill): support other platforms
-#endif
 
 bool FindDataDir(std::string *dataDirOut)
 {
-    for (auto searchDir : g_dEQPDataSearchDirs)
+    for (const char *dataPath : kDataPaths)
     {
-        if (deIsDir((std::string(searchDir) + "/gles2").c_str()))
-        {
-            *dataDirOut = searchDir;
-            return true;
-        }
-
         std::stringstream dirStream;
-        dirStream << angle::GetExecutableDirectory() << "/" << searchDir;
-        std::string dataDir = dirStream.str();
-        dirStream << "/gles2";
-        std::string searchPath = dirStream.str();
+        dirStream << angle::GetExecutableDirectory() << "/" << dataPath << "/"
+                  << ANGLE_DEQP_DATA_DIR;
+        std::string candidateDataDir = dirStream.str();
 
-        if (deIsDir(searchPath.c_str()))
+        if (angle::IsDirectory(candidateDataDir.c_str()))
         {
-            *dataDirOut = dataDir;
+            *dataDirOut = candidateDataDir;
             return true;
         }
     }

@@ -40,10 +40,8 @@ class ImageTest : public ANGLETest
         setConfigDepthBits(24);
     }
 
-    void SetUp() override
+    void testSetUp() override
     {
-        ANGLETest::SetUp();
-
         constexpr char kVS[] =
             "precision highp float;\n"
             "attribute vec4 position;\n"
@@ -125,21 +123,14 @@ class ImageTest : public ANGLETest
                 glGetUniformLocation(mTextureExternalESSL3Program, "tex");
         }
 
-        eglCreateImageKHR =
-            reinterpret_cast<PFNEGLCREATEIMAGEKHRPROC>(eglGetProcAddress("eglCreateImageKHR"));
-        eglDestroyImageKHR =
-            reinterpret_cast<PFNEGLDESTROYIMAGEKHRPROC>(eglGetProcAddress("eglDestroyImageKHR"));
-
         ASSERT_GL_NO_ERROR();
     }
 
-    void TearDown() override
+    void testTearDown() override
     {
         glDeleteProgram(mTextureProgram);
         glDeleteProgram(mTextureExternalProgram);
         glDeleteProgram(mTextureExternalESSL3Program);
-
-        ANGLETest::TearDown();
     }
 
     void createEGLImage2DTextureSource(size_t width,
@@ -471,9 +462,6 @@ class ImageTest : public ANGLETest
 
     GLuint mTextureExternalESSL3Program        = 0;
     GLint mTextureExternalESSL3UniformLocation = -1;
-
-    PFNEGLCREATEIMAGEKHRPROC eglCreateImageKHR;
-    PFNEGLDESTROYIMAGEKHRPROC eglDestroyImageKHR;
 };
 
 class ImageTestES3 : public ImageTest
@@ -1402,6 +1390,9 @@ TEST_P(ImageTest, Source3DTargetExternal)
 
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 && !IsGLExtensionEnabled("GL_OES_texture_3D"));
 
+    // Ozone only supports external target for images created with EGL_EXT_image_dma_buf_import
+    ANGLE_SKIP_TEST_IF(IsOzone());
+
     const size_t depth      = 2;
     GLubyte data[4 * depth] = {
         255, 0, 255, 255, 255, 255, 0, 255,
@@ -1632,6 +1623,7 @@ TEST_P(ImageTest, MipLevels)
     // Driver returns OOM in read pixels, some internal error.
     ANGLE_SKIP_TEST_IF(IsOzone() && IsOpenGLES());
     // Also fails on NVIDIA Shield TV bot.
+    // http://anglebug.com/3850
     ANGLE_SKIP_TEST_IF(IsNVIDIAShield() && IsOpenGLES());
     // On Vulkan, the clear operation in the loop is optimized with a render pass loadOp=Clear.  On
     // Linux/Intel, that operation is mistakenly clearing the rest of the mips to 0.
@@ -1976,6 +1968,7 @@ ANGLE_INSTANTIATE_TEST(ImageTest,
                        ES3_OPENGL(),
                        ES2_OPENGLES(),
                        ES3_OPENGLES(),
-                       ES2_VULKAN());
-ANGLE_INSTANTIATE_TEST(ImageTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
+                       ES2_VULKAN(),
+                       ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST(ImageTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES(), ES3_VULKAN());
 }  // namespace angle

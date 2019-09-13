@@ -142,7 +142,7 @@ angle_test("angle_unittests") {
            ":angle_test_expectations",
            "${angle_root}:preprocessor",
            "${angle_root}:translator",
-           "${angle_root}:libfeature_support${angle_libs_suffix}",
+           "${angle_root}:libfeature_support",
            ":angle_unittests_main",
          ]
   if (!is_android && !is_fuchsia) {
@@ -195,9 +195,9 @@ if (is_win || is_linux || is_mac || is_android || is_fuchsia) {
     ]
 
     data_deps = [
-      "${angle_root}:libEGL${angle_libs_suffix}",
-      "${angle_root}:libGLESv1_CM${angle_libs_suffix}",
-      "${angle_root}:libGLESv2${angle_libs_suffix}",
+      "${angle_root}:libEGL",
+      "${angle_root}:libGLESv1_CM",
+      "${angle_root}:libGLESv2",
     ]
 
     if (is_android) {
@@ -221,8 +221,7 @@ if (is_win || is_linux || is_mac || is_android) {
     }
 
     if (angle_enable_vulkan) {
-      sources += [ "gl_tests/VulkanFormatTablesTest.cpp" ]
-      sources += [ "gl_tests/VulkanUniformUpdatesTest.cpp" ]
+      sources += angle_white_box_tests_vulkan_sources
     }
 
     configs += [
@@ -273,6 +272,7 @@ if (is_win || is_linux || is_android || is_mac) {
     }
 
     configs += [
+      "${angle_jsoncpp_dir}:jsoncpp_config",
       "${angle_root}:libANGLE_config",
       "${angle_root}:library_name_config",
     ]
@@ -302,11 +302,12 @@ if (is_win || is_linux || is_android || is_mac || is_fuchsia) {
     ]
 
     data_deps = [
-      "${angle_root}:libEGL${angle_libs_suffix}",
-      "${angle_root}:libGLESv2${angle_libs_suffix}",
+      "${angle_root}:libEGL",
+      "${angle_root}:libGLESv2",
     ]
 
     configs += [
+      "${angle_jsoncpp_dir}:jsoncpp_config",
       "${angle_root}:libANGLE_config",
       "${angle_root}:library_name_config",
     ]
@@ -332,7 +333,7 @@ if (is_win || is_linux || is_android || is_mac || is_fuchsia) {
 ###-----------------------------------------------------
 
 if (build_angle_gles1_conform_tests) {
-  gles1_conform_root = "//third_party/gles1_conform"
+  gles1_conform_root = "$angle_root/third_party/gles1_conform"
 
   config("angle_gles1_conform_support") {
     include_dirs = [
@@ -356,11 +357,12 @@ if (build_angle_gles1_conform_tests) {
       # Remove when crbug.com/428099 is resolved.
       cflags += [
         "-Wno-implicit-function-declaration",
+        "-Wno-int-to-pointer-cast",
         "-Wno-self-assign",
         "-Wno-sign-compare",
         "-Wno-unused-const-variable",
+        "-Wno-unused-result",
         "-Wno-unused-variable",
-        "-Wno-int-to-pointer-cast",
 
         # Upstream tests do null pointer arithmetic, so disable those warnings.
         "-Wno-null-pointer-arithmetic",
@@ -372,25 +374,25 @@ if (build_angle_gles1_conform_tests) {
   source_set("angle_gles1_conformance_no_gtest") {
     configs += [
       ":angle_gles1_conform_support",
-      "${angle_root}:internal_config",
+      "$angle_root:internal_config",
     ]
 
     public_configs = [
-      "${angle_root}:angle_util_config",
-      "${angle_root}:gl_prototypes",
-      "${angle_root}:angle_static",
+      "$angle_root:angle_static",
+      "$angle_root:angle_util_config",
+      "$angle_root:gl_prototypes",
     ]
 
     testonly = true
 
-    deps = [
-      "${angle_root}:angle_common",
-      "${angle_root}:angle_util_static",
-      "${angle_root}:libEGL_static",
-      "${angle_root}:libGLESv1_CM_static",
-      "${angle_root}:libGLESv2_static",
-      "${angle_root}:preprocessor",
-      "${angle_root}:translator",
+    public_deps = [
+      "$angle_root:angle_common",
+      "$angle_root:angle_util_static",
+      "$angle_root:libEGL_static",
+      "$angle_root:libGLESv1_CM_static",
+      "$angle_root:libGLESv2_static",
+      "$angle_root:preprocessor",
+      "$angle_root:translator",
     ]
 
     sources = [
@@ -564,17 +566,19 @@ if (build_angle_deqp_tests && !is_fuchsia) {
   config("angle_deqp_support") {
     include_dirs = deqp_include_dirs
     if (is_win && !is_clang) {
-      include_dirs +=
-          [ "$angle_root/third_party/deqp/src/framework/platform/win32" ]
+      include_dirs += [ "$deqp_path/framework/platform/win32" ]
       cflags = [
         "/EHsc",  # dEQP requires exceptions
         "/wd4091",  # typedef ignored when no variable is declared
         "/wd4100",
+        "/wd4101",  # unreferenced local variable
         "/wd4125",  # decimal digit terminates octal escape sequence
         "/wd4127",  # conditional expression constant
         "/wd4244",  # possible loss of data
         "/wd4245",  # argument signed/unsigned mismatch
         "/wd4297",  # function assumed not to throw an exception but does
+        "/wd4302",  # truncation
+        "/wd4311",  # pointer truncation
         "/wd4389",  # signed/unsigned mismatch
         "/wd4510",  # default constructor could not be generated
         "/wd4512",
@@ -588,8 +592,7 @@ if (build_angle_deqp_tests && !is_fuchsia) {
       ]
     }
     if (is_android) {
-      include_dirs +=
-          [ "$angle_root/third_party/deqp/src/framework/platform/android" ]
+      include_dirs += [ "$deqp_path/framework/platform/android" ]
     }
     defines = [
       "DEQP_SUPPORT_GLES31=1",
@@ -608,7 +611,14 @@ if (build_angle_deqp_tests && !is_fuchsia) {
     if (is_clang) {
       # TODO(jmadill): Remove this once we fix dEQP.
       cflags_c = [ "-Wno-unused-local-typedef" ]
-      cflags_cc = [ "-Wno-unused-local-typedef" ]
+      cflags_cc = [
+        "-Wno-string-conversion",  # implicit conversion turns string literal into bool
+        "-Wno-unused-local-typedef",
+        "-Wno-unused-result",  # ignoring return value of function declared with 'nodiscard' attribute
+
+        # Suppress a spurious header warning. http://crbug.com/995046
+        "-Wno-nonportable-include-path",
+      ]
     }
 
     # Ask the system headers to expose all the regular function otherwise
@@ -639,10 +649,35 @@ if (build_angle_deqp_tests && !is_fuchsia) {
     ]
   }
 
-  angle_static_library("angle_deqp_decpp") {
-    suppressed_configs += deqp_undefine_configs
+  set_defaults("angle_deqp_source_set") {
+    public_configs = []
+    configs = angle_common_configs
+  }
+
+  template("angle_deqp_source_set") {
+    angle_source_set(target_name) {
+      forward_variables_from(invoker, "*")
+      suppressed_configs += deqp_undefine_configs
+    }
+  }
+
+  config("angle_deqp_framework_debase_config") {
+    include_dirs = [ "$deqp_path/framework/delibs/debase" ]
+  }
+
+  angle_deqp_source_set("angle_deqp_framework_debase") {
+    public_configs += [ ":angle_deqp_framework_debase_config" ]
+    sources = deqp_framework_debase_sources
+  }
+
+  config("angle_deqp_framework_decpp_config") {
+    include_dirs = [ "$deqp_path/framework/delibs/decpp" ]
+  }
+
+  angle_deqp_source_set("angle_deqp_framework_decpp") {
     public_configs += [
       ":angle_deqp_support",
+      ":angle_deqp_framework_decpp_config",
       "//build/config/compiler:exceptions",
       "//build/config/compiler:no_chromium_code",
     ]
@@ -654,7 +689,11 @@ if (build_angle_deqp_tests && !is_fuchsia) {
       ]
     }
 
-    sources = deqp_libtester_decpp_sources
+    public_deps = [
+      ":angle_deqp_framework_debase",
+      ":angle_deqp_framework_delibs",
+    ]
+    sources = deqp_framework_decpp_sources
   }
 
   config("angle_deqp_libtester_config") {
@@ -673,26 +712,123 @@ if (build_angle_deqp_tests && !is_fuchsia) {
     }
   }
 
-  angle_static_library("angle_deqp_libtester") {
-    public_deps = [
-      ":angle_deqp_decpp",
-      "${angle_libpng_dir}:libpng",
-      "${angle_root}:angle_common",
-      "${angle_root}:angle_util",
-      "${angle_root}:libEGL${angle_libs_suffix}",
-      "${angle_root}:libGLESv2${angle_libs_suffix}",
+  config("angle_deqp_framework_delibs_config") {
+    include_dirs = [
+      "$deqp_path/framework/delibs/debase",
+      "$deqp_path/framework/delibs/depool",
+      "$deqp_path/framework/delibs/dethread",
+      "$deqp_path/framework/delibs/deutil",
+      "$deqp_path/framework/delibs/destream",
+    ]
+  }
+
+  angle_deqp_source_set("angle_deqp_framework_delibs") {
+    sources = deqp_framework_delibs_sources
+
+    if (is_win) {
+      sources += deqp_framework_delibs_sources_win
+    }
+    if (is_linux || is_android || is_mac) {
+      sources += deqp_framework_delibs_sources_unix
+    }
+
+    public_configs = [
+      ":angle_deqp_framework_delibs_config",
+      ":angle_deqp_support",
     ]
 
-    suppressed_configs += deqp_undefine_configs
+    public_deps = [
+      ":angle_deqp_framework_debase",
+    ]
+  }
+
+  config("angle_deqp_framework_common_config") {
+    include_dirs = [
+      "$deqp_path/framework/common",
+      "$deqp_path/framework/randomshaders",
+      "$deqp_path/framework/referencerenderer",
+    ]
+  }
+
+  angle_deqp_source_set("angle_deqp_framework_common") {
+    sources = deqp_framework_common_sources
+    public_configs = [ ":angle_deqp_framework_common_config" ]
+    public_deps = [
+      ":angle_deqp_framework_decpp",
+      ":angle_deqp_framework_qphelper",
+    ]
+  }
+
+  config("angle_deqp_framework_opengl_config") {
+    include_dirs = [
+      "$deqp_path/framework/opengl",
+      "$deqp_path/framework/opengl/simplereference",
+      "$deqp_path/framework/opengl/wrapper",
+    ]
+  }
+
+  angle_deqp_source_set("angle_deqp_framework_opengl") {
+    sources = deqp_framework_opengl_sources
+    public_configs = [ ":angle_deqp_framework_opengl_config" ]
+    public_deps = [
+      ":angle_deqp_framework_common",
+    ]
+  }
+
+  config("angle_deqp_framework_egl_config") {
+    include_dirs = [
+      "$deqp_path/framework/egl",
+      "$deqp_path/framework/egl/wrapper",
+    ]
+  }
+
+  angle_deqp_source_set("angle_deqp_framework_egl") {
+    sources = deqp_framework_egl_sources
+    public_configs = [ ":angle_deqp_framework_egl_config" ]
+    public_deps = [
+      ":angle_deqp_framework_opengl",
+    ]
+  }
+
+  config("angle_deqp_framework_qphelper_config") {
+    include_dirs = [ "$deqp_path/framework/qphelper" ]
+  }
+
+  angle_deqp_source_set("angle_deqp_framework_qphelper") {
+    sources = deqp_framework_qphelper_sources
+    public_deps = [
+      ":angle_deqp_framework_delibs",
+      "${angle_libpng_dir}:libpng",
+    ]
+    public_configs = [ ":angle_deqp_framework_qphelper_config" ]
+  }
+
+  config("angle_deqp_glshared_config") {
+    include_dirs = [ "$deqp_path/modules/glshared" ]
+  }
+
+  angle_deqp_source_set("angle_deqp_glshared") {
+    sources = deqp_glshared_sources
+    public_deps = [
+      ":angle_deqp_framework_opengl",
+    ]
+    public_configs = [ ":angle_deqp_glshared_config" ]
+  }
+
+  angle_deqp_source_set("angle_deqp_libtester") {
+    public_deps = [
+      ":angle_deqp_framework_common",
+      ":angle_deqp_framework_egl",
+      ":angle_deqp_glshared",
+      "${angle_root}:angle_common",
+      "${angle_root}:angle_util",
+      "${angle_root}:libEGL",
+      "${angle_root}:libGLESv2",
+    ]
+
     configs += [ "${angle_root}:library_name_config" ]
     public_configs += [ ":angle_deqp_libtester_config" ]
     sources = deqp_libtester_sources
-    if (is_win) {
-      sources += deqp_libtester_sources_win
-    }
-    if (is_linux || is_android || is_mac) {
-      sources += deqp_libtester_sources_unix
-    }
     if (is_android) {
       sources += deqp_libtester_sources_android
       libs = [ "log" ]
@@ -712,50 +848,41 @@ if (build_angle_deqp_tests && !is_fuchsia) {
     libs = []
   }
 
-  api_names = [
-    "gles2",
-    "gles3",
-    "gles31",
-    "egl",
-  ]
-  target_defines = [
-    "ANGLE_DEQP_GLES2_TESTS",
-    "ANGLE_DEQP_GLES3_TESTS",
-    "ANGLE_DEQP_GLES31_TESTS",
-    "ANGLE_DEQP_EGL_TESTS",
-  ]
-  target_sources = [
-    deqp_gles2_sources,
-    deqp_gles3_sources,
-    deqp_gles31_sources,
-    deqp_egl_sources,
-  ]
+  set_defaults("angle_deqp_gtest") {
+    deps = []
+    sources = []
+    data = []
+    data_deps = []
+  }
 
-  foreach(index,
-          [
-            0,
-            1,
-            2,
-            3,
-          ]) {
-    api_name = api_names[index]
-    config_name = "angle_deqp_lib${api_name}_config"
+  template("angle_deqp_gtest") {
+    _api = target_name
+
+    config_name = "angle_deqp_${_api}_config"
     config(config_name) {
-      defines = [ target_defines[index] ]
+      defines = invoker.defines
     }
 
-    shared_library_name = "angle_deqp_lib${api_name}"
+    shared_library_name = "angle_deqp_lib${_api}"
     angle_shared_library(shared_library_name) {
-      deps = [
+      forward_variables_from(invoker,
+                             [
+                               "sources",
+                               "deps",
+                               "data",
+                               "data_deps",
+                             ])
+
+      deps += [
         ":angle_deqp_libtester",
-        "${angle_root}:angle_util",
+        "$angle_root:angle_util",
       ]
 
       suppressed_configs += deqp_undefine_configs
-      public_configs += [ ":${config_name}" ]
+      public_configs += [ ":$config_name" ]
 
-      sources = target_sources[index]
       sources += [
+        "deqp_support/angle_deqp_libtester.h",
         "deqp_support/angle_deqp_libtester_main.cpp",
         "deqp_support/tcuANGLEPlatform.cpp",
         "deqp_support/tcuANGLEPlatform.h",
@@ -763,18 +890,17 @@ if (build_angle_deqp_tests && !is_fuchsia) {
     }
 
     if (!build_with_chromium) {
-      angle_executable("angle_deqp_${api_name}_no_gtest") {
+      angle_executable("angle_deqp_${_api}_no_gtest") {
         sources = [
           "deqp_support/angle_deqp_tests_main.cpp",
         ]
         deps = [
-          ":${shared_library_name}",
+          ":$shared_library_name",
         ]
       }
     }
 
-    test_name = "angle_deqp_${api_name}_tests"
-    angle_test(test_name) {
+    angle_test("angle_deqp_${_api}_tests") {
       deps = [
         ":${shared_library_name}",
         ":angle_deqp_gtest_support",
@@ -785,21 +911,141 @@ if (build_angle_deqp_tests && !is_fuchsia) {
         "deqp_support/angle_deqp_gtest.cpp",
       ]
 
-      # Use the master lists from the Khronos version for GLES. For EGL the Khronos lists use wildcards.
-      mustpass_dir = "external/openglcts/data/mustpass/gles/aosp_mustpass"
-      if (api_name == "egl") {
-        mustpass_dir = "android/cts"
-      }
-
       data = [
-        "$angle_root/third_party/deqp/src/$mustpass_dir/master/${api_name}-master.txt",
-        "$angle_root/third_party/deqp/src/data/",
-        "deqp_support/deqp_${api_name}_test_expectations.txt",
+        "deqp_support/deqp_${_api}_test_expectations.txt",
+        "${invoker.mustpass_dir}/${invoker.mustpass_name}",
       ]
 
       if (is_android) {
         use_native_activity = true
       }
     }
+  }
+
+  _android_mustpass = "$deqp_path/android/cts/master"
+  _aosp_mustpass =
+      "$deqp_path/external/openglcts/data/mustpass/gles/aosp_mustpass/master"
+  _khronos_mustpass =
+      "$deqp_path/external/openglcts/data/mustpass/gles/khronos_mustpass/master"
+
+  template("angle_deqp_core_gtest") {
+    _api = target_name
+    angle_deqp_gtest(target_name) {
+      forward_variables_from(invoker, "*")
+
+      defines += [ "ANGLE_DEQP_DATA_DIR=\"data\"" ]
+
+      mustpass_name = "${_api}-master.txt"
+      data = [
+        "$deqp_path/data/",
+      ]
+    }
+  }
+
+  angle_deqp_core_gtest("gles2") {
+    defines = [ "ANGLE_DEQP_GLES2_TESTS" ]
+    sources = deqp_gles2_sources
+    mustpass_dir = _aosp_mustpass
+  }
+
+  angle_deqp_core_gtest("gles3") {
+    defines = [ "ANGLE_DEQP_GLES3_TESTS" ]
+    sources = deqp_gles3_sources
+    mustpass_dir = _aosp_mustpass
+  }
+
+  angle_deqp_core_gtest("gles31") {
+    defines = [ "ANGLE_DEQP_GLES31_TESTS" ]
+    sources = deqp_gles31_sources
+    mustpass_dir = _aosp_mustpass
+  }
+
+  angle_deqp_core_gtest("egl") {
+    defines = [ "ANGLE_DEQP_EGL_TESTS" ]
+    sources = deqp_egl_sources
+    mustpass_dir = _android_mustpass
+  }
+
+  # The CTS also includes a set of "KHR" tests that are separate from the main body of dEQP tests.
+
+  config("angle_deqp_khr_common_config") {
+    include_dirs = [
+      "$deqp_path/external/openglcts/modules/common",
+      "$deqp_path/external/openglcts/modules/gl",
+      "$deqp_path/external/openglcts/modules/gles2",
+      "$deqp_path/external/openglcts/modules/gles3",
+      "$deqp_path/external/openglcts/modules/gles31",
+      "$deqp_path/external/openglcts/modules/gles32",
+      "$deqp_path/external/openglcts/modules/glesext",
+    ]
+    if (is_clang) {
+      cflags = [ "-Wno-header-hygiene" ]  # using namespace directive in global context in header
+    }
+  }
+
+  angle_deqp_source_set("angle_deqp_khr_common") {
+    sources = deqp_khr_common_sources + deqp_khr_test_module_headers +
+              deqp_khr_gl_sources + deqp_khr_gles2_sources +
+              deqp_khr_gles3_sources + deqp_khr_gles31_sources +
+              deqp_khr_gles32_sources + deqp_khr_glesext_sources +
+              [ "deqp_support/glcTestPackageEntry_override.cpp" ]
+    public_deps = [
+      ":angle_deqp_framework_egl",
+      ":angle_deqp_glshared",
+    ]
+    public_configs = [ ":angle_deqp_khr_common_config" ]
+
+    # This is a bit of a hack so one test can capture memory limits.
+    include_dirs = [ "$deqp_path/external/vulkancts/framework/vulkan" ]
+  }
+
+  # The KHR dEQP tests expect a root prefix of "gl_cts" for some reason.
+  # This means we need an extra copy step to make them happy.
+  copy("angle_deqp_khr_data") {
+    sources = [
+      "$deqp_path/external/openglcts/data/gles3/arrays.test",
+      "$deqp_path/external/openglcts/data/gles3/declarations.test",
+      "$deqp_path/external/openglcts/data/gles3/literal_parsing.test",
+      "$deqp_path/external/openglcts/data/gles3/name_hiding.test",
+      "$deqp_path/external/openglcts/data/gles3/preprocessor.test",
+      "$deqp_path/external/openglcts/data/gles3/switch.test",
+    ]
+
+    outputs = [
+      "$root_out_dir/$angle_data_dir/gl_cts/data/gles3/{{source_file_part}}",
+    ]
+  }
+
+  template("angle_deqp_khr_gtest") {
+    angle_deqp_gtest(target_name) {
+      forward_variables_from(invoker, "*")
+      deps = [
+        ":angle_deqp_khr_common",
+        ":angle_deqp_khr_data",
+      ]
+
+      defines += [ "ANGLE_DEQP_DATA_DIR=\"$angle_data_dir\"" ]
+
+      mustpass_dir = _khronos_mustpass
+
+      data_deps = [
+        ":angle_deqp_khr_data",
+      ]
+    }
+  }
+
+  angle_deqp_khr_gtest("khr_gles2") {
+    defines = [ "ANGLE_DEQP_KHR_GLES2_TESTS" ]
+    mustpass_name = "gles2-khr-master.txt"
+  }
+
+  angle_deqp_khr_gtest("khr_gles3") {
+    defines = [ "ANGLE_DEQP_KHR_GLES3_TESTS" ]
+    mustpass_name = "gles3-khr-master.txt"
+  }
+
+  angle_deqp_khr_gtest("khr_gles31") {
+    defines = [ "ANGLE_DEQP_KHR_GLES31_TESTS" ]
+    mustpass_name = "gles31-khr-master.txt"
   }
 }

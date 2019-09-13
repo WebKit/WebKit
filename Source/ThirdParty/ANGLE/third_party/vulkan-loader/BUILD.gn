@@ -7,6 +7,7 @@
 # https://github.com/KhronosGroup/Vulkan-Loader
 
 import("../../gni/angle.gni")
+
 import("$angle_root/third_party/vulkan-headers/vulkan_headers_script_deps.gni")
 
 # Fuchsia has non-upstream changes to the vulkan loader, so we don't want
@@ -165,11 +166,7 @@ config("vulkan_loader_config") {
     "$angle_root/third_party/vulkan-headers/src/include",
     "src/loader",
   ]
-  defines = [
-    "ANGLE_VK_DATA_DIR=\"$data_dir\"",
-    "ANGLE_VK_ICD_JSON=\"$data_dir/VkICD_mock_icd.json\"",
-    "API_NAME=\"Vulkan\"",
-  ]
+  defines = [ "API_NAME=\"Vulkan\"" ]
 
   if (is_win) {
     cflags = [ "/wd4201" ]

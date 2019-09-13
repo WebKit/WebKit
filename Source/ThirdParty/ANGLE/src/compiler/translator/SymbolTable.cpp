@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -17,6 +17,7 @@
 #include "compiler/translator/ImmutableString.h"
 #include "compiler/translator/IntermNode.h"
 #include "compiler/translator/StaticType.h"
+#include "compiler/translator/util.h"
 
 namespace sh
 {
@@ -68,6 +69,7 @@ TSymbolTable::TSymbolTable()
     : mGlobalInvariant(false),
       mUniqueIdCounter(0),
       mShaderType(GL_FRAGMENT_SHADER),
+      mShaderSpec(SH_GLES2_SPEC),
       mGlInVariableWithArraySize(nullptr)
 {}
 
@@ -131,7 +133,7 @@ bool TSymbolTable::setGlInArraySize(unsigned int inputArraySize)
     {
         return mGlInVariableWithArraySize->getType().getOutermostArraySize() == inputArraySize;
     }
-    const TInterfaceBlock *glPerVertex = mVar_gl_PerVertex;
+    const TInterfaceBlock *glPerVertex = static_cast<const TInterfaceBlock *>(mVar_gl_PerVertex);
     TType *glInType = new TType(glPerVertex, EvqPerVertexIn, TLayoutQualifier::Create());
     glInType->makeArray(inputArraySize);
     mGlInVariableWithArraySize =
@@ -147,12 +149,12 @@ TVariable *TSymbolTable::getGlInVariableWithArraySize() const
 
 const TVariable *TSymbolTable::gl_FragData() const
 {
-    return mVar_gl_FragData;
+    return static_cast<const TVariable *>(mVar_gl_FragData);
 }
 
 const TVariable *TSymbolTable::gl_SecondaryFragDataEXT() const
 {
-    return mVar_gl_SecondaryFragDataEXT;
+    return static_cast<const TVariable *>(mVar_gl_SecondaryFragDataEXT);
 }
 
 TSymbolTable::VariableMetadata *TSymbolTable::getOrCreateVariableMetadata(const TVariable &variable)
@@ -196,7 +198,7 @@ void TSymbolTable::addInvariantVarying(const TVariable &variable)
 bool TSymbolTable::isVaryingInvariant(const TVariable &variable) const
 {
     ASSERT(atGlobalLevel());
-    if (mGlobalInvariant)
+    if (mGlobalInvariant && (IsShaderOutput(variable.getType().getQualifier())))
     {
         return true;
     }
@@ -249,6 +251,32 @@ const TSymbol *TSymbolTable::findGlobal(const ImmutableString &name) const
 {
     ASSERT(!mTable.empty());
     return mTable[0]->find(name);
+}
+
+const TSymbol *TSymbolTable::findGlobalWithConversion(
+    const std::vector<ImmutableString> &names) const
+{
+    const TSymbol *target;
+    for (ImmutableString name : names)
+    {
+        target = findGlobal(name);
+        if (target != nullptr)
+            break;
+    }
+    return target;
+}
+
+const TSymbol *TSymbolTable::findBuiltInWithConversion(const std::vector<ImmutableString> &names,
+                                                       int shaderVersion) const
+{
+    const TSymbol *target;
+    for (ImmutableString name : names)
+    {
+        target = findBuiltIn(name, shaderVersion);
+        if (target != nullptr)
+            break;
+    }
+    return target;
 }
 
 bool TSymbolTable::declare(TSymbol *symbol)
@@ -332,25 +360,35 @@ void TSymbolTable::initializeBuiltIns(sh::GLenum type,
                                       const ShBuiltInResources &resources)
 {
     mShaderType = type;
+    mShaderSpec = spec;
     mResources  = resources;
 
     // We need just one precision stack level for predefined precisions.
     mPrecisionStack.emplace_back(new PrecisionStackLevel);
 
-    switch (type)
+    if (IsDesktopGLSpec(spec))
     {
-        case GL_FRAGMENT_SHADER:
-            setDefaultPrecision(EbtInt, EbpMedium);
-            break;
-        case GL_VERTEX_SHADER:
-        case GL_COMPUTE_SHADER:
-        case GL_GEOMETRY_SHADER_EXT:
-            setDefaultPrecision(EbtInt, EbpHigh);
-            setDefaultPrecision(EbtFloat, EbpHigh);
-            break;
-        default:
-            UNREACHABLE();
+        setDefaultPrecision(EbtInt, EbpUndefined);
+        setDefaultPrecision(EbtFloat, EbpUndefined);
     }
+    else
+    {
+        switch (type)
+        {
+            case GL_FRAGMENT_SHADER:
+                setDefaultPrecision(EbtInt, EbpMedium);
+                break;
+            case GL_VERTEX_SHADER:
+            case GL_COMPUTE_SHADER:
+            case GL_GEOMETRY_SHADER_EXT:
+                setDefaultPrecision(EbtInt, EbpHigh);
+                setDefaultPrecision(EbtFloat, EbpHigh);
+                break;
+            default:
+                UNREACHABLE();
+        }
+    }
+
     // Set defaults for sampler types that have default precision, even those that are
     // only available if an extension exists.
     // New sampler types in ESSL3 don't have default precision. ESSL1 types do.

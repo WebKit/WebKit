@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -59,10 +59,10 @@ class CollectVariablesTest : public testing::Test
         const char *shaderStrings[] = {shaderString.c_str()};
         ASSERT_TRUE(mTranslator->compile(shaderStrings, 1, SH_VARIABLES));
 
-        const std::vector<Uniform> &uniforms = mTranslator->getUniforms();
+        const std::vector<ShaderVariable> &uniforms = mTranslator->getUniforms();
         ASSERT_EQ(1u, uniforms.size());
 
-        const Uniform &uniform = uniforms[0];
+        const ShaderVariable &uniform = uniforms[0];
         EXPECT_EQ("gl_DepthRange", uniform.name);
         ASSERT_TRUE(uniform.isStruct());
         ASSERT_EQ(3u, uniform.fields.size());
@@ -104,7 +104,7 @@ class CollectVariablesTest : public testing::Test
     void validateOutputVariableForShader(const std::string &shaderString,
                                          unsigned int varIndex,
                                          const char *varName,
-                                         const OutputVariable **outResult)
+                                         const ShaderVariable **outResult)
     {
         const char *shaderStrings[] = {shaderString.c_str()};
         ASSERT_TRUE(mTranslator->compile(shaderStrings, 1, SH_VARIABLES))
@@ -112,7 +112,7 @@ class CollectVariablesTest : public testing::Test
 
         const auto &outputVariables = mTranslator->getOutputVariables();
         ASSERT_LT(varIndex, outputVariables.size());
-        const OutputVariable &outputVariable = outputVariables[varIndex];
+        const ShaderVariable &outputVariable = outputVariables[varIndex];
         EXPECT_EQ(-1, outputVariable.location);
         EXPECT_TRUE(outputVariable.staticUse);
         EXPECT_TRUE(outputVariable.active);
@@ -133,7 +133,7 @@ class CollectVariablesTest : public testing::Test
         const auto &uniforms = mTranslator->getUniforms();
         ASSERT_EQ(1u, uniforms.size());
 
-        const Uniform &uniform = uniforms[0];
+        const ShaderVariable &uniform = uniforms[0];
         EXPECT_EQ(name, uniform.name);
         EXPECT_TRUE(uniform.staticUse);
         EXPECT_FALSE(uniform.active);
@@ -252,7 +252,7 @@ TEST_F(CollectFragmentVariablesTest, SimpleOutputVar)
     const auto &outputVariables = mTranslator->getOutputVariables();
     ASSERT_EQ(1u, outputVariables.size());
 
-    const OutputVariable &outputVariable = outputVariables[0];
+    const ShaderVariable &outputVariable = outputVariables[0];
 
     EXPECT_FALSE(outputVariable.isArray());
     EXPECT_EQ(-1, outputVariable.location);
@@ -278,7 +278,7 @@ TEST_F(CollectFragmentVariablesTest, LocationOutputVar)
     const auto &outputVariables = mTranslator->getOutputVariables();
     ASSERT_EQ(1u, outputVariables.size());
 
-    const OutputVariable &outputVariable = outputVariables[0];
+    const ShaderVariable &outputVariable = outputVariables[0];
 
     EXPECT_FALSE(outputVariable.isArray());
     EXPECT_EQ(5, outputVariable.location);
@@ -300,10 +300,10 @@ TEST_F(CollectVertexVariablesTest, LocationAttribute)
 
     compile(shaderString);
 
-    const std::vector<Attribute> &attributes = mTranslator->getAttributes();
+    const std::vector<ShaderVariable> &attributes = mTranslator->getAttributes();
     ASSERT_EQ(1u, attributes.size());
 
-    const Attribute &attribute = attributes[0];
+    const ShaderVariable &attribute = attributes[0];
 
     EXPECT_FALSE(attribute.isArray());
     EXPECT_EQ(5, attribute.location);
@@ -340,7 +340,7 @@ TEST_F(CollectVertexVariablesTest, SimpleInterfaceBlock)
 
     ASSERT_EQ(1u, interfaceBlock.fields.size());
 
-    const InterfaceBlockField &field = interfaceBlock.fields[0];
+    const ShaderVariable &field = interfaceBlock.fields[0];
 
     EXPECT_GLENUM_EQ(GL_HIGH_FLOAT, field.precision);
     EXPECT_TRUE(field.staticUse);
@@ -378,7 +378,7 @@ TEST_F(CollectVertexVariablesTest, SimpleInstancedInterfaceBlock)
 
     ASSERT_EQ(1u, interfaceBlock.fields.size());
 
-    const InterfaceBlockField &field = interfaceBlock.fields[0];
+    const ShaderVariable &field = interfaceBlock.fields[0];
 
     EXPECT_GLENUM_EQ(GL_HIGH_FLOAT, field.precision);
     EXPECT_TRUE(field.staticUse);
@@ -417,7 +417,7 @@ TEST_F(CollectVertexVariablesTest, StructInterfaceBlock)
 
     ASSERT_EQ(1u, interfaceBlock.fields.size());
 
-    const InterfaceBlockField &blockField = interfaceBlock.fields[0];
+    const ShaderVariable &blockField = interfaceBlock.fields[0];
 
     EXPECT_TRUE(blockField.isStruct());
     EXPECT_TRUE(blockField.staticUse);
@@ -465,7 +465,7 @@ TEST_F(CollectVertexVariablesTest, StructInstancedInterfaceBlock)
 
     ASSERT_EQ(1u, interfaceBlock.fields.size());
 
-    const InterfaceBlockField &blockField = interfaceBlock.fields[0];
+    const ShaderVariable &blockField = interfaceBlock.fields[0];
 
     EXPECT_TRUE(blockField.isStruct());
     EXPECT_TRUE(blockField.staticUse);
@@ -512,7 +512,7 @@ TEST_F(CollectVertexVariablesTest, NestedStructRowMajorInterfaceBlock)
 
     ASSERT_EQ(1u, interfaceBlock.fields.size());
 
-    const InterfaceBlockField &blockField = interfaceBlock.fields[0];
+    const ShaderVariable &blockField = interfaceBlock.fields[0];
 
     EXPECT_TRUE(blockField.isStruct());
     EXPECT_TRUE(blockField.staticUse);
@@ -544,10 +544,10 @@ TEST_F(CollectVertexVariablesTest, VaryingInterpolation)
 
     compile(shaderString);
 
-    const std::vector<Varying> &varyings = mTranslator->getOutputVaryings();
+    const std::vector<ShaderVariable> &varyings = mTranslator->getOutputVaryings();
     ASSERT_EQ(2u, varyings.size());
 
-    const Varying *varying = &varyings[0];
+    const ShaderVariable *varying = &varyings[0];
 
     if (varying->name == "gl_Position")
     {
@@ -599,7 +599,7 @@ TEST_F(CollectFragmentVariablesTest, OutputVarESSL1FragColor)
         "   gl_FragColor = vec4(1.0);\n"
         "}\n";
 
-    const OutputVariable *outputVariable = nullptr;
+    const ShaderVariable *outputVariable = nullptr;
     validateOutputVariableForShader(fragColorShader, 0u, "gl_FragColor", &outputVariable);
     ASSERT_NE(outputVariable, nullptr);
     EXPECT_FALSE(outputVariable->isArray());
@@ -625,7 +625,7 @@ TEST_F(CollectFragmentVariablesTest, OutputVarESSL1FragData)
     resources.MaxDrawBuffers           = kMaxDrawBuffers;
     initTranslator(resources);
 
-    const OutputVariable *outputVariable = nullptr;
+    const ShaderVariable *outputVariable = nullptr;
     validateOutputVariableForShader(fragDataShader, 0u, "gl_FragData", &outputVariable);
     ASSERT_NE(outputVariable, nullptr);
     ASSERT_EQ(1u, outputVariable->arraySizes.size());
@@ -649,7 +649,7 @@ TEST_F(CollectFragmentVariablesTest, OutputVarESSL1FragDepthMediump)
     resources.EXT_frag_depth     = 1;
     initTranslator(resources);
 
-    const OutputVariable *outputVariable = nullptr;
+    const ShaderVariable *outputVariable = nullptr;
     validateOutputVariableForShader(fragDepthShader, 0u, "gl_FragDepthEXT", &outputVariable);
     ASSERT_NE(outputVariable, nullptr);
     EXPECT_FALSE(outputVariable->isArray());
@@ -672,7 +672,7 @@ TEST_F(CollectFragmentVariablesTest, OutputVarESSL1FragDepthHighp)
     resources.FragmentPrecisionHigh = 1;
     initTranslator(resources);
 
-    const OutputVariable *outputVariable = nullptr;
+    const ShaderVariable *outputVariable = nullptr;
     validateOutputVariableForShader(fragDepthHighShader, 0u, "gl_FragDepthEXT", &outputVariable);
     ASSERT_NE(outputVariable, nullptr);
     EXPECT_FALSE(outputVariable->isArray());
@@ -695,7 +695,7 @@ TEST_F(CollectFragmentVariablesTest, OutputVarESSL3FragDepthHighp)
     resources.EXT_frag_depth     = 1;
     initTranslator(resources);
 
-    const OutputVariable *outputVariable = nullptr;
+    const ShaderVariable *outputVariable = nullptr;
     validateOutputVariableForShader(fragDepthHighShader, 0u, "gl_FragDepth", &outputVariable);
     ASSERT_NE(outputVariable, nullptr);
     EXPECT_FALSE(outputVariable->isArray());
@@ -723,7 +723,7 @@ TEST_F(CollectFragmentVariablesTest, OutputVarESSL1EXTBlendFuncExtendedSecondary
     resources.MaxDualSourceDrawBuffers = resources.MaxDrawBuffers;
     initTranslator(resources);
 
-    const OutputVariable *outputVariable = nullptr;
+    const ShaderVariable *outputVariable = nullptr;
     validateOutputVariableForShader(secondaryFragColorShader, 0u, "gl_FragColor", &outputVariable);
     ASSERT_NE(outputVariable, nullptr);
     EXPECT_FALSE(outputVariable->isArray());
@@ -761,7 +761,7 @@ TEST_F(CollectFragmentVariablesTest, OutputVarESSL1EXTBlendFuncExtendedSecondary
     resources.MaxDualSourceDrawBuffers = resources.MaxDrawBuffers;
     initTranslator(resources);
 
-    const OutputVariable *outputVariable = nullptr;
+    const ShaderVariable *outputVariable = nullptr;
     validateOutputVariableForShader(secondaryFragDataShader, 0u, "gl_FragData", &outputVariable);
     ASSERT_NE(outputVariable, nullptr);
     ASSERT_EQ(1u, outputVariable->arraySizes.size());
@@ -825,7 +825,7 @@ TEST_F(CollectHashedVertexVariablesTest, InstancedInterfaceBlock)
 
     ASSERT_EQ(1u, interfaceBlock.fields.size());
 
-    const InterfaceBlockField &field = interfaceBlock.fields[0];
+    const ShaderVariable &field = interfaceBlock.fields[0];
 
     EXPECT_GLENUM_EQ(GL_HIGH_FLOAT, field.precision);
     EXPECT_TRUE(field.staticUse);
@@ -858,7 +858,7 @@ TEST_F(CollectHashedVertexVariablesTest, StructUniform)
     const auto &uniforms = mTranslator->getUniforms();
     ASSERT_EQ(1u, uniforms.size());
 
-    const Uniform &uniform = uniforms[0];
+    const ShaderVariable &uniform = uniforms[0];
 
     EXPECT_FALSE(uniform.isArray());
     EXPECT_EQ("u", uniform.name);
@@ -902,7 +902,7 @@ TEST_F(CollectHashedVertexVariablesTest, NamelessStructUniform)
     const auto &uniforms = mTranslator->getUniforms();
     ASSERT_EQ(1u, uniforms.size());
 
-    const Uniform &uniform = uniforms[0];
+    const ShaderVariable &uniform = uniforms[0];
 
     EXPECT_FALSE(uniform.isArray());
     EXPECT_EQ("u", uniform.name);
@@ -945,7 +945,7 @@ TEST_F(CollectFragmentVariablesTest, MultiDeclaration)
     const auto &uniforms = mTranslator->getUniforms();
     ASSERT_EQ(2u, uniforms.size());
 
-    const Uniform &uniform = uniforms[0];
+    const ShaderVariable &uniform = uniforms[0];
     EXPECT_FALSE(uniform.isArray());
     EXPECT_GLENUM_EQ(GL_MEDIUM_FLOAT, uniform.precision);
     EXPECT_TRUE(uniform.staticUse);
@@ -953,7 +953,7 @@ TEST_F(CollectFragmentVariablesTest, MultiDeclaration)
     EXPECT_GLENUM_EQ(GL_FLOAT, uniform.type);
     EXPECT_EQ("uA", uniform.name);
 
-    const Uniform &uniformB = uniforms[1];
+    const ShaderVariable &uniformB = uniforms[1];
     EXPECT_FALSE(uniformB.isArray());
     EXPECT_GLENUM_EQ(GL_MEDIUM_FLOAT, uniformB.precision);
     EXPECT_TRUE(uniformB.staticUse);
@@ -980,7 +980,7 @@ TEST_F(CollectFragmentVariablesTest, EmptyDeclarator)
     const auto &uniforms = mTranslator->getUniforms();
     ASSERT_EQ(1u, uniforms.size());
 
-    const Uniform &uniformB = uniforms[0];
+    const ShaderVariable &uniformB = uniforms[0];
     EXPECT_FALSE(uniformB.isArray());
     EXPECT_GLENUM_EQ(GL_MEDIUM_FLOAT, uniformB.precision);
     EXPECT_TRUE(uniformB.staticUse);
@@ -1013,7 +1013,7 @@ TEST_F(CollectVertexVariablesTest, ViewID_OVR)
     // The internal ViewID_OVR varying is not exposed through the ShaderVars interface.
     const auto &varyings = mTranslator->getOutputVaryings();
     ASSERT_EQ(1u, varyings.size());
-    const Varying *varying = &varyings[0];
+    const ShaderVariable *varying = &varyings[0];
     EXPECT_EQ("gl_Position", varying->name);
 }
 
@@ -1112,7 +1112,7 @@ TEST_F(CollectGeometryVariablesTest, CollectPrimitiveIDIn)
     const auto &inputVaryings = mTranslator->getInputVaryings();
     ASSERT_EQ(1u, inputVaryings.size());
 
-    const Varying *varying = &inputVaryings[0];
+    const ShaderVariable *varying = &inputVaryings[0];
     EXPECT_EQ("gl_PrimitiveIDIn", varying->name);
     EXPECT_FALSE(varying->isArray());
     EXPECT_FALSE(varying->isStruct());
@@ -1145,7 +1145,7 @@ TEST_F(CollectGeometryVariablesTest, CollectInvocationID)
     const auto &inputVaryings = mTranslator->getInputVaryings();
     ASSERT_EQ(1u, inputVaryings.size());
 
-    const Varying *varying = &inputVaryings[0];
+    const ShaderVariable *varying = &inputVaryings[0];
     EXPECT_EQ("gl_InvocationID", varying->name);
     EXPECT_FALSE(varying->isArray());
     EXPECT_FALSE(varying->isStruct());
@@ -1182,7 +1182,7 @@ TEST_F(CollectGeometryVariablesTest, CollectGLInIndexedByExpression)
 
     const auto &inputVaryings = mTranslator->getInputVaryings();
     ASSERT_EQ(1u, inputVaryings.size());
-    const Varying *glInvocationID = &inputVaryings[0];
+    const ShaderVariable *glInvocationID = &inputVaryings[0];
     EXPECT_EQ("gl_InvocationID", glInvocationID->name);
 }
 
@@ -1207,7 +1207,7 @@ TEST_F(CollectGeometryVariablesTest, CollectPosition)
     const auto &outputVaryings = mTranslator->getOutputVaryings();
     ASSERT_EQ(1u, outputVaryings.size());
 
-    const Varying *varying = &outputVaryings[0];
+    const ShaderVariable *varying = &outputVaryings[0];
     EXPECT_EQ("gl_Position", varying->name);
     EXPECT_FALSE(varying->isArray());
     EXPECT_FALSE(varying->isStruct());
@@ -1239,7 +1239,7 @@ TEST_F(CollectGeometryVariablesTest, CollectPrimitiveID)
     const auto &OutputVaryings = mTranslator->getOutputVaryings();
     ASSERT_EQ(1u, OutputVaryings.size());
 
-    const Varying *varying = &OutputVaryings[0];
+    const ShaderVariable *varying = &OutputVaryings[0];
     EXPECT_EQ("gl_PrimitiveID", varying->name);
     EXPECT_FALSE(varying->isArray());
     EXPECT_FALSE(varying->isStruct());
@@ -1271,7 +1271,7 @@ TEST_F(CollectGeometryVariablesTest, CollectLayer)
     const auto &OutputVaryings = mTranslator->getOutputVaryings();
     ASSERT_EQ(1u, OutputVaryings.size());
 
-    const Varying *varying = &OutputVaryings[0];
+    const ShaderVariable *varying = &OutputVaryings[0];
     EXPECT_EQ("gl_Layer", varying->name);
     EXPECT_FALSE(varying->isArray());
     EXPECT_FALSE(varying->isStruct());
@@ -1303,7 +1303,7 @@ TEST_F(CollectFragmentVariablesEXTGeometryShaderTest, CollectPrimitiveID)
     const auto &inputVaryings = mTranslator->getInputVaryings();
     ASSERT_EQ(1u, inputVaryings.size());
 
-    const Varying *varying = &inputVaryings[0];
+    const ShaderVariable *varying = &inputVaryings[0];
     EXPECT_EQ("gl_PrimitiveID", varying->name);
     EXPECT_FALSE(varying->isArray());
     EXPECT_FALSE(varying->isStruct());
@@ -1335,7 +1335,7 @@ TEST_F(CollectFragmentVariablesEXTGeometryShaderTest, CollectLayer)
     const auto &inputVaryings = mTranslator->getInputVaryings();
     ASSERT_EQ(1u, inputVaryings.size());
 
-    const Varying *varying = &inputVaryings[0];
+    const ShaderVariable *varying = &inputVaryings[0];
     EXPECT_EQ("gl_Layer", varying->name);
     EXPECT_FALSE(varying->isArray());
     EXPECT_FALSE(varying->isStruct());
@@ -1362,11 +1362,11 @@ TEST_F(CollectVertexVariablesES31Test, CollectOutputWithLocation)
     const auto &outputVaryings = mTranslator->getOutputVaryings();
     ASSERT_EQ(2u, outputVaryings.size());
 
-    const Varying *varying1 = &outputVaryings[0];
+    const ShaderVariable *varying1 = &outputVaryings[0];
     EXPECT_EQ("v_output1", varying1->name);
     EXPECT_EQ(-1, varying1->location);
 
-    const Varying *varying2 = &outputVaryings[1];
+    const ShaderVariable *varying2 = &outputVaryings[1];
     EXPECT_EQ("v_output2", varying2->name);
     EXPECT_EQ(1, varying2->location);
 }
@@ -1390,11 +1390,11 @@ TEST_F(CollectFragmentVariablesES31Test, CollectInputWithLocation)
     const auto &inputVaryings = mTranslator->getInputVaryings();
     ASSERT_EQ(2u, inputVaryings.size());
 
-    const Varying *varying1 = &inputVaryings[0];
+    const ShaderVariable *varying1 = &inputVaryings[0];
     EXPECT_EQ("f_input1", varying1->name);
     EXPECT_EQ(-1, varying1->location);
 
-    const Varying *varying2 = &inputVaryings[1];
+    const ShaderVariable *varying2 = &inputVaryings[1];
     EXPECT_EQ("f_input2", varying2->name);
     EXPECT_EQ(1, varying2->location);
 }
@@ -1427,7 +1427,7 @@ TEST_F(CollectGeometryVariablesTest, CollectInputs)
 
     for (size_t i = 0; i < inputVaryings.size(); ++i)
     {
-        const Varying &varying = inputVaryings[i];
+        const ShaderVariable &varying = inputVaryings[i];
 
         EXPECT_EQ(kVaryingName[i], varying.name);
         EXPECT_TRUE(varying.isArray());
@@ -1466,7 +1466,7 @@ TEST_F(CollectGeometryVariablesTest, CollectInputArraySizeForUnsizedInput)
         const auto &inputVaryings = mTranslator->getInputVaryings();
         ASSERT_EQ(1u, inputVaryings.size());
 
-        const Varying *varying = &inputVaryings[0];
+        const ShaderVariable *varying = &inputVaryings[0];
         EXPECT_EQ("texcoord", varying->name);
         ASSERT_EQ(1u, varying->arraySizes.size());
         EXPECT_EQ(kArraySizeForInputPrimitives[i], varying->arraySizes.back());
@@ -1505,7 +1505,7 @@ TEST_F(CollectGeometryVariablesTest, CollectInputsWithInterpolationQualifiers)
 
         const auto &inputVaryings = mTranslator->getInputVaryings();
         ASSERT_EQ(1u, inputVaryings.size());
-        const Varying *varying = &inputVaryings[0];
+        const ShaderVariable *varying = &inputVaryings[0];
         EXPECT_EQ("texcoord", varying->name);
         EXPECT_EQ(kInterpolationType[i], varying->interpolation);
     }
@@ -1542,7 +1542,7 @@ TEST_F(CollectGeometryVariablesTest, CollectOutputsWithInterpolationQualifiers)
         const auto &outputVaryings = mTranslator->getOutputVaryings();
         ASSERT_EQ(1u, outputVaryings.size());
 
-        const Varying *varying = &outputVaryings[0];
+        const ShaderVariable *varying = &outputVaryings[0];
         EXPECT_EQ("texcoord", varying->name);
         EXPECT_EQ(kInterpolationType[i], varying->interpolation);
         EXPECT_FALSE(varying->isInvariant);
@@ -1568,7 +1568,7 @@ TEST_F(CollectGeometryVariablesTest, CollectOutputsWithInvariant)
     const auto &outputVaryings = mTranslator->getOutputVaryings();
     ASSERT_EQ(1u, outputVaryings.size());
 
-    const Varying *varying = &outputVaryings[0];
+    const ShaderVariable *varying = &outputVaryings[0];
     EXPECT_EQ("texcoord", varying->name);
     EXPECT_TRUE(varying->isInvariant);
 }
@@ -1589,10 +1589,10 @@ TEST_F(CollectFragmentVariablesTest, VaryingUsedInsideFoldedTernary)
 
     compile(shaderString);
 
-    const std::vector<Varying> &varyings = mTranslator->getInputVaryings();
+    const std::vector<ShaderVariable> &varyings = mTranslator->getInputVaryings();
     ASSERT_EQ(1u, varyings.size());
 
-    const Varying *varying = &varyings[0];
+    const ShaderVariable *varying = &varyings[0];
 
     EXPECT_FALSE(varying->isArray());
     EXPECT_GLENUM_EQ(GL_HIGH_FLOAT, varying->precision);
@@ -1967,7 +1967,7 @@ TEST_F(CollectFragmentVariablesTest, JustAVariableReferenceInNoBracesLoop)
     const auto &uniforms = mTranslator->getUniforms();
     ASSERT_EQ(1u, uniforms.size());
 
-    const Uniform &uniform = uniforms[0];
+    const ShaderVariable &uniform = uniforms[0];
     EXPECT_EQ("u", uniform.name);
     EXPECT_TRUE(uniform.staticUse);
     // Note that we don't check the active flag here - the usage of the uniform is not currently
@@ -1998,7 +1998,7 @@ TEST_F(CollectVertexVariablesTest, StaticallyUsedButNotActiveSimpleInterfaceBloc
     EXPECT_FALSE(interfaceBlock.active);
 
     ASSERT_EQ(1u, interfaceBlock.fields.size());
-    const InterfaceBlockField &field = interfaceBlock.fields[0];
+    const ShaderVariable &field = interfaceBlock.fields[0];
 
     EXPECT_EQ("f", field.name);
     EXPECT_TRUE(field.staticUse);
@@ -2029,7 +2029,7 @@ TEST_F(CollectVertexVariablesTest, StaticallyUsedButNotActiveInstancedInterfaceB
     EXPECT_FALSE(interfaceBlock.active);
 
     ASSERT_EQ(1u, interfaceBlock.fields.size());
-    const InterfaceBlockField &field = interfaceBlock.fields[0];
+    const ShaderVariable &field = interfaceBlock.fields[0];
 
     EXPECT_EQ("f", field.name);
     // See TODO in CollectVariables.cpp about tracking instanced interface block field static use.
@@ -2084,7 +2084,7 @@ TEST_F(CollectVertexVariablesTest, VaryingOnlyDeclaredInvariant)
     const auto &varyings = mTranslator->getOutputVaryings();
     ASSERT_EQ(1u, varyings.size());
 
-    const Varying &varying = varyings[0];
+    const ShaderVariable &varying = varyings[0];
     EXPECT_EQ("vf", varying.name);
     EXPECT_FALSE(varying.staticUse);
     EXPECT_FALSE(varying.active);
@@ -2109,7 +2109,7 @@ void main()
     const auto &outputs = mTranslator->getOutputVariables();
     ASSERT_EQ(1u, outputs.size());
 
-    const OutputVariable &output = outputs[0];
+    const ShaderVariable &output = outputs[0];
     EXPECT_EQ("outVar", output.name);
     EXPECT_TRUE(output.staticUse);
     EXPECT_TRUE(output.active);

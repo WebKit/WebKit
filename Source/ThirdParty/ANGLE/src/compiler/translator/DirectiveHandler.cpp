@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2012-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -164,6 +164,17 @@ void TDirectiveHandler::handleExtension(const angle::pp::SourceLocation &loc,
     if (iter != mExtensionBehavior.end())
     {
         iter->second = behaviorVal;
+        // OVR_multiview is implicitly enabled when OVR_multiview2 is enabled
+        if (name == "GL_OVR_multiview2")
+        {
+            const std::string multiview = "GL_OVR_multiview";
+            TExtensionBehavior::iterator iterMultiview =
+                mExtensionBehavior.find(GetExtensionByName(multiview.c_str()));
+            if (iterMultiview != mExtensionBehavior.end())
+            {
+                iterMultiview->second = behaviorVal;
+            }
+        }
         return;
     }
 
@@ -183,9 +194,12 @@ void TDirectiveHandler::handleExtension(const angle::pp::SourceLocation &loc,
     }
 }
 
-void TDirectiveHandler::handleVersion(const angle::pp::SourceLocation &loc, int version)
+void TDirectiveHandler::handleVersion(const angle::pp::SourceLocation &loc,
+                                      int version,
+                                      ShShaderSpec spec)
 {
-    if (version == 100 || version == 300 || version == 310)
+    if (((version == 100 || version == 300 || version == 310) && !IsDesktopGLSpec(spec)) ||
+        IsDesktopGLSpec(spec))
     {
         mShaderVersion = version;
     }
@@ -194,7 +208,7 @@ void TDirectiveHandler::handleVersion(const angle::pp::SourceLocation &loc, int 
         std::stringstream stream = sh::InitializeStream<std::stringstream>();
         stream << version;
         std::string str = stream.str();
-        mDiagnostics.error(loc, "version number not supported", str.c_str());
+        mDiagnostics.error(loc, "client/version number not supported", str.c_str());
     }
 }
 

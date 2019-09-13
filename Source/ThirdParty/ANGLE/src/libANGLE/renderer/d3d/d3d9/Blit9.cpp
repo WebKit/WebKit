@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2010 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -120,7 +120,7 @@ template <class D3DShaderType>
 angle::Result Blit9::setShader(Context9 *context9,
                                ShaderId source,
                                const char *profile,
-                               angle::Result (Renderer9::*createShader)(Context9 *,
+                               angle::Result (Renderer9::*createShader)(d3d::Context *,
                                                                         const DWORD *,
                                                                         size_t length,
                                                                         D3DShaderType **outShader),
@@ -229,11 +229,11 @@ angle::Result Blit9::copy2D(const gl::Context *context,
 
     ANGLE_TRY(initialize(context9));
 
-    const gl::FramebufferAttachment *colorbuffer = framebuffer->getColorbuffer(0);
+    const gl::FramebufferAttachment *colorbuffer = framebuffer->getColorAttachment(0);
     ASSERT(colorbuffer);
 
     RenderTarget9 *renderTarget9 = nullptr;
-    ANGLE_TRY(colorbuffer->getRenderTarget(context, &renderTarget9));
+    ANGLE_TRY(colorbuffer->getRenderTarget(context, 0, &renderTarget9));
     ASSERT(renderTarget9);
 
     angle::ComPtr<IDirect3DSurface9> source = renderTarget9->getSurface();
@@ -263,11 +263,11 @@ angle::Result Blit9::copyCube(const gl::Context *context,
 
     ANGLE_TRY(initialize(context9));
 
-    const gl::FramebufferAttachment *colorbuffer = framebuffer->getColorbuffer(0);
+    const gl::FramebufferAttachment *colorbuffer = framebuffer->getColorAttachment(0);
     ASSERT(colorbuffer);
 
     RenderTarget9 *renderTarget9 = nullptr;
-    ANGLE_TRY(colorbuffer->getRenderTarget(context, &renderTarget9));
+    ANGLE_TRY(colorbuffer->getRenderTarget(context, 0, &renderTarget9));
     ASSERT(renderTarget9);
 
     angle::ComPtr<IDirect3DSurface9> source = renderTarget9->getSurface();

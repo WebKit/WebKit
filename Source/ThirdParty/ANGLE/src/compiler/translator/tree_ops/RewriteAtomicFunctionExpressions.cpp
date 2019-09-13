@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2018 The ANGLE Project Authors. All rights reserved.
+// Copyright 2018 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -171,12 +171,13 @@ bool RewriteAtomicFunctionExpressionsTraverser::visitBlock(Visit visit, TIntermB
 
 }  // anonymous namespace
 
-void RewriteAtomicFunctionExpressions(TIntermNode *root,
+bool RewriteAtomicFunctionExpressions(TCompiler *compiler,
+                                      TIntermNode *root,
                                       TSymbolTable *symbolTable,
                                       int shaderVersion)
 {
     RewriteAtomicFunctionExpressionsTraverser traverser(symbolTable, shaderVersion);
     traverser.traverse(root);
-    traverser.updateTree();
+    return traverser.updateTree(compiler, root);
 }
 }  // namespace sh

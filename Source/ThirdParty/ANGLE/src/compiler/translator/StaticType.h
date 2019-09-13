@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 The ANGLE Project Authors. All rights reserved.
+// Copyright 2017 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -27,7 +27,7 @@ namespace Helpers
 
 // Size of the constexpr-generated mangled name.
 // If this value is too small, the compiler will produce errors.
-static constexpr size_t kStaticMangledNameLength = 2;
+static constexpr size_t kStaticMangledNameLength = TBasicMangledName::mangledNameSize + 1;
 
 // Type which holds the mangled names for constexpr-generated TTypes.
 // This simple struct is needed so that a char array can be returned by value.
@@ -46,14 +46,18 @@ constexpr StaticMangledName BuildStaticMangledName(TBasicType basicType,
 {
     StaticMangledName name = {};
     name.name[0]           = TType::GetSizeMangledName(primarySize, secondarySize);
-    name.name[1]           = GetBasicMangledName(basicType);
-    name.name[2]           = '\0';
+    TBasicMangledName typeName(basicType);
+    char *mangledName = typeName.getName();
+    static_assert(TBasicMangledName::mangledNameSize == 2, "Mangled name size is not 2");
+    name.name[1] = mangledName[0];
+    name.name[2] = mangledName[1];
+    name.name[3] = '\0';
     return name;
 }
 
 // This "variable" contains the mangled names for every constexpr-generated TType.
 // If kMangledNameInstance<B, P, Q, PS, SS> is used anywhere (specifally
-// in kInstance, below), this is where the appropriate type will be stored.
+// in instance, below), this is where the appropriate type will be stored.
 template <TBasicType basicType,
           TPrecision precision,
           TQualifier qualifier,
@@ -67,14 +71,18 @@ static constexpr StaticMangledName kMangledNameInstance =
 //
 
 // This "variable" contains every constexpr-generated TType.
-// If kInstance<B, P, Q, PS, SS> is used anywhere (specifally
+// If instance<B, P, Q, PS, SS> is used anywhere (specifally
 // in Get, below), this is where the appropriate type will be stored.
+//
+// TODO(crbug.com/981610): This is constexpr but doesn't follow the kConstant naming convention
+// because TType has a mutable member that prevents it from being in .data.rel.ro and makes the
+// Android Binary Size builder complain when ANGLE is rolled in Chromium.
 template <TBasicType basicType,
           TPrecision precision,
           TQualifier qualifier,
           unsigned char primarySize,
           unsigned char secondarySize>
-static constexpr TType kInstance =
+static constexpr TType instance =
     TType(basicType,
           precision,
           qualifier,
@@ -97,7 +105,7 @@ constexpr const TType *Get()
 {
     static_assert(1 <= primarySize && primarySize <= 4, "primarySize out of bounds");
     static_assert(1 <= secondarySize && secondarySize <= 4, "secondarySize out of bounds");
-    return &Helpers::kInstance<basicType, precision, qualifier, primarySize, secondarySize>;
+    return &Helpers::instance<basicType, precision, qualifier, primarySize, secondarySize>;
 }
 
 //

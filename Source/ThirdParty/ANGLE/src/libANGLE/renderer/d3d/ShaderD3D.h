@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -16,7 +16,7 @@
 namespace angle
 {
 struct CompilerWorkaroundsD3D;
-struct WorkaroundsD3D;
+struct FeaturesD3D;
 }  // namespace angle
 
 namespace gl
@@ -34,7 +34,7 @@ class ShaderD3D : public ShaderImpl
 {
   public:
     ShaderD3D(const gl::ShaderState &data,
-              const angle::WorkaroundsD3D &workarounds,
+              const angle::FeaturesD3D &features,
               const gl::Extensions &extensions);
     ~ShaderD3D() override;
 
@@ -65,6 +65,7 @@ class ShaderD3D : public ShaderImpl
     bool usesMultipleRenderTargets() const { return mUsesMultipleRenderTargets; }
     bool usesFragColor() const { return mUsesFragColor; }
     bool usesFragData() const { return mUsesFragData; }
+    bool usesSecondaryColor() const { return mUsesSecondaryColor; }
     bool usesFragCoord() const { return mUsesFragCoord; }
     bool usesFrontFacing() const { return mUsesFrontFacing; }
     bool usesPointSize() const { return mUsesPointSize; }
@@ -81,6 +82,7 @@ class ShaderD3D : public ShaderImpl
     bool mUsesMultipleRenderTargets;
     bool mUsesFragColor;
     bool mUsesFragData;
+    bool mUsesSecondaryColor;
     bool mUsesFragCoord;
     bool mUsesFrontFacing;
     bool mUsesPointSize;

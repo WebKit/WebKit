@@ -76,4 +76,8 @@ TEST_P(TextureTargetEnableTest, SetSeparateUnits)
     }
 }
 
-ANGLE_INSTANTIATE_TEST(TextureTargetEnableTest, ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES());
+ANGLE_INSTANTIATE_TEST(TextureTargetEnableTest,
+                       ES1_D3D11(),
+                       ES1_OPENGL(),
+                       ES1_OPENGLES(),
+                       ES1_VULKAN());

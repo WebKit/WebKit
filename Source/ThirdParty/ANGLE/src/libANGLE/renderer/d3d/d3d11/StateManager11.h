@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -44,7 +44,7 @@ class ShaderConstants11 : angle::NonCopyable
                           const D3D11_VIEWPORT &dxViewport,
                           bool is9_3,
                           bool presentPathFast);
-    bool onFirstVertexChange(GLint firstVertex);
+    bool onFirstVertexChange(GLint firstVertex, GLint baseVertex);
     void onImageLayerChange(gl::ShaderType shaderType, unsigned int imageIndex, int layer);
     void onSamplerChange(gl::ShaderType shaderType,
                          unsigned int samplerIndex,
@@ -133,10 +133,11 @@ class ShaderConstants11 : angle::NonCopyable
 
     struct ImageMetadata
     {
-        ImageMetadata() : layer(0), padding{0} {}
+        ImageMetadata() : layer(0), level(0), padding{0} {}
 
         int layer;
-        int padding[3];  // This just pads the struct to 16 bytes
+        unsigned int level;
+        int padding[2];  // This just pads the struct to 16 bytes
     };
     static_assert(sizeof(ImageMetadata) == 16u,
                   "Image metadata struct must be one 4-vec --> 16 bytes.");
@@ -296,10 +297,18 @@ class StateManager11 final : angle::NonCopyable
                                         UINT resourceSlot,
                                         const UAVType *uav);
 
-    bool unsetConflictingView(ID3D11View *view);
-    bool unsetConflictingSRVs(gl::ShaderType shaderType,
+    void unsetConflictingView(gl::PipelineType pipeline, ID3D11View *view, bool isRenderTarget);
+    void unsetConflictingSRVs(gl::PipelineType pipeline,
+                              gl::ShaderType shaderType,
+                              uintptr_t resource,
+                              const gl::ImageIndex *index,
+                              bool isRenderTarget);
+    void unsetConflictingUAVs(gl::PipelineType pipeline,
+                              gl::ShaderType shaderType,
                               uintptr_t resource,
                               const gl::ImageIndex *index);
+    void unsetConflictingRTVs(uintptr_t resource);
+
     void unsetConflictingAttachmentResources(const gl::FramebufferAttachment &attachment,
                                              ID3D11Resource *resource);
 
@@ -347,9 +356,6 @@ class StateManager11 final : angle::NonCopyable
                                      bool readonly,
                                      const gl::ImageUnit &imageUnit);
 
-    // Faster than calling setTexture a jillion times
-    angle::Result clearSRVs(gl::ShaderType shaderType, size_t rangeStart, size_t rangeEnd);
-    angle::Result clearUAVs(gl::ShaderType shaderType, size_t rangeStart, size_t rangeEnd);
     void handleMultiviewDrawFramebufferChange(const gl::Context *context);
 
     angle::Result syncCurrentValueAttribs(
@@ -428,6 +434,10 @@ class StateManager11 final : angle::NonCopyable
         // DIRTY_BIT_SHADERS and DIRTY_BIT_TEXTURE_AND_SAMPLER_STATE should be dealt before
         // DIRTY_BIT_PROGRAM_UNIFORM_BUFFERS for update image layers.
         DIRTY_BIT_SHADERS,
+        // DIRTY_BIT_GRAPHICS_SRVUAV_STATE and DIRTY_BIT_COMPUTE_SRVUAV_STATE should be lower
+        // bits than DIRTY_BIT_TEXTURE_AND_SAMPLER_STATE.
+        DIRTY_BIT_GRAPHICS_SRVUAV_STATE,
+        DIRTY_BIT_COMPUTE_SRVUAV_STATE,
         DIRTY_BIT_TEXTURE_AND_SAMPLER_STATE,
         DIRTY_BIT_PROGRAM_UNIFORMS,
         DIRTY_BIT_DRIVER_UNIFORMS,
@@ -448,6 +458,7 @@ class StateManager11 final : angle::NonCopyable
 
     // Internal dirty bits.
     DirtyBits mInternalDirtyBits;
+    DirtyBits mGraphicsDirtyBitsMask;
     DirtyBits mComputeDirtyBitsMask;
 
     // Blend State
@@ -525,8 +536,11 @@ class StateManager11 final : angle::NonCopyable
 
     using SRVCache = ViewCache<ID3D11ShaderResourceView, D3D11_SHADER_RESOURCE_VIEW_DESC>;
     using UAVCache = ViewCache<ID3D11UnorderedAccessView, D3D11_UNORDERED_ACCESS_VIEW_DESC>;
+    using RTVCache = ViewCache<ID3D11RenderTargetView, D3D11_RENDER_TARGET_VIEW_DESC>;
     gl::ShaderMap<SRVCache> mCurShaderSRVs;
     UAVCache mCurComputeUAVs;
+    RTVCache mCurRTVs;
+
     SRVCache *getSRVCache(gl::ShaderType shaderType);
 
     // A block of NULL pointers, cached so we don't re-allocate every draw call

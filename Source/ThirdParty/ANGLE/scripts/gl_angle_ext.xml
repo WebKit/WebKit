@@ -619,7 +619,7 @@
             </command>
             <command>
             <proto>void <name>glGetFramebufferParameterivRobustANGLE</name></proto>
-                <param><ptype>GLuint</ptype> <name>sampler</name></param>
+                <param><ptype>GLenum</ptype> <name>target</name></param>
                 <param><ptype>GLenum</ptype> <name>pname</name></param>
                 <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
                 <param><ptype>GLsizei *</ptype> <name>length</name></param>
@@ -886,6 +886,44 @@
                 <param><ptype>GLsizei</ptype> <name>drawcount</name></param>
             </command>
             <command>
+            <proto>void <name>glDrawArraysInstancedBaseInstanceANGLE</name></proto>
+                <param group="PrimitiveType"><ptype>GLenum</ptype> <name>mode</name></param>
+                <param><ptype>GLint</ptype> <name>first</name></param>
+                <param><ptype>GLsizei</ptype> <name>count</name></param>
+                <param><ptype>GLsizei</ptype> <name>instanceCount</name></param>
+                <param><ptype>GLuint</ptype> <name>baseInstance</name></param>
+            </command>
+            <command>
+            <proto>void <name>glDrawElementsInstancedBaseVertexBaseInstanceANGLE</name></proto>
+                <param group="PrimitiveType"><ptype>GLenum</ptype> <name>mode</name></param>
+                <param><ptype>GLsizei</ptype> <name>count</name></param>
+                <param group="DrawElementsType"><ptype>GLenum</ptype> <name>type</name></param>
+                <param>const <ptype>GLvoid</ptype> *<name>indices</name></param>
+                <param><ptype>GLsizei</ptype> <name>instanceCounts</name></param>
+                <param><ptype>GLint</ptype> <name>baseVertex</name></param>
+                <param><ptype>GLuint</ptype> <name>baseInstance</name></param>
+            </command>
+            <command>
+            <proto>void <name>glMultiDrawArraysInstancedBaseInstanceANGLE</name></proto>
+                <param group="PrimitiveType"><ptype>GLenum</ptype> <name>mode</name></param>
+                <param><ptype>GLsizei</ptype> <name>drawcount</name></param>
+                <param len="COMPSIZE(primcount)">const <ptype>GLsizei</ptype> *<name>counts</name></param>
+                <param len="COMPSIZE(primcount)">const <ptype>GLsizei</ptype> *<name>instanceCounts</name></param>
+                <param len="COMPSIZE(primcount)">const <ptype>GLint</ptype> *<name>firsts</name></param>
+                <param len="COMPSIZE(primcount)">const <ptype>GLuint</ptype> *<name>baseInstances</name></param>
+            </command>
+            <command>
+            <proto>void <name>glMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE</name></proto>
+                <param group="PrimitiveType"><ptype>GLenum</ptype> <name>mode</name></param>
+                <param group="DrawElementsType"><ptype>GLenum</ptype> <name>type</name></param>
+                <param><ptype>GLsizei</ptype> <name>drawcount</name></param>
+                <param len="COMPSIZE(primcount)">const <ptype>GLsizei</ptype> *<name>counts</name></param>
+                <param len="COMPSIZE(primcount)">const <ptype>GLsizei</ptype> *<name>instanceCounts</name></param>
+                <param len="COMPSIZE(primcount)">const <ptype>GLvoid</ptype> *const*<name>indices</name></param>
+                <param len="COMPSIZE(primcount)">const <ptype>GLint</ptype> *<name>baseVertices</name></param>
+                <param len="COMPSIZE(primcount)">const <ptype>GLuint</ptype> *<name>baseInstances</name></param>
+            </command>
+            <command>
             <proto>void <name>glGetMultisamplefvANGLE</name></proto>
                 <param><ptype>GLenum</ptype> <name>pname</name></param>
                 <param><ptype>GLuint</ptype> <name>index</name></param>
@@ -904,6 +942,21 @@
                 <proto>void <name>glLoseContextCHROMIUM</name></proto>
                 <param group="GraphicsResetStatus"><ptype>GLenum</ptype> <name>current</name></param>
                 <param group="GraphicsResetStatus"><ptype>GLenum</ptype> <name>other</name></param>
+            </command>
+            <command>
+                <proto>void <name>glTexImage2DExternalANGLE</name></proto>
+                <param group="TextureTarget"><ptype>GLenum</ptype> <name>target</name></param>
+                <param group="CheckedInt32"><ptype>GLint</ptype> <name>level</name></param>
+                <param group="InternalFormat"><ptype>GLint</ptype> <name>internalformat</name></param>
+                <param><ptype>GLsizei</ptype> <name>width</name></param>
+                <param><ptype>GLsizei</ptype> <name>height</name></param>
+                <param group="CheckedInt32"><ptype>GLint</ptype> <name>border</name></param>
+                <param group="PixelFormat"><ptype>GLenum</ptype> <name>format</name></param>
+                <param group="PixelType"><ptype>GLenum</ptype> <name>type</name></param>
+            </command>
+            <command>
+                <proto>void <name>glInvalidateTextureANGLE</name></proto>
+                <param group="TextureTarget"><ptype>GLenum</ptype> <name>target</name></param>
             </command>
     </commands>
     <!-- SECTION: ANGLE extension interface definitions -->
@@ -1054,6 +1107,14 @@
                 <command name="glMultiDrawElementsInstancedANGLE"/>
             </require>
         </extension>
+        <extension name="GL_ANGLE_base_vertex_base_instance" supported='gles2'>
+            <require>
+                <command name="glDrawArraysInstancedBaseInstanceANGLE"/>
+                <command name="glDrawElementsInstancedBaseVertexBaseInstanceANGLE"/>
+                <command name="glMultiDrawArraysInstancedBaseInstanceANGLE"/>
+                <command name="glMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE"/>
+            </require>
+        </extension>
         <extension name="GL_ANGLE_provoking_vertex" supported='gles2'>
             <require>
                 <enum name="GL_FIRST_VERTEX_CONVENTION"/>
@@ -1068,6 +1129,12 @@
                 <enum name="GL_INNOCENT_CONTEXT_RESET"/>
                 <enum name="GL_UNKNOWN_CONTEXT_RESET"/>
                 <command name="glLoseContextCHROMIUM"/>
+            </require>
+        </extension>
+        <extension name="GL_ANGLE_texture_external_update" supported='gl|gles2'>
+            <require>
+                <command name="glTexImage2DExternalANGLE"/>
+                <command name="glInvalidateTextureANGLE"/>
             </require>
         </extension>
     </extensions>

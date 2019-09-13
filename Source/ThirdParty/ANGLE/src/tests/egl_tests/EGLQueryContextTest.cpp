@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015 The ANGLE Project Authors. All rights reserved.
+// Copyright 2015 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -10,13 +10,11 @@
 
 using namespace angle;
 
-class EGLQueryContextTest : public EGLTest, public testing::WithParamInterface<PlatformParameters>
+class EGLQueryContextTest : public ANGLETest
 {
   public:
-    void SetUp() override
+    void testSetUp() override
     {
-        EGLTest::SetUp();
-
         int clientVersion = GetParam().majorVersion;
 
         EGLint dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
@@ -49,7 +47,7 @@ class EGLQueryContextTest : public EGLTest, public testing::WithParamInterface<P
         EXPECT_TRUE(mSurface != EGL_NO_SURFACE);
     }
 
-    void TearDown() override
+    void testTearDown() override
     {
         if (mDisplay != EGL_NO_DISPLAY)
         {
@@ -88,7 +86,7 @@ TEST_P(EGLQueryContextTest, GetClientVersion)
     EGLint clientVersion;
     EXPECT_TRUE(eglQueryContext(mDisplay, mContext, EGL_CONTEXT_CLIENT_VERSION, &clientVersion) !=
                 EGL_FALSE);
-    EXPECT_TRUE(clientVersion == GetParam().majorVersion);
+    EXPECT_GE(clientVersion, GetParam().majorVersion);
 }
 
 TEST_P(EGLQueryContextTest, GetRenderBufferNoSurface)
@@ -120,7 +118,7 @@ TEST_P(EGLQueryContextTest, BadDisplay)
 TEST_P(EGLQueryContextTest, NotInitialized)
 {
     EGLint val;
-    TearDown();
+    testTearDown();
     EXPECT_TRUE(eglQueryContext(mDisplay, mContext, EGL_CONTEXT_CLIENT_TYPE, &val) == EGL_FALSE);
     EXPECT_TRUE(eglGetError() == EGL_NOT_INITIALIZED);
 
@@ -145,10 +143,9 @@ TEST_P(EGLQueryContextTest, BadAttribute)
 }
 
 ANGLE_INSTANTIATE_TEST(EGLQueryContextTest,
-                       ES2_D3D9(),
-                       ES2_D3D11(),
-                       ES2_D3D11_FL9_3(),
-                       ES2_OPENGL(),
-                       ES2_VULKAN(),
-                       ES3_D3D11(),
-                       ES3_OPENGL());
+                       WithNoFixture(ES2_D3D9()),
+                       WithNoFixture(ES2_D3D11()),
+                       WithNoFixture(ES2_OPENGL()),
+                       WithNoFixture(ES2_VULKAN()),
+                       WithNoFixture(ES3_D3D11()),
+                       WithNoFixture(ES3_OPENGL()));

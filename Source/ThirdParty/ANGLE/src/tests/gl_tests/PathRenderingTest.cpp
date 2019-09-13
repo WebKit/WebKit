@@ -1055,22 +1055,13 @@ class CHROMIUMPathRenderingWithTexturingTest : public ANGLETest
 
     bool isApplicable() const { return IsGLExtensionEnabled("GL_CHROMIUM_path_rendering"); }
 
-    void TearDown() override
+    void testTearDown() override
     {
         if (mProgram)
         {
             glDeleteProgram(mProgram);
             ASSERT_GL_NO_ERROR();
         }
-
-        ANGLETest::TearDown();
-    }
-
-    void SetUp() override
-    {
-        ANGLETest::SetUp();
-        mBindUniformLocation = reinterpret_cast<PFNGLBINDUNIFORMLOCATIONCHROMIUMPROC>(
-            eglGetProcAddress("glBindUniformLocationCHROMIUM"));
     }
 
     // Sets up the GL program state for the test.
@@ -1115,9 +1106,9 @@ class CHROMIUMPathRenderingWithTexturingTest : public ANGLETest
     void bindProgram()
     {
         glBindAttribLocation(mProgram, kPositionLocation, "position");
-        mBindUniformLocation(mProgram, kViewMatrixLocation, "view_matrix");
-        mBindUniformLocation(mProgram, kColorMatrixLocation, "color_matrix");
-        mBindUniformLocation(mProgram, kModelTranslateLocation, "model_translate");
+        glBindUniformLocationCHROMIUM(mProgram, kViewMatrixLocation, "view_matrix");
+        glBindUniformLocationCHROMIUM(mProgram, kColorMatrixLocation, "color_matrix");
+        glBindUniformLocationCHROMIUM(mProgram, kModelTranslateLocation, "model_translate");
         glBindFragmentInputLocationCHROMIUM(mProgram, kColorFragmentInputLocation, "color");
 
         ASSERT_GL_NO_ERROR();
@@ -1215,11 +1206,6 @@ class CHROMIUMPathRenderingWithTexturingTest : public ANGLETest
         kTestRows    = kResolution / kShapeHeight,
         kTestColumns = kResolution / kShapeWidth,
     };
-
-    typedef void(GL_APIENTRYP PFNGLBINDUNIFORMLOCATIONCHROMIUMPROC)(GLuint mProgram,
-                                                                    GLint location,
-                                                                    const GLchar *name);
-    PFNGLBINDUNIFORMLOCATIONCHROMIUMPROC mBindUniformLocation = nullptr;
 
     GLuint mProgram;
 

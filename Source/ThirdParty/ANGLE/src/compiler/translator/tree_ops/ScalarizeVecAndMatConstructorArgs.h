@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -12,16 +12,19 @@
 #define COMPILER_TRANSLATOR_TREEOPS_SCALARIZEVECANDMATCONSTRUCTORARGS_H_
 
 #include "GLSLANG/ShaderLang.h"
+#include "common/angleutils.h"
 
 namespace sh
 {
+class TCompiler;
 class TIntermBlock;
 class TSymbolTable;
 
-void ScalarizeVecAndMatConstructorArgs(TIntermBlock *root,
-                                       sh::GLenum shaderType,
-                                       bool fragmentPrecisionHigh,
-                                       TSymbolTable *symbolTable);
+ANGLE_NO_DISCARD bool ScalarizeVecAndMatConstructorArgs(TCompiler *compiler,
+                                                        TIntermBlock *root,
+                                                        sh::GLenum shaderType,
+                                                        bool fragmentPrecisionHigh,
+                                                        TSymbolTable *symbolTable);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_SCALARIZEVECANDMATCONSTRUCTORARGS_H_

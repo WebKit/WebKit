@@ -19,18 +19,19 @@
 #include "libANGLE/renderer/gl/StateManagerGL.h"
 #include "libANGLE/renderer/gl/formatutilsgl.h"
 #include "libANGLE/renderer/gl/renderergl_utils.h"
+#include "platform/FeaturesGL.h"
 
 namespace rx
 {
 RenderbufferGL::RenderbufferGL(const gl::RenderbufferState &state,
                                const FunctionsGL *functions,
-                               const WorkaroundsGL &workarounds,
+                               const angle::FeaturesGL &features,
                                StateManagerGL *stateManager,
                                BlitGL *blitter,
                                const gl::TextureCapsMap &textureCaps)
     : RenderbufferImpl(state),
       mFunctions(functions),
-      mWorkarounds(workarounds),
+      mFeatures(features),
       mStateManager(stateManager),
       mBlitter(blitter),
       mTextureCaps(textureCaps),
@@ -54,7 +55,7 @@ angle::Result RenderbufferGL::setStorage(const gl::Context *context,
     mStateManager->bindRenderbuffer(GL_RENDERBUFFER, mRenderbufferID);
 
     nativegl::RenderbufferFormat renderbufferFormat =
-        nativegl::GetRenderbufferFormat(mFunctions, mWorkarounds, internalformat);
+        nativegl::GetRenderbufferFormat(mFunctions, mFeatures, internalformat);
     mFunctions->renderbufferStorage(GL_RENDERBUFFER, renderbufferFormat.internalFormat,
                                     static_cast<GLsizei>(width), static_cast<GLsizei>(height));
 
@@ -72,7 +73,7 @@ angle::Result RenderbufferGL::setStorageMultisample(const gl::Context *context,
     mStateManager->bindRenderbuffer(GL_RENDERBUFFER, mRenderbufferID);
 
     nativegl::RenderbufferFormat renderbufferFormat =
-        nativegl::GetRenderbufferFormat(mFunctions, mWorkarounds, internalformat);
+        nativegl::GetRenderbufferFormat(mFunctions, mFeatures, internalformat);
     mFunctions->renderbufferStorageMultisample(
         GL_RENDERBUFFER, static_cast<GLsizei>(samples), renderbufferFormat.internalFormat,
         static_cast<GLsizei>(width), static_cast<GLsizei>(height));

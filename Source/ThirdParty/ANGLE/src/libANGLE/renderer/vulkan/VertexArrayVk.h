@@ -17,6 +17,7 @@
 namespace rx
 {
 class BufferVk;
+struct ConversionBuffer;
 
 class VertexArrayVk : public VertexArrayImpl
 {
@@ -47,7 +48,8 @@ class VertexArrayVk : public VertexArrayImpl
                                  GLint firstVertex,
                                  GLsizei vertexOrIndexCount,
                                  gl::DrawElementsType indexTypeOrInvalid,
-                                 const void *indices);
+                                 const void *indices,
+                                 uint32_t *indexCountOut);
 
     const gl::AttribArray<VkBuffer> &getCurrentArrayBufferHandles() const
     {
@@ -76,41 +78,42 @@ class VertexArrayVk : public VertexArrayImpl
 
     vk::BufferHelper *getCurrentElementArrayBuffer() const { return mCurrentElementArrayBuffer; }
 
-    angle::Result updateIndexTranslation(ContextVk *contextVk,
-                                         GLsizei indexCount,
-                                         gl::DrawElementsType type,
-                                         const void *indices);
+    angle::Result convertIndexBufferGPU(ContextVk *contextVk,
+                                        BufferVk *bufferVk,
+                                        const void *indices);
+
+    angle::Result convertIndexBufferCPU(ContextVk *contextVk,
+                                        gl::DrawElementsType indexType,
+                                        size_t indexCount,
+                                        const void *sourcePointer);
 
   private:
     void setDefaultPackedInput(ContextVk *contextVk, size_t attribIndex);
 
-    angle::Result streamIndexData(ContextVk *contextVk,
-                                  gl::DrawElementsType indexType,
-                                  size_t indexCount,
-                                  const void *sourcePointer,
-                                  vk::DynamicBuffer *dynamicBuffer);
-    angle::Result convertVertexBufferGpu(ContextVk *contextVk,
+    angle::Result convertVertexBufferGPU(ContextVk *contextVk,
                                          BufferVk *srcBuffer,
                                          const gl::VertexBinding &binding,
                                          size_t attribIndex,
-                                         const vk::Format &vertexFormat);
-    angle::Result convertVertexBufferCpu(ContextVk *contextVk,
+                                         const vk::Format &vertexFormat,
+                                         ConversionBuffer *conversion,
+                                         GLuint relativeOffset);
+    angle::Result convertVertexBufferCPU(ContextVk *contextVk,
                                          BufferVk *srcBuffer,
                                          const gl::VertexBinding &binding,
                                          size_t attribIndex,
-                                         const vk::Format &vertexFormat);
-    void ensureConversionReleased(RendererVk *renderer, size_t attribIndex);
+                                         const vk::Format &vertexFormat,
+                                         ConversionBuffer *conversion,
+                                         GLuint relativeOffset);
 
     angle::Result syncDirtyAttrib(ContextVk *contextVk,
                                   const gl::VertexAttribute &attrib,
                                   const gl::VertexBinding &binding,
-                                  size_t attribIndex);
+                                  size_t attribIndex,
+                                  bool bufferOnly);
 
     gl::AttribArray<VkBuffer> mCurrentArrayBufferHandles;
     gl::AttribArray<VkDeviceSize> mCurrentArrayBufferOffsets;
     gl::AttribArray<vk::BufferHelper *> mCurrentArrayBuffers;
-    gl::AttribArray<vk::DynamicBuffer> mCurrentArrayBufferConversion;
-    gl::AttribArray<bool> mCurrentArrayBufferConversionCanRelease;
     VkDeviceSize mCurrentElementArrayBufferOffset;
     vk::BufferHelper *mCurrentElementArrayBuffer;
 

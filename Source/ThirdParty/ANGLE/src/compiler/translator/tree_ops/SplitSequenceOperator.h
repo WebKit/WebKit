@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -12,13 +12,18 @@
 #ifndef COMPILER_TRANSLATOR_TREEOPS_SPLITSEQUENCEOPERATOR_H_
 #define COMPILER_TRANSLATOR_TREEOPS_SPLITSEQUENCEOPERATOR_H_
 
+#include "common/angleutils.h"
+
 namespace sh
 {
-
+class TCompiler;
 class TIntermNode;
 class TSymbolTable;
 
-void SplitSequenceOperator(TIntermNode *root, int patternsToSplitMask, TSymbolTable *symbolTable);
+ANGLE_NO_DISCARD bool SplitSequenceOperator(TCompiler *compiler,
+                                            TIntermNode *root,
+                                            int patternsToSplitMask,
+                                            TSymbolTable *symbolTable);
 
 }  // namespace sh
 

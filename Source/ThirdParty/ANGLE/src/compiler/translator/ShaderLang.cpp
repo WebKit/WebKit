@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -35,43 +35,6 @@ bool isInitialized = false;
 
 template <typename VarT>
 const std::vector<VarT> *GetVariableList(const TCompiler *compiler);
-
-template <>
-const std::vector<Uniform> *GetVariableList(const TCompiler *compiler)
-{
-    return &compiler->getUniforms();
-}
-
-template <>
-const std::vector<Varying> *GetVariableList(const TCompiler *compiler)
-{
-    switch (compiler->getShaderType())
-    {
-        case GL_VERTEX_SHADER:
-            return &compiler->getOutputVaryings();
-        case GL_FRAGMENT_SHADER:
-            return &compiler->getInputVaryings();
-        case GL_COMPUTE_SHADER:
-            ASSERT(compiler->getOutputVaryings().empty() && compiler->getInputVaryings().empty());
-            return &compiler->getOutputVaryings();
-        // Since geometry shaders have both input and output varyings, we shouldn't call GetVaryings
-        // on a geometry shader.
-        default:
-            return nullptr;
-    }
-}
-
-template <>
-const std::vector<Attribute> *GetVariableList(const TCompiler *compiler)
-{
-    return &compiler->getAttributes();
-}
-
-template <>
-const std::vector<OutputVariable> *GetVariableList(const TCompiler *compiler)
-{
-    return &compiler->getOutputVariables();
-}
 
 template <>
 const std::vector<InterfaceBlock> *GetVariableList(const TCompiler *compiler)
@@ -199,12 +162,15 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->EXT_shader_framebuffer_fetch             = 0;
     resources->NV_shader_framebuffer_fetch              = 0;
     resources->ARM_shader_framebuffer_fetch             = 0;
+    resources->OVR_multiview                            = 0;
     resources->OVR_multiview2                           = 0;
     resources->EXT_YUV_target                           = 0;
     resources->EXT_geometry_shader                      = 0;
     resources->OES_texture_storage_multisample_2d_array = 0;
+    resources->OES_texture_3D                           = 0;
     resources->ANGLE_texture_multisample                = 0;
     resources->ANGLE_multi_draw                         = 0;
+    resources->ANGLE_base_vertex_base_instance          = 0;
 
     resources->NV_draw_buffers = 0;
 
@@ -407,12 +373,17 @@ const std::map<std::string, std::string> *GetNameHashingMap(const ShHandle handl
     return &(compiler->getNameMap());
 }
 
-const std::vector<Uniform> *GetUniforms(const ShHandle handle)
+const std::vector<ShaderVariable> *GetUniforms(const ShHandle handle)
 {
-    return GetShaderVariables<Uniform>(handle);
+    TCompiler *compiler = GetCompilerFromHandle(handle);
+    if (!compiler)
+    {
+        return nullptr;
+    }
+    return &compiler->getUniforms();
 }
 
-const std::vector<Varying> *GetInputVaryings(const ShHandle handle)
+const std::vector<ShaderVariable> *GetInputVaryings(const ShHandle handle)
 {
     TCompiler *compiler = GetCompilerFromHandle(handle);
     if (compiler == nullptr)
@@ -422,7 +393,7 @@ const std::vector<Varying> *GetInputVaryings(const ShHandle handle)
     return &compiler->getInputVaryings();
 }
 
-const std::vector<Varying> *GetOutputVaryings(const ShHandle handle)
+const std::vector<ShaderVariable> *GetOutputVaryings(const ShHandle handle)
 {
     TCompiler *compiler = GetCompilerFromHandle(handle);
     if (compiler == nullptr)
@@ -432,19 +403,48 @@ const std::vector<Varying> *GetOutputVaryings(const ShHandle handle)
     return &compiler->getOutputVaryings();
 }
 
-const std::vector<Varying> *GetVaryings(const ShHandle handle)
+const std::vector<ShaderVariable> *GetVaryings(const ShHandle handle)
 {
-    return GetShaderVariables<Varying>(handle);
+    TCompiler *compiler = GetCompilerFromHandle(handle);
+    if (compiler == nullptr)
+    {
+        return nullptr;
+    }
+
+    switch (compiler->getShaderType())
+    {
+        case GL_VERTEX_SHADER:
+            return &compiler->getOutputVaryings();
+        case GL_FRAGMENT_SHADER:
+            return &compiler->getInputVaryings();
+        case GL_COMPUTE_SHADER:
+            ASSERT(compiler->getOutputVaryings().empty() && compiler->getInputVaryings().empty());
+            return &compiler->getOutputVaryings();
+        // Since geometry shaders have both input and output varyings, we shouldn't call GetVaryings
+        // on a geometry shader.
+        default:
+            return nullptr;
+    }
 }
 
-const std::vector<Attribute> *GetAttributes(const ShHandle handle)
+const std::vector<ShaderVariable> *GetAttributes(const ShHandle handle)
 {
-    return GetShaderVariables<Attribute>(handle);
+    TCompiler *compiler = GetCompilerFromHandle(handle);
+    if (!compiler)
+    {
+        return nullptr;
+    }
+    return &compiler->getAttributes();
 }
 
-const std::vector<OutputVariable> *GetOutputVariables(const ShHandle handle)
+const std::vector<ShaderVariable> *GetOutputVariables(const ShHandle handle)
 {
-    return GetShaderVariables<OutputVariable>(handle);
+    TCompiler *compiler = GetCompilerFromHandle(handle);
+    if (!compiler)
+    {
+        return nullptr;
+    }
+    return &compiler->getOutputVariables();
 }
 
 const std::vector<InterfaceBlock> *GetInterfaceBlocks(const ShHandle handle)

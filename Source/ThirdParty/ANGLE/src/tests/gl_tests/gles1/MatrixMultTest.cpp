@@ -74,4 +74,4 @@ TEST_P(MatrixMultTest, Translation)
     EXPECT_EQ(angle::Mat4(), outputMatrix);
 }
 
-ANGLE_INSTANTIATE_TEST(MatrixMultTest, ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES());
+ANGLE_INSTANTIATE_TEST(MatrixMultTest, ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES(), ES1_VULKAN());

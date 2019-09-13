@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 The ANGLE Project Authors. All rights reserved.
+// Copyright 2016 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -19,6 +19,8 @@ enum VendorID : uint32_t
 {
     VENDOR_ID_UNKNOWN = 0x0,
     VENDOR_ID_AMD     = 0x1002,
+    VENDOR_ID_ARM     = 0x13B5,
+    VENDOR_ID_GOOGLE  = 0x1AE0,
     VENDOR_ID_INTEL   = 0x8086,
     VENDOR_ID_NVIDIA  = 0x10DE,
     // This is Qualcomm PCI Vendor ID.
@@ -37,6 +39,11 @@ enum AndroidDeviceID : uint32_t
 inline bool IsAMD(uint32_t vendorId)
 {
     return vendorId == VENDOR_ID_AMD;
+}
+
+inline bool IsARM(uint32_t vendorId)
+{
+    return vendorId == VENDOR_ID_ARM;
 }
 
 inline bool IsIntel(uint32_t vendorId)
@@ -123,6 +130,22 @@ inline bool IsApple()
 #endif
 }
 
+struct OSVersion
+{
+    OSVersion();
+    OSVersion(int major, int minor, int patch);
+
+    int majorVersion = 0;
+    int minorVersion = 0;
+    int patchVersion = 0;
+};
+bool operator==(const OSVersion &a, const OSVersion &b);
+bool operator!=(const OSVersion &a, const OSVersion &b);
+bool operator<(const OSVersion &a, const OSVersion &b);
+bool operator>=(const OSVersion &a, const OSVersion &b);
+
+OSVersion GetMacOSVersion();
+
 inline bool IsAndroid()
 {
 #if defined(ANGLE_PLATFORM_ANDROID)
@@ -131,6 +154,8 @@ inline bool IsAndroid()
     return false;
 #endif
 }
+
+int GetAndroidSDKVersion();
 
 }  // namespace rx
 #endif  // LIBANGLE_RENDERER_DRIVER_UTILS_H_

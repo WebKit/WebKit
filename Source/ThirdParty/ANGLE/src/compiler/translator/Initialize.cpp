@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -61,6 +61,10 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
     {
         extBehavior[TExtension::ARM_shader_framebuffer_fetch] = EBhUndefined;
     }
+    if (resources.OVR_multiview)
+    {
+        extBehavior[TExtension::OVR_multiview] = EBhUndefined;
+    }
     if (resources.OVR_multiview2)
     {
         extBehavior[TExtension::OVR_multiview2] = EBhUndefined;
@@ -77,6 +81,10 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
     {
         extBehavior[TExtension::OES_texture_storage_multisample_2d_array] = EBhUndefined;
     }
+    if (resources.OES_texture_3D)
+    {
+        extBehavior[TExtension::OES_texture_3D] = EBhUndefined;
+    }
     if (resources.ANGLE_texture_multisample)
     {
         extBehavior[TExtension::ANGLE_texture_multisample] = EBhUndefined;
@@ -84,6 +92,10 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
     if (resources.ANGLE_multi_draw)
     {
         extBehavior[TExtension::ANGLE_multi_draw] = EBhUndefined;
+    }
+    if (resources.ANGLE_base_vertex_base_instance)
+    {
+        extBehavior[TExtension::ANGLE_base_vertex_base_instance] = EBhUndefined;
     }
 }
 

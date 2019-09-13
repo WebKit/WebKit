@@ -17,6 +17,7 @@
 #include <angle_gl.h>
 
 #include <cstdint>
+#include <ostream>
 
 namespace egl
 {
@@ -37,6 +38,7 @@ enum class CompositorTiming : uint8_t
 template <>
 CompositorTiming FromEGLenum<CompositorTiming>(EGLenum from);
 EGLenum ToEGLenum(CompositorTiming from);
+std::ostream &operator<<(std::ostream &os, CompositorTiming value);
 
 enum class MessageType : uint8_t
 {
@@ -52,6 +54,7 @@ enum class MessageType : uint8_t
 template <>
 MessageType FromEGLenum<MessageType>(EGLenum from);
 EGLenum ToEGLenum(MessageType from);
+std::ostream &operator<<(std::ostream &os, MessageType value);
 
 enum class ObjectType : uint8_t
 {
@@ -70,6 +73,7 @@ enum class ObjectType : uint8_t
 template <>
 ObjectType FromEGLenum<ObjectType>(EGLenum from);
 EGLenum ToEGLenum(ObjectType from);
+std::ostream &operator<<(std::ostream &os, ObjectType value);
 
 enum class TextureFormat : uint8_t
 {
@@ -84,6 +88,7 @@ enum class TextureFormat : uint8_t
 template <>
 TextureFormat FromEGLenum<TextureFormat>(EGLenum from);
 EGLenum ToEGLenum(TextureFormat from);
+std::ostream &operator<<(std::ostream &os, TextureFormat value);
 
 enum class Timestamp : uint8_t
 {
@@ -104,6 +109,7 @@ enum class Timestamp : uint8_t
 template <>
 Timestamp FromEGLenum<Timestamp>(EGLenum from);
 EGLenum ToEGLenum(Timestamp from);
+std::ostream &operator<<(std::ostream &os, Timestamp value);
 
 }  // namespace egl
 

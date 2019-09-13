@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -41,7 +41,7 @@ class TransformFeedbackTest : public testing::Test
         // Set a reasonable number of tf attributes
         mCaps.maxTransformFeedbackSeparateAttributes = 8;
 
-        mFeedback = new gl::TransformFeedback(&mMockFactory, 1, mCaps);
+        mFeedback = new gl::TransformFeedback(&mMockFactory, gl::TransformFeedbackID{1}, mCaps);
         mFeedback->addRef();
 
         mImpl = rx::GetImplAs<rx::MockTransformFeedbackImpl>(mFeedback);
@@ -112,7 +112,7 @@ TEST_F(TransformFeedbackTest, BufferBinding)
         .WillOnce(Return(bufferImpl))
         .RetiresOnSaturation();
 
-    gl::Buffer *buffer = new gl::Buffer(&mockGLFactory, 1);
+    gl::Buffer *buffer = new gl::Buffer(&mockGLFactory, {1});
 
     static const size_t bindIndex = 0;
 

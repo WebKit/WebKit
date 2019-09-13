@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 The ANGLE Project Authors. All rights reserved.
+// Copyright 2014 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -25,7 +25,7 @@ class ANGLE_UTIL_EXPORT OSWindow
     static OSWindow *New();
     static void Delete(OSWindow **osWindow);
 
-    virtual bool initialize(const std::string &name, size_t width, size_t height) = 0;
+    virtual bool initialize(const std::string &name, int width, int height)       = 0;
     virtual void destroy()                                                        = 0;
 
     int getX() const;

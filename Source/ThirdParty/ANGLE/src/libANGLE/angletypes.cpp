@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2013 The ANGLE Project Authors. All rights reserved.
+// Copyright 2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -241,20 +241,25 @@ static void MinMax(int a, int b, int *minimum, int *maximum)
     }
 }
 
+Rectangle Rectangle::flip(bool flipX, bool flipY) const
+{
+    Rectangle flipped = *this;
+    if (flipX)
+    {
+        flipped.x     = flipped.x + flipped.width;
+        flipped.width = -flipped.width;
+    }
+    if (flipY)
+    {
+        flipped.y      = flipped.y + flipped.height;
+        flipped.height = -flipped.height;
+    }
+    return flipped;
+}
+
 Rectangle Rectangle::removeReversal() const
 {
-    Rectangle unreversed = *this;
-    if (isReversedX())
-    {
-        unreversed.x     = unreversed.x + unreversed.width;
-        unreversed.width = -unreversed.width;
-    }
-    if (isReversedY())
-    {
-        unreversed.y      = unreversed.y + unreversed.height;
-        unreversed.height = -unreversed.height;
-    }
-    return unreversed;
+    return flip(isReversedX(), isReversedY());
 }
 
 bool Rectangle::encloses(const gl::Rectangle &inside) const
