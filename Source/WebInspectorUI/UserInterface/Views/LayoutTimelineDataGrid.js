@@ -29,11 +29,11 @@ WI.LayoutTimelineDataGrid = class LayoutTimelineDataGrid extends WI.TimelineData
 
     callFramePopoverAnchorElement()
     {
-        return this.selectedNode.elementWithColumnIdentifier("location");
+        return this.selectedNode.elementWithColumnIdentifier("initiator");
     }
 
     shouldShowCallFramePopover()
     {
-        return this.isColumnVisible("location");
+        return this.isColumnVisible("initiator");
     }
 };
