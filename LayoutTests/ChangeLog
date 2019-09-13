@@ -1,3 +1,13 @@
+2019-09-13  Ali Juma  <ajuma@chromium.org>
+
+        IntersectionObserverEntry#intersectionRatio can be larger than 1
+        https://bugs.webkit.org/show_bug.cgi?id=200776
+
+        Reviewed by Simon Fraser.
+
+        * intersection-observer/intersection-clipped-to-target-expected.txt: Added.
+        * intersection-observer/intersection-clipped-to-target.html: Added.
+
 2019-09-13  Russell Epstein  <repstein@apple.com>
 
         Layout Test http/tests/appcache/remove-cache.html is a flaky failure.

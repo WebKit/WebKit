@@ -1,3 +1,27 @@
+2019-09-13  Ali Juma  <ajuma@chromium.org>
+
+        IntersectionObserverEntry#intersectionRatio can be larger than 1
+        https://bugs.webkit.org/show_bug.cgi?id=200776
+
+        Reviewed by Simon Fraser.
+
+        When computing the intersection between a target and an intersection observer's 
+        root, RenderBox::computeVisibleRectInContainer is used to map the target rect
+        up the containing block chain, clipping along the way. When a RenderBox has
+        a transform, this method expands the given rect to the enclosing rect in device
+        pixels. This is fine for the use case of computing an invalidation rect, but for
+        the intersection observer use case it means that it is possible for the computed
+        intersection rect to be slightly larger than the original target rect, resulting
+        in an intersection ratio greater than 1.
+
+        Fix this by performing a final intersection between the intersection rect as
+        computed above and the target rect.
+
+        Test: intersection-observer/intersection-clipped-to-target.html
+
+        * dom/Document.cpp:
+        (WebCore::computeIntersectionState):
+
 2019-09-13  Nikolas Zimmermann  <zimmermann@kde.org>
 
         SMIL animations of SVG <view> element have no effect
