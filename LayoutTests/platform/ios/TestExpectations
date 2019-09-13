@@ -1218,9 +1218,7 @@ http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Failure 
 http/tests/security/cross-origin-plugin.html [ Failure ]
 http/tests/security/local-user-CSS-from-remote.html [ Failure ]
 http/tests/security/storage-blocking-loosened-plugin.html [ Failure ]
-http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Failure ]
 http/tests/security/storage-blocking-strengthened-plugin.html [ Failure ]
-http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Failure ]
 http/tests/security/svg-image-with-css-cross-domain.html [ ImageOnlyFailure ]
 
 # HTTP tests that are flaky:
