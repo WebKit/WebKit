@@ -567,7 +567,7 @@
 
 2019-09-10  Nikolas Zimmermann  <zimmermann@kde.org>
 
-        SMIL animations of SVG <view> element have no effect
+        Test SVGViewSpec behavior across page-loads with different anchors
         https://bugs.webkit.org/show_bug.cgi?id=201536
 
         Reviewed by Rob Buis.
