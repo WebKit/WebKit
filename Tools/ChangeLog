@@ -1,3 +1,14 @@
+2019-09-13  Alex Christensen  <achristensen@webkit.org>
+
+        [iOS] TestWebKitAPI.WebKit.TLSVersionWebSocket is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=201745
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+        (TestWebKitAPI::TEST):
+        The exact message isn't important.  The fact that the TLS handshake failed is, which is checked by the TCPServer.
+
 2019-09-13  Patrick Griffis  <pgriffis@igalia.com>
 
         [JHBuild] Fix building gst-plugins-good against glibc 2.30

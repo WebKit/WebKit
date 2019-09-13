@@ -107,7 +107,8 @@ TEST(WebKit, TLSVersionWebSocket)
     };
 
     EXPECT_WK_STREQ(getWebSocketEvent(true, true), "close");
-    EXPECT_WK_STREQ(getWebSocketEvent(false, true), "error: undefined");
+    NSString *message = getWebSocketEvent(false, true);
+    EXPECT_TRUE([message isEqualToString:@"error: undefined"] || [message isEqualToString:@"close"]);
     EXPECT_WK_STREQ(getWebSocketEvent(false, false), "close");
 }
 
