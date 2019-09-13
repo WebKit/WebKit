@@ -251,7 +251,6 @@
 		087558C613B4A57D00F49307 /* SurrogatePairAwareTextIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 087558C413B4A57D00F49307 /* SurrogatePairAwareTextIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0885067F11DA045B00182B98 /* PaintInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0885067D11DA045B00182B98 /* PaintInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0885068011DA045B00182B98 /* PaintPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0885067E11DA045B00182B98 /* PaintPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		088A0E06126EF1DB00978F7A /* SVGAnimatedPropertyDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 088A0DFD126EF1DB00978F7A /* SVGAnimatedPropertyDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		088A0E0C126EF1DB00978F7A /* SVGPropertyTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 088A0E03126EF1DB00978F7A /* SVGPropertyTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		088C2F7A12390081003D65CE /* SVGTextLayoutAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 088C2F7612390080003D65CE /* SVGTextLayoutAttributes.h */; };
 		089582560E857A7E00F82C83 /* ImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 089582540E857A7E00F82C83 /* ImageLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5536,7 +5535,6 @@
 		087558C413B4A57D00F49307 /* SurrogatePairAwareTextIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurrogatePairAwareTextIterator.h; sourceTree = "<group>"; };
 		0885067D11DA045B00182B98 /* PaintInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaintInfo.h; sourceTree = "<group>"; };
 		0885067E11DA045B00182B98 /* PaintPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaintPhase.h; sourceTree = "<group>"; };
-		088A0DFD126EF1DB00978F7A /* SVGAnimatedPropertyDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedPropertyDescription.h; sourceTree = "<group>"; };
 		088A0E03126EF1DB00978F7A /* SVGPropertyTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPropertyTraits.h; sourceTree = "<group>"; };
 		088C2F7512390080003D65CE /* SVGTextLayoutAttributes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTextLayoutAttributes.cpp; sourceTree = "<group>"; };
 		088C2F7612390080003D65CE /* SVGTextLayoutAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTextLayoutAttributes.h; sourceTree = "<group>"; };
@@ -16096,7 +16094,6 @@
 				55EE5358223B29F900FBA944 /* SVGAnimatedPropertyAccessorImpl.h */,
 				55EE535A223B29FB00FBA944 /* SVGAnimatedPropertyAnimator.h */,
 				55EE5356223B29F700FBA944 /* SVGAnimatedPropertyAnimatorImpl.h */,
-				088A0DFD126EF1DB00978F7A /* SVGAnimatedPropertyDescription.h */,
 				55EE535C223B2A0D00FBA944 /* SVGAnimatedPropertyImpl.h */,
 				7266F02A2243149B00833975 /* SVGAnimatedPropertyList.h */,
 				55BE025E223B29C40032F08A /* SVGAnimatedPropertyPairAccessor.h */,
@@ -25579,10 +25576,10 @@
 				C234A9AE21E92C1A003C984D /* WHLSLCheckDuplicateFunctions.h */,
 				1C840B9B21EC400900D0500D /* WHLSLChecker.cpp */,
 				1C840B9721EC400700D0500D /* WHLSLChecker.h */,
-				1C281C6D22B87B9800691C00 /* WHLSLCheckTextureReferences.cpp */,
-				1C281C6E22B87B9800691C00 /* WHLSLCheckTextureReferences.h */,
 				524BD47E23277E15008F56C1 /* WHLSLCheckReferenceTypes.cpp */,
 				524BD48023277E16008F56C1 /* WHLSLCheckReferenceTypes.h */,
+				1C281C6D22B87B9800691C00 /* WHLSLCheckTextureReferences.cpp */,
+				1C281C6E22B87B9800691C00 /* WHLSLCheckTextureReferences.h */,
 				522BAB9622E6A36200C54CE9 /* WHLSLCodeLocation.h */,
 				1C86CA4B22AA19FF001BF961 /* WHLSLComputeDimensions.cpp */,
 				1C86CA4C22AA19FF001BF961 /* WHLSLComputeDimensions.h */,
@@ -31783,7 +31780,6 @@
 				24D912B813CA9A6900D21915 /* SVGAltGlyphItemElement.h in Headers */,
 				B22279770D00BF220071B782 /* SVGAngle.h in Headers */,
 				B222797A0D00BF220071B782 /* SVGAnimateColorElement.h in Headers */,
-				088A0E06126EF1DB00978F7A /* SVGAnimatedPropertyDescription.h in Headers */,
 				B22279900D00BF220071B782 /* SVGAnimateElement.h in Headers */,
 				832B843419D8E55100B26055 /* SVGAnimateElementBase.h in Headers */,
 				B22279930D00BF220071B782 /* SVGAnimateMotionElement.h in Headers */,

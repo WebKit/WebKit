@@ -39,13 +39,13 @@ class SVGLengthAnimator final : public SVGValuePropertyAnimator<SVGLength, SVGAn
 public:
     static auto create(const QualifiedName& attributeName, Ref<SVGProperty>&& property, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
     {
-        return makeUnique<SVGLengthAnimator>(attributeName, WTFMove(property), animationMode, calcMode, isAccumulated, isAdditive, LengthModeOther);
+        return makeUnique<SVGLengthAnimator>(attributeName, WTFMove(property), animationMode, calcMode, isAccumulated, isAdditive, SVGLengthMode::Other);
     }
 
     void start(SVGElement* targetElement) override
     {
         String baseValue = computeCSSPropertyValue(targetElement, cssPropertyID(m_attributeName.localName()));
-        SVGLengthValue value(LengthModeOther);
+        SVGLengthValue value(SVGLengthMode::Other);
         if (!value.setValueAsString(baseValue).hasException())
             m_property->setValue(value);
     }

@@ -107,9 +107,9 @@ protected:
 private:
     bool isTextContent() const final { return true; }
 
-    Ref<SVGAnimatedLength> m_textLength { SVGAnimatedLength::create(this, LengthModeOther) };
+    Ref<SVGAnimatedLength> m_textLength { SVGAnimatedLength::create(this, SVGLengthMode::Other) };
     Ref<SVGAnimatedEnumeration> m_lengthAdjust { SVGAnimatedEnumeration::create(this, SVGLengthAdjustSpacing) };
-    SVGLengthValue m_specifiedTextLength { LengthModeOther };
+    SVGLengthValue m_specifiedTextLength { SVGLengthMode::Other };
 };
 
 } // namespace WebCore

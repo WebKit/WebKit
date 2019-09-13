@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,34 +22,14 @@
 
 #include "ExceptionOr.h"
 #include "FloatRect.h"
+#include "SVGLengthValue.h"
 #include "SVGUnitTypes.h"
 
 namespace WebCore {
 
 class SVGElement;
-class SVGLengthValue;
 
 struct Length;
-
-enum SVGLengthType {
-    LengthTypeUnknown = 0,
-    LengthTypeNumber,
-    LengthTypePercentage,
-    LengthTypeEMS,
-    LengthTypeEXS,
-    LengthTypePX,
-    LengthTypeCM,
-    LengthTypeMM,
-    LengthTypeIN,
-    LengthTypePT,
-    LengthTypePC
-};
-
-enum SVGLengthMode {
-    LengthModeWidth = 0,
-    LengthModeHeight,
-    LengthModeOther
-};
 
 class SVGLengthContext {
 public:
@@ -64,9 +45,9 @@ public:
     static FloatPoint resolvePoint(const SVGElement*, SVGUnitTypes::SVGUnitType, const SVGLengthValue& x, const SVGLengthValue& y);
     static float resolveLength(const SVGElement*, SVGUnitTypes::SVGUnitType, const SVGLengthValue&);
 
-    float valueForLength(const Length&, SVGLengthMode = LengthModeOther);
-    ExceptionOr<float> convertValueToUserUnits(float, SVGLengthMode, SVGLengthType fromUnit) const;
-    ExceptionOr<float> convertValueFromUserUnits(float, SVGLengthMode, SVGLengthType toUnit) const;
+    float valueForLength(const Length&, SVGLengthMode = SVGLengthMode::Other);
+    ExceptionOr<float> convertValueToUserUnits(float, SVGLengthType, SVGLengthMode) const;
+    ExceptionOr<float> convertValueFromUserUnits(float, SVGLengthType, SVGLengthMode) const;
 
     bool determineViewport(FloatSize&) const;
 

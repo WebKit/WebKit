@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "SVGLengthContext.h"
 #include "SVGLengthValue.h"
 #include "SVGValueProperty.h"
 
@@ -38,17 +39,17 @@ class SVGLength : public SVGValueProperty<SVGLengthValue> {
 public:
     // Forward declare these enums in the w3c naming scheme, for IDL generation
     enum {
-        SVG_LENGTHTYPE_UNKNOWN = LengthTypeUnknown,
-        SVG_LENGTHTYPE_NUMBER = LengthTypeNumber,
-        SVG_LENGTHTYPE_PERCENTAGE = LengthTypePercentage,
-        SVG_LENGTHTYPE_EMS = LengthTypeEMS,
-        SVG_LENGTHTYPE_EXS = LengthTypeEXS,
-        SVG_LENGTHTYPE_PX = LengthTypePX,
-        SVG_LENGTHTYPE_CM = LengthTypeCM,
-        SVG_LENGTHTYPE_MM = LengthTypeMM,
-        SVG_LENGTHTYPE_IN = LengthTypeIN,
-        SVG_LENGTHTYPE_PT = LengthTypePT,
-        SVG_LENGTHTYPE_PC = LengthTypePC
+        SVG_LENGTHTYPE_UNKNOWN      = static_cast<unsigned>(SVGLengthType::Unknown),
+        SVG_LENGTHTYPE_NUMBER       = static_cast<unsigned>(SVGLengthType::Number),
+        SVG_LENGTHTYPE_PERCENTAGE   = static_cast<unsigned>(SVGLengthType::Percentage),
+        SVG_LENGTHTYPE_EMS          = static_cast<unsigned>(SVGLengthType::Ems),
+        SVG_LENGTHTYPE_EXS          = static_cast<unsigned>(SVGLengthType::Exs),
+        SVG_LENGTHTYPE_PX           = static_cast<unsigned>(SVGLengthType::Pixels),
+        SVG_LENGTHTYPE_CM           = static_cast<unsigned>(SVGLengthType::Centimeters),
+        SVG_LENGTHTYPE_MM           = static_cast<unsigned>(SVGLengthType::Millimeters),
+        SVG_LENGTHTYPE_IN           = static_cast<unsigned>(SVGLengthType::Inches),
+        SVG_LENGTHTYPE_PT           = static_cast<unsigned>(SVGLengthType::Points),
+        SVG_LENGTHTYPE_PC           = static_cast<unsigned>(SVGLengthType::Picas)
     };
 
     static Ref<SVGLength> create()
@@ -79,9 +80,9 @@ public:
         return SVGLength::create(m_value);
     }
 
-    unsigned short unitType()
+    unsigned short unitType()  const
     {
-        return m_value.unitType();
+        return static_cast<unsigned>(m_value.lengthType());
     }
 
     ExceptionOr<float> valueForBindings()
@@ -94,7 +95,7 @@ public:
         if (isReadOnly())
             return Exception { NoModificationAllowedError };
 
-        auto result = m_value.setValue(value, SVGLengthContext { contextElement() });
+        auto result = m_value.setValue(SVGLengthContext { contextElement() }, value);
         if (result.hasException())
             return result;
         
@@ -135,12 +136,12 @@ public:
         if (isReadOnly())
             return Exception { NoModificationAllowedError };
 
-        auto result = m_value.newValueSpecifiedUnits(unitType, valueInSpecifiedUnits);
-        if (result.hasException())
-            return result;
-        
+        if (unitType == SVG_LENGTHTYPE_UNKNOWN || unitType > SVG_LENGTHTYPE_PC)
+            return Exception { NotSupportedError };
+
+        m_value = { valueInSpecifiedUnits, static_cast<SVGLengthType>(unitType), m_value.lengthMode() };
         commitChange();
-        return result;
+        return { };
     }
     
     ExceptionOr<void> convertToSpecifiedUnits(unsigned short unitType)
@@ -148,10 +149,13 @@ public:
         if (isReadOnly())
             return Exception { NoModificationAllowedError };
 
-        auto result = m_value.convertToSpecifiedUnits(unitType, SVGLengthContext { contextElement() });
+        if (unitType == SVG_LENGTHTYPE_UNKNOWN || unitType > SVG_LENGTHTYPE_PC)
+            return Exception { NotSupportedError };
+
+        auto result = m_value.convertToSpecifiedUnits(SVGLengthContext { contextElement() }, static_cast<SVGLengthType>(unitType));
         if (result.hasException())
             return result;
-        
+
         commitChange();
         return result;
     }

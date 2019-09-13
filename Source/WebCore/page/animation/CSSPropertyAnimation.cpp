@@ -285,7 +285,7 @@ static inline LengthBox blendFunc(const CSSPropertyBlendingClient* anim, const L
 
 static inline SVGLengthValue blendFunc(const CSSPropertyBlendingClient*, const SVGLengthValue& from, const SVGLengthValue& to, double progress)
 {
-    return to.blend(from, narrowPrecisionToFloat(progress));
+    return SVGLengthValue::blend(from, to, narrowPrecisionToFloat(progress));
 }
 
 static inline Vector<SVGLengthValue> blendFunc(const CSSPropertyBlendingClient*, const Vector<SVGLengthValue>& from, const Vector<SVGLengthValue>& to, double progress)
@@ -305,7 +305,7 @@ static inline Vector<SVGLengthValue> blendFunc(const CSSPropertyBlendingClient*,
     }
     Vector<SVGLengthValue> result(resultLength);
     for (size_t i = 0; i < resultLength; ++i)
-        result[i] = to[i % toLength].blend(from[i % fromLength], narrowPrecisionToFloat(progress));
+        result[i] = SVGLengthValue::blend(from[i % fromLength], to[i % toLength], narrowPrecisionToFloat(progress));
     return result;
 }
 

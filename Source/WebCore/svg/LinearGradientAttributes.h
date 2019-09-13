@@ -26,7 +26,7 @@ struct LinearGradientAttributes : GradientAttributes {
     LinearGradientAttributes()
         : m_x1()
         , m_y1()
-        , m_x2(LengthModeWidth, "100%")
+        , m_x2(SVGLengthMode::Width, "100%")
         , m_y2()
         , m_x1Set(false)
         , m_y1Set(false)

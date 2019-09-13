@@ -63,12 +63,12 @@ private:
     bool selfHasRelativeLengths() const override;
 
     PropertyRegistry m_propertyRegistry { *this };
-    Ref<SVGAnimatedLength> m_cx { SVGAnimatedLength::create(this, LengthModeWidth, "50%") };
-    Ref<SVGAnimatedLength> m_cy { SVGAnimatedLength::create(this, LengthModeHeight, "50%") };
-    Ref<SVGAnimatedLength> m_r { SVGAnimatedLength::create(this, LengthModeOther, "50%") };
-    Ref<SVGAnimatedLength> m_fx { SVGAnimatedLength::create(this, LengthModeWidth) };
-    Ref<SVGAnimatedLength> m_fy { SVGAnimatedLength::create(this, LengthModeHeight) };
-    Ref<SVGAnimatedLength> m_fr { SVGAnimatedLength::create(this, LengthModeOther, "0%") };
+    Ref<SVGAnimatedLength> m_cx { SVGAnimatedLength::create(this, SVGLengthMode::Width, "50%") };
+    Ref<SVGAnimatedLength> m_cy { SVGAnimatedLength::create(this, SVGLengthMode::Height, "50%") };
+    Ref<SVGAnimatedLength> m_r { SVGAnimatedLength::create(this, SVGLengthMode::Other, "50%") };
+    Ref<SVGAnimatedLength> m_fx { SVGAnimatedLength::create(this, SVGLengthMode::Width) };
+    Ref<SVGAnimatedLength> m_fy { SVGAnimatedLength::create(this, SVGLengthMode::Height) };
+    Ref<SVGAnimatedLength> m_fr { SVGAnimatedLength::create(this, SVGLengthMode::Other, "0%") };
 };
 
 } // namespace WebCore

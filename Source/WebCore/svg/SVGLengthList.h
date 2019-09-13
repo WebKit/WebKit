@@ -35,7 +35,7 @@ class SVGLengthList : public SVGValuePropertyList<SVGLength> {
     using Base::Base;
 
 public:
-    static Ref<SVGLengthList> create(SVGLengthMode lengthMode = LengthModeOther)
+    static Ref<SVGLengthList> create(SVGLengthMode lengthMode = SVGLengthMode::Other)
     {
         return adoptRef(*new SVGLengthList(lengthMode));
     }
@@ -110,7 +110,7 @@ private:
     {
     }
 
-    SVGLengthMode m_lengthMode { LengthModeOther };
+    SVGLengthMode m_lengthMode { SVGLengthMode::Other };
 };
 
 } // namespace WebCore

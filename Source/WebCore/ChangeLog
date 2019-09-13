@@ -1,3 +1,186 @@
+2019-09-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SVGLengthValue should use two enums for 'type' and 'mode' instead of one unsigned for 'units'
+        https://bugs.webkit.org/show_bug.cgi?id=201663
+
+        Reviewed by Simon Fraser, Nikolas Zimmermann.
+
+        SVGLengthValue had one unsigned to store SVGLengthMode and SVGLengthType.
+        It used to allocate the least significant 4 bits of this unsigned to the
+        SVGLengthMode while it leaves the rest for SVGLengthType.
+
+        This will not be needed if SVGLengthMode and SVGLengthType are made of
+        size uint_8.
+
+        Also in this patch:
+
+        -- SVGLengthNegativeValuesMode is made enum class.
+
+        -- SVGLengthValue::blend() is moved to SVGLengthValue.cpp so we do not
+           need to include SVGLengthContext.h in SVGLengthValue.h.
+
+        -- SVGLengthType and SVGLengthMode are moved to SVGLengthValue.h. Instead
+           of having SVGLengthValue.h includes SVGLengthConttext.h, the opposite
+           will happen.
+
+        -- SVGAnimatedPropertyDescription.h is deleted. It should have been deleted
+           with the SVG tear off objects removal.
+
+        -- SVGPropertyTraits<SVGAngleValue> and SVGPropertyTraits<SVGLengthValue>
+           are deleted. They should have been deleted with SVGAnimatedType removal.
+
+        -- SVGLengthValue::lengthModeForAnimatedLengthAttribute() is deleted. It
+           was only called from SVGPropertyTraits<SVGLengthValue>.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/StyleResolver.h:
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::initialBaselineShiftValue):
+        (WebCore::SVGRenderStyle::initialKerning):
+        * rendering/svg/RenderSVGEllipse.cpp:
+        (WebCore::RenderSVGEllipse::calculateRadiiAndCenter):
+        * rendering/svg/RenderSVGRect.cpp:
+        (WebCore::RenderSVGRect::updateShapeFromElement):
+        * rendering/svg/SVGPathData.cpp:
+        (WebCore::pathFromCircleElement):
+        (WebCore::pathFromEllipseElement):
+        (WebCore::pathFromRectElement):
+        * rendering/svg/SVGTextLayoutEngineBaseline.cpp:
+        (WebCore::SVGTextLayoutEngineBaseline::calculateBaselineShift const):
+        * rendering/svg/SVGTextLayoutEngineSpacing.cpp:
+        (WebCore::SVGTextLayoutEngineSpacing::calculateCSSKerningAndSpacing):
+        * svg/LinearGradientAttributes.h:
+        (WebCore::LinearGradientAttributes::LinearGradientAttributes):
+        * svg/RadialGradientAttributes.h:
+        (WebCore::RadialGradientAttributes::RadialGradientAttributes):
+        * svg/SVGAngleValue.h:
+        (WebCore::SVGPropertyTraits<SVGAngleValue>::initialValue): Deleted.
+        (WebCore::SVGPropertyTraits<SVGAngleValue>::toString): Deleted.
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::parseAttribute):
+        * svg/SVGCircleElement.h:
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::parseAttribute):
+        * svg/SVGCursorElement.h:
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::parseAttribute):
+        * svg/SVGEllipseElement.h:
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::parseAttribute):
+        * svg/SVGFilterElement.h:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::parseAttribute):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::parseAttribute):
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::parseAttribute):
+        * svg/SVGImageElement.h:
+        * svg/SVGLength.h:
+        (WebCore::SVGLength::unitType const):
+        (WebCore::SVGLength::setValueForBindings):
+        (WebCore::SVGLength::newValueSpecifiedUnits):
+        (WebCore::SVGLength::convertToSpecifiedUnits):
+        (WebCore::SVGLength::unitType): Deleted.
+        * svg/SVGLengthContext.cpp:
+        (WebCore::SVGLengthContext::valueForLength):
+        (WebCore::SVGLengthContext::convertValueToUserUnits const):
+        (WebCore::SVGLengthContext::convertValueFromUserUnits const):
+        (WebCore::SVGLengthContext::convertValueFromUserUnitsToPercentage const):
+        (WebCore::SVGLengthContext::convertValueFromPercentageToUserUnits const):
+        * svg/SVGLengthContext.h:
+        (): Deleted.
+        * svg/SVGLengthList.h:
+        (WebCore::SVGLengthList::create):
+        * svg/SVGLengthValue.cpp:
+        (WebCore::lengthTypeToString):
+        (WebCore::parseLengthType):
+        (WebCore::primitiveTypeToLengthType):
+        (WebCore::lengthTypeToPrimitiveType):
+        (WebCore::SVGLengthValue::SVGLengthValue):
+        (WebCore::SVGLengthValue::construct):
+        (WebCore::SVGLengthValue::blend):
+        (WebCore::SVGLengthValue::fromCSSPrimitiveValue):
+        (WebCore::SVGLengthValue::toCSSPrimitiveValue):
+        (WebCore::SVGLengthValue::setValueAsString):
+        (WebCore::SVGLengthValue::valueAsString const):
+        (WebCore::SVGLengthValue::valueForBindings const):
+        (WebCore::SVGLengthValue::setValue):
+        (WebCore::SVGLengthValue::convertToSpecifiedUnits):
+        (WebCore::storeUnit): Deleted.
+        (WebCore::extractMode): Deleted.
+        (WebCore::extractType): Deleted.
+        (WebCore::SVGLengthValue::operator== const): Deleted.
+        (WebCore::SVGLengthValue::operator!= const): Deleted.
+        (WebCore::SVGLengthValue::unitType const): Deleted.
+        (WebCore::SVGLengthValue::unitMode const): Deleted.
+        (WebCore::SVGLengthValue::valueAsPercentage const): Deleted.
+        (WebCore::SVGLengthValue::newValueSpecifiedUnits): Deleted.
+        (WebCore::SVGLengthValue::lengthModeForAnimatedLengthAttribute): Deleted.
+        * svg/SVGLengthValue.h:
+        (WebCore::SVGLengthValue::lengthType const):
+        (WebCore::SVGLengthValue::lengthMode const):
+        (WebCore::SVGLengthValue::isZero const):
+        (WebCore::SVGLengthValue::isRelative const):
+        (WebCore::SVGLengthValue::valueAsPercentage const):
+        (WebCore::SVGLengthValue::valueInSpecifiedUnits const):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        (WebCore::SVGLengthValue::blend const): Deleted.
+        (WebCore::SVGPropertyTraits<SVGLengthValue>::initialValue): Deleted.
+        (WebCore::SVGPropertyTraits<SVGLengthValue>::parse): Deleted.
+        (WebCore::SVGPropertyTraits<SVGLengthValue>::toString): Deleted.
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::parseAttribute):
+        * svg/SVGLineElement.h:
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::parseAttribute):
+        * svg/SVGLinearGradientElement.h:
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::parseAttribute):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::parseAttribute):
+        * svg/SVGMaskElement.h:
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::parseAttribute):
+        * svg/SVGPatternElement.h:
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::parseAttribute):
+        * svg/SVGRadialGradientElement.h:
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::parseAttribute):
+        * svg/SVGRectElement.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseAttribute):
+        (WebCore::SVGSVGElement::hasIntrinsicWidth const):
+        (WebCore::SVGSVGElement::hasIntrinsicHeight const):
+        (WebCore::SVGSVGElement::intrinsicWidth const):
+        (WebCore::SVGSVGElement::intrinsicHeight const):
+        * svg/SVGSVGElement.h:
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::parseAttribute):
+        (WebCore::SVGTextContentElement::textLengthAnimated):
+        * svg/SVGTextContentElement.h:
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::parseAttribute):
+        * svg/SVGTextPathElement.h:
+        * svg/SVGTextPositioningElement.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::parseAttribute):
+        * svg/SVGUseElement.h:
+        * svg/properties/SVGAnimatedPropertyAccessorImpl.h:
+        * svg/properties/SVGAnimatedPropertyDescription.h: Removed.
+        * svg/properties/SVGAnimationAdditiveListFunctionImpl.h:
+        (WebCore::SVGAnimationLengthListFunction::animate):
+        * svg/properties/SVGAnimationAdditiveValueFunctionImpl.h:
+        (WebCore::SVGAnimationLengthFunction::animate):
+        * svg/properties/SVGValuePropertyAnimatorImpl.h:
+        * svg/properties/SVGValuePropertyListAnimatorImpl.h:
+
 2019-09-12  Chris Dumez  <cdumez@apple.com>
 
         Node.replaceChild()'s pre-replacement validations are not done in the right order
