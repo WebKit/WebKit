@@ -78,9 +78,6 @@ public:
 #if ENABLE(SERVICE_WORKER)
     WebSWClientConnection* existingServiceWorkerConnectionForSession(PAL::SessionID sessionID) { return m_swConnectionsBySession.get(sessionID); }
     WebSWClientConnection& serviceWorkerConnectionForSession(PAL::SessionID);
-
-    WebCore::SWServerConnectionIdentifier initializeSWClientConnection(WebSWClientConnection&);
-    void removeSWClientConnection(WebSWClientConnection&);
 #endif
 
 private:
@@ -113,7 +110,6 @@ private:
 
 #if ENABLE(SERVICE_WORKER)
     HashMap<PAL::SessionID, RefPtr<WebSWClientConnection>> m_swConnectionsBySession;
-    HashMap<WebCore::SWServerConnectionIdentifier, WebSWClientConnection*> m_swConnectionsByIdentifier;
 #endif
 };
 

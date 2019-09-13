@@ -34,6 +34,7 @@
 
 namespace WebCore {
 struct FetchOptions;
+struct MessageWithMessagePorts;
 class ResourceRequest;
 }
 
@@ -81,6 +82,8 @@ private:
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
+
+    void postMessageToServiceWorkerClient(PAL::SessionID, const WebCore::ServiceWorkerClientIdentifier& destinationIdentifier, const WebCore::MessageWithMessagePorts&, WebCore::ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin);
 
     // Messages to the SW host WebProcess
     void installServiceWorkerContext(const WebCore::ServiceWorkerContextData&, PAL::SessionID, const String& userAgent) final;

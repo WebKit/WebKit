@@ -79,7 +79,8 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    EstablishSWServerConnection(PAL::SessionID sessionID) -> (WebCore::SWServerConnectionIdentifier serverConnectionIdentifier) Synchronous
+    EstablishSWServerConnection(PAL::SessionID sessionID)
+    EstablishSWContextConnection(WebCore::RegistrableDomain domain)
 #endif
 
     CreateNewMessagePortChannel(struct WebCore::MessagePortIdentifier port1, struct WebCore::MessagePortIdentifier port2)

@@ -213,21 +213,22 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
     
 #if ENABLE(SERVICE_WORKER)
     if (decoder.messageReceiverName() == Messages::WebSWServerConnection::messageReceiverName()) {
-        if (auto swConnection = m_swConnections.get(makeObjectIdentifier<SWServerConnectionIdentifierType>(decoder.destinationID())))
+        if (auto swConnection = m_swConnections.get(PAL::SessionID { decoder.destinationID() }))
             swConnection->didReceiveMessage(connection, decoder);
         return;
     }
-
     if (decoder.messageReceiverName() == Messages::WebSWServerToContextConnection::messageReceiverName()) {
-        if (auto* contextConnection = m_networkProcess->connectionToContextProcessFromIPCConnection(connection)) {
-            contextConnection->didReceiveMessage(connection, decoder);
+        ASSERT(m_swContextConnection);
+        if (m_swContextConnection) {
+            m_swContextConnection->didReceiveMessage(connection, decoder);
             return;
         }
     }
 
     if (decoder.messageReceiverName() == Messages::ServiceWorkerFetchTask::messageReceiverName()) {
-        if (auto* contextConnection = m_networkProcess->connectionToContextProcessFromIPCConnection(connection)) {
-            contextConnection->didReceiveFetchTaskMessage(connection, decoder);
+        ASSERT(m_swContextConnection);
+        if (m_swContextConnection) {
+            m_swContextConnection->didReceiveFetchTaskMessage(connection, decoder);
             return;
         }
     }
@@ -268,7 +269,7 @@ void NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& conne
 
 #if ENABLE(SERVICE_WORKER)
     if (decoder.messageReceiverName() == Messages::WebSWServerConnection::messageReceiverName()) {
-        if (auto swConnection = m_swConnections.get(makeObjectIdentifier<SWServerConnectionIdentifierType>(decoder.destinationID())))
+        if (auto swConnection = m_swConnections.get(PAL::SessionID { decoder.destinationID() }))
             swConnection->didReceiveSyncMessage(connection, decoder, reply);
         return;
     }
@@ -285,10 +286,20 @@ void NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& conne
 void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
 {
 #if ENABLE(SERVICE_WORKER)
-    if (RefPtr<WebSWServerToContextConnection> serverToContextConnection = m_networkProcess->connectionToContextProcessFromIPCConnection(connection)) {
-        // Service Worker process exited.
-        m_networkProcess->connectionToContextProcessWasClosed(serverToContextConnection.releaseNonNull());
-        return;
+    if (m_swContextConnection) {
+        auto connection = WTFMove(m_swContextConnection);
+        auto& registrableDomain = connection->registrableDomain();
+
+        connection->connectionClosed();
+
+        Optional<PAL::SessionID> sessionID;
+        m_networkProcess->forEachSWServer([&](auto& server) {
+            server.markAllWorkersForRegistrableDomainAsTerminated(registrableDomain);
+            if (server.needsServerToContextConnectionForRegistrableDomain(registrableDomain))
+                sessionID = server.sessionID();
+        });
+        if (sessionID)
+            m_networkProcess->createServerToContextConnection(registrableDomain, *sessionID);
     }
 #else
     UNUSED_PARAM(connection);
@@ -863,18 +874,23 @@ void NetworkConnectionToWebProcess::unregisterSWConnections()
     }
 }
 
-void NetworkConnectionToWebProcess::establishSWServerConnection(PAL::SessionID sessionID, CompletionHandler<void(WebCore::SWServerConnectionIdentifier&&)>&& completionHandler)
+void NetworkConnectionToWebProcess::establishSWServerConnection(PAL::SessionID sessionID)
 {
     auto& server = m_networkProcess->swServerForSession(sessionID);
-    auto connection = makeUnique<WebSWServerConnection>(m_networkProcess, server, m_connection.get(), sessionID);
-    
-    SWServerConnectionIdentifier serverConnectionIdentifier = connection->identifier();
-    LOG(ServiceWorker, "NetworkConnectionToWebProcess::establishSWServerConnection - %s", serverConnectionIdentifier.loggingString().utf8().data());
+    auto connection = makeUnique<WebSWServerConnection>(m_networkProcess, server, m_connection.get(), m_webProcessIdentifier, sessionID);
 
-    ASSERT(!m_swConnections.contains(serverConnectionIdentifier));
-    m_swConnections.add(serverConnectionIdentifier, makeWeakPtr(*connection));
+    ASSERT(!m_swConnections.contains(sessionID));
+    m_swConnections.add(sessionID, makeWeakPtr(*connection));
     server.addConnection(WTFMove(connection));
-    completionHandler(WTFMove(serverConnectionIdentifier));
+}
+
+void NetworkConnectionToWebProcess::establishSWContextConnection(RegistrableDomain&& registrableDomain)
+{
+    m_swContextConnection = WebSWServerToContextConnection::create(m_networkProcess, registrableDomain, m_connection.get());
+
+    m_networkProcess->forEachSWServer([&](auto& server) {
+        server.serverToContextConnectionCreated(*m_swContextConnection);
+    });
 }
 #endif
 

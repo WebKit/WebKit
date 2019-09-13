@@ -1,3 +1,13 @@
+2019-09-13  Youenn Fablet  <youenn@apple.com>
+
+        Use WebProcess processIdentifier to identify Service Worker connections
+        https://bugs.webkit.org/show_bug.cgi?id=201459
+
+        Reviewed by Chris Dumez.
+
+        * pal/SessionID.h:
+        (PAL::SessionID::SessionID):
+
 2019-09-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r249801.

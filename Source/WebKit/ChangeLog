@@ -1,3 +1,110 @@
+2019-09-13  Youenn Fablet  <youenn@apple.com>
+
+        Use WebProcess processIdentifier to identify Service Worker connections
+        https://bugs.webkit.org/show_bug.cgi?id=201459
+
+        Reviewed by Chris Dumez.
+
+        Make WebSWServerConnection be stored in NetworkConnectionToWebProcess.
+        They are now keyed by session IDs hence why WebSWClientConnection is using the session ID as message connection ID.
+        Creation no longer requires a sync IPC since the connection is uniquely identified by its session ID and its process ID.
+        These IDs are stable over network process crash.
+        Within NetworkProcess, a server connection is managed by a SWServer which is session ID specific.
+        In that case, the process identifier uniquely identifies the connection.
+
+        Move WebSWServerToContextConnection be owned by NetworkConnectionToWebProcess.
+        Instead of creating it when webprocess is connecting to network process, use a dedicated IPC message.
+        This is similar to WebSWServerConnection once WebProcess asks to create it.
+        This will allow existing WebProcess, in cache or running pages, to run service workers as well.
+        A context connection map is kept in Network Process to reuse context connections since these connections are not sessionID specific.
+
+        Migrate from a single boolean to a HashSet to track whether some connections are in the process of being created.
+        Previously if two requests to create connections were done shortly one after the other on different registrable
+        domains, the second request would not be processed.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        (WebKit::NetworkConnectionToWebProcess::didReceiveSyncMessage):
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        (WebKit::NetworkConnectionToWebProcess::establishSWServerConnection):
+        (WebKit::NetworkConnectionToWebProcess::establishSWContextConnection):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didReceiveMessage):
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess):
+        (WebKit::NetworkProcess::forEachSWServer):
+        (WebKit::NetworkProcess::needsServerToContextConnectionForRegistrableDomain const):
+        (WebKit::NetworkProcess::createServerToContextConnection):
+        (WebKit::NetworkProcess::postMessageToServiceWorkerClient):
+        (WebKit::NetworkProcess::registerSWServerConnection):
+        (WebKit::NetworkProcess::unregisterSWServerConnection):
+        (WebKit::NetworkProcess::registerSWContextConnection):
+        (WebKit::NetworkProcess::unregisterSWContextConnection):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::WebSWServerConnection):
+        (WebKit::WebSWServerConnection::postMessageToServiceWorkerClient):
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::WebSWServerToContextConnection):
+        (WebKit::WebSWServerToContextConnection::~WebSWServerToContextConnection):
+        (WebKit::WebSWServerToContextConnection::postMessageToServiceWorkerClient):
+        (WebKit::WebSWServerToContextConnection::connectionMayNoLongerBeNeeded):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::openNetworkProcessConnection):
+        (WebKit::NetworkProcessProxy::establishWorkerContextConnectionToNetworkProcess):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToNetworkProcess):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::establishServiceWorkerContext):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        (WebKit::NetworkProcessConnection::didClose):
+        (WebKit::NetworkProcessConnection::serviceWorkerConnectionForSession):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::WebSWClientConnection):
+        (WebKit::WebSWClientConnection::~WebSWClientConnection):
+        (WebKit::WebSWClientConnection::messageSenderConnection const):
+        (WebKit::WebSWClientConnection::scheduleJobInServer):
+        (WebKit::WebSWClientConnection::finishFetchingScriptInServer):
+        (WebKit::WebSWClientConnection::addServiceWorkerRegistrationInServer):
+        (WebKit::WebSWClientConnection::removeServiceWorkerRegistrationInServer):
+        (WebKit::WebSWClientConnection::postMessageToServiceWorker):
+        (WebKit::WebSWClientConnection::registerServiceWorkerClient):
+        (WebKit::WebSWClientConnection::unregisterServiceWorkerClient):
+        (WebKit::WebSWClientConnection::didResolveRegistrationPromise):
+        (WebKit::WebSWClientConnection::matchRegistration):
+        (WebKit::WebSWClientConnection::runOrDelayTaskForImport):
+        (WebKit::WebSWClientConnection::whenRegistrationReady):
+        (WebKit::WebSWClientConnection::getRegistrations):
+        (WebKit::WebSWClientConnection::startFetch):
+        (WebKit::WebSWClientConnection::cancelFetch):
+        (WebKit::WebSWClientConnection::continueDidReceiveFetchResponse):
+        (WebKit::WebSWClientConnection::connectionToServerLost):
+        (WebKit::WebSWClientConnection::clear):
+        (WebKit::WebSWClientConnection::syncTerminateWorker):
+        (WebKit::WebSWClientConnection::updateThrottleState):
+        (WebKit::WebSWClientConnection::storeRegistrationsOnDiskForTesting):
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::WebSWContextManagerConnection):
+        (WebKit::m_userAgent):
+        (WebKit::WebSWContextManagerConnection::postMessageToServiceWorkerClient):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::establishWorkerContextConnectionToNetworkProcess):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2019-09-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r249801.

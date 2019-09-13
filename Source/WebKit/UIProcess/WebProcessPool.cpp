@@ -687,24 +687,22 @@ void WebProcessPool::getNetworkProcessConnection(WebProcessProxy& webProcessProx
 }
 
 #if ENABLE(SERVICE_WORKER)
-void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkProcessProxy& proxy, RegistrableDomain&& registrableDomain, Optional<PAL::SessionID> sessionID)
+void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkProcessProxy& proxy, RegistrableDomain&& registrableDomain, PAL::SessionID sessionID)
 {
     ASSERT_UNUSED(proxy, &proxy == m_networkProcess.get());
 
-    if (m_serviceWorkerProcesses.contains(registrableDomain))
-        return;
-
     m_mayHaveRegisteredServiceWorkers.clear();
 
-    WebsiteDataStore* websiteDataStore = nullptr;
-    if (sessionID)
-        websiteDataStore = WebsiteDataStore::existingNonDefaultDataStoreForSessionID(*sessionID);
+    auto* websiteDataStore = WebsiteDataStore::existingNonDefaultDataStoreForSessionID(sessionID);
 
     if (!websiteDataStore) {
         if (!m_websiteDataStore)
             m_websiteDataStore = API::WebsiteDataStore::defaultDataStore().ptr();
         websiteDataStore = &m_websiteDataStore->websiteDataStore();
     }
+
+    if (m_serviceWorkerProcesses.contains(registrableDomain))
+        return;
 
     if (m_serviceWorkerProcesses.isEmpty())
         sendToAllProcesses(Messages::WebProcess::RegisterServiceWorkerClients { });
@@ -718,7 +716,7 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
     auto* serviceWorkerProcessProxyPtr = serviceWorkerProcessProxy.ptr();
     m_processes.append(WTFMove(serviceWorkerProcessProxy));
 
-    serviceWorkerProcessProxyPtr->establishServiceWorkerContext(m_serviceWorkerPreferences ? m_serviceWorkerPreferences.value() : m_defaultPageGroup->preferences().store(), sessionID.valueOr(PAL::SessionID::defaultSessionID()));
+    serviceWorkerProcessProxyPtr->establishServiceWorkerContext(m_serviceWorkerPreferences ? m_serviceWorkerPreferences.value() : m_defaultPageGroup->preferences().store());
     if (!m_serviceWorkerUserAgent.isNull())
         serviceWorkerProcessProxyPtr->setServiceWorkerUserAgent(m_serviceWorkerUserAgent);
 }

@@ -50,9 +50,9 @@ namespace WebCore {
 
 static Seconds terminationDelay { 10_s };
 
-SWServer::Connection::Connection(SWServer& server)
+SWServer::Connection::Connection(SWServer& server, Identifier identifier)
     : m_server(server)
-    , m_identifier(SWServerConnectionIdentifier::generate())
+    , m_identifier(identifier)
 {
 }
 

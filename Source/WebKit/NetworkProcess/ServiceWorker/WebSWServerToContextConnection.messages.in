@@ -36,6 +36,7 @@ messages -> WebSWServerToContextConnection {
     MatchAll(uint64_t matchAllRequestIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, struct WebCore::ServiceWorkerClientQueryOptions options);
     Claim(uint64_t claimRequestIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier);
     SetScriptResource(WebCore::ServiceWorkerIdentifier identifier, URL scriptURL, String script, URL responseURL, String mimeType);
+    PostMessageToServiceWorkerClient(PAL::SessionID sessionID, struct WebCore::ServiceWorkerClientIdentifier destination, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerIdentifier source, String sourceOrigin)
 }
 
 #endif // ENABLE(SERVICE_WORKER)

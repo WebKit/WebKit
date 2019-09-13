@@ -52,7 +52,7 @@ public:
     static Ref<WebSWClientConnection> create(PAL::SessionID sessionID) { return adoptRef(*new WebSWClientConnection { sessionID }); }
     ~WebSWClientConnection();
 
-    WebCore::SWServerConnectionIdentifier serverConnectionIdentifier() const final;
+    WebCore::SWServerConnectionIdentifier serverConnectionIdentifier() const final { return m_identifier; }
 
     void addServiceWorkerRegistrationInServer(WebCore::ServiceWorkerRegistrationIdentifier) final;
     void removeServiceWorkerRegistrationInServer(WebCore::ServiceWorkerRegistrationIdentifier) final;
@@ -73,8 +73,6 @@ public:
 
 private:
     explicit WebSWClientConnection(PAL::SessionID);
-
-    void initializeConnectionIfNeeded();
 
     void scheduleJobInServer(const WebCore::ServiceWorkerJobData&) final;
     void finishFetchingScriptInServer(const WebCore::ServiceWorkerFetchResult&) final;
@@ -97,27 +95,26 @@ private:
 
     void scheduleStorageJob(const WebCore::ServiceWorkerJobData&);
 
-    void runOrDelayTaskForImport(WTF::Function<void()>&& task);
+    void runOrDelayTaskForImport(Function<void()>&& task);
 
-    IPC::Connection* messageSenderConnection() const final { return m_connection.get(); }
-    uint64_t messageSenderDestinationID() const final { return m_identifier.toUInt64(); }
+    IPC::Connection* messageSenderConnection() const final;
+    uint64_t messageSenderDestinationID() const final { return m_sessionID.toUInt64(); }
 
     void setSWOriginTableSharedMemory(const SharedMemory::Handle&);
     void setSWOriginTableIsImported();
 
-    template<typename U> void ensureConnectionAndSend(const U& message);
+    void clear();
 
     PAL::SessionID m_sessionID;
     WebCore::SWServerConnectionIdentifier m_identifier;
 
-    RefPtr<IPC::Connection> m_connection;
     UniqueRef<WebSWOriginTable> m_swOriginTable;
 
     uint64_t m_previousCallbackIdentifier { 0 };
     HashMap<uint64_t, RegistrationCallback> m_ongoingMatchRegistrationTasks;
     HashMap<uint64_t, GetRegistrationsCallback> m_ongoingGetRegistrationsTasks;
     HashMap<uint64_t, WhenRegistrationReadyCallback> m_ongoingRegistrationReadyTasks;
-    Deque<WTF::Function<void()>> m_tasksPendingOriginImport;
+    Deque<Function<void()>> m_tasksPendingOriginImport;
     bool m_isThrottleable { true };
 }; // class WebSWServerConnection
 

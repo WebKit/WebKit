@@ -298,16 +298,17 @@ public:
 
 #if ENABLE(SERVICE_WORKER)
     WebSWServerToContextConnection* serverToContextConnectionForRegistrableDomain(const WebCore::RegistrableDomain&);
-    void createServerToContextConnection(const WebCore::RegistrableDomain&, Optional<PAL::SessionID>);
+    void createServerToContextConnection(const WebCore::RegistrableDomain&, PAL::SessionID);
     
     WebCore::SWServer& swServerForSession(PAL::SessionID);
     void registerSWServerConnection(WebSWServerConnection&);
     void unregisterSWServerConnection(WebSWServerConnection&);
     
-    void swContextConnectionMayNoLongerBeNeeded(WebSWServerToContextConnection&);
-    
-    WebSWServerToContextConnection* connectionToContextProcessFromIPCConnection(IPC::Connection&);
-    void connectionToContextProcessWasClosed(Ref<WebSWServerToContextConnection>&&);
+    void registerSWContextConnection(WebSWServerToContextConnection&);
+    void unregisterSWContextConnection(WebSWServerToContextConnection&);
+
+    bool needsServerToContextConnectionForRegistrableDomain(const WebCore::RegistrableDomain&) const;
+    void forEachSWServer(const Function<void(WebCore::SWServer&)>&);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -393,7 +394,7 @@ private:
     // Message Handlers
     void didReceiveSyncNetworkProcessMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
     void initializeNetworkProcess(NetworkProcessCreationParameters&&);
-    void createNetworkConnectionToWebProcess(WebCore::ProcessIdentifier, bool isServiceWorkerProcess, WebCore::RegistrableDomain&&, CompletionHandler<void(Optional<IPC::Attachment>&&)>&&);
+    void createNetworkConnectionToWebProcess(WebCore::ProcessIdentifier, CompletionHandler<void(Optional<IPC::Attachment>&&)>&&);
 
     void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, uint64_t callbackID);
     void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime modifiedSince, uint64_t callbackID);
@@ -462,13 +463,12 @@ private:
 #if ENABLE(SERVICE_WORKER)
     void didCreateWorkerContextProcessConnection(const IPC::Attachment&);
     
-    void postMessageToServiceWorkerClient(const WebCore::ServiceWorkerClientIdentifier& destinationIdentifier, WebCore::MessageWithMessagePorts&&, WebCore::ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin);
-    void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, WebCore::MessageWithMessagePorts&&, const WebCore::ServiceWorkerOrClientIdentifier& source, WebCore::SWServerConnectionIdentifier);
+    void postMessageToServiceWorkerClient(PAL::SessionID, const WebCore::ServiceWorkerClientIdentifier& destinationIdentifier, WebCore::MessageWithMessagePorts&&, WebCore::ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin);
+    void postMessageToServiceWorker(PAL::SessionID, WebCore::ServiceWorkerIdentifier destination, WebCore::MessageWithMessagePorts&&, const WebCore::ServiceWorkerOrClientIdentifier& source, WebCore::SWServerConnectionIdentifier);
     
     void disableServiceWorkerProcessTerminationDelay();
     
     WebSWOriginStore* existingSWOriginStoreForSession(PAL::SessionID) const;
-    bool needsServerToContextConnectionForRegistrableDomain(const WebCore::RegistrableDomain&) const;
 
     void addServiceWorkerSession(PAL::SessionID, String& serviceWorkerRegistrationDirectory, const SandboxExtension::Handle&);
 #endif
@@ -539,12 +539,11 @@ private:
     Lock m_storageTaskMutex;
     
 #if ENABLE(SERVICE_WORKER)
-    HashMap<WebCore::RegistrableDomain, RefPtr<WebSWServerToContextConnection>> m_serverToContextConnections;
-    bool m_waitingForServerToContextProcessConnection { false };
+    HashMap<WebCore::RegistrableDomain, WebSWServerToContextConnection*> m_serverToContextConnections;
     bool m_shouldDisableServiceWorkerProcessTerminationDelay { false };
     HashMap<PAL::SessionID, String> m_swDatabasePaths;
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::SWServer>> m_swServers;
-    HashMap<WebCore::SWServerConnectionIdentifier, WeakPtr<WebSWServerConnection>> m_swServerConnections;
+    HashSet<WebCore::RegistrableDomain> m_pendingConnectionDomains;
 #endif
 
 #if PLATFORM(COCOA)
