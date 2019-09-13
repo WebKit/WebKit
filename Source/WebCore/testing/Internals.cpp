@@ -78,6 +78,7 @@
 #include "FormController.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "FrameView.h"
 #include "FullscreenManager.h"
 #include "GCObservation.h"
@@ -2481,6 +2482,18 @@ uint64_t Internals::documentIdentifier(const Document& document) const
 bool Internals::isDocumentAlive(uint64_t documentIdentifier) const
 {
     return Document::allDocumentsMap().contains(makeObjectIdentifier<DocumentIdentifierType>(documentIdentifier));
+}
+
+uint64_t Internals::frameIdentifier(const Document& document) const
+{
+    if (auto* page = document.page())
+        return page->mainFrame().loader().client().frameID().valueOr(FrameIdentifier { }).toUInt64();
+    return 0;
+}
+
+uint64_t Internals::pageIdentifier(const Document& document) const
+{
+    return document.pageID().valueOr(PageIdentifier { }).toUInt64();
 }
 
 bool Internals::isAnyWorkletGlobalScopeAlive() const

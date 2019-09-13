@@ -467,6 +467,7 @@ def headers_for_type(type):
         'WebCore::StorageAccessPromptWasShown': ['<WebCore/DocumentStorageAccess.h>'],
         'WebCore::StorageAccessWasGranted': ['<WebCore/DocumentStorageAccess.h>'],
         'WebCore::SupportedPluginIdentifier': ['<WebCore/PluginData.h>'],
+        'WebCore::SystemPreviewInfo': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::TextCheckingRequestData': ['<WebCore/TextChecking.h>'],
         'WebCore::TextCheckingResult': ['<WebCore/TextCheckerClient.h>'],
         'WebCore::TextCheckingType': ['<WebCore/TextChecking.h>'],

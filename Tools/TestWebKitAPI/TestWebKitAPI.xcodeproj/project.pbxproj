@@ -179,6 +179,8 @@
 		2EFF06D71D8AF34A0004BB30 /* WKWebViewCandidateTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF06D61D8AF34A0004BB30 /* WKWebViewCandidateTests.mm */; };
 		313C3A0221E567C300DBA86E /* SystemPreviewBlobNaming.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 313C3A0121E5677A00DBA86E /* SystemPreviewBlobNaming.html */; };
 		315118101DB1AE4000176304 /* ExtendedColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3151180F1DB1ADD500176304 /* ExtendedColor.cpp */; };
+		31B76E4323298E2C007FED2C /* SystemPreview.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31B76E4223298E2B007FED2C /* SystemPreview.mm */; };
+		31B76E4523299BDC007FED2C /* system-preview-trigger.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 31B76E4423299BA3007FED2C /* system-preview-trigger.html */; };
 		33BE5AF9137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33BE5AF8137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp */; };
 		33DC8912141955FE00747EF7 /* simple-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 33DC890E1419539300747EF7 /* simple-iframe.html */; };
 		33DC89141419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33DC89131419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp */; };
@@ -1406,6 +1408,7 @@
 				9BD6D3A31F7B218300BD4962 /* sunset-in-cupertino-200px.png in Copy Resources */,
 				9BD6D3A41F7B218300BD4962 /* sunset-in-cupertino-400px.gif in Copy Resources */,
 				9BD6D3A51F7B218300BD4962 /* sunset-in-cupertino-600px.jpg in Copy Resources */,
+				31B76E4523299BDC007FED2C /* system-preview-trigger.html in Copy Resources */,
 				313C3A0221E567C300DBA86E /* SystemPreviewBlobNaming.html in Copy Resources */,
 				CD59F53519E9110D00CF1835 /* test-mse.mp4 in Copy Resources */,
 				C95984F71E36BCEF002C0D45 /* test-without-audio-track.mp4 in Copy Resources */,
@@ -1638,6 +1641,8 @@
 		2EFF06D61D8AF34A0004BB30 /* WKWebViewCandidateTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewCandidateTests.mm; sourceTree = "<group>"; };
 		313C3A0121E5677A00DBA86E /* SystemPreviewBlobNaming.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = SystemPreviewBlobNaming.html; sourceTree = "<group>"; };
 		3151180F1DB1ADD500176304 /* ExtendedColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtendedColor.cpp; sourceTree = "<group>"; };
+		31B76E4223298E2B007FED2C /* SystemPreview.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemPreview.mm; sourceTree = "<group>"; };
+		31B76E4423299BA3007FED2C /* system-preview-trigger.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "system-preview-trigger.html"; sourceTree = "<group>"; };
 		333B9CE11277F23100FEFCE3 /* PreventEmptyUserAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreventEmptyUserAgent.cpp; sourceTree = "<group>"; };
 		33BE5AF4137B5A6C00705813 /* MouseMoveAfterCrash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseMoveAfterCrash.cpp; sourceTree = "<group>"; };
 		33BE5AF8137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseMoveAfterCrash_Bundle.cpp; sourceTree = "<group>"; };
@@ -2879,6 +2884,7 @@
 				414AD6852285D1B000777F2D /* StorageQuota.mm */,
 				515BE1701D428BD100DD7C68 /* StoreBlobThenDelete.mm */,
 				1C734B5220788C4800F430EA /* SystemColors.mm */,
+				31B76E4223298E2B007FED2C /* SystemPreview.mm */,
 				2D70059521EDA0C6003463CB /* TabOutOfWebView.mm */,
 				5774AA6721FBBF7800AF2A1B /* TestSOAuthorization.mm */,
 				F4CD74C720FDB49600DE3794 /* TestURLSchemeHandler.h */,
@@ -3338,6 +3344,7 @@
 				9BD6D3A01F7B202000BD4962 /* sunset-in-cupertino-200px.png */,
 				9BD6D39F1F7B202000BD4962 /* sunset-in-cupertino-400px.gif */,
 				9BD6D39E1F7B201E00BD4962 /* sunset-in-cupertino-600px.jpg */,
+				31B76E4423299BA3007FED2C /* system-preview-trigger.html */,
 				313C3A0121E5677A00DBA86E /* SystemPreviewBlobNaming.html */,
 				2E9896141D8F092B00739892 /* text-and-password-inputs.html */,
 				F4CD74C520FDACF500DE3794 /* text-with-async-script.html */,
@@ -4732,6 +4739,7 @@
 				4433A396208044140091ED57 /* SynchronousTimeoutTests.mm in Sources */,
 				7CCE7EA81A411A1900447C4C /* SyntheticBackingScaleFactorWindow.m in Sources */,
 				1C734B5320788C4800F430EA /* SystemColors.mm in Sources */,
+				31B76E4323298E2C007FED2C /* SystemPreview.mm in Sources */,
 				2D70059621EDA0C6003463CB /* TabOutOfWebView.mm in Sources */,
 				7CCE7F161A411AE600447C4C /* TerminateTwice.cpp in Sources */,
 				7CCE7EA91A411A1D00447C4C /* TestBrowsingContextLoadDelegate.mm in Sources */,

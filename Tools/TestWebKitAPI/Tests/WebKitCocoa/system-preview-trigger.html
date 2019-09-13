@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<body>
+<script>
+window.addEventListener("message", function (event) {
+    window.webkit.messageHandlers.testSystemPreview.postMessage({ message: "triggered", action: event.data });
+});
+
+window.addEventListener("load", function () {
+    let pageID = internals.pageIdentifier(document);
+    let frameID = internals.frameIdentifier(document);
+    let msg = { message: "loaded", pageID, frameID };
+    window.webkit.messageHandlers.testSystemPreview.postMessage(msg);
+});
+
+</script>
+

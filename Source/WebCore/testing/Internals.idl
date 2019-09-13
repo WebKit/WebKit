@@ -717,6 +717,9 @@ enum CompositingPolicy {
     unsigned long long documentIdentifier(Document document);
     boolean isDocumentAlive(unsigned long long documentIdentifier);
 
+    unsigned long long frameIdentifier(Document document);
+    unsigned long long pageIdentifier(Document document);
+
     boolean isAnyWorkletGlobalScopeAlive();
 
     DOMString serviceWorkerClientIdentifier(Document document);

@@ -9172,6 +9172,13 @@ void WebPageProxy::removeDataDetectedLinks(CompletionHandler<void(const DataDete
 
 #endif
 
+#if USE(SYSTEM_PREVIEW)
+void WebPageProxy::systemPreviewActionTriggered(const WebCore::SystemPreviewInfo& previewInfo, const String& message) const
+{
+    m_process->send(Messages::WebPage::SystemPreviewActionTriggered(previewInfo, message), m_webPageID);
+}
+#endif
+
 void WebPageProxy::dumpAdClickAttribution(CompletionHandler<void(const String&)>&& completionHandler)
 {
     if (auto* networkProcess = m_process->processPool().networkProcess()) {

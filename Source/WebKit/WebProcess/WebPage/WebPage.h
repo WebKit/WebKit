@@ -1589,6 +1589,10 @@ private:
 
     void simulateDeviceOrientationChange(double alpha, double beta, double gamma);
 
+#if USE(SYSTEM_PREVIEW)
+    void systemPreviewActionTriggered(WebCore::SystemPreviewInfo, const String& message);
+#endif
+
 #if ENABLE(SPEECH_SYNTHESIS)
     void speakingErrorOccurred();
     void boundaryEventOccurred(bool wordBoundary, unsigned charIndex);

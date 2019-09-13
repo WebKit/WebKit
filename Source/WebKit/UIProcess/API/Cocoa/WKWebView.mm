@@ -7468,8 +7468,20 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     WebKit::UserMediaProcessManager::singleton().denyNextUserMediaRequest();
 #endif
 }
-@end
 
+#if PLATFORM(IOS_FAMILY)
+- (void)_triggerSystemPreviewActionOnFrame:(uint64_t)frameID page:(uint64_t)pageID
+{
+#if USE(SYSTEM_PREVIEW)
+    if (_page) {
+        if (auto* previewController = _page->systemPreviewController())
+            previewController->triggerSystemPreviewActionWithTargetForTesting(frameID, pageID);
+    }
+#endif
+}
+#endif
+
+@end
 
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
 

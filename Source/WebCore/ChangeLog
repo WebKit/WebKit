@@ -1,3 +1,45 @@
+2019-09-11  Dean Jackson  <dino@apple.com>
+
+        Provide a prototype for AR QuickLook to trigger processing in the originating page
+        https://bugs.webkit.org/show_bug.cgi?id=201371
+        <rdar://54904781>
+
+        Reviewed by Simon Fraser.
+
+        * dom/Document.cpp:
+        (WebCore::Document::dispatchSystemPreviewActionEvent): Create and dispatch a MessageEvent.
+        * dom/Document.h:
+
+        * html/HTMLAnchorElement.cpp: Send along the page and frame identifiers for this
+        object to ensure that any reply goes to the correct place.
+        (WebCore::HTMLAnchorElement::handleClick):
+
+        * loader/FrameLoadRequest.h: Use the new SystemPreviewInfo type.
+        (WebCore::FrameLoadRequest::isSystemPreview const):
+        (WebCore::FrameLoadRequest::systemPreviewInfo const):
+        (WebCore::FrameLoadRequest::systemPreviewRect const): Deleted.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+
+        * loader/FrameLoaderTypes.h: Provide encoders for the type.
+        (WebCore::SystemPreviewInfo::encode const):
+        (WebCore::SystemPreviewInfo::decode):
+
+        * platform/network/ResourceRequestBase.cpp: Use the new type.
+        (WebCore::ResourceRequestBase::isSystemPreview const):
+        (WebCore::ResourceRequestBase::systemPreviewInfo const):
+        (WebCore::ResourceRequestBase::setSystemPreviewInfo):
+        (WebCore::ResourceRequestBase::setSystemPreview): Deleted.
+        (WebCore::ResourceRequestBase::systemPreviewRect const): Deleted.
+        (WebCore::ResourceRequestBase::setSystemPreviewRect): Deleted.
+        * platform/network/ResourceRequestBase.h:
+
+        * testing/Internals.cpp: Expose the frame and page identifiers to testing.
+        (WebCore::Internals::frameIdentifier const):
+        (WebCore::Internals::pageIdentifier const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-09-13  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebCore::firstPositionInNode()

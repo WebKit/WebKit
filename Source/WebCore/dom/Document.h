@@ -635,7 +635,7 @@ public:
     WEBCORE_EXPORT AXObjectCache* axObjectCache() const;
     void clearAXObjectCache();
 
-    Optional<PageIdentifier> pageID() const;
+    WEBCORE_EXPORT Optional<PageIdentifier> pageID() const;
     // to get visually ordered hebrew and arabic pages right
     void setVisuallyOrdered();
     bool visuallyOrdered() const { return m_visuallyOrdered; }
@@ -1531,6 +1531,10 @@ public:
 #endif
 
     MessagePortChannelProvider& messagePortChannelProvider();
+
+#if USE(SYSTEM_PREVIEW)
+    WEBCORE_EXPORT void dispatchSystemPreviewActionEvent(const String& message);
+#endif
 
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };

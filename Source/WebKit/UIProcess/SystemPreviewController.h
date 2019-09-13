@@ -27,6 +27,7 @@
 
 #if USE(SYSTEM_PREVIEW)
 
+#include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/ResourceError.h>
 #include <wtf/RetainPtr.h>
@@ -49,16 +50,22 @@ public:
 
     bool canPreview(const String& mimeType) const;
 
-    void start(URL originatingPageURL, const String& mimeType, const WebCore::IntRect&);
+    void start(URL originatingPageURL, const String& mimeType, const WebCore::SystemPreviewInfo&);
     void updateProgress(float);
     void finish(URL);
     void cancel();
     void fail(const WebCore::ResourceError&);
 
     WebPageProxy& page() { return m_webPageProxy; }
+    const WebCore::SystemPreviewInfo& previewInfo() const { return m_systemPreviewInfo; }
+
+    void triggerSystemPreviewAction();
+
+    void triggerSystemPreviewActionWithTargetForTesting(uint64_t frameID, uint64_t pageID);
 
 private:
     WebPageProxy& m_webPageProxy;
+    WebCore::SystemPreviewInfo m_systemPreviewInfo;
 #if USE(QUICK_LOOK)
     RetainPtr<QLPreviewController> m_qlPreviewController;
     RetainPtr<_WKPreviewControllerDelegate> m_qlPreviewControllerDelegate;

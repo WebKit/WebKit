@@ -1224,7 +1224,7 @@ void ArgumentCoder<ResourceRequest>::encode(Encoder& encoder, const ResourceRequ
 #if USE(SYSTEM_PREVIEW)
     if (resourceRequest.isSystemPreview()) {
         encoder << true;
-        encoder << resourceRequest.systemPreviewRect();
+        encoder << resourceRequest.systemPreviewInfo();
     } else
         encoder << false;
 #endif
@@ -1254,13 +1254,12 @@ bool ArgumentCoder<ResourceRequest>::decode(Decoder& decoder, ResourceRequest& r
     bool isSystemPreview;
     if (!decoder.decode(isSystemPreview))
         return false;
-    resourceRequest.setSystemPreview(isSystemPreview);
 
     if (isSystemPreview) {
-        IntRect systemPreviewRect;
-        if (!decoder.decode(systemPreviewRect))
+        SystemPreviewInfo systemPreviewInfo;
+        if (!decoder.decode(systemPreviewInfo))
             return false;
-        resourceRequest.setSystemPreviewRect(systemPreviewRect);
+        resourceRequest.setSystemPreviewInfo(systemPreviewInfo);
     }
 #endif
 

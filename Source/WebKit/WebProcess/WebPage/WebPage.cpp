@@ -6612,6 +6612,25 @@ void WebPage::simulateDeviceOrientationChange(double alpha, double beta, double 
 #endif
 }
 
+#if USE(SYSTEM_PREVIEW)
+void WebPage::systemPreviewActionTriggered(WebCore::SystemPreviewInfo previewInfo, const String& message)
+{
+    WebFrame* frame = WebProcess::singleton().webFrame(previewInfo.globalFrameID.frameID);
+    if (!frame)
+        return;
+
+    auto* document = frame->coreFrame()->document();
+    if (!document)
+        return;
+
+    auto pageID = document->pageID();
+    if (!pageID || previewInfo.globalFrameID.pageID != pageID.value())
+        return;
+
+    document->dispatchSystemPreviewActionEvent(message);
+}
+#endif
+
 #if ENABLE(SPEECH_SYNTHESIS)
 void WebPage::speakingErrorOccurred()
 {

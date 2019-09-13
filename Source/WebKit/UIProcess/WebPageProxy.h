@@ -484,6 +484,7 @@ public:
 
 #if USE(SYSTEM_PREVIEW)
     SystemPreviewController* systemPreviewController() { return m_systemPreviewController.get(); }
+    void systemPreviewActionTriggered(const WebCore::SystemPreviewInfo&, const String&) const;
 #endif
 
 #if ENABLE(CONTEXT_MENUS)

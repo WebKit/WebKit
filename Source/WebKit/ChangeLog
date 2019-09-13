@@ -1,3 +1,50 @@
+2019-09-11  Dean Jackson  <dino@apple.com>
+
+        Provide a prototype for AR QuickLook to trigger processing in the originating page
+        https://bugs.webkit.org/show_bug.cgi?id=201371
+        <rdar://54904781>
+
+        Reviewed by Simon Fraser.
+
+        Provide a way for a Web page to know if an action in the AR scene
+        was performed, if and only if the system AR library calls a delegate with
+        particular parameters. Post a message to the originating frame so
+        the page can detect the action.
+
+        * Scripts/webkit/messages.py: Include the right header for SystemPreviewInfo.
+
+        * Shared/WebCoreArgumentCoders.cpp: Use SystemPreviewInfo.
+        (IPC::ArgumentCoder<ResourceRequest>::encode):
+        (IPC::ArgumentCoder<ResourceRequest>::decode):
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _triggerSystemPreviewActionOnFrame:page:]): New helper/test function
+        to trigger the system preview action.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        * UIProcess/Cocoa/DownloadClient.mm: Use new type.
+        (WebKit::DownloadClient::didStart):
+
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm: Implement the delegate so that
+        we can detect an action. When it happens, tell the WebPageProxy to send a message.
+
+        * UIProcess/Downloads/DownloadProxy.h: Use SystemPreviewInfo type.
+        (WebKit::DownloadProxy::systemPreviewDownloadInfo const):
+        (WebKit::DownloadProxy::systemPreviewDownloadRect const): Deleted.
+
+        * UIProcess/SystemPreviewController.h:
+        (WebKit::SystemPreviewController::previewInfo const):
+
+        * UIProcess/WebPageProxy.cpp: Send it over to the Web Process.
+        (WebKit::WebPageProxy::systemPreviewActionTriggered const):
+        * UIProcess/WebPageProxy.h:
+
+        * WebProcess/WebPage/WebPage.cpp: Check the destination still exists, and then talk
+        to the Document.
+        (WebKit::WebPage::systemPreviewActionTriggered):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-09-13  Youenn Fablet  <youenn@apple.com>
 
         Partition processes running service workers by session ID
