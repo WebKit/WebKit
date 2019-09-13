@@ -47,10 +47,7 @@ namespace WebCore {
 
     void findWordBoundary(StringView, int position, int* start, int* end);
     void findEndWordBoundary(StringView, int position, int* end);
-
-    enum class NextWordDirection : bool { Forward, Backward };
-    enum class NextWordModeInIOS : bool { LegacyStopBeforeWord, StopAfterWord };
-    int findNextWordFromIndex(StringView, int position, NextWordDirection, NextWordModeInIOS = NextWordModeInIOS::LegacyStopBeforeWord);
+    int findNextWordFromIndex(StringView, int position, bool forward);
 
 }
 

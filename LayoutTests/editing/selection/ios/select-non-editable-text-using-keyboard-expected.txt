@@ -11,7 +11,7 @@ Press Shift + left arrow to select the previous character:
 PASS window.getSelection().toString() is "Her"
 
 Press Shift + Option + right arrow to select to the end of the word:
-PASS window.getSelection().toString() is "Here's"
+PASS window.getSelection().toString() is "Here's "
 
 Press Shift + Option + left arrow to select to the beginning of the word:
 PASS window.getSelection().toString() is "The"

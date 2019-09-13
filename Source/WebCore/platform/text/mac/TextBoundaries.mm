@@ -229,12 +229,11 @@ void findEndWordBoundary(StringView text, int position, int* end)
     findWordBoundary(text, position, &start, end);
 }
 
-int findNextWordFromIndex(StringView text, int position, NextWordDirection direction, NextWordModeInIOS whitespaceModeInIOS)
+int findNextWordFromIndex(StringView text, int position, bool forward)
 {   
 #if USE(APPKIT)
-    UNUSED_PARAM(whitespaceModeInIOS);
     NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:text.createNSStringWithoutCopying().get()];
-    int result = [attributedString nextWordFromIndex:position forward:direction == NextWordDirection::Forward];
+    int result = [attributedString nextWordFromIndex:position forward:forward];
     [attributedString release];
     return result;
 #else
@@ -244,31 +243,14 @@ int findNextWordFromIndex(StringView text, int position, NextWordDirection direc
     int pos = position;
     UBreakIterator* boundary = wordBreakIterator(text);
     if (boundary) {
-        if (direction == NextWordDirection::Forward) {
-            if (whitespaceModeInIOS == NextWordModeInIOS::StopAfterWord) {
-                while (static_cast<unsigned>(pos) < text.length() && isWordDelimitingCharacter(text[pos])) {
-                    pos = ubrk_following(boundary, pos);
-                    if (pos == UBRK_DONE)
-                        return text.length();
-                }
-            }
+        if (forward) {
             do {
                 pos = ubrk_following(boundary, pos);
                 if (pos == UBRK_DONE)
-                    return text.length();
+                    pos = text.length();
             } while (static_cast<unsigned>(pos) < text.length() && (pos == 0 || !isSkipCharacter(text[pos - 1])) && isSkipCharacter(text[pos]));
-
-            // ICU would skip the trailing whitespace. Go back.
-            if (whitespaceModeInIOS == NextWordModeInIOS::StopAfterWord && isWordDelimitingCharacter(text[pos - 1]))
-                pos = ubrk_preceding(boundary, pos);
         }
         else {
-            if (whitespaceModeInIOS == NextWordModeInIOS::StopAfterWord && pos && isWordDelimitingCharacter(text[pos - 1])) {
-                pos = ubrk_preceding(boundary, pos);
-                if (pos == UBRK_DONE)
-                    return 0;
-            }
-
             do {
                 pos = ubrk_preceding(boundary, pos);
                 if (pos == UBRK_DONE)

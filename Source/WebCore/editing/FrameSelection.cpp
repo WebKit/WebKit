@@ -711,26 +711,20 @@ VisiblePosition FrameSelection::endForPlatform() const
     return positionForPlatform(false);
 }
 
-static NextWordModeInIOS nextWordWhitespaceModeInIOS(EUserTriggered userTriggered)
+VisiblePosition FrameSelection::nextWordPositionForPlatform(const VisiblePosition &originalPosition)
 {
-    return userTriggered == UserTriggered ? NextWordModeInIOS::StopAfterWord : NextWordModeInIOS::LegacyStopBeforeWord;
-}
-
-VisiblePosition FrameSelection::nextWordPositionForPlatform(const VisiblePosition &originalPosition, EUserTriggered userTriggered)
-{
-    VisiblePosition positionAfterCurrentWord = nextWordPosition(originalPosition, nextWordWhitespaceModeInIOS(userTriggered));
+    VisiblePosition positionAfterCurrentWord = nextWordPosition(originalPosition);
 
     if (m_frame && m_frame->editor().behavior().shouldSkipSpaceWhenMovingRight()) {
         // In order to skip spaces when moving right, we advance one
         // word further and then move one word back. Given the
         // semantics of previousWordPosition() this will put us at the
         // beginning of the word following.
-        auto whitespaceMode = nextWordWhitespaceModeInIOS(userTriggered);
-        VisiblePosition positionAfterSpacingAndFollowingWord = nextWordPosition(positionAfterCurrentWord, whitespaceMode);
+        VisiblePosition positionAfterSpacingAndFollowingWord = nextWordPosition(positionAfterCurrentWord);
         if (positionAfterSpacingAndFollowingWord != positionAfterCurrentWord)
-            positionAfterCurrentWord = previousWordPosition(positionAfterSpacingAndFollowingWord, whitespaceMode);
+            positionAfterCurrentWord = previousWordPosition(positionAfterSpacingAndFollowingWord);
 
-        bool movingBackwardsMovedPositionToStartOfCurrentWord = positionAfterCurrentWord == previousWordPosition(nextWordPosition(originalPosition, whitespaceMode), whitespaceMode);
+        bool movingBackwardsMovedPositionToStartOfCurrentWord = positionAfterCurrentWord == previousWordPosition(nextWordPosition(originalPosition));
         if (movingBackwardsMovedPositionToStartOfCurrentWord)
             positionAfterCurrentWord = positionAfterSpacingAndFollowingWord;
     }
@@ -745,7 +739,7 @@ static void adjustPositionForUserSelectAll(VisiblePosition& pos, bool isForward)
 }
 #endif
 
-VisiblePosition FrameSelection::modifyExtendingRight(TextGranularity granularity, EUserTriggered userTriggered)
+VisiblePosition FrameSelection::modifyExtendingRight(TextGranularity granularity)
 {
     VisiblePosition pos(m_selection.extent(), m_selection.affinity());
 
@@ -763,15 +757,15 @@ VisiblePosition FrameSelection::modifyExtendingRight(TextGranularity granularity
         break;
     case WordGranularity:
         if (directionOfEnclosingBlock() == TextDirection::LTR)
-            pos = nextWordPositionForPlatform(pos, userTriggered);
+            pos = nextWordPositionForPlatform(pos);
         else
-            pos = previousWordPosition(pos, nextWordWhitespaceModeInIOS(userTriggered));
+            pos = previousWordPosition(pos);
         break;
     case LineBoundary:
         if (directionOfEnclosingBlock() == TextDirection::LTR)
-            pos = modifyExtendingForward(granularity, userTriggered);
+            pos = modifyExtendingForward(granularity);
         else
-            pos = modifyExtendingBackward(granularity, userTriggered);
+            pos = modifyExtendingBackward(granularity);
         break;
     case SentenceGranularity:
     case LineGranularity:
@@ -780,7 +774,7 @@ VisiblePosition FrameSelection::modifyExtendingRight(TextGranularity granularity
     case ParagraphBoundary:
     case DocumentBoundary:
         // FIXME: implement all of the above?
-        pos = modifyExtendingForward(granularity, userTriggered);
+        pos = modifyExtendingForward(granularity);
         break;
     case DocumentGranularity:
         ASSERT_NOT_REACHED();
@@ -792,7 +786,7 @@ VisiblePosition FrameSelection::modifyExtendingRight(TextGranularity granularity
     return pos;
 }
 
-VisiblePosition FrameSelection::modifyExtendingForward(TextGranularity granularity, EUserTriggered userTriggered)
+VisiblePosition FrameSelection::modifyExtendingForward(TextGranularity granularity)
 {
     VisiblePosition pos(m_selection.extent(), m_selection.affinity());
     switch (granularity) {
@@ -800,7 +794,7 @@ VisiblePosition FrameSelection::modifyExtendingForward(TextGranularity granulari
         pos = pos.next(CannotCrossEditingBoundary);
         break;
     case WordGranularity:
-        pos = nextWordPositionForPlatform(pos, userTriggered);
+        pos = nextWordPositionForPlatform(pos);
         break;
     case SentenceGranularity:
         pos = nextSentencePosition(pos);
@@ -837,7 +831,7 @@ VisiblePosition FrameSelection::modifyExtendingForward(TextGranularity granulari
     return pos;
 }
 
-VisiblePosition FrameSelection::modifyMovingRight(TextGranularity granularity, EUserTriggered userTriggered, bool* reachedBoundary)
+VisiblePosition FrameSelection::modifyMovingRight(TextGranularity granularity, bool* reachedBoundary)
 {
     if (reachedBoundary)
         *reachedBoundary = false;
@@ -867,7 +861,7 @@ VisiblePosition FrameSelection::modifyMovingRight(TextGranularity granularity, E
     case ParagraphBoundary:
     case DocumentBoundary:
         // FIXME: Implement all of the above.
-        pos = modifyMovingForward(granularity, userTriggered, reachedBoundary);
+        pos = modifyMovingForward(granularity, reachedBoundary);
         break;
     case LineBoundary:
         pos = rightBoundaryOfLine(startForPlatform(), directionOfEnclosingBlock(), reachedBoundary);
@@ -879,7 +873,7 @@ VisiblePosition FrameSelection::modifyMovingRight(TextGranularity granularity, E
     return pos;
 }
 
-VisiblePosition FrameSelection::modifyMovingForward(TextGranularity granularity, EUserTriggered userTriggered, bool* reachedBoundary)
+VisiblePosition FrameSelection::modifyMovingForward(TextGranularity granularity, bool* reachedBoundary)
 {
     if (reachedBoundary)
         *reachedBoundary = false;
@@ -909,7 +903,7 @@ VisiblePosition FrameSelection::modifyMovingForward(TextGranularity granularity,
             pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).next(CannotCrossEditingBoundary, reachedBoundary);
         break;
     case WordGranularity:
-        pos = nextWordPositionForPlatform(currentPosition, userTriggered);
+        pos = nextWordPositionForPlatform(currentPosition);
         break;
     case SentenceGranularity:
         pos = nextSentencePosition(currentPosition);
@@ -962,7 +956,7 @@ VisiblePosition FrameSelection::modifyMovingForward(TextGranularity granularity,
     return pos;
 }
 
-VisiblePosition FrameSelection::modifyExtendingLeft(TextGranularity granularity, EUserTriggered userTriggered)
+VisiblePosition FrameSelection::modifyExtendingLeft(TextGranularity granularity)
 {
     VisiblePosition pos(m_selection.extent(), m_selection.affinity());
 
@@ -980,15 +974,15 @@ VisiblePosition FrameSelection::modifyExtendingLeft(TextGranularity granularity,
         break;
     case WordGranularity:
         if (directionOfEnclosingBlock() == TextDirection::LTR)
-            pos = previousWordPosition(pos, nextWordWhitespaceModeInIOS(userTriggered));
+            pos = previousWordPosition(pos);
         else
-            pos = nextWordPositionForPlatform(pos, userTriggered);
+            pos = nextWordPositionForPlatform(pos);
         break;
     case LineBoundary:
         if (directionOfEnclosingBlock() == TextDirection::LTR)
-            pos = modifyExtendingBackward(granularity, userTriggered);
+            pos = modifyExtendingBackward(granularity);
         else
-            pos = modifyExtendingForward(granularity, userTriggered);
+            pos = modifyExtendingForward(granularity);
         break;
     case SentenceGranularity:
     case LineGranularity:
@@ -996,7 +990,7 @@ VisiblePosition FrameSelection::modifyExtendingLeft(TextGranularity granularity,
     case SentenceBoundary:
     case ParagraphBoundary:
     case DocumentBoundary:
-        pos = modifyExtendingBackward(granularity, userTriggered);
+        pos = modifyExtendingBackward(granularity);
         break;
     case DocumentGranularity:
         ASSERT_NOT_REACHED();
@@ -1008,7 +1002,7 @@ VisiblePosition FrameSelection::modifyExtendingLeft(TextGranularity granularity,
     return pos;
 }
        
-VisiblePosition FrameSelection::modifyExtendingBackward(TextGranularity granularity, EUserTriggered userTriggered)
+VisiblePosition FrameSelection::modifyExtendingBackward(TextGranularity granularity)
 {
     VisiblePosition pos(m_selection.extent(), m_selection.affinity());
 
@@ -1021,7 +1015,7 @@ VisiblePosition FrameSelection::modifyExtendingBackward(TextGranularity granular
         pos = pos.previous(CannotCrossEditingBoundary);
         break;
     case WordGranularity:
-        pos = previousWordPosition(pos, nextWordWhitespaceModeInIOS(userTriggered));
+        pos = previousWordPosition(pos);
         break;
     case SentenceGranularity:
         pos = previousSentencePosition(pos);
@@ -1058,7 +1052,7 @@ VisiblePosition FrameSelection::modifyExtendingBackward(TextGranularity granular
     return pos;
 }
 
-VisiblePosition FrameSelection::modifyMovingLeft(TextGranularity granularity, EUserTriggered userTriggered, bool* reachedBoundary)
+VisiblePosition FrameSelection::modifyMovingLeft(TextGranularity granularity, bool* reachedBoundary)
 {
     if (reachedBoundary)
         *reachedBoundary = false;
@@ -1088,7 +1082,7 @@ VisiblePosition FrameSelection::modifyMovingLeft(TextGranularity granularity, EU
     case ParagraphBoundary:
     case DocumentBoundary:
         // FIXME: Implement all of the above.
-        pos = modifyMovingBackward(granularity, userTriggered, reachedBoundary);
+        pos = modifyMovingBackward(granularity, reachedBoundary);
         break;
     case LineBoundary:
         pos = leftBoundaryOfLine(startForPlatform(), directionOfEnclosingBlock(), reachedBoundary);
@@ -1100,7 +1094,7 @@ VisiblePosition FrameSelection::modifyMovingLeft(TextGranularity granularity, EU
     return pos;
 }
 
-VisiblePosition FrameSelection::modifyMovingBackward(TextGranularity granularity, EUserTriggered userTriggered, bool* reachedBoundary)
+VisiblePosition FrameSelection::modifyMovingBackward(TextGranularity granularity, bool* reachedBoundary)
 {
     if (reachedBoundary)
         *reachedBoundary = false;
@@ -1129,7 +1123,7 @@ VisiblePosition FrameSelection::modifyMovingBackward(TextGranularity granularity
             pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).previous(CannotCrossEditingBoundary, reachedBoundary);
         break;
     case WordGranularity:
-        pos = previousWordPosition(currentPosition, nextWordWhitespaceModeInIOS(userTriggered));
+        pos = previousWordPosition(currentPosition);
         break;
     case SentenceGranularity:
         pos = previousSentencePosition(currentPosition);
@@ -1336,27 +1330,27 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
     switch (direction) {
     case DirectionRight:
         if (alter == AlterationMove)
-            position = modifyMovingRight(granularity, userTriggered, &reachedBoundary);
+            position = modifyMovingRight(granularity, &reachedBoundary);
         else
-            position = modifyExtendingRight(granularity, userTriggered);
+            position = modifyExtendingRight(granularity);
         break;
     case DirectionForward:
         if (alter == AlterationExtend)
-            position = modifyExtendingForward(granularity, userTriggered);
+            position = modifyExtendingForward(granularity);
         else
-            position = modifyMovingForward(granularity, userTriggered, &reachedBoundary);
+            position = modifyMovingForward(granularity, &reachedBoundary);
         break;
     case DirectionLeft:
         if (alter == AlterationMove)
-            position = modifyMovingLeft(granularity, userTriggered, &reachedBoundary);
+            position = modifyMovingLeft(granularity, &reachedBoundary);
         else
-            position = modifyExtendingLeft(granularity, userTriggered);
+            position = modifyExtendingLeft(granularity);
         break;
     case DirectionBackward:
         if (alter == AlterationExtend)
-            position = modifyExtendingBackward(granularity, userTriggered);
+            position = modifyExtendingBackward(granularity);
         else
-            position = modifyMovingBackward(granularity, userTriggered, &reachedBoundary);
+            position = modifyMovingBackward(granularity, &reachedBoundary);
         break;
     }
 
@@ -2151,7 +2145,7 @@ void FrameSelection::updateAppearance()
     // Construct a new VisibleSolution, since m_selection is not necessarily valid, and the following steps
     // assume a valid selection. See <https://bugs.webkit.org/show_bug.cgi?id=69563> and <rdar://problem/10232866>.
 #if ENABLE(TEXT_CARET)
-    VisiblePosition endVisiblePosition = paintBlockCursor ? modifyExtendingForward(CharacterGranularity, NotUserTriggered) : oldSelection.visibleEnd();
+    VisiblePosition endVisiblePosition = paintBlockCursor ? modifyExtendingForward(CharacterGranularity) : oldSelection.visibleEnd();
     VisibleSelection selection(oldSelection.visibleStart(), endVisiblePosition);
 #else
     VisibleSelection selection(oldSelection.visibleStart(), oldSelection.visibleEnd());
