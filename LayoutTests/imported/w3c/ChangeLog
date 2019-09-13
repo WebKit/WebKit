@@ -1,3 +1,20 @@
+2019-09-13  Chris Dumez  <cdumez@apple.com>
+
+        Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/getregistrations.https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=201661
+        <rdar://problem/55240851>
+
+        Reviewed by Alex Christensen.
+
+        The last test's cleanup step was very complex (involving waiting for a promise to get resolved) and WebKit's
+        completion handler in testharnessreport.js was often getting called before the promise resolution, leaving
+        the test frame in the output when we call notifyDone(). This seems like a potential bug in testharness.js.
+        To address the issue for now, do the unregistration in the test's body and only remove the test frame in
+        the cleanup step.
+
+        * web-platform-tests/service-workers/service-worker/getregistrations.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/getregistrations.https.html:
+
 2019-09-12  Chris Dumez  <cdumez@apple.com>
 
         Node.replaceChild()'s pre-replacement validations are not done in the right order
