@@ -1268,9 +1268,9 @@ void WebView::paintWithDirect2D()
             gc.scale(FloatSize(scaleFactor, scaleFactor));
             gc.clip(logicalDirtyRect);
             frameView->paint(gc, logicalDirtyRect);
-            gc.restore();
             if (m_shouldInvertColors)
                 gc.fillRect(logicalDirtyRect, Color::white, CompositeDifference);
+            gc.restore();
         }
     }
 
@@ -1420,9 +1420,9 @@ void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const In
         gc.scale(FloatSize(scaleFactor, scaleFactor));
         gc.clip(logicalDirtyRect);
         frameView->paint(gc, logicalDirtyRect);
-        gc.restore();
         if (m_shouldInvertColors)
             gc.fillRect(logicalDirtyRect, Color::white, CompositeDifference);
+        gc.restore();
     }
     gc.restore();
 }

@@ -1,3 +1,15 @@
+2019-09-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][WK1] Invert Colors inverts a part of the viewport in high DPI
+        https://bugs.webkit.org/show_bug.cgi?id=201719
+
+        Reviewed by Don Olmstead.
+
+        * WebView.cpp:
+        (WebView::paintWithDirect2D):
+        (WebView::paintIntoBackingStore):
+        Call gc.restore() after inverting the dirty rect.
+
 2019-09-10  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][WebKitLegacy][Clang] WebKit.h warning: 'IWebEditingDelegate2::shouldInsertNode' hides overloaded virtual function [-Woverloaded-virtual]
