@@ -543,18 +543,23 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
         JumpList notUnicode;
 
         load16Unaligned(regUnicodeInputAndTrail, resultReg);
+
+        // Is the character a leading surrogate?
         and32(surrogateTagMask, resultReg, regT2);
         notUnicode.append(branch32(NotEqual, regT2, leadingSurrogateTag));
+
+        // Is the input long enough to read a trailing surrogate?
         addPtr(TrustedImm32(2), regUnicodeInputAndTrail);
         notUnicode.append(branchPtr(AboveOrEqual, regUnicodeInputAndTrail, endOfStringAddress));
+
+        // Is the character a trailing surrogate?
         load16Unaligned(Address(regUnicodeInputAndTrail), regUnicodeInputAndTrail);
         and32(surrogateTagMask, regUnicodeInputAndTrail, regT2);
         notUnicode.append(branch32(NotEqual, regT2, trailingSurrogateTag));
-        sub32(leadingSurrogateTag, resultReg);
-        sub32(trailingSurrogateTag, regUnicodeInputAndTrail);
+
+        // Combine leading and trailing surrogates to produce a code point.
         lshift32(TrustedImm32(10), resultReg);
-        or32(regUnicodeInputAndTrail, resultReg);
-        add32(supplementaryPlanesBase, resultReg);
+        getEffectiveAddress(BaseIndex(resultReg, regUnicodeInputAndTrail, TimesOne, -U16_SURROGATE_OFFSET), resultReg);
         notUnicode.link(this);
     }
 
