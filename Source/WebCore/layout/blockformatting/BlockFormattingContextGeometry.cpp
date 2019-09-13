@@ -76,15 +76,16 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
             return { 0, nonCollapsedMargin };
 
         // 1. the bottom edge of the last line box, if the box establishes a inline formatting context with one or more lines
-        if (layoutBox.establishesInlineFormattingContext()) {
-            auto& lineBoxes = downcast<InlineFormattingState>(layoutState.establishedFormattingState(layoutBox)).lineBoxes();
+        auto& layoutContainer = downcast<Container>(layoutBox);
+        if (layoutContainer.establishesInlineFormattingContext()) {
+            auto& lineBoxes = downcast<InlineFormattingState>(layoutState.establishedFormattingState(layoutContainer)).lineBoxes();
             // Even empty containers generate one line. 
             ASSERT(!lineBoxes.isEmpty());
             return { lineBoxes.last().logicalBottom() - borderAndPaddingTop, nonCollapsedMargin };
         }
 
         // 2. the bottom edge of the bottom (possibly collapsed) margin of its last in-flow child, if the child's bottom margin...
-        auto* lastInFlowChild = downcast<Container>(layoutBox).lastInFlowChild();
+        auto* lastInFlowChild = layoutContainer.lastInFlowChild();
         ASSERT(lastInFlowChild);
         auto marginCollapse = MarginCollapse(formattingContext);
         if (!marginCollapse.marginAfterCollapsesWithParentMarginAfter(*lastInFlowChild)) {
@@ -328,8 +329,8 @@ FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::Geometry::i
             return { };
         }
 
-        if (layoutBox.establishesFormattingContext())
-            return layoutState().createFormattingContext(layoutBox)->computedIntrinsicWidthConstraints();
+        if (layoutBox.establishesFormattingContext() && is<Container>(layoutBox))
+            return layoutState().createFormattingContext(downcast<Container>(layoutBox))->computedIntrinsicWidthConstraints();
 
         if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
             return { };

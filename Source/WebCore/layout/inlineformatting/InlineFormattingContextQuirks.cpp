@@ -66,7 +66,7 @@ bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const Line::Con
             break;
         case InlineItem::Type::Box: {
             if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
-                auto& formattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(layoutBox));
+                auto& formattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(downcast<Container>(layoutBox)));
                 ASSERT(!formattingState.lineBoxes().isEmpty());
                 auto inlineBlockBaseline = formattingState.lineBoxes().last().baseline();
                 if (inlineBlockBaseline.descent)

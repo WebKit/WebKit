@@ -43,7 +43,7 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FormattingContext);
 
-FormattingContext::FormattingContext(const Box& formattingContextRoot, FormattingState& formattingState)
+FormattingContext::FormattingContext(const Container& formattingContextRoot, FormattingState& formattingState)
     : m_root(makeWeakPtr(formattingContextRoot))
     , m_formattingState(formattingState)
 {
@@ -138,11 +138,13 @@ void FormattingContext::layoutOutOfFlowContent()
 
         computeBorderAndPadding(*outOfFlowBox);
         computeOutOfFlowHorizontalGeometry(*outOfFlowBox);
-
-        auto formattingContext = layoutState().createFormattingContext(*outOfFlowBox);
-        formattingContext->layoutInFlowContent();
-        computeOutOfFlowVerticalGeometry(*outOfFlowBox);
-        formattingContext->layoutOutOfFlowContent();
+        if (is<Container>(*outOfFlowBox)) {
+            auto formattingContext = layoutState().createFormattingContext(downcast<Container>(*outOfFlowBox));
+            formattingContext->layoutInFlowContent();
+            computeOutOfFlowVerticalGeometry(*outOfFlowBox);
+            formattingContext->layoutOutOfFlowContent();            
+        } else
+            computeOutOfFlowVerticalGeometry(*outOfFlowBox);
     }
     LOG_WITH_STREAM(FormattingContextLayout, stream << "End: layout out-of-flow content -> context: " << &layoutState() << " root: " << &root());
 }
@@ -162,7 +164,7 @@ static LayoutUnit mapHorizontalPositionToAncestor(const FormattingContext& forma
 LayoutUnit FormattingContext::mapTopToFormattingContextRoot(const Box& layoutBox) const
 {
     ASSERT(layoutBox.containingBlock());
-    auto& formattingContextRoot = downcast<Container>(root());
+    auto& formattingContextRoot = root();
     ASSERT(layoutBox.isContainingBlockDescendantOf(formattingContextRoot));
     auto top = geometryForBox(layoutBox).top();
     for (auto* container = layoutBox.containingBlock(); container && container != &formattingContextRoot; container = container->containingBlock())
@@ -173,13 +175,13 @@ LayoutUnit FormattingContext::mapTopToFormattingContextRoot(const Box& layoutBox
 LayoutUnit FormattingContext::mapLeftToFormattingContextRoot(const Box& layoutBox) const
 {
     ASSERT(layoutBox.containingBlock());
-    return mapHorizontalPositionToAncestor(*this, geometryForBox(layoutBox).left(), *layoutBox.containingBlock(), downcast<Container>(root()));
+    return mapHorizontalPositionToAncestor(*this, geometryForBox(layoutBox).left(), *layoutBox.containingBlock(), root());
 }
 
 LayoutUnit FormattingContext::mapRightToFormattingContextRoot(const Box& layoutBox) const
 {
     ASSERT(layoutBox.containingBlock());
-    return mapHorizontalPositionToAncestor(*this, geometryForBox(layoutBox).right(), *layoutBox.containingBlock(), downcast<Container>(root()));
+    return mapHorizontalPositionToAncestor(*this, geometryForBox(layoutBox).right(), *layoutBox.containingBlock(), root());
 }
 
 const Display::Box& FormattingContext::geometryForBox(const Box& layoutBox, Optional<EscapeType> escapeType) const
@@ -242,9 +244,7 @@ const Display::Box& FormattingContext::geometryForBox(const Box& layoutBox, Opti
 #ifndef NDEBUG
 void FormattingContext::validateGeometryConstraintsAfterLayout() const
 {
-    if (!is<Container>(root()))
-        return;
-    auto& formattingContextRoot = downcast<Container>(root());
+    auto& formattingContextRoot = root();
     // FIXME: add a descendantsOfType<> flavor that stops at nested formatting contexts
     for (auto& layoutBox : descendantsOfType<Box>(formattingContextRoot)) {
         if (&layoutBox.formattingContextRoot() != &formattingContextRoot)

@@ -399,15 +399,16 @@ bool BlockFormattingContext::MarginCollapse::marginsCollapseThrough(const Box& l
             auto& layoutState = this->layoutState();
             // If we get here through margin estimation, we don't necessarily have an actual state for this layout box since
             // we haven't started laying it out yet.
-            if (!layoutState.hasFormattingState(layoutBox))
+            auto& layoutContainer = downcast<Container>(layoutBox);
+            if (!layoutState.hasFormattingState(layoutContainer))
                 return false;
-            auto& formattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(layoutBox));
+            auto& formattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(layoutContainer));
             if (!formattingState.inlineRuns().isEmpty())
                 return false;
             // Any float box in this formatting context prevents collapsing through.
             auto& floats = formattingState.floatingState().floats();
             for (auto& floatItem : floats) {
-                if (floatItem.isDescendantOfFormattingRoot(downcast<Container>(layoutBox)))
+                if (floatItem.isDescendantOfFormattingRoot(layoutContainer))
                     return false;
             }
             return true;

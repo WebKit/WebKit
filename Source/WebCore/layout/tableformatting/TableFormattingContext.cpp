@@ -52,7 +52,7 @@ void TableFormattingContext::initializeDisplayBoxToBlank(Display::Box& displayBo
 }
 
 // https://www.w3.org/TR/css-tables-3/#table-layout-algorithm
-TableFormattingContext::TableFormattingContext(const Box& formattingContextRoot, TableFormattingState& formattingState)
+TableFormattingContext::TableFormattingContext(const Container& formattingContextRoot, TableFormattingState& formattingState)
     : FormattingContext(formattingContextRoot, formattingState)
 {
 }
@@ -96,7 +96,8 @@ void TableFormattingContext::layoutTableCellBox(const Box& cellLayoutBox, const 
     cellDisplayBox.setContentBoxWidth(column.logicalWidth() - cellDisplayBox.horizontalMarginBorderAndPadding());
 
     ASSERT(cellLayoutBox.establishesBlockFormattingContext());
-    layoutState().createFormattingContext(cellLayoutBox)->layoutInFlowContent();
+    if (is<Container>(cellLayoutBox))
+        layoutState().createFormattingContext(downcast<Container>(cellLayoutBox))->layoutInFlowContent();
     cellDisplayBox.setVerticalMargin({ { }, { } });
     cellDisplayBox.setContentBoxHeight(geometry().tableCellHeightAndMargin(cellLayoutBox).height);
     // FIXME: Check what to do with out-of-flow content.
@@ -134,7 +135,7 @@ void TableFormattingContext::setComputedGeometryForSections()
     auto& grid = formattingState().tableGrid();
     auto sectionWidth = grid.columnsContext().logicalWidth() + 2 * grid.horizontalSpacing();
 
-    for (auto& section : childrenOfType<Box>(downcast<Container>(root()))) {
+    for (auto& section : childrenOfType<Box>(root())) {
         auto& sectionDisplayBox = formattingState().displayBox(section);
         initializeDisplayBoxToBlank(sectionDisplayBox);
         // FIXME: Size table sections properly.
@@ -162,7 +163,7 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedInt
 
 void TableFormattingContext::ensureTableGrid()
 {
-    auto& tableWrapperBox = downcast<Container>(root());
+    auto& tableWrapperBox = root();
     auto& tableGrid = formattingState().tableGrid();
     tableGrid.setHorizontalSpacing(LayoutUnit { tableWrapperBox.style().horizontalBorderSpacing() });
     tableGrid.setVerticalSpacing(LayoutUnit { tableWrapperBox.style().verticalBorderSpacing() });
@@ -193,7 +194,9 @@ void TableFormattingContext::computePreferredWidthForColumns()
 
         auto intrinsicWidth = formattingState.intrinsicWidthConstraintsForBox(tableCellBox);
         if (!intrinsicWidth) {
-            intrinsicWidth = layoutState().createFormattingContext(tableCellBox)->computedIntrinsicWidthConstraints();
+            intrinsicWidth = IntrinsicWidthConstraints { };
+            if (is<Container>(tableCellBox))
+                intrinsicWidth = layoutState().createFormattingContext(downcast<Container>(tableCellBox))->computedIntrinsicWidthConstraints();
             intrinsicWidth = geometry().constrainByMinMaxWidth(tableCellBox, *intrinsicWidth);
             auto border = geometry().computedBorder(tableCellBox);
             auto padding = *geometry().computedPadding(tableCellBox, UsedHorizontalValues({ }));

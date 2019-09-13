@@ -113,12 +113,12 @@ LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(co
     auto bottom = borderAndPaddingTop;
     auto& formattingRootContainer = downcast<Container>(layoutBox);
     if (formattingRootContainer.establishesInlineFormattingContext()) {
-        auto& lineBoxes = downcast<InlineFormattingState>(layoutState.establishedFormattingState(layoutBox)).lineBoxes();
+        auto& lineBoxes = downcast<InlineFormattingState>(layoutState.establishedFormattingState(formattingRootContainer)).lineBoxes();
         // Even empty containers generate one line. 
         ASSERT(!lineBoxes.isEmpty());
         top = lineBoxes.first().logicalTop();
         bottom = lineBoxes.last().logicalBottom();
-    } else if (formattingRootContainer.establishesBlockFormattingContext() || formattingRootContainer.establishesTableFormattingContext() || layoutBox.isDocumentBox()) {
+    } else if (formattingRootContainer.establishesBlockFormattingContext() || formattingRootContainer.establishesTableFormattingContext() || formattingRootContainer.isDocumentBox()) {
         if (formattingRootContainer.hasInFlowChild()) {
             auto& firstBoxGeometry = formattingContext.geometryForBox(*formattingRootContainer.firstInFlowChild(), EscapeType::AccessChildFormattingContext);
             auto& lastBoxGeometry = formattingContext.geometryForBox(*formattingRootContainer.lastInFlowChild(), EscapeType::AccessChildFormattingContext);
@@ -128,7 +128,7 @@ LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(co
     } else
         ASSERT_NOT_REACHED();
 
-    auto* formattingContextRoot = &layoutBox;
+    auto* formattingContextRoot = &formattingRootContainer;
     // TODO: The document renderer is not a formatting context root by default at all. Need to find out what it is.
     if (!layoutBox.establishesFormattingContext()) {
         ASSERT(layoutBox.isDocumentBox());
@@ -257,13 +257,18 @@ LayoutUnit FormattingContext::Geometry::shrinkToFitWidth(const Box& formattingRo
     // 'padding-left', 'padding-right', 'border-right-width', 'margin-right', and the widths of any relevant scroll bars.
 
     // Then the shrink-to-fit width is: min(max(preferred minimum width, available width), preferred width).
-    auto& layoutState = this->layoutState();
-    auto& formattingStateForRoot = layoutState.createFormattingStateForFormattingRootIfNeeded(formattingRoot);
-    auto intrinsicWidthConstraints = formattingStateForRoot.intrinsicWidthConstraints();
-    if (!intrinsicWidthConstraints)
-        intrinsicWidthConstraints = layoutState.createFormattingContext(formattingRoot)->computedIntrinsicWidthConstraints();
+    auto intrinsicWidthConstraints = IntrinsicWidthConstraints { };
+    if (is<Container>(formattingRoot)) {
+        auto& root = downcast<Container>(formattingRoot);
+        auto& formattingStateForRoot = layoutState().createFormattingStateForFormattingRootIfNeeded(root);
+        auto precomputedIntrinsicWidthConstraints = formattingStateForRoot.intrinsicWidthConstraints();
+        if (!precomputedIntrinsicWidthConstraints)
+            intrinsicWidthConstraints = layoutState().createFormattingContext(root)->computedIntrinsicWidthConstraints();
+        else
+            intrinsicWidthConstraints = *precomputedIntrinsicWidthConstraints;
+    }
     auto availableWidth = *usedValues.containingBlockWidth;
-    return std::min(std::max(intrinsicWidthConstraints->minimum, availableWidth), intrinsicWidthConstraints->maximum);
+    return std::min(std::max(intrinsicWidthConstraints.minimum, availableWidth), intrinsicWidthConstraints.maximum);
 }
 
 VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry(const Box& layoutBox, UsedVerticalValues usedValues) const

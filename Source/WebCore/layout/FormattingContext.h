@@ -46,7 +46,7 @@ class FormattingState;
 class FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(FormattingContext);
 public:
-    FormattingContext(const Box& formattingContextRoot, FormattingState&);
+    FormattingContext(const Container& formattingContextRoot, FormattingState&);
     virtual ~FormattingContext();
 
     virtual void layoutInFlowContent() = 0;
@@ -76,7 +76,7 @@ public:
     };
     const Display::Box& geometryForBox(const Box&, Optional<EscapeType> = WTF::nullopt) const;
 
-    const Box& root() const { return *m_root; }
+    const Container& root() const { return *m_root; }
 
 protected:
     using LayoutQueue = Vector<const Box*>;
@@ -171,7 +171,7 @@ private:
     void computeOutOfFlowVerticalGeometry(const Box&);
     void computeOutOfFlowHorizontalGeometry(const Box&);
 
-    WeakPtr<const Box> m_root;
+    WeakPtr<const Container> m_root;
     FormattingState& m_formattingState;
 };
 

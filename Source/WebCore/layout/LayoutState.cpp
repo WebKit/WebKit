@@ -60,7 +60,7 @@ void LayoutState::updateLayout()
     m_formattingContextRootListForLayout.clear();
 }
 
-void LayoutState::layoutFormattingContextSubtree(const Box& layoutRoot)
+void LayoutState::layoutFormattingContextSubtree(const Container& layoutRoot)
 {
     RELEASE_ASSERT(layoutRoot.establishesFormattingContext());
     auto formattingContext = createFormattingContext(layoutRoot);
@@ -104,14 +104,14 @@ FormattingState& LayoutState::formattingStateForBox(const Box& layoutBox) const
     return *m_formattingStates.get(&root);
 }
 
-FormattingState& LayoutState::establishedFormattingState(const Box& formattingRoot) const
+FormattingState& LayoutState::establishedFormattingState(const Container& formattingRoot) const
 {
     ASSERT(formattingRoot.establishesFormattingContext());
     RELEASE_ASSERT(m_formattingStates.contains(&formattingRoot));
     return *m_formattingStates.get(&formattingRoot);
 }
 
-FormattingState& LayoutState::createFormattingStateForFormattingRootIfNeeded(const Box& formattingRoot)
+FormattingState& LayoutState::createFormattingStateForFormattingRootIfNeeded(const Container& formattingRoot)
 {
     ASSERT(formattingRoot.establishesFormattingContext());
 
@@ -151,7 +151,7 @@ FormattingState& LayoutState::createFormattingStateForFormattingRootIfNeeded(con
     CRASH();
 }
 
-std::unique_ptr<FormattingContext> LayoutState::createFormattingContext(const Box& formattingContextRoot)
+std::unique_ptr<FormattingContext> LayoutState::createFormattingContext(const Container& formattingContextRoot)
 {
     ASSERT(formattingContextRoot.establishesFormattingContext());
     if (formattingContextRoot.establishesInlineFormattingContext()) {

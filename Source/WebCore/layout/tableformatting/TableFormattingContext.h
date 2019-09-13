@@ -39,7 +39,7 @@ namespace Layout {
 class TableFormattingContext : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(TableFormattingContext);
 public:
-    TableFormattingContext(const Box& formattingContextRoot, TableFormattingState&);
+    TableFormattingContext(const Container& formattingContextRoot, TableFormattingState&);
     void layoutInFlowContent() override;
 
 private:

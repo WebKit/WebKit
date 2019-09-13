@@ -45,7 +45,7 @@ FloatingState::FloatItem::FloatItem(const Box& layoutBox, Display::Box absoluteD
 {
 }
 
-FloatingState::FloatingState(LayoutState& layoutState, const Box& formattingContextRoot)
+FloatingState::FloatingState(LayoutState& layoutState, const Container& formattingContextRoot)
     : m_layoutState(layoutState)
     , m_formattingContextRoot(makeWeakPtr(formattingContextRoot))
 {
@@ -91,7 +91,7 @@ void FloatingState::append(FloatItem floatItem)
     return m_floats.insert(0, floatItem);
 }
 
-Optional<PositionInContextRoot> FloatingState::bottom(const Box& formattingContextRoot, Clear type) const
+Optional<PositionInContextRoot> FloatingState::bottom(const Container& formattingContextRoot, Clear type) const
 {
     if (m_floats.isEmpty())
         return { };
@@ -118,7 +118,7 @@ Optional<PositionInContextRoot> FloatingState::bottom(const Box& formattingConte
     return bottom;
 }
 
-Optional<PositionInContextRoot> FloatingState::top(const Box& formattingContextRoot) const
+Optional<PositionInContextRoot> FloatingState::top(const Container& formattingContextRoot) const
 {
     if (m_floats.isEmpty())
         return { };

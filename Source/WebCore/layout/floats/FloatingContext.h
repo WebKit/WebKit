@@ -73,7 +73,7 @@ public:
 private:
     LayoutState& layoutState() const { return m_floatingState.layoutState(); }
     const FormattingContext& formattingContext() const { return m_formattingContext; }
-    const Container& root() const { return downcast<Container>(formattingContext().root()); }
+    const Container& root() const { return formattingContext().root(); }
 
     void findPositionForFloatBox(FloatBox&) const;
     void findPositionForFormattingContextRoot(FloatAvoider&) const;

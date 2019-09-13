@@ -131,7 +131,7 @@ std::unique_ptr<Line::Content> Line::close()
                     auto& boxGeometry = formattingContext.geometryForBox(layoutBox);
                     logicalTop = baselineOffset() - ascent - boxGeometry.borderTop() - boxGeometry.paddingTop().valueOr(0);
                 } else if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
-                    auto& formattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(layoutBox));
+                    auto& formattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(downcast<Container>(layoutBox)));
                     // Spec makes us generate at least one line -even if it is empty.
                     ASSERT(!formattingState.lineBoxes().isEmpty());
                     auto inlineBlockBaseline = formattingState.lineBoxes().last().baseline();
@@ -374,7 +374,7 @@ void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit 
             auto newBaselineCandidate = LineBox::Baseline { runHeight, 0 };
             if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
                 // Inline-blocks with inline content always have baselines.
-                auto& formattingState = downcast<InlineFormattingState>(layoutState().establishedFormattingState(layoutBox));
+                auto& formattingState = downcast<InlineFormattingState>(layoutState().establishedFormattingState(downcast<Container>(layoutBox)));
                 // Spec makes us generate at least one line -even if it is empty.
                 ASSERT(!formattingState.lineBoxes().isEmpty());
                 newBaselineCandidate = formattingState.lineBoxes().last().baseline();

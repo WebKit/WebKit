@@ -44,7 +44,7 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(BlockFormattingContext);
 
-BlockFormattingContext::BlockFormattingContext(const Box& formattingContextRoot, BlockFormattingState& formattingState)
+BlockFormattingContext::BlockFormattingContext(const Container& formattingContextRoot, BlockFormattingState& formattingState)
     : FormattingContext(formattingContextRoot, formattingState)
 {
 }
@@ -55,12 +55,9 @@ void BlockFormattingContext::layoutInFlowContent()
     // In a block formatting context, boxes are laid out one after the other, vertically, beginning at the top of a containing block.
     // The vertical distance between two sibling boxes is determined by the 'margin' properties.
     // Vertical margins between adjacent block-level boxes in a block formatting context collapse.
-    if (!is<Container>(root()))
-        return;
-
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> block formatting context -> formatting root(" << &root() << ")");
 
-    auto& formattingRoot = downcast<Container>(root());
+    auto& formattingRoot = root();
     LayoutQueue layoutQueue;
     auto floatingContext = FloatingContext { *this, formattingState().floatingState() };
     // This is a post-order tree traversal layout.
@@ -126,18 +123,17 @@ Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(c
     if (floatingContext.isEmpty())
         return { };
     // Vertical static position is not computed yet, so let's just estimate it for now.
-    auto& formattingRoot = downcast<Container>(root());
     auto verticalPosition = mapTopToFormattingContextRoot(layoutBox);
     auto constraints = floatingContext.constraints({ verticalPosition });
     if (!constraints.left && !constraints.right)
         return { };
-    auto& containingBlock = downcast<Container>(*layoutBox.containingBlock());
+    auto& containingBlock = *layoutBox.containingBlock();
     auto& containingBlockGeometry = geometryForBox(containingBlock);
     auto availableWidth = containingBlockGeometry.contentBoxWidth();
 
     LayoutUnit containingBlockLeft;
     LayoutUnit containingBlockRight = containingBlockGeometry.right();
-    if (&containingBlock != &formattingRoot) {
+    if (&containingBlock != &root()) {
         // Move containing block left/right to the root's coordinate system.
         containingBlockLeft = mapLeftToFormattingContextRoot(containingBlock);
         containingBlockRight = mapRightToFormattingContextRoot(containingBlock);
@@ -167,15 +163,16 @@ void BlockFormattingContext::layoutFormattingContextRoot(FloatingContext& floati
         usedAvailableWidthForFloatAvoider = this->usedAvailableWidthForFloatAvoider(floatingContext, layoutBox);
     computeWidthAndMargin(layoutBox, usedAvailableWidthForFloatAvoider);
     computeStaticHorizontalPosition(layoutBox);
-    // Swich over to the new formatting context (the one that the root creates).
-    auto formattingContext = layoutState().createFormattingContext(layoutBox);
-    formattingContext->layoutInFlowContent();
-    // Come back and finalize the root's geometry.
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Compute] -> [Height][Margin] -> for layoutBox(" << &layoutBox << ")");
-    computeHeightAndMargin(layoutBox);
-    // Now that we computed the root's height, we can go back and layout the out-of-flow content.
-    formattingContext->layoutOutOfFlowContent();
-
+    if (is<Container>(layoutBox)) {
+        // Swich over to the new formatting context (the one that the root creates).
+        auto formattingContext = layoutState().createFormattingContext(downcast<Container>(layoutBox));
+        formattingContext->layoutInFlowContent();
+        // Come back and finalize the root's geometry.
+        computeHeightAndMargin(layoutBox);
+        // Now that we computed the root's height, we can go back and layout the out-of-flow content.
+        formattingContext->layoutOutOfFlowContent();
+    } else
+        computeHeightAndMargin(layoutBox);
     // Float related final positioning.
     if (layoutBox.isFloatingPositioned()) {
         computeFloatingPosition(floatingContext, layoutBox);
@@ -446,7 +443,6 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox)
 
 FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::computedIntrinsicWidthConstraints()
 {
-    auto& formattingRoot = root();
     auto& formattingState = this->formattingState();
     ASSERT(!formattingState.intrinsicWidthConstraints());
 
@@ -456,8 +452,8 @@ FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::computedInt
     // 3. As we climb back on the tree, compute min/max intrinsic width
     // (Any subtrees with new formatting contexts need to layout synchronously)
     Vector<const Box*> queue;
-    if (is<Container>(formattingRoot) && downcast<Container>(formattingRoot).hasInFlowOrFloatingChild())
-        queue.append(downcast<Container>(formattingRoot).firstInFlowOrFloatingChild());
+    if (root().hasInFlowOrFloatingChild())
+        queue.append(root().firstInFlowOrFloatingChild());
 
     IntrinsicWidthConstraints constraints;
     while (!queue.isEmpty()) {

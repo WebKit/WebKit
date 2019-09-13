@@ -76,11 +76,11 @@ public:
     bool needsUpdate(const Box&) const;
 
     FormattingState& formattingStateForBox(const Box&) const;
-    FormattingState& establishedFormattingState(const Box& formattingRoot) const;
-    bool hasFormattingState(const Box& formattingRoot) const { return m_formattingStates.contains(&formattingRoot); }
-    FormattingState& createFormattingStateForFormattingRootIfNeeded(const Box& formattingRoot);
+    FormattingState& establishedFormattingState(const Container& formattingRoot) const;
+    bool hasFormattingState(const Container& formattingRoot) const { return m_formattingStates.contains(&formattingRoot); }
+    FormattingState& createFormattingStateForFormattingRootIfNeeded(const Container& formattingRoot);
 
-    std::unique_ptr<FormattingContext> createFormattingContext(const Box& formattingContextRoot);
+    std::unique_ptr<FormattingContext> createFormattingContext(const Container& formattingContextRoot);
 #ifndef NDEBUG
     void registerFormattingContext(const FormattingContext&);
     void deregisterFormattingContext(const FormattingContext& formattingContext) { m_formattingContextList.remove(&formattingContext); }
@@ -96,10 +96,10 @@ public:
     void verifyAndOutputMismatchingLayoutTree(const RenderView&, const Container& initialContainingBlock) const;
 
 private:
-    void layoutFormattingContextSubtree(const Box&);
+    void layoutFormattingContextSubtree(const Container&);
 
     HashSet<const Container*> m_formattingContextRootListForLayout;
-    HashMap<const Box*, std::unique_ptr<FormattingState>> m_formattingStates;
+    HashMap<const Container*, std::unique_ptr<FormattingState>> m_formattingStates;
 #ifndef NDEBUG
     HashSet<const FormattingContext*> m_formattingContextList;
 #endif

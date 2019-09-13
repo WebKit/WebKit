@@ -1,3 +1,84 @@
+2019-09-13  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Do not create FormattingContext unless the root has child boxes.
+        https://bugs.webkit.org/show_bug.cgi?id=201766
+        <rdar://problem/55344449>
+
+        Reviewed by Antti Koivisto.
+
+        Just because a box establishes a formatting context, it does not necessarily mean we need to create a formatting context object for it.
+        The established formatting context is responsible for laying out the descendant content. The formatting context root itself is
+        laid out in the formatting context it lives in. So if there's no descendent content, we don't need to construct the context objects.
+
+        <body><div style="float: left;"></div></body> <- this div establishes a block formatting context (float) but it does not have any content so laying
+        it out simply means sizing and positioning it in the initial block formatting context.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::FormattingContext):
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowContent):
+        (WebCore::Layout::FormattingContext::mapTopToFormattingContextRoot const):
+        (WebCore::Layout::FormattingContext::mapLeftToFormattingContextRoot const):
+        (WebCore::Layout::FormattingContext::mapRightToFormattingContextRoot const):
+        (WebCore::Layout::FormattingContext::validateGeometryConstraintsAfterLayout const):
+        * layout/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::root const):
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::contentHeightForFormattingContextRoot const):
+        (WebCore::Layout::FormattingContext::Geometry::shrinkToFitWidth):
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::layoutFormattingContextSubtree):
+        (WebCore::Layout::LayoutState::establishedFormattingState const):
+        (WebCore::Layout::LayoutState::createFormattingStateForFormattingRootIfNeeded):
+        (WebCore::Layout::LayoutState::createFormattingContext):
+        * layout/LayoutState.h:
+        (WebCore::Layout::LayoutState::hasFormattingState const):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::BlockFormattingContext):
+        (WebCore::Layout::BlockFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::BlockFormattingContext::usedAvailableWidthForFloatAvoider const):
+        (WebCore::Layout::BlockFormattingContext::layoutFormattingContextRoot):
+        (WebCore::Layout::BlockFormattingContext::computedIntrinsicWidthConstraints):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::intrinsicWidthConstraints):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginsCollapseThrough const):
+        * layout/floats/FloatingContext.h:
+        (WebCore::Layout::FloatingContext::root const):
+        * layout/floats/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::FloatingState):
+        (WebCore::Layout::FloatingState::bottom const):
+        (WebCore::Layout::FloatingState::top const):
+        * layout/floats/FloatingState.h:
+        (WebCore::Layout::FloatingState::create):
+        (WebCore::Layout::FloatingState::root const):
+        (WebCore::Layout::FloatingState::leftBottom const):
+        (WebCore::Layout::FloatingState::rightBottom const):
+        (WebCore::Layout::FloatingState::bottom const):
+        (WebCore::Layout::FloatingState::FloatItem::isDescendantOfFormattingRoot const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::InlineFormattingContext):
+        (WebCore::Layout::InlineFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::InlineFormattingContext::computeIntrinsicWidthForFormattingRoot):
+        (WebCore::Layout::InlineFormattingContext::layoutFormattingContextRoot):
+        (WebCore::Layout::InlineFormattingContext::collectInlineContent const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::formattingRoot const):
+        * layout/inlineformatting/InlineFormattingContextQuirks.cpp:
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineDescentNeedsCollapsing const):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::close):
+        (WebCore::Layout::Line::adjustBaselineAndLineHeight):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::TableFormattingContext):
+        (WebCore::Layout::TableFormattingContext::layoutTableCellBox):
+        (WebCore::Layout::TableFormattingContext::setComputedGeometryForSections):
+        (WebCore::Layout::TableFormattingContext::ensureTableGrid):
+        (WebCore::Layout::TableFormattingContext::computePreferredWidthForColumns):
+        * layout/tableformatting/TableFormattingContext.h:
+
 2019-09-13  Ali Juma  <ajuma@chromium.org>
 
         IntersectionObserverEntry#intersectionRatio can be larger than 1
