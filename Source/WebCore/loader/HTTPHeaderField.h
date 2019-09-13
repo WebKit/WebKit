@@ -74,6 +74,9 @@ Optional<HTTPHeaderField> HTTPHeaderField::decode(Decoder& decoder)
 namespace RFC7230 {
 bool isTokenCharacter(UChar);
 bool isWhitespace(UChar);
+bool isCommentText(UChar);
+bool isQuotedPairSecondOctet(UChar);
+bool isDelimiter(UChar);
 } // namespace RFC7230
 
 } // namespace WebCore

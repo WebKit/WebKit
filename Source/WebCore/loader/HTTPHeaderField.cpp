@@ -40,7 +40,7 @@ bool isTokenCharacter(UChar c)
         || c == '`' || c == '|' || c == '~';
 }
 
-static bool isDelimiter(UChar c)
+bool isDelimiter(UChar c)
 {
     return c == '(' || c == ')' || c == ','
         || c == '/' || c == ':' || c == ';'
@@ -80,14 +80,14 @@ static bool isQuotedTextCharacter(UChar c)
         || isOBSText(c);
 }
 
-static bool isQuotedPairSecondOctet(UChar c)
+bool isQuotedPairSecondOctet(UChar c)
 {
     return isWhitespace(c)
         || isVisibleCharacter(c)
         || isOBSText(c);
 }
 
-static bool isCommentText(UChar c)
+bool isCommentText(UChar c)
 {
     return isWhitespace(c)
         || isInRange<0x21, 0x27>(c)
