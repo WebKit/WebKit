@@ -67,8 +67,8 @@ Line::Line(const InlineFormattingContext& inlineFormattingContext, const Initial
 static bool isInlineContainerConsideredEmpty(const FormattingContext& formattingContext, const Box& layoutBox)
 {
     // Note that this does not check whether the inline container has content. It simply checks if the container itself is considered empty.
-    auto& displayBox = formattingContext.displayBoxForLayoutBox(layoutBox);
-    return !(displayBox.horizontalBorder() || (displayBox.horizontalPadding() && displayBox.horizontalPadding().value()));
+    auto& boxGeometry = formattingContext.geometryForBox(layoutBox);
+    return !(boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value()));
 }
 
 bool Line::isVisuallyEmpty() const
@@ -86,10 +86,10 @@ bool Line::isVisuallyEmpty() const
             continue;
         if (run->layoutBox().establishesFormattingContext()) {
             ASSERT(run->layoutBox().isInlineBlockBox());
-            auto& displayBox = formattingContext.displayBoxForLayoutBox(run->layoutBox());
-            if (!displayBox.width())
+            auto& boxGeometry = formattingContext.geometryForBox(run->layoutBox());
+            if (!boxGeometry.width())
                 continue;
-            if (m_skipVerticalAligment || displayBox.height())
+            if (m_skipVerticalAligment || boxGeometry.height())
                 return false;
             continue;
         }
@@ -128,8 +128,8 @@ std::unique_ptr<Line::Content> Line::close()
                 if (run->isLineBreak() || run->isText())
                     logicalTop = baselineOffset() - ascent;
                 else if (run->isContainerStart()) {
-                    auto& displayBox = formattingContext.displayBoxForLayoutBox(layoutBox);
-                    logicalTop = baselineOffset() - ascent - displayBox.borderTop() - displayBox.paddingTop().valueOr(0);
+                    auto& boxGeometry = formattingContext.geometryForBox(layoutBox);
+                    logicalTop = baselineOffset() - ascent - boxGeometry.borderTop() - boxGeometry.paddingTop().valueOr(0);
                 } else if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
                     auto& formattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(layoutBox));
                     // Spec makes us generate at least one line -even if it is empty.
@@ -295,14 +295,14 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
 
 void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
-    auto& displayBox = formattingContext().displayBoxForLayoutBox(inlineItem.layoutBox());
-    auto horizontalMargin = displayBox.horizontalMargin();    
+    auto& boxGeometry = formattingContext().geometryForBox(inlineItem.layoutBox());
+    auto horizontalMargin = boxGeometry.horizontalMargin();    
     auto logicalRect = Display::Rect { };
 
     logicalRect.setLeft(contentLogicalWidth() + horizontalMargin.start);
     logicalRect.setWidth(logicalWidth);
     if (!m_skipVerticalAligment) {
-        adjustBaselineAndLineHeight(inlineItem, displayBox.marginBoxHeight());
+        adjustBaselineAndLineHeight(inlineItem, boxGeometry.marginBoxHeight());
         logicalRect.setHeight(inlineItemContentHeight(inlineItem));
     }
 
@@ -414,20 +414,19 @@ LayoutUnit Line::inlineItemContentHeight(const InlineItem& inlineItem) const
         return fontMetrics.height();
 
     auto& layoutBox = inlineItem.layoutBox();
-    ASSERT(formattingContext().hasDisplayBox(layoutBox));
-    auto& displayBox = formattingContext().displayBoxForLayoutBox(layoutBox);
+    auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
 
     if (layoutBox.isFloatingPositioned())
-        return displayBox.borderBoxHeight();
+        return boxGeometry.borderBoxHeight();
 
     if (layoutBox.replaced())
-        return displayBox.borderBoxHeight();
+        return boxGeometry.borderBoxHeight();
 
     if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
-        return fontMetrics.height() + displayBox.verticalBorder() + displayBox.verticalPadding().valueOr(0);
+        return fontMetrics.height() + boxGeometry.verticalBorder() + boxGeometry.verticalPadding().valueOr(0);
 
     // Non-replaced inline box (e.g. inline-block)
-    return displayBox.borderBoxHeight();
+    return boxGeometry.borderBoxHeight();
 }
 
 LineBox::Baseline Line::halfLeadingMetrics(const FontMetrics& fontMetrics, LayoutUnit lineLogicalHeight)

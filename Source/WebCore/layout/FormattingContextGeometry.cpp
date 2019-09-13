@@ -72,7 +72,7 @@ Optional<LayoutUnit> FormattingContext::Geometry::computedHeightValue(const Box&
     Optional<LayoutUnit> containingBlockHeightValue;
     if (layoutBox.isOutOfFlowPositioned()) {
         // Containing block's height is already computed since we layout the out-of-flow boxes as the last step.
-        containingBlockHeightValue = formattingContext().displayBoxForLayoutBox(*layoutBox.containingBlock()).height();
+        containingBlockHeightValue = formattingContext().geometryForBox(*layoutBox.containingBlock()).height();
     } else {
         if (layoutState().inQuirksMode())
             containingBlockHeightValue = formattingContext().quirks().heightValueOfNearestContainingBlockWithFixedHeight(layoutBox);
@@ -107,8 +107,8 @@ LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(co
 
     auto& layoutState = this->layoutState();
     auto& formattingContext = this->formattingContext();
-    auto& displayBox = formattingContext.displayBoxForLayoutBox(layoutBox);
-    auto borderAndPaddingTop = displayBox.borderTop() + displayBox.paddingTop().valueOr(0);
+    auto& boxGeometry = formattingContext.geometryForBox(layoutBox);
+    auto borderAndPaddingTop = boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0);
     auto top = borderAndPaddingTop;
     auto bottom = borderAndPaddingTop;
     auto& formattingRootContainer = downcast<Container>(layoutBox);
@@ -120,10 +120,10 @@ LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(co
         bottom = lineBoxes.last().logicalBottom();
     } else if (formattingRootContainer.establishesBlockFormattingContext() || formattingRootContainer.establishesTableFormattingContext() || layoutBox.isDocumentBox()) {
         if (formattingRootContainer.hasInFlowChild()) {
-            auto& firstDisplayBox = formattingContext.displayBoxForLayoutBox(*formattingRootContainer.firstInFlowChild(), EscapeType::AccessChildFormattingContext);
-            auto& lastDisplayBox = formattingContext.displayBoxForLayoutBox(*formattingRootContainer.lastInFlowChild(), EscapeType::AccessChildFormattingContext);
-            top = firstDisplayBox.rectWithMargin().top();
-            bottom = lastDisplayBox.rectWithMargin().bottom();
+            auto& firstBoxGeometry = formattingContext.geometryForBox(*formattingRootContainer.firstInFlowChild(), EscapeType::AccessChildFormattingContext);
+            auto& lastBoxGeometry = formattingContext.geometryForBox(*formattingRootContainer.lastInFlowChild(), EscapeType::AccessChildFormattingContext);
+            top = firstBoxGeometry.rectWithMargin().top();
+            bottom = lastBoxGeometry.rectWithMargin().bottom();
         }
     } else
         ASSERT_NOT_REACHED();
@@ -199,24 +199,24 @@ LayoutUnit FormattingContext::Geometry::staticVerticalPositionForOutOfFlowPositi
     LayoutUnit top;
     if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
         // Add sibling offset
-        auto& previousInFlowDisplayBox = formattingContext.displayBoxForLayoutBox(*previousInFlowSibling, FormattingContext::EscapeType::AccessChildFormattingContext);
-        top += previousInFlowDisplayBox.bottom() + previousInFlowDisplayBox.nonCollapsedMarginAfter();
+        auto& previousInFlowBoxGeometry = formattingContext.geometryForBox(*previousInFlowSibling, FormattingContext::EscapeType::AccessChildFormattingContext);
+        top += previousInFlowBoxGeometry.bottom() + previousInFlowBoxGeometry.nonCollapsedMarginAfter();
     } else {
         ASSERT(layoutBox.parent());
-        top = formattingContext.displayBoxForLayoutBox(*layoutBox.parent(), FormattingContext::EscapeType::AccessChildFormattingContext).contentBoxTop();
+        top = formattingContext.geometryForBox(*layoutBox.parent(), FormattingContext::EscapeType::AccessChildFormattingContext).contentBoxTop();
     }
 
     // Resolve top all the way up to the containing block.
     auto& containingBlock = *layoutBox.containingBlock();
     // Start with the parent since we pretend that this box is normal flow.
     for (auto* container = layoutBox.parent(); container != &containingBlock; container = container->containingBlock()) {
-        auto& displayBox = formattingContext.displayBoxForLayoutBox(*container, FormattingContext::EscapeType::AccessChildFormattingContext);
+        auto& boxGeometry = formattingContext.geometryForBox(*container, FormattingContext::EscapeType::AccessChildFormattingContext);
         // Display::Box::top is the border box top position in its containing block's coordinate system.
-        top += displayBox.top();
+        top += boxGeometry.top();
         ASSERT(!container->isPositioned() || layoutBox.isFixedPositioned());
     }
     // Move the static position relative to the padding box. This is very specific to abolutely positioned boxes.
-    auto paddingBoxTop = formattingContext.displayBoxForLayoutBox(containingBlock).paddingBoxTop();
+    auto paddingBoxTop = formattingContext.geometryForBox(containingBlock).paddingBoxTop();
     return top - paddingBoxTop;
 }
 
@@ -228,19 +228,19 @@ LayoutUnit FormattingContext::Geometry::staticHorizontalPositionForOutOfFlowPosi
     // Start with this box's border box offset from the parent's border box.
     auto& formattingContext = this->formattingContext();
     ASSERT(layoutBox.parent());
-    auto left = formattingContext.displayBoxForLayoutBox(*layoutBox.parent(), FormattingContext::EscapeType::AccessChildFormattingContext).contentBoxLeft();
+    auto left = formattingContext.geometryForBox(*layoutBox.parent(), FormattingContext::EscapeType::AccessChildFormattingContext).contentBoxLeft();
 
     // Resolve left all the way up to the containing block.
     auto& containingBlock = *layoutBox.containingBlock();
     // Start with the parent since we pretend that this box is normal flow.
     for (auto* container = layoutBox.parent(); container != &containingBlock; container = container->containingBlock()) {
-        auto& displayBox = formattingContext.displayBoxForLayoutBox(*container, FormattingContext::EscapeType::AccessChildFormattingContext);
+        auto& boxGeometry = formattingContext.geometryForBox(*container, FormattingContext::EscapeType::AccessChildFormattingContext);
         // Display::Box::left is the border box left position in its containing block's coordinate system.
-        left += displayBox.left();
+        left += boxGeometry.left();
         ASSERT(!container->isPositioned() || layoutBox.isFixedPositioned());
     }
     // Move the static position relative to the padding box. This is very specific to abolutely positioned boxes.
-    auto paddingBoxLeft = formattingContext.displayBoxForLayoutBox(containingBlock, FormattingContext::EscapeType::AccessChildFormattingContext).paddingBoxLeft();
+    auto paddingBoxLeft = formattingContext.geometryForBox(containingBlock, FormattingContext::EscapeType::AccessChildFormattingContext).paddingBoxLeft();
     return left - paddingBoxLeft;
 }
 
@@ -296,20 +296,20 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeomet
 
     auto& formattingContext = this->formattingContext();
     auto& style = layoutBox.style();
-    auto& displayBox = formattingContext.displayBoxForLayoutBox(layoutBox);
-    auto& containingBlockDisplayBox = formattingContext.displayBoxForLayoutBox(*layoutBox.containingBlock());
-    auto containingBlockHeight = containingBlockDisplayBox.paddingBoxHeight();
-    auto containingBlockWidth = containingBlockDisplayBox.paddingBoxWidth();
+    auto& boxGeometry = formattingContext.geometryForBox(layoutBox);
+    auto& containingBlockGeometry = formattingContext.geometryForBox(*layoutBox.containingBlock());
+    auto containingBlockHeight = containingBlockGeometry.paddingBoxHeight();
+    auto containingBlockWidth = containingBlockGeometry.paddingBoxWidth();
 
     auto top = computedValueIfNotAuto(style.logicalTop(), containingBlockWidth);
     auto bottom = computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);
     auto height = usedValues.height ? usedValues.height.value() : computedHeightValue(layoutBox, HeightType::Normal);
     auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutBox, UsedHorizontalValues { containingBlockWidth });
     UsedVerticalMargin::NonCollapsedValues usedVerticalMargin; 
-    auto paddingTop = displayBox.paddingTop().valueOr(0);
-    auto paddingBottom = displayBox.paddingBottom().valueOr(0);
-    auto borderTop = displayBox.borderTop();
-    auto borderBottom = displayBox.borderBottom();
+    auto paddingTop = boxGeometry.paddingTop().valueOr(0);
+    auto paddingBottom = boxGeometry.paddingBottom().valueOr(0);
+    auto borderTop = boxGeometry.borderTop();
+    auto borderBottom = boxGeometry.borderBottom();
     auto contentHeight = [&] {
         ASSERT(height);
         return style.boxSizing() == BoxSizing::ContentBox ? *height : *height - (borderTop + paddingTop + paddingBottom + borderBottom);  
@@ -381,7 +381,7 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeomet
 
     // For out-of-flow elements the containing block is formed by the padding edge of the ancestor.
     // At this point the positioned value is in the coordinate system of the padding box. Let's convert it to border box coordinate system.
-    auto containingBlockPaddingVerticalEdge = containingBlockDisplayBox.paddingBoxTop();
+    auto containingBlockPaddingVerticalEdge = containingBlockGeometry.paddingBoxTop();
     *top += containingBlockPaddingVerticalEdge;
     *bottom += containingBlockPaddingVerticalEdge;
 
@@ -421,9 +421,9 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
 
     auto& formattingContext = this->formattingContext();
     auto& style = layoutBox.style();
-    auto& displayBox = formattingContext.displayBoxForLayoutBox(layoutBox);
+    auto& boxGeometry = formattingContext.geometryForBox(layoutBox);
     auto& containingBlock = *layoutBox.containingBlock();
-    auto& containingBlockDisplayBox = formattingContext.displayBoxForLayoutBox(containingBlock);
+    auto& containingBlockGeometry = formattingContext.geometryForBox(containingBlock);
     auto containingBlockWidth = usedValues.containingBlockWidth.valueOr(0);
     auto isLeftToRightDirection = containingBlock.style().isLeftToRightDirection();
     
@@ -432,10 +432,10 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
     auto width = computedValueIfNotAuto(usedValues.width ? Length { usedValues.width.value(), Fixed } : style.logicalWidth(), containingBlockWidth);
     auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutBox, usedValues);
     UsedHorizontalMargin usedHorizontalMargin;
-    auto paddingLeft = displayBox.paddingLeft().valueOr(0);
-    auto paddingRight = displayBox.paddingRight().valueOr(0);
-    auto borderLeft = displayBox.borderLeft();
-    auto borderRight = displayBox.borderRight();
+    auto paddingLeft = boxGeometry.paddingLeft().valueOr(0);
+    auto paddingRight = boxGeometry.paddingRight().valueOr(0);
+    auto borderLeft = boxGeometry.borderLeft();
+    auto borderRight = boxGeometry.borderRight();
     auto contentWidth = [&] {
         ASSERT(width);
         return style.boxSizing() == BoxSizing::ContentBox ? *width : *width - (borderLeft + paddingLeft + paddingRight + borderRight);
@@ -531,7 +531,7 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
 
     // For out-of-flow elements the containing block is formed by the padding edge of the ancestor.
     // At this point the positioned value is in the coordinate system of the padding box. Let's convert it to border box coordinate system.
-    auto containingBlockPaddingVerticalEdge = containingBlockDisplayBox.paddingBoxLeft();
+    auto containingBlockPaddingVerticalEdge = containingBlockGeometry.paddingBoxLeft();
     *left += containingBlockPaddingVerticalEdge;
     *right += containingBlockPaddingVerticalEdge;
 
@@ -555,10 +555,10 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(
 
     auto& formattingContext = this->formattingContext();
     auto& style = layoutBox.style();
-    auto& displayBox = formattingContext.displayBoxForLayoutBox(layoutBox);
-    auto& containingBlockDisplayBox = formattingContext.displayBoxForLayoutBox(*layoutBox.containingBlock());
-    auto containingBlockHeight = containingBlockDisplayBox.paddingBoxHeight();
-    auto containingBlockWidth = containingBlockDisplayBox.paddingBoxWidth();
+    auto& boxGeometry = formattingContext.geometryForBox(layoutBox);
+    auto& containingBlockGeometry = formattingContext.geometryForBox(*layoutBox.containingBlock());
+    auto containingBlockHeight = containingBlockGeometry.paddingBoxHeight();
+    auto containingBlockWidth = containingBlockGeometry.paddingBoxWidth();
 
     auto top = computedValueIfNotAuto(style.logicalTop(), containingBlockWidth);
     auto bottom = computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);
@@ -566,10 +566,10 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(
     auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutBox, UsedHorizontalValues { containingBlockWidth });
     Optional<LayoutUnit> usedMarginBefore = computedVerticalMargin.before;
     Optional<LayoutUnit> usedMarginAfter = computedVerticalMargin.after;
-    auto paddingTop = displayBox.paddingTop().valueOr(0);
-    auto paddingBottom = displayBox.paddingBottom().valueOr(0);
-    auto borderTop = displayBox.borderTop();
-    auto borderBottom = displayBox.borderBottom();
+    auto paddingTop = boxGeometry.paddingTop().valueOr(0);
+    auto paddingBottom = boxGeometry.paddingBottom().valueOr(0);
+    auto borderTop = boxGeometry.borderTop();
+    auto borderBottom = boxGeometry.borderBottom();
 
     if (!top && !bottom) {
         // #1
@@ -609,7 +609,7 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(
 
     // For out-of-flow elements the containing block is formed by the padding edge of the ancestor.
     // At this point the positioned value is in the coordinate system of the padding box. Let's convert it to border box coordinate system.
-    auto containingBlockPaddingVerticalEdge = containingBlockDisplayBox.paddingBoxTop();
+    auto containingBlockPaddingVerticalEdge = containingBlockGeometry.paddingBoxTop();
     *top += containingBlockPaddingVerticalEdge;
     *bottom += containingBlockPaddingVerticalEdge;
 
@@ -641,7 +641,7 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
 
     auto& formattingContext = this->formattingContext();
     auto& style = layoutBox.style();
-    auto& displayBox = formattingContext.displayBoxForLayoutBox(layoutBox);
+    auto& boxGeometry = formattingContext.geometryForBox(layoutBox);
     auto& containingBlock = *layoutBox.containingBlock();
     auto containingBlockWidth = usedValues.containingBlockWidth.valueOr(0);
     auto isLeftToRightDirection = containingBlock.style().isLeftToRightDirection();
@@ -652,10 +652,10 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
     Optional<LayoutUnit> usedMarginStart = computedHorizontalMargin.start;
     Optional<LayoutUnit> usedMarginEnd = computedHorizontalMargin.end;
     auto width = inlineReplacedWidthAndMargin(layoutBox, usedValues).width;
-    auto paddingLeft = displayBox.paddingLeft().valueOr(0);
-    auto paddingRight = displayBox.paddingRight().valueOr(0);
-    auto borderLeft = displayBox.borderLeft();
-    auto borderRight = displayBox.borderRight();
+    auto paddingLeft = boxGeometry.paddingLeft().valueOr(0);
+    auto paddingRight = boxGeometry.paddingRight().valueOr(0);
+    auto borderLeft = boxGeometry.borderLeft();
+    auto borderRight = boxGeometry.borderRight();
 
     if (!left && !right) {
         // #1
@@ -718,7 +718,7 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
 
     // For out-of-flow elements the containing block is formed by the padding edge of the ancestor.
     // At this point the positioned value is in the coordinate system of the padding box. Let's convert it to border box coordinate system.
-    auto containingBlockPaddingVerticalEdge = formattingContext.displayBoxForLayoutBox(containingBlock).paddingBoxLeft();
+    auto containingBlockPaddingVerticalEdge = formattingContext.geometryForBox(containingBlock).paddingBoxLeft();
     *left += containingBlockPaddingVerticalEdge;
     *right += containingBlockPaddingVerticalEdge;
 
@@ -856,7 +856,7 @@ HeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargin(const
 
     // #1
     auto& formattingContext = this->formattingContext();
-    auto containingBlockWidth = formattingContext.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
+    auto containingBlockWidth = formattingContext.geometryForBox(*layoutBox.containingBlock()).contentBoxWidth();
     auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutBox, UsedHorizontalValues { containingBlockWidth });
     auto usedVerticalMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
     auto& style = layoutBox.style();
@@ -871,7 +871,7 @@ HeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargin(const
         height = replaced->intrinsicHeight();
     } else if (heightIsAuto && replaced->hasIntrinsicRatio()) {
         // #3
-        auto usedWidth = formattingContext.displayBoxForLayoutBox(layoutBox).width();
+        auto usedWidth = formattingContext.geometryForBox(layoutBox).width();
         height = usedWidth / replaced->intrinsicRatio();
     } else if (heightIsAuto && replaced->hasIntrinsicHeight()) {
         // #4
@@ -973,7 +973,7 @@ LayoutSize FormattingContext::Geometry::inFlowPositionedPositionOffset(const Box
 
     auto& style = layoutBox.style();
     auto& containingBlock = *layoutBox.containingBlock();
-    auto containingBlockWidth = formattingContext().displayBoxForLayoutBox(containingBlock).contentBoxWidth();
+    auto containingBlockWidth = formattingContext().geometryForBox(containingBlock).contentBoxWidth();
 
     auto top = computedValueIfNotAuto(style.logicalTop(), containingBlockWidth);
     auto bottom = computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);

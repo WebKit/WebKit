@@ -50,19 +50,19 @@ LayoutUnit FormattingContext::Quirks::heightValueOfNearestContainingBlockWithFix
         // If the only fixed value box we find is the ICB, then ignore the body and the document (vertical) margin, padding and border. So much quirkiness.
         // -and it's totally insane because now we freely travel across formatting context boundaries and computed margins are nonexistent.
         if (containingBlock->isBodyBox() || containingBlock->isDocumentBox()) {
-            auto& displayBox = formattingContext.displayBoxForLayoutBox(*containingBlock, FormattingContext::EscapeType::AccessAncestorFormattingContext);
+            auto& boxGeometry = formattingContext.geometryForBox(*containingBlock, FormattingContext::EscapeType::AccessAncestorFormattingContext);
 
-            auto usedValues = UsedHorizontalValues { formattingContext.displayBoxForLayoutBox(*containingBlock->containingBlock(), FormattingContext::EscapeType::AccessAncestorFormattingContext).contentBoxWidth() };
+            auto usedValues = UsedHorizontalValues { formattingContext.geometryForBox(*containingBlock->containingBlock(), FormattingContext::EscapeType::AccessAncestorFormattingContext).contentBoxWidth() };
             auto verticalMargin = formattingContext.geometry().computedVerticalMargin(*containingBlock, usedValues);
-            auto verticalPadding = displayBox.paddingTop().valueOr(0) + displayBox.paddingBottom().valueOr(0);
-            auto verticalBorder = displayBox.borderTop() + displayBox.borderBottom();
+            auto verticalPadding = boxGeometry.paddingTop().valueOr(0) + boxGeometry.paddingBottom().valueOr(0);
+            auto verticalBorder = boxGeometry.borderTop() + boxGeometry.borderBottom();
             bodyAndDocumentVerticalMarginPaddingAndBorder += verticalMargin.before.valueOr(0) + verticalMargin.after.valueOr(0) + verticalPadding + verticalBorder;
         }
 
         containingBlock = containingBlock->containingBlock();
     }
     // Initial containing block has to have a height.
-    return formattingContext.displayBoxForLayoutBox(layoutBox.initialContainingBlock(), FormattingContext::EscapeType::AccessAncestorFormattingContext).contentBox().height() - bodyAndDocumentVerticalMarginPaddingAndBorder;
+    return formattingContext.geometryForBox(layoutBox.initialContainingBlock(), FormattingContext::EscapeType::AccessAncestorFormattingContext).contentBox().height() - bodyAndDocumentVerticalMarginPaddingAndBorder;
 }
 
 }

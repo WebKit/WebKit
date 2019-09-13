@@ -57,8 +57,8 @@ bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const Line::Con
         case InlineItem::Type::HardLineBreak:
             return false;
         case InlineItem::Type::ContainerStart: {
-            auto& displayBox = formattingContext().displayBoxForLayoutBox(layoutBox);
-            if (displayBox.horizontalBorder() || (displayBox.horizontalPadding() && displayBox.horizontalPadding().value()))
+            auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
+            if (boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value()))
                 return false;
             break;
         }

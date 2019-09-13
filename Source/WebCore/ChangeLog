@@ -1,3 +1,126 @@
+2019-09-13  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] FormattingContext::displayBoxForLayoutBox should be split into 2 functions
+        https://bugs.webkit.org/show_bug.cgi?id=201754
+        <rdar://problem/55328753>
+
+        Reviewed by Antti Koivisto.
+
+        1. FormattingContext::geometryForBox() returns a const Display::Box. Use this function to access
+        already computed geometry such as the containing block's content box width.
+        This function can escape the current formatting context in certain cases and read geometry from parent/ancestor formatting contexts. 
+        2. FormattingState::displayBox() returns a non-const version of the Display::Box. Use this function to
+        create/get the display box of a particular layout box to set computed values. This call should never escape the
+        current formatting context (as no one should mutate ancestor boxes).
+        
+        Normally while laying out a particular box, we need to collect some geometry information from other boxes in the tree like previous sibling, containing block.
+        <div style="width: 100px"><div></div></div> <- the inner div's used width is based on the outer div's width. 
+        However we should never mutate the geometry information on those other boxes (outer div). This patch helps avoiding accidental mutation on ancestors by
+        returning a const version of the Display::Box.  
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry):
+        (WebCore::Layout::FormattingContext::computeBorderAndPadding):
+        (WebCore::Layout::mapHorizontalPositionToAncestor):
+        (WebCore::Layout::FormattingContext::mapTopToFormattingContextRoot const):
+        (WebCore::Layout::FormattingContext::mapLeftToFormattingContextRoot const):
+        (WebCore::Layout::FormattingContext::mapRightToFormattingContextRoot const):
+        (WebCore::Layout::FormattingContext::geometryForBox const):
+        (WebCore::Layout::FormattingContext::validateGeometryConstraintsAfterLayout const):
+        (WebCore::Layout::FormattingContext::displayBoxForLayoutBox const): Deleted.
+        * layout/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::hasDisplayBox const): Deleted.
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::computedHeightValue const):
+        (WebCore::Layout::FormattingContext::Geometry::contentHeightForFormattingContextRoot const):
+        (WebCore::Layout::FormattingContext::Geometry::staticVerticalPositionForOutOfFlowPositioned const):
+        (WebCore::Layout::FormattingContext::Geometry::staticHorizontalPositionForOutOfFlowPositioned const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::inFlowPositionedPositionOffset const):
+        * layout/FormattingContextQuirks.cpp:
+        (WebCore::Layout::FormattingContext::Quirks::heightValueOfNearestContainingBlockWithFixedHeight):
+        * layout/FormattingState.cpp:
+        (WebCore::Layout::FormattingState::displayBox const):
+        * layout/FormattingState.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::usedAvailableWidthForFloatAvoider const):
+        (WebCore::Layout::BlockFormattingContext::placeInFlowPositionedChildren):
+        (WebCore::Layout::BlockFormattingContext::computeStaticVerticalPosition):
+        (WebCore::Layout::BlockFormattingContext::computeStaticHorizontalPosition):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedVerticalPosition):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedVerticalPositionForFloatClear):
+        (WebCore::Layout::BlockFormattingContext::computeFloatingPosition):
+        (WebCore::Layout::BlockFormattingContext::computePositionToAvoidFloats):
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::verticalPositionWithMargin const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticVerticalPosition const):
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticHorizontalPosition const):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeightAndMargin):
+        * layout/blockformatting/BlockFormattingContextQuirks.cpp:
+        (WebCore::Layout::BlockFormattingContext::Quirks::stretchedInFlowHeight):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::hasClearance const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithParentMarginBefore const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithPreviousSiblingMarginAfter const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithFirstInFlowChildMarginBefore const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithSiblingMarginBeforeWithClearance const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithLastInFlowChildMarginAfter const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::updateMarginAfterForPreviousSibling const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeValues):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::estimatedMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::updatePositiveNegativeMarginValues):
+        (WebCore::Layout::hasClearance): Deleted.
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::positionForFloat const):
+        (WebCore::Layout::FloatingContext::verticalPositionWithClearance const):
+        (WebCore::Layout::FloatingContext::absoluteDisplayBoxCoordinates const):
+        (WebCore::Layout::FloatingContext::mapToFloatingStateRoot const):
+        (WebCore::Layout::FloatingContext::mapTopToFloatingStateRoot const):
+        (WebCore::Layout::FloatingContext::mapPointFromFormattingContextRootToFloatingStateRoot const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layout):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::InlineFormattingContext::initializeMarginBorderAndPaddingForGenericInlineBox):
+        (WebCore::Layout::InlineFormattingContext::computeMarginBorderAndPaddingForInlineContainer):
+        (WebCore::Layout::InlineFormattingContext::computeIntrinsicWidthForFormattingRoot):
+        (WebCore::Layout::InlineFormattingContext::computeHorizontalMargin):
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndMargin):
+        (WebCore::Layout::InlineFormattingContext::computeHeightAndMargin):
+        (WebCore::Layout::InlineFormattingContext::layoutFormattingContextRoot):
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockHeightAndMargin const):
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::inlineItemWidth):
+        (WebCore::Layout::LineLayout::placeInlineItem):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::layout const):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::computedIntrinsicWidth const):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::createDisplayRuns const):
+        * layout/inlineformatting/InlineFormattingContextQuirks.cpp:
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineDescentNeedsCollapsing const):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::isInlineContainerConsideredEmpty):
+        (WebCore::Layout::Line::isVisuallyEmpty const):
+        (WebCore::Layout::Line::close):
+        (WebCore::Layout::Line::appendNonReplacedInlineBox):
+        (WebCore::Layout::Line::inlineItemContentHeight const):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::layout):
+        (WebCore::Layout::TableFormattingContext::layoutTableCellBox):
+        (WebCore::Layout::TableFormattingContext::positionTableCells):
+        (WebCore::Layout::TableFormattingContext::setComputedGeometryForRows):
+        (WebCore::Layout::TableFormattingContext::setComputedGeometryForSections):
+        (WebCore::Layout::TableFormattingContext::computedTableWidth):
+
 2019-09-13  Youenn Fablet  <youenn@apple.com>
 
         Use WebProcess processIdentifier to identify Service Worker connections

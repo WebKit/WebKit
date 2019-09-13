@@ -66,7 +66,7 @@ LayoutState& FormattingContext::layoutState() const
 
 void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox)
 {
-    auto containingBlockWidth = displayBoxForLayoutBox(*layoutBox.containingBlock()).paddingBoxWidth();
+    auto containingBlockWidth = geometryForBox(*layoutBox.containingBlock()).paddingBoxWidth();
 
     auto compute = [&](Optional<LayoutUnit> usedWidth) {
         auto usedValues = UsedHorizontalValues { containingBlockWidth, usedWidth, { } };
@@ -86,7 +86,7 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox)
             horizontalGeometry = minHorizontalGeometry;
     }
 
-    auto& displayBox = displayBoxForLayoutBox(layoutBox);
+    auto& displayBox = formattingState().displayBox(layoutBox);
     displayBox.setLeft(horizontalGeometry.left + horizontalGeometry.widthAndMargin.usedMargin.start);
     displayBox.setContentBoxWidth(horizontalGeometry.widthAndMargin.width);
     displayBox.setHorizontalMargin(horizontalGeometry.widthAndMargin.usedMargin);
@@ -112,7 +112,7 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox)
             verticalGeometry = minVerticalGeometry;
     }
 
-    auto& displayBox = displayBoxForLayoutBox(layoutBox);
+    auto& displayBox = formattingState().displayBox(layoutBox);
     auto nonCollapsedVerticalMargin = verticalGeometry.heightAndMargin.nonCollapsedMargin;
     displayBox.setTop(verticalGeometry.top + nonCollapsedVerticalMargin.before);
     displayBox.setContentBoxHeight(verticalGeometry.heightAndMargin.height);
@@ -123,8 +123,8 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox)
 void FormattingContext::computeBorderAndPadding(const Box& layoutBox, Optional<UsedHorizontalValues> usedValues)
 {
     if (!usedValues)
-        usedValues = UsedHorizontalValues { displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
-    auto& displayBox = displayBoxForLayoutBox(layoutBox);
+        usedValues = UsedHorizontalValues { geometryForBox(*layoutBox.containingBlock()).contentBoxWidth() };
+    auto& displayBox = formattingState().displayBox(layoutBox);
     displayBox.setBorder(geometry().computedBorder(layoutBox));
     displayBox.setPadding(geometry().computedPadding(layoutBox, *usedValues));
 }
@@ -155,7 +155,7 @@ static LayoutUnit mapHorizontalPositionToAncestor(const FormattingContext& forma
         return horizontalPosition;
     ASSERT(containingBlock.isContainingBlockDescendantOf(ancestor));
     for (auto* container = &containingBlock; container && container != &ancestor; container = container->containingBlock())
-        horizontalPosition += formattingContext.displayBoxForLayoutBox(*container).left();
+        horizontalPosition += formattingContext.geometryForBox(*container).left();
     return horizontalPosition;
 }
 
@@ -165,28 +165,27 @@ LayoutUnit FormattingContext::mapTopToFormattingContextRoot(const Box& layoutBox
     ASSERT(layoutBox.containingBlock());
     auto& formattingContextRoot = downcast<Container>(root());
     ASSERT(layoutBox.isContainingBlockDescendantOf(formattingContextRoot));
-    auto top = displayBoxForLayoutBox(layoutBox).top();
+    auto top = geometryForBox(layoutBox).top();
     for (auto* container = layoutBox.containingBlock(); container && container != &formattingContextRoot; container = container->containingBlock())
-        top += displayBoxForLayoutBox(*container).top();
+        top += geometryForBox(*container).top();
     return top;
 }
 
 LayoutUnit FormattingContext::mapLeftToFormattingContextRoot(const Box& layoutBox) const
 {
     ASSERT(layoutBox.containingBlock());
-    return mapHorizontalPositionToAncestor(*this, displayBoxForLayoutBox(layoutBox).left(), *layoutBox.containingBlock(), downcast<Container>(root()));
+    return mapHorizontalPositionToAncestor(*this, geometryForBox(layoutBox).left(), *layoutBox.containingBlock(), downcast<Container>(root()));
 }
 
 LayoutUnit FormattingContext::mapRightToFormattingContextRoot(const Box& layoutBox) const
 {
     ASSERT(layoutBox.containingBlock());
-    return mapHorizontalPositionToAncestor(*this, displayBoxForLayoutBox(layoutBox).right(), *layoutBox.containingBlock(), downcast<Container>(root()));
+    return mapHorizontalPositionToAncestor(*this, geometryForBox(layoutBox).right(), *layoutBox.containingBlock(), downcast<Container>(root()));
 }
 
-Display::Box& FormattingContext::displayBoxForLayoutBox(const Box& layoutBox, Optional<EscapeType> escapeType) const
+const Display::Box& FormattingContext::geometryForBox(const Box& layoutBox, Optional<EscapeType> escapeType) const
 {
     UNUSED_PARAM(escapeType);
-
 #ifndef NDEBUG
     auto isOkToAccessDisplayBox = [&] {
         // 1. Highly common case of accessing the formatting root's display box itself. This is formatting context escaping in the strict sense, since
@@ -237,6 +236,7 @@ Display::Box& FormattingContext::displayBoxForLayoutBox(const Box& layoutBox, Op
     };
 #endif
     ASSERT(isOkToAccessDisplayBox());
+    ASSERT(layoutState().hasDisplayBox(layoutBox));
     return layoutState().displayBoxForLayoutBox(layoutBox);
 }
 
@@ -250,23 +250,23 @@ void FormattingContext::validateGeometryConstraintsAfterLayout() const
     for (auto& layoutBox : descendantsOfType<Box>(formattingContextRoot)) {
         if (&layoutBox.formattingContextRoot() != &formattingContextRoot)
             continue;
-        auto& containingBlockDisplayBox = displayBoxForLayoutBox(*layoutBox.containingBlock());
-        auto& displayBox = displayBoxForLayoutBox(layoutBox);
+        auto& containingBlockGeometry = geometryForBox(*layoutBox.containingBlock());
+        auto& boxGeometry = geometryForBox(layoutBox);
 
         // 10.3.3 Block-level, non-replaced elements in normal flow
         // 10.3.7 Absolutely positioned, non-replaced elements
         if ((layoutBox.isBlockLevelBox() || layoutBox.isOutOfFlowPositioned()) && !layoutBox.replaced()) {
             // margin-left + border-left-width + padding-left + width + padding-right + border-right-width + margin-right = width of containing block
-            auto containingBlockWidth = containingBlockDisplayBox.contentBoxWidth();
-            ASSERT(displayBox.horizontalMarginBorderAndPadding() + displayBox.contentBoxWidth() == containingBlockWidth);
+            auto containingBlockWidth = containingBlockGeometry.contentBoxWidth();
+            ASSERT(boxGeometry.horizontalMarginBorderAndPadding() + boxGeometry.contentBoxWidth() == containingBlockWidth);
         }
 
         // 10.6.4 Absolutely positioned, non-replaced elements
         if (layoutBox.isOutOfFlowPositioned() && !layoutBox.replaced()) {
             // top + margin-top + border-top-width + padding-top + height + padding-bottom + border-bottom-width + margin-bottom + bottom = height of containing block
-            auto containingBlockHeight = containingBlockDisplayBox.contentBoxHeight();
-            ASSERT(displayBox.top() + displayBox.marginBefore() + displayBox.borderTop() + displayBox.paddingTop().valueOr(0) + displayBox.contentBoxHeight()
-                + displayBox.paddingBottom().valueOr(0) + displayBox.borderBottom() + displayBox.marginAfter() == containingBlockHeight);
+            auto containingBlockHeight = containingBlockGeometry.contentBoxHeight();
+            ASSERT(boxGeometry.top() + boxGeometry.marginBefore() + boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0) + boxGeometry.contentBoxHeight()
+                + boxGeometry.paddingBottom().valueOr(0) + boxGeometry.borderBottom() + boxGeometry.marginAfter() == containingBlockHeight);
         }
     }
 }

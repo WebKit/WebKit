@@ -74,8 +74,7 @@ public:
         AccessParentFormattingContext,
         AccessAncestorFormattingContext
     };
-    Display::Box& displayBoxForLayoutBox(const Box&, Optional<EscapeType> = WTF::nullopt) const;
-    bool hasDisplayBox(const Box& layoutBox) const { return layoutState().hasDisplayBox(layoutBox); }
+    const Display::Box& geometryForBox(const Box&, Optional<EscapeType> = WTF::nullopt) const;
 
     const Box& root() const { return *m_root; }
 

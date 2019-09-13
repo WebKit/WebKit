@@ -168,20 +168,20 @@ Point FloatingContext::positionForFloat(const Box& layoutBox) const
     ASSERT(areFloatsHorizontallySorted(m_floatingState));
 
     if (isEmpty()) {
-        auto& displayBox = formattingContext().displayBoxForLayoutBox(layoutBox);
+        auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
 
         auto alignWithContainingBlock = [&]() -> Position {
             // If there is no floating to align with, push the box to the left/right edge of its containing block's content box.
-            auto& containingBlockDisplayBox = formattingContext().displayBoxForLayoutBox(*layoutBox.containingBlock());
+            auto& containingBlockGeometry = formattingContext().geometryForBox(*layoutBox.containingBlock());
 
             if (layoutBox.isLeftFloatingPositioned())
-                return Position { containingBlockDisplayBox.contentBoxLeft() + displayBox.marginStart() };
+                return Position { containingBlockGeometry.contentBoxLeft() + boxGeometry.marginStart() };
 
-            return Position { containingBlockDisplayBox.contentBoxRight() - displayBox.marginEnd() - displayBox.width() };
+            return Position { containingBlockGeometry.contentBoxRight() - boxGeometry.marginEnd() - boxGeometry.width() };
         };
 
         // No float box on the context yet -> align it with the containing block's left/right edge.
-        return { alignWithContainingBlock(), displayBox.top() };
+        return { alignWithContainingBlock(), boxGeometry.top() };
     }
 
     // Find the top most position where the float box fits.
@@ -238,9 +238,9 @@ FloatingContext::ClearancePosition FloatingContext::verticalPositionWithClearanc
         // Clearance inhibits margin collapsing.
         if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
             // Does this box with clearance actually collapse its margin before with the previous inflow box's margin after? 
-            auto verticalMargin = formattingContext().displayBoxForLayoutBox(layoutBox).verticalMargin();
+            auto verticalMargin = formattingContext().geometryForBox(layoutBox).verticalMargin();
             if (verticalMargin.hasCollapsedValues() && verticalMargin.collapsedValues().before) {
-                auto previousVerticalMargin = formattingContext().displayBoxForLayoutBox(*previousInFlowSibling).verticalMargin();
+                auto previousVerticalMargin = formattingContext().geometryForBox(*previousInFlowSibling).verticalMargin();
                 auto collapsedMargin = *verticalMargin.collapsedValues().before;
                 auto nonCollapsedMargin = previousVerticalMargin.after() + verticalMargin.before();
                 auto marginDifference = nonCollapsedMargin - collapsedMargin;
@@ -425,8 +425,8 @@ FloatingContext::AbsoluteCoordinateValuesForFloatAvoider FloatingContext::absolu
     auto displayBox = mapToFloatingStateRoot(floatAvoider);
 
     if (&containingBlock == &floatingState().root()) {
-        auto containingBlockDisplayBox = formattingContext().displayBoxForLayoutBox(containingBlock, FormattingContext::EscapeType::AccessParentFormattingContext);
-        return { displayBox, { }, {  containingBlockDisplayBox.contentBoxLeft(), containingBlockDisplayBox.contentBoxRight() } };
+        auto containingBlockGeometry = formattingContext().geometryForBox(containingBlock, FormattingContext::EscapeType::AccessParentFormattingContext);
+        return { displayBox, { }, {  containingBlockGeometry.contentBoxLeft(), containingBlockGeometry.contentBoxRight() } };
     }
     auto containingBlockAbsoluteDisplayBox = mapToFloatingStateRoot(containingBlock);
     auto containingBlockLeft = containingBlockAbsoluteDisplayBox.left();
@@ -436,12 +436,12 @@ FloatingContext::AbsoluteCoordinateValuesForFloatAvoider FloatingContext::absolu
 Display::Box FloatingContext::mapToFloatingStateRoot(const Box& floatBox) const
 {
     auto& floatingStateRoot = floatingState().root();
-    auto& displayBox = formattingContext().displayBoxForLayoutBox(floatBox, FormattingContext::EscapeType::AccessParentFormattingContext);
-    auto topLeft = displayBox.topLeft();
+    auto& boxGeometry = formattingContext().geometryForBox(floatBox, FormattingContext::EscapeType::AccessParentFormattingContext);
+    auto topLeft = boxGeometry.topLeft();
     for (auto* containingBlock = floatBox.containingBlock(); containingBlock && containingBlock != &floatingStateRoot; containingBlock = containingBlock->containingBlock())
-        topLeft.moveBy(formattingContext().displayBoxForLayoutBox(*containingBlock, FormattingContext::EscapeType::AccessParentFormattingContext).topLeft());
+        topLeft.moveBy(formattingContext().geometryForBox(*containingBlock, FormattingContext::EscapeType::AccessParentFormattingContext).topLeft());
 
-    auto mappedDisplayBox = Display::Box(displayBox);
+    auto mappedDisplayBox = Display::Box(boxGeometry);
     mappedDisplayBox.setTopLeft(topLeft);
     return mappedDisplayBox;
 }
@@ -449,9 +449,9 @@ Display::Box FloatingContext::mapToFloatingStateRoot(const Box& floatBox) const
 LayoutUnit FloatingContext::mapTopToFloatingStateRoot(const Box& floatBox) const
 {
     auto& floatingStateRoot = floatingState().root();
-    auto top = formattingContext().displayBoxForLayoutBox(floatBox, FormattingContext::EscapeType::AccessParentFormattingContext).top();
+    auto top = formattingContext().geometryForBox(floatBox, FormattingContext::EscapeType::AccessParentFormattingContext).top();
     for (auto* container = floatBox.containingBlock(); container && container != &floatingStateRoot; container = container->containingBlock())
-        top += formattingContext().displayBoxForLayoutBox(*container, FormattingContext::EscapeType::AccessParentFormattingContext).top();
+        top += formattingContext().geometryForBox(*container, FormattingContext::EscapeType::AccessParentFormattingContext).top();
     return top;
 }
 
@@ -463,7 +463,7 @@ Point FloatingContext::mapPointFromFormattingContextRootToFloatingStateRoot(Poin
         return position;
     auto mappedPosition = position;
     for (auto* container = &from; container && container != &to; container = container->containingBlock())
-        mappedPosition.moveBy(formattingContext().displayBoxForLayoutBox(*container, FormattingContext::EscapeType::AccessParentFormattingContext).topLeft());
+        mappedPosition.moveBy(formattingContext().geometryForBox(*container, FormattingContext::EscapeType::AccessParentFormattingContext).topLeft());
     return mappedPosition;
 }
 
