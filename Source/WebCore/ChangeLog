@@ -1,3 +1,11 @@
+2019-09-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed debug build fix for GLib-based ports.
+
+        * platform/glib/UserAgentGLib.cpp: Add the HTTPParsers.h header
+        inclusion to bring in the isValidUserAgentHeaderValue() declaration as
+        required for an assertion check.
+
 2019-09-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SVGLengthValue should use two enums for 'type' and 'mode' instead of one unsigned for 'units'

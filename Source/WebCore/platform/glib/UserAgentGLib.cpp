@@ -27,6 +27,7 @@
 #include "config.h"
 #include "UserAgent.h"
 
+#include "HTTPParsers.h"
 #include "UserAgentQuirks.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/URL.h>
