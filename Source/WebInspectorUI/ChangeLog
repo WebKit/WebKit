@@ -1,5 +1,17 @@
 2019-09-13  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Tighter autocomplete bubbles
+        https://bugs.webkit.org/show_bug.cgi?id=201742
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CompletionSuggestionsView.js:
+        (WI.CompletionSuggestionsView.prototype.show):
+        Eliminate the trailing space. Use bounding client rect to get
+        fractional widths and raise the value so we are at an even number.
+
+2019-09-13  Joseph Pecoraro  <pecoraro@apple.com>
+
         REGRESSION: Web Inspector: Layout Timeline View does not show popover for initiator data
         https://bugs.webkit.org/show_bug.cgi?id=201732
         <rdar://problem/55312339>
