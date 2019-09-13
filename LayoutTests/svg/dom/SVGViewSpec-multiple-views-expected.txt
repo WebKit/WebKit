@@ -58,6 +58,15 @@ PASS currentView.preserveAspectRatioString is "xMidYMax slice"
 PASS currentView.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMAX
 PASS currentView.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_SLICE
 
+Test dynamic modifications of the 'view2' element
+
+Check viewBox value after modification
+PASS currentView.viewBox.baseVal.x is 10
+PASS currentView.viewBox.baseVal.y is 10
+PASS currentView.viewBox.baseVal.width is 30
+PASS currentView.viewBox.baseVal.height is 30
+PASS currentView.viewBoxString is "10 10 30 30"
+
 Loading external SVG resources/multiple-view-elements.svg#svgView(viewBox(0 0 10 15);transform(scale(2 2));preserveAspectRatio(xMinYMax meet))...
 
 Verify that no load was performed, but only a different view was set on the same document

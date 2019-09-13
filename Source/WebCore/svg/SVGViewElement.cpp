@@ -22,7 +22,9 @@
 #include "config.h"
 #include "SVGViewElement.h"
 
+#include "RenderSVGResource.h"
 #include "SVGNames.h"
+#include "SVGSVGElement.h"
 #include "SVGStringList.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -59,6 +61,26 @@ void SVGViewElement::parseAttribute(const QualifiedName& name, const AtomString&
     SVGExternalResourcesRequired::parseAttribute(name, value);
     SVGFitToViewBox::parseAttribute(name, value);
     SVGZoomAndPan::parseAttribute(name, value);
+}
+
+void SVGViewElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    // We ignore changes to SVGNames::viewTargetAttr, which is deprecated and unused in WebCore.
+    if (PropertyRegistry::isKnownAttribute(attrName))
+        return;
+
+    if (SVGFitToViewBox::isKnownAttribute(attrName)) {
+        if (m_targetElement) {
+            m_targetElement->inheritViewAttributes(*this);
+            if (auto* renderer = m_targetElement->renderer())
+                RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+        }
+
+        return;
+    }
+
+    SVGElement::svgAttributeChanged(attrName);
+    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 }

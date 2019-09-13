@@ -1,3 +1,22 @@
+2019-09-13  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        SMIL animations of SVG <view> element have no effect
+        https://bugs.webkit.org/show_bug.cgi?id=94469
+
+        Reviewed by Said Abou-Hallawa.
+
+        Add new layout tests to verify that dynamic modifications of the <view> element cause
+        visual updates. Previously SVGSVGElement was never notified about changes of the
+        SVGViewElement and thus did not update the stored viewBox.
+
+        * svg/custom/animation-on-view-element-expected.html: Added.
+        * svg/custom/animation-on-view-element.html: Added. This is a new reftest
+        demonstrating that animations of SVG <view> elements now behave as expected.
+        * svg/custom/multiple-view-elements-expected.html: Added.
+        * svg/custom/multiple-view-elements.html: Added.
+        * svg/dom/SVGViewSpec-multiple-views-expected.txt:
+        * svg/dom/SVGViewSpec-multiple-views.html: Extend to cover dynamic modifications.
+
 2019-09-13  Russell Epstein  <repstein@apple.com>
 
         Unreviewed, rolling out r249709.

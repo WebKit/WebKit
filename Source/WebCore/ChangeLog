@@ -1,3 +1,37 @@
+2019-09-13  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        SMIL animations of SVG <view> element have no effect
+        https://bugs.webkit.org/show_bug.cgi?id=94469
+
+        Reviewed by Said Abou-Hallawa.
+
+        SMIL animations of the attributes associated with SVGViewElement work fine, but without any
+        visual effect. When loading an SVG document with a given fragment identifier
+        (e.g. test.svg#customView) where 'customView' references to an embedded SVGViewElement, the
+        viewBox/preserveAspectRatio settings should be taken from the SVGViewElement. Currently
+        there is no link between the SVGViewElement and the SVGSVGElement. The settings from the
+        SVGViewElement are only pasrsed onco in SVGSVGElement::scrollToFragment(). Dynamic updates
+        of the 'viewBox' and 'preserveAspectRatio' attributes of the SVGViewElement thus have no
+        visual effect, since the SVGSVGElement does not re-evaluates its viewBox.
+
+        Store a RefPtr to the currently used SVGViewElement in SVGSVGElement, and a WeakPtr back
+        to the SVGSVGElement that currently references the SVGViewElement. This allows us to
+        propagate SVGViewElement attribute changes to SVGSVGElement and re-evaluate the viewBox
+        stored in SVGSVGElement and trigger visual updates.
+
+        Tests: svg/custom/animation-on-view-element.html
+               svg/custom/multiple-view-elements.html
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::scrollToFragment):
+        * svg/SVGSVGElement.h:
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::svgAttributeChanged): Add missing implementation, tracked by
+        webkit.org/b/196554. Correctly handle SVGFitToViewBox property changes. Update the viewBox
+        stored in the SVGSVGElement, that references the SVGViewElement. Afterwards invalidate the
+        renderer associated with the SVGSVGElement, which properly triggers visual updates.
+        * svg/SVGViewElement.h:
+
 2019-09-13  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] ImageBuffer/ImageBufferData is highly inefficient

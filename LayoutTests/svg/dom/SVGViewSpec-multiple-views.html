@@ -98,6 +98,18 @@ function testSecondViewElement() {
     shouldBe("currentView.preserveAspectRatio.baseVal.align", "SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMAX");
     shouldBe("currentView.preserveAspectRatio.baseVal.meetOrSlice", "SVGPreserveAspectRatio.SVG_MEETORSLICE_SLICE");
 
+    debug("");
+    debug("Test dynamic modifications of the 'view2' element");
+    iframeElement.contentDocument.documentElement.getElementById("view2").setAttribute("viewBox", "10 10 30 30");
+
+    debug("");
+    debug("Check viewBox value after modification");
+    shouldBe("currentView.viewBox.baseVal.x", "10");
+    shouldBe("currentView.viewBox.baseVal.y", "10");
+    shouldBe("currentView.viewBox.baseVal.width", "30");
+    shouldBe("currentView.viewBox.baseVal.height", "30");
+    shouldBeEqualToString("currentView.viewBoxString", "10 10 30 30");
+
     nextView = "#svgView(viewBox(0 0 10 15);transform(scale(2 2));preserveAspectRatio(xMinYMax meet))";
     debug("");
     debug("Loading external SVG " + externalSVGFileName + nextView + "...");

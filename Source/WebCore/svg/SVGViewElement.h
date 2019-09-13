@@ -24,6 +24,7 @@
 #include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
+#include "SVGSVGElement.h"
 #include "SVGStringList.h"
 #include "SVGZoomAndPan.h"
 
@@ -39,19 +40,24 @@ public:
 
     Ref<SVGStringList> viewTarget() { return m_viewTarget.copyRef(); }
 
+    const SVGSVGElement* targetElement() const { return m_targetElement.get(); }
+    void setTargetElement(const SVGSVGElement& targetElement) { m_targetElement = makeWeakPtr(targetElement); }
+    void resetTargetElement() { m_targetElement = nullptr; }
+
 private:
     SVGViewElement(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGViewElement, SVGElement, SVGExternalResourcesRequired, SVGFitToViewBox>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
-    // FIXME(webkit.org/b/196554): svgAttributeChanged missing.
     void parseAttribute(const QualifiedName&, const AtomString&) final;
+    void svgAttributeChanged(const QualifiedName&) override;
 
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGStringList> m_viewTarget { SVGStringList::create(this) };
+    WeakPtr<SVGSVGElement> m_targetElement { nullptr };
 };
 
 } // namespace WebCore

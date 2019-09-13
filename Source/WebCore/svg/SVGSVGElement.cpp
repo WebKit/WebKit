@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2004, 2005, 2006, 2019 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2010 Rob Buis <buis@kde.org>
  * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
@@ -666,6 +666,19 @@ bool SVGSVGElement::scrollToFragment(const String& fragmentIdentifier)
     // attributes on the closest ancestor "svg" element.
     if (auto* viewElement = findViewAnchor(fragmentIdentifier)) {
         if (auto* rootElement = findRootAnchor(viewElement)) {
+            if (rootElement->m_currentViewElement) {
+                ASSERT(rootElement->m_currentViewElement->targetElement() == rootElement);
+
+                // If the viewElement has changed, remove the link from the SVGViewElement to the previously selected SVGSVGElement.
+                if (rootElement->m_currentViewElement != viewElement)
+                    rootElement->m_currentViewElement->resetTargetElement();
+            }
+
+            if (rootElement->m_currentViewElement != viewElement) {
+                rootElement->m_currentViewElement = viewElement;
+                rootElement->m_currentViewElement->setTargetElement(*rootElement);
+            }
+
             rootElement->inheritViewAttributes(*viewElement);
             if (auto* renderer = rootElement->renderer())
                 RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);

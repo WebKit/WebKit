@@ -36,6 +36,7 @@ class SVGMatrix;
 class SVGNumber;
 class SVGRect;
 class SVGTransform;
+class SVGViewElement;
 class SVGViewSpec;
 
 class SVGSVGElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired, public SVGFitToViewBox, public SVGZoomAndPan {
@@ -127,6 +128,8 @@ public:
     SVGAnimatedLength& widthAnimated() { return m_width; }
     SVGAnimatedLength& heightAnimated() { return m_height; }
 
+    void inheritViewAttributes(const SVGViewElement&);
+
 private:
     SVGSVGElement(const QualifiedName&, Document&);
     virtual ~SVGSVGElement();
@@ -149,7 +152,6 @@ private:
 
     AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const override;
     RefPtr<Frame> frameForCurrentScale() const;
-    void inheritViewAttributes(const SVGViewElement&);
     Ref<NodeList> collectIntersectionOrEnclosureList(SVGRect&, SVGElement*, bool (*checkFunction)(SVGElement&, SVGRect&));
 
     SVGViewElement* findViewAnchor(const String& fragmentIdentifier) const;
@@ -159,6 +161,7 @@ private:
     bool m_useCurrentView { false };
     Ref<SMILTimeContainer> m_timeContainer;
     RefPtr<SVGViewSpec> m_viewSpec;
+    RefPtr<SVGViewElement> m_currentViewElement;
     String m_currentViewFragmentIdentifier;
 
     Ref<SVGPoint> m_currentTranslate { SVGPoint::create() };
