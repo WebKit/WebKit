@@ -27,6 +27,7 @@
 
 #include "Image.h"
 #include "IntSize.h"
+#include "PlatformContextDirect2D.h"
 #include <JavaScriptCore/Uint8ClampedArray.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/RefPtr.h>
@@ -40,19 +41,27 @@ namespace WebCore {
 class PlatformContextDirect2D;
 
 struct ImageBufferData {
-    IntSize backingStoreSize;
+    mutable IntSize backingStoreSize;
     Checked<unsigned, RecordOverflow> bytesPerRow;
 
     // Only for software ImageBuffers.
-    Vector<char> data;
+    mutable Vector<uint8_t> data;
+    mutable AlphaPremultiplication byteFormat { AlphaPremultiplication::Unpremultiplied };
     std::unique_ptr<PlatformContextDirect2D> platformContext;
     std::unique_ptr<GraphicsContext> context;
     COMPtr<ID2D1Bitmap> bitmap;
+
+    enum class BitmapBufferSync { InSync, BitmapOutOfSync, BufferOutOfSync };
+    mutable BitmapBufferSync bitmapBufferSync { BitmapBufferSync::BufferOutOfSync };
 
     RefPtr<Uint8ClampedArray> getData(AlphaPremultiplication, const IntRect&, const IntSize&, bool accelerateRendering, float resolutionScale) const;
     void putData(const Uint8ClampedArray& source, AlphaPremultiplication sourceFormat, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize&, bool accelerateRendering, float resolutionScale);
 
     COMPtr<ID2D1Bitmap> compatibleBitmap(ID2D1RenderTarget*);
+
+    bool ensureBackingStore(const IntSize&) const;
+    void loadDataToBitmapIfNeeded();
+    void markBufferOutOfSync() { bitmapBufferSync = BitmapBufferSync::BufferOutOfSync; }
 };
 
 } // namespace WebCore

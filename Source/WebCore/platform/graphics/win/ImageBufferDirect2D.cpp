@@ -115,7 +115,11 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpac
     if (!SUCCEEDED(hr))
         return;
 
-    m_data.platformContext = makeUnique<PlatformContextDirect2D>(bitmapContext.get());
+    m_data.platformContext = makeUnique<PlatformContextDirect2D>(bitmapContext.get(), [this]() {
+        m_data.loadDataToBitmapIfNeeded();
+    }, [this]() {
+        m_data.markBufferOutOfSync();
+    });
     m_data.context = makeUnique<GraphicsContext>(m_data.platformContext.get(), GraphicsContext::BitmapRenderingContextType::GPUMemory);
 
     success = true;

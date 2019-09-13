@@ -1,3 +1,73 @@
+2019-09-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] ImageBuffer/ImageBufferData is highly inefficient
+        https://bugs.webkit.org/show_bug.cgi?id=201594
+
+        Reviewed by Said Abou-Hallawa.
+
+        My initial implementation of ImageBuffer and ImageBufferData for Direct2D involves too
+        much moving of data from GPU to CPU and back. We only need to make a renderable version
+        of the ImageBuffer when ImageBuffer::sinkIntoNativeImage or ImageBuffer::copyNativeImage
+        are called.
+
+        Currently, each ImageBuffer putData operation uploads the data to the GPU, and each
+        ImageBuffer getData pulls the data from the GPU.
+
+        This patch does the following:
+
+        1. It makes the assumption that the ID2D1Bitmap it holds is under its control (i.e.,
+           external draw operations do not manipulate the bitmap without marking it dirty).
+        2. It holds a CPU copy of the data from the ID2D1Bitmap originally used to create it.
+           It uses this data for all manipulations, and uploads to the bitmap only when
+           an ID2D1Bitmap is requested for drawing, and before a drawing operation is performed
+           on the associated ImageBuffer context.
+        3. It does not read back from the ID2D1Bitmap unless it is told that it is dirty.
+        4. It does not call 'ID2D1RenderTarget::SetTags' if ASSERTS are disabled because
+           they are costly, and don't help in release builds.
+ 
+        * platform/graphics/win/Direct2DOperations.cpp:
+        (WebCore::Direct2D::fillRect): Use new 'setTags' method.
+        (WebCore::Direct2D::fillRoundedRect): Ditto.
+        (WebCore::Direct2D::fillRectWithRoundedHole): Ditto.
+        (WebCore::Direct2D::fillRectWithGradient): Ditto.
+        (WebCore::Direct2D::fillPath): Ditto.
+        (WebCore::Direct2D::strokeRect): Ditto.
+        (WebCore::Direct2D::strokePath): Ditto.
+        (WebCore::Direct2D::drawPath): Ditto.
+        (WebCore::Direct2D::drawWithShadow): Notify observers before and after we drew.
+        (WebCore::Direct2D::drawWithoutShadow): Ditto.
+        (WebCore::Direct2D::clearRect): Use new 'setTags' method.
+        (WebCore::Direct2D::drawGlyphs): Ditto.
+        (WebCore::Direct2D::drawNativeImage): Ditto.
+        (WebCore::Direct2D::drawRect): Ditto.
+        (WebCore::Direct2D::drawLine): Ditto.
+        (WebCore::Direct2D::fillEllipse): Ditto.
+        (WebCore::Direct2D::drawEllipse): Ditto.
+        (WebCore::Direct2D::flush): Notify observer after we drew.
+        * platform/graphics/win/GradientDirect2D.cpp:
+        (WebCore::Gradient::fill): Don't call SetTags in non-ASSERT builds.
+        * platform/graphics/win/ImageBufferDataDirect2D.cpp:
+        (WebCore::ImageBufferData::ensureBackingStore const): Added.
+        (WebCore::ImageBufferData::getData const): Only read from the GPU if the in-memory
+        store is empty or out-of-sync.
+        (WebCore::ImageBufferData::putData): Mark the bitmap as out-of-sync, but don't
+        upload the data yet.
+        (WebCore::ImageBufferData::loadDataToBitmapIfNeeded): Helper function to upload data to the GPU.
+        (WebCore::ImageBufferData::compatibleBitmap): Only upload data if the relevant
+        bitmap is out of date.
+        * platform/graphics/win/ImageBufferDataDirect2D.h:
+        * platform/graphics/win/ImageBufferDirect2D.cpp:
+        (WebCore::ImageBuffer::ImageBuffer): Update constructor to register the ImageBufferData
+        lambdas as observer for draw operations.
+        * platform/graphics/win/PlatformContextDirect2D.cpp:
+        (WebCore::PlatformContextDirect2D::PlatformContextDirect2D): Update constructor to accept
+        lambdas to run before and after draw operations.
+        (WebCore::PlatformContextDirect2D::setTags): Added.
+        (WebCore::PlatformContextDirect2D::notifyPreDrawObserver): Added.
+        (WebCore::PlatformContextDirect2D::notifyPostDrawObserver): Added.
+        * platform/graphics/win/PlatformContextDirect2D.h:
+        (WebCore::PlatformContextDirect2D::PlatformContextDirect2D):
+
 2019-09-13  Russell Epstein  <repstein@apple.com>
 
         Unreviewed, rolling out r249709.

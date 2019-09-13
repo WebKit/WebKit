@@ -118,7 +118,9 @@ void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
             if (!m_cachedHash || !m_gradient)
                 generateGradient(d2dContext);
 
+#if !ASSERT_DISABLED
             d2dContext->SetTags(GRADIENT_DRAWING, __LINE__);
+#endif
 
             const D2D1_RECT_F d2dRect = rect;
             d2dContext->FillRectangle(&d2dRect, m_gradient);
@@ -145,7 +147,9 @@ void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
             if (!m_cachedHash || !m_gradient)
                 generateGradient(d2dContext);
 
+#if !ASSERT_DISABLED
             d2dContext->SetTags(GRADIENT_DRAWING, __LINE__);
+#endif
 
             const D2D1_RECT_F d2dRect = rect;
             d2dContext->FillRectangle(&d2dRect, m_gradient);

@@ -48,7 +48,7 @@ class PlatformContextDirect2D {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PlatformContextDirect2D);
 public:
-    PlatformContextDirect2D(ID2D1RenderTarget*);
+    PlatformContextDirect2D(ID2D1RenderTarget*, WTF::Function<void()>&& preDrawHandler = []() { }, WTF::Function<void()>&& postDrawHandler = []() { });
     ~PlatformContextDirect2D();
 
     ID2D1RenderTarget* renderTarget() { return m_renderTarget.get(); }
@@ -109,6 +109,10 @@ public:
     void setBlendMode(D2D1_BLEND_MODE mode) { m_blendMode = mode; }
     void setCompositeMode(D2D1_COMPOSITE_MODE mode) { m_compositeMode = mode; }
 
+    void setTags(D2D1_TAG tag1, D2D1_TAG tag2);
+    void notifyPreDrawObserver();
+    void notifyPostDrawObserver();
+
 private:
     GraphicsContextPlatformPrivate* m_graphicsContextPrivate { nullptr };
 
@@ -122,6 +126,9 @@ private:
     COMPtr<ID2D1SolidColorBrush> m_solidFillBrush;
     COMPtr<ID2D1BitmapBrush> m_patternStrokeBrush;
     COMPtr<ID2D1BitmapBrush> m_patternFillBrush;
+
+    WTF::Function<void()> m_preDrawHandler;
+    WTF::Function<void()> m_postDrawHandler;
 
     class State;
     State* m_state { nullptr };

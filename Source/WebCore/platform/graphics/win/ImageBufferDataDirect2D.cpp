@@ -79,6 +79,20 @@ void swizzleAndPremultiply(const uint8_t* srcRows, unsigned rowCount, unsigned c
     }
 }
 
+bool ImageBufferData::ensureBackingStore(const IntSize& size) const
+{
+    if (size == backingStoreSize && !data.isEmpty())
+        return true;
+
+    auto numBytes = size.area<RecordOverflow>() * 4;
+    if (numBytes.hasOverflowed())
+        return false;
+
+    backingStoreSize = size;
+    data.resizeToFit(numBytes.unsafeGet());
+    return data.capacity() == numBytes.unsafeGet();
+}
+
 RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication desiredFormat, const IntRect& rect, const IntSize& size, bool /* accelerateRendering */, float /* resolutionScale */) const
 {
     auto numBytes = rect.area<RecordOverflow>() * 4;
@@ -86,51 +100,62 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication desire
         return nullptr;
 
     auto result = Uint8ClampedArray::tryCreateUninitialized(numBytes.unsafeGet());
-    unsigned char* resultData = result ? result->data() : nullptr;
-    if (!resultData)
+    if (!result)
         return nullptr;
 
     if (!bitmap)
         return result;
 
-    context->endDraw();
+    auto bytesPerRowInData = rect.width() * 4;
+    auto height = rect.height();
+    auto width = rect.width();
 
-    COMPtr<ID2D1DeviceContext> d2dDeviceContext;
-    HRESULT hr = platformContext->renderTarget()->QueryInterface(__uuidof(ID2D1DeviceContext), reinterpret_cast<void**>(&d2dDeviceContext));
-    ASSERT(SUCCEEDED(hr));
+    if (bitmapBufferSync == BitmapBufferSync::BufferOutOfSync || data.size() != numBytes.unsafeGet()) {
+        context->endDraw();
 
-    auto bytesPerRowInData = size.width() * 4;
+        COMPtr<ID2D1DeviceContext> d2dDeviceContext(Query, platformContext->renderTarget());
+        ASSERT(!!d2dDeviceContext);
 
-    COMPtr<ID2D1Bitmap1> cpuBitmap;
-    D2D1_BITMAP_PROPERTIES1 bitmapProperties2 = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_CPU_READ | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, Direct2D::pixelFormat());
-    hr = d2dDeviceContext->CreateBitmap(size, nullptr, bytesPerRowInData, bitmapProperties2, &cpuBitmap);
-    if (!SUCCEEDED(hr))
-        return nullptr;
+        // Copy GPU data from the ID2D1Bitmap to a CPU-backed ID2D1Bitmap1
+        COMPtr<ID2D1Bitmap1> cpuBitmap;
+        D2D1_BITMAP_PROPERTIES1 bitmapProperties2 = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_CPU_READ | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, Direct2D::pixelFormat());
+        HRESULT hr = d2dDeviceContext->CreateBitmap(size, nullptr, bytesPerRowInData, bitmapProperties2, &cpuBitmap);
+        if (!SUCCEEDED(hr))
+            return nullptr;
 
-    D2D1_POINT_2U targetPos = D2D1::Point2U();
-    D2D1_RECT_U dataRect = rect;
-    hr = cpuBitmap->CopyFromBitmap(&targetPos, bitmap.get(), &dataRect);
-    if (!SUCCEEDED(hr))
-        return nullptr;
+        auto targetPos = D2D1::Point2U();
+        D2D1_RECT_U dataRect = rect;
+        hr = cpuBitmap->CopyFromBitmap(&targetPos, bitmap.get(), &dataRect);
+        if (!SUCCEEDED(hr))
+            return nullptr;
 
-    D2D1_MAPPED_RECT mappedData;
-    hr = cpuBitmap->Map(D2D1_MAP_OPTIONS_READ, &mappedData);
-    if (!SUCCEEDED(hr))
-        return nullptr;
+        D2D1_MAPPED_RECT mappedData;
+        hr = cpuBitmap->Map(D2D1_MAP_OPTIONS_READ, &mappedData);
+        if (!SUCCEEDED(hr))
+            return nullptr;
 
-    // Software filters expect RGBA bytes. We need to swizzle from Direct2D's BGRA to be compatible.
-    Checked<int> height = rect.height();
-    Checked<int> width = rect.width();
+        if (mappedData.bits) {
+            if (!ensureBackingStore(bitmap->GetPixelSize()))
+                return nullptr;
 
-    if (desiredFormat == AlphaPremultiplication::Unpremultiplied)
-        swizzleAndPremultiply<AlphaPremultiplication::Unpremultiplied>(mappedData.bits, height.unsafeGet(), width.unsafeGet(), mappedData.pitch, bytesPerRowInData, resultData);
-    else
-        swizzleAndPremultiply<AlphaPremultiplication::Premultiplied>(mappedData.bits, height.unsafeGet(), width.unsafeGet(), mappedData.pitch, bytesPerRowInData, resultData);
+            // Software filters expect RGBA bytes. We need to swizzle from Direct2D's BGRA to be compatible.
+            if (desiredFormat == AlphaPremultiplication::Unpremultiplied)
+                swizzleAndPremultiply<AlphaPremultiplication::Unpremultiplied>(mappedData.bits, height, width, mappedData.pitch, bytesPerRowInData, data.data());
+            else
+                swizzleAndPremultiply<AlphaPremultiplication::Premultiplied>(mappedData.bits, height, width, mappedData.pitch, bytesPerRowInData, data.data());
 
-    hr = cpuBitmap->Unmap();
-    ASSERT(SUCCEEDED(hr));
+            byteFormat = desiredFormat;
 
-    context->beginDraw();
+            bitmapBufferSync = BitmapBufferSync::InSync;
+        }
+
+        hr = cpuBitmap->Unmap();
+        ASSERT(SUCCEEDED(hr));
+
+        context->beginDraw();
+    }
+
+    result->setRange(data.data(), data.size(), 0);
 
     return result;
 }
@@ -203,43 +228,65 @@ void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplic
     if (width <= 0 || height <= 0)
         return;
 
-    context->endDraw();
-
+#if !ASSERT_DISABLED
     auto pixelSize = bitmap->GetPixelSize();
     ASSERT(pixelSize.width >= sourceSize.width());
     ASSERT(pixelSize.width >= size.width());
     ASSERT(pixelSize.height >= sourceSize.height());
     ASSERT(pixelSize.height >= size.height());
+#endif
+
+    if (!ensureBackingStore(size))
+        return;
+
+    memcpy(data.data(), source.data(), source.length());
+
+    byteFormat = sourceFormat;
+    bitmapBufferSync = BitmapBufferSync::BitmapOutOfSync;
+}
+
+void ImageBufferData::loadDataToBitmapIfNeeded()
+{
+    if (bitmapBufferSync != BitmapBufferSync::BitmapOutOfSync || data.isEmpty())
+        return;
+
+    auto pixelSize = bitmap->GetPixelSize();
+    ASSERT(pixelSize.width >= backingStoreSize.width());
+    ASSERT(pixelSize.height >= backingStoreSize.height());
+
+    Checked<unsigned, RecordOverflow> numBytes = pixelSize.width * pixelSize.height * 4;
+    if (numBytes.hasOverflowed())
+        return;
 
     // Software generated bitmap data is in RGBA. We need to swizzle to premultiplied BGRA to be compatible
     // with the HWND/HDC render backing we use.
-    if (sourceFormat == AlphaPremultiplication::Unpremultiplied)
-        inPlaceSwizzle<AlphaPremultiplication::Unpremultiplied>(source.data(), source.length()); // RGBA -> PBGRA
+    if (byteFormat == AlphaPremultiplication::Unpremultiplied)
+        inPlaceSwizzle<AlphaPremultiplication::Unpremultiplied>(data.data(), data.size()); // RGBA -> PBGRA
     else
-        inPlaceSwizzle<AlphaPremultiplication::Premultiplied>(source.data(), source.length()); // PRGBA -> PBGRA
+        inPlaceSwizzle<AlphaPremultiplication::Premultiplied>(data.data(), data.size()); // PRGBA -> PBGRA
+
+    // Copy the bits from current renderTarget to the output target.
+    // We cannot access the data backing an IWICBitmap or ID2D1Bitmap while an active draw session is open.
+    context->endDraw();
 
     COMPtr<ID2D1BitmapRenderTarget> bitmapRenderTarget;
-    HRESULT hr = platformContext->renderTarget()->QueryInterface(__uuidof(ID2D1BitmapRenderTarget), reinterpret_cast<void**>(&bitmapRenderTarget));
+    HRESULT hr = platformContext->renderTarget()->QueryInterface(&bitmapRenderTarget);
     ASSERT(SUCCEEDED(hr));
 
-    auto bytesPerRowInData = sourceRect.width() * 4;
+    auto bytesPerRowInData = backingStoreSize.width() * 4;
 
-    COMPtr<ID2D1Bitmap> swizzledBitmap;
-    D2D1_BITMAP_PROPERTIES bitmapProperties = D2D1::BitmapProperties(Direct2D::pixelFormat());
-    hr = bitmapRenderTarget->CreateBitmap(sourceSize, source.data(), bytesPerRowInData, bitmapProperties, &swizzledBitmap);
-    if (!SUCCEEDED(hr))
-        return;
-
-    D2D1_POINT_2U destPointD2D = destPoint;
-    D2D1_RECT_U srcRect = sourceRect;
-    hr = bitmap->CopyFromMemory(&srcRect, source.data(), bytesPerRowInData);
+    hr = bitmap->CopyFromMemory(nullptr, data.data(), bytesPerRowInData);
     ASSERT(SUCCEEDED(hr));
 
     context->beginDraw();
+
+    bitmapBufferSync = BitmapBufferSync::InSync;
 }
 
 COMPtr<ID2D1Bitmap> ImageBufferData::compatibleBitmap(ID2D1RenderTarget* renderTarget)
 {
+    loadDataToBitmapIfNeeded();
+
     if (!renderTarget)
         return bitmap;
 
@@ -282,7 +329,7 @@ COMPtr<ID2D1Bitmap> ImageBufferData::compatibleBitmap(ID2D1RenderTarget* renderT
         return nullptr;
 
     COMPtr<ID2D1DeviceContext> targetDeviceContext;
-    hr = renderTarget->QueryInterface(__uuidof(ID2D1DeviceContext), reinterpret_cast<void**>(&targetDeviceContext));
+    hr = renderTarget->QueryInterface(&targetDeviceContext);
     ASSERT(SUCCEEDED(hr));
 
     COMPtr<ID2D1Bitmap> compatibleBitmap;

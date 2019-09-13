@@ -40,8 +40,10 @@ public:
     State() = default;
 };
 
-PlatformContextDirect2D::PlatformContextDirect2D(ID2D1RenderTarget* renderTarget)
+PlatformContextDirect2D::PlatformContextDirect2D(ID2D1RenderTarget* renderTarget, WTF::Function<void()>&& preDrawHandler, WTF::Function<void()>&& postDrawHandler)
     : m_renderTarget(renderTarget)
+    , m_preDrawHandler(WTFMove(preDrawHandler))
+    , m_postDrawHandler(WTFMove(postDrawHandler))
 {
     m_stateStack.append(State());
     m_state = &m_stateStack.last();
@@ -258,6 +260,26 @@ void PlatformContextDirect2D::endDraw()
         WTFLogAlways("Failed in PlatformContextDirect2D::endDraw: hr=%xd, first=%ld, second=%ld", hr, first, second);
 
     --beginDrawCount;
+}
+
+void PlatformContextDirect2D::setTags(D2D1_TAG tag1, D2D1_TAG tag2)
+{
+#if !ASSERT_DISABLED
+    m_renderTarget->SetTags(tag1, tag2);
+#else
+    UNUSED_PARAM(tag1);
+    UNUSED_PARAM(tag2);
+#endif
+}
+
+void PlatformContextDirect2D::notifyPreDrawObserver()
+{
+    m_preDrawHandler();
+}
+
+void PlatformContextDirect2D::notifyPostDrawObserver()
+{
+    m_postDrawHandler();
 }
 
 } // namespace WebCore
