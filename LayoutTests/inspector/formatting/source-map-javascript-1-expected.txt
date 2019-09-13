@@ -1,0 +1,1187 @@
+Test JavaScript SourceMap.
+
+
+== Running test suite: SourceMaps.JavaScript
+-- Running test case: SourceMaps.JavaScript.1
+Original Content Length
+Formatted Content Length
+---- Original to Formatted ----
+Original: 0 (0, 1)
+  0| (#function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 0 (0, 1)
+  0| (#function(a, b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+
+Original: 1 (0, 2)
+  0| (f#unction(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 1 (0, 2)
+  0| (f#unction(a, b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+
+Original: 2 (0, 3)
+  0| (fu#nction(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 2 (0, 3)
+  0| (fu#nction(a, b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+
+Original: 3 (0, 4)
+  0| (fun#ction(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 3 (0, 4)
+  0| (fun#ction(a, b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+
+Original: 4 (0, 5)
+  0| (func#tion(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 4 (0, 5)
+  0| (func#tion(a, b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+
+Original: 5 (0, 6)
+  0| (funct#ion(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 5 (0, 6)
+  0| (funct#ion(a, b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+
+Original: 6 (0, 7)
+  0| (functi#on(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 6 (0, 7)
+  0| (functi#on(a, b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+
+Original: 7 (0, 8)
+  0| (functio#n(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 7 (0, 8)
+  0| (functio#n(a, b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+
+Original: 8 (0, 9)
+  0| (function#(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 8 (0, 9)
+  0| (function#(a, b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+
+Original: 9 (0, 10)
+  0| (function(#a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 9 (0, 10)
+  0| (function(#a, b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+
+Original: 10 (0, 11)
+  0| (function(a#,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 10 (0, 11)
+  0| (function(a#, b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+
+Original: 11 (0, 12)
+  0| (function(a,#b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 11 (0, 13)
+  0| (function(a, #b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+
+Original: 12 (0, 13)
+  0| (function(a,b#,c){let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 13 (0, 14)
+  0| (function(a, b#, c) {
+  1|     let sum = a;
+  2|     sum += b;
+
+Original: 13 (0, 14)
+  0| (function(a,b,#c){let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 14 (0, 16)
+  0| (function(a, b, #c) {
+  1|     let sum = a;
+  2|     sum += b;
+
+Original: 14 (0, 15)
+  0| (function(a,b,c#){let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 16 (0, 17)
+  0| (function(a, b, c#) {
+  1|     let sum = a;
+  2|     sum += b;
+
+Original: 15 (0, 16)
+  0| (function(a,b,c)#{let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 17 (0, 19)
+  0| (function(a, b, c) #{
+  1|     let sum = a;
+  2|     sum += b;
+
+Original: 16 (0, 17)
+  0| (function(a,b,c){#let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 19 (1, 4)
+  0| (function(a, b, c) {
+  1|     #let sum = a;
+  2|     sum += b;
+  3|     sum += c;
+
+Original: 17 (0, 18)
+  0| (function(a,b,c){l#et sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 25 (1, 5)
+  0| (function(a, b, c) {
+  1|     l#et sum = a;
+  2|     sum += b;
+  3|     sum += c;
+
+Original: 18 (0, 19)
+  0| (function(a,b,c){le#t sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 26 (1, 6)
+  0| (function(a, b, c) {
+  1|     le#t sum = a;
+  2|     sum += b;
+  3|     sum += c;
+
+Original: 19 (0, 20)
+  0| (function(a,b,c){let# sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 27 (1, 7)
+  0| (function(a, b, c) {
+  1|     let# sum = a;
+  2|     sum += b;
+  3|     sum += c;
+
+Original: 20 (0, 21)
+  0| (function(a,b,c){let #sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 28 (1, 8)
+  0| (function(a, b, c) {
+  1|     let #sum = a;
+  2|     sum += b;
+  3|     sum += c;
+
+Original: 21 (0, 22)
+  0| (function(a,b,c){let s#um=a;sum+=b;sum+=c;return sum;})()
+Formatted: 29 (1, 9)
+  0| (function(a, b, c) {
+  1|     let s#um = a;
+  2|     sum += b;
+  3|     sum += c;
+
+Original: 22 (0, 23)
+  0| (function(a,b,c){let su#m=a;sum+=b;sum+=c;return sum;})()
+Formatted: 30 (1, 10)
+  0| (function(a, b, c) {
+  1|     let su#m = a;
+  2|     sum += b;
+  3|     sum += c;
+
+Original: 23 (0, 24)
+  0| (function(a,b,c){let sum#=a;sum+=b;sum+=c;return sum;})()
+Formatted: 31 (1, 12)
+  0| (function(a, b, c) {
+  1|     let sum #= a;
+  2|     sum += b;
+  3|     sum += c;
+
+Original: 24 (0, 25)
+  0| (function(a,b,c){let sum=#a;sum+=b;sum+=c;return sum;})()
+Formatted: 33 (1, 14)
+  0| (function(a, b, c) {
+  1|     let sum = #a;
+  2|     sum += b;
+  3|     sum += c;
+
+Original: 25 (0, 26)
+  0| (function(a,b,c){let sum=a#;sum+=b;sum+=c;return sum;})()
+Formatted: 35 (1, 15)
+  0| (function(a, b, c) {
+  1|     let sum = a#;
+  2|     sum += b;
+  3|     sum += c;
+
+Original: 26 (0, 27)
+  0| (function(a,b,c){let sum=a;#sum+=b;sum+=c;return sum;})()
+Formatted: 36 (2, 4)
+  0| (function(a, b, c) {
+  1|     let sum = a;
+  2|     #sum += b;
+  3|     sum += c;
+  4|     return sum;
+
+Original: 27 (0, 28)
+  0| (function(a,b,c){let sum=a;s#um+=b;sum+=c;return sum;})()
+Formatted: 42 (2, 5)
+  0| (function(a, b, c) {
+  1|     let sum = a;
+  2|     s#um += b;
+  3|     sum += c;
+  4|     return sum;
+
+Original: 28 (0, 29)
+  0| (function(a,b,c){let sum=a;su#m+=b;sum+=c;return sum;})()
+Formatted: 43 (2, 6)
+  0| (function(a, b, c) {
+  1|     let sum = a;
+  2|     su#m += b;
+  3|     sum += c;
+  4|     return sum;
+
+Original: 29 (0, 30)
+  0| (function(a,b,c){let sum=a;sum#+=b;sum+=c;return sum;})()
+Formatted: 44 (2, 8)
+  0| (function(a, b, c) {
+  1|     let sum = a;
+  2|     sum #+= b;
+  3|     sum += c;
+  4|     return sum;
+
+Original: 30 (0, 31)
+  0| (function(a,b,c){let sum=a;sum+#=b;sum+=c;return sum;})()
+Formatted: 46 (2, 9)
+  0| (function(a, b, c) {
+  1|     let sum = a;
+  2|     sum +#= b;
+  3|     sum += c;
+  4|     return sum;
+
+Original: 31 (0, 32)
+  0| (function(a,b,c){let sum=a;sum+=#b;sum+=c;return sum;})()
+Formatted: 47 (2, 11)
+  0| (function(a, b, c) {
+  1|     let sum = a;
+  2|     sum += #b;
+  3|     sum += c;
+  4|     return sum;
+
+Original: 32 (0, 33)
+  0| (function(a,b,c){let sum=a;sum+=b#;sum+=c;return sum;})()
+Formatted: 49 (2, 12)
+  0| (function(a, b, c) {
+  1|     let sum = a;
+  2|     sum += b#;
+  3|     sum += c;
+  4|     return sum;
+
+Original: 33 (0, 34)
+  0| (function(a,b,c){let sum=a;sum+=b;#sum+=c;return sum;})()
+Formatted: 50 (3, 4)
+  1|     let sum = a;
+  2|     sum += b;
+  3|     #sum += c;
+  4|     return sum;
+  5| })()
+
+Original: 34 (0, 35)
+  0| (function(a,b,c){let sum=a;sum+=b;s#um+=c;return sum;})()
+Formatted: 56 (3, 5)
+  1|     let sum = a;
+  2|     sum += b;
+  3|     s#um += c;
+  4|     return sum;
+  5| })()
+
+Original: 35 (0, 36)
+  0| (function(a,b,c){let sum=a;sum+=b;su#m+=c;return sum;})()
+Formatted: 57 (3, 6)
+  1|     let sum = a;
+  2|     sum += b;
+  3|     su#m += c;
+  4|     return sum;
+  5| })()
+
+Original: 36 (0, 37)
+  0| (function(a,b,c){let sum=a;sum+=b;sum#+=c;return sum;})()
+Formatted: 58 (3, 8)
+  1|     let sum = a;
+  2|     sum += b;
+  3|     sum #+= c;
+  4|     return sum;
+  5| })()
+
+Original: 37 (0, 38)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+#=c;return sum;})()
+Formatted: 60 (3, 9)
+  1|     let sum = a;
+  2|     sum += b;
+  3|     sum +#= c;
+  4|     return sum;
+  5| })()
+
+Original: 38 (0, 39)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=#c;return sum;})()
+Formatted: 61 (3, 11)
+  1|     let sum = a;
+  2|     sum += b;
+  3|     sum += #c;
+  4|     return sum;
+  5| })()
+
+Original: 39 (0, 40)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c#;return sum;})()
+Formatted: 63 (3, 12)
+  1|     let sum = a;
+  2|     sum += b;
+  3|     sum += c#;
+  4|     return sum;
+  5| })()
+
+Original: 40 (0, 41)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;#return sum;})()
+Formatted: 64 (4, 4)
+  2|     sum += b;
+  3|     sum += c;
+  4|     #return sum;
+  5| })()
+  6| 
+
+Original: 41 (0, 42)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;r#eturn sum;})()
+Formatted: 70 (4, 5)
+  2|     sum += b;
+  3|     sum += c;
+  4|     r#eturn sum;
+  5| })()
+  6| 
+
+Original: 42 (0, 43)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;re#turn sum;})()
+Formatted: 71 (4, 6)
+  2|     sum += b;
+  3|     sum += c;
+  4|     re#turn sum;
+  5| })()
+  6| 
+
+Original: 43 (0, 44)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;ret#urn sum;})()
+Formatted: 72 (4, 7)
+  2|     sum += b;
+  3|     sum += c;
+  4|     ret#urn sum;
+  5| })()
+  6| 
+
+Original: 44 (0, 45)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;retu#rn sum;})()
+Formatted: 73 (4, 8)
+  2|     sum += b;
+  3|     sum += c;
+  4|     retu#rn sum;
+  5| })()
+  6| 
+
+Original: 45 (0, 46)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;retur#n sum;})()
+Formatted: 74 (4, 9)
+  2|     sum += b;
+  3|     sum += c;
+  4|     retur#n sum;
+  5| })()
+  6| 
+
+Original: 46 (0, 47)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return# sum;})()
+Formatted: 75 (4, 10)
+  2|     sum += b;
+  3|     sum += c;
+  4|     return# sum;
+  5| })()
+  6| 
+
+Original: 47 (0, 48)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return #sum;})()
+Formatted: 76 (4, 11)
+  2|     sum += b;
+  3|     sum += c;
+  4|     return #sum;
+  5| })()
+  6| 
+
+Original: 48 (0, 49)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return s#um;})()
+Formatted: 77 (4, 12)
+  2|     sum += b;
+  3|     sum += c;
+  4|     return s#um;
+  5| })()
+  6| 
+
+Original: 49 (0, 50)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return su#m;})()
+Formatted: 78 (4, 13)
+  2|     sum += b;
+  3|     sum += c;
+  4|     return su#m;
+  5| })()
+  6| 
+
+Original: 50 (0, 51)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum#;})()
+Formatted: 79 (4, 14)
+  2|     sum += b;
+  3|     sum += c;
+  4|     return sum#;
+  5| })()
+  6| 
+
+Original: 51 (0, 52)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;#})()
+Formatted: 80 (5, 0)
+  3|     sum += c;
+  4|     return sum;
+  5| #})()
+  6| 
+
+Original: 52 (0, 53)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;}#)()
+Formatted: 82 (5, 1)
+  3|     sum += c;
+  4|     return sum;
+  5| }#)()
+  6| 
+
+Original: 53 (0, 54)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})#()
+Formatted: 83 (5, 2)
+  3|     sum += c;
+  4|     return sum;
+  5| })#()
+  6| 
+
+Original: 54 (0, 55)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})(#)
+Formatted: 84 (5, 3)
+  3|     sum += c;
+  4|     return sum;
+  5| })(#)
+  6| 
+
+Original: 55 (0, 56)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()#
+Formatted: 85 (5, 4)
+  3|     sum += c;
+  4|     return sum;
+  5| })()#
+  6| 
+
+
+---- Formatted to Original ----
+Formatted: 0 (0, 1)
+  0| (#function(a, b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+Original: 0 (0, 1)
+  0| (#function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 1 (0, 2)
+  0| (f#unction(a, b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+Original: 1 (0, 2)
+  0| (f#unction(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 2 (0, 3)
+  0| (fu#nction(a, b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+Original: 2 (0, 3)
+  0| (fu#nction(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 3 (0, 4)
+  0| (fun#ction(a, b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+Original: 3 (0, 4)
+  0| (fun#ction(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 4 (0, 5)
+  0| (func#tion(a, b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+Original: 4 (0, 5)
+  0| (func#tion(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 5 (0, 6)
+  0| (funct#ion(a, b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+Original: 5 (0, 6)
+  0| (funct#ion(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 6 (0, 7)
+  0| (functi#on(a, b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+Original: 6 (0, 7)
+  0| (functi#on(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 7 (0, 8)
+  0| (functio#n(a, b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+Original: 7 (0, 8)
+  0| (functio#n(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 8 (0, 9)
+  0| (function#(a, b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+Original: 8 (0, 9)
+  0| (function#(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 9 (0, 10)
+  0| (function(#a, b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+Original: 9 (0, 10)
+  0| (function(#a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 10 (0, 11)
+  0| (function(a#, b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+Original: 10 (0, 11)
+  0| (function(a#,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 11 (0, 12)
+  0| (function(a,# b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+Original: 11 (0, 12)
+  0| (function(a,#b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 12 (0, 13)
+  0| (function(a, #b, c) {
+  1|     let sum = a;
+  2|     sum += b;
+Original: 12 (0, 12)
+  0| (function(a,#b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 13 (0, 14)
+  0| (function(a, b#, c) {
+  1|     let sum = a;
+  2|     sum += b;
+Original: 12 (0, 13)
+  0| (function(a,b#,c){let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 14 (0, 15)
+  0| (function(a, b,# c) {
+  1|     let sum = a;
+  2|     sum += b;
+Original: 13 (0, 14)
+  0| (function(a,b,#c){let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 15 (0, 16)
+  0| (function(a, b, #c) {
+  1|     let sum = a;
+  2|     sum += b;
+Original: 14 (0, 14)
+  0| (function(a,b,#c){let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 16 (0, 17)
+  0| (function(a, b, c#) {
+  1|     let sum = a;
+  2|     sum += b;
+Original: 14 (0, 15)
+  0| (function(a,b,c#){let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 17 (0, 18)
+  0| (function(a, b, c)# {
+  1|     let sum = a;
+  2|     sum += b;
+Original: 15 (0, 16)
+  0| (function(a,b,c)#{let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 18 (0, 19)
+  0| (function(a, b, c) #{
+  1|     let sum = a;
+  2|     sum += b;
+Original: 16 (0, 16)
+  0| (function(a,b,c)#{let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 19 (0, 20)
+  0| (function(a, b, c) {#
+  1|     let sum = a;
+  2|     sum += b;
+Original: 16 (0, 17)
+  0| (function(a,b,c){#let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 20 (1, 0)
+  0| (function(a, b, c) {
+  1| #    let sum = a;
+  2|     sum += b;
+  3|     sum += c;
+Original: 17 (0, 17)
+  0| (function(a,b,c){#let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 21 (1, 1)
+  0| (function(a, b, c) {
+  1|  #   let sum = a;
+  2|     sum += b;
+  3|     sum += c;
+Original: 17 (0, 17)
+  0| (function(a,b,c){#let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 22 (1, 2)
+  0| (function(a, b, c) {
+  1|   #  let sum = a;
+  2|     sum += b;
+  3|     sum += c;
+Original: 17 (0, 17)
+  0| (function(a,b,c){#let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 23 (1, 3)
+  0| (function(a, b, c) {
+  1|    # let sum = a;
+  2|     sum += b;
+  3|     sum += c;
+Original: 17 (0, 17)
+  0| (function(a,b,c){#let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 24 (1, 4)
+  0| (function(a, b, c) {
+  1|     #let sum = a;
+  2|     sum += b;
+  3|     sum += c;
+Original: 17 (0, 17)
+  0| (function(a,b,c){#let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 25 (1, 5)
+  0| (function(a, b, c) {
+  1|     l#et sum = a;
+  2|     sum += b;
+  3|     sum += c;
+Original: 17 (0, 18)
+  0| (function(a,b,c){l#et sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 26 (1, 6)
+  0| (function(a, b, c) {
+  1|     le#t sum = a;
+  2|     sum += b;
+  3|     sum += c;
+Original: 18 (0, 19)
+  0| (function(a,b,c){le#t sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 27 (1, 7)
+  0| (function(a, b, c) {
+  1|     let# sum = a;
+  2|     sum += b;
+  3|     sum += c;
+Original: 19 (0, 20)
+  0| (function(a,b,c){let# sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 28 (1, 8)
+  0| (function(a, b, c) {
+  1|     let #sum = a;
+  2|     sum += b;
+  3|     sum += c;
+Original: 20 (0, 21)
+  0| (function(a,b,c){let #sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 29 (1, 9)
+  0| (function(a, b, c) {
+  1|     let s#um = a;
+  2|     sum += b;
+  3|     sum += c;
+Original: 21 (0, 22)
+  0| (function(a,b,c){let s#um=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 30 (1, 10)
+  0| (function(a, b, c) {
+  1|     let su#m = a;
+  2|     sum += b;
+  3|     sum += c;
+Original: 22 (0, 23)
+  0| (function(a,b,c){let su#m=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 31 (1, 11)
+  0| (function(a, b, c) {
+  1|     let sum# = a;
+  2|     sum += b;
+  3|     sum += c;
+Original: 23 (0, 24)
+  0| (function(a,b,c){let sum#=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 32 (1, 12)
+  0| (function(a, b, c) {
+  1|     let sum #= a;
+  2|     sum += b;
+  3|     sum += c;
+Original: 24 (0, 24)
+  0| (function(a,b,c){let sum#=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 33 (1, 13)
+  0| (function(a, b, c) {
+  1|     let sum =# a;
+  2|     sum += b;
+  3|     sum += c;
+Original: 24 (0, 25)
+  0| (function(a,b,c){let sum=#a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 34 (1, 14)
+  0| (function(a, b, c) {
+  1|     let sum = #a;
+  2|     sum += b;
+  3|     sum += c;
+Original: 25 (0, 25)
+  0| (function(a,b,c){let sum=#a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 35 (1, 15)
+  0| (function(a, b, c) {
+  1|     let sum = a#;
+  2|     sum += b;
+  3|     sum += c;
+Original: 25 (0, 26)
+  0| (function(a,b,c){let sum=a#;sum+=b;sum+=c;return sum;})()
+
+Formatted: 36 (1, 16)
+  0| (function(a, b, c) {
+  1|     let sum = a;#
+  2|     sum += b;
+  3|     sum += c;
+Original: 26 (0, 27)
+  0| (function(a,b,c){let sum=a;#sum+=b;sum+=c;return sum;})()
+
+Formatted: 37 (2, 0)
+  0| (function(a, b, c) {
+  1|     let sum = a;
+  2| #    sum += b;
+  3|     sum += c;
+  4|     return sum;
+Original: 27 (0, 27)
+  0| (function(a,b,c){let sum=a;#sum+=b;sum+=c;return sum;})()
+
+Formatted: 38 (2, 1)
+  0| (function(a, b, c) {
+  1|     let sum = a;
+  2|  #   sum += b;
+  3|     sum += c;
+  4|     return sum;
+Original: 27 (0, 27)
+  0| (function(a,b,c){let sum=a;#sum+=b;sum+=c;return sum;})()
+
+Formatted: 39 (2, 2)
+  0| (function(a, b, c) {
+  1|     let sum = a;
+  2|   #  sum += b;
+  3|     sum += c;
+  4|     return sum;
+Original: 27 (0, 27)
+  0| (function(a,b,c){let sum=a;#sum+=b;sum+=c;return sum;})()
+
+Formatted: 40 (2, 3)
+  0| (function(a, b, c) {
+  1|     let sum = a;
+  2|    # sum += b;
+  3|     sum += c;
+  4|     return sum;
+Original: 27 (0, 27)
+  0| (function(a,b,c){let sum=a;#sum+=b;sum+=c;return sum;})()
+
+Formatted: 41 (2, 4)
+  0| (function(a, b, c) {
+  1|     let sum = a;
+  2|     #sum += b;
+  3|     sum += c;
+  4|     return sum;
+Original: 27 (0, 27)
+  0| (function(a,b,c){let sum=a;#sum+=b;sum+=c;return sum;})()
+
+Formatted: 42 (2, 5)
+  0| (function(a, b, c) {
+  1|     let sum = a;
+  2|     s#um += b;
+  3|     sum += c;
+  4|     return sum;
+Original: 27 (0, 28)
+  0| (function(a,b,c){let sum=a;s#um+=b;sum+=c;return sum;})()
+
+Formatted: 43 (2, 6)
+  0| (function(a, b, c) {
+  1|     let sum = a;
+  2|     su#m += b;
+  3|     sum += c;
+  4|     return sum;
+Original: 28 (0, 29)
+  0| (function(a,b,c){let sum=a;su#m+=b;sum+=c;return sum;})()
+
+Formatted: 44 (2, 7)
+  0| (function(a, b, c) {
+  1|     let sum = a;
+  2|     sum# += b;
+  3|     sum += c;
+  4|     return sum;
+Original: 29 (0, 30)
+  0| (function(a,b,c){let sum=a;sum#+=b;sum+=c;return sum;})()
+
+Formatted: 45 (2, 8)
+  0| (function(a, b, c) {
+  1|     let sum = a;
+  2|     sum #+= b;
+  3|     sum += c;
+  4|     return sum;
+Original: 30 (0, 30)
+  0| (function(a,b,c){let sum=a;sum#+=b;sum+=c;return sum;})()
+
+Formatted: 46 (2, 9)
+  0| (function(a, b, c) {
+  1|     let sum = a;
+  2|     sum +#= b;
+  3|     sum += c;
+  4|     return sum;
+Original: 30 (0, 31)
+  0| (function(a,b,c){let sum=a;sum+#=b;sum+=c;return sum;})()
+
+Formatted: 47 (2, 10)
+  0| (function(a, b, c) {
+  1|     let sum = a;
+  2|     sum +=# b;
+  3|     sum += c;
+  4|     return sum;
+Original: 31 (0, 32)
+  0| (function(a,b,c){let sum=a;sum+=#b;sum+=c;return sum;})()
+
+Formatted: 48 (2, 11)
+  0| (function(a, b, c) {
+  1|     let sum = a;
+  2|     sum += #b;
+  3|     sum += c;
+  4|     return sum;
+Original: 32 (0, 32)
+  0| (function(a,b,c){let sum=a;sum+=#b;sum+=c;return sum;})()
+
+Formatted: 49 (2, 12)
+  0| (function(a, b, c) {
+  1|     let sum = a;
+  2|     sum += b#;
+  3|     sum += c;
+  4|     return sum;
+Original: 32 (0, 33)
+  0| (function(a,b,c){let sum=a;sum+=b#;sum+=c;return sum;})()
+
+Formatted: 50 (2, 13)
+  0| (function(a, b, c) {
+  1|     let sum = a;
+  2|     sum += b;#
+  3|     sum += c;
+  4|     return sum;
+Original: 33 (0, 34)
+  0| (function(a,b,c){let sum=a;sum+=b;#sum+=c;return sum;})()
+
+Formatted: 51 (3, 0)
+  1|     let sum = a;
+  2|     sum += b;
+  3| #    sum += c;
+  4|     return sum;
+  5| })()
+Original: 34 (0, 34)
+  0| (function(a,b,c){let sum=a;sum+=b;#sum+=c;return sum;})()
+
+Formatted: 52 (3, 1)
+  1|     let sum = a;
+  2|     sum += b;
+  3|  #   sum += c;
+  4|     return sum;
+  5| })()
+Original: 34 (0, 34)
+  0| (function(a,b,c){let sum=a;sum+=b;#sum+=c;return sum;})()
+
+Formatted: 53 (3, 2)
+  1|     let sum = a;
+  2|     sum += b;
+  3|   #  sum += c;
+  4|     return sum;
+  5| })()
+Original: 34 (0, 34)
+  0| (function(a,b,c){let sum=a;sum+=b;#sum+=c;return sum;})()
+
+Formatted: 54 (3, 3)
+  1|     let sum = a;
+  2|     sum += b;
+  3|    # sum += c;
+  4|     return sum;
+  5| })()
+Original: 34 (0, 34)
+  0| (function(a,b,c){let sum=a;sum+=b;#sum+=c;return sum;})()
+
+Formatted: 55 (3, 4)
+  1|     let sum = a;
+  2|     sum += b;
+  3|     #sum += c;
+  4|     return sum;
+  5| })()
+Original: 34 (0, 34)
+  0| (function(a,b,c){let sum=a;sum+=b;#sum+=c;return sum;})()
+
+Formatted: 56 (3, 5)
+  1|     let sum = a;
+  2|     sum += b;
+  3|     s#um += c;
+  4|     return sum;
+  5| })()
+Original: 34 (0, 35)
+  0| (function(a,b,c){let sum=a;sum+=b;s#um+=c;return sum;})()
+
+Formatted: 57 (3, 6)
+  1|     let sum = a;
+  2|     sum += b;
+  3|     su#m += c;
+  4|     return sum;
+  5| })()
+Original: 35 (0, 36)
+  0| (function(a,b,c){let sum=a;sum+=b;su#m+=c;return sum;})()
+
+Formatted: 58 (3, 7)
+  1|     let sum = a;
+  2|     sum += b;
+  3|     sum# += c;
+  4|     return sum;
+  5| })()
+Original: 36 (0, 37)
+  0| (function(a,b,c){let sum=a;sum+=b;sum#+=c;return sum;})()
+
+Formatted: 59 (3, 8)
+  1|     let sum = a;
+  2|     sum += b;
+  3|     sum #+= c;
+  4|     return sum;
+  5| })()
+Original: 37 (0, 37)
+  0| (function(a,b,c){let sum=a;sum+=b;sum#+=c;return sum;})()
+
+Formatted: 60 (3, 9)
+  1|     let sum = a;
+  2|     sum += b;
+  3|     sum +#= c;
+  4|     return sum;
+  5| })()
+Original: 37 (0, 38)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+#=c;return sum;})()
+
+Formatted: 61 (3, 10)
+  1|     let sum = a;
+  2|     sum += b;
+  3|     sum +=# c;
+  4|     return sum;
+  5| })()
+Original: 38 (0, 39)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=#c;return sum;})()
+
+Formatted: 62 (3, 11)
+  1|     let sum = a;
+  2|     sum += b;
+  3|     sum += #c;
+  4|     return sum;
+  5| })()
+Original: 39 (0, 39)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=#c;return sum;})()
+
+Formatted: 63 (3, 12)
+  1|     let sum = a;
+  2|     sum += b;
+  3|     sum += c#;
+  4|     return sum;
+  5| })()
+Original: 39 (0, 40)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c#;return sum;})()
+
+Formatted: 64 (3, 13)
+  1|     let sum = a;
+  2|     sum += b;
+  3|     sum += c;#
+  4|     return sum;
+  5| })()
+Original: 40 (0, 41)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;#return sum;})()
+
+Formatted: 65 (4, 0)
+  2|     sum += b;
+  3|     sum += c;
+  4| #    return sum;
+  5| })()
+  6| 
+Original: 41 (0, 41)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;#return sum;})()
+
+Formatted: 66 (4, 1)
+  2|     sum += b;
+  3|     sum += c;
+  4|  #   return sum;
+  5| })()
+  6| 
+Original: 41 (0, 41)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;#return sum;})()
+
+Formatted: 67 (4, 2)
+  2|     sum += b;
+  3|     sum += c;
+  4|   #  return sum;
+  5| })()
+  6| 
+Original: 41 (0, 41)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;#return sum;})()
+
+Formatted: 68 (4, 3)
+  2|     sum += b;
+  3|     sum += c;
+  4|    # return sum;
+  5| })()
+  6| 
+Original: 41 (0, 41)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;#return sum;})()
+
+Formatted: 69 (4, 4)
+  2|     sum += b;
+  3|     sum += c;
+  4|     #return sum;
+  5| })()
+  6| 
+Original: 41 (0, 41)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;#return sum;})()
+
+Formatted: 70 (4, 5)
+  2|     sum += b;
+  3|     sum += c;
+  4|     r#eturn sum;
+  5| })()
+  6| 
+Original: 41 (0, 42)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;r#eturn sum;})()
+
+Formatted: 71 (4, 6)
+  2|     sum += b;
+  3|     sum += c;
+  4|     re#turn sum;
+  5| })()
+  6| 
+Original: 42 (0, 43)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;re#turn sum;})()
+
+Formatted: 72 (4, 7)
+  2|     sum += b;
+  3|     sum += c;
+  4|     ret#urn sum;
+  5| })()
+  6| 
+Original: 43 (0, 44)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;ret#urn sum;})()
+
+Formatted: 73 (4, 8)
+  2|     sum += b;
+  3|     sum += c;
+  4|     retu#rn sum;
+  5| })()
+  6| 
+Original: 44 (0, 45)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;retu#rn sum;})()
+
+Formatted: 74 (4, 9)
+  2|     sum += b;
+  3|     sum += c;
+  4|     retur#n sum;
+  5| })()
+  6| 
+Original: 45 (0, 46)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;retur#n sum;})()
+
+Formatted: 75 (4, 10)
+  2|     sum += b;
+  3|     sum += c;
+  4|     return# sum;
+  5| })()
+  6| 
+Original: 46 (0, 47)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return# sum;})()
+
+Formatted: 76 (4, 11)
+  2|     sum += b;
+  3|     sum += c;
+  4|     return #sum;
+  5| })()
+  6| 
+Original: 47 (0, 48)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return #sum;})()
+
+Formatted: 77 (4, 12)
+  2|     sum += b;
+  3|     sum += c;
+  4|     return s#um;
+  5| })()
+  6| 
+Original: 48 (0, 49)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return s#um;})()
+
+Formatted: 78 (4, 13)
+  2|     sum += b;
+  3|     sum += c;
+  4|     return su#m;
+  5| })()
+  6| 
+Original: 49 (0, 50)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return su#m;})()
+
+Formatted: 79 (4, 14)
+  2|     sum += b;
+  3|     sum += c;
+  4|     return sum#;
+  5| })()
+  6| 
+Original: 50 (0, 51)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum#;})()
+
+Formatted: 80 (4, 15)
+  2|     sum += b;
+  3|     sum += c;
+  4|     return sum;#
+  5| })()
+  6| 
+Original: 51 (0, 52)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;#})()
+
+Formatted: 81 (5, 0)
+  3|     sum += c;
+  4|     return sum;
+  5| #})()
+  6| 
+Original: 52 (0, 52)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;#})()
+
+Formatted: 82 (5, 1)
+  3|     sum += c;
+  4|     return sum;
+  5| }#)()
+  6| 
+Original: 52 (0, 53)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;}#)()
+
+Formatted: 83 (5, 2)
+  3|     sum += c;
+  4|     return sum;
+  5| })#()
+  6| 
+Original: 53 (0, 54)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})#()
+
+Formatted: 84 (5, 3)
+  3|     sum += c;
+  4|     return sum;
+  5| })(#)
+  6| 
+Original: 54 (0, 55)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})(#)
+
+Formatted: 85 (5, 4)
+  3|     sum += c;
+  4|     return sum;
+  5| })()#
+  6| 
+Original: 55 (0, 56)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()#
+
+Formatted: 86 (6, 0)
+  4|     return sum;
+  5| })()
+  6| #
+Original: 56 (1, 0)
+  0| (function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()
+
+

@@ -353,7 +353,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
                     if (index !== -1)
                         newTabs.insertAtIndex(WI.SourcesTabContentView.Type, index);
                     else
-                        newTabs.push(WI.SourcesTabContentView.Type);                    
+                        newTabs.push(WI.SourcesTabContentView.Type);
                 }
             }
             if (!initialValues.get(WI.settings.experimentalEnableLayersTab) && window.LayerTreeAgent && WI.settings.experimentalEnableLayersTab.value)

@@ -32,14 +32,14 @@ function test()
     }
 
 
-    let suite = InspectorTest.createAsyncSuite("EsprimaFormatter.JSON");
+    let suite = InspectorTest.createAsyncSuite("JSFormatter.JSON");
 
     const isModule = false;
     const indentString = "    ";
     let workerProxy = WI.FormatterWorkerProxy.singleton();
 
     suite.addTestCase({
-        name: "EsprimaFormatter.ValidJSON",
+        name: "JSFormatter.ValidJSON",
         description: "Format valid JSON",
         test(resolve, reject) {
             let validJSON = JSON.stringify({"a":123,"b":[1,2,3],"c":{"d":"e"}});
@@ -54,7 +54,7 @@ function test()
     });
 
     suite.addTestCase({
-        name: "EsprimaFormatter.InvalidButObject",
+        name: "JSFormatter.InvalidButObject",
         description: "Format invalid JSON due to literal keys, but it can be evaluated as a valid JavaScript Object",
         test(resolve, reject) {
             let invalidJSON = `{a:123,b:[1,2,3],c:{d:"e"}}`;
@@ -70,7 +70,7 @@ function test()
     });
 
     suite.addTestCase({
-        name: "EsprimaFormatter.InvalidWithComments",
+        name: "JSFormatter.InvalidWithComments",
         description: "Format invalid JSON due to comments, but it can be evaluated as a valid JavaScript Object",
         test(resolve, reject) {
             let invalidJSON = JSON.stringify({"a":123,"b":[1,2,3],"c":{"d":"e"}}) + "/*Comment*/";
@@ -86,7 +86,7 @@ function test()
     });
 
     suite.addTestCase({
-        name: "EsprimaFormatter.Invalid",
+        name: "JSFormatter.Invalid",
         description: "Format invalid JSON, that is not a valid JavaScript Object",
         test(resolve, reject) {
             let invalid = `{a:1 b:2}`;

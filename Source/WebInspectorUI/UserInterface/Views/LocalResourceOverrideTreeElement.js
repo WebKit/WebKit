@@ -45,7 +45,7 @@ WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement ext
         super.onattach();
 
         this._localResourceOverride.addEventListener(WI.LocalResourceOverride.Event.DisabledChanged, this._handleLocalResourceOverrideDisabledChanged, this);
- 
+
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._handleFrameMainResourceDidChange, this);
 
         this._updateStatusCheckbox();
@@ -92,7 +92,7 @@ WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement ext
         let toggleEnabledString = this._localResourceOverride.disabled ? WI.UIString("Enable Local Override") : WI.UIString("Disable Local Override");
         contextMenu.appendItem(toggleEnabledString, () => {
             this._localResourceOverride.disabled = !this._localResourceOverride.disabled;
-        });            
+        });
 
         contextMenu.appendItem(WI.UIString("Remove Local Override"), () => {
             WI.networkManager.removeLocalResourceOverride(this._localResourceOverride);

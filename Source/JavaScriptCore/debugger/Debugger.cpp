@@ -363,6 +363,15 @@ void Debugger::resolveBreakpoint(Breakpoint& breakpoint, SourceProvider* sourceP
     unsigned line = breakpoint.line + 1;
     unsigned column = breakpoint.column ? breakpoint.column : Breakpoint::unspecifiedColumn;
 
+    // Account for a <script>'s start position on the first line only.
+    unsigned providerStartLine = sourceProvider->startPosition().m_line.oneBasedInt(); // One based to match the already adjusted line.
+    unsigned providerStartColumn = sourceProvider->startPosition().m_column.zeroBasedInt(); // Zero based so column zero is zero.
+    if (line == providerStartLine && column != Breakpoint::unspecifiedColumn) {
+        ASSERT(providerStartColumn <= column);
+        if (providerStartColumn)
+            column -= providerStartColumn;
+    }
+
     DebuggerParseData& parseData = debuggerParseData(breakpoint.sourceID, sourceProvider);
     Optional<JSTextPosition> resolvedPosition = parseData.pausePositions.breakpointLocationForLineColumn((int)line, (int)column);
     if (!resolvedPosition)
@@ -370,6 +379,12 @@ void Debugger::resolveBreakpoint(Breakpoint& breakpoint, SourceProvider* sourceP
 
     unsigned resolvedLine = resolvedPosition->line;
     unsigned resolvedColumn = resolvedPosition->offset - resolvedPosition->lineStartOffset + 1;
+
+    // Re-account for a <script>'s start position on the first line only.
+    if (resolvedLine == providerStartLine && column != Breakpoint::unspecifiedColumn) {
+        if (providerStartColumn)
+            resolvedColumn += providerStartColumn;
+    }
 
     breakpoint.line = resolvedLine - 1;
     breakpoint.column = resolvedColumn - 1;

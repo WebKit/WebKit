@@ -25,11 +25,14 @@
 
 importScripts(...[
     "../../External/Esprima/esprima.js",
-    "FormatterUtilities.js",
-    "FormatterContentBuilder.js",
-    "ESTreeWalker.js",
-    "EsprimaFormatter.js",
     "CSSFormatter.js",
+    "ESTreeWalker.js",
+    "FormatterContentBuilder.js",
+    "FormatterUtilities.js",
+    "HTMLFormatter.js",
+    "HTMLParser.js",
+    "HTMLTreeBuilderFormatter.js",
+    "JSFormatter.js",
 ]);
 
 FormatterWorker = class FormatterWorker
@@ -43,15 +46,16 @@ FormatterWorker = class FormatterWorker
 
     formatJavaScript(sourceText, isModule, indentString, includeSourceMapData)
     {
-        let sourceType = isModule ? EsprimaFormatter.SourceType.Module : EsprimaFormatter.SourceType.Script;
+        let sourceType = isModule ? JSFormatter.SourceType.Module : JSFormatter.SourceType.Script;
 
         // Format a JavaScript program.
-        let formatter = new EsprimaFormatter(sourceText, sourceType, indentString);
+        const builder = null;
+        let formatter = new JSFormatter(sourceText, sourceType, builder, indentString);
         if (formatter.success) {
             let result = {formattedText: formatter.formattedText};
             if (includeSourceMapData) {
                 result.sourceMapData = formatter.sourceMapData;
-                // NOTE: With the EsprimaFormatter, multi-line tokens, such as comments and strings,
+                // NOTE: With the JSFormatter, multi-line tokens, such as comments and strings,
                 // would not have had their newlines counted properly by the builder. Rather then
                 // modify the formatter to check and account for newlines in every token just
                 // compute the list of line endings directly on the result.
@@ -77,7 +81,7 @@ FormatterWorker = class FormatterWorker
         // Likewise, an unnamed function's toString() produces a "function() { ... }", which is not
         // a valid program on its own. Wrap it in parenthesis to make it a function expression,
         // which is a valid program.
-        let invalidJSONFormatter = new EsprimaFormatter("(" + sourceText + ")", sourceType, indentString);
+        let invalidJSONFormatter = new JSFormatter("(" + sourceText + ")", sourceType, builder, indentString);
         if (invalidJSONFormatter.success) {
             let formattedTextWithParens = invalidJSONFormatter.formattedText;
             let result = {formattedText: formattedTextWithParens.substring(1, formattedTextWithParens.length - 2)}; // Remove "(" and ")\n".
@@ -92,7 +96,21 @@ FormatterWorker = class FormatterWorker
     formatCSS(sourceText, indentString, includeSourceMapData)
     {
         let result = {formattedText: null};
-        let formatter = new CSSFormatter(sourceText, indentString);
+        const builder = null;
+        let formatter = new CSSFormatter(sourceText, builder, indentString);
+        if (formatter.success) {
+            result.formattedText = formatter.formattedText;
+            if (includeSourceMapData)
+                result.sourceMapData = formatter.sourceMapData;
+        }
+        return result;
+    }
+
+    formatHTML(sourceText, indentString, includeSourceMapData)
+    {
+        let result = {formattedText: null};
+        const builder = null;
+        let formatter = new HTMLFormatter(sourceText, builder, indentString);
         if (formatter.success) {
             result.formattedText = formatter.formattedText;
             if (includeSourceMapData)

@@ -192,7 +192,7 @@ WI.Resource = class Resource extends WI.SourceCode
             if (resource.requestedByteRange)
                 classes.push("resource-type-range");
         } else
-            classes.push(resource.type)
+            classes.push(resource.type);
 
         return classes;
     }
@@ -1065,7 +1065,7 @@ WI.Resource = class Resource extends WI.SourceCode
 
     async createLocalResourceOverride(initialContent)
     {
-        console.assert(!this.isLocalResourceOverride)
+        console.assert(!this.isLocalResourceOverride);
         console.assert(WI.NetworkManager.supportsLocalResourceOverrides());
 
         let {rawContent, rawBase64Encoded} = await this.requestContent();

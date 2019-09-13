@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>EsprimaFormatter Tool</title>
+    <title>JSFormatter Tool</title>
     <link rel="stylesheet" href="../../UserInterface/External/CodeMirror/codemirror.css">
     <link rel="stylesheet" href="codemirror-additions.css">
     <script src="../../UserInterface/External/CodeMirror/codemirror.js"></script>
@@ -11,11 +11,11 @@
     <script src="../../UserInterface/Workers/Formatter/FormatterContentBuilder.js"></script>
     <script src="../../UserInterface/Workers/Formatter/FormatterUtilities.js"></script>
     <script src="../../UserInterface/Workers/Formatter/ESTreeWalker.js"></script>
-    <script src="../../UserInterface/Workers/Formatter/EsprimaFormatter.js"></script>
-    <script src="EsprimaFormatterDebug.js"></script>
+    <script src="../../UserInterface/Workers/Formatter/JSFormatter.js"></script>
+    <script src="JSFormatterDebug.js"></script>
 </head>
 <body>
-    <h1>Debug EsprimaFormatter</h1>
+    <h1>Debug JSFormatter</h1>
 
     <!-- Controls -->
     <button id="populate">Populate</button>
@@ -180,9 +180,9 @@
     // Current value of checkboxes.
     function currentSourceType() {
         if (programCheckbox.checked)
-            return EsprimaFormatter.SourceType.Script;
+            return JSFormatter.SourceType.Script;
         if (moduleCheckbox.checked)
-            return EsprimaFormatter.SourceType.Module;
+            return JSFormatter.SourceType.Module;
         console.assert(false, "Program or Module radio button should be checked");
         return undefined;
     }
@@ -193,13 +193,13 @@
 
         // Time the formatter.
         let startTime = Date.now();
-        let formatter = new EsprimaFormatter(cm.getValue(), currentSourceType());
+        let formatter = new JSFormatter(cm.getValue(), currentSourceType());
         let endTime = Date.now();
 
         // Show debug info.
         let debugText;
         try {
-            let debugFormatter = new EsprimaFormatterDebug(cm.getValue(), currentSourceType());
+            let debugFormatter = new JSFormatterDebug(cm.getValue(), currentSourceType());
             debugText = debugFormatter.debugText;
         } catch (error) {
             debugText = "Parse error: " + JSON.stringify(error, null, 2);
@@ -261,8 +261,8 @@
             let expectedData = xhr2.responseText;
 
             // Run the test.
-            let sourceType = isModuleTest(test) ? EsprimaFormatter.SourceType.Module : EsprimaFormatter.SourceType.Script;
-            let formatter = new EsprimaFormatter(testData, sourceType);
+            let sourceType = isModuleTest(test) ? JSFormatter.SourceType.Module : JSFormatter.SourceType.Script;
+            let formatter = new JSFormatter(testData, sourceType);
 
             // Compare results.
             let pass = formatter.formattedText === expectedData;

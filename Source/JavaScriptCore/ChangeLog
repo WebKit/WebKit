@@ -1,3 +1,16 @@
+2019-09-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Formatter: Pretty Print HTML resources (including inline <script>/<style>)
+        https://bugs.webkit.org/show_bug.cgi?id=201535
+        <rdar://problem/29119232>
+
+        Reviewed by Devin Rousso.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::resolveBreakpoint):
+        When resolving a breakpoint inside of an inline <script> we need to adjust
+        based on the starting position of the <script> in the HTML resource.
+
 2019-09-13  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] X86Registers.h callee-save register definition is wrong

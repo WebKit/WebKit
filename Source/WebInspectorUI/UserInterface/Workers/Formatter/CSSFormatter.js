@@ -25,14 +25,17 @@
 
 CSSFormatter = class CSSFormatter
 {
-    constructor(sourceText, indentString = "    ")
+    constructor(sourceText, builder, indentString = "    ")
     {
         this._success = false;
 
         this._sourceText = sourceText;
 
-        this._builder = new FormatterContentBuilder(indentString);
-        this._builder.setOriginalLineEndings(this._sourceText.lineEndings());
+        this._builder = builder;
+        if (!this._builder) {
+            this._builder = new FormatterContentBuilder(indentString);
+            this._builder.setOriginalLineEndings(this._sourceText.lineEndings());
+        }
 
         this._format();
 
@@ -270,17 +273,7 @@ CSSFormatter = class CSSFormatter
                         this._builder.appendNewline(true);
                 }
 
-                specialSequenceText.split(`\n`).forEach((line, i, lines) => {
-                    if (line) {
-                        this._builder.appendToken(line, startIndex);
-                        startIndex += line.length;
-                    }
-
-                    if (i < lines.length - 1) {
-                        this._builder.appendNewline(true);
-                        ++startIndex;
-                    }
-                });
+                this._builder.appendStringWithPossibleNewlines(specialSequenceText, startIndex);
 
                 i = endIndex;
                 c = this._sourceText[i];

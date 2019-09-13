@@ -141,7 +141,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             inputField.id = `local-resource-override-popover-${id}-input-field`;
             labelElement.setAttribute("for", inputField.id);
 
-            return {codeMirror, dataElement}
+            return {codeMirror, dataElement};
         };
 
         let urlRow = createRow(WI.UIString("URL"), "url", url);
@@ -218,7 +218,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
         addHeaderButton.addEventListener("click", (event) => {
             let newNode = new WI.DataGridNode({name: "Header", value: "value"});
             dataGrid.appendChild(newNode);
-            dataGrid.updateLayoutIfNeeded();            
+            dataGrid.updateLayoutIfNeeded();
             this.update();
             dataGrid.startEditingNode(newNode);
         });

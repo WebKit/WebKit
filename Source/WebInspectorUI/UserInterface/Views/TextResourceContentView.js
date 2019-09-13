@@ -66,14 +66,14 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
                 this._removeLocalResourceOverrideButtonNavigationItem = new WI.ButtonNavigationItem("remove-local-resource-override", WI.UIString("Remove Local Override"), "Images/NavigationItemTrash.svg", 15, 15);
                 this._removeLocalResourceOverrideButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleRemoveLocalResourceOverride, this);
                 this._removeLocalResourceOverrideButtonNavigationItem.enabled = true;
-                this._removeLocalResourceOverrideButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;                
+                this._removeLocalResourceOverrideButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
             } else {
                 this._localResourceOverrideBannerView = new WI.LocalResourceOverrideWarningView(resource);
 
                 this._createLocalResourceOverrideButtonNavigationItem = new WI.ButtonNavigationItem("create-local-resource-override", WI.UIString("Create Local Override"), "Images/NavigationItemNetworkOverride.svg", 13, 14);
                 this._createLocalResourceOverrideButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleCreateLocalResourceOverride, this);
                 this._createLocalResourceOverrideButtonNavigationItem.enabled = false; // Enabled when the text editor is populated with content.
-                this._createLocalResourceOverrideButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;            
+                this._createLocalResourceOverrideButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
             }
         }
 

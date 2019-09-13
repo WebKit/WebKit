@@ -27,9 +27,9 @@
 // This currently assumes Esprima tokens, ranges, and comments.
 // <http://esprima.org/demo/parse.html>
 
-EsprimaFormatter = class EsprimaFormatter
+JSFormatter = class JSFormatter
 {
-    constructor(sourceText, sourceType, indentString = "    ")
+    constructor(sourceText, sourceType, builder, indentString = "    ")
     {
         this._success = false;
 
@@ -45,9 +45,6 @@ EsprimaFormatter = class EsprimaFormatter
             return;
 
         this._sourceText = sourceText;
-        this._builder = null;
-
-        let walker = new ESTreeWalker(this._before.bind(this), this._after.bind(this));
 
         this._tokens = tree.tokens;
         this._tokensLength = this._tokens.length;
@@ -56,9 +53,13 @@ EsprimaFormatter = class EsprimaFormatter
         this._lineEndings = sourceText.lineEndings();
         this._lineEndingsIndex = 0;
 
-        this._builder = new FormatterContentBuilder(indentString);
-        this._builder.setOriginalLineEndings(this._lineEndings.slice());
+        this._builder = builder;
+        if (!this._builder) {
+            this._builder = new FormatterContentBuilder(indentString);
+            this._builder.setOriginalLineEndings(this._lineEndings.slice());
+        }
 
+        let walker = new ESTreeWalker(this._before.bind(this), this._after.bind(this));
         walker.walk(tree);
         this._afterProgram(tree);
         this._builder.appendNewline();
@@ -75,10 +76,7 @@ EsprimaFormatter = class EsprimaFormatter
 
     // Public
 
-    get success()
-    {
-        return this._success;
-    }
+    get success() { return this._success; }
 
     get formattedText()
     {
@@ -210,7 +208,7 @@ EsprimaFormatter = class EsprimaFormatter
     {
         let substring = this._sourceText.substring(from, to);
         for (let i = 0; i < substring.length; ++i) {
-            if (!EsprimaFormatter.isWhitespace(substring.charCodeAt(i)))
+            if (!JSFormatter.isWhitespace(substring.charCodeAt(i)))
                 return false;
         }
 
@@ -943,7 +941,7 @@ EsprimaFormatter = class EsprimaFormatter
     }
 };
 
-EsprimaFormatter.SourceType = {
+JSFormatter.SourceType = {
     Script: "script",
     Module: "module",
 };

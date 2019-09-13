@@ -1,0 +1,38 @@
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+    max-width: 80%;
+    margin: 2em auto;
+    padding: 0 1em;
+}
+
+h1 {
+    letter-spacing: -3px;
+    font-size: 3.23em;
+    font-weight: bold;
+    margin: 0;
+}
+
+.CodeMirror {
+    height: auto;
+}
+
+.CodeMirror .CodeMirror-lines {
+    padding: 4px 0;
+}
+
+.editors-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+}
+
+.editors-container > .CodeMirror {
+    border: 1px solid hsla(0, 0%, 90%);
+    width: 48%;
+}
+
+#debug, #debug-mapping {
+    padding: 1em;
+    background-color: hsl(0, 0%, 90%);
+}

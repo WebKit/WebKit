@@ -182,7 +182,7 @@ WI.TextEditor = class TextEditor extends WI.View
     hasFormatter()
     {
         let mode = this._codeMirror.getMode().name;
-        return mode === "javascript" || mode === "css";
+        return mode === "javascript" || mode === "css" || mode === "htmlmixed";
     }
 
     canBeFormatted()
@@ -893,12 +893,23 @@ WI.TextEditor = class TextEditor extends WI.View
         };
 
         let mode = this._codeMirror.getMode().name;
-        if (mode === "javascript") {
+        switch (mode) {
+        case "javascript": {
             let sourceType = this._delegate ? this._delegate.textEditorScriptSourceType(this) : WI.Script.SourceType.Program;
             const isModule = sourceType === WI.Script.SourceType.Module;
             workerProxy.formatJavaScript(sourceText, isModule, indentString, includeSourceMapData, formatCallback);
-        } else if (mode === "css")
+            break;
+        }
+        case "css":
             workerProxy.formatCSS(sourceText, indentString, includeSourceMapData, formatCallback);
+            break;
+        case "htmlmixed":
+            workerProxy.formatHTML(sourceText, indentString, includeSourceMapData, formatCallback);
+            break;
+        default:
+            console.assert(false, "Unexpected mode attempted to pretty print.");
+            break;
+        }
     }
 
     _finishPrettyPrint(beforePrettyPrintState, formattedText, sourceMapData, callback)

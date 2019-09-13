@@ -1,3 +1,113 @@
+2019-09-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Formatter: Pretty Print HTML resources (including inline <script>/<style>)
+        https://bugs.webkit.org/show_bug.cgi?id=201535
+        <rdar://problem/29119232>
+
+        Reviewed by Devin Rousso.
+
+        * TestExpectations:
+        Mark slow test.
+
+        * inspector/formatting/formatting-css.html:
+        * inspector/formatting/formatting-html-expected.txt: Added.
+        * inspector/formatting/formatting-html.html: Added.
+        * inspector/formatting/formatting-javascript-expected.txt:
+        * inspector/formatting/formatting-javascript.html:
+        * inspector/formatting/formatting-json-expected.txt:
+        * inspector/formatting/formatting-json.html:
+        * inspector/formatting/resources/formatting-utilities.js: Renamed from LayoutTests/inspector/formatting/resources/utilities.js.
+        Update formatting tests to use new path to utilities.
+
+        * inspector/formatting/resources/css-tests/basic-expected.css:
+        * inspector/formatting/resources/css-tests/gradient-expected.css:
+        * inspector/formatting/resources/css-tests/keyframes-expected.css:
+        * inspector/formatting/resources/css-tests/media-query-expected.css:
+        * inspector/formatting/resources/css-tests/selectors-expected.css:
+        * inspector/formatting/resources/css-tests/wrapping-expected.css:
+        * inspector/codemirror/resources/prettyprinting/css-tests/basic-expected.css:
+        * inspector/codemirror/resources/prettyprinting/css-tests/calc-expected.css:
+        * inspector/codemirror/resources/prettyprinting/css-tests/gradient-expected.css:
+        * inspector/codemirror/resources/prettyprinting/css-tests/keyframes-expected.css:
+        * inspector/codemirror/resources/prettyprinting/css-tests/media-query-expected.css:
+        * inspector/codemirror/resources/prettyprinting/css-tests/selectors-expected.css:
+        * inspector/codemirror/resources/prettyprinting/css-tests/wrapping-expected.css:
+        Eliminate an extra trailing newline in CSS formatted results.
+
+        * inspector/formatting/resources/html-tests/attributes-expected.html: Added.
+        * inspector/formatting/resources/html-tests/attributes.html: Added.
+        * inspector/formatting/resources/html-tests/auto-close-expected.html: Added.
+        * inspector/formatting/resources/html-tests/auto-close.html: Added.
+        * inspector/formatting/resources/html-tests/basic-1-expected.html: Added.
+        * inspector/formatting/resources/html-tests/basic-1.html: Added.
+        * inspector/formatting/resources/html-tests/basic-2-expected.html: Added.
+        * inspector/formatting/resources/html-tests/basic-2.html: Added.
+        * inspector/formatting/resources/html-tests/comments-expected.html: Added.
+        * inspector/formatting/resources/html-tests/comments.html: Added.
+        * inspector/formatting/resources/html-tests/eof-1-expected.html: Added.
+        * inspector/formatting/resources/html-tests/eof-1.html: Added.
+        * inspector/formatting/resources/html-tests/eof-2-expected.html: Added.
+        * inspector/formatting/resources/html-tests/eof-2.html: Added.
+        * inspector/formatting/resources/html-tests/eof-3-expected.html: Added.
+        * inspector/formatting/resources/html-tests/eof-3.html: Added.
+        * inspector/formatting/resources/html-tests/eof-4-expected.html: Added.
+        * inspector/formatting/resources/html-tests/eof-4.html: Added.
+        * inspector/formatting/resources/html-tests/eof-5-expected.html: Added.
+        * inspector/formatting/resources/html-tests/eof-5.html: Added.
+        * inspector/formatting/resources/html-tests/eof-6-expected.html: Added.
+        * inspector/formatting/resources/html-tests/eof-6.html: Added.
+        * inspector/formatting/resources/html-tests/inline-script-expected.html: Added.
+        * inspector/formatting/resources/html-tests/inline-script.html: Added.
+        * inspector/formatting/resources/html-tests/inline-style-expected.html: Added.
+        * inspector/formatting/resources/html-tests/inline-style.html: Added.
+        * inspector/formatting/resources/html-tests/list-expected.html: Added.
+        * inspector/formatting/resources/html-tests/list.html: Added.
+        * inspector/formatting/resources/html-tests/not-well-formed-1-expected.html: Added.
+        * inspector/formatting/resources/html-tests/not-well-formed-1.html: Added.
+        * inspector/formatting/resources/html-tests/not-well-formed-2-expected.html: Added.
+        * inspector/formatting/resources/html-tests/not-well-formed-2.html: Added.
+        * inspector/formatting/resources/html-tests/not-well-formed-3-expected.html: Added.
+        * inspector/formatting/resources/html-tests/not-well-formed-3.html: Added.
+        * inspector/formatting/resources/html-tests/self-closing-expected.html: Added.
+        * inspector/formatting/resources/html-tests/self-closing.html: Added.
+        HTMLFormatter tests.
+
+        * inspector/formatting/resources/html-source-map-tests/1.html: Added.
+        * inspector/formatting/resources/html-source-map-tests/2.html: Added.
+        * inspector/formatting/resources/css-source-map-tests/1.css: Added.
+        * inspector/formatting/resources/javascript-source-map-tests/1.js: Added.
+        * inspector/formatting/source-map-css-1-expected.txt: Added.
+        * inspector/formatting/source-map-css-1.html: Added.
+        * inspector/formatting/source-map-html-1-expected.txt: Added.
+        * inspector/formatting/source-map-html-1.html: Added.
+        * inspector/formatting/source-map-html-2-expected.txt: Added.
+        * inspector/formatting/source-map-html-2.html: Added.
+        * inspector/formatting/source-map-javascript-1-expected.txt: Added.
+        * inspector/formatting/source-map-javascript-1.html: Added.
+        * inspector/formatting/resources/source-map-utilities.js: Added.
+        (TestPage.registerInitializer.logLocationWithContext):
+        (TestPage.registerInitializer.async.runSourceMapTest):
+        (TestPage.registerInitializer.):
+        (TestPage.registerInitializer.async.loadFormattedContentAndSourceMap):
+        (TestPage.registerInitializer.async.loadSourceMapTestResource):
+        (TestPage.registerInitializer.window.addSourceMapTest):
+        (TestPage.registerInitializer):
+        New formatter source map tests to ensure we can go back and forth reasonably
+        between formatted content and original content.
+
+        * inspector/debugger/breakpoints/resolved-dump-all-inline-script-pause-locations-expected.txt: Added.
+        * inspector/debugger/breakpoints/resolved-dump-all-inline-script-pause-locations.html: Added.
+        * inspector/debugger/breakpoints/resources/dump-inline-scripts.html: Added.
+        * inspector/debugger/breakpoints/resources/dump.js:
+        (TestPage.registerInitializer.window.addDumpAllPauseLocationsTestCase):
+        (TestPage.registerInitializer.addDumpAllPauseLocationsTestCaseForScript):
+        (TestPage.registerInitializer):
+        * inspector/debugger/resources/log-pause-location.js:
+        (TestPage.registerInitializer.window.findScript):
+        (TestPage.registerInitializer.window.findResource):
+        Test for resolving breakpoints at column locations in <script> which was
+        not previously possible and would not have worked previously.
+
 2019-09-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, rebaseline inspector/model/remote-object.html for WK1 after r249808.

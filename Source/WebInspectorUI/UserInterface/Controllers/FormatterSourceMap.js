@@ -55,6 +55,11 @@ WI.FormatterSourceMap = class FormatterSourceMap extends WI.Object
         return this._positionToLocation(this._formattedLineEndings, formattedPosition);
     }
 
+    originalPositionToFormattedPosition(originalPosition)
+    {
+        return this._convertPosition(this._mapping.original, this._mapping.formatted, originalPosition);
+    }
+
     formattedToOriginal(lineNumber, columnNumber)
     {
         var originalPosition = this.formattedToOriginalOffset(lineNumber, columnNumber);
@@ -66,6 +71,11 @@ WI.FormatterSourceMap = class FormatterSourceMap extends WI.Object
         var formattedPosition = this._locationToPosition(this._formattedLineEndings, lineNumber || 0, columnNumber || 0);
         var originalPosition = this._convertPosition(this._mapping.formatted, this._mapping.original, formattedPosition);
         return originalPosition;
+    }
+
+    formattedPositionToOriginalPosition(formattedPosition)
+    {
+        return this._convertPosition(this._mapping.formatted, this._mapping.original, formattedPosition);
     }
 
     // Private

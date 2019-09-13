@@ -2,11 +2,11 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
-<script src="resources/utilities.js"></script>
+<script src="resources/formatting-utilities.js"></script>
 <script>
 function test()
 {
-    let suite = InspectorTest.createAsyncSuite("EsprimaFormatter.JavaScript");
+    let suite = InspectorTest.createAsyncSuite("JSFormatter");
 
     addFormattingTests(suite, "text/javascript", [
         "resources/javascript-tests/arrow-functions.js",

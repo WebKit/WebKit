@@ -1,4 +1,4 @@
-EsprimaFormatterDebug = class EsprimaFormatterDebug
+JSFormatterDebug = class JSFormatterDebug
 {
     constructor(sourceText, sourceType)
     {

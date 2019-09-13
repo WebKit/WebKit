@@ -34,4 +34,3 @@ div div > div#id.foo.bar:hover .something > .child ~ .sibling + :matches(.siblin
 div div > div#id.foo.bar:hover .something > .child ~ .sibling + :matches(.sibling)::after {
     color: red;
 }
-

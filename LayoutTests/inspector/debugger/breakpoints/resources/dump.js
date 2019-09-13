@@ -7,10 +7,23 @@ TestPage.registerInitializer(() => {
     // Dump all pause locations test.
     // Tries to set a breakpoint at every line:column in the file and
     // logs all unique pause locations with the originator line:column.
-    window.addDumpAllPauseLocationsTestCase = function(suite, {name, scriptRegex}) {
+    window.addDumpAllPauseLocationsTestCase = function(suite, {name, scriptRegex, resourceRegex}) {
+        if (scriptRegex) {
+            let script = window.findScript(scriptRegex);
+            addDumpAllPauseLocationsTestCaseForScript(suite, name, script);
+            return;
+        }
+        if (resourceRegex) {
+            let resource = window.findResource(resourceRegex);
+            addDumpAllPauseLocationsTestCaseForResource(suite, name, resource);
+            return;
+        }
+        throw "Missing scriptRegex or resourceRegex argument";
+    };
+
+    function addDumpAllPauseLocationsTestCaseForScript(suite, name, script) {
         suite.addTestCase({
             name, test(resolve, reject) {
-                let script = window.findScript(scriptRegex);
                 window.loadLinesFromSourceCode(script).then((lines) => {
                     // Iterate all possible pause locations in this file.
                     let pauseLocations = new Map;
@@ -42,6 +55,53 @@ TestPage.registerInitializer(() => {
                         }
                         resolve();
                     });
+                });
+            }
+        });
+    }
+
+    function addDumpAllPauseLocationsTestCaseForResource(suite, name, resource) {
+        suite.addTestCase({
+            name, test(resolve, reject) {
+                window.loadLinesFromSourceCode(resource).then((lines) => {
+                    // Iterate all possible pause locations in this file.
+                    let pauseLocations = new Map;
+                    let seenPauseLocations = new Set;
+
+                    let scripts = resource.scripts.slice();
+                    scripts.sort((a, b) => a.range.startLine - b.range.startLine);
+
+                    for (let script of scripts) {
+                        for (let line = script.range.startLine; line <= script.range.endLine; ++line) {
+                            let max = lines[line].length;
+                            for (let column = 0; column <= max; ++column) {
+                                DebuggerAgent.setBreakpointByUrl.invoke({url: resource.url, lineNumber: line, columnNumber: column}, (error, breakpointId, locations) => {
+                                    if (error)
+                                        return;
+                                    if (!locations.length)
+                                        return;
+                                    let location = locations[0];
+                                    let key = JSON.stringify(location);
+                                    if (seenPauseLocations.has(key))
+                                        return;
+                                    pauseLocations.set({lineNumber: line, columnNumber: column}, location);
+                                });
+                            }
+                        }
+
+                        // Log the unique locations and the first input that produced it.
+                        InspectorBackend.runAfterPendingDispatches(() => {
+                            InspectorTest.log("");
+                            for (let [inputLocation, payload] of pauseLocations) {
+                                InspectorTest.log(`INSERTING AT: ${inputLocation.lineNumber}:${inputLocation.columnNumber}`);
+                                InspectorTest.log(`PAUSES AT: ${payload.lineNumber}:${payload.columnNumber}`);
+                                let resolvedLocation = resource.createSourceCodeLocation(payload.lineNumber, payload.columnNumber);
+                                window.logResolvedBreakpointLinesWithContext(inputLocation, resolvedLocation, 3);
+                                InspectorTest.log("");
+                            }
+                            resolve();
+                        });
+                    }
                 });
             }
         });

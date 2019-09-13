@@ -1605,7 +1605,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
                         const selectedByUser = true;
                         treeElementToSelect.select(omitFocus, selectedByUser);
                     }
-                }                
+                }
             }
         }
     }

@@ -1,0 +1,1993 @@
+Test HTML SourceMap.
+
+
+== Running test suite: SourceMaps.HTML
+-- Running test case: SourceMaps.HTML.2
+Original Content Length
+Formatted Content Length
+---- Original to Formatted ----
+Original: 0 (0, 1)
+  0| <#body>
+  1| <!--
+  2| Test
+Formatted: 0 (0, 1)
+  0| <#body>
+  1|     <!--
+  2|     Test
+
+Original: 1 (0, 2)
+  0| <b#ody>
+  1| <!--
+  2| Test
+Formatted: 1 (0, 2)
+  0| <b#ody>
+  1|     <!--
+  2|     Test
+
+Original: 2 (0, 3)
+  0| <bo#dy>
+  1| <!--
+  2| Test
+Formatted: 2 (0, 3)
+  0| <bo#dy>
+  1|     <!--
+  2|     Test
+
+Original: 3 (0, 4)
+  0| <bod#y>
+  1| <!--
+  2| Test
+Formatted: 3 (0, 4)
+  0| <bod#y>
+  1|     <!--
+  2|     Test
+
+Original: 4 (0, 5)
+  0| <body#>
+  1| <!--
+  2| Test
+Formatted: 4 (0, 5)
+  0| <body#>
+  1|     <!--
+  2|     Test
+
+Original: 5 (0, 6)
+  0| <body>#
+  1| <!--
+  2| Test
+Formatted: 5 (0, 6)
+  0| <body>#
+  1|     <!--
+  2|     Test
+
+Original: 6 (1, 0)
+  0| <body>
+  1| #<!--
+  2| Test
+  3| -->
+Formatted: 6 (1, 4)
+  0| <body>
+  1|     #<!--
+  2|     Test
+  3|     -->
+
+Original: 7 (1, 1)
+  0| <body>
+  1| <#!--
+  2| Test
+  3| -->
+Formatted: 11 (1, 5)
+  0| <body>
+  1|     <#!--
+  2|     Test
+  3|     -->
+
+Original: 8 (1, 2)
+  0| <body>
+  1| <!#--
+  2| Test
+  3| -->
+Formatted: 12 (1, 6)
+  0| <body>
+  1|     <!#--
+  2|     Test
+  3|     -->
+
+Original: 9 (1, 3)
+  0| <body>
+  1| <!-#-
+  2| Test
+  3| -->
+Formatted: 13 (1, 7)
+  0| <body>
+  1|     <!-#-
+  2|     Test
+  3|     -->
+
+Original: 10 (1, 4)
+  0| <body>
+  1| <!--#
+  2| Test
+  3| -->
+Formatted: 14 (1, 8)
+  0| <body>
+  1|     <!--#
+  2|     Test
+  3|     -->
+
+Original: 11 (2, 0)
+  0| <body>
+  1| <!--
+  2| #Test
+  3| -->
+  4| <p
+Formatted: 15 (2, 4)
+  0| <body>
+  1|     <!--
+  2|     #Test
+  3|     -->
+  4|     <p attr attr=value attr="
+
+Original: 12 (2, 1)
+  0| <body>
+  1| <!--
+  2| T#est
+  3| -->
+  4| <p
+Formatted: 20 (2, 5)
+  0| <body>
+  1|     <!--
+  2|     T#est
+  3|     -->
+  4|     <p attr attr=value attr="
+
+Original: 13 (2, 2)
+  0| <body>
+  1| <!--
+  2| Te#st
+  3| -->
+  4| <p
+Formatted: 21 (2, 6)
+  0| <body>
+  1|     <!--
+  2|     Te#st
+  3|     -->
+  4|     <p attr attr=value attr="
+
+Original: 14 (2, 3)
+  0| <body>
+  1| <!--
+  2| Tes#t
+  3| -->
+  4| <p
+Formatted: 22 (2, 7)
+  0| <body>
+  1|     <!--
+  2|     Tes#t
+  3|     -->
+  4|     <p attr attr=value attr="
+
+Original: 15 (2, 4)
+  0| <body>
+  1| <!--
+  2| Test#
+  3| -->
+  4| <p
+Formatted: 23 (2, 8)
+  0| <body>
+  1|     <!--
+  2|     Test#
+  3|     -->
+  4|     <p attr attr=value attr="
+
+Original: 16 (3, 0)
+  1| <!--
+  2| Test
+  3| #-->
+  4| <p
+  5| attr
+Formatted: 24 (3, 4)
+  1|     <!--
+  2|     Test
+  3|     #-->
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+
+Original: 17 (3, 1)
+  1| <!--
+  2| Test
+  3| -#->
+  4| <p
+  5| attr
+Formatted: 29 (3, 5)
+  1|     <!--
+  2|     Test
+  3|     -#->
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+
+Original: 18 (3, 2)
+  1| <!--
+  2| Test
+  3| --#>
+  4| <p
+  5| attr
+Formatted: 30 (3, 6)
+  1|     <!--
+  2|     Test
+  3|     --#>
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+
+Original: 19 (3, 3)
+  1| <!--
+  2| Test
+  3| -->#
+  4| <p
+  5| attr
+Formatted: 31 (3, 7)
+  1|     <!--
+  2|     Test
+  3|     -->#
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+
+Original: 20 (4, 0)
+  2| Test
+  3| -->
+  4| #<p
+  5| attr
+  6| attr=value
+Formatted: 32 (4, 4)
+  2|     Test
+  3|     -->
+  4|     #<p attr attr=value attr="
+  5|     value" attr='
+  6|     value'>
+
+Original: 21 (4, 1)
+  2| Test
+  3| -->
+  4| <#p
+  5| attr
+  6| attr=value
+Formatted: 37 (4, 5)
+  2|     Test
+  3|     -->
+  4|     <#p attr attr=value attr="
+  5|     value" attr='
+  6|     value'>
+
+Original: 22 (4, 2)
+  2| Test
+  3| -->
+  4| <p#
+  5| attr
+  6| attr=value
+Formatted: 38 (4, 6)
+  2|     Test
+  3|     -->
+  4|     <p# attr attr=value attr="
+  5|     value" attr='
+  6|     value'>
+
+Original: 23 (5, 0)
+  3| -->
+  4| <p
+  5| #attr
+  6| attr=value
+  7| attr="
+Formatted: 39 (4, 7)
+  2|     Test
+  3|     -->
+  4|     <p #attr attr=value attr="
+  5|     value" attr='
+  6|     value'>
+
+Original: 24 (5, 1)
+  3| -->
+  4| <p
+  5| a#ttr
+  6| attr=value
+  7| attr="
+Formatted: 40 (4, 8)
+  2|     Test
+  3|     -->
+  4|     <p a#ttr attr=value attr="
+  5|     value" attr='
+  6|     value'>
+
+Original: 25 (5, 2)
+  3| -->
+  4| <p
+  5| at#tr
+  6| attr=value
+  7| attr="
+Formatted: 41 (4, 9)
+  2|     Test
+  3|     -->
+  4|     <p at#tr attr=value attr="
+  5|     value" attr='
+  6|     value'>
+
+Original: 26 (5, 3)
+  3| -->
+  4| <p
+  5| att#r
+  6| attr=value
+  7| attr="
+Formatted: 42 (4, 10)
+  2|     Test
+  3|     -->
+  4|     <p att#r attr=value attr="
+  5|     value" attr='
+  6|     value'>
+
+Original: 27 (5, 4)
+  3| -->
+  4| <p
+  5| attr#
+  6| attr=value
+  7| attr="
+Formatted: 43 (4, 11)
+  2|     Test
+  3|     -->
+  4|     <p attr# attr=value attr="
+  5|     value" attr='
+  6|     value'>
+
+Original: 28 (6, 0)
+  4| <p
+  5| attr
+  6| #attr=value
+  7| attr="
+  8| value"
+Formatted: 44 (4, 12)
+  2|     Test
+  3|     -->
+  4|     <p attr #attr=value attr="
+  5|     value" attr='
+  6|     value'>
+
+Original: 29 (6, 1)
+  4| <p
+  5| attr
+  6| a#ttr=value
+  7| attr="
+  8| value"
+Formatted: 45 (4, 13)
+  2|     Test
+  3|     -->
+  4|     <p attr a#ttr=value attr="
+  5|     value" attr='
+  6|     value'>
+
+Original: 30 (6, 2)
+  4| <p
+  5| attr
+  6| at#tr=value
+  7| attr="
+  8| value"
+Formatted: 46 (4, 14)
+  2|     Test
+  3|     -->
+  4|     <p attr at#tr=value attr="
+  5|     value" attr='
+  6|     value'>
+
+Original: 31 (6, 3)
+  4| <p
+  5| attr
+  6| att#r=value
+  7| attr="
+  8| value"
+Formatted: 47 (4, 15)
+  2|     Test
+  3|     -->
+  4|     <p attr att#r=value attr="
+  5|     value" attr='
+  6|     value'>
+
+Original: 32 (6, 4)
+  4| <p
+  5| attr
+  6| attr#=value
+  7| attr="
+  8| value"
+Formatted: 48 (4, 16)
+  2|     Test
+  3|     -->
+  4|     <p attr attr#=value attr="
+  5|     value" attr='
+  6|     value'>
+
+Original: 33 (6, 5)
+  4| <p
+  5| attr
+  6| attr=#value
+  7| attr="
+  8| value"
+Formatted: 49 (4, 17)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=#value attr="
+  5|     value" attr='
+  6|     value'>
+
+Original: 34 (6, 6)
+  4| <p
+  5| attr
+  6| attr=v#alue
+  7| attr="
+  8| value"
+Formatted: 50 (4, 18)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=v#alue attr="
+  5|     value" attr='
+  6|     value'>
+
+Original: 35 (6, 7)
+  4| <p
+  5| attr
+  6| attr=va#lue
+  7| attr="
+  8| value"
+Formatted: 51 (4, 19)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=va#lue attr="
+  5|     value" attr='
+  6|     value'>
+
+Original: 36 (6, 8)
+  4| <p
+  5| attr
+  6| attr=val#ue
+  7| attr="
+  8| value"
+Formatted: 52 (4, 20)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=val#ue attr="
+  5|     value" attr='
+  6|     value'>
+
+Original: 37 (6, 9)
+  4| <p
+  5| attr
+  6| attr=valu#e
+  7| attr="
+  8| value"
+Formatted: 53 (4, 21)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=valu#e attr="
+  5|     value" attr='
+  6|     value'>
+
+Original: 38 (6, 10)
+  4| <p
+  5| attr
+  6| attr=value#
+  7| attr="
+  8| value"
+Formatted: 54 (4, 22)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=value# attr="
+  5|     value" attr='
+  6|     value'>
+
+Original: 39 (7, 0)
+  5| attr
+  6| attr=value
+  7| #attr="
+  8| value"
+  9| attr='
+Formatted: 55 (4, 23)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=value #attr="
+  5|     value" attr='
+  6|     value'>
+
+Original: 40 (7, 1)
+  5| attr
+  6| attr=value
+  7| a#ttr="
+  8| value"
+  9| attr='
+Formatted: 56 (4, 24)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=value a#ttr="
+  5|     value" attr='
+  6|     value'>
+
+Original: 41 (7, 2)
+  5| attr
+  6| attr=value
+  7| at#tr="
+  8| value"
+  9| attr='
+Formatted: 57 (4, 25)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=value at#tr="
+  5|     value" attr='
+  6|     value'>
+
+Original: 42 (7, 3)
+  5| attr
+  6| attr=value
+  7| att#r="
+  8| value"
+  9| attr='
+Formatted: 58 (4, 26)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=value att#r="
+  5|     value" attr='
+  6|     value'>
+
+Original: 43 (7, 4)
+  5| attr
+  6| attr=value
+  7| attr#="
+  8| value"
+  9| attr='
+Formatted: 59 (4, 27)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=value attr#="
+  5|     value" attr='
+  6|     value'>
+
+Original: 44 (7, 5)
+  5| attr
+  6| attr=value
+  7| attr=#"
+  8| value"
+  9| attr='
+Formatted: 60 (4, 28)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=value attr=#"
+  5|     value" attr='
+  6|     value'>
+
+Original: 45 (7, 6)
+  5| attr
+  6| attr=value
+  7| attr="#
+  8| value"
+  9| attr='
+Formatted: 61 (4, 29)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=value attr="#
+  5|     value" attr='
+  6|     value'>
+
+Original: 46 (8, 0)
+  6| attr=value
+  7| attr="
+  8| #value"
+  9| attr='
+ 10| value'>
+Formatted: 62 (5, 4)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     #value" attr='
+  6|     value'>
+  7| 
+
+Original: 47 (8, 1)
+  6| attr=value
+  7| attr="
+  8| v#alue"
+  9| attr='
+ 10| value'>
+Formatted: 67 (5, 5)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     v#alue" attr='
+  6|     value'>
+  7| 
+
+Original: 48 (8, 2)
+  6| attr=value
+  7| attr="
+  8| va#lue"
+  9| attr='
+ 10| value'>
+Formatted: 68 (5, 6)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     va#lue" attr='
+  6|     value'>
+  7| 
+
+Original: 49 (8, 3)
+  6| attr=value
+  7| attr="
+  8| val#ue"
+  9| attr='
+ 10| value'>
+Formatted: 69 (5, 7)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     val#ue" attr='
+  6|     value'>
+  7| 
+
+Original: 50 (8, 4)
+  6| attr=value
+  7| attr="
+  8| valu#e"
+  9| attr='
+ 10| value'>
+Formatted: 70 (5, 8)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     valu#e" attr='
+  6|     value'>
+  7| 
+
+Original: 51 (8, 5)
+  6| attr=value
+  7| attr="
+  8| value#"
+  9| attr='
+ 10| value'>
+Formatted: 71 (5, 9)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     value#" attr='
+  6|     value'>
+  7| 
+
+Original: 52 (8, 6)
+  6| attr=value
+  7| attr="
+  8| value"#
+  9| attr='
+ 10| value'>
+Formatted: 72 (5, 10)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     value"# attr='
+  6|     value'>
+  7| 
+
+Original: 53 (9, 0)
+  7| attr="
+  8| value"
+  9| #attr='
+ 10| value'>
+ 11| 
+Formatted: 73 (5, 11)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     value" #attr='
+  6|     value'>
+  7| 
+
+Original: 54 (9, 1)
+  7| attr="
+  8| value"
+  9| a#ttr='
+ 10| value'>
+ 11| 
+Formatted: 74 (5, 12)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     value" a#ttr='
+  6|     value'>
+  7| 
+
+Original: 55 (9, 2)
+  7| attr="
+  8| value"
+  9| at#tr='
+ 10| value'>
+ 11| 
+Formatted: 75 (5, 13)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     value" at#tr='
+  6|     value'>
+  7| 
+
+Original: 56 (9, 3)
+  7| attr="
+  8| value"
+  9| att#r='
+ 10| value'>
+ 11| 
+Formatted: 76 (5, 14)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     value" att#r='
+  6|     value'>
+  7| 
+
+Original: 57 (9, 4)
+  7| attr="
+  8| value"
+  9| attr#='
+ 10| value'>
+ 11| 
+Formatted: 77 (5, 15)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     value" attr#='
+  6|     value'>
+  7| 
+
+Original: 58 (9, 5)
+  7| attr="
+  8| value"
+  9| attr=#'
+ 10| value'>
+ 11| 
+Formatted: 78 (5, 16)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     value" attr=#'
+  6|     value'>
+  7| 
+
+Original: 59 (9, 6)
+  7| attr="
+  8| value"
+  9| attr='#
+ 10| value'>
+ 11| 
+Formatted: 79 (5, 17)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     value" attr='#
+  6|     value'>
+  7| 
+
+Original: 60 (10, 0)
+  8| value"
+  9| attr='
+ 10| #value'>
+ 11| 
+Formatted: 80 (6, 4)
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+  6|     #value'>
+  7| 
+
+Original: 61 (10, 1)
+  8| value"
+  9| attr='
+ 10| v#alue'>
+ 11| 
+Formatted: 85 (6, 5)
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+  6|     v#alue'>
+  7| 
+
+Original: 62 (10, 2)
+  8| value"
+  9| attr='
+ 10| va#lue'>
+ 11| 
+Formatted: 86 (6, 6)
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+  6|     va#lue'>
+  7| 
+
+Original: 63 (10, 3)
+  8| value"
+  9| attr='
+ 10| val#ue'>
+ 11| 
+Formatted: 87 (6, 7)
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+  6|     val#ue'>
+  7| 
+
+Original: 64 (10, 4)
+  8| value"
+  9| attr='
+ 10| valu#e'>
+ 11| 
+Formatted: 88 (6, 8)
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+  6|     valu#e'>
+  7| 
+
+Original: 65 (10, 5)
+  8| value"
+  9| attr='
+ 10| value#'>
+ 11| 
+Formatted: 89 (6, 9)
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+  6|     value#'>
+  7| 
+
+Original: 66 (10, 6)
+  8| value"
+  9| attr='
+ 10| value'#>
+ 11| 
+Formatted: 90 (6, 10)
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+  6|     value'#>
+  7| 
+
+Original: 67 (10, 7)
+  8| value"
+  9| attr='
+ 10| value'>#
+ 11| 
+Formatted: 91 (6, 11)
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+  6|     value'>#
+  7| 
+
+Original: 68 (11, 0)
+  9| attr='
+ 10| value'>
+ 11| #
+Formatted: 92 (7, 0)
+  5|     value" attr='
+  6|     value'>
+  7| #
+
+
+---- Formatted to Original ----
+Formatted: 0 (0, 1)
+  0| <#body>
+  1|     <!--
+  2|     Test
+Original: 0 (0, 1)
+  0| <#body>
+  1| <!--
+  2| Test
+
+Formatted: 1 (0, 2)
+  0| <b#ody>
+  1|     <!--
+  2|     Test
+Original: 1 (0, 2)
+  0| <b#ody>
+  1| <!--
+  2| Test
+
+Formatted: 2 (0, 3)
+  0| <bo#dy>
+  1|     <!--
+  2|     Test
+Original: 2 (0, 3)
+  0| <bo#dy>
+  1| <!--
+  2| Test
+
+Formatted: 3 (0, 4)
+  0| <bod#y>
+  1|     <!--
+  2|     Test
+Original: 3 (0, 4)
+  0| <bod#y>
+  1| <!--
+  2| Test
+
+Formatted: 4 (0, 5)
+  0| <body#>
+  1|     <!--
+  2|     Test
+Original: 4 (0, 5)
+  0| <body#>
+  1| <!--
+  2| Test
+
+Formatted: 5 (0, 6)
+  0| <body>#
+  1|     <!--
+  2|     Test
+Original: 5 (0, 6)
+  0| <body>#
+  1| <!--
+  2| Test
+
+Formatted: 6 (1, 0)
+  0| <body>
+  1| #    <!--
+  2|     Test
+  3|     -->
+Original: 6 (1, 0)
+  0| <body>
+  1| #<!--
+  2| Test
+  3| -->
+
+Formatted: 7 (1, 1)
+  0| <body>
+  1|  #   <!--
+  2|     Test
+  3|     -->
+Original: 7 (1, 0)
+  0| <body>
+  1| #<!--
+  2| Test
+  3| -->
+
+Formatted: 8 (1, 2)
+  0| <body>
+  1|   #  <!--
+  2|     Test
+  3|     -->
+Original: 7 (1, 0)
+  0| <body>
+  1| #<!--
+  2| Test
+  3| -->
+
+Formatted: 9 (1, 3)
+  0| <body>
+  1|    # <!--
+  2|     Test
+  3|     -->
+Original: 7 (1, 0)
+  0| <body>
+  1| #<!--
+  2| Test
+  3| -->
+
+Formatted: 10 (1, 4)
+  0| <body>
+  1|     #<!--
+  2|     Test
+  3|     -->
+Original: 7 (1, 0)
+  0| <body>
+  1| #<!--
+  2| Test
+  3| -->
+
+Formatted: 11 (1, 5)
+  0| <body>
+  1|     <#!--
+  2|     Test
+  3|     -->
+Original: 7 (1, 1)
+  0| <body>
+  1| <#!--
+  2| Test
+  3| -->
+
+Formatted: 12 (1, 6)
+  0| <body>
+  1|     <!#--
+  2|     Test
+  3|     -->
+Original: 8 (1, 2)
+  0| <body>
+  1| <!#--
+  2| Test
+  3| -->
+
+Formatted: 13 (1, 7)
+  0| <body>
+  1|     <!-#-
+  2|     Test
+  3|     -->
+Original: 9 (1, 3)
+  0| <body>
+  1| <!-#-
+  2| Test
+  3| -->
+
+Formatted: 14 (1, 8)
+  0| <body>
+  1|     <!--#
+  2|     Test
+  3|     -->
+Original: 10 (1, 4)
+  0| <body>
+  1| <!--#
+  2| Test
+  3| -->
+
+Formatted: 15 (2, 0)
+  0| <body>
+  1|     <!--
+  2| #    Test
+  3|     -->
+  4|     <p attr attr=value attr="
+Original: 11 (2, 0)
+  0| <body>
+  1| <!--
+  2| #Test
+  3| -->
+  4| <p
+
+Formatted: 16 (2, 1)
+  0| <body>
+  1|     <!--
+  2|  #   Test
+  3|     -->
+  4|     <p attr attr=value attr="
+Original: 12 (2, 0)
+  0| <body>
+  1| <!--
+  2| #Test
+  3| -->
+  4| <p
+
+Formatted: 17 (2, 2)
+  0| <body>
+  1|     <!--
+  2|   #  Test
+  3|     -->
+  4|     <p attr attr=value attr="
+Original: 12 (2, 0)
+  0| <body>
+  1| <!--
+  2| #Test
+  3| -->
+  4| <p
+
+Formatted: 18 (2, 3)
+  0| <body>
+  1|     <!--
+  2|    # Test
+  3|     -->
+  4|     <p attr attr=value attr="
+Original: 12 (2, 0)
+  0| <body>
+  1| <!--
+  2| #Test
+  3| -->
+  4| <p
+
+Formatted: 19 (2, 4)
+  0| <body>
+  1|     <!--
+  2|     #Test
+  3|     -->
+  4|     <p attr attr=value attr="
+Original: 12 (2, 0)
+  0| <body>
+  1| <!--
+  2| #Test
+  3| -->
+  4| <p
+
+Formatted: 20 (2, 5)
+  0| <body>
+  1|     <!--
+  2|     T#est
+  3|     -->
+  4|     <p attr attr=value attr="
+Original: 12 (2, 1)
+  0| <body>
+  1| <!--
+  2| T#est
+  3| -->
+  4| <p
+
+Formatted: 21 (2, 6)
+  0| <body>
+  1|     <!--
+  2|     Te#st
+  3|     -->
+  4|     <p attr attr=value attr="
+Original: 13 (2, 2)
+  0| <body>
+  1| <!--
+  2| Te#st
+  3| -->
+  4| <p
+
+Formatted: 22 (2, 7)
+  0| <body>
+  1|     <!--
+  2|     Tes#t
+  3|     -->
+  4|     <p attr attr=value attr="
+Original: 14 (2, 3)
+  0| <body>
+  1| <!--
+  2| Tes#t
+  3| -->
+  4| <p
+
+Formatted: 23 (2, 8)
+  0| <body>
+  1|     <!--
+  2|     Test#
+  3|     -->
+  4|     <p attr attr=value attr="
+Original: 15 (2, 4)
+  0| <body>
+  1| <!--
+  2| Test#
+  3| -->
+  4| <p
+
+Formatted: 24 (3, 0)
+  1|     <!--
+  2|     Test
+  3| #    -->
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+Original: 16 (3, 0)
+  1| <!--
+  2| Test
+  3| #-->
+  4| <p
+  5| attr
+
+Formatted: 25 (3, 1)
+  1|     <!--
+  2|     Test
+  3|  #   -->
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+Original: 17 (3, 0)
+  1| <!--
+  2| Test
+  3| #-->
+  4| <p
+  5| attr
+
+Formatted: 26 (3, 2)
+  1|     <!--
+  2|     Test
+  3|   #  -->
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+Original: 17 (3, 0)
+  1| <!--
+  2| Test
+  3| #-->
+  4| <p
+  5| attr
+
+Formatted: 27 (3, 3)
+  1|     <!--
+  2|     Test
+  3|    # -->
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+Original: 17 (3, 0)
+  1| <!--
+  2| Test
+  3| #-->
+  4| <p
+  5| attr
+
+Formatted: 28 (3, 4)
+  1|     <!--
+  2|     Test
+  3|     #-->
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+Original: 17 (3, 0)
+  1| <!--
+  2| Test
+  3| #-->
+  4| <p
+  5| attr
+
+Formatted: 29 (3, 5)
+  1|     <!--
+  2|     Test
+  3|     -#->
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+Original: 17 (3, 1)
+  1| <!--
+  2| Test
+  3| -#->
+  4| <p
+  5| attr
+
+Formatted: 30 (3, 6)
+  1|     <!--
+  2|     Test
+  3|     --#>
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+Original: 18 (3, 2)
+  1| <!--
+  2| Test
+  3| --#>
+  4| <p
+  5| attr
+
+Formatted: 31 (3, 7)
+  1|     <!--
+  2|     Test
+  3|     -->#
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+Original: 19 (3, 3)
+  1| <!--
+  2| Test
+  3| -->#
+  4| <p
+  5| attr
+
+Formatted: 32 (4, 0)
+  2|     Test
+  3|     -->
+  4| #    <p attr attr=value attr="
+  5|     value" attr='
+  6|     value'>
+Original: 20 (4, 0)
+  2| Test
+  3| -->
+  4| #<p
+  5| attr
+  6| attr=value
+
+Formatted: 33 (4, 1)
+  2|     Test
+  3|     -->
+  4|  #   <p attr attr=value attr="
+  5|     value" attr='
+  6|     value'>
+Original: 21 (4, 0)
+  2| Test
+  3| -->
+  4| #<p
+  5| attr
+  6| attr=value
+
+Formatted: 34 (4, 2)
+  2|     Test
+  3|     -->
+  4|   #  <p attr attr=value attr="
+  5|     value" attr='
+  6|     value'>
+Original: 21 (4, 0)
+  2| Test
+  3| -->
+  4| #<p
+  5| attr
+  6| attr=value
+
+Formatted: 35 (4, 3)
+  2|     Test
+  3|     -->
+  4|    # <p attr attr=value attr="
+  5|     value" attr='
+  6|     value'>
+Original: 21 (4, 0)
+  2| Test
+  3| -->
+  4| #<p
+  5| attr
+  6| attr=value
+
+Formatted: 36 (4, 4)
+  2|     Test
+  3|     -->
+  4|     #<p attr attr=value attr="
+  5|     value" attr='
+  6|     value'>
+Original: 21 (4, 0)
+  2| Test
+  3| -->
+  4| #<p
+  5| attr
+  6| attr=value
+
+Formatted: 37 (4, 5)
+  2|     Test
+  3|     -->
+  4|     <#p attr attr=value attr="
+  5|     value" attr='
+  6|     value'>
+Original: 21 (4, 1)
+  2| Test
+  3| -->
+  4| <#p
+  5| attr
+  6| attr=value
+
+Formatted: 38 (4, 6)
+  2|     Test
+  3|     -->
+  4|     <p# attr attr=value attr="
+  5|     value" attr='
+  6|     value'>
+Original: 22 (4, 2)
+  2| Test
+  3| -->
+  4| <p#
+  5| attr
+  6| attr=value
+
+Formatted: 39 (4, 7)
+  2|     Test
+  3|     -->
+  4|     <p #attr attr=value attr="
+  5|     value" attr='
+  6|     value'>
+Original: 23 (5, 0)
+  3| -->
+  4| <p
+  5| #attr
+  6| attr=value
+  7| attr="
+
+Formatted: 40 (4, 8)
+  2|     Test
+  3|     -->
+  4|     <p a#ttr attr=value attr="
+  5|     value" attr='
+  6|     value'>
+Original: 24 (5, 1)
+  3| -->
+  4| <p
+  5| a#ttr
+  6| attr=value
+  7| attr="
+
+Formatted: 41 (4, 9)
+  2|     Test
+  3|     -->
+  4|     <p at#tr attr=value attr="
+  5|     value" attr='
+  6|     value'>
+Original: 25 (5, 2)
+  3| -->
+  4| <p
+  5| at#tr
+  6| attr=value
+  7| attr="
+
+Formatted: 42 (4, 10)
+  2|     Test
+  3|     -->
+  4|     <p att#r attr=value attr="
+  5|     value" attr='
+  6|     value'>
+Original: 26 (5, 3)
+  3| -->
+  4| <p
+  5| att#r
+  6| attr=value
+  7| attr="
+
+Formatted: 43 (4, 11)
+  2|     Test
+  3|     -->
+  4|     <p attr# attr=value attr="
+  5|     value" attr='
+  6|     value'>
+Original: 27 (5, 4)
+  3| -->
+  4| <p
+  5| attr#
+  6| attr=value
+  7| attr="
+
+Formatted: 44 (4, 12)
+  2|     Test
+  3|     -->
+  4|     <p attr #attr=value attr="
+  5|     value" attr='
+  6|     value'>
+Original: 28 (6, 0)
+  4| <p
+  5| attr
+  6| #attr=value
+  7| attr="
+  8| value"
+
+Formatted: 45 (4, 13)
+  2|     Test
+  3|     -->
+  4|     <p attr a#ttr=value attr="
+  5|     value" attr='
+  6|     value'>
+Original: 29 (6, 1)
+  4| <p
+  5| attr
+  6| a#ttr=value
+  7| attr="
+  8| value"
+
+Formatted: 46 (4, 14)
+  2|     Test
+  3|     -->
+  4|     <p attr at#tr=value attr="
+  5|     value" attr='
+  6|     value'>
+Original: 30 (6, 2)
+  4| <p
+  5| attr
+  6| at#tr=value
+  7| attr="
+  8| value"
+
+Formatted: 47 (4, 15)
+  2|     Test
+  3|     -->
+  4|     <p attr att#r=value attr="
+  5|     value" attr='
+  6|     value'>
+Original: 31 (6, 3)
+  4| <p
+  5| attr
+  6| att#r=value
+  7| attr="
+  8| value"
+
+Formatted: 48 (4, 16)
+  2|     Test
+  3|     -->
+  4|     <p attr attr#=value attr="
+  5|     value" attr='
+  6|     value'>
+Original: 32 (6, 4)
+  4| <p
+  5| attr
+  6| attr#=value
+  7| attr="
+  8| value"
+
+Formatted: 49 (4, 17)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=#value attr="
+  5|     value" attr='
+  6|     value'>
+Original: 33 (6, 5)
+  4| <p
+  5| attr
+  6| attr=#value
+  7| attr="
+  8| value"
+
+Formatted: 50 (4, 18)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=v#alue attr="
+  5|     value" attr='
+  6|     value'>
+Original: 34 (6, 6)
+  4| <p
+  5| attr
+  6| attr=v#alue
+  7| attr="
+  8| value"
+
+Formatted: 51 (4, 19)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=va#lue attr="
+  5|     value" attr='
+  6|     value'>
+Original: 35 (6, 7)
+  4| <p
+  5| attr
+  6| attr=va#lue
+  7| attr="
+  8| value"
+
+Formatted: 52 (4, 20)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=val#ue attr="
+  5|     value" attr='
+  6|     value'>
+Original: 36 (6, 8)
+  4| <p
+  5| attr
+  6| attr=val#ue
+  7| attr="
+  8| value"
+
+Formatted: 53 (4, 21)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=valu#e attr="
+  5|     value" attr='
+  6|     value'>
+Original: 37 (6, 9)
+  4| <p
+  5| attr
+  6| attr=valu#e
+  7| attr="
+  8| value"
+
+Formatted: 54 (4, 22)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=value# attr="
+  5|     value" attr='
+  6|     value'>
+Original: 38 (6, 10)
+  4| <p
+  5| attr
+  6| attr=value#
+  7| attr="
+  8| value"
+
+Formatted: 55 (4, 23)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=value #attr="
+  5|     value" attr='
+  6|     value'>
+Original: 39 (7, 0)
+  5| attr
+  6| attr=value
+  7| #attr="
+  8| value"
+  9| attr='
+
+Formatted: 56 (4, 24)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=value a#ttr="
+  5|     value" attr='
+  6|     value'>
+Original: 40 (7, 1)
+  5| attr
+  6| attr=value
+  7| a#ttr="
+  8| value"
+  9| attr='
+
+Formatted: 57 (4, 25)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=value at#tr="
+  5|     value" attr='
+  6|     value'>
+Original: 41 (7, 2)
+  5| attr
+  6| attr=value
+  7| at#tr="
+  8| value"
+  9| attr='
+
+Formatted: 58 (4, 26)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=value att#r="
+  5|     value" attr='
+  6|     value'>
+Original: 42 (7, 3)
+  5| attr
+  6| attr=value
+  7| att#r="
+  8| value"
+  9| attr='
+
+Formatted: 59 (4, 27)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=value attr#="
+  5|     value" attr='
+  6|     value'>
+Original: 43 (7, 4)
+  5| attr
+  6| attr=value
+  7| attr#="
+  8| value"
+  9| attr='
+
+Formatted: 60 (4, 28)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=value attr=#"
+  5|     value" attr='
+  6|     value'>
+Original: 44 (7, 5)
+  5| attr
+  6| attr=value
+  7| attr=#"
+  8| value"
+  9| attr='
+
+Formatted: 61 (4, 29)
+  2|     Test
+  3|     -->
+  4|     <p attr attr=value attr="#
+  5|     value" attr='
+  6|     value'>
+Original: 45 (7, 6)
+  5| attr
+  6| attr=value
+  7| attr="#
+  8| value"
+  9| attr='
+
+Formatted: 62 (5, 0)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5| #    value" attr='
+  6|     value'>
+  7| 
+Original: 46 (8, 0)
+  6| attr=value
+  7| attr="
+  8| #value"
+  9| attr='
+ 10| value'>
+
+Formatted: 63 (5, 1)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|  #   value" attr='
+  6|     value'>
+  7| 
+Original: 47 (8, 0)
+  6| attr=value
+  7| attr="
+  8| #value"
+  9| attr='
+ 10| value'>
+
+Formatted: 64 (5, 2)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|   #  value" attr='
+  6|     value'>
+  7| 
+Original: 47 (8, 0)
+  6| attr=value
+  7| attr="
+  8| #value"
+  9| attr='
+ 10| value'>
+
+Formatted: 65 (5, 3)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|    # value" attr='
+  6|     value'>
+  7| 
+Original: 47 (8, 0)
+  6| attr=value
+  7| attr="
+  8| #value"
+  9| attr='
+ 10| value'>
+
+Formatted: 66 (5, 4)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     #value" attr='
+  6|     value'>
+  7| 
+Original: 47 (8, 0)
+  6| attr=value
+  7| attr="
+  8| #value"
+  9| attr='
+ 10| value'>
+
+Formatted: 67 (5, 5)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     v#alue" attr='
+  6|     value'>
+  7| 
+Original: 47 (8, 1)
+  6| attr=value
+  7| attr="
+  8| v#alue"
+  9| attr='
+ 10| value'>
+
+Formatted: 68 (5, 6)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     va#lue" attr='
+  6|     value'>
+  7| 
+Original: 48 (8, 2)
+  6| attr=value
+  7| attr="
+  8| va#lue"
+  9| attr='
+ 10| value'>
+
+Formatted: 69 (5, 7)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     val#ue" attr='
+  6|     value'>
+  7| 
+Original: 49 (8, 3)
+  6| attr=value
+  7| attr="
+  8| val#ue"
+  9| attr='
+ 10| value'>
+
+Formatted: 70 (5, 8)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     valu#e" attr='
+  6|     value'>
+  7| 
+Original: 50 (8, 4)
+  6| attr=value
+  7| attr="
+  8| valu#e"
+  9| attr='
+ 10| value'>
+
+Formatted: 71 (5, 9)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     value#" attr='
+  6|     value'>
+  7| 
+Original: 51 (8, 5)
+  6| attr=value
+  7| attr="
+  8| value#"
+  9| attr='
+ 10| value'>
+
+Formatted: 72 (5, 10)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     value"# attr='
+  6|     value'>
+  7| 
+Original: 52 (8, 6)
+  6| attr=value
+  7| attr="
+  8| value"#
+  9| attr='
+ 10| value'>
+
+Formatted: 73 (5, 11)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     value" #attr='
+  6|     value'>
+  7| 
+Original: 53 (9, 0)
+  7| attr="
+  8| value"
+  9| #attr='
+ 10| value'>
+ 11| 
+
+Formatted: 74 (5, 12)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     value" a#ttr='
+  6|     value'>
+  7| 
+Original: 54 (9, 1)
+  7| attr="
+  8| value"
+  9| a#ttr='
+ 10| value'>
+ 11| 
+
+Formatted: 75 (5, 13)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     value" at#tr='
+  6|     value'>
+  7| 
+Original: 55 (9, 2)
+  7| attr="
+  8| value"
+  9| at#tr='
+ 10| value'>
+ 11| 
+
+Formatted: 76 (5, 14)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     value" att#r='
+  6|     value'>
+  7| 
+Original: 56 (9, 3)
+  7| attr="
+  8| value"
+  9| att#r='
+ 10| value'>
+ 11| 
+
+Formatted: 77 (5, 15)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     value" attr#='
+  6|     value'>
+  7| 
+Original: 57 (9, 4)
+  7| attr="
+  8| value"
+  9| attr#='
+ 10| value'>
+ 11| 
+
+Formatted: 78 (5, 16)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     value" attr=#'
+  6|     value'>
+  7| 
+Original: 58 (9, 5)
+  7| attr="
+  8| value"
+  9| attr=#'
+ 10| value'>
+ 11| 
+
+Formatted: 79 (5, 17)
+  3|     -->
+  4|     <p attr attr=value attr="
+  5|     value" attr='#
+  6|     value'>
+  7| 
+Original: 59 (9, 6)
+  7| attr="
+  8| value"
+  9| attr='#
+ 10| value'>
+ 11| 
+
+Formatted: 80 (6, 0)
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+  6| #    value'>
+  7| 
+Original: 60 (10, 0)
+  8| value"
+  9| attr='
+ 10| #value'>
+ 11| 
+
+Formatted: 81 (6, 1)
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+  6|  #   value'>
+  7| 
+Original: 61 (10, 0)
+  8| value"
+  9| attr='
+ 10| #value'>
+ 11| 
+
+Formatted: 82 (6, 2)
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+  6|   #  value'>
+  7| 
+Original: 61 (10, 0)
+  8| value"
+  9| attr='
+ 10| #value'>
+ 11| 
+
+Formatted: 83 (6, 3)
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+  6|    # value'>
+  7| 
+Original: 61 (10, 0)
+  8| value"
+  9| attr='
+ 10| #value'>
+ 11| 
+
+Formatted: 84 (6, 4)
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+  6|     #value'>
+  7| 
+Original: 61 (10, 0)
+  8| value"
+  9| attr='
+ 10| #value'>
+ 11| 
+
+Formatted: 85 (6, 5)
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+  6|     v#alue'>
+  7| 
+Original: 61 (10, 1)
+  8| value"
+  9| attr='
+ 10| v#alue'>
+ 11| 
+
+Formatted: 86 (6, 6)
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+  6|     va#lue'>
+  7| 
+Original: 62 (10, 2)
+  8| value"
+  9| attr='
+ 10| va#lue'>
+ 11| 
+
+Formatted: 87 (6, 7)
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+  6|     val#ue'>
+  7| 
+Original: 63 (10, 3)
+  8| value"
+  9| attr='
+ 10| val#ue'>
+ 11| 
+
+Formatted: 88 (6, 8)
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+  6|     valu#e'>
+  7| 
+Original: 64 (10, 4)
+  8| value"
+  9| attr='
+ 10| valu#e'>
+ 11| 
+
+Formatted: 89 (6, 9)
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+  6|     value#'>
+  7| 
+Original: 65 (10, 5)
+  8| value"
+  9| attr='
+ 10| value#'>
+ 11| 
+
+Formatted: 90 (6, 10)
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+  6|     value'#>
+  7| 
+Original: 66 (10, 6)
+  8| value"
+  9| attr='
+ 10| value'#>
+ 11| 
+
+Formatted: 91 (6, 11)
+  4|     <p attr attr=value attr="
+  5|     value" attr='
+  6|     value'>#
+  7| 
+Original: 67 (10, 7)
+  8| value"
+  9| attr='
+ 10| value'>#
+ 11| 
+
+Formatted: 92 (7, 0)
+  5|     value" attr='
+  6|     value'>
+  7| #
+Original: 68 (11, 0)
+  9| attr='
+ 10| value'>
+ 11| #
+
+

@@ -45,9 +45,11 @@ TestPage.registerInitializer(function() {
                 workerProxy.formatJavaScript(testText, isModule, indentString, callback);
                 break;
             }
-
             case "text/css":
                 workerProxy.formatCSS(testText, indentString, callback);
+                break;
+            case "text/html":
+                workerProxy.formatHTML(testText, indentString, callback);
                 break;
             }
         });

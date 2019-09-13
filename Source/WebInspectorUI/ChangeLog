@@ -1,5 +1,143 @@
 2019-09-13  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Formatter: Pretty Print HTML resources (including inline <script>/<style>)
+        https://bugs.webkit.org/show_bug.cgi?id=201535
+        <rdar://problem/29119232>
+
+        Reviewed by Devin Rousso.
+
+        Introduce HTMLFormatter, HTMLParser, and HTMLTreeBuilderFormatter.
+
+            - HTMLParser tokenizes HTML content and passes it to a tree builder.
+            - HTMLTreeBuilderFormatter uses those tokens to create a formatted dom tree of fake nodes.
+            - HTMLFormatter then builds formatted content and a FormatterSourceMap from that DOM tree.
+        
+        The output of HTMLFormatter is intended to just modify whitespace. So it won't be a
+        100% compatible DOM, but will be useful for debugging and reading inline <style>
+        and <script>, which is a more common debugging scenario. It also maintains original
+        author attribute quotations or lack therefore, because again it tries to only
+        change whitespace. A separate tree builder could be used for tidying content.
+
+        This introduces a few tools for working with formatting:
+
+            - Tools/HTMLFormatter - debug the parser, tree builder, and output format
+            - Tools/SourceMaps - debug formatted content and source mappings
+
+        This also:
+        
+            - renames "EsprimaFormatter" to "JSFormatter"
+            - eliminates an extra trailing newline in CSSFormatter output
+
+        * Tools/HTMLFormatter/HTMLTreeBuilderDebug.js: Added.
+        * Tools/HTMLFormatter/index.html: Added.
+        * Tools/HTMLFormatter/styles.css: Added.
+        Tool for debugging the HTML formatter components.
+
+        * Tools/SourceMaps/.gitignore: Added.
+        * Tools/SourceMaps/index.html: Added.
+        * Tools/SourceMaps/setup.sh: Added.
+        * Tools/SourceMaps/styles.css: Added.
+        Tool for debugging Formatter generated Source Maps.
+
+        * Tools/JSFormatter/JSFormatterDebug.js: Renamed from Source/WebInspectorUI/Tools/Formatting/EsprimaFormatterDebug.js.
+        * Tools/JSFormatter/codemirror-additions.css: Renamed from Source/WebInspectorUI/Tools/Formatting/codemirror-additions.css.
+        * Tools/JSFormatter/index.html: Renamed from Source/WebInspectorUI/Tools/Formatting/index.html.
+        Renamed this tool. EsprimaFormatter => JSFormatter.
+
+        * UserInterface/Controllers/FormatterSourceMap.js:
+        (WI.FormatterSourceMap.prototype.originalPositionToFormattedPosition):
+        (WI.FormatterSourceMap.prototype.formattedPositionToOriginalPosition):
+        New APIs used by tools and tests for translating "position" offsets and not line/columns.
+
+        * UserInterface/Workers/Formatter/JSFormatter.js: Renamed from Source/WebInspectorUI/UserInterface/Workers/Formatter/EsprimaFormatter.js.
+        (JSFormatter):
+        * UserInterface/Workers/Formatter/CSSFormatter.js:
+        (CSSFormatter):
+        Allow using a supplied builder, which is useful when formatting
+        inline content from HTMLFormatter (<style> / <script>).
+
+        * UserInterface/Workers/Formatter/FormatterContentBuilder.js:
+        (FormatterContentBuilder.prototype.get indentString):
+        (FormatterContentBuilder.prototype.get originalContent):
+        (FormatterContentBuilder.prototype.get indentLevel):
+        (FormatterContentBuilder.prototype.get originalOffset):
+        (FormatterContentBuilder.prototype.set originalOffset):
+        (FormatterContentBuilder.prototype.appendNonToken):
+        (FormatterContentBuilder.prototype.appendToken):
+        (FormatterContentBuilder.prototype.appendTokenWithPossibleNewlines):
+        (FormatterContentBuilder.prototype.appendMapping):
+        (FormatterContentBuilder.prototype.indentToLevel):
+        (FormatterContentBuilder.prototype.finish):
+        Provide API for getting / setting the original offset and indent level.
+        This is useful when the HTMLFormatter runs the CSSFormatter/JSFormatter
+        in a nested context (<style> / <script>). Add a few more APIs for
+        conveniences when appending tokens or important positions.
+
+        * UserInterface/Workers/Formatter/HTMLParser.js: Added.
+        (HTMLParser.prototype.parseDocument):
+        (HTMLParser.prototype._isEOF):
+        (HTMLParser.prototype._peek):
+        (HTMLParser.prototype._peekCharacterRegex):
+        (HTMLParser.prototype._peekString):
+        (HTMLParser.prototype._peekCaseInsensitiveString):
+        (HTMLParser.prototype._consumeWhitespace):
+        (HTMLParser.prototype._consumeUntilString):
+        (HTMLParser.prototype._consumeUntilRegex):
+        (HTMLParser.prototype._consumeDoubleQuotedString):
+        (HTMLParser):
+        Tokenize HTML content into nodes.
+
+        * UserInterface/Workers/Formatter/HTMLTreeBuilderFormatter.js: Added.
+        (HTMLTreeBuilderFormatter.prototype.get dom):
+        (HTMLTreeBuilderFormatter.prototype.begin):
+        (HTMLTreeBuilderFormatter.prototype.pushParserNode):
+        (HTMLTreeBuilderFormatter.prototype.end):
+        (HTMLTreeBuilderFormatter.prototype._pushParserNodeTopLevel):
+        (HTMLTreeBuilderFormatter.prototype._pushParserNodeStack):
+        (HTMLTreeBuilderFormatter.prototype._isEmptyNode):
+        (HTMLTreeBuilderFormatter.prototype._buildDOMNodeFromOpenTag):
+        (HTMLTreeBuilderFormatter.prototype._buildErrorNodeFromCloseTag):
+        (HTMLTreeBuilderFormatter.prototype._buildSimpleNodeFromParserNode):
+        (HTMLTreeBuilderFormatter):
+        Build a simple DOM tree from parser nodes.
+
+        * UserInterface/Workers/Formatter/HTMLFormatter.js: Added.
+        (HTMLFormatter.let.dom):
+        (HTMLFormatter):
+        (HTMLFormatter.prototype.get success):
+        (HTMLFormatter.prototype.get formattedText):
+        (HTMLFormatter.prototype.get sourceMapData):
+        (HTMLFormatter.prototype._walk):
+        (HTMLFormatter.prototype._walkChildren):
+        (HTMLFormatter.prototype._isNodeSelfClosing):
+        (HTMLFormatter.prototype._shouldHaveInlineContent):
+        (HTMLFormatter.prototype._hasMultipleNewLines):
+        (HTMLFormatter.prototype._buildAttributeString):
+        (HTMLFormatter.prototype._before):
+        (HTMLFormatter.prototype._after):
+        (HTMLFormatter.prototype._formatWithNestedFormatter):
+        (HTMLFormatter.prototype._formatScript):
+        (HTMLFormatter.prototype._formatStyle):
+        Output pretty printed text from a HTMLTreeBuilderFormatter dom tree.
+
+        * UserInterface/Proxies/FormatterWorkerProxy.js:
+        (WI.FormatterWorkerProxy.prototype.formatHTML):
+        * UserInterface/Workers/Formatter/FormatterWorker.js:
+        (FormatterWorker.prototype.formatJavaScript):
+        (FormatterWorker.prototype.formatCSS):
+        (FormatterWorker.prototype.formatHTML):
+        * UserInterface/Views/TextEditor.js:
+        (WI.TextEditor.prototype.hasFormatter):
+        (WI.TextEditor.prototype._canUseFormatterWorker):
+        (WI.TextEditor.prototype._startWorkerPrettyPrint):
+        Allow pretty printing HTML resources.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        New resources.
+
+2019-09-13  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: [Overrides] Command-Z doesn't undo changes after page reload
         https://bugs.webkit.org/show_bug.cgi?id=201698
         <rdar://problem/55276645>

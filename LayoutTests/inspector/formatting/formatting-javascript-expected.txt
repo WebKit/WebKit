@@ -1,8 +1,8 @@
 Test JavaScript formatting.
 
 
-== Running test suite: EsprimaFormatter.JavaScript
--- Running test case: EsprimaFormatter.JavaScript
+== Running test suite: JSFormatter
+-- Running test case: JSFormatter
 PASS: arrow-functions.js
 PASS: classes.js
 PASS: comments-and-preserve-newlines.js

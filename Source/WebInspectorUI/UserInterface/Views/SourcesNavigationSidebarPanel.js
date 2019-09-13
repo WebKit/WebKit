@@ -443,7 +443,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         // A custom implementation is needed for this since the frames are populated lazily.
 
         if (representedObject instanceof WI.LocalResourceOverride)
-            return this._localResourceOverridesTreeOutline.findTreeElement(localResource);
+            return this._localResourceOverridesTreeOutline.findTreeElement(representedObject);
 
         if (representedObject instanceof WI.LocalResource) {
             let localResourceOverride = WI.networkManager.localResourceOverrideForURL(representedObject.url);
