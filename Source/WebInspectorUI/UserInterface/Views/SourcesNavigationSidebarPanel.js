@@ -737,10 +737,19 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         return a.mainTitle.extendedLocaleCompare(b.mainTitle) || a.subtitle.extendedLocaleCompare(b.subtitle);
     }
 
+    _closeContentViewsFilter(contentView)
+    {
+        // Local Resource Override content views do not need to be closed across page navigations.
+        if (contentView.representedObject instanceof WI.LocalResource && contentView.representedObject.isLocalResourceOverride)
+            return false;
+
+        return true;
+    }
+
     _updateMainFrameTreeElement(mainFrame)
     {
         if (this.didInitialLayout)
-            this.contentBrowser.contentViewContainer.closeAllContentViews();
+            this.contentBrowser.contentViewContainer.closeAllContentViews(this._closeContentViewsFilter);
 
         let oldMainFrameTreeElement = this._mainFrameTreeElement;
         if (this._mainFrameTreeElement) {

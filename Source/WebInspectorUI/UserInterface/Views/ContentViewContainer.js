@@ -274,8 +274,10 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
         }
     }
 
-    closeAllContentViews()
+    closeAllContentViews(filter)
     {
+        console.assert(!filter || typeof filter === "function");
+
         if (!this._backForwardList.length) {
             console.assert(this._currentIndex === -1);
             return;
@@ -284,10 +286,14 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
         var visibleContentView = this.currentContentView;
 
         // Hide and disassociate with all the content views.
-        for (var i = 0; i < this._backForwardList.length; ++i) {
-            var entry = this._backForwardList[i];
+        for (let i = 0; i < this._backForwardList.length; ++i) {
+            let entry = this._backForwardList[i];
+            if (filter && !filter(entry.contentView))
+                continue;
+
             if (entry.contentView === visibleContentView)
                 this._hideEntry(entry);
+
             this._disassociateFromContentView(entry.contentView, entry.tombstone);
         }
 

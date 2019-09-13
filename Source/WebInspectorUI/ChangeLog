@@ -1,3 +1,21 @@
+2019-09-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: [Overrides] Command-Z doesn't undo changes after page reload
+        https://bugs.webkit.org/show_bug.cgi?id=201698
+        <rdar://problem/55276645>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/ContentViewContainer.js:
+        (WI.ContentViewContainer.prototype.closeAllContentViews):
+        Provide a filter to opt out of closing some content views.
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel.prototype._closeContentViewsFilter):
+        (WI.SourcesNavigationSidebarPanel.prototype._updateMainFrameTreeElement):
+        Avoid closing ContentViews for local resource overrides. This keeps the
+        SourceCodeTextEditor around and thus its undo/redo stack.
+
 2019-09-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Uncaught Exception: TypeError: null is not an object (evaluating 'selectedTreeElement.representedObject')
