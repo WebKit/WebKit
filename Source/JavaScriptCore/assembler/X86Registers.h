@@ -34,31 +34,15 @@
     FOR_EACH_GP_REGISTER(macro)                 \
     FOR_EACH_FP_REGISTER(macro)
 
-#if !OS(WINDOWS)
-
 #define FOR_EACH_GP_REGISTER(macro)             \
-    macro(eax, "rax", 0, 0)                     \
-    macro(ecx, "rcx", 0, 0)                     \
-    macro(edx, "rdx", 0, 0)                     \
-    macro(ebx, "rbx", 0, 1)                     \
-    macro(esp, "rsp", 0, 0)                     \
-    macro(ebp, "rbp", 0, 1)                     \
-    macro(esi, "rsi", 0, 0)                     \
-    macro(edi, "rdi", 0, 0)
-
-#else // OS(WINDOWS)
-
-#define FOR_EACH_GP_REGISTER(macro)             \
-    macro(eax, "rax", 0, 0)                     \
-    macro(ecx, "rcx", 0, 0)                     \
-    macro(edx, "rdx", 0, 0)                     \
-    macro(ebx, "rbx", 0, 1)                     \
-    macro(esp, "rsp", 0, 0)                     \
-    macro(ebp, "rbp", 0, 1)                     \
-    macro(esi, "rsi", 0, 1)                     \
-    macro(edi, "rdi", 0, 1)
-
-#endif // !OS(WINDOWS)
+    macro(eax, "eax", 0, 0)                     \
+    macro(ecx, "ecx", 0, 0)                     \
+    macro(edx, "edx", 0, 0)                     \
+    macro(ebx, "ebx", 0, 1)                     \
+    macro(esp, "esp", 0, 0)                     \
+    macro(ebp, "ebp", 0, 1)                     \
+    macro(esi, "esi", 0, 1)                     \
+    macro(edi, "edi", 0, 1)
 
 #define FOR_EACH_FP_REGISTER(macro)             \
     macro(xmm0, "xmm0", 0, 0)                   \
