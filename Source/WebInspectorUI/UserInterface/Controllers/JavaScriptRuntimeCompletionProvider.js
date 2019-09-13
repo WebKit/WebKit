@@ -41,6 +41,8 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
 
         console.assert(!WI.JavaScriptRuntimeCompletionProvider._instance);
 
+        this._ongoingCompletionRequests = 0;
+
         WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ActiveCallFrameDidChange, this._clearLastProperties, this);
     }
 
@@ -130,6 +132,9 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                 bracketNotation = false;
         }
 
+        // Start an completion request. We must now decrement before calling completionController.updateCompletions.
+        this._incrementOngoingCompletionRequests();
+
         // If the base is the same as the last time, we can reuse the property names we have already gathered.
         // Doing this eliminates delay caused by the async nature of the code below and it only calls getters
         // and functions once instead of repetitively. Sure, there can be difference each time the base is evaluated,
@@ -163,7 +168,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
         function evaluated(result, wasThrown)
         {
             if (wasThrown || !result || result.type === "undefined" || (result.type === "object" && result.subtype === "null")) {
-                WI.runtimeManager.activeExecutionContext.target.RuntimeAgent.releaseObjectGroup("completion");
+                this._decrementOngoingCompletionRequests();
 
                 updateLastPropertyNames.call(this, []);
                 completionController.updateCompletions(defaultCompletions);
@@ -265,7 +270,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
 
             updateLastPropertyNames.call(this, propertyNames);
 
-            WI.runtimeManager.activeExecutionContext.target.RuntimeAgent.releaseObjectGroup("completion");
+            this._decrementOngoingCompletionRequests();
 
             if (!base) {
                 propertyNames.pushAll(JavaScriptRuntimeCompletionProvider._commandLineAPIKeys);
@@ -369,6 +374,23 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
     }
 
     // Private
+
+    _incrementOngoingCompletionRequests()
+    {
+        this._ongoingCompletionRequests++;
+
+        console.assert(this._ongoingCompletionRequests <= 50, "Ongoing requests probably should not get this high. We may be missing a balancing decrement.");
+    }
+
+    _decrementOngoingCompletionRequests()
+    {
+        this._ongoingCompletionRequests--;
+
+        console.assert(this._ongoingCompletionRequests >= 0, "Unbalanced increments / decrements.");
+
+        if (this._ongoingCompletionRequests <= 0)
+            WI.runtimeManager.activeExecutionContext.target.RuntimeAgent.releaseObjectGroup("completion");
+    }
 
     _clearLastProperties()
     {

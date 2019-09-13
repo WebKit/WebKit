@@ -1,5 +1,19 @@
 2019-09-13  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Uncaught Exception: null is not an object (evaluating 'Object.keys(propertyNames)​')​ (at JavaScriptRuntimeCompletionProvider.js:​244:​57)​
+        https://bugs.webkit.org/show_bug.cgi?id=201729
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Controllers/JavaScriptRuntimeCompletionProvider.js:
+        (WI.JavaScriptRuntimeCompletionProvider):
+        (WI.JavaScriptRuntimeCompletionProvider.prototype.completionControllerCompletionsNeeded):
+        Don't clear the completion object group until all ongoing requests have completed.
+        Percision for the lifetime of the object group objects is not important, but we
+        surely don't want to delete an object too soon.
+
+2019-09-13  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Formatter: Pretty Print HTML resources (including inline <script>/<style>)
         https://bugs.webkit.org/show_bug.cgi?id=201535
         <rdar://problem/29119232>
