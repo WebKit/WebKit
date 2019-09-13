@@ -1,3 +1,19 @@
+2019-09-13  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebCore::firstPositionInNode()
+        https://bugs.webkit.org/show_bug.cgi?id=201764
+        <rdar://problem/54823754>
+
+        Reviewed by Wenson Hsieh and Geoff Garen.
+
+        Make sure to keep a Ref<> to the textNode when we call insertNodeAtTabSpanPosition()
+        or insertNodeAt().
+
+        Test: editing/firstPositionInNode-crash.html
+
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::positionInsideTextNode):
+
 2019-09-13  Youenn Fablet  <youenn@apple.com>
 
         Partition processes running service workers by session ID
