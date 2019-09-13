@@ -116,9 +116,17 @@ JS_EXPORT_PRIVATE bool isJITPC(void* pc);
 
 JS_EXPORT_PRIVATE void dumpJITMemory(const void*, const void*, size_t);
 
+struct GigacageAssertScope {
+    GigacageAssertScope(const void *src)
+        : src(src)
+    { }
+    ~GigacageAssertScope() { RELEASE_ASSERT(!Gigacage::contains(src)); }
+    const void* src;
+};
+
 static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n)
 {
-    RELEASE_ASSERT(!Gigacage::contains(src));
+    GigacageAssertScope assertScope(src);
 #if CPU(ARM64)
     static constexpr size_t instructionSize = sizeof(unsigned);
     RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(dst) == dst);
