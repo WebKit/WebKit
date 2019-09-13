@@ -71,20 +71,19 @@ constexpr size_t primitiveGigacageSize = 2 * bmalloc::Sizes::GB;
 constexpr size_t jsValueGigacageSize = 2 * bmalloc::Sizes::GB;
 constexpr size_t maximumCageSizeReductionForSlide = bmalloc::Sizes::GB / 4;
 constexpr size_t configSizeToProtect = 16 * bmalloc::Sizes::kB;
-#define GIGACAGE_ALLOCATION_CAN_FAIL 1
 #else
 constexpr size_t primitiveGigacageSize = 32 * bmalloc::Sizes::GB;
 constexpr size_t jsValueGigacageSize = 16 * bmalloc::Sizes::GB;
 constexpr size_t maximumCageSizeReductionForSlide = 4 * bmalloc::Sizes::GB;
 constexpr size_t configSizeToProtect = 4 * bmalloc::Sizes::kB;
-#define GIGACAGE_ALLOCATION_CAN_FAIL 0
 #endif
 
 // In Linux, if `vm.overcommit_memory = 2` is specified, mmap with large size can fail if it exceeds the size of RAM.
 // So we specify GIGACAGE_ALLOCATION_CAN_FAIL = 1.
 #if BOS(LINUX)
-#undef GIGACAGE_ALLOCATION_CAN_FAIL
 #define GIGACAGE_ALLOCATION_CAN_FAIL 1
+#else
+#define GIGACAGE_ALLOCATION_CAN_FAIL 0
 #endif
 
 

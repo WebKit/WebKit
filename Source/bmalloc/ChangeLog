@@ -1,3 +1,16 @@
+2019-09-13  Mark Lam  <mark.lam@apple.com>
+
+        We should never fail to allocate VA for the Gigacage.
+        https://bugs.webkit.org/show_bug.cgi?id=201774
+        <rdar://problem/55352042>
+
+        Reviewed by Yusuke Suzuki.
+
+        Unfortunately, this is still not true for OS(LINUX).  So, I'll leave the
+        GIGACAGE_ALLOCATION_CAN_FAIL code in place but disable it for everything else.
+
+        * bmalloc/Gigacage.h:
+
 2019-09-09  Michael Saboff  <msaboff@apple.com>
 
         Revert to pre-r243144 scavenging behavior for macOS
