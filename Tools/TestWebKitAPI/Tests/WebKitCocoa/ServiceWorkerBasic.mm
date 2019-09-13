@@ -2055,3 +2055,50 @@ TEST(WebKit, ServiceWorkerDatabaseWithRecordsTableButUnexpectedSchema)
     TestWebKitAPI::Util::run(&readyToContinue);
     readyToContinue = false;
 }
+
+TEST(ServiceWorkers, ProcessPerSession)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto messageHandler = adoptNS([[SWMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    auto handler1 = adoptNS([[SWSchemes alloc] init]);
+    handler1->resources.set("sw1://host/main.html", ResourceInfo { @"text/html", mainBytes });
+    handler1->resources.set("sw1://host/sw.js", ResourceInfo { @"application/javascript", scriptBytes });
+    handler1->resources.set("sw1://host2/main.html", ResourceInfo { @"text/html", mainBytes });
+    handler1->resources.set("sw1://host2/sw.js", ResourceInfo { @"application/javascript", scriptBytes });
+    [configuration setURLSchemeHandler:handler1.get() forURLScheme:@"sw1"];
+
+    WKProcessPool *processPool = configuration.get().processPool;
+    [processPool _registerURLSchemeServiceWorkersCanHandle:@"sw1"];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw1://host/main.html"]];
+
+    configuration.get().websiteDataStore = [WKWebsiteDataStore defaultDataStore];
+
+    auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView1 loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(1U, processPool._serviceWorkerProcessCount);
+
+    configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+
+    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView2 loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(2U, processPool._serviceWorkerProcessCount);
+}

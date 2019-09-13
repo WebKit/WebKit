@@ -1,3 +1,42 @@
+2019-09-13  Youenn Fablet  <youenn@apple.com>
+
+        Partition processes running service workers by session ID
+        https://bugs.webkit.org/show_bug.cgi?id=201643
+
+        Reviewed by Chris Dumez.
+
+        Move the creation of service worker context connection management to SWServer.
+        This allows to partition service worker context connections by registrable domain and sessionID.
+        WebKit2 is still responsible to create the IPC creation through a Function given to SWServer at construction
+        time.
+        SWServer now keeps a map of registrable domain -> context connection to use for running workers.
+        It also keeps a map of being-created connections.
+        In case a context connection is removed from the SWServer, the SWServer will notify all related worker instances
+        that they are not running. The SWServer will also recreate a context connection if needed.
+
+        This allows removing the global server context connection map.
+        Make SWServerToContextConnection no longer refcounted to simplify the lifetime management.
+
+        Covered by API test.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::SWServer):
+        (WebCore::SWServer::tryInstallContextData):
+        (WebCore::SWServer::contextConnectionCreated):
+        (WebCore::SWServer::unregisterServiceWorkerClient):
+        (WebCore::SWServer::needsContextConnectionForRegistrableDomain const):
+        (WebCore::SWServer::addContextConnection):
+        (WebCore::SWServer::removeContextConnection):
+        (WebCore::SWServer::createContextConnection):
+        * workers/service/server/SWServer.h:
+        (WebCore::SWServer::contextConnectionForRegistrableDomain):
+        * workers/service/server/SWServerToContextConnection.cpp:
+        (WebCore::SWServerToContextConnection::SWServerToContextConnection):
+        (WebCore::SWServerToContextConnection::~SWServerToContextConnection):
+        * workers/service/server/SWServerToContextConnection.h:
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::contextConnection):
+
 2019-09-13  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Do not create FormattingContext unless the root has child boxes.

@@ -297,17 +297,11 @@ public:
     void didReceiveNetworkProcessMessage(IPC::Connection&, IPC::Decoder&);
 
 #if ENABLE(SERVICE_WORKER)
-    WebSWServerToContextConnection* serverToContextConnectionForRegistrableDomain(const WebCore::RegistrableDomain&);
-    void createServerToContextConnection(const WebCore::RegistrableDomain&, PAL::SessionID);
-    
+    WebCore::SWServer* swServerForSessionIfExists(PAL::SessionID sessionID) { return m_swServers.get(sessionID); }
     WebCore::SWServer& swServerForSession(PAL::SessionID);
     void registerSWServerConnection(WebSWServerConnection&);
     void unregisterSWServerConnection(WebSWServerConnection&);
     
-    void registerSWContextConnection(WebSWServerToContextConnection&);
-    void unregisterSWContextConnection(WebSWServerToContextConnection&);
-
-    bool needsServerToContextConnectionForRegistrableDomain(const WebCore::RegistrableDomain&) const;
     void forEachSWServer(const Function<void(WebCore::SWServer&)>&);
 #endif
 
@@ -539,11 +533,9 @@ private:
     Lock m_storageTaskMutex;
     
 #if ENABLE(SERVICE_WORKER)
-    HashMap<WebCore::RegistrableDomain, WebSWServerToContextConnection*> m_serverToContextConnections;
     bool m_shouldDisableServiceWorkerProcessTerminationDelay { false };
     HashMap<PAL::SessionID, String> m_swDatabasePaths;
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::SWServer>> m_swServers;
-    HashSet<WebCore::RegistrableDomain> m_pendingConnectionDomains;
 #endif
 
 #if PLATFORM(COCOA)

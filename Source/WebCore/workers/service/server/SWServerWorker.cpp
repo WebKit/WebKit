@@ -98,7 +98,7 @@ const ClientOrigin& SWServerWorker::origin() const
 
 SWServerToContextConnection* SWServerWorker::contextConnection()
 {
-    return SWServerToContextConnection::connectionForRegistrableDomain(registrableDomain());
+    return m_server ? m_server->contextConnectionForRegistrableDomain(registrableDomain()) : nullptr;
 }
 
 void SWServerWorker::scriptContextFailedToStart(const Optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, const String& message)

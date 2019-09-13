@@ -701,14 +701,15 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
         websiteDataStore = &m_websiteDataStore->websiteDataStore();
     }
 
-    if (m_serviceWorkerProcesses.contains(registrableDomain))
+    RegistrableDomainWithSessionID registrableDomainWithSessionID { RegistrableDomain { registrableDomain }, sessionID };
+    if (m_serviceWorkerProcesses.contains(registrableDomainWithSessionID))
         return;
 
     if (m_serviceWorkerProcesses.isEmpty())
         sendToAllProcesses(Messages::WebProcess::RegisterServiceWorkerClients { });
 
     auto serviceWorkerProcessProxy = WebProcessProxy::createForServiceWorkers(*this, WTFMove(registrableDomain), *websiteDataStore);
-    m_serviceWorkerProcesses.add(serviceWorkerProcessProxy->registrableDomain(), serviceWorkerProcessProxy.ptr());
+    m_serviceWorkerProcesses.add(WTFMove(registrableDomainWithSessionID), serviceWorkerProcessProxy.ptr());
 
     updateProcessAssertions();
     initializeNewWebProcess(serviceWorkerProcessProxy, websiteDataStore);
@@ -1152,7 +1153,7 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
 
 #if ENABLE(SERVICE_WORKER)
     if (process->isRunningServiceWorkers()) {
-        auto* removedProcess = m_serviceWorkerProcesses.take(process->registrableDomain());
+        auto* removedProcess = m_serviceWorkerProcesses.take(RegistrableDomainWithSessionID { process->registrableDomain(), process->websiteDataStore().sessionID() });
         ASSERT_UNUSED(removedProcess, removedProcess == process);
         updateProcessAssertions();
     }

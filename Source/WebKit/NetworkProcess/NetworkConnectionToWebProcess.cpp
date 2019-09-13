@@ -286,21 +286,7 @@ void NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& conne
 void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
 {
 #if ENABLE(SERVICE_WORKER)
-    if (m_swContextConnection) {
-        auto connection = WTFMove(m_swContextConnection);
-        auto& registrableDomain = connection->registrableDomain();
-
-        connection->connectionClosed();
-
-        Optional<PAL::SessionID> sessionID;
-        m_networkProcess->forEachSWServer([&](auto& server) {
-            server.markAllWorkersForRegistrableDomainAsTerminated(registrableDomain);
-            if (server.needsServerToContextConnectionForRegistrableDomain(registrableDomain))
-                sessionID = server.sessionID();
-        });
-        if (sessionID)
-            m_networkProcess->createServerToContextConnection(registrableDomain, *sessionID);
-    }
+    m_swContextConnection = nullptr;
 #else
     UNUSED_PARAM(connection);
 #endif
@@ -884,13 +870,10 @@ void NetworkConnectionToWebProcess::establishSWServerConnection(PAL::SessionID s
     server.addConnection(WTFMove(connection));
 }
 
-void NetworkConnectionToWebProcess::establishSWContextConnection(RegistrableDomain&& registrableDomain)
+void NetworkConnectionToWebProcess::establishSWContextConnection(RegistrableDomain&& registrableDomain, PAL::SessionID sessionID)
 {
-    m_swContextConnection = WebSWServerToContextConnection::create(m_networkProcess, registrableDomain, m_connection.get());
-
-    m_networkProcess->forEachSWServer([&](auto& server) {
-        server.serverToContextConnectionCreated(*m_swContextConnection);
-    });
+    if (auto* server = m_networkProcess->swServerForSessionIfExists(sessionID))
+        m_swContextConnection = makeUnique<WebSWServerToContextConnection>(m_networkProcess, WTFMove(registrableDomain), *server, m_connection.get());
 }
 #endif
 

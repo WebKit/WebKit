@@ -87,7 +87,7 @@ Ref<DocumentLoader> ServiceWorkerFrameLoaderClient::createDocumentLoader(const R
     return WebDocumentLoader::create(request, substituteData);
 }
 
-WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection>&& connection, WebCore::RegistrableDomain&& registrableDomain, uint64_t pageGroupID, WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, const WebPreferencesStore& store)
+WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection>&& connection, WebCore::RegistrableDomain&& registrableDomain, PAL::SessionID sessionID, uint64_t pageGroupID, WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, const WebPreferencesStore& store)
     : m_connectionToNetworkProcess(WTFMove(connection))
     , m_registrableDomain(WTFMove(registrableDomain))
     , m_pageGroupID(pageGroupID)
@@ -100,7 +100,7 @@ WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection
 #endif
 {
     updatePreferencesStore(store);
-    m_connectionToNetworkProcess->send(Messages::NetworkConnectionToWebProcess::EstablishSWContextConnection { m_registrableDomain }, 0);
+    m_connectionToNetworkProcess->send(Messages::NetworkConnectionToWebProcess::EstablishSWContextConnection { m_registrableDomain, sessionID }, 0);
 }
 
 WebSWContextManagerConnection::~WebSWContextManagerConnection() = default;

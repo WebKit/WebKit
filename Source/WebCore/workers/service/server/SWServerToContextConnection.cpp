@@ -40,29 +40,14 @@ static SWServerToContextConnectionIdentifier generateServerToContextConnectionId
     return SWServerToContextConnectionIdentifier::generate();
 }
 
-static HashMap<RegistrableDomain, SWServerToContextConnection*>& allConnectionsByRegistrableDomain()
-{
-    static NeverDestroyed<HashMap<RegistrableDomain, SWServerToContextConnection*>> connectionsByOrigin;
-    return connectionsByOrigin;
-}
-
-SWServerToContextConnection::SWServerToContextConnection(const RegistrableDomain& registrableDomain)
+SWServerToContextConnection::SWServerToContextConnection(RegistrableDomain&& registrableDomain)
     : m_identifier(generateServerToContextConnectionIdentifier())
-    , m_registrableDomain(registrableDomain)
+    , m_registrableDomain(WTFMove(registrableDomain))
 {
-    auto result = allConnectionsByRegistrableDomain().add(m_registrableDomain, this);
-    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 SWServerToContextConnection::~SWServerToContextConnection()
 {
-    auto result = allConnectionsByRegistrableDomain().remove(m_registrableDomain);
-    ASSERT_UNUSED(result, result);
-}
-
-SWServerToContextConnection* SWServerToContextConnection::connectionForRegistrableDomain(const RegistrableDomain& registrableDomain)
-{
-    return allConnectionsByRegistrableDomain().get(registrableDomain);
 }
 
 void SWServerToContextConnection::scriptContextFailedToStart(const Optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const String& message)

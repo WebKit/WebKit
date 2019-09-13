@@ -89,7 +89,7 @@ public:
         virtual void registrationReady(uint64_t registrationReadyRequestIdentifier, ServiceWorkerRegistrationData&&) = 0;
         virtual void postMessageToServiceWorkerClient(DocumentIdentifier, const MessageWithMessagePorts&, ServiceWorkerIdentifier, const String& sourceOrigin) = 0;
 
-        virtual void serverToContextConnectionCreated(SWServerToContextConnection&) = 0;
+        virtual void contextConnectionCreated(SWServerToContextConnection&) = 0;
 
         SWServer& server() { return m_server; }
         const SWServer& server() const { return m_server; }
@@ -123,7 +123,9 @@ public:
         Vector<RegistrationReadyRequest> m_registrationReadyRequests;
     };
 
-    WEBCORE_EXPORT SWServer(UniqueRef<SWOriginStore>&&, String&& registrationDatabaseDirectory, PAL::SessionID);
+    using CreateContextConnectionCallback = Function<void(const WebCore::RegistrableDomain&)>;
+    WEBCORE_EXPORT SWServer(UniqueRef<SWOriginStore>&&, String&& registrationDatabaseDirectory, PAL::SessionID, CreateContextConnectionCallback&&);
+
     WEBCORE_EXPORT ~SWServer();
 
     WEBCORE_EXPORT void clearAll(WTF::CompletionHandler<void()>&&);
@@ -172,8 +174,6 @@ public:
     void matchAll(SWServerWorker&, const ServiceWorkerClientQueryOptions&, ServiceWorkerClientsMatchAllCallback&&);
     void claim(SWServerWorker&);
 
-    WEBCORE_EXPORT void serverToContextConnectionCreated(SWServerToContextConnection&);
-    
     WEBCORE_EXPORT static HashSet<SWServer*>& allServers();
 
     WEBCORE_EXPORT void registerServiceWorkerClient(ClientOrigin&&, ServiceWorkerClientData&&, const Optional<ServiceWorkerRegistrationIdentifier>&, String&& userAgent);
@@ -191,11 +191,17 @@ public:
     WEBCORE_EXPORT void getOriginsWithRegistrations(Function<void(const HashSet<SecurityOriginData>&)>&&);
 
     PAL::SessionID sessionID() const { return m_sessionID; }
-    WEBCORE_EXPORT bool needsServerToContextConnectionForRegistrableDomain(const RegistrableDomain&) const;
+    WEBCORE_EXPORT bool needsContextConnectionForRegistrableDomain(const RegistrableDomain&) const;
 
     void disableServiceWorkerProcessTerminationDelay() { m_shouldDisableServiceWorkerProcessTerminationDelay = true; }
 
     void removeFromScopeToRegistrationMap(const ServiceWorkerRegistrationKey&);
+
+    WEBCORE_EXPORT void addContextConnection(SWServerToContextConnection&);
+    WEBCORE_EXPORT void removeContextConnection(SWServerToContextConnection&);
+
+    SWServerToContextConnection* contextConnectionForRegistrableDomain(const RegistrableDomain& domain) { return m_contextConnections.get(domain); }
+    WEBCORE_EXPORT void createContextConnection(const RegistrableDomain&);
 
 private:
     void scriptFetchFinished(Connection&, const ServiceWorkerFetchResult&);
@@ -224,6 +230,8 @@ private:
     };
     void terminateWorkerInternal(SWServerWorker&, TerminationMode);
 
+    void contextConnectionCreated(SWServerToContextConnection&);
+
     HashMap<SWServerConnectionIdentifier, std::unique_ptr<Connection>> m_connections;
     HashMap<ServiceWorkerRegistrationKey, WeakPtr<SWServerRegistration>> m_scopeToRegistrationMap;
     HashMap<ServiceWorkerRegistrationIdentifier, std::unique_ptr<SWServerRegistration>> m_registrations;
@@ -250,6 +258,10 @@ private:
     bool m_shouldDisableServiceWorkerProcessTerminationDelay { false };
     Vector<CompletionHandler<void()>> m_clearCompletionCallbacks;
     Vector<Function<void(const HashSet<SecurityOriginData>&)>> m_getOriginsWithRegistrationsCallbacks;
+    HashMap<RegistrableDomain, SWServerToContextConnection*> m_contextConnections;
+
+    CreateContextConnectionCallback m_createContextConnectionCallback;
+    HashSet<WebCore::RegistrableDomain> m_pendingConnectionDomains;
 };
 
 } // namespace WebCore

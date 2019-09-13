@@ -41,17 +41,20 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebSWServerToContextConnection::WebSWServerToContextConnection(NetworkProcess& networkProcess, const RegistrableDomain& registrableDomain, Ref<IPC::Connection>&& connection)
-    : SWServerToContextConnection(registrableDomain)
+WebSWServerToContextConnection::WebSWServerToContextConnection(NetworkProcess& networkProcess, RegistrableDomain&& registrableDomain, SWServer& server, Ref<IPC::Connection>&& connection)
+    : SWServerToContextConnection(WTFMove(registrableDomain))
     , m_ipcConnection(WTFMove(connection))
     , m_networkProcess(networkProcess)
+    , m_server(makeWeakPtr(server))
 {
-    m_networkProcess->registerSWContextConnection(*this);
+    server.addContextConnection(*this);
 }
 
 WebSWServerToContextConnection::~WebSWServerToContextConnection()
 {
-    m_networkProcess->unregisterSWContextConnection(*this);
+    connectionClosed();
+    if (m_server && m_server->contextConnectionForRegistrableDomain(registrableDomain()) == this)
+        m_server->removeContextConnection(*this);
 }
 
 IPC::Connection* WebSWServerToContextConnection::messageSenderConnection() const
@@ -127,18 +130,10 @@ void WebSWServerToContextConnection::didFinishSkipWaiting(uint64_t callbackID)
     send(Messages::WebSWContextManagerConnection::DidFinishSkipWaiting { callbackID });
 }
 
-void WebSWServerToContextConnection::connectionMayNoLongerBeNeeded()
+void WebSWServerToContextConnection::connectionIsNoLongerNeeded()
 {
-    if (m_networkProcess->needsServerToContextConnectionForRegistrableDomain(registrableDomain()))
-        return;
-
     RELEASE_LOG(ServiceWorker, "Service worker process is no longer needed, terminating it");
     terminate();
-
-    m_networkProcess->forEachSWServer([&](auto& server) {
-        server.markAllWorkersForRegistrableDomainAsTerminated(registrableDomain());
-    });
-
     connectionClosed();
 }
 

@@ -53,7 +53,7 @@ struct WebPreferencesStore;
 
 class WebSWContextManagerConnection final : public WebCore::SWContextManager::Connection, public IPC::MessageReceiver {
 public:
-    WebSWContextManagerConnection(Ref<IPC::Connection>&&, WebCore::RegistrableDomain&&, uint64_t pageGroupID, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&);
+    WebSWContextManagerConnection(Ref<IPC::Connection>&&, WebCore::RegistrableDomain&&, PAL::SessionID, uint64_t pageGroupID, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&);
     ~WebSWContextManagerConnection();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

@@ -382,7 +382,7 @@ public:
     bool isServiceWorkerPageID(WebPageProxyIdentifier) const;
 #if ENABLE(SERVICE_WORKER)
     void establishWorkerContextConnectionToNetworkProcess(NetworkProcessProxy&, WebCore::RegistrableDomain&&, PAL::SessionID);
-    const HashMap<WebCore::RegistrableDomain, WebProcessProxy*>& serviceWorkerProxies() const { return m_serviceWorkerProcesses; }
+    size_t serviceWorkerProxiesCount() const { return m_serviceWorkerProcesses.size(); }
     void setAllowsAnySSLCertificateForServiceWorker(bool allows) { m_allowsAnySSLCertificateForServiceWorker = allows; }
     bool allowsAnySSLCertificateForServiceWorker() const { return m_allowsAnySSLCertificateForServiceWorker; }
     void updateServiceWorkerUserAgent(const String& userAgent);
@@ -621,7 +621,8 @@ private:
 
     WebProcessProxy* m_processWithPageCache { nullptr };
 #if ENABLE(SERVICE_WORKER)
-    HashMap<WebCore::RegistrableDomain, WebProcessProxy*> m_serviceWorkerProcesses;
+    using RegistrableDomainWithSessionID = std::pair<WebCore::RegistrableDomain, PAL::SessionID>;
+    HashMap<RegistrableDomainWithSessionID, WebProcessProxy*> m_serviceWorkerProcesses;
     bool m_waitingForWorkerContextProcessConnection { false };
     bool m_allowsAnySSLCertificateForServiceWorker { false };
     bool m_shouldDisableServiceWorkerProcessTerminationDelay { false };

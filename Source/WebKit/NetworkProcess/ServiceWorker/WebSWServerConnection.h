@@ -94,7 +94,7 @@ private:
 
     void postMessageToServiceWorkerClient(WebCore::DocumentIdentifier destinationContextIdentifier, const WebCore::MessageWithMessagePorts&, WebCore::ServiceWorkerIdentifier sourceServiceWorkerIdentifier, const String& sourceOrigin) final;
 
-    void serverToContextConnectionCreated(WebCore::SWServerToContextConnection&) final;
+    void contextConnectionCreated(WebCore::SWServerToContextConnection&) final;
 
     bool isThrottleable() const { return m_isThrottleable; }
     bool hasMatchingClient(const WebCore::RegistrableDomain&) const;

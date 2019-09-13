@@ -1,3 +1,49 @@
+2019-09-13  Youenn Fablet  <youenn@apple.com>
+
+        Partition processes running service workers by session ID
+        https://bugs.webkit.org/show_bug.cgi?id=201643
+
+        Reviewed by Chris Dumez.
+
+        Remove the management of server context connections from NetworkProcess.
+        The WebProcessPool service worker process map is now keyed by both registrable domain and sessionID.
+        Update WebProcessPool to only expose the number of service worker processes instead of the full map.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        (WebKit::NetworkConnectionToWebProcess::establishSWContextConnection):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::swServerForSession):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::swServerForSessionIfExists):
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::startFetch):
+        (WebKit::WebSWServerConnection::postMessageToServiceWorker):
+        (WebKit::WebSWServerConnection::scheduleJobInServer):
+        (WebKit::WebSWServerConnection::updateThrottleState):
+        (WebKit::WebSWServerConnection::contextConnectionCreated):
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::WebSWServerToContextConnection):
+        (WebKit::WebSWServerToContextConnection::~WebSWServerToContextConnection):
+        (WebKit::WebSWServerToContextConnection::connectionIsNoLongerNeeded):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _webPageContentProcessCount]):
+        (-[WKProcessPool _serviceWorkerProcessCount]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToNetworkProcess):
+        (WebKit::WebProcessPool::disconnectProcess):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::WebSWContextManagerConnection):
+        (WebKit::m_userAgent):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::establishWorkerContextConnectionToNetworkProcess):
+
 2019-09-13  Alex Christensen  <achristensen@webkit.org>
 
         AuxiliaryProcessProxy::sendWithAsyncReply should queue up messages if sent while the process is starting like it does messages without replies

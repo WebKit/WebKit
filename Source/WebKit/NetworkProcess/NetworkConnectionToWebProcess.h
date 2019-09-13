@@ -208,7 +208,7 @@ private:
 
 #if ENABLE(SERVICE_WORKER)
     void establishSWServerConnection(PAL::SessionID);
-    void establishSWContextConnection(WebCore::RegistrableDomain&&);
+    void establishSWContextConnection(WebCore::RegistrableDomain&&, PAL::SessionID);
     void unregisterSWConnections();
 #endif
 
@@ -320,7 +320,7 @@ private:
 
 #if ENABLE(SERVICE_WORKER)
     HashMap<PAL::SessionID, WeakPtr<WebSWServerConnection>> m_swConnections;
-    RefPtr<WebSWServerToContextConnection> m_swContextConnection;
+    std::unique_ptr<WebSWServerToContextConnection> m_swContextConnection;
 #endif
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)

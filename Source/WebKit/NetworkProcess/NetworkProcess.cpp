@@ -2386,7 +2386,9 @@ SWServer& NetworkProcess::swServerForSession(PAL::SessionID sessionID)
         // If there's not, then where did this PAL::SessionID come from?
         ASSERT(sessionID.isEphemeral() || !path.isEmpty());
         
-        auto value = makeUnique<SWServer>(makeUniqueRef<WebSWOriginStore>(), WTFMove(path), sessionID);
+        auto value = makeUnique<SWServer>(makeUniqueRef<WebSWOriginStore>(), WTFMove(path), sessionID, [this, sessionID](auto& registrableDomain) {
+            parentProcessConnection()->send(Messages::NetworkProcessProxy::EstablishWorkerContextConnectionToNetworkProcess { registrableDomain, sessionID }, 0);
+        });
         if (m_shouldDisableServiceWorkerProcessTerminationDelay)
             value->disableServiceWorkerProcessTerminationDelay();
         return value;
@@ -2401,27 +2403,6 @@ WebSWOriginStore* NetworkProcess::existingSWOriginStoreForSession(PAL::SessionID
     if (!swServer)
         return nullptr;
     return &static_cast<WebSWOriginStore&>(swServer->originStore());
-}
-
-bool NetworkProcess::needsServerToContextConnectionForRegistrableDomain(const RegistrableDomain& registrableDomain) const
-{
-    return WTF::anyOf(m_swServers.values(), [&](auto& swServer) {
-        return swServer->needsServerToContextConnectionForRegistrableDomain(registrableDomain);
-    });
-}
-
-WebSWServerToContextConnection* NetworkProcess::serverToContextConnectionForRegistrableDomain(const RegistrableDomain& registrableDomain)
-{
-    return m_serverToContextConnections.get(registrableDomain);
-}
-
-void NetworkProcess::createServerToContextConnection(const RegistrableDomain& registrableDomain, PAL::SessionID sessionID)
-{
-    if (m_pendingConnectionDomains.contains(registrableDomain))
-        return;
-
-    m_pendingConnectionDomains.add(registrableDomain);
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::EstablishWorkerContextConnectionToNetworkProcess { registrableDomain, sessionID }, 0);
 }
 
 void NetworkProcess::postMessageToServiceWorkerClient(PAL::SessionID sessionID, const ServiceWorkerClientIdentifier& destinationIdentifier, MessageWithMessagePorts&& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
@@ -2443,19 +2424,6 @@ void NetworkProcess::unregisterSWServerConnection(WebSWServerConnection& connect
 {
     if (auto* store = existingSWOriginStoreForSession(connection.sessionID()))
         store->unregisterSWServerConnection(connection);
-}
-
-void NetworkProcess::registerSWContextConnection(WebSWServerToContextConnection& connection)
-{
-    ASSERT(!m_serverToContextConnections.contains(connection.registrableDomain()));
-    m_pendingConnectionDomains.remove(connection.registrableDomain());
-    m_serverToContextConnections.add(connection.registrableDomain(), &connection);
-}
-
-void NetworkProcess::unregisterSWContextConnection(WebSWServerToContextConnection& connection)
-{
-    ASSERT(m_serverToContextConnections.get(connection.registrableDomain()) == &connection);
-    m_serverToContextConnections.remove(connection.registrableDomain());
 }
 
 void NetworkProcess::disableServiceWorkerProcessTerminationDelay()

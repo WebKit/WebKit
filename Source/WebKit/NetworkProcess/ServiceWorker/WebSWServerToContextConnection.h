@@ -31,6 +31,7 @@
 #include "MessageSender.h"
 #include "ServiceWorkerFetchTask.h"
 #include <WebCore/SWServerToContextConnection.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 struct FetchOptions;
@@ -52,12 +53,8 @@ class NetworkProcess;
 
 class WebSWServerToContextConnection : public WebCore::SWServerToContextConnection, public IPC::MessageSender, public IPC::MessageReceiver {
 public:
-    template <typename... Args> static Ref<WebSWServerToContextConnection> create(Args&&... args)
-    {
-        return adoptRef(*new WebSWServerToContextConnection(std::forward<Args>(args)...));
-    }
-
-    void connectionClosed();
+    WebSWServerToContextConnection(NetworkProcess&, WebCore::RegistrableDomain&&, WebCore::SWServer&, Ref<IPC::Connection>&&);
+    ~WebSWServerToContextConnection();
 
     IPC::Connection* ipcConnection() const { return m_ipcConnection.ptr(); }
 
@@ -76,9 +73,6 @@ public:
     bool isThrottleable() const { return m_isThrottleable; }
 
 private:
-    WebSWServerToContextConnection(NetworkProcess&, const WebCore::RegistrableDomain&, Ref<IPC::Connection>&&);
-    ~WebSWServerToContextConnection();
-
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
@@ -97,11 +91,14 @@ private:
     void claimCompleted(uint64_t requestIdentifier) final;
     void didFinishSkipWaiting(uint64_t callbackID) final;
 
-    void connectionMayNoLongerBeNeeded() final;
+    void connectionIsNoLongerNeeded() final;
+
+    void connectionClosed();
 
     Ref<IPC::Connection> m_ipcConnection;
     Ref<NetworkProcess> m_networkProcess;
-    
+    WeakPtr<WebCore::SWServer> m_server;
+
     HashMap<ServiceWorkerFetchTask::Identifier, WebCore::FetchIdentifier> m_ongoingFetchIdentifiers;
     HashMap<WebCore::FetchIdentifier, Ref<ServiceWorkerFetchTask>> m_ongoingFetches;
     bool m_isThrottleable { true };

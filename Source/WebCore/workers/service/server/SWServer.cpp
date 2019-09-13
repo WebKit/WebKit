@@ -299,9 +299,10 @@ void SWServer::Connection::syncTerminateWorker(ServiceWorkerIdentifier identifie
         m_server.syncTerminateWorker(*worker);
 }
 
-SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, String&& registrationDatabaseDirectory, PAL::SessionID sessionID)
+SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, String&& registrationDatabaseDirectory, PAL::SessionID sessionID, CreateContextConnectionCallback&& callback)
     : m_originStore(WTFMove(originStore))
     , m_sessionID(sessionID)
+    , m_createContextConnectionCallback(WTFMove(callback))
 {
     ASSERT(!registrationDatabaseDirectory.isEmpty() || m_sessionID.isEphemeral());
     if (!m_sessionID.isEphemeral())
@@ -535,7 +536,7 @@ void SWServer::updateWorker(Connection&, const ServiceWorkerJobDataIdentifier& j
 void SWServer::tryInstallContextData(ServiceWorkerContextData&& data)
 {
     RegistrableDomain registrableDomain(data.scriptURL);
-    auto* connection = SWServerToContextConnection::connectionForRegistrableDomain(registrableDomain);
+    auto* connection = contextConnectionForRegistrableDomain(registrableDomain);
     if (!connection) {
         m_pendingContextDatas.ensure(WTFMove(registrableDomain), [] {
             return Vector<ServiceWorkerContextData> { };
@@ -546,10 +547,10 @@ void SWServer::tryInstallContextData(ServiceWorkerContextData&& data)
     installContextData(data);
 }
 
-void SWServer::serverToContextConnectionCreated(SWServerToContextConnection& contextConnection)
+void SWServer::contextConnectionCreated(SWServerToContextConnection& contextConnection)
 {
     for (auto& connection : m_connections.values())
-        connection->serverToContextConnectionCreated(contextConnection);
+        connection->contextConnectionCreated(contextConnection);
 
     auto pendingContextDatas = m_pendingContextDatas.take(contextConnection.registrableDomain());
     for (auto& data : pendingContextDatas)
@@ -833,8 +834,10 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
                 terminateWorker(*worker);
 
             if (!m_clientsByRegistrableDomain.contains(clientRegistrableDomain)) {
-                if (auto* connection = SWServerToContextConnection::connectionForRegistrableDomain(clientRegistrableDomain))
-                    connection->connectionMayNoLongerBeNeeded();
+                if (auto* connection = contextConnectionForRegistrableDomain(clientRegistrableDomain)) {
+                    removeContextConnection(*connection);
+                    connection->connectionIsNoLongerNeeded();
+                }
             }
 
             m_clientIdentifiersPerOrigin.remove(clientOrigin);
@@ -864,7 +867,7 @@ void SWServer::removeFromScopeToRegistrationMap(const ServiceWorkerRegistrationK
     m_scopeToRegistrationMap.remove(key);
 }
 
-bool SWServer::needsServerToContextConnectionForRegistrableDomain(const RegistrableDomain& registrableDomain) const
+bool SWServer::needsContextConnectionForRegistrableDomain(const RegistrableDomain& registrableDomain) const
 {
     return m_clientsByRegistrableDomain.contains(registrableDomain);
 }
@@ -931,6 +934,38 @@ void SWServer::performGetOriginsWithRegistrationsCallbacks()
     auto callbacks = WTFMove(m_getOriginsWithRegistrationsCallbacks);
     for (auto& callback : callbacks)
         callback(originsWithRegistrations);
+}
+
+void SWServer::addContextConnection(SWServerToContextConnection& connection)
+{
+    ASSERT(!m_contextConnections.contains(connection.registrableDomain()));
+
+    m_pendingConnectionDomains.remove(connection.registrableDomain());
+    m_contextConnections.add(connection.registrableDomain(), &connection);
+
+    contextConnectionCreated(connection);
+}
+
+void SWServer::removeContextConnection(SWServerToContextConnection& connection)
+{
+    auto& registrableDomain = connection.registrableDomain();
+
+    ASSERT(m_contextConnections.get(registrableDomain) == &connection);
+
+    m_contextConnections.remove(registrableDomain);
+    markAllWorkersForRegistrableDomainAsTerminated(registrableDomain);
+    if (needsContextConnectionForRegistrableDomain(registrableDomain))
+        createContextConnection(registrableDomain);
+}
+
+void SWServer::createContextConnection(const RegistrableDomain& registrableDomain)
+{
+    ASSERT(!m_contextConnections.contains(registrableDomain));
+    if (m_pendingConnectionDomains.contains(registrableDomain))
+        return;
+
+    m_pendingConnectionDomains.add(registrableDomain);
+    m_createContextConnectionCallback(registrableDomain);
 }
 
 } // namespace WebCore

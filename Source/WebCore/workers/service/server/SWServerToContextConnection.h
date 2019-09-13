@@ -32,7 +32,6 @@
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerTypes.h"
-#include <wtf/RefCounted.h>
 
 namespace PAL {
 class SessionID;
@@ -46,7 +45,8 @@ struct ServiceWorkerClientIdentifier;
 struct ServiceWorkerContextData;
 struct ServiceWorkerJobDataIdentifier;
 
-class SWServerToContextConnection : public RefCounted<SWServerToContextConnection> {
+class SWServerToContextConnection {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT virtual ~SWServerToContextConnection();
 
@@ -77,14 +77,12 @@ public:
     WEBCORE_EXPORT void claim(uint64_t requestIdentifier, ServiceWorkerIdentifier);
     WEBCORE_EXPORT void setScriptResource(ServiceWorkerIdentifier, URL&& scriptURL, String&& script, URL&& responseURL, String&& mimeType);
 
-    WEBCORE_EXPORT static SWServerToContextConnection* connectionForRegistrableDomain(const RegistrableDomain&);
-
     const RegistrableDomain& registrableDomain() const { return m_registrableDomain; }
 
-    virtual void connectionMayNoLongerBeNeeded() = 0;
+    virtual void connectionIsNoLongerNeeded() = 0;
 
 protected:
-    WEBCORE_EXPORT explicit SWServerToContextConnection(const RegistrableDomain&);
+    WEBCORE_EXPORT explicit SWServerToContextConnection(RegistrableDomain&&);
 
 private:
     SWServerToContextConnectionIdentifier m_identifier;

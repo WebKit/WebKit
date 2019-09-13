@@ -80,7 +80,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
 #if ENABLE(SERVICE_WORKER)
     EstablishSWServerConnection(PAL::SessionID sessionID)
-    EstablishSWContextConnection(WebCore::RegistrableDomain domain)
+    EstablishSWContextConnection(WebCore::RegistrableDomain domain, PAL::SessionID sessionID)
 #endif
 
     CreateNewMessagePortChannel(struct WebCore::MessagePortIdentifier port1, struct WebCore::MessagePortIdentifier port2)
