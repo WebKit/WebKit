@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
 <html>
 <head>
 <script>
@@ -7,21 +8,14 @@ if (window.testRunner) {
 	testRunner.waitUntilDone();
 }
 
-function finishTest(frame) {
+function finishTest() {
 	if (window.testRunner)
 		testRunner.notifyDone();
-}
-
-function enterPrivateBrowsing(frame) {
-	if (window.testRunner)
-		testRunner.setPrivateBrowsingEnabled_DEPRECATED(true);
-	frame.onload = finishTest;
-	frame.contentWindow.location.reload();
 }
 </script>
 </head>
 <body>
 <p>This test passes if the application cache does not load while in private browsing</p>
-<iframe src="resources/frame-for-appcache-in-private-browsing.html" onload="enterPrivateBrowsing(this)"></iframe>
+<iframe src="resources/frame-for-appcache-in-private-browsing.html" onload="finishTest()"></iframe>
 </body>
 </html>

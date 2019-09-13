@@ -8,4 +8,6 @@ This test passes if the application cache does not load while in private browsin
 --------
 Frame: '<!--frame1-->'
 --------
+Application cache loaded
+Application cache not loaded
 

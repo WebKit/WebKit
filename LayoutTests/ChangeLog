@@ -1,3 +1,18 @@
+2019-09-13  Chris Dumez  <cdumez@apple.com>
+
+        Stop using testRunner.setPrivateBrowsingEnabled_DEPRECATED() in http/tests/security/appcache-in-private-browsing.html
+        https://bugs.webkit.org/show_bug.cgi?id=201704
+
+        Reviewed by Youenn Fablet.
+
+        Stop using testRunner.setPrivateBrowsingEnabled_DEPRECATED() in http/tests/security/appcache-in-private-browsing.html
+        and use the new useEphemeralSession WKTR / DRT flag instead.
+
+        * http/tests/security/appcache-in-private-browsing-expected.txt:
+        * http/tests/security/appcache-in-private-browsing.html:
+        * http/tests/security/resources/frame-for-appcache-in-private-browsing.html:
+        * platform/mac-wk2/TestExpectations:
+
 2019-09-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Formatter: Pretty Print HTML resources (including inline <script>/<style>)
