@@ -1149,12 +1149,12 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToJSON(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = exec->thisValue();
-    JSObject* object = jsCast<JSObject*>(thisValue.toThis(exec, NotStrictMode));
+    JSObject* object = thisValue.toObject(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue timeValue = object->toPrimitive(exec, PreferNumber);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    if (timeValue.isNumber() && !(timeValue.isInt32() || std::isfinite(timeValue.asDouble())))
+    if (timeValue.isNumber() && !std::isfinite(timeValue.asNumber()))
         return JSValue::encode(jsNull());
 
     JSValue toISOValue = object->get(exec, vm.propertyNames->toISOString);

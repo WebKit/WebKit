@@ -1,3 +1,18 @@
+2019-09-13  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Date.prototype.toJSON does not execute steps 1-2
+        https://bugs.webkit.org/show_bug.cgi?id=105282
+
+        Reviewed by Ross Kirsling.
+
+        According to https://tc39.es/ecma262/#sec-built-in-function-objects, built-in methods must be
+        strict mode functions. Before this change, `this` value in Date.prototype.toJSON was resolved
+        using sloppy mode semantics, resulting in `toISOString` being called on global object if `this`
+        value equals `null` or `undefined`.
+
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncToJSON): Resolve thisValue using strict semantics and simplify std::isfinite check.
+
 2019-09-13  Mark Lam  <mark.lam@apple.com>
 
         performJITMemcpy() should do its !Gigacage assertion on exit.
