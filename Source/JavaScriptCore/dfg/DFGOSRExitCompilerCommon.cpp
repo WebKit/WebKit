@@ -262,18 +262,9 @@ static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch)
 {
     AssemblyHelpers::Jump ownerIsRememberedOrInEden = jit.barrierBranchWithoutFence(owner);
 
-    // We need these extra slots because setupArgumentsWithExecState will use poke on x86.
-#if CPU(X86)
-    jit.subPtr(MacroAssembler::TrustedImm32(sizeof(void*) * 4), MacroAssembler::stackPointerRegister);
-#endif
-
     jit.setupArguments<decltype(operationOSRWriteBarrier)>(owner);
     jit.move(MacroAssembler::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(operationOSRWriteBarrier)), scratch);
     jit.call(scratch, OperationPtrTag);
-
-#if CPU(X86)
-    jit.addPtr(MacroAssembler::TrustedImm32(sizeof(void*) * 4), MacroAssembler::stackPointerRegister);
-#endif
 
     ownerIsRememberedOrInEden.link(&jit);
 }

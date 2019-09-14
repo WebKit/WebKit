@@ -181,7 +181,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(const SlowPathC
     
     size_t currentOffset = key.offset() + sizeof(void*);
     
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86_64)
     currentOffset += sizeof(void*);
 #endif
     

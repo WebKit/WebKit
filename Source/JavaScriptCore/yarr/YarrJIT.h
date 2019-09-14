@@ -32,11 +32,7 @@
 #include "Yarr.h"
 #include "YarrPattern.h"
 
-#if CPU(X86) && !COMPILER(MSVC)
-#define YARR_CALL __attribute__ ((regparm (3)))
-#else
 #define YARR_CALL
-#endif
 
 namespace JSC {
 

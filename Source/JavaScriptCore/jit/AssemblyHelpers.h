@@ -481,7 +481,7 @@ public:
         }
     }
 
-#if CPU(X86_64) || CPU(X86)
+#if CPU(X86_64)
     static constexpr size_t prologueStackPointerDelta()
     {
         // Prologue only saves the framePointerRegister
@@ -519,7 +519,7 @@ public:
     {
         push(address);
     }
-#endif // CPU(X86_64) || CPU(X86)
+#endif // CPU(X86_64)
 
 #if CPU(ARM_THUMB2) || CPU(ARM64)
     static constexpr size_t prologueStackPointerDelta()
@@ -1627,12 +1627,6 @@ public:
     {
         ASSERT(scratchGPR != resultGPR);
         Jump done;
-        if (isX86() && !isX86_64()) {
-            Jump nonZero = branchTest32(NonZero, vectorLengthGPR);
-            move(TrustedImm32(0), resultGPR);
-            done = jump();
-            nonZero.link(this);
-        }
         // If vectorLength == 0 then clz will return 32 on both ARM and x86. On 64-bit systems, we can then do a 64-bit right shift on a 32-bit -1 to get a 0 mask for zero vectorLength. On 32-bit ARM, shift masks with 0xff, which means it will still create a 0 mask.
         countLeadingZeros32(vectorLengthGPR, scratchGPR);
         move(TrustedImm32(-1), resultGPR);

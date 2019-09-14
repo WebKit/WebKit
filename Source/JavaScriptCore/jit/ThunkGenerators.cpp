@@ -268,24 +268,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
     jit.emitPutToCallFrameHeader(0, CallFrameSlot::codeBlock);
     jit.storePtr(JSInterfaceJIT::callFrameRegister, &vm.topCallFrame);
 
-#if CPU(X86)
-    // Calling convention:      f(ecx, edx, ...);
-    // Host function signature: f(ExecState*);
-    jit.move(JSInterfaceJIT::callFrameRegister, X86Registers::ecx);
-
-    jit.subPtr(JSInterfaceJIT::TrustedImm32(8), JSInterfaceJIT::stackPointerRegister); // Align stack after prologue.
-
-    // call the function
-    jit.emitGetFromCallFrameHeaderPtr(CallFrameSlot::callee, JSInterfaceJIT::regT1);
-    if (thunkFunctionType == ThunkFunctionType::JSFunction) {
-        jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::regT1, JSFunction::offsetOfExecutable()), JSInterfaceJIT::regT1);
-        jit.call(JSInterfaceJIT::Address(JSInterfaceJIT::regT1, executableOffsetToFunction), JSEntryPtrTag);
-    } else
-        jit.call(JSInterfaceJIT::Address(JSInterfaceJIT::regT1, InternalFunction::offsetOfNativeFunctionFor(kind)), JSEntryPtrTag);
-
-    jit.addPtr(JSInterfaceJIT::TrustedImm32(8), JSInterfaceJIT::stackPointerRegister);
-
-#elif CPU(X86_64)
+#if CPU(X86_64)
 #if !OS(WINDOWS)
     // Calling convention:      f(edi, esi, edx, ecx, ...);
     // Host function signature: f(ExecState*);
@@ -382,22 +365,14 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
     jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
     jit.storePtr(JSInterfaceJIT::callFrameRegister, &vm.topCallFrame);
 
-#if CPU(X86) && USE(JSVALUE32_64)
-    jit.subPtr(JSInterfaceJIT::TrustedImm32(4), JSInterfaceJIT::stackPointerRegister);
-    jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::regT0);
-    jit.push(JSInterfaceJIT::regT0);
-#else
 #if OS(WINDOWS)
     // Allocate space on stack for the 4 parameter registers.
     jit.subPtr(JSInterfaceJIT::TrustedImm32(4 * sizeof(int64_t)), JSInterfaceJIT::stackPointerRegister);
 #endif
     jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::argumentGPR0);
-#endif
     jit.move(JSInterfaceJIT::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(operationVMHandleException)), JSInterfaceJIT::regT3);
     jit.call(JSInterfaceJIT::regT3, OperationPtrTag);
-#if CPU(X86) && USE(JSVALUE32_64)
-    jit.addPtr(JSInterfaceJIT::TrustedImm32(8), JSInterfaceJIT::stackPointerRegister);
-#elif OS(WINDOWS)
+#if OS(WINDOWS)
     jit.addPtr(JSInterfaceJIT::TrustedImm32(4 * sizeof(int64_t)), JSInterfaceJIT::stackPointerRegister);
 #endif
 
@@ -523,9 +498,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM& vm)
 #  endif
     jit.ret();
 #else // USE(JSVALUE64) section above, USE(JSVALUE32_64) section below.
-#  if CPU(X86)
-    jit.pop(JSInterfaceJIT::regT4);
-#  endif
     jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::regT3);
     jit.load32(JSInterfaceJIT::addressFor(CallFrameSlot::argumentCount), JSInterfaceJIT::argumentGPR2);
     jit.add32(JSInterfaceJIT::TrustedImm32(CallFrame::headerSizeInRegisters), JSInterfaceJIT::argumentGPR2);
@@ -580,9 +552,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM& vm)
 
     done.link(&jit);
 
-#  if CPU(X86)
-    jit.push(JSInterfaceJIT::regT4);
-#  endif
     jit.ret();
 #endif // End of USE(JSVALUE32_64) section.
 

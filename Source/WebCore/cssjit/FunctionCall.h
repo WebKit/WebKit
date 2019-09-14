@@ -74,7 +74,7 @@ public:
 
     JSC::MacroAssembler::Jump callAndBranchOnBooleanReturnValue(JSC::MacroAssembler::ResultCondition condition)
     {
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86_64)
         return callAndBranchOnCondition(condition, JSC::MacroAssembler::TrustedImm32(0xff));
 #elif CPU(ARM64) || CPU(ARM)
         return callAndBranchOnCondition(condition, JSC::MacroAssembler::TrustedImm32(-1));
@@ -97,7 +97,7 @@ private:
         JSC::MacroAssembler::RegisterID a = m_firstArgument;
         JSC::MacroAssembler::RegisterID b = m_secondArgument;
         // x86 can swap without a temporary register. On other architectures, we need allocate a temporary register to switch the values.
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86_64)
         m_assembler.swap(a, b);
 #elif CPU(ARM64) || CPU(ARM_THUMB2)
         m_assembler.move(a, tempRegister);

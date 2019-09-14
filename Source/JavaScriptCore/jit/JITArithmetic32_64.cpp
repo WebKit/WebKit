@@ -334,53 +334,15 @@ void JIT::emitBinaryDoubleOp(const Instruction *instruction, OperandTypes types,
 
 void JIT::emit_op_mod(const Instruction* currentInstruction)
 {
-#if CPU(X86)
-    auto bytecode = instruction->as<OpMod>();
-    int dst = bytecode.m_dst.offset();
-    int op1 = bytecode.m_lhs.offset();
-    int op2 = bytecode.m_rhs.offset();
-
-    // Make sure registers are correct for x86 IDIV instructions.
-    ASSERT(regT0 == X86Registers::eax);
-    ASSERT(regT1 == X86Registers::edx);
-    ASSERT(regT2 == X86Registers::ecx);
-    ASSERT(regT3 == X86Registers::ebx);
-
-    emitLoad2(op1, regT0, regT3, op2, regT1, regT2);
-    addSlowCase(branchIfNotInt32(regT1));
-    addSlowCase(branchIfNotInt32(regT0));
-
-    move(regT3, regT0);
-    addSlowCase(branchTest32(Zero, regT2));
-    Jump denominatorNotNeg1 = branch32(NotEqual, regT2, TrustedImm32(-1));
-    addSlowCase(branch32(Equal, regT0, TrustedImm32(-2147483647-1)));
-    denominatorNotNeg1.link(this);
-    x86ConvertToDoubleWord32();
-    x86Div32(regT2);
-    Jump numeratorPositive = branch32(GreaterThanOrEqual, regT3, TrustedImm32(0));
-    addSlowCase(branchTest32(Zero, regT1));
-    numeratorPositive.link(this);
-    emitStoreInt32(dst, regT1, (op1 == dst || op2 == dst));
-#else
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_mod);
     slowPathCall.call();
-#endif
 }
 
-void JIT::emitSlow_op_mod(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_mod(const Instruction*, Vector<SlowCaseEntry>::iterator&)
 {
-#if CPU(X86)
-    linkAllSlowCases(iter);
-
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_mod);
-    slowPathCall.call();
-#else
-    UNUSED_PARAM(currentInstruction);
-    UNUSED_PARAM(iter);
     // We would have really useful assertions here if it wasn't for the compiler's
     // insistence on attribute noreturn.
     // RELEASE_ASSERT_NOT_REACHED();
-#endif
 }
 
 /* ------------------------------ END: OP_MOD ------------------------------ */

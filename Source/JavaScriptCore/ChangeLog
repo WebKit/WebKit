@@ -1,3 +1,74 @@
+2019-09-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Retire x86 32bit JIT support
+        https://bugs.webkit.org/show_bug.cgi?id=201790
+
+        Reviewed by Mark Lam.
+
+        Now, Xcode no longer has ability to build 32bit binary, so we cannot even test it on macOS.
+        Fedora stops shipping x86 32bit kernel. Our x86/x86_64 JIT requires SSE2, and so such relatively modern CPUs
+        can use JIT by switching x86 to x86_64. And these CPUs are modern enough to run CLoop at high speed.
+        WebKit already disabled x86 JIT by default while the implementation exists. So literary, it is not tested.
+
+        While x86 32bit becomes less useful, x86 32bit JIT backend is very complicated and is being a major maintenance burden.
+        This is due to very few # of registers. Which scatters a lot of isX86 / CPU(X86) in Baseline, DFG, and Yarr.
+
+        This patch retires x86 JIT support from JavaScriptCore and CSS JIT. We still keep MacroAssembler and GPRInfo / FPRInfo,
+        MachineContext information since they are useful even though JIT is not supported.
+
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::refine const):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileExceptionHandlers):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::osrWriteBarrier):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithDiv):
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+        (JSC::DFG::SpeculativeJIT::compileCreateRest):
+        (JSC::DFG::SpeculativeJIT::compileGetDirectPname):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::slowPathCallThunkGenerator):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::callExceptionFuzz):
+        (JSC::AssemblyHelpers::debugCall):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitComputeButterflyIndexingMask):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsImpl):
+        (JSC::CCallHelpers::prepareForTailCallSlow):
+        * jit/CallFrameShuffler.cpp:
+        (JSC::CallFrameShuffler::prepareForTailCall):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::emitSlow_op_mod):
+        * jit/SlowPathCall.h:
+        (JSC::JITSlowPathCall::call):
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+        (JSC::arityFixupGenerator):
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::emitModOrDiv):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generateDotStarEnclosure):
+        (JSC::Yarr::YarrGenerator::generateEnter):
+        (JSC::Yarr::YarrGenerator::generateReturn):
+        (JSC::Yarr::YarrGenerator::compile):
+        * yarr/YarrJIT.h:
+
 2019-09-13  Mark Lam  <mark.lam@apple.com>
 
         jsc -d stopped working.

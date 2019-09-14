@@ -250,11 +250,7 @@ void AssemblyHelpers::callExceptionFuzz(VM& vm)
     }
 
     // Set up one argument.
-#if CPU(X86)
-    poke(GPRInfo::callFrameRegister, 0);
-#else
     move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-#endif
     move(TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(operationExceptionFuzz)), GPRInfo::nonPreservedNonReturnGPR);
     call(GPRInfo::nonPreservedNonReturnGPR, OperationPtrTag);
 
@@ -932,11 +928,6 @@ void AssemblyHelpers::debugCall(VM& vm, V_DebugOperation_EPP function, void* arg
     move(TrustedImmPtr(argument), GPRInfo::argumentGPR1);
     move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     GPRReg scratch = selectScratchGPR(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2);
-#elif CPU(X86)
-    poke(GPRInfo::callFrameRegister, 0);
-    poke(TrustedImmPtr(argument), 1);
-    poke(TrustedImmPtr(buffer), 2);
-    GPRReg scratch = GPRInfo::regT0;
 #else
 #error "JIT not supported on this platform."
 #endif

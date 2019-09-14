@@ -76,11 +76,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
     jit.storePtr(MacroAssembler::TrustedImmPtr(scratchSize), MacroAssembler::Address(GPRInfo::regT0));
 
     // Set up one argument.
-#if CPU(X86)
-    jit.poke(GPRInfo::callFrameRegister, 0);
-#else
     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-#endif
 
     MacroAssembler::Call functionCall = jit.call(OperationPtrTag);
 

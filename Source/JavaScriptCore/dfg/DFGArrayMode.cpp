@@ -303,8 +303,6 @@ ArrayMode ArrayMode::refine(
                     return ArrayMode(type, Array::NonArray, Array::OutOfBounds, Array::AsIs, action());
                 return ArrayMode(Array::Generic, action());
             }
-            if (isX86() && is32Bit() && isScopedArgumentsSpeculation(base))
-                return ArrayMode(Array::Generic, action());
             return withType(type);
         }
         

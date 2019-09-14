@@ -945,12 +945,6 @@ void JIT::privateCompileExceptionHandlers()
 
         move(TrustedImmPtr(&vm()), GPRInfo::argumentGPR0);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
-
-#if CPU(X86)
-        // FIXME: should use the call abstraction, but this is currently in the SpeculativeJIT layer!
-        poke(GPRInfo::argumentGPR0);
-        poke(GPRInfo::argumentGPR1, 1);
-#endif
         m_calls.append(CallRecord(call(OperationPtrTag), std::numeric_limits<unsigned>::max(), FunctionPtr<OperationPtrTag>(lookupExceptionHandlerFromCallerFrame)));
         jumpToExceptionHandler(vm());
     }
@@ -964,12 +958,6 @@ void JIT::privateCompileExceptionHandlers()
         // lookupExceptionHandler is passed two arguments, the VM and the exec (the CallFrame*).
         move(TrustedImmPtr(&vm()), GPRInfo::argumentGPR0);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
-
-#if CPU(X86)
-        // FIXME: should use the call abstraction, but this is currently in the SpeculativeJIT layer!
-        poke(GPRInfo::argumentGPR0);
-        poke(GPRInfo::argumentGPR1, 1);
-#endif
         m_calls.append(CallRecord(call(OperationPtrTag), std::numeric_limits<unsigned>::max(), FunctionPtr<OperationPtrTag>(lookupExceptionHandler)));
         jumpToExceptionHandler(vm());
     }

@@ -49,11 +49,7 @@ public:
             m_jit->sampleInstruction(&m_jit->m_codeBlock->instructions()[m_jit->m_bytecodeOffset], true);
 #endif
         m_jit->updateTopCallFrame();
-#if CPU(X86) && USE(JSVALUE32_64)
-        m_jit->addPtr(MacroAssembler::TrustedImm32(-8), MacroAssembler::stackPointerRegister);
-        m_jit->push(JIT::TrustedImm32(JIT::TrustedImmPtr(m_pc)));
-        m_jit->push(JIT::callFrameRegister);
-#elif CPU(X86_64) && OS(WINDOWS)
+#if CPU(X86_64) && OS(WINDOWS)
         m_jit->addPtr(MacroAssembler::TrustedImm32(-16), MacroAssembler::stackPointerRegister);
         m_jit->move(MacroAssembler::stackPointerRegister, JIT::argumentGPR0);
         m_jit->move(JIT::callFrameRegister, JIT::argumentGPR1);
@@ -65,9 +61,7 @@ public:
         JIT::Call call = m_jit->call(OperationPtrTag);
         m_jit->m_calls.append(CallRecord(call, m_jit->m_bytecodeOffset, FunctionPtr<OperationPtrTag>(m_slowPathFunction)));
 
-#if CPU(X86) && USE(JSVALUE32_64)
-        m_jit->addPtr(MacroAssembler::TrustedImm32(16), MacroAssembler::stackPointerRegister);
-#elif CPU(X86_64) && OS(WINDOWS)
+#if CPU(X86_64) && OS(WINDOWS)
         m_jit->pop(JIT::regT0); // vPC
         m_jit->pop(JIT::regT1); // callFrame register
 #endif

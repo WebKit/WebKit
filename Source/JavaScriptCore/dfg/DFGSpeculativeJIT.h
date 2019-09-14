@@ -1044,17 +1044,7 @@ public:
 #endif
     }
 
-#if CPU(X86)
-    JITCompiler::Call appendCallSetResult(const FunctionPtr<CFunctionPtrTag> function, FPRReg result)
-    {
-        JITCompiler::Call call = appendCall(function);
-        if (result != InvalidFPRReg) {
-            m_jit.assembler().fstpl(0, JITCompiler::stackPointerRegister);
-            m_jit.loadDouble(JITCompiler::stackPointerRegister, result);
-        }
-        return call;
-    }
-#elif CPU(ARM_THUMB2) && !CPU(ARM_HARDFP)
+#if CPU(ARM_THUMB2) && !CPU(ARM_HARDFP)
     JITCompiler::Call appendCallSetResult(const FunctionPtr<CFunctionPtrTag> function, FPRReg result)
     {
         JITCompiler::Call call = appendCall(function);

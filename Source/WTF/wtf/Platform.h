@@ -809,7 +809,7 @@
 /* If possible, try to enable a disassembler. This is optional. We proceed in two
    steps: first we try to find some disassembler that we can use, and then we
    decide if the high-level disassembler API can be enabled. */
-#if !defined(USE_UDIS86) && ENABLE(JIT) && (CPU(X86) || CPU(X86_64)) && !USE(CAPSTONE)
+#if !defined(USE_UDIS86) && ENABLE(JIT) && CPU(X86_64) && !USE(CAPSTONE)
 #define USE_UDIS86 1
 #endif
 
@@ -823,7 +823,7 @@
 
 #if !defined(ENABLE_DFG_JIT) && ENABLE(JIT)
 /* Enable the DFG JIT on X86 and X86_64. */
-#if (CPU(X86) || CPU(X86_64)) && (OS(DARWIN) || OS(LINUX) || OS(FREEBSD) || OS(HURD) || OS(WINDOWS))
+#if CPU(X86_64) && (OS(DARWIN) || OS(LINUX) || OS(FREEBSD) || OS(HURD) || OS(WINDOWS))
 #define ENABLE_DFG_JIT 1
 #endif
 /* Enable the DFG JIT on ARMv7.  Only tested on iOS, Linux, and FreeBSD. */
@@ -1047,7 +1047,7 @@
 #endif
 #endif
 
-#if ENABLE(DFG_JIT) && HAVE(MACHINE_CONTEXT) && (CPU(X86) || CPU(X86_64) || CPU(ARM64))
+#if ENABLE(DFG_JIT) && HAVE(MACHINE_CONTEXT) && (CPU(X86_64) || CPU(ARM64))
 #define ENABLE_SIGNAL_BASED_VM_TRAPS 1
 #endif
 

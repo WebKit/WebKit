@@ -377,19 +377,7 @@ void CallFrameShuffler::prepareForTailCall()
     m_oldFrameBase = MacroAssembler::stackPointerRegister;
     m_oldFrameOffset = numLocals();
     m_newFrameBase = acquireGPR();
-#if CPU(X86)
-    // We load the frame pointer manually, but we need to ask the
-    // algorithm to move the return PC for us (it'd probably
-    // require a write to the danger zone). Since it'd be awkward
-    // to ask for half a value move, we ask that the whole thing
-    // be moved for us.
-    addNew(VirtualRegister { 0 },
-        ValueRecovery::displacedInJSStack(VirtualRegister(0), DataFormatJS));
-
-    // sp will point to head0 and we will move it up half a slot
-    // manually
-    m_newFrameOffset = 0;
-#elif CPU(ARM_THUMB2) || CPU(MIPS)
+#if CPU(ARM_THUMB2) || CPU(MIPS)
     // We load the frame pointer and link register
     // manually. We could ask the algorithm to load them for us,
     // and it would allow us to use the link register as an extra
@@ -475,12 +463,6 @@ void CallFrameShuffler::prepareForTailCall()
         dataLog("Preparing frame for tail call:\n", *this);
 
     prepareAny();
-
-#if CPU(X86)
-    if (verbose)
-        dataLog("  Simulating pop of the call frame register\n");
-    m_jit.addPtr(MacroAssembler::TrustedImm32(sizeof(void*)), MacroAssembler::stackPointerRegister);
-#endif
 
     if (verbose)
         dataLog("Ready for tail call!\n");

@@ -2282,13 +2282,6 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
             
         case ArrayPushIntrinsic: {
-#if USE(JSVALUE32_64)
-            if (isX86()) {
-                if (argumentCountIncludingThis > 2)
-                    return false;
-            }
-#endif
-
             if (static_cast<unsigned>(argumentCountIncludingThis) >= MIN_SPARSE_ARRAY_INDEX)
                 return false;
             
@@ -2316,12 +2309,6 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
 
         case ArraySliceIntrinsic: {
-#if USE(JSVALUE32_64)
-            if (isX86()) {
-                // There aren't enough registers for this to be done easily.
-                return false;
-            }
-#endif
             if (argumentCountIncludingThis < 1)
                 return false;
 
@@ -5426,14 +5413,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpStrcat>();
             int startOperand = bytecode.m_src.offset();
             int numOperands = bytecode.m_count;
-#if CPU(X86)
-            // X86 doesn't have enough registers to compile MakeRope with three arguments. The
-            // StrCat we emit here may be turned into a MakeRope. Rather than try to be clever,
-            // we just make StrCat dumber on this processor.
-            const unsigned maxArguments = 2;
-#else
             const unsigned maxArguments = 3;
-#endif
             Node* operands[AdjacencyList::Size];
             unsigned indexInOperands = 0;
             for (unsigned i = 0; i < AdjacencyList::Size; ++i)

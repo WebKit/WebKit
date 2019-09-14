@@ -412,43 +412,7 @@ private:
     }
 
 #else // USE(JSVALUE64)
-#if CPU(X86)
-
-    template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned extraPoke, typename... Args>
-    ALWAYS_INLINE void setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, extraGPRArgs, extraPoke> argSourceRegs, FPRReg arg, Args... args)
-    {
-        static_assert(std::is_same<CURRENT_ARGUMENT_TYPE, double>::value, "We should only be passing FPRRegs to a double");
-        pokeForArgument(arg, numGPRArgs, numFPRArgs, numCrossSources, extraGPRArgs, extraPoke);
-        setupArgumentsImpl<OperationType>(argSourceRegs.addStackArg(arg).addPoke(), args...);
-    }
-
-    template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned extraPoke, typename... Args>
-    ALWAYS_INLINE std::enable_if_t<sizeof(CURRENT_ARGUMENT_TYPE) <= 4>
-    setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, extraGPRArgs, extraPoke> argSourceRegs, GPRReg arg, Args... args)
-    {
-        pokeForArgument(arg, numGPRArgs, numFPRArgs, numCrossSources, extraGPRArgs, extraPoke);
-        setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg(), args...);
-    }
-
-    template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned extraPoke, typename... Args>
-    ALWAYS_INLINE std::enable_if_t<std::is_same<CURRENT_ARGUMENT_TYPE, EncodedJSValue>::value>
-    setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, extraGPRArgs, extraPoke> argSourceRegs, CellValue payload, Args... args)
-    {
-        pokeForArgument(payload.gpr(), numGPRArgs, numFPRArgs, numCrossSources, extraGPRArgs, extraPoke);
-        pokeForArgument(TrustedImm32(JSValue::CellTag), numGPRArgs, numFPRArgs, numCrossSources, extraGPRArgs, extraPoke + 1);
-        setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg().addPoke(), args...);
-    }
-
-    template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned extraPoke, typename... Args>
-    ALWAYS_INLINE std::enable_if_t<std::is_same<CURRENT_ARGUMENT_TYPE, EncodedJSValue>::value>
-    setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, extraGPRArgs, extraPoke> argSourceRegs, JSValueRegs arg, Args... args)
-    {
-        pokeForArgument(arg.payloadGPR(), numGPRArgs, numFPRArgs, numCrossSources, extraGPRArgs, extraPoke);
-        pokeForArgument(arg.tagGPR(), numGPRArgs, numFPRArgs, numCrossSources, extraGPRArgs, extraPoke + 1);
-        setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg().addPoke(), args...);
-    }
-
-#elif CPU(ARM_THUMB2) || CPU(MIPS)
+#if CPU(ARM_THUMB2) || CPU(MIPS)
 
     template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned extraPoke, typename... Args>
     void setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, extraGPRArgs, extraPoke> argSourceRegs, FPRReg arg, Args... args)
@@ -669,7 +633,7 @@ private:
     ALWAYS_INLINE void setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, extraGPRArgs, extraPoke> argSourceRegs)
     {
         static_assert(FunctionTraits<OperationType>::arity == numGPRArgs + numFPRArgs, "One last sanity check");
-#if USE(JSVALUE64) || CPU(X86)
+#if USE(JSVALUE64)
         static_assert(FunctionTraits<OperationType>::cCallArity() == numGPRArgs + numFPRArgs + extraPoke, "Check the CCall arity");
 #endif
         setupStubArgs<numGPRSources, GPRReg>(clampArrayToSize<numGPRSources, GPRReg>(argSourceRegs.gprDestinations), clampArrayToSize<numGPRSources, GPRReg>(argSourceRegs.gprSources));
@@ -812,7 +776,7 @@ public:
 #elif CPU(MIPS)
         loadPtr(Address(framePointerRegister, sizeof(void*)), returnAddressRegister);
         subPtr(TrustedImm32(2 * sizeof(void*)), newFrameSizeGPR);
-#elif CPU(X86) || CPU(X86_64)
+#elif CPU(X86_64)
         loadPtr(Address(framePointerRegister, sizeof(void*)), tempGPR);
         push(tempGPR);
         subPtr(TrustedImm32(sizeof(void*)), newFrameSizeGPR);

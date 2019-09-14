@@ -2344,7 +2344,7 @@ void AirIRGenerator::emitModOrDiv(bool isDiv, ExpressionType lhs, ExpressionType
         return;
     }
 
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86_64)
     Tmp eax(X86Registers::eax);
     Tmp edx(X86Registers::edx);
 

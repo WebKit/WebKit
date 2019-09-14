@@ -154,11 +154,6 @@ void JITCompiler::compileExceptionHandlers()
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
         addPtr(TrustedImm32(m_graph.stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, stackPointerRegister);
 
-#if CPU(X86)
-        // FIXME: should use the call abstraction, but this is currently in the SpeculativeJIT layer!
-        poke(GPRInfo::argumentGPR0);
-        poke(GPRInfo::argumentGPR1, 1);
-#endif
         m_calls.append(CallLinkRecord(call(OperationPtrTag), FunctionPtr<OperationPtrTag>(lookupExceptionHandlerFromCallerFrame)));
 
         jumpToExceptionHandler(vm());
@@ -173,11 +168,6 @@ void JITCompiler::compileExceptionHandlers()
         move(TrustedImmPtr(&vm()), GPRInfo::argumentGPR0);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
 
-#if CPU(X86)
-        // FIXME: should use the call abstraction, but this is currently in the SpeculativeJIT layer!
-        poke(GPRInfo::argumentGPR0);
-        poke(GPRInfo::argumentGPR1, 1);
-#endif
         m_calls.append(CallLinkRecord(call(OperationPtrTag), FunctionPtr<OperationPtrTag>(lookupExceptionHandler)));
 
         jumpToExceptionHandler(vm());

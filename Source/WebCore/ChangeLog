@@ -1,3 +1,14 @@
+2019-09-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Retire x86 32bit JIT support
+        https://bugs.webkit.org/show_bug.cgi?id=201790
+
+        Reviewed by Mark Lam.
+
+        * cssjit/FunctionCall.h:
+        (WebCore::FunctionCall::callAndBranchOnBooleanReturnValue):
+        (WebCore::FunctionCall::swapArguments):
+
 2019-09-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] FormattingContext::Geometry::inFlowPositionedPositionOffset should not read containing block's width

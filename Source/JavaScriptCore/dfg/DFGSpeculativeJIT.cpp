@@ -5099,7 +5099,7 @@ void SpeculativeJIT::compileArithDiv(Node* node)
 {
     switch (node->binaryUseKind()) {
     case Int32Use: {
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86_64)
         SpeculateInt32Operand op1(this, node->child1());
         SpeculateInt32Operand op2(this, node->child2());
         GPRTemporary eax(this, X86Registers::eax);
@@ -5362,7 +5362,7 @@ void SpeculativeJIT::compileArithMod(Node* node)
             }
         }
         
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86_64)
         if (node->child2()->isInt32Constant()) {
             int32_t divisor = node->child2()->asInt32();
             if (divisor && divisor != -1) {
@@ -5403,7 +5403,7 @@ void SpeculativeJIT::compileArithMod(Node* node)
 #endif
 
         SpeculateInt32Operand op2(this, node->child2());
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86_64)
         GPRTemporary eax(this, X86Registers::eax);
         GPRTemporary edx(this, X86Registers::edx);
         GPRReg op1GPR = op1.gpr();
@@ -7780,7 +7780,6 @@ void SpeculativeJIT::compileCreateRest(Node* node)
 {
     ASSERT(node->op() == CreateRest);
 
-#if !CPU(X86)
     if (m_jit.graph().isWatchingHavingABadTimeWatchpoint(node)) {
         SpeculateStrictInt32Operand arrayLength(this, node->child1());
         GPRTemporary arrayResult(this);
@@ -7825,7 +7824,6 @@ void SpeculativeJIT::compileCreateRest(Node* node)
         cellResult(arrayResultGPR, node);
         return;
     }
-#endif // !CPU(X86)
 
     SpeculateStrictInt32Operand arrayLength(this, node->child1());
     GPRTemporary argumentsStart(this);
@@ -13389,16 +13387,6 @@ void SpeculativeJIT::compileGetDirectPname(Node* node)
     GPRReg baseGPR = base.gpr();
     GPRReg propertyGPR = property.gpr();
 
-#if CPU(X86)
-    // Not enough registers on X86 for this code, so always use the slow path.
-    speculate(node, indexEdge);
-    flushRegisters();
-    JSValueRegsFlushedCallResult result(this);
-    JSValueRegs resultRegs = result.regs();
-    callOperation(operationGetByValCell, resultRegs, baseGPR, CCallHelpers::CellValue(propertyGPR));
-    m_jit.exceptionCheck();
-    jsValueResult(resultRegs, node);
-#else
     Edge& enumeratorEdge = m_jit.graph().varArgChild(node, 3);
     SpeculateStrictInt32Operand index(this, indexEdge);
     SpeculateCellOperand enumerator(this, enumeratorEdge);
@@ -13445,7 +13433,6 @@ void SpeculativeJIT::compileGetDirectPname(Node* node)
     addSlowPathGenerator(slowPathCall(slowPath, this, operationGetByValCell, resultRegs, baseGPR, CCallHelpers::CellValue(propertyGPR)));
 
     jsValueResult(resultRegs, node);
-#endif
 }
 
 void SpeculativeJIT::compileExtractCatchLocal(Node* node)

@@ -864,9 +864,6 @@ void SpeculativeJIT::emitCall(Node* node)
         JITCompiler::Jump done = m_jit.jump();
         
         JITCompiler::Label slowPath = m_jit.label();
-        if (isX86())
-            m_jit.pop(JITCompiler::selectScratchGPR(calleePayloadGPR));
-
         callOperation(operationLinkDirectCall, info, calleePayloadGPR);
         m_jit.exceptionCheck();
         m_jit.jump().linkTo(mainPath, &m_jit);
@@ -2707,47 +2704,6 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case PutByValWithThis: {
-#if CPU(X86)
-        // We don't have enough registers on X86 to do this
-        // without setting up the call frame incrementally.
-        unsigned index = 0;
-        m_jit.poke(GPRInfo::callFrameRegister, index++);
-
-        {
-            JSValueOperand base(this, m_jit.graph().varArgChild(node, 0));
-            GPRReg baseTag = base.tagGPR();
-            GPRReg basePayload = base.payloadGPR();
-
-            JSValueOperand thisValue(this, m_jit.graph().varArgChild(node, 1));
-            GPRReg thisValueTag = thisValue.tagGPR();
-            GPRReg thisValuePayload = thisValue.payloadGPR();
-
-            JSValueOperand property(this, m_jit.graph().varArgChild(node, 2));
-            GPRReg propertyTag = property.tagGPR();
-            GPRReg propertyPayload = property.payloadGPR();
-
-            m_jit.poke(basePayload, index++);
-            m_jit.poke(baseTag, index++);
-
-            m_jit.poke(thisValuePayload, index++);
-            m_jit.poke(thisValueTag, index++);
-
-            m_jit.poke(propertyPayload, index++);
-            m_jit.poke(propertyTag, index++);
-
-            flushRegisters();
-        }
-
-        JSValueOperand value(this, m_jit.graph().varArgChild(node, 3));
-        GPRReg valueTag = value.tagGPR();
-        GPRReg valuePayload = value.payloadGPR();
-        m_jit.poke(valuePayload, index++);
-        m_jit.poke(valueTag, index++);
-
-        flushRegisters();
-        appendCall(m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValWithThisStrict : operationPutByValWithThis);
-        m_jit.exceptionCheck();
-#else
         static_assert(GPRInfo::numberOfRegisters >= 8, "We are assuming we have enough registers to make this call without incrementally setting up the arguments.");
 
         JSValueOperand base(this, m_jit.graph().varArgChild(node, 0));
@@ -2766,7 +2722,6 @@ void SpeculativeJIT::compile(Node* node)
         callOperation(m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValWithThisStrict : operationPutByValWithThis,
             NoResult, baseRegs, thisRegs, propertyRegs, valueRegs);
         m_jit.exceptionCheck();
-#endif // CPU(X86)
 
         noResult(node);
         break;
@@ -3866,22 +3821,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case HasOwnProperty: {
-#if CPU(X86)
-        ASSERT(node->child2().useKind() == UntypedUse);
-        SpeculateCellOperand object(this, node->child1());
-        JSValueOperand key(this, node->child2());
-        GPRTemporary result(this, Reuse, object);
-
-        JSValueRegs keyRegs = key.jsValueRegs();
-        GPRReg objectGPR = object.gpr();
-        GPRReg resultGPR = result.gpr();
-
-        speculateObject(node->child1());
-
-        flushRegisters();
-        callOperation(operationHasOwnProperty, resultGPR, objectGPR, keyRegs);
-        booleanResult(resultGPR, node);
-#else
         SpeculateCellOperand object(this, node->child1());
         GPRTemporary uniquedStringImpl(this);
         GPRTemporary temp(this);
@@ -3980,7 +3919,6 @@ void SpeculativeJIT::compile(Node* node)
 
         done.link(&m_jit);
         booleanResult(resultGPR, node);
-#endif // CPU(X86)
         break;
     }
 
