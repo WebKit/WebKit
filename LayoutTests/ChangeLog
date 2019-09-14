@@ -1,3 +1,12 @@
+2019-09-13  Russell Epstein  <repstein@apple.com>
+
+        Layout Test webgl/2.0.0/conformance/glsl/misc/shaders-with-invariance.html is failing on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=201784
+
+        Unreviewed Test Gardening.
+
+        * platform/ios/TestExpectations: Marked Test as Failing.
+
 2019-09-13  Ali Juma  <ajuma@chromium.org>
 
         IntersectionObserverEntry#intersectionRatio can be larger than 1

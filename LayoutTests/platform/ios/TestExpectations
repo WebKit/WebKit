@@ -3343,3 +3343,6 @@ media/audio-concurrent-supported.html [ Pass Failure ]
 webkit.org/b/181837 [ Release ] imported/w3c/web-platform-tests/service-workers/service-worker/ready.https.html [ Pass Failure ]
 
 webkit.org/b/201190 imported/w3c/web-platform-tests/service-workers/service-worker/registration-mime-types.https.html [ Pass Failure ]
+
+webkit.org/b/201784 webgl/2.0.0/conformance/glsl/misc/shaders-with-invariance.html [ Failure ]
+
