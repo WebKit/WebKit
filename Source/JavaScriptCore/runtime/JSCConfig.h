@@ -34,7 +34,7 @@ namespace JSC {
 class ExecutableAllocator;
 class FixedVMPoolExecutableAllocator;
 
-#if CPU(ARM64)
+#if CPU(ARM64) || PLATFORM(WATCHOS)
 constexpr size_t PageSize = 16 * KB;
 #else
 constexpr size_t PageSize = 4 * KB;

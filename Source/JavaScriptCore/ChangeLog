@@ -1,3 +1,13 @@
+2019-09-13  Mark Lam  <mark.lam@apple.com>
+
+        watchOS requires PageSize alignment of 16K for JSC::Config.
+        https://bugs.webkit.org/show_bug.cgi?id=201786
+        <rdar://problem/55357890>
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/JSCConfig.h:
+
 2019-09-13  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, follow-up fix after r249842
