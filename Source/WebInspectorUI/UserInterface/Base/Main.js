@@ -297,6 +297,9 @@ WI.contentLoaded = function()
     document.body.classList.add(WI.sharedApp.debuggableType);
     document.body.setAttribute("dir", WI.resolvedLayoutDirection());
 
+    WI.layoutMeasurementContainer = document.body.appendChild(document.createElement("div"));
+    WI.layoutMeasurementContainer.id = "layout-measurement-container";
+
     WI.settings.showJavaScriptTypeInformation.addEventListener(WI.Setting.Event.Changed, WI._showJavaScriptTypeInformationSettingChanged);
     WI.settings.enableControlFlowProfiler.addEventListener(WI.Setting.Event.Changed, WI._enableControlFlowProfilerSettingChanged);
     WI.settings.resourceCachingDisabled.addEventListener(WI.Setting.Event.Changed, WI._resourceCachingDisabledSettingChanged);
@@ -2781,6 +2784,14 @@ WI._enableControlFlowProfilerSettingChanged = function(event)
 WI._resourceCachingDisabledSettingChanged = function(event)
 {
     NetworkAgent.setResourceCachingDisabled(WI.settings.resourceCachingDisabled.value);
+};
+
+WI.measureElement = function(element)
+{
+    WI.layoutMeasurementContainer.appendChild(element.cloneNode(true));
+    let rect = WI.layoutMeasurementContainer.getBoundingClientRect();
+    WI.layoutMeasurementContainer.removeChildren();
+    return rect;
 };
 
 WI.elementDragStart = function(element, dividerDrag, elementDragEnd, event, cursor, eventTarget)

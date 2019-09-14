@@ -113,18 +113,10 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
 
     show(anchorBounds)
     {
-        let scrollTop = this._containerElement.scrollTop;
-
         // Measure the container so we can know the intrinsic size of the items.
-        this._containerElement.style.position = "absolute";
-        document.body.appendChild(this._containerElement);
-
-        let intrinsicSize = this._containerElement.getBoundingClientRect();
+        let intrinsicSize = WI.measureElement(this._containerElement);
         let containerWidth = Math.ceil(intrinsicSize.width);
         let containerHeight = Math.ceil(intrinsicSize.height);
-
-        this._containerElement.removeAttribute("style");
-        this._element.appendChild(this._containerElement);
 
         // Lay out the suggest-box relative to the anchorBounds.
         let margin = 10;
@@ -157,10 +149,8 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
         this._element.style.width = width + "px";
         this._element.style.height = height + "px";
 
-        document.body.appendChild(this._element);
-
-        if (scrollTop)
-            this._containerElement.scrollTop = scrollTop;
+        if (!this._element.parentNode)
+            document.body.appendChild(this._element);
     }
 
     hide()

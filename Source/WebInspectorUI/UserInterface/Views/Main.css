@@ -175,6 +175,12 @@ body.docked:matches(.right, .left) #navigation-sidebar.collapsed > .resizer {
     height: 100%;
 }
 
+#layout-measurement-container {
+    position: absolute;
+    visibility: hidden;
+    pointer-events: none;
+}
+
 .message-text-view {
     display: flex;
     flex-direction: column;
