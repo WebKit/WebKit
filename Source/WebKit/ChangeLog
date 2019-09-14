@@ -1,3 +1,14 @@
+2019-09-14  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Check for a Snap sandbox a bit harder
+        https://bugs.webkit.org/show_bug.cgi?id=201793
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        (WebKit::isInsideSnap): Check whether the SNAP_NAME and SNAP_REVISION
+        environment variables are defined as well.
+
 2019-09-14  Youenn Fablet  <youenn@apple.com>
 
         Add release logging in WebLoaderStrategy to check that a load is going through service worker

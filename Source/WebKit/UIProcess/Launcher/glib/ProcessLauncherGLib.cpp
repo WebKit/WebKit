@@ -66,7 +66,10 @@ static bool isInsideSnap()
     if (ret)
         return *ret;
 
-    ret = g_getenv("SNAP");
+    // The "SNAP" environment variable is not unlikely to be set for/by something other
+    // than Snap, so check a couple of additional variables to avoid false positives.
+    // See: https://snapcraft.io/docs/environment-variables
+    ret = g_getenv("SNAP") && g_getenv("SNAP_NAME") && g_getenv("SNAP_REVISION");
     return *ret;
 }
 #endif
