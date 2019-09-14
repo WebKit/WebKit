@@ -1,3 +1,15 @@
+2019-09-14  Antti Koivisto  <antti@apple.com>
+
+        ASSERTION FAILED: !renderer() in  WebCore::Text::~Text
+        https://bugs.webkit.org/show_bug.cgi?id=172514
+        <rdar://problem/32470509>
+
+        Unreviewed, this assert should be fixed now.
+
+        * TestExpectations:
+
+        Unskipping imported/w3c/web-platform-tests/innerText/getter.html on debug
+
 2019-09-13  Youenn Fablet  <youenn@apple.com>
 
         WPT importer should check META global tag in .any.js files to generate the valid .html stub files

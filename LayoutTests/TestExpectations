@@ -2430,8 +2430,6 @@ webkit.org/b/172378 imported/blink/printing/print-document-without-documentEleme
 
 webkit.org/b/172609 fetch/closing-while-fetching-blob.html [ Skip ]
 
-webkit.org/b/172514 [ Debug ] imported/w3c/web-platform-tests/innerText/getter.html [ Skip ]
-
 webkit.org/b/175291 imported/w3c/web-platform-tests/css/css-ui/outline-018.html [ Skip ]
 
 webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-014.html [ ImageOnlyFailure ]
