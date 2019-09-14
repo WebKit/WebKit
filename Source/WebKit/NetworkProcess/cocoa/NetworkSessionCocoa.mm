@@ -558,7 +558,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
 {
-    if (!_session) {
+    if (!_session || [task state] == NSURLSessionTaskStateCanceling) {
         completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
         return;
     }
@@ -582,6 +582,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
 #if HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE)
             if (canNSURLSessionTrustEvaluate()) {
                 auto* networkDataTask = [self existingTask:task];
+                ASSERT(networkDataTask);
                 auto decisionHandler = makeBlockPtr([_session = makeWeakPtr(_session.get()), completionHandler = makeBlockPtr(completionHandler), taskIdentifier, networkDataTask = RefPtr<NetworkDataTaskCocoa>(networkDataTask)](NSURLAuthenticationChallenge *challenge, OSStatus trustResult) mutable {
                     auto task = WTFMove(networkDataTask);
                     auto* session = _session.get();

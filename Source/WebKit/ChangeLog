@@ -1,3 +1,21 @@
+2019-09-13  Youenn Fablet  <youenn@apple.com>
+
+        [MacOS/iOS] imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-abort.https.html is sometimes crashing in Debug
+        https://bugs.webkit.org/show_bug.cgi?id=201686
+
+        Reviewed by Alexey Proskuryakov.
+
+        A load might be cancelled shortly after being started in network process.
+        In that case, NetworkDataTaskCocoa might be destroyed, thus removed from the ID to task map
+        but some handlers might still be called until the NSURLSessionTask is finished cancelling.
+        This happens for authentication challenges.
+        In case where the NSURLSessionTask is cancelling, return early instead of processing the challenge.
+
+        Covered by LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-abort.https.html and LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-abort.https.html no longer crashing in debug.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+
 2019-09-11  Dean Jackson  <dino@apple.com>
 
         Provide a prototype for AR QuickLook to trigger processing in the originating page
