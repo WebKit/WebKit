@@ -29,9 +29,16 @@
 // it only does basic auto-closing. In general this tries to be a
 // whitespace reformatter for input text and not generate the ultimate
 // html tree that a browser would generate.
+//
+// When run with the XML option, all HTML specific cases are disabled.
 
 HTMLTreeBuilderFormatter = class HTMLTreeBuilderFormatter
 {
+    constructor({isXML} = {})
+    {
+        this._isXML = !!isXML;
+    }
+
     // Public
 
     get dom() { return this._dom; }
@@ -130,7 +137,7 @@ HTMLTreeBuilderFormatter = class HTMLTreeBuilderFormatter
         if (parserNode.closed)
             return true;
 
-        if (HTMLTreeBuilderFormatter.TagNamesWithoutChildren.has(node.lowercaseName))
+        if (!this._isXML && HTMLTreeBuilderFormatter.TagNamesWithoutChildren.has(node.lowercaseName))
             return true;
 
         return false;

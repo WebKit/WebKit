@@ -33,6 +33,7 @@
         <option>html</option>
         <option>javascript</option>
         <option>css</option>
+        <option>xml</option>
     </select>
     <button id="format">Format</button>
     <button id="save-as-url">Save URL</button>
@@ -197,6 +198,9 @@
         case "css":
             workerProxy.formatCSS(inputCM.getValue(), indentString, includeSourceMapData, formatResult);
             break;
+        case "xml":
+            workerProxy.formatXML(inputCM.getValue(), indentString, includeSourceMapData, formatResult);
+            break;
         }
 
         function formatResult({formattedText, sourceMapData}) {
@@ -235,6 +239,7 @@
 <input type=text><br><p>Test</p></div><p><![CDATA[ Test ]]></p></body></html>`;
     const simpleJS = `(function(){let a=1;return a+1;})();`;
     const simpleCSS = `body{color:red;background:blue}*{color:green}`;
+    const simpleXML = `<?xml version="1.0" encoding="iso8859-5"?><outer><inner attr="value">1</inner></outer>`;
 
     // Populate picker
     function updateContentFromPicker() {
@@ -251,6 +256,10 @@
         case "css":
             mode = "text/css";
             content = simpleCSS;
+            break;
+        case "xml":
+            mode = "text/xml";
+            content = simpleXML;
             break;
         default:
             console.assert();

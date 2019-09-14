@@ -110,7 +110,22 @@ FormatterWorker = class FormatterWorker
     {
         let result = {formattedText: null};
         const builder = null;
-        let formatter = new HTMLFormatter(sourceText, builder, indentString);
+        const sourceType = HTMLFormatter.SourceType.HTML;
+        let formatter = new HTMLFormatter(sourceText, sourceType, builder, indentString);
+        if (formatter.success) {
+            result.formattedText = formatter.formattedText;
+            if (includeSourceMapData)
+                result.sourceMapData = formatter.sourceMapData;
+        }
+        return result;
+    }
+
+    formatXML(sourceText, indentString, includeSourceMapData)
+    {
+        let result = {formattedText: null};
+        const builder = null;
+        const sourceType = HTMLFormatter.SourceType.XML;
+        let formatter = new HTMLFormatter(sourceText, sourceType, builder, indentString);
         if (formatter.success) {
             result.formattedText = formatter.formattedText;
             if (includeSourceMapData)

@@ -182,7 +182,7 @@ WI.TextEditor = class TextEditor extends WI.View
     hasFormatter()
     {
         let mode = this._codeMirror.getMode().name;
-        return mode === "javascript" || mode === "css" || mode === "htmlmixed";
+        return mode === "javascript" || mode === "css" || mode === "htmlmixed" || mode === "xml";
     }
 
     canBeFormatted()
@@ -905,6 +905,9 @@ WI.TextEditor = class TextEditor extends WI.View
             break;
         case "htmlmixed":
             workerProxy.formatHTML(sourceText, indentString, includeSourceMapData, formatCallback);
+            break;
+        case "xml":
+            workerProxy.formatXML(sourceText, indentString, includeSourceMapData, formatCallback);
             break;
         default:
             console.assert(false, "Unexpected mode attempted to pretty print.");

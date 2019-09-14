@@ -27,7 +27,7 @@ HTMLParser = class HTMLParser {
 
     // Public
 
-    parseDocument(sourceText, treeBuilder)
+    parseDocument(sourceText, treeBuilder, {isXML} = {})
     {
         console.assert(typeof sourceText === "string");
         console.assert(treeBuilder);
@@ -39,6 +39,7 @@ HTMLParser = class HTMLParser {
         this._mode = HTMLParser.Mode.Data;
         this._data = sourceText;
         this._bogusCommentOpener = null;
+        this._isXML = !!isXML;
 
         if (this._treeBuilder.begin)
             this._treeBuilder.begin();
@@ -448,7 +449,7 @@ HTMLParser = class HTMLParser {
     {
         // Custom mode for some elements.
         if (node.type === HTMLParser.NodeType.OpenTag) {
-            if (node.name.toLowerCase() === "script")
+            if (!this._isXML && node.name.toLowerCase() === "script")
                 this._mode = HTMLParser.Mode.ScriptData;
         }
 

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service xmlns="http://www.w3.org/2007/app"
+         xmlns:atom="http://www.w3.org/2005/Atom">
+  <atom:generator version="1.0-bcv3" uri="http://www.ibm.com/xmlns/prod/sn">
+    Example
+  </atom:generator>
+  <workspace xml:lang="en-US" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+    <atom:title type="text">Moleskin</atom:title>
+
+    <collection
+      href="http://example.com/weblogs/services/atom/joepeck/entries">
+      <atom:title type="text">Weblog Entries</atom:title>
+      <accept>application/atom+xml; type=entry</accept>
+      <categories
+        href="http://example.com/weblogs/services/atom/joepeck/categories" />
+    </collection>
+
+    <collection
+      href="http://example.com/weblogs/services/atom/joepeck/media">
+      <atom:title type="text">Media Entries</atom:title>
+      <accept>video/x-msvideo</accept>
+      <accept>application/octet-stream</accept>
+      <accept>image/gif</accept><accept>text/html</accept>
+      <accept>image/jpeg</accept><accept>image/png</accept>
+      <accept>text/plain</accept>
+      <categories fixed="yes" />
+    </collection>
+
+    <collection
+      href="http://example.com/weblogs/services/atom/joepeck/comments">
+      <atom:title type="text">Comment Entries</atom:title>
+      <accept>application/atom+xml; type=entry</accept>
+      <categories fixed="yes" />
+    </collection>
+  </workspace>
+</service>

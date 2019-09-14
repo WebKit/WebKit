@@ -1,5 +1,41 @@
 2019-09-13  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: HTML Formatter - XML mode
+        https://bugs.webkit.org/show_bug.cgi?id=201758
+
+        Reviewed by Devin Rousso.
+
+        * Tools/HTMLFormatter/index.html:
+        * Tools/SourceMaps/index.html:
+        Update Tools to more easily test XML.
+
+        * UserInterface/Proxies/FormatterWorkerProxy.js:
+        (WI.FormatterWorkerProxy.prototype.formatXML):
+        * UserInterface/Views/TextEditor.js:
+        (WI.TextEditor.prototype.hasFormatter):
+        (WI.TextEditor.prototype._startWorkerPrettyPrint):
+        Allow formatting XML content.
+
+        * UserInterface/Workers/Formatter/FormatterWorker.js:
+        (FormatterWorker.prototype.formatHTML):
+        (FormatterWorker.prototype.formatXML):
+        Expose "formatXML".
+
+        * UserInterface/Workers/Formatter/HTMLFormatter.js:
+        (HTMLFormatter.let.dom):
+        (HTMLFormatter):
+        (HTMLFormatter.prototype._shouldHaveNoChildren):
+        (HTMLFormatter.prototype._before):
+        (HTMLFormatter.prototype._after):
+        * UserInterface/Workers/Formatter/HTMLParser.js:
+        (HTMLParser.prototype.parseDocument):
+        * UserInterface/Workers/Formatter/HTMLTreeBuilderFormatter.js:
+        (HTMLTreeBuilderFormatter.prototype._isEmptyNode):
+        Give the HTMLFormatter and related classes an XML mode that
+        has less of the smarts of XML.
+
+2019-09-13  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: HTML Formatting: Handle infinite loop for incomplete script data
         https://bugs.webkit.org/show_bug.cgi?id=201769
 

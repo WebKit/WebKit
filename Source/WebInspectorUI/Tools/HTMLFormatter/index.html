@@ -40,6 +40,10 @@
         <option value="html-css-js">HTML with Styles and Script</option>
         <option value="self">Self</option>
     </select>
+    <select id="source-type">
+        <option value="text/html">HTML</option>
+        <option value="text/xml">XML</option>
+    </select>
     <button id="format">Format</button>
     <button id="select-output">Select Output</button>
     <button id="save-as-url">Save URL</button>
@@ -60,6 +64,7 @@
     <script>
     // Elements.
     const populatePicker = document.getElementById("populate");
+    const sourceTypePicker = document.getElementById("source-type");
     const timeOutput = document.getElementById("time");
     const prettyPre = document.getElementById("pretty");
     const debugPre = document.getElementById("debug");
@@ -86,16 +91,18 @@
             clearTimeout(timer);
 
         // Time the formatter.
+        let sourceType = sourceTypePicker.value === "text/html" ? HTMLFormatter.SourceType.HTML : HTMLFormatter.SourceType.XML;
         let startTime = Date.now();
-        let formatter = new HTMLFormatter(cm.getValue());
+        let formatter = new HTMLFormatter(cm.getValue(), sourceType);
         let endTime = Date.now();
 
         // Show debug parser info.
         let debugText = "";
         try {
+            let options = {isXML: sourceType === HTMLFormatter.SourceType.XML};
             let parser = new HTMLParser;
             let treeBuilder = new HTMLTreeBuilderDebug;
-            parser.parseDocument(cm.getValue(), treeBuilder);
+            parser.parseDocument(cm.getValue(), treeBuilder, options);
             debugText = treeBuilder.debugText;
         } catch (error) {
             debugText = "Parse error: " + JSON.stringify(error, null, 2);
@@ -177,7 +184,8 @@
     document.getElementById("save-as-url").addEventListener("click", (event) => {
         let content = cm.getValue();
         let populate = populatePicker.value;
-        window.location.search = `?content=${encodeURIComponent(content)}&populate=${encodeURIComponent(populate)}`;
+        let sourceType = sourceTypePicker.value;
+        window.location.search = `?content=${encodeURIComponent(content)}&populate=${encodeURIComponent(populate)}&sourceType=${encodeURIComponent(sourceType)}`;
     });
 
     const simpleHTML = `<!DOCTYPE html>
@@ -240,6 +248,12 @@
         updateContentFromPicker();
     });
 
+    // Parser mode picker.
+    sourceTypePicker.addEventListener("change", (event) => {
+        cm.setOption("mode", sourceTypePicker.value);
+        refresh();
+    });
+
     // Restore better initial value from query string.
     (function() {
         let queryParams = {};
@@ -254,6 +268,10 @@
         if (queryParams.populate) {
             populatePicker.value = queryParams.populate;
             updateContentFromPicker();
+        }
+        if (queryParams.sourceType) {
+            sourceTypePicker.value = queryParams.sourceType;
+            cm.setOption("mode", sourceTypePicker.value);
         }
         if (queryParams.content)
             cm.setValue(queryParams.content);

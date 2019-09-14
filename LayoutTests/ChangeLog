@@ -1,5 +1,27 @@
 2019-09-13  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: HTML Formatter - XML mode
+        https://bugs.webkit.org/show_bug.cgi?id=201758
+
+        Reviewed by Devin Rousso.
+
+        * inspector/formatting/formatting-xml-expected.txt: Added.
+        * inspector/formatting/formatting-xml.html: Added.
+        * inspector/formatting/resources/formatting-utilities.js:
+        (TestPage.registerInitializer.async.runFormattingTest):
+        * inspector/formatting/resources/xml-tests/atom-expected.xml: Added.
+        * inspector/formatting/resources/xml-tests/atom.xml: Added.
+        * inspector/formatting/resources/xml-tests/basic-expected.xml: Added.
+        * inspector/formatting/resources/xml-tests/basic.xml: Added.
+        * inspector/formatting/resources/xml-tests/rss-expected.xml: Added.
+        * inspector/formatting/resources/xml-tests/rss.xml: Added.
+        * inspector/formatting/resources/xml-tests/valid-html-invalid-xml-expected.xml: Added.
+        * inspector/formatting/resources/xml-tests/valid-html-invalid-xml.xml: Added.
+        * inspector/formatting/resources/xml-tests/xslt-expected.xml: Added.
+        * inspector/formatting/resources/xml-tests/xslt.xml: Added.
+
+2019-09-13  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: HTML Formatting: Handle infinite loop for incomplete script data
         https://bugs.webkit.org/show_bug.cgi?id=201769
 

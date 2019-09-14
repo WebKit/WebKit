@@ -25,15 +25,23 @@
 
 HTMLFormatter = class HTMLFormatter
 {
-    constructor(sourceText, builder, indentString = "    ")
+    constructor(sourceText, sourceType, builder, indentString = "    ")
     {
+        console.assert(typeof sourceText === "string");
+        console.assert(Object.values(HTMLFormatter.SourceType).includes(sourceType));
+
+        this._sourceType = sourceType;
+
         this._success = false;
 
         let dom = (function() {
             try {
+                let options = {
+                    isXML: sourceType === HTMLFormatter.SourceType.XML,
+                };
                 let parser = new HTMLParser;
-                let treeBuilder = new HTMLTreeBuilderFormatter;
-                parser.parseDocument(sourceText, treeBuilder);
+                let treeBuilder = new HTMLTreeBuilderFormatter(options);
+                parser.parseDocument(sourceText, treeBuilder, options);
                 return treeBuilder.dom;
             } catch (e) {
                 console.error("Unexpected HTMLFormatter Error", e);
@@ -105,7 +113,15 @@ HTMLFormatter = class HTMLFormatter
 
     _shouldHaveNoChildren(node)
     {
-        return HTMLTreeBuilderFormatter.TagNamesWithoutChildren.has(node.lowercaseName);
+        switch (this._sourceType) {
+        case HTMLFormatter.SourceType.HTML:
+            return HTMLTreeBuilderFormatter.TagNamesWithoutChildren.has(node.lowercaseName);
+        case HTMLFormatter.SourceType.XML:
+            return false;
+        }
+
+        console.assert(false, "Unknown source type", this._sourceType);
+        return false;
     }
 
     _shouldHaveInlineContent(node)
@@ -196,7 +212,7 @@ HTMLFormatter = class HTMLFormatter
                 this._builder.appendNewline();
 
             if (!node.__inlineContent) {
-                if (node.lowercaseName !== "html")
+                if (node.lowercaseName !== "html" || this._sourceType === HTMLFormatter.SourceType.XML)
                     this._builder.indent();
                 this._builder.appendNewline();
             }
@@ -268,7 +284,7 @@ HTMLFormatter = class HTMLFormatter
             if (node.__shouldHaveNoChildren)
                 return;
             if (!node.__inlineContent) {
-                if (node.lowercaseName !== "html")
+                if (node.lowercaseName !== "html" || this._sourceType === HTMLFormatter.SourceType.XML)
                     this._builder.dedent();
                 this._builder.appendNewline();
             }
@@ -356,4 +372,9 @@ HTMLFormatter = class HTMLFormatter
             return new CSSFormatter(sourceText, this._builder);
         });
     }
+};
+
+HTMLFormatter.SourceType = {
+    HTML: "html",
+    XML: "xml",
 };

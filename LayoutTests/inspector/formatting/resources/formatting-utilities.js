@@ -51,6 +51,9 @@ TestPage.registerInitializer(function() {
             case "text/html":
                 workerProxy.formatHTML(testText, indentString, callback);
                 break;
+            case "text/xml":
+                workerProxy.formatXML(testText, indentString, callback);
+                break;
             }
         });
     }
