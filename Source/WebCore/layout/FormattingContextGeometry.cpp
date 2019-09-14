@@ -272,10 +272,11 @@ LayoutUnit FormattingContext::Geometry::shrinkToFitWidth(const Box& formattingRo
     return std::min(std::max(intrinsicWidthConstraints.minimum, availableWidth), intrinsicWidthConstraints.maximum);
 }
 
-VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry(const Box& layoutBox, UsedVerticalValues usedVerticalValues) const
+VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues, UsedVerticalValues usedVerticalValues) const
 {
     ASSERT(layoutBox.isOutOfFlowPositioned() && !layoutBox.replaced());
     ASSERT(usedVerticalValues.containingBlockHeight);
+    ASSERT(usedHorizontalValues.containingBlockWidth);
 
     // 10.6.4 Absolutely positioned, non-replaced elements
     //
@@ -304,14 +305,13 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeomet
     auto& formattingContext = this->formattingContext();
     auto& style = layoutBox.style();
     auto& boxGeometry = formattingContext.geometryForBox(layoutBox);
-    auto& containingBlockGeometry = formattingContext.geometryForBox(*layoutBox.containingBlock());
     auto containingBlockHeight = *usedVerticalValues.containingBlockHeight;
-    auto containingBlockWidth = containingBlockGeometry.paddingBoxWidth();
+    auto containingBlockWidth = *usedHorizontalValues.containingBlockWidth;
 
     auto top = computedValueIfNotAuto(style.logicalTop(), containingBlockWidth);
     auto bottom = computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);
     auto height = usedVerticalValues.height ? usedVerticalValues.height.value() : computedHeightValue(layoutBox, HeightType::Normal, usedVerticalValues);
-    auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutBox, UsedHorizontalValues { containingBlockWidth });
+    auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutBox, usedHorizontalValues);
     UsedVerticalMargin::NonCollapsedValues usedVerticalMargin; 
     auto paddingTop = boxGeometry.paddingTop().valueOr(0);
     auto paddingBottom = boxGeometry.paddingBottom().valueOr(0);
@@ -388,7 +388,7 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeomet
 
     // For out-of-flow elements the containing block is formed by the padding edge of the ancestor.
     // At this point the positioned value is in the coordinate system of the padding box. Let's convert it to border box coordinate system.
-    auto containingBlockPaddingVerticalEdge = containingBlockGeometry.paddingBoxTop();
+    auto containingBlockPaddingVerticalEdge = formattingContext.geometryForBox(*layoutBox.containingBlock()).paddingBoxTop();
     *top += containingBlockPaddingVerticalEdge;
     *bottom += containingBlockPaddingVerticalEdge;
 
@@ -546,9 +546,11 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
     return { *left, *right, { contentWidth(), usedHorizontalMargin, computedHorizontalMargin } };
 }
 
-VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(const Box& layoutBox, UsedVerticalValues usedVerticalValues) const
+VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues, UsedVerticalValues usedVerticalValues) const
 {
     ASSERT(layoutBox.isOutOfFlowPositioned() && layoutBox.replaced());
+    ASSERT(usedVerticalValues.containingBlockHeight);
+    ASSERT(usedHorizontalValues.containingBlockWidth);
 
     // 10.6.5 Absolutely positioned, replaced elements
     //
@@ -563,14 +565,13 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(
     auto& formattingContext = this->formattingContext();
     auto& style = layoutBox.style();
     auto& boxGeometry = formattingContext.geometryForBox(layoutBox);
-    auto& containingBlockGeometry = formattingContext.geometryForBox(*layoutBox.containingBlock());
-    auto containingBlockHeight = containingBlockGeometry.paddingBoxHeight();
-    auto containingBlockWidth = containingBlockGeometry.paddingBoxWidth();
+    auto containingBlockHeight = *usedVerticalValues.containingBlockHeight;
+    auto containingBlockWidth = *usedHorizontalValues.containingBlockWidth;
 
     auto top = computedValueIfNotAuto(style.logicalTop(), containingBlockWidth);
     auto bottom = computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);
     auto height = inlineReplacedHeightAndMargin(layoutBox, usedVerticalValues).height;
-    auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutBox, UsedHorizontalValues { containingBlockWidth });
+    auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutBox, usedHorizontalValues);
     Optional<LayoutUnit> usedMarginBefore = computedVerticalMargin.before;
     Optional<LayoutUnit> usedMarginAfter = computedVerticalMargin.after;
     auto paddingTop = boxGeometry.paddingTop().valueOr(0);
@@ -616,7 +617,7 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(
 
     // For out-of-flow elements the containing block is formed by the padding edge of the ancestor.
     // At this point the positioned value is in the coordinate system of the padding box. Let's convert it to border box coordinate system.
-    auto containingBlockPaddingVerticalEdge = containingBlockGeometry.paddingBoxTop();
+    auto containingBlockPaddingVerticalEdge = formattingContext.geometryForBox(*layoutBox.containingBlock()).paddingBoxTop();
     *top += containingBlockPaddingVerticalEdge;
     *bottom += containingBlockPaddingVerticalEdge;
 
@@ -811,13 +812,13 @@ WidthAndMargin FormattingContext::Geometry::floatingReplacedWidthAndMargin(const
         usedValues.width, UsedHorizontalMargin { computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) } });
 }
 
-VerticalGeometry FormattingContext::Geometry::outOfFlowVerticalGeometry(const Box& layoutBox, UsedVerticalValues usedVerticalValues) const
+VerticalGeometry FormattingContext::Geometry::outOfFlowVerticalGeometry(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues, UsedVerticalValues usedVerticalValues) const
 {
     ASSERT(layoutBox.isOutOfFlowPositioned());
 
     if (!layoutBox.replaced())
-        return outOfFlowNonReplacedVerticalGeometry(layoutBox, usedVerticalValues);
-    return outOfFlowReplacedVerticalGeometry(layoutBox, usedVerticalValues);
+        return outOfFlowNonReplacedVerticalGeometry(layoutBox, usedHorizontalValues, usedVerticalValues);
+    return outOfFlowReplacedVerticalGeometry(layoutBox, usedHorizontalValues, usedVerticalValues);
 }
 
 HorizontalGeometry FormattingContext::Geometry::outOfFlowHorizontalGeometry(const Box& layoutBox, UsedHorizontalValues usedValues)

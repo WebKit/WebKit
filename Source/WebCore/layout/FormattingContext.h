@@ -95,7 +95,7 @@ protected:
     public:
         Geometry(const FormattingContext&);
 
-        VerticalGeometry outOfFlowVerticalGeometry(const Box&, UsedVerticalValues) const;
+        VerticalGeometry outOfFlowVerticalGeometry(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
         HorizontalGeometry outOfFlowHorizontalGeometry(const Box&, UsedHorizontalValues);
 
         HeightAndMargin floatingHeightAndMargin(const Box&, UsedVerticalValues, UsedHorizontalValues) const;
@@ -134,10 +134,10 @@ protected:
         const FormattingContext& formattingContext() const { return m_formattingContext; }
 
     private:
-        VerticalGeometry outOfFlowReplacedVerticalGeometry(const Box&, UsedVerticalValues) const;
+        VerticalGeometry outOfFlowReplacedVerticalGeometry(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
         HorizontalGeometry outOfFlowReplacedHorizontalGeometry(const Box&, UsedHorizontalValues) const;
 
-        VerticalGeometry outOfFlowNonReplacedVerticalGeometry(const Box&, UsedVerticalValues) const;
+        VerticalGeometry outOfFlowNonReplacedVerticalGeometry(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
         HorizontalGeometry outOfFlowNonReplacedHorizontalGeometry(const Box&, UsedHorizontalValues);
 
         HeightAndMargin floatingReplacedHeightAndMargin(const Box&, UsedVerticalValues) const;
