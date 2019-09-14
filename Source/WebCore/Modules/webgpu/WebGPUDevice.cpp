@@ -214,10 +214,10 @@ Ref<WebGPURenderPipeline> WebGPUDevice::createRenderPipeline(const WebGPURenderP
 
     auto gpuDescriptor = descriptor.tryCreateGPURenderPipelineDescriptor(m_errorScopes);
     if (!gpuDescriptor)
-        return WebGPURenderPipeline::create(nullptr);
+        return WebGPURenderPipeline::create(nullptr, m_errorScopes);
 
     auto pipeline = m_device->tryCreateRenderPipeline(*gpuDescriptor, m_errorScopes);
-    return WebGPURenderPipeline::create(WTFMove(pipeline));
+    return WebGPURenderPipeline::create(WTFMove(pipeline), m_errorScopes);
 }
 
 Ref<WebGPUComputePipeline> WebGPUDevice::createComputePipeline(const WebGPUComputePipelineDescriptor& descriptor) const
@@ -226,10 +226,10 @@ Ref<WebGPUComputePipeline> WebGPUDevice::createComputePipeline(const WebGPUCompu
 
     auto gpuDescriptor = descriptor.tryCreateGPUComputePipelineDescriptor(m_errorScopes);
     if (!gpuDescriptor)
-        return WebGPUComputePipeline::create(nullptr);
+        return WebGPUComputePipeline::create(nullptr, m_errorScopes);
 
     auto pipeline = m_device->tryCreateComputePipeline(*gpuDescriptor, m_errorScopes);
-    return WebGPUComputePipeline::create(WTFMove(pipeline));
+    return WebGPUComputePipeline::create(WTFMove(pipeline), m_errorScopes);
 }
 
 Ref<WebGPUCommandEncoder> WebGPUDevice::createCommandEncoder() const

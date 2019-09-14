@@ -30,6 +30,7 @@
 
 #import "GPUComputePipelineDescriptor.h"
 #import "GPUDevice.h"
+#import "GPUErrorScopes.h"
 #import "GPUPipelineMetalConvertLayout.h"
 #import "WHLSLPrepare.h"
 #import <Metal/Metal.h>
@@ -193,12 +194,11 @@ RefPtr<GPUComputePipeline> GPUComputePipeline::tryCreate(const GPUDevice& device
     if (!createResult)
         return nullptr;
 
-    return adoptRef(new GPUComputePipeline(WTFMove(createResult->pipelineState), createResult->computeDimensions, errorScopes));
+    return adoptRef(new GPUComputePipeline(WTFMove(createResult->pipelineState), createResult->computeDimensions));
 }
 
-GPUComputePipeline::GPUComputePipeline(RetainPtr<MTLComputePipelineState>&& pipeline, WHLSL::ComputeDimensions computeDimensions, GPUErrorScopes& errorScopes)
-    : GPUObjectBase(makeRef(errorScopes))
-    , m_platformComputePipeline(WTFMove(pipeline))
+GPUComputePipeline::GPUComputePipeline(RetainPtr<MTLComputePipelineState>&& pipeline, WHLSL::ComputeDimensions computeDimensions)
+    : m_platformComputePipeline(WTFMove(pipeline))
     , m_computeDimensions(computeDimensions)
 {
 }

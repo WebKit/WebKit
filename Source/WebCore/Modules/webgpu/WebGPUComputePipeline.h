@@ -28,19 +28,19 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUComputePipeline.h"
-#include <wtf/RefCounted.h>
+#include "GPUObjectBase.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class WebGPUComputePipeline : public RefCounted<WebGPUComputePipeline> {
+class WebGPUComputePipeline : public GPUObjectBase {
 public:
-    static Ref<WebGPUComputePipeline> create(RefPtr<GPUComputePipeline>&&);
+    static Ref<WebGPUComputePipeline> create(RefPtr<GPUComputePipeline>&&, GPUErrorScopes&);
 
     const GPUComputePipeline* computePipeline() const { return m_computePipeline.get(); }
 
 private:
-    WebGPUComputePipeline(RefPtr<GPUComputePipeline>&&);
+    WebGPUComputePipeline(RefPtr<GPUComputePipeline>&&, GPUErrorScopes&);
 
     RefPtr<GPUComputePipeline> m_computePipeline;
 };

@@ -27,7 +27,6 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUObjectBase.h"
 #include "GPURenderPipelineDescriptor.h"
 #include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
@@ -42,11 +41,12 @@ OBJC_PROTOCOL(MTLRenderPipelineState);
 namespace WebCore {
 
 class GPUDevice;
+class GPUErrorScopes;
 
 using PlatformRenderPipeline = MTLRenderPipelineState;
 using PlatformRenderPipelineSmartPtr = RetainPtr<MTLRenderPipelineState>;
 
-class GPURenderPipeline : public GPUObjectBase {
+class GPURenderPipeline : public RefCounted<GPURenderPipeline> {
 public:
     static RefPtr<GPURenderPipeline> tryCreate(const GPUDevice&, const GPURenderPipelineDescriptor&, GPUErrorScopes&);
 
@@ -59,7 +59,7 @@ public:
 
 private:
 #if USE(METAL)
-    GPURenderPipeline(RetainPtr<MTLDepthStencilState>&&, PlatformRenderPipelineSmartPtr&&, GPUPrimitiveTopology, Optional<GPUIndexFormat>, GPUErrorScopes&);
+    GPURenderPipeline(RetainPtr<MTLDepthStencilState>&&, PlatformRenderPipelineSmartPtr&&, GPUPrimitiveTopology, Optional<GPUIndexFormat>);
 
     RetainPtr<MTLDepthStencilState> m_depthStencilState;
 #endif // USE(METAL)

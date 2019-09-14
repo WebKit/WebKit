@@ -27,20 +27,20 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUObjectBase.h"
 #include "GPURenderPipeline.h"
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class WebGPURenderPipeline : public RefCounted<WebGPURenderPipeline> {
+class WebGPURenderPipeline : public GPUObjectBase {
 public:
-    static Ref<WebGPURenderPipeline> create(RefPtr<GPURenderPipeline>&&);
+    static Ref<WebGPURenderPipeline> create(RefPtr<GPURenderPipeline>&&, GPUErrorScopes&);
 
     const GPURenderPipeline* renderPipeline() const { return m_renderPipeline.get(); }
 
 private:
-    WebGPURenderPipeline(RefPtr<GPURenderPipeline>&&);
+    WebGPURenderPipeline(RefPtr<GPURenderPipeline>&&, GPUErrorScopes&);
 
     RefPtr<GPURenderPipeline> m_renderPipeline;
 };

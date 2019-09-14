@@ -29,6 +29,7 @@
 #if ENABLE(WEBGPU)
 
 #import "GPUDevice.h"
+#import "GPUErrorScopes.h"
 #import "GPULimits.h"
 #import "GPUPipelineMetalConvertLayout.h"
 #import "GPUUtils.h"
@@ -525,12 +526,11 @@ RefPtr<GPURenderPipeline> GPURenderPipeline::tryCreate(const GPUDevice& device, 
     if (!pipeline)
         return nullptr;
 
-    return adoptRef(new GPURenderPipeline(WTFMove(depthStencil), WTFMove(pipeline), descriptor.primitiveTopology, descriptor.vertexInput.indexFormat, errorScopes));
+    return adoptRef(new GPURenderPipeline(WTFMove(depthStencil), WTFMove(pipeline), descriptor.primitiveTopology, descriptor.vertexInput.indexFormat));
 }
 
-GPURenderPipeline::GPURenderPipeline(RetainPtr<MTLDepthStencilState>&& depthStencil, RetainPtr<MTLRenderPipelineState>&& pipeline, GPUPrimitiveTopology topology, Optional<GPUIndexFormat> format, GPUErrorScopes& errorScopes)
-    : GPUObjectBase(makeRef(errorScopes))
-    , m_depthStencilState(WTFMove(depthStencil))
+GPURenderPipeline::GPURenderPipeline(RetainPtr<MTLDepthStencilState>&& depthStencil, RetainPtr<MTLRenderPipelineState>&& pipeline, GPUPrimitiveTopology topology, Optional<GPUIndexFormat> format)
+    : m_depthStencilState(WTFMove(depthStencil))
     , m_platformRenderPipeline(WTFMove(pipeline))
     , m_primitiveTopology(topology)
     , m_indexFormat(format)

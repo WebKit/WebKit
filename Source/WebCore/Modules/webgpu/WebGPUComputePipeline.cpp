@@ -30,13 +30,14 @@
 
 namespace WebCore {
 
-Ref<WebGPUComputePipeline> WebGPUComputePipeline::create(RefPtr<GPUComputePipeline>&& pipeline)
+Ref<WebGPUComputePipeline> WebGPUComputePipeline::create(RefPtr<GPUComputePipeline>&& pipeline, GPUErrorScopes& errorScopes)
 {
-    return adoptRef(*new WebGPUComputePipeline(WTFMove(pipeline)));
+    return adoptRef(*new WebGPUComputePipeline(WTFMove(pipeline), errorScopes));
 }
 
-WebGPUComputePipeline::WebGPUComputePipeline(RefPtr<GPUComputePipeline>&& pipeline)
-    : m_computePipeline { WTFMove(pipeline) }
+WebGPUComputePipeline::WebGPUComputePipeline(RefPtr<GPUComputePipeline>&& pipeline, GPUErrorScopes& errorScopes)
+    : GPUObjectBase(makeRef(errorScopes))
+    , m_computePipeline { WTFMove(pipeline) }
 {
 }
 

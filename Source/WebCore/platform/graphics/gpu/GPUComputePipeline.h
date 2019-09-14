@@ -27,7 +27,6 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUObjectBase.h"
 #include "WHLSLPrepare.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -38,13 +37,14 @@ OBJC_PROTOCOL(MTLComputePipelineState);
 namespace WebCore {
 
 class GPUDevice;
+class GPUErrorScopes;
 
 struct GPUComputePipelineDescriptor;
 
 using PlatformComputePipeline = MTLComputePipelineState;
 using PlatformComputePipelineSmartPtr = RetainPtr<MTLComputePipelineState>;
 
-class GPUComputePipeline : public GPUObjectBase {
+class GPUComputePipeline : public RefCounted<GPUComputePipeline> {
 public:
     static RefPtr<GPUComputePipeline> tryCreate(const GPUDevice&, const GPUComputePipelineDescriptor&, GPUErrorScopes&);
 
@@ -53,7 +53,7 @@ public:
     WHLSL::ComputeDimensions computeDimensions() const { return m_computeDimensions; }
 
 private:
-    GPUComputePipeline(PlatformComputePipelineSmartPtr&&, WHLSL::ComputeDimensions, GPUErrorScopes&);
+    GPUComputePipeline(PlatformComputePipelineSmartPtr&&, WHLSL::ComputeDimensions);
 
     PlatformComputePipelineSmartPtr m_platformComputePipeline;
     WHLSL::ComputeDimensions m_computeDimensions { 0, 0, 0 };
