@@ -177,7 +177,9 @@ HTMLParser = class HTMLParser {
         let text = this._consumeUntilString("<", HTMLParser.Mode.TagOpen);
         if (text)
             this._push({type: HTMLParser.NodeType.Text, data: text, pos: startPos});
-        this._handleEOF(this._pos - 1);
+
+        if (this._isEOF() && this._data.endsWith("<"))
+            this._handleEOF(this._pos - 1);
     }
 
     _parseScriptData()
@@ -193,6 +195,8 @@ HTMLParser = class HTMLParser {
                 this._mode = HTMLParser.Mode.Data;
                 break;
             }
+            if (this._handleEOF(startPos))
+                return;
             scriptText += "<";
         }
 
@@ -433,10 +437,11 @@ HTMLParser = class HTMLParser {
     _handleEOF(lastPosition)
     {
         if (!this._isEOF())
-            return;
+            return false;
 
         // End of document. Treat everything from the last position as error text.
         this._push({type: HTMLParser.NodeType.ErrorText, data: this._data.substring(lastPosition), pos: lastPosition});
+        return true;
     }
 
     _push(node)

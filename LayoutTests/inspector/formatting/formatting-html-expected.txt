@@ -14,6 +14,9 @@ PASS: eof-3.html
 PASS: eof-4.html
 PASS: eof-5.html
 PASS: eof-6.html
+PASS: eof-7.html
+PASS: eof-8.html
+PASS: eof-9.html
 PASS: inline-script.html
 PASS: inline-style.html
 PASS: list.html

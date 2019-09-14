@@ -1,3 +1,19 @@
+2019-09-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: HTML Formatting: Handle infinite loop for incomplete script data
+        https://bugs.webkit.org/show_bug.cgi?id=201769
+
+        Reviewed by Devin Rousso.
+
+        * inspector/formatting/formatting-html-expected.txt:
+        * inspector/formatting/formatting-html.html:
+        * inspector/formatting/resources/html-tests/eof-7-expected.html: Added.
+        * inspector/formatting/resources/html-tests/eof-7.html: Added.
+        * inspector/formatting/resources/html-tests/eof-8-expected.html: Added.
+        * inspector/formatting/resources/html-tests/eof-8.html: Added.
+        * inspector/formatting/resources/html-tests/eof-9-expected.html: Added.
+        * inspector/formatting/resources/html-tests/eof-9.html: Added.
+
 2019-09-13  Russell Epstein  <repstein@apple.com>
 
         Layout Test webgl/2.0.0/conformance/glsl/misc/shaders-with-invariance.html is failing on iOS.

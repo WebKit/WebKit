@@ -1,5 +1,17 @@
 2019-09-13  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: HTML Formatting: Handle infinite loop for incomplete script data
+        https://bugs.webkit.org/show_bug.cgi?id=201769
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Workers/Formatter/HTMLParser.js:
+        (HTMLParser):
+        Handle EOF in the script data's loop.
+        Better handle EOF at the end of text data.
+
+2019-09-13  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Improve auto completion typing performance by avoiding global forced layouts
         https://bugs.webkit.org/show_bug.cgi?id=201735
 
