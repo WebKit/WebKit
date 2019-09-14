@@ -60,7 +60,7 @@ static uint64_t pageID;
 
 namespace TestWebKitAPI {
 
-TEST(WebKit, SystemPreviewTriggered)
+TEST(WebKit, DISABLED_SystemPreviewTriggered)
 {
     auto messageHandler = adoptNS([[TestSystemPreviewTriggeredHandler alloc] init]);
 

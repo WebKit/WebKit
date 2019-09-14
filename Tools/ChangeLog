@@ -1,3 +1,14 @@
+2019-09-13  Dean Jackson  <dino@apple.com>
+
+        Provide a prototype for AR QuickLook to trigger processing in the originating page
+        https://bugs.webkit.org/show_bug.cgi?id=201371
+        <rdar://54904781>
+
+        Disable the test for the moment.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/SystemPreview.mm:
+        (TestWebKitAPI::TEST):
+
 2019-09-11  Dean Jackson  <dino@apple.com>
 
         Provide a prototype for AR QuickLook to trigger processing in the originating page
