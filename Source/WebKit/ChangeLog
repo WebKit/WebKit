@@ -1,3 +1,15 @@
+2019-09-14  Youenn Fablet  <youenn@apple.com>
+
+        Add release logging in WebLoaderStrategy to check that a load is going through service worker
+        https://bugs.webkit.org/show_bug.cgi?id=201761
+
+        Reviewed by Chris Dumez.
+
+        This allows identifying whether a load remains pending on the service worker fetch path.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+
 2019-09-13  Youenn Fablet  <youenn@apple.com>
 
         [MacOS/iOS] imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-abort.https.html is sometimes crashing in Debug

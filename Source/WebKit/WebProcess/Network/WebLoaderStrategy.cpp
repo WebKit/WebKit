@@ -215,6 +215,8 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
 #endif
 
 #if ENABLE(SERVICE_WORKER)
+    RELEASE_LOG_IF_ALLOWED(!!resourceLoader.options().serviceWorkerRegistrationIdentifier && resourceLoader, "scheduleLoad: URL will be scheduled through ServiceWorker or Network Process (frame = %p, pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", resourceLoader.frame(), trackingParameters.pageID.toUInt64(), trackingParameters.frameID.toUInt64(), identifier);
+
     WebServiceWorkerProvider::singleton().handleFetch(resourceLoader, sessionID, shouldClearReferrerOnHTTPSToHTTPRedirect, [this, trackingParameters, identifier, sessionID, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime = maximumBufferingTime(resource), resourceLoader = makeRef(resourceLoader)] (ServiceWorkerClientFetch::Result result) mutable {
         if (result != ServiceWorkerClientFetch::Result::Unhandled) {
             LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled through ServiceWorker handle fetch algorithm", resourceLoader->url().string().latin1().data());
@@ -231,16 +233,21 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
             return;
         }
 
-        if (!WebProcess::singleton().webLoaderStrategy().tryLoadingUsingURLSchemeHandler(resourceLoader))
+        if (!WebProcess::singleton().webLoaderStrategy().tryLoadingUsingURLSchemeHandler(resourceLoader)) {
+            RELEASE_LOG_IF_ALLOWED(resourceLoader.get(), "scheduleLoad: URL will be scheduled with the NetworkProcess (frame = %p, pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", resourceLoader->frame(), trackingParameters.pageID.toUInt64(), trackingParameters.frameID.toUInt64(), identifier);
             WebProcess::singleton().webLoaderStrategy().scheduleLoadFromNetworkProcess(resourceLoader.get(), resourceLoader->request(), trackingParameters, sessionID, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime);
-        else
-            RELEASE_LOG_IF_ALLOWED(resourceLoader.get(), "scheduleLoad: URL not handled by any handlers (frame = %p, pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", resourceLoader->frame(), trackingParameters.pageID.toUInt64(), trackingParameters.frameID.toUInt64(), identifier);
+            return;
+        }
+
+        RELEASE_LOG_IF_ALLOWED(resourceLoader.get(), "scheduleLoad: URL not handled by any handlers (frame = %p, pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", resourceLoader->frame(), trackingParameters.pageID.toUInt64(), trackingParameters.frameID.toUInt64(), identifier);
     });
 #else
-    if (!tryLoadingUsingURLSchemeHandler(resourceLoader))
+    if (!tryLoadingUsingURLSchemeHandler(resourceLoader)) {
+        RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: URL will be scheduled with the NetworkProcess (frame = %p, pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", resourceLoader.frame(), trackingParameters.pageID.toUInt64(), trackingParameters.frameID.toUInt64(), identifier);
         scheduleLoadFromNetworkProcess(resourceLoader, resourceLoader.request(), trackingParameters, sessionID, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime(resource));
-    else
-        RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: URL not handled by any handlers (frame = %p, pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", resourceLoader.frame(), trackingParameters.pageID.toUInt64(), trackingParameters.frameID.toUInt64(), identifier);
+        return;
+    }
+    RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: URL not handled by any handlers (frame = %p, pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", resourceLoader.frame(), trackingParameters.pageID.toUInt64(), trackingParameters.frameID.toUInt64(), identifier);
 #endif
 }
 
