@@ -59,7 +59,7 @@ static inline bool isHeightAuto(const Box& layoutBox)
     return false;
 }
 
-Optional<LayoutUnit> FormattingContext::Geometry::computedHeightValue(const Box& layoutBox, HeightType heightType) const
+Optional<LayoutUnit> FormattingContext::Geometry::computedHeightValue(const Box& layoutBox, HeightType heightType, Optional<UsedVerticalValues> usedVerticalValues) const
 {
     auto& style = layoutBox.style();
     auto height = heightType == HeightType::Normal ? style.logicalHeight() : heightType == HeightType::Min ? style.logicalMinHeight() : style.logicalMaxHeight();
@@ -67,12 +67,13 @@ Optional<LayoutUnit> FormattingContext::Geometry::computedHeightValue(const Box&
         return { };
 
     if (height.isFixed())
-        return LayoutUnit(height.value());
+        return LayoutUnit { height.value() };
 
     Optional<LayoutUnit> containingBlockHeightValue;
-    if (layoutBox.isOutOfFlowPositioned()) {
+    if (usedVerticalValues && usedVerticalValues->containingBlockHeight) {
+        ASSERT(layoutBox.isOutOfFlowPositioned());
         // Containing block's height is already computed since we layout the out-of-flow boxes as the last step.
-        containingBlockHeightValue = formattingContext().geometryForBox(*layoutBox.containingBlock()).height();
+        containingBlockHeightValue = *usedVerticalValues->containingBlockHeight;
     } else {
         if (layoutState().inQuirksMode())
             containingBlockHeightValue = formattingContext().quirks().heightValueOfNearestContainingBlockWithFixedHeight(layoutBox);
@@ -171,17 +172,17 @@ Optional<LayoutUnit> FormattingContext::Geometry::fixedValue(const Length& geome
 // Specifies a percentage for determining the used value. The percentage is calculated with respect to the height of the generated box's containing block.
 // If the height of the containing block is not specified explicitly (i.e., it depends on content height), and this element is not absolutely positioned,
 // the percentage value is treated as '0' (for 'min-height') or 'none' (for 'max-height').
-Optional<LayoutUnit> FormattingContext::Geometry::computedMaxHeight(const Box& layoutBox) const
+Optional<LayoutUnit> FormattingContext::Geometry::computedMaxHeight(const Box& layoutBox, Optional<UsedVerticalValues> usedVerticalValues) const
 {
-    return computedHeightValue(layoutBox, HeightType::Max);
+    return computedHeightValue(layoutBox, HeightType::Max, usedVerticalValues);
 }
 
-Optional<LayoutUnit> FormattingContext::Geometry::computedMinHeight(const Box& layoutBox) const
+Optional<LayoutUnit> FormattingContext::Geometry::computedMinHeight(const Box& layoutBox, Optional<UsedVerticalValues> usedVerticalValues) const
 {
-    if (auto minHeightValue = computedHeightValue(layoutBox, HeightType::Min))
+    if (auto minHeightValue = computedHeightValue(layoutBox, HeightType::Min, usedVerticalValues))
         return minHeightValue;
 
-    return { 0 };
+    return { LayoutUnit { } };
 }
 
 LayoutUnit FormattingContext::Geometry::staticVerticalPositionForOutOfFlowPositioned(const Box& layoutBox) const
@@ -271,9 +272,10 @@ LayoutUnit FormattingContext::Geometry::shrinkToFitWidth(const Box& formattingRo
     return std::min(std::max(intrinsicWidthConstraints.minimum, availableWidth), intrinsicWidthConstraints.maximum);
 }
 
-VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry(const Box& layoutBox, UsedVerticalValues usedValues) const
+VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry(const Box& layoutBox, UsedVerticalValues usedVerticalValues) const
 {
     ASSERT(layoutBox.isOutOfFlowPositioned() && !layoutBox.replaced());
+    ASSERT(usedVerticalValues.containingBlockHeight);
 
     // 10.6.4 Absolutely positioned, non-replaced elements
     //
@@ -303,12 +305,12 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeomet
     auto& style = layoutBox.style();
     auto& boxGeometry = formattingContext.geometryForBox(layoutBox);
     auto& containingBlockGeometry = formattingContext.geometryForBox(*layoutBox.containingBlock());
-    auto containingBlockHeight = containingBlockGeometry.paddingBoxHeight();
+    auto containingBlockHeight = *usedVerticalValues.containingBlockHeight;
     auto containingBlockWidth = containingBlockGeometry.paddingBoxWidth();
 
     auto top = computedValueIfNotAuto(style.logicalTop(), containingBlockWidth);
     auto bottom = computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);
-    auto height = usedValues.height ? usedValues.height.value() : computedHeightValue(layoutBox, HeightType::Normal);
+    auto height = usedVerticalValues.height ? usedVerticalValues.height.value() : computedHeightValue(layoutBox, HeightType::Normal, usedVerticalValues);
     auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutBox, UsedHorizontalValues { containingBlockWidth });
     UsedVerticalMargin::NonCollapsedValues usedVerticalMargin; 
     auto paddingTop = boxGeometry.paddingTop().valueOr(0);
@@ -544,7 +546,7 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
     return { *left, *right, { contentWidth(), usedHorizontalMargin, computedHorizontalMargin } };
 }
 
-VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(const Box& layoutBox, UsedVerticalValues usedValues) const
+VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(const Box& layoutBox, UsedVerticalValues usedVerticalValues) const
 {
     ASSERT(layoutBox.isOutOfFlowPositioned() && layoutBox.replaced());
 
@@ -567,7 +569,7 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(
 
     auto top = computedValueIfNotAuto(style.logicalTop(), containingBlockWidth);
     auto bottom = computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);
-    auto height = inlineReplacedHeightAndMargin(layoutBox, usedValues).height;
+    auto height = inlineReplacedHeightAndMargin(layoutBox, usedVerticalValues).height;
     auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutBox, UsedHorizontalValues { containingBlockWidth });
     Optional<LayoutUnit> usedMarginBefore = computedVerticalMargin.before;
     Optional<LayoutUnit> usedMarginAfter = computedVerticalMargin.after;
@@ -809,13 +811,13 @@ WidthAndMargin FormattingContext::Geometry::floatingReplacedWidthAndMargin(const
         usedValues.width, UsedHorizontalMargin { computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) } });
 }
 
-VerticalGeometry FormattingContext::Geometry::outOfFlowVerticalGeometry(const Box& layoutBox, UsedVerticalValues usedValues) const
+VerticalGeometry FormattingContext::Geometry::outOfFlowVerticalGeometry(const Box& layoutBox, UsedVerticalValues usedVerticalValues) const
 {
     ASSERT(layoutBox.isOutOfFlowPositioned());
 
     if (!layoutBox.replaced())
-        return outOfFlowNonReplacedVerticalGeometry(layoutBox, usedValues);
-    return outOfFlowReplacedVerticalGeometry(layoutBox, usedValues);
+        return outOfFlowNonReplacedVerticalGeometry(layoutBox, usedVerticalValues);
+    return outOfFlowReplacedVerticalGeometry(layoutBox, usedVerticalValues);
 }
 
 HorizontalGeometry FormattingContext::Geometry::outOfFlowHorizontalGeometry(const Box& layoutBox, UsedHorizontalValues usedValues)
@@ -845,7 +847,7 @@ WidthAndMargin FormattingContext::Geometry::floatingWidthAndMargin(const Box& la
     return floatingReplacedWidthAndMargin(layoutBox, usedValues);
 }
 
-HeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargin(const Box& layoutBox, UsedVerticalValues usedValues) const
+HeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargin(const Box& layoutBox, UsedVerticalValues usedVerticalValues) const
 {
     ASSERT((layoutBox.isOutOfFlowPositioned() || layoutBox.isFloatingPositioned() || layoutBox.isInFlow()) && layoutBox.replaced());
 
@@ -867,8 +869,8 @@ HeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargin(const
     auto& style = layoutBox.style();
     auto replaced = layoutBox.replaced();
 
-    auto height = usedValues.height ? usedValues.height.value() : computedHeightValue(layoutBox, HeightType::Normal);
-    auto heightIsAuto = !usedValues.height && isHeightAuto(layoutBox);
+    auto height = usedVerticalValues.height ? usedVerticalValues.height.value() : computedHeightValue(layoutBox, HeightType::Normal, usedVerticalValues);
+    auto heightIsAuto = !usedVerticalValues.height && isHeightAuto(layoutBox);
     auto widthIsAuto = style.logicalWidth().isAuto();
 
     if (heightIsAuto && widthIsAuto && replaced->hasIntrinsicHeight()) {

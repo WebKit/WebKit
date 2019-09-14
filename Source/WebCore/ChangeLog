@@ -1,3 +1,31 @@
+2019-09-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] FormattingContext::Geometry::computedHeightValue should not read containing block's height.
+        https://bugs.webkit.org/show_bug.cgi?id=201791
+        <rdar://problem/55361695>
+
+        Reviewed by Antti Koivisto.
+
+        While sizing/positioning a particular box, we oftentimes need some containing block geometry information.
+        The idea here is that instead of calling formattingContext().geometry(containingBlock), these constraint values
+        would be pushed in to those compute* functions. It helps controlling the access to the display box tree and
+        prevents formatting context escaping.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry):
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::computedHeightValue const):
+        (WebCore::Layout::FormattingContext::Geometry::computedMaxHeight const):
+        (WebCore::Layout::FormattingContext::Geometry::computedMinHeight const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin const):
+        * layout/LayoutUnits.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin):
+
 2019-09-11  Dean Jackson  <dino@apple.com>
 
         Provide a prototype for AR QuickLook to trigger processing in the originating page

@@ -160,6 +160,7 @@ struct UsedHorizontalValues {
 };
 
 struct UsedVerticalValues {
+    Optional<LayoutUnit> containingBlockHeight;
     Optional<LayoutUnit> height;
 };
 

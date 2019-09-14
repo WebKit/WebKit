@@ -95,19 +95,22 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox)
 
 void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox)
 {
-    auto compute = [&](UsedVerticalValues usedValues) {
-        return geometry().outOfFlowVerticalGeometry(layoutBox, usedValues);
+    auto compute = [&](auto usedVerticalValues) {
+        return geometry().outOfFlowVerticalGeometry(layoutBox, usedVerticalValues);
     };
-
-    auto verticalGeometry = compute({ });
-    if (auto maxHeight = geometry().computedMaxHeight(layoutBox)) {
-        auto maxVerticalGeometry = compute({ *maxHeight });
+    auto containingBlockHeight = geometryForBox(*layoutBox.containingBlock()).paddingBoxHeight();
+    auto usedVerticalValuesForHeight = UsedVerticalValues { containingBlockHeight, { } };
+    auto verticalGeometry = compute(usedVerticalValuesForHeight);
+    if (auto maxHeight = geometry().computedMaxHeight(layoutBox, usedVerticalValuesForHeight)) {
+        auto usedValuesForMaxHeight = UsedVerticalValues { containingBlockHeight, maxHeight };
+        auto maxVerticalGeometry = compute(usedValuesForMaxHeight);
         if (verticalGeometry.heightAndMargin.height > maxVerticalGeometry.heightAndMargin.height)
             verticalGeometry = maxVerticalGeometry;
     }
 
-    if (auto minHeight = geometry().computedMinHeight(layoutBox)) {
-        auto minVerticalGeometry = compute({ *minHeight });
+    if (auto minHeight = geometry().computedMinHeight(layoutBox, usedVerticalValuesForHeight)) {
+        auto usedValuesForMinHeight = UsedVerticalValues { containingBlockHeight, minHeight };
+        auto minVerticalGeometry = compute(usedValuesForMinHeight);
         if (verticalGeometry.heightAndMargin.height < minVerticalGeometry.heightAndMargin.height)
             verticalGeometry = minVerticalGeometry;
     }
