@@ -3247,6 +3247,7 @@ public:
 
     ALWAYS_INLINE Call nearCall()
     {
+        invalidateAllTempRegisters();
         m_assembler.bl();
         return Call(m_assembler.label(), Call::LinkableNear);
     }
@@ -3260,6 +3261,7 @@ public:
 
     ALWAYS_INLINE Call threadSafePatchableNearCall()
     {
+        invalidateAllTempRegisters();
         m_assembler.bl();
         return Call(m_assembler.label(), Call::LinkableNear);
     }
