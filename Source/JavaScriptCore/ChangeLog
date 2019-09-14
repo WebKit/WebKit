@@ -1,5 +1,20 @@
 2019-09-13  Mark Lam  <mark.lam@apple.com>
 
+        jsc -d stopped working.
+        https://bugs.webkit.org/show_bug.cgi?id=201787
+
+        Reviewed by Joseph Pecoraro.
+
+        The reason is because, in this case, the jsc shell is trying to set an option
+        after the VM has been instantiated.  The fix is simply to move all options
+        initialization before the VM is instantiated.
+
+        * jsc.cpp:
+        (runWithOptions):
+        (jscmain):
+
+2019-09-13  Mark Lam  <mark.lam@apple.com>
+
         watchOS requires PageSize alignment of 16K for JSC::Config.
         https://bugs.webkit.org/show_bug.cgi?id=201786
         <rdar://problem/55357890>

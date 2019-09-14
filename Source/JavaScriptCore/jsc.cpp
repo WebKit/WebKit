@@ -2621,9 +2621,6 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
     String fileName;
     Vector<char> scriptBuffer;
 
-    if (options.m_dump)
-        JSC::Options::dumpGeneratedBytecodes() = true;
-
     VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
@@ -3097,6 +3094,8 @@ int jscmain(int argc, char** argv)
     CommandLine options(argc, argv);
 
     processConfigFile(Options::configFile(), "jsc");
+    if (options.m_dump)
+        JSC::Options::dumpGeneratedBytecodes() = true;
 
     // Initialize JSC before getting VM.
     JSC::initializeThreading();
