@@ -384,13 +384,14 @@ void BlockFormattingContext::computeWidthAndMargin(const Box& layoutBox, Optiona
 
 void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox)
 {
-    auto compute = [&](auto usedValues) -> HeightAndMargin {
+    auto compute = [&](auto usedVerticalValues) -> HeightAndMargin {
 
+        auto usedHorizontalValues = UsedHorizontalValues { geometryForBox(*layoutBox.containingBlock()).contentBoxWidth() };
         if (layoutBox.isInFlow())
-            return geometry().inFlowHeightAndMargin(layoutBox, usedValues);
+            return geometry().inFlowHeightAndMargin(layoutBox, usedHorizontalValues, usedVerticalValues);
 
         if (layoutBox.isFloatingPositioned())
-            return geometry().floatingHeightAndMargin(layoutBox, usedValues, UsedHorizontalValues { geometryForBox(*layoutBox.containingBlock()).contentBoxWidth() });
+            return geometry().floatingHeightAndMargin(layoutBox, usedHorizontalValues, usedVerticalValues);
 
         ASSERT_NOT_REACHED();
         return { };

@@ -98,15 +98,15 @@ protected:
         VerticalGeometry outOfFlowVerticalGeometry(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
         HorizontalGeometry outOfFlowHorizontalGeometry(const Box&, UsedHorizontalValues);
 
-        HeightAndMargin floatingHeightAndMargin(const Box&, UsedVerticalValues, UsedHorizontalValues) const;
+        HeightAndMargin floatingHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
         WidthAndMargin floatingWidthAndMargin(const Box&, UsedHorizontalValues);
 
-        HeightAndMargin inlineReplacedHeightAndMargin(const Box&, UsedVerticalValues) const;
+        HeightAndMargin inlineReplacedHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
         WidthAndMargin inlineReplacedWidthAndMargin(const Box&, UsedHorizontalValues) const;
 
         LayoutSize inFlowPositionedPositionOffset(const Box&) const;
 
-        HeightAndMargin complicatedCases(const Box&, UsedVerticalValues, UsedHorizontalValues) const;
+        HeightAndMargin complicatedCases(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
         LayoutUnit shrinkToFitWidth(const Box&, UsedHorizontalValues);
 
         Edges computedBorder(const Box&) const;
@@ -140,7 +140,7 @@ protected:
         VerticalGeometry outOfFlowNonReplacedVerticalGeometry(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
         HorizontalGeometry outOfFlowNonReplacedHorizontalGeometry(const Box&, UsedHorizontalValues);
 
-        HeightAndMargin floatingReplacedHeightAndMargin(const Box&, UsedVerticalValues) const;
+        HeightAndMargin floatingReplacedHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
         WidthAndMargin floatingReplacedWidthAndMargin(const Box&, UsedHorizontalValues) const;
 
         WidthAndMargin floatingNonReplacedWidthAndMargin(const Box&, UsedHorizontalValues);

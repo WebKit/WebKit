@@ -63,18 +63,17 @@ WidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(cons
     return WidthAndMargin { *width, { computedHorizontalMargin.start.valueOr(0_lu), computedHorizontalMargin.end.valueOr(0_lu) }, computedHorizontalMargin };
 }
 
-HeightAndMargin InlineFormattingContext::Geometry::inlineBlockHeightAndMargin(const Box& layoutBox) const
+HeightAndMargin InlineFormattingContext::Geometry::inlineBlockHeightAndMargin(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues) const
 {
     ASSERT(layoutBox.isInFlow());
 
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block' replaced elements in normal flow and floating replaced elements
     if (layoutBox.replaced())
-        return inlineReplacedHeightAndMargin(layoutBox, { });
+        return inlineReplacedHeightAndMargin(layoutBox, usedHorizontalValues, { });
 
     // 10.6.6 Complicated cases
     // - 'Inline-block', non-replaced elements.
-    auto usedHorizontalValues = UsedHorizontalValues { formattingContext().geometryForBox(*layoutBox.containingBlock()).contentBoxWidth() };
-    return complicatedCases(layoutBox, { }, usedHorizontalValues);
+    return complicatedCases(layoutBox, usedHorizontalValues, { });
 }
 
 }

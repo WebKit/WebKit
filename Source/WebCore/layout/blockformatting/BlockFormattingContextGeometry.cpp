@@ -251,28 +251,28 @@ Point BlockFormattingContext::Geometry::staticPosition(const Box& layoutBox) con
     return { staticHorizontalPosition(layoutBox), staticVerticalPosition(layoutBox) };
 }
 
-HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const Box& layoutBox, UsedVerticalValues usedValues)
+HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues, UsedVerticalValues usedVerticalValues)
 {
     ASSERT(layoutBox.isInFlow());
 
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block'
     // replaced elements in normal flow and floating replaced elements
     if (layoutBox.replaced())
-        return inlineReplacedHeightAndMargin(layoutBox, usedValues);
+        return inlineReplacedHeightAndMargin(layoutBox, usedHorizontalValues, usedVerticalValues);
 
     HeightAndMargin heightAndMargin;
     // FIXME: Let's special case the table height computation for now -> figure out whether tables fall into the "inFlowNonReplacedHeightAndMargin" category.
     if (layoutBox.establishesTableFormattingContext()) {
         auto usedHorizontalValues = UsedHorizontalValues { formattingContext().geometryForBox(*layoutBox.containingBlock()).contentBoxWidth() };
-        heightAndMargin = complicatedCases(layoutBox, usedValues, usedHorizontalValues);
+        heightAndMargin = complicatedCases(layoutBox, usedHorizontalValues, usedVerticalValues);
     } else if (layoutBox.isOverflowVisible() && !layoutBox.isDocumentBox()) {
         // TODO: Figure out the case for the document element. Let's just complicated-case it for now.
-        heightAndMargin = inFlowNonReplacedHeightAndMargin(layoutBox, usedValues);
+        heightAndMargin = inFlowNonReplacedHeightAndMargin(layoutBox, usedVerticalValues);
     } else {
         // 10.6.6 Complicated cases
         // Block-level, non-replaced elements in normal flow when 'overflow' does not compute to 'visible' (except if the 'overflow' property's value has been propagated to the viewport).
         auto usedHorizontalValues = UsedHorizontalValues { formattingContext().geometryForBox(*layoutBox.containingBlock()).contentBoxWidth() };
-        heightAndMargin = complicatedCases(layoutBox, usedValues, usedHorizontalValues);
+        heightAndMargin = complicatedCases(layoutBox, usedHorizontalValues, usedVerticalValues);
     }
 
     auto quirks = formattingContext().quirks();

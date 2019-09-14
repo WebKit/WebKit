@@ -1,5 +1,34 @@
 2019-09-14  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] FormattingContext::Geometry::inlineReplacedHeightAndMargin should not read containing block's width
+        https://bugs.webkit.org/show_bug.cgi?id=201796
+        <rdar://problem/55366109>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for using constraint values instead of querying the display tree for containing block geometry information.
+        See webkit.org/b/201795
+
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::complicatedCases const):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedHeightAndMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::floatingHeightAndMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin const):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeightAndMargin):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeHeightAndMargin):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockHeightAndMargin const):
+
+2019-09-14  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry should not read containing block's width.
         https://bugs.webkit.org/show_bug.cgi?id=201794
         <rdar://problem/55365669>

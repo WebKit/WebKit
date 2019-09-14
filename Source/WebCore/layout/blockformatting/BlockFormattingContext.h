@@ -77,7 +77,7 @@ private:
     public:
         Geometry(const BlockFormattingContext&);
 
-        HeightAndMargin inFlowHeightAndMargin(const Box&, UsedVerticalValues);
+        HeightAndMargin inFlowHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues);
         WidthAndMargin inFlowWidthAndMargin(const Box&, UsedHorizontalValues);
 
         Point staticPosition(const Box&) const;

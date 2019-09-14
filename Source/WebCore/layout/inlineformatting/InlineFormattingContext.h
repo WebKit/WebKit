@@ -86,7 +86,7 @@ private:
     public:
         Geometry(const InlineFormattingContext&);
 
-        HeightAndMargin inlineBlockHeightAndMargin(const Box&) const;
+        HeightAndMargin inlineBlockHeightAndMargin(const Box&, UsedHorizontalValues) const;
         WidthAndMargin inlineBlockWidthAndMargin(const Box&, UsedHorizontalValues);
 
     private:
