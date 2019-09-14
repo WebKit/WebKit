@@ -66,6 +66,27 @@ int kernTCSMAwareNumberOfProcessorCores()
     });
     return result;
 }
+
+int64_t hwL3CacheSize()
+{
+    int64_t val = 0;
+    size_t valSize = sizeof(val);
+    int rc = sysctlbyname("hw.l3cachesize", &val, &valSize, nullptr, 0);
+    if (rc < 0)
+        return 0;
+    return val;
+}
+
+int32_t hwPhysicalCPUMax()
+{
+    int32_t val = 0;
+    size_t valSize = sizeof(val);
+    int rc = sysctlbyname("hw.physicalcpu_max", &val, &valSize, nullptr, 0);
+    if (rc < 0)
+        return 0;
+    return val;
+}
+
 #endif // #if (CPU(X86) || CPU(X86_64)) && OS(DARWIN)
 
 } // namespace JSC

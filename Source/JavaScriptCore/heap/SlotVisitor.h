@@ -227,6 +227,10 @@ private:
     bool hasWork(const AbstractLocker&);
     bool didReachTermination(const AbstractLocker&);
 
+#if CPU(X86_64)
+    NEVER_INLINE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void reportZappedCellAndCrash(JSCell*);
+#endif
+
     template<typename Func>
     IterationStatus forEachMarkStack(const Func&);
 
