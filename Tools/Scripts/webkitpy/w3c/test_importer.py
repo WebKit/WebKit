@@ -190,6 +190,12 @@ class TestImporter(object):
             if self._tests_options:
                 self.remove_slow_from_w3c_tests_options()
 
+        self.globalToSuffix = dict(
+            window='html',
+            worker='worker.html',
+            dedicatedworker='worker.html',
+            serviceworker='serviceworker.html')
+
     def do_import(self):
         if not self.source_directory:
             _log.info('Downloading W3C test repositories')
@@ -407,6 +413,16 @@ class TestImporter(object):
         content = '<!-- This file is required for WebKit test infrastructure to run the templated test -->'
         self.filesystem.write_text_file(new_filepath, content + webkit_test_runner_options)
 
+    def readEnvironmentsForTemplateTest(self, filepath):
+        environments = []
+        lines = self.filesystem.read_text_file(filepath).split('\n')
+        for line in lines:
+            if line.startswith('//') and 'META: global=' in line:
+                items = line.split('META: global=', 1)[1].split(',')
+                suffixes = [self.globalToSuffix.get(item.strip(), '') for item in items]
+                environments = filter(None, set(suffixes))
+        return set(environments) if len(environments) else ['html', 'worker.html']
+
     def write_html_files_for_templated_js_tests(self, orig_filepath, new_filepath):
         if (orig_filepath.endswith('.window.js')):
             self._write_html_template(new_filepath.replace('.window.js', '.window.html'))
@@ -415,8 +431,8 @@ class TestImporter(object):
             self._write_html_template(new_filepath.replace('.worker.js', '.worker.html'))
             return
         if (orig_filepath.endswith('.any.js')):
-            self._write_html_template(new_filepath.replace('.any.js', '.any.html'))
-            self._write_html_template(new_filepath.replace('.any.js', '.any.worker.html'))
+            for suffix in self.readEnvironmentsForTemplateTest(orig_filepath):
+                self._write_html_template(new_filepath.replace('.any.js', '.any.' + suffix))
             return
 
     def import_tests(self):

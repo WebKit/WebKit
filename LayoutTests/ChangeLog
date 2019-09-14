@@ -1,3 +1,13 @@
+2019-09-13  Youenn Fablet  <youenn@apple.com>
+
+        WPT importer should check META global tag in .any.js files to generate the valid .html stub files
+        https://bugs.webkit.org/show_bug.cgi?id=201718
+
+        Reviewed by Chris Dumez.
+
+        * platform/mac-wk1/TestExpectations:
+        Skipping service worker tests.
+
 2019-09-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: HTML Formatter - XML mode

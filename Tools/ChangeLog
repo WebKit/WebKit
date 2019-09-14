@@ -1,3 +1,38 @@
+2019-09-13  Youenn Fablet  <youenn@apple.com>
+
+        WPT importer should check META global tag in .any.js files to generate the valid .html stub files
+        https://bugs.webkit.org/show_bug.cgi?id=201718
+
+        Reviewed by Chris Dumez.
+
+        Read meta tag information to select the environments where the any.js template tests will be run.
+        Added support to run service worker tests from any.js template tests.
+
+        Covered by unit test.
+        Since we import only a single repository nowadays, use a test config file with just one repository
+        to simplify the new test.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.__init__):
+        (TestImporter.readEnvironmentsForTemplateTest):
+        (TestImporter.write_html_files_for_templated_js_tests):
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        (TestImporterTest.test_import_dir_with_no_tests_and_no_hg):
+        (TestImporterTest.test_import_dir_with_no_tests):
+        (TestImporterTest.test_import_dir_with_empty_init_py):
+        (TestImporterTest.test_harnesslinks_conversion):
+        (TestImporterTest.test_submodules_generation):
+        (test_checkout_directory):
+        (test_clean_directory_option):
+        (test_git_ignore_generation):
+        (test_initpy_generation):
+        (test_remove_obsolete_content):
+        (test_manual_slow_test):
+        (test_webkit_test_runner_options):
+        (test_webkit_test_runner_import_reftests_with_absolute_paths_download):
+        (test_webkit_test_runner_import_reftests_with_absolute_paths_from_source_dir):
+        (test_template_test):
+
 2019-09-13  Dean Jackson  <dino@apple.com>
 
         Provide a prototype for AR QuickLook to trigger processing in the originating page
