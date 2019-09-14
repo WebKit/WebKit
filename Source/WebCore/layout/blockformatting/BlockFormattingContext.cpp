@@ -193,7 +193,8 @@ void BlockFormattingContext::placeInFlowPositionedChildren(const Box& layoutBox)
             continue;
 
         auto computeInFlowPositionedPosition = [&] {
-            auto positionOffset = geometry().inFlowPositionedPositionOffset(childBox);
+            auto usedHorizontalValues = UsedHorizontalValues { geometryForBox(*childBox.containingBlock()).contentBoxWidth() };
+            auto positionOffset = geometry().inFlowPositionedPositionOffset(childBox, usedHorizontalValues);
 
             auto& displayBox = formattingState().displayBox(childBox);
             auto topLeft = displayBox.topLeft();

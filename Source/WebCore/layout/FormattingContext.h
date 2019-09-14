@@ -104,7 +104,7 @@ protected:
         HeightAndMargin inlineReplacedHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
         WidthAndMargin inlineReplacedWidthAndMargin(const Box&, UsedHorizontalValues) const;
 
-        LayoutSize inFlowPositionedPositionOffset(const Box&) const;
+        LayoutSize inFlowPositionedPositionOffset(const Box&, UsedHorizontalValues) const;
 
         HeightAndMargin complicatedCases(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
         LayoutUnit shrinkToFitWidth(const Box&, UsedHorizontalValues);

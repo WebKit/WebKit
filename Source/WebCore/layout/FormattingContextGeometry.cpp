@@ -966,9 +966,10 @@ WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(const B
     return { *width, { usedMarginStart(), usedMarginEnd() }, computedHorizontalMargin };
 }
 
-LayoutSize FormattingContext::Geometry::inFlowPositionedPositionOffset(const Box& layoutBox) const
+LayoutSize FormattingContext::Geometry::inFlowPositionedPositionOffset(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues) const
 {
     ASSERT(layoutBox.isInFlowPositioned());
+    ASSERT(usedHorizontalValues.containingBlockWidth);
 
     // 9.4.3 Relative positioning
     //
@@ -981,7 +982,7 @@ LayoutSize FormattingContext::Geometry::inFlowPositionedPositionOffset(const Box
 
     auto& style = layoutBox.style();
     auto& containingBlock = *layoutBox.containingBlock();
-    auto containingBlockWidth = formattingContext().geometryForBox(containingBlock).contentBoxWidth();
+    auto containingBlockWidth = *usedHorizontalValues.containingBlockWidth;
 
     auto top = computedValueIfNotAuto(style.logicalTop(), containingBlockWidth);
     auto bottom = computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);
