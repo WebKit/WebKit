@@ -1,3 +1,16 @@
+2019-09-14  Chris Dumez  <cdumez@apple.com>
+
+        newController may be moved several times under SWClientConnection::notifyClientsOfControllerChange()
+        https://bugs.webkit.org/show_bug.cgi?id=201792
+        <rdar://problem/55351284>
+
+        Reviewed by Youenn Fablet.
+
+        Stop WTFMove()'ing inside the for loop.
+
+        * workers/service/SWClientConnection.cpp:
+        (WebCore::SWClientConnection::notifyClientsOfControllerChange):
+
 2019-09-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] FormattingContext::Geometry::computedHeightValue should not read containing block's height.

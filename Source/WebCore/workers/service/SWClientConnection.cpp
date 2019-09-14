@@ -237,9 +237,9 @@ void SWClientConnection::notifyClientsOfControllerChange(const HashSet<DocumentI
         if (!client)
             continue;
 
-        client->postTask([client, contextIdentifiers, newController = WTFMove(newController)](auto&) {
+        client->postTask([client, contextIdentifiers, newController](auto&) mutable {
             ASSERT(!client->activeServiceWorker() || client->activeServiceWorker()->identifier() != newController.identifier);
-            client->setActiveServiceWorker(ServiceWorker::getOrCreate(*client, ServiceWorkerData { newController }));
+            client->setActiveServiceWorker(ServiceWorker::getOrCreate(*client, WTFMove(newController)));
             if (auto* container = client->serviceWorkerContainer())
                 container->fireControllerChangeEvent();
         });
