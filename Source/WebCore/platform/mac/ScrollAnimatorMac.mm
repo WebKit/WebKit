@@ -321,6 +321,10 @@ enum FeatureToAnimate {
     if (!self)
         return nil;
 #else
+    self = [super init];
+    if (!self)
+        return nil;
+
     const NSTimeInterval timeInterval = 0.01;
     _timer = adoptNS([[NSTimer alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceNow:0] interval:timeInterval target:self selector:@selector(setCurrentProgress:) userInfo:nil repeats:YES]);
     _duration = duration;

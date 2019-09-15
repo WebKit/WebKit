@@ -1,3 +1,14 @@
+2019-09-15  David Kilzer  <ddkilzer@apple.com>
+
+        Missing call to [self init] in -[WebScrollbarPartAnimation initWithScrollbar:featureToAnimate:animateFrom:animateTo:duration:]
+        <https://webkit.org/b/201806>
+
+        Reviewed by Simon Fraser.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPartAnimation initWithScrollbar:featureToAnimate:animateFrom:animateTo:duration:]):
+        Call [self init] and return early if the result is nil.
+
 2019-09-14  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Make WebGPURenderPipeline and WebGPUComputePipeline inherit from GPUObjectBase
