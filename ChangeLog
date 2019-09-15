@@ -1,3 +1,17 @@
+2019-09-15  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Do not run the Bubblewrap executable when configuring for cross-compilation
+        https://bugs.webkit.org/show_bug.cgi?id=201340
+
+        Reviewed by Konstantin Tokarev.
+
+        * Source/cmake/BubblewrapSandboxChecks.cmake: Do not run the
+        Bubblewrap executable when cross-compiling to guess its version.
+        Emit a warning instead and trust that valid run-time paths will
+        be set using the BWRAP_EXECUTABLE and DBUS_PROXY_EXECUTABLE
+        variables. While at it, fix the regular expression used to match
+        the version string in the Bubblewrap output when not cross-compiling.
+
 2019-09-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Bump GTK version numbers
