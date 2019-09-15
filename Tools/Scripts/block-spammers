@@ -28,28 +28,22 @@
 
 import argparse
 import atexit
-import re
+import logging
 import requests
-import subprocess
+import os
 import sys
 from dateutil.parser import parse
+from webkitpy.common.net.credentials import Credentials
+
+_log = logging.getLogger(os.path.basename(__file__))
+logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 bugzilla_self_user_id = None
 bugzilla_token = None
 
 def get_bugzilla_token():
-    security = subprocess.Popen(['/usr/bin/security', 'find-internet-password', '-gs', 'bugs.webkit.org'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    security.wait()
-    if security.returncode:
-        raise Exception('Could not get bugs.webkit.org credentials from Keychain, exit code ' + str(security.returncode))
-    for line in security.stdout:
-        m = re.search('^    "acct"<blob>="(.+)"$', line)
-        if m:
-            account = m.group(1)
-            continue
-        m = re.search('^password: "(.+)"$', line)
-        if m:
-            password = m.group(1)
+    credentials = Credentials('bugs.webkit.org', git_prefix='bugzilla')
+    account, password = credentials.read_credentials(use_stored_credentials=True)
     if not account or not password:
         raise Exception('Could not parse security tool output to get bugs.webkit.org credentials')
 

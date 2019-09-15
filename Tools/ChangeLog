@@ -1,3 +1,26 @@
+2019-09-15  David Kilzer  <ddkilzer@apple.com>
+
+        block-spammers should obtain credentials the same way as webkit-patch
+        <https://webkit.org/b/201733>
+
+        Reviewed by Lucas Forschler.
+
+        * Scripts/block-spammers: Import Credentials from webkitpy.
+        Remove unused imports.  Enable logging at info level to match
+        webkit-patch.
+        (get_bugzilla_token): Use Credentials module to get
+        bugs.webkit.org credentials.
+        * Scripts/webkitpy/common/net/credentials.py:
+        (Credentials._run_security_tool): Change logging level from
+        error to info since multiple attempts are made at reading the
+        keychain.  Fix typos in comment.
+        (Credentials._credentials_from_security_command): Extract common
+        logic from Credentials._credentials_from_keychain into new
+        method.
+        (Credentials._credentials_from_keychain): Make fallback logic
+        for checking for credentials in the keychain more consistent and
+        easier to read.  Add error logging if no credentials are found.
+
 2019-09-13  Youenn Fablet  <youenn@apple.com>
 
         WPT importer should check META global tag in .any.js files to generate the valid .html stub files

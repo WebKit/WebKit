@@ -99,25 +99,29 @@ class Credentials(object):
         try:
             return self.executive.run_command(security_command)
         except ScriptError:
-            # Failed to either find a keychain entry or somekind of OS-related
-            # error occured (for instance, couldn't find the /usr/sbin/security
+            # Failed to either find a keychain entry or some kind of OS-related
+            # error occurred (for instance, couldn't find the /usr/sbin/security
             # command).
-            _log.error("Could not find a keychain entry for %s." % self.host)
+            _log.info('Could not find a keychain entry for {} using {}.'.format(self.host, command))
             return None
 
-    def _credentials_from_keychain(self, username=None):
-        if not self._is_mac_os_x():
-            return [username, None]
-
-        security_output = self._run_security_tool("find-internet-password", username)
+    def _credentials_from_security_command(self, command, username):
+        security_output = self._run_security_tool(command, username)
         if security_output:
             parsed_output = self._parse_security_tool_output(security_output)
             if any(parsed_output):
                 return parsed_output
-        security_output = self._run_security_tool("find-generic-password", username)
-        if security_output:
-            return self._parse_security_tool_output(security_output)
         return [None, None]
+
+    def _credentials_from_keychain(self, username=None):
+        if not self._is_mac_os_x():
+            return [username, None]
+        credentials = self._credentials_from_security_command('find-internet-password', username)
+        if not any(credentials):
+            credentials = self._credentials_from_security_command('find-generic-password', username)
+            if not any(credentials):
+                _log.error('Could not find a keychain entry for {}.'.format(self.host))
+        return credentials
 
     def _read_environ(self, key):
         environ_key = self._environ_prefix + key
