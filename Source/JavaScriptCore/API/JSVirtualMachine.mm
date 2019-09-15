@@ -40,6 +40,7 @@
 #import <mutex>
 #import <wtf/BlockPtr.h>
 #import <wtf/Lock.h>
+#import <wtf/RetainPtr.h>
 
 static NSMapTable *globalWrapperCache = 0;
 
@@ -180,17 +181,17 @@ static id getInternalObjcObject(id object)
         [self addExternalRememberedObject:owner];
  
     auto externalDataMutexLocker = holdLock(m_externalDataMutex);
-    NSMapTable *ownedObjects = [m_externalObjectGraph objectForKey:owner];
+    RetainPtr<NSMapTable> ownedObjects = [m_externalObjectGraph objectForKey:owner];
     if (!ownedObjects) {
         NSPointerFunctionsOptions weakIDOptions = NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPersonality;
         NSPointerFunctionsOptions integerOptions = NSPointerFunctionsOpaqueMemory | NSPointerFunctionsIntegerPersonality;
-        ownedObjects = [[NSMapTable alloc] initWithKeyOptions:weakIDOptions valueOptions:integerOptions capacity:1];
+        ownedObjects = adoptNS([[NSMapTable alloc] initWithKeyOptions:weakIDOptions valueOptions:integerOptions capacity:1]);
 
-        [m_externalObjectGraph setObject:ownedObjects forKey:owner];
+        [m_externalObjectGraph setObject:ownedObjects.get() forKey:owner];
     }
 
-    size_t count = reinterpret_cast<size_t>(NSMapGet(ownedObjects, (__bridge void*)object));
-    NSMapInsert(ownedObjects, (__bridge void*)object, reinterpret_cast<void*>(count + 1));
+    size_t count = reinterpret_cast<size_t>(NSMapGet(ownedObjects.get(), (__bridge void*)object));
+    NSMapInsert(ownedObjects.get(), (__bridge void*)object, reinterpret_cast<void*>(count + 1));
 }
 
 - (void)removeManagedReference:(id)object withOwner:(id)owner

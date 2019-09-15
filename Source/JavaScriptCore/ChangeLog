@@ -1,3 +1,14 @@
+2019-09-15  David Kilzer  <ddkilzer@apple.com>
+
+        Leak of NSMapTable in -[JSVirtualMachine addManagedReference:withOwner:]
+        <https://webkit.org/b/201803>
+
+        Reviewed by Dan Bernstein.
+
+        * API/JSVirtualMachine.mm:
+        (-[JSVirtualMachine addManagedReference:withOwner:]): Use
+        RetainPtr<> to fix the leak.
+
 2019-09-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Retire x86 32bit JIT support
