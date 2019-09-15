@@ -1,0 +1,8 @@
+Blocked access to external URL http://www1.localhost:8800/html/semantics/scripting-1/the-script-element/module/resources/referrer-checker.py?name=remote
+Blocked access to external URL http://www1.localhost:8800/html/semantics/scripting-1/the-script-element/module/resources/import-referrer-checker.sub.js?name=remote_remote
+Blocked access to external URL http://www1.localhost:8800/html/semantics/scripting-1/the-script-element/module/resources/import-same-origin-referrer-checker-from-remote-origin.sub.js?name=remote_same
+Blocked access to external URL http://www1.localhost:8800/html/semantics/scripting-1/the-script-element/module/resources/referrer-checker.py?name=same_remote
+
+Harness Error (TIMEOUT), message = null
+
+

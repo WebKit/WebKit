@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -16,9 +16,8 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-404.py
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-redirect-to-javascript.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-stringifier.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a.rel-getter-01.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a.rel-setter-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a.text-getter-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a.text-setter-01.html

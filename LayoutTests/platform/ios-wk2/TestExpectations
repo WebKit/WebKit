@@ -54,6 +54,7 @@ imported/w3c/web-platform-tests/payment-request/payment-request-show-method.http
 imported/w3c/web-platform-tests/payment-request/rejects_if_not_active.https.html [ WontFix ]
 
 webkit.org/b/170713 imported/w3c/web-platform-tests/css/css-ui/text-overflow-022.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/text-transform.html [ ImageOnlyFailure ]
 
 http/tests/security/contentSecurityPolicy/manifest-src-allowed.html [ Pass ]
 http/tests/security/contentSecurityPolicy/manifest-src-blocked.html [ Pass ]
@@ -1229,6 +1230,7 @@ webkit.org/b/181166 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/b/181167 imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/update.https.html [ Pass Failure ]
 
+imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Crash ]
 webkit.org/b/181392 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html [ Pass Failure ]
 
 webkit.org/b/181821 fast/visual-viewport/ios/caret-after-focus-in-fixed.html [ Pass Failure ]

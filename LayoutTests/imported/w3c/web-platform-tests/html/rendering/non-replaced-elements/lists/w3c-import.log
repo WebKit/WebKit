@@ -1,0 +1,69 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/TODO-lists.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-supported-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-supported-xhtml-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-supported-xhtml.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-supported.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-lower-alpha-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-lower-alpha.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-lower-roman-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-lower-roman.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-upper-alpha-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-upper-alpha.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-upper-roman-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-upper-roman.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-supported-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-supported-xhtml-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-supported-xhtml.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-supported.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-unsupported-circle-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-unsupported-circle.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-unsupported-disc-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-unsupported-disc.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-unsupported-invalid-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-unsupported-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-unsupported-lower-alpha-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-unsupported-lower-alpha.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-unsupported-lower-roman-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-unsupported-lower-roman.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-unsupported-none-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-unsupported-none.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-unsupported-round-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-unsupported-round.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-unsupported-square-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-unsupported-square.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-unsupported-upper-alpha-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-unsupported-upper-alpha.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-unsupported-upper-roman-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ol-type-unsupported-upper-roman.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-supported-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-supported-xhtml-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-supported-xhtml.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-supported.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-decimal-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-decimal.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-invalid-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-lower-alpha-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-lower-alpha.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-lower-roman-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-lower-roman.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-upper-alpha-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-upper-alpha.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-upper-roman-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-upper-roman.html

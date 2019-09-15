@@ -1,0 +1,4 @@
+
+
+PASS Changing type from file to text should not crash. 
+

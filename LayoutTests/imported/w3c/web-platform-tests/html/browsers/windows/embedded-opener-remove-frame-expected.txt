@@ -1,0 +1,4 @@
+
+FAIL opener of discarded nested browsing context The Window.opener getter can only be used on instances of Window
+FAIL opener of discarded auxiliary browsing context The Window.opener getter can only be used on instances of Window
+

@@ -4,29 +4,35 @@ PASS [INPUT in TEXT status] The value attibute is empty string
 PASS [INPUT in TEXT status] The value attribute matches the pattern attribute 
 PASS [INPUT in TEXT status] The value(ABC) in unicode attribute matches the pattern attribute 
 PASS [INPUT in TEXT status] The value attribute mismatches the pattern attribute 
+PASS [INPUT in TEXT status] The value attribute mismatches the pattern attribute even when a subset matches 
 PASS [INPUT in SEARCH status] The pattern attribute is not set 
 PASS [INPUT in SEARCH status] The value attibute is empty string 
 PASS [INPUT in SEARCH status] The value attribute matches the pattern attribute 
 PASS [INPUT in SEARCH status] The value(ABC) in unicode attribute matches the pattern attribute 
 PASS [INPUT in SEARCH status] The value attribute mismatches the pattern attribute 
+PASS [INPUT in SEARCH status] The value attribute mismatches the pattern attribute even when a subset matches 
 PASS [INPUT in TEL status] The pattern attribute is not set 
 PASS [INPUT in TEL status] The value attibute is empty string 
 PASS [INPUT in TEL status] The value attribute matches the pattern attribute 
 PASS [INPUT in TEL status] The value(ABC) in unicode attribute matches the pattern attribute 
 PASS [INPUT in TEL status] The value attribute mismatches the pattern attribute 
+PASS [INPUT in TEL status] The value attribute mismatches the pattern attribute even when a subset matches 
 PASS [INPUT in URL status] The pattern attribute is not set 
 PASS [INPUT in URL status] The value attibute is empty string 
 PASS [INPUT in URL status] The value attribute matches the pattern attribute 
 PASS [INPUT in URL status] The value(ABC) in unicode attribute matches the pattern attribute 
 PASS [INPUT in URL status] The value attribute mismatches the pattern attribute 
+PASS [INPUT in URL status] The value attribute mismatches the pattern attribute even when a subset matches 
 PASS [INPUT in EMAIL status] The pattern attribute is not set 
 PASS [INPUT in EMAIL status] The value attibute is empty string 
 PASS [INPUT in EMAIL status] The value attribute matches the pattern attribute 
 PASS [INPUT in EMAIL status] The value(ABC) in unicode attribute matches the pattern attribute 
 PASS [INPUT in EMAIL status] The value attribute mismatches the pattern attribute 
+PASS [INPUT in EMAIL status] The value attribute mismatches the pattern attribute even when a subset matches 
 PASS [INPUT in PASSWORD status] The pattern attribute is not set 
 PASS [INPUT in PASSWORD status] The value attibute is empty string 
 PASS [INPUT in PASSWORD status] The value attribute matches the pattern attribute 
 PASS [INPUT in PASSWORD status] The value(ABC) in unicode attribute matches the pattern attribute 
 PASS [INPUT in PASSWORD status] The value attribute mismatches the pattern attribute 
+PASS [INPUT in PASSWORD status] The value attribute mismatches the pattern attribute even when a subset matches 
 

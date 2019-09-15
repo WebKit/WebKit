@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -15,8 +15,10 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/animation-frames/callback-exception.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/animation-frames/callback-handle.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/animation-frames/callback-invoked.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/animation-frames/callback-multicalls.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/animation-frames/callback-timestamp.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/animation-frames/cancel-invoked.html
-/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/animation-frames/idlharness.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/animation-frames/cancel-pending.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/animation-frames/same-dispatch-time.html

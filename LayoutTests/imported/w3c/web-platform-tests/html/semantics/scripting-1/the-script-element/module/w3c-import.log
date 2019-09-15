@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -18,6 +18,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/charset-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/charset-02.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/charset-03.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/choice-of-error-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/choice-of-error-1a.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/choice-of-error-1b.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/choice-of-error-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/choice-of-error-2a.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/choice-of-error-2b.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/choice-of-error-3.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/choice-of-error-3a.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/choice-of-error-3b.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/compilation-error-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/compilation-error-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/credentials.sub.html
@@ -39,7 +48,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/cycle-tdz-access.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/cycle-unresolvable-a.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/cycle-unresolvable.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/duplicated-imports-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/duplicated-imports-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/error-and-slow-dependency.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/error-type-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/error-type-1.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/error-type-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/error-type-2.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/error-type-3.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/error-type-3.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling-parseerror-common.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling-parseerror-dependent.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling-parseerror-dependent.js
@@ -63,6 +80,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/execorder-parsedunordered1.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/execorder-parsedunordered2.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/execorder.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/export-default.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/export-something-nested.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/export-something.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/fetch-error-1.html
@@ -81,6 +99,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/imports-self-inner.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/imports-self.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/imports.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/inactive-context-import.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/inline-async-execorder.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-1.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-2.html
@@ -125,6 +145,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/module-vs-script-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/nested-missing-export.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/nomodule-attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-no-referrer.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-origin-when-cross-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-same-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-unsafe-url.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/script-for-event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/set-currentScript-on-window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/single-evaluation-1.html
@@ -140,3 +165,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/throw-error.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/throw-nested.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/throw.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/throw2.js

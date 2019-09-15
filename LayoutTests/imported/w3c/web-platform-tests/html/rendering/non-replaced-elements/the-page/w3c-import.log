@@ -1,0 +1,70 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1a-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1a.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1b-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1b.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1c-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1c.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1d-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1d.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1e-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1e.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1f-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1f.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1g-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1g.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1h-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1h.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1i-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1i.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1j-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1j.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1k-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1k.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1l-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1l.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2a-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2a.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2b-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2b.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2c-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2c.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2d-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2d.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2e-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2e.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2f-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2f.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2g-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2g.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2h-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2h.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2i-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2i.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2j-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2j.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2k-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2k.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2l-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2l.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body_link.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body_text_00ffff-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body_text_00ffff.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/iframe-body-margin-attributes.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/iframe-marginwidth-marginheight.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/test-body.xhtml

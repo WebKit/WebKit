@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 2659: Error: assert_equals: Number of attributes on the child document's body expected 0 but got 2
+
+
+FAIL iframe marginwidth and marginheight Error: assert_equals: Number of attributes on the child document's body expected 0 but got 2
+

@@ -1,0 +1,4 @@
+
+PASS MessageEventInit user activation set 
+FAIL MessageEventInit user activation not set assert_equals: userActivation attribute expected (object) null but got (undefined) undefined
+

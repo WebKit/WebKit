@@ -1068,7 +1068,6 @@ webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces-
 webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin-service-worker.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Failure Pass ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/canblock-serviceworker.https.html [ Failure ]
 
 # Loading MP4 as an image is not supported by GTK
 webkit.org/b/180370 fast/images/animated-image-mp4.html [ Skip ]
@@ -3199,7 +3198,6 @@ webkit.org/b/153700 fast/ruby/ruby-expansion-cjk.html [ ImageOnlyFailure ]
 
 webkit.org/b/94952 platform/gtk/scrollbars/overflow-scrollbar-horizontal-wheel-scroll.html [ Failure ]
 
-webkit.org/b/153707 imported/w3c/web-platform-tests/html/dom/interfaces.html [ Failure ]
 webkit.org/b/153707 imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent.html [ Failure ]
 
 webkit.org/b/153708 http/tests/cache/disk-cache/disk-cache-last-modified.html [ Failure ]

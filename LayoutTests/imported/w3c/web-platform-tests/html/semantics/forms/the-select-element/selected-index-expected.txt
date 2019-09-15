@@ -11,4 +11,5 @@ PASS set and reset (HTMLSelectElement)
 PASS set and reset (HTMLOptionsCollection) 
 PASS get display:none 
 PASS reset to display:none 
-        
+PASS set selectedIndex=-1 
+          

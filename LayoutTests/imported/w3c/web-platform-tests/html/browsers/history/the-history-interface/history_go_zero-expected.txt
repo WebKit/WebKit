@@ -2,6 +2,7 @@ main frame - has 1 onunload handler(s)
 main frame - has 1 onunload handler(s)
 main frame - has 1 onunload handler(s)
 main frame - has 1 onunload handler(s)
+main frame - has 1 onunload handler(s)
 
-FAIL history.go(0) assert_array_equals: Pages opened during history navigation lengths differ, expected 3 got 2
+PASS history.go(0) 
 

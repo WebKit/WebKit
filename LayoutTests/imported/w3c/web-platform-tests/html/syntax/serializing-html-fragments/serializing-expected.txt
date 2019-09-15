@@ -8,25 +8,26 @@ PASS innerHTML 5 <a b="&nbsp;"></a>
 PASS innerHTML 6 <a b="&quot;"></a> 
 PASS innerHTML 7 <a b="<"></a> 
 PASS innerHTML 8 <a b=">"></a> 
-PASS innerHTML 9 <svg xlink:href="a"></svg> 
-PASS innerHTML 10 <svg xmlns:svg="test"></svg> 
-PASS innerHTML 11 a 
-PASS innerHTML 12 &amp; 
-PASS innerHTML 13 &nbsp; 
-PASS innerHTML 14 &lt; 
-PASS innerHTML 15 &gt; 
-PASS innerHTML 16 " 
-PASS innerHTML 17 <style><&></style> 
-PASS innerHTML 18 <script type="test"><&></script> 
-PASS innerHTML 19 <&> 
-PASS innerHTML 20 <xmp><&></xmp> 
-FAIL innerHTML 21 <iframe><&></iframe> assert_equals: expected "<iframe><&></iframe>" but got "<iframe>&lt;&amp;&gt;</iframe>"
-FAIL innerHTML 22 <noembed><&></noembed> assert_equals: expected "<noembed><&></noembed>" but got "<noembed>&lt;&amp;&gt;</noembed>"
-FAIL innerHTML 23 <noframes><&></noframes> assert_equals: expected "<noframes><&></noframes>" but got "<noframes>&lt;&amp;&gt;</noframes>"
-FAIL innerHTML 24 <noscript><&></noscript> assert_equals: expected "<noscript><&></noscript>" but got "<noscript>&lt;&amp;&gt;</noscript>"
-PASS innerHTML 25 <!--data--> 
-PASS innerHTML 26 <a><b><c></c></b><d>e</d><f><g>h</g></f></a> 
-PASS innerHTML 27  
+FAIL innerHTML 9 <a href="javascript:&quot;<>&quot;"></a> assert_equals: expected "<a href=\"javascript:&quot;<>&quot;\"></a>" but got "<a href='javascript:\"<>\"'></a>"
+PASS innerHTML 10 <svg xlink:href="a"></svg> 
+PASS innerHTML 11 <svg xmlns:svg="test"></svg> 
+PASS innerHTML 12 a 
+PASS innerHTML 13 &amp; 
+PASS innerHTML 14 &nbsp; 
+PASS innerHTML 15 &lt; 
+PASS innerHTML 16 &gt; 
+PASS innerHTML 17 " 
+PASS innerHTML 18 <style><&></style> 
+PASS innerHTML 19 <script type="test"><&></script> 
+PASS innerHTML 20 <&> 
+PASS innerHTML 21 <xmp><&></xmp> 
+FAIL innerHTML 22 <iframe><&></iframe> assert_equals: expected "<iframe><&></iframe>" but got "<iframe>&lt;&amp;&gt;</iframe>"
+FAIL innerHTML 23 <noembed><&></noembed> assert_equals: expected "<noembed><&></noembed>" but got "<noembed>&lt;&amp;&gt;</noembed>"
+FAIL innerHTML 24 <noframes><&></noframes> assert_equals: expected "<noframes><&></noframes>" but got "<noframes>&lt;&amp;&gt;</noframes>"
+FAIL innerHTML 25 <noscript><&></noscript> assert_equals: expected "<noscript><&></noscript>" but got "<noscript>&lt;&amp;&gt;</noscript>"
+PASS innerHTML 26 <!--data--> 
+PASS innerHTML 27 <a><b><c></c></b><d>e</d><f><g>h</g></f></a> 
+PASS innerHTML 28  
 PASS outerHTML 0 <span></span> 
 PASS outerHTML 1 <span><a></a></span> 
 PASS outerHTML 2 <span><a b="c"></a></span> 
@@ -36,25 +37,26 @@ PASS outerHTML 5 <span><a b="&nbsp;"></a></span>
 PASS outerHTML 6 <span><a b="&quot;"></a></span> 
 PASS outerHTML 7 <span><a b="<"></a></span> 
 PASS outerHTML 8 <span><a b=">"></a></span> 
-PASS outerHTML 9 <span><svg xlink:href="a"></svg></span> 
-PASS outerHTML 10 <span><svg xmlns:svg="test"></svg></span> 
-PASS outerHTML 11 <span>a</span> 
-PASS outerHTML 12 <span>&amp;</span> 
-PASS outerHTML 13 <span>&nbsp;</span> 
-PASS outerHTML 14 <span>&lt;</span> 
-PASS outerHTML 15 <span>&gt;</span> 
-PASS outerHTML 16 <span>"</span> 
-PASS outerHTML 17 <span><style><&></style></span> 
-PASS outerHTML 18 <span><script type="test"><&></script></span> 
-PASS outerHTML 19 <script type="test"><&></script> 
-PASS outerHTML 20 <span><xmp><&></xmp></span> 
-FAIL outerHTML 21 <span><iframe><&></iframe></span> assert_equals: expected "<span><iframe><&></iframe></span>" but got "<span><iframe>&lt;&amp;&gt;</iframe></span>"
-FAIL outerHTML 22 <span><noembed><&></noembed></span> assert_equals: expected "<span><noembed><&></noembed></span>" but got "<span><noembed>&lt;&amp;&gt;</noembed></span>"
-FAIL outerHTML 23 <span><noframes><&></noframes></span> assert_equals: expected "<span><noframes><&></noframes></span>" but got "<span><noframes>&lt;&amp;&gt;</noframes></span>"
-FAIL outerHTML 24 <span><noscript><&></noscript></span> assert_equals: expected "<span><noscript><&></noscript></span>" but got "<span><noscript>&lt;&amp;&gt;</noscript></span>"
-PASS outerHTML 25 <span><!--data--></span> 
-PASS outerHTML 26 <span><a><b><c></c></b><d>e</d><f><g>h</g></f></a></span> 
-PASS outerHTML 27 <span b="c"></span> 
+FAIL outerHTML 9 <span><a href="javascript:&quot;<>&quot;"></a></span> assert_equals: expected "<span><a href=\"javascript:&quot;<>&quot;\"></a></span>" but got "<span><a href='javascript:\"<>\"'></a></span>"
+PASS outerHTML 10 <span><svg xlink:href="a"></svg></span> 
+PASS outerHTML 11 <span><svg xmlns:svg="test"></svg></span> 
+PASS outerHTML 12 <span>a</span> 
+PASS outerHTML 13 <span>&amp;</span> 
+PASS outerHTML 14 <span>&nbsp;</span> 
+PASS outerHTML 15 <span>&lt;</span> 
+PASS outerHTML 16 <span>&gt;</span> 
+PASS outerHTML 17 <span>"</span> 
+PASS outerHTML 18 <span><style><&></style></span> 
+PASS outerHTML 19 <span><script type="test"><&></script></span> 
+PASS outerHTML 20 <script type="test"><&></script> 
+PASS outerHTML 21 <span><xmp><&></xmp></span> 
+FAIL outerHTML 22 <span><iframe><&></iframe></span> assert_equals: expected "<span><iframe><&></iframe></span>" but got "<span><iframe>&lt;&amp;&gt;</iframe></span>"
+FAIL outerHTML 23 <span><noembed><&></noembed></span> assert_equals: expected "<span><noembed><&></noembed></span>" but got "<span><noembed>&lt;&amp;&gt;</noembed></span>"
+FAIL outerHTML 24 <span><noframes><&></noframes></span> assert_equals: expected "<span><noframes><&></noframes></span>" but got "<span><noframes>&lt;&amp;&gt;</noframes></span>"
+FAIL outerHTML 25 <span><noscript><&></noscript></span> assert_equals: expected "<span><noscript><&></noscript></span>" but got "<span><noscript>&lt;&amp;&gt;</noscript></span>"
+PASS outerHTML 26 <span><!--data--></span> 
+PASS outerHTML 27 <span><a><b><c></c></b><d>e</d><f><g>h</g></f></a></span> 
+PASS outerHTML 28 <span b="c"></span> 
 PASS innerHTML Attribute in the XML namespace 
 PASS innerHTML Attribute in the XML namespace with the prefix not set to xml: 
 PASS innerHTML Non-'xmlns' attribute in the xmlns namespace 

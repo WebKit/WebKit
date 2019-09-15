@@ -1,0 +1,6 @@
+
+An unclickable (non-link) area should not show the link cursor when hovered.
+
+
+FAIL Only clickable areas should show the link cursor. assert_equals: expected "pointer" but got "auto"
+

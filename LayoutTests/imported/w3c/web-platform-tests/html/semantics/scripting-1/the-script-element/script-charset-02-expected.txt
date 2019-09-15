@@ -1,4 +1,5 @@
 
-FAIL Script @type: unknown parameters assert_not_equals: got disallowed value 5
-FAIL Script @type: unknown parameters 1 assert_equals: expected 5 but got 10
+PASS assumption: document encoding is windows-1250 
+PASS windows-1250 script decoded using document encoding (also windows-1250) 
+PASS UTF-8 script decoded using document encoding (windows-1250) 
 

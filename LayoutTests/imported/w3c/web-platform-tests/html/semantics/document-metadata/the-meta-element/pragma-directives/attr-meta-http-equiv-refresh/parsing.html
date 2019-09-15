@@ -15,6 +15,7 @@
 <meta name="variant" content="?121-130">
 <meta name="variant" content="?131-last">
 <title>Parsing of meta refresh</title>
+<meta name="timeout" content="long">
 <script src=/resources/testharness.js></script>
 <script src=/resources/testharnessreport.js></script>
 <script src=/common/subset-tests.js></script>
@@ -105,7 +106,7 @@ var tests_arr = [
 
 tests_arr.forEach(function(test_obj) {
   ["<meta>", "Refresh header"].forEach(type => {
-    if(type === "Refresh header" && test_obj.input.match("[\n\r\f]")) { // See https://github.com/w3c/wptserve/issues/111 for why \f as well
+    if(type === "Refresh header" && test_obj.input.match("[\n\r\f]")) { // See https://github.com/web-platform-tests/wpt/issues/8372 for why \f as well
       return;
     }
     const filename = type === "<meta>" ? "refresh.sub.html" : "refresh.py";

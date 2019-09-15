@@ -1,6 +1,7 @@
-Blocked access to external URL http://www1.localhost:8800/html/browsers/browsing-the-web/history-traversal/support/window-name-test.sub.html?shouldhavename=false&sendmessage=false
-#PID UNRESPONSIVE - com.apple.WebKit.WebContent.Development (pid 40500)
-FAIL: Timed out waiting for notifyDone to be called
+Blocked access to external URL http://www1.localhost:8800/html/browsers/browsing-the-web/history-traversal/support/window-name-test.sub.html?shouldhavename=false&sendmessage=true
+open popup
 
-#EOF
-#EOF
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT window.name should equal "" after a cross-origin main frame navigation Test timed out
+

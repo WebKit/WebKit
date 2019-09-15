@@ -1,0 +1,6 @@
+
+PASS registerContentHandler() is removed 
+PASS isProtocolHandlerRegistered() is removed 
+PASS isContentHandlerRegistered() is removed 
+PASS unregisterContentHandler() is removed 
+

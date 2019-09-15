@@ -1827,7 +1827,6 @@ imported/blink/compositing/squashing/squashed-clip-parent.html [ Pass ImageOnlyF
 imported/blink/editing/style/justify-left-crash.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-auto-block-children-002.xht [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-002.xht [ Pass ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/browsers/offline/browser-state/navigator_online_online.html [ Failure Pass ]
 svg/animations/reset-animation-crash.html [ Pass ImageOnlyFailure ]
 svg/css/use-window-inactive-crash.html [ Pass ImageOnlyFailure ]
 transitions/cancel-transition.html [ Pass Failure ]

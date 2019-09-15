@@ -9,4 +9,5 @@ PASS Unknown name should not be in the collection
 PASS Foreign element should not be in the collection 
 PASS Input elements should not be in the collection 
 PASS The empty string should not be in the collections 
+PASS Document.images should be a live collection 
      

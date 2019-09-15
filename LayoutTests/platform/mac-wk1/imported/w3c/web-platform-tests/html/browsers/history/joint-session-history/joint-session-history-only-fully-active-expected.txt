@@ -1,0 +1,4 @@
+
+
+PASS Do only fully active documents count for session history? 
+

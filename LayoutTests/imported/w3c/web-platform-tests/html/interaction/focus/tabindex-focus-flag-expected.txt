@@ -1,0 +1,19 @@
+     
+
+
+PASS a should not be focusable by default. 
+PASS a[href] should be focusable by default. 
+PASS button should be focusable by default. 
+PASS input[type="hidden"] should not be focusable by default. 
+PASS input[type="button"] should be focusable by default. 
+PASS select should be focusable by default. 
+PASS textarea should be focusable by default. 
+PASS #summary-out should not be focusable by default. 
+PASS #summary-first should be focusable by default. 
+PASS #summary-second should not be focusable by default. 
+PASS [contenteditable] should be focusable by default. 
+PASS iframe should be focusable by default. 
+PASS A with tabindex=0 should be focusable. 
+FAIL SUMMARY#summary-out-tabindex0 with tabindex=0 should be focusable. assert_equals: expected Element node <summary tabindex="0" id="summary-out-tabindex0"></summary> but got Element node <a tabindex="0"></a>
+FAIL SUMMARY#summary-second-tabindex0 with tabindex=0 should be focusable. assert_equals: expected Element node <summary tabindex="0" id="summary-second-tabindex0"></sum... but got Element node <a tabindex="0"></a>
+

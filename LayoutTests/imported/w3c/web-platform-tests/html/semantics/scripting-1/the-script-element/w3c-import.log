@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -25,15 +25,21 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_009.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_010.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_011.htm
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/contains.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/cacheable-script-throw.py
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/data-url.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/defer.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/emptyish-script-elements.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/external-script-utf8.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/external-script-windows1250.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/historical.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/is-module-goal.mjs
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/is-script-goal.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/load-error-events-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/load-error-events-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/load-error-events-3.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/log.py
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/muted-errors-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/muted-errors.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/nomodule-reflect.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/nomodule-set-on-async-classic-script.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/nomodule-set-on-external-module-script.html
@@ -45,6 +51,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-charset-03.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-crossorigin-network.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-crossorigin.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-defer.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-for-event-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-for-event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-noembed-noframes-iframe.xhtml
@@ -58,6 +65,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-onerror-insertion-point-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-onload-insertion-point.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-onload-string.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-text-modifications.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-text-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-text.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-type-and-language-empty.html

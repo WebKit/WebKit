@@ -1,7 +1,0 @@
-  
-
-PASS Access allowed with no 'document.domain' modification. (Sanity check) 
-FAIL No access when frame sets a `null` 'document.domain'. assert_equals: expected "Done" but got "SecurityError"
-FAIL No access when parent sets a `null` 'document.domain'. promise_test: Unhandled rejection with value: object "SecurityError: Attempted to use a non-registrable domain."
-FAIL No access when both sides set a `null` 'document.domain'. promise_test: Unhandled rejection with value: object "SecurityError: Attempted to use a non-registrable domain."
-

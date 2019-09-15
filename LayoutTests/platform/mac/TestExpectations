@@ -377,7 +377,6 @@ webkit.org/b/147674 editing/mac/pasteboard/5583362.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.worker.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.html [ Skip ]
 
-webkit.org/b/184060 [ Debug ] imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html [ Pass Failure ]
 webkit.org/b/107118 fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
 webkit.org/b/142258 fast/css/object-fit/object-fit-canvas.html [ Pass ImageOnlyFailure ]
 
@@ -1243,8 +1242,6 @@ webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-fe0f-7.html [ Pass ]
 webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-fe0f-8.html [ Pass ]
 webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-fe0f-9.html [ Pass ]
 webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender.html [ Pass ]
-
-webkit.org/b/161142 [ Release ] imported/w3c/web-platform-tests/html/dom/interfaces.html [ Pass Failure ]
 
 webkit.org/b/161144 http/tests/media/hls/hls-accessiblity-describes-video-menu.html [ Skip ]
 

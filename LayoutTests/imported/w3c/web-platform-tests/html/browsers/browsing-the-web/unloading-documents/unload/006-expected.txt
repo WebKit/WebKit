@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT salvagable state of document after setting pagehide listener Test timed out
+PASS salvagable state of document after setting pagehide listener 
 

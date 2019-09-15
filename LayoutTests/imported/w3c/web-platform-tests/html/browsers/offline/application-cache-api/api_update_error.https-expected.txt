@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 2: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: Application Cache manifest could not be fetched, because the manifest had a 404 response.
+
+PASS INVALID_STATE_ERR error test 
+

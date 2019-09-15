@@ -1,0 +1,8 @@
+
+
+FAIL eval should successfully import assert_true: The module must have been evaluated expected true got undefined
+FAIL setTimeout should successfully import promise_test: Unhandled rejection with value: object "TypeError: Importing a module script failed."
+FAIL the Function constructor should successfully import assert_true: The module must have been evaluated expected true got undefined
+FAIL reflected inline event handlers should successfully import assert_true: The module must have been evaluated expected true got undefined
+FAIL inline event handlers triggered by JS should successfully import assert_true: The module must have been evaluated expected true got undefined
+

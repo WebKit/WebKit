@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 2: [object Object]
+CONSOLE MESSAGE: SyntaxError: Importing binding name 'default' cannot be resolved by star export entries.
+
+FAIL instantiation error has higher priority than evaluation error null is not an object (evaluating 'log[3].constructor')
+

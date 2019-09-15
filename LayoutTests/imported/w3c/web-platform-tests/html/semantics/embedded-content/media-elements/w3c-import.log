@@ -25,7 +25,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-disabled-by-feature-policy.https.sub.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-supported-by-feature-policy.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-with-broken-track.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/contains.json
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_canplay.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_canplay_noautoplay.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_canplaythrough.html
@@ -52,6 +51,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_timeupdate_noautoplay.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_volumechange.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/historical.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/media_fragment_seek.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/networkState_during_loadstart.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/networkState_during_progress.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/networkState_initial.html
@@ -64,6 +64,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_loadedmetadata.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_playing.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_initial.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/src_object_blob.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/src_reflects_attribute_not_source_elements.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/video_008.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/video_loop_base.html

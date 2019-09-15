@@ -1,0 +1,12 @@
+foo bar abcdefghijklmnopqrstuvwxyz
+foo bar abcdefghijklmnopqrstuvwxyz
+foo bar abcdefghijklmnopqrstuvwxyz
+foo bar abcdefghijklmnopqrstuvwxyz
+foo bar abcdefghijklmnopqrstuvwxyz
+
+PASS legend 
+FAIL legend[align=left] assert_equals: expected "start" but got "left"
+FAIL legend[align=center] assert_equals: expected "start" but got "center"
+FAIL legend[align=right] assert_equals: expected "start" but got "right"
+FAIL legend[align=justify] assert_equals: expected "start" but got "justify"
+

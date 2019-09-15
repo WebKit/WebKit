@@ -1,8 +1,8 @@
 
-FAIL form autocomplete attribute missing assert_equals: expected "on" but got ""
-FAIL form autocomplete attribute on assert_equals: expected "on" but got ""
-FAIL form autocomplete attribute off assert_equals: expected "off" but got ""
-FAIL form autocomplete attribute invalid assert_equals: expected "on" but got ""
+PASS form autocomplete attribute missing 
+PASS form autocomplete attribute on 
+PASS form autocomplete attribute off 
+PASS form autocomplete attribute invalid 
 PASS on is an allowed autocomplete field name 
 PASS off is an allowed autocomplete field name 
 PASS name is an allowed autocomplete field name 
@@ -15,6 +15,7 @@ PASS nickname is an allowed autocomplete field name
 PASS username is an allowed autocomplete field name 
 PASS new-password is an allowed autocomplete field name 
 PASS current-password is an allowed autocomplete field name 
+FAIL one-time-code is an allowed autocomplete field name assert_equals: expected "one-time-code" but got ""
 PASS organization-title is an allowed autocomplete field name 
 PASS organization is an allowed autocomplete field name 
 PASS street-address is an allowed autocomplete field name 
@@ -58,6 +59,11 @@ PASS tel-local-suffix is an allowed autocomplete field name
 PASS tel-extension is an allowed autocomplete field name 
 PASS email is an allowed autocomplete field name 
 PASS impp is an allowed autocomplete field name 
+PASS Test whitespace-only attribute value 
+PASS Test maximum number of tokens 
+PASS Unknown field 
+PASS Test 'wearing the autofill anchor mantle' with off/on 
+PASS Serialize combinations of section, mode, contact, and field 
       
       
       

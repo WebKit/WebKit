@@ -14,4 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/closing-the-input-stream/document-close-with-pending-script.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/closing-the-input-stream/document.close-01.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/closing-the-input-stream/load-event-after-location-set-during-write.window.js

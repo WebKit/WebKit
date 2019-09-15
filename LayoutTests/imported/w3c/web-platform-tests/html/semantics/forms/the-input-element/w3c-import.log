@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -21,13 +21,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/clone.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/cloning-steps.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/color.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/contains.json
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/date.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-local.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/email.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/files.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/hidden.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image-click-form-data.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image01-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-checkvalidity.html
@@ -48,6 +48,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/maxlength.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/minlength.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/month.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/multiline-placeholder-cr-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/multiline-placeholder-cr.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/multiline-placeholder-crlf-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/multiline-placeholder-crlf.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/multiline-placeholder-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/multiline-placeholder.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/number-disabled.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/number.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/password.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/pattern_attribute.html
@@ -55,6 +62,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-input-cancel.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-intrinsic-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-intrinsic-size.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/required_attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/reset.html
@@ -63,7 +72,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/telephone.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/text.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/time-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/time-datalist-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/time-focus-dynamic-value-change.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/time.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-file-to-text-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/url.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/valueMode.html

@@ -1,21 +1,20 @@
 var obsoleteElements = {
-  applet: {
-    align: "string",
-    alt: "string",
-    archive: "string",
-    code: "string",
-    codeBase: "url",
-    height: "string",
-    hspace: "unsigned long",
-    name: "string",
-    object: "url",
-    vspace: "unsigned long",
-    width: "string",
-  },
   marquee: {
-    behavior: "string",
+    behavior: {
+      type: {
+        type: "enum",
+        keywords: ["scroll", "slide", "alternate"],
+        defaultVal: "scroll"
+      },
+    },
     bgColor: "string",
-    direction: "string",
+    direction: {
+      type: {
+        type: "enum",
+        keywords: ["up", "right", "down", "left"],
+        defaultVal: "left"
+      },
+    },
     height: "string",
     hspace: "unsigned long",
     scrollAmount: {type: "unsigned long", defaultVal: 6},

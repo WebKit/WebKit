@@ -5,7 +5,7 @@ PASS Deleting element.dataset['foo'] should also remove an attribute with name '
 PASS Deleting element.dataset['fooBar'] should also remove an attribute with name 'data-foo-bar' should it exist. 
 PASS Deleting element.dataset['-'] should also remove an attribute with name 'data--' should it exist. 
 PASS Deleting element.dataset['Foo'] should also remove an attribute with name 'data--foo' should it exist. 
-PASS Deleting element.dataset['-foo'] should also remove an attribute with name 'data--foo' should it exist. 
+PASS Deleting element.dataset['-foo'] should not remove an attribute with name 'data--foo' should it exist. 
 PASS Deleting element.dataset['-Foo'] should also remove an attribute with name 'data---foo' should it exist. 
 PASS Deleting element.dataset[''] should also remove an attribute with name 'data-' should it exist. 
 PASS Deleting element.dataset['à'] should also remove an attribute with name 'data-à' should it exist. 

@@ -1,4 +1,4 @@
-Blocked access to external URL http://nonexistent.not-web-platform.test:8800/foo.html
+Blocked access to external URL http://nonexistent.127.0.0.1:8800/foo.html
 n
 
 PASS Verify fallback content for failed cross-origin navigations is shown correctly. 

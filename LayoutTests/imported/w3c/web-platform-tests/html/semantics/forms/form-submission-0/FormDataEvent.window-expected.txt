@@ -1,0 +1,4 @@
+
+FAIL Failing FormDataEvent constructor assert_throws: 0 arguments function "() => { new FormDataEvent() }" threw object "ReferenceError: Can't find variable: FormDataEvent" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL Successful FormDataEvent constructor Can't find variable: FormDataEvent
+

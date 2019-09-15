@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+
+PASS Dedicated worker of the cached script 
+PASS Dedicated worker of the fallbacked script 
+PASS Dedicated worker of the not-in-cache script 
+FAIL Shared worker of the cached script promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+FAIL Shared worker of the fallbacked script promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+FAIL Shared worker of the not-in-cache script promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+

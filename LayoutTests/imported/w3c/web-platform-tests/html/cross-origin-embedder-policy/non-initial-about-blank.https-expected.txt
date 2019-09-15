@@ -1,0 +1,3 @@
+
+PASS Cross-Origin-Embedder-Policy and about:blank 
+

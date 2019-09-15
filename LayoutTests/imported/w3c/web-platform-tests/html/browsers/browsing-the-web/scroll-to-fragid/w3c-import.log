@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -22,9 +22,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/006.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/007.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/forward-triggers-hashchange.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/fragment-and-encoding-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/fragment-and-encoding.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/navigate-helpers.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/replacement-enabled.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-frag-percent-encoded.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-position-vertical-lr.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-position-vertical-rl.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-position.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-anchor-name.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-id-top.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-top.html

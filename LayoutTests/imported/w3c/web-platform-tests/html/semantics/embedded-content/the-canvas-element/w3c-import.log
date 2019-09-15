@@ -25,7 +25,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.type.extend.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.type.prototype.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.type.replace.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/contains.json
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/context.arguments.missing.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/context.casesensitive.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/context.emptystring.html
@@ -66,6 +65,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.create.redirect.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.cross.cross.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.cross.redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.fillStyle.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.image.fillStyle.cross.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.image.fillStyle.redirect.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.image.strokeStyle.cross.html

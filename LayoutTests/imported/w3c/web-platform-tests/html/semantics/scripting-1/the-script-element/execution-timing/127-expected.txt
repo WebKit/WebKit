@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 2: SyntaxError: Unexpected end of script
+
+Harness Error (FAIL), message = SyntaxError: Unexpected end of script
+
+FAIL scheduler: appending non-text children to script  assert_array_equals: lengths differ, expected 4 got 2
+

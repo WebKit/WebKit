@@ -1,0 +1,3 @@
+
+FAIL Empty <input type=file> is still serialized assert_equals: type expected "application/octet-stream" but got ""
+

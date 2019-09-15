@@ -1,5 +1,6 @@
 
-PASS sanity checks 
+PASS basics 
 PASS current document 
-FAIL new document assert_equals: new document has empty domain expected "" but got "localhost"
+PASS new Document() 
+PASS XMLHttpRequest's response document 
 

@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,20 +14,23 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/body-exposed-window-event-handlers.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/body-onload.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/compile-event-handler-lexical-scopes.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/compile-event-handler-settings-objects.html
-/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/contains.json
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-all-global-events.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-attributes-body-window.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-attributes-frameset-window.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-attributes-windowless-body.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-javascript.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-onresize.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-processing-algorithm.html
-/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-spec-example.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-removal.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-spec-example.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/eventhandler-cancellation.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/inline-event-handler-ordering.html
-/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/invalid-uncompiled-raw-handler-compiled-late.html
-/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/invalid-uncompiled-raw-handler-compiled-once.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/invalid-uncompiled-raw-handler-compiled-late.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/invalid-uncompiled-raw-handler-compiled-once.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/invalid-uncompiled-raw-handler-keeps-position.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/messageevent-constructor.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/onerroreventhandler-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/onerroreventhandler.html

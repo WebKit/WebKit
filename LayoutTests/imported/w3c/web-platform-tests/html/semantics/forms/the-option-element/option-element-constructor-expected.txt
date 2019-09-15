@@ -9,4 +9,5 @@ PASS Option constructor treats empty text and value correctly
 PASS Option constructor treats falsy selected and defaultSelected correctly 
 PASS Option constructor treats truthy selected and defaultSelected correctly 
 PASS Option constructor does not set dirtiness (so, manipulating the selected content attribute still updates the selected IDL attribute) 
+PASS Prototype of object created with named constructor 
 

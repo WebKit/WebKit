@@ -2785,7 +2785,6 @@ fast/events/shadow-event-path.html [ Failure ]
 fast/events/pageshow-pagehide-on-back-uncached.html [ Skip ]
 
 # Newly imported W3C tests that are failing on Windows only.
-imported/w3c/web-platform-tests/html/dom/interfaces.html [ Skip ]
 imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_css.html [ Skip ]
 
 # Weird black images
@@ -3795,7 +3794,6 @@ imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-or
 imported/w3c/web-platform-tests/fetch/api/policies/referrer-unsafe-url-service-worker.https.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/request/destination [ Skip ]
 imported/w3c/web-platform-tests/fetch/cross-origin-resource-policy [ Skip ]
-imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/canblock-serviceworker.https.html [ Skip ]
 imported/w3c/web-platform-tests/server-timing/service_worker_idl.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers [ Skip ]
 

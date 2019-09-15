@@ -1,3 +1,14 @@
+2019-09-15  Chris Dumez  <cdumez@apple.com>
+
+        Re-sync HTML web-platform-tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=201753
+
+        Reviewed by Youenn Fablet.
+
+        Re-sync HTML web-platform-tests from upstream 8893b1bcfc2ca0675f4e81.
+
+        * web-platform-tests/html/*: Updated.
+
 2019-09-13  Youenn Fablet  <youenn@apple.com>
 
         WPT importer should check META global tag in .any.js files to generate the valid .html stub files

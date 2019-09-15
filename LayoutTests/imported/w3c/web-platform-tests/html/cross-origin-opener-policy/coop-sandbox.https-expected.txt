@@ -1,0 +1,3 @@
+
+FAIL Sandboxed Cross-Origin-Opener-Policy popup should result in a network error Can't find variable: BroadcastChannel
+

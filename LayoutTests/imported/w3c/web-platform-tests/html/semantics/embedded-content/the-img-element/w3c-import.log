@@ -23,7 +23,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/available-images-onload.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/available-images.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/brokenimg.jpg
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/contains.json
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/data-url.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/delay-load-event-detached.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/delay-load-event.html
@@ -31,8 +30,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/document-adopt-base-url.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/document-base-url-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/document-base-url.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/historical-progress-event.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-1.jpg
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image.png
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/img-with-containment-and-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/img-with-containment-and-size.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/img.complete.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/invalid-src.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/non-active-document.html

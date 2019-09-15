@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,7 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/DOMContentLoaded-defer-support.js
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/DOMContentLoaded-defer.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/Document.getElementsByTagName-foreign-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/Document.getElementsByTagName-foreign-02.html
@@ -22,7 +21,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/Element.getElementsByTagName-foreign-02.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/README
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/common.js
-/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/contains.json
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/empty-doctype-ids.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/foreign_content_001.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/foreign_content_003.html
@@ -34,6 +32,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/foreign_content_010.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/foreign_content_011.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/foreign_content_013.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html-integration-point.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_adoption01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_adoption02.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_comments01.html
@@ -94,8 +93,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_webkit02.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/math-parse01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/math-parse03.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/meta-inhead-insertion-mode.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/named-character-references-data.js
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/named-character-references.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/quotes-in-meta.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/template.js
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/test.js
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/the-end.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/unclosed-svg-script.html

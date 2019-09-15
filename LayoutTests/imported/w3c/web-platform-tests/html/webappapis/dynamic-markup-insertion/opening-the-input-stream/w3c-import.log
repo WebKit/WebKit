@@ -44,6 +44,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-side-effects-xml.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/beforeunload.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/custom-element.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/document-open-cancels-javascript-url-navigation.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/document.open-01.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/document.open-02.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/document.open-03-frame.html
@@ -66,5 +67,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/type-argument-plaintext.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/type-argument.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/unload.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/url-entry-document.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/url-fragment.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/url.window.js

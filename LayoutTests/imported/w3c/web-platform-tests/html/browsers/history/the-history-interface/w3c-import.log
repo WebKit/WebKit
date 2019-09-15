@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,6 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/002.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/004.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/005.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/006.html
@@ -30,10 +32,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/010.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/011.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/012.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/blank-new.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/blank-old.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/blank.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/blank2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/blank3.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/combination_history_001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/combination_history_002.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/combination_history_003.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/combination_history_004.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/combination_history_005.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/combination_history_006.html
@@ -61,15 +67,18 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_pushstate.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_pushstate_err.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_pushstate_nooptionalparam.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_pushstate_url.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_replacestate.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_replacestate_err.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_replacestate_nooptionalparam.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_state.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/iframe_history_go_0.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_1-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_2-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_3-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_3.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_4-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_4.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_5-1.html

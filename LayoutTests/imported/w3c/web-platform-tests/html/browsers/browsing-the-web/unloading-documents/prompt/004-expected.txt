@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 13: ReferenceError: Can't find variable: assert_true
+#PID UNRESPONSIVE - WebKitTestRunner (pid 35502)
+FAIL: Timed out waiting for notifyDone to be called
+
+#EOF
+#EOF

@@ -1,0 +1,3 @@
+
+PASS window.name after a same-origin main frame navigation 
+

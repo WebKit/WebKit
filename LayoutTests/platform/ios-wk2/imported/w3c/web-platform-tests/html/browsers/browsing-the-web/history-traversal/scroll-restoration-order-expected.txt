@@ -1,0 +1,3 @@
+
+FAIL Traversing history should restore scroll position after dispatching popstate and before dispatching hashchange assert_array_approx_equals: scroll is restored before hashchange for #2 property 0, expected 100 +/- undefined, expected 100 but got 555
+

@@ -235,6 +235,7 @@ imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening
 imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-exception-vs-return-xml.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/ignore-opens-during-unload.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/tasks.window.html [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/scripting/event-loops/fully_active_document.window.html [ Skip ]
 
 # Requires BroadcastChannel.
 imported/w3c/web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-BarProp.window.html [ Skip ]
@@ -258,7 +259,7 @@ imported/w3c/web-platform-tests/server-timing/navigation_timing_idl.https.html [
 webkit.org/b/188246 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-installed.https.html [ Pass Failure ]
 
 # Console log lines may appear in a different order so we silence them.
-imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html [ DumpJSConsoleLogInStdErr Failure Pass ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-weird.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html [ DumpJSConsoleLogInStdErr ]
 
@@ -266,10 +267,146 @@ imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.ht
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-origin-idna.sub.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_assign.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/per-global.window.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name_cross_origin_3.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/window-name-after-cross-origin-main-frame-navigation.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/prompt-and-unload-script-closeable.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/prompt/004.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/history/joint-session-history/joint-session-history-remove-iframe.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_pushstate_url.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_3.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/offline/appcache/appcache-iframe.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/origin/relaxing-the-same-origin-restriction/document_domain_feature_policy.tentative.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/windows/document-access/document_access_feature_policy.tentative.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html [ Skip ]
+imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1252.html [ Skip ]
+imported/w3c/web-platform-tests/html/interaction/focus/focus-01.html [ Skip ]
+imported/w3c/web-platform-tests/html/interaction/focus/focus-02.html [ Skip ]
+imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigation-and-the-tabindex-attribute/focus-tabindex-negative.html [ Skip ]
+imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigation-and-the-tabindex-attribute/focus-tabindex-order.html [ Skip ]
+imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigation-and-the-tabindex-attribute/focus-tabindex-positive.html [ Skip ]
+imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigation-and-the-tabindex-attribute/focus-tabindex-zero.html [ Skip ]
+imported/w3c/web-platform-tests/html/obsolete/requirements-for-implementations/the-marquee-element-0/marquee-events.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/loop-from-ended.tentative.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/src_object_blob.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-empty-cue.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-selection-task-order.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigate_history_go_forward.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/srcdoc_change_hash.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/select-event.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setRangeText.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/parse-error.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/no-active-script-manual-module.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-no-referrer.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-origin-when-cross-origin.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-origin.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-same-origin.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-unsafe-url.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/microtask-queuing/queue-microtask-exceptions.any.html [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/microtask-queuing/queue-microtask-exceptions.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/allow-crossorigin.html [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/disallow-crossorigin.html [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-events.html [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-events-iframe.html [ Skip ]
+imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/utf-16le.html [ Skip ]
+imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/utf-8.html [ Skip ]
+
+# Newly imported WPT ref tests failures.
+imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-001a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-002a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-003a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-003c.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-004a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-005a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-006a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-007a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-007c.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-008a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-009c.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/editing/editing-0/spelling-and-grammar-checking/spelling-markers-008.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/editing/editing-0/spelling-and-grammar-checking/spelling-markers-010.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/bindings/the-select-element-0/option-label.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-lower-alpha.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-lower-roman.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-upper-alpha.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/li-type-unsupported-upper-roman.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-decimal.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-lower-alpha.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-lower-roman.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-upper-alpha.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/lists/ul-type-unsupported-upper-roman.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-1.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-3q.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-3s.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-direction.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-group-direction.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-border-gap-negative-margin.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-list-item.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-transform-translatez.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-vertical.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/legend-block-margins-2.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/legend-block-margins.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/legend-display-rendering.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/legend-list-item-numbering.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/legend-list-item.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/legend-tall.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/color.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/width.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1i.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1j.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1k.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1l.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2i.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2j.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2k.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-2l.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-empty.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/the-details-element/details-after.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/the-details-element/details-before.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/anonymous-button-content-box.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/inline-level.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-modify-scrolling-attr-to-yes.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/multiline-placeholder-cr.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/multiline-placeholder-crlf.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/multiline-placeholder.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-b-element/b-usage.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-ruby-element/ruby-usage.html [ ImageOnlyFailure ]
+
+# Newly imported WPT tests that are crashing.
+imported/w3c/web-platform-tests/html/browsers/offline/application-cache-api/api_swapcache_error.https.html [ Crash ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/import-meta/import-meta-url.html [ Crash ]
+imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/video-controls-vertical-writing-mode.html [ Crash ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-04.html [ ImageOnlyFailure Crash ]
+
+# Newly imported WPT tests that are flaky.
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name_cross_origin_2.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/browsers/windows/targeting-cross-origin-nested-browsing-contexts.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/webappapis/update-rendering/child-document-raf-order.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/semantics/forms/autofocus/update-the-rendering.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/muted-errors.sub.html [ Failure Pass ]
+imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies.any.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/browsers/history/joint-session-history/joint-session-history-only-fully-active.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/001.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/002.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/combination_history_002.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/combination_history_003.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/058.html [ Failure Pass ]
 
 imported/w3c/web-platform-tests/fetch/api/basic/mode-same-origin.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.worker.html [ DumpJSConsoleLogInStdErr ]
+
+imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-load-error-events.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-load-error-events.https.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-style-error-01.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-style-error-limited-quirks.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-style-error-quirks.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/invalid-content-type.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/dom/idlharness.worker.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/error-type-1.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/sandbox.https.html [ DumpJSConsoleLogInStdErr ]
 
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-response-taint.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/service-workers/service-worker/register-closed-window.https.html [ DumpJSConsoleLogInStdErr ]
@@ -583,7 +720,6 @@ imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-constru
 imported/w3c/web-platform-tests/eventsource/request-credentials.htm [ Failure ]
 imported/w3c/web-platform-tests/mediacapture-fromelement/capture.html [ Failure ]
 imported/w3c/web-platform-tests/mediacapture-fromelement/ended.html [ Failure ]
-imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_4.html [ Failure ]
 webkit.org/b/185407 imported/w3c/web-platform-tests/html/dom/interfaces.worker.html [ Pass Failure Timeout ]
 imported/w3c/web-platform-tests/mediacapture-fromelement/creation.html [ Pass Failure ]
 webkit.org/b/180240 imported/w3c/web-platform-tests/resource-timing/single-entry-per-resource.html [ Pass Failure ]
@@ -904,7 +1040,6 @@ webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/ranges/Range-c
 webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/ranges/Range-isPointInRange.html [ Skip ]
 webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/ranges/Range-mutations.html [ Skip ]
 webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/ranges/Range-set.html [ Skip ]
-webkit.org/b/148736 [ Debug ] imported/w3c/web-platform-tests/html/dom/interfaces.html [ Skip ]
 webkit.org/b/148822 [ Debug ] imported/w3c/web-platform-tests/html/semantics/interfaces.html [ Skip ]
 webkit.org/b/154310 [ Debug ] imported/w3c/web-platform-tests/html/dom/reflection-embedded.html [ Skip ]
 webkit.org/b/154310 [ Debug ] imported/w3c/web-platform-tests/html/dom/reflection-forms.html [ Skip ]
@@ -916,7 +1051,6 @@ webkit.org/b/154310 [ Debug ] imported/w3c/web-platform-tests/html/dom/reflectio
 webkit.org/b/154310 [ Debug ] imported/w3c/web-platform-tests/html/dom/reflection-tabular.html [ Skip ]
 webkit.org/b/154310 [ Debug ] imported/w3c/web-platform-tests/html/dom/reflection-text.html  [ Skip ]
 webkit.org/b/171322 [ Debug ] imported/w3c/web-platform-tests/html/semantics/tabular-data/processing-model-1/span-limits.html [ Skip ]
-webkit.org/b/162517 [ Debug ] imported/w3c/web-platform-tests/html/the-xhtml-syntax/parsing-xhtml-documents/xhtml-mathml-dtd-entity-support.htm [ Skip ]
 webkit.org/b/175588 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-all-global-events.html [ Skip ]
 
 # Tests that are flaky due to console log / error messages
@@ -1048,7 +1182,6 @@ imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/url-encod
 # New W3C ref tests that are failing.
 webkit.org/b/148856 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/svg/intrinsicsize/intrinsicsize-svg-image.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-04.html [ ImageOnlyFailure ]
 
 # These tests generate random IDs that make text expectation unreliable.
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors [ Skip ]
@@ -1064,7 +1197,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-eleme
 # Newly importing W3C tests needed support for reftest-wait.
 webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-after-controls-added.html [ ImageOnlyFailure ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-after-controls-removed.html [ ImageOnlyFailure ]
-webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-empty-cue.html [ Pass ImageOnlyFailure ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-line-doesnt-fit.html [ ImageOnlyFailure ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-transformed-video.html [ Pass ImageOnlyFailure ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-non-snap-to-lines.html [ ImageOnlyFailure ]
@@ -1681,7 +1813,6 @@ webkit.org/b/148823 imported/w3c/web-platform-tests/css/css-multicol/multicol-sp
 webkit.org/b/148950 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base_href_specified.sub.html [ Skip ]
 
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_zero.html [ Pass Failure ]
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/window-name-after-cross-origin-main-frame-navigation.sub.html [ Timeout ]
 
 # FIXME: The following failures need individual bugs.
 webkit.org/b/148805 imported/w3c/web-platform-tests/css/css-multicol/multicol-inherit-003.xht [ ImageOnlyFailure ]
@@ -1891,9 +2022,6 @@ workers/bomb-with-v8.html [ Skip ]
 
 # Disable the SharedArrayBuffers tests
 imported/blink/fast/beacon/beacon-basic.html [ Skip ]
-imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/canblock-dedicatedworker.html [ Skip ]
-imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/canblock-serviceworker.https.html [ Skip ]
-imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/canblock-window.html [ Skip ]
 js/shared-array-buffer-webgl.html [ Skip ]
 workers/sab/cascade_lock.html [ Skip ]
 workers/sab/multi-memory-multi-buffer.html [ Skip ]
@@ -2038,7 +2166,6 @@ imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-
 webkit.org/b/168175 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-skip-no-boxes.html [ ImageOnlyFailure ]
 webkit.org/b/168175 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-menu.html [ ImageOnlyFailure ]
 webkit.org/b/168175 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/same-url.html [ Pass Failure ]
-webkit.org/b/168175 imported/w3c/web-platform-tests/html/browsers/offline/browser-state/navigator_online_online.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/document-adopt-base-url.html [ ImageOnlyFailure ]
 
@@ -2474,8 +2601,6 @@ webkit.org/b/183847 imported/mozilla/css-animations/test_event-order.html [ Pass
 
 webkit.org/b/183848 imported/mozilla/css-animations/test_keyframeeffect-getkeyframes.html [ Skip ]
 
-webkit.org/b/177440 imported/w3c/web-platform-tests/html/browsers/origin/relaxing-the-same-origin-restriction/document_domain_setter_null.tentative.html [ Pass Failure ]
-
 webkit.org/b/157068 [ Debug ] imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html [ Pass Crash ]
 webkit.org/b/157068 [ Release ] imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html [ Pass Failure ]
 
@@ -2495,8 +2620,6 @@ webkit.org/b/183390 http/wpt/html/browsers/history/the-location-interface/locati
 
 webkit.org/b/172243 imported/w3c/web-platform-tests/IndexedDB/idbdatabase-createObjectStore-exception-order.htm [ Pass Failure ]
 
-webkit.org/b/179851 imported/w3c/web-platform-tests/html/browsers/offline/manifest_url_check.html [ Pass Failure ]
-
 webkit.org/b/182177 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/service-workers/service-worker/svg-target-reftest.https.html [ ImageOnlyFailure ]
@@ -2506,8 +2629,6 @@ webkit.org/b/90980 fast/forms/textarea/textarea-state-restore.html [ Pass Timeou
 webkit.org/b/182928 http/tests/cache-storage/cache-representation.https.html [ Pass Failure ]
 
 webkit.org/b/116621 fast/replaced/preferred-widths.html [ Pass Failure ]
-
-webkit.org/b/184198 imported/w3c/web-platform-tests/html/browsers/offline/appcache/workers/appcache-worker.html [ Pass Failure ]
 
 webkit.org/b/184453 imported/w3c/web-platform-tests/workers/name-property.html [ Pass Failure ]
 

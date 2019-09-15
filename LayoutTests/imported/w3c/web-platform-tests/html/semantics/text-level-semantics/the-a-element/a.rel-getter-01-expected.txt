@@ -1,4 +1,0 @@
-
-PASS HTMLAnchorElement.rel getter 
-PASS Test anchor's rel getter 
-

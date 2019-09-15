@@ -12,5 +12,6 @@ PASS [INPUT in NUMBER status] The max equals to value
 PASS [INPUT in NUMBER status] The value is not a number 
 PASS [INPUT in NUMBER status] The value is greater than max(integer) 
 PASS [INPUT in NUMBER status] The value is greater than max(floating number) 
+PASS [INPUT in NUMBER status] The value is greater than max(special floating number) 
 PASS [INPUT in NUMBER status] The value is greater than max(scientific notation) 
 

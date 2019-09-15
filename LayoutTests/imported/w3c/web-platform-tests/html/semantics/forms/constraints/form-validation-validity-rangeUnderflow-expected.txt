@@ -12,5 +12,6 @@ PASS [INPUT in NUMBER status] The min equals to value
 PASS [INPUT in NUMBER status] The value is not a number 
 PASS [INPUT in NUMBER status] The value is less than min(integer) 
 PASS [INPUT in NUMBER status] The value is less than min(floating number) 
+PASS [INPUT in NUMBER status] The value is less than min(special floating number) 
 PASS [INPUT in NUMBER status] The value is less than min(scientific notation) 
 

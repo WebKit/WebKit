@@ -20,7 +20,8 @@ PASS [INPUT in DATETIME-LOCAL status] The value attibute is empty string
 PASS [INPUT in DATETIME-LOCAL status] The value must match the step 
 PASS [INPUT in DATETIME-LOCAL status] The value must mismatch the step 
 PASS [INPUT in NUMBER status] The step attribute is not set 
-PASS [INPUT in NUMBER status] The value attibute is empty string 
+PASS [INPUT in NUMBER status] The step attribute is not set and the value attribute is a floating number 
+PASS [INPUT in NUMBER status] The value attribute is empty string 
 PASS [INPUT in NUMBER status] The value must match the step 
 PASS [INPUT in NUMBER status] The value must mismatch the step 
 

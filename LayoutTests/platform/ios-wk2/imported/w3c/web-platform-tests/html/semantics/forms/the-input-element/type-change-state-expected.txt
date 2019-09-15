@@ -84,11 +84,11 @@ FAIL change state from tel to image Type error
 FAIL change state from tel to reset Type error
 FAIL change state from tel to button Type error
 FAIL change state from url to hidden Type error
-FAIL change state from url to text assert_equals: input.value should be '  foobar  ' after change of state expected "  foobar  " but got "foobar"
-FAIL change state from url to search assert_equals: input.value should be '  foobar  ' after change of state expected "  foobar  " but got "foobar"
-FAIL change state from url to tel assert_equals: input.value should be '  foobar  ' after change of state expected "  foobar  " but got "foobar"
+PASS change state from url to text 
+PASS change state from url to search 
+PASS change state from url to tel 
 PASS change state from url to email 
-FAIL change state from url to password assert_equals: input.value should be '  foobar  ' after change of state expected "  foobar  " but got "foobar"
+PASS change state from url to password 
 FAIL change state from url to datetime-local Type error
 FAIL change state from url to date Type error
 FAIL change state from url to month Type error
@@ -105,11 +105,11 @@ FAIL change state from url to image Type error
 FAIL change state from url to reset Type error
 FAIL change state from url to button Type error
 FAIL change state from email to hidden Type error
-FAIL change state from email to text assert_equals: input.value should be '  foobar  ' after change of state expected "  foobar  " but got "foobar"
-FAIL change state from email to search assert_equals: input.value should be '  foobar  ' after change of state expected "  foobar  " but got "foobar"
-FAIL change state from email to tel assert_equals: input.value should be '  foobar  ' after change of state expected "  foobar  " but got "foobar"
+PASS change state from email to text 
+PASS change state from email to search 
+PASS change state from email to tel 
 PASS change state from email to url 
-FAIL change state from email to password assert_equals: input.value should be '  foobar  ' after change of state expected "  foobar  " but got "foobar"
+PASS change state from email to password 
 FAIL change state from email to datetime-local Type error
 FAIL change state from email to date Type error
 FAIL change state from email to month Type error

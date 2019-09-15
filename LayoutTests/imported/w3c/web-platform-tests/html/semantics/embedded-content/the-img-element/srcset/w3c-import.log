@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/srcset/avoid-reload-on-resize.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/srcset/common.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/srcset/parse-a-srcset-attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/srcset/select-an-image-source.html

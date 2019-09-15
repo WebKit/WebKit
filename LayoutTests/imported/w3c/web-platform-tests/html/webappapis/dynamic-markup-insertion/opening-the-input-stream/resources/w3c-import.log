@@ -31,4 +31,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/page-with-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/set-document-domain.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/slow-png.py
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/url-entry-document-timer-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/resources/url-frame.html

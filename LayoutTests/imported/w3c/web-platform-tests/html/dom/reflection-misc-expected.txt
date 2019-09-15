@@ -8,6 +8,9 @@ PASS html.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r
 PASS html.title: setAttribute() to undefined 
 PASS html.title: setAttribute() to 7 
 PASS html.title: setAttribute() to 1.5 
+PASS html.title: setAttribute() to "5%" 
+PASS html.title: setAttribute() to "+100" 
+PASS html.title: setAttribute() to ".5" 
 PASS html.title: setAttribute() to true 
 PASS html.title: setAttribute() to false 
 PASS html.title: setAttribute() to object "[object Object]" 
@@ -23,6 +26,9 @@ PASS html.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0
 PASS html.title: IDL set to undefined 
 PASS html.title: IDL set to 7 
 PASS html.title: IDL set to 1.5 
+PASS html.title: IDL set to "5%" 
+PASS html.title: IDL set to "+100" 
+PASS html.title: IDL set to ".5" 
 PASS html.title: IDL set to true 
 PASS html.title: IDL set to false 
 PASS html.title: IDL set to object "[object Object]" 
@@ -40,6 +46,9 @@ PASS html.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\
 PASS html.lang: setAttribute() to undefined 
 PASS html.lang: setAttribute() to 7 
 PASS html.lang: setAttribute() to 1.5 
+PASS html.lang: setAttribute() to "5%" 
+PASS html.lang: setAttribute() to "+100" 
+PASS html.lang: setAttribute() to ".5" 
 PASS html.lang: setAttribute() to true 
 PASS html.lang: setAttribute() to false 
 PASS html.lang: setAttribute() to object "[object Object]" 
@@ -55,6 +64,9 @@ PASS html.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f
 PASS html.lang: IDL set to undefined 
 PASS html.lang: IDL set to 7 
 PASS html.lang: IDL set to 1.5 
+PASS html.lang: IDL set to "5%" 
+PASS html.lang: IDL set to "+100" 
+PASS html.lang: IDL set to ".5" 
 PASS html.lang: IDL set to true 
 PASS html.lang: IDL set to false 
 PASS html.lang: IDL set to object "[object Object]" 
@@ -72,6 +84,9 @@ PASS html.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x
 PASS html.dir: setAttribute() to undefined 
 PASS html.dir: setAttribute() to 7 
 PASS html.dir: setAttribute() to 1.5 
+PASS html.dir: setAttribute() to "5%" 
+PASS html.dir: setAttribute() to "+100" 
+PASS html.dir: setAttribute() to ".5" 
 PASS html.dir: setAttribute() to true 
 PASS html.dir: setAttribute() to false 
 PASS html.dir: setAttribute() to object "[object Object]" 
@@ -102,6 +117,9 @@ PASS html.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f 
 PASS html.dir: IDL set to undefined 
 PASS html.dir: IDL set to 7 
 PASS html.dir: IDL set to 1.5 
+PASS html.dir: IDL set to "5%" 
+PASS html.dir: IDL set to "+100" 
+PASS html.dir: IDL set to ".5" 
 PASS html.dir: IDL set to true 
 PASS html.dir: IDL set to false 
 PASS html.dir: IDL set to object "[object Object]" 
@@ -134,6 +152,9 @@ PASS html.className (<html class>): setAttribute() to " \0\x01\x02\x03\x04\x05\x
 PASS html.className (<html class>): setAttribute() to undefined 
 PASS html.className (<html class>): setAttribute() to 7 
 PASS html.className (<html class>): setAttribute() to 1.5 
+PASS html.className (<html class>): setAttribute() to "5%" 
+PASS html.className (<html class>): setAttribute() to "+100" 
+PASS html.className (<html class>): setAttribute() to ".5" 
 PASS html.className (<html class>): setAttribute() to true 
 PASS html.className (<html class>): setAttribute() to false 
 PASS html.className (<html class>): setAttribute() to object "[object Object]" 
@@ -149,6 +170,9 @@ PASS html.className (<html class>): IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 
 PASS html.className (<html class>): IDL set to undefined 
 PASS html.className (<html class>): IDL set to 7 
 PASS html.className (<html class>): IDL set to 1.5 
+PASS html.className (<html class>): IDL set to "5%" 
+PASS html.className (<html class>): IDL set to "+100" 
+PASS html.className (<html class>): IDL set to ".5" 
 PASS html.className (<html class>): IDL set to true 
 PASS html.className (<html class>): IDL set to false 
 PASS html.className (<html class>): IDL set to object "[object Object]" 
@@ -167,6 +191,9 @@ PASS html.hidden: setAttribute() to undefined
 PASS html.hidden: setAttribute() to null 
 PASS html.hidden: setAttribute() to 7 
 PASS html.hidden: setAttribute() to 1.5 
+PASS html.hidden: setAttribute() to "5%" 
+PASS html.hidden: setAttribute() to "+100" 
+PASS html.hidden: setAttribute() to ".5" 
 PASS html.hidden: setAttribute() to true 
 PASS html.hidden: setAttribute() to false 
 PASS html.hidden: setAttribute() to object "[object Object]" 
@@ -183,6 +210,9 @@ PASS html.hidden: IDL set to undefined
 PASS html.hidden: IDL set to null 
 PASS html.hidden: IDL set to 7 
 PASS html.hidden: IDL set to 1.5 
+PASS html.hidden: IDL set to "5%" 
+PASS html.hidden: IDL set to "+100" 
+PASS html.hidden: IDL set to ".5" 
 PASS html.hidden: IDL set to true 
 PASS html.hidden: IDL set to false 
 PASS html.hidden: IDL set to object "[object Object]" 
@@ -199,6 +229,9 @@ PASS html.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v
 PASS html.accessKey: setAttribute() to undefined 
 PASS html.accessKey: setAttribute() to 7 
 PASS html.accessKey: setAttribute() to 1.5 
+PASS html.accessKey: setAttribute() to "5%" 
+PASS html.accessKey: setAttribute() to "+100" 
+PASS html.accessKey: setAttribute() to ".5" 
 PASS html.accessKey: setAttribute() to true 
 PASS html.accessKey: setAttribute() to false 
 PASS html.accessKey: setAttribute() to object "[object Object]" 
@@ -214,6 +247,9 @@ PASS html.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0
 PASS html.accessKey: IDL set to undefined 
 PASS html.accessKey: IDL set to 7 
 PASS html.accessKey: IDL set to 1.5 
+PASS html.accessKey: IDL set to "5%" 
+PASS html.accessKey: IDL set to "+100" 
+PASS html.accessKey: IDL set to ".5" 
 PASS html.accessKey: IDL set to true 
 PASS html.accessKey: IDL set to false 
 PASS html.accessKey: IDL set to object "[object Object]" 
@@ -241,6 +277,8 @@ PASS html.tabIndex: setAttribute() to " 7"
 PASS html.tabIndex: setAttribute() to "\n7" 
 PASS html.tabIndex: setAttribute() to "\r7" 
 PASS html.tabIndex: setAttribute() to 1.5 
+PASS html.tabIndex: setAttribute() to "5%" 
+PASS html.tabIndex: setAttribute() to "+100" 
 PASS html.tabIndex: setAttribute() to object "2" 
 PASS html.tabIndex: IDL set to -36 
 PASS html.tabIndex: IDL set to -1 
@@ -255,6 +293,9 @@ PASS html.version: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f
 PASS html.version: setAttribute() to undefined 
 PASS html.version: setAttribute() to 7 
 PASS html.version: setAttribute() to 1.5 
+PASS html.version: setAttribute() to "5%" 
+PASS html.version: setAttribute() to "+100" 
+PASS html.version: setAttribute() to ".5" 
 PASS html.version: setAttribute() to true 
 PASS html.version: setAttribute() to false 
 PASS html.version: setAttribute() to object "[object Object]" 
@@ -270,6 +311,9 @@ PASS html.version: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\
 PASS html.version: IDL set to undefined 
 PASS html.version: IDL set to 7 
 PASS html.version: IDL set to 1.5 
+PASS html.version: IDL set to "5%" 
+PASS html.version: IDL set to "+100" 
+PASS html.version: IDL set to ".5" 
 PASS html.version: IDL set to true 
 PASS html.version: IDL set to false 
 PASS html.version: IDL set to object "[object Object]" 
@@ -287,6 +331,9 @@ PASS script.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f
 PASS script.title: setAttribute() to undefined 
 PASS script.title: setAttribute() to 7 
 PASS script.title: setAttribute() to 1.5 
+PASS script.title: setAttribute() to "5%" 
+PASS script.title: setAttribute() to "+100" 
+PASS script.title: setAttribute() to ".5" 
 PASS script.title: setAttribute() to true 
 PASS script.title: setAttribute() to false 
 PASS script.title: setAttribute() to object "[object Object]" 
@@ -302,6 +349,9 @@ PASS script.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\
 PASS script.title: IDL set to undefined 
 PASS script.title: IDL set to 7 
 PASS script.title: IDL set to 1.5 
+PASS script.title: IDL set to "5%" 
+PASS script.title: IDL set to "+100" 
+PASS script.title: IDL set to ".5" 
 PASS script.title: IDL set to true 
 PASS script.title: IDL set to false 
 PASS script.title: IDL set to object "[object Object]" 
@@ -319,6 +369,9 @@ PASS script.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\
 PASS script.lang: setAttribute() to undefined 
 PASS script.lang: setAttribute() to 7 
 PASS script.lang: setAttribute() to 1.5 
+PASS script.lang: setAttribute() to "5%" 
+PASS script.lang: setAttribute() to "+100" 
+PASS script.lang: setAttribute() to ".5" 
 PASS script.lang: setAttribute() to true 
 PASS script.lang: setAttribute() to false 
 PASS script.lang: setAttribute() to object "[object Object]" 
@@ -334,6 +387,9 @@ PASS script.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x
 PASS script.lang: IDL set to undefined 
 PASS script.lang: IDL set to 7 
 PASS script.lang: IDL set to 1.5 
+PASS script.lang: IDL set to "5%" 
+PASS script.lang: IDL set to "+100" 
+PASS script.lang: IDL set to ".5" 
 PASS script.lang: IDL set to true 
 PASS script.lang: IDL set to false 
 PASS script.lang: IDL set to object "[object Object]" 
@@ -351,6 +407,9 @@ PASS script.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r
 PASS script.dir: setAttribute() to undefined 
 PASS script.dir: setAttribute() to 7 
 PASS script.dir: setAttribute() to 1.5 
+PASS script.dir: setAttribute() to "5%" 
+PASS script.dir: setAttribute() to "+100" 
+PASS script.dir: setAttribute() to ".5" 
 PASS script.dir: setAttribute() to true 
 PASS script.dir: setAttribute() to false 
 PASS script.dir: setAttribute() to object "[object Object]" 
@@ -381,6 +440,9 @@ PASS script.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0
 PASS script.dir: IDL set to undefined 
 PASS script.dir: IDL set to 7 
 PASS script.dir: IDL set to 1.5 
+PASS script.dir: IDL set to "5%" 
+PASS script.dir: IDL set to "+100" 
+PASS script.dir: IDL set to ".5" 
 PASS script.dir: IDL set to true 
 PASS script.dir: IDL set to false 
 PASS script.dir: IDL set to object "[object Object]" 
@@ -413,6 +475,9 @@ PASS script.className (<script class>): setAttribute() to " \0\x01\x02\x03\x04\x
 PASS script.className (<script class>): setAttribute() to undefined 
 PASS script.className (<script class>): setAttribute() to 7 
 PASS script.className (<script class>): setAttribute() to 1.5 
+PASS script.className (<script class>): setAttribute() to "5%" 
+PASS script.className (<script class>): setAttribute() to "+100" 
+PASS script.className (<script class>): setAttribute() to ".5" 
 PASS script.className (<script class>): setAttribute() to true 
 PASS script.className (<script class>): setAttribute() to false 
 PASS script.className (<script class>): setAttribute() to object "[object Object]" 
@@ -428,6 +493,9 @@ PASS script.className (<script class>): IDL set to " \0\x01\x02\x03\x04\x05\x06\
 PASS script.className (<script class>): IDL set to undefined 
 PASS script.className (<script class>): IDL set to 7 
 PASS script.className (<script class>): IDL set to 1.5 
+PASS script.className (<script class>): IDL set to "5%" 
+PASS script.className (<script class>): IDL set to "+100" 
+PASS script.className (<script class>): IDL set to ".5" 
 PASS script.className (<script class>): IDL set to true 
 PASS script.className (<script class>): IDL set to false 
 PASS script.className (<script class>): IDL set to object "[object Object]" 
@@ -446,6 +514,9 @@ PASS script.hidden: setAttribute() to undefined
 PASS script.hidden: setAttribute() to null 
 PASS script.hidden: setAttribute() to 7 
 PASS script.hidden: setAttribute() to 1.5 
+PASS script.hidden: setAttribute() to "5%" 
+PASS script.hidden: setAttribute() to "+100" 
+PASS script.hidden: setAttribute() to ".5" 
 PASS script.hidden: setAttribute() to true 
 PASS script.hidden: setAttribute() to false 
 PASS script.hidden: setAttribute() to object "[object Object]" 
@@ -462,6 +533,9 @@ PASS script.hidden: IDL set to undefined
 PASS script.hidden: IDL set to null 
 PASS script.hidden: IDL set to 7 
 PASS script.hidden: IDL set to 1.5 
+PASS script.hidden: IDL set to "5%" 
+PASS script.hidden: IDL set to "+100" 
+PASS script.hidden: IDL set to ".5" 
 PASS script.hidden: IDL set to true 
 PASS script.hidden: IDL set to false 
 PASS script.hidden: IDL set to object "[object Object]" 
@@ -478,6 +552,9 @@ PASS script.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n
 PASS script.accessKey: setAttribute() to undefined 
 PASS script.accessKey: setAttribute() to 7 
 PASS script.accessKey: setAttribute() to 1.5 
+PASS script.accessKey: setAttribute() to "5%" 
+PASS script.accessKey: setAttribute() to "+100" 
+PASS script.accessKey: setAttribute() to ".5" 
 PASS script.accessKey: setAttribute() to true 
 PASS script.accessKey: setAttribute() to false 
 PASS script.accessKey: setAttribute() to object "[object Object]" 
@@ -493,6 +570,9 @@ PASS script.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\
 PASS script.accessKey: IDL set to undefined 
 PASS script.accessKey: IDL set to 7 
 PASS script.accessKey: IDL set to 1.5 
+PASS script.accessKey: IDL set to "5%" 
+PASS script.accessKey: IDL set to "+100" 
+PASS script.accessKey: IDL set to ".5" 
 PASS script.accessKey: IDL set to true 
 PASS script.accessKey: IDL set to false 
 PASS script.accessKey: IDL set to object "[object Object]" 
@@ -520,6 +600,8 @@ PASS script.tabIndex: setAttribute() to " 7"
 PASS script.tabIndex: setAttribute() to "\n7" 
 PASS script.tabIndex: setAttribute() to "\r7" 
 PASS script.tabIndex: setAttribute() to 1.5 
+PASS script.tabIndex: setAttribute() to "5%" 
+PASS script.tabIndex: setAttribute() to "+100" 
 PASS script.tabIndex: setAttribute() to object "2" 
 PASS script.tabIndex: IDL set to -36 
 PASS script.tabIndex: IDL set to -1 
@@ -537,6 +619,9 @@ PASS script.src: setAttribute() to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\
 PASS script.src: setAttribute() to undefined 
 PASS script.src: setAttribute() to 7 
 PASS script.src: setAttribute() to 1.5 
+PASS script.src: setAttribute() to "5%" 
+PASS script.src: setAttribute() to "+100" 
+PASS script.src: setAttribute() to ".5" 
 PASS script.src: setAttribute() to true 
 PASS script.src: setAttribute() to false 
 PASS script.src: setAttribute() to object "[object Object]" 
@@ -555,6 +640,9 @@ PASS script.src: IDL set to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f
 PASS script.src: IDL set to undefined 
 PASS script.src: IDL set to 7 
 PASS script.src: IDL set to 1.5 
+PASS script.src: IDL set to "5%" 
+PASS script.src: IDL set to "+100" 
+PASS script.src: IDL set to ".5" 
 PASS script.src: IDL set to true 
 PASS script.src: IDL set to false 
 PASS script.src: IDL set to object "[object Object]" 
@@ -572,6 +660,9 @@ PASS script.type: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\
 PASS script.type: setAttribute() to undefined 
 PASS script.type: setAttribute() to 7 
 PASS script.type: setAttribute() to 1.5 
+PASS script.type: setAttribute() to "5%" 
+PASS script.type: setAttribute() to "+100" 
+PASS script.type: setAttribute() to ".5" 
 PASS script.type: setAttribute() to true 
 PASS script.type: setAttribute() to false 
 PASS script.type: setAttribute() to object "[object Object]" 
@@ -587,6 +678,9 @@ PASS script.type: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x
 PASS script.type: IDL set to undefined 
 PASS script.type: IDL set to 7 
 PASS script.type: IDL set to 1.5 
+PASS script.type: IDL set to "5%" 
+PASS script.type: IDL set to "+100" 
+PASS script.type: IDL set to ".5" 
 PASS script.type: IDL set to true 
 PASS script.type: IDL set to false 
 PASS script.type: IDL set to object "[object Object]" 
@@ -605,6 +699,9 @@ PASS script.noModule: setAttribute() to undefined
 PASS script.noModule: setAttribute() to null 
 PASS script.noModule: setAttribute() to 7 
 PASS script.noModule: setAttribute() to 1.5 
+PASS script.noModule: setAttribute() to "5%" 
+PASS script.noModule: setAttribute() to "+100" 
+PASS script.noModule: setAttribute() to ".5" 
 PASS script.noModule: setAttribute() to true 
 PASS script.noModule: setAttribute() to false 
 PASS script.noModule: setAttribute() to object "[object Object]" 
@@ -621,6 +718,9 @@ PASS script.noModule: IDL set to undefined
 PASS script.noModule: IDL set to null 
 PASS script.noModule: IDL set to 7 
 PASS script.noModule: IDL set to 1.5 
+PASS script.noModule: IDL set to "5%" 
+PASS script.noModule: IDL set to "+100" 
+PASS script.noModule: IDL set to ".5" 
 PASS script.noModule: IDL set to true 
 PASS script.noModule: IDL set to false 
 PASS script.noModule: IDL set to object "[object Object]" 
@@ -637,6 +737,9 @@ PASS script.charset: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v
 PASS script.charset: setAttribute() to undefined 
 PASS script.charset: setAttribute() to 7 
 PASS script.charset: setAttribute() to 1.5 
+PASS script.charset: setAttribute() to "5%" 
+PASS script.charset: setAttribute() to "+100" 
+PASS script.charset: setAttribute() to ".5" 
 PASS script.charset: setAttribute() to true 
 PASS script.charset: setAttribute() to false 
 PASS script.charset: setAttribute() to object "[object Object]" 
@@ -652,6 +755,9 @@ PASS script.charset: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0
 PASS script.charset: IDL set to undefined 
 PASS script.charset: IDL set to 7 
 PASS script.charset: IDL set to 1.5 
+PASS script.charset: IDL set to "5%" 
+PASS script.charset: IDL set to "+100" 
+PASS script.charset: IDL set to ".5" 
 PASS script.charset: IDL set to true 
 PASS script.charset: IDL set to false 
 PASS script.charset: IDL set to object "[object Object]" 
@@ -670,6 +776,9 @@ PASS script.defer: setAttribute() to undefined
 PASS script.defer: setAttribute() to null 
 PASS script.defer: setAttribute() to 7 
 PASS script.defer: setAttribute() to 1.5 
+PASS script.defer: setAttribute() to "5%" 
+PASS script.defer: setAttribute() to "+100" 
+PASS script.defer: setAttribute() to ".5" 
 PASS script.defer: setAttribute() to true 
 PASS script.defer: setAttribute() to false 
 PASS script.defer: setAttribute() to object "[object Object]" 
@@ -686,6 +795,9 @@ PASS script.defer: IDL set to undefined
 PASS script.defer: IDL set to null 
 PASS script.defer: IDL set to 7 
 PASS script.defer: IDL set to 1.5 
+PASS script.defer: IDL set to "5%" 
+PASS script.defer: IDL set to "+100" 
+PASS script.defer: IDL set to ".5" 
 PASS script.defer: IDL set to true 
 PASS script.defer: IDL set to false 
 PASS script.defer: IDL set to object "[object Object]" 
@@ -702,6 +814,9 @@ PASS script.crossOrigin: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t
 PASS script.crossOrigin: setAttribute() to undefined 
 PASS script.crossOrigin: setAttribute() to 7 
 PASS script.crossOrigin: setAttribute() to 1.5 
+PASS script.crossOrigin: setAttribute() to "5%" 
+PASS script.crossOrigin: setAttribute() to "+100" 
+PASS script.crossOrigin: setAttribute() to ".5" 
 PASS script.crossOrigin: setAttribute() to true 
 PASS script.crossOrigin: setAttribute() to false 
 PASS script.crossOrigin: setAttribute() to object "[object Object]" 
@@ -727,6 +842,9 @@ PASS script.crossOrigin: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\
 PASS script.crossOrigin: IDL set to undefined 
 PASS script.crossOrigin: IDL set to 7 
 PASS script.crossOrigin: IDL set to 1.5 
+PASS script.crossOrigin: IDL set to "5%" 
+PASS script.crossOrigin: IDL set to "+100" 
+PASS script.crossOrigin: IDL set to ".5" 
 PASS script.crossOrigin: IDL set to true 
 PASS script.crossOrigin: IDL set to false 
 PASS script.crossOrigin: IDL set to object "[object Object]" 
@@ -754,6 +872,9 @@ PASS script.nonce: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f
 PASS script.nonce: setAttribute() to undefined 
 PASS script.nonce: setAttribute() to 7 
 PASS script.nonce: setAttribute() to 1.5 
+PASS script.nonce: setAttribute() to "5%" 
+PASS script.nonce: setAttribute() to "+100" 
+PASS script.nonce: setAttribute() to ".5" 
 PASS script.nonce: setAttribute() to true 
 PASS script.nonce: setAttribute() to false 
 PASS script.nonce: setAttribute() to object "[object Object]" 
@@ -769,6 +890,9 @@ PASS script.nonce: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\
 PASS script.nonce: IDL set to undefined 
 PASS script.nonce: IDL set to 7 
 PASS script.nonce: IDL set to 1.5 
+PASS script.nonce: IDL set to "5%" 
+PASS script.nonce: IDL set to "+100" 
+PASS script.nonce: IDL set to ".5" 
 PASS script.nonce: IDL set to true 
 PASS script.nonce: IDL set to false 
 PASS script.nonce: IDL set to object "[object Object]" 
@@ -786,6 +910,9 @@ PASS script.integrity: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n
 PASS script.integrity: setAttribute() to undefined 
 PASS script.integrity: setAttribute() to 7 
 PASS script.integrity: setAttribute() to 1.5 
+PASS script.integrity: setAttribute() to "5%" 
+PASS script.integrity: setAttribute() to "+100" 
+PASS script.integrity: setAttribute() to ".5" 
 PASS script.integrity: setAttribute() to true 
 PASS script.integrity: setAttribute() to false 
 PASS script.integrity: setAttribute() to object "[object Object]" 
@@ -801,6 +928,9 @@ PASS script.integrity: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\
 PASS script.integrity: IDL set to undefined 
 PASS script.integrity: IDL set to 7 
 PASS script.integrity: IDL set to 1.5 
+PASS script.integrity: IDL set to "5%" 
+PASS script.integrity: IDL set to "+100" 
+PASS script.integrity: IDL set to ".5" 
 PASS script.integrity: IDL set to true 
 PASS script.integrity: IDL set to false 
 PASS script.integrity: IDL set to object "[object Object]" 
@@ -818,6 +948,9 @@ PASS script.event: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f
 PASS script.event: setAttribute() to undefined 
 PASS script.event: setAttribute() to 7 
 PASS script.event: setAttribute() to 1.5 
+PASS script.event: setAttribute() to "5%" 
+PASS script.event: setAttribute() to "+100" 
+PASS script.event: setAttribute() to ".5" 
 PASS script.event: setAttribute() to true 
 PASS script.event: setAttribute() to false 
 PASS script.event: setAttribute() to object "[object Object]" 
@@ -833,6 +966,9 @@ PASS script.event: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\
 PASS script.event: IDL set to undefined 
 PASS script.event: IDL set to 7 
 PASS script.event: IDL set to 1.5 
+PASS script.event: IDL set to "5%" 
+PASS script.event: IDL set to "+100" 
+PASS script.event: IDL set to ".5" 
 PASS script.event: IDL set to true 
 PASS script.event: IDL set to false 
 PASS script.event: IDL set to object "[object Object]" 
@@ -850,6 +986,9 @@ PASS script.htmlFor (<script for>): setAttribute() to " \0\x01\x02\x03\x04\x05\x
 PASS script.htmlFor (<script for>): setAttribute() to undefined 
 PASS script.htmlFor (<script for>): setAttribute() to 7 
 PASS script.htmlFor (<script for>): setAttribute() to 1.5 
+PASS script.htmlFor (<script for>): setAttribute() to "5%" 
+PASS script.htmlFor (<script for>): setAttribute() to "+100" 
+PASS script.htmlFor (<script for>): setAttribute() to ".5" 
 PASS script.htmlFor (<script for>): setAttribute() to true 
 PASS script.htmlFor (<script for>): setAttribute() to false 
 PASS script.htmlFor (<script for>): setAttribute() to object "[object Object]" 
@@ -865,6 +1004,9 @@ PASS script.htmlFor (<script for>): IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 
 PASS script.htmlFor (<script for>): IDL set to undefined 
 PASS script.htmlFor (<script for>): IDL set to 7 
 PASS script.htmlFor (<script for>): IDL set to 1.5 
+PASS script.htmlFor (<script for>): IDL set to "5%" 
+PASS script.htmlFor (<script for>): IDL set to "+100" 
+PASS script.htmlFor (<script for>): IDL set to ".5" 
 PASS script.htmlFor (<script for>): IDL set to true 
 PASS script.htmlFor (<script for>): IDL set to false 
 PASS script.htmlFor (<script for>): IDL set to object "[object Object]" 
@@ -882,6 +1024,9 @@ PASS noscript.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v
 PASS noscript.title: setAttribute() to undefined 
 PASS noscript.title: setAttribute() to 7 
 PASS noscript.title: setAttribute() to 1.5 
+PASS noscript.title: setAttribute() to "5%" 
+PASS noscript.title: setAttribute() to "+100" 
+PASS noscript.title: setAttribute() to ".5" 
 PASS noscript.title: setAttribute() to true 
 PASS noscript.title: setAttribute() to false 
 PASS noscript.title: setAttribute() to object "[object Object]" 
@@ -897,6 +1042,9 @@ PASS noscript.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0
 PASS noscript.title: IDL set to undefined 
 PASS noscript.title: IDL set to 7 
 PASS noscript.title: IDL set to 1.5 
+PASS noscript.title: IDL set to "5%" 
+PASS noscript.title: IDL set to "+100" 
+PASS noscript.title: IDL set to ".5" 
 PASS noscript.title: IDL set to true 
 PASS noscript.title: IDL set to false 
 PASS noscript.title: IDL set to object "[object Object]" 
@@ -914,6 +1062,9 @@ PASS noscript.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\
 PASS noscript.lang: setAttribute() to undefined 
 PASS noscript.lang: setAttribute() to 7 
 PASS noscript.lang: setAttribute() to 1.5 
+PASS noscript.lang: setAttribute() to "5%" 
+PASS noscript.lang: setAttribute() to "+100" 
+PASS noscript.lang: setAttribute() to ".5" 
 PASS noscript.lang: setAttribute() to true 
 PASS noscript.lang: setAttribute() to false 
 PASS noscript.lang: setAttribute() to object "[object Object]" 
@@ -929,6 +1080,9 @@ PASS noscript.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e
 PASS noscript.lang: IDL set to undefined 
 PASS noscript.lang: IDL set to 7 
 PASS noscript.lang: IDL set to 1.5 
+PASS noscript.lang: IDL set to "5%" 
+PASS noscript.lang: IDL set to "+100" 
+PASS noscript.lang: IDL set to ".5" 
 PASS noscript.lang: IDL set to true 
 PASS noscript.lang: IDL set to false 
 PASS noscript.lang: IDL set to object "[object Object]" 
@@ -946,6 +1100,9 @@ PASS noscript.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f
 PASS noscript.dir: setAttribute() to undefined 
 PASS noscript.dir: setAttribute() to 7 
 PASS noscript.dir: setAttribute() to 1.5 
+PASS noscript.dir: setAttribute() to "5%" 
+PASS noscript.dir: setAttribute() to "+100" 
+PASS noscript.dir: setAttribute() to ".5" 
 PASS noscript.dir: setAttribute() to true 
 PASS noscript.dir: setAttribute() to false 
 PASS noscript.dir: setAttribute() to object "[object Object]" 
@@ -976,6 +1133,9 @@ PASS noscript.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\
 PASS noscript.dir: IDL set to undefined 
 PASS noscript.dir: IDL set to 7 
 PASS noscript.dir: IDL set to 1.5 
+PASS noscript.dir: IDL set to "5%" 
+PASS noscript.dir: IDL set to "+100" 
+PASS noscript.dir: IDL set to ".5" 
 PASS noscript.dir: IDL set to true 
 PASS noscript.dir: IDL set to false 
 PASS noscript.dir: IDL set to object "[object Object]" 
@@ -1008,6 +1168,9 @@ PASS noscript.className (<noscript class>): setAttribute() to " \0\x01\x02\x03\x
 PASS noscript.className (<noscript class>): setAttribute() to undefined 
 PASS noscript.className (<noscript class>): setAttribute() to 7 
 PASS noscript.className (<noscript class>): setAttribute() to 1.5 
+PASS noscript.className (<noscript class>): setAttribute() to "5%" 
+PASS noscript.className (<noscript class>): setAttribute() to "+100" 
+PASS noscript.className (<noscript class>): setAttribute() to ".5" 
 PASS noscript.className (<noscript class>): setAttribute() to true 
 PASS noscript.className (<noscript class>): setAttribute() to false 
 PASS noscript.className (<noscript class>): setAttribute() to object "[object Object]" 
@@ -1023,6 +1186,9 @@ PASS noscript.className (<noscript class>): IDL set to " \0\x01\x02\x03\x04\x05\
 PASS noscript.className (<noscript class>): IDL set to undefined 
 PASS noscript.className (<noscript class>): IDL set to 7 
 PASS noscript.className (<noscript class>): IDL set to 1.5 
+PASS noscript.className (<noscript class>): IDL set to "5%" 
+PASS noscript.className (<noscript class>): IDL set to "+100" 
+PASS noscript.className (<noscript class>): IDL set to ".5" 
 PASS noscript.className (<noscript class>): IDL set to true 
 PASS noscript.className (<noscript class>): IDL set to false 
 PASS noscript.className (<noscript class>): IDL set to object "[object Object]" 
@@ -1041,6 +1207,9 @@ PASS noscript.hidden: setAttribute() to undefined
 PASS noscript.hidden: setAttribute() to null 
 PASS noscript.hidden: setAttribute() to 7 
 PASS noscript.hidden: setAttribute() to 1.5 
+PASS noscript.hidden: setAttribute() to "5%" 
+PASS noscript.hidden: setAttribute() to "+100" 
+PASS noscript.hidden: setAttribute() to ".5" 
 PASS noscript.hidden: setAttribute() to true 
 PASS noscript.hidden: setAttribute() to false 
 PASS noscript.hidden: setAttribute() to object "[object Object]" 
@@ -1057,6 +1226,9 @@ PASS noscript.hidden: IDL set to undefined
 PASS noscript.hidden: IDL set to null 
 PASS noscript.hidden: IDL set to 7 
 PASS noscript.hidden: IDL set to 1.5 
+PASS noscript.hidden: IDL set to "5%" 
+PASS noscript.hidden: IDL set to "+100" 
+PASS noscript.hidden: IDL set to ".5" 
 PASS noscript.hidden: IDL set to true 
 PASS noscript.hidden: IDL set to false 
 PASS noscript.hidden: IDL set to object "[object Object]" 
@@ -1073,6 +1245,9 @@ PASS noscript.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t
 PASS noscript.accessKey: setAttribute() to undefined 
 PASS noscript.accessKey: setAttribute() to 7 
 PASS noscript.accessKey: setAttribute() to 1.5 
+PASS noscript.accessKey: setAttribute() to "5%" 
+PASS noscript.accessKey: setAttribute() to "+100" 
+PASS noscript.accessKey: setAttribute() to ".5" 
 PASS noscript.accessKey: setAttribute() to true 
 PASS noscript.accessKey: setAttribute() to false 
 PASS noscript.accessKey: setAttribute() to object "[object Object]" 
@@ -1088,6 +1263,9 @@ PASS noscript.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\
 PASS noscript.accessKey: IDL set to undefined 
 PASS noscript.accessKey: IDL set to 7 
 PASS noscript.accessKey: IDL set to 1.5 
+PASS noscript.accessKey: IDL set to "5%" 
+PASS noscript.accessKey: IDL set to "+100" 
+PASS noscript.accessKey: IDL set to ".5" 
 PASS noscript.accessKey: IDL set to true 
 PASS noscript.accessKey: IDL set to false 
 PASS noscript.accessKey: IDL set to object "[object Object]" 
@@ -1115,6 +1293,8 @@ PASS noscript.tabIndex: setAttribute() to " 7"
 PASS noscript.tabIndex: setAttribute() to "\n7" 
 PASS noscript.tabIndex: setAttribute() to "\r7" 
 PASS noscript.tabIndex: setAttribute() to 1.5 
+PASS noscript.tabIndex: setAttribute() to "5%" 
+PASS noscript.tabIndex: setAttribute() to "+100" 
 PASS noscript.tabIndex: setAttribute() to object "2" 
 PASS noscript.tabIndex: IDL set to -36 
 PASS noscript.tabIndex: IDL set to -1 
@@ -1129,6 +1309,9 @@ PASS template.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v
 PASS template.title: setAttribute() to undefined 
 PASS template.title: setAttribute() to 7 
 PASS template.title: setAttribute() to 1.5 
+PASS template.title: setAttribute() to "5%" 
+PASS template.title: setAttribute() to "+100" 
+PASS template.title: setAttribute() to ".5" 
 PASS template.title: setAttribute() to true 
 PASS template.title: setAttribute() to false 
 PASS template.title: setAttribute() to object "[object Object]" 
@@ -1144,6 +1327,9 @@ PASS template.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0
 PASS template.title: IDL set to undefined 
 PASS template.title: IDL set to 7 
 PASS template.title: IDL set to 1.5 
+PASS template.title: IDL set to "5%" 
+PASS template.title: IDL set to "+100" 
+PASS template.title: IDL set to ".5" 
 PASS template.title: IDL set to true 
 PASS template.title: IDL set to false 
 PASS template.title: IDL set to object "[object Object]" 
@@ -1161,6 +1347,9 @@ PASS template.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\
 PASS template.lang: setAttribute() to undefined 
 PASS template.lang: setAttribute() to 7 
 PASS template.lang: setAttribute() to 1.5 
+PASS template.lang: setAttribute() to "5%" 
+PASS template.lang: setAttribute() to "+100" 
+PASS template.lang: setAttribute() to ".5" 
 PASS template.lang: setAttribute() to true 
 PASS template.lang: setAttribute() to false 
 PASS template.lang: setAttribute() to object "[object Object]" 
@@ -1176,6 +1365,9 @@ PASS template.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e
 PASS template.lang: IDL set to undefined 
 PASS template.lang: IDL set to 7 
 PASS template.lang: IDL set to 1.5 
+PASS template.lang: IDL set to "5%" 
+PASS template.lang: IDL set to "+100" 
+PASS template.lang: IDL set to ".5" 
 PASS template.lang: IDL set to true 
 PASS template.lang: IDL set to false 
 PASS template.lang: IDL set to object "[object Object]" 
@@ -1193,6 +1385,9 @@ PASS template.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f
 PASS template.dir: setAttribute() to undefined 
 PASS template.dir: setAttribute() to 7 
 PASS template.dir: setAttribute() to 1.5 
+PASS template.dir: setAttribute() to "5%" 
+PASS template.dir: setAttribute() to "+100" 
+PASS template.dir: setAttribute() to ".5" 
 PASS template.dir: setAttribute() to true 
 PASS template.dir: setAttribute() to false 
 PASS template.dir: setAttribute() to object "[object Object]" 
@@ -1223,6 +1418,9 @@ PASS template.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\
 PASS template.dir: IDL set to undefined 
 PASS template.dir: IDL set to 7 
 PASS template.dir: IDL set to 1.5 
+PASS template.dir: IDL set to "5%" 
+PASS template.dir: IDL set to "+100" 
+PASS template.dir: IDL set to ".5" 
 PASS template.dir: IDL set to true 
 PASS template.dir: IDL set to false 
 PASS template.dir: IDL set to object "[object Object]" 
@@ -1255,6 +1453,9 @@ PASS template.className (<template class>): setAttribute() to " \0\x01\x02\x03\x
 PASS template.className (<template class>): setAttribute() to undefined 
 PASS template.className (<template class>): setAttribute() to 7 
 PASS template.className (<template class>): setAttribute() to 1.5 
+PASS template.className (<template class>): setAttribute() to "5%" 
+PASS template.className (<template class>): setAttribute() to "+100" 
+PASS template.className (<template class>): setAttribute() to ".5" 
 PASS template.className (<template class>): setAttribute() to true 
 PASS template.className (<template class>): setAttribute() to false 
 PASS template.className (<template class>): setAttribute() to object "[object Object]" 
@@ -1270,6 +1471,9 @@ PASS template.className (<template class>): IDL set to " \0\x01\x02\x03\x04\x05\
 PASS template.className (<template class>): IDL set to undefined 
 PASS template.className (<template class>): IDL set to 7 
 PASS template.className (<template class>): IDL set to 1.5 
+PASS template.className (<template class>): IDL set to "5%" 
+PASS template.className (<template class>): IDL set to "+100" 
+PASS template.className (<template class>): IDL set to ".5" 
 PASS template.className (<template class>): IDL set to true 
 PASS template.className (<template class>): IDL set to false 
 PASS template.className (<template class>): IDL set to object "[object Object]" 
@@ -1288,6 +1492,9 @@ PASS template.hidden: setAttribute() to undefined
 PASS template.hidden: setAttribute() to null 
 PASS template.hidden: setAttribute() to 7 
 PASS template.hidden: setAttribute() to 1.5 
+PASS template.hidden: setAttribute() to "5%" 
+PASS template.hidden: setAttribute() to "+100" 
+PASS template.hidden: setAttribute() to ".5" 
 PASS template.hidden: setAttribute() to true 
 PASS template.hidden: setAttribute() to false 
 PASS template.hidden: setAttribute() to object "[object Object]" 
@@ -1304,6 +1511,9 @@ PASS template.hidden: IDL set to undefined
 PASS template.hidden: IDL set to null 
 PASS template.hidden: IDL set to 7 
 PASS template.hidden: IDL set to 1.5 
+PASS template.hidden: IDL set to "5%" 
+PASS template.hidden: IDL set to "+100" 
+PASS template.hidden: IDL set to ".5" 
 PASS template.hidden: IDL set to true 
 PASS template.hidden: IDL set to false 
 PASS template.hidden: IDL set to object "[object Object]" 
@@ -1320,6 +1530,9 @@ PASS template.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t
 PASS template.accessKey: setAttribute() to undefined 
 PASS template.accessKey: setAttribute() to 7 
 PASS template.accessKey: setAttribute() to 1.5 
+PASS template.accessKey: setAttribute() to "5%" 
+PASS template.accessKey: setAttribute() to "+100" 
+PASS template.accessKey: setAttribute() to ".5" 
 PASS template.accessKey: setAttribute() to true 
 PASS template.accessKey: setAttribute() to false 
 PASS template.accessKey: setAttribute() to object "[object Object]" 
@@ -1335,6 +1548,9 @@ PASS template.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\
 PASS template.accessKey: IDL set to undefined 
 PASS template.accessKey: IDL set to 7 
 PASS template.accessKey: IDL set to 1.5 
+PASS template.accessKey: IDL set to "5%" 
+PASS template.accessKey: IDL set to "+100" 
+PASS template.accessKey: IDL set to ".5" 
 PASS template.accessKey: IDL set to true 
 PASS template.accessKey: IDL set to false 
 PASS template.accessKey: IDL set to object "[object Object]" 
@@ -1362,6 +1578,8 @@ PASS template.tabIndex: setAttribute() to " 7"
 PASS template.tabIndex: setAttribute() to "\n7" 
 PASS template.tabIndex: setAttribute() to "\r7" 
 PASS template.tabIndex: setAttribute() to 1.5 
+PASS template.tabIndex: setAttribute() to "5%" 
+PASS template.tabIndex: setAttribute() to "+100" 
 PASS template.tabIndex: setAttribute() to object "2" 
 PASS template.tabIndex: IDL set to -36 
 PASS template.tabIndex: IDL set to -1 
@@ -1376,6 +1594,9 @@ PASS slot.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r
 PASS slot.title: setAttribute() to undefined 
 PASS slot.title: setAttribute() to 7 
 PASS slot.title: setAttribute() to 1.5 
+PASS slot.title: setAttribute() to "5%" 
+PASS slot.title: setAttribute() to "+100" 
+PASS slot.title: setAttribute() to ".5" 
 PASS slot.title: setAttribute() to true 
 PASS slot.title: setAttribute() to false 
 PASS slot.title: setAttribute() to object "[object Object]" 
@@ -1391,6 +1612,9 @@ PASS slot.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0
 PASS slot.title: IDL set to undefined 
 PASS slot.title: IDL set to 7 
 PASS slot.title: IDL set to 1.5 
+PASS slot.title: IDL set to "5%" 
+PASS slot.title: IDL set to "+100" 
+PASS slot.title: IDL set to ".5" 
 PASS slot.title: IDL set to true 
 PASS slot.title: IDL set to false 
 PASS slot.title: IDL set to object "[object Object]" 
@@ -1408,6 +1632,9 @@ PASS slot.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\
 PASS slot.lang: setAttribute() to undefined 
 PASS slot.lang: setAttribute() to 7 
 PASS slot.lang: setAttribute() to 1.5 
+PASS slot.lang: setAttribute() to "5%" 
+PASS slot.lang: setAttribute() to "+100" 
+PASS slot.lang: setAttribute() to ".5" 
 PASS slot.lang: setAttribute() to true 
 PASS slot.lang: setAttribute() to false 
 PASS slot.lang: setAttribute() to object "[object Object]" 
@@ -1423,6 +1650,9 @@ PASS slot.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f
 PASS slot.lang: IDL set to undefined 
 PASS slot.lang: IDL set to 7 
 PASS slot.lang: IDL set to 1.5 
+PASS slot.lang: IDL set to "5%" 
+PASS slot.lang: IDL set to "+100" 
+PASS slot.lang: IDL set to ".5" 
 PASS slot.lang: IDL set to true 
 PASS slot.lang: IDL set to false 
 PASS slot.lang: IDL set to object "[object Object]" 
@@ -1440,6 +1670,9 @@ PASS slot.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x
 PASS slot.dir: setAttribute() to undefined 
 PASS slot.dir: setAttribute() to 7 
 PASS slot.dir: setAttribute() to 1.5 
+PASS slot.dir: setAttribute() to "5%" 
+PASS slot.dir: setAttribute() to "+100" 
+PASS slot.dir: setAttribute() to ".5" 
 PASS slot.dir: setAttribute() to true 
 PASS slot.dir: setAttribute() to false 
 PASS slot.dir: setAttribute() to object "[object Object]" 
@@ -1470,6 +1703,9 @@ PASS slot.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f 
 PASS slot.dir: IDL set to undefined 
 PASS slot.dir: IDL set to 7 
 PASS slot.dir: IDL set to 1.5 
+PASS slot.dir: IDL set to "5%" 
+PASS slot.dir: IDL set to "+100" 
+PASS slot.dir: IDL set to ".5" 
 PASS slot.dir: IDL set to true 
 PASS slot.dir: IDL set to false 
 PASS slot.dir: IDL set to object "[object Object]" 
@@ -1502,6 +1738,9 @@ PASS slot.className (<slot class>): setAttribute() to " \0\x01\x02\x03\x04\x05\x
 PASS slot.className (<slot class>): setAttribute() to undefined 
 PASS slot.className (<slot class>): setAttribute() to 7 
 PASS slot.className (<slot class>): setAttribute() to 1.5 
+PASS slot.className (<slot class>): setAttribute() to "5%" 
+PASS slot.className (<slot class>): setAttribute() to "+100" 
+PASS slot.className (<slot class>): setAttribute() to ".5" 
 PASS slot.className (<slot class>): setAttribute() to true 
 PASS slot.className (<slot class>): setAttribute() to false 
 PASS slot.className (<slot class>): setAttribute() to object "[object Object]" 
@@ -1517,6 +1756,9 @@ PASS slot.className (<slot class>): IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 
 PASS slot.className (<slot class>): IDL set to undefined 
 PASS slot.className (<slot class>): IDL set to 7 
 PASS slot.className (<slot class>): IDL set to 1.5 
+PASS slot.className (<slot class>): IDL set to "5%" 
+PASS slot.className (<slot class>): IDL set to "+100" 
+PASS slot.className (<slot class>): IDL set to ".5" 
 PASS slot.className (<slot class>): IDL set to true 
 PASS slot.className (<slot class>): IDL set to false 
 PASS slot.className (<slot class>): IDL set to object "[object Object]" 
@@ -1535,6 +1777,9 @@ PASS slot.hidden: setAttribute() to undefined
 PASS slot.hidden: setAttribute() to null 
 PASS slot.hidden: setAttribute() to 7 
 PASS slot.hidden: setAttribute() to 1.5 
+PASS slot.hidden: setAttribute() to "5%" 
+PASS slot.hidden: setAttribute() to "+100" 
+PASS slot.hidden: setAttribute() to ".5" 
 PASS slot.hidden: setAttribute() to true 
 PASS slot.hidden: setAttribute() to false 
 PASS slot.hidden: setAttribute() to object "[object Object]" 
@@ -1551,6 +1796,9 @@ PASS slot.hidden: IDL set to undefined
 PASS slot.hidden: IDL set to null 
 PASS slot.hidden: IDL set to 7 
 PASS slot.hidden: IDL set to 1.5 
+PASS slot.hidden: IDL set to "5%" 
+PASS slot.hidden: IDL set to "+100" 
+PASS slot.hidden: IDL set to ".5" 
 PASS slot.hidden: IDL set to true 
 PASS slot.hidden: IDL set to false 
 PASS slot.hidden: IDL set to object "[object Object]" 
@@ -1567,6 +1815,9 @@ PASS slot.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v
 PASS slot.accessKey: setAttribute() to undefined 
 PASS slot.accessKey: setAttribute() to 7 
 PASS slot.accessKey: setAttribute() to 1.5 
+PASS slot.accessKey: setAttribute() to "5%" 
+PASS slot.accessKey: setAttribute() to "+100" 
+PASS slot.accessKey: setAttribute() to ".5" 
 PASS slot.accessKey: setAttribute() to true 
 PASS slot.accessKey: setAttribute() to false 
 PASS slot.accessKey: setAttribute() to object "[object Object]" 
@@ -1582,6 +1833,9 @@ PASS slot.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0
 PASS slot.accessKey: IDL set to undefined 
 PASS slot.accessKey: IDL set to 7 
 PASS slot.accessKey: IDL set to 1.5 
+PASS slot.accessKey: IDL set to "5%" 
+PASS slot.accessKey: IDL set to "+100" 
+PASS slot.accessKey: IDL set to ".5" 
 PASS slot.accessKey: IDL set to true 
 PASS slot.accessKey: IDL set to false 
 PASS slot.accessKey: IDL set to object "[object Object]" 
@@ -1609,6 +1863,8 @@ PASS slot.tabIndex: setAttribute() to " 7"
 PASS slot.tabIndex: setAttribute() to "\n7" 
 PASS slot.tabIndex: setAttribute() to "\r7" 
 PASS slot.tabIndex: setAttribute() to 1.5 
+PASS slot.tabIndex: setAttribute() to "5%" 
+PASS slot.tabIndex: setAttribute() to "+100" 
 PASS slot.tabIndex: setAttribute() to object "2" 
 PASS slot.tabIndex: IDL set to -36 
 PASS slot.tabIndex: IDL set to -1 
@@ -1623,6 +1879,9 @@ PASS slot.name: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\
 PASS slot.name: setAttribute() to undefined 
 PASS slot.name: setAttribute() to 7 
 PASS slot.name: setAttribute() to 1.5 
+PASS slot.name: setAttribute() to "5%" 
+PASS slot.name: setAttribute() to "+100" 
+PASS slot.name: setAttribute() to ".5" 
 PASS slot.name: setAttribute() to true 
 PASS slot.name: setAttribute() to false 
 PASS slot.name: setAttribute() to object "[object Object]" 
@@ -1638,6 +1897,9 @@ PASS slot.name: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f
 PASS slot.name: IDL set to undefined 
 PASS slot.name: IDL set to 7 
 PASS slot.name: IDL set to 1.5 
+PASS slot.name: IDL set to "5%" 
+PASS slot.name: IDL set to "+100" 
+PASS slot.name: IDL set to ".5" 
 PASS slot.name: IDL set to true 
 PASS slot.name: IDL set to false 
 PASS slot.name: IDL set to object "[object Object]" 
@@ -1655,6 +1917,9 @@ PASS ins.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\
 PASS ins.title: setAttribute() to undefined 
 PASS ins.title: setAttribute() to 7 
 PASS ins.title: setAttribute() to 1.5 
+PASS ins.title: setAttribute() to "5%" 
+PASS ins.title: setAttribute() to "+100" 
+PASS ins.title: setAttribute() to ".5" 
 PASS ins.title: setAttribute() to true 
 PASS ins.title: setAttribute() to false 
 PASS ins.title: setAttribute() to object "[object Object]" 
@@ -1670,6 +1935,9 @@ PASS ins.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f
 PASS ins.title: IDL set to undefined 
 PASS ins.title: IDL set to 7 
 PASS ins.title: IDL set to 1.5 
+PASS ins.title: IDL set to "5%" 
+PASS ins.title: IDL set to "+100" 
+PASS ins.title: IDL set to ".5" 
 PASS ins.title: IDL set to true 
 PASS ins.title: IDL set to false 
 PASS ins.title: IDL set to object "[object Object]" 
@@ -1687,6 +1955,9 @@ PASS ins.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x
 PASS ins.lang: setAttribute() to undefined 
 PASS ins.lang: setAttribute() to 7 
 PASS ins.lang: setAttribute() to 1.5 
+PASS ins.lang: setAttribute() to "5%" 
+PASS ins.lang: setAttribute() to "+100" 
+PASS ins.lang: setAttribute() to ".5" 
 PASS ins.lang: setAttribute() to true 
 PASS ins.lang: setAttribute() to false 
 PASS ins.lang: setAttribute() to object "[object Object]" 
@@ -1702,6 +1973,9 @@ PASS ins.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f 
 PASS ins.lang: IDL set to undefined 
 PASS ins.lang: IDL set to 7 
 PASS ins.lang: IDL set to 1.5 
+PASS ins.lang: IDL set to "5%" 
+PASS ins.lang: IDL set to "+100" 
+PASS ins.lang: IDL set to ".5" 
 PASS ins.lang: IDL set to true 
 PASS ins.lang: IDL set to false 
 PASS ins.lang: IDL set to object "[object Object]" 
@@ -1719,6 +1993,9 @@ PASS ins.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0
 PASS ins.dir: setAttribute() to undefined 
 PASS ins.dir: setAttribute() to 7 
 PASS ins.dir: setAttribute() to 1.5 
+PASS ins.dir: setAttribute() to "5%" 
+PASS ins.dir: setAttribute() to "+100" 
+PASS ins.dir: setAttribute() to ".5" 
 PASS ins.dir: setAttribute() to true 
 PASS ins.dir: setAttribute() to false 
 PASS ins.dir: setAttribute() to object "[object Object]" 
@@ -1749,6 +2026,9 @@ PASS ins.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \
 PASS ins.dir: IDL set to undefined 
 PASS ins.dir: IDL set to 7 
 PASS ins.dir: IDL set to 1.5 
+PASS ins.dir: IDL set to "5%" 
+PASS ins.dir: IDL set to "+100" 
+PASS ins.dir: IDL set to ".5" 
 PASS ins.dir: IDL set to true 
 PASS ins.dir: IDL set to false 
 PASS ins.dir: IDL set to object "[object Object]" 
@@ -1781,6 +2061,9 @@ PASS ins.className (<ins class>): setAttribute() to " \0\x01\x02\x03\x04\x05\x06
 PASS ins.className (<ins class>): setAttribute() to undefined 
 PASS ins.className (<ins class>): setAttribute() to 7 
 PASS ins.className (<ins class>): setAttribute() to 1.5 
+PASS ins.className (<ins class>): setAttribute() to "5%" 
+PASS ins.className (<ins class>): setAttribute() to "+100" 
+PASS ins.className (<ins class>): setAttribute() to ".5" 
 PASS ins.className (<ins class>): setAttribute() to true 
 PASS ins.className (<ins class>): setAttribute() to false 
 PASS ins.className (<ins class>): setAttribute() to object "[object Object]" 
@@ -1796,6 +2079,9 @@ PASS ins.className (<ins class>): IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b
 PASS ins.className (<ins class>): IDL set to undefined 
 PASS ins.className (<ins class>): IDL set to 7 
 PASS ins.className (<ins class>): IDL set to 1.5 
+PASS ins.className (<ins class>): IDL set to "5%" 
+PASS ins.className (<ins class>): IDL set to "+100" 
+PASS ins.className (<ins class>): IDL set to ".5" 
 PASS ins.className (<ins class>): IDL set to true 
 PASS ins.className (<ins class>): IDL set to false 
 PASS ins.className (<ins class>): IDL set to object "[object Object]" 
@@ -1814,6 +2100,9 @@ PASS ins.hidden: setAttribute() to undefined
 PASS ins.hidden: setAttribute() to null 
 PASS ins.hidden: setAttribute() to 7 
 PASS ins.hidden: setAttribute() to 1.5 
+PASS ins.hidden: setAttribute() to "5%" 
+PASS ins.hidden: setAttribute() to "+100" 
+PASS ins.hidden: setAttribute() to ".5" 
 PASS ins.hidden: setAttribute() to true 
 PASS ins.hidden: setAttribute() to false 
 PASS ins.hidden: setAttribute() to object "[object Object]" 
@@ -1830,6 +2119,9 @@ PASS ins.hidden: IDL set to undefined
 PASS ins.hidden: IDL set to null 
 PASS ins.hidden: IDL set to 7 
 PASS ins.hidden: IDL set to 1.5 
+PASS ins.hidden: IDL set to "5%" 
+PASS ins.hidden: IDL set to "+100" 
+PASS ins.hidden: IDL set to ".5" 
 PASS ins.hidden: IDL set to true 
 PASS ins.hidden: IDL set to false 
 PASS ins.hidden: IDL set to object "[object Object]" 
@@ -1846,6 +2138,9 @@ PASS ins.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\
 PASS ins.accessKey: setAttribute() to undefined 
 PASS ins.accessKey: setAttribute() to 7 
 PASS ins.accessKey: setAttribute() to 1.5 
+PASS ins.accessKey: setAttribute() to "5%" 
+PASS ins.accessKey: setAttribute() to "+100" 
+PASS ins.accessKey: setAttribute() to ".5" 
 PASS ins.accessKey: setAttribute() to true 
 PASS ins.accessKey: setAttribute() to false 
 PASS ins.accessKey: setAttribute() to object "[object Object]" 
@@ -1861,6 +2156,9 @@ PASS ins.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e
 PASS ins.accessKey: IDL set to undefined 
 PASS ins.accessKey: IDL set to 7 
 PASS ins.accessKey: IDL set to 1.5 
+PASS ins.accessKey: IDL set to "5%" 
+PASS ins.accessKey: IDL set to "+100" 
+PASS ins.accessKey: IDL set to ".5" 
 PASS ins.accessKey: IDL set to true 
 PASS ins.accessKey: IDL set to false 
 PASS ins.accessKey: IDL set to object "[object Object]" 
@@ -1888,6 +2186,8 @@ PASS ins.tabIndex: setAttribute() to " 7"
 PASS ins.tabIndex: setAttribute() to "\n7" 
 PASS ins.tabIndex: setAttribute() to "\r7" 
 PASS ins.tabIndex: setAttribute() to 1.5 
+PASS ins.tabIndex: setAttribute() to "5%" 
+PASS ins.tabIndex: setAttribute() to "+100" 
 PASS ins.tabIndex: setAttribute() to object "2" 
 PASS ins.tabIndex: IDL set to -36 
 PASS ins.tabIndex: IDL set to -1 
@@ -1905,6 +2205,9 @@ PASS ins.cite: setAttribute() to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0
 PASS ins.cite: setAttribute() to undefined 
 PASS ins.cite: setAttribute() to 7 
 PASS ins.cite: setAttribute() to 1.5 
+PASS ins.cite: setAttribute() to "5%" 
+PASS ins.cite: setAttribute() to "+100" 
+PASS ins.cite: setAttribute() to ".5" 
 PASS ins.cite: setAttribute() to true 
 PASS ins.cite: setAttribute() to false 
 PASS ins.cite: setAttribute() to object "[object Object]" 
@@ -1923,6 +2226,9 @@ PASS ins.cite: IDL set to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \
 PASS ins.cite: IDL set to undefined 
 PASS ins.cite: IDL set to 7 
 PASS ins.cite: IDL set to 1.5 
+PASS ins.cite: IDL set to "5%" 
+PASS ins.cite: IDL set to "+100" 
+PASS ins.cite: IDL set to ".5" 
 PASS ins.cite: IDL set to true 
 PASS ins.cite: IDL set to false 
 PASS ins.cite: IDL set to object "[object Object]" 
@@ -1940,6 +2246,9 @@ PASS ins.dateTime: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f
 PASS ins.dateTime: setAttribute() to undefined 
 PASS ins.dateTime: setAttribute() to 7 
 PASS ins.dateTime: setAttribute() to 1.5 
+PASS ins.dateTime: setAttribute() to "5%" 
+PASS ins.dateTime: setAttribute() to "+100" 
+PASS ins.dateTime: setAttribute() to ".5" 
 PASS ins.dateTime: setAttribute() to true 
 PASS ins.dateTime: setAttribute() to false 
 PASS ins.dateTime: setAttribute() to object "[object Object]" 
@@ -1955,6 +2264,9 @@ PASS ins.dateTime: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\
 PASS ins.dateTime: IDL set to undefined 
 PASS ins.dateTime: IDL set to 7 
 PASS ins.dateTime: IDL set to 1.5 
+PASS ins.dateTime: IDL set to "5%" 
+PASS ins.dateTime: IDL set to "+100" 
+PASS ins.dateTime: IDL set to ".5" 
 PASS ins.dateTime: IDL set to true 
 PASS ins.dateTime: IDL set to false 
 PASS ins.dateTime: IDL set to object "[object Object]" 
@@ -1972,6 +2284,9 @@ PASS del.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\
 PASS del.title: setAttribute() to undefined 
 PASS del.title: setAttribute() to 7 
 PASS del.title: setAttribute() to 1.5 
+PASS del.title: setAttribute() to "5%" 
+PASS del.title: setAttribute() to "+100" 
+PASS del.title: setAttribute() to ".5" 
 PASS del.title: setAttribute() to true 
 PASS del.title: setAttribute() to false 
 PASS del.title: setAttribute() to object "[object Object]" 
@@ -1987,6 +2302,9 @@ PASS del.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f
 PASS del.title: IDL set to undefined 
 PASS del.title: IDL set to 7 
 PASS del.title: IDL set to 1.5 
+PASS del.title: IDL set to "5%" 
+PASS del.title: IDL set to "+100" 
+PASS del.title: IDL set to ".5" 
 PASS del.title: IDL set to true 
 PASS del.title: IDL set to false 
 PASS del.title: IDL set to object "[object Object]" 
@@ -2004,6 +2322,9 @@ PASS del.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x
 PASS del.lang: setAttribute() to undefined 
 PASS del.lang: setAttribute() to 7 
 PASS del.lang: setAttribute() to 1.5 
+PASS del.lang: setAttribute() to "5%" 
+PASS del.lang: setAttribute() to "+100" 
+PASS del.lang: setAttribute() to ".5" 
 PASS del.lang: setAttribute() to true 
 PASS del.lang: setAttribute() to false 
 PASS del.lang: setAttribute() to object "[object Object]" 
@@ -2019,6 +2340,9 @@ PASS del.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f 
 PASS del.lang: IDL set to undefined 
 PASS del.lang: IDL set to 7 
 PASS del.lang: IDL set to 1.5 
+PASS del.lang: IDL set to "5%" 
+PASS del.lang: IDL set to "+100" 
+PASS del.lang: IDL set to ".5" 
 PASS del.lang: IDL set to true 
 PASS del.lang: IDL set to false 
 PASS del.lang: IDL set to object "[object Object]" 
@@ -2036,6 +2360,9 @@ PASS del.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0
 PASS del.dir: setAttribute() to undefined 
 PASS del.dir: setAttribute() to 7 
 PASS del.dir: setAttribute() to 1.5 
+PASS del.dir: setAttribute() to "5%" 
+PASS del.dir: setAttribute() to "+100" 
+PASS del.dir: setAttribute() to ".5" 
 PASS del.dir: setAttribute() to true 
 PASS del.dir: setAttribute() to false 
 PASS del.dir: setAttribute() to object "[object Object]" 
@@ -2066,6 +2393,9 @@ PASS del.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \
 PASS del.dir: IDL set to undefined 
 PASS del.dir: IDL set to 7 
 PASS del.dir: IDL set to 1.5 
+PASS del.dir: IDL set to "5%" 
+PASS del.dir: IDL set to "+100" 
+PASS del.dir: IDL set to ".5" 
 PASS del.dir: IDL set to true 
 PASS del.dir: IDL set to false 
 PASS del.dir: IDL set to object "[object Object]" 
@@ -2098,6 +2428,9 @@ PASS del.className (<del class>): setAttribute() to " \0\x01\x02\x03\x04\x05\x06
 PASS del.className (<del class>): setAttribute() to undefined 
 PASS del.className (<del class>): setAttribute() to 7 
 PASS del.className (<del class>): setAttribute() to 1.5 
+PASS del.className (<del class>): setAttribute() to "5%" 
+PASS del.className (<del class>): setAttribute() to "+100" 
+PASS del.className (<del class>): setAttribute() to ".5" 
 PASS del.className (<del class>): setAttribute() to true 
 PASS del.className (<del class>): setAttribute() to false 
 PASS del.className (<del class>): setAttribute() to object "[object Object]" 
@@ -2113,6 +2446,9 @@ PASS del.className (<del class>): IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b
 PASS del.className (<del class>): IDL set to undefined 
 PASS del.className (<del class>): IDL set to 7 
 PASS del.className (<del class>): IDL set to 1.5 
+PASS del.className (<del class>): IDL set to "5%" 
+PASS del.className (<del class>): IDL set to "+100" 
+PASS del.className (<del class>): IDL set to ".5" 
 PASS del.className (<del class>): IDL set to true 
 PASS del.className (<del class>): IDL set to false 
 PASS del.className (<del class>): IDL set to object "[object Object]" 
@@ -2131,6 +2467,9 @@ PASS del.hidden: setAttribute() to undefined
 PASS del.hidden: setAttribute() to null 
 PASS del.hidden: setAttribute() to 7 
 PASS del.hidden: setAttribute() to 1.5 
+PASS del.hidden: setAttribute() to "5%" 
+PASS del.hidden: setAttribute() to "+100" 
+PASS del.hidden: setAttribute() to ".5" 
 PASS del.hidden: setAttribute() to true 
 PASS del.hidden: setAttribute() to false 
 PASS del.hidden: setAttribute() to object "[object Object]" 
@@ -2147,6 +2486,9 @@ PASS del.hidden: IDL set to undefined
 PASS del.hidden: IDL set to null 
 PASS del.hidden: IDL set to 7 
 PASS del.hidden: IDL set to 1.5 
+PASS del.hidden: IDL set to "5%" 
+PASS del.hidden: IDL set to "+100" 
+PASS del.hidden: IDL set to ".5" 
 PASS del.hidden: IDL set to true 
 PASS del.hidden: IDL set to false 
 PASS del.hidden: IDL set to object "[object Object]" 
@@ -2163,6 +2505,9 @@ PASS del.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\
 PASS del.accessKey: setAttribute() to undefined 
 PASS del.accessKey: setAttribute() to 7 
 PASS del.accessKey: setAttribute() to 1.5 
+PASS del.accessKey: setAttribute() to "5%" 
+PASS del.accessKey: setAttribute() to "+100" 
+PASS del.accessKey: setAttribute() to ".5" 
 PASS del.accessKey: setAttribute() to true 
 PASS del.accessKey: setAttribute() to false 
 PASS del.accessKey: setAttribute() to object "[object Object]" 
@@ -2178,6 +2523,9 @@ PASS del.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e
 PASS del.accessKey: IDL set to undefined 
 PASS del.accessKey: IDL set to 7 
 PASS del.accessKey: IDL set to 1.5 
+PASS del.accessKey: IDL set to "5%" 
+PASS del.accessKey: IDL set to "+100" 
+PASS del.accessKey: IDL set to ".5" 
 PASS del.accessKey: IDL set to true 
 PASS del.accessKey: IDL set to false 
 PASS del.accessKey: IDL set to object "[object Object]" 
@@ -2205,6 +2553,8 @@ PASS del.tabIndex: setAttribute() to " 7"
 PASS del.tabIndex: setAttribute() to "\n7" 
 PASS del.tabIndex: setAttribute() to "\r7" 
 PASS del.tabIndex: setAttribute() to 1.5 
+PASS del.tabIndex: setAttribute() to "5%" 
+PASS del.tabIndex: setAttribute() to "+100" 
 PASS del.tabIndex: setAttribute() to object "2" 
 PASS del.tabIndex: IDL set to -36 
 PASS del.tabIndex: IDL set to -1 
@@ -2222,6 +2572,9 @@ PASS del.cite: setAttribute() to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0
 PASS del.cite: setAttribute() to undefined 
 PASS del.cite: setAttribute() to 7 
 PASS del.cite: setAttribute() to 1.5 
+PASS del.cite: setAttribute() to "5%" 
+PASS del.cite: setAttribute() to "+100" 
+PASS del.cite: setAttribute() to ".5" 
 PASS del.cite: setAttribute() to true 
 PASS del.cite: setAttribute() to false 
 PASS del.cite: setAttribute() to object "[object Object]" 
@@ -2240,6 +2593,9 @@ PASS del.cite: IDL set to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \
 PASS del.cite: IDL set to undefined 
 PASS del.cite: IDL set to 7 
 PASS del.cite: IDL set to 1.5 
+PASS del.cite: IDL set to "5%" 
+PASS del.cite: IDL set to "+100" 
+PASS del.cite: IDL set to ".5" 
 PASS del.cite: IDL set to true 
 PASS del.cite: IDL set to false 
 PASS del.cite: IDL set to object "[object Object]" 
@@ -2257,6 +2613,9 @@ PASS del.dateTime: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f
 PASS del.dateTime: setAttribute() to undefined 
 PASS del.dateTime: setAttribute() to 7 
 PASS del.dateTime: setAttribute() to 1.5 
+PASS del.dateTime: setAttribute() to "5%" 
+PASS del.dateTime: setAttribute() to "+100" 
+PASS del.dateTime: setAttribute() to ".5" 
 PASS del.dateTime: setAttribute() to true 
 PASS del.dateTime: setAttribute() to false 
 PASS del.dateTime: setAttribute() to object "[object Object]" 
@@ -2272,6 +2631,9 @@ PASS del.dateTime: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\
 PASS del.dateTime: IDL set to undefined 
 PASS del.dateTime: IDL set to 7 
 PASS del.dateTime: IDL set to 1.5 
+PASS del.dateTime: IDL set to "5%" 
+PASS del.dateTime: IDL set to "+100" 
+PASS del.dateTime: IDL set to ".5" 
 PASS del.dateTime: IDL set to true 
 PASS del.dateTime: IDL set to false 
 PASS del.dateTime: IDL set to object "[object Object]" 
@@ -2289,6 +2651,9 @@ PASS details.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\
 PASS details.title: setAttribute() to undefined 
 PASS details.title: setAttribute() to 7 
 PASS details.title: setAttribute() to 1.5 
+PASS details.title: setAttribute() to "5%" 
+PASS details.title: setAttribute() to "+100" 
+PASS details.title: setAttribute() to ".5" 
 PASS details.title: setAttribute() to true 
 PASS details.title: setAttribute() to false 
 PASS details.title: setAttribute() to object "[object Object]" 
@@ -2304,6 +2669,9 @@ PASS details.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e
 PASS details.title: IDL set to undefined 
 PASS details.title: IDL set to 7 
 PASS details.title: IDL set to 1.5 
+PASS details.title: IDL set to "5%" 
+PASS details.title: IDL set to "+100" 
+PASS details.title: IDL set to ".5" 
 PASS details.title: IDL set to true 
 PASS details.title: IDL set to false 
 PASS details.title: IDL set to object "[object Object]" 
@@ -2321,6 +2689,9 @@ PASS details.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f
 PASS details.lang: setAttribute() to undefined 
 PASS details.lang: setAttribute() to 7 
 PASS details.lang: setAttribute() to 1.5 
+PASS details.lang: setAttribute() to "5%" 
+PASS details.lang: setAttribute() to "+100" 
+PASS details.lang: setAttribute() to ".5" 
 PASS details.lang: setAttribute() to true 
 PASS details.lang: setAttribute() to false 
 PASS details.lang: setAttribute() to object "[object Object]" 
@@ -2336,6 +2707,9 @@ PASS details.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\
 PASS details.lang: IDL set to undefined 
 PASS details.lang: IDL set to 7 
 PASS details.lang: IDL set to 1.5 
+PASS details.lang: IDL set to "5%" 
+PASS details.lang: IDL set to "+100" 
+PASS details.lang: IDL set to ".5" 
 PASS details.lang: IDL set to true 
 PASS details.lang: IDL set to false 
 PASS details.lang: IDL set to object "[object Object]" 
@@ -2353,6 +2727,9 @@ PASS details.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\
 PASS details.dir: setAttribute() to undefined 
 PASS details.dir: setAttribute() to 7 
 PASS details.dir: setAttribute() to 1.5 
+PASS details.dir: setAttribute() to "5%" 
+PASS details.dir: setAttribute() to "+100" 
+PASS details.dir: setAttribute() to ".5" 
 PASS details.dir: setAttribute() to true 
 PASS details.dir: setAttribute() to false 
 PASS details.dir: setAttribute() to object "[object Object]" 
@@ -2383,6 +2760,9 @@ PASS details.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x
 PASS details.dir: IDL set to undefined 
 PASS details.dir: IDL set to 7 
 PASS details.dir: IDL set to 1.5 
+PASS details.dir: IDL set to "5%" 
+PASS details.dir: IDL set to "+100" 
+PASS details.dir: IDL set to ".5" 
 PASS details.dir: IDL set to true 
 PASS details.dir: IDL set to false 
 PASS details.dir: IDL set to object "[object Object]" 
@@ -2415,6 +2795,9 @@ PASS details.className (<details class>): setAttribute() to " \0\x01\x02\x03\x04
 PASS details.className (<details class>): setAttribute() to undefined 
 PASS details.className (<details class>): setAttribute() to 7 
 PASS details.className (<details class>): setAttribute() to 1.5 
+PASS details.className (<details class>): setAttribute() to "5%" 
+PASS details.className (<details class>): setAttribute() to "+100" 
+PASS details.className (<details class>): setAttribute() to ".5" 
 PASS details.className (<details class>): setAttribute() to true 
 PASS details.className (<details class>): setAttribute() to false 
 PASS details.className (<details class>): setAttribute() to object "[object Object]" 
@@ -2430,6 +2813,9 @@ PASS details.className (<details class>): IDL set to " \0\x01\x02\x03\x04\x05\x0
 PASS details.className (<details class>): IDL set to undefined 
 PASS details.className (<details class>): IDL set to 7 
 PASS details.className (<details class>): IDL set to 1.5 
+PASS details.className (<details class>): IDL set to "5%" 
+PASS details.className (<details class>): IDL set to "+100" 
+PASS details.className (<details class>): IDL set to ".5" 
 PASS details.className (<details class>): IDL set to true 
 PASS details.className (<details class>): IDL set to false 
 PASS details.className (<details class>): IDL set to object "[object Object]" 
@@ -2448,6 +2834,9 @@ PASS details.hidden: setAttribute() to undefined
 PASS details.hidden: setAttribute() to null 
 PASS details.hidden: setAttribute() to 7 
 PASS details.hidden: setAttribute() to 1.5 
+PASS details.hidden: setAttribute() to "5%" 
+PASS details.hidden: setAttribute() to "+100" 
+PASS details.hidden: setAttribute() to ".5" 
 PASS details.hidden: setAttribute() to true 
 PASS details.hidden: setAttribute() to false 
 PASS details.hidden: setAttribute() to object "[object Object]" 
@@ -2464,6 +2853,9 @@ PASS details.hidden: IDL set to undefined
 PASS details.hidden: IDL set to null 
 PASS details.hidden: IDL set to 7 
 PASS details.hidden: IDL set to 1.5 
+PASS details.hidden: IDL set to "5%" 
+PASS details.hidden: IDL set to "+100" 
+PASS details.hidden: IDL set to ".5" 
 PASS details.hidden: IDL set to true 
 PASS details.hidden: IDL set to false 
 PASS details.hidden: IDL set to object "[object Object]" 
@@ -2480,6 +2872,9 @@ PASS details.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\
 PASS details.accessKey: setAttribute() to undefined 
 PASS details.accessKey: setAttribute() to 7 
 PASS details.accessKey: setAttribute() to 1.5 
+PASS details.accessKey: setAttribute() to "5%" 
+PASS details.accessKey: setAttribute() to "+100" 
+PASS details.accessKey: setAttribute() to ".5" 
 PASS details.accessKey: setAttribute() to true 
 PASS details.accessKey: setAttribute() to false 
 PASS details.accessKey: setAttribute() to object "[object Object]" 
@@ -2495,6 +2890,9 @@ PASS details.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r
 PASS details.accessKey: IDL set to undefined 
 PASS details.accessKey: IDL set to 7 
 PASS details.accessKey: IDL set to 1.5 
+PASS details.accessKey: IDL set to "5%" 
+PASS details.accessKey: IDL set to "+100" 
+PASS details.accessKey: IDL set to ".5" 
 PASS details.accessKey: IDL set to true 
 PASS details.accessKey: IDL set to false 
 PASS details.accessKey: IDL set to object "[object Object]" 
@@ -2522,6 +2920,8 @@ PASS details.tabIndex: setAttribute() to " 7"
 PASS details.tabIndex: setAttribute() to "\n7" 
 PASS details.tabIndex: setAttribute() to "\r7" 
 PASS details.tabIndex: setAttribute() to 1.5 
+PASS details.tabIndex: setAttribute() to "5%" 
+PASS details.tabIndex: setAttribute() to "+100" 
 PASS details.tabIndex: setAttribute() to object "2" 
 PASS details.tabIndex: IDL set to -36 
 PASS details.tabIndex: IDL set to -1 
@@ -2537,6 +2937,9 @@ PASS details.open: setAttribute() to undefined
 PASS details.open: setAttribute() to null 
 PASS details.open: setAttribute() to 7 
 PASS details.open: setAttribute() to 1.5 
+PASS details.open: setAttribute() to "5%" 
+PASS details.open: setAttribute() to "+100" 
+PASS details.open: setAttribute() to ".5" 
 PASS details.open: setAttribute() to true 
 PASS details.open: setAttribute() to false 
 PASS details.open: setAttribute() to object "[object Object]" 
@@ -2553,6 +2956,9 @@ PASS details.open: IDL set to undefined
 PASS details.open: IDL set to null 
 PASS details.open: IDL set to 7 
 PASS details.open: IDL set to 1.5 
+PASS details.open: IDL set to "5%" 
+PASS details.open: IDL set to "+100" 
+PASS details.open: IDL set to ".5" 
 PASS details.open: IDL set to true 
 PASS details.open: IDL set to false 
 PASS details.open: IDL set to object "[object Object]" 
@@ -2569,6 +2975,9 @@ PASS summary.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\
 PASS summary.title: setAttribute() to undefined 
 PASS summary.title: setAttribute() to 7 
 PASS summary.title: setAttribute() to 1.5 
+PASS summary.title: setAttribute() to "5%" 
+PASS summary.title: setAttribute() to "+100" 
+PASS summary.title: setAttribute() to ".5" 
 PASS summary.title: setAttribute() to true 
 PASS summary.title: setAttribute() to false 
 PASS summary.title: setAttribute() to object "[object Object]" 
@@ -2584,6 +2993,9 @@ PASS summary.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e
 PASS summary.title: IDL set to undefined 
 PASS summary.title: IDL set to 7 
 PASS summary.title: IDL set to 1.5 
+PASS summary.title: IDL set to "5%" 
+PASS summary.title: IDL set to "+100" 
+PASS summary.title: IDL set to ".5" 
 PASS summary.title: IDL set to true 
 PASS summary.title: IDL set to false 
 PASS summary.title: IDL set to object "[object Object]" 
@@ -2601,6 +3013,9 @@ PASS summary.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f
 PASS summary.lang: setAttribute() to undefined 
 PASS summary.lang: setAttribute() to 7 
 PASS summary.lang: setAttribute() to 1.5 
+PASS summary.lang: setAttribute() to "5%" 
+PASS summary.lang: setAttribute() to "+100" 
+PASS summary.lang: setAttribute() to ".5" 
 PASS summary.lang: setAttribute() to true 
 PASS summary.lang: setAttribute() to false 
 PASS summary.lang: setAttribute() to object "[object Object]" 
@@ -2616,6 +3031,9 @@ PASS summary.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\
 PASS summary.lang: IDL set to undefined 
 PASS summary.lang: IDL set to 7 
 PASS summary.lang: IDL set to 1.5 
+PASS summary.lang: IDL set to "5%" 
+PASS summary.lang: IDL set to "+100" 
+PASS summary.lang: IDL set to ".5" 
 PASS summary.lang: IDL set to true 
 PASS summary.lang: IDL set to false 
 PASS summary.lang: IDL set to object "[object Object]" 
@@ -2633,6 +3051,9 @@ PASS summary.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\
 PASS summary.dir: setAttribute() to undefined 
 PASS summary.dir: setAttribute() to 7 
 PASS summary.dir: setAttribute() to 1.5 
+PASS summary.dir: setAttribute() to "5%" 
+PASS summary.dir: setAttribute() to "+100" 
+PASS summary.dir: setAttribute() to ".5" 
 PASS summary.dir: setAttribute() to true 
 PASS summary.dir: setAttribute() to false 
 PASS summary.dir: setAttribute() to object "[object Object]" 
@@ -2663,6 +3084,9 @@ PASS summary.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x
 PASS summary.dir: IDL set to undefined 
 PASS summary.dir: IDL set to 7 
 PASS summary.dir: IDL set to 1.5 
+PASS summary.dir: IDL set to "5%" 
+PASS summary.dir: IDL set to "+100" 
+PASS summary.dir: IDL set to ".5" 
 PASS summary.dir: IDL set to true 
 PASS summary.dir: IDL set to false 
 PASS summary.dir: IDL set to object "[object Object]" 
@@ -2695,6 +3119,9 @@ PASS summary.className (<summary class>): setAttribute() to " \0\x01\x02\x03\x04
 PASS summary.className (<summary class>): setAttribute() to undefined 
 PASS summary.className (<summary class>): setAttribute() to 7 
 PASS summary.className (<summary class>): setAttribute() to 1.5 
+PASS summary.className (<summary class>): setAttribute() to "5%" 
+PASS summary.className (<summary class>): setAttribute() to "+100" 
+PASS summary.className (<summary class>): setAttribute() to ".5" 
 PASS summary.className (<summary class>): setAttribute() to true 
 PASS summary.className (<summary class>): setAttribute() to false 
 PASS summary.className (<summary class>): setAttribute() to object "[object Object]" 
@@ -2710,6 +3137,9 @@ PASS summary.className (<summary class>): IDL set to " \0\x01\x02\x03\x04\x05\x0
 PASS summary.className (<summary class>): IDL set to undefined 
 PASS summary.className (<summary class>): IDL set to 7 
 PASS summary.className (<summary class>): IDL set to 1.5 
+PASS summary.className (<summary class>): IDL set to "5%" 
+PASS summary.className (<summary class>): IDL set to "+100" 
+PASS summary.className (<summary class>): IDL set to ".5" 
 PASS summary.className (<summary class>): IDL set to true 
 PASS summary.className (<summary class>): IDL set to false 
 PASS summary.className (<summary class>): IDL set to object "[object Object]" 
@@ -2728,6 +3158,9 @@ PASS summary.hidden: setAttribute() to undefined
 PASS summary.hidden: setAttribute() to null 
 PASS summary.hidden: setAttribute() to 7 
 PASS summary.hidden: setAttribute() to 1.5 
+PASS summary.hidden: setAttribute() to "5%" 
+PASS summary.hidden: setAttribute() to "+100" 
+PASS summary.hidden: setAttribute() to ".5" 
 PASS summary.hidden: setAttribute() to true 
 PASS summary.hidden: setAttribute() to false 
 PASS summary.hidden: setAttribute() to object "[object Object]" 
@@ -2744,6 +3177,9 @@ PASS summary.hidden: IDL set to undefined
 PASS summary.hidden: IDL set to null 
 PASS summary.hidden: IDL set to 7 
 PASS summary.hidden: IDL set to 1.5 
+PASS summary.hidden: IDL set to "5%" 
+PASS summary.hidden: IDL set to "+100" 
+PASS summary.hidden: IDL set to ".5" 
 PASS summary.hidden: IDL set to true 
 PASS summary.hidden: IDL set to false 
 PASS summary.hidden: IDL set to object "[object Object]" 
@@ -2760,6 +3196,9 @@ PASS summary.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\
 PASS summary.accessKey: setAttribute() to undefined 
 PASS summary.accessKey: setAttribute() to 7 
 PASS summary.accessKey: setAttribute() to 1.5 
+PASS summary.accessKey: setAttribute() to "5%" 
+PASS summary.accessKey: setAttribute() to "+100" 
+PASS summary.accessKey: setAttribute() to ".5" 
 PASS summary.accessKey: setAttribute() to true 
 PASS summary.accessKey: setAttribute() to false 
 PASS summary.accessKey: setAttribute() to object "[object Object]" 
@@ -2775,6 +3214,9 @@ PASS summary.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r
 PASS summary.accessKey: IDL set to undefined 
 PASS summary.accessKey: IDL set to 7 
 PASS summary.accessKey: IDL set to 1.5 
+PASS summary.accessKey: IDL set to "5%" 
+PASS summary.accessKey: IDL set to "+100" 
+PASS summary.accessKey: IDL set to ".5" 
 PASS summary.accessKey: IDL set to true 
 PASS summary.accessKey: IDL set to false 
 PASS summary.accessKey: IDL set to object "[object Object]" 
@@ -2802,6 +3244,8 @@ PASS summary.tabIndex: setAttribute() to " 7"
 PASS summary.tabIndex: setAttribute() to "\n7" 
 PASS summary.tabIndex: setAttribute() to "\r7" 
 PASS summary.tabIndex: setAttribute() to 1.5 
+PASS summary.tabIndex: setAttribute() to "5%" 
+PASS summary.tabIndex: setAttribute() to "+100" 
 PASS summary.tabIndex: setAttribute() to object "2" 
 PASS summary.tabIndex: IDL set to -36 
 PASS summary.tabIndex: IDL set to -1 
@@ -2816,6 +3260,9 @@ PASS menu.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r
 PASS menu.title: setAttribute() to undefined 
 PASS menu.title: setAttribute() to 7 
 PASS menu.title: setAttribute() to 1.5 
+PASS menu.title: setAttribute() to "5%" 
+PASS menu.title: setAttribute() to "+100" 
+PASS menu.title: setAttribute() to ".5" 
 PASS menu.title: setAttribute() to true 
 PASS menu.title: setAttribute() to false 
 PASS menu.title: setAttribute() to object "[object Object]" 
@@ -2831,6 +3278,9 @@ PASS menu.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0
 PASS menu.title: IDL set to undefined 
 PASS menu.title: IDL set to 7 
 PASS menu.title: IDL set to 1.5 
+PASS menu.title: IDL set to "5%" 
+PASS menu.title: IDL set to "+100" 
+PASS menu.title: IDL set to ".5" 
 PASS menu.title: IDL set to true 
 PASS menu.title: IDL set to false 
 PASS menu.title: IDL set to object "[object Object]" 
@@ -2848,6 +3298,9 @@ PASS menu.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\
 PASS menu.lang: setAttribute() to undefined 
 PASS menu.lang: setAttribute() to 7 
 PASS menu.lang: setAttribute() to 1.5 
+PASS menu.lang: setAttribute() to "5%" 
+PASS menu.lang: setAttribute() to "+100" 
+PASS menu.lang: setAttribute() to ".5" 
 PASS menu.lang: setAttribute() to true 
 PASS menu.lang: setAttribute() to false 
 PASS menu.lang: setAttribute() to object "[object Object]" 
@@ -2863,6 +3316,9 @@ PASS menu.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f
 PASS menu.lang: IDL set to undefined 
 PASS menu.lang: IDL set to 7 
 PASS menu.lang: IDL set to 1.5 
+PASS menu.lang: IDL set to "5%" 
+PASS menu.lang: IDL set to "+100" 
+PASS menu.lang: IDL set to ".5" 
 PASS menu.lang: IDL set to true 
 PASS menu.lang: IDL set to false 
 PASS menu.lang: IDL set to object "[object Object]" 
@@ -2880,6 +3336,9 @@ PASS menu.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x
 PASS menu.dir: setAttribute() to undefined 
 PASS menu.dir: setAttribute() to 7 
 PASS menu.dir: setAttribute() to 1.5 
+PASS menu.dir: setAttribute() to "5%" 
+PASS menu.dir: setAttribute() to "+100" 
+PASS menu.dir: setAttribute() to ".5" 
 PASS menu.dir: setAttribute() to true 
 PASS menu.dir: setAttribute() to false 
 PASS menu.dir: setAttribute() to object "[object Object]" 
@@ -2910,6 +3369,9 @@ PASS menu.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f 
 PASS menu.dir: IDL set to undefined 
 PASS menu.dir: IDL set to 7 
 PASS menu.dir: IDL set to 1.5 
+PASS menu.dir: IDL set to "5%" 
+PASS menu.dir: IDL set to "+100" 
+PASS menu.dir: IDL set to ".5" 
 PASS menu.dir: IDL set to true 
 PASS menu.dir: IDL set to false 
 PASS menu.dir: IDL set to object "[object Object]" 
@@ -2942,6 +3404,9 @@ PASS menu.className (<menu class>): setAttribute() to " \0\x01\x02\x03\x04\x05\x
 PASS menu.className (<menu class>): setAttribute() to undefined 
 PASS menu.className (<menu class>): setAttribute() to 7 
 PASS menu.className (<menu class>): setAttribute() to 1.5 
+PASS menu.className (<menu class>): setAttribute() to "5%" 
+PASS menu.className (<menu class>): setAttribute() to "+100" 
+PASS menu.className (<menu class>): setAttribute() to ".5" 
 PASS menu.className (<menu class>): setAttribute() to true 
 PASS menu.className (<menu class>): setAttribute() to false 
 PASS menu.className (<menu class>): setAttribute() to object "[object Object]" 
@@ -2957,6 +3422,9 @@ PASS menu.className (<menu class>): IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 
 PASS menu.className (<menu class>): IDL set to undefined 
 PASS menu.className (<menu class>): IDL set to 7 
 PASS menu.className (<menu class>): IDL set to 1.5 
+PASS menu.className (<menu class>): IDL set to "5%" 
+PASS menu.className (<menu class>): IDL set to "+100" 
+PASS menu.className (<menu class>): IDL set to ".5" 
 PASS menu.className (<menu class>): IDL set to true 
 PASS menu.className (<menu class>): IDL set to false 
 PASS menu.className (<menu class>): IDL set to object "[object Object]" 
@@ -2975,6 +3443,9 @@ PASS menu.hidden: setAttribute() to undefined
 PASS menu.hidden: setAttribute() to null 
 PASS menu.hidden: setAttribute() to 7 
 PASS menu.hidden: setAttribute() to 1.5 
+PASS menu.hidden: setAttribute() to "5%" 
+PASS menu.hidden: setAttribute() to "+100" 
+PASS menu.hidden: setAttribute() to ".5" 
 PASS menu.hidden: setAttribute() to true 
 PASS menu.hidden: setAttribute() to false 
 PASS menu.hidden: setAttribute() to object "[object Object]" 
@@ -2991,6 +3462,9 @@ PASS menu.hidden: IDL set to undefined
 PASS menu.hidden: IDL set to null 
 PASS menu.hidden: IDL set to 7 
 PASS menu.hidden: IDL set to 1.5 
+PASS menu.hidden: IDL set to "5%" 
+PASS menu.hidden: IDL set to "+100" 
+PASS menu.hidden: IDL set to ".5" 
 PASS menu.hidden: IDL set to true 
 PASS menu.hidden: IDL set to false 
 PASS menu.hidden: IDL set to object "[object Object]" 
@@ -3007,6 +3481,9 @@ PASS menu.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v
 PASS menu.accessKey: setAttribute() to undefined 
 PASS menu.accessKey: setAttribute() to 7 
 PASS menu.accessKey: setAttribute() to 1.5 
+PASS menu.accessKey: setAttribute() to "5%" 
+PASS menu.accessKey: setAttribute() to "+100" 
+PASS menu.accessKey: setAttribute() to ".5" 
 PASS menu.accessKey: setAttribute() to true 
 PASS menu.accessKey: setAttribute() to false 
 PASS menu.accessKey: setAttribute() to object "[object Object]" 
@@ -3022,6 +3499,9 @@ PASS menu.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0
 PASS menu.accessKey: IDL set to undefined 
 PASS menu.accessKey: IDL set to 7 
 PASS menu.accessKey: IDL set to 1.5 
+PASS menu.accessKey: IDL set to "5%" 
+PASS menu.accessKey: IDL set to "+100" 
+PASS menu.accessKey: IDL set to ".5" 
 PASS menu.accessKey: IDL set to true 
 PASS menu.accessKey: IDL set to false 
 PASS menu.accessKey: IDL set to object "[object Object]" 
@@ -3049,6 +3529,8 @@ PASS menu.tabIndex: setAttribute() to " 7"
 PASS menu.tabIndex: setAttribute() to "\n7" 
 PASS menu.tabIndex: setAttribute() to "\r7" 
 PASS menu.tabIndex: setAttribute() to 1.5 
+PASS menu.tabIndex: setAttribute() to "5%" 
+PASS menu.tabIndex: setAttribute() to "+100" 
 PASS menu.tabIndex: setAttribute() to object "2" 
 PASS menu.tabIndex: IDL set to -36 
 PASS menu.tabIndex: IDL set to -1 
@@ -3064,6 +3546,9 @@ PASS menu.compact: setAttribute() to undefined
 PASS menu.compact: setAttribute() to null 
 PASS menu.compact: setAttribute() to 7 
 PASS menu.compact: setAttribute() to 1.5 
+PASS menu.compact: setAttribute() to "5%" 
+PASS menu.compact: setAttribute() to "+100" 
+PASS menu.compact: setAttribute() to ".5" 
 PASS menu.compact: setAttribute() to true 
 PASS menu.compact: setAttribute() to false 
 PASS menu.compact: setAttribute() to object "[object Object]" 
@@ -3080,6 +3565,9 @@ PASS menu.compact: IDL set to undefined
 PASS menu.compact: IDL set to null 
 PASS menu.compact: IDL set to 7 
 PASS menu.compact: IDL set to 1.5 
+PASS menu.compact: IDL set to "5%" 
+PASS menu.compact: IDL set to "+100" 
+PASS menu.compact: IDL set to ".5" 
 PASS menu.compact: IDL set to true 
 PASS menu.compact: IDL set to false 
 PASS menu.compact: IDL set to object "[object Object]" 
@@ -3096,6 +3584,9 @@ PASS dialog.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f
 PASS dialog.title: setAttribute() to undefined 
 PASS dialog.title: setAttribute() to 7 
 PASS dialog.title: setAttribute() to 1.5 
+PASS dialog.title: setAttribute() to "5%" 
+PASS dialog.title: setAttribute() to "+100" 
+PASS dialog.title: setAttribute() to ".5" 
 PASS dialog.title: setAttribute() to true 
 PASS dialog.title: setAttribute() to false 
 PASS dialog.title: setAttribute() to object "[object Object]" 
@@ -3111,6 +3602,9 @@ PASS dialog.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\
 PASS dialog.title: IDL set to undefined 
 PASS dialog.title: IDL set to 7 
 PASS dialog.title: IDL set to 1.5 
+PASS dialog.title: IDL set to "5%" 
+PASS dialog.title: IDL set to "+100" 
+PASS dialog.title: IDL set to ".5" 
 PASS dialog.title: IDL set to true 
 PASS dialog.title: IDL set to false 
 PASS dialog.title: IDL set to object "[object Object]" 
@@ -3128,6 +3622,9 @@ PASS dialog.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\
 PASS dialog.lang: setAttribute() to undefined 
 PASS dialog.lang: setAttribute() to 7 
 PASS dialog.lang: setAttribute() to 1.5 
+PASS dialog.lang: setAttribute() to "5%" 
+PASS dialog.lang: setAttribute() to "+100" 
+PASS dialog.lang: setAttribute() to ".5" 
 PASS dialog.lang: setAttribute() to true 
 PASS dialog.lang: setAttribute() to false 
 PASS dialog.lang: setAttribute() to object "[object Object]" 
@@ -3143,6 +3640,9 @@ PASS dialog.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x
 PASS dialog.lang: IDL set to undefined 
 PASS dialog.lang: IDL set to 7 
 PASS dialog.lang: IDL set to 1.5 
+PASS dialog.lang: IDL set to "5%" 
+PASS dialog.lang: IDL set to "+100" 
+PASS dialog.lang: IDL set to ".5" 
 PASS dialog.lang: IDL set to true 
 PASS dialog.lang: IDL set to false 
 PASS dialog.lang: IDL set to object "[object Object]" 
@@ -3160,6 +3660,9 @@ PASS dialog.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r
 PASS dialog.dir: setAttribute() to undefined 
 PASS dialog.dir: setAttribute() to 7 
 PASS dialog.dir: setAttribute() to 1.5 
+PASS dialog.dir: setAttribute() to "5%" 
+PASS dialog.dir: setAttribute() to "+100" 
+PASS dialog.dir: setAttribute() to ".5" 
 PASS dialog.dir: setAttribute() to true 
 PASS dialog.dir: setAttribute() to false 
 PASS dialog.dir: setAttribute() to object "[object Object]" 
@@ -3190,6 +3693,9 @@ PASS dialog.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0
 PASS dialog.dir: IDL set to undefined 
 PASS dialog.dir: IDL set to 7 
 PASS dialog.dir: IDL set to 1.5 
+PASS dialog.dir: IDL set to "5%" 
+PASS dialog.dir: IDL set to "+100" 
+PASS dialog.dir: IDL set to ".5" 
 PASS dialog.dir: IDL set to true 
 PASS dialog.dir: IDL set to false 
 PASS dialog.dir: IDL set to object "[object Object]" 
@@ -3222,6 +3728,9 @@ PASS dialog.className (<dialog class>): setAttribute() to " \0\x01\x02\x03\x04\x
 PASS dialog.className (<dialog class>): setAttribute() to undefined 
 PASS dialog.className (<dialog class>): setAttribute() to 7 
 PASS dialog.className (<dialog class>): setAttribute() to 1.5 
+PASS dialog.className (<dialog class>): setAttribute() to "5%" 
+PASS dialog.className (<dialog class>): setAttribute() to "+100" 
+PASS dialog.className (<dialog class>): setAttribute() to ".5" 
 PASS dialog.className (<dialog class>): setAttribute() to true 
 PASS dialog.className (<dialog class>): setAttribute() to false 
 PASS dialog.className (<dialog class>): setAttribute() to object "[object Object]" 
@@ -3237,6 +3746,9 @@ PASS dialog.className (<dialog class>): IDL set to " \0\x01\x02\x03\x04\x05\x06\
 PASS dialog.className (<dialog class>): IDL set to undefined 
 PASS dialog.className (<dialog class>): IDL set to 7 
 PASS dialog.className (<dialog class>): IDL set to 1.5 
+PASS dialog.className (<dialog class>): IDL set to "5%" 
+PASS dialog.className (<dialog class>): IDL set to "+100" 
+PASS dialog.className (<dialog class>): IDL set to ".5" 
 PASS dialog.className (<dialog class>): IDL set to true 
 PASS dialog.className (<dialog class>): IDL set to false 
 PASS dialog.className (<dialog class>): IDL set to object "[object Object]" 
@@ -3255,6 +3767,9 @@ PASS dialog.hidden: setAttribute() to undefined
 PASS dialog.hidden: setAttribute() to null 
 PASS dialog.hidden: setAttribute() to 7 
 PASS dialog.hidden: setAttribute() to 1.5 
+PASS dialog.hidden: setAttribute() to "5%" 
+PASS dialog.hidden: setAttribute() to "+100" 
+PASS dialog.hidden: setAttribute() to ".5" 
 PASS dialog.hidden: setAttribute() to true 
 PASS dialog.hidden: setAttribute() to false 
 PASS dialog.hidden: setAttribute() to object "[object Object]" 
@@ -3271,6 +3786,9 @@ PASS dialog.hidden: IDL set to undefined
 PASS dialog.hidden: IDL set to null 
 PASS dialog.hidden: IDL set to 7 
 PASS dialog.hidden: IDL set to 1.5 
+PASS dialog.hidden: IDL set to "5%" 
+PASS dialog.hidden: IDL set to "+100" 
+PASS dialog.hidden: IDL set to ".5" 
 PASS dialog.hidden: IDL set to true 
 PASS dialog.hidden: IDL set to false 
 PASS dialog.hidden: IDL set to object "[object Object]" 
@@ -3287,6 +3805,9 @@ PASS dialog.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n
 PASS dialog.accessKey: setAttribute() to undefined 
 PASS dialog.accessKey: setAttribute() to 7 
 PASS dialog.accessKey: setAttribute() to 1.5 
+PASS dialog.accessKey: setAttribute() to "5%" 
+PASS dialog.accessKey: setAttribute() to "+100" 
+PASS dialog.accessKey: setAttribute() to ".5" 
 PASS dialog.accessKey: setAttribute() to true 
 PASS dialog.accessKey: setAttribute() to false 
 PASS dialog.accessKey: setAttribute() to object "[object Object]" 
@@ -3302,6 +3823,9 @@ PASS dialog.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\
 PASS dialog.accessKey: IDL set to undefined 
 PASS dialog.accessKey: IDL set to 7 
 PASS dialog.accessKey: IDL set to 1.5 
+PASS dialog.accessKey: IDL set to "5%" 
+PASS dialog.accessKey: IDL set to "+100" 
+PASS dialog.accessKey: IDL set to ".5" 
 PASS dialog.accessKey: IDL set to true 
 PASS dialog.accessKey: IDL set to false 
 PASS dialog.accessKey: IDL set to object "[object Object]" 
@@ -3329,6 +3853,8 @@ PASS dialog.tabIndex: setAttribute() to " 7"
 PASS dialog.tabIndex: setAttribute() to "\n7" 
 PASS dialog.tabIndex: setAttribute() to "\r7" 
 PASS dialog.tabIndex: setAttribute() to 1.5 
+PASS dialog.tabIndex: setAttribute() to "5%" 
+PASS dialog.tabIndex: setAttribute() to "+100" 
 PASS dialog.tabIndex: setAttribute() to object "2" 
 PASS dialog.tabIndex: IDL set to -36 
 PASS dialog.tabIndex: IDL set to -1 
@@ -3344,6 +3870,9 @@ FAIL dialog.open: setAttribute() to undefined assert_equals: IDL get expected tr
 FAIL dialog.open: setAttribute() to null assert_equals: IDL get expected true but got false
 FAIL dialog.open: setAttribute() to 7 assert_equals: IDL get expected true but got false
 FAIL dialog.open: setAttribute() to 1.5 assert_equals: IDL get expected true but got false
+FAIL dialog.open: setAttribute() to "5%" assert_equals: IDL get expected true but got false
+FAIL dialog.open: setAttribute() to "+100" assert_equals: IDL get expected true but got false
+FAIL dialog.open: setAttribute() to ".5" assert_equals: IDL get expected true but got false
 FAIL dialog.open: setAttribute() to true assert_equals: IDL get expected true but got false
 FAIL dialog.open: setAttribute() to false assert_equals: IDL get expected true but got false
 FAIL dialog.open: setAttribute() to object "[object Object]" assert_equals: IDL get expected true but got false
@@ -3360,6 +3889,9 @@ FAIL dialog.open: IDL set to undefined assert_equals: hasAttribute() expected fa
 FAIL dialog.open: IDL set to null assert_equals: hasAttribute() expected false but got true
 PASS dialog.open: IDL set to 7 
 PASS dialog.open: IDL set to 1.5 
+PASS dialog.open: IDL set to "5%" 
+PASS dialog.open: IDL set to "+100" 
+PASS dialog.open: IDL set to ".5" 
 PASS dialog.open: IDL set to true 
 FAIL dialog.open: IDL set to false assert_equals: hasAttribute() expected false but got true
 PASS dialog.open: IDL set to object "[object Object]" 
@@ -3376,6 +3908,9 @@ PASS undefinedelement.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 
 PASS undefinedelement.title: setAttribute() to undefined 
 PASS undefinedelement.title: setAttribute() to 7 
 PASS undefinedelement.title: setAttribute() to 1.5 
+PASS undefinedelement.title: setAttribute() to "5%" 
+PASS undefinedelement.title: setAttribute() to "+100" 
+PASS undefinedelement.title: setAttribute() to ".5" 
 PASS undefinedelement.title: setAttribute() to true 
 PASS undefinedelement.title: setAttribute() to false 
 PASS undefinedelement.title: setAttribute() to object "[object Object]" 
@@ -3391,6 +3926,9 @@ PASS undefinedelement.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\
 PASS undefinedelement.title: IDL set to undefined 
 PASS undefinedelement.title: IDL set to 7 
 PASS undefinedelement.title: IDL set to 1.5 
+PASS undefinedelement.title: IDL set to "5%" 
+PASS undefinedelement.title: IDL set to "+100" 
+PASS undefinedelement.title: IDL set to ".5" 
 PASS undefinedelement.title: IDL set to true 
 PASS undefinedelement.title: IDL set to false 
 PASS undefinedelement.title: IDL set to object "[object Object]" 
@@ -3408,6 +3946,9 @@ PASS undefinedelement.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \
 PASS undefinedelement.lang: setAttribute() to undefined 
 PASS undefinedelement.lang: setAttribute() to 7 
 PASS undefinedelement.lang: setAttribute() to 1.5 
+PASS undefinedelement.lang: setAttribute() to "5%" 
+PASS undefinedelement.lang: setAttribute() to "+100" 
+PASS undefinedelement.lang: setAttribute() to ".5" 
 PASS undefinedelement.lang: setAttribute() to true 
 PASS undefinedelement.lang: setAttribute() to false 
 PASS undefinedelement.lang: setAttribute() to object "[object Object]" 
@@ -3423,6 +3964,9 @@ PASS undefinedelement.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v
 PASS undefinedelement.lang: IDL set to undefined 
 PASS undefinedelement.lang: IDL set to 7 
 PASS undefinedelement.lang: IDL set to 1.5 
+PASS undefinedelement.lang: IDL set to "5%" 
+PASS undefinedelement.lang: IDL set to "+100" 
+PASS undefinedelement.lang: IDL set to ".5" 
 PASS undefinedelement.lang: IDL set to true 
 PASS undefinedelement.lang: IDL set to false 
 PASS undefinedelement.lang: IDL set to object "[object Object]" 
@@ -3440,6 +3984,9 @@ PASS undefinedelement.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b
 PASS undefinedelement.dir: setAttribute() to undefined 
 PASS undefinedelement.dir: setAttribute() to 7 
 PASS undefinedelement.dir: setAttribute() to 1.5 
+PASS undefinedelement.dir: setAttribute() to "5%" 
+PASS undefinedelement.dir: setAttribute() to "+100" 
+PASS undefinedelement.dir: setAttribute() to ".5" 
 PASS undefinedelement.dir: setAttribute() to true 
 PASS undefinedelement.dir: setAttribute() to false 
 PASS undefinedelement.dir: setAttribute() to object "[object Object]" 
@@ -3470,6 +4017,9 @@ PASS undefinedelement.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\
 PASS undefinedelement.dir: IDL set to undefined 
 PASS undefinedelement.dir: IDL set to 7 
 PASS undefinedelement.dir: IDL set to 1.5 
+PASS undefinedelement.dir: IDL set to "5%" 
+PASS undefinedelement.dir: IDL set to "+100" 
+PASS undefinedelement.dir: IDL set to ".5" 
 PASS undefinedelement.dir: IDL set to true 
 PASS undefinedelement.dir: IDL set to false 
 PASS undefinedelement.dir: IDL set to object "[object Object]" 
@@ -3502,6 +4052,9 @@ PASS undefinedelement.className (<undefinedelement class>): setAttribute() to " 
 PASS undefinedelement.className (<undefinedelement class>): setAttribute() to undefined 
 PASS undefinedelement.className (<undefinedelement class>): setAttribute() to 7 
 PASS undefinedelement.className (<undefinedelement class>): setAttribute() to 1.5 
+PASS undefinedelement.className (<undefinedelement class>): setAttribute() to "5%" 
+PASS undefinedelement.className (<undefinedelement class>): setAttribute() to "+100" 
+PASS undefinedelement.className (<undefinedelement class>): setAttribute() to ".5" 
 PASS undefinedelement.className (<undefinedelement class>): setAttribute() to true 
 PASS undefinedelement.className (<undefinedelement class>): setAttribute() to false 
 PASS undefinedelement.className (<undefinedelement class>): setAttribute() to object "[object Object]" 
@@ -3517,6 +4070,9 @@ PASS undefinedelement.className (<undefinedelement class>): IDL set to " \0\x01\
 PASS undefinedelement.className (<undefinedelement class>): IDL set to undefined 
 PASS undefinedelement.className (<undefinedelement class>): IDL set to 7 
 PASS undefinedelement.className (<undefinedelement class>): IDL set to 1.5 
+PASS undefinedelement.className (<undefinedelement class>): IDL set to "5%" 
+PASS undefinedelement.className (<undefinedelement class>): IDL set to "+100" 
+PASS undefinedelement.className (<undefinedelement class>): IDL set to ".5" 
 PASS undefinedelement.className (<undefinedelement class>): IDL set to true 
 PASS undefinedelement.className (<undefinedelement class>): IDL set to false 
 PASS undefinedelement.className (<undefinedelement class>): IDL set to object "[object Object]" 
@@ -3535,6 +4091,9 @@ PASS undefinedelement.hidden: setAttribute() to undefined
 PASS undefinedelement.hidden: setAttribute() to null 
 PASS undefinedelement.hidden: setAttribute() to 7 
 PASS undefinedelement.hidden: setAttribute() to 1.5 
+PASS undefinedelement.hidden: setAttribute() to "5%" 
+PASS undefinedelement.hidden: setAttribute() to "+100" 
+PASS undefinedelement.hidden: setAttribute() to ".5" 
 PASS undefinedelement.hidden: setAttribute() to true 
 PASS undefinedelement.hidden: setAttribute() to false 
 PASS undefinedelement.hidden: setAttribute() to object "[object Object]" 
@@ -3551,6 +4110,9 @@ PASS undefinedelement.hidden: IDL set to undefined
 PASS undefinedelement.hidden: IDL set to null 
 PASS undefinedelement.hidden: IDL set to 7 
 PASS undefinedelement.hidden: IDL set to 1.5 
+PASS undefinedelement.hidden: IDL set to "5%" 
+PASS undefinedelement.hidden: IDL set to "+100" 
+PASS undefinedelement.hidden: IDL set to ".5" 
 PASS undefinedelement.hidden: IDL set to true 
 PASS undefinedelement.hidden: IDL set to false 
 PASS undefinedelement.hidden: IDL set to object "[object Object]" 
@@ -3567,6 +4129,9 @@ PASS undefinedelement.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\
 PASS undefinedelement.accessKey: setAttribute() to undefined 
 PASS undefinedelement.accessKey: setAttribute() to 7 
 PASS undefinedelement.accessKey: setAttribute() to 1.5 
+PASS undefinedelement.accessKey: setAttribute() to "5%" 
+PASS undefinedelement.accessKey: setAttribute() to "+100" 
+PASS undefinedelement.accessKey: setAttribute() to ".5" 
 PASS undefinedelement.accessKey: setAttribute() to true 
 PASS undefinedelement.accessKey: setAttribute() to false 
 PASS undefinedelement.accessKey: setAttribute() to object "[object Object]" 
@@ -3582,6 +4147,9 @@ PASS undefinedelement.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\
 PASS undefinedelement.accessKey: IDL set to undefined 
 PASS undefinedelement.accessKey: IDL set to 7 
 PASS undefinedelement.accessKey: IDL set to 1.5 
+PASS undefinedelement.accessKey: IDL set to "5%" 
+PASS undefinedelement.accessKey: IDL set to "+100" 
+PASS undefinedelement.accessKey: IDL set to ".5" 
 PASS undefinedelement.accessKey: IDL set to true 
 PASS undefinedelement.accessKey: IDL set to false 
 PASS undefinedelement.accessKey: IDL set to object "[object Object]" 
@@ -3609,6 +4177,8 @@ PASS undefinedelement.tabIndex: setAttribute() to " 7"
 PASS undefinedelement.tabIndex: setAttribute() to "\n7" 
 PASS undefinedelement.tabIndex: setAttribute() to "\r7" 
 PASS undefinedelement.tabIndex: setAttribute() to 1.5 
+PASS undefinedelement.tabIndex: setAttribute() to "5%" 
+PASS undefinedelement.tabIndex: setAttribute() to "+100" 
 PASS undefinedelement.tabIndex: setAttribute() to object "2" 
 PASS undefinedelement.tabIndex: IDL set to -36 
 PASS undefinedelement.tabIndex: IDL set to -1 
@@ -3616,6 +4186,114 @@ PASS undefinedelement.tabIndex: IDL set to 0
 PASS undefinedelement.tabIndex: IDL set to 1 
 PASS undefinedelement.tabIndex: IDL set to 2147483647 
 PASS undefinedelement.tabIndex: IDL set to -2147483648 
+FAIL undefinedelement.enterKeyHint: typeof IDL attribute assert_equals: expected "string" but got "undefined"
+FAIL undefinedelement.enterKeyHint: IDL get with DOM attribute unset assert_equals: expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to undefined assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to 7 assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to 1.5 assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "5%" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "+100" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to ".5" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to true assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to false assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to object "[object Object]" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to NaN assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to Infinity assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to -Infinity assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to null assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to object "test-toString" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "enter" assert_equals: IDL get expected (string) "enter" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "xenter" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "enter\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "nter" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "ENTER" assert_equals: IDL get expected (string) "enter" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "done" assert_equals: IDL get expected (string) "done" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "xdone" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "done\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "one" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "DONE" assert_equals: IDL get expected (string) "done" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "go" assert_equals: IDL get expected (string) "go" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "xgo" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "go\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "o" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "GO" assert_equals: IDL get expected (string) "go" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "next" assert_equals: IDL get expected (string) "next" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "xnext" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "next\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "ext" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "NEXT" assert_equals: IDL get expected (string) "next" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "previous" assert_equals: IDL get expected (string) "previous" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "xprevious" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "previous\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "revious" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "PREVIOUS" assert_equals: IDL get expected (string) "previous" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "search" assert_equals: IDL get expected (string) "search" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "xsearch" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "search\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "earch" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "SEARCH" assert_equals: IDL get expected (string) "search" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "send" assert_equals: IDL get expected (string) "send" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "xsend" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "send\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "end" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: setAttribute() to "SEND" assert_equals: IDL get expected (string) "send" but got (undefined) undefined
+FAIL undefinedelement.enterKeyHint: IDL set to "" assert_equals: getAttribute() expected "" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to 7 assert_equals: getAttribute() expected "7" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "5%" assert_equals: getAttribute() expected "5%" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "+100" assert_equals: getAttribute() expected "+100" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to ".5" assert_equals: getAttribute() expected ".5" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to true assert_equals: getAttribute() expected "true" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to false assert_equals: getAttribute() expected "false" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to null assert_equals: IDL get expected (string) "" but got (object) null
+FAIL undefinedelement.enterKeyHint: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to object "test-valueOf" assert_equals: getAttribute() expected "test-valueOf" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "enter" assert_equals: getAttribute() expected "enter" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "xenter" assert_equals: getAttribute() expected "xenter" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "enter\0" assert_equals: getAttribute() expected "enter\0" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "nter" assert_equals: getAttribute() expected "nter" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "ENTER" assert_equals: getAttribute() expected "ENTER" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "done" assert_equals: getAttribute() expected "done" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "xdone" assert_equals: getAttribute() expected "xdone" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "done\0" assert_equals: getAttribute() expected "done\0" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "one" assert_equals: getAttribute() expected "one" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "DONE" assert_equals: getAttribute() expected "DONE" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "go" assert_equals: getAttribute() expected "go" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "xgo" assert_equals: getAttribute() expected "xgo" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "go\0" assert_equals: getAttribute() expected "go\0" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "o" assert_equals: getAttribute() expected "o" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "GO" assert_equals: getAttribute() expected "GO" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "next" assert_equals: getAttribute() expected "next" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "xnext" assert_equals: getAttribute() expected "xnext" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "next\0" assert_equals: getAttribute() expected "next\0" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "ext" assert_equals: getAttribute() expected "ext" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "NEXT" assert_equals: getAttribute() expected "NEXT" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "previous" assert_equals: getAttribute() expected "previous" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "xprevious" assert_equals: getAttribute() expected "xprevious" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "previous\0" assert_equals: getAttribute() expected "previous\0" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "revious" assert_equals: getAttribute() expected "revious" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "PREVIOUS" assert_equals: getAttribute() expected "PREVIOUS" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "search" assert_equals: getAttribute() expected "search" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "xsearch" assert_equals: getAttribute() expected "xsearch" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "search\0" assert_equals: getAttribute() expected "search\0" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "earch" assert_equals: getAttribute() expected "earch" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "SEARCH" assert_equals: getAttribute() expected "SEARCH" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "send" assert_equals: getAttribute() expected "send" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "xsend" assert_equals: getAttribute() expected "xsend" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "send\0" assert_equals: getAttribute() expected "send\0" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "end" assert_equals: getAttribute() expected "end" but got "SEND"
+FAIL undefinedelement.enterKeyHint: IDL set to "SEND" assert_equals: IDL get expected "send" but got "SEND"
 PASS undefinedelement.inputMode: typeof IDL attribute 
 PASS undefinedelement.inputMode: IDL get with DOM attribute unset 
 PASS undefinedelement.inputMode: setAttribute() to "" 
@@ -3623,6 +4301,9 @@ PASS undefinedelement.inputMode: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\
 PASS undefinedelement.inputMode: setAttribute() to undefined 
 PASS undefinedelement.inputMode: setAttribute() to 7 
 PASS undefinedelement.inputMode: setAttribute() to 1.5 
+PASS undefinedelement.inputMode: setAttribute() to "5%" 
+PASS undefinedelement.inputMode: setAttribute() to "+100" 
+PASS undefinedelement.inputMode: setAttribute() to ".5" 
 PASS undefinedelement.inputMode: setAttribute() to true 
 PASS undefinedelement.inputMode: setAttribute() to false 
 PASS undefinedelement.inputMode: setAttribute() to object "[object Object]" 
@@ -3678,6 +4359,9 @@ PASS undefinedelement.inputMode: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\
 PASS undefinedelement.inputMode: IDL set to undefined 
 PASS undefinedelement.inputMode: IDL set to 7 
 PASS undefinedelement.inputMode: IDL set to 1.5 
+PASS undefinedelement.inputMode: IDL set to "5%" 
+PASS undefinedelement.inputMode: IDL set to "+100" 
+PASS undefinedelement.inputMode: IDL set to ".5" 
 PASS undefinedelement.inputMode: IDL set to true 
 PASS undefinedelement.inputMode: IDL set to false 
 PASS undefinedelement.inputMode: IDL set to object "[object Object]" 

@@ -1,0 +1,3 @@
+
+PASS Cross-Origin-Opener-Policy only works over secure contexts 
+

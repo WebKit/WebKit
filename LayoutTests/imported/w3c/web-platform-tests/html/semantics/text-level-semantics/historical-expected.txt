@@ -4,7 +4,4 @@ PASS area.type should not be supported
 PASS time.datetime should not be supported 
 PASS a.media should not be supported 
 PASS area.media should not be supported 
-PASS link.noreferer should not be supported 
-PASS a.noreferer should not be supported 
-PASS area.noreferer should not be supported 
 

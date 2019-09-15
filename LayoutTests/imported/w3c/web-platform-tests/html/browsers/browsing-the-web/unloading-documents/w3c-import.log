@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -27,9 +27,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-on-navigation-of-parent-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-on-navigation-of-parent-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-on-navigation-of-parent.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/contains.json
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-synchronous.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/navigation-within-beforeunload-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/navigation-within-beforeunload-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/navigation-within-beforeunload.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/pagehide-on-history-forward-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/pagehide-on-history-forward.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/prompt-and-unload-script-closeable.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/prompt-and-unload-script-uncloseable-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/prompt-and-unload-script-uncloseable.html
