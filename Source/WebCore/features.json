@@ -14,7 +14,7 @@
     {
         "name": "Battery Status API",
         "status": {
-            "status": "Removed"
+            "status": "Not Considering"
         },
         "url": "https://w3c.github.io/battery/",
         "webkit-url": "https://webkit.org/b/62698",
@@ -702,7 +702,7 @@
     {
         "name": "WebGL 2",
         "status": {
-            "status": "Supported In Preview",
+            "status": "In Development",
             "enabled-by-default": true
         },
         "url": "https://www.khronos.org/registry/webgl/specs/latest/2.0/",
@@ -922,6 +922,22 @@
         "specification": "HTML5",
         "category": "html",
         "description": "The datalist element represents a set of option elements that represent predefined options for other controls.",
+        "contact": {
+            "name": "Jon Davis",
+            "twitter": "@jonathandavis",
+            "email": "web-evangelist@apple.com"
+        }
+    },
+    {
+        "name": "Dialog Element",
+        "status": {
+            "status": "Under Consideration"
+        },
+        "url": "https://html.spec.whatwg.org/multipage/interactive-elements.html#the-dialog-element",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=84635",
+        "specification": "HTML5",
+        "category": "html",
+        "description": "The dialog element represents a part of an application that a user interacts with to perform a task, for example a dialog box, inspector, or window.",
         "contact": {
             "name": "Jon Davis",
             "twitter": "@jonathandavis",
