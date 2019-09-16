@@ -1,3 +1,17 @@
+2019-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r249142): [GTK] Epiphany delayed page loads continue indefinitely
+        https://bugs.webkit.org/show_bug.cgi?id=201544
+
+        Reviewed by Michael Catanzaro.
+
+        WebPageProxy::loadAlternateHTML() is an exception, because it's an API request but always sets the navigationID
+        to 0. We always want to reset the pending API request URL when alternate HTML load starts.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrameShared): Check also that it's an API alternate HTML load
+        to reset the pending API request URL.
+
 2019-09-15  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r248592): Leak of CFDictionaryRef in WebKit::NetworkRTCProvider::proxyInfoFromSession()

@@ -46,6 +46,7 @@ public:
     void reload();
     void goBack();
     void goForward();
+    void loadAlternateHTML(const char* html, const char* contentURI, const char* baseURI);
     void reset();
 
     void setRedirectURI(const char* uri) { m_redirectURI = uri; }
@@ -65,4 +66,5 @@ public:
     Vector<LoadEvents> m_loadEvents;
     float m_estimatedProgress;
     CString m_redirectURI;
+    CString m_committedURI;
 };
