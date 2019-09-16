@@ -372,11 +372,12 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/multil
 imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/multiline-placeholder.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-b-element/b-usage.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-ruby-element/ruby-usage.html [ ImageOnlyFailure ]
+[ Release ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/video-controls-vertical-writing-mode.html [ ImageOnlyFailure ]
 
 # Newly imported WPT tests that are crashing.
 imported/w3c/web-platform-tests/html/browsers/offline/application-cache-api/api_swapcache_error.https.html [ Crash ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/import-meta/import-meta-url.html [ Crash ]
-imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/video-controls-vertical-writing-mode.html [ Crash ]
+[ Debug ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/video-controls-vertical-writing-mode.html [ Crash ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-04.html [ ImageOnlyFailure Crash ]
 
 # Newly imported WPT tests that are flaky.
