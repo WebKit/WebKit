@@ -1,3 +1,14 @@
+2019-09-16  Saam Barati  <sbarati@apple.com>
+
+        JSObject::putInlineSlow should not ignore "__proto__" for Proxy
+        https://bugs.webkit.org/show_bug.cgi?id=200386
+        <rdar://problem/53854946>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/proxy-__proto__-in-prototype-chain.js: Added.
+        * stress/proxy-property-replace-structure-transition.js: Added.
+
 2019-09-13  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Date.prototype.toJSON does not execute steps 1-2

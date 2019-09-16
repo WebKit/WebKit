@@ -1,3 +1,22 @@
+2019-09-16  Saam Barati  <sbarati@apple.com>
+
+        JSObject::putInlineSlow should not ignore "__proto__" for Proxy
+        https://bugs.webkit.org/show_bug.cgi?id=200386
+        <rdar://problem/53854946>
+
+        Reviewed by Yusuke Suzuki.
+
+        We used to ignore '__proto__' in putInlineSlow when the object in question
+        was Proxy. There is no reason for this, and it goes against the spec. So
+        I've removed that condition. This also has the effect that it fixes an
+        assertion firing inside our inline caching code which dictates that for a
+        property replace that the base value's structure must be equal to the
+        structure when we grabbed the structure prior to the put operation.
+        The old code caused a weird edge case where we broke this invariant.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putInlineSlow):
+
 2019-09-15  David Kilzer  <ddkilzer@apple.com>
 
         Leak of NSMapTable in -[JSVirtualMachine addManagedReference:withOwner:]
