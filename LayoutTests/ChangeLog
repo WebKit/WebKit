@@ -1,5 +1,13 @@
 2019-09-16  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, skip imported/w3c/web-platform-tests/html/browsers/offline/application-cache-api/api_update.https.html.
+
+        This test is a flaky timeout since it was imported in r249886.
+
+        * TestExpectations:
+
+2019-09-16  Chris Dumez  <cdumez@apple.com>
+
         Update testharness.js from upstream
         https://bugs.webkit.org/show_bug.cgi?id=201808
 
