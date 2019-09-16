@@ -105,6 +105,7 @@
     CGEventSetIntegerValueField(cgEvent, kCGEventGestureBehavior, kCGSGestureBehaviorDeepPress);
 
     self = [super _initWithCGEvent:cgEvent eventRef:nullptr];
+    CFRelease(cgEvent);
 
     if (!self)
         return nil;

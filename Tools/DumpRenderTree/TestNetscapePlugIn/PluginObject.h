@@ -83,7 +83,7 @@ extern bool testDocumentOpen(NPP npp);
 extern bool testWindowOpen(NPP npp);
 
 #ifdef XP_MACOSX
-extern const void* createCoreAnimationLayer();
+extern CFTypeRef createCoreAnimationLayer() CF_RETURNS_RETAINED;
 #endif
 
 #endif

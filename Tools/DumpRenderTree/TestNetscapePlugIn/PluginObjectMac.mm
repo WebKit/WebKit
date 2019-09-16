@@ -42,7 +42,7 @@
 
 @end
 
-const void* createCoreAnimationLayer()
+CFTypeRef createCoreAnimationLayer()
 {
     CALayer *caLayer = [[TestPluginLayer alloc] init];
 

@@ -1,3 +1,30 @@
+2019-09-16  David Kilzer  <ddkilzer@apple.com>
+
+        Fix leaks in DumpRenderTree and WebKitTestRunner
+        <https://webkit.org/b/201814>
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.h:
+        (createCoreAnimationLayer): Fix signature to return CFTypeRef.
+        Add CF_RETURNS_RETAINED to document behavior.
+        * DumpRenderTree/TestNetscapePlugIn/PluginObjectMac.mm:
+        (createCoreAnimationLayer): Fix signature to return CFTypeRef.
+
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (takeWindowSnapshot): Add CF_RETURNS_RETAINED to document
+        behavior.
+        (createBitmapContextFromWebView): Fix leak of CGImageRef when
+        generating a replacement image.
+
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm: Add @dynamic
+        declaration for _stableStateOverride so compiler wouldn't try to
+        create another instance variable for it.
+
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (-[EventSenderSyntheticEvent initPressureEventAtLocation:globalLocation:stage:pressure:stageTransition:phase:time:eventNumber:window:]):
+        Release `cgEvent` to fix leak.
+
 2019-09-16  Andres Gonzalez  <andresg_22@apple.com>
 
         Expose misspelling ranges for editable content to accessibility clients.

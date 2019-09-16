@@ -83,7 +83,7 @@ static void paintRepaintRectOverlay(WebView* webView, CGContextRef context)
     CGContextRestoreGState(context);
 }
 
-static CGImageRef takeWindowSnapshot(CGSWindowID windowID, CGWindowImageOption imageOptions)
+static CGImageRef takeWindowSnapshot(CGSWindowID windowID, CGWindowImageOption imageOptions) CF_RETURNS_RETAINED
 {
     imageOptions |= kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque;
     return CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, windowID, imageOptions);
@@ -141,8 +141,10 @@ RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool increme
             if (image) {
                 // Work around <rdar://problem/17084993>; re-request the snapshot at kCGWindowImageNominalResolution if it was captured at the wrong scale.
                 CGFloat desiredSnapshotWidth = window.frame.size.width * deviceScaleFactor;
-                if (CGImageGetWidth(image) != desiredSnapshotWidth)
+                if (CGImageGetWidth(image) != desiredSnapshotWidth) {
+                    CGImageRelease(image);
                     image = takeWindowSnapshot([window windowNumber], kCGWindowImageNominalResolution);
+                }
             }
 
             if (!image)

@@ -72,6 +72,8 @@ struct CustomMenuActionInfo {
 
 @implementation TestRunnerWKWebView
 
+@dynamic _stableStateOverride;
+
 #if PLATFORM(MAC)
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)dragImage:(NSImage *)anImage at:(NSPoint)viewLocation offset:(NSSize)initialOffset event:(NSEvent *)event pasteboard:(NSPasteboard *)pboard source:(id)sourceObj slideBack:(BOOL)slideFlag
