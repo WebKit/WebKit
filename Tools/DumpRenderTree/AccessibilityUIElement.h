@@ -257,7 +257,8 @@ public:
 
     // Text markers.
     AccessibilityTextMarkerRange lineTextMarkerRangeForTextMarker(AccessibilityTextMarker*);
-    AccessibilityTextMarkerRange textMarkerRangeForElement(AccessibilityUIElement*);    
+    AccessibilityTextMarkerRange misspellingTextMarkerRange(AccessibilityTextMarkerRange* start, bool forward);
+    AccessibilityTextMarkerRange textMarkerRangeForElement(AccessibilityUIElement*);
     AccessibilityTextMarkerRange textMarkerRangeForMarkers(AccessibilityTextMarker* startMarker, AccessibilityTextMarker* endMarker);
     AccessibilityTextMarker startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*);
     AccessibilityTextMarker endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*);

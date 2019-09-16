@@ -323,6 +323,10 @@ using namespace HTMLNames;
 #define NSAccessibilityLineTextMarkerRangeForTextMarkerParameterizedAttribute @"AXLineTextMarkerRangeForTextMarker"
 #endif
 
+#ifndef NSAccessibilityMisspellingTextMarkerRangeParameterizedAttribute
+#define NSAccessibilityMisspellingTextMarkerRangeParameterizedAttribute @"AXMisspellingTextMarkerRange"
+#endif
+
 // Text selection
 #ifndef NSAccessibilitySelectTextActivity
 #define NSAccessibilitySelectTextActivity @"AXSelectTextActivity"
@@ -725,6 +729,21 @@ static AccessibilityTextOperation accessibilityTextOperationForParameterizedAttr
         operation.replacementText = replacementString;
 
     return operation;
+}
+
+static std::pair<RefPtr<Range>, AccessibilitySearchDirection> accessibilityMisspellingSearchCriteriaForParameterizedAttribute(WebAccessibilityObjectWrapper *object, const NSDictionary *params)
+{
+    std::pair<RefPtr<Range>, AccessibilitySearchDirection> criteria;
+
+    criteria.first = [object rangeForTextMarkerRange:[params objectForKey:@"AXStartTextMarkerRange"]];
+
+    NSNumber *forward = [params objectForKey:NSAccessibilitySearchTextDirection];
+    if ([forward isKindOfClass:[NSNumber class]])
+        criteria.second = [forward boolValue] ? AccessibilitySearchDirection::Next : AccessibilitySearchDirection::Previous;
+    else
+        criteria.second = AccessibilitySearchDirection::Next;
+
+    return criteria;
 }
 
 #pragma mark Text Marker helpers
@@ -4206,7 +4225,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         m_object->findMatchingObjects(&criteria, results);
         return convertToNSArray(results);
     }
-    
+
     if ([attribute isEqualToString:NSAccessibilityEndTextMarkerForBoundsParameterizedAttribute]) {
         IntRect webCoreRect = [self screenToContents:enclosingIntRect(rect)];
         CharacterOffset characterOffset = cache->characterOffsetForBounds(webCoreRect, false);
@@ -4223,7 +4242,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         VisiblePositionRange visiblePositionRange = m_object->lineRangeForPosition(visiblePosition);
         return [self textMarkerRangeFromVisiblePositions:visiblePositionRange.start endPosition:visiblePositionRange.end];
     }
-    
+
+    if ([attribute isEqualToString:NSAccessibilityMisspellingTextMarkerRangeParameterizedAttribute]) {
+        auto criteria = accessibilityMisspellingSearchCriteriaForParameterizedAttribute(self, dictionary);
+        if (auto misspellingRange = m_object->getMisspellingRange(criteria.first, criteria.second))
+            return [self textMarkerRangeFromRange:misspellingRange];
+        return nil;
+    }
+
     if ([attribute isEqualToString:NSAccessibilityTextMarkerIsValidParameterizedAttribute]) {
         VisiblePosition pos = [self visiblePositionForTextMarker:textMarker];
         return [NSNumber numberWithBool:!pos.isNull()];

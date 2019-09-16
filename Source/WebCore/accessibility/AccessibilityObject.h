@@ -485,6 +485,7 @@ public:
     virtual bool hasBoldFont() const { return false; }
     virtual bool hasItalicFont() const { return false; }
     bool hasMisspelling() const;
+    RefPtr<Range> getMisspellingRange(RefPtr<Range> const& start, AccessibilitySearchDirection) const;
     virtual bool hasPlainText() const { return false; }
     virtual bool hasSameFont(RenderObject*) const { return false; }
     virtual bool hasSameFontColor(RenderObject*) const { return false; }

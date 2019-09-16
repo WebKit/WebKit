@@ -1,3 +1,26 @@
+2019-09-16  Andres Gonzalez  <andresg_22@apple.com>
+
+        Expose misspelling ranges for editable content to accessibility clients.
+        https://bugs.webkit.org/show_bug.cgi?id=201752
+        <rdar://problem/49556828>
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/misspelling-range.html
+
+        Added [WebAccessibilityObjectWrapper misspellingTextMarkerRange] and
+        underlying AccessibilityObject implementation to expose misspellings to
+        accessibility clients that provide an alternative user interface to
+        spell checking.
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::getMisspellingRange const):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper misspellingTextMarkerRange:direction:]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (accessibilityMisspellingSearchCriteriaForParameterizedAttribute):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2019-09-15  Andy Estes  <aestes@apple.com>
 
         [WebIDL] Derived dictionaries should inherit their inherited dictionaries' partials

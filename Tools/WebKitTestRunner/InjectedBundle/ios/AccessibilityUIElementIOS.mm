@@ -97,11 +97,13 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSString *)stringForTextMarkers:(NSArray *)markers;
 - (id)startOrEndTextMarkerForTextMarkers:(NSArray*)textMarkers isStart:(BOOL)isStart;
 - (NSArray *)textMarkerRangeForMarkers:(NSArray *)textMarkers;
+- (NSInteger)positionForTextMarker:(id)marker;
 - (id)nextMarkerForMarker:(id)marker;
 - (id)previousMarkerForMarker:(id)marker;
 - (id)accessibilityObjectForTextMarker:(id)marker;
 - (id)lineStartMarkerForMarker:(id)marker;
 - (id)lineEndMarkerForMarker:(id)marker;
+- (NSArray *)misspellingTextMarkerRange:(NSArray *)startTextMarkerRange forward:(BOOL)forward;
 - (NSArray *)textMarkerRangeFromMarkers:(NSArray *)markers withText:(NSString *)text;
 - (BOOL)_accessibilityIsInTableCell;
 @end
@@ -1102,6 +1104,12 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::lineTextMarkerRange
     return AccessibilityTextMarkerRange::create(textMarkerRange);
 }
 
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::misspellingTextMarkerRange(AccessibilityTextMarkerRange* start, bool forward)
+{
+    id misspellingRange = [m_element misspellingTextMarkerRange:(id)start->platformTextMarkerRange() forward:forward];
+    return AccessibilityTextMarkerRange::create(misspellingRange);
+}
+
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForElement(AccessibilityUIElement* element)
 {
     id textMarkerRange = [element->platformUIElement() textMarkerRange];
@@ -1205,7 +1213,7 @@ bool AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute
 
 int AccessibilityUIElement::indexForTextMarker(AccessibilityTextMarker* marker)
 {
-    return -1;
+    return [m_element positionForTextMarker:(__bridge id)marker->platformTextMarker()];
 }
 
 bool AccessibilityUIElement::isTextMarkerValid(AccessibilityTextMarker* textMarker)

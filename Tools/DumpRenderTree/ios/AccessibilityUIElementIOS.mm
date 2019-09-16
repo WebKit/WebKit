@@ -118,6 +118,7 @@ AccessibilityUIElement::~AccessibilityUIElement()
 - (id)accessibilityObjectForTextMarker:(id)marker;
 - (id)lineStartMarkerForMarker:(id)marker;
 - (id)lineEndMarkerForMarker:(id)marker;
+- (NSArray *)misspellingTextMarkerRange:(NSArray *)startTextMarkerRange forward:(BOOL)forward;
 - (NSArray *)textMarkerRangeFromMarkers:(NSArray *)markers withText:(NSString *)text;
 @end
 
@@ -467,6 +468,12 @@ AccessibilityTextMarkerRange AccessibilityUIElement::lineTextMarkerRangeForTextM
     
     id textMarkerRange = [m_element textMarkerRangeForMarkers:textMarkers];
     return AccessibilityTextMarkerRange(textMarkerRange);
+}
+
+AccessibilityTextMarkerRange AccessibilityUIElement::misspellingTextMarkerRange(AccessibilityTextMarkerRange* startRange, bool forward)
+{
+    id misspellingRange = [m_element misspellingTextMarkerRange:(id)startRange->platformTextMarkerRange() forward:forward];
+    return AccessibilityTextMarkerRange(misspellingRange);
 }
 
 AccessibilityTextMarkerRange AccessibilityUIElement::textMarkerRangeForElement(AccessibilityUIElement* element)

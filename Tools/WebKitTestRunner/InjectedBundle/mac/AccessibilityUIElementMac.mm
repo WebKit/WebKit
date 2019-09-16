@@ -324,6 +324,16 @@ static NSDictionary *searchTextParameterizedAttributeForCriteria(JSContextRef co
     return parameterizedAttribute;
 }
 
+static NSDictionary *misspellingSearchParameterizedAttributeForCriteria(AccessibilityTextMarkerRange* start, bool forward)
+{
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+
+    [parameters setObject:(__bridge id)start->platformTextMarkerRange() forKey:@"AXStartTextMarkerRange"];
+    [parameters setObject:[NSNumber numberWithBool:forward] forKey:@"AXSearchTextDirection"];
+
+    return parameters;
+}
+
 void AccessibilityUIElement::getLinkedUIElements(Vector<RefPtr<AccessibilityUIElement> >& elementVector)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
@@ -1750,6 +1760,17 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::lineTextMarkerRange
     return AccessibilityTextMarkerRange::create((__bridge CFTypeRef)textMarkerRange);
     END_AX_OBJC_EXCEPTIONS
     
+    return nullptr;
+}
+
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::misspellingTextMarkerRange(AccessibilityTextMarkerRange* start, bool forward)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSDictionary *parameters = misspellingSearchParameterizedAttributeForCriteria(start, forward);
+    id textMarkerRange = [m_element accessibilityAttributeValue:@"AXMisspellingTextMarkerRange" forParameter:parameters];
+    return AccessibilityTextMarkerRange::create((__bridge CFTypeRef)textMarkerRange);
+    END_AX_OBJC_EXCEPTIONS
+
     return nullptr;
 }
 

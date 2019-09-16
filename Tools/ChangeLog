@@ -1,3 +1,21 @@
+2019-09-16  Andres Gonzalez  <andresg_22@apple.com>
+
+        Expose misspelling ranges for editable content to accessibility clients.
+        https://bugs.webkit.org/show_bug.cgi?id=201752
+        <rdar://problem/49556828>
+
+        Reviewed by Chris Fleizach.
+
+        Test code needed for LayoutTests/accessibility/misspelling-range.html.
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::misspellingTextMarkerRange):
+        (WTR::AccessibilityUIElement::indexForTextMarker):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::misspellingSearchParameterizedAttributeForCriteria):
+        (WTR::AccessibilityUIElement::misspellingTextMarkerRange):
+
 2019-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r249142): [GTK] Epiphany delayed page loads continue indefinitely
