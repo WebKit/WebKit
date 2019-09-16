@@ -1,5 +1,11 @@
 2019-09-16  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rebaseline test after testharness.js update in r249918.
+
+        * webgpu/whlsl/test-harness-test-expected.txt:
+
+2019-09-16  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, fix several css-dark-mode tests to run properly after testharness.js update in r249918.
 
         * css-dark-mode/color-scheme-css-expected.txt:

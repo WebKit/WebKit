@@ -1,4 +1,6 @@
 
+Harness Error (FAIL), message = 5 duplicate test names: "Return an expected float4 value.", "Return an expected int value.", "Return an expected uint value.", "Return an expected float value.", "Return an expected float4x4 value."
+
 PASS Return a literal of type bool. 
 PASS Return an expected float4 value. 
 PASS Return an expected int value. 
