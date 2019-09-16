@@ -1,3 +1,14 @@
+2019-09-16  Michael Saboff  <msaboff@apple.com>
+
+        [JSC] Perform check again when we found non-BMP characters
+        https://bugs.webkit.org/show_bug.cgi?id=201647
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/regexp-unicode-surrogate-pair-increment-should-involve-length-check.js: Added.
+        * stress/regexp-unicode-within-string.js: Updated test to eliminate the bogus print().
+        (testRegExpInbounds):
+
 2019-09-16  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Add missing syntax errors for await in function parameter default expressions

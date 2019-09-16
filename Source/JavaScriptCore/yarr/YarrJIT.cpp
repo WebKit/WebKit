@@ -438,16 +438,16 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
     }
 
 #ifdef JIT_UNICODE_EXPRESSIONS
-    void advanceIndexAfterCharacterClassTermMatch(const PatternTerm* term, JumpList& failures, const RegisterID character)
+    void advanceIndexAfterCharacterClassTermMatch(const PatternTerm* term, JumpList& failuresAfterIncrementingIndex, const RegisterID character)
     {
         ASSERT(term->type == PatternTerm::TypeCharacterClass);
 
-        if (term->characterClass->hasOneCharacterSize() && !term->invert())
+        if (term->isFixedWidthCharacterClass())
             add32(TrustedImm32(term->characterClass->hasNonBMPCharacters() ? 2 : 1), index);
         else {
             add32(TrustedImm32(1), index);
-            failures.append(atEndOfInput());
             Jump isBMPChar = branch32(LessThan, character, supplementaryPlanesBase);
+            failuresAfterIncrementingIndex.append(atEndOfInput());
             add32(TrustedImm32(1), index);
             isBMPChar.link(this);
         }
@@ -1747,6 +1747,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 #ifdef JIT_UNICODE_EXPRESSIONS
         if (m_decodeSurrogatePairs && (!term->characterClass->hasOneCharacterSize() || term->invert())) {
             Jump isBMPChar = branch32(LessThan, character, supplementaryPlanesBase);
+            op.m_jumps.append(atEndOfInput());
             add32(TrustedImm32(1), index);
             isBMPChar.link(this);
         }
@@ -1806,7 +1807,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 
 #ifdef JIT_UNICODE_EXPRESSIONS
         if (m_decodeSurrogatePairs) {
-            if (term->characterClass->hasOneCharacterSize() && !term->invert())
+            if (term->isFixedWidthCharacterClass())
                 add32(TrustedImm32(term->characterClass->hasNonBMPCharacters() ? 2 : 1), countRegister);
             else {
                 add32(TrustedImm32(1), countRegister);
@@ -1839,9 +1840,10 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
         move(TrustedImm32(0), countRegister);
 
         JumpList failures;
+        JumpList failuresDecrementIndex;
         Label loop(this);
 #ifdef JIT_UNICODE_EXPRESSIONS
-        if (term->characterClass->hasOneCharacterSize() && !term->invert() && term->characterClass->hasNonBMPCharacters()) {
+        if (term->isFixedWidthCharacterClass() && term->characterClass->hasNonBMPCharacters()) {
             move(TrustedImm32(1), character);
             failures.append(checkNotEnoughInput(character));
         } else
@@ -1865,7 +1867,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 
 #ifdef JIT_UNICODE_EXPRESSIONS
         if (m_decodeSurrogatePairs)
-            advanceIndexAfterCharacterClassTermMatch(term, failures, character);
+            advanceIndexAfterCharacterClassTermMatch(term, failuresDecrementIndex, character);
         else
 #endif
             add32(TrustedImm32(1), index);
@@ -1876,6 +1878,11 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
             failures.append(jump());
         } else
             jump(loop);
+
+        if (!failuresDecrementIndex.empty()) {
+            failuresDecrementIndex.link(this);
+            sub32(TrustedImm32(1), index);
+        }
 
         failures.link(this);
         op.m_reentry = label();
@@ -1898,7 +1905,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 
         if (!m_decodeSurrogatePairs)
             sub32(TrustedImm32(1), index);
-        else if (term->characterClass->hasOneCharacterSize() && !term->invert())
+        else if (term->isFixedWidthCharacterClass())
             sub32(TrustedImm32(term->characterClass->hasNonBMPCharacters() ? 2 : 1), index);
         else {
             // Rematch one less
@@ -1907,6 +1914,8 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
             loadFromFrame(term->frameLocation + BackTrackInfoCharacterClass::beginIndex(), index);
 
             Label rematchLoop(this);
+            Jump doneRematching = branchTest32(Zero, countRegister);
+
             readCharacter(m_checkedOffset - term->inputPosition, character);
 
             sub32(TrustedImm32(1), countRegister);
@@ -1918,7 +1927,8 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
             isBMPChar.link(this);
 #endif
 
-            branchTest32(Zero, countRegister).linkTo(rematchLoop, this);
+            jump(rematchLoop);
+            doneRematching.link(this);
 
             loadFromFrame(term->frameLocation + BackTrackInfoCharacterClass::matchAmountIndex(), countRegister);
         }
@@ -1954,6 +1964,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
         const RegisterID countRegister = regT1;
 
         JumpList nonGreedyFailures;
+        JumpList nonGreedyFailuresDecrementIndex;
 
         m_backtrackingState.link(this);
 
@@ -1986,7 +1997,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 
 #ifdef JIT_UNICODE_EXPRESSIONS
         if (m_decodeSurrogatePairs)
-            advanceIndexAfterCharacterClassTermMatch(term, nonGreedyFailures, character);
+            advanceIndexAfterCharacterClassTermMatch(term, nonGreedyFailuresDecrementIndex, character);
         else
 #endif
             add32(TrustedImm32(1), index);
@@ -1994,6 +2005,10 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 
         jump(op.m_reentry);
 
+        if (!nonGreedyFailuresDecrementIndex.empty()) {
+            nonGreedyFailuresDecrementIndex.link(this);
+            breakpoint();
+        }
         nonGreedyFailures.link(this);
         sub32(countRegister, index);
         m_backtrackingState.fallthrough();

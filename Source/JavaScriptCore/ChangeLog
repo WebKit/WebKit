@@ -1,3 +1,30 @@
+2019-09-16  Michael Saboff  <msaboff@apple.com>
+
+        [JSC] Perform check again when we found non-BMP characters
+        https://bugs.webkit.org/show_bug.cgi?id=201647
+
+        Reviewed by Yusuke Suzuki.
+
+        We need to check for end of input for non-BMP characters when matching a character class that contains
+        both BMP and non-BMP characters.  In advanceIndexAfterCharacterClassTermMatch() we were checking for
+        end of input for both BMP and non-BMP characters.  For BMP characters, this check is redundant.
+        After moving the check to after the "is BMP check", we need to decrement index after reaching the failure
+        label to back out the index++ for the first surrogate of the non-BMP character.
+
+        Added the same kind of check in generateCharacterClassOnce().  In that case, we have pre-checked the
+        first character (surrogate) for a non-BMP codepoint, so we just need to check for end of input before
+        we increment for the second surrogate.
+
+        While writing tests, I found an off by one error in backtrackCharacterClassGreedy() and changed the
+        loop to check the count at loop top instead of loop bottom.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::advanceIndexAfterCharacterClassTermMatch):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassOnce):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackCharacterClassGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackCharacterClassNonGreedy):
+
 2019-09-16  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Add missing syntax errors for await in function parameter default expressions
