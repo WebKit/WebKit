@@ -41,7 +41,6 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
 {
     ASSERT(layoutBox.isInFlow() && !layoutBox.replaced());
     ASSERT(layoutBox.isOverflowVisible());
-    ASSERT(usedHorizontalValues.containingBlockWidth);
 
     auto compute = [&]() -> HeightAndMargin {
 
@@ -113,7 +112,6 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
 WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues) const
 {
     ASSERT(layoutBox.isInFlow());
-    ASSERT(usedHorizontalValues.containingBlockWidth);
 
     auto compute = [&]() {
 
@@ -139,7 +137,7 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin
         //    edges of the containing block.
 
         auto& style = layoutBox.style();
-        auto containingBlockWidth = *usedHorizontalValues.containingBlockWidth;
+        auto containingBlockWidth = usedHorizontalValues.containingBlockWidth;
         auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
 
         auto width = computedValueIfNotAuto(usedHorizontalValues.width ? Length { usedHorizontalValues.width.value(), Fixed } : style.logicalWidth(), containingBlockWidth);

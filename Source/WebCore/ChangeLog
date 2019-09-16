@@ -1,5 +1,45 @@
 2019-09-16  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Always provide a containing block width value to compute* functions.
+        https://bugs.webkit.org/show_bug.cgi?id=201809
+        <rdar://problem/55383153>
+
+        Reviewed by Antti Koivisto.
+
+        The caller can always make a more informative decision about the default value when the containing block width is not available.
+        (Currently the only case is when computing the preferred width.)
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeBorderAndPadding):
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::shrinkToFitWidth):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedWidthAndMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::inFlowPositionedPositionOffset const):
+        (WebCore::Layout::FormattingContext::Geometry::computedPadding const):
+        (WebCore::Layout::FormattingContext::Geometry::computedHorizontalMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::computedVerticalMargin const):
+        * layout/LayoutUnits.h:
+        (WebCore::Layout::UsedHorizontalValues::UsedHorizontalValues):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::InlineFormattingContext::computeIntrinsicWidthForFormattingRoot):
+        (WebCore::Layout::InlineFormattingContext::layoutFormattingContextRoot):
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox):
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockWidthAndMargin):
+
+2019-09-16  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC] BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin should not read containing block's width
         https://bugs.webkit.org/show_bug.cgi?id=201807
         <rdar://problem/55381342>

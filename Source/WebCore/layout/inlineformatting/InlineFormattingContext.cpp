@@ -107,7 +107,7 @@ FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIn
     }
 
     Vector<const Box*> formattingContextRootList;
-    auto usedValues = UsedHorizontalValues { };
+    auto usedValues = UsedHorizontalValues { LayoutUnit { } };
     auto* layoutBox = root().firstInFlowOrFloatingChild();
     while (layoutBox) {
         if (layoutBox->establishesFormattingContext()) {
@@ -168,7 +168,7 @@ void InlineFormattingContext::computeIntrinsicWidthForFormattingRoot(const Box& 
 {
     ASSERT(formattingRoot.establishesFormattingContext());
 
-    auto usedValues = UsedHorizontalValues { };
+    auto usedValues = UsedHorizontalValues { LayoutUnit { } };
     computeBorderAndPadding(formattingRoot, usedValues);
     computeHorizontalMargin(formattingRoot, usedValues);
 
@@ -226,13 +226,12 @@ void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox)
     displayBox.setVerticalMargin({ heightAndMargin.nonCollapsedMargin, { } });
 }
 
-void InlineFormattingContext::layoutFormattingContextRoot(const Box& root, UsedHorizontalValues usedValues)
+void InlineFormattingContext::layoutFormattingContextRoot(const Box& root, UsedHorizontalValues usedHorizontalValues)
 {
     ASSERT(root.isFloatingPositioned() || root.isInlineBlockBox());
-    ASSERT(usedValues.containingBlockWidth);
 
-    computeBorderAndPadding(root, usedValues);
-    computeWidthAndMargin(root, usedValues);
+    computeBorderAndPadding(root, usedHorizontalValues);
+    computeWidthAndMargin(root, usedHorizontalValues);
     // This is similar to static positioning in block formatting context. We just need to initialize the top left position.
     formattingState().displayBox(root).setTopLeft({ 0, 0 });
     // Swich over to the new formatting context (the one that the root creates).
@@ -247,15 +246,14 @@ void InlineFormattingContext::layoutFormattingContextRoot(const Box& root, UsedH
         computeHeightAndMargin(root);
 }
 
-void InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox(const Box& layoutBox, UsedHorizontalValues usedValues)
+void InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues)
 {
     ASSERT(!layoutBox.isContainer());
     ASSERT(!layoutBox.establishesFormattingContext());
     ASSERT(layoutBox.replaced());
-    ASSERT(usedValues.containingBlockWidth);
 
-    computeBorderAndPadding(layoutBox, usedValues);
-    computeWidthAndMargin(layoutBox, usedValues);
+    computeBorderAndPadding(layoutBox, usedHorizontalValues);
+    computeWidthAndMargin(layoutBox, usedHorizontalValues);
     computeHeightAndMargin(layoutBox);
 }
 

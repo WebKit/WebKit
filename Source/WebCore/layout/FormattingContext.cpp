@@ -128,13 +128,13 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox)
     displayBox.setVerticalMargin({ nonCollapsedVerticalMargin, { } });
 }
 
-void FormattingContext::computeBorderAndPadding(const Box& layoutBox, Optional<UsedHorizontalValues> usedValues)
+void FormattingContext::computeBorderAndPadding(const Box& layoutBox, Optional<UsedHorizontalValues> usedHorizontalValues)
 {
-    if (!usedValues)
-        usedValues = UsedHorizontalValues { geometryForBox(*layoutBox.containingBlock()).contentBoxWidth() };
+    if (!usedHorizontalValues)
+        usedHorizontalValues = UsedHorizontalValues { geometryForBox(*layoutBox.containingBlock()).contentBoxWidth() };
     auto& displayBox = formattingState().displayBox(layoutBox);
     displayBox.setBorder(geometry().computedBorder(layoutBox));
-    displayBox.setPadding(geometry().computedPadding(layoutBox, *usedValues));
+    displayBox.setPadding(geometry().computedPadding(layoutBox, *usedHorizontalValues));
 }
 
 void FormattingContext::layoutOutOfFlowContent()
