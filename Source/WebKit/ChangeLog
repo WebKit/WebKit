@@ -1,3 +1,41 @@
+2019-09-16  Chris Dumez  <cdumez@apple.com>
+
+        Simplify WebResourceLoadObserver now that we have one WebProcess per session
+        https://bugs.webkit.org/show_bug.cgi?id=201821
+
+        Reviewed by Brent Fulgham.
+
+        Simplify WebResourceLoadObserver now that we have one WebProcess per session.
+        No need to pass sessionIDs around or store statistics per sessionID.
+        Also, only initialize the WebResourceLoadObserver if both ITP is enabled and
+        we're not in a WebContent process used for an ephemeral session.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp:
+        (WebKit::WebResourceLoadObserver::requestStorageAccessUnderOpener):
+        (WebKit::WebResourceLoadObserver::ensureResourceStatisticsForRegistrableDomain):
+        (WebKit::WebResourceLoadObserver::scheduleNotificationIfNeeded):
+        (WebKit::WebResourceLoadObserver::statisticsForURL):
+        (WebKit::WebResourceLoadObserver::takeStatistics):
+        (WebKit::WebResourceLoadObserver::clearState):
+        (WebKit::WebResourceLoadObserver::logFontLoad):
+        (WebKit::WebResourceLoadObserver::logCanvasRead):
+        (WebKit::WebResourceLoadObserver::logCanvasWriteOrMeasure):
+        (WebKit::WebResourceLoadObserver::logNavigatorAPIAccessed):
+        (WebKit::WebResourceLoadObserver::logScreenAPIAccessed):
+        (WebKit::WebResourceLoadObserver::logSubresourceLoading):
+        (WebKit::WebResourceLoadObserver::logWebSocketLoading):
+        (WebKit::WebResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setWebsiteDataStoreParameters):
+
 2019-09-16  David Kilzer  <ddkilzer@apple.com>
 
         Fix build failure in MockNfcService.mm

@@ -47,4 +47,9 @@ ResourceLoadObserver& ResourceLoadObserver::shared()
     return *sharedObserver();
 }
 
+ResourceLoadObserver* ResourceLoadObserver::sharedIfExists()
+{
+    return sharedObserver();
+}
+
 } // namespace WebCore

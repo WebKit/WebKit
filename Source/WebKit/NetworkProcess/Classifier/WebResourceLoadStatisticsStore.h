@@ -186,7 +186,7 @@ public:
     void sendDiagnosticMessageWithValue(const String& message, const String& description, unsigned value, unsigned sigDigits, WebCore::ShouldSample) const;
     void notifyPageStatisticsTelemetryFinished(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins) const;
 
-    void resourceLoadStatisticsUpdated(Vector<ResourceLoadStatistics>&&);
+    void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&&);
     void requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&&, WebCore::PageIdentifier openerID, OpenerDomain&&);
 
 private:

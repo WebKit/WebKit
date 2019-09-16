@@ -1,3 +1,18 @@
+2019-09-16  Chris Dumez  <cdumez@apple.com>
+
+        Simplify WebResourceLoadObserver now that we have one WebProcess per session
+        https://bugs.webkit.org/show_bug.cgi?id=201821
+
+        Reviewed by Brent Fulgham.
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+        * loader/ResourceLoadObserver.h:
+        (WebCore::ResourceLoadObserver::logWebSocketLoading):
+        (WebCore::ResourceLoadObserver::statisticsForURL):
+        * testing/Internals.cpp:
+        (WebCore::Internals::resourceLoadStatisticsForURL):
+
 2019-09-16  ChangSeok Oh  <changseok@webkit.org>
 
         [GTK] Remove GraphicsContext3D dependency from the outside of WebGL

@@ -36,12 +36,10 @@ namespace WebKit {
 
 class WebResourceLoadObserver final : public WebCore::ResourceLoadObserver {
 public:
-    using PerSessionResourceLoadData = Vector<std::pair<PAL::SessionID, Vector<WebCore::ResourceLoadStatistics>>>;
-
     WebResourceLoadObserver();
     
     void logSubresourceLoading(const WebCore::Frame*, const WebCore::ResourceRequest& newRequest, const WebCore::ResourceResponse& redirectResponse) final;
-    void logWebSocketLoading(const URL& targetURL, const URL& mainFrameURL, PAL::SessionID) final;
+    void logWebSocketLoading(const URL& targetURL, const URL& mainFrameURL) final;
     void logUserInteractionWithReducedTimeResolution(const WebCore::Document&) final;
     void logFontLoad(const WebCore::Document&, const String& familyName, bool loadStatus) final;
     void logCanvasRead(const WebCore::Document&) final;
@@ -50,30 +48,30 @@ public:
     void logScreenAPIAccessed(const WebCore::Document&, const WebCore::ResourceLoadStatistics::ScreenAPI) final;
 
 #if !RELEASE_LOG_DISABLED
-    void setShouldLogUserInteraction(bool shouldLogUserInteraction) final { m_shouldLogUserInteraction = shouldLogUserInteraction; }
+    static void setShouldLogUserInteraction(bool);
 #endif
 
-    String statisticsForURL(PAL::SessionID, const URL&) final;
+    String statisticsForURL(const URL&) final;
     void updateCentralStatisticsStore() final;
     void clearState() final;
     
-    bool hasStatistics() const final { return !m_perSessionResourceStatisticsMap.isEmpty(); }
+    bool hasStatistics() const final { return !m_resourceStatisticsMap.isEmpty(); }
 
 private:
-    WebCore::ResourceLoadStatistics& ensureResourceStatisticsForRegistrableDomain(PAL::SessionID, const WebCore::RegistrableDomain&);
+    WebCore::ResourceLoadStatistics& ensureResourceStatisticsForRegistrableDomain(const WebCore::RegistrableDomain&);
     void scheduleNotificationIfNeeded();
 
-    PerSessionResourceLoadData takeStatistics();
-    void requestStorageAccessUnderOpener(PAL::SessionID, const WebCore::RegistrableDomain& domainInNeedOfStorageAccess, WebCore::PageIdentifier openerPageID, WebCore::Document& openerDocument);
+    Vector<WebCore::ResourceLoadStatistics> takeStatistics();
+    void requestStorageAccessUnderOpener(const WebCore::RegistrableDomain& domainInNeedOfStorageAccess, WebCore::PageIdentifier openerPageID, WebCore::Document& openerDocument);
 
-    HashMap<PAL::SessionID, std::unique_ptr<HashMap<WebCore::RegistrableDomain, WebCore::ResourceLoadStatistics>>> m_perSessionResourceStatisticsMap;
+    HashMap<WebCore::RegistrableDomain, WebCore::ResourceLoadStatistics> m_resourceStatisticsMap;
     HashMap<WebCore::RegistrableDomain, WTF::WallTime> m_lastReportedUserInteractionMap;
 
     WebCore::Timer m_notificationTimer;
 
 #if !RELEASE_LOG_DISABLED
     uint64_t m_loggingCounter { 0 };
-    bool m_shouldLogUserInteraction { false };
+    static bool shouldLogUserInteraction;
 #endif
 };
 

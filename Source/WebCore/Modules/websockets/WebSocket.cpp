@@ -298,8 +298,8 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         }
     }
 
-    RunLoop::main().dispatch([targetURL = m_url.isolatedCopy(), mainFrameURL = context.url().isolatedCopy(), sessionID = context.sessionID()]() {
-        ResourceLoadObserver::shared().logWebSocketLoading(targetURL, mainFrameURL, sessionID);
+    RunLoop::main().dispatch([targetURL = m_url.isolatedCopy(), mainFrameURL = context.url().isolatedCopy()]() {
+        ResourceLoadObserver::shared().logWebSocketLoading(targetURL, mainFrameURL);
     });
 
     if (is<Document>(context)) {

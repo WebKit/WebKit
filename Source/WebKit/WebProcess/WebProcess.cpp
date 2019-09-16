@@ -215,10 +215,6 @@ WebProcess::WebProcess()
 #endif
 
     m_plugInAutoStartOriginHashes.add(PAL::SessionID::defaultSessionID(), HashMap<unsigned, WallTime>());
-
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    ResourceLoadObserver::setShared(*new WebResourceLoadObserver);
-#endif
     
     Gigacage::forbidDisablingPrimitiveGigacage();
 }
@@ -429,7 +425,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 #endif
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
-    ResourceLoadObserver::shared().setShouldLogUserInteraction(parameters.shouldLogUserInteraction);
+    WebResourceLoadObserver::setShouldLogUserInteraction(parameters.shouldLogUserInteraction);
 #endif
 
     RELEASE_LOG(Process, "%p - WebProcess::initializeWebProcess: Presenting process = %d", this, WebCore::presentingApplicationPID());
@@ -455,6 +451,11 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
 #endif
 
     setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsEnabled);
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (parameters.resourceLoadStatisticsEnabled && !parameters.sessionID.isEphemeral())
+        ResourceLoadObserver::setShared(*new WebResourceLoadObserver);
+#endif
 
     for (auto& supplement : m_supplements.values())
         supplement->setWebsiteDataStore(parameters);
@@ -1659,7 +1660,8 @@ void WebProcess::setResourceLoadStatisticsEnabled(bool enabled)
 void WebProcess::clearResourceLoadStatistics()
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    ResourceLoadObserver::shared().clearState();
+    if (auto* observer = ResourceLoadObserver::sharedIfExists())
+        observer->clearState();
 #endif
 }
 

@@ -59,10 +59,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     RemoveStorageAccessForFrame(WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID);
     ClearPageSpecificDataForResourceLoadStatistics(WebCore::PageIdentifier pageID);
     LogUserInteraction(WebCore::RegistrableDomain domain)
-    
-    # FIXME: Stop passing sessionIDs.
-    ResourceLoadStatisticsUpdated(Vector<std::pair<PAL::SessionID, Vector<WebCore::ResourceLoadStatistics>>> statistics)
-
+    ResourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics> statistics)
     HasStorageAccess(WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID) -> (bool hasStorageAccess) Async
     RequestStorageAccess(WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier webPageID, WebKit::WebPageProxyIdentifier webPageProxyID) -> (enum:bool WebCore::StorageAccessWasGranted wasGranted, enum:bool WebCore::StorageAccessPromptWasShown promptWasShown) Async
     RequestStorageAccessUnderOpener(WebCore::RegistrableDomain domainInNeedOfStorageAccess, WebCore::PageIdentifier openerPageID, WebCore::RegistrableDomain openerDomain)

@@ -26,7 +26,6 @@
 #pragma once
 
 #include "ResourceLoadStatistics.h"
-#include <pal/SessionID.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -40,12 +39,13 @@ class ResourceLoadObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT static ResourceLoadObserver& shared();
+    WEBCORE_EXPORT static ResourceLoadObserver* sharedIfExists();
     WEBCORE_EXPORT static void setShared(ResourceLoadObserver&);
     
     virtual ~ResourceLoadObserver() { }
 
     virtual void logSubresourceLoading(const Frame*, const ResourceRequest& /* newRequest */, const ResourceResponse& /* redirectResponse */) { }
-    virtual void logWebSocketLoading(const URL& /* targetURL */, const URL& /* mainFrameURL */, PAL::SessionID) { }
+    virtual void logWebSocketLoading(const URL& /* targetURL */, const URL& /* mainFrameURL */) { }
     virtual void logUserInteractionWithReducedTimeResolution(const Document&) { }
     virtual void logFontLoad(const Document&, const String& /* familyName */, bool /* loadStatus */) { }
     virtual void logCanvasRead(const Document&) { }
@@ -53,15 +53,11 @@ public:
     virtual void logNavigatorAPIAccessed(const Document&, const ResourceLoadStatistics::NavigatorAPI) { }
     virtual void logScreenAPIAccessed(const Document&, const ResourceLoadStatistics::ScreenAPI) { }
 
-    virtual String statisticsForURL(PAL::SessionID, const URL&) { return { }; }
+    virtual String statisticsForURL(const URL&) { return { }; }
     virtual void updateCentralStatisticsStore() { }
     virtual void clearState() { }
     
     virtual bool hasStatistics() const { return false; }
-    
-#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
-    virtual void setShouldLogUserInteraction(bool) { }
-#endif
 };
     
 } // namespace WebCore

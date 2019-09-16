@@ -691,13 +691,11 @@ void NetworkConnectionToWebProcess::logUserInteraction(const RegistrableDomain& 
     }
 }
 
-void NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated(WebResourceLoadObserver::PerSessionResourceLoadData&& statistics)
+void NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated(Vector<ResourceLoadStatistics>&& statistics)
 {
-    for (auto& iter : statistics) {
-        if (auto* networkSession = networkProcess().networkSession(iter.first)) {
-            if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
-                resourceLoadStatistics->resourceLoadStatisticsUpdated(WTFMove(iter.second));
-        }
+    if (auto* networkSession = this->networkSession()) {
+        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
+            resourceLoadStatistics->resourceLoadStatisticsUpdated(WTFMove(statistics));
     }
 }
 
