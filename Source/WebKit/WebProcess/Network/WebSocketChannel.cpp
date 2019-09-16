@@ -103,7 +103,7 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& url, const 
     if (request->url() != url && m_client)
         m_client->didUpgradeURL();
 
-    MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { m_document->sessionID(), *request, protocol, identifier() });
+    MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { *request, protocol, identifier() });
     return ConnectStatus::OK;
 }
 

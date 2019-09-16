@@ -1279,9 +1279,8 @@ UIViewController *WebPageProxy::paymentCoordinatorPresentingViewController(const
     return uiClient().presentingViewController();
 }
 
-const String& WebPageProxy::paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&, PAL::SessionID sessionID)
+const String& WebPageProxy::paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&)
 {
-    ASSERT_UNUSED(sessionID, sessionID == websiteDataStore().sessionID());
     return process().processPool().configuration().ctDataConnectionServiceType();
 }
 

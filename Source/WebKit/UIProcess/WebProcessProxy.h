@@ -131,6 +131,8 @@ public:
 
     WebsiteDataStore& websiteDataStore() const { ASSERT(m_websiteDataStore); return *m_websiteDataStore; }
     void setWebsiteDataStore(WebsiteDataStore&);
+    
+    PAL::SessionID sessionID() const;
 
     static WebProcessProxy* processForIdentifier(WebCore::ProcessIdentifier);
     static WebPageProxy* webPage(WebPageProxyIdentifier);

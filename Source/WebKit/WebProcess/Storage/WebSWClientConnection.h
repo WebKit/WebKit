@@ -34,7 +34,6 @@
 #include "SharedMemory.h"
 #include <WebCore/MessageWithMessagePorts.h>
 #include <WebCore/SWClientConnection.h>
-#include <pal/SessionID.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -49,7 +48,7 @@ class WebServiceWorkerProvider;
 
 class WebSWClientConnection final : public WebCore::SWClientConnection, private IPC::MessageSender, public IPC::MessageReceiver {
 public:
-    static Ref<WebSWClientConnection> create(PAL::SessionID sessionID) { return adoptRef(*new WebSWClientConnection { sessionID }); }
+    static Ref<WebSWClientConnection> create() { return adoptRef(*new WebSWClientConnection); }
     ~WebSWClientConnection();
 
     WebCore::SWServerConnectionIdentifier serverConnectionIdentifier() const final { return m_identifier; }
@@ -69,10 +68,8 @@ public:
 
     void syncTerminateWorker(WebCore::ServiceWorkerIdentifier) final;
 
-    PAL::SessionID sessionID() const { return m_sessionID; }
-
 private:
-    explicit WebSWClientConnection(PAL::SessionID);
+    WebSWClientConnection();
 
     void scheduleJobInServer(const WebCore::ServiceWorkerJobData&) final;
     void finishFetchingScriptInServer(const WebCore::ServiceWorkerFetchResult&) final;
@@ -98,14 +95,13 @@ private:
     void runOrDelayTaskForImport(Function<void()>&& task);
 
     IPC::Connection* messageSenderConnection() const final;
-    uint64_t messageSenderDestinationID() const final { return m_sessionID.toUInt64(); }
+    uint64_t messageSenderDestinationID() const final { return 0; }
 
     void setSWOriginTableSharedMemory(const SharedMemory::Handle&);
     void setSWOriginTableIsImported();
 
     void clear();
 
-    PAL::SessionID m_sessionID;
     WebCore::SWServerConnectionIdentifier m_identifier;
 
     UniqueRef<WebSWOriginTable> m_swOriginTable;

@@ -59,14 +59,14 @@ WebResourceLoadObserver::WebResourceLoadObserver()
 {
 }
 
-void WebResourceLoadObserver::requestStorageAccessUnderOpener(PAL::SessionID sessionID, const RegistrableDomain& domainInNeedOfStorageAccess, PageIdentifier openerPageID, Document& openerDocument)
+void WebResourceLoadObserver::requestStorageAccessUnderOpener(PAL::SessionID, const RegistrableDomain& domainInNeedOfStorageAccess, PageIdentifier openerPageID, Document& openerDocument)
 {
     auto openerUrl = openerDocument.url();
     RegistrableDomain openerDomain { openerUrl };
     if (domainInNeedOfStorageAccess != openerDomain
         && !openerDocument.hasRequestedPageSpecificStorageAccessWithUserInteraction(domainInNeedOfStorageAccess)
         && !equalIgnoringASCIICase(openerUrl.string(), WTF::blankURL())) {
-        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RequestStorageAccessUnderOpener(sessionID, domainInNeedOfStorageAccess, openerPageID, openerDomain), 0);
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RequestStorageAccessUnderOpener(domainInNeedOfStorageAccess, openerPageID, openerDomain), 0);
         
         // Remember user interaction-based requests since they don't need to be repeated.
         openerDocument.setHasRequestedPageSpecificStorageAccessWithUserInteraction(domainInNeedOfStorageAccess);
@@ -364,7 +364,7 @@ void WebResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const 
 
     // We notify right away in case of a user interaction instead of waiting the usual 5 seconds because we want
     // to update cookie blocking state as quickly as possible.
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::LogUserInteraction(document.sessionID(), topFrameDomain), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::LogUserInteraction(topFrameDomain), 0);
 
 #if !RELEASE_LOG_DISABLED
     if (m_shouldLogUserInteraction) {

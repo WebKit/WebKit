@@ -62,7 +62,7 @@ WebIDBConnectionToServer::WebIDBConnectionToServer(PAL::SessionID sessionID)
     : m_sessionID(sessionID)
     , m_connectionToServer(IDBClient::IDBConnectionToServer::create(*this))
 {
-    send(Messages::NetworkConnectionToWebProcess::EstablishIDBConnectionToServer(sessionID), 0);
+    send(Messages::NetworkConnectionToWebProcess::EstablishIDBConnectionToServer(), 0);
 }
 
 WebIDBConnectionToServer::~WebIDBConnectionToServer()

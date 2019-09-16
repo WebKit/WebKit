@@ -1476,6 +1476,12 @@ WebProcessPool& WebProcessProxy::processPool() const
     return *m_processPool.get();
 }
 
+PAL::SessionID WebProcessProxy::sessionID() const
+{
+    ASSERT(m_websiteDataStore);
+    return m_websiteDataStore->sessionID();
+}
+
 #if PLATFORM(WATCHOS)
 
 void WebProcessProxy::takeBackgroundActivityTokenForFullscreenInput()

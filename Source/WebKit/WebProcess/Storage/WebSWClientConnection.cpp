@@ -55,13 +55,11 @@ using namespace PAL;
 using namespace WebCore;
 
 
-WebSWClientConnection::WebSWClientConnection(SessionID sessionID)
-    : m_sessionID(sessionID)
-    , m_identifier(Process::identifier())
+WebSWClientConnection::WebSWClientConnection()
+    : m_identifier(Process::identifier())
     , m_swOriginTable(makeUniqueRef<WebSWOriginTable>())
 {
-    ASSERT(m_sessionID.isValid());
-    send(Messages::NetworkConnectionToWebProcess::EstablishSWServerConnection { sessionID });
+    send(Messages::NetworkConnectionToWebProcess::EstablishSWServerConnection { });
 }
 
 WebSWClientConnection::~WebSWClientConnection()

@@ -197,7 +197,7 @@ void WebFrameLoaderClient::detachedFromParent2()
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (m_frameSpecificStorageAccessIdentifier) {
         WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RemoveStorageAccessForFrame(
-            m_frameSpecificStorageAccessIdentifier->sessionID, m_frameSpecificStorageAccessIdentifier->frameID, m_frameSpecificStorageAccessIdentifier->pageID), 0);
+            m_frameSpecificStorageAccessIdentifier->frameID, m_frameSpecificStorageAccessIdentifier->pageID), 0);
         m_frameSpecificStorageAccessIdentifier = WTF::nullopt;
     }
 #endif
@@ -425,7 +425,7 @@ void WebFrameLoaderClient::dispatchWillChangeDocument(const URL& currentUrl, con
 
     if (m_frameSpecificStorageAccessIdentifier && !WebCore::areRegistrableDomainsEqual(currentUrl, newUrl)) {
         WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RemoveStorageAccessForFrame(
-            m_frameSpecificStorageAccessIdentifier->sessionID, m_frameSpecificStorageAccessIdentifier->frameID, m_frameSpecificStorageAccessIdentifier->pageID), 0);
+            m_frameSpecificStorageAccessIdentifier->frameID, m_frameSpecificStorageAccessIdentifier->pageID), 0);
         m_frameSpecificStorageAccessIdentifier = WTF::nullopt;
     }
 #endif

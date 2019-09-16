@@ -36,7 +36,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-void BlobRegistryProxy::registerFileBlobURL(PAL::SessionID sessionID, const URL& url, Ref<BlobDataFileReference>&& file, const String& contentType)
+void BlobRegistryProxy::registerFileBlobURL(PAL::SessionID, const URL& url, Ref<BlobDataFileReference>&& file, const String& contentType)
 {
     SandboxExtension::Handle extensionHandle;
 
@@ -44,39 +44,39 @@ void BlobRegistryProxy::registerFileBlobURL(PAL::SessionID sessionID, const URL&
     if (!file->path().isEmpty())
         SandboxExtension::createHandle(file->path(), SandboxExtension::Type::ReadOnly, extensionHandle);
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterFileBlobURL(sessionID, url, file->path(), extensionHandle, contentType), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterFileBlobURL(url, file->path(), extensionHandle, contentType), 0);
 }
 
-void BlobRegistryProxy::registerBlobURL(PAL::SessionID sessionID, const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)
+void BlobRegistryProxy::registerBlobURL(PAL::SessionID, const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterBlobURL(sessionID, url, blobParts, contentType), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterBlobURL(url, blobParts, contentType), 0);
 }
 
-void BlobRegistryProxy::registerBlobURL(PAL::SessionID sessionID, const URL& url, const URL& srcURL)
+void BlobRegistryProxy::registerBlobURL(PAL::SessionID, const URL& url, const URL& srcURL)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterBlobURLFromURL { sessionID, url, srcURL }, 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterBlobURLFromURL { url, srcURL }, 0);
 }
 
-void BlobRegistryProxy::registerBlobURLOptionallyFileBacked(PAL::SessionID sessionID, const URL& url, const URL& srcURL, RefPtr<WebCore::BlobDataFileReference>&& file, const String& contentType)
+void BlobRegistryProxy::registerBlobURLOptionallyFileBacked(PAL::SessionID, const URL& url, const URL& srcURL, RefPtr<WebCore::BlobDataFileReference>&& file, const String& contentType)
 {
     ASSERT(file);
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterBlobURLOptionallyFileBacked(sessionID, url, srcURL, file->path(), contentType), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterBlobURLOptionallyFileBacked(url, srcURL, file->path(), contentType), 0);
 }
 
-void BlobRegistryProxy::unregisterBlobURL(PAL::SessionID sessionID, const URL& url)
+void BlobRegistryProxy::unregisterBlobURL(PAL::SessionID, const URL& url)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UnregisterBlobURL(sessionID, url), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UnregisterBlobURL(url), 0);
 }
 
-void BlobRegistryProxy::registerBlobURLForSlice(PAL::SessionID sessionID, const URL& url, const URL& srcURL, long long start, long long end)
+void BlobRegistryProxy::registerBlobURLForSlice(PAL::SessionID, const URL& url, const URL& srcURL, long long start, long long end)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterBlobURLForSlice(sessionID, url, srcURL, start, end), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterBlobURLForSlice(url, srcURL, start, end), 0);
 }
 
-unsigned long long BlobRegistryProxy::blobSize(PAL::SessionID sessionID, const URL& url)
+unsigned long long BlobRegistryProxy::blobSize(PAL::SessionID, const URL& url)
 {
     uint64_t resultSize;
-    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::BlobSize(sessionID, url), Messages::NetworkConnectionToWebProcess::BlobSize::Reply(resultSize), 0))
+    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::BlobSize(url), Messages::NetworkConnectionToWebProcess::BlobSize::Reply(resultSize), 0))
         return 0;
     return resultSize;
 }

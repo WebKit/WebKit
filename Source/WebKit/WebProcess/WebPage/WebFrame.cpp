@@ -283,9 +283,7 @@ void WebFrame::startDownload(const WebCore::ResourceRequest& request, const Stri
     auto policyDownloadID = m_policyDownloadID;
     m_policyDownloadID = { };
 
-    auto& webProcess = WebProcess::singleton();
-    PAL::SessionID sessionID = page() ? page()->sessionID() : PAL::SessionID::defaultSessionID();
-    webProcess.ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::StartDownload(sessionID, policyDownloadID, request, suggestedName), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::StartDownload(policyDownloadID, request, suggestedName), 0);
 }
 
 void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader, PAL::SessionID sessionID, const ResourceRequest& request, const ResourceResponse& response)
@@ -307,7 +305,7 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
     else
         mainResourceLoadIdentifier = 0;
 
-    webProcess.ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ConvertMainResourceLoadToDownload(sessionID, mainResourceLoadIdentifier, policyDownloadID, request, response), 0);
+    webProcess.ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ConvertMainResourceLoadToDownload(mainResourceLoadIdentifier, policyDownloadID, request, response), 0);
 }
 
 void WebFrame::addConsoleMessage(MessageSource messageSource, MessageLevel messageLevel, const String& message, uint64_t requestID)

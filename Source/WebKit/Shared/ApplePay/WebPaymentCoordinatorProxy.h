@@ -78,14 +78,14 @@ public:
         virtual ~Client() = default;
 
         virtual IPC::Connection* paymentCoordinatorConnection(const WebPaymentCoordinatorProxy&) = 0;
-        virtual const String& paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&, PAL::SessionID) = 0;
-        virtual const String& paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&, PAL::SessionID) = 0;
-        virtual const String& paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&, PAL::SessionID) = 0;
+        virtual const String& paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&) = 0;
+        virtual const String& paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&) = 0;
+        virtual const String& paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&) = 0;
         virtual void paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, const IPC::StringReference&, IPC::MessageReceiver&) = 0;
         virtual void paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinatorProxy&, const IPC::StringReference&) = 0;
 #if PLATFORM(IOS_FAMILY)
         virtual UIViewController *paymentCoordinatorPresentingViewController(const WebPaymentCoordinatorProxy&) = 0;
-        virtual const String& paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&, PAL::SessionID) = 0;
+        virtual const String& paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&) = 0;
         virtual std::unique_ptr<PaymentAuthorizationPresenter> paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy&, PKPaymentRequest *) = 0;
 #endif
 #if PLATFORM(MAC)

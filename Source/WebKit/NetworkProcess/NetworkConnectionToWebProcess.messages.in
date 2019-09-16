@@ -31,38 +31,41 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     PrefetchDNS(String hostname)
     PreconnectTo(uint64_t preconnectionIdentifier, WebKit::NetworkResourceLoadParameters loadParameters);
 
-    StartDownload(PAL::SessionID sessionID, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, String suggestedName)
-    ConvertMainResourceLoadToDownload(PAL::SessionID sessionID, uint64_t mainResourceLoadIdentifier, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, WebCore::ResourceResponse response)
+    StartDownload(WebKit::DownloadID downloadID, WebCore::ResourceRequest request, String suggestedName)
+    ConvertMainResourceLoadToDownload(uint64_t mainResourceLoadIdentifier, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, WebCore::ResourceResponse response)
 
-    CookiesForDOM(PAL::SessionID sessionID, URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<WebCore::FrameIdentifier> frameID, Optional<WebCore::PageIdentifier> pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies) -> (String cookieString, bool didAccessSecureCookies) Synchronous
-    SetCookiesFromDOM(PAL::SessionID sessionID, URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<WebCore::FrameIdentifier> frameID, Optional<WebCore::PageIdentifier> pageID, String cookieString)
-    CookiesEnabled(PAL::SessionID sessionID) -> (bool enabled) Synchronous
-    CookieRequestHeaderFieldValue(PAL::SessionID sessionID, URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<WebCore::FrameIdentifier> frameID, Optional<WebCore::PageIdentifier> pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies) -> (String cookieString, bool didAccessSecureCookies) Synchronous
-    GetRawCookies(PAL::SessionID sessionID, URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<WebCore::FrameIdentifier> frameID, Optional<WebCore::PageIdentifier> pageID) -> (Vector<WebCore::Cookie> cookies) Synchronous
-    DeleteCookie(PAL::SessionID sessionID, URL url, String cookieName)
+    CookiesForDOM(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<WebCore::FrameIdentifier> frameID, Optional<WebCore::PageIdentifier> pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies) -> (String cookieString, bool didAccessSecureCookies) Synchronous
+    SetCookiesFromDOM(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<WebCore::FrameIdentifier> frameID, Optional<WebCore::PageIdentifier> pageID, String cookieString)
+    CookiesEnabled() -> (bool enabled) Synchronous
+    CookieRequestHeaderFieldValue(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<WebCore::FrameIdentifier> frameID, Optional<WebCore::PageIdentifier> pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies) -> (String cookieString, bool didAccessSecureCookies) Synchronous
+    GetRawCookies(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<WebCore::FrameIdentifier> frameID, Optional<WebCore::PageIdentifier> pageID) -> (Vector<WebCore::Cookie> cookies) Synchronous
+    DeleteCookie(URL url, String cookieName)
 
-    RegisterFileBlobURL(PAL::SessionID sessionID, URL url, String path, WebKit::SandboxExtension::Handle extensionHandle, String contentType)
-    RegisterBlobURL(PAL::SessionID sessionID, URL url, Vector<WebCore::BlobPart> blobParts, String contentType)
-    RegisterBlobURLFromURL(PAL::SessionID sessionID, URL url, URL srcURL)
-    RegisterBlobURLOptionallyFileBacked(PAL::SessionID sessionID, URL url, URL srcURL, String fileBackedPath, String contentType)
-    RegisterBlobURLForSlice(PAL::SessionID sessionID, URL url, URL srcURL, int64_t start, int64_t end)
-    UnregisterBlobURL(PAL::SessionID sessionID, URL url)
-    BlobSize(PAL::SessionID sessionID, URL url) -> (uint64_t resultSize) Synchronous
-    WriteBlobsToTemporaryFiles(PAL::SessionID sessionID, Vector<String> blobURLs) -> (Vector<String> fileNames) Async
+    RegisterFileBlobURL(URL url, String path, WebKit::SandboxExtension::Handle extensionHandle, String contentType)
+    RegisterBlobURL(URL url, Vector<WebCore::BlobPart> blobParts, String contentType)
+    RegisterBlobURLFromURL(URL url, URL srcURL)
+    RegisterBlobURLOptionallyFileBacked(URL url, URL srcURL, String fileBackedPath, String contentType)
+    RegisterBlobURLForSlice(URL url, URL srcURL, int64_t start, int64_t end)
+    UnregisterBlobURL(URL url)
+    BlobSize(URL url) -> (uint64_t resultSize) Synchronous
+    WriteBlobsToTemporaryFiles(Vector<String> blobURLs) -> (Vector<String> fileNames) Async
 
     SetCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 
-    CreateSocketStream(URL url, PAL::SessionID sessionID, String cachePartition, uint64_t identifier)
-    CreateSocketChannel(PAL::SessionID sessionID, WebCore::ResourceRequest request, String protocol, uint64_t identifier)
+    CreateSocketStream(URL url, String cachePartition, uint64_t identifier)
+    CreateSocketChannel(WebCore::ResourceRequest request, String protocol, uint64_t identifier)
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    RemoveStorageAccessForFrame(PAL::SessionID sessionID, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID);
-    ClearPageSpecificDataForResourceLoadStatistics(PAL::SessionID sessionID, WebCore::PageIdentifier pageID);
-    LogUserInteraction(PAL::SessionID sessionID, WebCore::RegistrableDomain domain)
+    RemoveStorageAccessForFrame(WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID);
+    ClearPageSpecificDataForResourceLoadStatistics(WebCore::PageIdentifier pageID);
+    LogUserInteraction(WebCore::RegistrableDomain domain)
+    
+    # FIXME: Stop passing sessionIDs.
     ResourceLoadStatisticsUpdated(Vector<std::pair<PAL::SessionID, Vector<WebCore::ResourceLoadStatistics>>> statistics)
-    HasStorageAccess(PAL::SessionID sessionID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID) -> (bool hasStorageAccess) Async
-    RequestStorageAccess(PAL::SessionID sessionID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier webPageID, WebKit::WebPageProxyIdentifier webPageProxyID) -> (enum:bool WebCore::StorageAccessWasGranted wasGranted, enum:bool WebCore::StorageAccessPromptWasShown promptWasShown) Async
-    RequestStorageAccessUnderOpener(PAL::SessionID sessionID, WebCore::RegistrableDomain domainInNeedOfStorageAccess, WebCore::PageIdentifier openerPageID, WebCore::RegistrableDomain openerDomain)
+
+    HasStorageAccess(WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID) -> (bool hasStorageAccess) Async
+    RequestStorageAccess(WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier webPageID, WebKit::WebPageProxyIdentifier webPageProxyID) -> (enum:bool WebCore::StorageAccessWasGranted wasGranted, enum:bool WebCore::StorageAccessPromptWasShown promptWasShown) Async
+    RequestStorageAccessUnderOpener(WebCore::RegistrableDomain domainInNeedOfStorageAccess, WebCore::PageIdentifier openerPageID, WebCore::RegistrableDomain openerDomain)
 #endif
 
     AddOriginAccessWhitelistEntry(String sourceOrigin, String destinationProtocol, String destinationHost, bool allowDestinationSubdomains);
@@ -75,12 +78,12 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     TakeNetworkLoadInformationMetrics(uint64_t resourceLoadIdentifier) -> (WebCore::NetworkLoadMetrics networkMetrics) Synchronous
 
 #if ENABLE(INDEXED_DATABASE)
-    EstablishIDBConnectionToServer(PAL::SessionID sessionID)
+    EstablishIDBConnectionToServer()
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    EstablishSWServerConnection(PAL::SessionID sessionID)
-    EstablishSWContextConnection(WebCore::RegistrableDomain domain, PAL::SessionID sessionID)
+    EstablishSWServerConnection()
+    EstablishSWContextConnection(WebCore::RegistrableDomain domain)
 #endif
 
     CreateNewMessagePortChannel(struct WebCore::MessagePortIdentifier port1, struct WebCore::MessagePortIdentifier port2)

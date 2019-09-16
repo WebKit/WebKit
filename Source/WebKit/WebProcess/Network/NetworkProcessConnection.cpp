@@ -210,9 +210,9 @@ void NetworkProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::S
 {
 }
 
-void NetworkProcessConnection::writeBlobsToTemporaryFiles(PAL::SessionID sessionID, const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&& completionHandler)
+void NetworkProcessConnection::writeBlobsToTemporaryFiles(PAL::SessionID, const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&& completionHandler)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::WriteBlobsToTemporaryFiles(sessionID, blobURLs), WTFMove(completionHandler));
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::WriteBlobsToTemporaryFiles(blobURLs), WTFMove(completionHandler));
 }
 
 void NetworkProcessConnection::didFinishPingLoad(uint64_t pingLoadIdentifier, ResourceError&& error, ResourceResponse&& response)
@@ -260,8 +260,8 @@ WebIDBConnectionToServer& NetworkProcessConnection::idbConnectionToServerForSess
 WebSWClientConnection& NetworkProcessConnection::serviceWorkerConnectionForSession(PAL::SessionID sessionID)
 {
     ASSERT(sessionID.isValid());
-    return *m_swConnectionsBySession.ensure(sessionID, [sessionID] {
-        return WebSWClientConnection::create(sessionID);
+    return *m_swConnectionsBySession.ensure(sessionID, [] {
+        return WebSWClientConnection::create();
     }).iterator->value;
 }
 #endif

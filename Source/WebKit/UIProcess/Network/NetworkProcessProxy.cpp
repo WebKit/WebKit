@@ -142,7 +142,7 @@ void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProces
 
 void NetworkProcessProxy::openNetworkProcessConnection(uint64_t connectionRequestIdentifier, WebProcessProxy& webProcessProxy)
 {
-    connection()->sendWithAsyncReply(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess { webProcessProxy.coreProcessIdentifier() }, [this, weakThis = makeWeakPtr(this), webProcessProxy = makeWeakPtr(webProcessProxy), connectionRequestIdentifier](auto&& connectionIdentifier) mutable {
+    connection()->sendWithAsyncReply(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID() }, [this, weakThis = makeWeakPtr(this), webProcessProxy = makeWeakPtr(webProcessProxy), connectionRequestIdentifier](auto&& connectionIdentifier) mutable {
         if (!weakThis)
             return;
 

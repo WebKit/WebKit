@@ -168,7 +168,7 @@ void NetworkResourceLoader::start()
 {
     ASSERT(RunLoop::isMain());
 
-    m_networkActivityTracker = m_connection->startTrackingResourceLoad(m_parameters.webPageID, m_parameters.identifier, isMainResource(), sessionID());
+    m_networkActivityTracker = m_connection->startTrackingResourceLoad(m_parameters.webPageID, m_parameters.identifier, isMainResource());
 
     ASSERT(!m_wasStarted);
     m_wasStarted = true;

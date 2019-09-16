@@ -1,3 +1,113 @@
+2019-09-16  Chris Dumez  <cdumez@apple.com>
+
+        Store sessionID on the NetworkConnectionToWebProcess now that there is one session per WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=201789
+
+        Reviewed by Alex Christensen.
+
+        Store sessionID on the NetworkConnectionToWebProcess now that there is one session per WebProcess.
+        As a result, we no longer need to pass the sessionID in each IPC from the WebProcess to the
+        NetworkProcess.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::create):
+        (WebKit::NetworkConnectionToWebProcess::NetworkConnectionToWebProcess):
+        (WebKit::NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess):
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        (WebKit::NetworkConnectionToWebProcess::didReceiveSyncMessage):
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        (WebKit::NetworkConnectionToWebProcess::createSocketStream):
+        (WebKit::NetworkConnectionToWebProcess::createSocketChannel):
+        (WebKit::NetworkConnectionToWebProcess::networkSession):
+        (WebKit::NetworkConnectionToWebProcess::resolveBlobReferences):
+        (WebKit::NetworkConnectionToWebProcess::storageSession):
+        (WebKit::NetworkConnectionToWebProcess::startDownload):
+        (WebKit::NetworkConnectionToWebProcess::convertMainResourceLoadToDownload):
+        (WebKit::NetworkConnectionToWebProcess::cookiesForDOM):
+        (WebKit::NetworkConnectionToWebProcess::setCookiesFromDOM):
+        (WebKit::NetworkConnectionToWebProcess::cookiesEnabled):
+        (WebKit::NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue):
+        (WebKit::NetworkConnectionToWebProcess::getRawCookies):
+        (WebKit::NetworkConnectionToWebProcess::deleteCookie):
+        (WebKit::NetworkConnectionToWebProcess::registerFileBlobURL):
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURL):
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURLFromURL):
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURLOptionallyFileBacked):
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURLForSlice):
+        (WebKit::NetworkConnectionToWebProcess::unregisterBlobURL):
+        (WebKit::NetworkConnectionToWebProcess::blobSize):
+        (WebKit::NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles):
+        (WebKit::NetworkConnectionToWebProcess::removeStorageAccessForFrame):
+        (WebKit::NetworkConnectionToWebProcess::clearPageSpecificDataForResourceLoadStatistics):
+        (WebKit::NetworkConnectionToWebProcess::logUserInteraction):
+        (WebKit::NetworkConnectionToWebProcess::hasStorageAccess):
+        (WebKit::NetworkConnectionToWebProcess::requestStorageAccess):
+        (WebKit::NetworkConnectionToWebProcess::requestStorageAccessUnderOpener):
+        (WebKit::NetworkConnectionToWebProcess::startTrackingResourceLoad):
+        (WebKit::NetworkConnectionToWebProcess::establishIDBConnectionToServer):
+        (WebKit::NetworkConnectionToWebProcess::unregisterSWConnection):
+        (WebKit::NetworkConnectionToWebProcess::establishSWServerConnection):
+        (WebKit::NetworkConnectionToWebProcess::establishSWContextConnection):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        (WebKit::NetworkConnectionToWebProcess::sessionID const):
+        (WebKit::NetworkConnectionToWebProcess::startDownload):
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::openNetworkProcessConnection):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::sessionID const):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::WebIDBConnectionToServer):
+        * WebProcess/FileAPI/BlobRegistryProxy.cpp:
+        (WebKit::BlobRegistryProxy::registerFileBlobURL):
+        (WebKit::BlobRegistryProxy::registerBlobURL):
+        (WebKit::BlobRegistryProxy::registerBlobURLOptionallyFileBacked):
+        (WebKit::BlobRegistryProxy::unregisterBlobURL):
+        (WebKit::BlobRegistryProxy::registerBlobURLForSlice):
+        (WebKit::BlobRegistryProxy::blobSize):
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::writeBlobsToTemporaryFiles):
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::connect):
+        * WebProcess/Network/WebSocketStream.cpp:
+        (WebKit::WebSocketStream::WebSocketStream):
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::WebSWClientConnection):
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::m_userAgent):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::detachedFromParent2):
+        (WebKit::WebFrameLoaderClient::dispatchWillChangeDocument):
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp:
+        (WebKit::WebResourceLoadObserver::requestStorageAccessUnderOpener):
+        (WebKit::WebResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+        * WebProcess/WebPage/WebCookieJar.cpp:
+        (WebKit::WebCookieJar::cookies const):
+        (WebKit::WebCookieJar::setCookies):
+        (WebKit::WebCookieJar::cookiesEnabled const):
+        (WebKit::WebCookieJar::cookieRequestHeaderFieldValue const):
+        (WebKit::WebCookieJar::getRawCookies const):
+        (WebKit::WebCookieJar::deleteCookie):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::startDownload):
+        (WebKit::WebFrame::convertMainResourceLoadToDownload):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+        (WebKit::WebPage::hasStorageAccess):
+        (WebKit::WebPage::requestStorageAccess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::createWebPage):
+        (WebKit::WebProcess::removeWebPage):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::sessionID const):
+
 2019-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r249142): [GTK] Epiphany delayed page loads continue indefinitely

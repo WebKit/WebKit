@@ -100,7 +100,7 @@ WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection
 #endif
 {
     updatePreferencesStore(store);
-    m_connectionToNetworkProcess->send(Messages::NetworkConnectionToWebProcess::EstablishSWContextConnection { m_registrableDomain, sessionID }, 0);
+    m_connectionToNetworkProcess->send(Messages::NetworkConnectionToWebProcess::EstablishSWContextConnection { m_registrableDomain }, 0);
 }
 
 WebSWContextManagerConnection::~WebSWContextManagerConnection() = default;

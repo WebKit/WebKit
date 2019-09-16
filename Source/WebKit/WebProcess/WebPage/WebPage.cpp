@@ -1338,7 +1338,7 @@ void WebPage::close()
         return;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ClearPageSpecificDataForResourceLoadStatistics(sessionID(), m_identifier), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ClearPageSpecificDataForResourceLoadStatistics(m_identifier), 0);
 #endif
 
     m_isClosed = true;
@@ -6535,12 +6535,12 @@ void WebPage::frameBecameRemote(FrameIdentifier frameID, GlobalFrameIdentifier&&
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 void WebPage::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, WebFrame& frame, CompletionHandler<void(bool)>&& completionHandler)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::HasStorageAccess(sessionID(), WTFMove(subFrameDomain), WTFMove(topFrameDomain), frame.frameID(), m_identifier), WTFMove(completionHandler));
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::HasStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frame.frameID(), m_identifier), WTFMove(completionHandler));
 }
 
 void WebPage::requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, WebFrame& frame, CompletionHandler<void(WebCore::StorageAccessWasGranted, WebCore::StorageAccessPromptWasShown)>&& completionHandler)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RequestStorageAccess(sessionID(), WTFMove(subFrameDomain), WTFMove(topFrameDomain), frame.frameID(), m_identifier, m_webPageProxyIdentifier), [completionHandler = WTFMove(completionHandler), frame = makeRef(frame), sessionID = sessionID(), pageID = m_identifier, frameID = frame.frameID()](StorageAccessWasGranted wasGranted, WebCore::StorageAccessPromptWasShown promptWasShown) mutable {
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RequestStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frame.frameID(), m_identifier, m_webPageProxyIdentifier), [completionHandler = WTFMove(completionHandler), frame = makeRef(frame), sessionID = sessionID(), pageID = m_identifier, frameID = frame.frameID()](StorageAccessWasGranted wasGranted, WebCore::StorageAccessPromptWasShown promptWasShown) mutable {
         if (wasGranted == StorageAccessWasGranted::Yes)
             frame->frameLoaderClient()->setHasFrameSpecificStorageAccess({ sessionID, frameID, pageID });
         completionHandler(wasGranted, promptWasShown);

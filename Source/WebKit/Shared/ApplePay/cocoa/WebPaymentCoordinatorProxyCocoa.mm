@@ -66,7 +66,7 @@ void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const Str
         return completionHandler(false);
 #endif
 
-    PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication(merchantIdentifier, domainName, m_client.paymentCoordinatorSourceApplicationSecondaryIdentifier(*this, sessionID), makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL canMakePayments, NSError *error) mutable {
+    PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication(merchantIdentifier, domainName, m_client.paymentCoordinatorSourceApplicationSecondaryIdentifier(*this), makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL canMakePayments, NSError *error) mutable {
         if (error)
             LOG_ERROR("PKCanMakePaymentsWithMerchantIdentifierAndDomain error %@", error);
 
@@ -278,22 +278,22 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
 
 #if HAVE(PASSKIT_BOUND_INTERFACE_IDENTIFIER)
     // FIXME: Remove -respondsToSelector: check once rdar://problem/48041516 is widely available in SDKs.
-    auto& boundInterfaceIdentifier = m_client.paymentCoordinatorBoundInterfaceIdentifier(*this, sessionID);
+    auto& boundInterfaceIdentifier = m_client.paymentCoordinatorBoundInterfaceIdentifier(*this);
     if (!boundInterfaceIdentifier.isEmpty() && [result respondsToSelector:@selector(setBoundInterfaceIdentifier:)])
         [result setBoundInterfaceIdentifier:boundInterfaceIdentifier];
 #endif
 
     // FIXME: Instead of using respondsToSelector, this should use a proper #if version check.
-    auto& bundleIdentifier = m_client.paymentCoordinatorSourceApplicationBundleIdentifier(*this, sessionID);
+    auto& bundleIdentifier = m_client.paymentCoordinatorSourceApplicationBundleIdentifier(*this);
     if (!bundleIdentifier.isEmpty() && [result respondsToSelector:@selector(setSourceApplicationBundleIdentifier:)])
         [result setSourceApplicationBundleIdentifier:bundleIdentifier];
 
-    auto& secondaryIdentifier = m_client.paymentCoordinatorSourceApplicationSecondaryIdentifier(*this, sessionID);
+    auto& secondaryIdentifier = m_client.paymentCoordinatorSourceApplicationSecondaryIdentifier(*this);
     if (!secondaryIdentifier.isEmpty() && [result respondsToSelector:@selector(setSourceApplicationSecondaryIdentifier:)])
         [result setSourceApplicationSecondaryIdentifier:secondaryIdentifier];
 
 #if PLATFORM(IOS_FAMILY)
-    auto& serviceType = m_client.paymentCoordinatorCTDataConnectionServiceType(*this, sessionID);
+    auto& serviceType = m_client.paymentCoordinatorCTDataConnectionServiceType(*this);
     if (!serviceType.isEmpty() && [result respondsToSelector:@selector(setCTDataConnectionServiceType:)])
         [result setCTDataConnectionServiceType:serviceType];
 #endif

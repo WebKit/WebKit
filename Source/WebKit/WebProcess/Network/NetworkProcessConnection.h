@@ -109,6 +109,7 @@ private:
 #endif
 
 #if ENABLE(SERVICE_WORKER)
+    // FIXME: This should be a single connection.
     HashMap<PAL::SessionID, RefPtr<WebSWClientConnection>> m_swConnectionsBySession;
 #endif
 };

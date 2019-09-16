@@ -162,9 +162,7 @@ public:
 
     InjectedBundle* injectedBundle() const { return m_injectedBundle.get(); }
     
-    // Prewarmed WebProcesses do not have an associated sessionID yet, which is why this is an optional.
-    // By the time the WebProcess gets a WebPage, it is guaranteed to have a sessionID.
-    const Optional<PAL::SessionID>& sessionID() const { return m_sessionID; }
+    PAL::SessionID sessionID() const { ASSERT(m_sessionID); return *m_sessionID; }
 
 #if PLATFORM(COCOA)
     const WTF::MachSendRight& compositingRenderServerPort() const { return m_compositingRenderServerPort; }
@@ -574,6 +572,9 @@ private:
 #endif
 
     HashMap<StorageAreaIdentifier, StorageAreaMap*> m_storageAreaMaps;
+    
+    // Prewarmed WebProcesses do not have an associated sessionID yet, which is why this is an optional.
+    // By the time the WebProcess gets a WebPage, it is guaranteed to have a sessionID.
     Optional<PAL::SessionID> m_sessionID;
 };
 

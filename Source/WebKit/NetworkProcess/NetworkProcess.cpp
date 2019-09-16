@@ -418,7 +418,7 @@ static inline Optional<std::pair<IPC::Connection::Identifier, IPC::Attachment>> 
 #endif
 }
 
-void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier identifier, CompletionHandler<void(Optional<IPC::Attachment>&&)>&& completionHandler)
+void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier identifier, PAL::SessionID sessionID, CompletionHandler<void(Optional<IPC::Attachment>&&)>&& completionHandler)
 {
     auto ipcConnection = createIPCConnectionToWebProcess();
     if (!ipcConnection) {
@@ -426,7 +426,7 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
         return;
     }
 
-    auto newConnection = NetworkConnectionToWebProcess::create(*this, identifier, ipcConnection->first);
+    auto newConnection = NetworkConnectionToWebProcess::create(*this, identifier, sessionID, ipcConnection->first);
     auto& connection = newConnection.get();
 
     ASSERT(!m_webProcessConnections.contains(identifier));

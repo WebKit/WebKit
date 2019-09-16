@@ -391,8 +391,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     setShouldUseFontSmoothing(parameters.shouldUseFontSmoothing);
 
-    ensureNetworkProcessConnection();
-
     setTerminationTimeout(parameters.terminationTimeout);
 
     resetPlugInAutoStartOriginHashes(parameters.plugInAutoStartOriginHashes);
@@ -462,6 +460,8 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
         supplement->setWebsiteDataStore(parameters);
 
     platformSetWebsiteDataStoreParameters(WTFMove(parameters));
+    
+    ensureNetworkProcessConnection();
 }
 
 bool WebProcess::hasPageRequiringPageCacheWhileSuspended() const
@@ -651,6 +651,8 @@ WebPage* WebProcess::webPage(PageIdentifier pageID) const
 
 void WebProcess::createWebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 {
+    ASSERT(parameters.sessionID == sessionID());
+
     // It is necessary to check for page existence here since during a window.open() (or targeted
     // link) the WebPage gets created both in the synchronous handler and through the normal way. 
     auto result = m_pageMap.add(pageID, nullptr);
@@ -669,6 +671,7 @@ void WebProcess::createWebPage(PageIdentifier pageID, WebPageCreationParameters&
 
 void WebProcess::removeWebPage(PAL::SessionID sessionID, PageIdentifier pageID)
 {
+    ASSERT(sessionID == this->sessionID());
     ASSERT(m_pageMap.contains(pageID));
 
     pageWillLeaveWindow(pageID);
@@ -1190,6 +1193,7 @@ static IPC::Connection::Identifier getNetworkProcessConnection(IPC::Connection& 
 NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
 {
     RELEASE_ASSERT(RunLoop::isMain());
+    ASSERT(m_sessionID);
 
     // If we've lost our connection to the network process (e.g. it crashed) try to re-establish it.
     if (!m_networkProcessConnection) {
