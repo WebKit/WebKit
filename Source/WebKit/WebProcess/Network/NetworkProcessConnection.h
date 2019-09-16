@@ -71,13 +71,13 @@ public:
     void writeBlobsToTemporaryFiles(PAL::SessionID, const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&);
 
 #if ENABLE(INDEXED_DATABASE)
-    WebIDBConnectionToServer* existingIDBConnectionToServer(PAL::SessionID sessionID) const { return m_webIDBConnectionsBySession.get(sessionID.toUInt64()); };
-    WebIDBConnectionToServer& idbConnectionToServerForSession(PAL::SessionID);
+    WebIDBConnectionToServer* existingIDBConnectionToServer() const { return m_webIDBConnection.get(); };
+    WebIDBConnectionToServer& idbConnectionToServerForSession();
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    WebSWClientConnection* existingServiceWorkerConnectionForSession(PAL::SessionID sessionID) { return m_swConnectionsBySession.get(sessionID); }
-    WebSWClientConnection& serviceWorkerConnectionForSession(PAL::SessionID);
+    WebSWClientConnection* existingServiceWorkerConnection() { return m_swConnection.get(); }
+    WebSWClientConnection& serviceWorkerConnection();
 #endif
 
     WTF::ProcessID networkProcessPID() const { return m_networkProcessPID; }
@@ -108,12 +108,11 @@ private:
     WTF::ProcessID m_networkProcessPID { 0 };
 
 #if ENABLE(INDEXED_DATABASE)
-    HashMap<uint64_t, RefPtr<WebIDBConnectionToServer>> m_webIDBConnectionsBySession;
+    RefPtr<WebIDBConnectionToServer> m_webIDBConnection;
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    // FIXME: This should be a single connection.
-    HashMap<PAL::SessionID, RefPtr<WebSWClientConnection>> m_swConnectionsBySession;
+    RefPtr<WebSWClientConnection> m_swConnection;
 #endif
 };
 

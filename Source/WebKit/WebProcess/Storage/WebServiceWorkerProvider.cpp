@@ -56,16 +56,17 @@ WebServiceWorkerProvider::WebServiceWorkerProvider()
 
 WebCore::SWClientConnection& WebServiceWorkerProvider::serviceWorkerConnectionForSession(SessionID sessionID)
 {
-    ASSERT(sessionID.isValid());
-    return WebProcess::singleton().ensureNetworkProcessConnection().serviceWorkerConnectionForSession(sessionID);
+    ASSERT_UNUSED(sessionID, sessionID == WebProcess::singleton().sessionID());
+    return WebProcess::singleton().ensureNetworkProcessConnection().serviceWorkerConnection();
 }
 
 WebCore::SWClientConnection* WebServiceWorkerProvider::existingServiceWorkerConnectionForSession(SessionID sessionID)
 {
+    ASSERT_UNUSED(sessionID, sessionID == WebProcess::singleton().sessionID());
     auto* networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
     if (!networkProcessConnection)
         return nullptr;
-    return networkProcessConnection->existingServiceWorkerConnectionForSession(sessionID);
+    return networkProcessConnection->existingServiceWorkerConnection();
 }
 
 static inline bool shouldHandleFetch(const ResourceLoaderOptions& options)
@@ -81,12 +82,14 @@ static inline bool shouldHandleFetch(const ResourceLoaderOptions& options)
 
 void WebServiceWorkerProvider::handleFetch(ResourceLoader& loader, PAL::SessionID sessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect, ServiceWorkerClientFetch::Callback&& callback)
 {
+    ASSERT_UNUSED(sessionID, sessionID == WebProcess::singleton().sessionID());
+
     if (!SchemeRegistry::canServiceWorkersHandleURLScheme(loader.request().url().protocol().toStringWithoutCopying()) || !shouldHandleFetch(loader.options())) {
         callback(ServiceWorkerClientFetch::Result::Unhandled);
         return;
     }
 
-    auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().serviceWorkerConnectionForSession(sessionID);
+    auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().serviceWorkerConnection();
     auto fetchIdentifier = makeObjectIdentifier<FetchIdentifierType>(loader.identifier());
     m_ongoingFetchTasks.add(fetchIdentifier, ServiceWorkerClientFetch::create(*this, loader, fetchIdentifier, connection, shouldClearReferrerOnHTTPSToHTTPRedirect, WTFMove(callback)));
 }

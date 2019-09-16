@@ -31,7 +31,6 @@
 #include "SandboxExtension.h"
 #include <WebCore/IDBConnectionToServer.h>
 #include <WebCore/ProcessIdentifier.h>
-#include <pal/SessionID.h>
 
 namespace WebKit {
 
@@ -39,7 +38,7 @@ class WebIDBResult;
 
 class WebIDBConnectionToServer final : private WebCore::IDBClient::IDBConnectionToServerDelegate, private IPC::MessageSender, public RefCounted<WebIDBConnectionToServer> {
 public:
-    static Ref<WebIDBConnectionToServer> create(PAL::SessionID);
+    static Ref<WebIDBConnectionToServer> create();
     virtual ~WebIDBConnectionToServer();
 
     WebCore::IDBClient::IDBConnectionToServer& coreConnectionToServer();
@@ -52,10 +51,10 @@ public:
     void deref() final { RefCounted<WebIDBConnectionToServer>::deref(); }
 
 private:
-    explicit WebIDBConnectionToServer(PAL::SessionID);
+    WebIDBConnectionToServer();
 
     IPC::Connection* messageSenderConnection() const final;
-    uint64_t messageSenderDestinationID() const final { return m_sessionID.toUInt64(); }
+    uint64_t messageSenderDestinationID() const final { return 0; }
 
     // IDBConnectionToServerDelegate
     void deleteDatabase(const WebCore::IDBRequestData&) final;
@@ -112,7 +111,6 @@ private:
     void notifyOpenDBRequestBlocked(const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion);
     void didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames);
 
-    PAL::SessionID m_sessionID;
     Ref<WebCore::IDBClient::IDBConnectionToServer> m_connectionToServer;
 };
 

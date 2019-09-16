@@ -105,7 +105,7 @@ private:
     void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, WebCore::MessageWithMessagePorts&&, const WebCore::ServiceWorkerOrClientIdentifier& source);
 
     IPC::Connection* messageSenderConnection() const final { return m_contentConnection.ptr(); }
-    uint64_t messageSenderDestinationID() const final { return m_sessionID.toUInt64(); }
+    uint64_t messageSenderDestinationID() const final { return 0; }
     
     template<typename U> static void sendToContextProcess(WebCore::SWServerToContextConnection&, U&& message);
 

@@ -130,17 +130,16 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
 
 #if ENABLE(INDEXED_DATABASE)
     if (decoder.messageReceiverName() == Messages::WebIDBConnectionToServer::messageReceiverName()) {
-        if (auto* idbConnection = m_webIDBConnectionsBySession.get(decoder.destinationID()))
-            idbConnection->didReceiveMessage(connection, decoder);
+        if (m_webIDBConnection)
+            m_webIDBConnection->didReceiveMessage(connection, decoder);
         return;
     }
 #endif
 
 #if ENABLE(SERVICE_WORKER)
     if (decoder.messageReceiverName() == Messages::WebSWClientConnection::messageReceiverName()) {
-        auto serviceWorkerConnection = m_swConnectionsBySession.get(PAL::SessionID { decoder.destinationID() });
-        if (serviceWorkerConnection)
-            serviceWorkerConnection->didReceiveMessage(connection, decoder);
+        if (m_swConnection)
+            m_swConnection->didReceiveMessage(connection, decoder);
         return;
     }
     if (decoder.messageReceiverName() == Messages::ServiceWorkerClientFetch::messageReceiverName()) {
@@ -195,15 +194,13 @@ void NetworkProcessConnection::didClose(IPC::Connection&)
     WebProcess::singleton().networkProcessConnectionClosed(this);
 
 #if ENABLE(INDEXED_DATABASE)
-    auto idbConnections = std::exchange(m_webIDBConnectionsBySession, { });
-    for (auto& connection : idbConnections.values())
-        connection->connectionToServerLost();
+    if (auto idbConnection = std::exchange(m_webIDBConnection, nullptr))
+        idbConnection->connectionToServerLost();
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    auto swConnections = std::exchange(m_swConnectionsBySession, { });
-    for (auto& connection : swConnections.values())
-        connection->connectionToServerLost();
+    if (auto swConnection = std::exchange(m_swConnection, nullptr))
+        swConnection->connectionToServerLost();
 #endif
 }
 
@@ -249,21 +246,20 @@ void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, 
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
-WebIDBConnectionToServer& NetworkProcessConnection::idbConnectionToServerForSession(PAL::SessionID sessionID)
+WebIDBConnectionToServer& NetworkProcessConnection::idbConnectionToServerForSession()
 {
-    return *m_webIDBConnectionsBySession.ensure(sessionID.toUInt64(), [&] {
-        return WebIDBConnectionToServer::create(sessionID);
-    }).iterator->value;
+    if (!m_webIDBConnection)
+        m_webIDBConnection = WebIDBConnectionToServer::create();
+    return *m_webIDBConnection;
 }
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-WebSWClientConnection& NetworkProcessConnection::serviceWorkerConnectionForSession(PAL::SessionID sessionID)
+WebSWClientConnection& NetworkProcessConnection::serviceWorkerConnection()
 {
-    ASSERT(sessionID.isValid());
-    return *m_swConnectionsBySession.ensure(sessionID, [] {
-        return WebSWClientConnection::create();
-    }).iterator->value;
+    if (!m_swConnection)
+        m_swConnection = WebSWClientConnection::create();
+    return *m_swConnection;
 }
 #endif
 

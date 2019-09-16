@@ -73,7 +73,7 @@ private:
     WebIDBConnectionToClient(NetworkProcess&, IPC::Connection&, WebCore::ProcessIdentifier, PAL::SessionID);
 
     IPC::Connection* messageSenderConnection() const final;
-    uint64_t messageSenderDestinationID() const final { return m_sessionID.toUInt64(); }
+    uint64_t messageSenderDestinationID() const final { return 0; }
 
     // Messages received from WebProcess
     void deleteDatabase(const WebCore::IDBRequestData&);

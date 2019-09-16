@@ -1,3 +1,36 @@
+2019-09-16  Chris Dumez  <cdumez@apple.com>
+
+        NetworkProcessConnection does not need HashMaps of sessionIDs for Service Workers and IDB
+        https://bugs.webkit.org/show_bug.cgi?id=201830
+
+        Reviewed by Geoffrey Garen.
+
+        NetworkProcessConnection does not need HashMaps of sessionIDs for Service Workers and IDB, since
+        we now have one sessionID per WebContent process.
+
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.h:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::create):
+        (WebKit::WebIDBConnectionToServer::WebIDBConnectionToServer):
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.h:
+        * WebProcess/Databases/WebDatabaseProvider.cpp:
+        (WebKit::WebDatabaseProvider::idbConnectionToServerForSession):
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        (WebKit::NetworkProcessConnection::didClose):
+        (WebKit::NetworkProcessConnection::idbConnectionToServerForSession):
+        (WebKit::NetworkProcessConnection::serviceWorkerConnectionForSession):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        (WebKit::NetworkProcessConnection::existingIDBConnectionToServer const):
+        (WebKit::NetworkProcessConnection::existingServiceWorkerConnectionForSession):
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        (WebKit::WebServiceWorkerProvider::serviceWorkerConnectionForSession):
+        (WebKit::WebServiceWorkerProvider::existingServiceWorkerConnectionForSession):
+        (WebKit::WebServiceWorkerProvider::handleFetch):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::networkProcessConnectionClosed):
+
 2019-09-16  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] Correct lifespan of other SharedBitmaps
