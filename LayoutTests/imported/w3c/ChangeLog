@@ -1,3 +1,11 @@
+2019-09-16  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, address flakiness of imported/w3c/web-platform-tests/html/browsers/offline/application-cache-api/api_update.https.html
+
+        Flaky since r249886.
+
+        * web-platform-tests/html/browsers/offline/application-cache-api/api_update.https-expected.txt:
+
 2019-09-16  Antti Koivisto  <antti@apple.com>
 
     Eliminate separate simple line layout path from TextIterator

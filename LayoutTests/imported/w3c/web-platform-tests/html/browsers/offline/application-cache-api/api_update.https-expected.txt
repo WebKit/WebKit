@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 2: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 
 PASS Offline Application Cache - API_update 
 
