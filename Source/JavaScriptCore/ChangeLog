@@ -1,3 +1,15 @@
+2019-09-16  David Kilzer  <ddkilzer@apple.com>
+
+        [JSC] REGRESSION (r248938): Leak of uint32_t arrays in testFastForwardCopy32()
+        <https://webkit.org/b/201804>
+
+        Reviewed by Saam Barati.
+
+        * b3/testb3_8.cpp:
+        (testFastForwardCopy32): Allocate arrays using
+        WTF::makeUniqueArray<uint32_t> to fix leaks caused by continue
+        statements.
+
 2019-09-16  Saam Barati  <sbarati@apple.com>
 
         JSObject::putInlineSlow should not ignore "__proto__" for Proxy

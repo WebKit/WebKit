@@ -26,6 +26,8 @@
 #include "config.h"
 #include "testb3.h"
 
+#include <wtf/UniqueArray.h>
+
 #if ENABLE(B3_JIT)
 
 template<typename T>
@@ -874,14 +876,18 @@ void testFastForwardCopy32()
             for (size_t arrsize : { 1, 4, 5, 6, 8, 10, 12, 16, 20, 40, 100, 1000}) {
                 size_t overlapAmount = 5;
 
+                UniqueArray<uint32_t> array1, array2;
                 uint32_t* arr1, *arr2;
 
                 if (overlap) {
-                    arr1 = new uint32_t[arrsize * 2];
+                    array1 = makeUniqueArray<uint32_t>(arrsize * 2);
+                    arr1 = &array1[0];
                     arr2 = arr1 + (arrsize - overlapAmount);
                 } else {
-                    arr1 = new uint32_t[arrsize];
-                    arr2 = new uint32_t[arrsize];
+                    array1 = makeUniqueArray<uint32_t>(arrsize);
+                    array2 = makeUniqueArray<uint32_t>(arrsize);
+                    arr1 = &array1[0];
+                    arr2 = &array2[0];
                 }
 
                 if (!aligned && arrsize < 3)
@@ -915,12 +921,6 @@ void testFastForwardCopy32()
                     --arr1;
                     --arr2;
                 }
-
-                if (!overlap) {
-                    delete[] arr1;
-                    delete[] arr2;
-                } else
-                    delete[] arr1;
             }
         }
     }
