@@ -93,8 +93,6 @@ protected:
     // This class implements generic positioning and sizing.
     class Geometry {
     public:
-        Geometry(const FormattingContext&);
-
         VerticalGeometry outOfFlowVerticalGeometry(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
         HorizontalGeometry outOfFlowHorizontalGeometry(const Box&, UsedHorizontalValues);
 
@@ -126,6 +124,9 @@ protected:
         LayoutUnit contentHeightForFormattingContextRoot(const Box&) const;
 
     protected:
+        friend class FormattingContext;
+        Geometry(const FormattingContext&);
+
         enum class HeightType { Min, Max, Normal };
         Optional<LayoutUnit> computedHeightValue(const Box&, HeightType, Optional<UsedVerticalValues> = WTF::nullopt) const;
 
@@ -154,11 +155,12 @@ protected:
 
     class Quirks {
     public:
-        Quirks(const FormattingContext&);
-
         LayoutUnit heightValueOfNearestContainingBlockWithFixedHeight(const Box&);
 
     protected:
+        friend class FormattingContext;
+        Quirks(const FormattingContext&);
+
         const LayoutState& layoutState() const { return m_formattingContext.layoutState(); }
         LayoutState& layoutState() { return m_formattingContext.layoutState(); }
         const FormattingContext& formattingContext() const { return m_formattingContext; }

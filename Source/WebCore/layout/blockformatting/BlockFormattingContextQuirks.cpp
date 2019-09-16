@@ -89,7 +89,7 @@ HeightAndMargin BlockFormattingContext::Quirks::stretchedInFlowHeight(const Box&
         strechedHeight -= bodyBoxGeometry.verticalBorder() + bodyBoxGeometry.verticalPadding().valueOr(0);
 
         auto nonCollapsedMargin = heightAndMargin.nonCollapsedMargin;
-        auto collapsedMargin = MarginCollapse(formattingContext).collapsedVerticalValues(layoutBox, nonCollapsedMargin);
+        auto collapsedMargin = formattingContext.marginCollapse().collapsedVerticalValues(layoutBox, nonCollapsedMargin);
         totalVerticalMargin = collapsedMargin.before.valueOr(nonCollapsedMargin.before);
         totalVerticalMargin += collapsedMargin.isCollapsedThrough ? nonCollapsedMargin.after : collapsedMargin.after.valueOr(nonCollapsedMargin.after);
     }

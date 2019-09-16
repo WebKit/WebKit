@@ -75,8 +75,6 @@ private:
     // This class implements positioning and sizing for boxes participating in a block formatting context.
     class Geometry : public FormattingContext::Geometry {
     public:
-        Geometry(const BlockFormattingContext&);
-
         HeightAndMargin inFlowHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues);
         WidthAndMargin inFlowWidthAndMargin(const Box&, UsedHorizontalValues);
 
@@ -87,6 +85,9 @@ private:
         IntrinsicWidthConstraints intrinsicWidthConstraints(const Box&);
 
     private:
+        friend class BlockFormattingContext;
+        Geometry(const BlockFormattingContext&);
+
         HeightAndMargin inFlowNonReplacedHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues);
         WidthAndMargin inFlowNonReplacedWidthAndMargin(const Box&, UsedHorizontalValues) const;
         WidthAndMargin inFlowReplacedWidthAndMargin(const Box&, UsedHorizontalValues) const;
@@ -99,8 +100,6 @@ private:
     // This class implements margin collapsing for block formatting context.
     class MarginCollapse {
     public:
-        MarginCollapse(const BlockFormattingContext&);
-
         UsedVerticalMargin::CollapsedValues collapsedVerticalValues(const Box&, const UsedVerticalMargin::NonCollapsedValues&);
 
         EstimatedMarginBefore estimatedMarginBefore(const Box&);
@@ -122,6 +121,9 @@ private:
         bool marginsCollapseThrough(const Box&) const;
 
     private:
+        friend class BlockFormattingContext;
+        MarginCollapse(const BlockFormattingContext&);
+
         enum class MarginType { Before, After };
         PositiveAndNegativeVerticalMargin::Values positiveNegativeValues(const Box&, MarginType);
         PositiveAndNegativeVerticalMargin::Values positiveNegativeMarginBefore(const Box&, const UsedVerticalMargin::NonCollapsedValues&);
@@ -138,8 +140,6 @@ private:
 
     class Quirks : public FormattingContext::Quirks {
     public:
-        Quirks(const BlockFormattingContext&);
-
         bool needsStretching(const Box&) const;
         HeightAndMargin stretchedInFlowHeight(const Box&, HeightAndMargin);
 
@@ -148,6 +148,9 @@ private:
         bool shouldIgnoreMarginAfter(const Box&) const;
 
     private:
+        friend class BlockFormattingContext;
+        Quirks(const BlockFormattingContext&);
+
         const BlockFormattingContext& formattingContext() const { return downcast<BlockFormattingContext>(FormattingContext::Quirks::formattingContext()); }
 
     };

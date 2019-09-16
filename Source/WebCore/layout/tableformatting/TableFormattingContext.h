@@ -45,11 +45,12 @@ public:
 private:
     class Geometry : public FormattingContext::Geometry {
     public:
-        Geometry(const TableFormattingContext&);
-
         HeightAndMargin tableCellHeightAndMargin(const Box&) const;
 
     private:
+        friend class TableFormattingContext;
+        Geometry(const TableFormattingContext&);
+
         const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingContext::Geometry::formattingContext()); }
     };
     TableFormattingContext::Geometry geometry() const { return Geometry(*this); }

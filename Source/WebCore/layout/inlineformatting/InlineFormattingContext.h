@@ -71,12 +71,13 @@ private:
 
     class Quirks : public FormattingContext::Quirks {
     public:
-        Quirks(const InlineFormattingContext&);
-
         bool lineDescentNeedsCollapsing(const Line::Content&) const;
         Line::InitialConstraints::HeightAndBaseline lineHeightConstraints(const Box& formattingRoot) const;
 
     private:
+        friend class InlineFormattingContext;
+        Quirks(const InlineFormattingContext&);
+
         const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingContext::Quirks::formattingContext()); }
 
     };
@@ -84,12 +85,13 @@ private:
 
     class Geometry : public FormattingContext::Geometry {
     public:
-        Geometry(const InlineFormattingContext&);
-
         HeightAndMargin inlineBlockHeightAndMargin(const Box&, UsedHorizontalValues) const;
         WidthAndMargin inlineBlockWidthAndMargin(const Box&, UsedHorizontalValues);
 
     private:
+        friend class InlineFormattingContext;
+        Geometry(const InlineFormattingContext&);
+
         const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingContext::Geometry::formattingContext()); }
 
     };
