@@ -3615,6 +3615,9 @@ webkit.org/b/199028 webgpu/whlsl/test-harness-test.html [ Slow ]
 
 imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeft-inline.html [ ImageOnlyFailure ]
 
+# Test is failing and is printing different values when it fails.
+fast/mediastream/captureStream/canvas2d.html [ Failure Pass ]
+
 # These tests only work on systems with the design system ui fonts installed.
 fast/text/design-system-ui-11.html [ ImageOnlyFailure ]
 fast/text/design-system-ui-12.html [ ImageOnlyFailure ]

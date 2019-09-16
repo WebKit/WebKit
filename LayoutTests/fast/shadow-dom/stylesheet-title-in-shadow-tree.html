@@ -80,7 +80,7 @@ function testUpdatingTitleOnSVGStyleElemenInShadowTree(mode) {
         assert_equals(shadowRoot.styleSheets[0].title, null);
         assert_equals(shadowRoot.styleSheets[1].title, null);
         assert_equals(getComputedStyle(shadowRoot.querySelector('div')).height, '20px');
-    }, `Setting title content attribute on a HTML style element should not set the title of a stylesheet inside a shadow tree of ${mode} mode`);
+    }, `Setting title content attribute on a HTML style element should not set the title of a stylesheet inside a shadow tree of ${mode} mode 2`);
 }
 
 testUpdatingTitleOnSVGStyleElemenInShadowTree('open');
@@ -100,7 +100,7 @@ function testLinkElementWithTitleInShadowTree(mode) {
         assert_equals(shadowRoot.styleSheets[0].title, null);
         assert_equals(shadowRoot.styleSheets[1].title, null);
         assert_equals(getComputedStyle(shadowRoot.querySelector('div')).backgroundColor, 'rgb(0, 128, 0)');
-    }, `title content attribute on a HTML style element should not set the title of a stylesheet inside a shadow tree of ${mode} mode`);
+    }, `title content attribute on a HTML style element should not set the title of a stylesheet inside a shadow tree of ${mode} mode 2`);
 }
 
 testLinkElementWithTitleInShadowTree('open');
@@ -125,7 +125,7 @@ function testUpdatingTitleOnLinkElementInShadowTree(mode) {
         assert_equals(shadowRoot.styleSheets[0].title, null);
         assert_equals(shadowRoot.styleSheets[1].title, null);
         assert_equals(getComputedStyle(shadowRoot.querySelector('div')).backgroundColor, 'rgb(0, 128, 0)');
-    }, `Setting title content attribute on a HTML style element should not set the title of a stylesheet inside a shadow tree of ${mode} mode`);
+    }, `Setting title content attribute on a HTML style element should not set the title of a stylesheet inside a shadow tree of ${mode} mode 3`);
 }
 
 testUpdatingTitleOnLinkElementInShadowTree('open');

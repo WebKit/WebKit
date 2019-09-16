@@ -1,3 +1,99 @@
+2019-09-16  Chris Dumez  <cdumez@apple.com>
+
+        Update testharness.js from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=201808
+
+        Reviewed by Darin Adler.
+
+        Update testharness.js from upstream 6fd5e1e086ce590a4780a30d12968.
+        Update existing layout tests so that they are compatible with this new version
+        of testharness.js.
+
+        * TestExpectations:
+        * css-custom-properties-api/length-expected.txt:
+        * css-custom-properties-api/length.html:
+        * css-custom-properties-api/registerProperty.html:
+        * css-dark-mode/older-systems/color-scheme-css-expected.txt:
+        * css-dark-mode/older-systems/color-scheme-css.html:
+        * css-dark-mode/older-systems/color-scheme-meta-expected.txt:
+        * css-dark-mode/older-systems/color-scheme-meta.html:
+        * css3/flexbox/style-change-expected.txt:
+        * fast/css/DOMQuad-serialization.html:
+        * fast/css/Element-style.html:
+        * fast/css/parse-justify-self-expected.txt:
+        * fast/css/parse-justify-self.html:
+        * fast/events/clipboard-event-constructor-expected.txt:
+        * fast/events/clipboard-event-constructor.html:
+        * fast/media/mq-js-update-media-expected.txt:
+        * fast/media/mq-js-update-media.html:
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas-expected.txt:
+        * fast/mediastream/captureStream/canvas2d-expected.txt:
+        * fast/mediastream/captureStream/canvas2d-heavy-drawing.html:
+        * fast/mediastream/captureStream/canvas2d.html:
+        * fast/shadow-dom/event-path-with-window-expected.txt:
+        * fast/shadow-dom/event-path-with-window.html:
+        * fast/shadow-dom/offsetParent-across-shadow-boundaries-expected.txt:
+        * fast/shadow-dom/offsetParent-across-shadow-boundaries.html:
+        * fast/shadow-dom/slotchange-for-slot-mutation-expected.txt:
+        * fast/shadow-dom/slotchange-for-slot-mutation.html:
+        * fast/shadow-dom/stylesheet-title-in-shadow-tree-expected.txt:
+        * fast/shadow-dom/stylesheet-title-in-shadow-tree.html:
+        * http/tests/fetch/redirectmode-and-preload-expected.txt:
+        * http/tests/fetch/redirectmode-and-preload.html:
+        * imported/blink/editing/selection/selectstart-event-crash-expected.txt:
+        * js/promises-tests/promises-in-workers-expected.txt:
+        * js/promises-tests/promises-in-workers.js:
+        * resources/check-layout-th.js:
+        (window.checkLayout):
+        * resources/testharness.js:
+        (WindowTestEnvironment):
+        (WindowTestEnvironment.prototype._dispatch):
+        (WindowTestEnvironment.prototype._forEach_windows):
+        (WindowTestEnvironment.prototype.next_default_test_name):
+        (WorkerTestEnvironment.prototype.next_default_test_name):
+        (ServiceWorkerTestEnvironment.on_all_loaded):
+        (ServiceWorkerTestEnvironment):
+        (ShellTestEnvironment):
+        (ShellTestEnvironment.prototype.next_default_test_name):
+        (ShellTestEnvironment.prototype.on_new_harness_properties):
+        (ShellTestEnvironment.prototype.on_tests_ready):
+        (ShellTestEnvironment.prototype.add_on_loaded_callback):
+        (ShellTestEnvironment.prototype.test_timeout):
+        (create_test_environment):
+        (is_shared_worker):
+        (is_service_worker):
+        (test):
+        (promise_test):
+        (this.wait_for):
+        (EventWatcher):
+        (done):
+        * streams/readable-byte-stream-controller-expected.txt:
+        * streams/readable-byte-stream-controller-worker-expected.txt: Added.
+        * streams/readable-byte-stream-controller-worker.html: Copied from LayoutTests/streams/readable-byte-stream-controller.html.
+        * streams/readable-byte-stream-controller.html:
+        * streams/readable-stream-byob-reader-expected.txt:
+        * streams/readable-stream-byob-reader-worker-expected.txt: Added.
+        * streams/readable-stream-byob-reader-worker.html: Copied from LayoutTests/streams/readable-stream-byob-reader.html.
+        * streams/readable-stream-byob-reader.html:
+        * streams/readable-stream-byob-request-expected.txt:
+        * streams/readable-stream-byob-request-worker-expected.txt: Copied from LayoutTests/streams/readable-stream-byob-request-expected.txt.
+        * streams/readable-stream-byob-request-worker.html: Copied from LayoutTests/streams/readable-stream-byob-request.html.
+        * streams/readable-stream-byob-request.html:
+        * streams/reference-implementation/readable-stream-templated-expected.txt:
+        * streams/reference-implementation/readable-stream-templated.html:
+        * streams/reference-implementation/writable-stream-abort-expected.txt:
+        * streams/reference-implementation/writable-stream-expected.txt:
+        * webrtc/datachannel/basic-expected.txt:
+        * webrtc/datachannel/basic.html:
+        * webrtc/datachannel/mdns-ice-candidates-expected.txt:
+        * webrtc/datachannel/mdns-ice-candidates.html:
+        * webrtc/pc-detached-document-expected.txt:
+        * webrtc/pc-detached-document.html:
+        * webrtc/video-mute-expected.txt:
+        * webrtc/video-mute-vp8-expected.txt:
+        * webrtc/video-mute-vp8.html:
+        * webrtc/video-mute.html:
+
 2019-09-16  Russell Epstein  <repstein@apple.com>
 
         [ macOS ] Layout tests webgpu/*-triangle-strip.html are flaky failures.

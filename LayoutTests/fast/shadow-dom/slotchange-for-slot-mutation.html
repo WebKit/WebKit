@@ -239,7 +239,7 @@ generateTests('<span></span>', '<div><p><slot id="slot1"></slot><b><slot id="slo
 
 generateTests('<span></span>', '<div><p><slot id="slot1"></slot><b><slot id="slot2"></slot></b><slot id="slot3"></slot></p></div>',
     (shadowRoot) => shadowRoot.querySelector('p').textContent = '', ['slot1'],
-    'slotchange event should fire on the first default slot removed in the tree order when replacing all children');
+    'slotchange event should fire on the first default slot removed in the tree order when replacing all children 2');
 
 generateTests('<span slot="b"></span>',
     '<p><slot id="slot1" name="a"></slot><b><slot id="slot2" name="b"></slot></b><slot id="slot3" name="b"></slot></p>',
@@ -248,7 +248,7 @@ generateTests('<span slot="b"></span>',
 
 generateTests('<span slot="a"></span><span slot="b"></span>', '<slot id="a1" name="a"></slot><slot id="a2" name="a"></slot><slot></slot>',
     (shadowRoot) => shadowRoot.getElementById('a1').remove(), ['a2', 'a1'],
-    'slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order');
+    'slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order 2');
 
 generateTests('<span></span><span slot="a"></span>', '<span><slot id="default1"></slot><b><slot id="b1" name="b"></slot>'
     + '<slot id="a1" name="a"></slot></b></span><slot id="default2"></slot><slot id="a2" name="a"></slot>',

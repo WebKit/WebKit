@@ -11,7 +11,7 @@ test(() => {
     assert_equals(quad.__proto__, DOMQuad.prototype);
 
     var toJSONDescriptor = Object.getOwnPropertyDescriptor(DOMQuad.prototype, "toJSON");
-    assert_exists(toJSONDescriptor, "value");
+    assert_own_property(toJSONDescriptor, "value");
     assert_true(toJSONDescriptor.enumerable);
     assert_true(toJSONDescriptor.configurable);
     assert_true(toJSONDescriptor.writable);

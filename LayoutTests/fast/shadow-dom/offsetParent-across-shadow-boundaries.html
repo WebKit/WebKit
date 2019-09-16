@@ -88,14 +88,14 @@ function testOffsetParentOnElementAssignedToSlotInsideNestedOffsetParents(mode) 
         const previousBlock = document.createElement('div');
         previousBlock.style.height = '12px';
         container.append(previousBlock, host);
-        this.add_cleanup(() => container.innerHTML = '');
+        this.add_cleanup(() => { container.innerHTML = ''; });
         const shadowRoot = host.attachShadow({mode});
         shadowRoot.innerHTML = '<section style="position: relative; margin-left: 20px; margin-top: 100px; background: #ccc"><div style="position: absolute; top: 10px; left: 10px;"><slot></slot></div></section>';
         const target = host.querySelector('#target');
         assert_equals(target.offsetParent, container);
         assert_equals(target.offsetLeft, 30);
         assert_equals(target.offsetTop, 122);
-    }, `offsetParent must skip offset parents of an element when the context object is assigned to a slot in a shadow tree of ${mode} mode`);
+    }, `offsetParent must skip multiple offset parents of an element when the context object is assigned to a slot in a shadow tree of ${mode} mode`);
 }
 
 testOffsetParentOnElementAssignedToSlotInsideNestedOffsetParents('open');

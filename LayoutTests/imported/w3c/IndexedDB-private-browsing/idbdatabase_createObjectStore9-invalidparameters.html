@@ -7,11 +7,11 @@
 <script src=support.js></script>
 
 <script>
-    function invalid_optionalParameters(desc, params) {
+    function invalid_optionalParameters(desc, params, exception) {
         var t = async_test(document.title + " - " + desc);
 
         createdb(t).onupgradeneeded = function(e) {
-            assert_throws(null, function() {
+            assert_throws(exception, function() {
                 e.target.result.createObjectStore("store", params);
             });
 
@@ -19,10 +19,10 @@
         };
     }
 
-    invalid_optionalParameters("autoInc and empty keyPath", {autoIncrement: true, keyPath: ""});
-    invalid_optionalParameters("autoInc and keyPath array", {autoIncrement: true, keyPath: []});
-    invalid_optionalParameters("autoInc and keyPath array 2", {autoIncrement: true, keyPath: ["hey"]});
-    invalid_optionalParameters("autoInc and keyPath object", {autoIncrement: true, keyPath: {a:"hey", b:2}});
+    invalid_optionalParameters("autoInc and empty keyPath", {autoIncrement: true, keyPath: ""}, DOMException.INVALID_ACCESS_ERR);
+    invalid_optionalParameters("autoInc and keyPath array", {autoIncrement: true, keyPath: []}, DOMException.SYNTAX_ERR);
+    invalid_optionalParameters("autoInc and keyPath array 2", {autoIncrement: true, keyPath: ["hey"]}, DOMException.INVALID_ACCESS_ERR);
+    invalid_optionalParameters("autoInc and keyPath object", {autoIncrement: true, keyPath: {a:"hey", b:2}}, DOMException.SYNTAX_ERR);
 
 </script>
 

@@ -15,7 +15,7 @@ for (let i = 0; i < 2; i++) {
 
     return new Promise(resolve => step_timeout(resolve, 500));
 
-  }, 'Test');
+  }, 'Test ' + (i + 1));
 }
 
 done();

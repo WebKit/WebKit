@@ -49,7 +49,7 @@ test(function() {
 test(function() {
     // The semantic text color should be black again.
     test_color_is_black("test1");
-}, "Element colors are correct in light color scheme with only light supported color scheme");
+}, "Element colors are correct in light color scheme with only light supported color scheme 2");
 
 test(function() {
     document.body.style.setProperty("color-scheme", "auto");
@@ -87,11 +87,11 @@ test(function() {
 
 test(function() {
     document.body.style.setProperty("color-scheme", "light dark");
-}, "Color schemes changed to light and dark");
+}, "Color schemes changed to light and dark 2");
 
 test(function() {
     test_color_is_black("test1");
-}, "Element colors are correct in light color scheme with light and dark supported color scheme");
+}, "Element colors are correct in light color scheme with light and dark supported color scheme 2");
 
 test(function() {
     document.body.style.setProperty("color-scheme", "foo dark");

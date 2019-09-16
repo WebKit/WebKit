@@ -7,5 +7,5 @@ PASS Ensuring connection state is connected
 PASS Track is enabled, video should not be black 
 PASS Track is disabled, video should be black 
 PASS If disabled, black frames should still be coming 
-PASS Track is enabled, video should not be black 
+PASS Track is enabled, video should not be black 2 
 

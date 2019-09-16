@@ -19,7 +19,7 @@ test(() => {
     var pc = new frame.contentWindow.RTCPeerConnection();
     document.body.removeChild(frame);
     assert_throws('InvalidStateError', () => { pc.setConfiguration({}) });
-}, "Peer Connection objects should not be created in detached documents");
+}, "Peer Connection objects should not be created in detached documents 2");
 </script>
 </body>
 </html>

@@ -41,7 +41,7 @@ test(function() {
     assert_equals(event.cancelable, true);
     assert_equals(event.composed, false);
     assert_equals(event.clipboardData, null);
-}, "bubbles member");
+}, "cancelable member");
 
 test(function() {
     var event = new ClipboardEvent("foo", {composed: true});
@@ -51,7 +51,7 @@ test(function() {
     assert_equals(event.cancelable, false);
     assert_equals(event.composed, true);
     assert_equals(event.clipboardData, null);
-}, "bubbles member");
+}, "composed member");
 
 test(function() {
     var event = new ClipboardEvent("foo", {bubbles: true, cancelable: true, composed: true});
@@ -61,7 +61,7 @@ test(function() {
     assert_equals(event.cancelable, true);
     assert_equals(event.composed, true);
     assert_equals(event.clipboardData, null);
-}, "bubbles member");
+}, "bubbles / cancelable / composed members");
 
 test(function() {
     assert_throws(new TypeError(), function() {

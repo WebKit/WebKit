@@ -48,7 +48,7 @@ test(function() {
 
 test(function() {
     test_color_is_black("test1");
-}, "Element colors are correct in light color scheme with only light color scheme");
+}, "Element colors are correct in light color scheme with only light color scheme 2");
 
 test(function() {
     document.getElementById("meta").content = "";
@@ -60,11 +60,11 @@ test(function() {
 
 test(function() {
     document.getElementById("meta").content = "   light, dark ";
-}, "Color schemes changed to light and dark");
+}, "Color schemes changed to light and dark 2");
 
 test(function() {
     test_color_is_black("test1");
-}, "Element colors are correct in light color scheme with light and dark color scheme");
+}, "Element colors are correct in light color scheme with light and dark color scheme 2");
 
 test(function() {
     document.getElementById("meta").content = ", foo dark";

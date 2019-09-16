@@ -1,5 +1,20 @@
 2019-09-16  Chris Dumez  <cdumez@apple.com>
 
+        Update testharness.js from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=201808
+
+        Reviewed by Darin Adler.
+
+        Update existing layout tests so that they are compatible with this new version
+        of testharness.js.
+
+        * IndexedDB-private-browsing/idbdatabase_createObjectStore9-invalidparameters.html:
+        * IndexedDB-private-browsing/idbobjectstore_deleted.html:
+        * web-platform-tests/custom-elements/resources/custom-elements-helpers.js:
+        (create_window_in_test):
+
+2019-09-16  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, land expectations for imported/w3c/web-platform-tests/html/browsers/offline/application-cache-api/api_swapcache_error.https.html.
 
         This test was imported in r249886.

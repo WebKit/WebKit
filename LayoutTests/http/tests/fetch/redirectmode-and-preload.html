@@ -27,7 +27,7 @@ function startTests()
 
     promise_test(function(test) {
         return promise_rejects(test, new TypeError(), fetch(preloadUrl, {redirect: "error", mode: "cors", credentials: "include"}));
-    }, "Fetch should check for redirections even if resource is preloaded (different fetch mode, different redirect mode)");
+    }, "Fetch should check for redirections even if resource is preloaded (different fetch mode, different redirect mode) 2");
 }
     </script>
   </body>

@@ -1,32 +1,32 @@
 CONSOLE MESSAGE: Unhandled Promise Rejection: a
-CONSOLE MESSAGE: line 2687: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: line 3374: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Sorry, it just wasn't meant to be.
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Sorry, it just wasn't meant to be.
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Sorry, it just wasn't meant to be.
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Sorry, it just wasn't meant to be.
-CONSOLE MESSAGE: line 2687: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: line 3374: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: line 2687: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: line 3374: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: line 2687: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: line 3374: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: line 2687: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: line 3374: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: line 2687: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: line 3374: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: line 2687: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: line 3374: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: line 2687: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: line 3374: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: line 2687: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: line 3374: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: line 2687: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: line 3374: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: line 2687: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: line 3374: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'e.message')
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'e.error')
 
 PASS Aborting a WritableStream immediately prevents future writes 
 PASS Aborting a WritableStream prevents further writes after any that are in progress 

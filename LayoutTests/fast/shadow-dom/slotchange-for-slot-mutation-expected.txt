@@ -171,18 +171,18 @@ PASS slotchange event should fire on the first default slot removed in the tree 
 PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children in a disconnected closed mode shadow root 
 PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children in a connected open mode shadow root 
 PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children in a disconnected open mode shadow root 
-PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children in a connected closed mode shadow root 
-PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children in a disconnected closed mode shadow root 
-PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children in a connected open mode shadow root 
-PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children in a disconnected open mode shadow root 
+PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children 2 in a connected closed mode shadow root 
+PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children 2 in a disconnected closed mode shadow root 
+PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children 2 in a connected open mode shadow root 
+PASS slotchange event should fire on the first default slot removed in the tree order when replacing all children 2 in a disconnected open mode shadow root 
 PASS slotchange event should fire on the first named slot of the same name removed in the tree order in a connected closed mode shadow root 
 PASS slotchange event should fire on the first named slot of the same name removed in the tree order in a disconnected closed mode shadow root 
 PASS slotchange event should fire on the first named slot of the same name removed in the tree order in a connected open mode shadow root 
 PASS slotchange event should fire on the first named slot of the same name removed in the tree order in a disconnected open mode shadow root 
-PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order in a connected closed mode shadow root 
-PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order in a disconnected closed mode shadow root 
-PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order in a connected open mode shadow root 
-PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order in a disconnected open mode shadow root 
+PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order 2 in a connected closed mode shadow root 
+PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order 2 in a disconnected closed mode shadow root 
+PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order 2 in a connected open mode shadow root 
+PASS slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order 2 in a disconnected open mode shadow root 
 PASS slotchange event should fire on all first slots of its kind with assigned nodes and their previously-first counterparts in the tree order in a connected closed mode shadow root 
 PASS slotchange event should fire on all first slots of its kind with assigned nodes and their previously-first counterparts in the tree order in a disconnected closed mode shadow root 
 PASS slotchange event should fire on all first slots of its kind with assigned nodes and their previously-first counterparts in the tree order in a connected open mode shadow root 

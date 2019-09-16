@@ -31,7 +31,7 @@ test(function() {
     assert_throws(new TypeError(), () => CSS.registerProperty({name: '--no-inherits'}));
     assert_throws(new TypeError(), () => CSS.registerProperty({inherits: false}));
     // Repeated name
-    assert_throws(null,
+    assert_throws(DOMException.INVALID_MODIFICATION_ERR,
         () => CSS.registerProperty({name: '--syntax-test-3', inherits: false, initialValue: '500px'}));
 }, "registerProperty always allows omitting initialValue and syntax, requires name and inherits");
 test(function() {

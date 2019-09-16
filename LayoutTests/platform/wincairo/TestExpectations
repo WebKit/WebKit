@@ -552,8 +552,11 @@ imported/blink/plugins/empty-per-context-data.html [ Skip ]
 
 # ReadableByteStreamController is not implemented
 streams/readable-byte-stream-controller.html [ Skip ]
+streams/readable-byte-stream-controller-worker.html [ Skip ]
 streams/readable-stream-byob-reader.html [ Skip ]
+streams/readable-stream-byob-reader-worker.html [ Skip ]
 streams/readable-stream-byob-request.html [ Skip ]
+streams/readable-stream-byob-request-worker.html [ Skip ]
 
 # image diffs off by 0.0x%
 css2.1/20110323/border-conflict-element-021a.htm [ ImageOnlyFailure ]

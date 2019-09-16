@@ -16,7 +16,7 @@ function templatedRSClosed(label, factory) {
     test(function() {
     }, 'Running templatedRSClosed with ' + label);
 
-    var test1 = async_test('piping to a WritableStream in the writable state should close the writable stream');
+    var test1 = async_test(label + ': piping to a WritableStream in the writable state should close the writable stream');
     test1.step(function() {
         var closeCalled = false;
 
@@ -49,7 +49,7 @@ function templatedRSClosed(label, factory) {
         })).catch(test1.step_func(function(e) { assert_unreached(e); }));
     });
 
-    var test2 = async_test('piping to a WritableStream in the writable state with { preventClose: true } should do nothing');
+    var test2 = async_test(label + ': piping to a WritableStream in the writable state with { preventClose: true } should do nothing');
     test2.step(function() {
         var rs = factory();
 
@@ -84,7 +84,7 @@ function templatedRSErrored(label, factory, error) {
     test(function() {
     }, 'Running templatedRSErrored with ' + label);
 
-    var test1 = async_test('piping to a WritableStream in the writable state should abort the writable stream');
+    var test1 = async_test(label + ': piping to a WritableStream in the writable state should abort the writable stream');
     test1.step(function() {
         var rs = factory();
 
@@ -123,7 +123,7 @@ function templatedRSErroredAsyncOnly(label, factory, error) {
     test(function() {
     }, 'Running templatedRSErroredAsyncOnly with ' + label);
 
-    var test1 = async_test('piping with no options');
+    var test1 = async_test(label + ': piping with no options');
     test1.step(function() {
         var closeCalled = false;
 
@@ -148,7 +148,7 @@ function templatedRSErroredAsyncOnly(label, factory, error) {
         }))
     });
 
-    var test2 = async_test('piping with { preventAbort: false }');
+    var test2 = async_test(label + ': piping with { preventAbort: false }');
     test2.step(function() {
         var abortCalled = false;
         var closeRejected = false;
@@ -176,7 +176,7 @@ function templatedRSErroredAsyncOnly(label, factory, error) {
         }));
     });
 
-    var test3 = async_test('piping with { preventAbort: true }');
+    var test3 = async_test(label + ': piping with { preventAbort: true }');
     test3.step(function() {
         var rs = factory();
 
@@ -198,7 +198,7 @@ function templatedRSTwoChunksClosed(label, factory, error) {
     test(function() {
     }, 'Running templatedRSTwoChunksClosed with ' + label);
 
-    var test1 = async_test('piping with no options and no destination errors');
+    var test1 = async_test(label + ': piping with no options and no destination errors');
     test1.step(function() {
         var rs = factory();
 
@@ -219,7 +219,7 @@ function templatedRSTwoChunksClosed(label, factory, error) {
         }));
     });
 
-    var test2 = async_test('piping with { preventClose: false } and no destination errors');
+    var test2 = async_test(label + ': piping with { preventClose: false } and no destination errors');
     test2.step(function() {
         var rs = factory();
 
@@ -240,7 +240,7 @@ function templatedRSTwoChunksClosed(label, factory, error) {
         }));
     });
 
-    var test3 = async_test('piping with { preventClose: true } and no destination errors');
+    var test3 = async_test(label + ': piping with { preventClose: true } and no destination errors');
     test3.step(function() {
         var rs = factory();
 
@@ -264,7 +264,7 @@ function templatedRSTwoChunksClosed(label, factory, error) {
         }));
     });
 
-    var test4 = async_test('piping with { preventClose: false } and a destination with that errors synchronously');
+    var test4 = async_test(label + ': piping with { preventClose: false } and a destination with that errors synchronously');
     test4.step(function() {
         var rs = factory();
 
@@ -290,7 +290,7 @@ function templatedRSTwoChunksClosed(label, factory, error) {
         );
     });
 
-    var test5 = async_test('piping with { preventClose: true } and a destination with that errors synchronously');
+    var test5 = async_test(label + ': piping with { preventClose: true } and a destination with that errors synchronously');
     test5.step(function() {
         var rs = factory();
 
@@ -316,7 +316,7 @@ function templatedRSTwoChunksClosed(label, factory, error) {
         );
     });
 
-    var test6 = async_test('piping with { preventClose: true } and a destination that errors on the last chunk');
+    var test6 = async_test(label + ': piping with { preventClose: true } and a destination that errors on the last chunk');
     test6.step(function() {
         var rs = factory();
 

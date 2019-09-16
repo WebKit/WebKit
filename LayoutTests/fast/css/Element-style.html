@@ -17,7 +17,7 @@ test(() => {
     assert_idl_attribute(testSVG, "style", "SVGElement has 'style' attribute");
     assert_own_property(SVGElement.prototype, "style", "'style' is on SVGElement prototype");
 
-    assert_not_exists("Element.prototype", "style", "'style' is not on Element prototype");
+    assert_not_own_property("Element.prototype", "style", "'style' is not on Element prototype");
 }, "'style' property location");
 
 test(() => {

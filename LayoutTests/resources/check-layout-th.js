@@ -161,6 +161,8 @@ function checkExpectedValues(t, node, prefix)
     return output.checked;
 }
 
+let testNumbers = new Map();
+
 window.checkLayout = function(selectorList, outputContainer)
 {
     if (!selectorList) {
@@ -168,7 +170,11 @@ window.checkLayout = function(selectorList, outputContainer)
         return;
     }
     var nodes = document.querySelectorAll(selectorList);
-    var testNumber = 0;
+
+    let testNumber = 0;
+    if (testNumbers.has("" + selectorList))
+        testNumber = testNumbers.get("" + selectorList);
+
     nodes = Array.prototype.slice.call(nodes);
     nodes.reverse();
     var checkedLayout = false;
@@ -189,6 +195,9 @@ window.checkLayout = function(selectorList, outputContainer)
     if (!checkedLayout) {
         console.error("No valid data-* attributes found in selector list : " + selectorList);
     }
+
+    testNumbers.set("" + selectorList, testNumber);
+
     done();
 };
 

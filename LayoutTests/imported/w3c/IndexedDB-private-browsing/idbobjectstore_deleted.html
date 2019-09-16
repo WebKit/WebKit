@@ -28,16 +28,16 @@
         db.deleteObjectStore("store");
         assert_equals(db.objectStoreNames.length, 0, "objectStoreNames.length after delete");
 
-        assert_throws(null, function() { objStore.add(2); });
-        assert_throws(null, function() { objStore.put(3); });
-        assert_throws(null, function() { objStore.get(1); });
-        assert_throws(null, function() { objStore.clear(); });
-        assert_throws(null, function() { objStore.count(); });
-        assert_throws(null, function() { objStore.delete(1); });
-        assert_throws(null, function() { objStore.openCursor(); });
-        assert_throws(null, function() { objStore.index("idx"); });
-        assert_throws(null, function() { objStore.deleteIndex("idx"); });
-        assert_throws(null, function() { objStore.createIndex("idx2", "a"); });
+        assert_throws(DOMException.INVALID_STATE_ERR, function() { objStore.add(2); });
+        assert_throws(DOMException.INVALID_STATE_ERR, function() { objStore.put(3); });
+        assert_throws(DOMException.INVALID_STATE_ERR, function() { objStore.get(1); });
+        assert_throws(DOMException.INVALID_STATE_ERR, function() { objStore.clear(); });
+        assert_throws(DOMException.INVALID_STATE_ERR, function() { objStore.count(); });
+        assert_throws(DOMException.INVALID_STATE_ERR, function() { objStore.delete(1); });
+        assert_throws(DOMException.INVALID_STATE_ERR, function() { objStore.openCursor(); });
+        assert_throws(DOMException.INVALID_STATE_ERR, function() { objStore.index("idx"); });
+        assert_throws(DOMException.INVALID_STATE_ERR, function() { objStore.deleteIndex("idx"); });
+        assert_throws(DOMException.INVALID_STATE_ERR, function() { objStore.createIndex("idx2", "a"); });
     }
 
     open_rq.onsuccess = function() {

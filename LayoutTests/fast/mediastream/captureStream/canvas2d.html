@@ -19,7 +19,7 @@ function checkCanvas(canvas, stream)
         video.onplay = () => {
             canvas2.getContext("2d").drawImage(video, 0 ,0);
             try {
-                assert_array_equals(canvas.getContext("2d").getImageData(0 ,0, 100, 100), canvas2.getContext("2d").getImageData(0, 0, 100, 100));
+                assert_array_equals(canvas.getContext("2d").getImageData(0 ,0, 100, 100).data, canvas2.getContext("2d").getImageData(0, 0, 100, 100).data);
             } catch(e) {
                 reject(e);
                 return;
