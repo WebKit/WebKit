@@ -1,3 +1,20 @@
+2019-09-16  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style: Fix warning message for std::make_unique<typename[]>
+        <https://webkit.org/b/201818>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_wtf_make_unique): Emit different error message when using
+        std::make_unique<>() to create an array.  Personalize the error
+        message by including the original type name, which also
+        demonstrates that WTF::makeUniqueArray<>() does not need square
+        brackets for its typename.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_wtf_make_unique): Add test.
+        (WebKitStyleTest.test_wtf_make_unique_array): Ditto.
+
 2019-09-16  Andres Gonzalez  <andresg_22@apple.com>
 
         Rename [WebAccessibilityObjectWrapper _accessibilityInsertText] to accessibilityInsertText to match accessibility client.

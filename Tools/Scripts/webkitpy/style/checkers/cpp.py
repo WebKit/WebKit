@@ -2411,11 +2411,18 @@ def check_wtf_make_unique(clean_lines, line_number, file_state, error):
 
     line = clean_lines.elided[line_number]  # Get rid of comments and strings.
 
-    using_std_make_unique = search(r'\bstd::make_unique\s*\<', line)
-    if not using_std_make_unique:
+    using_std_make_unique_search = search(r'\bstd::make_unique\s*<([^(]+)', line)
+    if not using_std_make_unique_search:
         return
 
-    error(line_number, 'runtime/wtf_make_unique', 4, "Use 'WTF::makeUnique<>' instead of 'std::make_unique<>'.")
+    typename = using_std_make_unique_search.group(1).strip()[:-1].strip()
+    if typename.endswith('[]'):
+        error(line_number, 'runtime/wtf_make_unique', 4,
+              "Use 'WTF::makeUniqueArray<{new_typename}>' instead of 'std::make_unique<{original_typename}>'.".format(
+                  new_typename=typename[:-2], original_typename=typename))
+    else:
+        error(line_number, 'runtime/wtf_make_unique', 4,
+              "Use 'WTF::makeUnique<{typename}>' instead of 'std::make_unique<{typename}>'.".format(typename=typename))
 
 
 def check_ctype_functions(clean_lines, line_number, file_state, error):

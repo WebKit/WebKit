@@ -5217,6 +5217,42 @@ class WebKitStyleTest(CppStyleTestBase):
             '  [runtime/max_min_macros] [4]',
             'foo.h')
 
+    def test_wtf_make_unique(self):
+        self.assert_lint(
+             'std::unique_ptr<Foo> foo = WTF::makeUnique<Foo>();',
+             '',
+             'foo.cpp')
+
+        self.assert_lint(
+            'std::unique_ptr<Foo> foo = std::make_unique<Foo>();',
+            "Use 'WTF::makeUnique<Foo>' instead of 'std::make_unique<Foo>'."
+            "  [runtime/wtf_make_unique] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'std::unique_ptr<Foo> foo = std::make_unique<Foo>();',
+            "Use 'WTF::makeUnique<Foo>' instead of 'std::make_unique<Foo>'."
+            "  [runtime/wtf_make_unique] [4]",
+            'foo.mm')
+
+    def test_wtf_make_unique_array(self):
+        self.assert_lint(
+             'WTF::UniqueArray<uint32_t> array = WTF::makeUniqueArray<uint32_t>(10);',
+             '',
+             'foo.cpp')
+
+        self.assert_lint(
+            'std::unique_ptr<uint32_t[]> array = std::make_unique<uint32_t[]>(10);',
+            "Use 'WTF::makeUniqueArray<uint32_t>' instead of 'std::make_unique<uint32_t[]>'."
+            "  [runtime/wtf_make_unique] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'std::unique_ptr<uint32_t[]> array = std::make_unique<uint32_t[]>(10);',
+            "Use 'WTF::makeUniqueArray<uint32_t>' instead of 'std::make_unique<uint32_t[]>'."
+            "  [runtime/wtf_make_unique] [4]",
+            'foo.mm')
+
     def test_wtf_move(self):
         self.assert_lint(
              'A a = WTFMove(b);',
