@@ -1,5 +1,20 @@
 2019-09-16  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, fix several css-dark-mode tests to run properly after testharness.js update in r249918.
+
+        * css-dark-mode/color-scheme-css-expected.txt:
+        * css-dark-mode/color-scheme-css.html:
+        * css-dark-mode/color-scheme-meta-expected.txt:
+        * css-dark-mode/color-scheme-meta.html:
+        * css-dark-mode/color-scheme-scrollbar-expected.txt:
+        * css-dark-mode/color-scheme-scrollbar.html:
+        * css-dark-mode/older-syntax/supported-color-schemes-css-expected.txt:
+        * css-dark-mode/older-syntax/supported-color-schemes-css.html:
+        * css-dark-mode/older-syntax/supported-color-schemes-meta-expected.txt:
+        * css-dark-mode/older-syntax/supported-color-schemes-meta.html:
+
+2019-09-16  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, skip imported/w3c/web-platform-tests/html/browsers/offline/application-cache-api/api_update.https.html.
 
         This test is a flaky timeout since it was imported in r249886.

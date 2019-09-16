@@ -58,7 +58,7 @@ test(function() {
 test(function() {
     if (window.internals)
         internals.settings.setUseDarkAppearance(true);
-}, "Dark color scheme enabled");
+}, "Dark color scheme enabled 2");
 
 test(function() {
     // The semantic text color should be white.
@@ -68,7 +68,7 @@ test(function() {
 test(function() {
     if (window.internals)
         internals.settings.setUseDarkAppearance(false);
-}, "Light color scheme enabled");
+}, "Light color scheme enabled 2");
 
 test(function() {
     document.getElementById("meta").content = "dark";
@@ -82,7 +82,7 @@ test(function() {
 test(function() {
     if (window.internals)
         internals.settings.setUseDarkAppearance(true);
-}, "Dark color scheme enabled");
+}, "Dark color scheme enabled 3");
 
 test(function() {
     // The semantic text color should be white still.
@@ -96,7 +96,7 @@ test(function() {
 test(function() {
     // The semantic text color should be black again.
     test_color_is_black("test1");
-}, "Element colors are correct in dark color scheme with only light color scheme");
+}, "Element colors are correct in dark color scheme with only light color scheme 2");
 
 test(function() {
     document.getElementById("meta").content = "";
