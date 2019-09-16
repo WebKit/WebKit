@@ -1026,6 +1026,7 @@ void SamplingProfiler::reportDataToOptionFile()
 {
     if (m_needsReportAtExit) {
         m_needsReportAtExit = false;
+        JSLockHolder holder(m_vm);
         const char* path = Options::samplingProfilerPath();
         StringPrintStream pathOut;
         pathOut.print(path, "/");

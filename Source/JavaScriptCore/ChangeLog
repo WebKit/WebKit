@@ -1,3 +1,20 @@
+2019-09-16  Tadeu Zagallo  <tzagallo@apple.com>
+
+        SamplingProfiler should hold API lock before reporting results
+        https://bugs.webkit.org/show_bug.cgi?id=201829
+
+        Reviewed by Yusuke Suzuki.
+
+        Right now, the SamplingProfiler crashes in debug builds when trying
+        report results if it finds a JSFunction on the stack that doesn't have
+        RareData. It tries to allocate the function's rare data when we call
+        getOwnPropertySlot in order to get the function's name, but that fails
+        because we are not holding the VM's API lock. We fix it by just holding
+        the lock before reporting the results.
+
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::reportDataToOptionFile):
+
 2019-09-16  David Kilzer  <ddkilzer@apple.com>
 
         [JSC] REGRESSION (r248938): Leak of uint32_t arrays in testFastForwardCopy32()
