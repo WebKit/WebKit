@@ -474,8 +474,8 @@ void TextIterator::advance()
 
     if (!m_textBox && m_remainingTextBox) {
         m_textBox = m_remainingTextBox;
-        m_remainingTextBox = nullptr;
-        m_firstLetterText = nullptr;
+        m_remainingTextBox = { };
+        m_firstLetterText = { };
         m_offset = 0;
     }
     // handle remembered text box
@@ -574,25 +574,6 @@ static bool hasVisibleTextNode(RenderText& renderer)
     return false;
 }
 
-static unsigned textNodeOffsetInFlow(const Text& firstTextNodeInRange)
-{
-    // Calculate the text offset for simple lines.
-    RenderObject* renderer = firstTextNodeInRange.renderer();
-    if (!renderer)
-        return 0;
-    unsigned textOffset = 0;
-    for (renderer = renderer->previousSibling(); renderer; renderer = renderer->previousSibling()) {
-        if (is<RenderText>(renderer))
-            textOffset += downcast<RenderText>(renderer)->text().length();
-    }
-    return textOffset;
-}
-
-static bool isNewLineOrTabCharacter(UChar character)
-{
-    return character == '\n' || character == '\t';
-}
-
 bool TextIterator::handleTextNode()
 {
     Text& textNode = downcast<Text>(*m_node);
@@ -617,7 +598,7 @@ bool TextIterator::handleTextNode()
                 String firstLetter = m_firstLetterText->text();
                 emitText(textNode, *m_firstLetterText, m_offset, m_offset + firstLetter.length());
                 m_firstLetterText = nullptr;
-                m_textBox = nullptr;
+                m_textBox = { };
                 return false;
             }
         }
@@ -634,102 +615,13 @@ bool TextIterator::handleTextNode()
         return true;
     }
 
-    if (const auto* layout = renderer.simpleLineLayout()) {
-        if (renderer.style().visibility() != Visibility::Visible && !(m_behavior & TextIteratorIgnoresStyleVisibility))
-            return true;
-        ASSERT(renderer.parent());
-        ASSERT(is<RenderBlockFlow>(*renderer.parent()));
-        const auto& blockFlow = downcast<RenderBlockFlow>(*renderer.parent());
-        // Use the simple layout runs to iterate over the text content.
-        bool isNewTextNode = m_previousSimpleTextNodeInFlow && m_previousSimpleTextNodeInFlow != &textNode;
-        // Simple line layout run positions are all absolute to the parent flow.
-        // Offsetting is required when multiple renderers are present.
-        m_accumulatedSimpleTextLengthInFlow += isNewTextNode ? m_previousSimpleTextNodeInFlow->renderer()->text().length() : 0;
-        m_previousSimpleTextNodeInFlow = &textNode;
-
-        unsigned endPosition = (m_node == m_endContainer) ? static_cast<unsigned>(m_endOffset) : rendererText.length();
-        if (!m_flowRunResolverCache || &m_flowRunResolverCache->flow() != &blockFlow) {
-            m_accumulatedSimpleTextLengthInFlow = m_flowRunResolverCache ? 0 : textNodeOffsetInFlow(textNode);
-            m_flowRunResolverCache = makeUnique<SimpleLineLayout::RunResolver>(blockFlow, *layout);
-        }
-        // Skip to m_offset position.
-        auto range = m_flowRunResolverCache->rangeForRenderer(renderer);
-        auto it = range.begin();
-        auto end = range.end();
-        auto startPosition = static_cast<unsigned>(m_offset) + m_accumulatedSimpleTextLengthInFlow;
-        while (it != end && (*it).end() <= startPosition)
-            ++it;
-        if (m_nextRunNeedsWhitespace && rendererText[m_offset - 1] == '\n') {
-            emitCharacter(' ', textNode, nullptr, m_offset, m_offset + 1);
-            return it == end;
-        }
-        if (it == end) {
-            // Collapsed trailing whitespace.
-            m_offset = endPosition;
-            m_lastTextNodeEndedWithCollapsedSpace = true;
-            return true;
-        }
-        if (m_nextRunNeedsWhitespace) {
-            emitCharacter(' ', textNode, nullptr, m_offset, m_offset + 1);
-            return false;
-        }
-        // If the position we are looking for is to the left of the renderer's first run, it could mean that
-        // the runs and the renderers are out of sync (e.g. we skipped a renderer in between).
-        // Better bail out at this point.
-        auto run = *it;
-        if (run.start() > startPosition) {
-            ASSERT(m_flowRunResolverCache);
-            if (&(rendererForPosition(m_flowRunResolverCache->flowContents(), startPosition)) != &renderer) {
-                ASSERT_NOT_REACHED();
-                return true;
-            }
-        }
-        ASSERT(run.end() - run.start() <= rendererText.length());
-        // contentStart skips leading whitespace.
-        unsigned contentStart = std::max<unsigned>(m_offset, run.start() - m_accumulatedSimpleTextLengthInFlow);
-        unsigned contentEnd = std::min(endPosition, run.end() - m_accumulatedSimpleTextLengthInFlow);
-        ASSERT_WITH_SECURITY_IMPLICATION(contentStart <= contentEnd);
-        // Check if whitespace adjustment is needed when crossing renderer boundary.
-        if (isNewTextNode) {
-            bool lastCharacterIsNotWhitespace = m_lastCharacter && !renderer.style().isCollapsibleWhiteSpace(m_lastCharacter);
-            bool addTrailingWhitespaceForPrevious = m_lastTextNodeEndedWithCollapsedSpace && lastCharacterIsNotWhitespace;
-            bool leadingWhitespaceIsNeededForCurrent = contentStart > static_cast<unsigned>(m_offset) && lastCharacterIsNotWhitespace;
-            if (addTrailingWhitespaceForPrevious || leadingWhitespaceIsNeededForCurrent) {
-                emitCharacter(' ', textNode, nullptr, m_offset, m_offset + 1);
-                return false;
-            }
-        }
-        // \n \t single whitespace characters need replacing so that the new line/tab characters don't show up.
-        unsigned stopPosition = contentStart;
-        while (stopPosition < contentEnd && !isNewLineOrTabCharacter(rendererText[stopPosition]))
-            ++stopPosition;
-        // Emit the text up to the new line/tab character.
-        if (stopPosition < contentEnd) {
-            if (stopPosition == contentStart) {
-                emitCharacter(' ', textNode, nullptr, contentStart, contentStart + 1);
-                m_offset = contentStart + 1;
-                return false;
-            }
-            emitText(textNode, renderer, contentStart, stopPosition);
-            m_offset = stopPosition + 1;
-            m_nextRunNeedsWhitespace = true;
-            return false;
-        }
-        emitText(textNode, renderer, contentStart, contentEnd);
-        // When line ending with collapsed whitespace is present, we need to carry over one whitespace: foo(end of line)bar -> foo bar (otherwise we would end up with foobar).
-        m_nextRunNeedsWhitespace = run.isEndOfLine() && contentEnd < endPosition && renderer.style().isCollapsibleWhiteSpace(rendererText[contentEnd]);
-        m_offset = contentEnd;
-        return static_cast<unsigned>(m_offset) == endPosition;
-    }
-
-    if (renderer.firstTextBox())
-        m_textBox = renderer.firstTextBox();
+    m_textBox = m_lineLayoutProvider.firstTextBoxFor(renderer);
 
     bool shouldHandleFirstLetter = !m_handledFirstLetter && is<RenderTextFragment>(renderer) && !m_offset;
     if (shouldHandleFirstLetter)
         handleTextNodeFirstLetter(downcast<RenderTextFragment>(renderer));
 
-    if (!renderer.firstTextBox() && rendererText.length() && !shouldHandleFirstLetter) {
+    if (!m_textBox && rendererText.length() && !shouldHandleFirstLetter) {
         if (renderer.style().visibility() != Visibility::Visible && !(m_behavior & TextIteratorIgnoresStyleVisibility))
             return false;
         m_lastTextNodeEndedWithCollapsedSpace = true; // entire block is collapsed space
@@ -744,7 +636,7 @@ bool TextIterator::handleTextNode()
             m_sortedTextBoxes.append(textBox);
         std::sort(m_sortedTextBoxes.begin(), m_sortedTextBoxes.end(), InlineTextBox::compareByStart);
         m_sortedTextBoxesPosition = 0;
-        m_textBox = m_sortedTextBoxes.isEmpty() ? nullptr : m_sortedTextBoxes[0];
+        m_textBox = m_lineLayoutProvider.iteratorForInlineTextBox(m_sortedTextBoxes.isEmpty() ? nullptr : m_sortedTextBoxes[0]);
     }
 
     handleTextBox();
@@ -757,18 +649,25 @@ void TextIterator::handleTextBox()
 
     auto& renderer = m_firstLetterText ? *m_firstLetterText : *textNode.renderer();
     if (renderer.style().visibility() != Visibility::Visible && !(m_behavior & TextIteratorIgnoresStyleVisibility)) {
-        m_textBox = nullptr;
+        m_textBox = { };
         return;
     }
+
+    auto firstTextBox = [&] {
+        if (renderer.containsReversedText())
+            return m_lineLayoutProvider.iteratorForInlineTextBox(m_sortedTextBoxes.isEmpty() ? nullptr : m_sortedTextBoxes[0]);
+
+        return m_lineLayoutProvider.firstTextBoxFor(renderer);
+    }();
+
     String rendererText = renderer.text();
     unsigned start = m_offset;
     unsigned end = (&textNode == m_endContainer) ? static_cast<unsigned>(m_endOffset) : UINT_MAX;
     while (m_textBox) {
-        unsigned textBoxStart = m_textBox->start();
+        unsigned textBoxStart = m_textBox->localStartOffset();
         unsigned runStart = std::max(textBoxStart, start);
 
         // Check for collapsed space at the start of this run.
-        InlineTextBox* firstTextBox = renderer.containsReversedText() ? (m_sortedTextBoxes.isEmpty() ? nullptr : m_sortedTextBoxes[0]) : renderer.firstTextBox();
         bool needSpace = m_lastTextNodeEndedWithCollapsedSpace || (m_textBox == firstTextBox && textBoxStart == runStart && runStart);
         if (needSpace && !renderer.style().isCollapsibleWhiteSpace(m_lastCharacter) && m_lastCharacter) {
             if (m_lastTextNode == &textNode && runStart && rendererText[runStart - 1] == ' ') {
@@ -780,17 +679,19 @@ void TextIterator::handleTextBox()
                 emitCharacter(' ', textNode, nullptr, runStart, runStart);
             return;
         }
-        unsigned textBoxEnd = textBoxStart + m_textBox->len();
+        unsigned textBoxEnd = textBoxStart + m_textBox->length();
         unsigned runEnd = std::min(textBoxEnd, end);
         
         // Determine what the next text box will be, but don't advance yet
-        InlineTextBox* nextTextBox = nullptr;
+        LineLayoutInterface::TextBoxIterator nextTextBox;
         if (renderer.containsReversedText()) {
+            // FIXME: Handle reversed text in the line layout iterator.
             if (m_sortedTextBoxesPosition + 1 < m_sortedTextBoxes.size())
-                nextTextBox = m_sortedTextBoxes[m_sortedTextBoxesPosition + 1];
-        } else 
-            nextTextBox = m_textBox->nextTextBox();
-        ASSERT(!nextTextBox || &nextTextBox->renderer() == &renderer);
+                nextTextBox = m_lineLayoutProvider.iteratorForInlineTextBox(m_sortedTextBoxes[m_sortedTextBoxesPosition + 1]);
+        } else {
+            nextTextBox = m_textBox;
+            ++nextTextBox;
+        }
 
         if (runStart < runEnd) {
             // Handle either a single newline character (which becomes a space),
@@ -817,7 +718,7 @@ void TextIterator::handleTextBox()
                 return;
 
             // Advance and return
-            unsigned nextRunStart = nextTextBox ? nextTextBox->start() : rendererText.length();
+            unsigned nextRunStart = nextTextBox ? nextTextBox->localStartOffset() : rendererText.length();
             if (nextRunStart > runEnd)
                 m_lastTextNodeEndedWithCollapsedSpace = true; // collapsed space between runs or at the end
             m_textBox = nextTextBox;
@@ -832,8 +733,8 @@ void TextIterator::handleTextBox()
     }
     if (!m_textBox && m_remainingTextBox) {
         m_textBox = m_remainingTextBox;
-        m_remainingTextBox = nullptr;
-        m_firstLetterText = nullptr;
+        m_remainingTextBox = { };
+        m_firstLetterText = { };
         m_offset = 0;
         handleTextBox();
     }
@@ -856,7 +757,7 @@ void TextIterator::handleTextNodeFirstLetter(RenderTextFragment& renderer)
         if (auto* firstLetterText = firstRenderTextInFirstLetter(firstLetter)) {
             m_handledFirstLetter = true;
             m_remainingTextBox = m_textBox;
-            m_textBox = firstLetterText->firstTextBox();
+            m_textBox = m_lineLayoutProvider.firstTextBoxFor(*firstLetterText);
             m_sortedTextBoxes.clear();
             m_firstLetterText = firstLetterText;
         }
@@ -1222,7 +1123,6 @@ void TextIterator::emitCharacter(UChar character, Node& characterNode, Node* off
     m_text = m_copyableText.text();
     m_lastCharacter = character;
     m_lastTextNodeEndedWithCollapsedSpace = false;
-    m_nextRunNeedsWhitespace = false;
 }
 
 void TextIterator::emitText(Text& textNode, RenderText& renderer, int textStartOffset, int textEndOffset)
@@ -1247,7 +1147,6 @@ void TextIterator::emitText(Text& textNode, RenderText& renderer, int textStartO
     m_text = m_copyableText.text();
 
     m_lastTextNodeEndedWithCollapsedSpace = false;
-    m_nextRunNeedsWhitespace = false;
     m_hasEmitted = true;
 }
 

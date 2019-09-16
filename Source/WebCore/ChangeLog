@@ -1,3 +1,81 @@
+2019-09-16  Antti Koivisto  <antti@apple.com>
+
+        Eliminate separate simple line layout path from TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=201760
+
+        Reviewed by Zalan Bujtas.
+
+        Use the new line layout iterator to implement linebox traversal in TextIterator.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::advance):
+        (WebCore::TextIterator::handleTextNode):
+        (WebCore::TextIterator::handleTextBox):
+
+        InlineTextBox* -> LineLayoutInterface::TextBoxIterator
+        Delete the seperate simple line layout path.
+
+        (WebCore::TextIterator::handleTextNodeFirstLetter):
+        (WebCore::TextIterator::emitCharacter):
+        (WebCore::TextIterator::emitText):
+        * editing/TextIterator.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        (WebCore::write):
+        * rendering/SimpleLineLayoutResolver.cpp:
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::Iterator):
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::advanceLines):
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::resolver const):
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::inQuirksMode const):
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::operator== const):
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::simpleRun const):
+
+        Make RunResolver::Iterator copyable (so TextBoxIterator becomes copyable too).
+
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::findNextTextFragment):
+        * rendering/line/LineLayoutInterfaceTextBoxes.cpp:
+        (WebCore::LineLayoutInterface::TextBox::rect const):
+        (WebCore::LineLayoutInterface::TextBox::logicalRect const):
+        (WebCore::LineLayoutInterface::TextBox::hasHyphen const):
+        (WebCore::LineLayoutInterface::TextBox::isLeftToRightDirection const):
+        (WebCore::LineLayoutInterface::TextBox::dirOverride const):
+        (WebCore::LineLayoutInterface::TextBox::text const):
+        (WebCore::LineLayoutInterface::TextBox::localStartOffset const):
+        (WebCore::LineLayoutInterface::TextBox::localEndOffset const):
+        (WebCore::LineLayoutInterface::TextBox::length const):
+
+        Add offset and length functions.
+
+        (WebCore::LineLayoutInterface::TextBox::iterator const):
+        (WebCore::LineLayoutInterface::TextBoxIterator::TextBoxIterator):
+        (WebCore::LineLayoutInterface::TextBoxIterator::traverseNext):
+        (WebCore::LineLayoutInterface::TextBoxIterator::operator== const):
+        (WebCore::LineLayoutInterface::TextBoxIterator::atEnd const):
+        (WebCore::LineLayoutInterface::Provider::firstTextBoxFor):
+        (WebCore::LineLayoutInterface::Provider::textBoxRangeFor):
+        (WebCore::LineLayoutInterface::Provider::iteratorForInlineTextBox):
+
+        Add Provider class for making iterators. It constructs and keeps SimpleLineLayout::Resolvers alive during traversal as needed.
+
+        * rendering/line/LineLayoutInterfaceTextBoxes.h:
+        (WebCore::LineLayoutInterface::TextBoxIterator::TextBoxIterator):
+        (WebCore::LineLayoutInterface::TextBoxIterator::operator bool const):
+        (WebCore::LineLayoutInterface::TextBoxIterator::operator== const):
+        (WebCore::LineLayoutInterface::TextBoxIterator::operator!= const):
+        (WebCore::LineLayoutInterface::TextBoxIterator::operator* const):
+        (WebCore::LineLayoutInterface::TextBoxIterator::operator-> const):
+
+        Make TextBoxIterator privately inherit TextBox. This way we don't need to construct temporaries and can easily implement operator->.
+
+        (WebCore::LineLayoutInterface::TextBoxRange::TextBoxRange):
+        (WebCore::LineLayoutInterface::TextBoxRange::begin const):
+        (WebCore::LineLayoutInterface::TextBoxRange::end const):
+
+        Use separate end() type of C++17 ranges.
+
 2019-09-16  Andres Gonzalez  <andresg_22@apple.com>
 
         Expose misspelling ranges for editable content to accessibility clients.

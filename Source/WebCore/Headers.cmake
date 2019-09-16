@@ -1303,7 +1303,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/SelectionRangeData.h
     rendering/SimpleLineLayout.h
     rendering/SimpleLineLayoutCoverage.h
+    rendering/SimpleLineLayoutFlowContents.h
+    rendering/SimpleLineLayoutResolver.h
 
+    rendering/line/LineLayoutInterfaceTextBoxes.h
     rendering/line/LineWidth.h
     rendering/line/TrailingObjects.h
 

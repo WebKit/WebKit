@@ -27,6 +27,7 @@
 
 #include "FloatRect.h"
 #include "SimpleLineLayoutResolver.h"
+#include <wtf/HashMap.h>
 #include <wtf/IteratorRange.h>
 #include <wtf/Variant.h>
 #include <wtf/text/StringView.h>
@@ -34,6 +35,7 @@
 namespace WebCore {
 
 class InlineTextBox;
+class Provider;
 class RenderText;
 
 namespace LineLayoutInterface {
@@ -41,12 +43,10 @@ namespace LineLayoutInterface {
 class TextBoxContext;
 class TextBoxIterator;
 
+struct EndIterator { };
+
 class TextBox {
 public:
-    TextBox(const TextBoxIterator& iterator)
-        : m_iterator(iterator)
-    { }
-
     FloatRect rect() const;
     FloatRect logicalRect() const;
 
@@ -56,45 +56,83 @@ public:
 
     StringView text() const;
 
+    // These offsets are relative to the text renderer (not flow).
+    unsigned localStartOffset() const;
+    unsigned localEndOffset() const;
+    unsigned length() const;
+
+protected:
+    TextBox() = default;
+    TextBox(const TextBox&) = default;
+    TextBox(TextBox&&) = default;
+    TextBox& operator=(const TextBox&) = default;
+    TextBox& operator=(TextBox&&) = default;
+
 private:
-    const TextBoxIterator& m_iterator;
+    const TextBoxIterator& iterator() const;
 };
 
-class TextBoxIterator {
+class TextBoxIterator : private TextBox {
 public:
-    TextBoxIterator(const InlineTextBox*);
-    TextBoxIterator(SimpleLineLayout::RunResolver::Iterator);
+    TextBoxIterator() : m_pathVariant(nullptr) { };
+    explicit TextBoxIterator(const InlineTextBox*);
+    TextBoxIterator(SimpleLineLayout::RunResolver::Iterator, SimpleLineLayout::RunResolver::Iterator end);
 
     TextBoxIterator& operator++() { return traverseNext(); }
+
+    explicit operator bool() const { return !atEnd(); }
 
     bool operator==(const TextBoxIterator&) const;
     bool operator!=(const TextBoxIterator& other) const { return !(*this == other); }
 
-    TextBox operator*() const { return { *this }; }
+    bool operator==(EndIterator) const { return atEnd(); }
+    bool operator!=(EndIterator) const { return !atEnd(); }
+
+    const TextBox& operator*() const { return *this; }
+    const TextBox* operator->() const { return this; }
+
+    bool atEnd() const;
 
 private:
     friend class TextBox;
 
     TextBoxIterator& traverseNext();
 
-    Variant<SimpleLineLayout::RunResolver::Iterator, const InlineTextBox*> m_pathVariant;
+    struct SimplePath {
+        SimpleLineLayout::RunResolver::Iterator iterator;
+        SimpleLineLayout::RunResolver::Iterator end;
+    };
+    Variant<SimplePath, const InlineTextBox*> m_pathVariant;
 };
 
 class TextBoxRange {
 public:
-    TextBoxRange(const RenderText&);
+    TextBoxRange(TextBoxIterator begin)
+        : m_begin(begin)
+    {
+    }
 
-    TextBoxIterator begin() const { return m_range.begin(); }
-    TextBoxIterator end() const { return m_range.end(); }
+    TextBoxIterator begin() const { return m_begin; }
+    EndIterator end() const { return { }; }
 
 private:
-    friend class TextBoxIterator;
-
-    Optional<SimpleLineLayout::RunResolver> m_simpleLineRunResolver;
-    WTF::IteratorRange<TextBoxIterator> m_range;
+    TextBoxIterator m_begin;
 };
 
-TextBoxRange textBoxes(const RenderText&);
+class Provider {
+public:
+    Provider();
+    ~Provider();
+
+    TextBoxIterator firstTextBoxFor(const RenderText&);
+    TextBoxRange textBoxRangeFor(const RenderText&);
+
+    // FIXME: Remove.
+    TextBoxIterator iteratorForInlineTextBox(const InlineTextBox*);
+
+private:
+    HashMap<const RenderBlockFlow*, std::unique_ptr<SimpleLineLayout::RunResolver>> m_simpleLineLayoutResolvers;
+};
 
 }
 }

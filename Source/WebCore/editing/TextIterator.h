@@ -28,6 +28,7 @@
 // FIXME: Move each iterator class into a separate header file.
 
 #include "FindOptions.h"
+#include "LineLayoutInterfaceTextBoxes.h"
 #include "Range.h"
 #include "TextIteratorBehavior.h"
 #include <wtf/Vector.h>
@@ -167,10 +168,10 @@ private:
 
     // Used when there is still some pending text from the current node; when these are false and null, we go back to normal iterating.
     Node* m_nodeForAdditionalNewline { nullptr };
-    InlineTextBox* m_textBox { nullptr };
+    LineLayoutInterface::TextBoxIterator m_textBox;
 
     // Used when iterating over :first-letter text to save pointer to remaining text box.
-    InlineTextBox* m_remainingTextBox { nullptr };
+    LineLayoutInterface::TextBoxIterator m_remainingTextBox;
 
     // Used to point to RenderText object for :first-letter.
     RenderText* m_firstLetterText { nullptr };
@@ -180,11 +181,7 @@ private:
     bool m_lastTextNodeEndedWithCollapsedSpace { false };
     UChar m_lastCharacter { 0 };
 
-    // Used to do simple line layout run logic.
-    bool m_nextRunNeedsWhitespace { false };
-    unsigned m_accumulatedSimpleTextLengthInFlow { 0 };
-    Text* m_previousSimpleTextNodeInFlow { nullptr };
-    std::unique_ptr<SimpleLineLayout::RunResolver> m_flowRunResolverCache;
+    LineLayoutInterface::Provider m_lineLayoutProvider;
 
     // Used when text boxes are out of order (Hebrew/Arabic with embedded LTR text)
     Vector<InlineTextBox*> m_sortedTextBoxes;

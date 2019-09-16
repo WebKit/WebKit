@@ -1,3 +1,17 @@
+2019-09-16  Antti Koivisto  <antti@apple.com>
+
+    Eliminate separate simple line layout path from TextIterator
+    https://bugs.webkit.org/show_bug.cgi?id=201760
+
+    Reviewed by Zalan Bujtas.
+
+    * web-platform-tests/css/css-grid/alignment/grid-row-axis-alignment-positioned-items-015-expected.txt:
+    * web-platform-tests/css/css-grid/alignment/grid-row-axis-alignment-positioned-items-016-expected.txt:
+    * web-platform-tests/innerText/getter-expected.txt:
+
+    Two '\t' subtests flip to FAIL because this was only supported on TextIterator simple line layout path.
+    This can now be fixed correctly for both paths.
+
 2019-09-15  Chris Dumez  <cdumez@apple.com>
 
         Re-sync HTML web-platform-tests from upstream

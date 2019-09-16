@@ -1,3 +1,24 @@
+2019-09-16  Antti Koivisto  <antti@apple.com>
+
+        Eliminate separate simple line layout path from TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=201760
+
+        Reviewed by Zalan Bujtas.
+
+        This patch makes simple and complex line layout path results from TextIterator match, causing some whitespace changes.
+
+        * animations/lineheight-animation-expected.txt:
+        * animations/simultaneous-start-transform-expected.txt:
+        * animations/width-using-ems-expected.txt:
+        * compositing/shared-backing/overflow-scroll/absolute-in-stacking-relative-in-scroller-expected.txt:
+        * css3/filters/backdrop/backdrop-filter-does-not-size-properly-absolute-expected.txt:
+        * fast/events/window-events-bubble-expected.txt:
+        * fast/events/window-events-bubble2-expected.txt:
+        * fast/tokenizer/script_extra_close-expected.txt:
+        * legacy-animation-engine/animations/lineheight-animation-expected.txt:
+        * legacy-animation-engine/animations/simultaneous-start-transform-expected.txt:
+        * scrollingcoordinator/scrolling-tree/nested-absolute-in-overflow-expected.txt:
+
 2019-09-16  Andres Gonzalez  <andresg_22@apple.com>
 
         Expose misspelling ranges for editable content to accessibility clients.

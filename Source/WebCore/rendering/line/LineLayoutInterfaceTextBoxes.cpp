@@ -35,46 +35,46 @@ namespace LineLayoutInterface {
 
 FloatRect TextBox::rect() const
 {
-    auto simple = [](const SimpleLineLayout::RunResolver::Iterator simpleLineIterator) {
-        return (*simpleLineIterator).rect();
+    auto simple = [](const TextBoxIterator::SimplePath& path) {
+        return (*path.iterator).rect();
     };
 
     auto complex = [](const InlineTextBox* inlineTextBox) {
         return inlineTextBox->frameRect();
     };
 
-    return WTF::switchOn(m_iterator.m_pathVariant, simple, complex);
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
 }
 
 FloatRect TextBox::logicalRect() const
 {
-    auto simple = [](const SimpleLineLayout::RunResolver::Iterator simpleLineIterator) {
-        return (*simpleLineIterator).rect();
+    auto simple = [](const TextBoxIterator::SimplePath& path) {
+        return (*path.iterator).rect();
     };
 
     auto complex = [](const InlineTextBox* inlineTextBox) {
         return inlineTextBox->logicalFrameRect();
     };
 
-    return WTF::switchOn(m_iterator.m_pathVariant, simple, complex);
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
 }
 
 bool TextBox::hasHyphen() const
 {
-    auto simple = [](const SimpleLineLayout::RunResolver::Iterator simpleLineIterator) {
-        return (*simpleLineIterator).hasHyphen();
+    auto simple = [](const TextBoxIterator::SimplePath& path) {
+        return (*path.iterator).hasHyphen();
     };
 
     auto complex = [](const InlineTextBox* inlineTextBox) {
         return inlineTextBox->hasHyphen();
     };
 
-    return WTF::switchOn(m_iterator.m_pathVariant, simple, complex);
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
 }
 
 bool TextBox::isLeftToRightDirection() const
 {
-    auto simple = [](const SimpleLineLayout::RunResolver::Iterator) {
+    auto simple = [](const TextBoxIterator::SimplePath&) {
         return true;
     };
 
@@ -82,12 +82,12 @@ bool TextBox::isLeftToRightDirection() const
         return inlineTextBox->isLeftToRightDirection();
     };
 
-    return WTF::switchOn(m_iterator.m_pathVariant, simple, complex);
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
 }
 
 bool TextBox::dirOverride() const
 {
-    auto simple = [](const SimpleLineLayout::RunResolver::Iterator) {
+    auto simple = [](const TextBoxIterator::SimplePath&) {
         return false;
     };
 
@@ -95,20 +95,64 @@ bool TextBox::dirOverride() const
         return inlineTextBox->dirOverride();
     };
 
-    return WTF::switchOn(m_iterator.m_pathVariant, simple, complex);
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
 }
 
 StringView TextBox::text() const
 {
-    auto simple = [](const SimpleLineLayout::RunResolver::Iterator simpleLineIterator) {
-        return (*simpleLineIterator).text();
+    auto simple = [](const TextBoxIterator::SimplePath& path) {
+        return (*path.iterator).text();
     };
 
     auto complex = [](const InlineTextBox* inlineTextBox) {
         return StringView(inlineTextBox->renderer().text()).substring(inlineTextBox->start(), inlineTextBox->len());
     };
 
-    return WTF::switchOn(m_iterator.m_pathVariant, simple, complex);
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
+}
+
+unsigned TextBox::localStartOffset() const
+{
+    auto simple = [](const TextBoxIterator::SimplePath& path) {
+        return (*path.iterator).localStart();
+    };
+
+    auto complex = [](const InlineTextBox* inlineTextBox) {
+        return inlineTextBox->start();
+    };
+
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
+}
+
+unsigned TextBox::localEndOffset() const
+{
+    auto simple = [](const TextBoxIterator::SimplePath& path) {
+        return (*path.iterator).localEnd();
+    };
+
+    auto complex = [](const InlineTextBox* inlineTextBox) {
+        return inlineTextBox->end();
+    };
+
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
+}
+
+unsigned TextBox::length() const
+{
+    auto simple = [](const TextBoxIterator::SimplePath& path) {
+        return (*path.iterator).end() - (*path.iterator).start();
+    };
+
+    auto complex = [](const InlineTextBox* inlineTextBox) {
+        return inlineTextBox->len();
+    };
+
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
+}
+
+inline const TextBoxIterator& TextBox::iterator() const
+{
+    return static_cast<const TextBoxIterator&>(*this);
 }
 
 TextBoxIterator::TextBoxIterator(const InlineTextBox* inlineTextBox)
@@ -116,15 +160,15 @@ TextBoxIterator::TextBoxIterator(const InlineTextBox* inlineTextBox)
 {
 }
 
-TextBoxIterator::TextBoxIterator(SimpleLineLayout::RunResolver::Iterator simpleLineIterator)
-    : m_pathVariant(simpleLineIterator)
+TextBoxIterator::TextBoxIterator(SimpleLineLayout::RunResolver::Iterator iterator, SimpleLineLayout::RunResolver::Iterator end)
+    : m_pathVariant(TextBoxIterator::SimplePath { iterator, end })
 {
 }
 
 TextBoxIterator& TextBoxIterator::traverseNext()
 {
-    auto simple = [](SimpleLineLayout::RunResolver::Iterator& simpleLineIterator) {
-        ++simpleLineIterator;
+    auto simple = [](TextBoxIterator::SimplePath& path) {
+        ++path.iterator;
     };
 
     auto complex = [](const InlineTextBox*& inlineTextBox) {
@@ -141,8 +185,8 @@ bool TextBoxIterator::operator==(const TextBoxIterator& other) const
     if (m_pathVariant.index() != other.m_pathVariant.index())
         return false;
 
-    auto simple = [&](const SimpleLineLayout::RunResolver::Iterator simpleLineIterator) {
-        return simpleLineIterator == WTF::get<SimpleLineLayout::RunResolver::Iterator>(other.m_pathVariant);
+    auto simple = [&](const TextBoxIterator::SimplePath& path) {
+        return path.iterator == WTF::get<TextBoxIterator::SimplePath>(other.m_pathVariant).iterator;
     };
 
     auto complex = [&](const InlineTextBox* inlineTextBox) {
@@ -152,32 +196,48 @@ bool TextBoxIterator::operator==(const TextBoxIterator& other) const
     return WTF::switchOn(m_pathVariant, simple, complex);
 }
 
-static Optional<SimpleLineLayout::RunResolver> simpleLineRunResolverForText(const RenderText& text)
+bool TextBoxIterator::atEnd() const
 {
-    if (!text.simpleLineLayout())
-        return WTF::nullopt;
-    return SimpleLineLayout::runResolver(downcast<const RenderBlockFlow>(*text.parent()), *text.simpleLineLayout());
+    auto simple = [&](const TextBoxIterator::SimplePath& path) {
+        return path.iterator == path.end;
+    };
+
+    auto complex = [&](const InlineTextBox* inlineTextBox) {
+        return !inlineTextBox;
+    };
+
+    return WTF::switchOn(m_pathVariant, simple, complex);
 }
 
-static auto rangeForText(const RenderText& text, Optional<SimpleLineLayout::RunResolver>& simpleLineRunResolver)
+Provider::Provider() = default;
+Provider::~Provider() = default;
+
+TextBoxIterator Provider::firstTextBoxFor(const RenderText& text)
 {
-    if (simpleLineRunResolver) {
-        auto range = simpleLineRunResolver->rangeForRenderer(text);
-        return WTF::makeIteratorRange(TextBoxIterator(range.begin()), TextBoxIterator(range.end()));
+    if (auto* simpleLineLayout = text.simpleLineLayout()) {
+        auto& parent = downcast<const RenderBlockFlow>(*text.parent());
+        auto& resolver = m_simpleLineLayoutResolvers.ensure(&parent, [&] {
+            return makeUnique<SimpleLineLayout::RunResolver>(parent, *simpleLineLayout);
+        }).iterator->value;
+
+        auto range = resolver->rangeForRenderer(text);
+        return { range.begin(), range.end() };
     }
-    return WTF::makeIteratorRange(TextBoxIterator(text.firstTextBox()), TextBoxIterator(nullptr));
+
+    return TextBoxIterator { text.firstTextBox() };
 }
 
-TextBoxRange::TextBoxRange(const RenderText& text)
-    : m_simpleLineRunResolver(simpleLineRunResolverForText(text))
-    , m_range(rangeForText(text, m_simpleLineRunResolver))
+TextBoxRange Provider::textBoxRangeFor(const RenderText& text)
 {
+    return { firstTextBoxFor(text) };
 }
 
-TextBoxRange textBoxes(const RenderText& text)
+TextBoxIterator Provider::iteratorForInlineTextBox(const InlineTextBox* inlineTextBox)
 {
-    return { text };
+    return TextBoxIterator { inlineTextBox };
 }
+
+
 
 }
 }

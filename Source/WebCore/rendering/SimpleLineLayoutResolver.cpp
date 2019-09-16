@@ -113,7 +113,7 @@ unsigned RunResolver::Run::localEnd() const
 }
 
 RunResolver::Iterator::Iterator(const RunResolver& resolver, unsigned runIndex, unsigned lineIndex)
-    : m_resolver(resolver)
+    : m_resolver(&resolver)
     , m_runIndex(runIndex)
     , m_lineIndex(lineIndex)
 {
@@ -129,8 +129,8 @@ RunResolver::Iterator& RunResolver::Iterator::advance()
 
 RunResolver::Iterator& RunResolver::Iterator::advanceLines(unsigned lineCount)
 {
-    unsigned runCount = m_resolver.m_layout.runCount();
-    if (runCount == m_resolver.m_layout.lineCount()) {
+    unsigned runCount = resolver().m_layout.runCount();
+    if (runCount == resolver().m_layout.lineCount()) {
         m_runIndex = std::min(runCount, m_runIndex + lineCount);
         m_lineIndex = m_runIndex;
         return *this;

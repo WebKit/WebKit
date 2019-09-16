@@ -1,4 +1,4 @@
-absabs
+abs abs
 
 (Frame scrolling node
   (scrollable area size 800 600)

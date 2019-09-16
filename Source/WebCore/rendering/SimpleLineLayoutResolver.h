@@ -94,10 +94,10 @@ public:
         unsigned lineIndex() const { return m_lineIndex; }
         Iterator& advance();
         Iterator& advanceLines(unsigned);
-        const RunResolver& resolver() const { return m_resolver; }
-        bool inQuirksMode() const { return m_resolver.m_inQuirksMode; }
+        const RunResolver& resolver() const { return *m_resolver; }
+        bool inQuirksMode() const { return resolver().m_inQuirksMode; }
 
-        const RunResolver& m_resolver;
+        const RunResolver* m_resolver;
         unsigned m_runIndex;
         unsigned m_lineIndex;
     };
@@ -238,7 +238,7 @@ inline RunResolver::Iterator& RunResolver::Iterator::operator--()
 
 inline bool RunResolver::Iterator::operator==(const Iterator& other) const
 {
-    ASSERT(&m_resolver == &other.m_resolver);
+    ASSERT(m_resolver == other.m_resolver);
     return m_runIndex == other.m_runIndex;
 }
 
@@ -254,7 +254,7 @@ inline RunResolver::Run RunResolver::Iterator::operator*() const
 
 inline const SimpleLineLayout::Run& RunResolver::Iterator::simpleRun() const
 {
-    return m_resolver.m_layout.runAt(m_runIndex);
+    return resolver().m_layout.runAt(m_runIndex);
 }
 
 inline RunResolver::Iterator RunResolver::begin() const

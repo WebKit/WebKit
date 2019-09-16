@@ -7,7 +7,7 @@ PASS Trailing whitespace removed ("<div>abc ")
 PASS Internal whitespace compressed ("<div>abc  def") 
 PASS \n converted to space ("<div>abc\ndef") 
 PASS \r converted to space ("<div>abc\rdef") 
-PASS \t converted to space ("<div>abc\tdef") 
+FAIL \t converted to space ("<div>abc\tdef") assert_equals: expected "abc def" but got "abc\tdef"
 FAIL Trailing whitespace before hard line break removed ("<div>abc <br>def") assert_equals: expected "abc\ndef" but got "abc \ndef"
 PASS Leading whitespace preserved ("<pre> abc") 
 PASS Trailing whitespace preserved ("<pre>abc ") 
@@ -31,9 +31,9 @@ PASS \t preserved ("<span style='white-space:pre'>abc\tdef")
 PASS Leading whitespace removed ("<div style='white-space:pre-line'> abc") 
 PASS Trailing whitespace removed ("<div style='white-space:pre-line'>abc ") 
 PASS Internal whitespace collapsed ("<div style='white-space:pre-line'>abc  def") 
-FAIL \n preserved ("<div style='white-space:pre-line'>abc\ndef") assert_equals: expected "abc\ndef" but got "abcdef"
-FAIL \r converted to newline ("<div style='white-space:pre-line'>abc\rdef") assert_equals: expected "abc\ndef" but got "abcdef"
-PASS \t converted to space ("<div style='white-space:pre-line'>abc\tdef") 
+FAIL \n preserved ("<div style='white-space:pre-line'>abc\ndef") assert_equals: expected "abc\ndef" but got "abc def"
+FAIL \r converted to newline ("<div style='white-space:pre-line'>abc\rdef") assert_equals: expected "abc\ndef" but got "abc def"
+FAIL \t converted to space ("<div style='white-space:pre-line'>abc\tdef") assert_equals: expected "abc def" but got "abc\tdef"
 PASS Whitespace collapses across element boundaries ("<div><span>abc </span> def") 
 PASS Whitespace collapses across element boundaries ("<div><span>abc </span><span></span> def") 
 FAIL Whitespace collapses across element boundaries ("<div><span>abc </span><span style='white-space:pre'></span> def") assert_equals: expected "abc def" but got "abc  def"
@@ -135,7 +135,7 @@ FAIL One blank line between <p>s, ignoring empty <p>s ("<div><p>abc<p></p><p></p
 FAIL Invisible <p> doesn't induce extra line breaks ("<div style='visibility:hidden'><p><span style='visibility:visible'>abc</span></p>\n<div style='visibility:visible'>def</div>") assert_equals: expected "abc\ndef" but got "abc\n\ndef\n"
 FAIL No blank lines around <div> with margin ("<div>abc<div style='margin:2em'>def") assert_equals: expected "abc\ndef" but got "abc\ndef\n"
 PASS No newlines at display:inline-block boundary ("<div>123<span style='display:inline-block'>abc</span>def") 
-FAIL Leading/trailing space removal at display:inline-block boundary ("<div>123<span style='display:inline-block'> abc </span>def") assert_equals: expected "123abcdef" but got "123abc def"
+FAIL Leading/trailing space removal at display:inline-block boundary ("<div>123<span style='display:inline-block'> abc </span>def") assert_equals: expected "123abcdef" but got "123 abc def"
 FAIL Blank lines around <p> even without margin ("<div>123<p style='margin:0px'>abc</p>def") assert_equals: expected "123\n\nabc\n\ndef" but got "123\nabc\ndef"
 FAIL No blank lines around <h1> ("<div>123<h1>abc</h1>def") assert_equals: expected "123\nabc\ndef" but got "123\nabc\n\ndef"
 FAIL No blank lines around <h2> ("<div>123<h2>abc</h2>def") assert_equals: expected "123\nabc\ndef" but got "123\nabc\n\ndef"
