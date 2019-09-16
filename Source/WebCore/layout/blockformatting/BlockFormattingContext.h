@@ -87,7 +87,7 @@ private:
         IntrinsicWidthConstraints intrinsicWidthConstraints(const Box&);
 
     private:
-        HeightAndMargin inFlowNonReplacedHeightAndMargin(const Box&, UsedVerticalValues);
+        HeightAndMargin inFlowNonReplacedHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues);
         WidthAndMargin inFlowNonReplacedWidthAndMargin(const Box&, UsedHorizontalValues) const;
         WidthAndMargin inFlowReplacedWidthAndMargin(const Box&, UsedHorizontalValues) const;
         Point staticPositionForOutOfFlowPositioned(const Box&) const;

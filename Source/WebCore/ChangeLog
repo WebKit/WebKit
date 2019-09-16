@@ -1,3 +1,20 @@
+2019-09-16  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin should not read containing block's width
+        https://bugs.webkit.org/show_bug.cgi?id=201807
+        <rdar://problem/55381342>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for using constraint values instead of querying the display tree for containing block geometry information.
+        See webkit.org/b/201795
+
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeightAndMargin):
+
 2019-09-16  Antti Koivisto  <antti@apple.com>
 
         Eliminate separate simple line layout path from TextIterator
