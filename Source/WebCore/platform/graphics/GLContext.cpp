@@ -34,6 +34,7 @@
 
 #if USE(GLX)
 #include "GLContextGLX.h"
+#include "OpenGLShims.h"
 #endif
 
 using WTF::ThreadSpecific;

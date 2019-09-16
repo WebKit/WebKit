@@ -20,7 +20,6 @@
 #include "GLContextGLX.h"
 
 #if USE(GLX)
-#include "GraphicsContext3D.h"
 #include "OpenGLShims.h"
 #include "PlatformDisplayX11.h"
 #include "XErrorTrapper.h"

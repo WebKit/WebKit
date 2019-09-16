@@ -23,6 +23,7 @@
 
 #if USE(GSTREAMER_GL)
 
+#include "FloatRect.h"
 #include "GLContext.h"
 #include "ImageOrientation.h"
 #include "TextureMapperShaderProgram.h"

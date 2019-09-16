@@ -93,7 +93,6 @@
 #if USE(TEXTURE_MAPPER_GL)
 #include "BitmapTextureGL.h"
 #include "BitmapTexturePool.h"
-#include "GraphicsContext3D.h"
 #include "TextureMapperContextAttributes.h"
 #include "TextureMapperPlatformLayerBuffer.h"
 #include "TextureMapperPlatformLayerProxy.h"
@@ -227,7 +226,7 @@ public:
         using Buffer = TextureMapperPlatformLayerBuffer;
 
         if ((GST_VIDEO_INFO_IS_RGB(&m_videoFrame.info) && GST_VIDEO_INFO_N_PLANES(&m_videoFrame.info) == 1))
-            return makeUnique<Buffer>(Buffer::TextureVariant { Buffer::RGBTexture { *static_cast<GLuint*>(m_videoFrame.data[0]) } }, m_size, m_flags, GraphicsContext3D::RGBA);
+            return makeUnique<Buffer>(Buffer::TextureVariant { Buffer::RGBTexture { *static_cast<GLuint*>(m_videoFrame.data[0]) } }, m_size, m_flags, GL_RGBA);
 
         if (GST_VIDEO_INFO_IS_YUV(&m_videoFrame.info)) {
             if (GST_VIDEO_INFO_N_COMPONENTS(&m_videoFrame.info) < 3 || GST_VIDEO_INFO_N_PLANES(&m_videoFrame.info) > 3)
@@ -237,7 +236,7 @@ public:
                 // IMX VPU decoder decodes YUV data only into the Y texture from which the sampler
                 // then directly produces RGBA data. Textures for other planes aren't used, but
                 // that's decoder's problem. We have to treat that Y texture as having RGBA data.
-                return makeUnique<Buffer>(Buffer::TextureVariant { Buffer::RGBTexture { *static_cast<GLuint*>(m_videoFrame.data[0]) } }, m_size, m_flags, GraphicsContext3D::RGBA);
+                return makeUnique<Buffer>(Buffer::TextureVariant { Buffer::RGBTexture { *static_cast<GLuint*>(m_videoFrame.data[0]) } }, m_size, m_flags, GL_RGBA);
             }
 
             unsigned numberOfPlanes = GST_VIDEO_INFO_N_PLANES(&m_videoFrame.info);
@@ -267,7 +266,7 @@ public:
                 };
             }
 
-            return makeUnique<Buffer>( Buffer::TextureVariant { Buffer::YUVTexture { numberOfPlanes, planes, yuvPlane, yuvPlaneOffset, yuvToRgb } }, m_size, m_flags, GraphicsContext3D::RGBA);
+            return makeUnique<Buffer>( Buffer::TextureVariant { Buffer::YUVTexture { numberOfPlanes, planes, yuvPlane, yuvPlaneOffset, yuvToRgb } }, m_size, m_flags, GL_RGBA);
         }
 
         return nullptr;
@@ -1094,7 +1093,7 @@ NativeImagePtr MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime()
 
     frameHolder->waitForCPUSync();
 
-    if (!m_videoTextureCopier->copyVideoTextureToPlatformTexture(*layerBuffer.get(), size, 0, GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, false, m_videoSourceOrientation))
+    if (!m_videoTextureCopier->copyVideoTextureToPlatformTexture(*layerBuffer.get(), size, 0, GL_TEXTURE_2D, 0, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, false, m_videoSourceOrientation))
         return nullptr;
 
     return adoptRef(cairo_gl_surface_create_for_texture(context->cairoDevice(), CAIRO_CONTENT_COLOR_ALPHA, m_videoTextureCopier->resultTexture(), size.width(), size.height()));

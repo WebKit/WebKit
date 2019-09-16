@@ -20,7 +20,7 @@
 #ifndef GLContext_h
 #define GLContext_h
 
-#include "GraphicsContext3D.h"
+#include "ANGLEWebKitBridge.h"
 #include "IntSize.h"
 #include "PlatformDisplay.h"
 #include <wtf/Noncopyable.h>
@@ -40,6 +40,8 @@ typedef uint64_t GLNativeWindowType;
 #if USE(CAIRO)
 typedef struct _cairo_device cairo_device_t;
 #endif
+
+typedef void* PlatformGraphicsContext3D;
 
 namespace WebCore {
 

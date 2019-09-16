@@ -1,3 +1,26 @@
+2019-09-16  ChangSeok Oh  <changseok@webkit.org>
+
+        [GTK] Remove GraphicsContext3D dependency from the outside of WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=201748
+
+        Reviewed by Alex Christensen.
+
+        This is a preliminary change to bring ANGLE support for WebGL to GTK port.
+        GraphicsContext3DANGLE has its own egl context but we want to make ANGLE egl context
+        for WebGL and other GL contexts (i.e., glx, gles/egl) for TextureMapper live together.
+        Mixed uses of GraphicsContext3D outside of WebGL code could cause unintended behaviors.
+        We want to make sure that only WebGL code uses it.
+
+        No new tests since no functionality changed.
+
+        * platform/graphics/GLContext.cpp:
+        * platform/graphics/GLContext.h:
+        * platform/graphics/glx/GLContextGLX.cpp:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::GstVideoFrameHolder::platformLayerBuffer):
+        (WebCore::MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime):
+        * platform/graphics/gstreamer/VideoTextureCopierGStreamer.cpp:
+
 2019-09-16  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Make the nested Geometry/MarginCollapse/Quirks c'tors private.
