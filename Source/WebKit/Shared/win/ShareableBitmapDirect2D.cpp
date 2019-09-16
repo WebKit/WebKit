@@ -114,7 +114,7 @@ void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, 
 
 void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const IntPoint& dstPoint, const IntRect& srcRect)
 {
-    auto surface = createDirect2DSurface(nullptr, context.platformContext()->renderTarget());
+    auto surface = createDirect2DSurface(context.platformContext()->d3dDevice(), context.platformContext()->renderTarget());
 
 #ifndef _NDEBUG
     auto bitmapSize = surface->GetPixelSize();
@@ -139,27 +139,28 @@ COMPtr<ID2D1Bitmap> ShareableBitmap::createDirect2DSurface(ID3D11Device1* direct
     if (!directXDevice)
         directXDevice = Direct2D::defaultDirectXDevice();
 
-    COMPtr<ID3D11Texture2D> texture;
-    HRESULT hr = directXDevice->OpenSharedResource1(m_configuration.sharedResourceHandle, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&texture));
-    if (!SUCCEEDED(hr))
-        return nullptr;
+    if (!m_bitmap) {
+        COMPtr<ID3D11Texture2D> texture;
+        HRESULT hr = directXDevice->OpenSharedResource1(m_configuration.sharedResourceHandle, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&texture));
+        if (!SUCCEEDED(hr))
+            return nullptr;
 
-    hr = texture->QueryInterface(&m_surface);
-    RELEASE_ASSERT(SUCCEEDED(hr));
+        hr = texture->QueryInterface(&m_surface);
+        RELEASE_ASSERT(SUCCEEDED(hr));
 
-    // Lock the surface to the current device while rendering.
-    hr = m_surface->QueryInterface(&m_surfaceMutex);
-    RELEASE_ASSERT(SUCCEEDED(hr));
-    hr = m_surfaceMutex->AcquireSync(1, INFINITE);
-    RELEASE_ASSERT(SUCCEEDED(hr));
+        // Lock the surface to the current device while rendering.
+        hr = m_surface->QueryInterface(&m_surfaceMutex);
+        RELEASE_ASSERT(SUCCEEDED(hr));
+        hr = m_surfaceMutex->AcquireSync(1, INFINITE);
+        RELEASE_ASSERT(SUCCEEDED(hr));
 
-    COMPtr<ID2D1Bitmap> bitmap;
-    auto bitmapProperties = Direct2D::bitmapProperties();
-    hr = renderTarget->CreateSharedBitmap(__uuidof(IDXGISurface1), reinterpret_cast<void*>(m_surface.get()), &bitmapProperties, &bitmap);
-    if (!SUCCEEDED(hr))
-        return nullptr;
+        auto bitmapProperties = Direct2D::bitmapProperties();
+        hr = renderTarget->CreateSharedBitmap(__uuidof(IDXGISurface1), reinterpret_cast<void*>(m_surface.get()), &bitmapProperties, &m_bitmap);
+        if (!SUCCEEDED(hr))
+            return nullptr;
+    }
 
-    return bitmap;
+    return m_bitmap;
 }
 
 RefPtr<Image> ShareableBitmap::createImage()

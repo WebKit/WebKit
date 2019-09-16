@@ -1,3 +1,30 @@
+2019-09-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] Correct lifespan of other SharedBitmaps
+        https://bugs.webkit.org/show_bug.cgi?id=201800
+
+        Reviewed by Dean Jackson.
+
+        The pop-up menu code creates its own SharedBitmap in the WebContent process,
+        which needs to release its handle before destruction, otherwise the UIProcess
+        will be unable to access the GPU texture (since it will have been cleaned up).
+
+        This patch also audits other uses of SharedBitmap to make sure a similar
+        problem doesn't exist elsewhere.
+
+        * platform/graphics/win/Direct2DUtilities.cpp:
+        (WebCore::Direct2D::toDXGIDevice): Switch to IDXGIDevice1 (since that is our
+        minimum target DX).
+        (WebCore::Direct2D::factoryForDXGIDevice): Ditto.
+        (WebCore::Direct2D::swapChainOfSizeForWindowAndDevice): Added.
+        * platform/graphics/win/Direct2DUtilities.h:
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate): Correct
+        a very silly use-after-move in the implementation.
+        * platform/graphics/win/PlatformContextDirect2D.h:
+        (WebCore::PlatformContextDirect2D::d3dDevice const): Added.
+        (WebCore::PlatformContextDirect2D::setD3DDevice):
+
 2019-09-16  Chris Dumez  <cdumez@apple.com>
 
         Simplify WebResourceLoadObserver now that we have one WebProcess per session

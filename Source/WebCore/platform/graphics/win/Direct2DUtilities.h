@@ -40,8 +40,10 @@ interface ID2D1DCRenderTarget;
 interface ID2D1RenderTarget;
 interface ID3D11Device1;
 interface ID3D11DeviceContext1;
-interface IDXGIDevice;
+interface ID3D11RenderTargetView;
+interface IDXGIDevice1;
 interface IDXGIFactory2;
+interface IDXGISwapChain;
 interface IDXGISurface1;
 interface IWICBitmapSource;
 interface IWICBitmap;
@@ -49,6 +51,7 @@ interface IWICBitmap;
 struct D2D1_BITMAP_PROPERTIES;
 struct D2D1_PIXEL_FORMAT;
 struct D2D1_RENDER_TARGET_PROPERTIES;
+struct D3D11_VIEWPORT;
 
 namespace WebCore {
 
@@ -87,8 +90,9 @@ void copyRectFromOneSurfaceToAnother(ID2D1Bitmap* from, ID2D1Bitmap* to, const I
 WEBCORE_EXPORT ID3D11DeviceContext1* dxgiImmediateContext();
 WEBCORE_EXPORT ID3D11Device1* defaultDirectXDevice();
 WEBCORE_EXPORT bool createDeviceAndContext(COMPtr<ID3D11Device1>&, COMPtr<ID3D11DeviceContext1>&);
-WEBCORE_EXPORT COMPtr<IDXGIDevice> toDXGIDevice(const COMPtr<ID3D11Device1>&);
-WEBCORE_EXPORT COMPtr<IDXGIFactory2> factoryForDXGIDevice(const COMPtr<IDXGIDevice>&);
+WEBCORE_EXPORT COMPtr<IDXGIDevice1> toDXGIDevice(const COMPtr<ID3D11Device1>&);
+WEBCORE_EXPORT COMPtr<IDXGIFactory2> factoryForDXGIDevice(const COMPtr<IDXGIDevice1>&);
+WEBCORE_EXPORT COMPtr<IDXGISwapChain> swapChainOfSizeForWindowAndDevice(const WebCore::IntSize&, HWND, const COMPtr<ID3D11Device1>&);
 
 void writeDiagnosticPNGToPath(ID2D1RenderTarget*, ID2D1Bitmap*, LPCWSTR fileName);
 

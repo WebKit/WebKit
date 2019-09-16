@@ -412,20 +412,20 @@ bool createDeviceAndContext(COMPtr<ID3D11Device1>& d3dDevice, COMPtr<ID3D11Devic
     return true;
 }
 
-COMPtr<IDXGIDevice> toDXGIDevice(const COMPtr<ID3D11Device1>& d3dDevice)
+COMPtr<IDXGIDevice1> toDXGIDevice(const COMPtr<ID3D11Device1>& d3dDevice)
 {
     if (!d3dDevice)
         return nullptr;
 
-    COMPtr<IDXGIDevice> dxgiDevice;
-    HRESULT hr = d3dDevice->QueryInterface(__uuidof(IDXGIDevice), (void **)&dxgiDevice);
+    COMPtr<IDXGIDevice1> dxgiDevice;
+    HRESULT hr = d3dDevice->QueryInterface(__uuidof(IDXGIDevice1), (void **)&dxgiDevice);
     if (!SUCCEEDED(hr))
         return nullptr;
 
     return dxgiDevice;
 }
 
-COMPtr<IDXGIFactory2> factoryForDXGIDevice(const COMPtr<IDXGIDevice>& device)
+COMPtr<IDXGIFactory2> factoryForDXGIDevice(const COMPtr<IDXGIDevice1>& device)
 {
     if (!device)
         return nullptr;
@@ -443,6 +443,33 @@ COMPtr<IDXGIFactory2> factoryForDXGIDevice(const COMPtr<IDXGIDevice>& device)
     RELEASE_ASSERT(SUCCEEDED(hr));
     
     return factory2;
+}
+
+COMPtr<IDXGISwapChain> swapChainOfSizeForWindowAndDevice(const WebCore::IntSize& size, HWND window, const COMPtr<ID3D11Device1>& device)
+{
+    if (!device)
+        return nullptr;
+
+    DXGI_SWAP_CHAIN_DESC1 swapChainDescription;
+    ::ZeroMemory(&swapChainDescription, sizeof(swapChainDescription));
+    swapChainDescription.Width = size.width();
+    swapChainDescription.Height = size.height();
+    swapChainDescription.Format = webkitTextureFormat;
+    swapChainDescription.SampleDesc.Count = 1;
+    swapChainDescription.SampleDesc.Quality = 0;
+    swapChainDescription.BufferUsage = DXGI_USAGE_SHADER_INPUT | DXGI_USAGE_RENDER_TARGET_OUTPUT;
+    swapChainDescription.BufferCount = 1;
+    swapChainDescription.Flags = DXGI_SWAP_CHAIN_FLAG_GDI_COMPATIBLE;
+
+    auto factory = Direct2D::factoryForDXGIDevice(Direct2D::toDXGIDevice(device));
+
+    COMPtr<IDXGISwapChain1> swapChain1;
+    HRESULT hr = factory->CreateSwapChainForHwnd(device.get(), window, &swapChainDescription, nullptr, nullptr, &swapChain1);
+    if (!SUCCEEDED(hr))
+        return nullptr;
+
+    COMPtr<IDXGISwapChain> swapChain(Query, swapChain1);
+    return swapChain;
 }
 
 } // namespace Direct2D

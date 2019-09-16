@@ -32,6 +32,7 @@
 #include <d2d1.h>
 #include <d2d1_1.h>
 #include <d2d1effects.h>
+#include <d3d11_1.h>
 
 namespace WebCore {
 
@@ -53,6 +54,9 @@ public:
 
     ID2D1RenderTarget* renderTarget() { return m_renderTarget.get(); }
     void setRenderTarget(ID2D1RenderTarget* renderTarget) { m_renderTarget = renderTarget; }
+
+    ID3D11Device1* d3dDevice() const { return m_d3dDevice.get(); }
+    void setD3DDevice(ID3D11Device1* device) { m_d3dDevice = device; }
 
     GraphicsContextPlatformPrivate* graphicsContextPrivate() { return m_graphicsContextPrivate; }
     void setGraphicsContextPrivate(GraphicsContextPlatformPrivate* graphicsContextPrivate) { m_graphicsContextPrivate = graphicsContextPrivate; }
@@ -126,6 +130,8 @@ private:
     COMPtr<ID2D1SolidColorBrush> m_solidFillBrush;
     COMPtr<ID2D1BitmapBrush> m_patternStrokeBrush;
     COMPtr<ID2D1BitmapBrush> m_patternFillBrush;
+
+    COMPtr<ID3D11Device1> m_d3dDevice;
 
     WTF::Function<void()> m_preDrawHandler;
     WTF::Function<void()> m_postDrawHandler;

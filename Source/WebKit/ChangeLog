@@ -1,3 +1,43 @@
+2019-09-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] Correct lifespan of other SharedBitmaps
+        https://bugs.webkit.org/show_bug.cgi?id=201800
+
+        Reviewed by Dean Jackson.
+
+        The pop-up menu code creates its own SharedBitmap in the WebContent process,
+        which needs to release its handle before destruction, otherwise the UIProcess
+        will be unable to access the GPU texture (since it will have been cleaned up).
+
+        Since WebPopupMenuProxyWin has its own HWND and WinProc, it needs its own
+        swapChain to handle syncing of content to the screen.
+
+        This patch also audits other uses of SharedBitmap to make sure a similar
+        problem doesn't exist elsewhere.
+
+        * Shared/ShareableBitmap.h:
+        * Shared/win/ShareableBitmapDirect2D.cpp:
+        (WebKit::ShareableBitmap::paint):
+        (WebKit::ShareableBitmap::createDirect2DSurface):
+        * UIProcess/win/WebPopupMenuProxyWin.cpp:
+        (WebKit::WebPopupMenuProxyWin::showPopupMenu): Add Direct2D code paths.
+        (WebKit::WebPopupMenuProxyWin::paint): Update for Direct2D.
+        (WebKit::WebPopupMenuProxyWin::setupSwapChain): Added.
+        (WebKit::WebPopupMenuProxyWin::configureBackingStore): Added.
+        * UIProcess/win/WebPopupMenuProxyWin.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::setupSwapChain): Move some implementation code to the
+        Direct2DUtilities file.
+        * UIProcess/win/WebView.h:
+        (WebKit::WebView::d3dDevice const):
+        (WebKit::WebView::d3dImmediateContext const):
+        (WebKit::WebView::d3dDevice): Deleted.
+        * WebProcess/WebCoreSupport/WebPopupMenu.cpp:
+        (WebKit::WebPopupMenu::show):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::getImageForFindMatch): Prevent WebContent process from
+        destroying SharedBitmap before the UIProcess can receive it.
+
 2019-09-16  Chris Dumez  <cdumez@apple.com>
 
         Simplify WebResourceLoadObserver now that we have one WebProcess per session

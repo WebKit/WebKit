@@ -174,6 +174,7 @@ private:
 #if USE(DIRECT2D)
     COMPtr<IDXGISurface1> m_surface;
     COMPtr<IDXGIKeyedMutex> m_surfaceMutex;
+    COMPtr<ID2D1Bitmap> m_bitmap;
 #endif
 
     // If the shareable bitmap is backed by shared memory, this points to the shared memory object.

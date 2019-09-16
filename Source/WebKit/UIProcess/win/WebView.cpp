@@ -956,23 +956,10 @@ void WebView::setupSwapChain(const WebCore::IntSize& size)
     if (!m_d3dDevice)
         return;
 
-    DXGI_SWAP_CHAIN_DESC1 swapChainDescription;
-    ::ZeroMemory(&swapChainDescription, sizeof(swapChainDescription));
-    swapChainDescription.Width = size.width();
-    swapChainDescription.Height = size.height();
-    swapChainDescription.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-    swapChainDescription.SampleDesc.Count = 1;
-    swapChainDescription.SampleDesc.Quality = 0;
-    swapChainDescription.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-    swapChainDescription.BufferCount = 1;
+    m_swapChain = Direct2D::swapChainOfSizeForWindowAndDevice(size, m_window, m_d3dDevice);
+    RELEASE_ASSERT(m_swapChain);
 
     auto factory = Direct2D::factoryForDXGIDevice(Direct2D::toDXGIDevice(m_d3dDevice));
-
-    IDXGISwapChain1* swapChain1 = nullptr;
-    HRESULT hr = factory->CreateSwapChainForHwnd(m_d3dDevice.get(), m_window, &swapChainDescription, nullptr, nullptr, &swapChain1);
-    if (SUCCEEDED(hr))
-        hr = swapChain1->QueryInterface(__uuidof(IDXGISwapChain), reinterpret_cast<void**>(&m_swapChain));
-    RELEASE_ASSERT(SUCCEEDED(hr));
 
     factory->MakeWindowAssociation(m_window, 0);
     configureBackingStore(size);

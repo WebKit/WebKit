@@ -328,6 +328,10 @@ void FindController::getImageForFindMatch(uint32_t matchIndex)
         return;
 
     m_webPage->send(Messages::WebPageProxy::DidGetImageForFindMatch(handle, matchIndex));
+#if USE(DIRECT2D)
+    // Don't destroy the shared handle in the WebContent process. It will be destroyed in the UIProcess.
+    selectionSnapshot->leakSharedResource();
+#endif
 }
 
 void FindController::selectFindMatch(uint32_t matchIndex)

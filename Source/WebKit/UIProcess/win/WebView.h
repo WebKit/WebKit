@@ -84,7 +84,8 @@ public:
     DrawingAreaProxy* drawingArea() { return page() ? page()->drawingArea() : nullptr; }
 
 #if USE(DIRECT2D)
-    ID3D11Device1* d3dDevice() { return m_d3dDevice.get(); }
+    ID3D11Device1* d3dDevice() const { return m_d3dDevice.get(); }
+    ID3D11DeviceContext1* d3dImmediateContext() const { return m_immediateContext.get(); }
 #endif
 
 private:

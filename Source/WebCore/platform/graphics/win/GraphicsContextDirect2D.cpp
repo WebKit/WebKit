@@ -296,7 +296,7 @@ GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(PlatformContextDi
 
 GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(std::unique_ptr<PlatformContextDirect2D>&& ownedPlatformContext, GraphicsContext::BitmapRenderingContextType renderingType)
     : m_ownedPlatformContext(WTFMove(ownedPlatformContext))
-    , m_platformContext(*ownedPlatformContext)
+    , m_platformContext(*m_ownedPlatformContext)
     , m_rendererType(renderingType)
 {
     if (!m_platformContext.renderTarget())
