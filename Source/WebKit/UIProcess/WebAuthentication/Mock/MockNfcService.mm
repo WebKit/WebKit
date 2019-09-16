@@ -32,6 +32,7 @@
 #import "NfcConnection.h"
 #import <WebCore/FidoConstants.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
 
@@ -70,6 +71,18 @@
     if ((self = [super init]))
         _type = tag.type;
     return self;
+}
+
+- (void)dealloc
+{
+    [_tagID release];
+    _tagID = nil;
+    [_AppData release];
+    _AppData = nil;
+    [_UID release];
+    _UID = nil;
+
+    [super dealloc];
 }
 
 - (NSString*)description
@@ -187,12 +200,12 @@ void MockNfcService::detectTags() const
     auto callback = makeBlockPtr([configuration = m_configuration] {
         auto tags = adoptNS([[NSMutableArray alloc] init]);
         if (configuration.nfc->error == MockNfc::Error::WrongTagType || configuration.nfc->multipleTags)
-            [tags addObject:[[WKMockNFTag alloc] initWithType:NFTagTypeUnknown]];
+            [tags addObject:adoptNS([[WKMockNFTag alloc] initWithType:NFTagTypeUnknown]).get()];
         else
-            [tags addObject:[[WKMockNFTag alloc] initWithType:NFTagTypeGeneric4A]];
+            [tags addObject:adoptNS([[WKMockNFTag alloc] initWithType:NFTagTypeGeneric4A]).get()];
 
         if (configuration.nfc->multipleTags)
-            [tags addObject:[[WKMockNFTag alloc] initWithType:NFTagTypeGeneric4A]];
+            [tags addObject:adoptNS([[WKMockNFTag alloc] initWithType:NFTagTypeGeneric4A]).get()];
 
         [globalNFReaderSessionDelegate readerSession:nil didDetectTags:tags.get()];
     });

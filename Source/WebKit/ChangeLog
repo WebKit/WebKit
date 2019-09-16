@@ -1,5 +1,18 @@
 2019-09-16  David Kilzer  <ddkilzer@apple.com>
 
+        [WebAuthn] REGRESSION (r249059): Leak of WKMockNFTag objects and WKMockNFTag instance variables
+        <https://webkit.org/b/201813>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/WebAuthentication/Mock/MockNfcService.mm:
+        (-[WKMockNFTag dealloc]): Add method and release instance
+        variables to fix leaks.
+        (WebKit::MockNfcService::detectTags const): Use adoptNS() to fix
+        leaks of WKMockNFTag objects.
+
+2019-09-16  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r243113): Leak of multiple instance variable blocks when deallocating _WKAttributedStringNavigationDelegate
         <https://webkit.org/b/201812>
 
