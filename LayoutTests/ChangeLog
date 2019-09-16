@@ -1,5 +1,13 @@
 2019-09-16  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, skip a couple of new WPT tests that are timing out on the bots.
+
+        These tests were imported in r249886.
+
+        * TestExpectations:
+
+2019-09-16  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, land expectations for imported/w3c/web-platform-tests/html/browsers/offline/application-cache-api/api_swapcache_error.https.html.
 
         This test was imported in r249886.
