@@ -1,3 +1,17 @@
+2019-09-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Support more than two FIDO protocol versions
+        https://bugs.webkit.org/show_bug.cgi?id=198408
+        <rdar://problem/51292176>
+
+        Reviewed by Chris Dumez.
+
+        Covered by new API tests.
+
+        * Modules/webauthn/fido/DeviceResponseConverter.cpp:
+        (fido::readCTAPGetInfoResponse):
+        Remove the check for the array size.
+
 2019-09-16  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] Correct lifespan of other SharedBitmaps

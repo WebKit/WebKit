@@ -572,6 +572,21 @@ TEST(CTAPResponseTest, TestReadGetInfoResponse)
     EXPECT_EQ(AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedButPinNotSet, getInfoResponse->options().clientPinAvailability());
 }
 
+TEST(CTAPResponseTest, TestReadGetInfoResponse2)
+{
+    auto getInfoResponse = readCTAPGetInfoResponse(convertBytesToVector(TestData::kTestGetInfoResponsePlatformDevice2, sizeof(TestData::kTestGetInfoResponsePlatformDevice2)));
+    ASSERT_TRUE(getInfoResponse);
+    ASSERT_TRUE(getInfoResponse->maxMsgSize());
+    EXPECT_EQ(*getInfoResponse->maxMsgSize(), 1200u);
+    EXPECT_NE(getInfoResponse->versions().find(ProtocolVersion::kCtap), getInfoResponse->versions().end());
+    EXPECT_NE(getInfoResponse->versions().find(ProtocolVersion::kU2f), getInfoResponse->versions().end());
+    EXPECT_TRUE(getInfoResponse->options().isPlatformDevice());
+    EXPECT_TRUE(getInfoResponse->options().supportsResidentKey());
+    EXPECT_TRUE(getInfoResponse->options().userPresenceRequired());
+    EXPECT_EQ(AuthenticatorSupportedOptions::UserVerificationAvailability::kSupportedAndConfigured, getInfoResponse->options().userVerificationAvailability());
+    EXPECT_EQ(AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedButPinNotSet, getInfoResponse->options().clientPinAvailability());
+}
+
 TEST(CTAPResponseTest, TestReadGetInfoResponseWithIncorrectFormat)
 {
     EXPECT_FALSE(readCTAPGetInfoResponse(convertBytesToVector(kTestAuthenticatorGetInfoResponseWithNoVersion, sizeof(kTestAuthenticatorGetInfoResponseWithNoVersion))));

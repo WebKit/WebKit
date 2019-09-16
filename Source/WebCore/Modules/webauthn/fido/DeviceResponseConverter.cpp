@@ -195,7 +195,7 @@ Optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector<uint
     const auto& responseMap = decodedResponse->getMap();
 
     auto it = responseMap.find(CBOR(1));
-    if (it == responseMap.end() || !it->second.isArray() || it->second.getArray().size() > 2)
+    if (it == responseMap.end() || !it->second.isArray())
         return WTF::nullopt;
     StdSet<ProtocolVersion> protocolVersions;
     for (const auto& version : it->second.getArray()) {
