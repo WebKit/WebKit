@@ -1,3 +1,16 @@
+2019-09-16  Eric Liang  <ericliang@apple.com>
+
+        AX: USER: VO: Messages > Message > Shift-VO-M doesn't reveal correct actions
+        https://bugs.webkit.org/show_bug.cgi?id=201840
+
+        Reviewed by Chris Fleizach.
+
+        menuForEvent: expects event-position in window's space, but we pass the position in Core's space. In this case, we need to convert core's space to window's space.
+        Tested that existing tests passed with WK1 and WK2
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityShowContextMenu]):
+
 2019-09-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Support more than two FIDO protocol versions
