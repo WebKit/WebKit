@@ -1,3 +1,19 @@
+2019-09-16  Andres Gonzalez  <andresg_22@apple.com>
+
+        Rename [WebAccessibilityObjectWrapper _accessibilityInsertText] to accessibilityInsertText to match accessibility client.
+        https://bugs.webkit.org/show_bug.cgi?id=201820
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::insertText):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::insertText):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::insertText):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::insertText):
+
 2019-09-16  David Kilzer  <ddkilzer@apple.com>
 
         Fix leaks in DumpRenderTree and WebKitTestRunner

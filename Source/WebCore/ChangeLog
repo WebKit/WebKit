@@ -1,3 +1,19 @@
+2019-09-16  Andres Gonzalez  <andresg_22@apple.com>
+
+        Rename [WebAccessibilityObjectWrapper _accessibilityInsertText] to accessibilityInsertText to match accessibility client.
+        https://bugs.webkit.org/show_bug.cgi?id=201820
+
+        Reviewed by Chris Fleizach.
+
+        No new tests necessary since this is a method rename.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityInsertText:]):
+        (-[WebAccessibilityObjectWrapper _accessibilityInsertText:]): Deleted.
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityInsertText:]):
+        (-[WebAccessibilityObjectWrapper _accessibilityInsertText:]): Deleted.
+
 2019-09-16  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Always provide a containing block width value to compute* functions.

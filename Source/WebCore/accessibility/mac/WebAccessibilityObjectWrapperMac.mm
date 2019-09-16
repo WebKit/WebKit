@@ -3849,7 +3849,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return m_object->replaceTextInRange(string, PlainTextRange(range));
 }
 
-- (BOOL)_accessibilityInsertText:(NSString *)text
+- (BOOL)accessibilityInsertText:(NSString *)text
 {
     if (![self updateObjectBackingStore])
         return NO;
