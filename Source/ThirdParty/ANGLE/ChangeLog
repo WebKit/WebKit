@@ -1,3 +1,16 @@
+2019-09-16  James Darpinian  <jdarpinian@chromium.org>
+
+        Remove commit.h copying build steps
+        https://bugs.webkit.org/show_bug.cgi?id=201785
+
+        Reviewed by Alex Christensen.
+
+        * ANGLE.xcodeproj/project.pbxproj: Remove leftover build step
+        * CMakeLists.txt: Remove commit.h copying
+        * src/common/version.h: Restore to upstream version
+        * src/id/commit.h: Added.
+        * update-angle.sh: Copy commit.h to id/commit.h at import time
+
 2019-09-12  James Darpinian  <jdarpinian@chromium.org>
 
         Update ANGLE

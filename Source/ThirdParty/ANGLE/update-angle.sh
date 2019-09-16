@@ -14,6 +14,8 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     exit
 fi
 
+PREVIOUS_COMMIT_HASH=`grep -m 1 -o -E "[a-z0-9]{40}" ANGLE.plist`
+
 # First, preserve WebKit's additional files
 TEMPDIR=`mktemp -d`
 function cleanup {
@@ -43,15 +45,25 @@ mv include/CMakeLists.txt "$TEMPDIR/include"
 # Remove all files including hidden ones, but not . or ..
 rm -rf ..?* .[!.]* *
 echo "Downloading latest ANGLE via git clone."
-git clone https://chromium.googlesource.com/angle/angle . --depth 1
+git clone https://chromium.googlesource.com/angle/angle .
 echo "Successfully downloaded latest ANGLE."
 echo -n "Commit hash: "
 COMMIT_HASH=`git rev-parse HEAD`
 echo "$COMMIT_HASH"
+echo ""
+echo "Summary of added and removed files since last update:"
+echo "________________________________________________________________________"
+echo ""
+git diff --summary "$PREVIOUS_COMMIT_HASH"
+echo "________________________________________________________________________"
+echo ""
 
 trap - EXIT
 cleanup
 
+echo "Copying src/commit.h to src/id/commit.h"
+mkdir -p src/id
+cp src/commit.h src/id/
 echo "Updating ANGLE.plist commit hashes."
 sed -i.bak -e "s/\([^a-z0-9]\)[a-z0-9]\{40\}\([^a-z0-9]\)/\1$COMMIT_HASH\2/g" ANGLE.plist
 echo "Updating ANGLE.plist date."

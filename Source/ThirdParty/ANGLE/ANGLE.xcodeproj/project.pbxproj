@@ -2889,7 +2889,6 @@
 			buildConfigurationList = FB39D0D61200F11E00088E69 /* Build configuration list for PBXNativeTarget "ANGLE" */;
 			buildPhases = (
 				FB39D77B1201110C00088E69 /* Headers */,
-				A3E827AB230CAF7700E76682 /* ShellScript */,
 				FB39D0CE1200F0E300088E69 /* Sources */,
 				FB39D0CF1200F0E300088E69 /* Frameworks */,
 				312BDB0B15FECAB00097EBC7 /* CopyFiles */,
@@ -2951,23 +2950,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${XCODE_VERSION_MAJOR}\" -ge \"1100\" -a \"${USE_NEW_BUILD_SYSTEM}\" = \"YES\" ]; then\n    exit 0\nfi\n\nexec \"$SRCROOT/adjust-angle-include-paths.sh\"\n";
-		};
-		A3E827AB230CAF7700E76682 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"$DERIVED_FILE_DIR/include/id\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -3318,7 +3300,6 @@
 					src,
 					third_party/base,
 					src/common/third_party/base,
-					"$(DERIVED_FILE_DIR)/include",
 				);
 				OTHER_CPLUSPLUSFLAGS = "$(ASAN_OTHER_CPLUSPLUSFLAGS)";
 			};
@@ -3354,7 +3335,6 @@
 					src,
 					third_party/base,
 					src/common/third_party/base,
-					"$(DERIVED_FILE_DIR)/include",
 				);
 				OTHER_CPLUSPLUSFLAGS = "$(ASAN_OTHER_CPLUSPLUSFLAGS)";
 			};
@@ -3375,7 +3355,6 @@
 					src,
 					third_party/base,
 					src/common/third_party/base,
-					"$(DERIVED_FILE_DIR)/include",
 				);
 				OTHER_CPLUSPLUSFLAGS = "$(ASAN_OTHER_CPLUSPLUSFLAGS)";
 			};

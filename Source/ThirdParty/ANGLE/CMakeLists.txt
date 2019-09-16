@@ -58,7 +58,6 @@ set(ANGLE_SOURCES
     ${angle_translator_glsl_sources}
     ${angle_translator_sources}
     ${libangle_capture_sources}
-    ${CMAKE_CURRENT_BINARY_DIR}/include/id/commit.h
 )
 
 if (UNIX)
@@ -85,8 +84,6 @@ add_subdirectory(include)
 add_library(ANGLEFramework INTERFACE)
 add_dependencies(ANGLEFramework GLSLANGHeaders ANGLEHeaders)
 
-configure_file(src/commit.h ${CMAKE_CURRENT_BINARY_DIR}/include/id/commit.h COPYONLY)
-
 if (USE_ANGLE_EGL)
     add_library(ANGLE STATIC
         ${ANGLE_SOURCES}
@@ -103,7 +100,6 @@ if (USE_ANGLE_EGL)
 
     add_library(GLESv2 SHARED
         ${libglesv2_sources}
-        ${CMAKE_CURRENT_BINARY_DIR}/include/id/commit.h
     )
     target_include_directories(GLESv2 PRIVATE ${ANGLE_PRIVATE_INCLUDE_DIRECTORIES})
     target_compile_definitions(GLESv2 PRIVATE LIBGLESV2_IMPLEMENTATION)
@@ -111,7 +107,6 @@ if (USE_ANGLE_EGL)
 
     add_library(EGL SHARED
         ${libegl_sources}
-        ${CMAKE_CURRENT_BINARY_DIR}/include/id/commit.h
     )
     target_include_directories(EGL PRIVATE ${ANGLE_PRIVATE_INCLUDE_DIRECTORIES})
     target_compile_definitions(EGL PRIVATE
