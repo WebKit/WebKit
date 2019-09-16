@@ -63,6 +63,22 @@ constexpr NSUInteger maximumWebViewCacheSize = 3;
 
 @implementation _WKAttributedStringNavigationDelegate
 
+- (void)dealloc
+{
+    [_webContentProcessDidTerminate release];
+    _webContentProcessDidTerminate = nil;
+    [_decidePolicyForNavigationAction release];
+    _decidePolicyForNavigationAction = nil;
+    [_didFailProvisionalNavigation release];
+    _didFailProvisionalNavigation = nil;
+    [_didFailNavigation release];
+    _didFailNavigation = nil;
+    [_didFinishNavigation release];
+    _didFinishNavigation = nil;
+
+    [super dealloc];
+}
+
 - (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
 {
     if (_webContentProcessDidTerminate)

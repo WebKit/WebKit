@@ -1,3 +1,14 @@
+2019-09-16  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r243113): Leak of multiple instance variable blocks when deallocating _WKAttributedStringNavigationDelegate
+        <https://webkit.org/b/201812>
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/API/Cocoa/NSAttributedString.mm:
+        (-[_WKAttributedStringNavigationDelegate dealloc]): Add method
+        to release instance variable blocks to fix potential leaks.
+
 2019-09-16  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed build fix.
