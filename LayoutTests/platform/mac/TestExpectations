@@ -1996,3 +1996,12 @@ webkit.org/b/181837 [ Release ] imported/w3c/web-platform-tests/service-workers/
 
 webkit.org/b/199124 http/tests/appcache/remove-cache.html [ Pass Failure ]
 
+# rdar://55405851 ([ macOS ] Layout tests webgpu/*-triangle-strip.html are flaky failures. (201827))
+webkit.org/b/201827 webgpu/blend-color-triangle-strip.html [ Pass ImageOnlyFailure ]
+webkit.org/b/201827 webgpu/blend-triangle-strip.html [ Pass ImageOnlyFailure ]
+webkit.org/b/201827 webgpu/color-write-mask-triangle-strip.html [ Pass ImageOnlyFailure ]
+webkit.org/b/201827 webgpu/depth-enabled-triangle-strip.html [ Pass ImageOnlyFailure ]
+webkit.org/b/201827 webgpu/simple-triangle-strip.html [ Pass ImageOnlyFailure ]
+webkit.org/b/201827 webgpu/texture-triangle-strip.html [ Pass ImageOnlyFailure ]
+webkit.org/b/201827 webgpu/viewport-scissor-rect-triangle-strip.html [ Pass ImageOnlyFailure ]
+

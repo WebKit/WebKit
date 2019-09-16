@@ -1,3 +1,12 @@
+2019-09-16  Russell Epstein  <repstein@apple.com>
+
+        [ macOS ] Layout tests webgpu/*-triangle-strip.html are flaky failures.
+        https://bugs.webkit.org/show_bug.cgi?id=201827
+
+        Unreviewed Test Gardening.
+
+        * platform/mac/TestExpectations:
+
 2019-09-16  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, mark imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-events-onerror.html as flaky on iOS.
