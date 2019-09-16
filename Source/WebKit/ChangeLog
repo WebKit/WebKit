@@ -1,3 +1,10 @@
+2019-09-16  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed build fix.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.h: Add missing forward
+        declaration of the NetworkSession class.
+
 2019-09-16  Chris Dumez  <cdumez@apple.com>
 
         Store sessionID on the NetworkConnectionToWebProcess now that there is one session per WebProcess

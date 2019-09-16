@@ -64,6 +64,7 @@ namespace WebKit {
 
 class NetworkProcess;
 class NetworkResourceLoader;
+class NetworkSession;
 class NetworkSocketChannel;
 class NetworkSocketStream;
 class WebIDBConnectionToClient;
