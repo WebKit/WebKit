@@ -1,3 +1,14 @@
+2019-09-16  David Kilzer  <ddkilzer@apple.com>
+
+        Fix build failure in MockNfcService.mm
+        <https://webkit.org/b/201839>
+
+        Reviewed by Brady Eidson.
+
+        * UIProcess/WebAuthentication/Mock/MockNfcService.mm:
+        Specify instance variable names for @synthesized variables that
+        need to be manually released in -dealloc under MRR.
+
 2019-09-16  Per Arne Vollan  <pvollan@apple.com>
 
         REGRESSION(249649): Unable to open local files in MiniBrowser on macOS

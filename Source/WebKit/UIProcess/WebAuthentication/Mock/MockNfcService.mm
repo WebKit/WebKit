@@ -51,9 +51,9 @@
 }
 
 @synthesize technology;
-@synthesize tagID;
-@synthesize AppData;
-@synthesize UID;
+@synthesize tagID=_tagID;
+@synthesize AppData=_AppData;
+@synthesize UID=_UID;
 @synthesize ndefAvailability;
 @synthesize ndefMessageSize;
 @synthesize ndefContainerSize;
