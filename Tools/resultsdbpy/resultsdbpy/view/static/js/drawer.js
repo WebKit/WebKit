@@ -22,7 +22,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import {DOM, REF} from '/library/js/Ref.js';
-import {QueryModifier} from '/assets/js/common.js';
+import {queryToParams, paramsToQuery, QueryModifier, } from '/assets/js/common.js';
 import {Configuration} from '/assets/js/configuration.js'
 
 function setEnableRecursive(element, state) {
@@ -116,6 +116,26 @@ function Drawer(controls = [], onCollapseChange) {
         </div>`;
 }
 
+let configurations = []
+let configurationsDefinedCallbacks = [];
+function refreshConfigurations() {
+    let params = queryToParams(document.URL.split('?')[1]);
+    let queryParams = {};
+    if (params.branch)
+        queryParams.branch = params.branch;
+
+    const query = paramsToQuery(queryParams);
+    fetch(query ? 'api/suites?' + query: 'api/suites').then(response => {
+        response.json().then(json => {
+            configurations = json.map(pair => new Configuration(pair[0]));
+            configurationsDefinedCallbacks.forEach(callback => callback());
+        });
+    }).catch(error => {
+        // If the load fails, log the error and continue
+        console.error(JSON.stringify(error, null, 4));
+    });
+}
+
 function BranchSelector(callback) {
     const defaultBranches = new Set(['trunk', 'master']);
     const defaultBranchKey = [...defaultBranches].sort().join('/');
@@ -130,6 +150,7 @@ function BranchSelector(callback) {
                     branchModifier.remove();
                 else
                     branchModifier.replace(branch);
+                refreshConfigurations();
                 callback();
             }
         },
@@ -209,21 +230,7 @@ function LimitSlider(callback, max = 10000, defaultValue = 1000) {
 }
 
 function ConfigurationSelectors(callback) {
-    let configurations = []
-    let configurationsDefinedCallbacks = [];
-    fetch('api/suites').then(response => {
-        response.json().then(json => {
-            json.forEach(pair => {
-                const config = new Configuration(pair[0]);
-                configurations.push(config);
-            });
-            configurationsDefinedCallbacks.forEach(callback => {callback();});
-        });
-    }).catch(error => {
-        // If the load fails, log the error and continue
-        console.error(JSON.stringify(error, null, 4));
-    });
-
+    refreshConfigurations();
     const elements = [
         {'query': 'platform', 'name': 'Platform'},
         {'query': 'version_name', 'name': 'Version Name'},

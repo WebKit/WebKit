@@ -98,11 +98,11 @@ class ArchiveContext(object):
             uuid = self.commit_context.uuid_for_commits(commits)
             ttl = int((uuid // Commit.TIMESTAMP_TO_UUID_MULTIPLIER) + self.ttl_seconds - time.time()) if self.ttl_seconds else None
 
-            self.configuration_context.register_configuration(configuration, timestamp=timestamp)
-
             for branch in self.commit_context.branch_keys_for_commits(commits):
+                self.configuration_context.register_configuration(configuration, branch=branch, timestamp=timestamp)
+
                 self.configuration_context.insert_row_with_configuration(
-                    UploadContext.SuitesByConfiguration.__table_name__, configuration, suite=suite, ttl=ttl,
+                    UploadContext.SuitesByConfiguration.__table_name__, configuration, suite=suite, branch=branch, ttl=ttl,
                 )
                 self.configuration_context.insert_row_with_configuration(
                     self.ArchivesByCommit.__table_name__, configuration=configuration, suite=suite,

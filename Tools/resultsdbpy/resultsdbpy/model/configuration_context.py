@@ -29,6 +29,7 @@ from cassandra.cqlengine.models import Model
 from collections import Iterable, OrderedDict
 from datetime import datetime
 from resultsdbpy.controller.configuration import Configuration
+from resultsdbpy.model.commit_context import CommitContext
 
 
 class ClusteredByConfiguration(Model):
@@ -64,7 +65,7 @@ class ConfigurationContext(object):
             )
 
     class ByPlatform(Model, ConfigurationModel):
-        __table_name__ = 'configurations_by_platform'
+        __table_name__ = 'configs_by_platform_with_branch'
         platform = columns.Text(partition_key=True, required=True)
         style = columns.Text(primary_key=True, required=False)
         flavor = columns.Text(primary_key=True, required=False)
@@ -72,11 +73,12 @@ class ConfigurationContext(object):
         model = columns.Text(primary_key=True, required=False)
         is_simulator = columns.Boolean(primary_key=True, required=True)
         version = columns.Integer(primary_key=True, required=True)
+        branch = columns.Text(primary_key=True, required=True)
         version_name = columns.Text(primary_key=True, required=False)
         last_run = columns.DateTime(required=True)
 
     class ByPlatformAndVersion(Model, ConfigurationModel):
-        __table_name__ = 'configurations_by_platform_and_version'
+        __table_name__ = 'configs_by_platform_and_version_with_branch'
         platform = columns.Text(partition_key=True, required=True)
         version = columns.Integer(partition_key=True, required=True)
         style = columns.Text(primary_key=True, required=False)
@@ -84,11 +86,12 @@ class ConfigurationContext(object):
         architecture = columns.Text(primary_key=True, required=True)
         model = columns.Text(primary_key=True, required=False)
         is_simulator = columns.Boolean(primary_key=True, required=True)
+        branch = columns.Text(primary_key=True, required=True)
         version_name = columns.Text(primary_key=True, required=False)
         last_run = columns.DateTime(required=True)
 
     class ByArchitecture(Model, ConfigurationModel):
-        __table_name__ = 'configurations_by_architecture'
+        __table_name__ = 'configs_by_architecture_with_branch'
         architecture = columns.Text(partition_key=True, required=True)
         style = columns.Text(primary_key=True, required=False)
         platform = columns.Text(primary_key=True, required=True)
@@ -96,11 +99,12 @@ class ConfigurationContext(object):
         model = columns.Text(primary_key=True, required=False)
         flavor = columns.Text(primary_key=True, required=False)
         is_simulator = columns.Boolean(primary_key=True, required=True)
+        branch = columns.Text(primary_key=True, required=True)
         version_name = columns.Text(primary_key=True, required=False)
         last_run = columns.DateTime(required=True)
 
     class ByModel(Model, ConfigurationModel):
-        __table_name__ = 'configurations_by_model'
+        __table_name__ = 'configs_by_model_with_branch'
         model = columns.Text(partition_key=True, required=True)
         version = columns.Integer(primary_key=True, required=True)
         style = columns.Text(primary_key=True, required=False)
@@ -108,6 +112,7 @@ class ConfigurationContext(object):
         flavor = columns.Text(primary_key=True, required=False)
         architecture = columns.Text(primary_key=True, required=True)
         is_simulator = columns.Boolean(primary_key=True, required=True)
+        branch = columns.Text(primary_key=True, required=True)
         version_name = columns.Text(primary_key=True, required=False)
         last_run = columns.DateTime(required=True)
 
@@ -117,7 +122,6 @@ class ConfigurationContext(object):
 
         self.redis = redis
         self.cassandra = cassandra
-        self.repositories = {}
         self.cache_timeout = cache_timeout
 
         with self:
@@ -128,7 +132,7 @@ class ConfigurationContext(object):
 
             for configuration in self.cassandra.select_from_table(self.ByPlatform.__table_name__):
                 if configuration.last_run >= datetime.utcfromtimestamp(int(time.time() - cache_timeout)):
-                    self._register_in_redis(configuration.to_configuration(), configuration.last_run)
+                    self._register_in_redis(configuration.to_configuration(), configuration.branch, configuration.last_run)
 
     def __enter__(self):
         self.cassandra.__enter__()
@@ -137,16 +141,17 @@ class ConfigurationContext(object):
         self.cassandra.__exit__(*args, **kwargs)
 
     @classmethod
-    def _convert_to_redis_key(cls, configuration):
-        return 'configurations:{}:{}:{}:{}:{}:{}:{}:{}'.format(
+    def _convert_to_redis_key(cls, configuration, branch):
+        return 'configs_with_branch:{}:{}:{}:{}:{}:{}:{}:{}:{}'.format(
             configuration.platform or '*', '*' if configuration.is_simulator is None else (1 if configuration.is_simulator else 0),
             '*' if configuration.version is None else Configuration.integer_to_version(configuration.version),
             configuration.version_name or '*',
             configuration.architecture or '*', configuration.model or '*',
             configuration.style or '*', configuration.flavor or '*',
+            branch,
         )
 
-    def _register_in_redis(self, configuration, timestamp):
+    def _register_in_redis(self, configuration, branch, timestamp):
         if isinstance(timestamp, datetime):
             timestamp = calendar.timegm(timestamp.timetuple())
         expiration = int(self.cache_timeout - (time.time() - int(timestamp)))
@@ -154,11 +159,11 @@ class ConfigurationContext(object):
             sdk = configuration.sdk
             try:
                 configuration.sdk = None
-                self.redis.set(self._convert_to_redis_key(configuration), configuration.to_json(), ex=expiration)
+                self.redis.set(self._convert_to_redis_key(configuration, branch), configuration.to_json(), ex=expiration)
             finally:
                 configuration.sdk = sdk
 
-    def register_configuration(self, configuration, timestamp=time.time()):
+    def register_configuration(self, configuration, branch=None, timestamp=time.time()):
         if not isinstance(configuration, Configuration):
             raise TypeError(f'Expected type {Configuration}, got {type(configuration)}')
         if not configuration.is_complete():
@@ -166,13 +171,15 @@ class ConfigurationContext(object):
         if not isinstance(timestamp, datetime):
             timestamp = datetime.utcfromtimestamp(int(timestamp))
 
+        branch = branch or CommitContext.DEFAULT_BRANCH_KEY
+
         with self:
             tables_to_insert_to = [self.ByPlatform.__table_name__, self.ByPlatformAndVersion.__table_name__, self.ByArchitecture.__table_name__]
             if configuration.model is not None:
                 tables_to_insert_to.append(self.ByModel.__table_name__)
             for table in tables_to_insert_to:
                 self.cassandra.insert_row(
-                    table,
+                    table, branch=branch,
                     platform=configuration.platform, is_simulator=configuration.is_simulator,
                     version=configuration.version, version_name=configuration.version_name or '',
                     architecture=configuration.architecture, model=configuration.model or '',
@@ -180,13 +187,13 @@ class ConfigurationContext(object):
                     last_run=timestamp,
                 )
 
-        self._register_in_redis(configuration, timestamp)
+        self._register_in_redis(configuration, branch, timestamp)
 
-    def search_for_configuration(self, configuration):
+    def search_for_configuration(self, configuration, branch=None):
         if not isinstance(configuration, Configuration):
             raise TypeError(f'Expected type {Configuration}, got {type(configuration)}')
 
-        kwargs = {}
+        kwargs = dict(branch=branch or CommitContext.DEFAULT_BRANCH_KEY)
         for member in Configuration.REQUIRED_MEMBERS + Configuration.OPTIONAL_MEMBERS:
             if getattr(configuration, member):
                 kwargs[member] = getattr(configuration, member)
@@ -205,12 +212,12 @@ class ConfigurationContext(object):
         with self:
             return [model.to_configuration() for model in self.cassandra.select_from_table(table.__table_name__, **kwargs)]
 
-    def search_for_recent_configuration(self, configuration=Configuration()):
+    def search_for_recent_configuration(self, configuration=Configuration(), branch=None):
         if not isinstance(configuration, Configuration):
             raise TypeError(f'Expected type {Configuration}, got {type(configuration)}')
 
         configurations = []
-        for key in self.redis.scan_iter(self._convert_to_redis_key(configuration)):
+        for key in self.redis.scan_iter(self._convert_to_redis_key(configuration, branch or CommitContext.DEFAULT_BRANCH_KEY)):
             candidate = Configuration.from_json(self.redis.get(key.decode('utf-8')).decode('utf-8'))
             if candidate == configuration:
                 configurations.append(candidate)
@@ -236,7 +243,7 @@ class ConfigurationContext(object):
                 attributes=json.dumps(attributes_dict),
                 **kwargs)
 
-    def select_from_table_with_configurations(self, table_name, configurations=None, recent=True, limit=100, **kwargs):
+    def select_from_table_with_configurations(self, table_name, configurations=None, branch=None, recent=True, limit=100, **kwargs):
         if not isinstance(configurations, Iterable):
             raise TypeError('Expected configurations to be iterable')
         if not configurations:
@@ -250,9 +257,9 @@ class ConfigurationContext(object):
                 if config.is_complete():
                     complete_configurations.add(config)
                 elif recent:
-                    [complete_configurations.add(element) for element in self.search_for_recent_configuration(config)]
+                    [complete_configurations.add(element) for element in self.search_for_recent_configuration(config, branch=branch)]
                 else:
-                    [complete_configurations.add(element) for element in self.search_for_configuration(config)]
+                    [complete_configurations.add(element) for element in self.search_for_configuration(config, branch=branch)]
 
             results = {}
             for configuration in complete_configurations:
@@ -268,6 +275,7 @@ class ConfigurationContext(object):
                     architecture=configuration.architecture,
                     attributes=json.dumps(attributes_dict),
                     limit=limit,
+                    branch=branch or CommitContext.DEFAULT_BRANCH_KEY,
                     **kwargs)
                 if len(rows) == 0:
                     continue

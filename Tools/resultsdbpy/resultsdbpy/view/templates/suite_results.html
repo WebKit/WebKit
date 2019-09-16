@@ -120,6 +120,8 @@ class MainView {
             if (params[member])
                 suiteParams[member] = params[member];
         });
+        if (params.branch)
+            suiteParams.branch = params.branch;
         let query = paramsToQuery(suiteParams);
         fetch(query ? 'api/suites?' + query: 'api/suites').then(response => {
             response.json().then(json => {

@@ -1,3 +1,39 @@
+2019-09-16  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Configurations should be branch specific
+        https://bugs.webkit.org/show_bug.cgi?id=201561
+
+        Reviewed by Dewei Zhu.
+
+        Partition configurations by branch in both Redis and Cassandra.
+
+        * resultsdbpy/resultsdbpy/controller/upload_controller.py:
+        (UploadController.suites): Allow the user to specify branches while listing suites.
+        * resultsdbpy/resultsdbpy/model/archive_context.py:
+        (ArchiveContext.register): Register each configuration with a branch.
+        * resultsdbpy/resultsdbpy/model/configuration_context.py:
+        (ConfigurationContext.ByPlatform): Index by branch.
+        (ConfigurationContext.ByPlatformAndVersion): Ditto.
+        (ConfigurationContext.ByArchitecture): Ditto.
+        (ConfigurationContext.ByModel): Ditto.
+        (ConfigurationContext.__init__): Populate Redis cache with branch.
+        (ConfigurationContext._convert_to_redis_key): Accept branch in Redis key.
+        (ConfigurationContext._register_in_redis): Register configuration with branch.
+        (ConfigurationContext.register_configuration): Ditto.
+        (ConfigurationContext.search_for_configuration): Search for configuration with branch.
+        (ConfigurationContext.search_for_recent_configuration): Ditto.
+        (ConfigurationContext.select_from_table_with_configurations): Ditto.
+        * resultsdbpy/resultsdbpy/model/configuration_context_unittest.py:
+        (ConfigurationContextTest.register_configurations): Register with branch.
+        (ConfigurationContextTest.test_repopulate_recent): Construct ConfigurationContext with
+        CommitContext object.
+        * resultsdbpy/resultsdbpy/model/upload_context.py:
+        (UploadContext.SuitesByConfiguration): Index by branch.
+        (UploadContext.upload_test_results): Register each configuration with a branch.
+        (UploadContext.find_suites): Pass branch to search for configurations.
+        * resultsdbpy/resultsdbpy/view/static/js/drawer.js: Check for new configurations when the branch is changed.
+        * resultsdbpy/resultsdbpy/view/templates/suite_results.html: Add branch to suites query.
+
 2019-09-16  David Kilzer  <ddkilzer@apple.com>
 
         check-webkit-style: Fix warning message for std::make_unique<typename[]>

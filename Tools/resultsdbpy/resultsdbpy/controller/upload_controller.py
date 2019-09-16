@@ -159,13 +159,16 @@ class UploadController(HasCommitContext):
 
     @query_as_kwargs()
     @configuration_for_query()
-    def suites(self, configurations=None, recent=None, suite=None, **kwargs):
+    def suites(self, configurations=None, recent=None, suite=None, branch=None, **kwargs):
         AssertRequest.is_type(['GET'])
         AssertRequest.query_kwargs_empty(**kwargs)
 
         with self.upload_context:
-            suites_by_config = self.upload_context.find_suites(configurations=configurations,
-                                                               recent=boolean_query(*recent)[0] if recent else True)
+            suites_by_config = self.upload_context.find_suites(
+                configurations=configurations,
+                recent=boolean_query(*recent)[0] if recent else True,
+                branch=branch[0] if branch else None,
+            )
             result = []
             for config, candidate_suites in suites_by_config.items():
                 suites_for_config = [s for s in candidate_suites if not suite or s in suite]

@@ -27,6 +27,7 @@ from resultsdbpy.controller.configuration import Configuration
 from fakeredis import FakeStrictRedis
 from redis import StrictRedis
 from resultsdbpy.model.cassandra_context import CassandraContext
+from resultsdbpy.model.commit_context import CommitContext
 from resultsdbpy.model.configuration_context import ConfigurationContext, ClusteredByConfiguration
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
 from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
@@ -75,9 +76,9 @@ class ConfigurationContextTest(WaitForDockerTestCase):
         for configuration in self.CONFIGURATIONS:
             if (configuration.platform == 'Mac' and configuration.version <= Configuration.version_to_integer('10.13')) \
                or (configuration.platform == 'iOS' and configuration.version <= Configuration.version_to_integer('11')):
-                self.database.register_configuration(configuration, old)
+                self.database.register_configuration(configuration, branch=None, timestamp=old)
             else:
-                self.database.register_configuration(configuration, current)
+                self.database.register_configuration(configuration, branch=None, timestamp=current)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_invalid_configuration(self, redis=StrictRedis, cassandra=CassandraContext):

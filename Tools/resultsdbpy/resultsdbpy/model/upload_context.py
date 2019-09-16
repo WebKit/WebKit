@@ -43,8 +43,9 @@ class UploadContext(object):
     MAX_TASKS_IN_SCAN = 10
 
     class SuitesByConfiguration(ClusteredByConfiguration):
-        __table_name__ = 'suites_by_configuration'
+        __table_name__ = 'suites_by_configuration_and_branch'
         suite = columns.Text(primary_key=True, required=True)
+        branch = columns.Text(primary_key=True, required=True)
 
     class UploadsByConfiguration(ClusteredByConfiguration):
         __table_name__ = 'uploads_by_configuration_01'
@@ -227,11 +228,11 @@ class UploadContext(object):
         branches = self.commit_context.branch_keys_for_commits(commits)
 
         with self:
-            self.configuration_context.register_configuration(configuration, timestamp=timestamp)
-
             for branch in branches:
+                self.configuration_context.register_configuration(configuration, branch=branch, timestamp=timestamp)
+
                 self.configuration_context.insert_row_with_configuration(
-                    self.SuitesByConfiguration.__table_name__, configuration, suite=suite,
+                    self.SuitesByConfiguration.__table_name__, configuration, suite=suite, branch=branch,
                     ttl=int((uuid // Commit.TIMESTAMP_TO_UUID_MULTIPLIER) + self.ttl_seconds - time.time()) if self.ttl_seconds else None,
                 )
                 self.configuration_context.insert_row_with_configuration(
@@ -258,11 +259,11 @@ class UploadContext(object):
                 ).items()})
             return result
 
-    def find_suites(self, configurations, recent=True, limit=100):
+    def find_suites(self, configurations, branch=None, recent=True, limit=100):
         with self:
             return {
                 config: [row.suite for row in rows] for config, rows in self.configuration_context.select_from_table_with_configurations(
-                    self.SuitesByConfiguration.__table_name__, configurations=configurations, recent=recent, limit=limit,
+                    self.SuitesByConfiguration.__table_name__, configurations=configurations, branch=branch, recent=recent, limit=limit,
                 ).items()
             }
 
