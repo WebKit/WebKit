@@ -201,6 +201,11 @@ function testSyntaxError(script, message) {
         `var O = { *method(await) { return await; } };`,
 
         `(function await() {})`,
+        `(function () { await => {}; })`,
+        `(function () { (await) => {}; })`,
+        `(function () { (x = await => {}) => {}; })`,
+        `(function () { (x = (await) => {}) => {}; })`,
+        `(function () { (x = await /1/g) => {}; })`,
     ];
 
     for (let context of contextData) {
@@ -422,6 +427,9 @@ function testSyntaxError(script, message) {
         `var asyncArrow = async({ await = 1}) => {};`,
         `var asyncArrow = async({ } = await) => 1;`,
         `var asyncArrow = async({ } = await) => {};`,
+        `var asyncArrow = async() => { (x = await => {}) => {} };`,
+        `var asyncArrow = async() => { (x = (await) => {}) => {} };`,
+        `var asyncArrow = async() => { (x = await /1/g) => {} };`,
 
         `({ async method(await) {} })`,
         `({ async method(...await) {} })`,

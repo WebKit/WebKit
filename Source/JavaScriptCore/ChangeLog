@@ -1,3 +1,22 @@
+2019-09-16  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Add missing syntax errors for await in function parameter default expressions
+        https://bugs.webkit.org/show_bug.cgi?id=201615
+
+        Reviewed by Darin Adler.
+
+        This patch rectifies two oversights:
+          1. We were prohibiting `async function f(x = (await) => {}) {}` but not `async function f(x = await => {}) {}`
+             (and likewise for async arrow functions).
+          2. We were not prohibiting `(x = await => {}) => {}` in an async context
+             (regardless of parentheses, but note that this one *only* applies to arrow functions).
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::isArrowFunctionParameters): Fix case (1).
+        (JSC::Parser<LexerType>::parseFunctionInfo): Fix case (2).
+        (JSC::Parser<LexerType>::parseAwaitExpression): Convert unfailing check into an ASSERT.
+        (JSC::Parser<LexerType>::parsePrimaryExpression): Adjust error message for case (2).
+
 2019-09-16  Tadeu Zagallo  <tzagallo@apple.com>
 
         SamplingProfiler should hold API lock before reporting results

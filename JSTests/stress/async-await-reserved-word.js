@@ -48,6 +48,9 @@ shouldThrowSyntaxError("(async function f([...await]) {})", "Cannot use 'await' 
 shouldThrowSyntaxError("(async function f(...await) {})", "Cannot use 'await' as a parameter name in an async function.");
 shouldThrowSyntaxError("(async function f({await}) {})", "Cannot use 'await' as a parameter name in an async function.");
 shouldThrowSyntaxError("(async function f({isAsync: await}) {})", "Cannot use 'await' as a parameter name in an async function.");
+shouldThrowSyntaxError("(async function f(x = await => {}) {})", "Cannot use 'await' within a parameter default expression.");
+shouldThrowSyntaxError("(async function f(x = (await) => {}) {})", "Cannot use 'await' within a parameter default expression.");
+shouldThrowSyntaxError("(async function f(x = await /1/g) {})", "Cannot use 'await' within a parameter default expression.");
 
 // AsyncFunctionDeclaration
 shouldThrowSyntaxError("async function f() { var await; }", "Cannot use 'await' as a variable name in an async function.");
@@ -76,6 +79,9 @@ shouldThrowSyntaxError("async function f([...await]) {}", "Cannot use 'await' as
 shouldThrowSyntaxError("async function f(...await) {}", "Cannot use 'await' as a parameter name in an async function.");
 shouldThrowSyntaxError("async function f({await}) {}", "Cannot use 'await' as a parameter name in an async function.");
 shouldThrowSyntaxError("async function f({isAsync: await}) {}", "Cannot use 'await' as a parameter name in an async function.");
+shouldThrowSyntaxError("async function f(x = await => {}) {}", "Cannot use 'await' within a parameter default expression.");
+shouldThrowSyntaxError("async function f(x = (await) => {}) {}", "Cannot use 'await' within a parameter default expression.");
+shouldThrowSyntaxError("async function f(x = await /1/g) {}", "Cannot use 'await' within a parameter default expression.");
 
 // AsyncArrowFunction
 shouldThrowSyntaxError("var f = async () => { var await; }", "Cannot use 'await' as a variable name in an async function.");
@@ -98,13 +104,16 @@ shouldThrowSyntaxError("var f = async () => { const {isAsync: await} = {}; }", "
 shouldThrowSyntaxError("var f = async () => { const {isAsync: await} = {}; }", "Cannot use 'await' as a lexical variable name in an async function.");
 shouldThrowSyntaxError("var f = async () => { function await() {} }", "Cannot declare function named 'await' in an async function.");
 shouldThrowSyntaxError("var f = async () => { async function await() {} }", "Cannot declare function named 'await' in an async function.");
+shouldThrowSyntaxError("var f = async await => {}", "Cannot use 'await' as a parameter name in an async function.");
 shouldThrowSyntaxError("var f = async (await) => {}", "Cannot use 'await' as a parameter name in an async function.");
 shouldThrowSyntaxError("var f = async ([await]) => {}", "Cannot use 'await' as a parameter name in an async function.");
 shouldThrowSyntaxError("var f = async ([...await]) => {}", "Cannot use 'await' as a parameter name in an async function.");
 shouldThrowSyntaxError("var f = async (...await) => {}", "Cannot use 'await' as a parameter name in an async function.");
 shouldThrowSyntaxError("var f = async ({await}) => {}", "Cannot use 'await' as a parameter name in an async function.");
 shouldThrowSyntaxError("var f = async ({isAsync: await}) => {}", "Cannot use 'await' as a parameter name in an async function.");
-shouldThrowSyntaxError("var f = async await => {}", "Cannot use 'await' as a parameter name in an async function.");
+shouldThrowSyntaxError("var f = async (x = await => {}) => {}", "Cannot use 'await' within a parameter default expression.");
+shouldThrowSyntaxError("var f = async (x = (await) => {}) => {}", "Cannot use 'await' within a parameter default expression.");
+shouldThrowSyntaxError("var f = async (x = await /1/g) => {}", "Cannot use 'await' within a parameter default expression.");
 
 // AsyncMethod
 shouldThrowSyntaxError("var O = { async f() { var await; } }", "Cannot use 'await' as a variable name in an async function.");
@@ -133,6 +142,9 @@ shouldThrowSyntaxError("var O = { async f([...await]) {}", "Cannot use 'await' a
 shouldThrowSyntaxError("var O = { async f(...await) {}", "Cannot use 'await' as a parameter name in an async function.");
 shouldThrowSyntaxError("var O = { async f({await}) {}", "Cannot use 'await' as a parameter name in an async function.");
 shouldThrowSyntaxError("var O = { async f({isAsync: await}) {}", "Cannot use 'await' as a parameter name in an async function.");
+shouldThrowSyntaxError("var O = { async f(x = await => {}) {} }", "Cannot use 'await' within a parameter default expression.");
+shouldThrowSyntaxError("var O = { async f(x = (await) => {}) {} }", "Cannot use 'await' within a parameter default expression.");
+shouldThrowSyntaxError("var O = { async f(x = await /1/g) {} }", "Cannot use 'await' within a parameter default expression.");
 
 // AsyncFunction constructor
 shouldThrowSyntaxError("AsyncFunction('var await;')", "Cannot use 'await' as a variable name in an async function.");
@@ -161,3 +173,6 @@ shouldThrowSyntaxError("AsyncFunction('[...await]', '')", "Cannot use 'await' as
 shouldThrowSyntaxError("AsyncFunction('...await', '')", "Cannot use 'await' as a parameter name in an async function.");
 shouldThrowSyntaxError("AsyncFunction('{await}', '')", "Cannot use 'await' as a parameter name in an async function.");
 shouldThrowSyntaxError("AsyncFunction('{isAsync: await}', '')", "Cannot use 'await' as a parameter name in an async function.");
+shouldThrowSyntaxError("AsyncFunction('x = await => {}', '')", "Cannot use 'await' within a parameter default expression.");
+shouldThrowSyntaxError("AsyncFunction('x = (await) => {}', '')", "Cannot use 'await' within a parameter default expression.");
+shouldThrowSyntaxError("AsyncFunction('x = await /1/g', '')", "Cannot use 'await' within a parameter default expression.");

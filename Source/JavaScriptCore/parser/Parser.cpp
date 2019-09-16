@@ -347,6 +347,7 @@ bool Parser<LexerType>::isArrowFunctionParameters()
     }
 
     if (matchSpecIdentifier()) {
+        semanticFailIfTrue(!m_parserState.allowAwait && match(AWAIT), "Cannot use 'await' as a parameter name in an async function");
         SavePoint saveArrowFunctionPoint = createSavePoint();
         next();
         bool isArrowFunction = match(ARROWFUNCTION);
@@ -2430,7 +2431,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
             // Parse formal parameters with [+Yield] parameterization, in order to ban YieldExpressions
             // in ArrowFormalParameters, per ES6 #sec-arrow-function-definitions-static-semantics-early-errors.
             Scope::MaybeParseAsGeneratorForScope parseAsGenerator(functionScope, parentScope->isGenerator());
-            SetForScope<bool> overrideAllowAwait(m_parserState.allowAwait, !isAsyncFunctionParseMode(mode));
+            SetForScope<bool> overrideAllowAwait(m_parserState.allowAwait, !parentScope->isAsyncFunction() && !isAsyncFunctionParseMode(mode));
             parseFunctionParameters(syntaxChecker, mode, functionInfo);
             propagateError();
         }
@@ -3830,7 +3831,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseAwaitExpress
 {
     ASSERT(match(AWAIT));
     ASSERT(currentScope()->isAsyncFunction());
-    failIfTrue(m_parserState.functionParsePhase == FunctionParsePhase::Parameters, "Cannot use await expression within parameters");
+    ASSERT(m_parserState.functionParsePhase != FunctionParsePhase::Parameters);
     JSTokenLocation location(tokenLocation());
     JSTextPosition divotStart = tokenStartPosition();
     next();
@@ -4520,7 +4521,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
     }
     case AWAIT:
         if (m_parserState.functionParsePhase == FunctionParsePhase::Parameters)
-            failIfFalse(m_parserState.allowAwait, "Cannot use await expression within parameters");
+            semanticFailIfFalse(m_parserState.allowAwait, "Cannot use 'await' within a parameter default expression");
         else if (currentFunctionScope()->isAsyncFunctionBoundary())
             return parseAwaitExpression(context);
 

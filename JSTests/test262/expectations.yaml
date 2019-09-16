@@ -2387,12 +2387,6 @@ test/language/expressions/assignment/fn-name-lhs-cover.js:
 test/language/expressions/assignment/fn-name-lhs-member.js:
   default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
-test/language/expressions/async-arrow-function/await-as-param-ident-nested-arrow-parameter-position.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/expressions/async-arrow-function/await-as-param-nested-arrow-body-position.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/expressions/call/eval-realm-indirect.js:
   default: 'Test262Error: Expected SameValue(Â«insideÂ», Â«outsideÂ») to be true'
 test/language/expressions/call/eval-spread-empty-leading.js:
