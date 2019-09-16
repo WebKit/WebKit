@@ -1,3 +1,14 @@
+2019-09-15  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r248592): Leak of CFDictionaryRef in WebKit::NetworkRTCProvider::proxyInfoFromSession()
+        <https://webkit.org/b/201811>
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/webrtc/NetworkRTCProvider.mm:
+        (WebKit::NetworkRTCProvider::proxyInfoFromSession): Use
+        RetainPtr<> to fix the leak.
+
 2019-09-14  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Check for a Snap sandbox a bit harder

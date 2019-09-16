@@ -32,6 +32,7 @@
 #include <WebCore/LibWebRTCMacros.h>
 #include <webrtc/rtc_base/asyncpacketsocket.h>
 #include <webrtc/rtc_base/logging.h>
+#include <wtf/RetainPtr.h>
 
 namespace WebKit {
 
@@ -72,19 +73,19 @@ rtc::ProxyInfo NetworkRTCProvider::proxyInfoFromSession(const RTCNetwork::Socket
 {
     // FIXME: We should check for kCFNetworkProxiesExceptionsList to decide whether to use proxy or not.
     // FIXME: We should also get username/password for authentication cases.
-    auto proxyDictionary = static_cast<NetworkSessionCocoa&>(session).proxyConfiguration();
+    RetainPtr<CFDictionaryRef> proxyDictionary = static_cast<NetworkSessionCocoa&>(session).proxyConfiguration();
     if (!proxyDictionary)
-        proxyDictionary = CFNetworkCopySystemProxySettings();
+        proxyDictionary = adoptCF(CFNetworkCopySystemProxySettings());
 #if PLATFORM(MAC)
-    if (isEnabled(proxyDictionary, kCFNetworkProxiesHTTPSEnable))
-        return createRTCProxy(proxyDictionary, rtc::PROXY_HTTPS, kCFNetworkProxiesHTTPSProxy, kCFNetworkProxiesHTTPSPort);
+    if (isEnabled(proxyDictionary.get(), kCFNetworkProxiesHTTPSEnable))
+        return createRTCProxy(proxyDictionary.get(), rtc::PROXY_HTTPS, kCFNetworkProxiesHTTPSProxy, kCFNetworkProxiesHTTPSPort);
 
-    if (isEnabled(proxyDictionary, kCFNetworkProxiesSOCKSEnable))
-        return createRTCProxy(proxyDictionary, rtc::PROXY_SOCKS5, kCFNetworkProxiesSOCKSProxy, kCFNetworkProxiesSOCKSPort);
+    if (isEnabled(proxyDictionary.get(), kCFNetworkProxiesSOCKSEnable))
+        return createRTCProxy(proxyDictionary.get(), rtc::PROXY_SOCKS5, kCFNetworkProxiesSOCKSProxy, kCFNetworkProxiesSOCKSPort);
 #endif
 #if PLATFORM(IOS)
-    if (isEnabled(proxyDictionary, kCFNetworkProxiesHTTPEnable))
-        return createRTCProxy(proxyDictionary, rtc::PROXY_HTTPS, kCFNetworkProxiesHTTPProxy, kCFNetworkProxiesHTTPPort);
+    if (isEnabled(proxyDictionary.get(), kCFNetworkProxiesHTTPEnable))
+        return createRTCProxy(proxyDictionary.get(), rtc::PROXY_HTTPS, kCFNetworkProxiesHTTPProxy, kCFNetworkProxiesHTTPPort);
 #endif
     return { };
 }
