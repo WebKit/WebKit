@@ -1175,7 +1175,7 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     addPlatformLoadParameters(loadParameters);
 
 #if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_PID)
-    if (processIdentifier() || !url.isLocalFile())
+    if (process->processIdentifier() || !url.isLocalFile())
         process->send(Messages::WebPage::LoadRequest(loadParameters), webPageID);
     else {
         String sandboxExtensionPath;

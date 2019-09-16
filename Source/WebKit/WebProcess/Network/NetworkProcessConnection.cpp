@@ -68,8 +68,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-NetworkProcessConnection::NetworkProcessConnection(IPC::Connection::Identifier connectionIdentifier)
+NetworkProcessConnection::NetworkProcessConnection(IPC::Connection::Identifier connectionIdentifier, WTF::ProcessID pid)
     : m_connection(IPC::Connection::createClientConnection(connectionIdentifier, *this))
+    , m_networkProcessPID(pid)
 {
     m_connection->open();
 }

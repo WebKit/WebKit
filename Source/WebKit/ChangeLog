@@ -1,3 +1,42 @@
+2019-09-16  Per Arne Vollan  <pvollan@apple.com>
+
+        REGRESSION(249649): Unable to open local files in MiniBrowser on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=201798
+
+        Reviewed by Brent Fulgham.
+
+        The commit <https://trac.webkit.org/changeset/249649> introduced a MiniBrowser regression on macOS where
+        MiniBrowser is not able to open local files. The change set r249649 fixed a problem where the WebContent
+        process PID was not ready to be used when creating a sandbox extension. This happened in the cases where
+        the WebContent process had not finished launching when the load started. The WebContent process is also
+        creating sandbox extensions for the Networking process for the files being loaded, and also needs to be
+        passing the PID of the Networking process when creating these. This patch is addressing this by getting
+        the PID of the Networking process when the WebContent process is initially getting the connection to the
+        Networking process. The PID is then stored in the NetworkProcessConnection class, from where it is passed
+        to the NetworkLoadParameters, and used when creating the sandbox extension for the Networking process.
+
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::~NetworkProcessProxy):
+        (WebKit::NetworkProcessProxy::openNetworkProcessConnection):
+        (WebKit::NetworkProcessProxy::networkProcessCrashed):
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadRequestWithNavigationShared):
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::NetworkProcessConnection):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        (WebKit::NetworkProcessConnection::create):
+        (WebKit::NetworkProcessConnection::networkProcessPID const):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::getNetworkProcessConnection):
+        (WebKit::WebProcess::ensureNetworkProcessConnection):
+
 2019-09-16  David Kilzer  <ddkilzer@apple.com>
 
         [WebAuthn] REGRESSION (r249059): Leak of WKMockNFTag objects and WKMockNFTag instance variables
