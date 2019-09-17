@@ -1,3 +1,14 @@
+2019-09-17  Russell Epstein  <russell_e@apple.com>
+
+        Rebaseline imported/w3c/web-platform-tests/cors/access-control-expose-headers-parsing.window.html for Catalina and iOS 13.
+        https://bugs.webkit.org/show_bug.cgi?id=172357
+
+        Unreviewed Test Gardening.
+
+        * platform/ios/imported/w3c/web-platform-tests/cors/access-control-expose-headers-parsing.window-expected.txt:
+        * platform/mac-mojave/imported/w3c/web-platform-tests/cors/access-control-expose-headers-parsing.window-expected.txt: Copied from LayoutTests/platform/ios/imported/w3c/web-platform-tests/cors/access-control-expose-headers-parsing.window-expected.txt.
+        * platform/mac/imported/w3c/web-platform-tests/cors/access-control-expose-headers-parsing.window-expected.txt:
+
 2019-09-17  Chris Dumez  <cdumez@apple.com>
 
         Update testharness.js from upstream for web-platform-tests
