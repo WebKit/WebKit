@@ -159,13 +159,13 @@ TEST_F(URLParserTextEncodingTest, QueryEncoding)
     checkURL(makeString("wss://host/path?", withUmlauts), &iso88591, {"wss", "", "", "host", 0, "/path", "%C3%9C%D0%B0%D1%91", "", "wss://host/path?%C3%9C%D0%B0%D1%91"});
     checkURL(makeString("asdf://host/path?", withUmlauts), &iso88591, {"asdf", "", "", "host", 0, "/path", "%C3%9C%D0%B0%D1%91", "", "asdf://host/path?%C3%9C%D0%B0%D1%91"});
     checkURL(makeString("https://host/path?", withUmlauts), &iso88591, {"https", "", "", "host", 0, "/path", "%DC%26%231072%3B%26%231105%3B", "", "https://host/path?%DC%26%231072%3B%26%231105%3B"});
-    checkURL(makeString("gopher://host/path?", withUmlauts), &iso88591, {"gopher", "", "", "host", 0, "/path", "%DC%26%231072%3B%26%231105%3B", "", "gopher://host/path?%DC%26%231072%3B%26%231105%3B"});
+    checkURL(makeString("gopher://host/path?", withUmlauts), &iso88591, {"gopher", "", "", "host", 0, "/path", "%C3%9C%D0%B0%D1%91", "", "gopher://host/path?%C3%9C%D0%B0%D1%91"});
     checkURL(makeString("/path?", withUmlauts, "#fragment"), "ws://example.com/", &iso88591, {"ws", "", "", "example.com", 0, "/path", "%C3%9C%D0%B0%D1%91", "fragment", "ws://example.com/path?%C3%9C%D0%B0%D1%91#fragment"});
     checkURL(makeString("/path?", withUmlauts, "#fragment"), "wss://example.com/", &iso88591, {"wss", "", "", "example.com", 0, "/path", "%C3%9C%D0%B0%D1%91", "fragment", "wss://example.com/path?%C3%9C%D0%B0%D1%91#fragment"});
     checkURL(makeString("/path?", withUmlauts, "#fragment"), "asdf://example.com/", &iso88591, {"asdf", "", "", "example.com", 0, "/path", "%C3%9C%D0%B0%D1%91", "fragment", "asdf://example.com/path?%C3%9C%D0%B0%D1%91#fragment"});
     checkURL(makeString("/path?", withUmlauts, "#fragment"), "https://example.com/", &iso88591, {"https", "", "", "example.com", 0, "/path", "%DC%26%231072%3B%26%231105%3B", "fragment", "https://example.com/path?%DC%26%231072%3B%26%231105%3B#fragment"});
-    checkURL(makeString("/path?", withUmlauts, "#fragment"), "gopher://example.com/", &iso88591, {"gopher", "", "", "example.com", 0, "/path", "%DC%26%231072%3B%26%231105%3B", "fragment", "gopher://example.com/path?%DC%26%231072%3B%26%231105%3B#fragment"});
-    checkURL(makeString("gopher://host/path?", withUmlauts, "#fragment"), "asdf://example.com/?doesntmatter", &iso88591, {"gopher", "", "", "host", 0, "/path", "%DC%26%231072%3B%26%231105%3B", "fragment", "gopher://host/path?%DC%26%231072%3B%26%231105%3B#fragment"});
+    checkURL(makeString("/path?", withUmlauts, "#fragment"), "gopher://example.com/", &iso88591, {"gopher", "", "", "example.com", 0, "/path", "%C3%9C%D0%B0%D1%91", "fragment", "gopher://example.com/path?%C3%9C%D0%B0%D1%91#fragment"});
+    checkURL(makeString("gopher://host/path?", withUmlauts, "#fragment"), "asdf://example.com/?doesntmatter", &iso88591, {"gopher", "", "", "host", 0, "/path", "%C3%9C%D0%B0%D1%91", "fragment", "gopher://host/path?%C3%9C%D0%B0%D1%91#fragment"});
     checkURL(makeString("asdf://host/path?", withUmlauts, "#fragment"), "http://example.com/?doesntmatter", &iso88591, {"asdf", "", "", "host", 0, "/path", "%C3%9C%D0%B0%D1%91", "fragment", "asdf://host/path?%C3%9C%D0%B0%D1%91#fragment"});
 
     checkURL("http://host/pa'th?qu'ery#fr'agment", nullptr, {"http", "", "", "host", 0, "/pa'th", "qu%27ery", "fr'agment", "http://host/pa'th?qu%27ery#fr'agment"});

@@ -1113,17 +1113,9 @@ TEST_F(WTF_URLParser, DefaultPort)
         {"ftp", "", "", "host", 22, "/", "", "", "ftp://host:22/"},
         {"ftp", "", "", "host", 22, "", "", "", "ftp://host:22"});
     
-    checkURL("gOpHeR://host:70/", {"gopher", "", "", "host", 0, "/", "", "", "gopher://host/"});
-    checkURL("gopher://host:70/", {"gopher", "", "", "host", 0, "/", "", "", "gopher://host/"});
+    checkURL("gOpHeR://host:70/", {"gopher", "", "", "host", 70, "/", "", "", "gopher://host:70/"});
+    checkURL("gopher://host:70/", {"gopher", "", "", "host", 70, "/", "", "", "gopher://host:70/"});
     checkURL("gopher://host:71/", {"gopher", "", "", "host", 71, "/", "", "", "gopher://host:71/"});
-    // Spec, Chrome, Firefox, and URLParser have "/", URL::parse does not.
-    // Spec, Chrome, URLParser, URL::parse recognize gopher default port, Firefox does not.
-    checkURLDifferences("gopher://host:70",
-        {"gopher", "", "", "host", 0, "/", "", "", "gopher://host/"},
-        {"gopher", "", "", "host", 0, "", "", "", "gopher://host"});
-    checkURLDifferences("gopher://host:71",
-        {"gopher", "", "", "host", 71, "/", "", "", "gopher://host:71/"},
-        {"gopher", "", "", "host", 71, "", "", "", "gopher://host:71"});
     
     checkURL("hTtP://host:80", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
     checkURL("http://host:80", {"http", "", "", "host", 0, "/", "", "", "http://host/"});

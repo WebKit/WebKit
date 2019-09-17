@@ -1,3 +1,16 @@
+2019-09-16  Alex Christensen  <achristensen@webkit.org>
+
+        Remove "gopher" from list of special schemes in URLParser
+        https://bugs.webkit.org/show_bug.cgi?id=201852
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Tests/WTF/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebCore/URLParserTextEncoding.cpp:
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+
 2019-09-16  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Shard result archives

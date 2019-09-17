@@ -68,7 +68,7 @@ PASS Parsing origin: <ftp:/example.com/> against <http://example.org/foo/bar>
 PASS Parsing origin: <https:/example.com/> against <http://example.org/foo/bar> 
 FAIL Parsing origin: <madeupscheme:/example.com/> against <http://example.org/foo/bar> assert_equals: origin expected "null" but got "madeupscheme://"
 FAIL Parsing origin: <ftps:/example.com/> against <http://example.org/foo/bar> assert_equals: origin expected "null" but got "ftps://"
-PASS Parsing origin: <gopher:/example.com/> against <http://example.org/foo/bar> 
+FAIL Parsing origin: <gopher:/example.com/> against <http://example.org/foo/bar> assert_equals: origin expected "gopher://example.com" but got "gopher://"
 PASS Parsing origin: <ws:/example.com/> against <http://example.org/foo/bar> 
 PASS Parsing origin: <wss:/example.com/> against <http://example.org/foo/bar> 
 PASS Parsing origin: <data:/example.com/> against <http://example.org/foo/bar> 
@@ -79,7 +79,7 @@ PASS Parsing origin: <ftp:example.com/> against <http://example.org/foo/bar>
 PASS Parsing origin: <https:example.com/> against <http://example.org/foo/bar> 
 FAIL Parsing origin: <madeupscheme:example.com/> against <http://example.org/foo/bar> assert_equals: origin expected "null" but got "madeupscheme://"
 FAIL Parsing origin: <ftps:example.com/> against <http://example.org/foo/bar> assert_equals: origin expected "null" but got "ftps://"
-PASS Parsing origin: <gopher:example.com/> against <http://example.org/foo/bar> 
+FAIL Parsing origin: <gopher:example.com/> against <http://example.org/foo/bar> assert_equals: origin expected "gopher://example.com" but got "gopher://"
 PASS Parsing origin: <ws:example.com/> against <http://example.org/foo/bar> 
 PASS Parsing origin: <wss:example.com/> against <http://example.org/foo/bar> 
 PASS Parsing origin: <data:example.com/> against <http://example.org/foo/bar> 
@@ -144,7 +144,7 @@ PASS Parsing origin: <https://foo:443/> against <about:blank>
 PASS Parsing origin: <https://foo:80/> against <about:blank> 
 PASS Parsing origin: <ftp://foo:21/> against <about:blank> 
 PASS Parsing origin: <ftp://foo:80/> against <about:blank> 
-PASS Parsing origin: <gopher://foo:70/> against <about:blank> 
+FAIL Parsing origin: <gopher://foo:70/> against <about:blank> assert_equals: origin expected "gopher://foo" but got "gopher://foo:70"
 PASS Parsing origin: <gopher://foo:443/> against <about:blank> 
 PASS Parsing origin: <ws://foo:80/> against <about:blank> 
 PASS Parsing origin: <ws://foo:81/> against <about:blank> 
@@ -159,7 +159,7 @@ PASS Parsing origin: <ftp:/example.com/> against <about:blank>
 PASS Parsing origin: <https:/example.com/> against <about:blank> 
 FAIL Parsing origin: <madeupscheme:/example.com/> against <about:blank> assert_equals: origin expected "null" but got "madeupscheme://"
 FAIL Parsing origin: <ftps:/example.com/> against <about:blank> assert_equals: origin expected "null" but got "ftps://"
-PASS Parsing origin: <gopher:/example.com/> against <about:blank> 
+FAIL Parsing origin: <gopher:/example.com/> against <about:blank> assert_equals: origin expected "gopher://example.com" but got "gopher://"
 PASS Parsing origin: <ws:/example.com/> against <about:blank> 
 PASS Parsing origin: <wss:/example.com/> against <about:blank> 
 PASS Parsing origin: <data:/example.com/> against <about:blank> 
@@ -170,7 +170,7 @@ PASS Parsing origin: <ftp:example.com/> against <about:blank>
 PASS Parsing origin: <https:example.com/> against <about:blank> 
 FAIL Parsing origin: <madeupscheme:example.com/> against <about:blank> assert_equals: origin expected "null" but got "madeupscheme://"
 FAIL Parsing origin: <ftps:example.com/> against <about:blank> assert_equals: origin expected "null" but got "ftps://"
-PASS Parsing origin: <gopher:example.com/> against <about:blank> 
+FAIL Parsing origin: <gopher:example.com/> against <about:blank> assert_equals: origin expected "gopher://example.com" but got "gopher://"
 PASS Parsing origin: <ws:example.com/> against <about:blank> 
 PASS Parsing origin: <wss:example.com/> against <about:blank> 
 PASS Parsing origin: <data:example.com/> against <about:blank> 

@@ -1,3 +1,20 @@
+2019-09-16  Alex Christensen  <achristensen@webkit.org>
+
+        Remove "gopher" from list of special schemes in URLParser
+        https://bugs.webkit.org/show_bug.cgi?id=201852
+
+        Reviewed by Simon Fraser.
+
+        There is little meaningful content on gopher servers, and WebKit does not actually support gopher.
+        This makes WebKit match the behavior of Gecko and goes along with a change proposed at
+        https://github.com/whatwg/url/issues/342
+
+        * wtf/URLParser.cpp:
+        (WTF::URLParser::defaultPortForProtocol):
+        (WTF::scheme):
+        (WTF::URLParser::copyURLPartsUntil):
+        (WTF::URLParser::parse):
+
 2019-09-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Retire x86 32bit JIT support

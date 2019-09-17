@@ -24,7 +24,7 @@ FAIL src should be ws:/tête. Was ws://xn--tte-fma/.
 FAIL src should be ftp:/tête. Was ftp://xn--tte-fma/.
 FAIL src should be http:/tête. Was http://xn--tte-fma/.
 FAIL src should be https:/tête. Was https://xn--tte-fma/.
-FAIL src should be gopher:/tête. Was gopher://xn--tte-fma/.
+PASS src is expected
 PASS successfullyParsed is true
 
 TEST COMPLETE

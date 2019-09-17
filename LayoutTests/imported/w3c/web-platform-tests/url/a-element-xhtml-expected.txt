@@ -84,7 +84,7 @@ PASS Parsing: <file://example:test/> against <about:blank>
 PASS Parsing: <file://example%/> against <about:blank> 
 PASS Parsing: <file://[example]/> against <about:blank> 
 PASS Parsing: <ftps:/example.com/> against <http://example.org/foo/bar> 
-PASS Parsing: <gopher:/example.com/> against <http://example.org/foo/bar> 
+FAIL Parsing: <gopher:/example.com/> against <http://example.org/foo/bar> assert_equals: href expected "gopher://example.com/" but got "gopher:/example.com/"
 PASS Parsing: <ws:/example.com/> against <http://example.org/foo/bar> 
 PASS Parsing: <wss:/example.com/> against <http://example.org/foo/bar> 
 PASS Parsing: <data:/example.com/> against <http://example.org/foo/bar> 
@@ -95,7 +95,7 @@ PASS Parsing: <ftp:example.com/> against <http://example.org/foo/bar>
 PASS Parsing: <https:example.com/> against <http://example.org/foo/bar> 
 PASS Parsing: <madeupscheme:example.com/> against <http://example.org/foo/bar> 
 PASS Parsing: <ftps:example.com/> against <http://example.org/foo/bar> 
-PASS Parsing: <gopher:example.com/> against <http://example.org/foo/bar> 
+FAIL Parsing: <gopher:example.com/> against <http://example.org/foo/bar> assert_equals: href expected "gopher://example.com/" but got "gopher:example.com/"
 PASS Parsing: <ws:example.com/> against <http://example.org/foo/bar> 
 PASS Parsing: <wss:example.com/> against <http://example.org/foo/bar> 
 PASS Parsing: <data:example.com/> against <http://example.org/foo/bar> 
@@ -181,7 +181,7 @@ PASS Parsing: <https://foo:443/> against <about:blank>
 PASS Parsing: <https://foo:80/> against <about:blank> 
 PASS Parsing: <ftp://foo:21/> against <about:blank> 
 PASS Parsing: <ftp://foo:80/> against <about:blank> 
-PASS Parsing: <gopher://foo:70/> against <about:blank> 
+FAIL Parsing: <gopher://foo:70/> against <about:blank> assert_equals: href expected "gopher://foo/" but got "gopher://foo:70/"
 PASS Parsing: <gopher://foo:443/> against <about:blank> 
 PASS Parsing: <ws://foo:80/> against <about:blank> 
 PASS Parsing: <ws://foo:81/> against <about:blank> 
@@ -197,7 +197,7 @@ PASS Parsing: <https:/example.com/> against <about:blank>
 PASS Parsing: <madeupscheme:/example.com/> against <about:blank> 
 PASS Parsing: <file:/example.com/> against <about:blank> 
 PASS Parsing: <ftps:/example.com/> against <about:blank> 
-PASS Parsing: <gopher:/example.com/> against <about:blank> 
+FAIL Parsing: <gopher:/example.com/> against <about:blank> assert_equals: href expected "gopher://example.com/" but got "gopher:/example.com/"
 PASS Parsing: <ws:/example.com/> against <about:blank> 
 PASS Parsing: <wss:/example.com/> against <about:blank> 
 PASS Parsing: <data:/example.com/> against <about:blank> 
@@ -208,7 +208,7 @@ PASS Parsing: <ftp:example.com/> against <about:blank>
 PASS Parsing: <https:example.com/> against <about:blank> 
 PASS Parsing: <madeupscheme:example.com/> against <about:blank> 
 PASS Parsing: <ftps:example.com/> against <about:blank> 
-PASS Parsing: <gopher:example.com/> against <about:blank> 
+FAIL Parsing: <gopher:example.com/> against <about:blank> assert_equals: href expected "gopher://example.com/" but got "gopher:example.com/"
 PASS Parsing: <ws:example.com/> against <about:blank> 
 PASS Parsing: <wss:example.com/> against <about:blank> 
 PASS Parsing: <data:example.com/> against <about:blank> 

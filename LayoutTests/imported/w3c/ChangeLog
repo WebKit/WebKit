@@ -1,3 +1,18 @@
+2019-09-16  Alex Christensen  <achristensen@webkit.org>
+
+        Remove "gopher" from list of special schemes in URLParser
+        https://bugs.webkit.org/show_bug.cgi?id=201852
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/url/a-element-expected.txt:
+        * web-platform-tests/url/a-element-origin-expected.txt:
+        * web-platform-tests/url/a-element-origin-xhtml-expected.txt:
+        * web-platform-tests/url/a-element-xhtml-expected.txt:
+        * web-platform-tests/url/url-constructor-expected.txt:
+        * web-platform-tests/url/url-origin-expected.txt:
+        * web-platform-tests/url/url-setters-expected.txt:
+
 2019-09-16  Chris Dumez  <cdumez@apple.com>
 
         Update testharness.js from upstream

@@ -949,7 +949,7 @@ executeTests(
   {
     "input": "gopher:/example.com/",
     "base": "http://example.org/foo/bar",
-    "href": "gopher://example.com/",
+    "href": "gopher:/example.com/",
     "origin": "gopher://example.com",
     "protocol": "gopher:",
     "username": "",
@@ -1114,7 +1114,7 @@ executeTests(
   {
     "input": "gopher:example.com/",
     "base": "http://example.org/foo/bar",
-    "href": "gopher://example.com/",
+    "href": "gopher:example.com/",
     "origin": "gopher://example.com",
     "protocol": "gopher:",
     "username": "",
@@ -2358,14 +2358,14 @@ executeTests(
   {
     "input": "gopher://foo:70/",
     "base": "about:blank",
-    "href": "gopher://foo/",
+    "href": "gopher://foo:70/",
     "origin": "gopher://foo",
     "protocol": "gopher:",
     "username": "",
     "password": "",
     "host": "foo",
     "hostname": "foo",
-    "port": "",
+    "port": "70",
     "pathname": "/",
     "search": "",
     "hash": ""
@@ -2597,7 +2597,7 @@ executeTests(
   {
     "input": "gopher:/example.com/",
     "base": "about:blank",
-    "href": "gopher://example.com/",
+    "href": "gopher:/example.com/",
     "origin": "gopher://example.com",
     "protocol": "gopher:",
     "username": "",
@@ -2762,7 +2762,7 @@ executeTests(
   {
     "input": "gopher:example.com/",
     "base": "about:blank",
-    "href": "gopher://example.com/",
+    "href": "gopher:example.com/",
     "origin": "gopher://example.com",
     "protocol": "gopher:",
     "username": "",

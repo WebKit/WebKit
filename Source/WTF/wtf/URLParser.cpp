@@ -653,7 +653,6 @@ void URLParser::encodeNonUTF8Query(const Vector<UChar>& source, const URLTextEnc
 Optional<uint16_t> URLParser::defaultPortForProtocol(StringView scheme)
 {
     static const uint16_t ftpPort = 21;
-    static const uint16_t gopherPort = 70;
     static const uint16_t httpPort = 80;
     static const uint16_t httpsPort = 443;
     static const uint16_t wsPort = 80;
@@ -695,15 +694,6 @@ Optional<uint16_t> URLParser::defaultPortForProtocol(StringView scheme)
         default:
             return WTF::nullopt;
         }
-    case 'g':
-        if (length == 6
-            && scheme[1] == 'o'
-            && scheme[2] == 'p'
-            && scheme[3] == 'h'
-            && scheme[4] == 'e'
-            && scheme[5] == 'r')
-            return gopherPort;
-        return WTF::nullopt;
     case 'f':
         if (length == 3
             && scheme[1] == 't'
@@ -720,7 +710,6 @@ enum class Scheme {
     WSS,
     File,
     FTP,
-    Gopher,
     HTTP,
     HTTPS,
     NonSpecial
@@ -748,15 +737,6 @@ ALWAYS_INLINE static Scheme scheme(StringView scheme)
         default:
             return Scheme::NonSpecial;
         }
-    case 'g':
-        if (length == 6
-            && scheme[1] == 'o'
-            && scheme[2] == 'p'
-            && scheme[3] == 'h'
-            && scheme[4] == 'e'
-            && scheme[5] == 'r')
-            return Scheme::Gopher;
-        return Scheme::NonSpecial;
     case 'h':
         switch (length) {
         case 4:
@@ -919,7 +899,6 @@ void URLParser::copyURLPartsUntil(const URL& base, URLPart part, const CodePoint
         m_urlIsFile = true;
         FALLTHROUGH;
     case Scheme::FTP:
-    case Scheme::Gopher:
     case Scheme::HTTP:
     case Scheme::HTTPS:
         m_urlIsSpecial = true;
@@ -1292,7 +1271,6 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                     m_url.m_protocolIsInHTTPFamily = true;
                     FALLTHROUGH;
                 case Scheme::FTP:
-                case Scheme::Gopher:
                     m_urlIsSpecial = true;
                     if (base.protocolIs(urlScheme))
                         state = State::SpecialRelativeOrAuthority;

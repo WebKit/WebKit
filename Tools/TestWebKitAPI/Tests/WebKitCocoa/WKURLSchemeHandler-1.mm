@@ -209,14 +209,13 @@ TEST(URLSchemeHandler, NoMIMEType)
     EXPECT_TRUE([[handler.get().stoppedURLs objectAtIndex:0] isEqual:[NSURL URLWithString:@"testing:main"]]);
 }
 
-static NSString *schemes[] = {
+static NSString *handledSchemes[] = {
     @"about",
     @"applewebdata",
     @"blob",
     @"data",
     @"file",
     @"ftp",
-    @"gopher",
     @"http",
     @"https",
     @"javascript",
@@ -234,12 +233,17 @@ static NSString *schemes[] = {
 #endif
 };
 
+static NSString *notHandledSchemes[] = {
+    @"gopher",
+    @"my-custom-scheme",
+};
+
 TEST(URLSchemeHandler, BuiltinSchemes)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr<SchemeHandler> handler = adoptNS([[SchemeHandler alloc] initWithData:nil mimeType:nil]);
 
-    for (NSString *scheme : schemes) {
+    for (NSString *scheme : handledSchemes) {
         EXPECT_TRUE([WKWebView handlesURLScheme:scheme]);
 
         bool exceptionRaised = false;
@@ -250,6 +254,17 @@ TEST(URLSchemeHandler, BuiltinSchemes)
             exceptionRaised = true;
         }
         EXPECT_TRUE(exceptionRaised);
+    }
+    for (NSString *scheme : notHandledSchemes) {
+        EXPECT_FALSE([WKWebView handlesURLScheme:scheme]);
+
+        bool exceptionRaised = false;
+        @try {
+            [configuration setURLSchemeHandler:handler.get() forURLScheme:scheme];
+        } @catch (NSException *exception) {
+            exceptionRaised = true;
+        }
+        EXPECT_FALSE(exceptionRaised);
     }
 }
 
