@@ -1,6 +1,17 @@
 2019-09-17  Russell Epstein  <repstein@apple.com>
 
         REGRESSION (macOS): Many webgpu/whlsl* tests are flaky failures.
+        https://bugs.webkit.org/show_bug.cgi?id=201877.
+
+        Unreviewed Test Gardening.
+
+        Incorrectly marked tests as Failures. Changed to ImageOnlyFailures as
+	intended.
+        * platform/mac/TestExpectations:
+
+2019-09-17  Russell Epstein  <repstein@apple.com>
+
+        REGRESSION (macOS): Many webgpu/whlsl* tests are flaky failures.
         https://bugs.webkit.org/show_bug.cgi?id=201877
 
         Unreviewed Test Gardening.
