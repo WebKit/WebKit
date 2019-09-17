@@ -1,3 +1,20 @@
+2019-09-17  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        SVG <animateMotion> does not reset the element to its first animation frame if its fill is "remove"
+        https://bugs.webkit.org/show_bug.cgi?id=201565
+
+        Reviewed by Said Abou-Hallawa.
+
+        Add a layout test covering fill="remove" support <animate> and <animateMotion>.
+        Add another layout test covering both fill="remove" and fill="freeze" for
+        <animateMotion> on SVG elements and their instances (<use>).
+
+        * svg/animations/animateMotion-remove-freeze-use-expected.svg: Added.
+        * svg/animations/animateMotion-remove-freeze-use.svg: Added.
+        * svg/animations/fill-remove-support-expected.txt: Added.
+        * svg/animations/fill-remove-support.html: Added.
+        * svg/animations/resources/fill-remove-support.svg: Added.
+
 2019-09-17  Russell Epstein  <repstein@apple.com>
 
         REGRESSION (macOS): Many webgpu/whlsl* tests are flaky failures.

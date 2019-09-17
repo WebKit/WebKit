@@ -156,6 +156,7 @@ void SVGAnimateMotionElement::clearAnimatedType(SVGElement* targetElement)
         return;
     if (AffineTransform* transform = targetElement->supplementalTransform())
         transform->makeIdentity();
+    applyResultsToTarget();
 }
 
 bool SVGAnimateMotionElement::calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString)
@@ -212,12 +213,10 @@ void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned 
     auto targetElement = makeRefPtr(this->targetElement());
     if (!targetElement)
         return;
+
     AffineTransform* transform = targetElement->supplementalTransform();
     if (!transform)
         return;
-
-    if (RenderObject* targetRenderer = targetElement->renderer())
-        targetRenderer->setNeedsTransformUpdate();
 
     if (!isAdditive())
         transform->makeIdentity();
@@ -253,8 +252,10 @@ void SVGAnimateMotionElement::applyResultsToTarget()
     if (!targetElement)
         return;
 
-    if (RenderElement* renderer = targetElement->renderer())
+    if (RenderElement* renderer = targetElement->renderer()) {
+        renderer->setNeedsTransformUpdate();
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+    }
 
     AffineTransform* targetSupplementalTransform = targetElement->supplementalTransform();
     if (!targetSupplementalTransform)

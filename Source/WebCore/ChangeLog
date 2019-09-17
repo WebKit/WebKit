@@ -1,3 +1,46 @@
+2019-09-17  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        SVG <animateMotion> does not reset the element to its first animation frame if its fill is "remove"
+        https://bugs.webkit.org/show_bug.cgi?id=201565
+
+        Reviewed by Said Abou-Hallawa.
+
+        Fix fill="remove" support for <animateMotion>: properly trigger visual updates.
+        Motion animations are implemented by provding an additional transformation on
+        SVGGraphicsElements: the supplementalTransform().
+
+        When an <animateMotion> element specifies fill="remove" the supplemental transform is
+        correctly reset, when the animation is finished. However, nobody is notified about the
+        change of transformation matrix. Fix by marking the target elements renderer as
+        setNeedsTransformUpdate() and call markForLayoutAndParentResourceInvalidation().
+
+        <animate> elements are not affected by the bug:
+        SVGAnimateElementBase::clearAnimatedType()
+         -> invokes SVGAttributeAnimator::stop()
+            -> invokes applyAnimatedPropertyChange() [via SVGAnimatedPropertyAnimator]
+            -> invokes SVGXXXElement::svgAttributeChanged().
+
+        When animating e.g. the 'transform' attribute SVGGraphicsElement::svgAttributeChanged()
+        will use exactly the same mechanism to trigger visul updates: first call
+        setNeedsTransformUpdate() on the associated renderer, followd by a call to
+        markForLayoutAndParentResourceInvalidation().
+
+        --> Both code paths are now consistent.
+        Also fixes http://web-platform-tests.live/svg/animations/animateMotion-fill-remove.html.
+
+        Tests: svg/animations/fill-remove-support.html
+               svg/animations/animateMotion-remove-freeze-use.svg
+
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::clearAnimatedType): Call applyResultsToTarget().
+        (WebCore::SVGAnimateMotionElement::calculateAnimatedValue): Stop calling
+        setNeedsTransformUpdate() on the target elements renderer, since applyResultsToTarget()
+        is responsible for modifications of the renderer state.
+        (WebCore::SVGAnimateMotionElement::applyResultsToTarget): Always mark the renderer
+        as setNeedsTransformUpdate() when applying the results, before the call to
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(). This is more consistent
+        with respect to the code path that updates the SVGElements instances (<use> support).
+
 2019-09-17  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add a WKA extension point
