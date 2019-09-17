@@ -1,3 +1,11 @@
+2019-09-17  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed restabilization of non-unified build.
+
+        * UIProcess/WebProcessProxy.cpp:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp:
+
 2019-09-17  Chris Dumez  <cdumez@apple.com>
 
         WebProcess class methods should not need to take a sessionID

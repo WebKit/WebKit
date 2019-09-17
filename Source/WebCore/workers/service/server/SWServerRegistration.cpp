@@ -29,6 +29,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "SWServer.h"
+#include "SWServerToContextConnection.h"
 #include "SWServerWorker.h"
 #include "ServiceWorkerTypes.h"
 #include "ServiceWorkerUpdateViaCache.h"

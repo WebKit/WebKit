@@ -24,6 +24,7 @@
 
 #include "AnimationUtilities.h"
 #include "CSSPrimitiveValue.h"
+#include "SVGLengthContext.h"
 #include "SVGParserUtilities.h"
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/TextStream.h>

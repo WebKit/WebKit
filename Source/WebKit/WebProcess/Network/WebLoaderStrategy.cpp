@@ -43,6 +43,7 @@
 #include "WebProcess.h"
 #include "WebProcessPoolMessages.h"
 #include "WebResourceLoader.h"
+#include "WebSWContextManagerConnection.h"
 #include "WebServiceWorkerProvider.h"
 #include "WebURLSchemeHandlerProxy.h"
 #include "WebURLSchemeTaskProxy.h"

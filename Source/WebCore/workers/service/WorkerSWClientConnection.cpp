@@ -29,6 +29,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "SecurityOrigin.h"
+#include "ServiceWorkerClientData.h"
 #include "ServiceWorkerFetchResult.h"
 #include "ServiceWorkerJobData.h"
 #include "ServiceWorkerProvider.h"

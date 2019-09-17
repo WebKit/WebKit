@@ -1,3 +1,17 @@
+2019-09-17  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed restabilization of non-unified build.
+
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::resolveContext const):
+        * platform/win/BString.h:
+        * svg/PatternAttributes.h:
+        * svg/SVGLengthValue.cpp:
+        * svg/properties/SVGAnimationAdditiveValueFunctionImpl.h:
+        * workers/service/ServiceWorkerJob.cpp:
+        * workers/service/WorkerSWClientConnection.cpp:
+        * workers/service/server/SWServerRegistration.cpp:
+
 2019-09-17  Keith Rollin  <krollin@apple.com>
 
         Remove some support for < iOS 12

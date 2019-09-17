@@ -209,7 +209,7 @@ ScriptExecutionContext* InspectorCanvas::scriptExecutionContext() const
     );
 }
 
-JSC::JSValue InspectorCanvas::resolveContext(ExecState* exec) const
+JSC::JSValue InspectorCanvas::resolveContext(JSC::ExecState* exec) const
 {
     JSC::JSLockHolder lock(exec);
 

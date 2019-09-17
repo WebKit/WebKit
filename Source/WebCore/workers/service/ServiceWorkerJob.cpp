@@ -34,6 +34,7 @@
 #include "ResourceError.h"
 #include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
 #include "ServiceWorkerJobData.h"
 #include "ServiceWorkerRegistration.h"
 

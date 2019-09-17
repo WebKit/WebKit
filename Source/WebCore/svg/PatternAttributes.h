@@ -21,6 +21,7 @@
 
 #include "SVGLengthValue.h"
 #include "SVGPreserveAspectRatioValue.h"
+#include "SVGUnitTypes.h"
 
 namespace WebCore {
 

@@ -29,6 +29,7 @@
 #include "FloatRect.h"
 #include "SVGAngleValue.h"
 #include "SVGAnimationAdditiveValueFunction.h"
+#include "SVGLengthContext.h"
 #include "SVGLengthValue.h"
 #include "SVGPathByteStream.h"
 #include "SVGPropertyTraits.h"

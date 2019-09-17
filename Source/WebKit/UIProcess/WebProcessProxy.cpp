@@ -46,6 +46,7 @@
 #include "WebPageProxy.h"
 #include "WebPasteboardProxy.h"
 #include "WebProcessCache.h"
+#include "WebProcessDataStoreParameters.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxyMessages.h"
