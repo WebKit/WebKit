@@ -1,3 +1,24 @@
+2019-09-17  Keith Rollin  <krollin@apple.com>
+
+        Remove some support for < iOS 12
+        https://bugs.webkit.org/show_bug.cgi?id=201851
+        <rdar://problem/55422044>
+
+        Reviewed by Jiewen Tan and Alexey Proskuryakov.
+
+        Remove some support for iOS versions less than 12.0.
+
+        Update conditionals that reference __IPHONE_OS_VERSION_MIN_REQUIRED
+        and __IPHONE_OS_VERSION_MAX_ALLOWED, assuming that they both have
+        values >= 120000. This means that expressions like
+        "__IPHONE_OS_VERSION_MIN_REQUIRED < 101200" are always False and
+        "__IPHONE_OS_VERSION_MIN_REQUIRED >= 101200" are always True.
+
+        This removal is part of a series of patches effecting such removal.
+
+        * WebKitTestRunner/InjectedBundle/cocoa/ActivateFontsCocoa.mm:
+        (WTR::installFakeHelvetica):
+
 2019-09-17  David Kilzer  <ddkilzer@apple.com>
 
         run-webkit-tests: Driver.do_post_tests_work() is never called when `stop_when_done` is true in Driver.run_test()
