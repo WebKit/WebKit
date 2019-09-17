@@ -39,7 +39,9 @@ String MIMETypeForImageType(const String& type)
     // a MIME type like image/type will work for common image UTIs like jpeg, 
     // png, tiff, gif but won't work for UTIs like: public.jpeg-2000,
     // public.xbitmap-image, com.apple.quicktime-image, and others.
-    if (int dotLocation = type.reverseFind('.'))
+    if (type == "com.microsoft.cur" || type == "com.microsoft.ico")
+        mimeType = "image/vnd.microsoft.icon"_s;
+    else if (int dotLocation = type.reverseFind('.'))
         mimeType = "image/" + type.substring(dotLocation + 1);
     return mimeType;
 }

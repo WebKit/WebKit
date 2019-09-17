@@ -50,10 +50,12 @@ const HashSet<String>& defaultSupportedImageTypes()
         "com.microsoft.cur",
         "com.microsoft.ico",
         "public.jpeg",
-        "public.jpeg-2000",
-        "public.mpo-image",
         "public.png",
         "public.tiff",
+#if !PLATFORM(WIN)
+        "public.jpeg-2000",
+        "public.mpo-image",
+#endif
     };
 
 #ifndef NDEBUG
