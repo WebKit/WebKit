@@ -1,3 +1,83 @@
+2019-09-17  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r249670. rdar://problem/55225975
+
+    Revert to pre-r243144 scavenging behavior for macOS
+    https://bugs.webkit.org/show_bug.cgi?id=201555
+    
+    Reviewed by Saam Barati.
+    
+    The change in r243144 regressed internal power metrics for some Mac models.
+    
+    * bmalloc/Heap.cpp:
+    (bmalloc::Heap::scavenge):
+    (bmalloc::Heap::scavengeToHighWatermark):
+    (bmalloc::Heap::allocateSmallChunk):
+    (bmalloc::Heap::allocateSmallPage):
+    (bmalloc::Heap::allocateLarge):
+    * bmalloc/Heap.h:
+    * bmalloc/IsoDirectory.h:
+    * bmalloc/IsoDirectoryInlines.h:
+    (bmalloc::passedNumPages>::takeFirstEligible):
+    (bmalloc::passedNumPages>::scavenge):
+    (bmalloc::passedNumPages>::scavengeToHighWatermark):
+    * bmalloc/IsoHeapImpl.h:
+    * bmalloc/IsoHeapImplInlines.h:
+    (bmalloc::IsoHeapImpl<Config>::scavengeToHighWatermark):
+    * bmalloc/LargeMap.cpp:
+    (bmalloc::LargeMap::add):
+    * bmalloc/LargeRange.h:
+    (bmalloc::LargeRange::LargeRange):
+    (bmalloc::merge):
+    * bmalloc/Scavenger.cpp:
+    (bmalloc::Scavenger::Scavenger):
+    (bmalloc::Scavenger::timeSinceLastPartialScavenge):
+    (bmalloc::Scavenger::scavenge):
+    (bmalloc::Scavenger::partialScavenge):
+    (bmalloc::Scavenger::threadRunLoop):
+    * bmalloc/Scavenger.h:
+    * bmalloc/SmallPage.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249670 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-09-09  Michael Saboff  <msaboff@apple.com>
+
+            Revert to pre-r243144 scavenging behavior for macOS
+            https://bugs.webkit.org/show_bug.cgi?id=201555
+
+            Reviewed by Saam Barati.
+
+            The change in r243144 regressed internal power metrics for some Mac models.
+
+            * bmalloc/Heap.cpp:
+            (bmalloc::Heap::scavenge):
+            (bmalloc::Heap::scavengeToHighWatermark):
+            (bmalloc::Heap::allocateSmallChunk):
+            (bmalloc::Heap::allocateSmallPage):
+            (bmalloc::Heap::allocateLarge):
+            * bmalloc/Heap.h:
+            * bmalloc/IsoDirectory.h:
+            * bmalloc/IsoDirectoryInlines.h:
+            (bmalloc::passedNumPages>::takeFirstEligible):
+            (bmalloc::passedNumPages>::scavenge):
+            (bmalloc::passedNumPages>::scavengeToHighWatermark):
+            * bmalloc/IsoHeapImpl.h:
+            * bmalloc/IsoHeapImplInlines.h:
+            (bmalloc::IsoHeapImpl<Config>::scavengeToHighWatermark):
+            * bmalloc/LargeMap.cpp:
+            (bmalloc::LargeMap::add):
+            * bmalloc/LargeRange.h:
+            (bmalloc::LargeRange::LargeRange):
+            (bmalloc::merge):
+            * bmalloc/Scavenger.cpp:
+            (bmalloc::Scavenger::Scavenger):
+            (bmalloc::Scavenger::timeSinceLastPartialScavenge):
+            (bmalloc::Scavenger::scavenge):
+            (bmalloc::Scavenger::partialScavenge):
+            (bmalloc::Scavenger::threadRunLoop):
+            * bmalloc/Scavenger.h:
+            * bmalloc/SmallPage.h:
+
 2019-07-29  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r247714. rdar://problem/53647616

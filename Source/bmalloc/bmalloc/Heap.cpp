@@ -175,18 +175,24 @@ void Heap::decommitLargeRange(std::lock_guard<Mutex>&, LargeRange& range, BulkDe
 #endif
 }
 
+#if BPLATFORM(MAC)
+void Heap::scavenge(std::lock_guard<Mutex>& lock, BulkDecommit& decommitter)
+#else
 void Heap::scavenge(std::lock_guard<Mutex>& lock, BulkDecommit& decommitter, size_t& deferredDecommits)
+#endif
 {
     for (auto& list : m_freePages) {
         for (auto* chunk : list) {
             for (auto* page : chunk->freePages()) {
                 if (!page->hasPhysicalPages())
                     continue;
+#if !BPLATFORM(MAC)
                 if (page->usedSinceLastScavenge()) {
                     page->clearUsedSinceLastScavenge();
                     deferredDecommits++;
                     continue;
                 }
+#endif
 
                 size_t pageSize = bmalloc::pageSize(&list - &m_freePages[0]);
                 size_t decommitSize = physicalPageSizeSloppy(page->begin()->begin(), pageSize);
@@ -207,14 +213,36 @@ void Heap::scavenge(std::lock_guard<Mutex>& lock, BulkDecommit& decommitter, siz
     }
 
     for (LargeRange& range : m_largeFree) {
+#if BPLATFORM(MAC)
+        m_highWatermark = std::min(m_highWatermark, static_cast<void*>(range.begin()));
+#else
         if (range.usedSinceLastScavenge()) {
             range.clearUsedSinceLastScavenge();
             deferredDecommits++;
             continue;
         }
+#endif
         decommitLargeRange(lock, range, decommitter);
     }
+
+#if BPLATFORM(MAC)
+    m_freeableMemory = 0;
+#endif
 }
+
+#if BPLATFORM(MAC)
+void Heap::scavengeToHighWatermark(std::lock_guard<Mutex>& lock, BulkDecommit& decommitter)
+{
+    void* newHighWaterMark = nullptr;
+    for (LargeRange& range : m_largeFree) {
+        if (range.begin() <= m_highWatermark)
+            newHighWaterMark = std::min(newHighWaterMark, static_cast<void*>(range.begin()));
+        else
+            decommitLargeRange(lock, range, decommitter);
+    }
+    m_highWatermark = newHighWaterMark;
+}
+#endif
 
 void Heap::deallocateLineCache(std::unique_lock<Mutex>&, LineCache& lineCache)
 {
@@ -244,7 +272,9 @@ void Heap::allocateSmallChunk(std::unique_lock<Mutex>& lock, size_t pageClass)
 
         forEachPage(chunk, pageSize, [&](SmallPage* page) {
             page->setHasPhysicalPages(true);
+#if !BPLATFORM(MAC)
             page->setUsedSinceLastScavenge();
+#endif
             page->setHasFreeLines(lock, true);
             chunk->freePages().push(page);
         });
@@ -324,7 +354,9 @@ SmallPage* Heap::allocateSmallPage(std::unique_lock<Mutex>& lock, size_t sizeCla
             m_physicalPageMap.commit(page->begin()->begin(), pageSize);
 #endif
         }
+#if !BPLATFORM(MAC)
         page->setUsedSinceLastScavenge();
+#endif
 
         return page;
     }();
@@ -582,6 +614,9 @@ void* Heap::tryAllocateLarge(std::unique_lock<Mutex>& lock, size_t alignment, si
     m_freeableMemory -= range.totalPhysicalSize();
 
     void* result = splitAndAllocate(lock, range, alignment, size).begin();
+#if BPLATFORM(MAC)
+    m_highWatermark = std::max(m_highWatermark, result);
+#endif
     return result;
 }
 
