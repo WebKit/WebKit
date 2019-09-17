@@ -377,7 +377,6 @@ public:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     virtual bool hasFrameSpecificStorageAccess() { return false; }
-    virtual void setHasFrameSpecificStorageAccess(bool) { }
 #endif
 };
 
