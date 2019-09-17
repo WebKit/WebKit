@@ -1,5 +1,26 @@
 2019-09-17  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC[MarginCollapsing] MarginCollapse::estimatedMarginBefore should take pre-computed non-collapsed margin values.
+        https://bugs.webkit.org/show_bug.cgi?id=201848
+        <rdar://problem/55419419>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for using constraint values instead of querying the display tree for containing block geometry information.
+        See webkit.org/b/201795
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedVerticalPosition):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::estimatedMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeIgnoringCollapsingThrough):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::collapsedVerticalValues):
+
+2019-09-17  Zalan Bujtas  <zalan@apple.com>
+
         [First-letter] Use WeakPtr for the first-letter insertion point.
         https://bugs.webkit.org/show_bug.cgi?id=201842
         <rdar://problem/51373788>

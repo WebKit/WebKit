@@ -231,7 +231,10 @@ void BlockFormattingContext::computeStaticPosition(const FloatingContext& floati
 
 void BlockFormattingContext::computeEstimatedVerticalPosition(const Box& layoutBox)
 {
-    auto estimatedMarginBefore = marginCollapse().estimatedMarginBefore(layoutBox);
+    auto usedHorizontalValues = UsedHorizontalValues { geometryForBox(*layoutBox.containingBlock()).contentBoxWidth() };
+    auto computedVerticalMargin = geometry().computedVerticalMargin(layoutBox, usedHorizontalValues);
+    auto usedNonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
+    auto estimatedMarginBefore = marginCollapse().estimatedMarginBefore(layoutBox, usedNonCollapsedMargin);
     setEstimatedMarginBefore(layoutBox, estimatedMarginBefore);
 
     auto& displayBox = formattingState().displayBox(layoutBox);

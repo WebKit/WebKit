@@ -100,10 +100,10 @@ private:
     // This class implements margin collapsing for block formatting context.
     class MarginCollapse {
     public:
-        UsedVerticalMargin::CollapsedValues collapsedVerticalValues(const Box&, const UsedVerticalMargin::NonCollapsedValues&);
+        UsedVerticalMargin::CollapsedValues collapsedVerticalValues(const Box&, UsedVerticalMargin::NonCollapsedValues);
 
-        EstimatedMarginBefore estimatedMarginBefore(const Box&);
-        LayoutUnit marginBeforeIgnoringCollapsingThrough(const Box&, const UsedVerticalMargin::NonCollapsedValues&);
+        EstimatedMarginBefore estimatedMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues);
+        LayoutUnit marginBeforeIgnoringCollapsingThrough(const Box&, UsedVerticalMargin::NonCollapsedValues);
         void updateMarginAfterForPreviousSibling(const Box&) const;
         void updatePositiveNegativeMarginValues(const Box&);
 
@@ -126,8 +126,8 @@ private:
 
         enum class MarginType { Before, After };
         PositiveAndNegativeVerticalMargin::Values positiveNegativeValues(const Box&, MarginType);
-        PositiveAndNegativeVerticalMargin::Values positiveNegativeMarginBefore(const Box&, const UsedVerticalMargin::NonCollapsedValues&);
-        PositiveAndNegativeVerticalMargin::Values positiveNegativeMarginAfter(const Box&, const UsedVerticalMargin::NonCollapsedValues&);
+        PositiveAndNegativeVerticalMargin::Values positiveNegativeMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues);
+        PositiveAndNegativeVerticalMargin::Values positiveNegativeMarginAfter(const Box&, UsedVerticalMargin::NonCollapsedValues);
         bool hasClearance(const Box&) const;
 
         LayoutState& layoutState() { return m_blockFormattingContext.layoutState(); }
