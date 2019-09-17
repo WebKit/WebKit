@@ -422,12 +422,18 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
     gdk_window_set_user_data(window, widget);
 
     gtk_im_context_set_client_window(priv->inputMethodFilter.context(), window);
+
+    if (priv->acceleratedBackingStore)
+        priv->acceleratedBackingStore->realize();
 }
 
 static void webkitWebViewBaseUnrealize(GtkWidget* widget)
 {
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(widget);
     gtk_im_context_set_client_window(webView->priv->inputMethodFilter.context(), nullptr);
+
+    if (webView->priv->acceleratedBackingStore)
+        webView->priv->acceleratedBackingStore->unrealize();
 
     GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->unrealize(widget);
 }

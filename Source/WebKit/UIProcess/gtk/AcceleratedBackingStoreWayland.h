@@ -65,6 +65,8 @@ private:
 #endif
 
     bool paint(cairo_t*, const WebCore::IntRect&) override;
+    void realize() override;
+    void unrealize() override;
     bool makeContextCurrent() override;
 #if USE(WPE_RENDERER)
     void update(const LayerTreeContext&) override;

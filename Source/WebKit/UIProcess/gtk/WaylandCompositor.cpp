@@ -167,6 +167,9 @@ WaylandCompositor::Surface::~Surface()
 
 void WaylandCompositor::Surface::setWebPage(WebPageProxy* webPage)
 {
+    if (m_webPage == webPage)
+        return;
+
     if (m_webPage) {
         flushPendingFrameCallbacks();
         flushFrameCallbacks();
@@ -561,6 +564,18 @@ void WaylandCompositor::bindSurfaceToWebPage(WaylandCompositor::Surface* surface
 
     surface->setWebPage(webPage);
     m_pageMap.set(webPage, makeWeakPtr(*surface));
+}
+
+void WaylandCompositor::bindWebPage(WebPageProxy& webPage)
+{
+    if (WeakPtr<Surface> surface = m_pageMap.get(&webPage))
+        surface->setWebPage(&webPage);
+}
+
+void WaylandCompositor::unbindWebPage(WebPageProxy& webPage)
+{
+    if (WeakPtr<Surface> surface = m_pageMap.get(&webPage))
+        surface->setWebPage(nullptr);
 }
 
 void WaylandCompositor::registerWebPage(WebPageProxy& webPage)

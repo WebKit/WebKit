@@ -551,8 +551,7 @@ void DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode(GraphicsLay
     if (m_previousLayerTreeHost) {
         m_layerTreeHost = WTFMove(m_previousLayerTreeHost);
         m_layerTreeHost->setIsDiscardable(false);
-        if (!m_isPaintingSuspended)
-            m_layerTreeHost->resumeRendering();
+        m_layerTreeHost->resumeRendering();
         if (!m_layerTreeStateIsFrozen)
             m_layerTreeHost->setLayerFlushSchedulingEnabled(true);
     } else {
