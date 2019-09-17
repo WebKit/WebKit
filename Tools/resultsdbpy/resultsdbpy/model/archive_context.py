@@ -21,13 +21,18 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import calendar
+import hashlib
 import io
+import json
 import time
 import zipfile
 
 from cassandra.cqlengine import columns
+from cassandra.cqlengine.models import Model
+from collections import OrderedDict
 from datetime import datetime
 from resultsdbpy.controller.commit import Commit
+from resultsdbpy.controller.configuration import Configuration
 from resultsdbpy.model.commit_context import CommitContext
 from resultsdbpy.model.configuration_context import ClusteredByConfiguration
 from resultsdbpy.model.upload_context import UploadContext
@@ -43,22 +48,34 @@ def _get_time(input_time):
 
 class ArchiveContext(object):
     DEFAULT_LIMIT = 10
+    CHUNK_SIZE = 10 * 1024 * 1024  # Cassandra doesn't do well with data blobs of more than 10 MB
+    MEMORY_LIMIT = 2 * 1024 * 1024 * 1024  # Don't allow more than 2 gigs of archives in memory at one time
 
-    class ArchivesByCommit(ClusteredByConfiguration):
-        __table_name__ = 'archives_by_commit'
+    class ArchiveMetaDataByCommit(ClusteredByConfiguration):
+        __table_name__ = 'archive_metadata_by_commit'
         suite = columns.Text(partition_key=True, required=True)
         branch = columns.Text(partition_key=True, required=True)
         uuid = columns.BigInt(primary_key=True, required=True, clustering_order='DESC')
         sdk = columns.Text(primary_key=True, required=True)
         start_time = columns.BigInt(primary_key=True, required=True)
-        archive = columns.Blob(required=True)
+        digest = columns.Text(required=True)
+        size = columns.BigInt(required=True)
 
         def unpack(self):
             return dict(
                 uuid=self.uuid,
                 start_time=self.start_time,
-                archive=io.BytesIO(self.archive),
+                digest=self.digest,
+                size=self.size,
             )
+
+    # According to https://cwiki.apache.org/confluence/display/CASSANDRA2/CassandraLimitations, we should shard
+    # large data blobs.
+    class ArchiveChunks(Model):
+        __table_name__ = 'archive_chunks'
+        digest = columns.Text(partition_key=True, required=True)
+        index = columns.Integer(primary_key=True, required=True)
+        chunk = columns.Blob(required=True)
 
     @classmethod
     def assert_zipfile(cls, archive):
@@ -79,7 +96,8 @@ class ArchiveContext(object):
         self.ttl_seconds = ttl_seconds
 
         with self:
-            self.cassandra.create_table(self.ArchivesByCommit)
+            self.cassandra.create_table(self.ArchiveMetaDataByCommit)
+            self.cassandra.create_table(self.ArchiveChunks)
             self.cassandra.create_table(UploadContext.SuitesByConfiguration)
 
     def __enter__(self):
@@ -104,10 +122,26 @@ class ArchiveContext(object):
                 self.configuration_context.insert_row_with_configuration(
                     UploadContext.SuitesByConfiguration.__table_name__, configuration, suite=suite, branch=branch, ttl=ttl,
                 )
+
+                # Breaking up the archive into chunks
+                index = 0
+                size = len(archive.getvalue())
+                digest = hashlib.md5(archive.getvalue()).hexdigest()
+                archive.seek(0)
+                while size > index * self.CHUNK_SIZE:
+                    self.cassandra.insert_row(
+                        self.ArchiveChunks.__table_name__,
+                        digest=digest, index=index,
+                        chunk=archive.read(self.CHUNK_SIZE),
+                    )
+                    index += 1
+
                 self.configuration_context.insert_row_with_configuration(
-                    self.ArchivesByCommit.__table_name__, configuration=configuration, suite=suite,
+                    self.ArchiveMetaDataByCommit.__table_name__, configuration=configuration, suite=suite,
                     branch=branch, uuid=uuid, ttl=ttl,
-                    archive=archive.getvalue(), sdk=configuration.sdk or '?', start_time=timestamp,
+                    sdk=configuration.sdk or '?', start_time=timestamp,
+                    digest=digest,
+                    size=size,
                 )
 
     def find_archive(
@@ -122,16 +156,60 @@ class ArchiveContext(object):
             raise TypeError(f'Expected type {str}, got {type(suite)}')
 
         with self:
-            result = {}
+            metadata_by_config = {}
             for configuration in configurations:
-                result.update({config: [value.unpack() for value in values] for config, values in self.configuration_context.select_from_table_with_configurations(
-                    self.ArchivesByCommit.__table_name__, configurations=[configuration], recent=recent,
+                metadata_by_config.update({config: [value.unpack() for value in values] for config, values in self.configuration_context.select_from_table_with_configurations(
+                    self.ArchiveMetaDataByCommit.__table_name__, configurations=[configuration], recent=recent,
                     suite=suite, sdk=configuration.sdk, branch=branch or self.commit_context.DEFAULT_BRANCH_KEY,
                     uuid__gte=CommitContext.convert_to_uuid(begin),
                     uuid__lte=CommitContext.convert_to_uuid(end, CommitContext.timestamp_to_uuid()),
                     start_time__gte=_get_time(begin_query_time), start_time__lte=_get_time(end_query_time),
                     limit=limit,
                 ).items()})
+
+            memory_used = 0
+            for values in metadata_by_config.values():
+                for value in values:
+                    if not value.get('digest'):
+                        continue
+
+                    memory_used += value.get('size', 0)
+                    if memory_used > self.MEMORY_LIMIT:
+                        raise RuntimeError('Hit soft-memory cap when fetching archives, aborting')
+
+            result = {}
+            for config, values in metadata_by_config.items():
+                for value in values:
+                    if not value.get('digest'):
+                        continue
+
+                    rows = self.cassandra.select_from_table(
+                        self.ArchiveChunks.__table_name__,
+                        digest=value.get('digest'),
+                        limit=1 + int(value.get('size', 0) / self.CHUNK_SIZE),
+                    )
+                    if len(rows) == 0:
+                        continue
+
+                    digest = hashlib.md5()
+                    archive = io.BytesIO()
+                    archive_size = 0
+                    for row in rows:
+                        archive_size += len(row.chunk)
+                        digest.update(row.chunk)
+                        archive.write(row.chunk)
+
+                    if archive_size != value.get('size', 0) or value.get('digest', '') != digest.hexdigest():
+                        raise RuntimeError('Failed to reconstruct archive from chunks')
+
+                    archive.seek(0)
+                    result.setdefault(config, [])
+                    result[config].append(dict(
+                        archive=archive,
+                        uuid=value['uuid'],
+                        start_time=value['start_time'],
+                    ))
+
             return result
 
     @classmethod

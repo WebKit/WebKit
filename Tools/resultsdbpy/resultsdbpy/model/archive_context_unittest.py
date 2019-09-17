@@ -21,6 +21,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import base64
+import io
+import mock
+import os
+import zipfile
 
 from fakeredis import FakeStrictRedis
 from redis import StrictRedis
@@ -35,10 +39,10 @@ from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
 class ArchiveContextTest(WaitForDockerTestCase):
     KEYSPACE = 'archive_test_keyspace'
 
-    def init_database(self, redis=StrictRedis, cassandra=CassandraContext):
+    def init_database(self, redis=StrictRedis, cassandra=CassandraContext, configuration=Configuration(), archive=None):
         cassandra.drop_keyspace(keyspace=self.KEYSPACE)
         self.model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True))
-        MockModelFactory.add_mock_archives(self.model)
+        MockModelFactory.add_mock_archives(self.model, configuration=configuration, archive=archive)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_find_archive(self, redis=StrictRedis, cassandra=CassandraContext):
@@ -88,3 +92,37 @@ class ArchiveContextTest(WaitForDockerTestCase):
         self.assertEqual(len(next(iter(files.values()))), 1)
         self.assertEqual(next(iter(files.values()))[0]['uuid'], 153804910800)
         self.assertEqual(next(iter(files.values()))[0]['file'], ['file.txt', 'index.html'])
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_large_archive(self, redis=StrictRedis, cassandra=CassandraContext):
+        FILE_SIZE = 25 * 1024 * 1024  # 25 MB files
+        buff = io.BytesIO()
+        with zipfile.ZipFile(buff, 'a', zipfile.ZIP_DEFLATED, False) as archive:
+            for file, data in [
+                ('file-1.txt', io.BytesIO(os.urandom(FILE_SIZE))),
+                ('file-2.txt', io.BytesIO(os.urandom(FILE_SIZE))),
+                ('file-3.txt', io.BytesIO(os.urandom(FILE_SIZE))),
+            ]:
+                archive.writestr(file, data.getvalue())
+
+        self.init_database(
+            redis=redis, cassandra=cassandra,
+            configuration=Configuration(platform='Mac', style='Release', flavor='wk1'),
+            archive=buff,
+        )
+
+        files = self.model.archive_context.find_archive(
+            configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+            begin=MockSVNRepository.webkit().commit_for_id(236542), end=MockSVNRepository.webkit().commit_for_id(236542),
+            suite='layout-tests',
+        )
+        self.assertEqual(len(next(iter(files.values()))), 1)
+        self.assertEqual(next(iter(files.values()))[0]['uuid'], 153804910800)
+        self.assertEqual(next(iter(files.values()))[0]['archive'].getvalue(), buff.getvalue())
+
+        with mock.patch('resultsdbpy.model.archive_context.ArchiveContext.MEMORY_LIMIT', new=FILE_SIZE), self.assertRaises(RuntimeError):
+            self.model.archive_context.find_archive(
+                configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+                begin=MockSVNRepository.webkit().commit_for_id(236542), end=MockSVNRepository.webkit().commit_for_id(236542),
+                suite='layout-tests',
+            )

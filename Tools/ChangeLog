@@ -1,3 +1,31 @@
+2019-09-16  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Shard result archives
+        https://bugs.webkit.org/show_bug.cgi?id=201734
+
+        Reviewed by Dewei Zhu.
+
+        Cassandra advertises being able to store up to 2 GB in a single blob-storage row.
+        In practice, this usually doesn't work according to the Cassandra developers,
+        large blobs should be broken up into shards of, at most, 10 MB.
+
+        * resultsdbpy/resultsdbpy/model/archive_context.py:
+        (ArchiveContext):
+        (ArchiveContext.ArchiveMetaDataByCommit): Point to the archive shards by hash.
+        (ArchiveContext.ArchiveMetaDataByCommit.unpack):
+        (ArchiveContext.ArchiveChunks): Store archive shards, indexed by hash.
+        (ArchiveContext.__init__):
+        (ArchiveContext.register): When saving archives, save a reference hash and then
+        shard the actual archive data before saving.
+        (ArchiveContext.find_archive): Search for archive by meta-data, then reconstruct
+        the archive. Raise an exception if we determine that memory usage is a problem.
+        (ArchiveContext.ArchivesByCommit): Deleted.
+        (ArchiveContext.ArchivesByCommit.unpack): Deleted.
+        * resultsdbpy/resultsdbpy/model/archive_context_unittest.py:
+        (ArchiveContextTest.init_database): Allow configuration and archive to be specified.
+        (ArchiveContextTest):
+        (ArchiveContextTest.test_large_archive): Test archive sharding.
+
 2019-09-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Support more than two FIDO protocol versions
