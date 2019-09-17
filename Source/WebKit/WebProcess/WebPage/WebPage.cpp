@@ -503,7 +503,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     m_page = makeUnique<Page>(WTFMove(pageConfiguration));
 
-    setSessionID(parameters.sessionID);
+    setSessionID(WebProcess::singleton().sessionID());
 
     updatePreferences(parameters.store);
 

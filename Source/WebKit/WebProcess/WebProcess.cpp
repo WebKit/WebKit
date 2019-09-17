@@ -652,8 +652,6 @@ WebPage* WebProcess::webPage(PageIdentifier pageID) const
 
 void WebProcess::createWebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 {
-    ASSERT(parameters.sessionID == sessionID());
-
     // It is necessary to check for page existence here since during a window.open() (or targeted
     // link) the WebPage gets created both in the synchronous handler and through the normal way. 
     auto result = m_pageMap.add(pageID, nullptr);

@@ -298,8 +298,8 @@ Page* WebChromeClient::createWindow(Frame& frame, const FrameLoadRequest& reques
     if (!newPageID)
         return nullptr;
     ASSERT(parameters);
-    if (parameters->sessionID == m_page.sessionID())
-        parameters->oldPageID = m_page.identifier();
+
+    parameters->oldPageID = m_page.identifier();
 
     webProcess.createWebPage(*newPageID, WTFMove(*parameters));
     return webProcess.webPage(*newPageID)->corePage();

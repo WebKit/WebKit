@@ -7218,7 +7218,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 
 WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& process, DrawingAreaProxy& drawingArea)
 {
-    WebPageCreationParameters parameters { process.websiteDataStore().sessionID() };
+    WebPageCreationParameters parameters;
 
     parameters.viewSize = pageClient().viewSize();
     parameters.activityState = m_activityState;
@@ -7243,7 +7243,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.itemStates = m_backForwardList->itemStates();
     parameters.userContentControllerID = m_userContentController->identifier();
     parameters.visitedLinkTableID = m_visitedLinkStore->identifier();
-    parameters.websiteDataStoreID = process.websiteDataStore().identifier();
     parameters.canRunBeforeUnloadConfirmPanel = m_uiClient->canRunBeforeUnloadConfirmPanel();
     parameters.canRunModal = m_canRunModal;
     parameters.deviceScaleFactor = deviceScaleFactor();

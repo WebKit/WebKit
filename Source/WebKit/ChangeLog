@@ -1,3 +1,27 @@
+2019-09-16  Chris Dumez  <cdumez@apple.com>
+
+        Drop sessionID / websiteDataStoreID from WebPageCreationParameters
+        https://bugs.webkit.org/show_bug.cgi?id=201847
+
+        Reviewed by Youenn Fablet.
+
+        Drop sessionID / websiteDataStoreID from WebPageCreationParameters now that we have
+        one session per WebProcess.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        (WebKit::WebPageCreationParameters::WebPageCreationParameters): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createWindow):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_textAutoSizingAdjustmentTimer):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::createWebPage):
+
 2019-09-16  Dean Jackson  <dino@apple.com>
 
         Provide a prototype for AR QuickLook to trigger processing in the originating page
