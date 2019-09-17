@@ -59,7 +59,7 @@
 
 @interface ARQuickLookWebKitItem : QLItem
 - (instancetype)initWithPreviewItemProvider:(NSItemProvider *)itemProvider contentType:(NSString *)contentType previewTitle:(NSString *)previewTitle fileSize:(NSNumber *)fileSize previewItem:(ARQuickLookPreviewItem *)previewItem;
-- (void)setDelegate:(ARQuickLookWebKitItemDelegate)delegate;
+- (void)setDelegate:(id <ARQuickLookWebKitItemDelegate>)delegate;
 @end
 
 #endif
