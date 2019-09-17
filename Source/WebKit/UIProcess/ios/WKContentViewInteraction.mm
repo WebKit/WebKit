@@ -7875,32 +7875,6 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     return [UIMenu menuWithTitle:title children:actions];
 }
 
-static UIMenu *menuWithShowLinkPreviewAction(UIMenu *originalMenu)
-{
-    if (!originalMenu)
-        return nil;
-
-    // Look for a UIAction that has the WKElementActionTypeToggleShowLinkPreviewsIdentifier.
-    NSUInteger result = [originalMenu.children indexOfObjectPassingTest:^BOOL(UIMenuElement *element, NSUInteger index, BOOL *stop) {
-        if (![element isKindOfClass:[UIAction class]])
-            return NO;
-        if ([(UIAction *)element identifier] == WKElementActionTypeToggleShowLinkPreviewsIdentifier) {
-            *stop = YES;
-            return YES;
-        }
-        return NO;
-    }];
-    if (result != NSNotFound)
-        return originalMenu;
-
-    // We didn't find one, so make a new UIMenu with the toggle action.
-    NSMutableArray<UIMenuElement *> *menuElements = [NSMutableArray arrayWithCapacity:(originalMenu.children.count + 1)];
-    [menuElements addObjectsFromArray:originalMenu.children];
-    _WKElementAction *toggleAction = [_WKElementAction elementActionWithType:_WKElementActionToggleShowLinkPreviews];
-    [menuElements addObject:[toggleAction uiActionForElementInfo:nil]];
-    return [originalMenu menuByReplacingChildren:menuElements];
-}
-
 - (void)assignLegacyDataForContextMenuInteraction
 {
     ASSERT(!_contextMenuHasRequestedLegacyData);
@@ -7953,7 +7927,7 @@ static UIMenu *menuWithShowLinkPreviewAction(UIMenu *originalMenu)
                     _contextMenuLegacyPreviewController = dataDetectorsResult.get().previewProvider();
                 if (dataDetectorsResult && dataDetectorsResult.get().actionProvider) {
                     auto menuElements = menuElementsFromDefaultActions(defaultActionsFromAssistant, elementInfo);
-                    _contextMenuLegacyMenu = menuWithShowLinkPreviewAction(dataDetectorsResult.get().actionProvider(menuElements));
+                    _contextMenuLegacyMenu = dataDetectorsResult.get().actionProvider(menuElements);
                 }
                 END_BLOCK_OBJC_EXCEPTIONS;
             }

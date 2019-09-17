@@ -1,3 +1,19 @@
+2019-09-17  Dean Jackson  <dino@apple.com>
+
+        Remove the "Show Link Previews" and "Hide Link Previews" action menus in the preview platter
+        https://bugs.webkit.org/show_bug.cgi?id=201864
+        <rdar://55190038>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm: Remove the toggle action from the
+        default values.
+        (-[WKActionSheetAssistant defaultActionsForLinkSheet:]):
+        * UIProcess/ios/WKContentViewInteraction.mm: No longer try to add a toggle when
+        it isn't there.
+        (-[WKContentView assignLegacyDataForContextMenuInteraction]):
+        (menuWithShowLinkPreviewAction): Deleted.
+
 2019-09-17  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Use WebPreferences instead of RuntimeEnabledFeatures in UIProcess

@@ -164,17 +164,9 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
             [assistant.delegate actionSheetAssistant:assistant shareElementWithURL:actionInfo.URL ?: actionInfo.imageURL rect:actionInfo.boundingRect];
         };
         break;
-    case _WKElementActionToggleShowLinkPreviews: {
-        bool showingLinkPreviews = true;
-        if (NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:webkitShowLinkPreviewsPreferenceKey])
-            showingLinkPreviews = value.boolValue;
-
-        title = showingLinkPreviews ? WEB_UI_STRING("Hide Link Previews", "Title for Hide Link Previews action button") : WEB_UI_STRING("Show Link Previews", "Title for Show Link Previews action button");
-        handler = ^(WKActionSheetAssistant *, _WKActivatedElementInfo *) {
-            [[NSUserDefaults standardUserDefaults] setBool:!showingLinkPreviews forKey:webkitShowLinkPreviewsPreferenceKey];
-        };
+    case _WKElementActionToggleShowLinkPreviews:
+        // This action must still exist for compatibility, but doesn't do anything.
         break;
-    }
     default:
         [NSException raise:NSInvalidArgumentException format:@"There is no standard web element action of type %ld.", (long)type];
         return nil;

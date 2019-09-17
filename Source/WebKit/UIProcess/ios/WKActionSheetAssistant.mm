@@ -558,8 +558,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeShare assistant:self]];
     }
 
-    [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionToggleShowLinkPreviews assistant:self]];
-
     return defaultActions;
 }
 
