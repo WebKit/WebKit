@@ -174,10 +174,11 @@ void StorageAreaMap::loadValuesIfNeeded()
     if (m_storageMap)
         return;
 
+    // The StorageManager::GetValues() IPC may be very slow because it may need to fetch the values from disk and there may be a lot
+    // of data.
+    IPC::UnboundedSynchronousIPCScope unboundedSynchronousIPCScope;
+
     HashMap<String, String> values;
-    // FIXME: This should use a special sendSync flag to indicate that we don't want to process incoming messages while waiting for a reply.
-    // (This flag does not yet exist). Since loadValuesIfNeeded() ends up being called from within JavaScript code, processing incoming synchronous messages
-    // could lead to weird reentrency bugs otherwise.
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::StorageManager::GetValues(m_storageMapID, m_currentSeed), Messages::StorageManager::GetValues::Reply(values), 0);
 
     m_storageMap = StorageMap::create(m_quotaInBytes);
