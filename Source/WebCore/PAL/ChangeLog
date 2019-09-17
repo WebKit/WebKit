@@ -1,3 +1,15 @@
+2019-09-16  Dean Jackson  <dino@apple.com>
+
+        REGRESSION: iPad: Safari becomes unresponsive after context menu on 1-800-MY-APPLE phone number, tapping 'Add to Contacts'
+        https://bugs.webkit.org/show_bug.cgi?id=201816
+        <rdar://55105827>
+
+        Reviewed by Darin Adler.
+
+        Expose kDataDetectorsSourceRectKey (and sort things while there).
+
+        * pal/spi/ios/DataDetectorsUISPI.h:
+
 2019-09-13  Youenn Fablet  <youenn@apple.com>
 
         Use WebProcess processIdentifier to identify Service Worker connections

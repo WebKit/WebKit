@@ -6424,6 +6424,15 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
         context.get()[getkDataDetectorsLeadingText()] = positionInformation.textBefore;
     if (!positionInformation.textAfter.isEmpty())
         context.get()[getkDataDetectorsTrailingText()] = positionInformation.textAfter;
+
+    CGRect sourceRect;
+    if (positionInformation.isLink)
+        sourceRect = positionInformation.linkIndicator.textBoundingRectInRootViewCoordinates;
+    else
+        sourceRect = positionInformation.bounds;
+
+    CGRect frameInContainerViewCoordinates = [self convertRect:sourceRect toView:self.containerViewForTargetedPreviews];
+    context.get()[getkDataDetectorsSourceRectKey()] = [NSValue valueWithCGRect:frameInContainerViewCoordinates];
 #endif
     
     return context.autorelease();

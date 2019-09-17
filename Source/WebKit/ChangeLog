@@ -1,3 +1,20 @@
+2019-09-16  Dean Jackson  <dino@apple.com>
+
+        REGRESSION: iPad: Safari becomes unresponsive after context menu on 1-800-MY-APPLE phone number, tapping 'Add to Contacts'
+        https://bugs.webkit.org/show_bug.cgi?id=201816
+        <rdar://55105827>
+
+        Reviewed by Darin Adler.
+
+        When generating the DataDetectorsContext for a position, we should
+        also provide the source rectangle for the link in root view coordinates.
+        This allows DataDetectors to show any modal dialogs in the right
+        position.
+
+        * UIProcess/ios/WKContentViewInteraction.mm: Use either the bounds of the positionInformation
+        or the text bounding rectangle.
+        (-[WKContentView dataDetectionContextForPositionInformation:]):
+
 2019-09-16  Chris Dumez  <cdumez@apple.com>
 
         NetworkProcessConnection does not need HashMaps of sessionIDs for Service Workers and IDB
