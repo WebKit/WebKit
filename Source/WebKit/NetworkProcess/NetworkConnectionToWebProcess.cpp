@@ -862,7 +862,7 @@ void NetworkConnectionToWebProcess::unregisterSWConnection()
 void NetworkConnectionToWebProcess::establishSWServerConnection()
 {
     auto& server = m_networkProcess->swServerForSession(m_sessionID);
-    auto connection = makeUnique<WebSWServerConnection>(m_networkProcess, server, m_connection.get(), m_webProcessIdentifier, m_sessionID);
+    auto connection = makeUnique<WebSWServerConnection>(m_networkProcess, server, m_connection.get(), m_webProcessIdentifier);
 
     ASSERT(!m_swConnection);
     m_swConnection = makeWeakPtr(*connection);
