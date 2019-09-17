@@ -1339,6 +1339,9 @@ static bool desktopClassBrowsingRecommendedForRequest(const WebCore::ResourceReq
     if (equalLettersIgnoringASCIICase(host, "trello.com") || host.endsWithIgnoringASCIICase(".trello.com"))
         return false;
 
+    if (equalLettersIgnoringASCIICase(host, "ted.com") || host.endsWithIgnoringASCIICase(".ted.com"))
+        return false;
+
     if (host.containsIgnoringASCIICase("hsbc.")) {
         if (equalLettersIgnoringASCIICase(host, "hsbc.com.au") || host.endsWithIgnoringASCIICase(".hsbc.com.au"))
             return false;

@@ -1,5 +1,36 @@
 2019-09-17  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r249757. rdar://problem/55427273
+
+    REGRESSION: Scrubbing on ted.com does not work well
+    https://bugs.webkit.org/show_bug.cgi?id=201635
+    <rdar://problem/51463649>
+    
+    Patch by Antoine Quint <graouts@apple.com> on 2019-09-11
+    Reviewed by Dean Jackson.
+    
+    This website uses custom media controls that simply don't work well on iOS when the User-Agent string is the desktop one, so we default to the mobile UA.
+    
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::desktopClassBrowsingRecommendedForRequest):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249757 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-09-11  Antoine Quint  <graouts@apple.com>
+
+            REGRESSION: Scrubbing on ted.com does not work well
+            https://bugs.webkit.org/show_bug.cgi?id=201635
+            <rdar://problem/51463649>
+
+            Reviewed by Dean Jackson.
+
+            This website uses custom media controls that simply don't work well on iOS when the User-Agent string is the desktop one, so we default to the mobile UA.
+
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::desktopClassBrowsingRecommendedForRequest):
+
+2019-09-17  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r249754. rdar://problem/55427271
 
     REGRESSION (r233780): After swiping to navigate back, pinching to zoom in on webcontent snaps back to zoomed out when letting go
