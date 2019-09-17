@@ -54,8 +54,7 @@ public:
     AuthenticatorManager();
     virtual ~AuthenticatorManager() = default;
 
-    void makeCredential(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions&, Callback&&);
-    void getAssertion(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&, Callback&&);
+    void handleRequest(WebAuthenticationRequestData&&, Callback&&);
 
     virtual bool isMock() const { return false; }
 

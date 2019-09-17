@@ -43,6 +43,8 @@ namespace WebKit {
 
 class WebPageProxy;
 
+struct WebAuthenticationRequestData;
+
 class WebAuthenticatorCoordinatorProxy : private IPC::MessageReceiver, public CanMakeWeakPtr<WebAuthenticatorCoordinatorProxy> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebAuthenticatorCoordinatorProxy);
@@ -61,6 +63,8 @@ private:
 
     // Senders.
     void requestReply(uint64_t messageId, const WebCore::PublicKeyCredentialData&, const WebCore::ExceptionData&);
+
+    void handleRequest(uint64_t messageId, WebAuthenticationRequestData&&);
 
     WebPageProxy& m_webPageProxy;
 };

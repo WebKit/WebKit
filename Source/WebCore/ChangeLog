@@ -1,3 +1,17 @@
+2019-09-17  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Use WebPreferences instead of RuntimeEnabledFeatures in UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=198176
+        <rdar://problem/55285709>
+
+        Reviewed by Youenn Fablet.
+
+        No changes of behavior.
+
+        * Modules/webauthn/PublicKeyCredential.cpp:
+        (WebCore::PublicKeyCredential::isUserVerifyingPlatformAuthenticatorAvailable):
+        Resolves the promise with false immediately when the feature flag is false.
+
 2019-09-17  Rob Buis  <rbuis@igalia.com>
 
         Access-Control-Expose-Headers parsed incorrectly

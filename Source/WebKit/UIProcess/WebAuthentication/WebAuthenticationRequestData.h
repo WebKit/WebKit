@@ -27,18 +27,18 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "WebPreferences.h"
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/PublicKeyCredentialRequestOptions.h>
+#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
 
 struct WebAuthenticationRequestData {
     Vector<uint8_t> hash;
-    // FIXME: Maybe we could make an ABC of Options and then use safe casting here.
-    bool isCreationRequest { true };
-    WebCore::PublicKeyCredentialCreationOptions creationOptions;
-    WebCore::PublicKeyCredentialRequestOptions requestOptions;
+    Variant<WebCore::PublicKeyCredentialCreationOptions, WebCore::PublicKeyCredentialRequestOptions> options;
+    RefPtr<WebPreferences> preferences;
 };
 
 } // namespace WebKit
