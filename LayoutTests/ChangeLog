@@ -1,3 +1,14 @@
+2019-09-17  Zalan Bujtas  <zalan@apple.com>
+
+        [First-letter] Use WeakPtr for the first-letter insertion point.
+        https://bugs.webkit.org/show_bug.cgi?id=201842
+        <rdar://problem/51373788>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/first-letter-with-columns-crash-expected.txt: Added.
+        * fast/text/first-letter-with-columns-crash.html: Added.
+
 2019-09-17  Rob Buis  <rbuis@igalia.com>
 
         Access-Control-Expose-Headers parsed incorrectly

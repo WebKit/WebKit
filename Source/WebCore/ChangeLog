@@ -1,3 +1,18 @@
+2019-09-17  Zalan Bujtas  <zalan@apple.com>
+
+        [First-letter] Use WeakPtr for the first-letter insertion point.
+        https://bugs.webkit.org/show_bug.cgi?id=201842
+        <rdar://problem/51373788>
+
+        Reviewed by Antti Koivisto.
+
+        The about-to-be-removed first letter renderer's sibling could potentially be destroyed too as the result of the anonymous subtree collapsing logic (when the next sibling is a generated anonymous block and it is not needed anymore.)
+
+        Test: fast/text/first-letter-with-columns-crash.html
+
+        * rendering/updating/RenderTreeBuilderFirstLetter.cpp:
+        (WebCore::RenderTreeBuilder::FirstLetter::updateStyle):
+
 2019-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Cannot create EGL window surface: EGL_BAD_ALLOC
