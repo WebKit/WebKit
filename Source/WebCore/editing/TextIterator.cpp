@@ -671,17 +671,23 @@ void TextIterator::handleTextBox()
         nextTextBox.traverseNextInTextOrder();
 
         if (runStart < runEnd) {
-            // Handle either a single newline character (which becomes a space),
-            // or a run of characters that does not include a newline.
-            // This effectively translates newlines to spaces without copying the text.
-            if (rendererText[runStart] == '\n') {
+            auto isNewlineOrTab = [&](UChar character) {
+                return character == '\n' || character == '\t';
+            };
+            // Handle either a single newline or tab character (which becomes a space),
+            // or a run of characters that does not include newlines or tabs.
+            // This effectively translates newlines and tabs to spaces without copying the text.
+            if (isNewlineOrTab(rendererText[runStart])) {
                 emitCharacter(' ', textNode, nullptr, runStart, runStart + 1);
                 m_offset = runStart + 1;
             } else {
-                size_t subrunEnd = rendererText.find('\n', runStart);
-                if (subrunEnd == notFound || subrunEnd > runEnd) {
-                    subrunEnd = runEnd;
-                    bool lastSpaceCollapsedByNextNonTextBox = !nextTextBox && (m_behavior & TextIteratorBehavesAsIfNodesFollowing) && rendererText.length() > runEnd;
+                auto subrunEnd = runStart + 1;
+                for (; subrunEnd < runEnd; ++subrunEnd) {
+                    if (isNewlineOrTab(rendererText[subrunEnd]))
+                        break;
+                }
+                if (subrunEnd == runEnd && (m_behavior & TextIteratorBehavesAsIfNodesFollowing)) {
+                    bool lastSpaceCollapsedByNextNonTextBox = !nextTextBox && rendererText.length() > subrunEnd && rendererText[subrunEnd] == ' ';
                     if (lastSpaceCollapsedByNextNonTextBox)
                         ++subrunEnd; // runEnd stopped before last space. Increment by one to restore the space.
                 }

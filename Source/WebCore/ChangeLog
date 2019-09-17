@@ -1,3 +1,20 @@
+2019-09-17  Antti Koivisto  <antti@apple.com>
+
+        TextIterator should convert tabs to spaces
+        https://bugs.webkit.org/show_bug.cgi?id=201863
+
+        Reviewed by Zalan Bujtas.
+
+        As seen in tests
+
+        imported/w3c/web-platform-tests/innerText/getter.html
+        imported/w3c/web-platform-tests/html/dom/elements/the-innertext-idl-attribute/getter.html
+
+        The old simple line layout path in TextIterator used to do this.
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleTextBox):
+
 2019-09-17  Zalan Bujtas  <zalan@apple.com>
 
         [LFC[MarginCollapsing] MarginCollapse::estimatedMarginBefore should take pre-computed non-collapsed margin values.

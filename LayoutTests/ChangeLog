@@ -1,3 +1,22 @@
+2019-09-17  Antti Koivisto  <antti@apple.com>
+
+        TextIterator should convert tabs to spaces
+        https://bugs.webkit.org/show_bug.cgi?id=201863
+
+        Reviewed by Zalan Bujtas.
+
+        * editing/pasteboard/5761530-1.html:
+
+        Set body to 'whitespace:pre' so tabs don't get lost in test output.
+
+        * fast/tokenizer/script_extra_close-expected.txt:
+        * imported/blink/fast/text/font-linux-normalize-expected.txt:
+        * platform/mac/editing/pasteboard/5761530-1-expected.txt: Removed.
+
+        No need for platform specific result.
+
+        * editing/pasteboard/5761530-1-expected.txt:
+
 2019-09-17  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (iOS 13): rAF stops firing when navigating away cross-origin and then back
