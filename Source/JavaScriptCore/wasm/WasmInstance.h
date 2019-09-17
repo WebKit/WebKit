@@ -130,6 +130,7 @@ public:
         WasmToWasmImportableFunction::LoadLocation wasmEntrypointLoadLocation { nullptr };
         MacroAssemblerCodePtr<WasmEntryPtrTag> wasmToEmbedderStub;
         void* importFunction { nullptr }; // In a JS embedding, this is a WriteBarrier<JSObject>.
+        void** boxedCalleeLoadLocation { nullptr };
     };
     unsigned numImportFunctions() const { return m_numImportFunctions; }
     ImportFunctionInfo* importFunctionInfo(size_t importFunctionNum)
@@ -141,6 +142,7 @@ public:
     static size_t offsetOfWasmEntrypointLoadLocation(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, wasmEntrypointLoadLocation); }
     static size_t offsetOfWasmToEmbedderStub(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, wasmToEmbedderStub); }
     static size_t offsetOfImportFunction(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, importFunction); }
+    static size_t offsetOfBoxedCalleeLoadLocation(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, boxedCalleeLoadLocation); }
     template<typename T> T* importFunction(unsigned importFunctionNum) { return reinterpret_cast<T*>(&importFunctionInfo(importFunctionNum)->importFunction); }
 
     static_assert(sizeof(ImportFunctionInfo) == WTF::roundUpToMultipleOf<sizeof(uint64_t)>(sizeof(ImportFunctionInfo)), "We rely on this for the alignment to be correct");

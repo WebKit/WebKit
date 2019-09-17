@@ -1,3 +1,98 @@
+2019-09-17  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Change WebAssembly calling conventions
+        https://bugs.webkit.org/show_bug.cgi?id=201799
+
+        Reviewed by Saam Barati.
+
+        Currently, the Wasm::Callee writes itself to CallFrameSlot::callee. However, this won't work when
+        we have the Wasm interpreter, since we need the callee in order to know which function are we executing.
+        This patch changes the calling conventions in preparation for the interpreter, so that the caller
+        becomes responsible for writing the callee into the call frame.
+        However, there are exceptions to this rule: stubs can still write to the callee slot, since they are individually
+        generated and will still be present in the interpreter. We keep this design to avoid emitting unnecessary
+        code when we know statically who is the callee:
+        - Caller writes to call frame: intra-module direct wasm calls, indirect wasm calls, JS-to-wasm stub (new frame), JS-to-wasm IC.
+        - Callee writes to call frame: inter-module wasm-to-wasm stub, JS-to-wasm stub (callee frame), wasm-to-JS stub, OMG osr entry
+
+        Additionally, this patch also changes it so that the callee keeps track of its callers, instead of having a global mapping
+        of calls in the Wasm::CodeBlock. This makes it easier to repatch all callers of a given Callee when it tiers up.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::AirIRGenerator::addCall):
+        (JSC::Wasm::AirIRGenerator::addCallIndirect):
+        (JSC::Wasm::parseAndCompileAir):
+        * wasm/WasmAirIRGenerator.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::addCall):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmB3IRGenerator.h:
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::BBQPlan):
+        (JSC::Wasm::BBQPlan::prepare):
+        (JSC::Wasm::BBQPlan::compileFunctions):
+        (JSC::Wasm::BBQPlan::complete):
+        * wasm/WasmBBQPlan.h:
+        * wasm/WasmBBQPlanInlines.h:
+        (JSC::Wasm::BBQPlan::initializeCallees):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmCallee.cpp:
+        (JSC::Wasm::Callee::Callee):
+        (JSC::Wasm::repatchMove):
+        (JSC::Wasm::repatchCall):
+        (JSC::Wasm::BBQCallee::addCaller):
+        (JSC::Wasm::BBQCallee::addAndLinkCaller):
+        (JSC::Wasm::BBQCallee::repatchCallers):
+        * wasm/WasmCallee.h:
+        (JSC::Wasm::Callee::entrypoint):
+        (JSC::Wasm::Callee::code const):
+        (JSC::Wasm::Callee::calleeSaveRegisters):
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::CallingConvention::setupFrameInPrologue const):
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::CodeBlock):
+        * wasm/WasmCodeBlock.h:
+        (JSC::Wasm::CodeBlock::embedderEntrypointCalleeFromFunctionIndexSpace):
+        (JSC::Wasm::CodeBlock::wasmBBQCalleeFromFunctionIndexSpace):
+        (JSC::Wasm::CodeBlock::entrypointLoadLocationFromFunctionIndexSpace):
+        (JSC::Wasm::CodeBlock::boxedCalleeLoadLocationFromFunctionIndexSpace):
+        * wasm/WasmEmbedder.h:
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::WasmToWasmImportableFunction::offsetOfBoxedCalleeLoadLocation):
+        * wasm/WasmInstance.h:
+        (JSC::Wasm::Instance::offsetOfBoxedCalleeLoadLocation):
+        * wasm/WasmOMGForOSREntryPlan.cpp:
+        (JSC::Wasm::OMGForOSREntryPlan::OMGForOSREntryPlan):
+        (JSC::Wasm::OMGForOSREntryPlan::work):
+        * wasm/WasmOMGForOSREntryPlan.h:
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::OMGPlan):
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmOMGPlan.h:
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::triggerOMGReplacementCompile):
+        (JSC::Wasm::doOSREntry):
+        (JSC::Wasm::triggerOSREntryNow):
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/JSToWasm.h:
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+        (JSC::WebAssemblyFunction::create):
+        (JSC::WebAssemblyFunction::WebAssemblyFunction):
+        * wasm/js/WebAssemblyFunction.h:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        (JSC::WebAssemblyModuleRecord::evaluate):
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::WebAssemblyWrapperFunction::create):
+
 2019-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] CheckArray+NonArray is not filtering out Array in AI

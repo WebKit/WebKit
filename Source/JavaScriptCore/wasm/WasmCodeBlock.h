@@ -28,6 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "MacroAssemblerCodeRef.h"
+#include "WasmCallee.h"
 #include "WasmEmbedder.h"
 #include "WasmTierUpCount.h"
 #include <wtf/Lock.h>
@@ -40,9 +41,8 @@ namespace JSC {
 
 namespace Wasm {
 
-class Callee;
-struct Context;
 class BBQPlan;
+struct Context;
 class OMGPlan;
 struct ModuleInformation;
 struct UnlinkedWasmToWasmCall;
@@ -76,7 +76,7 @@ public:
 
     // These two callee getters are only valid once the callees have been populated.
 
-    Callee& embedderEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
+    EmbedderEntrypointCallee& embedderEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
         ASSERT(runnable());
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
@@ -86,22 +86,13 @@ public:
         RELEASE_ASSERT(callee);
         return *callee;
     }
-    Callee& wasmEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
-    {
-        ASSERT(runnable());
-        RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
-        unsigned calleeIndex = functionIndexSpace - functionImportCount();
-        if (m_optimizedCallees[calleeIndex])
-            return *m_optimizedCallees[calleeIndex].get();
-        return *m_callees[calleeIndex].get();
-    }
 
-    Callee& wasmBBQCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
+    BBQCallee& wasmBBQCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
         ASSERT(runnable());
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
-        return *m_callees[calleeIndex].get();
+        return m_callees[calleeIndex].get();
     }
 
     MacroAssemblerCodePtr<WasmEntryPtrTag>* entrypointLoadLocationFromFunctionIndexSpace(unsigned functionIndexSpace)
@@ -109,6 +100,13 @@ public:
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
         return &m_wasmIndirectCallEntryPoints[calleeIndex];
+    }
+
+    void** boxedCalleeLoadLocationFromFunctionIndexSpace(unsigned functionIndexSpace)
+    {
+        RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
+        unsigned calleeIndex = functionIndexSpace - functionImportCount();
+        return &m_boxedCallees[calleeIndex];
     }
 
     bool isSafeToRun(MemoryMode);
@@ -124,11 +122,11 @@ private:
     void setCompilationFinished();
     unsigned m_calleeCount;
     MemoryMode m_mode;
-    Vector<RefPtr<Callee>> m_callees;
-    Vector<RefPtr<Callee>> m_optimizedCallees;
-    HashMap<uint32_t, RefPtr<Callee>, typename DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_embedderCallees;
+    Vector<Ref<BBQCallee>> m_callees;
+    Vector<RefPtr<OMGCallee>> m_optimizedCallees;
+    Vector<void*> m_boxedCallees;
+    HashMap<uint32_t, RefPtr<EmbedderEntrypointCallee>, typename DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_embedderCallees;
     Vector<MacroAssemblerCodePtr<WasmEntryPtrTag>> m_wasmIndirectCallEntryPoints;
-    Vector<Vector<UnlinkedWasmToWasmCall>> m_wasmToWasmCallsites;
     Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToWasmExitStubs;
     RefPtr<BBQPlan> m_plan;
     std::atomic<bool> m_compilationFinished { false };

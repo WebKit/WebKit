@@ -465,6 +465,8 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
         // FIXME: Currently we just do an indirect jump. But we should teach the Module
         // how to repatch us:
         // https://bugs.webkit.org/show_bug.cgi?id=196570
+        jit.loadPtr(boxedCalleeLoadLocation(), scratchGPR);
+        jit.storePtr(scratchGPR, CCallHelpers::Address(CCallHelpers::stackPointerRegister, CallFrameSlot::callee * sizeof(Register) - sizeof(CallerFrameAndPC)));
         jit.loadPtr(entrypointLoadLocation(), scratchGPR);
         jit.call(scratchGPR, WasmEntryPtrTag);
     }
@@ -536,10 +538,10 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
     return m_jsCallEntrypoint.code();
 }
 
-WebAssemblyFunction* WebAssemblyFunction::create(VM& vm, JSGlobalObject* globalObject, Structure* structure, unsigned length, const String& name, JSWebAssemblyInstance* instance, Wasm::Callee& jsEntrypoint, Wasm::WasmToWasmImportableFunction::LoadLocation wasmToWasmEntrypointLoadLocation, Wasm::SignatureIndex signatureIndex)
+WebAssemblyFunction* WebAssemblyFunction::create(VM& vm, JSGlobalObject* globalObject, Structure* structure, unsigned length, const String& name, JSWebAssemblyInstance* instance, Wasm::Callee& jsEntrypoint, Wasm::WasmToWasmImportableFunction::LoadLocation wasmToWasmEntrypointLoadLocation, void** boxedCalleeLoadLocation, Wasm::SignatureIndex signatureIndex)
 {
     NativeExecutable* executable = vm.getHostFunction(callWebAssemblyFunction, NoIntrinsic, callHostFunctionAsConstructor, nullptr, name);
-    WebAssemblyFunction* function = new (NotNull, allocateCell<WebAssemblyFunction>(vm.heap)) WebAssemblyFunction(vm, globalObject, structure, jsEntrypoint, wasmToWasmEntrypointLoadLocation, signatureIndex);
+    WebAssemblyFunction* function = new (NotNull, allocateCell<WebAssemblyFunction>(vm.heap)) WebAssemblyFunction(vm, globalObject, structure, jsEntrypoint, wasmToWasmEntrypointLoadLocation, boxedCalleeLoadLocation, signatureIndex);
     function->finishCreation(vm, executable, length, name, instance);
     ASSERT_WITH_MESSAGE(!function->isLargeAllocation(), "WebAssemblyFunction should be allocated not in large allocation since it is JSCallee.");
     return function;
@@ -551,10 +553,10 @@ Structure* WebAssemblyFunction::createStructure(VM& vm, JSGlobalObject* globalOb
     return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
 }
 
-WebAssemblyFunction::WebAssemblyFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure, Wasm::Callee& jsEntrypoint, Wasm::WasmToWasmImportableFunction::LoadLocation wasmToWasmEntrypointLoadLocation, Wasm::SignatureIndex signatureIndex)
+WebAssemblyFunction::WebAssemblyFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure, Wasm::Callee& jsEntrypoint, Wasm::WasmToWasmImportableFunction::LoadLocation wasmToWasmEntrypointLoadLocation, void** boxedCalleeLoadLocation, Wasm::SignatureIndex signatureIndex)
     : Base { vm, globalObject, structure }
-    , m_jsEntrypoint { jsEntrypoint.entrypoint() }
-    , m_importableFunction { signatureIndex, wasmToWasmEntrypointLoadLocation }
+    , m_jsEntrypoint { jsEntrypoint.code() }
+    , m_importableFunction { signatureIndex, wasmToWasmEntrypointLoadLocation, boxedCalleeLoadLocation }
 { }
 
 void WebAssemblyFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)

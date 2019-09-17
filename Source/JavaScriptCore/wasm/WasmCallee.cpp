@@ -32,16 +32,14 @@
 
 namespace JSC { namespace Wasm {
 
-Callee::Callee(Wasm::CompilationMode compilationMode, Entrypoint&& entrypoint)
+Callee::Callee(Wasm::CompilationMode compilationMode)
     : m_compilationMode(compilationMode)
-    , m_entrypoint(WTFMove(entrypoint))
 {
     CalleeRegistry::singleton().registerCallee(this);
 }
 
-Callee::Callee(Wasm::CompilationMode compilationMode, Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+Callee::Callee(Wasm::CompilationMode compilationMode, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     : m_compilationMode(compilationMode)
-    , m_entrypoint(WTFMove(entrypoint))
     , m_indexOrName(index, WTFMove(name))
 {
     CalleeRegistry::singleton().registerCallee(this);
@@ -50,6 +48,48 @@ Callee::Callee(Wasm::CompilationMode compilationMode, Entrypoint&& entrypoint, s
 Callee::~Callee()
 {
     CalleeRegistry::singleton().unregisterCallee(this);
+}
+
+
+inline void repatchMove(const AbstractLocker&, CodeLocationDataLabelPtr<WasmEntryPtrTag> moveLocation, Callee& targetCallee)
+{
+    MacroAssembler::repatchPointer(moveLocation, CalleeBits::boxWasm(&targetCallee));
+}
+
+inline void repatchCall(const AbstractLocker&, CodeLocationNearCall<WasmEntryPtrTag> callLocation, Callee& targetCallee)
+{
+    MacroAssembler::repatchNearCall(callLocation, CodeLocationLabel<WasmEntryPtrTag>(targetCallee.code()));
+}
+
+void BBQCallee::addCaller(const AbstractLocker&, LinkBuffer& linkBuffer, UnlinkedMoveAndCall call)
+{
+    auto moveLocation = linkBuffer.locationOf<WasmEntryPtrTag>(call.moveLocation);
+    auto callLocation = linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call.callLocation);
+    m_moveLocations.append(moveLocation);
+    m_callLocations.append(callLocation);
+}
+
+void BBQCallee::addAndLinkCaller(const AbstractLocker& locker, LinkBuffer& linkBuffer, UnlinkedMoveAndCall call)
+{
+    RELEASE_ASSERT(entrypoint().compilation);
+
+    auto moveLocation = linkBuffer.locationOf<WasmEntryPtrTag>(call.moveLocation);
+    auto callLocation = linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call.callLocation);
+    m_moveLocations.append(moveLocation);
+    m_callLocations.append(callLocation);
+
+    Callee& targetCallee = m_replacement ? static_cast<Callee&>(*m_replacement) : *this;
+    repatchMove(locker, moveLocation, targetCallee);
+    repatchCall(locker, callLocation, targetCallee);
+}
+
+void BBQCallee::repatchCallers(const AbstractLocker& locker, Callee& targetCallee)
+{
+    RELEASE_ASSERT(targetCallee.entrypoint().compilation);
+    for (auto moveLocation : m_moveLocations)
+        repatchMove(locker, moveLocation, targetCallee);
+    for (auto callLocation : m_callLocations)
+        repatchCall(locker, callLocation, targetCallee);
 }
 
 } } // namespace JSC::Wasm
