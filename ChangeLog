@@ -1,3 +1,16 @@
+2019-09-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][curl] Define NOCRYPT to suppress libressl "Warning, overriding WinCrypt defines"
+        https://bugs.webkit.org/show_bug.cgi?id=201858
+
+        Reviewed by Alex Christensen.
+
+        LibreSSL headers are reporing a compilation warning for overriding
+        WinCrypt defines. Define NOCRYPT to let windows.h not to include
+        WinCrypt for WinCairo port.
+
+        * Source/cmake/OptionsWinCairo.cmake: Added -DNOCRYPT.
+
 2019-09-15  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Do not run the Bubblewrap executable when configuring for cross-compilation
