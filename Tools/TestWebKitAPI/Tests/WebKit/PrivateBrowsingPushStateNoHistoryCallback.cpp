@@ -32,6 +32,7 @@
 #include "Test.h"
 #include <WebKit/WKPreferencesRefPrivate.h>
 #include <WebKit/WKRetainPtr.h>
+#include <WebKit/WKWebsiteDataStoreRef.h>
 
 namespace TestWebKitAPI {
 
@@ -52,6 +53,12 @@ static void didNavigateWithNavigationData(WKContextRef context, WKPageRef page, 
 TEST(WebKit, PrivateBrowsingPushStateNoHistoryCallback)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
+    
+    auto pageConfiguration = adoptWK(WKPageConfigurationCreate());
+    WKPageConfigurationSetContext(pageConfiguration.get(), context.get());
+    
+    auto ephemeralStore = adoptWK(WKWebsiteDataStoreCreateNonPersistentDataStore());
+    WKPageConfigurationSetWebsiteDataStore(pageConfiguration.get(), ephemeralStore.get());
 
     WKContextHistoryClientV0 historyClient;
     memset(&historyClient, 0, sizeof(historyClient));
@@ -61,7 +68,7 @@ TEST(WebKit, PrivateBrowsingPushStateNoHistoryCallback)
 
     WKContextSetHistoryClient(context.get(), &historyClient.base);
 
-    PlatformWebView webView(context.get());
+    PlatformWebView webView(pageConfiguration.get());
 
     WKPageNavigationClientV0 pageLoaderClient;
     memset(&pageLoaderClient, 0, sizeof(pageLoaderClient));
@@ -74,7 +81,6 @@ TEST(WebKit, PrivateBrowsingPushStateNoHistoryCallback)
     WKPageSetPageNavigationClient(webView.page(), &pageLoaderClient.base);
 
     WKRetainPtr<WKPreferencesRef> preferences = adoptWK(WKPreferencesCreate());
-    WKPreferencesSetPrivateBrowsingEnabled(preferences.get(), true);
     WKPreferencesSetUniversalAccessFromFileURLsAllowed(preferences.get(), true);
 
     WKPageGroupRef pageGroup = WKPageGetPageGroup(webView.page());
@@ -85,12 +91,13 @@ TEST(WebKit, PrivateBrowsingPushStateNoHistoryCallback)
 
     Util::run(&didSameDocumentNavigation);
 
-    WKPreferencesSetPrivateBrowsingEnabled(preferences.get(), false);
+    WKPageConfigurationSetWebsiteDataStore(pageConfiguration.get(), WKWebsiteDataStoreGetDefaultDataStore());
+    PlatformWebView webView2(pageConfiguration.get());
 
     historyClient.didNavigateWithNavigationData = didNavigateWithNavigationData;
     WKContextSetHistoryClient(context.get(), &historyClient.base);
 
-    WKPageLoadURL(webView.page(), url.get());
+    WKPageLoadURL(webView2.page(), url.get());
 
     Util::run(&didNavigate);
 }

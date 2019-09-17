@@ -132,9 +132,8 @@ _WKRemoteObjectRegistry *WKPageGetObjectRegistry(WKPageRef pageRef)
 bool WKPageIsURLKnownHSTSHost(WKPageRef page, WKURLRef url)
 {
     WebKit::WebPageProxy* webPageProxy = WebKit::toImpl(page);
-    bool privateBrowsingEnabled = webPageProxy->pageGroup().preferences().privateBrowsingEnabled();
 
-    return webPageProxy->process().processPool().isURLKnownHSTSHost(WebKit::toImpl(url)->string(), privateBrowsingEnabled);
+    return webPageProxy->process().processPool().isURLKnownHSTSHost(WebKit::toImpl(url)->string());
 }
 
 WKNavigation *WKPageLoadURLRequestReturningNavigation(WKPageRef pageRef, WKURLRequestRef urlRequestRef)

@@ -626,9 +626,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     // Initialize the network process.
     networkProcess->send(Messages::NetworkProcess::InitializeNetworkProcess(parameters), 0);
 
-    if (WebPreferences::anyPagesAreUsingPrivateBrowsing())
-        networkProcess->send(Messages::NetworkProcess::AddWebsiteDataStore(WebsiteDataStoreParameters::legacyPrivateSessionParameters()), 0);
-
 #if PLATFORM(COCOA)
     networkProcess->send(Messages::NetworkProcess::SetQOS(networkProcessLatencyQOS(), networkProcessThroughputQOS()), 0);
 #endif
@@ -735,33 +732,11 @@ void WebProcessPool::disableServiceWorkerProcessTerminationDelay()
 #endif
 }
 
-void WebProcessPool::willStartUsingPrivateBrowsing()
-{
-    for (auto* processPool : allProcessPools())
-        processPool->setAnyPageGroupMightHavePrivateBrowsingEnabled(true);
-}
-
-void WebProcessPool::willStopUsingPrivateBrowsing()
-{
-    for (auto* processPool : allProcessPools())
-        processPool->setAnyPageGroupMightHavePrivateBrowsingEnabled(false);
-}
-
 void WebProcessPool::windowServerConnectionStateChanged()
 {
     size_t processCount = m_processes.size();
     for (size_t i = 0; i < processCount; ++i)
         m_processes[i]->windowServerConnectionStateChanged();
-}
-
-void WebProcessPool::setAnyPageGroupMightHavePrivateBrowsingEnabled(bool privateBrowsingEnabled)
-{
-    if (privateBrowsingEnabled) {
-        ensureNetworkProcess().send(Messages::NetworkProcess::AddWebsiteDataStore(WebsiteDataStoreParameters::legacyPrivateSessionParameters()), 0);
-    } else {
-        if (auto* networkProcess = this->networkProcess())
-            networkProcess->removeSession(PAL::SessionID::legacyPrivateSessionID());
-    }
 }
 
 void (*s_invalidMessageCallback)(WKStringRef messageName);

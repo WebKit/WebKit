@@ -2391,7 +2391,7 @@ gboolean webkit_settings_get_enable_private_browsing(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
-    return settings->priv->preferences->privateBrowsingEnabled();
+    return FALSE;
 }
 
 /**
@@ -2406,14 +2406,6 @@ gboolean webkit_settings_get_enable_private_browsing(WebKitSettings* settings)
 void webkit_settings_set_enable_private_browsing(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
-
-    WebKitSettingsPrivate* priv = settings->priv;
-    bool currentValue = priv->preferences->privateBrowsingEnabled();
-    if (currentValue == enabled)
-        return;
-
-    priv->preferences->setPrivateBrowsingEnabled(enabled);
-    g_object_notify(G_OBJECT(settings), "enable-private-browsing");
 }
 #endif
 

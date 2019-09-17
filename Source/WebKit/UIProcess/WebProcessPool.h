@@ -395,9 +395,6 @@ public:
 
     void windowServerConnectionStateChanged();
 
-    static void willStartUsingPrivateBrowsing();
-    static void willStopUsingPrivateBrowsing();
-
 #if USE(SOUP)
     void setIgnoreTLSErrors(bool);
     bool ignoreTLSErrors() const { return m_ignoreTLSErrors; }
@@ -408,7 +405,7 @@ public:
 
     void processDidCachePage(WebProcessProxy*);
 
-    bool isURLKnownHSTSHost(const String& urlString, bool privateBrowsingEnabled) const;
+    bool isURLKnownHSTSHost(const String& urlString) const;
     void resetHSTSHosts();
     void resetHSTSHostsAddedAfterDate(double startDateIntervalSince1970);
 
@@ -593,8 +590,6 @@ private:
 
     void addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash, PAL::SessionID);
     void plugInDidReceiveUserInteraction(unsigned plugInOriginHash, PAL::SessionID);
-
-    void setAnyPageGroupMightHavePrivateBrowsingEnabled(bool);
 
     void resolvePathsForSandboxExtensions();
     void platformResolvePathsForSandboxExtensions();

@@ -351,12 +351,11 @@ WKStringRef WKPreferencesCopyDefaultTextEncodingName(WKPreferencesRef preference
 
 void WKPreferencesSetPrivateBrowsingEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
-    toImpl(preferencesRef)->setPrivateBrowsingEnabled(enabled);
 }
 
 bool WKPreferencesGetPrivateBrowsingEnabled(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->privateBrowsingEnabled();
+    return false;
 }
 
 void WKPreferencesSetDeveloperExtrasEnabled(WKPreferencesRef preferencesRef, bool enabled)

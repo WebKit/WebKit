@@ -489,11 +489,11 @@ static CFURLStorageSessionRef privateBrowsingSession()
     return session;
 }
 
-bool WebProcessPool::isURLKnownHSTSHost(const String& urlString, bool privateBrowsingEnabled) const
+bool WebProcessPool::isURLKnownHSTSHost(const String& urlString) const
 {
     RetainPtr<CFURLRef> url = URL(URL(), urlString).createCFURL();
 
-    return _CFNetworkIsKnownHSTSHostWithSession(url.get(), privateBrowsingEnabled ? privateBrowsingSession() : nullptr);
+    return _CFNetworkIsKnownHSTSHostWithSession(url.get(), nullptr);
 }
 
 void WebProcessPool::resetHSTSHosts()

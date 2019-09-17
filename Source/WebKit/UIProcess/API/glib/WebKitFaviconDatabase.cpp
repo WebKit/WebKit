@@ -271,7 +271,6 @@ void webkitFaviconDatabaseOpen(WebKitFaviconDatabase* database, const String& pa
     priv->iconDatabase->setClient(makeUnique<WebKitIconDatabaseClient>(database));
     IconDatabase::delayDatabaseCleanup();
     priv->iconDatabase->setEnabled(true);
-    priv->iconDatabase->setPrivateBrowsingEnabled(WebPreferences::anyPagesAreUsingPrivateBrowsing());
 
     if (!priv->iconDatabase->open(FileSystem::directoryName(path), FileSystem::pathGetFileName(path))) {
         priv->iconDatabase = nullptr;

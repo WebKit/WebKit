@@ -92,11 +92,6 @@ SafeBrowsingEnabled:
   defaultValue: true
   webcoreBinding: none
 
-PrivateBrowsingEnabled:
-  type: bool
-  defaultValue: false
-  webcoreBinding: none
-
 TextAreasAreResizable:
   type: bool
   defaultValue: DEFAULT_TEXT_AREAS_ARE_RESIZABLE

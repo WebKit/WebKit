@@ -3546,11 +3546,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     m_scrollingPerformanceLoggingEnabled = store.getBoolValueForKey(WebPreferencesKey::scrollingPerformanceLoggingEnabledKey());
     settings.setScrollingPerformanceLoggingEnabled(m_scrollingPerformanceLoggingEnabled);
 
-    if (store.getBoolValueForKey(WebPreferencesKey::privateBrowsingEnabledKey()) && !usesEphemeralSession())
-        setSessionID(PAL::SessionID::legacyPrivateSessionID());
-    else if (!store.getBoolValueForKey(WebPreferencesKey::privateBrowsingEnabledKey()) && sessionID() == PAL::SessionID::legacyPrivateSessionID())
-        setSessionID(PAL::SessionID::defaultSessionID());
-
     bool isAppNapEnabled = store.getBoolValueForKey(WebPreferencesKey::pageVisibilityBasedProcessSuppressionEnabledKey());
     if (m_isAppNapEnabled != isAppNapEnabled) {
         m_isAppNapEnabled = isAppNapEnabled;

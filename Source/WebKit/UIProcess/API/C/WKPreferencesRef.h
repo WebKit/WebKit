@@ -149,8 +149,8 @@ WK_EXPORT void WKPreferencesSetDefaultTextEncodingName(WKPreferencesRef preferen
 WK_EXPORT WKStringRef WKPreferencesCopyDefaultTextEncodingName(WKPreferencesRef preferencesRef);
 
 // Defaults to false.
-WK_EXPORT void WKPreferencesSetPrivateBrowsingEnabled(WKPreferencesRef preferencesRef, bool enabled);
-WK_EXPORT bool WKPreferencesGetPrivateBrowsingEnabled(WKPreferencesRef preferencesRef);
+WK_EXPORT void WKPreferencesSetPrivateBrowsingEnabled(WKPreferencesRef preferencesRef, bool enabled) WK_C_API_DEPRECATED;
+WK_EXPORT bool WKPreferencesGetPrivateBrowsingEnabled(WKPreferencesRef preferencesRef) WK_C_API_DEPRECATED;
 
 // Defaults to false.
 WK_EXPORT void WKPreferencesSetDeveloperExtrasEnabled(WKPreferencesRef preferencesRef, bool enabled);
