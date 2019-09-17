@@ -188,7 +188,8 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createWindowContext(GLNativeWindowTy
     if (platformDisplay.type() == PlatformDisplay::Type::WPE)
         surface = createWindowSurfaceWPE(display, config, window);
 #else
-    surface = eglCreateWindowSurface(display, config, static_cast<EGLNativeWindowType>(window), nullptr);
+    if (surface == EGL_NO_SURFACE)
+        surface = eglCreateWindowSurface(display, config, static_cast<EGLNativeWindowType>(window), nullptr);
 #endif
     if (surface == EGL_NO_SURFACE) {
         WTFLogAlways("Cannot create EGL window surface: %s\n", lastErrorString());
