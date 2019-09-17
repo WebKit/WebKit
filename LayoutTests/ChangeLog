@@ -1,3 +1,15 @@
+2019-09-17  Rob Buis  <rbuis@igalia.com>
+
+        Access-Control-Expose-Headers parsed incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=172357
+
+        Reviewed by Youenn Fablet.
+
+        Add Mac/iOS expectations.
+
+        * platform/ios/imported/w3c/web-platform-tests/cors/access-control-expose-headers-parsing.window-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/cors/access-control-expose-headers-parsing.window-expected.txt: Added.
+
 2019-09-16  Alex Christensen  <achristensen@webkit.org>
 
         Remove "gopher" from list of special schemes in URLParser

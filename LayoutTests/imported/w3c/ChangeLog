@@ -1,3 +1,26 @@
+2019-09-17  Rob Buis  <rbuis@igalia.com>
+
+        Access-Control-Expose-Headers parsed incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=172357
+
+        Reviewed by Youenn Fablet.
+
+        Import cors/access-control-expose-headers-parsing.window.js and adjust it
+        so it fetches a remote url, since subdomains do not work for localhost.
+
+        * web-platform-tests/cors/access-control-expose-headers-parsing.window-expected.txt: Added.
+        * web-platform-tests/cors/access-control-expose-headers-parsing.window.html: Added.
+        * web-platform-tests/cors/access-control-expose-headers-parsing.window.js:
+        (runTests):
+        (exposeTest): Deleted.
+        * web-platform-tests/cors/allow-headers-expected.txt: Removed.
+        * web-platform-tests/cors/allow-headers.htm: Removed.
+        * web-platform-tests/cors/resources/access-control-expose-headers-parsing-2.asis: Removed.
+        * web-platform-tests/cors/resources/access-control-expose-headers-parsing.asis: Removed.
+        * web-platform-tests/cors/resources/access-control-expose-headers.json: Added.
+        * web-platform-tests/cors/resources/expose-headers.py: Added.
+        (main):
+
 2019-09-17  Youenn Fablet  <youenn@apple.com>
 
         Content-Type should be preserved on responses created from DOMCache
