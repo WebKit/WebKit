@@ -291,6 +291,16 @@ static bool hasAnyIllegibleColors(TextIndicatorData& data, const Color& backgrou
     return !hasOnlyLegibleTextColors || textColors.isEmpty();
 }
 
+static bool containsOnlyWhiteSpaceText(const Range& range)
+{
+    auto* stop = range.pastLastNode();
+    for (auto* node = range.firstNode(); node && node != stop; node = NodeTraversal::next(*node)) {
+        if (!is<RenderText>(node->renderer()))
+            return false;
+    }
+    return plainTextReplacingNoBreakSpace(&range).stripWhiteSpace().isEmpty();
+}
+
 static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Range& range, FloatSize margin, bool indicatesCurrentSelection)
 {
     if (auto* document = frame.document())
@@ -312,7 +322,14 @@ static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Ran
 
     FrameSelection::TextRectangleHeight textRectHeight = (data.options & TextIndicatorOptionTightlyFitContent) ? FrameSelection::TextRectangleHeight::TextHeight : FrameSelection::TextRectangleHeight::SelectionHeight;
 
-    if ((data.options & TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges) && (hasNonInlineOrReplacedElements(range) || treatRangeAsComplexDueToIllegibleTextColors))
+    bool useBoundingRectAndPaintAllContentForComplexRanges = data.options & TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges;
+    if (useBoundingRectAndPaintAllContentForComplexRanges && containsOnlyWhiteSpaceText(range)) {
+        auto commonAncestorContainer = makeRefPtr(range.commonAncestorContainer());
+        if (auto* containerRenderer = commonAncestorContainer->renderer()) {
+            data.options |= TextIndicatorOptionPaintAllContent;
+            textRects.append(containerRenderer->absoluteBoundingBoxRect());
+        }
+    } else if (useBoundingRectAndPaintAllContentForComplexRanges && (treatRangeAsComplexDueToIllegibleTextColors || hasNonInlineOrReplacedElements(range)))
         data.options |= TextIndicatorOptionPaintAllContent;
 #if PLATFORM(IOS_FAMILY)
     else if (data.options & TextIndicatorOptionUseSelectionRectForSizing)

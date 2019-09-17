@@ -1,0 +1,11 @@
+PASS 0 is >= boundingRect.x
+PASS 0 is >= boundingRect.y
+PASS boundingRect.width is >= innerWidth
+PASS boundingRect.height is >= innerHeight
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 
+To test manually, force click on macOS or begin a drag on iPadOS here. The preview highlight rect or targeted drag preview (respectively) should encompass the entire window, instead of just a tiny piece of empty text in the upper left hand corner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
