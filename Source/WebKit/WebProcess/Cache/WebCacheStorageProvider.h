@@ -46,8 +46,7 @@ public:
 private:
     WebCacheStorageProvider() = default;
 
-    RefPtr<WebCacheStorageConnection> m_defaultConnection;
-    HashMap<PAL::SessionID, Ref<WebCacheStorageConnection>> m_connections;
+    RefPtr<WebCacheStorageConnection> m_connection;
 };
 
 }

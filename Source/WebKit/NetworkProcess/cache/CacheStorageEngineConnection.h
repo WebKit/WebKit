@@ -63,22 +63,24 @@ public:
 private:
     explicit CacheStorageEngineConnection(NetworkConnectionToWebProcess&);
 
-    void open(PAL::SessionID, WebCore::ClientOrigin&&, String&& cacheName, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
-    void remove(PAL::SessionID, uint64_t cacheIdentifier, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
-    void caches(PAL::SessionID, WebCore::ClientOrigin&&, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&&);
+    void open(WebCore::ClientOrigin&&, String&& cacheName, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
+    void remove(uint64_t cacheIdentifier, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
+    void caches(WebCore::ClientOrigin&&, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&&);
 
-    void retrieveRecords(PAL::SessionID, uint64_t cacheIdentifier, URL&&, WebCore::DOMCacheEngine::RecordsCallback&&);
-    void deleteMatchingRecords(PAL::SessionID, uint64_t cacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
-    void putRecords(PAL::SessionID, uint64_t cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
+    void retrieveRecords(uint64_t cacheIdentifier, URL&&, WebCore::DOMCacheEngine::RecordsCallback&&);
+    void deleteMatchingRecords(uint64_t cacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
+    void putRecords(uint64_t cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
 
-    void reference(PAL::SessionID, uint64_t cacheIdentifier);
-    void dereference(PAL::SessionID, uint64_t cacheIdentifier);
+    void reference(uint64_t cacheIdentifier);
+    void dereference(uint64_t cacheIdentifier);
 
-    void clearMemoryRepresentation(PAL::SessionID, WebCore::ClientOrigin&&, CompletionHandler<void(Optional<WebCore::DOMCacheEngine::Error>&&)>&&);
-    void engineRepresentation(PAL::SessionID, CompletionHandler<void(String&&)>&&);
+    void clearMemoryRepresentation(WebCore::ClientOrigin&&, CompletionHandler<void(Optional<WebCore::DOMCacheEngine::Error>&&)>&&);
+    void engineRepresentation( CompletionHandler<void(String&&)>&&);
+    
+    PAL::SessionID sessionID() const;
 
     NetworkConnectionToWebProcess& m_connection;
-    HashMap<PAL::SessionID, HashMap<CacheStorage::CacheIdentifier, CacheStorage::LockCount>> m_cachesLocks;
+    HashMap<CacheStorage::CacheIdentifier, CacheStorage::LockCount> m_cachesLocks;
 };
 
 }

@@ -1,5 +1,49 @@
 2019-09-17  Chris Dumez  <cdumez@apple.com>
 
+        There should be a single CacheStorageConnection per WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=201874
+
+        Reviewed by Geoffrey Garen.
+
+        There should be a single CacheStorageConnection per WebProcess now that we have a single session
+        per WebProcess. This invariant allows us to simplify the code.
+
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        (WebKit::CacheStorageEngineConnection::~CacheStorageEngineConnection):
+        (WebKit::CacheStorageEngineConnection::open):
+        (WebKit::CacheStorageEngineConnection::remove):
+        (WebKit::CacheStorageEngineConnection::caches):
+        (WebKit::CacheStorageEngineConnection::retrieveRecords):
+        (WebKit::CacheStorageEngineConnection::deleteMatchingRecords):
+        (WebKit::CacheStorageEngineConnection::putRecords):
+        (WebKit::CacheStorageEngineConnection::reference):
+        (WebKit::CacheStorageEngineConnection::dereference):
+        (WebKit::CacheStorageEngineConnection::clearMemoryRepresentation):
+        (WebKit::CacheStorageEngineConnection::engineRepresentation):
+        (WebKit::CacheStorageEngineConnection::sessionID const):
+        * NetworkProcess/cache/CacheStorageEngineConnection.h:
+        * NetworkProcess/cache/CacheStorageEngineConnection.messages.in:
+        * WebProcess/Cache/WebCacheStorageConnection.cpp:
+        (WebKit::WebCacheStorageConnection::WebCacheStorageConnection):
+        (WebKit::WebCacheStorageConnection::open):
+        (WebKit::WebCacheStorageConnection::remove):
+        (WebKit::WebCacheStorageConnection::retrieveCaches):
+        (WebKit::WebCacheStorageConnection::retrieveRecords):
+        (WebKit::WebCacheStorageConnection::batchDeleteOperation):
+        (WebKit::WebCacheStorageConnection::batchPutOperation):
+        (WebKit::WebCacheStorageConnection::reference):
+        (WebKit::WebCacheStorageConnection::dereference):
+        (WebKit::WebCacheStorageConnection::clearMemoryRepresentation):
+        (WebKit::WebCacheStorageConnection::engineRepresentation):
+        (WebKit::WebCacheStorageConnection::updateQuotaBasedOnSpaceUsage):
+        (WebKit::WebCacheStorageConnection::sessionID const):
+        * WebProcess/Cache/WebCacheStorageConnection.h:
+        * WebProcess/Cache/WebCacheStorageProvider.cpp:
+        (WebKit::WebCacheStorageProvider::createCacheStorageConnection):
+        * WebProcess/Cache/WebCacheStorageProvider.h:
+
+2019-09-17  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed attempt to fix internal build after r249962.
 
         * UIProcess/API/C/WKPreferencesRef.h:
