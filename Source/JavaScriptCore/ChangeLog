@@ -1,3 +1,18 @@
+2019-09-16  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Wasm StreamingParser should validate that number of functions matches number of declarations
+        https://bugs.webkit.org/show_bug.cgi?id=201850
+        <rdar://problem/55290186>
+
+        Reviewed by Yusuke Suzuki.
+
+        Currently, when parsing the code section, we check that the number of functions matches the number
+        of declarations in the function section. However, that check is never performed if the module does
+        not have a code section. To fix that, we perform the check again in StreamingParser::finalize.
+
+        * wasm/WasmStreamingParser.cpp:
+        (JSC::Wasm::StreamingParser::finalize):
+
 2019-09-16  Michael Saboff  <msaboff@apple.com>
 
         [JSC] Perform check again when we found non-BMP characters

@@ -383,6 +383,10 @@ auto StreamingParser::finalize() -> State
         break;
 
     case State::SectionID:
+        if (m_functionIndex != m_info->functions.size()) {
+            m_state = fail("Number of functions parsed (", m_functionCount, ") does not match the number of declared functions (", m_info->functions.size(), ")");
+            break;
+        }
         if (m_remaining.isEmpty()) {
             if (UNLIKELY(Options::useEagerWebAssemblyModuleHashing()))
                 m_info->nameSection->setHash(m_hasher.computeHexDigest());
