@@ -1,3 +1,42 @@
+2019-09-17  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r249701. rdar://problem/55291696
+
+    Tap and hold on Facebook sometimes creates a tall empty selection.
+    https://bugs.webkit.org/show_bug.cgi?id=201618
+    rdar://53630145
+    
+    Reviewed by Megan Gardner.
+    
+    Source/WebCore:
+    
+    API Test: SelectionTests.ByWordAtEndOfDocument
+    
+    * editing/VisibleUnits.cpp:
+    (WebCore::wordRangeFromPosition):
+    Remove special case code for the possibility of an empty paragraph and at the end
+    of the document. This is no longer needed and was causing a large selection to be
+    created on Facebook due to large areas of non-selectable content on the page.
+    
+    Tools:
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/ios/SelectionByWord.mm: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249701 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-09-09  Timothy Hatcher  <timothy@apple.com>
+
+            Tap and hold on Facebook sometimes creates a tall empty selection.
+            https://bugs.webkit.org/show_bug.cgi?id=201618
+            rdar://53630145
+
+            Reviewed by Megan Gardner.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/ios/SelectionByWord.mm: Added.
+
 2019-09-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (iOS 13): Bulleted list copied from Notes to Mail results in Times New Roman
