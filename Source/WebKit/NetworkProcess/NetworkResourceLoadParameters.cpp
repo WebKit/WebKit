@@ -67,11 +67,7 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
 
     if (request.url().isLocalFile()) {
         SandboxExtension::Handle requestSandboxExtension;
-#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_PID)
-        SandboxExtension::createHandleForReadByPid(request.url().fileSystemPath(), networkProcessPID, requestSandboxExtension);
-#else
         SandboxExtension::createHandle(request.url().fileSystemPath(), SandboxExtension::Type::ReadOnly, requestSandboxExtension);
-#endif
         encoder << requestSandboxExtension;
     }
 

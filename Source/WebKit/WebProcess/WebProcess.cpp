@@ -1161,11 +1161,10 @@ void WebProcess::setInjectedBundleParameters(const IPC::DataReference& value)
     injectedBundle->setBundleParameters(value);
 }
 
-static std::pair<IPC::Connection::Identifier, WTF::ProcessID> getNetworkProcessConnection(IPC::Connection& connection)
+static IPC::Connection::Identifier getNetworkProcessConnection(IPC::Connection& connection)
 {
     IPC::Attachment encodedConnectionIdentifier;
-    WTF::ProcessID pid;
-    if (!connection.sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(), Messages::WebProcessProxy::GetNetworkProcessConnection::Reply(encodedConnectionIdentifier, pid), 0)) {
+    if (!connection.sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(), Messages::WebProcessProxy::GetNetworkProcessConnection::Reply(encodedConnectionIdentifier), 0)) {
 #if PLATFORM(GTK) || PLATFORM(WPE)
         // GTK+ and WPE ports don't exit on send sync message failure.
         // In this particular case, the network process can be terminated by the UI process while the
@@ -1179,14 +1178,14 @@ static std::pair<IPC::Connection::Identifier, WTF::ProcessID> getNetworkProcessC
     }
 
 #if USE(UNIX_DOMAIN_SOCKETS)
-    return std::make_pair(encodedConnectionIdentifier.releaseFileDescriptor(), pid);
+    return encodedConnectionIdentifier.releaseFileDescriptor();
 #elif OS(DARWIN)
-    return std::make_pair(encodedConnectionIdentifier.port(), pid);
+    return encodedConnectionIdentifier.port();
 #elif OS(WINDOWS)
-    return std::make_pair(encodedConnectionIdentifier.handle(), pid);
+    return encodedConnectionIdentifier.handle();
 #else
     ASSERT_NOT_REACHED();
-    return std::make_pair(IPC::Connection::Identifier(), pid);
+    return IPC::Connection::Identifier();
 #endif
 }
 
@@ -1197,23 +1196,17 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
 
     // If we've lost our connection to the network process (e.g. it crashed) try to re-establish it.
     if (!m_networkProcessConnection) {
-        auto connectionIdentifierAndPID = getNetworkProcessConnection(*parentProcessConnection());
-        
-        IPC::Connection::Identifier connectionIdentifier = connectionIdentifierAndPID.first;
-        WTF::ProcessID pid = connectionIdentifierAndPID.second;
+        IPC::Connection::Identifier connectionIdentifier = getNetworkProcessConnection(*parentProcessConnection());
 
         // Retry once if the IPC to get the connectionIdentifier succeeded but the connectionIdentifier we received
         // is invalid. This may indicate that the network process has crashed.
-        if (!IPC::Connection::identifierIsValid(connectionIdentifier)) {
-            connectionIdentifierAndPID = getNetworkProcessConnection(*parentProcessConnection());
-            connectionIdentifier = connectionIdentifierAndPID.first;
-            pid = connectionIdentifierAndPID.second;
-        }
+        if (!IPC::Connection::identifierIsValid(connectionIdentifier))
+            connectionIdentifier = getNetworkProcessConnection(*parentProcessConnection());
 
         if (!IPC::Connection::identifierIsValid(connectionIdentifier))
             CRASH();
 
-        m_networkProcessConnection = NetworkProcessConnection::create(connectionIdentifier, pid);
+        m_networkProcessConnection = NetworkProcessConnection::create(connectionIdentifier);
     }
     
     return *m_networkProcessConnection;

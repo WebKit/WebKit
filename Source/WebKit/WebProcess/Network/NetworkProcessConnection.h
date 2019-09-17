@@ -58,9 +58,9 @@ typedef uint64_t ResourceLoadIdentifier;
 
 class NetworkProcessConnection : public RefCounted<NetworkProcessConnection>, IPC::Connection::Client {
 public:
-    static Ref<NetworkProcessConnection> create(IPC::Connection::Identifier connectionIdentifier, WTF::ProcessID pid)
+    static Ref<NetworkProcessConnection> create(IPC::Connection::Identifier connectionIdentifier)
     {
-        return adoptRef(*new NetworkProcessConnection(connectionIdentifier, pid));
+        return adoptRef(*new NetworkProcessConnection(connectionIdentifier));
     }
     ~NetworkProcessConnection();
     
@@ -80,10 +80,8 @@ public:
     WebSWClientConnection& serviceWorkerConnection();
 #endif
 
-    WTF::ProcessID networkProcessPID() const { return m_networkProcessPID; }
-
 private:
-    NetworkProcessConnection(IPC::Connection::Identifier, WTF::ProcessID);
+    NetworkProcessConnection(IPC::Connection::Identifier);
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -105,7 +103,6 @@ private:
 
     // The connection from the web process to the network process.
     Ref<IPC::Connection> m_connection;
-    WTF::ProcessID m_networkProcessPID { 0 };
 
 #if ENABLE(INDEXED_DATABASE)
     RefPtr<WebIDBConnectionToServer> m_webIDBConnection;

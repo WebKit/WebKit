@@ -285,7 +285,6 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.webPageID = trackingParameters.pageID;
     loadParameters.webFrameID = trackingParameters.frameID;
     loadParameters.parentPID = presentingApplicationPID();
-    loadParameters.networkProcessPID = WebProcess::singleton().ensureNetworkProcessConnection().networkProcessPID();
     loadParameters.request = request;
     loadParameters.contentSniffingPolicy = contentSniffingPolicy;
     loadParameters.contentEncodingSniffingPolicy = contentEncodingSniffingPolicy;

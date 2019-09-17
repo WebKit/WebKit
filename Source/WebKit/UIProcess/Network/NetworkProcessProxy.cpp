@@ -104,7 +104,7 @@ NetworkProcessProxy::~NetworkProcessProxy()
         m_downloadProxyMap->invalidate();
 
     for (auto& request : m_connectionRequests.values())
-        request.reply({ }, 0);
+        request.reply({ });
 }
 
 void NetworkProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
@@ -156,10 +156,10 @@ void NetworkProcessProxy::openNetworkProcessConnection(uint64_t connectionReques
         auto request = m_connectionRequests.take(connectionRequestIdentifier);
 
 #if USE(UNIX_DOMAIN_SOCKETS) || OS(WINDOWS)
-        request.reply(*connectionIdentifier, processIdentifier());
+        request.reply(*connectionIdentifier);
 #elif OS(DARWIN)
         MESSAGE_CHECK(MACH_PORT_VALID(connectionIdentifier->port()));
-        request.reply(IPC::Attachment { connectionIdentifier->port(), MACH_MSG_TYPE_MOVE_SEND }, processIdentifier());
+        request.reply(IPC::Attachment { connectionIdentifier->port(), MACH_MSG_TYPE_MOVE_SEND });
 #else
         notImplemented();
 #endif
@@ -248,7 +248,7 @@ void NetworkProcessProxy::networkProcessCrashed()
         if (request.webProcess)
             pendingRequests.uncheckedAppend(std::make_pair(makeRefPtr(request.webProcess.get()), WTFMove(request.reply)));
         else
-            request.reply({ }, 0);
+            request.reply({ });
     }
     m_connectionRequests.clear();
 
@@ -394,7 +394,7 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
         if (connectionRequest.webProcess)
             getNetworkProcessConnection(*connectionRequest.webProcess, WTFMove(connectionRequest.reply));
         else
-            connectionRequest.reply({ }, 0);
+            connectionRequest.reply({ });
     }
 
 #if PLATFORM(COCOA)
