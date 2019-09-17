@@ -1,3 +1,12 @@
+2019-09-17  Russell Epstein  <repstein@apple.com>
+
+        REGRESSION (macOS): Many webgpu/whlsl* tests are flaky failures.
+        https://bugs.webkit.org/show_bug.cgi?id=201877
+
+        Unreviewed Test Gardening.
+
+        * platform/mac/TestExpectations:
+
 2019-09-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: HTML Formatter - better handling for HTML specific tag cases (<p>/<li>)
