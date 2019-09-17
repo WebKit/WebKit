@@ -480,16 +480,23 @@ void GraphicsLayerCA::willBeDestroyed()
 
 void GraphicsLayerCA::setName(const String& name)
 {
+    if (name == this->name())
+        return;
+
+    GraphicsLayer::setName(name);
+    noteLayerPropertyChanged(NameChanged);
+}
+
+String GraphicsLayerCA::debugName() const
+{
 #if ENABLE(TREE_DEBUGGING)
     String caLayerDescription;
     if (!m_layer->isPlatformCALayerRemote())
         caLayerDescription = makeString("CALayer(0x", hex(reinterpret_cast<uintptr_t>(m_layer->platformLayer()), Lowercase), ") ");
-    GraphicsLayer::setName(makeString(caLayerDescription, "GraphicsLayer(0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase), ", ", primaryLayerID(), ") ", name));
+    return makeString(caLayerDescription, "GraphicsLayer(0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase), ", ", primaryLayerID(), ") ", name());
 #else
-    GraphicsLayer::setName(name);
+    return name();
 #endif
-
-    noteLayerPropertyChanged(NameChanged);
 }
 
 GraphicsLayer::PlatformLayerID GraphicsLayerCA::primaryLayerID() const
@@ -1027,7 +1034,7 @@ void GraphicsLayerCA::addProcessingActionForAnimation(const String& animationNam
 
 bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const FloatSize& boxSize, const Animation* anim, const String& animationName, double timeOffset)
 {
-    LOG(Animations, "GraphicsLayerCA %p %llu addAnimation %s (can be accelerated %d)", this, primaryLayerID(), animationName.utf8().data(), animationCanBeAccelerated(valueList, anim));
+    LOG_WITH_STREAM(Animations, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " addAnimation " << anim << " " << animationName << " duration " << anim->duration() << " (can be accelerated " << animationCanBeAccelerated(valueList, anim) << ")");
 
     ASSERT(!animationName.isEmpty());
 
@@ -1058,7 +1065,7 @@ bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const Flo
 
 void GraphicsLayerCA::pauseAnimation(const String& animationName, double timeOffset)
 {
-    LOG(Animations, "GraphicsLayerCA %p pauseAnimation %s (running %d)", this, animationName.utf8().data(), animationIsRunning(animationName));
+    LOG_WITH_STREAM(Animations, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " pauseAnimation " << animationName << " (is running " << animationIsRunning(animationName) << ")");
 
     // Call add since if there is already a Remove in there, we don't want to overwrite it with a Pause.
     addProcessingActionForAnimation(animationName, AnimationProcessingAction { Pause, Seconds { timeOffset } });
@@ -1068,7 +1075,7 @@ void GraphicsLayerCA::pauseAnimation(const String& animationName, double timeOff
 
 void GraphicsLayerCA::seekAnimation(const String& animationName, double timeOffset)
 {
-    LOG(Animations, "GraphicsLayerCA %p seekAnimation %s (running %d)", this, animationName.utf8().data(), animationIsRunning(animationName));
+    LOG_WITH_STREAM(Animations, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " seekAnimation " << animationName << " (is running " << animationIsRunning(animationName) << ")");
 
     // Call add since if there is already a Remove in there, we don't want to overwrite it with a Pause.
     addProcessingActionForAnimation(animationName, AnimationProcessingAction { Seek, Seconds { timeOffset } });
@@ -1078,10 +1085,12 @@ void GraphicsLayerCA::seekAnimation(const String& animationName, double timeOffs
 
 void GraphicsLayerCA::removeAnimation(const String& animationName)
 {
-    LOG(Animations, "GraphicsLayerCA %p removeAnimation %s (running %d)", this, animationName.utf8().data(), animationIsRunning(animationName));
+    LOG_WITH_STREAM(Animations, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " removeAnimation " << animationName << " (is running " << animationIsRunning(animationName) << ")");
 
-    if (!animationIsRunning(animationName))
+    if (!animationIsRunning(animationName)) {
+        removeFromUncommittedAnimations(animationName);
         return;
+    }
 
     addProcessingActionForAnimation(animationName, AnimationProcessingAction(Remove));
     noteLayerPropertyChanged(AnimationChanged | CoverageRectChanged);
@@ -1089,13 +1098,13 @@ void GraphicsLayerCA::removeAnimation(const String& animationName)
 
 void GraphicsLayerCA::platformCALayerAnimationStarted(const String& animationKey, MonotonicTime startTime)
 {
-    LOG(Animations, "GraphicsLayerCA %p platformCALayerAnimationStarted %s at %f", this, animationKey.utf8().data(), startTime.secondsSinceEpoch().seconds());
+    LOG_WITH_STREAM(Animations, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " platformCALayerAnimationStarted " << animationKey);
     client().notifyAnimationStarted(this, animationKey, startTime);
 }
 
 void GraphicsLayerCA::platformCALayerAnimationEnded(const String& animationKey)
 {
-    LOG(Animations, "GraphicsLayerCA %p platformCALayerAnimationEnded %s", this, animationKey.utf8().data());
+    LOG_WITH_STREAM(Animations, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " platformCALayerAnimationEnded " << animationKey);
     client().notifyAnimationEnded(this, animationKey);
 }
 
@@ -1912,20 +1921,21 @@ void GraphicsLayerCA::commitLayerChangesAfterSublayers(CommitState& commitState)
 
 void GraphicsLayerCA::updateNames()
 {
+    auto name = debugName();
     switch (structuralLayerPurpose()) {
     case StructuralLayerForPreserves3D:
-        m_structuralLayer->setName("preserve-3d: " + name());
+        m_structuralLayer->setName("preserve-3d: " + name);
         break;
     case StructuralLayerForReplicaFlattening:
-        m_structuralLayer->setName("replica flattening: " + name());
+        m_structuralLayer->setName("replica flattening: " + name);
         break;
     case StructuralLayerForBackdrop:
-        m_structuralLayer->setName("backdrop hosting: " + name());
+        m_structuralLayer->setName("backdrop hosting: " + name);
         break;
     case NoStructuralLayer:
         break;
     }
-    m_layer->setName(name());
+    m_layer->setName(name);
 }
 
 void GraphicsLayerCA::updateSublayerList(bool maxLayerDepthReached)
@@ -3147,6 +3157,16 @@ void GraphicsLayerCA::appendToUncommittedAnimations(LayerPropertyAnimation&& ani
     m_animations->animationsToProcess.remove(animation.m_name);
 
     m_animations->uncomittedAnimations.append(WTFMove(animation));
+}
+
+void GraphicsLayerCA::removeFromUncommittedAnimations(const String& animationName)
+{
+    if (!m_animations)
+        return;
+
+    m_animations->uncomittedAnimations.removeFirstMatching([&animationName] (auto& current) {
+        return current.m_name == animationName;
+    });
 }
 
 bool GraphicsLayerCA::createFilterAnimationsFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, Seconds timeOffset)

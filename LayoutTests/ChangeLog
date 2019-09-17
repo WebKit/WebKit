@@ -1,43 +1,94 @@
 2019-09-17  Kocsen Chung  <kocsen_chung@apple.com>
 
-        Cherry-pick r249507. rdar://problem/55427491
+        Cherry-pick r249511. rdar://problem/55291693
 
-    Line artifacts in note body after viewing note with <attachment>s
-    https://bugs.webkit.org/show_bug.cgi?id=201474
-    <rdar://problem/51306108>
+    Cancelled transitions on Google image search leave content with opacity 0 sometimes
+    https://bugs.webkit.org/show_bug.cgi?id=201482
+    rdar://problem/54921036
     
-    Reviewed by Simon Fraser.
-    
+    Reviewed by Tim Horton.
     Source/WebCore:
     
-    Test: fast/attachment/attachment-border-should-stay-inside-attachment.html
+    If, in a single rendering update, we started an accelerated opacity transition, and then removed
+    it, we'd still push the transition onto the CALayer with fillForwards and never remove it, so its
+    effects would last forever.
     
-    * rendering/RenderThemeIOS.mm:
-    (WebCore::attachmentBorderPath):
-    (WebCore::paintAttachmentBorder):
-    Inset the border rect by half the width, so that <attachment> doesn't
-    paint out-of-bounds.
+    Fix by making GraphicsLayerCA::removeAnimation() remove animations from the uncomittedAnimations
+    list as well.
+    
+    Also fix layer names in debug; if a layer's primaryLayerID changed, we'd fail to rename the
+    CALayer, causing confusion when logging at layer dumps. Fix by adding the layer ID just
+    before pushing the name to the platform layer.
+    
+    Some drive-by logging cleanup.
+    
+    Test: legacy-animation-engine/compositing/transitions/add-remove-transition.html
+    
+    * platform/graphics/GraphicsLayer.cpp:
+    (WebCore::GraphicsLayer::debugName const):
+    * platform/graphics/GraphicsLayer.h:
+    * platform/graphics/ca/GraphicsLayerCA.cpp:
+    (WebCore::GraphicsLayerCA::setName):
+    (WebCore::GraphicsLayerCA::debugName const):
+    (WebCore::GraphicsLayerCA::addAnimation):
+    (WebCore::GraphicsLayerCA::pauseAnimation):
+    (WebCore::GraphicsLayerCA::seekAnimation):
+    (WebCore::GraphicsLayerCA::removeAnimation):
+    (WebCore::GraphicsLayerCA::platformCALayerAnimationStarted):
+    (WebCore::GraphicsLayerCA::platformCALayerAnimationEnded):
+    (WebCore::GraphicsLayerCA::updateNames):
+    (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+    * platform/graphics/ca/GraphicsLayerCA.h:
+    * rendering/RenderLayerCompositor.cpp:
+    (WebCore::RenderLayerCompositor::logLayerInfo):
     
     LayoutTests:
     
-    * fast/attachment/attachment-border-should-stay-inside-attachment-expected.html: Added.
-    * fast/attachment/attachment-border-should-stay-inside-attachment.html: Added.
-    Add a test that ensures that <attachment> stays inside its bounds.
+    * legacy-animation-engine/compositing/transitions/add-remove-transition-expected.html: Added.
+    * legacy-animation-engine/compositing/transitions/add-remove-transition.html: Added.
     
-    
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249507 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249511 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-    2019-09-04  Tim Horton  <timothy_horton@apple.com>
+    2019-09-17  Kocsen Chung  <kocsen_chung@apple.com>
 
-            Line artifacts in note body after viewing note with <attachment>s
-            https://bugs.webkit.org/show_bug.cgi?id=201474
-            <rdar://problem/51306108>
+            Cherry-pick r249507. rdar://problem/55427491
 
-            Reviewed by Simon Fraser.
+        Line artifacts in note body after viewing note with <attachment>s
+        https://bugs.webkit.org/show_bug.cgi?id=201474
+        <rdar://problem/51306108>
 
-            * fast/attachment/attachment-border-should-stay-inside-attachment-expected.html: Added.
-            * fast/attachment/attachment-border-should-stay-inside-attachment.html: Added.
-            Add a test that ensures that <attachment> stays inside its bounds.
+        Reviewed by Simon Fraser.
+
+        Source/WebCore:
+
+        Test: fast/attachment/attachment-border-should-stay-inside-attachment.html
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::attachmentBorderPath):
+        (WebCore::paintAttachmentBorder):
+        Inset the border rect by half the width, so that <attachment> doesn't
+        paint out-of-bounds.
+
+        LayoutTests:
+
+        * fast/attachment/attachment-border-should-stay-inside-attachment-expected.html: Added.
+        * fast/attachment/attachment-border-should-stay-inside-attachment.html: Added.
+        Add a test that ensures that <attachment> stays inside its bounds.
+
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249507 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2019-09-04  Tim Horton  <timothy_horton@apple.com>
+
+                Line artifacts in note body after viewing note with <attachment>s
+                https://bugs.webkit.org/show_bug.cgi?id=201474
+                <rdar://problem/51306108>
+
+                Reviewed by Simon Fraser.
+
+                * fast/attachment/attachment-border-should-stay-inside-attachment-expected.html: Added.
+                * fast/attachment/attachment-border-should-stay-inside-attachment.html: Added.
+                Add a test that ensures that <attachment> stays inside its bounds.
 
 2019-09-09  Ryosuke Niwa  <rniwa@webkit.org>
 
@@ -163,6 +214,17 @@
             <rdar://problem/50956429>
 
             Reviewed by Simon Fraser.
+
+2019-09-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Cancelled transitions on Google image search leave content with opacity 0 sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=201482
+        rdar://problem/54921036
+
+        Reviewed by Tim Horton.
+
+        * legacy-animation-engine/compositing/transitions/add-remove-transition-expected.html: Added.
+        * legacy-animation-engine/compositing/transitions/add-remove-transition.html: Added.
 
             Add a couple of new layout tests.
 

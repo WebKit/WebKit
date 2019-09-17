@@ -268,6 +268,7 @@ public:
     // Layer name. Only used to identify layers in debug output
     const String& name() const { return m_name; }
     virtual void setName(const String& name) { m_name = name; }
+    virtual String debugName() const;
 
     GraphicsLayer* parent() const { return m_parent; };
     void setParent(GraphicsLayer*); // Internal use only.

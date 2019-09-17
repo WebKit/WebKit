@@ -55,6 +55,7 @@ public:
     WEBCORE_EXPORT void initialize(Type) override;
 
     WEBCORE_EXPORT void setName(const String&) override;
+    WEBCORE_EXPORT String debugName() const override;
 
     WEBCORE_EXPORT PlatformLayerID primaryLayerID() const override;
 
@@ -489,6 +490,7 @@ private:
     bool appendToUncommittedAnimations(const KeyframeValueList&, const TransformOperations*, const Animation*, const String& animationName, const FloatSize& boxSize, int animationIndex, Seconds timeOffset, bool isMatrixAnimation);
     bool appendToUncommittedAnimations(const KeyframeValueList&, const FilterOperation*, const Animation*, const String& animationName, int animationIndex, Seconds timeOffset);
     void appendToUncommittedAnimations(LayerPropertyAnimation&&);
+    void removeFromUncommittedAnimations(const String&);
 
     enum LayerChange : uint64_t {
         NoChange                                = 0,
