@@ -218,6 +218,9 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
 
 #if ENABLE(ASYNC_SCROLLING)
     m_webPageProxy.scrollingCoordinatorProxy()->applyScrollingTreeLayerPositionsAfterCommit();
+#if PLATFORM(IOS_FAMILY)
+    m_webPageProxy.adjustLayersForLayoutViewport(m_webPageProxy.unconstrainedLayoutViewportRect());
+#endif
 
     // Handle requested scroll position updates from the scrolling tree transaction after didCommitLayerTree()
     // has updated the view size based on the content size.

@@ -1,82 +1,131 @@
 2019-09-17  Kocsen Chung  <kocsen_chung@apple.com>
 
-        Cherry-pick r249813. rdar://problem/55427490
+        Cherry-pick r249815. rdar://problem/55427483
 
-    [Cocoa] Text indicator for an image link on the front page of apple.com looks wrong
-    https://bugs.webkit.org/show_bug.cgi?id=201724
-    <rdar://problem/54622894>
+    REGRESSION (iOS 13): Top fixed element on apple.com flickers in size while pinching in
+    https://bugs.webkit.org/show_bug.cgi?id=201668
+    rdar://problem/51934041
     
-    Reviewed by Tim Horton.
+    Reviewed by Frédéric Wang.
     
     Source/WebCore:
     
-    When computing the bounds of the range (<a>, 0) to (<a>, 1) for a text indicator snapshot where <a> is a link
-    with a single non-breaking whitespace character, we currently use the text rect of the single space. This leads
-    to a confusing text indicator, as the resulting snapshot is a tiny blank square in the top left corner of the
-    link. This problem manifests when starting a drag or showing the system context menu on iOS, or force clicking
-    or three-finger tapping to show a preview on macOS.
+    When computing the new layout viewport rect in ScrollingTreeFrameScrollingNode, use
+    "StickToDocumentBounds" mode, not "StickToViewportBounds", because otherwise we'll compute
+    a layout viewport that has negative top/left offsets which causes fixed elements to jump outside
+    the viewport. The only code that should be moving things outside the viewport (a temporary effect
+    that happens when pinching) is the 'isBelowMinimumScale' path in WebPageProxy::computeCustomFixedPositionRect().
     
-    To address this scenario, tweak the heuristic in the case where the text indicator option
-    TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges is specified, such that we consider a range
-    containing only text with whitespaces to be "complex"; additionally, instead of falling back to the range's
-    bounding rect (which in this case is still tiny), fall back to the common ancestor container's bounding rect,
-    which encompasses not only the text inside the range but also the element containing the range (in this case,
-    the anchor element).
+    With this change ScrollingTreeFrameScrollingNode no longer needs m_behaviorForFixed; it can be removed later.
     
-    Test: fast/text-indicator/text-indicator-empty-link.html
+    Not currently testable, since it involves pinching in past minimum zoom and transients state.
     
-    * page/TextIndicator.cpp:
-    (WebCore::containsOnlyWhiteSpaceText):
+    * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+    (WebCore::ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition const):
     
-    Add a helper to determine whether a Range is comprised only of rendered text that only contains whitespace
-    characters.
+    Source/WebKit:
     
-    (WebCore::initializeIndicator):
+    The UI process can have transient state that pushes scrolling-tree-managed layers into custom
+    locations while pinch-zooming. We have to apply this state both when the visible rects
+    in the UI process change (existing code in -[WKContentView didUpdateVisibleRect:...]) and when
+    we get new layers from the web process (added in RemoteLayerTreeDrawingAreaProxy::commitLayerTree()
+    in this patch).
     
-    See ChangeLog entry above for more detail.
+    Move some code into WebPageProxy to create functions that we can call from both places.
     
-    LayoutTests:
+    For manual testing, visit a page with fixed banners, pinch in slightly, then pinch out and,
+    while keeping your fingers down, move the contents around.
     
-    Add a new layout test to exercise this scenario.
+    * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+    (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/ios/WKContentView.mm:
+    (-[WKContentView didUpdateVisibleRect:unobscuredRect:contentInsets:unobscuredRectInScrollViewCoordinates:obscuredInsets:unobscuredSafeAreaInsets:inputViewBounds:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]):
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::WebPageProxy::unconstrainedLayoutViewportRect const):
+    (WebKit::WebPageProxy::adjustLayersForLayoutViewport):
     
-    * fast/text-indicator/text-indicator-empty-link-expected.txt: Added.
-    * fast/text-indicator/text-indicator-empty-link.html: Added.
-    
-    
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249813 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249815 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-    2019-09-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+    2019-09-17  Kocsen Chung  <kocsen_chung@apple.com>
 
-            [Cocoa] Text indicator for an image link on the front page of apple.com looks wrong
-            https://bugs.webkit.org/show_bug.cgi?id=201724
-            <rdar://problem/54622894>
+            Cherry-pick r249813. rdar://problem/55427490
 
-            Reviewed by Tim Horton.
+        [Cocoa] Text indicator for an image link on the front page of apple.com looks wrong
+        https://bugs.webkit.org/show_bug.cgi?id=201724
+        <rdar://problem/54622894>
 
-            When computing the bounds of the range (<a>, 0) to (<a>, 1) for a text indicator snapshot where <a> is a link
-            with a single non-breaking whitespace character, we currently use the text rect of the single space. This leads
-            to a confusing text indicator, as the resulting snapshot is a tiny blank square in the top left corner of the
-            link. This problem manifests when starting a drag or showing the system context menu on iOS, or force clicking
-            or three-finger tapping to show a preview on macOS.
+        Reviewed by Tim Horton.
 
-            To address this scenario, tweak the heuristic in the case where the text indicator option
-            TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges is specified, such that we consider a range
-            containing only text with whitespaces to be "complex"; additionally, instead of falling back to the range's
-            bounding rect (which in this case is still tiny), fall back to the common ancestor container's bounding rect,
-            which encompasses not only the text inside the range but also the element containing the range (in this case,
-            the anchor element).
+        Source/WebCore:
 
-            Test: fast/text-indicator/text-indicator-empty-link.html
+        When computing the bounds of the range (<a>, 0) to (<a>, 1) for a text indicator snapshot where <a> is a link
+        with a single non-breaking whitespace character, we currently use the text rect of the single space. This leads
+        to a confusing text indicator, as the resulting snapshot is a tiny blank square in the top left corner of the
+        link. This problem manifests when starting a drag or showing the system context menu on iOS, or force clicking
+        or three-finger tapping to show a preview on macOS.
 
-            * page/TextIndicator.cpp:
-            (WebCore::containsOnlyWhiteSpaceText):
+        To address this scenario, tweak the heuristic in the case where the text indicator option
+        TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges is specified, such that we consider a range
+        containing only text with whitespaces to be "complex"; additionally, instead of falling back to the range's
+        bounding rect (which in this case is still tiny), fall back to the common ancestor container's bounding rect,
+        which encompasses not only the text inside the range but also the element containing the range (in this case,
+        the anchor element).
 
-            Add a helper to determine whether a Range is comprised only of rendered text that only contains whitespace
-            characters.
+        Test: fast/text-indicator/text-indicator-empty-link.html
 
-            (WebCore::initializeIndicator):
+        * page/TextIndicator.cpp:
+        (WebCore::containsOnlyWhiteSpaceText):
 
-            See ChangeLog entry above for more detail.
+        Add a helper to determine whether a Range is comprised only of rendered text that only contains whitespace
+        characters.
+
+        (WebCore::initializeIndicator):
+
+        See ChangeLog entry above for more detail.
+
+        LayoutTests:
+
+        Add a new layout test to exercise this scenario.
+
+        * fast/text-indicator/text-indicator-empty-link-expected.txt: Added.
+        * fast/text-indicator/text-indicator-empty-link.html: Added.
+
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249813 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2019-09-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+                [Cocoa] Text indicator for an image link on the front page of apple.com looks wrong
+                https://bugs.webkit.org/show_bug.cgi?id=201724
+                <rdar://problem/54622894>
+
+                Reviewed by Tim Horton.
+
+                When computing the bounds of the range (<a>, 0) to (<a>, 1) for a text indicator snapshot where <a> is a link
+                with a single non-breaking whitespace character, we currently use the text rect of the single space. This leads
+                to a confusing text indicator, as the resulting snapshot is a tiny blank square in the top left corner of the
+                link. This problem manifests when starting a drag or showing the system context menu on iOS, or force clicking
+                or three-finger tapping to show a preview on macOS.
+
+                To address this scenario, tweak the heuristic in the case where the text indicator option
+                TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges is specified, such that we consider a range
+                containing only text with whitespaces to be "complex"; additionally, instead of falling back to the range's
+                bounding rect (which in this case is still tiny), fall back to the common ancestor container's bounding rect,
+                which encompasses not only the text inside the range but also the element containing the range (in this case,
+                the anchor element).
+
+                Test: fast/text-indicator/text-indicator-empty-link.html
+
+                * page/TextIndicator.cpp:
+                (WebCore::containsOnlyWhiteSpaceText):
+
+                Add a helper to determine whether a Range is comprised only of rendered text that only contains whitespace
+                characters.
+
+                (WebCore::initializeIndicator):
+
+                See ChangeLog entry above for more detail.
 
 2019-09-17  Kocsen Chung  <kocsen_chung@apple.com>
 
@@ -408,6 +457,27 @@
 
             Crash under WebCore::firstPositionInNode()
             https://bugs.webkit.org/show_bug.cgi?id=201764
+2019-09-11  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (iOS 13): Top fixed element on apple.com flickers in size while pinching in
+        https://bugs.webkit.org/show_bug.cgi?id=201668
+        rdar://problem/51934041
+
+        Reviewed by Frédéric Wang.
+
+        When computing the new layout viewport rect in ScrollingTreeFrameScrollingNode, use
+        "StickToDocumentBounds" mode, not "StickToViewportBounds", because otherwise we'll compute
+        a layout viewport that has negative top/left offsets which causes fixed elements to jump outside
+        the viewport. The only code that should be moving things outside the viewport (a temporary effect
+        that happens when pinching) is the 'isBelowMinimumScale' path in WebPageProxy::computeCustomFixedPositionRect().
+
+        With this change ScrollingTreeFrameScrollingNode no longer needs m_behaviorForFixed; it can be removed later.
+
+        Not currently testable, since it involves pinching in past minimum zoom and transients state.
+
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition const):
+
             <rdar://problem/54823754>
 
             Reviewed by Wenson Hsieh and Geoff Garen.

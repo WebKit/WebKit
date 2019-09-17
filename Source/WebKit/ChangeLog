@@ -1,47 +1,96 @@
 2019-09-17  Kocsen Chung  <kocsen_chung@apple.com>
 
-        Cherry-pick r249770. rdar://problem/55427487
+        Cherry-pick r249815. rdar://problem/55427483
 
-    REGRESSION (245006): can't scroll in "read more" view in Eventbrite app
-    https://bugs.webkit.org/show_bug.cgi?id=201683
-    <rdar://problem/54582602>
+    REGRESSION (iOS 13): Top fixed element on apple.com flickers in size while pinching in
+    https://bugs.webkit.org/show_bug.cgi?id=201668
+    rdar://problem/51934041
     
-    Reviewed by Simon Fraser.
+    Reviewed by Frédéric Wang.
     
     Source/WebCore:
     
-    * platform/RuntimeApplicationChecks.h:
-    * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
-    (WebCore::IOSApplication::isEventbrite):
+    When computing the new layout viewport rect in ScrollingTreeFrameScrollingNode, use
+    "StickToDocumentBounds" mode, not "StickToViewportBounds", because otherwise we'll compute
+    a layout viewport that has negative top/left offsets which causes fixed elements to jump outside
+    the viewport. The only code that should be moving things outside the viewport (a temporary effect
+    that happens when pinching) is the 'isBelowMinimumScale' path in WebPageProxy::computeCustomFixedPositionRect().
+    
+    With this change ScrollingTreeFrameScrollingNode no longer needs m_behaviorForFixed; it can be removed later.
+    
+    Not currently testable, since it involves pinching in past minimum zoom and transients state.
+    
+    * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+    (WebCore::ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition const):
     
     Source/WebKit:
     
-    Content <body> has 'overflow:hidden'.
+    The UI process can have transient state that pushes scrolling-tree-managed layers into custom
+    locations while pinch-zooming. We have to apply this state both when the visible rects
+    in the UI process change (existing code in -[WKContentView didUpdateVisibleRect:...]) and when
+    we get new layers from the web process (added in RemoteLayerTreeDrawingAreaProxy::commitLayerTree()
+    in this patch).
     
-    * UIProcess/Cocoa/VersionChecks.h:
-    * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
-    (WebKit::RemoteScrollingCoordinatorProxy::hasScrollableMainFrame const):
+    Move some code into WebPageProxy to create functions that we can call from both places.
     
-    Fix by adding an app specific LinkedOnOrAfter quirk that always allows main frame scrolling.
+    For manual testing, visit a page with fixed banners, pinch in slightly, then pinch out and,
+    while keeping your fingers down, move the contents around.
     
+    * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+    (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/ios/WKContentView.mm:
+    (-[WKContentView didUpdateVisibleRect:unobscuredRect:contentInsets:unobscuredRectInScrollViewCoordinates:obscuredInsets:unobscuredSafeAreaInsets:inputViewBounds:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]):
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::WebPageProxy::unconstrainedLayoutViewportRect const):
+    (WebKit::WebPageProxy::adjustLayersForLayoutViewport):
     
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249770 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249815 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-    2019-09-11  Antti Koivisto  <antti@apple.com>
+    2019-09-17  Kocsen Chung  <kocsen_chung@apple.com>
 
-            REGRESSION (245006): can't scroll in "read more" view in Eventbrite app
-            https://bugs.webkit.org/show_bug.cgi?id=201683
-            <rdar://problem/54582602>
+            Cherry-pick r249770. rdar://problem/55427487
 
-            Reviewed by Simon Fraser.
+        REGRESSION (245006): can't scroll in "read more" view in Eventbrite app
+        https://bugs.webkit.org/show_bug.cgi?id=201683
+        <rdar://problem/54582602>
 
-            Content <body> has 'overflow:hidden'.
+        Reviewed by Simon Fraser.
 
-            * UIProcess/Cocoa/VersionChecks.h:
-            * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
-            (WebKit::RemoteScrollingCoordinatorProxy::hasScrollableMainFrame const):
+        Source/WebCore:
 
-            Fix by adding an app specific LinkedOnOrAfter quirk that always allows main frame scrolling.
+        * platform/RuntimeApplicationChecks.h:
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        (WebCore::IOSApplication::isEventbrite):
+
+        Source/WebKit:
+
+        Content <body> has 'overflow:hidden'.
+
+        * UIProcess/Cocoa/VersionChecks.h:
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::hasScrollableMainFrame const):
+
+        Fix by adding an app specific LinkedOnOrAfter quirk that always allows main frame scrolling.
+
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249770 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2019-09-11  Antti Koivisto  <antti@apple.com>
+
+                REGRESSION (245006): can't scroll in "read more" view in Eventbrite app
+                https://bugs.webkit.org/show_bug.cgi?id=201683
+                <rdar://problem/54582602>
+
+                Reviewed by Simon Fraser.
+
+                Content <body> has 'overflow:hidden'.
+
+                * UIProcess/Cocoa/VersionChecks.h:
+                * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+                (WebKit::RemoteScrollingCoordinatorProxy::hasScrollableMainFrame const):
+
+                Fix by adding an app specific LinkedOnOrAfter quirk that always allows main frame scrolling.
 
 2019-09-17  Kocsen Chung  <kocsen_chung@apple.com>
 
@@ -257,6 +306,34 @@
     
     
     git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249703 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+2019-09-11  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (iOS 13): Top fixed element on apple.com flickers in size while pinching in
+        https://bugs.webkit.org/show_bug.cgi?id=201668
+        rdar://problem/51934041
+
+        Reviewed by Frédéric Wang.
+
+        The UI process can have transient state that pushes scrolling-tree-managed layers into custom
+        locations while pinch-zooming. We have to apply this state both when the visible rects
+        in the UI process change (existing code in -[WKContentView didUpdateVisibleRect:...]) and when
+        we get new layers from the web process (added in RemoteLayerTreeDrawingAreaProxy::commitLayerTree()
+        in this patch).
+
+        Move some code into WebPageProxy to create functions that we can call from both places.
+
+        For manual testing, visit a page with fixed banners, pinch in slightly, then pinch out and,
+        while keeping your fingers down, move the contents around.
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:contentInsets:unobscuredRectInScrollViewCoordinates:obscuredInsets:unobscuredSafeAreaInsets:inputViewBounds:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::unconstrainedLayoutViewportRect const):
+        (WebKit::WebPageProxy::adjustLayersForLayoutViewport):
+
 
     2019-09-09  Chris Dumez  <cdumez@apple.com>
 
