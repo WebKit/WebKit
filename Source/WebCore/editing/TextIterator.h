@@ -183,10 +183,6 @@ private:
 
     LineLayoutInterface::Provider m_lineLayoutProvider;
 
-    // Used when text boxes are out of order (Hebrew/Arabic with embedded LTR text)
-    Vector<InlineTextBox*> m_sortedTextBoxes;
-    size_t m_sortedTextBoxesPosition { 0 };
-
     // Used when deciding whether to emit a "positioning" (e.g. newline) before any other content
     bool m_hasEmitted { false };
 

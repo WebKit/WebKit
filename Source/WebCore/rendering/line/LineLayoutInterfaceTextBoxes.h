@@ -74,11 +74,15 @@ private:
 
 class TextBoxIterator : private TextBox {
 public:
-    TextBoxIterator() : m_pathVariant(nullptr) { };
+    TextBoxIterator() : m_pathVariant(ComplexPath { nullptr, { } }) { };
     explicit TextBoxIterator(const InlineTextBox*);
+    TextBoxIterator(Vector<const InlineTextBox*>&& sorted, size_t index);
+    
     TextBoxIterator(SimpleLineLayout::RunResolver::Iterator, SimpleLineLayout::RunResolver::Iterator end);
 
-    TextBoxIterator& operator++() { return traverseNext(); }
+    TextBoxIterator& operator++() { return traverseNextInVisualOrder(); }
+    TextBoxIterator& traverseNextInVisualOrder();
+    TextBoxIterator& traverseNextInTextOrder();
 
     explicit operator bool() const { return !atEnd(); }
 
@@ -96,13 +100,16 @@ public:
 private:
     friend class TextBox;
 
-    TextBoxIterator& traverseNext();
-
     struct SimplePath {
         SimpleLineLayout::RunResolver::Iterator iterator;
         SimpleLineLayout::RunResolver::Iterator end;
     };
-    Variant<SimplePath, const InlineTextBox*> m_pathVariant;
+    struct ComplexPath {
+        const InlineTextBox* inlineTextBox;
+        Vector<const InlineTextBox*> sortedInlineTextBoxes;
+        size_t sortedInlineTextBoxIndex { 0 };
+    };
+    Variant<SimplePath, ComplexPath> m_pathVariant;
 };
 
 class TextBoxRange {
@@ -124,11 +131,10 @@ public:
     Provider();
     ~Provider();
 
-    TextBoxIterator firstTextBoxFor(const RenderText&);
+    TextBoxIterator firstTextBoxFor(const RenderText& text) { return firstTextBoxInVisualOrderFor(text); }
+    TextBoxIterator firstTextBoxInVisualOrderFor(const RenderText&);
+    TextBoxIterator firstTextBoxInTextOrderFor(const RenderText&);
     TextBoxRange textBoxRangeFor(const RenderText&);
-
-    // FIXME: Remove.
-    TextBoxIterator iteratorForInlineTextBox(const InlineTextBox*);
 
 private:
     HashMap<const RenderBlockFlow*, std::unique_ptr<SimpleLineLayout::RunResolver>> m_simpleLineLayoutResolvers;

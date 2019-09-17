@@ -1,3 +1,40 @@
+2019-09-16  Antti Koivisto  <antti@apple.com>
+
+        Move code for traversing reversed text boxes from TextIterator to TextBoxIterator
+        https://bugs.webkit.org/show_bug.cgi?id=201819
+
+        Reviewed by Zalan Bujtas.
+
+        Handle traversal order in TextBoxIterator.
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleTextNode):
+        (WebCore::TextIterator::handleTextBox):
+        (WebCore::TextIterator::handleTextNodeFirstLetter):
+        * editing/TextIterator.h:
+        * rendering/line/LineLayoutInterfaceTextBoxes.cpp:
+        (WebCore::LineLayoutInterface::TextBox::rect const):
+        (WebCore::LineLayoutInterface::TextBox::logicalRect const):
+        (WebCore::LineLayoutInterface::TextBox::hasHyphen const):
+        (WebCore::LineLayoutInterface::TextBox::isLeftToRightDirection const):
+        (WebCore::LineLayoutInterface::TextBox::dirOverride const):
+        (WebCore::LineLayoutInterface::TextBox::text const):
+        (WebCore::LineLayoutInterface::TextBox::localStartOffset const):
+        (WebCore::LineLayoutInterface::TextBox::localEndOffset const):
+        (WebCore::LineLayoutInterface::TextBox::length const):
+        (WebCore::LineLayoutInterface::TextBoxIterator::TextBoxIterator):
+        (WebCore::LineLayoutInterface::TextBoxIterator::traverseNextInVisualOrder):
+        (WebCore::LineLayoutInterface::TextBoxIterator::traverseNextInTextOrder):
+        (WebCore::LineLayoutInterface::TextBoxIterator::operator== const):
+        (WebCore::LineLayoutInterface::TextBoxIterator::atEnd const):
+        (WebCore::LineLayoutInterface::Provider::firstTextBoxInVisualOrderFor):
+        (WebCore::LineLayoutInterface::Provider::firstTextBoxInTextOrderFor):
+        (WebCore::LineLayoutInterface::Provider::textBoxRangeFor):
+        * rendering/line/LineLayoutInterfaceTextBoxes.h:
+        (WebCore::LineLayoutInterface::TextBoxIterator::TextBoxIterator):
+        (WebCore::LineLayoutInterface::TextBoxIterator::operator++):
+        (WebCore::LineLayoutInterface::Provider::firstTextBoxFor):
+
 2019-09-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][curl] Don't compile unused CertificateCFWin.cpp

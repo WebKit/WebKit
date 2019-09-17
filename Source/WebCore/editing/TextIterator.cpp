@@ -615,7 +615,7 @@ bool TextIterator::handleTextNode()
         return true;
     }
 
-    m_textBox = m_lineLayoutProvider.firstTextBoxFor(renderer);
+    m_textBox = m_lineLayoutProvider.firstTextBoxInTextOrderFor(renderer);
 
     bool shouldHandleFirstLetter = !m_handledFirstLetter && is<RenderTextFragment>(renderer) && !m_offset;
     if (shouldHandleFirstLetter)
@@ -626,17 +626,6 @@ bool TextIterator::handleTextNode()
             return false;
         m_lastTextNodeEndedWithCollapsedSpace = true; // entire block is collapsed space
         return true;
-    }
-
-    // Used when text boxes are out of order (Hebrew/Arabic w/ embeded LTR text)
-    auto& boxesRenderer = m_firstLetterText ? *m_firstLetterText : renderer;
-    if (boxesRenderer.containsReversedText()) {
-        m_sortedTextBoxes.clear();
-        for (InlineTextBox* textBox = boxesRenderer.firstTextBox(); textBox; textBox = textBox->nextTextBox())
-            m_sortedTextBoxes.append(textBox);
-        std::sort(m_sortedTextBoxes.begin(), m_sortedTextBoxes.end(), InlineTextBox::compareByStart);
-        m_sortedTextBoxesPosition = 0;
-        m_textBox = m_lineLayoutProvider.iteratorForInlineTextBox(m_sortedTextBoxes.isEmpty() ? nullptr : m_sortedTextBoxes[0]);
     }
 
     handleTextBox();
@@ -653,12 +642,7 @@ void TextIterator::handleTextBox()
         return;
     }
 
-    auto firstTextBox = [&] {
-        if (renderer.containsReversedText())
-            return m_lineLayoutProvider.iteratorForInlineTextBox(m_sortedTextBoxes.isEmpty() ? nullptr : m_sortedTextBoxes[0]);
-
-        return m_lineLayoutProvider.firstTextBoxFor(renderer);
-    }();
+    auto firstTextBox = m_lineLayoutProvider.firstTextBoxInTextOrderFor(renderer);
 
     String rendererText = renderer.text();
     unsigned start = m_offset;
@@ -683,15 +667,8 @@ void TextIterator::handleTextBox()
         unsigned runEnd = std::min(textBoxEnd, end);
         
         // Determine what the next text box will be, but don't advance yet
-        LineLayoutInterface::TextBoxIterator nextTextBox;
-        if (renderer.containsReversedText()) {
-            // FIXME: Handle reversed text in the line layout iterator.
-            if (m_sortedTextBoxesPosition + 1 < m_sortedTextBoxes.size())
-                nextTextBox = m_lineLayoutProvider.iteratorForInlineTextBox(m_sortedTextBoxes[m_sortedTextBoxesPosition + 1]);
-        } else {
-            nextTextBox = m_textBox;
-            ++nextTextBox;
-        }
+        auto nextTextBox = m_textBox;
+        nextTextBox.traverseNextInTextOrder();
 
         if (runStart < runEnd) {
             // Handle either a single newline character (which becomes a space),
@@ -722,14 +699,10 @@ void TextIterator::handleTextBox()
             if (nextRunStart > runEnd)
                 m_lastTextNodeEndedWithCollapsedSpace = true; // collapsed space between runs or at the end
             m_textBox = nextTextBox;
-            if (renderer.containsReversedText())
-                ++m_sortedTextBoxesPosition;
             return;
         }
         // Advance and continue
         m_textBox = nextTextBox;
-        if (renderer.containsReversedText())
-            ++m_sortedTextBoxesPosition;
     }
     if (!m_textBox && m_remainingTextBox) {
         m_textBox = m_remainingTextBox;
@@ -757,8 +730,7 @@ void TextIterator::handleTextNodeFirstLetter(RenderTextFragment& renderer)
         if (auto* firstLetterText = firstRenderTextInFirstLetter(firstLetter)) {
             m_handledFirstLetter = true;
             m_remainingTextBox = m_textBox;
-            m_textBox = m_lineLayoutProvider.firstTextBoxFor(*firstLetterText);
-            m_sortedTextBoxes.clear();
+            m_textBox = m_lineLayoutProvider.firstTextBoxInTextOrderFor(*firstLetterText);
             m_firstLetterText = firstLetterText;
         }
     }

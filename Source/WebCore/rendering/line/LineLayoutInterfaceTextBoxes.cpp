@@ -39,8 +39,8 @@ FloatRect TextBox::rect() const
         return (*path.iterator).rect();
     };
 
-    auto complex = [](const InlineTextBox* inlineTextBox) {
-        return inlineTextBox->frameRect();
+    auto complex = [](const TextBoxIterator::ComplexPath& path) {
+        return path.inlineTextBox->frameRect();
     };
 
     return WTF::switchOn(iterator().m_pathVariant, simple, complex);
@@ -52,8 +52,8 @@ FloatRect TextBox::logicalRect() const
         return (*path.iterator).rect();
     };
 
-    auto complex = [](const InlineTextBox* inlineTextBox) {
-        return inlineTextBox->logicalFrameRect();
+    auto complex = [](const TextBoxIterator::ComplexPath& path) {
+        return path.inlineTextBox->logicalFrameRect();
     };
 
     return WTF::switchOn(iterator().m_pathVariant, simple, complex);
@@ -65,8 +65,8 @@ bool TextBox::hasHyphen() const
         return (*path.iterator).hasHyphen();
     };
 
-    auto complex = [](const InlineTextBox* inlineTextBox) {
-        return inlineTextBox->hasHyphen();
+    auto complex = [](const TextBoxIterator::ComplexPath& path) {
+        return path.inlineTextBox->hasHyphen();
     };
 
     return WTF::switchOn(iterator().m_pathVariant, simple, complex);
@@ -78,8 +78,8 @@ bool TextBox::isLeftToRightDirection() const
         return true;
     };
 
-    auto complex = [](const InlineTextBox* inlineTextBox) {
-        return inlineTextBox->isLeftToRightDirection();
+    auto complex = [](const TextBoxIterator::ComplexPath& path) {
+        return path.inlineTextBox->isLeftToRightDirection();
     };
 
     return WTF::switchOn(iterator().m_pathVariant, simple, complex);
@@ -91,8 +91,8 @@ bool TextBox::dirOverride() const
         return false;
     };
 
-    auto complex = [](const InlineTextBox* inlineTextBox) {
-        return inlineTextBox->dirOverride();
+    auto complex = [](const TextBoxIterator::ComplexPath& path) {
+        return path.inlineTextBox->dirOverride();
     };
 
     return WTF::switchOn(iterator().m_pathVariant, simple, complex);
@@ -104,8 +104,8 @@ StringView TextBox::text() const
         return (*path.iterator).text();
     };
 
-    auto complex = [](const InlineTextBox* inlineTextBox) {
-        return StringView(inlineTextBox->renderer().text()).substring(inlineTextBox->start(), inlineTextBox->len());
+    auto complex = [](const TextBoxIterator::ComplexPath& path) {
+        return StringView(path.inlineTextBox->renderer().text()).substring(path.inlineTextBox->start(), path.inlineTextBox->len());
     };
 
     return WTF::switchOn(iterator().m_pathVariant, simple, complex);
@@ -117,8 +117,8 @@ unsigned TextBox::localStartOffset() const
         return (*path.iterator).localStart();
     };
 
-    auto complex = [](const InlineTextBox* inlineTextBox) {
-        return inlineTextBox->start();
+    auto complex = [](const TextBoxIterator::ComplexPath& path) {
+        return path.inlineTextBox->start();
     };
 
     return WTF::switchOn(iterator().m_pathVariant, simple, complex);
@@ -130,8 +130,8 @@ unsigned TextBox::localEndOffset() const
         return (*path.iterator).localEnd();
     };
 
-    auto complex = [](const InlineTextBox* inlineTextBox) {
-        return inlineTextBox->end();
+    auto complex = [](const TextBoxIterator::ComplexPath& path) {
+        return path.inlineTextBox->end();
     };
 
     return WTF::switchOn(iterator().m_pathVariant, simple, complex);
@@ -143,8 +143,8 @@ unsigned TextBox::length() const
         return (*path.iterator).end() - (*path.iterator).start();
     };
 
-    auto complex = [](const InlineTextBox* inlineTextBox) {
-        return inlineTextBox->len();
+    auto complex = [](const TextBoxIterator::ComplexPath& path) {
+        return path.inlineTextBox->len();
     };
 
     return WTF::switchOn(iterator().m_pathVariant, simple, complex);
@@ -156,23 +156,49 @@ inline const TextBoxIterator& TextBox::iterator() const
 }
 
 TextBoxIterator::TextBoxIterator(const InlineTextBox* inlineTextBox)
-    : m_pathVariant(inlineTextBox)
+    : m_pathVariant(ComplexPath { inlineTextBox, { } })
+{
+}
+TextBoxIterator::TextBoxIterator(Vector<const InlineTextBox*>&& sorted, size_t index)
+    : m_pathVariant(ComplexPath { index < sorted.size() ? sorted[index] : nullptr, WTFMove(sorted), index })
 {
 }
 
 TextBoxIterator::TextBoxIterator(SimpleLineLayout::RunResolver::Iterator iterator, SimpleLineLayout::RunResolver::Iterator end)
-    : m_pathVariant(TextBoxIterator::SimplePath { iterator, end })
+    : m_pathVariant(SimplePath { iterator, end })
 {
 }
 
-TextBoxIterator& TextBoxIterator::traverseNext()
+TextBoxIterator& TextBoxIterator::traverseNextInVisualOrder()
 {
-    auto simple = [](TextBoxIterator::SimplePath& path) {
+    auto simple = [](SimplePath& path) {
         ++path.iterator;
     };
 
-    auto complex = [](const InlineTextBox*& inlineTextBox) {
-        inlineTextBox = inlineTextBox->nextTextBox();
+    auto complex = [](ComplexPath& path) {
+        path.inlineTextBox = path.inlineTextBox->nextTextBox();
+    };
+
+    WTF::switchOn(m_pathVariant, simple, complex);
+
+    return *this;
+}
+
+TextBoxIterator& TextBoxIterator::traverseNextInTextOrder()
+{
+    auto simple = [](SimplePath& path) {
+        ++path.iterator;
+    };
+
+    auto complex = [](ComplexPath& path) {
+        if (!path.sortedInlineTextBoxes.isEmpty()) {
+            ++path.sortedInlineTextBoxIndex;
+            if (path.sortedInlineTextBoxIndex < path.sortedInlineTextBoxes.size())
+                path.inlineTextBox = path.sortedInlineTextBoxes[path.sortedInlineTextBoxIndex];
+            else
+                path.inlineTextBox = nullptr;
+        } else
+            path.inlineTextBox = path.inlineTextBox->nextTextBox();
     };
 
     WTF::switchOn(m_pathVariant, simple, complex);
@@ -185,12 +211,12 @@ bool TextBoxIterator::operator==(const TextBoxIterator& other) const
     if (m_pathVariant.index() != other.m_pathVariant.index())
         return false;
 
-    auto simple = [&](const TextBoxIterator::SimplePath& path) {
-        return path.iterator == WTF::get<TextBoxIterator::SimplePath>(other.m_pathVariant).iterator;
+    auto simple = [&](const SimplePath& path) {
+        return path.iterator == WTF::get<SimplePath>(other.m_pathVariant).iterator;
     };
 
-    auto complex = [&](const InlineTextBox* inlineTextBox) {
-        return inlineTextBox == WTF::get<const InlineTextBox*>(other.m_pathVariant);
+    auto complex = [&](const ComplexPath& path) {
+        return path.inlineTextBox == WTF::get<ComplexPath>(other.m_pathVariant).inlineTextBox;
     };
 
     return WTF::switchOn(m_pathVariant, simple, complex);
@@ -198,12 +224,12 @@ bool TextBoxIterator::operator==(const TextBoxIterator& other) const
 
 bool TextBoxIterator::atEnd() const
 {
-    auto simple = [&](const TextBoxIterator::SimplePath& path) {
+    auto simple = [&](const SimplePath& path) {
         return path.iterator == path.end;
     };
 
-    auto complex = [&](const InlineTextBox* inlineTextBox) {
-        return !inlineTextBox;
+    auto complex = [&](const ComplexPath& path) {
+        return !path.inlineTextBox;
     };
 
     return WTF::switchOn(m_pathVariant, simple, complex);
@@ -212,7 +238,7 @@ bool TextBoxIterator::atEnd() const
 Provider::Provider() = default;
 Provider::~Provider() = default;
 
-TextBoxIterator Provider::firstTextBoxFor(const RenderText& text)
+TextBoxIterator Provider::firstTextBoxInVisualOrderFor(const RenderText& text)
 {
     if (auto* simpleLineLayout = text.simpleLineLayout()) {
         auto& parent = downcast<const RenderBlockFlow>(*text.parent());
@@ -227,17 +253,23 @@ TextBoxIterator Provider::firstTextBoxFor(const RenderText& text)
     return TextBoxIterator { text.firstTextBox() };
 }
 
+TextBoxIterator Provider::firstTextBoxInTextOrderFor(const RenderText& text)
+{
+    if (!text.simpleLineLayout() && text.containsReversedText()) {
+        Vector<const InlineTextBox*> sortedTextBoxes;
+        for (auto* textBox = text.firstTextBox(); textBox; textBox = textBox->nextTextBox())
+            sortedTextBoxes.append(textBox);
+        std::sort(sortedTextBoxes.begin(), sortedTextBoxes.end(), InlineTextBox::compareByStart);
+        return TextBoxIterator { WTFMove(sortedTextBoxes), 0 };
+    }
+
+    return firstTextBoxInVisualOrderFor(text);
+}
+
 TextBoxRange Provider::textBoxRangeFor(const RenderText& text)
 {
-    return { firstTextBoxFor(text) };
+    return { firstTextBoxInVisualOrderFor(text) };
 }
-
-TextBoxIterator Provider::iteratorForInlineTextBox(const InlineTextBox* inlineTextBox)
-{
-    return TextBoxIterator { inlineTextBox };
-}
-
-
 
 }
 }
