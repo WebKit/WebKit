@@ -1,3 +1,24 @@
+2019-09-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: HTML Formatter - better handling for HTML specific tag cases (<p>/<li>)
+        https://bugs.webkit.org/show_bug.cgi?id=201757
+        <rdar://problem/55409987>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Workers/Formatter/HTMLFormatter.js:
+        (HTMLFormatter.prototype._after):
+        Handle a closing tag with different text than the opening tag.
+
+        * UserInterface/Workers/Formatter/HTMLTreeBuilderFormatter.js:
+        (HTMLTreeBuilderFormatter.prototype._pushParserNodeTopLevel):
+        (HTMLTreeBuilderFormatter.prototype._pushParserNodeStack):
+        (HTMLTreeBuilderFormatter.prototype._implicitlyCloseHTMLNodesForOpenTag):
+        (HTMLTreeBuilderFormatter.prototype._implicitlyCloseTagNamesInsideParentTagNames):
+        (HTMLTreeBuilderFormatter.prototype._indexOfStackNodeMatchingTagNames):
+        Generalize the implicit closing a bit. Allow open tags to implicitly
+        close certain other open tags in the stack.
+
 2019-09-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: HTML Formatter - XML mode

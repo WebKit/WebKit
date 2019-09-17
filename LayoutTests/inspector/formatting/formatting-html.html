@@ -10,7 +10,8 @@ function test()
 
     addFormattingTests(suite, "text/html", [
         "resources/html-tests/attributes.html",
-        "resources/html-tests/auto-close.html",
+        "resources/html-tests/auto-close-normal.html",
+        "resources/html-tests/auto-close-special.html",
         "resources/html-tests/basic-1.html",
         "resources/html-tests/basic-2.html",
         "resources/html-tests/comments.html",
@@ -29,7 +30,10 @@ function test()
         "resources/html-tests/not-well-formed-1.html",
         "resources/html-tests/not-well-formed-2.html",
         "resources/html-tests/not-well-formed-3.html",
+        "resources/html-tests/p.html",
         "resources/html-tests/self-closing.html",
+        "resources/html-tests/table.html",
+        "resources/html-tests/tag-case.html",
     ]);
 
     suite.runTestCasesAndFinish();

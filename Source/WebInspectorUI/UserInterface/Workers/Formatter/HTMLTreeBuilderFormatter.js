@@ -24,9 +24,9 @@
  */
 
 // This tree builder attempts to match input text to output DOM node.
-// This therefore doesn't do HTML5 tree construction like auto-closing
+// This therefore doesn't do HTML5 tree construction like implicitly-closing
 // specific HTML parent nodes depending on being in a particular node,
-// it only does basic auto-closing. In general this tries to be a
+// it only does basic implicitly-closing. In general this tries to be a
 // whitespace reformatter for input text and not generate the ultimate
 // html tree that a browser would generate.
 //
@@ -51,7 +51,7 @@ HTMLTreeBuilderFormatter = class HTMLTreeBuilderFormatter
 
     pushParserNode(parserNode)
     {
-        let containerNode = this._stackOfOpenElements[this._stackOfOpenElements.length - 1];
+        let containerNode = this._stackOfOpenElements.lastValue;
         if (!containerNode)
             this._pushParserNodeTopLevel(parserNode);
         else
@@ -90,34 +90,34 @@ HTMLTreeBuilderFormatter = class HTMLTreeBuilderFormatter
     {
         if (parserNode.type === HTMLParser.NodeType.OpenTag) {
             let node = this._buildDOMNodeFromOpenTag(parserNode);
-            containerNode.children.push(node);
+            let childrenArray = containerNode.children;
+            if (!this._isXML) {
+                this._implicitlyCloseHTMLNodesForOpenTag(parserNode, node);
+                containerNode = this._stackOfOpenElements.lastValue;
+                childrenArray = containerNode ? containerNode.children : this._dom;
+            }
+            childrenArray.push(node);
             if (!this._isEmptyNode(parserNode, node))
                 this._stackOfOpenElements.push(node);
             return;
         }
 
         if (parserNode.type === HTMLParser.NodeType.CloseTag) {
-            let found = false;
-            let nodesToPop = 0;
-            for (let i = this._stackOfOpenElements.length - 1; i >= 0; --i) {
-                nodesToPop++;
-                let stackNode = this._stackOfOpenElements[i];
-                if (stackNode.name === parserNode.name) {
-                    found = true;
-                    break;
-                }
-            }
+            let tagName = this._isXML ? parserNode.name : parserNode.name.toLowerCase();
+            let matchingOpenTagIndex = this._indexOfStackNodeMatchingTagNames([tagName]);
 
-            // Found a matching tag, auto-close nodes.
-            if (found) {
-                console.assert(nodesToPop > 0);
+            // Found a matching tag, implicitly-close nodes.
+            if (matchingOpenTagIndex !== -1) {
+                let nodesToPop = this._stackOfOpenElements.length - matchingOpenTagIndex;
                 for (let i = 0; i < nodesToPop - 1; ++i) {
-                    let autoClosingNode = this._stackOfOpenElements.pop();
-                    autoClosingNode.implicitClose = true;
+                    let implicitlyClosingNode = this._stackOfOpenElements.pop();
+                    implicitlyClosingNode.implicitClose = true;
                 }
-                let autoClosingNode = this._stackOfOpenElements.pop();
-                if (parserNode.pos)
-                    autoClosingNode.closeTagPos = parserNode.pos;
+                let implicitlyClosingNode = this._stackOfOpenElements.pop();
+                if (parserNode.pos) {
+                    implicitlyClosingNode.closeTagPos = parserNode.pos;
+                    implicitlyClosingNode.closeTagName = parserNode.name;
+                }
                 return;
             }
 
@@ -130,6 +130,150 @@ HTMLTreeBuilderFormatter = class HTMLTreeBuilderFormatter
 
         let node = this._buildSimpleNodeFromParserNode(parserNode);
         containerNode.children.push(node);
+    }
+
+    _implicitlyCloseHTMLNodesForOpenTag(parserNode, node)
+    {
+        if (parserNode.closed)
+            return;
+
+        switch (node.lowercaseName) {
+        // <body> closes <head>.
+        case "body":
+            this._implicitlyCloseTagNamesInsideParentTagNames(["head"]);
+            break;
+
+        // Inside <select>.
+        case "option":
+            this._implicitlyCloseTagNamesInsideParentTagNames(["option"], ["select"]);
+            break;
+        case "optgroup": {
+            let didClose = this._implicitlyCloseTagNamesInsideParentTagNames(["optgroup"], ["select"]);;
+            if (!didClose)
+                this._implicitlyCloseTagNamesInsideParentTagNames(["option"], ["select"]);
+            break;
+        }
+
+        // Inside <ol>/<ul>.
+        case "li":
+            this._implicitlyCloseTagNamesInsideParentTagNames(["li"], ["ol", "ul"]);
+            break;
+
+        // Inside <dl>.
+        case "dd":
+        case "dt":
+            this._implicitlyCloseTagNamesInsideParentTagNames(["dd", "dt"], ["dl"]);
+            break;
+
+        // Inside <table>.
+        case "tr": {
+            let didClose = this._implicitlyCloseTagNamesInsideParentTagNames(["tr"], ["table"]);
+            if (!didClose)
+                this._implicitlyCloseTagNamesInsideParentTagNames(["td", "th"], ["table"]);
+            break;
+        }
+        case "td":
+        case "th":
+            this._implicitlyCloseTagNamesInsideParentTagNames(["td", "th"], ["table"]);
+            break;
+        case "tbody": {
+            let didClose = this._implicitlyCloseTagNamesInsideParentTagNames(["thead"], ["table"]);
+            if (!didClose)
+                didClose = this._implicitlyCloseTagNamesInsideParentTagNames(["tr"], ["table"]);
+            break;
+        }
+        case "tfoot": {
+            let didClose = this._implicitlyCloseTagNamesInsideParentTagNames(["tbody"], ["table"]);
+            if (!didClose)
+                didClose = this._implicitlyCloseTagNamesInsideParentTagNames(["tr"], ["table"]);
+            break;
+        }
+        case "colgroup":
+            this._implicitlyCloseTagNamesInsideParentTagNames(["colgroup"], ["table"]);
+            break;
+
+        // Nodes that implicitly close a <p>. Normally this is only in <body> but we simplify to always.
+        // https://html.spec.whatwg.org/multipage/parsing.html#parsing-main-inbody
+        case "address":
+        case "article":
+        case "aside":
+        case "blockquote":
+        case "center":
+        case "details":
+        case "dialog":
+        case "dir":
+        case "div":
+        case "dl":
+        case "fieldset":
+        case "figcaption":
+        case "figure":
+        case "footer":
+        case "form":
+        case "h1":
+        case "h2":
+        case "h3":
+        case "h4":
+        case "h5":
+        case "h6":
+        case "header":
+        case "hgroup":
+        case "hr":
+        case "listing":
+        case "main":
+        case "menu":
+        case "nav":
+        case "ol":
+        case "p":
+        case "plaintext":
+        case "pre":
+        case "section":
+        case "summary":
+        case "table":
+        case "ul":
+        case "xmp":
+            this._implicitlyCloseTagNamesInsideParentTagNames(["p"]);
+            break;
+        }
+    }
+
+    _implicitlyCloseTagNamesInsideParentTagNames(tagNames, containerScopeTagNames)
+    {
+        console.assert(!this._isXML, "Implicitly closing only happens in HTML. Also, names are compared case insensitively which would be invalid for XML.");
+
+        let existingOpenTagIndex = this._indexOfStackNodeMatchingTagNames(tagNames);
+        if (existingOpenTagIndex === -1)
+            return false;
+
+        // Disallow impliticly closing beyond the container tag boundary.
+        if (containerScopeTagNames) {
+            for (let i = existingOpenTagIndex + 1; i < this._stackOfOpenElements.length; ++i) {
+                let stackNode = this._stackOfOpenElements[i];
+                let name = stackNode.lowercaseName;
+                if (containerScopeTagNames.includes(name))
+                    return false;
+            }
+        }
+
+        // Implicitly close tags.
+        let nodesToPop = this._stackOfOpenElements.length - existingOpenTagIndex;
+        for (let i = 0; i < nodesToPop; ++i) {
+            let implicitlyClosingNode = this._stackOfOpenElements.pop();
+            implicitlyClosingNode.implicitClose = true;
+        }
+
+        return true;
+    }
+
+    _indexOfStackNodeMatchingTagNames(tagNames)
+    {
+        for (let i = this._stackOfOpenElements.length - 1; i >= 0; --i) {
+            let stackNode = this._stackOfOpenElements[i];
+            let name = this._isXML ? stackNode.name : stackNode.lowercaseName;
+            if (tagNames.includes(name))
+                return i;
+        }
+
+        return -1;
     }
 
     _isEmptyNode(parserNode, node)

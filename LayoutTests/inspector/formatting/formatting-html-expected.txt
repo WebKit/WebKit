@@ -4,7 +4,8 @@ Test HTML formatting.
 == Running test suite: HTMLFormatter
 -- Running test case: HTMLFormatter
 PASS: attributes.html
-PASS: auto-close.html
+PASS: auto-close-normal.html
+PASS: auto-close-special.html
 PASS: basic-1.html
 PASS: basic-2.html
 PASS: comments.html
@@ -23,5 +24,8 @@ PASS: list.html
 PASS: not-well-formed-1.html
 PASS: not-well-formed-2.html
 PASS: not-well-formed-3.html
+PASS: p.html
 PASS: self-closing.html
+PASS: table.html
+PASS: tag-case.html
 

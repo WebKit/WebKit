@@ -1,3 +1,37 @@
+2019-09-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: HTML Formatter - better handling for HTML specific tag cases (<p>/<li>)
+        https://bugs.webkit.org/show_bug.cgi?id=201757
+        <rdar://problem/55409987>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/formatting/formatting-html-expected.txt:
+        * inspector/formatting/formatting-html.html:
+        * inspector/formatting/resources/html-tests/auto-close-normal-expected.html: Renamed from LayoutTests/inspector/formatting/resources/html-tests/auto-close-expected.html.
+        * inspector/formatting/resources/html-tests/auto-close-normal.html: Renamed from LayoutTests/inspector/formatting/resources/html-tests/auto-close.html.
+        * inspector/formatting/resources/html-tests/auto-close-special-expected.html: Added.
+        * inspector/formatting/resources/html-tests/auto-close-special.html: Added.
+        * inspector/formatting/resources/html-tests/list-expected.html:
+        * inspector/formatting/resources/html-tests/list.html:
+        * inspector/formatting/resources/html-tests/not-well-formed-1-expected.html:
+        * inspector/formatting/resources/html-tests/not-well-formed-1.html:
+        * inspector/formatting/resources/html-tests/p-expected.html: Added.
+        * inspector/formatting/resources/html-tests/p.html: Added.
+        * inspector/formatting/resources/html-tests/table-expected.html: Added.
+        * inspector/formatting/resources/html-tests/table.html: Added.
+        * inspector/formatting/resources/html-tests/tag-case-expected.html: Added.
+        * inspector/formatting/resources/html-tests/tag-case.html: Added.
+        Tests for HTML specialties.
+
+        * inspector/formatting/formatting-xml-expected.txt:
+        * inspector/formatting/formatting-xml.html:
+        * inspector/formatting/resources/xml-tests/tag-case-expected.xml: Added.
+        * inspector/formatting/resources/xml-tests/tag-case.xml: Added.
+        * inspector/formatting/resources/xml-tests/valid-html-invalid-xml-expected.xml:
+        * inspector/formatting/resources/xml-tests/valid-html-invalid-xml.xml:
+        XML is case-sensitive. Ensure XML doesn't get more of the HTML specialties.
+
 2019-09-17  Antti Koivisto  <antti@apple.com>
 
         TextIterator should convert tabs to spaces
