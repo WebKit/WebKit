@@ -52,10 +52,14 @@
 #if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
 #import <ARKit/ARKit.h>
 
+@protocol ARQuickLookWebKitItemDelegate
+@end
+
 @class ARQuickLookWebKitItem;
 
 @interface ARQuickLookWebKitItem : QLItem
 - (instancetype)initWithPreviewItemProvider:(NSItemProvider *)itemProvider contentType:(NSString *)contentType previewTitle:(NSString *)previewTitle fileSize:(NSNumber *)fileSize previewItem:(ARQuickLookPreviewItem *)previewItem;
+- (void)setDelegate:(ARQuickLookWebKitItemDelegate)delegate;
 @end
 
 #endif

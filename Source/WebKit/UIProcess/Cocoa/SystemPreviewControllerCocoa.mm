@@ -46,8 +46,6 @@ SOFT_LINK_CLASS(ARKit, ARQuickLookPreviewItem);
 SOFT_LINK_PRIVATE_FRAMEWORK(AssetViewer);
 SOFT_LINK_CLASS(AssetViewer, ARQuickLookWebKitItem);
 
-@protocol ARQuickLookWebKitItemDelegate;
-
 @interface _WKPreviewControllerDataSource : NSObject <QLPreviewControllerDataSource, ARQuickLookWebKitItemDelegate> {
 #else
 @interface _WKPreviewControllerDataSource : NSObject <QLPreviewControllerDataSource> {

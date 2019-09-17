@@ -1,3 +1,12 @@
+2019-09-16  Dean Jackson  <dino@apple.com>
+
+        Provide a prototype for AR QuickLook to trigger processing in the originating page
+        https://bugs.webkit.org/show_bug.cgi?id=201371
+
+        Hopefully fix the public iOS 13 build.
+
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+
 2019-09-16  David Kilzer  <ddkilzer@apple.com>
 
         [WebAuthn] Name instance variables consistently in WKMockNFTag
