@@ -53,7 +53,7 @@ public:
 
     rtc::AsyncPacketSocket* createUdpSocket(const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort);
     rtc::AsyncPacketSocket* createServerTcpSocket(const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort, int options);
-    rtc::AsyncPacketSocket* createClientTcpSocket(const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, PAL::SessionID, String&& userAgent, int options);
+    rtc::AsyncPacketSocket* createClientTcpSocket(const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, String&& userAgent, int options);
     rtc::AsyncResolverInterface* createAsyncResolver();
 
 private:

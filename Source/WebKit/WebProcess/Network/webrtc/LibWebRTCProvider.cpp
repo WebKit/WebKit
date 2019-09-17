@@ -60,17 +60,16 @@ void LibWebRTCProvider::unregisterMDNSNames(uint64_t documentIdentifier)
     WebProcess::singleton().libWebRTCNetwork().mdnsRegister().unregisterMDNSNames(documentIdentifier);
 }
 
-void LibWebRTCProvider::registerMDNSName(PAL::SessionID sessionID, uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&& callback)
+void LibWebRTCProvider::registerMDNSName(PAL::SessionID, uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&& callback)
 {
-    WebProcess::singleton().libWebRTCNetwork().mdnsRegister().registerMDNSName(sessionID, documentIdentifier, ipAddress, WTFMove(callback));
+    WebProcess::singleton().libWebRTCNetwork().mdnsRegister().registerMDNSName(documentIdentifier, ipAddress, WTFMove(callback));
 }
 
 class RTCSocketFactory final : public rtc::PacketSocketFactory {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RTCSocketFactory(PAL::SessionID sessionID, String&& userAgent)
-        : m_sessionID(sessionID)
-        , m_userAgent(WTFMove(userAgent))
+    explicit RTCSocketFactory(String&& userAgent)
+        : m_userAgent(WTFMove(userAgent))
     {
     }
 
@@ -87,7 +86,7 @@ private:
 
     rtc::AsyncPacketSocket* CreateClientTcpSocket(const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, const rtc::ProxyInfo&, const std::string&, int options) final
     {
-        return factory().createClientTcpSocket(localAddress, remoteAddress, m_sessionID, String { m_userAgent }, options);
+        return factory().createClientTcpSocket(localAddress, remoteAddress, String { m_userAgent }, options);
     }
 
     rtc::AsyncResolverInterface* CreateAsyncResolver() final
@@ -98,13 +97,12 @@ private:
     LibWebRTCSocketFactory& factory() { return WebProcess::singleton().libWebRTCNetwork().socketFactory(); }
 
 private:
-    PAL::SessionID m_sessionID;
     String m_userAgent;
 };
 
-std::unique_ptr<rtc::PacketSocketFactory> LibWebRTCProvider::createSocketFactory(PAL::SessionID sessionID, String&& userAgent)
+std::unique_ptr<rtc::PacketSocketFactory> LibWebRTCProvider::createSocketFactory(PAL::SessionID, String&& userAgent)
 {
-    return makeUnique<RTCSocketFactory>(sessionID, WTFMove(userAgent));
+    return makeUnique<RTCSocketFactory>(WTFMove(userAgent));
 }
 
 } // namespace WebKit

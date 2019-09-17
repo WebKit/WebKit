@@ -98,7 +98,7 @@ private:
     explicit NetworkRTCProvider(NetworkConnectionToWebProcess&);
 
     void createUDPSocket(uint64_t, const RTCNetwork::SocketAddress&, uint16_t, uint16_t);
-    void createClientTCPSocket(uint64_t, const RTCNetwork::SocketAddress&, const RTCNetwork::SocketAddress&, PAL::SessionID, String&& userAgent, int);
+    void createClientTCPSocket(uint64_t, const RTCNetwork::SocketAddress&, const RTCNetwork::SocketAddress&, String&& userAgent, int);
     void createServerTCPSocket(uint64_t, const RTCNetwork::SocketAddress&, uint16_t minPort, uint16_t maxPort, int);
     void wrapNewTCPConnection(uint64_t identifier, uint64_t newConnectionSocketIdentifier);
 

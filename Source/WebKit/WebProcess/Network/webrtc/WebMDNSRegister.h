@@ -45,7 +45,7 @@ public:
     WebMDNSRegister() = default;
 
     void unregisterMDNSNames(uint64_t documentIdentifier);
-    void registerMDNSName(PAL::SessionID, uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(WebCore::LibWebRTCProvider::MDNSNameOrError&&)>&&);
+    void registerMDNSName(uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(WebCore::LibWebRTCProvider::MDNSNameOrError&&)>&&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 

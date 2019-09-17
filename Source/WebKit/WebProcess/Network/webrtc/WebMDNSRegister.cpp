@@ -62,7 +62,7 @@ void WebMDNSRegister::unregisterMDNSNames(uint64_t documentIdentifier)
     connection.send(Messages::NetworkMDNSRegister::UnregisterMDNSNames { identifier }, 0);
 }
 
-void WebMDNSRegister::registerMDNSName(PAL::SessionID sessionID, uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(LibWebRTCProvider::MDNSNameOrError&&)>&& callback)
+void WebMDNSRegister::registerMDNSName(uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(LibWebRTCProvider::MDNSNameOrError&&)>&& callback)
 {
     auto identifier = makeObjectIdentifier<DocumentIdentifierType>(documentIdentifier);
     auto& map = m_registeringDocuments.ensure(identifier, [] {
@@ -78,7 +78,7 @@ void WebMDNSRegister::registerMDNSName(PAL::SessionID sessionID, uint64_t docume
     m_pendingRegistrations.add(++m_pendingRequestsIdentifier, PendingRegistration { WTFMove(callback), identifier, ipAddress });
 
     auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
-    if (!connection.send(Messages::NetworkMDNSRegister::RegisterMDNSName { m_pendingRequestsIdentifier, sessionID, identifier, ipAddress }, 0))
+    if (!connection.send(Messages::NetworkMDNSRegister::RegisterMDNSName { m_pendingRequestsIdentifier, identifier, ipAddress }, 0))
         finishedRegisteringMDNSName(m_pendingRequestsIdentifier, makeUnexpected(MDNSRegisterError::Internal));
 }
 

@@ -65,8 +65,10 @@ public:
 
 private:
     void unregisterMDNSNames(WebCore::DocumentIdentifier);
-    void registerMDNSName(uint64_t requestIdentifier, PAL::SessionID, WebCore::DocumentIdentifier, const String& ipAddress);
-    void resolveMDNSName(uint64_t requestIdentifier, PAL::SessionID, const String& name);
+    void registerMDNSName(uint64_t requestIdentifier, WebCore::DocumentIdentifier, const String& ipAddress);
+    void resolveMDNSName(uint64_t requestIdentifier, const String& name);
+    
+    PAL::SessionID sessionID() const;
 
     NetworkConnectionToWebProcess& m_connection;
 #if ENABLE_MDNS

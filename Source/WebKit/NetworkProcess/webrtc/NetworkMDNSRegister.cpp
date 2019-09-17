@@ -37,7 +37,7 @@
 
 namespace WebKit {
 
-#define RELEASE_LOG_IF_ALLOWED(sessionID, fmt, ...) RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), Network, "%p - NetworkMDNSRegister::" fmt, this, ##__VA_ARGS__)
+#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(sessionID().isAlwaysOnLoggingAllowed(), Network, "%p - NetworkMDNSRegister::" fmt, this, ##__VA_ARGS__)
 #define RELEASE_LOG_IF_ALLOWED_IN_CALLBACK(sessionID, fmt, ...) RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), Network, "NetworkMDNSRegister callback - " fmt, ##__VA_ARGS__)
 
 NetworkMDNSRegister::NetworkMDNSRegister(NetworkConnectionToWebProcess& connection)
@@ -104,20 +104,20 @@ static void registerMDNSNameCallback(DNSServiceRef, DNSRecordRef record, DNSServ
     request->connection->send(Messages::WebMDNSRegister::FinishedRegisteringMDNSName { request->requestIdentifier, request->name }, 0);
 }
 
-void NetworkMDNSRegister::registerMDNSName(uint64_t requestIdentifier, PAL::SessionID sessionID, WebCore::DocumentIdentifier documentIdentifier, const String& ipAddress)
+void NetworkMDNSRegister::registerMDNSName(uint64_t requestIdentifier, WebCore::DocumentIdentifier documentIdentifier, const String& ipAddress)
 {
     DNSServiceRef service;
     auto iterator = m_services.find(documentIdentifier);
     if (iterator == m_services.end()) {
         auto error = DNSServiceCreateConnection(&service);
         if (error) {
-            RELEASE_LOG_IF_ALLOWED(sessionID, "registerMDNSName DNSServiceCreateConnection error %d", error);
+            RELEASE_LOG_IF_ALLOWED("registerMDNSName DNSServiceCreateConnection error %d", error);
             m_connection.connection().send(Messages::WebMDNSRegister::FinishedRegisteringMDNSName { requestIdentifier, makeUnexpected(WebCore::MDNSRegisterError::DNSSD) }, 0);
             return;
         }
         error = DNSServiceSetDispatchQueue(service, dispatch_get_main_queue());
         if (error) {
-            RELEASE_LOG_IF_ALLOWED(sessionID, "registerMDNSName DNSServiceCreateConnection error %d", error);
+            RELEASE_LOG_IF_ALLOWED("registerMDNSName DNSServiceCreateConnection error %d", error);
             m_connection.connection().send(Messages::WebMDNSRegister::FinishedRegisteringMDNSName { requestIdentifier, makeUnexpected(WebCore::MDNSRegisterError::DNSSD) }, 0);
             return;
         }
@@ -131,12 +131,12 @@ void NetworkMDNSRegister::registerMDNSName(uint64_t requestIdentifier, PAL::Sess
     auto ip = inet_addr(ipAddress.utf8().data());
 
     if (ip == ( in_addr_t)(-1)) {
-        RELEASE_LOG_IF_ALLOWED(sessionID, "registerMDNSName inet_addr error");
+        RELEASE_LOG_IF_ALLOWED("registerMDNSName inet_addr error");
         m_connection.connection().send(Messages::WebMDNSRegister::FinishedRegisteringMDNSName { requestIdentifier, makeUnexpected(WebCore::MDNSRegisterError::BadParameter) }, 0);
         return;
     }
 
-    auto pendingRequest = makeUnique<PendingRegistrationRequest>(makeRef(m_connection.connection()), requestIdentifier, WTFMove(name), sessionID);
+    auto pendingRequest = makeUnique<PendingRegistrationRequest>(makeRef(m_connection.connection()), requestIdentifier, WTFMove(name), sessionID());
     auto* record = &pendingRequest->record;
     auto error = DNSServiceRegisterRecord(service,
         record,
@@ -155,7 +155,7 @@ void NetworkMDNSRegister::registerMDNSName(uint64_t requestIdentifier, PAL::Sess
         registerMDNSNameCallback,
         reinterpret_cast<void*>(pendingRegistrationRequestCount));
     if (error) {
-        RELEASE_LOG_IF_ALLOWED(sessionID, "registerMDNSName DNSServiceRegisterRecord error %d", error);
+        RELEASE_LOG_IF_ALLOWED("registerMDNSName DNSServiceRegisterRecord error %d", error);
         m_connection.connection().send(Messages::WebMDNSRegister::FinishedRegisteringMDNSName { requestIdentifier, makeUnexpected(WebCore::MDNSRegisterError::DNSSD) }, 0);
         return;
     }
@@ -168,13 +168,18 @@ void NetworkMDNSRegister::unregisterMDNSNames(WebCore::DocumentIdentifier)
 {
 }
 
-void NetworkMDNSRegister::registerMDNSName(uint64_t requestIdentifier, PAL::SessionID sessionID, WebCore::DocumentIdentifier documentIdentifier, const String& ipAddress)
+void NetworkMDNSRegister::registerMDNSName(uint64_t requestIdentifier, WebCore::DocumentIdentifier documentIdentifier, const String& ipAddress)
 {
-    RELEASE_LOG_IF_ALLOWED(sessionID, "registerMDNSName not implemented");
+    RELEASE_LOG_IF_ALLOWED("registerMDNSName not implemented");
     m_connection.connection().send(Messages::WebMDNSRegister::FinishedRegisteringMDNSName { requestIdentifier, makeUnexpected(WebCore::MDNSRegisterError::NotImplemented) }, 0);
 }
 
 #endif
+
+PAL::SessionID NetworkMDNSRegister::sessionID() const
+{
+    return m_connection.sessionID();
+}
 
 } // namespace WebKit
 

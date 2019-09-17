@@ -137,9 +137,9 @@ rtc::ProxyInfo NetworkRTCProvider::proxyInfoFromSession(const RTCNetwork::Socket
 }
 #endif
 
-void NetworkRTCProvider::createClientTCPSocket(uint64_t identifier, const RTCNetwork::SocketAddress& localAddress, const RTCNetwork::SocketAddress& remoteAddress, PAL::SessionID sessionID, String&& userAgent, int options)
+void NetworkRTCProvider::createClientTCPSocket(uint64_t identifier, const RTCNetwork::SocketAddress& localAddress, const RTCNetwork::SocketAddress& remoteAddress, String&& userAgent, int options)
 {
-    auto* session = m_connection->networkProcess().networkSession(sessionID);
+    auto* session = m_connection->networkSession();
     if (!session) {
         m_connection->connection().send(Messages::WebRTCSocket::SignalClose(1), identifier);
         return;
