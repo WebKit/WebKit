@@ -169,11 +169,7 @@ class Configuration {
             if (result != 0)
                 return;
 
-            if (this[key] === null && configuration[key] !== null)
-                result = -1;
-            else if (this[key] !== null && configuration[key] === null)
-                result = 1;
-            else if (this[key] !== null && configuration[key] !== null) {
+            if (this[key] !== null && configuration[key] !== null) {
                 if (typeof this[key] === 'string')
                     result = this[key].localeCompare(configuration[key]);
                 else if (typeof this[key] === 'number' || typeof this[key] === 'boolean')
@@ -185,12 +181,8 @@ class Configuration {
         return result;
     }
     compareSDKs(configuration) {
-        if (this.sdk === null && configuration.sdk === null)
+        if (this.sdk === null || configuration.sdk === null)
             return 0;
-        if (this.sdk === null && configuration.sdk !== null)
-            return -1;
-        if (this.sdk !== null && configuration.sdk === null)
-            return 1;
 
         const sdkRegex = /(\d+)([A-Z])(\d+)(.*)/;
         const myMatch = this.sdk.match(sdkRegex);

@@ -1,3 +1,19 @@
+2019-09-17  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org results bubbles' tooltips should include SDK information
+        https://bugs.webkit.org/show_bug.cgi?id=201823
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/static/js/configuration.js:
+        (Configuration.prototype.compare): Like the Python instance of this class,
+        support using null as a wildcard.
+        (Configuration.prototype.compareSDKs): Ditto.
+        * resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (TimelineFromEndpoint.prototype.render.onDotEnterFactory): Construct a configuration
+        object from all bits of data used to construct a given bubble.
+        (TimelineFromEndpoint.prototype.render):
+
 2019-09-17  Keith Rollin  <krollin@apple.com>
 
         Remove some support for < iOS 12

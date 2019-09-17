@@ -607,6 +607,33 @@ class TimelineFromEndpoint {
 
         function onDotEnterFactory(configuration) {
             return (data, event, canvas) => {
+                let partialConfiguration = {};
+                self.configurations.forEach(configurationKey => {
+                    if (configurationKey.compare(configuration) || configurationKey.compareSDKs(configuration))
+                        return;
+                    self.results[configurationKey.toKey()].forEach(pair => {
+                        const computedConfiguration = new Configuration(pair.configuration);
+                        if (computedConfiguration.compare(configuration) || computedConfiguration.compareSDKs(configuration))
+                            return;
+                        let doesMatch = false;
+                        pair.results.forEach(node => {
+                            if (doesMatch)
+                                return;
+                            if (node.uuid == data.uuid)
+                                doesMatch = true;
+                        });
+                        if (doesMatch) {
+                            Configuration.members().forEach(member => {
+                                if (member in partialConfiguration) {
+                                    if (partialConfiguration[member] !== null && partialConfiguration[member] !== computedConfiguration[member])
+                                        partialConfiguration[member] = null;
+                                } else if (computedConfiguration[member] !== null)
+                                    partialConfiguration[member] = computedConfiguration[member];
+                            });
+                        }
+                    });
+                });
+                partialConfiguration = new Configuration(partialConfiguration);
                 const scrollDelta = document.documentElement.scrollTop || document.body.scrollTop;
                 ToolTip.set(
                     `<div class="content">
@@ -630,6 +657,8 @@ class TimelineFromEndpoint {
                             const query = paramsToQuery(params);
                             return `<a href="/commit/info?${query}" target="_blank">${commit.id.substring(0,12)}</a>`;
                         }).join(', ')}
+                        <br>
+                        ${partialConfiguration}
                         <br>
 
                         ${data.expected ? `Expected: ${data.expected}<br>` : ''}
@@ -667,7 +696,7 @@ class TimelineFromEndpoint {
             this.results[configuration.toKey()].forEach(pair => {
                 const strippedConfig = new Configuration(pair.configuration);
                 resultsByKey[strippedConfig.toKey()] = combineResults([], [...pair.results].sort(function(a, b) {return b.uuid - a.uuid;}));
-                delete strippedConfig.sdk;
+                strippedConfig.sdk = null;
                 mappedChildrenConfigs[strippedConfig.toKey()] = strippedConfig;
                 if (!childrenConfigsBySDK[strippedConfig.toKey()])
                     childrenConfigsBySDK[strippedConfig.toKey()] = [];
