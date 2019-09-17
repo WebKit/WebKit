@@ -312,6 +312,12 @@ bool IOSApplication::isEvernote()
     return isEvernote;
 }
 
+bool IOSApplication::isEventbrite()
+{
+    static bool isEventbrite = applicationBundleIsEqualTo("com.eventbrite.attendee"_s);
+    return isEventbrite;
+}
+
 #endif
 
 } // namespace WebCore

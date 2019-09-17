@@ -1,5 +1,50 @@
 2019-09-17  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r249770. rdar://problem/55427487
+
+    REGRESSION (245006): can't scroll in "read more" view in Eventbrite app
+    https://bugs.webkit.org/show_bug.cgi?id=201683
+    <rdar://problem/54582602>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    * platform/RuntimeApplicationChecks.h:
+    * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+    (WebCore::IOSApplication::isEventbrite):
+    
+    Source/WebKit:
+    
+    Content <body> has 'overflow:hidden'.
+    
+    * UIProcess/Cocoa/VersionChecks.h:
+    * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+    (WebKit::RemoteScrollingCoordinatorProxy::hasScrollableMainFrame const):
+    
+    Fix by adding an app specific LinkedOnOrAfter quirk that always allows main frame scrolling.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249770 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-09-11  Antti Koivisto  <antti@apple.com>
+
+            REGRESSION (245006): can't scroll in "read more" view in Eventbrite app
+            https://bugs.webkit.org/show_bug.cgi?id=201683
+            <rdar://problem/54582602>
+
+            Reviewed by Simon Fraser.
+
+            Content <body> has 'overflow:hidden'.
+
+            * UIProcess/Cocoa/VersionChecks.h:
+            * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+            (WebKit::RemoteScrollingCoordinatorProxy::hasScrollableMainFrame const):
+
+            Fix by adding an app specific LinkedOnOrAfter quirk that always allows main frame scrolling.
+
+2019-09-17  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r249757. rdar://problem/55427273
 
     REGRESSION: Scrubbing on ted.com does not work well
