@@ -1,3 +1,14 @@
+2019-09-16  David Kilzer  <ddkilzer@apple.com>
+
+        [WebAuthn] Name instance variables consistently in WKMockNFTag
+        <https://webkit.org/b/201845>
+
+        Reviewed by Jiewen Tan.
+
+        * UIProcess/WebAuthentication/Mock/MockNfcService.mm:
+        Make all @synthesize instance variables use a leading underscore
+        for their name.
+
 2019-09-16  Dean Jackson  <dino@apple.com>
 
         REGRESSION: iPad: Safari becomes unresponsive after context menu on 1-800-MY-APPLE phone number, tapping 'Add to Contacts'

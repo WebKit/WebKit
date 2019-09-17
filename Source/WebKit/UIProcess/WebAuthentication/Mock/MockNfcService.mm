@@ -50,16 +50,16 @@
     NFTagType _type;
 }
 
-@synthesize technology;
+@synthesize technology=_technology;
 @synthesize tagID=_tagID;
 @synthesize AppData=_AppData;
 @synthesize UID=_UID;
-@synthesize ndefAvailability;
-@synthesize ndefMessageSize;
-@synthesize ndefContainerSize;
-@synthesize tagA;
-@synthesize tagB;
-@synthesize tagF;
+@synthesize ndefAvailability=_ndefAvailability;
+@synthesize ndefMessageSize=_ndefMessageSize;
+@synthesize ndefContainerSize=_ndefContainerSize;
+@synthesize tagA=_tagA;
+@synthesize tagB=_tagB;
+@synthesize tagF=_tagF;
 
 - (NFTagType)type
 {
