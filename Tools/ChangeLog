@@ -1,3 +1,14 @@
+2019-09-17  David Kilzer  <ddkilzer@apple.com>
+
+        run-webkit-tests: Driver.do_post_tests_work() is never called when `stop_when_done` is true in Driver.run_test()
+        <https://webkit.org/b/201873>
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.run_test): Call self.do_post_tests_work() when a test
+        shard has completed, but didn't crash or time out.
+
 2019-09-17  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r249923): ASSERTION FAILED: sessionID == WebProcess::singleton().sessionID() in WebCore::SWClientConnection *WebKit::WebServiceWorkerProvider::existingServiceWorkerConnectionForSession(PAL::SessionID)

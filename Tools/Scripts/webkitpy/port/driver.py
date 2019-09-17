@@ -221,6 +221,8 @@ class Driver(object):
         pid = self._server_process.pid()
 
         if stop_when_done or crashed or timed_out:
+            if stop_when_done and not (crashed or timed_out):
+                self.do_post_tests_work()
             # We call stop() even if we crashed or timed out in order to get any remaining stdout/stderr output.
             # In the timeout case, we kill the hung process as well.
             out, err = self._server_process.stop(self._port.driver_stop_timeout() if stop_when_done else 0.0)
