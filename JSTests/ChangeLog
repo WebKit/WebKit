@@ -1,3 +1,14 @@
+2019-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] CheckArray+NonArray is not filtering out Array in AI
+        https://bugs.webkit.org/show_bug.cgi?id=201857
+        <rdar://problem/54194820>
+
+        Reviewed by Keith Miller.
+
+        * stress/check-array-with-non-array-does-not-filter-arrays.js: Added.
+        (foo):
+
 2019-09-17  Saam Barati  <sbarati@apple.com>
 
         CheckArray on DirectArguments/ScopedArguments does not filter out slow put array storage

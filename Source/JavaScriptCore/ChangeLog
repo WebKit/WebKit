@@ -1,3 +1,19 @@
+2019-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] CheckArray+NonArray is not filtering out Array in AI
+        https://bugs.webkit.org/show_bug.cgi?id=201857
+        <rdar://problem/54194820>
+
+        Reviewed by Keith Miller.
+
+        The code of DFG::ArrayMode::alreadyChecked is different from SpeculativeJIT's CheckArray / CheckStructure.
+        While we assume CheckArray+NonArray ensures it only passes non-array inputs, DFG::ArrayMode::alreadyChecked
+        accepts arrays too. So CheckArray+NonArray is removed in AI if the input is proven that it is an array.
+        This patch aligns DFG::ArrayMode::alreadyChecked to the checks done at runtime.
+
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::alreadyChecked const):
+
 2019-09-17  Saam Barati  <sbarati@apple.com>
 
         CheckArray on DirectArguments/ScopedArguments does not filter out slow put array storage

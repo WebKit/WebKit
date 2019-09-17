@@ -417,55 +417,67 @@ Structure* ArrayMode::originalArrayStructure(Graph& graph, Node* node) const
 
 bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& value, IndexingType shape) const
 {
+    ASSERT(isSpecific());
+
+    IndexingType indexingModeMask = IsArray | IndexingShapeMask;
+    if (action() == Array::Write)
+        indexingModeMask |= CopyOnWrite;
+
     switch (arrayClass()) {
-    case Array::OriginalArray: {
-        if (value.m_structure.isTop())
-            return false;
-        for (unsigned i = value.m_structure.size(); i--;) {
-            RegisteredStructure structure = value.m_structure[i];
-            if ((structure->indexingType() & IndexingShapeMask) != shape)
-                return false;
-            if (isCopyOnWrite(structure->indexingMode()) && action() == Array::Write)
-                return false;
-            if (!(structure->indexingType() & IsArray))
-                return false;
-            if (!graph.globalObjectFor(node->origin.semantic)->isOriginalArrayStructure(structure.get()))
-                return false;
-        }
-        return true;
-    }
-        
     case Array::Array: {
         if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModesIgnoringTypedArrays(shape | IsArray)))
             return true;
-        if (value.m_structure.isTop())
+        if (!value.m_structure.isFinite())
             return false;
         for (unsigned i = value.m_structure.size(); i--;) {
             RegisteredStructure structure = value.m_structure[i];
-            if ((structure->indexingMode() & IndexingShapeMask) != shape)
-                return false;
-            if (isCopyOnWrite(structure->indexingMode()) && action() == Array::Write)
-                return false;
-            if (!(structure->indexingType() & IsArray))
+            if ((structure->indexingMode() & indexingModeMask) != (shape | IsArray))
                 return false;
         }
         return true;
     }
-        
-    default: {
-        if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModesIgnoringTypedArrays(shape) | asArrayModesIgnoringTypedArrays(shape | IsArray)))
+
+    // Array::OriginalNonArray can be shown when the value is a TypedArray with original structure.
+    // But here, we already filtered TypedArrays. So, just handle it like a NonArray.
+    case Array::OriginalNonArray:
+    case Array::NonArray: {
+        if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModesIgnoringTypedArrays(shape)))
             return true;
-        if (value.m_structure.isTop())
+        if (!value.m_structure.isFinite())
             return false;
         for (unsigned i = value.m_structure.size(); i--;) {
             RegisteredStructure structure = value.m_structure[i];
-            if ((structure->indexingMode() & IndexingShapeMask) != shape)
-                return false;
-            if (isCopyOnWrite(structure->indexingMode()) && action() == Array::Write)
+            if ((structure->indexingMode() & indexingModeMask) != shape)
                 return false;
         }
         return true;
-    } }
+    }
+
+    case Array::PossiblyArray: {
+        if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModesIgnoringTypedArrays(shape) | asArrayModesIgnoringTypedArrays(shape | IsArray)))
+            return true;
+        if (!value.m_structure.isFinite())
+            return false;
+        for (unsigned i = value.m_structure.size(); i--;) {
+            RegisteredStructure structure = value.m_structure[i];
+            if ((structure->indexingMode() & (indexingModeMask & ~IsArray)) != shape)
+                return false;
+        }
+        return true;
+    }
+
+    // If ArrayMode is Array::OriginalCopyOnWriteArray or Array::OriginalArray, CheckArray is never emitted. Instead, we always emit CheckStructure.
+    // So, we should perform the same check to the CheckStructure here.
+    case Array::OriginalArray:
+    case Array::OriginalCopyOnWriteArray: {
+        if (!value.m_structure.isFinite())
+            return false;
+        Structure* originalStructure = originalArrayStructure(graph, node);
+        if (value.m_structure.size() != 1)
+            return false;
+        return value.m_structure.onlyStructure().get() == originalStructure;
+    }
+    }
 }
 
 bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& value) const
