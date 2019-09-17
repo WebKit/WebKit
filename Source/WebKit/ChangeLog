@@ -1,5 +1,29 @@
 2019-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Initial view loading is slow
+        https://bugs.webkit.org/show_bug.cgi?id=201451
+
+        Reviewed by Sergio Villar Senin.
+
+        The problem is that now we are always calling DrawingAreaProxy::waitForBackingStoreUpdateOnNextPaint() after a
+        new process is launched and we used to do that only when launching a new process after a crash. This makes
+        m_hasReceivedFirstUpdate useless, because it's always set to true right after a process is launched. Then, we
+        wait up to half a second (which is usually the case for the initial load) until the first update. We only want
+        to do that when recovering from a crash or when swapping processes to avoid flashing effect.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::launchProcess): Add ProcessLaunchReason parameter and pass it to
+        finishAttachingToWebProcess instead of IsProcessSwap.
+        (WebKit::WebPageProxy::swapToWebProcess): Pass ProcessLaunchReason::ProcessSwap to
+        finishAttachingToWebProcess().
+        (WebKit::WebPageProxy::finishAttachingToWebProcess): Do not call
+        DrawingAreaProxy::waitForBackingStoreUpdateOnNextPaint() when process launch reason is ProcessLaunchReason::InitialProcess.
+        (WebKit::WebPageProxy::launchProcessForReload): Pass ProcessLaunchReason::Reload to launchProcess().
+        * UIProcess/WebPageProxy.h: Remove IsProcessSwap and add ProcessLaunchReason instead that is passed to
+        launchProcess and finishAttachingToWebProcess.
+
+2019-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r249275): [GTK][WPE] WebPage injected bundle messages no longer work
         https://bugs.webkit.org/show_bug.cgi?id=201865
 
