@@ -1,3 +1,14 @@
+2019-09-17  Saam Barati  <sbarati@apple.com>
+
+        CheckArray on DirectArguments/ScopedArguments does not filter out slow put array storage
+        https://bugs.webkit.org/show_bug.cgi?id=201853
+        <rdar://problem/53805461>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/direct-arguments-check-array-filter-type.js: Added.
+        (foo):
+
 2019-09-16  Tadeu Zagallo  <tzagallo@apple.com>
 
         Wasm StreamingParser should validate that number of functions matches number of declarations

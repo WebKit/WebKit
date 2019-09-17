@@ -1,3 +1,20 @@
+2019-09-17  Saam Barati  <sbarati@apple.com>
+
+        CheckArray on DirectArguments/ScopedArguments does not filter out slow put array storage
+        https://bugs.webkit.org/show_bug.cgi?id=201853
+        <rdar://problem/53805461>
+
+        Reviewed by Yusuke Suzuki.
+
+        We were claiming CheckArray for ScopedArguments/DirectArguments was filtering
+        out SlowPutArrayStorage. It does no such thing. We just check that the object
+        is either ScopedArguments/DirectArguments.
+
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::arrayModesThatPassFiltering const):
+        (JSC::DFG::ArrayMode::arrayModesWithIndexingShapes const):
+        (JSC::DFG::ArrayMode::arrayModesWithIndexingShape const): Deleted.
+
 2019-09-16  Tadeu Zagallo  <tzagallo@apple.com>
 
         Wasm StreamingParser should validate that number of functions matches number of declarations
