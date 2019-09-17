@@ -104,7 +104,19 @@ promise_test(async t => {
   // test. So we have to wait until the cross origin register() is done, and not
   // just until the frame loads.
   const frame = await with_iframe_ready(frame_url);
-  t.add_cleanup(() => frame.remove());
+  t.add_cleanup(async () => {
+    // Wait until the cross-origin worker is unregistered.
+    let resolve;
+    const channel = new MessageChannel();
+    channel.port1.onmessage = e => {
+      if (e.data == 'unregistered')
+        resolve();
+    };
+    frame.contentWindow.postMessage('unregister', '*', [channel.port2]);
+    await new Promise(r => { resolve = r; });
+
+    frame.remove();
+  });
 
   const registrations = [
     await service_worker_unregister_and_register(t, script, scope)];
@@ -113,15 +125,5 @@ promise_test(async t => {
   assert_array_equals(
       value, registrations,
       'getRegistrations should only return same origin registrations.');
-
-  // Wait until the cross-origin worker is unregistered.
-  let resolve;
-  const channel = new MessageChannel();
-  channel.port1.onmessage = e => {
-    if (e.data == 'unregistered')
-      resolve();
-  };
-  frame.contentWindow.postMessage('unregister', '*', [channel.port2]);
-  await new Promise(r => { resolve = r; });
 }, 'getRegistrations promise resolves only with same origin registrations.');
 </script>
