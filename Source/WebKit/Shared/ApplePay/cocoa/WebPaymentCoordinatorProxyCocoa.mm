@@ -59,7 +59,7 @@ static void finishCreating(PKPaymentRequest *, const WebCore::ApplePaySessionPay
 
 namespace WebKit {
 
-void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, PAL::SessionID sessionID, WTF::Function<void(bool)>&& completionHandler)
+void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler)
 {
 #if PLATFORM(MAC)
     if (!PAL::isPassKitFrameworkAvailable())
@@ -219,7 +219,7 @@ static PKPaymentRequestAPIType toAPIType(WebCore::ApplePaySessionPaymentRequest:
 }
 #endif
 
-RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(const URL& originatingURL, const Vector<URL>& linkIconURLs, PAL::SessionID sessionID, const WebCore::ApplePaySessionPaymentRequest& paymentRequest)
+RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest)
 {
     auto result = adoptNS([PAL::allocPKPaymentRequestInstance() init]);
 

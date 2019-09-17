@@ -74,9 +74,9 @@ void WebPaymentCoordinatorProxy::canMakePayments(CompletionHandler<void(bool)>&&
     platformCanMakePayments(WTFMove(reply));
 }
 
-void WebPaymentCoordinatorProxy::canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, PAL::SessionID sessionID, CompletionHandler<void(bool)>&& completionHandler)
+void WebPaymentCoordinatorProxy::canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&& completionHandler)
 {
-    platformCanMakePaymentsWithActiveCard(merchantIdentifier, domainName, sessionID, WTFMove(completionHandler));
+    platformCanMakePaymentsWithActiveCard(merchantIdentifier, domainName, WTFMove(completionHandler));
 }
 
 void WebPaymentCoordinatorProxy::openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&& completionHandler)
@@ -84,7 +84,7 @@ void WebPaymentCoordinatorProxy::openPaymentSetup(const String& merchantIdentifi
     platformOpenPaymentSetup(merchantIdentifier, domainName, WTFMove(completionHandler));
 }
 
-void WebPaymentCoordinatorProxy::showPaymentUI(WebCore::PageIdentifier destinationID, PAL::SessionID sessionID, const String& originatingURLString, const Vector<String>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest& paymentRequest, CompletionHandler<void(bool)>&& completionHandler)
+void WebPaymentCoordinatorProxy::showPaymentUI(WebCore::PageIdentifier destinationID, const String& originatingURLString, const Vector<String>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest& paymentRequest, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (auto& coordinator = activePaymentCoordinatorProxy())
         coordinator->didCancelPaymentSession();
@@ -104,7 +104,7 @@ void WebPaymentCoordinatorProxy::showPaymentUI(WebCore::PageIdentifier destinati
     for (const auto& linkIconURLString : linkIconURLStrings)
         linkIconURLs.append(URL(URL(), linkIconURLString));
 
-    platformShowPaymentUI(originatingURL, linkIconURLs, sessionID, paymentRequest, [this, weakThis = makeWeakPtr(*this)](bool result) {
+    platformShowPaymentUI(originatingURL, linkIconURLs, paymentRequest, [this, weakThis = makeWeakPtr(*this)](bool result) {
         if (!weakThis)
             return;
 

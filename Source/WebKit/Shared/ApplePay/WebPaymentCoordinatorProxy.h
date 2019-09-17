@@ -116,9 +116,9 @@ private:
 
     // Message handlers
     void canMakePayments(CompletionHandler<void(bool)>&&);
-    void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, PAL::SessionID, CompletionHandler<void(bool)>&&);
+    void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&);
     void openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&);
-    void showPaymentUI(WebCore::PageIdentifier destinationID, PAL::SessionID, const String& originatingURLString, const Vector<String>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest&, CompletionHandler<void(bool)>&&);
+    void showPaymentUI(WebCore::PageIdentifier destinationID, const String& originatingURLString, const Vector<String>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest&, CompletionHandler<void(bool)>&&);
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&);
     void completeShippingMethodSelection(const Optional<WebCore::ShippingMethodUpdate>&);
     void completeShippingContactSelection(const Optional<WebCore::ShippingContactUpdate>&);
@@ -137,16 +137,16 @@ private:
     void hidePaymentUI();
 
     void platformCanMakePayments(CompletionHandler<void(bool)>&&);
-    void platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, PAL::SessionID, WTF::Function<void(bool)>&& completionHandler);
+    void platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler);
     void platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler);
-    void platformShowPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, PAL::SessionID, const WebCore::ApplePaySessionPaymentRequest&, CompletionHandler<void(bool)>&&);
+    void platformShowPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&, CompletionHandler<void(bool)>&&);
     void platformCompleteMerchantValidation(const WebCore::PaymentMerchantSession&);
     void platformCompleteShippingMethodSelection(const Optional<WebCore::ShippingMethodUpdate>&);
     void platformCompleteShippingContactSelection(const Optional<WebCore::ShippingContactUpdate>&);
     void platformCompletePaymentMethodSelection(const Optional<WebCore::PaymentMethodUpdate>&);
     void platformCompletePaymentSession(const Optional<WebCore::PaymentAuthorizationResult>&);
 #if PLATFORM(COCOA)
-    RetainPtr<PKPaymentRequest> platformPaymentRequest(const URL& originatingURL, const Vector<URL>& linkIconURLs, PAL::SessionID, const WebCore::ApplePaySessionPaymentRequest&);
+    RetainPtr<PKPaymentRequest> platformPaymentRequest(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&);
 #endif
 
     Client& m_client;

@@ -47,9 +47,9 @@ void WebPaymentCoordinatorProxy::platformCanMakePayments(CompletionHandler<void(
     });
 }
 
-void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLStrings, PAL::SessionID sessionID, const WebCore::ApplePaySessionPaymentRequest& request, CompletionHandler<void(bool)>&& completionHandler)
+void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest& request, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto paymentRequest = platformPaymentRequest(originatingURL, linkIconURLStrings, sessionID, request);
+    auto paymentRequest = platformPaymentRequest(originatingURL, linkIconURLStrings, request);
 
     ASSERT(!m_authorizationPresenter);
     m_authorizationPresenter = m_client.paymentCoordinatorAuthorizationPresenter(*this, paymentRequest.get());

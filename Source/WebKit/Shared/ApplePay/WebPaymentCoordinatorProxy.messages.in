@@ -27,10 +27,10 @@
 messages -> WebPaymentCoordinatorProxy {
 
     CanMakePayments() -> (bool result) Synchronous
-    CanMakePaymentsWithActiveCard(String merchantIdentifier, String domainName, PAL::SessionID sessionID) -> (bool canMakePayments) Async
+    CanMakePaymentsWithActiveCard(String merchantIdentifier, String domainName) -> (bool canMakePayments) Async
     OpenPaymentSetup(String merchantIdentifier, String domainName) -> (bool result) Async
 
-    ShowPaymentUI(WebCore::PageIdentifier destinationID, PAL::SessionID sessionID, String originatingURLString, Vector<String> linkIconURLStrings, WebCore::ApplePaySessionPaymentRequest paymentRequest) -> (bool result) Synchronous
+    ShowPaymentUI(WebCore::PageIdentifier destinationID, String originatingURLString, Vector<String> linkIconURLStrings, WebCore::ApplePaySessionPaymentRequest paymentRequest) -> (bool result) Synchronous
     CompleteMerchantValidation(WebCore::PaymentMerchantSession paymentMerchantSession)
     CompleteShippingMethodSelection(Optional<WebCore::ShippingMethodUpdate> update)
     CompleteShippingContactSelection(Optional<WebCore::ShippingContactUpdate> update)

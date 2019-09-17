@@ -1,5 +1,30 @@
 2019-09-17  Chris Dumez  <cdumez@apple.com>
 
+        WebPaymentCoordinatorProxy does not need sessionIDs
+        https://bugs.webkit.org/show_bug.cgi?id=201875
+
+        Reviewed by Geoffrey Garen.
+
+        WebPaymentCoordinatorProxy does not need sessionIDs so let's stop passing them around.
+
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::canMakePaymentsWithActiveCard):
+        (WebKit::WebPaymentCoordinatorProxy::showPaymentUI):
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.h:
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.messages.in:
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard):
+        (WebKit::WebPaymentCoordinatorProxy::platformPaymentRequest):
+        * Shared/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI):
+        * Shared/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI):
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::canMakePaymentsWithActiveCard):
+        (WebKit::WebPaymentCoordinator::showPaymentUI):
+
+2019-09-17  Chris Dumez  <cdumez@apple.com>
+
         There should be a single CacheStorageConnection per WebProcess
         https://bugs.webkit.org/show_bug.cgi?id=201874
 
