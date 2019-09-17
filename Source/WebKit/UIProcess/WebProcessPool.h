@@ -187,6 +187,7 @@ public:
     IPC::Connection* networkingProcessConnection();
 
     template<typename T> void sendToAllProcesses(const T& message);
+    template<typename T> void sendToAllProcessesForSession(const T& message, PAL::SessionID);
     template<typename T> void sendToAllProcessesRelaunchingThemIfNecessary(const T& message);
     template<typename T> void sendToOneProcess(T&& message);
 
@@ -841,6 +842,17 @@ void WebProcessPool::sendToAllProcesses(const T& message)
     for (size_t i = 0; i < processCount; ++i) {
         WebProcessProxy* process = m_processes[i].get();
         if (process->canSendMessage())
+            process->send(T(message), 0);
+    }
+}
+
+template<typename T>
+void WebProcessPool::sendToAllProcessesForSession(const T& message, PAL::SessionID sessionID)
+{
+    size_t processCount = m_processes.size();
+    for (size_t i = 0; i < processCount; ++i) {
+        WebProcessProxy* process = m_processes[i].get();
+        if (process->canSendMessage() && !process->isPrewarmed() && process->sessionID() == sessionID)
             process->send(T(message), 0);
     }
 }

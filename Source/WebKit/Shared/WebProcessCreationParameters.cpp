@@ -111,7 +111,6 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << notificationPermissions;
 #endif
 
-    encoder << plugInAutoStartOriginHashes;
     encoder << plugInAutoStartOrigins;
     encoder << memoryCacheDisabled;
     encoder << attrStyleEnabled;
@@ -315,8 +314,6 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
 #endif
 
-    if (!decoder.decode(parameters.plugInAutoStartOriginHashes))
-        return false;
     if (!decoder.decode(parameters.plugInAutoStartOrigins))
         return false;
     if (!decoder.decode(parameters.memoryCacheDisabled))

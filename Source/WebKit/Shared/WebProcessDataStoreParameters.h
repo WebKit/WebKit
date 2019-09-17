@@ -43,6 +43,7 @@ struct WebProcessDataStoreParameters {
     SandboxExtension::Handle mediaKeyStorageDirectoryExtensionHandle;
     String javaScriptConfigurationDirectory;
     SandboxExtension::Handle javaScriptConfigurationDirectoryExtensionHandle;
+    HashMap<unsigned, WallTime> plugInAutoStartOriginHashes;
     bool resourceLoadStatisticsEnabled { false };
 
     template<class Encoder> void encode(Encoder&) const;
@@ -64,6 +65,7 @@ void WebProcessDataStoreParameters::encode(Encoder& encoder) const
     encoder << mediaKeyStorageDirectoryExtensionHandle;
     encoder << javaScriptConfigurationDirectory;
     encoder << javaScriptConfigurationDirectoryExtensionHandle;
+    encoder << plugInAutoStartOriginHashes;
     encoder << resourceLoadStatisticsEnabled;
 }
 
@@ -123,6 +125,11 @@ Optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::decode(De
     decoder >> javaScriptConfigurationDirectoryExtensionHandle;
     if (!javaScriptConfigurationDirectoryExtensionHandle)
         return WTF::nullopt;
+        
+    Optional<HashMap<unsigned, WallTime>> plugInAutoStartOriginHashes;
+    decoder >> plugInAutoStartOriginHashes;
+    if (!plugInAutoStartOriginHashes)
+        return WTF::nullopt;
 
     bool resourceLoadStatisticsEnabled = false;
     if (!decoder.decode(resourceLoadStatisticsEnabled))
@@ -141,6 +148,7 @@ Optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::decode(De
         WTFMove(*mediaKeyStorageDirectoryExtensionHandle),
         WTFMove(javaScriptConfigurationDirectory),
         WTFMove(*javaScriptConfigurationDirectoryExtensionHandle),
+        WTFMove(*plugInAutoStartOriginHashes),
         resourceLoadStatisticsEnabled
     };
 }

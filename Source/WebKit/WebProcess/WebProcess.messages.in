@@ -53,9 +53,8 @@ messages -> WebProcess LegacyReceiver {
     FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
 
     # Plug-ins.
-    DidAddPlugInAutoStartOriginHash(uint32_t hash, WallTime expirationTime, PAL::SessionID sessionID)
-    ResetPlugInAutoStartOriginDefaultHashes(HashMap<uint32_t,WallTime> hashes)
-    ResetPlugInAutoStartOriginHashes(HashMap<PAL::SessionID, HashMap<uint32_t,WallTime>> hashes)
+    DidAddPlugInAutoStartOriginHash(uint32_t hash, WallTime expirationTime)
+    ResetPlugInAutoStartOriginHashes(HashMap<uint32_t,WallTime> hashes)
     SetPluginLoadClientPolicy(uint8_t policy, String host, String bundleIdentifier, String versionString)
     ResetPluginLoadClientPolicies(HashMap<String, HashMap<String, HashMap<String, uint8_t>>> pluginLoadClientPolicies)
     ClearPluginClientPolicies()
@@ -78,9 +77,9 @@ messages -> WebProcess LegacyReceiver {
 
     ReleasePageCache()
 
-    FetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes) -> (struct WebKit::WebsiteData websiteData) Async
-    DeleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, WallTime modifiedSince) -> () Async
-    DeleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins) -> () Async
+    FetchWebsiteData(OptionSet<WebKit::WebsiteDataType> websiteDataTypes) -> (struct WebKit::WebsiteData websiteData) Async
+    DeleteWebsiteData(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, WallTime modifiedSince) -> () Async
+    DeleteWebsiteDataForOrigins(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins) -> () Async
 
     SetHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds)
 #if PLATFORM(COCOA)
@@ -111,7 +110,7 @@ messages -> WebProcess LegacyReceiver {
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    EstablishWorkerContextConnectionToNetworkProcess(uint64_t pageGroupID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, struct WebKit::WebPreferencesStore store, WebCore::RegistrableDomain domain, PAL::SessionID initialSessionID)
+    EstablishWorkerContextConnectionToNetworkProcess(uint64_t pageGroupID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, struct WebKit::WebPreferencesStore store, WebCore::RegistrableDomain domain)
     RegisterServiceWorkerClients()
 #endif
 

@@ -1842,7 +1842,7 @@ void PluginView::pluginDidReceiveUserInteraction()
     String pluginOrigin = plugInImageElement.loadedUrl().host().toString();
     String mimeType = plugInImageElement.serviceType();
 
-    WebProcess::singleton().plugInDidReceiveUserInteraction(pageOrigin, pluginOrigin, mimeType, plugInImageElement.document().page()->sessionID());
+    WebProcess::singleton().plugInDidReceiveUserInteraction(pageOrigin, pluginOrigin, mimeType);
 }
 
 bool PluginView::shouldCreateTransientPaintingSnapshot() const

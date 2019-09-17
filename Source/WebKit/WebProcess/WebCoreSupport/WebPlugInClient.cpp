@@ -55,7 +55,8 @@ bool WebPlugInClient::shouldAutoStartFromOrigin(const String& pageOrigin, const 
 
 void WebPlugInClient::didStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, PAL::SessionID sessionID)
 {
-    WebProcess::singleton().plugInDidStartFromOrigin(pageOrigin, pluginOrigin, mimeType, sessionID);
+    ASSERT_UNUSED(sessionID, sessionID == WebProcess::singleton().sessionID());
+    WebProcess::singleton().plugInDidStartFromOrigin(pageOrigin, pluginOrigin, mimeType);
 }
 
 } // namespace WebKit

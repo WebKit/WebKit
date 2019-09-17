@@ -61,7 +61,7 @@ public:
     void setAutoStartOriginsFilteringOutEntriesAddedAfterTime(API::Dictionary&, WallTime);
     void setAutoStartOriginsArray(API::Array&);
 
-    SessionPlugInAutoStartOriginMap autoStartOriginHashesCopy() const;
+    PlugInAutoStartOriginMap autoStartOriginHashesCopy(PAL::SessionID) const;
     const PlugInAutoStartOrigins& autoStartOrigins() const { return m_autoStartOrigins; }
 
 private:
