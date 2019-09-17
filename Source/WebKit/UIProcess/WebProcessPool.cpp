@@ -832,6 +832,14 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
 {
     if (!m_prewarmedProcess)
         return nullptr;
+    
+    // There is sometimes a delay until we get notified that a prewarmed process has been terminated (e.g. after resuming
+    // from suspension) so make sure the process is still running here before deciding to use it.
+    if (m_prewarmedProcess->state() == AuxiliaryProcessProxy::State::Terminated) {
+        RELEASE_LOG_ERROR(Process, "Not using prewarmed process %d because it has been terminated", m_prewarmedProcess->processIdentifier());
+        m_prewarmedProcess = nullptr;
+        return nullptr;
+    }
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     // In platforms using Bubblewrap for sandboxing, prewarmed process is launched using the WebProcessPool primary WebsiteDataStore,

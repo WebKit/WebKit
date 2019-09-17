@@ -123,6 +123,7 @@ protected:
 private:
     virtual void connectionWillOpen(IPC::Connection&);
     virtual void processWillShutDown(IPC::Connection&) = 0;
+    static bool isRunningProcessPID(ProcessID);
 
     Vector<std::pair<std::unique_ptr<IPC::Encoder>, OptionSet<IPC::SendOption>>> m_pendingMessages;
     RefPtr<ProcessLauncher> m_processLauncher;
