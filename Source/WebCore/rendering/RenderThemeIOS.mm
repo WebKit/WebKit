@@ -1529,6 +1529,7 @@ const CGSize attachmentSize = { 160, 119 };
 
 const CGFloat attachmentBorderRadius = 16;
 static Color attachmentBorderColor() { return Color(204, 204, 204); }
+static CGFloat attachmentBorderThickness = 1;
 
 static Color attachmentProgressColor() { return Color(222, 222, 222); }
 const CGFloat attachmentProgressBorderThickness = 3;
@@ -1839,15 +1840,18 @@ static void paintAttachmentProgress(GraphicsContext& context, RenderAttachmentIn
 
 static Path attachmentBorderPath(RenderAttachmentInfo& info)
 {
+    auto insetAttachmentRect = info.attachmentRect;
+    insetAttachmentRect.inflate(-attachmentBorderThickness / 2);
+
     Path borderPath;
-    borderPath.addRoundedRect(info.attachmentRect, FloatSize(attachmentBorderRadius, attachmentBorderRadius));
+    borderPath.addRoundedRect(insetAttachmentRect, FloatSize(attachmentBorderRadius, attachmentBorderRadius));
     return borderPath;
 }
 
 static void paintAttachmentBorder(GraphicsContext& context, Path& borderPath)
 {
     context.setStrokeColor(attachmentBorderColor());
-    context.setStrokeThickness(1);
+    context.setStrokeThickness(attachmentBorderThickness);
     context.strokePath(borderPath);
 }
 
