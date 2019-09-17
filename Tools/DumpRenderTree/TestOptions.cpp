@@ -81,6 +81,8 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
             enableIntersectionObserver = parseBooleanTestHeaderValue(value);
         else if (key == "useEphemeralSession")
             useEphemeralSession = parseBooleanTestHeaderValue(value);
+        else if (key == "enablePageCache")
+            enablePageCache = parseBooleanTestHeaderValue(value);
         else if (key == "enableMenuItemElement")
             enableMenuItemElement = parseBooleanTestHeaderValue(value);
         else if (key == "enableKeygenElement")

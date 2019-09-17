@@ -762,6 +762,7 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
         m_drawingArea->enablePainting();
 
         m_drawingArea->adoptLayersFromDrawingArea(*oldDrawingArea);
+        m_drawingArea->adoptDisplayRefreshMonitorsFromDrawingArea(*oldDrawingArea);
 
         unfreezeLayerTree(LayerTreeFreezeReason::PageSuspended);
     }

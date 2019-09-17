@@ -1,3 +1,28 @@
+2019-09-17  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (iOS 13): rAF stops firing when navigating away cross-origin and then back
+        https://bugs.webkit.org/show_bug.cgi?id=201767
+        <rdar://problem/55350854>
+
+        Reviewed by Geoffrey Garen.
+
+        When navigating back and restoring a SuspendedPage, WebPage::reinitializeWebPage() ends up
+        reconstructing a new DrawingArea to match the identifier of the DrawingAreaProxy that the
+        UIProcess created. The issue is that when reconstructing the DrawingArea, we were losing
+        the DisplayRefreshMonitors that had been registered on the previous drawing area. To
+        address the issue, we now make sure to transfer the DisplayRefreshMonitors over from the
+        old to the new drawing area. This patch is kept as small as possible to faciliate cherry
+        picking to a branch. However, I think we should consider refactoring the code so that
+        we no longer need to re-create the DrawingArea in the WebProcess in this case.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::adoptDisplayRefreshMonitorsFromDrawingArea):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::adoptDisplayRefreshMonitorsFromDrawingArea):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::reinitializeWebPage):
+
 2019-09-17  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r249950.

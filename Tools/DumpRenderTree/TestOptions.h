@@ -33,6 +33,7 @@ struct TestOptions {
     bool useAcceleratedDrawing { false };
     bool enableIntersectionObserver { false };
     bool useEphemeralSession { false };
+    bool enablePageCache { false };
     bool enableMenuItemElement { false };
     bool enableKeygenElement { false };
     bool enableModernMediaControls { true };

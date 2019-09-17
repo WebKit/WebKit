@@ -912,6 +912,7 @@ static void setWebPreferencesForTestOptions(IWebPreferences* preferences, const 
     prefsPrivate->setIsSecureContextAttributeEnabled(options.enableIsSecureContextAttribute);
     prefsPrivate->setInspectorAdditionsEnabled(options.enableInspectorAdditions);
     preferences->setPrivateBrowsingEnabled(options.useEphemeralSession);
+    preferences->setUsesPageCache(options.enablePageCache);
 }
 
 static String applicationId()

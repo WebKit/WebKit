@@ -1028,6 +1028,7 @@ static void setWebPreferencesForTestOptions(const TestOptions& options)
     preferences.resizeObserverEnabled = options.enableResizeObserver;
     preferences.coreMathMLEnabled = options.enableCoreMathML;
     preferences.privateBrowsingEnabled = options.useEphemeralSession;
+    preferences.usesPageCache = options.enablePageCache;
 }
 
 // Called once on DumpRenderTree startup.

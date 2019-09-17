@@ -147,6 +147,7 @@ public:
 #endif
 
     virtual void adoptLayersFromDrawingArea(DrawingArea&) { }
+    virtual void adoptDisplayRefreshMonitorsFromDrawingArea(DrawingArea&) { }
 
     void removeMessageReceiverIfNeeded();
 
