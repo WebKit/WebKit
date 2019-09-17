@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: line 28: Error
-CONSOLE MESSAGE: line 37: Error
-CONSOLE MESSAGE: line 49: Error
-CONSOLE MESSAGE: line 59: Error
 
 PASS Exception in success event handler on request 
 PASS Exception in success event listener on request 

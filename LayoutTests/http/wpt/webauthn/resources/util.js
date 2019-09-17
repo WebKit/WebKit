@@ -339,7 +339,7 @@ function checkCtapMakeCredentialResult(credential, isNoneAttestation = true)
     assert_equals(credential.type, 'public-key');
     assert_array_equals(new Uint8Array(credential.rawId), Base64URL.parse(testHidCredentialIdBase64));
     assert_equals(bytesToASCIIString(credential.response.clientDataJSON), '{"type":"webauthn.create","challenge":"MTIzNDU2","origin":"https://localhost:9443"}');
-    assert_not_exists(credential.getClientExtensionResults(), "appid");
+    assert_not_own_property(credential.getClientExtensionResults(), "appid");
 
     // Check attestation
     const attestationObject = CBOR.decode(credential.response.attestationObject);
@@ -374,7 +374,7 @@ function checkU2fMakeCredentialResult(credential, isNoneAttestation = true)
     assert_equals(credential.type, 'public-key');
     assert_array_equals(new Uint8Array(credential.rawId), Base64URL.parse(testU2fCredentialIdBase64));
     assert_equals(bytesToASCIIString(credential.response.clientDataJSON), '{"type":"webauthn.create","challenge":"MTIzNDU2","origin":"https://localhost:9443"}');
-    assert_not_exists(credential.getClientExtensionResults(), "appid");
+    assert_not_own_property(credential.getClientExtensionResults(), "appid");
 
     // Check attestation
     const attestationObject = CBOR.decode(credential.response.attestationObject);
@@ -405,7 +405,7 @@ function checkCtapGetAssertionResult(credential)
     assert_array_equals(new Uint8Array(credential.rawId), Base64URL.parse(testHidCredentialIdBase64));
     assert_equals(bytesToASCIIString(credential.response.clientDataJSON), '{"type":"webauthn.get","challenge":"MTIzNDU2","origin":"https://localhost:9443"}');
     assert_equals(credential.response.userHandle, null);
-    assert_not_exists(credential.getClientExtensionResults(), "appid");
+    assert_not_own_property(credential.getClientExtensionResults(), "appid");
 
     // Check authData
     const authData = decodeAuthData(new Uint8Array(credential.response.authenticatorData));
@@ -423,7 +423,7 @@ function checkU2fGetAssertionResult(credential, isAppID = false, appIDHash = "c2
     assert_equals(bytesToASCIIString(credential.response.clientDataJSON), '{"type":"webauthn.get","challenge":"MTIzNDU2","origin":"https://localhost:9443"}');
     assert_equals(credential.response.userHandle, null);
     if (!isAppID)
-        assert_not_exists(credential.getClientExtensionResults(), "appid");
+        assert_not_own_property(credential.getClientExtensionResults(), "appid");
     else
         assert_true(credential.getClientExtensionResults().appid);
 

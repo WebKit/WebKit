@@ -1,4 +1,4 @@
  
 
-FAIL Untitled TypeError: null is not an object (evaluating 'document.currentScript.setAttribute')
+FAIL svgscript-nonces-hidden-meta TypeError: null is not an object (evaluating 'document.currentScript.setAttribute')
 

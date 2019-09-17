@@ -1,3 +1,3 @@
 
-FAIL Untitled assert_equals: expected "gamma\n" but got "beta\n"
+FAIL xhr-worker assert_equals: expected "gamma\n" but got "beta\n"
 

@@ -1,3 +1,185 @@
+2019-09-17  Chris Dumez  <cdumez@apple.com>
+
+        Update testharness.js from upstream for web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=201843
+
+        Reviewed by Jiewen Tan.
+
+        Update testharness.js from upstream 6fd5e1e086ce590a4780a30d129 for web-platform-tests and
+        rebaseline tests accordingly.
+
+        * web-platform-tests/FileAPI/FileReader/workers-expected.txt:
+        * web-platform-tests/FileAPI/url/url-format.any.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.worker-expected.txt:
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constants.any-expected.txt:
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constants.any.worker-expected.txt:
+        * web-platform-tests/content-security-policy/inside-worker/shared-inheritance-expected.txt:
+        * web-platform-tests/content-security-policy/inside-worker/shared-script-expected.txt:
+        * web-platform-tests/content-security-policy/nonce-hiding/svgscript-nonces-hidden-meta.tentative.sub-expected.txt:
+        * web-platform-tests/content-security-policy/nonce-hiding/svgscript-nonces-hidden.tentative-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-001-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-002-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-003-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-004-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-005-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-006-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-007-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-008-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-009-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-010-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-011-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-012-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-013-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-014-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-015-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-016-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-017-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-018-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-019-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-020-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-021-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-022-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-023-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-024-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-025-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-026-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-027-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-028-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-029-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-030-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-031-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-032-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-033-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-034-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-035-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-036-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-001-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-002-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-003-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-004-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-005-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-006-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-007-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-008-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-change-fit-content-argument-001-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/unit-cycles-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/url-resolution-expected.txt:
+        * web-platform-tests/custom-elements/parser/parser-fallsback-to-unknown-element-expected.txt:
+        * web-platform-tests/dom/events/Event-dispatch-listener-order.window-expected.txt:
+        * web-platform-tests/dom/events/Event-isTrusted.any-expected.txt:
+        * web-platform-tests/dom/events/Event-isTrusted.any.worker-expected.txt:
+        * web-platform-tests/dom/nodes/Element-getElementsByTagName-change-document-HTMLNess-expected.txt:
+        * web-platform-tests/eventsource/eventsource-prototype-expected.txt:
+        * web-platform-tests/fetch/api/basic/stream-safe-creation.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-cache.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-cache.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-redirect.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-redirect.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin-service-worker.https-expected.txt:
+        * web-platform-tests/fetch/api/request/request-consume-empty-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume-empty-expected.txt:
+        * web-platform-tests/fetch/cross-origin-resource-policy/scheme-restriction.https.window-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/javascript-url-global-scope-expected.txt:
+        * web-platform-tests/html/browsers/history/joint-session-history/joint-session-history-iframe-state-expected.txt:
+        * web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-expected.txt:
+        * web-platform-tests/html/browsers/origin/origin-of-data-document-expected.txt:
+        * web-platform-tests/html/browsers/origin/relaxing-the-same-origin-restriction/document_domain_setter-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/no_window_open_when_term_nesting_level_nonzero.window-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/focus.window-expected.txt:
+        * web-platform-tests/html/browsers/windows/document-access/document_access_parent_access.tentative-expected.txt:
+        * web-platform-tests/html/browsers/windows/targeting-cross-origin-nested-browsing-contexts-expected.txt:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-01-expected.txt:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-02-expected.txt:
+        * web-platform-tests/html/rendering/non-replaced-elements/flow-content-0/dialog-display-expected.txt:
+        * web-platform-tests/html/rendering/non-replaced-elements/tables/table-vspace-hspace-expected.txt:
+        * web-platform-tests/html/rendering/non-replaced-elements/tables/table-vspace-hspace-s-expected.txt:
+        * web-platform-tests/html/rendering/non-replaced-elements/the-page/iframe-marginwidth-marginheight-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-base-element/base_target_does_not_affect_iframe_src_navigation-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-base-element/base_target_does_not_affect_location_assignment-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/not-in-shadow-tree-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/srclang-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/language-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-frame-element/document-getters-return-null-for-cross-origin-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/document-getters-return-null-for-cross-origin-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_allow_downloads_without_user_activation.sub.tentative-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_allow_downloads_without_user_activation.sub.tentative-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox_030-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-object-element/document-getters-return-null-for-cross-origin-expected.txt:
+        * web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/htmlanchorelement_noopener-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/084-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/charset-02-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/crossorigin-expected.txt:
+        * web-platform-tests/html/syntax/parsing/quotes-in-meta-expected.txt:
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/document-open-cancels-javascript-url-navigation-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-parse-error-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-runtime-error-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-runtime-error-throw-expected.txt:
+        * web-platform-tests/html/webappapis/timers/negative-settimeout-expected.txt:
+        * web-platform-tests/infrastructure/server/context.any-expected.txt:
+        * web-platform-tests/infrastructure/server/context.any.serviceworker-expected.txt:
+        * web-platform-tests/infrastructure/server/context.any.worker-expected.txt:
+        * web-platform-tests/infrastructure/server/title.any.worker-expected.txt:
+        * web-platform-tests/mediacapture-streams/MediaStreamTrack-end-manual.https-expected.txt:
+        * web-platform-tests/pointerevents/pointerevent_root_computed_style-expected.txt:
+        * web-platform-tests/pointerevents/pointerevent_root_hit_test-expected.txt:
+        * web-platform-tests/preload/link-header-preload-nonce-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_match_origin-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_match_wildcard-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_multi-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_multi_wildcard-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_null-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_origin_uppercase-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_space-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_wildcard-expected.txt:
+        * web-platform-tests/resources/testharness.css.headers:
+        * web-platform-tests/resources/testharness.js:
+        (WindowTestEnvironment.prototype._forEach_windows):
+        (WindowTestEnvironment.prototype.next_default_test_name):
+        (WorkerTestEnvironment.prototype.next_default_test_name):
+        (ShellTestEnvironment):
+        (ShellTestEnvironment.prototype.next_default_test_name):
+        (ShellTestEnvironment.prototype.on_new_harness_properties):
+        (ShellTestEnvironment.prototype.on_tests_ready):
+        (ShellTestEnvironment.prototype.add_on_loaded_callback):
+        (ShellTestEnvironment.prototype.test_timeout):
+        (create_test_environment):
+        (is_shared_worker):
+        (is_service_worker):
+        (test):
+        (promise_test):
+        (this.wait_for):
+        (EventWatcher):
+        (done):
+        * web-platform-tests/resources/testharness.js.headers:
+        * web-platform-tests/server-timing/resource_timing_idl-expected.txt:
+        * web-platform-tests/server-timing/resource_timing_idl.https-expected.txt:
+        * web-platform-tests/server-timing/service_worker_idl-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-get-resultingClientId.https-expected.txt:
+        * web-platform-tests/streams/piping/general-expected.txt:
+        * web-platform-tests/visual-viewport/viewport-read-size-causes-layout-expected.txt:
+        * web-platform-tests/visual-viewport/viewport-read-size-in-iframe-causes-layout-expected.txt:
+        * web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.worker-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/canceling-an-animation-expected.txt:
+        * web-platform-tests/webrtc/RTCRtpTransceiver-setCodecPreferences-expected.txt:
+        * web-platform-tests/websockets/Close-undefined.any.worker-expected.txt:
+        * web-platform-tests/websockets/opening-handshake/003-expected.txt:
+        * web-platform-tests/websockets/unload-a-document/001-expected.txt:
+        * web-platform-tests/websockets/unload-a-document/002-expected.txt:
+        * web-platform-tests/websockets/unload-a-document/003-expected.txt:
+        * web-platform-tests/websockets/unload-a-document/004-expected.txt:
+        * web-platform-tests/workers/WorkerGlobalScope_requestAnimationFrame.tentative.worker-expected.txt:
+        * web-platform-tests/workers/Worker_ErrorEvent_error-expected.txt:
+        * web-platform-tests/workers/baseurl/alpha/importScripts-in-worker-expected.txt:
+        * web-platform-tests/workers/baseurl/alpha/xhr-in-worker-expected.txt:
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/001.worker-expected.txt:
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/002.worker-expected.txt:
+        * web-platform-tests/xhr/overridemimetype-done-state.any-expected.txt:
+        * web-platform-tests/xhr/overridemimetype-done-state.any.worker-expected.txt:
+        * web-platform-tests/xhr/responsetype.any-expected.txt:
+        * web-platform-tests/xhr/timeout-sync-expected.txt:
+
 2019-09-17  Antti Koivisto  <antti@apple.com>
 
         TextIterator should convert tabs to spaces

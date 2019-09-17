@@ -18,16 +18,16 @@ PASS WebAssembly.instantiate(module): Non-object module: 0.1
 PASS WebAssembly.instantiate(module): Non-object module: NaN 
 PASS WebAssembly.instantiate(module): Missing imports argument 
 PASS WebAssembly.instantiate(module): Imports argument with missing property: undefined 
-TIMEOUT WebAssembly.instantiate(module): Imports argument with missing property: empty object Test timed out
-NOTRUN WebAssembly.instantiate(module): Imports argument with missing property: wrong property 
-NOTRUN WebAssembly.instantiate(module): Importing an i64 global 
-NOTRUN WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: undefined 
-NOTRUN WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: null 
-NOTRUN WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: true 
-NOTRUN WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: "" 
-NOTRUN WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: symbol "Symbol()" 
-NOTRUN WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: 1 
-NOTRUN WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: 0.1 
-NOTRUN WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: NaN 
-NOTRUN WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: object "[object Object]" 
+PASS WebAssembly.instantiate(module): Imports argument with missing property: empty object 
+PASS WebAssembly.instantiate(module): Imports argument with missing property: wrong property 
+PASS WebAssembly.instantiate(module): Importing an i64 global 
+PASS WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: undefined 
+PASS WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: null 
+PASS WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: true 
+PASS WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: "" 
+PASS WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: symbol "Symbol()" 
+PASS WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: 1 
+PASS WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: 0.1 
+PASS WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: NaN 
+PASS WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: object "[object Object]" 
 

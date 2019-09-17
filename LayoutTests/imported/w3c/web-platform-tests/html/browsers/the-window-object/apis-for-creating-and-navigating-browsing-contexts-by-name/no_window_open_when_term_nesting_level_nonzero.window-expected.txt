@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 2659: Error: assert_equals: expected no popup during pagehide expected null but got object "[object Window]"
-CONSOLE MESSAGE: line 2659: Error: assert_equals: expected no popup during unload expected null but got object "[object Window]"
+CONSOLE MESSAGE: line 3082: Error: assert_equals: expected no popup during pagehide expected null but got object "[object Window]"
+CONSOLE MESSAGE: line 3082: Error: assert_equals: expected no popup during unload expected null but got object "[object Window]"
 
 PASS no popups with frame removal 
 FAIL no popups with frame navigation assert_equals: expected no popup during beforeunload expected null but got object "[object Window]"

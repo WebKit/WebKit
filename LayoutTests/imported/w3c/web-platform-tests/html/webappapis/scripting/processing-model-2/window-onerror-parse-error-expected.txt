@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: line 34: SyntaxError: Unexpected identifier 'script'
-CONSOLE MESSAGE: line 1401: Error: Tried to create a test with file_is_test
-CONSOLE MESSAGE: line 1401: Error: Tried to create a test with file_is_test
-CONSOLE MESSAGE: line 1401: Error: Tried to create a test with file_is_test
+CONSOLE MESSAGE: line 1515: Error: Tried to create a test with file_is_test
+CONSOLE MESSAGE: line 1515: Error: Tried to create a test with file_is_test
+CONSOLE MESSAGE: line 1515: Error: Tried to create a test with file_is_test
 
 PASS window.onerror: parse errors 
 

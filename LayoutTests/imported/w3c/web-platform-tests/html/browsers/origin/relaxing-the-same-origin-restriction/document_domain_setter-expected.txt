@@ -1,6 +1,6 @@
 CONSOLE MESSAGE: line 7: SecurityError: Attempted to use a non-registrable domain.
-CONSOLE MESSAGE: line 1489: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". The frame requesting access set "document.domain" to "localhost", but the frame being accessed did not. Both must set "document.domain" to the same value to allow access.
-CONSOLE MESSAGE: line 1489: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". The frame requesting access set "document.domain" to "localhost", but the frame being accessed did not. Both must set "document.domain" to the same value to allow access.
+CONSOLE MESSAGE: line 1611: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". The frame requesting access set "document.domain" to "localhost", but the frame being accessed did not. Both must set "document.domain" to the same value to allow access.
+CONSOLE MESSAGE: line 1611: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". The frame requesting access set "document.domain" to "localhost", but the frame being accessed did not. Both must set "document.domain" to the same value to allow access.
 
 
 FAIL failed setting of document.domain assert_throws: function "function () { document.domain = SUFFIX_HOST; }" did not throw

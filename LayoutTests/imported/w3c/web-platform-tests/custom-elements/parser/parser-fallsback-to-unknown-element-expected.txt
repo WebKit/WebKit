@@ -2,7 +2,7 @@ CONSOLE MESSAGE: TypeError: The result of constructing a custom element must be 
 CONSOLE MESSAGE: TypeError: The result of constructing a custom element must be a HTMLElement
 CONSOLE MESSAGE: line 35: ReferenceError: Cannot access uninitialized variable.
 CONSOLE MESSAGE: line 41: Bad
-CONSOLE MESSAGE: line 1401: Error: Tried to create a test with file_is_test
+CONSOLE MESSAGE: line 1515: Error: Tried to create a test with file_is_test
 
 PASS Custom Elements: Changes to the HTML parser 
 

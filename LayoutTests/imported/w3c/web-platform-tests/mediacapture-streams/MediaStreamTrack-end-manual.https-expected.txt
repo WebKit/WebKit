@@ -5,5 +5,7 @@ Description
 This test checks that the video and audio tracks of MediaStream object returned by the success callback in getUserMedia are correctly set into inactive state when permission is revoked.
 
 
+Harness Error (TIMEOUT), message = null
+
 TIMEOUT Tests that the video MediaStreamTrack objects are properly ended on permission revocation Test timed out
 

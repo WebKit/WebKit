@@ -1,6 +1,6 @@
 CONSOLE MESSAGE: Refused to load http://localhost:8800/preload/resources/dummy.js?from-header&without-nonce because it does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: Refused to load http://localhost:8800/preload/resources/dummy.js?from-header&with-nonce because it does not appear in the script-src directive of the Content Security Policy.
-CONSOLE MESSAGE: line 2659: Error: assert_equals: resources/dummy.js?from-header&with-nonce expected 1 but got 0
+CONSOLE MESSAGE: line 3082: Error: assert_equals: resources/dummy.js?from-header&with-nonce expected 1 but got 0
 
 FAIL Makes sure that Link headers preload resources with CSP nonce Error: assert_equals: resources/dummy.js?from-header&with-nonce expected 1 but got 0
 

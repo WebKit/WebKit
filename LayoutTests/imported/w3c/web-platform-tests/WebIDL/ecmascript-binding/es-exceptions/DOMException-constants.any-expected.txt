@@ -1,5 +1,5 @@
 
-PASS Untitled 
+PASS DOMException-constants 
 PASS Constant INDEX_SIZE_ERR on DOMException constructor object 
 PASS Constant INDEX_SIZE_ERR on DOMException prototype object 
 PASS Constant DOMSTRING_SIZE_ERR on DOMException constructor object 

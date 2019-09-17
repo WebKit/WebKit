@@ -1,3 +1,5 @@
 
+Harness Error (FAIL), message = Test named 'WebSockets: navigating nested browsing context with closed websocket' specified 2 'cleanup' functions, and 1 failed.
+
 FAIL WebSockets: navigating nested browsing context with closed websocket assert_unreached: document was discarded Reached unreachable code
 

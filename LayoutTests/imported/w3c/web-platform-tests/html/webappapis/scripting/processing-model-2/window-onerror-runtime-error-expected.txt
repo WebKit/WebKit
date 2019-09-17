@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: line 36: TypeError: undefined is not an object (evaluating 'window.nonexistentproperty.oops')
-CONSOLE MESSAGE: line 1401: Error: Tried to create a test with file_is_test
-CONSOLE MESSAGE: line 1401: Error: Tried to create a test with file_is_test
-CONSOLE MESSAGE: line 1401: Error: Tried to create a test with file_is_test
+CONSOLE MESSAGE: line 1515: Error: Tried to create a test with file_is_test
+CONSOLE MESSAGE: line 1515: Error: Tried to create a test with file_is_test
+CONSOLE MESSAGE: line 1515: Error: Tried to create a test with file_is_test
 
 PASS window.onerror: runtime scripterrors 
 

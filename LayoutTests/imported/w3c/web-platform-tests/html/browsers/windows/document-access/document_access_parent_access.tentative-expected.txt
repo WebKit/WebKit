@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: line 2: TypeError: Not enough arguments
 
 
-FAIL Untitled assert_equals: Security Error thrown expected "SecurityError" but got "ReferenceError"
+FAIL document_access_parent_access assert_equals: Security Error thrown expected "SecurityError" but got "ReferenceError"
 

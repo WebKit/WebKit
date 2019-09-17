@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: line 1: TypeError: null is not an object (evaluating 'top.log')
-CONSOLE MESSAGE: line 1401: Error: Tried to create a test with file_is_test
+CONSOLE MESSAGE: line 1515: Error: Tried to create a test with file_is_test
 FAILED (This TC requires JavaScript enabled)
 
 FAIL  scheduler: event listener defined by script in a removed IFRAME TypeError: null is not an object (evaluating 'top.log')

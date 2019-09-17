@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS throwing Object.prototype.start accessor should not affect stream creation by 'fetch' 
 PASS Object.prototype.start accessor returning invalid value should not affect stream creation by 'fetch' 
 PASS throwing Object.prototype.type accessor should not affect stream creation by 'fetch' 

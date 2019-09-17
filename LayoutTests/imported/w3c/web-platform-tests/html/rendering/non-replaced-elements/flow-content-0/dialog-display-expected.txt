@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 2659: Error: assert_equals: expected "block" but got "inline"
+CONSOLE MESSAGE: line 3082: Error: assert_equals: expected "block" but got "inline"
 
 FAIL dialog: display Error: assert_equals: expected "block" but got "inline"
 

@@ -1,8 +1,8 @@
 
 PASS global setup 
 FAIL get(resultingClientId) for same-origin document assert_equals: promiseValue expected "client" but got "undefinedValue"
-FAIL get(resultingClientId) on cross-origin redirect assert_equals: get(event.resultingClientId) in the fetch event should fulfill expected (string) "fulfilled" but got (undefined) undefined
-FAIL get(resultingClientId) for document sandboxed by CSP header assert_equals: get(event.resultingClientId) in the fetch event should fulfill expected (string) "fulfilled" but got (undefined) undefined
-FAIL get(resultingClientId) for document sandboxed by CSP header with allow-same-origin assert_equals: get(event.resultingClientId) in the fetch event should fulfill expected (string) "fulfilled" but got (undefined) undefined
+PASS get(resultingClientId) on cross-origin redirect 
+PASS get(resultingClientId) for document sandboxed by CSP header 
+FAIL get(resultingClientId) for document sandboxed by CSP header with allow-same-origin assert_equals: promiseValue expected "client" but got "undefinedValue"
 PASS global cleanup 
 

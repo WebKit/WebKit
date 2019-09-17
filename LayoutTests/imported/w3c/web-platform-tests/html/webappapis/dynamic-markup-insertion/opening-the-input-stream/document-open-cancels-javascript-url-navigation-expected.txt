@@ -1,4 +1,4 @@
 
 
-PASS Untitled 
+PASS document-open-cancels-javascript-url-navigation 
 

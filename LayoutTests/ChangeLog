@@ -1,3 +1,13 @@
+2019-09-17  Chris Dumez  <cdumez@apple.com>
+
+        Update testharness.js from upstream for web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=201843
+
+        Reviewed by Jiewen Tan.
+
+        * http/wpt/resource-timing/rt-initiatorType-other-expected.txt:
+        * http/wpt/webauthn/resources/util.js:
+
 2019-09-17  Nikolas Zimmermann  <zimmermann@kde.org>
 
         SVG <animateMotion> does not reset the element to its first animation frame if its fill is "remove"
