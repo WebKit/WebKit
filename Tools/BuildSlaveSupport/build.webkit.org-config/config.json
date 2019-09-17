@@ -34,15 +34,15 @@
                     { "name": "bot636", "platform": "mac-highsierra" },
                     { "name": "bot638", "platform": "mac-highsierra" },
 
-                    { "name": "bot673", "platform": "ios-12" },
-                    { "name": "bot651", "platform": "ios-simulator-12" },
-                    { "name": "bot652", "platform": "ios-simulator-12" },
-                    { "name": "bot653", "platform": "ios-simulator-12" },
-                    { "name": "bot654", "platform": "ios-simulator-12" },
-                    { "name": "bot677", "platform": "ios-simulator-12" },
-                    { "name": "bot682", "platform": "ios-simulator-12" },
-                    { "name": "bot694", "platform": "ios-simulator-12" },
-                    { "name": "bot695", "platform": "ios-simulator-12" },
+                    { "name": "bot673", "platform": "ios-13" },
+                    { "name": "bot651", "platform": "ios-simulator-13" },
+                    { "name": "bot652", "platform": "ios-simulator-13" },
+                    { "name": "bot653", "platform": "ios-simulator-13" },
+                    { "name": "bot654", "platform": "ios-simulator-13" },
+                    { "name": "bot677", "platform": "ios-simulator-13" },
+                    { "name": "bot682", "platform": "ios-simulator-13" },
+                    { "name": "bot694", "platform": "ios-simulator-13" },
+                    { "name": "bot695", "platform": "ios-simulator-13" },
 
                     { "name": "bot543", "platform": "win" },
                     { "name": "bot544", "platform": "win" },
@@ -174,31 +174,31 @@
                       "slavenames": ["bot632"]
                     },
                     {
-                      "name": "Apple iOS 12 Release (Build)", "type": "Build", "builddir": "ios-12-release",
-                      "platform": "ios-12", "configuration": "release", "architectures": ["arm64"],
+                      "name": "Apple iOS 13 Release (Build)", "type": "Build", "builddir": "ios-13-release",
+                      "platform": "ios-13", "configuration": "release", "architectures": ["arm64"],
                       "slavenames": ["bot673"]
                     },
                     {
-                      "name": "Apple iOS 12 Simulator Release (Build)", "type": "Build", "builddir": "ios-simulator-12-release",
-                      "platform": "ios-simulator-12", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["ios-simulator-12-release-tests-wk2"],
+                      "name": "Apple iOS 13 Simulator Release (Build)", "type": "Build", "builddir": "ios-simulator-13-release",
+                      "platform": "ios-simulator-13", "configuration": "release", "architectures": ["x86_64"],
+                      "triggers": ["ios-simulator-13-release-tests-wk2"],
                       "slavenames": ["bot677", "bot682"]
                     },
                     {
-                      "name": "Apple iOS 12 Simulator Debug (Build)", "type": "Build", "builddir": "ios-simulator-12-debug",
-                      "platform": "ios-simulator-12", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["ios-simulator-12-debug-tests-wk2"],
+                      "name": "Apple iOS 13 Simulator Debug (Build)", "type": "Build", "builddir": "ios-simulator-13-debug",
+                      "platform": "ios-simulator-13", "configuration": "debug", "architectures": ["x86_64"],
+                      "triggers": ["ios-simulator-13-debug-tests-wk2"],
                       "slavenames": ["bot694", "bot695"]
                     },
                     {
-                      "name": "Apple iOS 12 Simulator Release WK2 (Tests)", "type": "TestAllButJSC", "builddir": "ios-simulator-12-release-tests-wk2",
-                      "platform": "ios-simulator-12", "configuration": "release", "architectures": ["x86_64"],
+                      "name": "Apple iOS 13 Simulator Release WK2 (Tests)", "type": "TestAllButJSC", "builddir": "ios-simulator-13-release-tests-wk2",
+                      "platform": "ios-simulator-13", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot651", "bot652"]
                     },
                     {
-                      "name": "Apple iOS 12 Simulator Debug WK2 (Tests)", "type": "TestAllButJSC", "builddir": "ios-simulator-12-debug-tests-wk2",
-                      "platform": "ios-simulator-12", "configuration": "debug", "architectures": ["x86_64"],
+                      "name": "Apple iOS 13 Simulator Debug WK2 (Tests)", "type": "TestAllButJSC", "builddir": "ios-simulator-13-debug-tests-wk2",
+                      "platform": "ios-simulator-13", "configuration": "debug", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
                       "slavenames": ["bot653", "bot654"]
                     },
@@ -386,11 +386,11 @@
                     { "type": "PlatformSpecificScheduler", "platform": "mac-highsierra", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple High Sierra Release (Build)", "Apple High Sierra Debug (Build)", "Apple High Sierra LLINT CLoop (BuildAndTest)"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "ios-12", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple iOS 12 Release (Build)"]
+                    { "type": "PlatformSpecificScheduler", "platform": "ios-13", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple iOS 13 Release (Build)"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-12", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple iOS 12 Simulator Release (Build)", "Apple iOS 12 Simulator Debug (Build)"]
+                    { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-13", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple iOS 13 Simulator Release (Build)", "Apple iOS 13 Simulator Debug (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple Win 7 Release (Build)", "Apple Win 10 Release (Build)", "Apple Win 10 Debug (Build)"]
@@ -422,11 +422,11 @@
                     { "type": "Triggerable", "name": "highsierra-release-tests-test262",
                       "builderNames": ["Apple High Sierra Release Test262 (Tests)"]
                     },
-                    { "type": "Triggerable", "name": "ios-simulator-12-release-tests-wk2",
-                      "builderNames": ["Apple iOS 12 Simulator Release WK2 (Tests)"]
+                    { "type": "Triggerable", "name": "ios-simulator-13-release-tests-wk2",
+                      "builderNames": ["Apple iOS 13 Simulator Release WK2 (Tests)"]
                     },
-                    { "type": "Triggerable", "name": "ios-simulator-12-debug-tests-wk2",
-                      "builderNames": ["Apple iOS 12 Simulator Debug WK2 (Tests)"]
+                    { "type": "Triggerable", "name": "ios-simulator-13-debug-tests-wk2",
+                      "builderNames": ["Apple iOS 13 Simulator Debug WK2 (Tests)"]
                     },
                     { "type": "Triggerable", "name": "win10-release-tests",
                       "builderNames": ["Apple Win 10 Release (Tests)"]

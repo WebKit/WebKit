@@ -82,11 +82,11 @@
     },
     {
       "name": "ews108",
-      "platform": "ios-12"
+      "platform": "ios-13"
     },
     {
       "name": "ews109",
-      "platform": "ios-12"
+      "platform": "ios-13"
     },
     {
       "name": "ews112",
@@ -126,27 +126,27 @@
     },
     {
       "name": "ews121",
-      "platform": "ios-simulator-12"
+      "platform": "ios-simulator-13"
     },
     {
       "name": "ews122",
-      "platform": "ios-simulator-12"
+      "platform": "ios-simulator-13"
     },
     {
       "name": "ews123",
-      "platform": "ios-simulator-12"
+      "platform": "ios-simulator-13"
     },
     {
       "name": "ews124",
-      "platform": "ios-simulator-12"
+      "platform": "ios-simulator-13"
     },
     {
       "name": "ews125",
-      "platform": "ios-simulator-12"
+      "platform": "ios-simulator-13"
     },
     {
       "name": "ews126",
-      "platform": "ios-simulator-12"
+      "platform": "ios-simulator-13"
     },
     {
       "name": "ews127",
@@ -305,32 +305,32 @@
       "workernames": ["igalia1-gtk-wk2-ews", "igalia2-gtk-wk2-ews", "igalia3-gtk-wk2-ews", "igalia4-gtk-wk2-ews", "aperez-gtk-ews"]
     },
     {
-      "name": "iOS-12-Build-EWS",
+      "name": "iOS-13-Build-EWS",
       "shortname": "ios",
       "icon": "buildOnly",
       "factory": "iOSBuildFactory",
-      "platform": "ios-12",
+      "platform": "ios-13",
       "configuration": "release",
       "architectures": ["arm64"],
       "workernames": ["ews152", "ews154", "ews108", "ews109"]
     },
     {
-      "name": "iOS-12-Simulator-Build-EWS",
+      "name": "iOS-13-Simulator-Build-EWS",
       "shortname": "ios-sim",
       "icon": "buildOnly",
       "factory": "iOSBuildFactory",
-      "platform": "ios-simulator-12",
+      "platform": "ios-simulator-13",
       "configuration": "release",
       "architectures": ["x86_64"],
-      "triggers": ["api-tests-ios-sim-ews", "ios-12-sim-wk2-tests-ews"],
+      "triggers": ["api-tests-ios-sim-ews", "ios-13-sim-wk2-tests-ews"],
       "workernames": ["ews152", "ews154", "ews156", "ews157"]
     },
     {
-      "name": "iOS-12-Simulator-WK2-Tests-EWS",
+      "name": "iOS-13-Simulator-WK2-Tests-EWS",
       "shortname": "ios-wk2",
       "icon": "testOnly",
       "factory": "iOSTestsFactory",
-      "platform": "ios-simulator-12",
+      "platform": "ios-simulator-13",
       "configuration": "release",
       "architectures": ["x86_64"],
       "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126"]
@@ -480,7 +480,7 @@
       "type": "Try_Userpass",
       "name": "try",
       "port": 5555,
-      "builderNames": ["Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Webkit2-EWS", "iOS-12-Build-EWS", "iOS-12-Simulator-Build-EWS",
+      "builderNames": ["Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Webkit2-EWS", "iOS-13-Build-EWS", "iOS-13-Simulator-Build-EWS",
                        "macOS-High-Sierra-Debug-Build-EWS", "macOS-High-Sierra-Release-Build-EWS",
                        "Services-EWS", "Style-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WPE-EWS", "WinCairo-EWS"]
     },
@@ -513,9 +513,9 @@
     },
     {
       "type": "Triggerable",
-      "name": "ios-12-sim-wk2-tests-ews",
+      "name": "ios-13-sim-wk2-tests-ews",
       "builderNames": [
-        "iOS-12-Simulator-WK2-Tests-EWS"
+        "iOS-13-Simulator-WK2-Tests-EWS"
       ]
     },
     {
