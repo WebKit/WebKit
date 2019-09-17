@@ -1,5 +1,13 @@
 2019-09-17  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, address flakiness of imported/w3c/web-platform-tests/html/browsers/offline/application-cache-api/api_update_error.https.html.
+
+        Stop logging console messages.
+
+        * web-platform-tests/html/browsers/offline/application-cache-api/api_update_error.https-expected.txt:
+
+2019-09-17  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, revert r249850 as the flakiness should be gone as of the testharness.js update in r249977.
         https://bugs.webkit.org/show_bug.cgi?id=201661
 

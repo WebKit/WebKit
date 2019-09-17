@@ -411,6 +411,7 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/mo
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/sandbox.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/browsers/offline/application-cache-api/api_update_error.https.html [ DumpJSConsoleLogInStdErr ]
 
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-response-taint.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/service-workers/service-worker/register-closed-window.https.html [ DumpJSConsoleLogInStdErr ]
