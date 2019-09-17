@@ -933,6 +933,7 @@ void drawSurface(PlatformContextCairo& platformContext, cairo_surface_t* surface
     if (srcRect.x() || srcRect.y() || srcRect.size() != cairoSurfaceSize(surface)) {
         // Cairo subsurfaces don't support floating point boundaries well, so we expand the rectangle.
         IntRect expandedSrcRect(enclosingIntRect(srcRect));
+        expandedSrcRect.intersect({ { }, cairoSurfaceSize(surface) });
 
         // We use a subsurface here so that we don't end up sampling outside the originalSrcRect rectangle.
         // See https://bugs.webkit.org/show_bug.cgi?id=58309
