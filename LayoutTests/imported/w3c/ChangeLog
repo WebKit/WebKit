@@ -1,3 +1,11 @@
+2019-09-17  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, address flakiness of imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html
+
+        Do not log console messages.
+
+        * web-platform-tests/IndexedDB/fire-error-event-exception-expected.txt:
+
 2019-09-17  Rob Buis  <rbuis@igalia.com>
 
         Access-Control-Expose-Headers parsed incorrectly

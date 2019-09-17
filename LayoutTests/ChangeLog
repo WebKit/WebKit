@@ -1,3 +1,11 @@
+2019-09-17  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, address flakiness of imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html
+
+        Do not log console messages.
+
+        * TestExpectations:
+
 2019-09-17  Zalan Bujtas  <zalan@apple.com>
 
         [First-letter] Use WeakPtr for the first-letter insertion point.

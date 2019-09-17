@@ -409,6 +409,7 @@ imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ DumpJSConsoleLo
 imported/w3c/web-platform-tests/html/dom/idlharness.worker.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/error-type-1.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/sandbox.https.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ DumpJSConsoleLogInStdErr ]
 
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-response-taint.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/service-workers/service-worker/register-closed-window.https.html [ DumpJSConsoleLogInStdErr ]
