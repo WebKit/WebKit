@@ -1,5 +1,20 @@
 2019-09-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [WinCairo][curl] Don't compile unused CertificateCFWin.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=201860
+
+        Reviewed by Alex Christensen.
+
+        Curl port is using ResourceHandle::setClientCertificateInfo
+        instead of ResourceHandle::setClientCertificate.
+
+        * PlatformWin.cmake: Added CertificateCFWin.cpp to WebCore_SOURCES only if USE_CFURLCONNECTION.
+        * platform/network/ResourceHandle.h: Removed an unused method setClientCertificate.
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::setClientCertificate): Deleted.
+
+2019-09-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [AppleWin] Assertion failure in defaultSupportedImageTypes in UTIRegistry.cpp
         https://bugs.webkit.org/show_bug.cgi?id=198286
 

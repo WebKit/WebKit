@@ -1,3 +1,13 @@
+2019-09-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][curl] Don't compile unused CertificateCFWin.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=201860
+
+        Reviewed by Alex Christensen.
+
+        * WebMutableURLRequest.cpp: Include <WebCore/CertificateCFWin.h> only if USE(CFURLCONNECTION).
+        (WebMutableURLRequest::setClientCertificate): Don't use PCCERT_CONTEXT for curl port which is defined in WinCrypt.
+
 2019-09-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][WK1] Accelerated Compositing can't be disabled by using WebPreferences::setAcceleratedCompositingEnabled

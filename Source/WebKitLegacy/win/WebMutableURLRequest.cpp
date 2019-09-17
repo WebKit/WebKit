@@ -36,12 +36,9 @@
 #include <wtf/text/CString.h>
 #include <wtf/RetainPtr.h>
 
-#if USE(CF)
-#include <WebCore/CertificateCFWin.h>
-#endif
-
 #if USE(CFURLCONNECTION)
 #include <CFNetwork/CFURLRequestPriv.h>
+#include <WebCore/CertificateCFWin.h>
 #endif
 
 using namespace WebCore;
@@ -364,8 +361,8 @@ HRESULT WebMutableURLRequest::setClientCertificate(ULONG_PTR cert)
     if (!cert)
         return E_POINTER;
 
+#if USE(CFURLCONNECTION)
     PCCERT_CONTEXT certContext = reinterpret_cast<PCCERT_CONTEXT>(cert);
-#if USE(CF)
     RetainPtr<CFDataRef> certData = WebCore::copyCertificateToData(certContext);
     ResourceHandle::setClientCertificate(m_request.url().host().toString(), certData.get());
     return S_OK;

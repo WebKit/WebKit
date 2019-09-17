@@ -155,10 +155,6 @@ public:
     static void setClientCertificateInfo(const String&, const String&, const String&);
 #endif
 
-#if OS(WINDOWS) && USE(CURL) && USE(CF)
-    static void setClientCertificate(const String& host, CFDataRef);
-#endif
-
     bool shouldContentSniff() const;
     static bool shouldContentSniffURL(const URL&);
 

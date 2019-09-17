@@ -189,14 +189,6 @@ void ResourceHandle::setClientCertificateInfo(const String& host, const String& 
 
 #endif
 
-#if OS(WINDOWS) && USE(CF)
-
-void ResourceHandle::setClientCertificate(const String&, CFDataRef)
-{
-}
-
-#endif
-
 void ResourceHandle::platformSetDefersLoading(bool defers)
 {
     ASSERT(isMainThread());
