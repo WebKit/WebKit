@@ -141,6 +141,11 @@ enum ClearProvisionalItemPolicy {
     ShouldNotClearProvisionalItem
 };
 
+enum class StopLoadingPolicy {
+    PreventDuringUnloadEvents,
+    AlwaysStopLoading
+};
+
 enum class ObjectContentType : uint8_t {
     None,
     Image,
