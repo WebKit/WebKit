@@ -150,11 +150,13 @@ RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableD
 
 void WebProcessCache::updateCapacity(WebProcessPool& processPool)
 {
-    if (!processPool.configuration().processSwapsOnNavigation() || !processPool.configuration().usesWebProcessCache()) {
+    if (!processPool.configuration().processSwapsOnNavigation() || !processPool.configuration().usesWebProcessCache() || processPool.cacheModel() != CacheModel::PrimaryWebBrowser) {
         if (!processPool.configuration().processSwapsOnNavigation())
             RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::updateCapacity: Cache is disabled because process swap on navigation is disabled", this);
-        else
+        else if (!processPool.configuration().usesWebProcessCache())
             RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::updateCapacity: Cache is disabled by client", this);
+        else
+            RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::updateCapacity: Cache is disabled because cache model is not PrimaryWebBrowser", this);
         m_capacity = 0;
     } else {
         size_t memorySize = ramSize() / GB;
