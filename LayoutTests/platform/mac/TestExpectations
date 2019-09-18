@@ -2024,3 +2024,5 @@ webgpu/whlsl/separate-shader-modules/separate-shader-modules-19.html [ Pass Imag
 webgpu/whlsl/separate-shader-modules/separate-shader-modules-24.html [ Pass ImageOnlyFailure ]
 webgpu/whlsl/separate-shader-modules/separate-shader-modules-26.html [ Pass ImageOnlyFailure ]
 
+# rdar://55484256 (REGRESSION: (Catalina) fast/images/async-image-multiple-clients-repaint.html is a flakey failure)
+[ Catalina+ ] fast/images/async-image-multiple-clients-repaint.html [ Pass Failure ]

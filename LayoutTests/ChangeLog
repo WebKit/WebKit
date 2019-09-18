@@ -1,5 +1,14 @@
 2019-09-18  Russell Epstein  <repstein@apple.com>
 
+        REGRESSION: (Catalina) fast/images/async-image-multiple-clients-repaint.html is a flakey failure.
+        rdar://55484256
+
+        Unreviewed Test Gardening.
+
+        * platform/mac/TestExpectations:
+
+2019-09-18  Russell Epstein  <repstein@apple.com>
+
         REGRESSION (macOS): Many webgpu/whlsl* tests are flaky failures.
         https://bugs.webkit.org/show_bug.cgi?id=201877
 
