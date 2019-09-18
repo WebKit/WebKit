@@ -245,7 +245,7 @@ LayoutUnit FormattingContext::Geometry::staticHorizontalPositionForOutOfFlowPosi
     return left - paddingBoxLeft;
 }
 
-LayoutUnit FormattingContext::Geometry::shrinkToFitWidth(const Box& formattingRoot, UsedHorizontalValues usedHorizontalValues)
+LayoutUnit FormattingContext::Geometry::shrinkToFitWidth(const Box& formattingRoot, LayoutUnit availableWidth)
 {
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width] -> shrink to fit -> unsupported -> width(" << LayoutUnit { } << "px) layoutBox: " << &formattingRoot << ")");
     ASSERT(formattingRoot.establishesFormattingContext());
@@ -267,7 +267,6 @@ LayoutUnit FormattingContext::Geometry::shrinkToFitWidth(const Box& formattingRo
         else
             intrinsicWidthConstraints = *precomputedIntrinsicWidthConstraints;
     }
-    auto availableWidth = usedHorizontalValues.containingBlockWidth;
     return std::min(std::max(intrinsicWidthConstraints.minimum, availableWidth), intrinsicWidthConstraints.maximum);
 }
 
@@ -498,7 +497,7 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
         // Calculate the available width by solving for 'width' after setting 'left' (in case 1) to 0
         left = LayoutUnit { 0 };
         auto availableWidth = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + paddingRight + borderRight + usedHorizontalMargin.end + *right);
-        width = shrinkToFitWidth(layoutBox, UsedHorizontalValues { availableWidth, usedHorizontalValues.width, usedHorizontalValues.margin });
+        width = shrinkToFitWidth(layoutBox, availableWidth);
         left = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + *width + paddingRight  + borderRight + usedHorizontalMargin.end + *right);
     } else if (!left && !right && width) {
         // #2
@@ -515,7 +514,7 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
         // Calculate the available width by solving for 'width' after setting 'right' (in case 3) to 0
         right = LayoutUnit { 0 };
         auto availableWidth = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + paddingRight + borderRight + usedHorizontalMargin.end + *right);
-        width = shrinkToFitWidth(layoutBox, UsedHorizontalValues { availableWidth, usedHorizontalValues.width, usedHorizontalValues.margin });
+        width = shrinkToFitWidth(layoutBox, availableWidth);
         right = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + *width + paddingRight + borderRight + usedHorizontalMargin.end);
     } else if (!left && width && right) {
         // #4
@@ -775,7 +774,7 @@ WidthAndMargin FormattingContext::Geometry::floatingNonReplacedWidthAndMargin(co
     // #2
     auto width = computedValueIfNotAuto(usedHorizontalValues.width ? Length { usedHorizontalValues.width.value(), Fixed } : layoutBox.style().logicalWidth(), usedHorizontalValues.containingBlockWidth);
     if (!width)
-        width = shrinkToFitWidth(layoutBox, usedHorizontalValues);
+        width = shrinkToFitWidth(layoutBox, usedHorizontalValues.containingBlockWidth);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width][Margin] -> floating non-replaced -> width(" << *width << "px) margin(" << usedHorizontallMargin.start << "px, " << usedHorizontallMargin.end << "px) -> layoutBox(" << &layoutBox << ")");
     return WidthAndMargin { *width, usedHorizontallMargin, computedHorizontalMargin };

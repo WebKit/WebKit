@@ -105,7 +105,7 @@ protected:
         LayoutSize inFlowPositionedPositionOffset(const Box&, UsedHorizontalValues) const;
 
         HeightAndMargin complicatedCases(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
-        LayoutUnit shrinkToFitWidth(const Box&, UsedHorizontalValues);
+        LayoutUnit shrinkToFitWidth(const Box&, LayoutUnit availableWidth);
 
         Edges computedBorder(const Box&) const;
         Optional<Edges> computedPadding(const Box&, UsedHorizontalValues) const;
