@@ -1,3 +1,67 @@
+2019-09-18  Saam Barati  <sbarati@apple.com>
+
+        Phantom insertion phase may disagree with arguments forwarding about live ranges
+        https://bugs.webkit.org/show_bug.cgi?id=200715
+        <rdar://problem/54301717>
+
+        Reviewed by Yusuke Suzuki.
+
+        The issue is that Phantom insertion phase was disagreeing about live ranges
+        from the arguments forwarding phase. The effect is that Phantom insertion
+        would insert a Phantom creating a longer live range than what arguments
+        forwarding was analyzing. Arguments forwarding will look for the last DFG
+        use or the last bytecode use of a variable it wants to eliminate. It then
+        does an interference analysis to ensure that nothing clobbers other variables
+        it needs to recover the sunken allocation during OSR exit.
+        
+        Phantom insertion works by ordering the program into OSR exit epochs. If a value was used
+        in the current epoch, there is no need to insert a phantom for it. We
+        determine where we might need a Phantom by looking at bytecode kills. In this
+        analysis, we have a mapping from bytecode local to DFG node. However, we
+        sometimes forgot to remove the entry when a local is killed. So, if the first
+        kill of a variable is in the same OSR exit epoch, we won't insert a Phantom by design.
+        However, if the variable gets killed again, we might errantly insert a Phantom
+        for the prior variable which should've already been killed. The solution is to
+        clear the entry in our mapping when a variable is killed.
+        
+        The program in question was like this:
+        
+        1: DirectArguments
+        ...
+        2: MovHint(@1, loc1) // arguments forwarding treats this as the final kill for @1
+        ...
+        clobber things needed for recovery
+        ...
+        
+        Arguments elimination would transform the program since between @1 and
+        @2, nothing clobbers values needed for exit and nothing escapes @1. The
+        program becomes:
+        
+        1: PhantomDirectArguments
+        ...
+        2: MovHint(@1, loc1) // arguments forwarding treats this as the final kill for @1
+        ...
+        clobber things needed for recovery of @1
+        ...
+        
+        
+        Phantom insertion would then transform the program into:
+        
+        1: PhantomDirectArguments
+        ...
+        2: MovHint(@1, loc1) // arguments forwarding treats this as the final kill for @1
+        ...
+        clobber things needed for recovery of @1
+        ...
+        3: Phantom(@1)
+        ...
+        
+        This is wrong because Phantom insertion and arguments forwarding must agree on live
+        ranges, otherwise the interference analysis performed by arguments forwarding will
+        not correctly analyze up until where the value might be recovered.
+
+        * dfg/DFGPhantomInsertionPhase.cpp:
+
 2019-09-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r250002.
