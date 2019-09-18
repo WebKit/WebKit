@@ -50,6 +50,16 @@ static void childSetupFunction(gpointer userData)
 }
 
 #if ENABLE(BUBBLEWRAP_SANDBOX)
+static bool isInsideDocker()
+{
+    static Optional<bool> ret;
+    if (ret)
+        return *ret;
+
+    ret = g_file_test("/.dockerenv", G_FILE_TEST_EXISTS);
+    return *ret;
+}
+
 static bool isInsideFlatpak()
 {
     static Optional<bool> ret;
@@ -159,9 +169,9 @@ void ProcessLauncher::launchProcess()
     if (sandboxEnv)
         sandboxEnabled = !strcmp(sandboxEnv, "1");
 
-    // You cannot use bubblewrap within Flatpak so lets ensure it never happens.
+    // You cannot use bubblewrap within Flatpak or Docker so lets ensure it never happens.
     // Snap can allow it but has its own limitations that require workarounds.
-    if (sandboxEnabled && !isInsideFlatpak() && !isInsideSnap())
+    if (sandboxEnabled && !isInsideFlatpak() && !isInsideSnap() && !isInsideDocker())
         process = bubblewrapSpawn(launcher.get(), m_launchOptions, argv, &error.outPtr());
     else
 #endif
