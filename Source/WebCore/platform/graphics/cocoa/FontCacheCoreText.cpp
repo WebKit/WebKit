@@ -895,7 +895,7 @@ public:
                 return;
             auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
             addAttributesForInstalledFonts(attributes.get(), allowUserInstalledFonts);
-            this->fontDescriptor = CTFontDescriptorCreateCopyWithAttributes(fontDescriptor, attributes.get());
+            this->fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor, attributes.get()));
 #endif
         }
 
