@@ -49,12 +49,9 @@ struct CompilationContext {
     std::unique_ptr<B3::OpaqueByproducts> embedderEntrypointByproducts;
     std::unique_ptr<CCallHelpers> wasmEntrypointJIT;
     std::unique_ptr<B3::OpaqueByproducts> wasmEntrypointByproducts;
-    Vector<UnlinkedWasmToWasmCall> outgoingCalls;
-    Optional<UnlinkedMoveAndCall> embedderMoveAndCall;
-    RegisterAtOffsetList calleeSaveRegisters;
 };
 
-Expected<void, String> parseAndCompile(CompilationContext&, const FunctionData&, const Signature&, Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>>&, unsigned& osrEntryScratchBufferSize, const ModuleInformation&, MemoryMode, CompilationMode, uint32_t functionIndex, uint32_t loopIndexForOSREntry, TierUpCount* = nullptr, ThrowWasmException = nullptr);
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationContext&, const FunctionData&, const Signature&, Vector<UnlinkedWasmToWasmCall>&, unsigned& osrEntryScratchBufferSize, const ModuleInformation&, MemoryMode, CompilationMode, uint32_t functionIndex, uint32_t loopIndexForOSREntry, TierUpCount* = nullptr, ThrowWasmException = nullptr);
 
 } } // namespace JSC::Wasm
 

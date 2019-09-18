@@ -229,7 +229,7 @@ public:
             return fail(__VA_ARGS__);             \
     } while (0)
 
-    AirIRGenerator(const ModuleInformation&, B3::Procedure&, Vector<UnlinkedWasmToWasmCall>&, const Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>>&, MemoryMode, unsigned functionIndex, TierUpCount*, ThrowWasmException, const Signature&);
+    AirIRGenerator(const ModuleInformation&, B3::Procedure&, InternalFunction*, Vector<UnlinkedWasmToWasmCall>&, MemoryMode, unsigned functionIndex, TierUpCount*, ThrowWasmException, const Signature&);
 
     PartialResult WARN_UNUSED_RETURN addArguments(const Signature&);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
@@ -628,8 +628,7 @@ private:
     BasicBlock* m_currentBlock { nullptr };
     BasicBlock* m_rootBlock { nullptr };
     Vector<TypedTmp> m_locals;
-    Vector<UnlinkedWasmToWasmCall>& m_outgoingCalls;
-    const Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>>& m_wasmToWasmExitStubs;
+    Vector<UnlinkedWasmToWasmCall>& m_unlinkedWasmToWasmCalls; // List each call site and the function index whose address it should be patched with.
     GPRReg m_memoryBaseGPR { InvalidGPRReg };
     GPRReg m_memorySizeGPR { InvalidGPRReg };
     GPRReg m_wasmContextInstanceGPR { InvalidGPRReg };
@@ -698,15 +697,14 @@ void AirIRGenerator::restoreWasmContextInstance(BasicBlock* block, TypedTmp inst
     emitPatchpoint(block, patchpoint, Tmp(), instance);
 }
 
-AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& procedure, Vector<UnlinkedWasmToWasmCall>& outgoingCalls, const Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>>& wasmToWasmExitStubs, MemoryMode mode, unsigned functionIndex, TierUpCount* tierUp, ThrowWasmException throwWasmException, const Signature& signature)
+AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& procedure, InternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, unsigned functionIndex, TierUpCount* tierUp, ThrowWasmException throwWasmException, const Signature& signature)
     : m_info(info)
     , m_mode(mode)
     , m_functionIndex(functionIndex)
     , m_tierUp(tierUp)
     , m_proc(procedure)
     , m_code(m_proc.code())
-    , m_outgoingCalls(outgoingCalls)
-    , m_wasmToWasmExitStubs(wasmToWasmExitStubs)
+    , m_unlinkedWasmToWasmCalls(unlinkedWasmToWasmCalls)
     , m_numImportFunctions(info.importFunctionCount())
 {
     m_currentBlock = m_code.addBlock();
@@ -752,7 +750,16 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
     Ref<B3::Air::PrologueGenerator> prologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([=] (CCallHelpers& jit, B3::Air::Code& code) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         code.emitDefaultPrologue(jit);
-        jit.emitPutToCallFrameHeader(nullptr, CallFrameSlot::codeBlock);
+
+        {
+            GPRReg calleeGPR = wasmCallingConventionAir().prologueScratch(0);
+            auto moveLocation = jit.moveWithPatch(MacroAssembler::TrustedImmPtr(nullptr), calleeGPR);
+            jit.addLinkTask([compilation, moveLocation] (LinkBuffer& linkBuffer) {
+                compilation->calleeMoveLocation = linkBuffer.locationOf<WasmEntryPtrTag>(moveLocation);
+            });
+            jit.emitPutToCallFrameHeader(calleeGPR, CallFrameSlot::callee);
+            jit.emitPutToCallFrameHeader(nullptr, CallFrameSlot::codeBlock);
+        }
 
         {
             const Checked<int32_t> wasmFrameSize = m_code.frameSize();
@@ -1918,6 +1925,8 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const Signature& signature,
     if (returnType != Type::Void)
         result = tmpForType(returnType);
 
+    Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls = &m_unlinkedWasmToWasmCalls;
+
     if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex)) {
         m_maxNumJSCallArguments = std::max(m_maxNumJSCallArguments, static_cast<uint32_t>(args.size()));
 
@@ -1953,12 +1962,11 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const Signature& signature,
                 patchArgs.append({ tmp, rep });
             });
 
-            MacroAssemblerCodeRef<WasmEntryPtrTag> wasmToWasmExitStub = m_wasmToWasmExitStubs[functionIndex];
-            patchpoint->setGenerator([wasmToWasmExitStub] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            patchpoint->setGenerator([unlinkedWasmToWasmCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
-                MacroAssembler::Call call = jit.call(WasmEntryPtrTag);
-                jit.addLinkTask([call, wasmToWasmExitStub] (LinkBuffer& linkBuffer) {
-                    linkBuffer.link(call, CodeLocationLabel<WasmEntryPtrTag>(wasmToWasmExitStub.code()));
+                CCallHelpers::Call call = jit.threadSafePatchableNearCall();
+                jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex] (LinkBuffer& linkBuffer) {
+                    unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndex });
                 });
             });
 
@@ -2005,20 +2013,18 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const Signature& signature,
         auto* patchpoint = addPatchpoint(toB3Type(returnType));
         patchpoint->effects.writesPinned = true;
         patchpoint->effects.readsPinned = true;
-        patchpoint->numGPScratchRegisters++;
 
         Vector<ConstrainedTmp> patchArgs;
         wasmCallingConventionAir().setupCall(m_code, returnType, patchpoint, toTmpVector(args), [&] (Tmp tmp, B3::ValueRep rep) {
             patchArgs.append({ tmp, rep });
         });
 
-        Vector<UnlinkedWasmToWasmCall>* outgoingCalls = &m_outgoingCalls;
-        patchpoint->setGenerator([outgoingCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-            GPRReg calleeGPR = params.gpScratch(0);
-            auto moveLocation = jit.moveWithPatch(MacroAssembler::TrustedImmPtr(nullptr), calleeGPR);
-            jit.storePtr(calleeGPR, MacroAssembler::Address(MacroAssembler::stackPointerRegister, CallFrameSlot::callee * sizeof(Register) - sizeof(CallerFrameAndPC)));
-            CCallHelpers::Call callLocation = jit.threadSafePatchableNearCall();
-            outgoingCalls->append({ functionIndex, { moveLocation, callLocation }});
+        patchpoint->setGenerator([unlinkedWasmToWasmCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            CCallHelpers::Call call = jit.threadSafePatchableNearCall();
+            jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex] (LinkBuffer& linkBuffer) {
+                unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndex });
+            });
         });
 
         emitPatchpoint(m_currentBlock, patchpoint, result, WTFMove(patchArgs));
@@ -2072,7 +2078,6 @@ auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signa
     });
 
     ExpressionType calleeCode = g64();
-    ExpressionType callee = g64();
     {
         ExpressionType calleeSignatureIndex = g64();
         // Compute the offset in the table index space we are looking for.
@@ -2081,7 +2086,6 @@ auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signa
         append(Add64, callableFunctionBuffer, calleeSignatureIndex);
         
         append(Move, Arg::addr(calleeSignatureIndex, WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation()), calleeCode); // Pointer to callee code.
-        append(Move, Arg::addr(calleeSignatureIndex, WasmToWasmImportableFunction::offsetOfBoxedCalleeLoadLocation()), callee); // Pointer to boxed callee
 
         // Check that the WasmToWasmImportableFunction is initialized. We trap if it isn't. An "invalid" SignatureIndex indicates it's not initialized.
         // FIXME: when we have trap handlers, we can just let the call fail because Signature::invalidIndex is 0. https://bugs.webkit.org/show_bug.cgi?id=177210
@@ -2174,10 +2178,6 @@ auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signa
 
     Vector<ConstrainedTmp> emitArgs;
     emitArgs.append(calleeCode);
-
-    append(Move, Arg::addr(callee), callee);
-    emitArgs.append({ callee, B3::ValueRep::stackArgument(CallFrameSlot::callee * sizeof(Register) - sizeof(CallerFrameAndPC)) });
-
     wasmCallingConventionAir().setupCall(m_code, returnType, patch, toTmpVector(args), [&] (Tmp tmp, B3::ValueRep rep) {
         emitArgs.append({ tmp, rep });
     });
@@ -2218,8 +2218,10 @@ auto AirIRGenerator::origin() -> B3::Origin
     return B3::Origin();
 }
 
-Expected<void, String> parseAndCompileAir(CompilationContext& compilationContext, const FunctionData& function, const Signature& signature, Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>>& wasmToWasmExitStubs, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, TierUpCount* tierUp, ThrowWasmException throwWasmException)
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(CompilationContext& compilationContext, const FunctionData& function, const Signature& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, TierUpCount* tierUp, ThrowWasmException throwWasmException)
 {
+    auto result = makeUnique<InternalFunction>();
+
     compilationContext.embedderEntrypointJIT = makeUnique<CCallHelpers>();
     compilationContext.wasmEntrypointJIT = makeUnique<CCallHelpers>();
 
@@ -2239,7 +2241,7 @@ Expected<void, String> parseAndCompileAir(CompilationContext& compilationContext
     
     procedure.setOptLevel(Options::webAssemblyBBQAirOptimizationLevel());
 
-    AirIRGenerator irGenerator(info, procedure, compilationContext.outgoingCalls, wasmToWasmExitStubs, mode, functionIndex, tierUp, throwWasmException, signature);
+    AirIRGenerator irGenerator(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode, functionIndex, tierUp, throwWasmException, signature);
     FunctionParser<AirIRGenerator> parser(irGenerator, function.data.data(), function.data.size(), signature, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 
@@ -2259,10 +2261,10 @@ Expected<void, String> parseAndCompileAir(CompilationContext& compilationContext
         B3::Air::prepareForGeneration(code);
         B3::Air::generate(code, *compilationContext.wasmEntrypointJIT);
         compilationContext.wasmEntrypointByproducts = procedure.releaseByproducts();
-        compilationContext.calleeSaveRegisters = code.calleeSaveRegisterAtOffsetList();
+        result->entrypoint.calleeSaveRegisters = code.calleeSaveRegisterAtOffsetList();
     }
 
-    return { };
+    return result;
 }
 
 template <typename IntType>

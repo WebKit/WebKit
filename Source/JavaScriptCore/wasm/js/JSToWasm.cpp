@@ -42,15 +42,21 @@
 
 namespace JSC { namespace Wasm {
 
-void createJSToWasmWrapper(CompilationContext& compilationContext, const Signature& signature, EmbedderEntrypointCallee* self, const ModuleInformation& info, MemoryMode mode)
+std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& compilationContext, const Signature& signature, Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, unsigned functionIndex)
 {
     CCallHelpers& jit = *compilationContext.embedderEntrypointJIT;
 
+    auto result = makeUnique<InternalFunction>();
     jit.emitFunctionPrologue();
 
     // FIXME Stop using 0 as codeBlocks. https://bugs.webkit.org/show_bug.cgi?id=165321
     jit.store64(CCallHelpers::TrustedImm64(0), CCallHelpers::Address(GPRInfo::callFrameRegister, CallFrameSlot::codeBlock * static_cast<int>(sizeof(Register))));
-    jit.storePtr(CCallHelpers::TrustedImmPtr(CalleeBits::boxWasm(self)), CCallHelpers::Address(GPRInfo::callFrameRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
+    MacroAssembler::DataLabelPtr calleeMoveLocation = jit.moveWithPatch(MacroAssembler::TrustedImmPtr(nullptr), GPRInfo::nonPreservedNonReturnGPR);
+    jit.storePtr(GPRInfo::nonPreservedNonReturnGPR, CCallHelpers::Address(GPRInfo::callFrameRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
+    CodeLocationDataLabelPtr<WasmEntryPtrTag>* linkedCalleeMove = &result->calleeMoveLocation;
+    jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+        *linkedCalleeMove = linkBuffer.locationOf<WasmEntryPtrTag>(calleeMoveLocation);
+    });
 
     const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
     RegisterSet toSave = pinnedRegs.toSave(mode);
@@ -63,7 +69,7 @@ void createJSToWasmWrapper(CompilationContext& compilationContext, const Signatu
 #endif
 
     RegisterAtOffsetList registersToSpill(toSave, RegisterAtOffsetList::OffsetBaseType::FramePointerBased);
-    self->entrypoint().calleeSaveRegisters = registersToSpill;
+    result->entrypoint.calleeSaveRegisters = registersToSpill;
 
     unsigned totalFrameSize = registersToSpill.size() * sizeof(void*);
     totalFrameSize += WasmCallingConvention::headerSizeInBytes();
@@ -119,10 +125,9 @@ void createJSToWasmWrapper(CompilationContext& compilationContext, const Signatu
         }
 
         emitThrowWasmToJSException(jit, GPRInfo::argumentGPR2, argumentsIncludeI64 ? ExceptionType::I64ArgumentType : ExceptionType::I64ReturnType);
-        return;
+        return result;
     }
 
-    compilationContext.embedderMoveAndCall = UnlinkedMoveAndCall { };
     GPRReg wasmContextInstanceGPR = pinnedRegs.wasmContextInstancePointer;
 
     {
@@ -193,10 +198,6 @@ void createJSToWasmWrapper(CompilationContext& compilationContext, const Signatu
 
             jsOffset += sizeof(EncodedJSValue);
         }
-
-        GPRReg calleeGPR = wasmCallingConventionAir().prologueScratch(0);
-        compilationContext.embedderMoveAndCall->moveLocation = jit.moveWithPatch(MacroAssembler::TrustedImmPtr(nullptr), calleeGPR);
-        jit.storePtr(calleeGPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
     }
 
     if (!!info.memory) {
@@ -220,7 +221,12 @@ void createJSToWasmWrapper(CompilationContext& compilationContext, const Signatu
         jit.cageConditionally(Gigacage::Primitive, baseMemory, scratchOrSize, scratchOrSize);
     }
 
-    compilationContext.embedderMoveAndCall->callLocation = jit.threadSafePatchableNearCall();
+    CCallHelpers::Call call = jit.threadSafePatchableNearCall();
+    unsigned functionIndexSpace = functionIndex + info.importFunctionCount();
+    ASSERT(functionIndexSpace < info.functionIndexSpaceSize());
+    jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndexSpace] (LinkBuffer& linkBuffer) {
+        unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndexSpace });
+    });
 
     for (const RegisterAtOffset& regAtOffset : registersToSpill) {
         GPRReg reg = regAtOffset.reg().gpr();
@@ -260,6 +266,8 @@ void createJSToWasmWrapper(CompilationContext& compilationContext, const Signatu
 
     jit.emitFunctionEpilogue();
     jit.ret();
+
+    return result;
 }
 
 } } // namespace JSC::Wasm

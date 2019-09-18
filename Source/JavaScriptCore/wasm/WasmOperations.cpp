@@ -82,7 +82,7 @@ static void triggerOMGReplacementCompile(TierUpCount& tierUp, OMGCallee* replace
     if (compile) {
         dataLogLnIf(Options::verboseOSR(), "triggerOMGReplacement for ", functionIndex);
         // We need to compile the code.
-        Ref<Plan> plan = adoptRef(*new OMGPlan(instance->context(), Ref<Wasm::Module>(instance->module()), functionIndex, codeBlock, Plan::dontFinalize()));
+        Ref<Plan> plan = adoptRef(*new OMGPlan(instance->context(), Ref<Wasm::Module>(instance->module()), functionIndex, codeBlock.mode(), Plan::dontFinalize()));
         ensureWorklist().enqueue(plan.copyRef());
         if (UNLIKELY(!Options::useConcurrentJIT()))
             plan->waitForCompletion();
@@ -197,14 +197,9 @@ static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& c
 #else
 #error Unsupported architecture.
 #endif
-
-    // 4. Update the callee slot in the call frame to the OSR entry callee.
-    Register* stackPointer = bitwise_cast<Register*>(context.sp());
-    *(stackPointer + CallFrameSlot::callee - 1) = bitwise_cast<Register>(CalleeBits::boxWasm(&osrEntryCallee));
-
-    // 5. Configure argument registers to jump to OSR entry from the caller of this runtime function.
+    // 4. Configure argument registers to jump to OSR entry from the caller of this runtime function.
     context.gpr(GPRInfo::argumentGPR0) = bitwise_cast<UCPURegister>(buffer);
-    context.gpr(GPRInfo::argumentGPR1) = bitwise_cast<UCPURegister>(osrEntryCallee.code().executableAddress<>());
+    context.gpr(GPRInfo::argumentGPR1) = bitwise_cast<UCPURegister>(osrEntryCallee.entrypoint().executableAddress<>());
 }
 
 void JIT_OPERATION triggerOSREntryNow(Probe::Context& context)
@@ -370,7 +365,7 @@ void JIT_OPERATION triggerOSREntryNow(Probe::Context& context)
 
     if (startOSREntryCompilation) {
         dataLogLnIf(Options::verboseOSR(), "triggerOMGOSR for ", functionIndex);
-        Ref<Plan> plan = adoptRef(*new OMGForOSREntryPlan(instance->context(), Ref<Wasm::Module>(instance->module()), Ref<Wasm::BBQCallee>(callee), functionIndex, loopIndex, codeBlock, Plan::dontFinalize()));
+        Ref<Plan> plan = adoptRef(*new OMGForOSREntryPlan(instance->context(), Ref<Wasm::Module>(instance->module()), Ref<Wasm::BBQCallee>(callee), functionIndex, loopIndex, codeBlock.mode(), Plan::dontFinalize()));
         ensureWorklist().enqueue(plan.copyRef());
         if (UNLIKELY(!Options::useConcurrentJIT()))
             plan->waitForCompletion();

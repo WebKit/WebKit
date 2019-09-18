@@ -88,16 +88,34 @@ private:
 
 public:
     static unsigned headerSizeInBytes() { return headerSize; }
-    void setupFrameInPrologue(B3::Procedure& proc, B3::Origin origin, B3::BasicBlock* block) const
+    void setupFrameInPrologue(CodeLocationDataLabelPtr<WasmEntryPtrTag>* calleeMoveLocation, B3::Procedure& proc, B3::Origin origin, B3::BasicBlock* block) const
     {
+        static_assert(CallFrameSlot::callee * sizeof(Register) < headerSize, "We rely on this here for now.");
         static_assert(CallFrameSlot::codeBlock * sizeof(Register) < headerSize, "We rely on this here for now.");
+
+        B3::PatchpointValue* getCalleePatchpoint = block->appendNew<B3::PatchpointValue>(proc, B3::Int64, origin);
+        getCalleePatchpoint->resultConstraints = { B3::ValueRep::SomeRegister };
+        getCalleePatchpoint->effects = B3::Effects::none();
+        getCalleePatchpoint->setGenerator(
+            [=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+                GPRReg result = params[0].gpr();
+                MacroAssembler::DataLabelPtr moveLocation = jit.moveWithPatch(MacroAssembler::TrustedImmPtr(nullptr), result);
+                jit.addLinkTask([calleeMoveLocation, moveLocation] (LinkBuffer& linkBuffer) {
+                    *calleeMoveLocation = linkBuffer.locationOf<WasmEntryPtrTag>(moveLocation);
+                });
+            });
+
+        B3::Value* framePointer = block->appendNew<B3::Value>(proc, B3::FramePointer, origin);
+        B3::Value* offsetOfCallee = block->appendNew<B3::Const64Value>(proc, origin, CallFrameSlot::callee * sizeof(Register));
+        block->appendNew<B3::MemoryValue>(proc, B3::Store, origin,
+            getCalleePatchpoint,
+            block->appendNew<B3::Value>(proc, B3::Add, origin, framePointer, offsetOfCallee));
 
         // FIXME: We shouldn't have to store zero into the CodeBlock* spot in the call frame,
         // but there are places that interpret non-null CodeBlock slot to mean a valid CodeBlock.
         // When doing unwinding, we'll need to verify that the entire runtime is OK with a non-null
         // CodeBlock not implying that the CodeBlock is valid.
         // https://bugs.webkit.org/show_bug.cgi?id=165321
-        B3::Value* framePointer = block->appendNew<B3::Value>(proc, B3::FramePointer, origin);
         B3::Value* offsetOfCodeBlock = block->appendNew<B3::Const64Value>(proc, origin, CallFrameSlot::codeBlock * sizeof(Register));
         block->appendNew<B3::MemoryValue>(proc, B3::Store, origin,
             block->appendNew<B3::Const64Value>(proc, origin, 0),

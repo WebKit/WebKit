@@ -393,7 +393,6 @@ set(JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS
 set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCBuiltins.h
-    ${JavaScriptCore_DERIVED_SOURCES_DIR}/WasmOps.h
 
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendDispatchers.h
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorFrontendDispatchers.h
@@ -463,10 +462,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     assembler/X86Assembler.h
     assembler/X86Registers.h
     assembler/X86_64Registers.h
-
-    b3/B3Common.h
-    b3/B3Compilation.h
-    b3/B3Type.h
 
     bindings/ScriptFunctionCall.h
     bindings/ScriptObject.h
@@ -1006,7 +1001,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/WriteBarrier.h
     runtime/WriteBarrierInlines.h
 
-    wasm/WasmCallee.h
     wasm/WasmCapabilities.h
     wasm/WasmCodeBlock.h
     wasm/WasmCompilationMode.h
@@ -1014,16 +1008,13 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/WasmEmbedder.h
     wasm/WasmExceptionType.h
     wasm/WasmFaultSignalHandler.h
-    wasm/WasmFormat.h
     wasm/WasmIndexOrName.h
     wasm/WasmMemory.h
-    wasm/WasmMemoryInformation.h
     wasm/WasmMemoryMode.h
     wasm/WasmModule.h
     wasm/WasmName.h
     wasm/WasmNameSection.h
     wasm/WasmPageCount.h
-    wasm/WasmSignature.h
     wasm/WasmTierUpCount.h
 
     wasm/js/JSWebAssembly.h

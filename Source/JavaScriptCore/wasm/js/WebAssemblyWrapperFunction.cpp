@@ -60,9 +60,7 @@ WebAssemblyWrapperFunction* WebAssemblyWrapperFunction::create(VM& vm, JSGlobalO
     ASSERT_WITH_MESSAGE(!function->inherits<WebAssemblyWrapperFunction>(vm), "We should never double wrap a wrapper function.");
     String name = "";
     NativeExecutable* executable = vm.getHostFunction(callWebAssemblyWrapperFunction, NoIntrinsic, callHostFunctionAsConstructor, nullptr, name);
-    auto importFunctionInfo = instance->instance().importFunctionInfo(importIndex);
-    static void* nullBoxedCallee = nullptr;
-    WebAssemblyWrapperFunction* result = new (NotNull, allocateCell<WebAssemblyWrapperFunction>(vm.heap)) WebAssemblyWrapperFunction(vm, globalObject, structure, Wasm::WasmToWasmImportableFunction { signatureIndex, &importFunctionInfo->wasmToEmbedderStub, &nullBoxedCallee });
+    WebAssemblyWrapperFunction* result = new (NotNull, allocateCell<WebAssemblyWrapperFunction>(vm.heap)) WebAssemblyWrapperFunction(vm, globalObject, structure, Wasm::WasmToWasmImportableFunction { signatureIndex, &instance->instance().importFunctionInfo(importIndex)->wasmToEmbedderStub } );
     const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
     result->finishCreation(vm, executable, signature.argumentCount(), name, function, instance);
     return result;

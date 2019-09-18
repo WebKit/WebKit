@@ -290,7 +290,7 @@
 		0F338DF61BE93D550013C88F /* B3ConstrainedValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338DF41BE93D550013C88F /* B3ConstrainedValue.h */; };
 		0F338DFA1BE96AA80013C88F /* B3CCallValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338DF81BE96AA80013C88F /* B3CCallValue.h */; };
 		0F338DFE1BED51270013C88F /* AirSimplifyCFG.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338DFC1BED51270013C88F /* AirSimplifyCFG.h */; };
-		0F338E0C1BF0276C0013C88F /* B3Compilation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338E001BF0276C0013C88F /* B3Compilation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F338E0C1BF0276C0013C88F /* B3Compilation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338E001BF0276C0013C88F /* B3Compilation.h */; };
 		0F338E0E1BF0276C0013C88F /* B3DataSection.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338E021BF0276C0013C88F /* B3DataSection.h */; };
 		0F338E101BF0276C0013C88F /* B3MoveConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338E041BF0276C0013C88F /* B3MoveConstants.h */; };
 		0F338E111BF0276C0013C88F /* B3OpaqueByproduct.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338E051BF0276C0013C88F /* B3OpaqueByproduct.h */; };
@@ -652,7 +652,7 @@
 		0FEC85041BDACDAC0080FF74 /* B3BlockWorklist.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84BA1BDACDAC0080FF74 /* B3BlockWorklist.h */; };
 		0FEC85061BDACDAC0080FF74 /* B3CheckSpecial.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84BC1BDACDAC0080FF74 /* B3CheckSpecial.h */; };
 		0FEC85081BDACDAC0080FF74 /* B3CheckValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84BE1BDACDAC0080FF74 /* B3CheckValue.h */; };
-		0FEC850A1BDACDAC0080FF74 /* B3Common.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84C01BDACDAC0080FF74 /* B3Common.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FEC850A1BDACDAC0080FF74 /* B3Common.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84C01BDACDAC0080FF74 /* B3Common.h */; };
 		0FEC850C1BDACDAC0080FF74 /* B3Commutativity.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84C21BDACDAC0080FF74 /* B3Commutativity.h */; };
 		0FEC850E1BDACDAC0080FF74 /* B3Const32Value.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84C41BDACDAC0080FF74 /* B3Const32Value.h */; };
 		0FEC85101BDACDAC0080FF74 /* B3Const64Value.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84C61BDACDAC0080FF74 /* B3Const64Value.h */; };
@@ -675,7 +675,7 @@
 		0FEC85361BDACDAC0080FF74 /* B3SuccessorCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84EC1BDACDAC0080FF74 /* B3SuccessorCollection.h */; };
 		0FEC85381BDACDAC0080FF74 /* B3SwitchCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84EE1BDACDAC0080FF74 /* B3SwitchCase.h */; };
 		0FEC853A1BDACDAC0080FF74 /* B3SwitchValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84F01BDACDAC0080FF74 /* B3SwitchValue.h */; };
-		0FEC853C1BDACDAC0080FF74 /* B3Type.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84F21BDACDAC0080FF74 /* B3Type.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FEC853C1BDACDAC0080FF74 /* B3Type.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84F21BDACDAC0080FF74 /* B3Type.h */; };
 		0FEC853E1BDACDAC0080FF74 /* B3UpsilonValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84F41BDACDAC0080FF74 /* B3UpsilonValue.h */; };
 		0FEC85401BDACDAC0080FF74 /* B3UseCounts.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84F61BDACDAC0080FF74 /* B3UseCounts.h */; };
 		0FEC85421BDACDAC0080FF74 /* B3Validate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84F81BDACDAC0080FF74 /* B3Validate.h */; };
@@ -7146,11 +7146,11 @@
 				868921C11F9C0CB7001159F6 /* JSBigInt.h */,
 				86FA9E8F142BBB2D001773B7 /* JSBoundFunction.cpp */,
 				86FA9E90142BBB2E001773B7 /* JSBoundFunction.h */,
+				FE48BD4323245E8700F136D0 /* JSCConfig.cpp */,
+				FE48BD4223245E8700F136D0 /* JSCConfig.h */,
 				657CF45619BF6662004ACBF2 /* JSCallee.cpp */,
 				657CF45719BF6662004ACBF2 /* JSCallee.h */,
 				53B601EB2034B8C5006BE667 /* JSCast.h */,
-				FE48BD4323245E8700F136D0 /* JSCConfig.cpp */,
-				FE48BD4223245E8700F136D0 /* JSCConfig.h */,
 				BC7F8FBA0E19D1EF008632C0 /* JSCell.cpp */,
 				BC1167D80E19BCC9008066DD /* JSCell.h */,
 				0F97496F1687ADE200A4FF6A /* JSCellInlines.h */,
@@ -9353,6 +9353,7 @@
 				0FEA0A10170513DB00BB722C /* FTLLowerDFGToB3.h in Headers */,
 				A7D89D0217A0B90400773AD8 /* FTLLoweredNodeValue.h in Headers */,
 				0F2B9CF919D0BAC100B1D1B5 /* FTLOperations.h in Headers */,
+				FE3842322324D51B009DD445 /* OptionEntry.h in Headers */,
 				0FD8A31C17D51F2200CA2C40 /* FTLOSREntry.h in Headers */,
 				0F235BDD17178E1C00690C7F /* FTLOSRExit.h in Headers */,
 				0F235BE017178E1C00690C7F /* FTLOSRExitCompiler.h in Headers */,
@@ -9542,6 +9543,7 @@
 				A1D793011B43864B004516F5 /* IntlNumberFormatPrototype.h in Headers */,
 				A125846F1B45A36000CC7F6C /* IntlNumberFormatPrototype.lut.h in Headers */,
 				A12BBFF21B044A8B00664B69 /* IntlObject.h in Headers */,
+				FE48BD4423245E9300F136D0 /* JSCConfig.h in Headers */,
 				708EBE241CE8F35800453146 /* IntlObjectInlines.h in Headers */,
 				860BD801148EA6F200112B2F /* Intrinsic.h in Headers */,
 				534E03541E53BD2900213F64 /* IntrinsicGetterAccessCase.h in Headers */,
@@ -9612,7 +9614,6 @@
 				657CF45919BF6662004ACBF2 /* JSCallee.h in Headers */,
 				53B601EC2034B8C5006BE667 /* JSCast.h in Headers */,
 				A7D801A91880D6A80026C39B /* JSCBuiltins.h in Headers */,
-				FE48BD4423245E9300F136D0 /* JSCConfig.h in Headers */,
 				BC1167DA0E19BCC9008066DD /* JSCell.h in Headers */,
 				0F9749711687ADE400A4FF6A /* JSCellInlines.h in Headers */,
 				0F1DD84A18A945BE0026F3FA /* JSCInlines.h in Headers */,
@@ -9890,9 +9891,7 @@
 				0F2BDC2C151FDE9100CD8910 /* Operands.h in Headers */,
 				A70447EA17A0BD4600F5898E /* OperandsInlines.h in Headers */,
 				BC18C4480E16F5CD00B34460 /* Operations.h in Headers */,
-				FE3842322324D51B009DD445 /* OptionEntry.h in Headers */,
 				0FE228ED1436AB2700196C48 /* Options.h in Headers */,
-				FE3842332324D51B009DD445 /* OptionsList.h in Headers */,
 				E356987222841187008CDCCB /* PackedCellPtr.h in Headers */,
 				0F9DAA0A1FD1C3D30079C5B2 /* ParallelSourceAdapter.h in Headers */,
 				E34E657520668EAA00FB81AC /* ParseHash.h in Headers */,
@@ -9999,6 +9998,7 @@
 				0FE050281AA9095600D33B33 /* ScopedArguments.h in Headers */,
 				0FE050291AA9095600D33B33 /* ScopedArgumentsTable.h in Headers */,
 				0FE0502B1AA9095600D33B33 /* ScopeOffset.h in Headers */,
+				FE3842332324D51B009DD445 /* OptionsList.h in Headers */,
 				0F24E55217EE274900ABB217 /* ScratchRegisterAllocator.h in Headers */,
 				A5FD0068189AFE9C00633231 /* ScriptArguments.h in Headers */,
 				A503FA21188EFF6800110F14 /* ScriptBreakpoint.h in Headers */,

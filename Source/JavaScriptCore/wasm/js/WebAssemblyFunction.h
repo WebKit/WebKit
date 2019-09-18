@@ -62,12 +62,11 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, Structure*, unsigned, const String&, JSWebAssemblyInstance*, Wasm::Callee& jsEntrypoint, WasmToWasmImportableFunction::LoadLocation wasmEntrypointLoadLocation, void** boxedCalleeLoadLocation, Wasm::SignatureIndex);
+    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, Structure*, unsigned, const String&, JSWebAssemblyInstance*, Wasm::Callee& jsEntrypoint, WasmToWasmImportableFunction::LoadLocation, Wasm::SignatureIndex);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     Wasm::SignatureIndex signatureIndex() const { return m_importableFunction.signatureIndex; }
     WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation() const { return m_importableFunction.entrypointLoadLocation; }
-    void** boxedCalleeLoadLocation() const { return m_importableFunction.boxedCalleeLoadLocation; }
     WasmToWasmImportableFunction importableFunction() const { return m_importableFunction; }
 
     MacroAssemblerCodePtr<WasmEntryPtrTag> jsEntrypoint(ArityCheckMode arity)
@@ -79,7 +78,6 @@ public:
     }
 
     static ptrdiff_t offsetOfEntrypointLoadLocation() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_importableFunction) + WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation(); }
-    static ptrdiff_t offsetOfBoxedCalleeLoadLocation() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_importableFunction) + WasmToWasmImportableFunction::offsetOfBoxedCalleeLoadLocation(); }
 
     MacroAssemblerCodePtr<JSEntryPtrTag> jsCallEntrypoint()
     {
@@ -93,7 +91,7 @@ public:
 
 private:
     static void visitChildren(JSCell*, SlotVisitor&);
-    WebAssemblyFunction(VM&, JSGlobalObject*, Structure*, Wasm::Callee& jsEntrypoint, WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation, void** boxedCalleeLoadLocation, Wasm::SignatureIndex);
+    WebAssemblyFunction(VM&, JSGlobalObject*, Structure*, Wasm::Callee& jsEntrypoint, WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation, Wasm::SignatureIndex);
 
     MacroAssemblerCodePtr<JSEntryPtrTag> jsCallEntrypointSlow();
     ptrdiff_t previousInstanceOffset() const;

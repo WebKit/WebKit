@@ -54,15 +54,15 @@ namespace WasmOMGForOSREntryPlanInternal {
 static constexpr bool verbose = false;
 }
 
-OMGForOSREntryPlan::OMGForOSREntryPlan(Context* context, Ref<Module>&& module, Ref<BBQCallee>&& callee, uint32_t functionIndex, uint32_t loopIndex, CodeBlock& codeBlock, CompletionTask&& task)
+OMGForOSREntryPlan::OMGForOSREntryPlan(Context* context, Ref<Module>&& module, Ref<BBQCallee>&& callee, uint32_t functionIndex, uint32_t loopIndex, MemoryMode mode, CompletionTask&& task)
     : Base(context, makeRef(const_cast<ModuleInformation&>(module->moduleInformation())), WTFMove(task))
     , m_module(WTFMove(module))
-    , m_codeBlock(codeBlock)
+    , m_codeBlock(*m_module->codeBlockFor(mode))
     , m_callee(WTFMove(callee))
     , m_functionIndex(functionIndex)
     , m_loopIndex(loopIndex)
 {
-    setMode(codeBlock.mode());
+    setMode(mode);
     ASSERT(m_codeBlock->runnable());
     ASSERT(m_codeBlock.ptr() == m_module->codeBlockFor(m_mode));
     dataLogLnIf(WasmOMGForOSREntryPlanInternal::verbose, "Starting OMGForOSREntry plan for ", functionIndex, " of module: ", RawPointer(&m_module.get()));
@@ -81,33 +81,45 @@ void OMGForOSREntryPlan::work(CompilationEffort)
     const Signature& signature = SignatureInformation::get(signatureIndex);
     ASSERT(validateFunction(function, signature, m_moduleInformation.get()));
 
+    Vector<UnlinkedWasmToWasmCall> unlinkedCalls;
     CompilationContext context;
     unsigned osrEntryScratchBufferSize = 0;
-    auto parseAndCompileResult = parseAndCompile(context, function, signature, m_codeBlock->m_wasmToWasmExitStubs, osrEntryScratchBufferSize, m_moduleInformation.get(), m_mode, CompilationMode::OMGForOSREntryMode, m_functionIndex, m_loopIndex);
+    auto parseAndCompileResult = parseAndCompile(context, function, signature, unlinkedCalls, osrEntryScratchBufferSize, m_moduleInformation.get(), m_mode, CompilationMode::OMGForOSREntryMode, m_functionIndex, m_loopIndex);
 
     if (UNLIKELY(!parseAndCompileResult)) {
         fail(holdLock(m_lock), makeString(parseAndCompileResult.error(), "when trying to tier up ", String::number(m_functionIndex)));
         return;
     }
 
+    Entrypoint omgEntrypoint;
     LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, JITCompilationCanFail);
     if (UNLIKELY(linkBuffer.didFailToAllocate())) {
         Base::fail(holdLock(m_lock), makeString("Out of executable memory while tiering up function at index ", String::number(m_functionIndex)));
         return;
     }
 
-    Ref<OMGForOSREntryCallee> callee = OMGForOSREntryCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), osrEntryScratchBufferSize, m_loopIndex);
-    callee->entrypoint().calleeSaveRegisters = WTFMove(context.calleeSaveRegisters);
-    callee->entrypoint().compilation = makeUnique<B3::Compilation>(
+    omgEntrypoint.compilation = makeUnique<B3::Compilation>(
         FINALIZE_CODE(linkBuffer, B3CompilationPtrTag, "WebAssembly OMGForOSREntry function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
         WTFMove(context.wasmEntrypointByproducts));
 
+    omgEntrypoint.calleeSaveRegisters = WTFMove(parseAndCompileResult.value()->entrypoint.calleeSaveRegisters);
+
+    MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint;
     ASSERT(m_codeBlock.ptr() == m_module->codeBlockFor(mode()));
+    Ref<OMGForOSREntryCallee> callee = OMGForOSREntryCallee::create(WTFMove(omgEntrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), osrEntryScratchBufferSize, m_loopIndex, WTFMove(unlinkedCalls));
     {
+        MacroAssembler::repatchPointer(parseAndCompileResult.value()->calleeMoveLocation, CalleeBits::boxWasm(callee.ptr()));
+        entrypoint = callee->entrypoint();
+
         auto locker = holdLock(m_codeBlock->m_lock);
-        for (auto& call : context.outgoingCalls) {
-            BBQCallee& targetCallee = m_codeBlock->wasmBBQCalleeFromFunctionIndexSpace(call.targetFunctionIndexSpace);
-            targetCallee.addAndLinkCaller(locker, linkBuffer, call.unlinkedMoveAndCall);
+        for (auto& call : callee->wasmToWasmCallsites()) {
+            MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint;
+            if (call.functionIndexSpace < m_module->moduleInformation().importFunctionCount())
+                entrypoint = m_codeBlock->m_wasmToWasmExitStubs[call.functionIndexSpace].code();
+            else
+                entrypoint = m_codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(call.functionIndexSpace).entrypoint().retagged<WasmEntryPtrTag>();
+
+            MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel<WasmEntryPtrTag>(entrypoint));
         }
     }
     resetInstructionCacheOnAllThreads();
@@ -119,6 +131,19 @@ void OMGForOSREntryPlan::work(CompilationEffort)
             m_callee->setOSREntryCallee(callee.copyRef());
             m_callee->tierUpCount()->osrEntryTriggers()[m_loopIndex] = TierUpCount::TriggerReason::CompilationDone;
             m_callee->tierUpCount()->m_compilationStatusForOMGForOSREntry = TierUpCount::CompilationStatus::Compiled;
+        }
+        WTF::storeStoreFence();
+        // It is possible that a new OMG callee is added while we release m_codeBlock->lock.
+        // Until we add OMGForOSREntry callee to BBQCallee's m_osrEntryCallee, this new OMG function linking does not happen for this OMGForOSREntry callee.
+        // We re-link this OMGForOSREntry callee again not to miss that chance.
+        for (auto& call : callee->wasmToWasmCallsites()) {
+            MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint;
+            if (call.functionIndexSpace < m_module->moduleInformation().importFunctionCount())
+                entrypoint = m_codeBlock->m_wasmToWasmExitStubs[call.functionIndexSpace].code();
+            else
+                entrypoint = m_codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(call.functionIndexSpace).entrypoint().retagged<WasmEntryPtrTag>();
+
+            MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel<WasmEntryPtrTag>(entrypoint));
         }
     }
     dataLogLnIf(WasmOMGForOSREntryPlanInternal::verbose, "Finished OMGForOSREntry ", m_functionIndex, " with tier up count at: ", m_callee->tierUpCount()->count());

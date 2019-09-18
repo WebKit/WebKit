@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmBBQPlanInlines.h"
+#include "WasmCallee.h"
 #include "WasmFormat.h"
 #include "WasmWorklist.h"
 
@@ -46,15 +47,7 @@ CodeBlock::CodeBlock(Context* context, MemoryMode mode, ModuleInformation& modul
 {
     RefPtr<CodeBlock> protectedThis = this;
 
-    m_callees.resize(m_calleeCount);
-    m_boxedCallees.resize(m_calleeCount);
-    for (uint32_t i = 0; i < m_calleeCount; i++) {
-        uint32_t functionIndexSpace = moduleInformation.importFunctionCount() + i;
-        m_callees[i] = BBQCallee::create(functionIndexSpace, moduleInformation.nameSection->get(functionIndexSpace), makeUnique<TierUpCount>());
-        m_boxedCallees[i] = CalleeBits::boxWasm(m_callees[i].ptr());
-    }
-
-    m_plan = adoptRef(*new BBQPlan(context, m_callees, makeRef(moduleInformation), BBQPlan::FullCompile, createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
+    m_plan = adoptRef(*new BBQPlan(context, makeRef(moduleInformation), BBQPlan::FullCompile, createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
         auto locker = holdLock(m_lock);
         if (m_plan->failed()) {
             m_errorMessage = m_plan->errorMessage();
@@ -63,18 +56,21 @@ CodeBlock::CodeBlock(Context* context, MemoryMode mode, ModuleInformation& modul
         }
 
         // FIXME: we should eventually collect the BBQ code.
+        m_callees.resize(m_calleeCount);
         m_optimizedCallees.resize(m_calleeCount);
         m_wasmIndirectCallEntryPoints.resize(m_calleeCount);
 
-        m_plan->initializeCallees([&] (unsigned calleeIndex, RefPtr<EmbedderEntrypointCallee>&& embedderEntrypointCallee) {
+        m_plan->initializeCallees([&] (unsigned calleeIndex, RefPtr<Wasm::Callee>&& embedderEntrypointCallee, Ref<Wasm::Callee>&& wasmEntrypointCallee) {
             if (embedderEntrypointCallee) {
                 auto result = m_embedderCallees.set(calleeIndex, WTFMove(embedderEntrypointCallee));
                 ASSERT_UNUSED(result, result.isNewEntry);
             }
-            m_wasmIndirectCallEntryPoints[calleeIndex] = m_callees[calleeIndex]->code();
+            m_callees[calleeIndex] = WTFMove(wasmEntrypointCallee);
+            m_wasmIndirectCallEntryPoints[calleeIndex] = m_callees[calleeIndex]->entrypoint();
         });
 
         m_wasmToWasmExitStubs = m_plan->takeWasmToWasmExitStubs();
+        m_wasmToWasmCallsites = m_plan->takeWasmToWasmCallsites();
 
         setCompilationFinished();
     }), WTFMove(createEmbedderWrapper), throwWasmException));

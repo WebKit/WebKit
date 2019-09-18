@@ -51,7 +51,7 @@ public:
     enum AsyncWork : uint8_t { FullCompile, Validation };
 
     // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
-    BBQPlan(Context*, const Vector<Ref<BBQCallee>>&, Ref<ModuleInformation>, AsyncWork, CompletionTask&&, CreateEmbedderWrapper&&, ThrowWasmException);
+    BBQPlan(Context*, Ref<ModuleInformation>, AsyncWork, CompletionTask&&, CreateEmbedderWrapper&&, ThrowWasmException);
     JS_EXPORT_PRIVATE BBQPlan(Context*, Vector<uint8_t>&&, AsyncWork, CompletionTask&&, CreateEmbedderWrapper&&, ThrowWasmException);
     BBQPlan(Context*, AsyncWork, CompletionTask&&);
 
@@ -98,6 +98,12 @@ public:
         return WTFMove(m_wasmToWasmExitStubs);
     }
 
+    Vector<Vector<UnlinkedWasmToWasmCall>> takeWasmToWasmCallsites()
+    {
+        RELEASE_ASSERT(!failed() && !hasWork());
+        return WTFMove(m_unlinkedWasmToWasmCalls);
+    }
+
     enum class State : uint8_t {
         Initial,
         Validated,
@@ -133,13 +139,14 @@ private:
     Vector<uint8_t> m_source;
     Bag<CallLinkInfo> m_callLinkInfos;
     Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToWasmExitStubs;
+    Vector<std::unique_ptr<InternalFunction>> m_wasmInternalFunctions;
     HashSet<uint32_t, typename DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_exportedFunctionIndices;
-    HashMap<uint32_t, RefPtr<EmbedderEntrypointCallee>, typename DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_embedderToWasmInternalFunctions;
+    HashMap<uint32_t, std::unique_ptr<InternalFunction>, typename DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_embedderToWasmInternalFunctions;
     Vector<CompilationContext> m_compilationContexts;
     Vector<std::unique_ptr<TierUpCount>> m_tierUpCounts;
 
+    Vector<Vector<UnlinkedWasmToWasmCall>> m_unlinkedWasmToWasmCalls;
     StreamingParser m_streamingParser;
-    const Vector<Ref<BBQCallee>>* m_callees { nullptr };
     State m_state;
 
     const AsyncWork m_asyncWork;

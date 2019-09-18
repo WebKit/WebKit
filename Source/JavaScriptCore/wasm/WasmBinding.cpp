@@ -47,7 +47,6 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
     JIT jit;
 
     GPRReg scratch = wasmCallingConventionAir().prologueScratch(0);
-    GPRReg callee = wasmCallingConventionAir().prologueScratch(1);
     GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
     ASSERT(baseMemory != scratch);
     ASSERT(pinnedRegs.sizeRegister != baseMemory);
@@ -58,19 +57,12 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
     jit.loadWasmContextInstance(sizeRegAsScratch); // Old Instance*
     // Get the callee's Wasm::Instance and set it as WasmContext's instance. The caller will take care of restoring its own Instance.
     jit.loadPtr(JIT::Address(sizeRegAsScratch, Instance::offsetOfTargetInstance(importIndex)), baseMemory); // Instance*.
-    // While we're accessing that cacheline, also get the wasm entrypoint and callee so we can tail call to it below.
+    // While we're accessing that cacheline, also get the wasm entrypoint so we can tail call to it below.
     jit.loadPtr(JIT::Address(sizeRegAsScratch, Instance::offsetOfWasmEntrypointLoadLocation(importIndex)), scratch);
-    jit.loadPtr(JIT::Address(sizeRegAsScratch, Instance::offsetOfBoxedCalleeLoadLocation(importIndex)), callee);
     jit.storeWasmContextInstance(baseMemory);
 
     jit.loadPtr(JIT::Address(sizeRegAsScratch, Instance::offsetOfCachedStackLimit()), sizeRegAsScratch);
     jit.storePtr(sizeRegAsScratch, JIT::Address(baseMemory, Instance::offsetOfCachedStackLimit()));
-
-    // Set the callee slot in the call frame
-    jit.loadPtr(callee, callee);
-    // At this point, we have been called, so ReturnPC is on the stack, but we have not yet pushed the frame pointer,
-    // so we have to subtract the space for CallerFrame from the callee slot
-    jit.storePtr(callee, JIT::Address(JIT::stackPointerRegister, CallFrameSlot::callee * sizeof(Register) - sizeof(CPURegister)));
 
     // FIXME the following code assumes that all Wasm::Instance have the same pinned registers. https://bugs.webkit.org/show_bug.cgi?id=162952
     // Set up the callee's baseMemory register as well as the memory size registers.

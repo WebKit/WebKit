@@ -31,7 +31,7 @@
 
 namespace JSC { namespace Wasm {
 
-Expected<void, String> parseAndCompileAir(CompilationContext&, const FunctionData&, const Signature&, Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>>&, const ModuleInformation&, MemoryMode, uint32_t functionIndex, TierUpCount* = nullptr, ThrowWasmException = nullptr);
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(CompilationContext&, const FunctionData&, const Signature&, Vector<UnlinkedWasmToWasmCall>&, const ModuleInformation&, MemoryMode, uint32_t functionIndex, TierUpCount* = nullptr, ThrowWasmException = nullptr);
 
 } } // namespace JSC::Wasm
 

@@ -287,15 +287,10 @@ inline bool isValidNameType(Int val)
     return false;
 }
 
-struct UnlinkedMoveAndCall {
-    MacroAssembler::DataLabelPtr moveLocation;
-    MacroAssembler::Call callLocation;
-};
-
 struct UnlinkedWasmToWasmCall {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    size_t targetFunctionIndexSpace;
-    UnlinkedMoveAndCall unlinkedMoveAndCall;
+    CodeLocationNearCall<WasmEntryPtrTag> callLocation;
+    size_t functionIndexSpace;
 };
 
 struct Entrypoint {
@@ -318,12 +313,10 @@ struct WasmToWasmImportableFunction {
     using LoadLocation = MacroAssemblerCodePtr<WasmEntryPtrTag>*;
     static ptrdiff_t offsetOfSignatureIndex() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, signatureIndex); }
     static ptrdiff_t offsetOfEntrypointLoadLocation() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, entrypointLoadLocation); }
-    static ptrdiff_t offsetOfBoxedCalleeLoadLocation() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, boxedCalleeLoadLocation); }
 
     // FIXME: Pack signature index and code pointer into one 64-bit value. See <https://bugs.webkit.org/show_bug.cgi?id=165511>.
     SignatureIndex signatureIndex { Signature::invalidIndex };
     LoadLocation entrypointLoadLocation;
-    void** boxedCalleeLoadLocation;
 };
 using FunctionIndexSpace = Vector<WasmToWasmImportableFunction>;
 

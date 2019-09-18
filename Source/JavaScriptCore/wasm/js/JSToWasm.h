@@ -41,7 +41,7 @@ namespace JSC {
 
 namespace Wasm {
 
-void createJSToWasmWrapper(CompilationContext&, const Signature&, EmbedderEntrypointCallee*, const ModuleInformation&, MemoryMode);
+std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext&, const Signature&, Vector<UnlinkedWasmToWasmCall>*, const ModuleInformation&, MemoryMode, uint32_t functionIndex);
 
 } } // namespace JSC::Wasm
 
