@@ -1,3 +1,15 @@
+2019-09-18  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove build warning since r248998.
+
+        This patch removes build warning below.
+        warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+
+        No new tests, no behavioral change.
+
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::rowAvailable):
+
 2019-09-18  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [cairo] Incorrect targetRect in BackingStoreBackendCairoImpl::scroll

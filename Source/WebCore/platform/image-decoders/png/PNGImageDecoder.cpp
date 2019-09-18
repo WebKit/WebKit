@@ -468,7 +468,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     // make our lives easier.
     if (!rowBuffer)
         return;
-    if (rowIndex >= size().height())
+    if (rowIndex >= (unsigned)size().height())
         return;
 
     /* libpng comments (continued).
