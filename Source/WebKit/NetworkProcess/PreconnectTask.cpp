@@ -39,13 +39,13 @@ namespace WebKit {
 
 using namespace WebCore;
 
-PreconnectTask::PreconnectTask(NetworkProcess& networkProcess, NetworkLoadParameters&& parameters, CompletionHandler<void(const ResourceError&)>&& completionHandler)
+PreconnectTask::PreconnectTask(NetworkProcess& networkProcess, PAL::SessionID sessionID, NetworkLoadParameters&& parameters, CompletionHandler<void(const ResourceError&)>&& completionHandler)
     : m_completionHandler(WTFMove(completionHandler))
     , m_timeoutTimer([this] { didFinish(ResourceError { String(), 0, m_networkLoad->parameters().request.url(), "Preconnection timed out"_s, ResourceError::Type::Timeout }); })
 {
     RELEASE_LOG(Network, "%p - PreconnectTask::PreconnectTask()", this);
 
-    auto* networkSession = networkProcess.networkSession(parameters.sessionID);
+    auto* networkSession = networkProcess.networkSession(sessionID);
     if (!networkSession) {
         ASSERT_NOT_REACHED();
         m_completionHandler(internalError(parameters.request.url()));

@@ -52,7 +52,7 @@ SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameI
 {
     ASSERT(!m_cacheEntry || m_cacheEntry->needsValidation());
 
-    NetworkLoadParameters parameters { cache.sessionID() };
+    NetworkLoadParameters parameters;
     parameters.webPageProxyID = globalFrameID.webPageProxyID;
     parameters.webPageID = globalFrameID.webPageID;
     parameters.webFrameID = globalFrameID.frameID;

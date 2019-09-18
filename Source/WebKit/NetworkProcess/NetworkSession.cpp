@@ -101,7 +101,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
         if (!weakThis)
             return;
         // PingLoad manages its own lifetime, deleting itself when its purpose has been fulfilled.
-        new PingLoad(m_networkProcess, WTFMove(loadParameters), WTFMove(completionHandler));
+        new PingLoad(m_networkProcess, m_sessionID, WTFMove(loadParameters), WTFMove(completionHandler));
     });
 }
 

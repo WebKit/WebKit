@@ -28,6 +28,7 @@
 #include "DownloadID.h"
 #include "MessageSender.h"
 #include "NetworkCache.h"
+#include "NetworkConnectionToWebProcess.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkLoadClient.h"
 #include "NetworkResourceLoadParameters.h"
@@ -83,7 +84,7 @@ public:
     const WebCore::ResourceResponse& response() const { return m_response; }
 
     NetworkConnectionToWebProcess& connectionToWebProcess() const { return m_connection; }
-    PAL::SessionID sessionID() const { return m_parameters.sessionID; }
+    PAL::SessionID sessionID() const { return m_connection->sessionID(); }
     ResourceLoadIdentifier identifier() const { return m_parameters.identifier; }
     WebCore::FrameIdentifier frameID() const { return m_parameters.webFrameID; }
     WebCore::PageIdentifier pageID() const { return m_parameters.webPageID; }

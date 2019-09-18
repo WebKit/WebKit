@@ -40,7 +40,7 @@ class NetworkProcess;
 
 class PreconnectTask final : public NetworkLoadClient {
 public:
-    explicit PreconnectTask(NetworkProcess&, NetworkLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&)>&& completionHandler = { });
+    PreconnectTask(NetworkProcess&, PAL::SessionID, NetworkLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&)>&& completionHandler = { });
     ~PreconnectTask();
 
 private:

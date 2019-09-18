@@ -33,7 +33,6 @@ using namespace WebCore;
 
 void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
 {
-    encoder << sessionID;
     encoder << identifier;
     encoder << webPageProxyID;
     encoder << webPageID;
@@ -109,13 +108,7 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
 
 Optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::decode(IPC::Decoder& decoder)
 {
-    Optional<PAL::SessionID> sessionID;
-    decoder >> sessionID;
-
-    if (!sessionID)
-        return WTF::nullopt;
-
-    NetworkResourceLoadParameters result { *sessionID };
+    NetworkResourceLoadParameters result;
 
     if (!decoder.decode(result.identifier))
         return WTF::nullopt;

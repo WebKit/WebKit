@@ -63,7 +63,7 @@ void NetworkCORSPreflightChecker::startPreflight()
 {
     RELEASE_LOG_IF_ALLOWED("startPreflight");
 
-    NetworkLoadParameters loadParameters { m_parameters.sessionID };
+    NetworkLoadParameters loadParameters;
     loadParameters.request = createAccessControlPreflightRequest(m_parameters.originalRequest, m_parameters.sourceOrigin, m_parameters.referrer);
     if (!m_parameters.userAgent.isNull())
         loadParameters.request.setHTTPHeaderField(HTTPHeaderName::UserAgent, m_parameters.userAgent);
@@ -71,7 +71,7 @@ void NetworkCORSPreflightChecker::startPreflight()
     if (m_shouldCaptureExtraNetworkLoadMetrics)
         m_loadInformation = NetworkTransactionInformation { NetworkTransactionInformation::Type::Preflight, loadParameters.request, { }, { } };
 
-    if (auto* networkSession = m_networkProcess->networkSession(loadParameters.sessionID)) {
+    if (auto* networkSession = m_networkProcess->networkSession(m_parameters.sessionID)) {
         m_task = NetworkDataTask::create(*networkSession, *this, WTFMove(loadParameters));
         m_task->resume();
     } else

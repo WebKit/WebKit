@@ -42,12 +42,6 @@ enum class PreconnectOnly { No, Yes };
 
 class NetworkLoadParameters {
 public:
-    explicit NetworkLoadParameters(PAL::SessionID sessionID)
-        : sessionID(sessionID)
-    {
-    }
-
-    PAL::SessionID sessionID;
     WebPageProxyIdentifier webPageProxyID;
     WebCore::PageIdentifier webPageID;
     WebCore::FrameIdentifier webFrameID;

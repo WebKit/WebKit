@@ -477,7 +477,7 @@ void NetworkConnectionToWebProcess::preconnectTo(uint64_t preconnectionIdentifie
     ASSERT(!parameters.request.httpBody());
     
 #if ENABLE(SERVER_PRECONNECT)
-    new PreconnectTask(networkProcess(), WTFMove(parameters), [this, protectedThis = makeRef(*this), identifier = preconnectionIdentifier] (const ResourceError& error) {
+    new PreconnectTask(networkProcess(), sessionID(), WTFMove(parameters), [this, protectedThis = makeRef(*this), identifier = preconnectionIdentifier] (const ResourceError& error) {
         didFinishPreconnection(identifier, error);
     });
 #else
