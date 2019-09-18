@@ -38,9 +38,9 @@ FileSystemFileEntry::FileSystemFileEntry(ScriptExecutionContext& context, DOMFil
 {
 }
 
-void FileSystemFileEntry::file(ScriptExecutionContext& context, Ref<FileCallback>&& successCallback, RefPtr<ErrorCallback>&& errorCallback)
+void FileSystemFileEntry::file(Ref<FileCallback>&& successCallback, RefPtr<ErrorCallback>&& errorCallback)
 {
-    filesystem().getFile(context, *this, [successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback)](auto&& result) {
+    filesystem().getFile(*this, [successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback)](auto&& result) {
         if (result.hasException()) {
             if (errorCallback)
                 errorCallback->handleEvent(DOMException::create(result.releaseException()));

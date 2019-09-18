@@ -60,7 +60,7 @@ void PublicURLManager::revoke(const URL& url)
 {
     for (auto& registry : m_registryToURL) {
         if (registry.value.contains(url.string())) {
-            registry.key->unregisterURL(*scriptExecutionContext(), url);
+            registry.key->unregisterURL(url);
             registry.value.remove(url.string());
             break;
         }
@@ -75,7 +75,7 @@ void PublicURLManager::stop()
     m_isStopped = true;
     for (auto& registry : m_registryToURL) {
         for (auto& url : registry.value)
-            registry.key->unregisterURL(*scriptExecutionContext(), URL({ }, url));
+            registry.key->unregisterURL(URL({ }, url));
     }
 
     m_registryToURL.clear();

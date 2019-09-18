@@ -75,7 +75,7 @@ public:
     void setAsLoading() { m_isLoading = true; }
 
 private:
-    Ref<Blob> takeAsBlob(PAL::SessionID);
+    Ref<Blob> takeAsBlob();
 
     Type m_type;
     String m_contentType;

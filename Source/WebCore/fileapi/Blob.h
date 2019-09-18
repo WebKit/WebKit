@@ -37,7 +37,6 @@
 #include <wtf/IsoMalloc.h>
 #include <wtf/URL.h>
 #include "URLRegistry.h"
-#include <pal/SessionID.h>
 #include <wtf/Variant.h>
 
 namespace JSC {
@@ -56,30 +55,30 @@ using BlobPartVariant = Variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayB
 class Blob : public ScriptWrappable, public URLRegistrable, public RefCounted<Blob> {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(Blob, WEBCORE_EXPORT);
 public:
-    static Ref<Blob> create(PAL::SessionID sessionID)
+    static Ref<Blob> create()
     {
-        return adoptRef(*new Blob(sessionID));
+        return adoptRef(*new Blob);
     }
 
-    static Ref<Blob> create(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& propertyBag)
+    static Ref<Blob> create(Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& propertyBag)
     {
-        return adoptRef(*new Blob(context.sessionID(), WTFMove(blobPartVariants), propertyBag));
+        return adoptRef(*new Blob(WTFMove(blobPartVariants), propertyBag));
     }
 
-    static Ref<Blob> create(PAL::SessionID sessionID, const SharedBuffer& buffer, const String& contentType)
+    static Ref<Blob> create(const SharedBuffer& buffer, const String& contentType)
     {
-        return adoptRef(*new Blob(sessionID, buffer, contentType));
+        return adoptRef(*new Blob(buffer, contentType));
     }
 
-    static Ref<Blob> create(PAL::SessionID sessionID, Vector<uint8_t>&& data, const String& contentType)
+    static Ref<Blob> create(Vector<uint8_t>&& data, const String& contentType)
     {
-        return adoptRef(*new Blob(sessionID, WTFMove(data), contentType));
+        return adoptRef(*new Blob(WTFMove(data), contentType));
     }
 
-    static Ref<Blob> deserialize(PAL::SessionID sessionID, const URL& srcURL, const String& type, long long size, const String& fileBackedPath)
+    static Ref<Blob> deserialize(const URL& srcURL, const String& type, long long size, const String& fileBackedPath)
     {
         ASSERT(Blob::isNormalizedContentType(type));
-        return adoptRef(*new Blob(deserializationContructor, sessionID, srcURL, type, size, fileBackedPath));
+        return adoptRef(*new Blob(deserializationContructor, srcURL, type, size, fileBackedPath));
     }
 
     virtual ~Blob();
@@ -104,30 +103,28 @@ public:
 
     Ref<Blob> slice(long long start = 0, long long end = std::numeric_limits<long long>::max(), const String& contentType = String()) const
     {
-        return adoptRef(*new Blob(m_sessionID, m_internalURL, start, end, contentType));
+        return adoptRef(*new Blob(m_internalURL, start, end, contentType));
     }
 
 protected:
-    WEBCORE_EXPORT explicit Blob(PAL::SessionID);
-    Blob(PAL::SessionID, Vector<BlobPartVariant>&&, const BlobPropertyBag&);
-    Blob(PAL::SessionID, const SharedBuffer&, const String& contentType);
-    Blob(PAL::SessionID, Vector<uint8_t>&&, const String& contentType);
+    WEBCORE_EXPORT Blob();
+    Blob(Vector<BlobPartVariant>&&, const BlobPropertyBag&);
+    Blob(const SharedBuffer&, const String& contentType);
+    Blob(Vector<uint8_t>&&, const String& contentType);
 
     enum ReferencingExistingBlobConstructor { referencingExistingBlobConstructor };
     Blob(ReferencingExistingBlobConstructor, const Blob&);
 
     enum UninitializedContructor { uninitializedContructor };
-    Blob(UninitializedContructor, PAL::SessionID, URL&&, String&& type);
+    Blob(UninitializedContructor, URL&&, String&& type);
 
     enum DeserializationContructor { deserializationContructor };
-    Blob(DeserializationContructor, PAL::SessionID, const URL& srcURL, const String& type, Optional<unsigned long long> size, const String& fileBackedPath);
+    Blob(DeserializationContructor, const URL& srcURL, const String& type, Optional<unsigned long long> size, const String& fileBackedPath);
 
     // For slicing.
-    Blob(PAL::SessionID, const URL& srcURL, long long start, long long end, const String& contentType);
+    Blob(const URL& srcURL, long long start, long long end, const String& contentType);
 
 private:
-    PAL::SessionID m_sessionID;
-
     // This is an internal URL referring to the blob data associated with this object. It serves
     // as an identifier for this blob. The internal URL is never used to source the blob's content
     // into an HTML or for FileRead'ing, public blob URLs must be used for those purposes.

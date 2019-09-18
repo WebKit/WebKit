@@ -106,11 +106,10 @@ CompletionHandlerCallingScope PolicyChecker::extendBlobURLLifetimeIfNecessary(Re
 
     // Create a new temporary blobURL in case this one gets revoked during the asynchronous navigation policy decision.
     URL temporaryBlobURL = BlobURL::createPublicURL(&m_frame.document()->securityOrigin());
-    auto sessionID = m_frame.document()->sessionID();
-    blobRegistry().registerBlobURL(sessionID, temporaryBlobURL, request.url());
+    blobRegistry().registerBlobURL(temporaryBlobURL, request.url());
     request.setURL(temporaryBlobURL);
-    return CompletionHandler<void()>([sessionID, temporaryBlobURL = WTFMove(temporaryBlobURL)] {
-        blobRegistry().unregisterBlobURL(sessionID, temporaryBlobURL);
+    return CompletionHandler<void()>([temporaryBlobURL = WTFMove(temporaryBlobURL)] {
+        blobRegistry().unregisterBlobURL(temporaryBlobURL);
     });
 }
 

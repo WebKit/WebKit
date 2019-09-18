@@ -1282,7 +1282,7 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
     // workers currently write blobs to disk synchronously.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=157958 - Make this asynchronous after refactoring allows it.
     if (!isMainThread()) {
-        auto idbValue = value->writeBlobsToDiskForIndexedDBSynchronously(scriptExecutionContext()->sessionID());
+        auto idbValue = value->writeBlobsToDiskForIndexedDBSynchronously();
         if (idbValue.data().data())
             m_database->connectionProxy().putOrAdd(operation, key.get(), idbValue, overwriteMode);
         else {
@@ -1301,7 +1301,7 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
     // stop future requests from going to the server ahead of it.
     operation.setNextRequestCanGoToServer(false);
 
-    value->writeBlobsToDiskForIndexedDB(scriptExecutionContext()->sessionID(), [protectedThis = makeRef(*this), this, protectedOperation = Ref<IDBClient::TransactionOperation>(operation), keyData = IDBKeyData(key.get()).isolatedCopy(), overwriteMode](IDBValue&& idbValue) mutable {
+    value->writeBlobsToDiskForIndexedDB([protectedThis = makeRef(*this), this, protectedOperation = Ref<IDBClient::TransactionOperation>(operation), keyData = IDBKeyData(key.get()).isolatedCopy(), overwriteMode](IDBValue&& idbValue) mutable {
         ASSERT(&originThread() == &Thread::current());
         ASSERT(isMainThread());
         if (idbValue.data().data()) {

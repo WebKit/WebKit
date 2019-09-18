@@ -31,14 +31,14 @@ namespace WebKit {
 
 class BlobRegistryProxy final : public WebCore::BlobRegistry {
 public:
-    void registerFileBlobURL(PAL::SessionID, const URL&, Ref<WebCore::BlobDataFileReference>&&, const String& contentType) final;
-    void registerBlobURL(PAL::SessionID, const URL&, Vector<WebCore::BlobPart>&&, const String& contentType) final;
-    void registerBlobURL(PAL::SessionID, const URL&, const URL& srcURL) final;
-    void registerBlobURLOptionallyFileBacked(PAL::SessionID, const URL&, const URL& srcURL, RefPtr<WebCore::BlobDataFileReference>&&, const String& contentType) final;
-    void unregisterBlobURL(PAL::SessionID, const URL&) final;
-    void registerBlobURLForSlice(PAL::SessionID, const URL&, const URL& srcURL, long long start, long long end) final;
+    void registerFileBlobURL(const URL&, Ref<WebCore::BlobDataFileReference>&&, const String& contentType) final;
+    void registerBlobURL(const URL&, Vector<WebCore::BlobPart>&&, const String& contentType) final;
+    void registerBlobURL(const URL&, const URL& srcURL) final;
+    void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<WebCore::BlobDataFileReference>&&, const String& contentType) final;
+    void unregisterBlobURL(const URL&) final;
+    void registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end) final;
     unsigned long long blobSize(const URL&) final;
-    void writeBlobsToTemporaryFiles(PAL::SessionID, const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) final;
+    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) final;
 };
 
 }

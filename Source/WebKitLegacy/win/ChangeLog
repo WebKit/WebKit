@@ -1,3 +1,14 @@
+2019-09-18  Chris Dumez  <cdumez@apple.com>
+
+        BlobRegistry no longer needs SessionIDs
+        https://bugs.webkit.org/show_bug.cgi?id=201936
+
+        Reviewed by Geoffrey Garen.
+
+        BlobRegistry no longer needs SessionIDs, now that we have a single session per WebProcess.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+
 2019-09-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][curl] Don't compile unused CertificateCFWin.cpp

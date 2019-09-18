@@ -103,7 +103,6 @@ private:
     String m_dataType;
 
     URL m_urlForReading;
-    Optional<PAL::SessionID> m_sessionID;
     RefPtr<ThreadableLoader> m_loader;
 
     RefPtr<JSC::ArrayBuffer> m_rawData;

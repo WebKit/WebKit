@@ -2091,7 +2091,7 @@ private:
             filePath = path->string();
 
         if (m_isDOMGlobalObject)
-            file = File::deserialize(jsCast<JSDOMGlobalObject*>(m_globalObject)->scriptExecutionContext()->sessionID(), filePath, URL(URL(), url->string()), type->string(), name->string(), optionalLastModified);
+            file = File::deserialize(filePath, URL(URL(), url->string()), type->string(), name->string(), optionalLastModified);
         return true;
     }
 
@@ -2857,7 +2857,7 @@ private:
                 return JSValue();
             if (!m_isDOMGlobalObject)
                 return jsNull();
-            return getJSValue(Blob::deserialize(jsCast<JSDOMGlobalObject*>(m_globalObject)->scriptExecutionContext()->sessionID(), URL(URL(), url->string()), type->string(), size, blobFilePathForBlobURL(url->string())).get());
+            return getJSValue(Blob::deserialize(URL(URL(), url->string()), type->string(), size, blobFilePathForBlobURL(url->string())).get());
         }
         case StringTag: {
             CachedStringRef cachedString;
@@ -3569,12 +3569,12 @@ Vector<String> SerializedScriptValue::blobURLsIsolatedCopy() const
     return result;
 }
 
-void SerializedScriptValue::writeBlobsToDiskForIndexedDB(PAL::SessionID sessionID, CompletionHandler<void(IDBValue&&)>&& completionHandler)
+void SerializedScriptValue::writeBlobsToDiskForIndexedDB(CompletionHandler<void(IDBValue&&)>&& completionHandler)
 {
     ASSERT(isMainThread());
     ASSERT(hasBlobURLs());
 
-    blobRegistry().writeBlobsToTemporaryFiles(sessionID, m_blobURLs, [completionHandler = WTFMove(completionHandler), this, protectedThis = makeRef(*this)] (auto&& blobFilePaths) mutable {
+    blobRegistry().writeBlobsToTemporaryFiles(m_blobURLs, [completionHandler = WTFMove(completionHandler), this, protectedThis = makeRef(*this)] (auto&& blobFilePaths) mutable {
         ASSERT(isMainThread());
 
         if (blobFilePaths.isEmpty()) {
@@ -3590,7 +3590,7 @@ void SerializedScriptValue::writeBlobsToDiskForIndexedDB(PAL::SessionID sessionI
     });
 }
 
-IDBValue SerializedScriptValue::writeBlobsToDiskForIndexedDBSynchronously(PAL::SessionID sessionID)
+IDBValue SerializedScriptValue::writeBlobsToDiskForIndexedDBSynchronously()
 {
     ASSERT(!isMainThread());
 
@@ -3599,8 +3599,8 @@ IDBValue SerializedScriptValue::writeBlobsToDiskForIndexedDBSynchronously(PAL::S
     Condition condition;
     lock.lock();
 
-    RunLoop::main().dispatch([this, sessionID, conditionPtr = &condition, valuePtr = &value] {
-        writeBlobsToDiskForIndexedDB(sessionID, [conditionPtr, valuePtr](IDBValue&& result) {
+    RunLoop::main().dispatch([this, conditionPtr = &condition, valuePtr = &value] {
+        writeBlobsToDiskForIndexedDB([conditionPtr, valuePtr](IDBValue&& result) {
             ASSERT(isMainThread());
             valuePtr->setAsIsolatedCopy(result);
 

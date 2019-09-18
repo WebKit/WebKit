@@ -67,7 +67,6 @@ private:
     FetchBodyConsumer* m_consumer;
     bool m_isStarted { false };
     URL m_urlForReading;
-    Optional<PAL::SessionID> m_sessionID;
 };
 
 } // namespace WebCore

@@ -4263,7 +4263,7 @@ RefPtr<File> Internals::createFile(const String& path)
     if (!url.isLocalFile())
         return nullptr;
 
-    return File::create(document->sessionID(), url.fileSystemPath());
+    return File::create(url.fileSystemPath());
 }
 
 void Internals::queueMicroTask(int testNumber)

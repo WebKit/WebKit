@@ -149,7 +149,7 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
     auto* formData = request.httpBody();
     Optional<FetchBody> body;
     if (formData && !formData->isEmpty()) {
-        body = FetchBody::fromFormData(globalScope.sessionID(), *formData);
+        body = FetchBody::fromFormData(*formData);
         if (!body) {
             client->didNotHandle();
             return;

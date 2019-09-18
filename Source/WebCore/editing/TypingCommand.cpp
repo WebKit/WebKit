@@ -425,7 +425,7 @@ RefPtr<DataTransfer> TypingCommand::inputEventDataTransfer() const
 
     StringBuilder htmlText;
     MarkupAccumulator::appendCharactersReplacingEntities(htmlText, m_currentTextToInsert, 0, m_currentTextToInsert.length(), EntityMaskInHTMLPCDATA);
-    return DataTransfer::createForInputEvent(document(), m_currentTextToInsert, htmlText.toString());
+    return DataTransfer::createForInputEvent(m_currentTextToInsert, htmlText.toString());
 }
 
 void TypingCommand::didApplyCommand()

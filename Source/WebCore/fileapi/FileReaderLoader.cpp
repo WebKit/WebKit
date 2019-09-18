@@ -68,7 +68,7 @@ FileReaderLoader::~FileReaderLoader()
 {
     terminate();
     if (!m_urlForReading.isEmpty())
-        ThreadableBlobRegistry::unregisterBlobURL(*m_sessionID, m_urlForReading);
+        ThreadableBlobRegistry::unregisterBlobURL(m_urlForReading);
 }
 
 void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, Blob& blob)
@@ -81,8 +81,7 @@ void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, Blo
         failed(FileError::SECURITY_ERR);
         return;
     }
-    m_sessionID = scriptExecutionContext->sessionID();
-    ThreadableBlobRegistry::registerBlobURL(*m_sessionID, scriptExecutionContext->securityOrigin(), m_urlForReading, blob.url());
+    ThreadableBlobRegistry::registerBlobURL(scriptExecutionContext->securityOrigin(), m_urlForReading, blob.url());
 
     // Construct and load the request.
     ResourceRequest request(m_urlForReading);

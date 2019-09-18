@@ -985,9 +985,9 @@ static void restoreAttachmentElementsInFragment(DocumentFragment& fragment)
         auto attachmentPath = attachment->attachmentPath();
         auto blobURL = attachment->blobURL();
         if (!attachmentPath.isEmpty())
-            attachment->setFile(File::create(fragment.document().sessionID(), attachmentPath));
+            attachment->setFile(File::create(attachmentPath));
         else if (!blobURL.isEmpty())
-            attachment->setFile(File::deserialize(fragment.document().sessionID(), { }, blobURL, attachment->attachmentType(), attachment->attachmentTitle()));
+            attachment->setFile(File::deserialize({ }, blobURL, attachment->attachmentType(), attachment->attachmentTitle()));
 
         // Remove temporary attributes that were previously added in StyledMarkupAccumulator::appendCustomAttributes.
         attachment->removeAttribute(webkitattachmentidAttr);

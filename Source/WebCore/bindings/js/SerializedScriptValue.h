@@ -93,8 +93,8 @@ public:
 
 #if ENABLE(INDEXED_DATABASE)
     Vector<String> blobURLsIsolatedCopy() const;
-    void writeBlobsToDiskForIndexedDB(PAL::SessionID, CompletionHandler<void(IDBValue&&)>&&);
-    IDBValue writeBlobsToDiskForIndexedDBSynchronously(PAL::SessionID);
+    void writeBlobsToDiskForIndexedDB(CompletionHandler<void(IDBValue&&)>&&);
+    IDBValue writeBlobsToDiskForIndexedDBSynchronously();
 #endif // ENABLE(INDEXED_DATABASE)
 
     static Ref<SerializedScriptValue> createFromWireBytes(Vector<uint8_t>&& data)

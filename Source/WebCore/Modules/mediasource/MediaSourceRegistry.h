@@ -48,7 +48,7 @@ public:
 
     // Registers a blob URL referring to the specified media source.
     void registerURL(ScriptExecutionContext&, const URL&, URLRegistrable&)final;
-    void unregisterURL(ScriptExecutionContext&, const URL&) final;
+    void unregisterURL(const URL&) final;
     URLRegistrable* lookup(const String&) const final;
 
 private:

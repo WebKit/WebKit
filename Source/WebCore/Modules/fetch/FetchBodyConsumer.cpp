@@ -35,11 +35,11 @@
 
 namespace WebCore {
 
-static inline Ref<Blob> blobFromData(PAL::SessionID sessionID, const unsigned char* data, unsigned length, const String& contentType)
+static inline Ref<Blob> blobFromData(const unsigned char* data, unsigned length, const String& contentType)
 {
     Vector<uint8_t> value(length);
     memcpy(value.data(), data, length);
-    return Blob::create(sessionID, WTFMove(value), contentType);
+    return Blob::create(WTFMove(value), contentType);
 }
 
 static inline bool shouldPrependBOM(const unsigned char* data, unsigned length)
@@ -64,8 +64,8 @@ static void resolveWithTypeAndData(Ref<DeferredPromise>&& promise, FetchBodyCons
         fulfillPromiseWithArrayBuffer(WTFMove(promise), data, length);
         return;
     case FetchBodyConsumer::Type::Blob:
-        promise->resolveCallbackValueWithNewlyCreated<IDLInterface<Blob>>([&data, &length, &contentType](auto& context) {
-            return blobFromData(context.sessionID(), data, length, contentType);
+        promise->resolveCallbackValueWithNewlyCreated<IDLInterface<Blob>>([&data, &length, &contentType](auto&) {
+            return blobFromData(data, length, contentType);
         });
         return;
     case FetchBodyConsumer::Type::JSON:
@@ -132,8 +132,8 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, ReadableStream* 
         fulfillPromiseWithArrayBuffer(WTFMove(promise), takeAsArrayBuffer().get());
         return;
     case Type::Blob:
-        promise->resolveCallbackValueWithNewlyCreated<IDLInterface<Blob>>([this](auto& context) {
-            return takeAsBlob(context.sessionID());
+        promise->resolveCallbackValueWithNewlyCreated<IDLInterface<Blob>>([this](auto&) {
+            return takeAsBlob();
         });
         return;
     case Type::JSON:
@@ -181,13 +181,13 @@ RefPtr<JSC::ArrayBuffer> FetchBodyConsumer::takeAsArrayBuffer()
     return arrayBuffer;
 }
 
-Ref<Blob> FetchBodyConsumer::takeAsBlob(PAL::SessionID sessionID)
+Ref<Blob> FetchBodyConsumer::takeAsBlob()
 {
     if (!m_buffer)
-        return Blob::create(sessionID, Vector<uint8_t>(), m_contentType);
+        return Blob::create(Vector<uint8_t>(), m_contentType);
 
     // FIXME: We should try to move m_buffer to Blob without doing extra copy.
-    return blobFromData(sessionID, reinterpret_cast<const unsigned char*>(m_buffer->data()), m_buffer->size(), m_contentType);
+    return blobFromData(reinterpret_cast<const unsigned char*>(m_buffer->data()), m_buffer->size(), m_contentType);
 }
 
 String FetchBodyConsumer::takeAsText()

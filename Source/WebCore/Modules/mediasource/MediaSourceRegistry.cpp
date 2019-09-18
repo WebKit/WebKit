@@ -58,7 +58,7 @@ void MediaSourceRegistry::registerURL(ScriptExecutionContext&, const URL& url, U
     m_mediaSources.set(url.string(), &source);
 }
 
-void MediaSourceRegistry::unregisterURL(ScriptExecutionContext&, const URL& url)
+void MediaSourceRegistry::unregisterURL(const URL& url)
 {
     ASSERT(isMainThread());
     if (auto source = m_mediaSources.take(url.string()))

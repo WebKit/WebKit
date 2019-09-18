@@ -42,17 +42,17 @@ public:
     };
 
     // Create a file with an optional name exposed to the author (via File.name and associated DOM properties) that differs from the one provided in the path.
-    WEBCORE_EXPORT static Ref<File> create(PAL::SessionID, const String& path, const String& nameOverride = { });
+    WEBCORE_EXPORT static Ref<File> create(const String& path, const String& nameOverride = { });
 
     // Create a File using the 'new File' constructor.
-    static Ref<File> create(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag& propertyBag)
+    static Ref<File> create(Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag& propertyBag)
     {
-        return adoptRef(*new File(context, WTFMove(blobPartVariants), filename, propertyBag));
+        return adoptRef(*new File(WTFMove(blobPartVariants), filename, propertyBag));
     }
 
-    static Ref<File> deserialize(PAL::SessionID sessionID, const String& path, const URL& srcURL, const String& type, const String& name, const Optional<int64_t>& lastModified = WTF::nullopt)
+    static Ref<File> deserialize(const String& path, const URL& srcURL, const String& type, const String& name, const Optional<int64_t>& lastModified = WTF::nullopt)
     {
-        return adoptRef(*new File(deserializationContructor, sessionID, path, srcURL, type, name, lastModified));
+        return adoptRef(*new File(deserializationContructor, path, srcURL, type, name, lastModified));
     }
 
     static Ref<File> create(const Blob& blob, const String& name)
@@ -65,7 +65,7 @@ public:
         return adoptRef(*new File(file, name));
     }
 
-    static Ref<File> createWithRelativePath(PAL::SessionID, const String& path, const String& relativePath);
+    static Ref<File> createWithRelativePath(const String& path, const String& relativePath);
 
     bool isFile() const override { return true; }
 
@@ -85,13 +85,13 @@ public:
     bool isDirectory() const;
 
 private:
-    WEBCORE_EXPORT explicit File(PAL::SessionID, const String& path);
-    File(PAL::SessionID, URL&&, String&& type, String&& path, String&& name);
-    File(ScriptExecutionContext&, Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag&);
+    WEBCORE_EXPORT explicit File(const String& path);
+    File(URL&&, String&& type, String&& path, String&& name);
+    File(Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag&);
     File(const Blob&, const String& name);
     File(const File&, const String& name);
 
-    File(DeserializationContructor, PAL::SessionID, const String& path, const URL& srcURL, const String& type, const String& name, const Optional<int64_t>& lastModified);
+    File(DeserializationContructor, const String& path, const URL& srcURL, const String& type, const String& name, const Optional<int64_t>& lastModified);
 
     static void computeNameAndContentType(const String& path, const String& nameOverride, String& effectiveName, String& effectiveContentType);
 #if ENABLE(FILE_REPLACEMENT)

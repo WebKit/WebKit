@@ -124,8 +124,8 @@ void FetchBodyOwner::blob(Ref<DeferredPromise>&& promise)
     }
 
     if (isBodyNullOrOpaque()) {
-        promise->resolveCallbackValueWithNewlyCreated<IDLInterface<Blob>>([this](auto& context) {
-            return Blob::create(context.sessionID(), Vector<uint8_t> { }, Blob::normalizedContentType(extractMIMETypeFromMediaType(m_contentType)));
+        promise->resolveCallbackValueWithNewlyCreated<IDLInterface<Blob>>([this](auto&) {
+            return Blob::create(Vector<uint8_t> { }, Blob::normalizedContentType(extractMIMETypeFromMediaType(m_contentType)));
         });
         return;
     }

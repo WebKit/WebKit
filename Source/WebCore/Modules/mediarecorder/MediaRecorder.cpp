@@ -157,8 +157,8 @@ Ref<Blob> MediaRecorder::createRecordingDataBlob()
 {
     auto data = m_private->fetchData();
     if (!data)
-        return Blob::create(scriptExecutionContext()->sessionID());
-    return Blob::create(scriptExecutionContext()->sessionID(), *data, m_private->mimeType());
+        return Blob::create();
+    return Blob::create(*data, m_private->mimeType());
 }
 
 void MediaRecorder::didAddOrRemoveTrack()

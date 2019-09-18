@@ -130,7 +130,7 @@ Vector<RefPtr<StaticRange>> SpellingCorrectionCommand::targetRanges() const
 RefPtr<DataTransfer> SpellingCorrectionCommand::inputEventDataTransfer() const
 {
     if (!isEditingTextAreaOrTextInput())
-        return DataTransfer::createForInputEvent(document(), m_correction, serializeFragment(*m_correctionFragment, SerializedNodes::SubtreeIncludingNode));
+        return DataTransfer::createForInputEvent(m_correction, serializeFragment(*m_correctionFragment, SerializedNodes::SubtreeIncludingNode));
 
     return CompositeEditCommand::inputEventDataTransfer();
 }

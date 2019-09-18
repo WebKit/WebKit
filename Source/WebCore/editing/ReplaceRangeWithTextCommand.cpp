@@ -82,7 +82,7 @@ String ReplaceRangeWithTextCommand::inputEventData() const
 RefPtr<DataTransfer> ReplaceRangeWithTextCommand::inputEventDataTransfer() const
 {
     if (!isEditingTextAreaOrTextInput())
-        return DataTransfer::createForInputEvent(document(), m_text, serializeFragment(*m_textFragment, SerializedNodes::SubtreeIncludingNode));
+        return DataTransfer::createForInputEvent(m_text, serializeFragment(*m_textFragment, SerializedNodes::SubtreeIncludingNode));
 
     return CompositeEditCommand::inputEventDataTransfer();
 }

@@ -259,7 +259,7 @@ static Ref<DocumentFragment> createFragmentForImageAttachment(Frame& frame, Docu
         frame.editor().registerAttachmentIdentifier(attachment->ensureUniqueIdentifier(), contentType, defaultImageAttachmentName, WTFMove(buffer));
         if (contentTypeIsSuitableForInlineImageRepresentation(contentType)) {
             auto image = HTMLImageElement::create(document);
-            image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document, Blob::create(document.sessionID(), buffer.get(), contentType)));
+            image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document, Blob::create(buffer.get(), contentType)));
             image->setAttachmentElement(WTFMove(attachment));
             if (preferredSize.width)
                 image->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomString::number(*preferredSize.width));
@@ -271,7 +271,7 @@ static Ref<DocumentFragment> createFragmentForImageAttachment(Frame& frame, Docu
             fragment->appendChild(WTFMove(attachment));
         }
     } else {
-        attachment->setFile(File::create(Blob::create(document.sessionID(), buffer.get(), contentType), defaultImageAttachmentName), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
+        attachment->setFile(File::create(Blob::create(buffer.get(), contentType), defaultImageAttachmentName), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
         fragment->appendChild(WTFMove(attachment));
     }
     return fragment;
@@ -365,7 +365,7 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
         if (supportsClientSideAttachmentData(frame)) {
             if (is<HTMLImageElement>(originalElement.get()) && contentTypeIsSuitableForInlineImageRepresentation(info.contentType)) {
                 auto& image = downcast<HTMLImageElement>(originalElement.get());
-                image.setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(*frame.document(), Blob::create(fragment.document().sessionID(), info.data, info.contentType)));
+                image.setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(*frame.document(), Blob::create(info.data, info.contentType)));
                 image.setAttachmentElement(attachment.copyRef());
             } else {
                 attachment->updateAttributes(info.data->size(), info.contentType, info.fileName);
@@ -373,7 +373,7 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
             }
             frame.editor().registerAttachmentIdentifier(attachment->ensureUniqueIdentifier(), WTFMove(info.contentType), WTFMove(info.fileName), WTFMove(info.data));
         } else {
-            attachment->setFile(File::create(Blob::create(fragment.document().sessionID(), WTFMove(info.data), WTFMove(info.contentType)), WTFMove(info.fileName)), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
+            attachment->setFile(File::create(Blob::create(WTFMove(info.data), WTFMove(info.contentType)), WTFMove(info.fileName)), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
             parent->replaceChild(WTFMove(attachment), WTFMove(originalElement));
         }
     }
@@ -415,7 +415,7 @@ RefPtr<DocumentFragment> createFragmentAndAddResources(Frame& frame, NSAttribute
 
     HashMap<AtomString, AtomString> blobURLMap;
     for (const Ref<ArchiveResource>& subresource : fragmentAndResources.resources) {
-        auto blob = Blob::create(document.sessionID(), subresource->data(), subresource->mimeType());
+        auto blob = Blob::create(subresource->data(), subresource->mimeType());
         String blobURL = DOMURL::createObjectURL(document, blob);
         blobURLMap.set(subresource->url().string(), blobURL);
     }
@@ -464,7 +464,7 @@ static String sanitizeMarkupWithArchive(Frame& frame, Document& destinationDocum
         auto& subresourceURL = subresource->url();
         if (!shouldReplaceSubresourceURL(subresourceURL))
             continue;
-        auto blob = Blob::create(destinationDocument.sessionID(), subresource->data(), subresource->mimeType());
+        auto blob = Blob::create(subresource->data(), subresource->mimeType());
         String blobURL = DOMURL::createObjectURL(destinationDocument, blob);
         blobURLMap.set(subresourceURL.string(), blobURL);
     }
@@ -491,7 +491,7 @@ static String sanitizeMarkupWithArchive(Frame& frame, Document& destinationDocum
         Vector<uint8_t> blobBuffer;
         blobBuffer.reserveCapacity(utf8.length());
         blobBuffer.append(reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length());
-        auto blob = Blob::create(destinationDocument.sessionID(), WTFMove(blobBuffer), type);
+        auto blob = Blob::create(WTFMove(blobBuffer), type);
 
         String subframeBlobURL = DOMURL::createObjectURL(destinationDocument, blob);
         blobURLMap.set(subframeURL.string(), subframeBlobURL);
@@ -688,7 +688,7 @@ bool WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const String& type,
     if (shouldReplaceRichContentWithAttachments())
         addFragment(createFragmentForImageAttachment(frame, document, WTFMove(buffer), type, preferredPresentationSize));
     else
-        addFragment(createFragmentForImageAndURL(document, DOMURL::createObjectURL(document, Blob::create(document.sessionID(), buffer.get(), type)), preferredPresentationSize));
+        addFragment(createFragmentForImageAndURL(document, DOMURL::createObjectURL(document, Blob::create(buffer.get(), type)), preferredPresentationSize));
 
     return fragment;
 }
@@ -709,7 +709,7 @@ static Ref<HTMLElement> attachmentForFilePath(Frame& frame, const String& path, 
     auto document = makeRef(*frame.document());
     auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
     if (!supportsClientSideAttachmentData(frame)) {
-        attachment->setFile(File::create(document->sessionID(), path), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
+        attachment->setFile(File::create(path), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
         return attachment;
     }
 
@@ -736,7 +736,7 @@ static Ref<HTMLElement> attachmentForFilePath(Frame& frame, const String& path, 
 
     if (contentTypeIsSuitableForInlineImageRepresentation(contentType)) {
         auto image = HTMLImageElement::create(document);
-        image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document, File::create(document->sessionID(), path)));
+        image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document, File::create(path)));
         image->setAttachmentElement(WTFMove(attachment));
         if (preferredSize.width)
             image->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomString::number(*preferredSize.width));
@@ -765,7 +765,7 @@ static Ref<HTMLElement> attachmentForData(Frame& frame, SharedBuffer& buffer, co
         fileName = name;
 
     if (!supportsClientSideAttachmentData(frame)) {
-        attachment->setFile(File::create(Blob::create(document->sessionID(), buffer, WTFMove(attachmentType)), fileName));
+        attachment->setFile(File::create(Blob::create(buffer, WTFMove(attachmentType)), fileName));
         return attachment;
     }
 
@@ -773,7 +773,7 @@ static Ref<HTMLElement> attachmentForData(Frame& frame, SharedBuffer& buffer, co
 
     if (contentTypeIsSuitableForInlineImageRepresentation(attachmentType)) {
         auto image = HTMLImageElement::create(document);
-        image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document, File::create(Blob::create(document->sessionID(), buffer, WTFMove(attachmentType)), WTFMove(fileName))));
+        image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document, File::create(Blob::create(buffer, WTFMove(attachmentType)), WTFMove(fileName))));
         image->setAttachmentElement(WTFMove(attachment));
         if (preferredSize.width)
             image->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomString::number(*preferredSize.width));

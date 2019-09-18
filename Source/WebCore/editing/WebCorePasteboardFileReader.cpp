@@ -35,12 +35,12 @@ WebCorePasteboardFileReader::~WebCorePasteboardFileReader() = default;
 
 void WebCorePasteboardFileReader::readFilename(const String& filename)
 {
-    files.append(File::create(sessionID, filename));
+    files.append(File::create(filename));
 }
 
 void WebCorePasteboardFileReader::readBuffer(const String& filename, const String& type, Ref<SharedBuffer>&& buffer)
 {
-    files.append(File::create(Blob::create(sessionID, buffer.get(), type), filename));
+    files.append(File::create(Blob::create(buffer.get(), type), filename));
 }
 
 }
