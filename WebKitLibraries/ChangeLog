@@ -1,3 +1,16 @@
+2019-09-17  Jonathan Bedard  <jbedard@apple.com>
+
+        Follow-up: [iOS 13] Enable WebKit build
+        https://bugs.webkit.org/show_bug.cgi?id=199481
+        <rdar://problem/52619048>
+
+        Unreviewed build-fix.
+
+        * WebKitPrivateFrameworkStubs/iOS/13/DeviceIdentity.framework: Added.
+        * WebKitPrivateFrameworkStubs/iOS/13/DeviceIdentity.framework/DeviceIdentity.tbd: Added.
+        * WebKitPrivateFrameworkStubs/iOS/13/IOSurfaceAccelerator.framework: Added.
+        * WebKitPrivateFrameworkStubs/iOS/13/IOSurfaceAccelerator.framework/IOSurfaceAccelerator.tbd: Added.
+
 2019-07-11  Jonathan Bedard  <jbedard@apple.com>
 
         [iOS 13] Enable WebKit build
