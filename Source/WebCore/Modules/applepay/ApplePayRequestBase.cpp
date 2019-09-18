@@ -36,6 +36,7 @@
 #else
 namespace WebCore {
 static void finishConverting(ApplePaySessionPaymentRequest&, ApplePayRequestBase&) { }
+static bool requiresSupportedNetworks(unsigned, const ApplePayRequestBase&) { return true; }
 }
 #endif
 
@@ -43,9 +44,6 @@ namespace WebCore {
 
 static ExceptionOr<Vector<String>> convertAndValidate(Document& document, unsigned version, const Vector<String>& supportedNetworks, const PaymentCoordinator& paymentCoordinator)
 {
-    if (supportedNetworks.isEmpty())
-        return Exception { TypeError, "At least one supported network must be provided." };
-
     Vector<String> result;
     result.reserveInitialCapacity(supportedNetworks.size());
     for (auto& supportedNetwork : supportedNetworks) {
@@ -71,6 +69,9 @@ ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& document
     if (merchantCapabilities.hasException())
         return merchantCapabilities.releaseException();
     result.setMerchantCapabilities(merchantCapabilities.releaseReturnValue());
+
+    if (requiresSupportedNetworks(version, request) && request.supportedNetworks.isEmpty())
+        return Exception { TypeError, "At least one supported network must be provided." };
 
     auto supportedNetworks = convertAndValidate(document, version, request.supportedNetworks, paymentCoordinator);
     if (supportedNetworks.hasException())
