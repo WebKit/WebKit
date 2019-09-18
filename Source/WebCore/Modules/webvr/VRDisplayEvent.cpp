@@ -26,11 +26,8 @@
 #include "VRDisplayEvent.h"
 
 #include "VRDisplay.h"
-#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
-
-WTF_MAKE_ISO_ALLOCATED_IMPL(VRDisplayEvent);
 
 VRDisplayEvent::VRDisplayEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)

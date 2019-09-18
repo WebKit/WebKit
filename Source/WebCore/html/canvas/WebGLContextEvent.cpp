@@ -28,11 +28,7 @@
 
 #if ENABLE(WEBGL)
 
-#include <wtf/IsoMallocInlines.h>
-
 namespace WebCore {
-
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLContextEvent);
 
 WebGLContextEvent::WebGLContextEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, const String& statusMessage)
     : Event(type, canBubble, cancelable)

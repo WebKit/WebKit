@@ -33,7 +33,6 @@
 namespace WebCore {
 
 class CustomEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(CustomEvent);
 public:
     virtual ~CustomEvent();
 

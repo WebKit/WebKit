@@ -35,7 +35,6 @@
 namespace WebCore {
 
 class TrackEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(TrackEvent);
 public:
     virtual ~TrackEvent();
 

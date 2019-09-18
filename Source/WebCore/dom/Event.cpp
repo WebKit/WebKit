@@ -32,11 +32,8 @@
 #include "Performance.h"
 #include "UserGestureIndicator.h"
 #include "WorkerGlobalScope.h"
-#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
-
-WTF_MAKE_ISO_ALLOCATED_IMPL(Event);
 
 ALWAYS_INLINE Event::Event(MonotonicTime createTime, const AtomString& type, IsTrusted isTrusted, CanBubble canBubble, IsCancelable cancelable, IsComposed composed)
     : m_isInitialized { !type.isNull() }

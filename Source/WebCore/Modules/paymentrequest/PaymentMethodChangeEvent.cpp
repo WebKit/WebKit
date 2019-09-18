@@ -28,11 +28,7 @@
 
 #if ENABLE(PAYMENT_REQUEST)
 
-#include <wtf/IsoMallocInlines.h>
-
 namespace WebCore {
-
-WTF_MAKE_ISO_ALLOCATED_IMPL(PaymentMethodChangeEvent);
 
 EventInterface PaymentMethodChangeEvent::eventInterface() const
 {

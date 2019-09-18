@@ -36,8 +36,7 @@
 
 namespace WebCore {
 
-class OverconstrainedErrorEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(OverconstrainedErrorEvent);
+class OverconstrainedErrorEvent : public Event {
 public:
     virtual ~OverconstrainedErrorEvent() = default;
 

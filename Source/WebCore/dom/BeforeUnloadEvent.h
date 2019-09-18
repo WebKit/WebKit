@@ -29,7 +29,6 @@
 namespace WebCore {
 
 class BeforeUnloadEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(BeforeUnloadEvent);
 public:
     static Ref<BeforeUnloadEvent> create()
     {

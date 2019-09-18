@@ -1,3 +1,15 @@
+2019-09-18  Russell Epstein  <repstein@apple.com>
+
+        Unreviewed, rolling out r250030.
+
+        Cause of Recent Build Failures.
+
+        Reverted changeset:
+
+        "Make all ScriptWrappable IsoHeap-ed"
+        https://bugs.webkit.org/show_bug.cgi?id=201846
+        https://trac.webkit.org/changeset/250030
+
 2019-09-18  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] FormattingContext::Geometry::computedHeight* functions need containingBlockHeight only.

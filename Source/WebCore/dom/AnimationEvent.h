@@ -30,7 +30,6 @@
 namespace WebCore {
 
 class AnimationEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(AnimationEvent);
 public:
     static Ref<AnimationEvent> create(const AtomString& type, const String& animationName, double elapsedTime)
     {

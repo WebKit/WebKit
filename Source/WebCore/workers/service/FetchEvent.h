@@ -38,7 +38,6 @@ class FetchResponse;
 class ResourceError;
 
 class FetchEvent final : public ExtendableEvent {
-    WTF_MAKE_ISO_ALLOCATED(FetchEvent);
 public:
     struct Init : ExtendableEventInit {
         RefPtr<FetchRequest> request;

@@ -32,8 +32,7 @@
 
 namespace WebCore {
 
-class IDBRequestCompletionEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(IDBRequestCompletionEvent);
+class IDBRequestCompletionEvent : public Event {
 public:
     static Ref<Event> create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, IDBRequest& request)
     {

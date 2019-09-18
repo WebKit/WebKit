@@ -165,7 +165,6 @@ Modules/mediastream/MediaStreamTrack.cpp
 Modules/mediastream/MediaStreamTrackEvent.cpp
 Modules/mediastream/MediaTrackConstraints.cpp
 Modules/mediastream/NavigatorMediaDevices.cpp
-Modules/mediastream/OverconstrainedErrorEvent.cpp
 Modules/mediastream/PeerConnectionBackend.cpp
 Modules/mediastream/RTCCertificate.cpp
 Modules/mediastream/RTCController.cpp
@@ -291,7 +290,6 @@ Modules/webdatabase/SQLTransactionStateMachine.cpp
 
 Modules/webdriver/NavigatorWebDriver.cpp
 
-Modules/websockets/CloseEvent.cpp
 Modules/websockets/ThreadableWebSocketChannel.cpp
 Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp
 Modules/websockets/WebSocket.cpp
@@ -577,7 +575,6 @@ bindings/js/ScriptCachedFrameData.cpp
 bindings/js/ScriptController.cpp
 bindings/js/ScriptModuleLoader.cpp
 bindings/js/ScriptState.cpp
-bindings/js/ScriptWrappable.cpp
 bindings/js/StructuredClone.cpp
 bindings/js/SerializedScriptValue.cpp
 bindings/js/WebCoreJSClientData.cpp
@@ -814,7 +811,6 @@ dom/ActiveDOMObject.cpp
 dom/AllDescendantsCollection.cpp
 dom/AnimationEvent.cpp
 dom/Attr.cpp
-dom/BeforeLoadEvent.cpp
 dom/BeforeTextInsertedEvent.cpp
 dom/BeforeUnloadEvent.cpp
 dom/CDATASection.cpp
@@ -879,7 +875,6 @@ dom/ExtensionStyleSheets.cpp
 dom/FocusEvent.cpp
 dom/FullscreenManager.cpp
 dom/GenericEventQueue.cpp
-dom/HashChangeEvent.cpp
 dom/IdTargetObserver.cpp
 dom/IdTargetObserverRegistry.cpp
 dom/InlineClassicScript.cpp
@@ -935,7 +930,6 @@ dom/ScriptableDocumentParser.cpp
 dom/ScriptedAnimationController.cpp
 dom/SecurityContext.cpp
 dom/SecurityOriginPolicy.cpp
-dom/SecurityPolicyViolationEvent.cpp
 dom/SelectorQuery.cpp
 dom/ShadowRoot.cpp
 dom/SimulatedClick.cpp
@@ -2526,7 +2520,6 @@ xml/DOMParser.cpp
 xml/NativeXPathNSResolver.cpp
 xml/XMLErrors.cpp
 xml/XMLHttpRequest.cpp
-xml/XMLHttpRequestProgressEvent.cpp
 xml/XMLHttpRequestProgressEventThrottle.cpp
 xml/XMLHttpRequestUpload.cpp
 xml/XMLSerializer.cpp

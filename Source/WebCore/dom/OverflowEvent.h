@@ -30,7 +30,6 @@
 namespace WebCore {
 
 class OverflowEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(OverflowEvent);
 public:
     enum orientType {
         HORIZONTAL = 0,

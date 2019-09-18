@@ -31,7 +31,6 @@
 namespace WebCore {
 
 class CompositionEvent final : public UIEvent {
-    WTF_MAKE_ISO_ALLOCATED(CompositionEvent);
 public:
     static Ref<CompositionEvent> create(const AtomString& type, RefPtr<WindowProxy>&& view, const String& data)
     {

@@ -33,8 +33,7 @@ namespace WebCore {
 
 class MediaStreamTrack;
 
-class MediaStreamTrackEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(MediaStreamTrackEvent);
+class MediaStreamTrackEvent : public Event {
 public:
     virtual ~MediaStreamTrackEvent();
 

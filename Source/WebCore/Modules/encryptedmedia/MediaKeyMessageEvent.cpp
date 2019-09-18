@@ -31,11 +31,7 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include <wtf/IsoMallocInlines.h>
-
 namespace WebCore {
-
-WTF_MAKE_ISO_ALLOCATED_IMPL(MediaKeyMessageEvent);
 
 MediaKeyMessageEvent::MediaKeyMessageEvent(const AtomString& type, const MediaKeyMessageEvent::Init& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)

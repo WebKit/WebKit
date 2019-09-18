@@ -31,7 +31,6 @@
 namespace WebCore {
 
 class OfflineAudioCompletionEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(OfflineAudioCompletionEvent);
 public:
     static Ref<OfflineAudioCompletionEvent> create(RefPtr<AudioBuffer>&& renderedBuffer);
     

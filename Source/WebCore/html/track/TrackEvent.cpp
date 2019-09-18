@@ -28,11 +28,8 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "TrackEvent.h"
-#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
-
-WTF_MAKE_ISO_ALLOCATED_IMPL(TrackEvent);
 
 static inline Optional<TrackEvent::TrackEventTrack> convertToTrackEventTrack(Ref<TrackBase>&& track)
 {

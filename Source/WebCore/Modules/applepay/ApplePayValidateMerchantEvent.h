@@ -32,8 +32,7 @@
 
 namespace WebCore {
 
-class ApplePayValidateMerchantEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(ApplePayValidateMerchantEvent);
+class ApplePayValidateMerchantEvent : public Event {
 public:
     static Ref<ApplePayValidateMerchantEvent> create(const AtomString& type, URL&& validationURL)
     {

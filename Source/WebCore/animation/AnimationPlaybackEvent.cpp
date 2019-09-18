@@ -27,11 +27,8 @@
 #include "AnimationPlaybackEvent.h"
 
 #include "WebAnimationUtilities.h"
-#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
-
-WTF_MAKE_ISO_ALLOCATED_IMPL(AnimationPlaybackEvent);
 
 AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, const AnimationPlaybackEventInit& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)

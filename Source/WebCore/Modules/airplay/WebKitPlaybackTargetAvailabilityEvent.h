@@ -31,8 +31,7 @@
 
 namespace WebCore {
 
-class WebKitPlaybackTargetAvailabilityEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(WebKitPlaybackTargetAvailabilityEvent);
+class WebKitPlaybackTargetAvailabilityEvent : public Event {
 public:
 
     static Ref<WebKitPlaybackTargetAvailabilityEvent> create(const AtomString& eventType, bool available)

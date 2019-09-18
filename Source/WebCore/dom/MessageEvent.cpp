@@ -31,13 +31,10 @@
 #include "Blob.h"
 #include "EventNames.h"
 #include <JavaScriptCore/JSCInlines.h>
-#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 using namespace JSC;
-
-WTF_MAKE_ISO_ALLOCATED_IMPL(MessageEvent);
 
 MessageEvent::MessageEvent() = default;
 

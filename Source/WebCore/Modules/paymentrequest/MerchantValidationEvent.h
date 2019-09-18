@@ -36,7 +36,6 @@ class DOMPromise;
 class Document;
 
 class MerchantValidationEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(MerchantValidationEvent);
 public:
     struct Init final : EventInit {
         String methodName;

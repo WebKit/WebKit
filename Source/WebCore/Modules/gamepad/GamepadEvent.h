@@ -33,8 +33,7 @@
 
 namespace WebCore {
 
-class GamepadEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(GamepadEvent);
+class GamepadEvent : public Event {
 public:
     ~GamepadEvent() = default;
 

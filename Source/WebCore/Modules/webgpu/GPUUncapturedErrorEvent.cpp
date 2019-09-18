@@ -28,11 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
-#include <wtf/IsoMallocInlines.h>
-
 namespace WebCore {
-
-WTF_MAKE_ISO_ALLOCATED_IMPL(GPUUncapturedErrorEvent);
 
 Ref<GPUUncapturedErrorEvent> GPUUncapturedErrorEvent::create(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
 {

@@ -30,7 +30,6 @@ class SVGPoint;
 class SVGRect;
 
 class SVGZoomEvent final : public UIEvent {
-    WTF_MAKE_ISO_ALLOCATED(SVGZoomEvent);
 public:
     static Ref<SVGZoomEvent> createForBindings() { return adoptRef(*new SVGZoomEvent); }
 

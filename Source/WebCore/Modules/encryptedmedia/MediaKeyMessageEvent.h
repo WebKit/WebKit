@@ -38,7 +38,6 @@
 namespace WebCore {
 
 class MediaKeyMessageEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(MediaKeyMessageEvent);
 public:
     using Type = MediaKeyMessageType;
     using Init = MediaKeyMessageEventInit;

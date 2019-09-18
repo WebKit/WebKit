@@ -34,7 +34,6 @@ namespace WebCore {
 class Node;
 
 class FocusEvent final : public UIEvent {
-    WTF_MAKE_ISO_ALLOCATED(FocusEvent);
 public:
     static Ref<FocusEvent> create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<WindowProxy>&& view, int detail, RefPtr<EventTarget>&& relatedTarget)
     {

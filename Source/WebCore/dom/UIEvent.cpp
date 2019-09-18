@@ -24,12 +24,9 @@
 #include "UIEvent.h"
 
 #include "Node.h"
-#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
     
-WTF_MAKE_ISO_ALLOCATED_IMPL(UIEvent);
-
 UIEvent::UIEvent()
     : m_detail(0)
 {

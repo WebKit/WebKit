@@ -32,8 +32,7 @@
 namespace WebCore {
 class RTCIceCandidate;
 
-class RTCPeerConnectionIceEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(RTCPeerConnectionIceEvent);
+class RTCPeerConnectionIceEvent : public Event {
 public:
     virtual ~RTCPeerConnectionIceEvent();
 

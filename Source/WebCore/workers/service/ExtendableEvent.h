@@ -36,7 +36,6 @@ namespace WebCore {
 class DOMPromise;
 
 class ExtendableEvent : public Event, public CanMakeWeakPtr<ExtendableEvent> {
-    WTF_MAKE_ISO_ALLOCATED(ExtendableEvent);
 public:
     static Ref<ExtendableEvent> create(const AtomString& type, const ExtendableEventInit& initializer, IsTrusted isTrusted = IsTrusted::No)
     {

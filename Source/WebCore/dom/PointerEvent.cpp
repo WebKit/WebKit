@@ -28,12 +28,9 @@
 
 #if ENABLE(POINTER_EVENTS)
 
-#include "EventNames.h"
-#include <wtf/IsoMallocInlines.h>
+#import "EventNames.h"
 
 namespace WebCore {
-
-WTF_MAKE_ISO_ALLOCATED_IMPL(PointerEvent);
 
 const String& PointerEvent::mousePointerType()
 {

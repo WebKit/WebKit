@@ -27,11 +27,8 @@
 #include "FocusEvent.h"
 
 #include "Node.h"
-#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
-
-WTF_MAKE_ISO_ALLOCATED_IMPL(FocusEvent);
 
 EventInterface FocusEvent::eventInterface() const
 {
