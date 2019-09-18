@@ -6551,7 +6551,7 @@ void WebPage::requestStorageAccess(RegistrableDomain&& subFrameDomain, Registrab
     if (!frame)
         return completionHandler(WebCore::StorageAccessWasGranted::No, WebCore::StorageAccessPromptWasShown::No);
     
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RequestStorageAccess(sessionID(), WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, m_pageID), [completionHandler = WTFMove(completion    Handler), frame = makeRef(*frame), sessionID = sessionID(), pageID = m_pageID](StorageAccessWasGranted wasGranted, WebCore::StorageAccessPromptWasShown promptWasShown) mutable {
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RequestStorageAccess(sessionID(), WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, m_pageID), [completionHandler = WTFMove(completionHandler), frame = makeRef(*frame), sessionID = sessionID(), pageID = m_pageID](StorageAccessWasGranted wasGranted, WebCore::StorageAccessPromptWasShown promptWasShown) mutable {
         if (wasGranted == StorageAccessWasGranted::Yes) {
             if (auto* frameLoaderClient = frame->frameLoaderClient())
                 frameLoaderClient->setHasFrameSpecificStorageAccess({ sessionID, frame->frameID(), pageID });
