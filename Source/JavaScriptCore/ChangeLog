@@ -1,3 +1,28 @@
+2019-09-18  Saam Barati  <sbarati@apple.com>
+
+        TOCTOU bug in havingABadTime related assertion in DFGSpeculativeJIT
+        https://bugs.webkit.org/show_bug.cgi?id=201953
+        <rdar://problem/53803524>
+
+        Reviewed by Yusuke Suzuki.
+
+        We had code in DFGSpeculativeJIT like:
+        
+        if (!globalObject->isHavingABadTime()) {
+            <-- here -->
+            Structure* s = globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()));
+            assert 's' has expected indexing type
+        }
+        
+        The problem is, we may have a bad time before we actually load the structure
+        inside the if. We may have a bad time while we're at the "<-- here -->" in the
+        above program. The fix is to first load the structure, then check if we're
+        having a bad time. If we're still not having a bad time, it's valid to assert
+        things about the structure.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewArray):
+
 2019-09-18  Chris Dumez  <cdumez@apple.com>
 
         Stop calling WTF::initializeMainThread() in JSGlobalContextCreate*()

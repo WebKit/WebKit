@@ -7954,8 +7954,8 @@ void SpeculativeJIT::compileSpread(Node* node)
 void SpeculativeJIT::compileNewArray(Node* node)
 {
     JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
+    RegisteredStructure structure = m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()));
     if (!globalObject->isHavingABadTime() && !hasAnyArrayStorage(node->indexingType())) {
-        RegisteredStructure structure = m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()));
         DFG_ASSERT(m_jit.graph(), node, structure->indexingType() == node->indexingType(), structure->indexingType(), node->indexingType());
         ASSERT(
             hasUndecided(structure->indexingType())
@@ -8028,7 +8028,7 @@ void SpeculativeJIT::compileNewArray(Node* node)
     if (!node->numChildren()) {
         flushRegisters();
         GPRFlushedCallResult result(this);
-        callOperation(operationNewEmptyArray, result.gpr(), m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType())));
+        callOperation(operationNewEmptyArray, result.gpr(), structure);
         m_jit.exceptionCheck();
         cellResult(result.gpr(), node);
         return;
