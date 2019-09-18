@@ -145,11 +145,13 @@ struct VerticalGeometry {
 struct UsedHorizontalValues {
     struct Constraints {
         explicit Constraints(const Display::Box& containingBlockGeometry);
-        explicit Constraints(LayoutUnit horizontalConstraint)
-            : width(horizontalConstraint)
+        explicit Constraints(LayoutUnit contentBoxLeft, LayoutUnit horizontalConstraint)
+            : contentBoxLeft(contentBoxLeft)
+            , width(horizontalConstraint)
         {
         }
 
+        LayoutUnit contentBoxLeft;
         LayoutUnit width;
     };
 

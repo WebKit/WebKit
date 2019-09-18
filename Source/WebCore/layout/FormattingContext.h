@@ -147,7 +147,7 @@ protected:
         WidthAndMargin floatingNonReplacedWidthAndMargin(const Box&, UsedHorizontalValues);
 
         LayoutUnit staticVerticalPositionForOutOfFlowPositioned(const Box&) const;
-        LayoutUnit staticHorizontalPositionForOutOfFlowPositioned(const Box&) const;
+        LayoutUnit staticHorizontalPositionForOutOfFlowPositioned(const Box&, UsedHorizontalValues) const;
 
         const FormattingContext& m_formattingContext;
     };

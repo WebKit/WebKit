@@ -199,7 +199,7 @@ void TableFormattingContext::computePreferredWidthForColumns()
                 intrinsicWidth = layoutState().createFormattingContext(downcast<Container>(tableCellBox))->computedIntrinsicWidthConstraints();
             intrinsicWidth = geometry().constrainByMinMaxWidth(tableCellBox, *intrinsicWidth);
             auto border = geometry().computedBorder(tableCellBox);
-            auto padding = *geometry().computedPadding(tableCellBox, UsedHorizontalValues { UsedHorizontalValues::Constraints { LayoutUnit { } } });
+            auto padding = *geometry().computedPadding(tableCellBox, UsedHorizontalValues { UsedHorizontalValues::Constraints { { }, { } } });
 
             intrinsicWidth->expand(border.horizontal.width() + padding.horizontal.width());
             formattingState.setIntrinsicWidthConstraintsForBox(tableCellBox, *intrinsicWidth);

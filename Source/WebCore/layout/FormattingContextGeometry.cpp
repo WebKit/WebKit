@@ -218,7 +218,7 @@ LayoutUnit FormattingContext::Geometry::staticVerticalPositionForOutOfFlowPositi
     return top - paddingBoxTop;
 }
 
-LayoutUnit FormattingContext::Geometry::staticHorizontalPositionForOutOfFlowPositioned(const Box& layoutBox) const
+LayoutUnit FormattingContext::Geometry::staticHorizontalPositionForOutOfFlowPositioned(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues) const
 {
     ASSERT(layoutBox.isOutOfFlowPositioned());
     // See staticVerticalPositionForOutOfFlowPositioned for the definition of the static position.
@@ -238,8 +238,7 @@ LayoutUnit FormattingContext::Geometry::staticHorizontalPositionForOutOfFlowPosi
         ASSERT(!container->isPositioned() || layoutBox.isFixedPositioned());
     }
     // Move the static position relative to the padding box. This is very specific to abolutely positioned boxes.
-    auto paddingBoxLeft = formattingContext.geometryForBox(containingBlock, FormattingContext::EscapeType::AccessChildFormattingContext).paddingBoxLeft();
-    return left - paddingBoxLeft;
+    return left - usedHorizontalValues.constraints.contentBoxLeft;
 }
 
 LayoutUnit FormattingContext::Geometry::shrinkToFitWidth(const Box& formattingRoot, LayoutUnit availableWidth)
@@ -446,7 +445,7 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
         // position and apply rule number three below; otherwise, set 'right' to the static position and apply rule number one below.
         usedHorizontalMargin = { computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) };
 
-        auto staticHorizontalPosition = staticHorizontalPositionForOutOfFlowPositioned(layoutBox);
+        auto staticHorizontalPosition = staticHorizontalPositionForOutOfFlowPositioned(layoutBox, usedHorizontalValues);
         if (isLeftToRightDirection)
             left = staticHorizontalPosition;
         else
@@ -498,7 +497,7 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
         left = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + *width + paddingRight  + borderRight + usedHorizontalMargin.end + *right);
     } else if (!left && !right && width) {
         // #2
-        auto staticHorizontalPosition = staticHorizontalPositionForOutOfFlowPositioned(layoutBox);
+        auto staticHorizontalPosition = staticHorizontalPositionForOutOfFlowPositioned(layoutBox, usedHorizontalValues);
         if (isLeftToRightDirection) {
             left = staticHorizontalPosition;
             right = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + contentWidth() + paddingRight + borderRight + usedHorizontalMargin.end);
@@ -530,7 +529,7 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
 
     // For out-of-flow elements the containing block is formed by the padding edge of the ancestor.
     // At this point the positioned value is in the coordinate system of the padding box. Let's convert it to border box coordinate system.
-    auto containingBlockPaddingVerticalEdge = formattingContext.geometryForBox(*layoutBox.containingBlock()).paddingBoxLeft();
+    auto containingBlockPaddingVerticalEdge = usedHorizontalValues.constraints.contentBoxLeft;
     *left += containingBlockPaddingVerticalEdge;
     *right += containingBlockPaddingVerticalEdge;
 
@@ -657,7 +656,7 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
 
     if (!left && !right) {
         // #1
-        auto staticHorizontalPosition = staticHorizontalPositionForOutOfFlowPositioned(layoutBox);
+        auto staticHorizontalPosition = staticHorizontalPositionForOutOfFlowPositioned(layoutBox, usedHorizontalValues);
         if (isLeftToRightDirection)
             left = staticHorizontalPosition;
         else
@@ -716,7 +715,7 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
 
     // For out-of-flow elements the containing block is formed by the padding edge of the ancestor.
     // At this point the positioned value is in the coordinate system of the padding box. Let's convert it to border box coordinate system.
-    auto containingBlockPaddingVerticalEdge = formattingContext.geometryForBox(*layoutBox.containingBlock()).paddingBoxLeft();
+    auto containingBlockPaddingVerticalEdge = usedHorizontalValues.constraints.contentBoxLeft;
     *left += containingBlockPaddingVerticalEdge;
     *right += containingBlockPaddingVerticalEdge;
 

@@ -234,16 +234,16 @@ LayoutUnit BlockFormattingContext::Geometry::staticVerticalPosition(const Box& l
     return formattingContext().geometryForBox(*layoutBox.containingBlock()).contentBoxTop();
 }
 
-LayoutUnit BlockFormattingContext::Geometry::staticHorizontalPosition(const Box& layoutBox) const
+LayoutUnit BlockFormattingContext::Geometry::staticHorizontalPosition(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues) const
 {
     // https://www.w3.org/TR/CSS22/visuren.html#block-formatting
     // In a block formatting context, each box's left outer edge touches the left edge of the containing block (for right-to-left formatting, right edges touch).
-    return formattingContext().geometryForBox(*layoutBox.containingBlock()).contentBoxLeft() + formattingContext().geometryForBox(layoutBox).marginStart();
+    return usedHorizontalValues.constraints.contentBoxLeft + formattingContext().geometryForBox(layoutBox).marginStart();
 }
 
-Point BlockFormattingContext::Geometry::staticPosition(const Box& layoutBox) const
+Point BlockFormattingContext::Geometry::staticPosition(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues) const
 {
-    return { staticHorizontalPosition(layoutBox), staticVerticalPosition(layoutBox) };
+    return { staticHorizontalPosition(layoutBox, usedHorizontalValues), staticVerticalPosition(layoutBox) };
 }
 
 HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues, UsedVerticalValues usedVerticalValues)

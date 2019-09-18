@@ -1,5 +1,43 @@
 2019-09-18  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Add contentbox left constraint to UsedHorizontalValues::Constraints
+        https://bugs.webkit.org/show_bug.cgi?id=201923
+        <rdar://problem/55485796>
+
+        Reviewed by Antti Koivisto.
+
+        Pass in the contentbox left constraint value to the FormattingContext::compute*() functions so that they don't need to read the containg block's geometry.
+        This is in preparation for using constraint values instead of querying the display tree for containing block geometry information.
+        See webkit.org/b/201795
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::outOfFlowConstraints):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry):
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::staticHorizontalPositionForOutOfFlowPositioned const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry const):
+        * layout/LayoutUnits.cpp:
+        (WebCore::Layout::UsedHorizontalValues::Constraints::Constraints):
+        * layout/LayoutUnits.h:
+        (WebCore::Layout::UsedHorizontalValues::Constraints::Constraints):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeStaticHorizontalPosition):
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticHorizontalPosition const):
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticPosition const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::InlineFormattingContext::computeIntrinsicWidthForFormattingRoot):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computePreferredWidthForColumns):
+
+2019-09-18  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Introduce UsedHorizontalValues::Constraints
         https://bugs.webkit.org/show_bug.cgi?id=201919
         <rdar://problem/55481927>

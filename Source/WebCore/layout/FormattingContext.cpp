@@ -43,6 +43,11 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FormattingContext);
 
+static UsedHorizontalValues::Constraints outOfFlowConstraints(const Display::Box& containingBlockGeometry)
+{
+    return UsedHorizontalValues::Constraints { containingBlockGeometry.paddingBoxLeft(), containingBlockGeometry.paddingBoxWidth() };
+}
+
 FormattingContext::FormattingContext(const Container& formattingContextRoot, FormattingState& formattingState)
     : m_root(makeWeakPtr(formattingContextRoot))
     , m_formattingState(formattingState)
@@ -66,11 +71,12 @@ LayoutState& FormattingContext::layoutState() const
 
 void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox)
 {
-    auto containingBlockWidth = geometryForBox(*layoutBox.containingBlock()).paddingBoxWidth();
-    auto containingBlockHeight = geometryForBox(*layoutBox.containingBlock()).paddingBoxHeight();
+    auto& containingBlockGeometry = geometryForBox(*layoutBox.containingBlock());
+    auto containingBlockWidth = containingBlockGeometry.paddingBoxWidth();
+    auto containingBlockHeight = containingBlockGeometry.paddingBoxHeight();
 
     auto compute = [&](Optional<LayoutUnit> usedWidth) {
-        auto usedHorizontalValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { containingBlockWidth }, usedWidth, { } };
+        auto usedHorizontalValues = UsedHorizontalValues { outOfFlowConstraints(containingBlockGeometry), usedWidth, { } };
         auto usedVerticalValues = UsedVerticalValues { containingBlockHeight, { } };
         return geometry().outOfFlowHorizontalGeometry(layoutBox, usedHorizontalValues, usedVerticalValues);
     };
@@ -102,10 +108,9 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox)
     };
     auto& containingBlockGeometry = geometryForBox(*layoutBox.containingBlock());
     auto containingBlockHeight = containingBlockGeometry.paddingBoxHeight();
-    auto containingBlockWidth = containingBlockGeometry.paddingBoxHeight();
 
     auto usedVerticalValuesForHeight = UsedVerticalValues { containingBlockHeight, { } };
-    auto usedHorizontalValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { containingBlockWidth } };
+    auto usedHorizontalValues = UsedHorizontalValues { outOfFlowConstraints(containingBlockGeometry) };
 
     auto verticalGeometry = compute(usedHorizontalValues, usedVerticalValuesForHeight);
     if (auto maxHeight = geometry().computedMaxHeight(layoutBox, containingBlockHeight)) {

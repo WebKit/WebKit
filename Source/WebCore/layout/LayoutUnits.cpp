@@ -34,7 +34,8 @@ namespace WebCore {
 namespace Layout {
 
 UsedHorizontalValues::Constraints::Constraints(const Display::Box& containingBlockGeometry)
-    : width(containingBlockGeometry.contentBoxWidth())
+    : contentBoxLeft(containingBlockGeometry.contentBoxLeft())
+    , width(containingBlockGeometry.contentBoxWidth())
 {
 }
 

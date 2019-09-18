@@ -221,7 +221,8 @@ void BlockFormattingContext::computeStaticVerticalPosition(const FloatingContext
 
 void BlockFormattingContext::computeStaticHorizontalPosition(const Box& layoutBox)
 {
-    formattingState().displayBox(layoutBox).setLeft(geometry().staticHorizontalPosition(layoutBox));
+    auto usedHorizontalValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { geometryForBox(*layoutBox.containingBlock()) } };
+    formattingState().displayBox(layoutBox).setLeft(geometry().staticHorizontalPosition(layoutBox, usedHorizontalValues));
 }
 
 void BlockFormattingContext::computeStaticPosition(const FloatingContext& floatingContext, const Box& layoutBox)
@@ -351,13 +352,15 @@ void BlockFormattingContext::computePositionToAvoidFloats(const FloatingContext&
 void BlockFormattingContext::computeWidthAndMargin(const Box& layoutBox, Optional<LayoutUnit> usedAvailableWidth)
 {
     LayoutUnit availableWidth;
+    auto containingBlockGeometry = geometryForBox(*layoutBox.containingBlock());
     if (usedAvailableWidth)
         availableWidth = *usedAvailableWidth;
     else
-        availableWidth = geometryForBox(*layoutBox.containingBlock()).contentBoxWidth();
+        availableWidth = containingBlockGeometry.contentBoxWidth();
+    auto constraints = UsedHorizontalValues::Constraints { containingBlockGeometry.contentBoxLeft(), availableWidth };
 
     auto compute = [&](Optional<LayoutUnit> usedWidth) -> WidthAndMargin {
-        auto usedValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { availableWidth }, usedWidth, { } };
+        auto usedValues = UsedHorizontalValues { constraints, usedWidth, { } };
         if (layoutBox.isInFlow())
             return geometry().inFlowWidthAndMargin(layoutBox, usedValues);
 

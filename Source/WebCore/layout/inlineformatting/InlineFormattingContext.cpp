@@ -106,7 +106,7 @@ FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIn
     }
 
     Vector<const Box*> formattingContextRootList;
-    auto usedValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { LayoutUnit { } } };
+    auto usedValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { { }, { } } };
     auto* layoutBox = root().firstInFlowOrFloatingChild();
     while (layoutBox) {
         if (layoutBox->establishesFormattingContext()) {
@@ -167,7 +167,7 @@ void InlineFormattingContext::computeIntrinsicWidthForFormattingRoot(const Box& 
 {
     ASSERT(formattingRoot.establishesFormattingContext());
 
-    auto usedValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { LayoutUnit { } } };
+    auto usedValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { { }, { } } };
     computeBorderAndPadding(formattingRoot, usedValues);
     computeHorizontalMargin(formattingRoot, usedValues);
 
