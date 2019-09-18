@@ -173,7 +173,25 @@ struct UsedHorizontalValues {
 };
 
 struct UsedVerticalValues {
-    Optional<LayoutUnit> containingBlockHeight;
+    struct Constraints {
+        explicit Constraints(const Display::Box& containingBlockGeometry);
+        explicit Constraints(LayoutUnit contentBoxTop, Optional<LayoutUnit> verticalConstraint = WTF::nullopt)
+            : contentBoxTop(contentBoxTop)
+            , height(verticalConstraint)
+        {
+        }
+
+        LayoutUnit contentBoxTop;
+        Optional<LayoutUnit> height;
+    };
+
+    explicit UsedVerticalValues(Constraints constraints, Optional<LayoutUnit> height = { })
+        : constraints(constraints)
+        , height(height)
+    {
+    }
+
+    Constraints constraints;
     Optional<LayoutUnit> height;
 };
 

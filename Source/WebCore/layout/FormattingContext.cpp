@@ -43,9 +43,14 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FormattingContext);
 
-static UsedHorizontalValues::Constraints outOfFlowConstraints(const Display::Box& containingBlockGeometry)
+static UsedHorizontalValues::Constraints outOfFlowHorizontalConstraints(const Display::Box& containingBlockGeometry)
 {
     return UsedHorizontalValues::Constraints { containingBlockGeometry.paddingBoxLeft(), containingBlockGeometry.paddingBoxWidth() };
+}
+
+static UsedVerticalValues::Constraints outOfFlowVerticalConstraints(const Display::Box& containingBlockGeometry)
+{
+    return UsedVerticalValues::Constraints { containingBlockGeometry.paddingBoxTop(), containingBlockGeometry.paddingBoxHeight() };
 }
 
 FormattingContext::FormattingContext(const Container& formattingContextRoot, FormattingState& formattingState)
@@ -73,11 +78,10 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox)
 {
     auto& containingBlockGeometry = geometryForBox(*layoutBox.containingBlock());
     auto containingBlockWidth = containingBlockGeometry.paddingBoxWidth();
-    auto containingBlockHeight = containingBlockGeometry.paddingBoxHeight();
 
     auto compute = [&](Optional<LayoutUnit> usedWidth) {
-        auto usedHorizontalValues = UsedHorizontalValues { outOfFlowConstraints(containingBlockGeometry), usedWidth, { } };
-        auto usedVerticalValues = UsedVerticalValues { containingBlockHeight, { } };
+        auto usedHorizontalValues = UsedHorizontalValues { outOfFlowHorizontalConstraints(containingBlockGeometry), usedWidth, { } };
+        auto usedVerticalValues = UsedVerticalValues { outOfFlowVerticalConstraints(containingBlockGeometry), { } };
         return geometry().outOfFlowHorizontalGeometry(layoutBox, usedHorizontalValues, usedVerticalValues);
     };
 
@@ -109,19 +113,19 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox)
     auto& containingBlockGeometry = geometryForBox(*layoutBox.containingBlock());
     auto containingBlockHeight = containingBlockGeometry.paddingBoxHeight();
 
-    auto usedVerticalValuesForHeight = UsedVerticalValues { containingBlockHeight, { } };
-    auto usedHorizontalValues = UsedHorizontalValues { outOfFlowConstraints(containingBlockGeometry) };
+    auto usedVerticalValuesForHeight = UsedVerticalValues { outOfFlowVerticalConstraints(containingBlockGeometry), { } };
+    auto usedHorizontalValues = UsedHorizontalValues { outOfFlowHorizontalConstraints(containingBlockGeometry) };
 
     auto verticalGeometry = compute(usedHorizontalValues, usedVerticalValuesForHeight);
     if (auto maxHeight = geometry().computedMaxHeight(layoutBox, containingBlockHeight)) {
-        auto usedValuesForMaxHeight = UsedVerticalValues { containingBlockHeight, maxHeight };
+        auto usedValuesForMaxHeight = UsedVerticalValues { outOfFlowVerticalConstraints(containingBlockGeometry), maxHeight };
         auto maxVerticalGeometry = compute(usedHorizontalValues, usedValuesForMaxHeight);
         if (verticalGeometry.heightAndMargin.height > maxVerticalGeometry.heightAndMargin.height)
             verticalGeometry = maxVerticalGeometry;
     }
 
     if (auto minHeight = geometry().computedMinHeight(layoutBox, containingBlockHeight)) {
-        auto usedValuesForMinHeight = UsedVerticalValues { containingBlockHeight, minHeight };
+        auto usedValuesForMinHeight = UsedVerticalValues { outOfFlowVerticalConstraints(containingBlockGeometry), minHeight };
         auto minVerticalGeometry = compute(usedHorizontalValues, usedValuesForMinHeight);
         if (verticalGeometry.heightAndMargin.height < minVerticalGeometry.heightAndMargin.height)
             verticalGeometry = minVerticalGeometry;

@@ -221,7 +221,7 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin(co
     return { *usedValues.width, nonReplacedWidthAndMargin.usedMargin, nonReplacedWidthAndMargin.computedMargin };
 }
 
-LayoutUnit BlockFormattingContext::Geometry::staticVerticalPosition(const Box& layoutBox) const
+LayoutUnit BlockFormattingContext::Geometry::staticVerticalPosition(const Box& layoutBox, UsedVerticalValues usedVerticalValues) const
 {
     // https://www.w3.org/TR/CSS22/visuren.html#block-formatting
     // In a block formatting context, boxes are laid out one after the other, vertically, beginning at the top of a containing block.
@@ -231,7 +231,7 @@ LayoutUnit BlockFormattingContext::Geometry::staticVerticalPosition(const Box& l
         auto& previousInFlowBoxGeometry = formattingContext().geometryForBox(*previousInFlowSibling);
         return previousInFlowBoxGeometry.bottom() + previousInFlowBoxGeometry.marginAfter();
     }
-    return formattingContext().geometryForBox(*layoutBox.containingBlock()).contentBoxTop();
+    return usedVerticalValues.constraints.contentBoxTop;
 }
 
 LayoutUnit BlockFormattingContext::Geometry::staticHorizontalPosition(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues) const
@@ -241,9 +241,9 @@ LayoutUnit BlockFormattingContext::Geometry::staticHorizontalPosition(const Box&
     return usedHorizontalValues.constraints.contentBoxLeft + formattingContext().geometryForBox(layoutBox).marginStart();
 }
 
-Point BlockFormattingContext::Geometry::staticPosition(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues) const
+Point BlockFormattingContext::Geometry::staticPosition(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues, UsedVerticalValues usedVerticalValues) const
 {
-    return { staticHorizontalPosition(layoutBox, usedHorizontalValues), staticVerticalPosition(layoutBox) };
+    return { staticHorizontalPosition(layoutBox, usedHorizontalValues), staticVerticalPosition(layoutBox, usedVerticalValues) };
 }
 
 HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues, UsedVerticalValues usedVerticalValues)

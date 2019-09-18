@@ -78,8 +78,8 @@ private:
         HeightAndMargin inFlowHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues);
         WidthAndMargin inFlowWidthAndMargin(const Box&, UsedHorizontalValues);
 
-        Point staticPosition(const Box&, UsedHorizontalValues) const;
-        LayoutUnit staticVerticalPosition(const Box&) const;
+        Point staticPosition(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
+        LayoutUnit staticVerticalPosition(const Box&, UsedVerticalValues) const;
         LayoutUnit staticHorizontalPosition(const Box&, UsedHorizontalValues) const;
 
         IntrinsicWidthConstraints intrinsicWidthConstraints(const Box&);

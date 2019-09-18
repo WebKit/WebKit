@@ -39,6 +39,11 @@ UsedHorizontalValues::Constraints::Constraints(const Display::Box& containingBlo
 {
 }
 
+UsedVerticalValues::Constraints::Constraints(const Display::Box& containingBlockGeometry)
+    : contentBoxTop(containingBlockGeometry.contentBoxTop())
+{
+}
+
 }
 }
 #endif

@@ -210,13 +210,15 @@ void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, UsedHo
 void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox)
 {
     HeightAndMargin heightAndMargin;
-    auto usedHorizontalValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { geometryForBox(*layoutBox.containingBlock()) } };
+    auto& containingBlockGeometry = geometryForBox(*layoutBox.containingBlock());
+    auto usedHorizontalValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { containingBlockGeometry } };
+    auto usedVerticalValues = UsedVerticalValues { UsedVerticalValues::Constraints { containingBlockGeometry } };
     if (layoutBox.isFloatingPositioned())
-        heightAndMargin = geometry().floatingHeightAndMargin(layoutBox, usedHorizontalValues, { });
+        heightAndMargin = geometry().floatingHeightAndMargin(layoutBox, usedHorizontalValues, usedVerticalValues);
     else if (layoutBox.isInlineBlockBox())
-        heightAndMargin = geometry().inlineBlockHeightAndMargin(layoutBox, usedHorizontalValues);
+        heightAndMargin = geometry().inlineBlockHeightAndMargin(layoutBox, usedHorizontalValues, usedVerticalValues);
     else if (layoutBox.replaced())
-        heightAndMargin = geometry().inlineReplacedHeightAndMargin(layoutBox, usedHorizontalValues, { });
+        heightAndMargin = geometry().inlineReplacedHeightAndMargin(layoutBox, usedHorizontalValues, usedVerticalValues);
     else
         ASSERT_NOT_REACHED();
 

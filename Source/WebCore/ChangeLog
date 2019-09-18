@@ -1,3 +1,46 @@
+2019-09-18  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Introduce UsedVerticalValues::Constraints
+        https://bugs.webkit.org/show_bug.cgi?id=201933
+        <rdar://problem/55487485>
+
+        Reviewed by Antti Koivisto.
+
+        UsedVerticalValues::Constraints holds the constraint values ((optional)containing block height and contentbox top) for a particular box geometry computation. 
+        This is in preparation for using constraint values instead of querying the display tree for containing block geometry information.
+        See webkit.org/b/201795
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::outOfFlowHorizontalConstraints):
+        (WebCore::Layout::outOfFlowVerticalConstraints):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry):
+        (WebCore::Layout::outOfFlowConstraints): Deleted.
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::staticVerticalPositionForOutOfFlowPositioned const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin const):
+        * layout/LayoutUnits.cpp:
+        (WebCore::Layout::UsedVerticalValues::Constraints::Constraints):
+        * layout/LayoutUnits.h:
+        (WebCore::Layout::UsedVerticalValues::Constraints::Constraints):
+        (WebCore::Layout::UsedVerticalValues::UsedVerticalValues):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeStaticVerticalPosition):
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticVerticalPosition const):
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticPosition const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeHeightAndMargin):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockHeightAndMargin const):
+
 2019-09-18  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, WinCairo build fix after r250045.

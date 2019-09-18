@@ -212,7 +212,8 @@ void BlockFormattingContext::placeInFlowPositionedChildren(const Box& layoutBox)
 
 void BlockFormattingContext::computeStaticVerticalPosition(const FloatingContext& floatingContext, const Box& layoutBox)
 {
-    formattingState().displayBox(layoutBox).setTop(geometry().staticVerticalPosition(layoutBox));
+    auto usedVerticalValues = UsedVerticalValues { UsedVerticalValues::Constraints { geometryForBox(*layoutBox.containingBlock()) } };
+    formattingState().displayBox(layoutBox).setTop(geometry().staticVerticalPosition(layoutBox, usedVerticalValues));
     if (layoutBox.hasFloatClear())
         computeEstimatedVerticalPositionForFloatClear(floatingContext, layoutBox);
     else if (layoutBox.establishesFormattingContext())
@@ -392,9 +393,10 @@ void BlockFormattingContext::computeWidthAndMargin(const Box& layoutBox, Optiona
 
 void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox)
 {
+    auto& containingBlockGeometry = geometryForBox(*layoutBox.containingBlock());
     auto compute = [&](auto usedVerticalValues) -> HeightAndMargin {
 
-        auto usedHorizontalValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { geometryForBox(*layoutBox.containingBlock()) } };
+        auto usedHorizontalValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { containingBlockGeometry } };
         if (layoutBox.isInFlow())
             return geometry().inFlowHeightAndMargin(layoutBox, usedHorizontalValues, usedVerticalValues);
 
@@ -405,10 +407,11 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox)
         return { };
     };
 
-    auto heightAndMargin = compute(UsedVerticalValues { });
+    auto verticalConstraints = UsedVerticalValues::Constraints { containingBlockGeometry };
+    auto heightAndMargin = compute(UsedVerticalValues { verticalConstraints });
     if (auto maxHeight = geometry().computedMaxHeight(layoutBox)) {
         if (heightAndMargin.height > *maxHeight) {
-            auto maxHeightAndMargin = compute(UsedVerticalValues { { }, *maxHeight });
+            auto maxHeightAndMargin = compute(UsedVerticalValues { verticalConstraints, maxHeight });
             // Used height should remain the same.
             ASSERT((layoutState().inQuirksMode() && (layoutBox.isBodyBox() || layoutBox.isDocumentBox())) || maxHeightAndMargin.height == *maxHeight);
             heightAndMargin = { *maxHeight, maxHeightAndMargin.nonCollapsedMargin };
@@ -417,7 +420,7 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox)
 
     if (auto minHeight = geometry().computedMinHeight(layoutBox)) {
         if (heightAndMargin.height < *minHeight) {
-            auto minHeightAndMargin = compute(UsedVerticalValues { { }, *minHeight });
+            auto minHeightAndMargin = compute(UsedVerticalValues { verticalConstraints, minHeight });
             // Used height should remain the same.
             ASSERT((layoutState().inQuirksMode() && (layoutBox.isBodyBox() || layoutBox.isDocumentBox())) || minHeightAndMargin.height == *minHeight);
             heightAndMargin = { *minHeight, minHeightAndMargin.nonCollapsedMargin };
