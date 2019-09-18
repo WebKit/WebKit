@@ -1015,6 +1015,11 @@ private:
         case NewPromise:
             setPrediction(SpecPromiseObject);
             break;
+
+        case CreateGenerator:
+        case NewGenerator:
+            setPrediction(SpecObjectOther);
+            break;
             
         case ArraySlice:
         case NewArrayWithSpread:

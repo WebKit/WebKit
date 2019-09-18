@@ -128,14 +128,18 @@ function checkProperty(object, name, value, attributes = { writable: true, enume
     shouldBe(okCalled, 1);
 }
 {
-    let builtin = createBuiltin(`(function (obj) {
-        return @getByIdDirectPrivate(obj, "generatorState");
+    let builtinPut = createBuiltin(`(function (obj, value) {
+        @putByIdDirectPrivate(obj, "next", value);
     })`);
-    function* hello() { }
-    let generator = hello();
-    shouldBe(typeof builtin(generator), "number");
-    let result = Object.assign({}, generator);
-    shouldBe(typeof builtin(result), "undefined");
+    let builtinGet = createBuiltin(`(function (obj) {
+        return @getByIdDirectPrivate(obj, "next");
+    })`);
+    var object = {};
+    var value = 42;
+    builtinPut(object, value);
+    shouldBe(typeof builtinGet(object), "number");
+    let result = Object.assign({}, object);
+    shouldBe(typeof builtinGet(result), "undefined");
 }
 {
     let object = {};

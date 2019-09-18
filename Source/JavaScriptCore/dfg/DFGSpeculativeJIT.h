@@ -1474,8 +1474,10 @@ public:
     void compileObjectCreate(Node*);
     void compileCreateThis(Node*);
     void compileCreatePromise(Node*);
+    void compileCreateGenerator(Node*);
     void compileNewObject(Node*);
     void compileNewPromise(Node*);
+    void compileNewGenerator(Node*);
     void compileToPrimitive(Node*);
     void compileLogShadowChickenPrologue(Node*);
     void compileLogShadowChickenTail(Node*);

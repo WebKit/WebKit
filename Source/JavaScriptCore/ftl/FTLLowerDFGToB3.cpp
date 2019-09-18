@@ -78,6 +78,7 @@
 #include "JSAsyncFunction.h"
 #include "JSAsyncGeneratorFunction.h"
 #include "JSCInlines.h"
+#include "JSGenerator.h"
 #include "JSGeneratorFunction.h"
 #include "JSImmutableButterfly.h"
 #include "JSLexicalEnvironment.h"
@@ -1048,6 +1049,9 @@ private:
         case NewPromise:
             compileNewPromise();
             break;
+        case NewGenerator:
+            compileNewGenerator();
+            break;
         case NewStringObject:
             compileNewStringObject();
             break;
@@ -1065,6 +1069,9 @@ private:
             break;
         case CreatePromise:
             compileCreatePromise();
+            break;
+        case CreateGenerator:
+            compileCreateGenerator();
             break;
         case Spread:
             compileSpread();
@@ -5912,6 +5919,31 @@ private:
         setJSValue(m_out.phi(pointerType(), fastResult, slowResult));
     }
 
+    void compileNewGenerator()
+    {
+        LBasicBlock slowCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowCase);
+
+        LValue generator = allocateObject<JSGenerator>(m_node->structure(), m_out.intPtrZero, slowCase);
+        m_out.store64(m_out.constInt64(JSValue::encode(jsNull())), generator, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSGenerator::Field::PolyProto)]);
+        m_out.store64(m_out.constInt64(JSValue::encode(jsNumber(static_cast<int32_t>(JSGenerator::GeneratorState::Init)))), generator, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSGenerator::Field::State)]);
+        m_out.store64(m_out.constInt64(JSValue::encode(jsUndefined())), generator, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSGenerator::Field::Next)]);
+        m_out.store64(m_out.constInt64(JSValue::encode(jsUndefined())), generator, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSGenerator::Field::This)]);
+        m_out.store64(m_out.constInt64(JSValue::encode(jsUndefined())), generator, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSGenerator::Field::Frame)]);
+        mutatorFence();
+        ValueFromBlock fastResult = m_out.anchor(generator);
+        m_out.jump(continuation);
+
+        m_out.appendTo(slowCase, continuation);
+        ValueFromBlock slowResult = m_out.anchor(vmCall(pointerType(), m_out.operation(operationNewGenerator), m_callFrame, frozenPointer(m_graph.freezeStrong(m_node->structure().get()))));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(pointerType(), fastResult, slowResult));
+    }
+
     void compileNewStringObject()
     {
         RegisteredStructure structure = m_node->structure();
@@ -6279,6 +6311,7 @@ private:
         LBasicBlock derivedCase = m_out.newBlock();
         LBasicBlock isFunctionBlock = m_out.newBlock();
         LBasicBlock hasRareData = m_out.newBlock();
+        LBasicBlock hasStructure = m_out.newBlock();
         LBasicBlock checkGlobalObjectCase = m_out.newBlock();
         LBasicBlock fastAllocationCase = m_out.newBlock();
         LBasicBlock slowCase = m_out.newBlock();
@@ -6294,8 +6327,11 @@ private:
         LValue rareData = m_out.loadPtr(callee, m_heaps.JSFunction_rareData);
         m_out.branch(m_out.isZero64(rareData), rarely(slowCase), usually(hasRareData));
 
-        m_out.appendTo(hasRareData, fastAllocationCase);
+        m_out.appendTo(hasRareData, hasStructure);
         LValue structure = m_out.loadPtr(rareData, m_heaps.FunctionRareData_internalFunctionAllocationProfile_structure);
+        m_out.branch(m_out.isZero64(structure), rarely(slowCase), usually(hasStructure));
+
+        m_out.appendTo(hasStructure, checkGlobalObjectCase);
         m_out.branch(m_out.equal(m_out.loadPtr(structure, m_heaps.Structure_classInfo), m_out.constIntPtr(m_node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info())), usually(checkGlobalObjectCase), rarely(slowCase));
 
         m_out.appendTo(checkGlobalObjectCase, fastAllocationCase);
@@ -6316,6 +6352,57 @@ private:
 
         m_out.appendTo(slowCase, continuation);
         ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, m_out.operation(m_node->isInternalPromise() ? operationCreateInternalPromise : operationCreatePromise), m_callFrame, callee, weakPointer(globalObject)));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        LValue result = m_out.phi(Int64, fastResult, slowResult);
+
+        setJSValue(result);
+    }
+
+    void compileCreateGenerator()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
+
+        LValue callee = lowCell(m_node->child1());
+
+        LBasicBlock isFunctionBlock = m_out.newBlock();
+        LBasicBlock hasRareData = m_out.newBlock();
+        LBasicBlock hasStructure = m_out.newBlock();
+        LBasicBlock checkGlobalObjectCase = m_out.newBlock();
+        LBasicBlock fastAllocationCase = m_out.newBlock();
+        LBasicBlock slowCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        m_out.branch(isFunction(callee, provenType(m_node->child1())), usually(isFunctionBlock), rarely(slowCase));
+
+        LBasicBlock lastNext = m_out.appendTo(isFunctionBlock, hasRareData);
+        LValue rareData = m_out.loadPtr(callee, m_heaps.JSFunction_rareData);
+        m_out.branch(m_out.isZero64(rareData), rarely(slowCase), usually(hasRareData));
+
+        m_out.appendTo(hasRareData, hasStructure);
+        LValue structure = m_out.loadPtr(rareData, m_heaps.FunctionRareData_internalFunctionAllocationProfile_structure);
+        m_out.branch(m_out.isZero64(structure), rarely(slowCase), usually(hasStructure));
+
+        m_out.appendTo(hasStructure, checkGlobalObjectCase);
+        m_out.branch(m_out.equal(m_out.loadPtr(structure, m_heaps.Structure_classInfo), m_out.constIntPtr(JSGenerator::info())), usually(checkGlobalObjectCase), rarely(slowCase));
+
+        m_out.appendTo(checkGlobalObjectCase, fastAllocationCase);
+        m_out.branch(m_out.equal(m_out.loadPtr(structure, m_heaps.Structure_globalObject), weakPointer(globalObject)), usually(fastAllocationCase), rarely(slowCase));
+
+        m_out.appendTo(fastAllocationCase, slowCase);
+        LValue generator = allocateObject<JSGenerator>(structure, m_out.intPtrZero, slowCase);
+        m_out.store64(m_out.constInt64(JSValue::encode(jsNull())), generator, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSGenerator::Field::PolyProto)]);
+        m_out.store64(m_out.constInt64(JSValue::encode(jsNumber(static_cast<int32_t>(JSGenerator::GeneratorState::Init)))), generator, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSGenerator::Field::State)]);
+        m_out.store64(m_out.constInt64(JSValue::encode(jsUndefined())), generator, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSGenerator::Field::Next)]);
+        m_out.store64(m_out.constInt64(JSValue::encode(jsUndefined())), generator, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSGenerator::Field::This)]);
+        m_out.store64(m_out.constInt64(JSValue::encode(jsUndefined())), generator, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSGenerator::Field::Frame)]);
+        mutatorFence();
+        ValueFromBlock fastResult = m_out.anchor(generator);
+        m_out.jump(continuation);
+
+        m_out.appendTo(slowCase, continuation);
+        ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, m_out.operation(operationCreateGenerator), m_callFrame, callee, weakPointer(globalObject)));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -16101,10 +16188,12 @@ private:
         jsValueToStrictInt52(edge, lowJSValue(edge, ManualOperandSpeculation));
     }
 
-    LValue isCellWithType(LValue cell, JSType queriedType, SpeculatedType speculatedTypeForQuery, SpeculatedType type = SpecFullTop)
+    LValue isCellWithType(LValue cell, JSType queriedType, Optional<SpeculatedType> speculatedTypeForQuery, SpeculatedType type = SpecFullTop)
     {
-        if (LValue proven = isProvenValue(type & SpecCell, speculatedTypeForQuery))
-            return proven;
+        if (speculatedTypeForQuery) {
+            if (LValue proven = isProvenValue(type & SpecCell, speculatedTypeForQuery.value()))
+                return proven;
+        }
         return m_out.equal(
             m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoType),
             m_out.constInt32(queriedType));

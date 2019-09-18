@@ -568,6 +568,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpPutById)
         LINK(OpCreateThis)
         LINK(OpCreatePromise)
+        LINK(OpCreateGenerator)
 
         LINK(OpAdd)
         LINK(OpMul)
@@ -1273,6 +1274,9 @@ void CodeBlock::finalizeLLIntInlineCaches()
         });
         m_metadata->forEach<OpCreatePromise>([&] (auto& metadata) {
             handleCreateBytecode(metadata, "op_create_promise"_s);
+        });
+        m_metadata->forEach<OpCreateGenerator>([&] (auto& metadata) {
+            handleCreateBytecode(metadata, "op_create_generator"_s);
         });
 
         m_metadata->forEach<OpResolveScope>([&] (auto& metadata) {

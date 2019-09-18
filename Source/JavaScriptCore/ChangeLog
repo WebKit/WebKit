@@ -1,3 +1,166 @@
+2019-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Generator should have internal fields
+        https://bugs.webkit.org/show_bug.cgi?id=201159
+
+        Reviewed by Keith Miller.
+
+        This patch makes generator's internal states InternalField instead of private properties.
+        Each generator function produces a generator with different [[Prototype]], which makes generators have different Structures.
+        As a result, Generator.prototype.next etc.'s implementation becomes megamorphic even if it is not necessary.
+
+        If we make these structures adaptively poly-proto, some generators get poly-proto structures while others are not, resulting
+        in megamorphic lookup in Generator.prototype.next. If we make all the generator's structure poly-proto, it makes Generator.prototype.next
+        lookup suboptimal for now.
+
+        In this patch, we start with a relatively simple solution. This patch introduces JSGenerator class, and it has internal fields for generator's internal
+        states. We extend promise-internal-field access bytecodes to access to these fields from bytecode so that Generator.prototype.next can access
+        these fields without using megamorphic get_by_id_direct.
+
+        And we attach JSGeneratorType to JSGenerator so that we can efficiently implement `@isGenerator()` check in bytecode.
+
+        We reserve the offset = 0 slot for the future poly-proto extension for JSGenerator. By reserving this slot, non-poly-proto JSGenerator and poly-proto
+        JSGenerator still can offer the way to access to the same Generator internal fields with the same offset while poly-proto JSGenerator can get offset = 0
+        inline-storage slot for PolyProto implementation.
+
+        This patch adds op_create_generator since it is distinct from op_create_promise once we add PolyProto support.
+        In the future when we introduce some kind of op_create_async_generator we will probably share only one bytecode for both generator and async generator.
+
+        This patch offers around 10% improvement in JetStream2/Basic. And this patch is the basis of optimization of JetStream2/async-fs which leverages async generators significantly.
+
+        This patch includes several design decisions.
+
+            1. We add a new JSGenerator instead of leveraging JSFinalObject. The main reason is that we would like to have JSGeneratorType to quickly query `@isGenerator`.
+            2. This patch currently does not include object-allocation-sinking support for JSGenerator, but it is trivial, and will be added. And this patch also does not include poly-proto
+               support for JSGenerator. The main reason is simply because this patch is already large enough, and I do not want to make this patch larger and larger.
+            3. We can support arbitrary sized inline-storage: Reserving 0-5 offsets for internal fields, and start putting all the other things to the subsequent internal fields. But for now,
+               we are not taking this approach just because I'm not sure this is necessary. If we found such a pattern, we can easily extend the current one but for now, I would like to keep
+               this patch simple.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * builtins/AsyncFunctionPrototype.js:
+        (globalPrivate.asyncFunctionResume):
+        * builtins/GeneratorPrototype.js:
+        (globalPrivate.generatorResume):
+        (next):
+        (return):
+        (throw):
+        * bytecode/BytecodeGeneratorification.cpp:
+        (JSC::BytecodeGeneratorification::run):
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        * bytecode/SpeculatedType.cpp:
+        (JSC::speculationFromJSType):
+        * bytecode/SpeculatedType.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitPutGeneratorFields):
+        (JSC::BytecodeGenerator::emitCreateGenerator):
+        (JSC::BytecodeGenerator::emitNewGenerator):
+        (JSC::BytecodeGenerator::emitYield):
+        (JSC::BytecodeGenerator::emitDelegateYield):
+        (JSC::BytecodeGenerator::emitGeneratorStateChange):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitIsGenerator):
+        (JSC::BytecodeGenerator::generatorStateRegister):
+        (JSC::BytecodeGenerator::generatorValueRegister):
+        (JSC::BytecodeGenerator::generatorResumeModeRegister):
+        (JSC::BytecodeGenerator::generatorFrameRegister):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::generatorInternalFieldIndex):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_getGeneratorInternalField):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_putGeneratorInternalField):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isGenerator):
+        (JSC::FunctionNode::emitBytecode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupIsCellWithType):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToNewGenerator):
+        (JSC::DFG::Node::speculatedTypeForQuery):
+        (JSC::DFG::Node::hasStructure):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCreatePromise):
+        (JSC::DFG::SpeculativeJIT::compileCreateGenerator):
+        (JSC::DFG::SpeculativeJIT::compileNewGenerator):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewGenerator):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreatePromise):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateGenerator):
+        (JSC::FTL::DFG::LowerDFGToB3::isCellWithType):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_internal_field):
+        (JSC::JIT::emit_op_put_internal_field):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::createSubclassStructureSlow):
+        * runtime/InternalFunction.h:
+        (JSC::InternalFunction::createSubclassStructure):
+        * runtime/JSGenerator.cpp: Added.
+        (JSC::JSGenerator::create):
+        (JSC::JSGenerator::createStructure):
+        (JSC::JSGenerator::JSGenerator):
+        (JSC::JSGenerator::finishCreation):
+        (JSC::JSGenerator::visitChildren):
+        * runtime/JSGenerator.h: Copied from Source/JavaScriptCore/runtime/JSGeneratorFunction.h.
+        * runtime/JSGeneratorFunction.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::generatorStructure const):
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+
 2019-09-17  Keith Miller  <keith_miller@apple.com>
 
         Move comment explaining our Options to OptionsList.h

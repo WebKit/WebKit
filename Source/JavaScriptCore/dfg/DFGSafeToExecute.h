@@ -179,6 +179,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ToThis:
     case CreateThis:
     case CreatePromise:
+    case CreateGenerator:
     case ObjectCreate:
     case ObjectKeys:
     case GetCallee:
@@ -321,6 +322,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ConstructForwardVarargs:
     case NewObject:
     case NewPromise:
+    case NewGenerator:
     case NewArray:
     case NewArrayWithSize:
     case NewArrayBuffer:

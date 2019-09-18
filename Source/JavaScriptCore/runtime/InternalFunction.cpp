@@ -119,7 +119,6 @@ Structure* InternalFunction::createSubclassStructureSlow(ExecState* exec, JSValu
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    ASSERT(!newTarget || newTarget.isConstructor(vm));
 
     ASSERT(baseClass->hasMonoProto());
 
@@ -133,7 +132,7 @@ Structure* InternalFunction::createSubclassStructureSlow(ExecState* exec, JSValu
             return structure;
 
         // Note, Reflect.construct might cause the profile to churn but we don't care.
-        JSValue prototypeValue = newTarget.get(exec, vm.propertyNames->prototype);
+        JSValue prototypeValue = targetFunction->get(exec, vm.propertyNames->prototype);
         RETURN_IF_EXCEPTION(scope, nullptr);
         if (JSObject* prototype = jsDynamicCast<JSObject*>(vm, prototypeValue))
             return targetFunction->rareData(vm)->createInternalFunctionAllocationStructureFromBase(vm, globalObject, prototype, baseClass);

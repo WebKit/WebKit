@@ -579,7 +579,7 @@ TypedArrayType typedArrayTypeFromSpeculation(SpeculatedType type)
     return NotTypedArray;
 }
 
-SpeculatedType speculationFromJSType(JSType type)
+Optional<SpeculatedType> speculationFromJSType(JSType type)
 {
     switch (type) {
     case StringType:
@@ -609,9 +609,8 @@ SpeculatedType speculationFromJSType(JSType type)
     case DataViewType:
         return SpecDataViewObject;
     default:
-        ASSERT_NOT_REACHED();
+        return WTF::nullopt;
     }
-    return SpecNone;
 }
 
 SpeculatedType leastUpperBoundOfStrictlyEquivalentSpeculations(SpeculatedType type)

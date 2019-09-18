@@ -668,6 +668,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case NumberToStringWithRadix:
     case CreateThis:
     case CreatePromise:
+    case CreateGenerator:
     case InstanceOf:
     case StringValueOf:
     case ObjectKeys:
@@ -1566,6 +1567,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
     case NewObject:
     case NewPromise:
+    case NewGenerator:
     case NewRegexp:
     case NewSymbol:
     case NewStringObject:

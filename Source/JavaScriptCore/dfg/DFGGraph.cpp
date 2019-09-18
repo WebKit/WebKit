@@ -281,8 +281,8 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
             }
         }
     }
-    if (node->hasSpeculatedTypeForQuery())
-        out.print(comma, SpeculationDump(node->speculatedTypeForQuery()));
+    if (node->hasQueriedType())
+        out.print(comma, node->queriedType());
     if (node->hasStorageAccessData()) {
         StorageAccessData& storageAccessData = node->storageAccessData();
         out.print(comma, "id", storageAccessData.identifierNumber, "{", identifiers()[storageAccessData.identifierNumber], "}");

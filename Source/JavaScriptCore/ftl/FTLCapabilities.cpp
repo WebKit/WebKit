@@ -75,6 +75,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetButterfly:
     case NewObject:
     case NewPromise:
+    case NewGenerator:
     case NewStringObject:
     case NewSymbol:
     case NewArray:
@@ -380,6 +381,7 @@ inline CapabilityLevel canCompile(Node* node)
     case FilterInByIdStatus:
     case CreateThis:
     case CreatePromise:
+    case CreateGenerator:
     case DataViewGetInt:
     case DataViewGetFloat:
     case DataViewSet:

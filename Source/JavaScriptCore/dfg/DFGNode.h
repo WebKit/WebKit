@@ -767,6 +767,15 @@ public:
         m_opInfo2 = internal;
     }
 
+    void convertToNewGenerator(RegisteredStructure structure)
+    {
+        ASSERT(m_op == CreateGenerator);
+        setOpAndDefaultFlags(NewGenerator);
+        children.reset();
+        m_opInfo = structure;
+        m_opInfo2 = OpInfoWrapper();
+    }
+
     void convertToNewArrayBuffer(FrozenValue* immutableButterfly);
     
     void convertToDirectCall(FrozenValue*);
@@ -1372,7 +1381,7 @@ public:
         return op() == IsCellWithType;
     }
 
-    SpeculatedType speculatedTypeForQuery()
+    Optional<SpeculatedType> speculatedTypeForQuery()
     {
         return speculationFromJSType(queriedType());
     }
@@ -1909,6 +1918,7 @@ public:
         case ArrayifyToStructure:
         case NewObject:
         case NewPromise:
+        case NewGenerator:
         case NewStringObject:
             return true;
         default:

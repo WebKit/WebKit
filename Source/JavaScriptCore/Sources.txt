@@ -824,6 +824,7 @@ runtime/JSDateMath.cpp
 runtime/JSDestructibleObjectHeapCellType.cpp
 runtime/JSFixedArray.cpp
 runtime/JSFunction.cpp
+runtime/JSGenerator.cpp
 runtime/JSGeneratorFunction.cpp
 runtime/JSGlobalLexicalEnvironment.cpp
 runtime/JSGlobalObject.cpp

@@ -1394,6 +1394,14 @@ JSCell* JIT_OPERATION operationNewInternalPromise(ExecState* exec, Structure* st
     return JSInternalPromise::create(vm, structure);
 }
 
+JSCell* JIT_OPERATION operationNewGenerator(ExecState* exec, Structure* structure)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    return JSGenerator::create(vm, structure);
+}
+
 JSCell* JIT_OPERATION operationNewRegexp(ExecState* exec, JSCell* regexpPtr)
 {
     SuperSamplerScope superSamplerScope(false);

@@ -497,7 +497,7 @@ JS_EXPORT_PRIVATE SpeculatedType speculationFromValue(JSValue);
 // If it's an anyInt(), it'll return speculated types from the Int52 lattice.
 // Otherwise, it'll return types from the JSValue lattice.
 JS_EXPORT_PRIVATE SpeculatedType int52AwareSpeculationFromValue(JSValue);
-SpeculatedType speculationFromJSType(JSType);
+Optional<SpeculatedType> speculationFromJSType(JSType);
 
 SpeculatedType speculationFromTypedArrayType(TypedArrayType); // only valid for typed views.
 TypedArrayType typedArrayTypeFromSpeculation(SpeculatedType);

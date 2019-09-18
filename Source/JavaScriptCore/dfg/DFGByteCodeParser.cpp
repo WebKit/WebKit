@@ -4850,8 +4850,6 @@ void ByteCodeParser::parseBlock(unsigned limit)
                             m_graph.freeze(rareData);
                             m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
                             
-                            // The callee is still live up to this point.
-                            addToGraph(Phantom, callee);
                             Node* object = addToGraph(NewObject, OpInfo(m_graph.registerStructure(structure)));
                             if (structure->hasPolyProto()) {
                                 StorageAccessData* data = m_graph.m_storageAccessData.add();
@@ -4861,6 +4859,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
                                 addToGraph(PutByOffset, OpInfo(data), object, object, weakJSConstant(prototype));
                             }
                             set(VirtualRegister(bytecode.m_dst), object);
+                            // The callee is still live up to this point.
+                            addToGraph(Phantom, callee);
                             alreadyEmitted = true;
                         }
                     }
@@ -4930,9 +4930,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
                                 m_graph.freeze(rareData);
                                 m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
 
+                                set(VirtualRegister(bytecode.m_dst), addToGraph(NewPromise, OpInfo(m_graph.registerStructure(structure)), OpInfo(bytecode.m_isInternalPromise)));
                                 // The callee is still live up to this point.
                                 addToGraph(Phantom, callee);
-                                set(VirtualRegister(bytecode.m_dst), addToGraph(NewPromise, OpInfo(m_graph.registerStructure(structure)), OpInfo(bytecode.m_isInternalPromise)));
                                 alreadyEmitted = true;
                             }
                         }
@@ -4942,6 +4942,52 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     set(VirtualRegister(bytecode.m_dst), addToGraph(CreatePromise, OpInfo(), OpInfo(bytecode.m_isInternalPromise), callee));
             }
             NEXT_OPCODE(op_create_promise);
+        }
+
+        case op_create_generator: {
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
+            auto bytecode = currentInstruction->as<OpCreateGenerator>();
+            Node* callee = get(VirtualRegister(bytecode.m_callee));
+
+            bool alreadyEmitted = false;
+
+            JSFunction* function = callee->dynamicCastConstant<JSFunction*>(*m_vm);
+            if (!function) {
+                JSCell* cachedFunction = bytecode.metadata(codeBlock).m_cachedCallee.unvalidatedGet();
+                if (cachedFunction
+                    && cachedFunction != JSCell::seenMultipleCalleeObjects()
+                    && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
+                    ASSERT(cachedFunction->inherits<JSFunction>(*m_vm));
+
+                    FrozenValue* frozen = m_graph.freeze(cachedFunction);
+                    addToGraph(CheckCell, OpInfo(frozen), callee);
+
+                    function = static_cast<JSFunction*>(cachedFunction);
+                }
+            }
+
+            if (function) {
+                if (FunctionRareData* rareData = function->rareData()) {
+                    if (rareData->allocationProfileWatchpointSet().isStillValid()) {
+                        Structure* structure = rareData->internalFunctionAllocationStructure();
+                        if (structure
+                            && structure->classInfo() == JSGenerator::info()
+                            && structure->globalObject() == globalObject
+                            && rareData->allocationProfileWatchpointSet().isStillValid()) {
+                            m_graph.freeze(rareData);
+                            m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
+
+                            set(VirtualRegister(bytecode.m_dst), addToGraph(NewGenerator, OpInfo(m_graph.registerStructure(structure))));
+                            // The callee is still live up to this point.
+                            addToGraph(Phantom, callee);
+                            alreadyEmitted = true;
+                        }
+                    }
+                }
+            }
+            if (!alreadyEmitted)
+                set(VirtualRegister(bytecode.m_dst), addToGraph(CreateGenerator, callee));
+            NEXT_OPCODE(op_create_generator);
         }
 
         case op_new_object: {
@@ -4957,6 +5003,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
             JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
             set(bytecode.m_dst, addToGraph(NewPromise, OpInfo(m_graph.registerStructure(bytecode.m_isInternalPromise ? globalObject->internalPromiseStructure() : globalObject->promiseStructure())), OpInfo(bytecode.m_isInternalPromise)));
             NEXT_OPCODE(op_new_promise);
+        }
+
+        case op_new_generator: {
+            auto bytecode = currentInstruction->as<OpNewGenerator>();
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
+            set(bytecode.m_dst, addToGraph(NewGenerator, OpInfo(m_graph.registerStructure(globalObject->generatorStructure()))));
+            NEXT_OPCODE(op_new_generator);
         }
             
         case op_new_array: {

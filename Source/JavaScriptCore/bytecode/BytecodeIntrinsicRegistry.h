@@ -42,11 +42,13 @@ class RegisterID;
     macro(getByIdDirect) \
     macro(getByIdDirectPrivate) \
     macro(getPromiseInternalField) \
+    macro(getGeneratorInternalField) \
     macro(idWithProfile) \
     macro(isObject) \
     macro(isJSArray) \
     macro(isProxyObject) \
     macro(isDerivedArray) \
+    macro(isGenerator) \
     macro(isPromise) \
     macro(isRegExpObject) \
     macro(isMap) \
@@ -61,6 +63,7 @@ class RegisterID;
     macro(putByIdDirectPrivate) \
     macro(putByValDirect) \
     macro(putPromiseInternalField) \
+    macro(putGeneratorInternalField) \
     macro(toNumber) \
     macro(toString) \
     macro(toObject) \
@@ -98,6 +101,10 @@ class RegisterID;
     macro(promiseFlagsIsFirstResolvingFunctionCalled) \
     macro(promiseFieldFlags) \
     macro(promiseFieldReactionsOrResult) \
+    macro(generatorFieldState) \
+    macro(generatorFieldNext) \
+    macro(generatorFieldThis) \
+    macro(generatorFieldFrame) \
     macro(GeneratorResumeModeNormal) \
     macro(GeneratorResumeModeThrow) \
     macro(GeneratorResumeModeReturn) \

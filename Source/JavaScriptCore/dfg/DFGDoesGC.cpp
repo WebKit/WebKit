@@ -333,6 +333,7 @@ bool doesGC(Graph& graph, Node* node)
     case TryGetById:
     case CreateThis:
     case CreatePromise:
+    case CreateGenerator:
     case ObjectCreate:
     case ObjectKeys:
     case AllocatePropertyStorage:
@@ -341,6 +342,7 @@ bool doesGC(Graph& graph, Node* node)
     case ArrayifyToStructure:
     case NewObject:
     case NewPromise:
+    case NewGenerator:
     case NewArray:
     case NewArrayWithSpread:
     case Spread:

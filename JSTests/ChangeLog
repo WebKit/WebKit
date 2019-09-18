@@ -1,5 +1,28 @@
 2019-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Generator should have internal fields
+        https://bugs.webkit.org/show_bug.cgi?id=201159
+
+        Reviewed by Keith Miller.
+
+        * stress/create-generator.js: Added.
+        (shouldBe):
+        (test.generator):
+        (test):
+        * stress/generator-construct-failure.js: Added.
+        (shouldThrow):
+        (TypeError):
+        * stress/generator-prototype-change.js: Added.
+        (shouldBe):
+        (gen):
+        * stress/generator-prototype-closure.js: Added.
+        (shouldBe):
+        (test.gen):
+        (test):
+        * stress/object-assign-fast-path.js:
+
+2019-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Follow-up after String.codePointAt optimization
         https://bugs.webkit.org/show_bug.cgi?id=201889
 

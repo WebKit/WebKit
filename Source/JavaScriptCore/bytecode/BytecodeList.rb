@@ -134,6 +134,20 @@ op :new_promise,
         isInternalPromise: bool,
     }
 
+op :create_generator,
+    args: {
+        dst: VirtualRegister,
+        callee: VirtualRegister,
+    },
+    metadata: {
+        cachedCallee: WriteBarrier[JSCell]
+    }
+
+op :new_generator,
+    args: {
+        dst: VirtualRegister,
+    }
+
 op :get_argument,
     args: {
         dst: VirtualRegister,
