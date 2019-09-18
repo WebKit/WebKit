@@ -1,5 +1,25 @@
 2019-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Follow-up after String.codePointAt optimization
+        https://bugs.webkit.org/show_bug.cgi?id=201889
+
+        Reviewed by Saam Barati.
+
+        * stress/string-char-at-bad-type.js: Added.
+        (shouldBe):
+        (object.toString):
+        (test):
+        * stress/string-char-code-at-bad-type.js: Added.
+        (shouldBe):
+        (object.toString):
+        (test):
+        * stress/string-code-point-at-bad-type.js: Added.
+        (shouldBe):
+        (object.toString):
+        (test):
+
+2019-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] CheckArray+NonArray is not filtering out Array in AI
         https://bugs.webkit.org/show_bug.cgi?id=201857
         <rdar://problem/54194820>

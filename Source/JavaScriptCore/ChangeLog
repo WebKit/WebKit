@@ -1,3 +1,18 @@
+2019-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Follow-up after String.codePointAt optimization
+        https://bugs.webkit.org/show_bug.cgi?id=201889
+
+        Reviewed by Saam Barati.
+
+        Follow-up after string.codePointAt DFG / FTL optimizations,
+
+        1. Gracefully accept arguments more than expected for intrinsics
+        2. Check BadType in String.codePointAt, String.charAt, and String.charCodeAt.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+
 2019-09-17  Tadeu Zagallo  <tzagallo@apple.com>
 
         Change WebAssembly calling conventions

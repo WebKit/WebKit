@@ -2460,9 +2460,6 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
             
         case ArrayPopIntrinsic: {
-            if (argumentCountIncludingThis != 1)
-                return false;
-            
             ArrayMode arrayMode = getArrayMode(Array::Write);
             if (!arrayMode.isJSArray())
                 return false;
@@ -2594,10 +2591,10 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
 
         case CharCodeAtIntrinsic: {
-            if (argumentCountIncludingThis != 2)
+            if (argumentCountIncludingThis < 2)
                 return false;
 
-            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Uncountable))
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Uncountable) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
                 return false;
 
             insertChecks();
@@ -2613,10 +2610,10 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             if (!is64Bit())
                 return false;
 
-            if (argumentCountIncludingThis != 2)
+            if (argumentCountIncludingThis < 2)
                 return false;
 
-            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Uncountable))
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Uncountable) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
                 return false;
 
             insertChecks();
@@ -2629,7 +2626,10 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
 
         case CharAtIntrinsic: {
-            if (argumentCountIncludingThis != 2)
+            if (argumentCountIncludingThis < 2)
+                return false;
+
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
                 return false;
 
             // FIXME: String#charAt returns empty string when index is out-of-bounds, and this does not break the AI's claim.
@@ -2668,7 +2668,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
 
         case RegExpExecIntrinsic: {
-            if (argumentCountIncludingThis != 2)
+            if (argumentCountIncludingThis < 2)
                 return false;
             
             insertChecks();
@@ -2680,7 +2680,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             
         case RegExpTestIntrinsic:
         case RegExpTestFastIntrinsic: {
-            if (argumentCountIncludingThis != 2)
+            if (argumentCountIncludingThis < 2)
                 return false;
 
             if (intrinsic == RegExpTestIntrinsic) {
@@ -2748,7 +2748,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
 
         case ObjectGetPrototypeOfIntrinsic: {
-            if (argumentCountIncludingThis != 2)
+            if (argumentCountIncludingThis < 2)
                 return false;
 
             insertChecks();
@@ -2775,7 +2775,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
 
         case ReflectGetPrototypeOfIntrinsic: {
-            if (argumentCountIncludingThis != 2)
+            if (argumentCountIncludingThis < 2)
                 return false;
 
             insertChecks();
@@ -2799,7 +2799,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
 
         case StringPrototypeReplaceIntrinsic: {
-            if (argumentCountIncludingThis != 3)
+            if (argumentCountIncludingThis < 3)
                 return false;
 
             // Don't inline intrinsic if we exited due to "search" not being a RegExp or String object.
@@ -2851,7 +2851,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
             
         case StringPrototypeReplaceRegExpIntrinsic: {
-            if (argumentCountIncludingThis != 3)
+            if (argumentCountIncludingThis < 3)
                 return false;
             
             insertChecks();
@@ -2887,7 +2887,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             return true;
         }
         case IMulIntrinsic: {
-            if (argumentCountIncludingThis != 3)
+            if (argumentCountIncludingThis < 3)
                 return false;
             insertChecks();
             VirtualRegister leftOperand = virtualRegisterForArgument(1, registerOffset);
@@ -2899,8 +2899,6 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
 
         case RandomIntrinsic: {
-            if (argumentCountIncludingThis != 1)
-                return false;
             insertChecks();
             setResult(addToGraph(ArithRandom));
             return true;
@@ -2953,7 +2951,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
             
         case FiatInt52Intrinsic: {
-            if (argumentCountIncludingThis != 2)
+            if (argumentCountIncludingThis < 2)
                 return false;
             insertChecks();
             VirtualRegister operand = virtualRegisterForArgument(1, registerOffset);
@@ -2965,7 +2963,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
 
         case JSMapGetIntrinsic: {
-            if (argumentCountIncludingThis != 2)
+            if (argumentCountIncludingThis < 2)
                 return false;
 
             insertChecks();
@@ -2981,7 +2979,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
 
         case JSSetHasIntrinsic:
         case JSMapHasIntrinsic: {
-            if (argumentCountIncludingThis != 2)
+            if (argumentCountIncludingThis < 2)
                 return false;
 
             insertChecks();
@@ -3005,7 +3003,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
 
         case JSSetAddIntrinsic: {
-            if (argumentCountIncludingThis != 2)
+            if (argumentCountIncludingThis < 2)
                 return false;
 
             insertChecks();
@@ -3019,7 +3017,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
 
         case JSMapSetIntrinsic: {
-            if (argumentCountIncludingThis != 3)
+            if (argumentCountIncludingThis < 3)
                 return false;
 
             insertChecks();
@@ -3086,7 +3084,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
 
         case JSWeakMapGetIntrinsic: {
-            if (argumentCountIncludingThis != 2)
+            if (argumentCountIncludingThis < 2)
                 return false;
 
             if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
@@ -3105,7 +3103,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
 
         case JSWeakMapHasIntrinsic: {
-            if (argumentCountIncludingThis != 2)
+            if (argumentCountIncludingThis < 2)
                 return false;
 
             if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
@@ -3125,7 +3123,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
 
         case JSWeakSetHasIntrinsic: {
-            if (argumentCountIncludingThis != 2)
+            if (argumentCountIncludingThis < 2)
                 return false;
 
             if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
@@ -3145,7 +3143,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
 
         case JSWeakSetAddIntrinsic: {
-            if (argumentCountIncludingThis != 2)
+            if (argumentCountIncludingThis < 2)
                 return false;
 
             if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
@@ -3162,7 +3160,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
 
         case JSWeakMapSetIntrinsic: {
-            if (argumentCountIncludingThis != 3)
+            if (argumentCountIncludingThis < 3)
                 return false;
 
             if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
@@ -3365,7 +3363,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
 
         case HasOwnPropertyIntrinsic: {
-            if (argumentCountIncludingThis != 2)
+            if (argumentCountIncludingThis < 2)
                 return false;
 
             // This can be racy, that's fine. We know that once we observe that this is created,
@@ -3403,9 +3401,6 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
 
         case StringPrototypeToLowerCaseIntrinsic: {
-            if (argumentCountIncludingThis != 1)
-                return false;
-
             if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
                 return false;
 
@@ -3417,9 +3412,6 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         }
 
         case NumberPrototypeToStringIntrinsic: {
-            if (argumentCountIncludingThis != 1 && argumentCountIncludingThis != 2)
-                return false;
-
             if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
                 return false;
 
