@@ -263,9 +263,9 @@ void WebSWContextManagerConnection::syncTerminateWorker(ServiceWorkerIdentifier 
     SWContextManager::singleton().terminateWorker(identifier, syncWorkerTerminationTimeout, WTFMove(reply));
 }
 
-void WebSWContextManagerConnection::postMessageToServiceWorkerClient(PAL::SessionID sessionID, const ServiceWorkerClientIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
+void WebSWContextManagerConnection::postMessageToServiceWorkerClient(const ServiceWorkerClientIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
 {
-    m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::PostMessageToServiceWorkerClient(sessionID, destinationIdentifier, message, sourceIdentifier, sourceOrigin), 0);
+    m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::PostMessageToServiceWorkerClient(destinationIdentifier, message, sourceIdentifier, sourceOrigin), 0);
 }
 
 void WebSWContextManagerConnection::didFinishInstall(Optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, bool wasSuccessful)

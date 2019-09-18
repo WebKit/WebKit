@@ -2405,12 +2405,6 @@ WebSWOriginStore* NetworkProcess::existingSWOriginStoreForSession(PAL::SessionID
     return &static_cast<WebSWOriginStore&>(swServer->originStore());
 }
 
-void NetworkProcess::postMessageToServiceWorkerClient(PAL::SessionID sessionID, const ServiceWorkerClientIdentifier& destinationIdentifier, MessageWithMessagePorts&& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
-{
-    if (auto* connection = swServerForSession(sessionID).connection(destinationIdentifier.serverConnectionIdentifier))
-        connection->postMessageToServiceWorkerClient(destinationIdentifier.contextIdentifier, WTFMove(message), sourceIdentifier, sourceOrigin);
-}
-
 void NetworkProcess::registerSWServerConnection(WebSWServerConnection& connection)
 {
     ASSERT(parentProcessHasServiceWorkerEntitlement());

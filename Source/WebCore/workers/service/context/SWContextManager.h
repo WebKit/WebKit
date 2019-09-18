@@ -49,7 +49,7 @@ public:
     public:
         virtual ~Connection() { }
 
-        virtual void postMessageToServiceWorkerClient(PAL::SessionID, const ServiceWorkerClientIdentifier& destinationIdentifier, const MessageWithMessagePorts&, ServiceWorkerIdentifier source, const String& sourceOrigin) = 0;
+        virtual void postMessageToServiceWorkerClient(const ServiceWorkerClientIdentifier& destinationIdentifier, const MessageWithMessagePorts&, ServiceWorkerIdentifier source, const String& sourceOrigin) = 0;
         virtual void serviceWorkerStarted(Optional<ServiceWorkerJobDataIdentifier>, ServiceWorkerIdentifier, bool doesHandleFetch) = 0;
         virtual void serviceWorkerFailedToStart(Optional<ServiceWorkerJobDataIdentifier>, ServiceWorkerIdentifier, const String& message) = 0;
         virtual void didFinishInstall(Optional<ServiceWorkerJobDataIdentifier>, ServiceWorkerIdentifier, bool wasSuccessful) = 0;

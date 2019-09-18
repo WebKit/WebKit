@@ -151,7 +151,6 @@ messages -> NetworkProcess LegacyReceiver {
     SetCacheStorageParameters(PAL::SessionID sessionID, String cacheStorageDirectory, WebKit::SandboxExtension::Handle handle);
 
 #if ENABLE(SERVICE_WORKER)
-    PostMessageToServiceWorkerClient(PAL::SessionID sessionID, struct WebCore::ServiceWorkerClientIdentifier destinationIdentifier, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerIdentifier sourceIdentifier, String sourceOrigin)
     DisableServiceWorkerProcessTerminationDelay()
 #endif
 

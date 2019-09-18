@@ -74,9 +74,12 @@ void WebSWServerToContextConnection::connectionClosed()
         fetch->fail(ResourceError { errorDomainWebKitInternal, 0, { }, "Service Worker context closed"_s });
 }
 
-void WebSWServerToContextConnection::postMessageToServiceWorkerClient(PAL::SessionID sessionID, const ServiceWorkerClientIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
+void WebSWServerToContextConnection::postMessageToServiceWorkerClient(const ServiceWorkerClientIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
 {
-    if (auto* connection = m_networkProcess->swServerForSession(sessionID).connection(destinationIdentifier.serverConnectionIdentifier))
+    if (!m_server)
+        return;
+
+    if (auto* connection = m_server->connection(destinationIdentifier.serverConnectionIdentifier))
         connection->postMessageToServiceWorkerClient(destinationIdentifier.contextIdentifier, message, sourceIdentifier, sourceOrigin);
 }
 
