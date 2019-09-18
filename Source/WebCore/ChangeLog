@@ -1,3 +1,20 @@
+2019-09-18  Loïc Yhuel  <loic.yhuel@softathome.com>  and  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        JPEGImageDecoder: use libjpeg-turbo RGBA output path even for Adobe transform=0 JPEGs
+        https://bugs.webkit.org/show_bug.cgi?id=200163
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove the workaround for old libjpeg-turbo which doesn't support
+        BGRA output for Adobe transform=0 images. The bug was fixed in
+        libjpeg-turbo 1.2.1.
+
+        No new tests, no behavior change.
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageReader::decode): Removed code in #if defined(TURBO_JPEG_RGB_SWIZZLE).
+        (colorSpaceHasAlpha): Removed an unused inline function.
+
 2019-09-18  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove build warning since r248998.

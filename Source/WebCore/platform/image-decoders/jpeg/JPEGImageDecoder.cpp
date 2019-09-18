@@ -57,10 +57,8 @@ extern "C" {
 #define TURBO_JPEG_RGB_SWIZZLE
 inline J_COLOR_SPACE rgbOutputColorSpace() { return JCS_EXT_BGRA; }
 inline bool turboSwizzled(J_COLOR_SPACE colorSpace) { return colorSpace == JCS_EXT_RGBA || colorSpace == JCS_EXT_BGRA; }
-inline bool colorSpaceHasAlpha(J_COLOR_SPACE colorSpace) { return turboSwizzled(colorSpace); }
 #else
 inline J_COLOR_SPACE rgbOutputColorSpace() { return JCS_RGB; }
-inline bool colorSpaceHasAlpha(J_COLOR_SPACE) { return false; }
 #endif
 
 #if USE(LOW_QUALITY_IMAGE_NO_JPEG_DITHERING)
@@ -300,14 +298,6 @@ public:
             case JCS_YCbCr:
                 // libjpeg can convert GRAYSCALE and YCbCr image pixels to RGB.
                 m_info.out_color_space = rgbOutputColorSpace();
-#if defined(TURBO_JPEG_RGB_SWIZZLE)
-                if (m_info.saw_JFIF_marker)
-                    break;
-                // FIXME: Swizzle decoding does not support Adobe transform=0
-                // images (yet), so revert to using JSC_RGB in that case.
-                if (m_info.saw_Adobe_marker && !m_info.Adobe_transform)
-                    m_info.out_color_space = JCS_RGB;
-#endif
                 break;
             case JCS_CMYK:
             case JCS_YCCK:
