@@ -64,3 +64,13 @@
     [Conditional=Conditional15] boolean partialBooleanMemberWithIgnoredConditional;
     [EnabledBySetting=TestSetting] DOMString partialStringMemberWithEnabledBySetting;
 };
+
+partial dictionary TestInheritedDictionary {
+    required long partialRequiredLongMember;
+    boolean partialBooleanMember;
+    DOMString partialStringMember;
+    VoidCallback partialCallbackMember;
+    [ImplementedAs=partialUnsignedLongMember] unsigned long partialUnsignedLongMemberWithImplementedAs;
+    [Conditional=Conditional15] boolean partialBooleanMemberWithConditional;
+    [EnabledBySetting=TestSetting] DOMString partialStringMemberWithEnabledBySetting;
+};

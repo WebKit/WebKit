@@ -1,5 +1,78 @@
 2019-09-17  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r249888. rdar://problem/55461403
+
+    [WebIDL] Derived dictionaries should inherit their inherited dictionaries' partials
+    https://bugs.webkit.org/show_bug.cgi?id=201802
+    
+    Reviewed by Sam Weinig.
+    
+    Prior to this change, a dictionary D that inherits from dictionary B would not inherit B's
+    partial dictionaries. Fixed this by moving supplemental dependencies processing from
+    generate-bindings.pl to CodeGenerator.pm and reusing it in GetDictionaryByType.
+    
+    Added new bindings tests.
+    
+    * bindings/scripts/CodeGenerator.pm:
+    (new):
+    (ProcessDocument):
+    (ProcessSupplementalDependencies):
+    (shouldPropertyBeExposed):
+    (GetDictionaryByType):
+    * bindings/scripts/generate-bindings.pl:
+    (generateBindings):
+    (shouldPropertyBeExposed): Deleted.
+    * bindings/scripts/test/JS/JSTestDerivedDictionary.cpp: Added.
+    (WebCore::convertDictionary<TestDerivedDictionary>):
+    (WebCore::convertDictionaryToJS):
+    * bindings/scripts/test/JS/JSTestDerivedDictionary.h: Added.
+    * bindings/scripts/test/JS/JSTestInheritedDictionary.cpp: Added.
+    (WebCore::convertDictionary<TestInheritedDictionary>):
+    (WebCore::convertDictionaryToJS):
+    * bindings/scripts/test/JS/JSTestInheritedDictionary.h: Added.
+    * bindings/scripts/test/TestDerivedDictionary.idl: Added.
+    * bindings/scripts/test/TestInheritedDictionary.idl: Added.
+    * bindings/scripts/test/TestSupplemental.idl:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249888 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-09-15  Andy Estes  <aestes@apple.com>
+
+            [WebIDL] Derived dictionaries should inherit their inherited dictionaries' partials
+            https://bugs.webkit.org/show_bug.cgi?id=201802
+
+            Reviewed by Sam Weinig.
+
+            Prior to this change, a dictionary D that inherits from dictionary B would not inherit B's
+            partial dictionaries. Fixed this by moving supplemental dependencies processing from
+            generate-bindings.pl to CodeGenerator.pm and reusing it in GetDictionaryByType.
+
+            Added new bindings tests.
+
+            * bindings/scripts/CodeGenerator.pm:
+            (new):
+            (ProcessDocument):
+            (ProcessSupplementalDependencies):
+            (shouldPropertyBeExposed):
+            (GetDictionaryByType):
+            * bindings/scripts/generate-bindings.pl:
+            (generateBindings):
+            (shouldPropertyBeExposed): Deleted.
+            * bindings/scripts/test/JS/JSTestDerivedDictionary.cpp: Added.
+            (WebCore::convertDictionary<TestDerivedDictionary>):
+            (WebCore::convertDictionaryToJS):
+            * bindings/scripts/test/JS/JSTestDerivedDictionary.h: Added.
+            * bindings/scripts/test/JS/JSTestInheritedDictionary.cpp: Added.
+            (WebCore::convertDictionary<TestInheritedDictionary>):
+            (WebCore::convertDictionaryToJS):
+            * bindings/scripts/test/JS/JSTestInheritedDictionary.h: Added.
+            * bindings/scripts/test/TestDerivedDictionary.idl: Added.
+            * bindings/scripts/test/TestInheritedDictionary.idl: Added.
+            * bindings/scripts/test/TestSupplemental.idl:
+
+2019-09-17  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r247573. rdar://problem/55461395
 
     [Pointer Events] The button and buttons properties are incorrect on iOS
