@@ -21,8 +21,8 @@ EVENT(seeked)
 ** Jump to next cue **
 EXPECTED (video.currentTime == '0.75') OK
 EXPECTED (testTrack.track.activeCues.length == '1') OK
-EXPECTED (testTrack.track.activeCues[0].text == '	1234') OK
-EXPECTED (testCueDisplayBox.innerText == '	1234') OK
+EXPECTED (testTrack.track.activeCues[0].text == ' 1234') OK
+EXPECTED (testCueDisplayBox.innerText == ' 1234') OK
 
 ** The position should be default and CSS direction set to ltr **
 EXPECTED (2 * testCueDisplayBox.offsetLeft == video.videoWidth - testCueDisplayBox.offsetWidth == 'true') OK
@@ -73,8 +73,8 @@ EVENT(seeked)
 ** Jump to next cue **
 EXPECTED (video.currentTime == '2.75') OK
 EXPECTED (testTrack.track.activeCues.length == '1') OK
-EXPECTED (testTrack.track.activeCues[0].text == '	०१२३४५६७८९ ') OK
-EXPECTED (testCueDisplayBox.innerText == '	०१२३४५६७८९ ') OK
+EXPECTED (testTrack.track.activeCues[0].text == ' ०१२३४५६७८९ ') OK
+EXPECTED (testCueDisplayBox.innerText == ' ०१२३४५६७८९ ') OK
 
 ** The position should be default and CSS direction set to ltr **
 EXPECTED (2 * testCueDisplayBox.offsetLeft == video.videoWidth - testCueDisplayBox.offsetWidth == 'true') OK
