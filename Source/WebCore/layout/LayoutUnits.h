@@ -34,6 +34,11 @@
 #include <wtf/Optional.h>
 
 namespace WebCore {
+
+namespace Display {
+class Box;
+}
+
 namespace Layout {
 
 struct Position {
@@ -138,19 +143,29 @@ struct VerticalGeometry {
 };
 
 struct UsedHorizontalValues {
-    explicit UsedHorizontalValues(LayoutUnit containingBlockWidth)
-        : containingBlockWidth(containingBlockWidth)
+    struct Constraints {
+        explicit Constraints(const Display::Box& containingBlockGeometry);
+        explicit Constraints(LayoutUnit horizontalConstraint)
+            : width(horizontalConstraint)
         {
         }
 
-    explicit UsedHorizontalValues(LayoutUnit containingBlockWidth, Optional<LayoutUnit> width, Optional<UsedHorizontalMargin> margin)
-        : containingBlockWidth(containingBlockWidth)
+        LayoutUnit width;
+    };
+
+    explicit UsedHorizontalValues(Constraints constraints)
+        : constraints(constraints)
+    {
+    }
+
+    explicit UsedHorizontalValues(Constraints constraints, Optional<LayoutUnit> width, Optional<UsedHorizontalMargin> margin)
+        : constraints(constraints)
         , width(width)
         , margin(margin)
-        {
-        }
+    {
+    }
 
-    LayoutUnit containingBlockWidth;
+    Constraints constraints;
     Optional<LayoutUnit> width;
     Optional<UsedHorizontalMargin> margin;
 };

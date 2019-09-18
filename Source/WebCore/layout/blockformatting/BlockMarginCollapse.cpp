@@ -519,7 +519,7 @@ PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse
         return marginType == MarginType::Before ? positiveAndNegativeVerticalMargin.before : positiveAndNegativeVerticalMargin.after; 
     }
     // This is the estimate path. We don't yet have positive/negative margin computed.
-    auto usedValues = UsedHorizontalValues { formattingContext().geometryForBox(*layoutBox.containingBlock()).contentBoxWidth() };
+    auto usedValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { formattingContext().geometryForBox(*layoutBox.containingBlock()) } };
     auto computedVerticalMargin = formattingContext().geometry().computedVerticalMargin(layoutBox, usedValues);
     auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) }; 
 

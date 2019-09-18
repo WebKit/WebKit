@@ -30,7 +30,6 @@
 #include "FloatingState.h"
 #include "FormattingContext.h"
 #include "LayoutContainer.h"
-#include "LayoutUnits.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {

@@ -1,3 +1,61 @@
+2019-09-18  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Introduce UsedHorizontalValues::Constraints
+        https://bugs.webkit.org/show_bug.cgi?id=201919
+        <rdar://problem/55481927>
+
+        Reviewed by Antti Koivisto.
+
+        UsedHorizontalValues::Constraints holds the constraint values for a particular box geometry computation (currently it only has the horizontal width constraint) 
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry):
+        (WebCore::Layout::FormattingContext::computeBorderAndPadding):
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedWidthAndMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::inFlowPositionedPositionOffset const):
+        (WebCore::Layout::FormattingContext::Geometry::computedPadding const):
+        (WebCore::Layout::FormattingContext::Geometry::computedHorizontalMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::computedVerticalMargin const):
+        * layout/FormattingContextQuirks.cpp:
+        (WebCore::Layout::FormattingContext::Quirks::heightValueOfNearestContainingBlockWithFixedHeight):
+        * layout/LayoutUnits.h:
+        (WebCore::Layout::UsedHorizontalValues::Constraints::Constraints):
+        (WebCore::Layout::UsedHorizontalValues::UsedHorizontalValues):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::placeInFlowPositionedChildren):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedVerticalPosition):
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowWidthAndMargin):
+        * layout/blockformatting/BlockFormattingContextQuirks.cpp:
+        (WebCore::Layout::BlockFormattingContext::Quirks::stretchedInFlowHeight):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeValues):
+        * layout/floats/FloatingContext.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::InlineFormattingContext::computeIntrinsicWidthForFormattingRoot):
+        (WebCore::Layout::InlineFormattingContext::computeHeightAndMargin):
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockWidthAndMargin):
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::createDisplayRuns const):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computePreferredWidthForColumns):
+
 2019-09-18  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Tell websites why a session was cancelled

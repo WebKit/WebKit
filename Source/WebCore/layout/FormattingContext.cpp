@@ -70,7 +70,7 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox)
     auto containingBlockHeight = geometryForBox(*layoutBox.containingBlock()).paddingBoxHeight();
 
     auto compute = [&](Optional<LayoutUnit> usedWidth) {
-        auto usedHorizontalValues = UsedHorizontalValues { containingBlockWidth, usedWidth, { } };
+        auto usedHorizontalValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { containingBlockWidth }, usedWidth, { } };
         auto usedVerticalValues = UsedVerticalValues { containingBlockHeight, { } };
         return geometry().outOfFlowHorizontalGeometry(layoutBox, usedHorizontalValues, usedVerticalValues);
     };
@@ -105,7 +105,7 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox)
     auto containingBlockWidth = containingBlockGeometry.paddingBoxHeight();
 
     auto usedVerticalValuesForHeight = UsedVerticalValues { containingBlockHeight, { } };
-    auto usedHorizontalValues = UsedHorizontalValues { containingBlockWidth };
+    auto usedHorizontalValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { containingBlockWidth } };
 
     auto verticalGeometry = compute(usedHorizontalValues, usedVerticalValuesForHeight);
     if (auto maxHeight = geometry().computedMaxHeight(layoutBox, containingBlockHeight)) {
@@ -133,7 +133,7 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox)
 void FormattingContext::computeBorderAndPadding(const Box& layoutBox, Optional<UsedHorizontalValues> usedHorizontalValues)
 {
     if (!usedHorizontalValues)
-        usedHorizontalValues = UsedHorizontalValues { geometryForBox(*layoutBox.containingBlock()).contentBoxWidth() };
+        usedHorizontalValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { geometryForBox(*layoutBox.containingBlock()) } };
     auto& displayBox = formattingState().displayBox(layoutBox);
     displayBox.setBorder(geometry().computedBorder(layoutBox));
     displayBox.setPadding(geometry().computedPadding(layoutBox, *usedHorizontalValues));

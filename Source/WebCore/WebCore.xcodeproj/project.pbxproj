@@ -5813,6 +5813,7 @@
 		113409D8203E038000C66915 /* RenderTreeBuilderContinuation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderContinuation.h; sourceTree = "<group>"; };
 		113D0B4F1F9FDD2B00F611BB /* FrameViewLayoutContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FrameViewLayoutContext.cpp; sourceTree = "<group>"; };
 		113D0B501F9FDD2B00F611BB /* FrameViewLayoutContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameViewLayoutContext.h; sourceTree = "<group>"; };
+		115CA83023328B1E00FD3B08 /* LayoutUnits.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutUnits.cpp; sourceTree = "<group>"; };
 		115CFA68208AF7D0001E6991 /* FormattingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FormattingContext.h; sourceTree = "<group>"; };
 		115CFA69208AF7D0001E6991 /* FormattingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FormattingContext.cpp; sourceTree = "<group>"; };
 		115CFA6C208AFAB6001E6991 /* BlockFormattingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlockFormattingContext.h; sourceTree = "<group>"; };
@@ -16409,6 +16410,7 @@
 				6FEFE81D22F9D22A00114927 /* LayoutPhase.h */,
 				6F7CA3C5208C2956002F29AB /* LayoutState.cpp */,
 				6F7CA3C4208C2956002F29AB /* LayoutState.h */,
+				115CA83023328B1E00FD3B08 /* LayoutUnits.cpp */,
 				6F73918C2106CEDD006AF262 /* LayoutUnits.h */,
 				6FE7AA2621C37B6300296DCD /* MarginTypes.h */,
 				11FF02D520BA3C810083F25B /* Verification.cpp */,

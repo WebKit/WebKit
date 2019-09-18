@@ -404,11 +404,12 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const Line::Conten
             continue;
         }
 
+        auto usedHorizontalValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { formattingContext.geometryForBox(*layoutBox.containingBlock()) } };
         // Inline level box (replaced or inline-block)
         if (lineRun->isBox()) {
             auto topLeft = logicalRect.topLeft();
             if (layoutBox.isInFlowPositioned())
-                topLeft += geometry.inFlowPositionedPositionOffset(layoutBox, UsedHorizontalValues { formattingContext.geometryForBox(*layoutBox.containingBlock()).contentBoxWidth() });
+                topLeft += geometry.inFlowPositionedPositionOffset(layoutBox, usedHorizontalValues);
             displayBox.setTopLeft(topLeft);
             lineBoxRect.expandHorizontally(logicalRect.width());
             formattingState.addInlineRun(makeUnique<Display::Run>(logicalRect));
@@ -425,7 +426,7 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const Line::Conten
         // Inline level container end (</span>)
         if (lineRun->isContainerEnd()) {
             if (layoutBox.isInFlowPositioned()) {
-                auto inflowOffset = geometry.inFlowPositionedPositionOffset(layoutBox, UsedHorizontalValues { formattingContext.geometryForBox(*layoutBox.containingBlock()).contentBoxWidth() });
+                auto inflowOffset = geometry.inFlowPositionedPositionOffset(layoutBox, usedHorizontalValues);
                 displayBox.moveHorizontally(inflowOffset.width());
                 displayBox.moveVertically(inflowOffset.height());
             }

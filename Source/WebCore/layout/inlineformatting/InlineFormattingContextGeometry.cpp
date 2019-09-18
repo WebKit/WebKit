@@ -53,9 +53,9 @@ WidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(cons
     // If 'width' is 'auto', the used value is the shrink-to-fit width as for floating elements.
     // A computed value of 'auto' for 'margin-left' or 'margin-right' becomes a used value of '0'.
     // #1
-    auto width = computedValueIfNotAuto(formattingContextRoot.style().logicalWidth(), usedHorizontalValues.containingBlockWidth);
+    auto width = computedValueIfNotAuto(formattingContextRoot.style().logicalWidth(), usedHorizontalValues.constraints.width);
     if (!width)
-        width = shrinkToFitWidth(formattingContextRoot, usedHorizontalValues.containingBlockWidth);
+        width = shrinkToFitWidth(formattingContextRoot, usedHorizontalValues.constraints.width);
 
     // #2
     auto computedHorizontalMargin = Geometry::computedHorizontalMargin(formattingContextRoot, usedHorizontalValues);

@@ -136,7 +136,7 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin
         //    edges of the containing block.
 
         auto& style = layoutBox.style();
-        auto containingBlockWidth = usedHorizontalValues.containingBlockWidth;
+        auto containingBlockWidth = usedHorizontalValues.constraints.width;
         auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
 
         auto width = computedValueIfNotAuto(usedHorizontalValues.width ? Length { usedHorizontalValues.width.value(), Fixed } : style.logicalWidth(), containingBlockWidth);
@@ -278,7 +278,7 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const Bo
     return heightAndMargin;
 }
 
-WidthAndMargin BlockFormattingContext::Geometry::inFlowWidthAndMargin(const Box& layoutBox, UsedHorizontalValues usedValues)
+WidthAndMargin BlockFormattingContext::Geometry::inFlowWidthAndMargin(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues)
 {
     ASSERT(layoutBox.isInFlow());
 
@@ -286,11 +286,11 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowWidthAndMargin(const Box&
         if (layoutBox.establishesTableFormattingContext()) {
             // This is a special table "fit-content size" behavior handling. Not in the spec though.
             // Table returns its final width as min/max. Use this final width value to computed horizontal margins etc.
-            usedValues.width = shrinkToFitWidth(layoutBox, usedValues.containingBlockWidth);
+            usedHorizontalValues.width = shrinkToFitWidth(layoutBox, usedHorizontalValues.constraints.width);
         }
-        return inFlowNonReplacedWidthAndMargin(layoutBox, usedValues);
+        return inFlowNonReplacedWidthAndMargin(layoutBox, usedHorizontalValues);
     }
-    return inFlowReplacedWidthAndMargin(layoutBox, usedValues);
+    return inFlowReplacedWidthAndMargin(layoutBox, usedHorizontalValues);
 }
 
 FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::Geometry::intrinsicWidthConstraints(const Box& layoutBox)
