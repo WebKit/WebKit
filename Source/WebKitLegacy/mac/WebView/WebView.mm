@@ -1432,6 +1432,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
     auto storageProvider = PageStorageSessionProvider::create();
     PageConfiguration pageConfiguration(
+        [[self preferences] privateBrowsingEnabled] ? PAL::SessionID::legacyPrivateSessionID() : PAL::SessionID::defaultSessionID(),
         makeUniqueRef<WebEditorClient>(self),
         SocketProvider::create(),
         LibWebRTCProvider::create(),
@@ -1700,6 +1701,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
     auto storageProvider = PageStorageSessionProvider::create();
     PageConfiguration pageConfiguration(
+        [[self preferences] privateBrowsingEnabled] ? PAL::SessionID::legacyPrivateSessionID() : PAL::SessionID::defaultSessionID(),
         makeUniqueRef<WebEditorClient>(self),
         SocketProvider::create(),
         LibWebRTCProvider::create(),

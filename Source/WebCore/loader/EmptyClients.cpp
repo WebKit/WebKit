@@ -70,6 +70,7 @@
 #include "UserContentProvider.h"
 #include "VisitedLinkStore.h"
 #include <JavaScriptCore/HeapInlines.h>
+#include <pal/SessionID.h>
 #include <wtf/NeverDestroyed.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -547,9 +548,10 @@ class EmptyStorageSessionProvider : public StorageSessionProvider {
     NetworkStorageSession* storageSession() const final { return nullptr; }
 };
 
-PageConfiguration pageConfigurationWithEmptyClients()
+PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
 {
     PageConfiguration pageConfiguration {
+        sessionID,
         makeUniqueRef<EmptyEditorClient>(),
         SocketProvider::create(),
         LibWebRTCProvider::create(),

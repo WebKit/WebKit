@@ -443,6 +443,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 
     PageConfiguration pageConfiguration(
+        WebProcess::singleton().sessionID(),
         makeUniqueRef<WebEditorClient>(this),
         WebSocketProvider::create(),
         makeUniqueRef<WebKit::LibWebRTCProvider>(),
@@ -502,8 +503,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 
     m_page = makeUnique<Page>(WTFMove(pageConfiguration));
-
-    setSessionID(WebProcess::singleton().sessionID());
 
     updatePreferences(parameters.store);
 
@@ -3198,11 +3197,6 @@ void WebPage::setLayerHostingMode(LayerHostingMode layerHostingMode)
 
     for (auto* pluginView : m_pluginViews)
         pluginView->setLayerHostingMode(m_layerHostingMode);
-}
-
-void WebPage::setSessionID(PAL::SessionID sessionID)
-{
-    m_page->setSessionID(sessionID);
 }
 
 void WebPage::didReceivePolicyDecision(FrameIdentifier frameID, uint64_t listenerID, PolicyCheckIdentifier identifier, PolicyAction policyAction, uint64_t navigationID, const DownloadID& downloadID, Optional<WebsitePoliciesData>&& websitePolicies)

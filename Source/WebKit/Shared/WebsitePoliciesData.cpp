@@ -270,13 +270,6 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
         return;
 
     documentLoader.applyPoliciesToSettings();
-
-    auto* page = frame->page();
-    if (!page)
-        return;
-
-    if (websitePolicies.websiteDataStoreParameters)
-        page->setSessionID(websitePolicies.websiteDataStoreParameters->networkSessionParameters.sessionID);
 }
 
 }

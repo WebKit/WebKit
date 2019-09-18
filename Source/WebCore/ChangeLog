@@ -1,3 +1,32 @@
+2019-09-17  Chris Dumez  <cdumez@apple.com>
+
+        Stop calling Page::setSessionID() from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=201888
+
+        Reviewed by Alex Christensen.
+
+        Stop calling Page::setSessionID() from WebKit2 since Page's sessionID can never change when
+        using WebKit2 (We process-swap and create a new Page in a new process when changing data
+        store). Instead, we now pass the sessionID ID when constructing the Page, as part of the
+        PageConfiguration structure.
+
+        * editing/markup.cpp:
+        (WebCore::createPageForSanitizingWebContent):
+        * loader/EmptyClients.cpp:
+        (WebCore::pageConfigurationWithEmptyClients):
+        * loader/EmptyClients.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::setSessionID):
+        * page/PageConfiguration.cpp:
+        (WebCore::PageConfiguration::PageConfiguration):
+        * page/PageConfiguration.h:
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::createPageForServiceWorker):
+        (WebCore::ServiceWorkerThreadProxy::ServiceWorkerThreadProxy):
+
 2019-09-17  Mark Lam  <mark.lam@apple.com>
 
         Use constexpr instead of const in symbol definitions that are obviously constexpr.
