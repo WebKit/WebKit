@@ -82,15 +82,15 @@ function setUpCompute() {
     const bindGroupLayout = device.createBindGroupLayout({
         bindings: [{
             binding: sourceBufferBindingNum,
-            visibility: GPUShaderStageBit.COMPUTE,
+            visibility: GPUShaderStage.COMPUTE,
             type: "storage-buffer"
         }, {
             binding: outputBufferBindingNum,
-            visibility: GPUShaderStageBit.COMPUTE,
+            visibility: GPUShaderStage.COMPUTE,
             type: "storage-buffer"
         }, {
             binding: uniformsBufferBindingNum,
-            visibility: GPUShaderStageBit.COMPUTE,
+            visibility: GPUShaderStage.COMPUTE,
             type: "uniform-buffer"
         }]
     });

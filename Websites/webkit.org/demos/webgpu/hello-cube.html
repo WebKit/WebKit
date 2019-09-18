@@ -173,7 +173,7 @@ async function init() {
     // Bind group binding layout
     const transformBufferBindGroupLayoutBinding = {
         binding: transformBindingNum, // id[[(0)]]
-        visibility: GPUShaderStageBit.VERTEX,
+        visibility: GPUShaderStage.VERTEX,
         type: "uniform-buffer"
     };
 
@@ -208,7 +208,7 @@ async function init() {
             dstFactor: "one-minus-src-alpha",
             operation: "add"
         },
-        writeMask: GPUColorWriteBits.ALL
+        writeMask: GPUColorWrite.ALL
     };
     const pipelineDescriptor = {
         layout: pipelineLayout,

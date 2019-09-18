@@ -94,13 +94,13 @@ WebGLStage = Utilities.createSubclass(Stage,
 
                     this._timeBindGroupLayout = device.createBindGroupLayout({
                         bindings: [
-                            { binding: 0, visibility: GPUShaderStageBit.VERTEX, type: "uniform-buffer" },
+                            { binding: 0, visibility: GPUShaderStage.VERTEX, type: "uniform-buffer" },
                         ],
                     });
 
                     this._bindGroupLayout = device.createBindGroupLayout({
                         bindings: [
-                            { binding: 0, visibility: GPUShaderStageBit.VERTEX, type: "uniform-buffer" },
+                            { binding: 0, visibility: GPUShaderStage.VERTEX, type: "uniform-buffer" },
                         ],
                     });
 

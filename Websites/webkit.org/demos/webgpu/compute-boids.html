@@ -154,9 +154,9 @@ compute void compute_main(constant SimParams[] paramsBuffer : register(b0), devi
 
       const computeBindGroupLayout = device.createBindGroupLayout({
         bindings: [
-          { binding: 0, visibility: GPUShaderStageBit.COMPUTE, type: "uniform-buffer" },
-          { binding: 1, visibility: GPUShaderStageBit.COMPUTE, type: "storage-buffer" },
-          { binding: 2, visibility: GPUShaderStageBit.COMPUTE, type: "storage-buffer" },
+          { binding: 0, visibility: GPUShaderStage.COMPUTE, type: "uniform-buffer" },
+          { binding: 1, visibility: GPUShaderStage.COMPUTE, type: "storage-buffer" },
+          { binding: 2, visibility: GPUShaderStage.COMPUTE, type: "storage-buffer" },
         ],
       });
 

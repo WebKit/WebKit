@@ -1,3 +1,33 @@
+2019-09-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Update demos to work on STP 92
+        https://bugs.webkit.org/show_bug.cgi?id=201872
+
+        Reviewed by Dean Jackson.
+
+        Updating for new WSL buffer layouts.
+        Updating for new WSL compiler struct validation rules.
+        GPUShaderStageBit => GPUShaderStage
+        GPUColorWriteBits => GPUColorWrite
+        GPUBufferUsage.TRANSFER_DST => GPUBufferUsage.COPY_DST
+        GPUBufferUsage.TRANSFER_SRC => GPUBufferUsage.COPY_SRC
+
+        * demos/webgpu/babylon/babylonWebGpu.max.js:
+        * demos/webgpu/babylon/oneHelmetWebGPUWSLShaders.js:
+        (sampler.bumpSamplerSampler.register):
+        (sampler.reflectionSamplerSampler.register):
+        (float2.uv.attribute): Deleted.
+        (float3.normal.attribute): Deleted.
+        * demos/webgpu/compute-boids.html:
+        * demos/webgpu/hello-cube.html:
+        * demos/webgpu/scripts/compute-blur.js:
+        (setUpCompute):
+        (createShaderCode):
+        * demos/webgpu/scripts/compute-boids-compile.js:
+        * demos/webgpu/scripts/hello-triangle.js:
+        (async.helloTriangle):
+        * demos/webgpu/textured-cube.html:
+
 2019-09-09  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Upload Babylon.js, WSL compile, and MotionMark links to demo page

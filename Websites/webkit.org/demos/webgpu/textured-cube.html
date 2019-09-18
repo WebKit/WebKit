@@ -149,7 +149,7 @@ async function init() {
 
     const verticesBufferDescriptor = { 
         size: verticesArray.byteLength, 
-        usage: GPUBufferUsage.VERTEX | GPUBufferUsage.TRANSFER_DST
+        usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
     };
     let verticesArrayBuffer;
     [verticesBuffer, verticesArrayBuffer] = device.createBufferMapped(verticesBufferDescriptor);
@@ -215,7 +215,7 @@ async function init() {
 
     const textureDataBufferDescriptor = {
         size: imageData.data.length,
-        usage: GPUBufferUsage.TRANSFER_SRC
+        usage: GPUBufferUsage.COPY_SRC
     };
     const [textureDataBuffer, textureArrayBuffer] = device.createBufferMapped(textureDataBufferDescriptor);
     
@@ -246,13 +246,13 @@ async function init() {
     // Bind group binding layout
     const transformBufferBindGroupLayoutBinding = {
         binding: transformBindingNum, // id[[(0)]]
-        visibility: GPUShaderStageBit.VERTEX,
+        visibility: GPUShaderStage.VERTEX,
         type: "uniform-buffer"
     };
 
     const textureBindGroupLayoutBinding = {
         binding: textureBindingNum,
-        visibility: GPUShaderStageBit.FRAGMENT,
+        visibility: GPUShaderStage.FRAGMENT,
         type: "sampled-texture"
     };
     textureViewBinding = {
@@ -262,7 +262,7 @@ async function init() {
 
     const samplerBindGroupLayoutBinding = {
         binding: samplerBindingNum,
-        visibility: GPUShaderStageBit.FRAGMENT,
+        visibility: GPUShaderStage.FRAGMENT,
         type: "sampler"
     };
     samplerBinding = {
@@ -303,7 +303,7 @@ async function init() {
             dstFactor: "one-minus-src-alpha",
             operation: "add"
         },
-        writeMask: GPUColorWriteBits.ALL
+        writeMask: GPUColorWrite.ALL
     };
     const pipelineDescriptor = {
         layout: pipelineLayout,

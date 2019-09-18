@@ -1,3 +1,15 @@
+2019-09-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Update demos to work on STP 92
+        https://bugs.webkit.org/show_bug.cgi?id=201872
+
+        Reviewed by Dean Jackson.
+
+        GPUShaderStageBit => GPUShaderStage
+
+        * MotionMark1.1/tests/3d/resources/webgpu.js:
+        (Stage.call.initialize):
+
 2019-09-09  Jon Lee  <jonlee@apple.com>
 
         Upload triangles tests for 3D suite in MotionMark

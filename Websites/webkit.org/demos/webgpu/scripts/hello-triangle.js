@@ -105,7 +105,7 @@ async function helloTriangle() {
         format: "bgra8unorm",
         alphaBlend: alphaBlendDescriptor,
         colorBlend: colorBlendDescriptor,
-        writeMask: GPUColorWriteBits.ALL
+        writeMask: GPUColorWrite.ALL
     };
     
     /* GPURenderPipelineDescriptor */
