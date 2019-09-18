@@ -72,9 +72,8 @@ using namespace WebCore;
 static const Seconds asyncWorkerTerminationTimeout { 10_s };
 static const Seconds syncWorkerTerminationTimeout { 100_ms }; // Only used by layout tests.
 
-ServiceWorkerFrameLoaderClient::ServiceWorkerFrameLoaderClient(WebSWContextManagerConnection& connection, SessionID sessionID, WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, FrameIdentifier frameID, const String& userAgent)
+ServiceWorkerFrameLoaderClient::ServiceWorkerFrameLoaderClient(WebSWContextManagerConnection& connection, WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, FrameIdentifier frameID, const String& userAgent)
     : m_connection(connection)
-    , m_sessionID(sessionID)
     , m_webPageProxyID(webPageProxyID)
     , m_pageID(pageID)
     , m_frameID(frameID)
@@ -139,7 +138,7 @@ void WebSWContextManagerConnection::installServiceWorker(const ServiceWorkerCont
     // FIXME: This method should be moved directly to WebCore::SWContextManager::Connection
     // If it weren't for ServiceWorkerFrameLoaderClient's dependence on WebDocumentLoader, this could already happen.
     // FIXME: Weird to pass m_previousServiceWorkerID as a FrameIdentifier.
-    auto frameLoaderClient = makeUnique<ServiceWorkerFrameLoaderClient>(*this, sessionID, m_webPageProxyID, m_pageID, frameIdentifierFromID(++m_previousServiceWorkerID), effectiveUserAgent);
+    auto frameLoaderClient = makeUnique<ServiceWorkerFrameLoaderClient>(*this, m_webPageProxyID, m_pageID, frameIdentifierFromID(++m_previousServiceWorkerID), effectiveUserAgent);
     pageConfiguration.loaderClientForMainFrame = frameLoaderClient.get();
     m_loaders.add(WTFMove(frameLoaderClient));
 

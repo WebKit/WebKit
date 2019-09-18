@@ -1015,7 +1015,8 @@ void Frame::selfOnlyDeref()
 
 PAL::SessionID Frame::sessionID() const
 {
-    return m_loader->client().sessionID();
+    auto* page = this->page();
+    return page ? page->sessionID() : PAL::SessionID::defaultSessionID();
 }
 
 } // namespace WebCore

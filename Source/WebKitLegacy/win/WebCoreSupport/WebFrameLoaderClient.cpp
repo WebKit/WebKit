@@ -133,12 +133,6 @@ Optional<WebCore::FrameIdentifier> WebFrameLoaderClient::frameID() const
     return WTF::nullopt;
 }
 
-PAL::SessionID WebFrameLoaderClient::sessionID() const
-{
-    auto* coreFrame = core(m_webFrame);
-    return coreFrame && coreFrame->page() ? coreFrame->page()->sessionID() : PAL::SessionID::defaultSessionID();
-}
-
 bool WebFrameLoaderClient::hasWebView() const
 {
     return m_webFrame->webView();

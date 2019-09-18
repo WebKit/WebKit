@@ -56,7 +56,6 @@ public:
     Optional<WebPageProxyIdentifier> webPageProxyID() const;
     Optional<WebCore::PageIdentifier> pageID() const final;
     Optional<WebCore::FrameIdentifier> frameID() const final;
-    PAL::SessionID sessionID() const final;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     bool hasFrameSpecificStorageAccess() final { return !!m_frameSpecificStorageAccessIdentifier; }

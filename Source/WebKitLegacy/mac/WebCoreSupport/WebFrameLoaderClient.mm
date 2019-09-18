@@ -219,12 +219,6 @@ Optional<FrameIdentifier> WebFrameLoaderClient::frameID() const
     return WTF::nullopt;
 }
 
-PAL::SessionID WebFrameLoaderClient::sessionID() const
-{
-    auto* coreFrame = core(m_webFrame.get());
-    return coreFrame && coreFrame->page() ? coreFrame->page()->sessionID() : PAL::SessionID::defaultSessionID();
-}
-
 void WebFrameLoaderClient::frameLoaderDestroyed()
 {
     [m_webFrame.get() _clearCoreFrame];

@@ -168,7 +168,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     trackingParameters.pageID = frameLoaderClient.pageID().valueOr(PageIdentifier { });
     trackingParameters.frameID = frameLoaderClient.frameID().valueOr(FrameIdentifier { });
     trackingParameters.resourceID = identifier;
-    auto sessionID = frameLoaderClient.sessionID();
+    auto sessionID = WebProcess::singleton().sessionID();
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     // If the DocumentLoader schedules this as an archive resource load,

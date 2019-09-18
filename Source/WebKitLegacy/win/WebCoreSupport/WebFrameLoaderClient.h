@@ -53,7 +53,6 @@ public:
 
     Optional<WebCore::PageIdentifier> pageID() const final;
     Optional<WebCore::FrameIdentifier> frameID() const final;
-    PAL::SessionID sessionID() const final;
 
     bool hasWebView() const override;
 

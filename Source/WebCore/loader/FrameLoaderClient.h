@@ -130,7 +130,6 @@ public:
 
     virtual Optional<PageIdentifier> pageID() const = 0;
     virtual Optional<FrameIdentifier> frameID() const = 0;
-    virtual PAL::SessionID sessionID() const = 0;
 
 #if PLATFORM(IOS_FAMILY)
     // Returns true if the client forced the layout.

@@ -465,11 +465,6 @@ void EmptyChromeClient::showShareSheet(ShareDataWithParsedURL&, CompletionHandle
 {
 }
 
-PAL::SessionID EmptyFrameLoaderClient::sessionID() const
-{
-    return PAL::SessionID::defaultSessionID();
-}
-
 void EmptyFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String&, PolicyCheckIdentifier, FramePolicyFunction&&)
 {
 }

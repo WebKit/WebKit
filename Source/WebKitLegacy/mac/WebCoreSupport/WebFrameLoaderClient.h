@@ -65,7 +65,6 @@ private:
 
     Optional<WebCore::PageIdentifier> pageID() const final;
     Optional<WebCore::FrameIdentifier> frameID() const final;
-    PAL::SessionID sessionID() const final;
 
     void makeRepresentation(WebCore::DocumentLoader*) final;
     bool hasHTMLView() const final;

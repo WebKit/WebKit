@@ -136,16 +136,6 @@ Optional<FrameIdentifier> WebFrameLoaderClient::frameID() const
     return WTF::nullopt;
 }
 
-PAL::SessionID WebFrameLoaderClient::sessionID() const
-{
-    WebPage* page = m_frame ? m_frame->page() : nullptr;
-    if (!page || !page->corePage()) {
-        ASSERT_NOT_REACHED();
-        return PAL::SessionID::defaultSessionID();
-    }
-    return page->sessionID();
-}
-
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 void WebFrameLoaderClient::setHasFrameSpecificStorageAccess(FrameSpecificStorageAccessIdentifier&& frameSpecificStorageAccessIdentifier )
 {

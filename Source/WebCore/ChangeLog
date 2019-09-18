@@ -1,5 +1,22 @@
 2019-09-18  Chris Dumez  <cdumez@apple.com>
 
+        Drop FrameLoaderClient::sessionID()
+        https://bugs.webkit.org/show_bug.cgi?id=201916
+
+        Reviewed by Geoffrey Garen.
+
+        Drop FrameLoaderClient::sessionID(). The Frame can get the sessionID from its page (Which is
+        what the FrameLoaderClient::sessionID() ended up doing) and other call sites at WebKit2 layer
+        can get the sessionID from the WebProcess singleton.
+
+        * loader/EmptyClients.cpp:
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoaderClient.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::sessionID const):
+
+2019-09-18  Chris Dumez  <cdumez@apple.com>
+
         WebSWServerToContextConnection::PostMessageToServiceWorkerClient IPC no longer needs to take a sessionID
         https://bugs.webkit.org/show_bug.cgi?id=201883
 
