@@ -1,3 +1,15 @@
+2019-09-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] Remove unused DOMDefaultImpl.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=201867
+
+        Reviewed by Darin Adler.
+
+        * MiniBrowser/win/CMakeLists.txt: Removed DOMDefaultImpl.cpp.
+        * MiniBrowser/win/DOMDefaultImpl.cpp: Removed.
+        * MiniBrowser/win/DOMDefaultImpl.h: Removed.
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.cpp:
+
 2019-09-17  Dean Jackson  <dino@apple.com>
 
         Remove the "Show Link Previews" and "Hide Link Previews" action menus in the preview platter

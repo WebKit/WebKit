@@ -10,7 +10,6 @@ set(MiniBrowser_SOURCES
     AccessibilityDelegate.cpp
     BrowserWindow.cpp
     Common.cpp
-    DOMDefaultImpl.cpp
     MainWindow.cpp
     PrintWebUIDelegate.cpp
     ResourceLoadDelegate.cpp

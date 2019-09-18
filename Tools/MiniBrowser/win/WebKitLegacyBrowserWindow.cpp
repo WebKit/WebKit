@@ -31,7 +31,6 @@
 
 #include "AccessibilityDelegate.h"
 #include "Common.h"
-#include "DOMDefaultImpl.h"
 #include "MiniBrowserLibResource.h"
 #include "MiniBrowserWebHost.h"
 #include "PrintWebUIDelegate.h"
