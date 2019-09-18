@@ -43,6 +43,7 @@ WTF_EXTERN_C_END
 #import <PassKit/PKError_Private.h>
 #import <PassKit/PKPassLibrary.h>
 #import <PassKit/PKPayment.h>
+#import <PassKit/PKPaymentPass.h>
 #import <PassKit/PKPaymentAuthorizationViewController_Private.h>
 #import <PassKit/PKPaymentMethod.h>
 #import <PassKit/PKPaymentRequest_Private.h>
