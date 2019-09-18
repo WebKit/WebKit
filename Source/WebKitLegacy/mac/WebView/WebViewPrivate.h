@@ -311,6 +311,9 @@ typedef enum {
 - (void)setMediaVolume:(float)volume;
 - (float)mediaVolume;
 
+- (void)suspendAllMediaPlayback;
+- (void)resumeAllMediaPlayback;
+
 // Add visited links
 - (void)addVisitedLinks:(NSArray *)visitedLinks;
 #if TARGET_OS_IPHONE
