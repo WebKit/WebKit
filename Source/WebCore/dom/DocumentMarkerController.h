@@ -107,6 +107,7 @@ public:
 
 private:
     void addMarker(Node&, const DocumentMarker&);
+    Vector<RefPtr<Range>> collectTextRanges(const Range&);
 
     typedef Vector<RenderedDocumentMarker> MarkerList;
     typedef HashMap<RefPtr<Node>, std::unique_ptr<MarkerList>> MarkerMap;

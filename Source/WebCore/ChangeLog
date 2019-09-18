@@ -1,3 +1,26 @@
+2019-09-18  Antti Koivisto  <antti@apple.com>
+
+        DocumentMarkerController should not invoke ensureLineBoxes during TextIterator traversal
+        https://bugs.webkit.org/show_bug.cgi?id=201911
+        <rdar://problem/55455458>
+
+        Reviewed by Zalan Bujtas.
+
+        DocumentMarkerController::addMarker may call ensureLineBoxes but TextIterator doesn't expect mutations during traversal.
+        Fix by doing range collection as a separate step.
+
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::collectTextRanges):
+        (WebCore::DocumentMarkerController::addMarker):
+        (WebCore::DocumentMarkerController::addTextMatchMarker):
+        (WebCore::DocumentMarkerController::addDictationPhraseWithAlternativesMarker):
+        (WebCore::DocumentMarkerController::addDictationResultMarker):
+        (WebCore::DocumentMarkerController::addDraggedContentMarker):
+        (WebCore::DocumentMarkerController::addPlatformTextCheckingMarker):
+        (WebCore::DocumentMarkerController::removeMarkers):
+        (WebCore::DocumentMarkerController::filterMarkers):
+        * dom/DocumentMarkerController.h:
+
 2019-09-18  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Shrink-to-fit-width needs the available width constraint value only

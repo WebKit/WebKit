@@ -60,21 +60,24 @@ void DocumentMarkerController::detach()
     m_possiblyExistingMarkerTypes = { };
 }
 
+Vector<RefPtr<Range>> DocumentMarkerController::collectTextRanges(const Range& range)
+{
+    Vector<RefPtr<Range>> textRange;
+    for (TextIterator textIterator(&range); !textIterator.atEnd(); textIterator.advance())
+        textRange.append(textIterator.range());
+    return textRange;
+}
+
 void DocumentMarkerController::addMarker(Range& range, DocumentMarker::MarkerType type, const String& description)
 {
-    for (TextIterator markedText(&range); !markedText.atEnd(); markedText.advance()) {
-        RefPtr<Range> textPiece = markedText.range();
+    for (auto textPiece : collectTextRanges(range))
         addMarker(textPiece->startContainer(), DocumentMarker(type, textPiece->startOffset(), textPiece->endOffset(), description));
-    }
 }
 
 void DocumentMarkerController::addMarker(Range& range, DocumentMarker::MarkerType type)
 {
-    for (TextIterator markedText(&range); !markedText.atEnd(); markedText.advance()) {
-        RefPtr<Range> textPiece = markedText.range();
+    for (auto textPiece : collectTextRanges(range))
         addMarker(textPiece->startContainer(), DocumentMarker(type, textPiece->startOffset(), textPiece->endOffset()));
-    }
-
 }
 
 void DocumentMarkerController::addMarkerToNode(Node& node, unsigned startOffset, unsigned length, DocumentMarker::MarkerType type)
@@ -89,8 +92,7 @@ void DocumentMarkerController::addMarkerToNode(Node& node, unsigned startOffset,
 
 void DocumentMarkerController::addTextMatchMarker(const Range& range, bool activeMatch)
 {
-    for (TextIterator markedText(&range); !markedText.atEnd(); markedText.advance()) {
-        RefPtr<Range> textPiece = markedText.range();
+    for (auto textPiece : collectTextRanges(range)) {
         unsigned startOffset = textPiece->startOffset();
         unsigned endOffset = textPiece->endOffset();
         addMarker(textPiece->startContainer(), DocumentMarker(startOffset, endOffset, activeMatch));
@@ -101,10 +103,8 @@ void DocumentMarkerController::addTextMatchMarker(const Range& range, bool activ
 
 void DocumentMarkerController::addMarker(Range& range, DocumentMarker::MarkerType type, const String& description, const Vector<String>& interpretations, const RetainPtr<id>& metadata)
 {
-    for (TextIterator markedText(&range); !markedText.atEnd(); markedText.advance()) {
-        RefPtr<Range> textPiece = markedText.range();
+    for (auto textPiece : collectTextRanges(range))
         addMarker(textPiece->startContainer(), DocumentMarker(type, textPiece->startOffset(), textPiece->endOffset(), description, interpretations, metadata));
-    }
 }
 
 void DocumentMarkerController::addDictationPhraseWithAlternativesMarker(Range& range, const Vector<String>& interpretations)
@@ -114,8 +114,7 @@ void DocumentMarkerController::addDictationPhraseWithAlternativesMarker(Range& r
         return;
 
     size_t numberOfAlternatives = interpretations.size() - 1;
-    for (TextIterator markedText(&range); !markedText.atEnd(); markedText.advance()) {
-        RefPtr<Range> textPiece = markedText.range();
+    for (auto textPiece : collectTextRanges(range)) {
         DocumentMarker marker(DocumentMarker::DictationPhraseWithAlternatives, textPiece->startOffset(), textPiece->endOffset(), emptyString(), Vector<String>(numberOfAlternatives), RetainPtr<id>());
         for (size_t i = 0; i < numberOfAlternatives; ++i)
             marker.setAlternative(interpretations[i + 1], i);
@@ -125,19 +124,16 @@ void DocumentMarkerController::addDictationPhraseWithAlternativesMarker(Range& r
 
 void DocumentMarkerController::addDictationResultMarker(Range& range, const RetainPtr<id>& metadata)
 {
-    for (TextIterator markedText(&range); !markedText.atEnd(); markedText.advance()) {
-        RefPtr<Range> textPiece = markedText.range();
+    for (auto textPiece : collectTextRanges(range))
         addMarker(textPiece->startContainer(), DocumentMarker(DocumentMarker::DictationResult, textPiece->startOffset(), textPiece->endOffset(), String(), Vector<String>(), metadata));
-    }
 }
 
 #endif
 
 void DocumentMarkerController::addDraggedContentMarker(Range& range)
 {
-    for (TextIterator markedText(&range); !markedText.atEnd(); markedText.advance()) {
-        auto textPiece = markedText.range();
-        DocumentMarker::DraggedContentData draggedContentData { markedText.node() };
+    for (auto textPiece : collectTextRanges(range)) {
+        DocumentMarker::DraggedContentData draggedContentData { textPiece->firstNode() };
         addMarker(textPiece->startContainer(), { DocumentMarker::DraggedContent, textPiece->startOffset(), textPiece->endOffset(), WTFMove(draggedContentData) });
     }
 }
@@ -145,8 +141,7 @@ void DocumentMarkerController::addDraggedContentMarker(Range& range)
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
 void DocumentMarkerController::addPlatformTextCheckingMarker(Range& range, const String& key, const String& value)
 {
-    for (TextIterator markedText(&range); !markedText.atEnd(); markedText.advance()) {
-        auto textPiece = markedText.range();
+    for (auto textPiece : collectTextRanges(range)) {
         DocumentMarker::PlatformTextCheckingData textCheckingData { key, value };
         addMarker(textPiece->startContainer(), { DocumentMarker::PlatformTextChecking, textPiece->startOffset(), textPiece->endOffset(), WTFMove(textCheckingData) });
     }
@@ -155,12 +150,10 @@ void DocumentMarkerController::addPlatformTextCheckingMarker(Range& range, const
 
 void DocumentMarkerController::removeMarkers(Range& range, OptionSet<DocumentMarker::MarkerType> markerTypes, RemovePartiallyOverlappingMarkerOrNot shouldRemovePartiallyOverlappingMarker)
 {
-    for (TextIterator markedText(&range); !markedText.atEnd(); markedText.advance()) {
+    for (auto textPiece : collectTextRanges(range)) {
         if (!possiblyHasMarkers(markerTypes))
             return;
         ASSERT(!m_markers.isEmpty());
-
-        auto textPiece = markedText.range();
         unsigned startOffset = textPiece->startOffset();
         unsigned endOffset = textPiece->endOffset();
         removeMarkers(textPiece->startContainer(), startOffset, endOffset - startOffset, markerTypes, nullptr, shouldRemovePartiallyOverlappingMarker);
@@ -169,12 +162,11 @@ void DocumentMarkerController::removeMarkers(Range& range, OptionSet<DocumentMar
 
 void DocumentMarkerController::filterMarkers(Range& range, std::function<bool(DocumentMarker*)> filterFunction, OptionSet<DocumentMarker::MarkerType> markerTypes, RemovePartiallyOverlappingMarkerOrNot shouldRemovePartiallyOverlappingMarker)
 {
-    for (TextIterator markedText(&range); !markedText.atEnd(); markedText.advance()) {
+    for (auto textPiece : collectTextRanges(range)) {
         if (!possiblyHasMarkers(markerTypes))
             return;
         ASSERT(!m_markers.isEmpty());
 
-        auto textPiece = markedText.range();
         unsigned startOffset = textPiece->startOffset();
         unsigned endOffset = textPiece->endOffset();
         removeMarkers(textPiece->startContainer(), startOffset, endOffset - startOffset, markerTypes, filterFunction, shouldRemovePartiallyOverlappingMarker);
