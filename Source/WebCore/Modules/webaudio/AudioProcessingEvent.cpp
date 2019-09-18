@@ -30,8 +30,11 @@
 
 #include "AudioBuffer.h"
 #include "EventNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(AudioProcessingEvent);
 
 AudioProcessingEvent::AudioProcessingEvent() = default;
 

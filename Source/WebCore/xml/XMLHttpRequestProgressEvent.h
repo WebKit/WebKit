@@ -30,7 +30,8 @@
 
 namespace WebCore {
 
-class XMLHttpRequestProgressEvent : public ProgressEvent {
+class XMLHttpRequestProgressEvent final : public ProgressEvent {
+    WTF_MAKE_ISO_ALLOCATED(XMLHttpRequestProgressEvent);
 public:
     static Ref<XMLHttpRequestProgressEvent> create(const AtomString& type, bool lengthComputable = false, unsigned long long loaded = 0, unsigned long long total = 0)
     {

@@ -33,6 +33,7 @@ namespace WebCore {
 class AudioBuffer;
     
 class AudioProcessingEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(AudioProcessingEvent);
 public:
     static Ref<AudioProcessingEvent> create(RefPtr<AudioBuffer>&& inputBuffer, RefPtr<AudioBuffer>&& outputBuffer, double playbackTime)
     {

@@ -34,6 +34,7 @@ class DataTransfer;
 class WindowProxy;
 
 class InputEvent final : public UIEvent {
+    WTF_MAKE_ISO_ALLOCATED(InputEvent);
 public:
     struct Init : UIEventInit {
         String data;

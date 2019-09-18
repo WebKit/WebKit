@@ -1,3 +1,217 @@
+2019-09-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Make all ScriptWrappable IsoHeap-ed
+        https://bugs.webkit.org/show_bug.cgi?id=201846
+        <rdar://problem/55407535>
+
+        Reviewed by Mark Lam.
+
+        This patch puts Event and derived classes under IsoHeap to make all ScriptWrappable classes IsoHeap-ed.
+
+        * Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.cpp:
+        * Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.h:
+        (WebCore::WebKitPlaybackTargetAvailabilityEvent::create): Deleted.
+        (WebCore::WebKitPlaybackTargetAvailabilityEvent::availability const): Deleted.
+        * Modules/applepay/ApplePayPaymentAuthorizedEvent.cpp:
+        * Modules/applepay/ApplePayPaymentAuthorizedEvent.h:
+        * Modules/applepay/ApplePayPaymentMethodSelectedEvent.cpp:
+        * Modules/applepay/ApplePayPaymentMethodSelectedEvent.h:
+        (WebCore::ApplePayPaymentMethodSelectedEvent::create): Deleted.
+        (WebCore::ApplePayPaymentMethodSelectedEvent::paymentMethod): Deleted.
+        * Modules/applepay/ApplePayShippingContactSelectedEvent.cpp:
+        * Modules/applepay/ApplePayShippingContactSelectedEvent.h:
+        * Modules/applepay/ApplePayShippingMethodSelectedEvent.cpp:
+        * Modules/applepay/ApplePayShippingMethodSelectedEvent.h:
+        * Modules/applepay/ApplePayValidateMerchantEvent.cpp:
+        * Modules/applepay/ApplePayValidateMerchantEvent.h:
+        (WebCore::ApplePayValidateMerchantEvent::create): Deleted.
+        (WebCore::ApplePayValidateMerchantEvent::validationURL const): Deleted.
+        * Modules/encryptedmedia/MediaKeyMessageEvent.cpp:
+        * Modules/encryptedmedia/MediaKeyMessageEvent.h:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyMessageEvent.cpp:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyMessageEvent.h:
+        (WebCore::WebKitMediaKeyMessageEvent::create): Deleted.
+        (WebCore::WebKitMediaKeyMessageEvent::message const): Deleted.
+        (WebCore::WebKitMediaKeyMessageEvent::destinationURL const): Deleted.
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyNeededEvent.cpp:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyNeededEvent.h:
+        (WebCore::WebKitMediaKeyNeededEvent::create): Deleted.
+        (WebCore::WebKitMediaKeyNeededEvent::initData const): Deleted.
+        * Modules/gamepad/GamepadEvent.cpp:
+        * Modules/gamepad/GamepadEvent.h:
+        (WebCore::GamepadEvent::create): Deleted.
+        (WebCore::GamepadEvent::gamepad const): Deleted.
+        * Modules/indexeddb/IDBRequestCompletionEvent.cpp:
+        * Modules/indexeddb/IDBRequestCompletionEvent.h:
+        (WebCore::IDBRequestCompletionEvent::create): Deleted.
+        * Modules/indexeddb/IDBVersionChangeEvent.cpp:
+        * Modules/indexeddb/IDBVersionChangeEvent.h:
+        * Modules/mediarecorder/BlobEvent.cpp:
+        * Modules/mediarecorder/BlobEvent.h:
+        * Modules/mediarecorder/MediaRecorderErrorEvent.cpp:
+        * Modules/mediarecorder/MediaRecorderErrorEvent.h:
+        * Modules/mediastream/MediaStreamTrackEvent.cpp:
+        * Modules/mediastream/MediaStreamTrackEvent.h:
+        * Modules/mediastream/OverconstrainedErrorEvent.cpp: Copied from Source/WebCore/Modules/mediarecorder/BlobEvent.h.
+        * Modules/mediastream/OverconstrainedErrorEvent.h:
+        (WebCore::OverconstrainedErrorEvent::create): Deleted.
+        (WebCore::OverconstrainedErrorEvent::error const): Deleted.
+        (WebCore::OverconstrainedErrorEvent::OverconstrainedErrorEvent): Deleted.
+        * Modules/mediastream/RTCDTMFToneChangeEvent.cpp:
+        * Modules/mediastream/RTCDTMFToneChangeEvent.h:
+        * Modules/mediastream/RTCDataChannelEvent.cpp:
+        * Modules/mediastream/RTCDataChannelEvent.h:
+        * Modules/mediastream/RTCPeerConnectionIceEvent.cpp:
+        * Modules/mediastream/RTCPeerConnectionIceEvent.h:
+        (WebCore::RTCPeerConnectionIceEvent::url const): Deleted.
+        * Modules/mediastream/RTCTrackEvent.cpp:
+        * Modules/mediastream/RTCTrackEvent.h:
+        (WebCore::RTCTrackEvent::receiver const): Deleted.
+        (WebCore::RTCTrackEvent::track const): Deleted.
+        (WebCore::RTCTrackEvent::streams const): Deleted.
+        (WebCore::RTCTrackEvent::transceiver const): Deleted.
+        (WebCore::RTCTrackEvent::eventInterface const): Deleted.
+        * Modules/paymentrequest/MerchantValidationEvent.cpp:
+        * Modules/paymentrequest/MerchantValidationEvent.h:
+        * Modules/paymentrequest/PaymentMethodChangeEvent.cpp:
+        * Modules/paymentrequest/PaymentMethodChangeEvent.h:
+        * Modules/paymentrequest/PaymentRequestUpdateEvent.cpp:
+        * Modules/paymentrequest/PaymentRequestUpdateEvent.h:
+        * Modules/speech/SpeechSynthesisEvent.cpp:
+        * Modules/speech/SpeechSynthesisEvent.h:
+        (WebCore::SpeechSynthesisEvent::charIndex const): Deleted.
+        (WebCore::SpeechSynthesisEvent::elapsedTime const): Deleted.
+        (WebCore::SpeechSynthesisEvent::name const): Deleted.
+        (WebCore::SpeechSynthesisEvent::eventInterface const): Deleted.
+        * Modules/webaudio/AudioProcessingEvent.cpp:
+        * Modules/webaudio/AudioProcessingEvent.h:
+        * Modules/webaudio/OfflineAudioCompletionEvent.cpp:
+        * Modules/webaudio/OfflineAudioCompletionEvent.h:
+        * Modules/webgpu/GPUUncapturedErrorEvent.cpp:
+        * Modules/webgpu/GPUUncapturedErrorEvent.h:
+        * Modules/websockets/CloseEvent.cpp: Copied from Source/WebCore/dom/BeforeTextInsertedEvent.cpp.
+        * Modules/websockets/CloseEvent.h:
+        (WebCore::CloseEvent::create): Deleted.
+        (WebCore::CloseEvent::wasClean const): Deleted.
+        (WebCore::CloseEvent::code const): Deleted.
+        (WebCore::CloseEvent::reason const): Deleted.
+        (WebCore::CloseEvent::CloseEvent): Deleted.
+        * Modules/webvr/VRDisplayEvent.cpp:
+        * Modules/webvr/VRDisplayEvent.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibleSetValueEvent.cpp:
+        * accessibility/AccessibleSetValueEvent.h:
+        (WebCore::AccessibleSetValueEvent::create): Deleted.
+        (WebCore::AccessibleSetValueEvent::value const): Deleted.
+        * animation/AnimationPlaybackEvent.cpp:
+        * animation/AnimationPlaybackEvent.h:
+        * bindings/js/ScriptWrappable.cpp: Copied from Source/WebCore/html/canvas/WebGLContextEvent.cpp.
+        * bindings/js/ScriptWrappable.h:
+        * dom/AnimationEvent.cpp:
+        * dom/AnimationEvent.h:
+        * dom/BeforeLoadEvent.cpp: Copied from Source/WebCore/dom/BeforeTextInsertedEvent.cpp.
+        * dom/BeforeLoadEvent.h:
+        * dom/BeforeTextInsertedEvent.cpp:
+        * dom/BeforeTextInsertedEvent.h:
+        * dom/BeforeUnloadEvent.cpp:
+        * dom/BeforeUnloadEvent.h:
+        * dom/ClipboardEvent.cpp:
+        * dom/ClipboardEvent.h:
+        * dom/CompositionEvent.cpp:
+        * dom/CompositionEvent.h:
+        * dom/CustomEvent.cpp:
+        * dom/CustomEvent.h:
+        * dom/DeviceMotionEvent.cpp:
+        * dom/DeviceMotionEvent.h:
+        * dom/DeviceOrientationEvent.cpp:
+        * dom/DeviceOrientationEvent.h:
+        * dom/ErrorEvent.cpp:
+        * dom/ErrorEvent.h:
+        * dom/Event.cpp:
+        * dom/Event.h:
+        * dom/FocusEvent.cpp:
+        * dom/FocusEvent.h:
+        * dom/HashChangeEvent.cpp: Copied from Source/WebCore/dom/BeforeTextInsertedEvent.cpp.
+        * dom/HashChangeEvent.h:
+        * dom/InputEvent.cpp:
+        * dom/InputEvent.h:
+        * dom/KeyboardEvent.cpp:
+        * dom/KeyboardEvent.h:
+        * dom/MessageEvent.cpp:
+        * dom/MessageEvent.h:
+        * dom/MouseEvent.cpp:
+        * dom/MouseEvent.h:
+        * dom/MouseRelatedEvent.cpp:
+        * dom/MouseRelatedEvent.h:
+        * dom/MutationEvent.cpp:
+        * dom/MutationEvent.h:
+        * dom/OverflowEvent.cpp:
+        * dom/OverflowEvent.h:
+        * dom/PageTransitionEvent.cpp:
+        * dom/PageTransitionEvent.h:
+        * dom/PointerEvent.cpp:
+        * dom/PointerEvent.h:
+        * dom/PopStateEvent.cpp:
+        * dom/PopStateEvent.h:
+        * dom/ProgressEvent.cpp:
+        * dom/ProgressEvent.h:
+        * dom/PromiseRejectionEvent.cpp:
+        * dom/PromiseRejectionEvent.h:
+        * dom/SecurityPolicyViolationEvent.cpp: Copied from Source/WebCore/dom/BeforeTextInsertedEvent.cpp.
+        * dom/SecurityPolicyViolationEvent.h:
+        * dom/TextEvent.cpp:
+        * dom/TextEvent.h:
+        * dom/TouchEvent.cpp:
+        * dom/TouchEvent.h:
+        * dom/TransitionEvent.cpp:
+        * dom/TransitionEvent.h:
+        * dom/UIEvent.cpp:
+        * dom/UIEvent.h:
+        * dom/UIEventWithKeyState.cpp:
+        * dom/UIEventWithKeyState.h:
+        * dom/WebKitAnimationEvent.cpp:
+        * dom/WebKitAnimationEvent.h:
+        * dom/WebKitTransitionEvent.cpp:
+        * dom/WebKitTransitionEvent.h:
+        * dom/WheelEvent.cpp:
+        * dom/WheelEvent.h:
+        * html/MediaEncryptedEvent.cpp:
+        * html/MediaEncryptedEvent.h:
+        * html/canvas/WebGLContextEvent.cpp:
+        * html/canvas/WebGLContextEvent.h:
+        * html/shadow/ProgressShadowElement.h:
+        * html/track/TrackEvent.cpp:
+        * html/track/TrackEvent.h:
+        * storage/StorageEvent.cpp:
+        * storage/StorageEvent.h:
+        (WebCore::StorageEvent::key const): Deleted.
+        (WebCore::StorageEvent::oldValue const): Deleted.
+        (WebCore::StorageEvent::newValue const): Deleted.
+        (WebCore::StorageEvent::url const): Deleted.
+        (WebCore::StorageEvent::storageArea const): Deleted.
+        * svg/SVGFEDistantLightElement.h:
+        * svg/SVGFEFuncAElement.h:
+        * svg/SVGFEFuncBElement.h:
+        * svg/SVGFEFuncGElement.h:
+        * svg/SVGFEFuncRElement.h:
+        * svg/SVGFEPointLightElement.h:
+        * svg/SVGFESpotLightElement.h:
+        * svg/SVGZoomEvent.cpp:
+        * svg/SVGZoomEvent.h:
+        * workers/service/ExtendableEvent.cpp:
+        * workers/service/ExtendableEvent.h:
+        * workers/service/ExtendableMessageEvent.cpp:
+        * workers/service/ExtendableMessageEvent.h:
+        * workers/service/FetchEvent.cpp:
+        * workers/service/FetchEvent.h:
+        * xml/XMLHttpRequestProgressEvent.cpp: Copied from Source/WebCore/Modules/encryptedmedia/MediaKeyMessageEvent.cpp.
+        * xml/XMLHttpRequestProgressEvent.h:
+        (WebCore::XMLHttpRequestProgressEvent::create): Deleted.
+        (WebCore::XMLHttpRequestProgressEvent::position const): Deleted.
+        (WebCore::XMLHttpRequestProgressEvent::totalSize const): Deleted.
+        (WebCore::XMLHttpRequestProgressEvent::XMLHttpRequestProgressEvent): Deleted.
+
 2019-09-18  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Introduce UsedVerticalValues::Constraints

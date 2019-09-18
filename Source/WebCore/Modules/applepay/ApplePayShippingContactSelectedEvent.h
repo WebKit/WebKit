@@ -35,6 +35,7 @@ namespace WebCore {
 class PaymentContact;
 
 class ApplePayShippingContactSelectedEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(ApplePayShippingContactSelectedEvent);
 public:
     static Ref<ApplePayShippingContactSelectedEvent> create(const AtomString& type, unsigned version, const PaymentContact& shippingContact)
     {

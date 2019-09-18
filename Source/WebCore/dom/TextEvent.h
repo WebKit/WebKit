@@ -37,6 +37,7 @@ namespace WebCore {
     enum class MailBlockquoteHandling;
 
     class TextEvent final : public UIEvent {
+        WTF_MAKE_ISO_ALLOCATED(TextEvent);
     public:
         static Ref<TextEvent> create(RefPtr<WindowProxy>&&, const String& data, TextEventInputType = TextEventInputKeyboard);
         static Ref<TextEvent> createForBindings();

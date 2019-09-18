@@ -30,8 +30,11 @@
 
 #include "Document.h"
 #include "PaymentRequest.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(MerchantValidationEvent);
 
 Ref<MerchantValidationEvent> MerchantValidationEvent::create(const AtomString& type, const String& methodName, URL&& validationURL)
 {

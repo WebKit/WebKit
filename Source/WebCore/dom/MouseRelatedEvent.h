@@ -37,6 +37,7 @@ struct MouseRelatedEventInit : public EventModifierInit {
 
 // Internal only: Helper class for what's common between mouse and wheel events.
 class MouseRelatedEvent : public UIEventWithKeyState {
+    WTF_MAKE_ISO_ALLOCATED(MouseRelatedEvent);
 public:
     enum class IsSimulated : uint8_t { Yes, No };
 

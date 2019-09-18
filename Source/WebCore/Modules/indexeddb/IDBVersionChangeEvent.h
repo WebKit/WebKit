@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class IDBVersionChangeEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(IDBVersionChangeEvent);
 public:
     static Ref<IDBVersionChangeEvent> create(uint64_t oldVersion, uint64_t newVersion, const AtomString& eventType)
     {

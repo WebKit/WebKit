@@ -30,8 +30,11 @@
 
 #include "EventNames.h"
 #include "PaymentRequest.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(PaymentRequestUpdateEvent);
 
 PaymentRequestUpdateEvent::PaymentRequestUpdateEvent(const AtomString& type, const PaymentRequestUpdateEventInit& eventInit)
     : Event { type, eventInit, IsTrusted::No }

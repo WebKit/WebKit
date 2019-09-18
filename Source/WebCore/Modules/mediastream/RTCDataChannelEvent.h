@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class RTCDataChannelEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(RTCDataChannelEvent);
 public:
     struct Init : EventInit {
         RefPtr<RTCDataChannel> channel;

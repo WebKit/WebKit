@@ -32,5 +32,6 @@ private:
 
     Ref<LightSource> lightSource(SVGFilterBuilder&) const override;
 };
+static_assert(sizeof(SVGFEPointLightElement) == sizeof(SVGFELightElement));
 
 } // namespace WebCore

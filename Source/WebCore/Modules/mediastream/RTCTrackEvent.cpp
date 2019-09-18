@@ -36,8 +36,11 @@
 #include "MediaStream.h"
 #include "MediaStreamTrack.h"
 #include "RTCRtpTransceiver.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RTCTrackEvent);
 
 Ref<RTCTrackEvent> RTCTrackEvent::create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<RTCRtpReceiver>&& receiver, RefPtr<MediaStreamTrack>&& track, Vector<RefPtr<MediaStream>>&& streams, RefPtr<RTCRtpTransceiver>&& transceiver)
 {

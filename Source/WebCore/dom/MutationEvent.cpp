@@ -23,7 +23,11 @@
 #include "config.h"
 #include "MutationEvent.h"
 
+#include <wtf/IsoMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(MutationEvent);
 
 MutationEvent::MutationEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, Node* relatedNode, const String& prevValue, const String& newValue)
     : Event(type, canBubble, cancelable)

@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class WheelEvent final : public MouseEvent {
+    WTF_MAKE_ISO_ALLOCATED(WheelEvent);
 public:
     enum { TickMultiplier = 120 };
 

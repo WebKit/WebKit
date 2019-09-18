@@ -31,8 +31,11 @@
 #include "TouchEvent.h"
 
 #include "EventDispatcher.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(TouchEvent);
 
 TouchEvent::TouchEvent() = default;
 

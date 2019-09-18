@@ -34,8 +34,11 @@
 #include "JSEventTargetCustom.h"
 #include "PlatformMouseEvent.h"
 #include "RuntimeApplicationChecks.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(MouseEvent);
 
 using namespace JSC;
 

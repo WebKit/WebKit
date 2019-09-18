@@ -27,8 +27,11 @@
 #include "StorageEvent.h"
 
 #include "Storage.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(StorageEvent);
 
 Ref<StorageEvent> StorageEvent::createForBindings()
 {

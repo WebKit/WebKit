@@ -35,6 +35,7 @@ class Node;
 class PlatformKeyboardEvent;
 
 class KeyboardEvent final : public UIEventWithKeyState {
+    WTF_MAKE_ISO_ALLOCATED(KeyboardEvent);
 public:
     enum KeyLocationCode {
         DOM_KEY_LOCATION_STANDARD = 0x00,

@@ -29,8 +29,11 @@
 #if ENABLE(WEB_RTC)
 
 #include "RTCDataChannel.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RTCDataChannelEvent);
 
 Ref<RTCDataChannelEvent> RTCDataChannelEvent::create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, Ref<RTCDataChannel>&& channel)
 {

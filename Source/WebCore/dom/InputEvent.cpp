@@ -29,9 +29,12 @@
 #include "DataTransfer.h"
 #include "Node.h"
 #include "WindowProxy.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(InputEvent);
 
 Ref<InputEvent> InputEvent::create(const AtomString& eventType, const String& inputType, IsCancelable cancelable, RefPtr<WindowProxy>&& view, const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail)
 {

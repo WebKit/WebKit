@@ -28,8 +28,11 @@
 #include "MediaStreamTrackEvent.h"
 
 #include "MediaStreamTrack.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(MediaStreamTrackEvent);
 
 Ref<MediaStreamTrackEvent> MediaStreamTrackEvent::create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<MediaStreamTrack>&& track)
 {

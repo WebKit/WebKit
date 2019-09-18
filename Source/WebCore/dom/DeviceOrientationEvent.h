@@ -33,6 +33,7 @@ namespace WebCore {
 class DeviceOrientationData;
 
 class DeviceOrientationEvent final : public Event, public DeviceOrientationOrMotionEvent {
+    WTF_MAKE_ISO_ALLOCATED(DeviceOrientationEvent);
 public:
     static Ref<DeviceOrientationEvent> create(const AtomString& eventType, DeviceOrientationData* orientation)
     {

@@ -27,7 +27,11 @@
 #include "config.h"
 #include "CompositionEvent.h"
 
+#include <wtf/IsoMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(CompositionEvent);
 
 CompositionEvent::CompositionEvent() = default;
 
