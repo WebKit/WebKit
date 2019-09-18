@@ -27,6 +27,7 @@
 
 #include "SandboxExtension.h"
 #include <pal/SessionID.h>
+#include <wtf/HashMap.h>
 
 namespace WebKit {
 
