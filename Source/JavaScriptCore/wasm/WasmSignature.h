@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -125,7 +125,7 @@ struct SignatureHash {
     bool operator==(const SignatureHash& rhs) const { return equal(*this, rhs); }
     static bool equal(const SignatureHash& lhs, const SignatureHash& rhs) { return lhs.key == rhs.key || (lhs.key && rhs.key && *lhs.key == *rhs.key); }
     static unsigned hash(const SignatureHash& signature) { return signature.key ? signature.key->hash() : 0; }
-    static const bool safeToCompareToEmptyOrDeleted = false;
+    static constexpr bool safeToCompareToEmptyOrDeleted = false;
     bool isHashTableDeletedValue() const { return key.isHashTableDeletedValue(); }
 };
 
@@ -141,7 +141,7 @@ template<> struct DefaultHash<JSC::Wasm::SignatureHash> {
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::Wasm::SignatureHash> : SimpleClassHashTraits<JSC::Wasm::SignatureHash> {
-    static const bool emptyValueIsZero = true;
+    static constexpr bool emptyValueIsZero = true;
 };
 
 } // namespace WTF

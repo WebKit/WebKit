@@ -2630,7 +2630,7 @@ void SpeculativeJIT::compileDoubleRep(Node* node)
             JITCompiler::Jump isNumber = m_jit.branchIfNumber(op1GPR);
             JITCompiler::Jump isUndefined = m_jit.branchIfUndefined(op1GPR);
 
-            static const double zero = 0;
+            static constexpr double zero = 0;
             m_jit.loadDouble(TrustedImmPtr(&zero), resultFPR);
 
             JITCompiler::Jump isNull = m_jit.branchIfNull(op1GPR);
@@ -2640,7 +2640,7 @@ void SpeculativeJIT::compileDoubleRep(Node* node)
                 m_jit.branchTest64(JITCompiler::Zero, op1GPR, TrustedImm32(static_cast<int32_t>(TagBitBool))));
 
             JITCompiler::Jump isFalse = m_jit.branch64(JITCompiler::Equal, op1GPR, TrustedImm64(ValueFalse));
-            static const double one = 1;
+            static constexpr double one = 1;
             m_jit.loadDouble(TrustedImmPtr(&one), resultFPR);
             done.append(m_jit.jump());
             done.append(isFalse);
@@ -2678,7 +2678,7 @@ void SpeculativeJIT::compileDoubleRep(Node* node)
             JITCompiler::Jump isNumber = m_jit.branch32(JITCompiler::Below, op1TagGPR, JITCompiler::TrustedImm32(JSValue::LowestTag + 1));
             JITCompiler::Jump isUndefined = m_jit.branchIfUndefined(op1TagGPR);
 
-            static const double zero = 0;
+            static constexpr double zero = 0;
             m_jit.loadDouble(TrustedImmPtr(&zero), resultFPR);
 
             JITCompiler::Jump isNull = m_jit.branchIfNull(op1TagGPR);
@@ -2687,7 +2687,7 @@ void SpeculativeJIT::compileDoubleRep(Node* node)
             DFG_TYPE_CHECK(JSValueRegs(op1TagGPR, op1PayloadGPR), node->child1(), ~SpecCell, m_jit.branchIfNotBoolean(op1TagGPR, InvalidGPRReg));
 
             JITCompiler::Jump isFalse = m_jit.branchTest32(JITCompiler::Zero, op1PayloadGPR, TrustedImm32(1));
-            static const double one = 1;
+            static constexpr double one = 1;
             m_jit.loadDouble(TrustedImmPtr(&one), resultFPR);
             done.append(m_jit.jump());
             done.append(isFalse);
@@ -2807,9 +2807,9 @@ static void compileClampIntegerToByte(JITCompiler& jit, GPRReg result)
 static void compileClampDoubleToByte(JITCompiler& jit, GPRReg result, FPRReg source, FPRReg scratch)
 {
     // Unordered compare so we pick up NaN
-    static const double zero = 0;
-    static const double byteMax = 255;
-    static const double half = 0.5;
+    static constexpr double zero = 0;
+    static constexpr double byteMax = 255;
+    static constexpr double half = 0.5;
     jit.loadDouble(JITCompiler::TrustedImmPtr(&zero), scratch);
     MacroAssembler::Jump tooSmall = jit.branchDouble(MacroAssembler::DoubleLessThanOrEqualOrUnordered, source, scratch);
     jit.loadDouble(JITCompiler::TrustedImmPtr(&byteMax), scratch);
@@ -5598,7 +5598,7 @@ void SpeculativeJIT::compileArithRounding(Node* node)
                 FPRTemporary result(this);
                 FPRReg resultFPR = result.fpr();
                 if (producesInteger(node->arithRoundingMode()) && !shouldCheckNegativeZero(node->arithRoundingMode())) {
-                    static const double halfConstant = 0.5;
+                    static constexpr double halfConstant = 0.5;
                     m_jit.loadDouble(TrustedImmPtr(&halfConstant), resultFPR);
                     m_jit.addDouble(valueFPR, resultFPR);
                     m_jit.floorDouble(resultFPR, resultFPR);
@@ -5607,12 +5607,12 @@ void SpeculativeJIT::compileArithRounding(Node* node)
 
                     FPRTemporary scratch(this);
                     FPRReg scratchFPR = scratch.fpr();
-                    static const double halfConstant = -0.5;
+                    static constexpr double halfConstant = -0.5;
                     m_jit.loadDouble(TrustedImmPtr(&halfConstant), scratchFPR);
                     m_jit.addDouble(resultFPR, scratchFPR);
 
                     JITCompiler::Jump shouldUseCeiled = m_jit.branchDouble(JITCompiler::DoubleLessThanOrEqual, scratchFPR, valueFPR);
-                    static const double oneConstant = -1.0;
+                    static constexpr double oneConstant = -1.0;
                     m_jit.loadDouble(TrustedImmPtr(&oneConstant), scratchFPR);
                     m_jit.addDouble(scratchFPR, resultFPR);
                     shouldUseCeiled.link(&m_jit);
@@ -5802,7 +5802,7 @@ static MacroAssembler::Jump compileArithPowIntegerFastPath(JITCompiler& assemble
     MacroAssembler::JumpList skipFastPath;
     skipFastPath.append(assembler.branch32(MacroAssembler::Above, yOperand, MacroAssembler::TrustedImm32(maxExponentForIntegerMathPow)));
 
-    static const double oneConstant = 1.0;
+    static constexpr double oneConstant = 1.0;
     assembler.loadDouble(MacroAssembler::TrustedImmPtr(&oneConstant), result);
 
     MacroAssembler::Label startLoop(assembler.label());
@@ -5893,8 +5893,8 @@ void SpeculativeJIT::compileArithPow(Node* node)
 
     if (node->child2()->isDoubleConstant()) {
         double exponent = node->child2()->asNumber();
-        static const double infinityConstant = std::numeric_limits<double>::infinity();
-        static const double minusInfinityConstant = -std::numeric_limits<double>::infinity();
+        static constexpr double infinityConstant = std::numeric_limits<double>::infinity();
+        static constexpr double minusInfinityConstant = -std::numeric_limits<double>::infinity();
         if (exponent == 0.5) {
             SpeculateDoubleOperand xOperand(this, node->child1());
             FPRTemporary result(this);
@@ -5934,7 +5934,7 @@ void SpeculativeJIT::compileArithPow(Node* node)
             m_jit.loadDouble(TrustedImmPtr(&minusInfinityConstant), resultFpr);
             MacroAssembler::Jump xIsMinusInfinity = m_jit.branchDouble(MacroAssembler::DoubleEqual, xOperandFpr, resultFpr);
 
-            static const double oneConstant = 1.;
+            static constexpr double oneConstant = 1.;
             m_jit.loadDouble(TrustedImmPtr(&oneConstant), resultFpr);
             m_jit.sqrtDouble(xOperandFpr, scratchFPR);
             m_jit.divDouble(resultFpr, scratchFPR, resultFpr);
@@ -10785,7 +10785,7 @@ void SpeculativeJIT::emitBinarySwitchStringRecurse(
     unsigned numChecked, unsigned begin, unsigned end, GPRReg buffer, GPRReg length,
     GPRReg temp, unsigned alreadyCheckedLength, bool checkedExactLength)
 {
-    static const bool verbose = false;
+    static constexpr bool verbose = false;
     
     if (verbose) {
         dataLog("We're down to the following cases, alreadyCheckedLength = ", alreadyCheckedLength, ":\n");

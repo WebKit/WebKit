@@ -490,7 +490,7 @@ typedef IntHash<EncodedJSValue> EncodedJSValueHash;
 
 #if USE(JSVALUE32_64)
 struct EncodedJSValueHashTraits : HashTraits<EncodedJSValue> {
-    static const bool emptyValueIsZero = false;
+    static constexpr bool emptyValueIsZero = false;
     static EncodedJSValue emptyValue() { return JSValue::encode(JSValue()); }
     static void constructDeletedValue(EncodedJSValue& slot) { slot = JSValue::encode(JSValue(JSValue::HashTableDeletedValue)); }
     static bool isDeletedValue(EncodedJSValue value) { return value == JSValue::encode(JSValue(JSValue::HashTableDeletedValue)); }
@@ -505,7 +505,7 @@ struct EncodedJSValueHashTraits : HashTraits<EncodedJSValue> {
 typedef std::pair<EncodedJSValue, SourceCodeRepresentation> EncodedJSValueWithRepresentation;
 
 struct EncodedJSValueWithRepresentationHashTraits : HashTraits<EncodedJSValueWithRepresentation> {
-    static const bool emptyValueIsZero = false;
+    static constexpr bool emptyValueIsZero = false;
     static EncodedJSValueWithRepresentation emptyValue() { return std::make_pair(JSValue::encode(JSValue()), SourceCodeRepresentation::Other); }
     static void constructDeletedValue(EncodedJSValueWithRepresentation& slot) { slot = std::make_pair(JSValue::encode(JSValue(JSValue::HashTableDeletedValue)), SourceCodeRepresentation::Other); }
     static bool isDeletedValue(EncodedJSValueWithRepresentation value) { return value == std::make_pair(JSValue::encode(JSValue(JSValue::HashTableDeletedValue)), SourceCodeRepresentation::Other); }
@@ -520,7 +520,7 @@ struct EncodedJSValueWithRepresentationHash {
     {
         return a == b;
     }
-    static const bool safeToCompareToEmptyOrDeleted = true;
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
 // Stand-alone helper functions.

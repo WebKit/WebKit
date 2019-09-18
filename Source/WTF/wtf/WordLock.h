@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -84,9 +84,9 @@ public:
 protected:
     friend struct TestWebKitAPI::LockInspector;
     
-    static const uintptr_t isLockedBit = 1;
-    static const uintptr_t isQueueLockedBit = 2;
-    static const uintptr_t queueHeadMask = 3;
+    static constexpr uintptr_t isLockedBit = 1;
+    static constexpr uintptr_t isQueueLockedBit = 2;
+    static constexpr uintptr_t queueHeadMask = 3;
 
     WTF_EXPORT_PRIVATE void lockSlow();
     WTF_EXPORT_PRIVATE void unlockSlow();

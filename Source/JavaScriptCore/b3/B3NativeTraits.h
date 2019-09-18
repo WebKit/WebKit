@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,71 +37,71 @@ template<typename> struct NativeTraits;
 
 template<> struct NativeTraits<int8_t> {
     typedef int32_t CanonicalType;
-    static const Bank bank = GP;
-    static const Width width = Width8;
+    static constexpr Bank bank = GP;
+    static constexpr Width width = Width8;
     static constexpr Type type = Int32;
 };
 
 template<> struct NativeTraits<uint8_t> {
     typedef int32_t CanonicalType;
-    static const Bank bank = GP;
-    static const Width width = Width8;
+    static constexpr Bank bank = GP;
+    static constexpr Width width = Width8;
     static constexpr Type type = Int32;
 };
 
 template<> struct NativeTraits<int16_t> {
     typedef int32_t CanonicalType;
-    static const Bank bank = GP;
-    static const Width width = Width16;
+    static constexpr Bank bank = GP;
+    static constexpr Width width = Width16;
     static constexpr Type type = Int32;
 };
 
 template<> struct NativeTraits<uint16_t> {
     typedef int32_t CanonicalType;
-    static const Bank bank = GP;
-    static const Width width = Width16;
+    static constexpr Bank bank = GP;
+    static constexpr Width width = Width16;
     static constexpr Type type = Int32;
 };
 
 template<> struct NativeTraits<int32_t> {
     typedef int32_t CanonicalType;
-    static const Bank bank = GP;
-    static const Width width = Width32;
+    static constexpr Bank bank = GP;
+    static constexpr Width width = Width32;
     static constexpr Type type = Int32;
 };
 
 template<> struct NativeTraits<uint32_t> {
     typedef int32_t CanonicalType;
-    static const Bank bank = GP;
-    static const Width width = Width32;
+    static constexpr Bank bank = GP;
+    static constexpr Width width = Width32;
     static constexpr Type type = Int32;
 };
 
 template<> struct NativeTraits<int64_t> {
     typedef int64_t CanonicalType;
-    static const Bank bank = GP;
-    static const Width width = Width64;
+    static constexpr Bank bank = GP;
+    static constexpr Width width = Width64;
     static constexpr Type type = Int64;
 };
 
 template<> struct NativeTraits<uint64_t> {
     typedef int64_t CanonicalType;
-    static const Bank bank = GP;
-    static const Width width = Width64;
+    static constexpr Bank bank = GP;
+    static constexpr Width width = Width64;
     static constexpr Type type = Int64;
 };
 
 template<> struct NativeTraits<float> {
     typedef float CanonicalType;
-    static const Bank bank = FP;
-    static const Width width = Width32;
+    static constexpr Bank bank = FP;
+    static constexpr Width width = Width32;
     static constexpr Type type = Float;
 };
 
 template<> struct NativeTraits<double> {
     typedef double CanonicalType;
-    static const Bank bank = FP;
-    static const Width width = Width64;
+    static constexpr Bank bank = FP;
+    static constexpr Width width = Width64;
     static constexpr Type type = Double;
 };
 

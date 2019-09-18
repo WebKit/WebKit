@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,30 +40,30 @@ static constexpr FPRReg InvalidFPRReg { FPRReg::InvalidFPRReg };
 class FPRInfo {
 public:
     typedef FPRReg RegisterType;
-    static const unsigned numberOfRegisters = 6;
-    static const unsigned numberOfArgumentRegisters = is64Bit() ? 8 : 0;
+    static constexpr unsigned numberOfRegisters = 6;
+    static constexpr unsigned numberOfArgumentRegisters = is64Bit() ? 8 : 0;
 
     // Temporary registers.
-    static const FPRReg fpRegT0 = X86Registers::xmm0;
-    static const FPRReg fpRegT1 = X86Registers::xmm1;
-    static const FPRReg fpRegT2 = X86Registers::xmm2;
-    static const FPRReg fpRegT3 = X86Registers::xmm3;
-    static const FPRReg fpRegT4 = X86Registers::xmm4;
-    static const FPRReg fpRegT5 = X86Registers::xmm5;
+    static constexpr FPRReg fpRegT0 = X86Registers::xmm0;
+    static constexpr FPRReg fpRegT1 = X86Registers::xmm1;
+    static constexpr FPRReg fpRegT2 = X86Registers::xmm2;
+    static constexpr FPRReg fpRegT3 = X86Registers::xmm3;
+    static constexpr FPRReg fpRegT4 = X86Registers::xmm4;
+    static constexpr FPRReg fpRegT5 = X86Registers::xmm5;
 #if CPU(X86_64)
     // Only X86_64 passes aguments in xmm registers
-    static const FPRReg argumentFPR0 = X86Registers::xmm0; // fpRegT0
-    static const FPRReg argumentFPR1 = X86Registers::xmm1; // fpRegT1
-    static const FPRReg argumentFPR2 = X86Registers::xmm2; // fpRegT2
-    static const FPRReg argumentFPR3 = X86Registers::xmm3; // fpRegT3
-    static const FPRReg argumentFPR4 = X86Registers::xmm4; // fpRegT4
-    static const FPRReg argumentFPR5 = X86Registers::xmm5; // fpRegT5
-    static const FPRReg argumentFPR6 = X86Registers::xmm6;
-    static const FPRReg argumentFPR7 = X86Registers::xmm7;
+    static constexpr FPRReg argumentFPR0 = X86Registers::xmm0; // fpRegT0
+    static constexpr FPRReg argumentFPR1 = X86Registers::xmm1; // fpRegT1
+    static constexpr FPRReg argumentFPR2 = X86Registers::xmm2; // fpRegT2
+    static constexpr FPRReg argumentFPR3 = X86Registers::xmm3; // fpRegT3
+    static constexpr FPRReg argumentFPR4 = X86Registers::xmm4; // fpRegT4
+    static constexpr FPRReg argumentFPR5 = X86Registers::xmm5; // fpRegT5
+    static constexpr FPRReg argumentFPR6 = X86Registers::xmm6;
+    static constexpr FPRReg argumentFPR7 = X86Registers::xmm7;
 #endif
     // On X86 the return will actually be on the x87 stack,
     // so we'll copy to xmm0 for sanity!
-    static const FPRReg returnValueFPR = X86Registers::xmm0; // fpRegT0
+    static constexpr FPRReg returnValueFPR = X86Registers::xmm0; // fpRegT0
 
     // FPRReg mapping is direct, the machine regsiter numbers can
     // be used directly as indices into the FPR RegisterBank.
@@ -96,7 +96,7 @@ public:
         return MacroAssembler::fprName(reg);
     }
 
-    static const unsigned InvalidIndex = 0xffffffff;
+    static constexpr unsigned InvalidIndex = 0xffffffff;
 };
 
 #endif // CPU(X86) || CPU(X86_64)
@@ -106,30 +106,30 @@ public:
 class FPRInfo {
 public:
     typedef FPRReg RegisterType;
-    static const unsigned numberOfRegisters = 6;
+    static constexpr unsigned numberOfRegisters = 6;
 
 #if CPU(ARM_HARDFP)
-    static const unsigned numberOfArgumentRegisters = 8;
+    static constexpr unsigned numberOfArgumentRegisters = 8;
 #else
-    static const unsigned numberOfArgumentRegisters = 0;
+    static constexpr unsigned numberOfArgumentRegisters = 0;
 #endif
 
     // Temporary registers.
     // d7 is use by the MacroAssembler as fpTempRegister.
-    static const FPRReg fpRegT0 = ARMRegisters::d0;
-    static const FPRReg fpRegT1 = ARMRegisters::d1;
-    static const FPRReg fpRegT2 = ARMRegisters::d2;
-    static const FPRReg fpRegT3 = ARMRegisters::d3;
-    static const FPRReg fpRegT4 = ARMRegisters::d4;
-    static const FPRReg fpRegT5 = ARMRegisters::d5;
+    static constexpr FPRReg fpRegT0 = ARMRegisters::d0;
+    static constexpr FPRReg fpRegT1 = ARMRegisters::d1;
+    static constexpr FPRReg fpRegT2 = ARMRegisters::d2;
+    static constexpr FPRReg fpRegT3 = ARMRegisters::d3;
+    static constexpr FPRReg fpRegT4 = ARMRegisters::d4;
+    static constexpr FPRReg fpRegT5 = ARMRegisters::d5;
     // ARMv7 doesn't pass arguments in fp registers. The return
     // value is also actually in integer registers, for now
     // we'll return in d0 for simplicity.
-    static const FPRReg returnValueFPR = ARMRegisters::d0; // fpRegT0
+    static constexpr FPRReg returnValueFPR = ARMRegisters::d0; // fpRegT0
 
 #if CPU(ARM_HARDFP)
-    static const FPRReg argumentFPR0 = ARMRegisters::d0; // fpRegT0
-    static const FPRReg argumentFPR1 = ARMRegisters::d1; // fpRegT1
+    static constexpr FPRReg argumentFPR0 = ARMRegisters::d0; // fpRegT0
+    static constexpr FPRReg argumentFPR1 = ARMRegisters::d1; // fpRegT1
 #endif
 
     // FPRReg mapping is direct, the machine regsiter numbers can
@@ -163,7 +163,7 @@ public:
         return MacroAssembler::fprName(reg);
     }
 
-    static const unsigned InvalidIndex = 0xffffffff;
+    static constexpr unsigned InvalidIndex = 0xffffffff;
 };
 
 #endif // CPU(ARM)
@@ -173,53 +173,53 @@ public:
 class FPRInfo {
 public:
     typedef FPRReg RegisterType;
-    static const unsigned numberOfRegisters = 23;
-    static const unsigned numberOfArgumentRegisters = 8;
+    static constexpr unsigned numberOfRegisters = 23;
+    static constexpr unsigned numberOfArgumentRegisters = 8;
 
     // Temporary registers.
     // q8-q15 are callee saved, q31 is use by the MacroAssembler as fpTempRegister.
-    static const FPRReg fpRegT0 = ARM64Registers::q0;
-    static const FPRReg fpRegT1 = ARM64Registers::q1;
-    static const FPRReg fpRegT2 = ARM64Registers::q2;
-    static const FPRReg fpRegT3 = ARM64Registers::q3;
-    static const FPRReg fpRegT4 = ARM64Registers::q4;
-    static const FPRReg fpRegT5 = ARM64Registers::q5;
-    static const FPRReg fpRegT6 = ARM64Registers::q6;
-    static const FPRReg fpRegT7 = ARM64Registers::q7;
-    static const FPRReg fpRegT8 = ARM64Registers::q16;
-    static const FPRReg fpRegT9 = ARM64Registers::q17;
-    static const FPRReg fpRegT10 = ARM64Registers::q18;
-    static const FPRReg fpRegT11 = ARM64Registers::q19;
-    static const FPRReg fpRegT12 = ARM64Registers::q20;
-    static const FPRReg fpRegT13 = ARM64Registers::q21;
-    static const FPRReg fpRegT14 = ARM64Registers::q22;
-    static const FPRReg fpRegT15 = ARM64Registers::q23;
-    static const FPRReg fpRegT16 = ARM64Registers::q24;
-    static const FPRReg fpRegT17 = ARM64Registers::q25;
-    static const FPRReg fpRegT18 = ARM64Registers::q26;
-    static const FPRReg fpRegT19 = ARM64Registers::q27;
-    static const FPRReg fpRegT20 = ARM64Registers::q28;
-    static const FPRReg fpRegT21 = ARM64Registers::q29;
-    static const FPRReg fpRegT22 = ARM64Registers::q30;
-    static const FPRReg fpRegCS0 = ARM64Registers::q8;
-    static const FPRReg fpRegCS1 = ARM64Registers::q9;
-    static const FPRReg fpRegCS2 = ARM64Registers::q10;
-    static const FPRReg fpRegCS3 = ARM64Registers::q11;
-    static const FPRReg fpRegCS4 = ARM64Registers::q12;
-    static const FPRReg fpRegCS5 = ARM64Registers::q13;
-    static const FPRReg fpRegCS6 = ARM64Registers::q14;
-    static const FPRReg fpRegCS7 = ARM64Registers::q15;
+    static constexpr FPRReg fpRegT0 = ARM64Registers::q0;
+    static constexpr FPRReg fpRegT1 = ARM64Registers::q1;
+    static constexpr FPRReg fpRegT2 = ARM64Registers::q2;
+    static constexpr FPRReg fpRegT3 = ARM64Registers::q3;
+    static constexpr FPRReg fpRegT4 = ARM64Registers::q4;
+    static constexpr FPRReg fpRegT5 = ARM64Registers::q5;
+    static constexpr FPRReg fpRegT6 = ARM64Registers::q6;
+    static constexpr FPRReg fpRegT7 = ARM64Registers::q7;
+    static constexpr FPRReg fpRegT8 = ARM64Registers::q16;
+    static constexpr FPRReg fpRegT9 = ARM64Registers::q17;
+    static constexpr FPRReg fpRegT10 = ARM64Registers::q18;
+    static constexpr FPRReg fpRegT11 = ARM64Registers::q19;
+    static constexpr FPRReg fpRegT12 = ARM64Registers::q20;
+    static constexpr FPRReg fpRegT13 = ARM64Registers::q21;
+    static constexpr FPRReg fpRegT14 = ARM64Registers::q22;
+    static constexpr FPRReg fpRegT15 = ARM64Registers::q23;
+    static constexpr FPRReg fpRegT16 = ARM64Registers::q24;
+    static constexpr FPRReg fpRegT17 = ARM64Registers::q25;
+    static constexpr FPRReg fpRegT18 = ARM64Registers::q26;
+    static constexpr FPRReg fpRegT19 = ARM64Registers::q27;
+    static constexpr FPRReg fpRegT20 = ARM64Registers::q28;
+    static constexpr FPRReg fpRegT21 = ARM64Registers::q29;
+    static constexpr FPRReg fpRegT22 = ARM64Registers::q30;
+    static constexpr FPRReg fpRegCS0 = ARM64Registers::q8;
+    static constexpr FPRReg fpRegCS1 = ARM64Registers::q9;
+    static constexpr FPRReg fpRegCS2 = ARM64Registers::q10;
+    static constexpr FPRReg fpRegCS3 = ARM64Registers::q11;
+    static constexpr FPRReg fpRegCS4 = ARM64Registers::q12;
+    static constexpr FPRReg fpRegCS5 = ARM64Registers::q13;
+    static constexpr FPRReg fpRegCS6 = ARM64Registers::q14;
+    static constexpr FPRReg fpRegCS7 = ARM64Registers::q15;
 
-    static const FPRReg argumentFPR0 = ARM64Registers::q0; // fpRegT0
-    static const FPRReg argumentFPR1 = ARM64Registers::q1; // fpRegT1
-    static const FPRReg argumentFPR2 = ARM64Registers::q2; // fpRegT2
-    static const FPRReg argumentFPR3 = ARM64Registers::q3; // fpRegT3
-    static const FPRReg argumentFPR4 = ARM64Registers::q4; // fpRegT4
-    static const FPRReg argumentFPR5 = ARM64Registers::q5; // fpRegT5
-    static const FPRReg argumentFPR6 = ARM64Registers::q6; // fpRegT6
-    static const FPRReg argumentFPR7 = ARM64Registers::q7; // fpRegT7
+    static constexpr FPRReg argumentFPR0 = ARM64Registers::q0; // fpRegT0
+    static constexpr FPRReg argumentFPR1 = ARM64Registers::q1; // fpRegT1
+    static constexpr FPRReg argumentFPR2 = ARM64Registers::q2; // fpRegT2
+    static constexpr FPRReg argumentFPR3 = ARM64Registers::q3; // fpRegT3
+    static constexpr FPRReg argumentFPR4 = ARM64Registers::q4; // fpRegT4
+    static constexpr FPRReg argumentFPR5 = ARM64Registers::q5; // fpRegT5
+    static constexpr FPRReg argumentFPR6 = ARM64Registers::q6; // fpRegT6
+    static constexpr FPRReg argumentFPR7 = ARM64Registers::q7; // fpRegT7
 
-    static const FPRReg returnValueFPR = ARM64Registers::q0; // fpRegT0
+    static constexpr FPRReg returnValueFPR = ARM64Registers::q0; // fpRegT0
 
     static FPRReg toRegister(unsigned index)
     {
@@ -258,7 +258,7 @@ public:
         return MacroAssembler::fprName(reg);
     }
 
-    static const unsigned InvalidIndex = 0xffffffff;
+    static constexpr unsigned InvalidIndex = 0xffffffff;
 };
 
 #endif // CPU(ARM64)
@@ -268,22 +268,22 @@ public:
 class FPRInfo {
 public:
     typedef FPRReg RegisterType;
-    static const unsigned numberOfRegisters = 7;
-    static const unsigned numberOfArgumentRegisters = 2;
+    static constexpr unsigned numberOfRegisters = 7;
+    static constexpr unsigned numberOfArgumentRegisters = 2;
 
     // Temporary registers.
-    static const FPRReg fpRegT0 = MIPSRegisters::f0;
-    static const FPRReg fpRegT1 = MIPSRegisters::f2;
-    static const FPRReg fpRegT2 = MIPSRegisters::f4;
-    static const FPRReg fpRegT3 = MIPSRegisters::f6;
-    static const FPRReg fpRegT4 = MIPSRegisters::f8;
-    static const FPRReg fpRegT5 = MIPSRegisters::f10;
-    static const FPRReg fpRegT6 = MIPSRegisters::f18;
+    static constexpr FPRReg fpRegT0 = MIPSRegisters::f0;
+    static constexpr FPRReg fpRegT1 = MIPSRegisters::f2;
+    static constexpr FPRReg fpRegT2 = MIPSRegisters::f4;
+    static constexpr FPRReg fpRegT3 = MIPSRegisters::f6;
+    static constexpr FPRReg fpRegT4 = MIPSRegisters::f8;
+    static constexpr FPRReg fpRegT5 = MIPSRegisters::f10;
+    static constexpr FPRReg fpRegT6 = MIPSRegisters::f18;
 
-    static const FPRReg returnValueFPR = MIPSRegisters::f0;
+    static constexpr FPRReg returnValueFPR = MIPSRegisters::f0;
 
-    static const FPRReg argumentFPR0 = MIPSRegisters::f12;
-    static const FPRReg argumentFPR1 = MIPSRegisters::f14;
+    static constexpr FPRReg argumentFPR0 = MIPSRegisters::f12;
+    static constexpr FPRReg argumentFPR1 = MIPSRegisters::f14;
 
     static FPRReg toRegister(unsigned index)
     {
@@ -324,7 +324,7 @@ public:
         return MacroAssembler::fprName(reg);
     }
 
-    static const unsigned InvalidIndex = 0xffffffff;
+    static constexpr unsigned InvalidIndex = 0xffffffff;
 };
 
 #endif // CPU(MIPS)

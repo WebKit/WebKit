@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,7 +60,7 @@ static int notifyTokens[3];
 // low memory events, greatly reducing CPU usage.
 static const Seconds s_minimumHoldOffTime { 5_s };
 #if !PLATFORM(IOS_FAMILY)
-static const unsigned s_holdOffMultiplier = 20;
+static constexpr unsigned s_holdOffMultiplier = 20;
 #endif
 
 void MemoryPressureHandler::install()

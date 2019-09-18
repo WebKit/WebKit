@@ -102,7 +102,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             domain_lines.append('namespace %s {' % domain.domain_name)
 
             if isinstance(version, int):
-                domain_lines.append('static const unsigned VERSION = %s;' % version)
+                domain_lines.append('static constexpr unsigned VERSION = %s;' % version)
 
             domain_lines.append('} // %s' % domain.domain_name)
             sections.append(self.wrap_with_guard_for_domain(domain, '\n'.join(domain_lines)))

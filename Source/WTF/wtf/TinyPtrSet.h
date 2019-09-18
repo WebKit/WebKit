@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -359,12 +359,12 @@ public:
 private:
     friend class JSC::DFG::StructureAbstractValue;
 
-    static const uintptr_t fatFlag = 1;
-    static const uintptr_t reservedFlag = 2;
-    static const uintptr_t flags = fatFlag | reservedFlag;
-    static const uintptr_t reservedValue = 4;
+    static constexpr uintptr_t fatFlag = 1;
+    static constexpr uintptr_t reservedFlag = 2;
+    static constexpr uintptr_t flags = fatFlag | reservedFlag;
+    static constexpr uintptr_t reservedValue = 4;
 
-    static const unsigned defaultStartingSize = 4;
+    static constexpr unsigned defaultStartingSize = 4;
     
     NEVER_INLINE bool addOutOfLine(T value)
     {

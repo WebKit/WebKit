@@ -1,6 +1,6 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -444,8 +444,8 @@ WTF_EXPORT_PRIVATE const String& nullString();
 template<typename> struct DefaultHash;
 template<> struct DefaultHash<String> { using Hash = StringHash; };
 template<> struct VectorTraits<String> : VectorTraitsBase<false, void> {
-    static const bool canInitializeWithMemset = true;
-    static const bool canMoveWithMemcpy = true;
+    static constexpr bool canInitializeWithMemset = true;
+    static constexpr bool canMoveWithMemcpy = true;
 };
 
 template<> struct IntegerToStringConversionTrait<String> {

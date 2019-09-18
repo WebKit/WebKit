@@ -109,9 +109,9 @@ struct UnlinkedSimpleJumpTable {
 class UnlinkedCodeBlock : public JSCell {
 public:
     typedef JSCell Base;
-    static const unsigned StructureFlags = Base::StructureFlags;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
-    static const bool needsDestruction = true;
+    static constexpr bool needsDestruction = true;
 
     enum { CallFunction, ApplyFunction };
 

@@ -35,7 +35,7 @@
 namespace JSC {
 
 namespace PromiseDeferredTimerInternal {
-static const bool verbose = false;
+static constexpr bool verbose = false;
 }
 
 PromiseDeferredTimer::PromiseDeferredTimer(VM& vm)

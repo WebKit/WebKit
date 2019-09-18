@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -304,8 +304,8 @@ public:
     void dump(PrintStream& out) const;
     
 private:
-    static const unsigned valueShift = 15;
-    static const unsigned topShift = 14;
+    static constexpr unsigned valueShift = 15;
+    static constexpr unsigned topShift = 14;
     
     Payload payloadImpl() const
     {
@@ -329,7 +329,7 @@ private:
 struct AbstractHeapHash {
     static unsigned hash(const AbstractHeap& key) { return key.hash(); }
     static bool equal(const AbstractHeap& a, const AbstractHeap& b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = true;
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
 } } // namespace JSC::DFG

@@ -974,8 +974,8 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
         ASSERT(resultFilter);
 
         auto addPropName = [&] (JSValue value, RuntimeType type) -> bool {
-            static const bool doExitEarly = true;
-            static const bool dontExitEarly = false;
+            static constexpr bool doExitEarly = true;
+            static constexpr bool dontExitEarly = false;
 
             Identifier ident = value.toPropertyKey(exec);
             RETURN_IF_EXCEPTION(scope, doExitEarly);

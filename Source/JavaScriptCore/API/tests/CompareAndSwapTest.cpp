@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,11 +40,11 @@ public:
     inline size_t numBits() const { return words * wordSize; }
 
 private:
-    static const size_t Size = 4096*10;
+    static constexpr size_t Size = 4096*10;
 
-    static const unsigned wordSize = sizeof(uint8_t) * 8;
-    static const unsigned words = (Size + wordSize - 1) / wordSize;
-    static const uint8_t one = 1;
+    static constexpr unsigned wordSize = sizeof(uint8_t) * 8;
+    static constexpr unsigned words = (Size + wordSize - 1) / wordSize;
+    static constexpr uint8_t one = 1;
 
     uint8_t bits[words];
 };

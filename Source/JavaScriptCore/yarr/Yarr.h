@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Peter Varga (pvarga@inf.u-szeged.hu), University of Szeged
  * All rights reserved.
  *
@@ -42,12 +42,12 @@ namespace JSC { namespace Yarr {
 #define YarrStackSpaceForBackTrackInfoParentheses 4
 #define YarrStackSpaceForDotStarEnclosure 1
 
-static const unsigned quantifyInfinite = UINT_MAX;
-static const unsigned offsetNoMatch = std::numeric_limits<unsigned>::max();
+static constexpr unsigned quantifyInfinite = UINT_MAX;
+static constexpr unsigned offsetNoMatch = std::numeric_limits<unsigned>::max();
 
 // The below limit restricts the number of "recursive" match calls in order to
 // avoid spending exponential time on complex regular expressions.
-static const unsigned matchLimit = 1000000;
+static constexpr unsigned matchLimit = 1000000;
 
 enum JSRegExpResult {
     JSRegExpMatch = 1,

@@ -36,7 +36,7 @@ static constexpr unsigned maxCapacity = String::MaxLength;
 
 static unsigned expandedCapacity(unsigned capacity, unsigned requiredLength)
 {
-    static const unsigned minimumCapacity = 16;
+    static constexpr unsigned minimumCapacity = 16;
     return std::max(requiredLength, std::max(minimumCapacity, std::min(capacity * 2, maxCapacity)));
 }
 

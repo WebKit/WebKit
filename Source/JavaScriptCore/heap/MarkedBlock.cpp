@@ -44,7 +44,7 @@ static constexpr bool verbose = false;
 
 const size_t MarkedBlock::blockSize;
 
-static const bool computeBalance = false;
+static constexpr bool computeBalance = false;
 static size_t balance;
 
 MarkedBlock::Handle* MarkedBlock::tryCreate(Heap& heap, AlignedMemoryAllocator* alignedMemoryAllocator)

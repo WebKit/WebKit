@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -567,12 +567,12 @@ private:
 namespace WTF {
 template <>
 struct VectorTraits<JSC::DFG::AbstractValue> : VectorTraitsBase<false, JSC::DFG::AbstractValue> {
-    static const bool canInitializeWithMemset = true;
+    static constexpr bool canInitializeWithMemset = true;
 };
 
 template <>
 struct HashTraits<JSC::DFG::AbstractValue> : GenericHashTraits<JSC::DFG::AbstractValue> {
-    static const bool emptyValueIsZero = true;
+    static constexpr bool emptyValueIsZero = true;
 };
 };
 #endif // USE(JSVALUE64)

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005-2018 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -336,7 +336,7 @@ template<typename T> inline RetainPtr<typename RetainPtr<T>::HelperPtrType> reta
 }
 
 template <typename T> struct IsSmartPtr<RetainPtr<T>> {
-    static const bool value = true;
+    static constexpr bool value = true;
 };
 
 template<typename P> struct HashTraits<RetainPtr<P>> : SimpleClassHashTraits<RetainPtr<P>> {
@@ -366,7 +366,7 @@ struct RetainPtrObjectHash {
     {
         return CFEqual(a.get(), b.get());
     }
-    static const bool safeToCompareToEmptyOrDeleted = false;
+    static constexpr bool safeToCompareToEmptyOrDeleted = false;
 };
 
 inline bool safeCFEqual(CFTypeRef a, CFTypeRef b)

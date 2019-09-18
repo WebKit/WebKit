@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All Rights Reserved.
  * Copyright (C) 2013 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -113,9 +113,9 @@ namespace WTF {
 
 enum CheckMoveParameterTag { CheckMoveParameter };
 
-static const size_t KB = 1024;
-static const size_t MB = 1024 * 1024;
-static const size_t GB = 1024 * 1024 * 1024;
+static constexpr size_t KB = 1024;
+static constexpr size_t MB = 1024 * 1024;
+static constexpr size_t GB = 1024 * 1024 * 1024;
 
 inline bool isPointerAligned(void* p)
 {

@@ -279,8 +279,8 @@ public:
 
 void WTFReportBacktrace()
 {
-    static const int framesToShow = 31;
-    static const int framesToSkip = 2;
+    static constexpr int framesToShow = 31;
+    static constexpr int framesToSkip = 2;
     void* samples[framesToShow + framesToSkip];
     int frames = framesToShow + framesToSkip;
 

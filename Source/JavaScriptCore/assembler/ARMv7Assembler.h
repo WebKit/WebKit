@@ -103,9 +103,9 @@ class ARMThumbImmediate {
     friend class ARMv7Assembler;
 
     typedef uint8_t ThumbImmediateType;
-    static const ThumbImmediateType TypeInvalid = 0;
-    static const ThumbImmediateType TypeEncoded = 1;
-    static const ThumbImmediateType TypeUInt16 = 2;
+    static constexpr ThumbImmediateType TypeInvalid = 0;
+    static constexpr ThumbImmediateType TypeEncoded = 1;
+    static constexpr ThumbImmediateType TypeUInt16 = 2;
 
     typedef union {
         int16_t asInt;

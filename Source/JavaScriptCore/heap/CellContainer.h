@@ -94,7 +94,7 @@ public:
     WeakSet& weakSet() const;
     
 private:
-    static const uintptr_t isLargeAllocationBit = 1;
+    static constexpr uintptr_t isLargeAllocationBit = 1;
     uintptr_t m_encodedPointer;
 };
 

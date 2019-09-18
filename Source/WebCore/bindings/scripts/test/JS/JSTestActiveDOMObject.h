@@ -52,7 +52,7 @@ public:
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 public:
-    static const unsigned StructureFlags = Base::StructureFlags | JSC::HasPutPropertySecurityCheck | JSC::HasStaticPropertyTable;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasPutPropertySecurityCheck | JSC::HasStaticPropertyTable;
 protected:
     JSTestActiveDOMObject(JSC::Structure*, JSDOMGlobalObject&, Ref<TestActiveDOMObject>&&);
 

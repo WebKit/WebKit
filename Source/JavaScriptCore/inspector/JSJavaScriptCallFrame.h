@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,7 @@ namespace Inspector {
 class JSJavaScriptCallFrame final : public JSC::JSDestructibleObject {
 public:
     typedef JSC::JSDestructibleObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     DECLARE_INFO;
 
@@ -71,13 +71,13 @@ public:
     JSC::JSValue isTailDeleted(JSC::ExecState*) const;
 
     // Constants.
-    static const unsigned short GLOBAL_SCOPE = 0;
-    static const unsigned short WITH_SCOPE = 1;
-    static const unsigned short CLOSURE_SCOPE = 2;
-    static const unsigned short CATCH_SCOPE = 3;
-    static const unsigned short FUNCTION_NAME_SCOPE = 4;
-    static const unsigned short GLOBAL_LEXICAL_ENVIRONMENT_SCOPE = 5;
-    static const unsigned short NESTED_LEXICAL_SCOPE = 6;
+    static constexpr unsigned short GLOBAL_SCOPE = 0;
+    static constexpr unsigned short WITH_SCOPE = 1;
+    static constexpr unsigned short CLOSURE_SCOPE = 2;
+    static constexpr unsigned short CATCH_SCOPE = 3;
+    static constexpr unsigned short FUNCTION_NAME_SCOPE = 4;
+    static constexpr unsigned short GLOBAL_LEXICAL_ENVIRONMENT_SCOPE = 5;
+    static constexpr unsigned short NESTED_LEXICAL_SCOPE = 6;
 
 protected:
     void finishCreation(JSC::VM&);

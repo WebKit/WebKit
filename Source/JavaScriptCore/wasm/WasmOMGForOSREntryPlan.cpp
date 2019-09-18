@@ -51,7 +51,7 @@
 namespace JSC { namespace Wasm {
 
 namespace WasmOMGForOSREntryPlanInternal {
-static const bool verbose = false;
+static constexpr bool verbose = false;
 }
 
 OMGForOSREntryPlan::OMGForOSREntryPlan(Context* context, Ref<Module>&& module, Ref<BBQCallee>&& callee, uint32_t functionIndex, uint32_t loopIndex, CodeBlock& codeBlock, CompletionTask&& task)

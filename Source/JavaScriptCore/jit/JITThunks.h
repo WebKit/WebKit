@@ -87,7 +87,7 @@ private:
         {
             return (std::get<0>(a) == std::get<0>(b)) && (std::get<1>(a) == std::get<1>(b)) && (std::get<2>(a) == std::get<2>(b));
         }
-        static const bool safeToCompareToEmptyOrDeleted = true;
+        static constexpr bool safeToCompareToEmptyOrDeleted = true;
 
     private:
         static inline unsigned hashPointer(TaggedNativeFunction p)
@@ -97,7 +97,7 @@ private:
     };
 
     struct HostFunctionHashTrait : WTF::GenericHashTraits<HostFunctionKey> {
-        static const bool emptyValueIsZero = true;
+        static constexpr bool emptyValueIsZero = true;
         static EmptyValueType emptyValue() { return std::make_tuple(nullptr, nullptr, String()); }
 
         static void constructDeletedValue(HostFunctionKey& slot) { std::get<0>(slot) = TaggedNativeFunction(-1); }

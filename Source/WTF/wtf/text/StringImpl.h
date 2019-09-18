@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2005-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -94,7 +94,7 @@ struct StringStats {
     void removeString(StringImpl&);
     void printStats();
 
-    static const unsigned s_printStringStatsFrequency = 5000;
+    static constexpr unsigned s_printStringStatsFrequency = 5000;
     static std::atomic<unsigned> s_stringRemovesTillPrintStats;
 
     std::atomic<unsigned> m_refCalls;
@@ -519,8 +519,8 @@ private:
     WTF_EXPORT_PRIVATE NEVER_INLINE unsigned hashSlowCase() const;
 
     // The bottom bit in the ref count indicates a static (immortal) string.
-    static const unsigned s_refCountFlagIsStaticString = 0x1;
-    static const unsigned s_refCountIncrement = 0x2; // This allows us to ref / deref without disturbing the static string flag.
+    static constexpr unsigned s_refCountFlagIsStaticString = 0x1;
+    static constexpr unsigned s_refCountIncrement = 0x2; // This allows us to ref / deref without disturbing the static string flag.
 
 #if STRING_STATS
     WTF_EXPORT_PRIVATE static StringStats m_stringStats;

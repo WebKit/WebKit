@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,7 @@ template<typename LockType, LockType isHeldBit, LockType hasParkedBit, typename 
 void LockAlgorithm<LockType, isHeldBit, hasParkedBit, Hooks>::lockSlow(Atomic<LockType>& lock)
 {
     // This magic number turns out to be optimal based on past JikesRVM experiments.
-    static const unsigned spinLimit = 40;
+    static constexpr unsigned spinLimit = 40;
     
     unsigned spinCount = 0;
     

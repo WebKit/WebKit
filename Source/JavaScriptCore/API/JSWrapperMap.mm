@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015, 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,11 +46,11 @@
 
 #if PLATFORM(APPLETV)
 #else
-static const int32_t firstJavaScriptCoreVersionWithInitConstructorSupport = 0x21A0400; // 538.4.0
+static constexpr int32_t firstJavaScriptCoreVersionWithInitConstructorSupport = 0x21A0400; // 538.4.0
 #if PLATFORM(IOS_FAMILY)
-static const uint32_t firstSDKVersionWithInitConstructorSupport = DYLD_IOS_VERSION_10_0;
+static constexpr uint32_t firstSDKVersionWithInitConstructorSupport = DYLD_IOS_VERSION_10_0;
 #elif PLATFORM(MAC)
-static const uint32_t firstSDKVersionWithInitConstructorSupport = 0xA0A00; // OSX 10.10.0
+static constexpr uint32_t firstSDKVersionWithInitConstructorSupport = 0xA0A00; // OSX 10.10.0
 #endif
 #endif
 

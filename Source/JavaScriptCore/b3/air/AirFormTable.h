@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,13 +31,13 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
-static const uint8_t formRoleShift = 0;
-static const uint8_t formRoleMask = 15;
-static const uint8_t formBankShift = 4;
-static const uint8_t formBankMask = 1;
-static const uint8_t formWidthShift = 5;
-static const uint8_t formWidthMask = 3;
-static const uint8_t formInvalidShift = 7;
+static constexpr uint8_t formRoleShift = 0;
+static constexpr uint8_t formRoleMask = 15;
+static constexpr uint8_t formBankShift = 4;
+static constexpr uint8_t formBankMask = 1;
+static constexpr uint8_t formWidthShift = 5;
+static constexpr uint8_t formWidthMask = 3;
+static constexpr uint8_t formInvalidShift = 7;
 
 #define ENCODE_INST_FORM(role, bank, width) (static_cast<uint8_t>(role) << formRoleShift | static_cast<uint8_t>(bank) << formBankShift | static_cast<uint8_t>(width) << formWidthShift)
 

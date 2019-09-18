@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,12 +35,12 @@ namespace JSC { namespace DFG {
 
 class LazyNode {
 public:
-    static const size_t jsConstantTag = 0;
-    static const size_t doubleConstantTag = 1;
-    static const size_t int52ConstantTag = 2;
+    static constexpr size_t jsConstantTag = 0;
+    static constexpr size_t doubleConstantTag = 1;
+    static constexpr size_t int52ConstantTag = 2;
 
-    static const uintptr_t tagMask = 0x3;
-    static const uintptr_t pointerMask = ~tagMask;
+    static constexpr uintptr_t tagMask = 0x3;
+    static constexpr uintptr_t pointerMask = ~tagMask;
 
     explicit LazyNode(Node* node = nullptr)
         : m_node(node)
@@ -177,7 +177,7 @@ namespace WTF {
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::DFG::LazyNode> : SimpleClassHashTraits<JSC::DFG::LazyNode> {
-    static const bool emptyValueIsZero = true;
+    static constexpr bool emptyValueIsZero = true;
 };
 
 } // namespace WTF

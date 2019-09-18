@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,8 +45,8 @@ inline bool isCharacterAllowedInBase(UChar c, int base)
 template<typename IntegralType, typename CharacterType>
 inline IntegralType toIntegralType(const CharacterType* data, size_t length, bool* ok = nullptr, int base = 10)
 {
-    static const IntegralType integralMax = std::numeric_limits<IntegralType>::max();
-    static const bool isSigned = std::numeric_limits<IntegralType>::is_signed;
+    static constexpr IntegralType integralMax = std::numeric_limits<IntegralType>::max();
+    static constexpr bool isSigned = std::numeric_limits<IntegralType>::is_signed;
     const IntegralType maxMultiplier = integralMax / base;
 
     IntegralType value = 0;

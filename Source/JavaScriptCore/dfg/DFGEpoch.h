@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,8 +109,8 @@ public:
     void dump(PrintStream&) const;
     
 private:
-    static const unsigned s_none = 0;
-    static const unsigned s_first = 1;
+    static constexpr unsigned s_none = 0;
+    static constexpr unsigned s_first = 1;
     
     unsigned m_epoch;
 };

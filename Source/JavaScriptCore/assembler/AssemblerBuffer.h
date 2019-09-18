@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,7 +68,7 @@ namespace JSC {
 
     class AssemblerData {
         WTF_MAKE_NONCOPYABLE(AssemblerData);
-        static const size_t InlineCapacity = 128;
+        static constexpr size_t InlineCapacity = 128;
     public:
         AssemblerData()
             : m_buffer(m_inlineBuffer)

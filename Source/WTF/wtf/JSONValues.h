@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -52,7 +52,7 @@ class ObjectBase;
 // FIXME: unify this JSON parser with JSONParse in JavaScriptCore.
 class WTF_EXPORT_PRIVATE Value : public RefCounted<Value> {
 public:
-    static const int maxDepth = 1000;
+    static constexpr int maxDepth = 1000;
 
     virtual ~Value()
     {

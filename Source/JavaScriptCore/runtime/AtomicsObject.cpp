@@ -195,7 +195,7 @@ EncodedJSValue atomicOperationWithArgs(ExecState* exec, const Func& func)
 }
 
 struct AddFunc {
-    static const unsigned numExtraArgs = 1;
+    static constexpr unsigned numExtraArgs = 1;
     
     template<typename T>
     JSValue operator()(T* ptr, const double* args) const
@@ -205,7 +205,7 @@ struct AddFunc {
 };
 
 struct AndFunc {
-    static const unsigned numExtraArgs = 1;
+    static constexpr unsigned numExtraArgs = 1;
     
     template<typename T>
     JSValue operator()(T* ptr, const double* args) const
@@ -215,7 +215,7 @@ struct AndFunc {
 };
 
 struct CompareExchangeFunc {
-    static const unsigned numExtraArgs = 2;
+    static constexpr unsigned numExtraArgs = 2;
     
     template<typename T>
     JSValue operator()(T* ptr, const double* args) const
@@ -227,7 +227,7 @@ struct CompareExchangeFunc {
 };
 
 struct ExchangeFunc {
-    static const unsigned numExtraArgs = 1;
+    static constexpr unsigned numExtraArgs = 1;
     
     template<typename T>
     JSValue operator()(T* ptr, const double* args) const
@@ -237,7 +237,7 @@ struct ExchangeFunc {
 };
 
 struct LoadFunc {
-    static const unsigned numExtraArgs = 0;
+    static constexpr unsigned numExtraArgs = 0;
     
     template<typename T>
     JSValue operator()(T* ptr, const double*) const
@@ -247,7 +247,7 @@ struct LoadFunc {
 };
 
 struct OrFunc {
-    static const unsigned numExtraArgs = 1;
+    static constexpr unsigned numExtraArgs = 1;
     
     template<typename T>
     JSValue operator()(T* ptr, const double* args) const
@@ -257,7 +257,7 @@ struct OrFunc {
 };
 
 struct StoreFunc {
-    static const unsigned numExtraArgs = 1;
+    static constexpr unsigned numExtraArgs = 1;
     
     template<typename T>
     JSValue operator()(T* ptr, const double* args) const
@@ -270,7 +270,7 @@ struct StoreFunc {
 };
 
 struct SubFunc {
-    static const unsigned numExtraArgs = 1;
+    static constexpr unsigned numExtraArgs = 1;
     
     template<typename T>
     JSValue operator()(T* ptr, const double* args) const
@@ -280,7 +280,7 @@ struct SubFunc {
 };
 
 struct XorFunc {
-    static const unsigned numExtraArgs = 1;
+    static constexpr unsigned numExtraArgs = 1;
     
     template<typename T>
     JSValue operator()(T* ptr, const double* args) const

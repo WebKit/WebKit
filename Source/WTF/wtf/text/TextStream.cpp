@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,11 +31,11 @@
 
 namespace WTF {
 
-static const size_t printBufferSize = 100; // large enough for any integer or floating point value in string format, including trailing null character
+static constexpr size_t printBufferSize = 100; // large enough for any integer or floating point value in string format, including trailing null character
 
 static inline bool hasFractions(double val)
 {
-    static const double s_epsilon = 0.0001;
+    static constexpr double s_epsilon = 0.0001;
     int ival = static_cast<int>(val);
     double dval = static_cast<double>(ival);
     return fabs(val - dval) > s_epsilon;

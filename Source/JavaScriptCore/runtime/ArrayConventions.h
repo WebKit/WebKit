@@ -91,7 +91,7 @@ static_assert(MAX_STORAGE_VECTOR_INDEX <= MAX_ARRAY_INDEX, "MAX_STORAGE_VECTOR_I
 // For all array indices under MIN_SPARSE_ARRAY_INDEX, we always use a vector.
 // When indices greater than MIN_SPARSE_ARRAY_INDEX are involved, we use a vector
 // as long as it is 1/8 full. If more sparse than that, we use a map.
-static const unsigned minDensityMultiplier = 8;
+static constexpr unsigned minDensityMultiplier = 8;
 
 inline bool isDenseEnoughForVector(unsigned length, unsigned numValues)
 {

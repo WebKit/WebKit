@@ -282,7 +282,7 @@ namespace detail
         static auto test(P * p) -> decltype(C::at(*p), std::true_type());
         template <typename, typename>
         static std::false_type test(...);
-        static const bool value = std::is_same<std::true_type, decltype(test<T, dummy>(nullptr))>::value;
+        static constexpr bool value = std::is_same<std::true_type, decltype(test<T, dummy>(nullptr))>::value;
     };
     template <class L, typename Index, bool>
     struct at_dispatch
@@ -2286,7 +2286,7 @@ namespace detail
         static auto test(P * p) -> decltype(C::erase(type_<P>{}), std::true_type());
         template <typename, typename>
         static std::false_type test(...);
-        static const bool value = std::is_same<std::true_type, decltype(test<T, dummy>(nullptr))>::value;
+        static constexpr bool value = std::is_same<std::true_type, decltype(test<T, dummy>(nullptr))>::value;
     };
     template<class L, class I, bool>
     struct erase_dispatch

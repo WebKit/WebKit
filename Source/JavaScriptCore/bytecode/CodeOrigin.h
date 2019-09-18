@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -282,13 +282,13 @@ inline bool CodeOrigin::operator==(const CodeOrigin& other) const
 struct CodeOriginHash {
     static unsigned hash(const CodeOrigin& key) { return key.hash(); }
     static bool equal(const CodeOrigin& a, const CodeOrigin& b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = true;
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
 struct CodeOriginApproximateHash {
     static unsigned hash(const CodeOrigin& key) { return key.approximateHash(); }
     static bool equal(const CodeOrigin& a, const CodeOrigin& b) { return a.isApproximatelyEqualTo(b); }
-    static const bool safeToCompareToEmptyOrDeleted = true;
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
 } // namespace JSC
@@ -302,7 +302,7 @@ template<> struct DefaultHash<JSC::CodeOrigin> {
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::CodeOrigin> : SimpleClassHashTraits<JSC::CodeOrigin> {
-    static const bool emptyValueIsZero = false;
+    static constexpr bool emptyValueIsZero = false;
 };
 
 } // namespace WTF

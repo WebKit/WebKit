@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,24 +38,24 @@ template<bool isInteger, typename T> struct GenericHashTraitsBase;
 
 template<typename T> struct GenericHashTraitsBase<false, T> {
     // The emptyValueIsZero flag is used to optimize allocation of empty hash tables with zeroed memory.
-    static const bool emptyValueIsZero = false;
+    static constexpr bool emptyValueIsZero = false;
 
     // The hasIsEmptyValueFunction flag allows the hash table to automatically generate code to check
     // for the empty value when it can be done with the equality operator, but allows custom functions
     // for cases like String that need them.
-    static const bool hasIsEmptyValueFunction = false;
+    static constexpr bool hasIsEmptyValueFunction = false;
 
     // Used by WeakPtr to indicate that the value may become deleted without being explicitly removed.
-    static const bool hasIsReleasedWeakValueFunction = false;
+    static constexpr bool hasIsReleasedWeakValueFunction = false;
 
     // The starting table size. Can be overridden when we know beforehand that
     // a hash table will have at least N entries.
-    static const unsigned minimumTableSize = 8;
+    static constexpr unsigned minimumTableSize = 8;
 };
 
 // Default integer traits disallow both 0 and -1 as keys (max value instead of -1 for unsigned).
 template<typename T> struct GenericHashTraitsBase<true, T> : GenericHashTraitsBase<false, T> {
-    static const bool emptyValueIsZero = true;
+    static constexpr bool emptyValueIsZero = true;
     static void constructDeletedValue(T& slot) { slot = static_cast<T>(-1); }
     static bool isDeletedValue(T value) { return value == static_cast<T>(-1); }
 };
@@ -99,14 +99,14 @@ template<> struct HashTraits<double> : FloatHashTraits<double> { };
 
 // Default unsigned traits disallow both 0 and max as keys -- use these traits to allow zero and disallow max - 1.
 template<typename T> struct UnsignedWithZeroKeyHashTraits : GenericHashTraits<T> {
-    static const bool emptyValueIsZero = false;
+    static constexpr bool emptyValueIsZero = false;
     static T emptyValue() { return std::numeric_limits<T>::max(); }
     static void constructDeletedValue(T& slot) { slot = std::numeric_limits<T>::max() - 1; }
     static bool isDeletedValue(T value) { return value == std::numeric_limits<T>::max() - 1; }
 };
 
 template<typename T> struct SignedWithZeroKeyHashTraits : GenericHashTraits<T> {
-    static const bool emptyValueIsZero = false;
+    static constexpr bool emptyValueIsZero = false;
     static T emptyValue() { return std::numeric_limits<T>::min(); }
     static void constructDeletedValue(T& slot) { slot = std::numeric_limits<T>::max(); }
     static bool isDeletedValue(T value) { return value == std::numeric_limits<T>::max(); }
@@ -115,14 +115,14 @@ template<typename T> struct SignedWithZeroKeyHashTraits : GenericHashTraits<T> {
 // Can be used with strong enums, allows zero as key.
 template<typename T> struct StrongEnumHashTraits : GenericHashTraits<T> {
     using UnderlyingType = typename std::underlying_type<T>::type;
-    static const bool emptyValueIsZero = false;
+    static constexpr bool emptyValueIsZero = false;
     static T emptyValue() { return static_cast<T>(std::numeric_limits<UnderlyingType>::max()); }
     static void constructDeletedValue(T& slot) { slot = static_cast<T>(std::numeric_limits<UnderlyingType>::max() - 1); }
     static bool isDeletedValue(T value) { return value == static_cast<T>(std::numeric_limits<UnderlyingType>::max() - 1); }
 };
 
 template<typename P> struct HashTraits<P*> : GenericHashTraits<P*> {
-    static const bool emptyValueIsZero = true;
+    static constexpr bool emptyValueIsZero = true;
     static void constructDeletedValue(P*& slot) { slot = reinterpret_cast<P*>(-1); }
     static bool isDeletedValue(P* value) { return value == reinterpret_cast<P*>(-1); }
 };
@@ -130,7 +130,7 @@ template<typename P> struct HashTraits<P*> : GenericHashTraits<P*> {
 #ifdef __OBJC__
 
 template<> struct HashTraits<__unsafe_unretained id> : GenericHashTraits<__unsafe_unretained id> {
-    static const bool emptyValueIsZero = true;
+    static constexpr bool emptyValueIsZero = true;
     static void constructDeletedValue(__unsafe_unretained id& slot) { slot = (__bridge __unsafe_unretained id)reinterpret_cast<CFTypeRef>(-1); }
     static bool isDeletedValue(__unsafe_unretained id value) { return (__bridge CFTypeRef)value == reinterpret_cast<CFTypeRef>(-1); }
 };
@@ -138,7 +138,7 @@ template<> struct HashTraits<__unsafe_unretained id> : GenericHashTraits<__unsaf
 #endif
 
 template<typename T> struct SimpleClassHashTraits : GenericHashTraits<T> {
-    static const bool emptyValueIsZero = true;
+    static constexpr bool emptyValueIsZero = true;
     static void constructDeletedValue(T& slot) { new (NotNull, std::addressof(slot)) T(HashTableDeletedValue); }
     static bool isDeletedValue(const T& value) { return value.isHashTableDeletedValue(); }
 };
@@ -196,7 +196,7 @@ template<typename P> struct HashTraits<RefPtr<P>> : SimpleClassHashTraits<RefPtr
 };
 
 template<typename P> struct RefHashTraits : SimpleClassHashTraits<Ref<P>> {
-    static const bool emptyValueIsZero = true;
+    static constexpr bool emptyValueIsZero = true;
     static Ref<P> emptyValue() { return HashTableEmptyValue; }
 
     template <typename>
@@ -205,7 +205,7 @@ template<typename P> struct RefHashTraits : SimpleClassHashTraits<Ref<P>> {
         new (NotNull, std::addressof(slot)) Ref<P>(HashTableEmptyValue);
     }
 
-    static const bool hasIsEmptyValueFunction = true;
+    static constexpr bool hasIsEmptyValueFunction = true;
     static bool isEmptyValue(const Ref<P>& value) { return value.isHashTableEmptyValue(); }
 
     static void assignToEmpty(Ref<P>& emptyValue, Ref<P>&& newValue) { ASSERT(isEmptyValue(emptyValue)); emptyValue.assignToHashTableEmptyValue(WTFMove(newValue)); }
@@ -221,7 +221,7 @@ template<typename P> struct RefHashTraits : SimpleClassHashTraits<Ref<P>> {
 template<typename P> struct HashTraits<Ref<P>> : RefHashTraits<P> { };
 
 template<> struct HashTraits<String> : SimpleClassHashTraits<String> {
-    static const bool hasIsEmptyValueFunction = true;
+    static constexpr bool hasIsEmptyValueFunction = true;
     static bool isEmptyValue(const String&);
 
     static void customDeleteBucket(String&);
@@ -259,7 +259,7 @@ struct HashTraitHasCustomDelete {
     template<typename X> static std::true_type TestHasCustomDelete(X*, decltype(X::customDeleteBucket(bucketArg))* = nullptr);
     static std::false_type TestHasCustomDelete(...);
     typedef decltype(TestHasCustomDelete(static_cast<Traits*>(nullptr))) ResultType;
-    static const bool value = ResultType::value;
+    static constexpr bool value = ResultType::value;
 };
 
 template<typename Traits, typename T>
@@ -284,10 +284,10 @@ struct PairHashTraits : GenericHashTraits<std::pair<typename FirstTraitsArg::Tra
     typedef std::pair<typename FirstTraits::TraitType, typename SecondTraits::TraitType> TraitType;
     typedef std::pair<typename FirstTraits::EmptyValueType, typename SecondTraits::EmptyValueType> EmptyValueType;
 
-    static const bool emptyValueIsZero = FirstTraits::emptyValueIsZero && SecondTraits::emptyValueIsZero;
+    static constexpr bool emptyValueIsZero = FirstTraits::emptyValueIsZero && SecondTraits::emptyValueIsZero;
     static EmptyValueType emptyValue() { return std::make_pair(FirstTraits::emptyValue(), SecondTraits::emptyValue()); }
 
-    static const unsigned minimumTableSize = FirstTraits::minimumTableSize;
+    static constexpr unsigned minimumTableSize = FirstTraits::minimumTableSize;
 
     static void constructDeletedValue(TraitType& slot) { FirstTraits::constructDeletedValue(slot.first); }
     static bool isDeletedValue(const TraitType& value) { return FirstTraits::isDeletedValue(value.first); }
@@ -307,10 +307,10 @@ struct TupleHashTraits : GenericHashTraits<std::tuple<typename FirstTrait::Trait
     static constexpr bool allTrue(BoolType value) { return value; }
     template<typename BoolType, typename... BoolTypes>
     static constexpr bool allTrue(BoolType value, BoolTypes... values) { return value && allTrue(values...); }
-    static const bool emptyValueIsZero = allTrue(FirstTrait::emptyValueIsZero, Traits::emptyValueIsZero...);
+    static constexpr bool emptyValueIsZero = allTrue(FirstTrait::emptyValueIsZero, Traits::emptyValueIsZero...);
     static EmptyValueType emptyValue() { return std::make_tuple(FirstTrait::emptyValue(), Traits::emptyValue()...); }
 
-    static const unsigned minimumTableSize = FirstTrait::minimumTableSize;
+    static constexpr unsigned minimumTableSize = FirstTrait::minimumTableSize;
 
     static void constructDeletedValue(TraitType& slot) { FirstTrait::constructDeletedValue(std::get<0>(slot)); }
     static bool isDeletedValue(const TraitType& value) { return FirstTrait::isDeletedValue(std::get<0>(value)); }
@@ -327,7 +327,7 @@ struct KeyValuePairHashTraits : GenericHashTraits<KeyValuePair<typename KeyTrait
     typedef KeyValuePair<typename KeyTraits::EmptyValueType, typename ValueTraits::EmptyValueType> EmptyValueType;
     typedef typename ValueTraitsArg::TraitType ValueType;
 
-    static const bool emptyValueIsZero = KeyTraits::emptyValueIsZero && ValueTraits::emptyValueIsZero;
+    static constexpr bool emptyValueIsZero = KeyTraits::emptyValueIsZero && ValueTraits::emptyValueIsZero;
     static EmptyValueType emptyValue() { return KeyValuePair<typename KeyTraits::EmptyValueType, typename ValueTraits::EmptyValueType>(KeyTraits::emptyValue(), ValueTraits::emptyValue()); }
 
     template <typename>
@@ -337,7 +337,7 @@ struct KeyValuePairHashTraits : GenericHashTraits<KeyValuePair<typename KeyTrait
         ValueTraits::template constructEmptyValue<ValueTraits>(slot.value);
     }
 
-    static const unsigned minimumTableSize = KeyTraits::minimumTableSize;
+    static constexpr unsigned minimumTableSize = KeyTraits::minimumTableSize;
 
     static void constructDeletedValue(TraitType& slot) { KeyTraits::constructDeletedValue(slot.key); }
     static bool isDeletedValue(const TraitType& value) { return KeyTraits::isDeletedValue(value.key); }
@@ -357,7 +357,7 @@ struct HashTraits<KeyValuePair<Key, Value>> : public KeyValuePairHashTraits<Hash
 
 template<typename T>
 struct NullableHashTraits : public HashTraits<T> {
-    static const bool emptyValueIsZero = false;
+    static constexpr bool emptyValueIsZero = false;
     static T emptyValue() { return reinterpret_cast<T>(1); }
 };
 
@@ -365,8 +365,8 @@ struct NullableHashTraits : public HashTraits<T> {
 // and how to construct both.
 template<typename T>
 struct CustomHashTraits : public GenericHashTraits<T> {
-    static const bool emptyValueIsZero = false;
-    static const bool hasIsEmptyValueFunction = true;
+    static constexpr bool emptyValueIsZero = false;
+    static constexpr bool hasIsEmptyValueFunction = true;
     
     static void constructDeletedValue(T& slot)
     {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,8 +44,8 @@ struct EmptyLockHooks {
 
 template<typename LockType, LockType isHeldBit, LockType hasParkedBit, typename Hooks = EmptyLockHooks<LockType>>
 class LockAlgorithm {
-    static const bool verbose = false;
-    static const LockType mask = isHeldBit | hasParkedBit;
+    static constexpr bool verbose = false;
+    static constexpr LockType mask = isHeldBit | hasParkedBit;
 
 public:
     static bool lockFastAssumingZero(Atomic<LockType>& lock)

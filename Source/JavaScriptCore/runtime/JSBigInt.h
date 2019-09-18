@@ -38,7 +38,7 @@ namespace JSC {
 
 class JSBigInt final : public JSCell {
     using Base = JSCell;
-    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal | OverridesToThis;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal | OverridesToThis;
     friend class CachedBigInt;
 
 public:

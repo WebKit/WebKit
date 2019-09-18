@@ -640,7 +640,7 @@ private:
 };
 
 // We clamp recursion well beyond anything reasonable.
-static const unsigned maximumFilterRecursion = 40000;
+static constexpr unsigned maximumFilterRecursion = 40000;
 enum WalkerState { StateUnknown, ArrayStartState, ArrayStartVisitMember, ArrayEndVisitMember, 
                                  ObjectStartState, ObjectStartVisitMember, ObjectEndVisitMember };
 NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)

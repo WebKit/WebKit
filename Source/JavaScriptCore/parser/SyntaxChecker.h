@@ -140,11 +140,11 @@ public:
     typedef DestructuringPattern ObjectPattern;
     typedef DestructuringPattern RestPattern;
 
-    static const bool CreatesAST = false;
-    static const bool NeedsFreeVariableInfo = false;
-    static const bool CanUseFunctionCache = true;
-    static const unsigned DontBuildKeywords = LexexFlagsDontBuildKeywords;
-    static const unsigned DontBuildStrings = LexerFlagsDontBuildStrings;
+    static constexpr bool CreatesAST = false;
+    static constexpr bool NeedsFreeVariableInfo = false;
+    static constexpr bool CanUseFunctionCache = true;
+    static constexpr unsigned DontBuildKeywords = LexexFlagsDontBuildKeywords;
+    static constexpr unsigned DontBuildStrings = LexerFlagsDontBuildStrings;
 
     int createSourceElements() { return SourceElementsResult; }
     ExpressionType makeFunctionCallNode(const JSTokenLocation&, ExpressionType, bool, int, int, int, int, size_t, bool) { return CallExpr; }

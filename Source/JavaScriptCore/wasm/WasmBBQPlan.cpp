@@ -49,7 +49,7 @@
 namespace JSC { namespace Wasm {
 
 namespace WasmBBQPlanInternal {
-static const bool verbose = false;
+static constexpr bool verbose = false;
 }
 
 BBQPlan::BBQPlan(Context* context, const Vector<Ref<BBQCallee>>& callees, Ref<ModuleInformation> info, AsyncWork work, CompletionTask&& task, CreateEmbedderWrapper&& createEmbedderWrapper, ThrowWasmException throwWasmException)

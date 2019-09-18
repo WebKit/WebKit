@@ -39,7 +39,7 @@
 
 namespace JSC {
 namespace AbstractModuleRecordInternal {
-static const bool verbose = false;
+static constexpr bool verbose = false;
 } // namespace AbstractModuleRecordInternal
 
 const ClassInfo AbstractModuleRecord::s_info = { "AbstractModuleRecord", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AbstractModuleRecord) };
@@ -173,7 +173,7 @@ struct AbstractModuleRecord::ResolveQuery {
     struct Hash {
         static unsigned hash(const ResolveQuery&);
         static bool equal(const ResolveQuery&, const ResolveQuery&);
-        static const bool safeToCompareToEmptyOrDeleted = true;
+        static constexpr bool safeToCompareToEmptyOrDeleted = true;
     };
     using HashTraits = WTF::CustomHashTraits<ResolveQuery>;
 

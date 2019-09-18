@@ -72,7 +72,7 @@ namespace JSC { namespace B3 {
 namespace {
 
 namespace B3LowerToAirInternal {
-static const bool verbose = false;
+static constexpr bool verbose = false;
 }
 
 using Arg = Air::Arg;
@@ -531,7 +531,7 @@ private:
             return Arg::addr(tmp(address), offset);
         };
         
-        static const unsigned lotsOfUses = 10; // This is arbitrary and we should tune it eventually.
+        static constexpr unsigned lotsOfUses = 10; // This is arbitrary and we should tune it eventually.
 
         // Only match if the address value isn't used in some large number of places.
         if (m_useCounts.numUses(address) > lotsOfUses)

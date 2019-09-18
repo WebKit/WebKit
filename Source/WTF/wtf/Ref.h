@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -239,7 +239,7 @@ struct GetPtrHelper<Ref<T, U>> {
 
 template <typename T, typename U>
 struct IsSmartPtr<Ref<T, U>> {
-    static const bool value = true;
+    static constexpr bool value = true;
 };
 
 template<typename T, typename U>

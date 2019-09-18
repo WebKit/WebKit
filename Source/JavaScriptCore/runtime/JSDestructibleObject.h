@@ -35,7 +35,7 @@ class JSDestructibleObject : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 
-    static const bool needsDestruction = true;
+    static constexpr bool needsDestruction = true;
     
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)

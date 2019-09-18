@@ -64,7 +64,7 @@ JS_EXPORT_PRIVATE Exception* throwTerminatedExecutionException(ExecState*, Throw
 class TerminatedExecutionError final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     static TerminatedExecutionError* create(VM& vm)
     {

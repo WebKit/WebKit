@@ -36,7 +36,7 @@ class IsoCellSet;
 class ScriptExecutable : public ExecutableBase {
 public:
     typedef ExecutableBase Base;
-    static const unsigned StructureFlags = Base::StructureFlags;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static void destroy(JSCell*);
 

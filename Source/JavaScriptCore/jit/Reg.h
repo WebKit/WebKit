@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -226,7 +226,7 @@ private:
 struct RegHash {
     static unsigned hash(const Reg& key) { return key.hash(); }
     static bool equal(const Reg& a, const Reg& b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = true;
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
 } // namespace JSC
@@ -240,7 +240,7 @@ template<> struct DefaultHash<JSC::Reg> {
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::Reg> : SimpleClassHashTraits<JSC::Reg> {
-    static const bool emptyValueIsZero = false;
+    static constexpr bool emptyValueIsZero = false;
  };
 
 } // namespace WTF

@@ -68,7 +68,7 @@ template<typename T> struct PerThreadStorage;
 // For now, we only support PerThread<PerHeapKind<Cache>>. We can expand to other types by
 // using more keys.
 template<> struct PerThreadStorage<PerHeapKind<Cache>> {
-    static const pthread_key_t key = __PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0;
+    static constexpr pthread_key_t key = __PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0;
 
     static void* get()
     {

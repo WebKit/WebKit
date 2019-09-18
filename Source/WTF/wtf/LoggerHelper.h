@@ -58,8 +58,8 @@ public:
 
     const void* childLogIdentifier(uint64_t identifier) const
     {
-        static const uint64_t parentMask = 0xffffffffffff0000ull;
-        static const uint64_t maskLowerWord = 0xffffull;
+        static constexpr uint64_t parentMask = 0xffffffffffff0000ull;
+        static constexpr uint64_t maskLowerWord = 0xffffull;
         return reinterpret_cast<const void*>((reinterpret_cast<uint64_t>(logIdentifier()) & parentMask) | (identifier & maskLowerWord));
     }
 

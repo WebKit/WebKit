@@ -503,7 +503,7 @@ public:
     void retFloat(FPRegisterID) { ret(); }
     void retDouble(FPRegisterID) { ret(); }
 
-    static const unsigned BlindingModulus = 64;
+    static constexpr unsigned BlindingModulus = 64;
     bool shouldConsiderBlinding()
     {
         return !(random() & (BlindingModulus - 1));

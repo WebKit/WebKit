@@ -56,7 +56,7 @@ public:
 
     DECLARE_INFO;
 
-    static const bool needsDestruction = true;
+    static constexpr bool needsDestruction = true;
 
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)

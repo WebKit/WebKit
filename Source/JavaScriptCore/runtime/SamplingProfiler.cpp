@@ -65,8 +65,8 @@ static double sNumTotalWalks = 0;
 static double sNumFailedWalks = 0;
 static const uint32_t sNumWalkReportingFrequency = 50;
 static const double sWalkErrorPercentage = .05;
-static const bool sReportStatsOnlyWhenTheyreAboveThreshold = false;
-static const bool sReportStats = false;
+static constexpr bool sReportStatsOnlyWhenTheyreAboveThreshold = false;
+static constexpr bool sReportStats = false;
 
 using FrameType = SamplingProfiler::FrameType;
 using UnprocessedStackFrame = SamplingProfiler::UnprocessedStackFrame;

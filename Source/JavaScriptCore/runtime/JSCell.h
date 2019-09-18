@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -82,9 +82,9 @@ class JSCell : public HeapCell {
     friend void* tryAllocateCellHelper(Heap&, size_t, GCDeferralContext*, AllocationFailureMode);
 
 public:
-    static const unsigned StructureFlags = 0;
+    static constexpr unsigned StructureFlags = 0;
 
-    static const bool needsDestruction = false;
+    static constexpr bool needsDestruction = false;
 
     // Don't call this directly. Call JSC::subspaceFor<Type>(vm) instead.
     // FIXME: Refer to Subspace by reference.

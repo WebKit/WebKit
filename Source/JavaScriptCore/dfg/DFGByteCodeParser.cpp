@@ -80,9 +80,9 @@ namespace JSC { namespace DFG {
 
 namespace DFGByteCodeParserInternal {
 #ifdef NDEBUG
-static const bool verbose = false;
+static constexpr bool verbose = false;
 #else
-static const bool verbose = true;
+static constexpr bool verbose = true;
 #endif
 } // namespace DFGByteCodeParserInternal
 

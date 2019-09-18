@@ -45,7 +45,7 @@ namespace WTF {
 typedef Vector<char, 512> CharBuffer;
 typedef Vector<UChar, 512> UCharBuffer;
 
-static const unsigned invalidPortNumber = 0xFFFF;
+static constexpr unsigned invalidPortNumber = 0xFFFF;
 
 // Copies the source to the destination, assuming all the source characters are
 // ASCII. The destination buffer must be large enough. Null characters are allowed

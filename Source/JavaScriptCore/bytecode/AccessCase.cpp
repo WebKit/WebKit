@@ -51,7 +51,7 @@
 namespace JSC {
 
 namespace AccessCaseInternal {
-static const bool verbose = false;
+static constexpr bool verbose = false;
 }
 
 AccessCase::AccessCase(VM& vm, JSCell* owner, AccessType type, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain)

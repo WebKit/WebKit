@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved
+ * Copyright (C) 2006-2019 Apple Inc. All rights reserved
  * Copyright (C) Research In Motion Limited 2009. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -75,7 +75,7 @@ namespace WTF {
             return equal(a.impl(), b.impl());
         }
 
-        static const bool safeToCompareToEmptyOrDeleted = false;
+        static constexpr bool safeToCompareToEmptyOrDeleted = false;
     };
 
     struct ASCIICaseInsensitiveHash {
@@ -154,7 +154,7 @@ namespace WTF {
             return a == b || equal(a.impl(), b.impl());
         }
 
-        static const bool safeToCompareToEmptyOrDeleted = false;
+        static constexpr bool safeToCompareToEmptyOrDeleted = false;
     };
 
     // This hash can be used in cases where the key is a hash of a string, but we don't

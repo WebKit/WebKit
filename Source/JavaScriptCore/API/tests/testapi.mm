@@ -1340,7 +1340,7 @@ static void testObjectiveCAPIMain()
     }
 
     @autoreleasepool {
-        static const unsigned count = 100;
+        static constexpr unsigned count = 100;
         NSMutableArray *array = [NSMutableArray arrayWithCapacity:count];
         JSContext *context = [[JSContext alloc] init];
         @autoreleasepool {

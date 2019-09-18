@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -45,7 +45,7 @@ TextBreakIterator::TextBreakIterator(StringView string, Mode mode, const AtomStr
 {
 }
 
-static const int maxLocaleStringLength = 32;
+static constexpr int maxLocaleStringLength = 32;
 
 static inline RetainPtr<CFStringRef> textBreakLocalePreference()
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -221,7 +221,7 @@ private:
 struct VarOffsetHash {
     static unsigned hash(const VarOffset& key) { return key.hash(); }
     static bool equal(const VarOffset& a, const VarOffset& b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = true;
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
 } // namespace JSC
@@ -237,7 +237,7 @@ template<> struct DefaultHash<JSC::VarOffset> {
 
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::VarOffset> : SimpleClassHashTraits<JSC::VarOffset> {
-    static const bool emptyValueIsZero = false;
+    static constexpr bool emptyValueIsZero = false;
 };
 
 } // namespace WTF

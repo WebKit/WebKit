@@ -149,7 +149,7 @@ void JSString::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.reportExtraMemoryVisited(impl->costDuringGC());
 }
 
-static const unsigned maxLengthForOnStackResolve = 2048;
+static constexpr unsigned maxLengthForOnStackResolve = 2048;
 
 void JSRopeString::resolveRopeInternal8(LChar* buffer) const
 {

@@ -36,7 +36,7 @@ class JSWebAssemblyModule;
 class WebAssemblyToJSCallee final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
-    static const unsigned StructureFlags = Base::StructureFlags;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static WebAssemblyToJSCallee* create(VM&, Structure*, JSWebAssemblyModule*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);

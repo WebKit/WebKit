@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -89,7 +89,7 @@ bool canAccessThreadLocalDataForThread(Thread& thread)
 #endif
 
 // 0.1 sec delays in UI is approximate threshold when they become noticeable. Have a limit that's half of that.
-static const auto maxRunLoopSuspensionTime = 50_ms;
+static constexpr auto maxRunLoopSuspensionTime = 50_ms;
 
 void dispatchFunctionsFromMainThread()
 {

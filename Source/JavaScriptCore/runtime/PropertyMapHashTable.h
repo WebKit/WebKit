@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2014 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -121,7 +121,7 @@ class PropertyTable final : public JSCell {
 
 public:
     typedef JSCell Base;
-    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
@@ -129,7 +129,7 @@ public:
         return &vm.propertyTableSpace;
     }
 
-    static const bool needsDestruction = true;
+    static constexpr bool needsDestruction = true;
     static void destroy(JSCell*);
 
     DECLARE_EXPORT_INFO;
@@ -202,7 +202,7 @@ public:
     static ptrdiff_t offsetOfIndexMask() { return OBJECT_OFFSETOF(PropertyTable, m_indexMask); }
     static ptrdiff_t offsetOfIndex() { return OBJECT_OFFSETOF(PropertyTable, m_index); }
 
-    static const unsigned EmptyEntryIndex = 0;
+    static constexpr unsigned EmptyEntryIndex = 0;
 
 private:
     PropertyTable(VM&, unsigned initialCapacity);
@@ -258,7 +258,7 @@ private:
     unsigned m_deletedCount;
     std::unique_ptr<Vector<PropertyOffset>> m_deletedOffsets;
 
-    static const unsigned MinimumTableSize = 16;
+    static constexpr unsigned MinimumTableSize = 16;
 };
 
 inline PropertyTable::iterator PropertyTable::begin()

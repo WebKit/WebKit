@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -143,7 +143,7 @@ private:
 struct CheckSpecialKeyHash {
     static unsigned hash(const CheckSpecial::Key& key) { return key.hash(); }
     static bool equal(const CheckSpecial::Key& a, const CheckSpecial::Key& b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = true;
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
 } } // namespace JSC::B3
@@ -158,7 +158,7 @@ template<> struct DefaultHash<JSC::B3::CheckSpecial::Key> {
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::B3::CheckSpecial::Key> : SimpleClassHashTraits<JSC::B3::CheckSpecial::Key> {
     // I don't want to think about this very hard, it's not worth it. I'm a be conservative.
-    static const bool emptyValueIsZero = false;
+    static constexpr bool emptyValueIsZero = false;
 };
 
 } // namespace WTF

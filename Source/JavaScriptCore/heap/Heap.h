@@ -121,7 +121,7 @@ public:
     // deadline when calling Heap::isPagedOut. Decreasing it will cause us to detect 
     // overstepping our deadline more quickly, while increasing it will cause 
     // our scan to run faster. 
-    static const unsigned s_timeCheckResolution = 16;
+    static constexpr unsigned s_timeCheckResolution = 16;
 
     bool isMarked(const void*);
     static bool testAndSetMarked(HeapVersion, const void*);
@@ -428,7 +428,7 @@ private:
     class HeapThread;
     friend class HeapThread;
 
-    static const size_t minExtraMemory = 256;
+    static constexpr size_t minExtraMemory = 256;
     
     class FinalizerOwner : public WeakHandleOwner {
         void finalize(Handle<Unknown>, void* context) override;
@@ -678,7 +678,7 @@ private:
     unsigned m_numberOfWaitingParallelMarkers { 0 };
 
     ConcurrentPtrHashSet m_opaqueRoots;
-    static const size_t s_blockFragmentLength = 32;
+    static constexpr size_t s_blockFragmentLength = 32;
 
     ParallelHelperClient m_helperClient;
     RefPtr<SharedTask<void(SlotVisitor&)>> m_bonusVisitorTask;
@@ -690,12 +690,12 @@ private:
     
     std::unique_ptr<MutatorScheduler> m_scheduler;
     
-    static const unsigned mutatorHasConnBit = 1u << 0u; // Must also be protected by threadLock.
-    static const unsigned stoppedBit = 1u << 1u; // Only set when !hasAccessBit
-    static const unsigned hasAccessBit = 1u << 2u;
-    static const unsigned gcDidJITBit = 1u << 3u; // Set when the GC did some JITing, so on resume we need to cpuid.
-    static const unsigned needFinalizeBit = 1u << 4u;
-    static const unsigned mutatorWaitingBit = 1u << 5u; // Allows the mutator to use this as a condition variable.
+    static constexpr unsigned mutatorHasConnBit = 1u << 0u; // Must also be protected by threadLock.
+    static constexpr unsigned stoppedBit = 1u << 1u; // Only set when !hasAccessBit
+    static constexpr unsigned hasAccessBit = 1u << 2u;
+    static constexpr unsigned gcDidJITBit = 1u << 3u; // Set when the GC did some JITing, so on resume we need to cpuid.
+    static constexpr unsigned needFinalizeBit = 1u << 4u;
+    static constexpr unsigned mutatorWaitingBit = 1u << 5u; // Allows the mutator to use this as a condition variable.
     Atomic<unsigned> m_worldState;
     bool m_worldIsStopped { false };
     Lock m_visitRaceLock;

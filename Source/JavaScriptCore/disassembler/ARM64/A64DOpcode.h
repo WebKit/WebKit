@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -195,7 +195,7 @@ protected:
         bufferPrintf("lsl #%u", 16 * amount);
     }
 
-    static const int bufferSize = 81;
+    static constexpr int bufferSize = 81;
 
     char m_formatBuffer[bufferSize];
     uint32_t* m_currentPC;
@@ -227,8 +227,8 @@ public:
 
 class A64DOpcodeAddSubtractImmediate : public A64DOpcodeAddSubtract {
 public:
-    static const uint32_t mask = 0x1f000000;
-    static const uint32_t pattern = 0x11000000;
+    static constexpr uint32_t mask = 0x1f000000;
+    static constexpr uint32_t pattern = 0x11000000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeAddSubtractImmediate, thisObj);
 
@@ -241,8 +241,8 @@ public:
 
 class A64DOpcodeAddSubtractExtendedRegister : public A64DOpcodeAddSubtract {
 public:
-    static const uint32_t mask = 0x1fe00000;
-    static const uint32_t pattern = 0x0b200000;
+    static constexpr uint32_t mask = 0x1fe00000;
+    static constexpr uint32_t pattern = 0x0b200000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeAddSubtractExtendedRegister, thisObj);
 
@@ -253,8 +253,8 @@ public:
 
 class A64DOpcodeAddSubtractShiftedRegister : public A64DOpcodeAddSubtract {
 public:
-    static const uint32_t mask = 0x1f200000;
-    static const uint32_t pattern = 0x0b000000;
+    static constexpr uint32_t mask = 0x1f200000;
+    static constexpr uint32_t pattern = 0x0b000000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeAddSubtractShiftedRegister, thisObj);
 
@@ -274,8 +274,8 @@ private:
     static const char* const s_extractOpNames[3];
 
 public:
-    static const uint32_t mask = 0x1f800000;
-    static const uint32_t pattern = 0x13000000;
+    static constexpr uint32_t mask = 0x1f800000;
+    static constexpr uint32_t pattern = 0x13000000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeBitfield, thisObj);
 
@@ -294,8 +294,8 @@ public:
 
 class A64DOpcodeCompareAndBranchImmediate : public A64DOpcode {
 public:
-    static const uint32_t mask = 0x7e000000;
-    static const uint32_t pattern = 0x34000000;
+    static constexpr uint32_t mask = 0x7e000000;
+    static constexpr uint32_t pattern = 0x34000000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeCompareAndBranchImmediate, thisObj);
 
@@ -307,8 +307,8 @@ public:
 
 class A64DOpcodeConditionalBranchImmediate : public A64DOpcode {
 public:
-    static const uint32_t mask = 0xff000010;
-    static const uint32_t pattern = 0x54000000;
+    static constexpr uint32_t mask = 0xff000010;
+    static constexpr uint32_t pattern = 0x54000000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeConditionalBranchImmediate, thisObj);
 
@@ -323,8 +323,8 @@ private:
     static const char* const s_opNames[4];
 
 public:
-    static const uint32_t mask = 0x1fe00000;
-    static const uint32_t pattern = 0x1a800000;
+    static constexpr uint32_t mask = 0x1fe00000;
+    static constexpr uint32_t pattern = 0x1a800000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeConditionalSelect, thisObj);
 
@@ -344,8 +344,8 @@ private:
     static const char* const s_pacAutOpNames[18];
     
 public:
-    static const uint32_t mask = 0x5fe00000;
-    static const uint32_t pattern = 0x5ac00000;
+    static constexpr uint32_t mask = 0x5fe00000;
+    static constexpr uint32_t pattern = 0x5ac00000;
     
     DEFINE_STATIC_FORMAT(A64DOpcodeDataProcessing1Source, thisObj);
     
@@ -363,8 +363,8 @@ private:
     static const char* const s_opNames[16];
 
 public:
-    static const uint32_t mask = 0x5fe00000;
-    static const uint32_t pattern = 0x1ac00000;
+    static constexpr uint32_t mask = 0x5fe00000;
+    static constexpr uint32_t pattern = 0x1ac00000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeDataProcessing2Source, thisObj);
 
@@ -382,8 +382,8 @@ private:
     static const char* const s_pseudoOpNames[16];
 
 public:
-    static const uint32_t mask = 0x1f000000;
-    static const uint32_t pattern = 0x1b000000;
+    static constexpr uint32_t mask = 0x1f000000;
+    static constexpr uint32_t pattern = 0x1b000000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeDataProcessing3Source, thisObj);
 
@@ -399,8 +399,8 @@ public:
 
 class A64OpcodeExceptionGeneration : public A64DOpcode {
 public:
-    static const uint32_t mask = 0xff000000;
-    static const uint32_t pattern = 0xd4000000;
+    static constexpr uint32_t mask = 0xff000000;
+    static constexpr uint32_t pattern = 0xd4000000;
 
     DEFINE_STATIC_FORMAT(A64OpcodeExceptionGeneration, thisObj);
 
@@ -414,8 +414,8 @@ public:
 
 class A64DOpcodeExtract : public A64DOpcode {
 public:
-    static const uint32_t mask = 0x1f800000;
-    static const uint32_t pattern = 0x13800000;
+    static constexpr uint32_t mask = 0x1f800000;
+    static constexpr uint32_t pattern = 0x13800000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeExtract, thisObj);
 
@@ -439,8 +439,8 @@ private:
     static const char* const s_opNames[16];
     
 public:
-    static const uint32_t mask = 0x5f203c00;
-    static const uint32_t pattern = 0x1e202000;
+    static constexpr uint32_t mask = 0x5f203c00;
+    static constexpr uint32_t pattern = 0x1e202000;
     
     DEFINE_STATIC_FORMAT(A64DOpcodeFloatingPointCompare, thisObj);
     
@@ -455,8 +455,8 @@ public:
 
 class A64DOpcodeFloatingPointConditionalSelect : public A64DOpcodeFloatingPointOps {
 public:
-    static const uint32_t mask = 0x5f200c00;
-    static const uint32_t pattern = 0x1e200c00;
+    static constexpr uint32_t mask = 0x5f200c00;
+    static constexpr uint32_t pattern = 0x1e200c00;
     
     DEFINE_STATIC_FORMAT(A64DOpcodeFloatingPointConditionalSelect, thisObj);
     
@@ -472,8 +472,8 @@ private:
     static const char* const s_opNames[16];
 
 public:
-    static const uint32_t mask = 0x5f207c00;
-    static const uint32_t pattern = 0x1e204000;
+    static constexpr uint32_t mask = 0x5f207c00;
+    static constexpr uint32_t pattern = 0x1e204000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeFloatingPointDataProcessing1Source, thisObj);
 
@@ -489,8 +489,8 @@ private:
     static const char* const s_opNames[16];
 
 public:
-    static const uint32_t mask = 0x5f200800;
-    static const uint32_t pattern = 0x1e200800;
+    static constexpr uint32_t mask = 0x5f200800;
+    static constexpr uint32_t pattern = 0x1e200800;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeFloatingPointDataProcessing2Source, thisObj);
 
@@ -506,8 +506,8 @@ private:
     static const char* const s_opNames[4];
     
 public:
-    static const uint32_t mask = 0x5f200000;
-    static const uint32_t pattern = 0x1e000000;
+    static constexpr uint32_t mask = 0x5f200000;
+    static constexpr uint32_t pattern = 0x1e000000;
     
     DEFINE_STATIC_FORMAT(A64DOpcodeFloatingFixedPointConversions, thisObj);
     
@@ -525,8 +525,8 @@ private:
     static const char* const s_opNames[32];
     
 public:
-    static const uint32_t mask = 0x5f20fc00;
-    static const uint32_t pattern = 0x1e200000;
+    static constexpr uint32_t mask = 0x5f20fc00;
+    static constexpr uint32_t pattern = 0x1e200000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeFloatingPointIntegerConversions, thisObj);
 
@@ -550,8 +550,8 @@ public:
 
 class A64DOpcodeMSRImmediate : public A64DOpcodeSystem {
 public:
-    static const uint32_t mask = 0xfff8f01f;
-    static const uint32_t pattern = 0xd500401f;
+    static constexpr uint32_t mask = 0xfff8f01f;
+    static constexpr uint32_t pattern = 0xd500401f;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeMSRImmediate, thisObj);
 
@@ -560,8 +560,8 @@ public:
 
 class A64DOpcodeMSROrMRSRegister : public A64DOpcodeSystem {
 public:
-    static const uint32_t mask = 0xffd00000;
-    static const uint32_t pattern = 0xd5100000;
+    static constexpr uint32_t mask = 0xffd00000;
+    static constexpr uint32_t pattern = 0xd5100000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeMSROrMRSRegister, thisObj);
 
@@ -576,8 +576,8 @@ private:
     static const char* const s_opNames[32];
 
 public:
-    static const uint32_t mask = 0xfffff01f;
-    static const uint32_t pattern = 0xd503201f;
+    static constexpr uint32_t mask = 0xfffff01f;
+    static constexpr uint32_t pattern = 0xd503201f;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeHint, thisObj);
 
@@ -592,8 +592,8 @@ class A64DOpcodeSystemSync : public A64DOpcodeSystem {
     static const char* const s_optionNames[16];
 
 public:
-    static const uint32_t mask = 0xfffff01f;
-    static const uint32_t pattern = 0xd503301f;
+    static constexpr uint32_t mask = 0xfffff01f;
+    static constexpr uint32_t pattern = 0xd503301f;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeSystemSync, thisObj);
 
@@ -625,8 +625,8 @@ private:
     static const char* const s_opNames[64];
 
 public:
-    static const uint32_t mask = 0x3f000000;
-    static const uint32_t pattern = 0x08000000;
+    static constexpr uint32_t mask = 0x3f000000;
+    static constexpr uint32_t pattern = 0x08000000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeLoadStoreExclusive, thisObj);
 
@@ -653,8 +653,8 @@ private:
     static const char* const s_unscaledOpNames[32];
 
 public:
-    static const uint32_t mask = 0x3b200000;
-    static const uint32_t pattern = 0x38000000;
+    static constexpr uint32_t mask = 0x3b200000;
+    static constexpr uint32_t pattern = 0x38000000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeLoadStoreImmediate, thisObj);
 
@@ -674,8 +674,8 @@ public:
 
 class A64DOpcodeLoadStoreRegisterOffset : public A64DOpcodeLoadStore {
 public:
-    static const uint32_t mask = 0x3b200c00;
-    static const uint32_t pattern = 0x38200800;
+    static constexpr uint32_t mask = 0x3b200c00;
+    static constexpr uint32_t pattern = 0x38200800;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeLoadStoreRegisterOffset, thisObj);
 
@@ -696,8 +696,8 @@ protected:
     }
 
 public:
-    static const uint32_t mask = 0xff200400;
-    static const uint32_t pattern = 0xf8200400;
+    static constexpr uint32_t mask = 0xff200400;
+    static constexpr uint32_t pattern = 0xf8200400;
     
     DEFINE_STATIC_FORMAT(A64DOpcodeLoadStoreAuthenticated, thisObj);
     
@@ -713,8 +713,8 @@ public:
 
 class A64DOpcodeLoadStoreRegisterPair : public A64DOpcodeLoadStore {
 public:
-    static const uint32_t mask = 0x3a000000;
-    static const uint32_t pattern = 0x28000000;
+    static constexpr uint32_t mask = 0x3a000000;
+    static constexpr uint32_t pattern = 0x28000000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeLoadStoreRegisterPair, thisObj);
 
@@ -729,8 +729,8 @@ public:
 
 class A64DOpcodeLoadStoreUnsignedImmediate : public A64DOpcodeLoadStore {
 public:
-    static const uint32_t mask = 0x3b000000;
-    static const uint32_t pattern = 0x39000000;
+    static constexpr uint32_t mask = 0x3b000000;
+    static constexpr uint32_t pattern = 0x39000000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeLoadStoreUnsignedImmediate, thisObj);
 
@@ -755,8 +755,8 @@ public:
 
 class A64DOpcodeLogicalImmediate : public A64DOpcodeLogical {
 public:
-    static const uint32_t mask = 0x1f800000;
-    static const uint32_t pattern = 0x12000000;
+    static constexpr uint32_t mask = 0x1f800000;
+    static constexpr uint32_t pattern = 0x12000000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeLogicalImmediate, thisObj);
 
@@ -772,8 +772,8 @@ public:
 
 class A64DOpcodeLogicalShiftedRegister : public A64DOpcodeLogical {
 public:
-    static const uint32_t mask = 0x1f000000;
-    static const uint32_t pattern = 0x0a000000;
+    static constexpr uint32_t mask = 0x1f000000;
+    static constexpr uint32_t pattern = 0x0a000000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeLogicalShiftedRegister, thisObj);
 
@@ -791,8 +791,8 @@ private:
     static const char* const s_opNames[4];
 
 public:
-    static const uint32_t mask = 0x1f800000;
-    static const uint32_t pattern = 0x12800000;
+    static constexpr uint32_t mask = 0x1f800000;
+    static constexpr uint32_t pattern = 0x12800000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeMoveWide, thisObj);
 
@@ -806,8 +806,8 @@ public:
 
 class A64DOpcodeTestAndBranchImmediate : public A64DOpcode {
 public:
-    static const uint32_t mask = 0x7e000000;
-    static const uint32_t pattern = 0x36000000;
+    static constexpr uint32_t mask = 0x7e000000;
+    static constexpr uint32_t pattern = 0x36000000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeTestAndBranchImmediate, thisObj);
 
@@ -820,8 +820,8 @@ public:
 
 class A64DOpcodeUnconditionalBranchImmediate : public A64DOpcode {
 public:
-    static const uint32_t mask = 0x7c000000;
-    static const uint32_t pattern = 0x14000000;
+    static constexpr uint32_t mask = 0x7c000000;
+    static constexpr uint32_t pattern = 0x14000000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeUnconditionalBranchImmediate, thisObj);
 
@@ -837,8 +837,8 @@ private:
     static const char* const s_AuthOpNames[20];
 
 public:
-    static const uint32_t mask = 0xfe1f0000;
-    static const uint32_t pattern = 0xd61f0000;
+    static constexpr uint32_t mask = 0xfe1f0000;
+    static constexpr uint32_t pattern = 0xd61f0000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeUnconditionalBranchRegister, thisObj);
 

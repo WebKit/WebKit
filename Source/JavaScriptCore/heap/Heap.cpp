@@ -2254,7 +2254,7 @@ void Heap::notifyIncrementalSweeper()
 
 void Heap::updateAllocationLimits()
 {
-    static const bool verbose = false;
+    static constexpr bool verbose = false;
     
     if (verbose) {
         dataLog("\n");

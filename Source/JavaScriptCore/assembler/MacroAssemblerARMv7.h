@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2010 University of Szeged
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,15 +36,15 @@ namespace JSC {
 using Assembler = TARGET_ASSEMBLER;
 
 class MacroAssemblerARMv7 : public AbstractMacroAssembler<Assembler> {
-    static const RegisterID dataTempRegister = ARMRegisters::ip;
-    static const RegisterID addressTempRegister = ARMRegisters::r6;
+    static constexpr RegisterID dataTempRegister = ARMRegisters::ip;
+    static constexpr RegisterID addressTempRegister = ARMRegisters::r6;
 
-    static const ARMRegisters::FPDoubleRegisterID fpTempRegister = ARMRegisters::d7;
+    static constexpr ARMRegisters::FPDoubleRegisterID fpTempRegister = ARMRegisters::d7;
     inline ARMRegisters::FPSingleRegisterID fpTempRegisterAsSingle() { return ARMRegisters::asSingle(fpTempRegister); }
 
 public:
-    static const unsigned numGPRs = 16;
-    static const unsigned numFPRs = 16;
+    static constexpr unsigned numGPRs = 16;
+    static constexpr unsigned numFPRs = 16;
     
     MacroAssemblerARMv7()
         : m_makeJumpPatchable(false)
@@ -56,8 +56,8 @@ public:
     typedef ARMv7Assembler::JumpLinkType JumpLinkType;
     typedef ARMv7Assembler::Condition Condition;
 
-    static const ARMv7Assembler::Condition DefaultCondition = ARMv7Assembler::ConditionInvalid;
-    static const ARMv7Assembler::JumpType DefaultJump = ARMv7Assembler::JumpNoConditionFixedSize;
+    static constexpr ARMv7Assembler::Condition DefaultCondition = ARMv7Assembler::ConditionInvalid;
+    static constexpr ARMv7Assembler::JumpType DefaultJump = ARMv7Assembler::JumpNoConditionFixedSize;
 
     static bool isCompactPtrAlignedAddressOffset(ptrdiff_t value)
     {
@@ -103,7 +103,7 @@ public:
     };
     
 public:
-    static const Scale ScalePtr = TimesFour;
+    static constexpr Scale ScalePtr = TimesFour;
 
     enum RelationalCondition {
         Equal = ARMv7Assembler::ConditionEQ,
@@ -143,9 +143,9 @@ public:
         DoubleLessThanOrEqualOrUnordered = ARMv7Assembler::ConditionLE,
     };
 
-    static const RegisterID stackPointerRegister = ARMRegisters::sp;
-    static const RegisterID framePointerRegister = ARMRegisters::fp;
-    static const RegisterID linkRegister = ARMRegisters::lr;
+    static constexpr RegisterID stackPointerRegister = ARMRegisters::sp;
+    static constexpr RegisterID framePointerRegister = ARMRegisters::fp;
+    static constexpr RegisterID linkRegister = ARMRegisters::lr;
 
     // Integer arithmetic operations:
     //

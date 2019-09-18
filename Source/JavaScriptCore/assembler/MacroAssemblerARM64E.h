@@ -107,7 +107,7 @@ public:
         m_assembler.xpacd(target);
     }
 
-    static const RegisterID InvalidGPR  = static_cast<RegisterID>(-1);
+    static constexpr RegisterID InvalidGPR  = static_cast<RegisterID>(-1);
 
     enum class CallSignatureType {
         CFunctionCall,

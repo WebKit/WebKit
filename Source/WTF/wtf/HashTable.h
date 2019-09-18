@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2011, 2012, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2008 David Levin <levin@chromium.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -518,8 +518,8 @@ namespace WTF {
         static void invalidateIterators() { }
 #endif
 
-        static const unsigned m_maxLoad = 2;
-        static const unsigned m_minLoad = 6;
+        static constexpr unsigned m_maxLoad = 2;
+        static constexpr unsigned m_minLoad = 6;
 
         ValueType* m_table;
         unsigned m_tableSize;
@@ -545,16 +545,16 @@ namespace WTF {
     template<unsigned size> struct OneifyLowBits;
     template<>
     struct OneifyLowBits<0> {
-        static const unsigned value = 0;
+        static constexpr unsigned value = 0;
     };
     template<unsigned number>
     struct OneifyLowBits {
-        static const unsigned value = number | OneifyLowBits<(number >> 1)>::value;
+        static constexpr unsigned value = number | OneifyLowBits<(number >> 1)>::value;
     };
     // Compute the first power of two integer that is an upper bound of the parameter 'number'.
     template<unsigned number>
     struct UpperPowerOfTwoBound {
-        static const unsigned value = (OneifyLowBits<number - 1>::value + 1) * 2;
+        static constexpr unsigned value = (OneifyLowBits<number - 1>::value + 1) * 2;
     };
 
     // Because power of two numbers are the limit of maxLoad, their capacity is twice the
@@ -562,18 +562,18 @@ namespace WTF {
     template<unsigned size, bool isPowerOfTwo> struct HashTableCapacityForSizeSplitter;
     template<unsigned size>
     struct HashTableCapacityForSizeSplitter<size, true> {
-        static const unsigned value = size * 4;
+        static constexpr unsigned value = size * 4;
     };
     template<unsigned size>
     struct HashTableCapacityForSizeSplitter<size, false> {
-        static const unsigned value = UpperPowerOfTwoBound<size>::value;
+        static constexpr unsigned value = UpperPowerOfTwoBound<size>::value;
     };
 
     // HashTableCapacityForSize computes the upper power of two capacity to hold the size parameter.
     // This is done at compile time to initialize the HashTraits.
     template<unsigned size>
     struct HashTableCapacityForSize {
-        static const unsigned value = HashTableCapacityForSizeSplitter<size, !(size & (size - 1))>::value;
+        static constexpr unsigned value = HashTableCapacityForSizeSplitter<size, !(size & (size - 1))>::value;
         COMPILE_ASSERT(size > 0, HashTableNonZeroMinimumCapacity);
         COMPILE_ASSERT(!static_cast<unsigned>(value >> 31), HashTableNoCapacityOverflow);
         COMPILE_ASSERT(value > (2 * size), HashTableCapacityHoldsContentSize);

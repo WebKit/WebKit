@@ -109,7 +109,7 @@ private:
     char m_data[1];
 
 #if HAVE_PTHREAD_MACHDEP_H
-    static const pthread_key_t tlsKey = __PTK_FRAMEWORK_JAVASCRIPTCORE_KEY1;
+    static constexpr pthread_key_t tlsKey = __PTK_FRAMEWORK_JAVASCRIPTCORE_KEY1;
 #else
     BEXPORT static bool s_didInitialize;
     BEXPORT static pthread_key_t s_tlsKey;

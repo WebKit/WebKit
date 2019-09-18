@@ -94,7 +94,7 @@ private:
 struct DesiredGlobalPropertyHash {
     static unsigned hash(const DesiredGlobalProperty& key) { return key.hash(); }
     static bool equal(const DesiredGlobalProperty& a, const DesiredGlobalProperty& b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = true;
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
 } } // namespace JSC::DFG

@@ -77,7 +77,7 @@ public:
     WTF_EXPORT_PRIVATE static void updateChecksumForData(SHA1&, const uint8_t*, size_t);
     template <typename Type> static void updateChecksumForNumber(SHA1&, Type);
 
-    static const bool isIPCEncoder = false;
+    static constexpr bool isIPCEncoder = false;
 
 private:
     WTF_EXPORT_PRIVATE void encode(bool);
@@ -100,16 +100,16 @@ private:
     SHA1 m_sha1;
 };
 
-template <> struct Encoder::Salt<bool> { static const unsigned value = 3; };
-template <> struct Encoder::Salt<uint8_t> { static const  unsigned value = 5; };
-template <> struct Encoder::Salt<uint16_t> { static const unsigned value = 7; };
-template <> struct Encoder::Salt<uint32_t> { static const unsigned value = 11; };
-template <> struct Encoder::Salt<uint64_t> { static const unsigned value = 13; };
-template <> struct Encoder::Salt<int32_t> { static const unsigned value = 17; };
-template <> struct Encoder::Salt<int64_t> { static const unsigned value = 19; };
-template <> struct Encoder::Salt<float> { static const unsigned value = 23; };
-template <> struct Encoder::Salt<double> { static const unsigned value = 29; };
-template <> struct Encoder::Salt<uint8_t*> { static const unsigned value = 101; };
+template <> struct Encoder::Salt<bool> { static constexpr unsigned value = 3; };
+template <> struct Encoder::Salt<uint8_t> { static constexpr  unsigned value = 5; };
+template <> struct Encoder::Salt<uint16_t> { static constexpr unsigned value = 7; };
+template <> struct Encoder::Salt<uint32_t> { static constexpr unsigned value = 11; };
+template <> struct Encoder::Salt<uint64_t> { static constexpr unsigned value = 13; };
+template <> struct Encoder::Salt<int32_t> { static constexpr unsigned value = 17; };
+template <> struct Encoder::Salt<int64_t> { static constexpr unsigned value = 19; };
+template <> struct Encoder::Salt<float> { static constexpr unsigned value = 23; };
+template <> struct Encoder::Salt<double> { static constexpr unsigned value = 29; };
+template <> struct Encoder::Salt<uint8_t*> { static constexpr unsigned value = 101; };
 
 template <typename Type>
 void Encoder::updateChecksumForNumber(SHA1& sha1, Type value)

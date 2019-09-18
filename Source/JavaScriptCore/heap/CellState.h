@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,8 +45,8 @@ enum class CellState : uint8_t {
     PossiblyGrey = 2
 };
 
-static const unsigned blackThreshold = 0; // x <= blackThreshold means x is PossiblyOldOrBlack.
-static const unsigned tautologicalThreshold = 100; // x <= tautologicalThreshold is always true.
+static constexpr unsigned blackThreshold = 0; // x <= blackThreshold means x is PossiblyOldOrBlack.
+static constexpr unsigned tautologicalThreshold = 100; // x <= tautologicalThreshold is always true.
 
 inline bool isWithinThreshold(CellState cellState, unsigned threshold)
 {

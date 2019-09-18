@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2011, 2015 Apple Inc. All rights reserved.
+ *  Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -117,7 +117,7 @@ public:
 
     DECLARE_INFO;
 
-    static const bool needsDestructor = false;
+    static constexpr bool needsDestructor = false;
 
     static Structure* createStructure(VM& vm, JSValue prototype)
     {

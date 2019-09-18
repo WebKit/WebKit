@@ -80,7 +80,7 @@ using namespace B3;
 
 namespace {
 namespace WasmB3IRGeneratorInternal {
-static const bool verbose = false;
+static constexpr bool verbose = false;
 }
 }
 

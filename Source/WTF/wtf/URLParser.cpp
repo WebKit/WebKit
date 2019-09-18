@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -652,11 +652,11 @@ void URLParser::encodeNonUTF8Query(const Vector<UChar>& source, const URLTextEnc
 
 Optional<uint16_t> URLParser::defaultPortForProtocol(StringView scheme)
 {
-    static const uint16_t ftpPort = 21;
-    static const uint16_t httpPort = 80;
-    static const uint16_t httpsPort = 443;
-    static const uint16_t wsPort = 80;
-    static const uint16_t wssPort = 443;
+    static constexpr uint16_t ftpPort = 21;
+    static constexpr uint16_t httpPort = 80;
+    static constexpr uint16_t httpsPort = 443;
+    static constexpr uint16_t wsPort = 80;
+    static constexpr uint16_t wssPort = 443;
     
     auto length = scheme.length();
     if (!length)

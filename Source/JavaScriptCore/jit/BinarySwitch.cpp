@@ -34,7 +34,7 @@
 namespace JSC {
 
 namespace BinarySwitchInternal {
-static const bool verbose = false;
+static constexpr bool verbose = false;
 }
 
 static unsigned globalCounter; // We use a different seed every time we are invoked.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,7 +77,7 @@ public:
     
 private:
     // WARNING: We require all of these default values to be zero. Otherwise, you'll need to add
-    // "static const bool emptyValueIsZero = false;" to the HashTraits at the bottom of this file.
+    // "static constexpr bool emptyValueIsZero = false;" to the HashTraits at the bottom of this file.
     JSObject* m_prototype { nullptr }; 
     FunctionExecutable* m_executable { nullptr }; 
     unsigned m_inlineCapacity { 0 };
@@ -88,7 +88,7 @@ private:
 struct PrototypeKeyHash {
     static unsigned hash(const PrototypeKey& key) { return key.hash(); }
     static bool equal(const PrototypeKey& a, const PrototypeKey& b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = true;
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
 } // namespace JSC

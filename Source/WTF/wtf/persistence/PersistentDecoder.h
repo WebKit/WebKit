@@ -95,7 +95,7 @@ public:
         return bufferIsLargeEnoughToContain(numElements * sizeof(T));
     }
 
-    static const bool isIPCDecoder = false;
+    static constexpr bool isIPCDecoder = false;
 
 private:
     WTF_EXPORT_PRIVATE bool bufferIsLargeEnoughToContain(size_t) const;

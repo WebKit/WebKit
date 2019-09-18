@@ -122,11 +122,11 @@ public:
     typedef ObjectPatternNode* ObjectPattern;
     typedef BindingNode* BindingPattern;
     typedef AssignmentElementNode* AssignmentElement;
-    static const bool CreatesAST = true;
-    static const bool NeedsFreeVariableInfo = true;
-    static const bool CanUseFunctionCache = true;
-    static const int  DontBuildKeywords = 0;
-    static const int  DontBuildStrings = 0;
+    static constexpr bool CreatesAST = true;
+    static constexpr bool NeedsFreeVariableInfo = true;
+    static constexpr bool CanUseFunctionCache = true;
+    static constexpr int  DontBuildKeywords = 0;
+    static constexpr int  DontBuildStrings = 0;
 
     ExpressionNode* makeBinaryNode(const JSTokenLocation&, int token, std::pair<ExpressionNode*, BinaryOpInfo>, std::pair<ExpressionNode*, BinaryOpInfo>);
     ExpressionNode* makeFunctionCallNode(const JSTokenLocation&, ExpressionNode* func, bool previousBaseWasSuper, ArgumentsNode* args, const JSTextPosition& divotStart, const JSTextPosition& divot, const JSTextPosition& divotEnd, size_t callOrApplyChildDepth, bool isOptionalCall);

@@ -897,8 +897,8 @@ namespace JSC {
         void emitOutOfLineFinallyHandler(RegisterID* exceptionRegister, RegisterID* completionTypeRegister, TryData*);
 
     private:
-        static const int CurrentLexicalScopeIndex = -2;
-        static const int OutermostLexicalScopeIndex = -1;
+        static constexpr int CurrentLexicalScopeIndex = -2;
+        static constexpr int OutermostLexicalScopeIndex = -1;
 
         int currentLexicalScopeIndex() const
         {

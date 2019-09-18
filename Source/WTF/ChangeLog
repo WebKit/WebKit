@@ -1,3 +1,79 @@
+2019-09-17  Mark Lam  <mark.lam@apple.com>
+
+        Use constexpr instead of const in symbol definitions that are obviously constexpr.
+        https://bugs.webkit.org/show_bug.cgi?id=201879
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * wtf/Assertions.cpp:
+        * wtf/AutomaticThread.cpp:
+        * wtf/BitVector.h:
+        * wtf/Bitmap.h:
+        * wtf/BloomFilter.h:
+        * wtf/Brigand.h:
+        * wtf/CheckedArithmetic.h:
+        * wtf/CrossThreadCopier.h:
+        * wtf/CurrentTime.cpp:
+        * wtf/DataLog.cpp:
+        * wtf/DateMath.cpp:
+        (WTF::daysFrom1970ToYear):
+        * wtf/DeferrableRefCounted.h:
+        * wtf/GetPtr.h:
+        * wtf/HashFunctions.h:
+        * wtf/HashMap.h:
+        * wtf/HashTable.h:
+        * wtf/HashTraits.h:
+        * wtf/JSONValues.cpp:
+        * wtf/JSONValues.h:
+        * wtf/ListHashSet.h:
+        * wtf/Lock.h:
+        * wtf/LockAlgorithm.h:
+        * wtf/LockAlgorithmInlines.h:
+        (WTF::Hooks>::lockSlow):
+        * wtf/Logger.h:
+        * wtf/LoggerHelper.h:
+        (WTF::LoggerHelper::childLogIdentifier const):
+        * wtf/MainThread.cpp:
+        * wtf/MetaAllocatorPtr.h:
+        * wtf/MonotonicTime.h:
+        * wtf/NaturalLoops.h:
+        (WTF::NaturalLoops::NaturalLoops):
+        * wtf/ObjectIdentifier.h:
+        * wtf/RAMSize.cpp:
+        * wtf/Ref.h:
+        * wtf/RefPtr.h:
+        * wtf/RetainPtr.h:
+        * wtf/SchedulePair.h:
+        * wtf/StackShot.h:
+        * wtf/StdLibExtras.h:
+        * wtf/TinyPtrSet.h:
+        * wtf/URL.cpp:
+        * wtf/URLHash.h:
+        * wtf/URLParser.cpp:
+        (WTF::URLParser::defaultPortForProtocol):
+        * wtf/Vector.h:
+        * wtf/VectorTraits.h:
+        * wtf/WallTime.h:
+        * wtf/WeakHashSet.h:
+        * wtf/WordLock.h:
+        * wtf/cocoa/CPUTimeCocoa.cpp:
+        * wtf/cocoa/MemoryPressureHandlerCocoa.mm:
+        * wtf/persistence/PersistentDecoder.h:
+        * wtf/persistence/PersistentEncoder.h:
+        * wtf/text/AtomStringHash.h:
+        * wtf/text/CString.h:
+        * wtf/text/StringBuilder.cpp:
+        (WTF::expandedCapacity):
+        * wtf/text/StringHash.h:
+        * wtf/text/StringImpl.h:
+        * wtf/text/StringToIntegerConversion.h:
+        (WTF::toIntegralType):
+        * wtf/text/SymbolRegistry.h:
+        * wtf/text/TextStream.cpp:
+        (WTF::hasFractions):
+        * wtf/text/WTFString.h:
+        * wtf/text/cocoa/TextBreakIteratorInternalICUCocoa.cpp:
+
 2019-09-16  Alex Christensen  <achristensen@webkit.org>
 
         Remove "gopher" from list of special schemes in URLParser

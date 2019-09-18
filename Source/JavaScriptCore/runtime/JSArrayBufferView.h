@@ -96,7 +96,7 @@ inline bool hasArrayBuffer(TypedArrayMode mode)
 class JSArrayBufferView : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
-    static const unsigned fastSizeLimit = 1000;
+    static constexpr unsigned fastSizeLimit = 1000;
     using VectorPtr = CagedBarrierPtr<Gigacage::Primitive, void, tagCagedPtr>;
     
     static size_t sizeOf(uint32_t length, uint32_t elementSize)

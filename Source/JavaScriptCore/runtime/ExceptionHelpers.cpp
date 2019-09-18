@@ -234,7 +234,7 @@ static String invalidParameterInSourceAppender(const String& originalMessage, co
     if (sourceText.find("in") != inIndex)
         return makeString(originalMessage, " (evaluating '", sourceText, "')");
 
-    static const unsigned inLength = 2;
+    static constexpr unsigned inLength = 2;
     String rightHandSide = sourceText.substring(inIndex + inLength).simplifyWhiteSpace();
     return makeString(rightHandSide, " is not an Object. (evaluating '", sourceText, "')");
 }
@@ -250,7 +250,7 @@ inline String invalidParameterInstanceofSourceAppender(const String& content, co
     if (sourceText.find("instanceof") != instanceofIndex)
         return makeString(originalMessage, " (evaluating '", sourceText, "')");
 
-    static const unsigned instanceofLength = 10;
+    static constexpr unsigned instanceofLength = 10;
     String rightHandSide = sourceText.substring(instanceofIndex + instanceofLength).simplifyWhiteSpace();
     return makeString(rightHandSide, content, ". (evaluating '", sourceText, "')");
 }

@@ -72,8 +72,8 @@ public:
     void shrinkToFit();
 
 private:
-    static const size_t growFactor = 2;
-    static const size_t shrinkFactor = 4;
+    static constexpr size_t growFactor = 2;
+    static constexpr size_t shrinkFactor = 4;
     static size_t initialCapacity() { return vmPageSize() / sizeof(T); }
 
     void growCapacity();

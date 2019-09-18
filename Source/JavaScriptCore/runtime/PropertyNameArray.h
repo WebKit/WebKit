@@ -115,7 +115,7 @@ ALWAYS_INLINE void PropertyNameArray::addUnchecked(UniquedStringImpl* identifier
 
 ALWAYS_INLINE void PropertyNameArray::add(UniquedStringImpl* identifier)
 {
-    static const unsigned setThreshold = 20;
+    static constexpr unsigned setThreshold = 20;
 
     ASSERT(identifier);
 

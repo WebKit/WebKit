@@ -145,7 +145,7 @@ void fastForwardCopy32(uint32_t* dst, const uint32_t* src, size_t size)
 #endif
 
 class ReduceLoopStrength {
-    static const bool verbose = false;
+    static constexpr bool verbose = false;
 
     struct AddrInfo {
         Value* appendAddr(Procedure& proc, BasicBlock* block, Value* addr)

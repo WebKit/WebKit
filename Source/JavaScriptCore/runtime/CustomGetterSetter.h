@@ -35,7 +35,7 @@ namespace JSC {
 class CustomGetterSetter : public JSCell {
 public:
     typedef JSCell Base;
-    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     typedef PropertySlot::GetValueFunc CustomGetter;
     typedef PutPropertySlot::PutValueFunc CustomSetter;

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006 Apple Inc.
+ *  Copyright (C) 2006-2019 Apple Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -30,7 +30,7 @@ enum HashTableEmptyValueType { HashTableEmptyValue };
 template <typename T> inline T* getPtr(T* p) { return p; }
 
 template <typename T> struct IsSmartPtr {
-    static const bool value = false;
+    static constexpr bool value = false;
 };
 
 template <typename T, bool isSmartPtr>
@@ -67,7 +67,7 @@ inline typename GetPtrHelper<T>::PtrType getPtr(const T& p)
 // Explicit specialization for C++ standard library types.
 
 template <typename T, typename Deleter> struct IsSmartPtr<std::unique_ptr<T, Deleter>> {
-    static const bool value = true;
+    static constexpr bool value = true;
 };
 
 template <typename T, typename Deleter>

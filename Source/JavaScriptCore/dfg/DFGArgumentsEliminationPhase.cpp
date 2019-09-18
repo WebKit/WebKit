@@ -52,7 +52,7 @@ namespace JSC { namespace DFG {
 namespace {
 
 namespace DFGArgumentsEliminationPhaseInternal {
-static const bool verbose = false;
+static constexpr bool verbose = false;
 }
 
 class ArgumentsEliminationPhase : public Phase {

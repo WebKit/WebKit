@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,7 @@ namespace JSC { namespace DFG {
 struct Node;
 
 typedef uint32_t BlockIndex;
-static const BlockIndex NoBlock = UINT_MAX;
+static constexpr BlockIndex NoBlock = UINT_MAX;
 
 // Use RefChildren if the child ref counts haven't already been adjusted using
 // other means and either of the following is true:

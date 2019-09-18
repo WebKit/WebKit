@@ -271,7 +271,7 @@ void UnlinkedCodeBlock::addExpressionInfo(unsigned instructionOffset,
 
 bool UnlinkedCodeBlock::typeProfilerExpressionInfoForBytecodeOffset(unsigned bytecodeOffset, unsigned& startDivot, unsigned& endDivot)
 {
-    static const bool verbose = false;
+    static constexpr bool verbose = false;
     if (!m_rareData) {
         if (verbose)
             dataLogF("Don't have assignment info for offset:%u\n", bytecodeOffset);

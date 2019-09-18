@@ -111,8 +111,8 @@ public:
 
     enum CopyParsedBlockTag { CopyParsedBlock };
 
-    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
-    static const bool needsDestruction = true;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+    static constexpr bool needsDestruction = true;
 
     template<typename, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM&) { return nullptr; }

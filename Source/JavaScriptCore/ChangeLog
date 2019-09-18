@@ -1,3 +1,389 @@
+2019-09-17  Mark Lam  <mark.lam@apple.com>
+
+        Use constexpr instead of const in symbol definitions that are obviously constexpr.
+        https://bugs.webkit.org/show_bug.cgi?id=201879
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        const may require external storage  (at the compiler's whim) though these
+        currently do not.  constexpr makes it clear that the value is a literal constant
+        that can be inlined.  In most cases in the code, when we say static const, we
+        actually mean static constexpr.  I'm changing the code to reflect this.
+
+        * API/JSAPIValueWrapper.h:
+        * API/JSCallbackConstructor.h:
+        * API/JSCallbackObject.h:
+        * API/JSContextRef.cpp:
+        * API/JSWrapperMap.mm:
+        * API/tests/CompareAndSwapTest.cpp:
+        * API/tests/TypedArrayCTest.cpp:
+        * API/tests/testapi.mm:
+        (testObjectiveCAPIMain):
+        * KeywordLookupGenerator.py:
+        (Trie.printAsC):
+        * assembler/ARMv7Assembler.h:
+        * assembler/AssemblerBuffer.h:
+        * assembler/AssemblerCommon.h:
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerARM64.h:
+        * assembler/MacroAssemblerARM64E.h:
+        * assembler/MacroAssemblerARMv7.h:
+        * assembler/MacroAssemblerCodeRef.h:
+        * assembler/MacroAssemblerMIPS.h:
+        * assembler/MacroAssemblerX86.h:
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::absDouble):
+        (JSC::MacroAssemblerX86Common::negateDouble):
+        * assembler/MacroAssemblerX86_64.h:
+        * assembler/X86Assembler.h:
+        * b3/B3Bank.h:
+        * b3/B3CheckSpecial.h:
+        * b3/B3DuplicateTails.cpp:
+        * b3/B3EliminateCommonSubexpressions.cpp:
+        * b3/B3FixSSA.cpp:
+        * b3/B3FoldPathConstants.cpp:
+        * b3/B3InferSwitches.cpp:
+        * b3/B3Kind.h:
+        * b3/B3LowerToAir.cpp:
+        * b3/B3NativeTraits.h:
+        * b3/B3ReduceDoubleToFloat.cpp:
+        * b3/B3ReduceLoopStrength.cpp:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3ValueKey.h:
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+        * b3/air/AirAllocateStackByGraphColoring.cpp:
+        * b3/air/AirArg.h:
+        * b3/air/AirCCallSpecial.h:
+        * b3/air/AirEmitShuffle.cpp:
+        * b3/air/AirFixObviousSpills.cpp:
+        * b3/air/AirFormTable.h:
+        * b3/air/AirLowerAfterRegAlloc.cpp:
+        * b3/air/AirPrintSpecial.h:
+        * b3/air/AirStackAllocation.cpp:
+        * b3/air/AirTmp.h:
+        * b3/testb3_6.cpp:
+        (testInterpreter):
+        * bytecode/AccessCase.cpp:
+        * bytecode/CallLinkStatus.cpp:
+        * bytecode/CallVariant.h:
+        * bytecode/CodeBlock.h:
+        * bytecode/CodeOrigin.h:
+        * bytecode/DFGExitProfile.h:
+        * bytecode/DirectEvalCodeCache.h:
+        * bytecode/ExecutableToCodeBlockEdge.h:
+        * bytecode/GetterSetterAccessCase.cpp:
+        * bytecode/LazyOperandValueProfile.h:
+        * bytecode/ObjectPropertyCondition.h:
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        * bytecode/PolymorphicAccess.cpp:
+        * bytecode/PropertyCondition.h:
+        * bytecode/SpeculatedType.h:
+        * bytecode/StructureStubInfo.cpp:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::typeProfilerExpressionInfoForBytecodeOffset):
+        * bytecode/UnlinkedCodeBlock.h:
+        * bytecode/UnlinkedEvalCodeBlock.h:
+        * bytecode/UnlinkedFunctionCodeBlock.h:
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecode/UnlinkedModuleProgramCodeBlock.h:
+        * bytecode/UnlinkedProgramCodeBlock.h:
+        * bytecode/ValueProfile.h:
+        * bytecode/VirtualRegister.h:
+        * bytecode/Watchpoint.h:
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/Label.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ThisNode::emitBytecode):
+        * bytecompiler/RegisterID.h:
+        * debugger/Breakpoint.h:
+        * debugger/DebuggerParseData.cpp:
+        * debugger/DebuggerPrimitives.h:
+        * debugger/DebuggerScope.h:
+        * dfg/DFGAbstractHeap.h:
+        * dfg/DFGAbstractValue.h:
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGByteCodeParser.cpp:
+        * dfg/DFGCSEPhase.cpp:
+        * dfg/DFGCommon.h:
+        * dfg/DFGCompilationKey.h:
+        * dfg/DFGDesiredGlobalProperty.h:
+        * dfg/DFGEdgeDominates.h:
+        * dfg/DFGEpoch.h:
+        * dfg/DFGForAllKills.h:
+        (JSC::DFG::forAllKilledNodesAtNodeIndex):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::isLiveInBytecode):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGInPlaceAbstractState.cpp:
+        * dfg/DFGIntegerCheckCombiningPhase.cpp:
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+        * dfg/DFGInvalidationPointInjectionPhase.cpp:
+        * dfg/DFGLICMPhase.cpp:
+        * dfg/DFGLazyNode.h:
+        * dfg/DFGMinifiedID.h:
+        * dfg/DFGMovHintRemovalPhase.cpp:
+        * dfg/DFGNodeFlowProjection.h:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPhantomInsertionPhase.cpp:
+        * dfg/DFGPromotedHeapLocation.h:
+        * dfg/DFGPropertyTypeKey.h:
+        * dfg/DFGPureValue.h:
+        * dfg/DFGPutStackSinkingPhase.cpp:
+        * dfg/DFGRegisterBank.h:
+        * dfg/DFGSSAConversionPhase.cpp:
+        * dfg/DFGSSALoweringPhase.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileDoubleRep):
+        (JSC::DFG::compileClampDoubleToByte):
+        (JSC::DFG::SpeculativeJIT::compileArithRounding):
+        (JSC::DFG::compileArithPowIntegerFastPath):
+        (JSC::DFG::SpeculativeJIT::compileArithPow):
+        (JSC::DFG::SpeculativeJIT::emitBinarySwitchStringRecurse):
+        * dfg/DFGStackLayoutPhase.cpp:
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * dfg/DFGStrengthReductionPhase.cpp:
+        * dfg/DFGStructureAbstractValue.h:
+        * dfg/DFGVarargsForwardingPhase.cpp:
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::reconstruct const):
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        * disassembler/ARM64/A64DOpcode.h:
+        * ftl/FTLLocation.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithRandom):
+        * ftl/FTLSlowPathCall.cpp:
+        * ftl/FTLSlowPathCallKey.h:
+        * heap/CellContainer.h:
+        * heap/CellState.h:
+        * heap/ConservativeRoots.h:
+        * heap/GCSegmentedArray.h:
+        * heap/HandleBlock.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::updateAllocationLimits):
+        * heap/Heap.h:
+        * heap/HeapSnapshot.h:
+        * heap/HeapUtil.h:
+        (JSC::HeapUtil::findGCObjectPointersForMarking):
+        * heap/IncrementalSweeper.cpp:
+        * heap/LargeAllocation.h:
+        * heap/MarkedBlock.cpp:
+        * heap/Strong.h:
+        * heap/VisitRaceKey.h:
+        * heap/Weak.h:
+        * heap/WeakBlock.h:
+        * inspector/JSInjectedScriptHost.h:
+        * inspector/JSInjectedScriptHostPrototype.h:
+        * inspector/JSJavaScriptCallFrame.h:
+        * inspector/JSJavaScriptCallFramePrototype.h:
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        (CppProtocolTypesHeaderGenerator._generate_versions):
+        * inspector/scripts/tests/generic/expected/version.json-result:
+        * interpreter/Interpreter.h:
+        * interpreter/ShadowChicken.cpp:
+        * jit/BinarySwitch.cpp:
+        * jit/CallFrameShuffler.h:
+        * jit/ExecutableAllocator.h:
+        * jit/FPRInfo.h:
+        * jit/GPRInfo.h:
+        * jit/ICStats.h:
+        * jit/JITThunks.h:
+        * jit/Reg.h:
+        * jit/RegisterSet.h:
+        * jit/TempRegisterSet.h:
+        * jsc.cpp:
+        * parser/ASTBuilder.h:
+        * parser/Nodes.h:
+        * parser/SourceCodeKey.h:
+        * parser/SyntaxChecker.h:
+        * parser/VariableEnvironment.h:
+        * profiler/ProfilerOrigin.h:
+        * profiler/ProfilerOriginStack.h:
+        * profiler/ProfilerUID.h:
+        * runtime/AbstractModuleRecord.cpp:
+        * runtime/ArrayBufferNeuteringWatchpointSet.h:
+        * runtime/ArrayConstructor.h:
+        * runtime/ArrayConventions.h:
+        * runtime/ArrayIteratorPrototype.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::setLength):
+        * runtime/AsyncFromSyncIteratorPrototype.h:
+        * runtime/AsyncGeneratorFunctionPrototype.h:
+        * runtime/AsyncGeneratorPrototype.h:
+        * runtime/AsyncIteratorPrototype.h:
+        * runtime/AtomicsObject.cpp:
+        * runtime/BigIntConstructor.h:
+        * runtime/BigIntPrototype.h:
+        * runtime/BooleanPrototype.h:
+        * runtime/ClonedArguments.h:
+        * runtime/CodeCache.h:
+        * runtime/ControlFlowProfiler.h:
+        * runtime/CustomGetterSetter.h:
+        * runtime/DateConstructor.h:
+        * runtime/DatePrototype.h:
+        * runtime/DefinePropertyAttributes.h:
+        * runtime/ErrorPrototype.h:
+        * runtime/EvalExecutable.h:
+        * runtime/Exception.h:
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::invalidParameterInSourceAppender):
+        (JSC::invalidParameterInstanceofSourceAppender):
+        * runtime/ExceptionHelpers.h:
+        * runtime/ExecutableBase.h:
+        * runtime/FunctionExecutable.h:
+        * runtime/FunctionRareData.h:
+        * runtime/GeneratorPrototype.h:
+        * runtime/GenericArguments.h:
+        * runtime/GenericOffset.h:
+        * runtime/GetPutInfo.h:
+        * runtime/GetterSetter.h:
+        * runtime/GlobalExecutable.h:
+        * runtime/Identifier.h:
+        * runtime/InspectorInstrumentationObject.h:
+        * runtime/InternalFunction.h:
+        * runtime/IntlCollatorConstructor.h:
+        * runtime/IntlCollatorPrototype.h:
+        * runtime/IntlDateTimeFormatConstructor.h:
+        * runtime/IntlDateTimeFormatPrototype.h:
+        * runtime/IntlNumberFormatConstructor.h:
+        * runtime/IntlNumberFormatPrototype.h:
+        * runtime/IntlObject.h:
+        * runtime/IntlPluralRulesConstructor.h:
+        * runtime/IntlPluralRulesPrototype.h:
+        * runtime/IteratorPrototype.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::tryCreateUninitializedRestricted):
+        * runtime/JSArray.h:
+        * runtime/JSArrayBuffer.h:
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSBigInt.h:
+        * runtime/JSCJSValue.h:
+        * runtime/JSCell.h:
+        * runtime/JSCustomGetterSetterFunction.h:
+        * runtime/JSDataView.h:
+        * runtime/JSDataViewPrototype.h:
+        * runtime/JSDestructibleObject.h:
+        * runtime/JSFixedArray.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGlobalLexicalEnvironment.h:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSImmutableButterfly.h:
+        * runtime/JSInternalPromiseConstructor.h:
+        * runtime/JSInternalPromiseDeferred.h:
+        * runtime/JSInternalPromisePrototype.h:
+        * runtime/JSLexicalEnvironment.h:
+        * runtime/JSModuleEnvironment.h:
+        * runtime/JSModuleLoader.h:
+        * runtime/JSModuleNamespaceObject.h:
+        * runtime/JSNonDestructibleProxy.h:
+        * runtime/JSONObject.cpp:
+        * runtime/JSONObject.h:
+        * runtime/JSObject.h:
+        * runtime/JSPromiseConstructor.h:
+        * runtime/JSPromiseDeferred.h:
+        * runtime/JSPromisePrototype.h:
+        * runtime/JSPropertyNameEnumerator.h:
+        * runtime/JSProxy.h:
+        * runtime/JSScope.h:
+        * runtime/JSScriptFetchParameters.h:
+        * runtime/JSScriptFetcher.h:
+        * runtime/JSSegmentedVariableObject.h:
+        * runtime/JSSourceCode.h:
+        * runtime/JSString.cpp:
+        * runtime/JSString.h:
+        * runtime/JSSymbolTableObject.h:
+        * runtime/JSTemplateObjectDescriptor.h:
+        * runtime/JSTypeInfo.h:
+        * runtime/MapPrototype.h:
+        * runtime/MinimumReservedZoneSize.h:
+        * runtime/ModuleProgramExecutable.h:
+        * runtime/NativeExecutable.h:
+        * runtime/NativeFunction.h:
+        * runtime/NativeStdFunctionCell.h:
+        * runtime/NumberConstructor.h:
+        * runtime/NumberPrototype.h:
+        * runtime/ObjectConstructor.h:
+        * runtime/ObjectPrototype.h:
+        * runtime/ProgramExecutable.h:
+        * runtime/PromiseDeferredTimer.cpp:
+        * runtime/PropertyMapHashTable.h:
+        * runtime/PropertyNameArray.h:
+        (JSC::PropertyNameArray::add):
+        * runtime/PrototypeKey.h:
+        * runtime/ProxyConstructor.h:
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+        * runtime/ProxyRevoke.h:
+        * runtime/ReflectObject.h:
+        * runtime/RegExp.h:
+        * runtime/RegExpCache.h:
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpKey.h:
+        * runtime/RegExpObject.h:
+        * runtime/RegExpPrototype.h:
+        * runtime/RegExpStringIteratorPrototype.h:
+        * runtime/SamplingProfiler.cpp:
+        * runtime/ScopedArgumentsTable.h:
+        * runtime/ScriptExecutable.h:
+        * runtime/SetPrototype.h:
+        * runtime/SmallStrings.h:
+        * runtime/SparseArrayValueMap.h:
+        * runtime/StringConstructor.h:
+        * runtime/StringIteratorPrototype.h:
+        * runtime/StringObject.h:
+        * runtime/StringPrototype.h:
+        * runtime/Structure.h:
+        * runtime/StructureChain.h:
+        * runtime/StructureRareData.h:
+        * runtime/StructureTransitionTable.h:
+        * runtime/Symbol.h:
+        * runtime/SymbolConstructor.h:
+        * runtime/SymbolPrototype.h:
+        * runtime/SymbolTable.h:
+        * runtime/TemplateObjectDescriptor.h:
+        * runtime/TypeProfiler.cpp:
+        * runtime/TypeProfiler.h:
+        * runtime/TypeProfilerLog.cpp:
+        * runtime/VarOffset.h:
+        * testRegExp.cpp:
+        * tools/HeapVerifier.cpp:
+        (JSC::HeapVerifier::checkIfRecorded):
+        * tools/JSDollarVM.cpp:
+        * wasm/WasmB3IRGenerator.cpp:
+        * wasm/WasmBBQPlan.cpp:
+        * wasm/WasmFaultSignalHandler.cpp:
+        * wasm/WasmFunctionParser.h:
+        * wasm/WasmOMGForOSREntryPlan.cpp:
+        * wasm/WasmOMGPlan.cpp:
+        * wasm/WasmPlan.cpp:
+        * wasm/WasmSignature.cpp:
+        * wasm/WasmSignature.h:
+        * wasm/WasmWorklist.cpp:
+        * wasm/js/JSWebAssembly.h:
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        * wasm/js/WebAssemblyCompileErrorConstructor.h:
+        * wasm/js/WebAssemblyCompileErrorPrototype.h:
+        * wasm/js/WebAssemblyFunction.h:
+        * wasm/js/WebAssemblyInstanceConstructor.h:
+        * wasm/js/WebAssemblyInstancePrototype.h:
+        * wasm/js/WebAssemblyLinkErrorConstructor.h:
+        * wasm/js/WebAssemblyLinkErrorPrototype.h:
+        * wasm/js/WebAssemblyMemoryConstructor.h:
+        * wasm/js/WebAssemblyMemoryPrototype.h:
+        * wasm/js/WebAssemblyModuleConstructor.h:
+        * wasm/js/WebAssemblyModulePrototype.h:
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.h:
+        * wasm/js/WebAssemblyRuntimeErrorPrototype.h:
+        * wasm/js/WebAssemblyTableConstructor.h:
+        * wasm/js/WebAssemblyTablePrototype.h:
+        * wasm/js/WebAssemblyToJSCallee.h:
+        * yarr/Yarr.h:
+        * yarr/YarrParser.h:
+        * yarr/generateYarrCanonicalizeUnicode:
+
 2019-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Follow-up after String.codePointAt optimization

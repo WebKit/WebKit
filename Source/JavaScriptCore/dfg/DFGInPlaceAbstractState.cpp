@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@
 namespace JSC { namespace DFG {
 
 namespace DFGInPlaceAbstractStateInternal {
-static const bool verbose = false;
+static constexpr bool verbose = false;
 }
 
 InPlaceAbstractState::InPlaceAbstractState(Graph& graph)

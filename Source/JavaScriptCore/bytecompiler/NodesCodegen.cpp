@@ -165,7 +165,7 @@ RegisterID* ThisNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst
         return 0;
 
     RegisterID* result = generator.move(dst, generator.thisRegister());
-    static const unsigned thisLength = 4;
+    static constexpr unsigned thisLength = 4;
     generator.emitProfileType(generator.thisRegister(), position(), JSTextPosition(-1, position().offset + thisLength, -1));
     return result;
 }

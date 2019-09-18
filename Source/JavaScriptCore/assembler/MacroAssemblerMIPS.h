@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2010 MIPS Technologies, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,8 +38,8 @@ using Assembler = TARGET_ASSEMBLER;
 class MacroAssemblerMIPS : public AbstractMacroAssembler<Assembler> {
 public:
     typedef MIPSRegisters::FPRegisterID FPRegisterID;
-    static const unsigned numGPRs = 32;
-    static const unsigned numFPRs = 32;
+    static constexpr unsigned numGPRs = 32;
+    static constexpr unsigned numFPRs = 32;
 
     MacroAssemblerMIPS()
         : m_fixedWidth(false)
@@ -61,21 +61,21 @@ public:
         return getLSBSet(v);
     }
 
-    static const Scale ScalePtr = TimesFour;
+    static constexpr Scale ScalePtr = TimesFour;
 
     // For storing immediate number
-    static const RegisterID immTempRegister = MIPSRegisters::t0;
+    static constexpr RegisterID immTempRegister = MIPSRegisters::t0;
     // For storing data loaded from the memory
-    static const RegisterID dataTempRegister = MIPSRegisters::t1;
+    static constexpr RegisterID dataTempRegister = MIPSRegisters::t1;
     // For storing address base
-    static const RegisterID addrTempRegister = MIPSRegisters::t7;
+    static constexpr RegisterID addrTempRegister = MIPSRegisters::t7;
     // For storing compare result
-    static const RegisterID cmpTempRegister = MIPSRegisters::t8;
+    static constexpr RegisterID cmpTempRegister = MIPSRegisters::t8;
 
     // FP temp register
-    static const FPRegisterID fpTempRegister = MIPSRegisters::f16;
+    static constexpr FPRegisterID fpTempRegister = MIPSRegisters::f16;
 
-    static const int MaximumCompactPtrAlignedAddressOffset = 0x7FFFFFFF;
+    static constexpr int MaximumCompactPtrAlignedAddressOffset = 0x7FFFFFFF;
 
     enum RelationalCondition {
         Equal,
@@ -118,9 +118,9 @@ public:
         Scale
     };
 
-    static const RegisterID stackPointerRegister = MIPSRegisters::sp;
-    static const RegisterID framePointerRegister = MIPSRegisters::fp;
-    static const RegisterID returnAddressRegister = MIPSRegisters::ra;
+    static constexpr RegisterID stackPointerRegister = MIPSRegisters::sp;
+    static constexpr RegisterID framePointerRegister = MIPSRegisters::fp;
+    static constexpr RegisterID returnAddressRegister = MIPSRegisters::ra;
 
     // Integer arithmetic operations:
     //

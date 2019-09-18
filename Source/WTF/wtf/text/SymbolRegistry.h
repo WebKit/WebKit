@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,7 +69,7 @@ template<> struct DefaultHash<SymbolRegistryKey> {
 };
 
 template<> struct HashTraits<SymbolRegistryKey> : SimpleClassHashTraits<SymbolRegistryKey> {
-    static const bool hasIsEmptyValueFunction = true;
+    static constexpr bool hasIsEmptyValueFunction = true;
     static bool isEmptyValue(const SymbolRegistryKey& key)
     {
         return key.impl() == nullptr;

@@ -35,7 +35,7 @@ namespace JSC {
 class JSCell;
 class Structure;
 
-static const unsigned FirstInternalAttribute = 1 << 6; // Use for transitions that don't have to do with property additions.
+static constexpr unsigned FirstInternalAttribute = 1 << 6; // Use for transitions that don't have to do with property additions.
 
 // Support for attributes used to indicate transitions not related to properties.
 // If any of these are used, the string portion of the key should be 0.
@@ -140,7 +140,7 @@ inline bool setsReadOnlyOnNonAccessorProperties(NonPropertyTransition transition
 }
 
 class StructureTransitionTable {
-    static const intptr_t UsingSingleSlotFlag = 1;
+    static constexpr intptr_t UsingSingleSlotFlag = 1;
 
     
     struct Hash {
@@ -156,7 +156,7 @@ class StructureTransitionTable {
             return a == b;
         }
 
-        static const bool safeToCompareToEmptyOrDeleted = true;
+        static constexpr bool safeToCompareToEmptyOrDeleted = true;
     };
 
     typedef WeakGCMap<Hash::Key, Structure, Hash> TransitionMap;

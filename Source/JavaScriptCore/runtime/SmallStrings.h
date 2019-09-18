@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2009, 2015-2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,7 +53,7 @@ class VM;
 class JSString;
 class SlotVisitor;
 
-static const unsigned maxSingleCharacterString = 0xFF;
+static constexpr unsigned maxSingleCharacterString = 0xFF;
 
 class SmallStrings {
     WTF_MAKE_NONCOPYABLE(SmallStrings);
@@ -125,7 +125,7 @@ public:
     }
 
 private:
-    static const unsigned singleCharacterStringCount = maxSingleCharacterString + 1;
+    static constexpr unsigned singleCharacterStringCount = maxSingleCharacterString + 1;
 
     void initialize(VM*, JSString*&, const char* value);
 

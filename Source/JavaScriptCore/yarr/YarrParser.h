@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1117,7 +1117,7 @@ private:
     HashSet<String> m_captureGroupNames;
 
     // Derived by empirical testing of compile time in PCRE and WREC.
-    static const unsigned MAX_PATTERN_SIZE = 1024 * 1024;
+    static constexpr unsigned MAX_PATTERN_SIZE = 1024 * 1024;
 };
 
 /*

@@ -319,7 +319,7 @@ namespace Protocol {
 
 // Versions.
 namespace VersionDomain {
-static const unsigned VERSION = 42;
+static constexpr unsigned VERSION = 42;
 } // VersionDomain
 // End of versions.
 

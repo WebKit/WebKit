@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ public:
     static void destroy(HandleBlock*);
     static HandleBlock* blockFor(HandleNode*);
 
-    static const size_t blockSize = 4 * KB;
+    static constexpr size_t blockSize = 4 * KB;
 
     HandleSet* handleSet();
 
@@ -53,7 +53,7 @@ private:
     char* payload();
     char* payloadEnd();
 
-    static const size_t s_blockMask = ~(blockSize - 1);
+    static constexpr size_t s_blockMask = ~(blockSize - 1);
 
     HandleBlock* m_prev;
     HandleBlock* m_next;

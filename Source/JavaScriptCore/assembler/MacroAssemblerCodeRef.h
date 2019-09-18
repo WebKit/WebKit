@@ -408,7 +408,7 @@ struct MacroAssemblerCodePtrHash {
     {
         return a == b;
     }
-    static const bool safeToCompareToEmptyOrDeleted = true;
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
 // MacroAssemblerCodeRef:

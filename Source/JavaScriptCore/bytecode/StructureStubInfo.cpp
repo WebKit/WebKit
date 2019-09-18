@@ -36,7 +36,7 @@ namespace JSC {
 #if ENABLE(JIT)
 
 namespace StructureStubInfoInternal {
-static const bool verbose = false;
+static constexpr bool verbose = false;
 }
 
 StructureStubInfo::StructureStubInfo(AccessType accessType)

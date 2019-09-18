@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,8 +38,8 @@ namespace WTF {
 // sometimes even for some additional functionality.
 
 class DeferrableRefCountedBase {
-    static const unsigned deferredFlag = 1;
-    static const unsigned normalIncrement = 2;
+    static constexpr unsigned deferredFlag = 1;
+    static constexpr unsigned normalIncrement = 2;
 
 public:
     void ref() const

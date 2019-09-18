@@ -133,16 +133,16 @@ template <DebuggerParseInfoTag T> struct DebuggerParseInfo { };
 
 template <> struct DebuggerParseInfo<Program> {
     typedef JSC::ProgramNode RootNode;
-    static const SourceParseMode parseMode = SourceParseMode::ProgramMode;
-    static const JSParserStrictMode strictMode = JSParserStrictMode::NotStrict;
-    static const JSParserScriptMode scriptMode = JSParserScriptMode::Classic;
+    static constexpr SourceParseMode parseMode = SourceParseMode::ProgramMode;
+    static constexpr JSParserStrictMode strictMode = JSParserStrictMode::NotStrict;
+    static constexpr JSParserScriptMode scriptMode = JSParserScriptMode::Classic;
 };
 
 template <> struct DebuggerParseInfo<Module> {
     typedef JSC::ModuleProgramNode RootNode;
-    static const SourceParseMode parseMode = SourceParseMode::ModuleEvaluateMode;
-    static const JSParserStrictMode strictMode = JSParserStrictMode::Strict;
-    static const JSParserScriptMode scriptMode = JSParserScriptMode::Module;
+    static constexpr SourceParseMode parseMode = SourceParseMode::ModuleEvaluateMode;
+    static constexpr JSParserStrictMode strictMode = JSParserStrictMode::Strict;
+    static constexpr JSParserScriptMode scriptMode = JSParserScriptMode::Module;
 };
 
 template <DebuggerParseInfoTag T>

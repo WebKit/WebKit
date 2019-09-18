@@ -33,7 +33,7 @@ namespace JSC {
 class GlobalExecutable : public ScriptExecutable {
 public:
     using Base = ScriptExecutable;
-    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     DECLARE_INFO;
 

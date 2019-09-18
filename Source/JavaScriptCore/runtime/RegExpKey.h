@@ -2,6 +2,7 @@
  * Copyright (C) 2010 University of Szeged
  * Copyright (C) 2010 Renata Hodovan (hodovan@inf.u-szeged.hu)
  * All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,7 +70,7 @@ struct RegExpKey {
     struct Hash {
         static unsigned hash(const RegExpKey& key) { return key.pattern->hash(); }
         static bool equal(const RegExpKey& a, const RegExpKey& b) { return a == b; }
-        static const bool safeToCompareToEmptyOrDeleted = false;
+        static constexpr bool safeToCompareToEmptyOrDeleted = false;
     };
 };
 
@@ -94,7 +95,7 @@ template<> struct DefaultHash<JSC::RegExpKey> {
 };
 
 template<> struct HashTraits<JSC::RegExpKey> : GenericHashTraits<JSC::RegExpKey> {
-    static const bool emptyValueIsZero = true;
+    static constexpr bool emptyValueIsZero = true;
     static void constructDeletedValue(JSC::RegExpKey& slot) { slot.flagsValue = JSC::Yarr::Flags::DeletedValue; }
     static bool isDeletedValue(const JSC::RegExpKey& value) { return value.flagsValue == JSC::Yarr::Flags::DeletedValue; }
 };

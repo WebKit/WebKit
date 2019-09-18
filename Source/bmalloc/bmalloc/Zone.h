@@ -40,7 +40,7 @@ class Chunk;
 class Zone : public malloc_zone_t {
 public:
     // Enough capacity to track a 64GB heap, so probably enough for anything.
-    static const size_t capacity = 2048;
+    static constexpr size_t capacity = 2048;
 
     Zone(std::lock_guard<Mutex>&);
     Zone(task_t, memory_reader_t, vm_address_t);

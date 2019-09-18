@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,7 @@ namespace JSC { namespace DFG {
 namespace {
 
 namespace DFGIntegerRangeOptimizationPhaseInternal {
-static const bool verbose = false;
+static constexpr bool verbose = false;
 }
 const unsigned giveUpThreshold = 50;
 
@@ -97,8 +97,8 @@ public:
         return 0;
     }
 
-    static const unsigned minVagueness = 0;
-    static const unsigned maxVagueness = 2;
+    static constexpr unsigned minVagueness = 0;
+    static constexpr unsigned maxVagueness = 2;
     
     static Kind flipped(Kind kind)
     {

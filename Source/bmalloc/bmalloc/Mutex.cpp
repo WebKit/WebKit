@@ -36,7 +36,7 @@ void Mutex::lockSlowCase()
     // The longest critical section in bmalloc is much shorter than the
     // time it takes to make a system call to yield to the OS scheduler.
     // So, we try again a lot before we yield.
-    static const size_t aLot = 256;
+    static constexpr size_t aLot = 256;
     
     if (!m_isSpinning.exchange(true)) {
         auto clear = makeScopeExit([&] { m_isSpinning.store(false); });

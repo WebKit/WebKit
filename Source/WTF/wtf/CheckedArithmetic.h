@@ -242,22 +242,22 @@ template <typename Target, typename Source> static inline bool convertSafely(Sou
 
 template <typename T> struct RemoveChecked {
     typedef T CleanType;
-    static const CleanType DefaultValue = 0;    
+    static constexpr CleanType DefaultValue = 0;
 };
 
 template <typename T> struct RemoveChecked<Checked<T, ConditionalCrashOnOverflow>> {
     using CleanType = typename RemoveChecked<T>::CleanType;
-    static const CleanType DefaultValue = 0;
+    static constexpr CleanType DefaultValue = 0;
 };
 
 template <typename T> struct RemoveChecked<Checked<T, CrashOnOverflow>> {
     typedef typename RemoveChecked<T>::CleanType CleanType;
-    static const CleanType DefaultValue = 0;
+    static constexpr CleanType DefaultValue = 0;
 };
 
 template <typename T> struct RemoveChecked<Checked<T, RecordOverflow>> {
     typedef typename RemoveChecked<T>::CleanType CleanType;
-    static const CleanType DefaultValue = 0;
+    static constexpr CleanType DefaultValue = 0;
 };
 
 // The ResultBase and SignednessSelector are used to workaround typeof not being

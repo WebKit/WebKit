@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@
 
 namespace WTF {
 
-static const int64_t microsecondsPerSecond = 1000000;
+static constexpr int64_t microsecondsPerSecond = 1000000;
 
 static int64_t timeValueToMicroseconds(const time_value_t& value)
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@ class JSGlobalLexicalEnvironment final : public JSSegmentedVariableObject {
 public:
     using Base = JSSegmentedVariableObject;
 
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
     static JSGlobalLexicalEnvironment* create(VM& vm, Structure* structure, JSScope* parentScope)
     {
@@ -50,7 +50,7 @@ public:
 
     static void destroy(JSCell*);
     // We don't need a destructor because we use a finalizer instead.
-    static const bool needsDestruction = false;
+    static constexpr bool needsDestruction = false;
 
     bool isEmpty() const { return !symbolTable()->size(); }
     bool isConstVariable(UniquedStringImpl*);

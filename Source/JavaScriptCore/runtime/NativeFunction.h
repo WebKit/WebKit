@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,7 +60,7 @@ private:
 struct NativeFunctionHash {
     static unsigned hash(NativeFunction key) { return IntHash<uintptr_t>::hash(bitwise_cast<uintptr_t>(key)); }
     static bool equal(NativeFunction a, NativeFunction b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = true;
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
 class TaggedNativeFunction {
@@ -98,7 +98,7 @@ private:
 struct TaggedNativeFunctionHash {
     static unsigned hash(TaggedNativeFunction key) { return IntHash<uintptr_t>::hash(bitwise_cast<uintptr_t>(key)); }
     static bool equal(TaggedNativeFunction a, TaggedNativeFunction b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = true;
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
 static_assert(sizeof(NativeFunction) == sizeof(void*), "");

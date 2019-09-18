@@ -196,7 +196,7 @@ public:
     }
 
     typedef JSNonFinalObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | JSC::MasqueradesAsUndefined;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::MasqueradesAsUndefined;
 
     static Masquerader* create(VM& vm, JSGlobalObject* globalObject)
     {
@@ -493,7 +493,7 @@ public:
         return object;
     }
 
-    static const bool needsDestruction = false;
+    static constexpr bool needsDestruction = false;
 
     DECLARE_INFO;
     static const GlobalObjectMethodTable s_globalObjectMethodTable;

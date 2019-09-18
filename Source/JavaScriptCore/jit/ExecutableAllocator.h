@@ -58,7 +58,7 @@
 
 namespace JSC {
 
-static const unsigned jitAllocationGranule = 32;
+static constexpr unsigned jitAllocationGranule = 32;
 
 typedef WTF::MetaAllocatorHandle ExecutableMemoryHandle;
 

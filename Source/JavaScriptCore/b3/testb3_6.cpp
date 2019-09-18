@@ -1662,11 +1662,11 @@ void testInterpreter()
     dispatch->appendSuccessor(FrequentedBlock(stop));
 
     // Our "opcodes".
-    static const intptr_t AddDP = 0;
-    static const intptr_t AddCP = 1;
-    static const intptr_t Add = 2;
-    static const intptr_t Print = 3;
-    static const intptr_t Stop = 4;
+    static constexpr intptr_t AddDP = 0;
+    static constexpr intptr_t AddCP = 1;
+    static constexpr intptr_t Add = 2;
+    static constexpr intptr_t Print = 3;
+    static constexpr intptr_t Stop = 4;
 
     polyJump->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {

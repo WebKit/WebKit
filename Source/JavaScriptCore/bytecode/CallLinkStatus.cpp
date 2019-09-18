@@ -40,7 +40,7 @@
 namespace JSC {
 
 namespace CallLinkStatusInternal {
-static const bool verbose = false;
+static constexpr bool verbose = false;
 }
 
 CallLinkStatus::CallLinkStatus(JSValue value)

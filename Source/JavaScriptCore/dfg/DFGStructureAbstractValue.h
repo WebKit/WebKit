@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -251,10 +251,10 @@ public:
     void validateReferences(const TrackedReferences&) const;
     
 private:
-    static const uintptr_t clobberedFlag = RegisteredStructureSet::reservedFlag;
-    static const uintptr_t topValue = RegisteredStructureSet::reservedValue;
-    static const unsigned polymorphismLimit = 10;
-    static const unsigned clobberedSupremacyThreshold = 2;
+    static constexpr uintptr_t clobberedFlag = RegisteredStructureSet::reservedFlag;
+    static constexpr uintptr_t topValue = RegisteredStructureSet::reservedValue;
+    static constexpr unsigned polymorphismLimit = 10;
+    static constexpr unsigned clobberedSupremacyThreshold = 2;
     
     void filterSlow(SpeculatedType type);
     void filterClassInfoSlow(const ClassInfo*);

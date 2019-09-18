@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010 &yet, LLC. (nate@andyet.net)
@@ -109,11 +109,11 @@ template<unsigned length> inline bool startsWithLettersIgnoringASCIICase(const c
 
 /* Constants */
 
-static const double maxUnixTime = 2145859200.0; // 12/31/2037
+static constexpr double maxUnixTime = 2145859200.0; // 12/31/2037
 // ECMAScript asks not to support for a date of which total
 // millisecond value is larger than the following value.
 // See 15.9.1.14 of ECMA-262 5th edition.
-static const double maxECMAScriptTime = 8.64E15;
+static constexpr double maxECMAScriptTime = 8.64E15;
 
 // Day of year for the first day of each month, where index 0 is January, and day 0 is January 1.
 // First for non-leap years, then for leap years.
@@ -156,9 +156,9 @@ static inline double daysFrom1970ToYear(int year)
     // However, every hundredth year is not a leap year.  1900 and 2100 are not leap years.
     // Every four hundred years, there's a leap year after all.  2000 and 2400 are leap years.
 
-    static const int leapDaysBefore1971By4Rule = 1970 / 4;
-    static const int excludedLeapDaysBefore1971By100Rule = 1970 / 100;
-    static const int leapDaysBefore1971By400Rule = 1970 / 400;
+    static constexpr int leapDaysBefore1971By4Rule = 1970 / 4;
+    static constexpr int excludedLeapDaysBefore1971By100Rule = 1970 / 100;
+    static constexpr int leapDaysBefore1971By400Rule = 1970 / 400;
 
     const double yearMinusOne = year - 1;
     const double yearsToAddBy4Rule = floor(yearMinusOne / 4.0) - leapDaysBefore1971By4Rule;

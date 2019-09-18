@@ -34,7 +34,7 @@ class NativeExecutable final : public ExecutableBase {
     friend class LLIntOffsetsExtractor;
 public:
     typedef ExecutableBase Base;
-    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     static NativeExecutable* create(VM&, Ref<JITCode>&& callThunk, TaggedNativeFunction, Ref<JITCode>&& constructThunk, TaggedNativeFunction constructor, const String& name);
 

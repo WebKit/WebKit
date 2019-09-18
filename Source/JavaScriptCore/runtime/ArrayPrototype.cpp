@@ -175,7 +175,7 @@ static ALWAYS_INLINE bool putLength(ExecState* exec, VM& vm, JSObject* obj, JSVa
 static ALWAYS_INLINE void setLength(ExecState* exec, VM& vm, JSObject* obj, unsigned value)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
-    static const bool throwException = true;
+    static constexpr bool throwException = true;
     if (isJSArray(obj)) {
         jsCast<JSArray*>(obj)->setLength(exec, value, throwException);
         RETURN_IF_EXCEPTION(scope, void());

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@
 
 namespace WTF {
 
-static const bool verbose = false;
+static constexpr bool verbose = false;
 
 Ref<AutomaticThreadCondition> AutomaticThreadCondition::create()
 {

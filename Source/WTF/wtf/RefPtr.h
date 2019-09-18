@@ -239,7 +239,7 @@ inline RefPtr<T, U> static_pointer_cast(const RefPtr<X, Y>& p)
 
 template <typename T, typename U>
 struct IsSmartPtr<RefPtr<T, U>> {
-    static const bool value = true;
+    static constexpr bool value = true;
 };
 
 template<typename T, typename U>

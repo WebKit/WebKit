@@ -187,7 +187,7 @@ class Trie:
         print("static ALWAYS_INLINE bool isIdentPartIncludingEscape(const LChar* code, const LChar* codeEnd);")
         print("static ALWAYS_INLINE bool isIdentPartIncludingEscape(const UChar* code, const UChar* codeEnd);")
         # max length + 1 so we don't need to do any bounds checking at all
-        print("static const int maxTokenLength = %d;" % (self.maxLength() + 1))
+        print("static constexpr int maxTokenLength = %d;" % (self.maxLength() + 1))
         print("")
         print("template <>")
         print("template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::parseKeyword(JSTokenData* data)")

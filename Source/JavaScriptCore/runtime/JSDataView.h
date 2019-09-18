@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,7 @@ namespace JSC {
 class JSDataView final : public JSArrayBufferView {
 public:
     typedef JSArrayBufferView Base;
-    static const unsigned elementSize = 1;
+    static constexpr unsigned elementSize = 1;
     
 protected:
     JSDataView(VM&, ConstructionContext&, ArrayBuffer*);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,7 +80,7 @@ private:
 };
 
 struct VariableEnvironmentEntryHashTraits : HashTraits<VariableEnvironmentEntry> {
-    static const bool needsDestruction = false;
+    static constexpr bool needsDestruction = false;
 };
 
 class VariableEnvironment {
@@ -158,7 +158,7 @@ struct CompactVariableMapKey {
 
     static unsigned hash(const CompactVariableMapKey& key) { return key.m_environment->hash(); }
     static bool equal(const CompactVariableMapKey& a, const CompactVariableMapKey& b) { return *a.m_environment == *b.m_environment; }
-    static const bool safeToCompareToEmptyOrDeleted = false;
+    static constexpr bool safeToCompareToEmptyOrDeleted = false;
     static void makeDeletedValue(CompactVariableMapKey& key)
     {
         key.m_environment = reinterpret_cast<CompactVariableEnvironment*>(1);
@@ -193,10 +193,10 @@ template<> struct DefaultHash<JSC::CompactVariableMapKey> {
 };
 
 template<> struct HashTraits<JSC::CompactVariableMapKey> : GenericHashTraits<JSC::CompactVariableMapKey> {
-    static const bool emptyValueIsZero = true;
+    static constexpr bool emptyValueIsZero = true;
     static JSC::CompactVariableMapKey emptyValue() { return JSC::CompactVariableMapKey(); }
 
-    static const bool hasIsEmptyValueFunction = true;
+    static constexpr bool hasIsEmptyValueFunction = true;
     static bool isEmptyValue(JSC::CompactVariableMapKey key) { return key.isHashTableEmptyValue(); }
 
     static void constructDeletedValue(JSC::CompactVariableMapKey& key) { JSC::CompactVariableMapKey::makeDeletedValue(key); }

@@ -1131,7 +1131,7 @@ class JSFinalObject final : public JSObject {
 
 public:
     typedef JSObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static size_t allocationSize(Checked<size_t> inlineCapacity)
     {
@@ -1139,15 +1139,15 @@ public:
     }
 
     static inline const TypeInfo typeInfo() { return TypeInfo(FinalObjectType, StructureFlags); }
-    static const IndexingType defaultIndexingType = NonArray;
+    static constexpr IndexingType defaultIndexingType = NonArray;
         
-    static const unsigned defaultSize = 64;
+    static constexpr unsigned defaultSize = 64;
     static inline unsigned defaultInlineCapacity()
     {
         return (defaultSize - allocationSize(0)) / sizeof(WriteBarrier<Unknown>);
     }
 
-    static const unsigned maxSize = 512;
+    static constexpr unsigned maxSize = 512;
     static inline unsigned maxInlineCapacity()
     {
         return (maxSize - allocationSize(0)) / sizeof(WriteBarrier<Unknown>);

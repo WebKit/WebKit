@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -126,7 +126,7 @@ public:
     }
     
 public:
-    static const uintptr_t shadowBit = 1;
+    static constexpr uintptr_t shadowBit = 1;
     
     uintptr_t m_word { 0 };
 };
@@ -134,7 +134,7 @@ public:
 struct NodeFlowProjectionHash {
     static unsigned hash(NodeFlowProjection key) { return key.hash(); }
     static bool equal(NodeFlowProjection a, NodeFlowProjection b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = true;
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
 } } // namespace JSC::DFG

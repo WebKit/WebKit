@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,7 +48,7 @@ namespace JSC { namespace DFG {
 namespace {
 
 namespace DFGCSEPhaseInternal {
-static const bool verbose = false;
+static constexpr bool verbose = false;
 }
 
 class ImpureDataSlot {
@@ -353,7 +353,7 @@ private:
         // the overhead of HashMaps can be quite high currently: clearing them, or even removing
         // enough things from them, deletes (or resizes) their backing store eagerly. Hence
         // HashMaps induce a lot of malloc traffic.
-        static const unsigned capacity = 100;
+        static constexpr unsigned capacity = 100;
     
         SmallMaps()
             : m_pureLength(0)

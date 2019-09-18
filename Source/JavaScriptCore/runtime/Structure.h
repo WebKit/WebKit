@@ -65,11 +65,11 @@ struct DumpContext;
 // The out-of-line property storage capacity to use when first allocating out-of-line
 // storage. Note that all objects start out without having any out-of-line storage;
 // this comes into play only on the first property store that exhausts inline storage.
-static const unsigned initialOutOfLineCapacity = 4;
+static constexpr unsigned initialOutOfLineCapacity = 4;
 
 // The factor by which to grow out-of-line storage when it is exhausted, after the
 // initial allocation.
-static const unsigned outOfLineGrowthFactor = 2;
+static constexpr unsigned outOfLineGrowthFactor = 2;
 
 struct PropertyMapEntry {
     UniquedStringImpl* key;
@@ -124,7 +124,7 @@ public:
     friend class StructureTransitionTable;
 
     typedef JSCell Base;
-    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
     
     enum PolyProtoTag { PolyProto };
     static Structure* create(VM&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*, IndexingType = NonArray, unsigned inlineCapacity = 0);
@@ -201,7 +201,7 @@ public:
 
     JS_EXPORT_PRIVATE Structure* flattenDictionaryStructure(VM&, JSObject*);
 
-    static const bool needsDestruction = true;
+    static constexpr bool needsDestruction = true;
     static void destroy(JSCell*);
 
     // Versions that take a func will call it after making the change but while still holding
@@ -627,8 +627,8 @@ private:
 
 public:
 #define DEFINE_BITFIELD(type, lowerName, upperName, width, offset) \
-    static const uint32_t s_##lowerName##Shift = offset;\
-    static const uint32_t s_##lowerName##Mask = ((1 << (width - 1)) | ((1 << (width - 1)) - 1));\
+    static constexpr uint32_t s_##lowerName##Shift = offset;\
+    static constexpr uint32_t s_##lowerName##Mask = ((1 << (width - 1)) | ((1 << (width - 1)) - 1));\
     type lowerName() const { return static_cast<type>((m_bitField >> offset) & s_##lowerName##Mask); }\
     void set##upperName(type newValue) \
     {\
@@ -748,8 +748,8 @@ private:
     
     void startWatchingInternalProperties(VM&);
 
-    static const int s_maxTransitionLength = 64;
-    static const int s_maxTransitionLengthForNonEvalPutById = 512;
+    static constexpr int s_maxTransitionLength = 64;
+    static constexpr int s_maxTransitionLengthForNonEvalPutById = 512;
 
     // These need to be properly aligned at the beginning of the 'Structure'
     // part of the object.

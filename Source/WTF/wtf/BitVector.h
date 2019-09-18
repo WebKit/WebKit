@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -489,7 +489,7 @@ private:
 struct BitVectorHash {
     static unsigned hash(const BitVector& vector) { return vector.hash(); }
     static bool equal(const BitVector& a, const BitVector& b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = false;
+    static constexpr bool safeToCompareToEmptyOrDeleted = false;
 };
 
 template<typename T> struct DefaultHash;

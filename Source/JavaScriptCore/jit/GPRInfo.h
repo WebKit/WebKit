@@ -337,26 +337,26 @@ private:
 class GPRInfo {
 public:
     typedef GPRReg RegisterType;
-    static const unsigned numberOfRegisters = 6;
-    static const unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
+    static constexpr unsigned numberOfRegisters = 6;
+    static constexpr unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
 
     // Temporary registers.
-    static const GPRReg regT0 = X86Registers::eax;
-    static const GPRReg regT1 = X86Registers::edx;
-    static const GPRReg regT2 = X86Registers::ecx;
-    static const GPRReg regT3 = X86Registers::ebx; // Callee-save
-    static const GPRReg regT4 = X86Registers::esi; // Callee-save
-    static const GPRReg regT5 = X86Registers::edi; // Callee-save
-    static const GPRReg callFrameRegister = X86Registers::ebp;
+    static constexpr GPRReg regT0 = X86Registers::eax;
+    static constexpr GPRReg regT1 = X86Registers::edx;
+    static constexpr GPRReg regT2 = X86Registers::ecx;
+    static constexpr GPRReg regT3 = X86Registers::ebx; // Callee-save
+    static constexpr GPRReg regT4 = X86Registers::esi; // Callee-save
+    static constexpr GPRReg regT5 = X86Registers::edi; // Callee-save
+    static constexpr GPRReg callFrameRegister = X86Registers::ebp;
     // These constants provide the names for the general purpose argument & return value registers.
-    static const GPRReg argumentGPR0 = X86Registers::ecx; // regT2
-    static const GPRReg argumentGPR1 = X86Registers::edx; // regT1
-    static const GPRReg argumentGPR2 = X86Registers::eax; // regT0
-    static const GPRReg argumentGPR3 = X86Registers::ebx; // regT3
-    static const GPRReg nonArgGPR0 = X86Registers::esi; // regT4
-    static const GPRReg returnValueGPR = X86Registers::eax; // regT0
-    static const GPRReg returnValueGPR2 = X86Registers::edx; // regT1
-    static const GPRReg nonPreservedNonReturnGPR = X86Registers::ecx;
+    static constexpr GPRReg argumentGPR0 = X86Registers::ecx; // regT2
+    static constexpr GPRReg argumentGPR1 = X86Registers::edx; // regT1
+    static constexpr GPRReg argumentGPR2 = X86Registers::eax; // regT0
+    static constexpr GPRReg argumentGPR3 = X86Registers::ebx; // regT3
+    static constexpr GPRReg nonArgGPR0 = X86Registers::esi; // regT4
+    static constexpr GPRReg returnValueGPR = X86Registers::eax; // regT0
+    static constexpr GPRReg returnValueGPR2 = X86Registers::edx; // regT1
+    static constexpr GPRReg nonPreservedNonReturnGPR = X86Registers::ecx;
 
     static GPRReg toRegister(unsigned index)
     {
@@ -386,7 +386,7 @@ public:
         return MacroAssembler::gprName(reg);
     }
 
-    static const unsigned InvalidIndex = 0xffffffff;
+    static constexpr unsigned InvalidIndex = 0xffffffff;
 };
 
 #endif // CPU(X86)
@@ -403,68 +403,68 @@ public:
 class GPRInfo {
 public:
     typedef GPRReg RegisterType;
-    static const unsigned numberOfRegisters = 11;
-    static const unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
+    static constexpr unsigned numberOfRegisters = 11;
+    static constexpr unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
 
     // These registers match the baseline JIT.
-    static const GPRReg callFrameRegister = X86Registers::ebp;
-    static const GPRReg tagTypeNumberRegister = X86Registers::r14;
-    static const GPRReg tagMaskRegister = X86Registers::r15;
+    static constexpr GPRReg callFrameRegister = X86Registers::ebp;
+    static constexpr GPRReg tagTypeNumberRegister = X86Registers::r14;
+    static constexpr GPRReg tagMaskRegister = X86Registers::r15;
 
     // Temporary registers.
-    static const GPRReg regT0 = X86Registers::eax;
+    static constexpr GPRReg regT0 = X86Registers::eax;
 #if !OS(WINDOWS)
-    static const GPRReg regT1 = X86Registers::esi;
-    static const GPRReg regT2 = X86Registers::edx;
-    static const GPRReg regT3 = X86Registers::ecx;
-    static const GPRReg regT4 = X86Registers::r8;
-    static const GPRReg regT5 = X86Registers::r10;
-    static const GPRReg regT6 = X86Registers::edi;
-    static const GPRReg regT7 = X86Registers::r9;
+    static constexpr GPRReg regT1 = X86Registers::esi;
+    static constexpr GPRReg regT2 = X86Registers::edx;
+    static constexpr GPRReg regT3 = X86Registers::ecx;
+    static constexpr GPRReg regT4 = X86Registers::r8;
+    static constexpr GPRReg regT5 = X86Registers::r10;
+    static constexpr GPRReg regT6 = X86Registers::edi;
+    static constexpr GPRReg regT7 = X86Registers::r9;
 #else
-    static const GPRReg regT1 = X86Registers::edx;
-    static const GPRReg regT2 = X86Registers::r8;
-    static const GPRReg regT3 = X86Registers::r9;
-    static const GPRReg regT4 = X86Registers::r10;
-    static const GPRReg regT5 = X86Registers::ecx;
+    static constexpr GPRReg regT1 = X86Registers::edx;
+    static constexpr GPRReg regT2 = X86Registers::r8;
+    static constexpr GPRReg regT3 = X86Registers::r9;
+    static constexpr GPRReg regT4 = X86Registers::r10;
+    static constexpr GPRReg regT5 = X86Registers::ecx;
 #endif
 
-    static const GPRReg regCS0 = X86Registers::ebx;
+    static constexpr GPRReg regCS0 = X86Registers::ebx;
 
 #if !OS(WINDOWS)
-    static const GPRReg regCS1 = X86Registers::r12;
-    static const GPRReg regCS2 = X86Registers::r13;
-    static const GPRReg regCS3 = X86Registers::r14;
-    static const GPRReg regCS4 = X86Registers::r15;
+    static constexpr GPRReg regCS1 = X86Registers::r12;
+    static constexpr GPRReg regCS2 = X86Registers::r13;
+    static constexpr GPRReg regCS3 = X86Registers::r14;
+    static constexpr GPRReg regCS4 = X86Registers::r15;
 #else
-    static const GPRReg regCS1 = X86Registers::esi;
-    static const GPRReg regCS2 = X86Registers::edi;
-    static const GPRReg regCS3 = X86Registers::r12;
-    static const GPRReg regCS4 = X86Registers::r13;
-    static const GPRReg regCS5 = X86Registers::r14;
-    static const GPRReg regCS6 = X86Registers::r15;
+    static constexpr GPRReg regCS1 = X86Registers::esi;
+    static constexpr GPRReg regCS2 = X86Registers::edi;
+    static constexpr GPRReg regCS3 = X86Registers::r12;
+    static constexpr GPRReg regCS4 = X86Registers::r13;
+    static constexpr GPRReg regCS5 = X86Registers::r14;
+    static constexpr GPRReg regCS6 = X86Registers::r15;
 #endif
 
     // These constants provide the names for the general purpose argument & return value registers.
 #if !OS(WINDOWS)
-    static const GPRReg argumentGPR0 = X86Registers::edi; // regT6
-    static const GPRReg argumentGPR1 = X86Registers::esi; // regT1
-    static const GPRReg argumentGPR2 = X86Registers::edx; // regT2
-    static const GPRReg argumentGPR3 = X86Registers::ecx; // regT3
-    static const GPRReg argumentGPR4 = X86Registers::r8; // regT4
-    static const GPRReg argumentGPR5 = X86Registers::r9; // regT7
+    static constexpr GPRReg argumentGPR0 = X86Registers::edi; // regT6
+    static constexpr GPRReg argumentGPR1 = X86Registers::esi; // regT1
+    static constexpr GPRReg argumentGPR2 = X86Registers::edx; // regT2
+    static constexpr GPRReg argumentGPR3 = X86Registers::ecx; // regT3
+    static constexpr GPRReg argumentGPR4 = X86Registers::r8; // regT4
+    static constexpr GPRReg argumentGPR5 = X86Registers::r9; // regT7
 #else
-    static const GPRReg argumentGPR0 = X86Registers::ecx; // regT5
-    static const GPRReg argumentGPR1 = X86Registers::edx; // regT1
-    static const GPRReg argumentGPR2 = X86Registers::r8; // regT2
-    static const GPRReg argumentGPR3 = X86Registers::r9; // regT3
+    static constexpr GPRReg argumentGPR0 = X86Registers::ecx; // regT5
+    static constexpr GPRReg argumentGPR1 = X86Registers::edx; // regT1
+    static constexpr GPRReg argumentGPR2 = X86Registers::r8; // regT2
+    static constexpr GPRReg argumentGPR3 = X86Registers::r9; // regT3
 #endif
-    static const GPRReg nonArgGPR0 = X86Registers::r10; // regT5 (regT4 on Windows)
-    static const GPRReg returnValueGPR = X86Registers::eax; // regT0
-    static const GPRReg returnValueGPR2 = X86Registers::edx; // regT1 or regT2
-    static const GPRReg nonPreservedNonReturnGPR = X86Registers::r10; // regT5 (regT4 on Windows)
-    static const GPRReg nonPreservedNonArgumentGPR0 = X86Registers::r10; // regT5 (regT4 on Windows)
-    static const GPRReg nonPreservedNonArgumentGPR1 = X86Registers::eax;
+    static constexpr GPRReg nonArgGPR0 = X86Registers::r10; // regT5 (regT4 on Windows)
+    static constexpr GPRReg returnValueGPR = X86Registers::eax; // regT0
+    static constexpr GPRReg returnValueGPR2 = X86Registers::edx; // regT1 or regT2
+    static constexpr GPRReg nonPreservedNonReturnGPR = X86Registers::r10; // regT5 (regT4 on Windows)
+    static constexpr GPRReg nonPreservedNonArgumentGPR0 = X86Registers::r10; // regT5 (regT4 on Windows)
+    static constexpr GPRReg nonPreservedNonArgumentGPR1 = X86Registers::eax;
 
     // FIXME: I believe that all uses of this are dead in the sense that it just causes the scratch
     // register allocator to select a different register and potentially spill things. It would be better
@@ -521,7 +521,7 @@ public:
         return reservedRegisters;
     }
     
-    static const unsigned InvalidIndex = 0xffffffff;
+    static constexpr unsigned InvalidIndex = 0xffffffff;
 };
 
 #endif // CPU(X86_64)
@@ -533,32 +533,32 @@ public:
 class GPRInfo {
 public:
     typedef GPRReg RegisterType;
-    static const unsigned numberOfRegisters = 9;
-    static const unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
+    static constexpr unsigned numberOfRegisters = 9;
+    static constexpr unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
 
     // Temporary registers.
-    static const GPRReg regT0 = ARMRegisters::r0;
-    static const GPRReg regT1 = ARMRegisters::r1;
-    static const GPRReg regT2 = ARMRegisters::r2;
-    static const GPRReg regT3 = ARMRegisters::r3;
-    static const GPRReg regT4 = ARMRegisters::r8;
-    static const GPRReg regT5 = ARMRegisters::r9;
-    static const GPRReg regT6 = ARMRegisters::r10;
-    static const GPRReg regT7 = ARMRegisters::r5;
-    static const GPRReg regT8 = ARMRegisters::r4;
-    static const GPRReg regCS0 = ARMRegisters::r11;
+    static constexpr GPRReg regT0 = ARMRegisters::r0;
+    static constexpr GPRReg regT1 = ARMRegisters::r1;
+    static constexpr GPRReg regT2 = ARMRegisters::r2;
+    static constexpr GPRReg regT3 = ARMRegisters::r3;
+    static constexpr GPRReg regT4 = ARMRegisters::r8;
+    static constexpr GPRReg regT5 = ARMRegisters::r9;
+    static constexpr GPRReg regT6 = ARMRegisters::r10;
+    static constexpr GPRReg regT7 = ARMRegisters::r5;
+    static constexpr GPRReg regT8 = ARMRegisters::r4;
+    static constexpr GPRReg regCS0 = ARMRegisters::r11;
     // These registers match the baseline JIT.
-    static const GPRReg callFrameRegister = ARMRegisters::fp;
+    static constexpr GPRReg callFrameRegister = ARMRegisters::fp;
     // These constants provide the names for the general purpose argument & return value registers.
-    static const GPRReg argumentGPR0 = ARMRegisters::r0; // regT0
-    static const GPRReg argumentGPR1 = ARMRegisters::r1; // regT1
-    static const GPRReg argumentGPR2 = ARMRegisters::r2; // regT2
-    static const GPRReg argumentGPR3 = ARMRegisters::r3; // regT3
-    static const GPRReg nonArgGPR0 = ARMRegisters::r4; // regT8
-    static const GPRReg nonArgGPR1 = ARMRegisters::r8; // regT4
-    static const GPRReg returnValueGPR = ARMRegisters::r0; // regT0
-    static const GPRReg returnValueGPR2 = ARMRegisters::r1; // regT1
-    static const GPRReg nonPreservedNonReturnGPR = ARMRegisters::r5;
+    static constexpr GPRReg argumentGPR0 = ARMRegisters::r0; // regT0
+    static constexpr GPRReg argumentGPR1 = ARMRegisters::r1; // regT1
+    static constexpr GPRReg argumentGPR2 = ARMRegisters::r2; // regT2
+    static constexpr GPRReg argumentGPR3 = ARMRegisters::r3; // regT3
+    static constexpr GPRReg nonArgGPR0 = ARMRegisters::r4; // regT8
+    static constexpr GPRReg nonArgGPR1 = ARMRegisters::r8; // regT4
+    static constexpr GPRReg returnValueGPR = ARMRegisters::r0; // regT0
+    static constexpr GPRReg returnValueGPR2 = ARMRegisters::r1; // regT1
+    static constexpr GPRReg nonPreservedNonReturnGPR = ARMRegisters::r5;
 
     static GPRReg toRegister(unsigned index)
     {
@@ -590,7 +590,7 @@ public:
         return MacroAssembler::gprName(reg);
     }
 
-    static const unsigned InvalidIndex = 0xffffffff;
+    static constexpr unsigned InvalidIndex = 0xffffffff;
 };
 
 #endif // CPU(ARM)
@@ -603,58 +603,58 @@ public:
 class GPRInfo {
 public:
     typedef GPRReg RegisterType;
-    static const unsigned numberOfRegisters = 16;
-    static const unsigned numberOfArgumentRegisters = 8;
+    static constexpr unsigned numberOfRegisters = 16;
+    static constexpr unsigned numberOfArgumentRegisters = 8;
 
     // These registers match the baseline JIT.
-    static const GPRReg callFrameRegister = ARM64Registers::fp;
-    static const GPRReg tagTypeNumberRegister = ARM64Registers::x27;
-    static const GPRReg tagMaskRegister = ARM64Registers::x28;
-    static const GPRReg dataTempRegister = MacroAssembler::dataTempRegister;
-    static const GPRReg memoryTempRegister = MacroAssembler::memoryTempRegister;
+    static constexpr GPRReg callFrameRegister = ARM64Registers::fp;
+    static constexpr GPRReg tagTypeNumberRegister = ARM64Registers::x27;
+    static constexpr GPRReg tagMaskRegister = ARM64Registers::x28;
+    static constexpr GPRReg dataTempRegister = MacroAssembler::dataTempRegister;
+    static constexpr GPRReg memoryTempRegister = MacroAssembler::memoryTempRegister;
     // Temporary registers.
-    static const GPRReg regT0 = ARM64Registers::x0;
-    static const GPRReg regT1 = ARM64Registers::x1;
-    static const GPRReg regT2 = ARM64Registers::x2;
-    static const GPRReg regT3 = ARM64Registers::x3;
-    static const GPRReg regT4 = ARM64Registers::x4;
-    static const GPRReg regT5 = ARM64Registers::x5;
-    static const GPRReg regT6 = ARM64Registers::x6;
-    static const GPRReg regT7 = ARM64Registers::x7;
-    static const GPRReg regT8 = ARM64Registers::x8;
-    static const GPRReg regT9 = ARM64Registers::x9;
-    static const GPRReg regT10 = ARM64Registers::x10;
-    static const GPRReg regT11 = ARM64Registers::x11;
-    static const GPRReg regT12 = ARM64Registers::x12;
-    static const GPRReg regT13 = ARM64Registers::x13;
-    static const GPRReg regT14 = ARM64Registers::x14;
-    static const GPRReg regT15 = ARM64Registers::x15;
-    static const GPRReg regCS0 = ARM64Registers::x19; // Used by FTL only
-    static const GPRReg regCS1 = ARM64Registers::x20; // Used by FTL only
-    static const GPRReg regCS2 = ARM64Registers::x21; // Used by FTL only
-    static const GPRReg regCS3 = ARM64Registers::x22; // Used by FTL only
-    static const GPRReg regCS4 = ARM64Registers::x23; // Used by FTL only
-    static const GPRReg regCS5 = ARM64Registers::x24; // Used by FTL only
-    static const GPRReg regCS6 = ARM64Registers::x25; // Used by FTL only
-    static const GPRReg regCS7 = ARM64Registers::x26;
-    static const GPRReg regCS8 = ARM64Registers::x27; // tagTypeNumber
-    static const GPRReg regCS9 = ARM64Registers::x28; // tagMask
+    static constexpr GPRReg regT0 = ARM64Registers::x0;
+    static constexpr GPRReg regT1 = ARM64Registers::x1;
+    static constexpr GPRReg regT2 = ARM64Registers::x2;
+    static constexpr GPRReg regT3 = ARM64Registers::x3;
+    static constexpr GPRReg regT4 = ARM64Registers::x4;
+    static constexpr GPRReg regT5 = ARM64Registers::x5;
+    static constexpr GPRReg regT6 = ARM64Registers::x6;
+    static constexpr GPRReg regT7 = ARM64Registers::x7;
+    static constexpr GPRReg regT8 = ARM64Registers::x8;
+    static constexpr GPRReg regT9 = ARM64Registers::x9;
+    static constexpr GPRReg regT10 = ARM64Registers::x10;
+    static constexpr GPRReg regT11 = ARM64Registers::x11;
+    static constexpr GPRReg regT12 = ARM64Registers::x12;
+    static constexpr GPRReg regT13 = ARM64Registers::x13;
+    static constexpr GPRReg regT14 = ARM64Registers::x14;
+    static constexpr GPRReg regT15 = ARM64Registers::x15;
+    static constexpr GPRReg regCS0 = ARM64Registers::x19; // Used by FTL only
+    static constexpr GPRReg regCS1 = ARM64Registers::x20; // Used by FTL only
+    static constexpr GPRReg regCS2 = ARM64Registers::x21; // Used by FTL only
+    static constexpr GPRReg regCS3 = ARM64Registers::x22; // Used by FTL only
+    static constexpr GPRReg regCS4 = ARM64Registers::x23; // Used by FTL only
+    static constexpr GPRReg regCS5 = ARM64Registers::x24; // Used by FTL only
+    static constexpr GPRReg regCS6 = ARM64Registers::x25; // Used by FTL only
+    static constexpr GPRReg regCS7 = ARM64Registers::x26;
+    static constexpr GPRReg regCS8 = ARM64Registers::x27; // tagTypeNumber
+    static constexpr GPRReg regCS9 = ARM64Registers::x28; // tagMask
     // These constants provide the names for the general purpose argument & return value registers.
-    static const GPRReg argumentGPR0 = ARM64Registers::x0; // regT0
-    static const GPRReg argumentGPR1 = ARM64Registers::x1; // regT1
-    static const GPRReg argumentGPR2 = ARM64Registers::x2; // regT2
-    static const GPRReg argumentGPR3 = ARM64Registers::x3; // regT3
-    static const GPRReg argumentGPR4 = ARM64Registers::x4; // regT4
-    static const GPRReg argumentGPR5 = ARM64Registers::x5; // regT5
-    static const GPRReg argumentGPR6 = ARM64Registers::x6; // regT6
-    static const GPRReg argumentGPR7 = ARM64Registers::x7; // regT7
-    static const GPRReg nonArgGPR0 = ARM64Registers::x8; // regT8
-    static const GPRReg nonArgGPR1 = ARM64Registers::x9; // regT9
-    static const GPRReg returnValueGPR = ARM64Registers::x0; // regT0
-    static const GPRReg returnValueGPR2 = ARM64Registers::x1; // regT1
-    static const GPRReg nonPreservedNonReturnGPR = ARM64Registers::x2;
-    static const GPRReg nonPreservedNonArgumentGPR0 = ARM64Registers::x8;
-    static const GPRReg nonPreservedNonArgumentGPR1 = ARM64Registers::x9;
+    static constexpr GPRReg argumentGPR0 = ARM64Registers::x0; // regT0
+    static constexpr GPRReg argumentGPR1 = ARM64Registers::x1; // regT1
+    static constexpr GPRReg argumentGPR2 = ARM64Registers::x2; // regT2
+    static constexpr GPRReg argumentGPR3 = ARM64Registers::x3; // regT3
+    static constexpr GPRReg argumentGPR4 = ARM64Registers::x4; // regT4
+    static constexpr GPRReg argumentGPR5 = ARM64Registers::x5; // regT5
+    static constexpr GPRReg argumentGPR6 = ARM64Registers::x6; // regT6
+    static constexpr GPRReg argumentGPR7 = ARM64Registers::x7; // regT7
+    static constexpr GPRReg nonArgGPR0 = ARM64Registers::x8; // regT8
+    static constexpr GPRReg nonArgGPR1 = ARM64Registers::x9; // regT9
+    static constexpr GPRReg returnValueGPR = ARM64Registers::x0; // regT0
+    static constexpr GPRReg returnValueGPR2 = ARM64Registers::x1; // regT1
+    static constexpr GPRReg nonPreservedNonReturnGPR = ARM64Registers::x2;
+    static constexpr GPRReg nonPreservedNonArgumentGPR0 = ARM64Registers::x8;
+    static constexpr GPRReg nonPreservedNonArgumentGPR1 = ARM64Registers::x9;
     static const GPRReg patchpointScratchRegister;
 
     // GPRReg mapping is direct, the machine register numbers can
@@ -709,7 +709,7 @@ public:
         return reservedRegisters;
     }
     
-    static const unsigned InvalidIndex = 0xffffffff;
+    static constexpr unsigned InvalidIndex = 0xffffffff;
 };
 
 #endif // CPU(ARM64)
@@ -721,36 +721,36 @@ public:
 class GPRInfo {
 public:
     typedef GPRReg RegisterType;
-    static const unsigned numberOfRegisters = 11;
-    static const unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
+    static constexpr unsigned numberOfRegisters = 11;
+    static constexpr unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
 
     // regT0 must be v0 for returning a 32-bit value.
     // regT1 must be v1 for returning a pair of 32-bit value.
 
     // Temporary registers.
-    static const GPRReg regT0 = MIPSRegisters::v0;
-    static const GPRReg regT1 = MIPSRegisters::v1;
-    static const GPRReg regT2 = MIPSRegisters::t2;
-    static const GPRReg regT3 = MIPSRegisters::t3;
-    static const GPRReg regT4 = MIPSRegisters::t4;
-    static const GPRReg regT5 = MIPSRegisters::t5;
-    static const GPRReg regT6 = MIPSRegisters::t6;
-    static const GPRReg regT7 = MIPSRegisters::a0;
-    static const GPRReg regT8 = MIPSRegisters::a1;
-    static const GPRReg regT9 = MIPSRegisters::a2;
-    static const GPRReg regT10 = MIPSRegisters::a3;
+    static constexpr GPRReg regT0 = MIPSRegisters::v0;
+    static constexpr GPRReg regT1 = MIPSRegisters::v1;
+    static constexpr GPRReg regT2 = MIPSRegisters::t2;
+    static constexpr GPRReg regT3 = MIPSRegisters::t3;
+    static constexpr GPRReg regT4 = MIPSRegisters::t4;
+    static constexpr GPRReg regT5 = MIPSRegisters::t5;
+    static constexpr GPRReg regT6 = MIPSRegisters::t6;
+    static constexpr GPRReg regT7 = MIPSRegisters::a0;
+    static constexpr GPRReg regT8 = MIPSRegisters::a1;
+    static constexpr GPRReg regT9 = MIPSRegisters::a2;
+    static constexpr GPRReg regT10 = MIPSRegisters::a3;
     // These registers match the baseline JIT.
-    static const GPRReg callFrameRegister = MIPSRegisters::fp;
+    static constexpr GPRReg callFrameRegister = MIPSRegisters::fp;
     // These constants provide the names for the general purpose argument & return value registers.
-    static const GPRReg argumentGPR0 = MIPSRegisters::a0;
-    static const GPRReg argumentGPR1 = MIPSRegisters::a1;
-    static const GPRReg argumentGPR2 = MIPSRegisters::a2;
-    static const GPRReg argumentGPR3 = MIPSRegisters::a3;
-    static const GPRReg nonArgGPR0 = regT4;
-    static const GPRReg returnValueGPR = regT0;
-    static const GPRReg returnValueGPR2 = regT1;
-    static const GPRReg nonPreservedNonReturnGPR = regT2;
-    static const GPRReg regCS0 = MIPSRegisters::s0;
+    static constexpr GPRReg argumentGPR0 = MIPSRegisters::a0;
+    static constexpr GPRReg argumentGPR1 = MIPSRegisters::a1;
+    static constexpr GPRReg argumentGPR2 = MIPSRegisters::a2;
+    static constexpr GPRReg argumentGPR3 = MIPSRegisters::a3;
+    static constexpr GPRReg nonArgGPR0 = regT4;
+    static constexpr GPRReg returnValueGPR = regT0;
+    static constexpr GPRReg returnValueGPR2 = regT1;
+    static constexpr GPRReg nonPreservedNonReturnGPR = regT2;
+    static constexpr GPRReg regCS0 = MIPSRegisters::s0;
 
     static GPRReg toRegister(unsigned index)
     {
@@ -786,7 +786,7 @@ public:
         return MacroAssembler::gprName(reg);
     }
 
-    static const unsigned InvalidIndex = 0xffffffff;
+    static constexpr unsigned InvalidIndex = 0xffffffff;
 };
 
 #endif // CPU(MIPS)

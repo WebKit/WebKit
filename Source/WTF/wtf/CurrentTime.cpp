@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Google Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
@@ -68,8 +68,8 @@ namespace WTF {
 #if OS(WINDOWS)
 
 // Number of 100 nanosecond between January 1, 1601 and January 1, 1970.
-static const ULONGLONG epochBias = 116444736000000000ULL;
-static const double hundredsOfNanosecondsPerMillisecond = 10000;
+static constexpr ULONGLONG epochBias = 116444736000000000ULL;
+static constexpr double hundredsOfNanosecondsPerMillisecond = 10000;
 
 static double lowResUTCTime()
 {

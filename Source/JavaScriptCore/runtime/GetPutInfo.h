@@ -203,11 +203,11 @@ class GetPutInfo {
 public:
     // Give each field 10 bits for simplicity.
     static_assert(sizeof(Operand) * 8 > 30, "Not enough bits for GetPutInfo");
-    static const unsigned modeShift = 20;
-    static const unsigned initializationShift = 10;
-    static const unsigned typeBits = (1 << initializationShift) - 1;
-    static const unsigned initializationBits = ((1 << modeShift) - 1) & ~typeBits;
-    static const unsigned modeBits = ((1 << 30) - 1) & ~initializationBits & ~typeBits;
+    static constexpr unsigned modeShift = 20;
+    static constexpr unsigned initializationShift = 10;
+    static constexpr unsigned typeBits = (1 << initializationShift) - 1;
+    static constexpr unsigned initializationBits = ((1 << modeShift) - 1) & ~typeBits;
+    static constexpr unsigned modeBits = ((1 << 30) - 1) & ~initializationBits & ~typeBits;
     static_assert((modeBits & initializationBits & typeBits) == 0x0, "There should be no intersection between ResolveMode ResolveType and InitializationMode");
 
     GetPutInfo() = default;

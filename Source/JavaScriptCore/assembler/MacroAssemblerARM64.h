@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,8 +38,8 @@ using Assembler = TARGET_ASSEMBLER;
 
 class MacroAssemblerARM64 : public AbstractMacroAssembler<Assembler> {
 public:
-    static const unsigned numGPRs = 32;
-    static const unsigned numFPRs = 32;
+    static constexpr unsigned numGPRs = 32;
+    static constexpr unsigned numFPRs = 32;
     
     static constexpr RegisterID dataTempRegister = ARM64Registers::ip0;
     static constexpr RegisterID memoryTempRegister = ARM64Registers::ip1;
@@ -51,11 +51,11 @@ public:
     }
 
 protected:
-    static const ARM64Registers::FPRegisterID fpTempRegister = ARM64Registers::q31;
-    static const Assembler::SetFlags S = Assembler::S;
-    static const int64_t maskHalfWord0 = 0xffffl;
-    static const int64_t maskHalfWord1 = 0xffff0000l;
-    static const int64_t maskUpperWord = 0xffffffff00000000l;
+    static constexpr ARM64Registers::FPRegisterID fpTempRegister = ARM64Registers::q31;
+    static constexpr Assembler::SetFlags S = Assembler::S;
+    static constexpr int64_t maskHalfWord0 = 0xffffl;
+    static constexpr int64_t maskHalfWord1 = 0xffff0000l;
+    static constexpr int64_t maskUpperWord = 0xffffffff00000000l;
 
     static constexpr size_t INSTRUCTION_SIZE = 4;
 
@@ -75,8 +75,8 @@ public:
     typedef Assembler::JumpLinkType JumpLinkType;
     typedef Assembler::Condition Condition;
 
-    static const Assembler::Condition DefaultCondition = Assembler::ConditionInvalid;
-    static const Assembler::JumpType DefaultJump = Assembler::JumpNoConditionFixedSize;
+    static constexpr Assembler::Condition DefaultCondition = Assembler::ConditionInvalid;
+    static constexpr Assembler::JumpType DefaultJump = Assembler::JumpNoConditionFixedSize;
 
     Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink() { return m_assembler.jumpsToLink(); }
     static bool canCompact(JumpType jumpType) { return Assembler::canCompact(jumpType); }
@@ -86,7 +86,7 @@ public:
     template <Assembler::CopyFunction copy>
     static void link(LinkRecord& record, uint8_t* from, const uint8_t* fromInstruction, uint8_t* to) { return Assembler::link<copy>(record, from, fromInstruction, to); }
 
-    static const Scale ScalePtr = TimesEight;
+    static constexpr Scale ScalePtr = TimesEight;
 
     static bool isCompactPtrAlignedAddressOffset(ptrdiff_t value)
     {
@@ -137,9 +137,9 @@ public:
         DoubleLessThanOrEqualOrUnordered = Assembler::ConditionLE,
     };
 
-    static const RegisterID stackPointerRegister = ARM64Registers::sp;
-    static const RegisterID framePointerRegister = ARM64Registers::fp;
-    static const RegisterID linkRegister = ARM64Registers::lr;
+    static constexpr RegisterID stackPointerRegister = ARM64Registers::sp;
+    static constexpr RegisterID framePointerRegister = ARM64Registers::fp;
+    static constexpr RegisterID linkRegister = ARM64Registers::lr;
 
     // FIXME: Get reasonable implementations for these
     static bool shouldBlindForSpecificArch(uint32_t value) { return value >= 0x00ffffff; }

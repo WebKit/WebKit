@@ -53,7 +53,7 @@
 
 namespace bmalloc {
 
-static const size_t availableMemoryGuess = 512 * bmalloc::MB;
+static constexpr size_t availableMemoryGuess = 512 * bmalloc::MB;
 
 #if BOS(DARWIN)
 static size_t memorySizeAccordingToKernel()

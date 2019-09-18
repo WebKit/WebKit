@@ -32,8 +32,8 @@ namespace JSC {
     class JSNonDestructibleProxy : public JSProxy {
         public:
             using Base = JSProxy;
-            static const unsigned StructureFlags = Base::StructureFlags;
-            static const bool needsDestruction = false;
+            static constexpr unsigned StructureFlags = Base::StructureFlags;
+            static constexpr bool needsDestruction = false;
 
             template<typename CellType, SubspaceAccess mode>
                 static CompleteSubspace* subspaceFor(VM& vm)

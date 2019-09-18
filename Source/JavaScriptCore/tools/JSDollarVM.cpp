@@ -279,7 +279,7 @@ public:
     }
 
     typedef JSNonFinalObject Base;
-    static const bool needsDestruction = false;
+    static constexpr bool needsDestruction = false;
 
     static SimpleObject* create(VM& vm, JSGlobalObject* globalObject)
     {
@@ -332,7 +332,7 @@ public:
 
     DECLARE_INFO;
     typedef JSNonFinalObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | JSC::GetOwnPropertySlotIsImpure | JSC::OverridesGetOwnPropertySlot;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::GetOwnPropertySlotIsImpure | JSC::OverridesGetOwnPropertySlot;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -400,7 +400,7 @@ public:
 
     DECLARE_INFO;
     typedef JSNonFinalObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | JSC::OverridesGetOwnPropertySlot;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::OverridesGetOwnPropertySlot;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -471,7 +471,7 @@ private:
 class RuntimeArray : public JSArray {
 public:
     typedef JSArray Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames;
 
     static RuntimeArray* create(ExecState* exec)
     {
@@ -493,7 +493,7 @@ public:
         static_cast<RuntimeArray*>(cell)->RuntimeArray::~RuntimeArray();
     }
 
-    static const bool needsDestruction = false;
+    static constexpr bool needsDestruction = false;
 
     static bool getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
     {
@@ -596,7 +596,7 @@ public:
 
     DECLARE_INFO;
     typedef JSNonFinalObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -648,7 +648,7 @@ public:
 
     DECLARE_INFO;
     typedef DOMJITNode Base;
-    static const unsigned StructureFlags = Base::StructureFlags;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -739,7 +739,7 @@ public:
 
     DECLARE_INFO;
     typedef DOMJITNode Base;
-    static const unsigned StructureFlags = Base::StructureFlags;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -859,7 +859,7 @@ public:
 
     DECLARE_INFO;
     typedef DOMJITNode Base;
-    static const unsigned StructureFlags = Base::StructureFlags;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -938,7 +938,7 @@ public:
 
     DECLARE_INFO;
     typedef DOMJITNode Base;
-    static const unsigned StructureFlags = Base::StructureFlags;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -997,7 +997,7 @@ public:
 
     DECLARE_INFO;
     using Base = DOMJITNode;
-    static const unsigned StructureFlags = Base::StructureFlags;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -1095,7 +1095,7 @@ private:
 class JSTestCustomGetterSetter : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
-    static const unsigned StructureFlags = Base::StructureFlags;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     JSTestCustomGetterSetter(VM& vm, Structure* structure)
         : Base(vm, structure)

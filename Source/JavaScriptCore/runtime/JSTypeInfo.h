@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2008, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,26 +37,26 @@ class LLIntOffsetsExtractor;
 
 // Inline flags.
 
-static const unsigned MasqueradesAsUndefined = 1; // WebCore uses MasqueradesAsUndefined to make document.all undetectable.
-static const unsigned ImplementsDefaultHasInstance = 1 << 1;
-static const unsigned OverridesGetCallData = 1 << 2; // Need this flag if you implement [[Callable]] interface, which means overriding getCallData. The object may not be callable since getCallData can say it is not callable.
-static const unsigned OverridesGetOwnPropertySlot = 1 << 3;
-static const unsigned OverridesToThis = 1 << 4; // If this is false then this returns something other than 'this'. Non-object cells that are visible to JS have this set as do some exotic objects.
-static const unsigned HasStaticPropertyTable = 1 << 5;
-static const unsigned TypeInfoPerCellBit = 1 << 7; // Unlike other inline flags, this will only be set on the cell itself and will not be set on the Structure.
+static constexpr unsigned MasqueradesAsUndefined = 1; // WebCore uses MasqueradesAsUndefined to make document.all undetectable.
+static constexpr unsigned ImplementsDefaultHasInstance = 1 << 1;
+static constexpr unsigned OverridesGetCallData = 1 << 2; // Need this flag if you implement [[Callable]] interface, which means overriding getCallData. The object may not be callable since getCallData can say it is not callable.
+static constexpr unsigned OverridesGetOwnPropertySlot = 1 << 3;
+static constexpr unsigned OverridesToThis = 1 << 4; // If this is false then this returns something other than 'this'. Non-object cells that are visible to JS have this set as do some exotic objects.
+static constexpr unsigned HasStaticPropertyTable = 1 << 5;
+static constexpr unsigned TypeInfoPerCellBit = 1 << 7; // Unlike other inline flags, this will only be set on the cell itself and will not be set on the Structure.
 
 // Out of line flags.
 
-static const unsigned ImplementsHasInstance = 1 << 8;
-static const unsigned OverridesGetPropertyNames = 1 << 9;
-static const unsigned ProhibitsPropertyCaching = 1 << 10;
-static const unsigned GetOwnPropertySlotIsImpure = 1 << 11;
-static const unsigned NewImpurePropertyFiresWatchpoints = 1 << 12;
-static const unsigned IsImmutablePrototypeExoticObject = 1 << 13;
-static const unsigned GetOwnPropertySlotIsImpureForPropertyAbsence = 1 << 14;
-static const unsigned InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero = 1 << 15;
-static const unsigned StructureIsImmortal = 1 << 16;
-static const unsigned HasPutPropertySecurityCheck = 1 << 17;
+static constexpr unsigned ImplementsHasInstance = 1 << 8;
+static constexpr unsigned OverridesGetPropertyNames = 1 << 9;
+static constexpr unsigned ProhibitsPropertyCaching = 1 << 10;
+static constexpr unsigned GetOwnPropertySlotIsImpure = 1 << 11;
+static constexpr unsigned NewImpurePropertyFiresWatchpoints = 1 << 12;
+static constexpr unsigned IsImmutablePrototypeExoticObject = 1 << 13;
+static constexpr unsigned GetOwnPropertySlotIsImpureForPropertyAbsence = 1 << 14;
+static constexpr unsigned InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero = 1 << 15;
+static constexpr unsigned StructureIsImmortal = 1 << 16;
+static constexpr unsigned HasPutPropertySecurityCheck = 1 << 17;
 
 class TypeInfo {
 public:

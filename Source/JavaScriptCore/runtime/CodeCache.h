@@ -59,7 +59,7 @@ class VM;
 class VariableEnvironment;
 
 namespace CodeCacheInternal {
-static const bool verbose = false;
+static constexpr bool verbose = false;
 } // namespace CodeCacheInternal
 
 struct SourceCodeValue {

@@ -1133,7 +1133,7 @@ BytecodeKills& Graph::killsFor(InlineCallFrame* inlineCallFrame)
 
 bool Graph::isLiveInBytecode(VirtualRegister operand, CodeOrigin codeOrigin)
 {
-    static const bool verbose = false;
+    static constexpr bool verbose = false;
     
     if (verbose)
         dataLog("Checking of operand is live: ", operand, "\n");

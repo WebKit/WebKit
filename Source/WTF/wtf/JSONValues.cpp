@@ -40,7 +40,7 @@ namespace JSONImpl {
 
 namespace {
 
-static const int stackLimit = 1000;
+static constexpr int stackLimit = 1000;
 
 enum class Token {
     ObjectBegin,

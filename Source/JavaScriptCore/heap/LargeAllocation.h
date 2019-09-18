@@ -145,8 +145,8 @@ public:
     
     void dump(PrintStream&) const;
     
-    static const unsigned alignment = MarkedBlock::atomSize;
-    static const unsigned halfAlignment = alignment / 2;
+    static constexpr unsigned alignment = MarkedBlock::atomSize;
+    static constexpr unsigned halfAlignment = alignment / 2;
 
 private:
     LargeAllocation(Heap&, size_t, Subspace*, unsigned indexInSpace, bool adjustedAlignment);
