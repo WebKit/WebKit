@@ -83,7 +83,8 @@ unsigned long long BlobRegistryProxy::blobSize(const URL& url)
 
 void BlobRegistryProxy::writeBlobsToTemporaryFiles(PAL::SessionID sessionID, const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&& completionHandler)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().writeBlobsToTemporaryFiles(sessionID, blobURLs, WTFMove(completionHandler));
+    ASSERT_UNUSED(sessionID, sessionID == WebProcess::singleton().sessionID());
+    WebProcess::singleton().ensureNetworkProcessConnection().writeBlobsToTemporaryFiles(blobURLs, WTFMove(completionHandler));
 }
 
 }

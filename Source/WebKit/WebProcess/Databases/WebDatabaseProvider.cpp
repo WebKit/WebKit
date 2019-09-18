@@ -69,7 +69,7 @@ WebDatabaseProvider::~WebDatabaseProvider()
 #if ENABLE(INDEXED_DATABASE)
 WebCore::IDBClient::IDBConnectionToServer& WebDatabaseProvider::idbConnectionToServerForSession(const PAL::SessionID&)
 {
-    return WebProcess::singleton().ensureNetworkProcessConnection().idbConnectionToServerForSession().coreConnectionToServer();
+    return WebProcess::singleton().ensureNetworkProcessConnection().idbConnectionToServer().coreConnectionToServer();
 }
 #endif
 

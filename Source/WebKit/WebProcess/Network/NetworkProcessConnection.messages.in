@@ -23,7 +23,7 @@
 messages -> NetworkProcessConnection LegacyReceiver {
 
 #if ENABLE(SHAREABLE_RESOURCE)
-    DidCacheResource(WebCore::ResourceRequest request, WebKit::ShareableResource::Handle resource, PAL::SessionID sessionID)
+    DidCacheResource(WebCore::ResourceRequest request, WebKit::ShareableResource::Handle resource)
 #endif
 
     DidFinishPingLoad(uint64_t pingLoadIdentifier, WebCore::ResourceError error, WebCore::ResourceResponse response)

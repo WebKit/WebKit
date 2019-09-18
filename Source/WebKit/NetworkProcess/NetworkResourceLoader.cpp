@@ -846,7 +846,7 @@ void NetworkResourceLoader::tryStoreAsCacheEntry()
         if (mappedBody.shareableResourceHandle.isNull())
             return;
         LOG(NetworkCache, "(NetworkProcess) sending DidCacheResource");
-        loader->send(Messages::NetworkProcessConnection::DidCacheResource(loader->originalRequest(), mappedBody.shareableResourceHandle, loader->sessionID()));
+        loader->send(Messages::NetworkProcessConnection::DidCacheResource(loader->originalRequest(), mappedBody.shareableResourceHandle));
 #endif
     });
 }

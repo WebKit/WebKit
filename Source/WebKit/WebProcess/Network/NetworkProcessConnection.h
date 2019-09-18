@@ -38,10 +38,6 @@ namespace IPC {
 class DataReference;
 }
 
-namespace PAL {
-class SessionID;
-}
-
 namespace WebCore {
 class ResourceError;
 class ResourceRequest;
@@ -68,11 +64,11 @@ public:
 
     void didReceiveNetworkProcessConnectionMessage(IPC::Connection&, IPC::Decoder&);
 
-    void writeBlobsToTemporaryFiles(PAL::SessionID, const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&);
+    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&);
 
 #if ENABLE(INDEXED_DATABASE)
     WebIDBConnectionToServer* existingIDBConnectionToServer() const { return m_webIDBConnection.get(); };
-    WebIDBConnectionToServer& idbConnectionToServerForSession();
+    WebIDBConnectionToServer& idbConnectionToServer();
 #endif
 
 #if ENABLE(SERVICE_WORKER)
@@ -98,7 +94,7 @@ private:
 
 #if ENABLE(SHAREABLE_RESOURCE)
     // Message handlers.
-    void didCacheResource(const WebCore::ResourceRequest&, const ShareableResource::Handle&, PAL::SessionID);
+    void didCacheResource(const WebCore::ResourceRequest&, const ShareableResource::Handle&);
 #endif
 
     // The connection from the web process to the network process.

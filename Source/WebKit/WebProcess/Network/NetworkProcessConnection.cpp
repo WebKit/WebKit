@@ -207,7 +207,7 @@ void NetworkProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::S
 {
 }
 
-void NetworkProcessConnection::writeBlobsToTemporaryFiles(PAL::SessionID, const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&& completionHandler)
+void NetworkProcessConnection::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&& completionHandler)
 {
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::WriteBlobsToTemporaryFiles(blobURLs), WTFMove(completionHandler));
 }
@@ -228,9 +228,9 @@ void NetworkProcessConnection::setOnLineState(bool isOnLine)
 }
 
 #if ENABLE(SHAREABLE_RESOURCE)
-void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, const ShareableResource::Handle& handle, PAL::SessionID sessionID)
+void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, const ShareableResource::Handle& handle)
 {
-    CachedResource* resource = MemoryCache::singleton().resourceForRequest(request, sessionID);
+    auto* resource = MemoryCache::singleton().resourceForRequest(request, WebProcess::singleton().sessionID());
     if (!resource)
         return;
     
@@ -245,7 +245,7 @@ void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, 
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
-WebIDBConnectionToServer& NetworkProcessConnection::idbConnectionToServerForSession()
+WebIDBConnectionToServer& NetworkProcessConnection::idbConnectionToServer()
 {
     if (!m_webIDBConnection)
         m_webIDBConnection = WebIDBConnectionToServer::create();
