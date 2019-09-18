@@ -1,3 +1,14 @@
+2019-09-18  Russell Epstein  <repstein@apple.com>
+
+        REGRESSION (macOS): Many webgpu/whlsl* tests are flaky failures.
+        https://bugs.webkit.org/show_bug.cgi?id=201877
+
+        Unreviewed Test Gardening.
+
+        Two additional tests are flaky, marking as such.
+
+        * platform/mac/TestExpectations:
+
 2019-09-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed iOS 13 test gardening, update test expectations.

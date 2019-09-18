@@ -2021,4 +2021,6 @@ webgpu/whlsl/separate-shader-modules/separate-shader-modules-16.html [ Pass Imag
 webgpu/whlsl/separate-shader-modules/separate-shader-modules-17.html [ Pass ImageOnlyFailure ] 
 webgpu/whlsl/separate-shader-modules/separate-shader-modules-18.html [ Pass ImageOnlyFailure ]
 webgpu/whlsl/separate-shader-modules/separate-shader-modules-19.html [ Pass ImageOnlyFailure ]
+webgpu/whlsl/separate-shader-modules/separate-shader-modules-24.html [ Pass ImageOnlyFailure ]
+webgpu/whlsl/separate-shader-modules/separate-shader-modules-26.html [ Pass ImageOnlyFailure ]
 
