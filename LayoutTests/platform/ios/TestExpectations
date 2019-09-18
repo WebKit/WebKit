@@ -3345,3 +3345,17 @@ webkit.org/b/201190 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/b/201784 webgl/2.0.0/conformance/glsl/misc/shaders-with-invariance.html [ Failure ]
 
+# <rdar://problem/54325542> quicklook/numbers-09.html is failing
+quicklook/numbers-09.html [ Pass ]
+
+# rdar://53468934
+legacy-animation-engine/fast/text/crash-complex-text-surrogate.html [ Failure ]
+fast/text/crash-complex-text-surrogate.html [ Failure ]
+fast/text/international/system-language/system-font-punctuation.html [ Failure ]
+
+# <rdar://problem/51756254>REGRESSION (r244582-r244596) Layout tests fast/scrolling/ios/touch-scroll-visibility-hidden.html fast/scrolling/ios/touch-scroll-pointer-events-none.html are failing
+fast/scrolling/ios/touch-scroll-pointer-events-none.html [ Failure ]
+fast/scrolling/ios/touch-scroll-visibility-hidden.html [ Failure ]
+
+# <rdar://problem/52962272> fast/scrolling/ios/body-overflow-hidden.html is an Image failure
+fast/scrolling/ios/body-overflow-hidden.html [ Pass ImageOnlyFailure ]

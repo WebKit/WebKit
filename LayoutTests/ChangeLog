@@ -1,5 +1,13 @@
 2019-09-17  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed iOS 13 test gardening, udpate test expectations and baselines.
+
+        * platform/ios/TestExpectations:
+        * platform/ios/js/dom/navigator-maxtouchpoints-expected.txt: Added.
+        * platform/ios/platform/ios/ios/fast/text/opticalFont-expected.txt:
+
+2019-09-17  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed test gardening, rebaseline a test after r249963.
 
         * media/track/track-cue-rendering-rtl-expected.txt:
