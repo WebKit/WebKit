@@ -106,9 +106,10 @@ private:
     void computeHeightAndMargin(const Box&);
     void computeWidthAndMargin(const Box&, UsedHorizontalValues);
 
-    void collectInlineContent() const;
+    void collectInlineContent();
 
-    InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
+    const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
+    InlineFormattingState& formattingState() { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
     // FIXME: Come up with a structure that requires no friending.
     friend class Line;
 };

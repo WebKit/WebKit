@@ -104,8 +104,8 @@ private:
 
         EstimatedMarginBefore estimatedMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues);
         LayoutUnit marginBeforeIgnoringCollapsingThrough(const Box&, UsedVerticalMargin::NonCollapsedValues);
-        void updateMarginAfterForPreviousSibling(const Box&) const;
-        void updatePositiveNegativeMarginValues(const Box&);
+        static void updateMarginAfterForPreviousSibling(BlockFormattingContext&, const MarginCollapse&, const Box&);
+        static void updatePositiveNegativeMarginValues(BlockFormattingContext&, const MarginCollapse&, const Box&);
 
         bool marginBeforeCollapsesWithParentMarginBefore(const Box&) const;
         bool marginBeforeCollapsesWithFirstInFlowChildMarginBefore(const Box&) const;
@@ -125,9 +125,9 @@ private:
         MarginCollapse(const BlockFormattingContext&);
 
         enum class MarginType { Before, After };
-        PositiveAndNegativeVerticalMargin::Values positiveNegativeValues(const Box&, MarginType);
-        PositiveAndNegativeVerticalMargin::Values positiveNegativeMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues);
-        PositiveAndNegativeVerticalMargin::Values positiveNegativeMarginAfter(const Box&, UsedVerticalMargin::NonCollapsedValues);
+        PositiveAndNegativeVerticalMargin::Values positiveNegativeValues(const Box&, MarginType) const;
+        PositiveAndNegativeVerticalMargin::Values positiveNegativeMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues) const;
+        PositiveAndNegativeVerticalMargin::Values positiveNegativeMarginAfter(const Box&, UsedVerticalMargin::NonCollapsedValues) const;
         bool hasClearance(const Box&) const;
 
         LayoutState& layoutState() { return m_blockFormattingContext.layoutState(); }
@@ -165,7 +165,8 @@ private:
     bool hasPrecomputedMarginBefore(const Box&) const;
 #endif
 
-    BlockFormattingState& formattingState() const { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
+    const BlockFormattingState& formattingState() const { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
+    BlockFormattingState& formattingState() { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
 
 private:
     HashMap<const Box*, EstimatedMarginBefore> m_estimatedMarginBeforeList;

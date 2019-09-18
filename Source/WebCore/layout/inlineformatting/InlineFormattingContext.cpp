@@ -258,7 +258,7 @@ void InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox(const Bo
     computeHeightAndMargin(layoutBox);
 }
 
-void InlineFormattingContext::collectInlineContent() const
+void InlineFormattingContext::collectInlineContent()
 {
     // Traverse the tree and create inline items out of containers and leaf nodes. This essentially turns the tree inline structure into a flat one.
     // <span>text<span></span><img></span> -> [ContainerStart][InlineBox][ContainerStart][ContainerEnd][InlineBox][ContainerEnd]

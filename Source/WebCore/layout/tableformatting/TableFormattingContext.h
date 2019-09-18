@@ -70,7 +70,8 @@ private:
 
     void initializeDisplayBoxToBlank(Display::Box&) const;
 
-    TableFormattingState& formattingState() const { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
+    const TableFormattingState& formattingState() const { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
+    TableFormattingState& formattingState() { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
 };
 
 inline TableFormattingContext::Geometry::Geometry(const TableFormattingContext& tableFormattingContext)

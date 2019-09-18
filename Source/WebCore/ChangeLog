@@ -1,3 +1,46 @@
+2019-09-18  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] FormattingContext::Geometry/MarginCollapse/Quirk classes should not need to access non-const Display::Box
+        https://bugs.webkit.org/show_bug.cgi?id=201944
+        <rdar://problem/55493279>
+
+        Reviewed by Antti Koivisto.
+
+        This patch improves const correctness so that the Geometry/MarginCollapse/Quirk objects could not access non-const Display::Boxes (to mutate the display tree).
+        (The MarginCollapse::Update* functions are about updating the margin values on previously processed boxes so strictly speaking they are not margin collapsing related, but they somewhat belong to the MarginCollapse class -since they deal with margins.)
+
+        * layout/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::formattingState const):
+        (WebCore::Layout::FormattingContext::formattingState):
+        * layout/FormattingState.cpp:
+        (WebCore::Layout::FormattingState::displayBox):
+        (WebCore::Layout::FormattingState::displayBox const): Deleted.
+        * layout/FormattingState.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin):
+        * layout/blockformatting/BlockFormattingContext.h:
+        (WebCore::Layout::BlockFormattingContext::formattingState const):
+        (WebCore::Layout::BlockFormattingContext::formattingState):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::updateMarginAfterForPreviousSibling):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeValues const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeMarginBefore const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeMarginAfter const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::updatePositiveNegativeMarginValues):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::updateMarginAfterForPreviousSibling const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeValues): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeMarginBefore): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeMarginAfter): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::collectInlineContent):
+        (WebCore::Layout::InlineFormattingContext::collectInlineContent const): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.h:
+        (WebCore::Layout::InlineFormattingContext::formattingState const):
+        (WebCore::Layout::InlineFormattingContext::formattingState):
+        * layout/tableformatting/TableFormattingContext.h:
+        (WebCore::Layout::TableFormattingContext::formattingState const):
+        (WebCore::Layout::TableFormattingContext::formattingState):
+
 2019-09-18  Chris Dumez  <cdumez@apple.com>
 
         BlobRegistry no longer needs SessionIDs

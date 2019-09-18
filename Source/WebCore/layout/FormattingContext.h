@@ -82,7 +82,8 @@ protected:
     using LayoutQueue = Vector<const Box*>;
 
     LayoutState& layoutState() const;
-    FormattingState& formattingState() const { return m_formattingState; }
+    const FormattingState& formattingState() const { return m_formattingState; }
+    FormattingState& formattingState() { return m_formattingState; }
 
     void computeBorderAndPadding(const Box&, Optional<UsedHorizontalValues> = WTF::nullopt);
 

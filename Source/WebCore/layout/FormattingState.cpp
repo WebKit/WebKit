@@ -47,7 +47,7 @@ FormattingState::~FormattingState()
 {
 }
 
-Display::Box& FormattingState::displayBox(const Box& layoutBox) const
+Display::Box& FormattingState::displayBox(const Box& layoutBox)
 {
     // Should never need to mutate a display box outside of the formatting context.
     ASSERT(&layoutState().establishedFormattingState(layoutBox.formattingContextRoot()) == this);

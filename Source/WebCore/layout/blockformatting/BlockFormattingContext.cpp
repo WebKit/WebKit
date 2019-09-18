@@ -448,9 +448,10 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox)
     displayBox.setContentBoxHeight(heightAndMargin.height);
     displayBox.setVerticalMargin(verticalMargin);
 
-    marginCollapse().updatePositiveNegativeMarginValues(layoutBox);
+    auto marginCollapse = this->marginCollapse();
+    MarginCollapse::updatePositiveNegativeMarginValues(*this, marginCollapse, layoutBox);
     // Adjust the previous sibling's margin bottom now that this box's vertical margin is computed.
-    marginCollapse().updateMarginAfterForPreviousSibling(layoutBox);
+    MarginCollapse::updateMarginAfterForPreviousSibling(*this, marginCollapse, layoutBox);
 }
 
 FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::computedIntrinsicWidthConstraints()
