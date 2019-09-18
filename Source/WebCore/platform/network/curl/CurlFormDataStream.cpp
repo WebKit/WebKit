@@ -104,7 +104,7 @@ void CurlFormDataStream::computeContentLength()
     m_isContentLengthUpdated = true;
 
     for (const auto& element : m_formData->elements())
-        m_totalSize += element.lengthInBytes(m_sessionID);
+        m_totalSize += element.lengthInBytes();
 }
 
 Optional<size_t> CurlFormDataStream::read(char* buffer, size_t size)

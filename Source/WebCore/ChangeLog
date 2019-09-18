@@ -1,3 +1,10 @@
+2019-09-18  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, WinCairo build fix after r250045.
+
+        * platform/network/curl/CurlFormDataStream.cpp:
+        (WebCore::CurlFormDataStream::computeContentLength):
+
 2019-09-18  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Add contentbox left constraint to UsedHorizontalValues::Constraints
