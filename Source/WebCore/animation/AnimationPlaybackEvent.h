@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class AnimationPlaybackEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(AnimationPlaybackEvent);
 public:
     static Ref<AnimationPlaybackEvent> create(const AtomString& type, Optional<Seconds> currentTime, Optional<Seconds> timelineTime)
     {

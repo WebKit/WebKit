@@ -27,8 +27,11 @@
 #include "DeviceOrientationEvent.h"
 
 #include "DeviceOrientationData.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(DeviceOrientationEvent);
 
 DeviceOrientationEvent::~DeviceOrientationEvent() = default;
 

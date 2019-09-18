@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class GPUUncapturedErrorEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(GPUUncapturedErrorEvent);
 public:
     struct Init: EventInit {
         GPUError error;

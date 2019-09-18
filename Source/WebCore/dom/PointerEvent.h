@@ -40,6 +40,7 @@
 namespace WebCore {
 
 class PointerEvent final : public MouseEvent {
+    WTF_MAKE_ISO_ALLOCATED(PointerEvent);
 public:
     struct Init : MouseEventInit {
         PointerID pointerId { mousePointerID };

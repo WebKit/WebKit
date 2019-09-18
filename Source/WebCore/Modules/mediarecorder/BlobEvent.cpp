@@ -29,8 +29,11 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "Blob.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(BlobEvent);
 
 Ref<BlobEvent> BlobEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
 {

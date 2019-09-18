@@ -14882,6 +14882,12 @@
 		E3B2F0E91D7F3D3C00B0C9D1 /* LoadableScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadableScript.cpp; sourceTree = "<group>"; };
 		E3B7C0621DC3415A001FB0B8 /* JSDocumentDOMJIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentDOMJIT.cpp; sourceTree = "<group>"; };
 		E3BC827322530221005276DE /* NodeList.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NodeList.cpp; sourceTree = "<group>"; };
+		E3BF19E122AF2F55009C9926 /* XMLHttpRequestProgressEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XMLHttpRequestProgressEvent.cpp; sourceTree = "<group>"; };
+		E3BF19E322AF2FA5009C9926 /* OverconstrainedErrorEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OverconstrainedErrorEvent.cpp; sourceTree = "<group>"; };
+		E3BF19E422AF2FCF009C9926 /* CloseEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CloseEvent.cpp; sourceTree = "<group>"; };
+		E3BF19E522AF2FF4009C9926 /* BeforeLoadEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BeforeLoadEvent.cpp; sourceTree = "<group>"; };
+		E3BF19E622AF302A009C9926 /* HashChangeEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HashChangeEvent.cpp; sourceTree = "<group>"; };
+		E3BF19E722AF309F009C9926 /* SecurityPolicyViolationEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SecurityPolicyViolationEvent.cpp; sourceTree = "<group>"; };
 		E3C99A081DC3D41700794AD3 /* DOMJITCheckDOM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITCheckDOM.h; sourceTree = "<group>"; };
 		E3C9AEC92113147400419B92 /* JSMicrotaskCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMicrotaskCallback.h; sourceTree = "<group>"; };
 		E3D049931DADC04500718F3C /* NodeConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeConstants.h; sourceTree = "<group>"; };
@@ -15722,6 +15728,7 @@
 				5EA725CC1ACABCB500EAD17B /* NavigatorMediaDevices.idl */,
 				0704A4051D6DE9F10086DCDB /* OverconstrainedError.h */,
 				0704A4031D6DE9F10086DCDB /* OverconstrainedError.idl */,
+				E3BF19E322AF2FA5009C9926 /* OverconstrainedErrorEvent.cpp */,
 				072A703E1D6E8F6200DF0AFC /* OverconstrainedErrorEvent.h */,
 				072A703F1D6E8F6200DF0AFC /* OverconstrainedErrorEvent.idl */,
 				41E408381DCB747900EFCE19 /* PeerConnectionBackend.cpp */,
@@ -22038,6 +22045,7 @@
 		97AABCF714FA09B5007457AE /* websockets */ = {
 			isa = PBXGroup;
 			children = (
+				E3BF19E422AF2FCF009C9926 /* CloseEvent.cpp */,
 				97AABCF814FA09D5007457AE /* CloseEvent.h */,
 				97AABCF914FA09D5007457AE /* CloseEvent.idl */,
 				5C688AA01D380509000B54FA /* ThreadableWebSocketChannel.cpp */,
@@ -26408,6 +26416,7 @@
 				BC348BA70DB7F1B8004ABAB9 /* XMLHttpRequest.idl */,
 				83D35AEA1C7187ED00F70D5A /* XMLHttpRequestEventTarget.h */,
 				83D35AEB1C7187ED00F70D5A /* XMLHttpRequestEventTarget.idl */,
+				E3BF19E122AF2F55009C9926 /* XMLHttpRequestProgressEvent.cpp */,
 				F9F0ED770DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h */,
 				F9F0ED780DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.idl */,
 				A136A00A1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.cpp */,
@@ -27368,6 +27377,7 @@
 				A8C4A7FB09D563270003AC8D /* Attr.h */,
 				93EEC1E509C2877700C515D1 /* Attr.idl */,
 				A8C4A7F909D563270003AC8D /* Attribute.h */,
+				E3BF19E522AF2FF4009C9926 /* BeforeLoadEvent.cpp */,
 				BC9462D7107A7B4C00857193 /* BeforeLoadEvent.h */,
 				BC9462CB107A7A3900857193 /* BeforeLoadEvent.idl */,
 				AB23A32509BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp */,
@@ -27584,6 +27594,7 @@
 				0720B09E14D3323500642955 /* GenericEventQueue.cpp */,
 				0720B09F14D3323500642955 /* GenericEventQueue.h */,
 				7C4189AB1B07C170000FA757 /* GlobalEventHandlers.idl */,
+				E3BF19E622AF302A009C9926 /* HashChangeEvent.cpp */,
 				2442BBF81194C9D300D49469 /* HashChangeEvent.h */,
 				8482B7441198C32E00BFB005 /* HashChangeEvent.idl */,
 				C3CF17A015B0063F00276D39 /* IdTargetObserver.cpp */,
@@ -27745,6 +27756,7 @@
 				976F36E914686225005E93B4 /* SecurityContext.h */,
 				1AF7AFC51A48A8BC00C8E4E7 /* SecurityOriginPolicy.cpp */,
 				1AF7AFC61A48A8BC00C8E4E7 /* SecurityOriginPolicy.h */,
+				E3BF19E722AF309F009C9926 /* SecurityPolicyViolationEvent.cpp */,
 				2D5BC42516F882BE007048D0 /* SecurityPolicyViolationEvent.h */,
 				2D5BC42616F882BE007048D0 /* SecurityPolicyViolationEvent.idl */,
 				E45322A9140CE267005A0F92 /* SelectorQuery.cpp */,

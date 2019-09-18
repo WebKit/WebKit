@@ -33,6 +33,7 @@ namespace WebCore {
 class DOMPromise;
 
 class PromiseRejectionEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(PromiseRejectionEvent);
 public:
     struct Init : EventInit {
         RefPtr<DOMPromise> promise;

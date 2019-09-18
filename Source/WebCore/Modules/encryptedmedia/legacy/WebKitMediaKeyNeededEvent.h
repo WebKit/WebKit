@@ -32,7 +32,8 @@
 
 namespace WebCore {
 
-class WebKitMediaKeyNeededEvent : public Event {
+class WebKitMediaKeyNeededEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(WebKitMediaKeyNeededEvent);
 public:
     virtual ~WebKitMediaKeyNeededEvent();
 

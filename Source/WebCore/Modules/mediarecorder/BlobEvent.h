@@ -33,6 +33,7 @@ namespace WebCore {
 class Blob;
     
 class BlobEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(BlobEvent);
 public:
     struct Init : EventInit {
         RefPtr<Blob> data;

@@ -63,6 +63,7 @@ private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     bool rendererIsNeeded(const RenderStyle&) override;
 };
+static_assert(sizeof(ProgressInnerElement) == sizeof(ProgressShadowElement));
 
 inline Ref<ProgressInnerElement> ProgressInnerElement::create(Document& document)
 {
@@ -78,6 +79,7 @@ public:
 private:
     ProgressBarElement(Document&);
 };
+static_assert(sizeof(ProgressBarElement) == sizeof(ProgressShadowElement));
 
 inline Ref<ProgressBarElement> ProgressBarElement::create(Document& document)
 {
@@ -94,6 +96,7 @@ public:
 private:
     ProgressValueElement(Document&);
 };
+static_assert(sizeof(ProgressValueElement) == sizeof(ProgressShadowElement));
 
 inline Ref<ProgressValueElement> ProgressValueElement::create(Document& document)
 {

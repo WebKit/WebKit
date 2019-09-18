@@ -28,7 +28,11 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include <wtf/IsoMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(IDBVersionChangeEvent);
 
 IDBVersionChangeEvent::IDBVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion, const AtomString& name)
     : Event(name, CanBubble::No, IsCancelable::No)

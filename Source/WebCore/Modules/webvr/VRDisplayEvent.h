@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class VRDisplayEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(VRDisplayEvent);
 public:
     static Ref<VRDisplayEvent> create(const AtomString& type, const RefPtr<VRDisplay>& display, Optional<VRDisplayEventReason>&& reason)
     {

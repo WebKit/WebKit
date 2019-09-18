@@ -31,5 +31,6 @@ public:
 private:
     SVGFEFuncGElement(const QualifiedName&, Document&);
 };
+static_assert(sizeof(SVGFEFuncGElement) == sizeof(SVGComponentTransferFunctionElement));
 
 } // namespace WebCore

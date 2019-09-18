@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class BeforeLoadEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(BeforeLoadEvent);
 public:
     static Ref<BeforeLoadEvent> create(const String& url)
     {

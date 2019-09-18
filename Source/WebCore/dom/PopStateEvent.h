@@ -35,6 +35,7 @@ class History;
 class SerializedScriptValue;
 
 class PopStateEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(PopStateEvent);
 public:
     virtual ~PopStateEvent();
     static Ref<PopStateEvent> create(RefPtr<SerializedScriptValue>&&, History*);

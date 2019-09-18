@@ -29,8 +29,11 @@
 #include "ExtendableMessageEvent.h"
 
 #include "EventNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(ExtendableMessageEvent);
 
 Ref<ExtendableMessageEvent> ExtendableMessageEvent::create(Vector<RefPtr<MessagePort>>&& ports, RefPtr<SerializedScriptValue>&& data, const String& origin, const String& lastEventId, Optional<ExtendableMessageEventSource>&& source)
 {

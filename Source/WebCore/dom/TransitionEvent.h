@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class TransitionEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(TransitionEvent);
 public:
     static Ref<TransitionEvent> create(const AtomString& type, const String& propertyName, double elapsedTime, const String& pseudoElement)
     {

@@ -29,6 +29,7 @@
 namespace WebCore {
 
 class MutationEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(MutationEvent);
 public:
     enum {
         MODIFICATION = 1,

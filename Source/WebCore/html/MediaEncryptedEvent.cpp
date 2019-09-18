@@ -32,8 +32,11 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "NotImplemented.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(MediaEncryptedEvent);
 
 MediaEncryptedEvent::MediaEncryptedEvent(const AtomString& type, const MediaEncryptedEventInit& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)

@@ -29,7 +29,8 @@
 
 namespace WebCore {
 
-class AccessibleSetValueEvent : public Event {
+class AccessibleSetValueEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(AccessibleSetValueEvent);
 public:
     static Ref<AccessibleSetValueEvent> create(const AtomString& type, const AtomString& value)
     {

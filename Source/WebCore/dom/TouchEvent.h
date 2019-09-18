@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class TouchEvent final : public MouseRelatedEvent {
+    WTF_MAKE_ISO_ALLOCATED(TouchEvent);
 public:
     virtual ~TouchEvent();
 

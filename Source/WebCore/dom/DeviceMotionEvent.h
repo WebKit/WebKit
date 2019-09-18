@@ -33,6 +33,7 @@ namespace WebCore {
 class DeviceMotionData;
 
 class DeviceMotionEvent final : public Event, public DeviceOrientationOrMotionEvent {
+    WTF_MAKE_ISO_ALLOCATED(DeviceMotionEvent);
 public:
     virtual ~DeviceMotionEvent();
 

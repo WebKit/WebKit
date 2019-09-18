@@ -26,6 +26,7 @@
 namespace WebCore {
 
 class HashChangeEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(HashChangeEvent);
 public:
     static Ref<HashChangeEvent> create(const String& oldURL, const String& newURL)
     {

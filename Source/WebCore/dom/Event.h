@@ -39,6 +39,7 @@ class EventTarget;
 class ScriptExecutionContext;
 
 class Event : public ScriptWrappable, public RefCounted<Event> {
+    WTF_MAKE_ISO_ALLOCATED(Event);
 public:
     enum class IsTrusted : uint8_t { No, Yes };
     enum class CanBubble : uint8_t { No, Yes };

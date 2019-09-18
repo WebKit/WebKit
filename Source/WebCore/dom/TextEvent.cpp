@@ -30,8 +30,11 @@
 #include "DocumentFragment.h"
 #include "Editor.h"
 #include "EventNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(TextEvent);
 
 Ref<TextEvent> TextEvent::createForBindings()
 {

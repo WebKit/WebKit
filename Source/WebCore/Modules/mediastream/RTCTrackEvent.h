@@ -44,7 +44,8 @@ class RTCRtpTransceiver;
 
 typedef Vector<RefPtr<MediaStream>> MediaStreamArray;
 
-class RTCTrackEvent : public Event {
+class RTCTrackEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(RTCTrackEvent);
 public:
     static Ref<RTCTrackEvent> create(const AtomString& type, CanBubble, IsCancelable, RefPtr<RTCRtpReceiver>&&, RefPtr<MediaStreamTrack>&&, MediaStreamArray&&, RefPtr<RTCRtpTransceiver>&&);
 

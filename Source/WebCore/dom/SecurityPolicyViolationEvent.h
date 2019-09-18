@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class SecurityPolicyViolationEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(SecurityPolicyViolationEvent);
 public:
     static Ref<SecurityPolicyViolationEvent> create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, const String& documentURI, const String& referrer, const String& blockedURI, const String& violatedDirective, const String& effectiveDirective, const String& originalPolicy, const String& sourceFile, unsigned short statusCode, int lineNumber, int columnNumber)
     {

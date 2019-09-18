@@ -32,7 +32,8 @@ namespace WebCore {
 
 class Storage;
 
-class StorageEvent : public Event {
+class StorageEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(StorageEvent);
 public:
     static Ref<StorageEvent> create(const AtomString& type, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea);
     static Ref<StorageEvent> createForBindings();

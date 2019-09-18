@@ -26,7 +26,11 @@
 #include "config.h"
 #include "WebKitAnimationEvent.h"
 
+#include <wtf/IsoMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(WebKitAnimationEvent);
 
 WebKitAnimationEvent::WebKitAnimationEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)
