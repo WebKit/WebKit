@@ -54,8 +54,7 @@ void BackingStoreBackendCairoImpl::scroll(const IntRect& scrollRect, const IntSi
 {
     IntRect targetRect = scrollRect;
     targetRect.move(scrollOffset);
-    targetRect.shiftMaxXEdgeTo(targetRect.maxX() - scrollOffset.width());
-    targetRect.shiftMaxYEdgeTo(targetRect.maxY() - scrollOffset.height());
+    targetRect.intersect(scrollRect);
     if (targetRect.isEmpty())
         return;
 

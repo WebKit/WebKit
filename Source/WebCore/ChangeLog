@@ -1,3 +1,19 @@
+2019-09-18  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [cairo] Incorrect targetRect in BackingStoreBackendCairoImpl::scroll
+        https://bugs.webkit.org/show_bug.cgi?id=201895
+
+        Reviewed by Carlos Garcia Campos.
+
+        In BackingStoreBackendCairoImpl::scroll, targetRect is calculated
+        wrongly by shifting maxX and maxY. Bug 59655 fixed the issue by
+        removing the shifting, but only for BackingStoreBackendCairoX11::scroll.
+
+        No new tests, no behavior change.
+
+        * platform/graphics/cairo/BackingStoreBackendCairoImpl.cpp:
+        (WebCore::BackingStoreBackendCairoImpl::scroll): Take intersection of targetRect and scrollRect.
+
 2019-09-18  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add a WKA extension point
