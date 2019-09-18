@@ -1,3 +1,27 @@
+2019-09-18  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] FormattingContext::Geometry::computedHeight* functions need containingBlockHeight only.
+        https://bugs.webkit.org/show_bug.cgi?id=201880
+        <rdar://problem/55449623>
+
+        Reviewed by Antti Koivisto.
+
+        Let's tighten the incoming vertical parameter.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry):
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::computedHeightValue const):
+        (WebCore::Layout::FormattingContext::Geometry::computedMaxHeight const):
+        (WebCore::Layout::FormattingContext::Geometry::computedMinHeight const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin const):
+
 2019-09-18  Antti Koivisto  <antti@apple.com>
 
         DocumentMarkerController should not invoke ensureLineBoxes during TextIterator traversal

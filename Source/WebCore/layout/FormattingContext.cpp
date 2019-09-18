@@ -67,10 +67,12 @@ LayoutState& FormattingContext::layoutState() const
 void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox)
 {
     auto containingBlockWidth = geometryForBox(*layoutBox.containingBlock()).paddingBoxWidth();
+    auto containingBlockHeight = geometryForBox(*layoutBox.containingBlock()).paddingBoxHeight();
 
     auto compute = [&](Optional<LayoutUnit> usedWidth) {
-        auto usedValues = UsedHorizontalValues { containingBlockWidth, usedWidth, { } };
-        return geometry().outOfFlowHorizontalGeometry(layoutBox, usedValues);
+        auto usedHorizontalValues = UsedHorizontalValues { containingBlockWidth, usedWidth, { } };
+        auto usedVerticalValues = UsedVerticalValues { containingBlockHeight, { } };
+        return geometry().outOfFlowHorizontalGeometry(layoutBox, usedHorizontalValues, usedVerticalValues);
     };
 
     auto horizontalGeometry = compute({ });
@@ -106,14 +108,14 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox)
     auto usedHorizontalValues = UsedHorizontalValues { containingBlockWidth };
 
     auto verticalGeometry = compute(usedHorizontalValues, usedVerticalValuesForHeight);
-    if (auto maxHeight = geometry().computedMaxHeight(layoutBox, usedVerticalValuesForHeight)) {
+    if (auto maxHeight = geometry().computedMaxHeight(layoutBox, containingBlockHeight)) {
         auto usedValuesForMaxHeight = UsedVerticalValues { containingBlockHeight, maxHeight };
         auto maxVerticalGeometry = compute(usedHorizontalValues, usedValuesForMaxHeight);
         if (verticalGeometry.heightAndMargin.height > maxVerticalGeometry.heightAndMargin.height)
             verticalGeometry = maxVerticalGeometry;
     }
 
-    if (auto minHeight = geometry().computedMinHeight(layoutBox, usedVerticalValuesForHeight)) {
+    if (auto minHeight = geometry().computedMinHeight(layoutBox, containingBlockHeight)) {
         auto usedValuesForMinHeight = UsedVerticalValues { containingBlockHeight, minHeight };
         auto minVerticalGeometry = compute(usedHorizontalValues, usedValuesForMinHeight);
         if (verticalGeometry.heightAndMargin.height < minVerticalGeometry.heightAndMargin.height)

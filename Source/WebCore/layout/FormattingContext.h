@@ -94,13 +94,13 @@ protected:
     class Geometry {
     public:
         VerticalGeometry outOfFlowVerticalGeometry(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
-        HorizontalGeometry outOfFlowHorizontalGeometry(const Box&, UsedHorizontalValues);
+        HorizontalGeometry outOfFlowHorizontalGeometry(const Box&, UsedHorizontalValues, UsedVerticalValues);
 
         HeightAndMargin floatingHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
         WidthAndMargin floatingWidthAndMargin(const Box&, UsedHorizontalValues);
 
         HeightAndMargin inlineReplacedHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
-        WidthAndMargin inlineReplacedWidthAndMargin(const Box&, UsedHorizontalValues) const;
+        WidthAndMargin inlineReplacedWidthAndMargin(const Box&, UsedHorizontalValues, Optional<UsedVerticalValues> = WTF::nullopt) const;
 
         LayoutSize inFlowPositionedPositionOffset(const Box&, UsedHorizontalValues) const;
 
@@ -116,8 +116,8 @@ protected:
         Optional<LayoutUnit> computedValueIfNotAuto(const Length& geometryProperty, LayoutUnit containingBlockWidth) const;
         Optional<LayoutUnit> fixedValue(const Length& geometryProperty) const;
 
-        Optional<LayoutUnit> computedMinHeight(const Box&, Optional<UsedVerticalValues> = WTF::nullopt) const;
-        Optional<LayoutUnit> computedMaxHeight(const Box&, Optional<UsedVerticalValues> = WTF::nullopt) const;
+        Optional<LayoutUnit> computedMinHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = WTF::nullopt) const;
+        Optional<LayoutUnit> computedMaxHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = WTF::nullopt) const;
 
         FormattingContext::IntrinsicWidthConstraints constrainByMinMaxWidth(const Box&, IntrinsicWidthConstraints) const;
 
@@ -128,7 +128,7 @@ protected:
         Geometry(const FormattingContext&);
 
         enum class HeightType { Min, Max, Normal };
-        Optional<LayoutUnit> computedHeightValue(const Box&, HeightType, Optional<UsedVerticalValues> = WTF::nullopt) const;
+        Optional<LayoutUnit> computedHeightValue(const Box&, HeightType, Optional<LayoutUnit> containingBlockHeight = WTF::nullopt) const;
 
         const LayoutState& layoutState() const { return m_formattingContext.layoutState(); }
         LayoutState& layoutState() { return m_formattingContext.layoutState(); }
@@ -136,7 +136,7 @@ protected:
 
     private:
         VerticalGeometry outOfFlowReplacedVerticalGeometry(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
-        HorizontalGeometry outOfFlowReplacedHorizontalGeometry(const Box&, UsedHorizontalValues) const;
+        HorizontalGeometry outOfFlowReplacedHorizontalGeometry(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
 
         VerticalGeometry outOfFlowNonReplacedVerticalGeometry(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
         HorizontalGeometry outOfFlowNonReplacedHorizontalGeometry(const Box&, UsedHorizontalValues);
