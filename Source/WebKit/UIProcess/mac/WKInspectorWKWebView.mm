@@ -35,6 +35,13 @@
     WeakObjCPtr<id <WKInspectorWKWebViewDelegate>> _inspectorWKWebViewDelegate;
 }
 
+- (NSRect)_opaqueRectForWindowMoveWhenInTitlebar
+{
+    // This convinces AppKit to allow window moves when clicking anywhere in the titlebar (top 22pt)
+    // when this view's contents cover the entire window's contents, including the titlebar.
+    return NSZeroRect;
+}
+
 - (NSInteger)tag
 {
     return WKInspectorViewTag;

@@ -1,3 +1,15 @@
+2019-09-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Can't drag undocked Inspector window by its title text
+        https://bugs.webkit.org/show_bug.cgi?id=190886
+        <rdar://problem/44574547>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/mac/WKInspectorWKWebView.mm:
+        (-[WKInspectorWKWebView _opaqueRectForWindowMoveWhenInTitlebar]):
+        Legendary.
+
 2019-09-18  Chris Dumez  <cdumez@apple.com>
 
         BlobRegistry no longer needs SessionIDs
