@@ -421,6 +421,43 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
             m_namedUsedRegs = RegisterSet();
             m_namedDefdRegs = RegisterSet();
 
+            bool needsToGenerate = ([&] () -> bool {
+                // FIXME: We should consider trying to figure out if we can also elide Mov32s
+                if (!(inst.kind.opcode == Move || inst.kind.opcode == MoveDouble))
+                    return true;
+
+                ASSERT(inst.args.size() >= 2);
+                Arg source = inst.args[0];
+                Arg dest = inst.args[1];
+                if (!source.isTmp() || !dest.isTmp())
+                    return true;
+
+                // FIXME: We don't track where the last use of a reg is globally so we don't know where we can elide them.
+                ASSERT(source.isReg() || m_liveRangeEnd[source.tmp()] >= m_globalInstIndex);
+                if (source.isReg() || m_liveRangeEnd[source.tmp()] != m_globalInstIndex)
+                    return true;
+
+                Reg sourceReg = m_map[source.tmp()].reg;
+                // If the value is not already materialized into a register we may still move it into one so let the normal generation code run.
+                if (!sourceReg)
+                    return true;
+
+                ASSERT(m_currentAllocation->at(sourceReg) == source.tmp());
+
+                if (dest.isReg() && dest.reg() != sourceReg)
+                    return true;
+
+                if (Reg oldReg = m_map[dest.tmp()].reg) {
+                    ASSERT(m_currentAllocation->at(oldReg) == dest.tmp());
+                    m_currentAllocation->at(oldReg) = Tmp();
+                }
+
+                m_currentAllocation->at(sourceReg) = dest.tmp();
+                m_map[source.tmp()].reg = Reg();
+                m_map[dest.tmp()].reg = sourceReg;
+                return false;
+            })();
+
             inst.forEachArg([&] (Arg& arg, Arg::Role role, Bank, Width) {
                 if (!arg.isTmp())
                     return;
@@ -482,7 +519,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
             allocNamed(m_namedUsedRegs, false); // Must come before the defd registers since we may use and def the same register.
             allocNamed(m_namedDefdRegs, true);
 
-            {
+            if (needsToGenerate) {
                 auto tryAllocate = [&] {
                     Vector<Tmp*, 8> usesToAlloc;
                     Vector<Tmp*, 8> defsToAlloc;
@@ -605,7 +642,9 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
             }
 
             if (!inst.isTerminal()) {
-                CCallHelpers::Jump jump = inst.generate(*m_jit, context);
+                CCallHelpers::Jump jump;
+                if (needsToGenerate)
+                    jump = inst.generate(*m_jit, context);
                 ASSERT_UNUSED(jump, !jump.isSet());
 
                 for (Reg reg : clobberedRegisters) {
@@ -616,7 +655,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                     m_map[tmp].reg = Reg();
                 }
             } else {
-                bool needsToGenerate = true;
+                ASSERT(needsToGenerate);
                 if (inst.kind.opcode == Jump && block->successorBlock(0) == m_code.findNextBlock(block))
                     needsToGenerate = false;
 

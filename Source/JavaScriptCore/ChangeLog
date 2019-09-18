@@ -1,3 +1,40 @@
+2019-09-17  Keith Miller  <keith_miller@apple.com>
+
+        Elide unnecessary moves in Air O0
+        https://bugs.webkit.org/show_bug.cgi?id=201703
+
+        Reviewed by Saam Barati.
+
+        This patch also removes the code that would try to reuse temps in
+        WasmAirIRGenerator. That code makes it hard to accurately
+        determine where a temp dies as it could be reused again
+        later. Thus every temp, may appear to live for a long time in the
+        global ordering.
+
+        This appears to be a minor progression on the overall score of
+        wasm subtests in JS2 and a 10% wasm-JIT memory usage reduction.
+
+        This patch also fixes an issue where we didn't ask Patchpoints
+        for early clobber registers when determining what callee saves
+        were used by the program.
+
+        * b3/air/AirAllocateRegistersAndStackAndGenerateCode.cpp:
+        (JSC::B3::Air::GenerateAndAllocateRegisters::generate):
+        * b3/air/AirBasicBlock.h:
+        * b3/air/AirCode.h:
+        * b3/air/AirHandleCalleeSaves.cpp:
+        (JSC::B3::Air::handleCalleeSaves):
+        * b3/air/testair.cpp:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::didKill): Deleted.
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::didKill): Deleted.
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseBody):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::didKill): Deleted.
+
 2019-09-17  Mark Lam  <mark.lam@apple.com>
 
         Use constexpr instead of const in symbol definitions that are obviously constexpr.

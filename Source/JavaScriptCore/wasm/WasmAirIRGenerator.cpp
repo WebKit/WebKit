@@ -303,17 +303,6 @@ public:
         return result;
     }
 
-    ALWAYS_INLINE void didKill(const ExpressionType& typedTmp)
-    {
-        Tmp tmp = typedTmp.tmp();
-        if (!tmp)
-            return;
-        if (tmp.isGP())
-            m_freeGPs.append(tmp);
-        else
-            m_freeFPs.append(tmp);
-    }
-
     const Bag<B3::PatchpointValue*>& patchpoints() const
     {
         return m_patchpoints;

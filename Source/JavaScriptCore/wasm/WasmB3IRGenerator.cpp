@@ -246,8 +246,6 @@ public:
     Value* constant(B3::Type, uint64_t bits, Optional<Origin> = WTF::nullopt);
     void insertConstants();
 
-    ALWAYS_INLINE void didKill(ExpressionType) { }
-
 private:
     void emitExceptionCheck(CCallHelpers&, ExceptionType);
 

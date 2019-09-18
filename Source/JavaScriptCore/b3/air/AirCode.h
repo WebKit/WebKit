@@ -224,7 +224,7 @@ public:
     RegisterSet calleeSaveRegisters() const { return m_calleeSaveRegisters; }
 
     // Recomputes predecessors and deletes unreachable blocks.
-    void resetReachability();
+    JS_EXPORT_PRIVATE void resetReachability();
     
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;
 
