@@ -80,7 +80,7 @@ private:
     void postMessageToServiceWorkerClient(const WebCore::ServiceWorkerClientIdentifier& destinationIdentifier, const WebCore::MessageWithMessagePorts&, WebCore::ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin);
 
     // Messages to the SW host WebProcess
-    void installServiceWorkerContext(const WebCore::ServiceWorkerContextData&, PAL::SessionID, const String& userAgent) final;
+    void installServiceWorkerContext(const WebCore::ServiceWorkerContextData&, const String& userAgent) final;
     void fireInstallEvent(WebCore::ServiceWorkerIdentifier) final;
     void fireActivateEvent(WebCore::ServiceWorkerIdentifier) final;
     void softUpdate(WebCore::ServiceWorkerIdentifier) final;

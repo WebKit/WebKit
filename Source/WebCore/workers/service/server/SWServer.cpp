@@ -587,7 +587,7 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
     auto result = m_runningOrTerminatingWorkers.add(data.serviceWorkerIdentifier, WTFMove(worker));
     ASSERT_UNUSED(result, result.isNewEntry);
 
-    connection->installServiceWorkerContext(data, m_sessionID, userAgent);
+    connection->installServiceWorkerContext(data, userAgent);
 }
 
 void SWServer::runServiceWorkerIfNecessary(ServiceWorkerIdentifier identifier, RunServiceWorkerCallback&& callback)
@@ -643,7 +643,7 @@ bool SWServer::runServiceWorker(ServiceWorkerIdentifier identifier)
     auto* contextConnection = worker->contextConnection();
     ASSERT(contextConnection);
 
-    contextConnection->installServiceWorkerContext(worker->contextData(), m_sessionID, worker->userAgent());
+    contextConnection->installServiceWorkerContext(worker->contextData(), worker->userAgent());
 
     return true;
 }

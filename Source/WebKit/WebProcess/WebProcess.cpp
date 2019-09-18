@@ -1794,7 +1794,7 @@ void WebProcess::establishWorkerContextConnectionToNetworkProcess(uint64_t pageG
     // by calling ensureNetworkProcessConnection. SWContextManager needs to use the same underlying IPC::Connection as the
     // NetworkProcessConnection for synchronization purposes.
     auto& ipcConnection = ensureNetworkProcessConnection().connection();
-    SWContextManager::singleton().setConnection(makeUnique<WebSWContextManagerConnection>(ipcConnection, WTFMove(registrableDomain), sessionID(), pageGroupID, webPageProxyID, pageID, store));
+    SWContextManager::singleton().setConnection(makeUnique<WebSWContextManagerConnection>(ipcConnection, WTFMove(registrableDomain), pageGroupID, webPageProxyID, pageID, store));
 }
 
 void WebProcess::registerServiceWorkerClients()
