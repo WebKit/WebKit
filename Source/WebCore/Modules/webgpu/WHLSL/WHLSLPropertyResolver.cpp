@@ -29,6 +29,8 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLAST.h"
+#include "WHLSLProgram.h"
+#include "WHLSLReplaceWith.h"
 #include "WHLSLVisitor.h"
 
 namespace WebCore {

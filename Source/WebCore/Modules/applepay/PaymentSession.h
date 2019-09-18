@@ -37,6 +37,8 @@ class Document;
 class Payment;
 class PaymentContact;
 class PaymentMethod;
+class PaymentSessionError;
+class ScriptExecutionContext;
 
 class PaymentSession : public virtual PaymentSessionBase {
 public:
@@ -49,7 +51,7 @@ public:
     virtual void didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod&) = 0;
     virtual void didSelectShippingContact(const PaymentContact&) = 0;
     virtual void didSelectPaymentMethod(const PaymentMethod&) = 0;
-    virtual void didCancelPaymentSession() = 0;
+    virtual void didCancelPaymentSession(PaymentSessionError&&) = 0;
 };
 
 } // namespace WebCore

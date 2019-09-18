@@ -34,6 +34,7 @@
 #include "MockPaymentMethod.h"
 #include "Page.h"
 #include "PaymentCoordinator.h"
+#include "PaymentSessionError.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/RunLoop.h>
 #include <wtf/URL.h>
@@ -190,7 +191,7 @@ void MockPaymentCoordinator::acceptPayment()
 void MockPaymentCoordinator::cancelPayment()
 {
     dispatchIfShowing([page = &m_page] {
-        page->paymentCoordinator().didCancelPaymentSession();
+        page->paymentCoordinator().didCancelPaymentSession({ });
         ++hideCount;
         ASSERT(showCount == hideCount);
     });

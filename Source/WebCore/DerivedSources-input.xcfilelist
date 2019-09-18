@@ -19,6 +19,7 @@ $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/xxd.pl
 $(PROJECT_DIR)/Configurations/FeatureDefines.xcconfig
 $(PROJECT_DIR)/DerivedSources.make
 $(PROJECT_DIR)/Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayCancelEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayContactField.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayError.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayErrorCode.idl
@@ -37,6 +38,7 @@ $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentPass.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentRequest.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayRequestBase.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePaySession.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePaySessionError.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayShippingContactSelectedEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayShippingContactUpdate.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayShippingMethod.idl

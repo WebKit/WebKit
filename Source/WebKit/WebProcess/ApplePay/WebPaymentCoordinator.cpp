@@ -55,7 +55,7 @@ void WebPaymentCoordinator::networkProcessConnectionClosed()
 {
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     if (remoteUIEnabled())
-        didCancelPaymentSession();
+        didCancelPaymentSession({ });
 #endif
 }
 
@@ -196,9 +196,9 @@ void WebPaymentCoordinator::didSelectPaymentMethod(const WebCore::PaymentMethod&
     paymentCoordinator().didSelectPaymentMethod(paymentMethod);
 }
 
-void WebPaymentCoordinator::didCancelPaymentSession()
+void WebPaymentCoordinator::didCancelPaymentSession(WebCore::PaymentSessionError&& sessionError)
 {
-    paymentCoordinator().didCancelPaymentSession();
+    paymentCoordinator().didCancelPaymentSession(WTFMove(sessionError));
 }
 
 WebCore::PaymentCoordinator& WebPaymentCoordinator::paymentCoordinator()

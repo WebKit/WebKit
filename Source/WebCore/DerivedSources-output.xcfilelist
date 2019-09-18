@@ -66,6 +66,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnimationPlaybackEventInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnimationPlaybackEventInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnimationTimeline.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnimationTimeline.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayCancelEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayCancelEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayContactField.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayContactField.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayError.cpp
@@ -106,6 +108,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayRequestBase.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayRequestBase.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePaySession.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePaySession.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePaySessionError.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePaySessionError.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePaySetup.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePaySetup.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePaySetupFeature.cpp

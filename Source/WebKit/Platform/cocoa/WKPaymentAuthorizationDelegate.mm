@@ -30,10 +30,12 @@
 
 #import <WebCore/Payment.h>
 #import <WebCore/PaymentMethod.h>
+#import <WebCore/PaymentSessionError.h>
 
 @implementation WKPaymentAuthorizationDelegate {
     RetainPtr<NSArray<PKPaymentSummaryItem *>> _summaryItems;
     RetainPtr<NSArray<PKShippingMethod *>> _shippingMethods;
+    RetainPtr<NSError> _sessionError;
     WeakPtr<WebKit::PaymentAuthorizationPresenter> _presenter;
     WebKit::DidAuthorizePaymentCompletion _didAuthorizePaymentCompletion;
     WebKit::DidRequestMerchantSessionCompletion _didRequestMerchantSessionCompletion;
@@ -124,7 +126,7 @@
 - (void)_didFinish
 {
     if (auto presenter = _presenter.get())
-        presenter->client().presenterDidFinish(*presenter, _didReachFinalState);
+        presenter->client().presenterDidFinish(*presenter, { std::exchange(_sessionError, nil) }, _didReachFinalState);
 }
 
 - (void)_didRequestMerchantSession:(WebKit::DidRequestMerchantSessionCompletion::BlockType)completion
@@ -207,6 +209,10 @@ static WebCore::ApplePaySessionPaymentRequest::ShippingMethod toShippingMethod(P
 
 - (void)_willFinishWithError:(NSError *)error
 {
+    if (![error.domain isEqualToString:PAL::get_PassKit_PKPassKitErrorDomain()])
+        return;
+
+    _sessionError = error;
 }
 
 @end

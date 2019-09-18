@@ -1,3 +1,13 @@
+2019-09-18  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Tell websites why a session was cancelled
+        https://bugs.webkit.org/show_bug.cgi?id=201912
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/ssl/applepay/ApplePayCancelEvent.https-expected.txt: Added.
+        * http/tests/ssl/applepay/ApplePayCancelEvent.https.html: Added.
+
 2019-09-18  Russell Epstein  <repstein@apple.com>
 
         REGRESSION: (Catalina) fast/images/async-image-multiple-clients-repaint.html is a flakey failure.

@@ -571,6 +571,7 @@ WHLSLStandardLibraryFunctionMap.cpp
 
 #if ENABLE_APPLE_PAY
 
+    Modules/applepay/ApplePayCancelEvent.cpp
     Modules/applepay/ApplePayContactField.cpp
     Modules/applepay/ApplePayError.cpp
     Modules/applepay/ApplePayMerchantCapability.cpp
@@ -591,9 +592,11 @@ WHLSLStandardLibraryFunctionMap.cpp
     Modules/applepay/cocoa/PaymentContactCocoa.mm
     Modules/applepay/cocoa/PaymentMerchantSessionCocoa.mm
     Modules/applepay/cocoa/PaymentMethodCocoa.mm
+    Modules/applepay/cocoa/PaymentSessionErrorCocoa.mm
 
     Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp
 
+    JSApplePayCancelEvent.cpp
     JSApplePayContactField.cpp
     JSApplePayError.cpp
     JSApplePayErrorCode.cpp
@@ -614,6 +617,7 @@ WHLSLStandardLibraryFunctionMap.cpp
     JSApplePayRequest.cpp
     JSApplePayRequestBase.cpp
     JSApplePaySession.cpp
+    JSApplePaySessionError.cpp
     JSApplePayShippingContactSelectedEvent.cpp
     JSApplePayShippingContactUpdate.cpp
     JSApplePayShippingMethod.cpp

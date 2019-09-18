@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,11 +23,49 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "PaymentSessionError.h"
 
-#include "ApplePaySessionPaymentRequest.h"
-#include "Payment.h"
-#include "PaymentContact.h"
-#include "PaymentMerchantSession.h"
-#include "PaymentMethod.h"
-#include "PaymentSessionError.h"
+#if ENABLE(APPLE_PAY)
+
+#import "ApplePaySessionError.h"
+#import <pal/cocoa/PassKitSoftLink.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/PaymentSessionErrorCocoaAdditions.mm>
+#else
+namespace WebCore {
+static Optional<ApplePaySessionError> additionalError(NSError *) { return WTF::nullopt; }
+}
+#endif
+
+namespace WebCore {
+
+PaymentSessionError::PaymentSessionError(RetainPtr<NSError>&& error)
+    : m_platformError { WTFMove(error) }
+{
+}
+
+ApplePaySessionError PaymentSessionError::sessionError() const
+{
+    ASSERT(!m_platformError || [[m_platformError domain] isEqualToString:PAL::get_PassKit_PKPassKitErrorDomain()]);
+
+    if (auto error = additionalError(m_platformError.get()))
+        return *error;
+
+    return unknownError();
+}
+
+NSError *PaymentSessionError::platformError() const
+{
+    return m_platformError.get();
+}
+
+ApplePaySessionError PaymentSessionError::unknownError() const
+{
+    return { "unknown"_s, { } };
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(APPLE_PAY)

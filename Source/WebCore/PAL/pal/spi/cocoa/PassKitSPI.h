@@ -39,9 +39,14 @@ WTF_EXTERN_C_END
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#import <PassKit/PassKit.h>
+#import <PassKit/PKContact.h>
+#import <PassKit/PKError_Private.h>
+#import <PassKit/PKPassLibrary.h>
+#import <PassKit/PKPayment.h>
 #import <PassKit/PKPaymentAuthorizationViewController_Private.h>
+#import <PassKit/PKPaymentMethod.h>
 #import <PassKit/PKPaymentRequest_Private.h>
+#import <PassKitCore/PKPaymentRequestStatus_Private.h>
 #import <PassKitCore/PKPaymentRequest_WebKit.h>
 
 #if PLATFORM(IOS_FAMILY)

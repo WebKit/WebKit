@@ -31,7 +31,6 @@
 #import "APIUIClient.h"
 #import "PaymentAuthorizationPresenter.h"
 #import "WebPageProxy.h"
-#import <PassKit/PassKit.h>
 #import <UIKit/UIViewController.h>
 #import <WebCore/PaymentAuthorizationStatus.h>
 #import <pal/cocoa/PassKitSoftLink.h>

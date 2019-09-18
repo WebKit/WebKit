@@ -43,6 +43,7 @@ class DataReference;
 namespace WebCore {
 class PaymentCoordinator;
 class PaymentContact;
+class PaymentSessionError;
 }
 
 namespace WebKit {
@@ -95,7 +96,7 @@ private:
     void didSelectShippingMethod(const WebCore::ApplePaySessionPaymentRequest::ShippingMethod&);
     void didSelectShippingContact(const WebCore::PaymentContact&);
     void didSelectPaymentMethod(const WebCore::PaymentMethod&);
-    void didCancelPaymentSession();
+    void didCancelPaymentSession(WebCore::PaymentSessionError&&);
 
     WebCore::PaymentCoordinator& paymentCoordinator();
 

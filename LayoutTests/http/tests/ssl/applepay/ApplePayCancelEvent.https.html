@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/payment-request.js"></script>
+</head>
+<body>
+<script>
+
+description("Test ApplePaySession's cancel event.");
+
+window.jsTestIsAsync = true;
+
+function validRequest()
+{
+    return {
+        countryCode: 'US',
+        currencyCode: 'USD',
+        supportedNetworks: ['visa', 'masterCard'],
+        merchantCapabilities: ['supports3DS'],
+        total: { label: 'Your Label', amount: '10.00' },
+    }
+}
+
+activateThen(() => {
+    var session = new ApplePaySession(2, validRequest());
+    session.oncancel = (event) => {
+        shouldBeNonNull('event');
+        shouldBe('typeof event', '"object"');
+        shouldBeNonNull('event.sessionError');
+        shouldBe('typeof event.sessionError', '"object"');
+        shouldBe('event.sessionError.code', '"unknown"');
+        shouldBe("typeof event.sessionError.code", '"string"');
+        shouldBe('Object.keys(event.sessionError.info).length', '0');
+        shouldBe('typeof event.sessionError.info', '"object"');
+        testPassed('cancel event received');
+        finishJSTest();
+    };
+    session.begin();
+    internals.mockPaymentCoordinator.cancelPayment();
+});
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

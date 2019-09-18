@@ -108,7 +108,7 @@ private:
     
     // PaymentAuthorizationPresenter::Client
     void presenterDidAuthorizePayment(PaymentAuthorizationPresenter&, const WebCore::Payment&) final;
-    void presenterDidFinish(PaymentAuthorizationPresenter&, bool didReachFinalState) final;
+    void presenterDidFinish(PaymentAuthorizationPresenter&, WebCore::PaymentSessionError&&, bool didReachFinalState) final;
     void presenterDidSelectPaymentMethod(PaymentAuthorizationPresenter&, const WebCore::PaymentMethod&) final;
     void presenterDidSelectShippingContact(PaymentAuthorizationPresenter&, const WebCore::PaymentContact&) final;
     void presenterDidSelectShippingMethod(PaymentAuthorizationPresenter&, const WebCore::ApplePaySessionPaymentRequest::ShippingMethod&) final;
@@ -132,7 +132,7 @@ private:
     bool canCompletePayment() const;
     bool canAbort() const;
 
-    void didCancelPaymentSession();
+    void didCancelPaymentSession(WebCore::PaymentSessionError&& = { });
     void didReachFinalState();
     void hidePaymentUI();
 

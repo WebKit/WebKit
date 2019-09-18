@@ -1,3 +1,56 @@
+2019-09-18  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Tell websites why a session was cancelled
+        https://bugs.webkit.org/show_bug.cgi?id=201912
+
+        Reviewed by Brady Eidson.
+
+        Added ApplePayCancelEvent as the interface for ApplePaySession's cancel event. This event
+        object includes a `sessionError` attribute that exposes a Web-safe version of the PassKit
+        domain error we received from PKPaymentAuthorization(View)Controller. Currently, we report
+        all errors with code "unknown", but more codes will be added in future patches.
+
+        Test: http/tests/ssl/applepay/ApplePayCancelEvent.https.html
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/applepay/ApplePayCancelEvent.cpp: Copied from Source/WebCore/Modules/applepay/PaymentHeaders.h.
+        (WebCore::ApplePayCancelEvent::ApplePayCancelEvent):
+        (WebCore::ApplePayCancelEvent::sessionError const):
+        (WebCore::ApplePayCancelEvent::eventInterface const):
+        * Modules/applepay/ApplePayCancelEvent.h: Copied from Source/WebCore/Modules/applepay/PaymentHeaders.h.
+        (WebCore::ApplePayCancelEvent::create):
+        * Modules/applepay/ApplePayCancelEvent.idl: Copied from Source/WebCore/Modules/applepay/PaymentHeaders.h.
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::ApplePaySession::didCancelPaymentSession):
+        * Modules/applepay/ApplePaySession.h:
+        * Modules/applepay/ApplePaySessionError.h: Copied from Source/WebCore/Modules/applepay/PaymentHeaders.h.
+        * Modules/applepay/ApplePaySessionError.idl: Copied from Source/WebCore/Modules/applepay/PaymentHeaders.h.
+        * Modules/applepay/PaymentCoordinator.cpp:
+        (WebCore::PaymentCoordinator::didCancelPaymentSession):
+        * Modules/applepay/PaymentCoordinator.h:
+        * Modules/applepay/PaymentHeaders.h:
+        * Modules/applepay/PaymentSession.cpp:
+        * Modules/applepay/PaymentSession.h:
+        * Modules/applepay/PaymentSessionError.h: Copied from Source/WebCore/Modules/applepay/PaymentHeaders.h.
+        * Modules/applepay/cocoa/PaymentSessionErrorCocoa.mm: Copied from Source/WebCore/Modules/applepay/PaymentSession.h.
+        (WebCore::additionalError):
+        (WebCore::PaymentSessionError::PaymentSessionError):
+        (WebCore::PaymentSessionError::sessionError const):
+        (WebCore::PaymentSessionError::platformError const):
+        (WebCore::PaymentSessionError::unknownError const):
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::ApplePayPaymentHandler::didCancelPaymentSession):
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.h:
+        * Modules/webgpu/WHLSL/WHLSLCheckTextureReferences.cpp:
+        * Modules/webgpu/WHLSL/WHLSLPropertyResolver.cpp:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventNames.in:
+        * testing/MockPaymentCoordinator.cpp:
+        (WebCore::MockPaymentCoordinator::cancelPayment):
+
 2019-09-18  Chris Dumez  <cdumez@apple.com>
 
         WebSWContextManagerConnection::installServiceWorker IPC no longer need a sessionID

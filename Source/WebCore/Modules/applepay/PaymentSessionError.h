@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,30 @@
 
 #pragma once
 
-#include "ApplePaySessionPaymentRequest.h"
-#include "Payment.h"
-#include "PaymentContact.h"
-#include "PaymentMerchantSession.h"
-#include "PaymentMethod.h"
-#include "PaymentSessionError.h"
+#if ENABLE(APPLE_PAY)
+
+#include <wtf/RetainPtr.h>
+
+OBJC_CLASS NSError;
+
+namespace WebCore {
+
+struct ApplePaySessionError;
+
+class WEBCORE_EXPORT PaymentSessionError {
+public:
+    PaymentSessionError() = default;
+    PaymentSessionError(RetainPtr<NSError>&&);
+
+    ApplePaySessionError sessionError() const;
+    NSError *platformError() const;
+
+private:
+    ApplePaySessionError unknownError() const;
+
+    RetainPtr<NSError> m_platformError;
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(APPLE_PAY)

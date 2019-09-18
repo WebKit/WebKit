@@ -1,3 +1,34 @@
+2019-09-18  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Tell websites why a session was cancelled
+        https://bugs.webkit.org/show_bug.cgi?id=201912
+        <rdar://problem/55469706>
+
+        Reviewed by Brady Eidson.
+
+        Remembered the error passed to -[WKPaymentAuthorizationDelegate _willFinishWithError:] and
+        sent it to the WebContent process in Messages::WebPaymentCoordinator::DidCancelPaymentSession.
+
+        * Platform/cocoa/PaymentAuthorizationPresenter.h:
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.mm:
+        (-[WKPaymentAuthorizationDelegate _didFinish]):
+        (-[WKPaymentAuthorizationDelegate _willFinishWithError:]):
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::didCancelPaymentSession):
+        (WebKit::WebPaymentCoordinatorProxy::presenterDidFinish):
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.h:
+        (WebKit::WebPaymentCoordinatorProxy::didCancelPaymentSession):
+        * Shared/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm:
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::PaymentSessionError>::encode):
+        (IPC::ArgumentCoder<WebCore::PaymentSessionError>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::networkProcessConnectionClosed):
+        (WebKit::WebPaymentCoordinator::didCancelPaymentSession):
+        * WebProcess/ApplePay/WebPaymentCoordinator.h:
+        * WebProcess/ApplePay/WebPaymentCoordinator.messages.in:
+
 2019-09-18  Chris Dumez  <cdumez@apple.com>
 
         WebSWContextManagerConnection::installServiceWorker IPC no longer need a sessionID

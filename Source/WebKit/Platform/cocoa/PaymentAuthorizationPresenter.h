@@ -41,6 +41,7 @@ class Payment;
 class PaymentContact;
 class PaymentMerchantSession;
 class PaymentMethod;
+class PaymentSessionError;
 }
 
 namespace WebKit {
@@ -53,7 +54,7 @@ public:
         virtual ~Client() = default;
 
         virtual void presenterDidAuthorizePayment(PaymentAuthorizationPresenter&, const WebCore::Payment&) = 0;
-        virtual void presenterDidFinish(PaymentAuthorizationPresenter&, bool didReachFinalState) = 0;
+        virtual void presenterDidFinish(PaymentAuthorizationPresenter&, WebCore::PaymentSessionError&&, bool didReachFinalState) = 0;
         virtual void presenterDidSelectPaymentMethod(PaymentAuthorizationPresenter&, const WebCore::PaymentMethod&) = 0;
         virtual void presenterDidSelectShippingContact(PaymentAuthorizationPresenter&, const WebCore::PaymentContact&) = 0;
         virtual void presenterDidSelectShippingMethod(PaymentAuthorizationPresenter&, const WebCore::ApplePaySessionPaymentRequest::ShippingMethod&) = 0;
