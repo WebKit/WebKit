@@ -1358,3 +1358,10 @@ fast/viewport/ios/ignore-minimum-device-width-for-page-with-viewport-device-widt
 
 # problem with blur handling
 mathml/focus-event-handling.html [ Failure ]
+
+webkit.org/b/201898 editing/pasteboard/ios/dom-paste-same-origin.html [ Failure ]
+# <rdar://problem/51756254>REGRESSION (r244582-r244596) Layout tests fast/scrolling/ios/touch-scroll-visibility-hidden.html fast/scrolling/ios/touch-scroll-pointer-events-none.html are failing
+fast/scrolling/ios/touch-scroll-pointer-events-none.html [ Failure ]
+fast/scrolling/ios/touch-scroll-visibility-hidden.html [ Failure ]
+# <rdar://problem/52962272> fast/scrolling/ios/body-overflow-hidden.html is an Image failure
+fast/scrolling/ios/body-overflow-hidden.html [ Pass ImageOnlyFailure ]
