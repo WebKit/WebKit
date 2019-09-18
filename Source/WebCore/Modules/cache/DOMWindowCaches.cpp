@@ -72,7 +72,7 @@ DOMCacheStorage* DOMWindowCaches::caches() const
     ASSERT(frame());
     ASSERT(frame()->document());
     if (!m_caches && frame()->page())
-        m_caches = DOMCacheStorage::create(*frame()->document(), frame()->page()->cacheStorageProvider().createCacheStorageConnection(frame()->page()->sessionID()));
+        m_caches = DOMCacheStorage::create(*frame()->document(), frame()->page()->cacheStorageProvider().createCacheStorageConnection());
     return m_caches.get();
 }
 

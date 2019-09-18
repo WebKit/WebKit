@@ -1,5 +1,17 @@
 2019-09-18  Chris Dumez  <cdumez@apple.com>
 
+        CacheStorageProvider::createCacheStorageConnection() does not need to take in a SessionID
+        https://bugs.webkit.org/show_bug.cgi?id=201920
+
+        Reviewed by Geoffrey Garen.
+
+        CacheStorageProvider::createCacheStorageConnection() does not need to take in a SessionID.
+        This sessionID is no longer used now that we have a session per WebProcess.
+
+        * WebCoreSupport/WebPlatformStrategies.mm:
+
+2019-09-18  Chris Dumez  <cdumez@apple.com>
+
         Drop FrameLoaderClient::sessionID()
         https://bugs.webkit.org/show_bug.cgi?id=201916
 

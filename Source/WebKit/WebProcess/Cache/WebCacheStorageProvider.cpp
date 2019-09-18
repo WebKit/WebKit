@@ -34,9 +34,8 @@
 
 namespace WebKit {
 
-Ref<WebCore::CacheStorageConnection> WebCacheStorageProvider::createCacheStorageConnection(PAL::SessionID sessionID)
+Ref<WebCore::CacheStorageConnection> WebCacheStorageProvider::createCacheStorageConnection()
 {
-    ASSERT_UNUSED(sessionID, WebProcess::singleton().sessionID());
     if (!m_connection)
         m_connection = WebCacheStorageConnection::create(*this);
     return *m_connection;

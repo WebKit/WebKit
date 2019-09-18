@@ -55,8 +55,6 @@ private:
     void reference(uint64_t cacheIdentifier) final;
     void dereference(uint64_t cacheIdentifier) final;
 
-    PAL::SessionID sessionID() const final;
-
     void doOpen(uint64_t requestIdentifier, const ClientOrigin&, const String& cacheName);
     void doRemove(uint64_t requestIdentifier, uint64_t cacheIdentifier);
     void doRetrieveCaches(uint64_t requestIdentifier, const ClientOrigin&, uint64_t updateCounter);

@@ -128,15 +128,15 @@ void ThreadableBlobRegistry::registerBlobURLForSlice(PAL::SessionID sessionID, c
     });
 }
 
-unsigned long long ThreadableBlobRegistry::blobSize(PAL::SessionID sessionID, const URL& url)
+unsigned long long ThreadableBlobRegistry::blobSize(const URL& url)
 {
     if (isMainThread())
-        return blobRegistry().blobSize(sessionID, url);
+        return blobRegistry().blobSize(url);
 
     unsigned long long resultSize;
     BinarySemaphore semaphore;
-    callOnMainThread([sessionID, url = url.isolatedCopy(), &semaphore, &resultSize] {
-        resultSize = blobRegistry().blobSize(sessionID, url);
+    callOnMainThread([url = url.isolatedCopy(), &semaphore, &resultSize] {
+        resultSize = blobRegistry().blobSize(url);
         semaphore.signal();
     });
     semaphore.wait();

@@ -41,7 +41,7 @@ class WebCacheStorageProvider final : public WebCore::CacheStorageProvider {
 public:
     static Ref<WebCacheStorageProvider> create() { return adoptRef(*new WebCacheStorageProvider); }
 
-    Ref<WebCore::CacheStorageConnection> createCacheStorageConnection(PAL::SessionID) final;
+    Ref<WebCore::CacheStorageConnection> createCacheStorageConnection() final;
 
 private:
     WebCacheStorageProvider() = default;

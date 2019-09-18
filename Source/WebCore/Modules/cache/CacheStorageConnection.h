@@ -57,8 +57,6 @@ public:
     virtual void engineRepresentation(CompletionHandler<void(const String&)>&& callback) { callback(String { }); }
     virtual void updateQuotaBasedOnSpaceUsage(const ClientOrigin&) { }
 
-    virtual PAL::SessionID sessionID() const = 0;
-
 private:
     uint64_t computeRealBodySize(const DOMCacheEngine::ResponseBody&);
 

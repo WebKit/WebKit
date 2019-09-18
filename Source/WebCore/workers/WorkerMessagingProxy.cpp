@@ -139,7 +139,7 @@ Ref<CacheStorageConnection> WorkerMessagingProxy::createCacheStorageConnection()
 {
     ASSERT(isMainThread());
     auto& document = downcast<Document>(*m_scriptExecutionContext);
-    return document.page()->cacheStorageProvider().createCacheStorageConnection(document.page()->sessionID());
+    return document.page()->cacheStorageProvider().createCacheStorageConnection();
 }
 
 bool WorkerMessagingProxy::postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)

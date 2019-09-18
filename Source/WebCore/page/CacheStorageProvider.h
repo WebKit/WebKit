@@ -35,11 +35,10 @@ class CacheStorageProvider : public RefCounted<CacheStorageProvider> {
 public:
     class DummyCacheStorageConnection final : public WebCore::CacheStorageConnection {
     public:
-        static Ref<DummyCacheStorageConnection> create(PAL::SessionID sessionID) { return adoptRef(*new DummyCacheStorageConnection(sessionID)); }
+        static Ref<DummyCacheStorageConnection> create() { return adoptRef(*new DummyCacheStorageConnection()); }
 
     private:
-        explicit DummyCacheStorageConnection(PAL::SessionID sessionID)
-            : m_sessionID(sessionID)
+        DummyCacheStorageConnection()
         {
         }
 
@@ -51,13 +50,10 @@ public:
         void batchPutOperation(uint64_t, Vector<DOMCacheEngine::Record>&&, DOMCacheEngine::RecordIdentifiersCallback&&) final { }
         void reference(uint64_t) final { }
         void dereference(uint64_t) final { }
-        PAL::SessionID sessionID() const final { return m_sessionID; }
-
-        PAL::SessionID m_sessionID;
     };
 
     static Ref<CacheStorageProvider> create() { return adoptRef(*new CacheStorageProvider); }
-    virtual Ref<CacheStorageConnection> createCacheStorageConnection(PAL::SessionID sessionID) { return DummyCacheStorageConnection::create(sessionID); }
+    virtual Ref<CacheStorageConnection> createCacheStorageConnection() { return DummyCacheStorageConnection::create(); }
     virtual ~CacheStorageProvider() { };
 
 protected:

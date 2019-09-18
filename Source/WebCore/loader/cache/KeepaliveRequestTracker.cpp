@@ -44,7 +44,7 @@ bool KeepaliveRequestTracker::tryRegisterRequest(CachedResource& resource)
     if (!body)
         return true;
 
-    uint64_t bodySize = body->lengthInBytes(resource.sessionID());
+    uint64_t bodySize = body->lengthInBytes();
     if (m_inflightKeepaliveBytes + bodySize > maxInflightKeepaliveBytes)
         return false;
 
@@ -60,7 +60,7 @@ void KeepaliveRequestTracker::registerRequest(CachedResource& resource)
         return;
     ASSERT(!m_inflightKeepaliveRequests.contains(&resource));
     m_inflightKeepaliveRequests.append(&resource);
-    m_inflightKeepaliveBytes += body->lengthInBytes(resource.sessionID());
+    m_inflightKeepaliveBytes += body->lengthInBytes();
     ASSERT(m_inflightKeepaliveBytes <= maxInflightKeepaliveBytes);
 
     resource.addClient(*this);
@@ -87,7 +87,7 @@ void KeepaliveRequestTracker::unregisterRequest(CachedResource& resource)
     resource.removeClient(*this);
     bool wasRemoved = m_inflightKeepaliveRequests.removeFirst(&resource);
     ASSERT_UNUSED(wasRemoved, wasRemoved);
-    m_inflightKeepaliveBytes -= resource.resourceRequest().httpBody()->lengthInBytes(resource.sessionID());
+    m_inflightKeepaliveBytes -= resource.resourceRequest().httpBody()->lengthInBytes();
     ASSERT(m_inflightKeepaliveBytes <= maxInflightKeepaliveBytes);
 }
 

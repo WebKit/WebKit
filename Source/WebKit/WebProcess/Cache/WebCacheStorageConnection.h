@@ -66,8 +66,6 @@ private:
     void clearMemoryRepresentation(const WebCore::ClientOrigin&, WebCore::DOMCacheEngine::CompletionCallback&&) final;
     void engineRepresentation(CompletionHandler<void(const String&)>&&) final;
     void updateQuotaBasedOnSpaceUsage(const WebCore::ClientOrigin&) final;
-    
-    PAL::SessionID sessionID() const final;
 
     WebCacheStorageProvider& m_provider;
 };

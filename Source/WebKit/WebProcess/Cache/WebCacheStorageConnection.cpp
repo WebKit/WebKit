@@ -110,9 +110,4 @@ void WebCacheStorageConnection::updateQuotaBasedOnSpaceUsage(const WebCore::Clie
     connection().send(Messages::NetworkProcess::UpdateQuotaBasedOnSpaceUsageForTesting(WebProcess::singleton().sessionID(), origin), 0);
 }
 
-PAL::SessionID WebCacheStorageConnection::sessionID() const
-{
-    return WebProcess::singleton().sessionID();
-}
-
 }

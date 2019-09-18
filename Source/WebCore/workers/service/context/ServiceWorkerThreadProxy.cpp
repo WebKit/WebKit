@@ -100,7 +100,6 @@ ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfi
     , m_document(*m_page->mainFrame().document())
     , m_serviceWorkerThread(ServiceWorkerThread::create(data, sessionID, WTFMove(userAgent), *this, *this, idbConnectionProxy(m_document), m_document->socketProvider()))
     , m_cacheStorageProvider(cacheStorageProvider)
-    , m_sessionID(sessionID)
     , m_inspectorProxy(*this)
 {
     static bool addedListener;
@@ -161,7 +160,7 @@ Ref<CacheStorageConnection> ServiceWorkerThreadProxy::createCacheStorageConnecti
 {
     ASSERT(isMainThread());
     if (!m_cacheStorageConnection)
-        m_cacheStorageConnection = m_cacheStorageProvider.createCacheStorageConnection(m_sessionID);
+        m_cacheStorageConnection = m_cacheStorageProvider.createCacheStorageConnection();
     return *m_cacheStorageConnection;
 }
 

@@ -149,10 +149,10 @@ uint64_t FormDataElement::lengthInBytes(BlobRegistryImpl* blobRegistry) const
     });
 }
 
-uint64_t FormDataElement::lengthInBytes(PAL::SessionID sessionID) const
+uint64_t FormDataElement::lengthInBytes() const
 {
-    return computeLengthInBytes(*this, [&](auto& url) {
-        return blobRegistry().blobSize(sessionID, url);
+    return computeLengthInBytes(*this, [](auto& url) {
+        return blobRegistry().blobSize(url);
     });
 }
 
@@ -394,12 +394,12 @@ FormDataForUpload::~FormDataForUpload()
         FileSystem::deleteFile(file);
 }
 
-uint64_t FormData::lengthInBytes(PAL::SessionID sessionID) const
+uint64_t FormData::lengthInBytes() const
 {
     if (!m_lengthInBytes) {
         uint64_t length = 0;
         for (auto& element : m_elements)
-            length += element.lengthInBytes(sessionID);
+            length += element.lengthInBytes();
         m_lengthInBytes = length;
     }
     return *m_lengthInBytes;
