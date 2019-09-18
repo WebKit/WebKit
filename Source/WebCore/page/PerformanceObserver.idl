@@ -36,7 +36,7 @@
 ] interface PerformanceObserver {
     [MayThrowException] void observe(PerformanceObserverInit options);
     void disconnect();
-    [CachedAttribute] static readonly attribute FrozenArray<DOMString> supportedEntryTypes;
+    static readonly attribute FrozenArray<DOMString> supportedEntryTypes;
 };
 
 dictionary PerformanceObserverInit {

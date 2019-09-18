@@ -1,5 +1,11 @@
 2019-09-17  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, revert change that Alex mistakenly committed at the same time as r250006 and broke the build.
+
+        * page/PerformanceObserver.idl:
+
+2019-09-17  Chris Dumez  <cdumez@apple.com>
+
         Stop calling Page::setSessionID() from WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=201888
 
