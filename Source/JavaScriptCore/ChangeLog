@@ -1,5 +1,18 @@
 2019-09-19  Mark Lam  <mark.lam@apple.com>
 
+        Remove a now unnecessary hack to work around static const needing external linkage.
+        https://bugs.webkit.org/show_bug.cgi?id=201988
+
+        Reviewed by Saam Barati.
+
+        MacroAssembler::dataTempRegister is now a constexpr, thereby ensuring that it's
+        inlinable.
+
+        * b3/B3Common.cpp:
+        (JSC::B3::pinnedExtendedOffsetAddrRegister):
+
+2019-09-19  Mark Lam  <mark.lam@apple.com>
+
         Replace JSValue #defines with static constexpr values.
         https://bugs.webkit.org/show_bug.cgi?id=201966
 
