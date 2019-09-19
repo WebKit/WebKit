@@ -1,5 +1,29 @@
 2019-09-19  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Remove redundant Layout::Box::ElementTypes
+        https://bugs.webkit.org/show_bug.cgi?id=201963
+
+        Reviewed by Antti Koivisto.
+
+        These types can be solved through RenderStyle.
+
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::isPaddingApplicable const):
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::isTableHeader const):
+        (WebCore::Layout::Box::isTableBody const):
+        (WebCore::Layout::Box::isTableFooter const):
+        (WebCore::Layout::Box::isTableRow const):
+        (WebCore::Layout::Box::isTableColumnGroup const):
+        (WebCore::Layout::Box::isTableColumn const):
+        (WebCore::Layout::Box::isTableCell const):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createLayoutBox):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::layoutUsingFormattingContext):
+
+2019-09-19  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] InlineFormattingContext::InlineLayout should not need to call LayoutState::establishedFormattingState
         https://bugs.webkit.org/show_bug.cgi?id=201972
         <rdar://problem/55505869>

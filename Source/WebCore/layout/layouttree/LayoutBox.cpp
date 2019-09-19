@@ -373,13 +373,12 @@ bool Box::isPaddingApplicable() const
     if (isAnonymous())
         return false;
 
-    auto elementType = m_elementAttributes.value().elementType;
-    return elementType != ElementType::TableHeaderGroup
-        && elementType != ElementType::TableBodyGroup
-        && elementType != ElementType::TableFooterGroup
-        && elementType != ElementType::TableRow
-        && elementType != ElementType::TableColumnGroup
-        && elementType != ElementType::TableColumn;
+    return !isTableHeader()
+        && !isTableBody()
+        && !isTableFooter()
+        && !isTableRow()
+        && !isTableColumnGroup()
+        && !isTableColumn();
 }
 
 void Box::setTextContent(String textContent)

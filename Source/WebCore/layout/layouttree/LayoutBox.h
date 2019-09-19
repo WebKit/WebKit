@@ -47,12 +47,6 @@ public:
         Body,
         TableWrapperBox, // The table generates a principal block container box called the table wrapper box that contains the table box and any caption boxes.
         TableBox, // The table box is a block-level box that contains the table's internal table boxes.
-        TableColumn,
-        TableRow,
-        TableColumnGroup,
-        TableHeaderGroup,
-        TableBodyGroup,
-        TableFooterGroup,
         Image,
         IFrame,
         HardLineBreak,
@@ -116,11 +110,13 @@ public:
     bool isTableWrapperBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::TableWrapperBox; }
     bool isTableBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::TableBox; }
     bool isTableCaption() const { return style().display() == DisplayType::TableCaption; }
-    bool isTableHeader() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::TableHeaderGroup; }
-    bool isTableBody() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::TableBodyGroup; }
-    bool isTableFooter() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::TableFooterGroup; }
-    bool isTableRow() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::TableRow; }
-    bool isTableCell() const { return style().display() == DisplayType::TableCell;; }
+    bool isTableHeader() const { return style().display() == DisplayType::TableHeaderGroup; }
+    bool isTableBody() const { return style().display() == DisplayType::TableRowGroup; }
+    bool isTableFooter() const { return style().display() == DisplayType::TableFooterGroup; }
+    bool isTableRow() const { return style().display() == DisplayType::TableRow; }
+    bool isTableColumnGroup() const { return style().display() == DisplayType::TableColumnGroup; }
+    bool isTableColumn() const { return style().display() == DisplayType::TableColumn; }
+    bool isTableCell() const { return style().display() == DisplayType::TableCell; }
     bool isReplaced() const { return isImage() || isIFrame(); }
     bool isIFrame() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::IFrame; }
     bool isImage() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Image; }
