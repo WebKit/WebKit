@@ -1,3 +1,19 @@
+2019-09-19  Mark Lam  <mark.lam@apple.com>
+
+        Refactoring: fix broken indentation in JSNonDestructibleProxy.h.
+        https://bugs.webkit.org/show_bug.cgi?id=201989
+
+        Reviewed by Saam Barati.
+
+        This patch only unindent the code to get it back to compliant formatting.
+        There is no actual code change.
+
+        * runtime/JSNonDestructibleProxy.h:
+        (JSC::JSNonDestructibleProxy::subspaceFor):
+        (JSC::JSNonDestructibleProxy::create):
+        (JSC::JSNonDestructibleProxy::createStructure):
+        (JSC::JSNonDestructibleProxy::JSNonDestructibleProxy):
+
 2019-09-19  Tadeu Zagallo  <tzagallo@apple.com>
 
         Syntax checker should report duplicate __proto__ properties

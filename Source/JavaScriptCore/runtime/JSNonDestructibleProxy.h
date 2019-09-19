@@ -29,53 +29,53 @@
 
 namespace JSC {
 
-    class JSNonDestructibleProxy : public JSProxy {
-        public:
-            using Base = JSProxy;
-            static constexpr unsigned StructureFlags = Base::StructureFlags;
-            static constexpr bool needsDestruction = false;
+class JSNonDestructibleProxy : public JSProxy {
+public:
+    using Base = JSProxy;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
+    static constexpr bool needsDestruction = false;
 
-            template<typename CellType, SubspaceAccess mode>
-                static CompleteSubspace* subspaceFor(VM& vm)
-                {
-                    // JSProxy is JSDestrucitbleObject, but we make this JSNonDestructibleProxy non-destructible by using non-destructible subspace.
-                    // The motivation behind this is (1) except for JSWindowProxy JSProxy does not need to be destructible, and (2) subspace of destructible
-                    // and non-destructible objects are separated and JSProxy is using one MarkedBlock only for JSProxy class in the JSC framework and wasting memory.
-                    // Basically, to make objects destructible, objects need to inherit JSDestructibleObject. It holds a classInfo at a specific offset
-                    // so that Heap can get methodTable::destroy even if structures held by objects are destroyed before objects' destructions. But this
-                    // requirement forces JSProxy to inherit JSDestructibleObject for JSWindowProxy even while the other JSProxy does not need to be
-                    // destructible. We create JSNonDestructibleProxy, which is a subclass of JSProxy, and make it non-destructible so that we still keep
-                    // JSWindowProxy destructible while making JSNonDestructibleProxy non-destructible.
-                    return JSNonFinalObject::subspaceFor<CellType, mode>(vm);
-                }
+    template<typename CellType, SubspaceAccess mode>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        // JSProxy is JSDestrucitbleObject, but we make this JSNonDestructibleProxy non-destructible by using non-destructible subspace.
+        // The motivation behind this is (1) except for JSWindowProxy JSProxy does not need to be destructible, and (2) subspace of destructible
+        // and non-destructible objects are separated and JSProxy is using one MarkedBlock only for JSProxy class in the JSC framework and wasting memory.
+        // Basically, to make objects destructible, objects need to inherit JSDestructibleObject. It holds a classInfo at a specific offset
+        // so that Heap can get methodTable::destroy even if structures held by objects are destroyed before objects' destructions. But this
+        // requirement forces JSProxy to inherit JSDestructibleObject for JSWindowProxy even while the other JSProxy does not need to be
+        // destructible. We create JSNonDestructibleProxy, which is a subclass of JSProxy, and make it non-destructible so that we still keep
+        // JSWindowProxy destructible while making JSNonDestructibleProxy non-destructible.
+        return JSNonFinalObject::subspaceFor<CellType, mode>(vm);
+    }
 
-            static JSNonDestructibleProxy* create(VM& vm, Structure* structure, JSObject* target)
-            {
-                JSNonDestructibleProxy* proxy = new (NotNull, allocateCell<JSNonDestructibleProxy>(vm.heap)) JSNonDestructibleProxy(vm, structure);
-                proxy->finishCreation(vm, target);
-                return proxy;
-            }
+    static JSNonDestructibleProxy* create(VM& vm, Structure* structure, JSObject* target)
+    {
+        JSNonDestructibleProxy* proxy = new (NotNull, allocateCell<JSNonDestructibleProxy>(vm.heap)) JSNonDestructibleProxy(vm, structure);
+        proxy->finishCreation(vm, target);
+        return proxy;
+    }
 
-            static JSNonDestructibleProxy* create(VM& vm, Structure* structure)
-            {
-                JSNonDestructibleProxy* proxy = new (NotNull, allocateCell<JSNonDestructibleProxy>(vm.heap)) JSNonDestructibleProxy(vm, structure);
-                proxy->finishCreation(vm);
-                return proxy;
-            }
+    static JSNonDestructibleProxy* create(VM& vm, Structure* structure)
+    {
+        JSNonDestructibleProxy* proxy = new (NotNull, allocateCell<JSNonDestructibleProxy>(vm.heap)) JSNonDestructibleProxy(vm, structure);
+        proxy->finishCreation(vm);
+        return proxy;
+    }
 
-            static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, JSType proxyType)
-            {
-                ASSERT(proxyType == ImpureProxyType || proxyType == PureForwardingProxyType);
-                return Structure::create(vm, globalObject, prototype, TypeInfo(proxyType, StructureFlags), info());
-            }
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, JSType proxyType)
+    {
+        ASSERT(proxyType == ImpureProxyType || proxyType == PureForwardingProxyType);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(proxyType, StructureFlags), info());
+    }
 
-            DECLARE_EXPORT_INFO;
+    DECLARE_EXPORT_INFO;
 
-        protected:
-            JSNonDestructibleProxy(VM& vm, Structure* structure)
-                : Base(vm, structure)
-            {
-            }
-    };
+protected:
+    JSNonDestructibleProxy(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    {
+    }
+};
 
 } // namespace JSC
