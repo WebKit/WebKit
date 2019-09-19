@@ -28,7 +28,6 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include <WebCore/SocketStreamHandle.h>
-#include <pal/SessionID.h>
 #include <wtf/Identified.h>
 
 namespace IPC {
@@ -45,7 +44,7 @@ namespace WebKit {
 
 class WebSocketStream : public IPC::MessageSender, public IPC::MessageReceiver, public WebCore::SocketStreamHandle, public Identified<WebSocketStream> {
 public:
-    static Ref<WebSocketStream> create(const URL&, WebCore::SocketStreamHandleClient&, PAL::SessionID, const String& credentialPartition);
+    static Ref<WebSocketStream> create(const URL&, WebCore::SocketStreamHandleClient&, const String& credentialPartition);
     static void networkProcessCrashed();
     static WebSocketStream* streamWithIdentifier(uint64_t);
     
@@ -73,7 +72,7 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
-    WebSocketStream(const URL&, WebCore::SocketStreamHandleClient&, PAL::SessionID, const String& credentialPartition);
+    WebSocketStream(const URL&, WebCore::SocketStreamHandleClient&, const String& credentialPartition);
     ~WebSocketStream();
 
     size_t m_bufferedAmount { 0 };

@@ -40,7 +40,8 @@ using namespace WebCore;
 
 Ref<SocketStreamHandle> WebSocketProvider::createSocketStreamHandle(const URL& url, SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& credentialPartition, const StorageSessionProvider*)
 {
-    return WebSocketStream::create(url, client, sessionID, credentialPartition);
+    ASSERT_UNUSED(sessionID, sessionID == WebProcess::singleton().sessionID());
+    return WebSocketStream::create(url, client, credentialPartition);
 }
 
 RefPtr<ThreadableWebSocketChannel> WebSocketProvider::createWebSocketChannel(Document& document, WebSocketChannelClient& client)

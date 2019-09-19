@@ -101,7 +101,6 @@ SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandl
     , m_connectingSubstate(New)
     , m_connectionType(Unknown)
     , m_sentStoredCredentials(false)
-    , m_sessionID(sessionID)
     , m_credentialPartition(credentialPartition)
     , m_auditData(WTFMove(auditData))
     , m_storageSessionProvider(provider)

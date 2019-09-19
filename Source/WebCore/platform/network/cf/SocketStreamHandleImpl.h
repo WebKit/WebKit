@@ -103,7 +103,6 @@ private:
     RetainPtr<CFWriteStreamRef> m_writeStream;
 
     RetainPtr<CFURLRef> m_httpsURL; // ws(s): replaced with https:
-    PAL::SessionID m_sessionID;
     String m_credentialPartition;
     SourceApplicationAuditToken m_auditData;
     RefPtr<const StorageSessionProvider> m_storageSessionProvider;
