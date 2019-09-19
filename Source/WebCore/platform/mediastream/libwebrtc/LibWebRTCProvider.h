@@ -84,7 +84,7 @@ public:
         UNUSED_PARAM(documentIdentifier);
     }
 
-    virtual void registerMDNSName(PAL::SessionID, uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&& callback)
+    virtual void registerMDNSName(uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&& callback)
     {
         UNUSED_PARAM(documentIdentifier);
         UNUSED_PARAM(ipAddress);
@@ -120,7 +120,7 @@ public:
     void setEnableWebRTCEncryption(bool);
     void setUseDTLS10(bool);
 
-    virtual std::unique_ptr<rtc::PacketSocketFactory> createSocketFactory(PAL::SessionID, String&& /* userAgent */) { return nullptr; }
+    virtual std::unique_ptr<rtc::PacketSocketFactory> createSocketFactory(String&& /* userAgent */) { return nullptr; }
 
 protected:
     LibWebRTCProvider() = default;

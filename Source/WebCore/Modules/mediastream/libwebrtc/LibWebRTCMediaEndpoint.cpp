@@ -88,7 +88,7 @@ bool LibWebRTCMediaEndpoint::setConfiguration(LibWebRTCProvider& client, webrtc:
     if (!m_backend) {
         if (!m_rtcSocketFactory) {
             auto& document = downcast<Document>(*m_peerConnectionBackend.connection().scriptExecutionContext());
-            m_rtcSocketFactory = client.createSocketFactory(document.sessionID(), document.userAgent(document.url()));
+            m_rtcSocketFactory = client.createSocketFactory(document.userAgent(document.url()));
         }
         m_backend = client.createPeerConnection(*this, m_rtcSocketFactory.get(), WTFMove(configuration));
         return !!m_backend;

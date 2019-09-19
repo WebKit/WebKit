@@ -60,7 +60,7 @@ void LibWebRTCProvider::unregisterMDNSNames(uint64_t documentIdentifier)
     WebProcess::singleton().libWebRTCNetwork().mdnsRegister().unregisterMDNSNames(documentIdentifier);
 }
 
-void LibWebRTCProvider::registerMDNSName(PAL::SessionID, uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&& callback)
+void LibWebRTCProvider::registerMDNSName(uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&& callback)
 {
     WebProcess::singleton().libWebRTCNetwork().mdnsRegister().registerMDNSName(documentIdentifier, ipAddress, WTFMove(callback));
 }
@@ -100,7 +100,7 @@ private:
     String m_userAgent;
 };
 
-std::unique_ptr<rtc::PacketSocketFactory> LibWebRTCProvider::createSocketFactory(PAL::SessionID, String&& userAgent)
+std::unique_ptr<rtc::PacketSocketFactory> LibWebRTCProvider::createSocketFactory(String&& userAgent)
 {
     return makeUnique<RTCSocketFactory>(WTFMove(userAgent));
 }

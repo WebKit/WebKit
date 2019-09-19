@@ -469,7 +469,7 @@ void PeerConnectionBackend::registerMDNSName(const String& ipAddress)
     ++m_waitingForMDNSRegistration;
     auto& document = downcast<Document>(*m_peerConnection.scriptExecutionContext());
     auto& provider = document.page()->libWebRTCProvider();
-    provider.registerMDNSName(document.sessionID(), document.identifier().toUInt64(), ipAddress, [peerConnection = makeRef(m_peerConnection), this, ipAddress] (LibWebRTCProvider::MDNSNameOrError&& result) {
+    provider.registerMDNSName(document.identifier().toUInt64(), ipAddress, [peerConnection = makeRef(m_peerConnection), this, ipAddress] (LibWebRTCProvider::MDNSNameOrError&& result) {
         if (peerConnection->isStopped())
             return;
 
