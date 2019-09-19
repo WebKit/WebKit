@@ -1,3 +1,17 @@
+2019-09-18  Andy Estes  <aestes@apple.com>
+
+        Unreviewed, fixed a crash in ssl/applepay/ApplePayCancelEvent.https.html
+
+        After r250060 (which landed very shortly after the patch that introduced ApplePayCancelEvent),
+        all Events must be IsoHeap-ed. ApplePayCancelEvent was not IsoHeap-ed, and so this caused
+        assertion failures in ssl/applepay/ApplePayCancelEvent.https.html.
+        
+        Added the WTF_MAKE_ISO_ALLOCATED macros to ApplePayCancelEvent without a review to stop the
+        test from failing in EWS.
+
+        * Modules/applepay/ApplePayCancelEvent.cpp:
+        * Modules/applepay/ApplePayCancelEvent.h:
+
 2019-09-18  Chris Dumez  <cdumez@apple.com>
 
         WebSocketStream does not need a SessionID
