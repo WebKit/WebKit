@@ -3545,8 +3545,8 @@
         },
         "rx": {
             "codegen-properties": {
-                "initial": "initialZeroLength",
-                "converter": "Length"
+                "initial": "initialRadius",
+                "converter": "LengthOrAuto"
             },
             "specification": {
                 "category": "svg",
@@ -3555,8 +3555,8 @@
         },
         "ry": {
             "codegen-properties": {
-                "initial": "initialZeroLength",
-                "converter": "Length"
+                "initial": "initialRadius",
+                "converter": "LengthOrAuto"
             },
             "specification": {
                 "category": "svg",

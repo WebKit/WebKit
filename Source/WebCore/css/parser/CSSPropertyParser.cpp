@@ -2142,10 +2142,8 @@ static RefPtr<CSSPrimitiveValue> consumeBaselineShift(CSSParserTokenRange& range
 
 static RefPtr<CSSPrimitiveValue> consumeRxOrRy(CSSParserTokenRange& range)
 {
-    // FIXME-NEWPARSER: We don't support auto values when mapping, so for now turn this
-    // off until we can figure out if we're even supposed to support it.
-    // if (range.peek().id() == CSSValueAuto)
-    //     return consumeIdent(range);
+    if (range.peek().id() == CSSValueAuto)
+        return consumeIdent(range);
     return consumeLengthOrPercent(range, SVGAttributeMode, ValueRangeAll, UnitlessQuirk::Forbid);
 }
 

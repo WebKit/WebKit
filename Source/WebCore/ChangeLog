@@ -1,3 +1,33 @@
+2019-09-19  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [SVG2]: Add auto behavior for rx and ry to the SVG <ellipse> and<rect> elements
+        https://bugs.webkit.org/show_bug.cgi?id=199843
+
+        Reviewed by Simon Fraser, Nikolas Zimmermann.
+
+        The specification is: https://www.w3.org/TR/SVG2/geometry.html#RxProperty.
+
+        Change the initial value of rx and ry to be "auto". Change the parser to
+        parse LengthOrAuto for these properties. Handle the case if one of them
+        is missing.
+
+        Tests: svg/custom/ellipse-radius-auto-dynamic.svg
+               svg/custom/ellipse-radius-auto-initial.svg
+               svg/custom/ellipse-radius-length-initial.svg
+               svg/custom/rect-radius-auto-dynamic.svg
+               svg/custom/rect-radius-auto-initial.svg
+               svg/custom/rect-radius-length-initial.svg
+
+        * css/CSSProperties.json:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeRxOrRy):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::initialRadius):
+        * rendering/style/SVGRenderStyleDefs.cpp:
+        (WebCore::StyleLayoutData::StyleLayoutData):
+        * rendering/svg/RenderSVGEllipse.cpp:
+        (WebCore::RenderSVGEllipse::calculateRadiiAndCenter):
+
 2019-09-19  Peng Liu  <peng.liu6@apple.com>
 
         HTMLVideoElement with a broken poster image will take square dimension

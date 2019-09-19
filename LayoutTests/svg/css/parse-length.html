@@ -129,18 +129,18 @@ negativeTestZero("r", "100px !important");
 negativeTestZero("r", "{ 100px }");
 
 // Negative tests for 'rx'.
-negativeTestZero("rx", "auto", "auto");
-negativeTestZero("rx", "100   px");
-negativeTestZero("rx", "100px;");
-negativeTestZero("rx", "100px !important");
-negativeTestZero("rx", "{ 100px }");
+negativeTest("rx", "auto", "auto");
+negativeTest("rx", "100   px", "auto");
+negativeTest("rx", "100px;", "auto");
+negativeTest("rx", "100px !important", "auto");
+negativeTest("rx", "{ 100px }", "auto");
 
 // Negative tests for 'ry'.
-negativeTestZero("ry", "auto");
-negativeTestZero("ry", "100   px");
-negativeTestZero("ry", "100px;");
-negativeTestZero("ry", "100px !important");
-negativeTestZero("ry", "{ 100px }");
+negativeTest("ry", "auto", "auto");
+negativeTest("ry", "100   px", "auto");
+negativeTest("ry", "100px;", "auto");
+negativeTest("ry", "100px !important", "auto");
+negativeTest("ry", "{ 100px }", "auto");
 
 // Negative tests for 'width'.
 negativeTest("width", "100   px");

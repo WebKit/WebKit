@@ -2428,6 +2428,8 @@ webkit.org/b/24690 platform/mac/plugins/pluginDocumentView-deallocated-dataSourc
 webkit.org/b/17392 svg/batik/text/textBiDi.svg [ Skip ]
 webkit.org/b/11662 svg/custom/js-font-test.svg [ Skip ]
 webkit.org/b/63186 svg/zoom/page/zoom-svg-through-object-with-text.xhtml [ Skip ]
+webkit.org/b/201918 svg/custom/ellipse-radius-auto-dynamic.svg [ Skip ]
+webkit.org/b/201918 svg/custom/rect-radius-auto-dynamic.svg [ Skip ]
 
 # Test disabled in r37513 for causing next test to hang
 animations/font-size-using-ems.html [ Skip ]

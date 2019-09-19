@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <g id="ellipses">
+        <ellipse cx="40" cy="60" rx="20" ry="20" fill="green"/>
+        <ellipse cx="90" cy="60" rx="30" ry="30" fill="green"/>
+        <ellipse cx="160" cy="60" rx="40" ry="40" fill="green"/>
+        <ellipse cx="250" cy="60" rx="50" ry="50" fill="green"/>
+    </g>
+    <use y="100" href="#ellipses"/>
+</svg>

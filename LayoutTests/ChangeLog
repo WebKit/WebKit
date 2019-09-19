@@ -1,3 +1,32 @@
+2019-09-19  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [SVG2]: Add auto behavior for rx and ry to the SVG <ellipse> and <rect> elements
+        https://bugs.webkit.org/show_bug.cgi?id=199843
+
+        Reviewed by Simon Fraser, Nikolas Zimmermann.
+
+        Add tests which exercise the initial setting for rx and ry: length, 'auto'.
+        Add tests to dynamically change the values of these properties from length
+        to 'auto'.
+
+        Skip the tests with dynamic changes till webkit.org/b/201918 is fixed.
+
+        * TestExpectations:
+        * svg/css/parse-length-expected.txt:
+        * svg/css/parse-length.html:
+        * svg/custom/ellipse-radius-auto-dynamic-expected.svg: Added.
+        * svg/custom/ellipse-radius-auto-dynamic.svg: Added.
+        * svg/custom/ellipse-radius-auto-initial-expected.svg: Added.
+        * svg/custom/ellipse-radius-auto-initial.svg: Added.
+        * svg/custom/ellipse-radius-length-initial-expected.svg: Added.
+        * svg/custom/ellipse-radius-length-initial.svg: Added.
+        * svg/custom/rect-radius-auto-dynamic-expected.svg: Added.
+        * svg/custom/rect-radius-auto-dynamic.svg: Added.
+        * svg/custom/rect-radius-auto-initial-expected.svg: Added.
+        * svg/custom/rect-radius-auto-initial.svg: Added.
+        * svg/custom/rect-radius-length-initial-expected.svg: Added.
+        * svg/custom/rect-radius-length-initial.svg: Added.
+
 2019-09-19  Peng Liu  <peng.liu6@apple.com>
 
         HTMLVideoElement with a broken poster image will take square dimension
