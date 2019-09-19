@@ -1,3 +1,27 @@
+2019-09-18  Zhifei Fang  <zhifei_fang@apple.com>
+
+        [results.webkit.org] fix missing col classes
+        https://bugs.webkit.org/show_bug.cgi?id=201949
+
+        Reviewed by Jonathan Bedard.
+
+        * resultsdbpy/resultsdbpy/view/static/library/css/webkit.css:
+        (@media screen and (min-width: 768px)):
+        (.row):
+        (.col-1):
+        (.col-2):
+        (.col-3):
+        (.col-4):
+        (.col-5):
+        (.col-6):
+        (.col-7):
+        (.col-8):
+        (.col-9):
+        (.col-10):
+        (.col-11):
+        (.col-12):
+        (@media screen and (min-width: 600px)):
+
 2019-09-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update flakiness dashboard configuration for iOS 13 queues
