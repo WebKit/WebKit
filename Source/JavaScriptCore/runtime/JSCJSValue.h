@@ -381,25 +381,25 @@ public:
      * ranges to encode other values (however there are also other ranges of NaN space that
      * could have been selected).
      *
-     * This range of NaN space is represented by 64-bit numbers begining with the 16-bit
-     * hex patterns 0xFFFE and 0xFFFF - we rely on the fact that no valid double-precision
+     * This range of NaN space is represented by 64-bit numbers begining with the 15-bit
+     * hex patterns 0xFFFC and 0xFFFE - we rely on the fact that no valid double-precision
      * numbers will fall in these ranges.
      *
-     * The top 16-bits denote the type of the encoded JSValue:
+     * The top 15-bits denote the type of the encoded JSValue:
      *
      *     Pointer {  0000:PPPP:PPPP:PPPP
-     *              / 0001:****:****:****
+     *              / 0002:****:****:****
      *     Double  {         ...
-     *              \ FFFE:****:****:****
-     *     Integer {  FFFF:0000:IIII:IIII
+     *              \ FFFC:****:****:****
+     *     Integer {  FFFE:0000:IIII:IIII
      *
      * The scheme we have implemented encodes double precision values by performing a
-     * 64-bit integer addition of the value 2^48 to the number. After this manipulation
-     * no encoded double-precision value will begin with the pattern 0x0000 or 0xFFFF.
+     * 64-bit integer addition of the value 2^49 to the number. After this manipulation
+     * no encoded double-precision value will begin with the pattern 0x0000 or 0xFFFE.
      * Values must be decoded by reversing this operation before subsequent floating point
      * operations may be peformed.
      *
-     * 32-bit signed integers are marked with the 16-bit tag 0xFFFF.
+     * 32-bit signed integers are marked with the 16-bit tag 0xFFFE.
      *
      * The tag 0x0000 denotes a pointer, or another form of tagged immediate. Boolean,
      * null and undefined values are represented by specific, invalid pointer values:
@@ -419,15 +419,13 @@ public:
      * holes, and as a C++ 'no value' result (e.g. JSValue() has an internal value of 0).
      */
 
-    // These values are #defines since using static const integers here is a ~1% regression!
-
-    // This value is 2^48, used to encode doubles such that the encoded value will begin
-    // with a 16-bit pattern within the range 0x0001..0xFFFE.
-    static constexpr size_t DoubleEncodeOffsetBit = 48;
+    // This value is 2^49, used to encode doubles such that the encoded value will begin
+    // with a 15-bit pattern within the range 0x0002..0xFFFC.
+    static constexpr size_t DoubleEncodeOffsetBit = 49;
     static constexpr int64_t DoubleEncodeOffset = 1ll << DoubleEncodeOffsetBit;
     // If all bits in the mask are set, this indicates an integer number,
     // if any but not all are set this value is a double precision number.
-    static constexpr int64_t NumberTag = 0xffff000000000000ll;
+    static constexpr int64_t NumberTag = 0xfffe000000000000ll;
 
     // All non-numeric (bool, null, undefined) immediates have bit 2 set.
     static constexpr int32_t OtherTag       = 0x2;

@@ -1,5 +1,101 @@
 2019-09-19  Mark Lam  <mark.lam@apple.com>
 
+        Reduce the number of required tag bits for the JSValue.
+        https://bugs.webkit.org/show_bug.cgi?id=201990
+
+        Reviewed by Yusuke Suzuki.
+
+        We're reducing the number of tag bits to 15.  It should just work.
+
+        How did we arrive at 15 bits?
+        ============================
+        Currently, the minimum number of top bits used by doubles is 13-bits.  The
+        highest double bit encoding are:
+
+            "negative" pureNaN: starts with 0xfff8
+            negative infinity:  starts with 0xfff0
+            highest number:     starts with 0xffe*
+            lowest number:      starts with 0x0000
+
+        Requirements:
+        1. We need tags for 2 range of numbers: pointers (all 0s at the top), and ints
+           (all 1s at the top).
+
+        2. We want to be able to add an offset to double bits and ensure that they never
+           end up in the ranges for pointers and ints.
+
+        3. The int tag must be higher than whatever value is produced in the top bits
+           when boxing a double.  We have code that relies on this relationship being
+           true and checks if a JSValue is an int by checking if the tag bits are above
+           or equal to the int tag.
+
+        4. We don't want to burn more than 2 CPU registers for tag / mask registers.
+
+        Based on the bit encoding of doubles, the full number range of the top 13 bits
+        are used in valid double numbers.  This means the minimum tag bits must be greater
+        than 13.
+
+        Consider a 14-bit tag.  The DoubleEncodeOffset will be 1 << 50 i.e. starts with
+        0x0004.  With this encoding,
+            "negative" pureNaN: maps to 0xfff8 + 0x0004 => 0xfffc
+
+        i.e. the top 14 bits are all set.  This conflicts with the int number range.
+
+        Next, consider a 15-bit tag.  The DoubleEncodeOffset will be 1 << 49 i.e. starts
+        with 0x0002.  With this encoding:
+            "negative" pureNaN: maps to 0xfff8 + 0x0002 => 0xfffa
+            negative infinity:  maps to 0xfff0 + 0x0002 => 0xfff2
+
+        i.e. 0xfffe (top 5 bits set) is available to represent ints.  This is the encoding
+        that we'll adopt in this patch.
+
+        Alternate encodings schemes to consider in the future:
+        =====================================================
+        1. If we're willing and able to purifyNaN at all the places that can produce a
+           "negative" pureNaN, e.g. after a division, then we can remove the "negative"
+           pureNaN as a valid double bit encoding.  With this, we can now box doubles
+           with just a 14-bit tag, and DoubleEncodeOffset will be 1 << 50 i.e. starts with
+           0x0004.
+
+           With this encoding, the top double, negative infinity, is encoded as follows:
+
+                negative infinity:  maps to 0xfff0 + 0x0004 => 0xfff4
+
+           i.e. leaving 0xfffc as the tag for ints.
+
+           We didn't adopt this scheme at this time because it adds complexity, and may
+           have performance impact from the extra purifyNaN checks.
+
+           Ref: https://bugs.webkit.org/show_bug.cgi?id=202002
+
+        2. If we're willing to use 3 tag registers or always materialize one of them, we
+           can also adopt a 14-bit tag as follows:
+
+               Pointer {  0000:PPPP:PPPP:PPPP
+                        / 0002:****:****:****
+               Double  {         ...
+                        \ FFFC:****:****:****
+               Integer {  FFFF:0000:IIII:IIII
+
+           where ...
+               NumberMask is 0xfffc: any bits set in the top 14 bits is a number.
+               IntMask is 0xffff: value is int if value & IntMask == IntMask.
+               NotCellMask is NumberMask | OtherTag.
+
+           Since the highest double is "negative" pureNaN i.e. starts with 0xfff8, adding
+           a DoubleEncodeOffset of 1<<50 (starts with 0x0004) produces 0xfffc which is
+           still less than 0xffff.
+
+           We didn't adopt this scheme at this time because it adds complexity and may
+           have a performance impact from either burning another register, or materializing
+           the 3rd mask.
+
+           Ref: https://bugs.webkit.org/show_bug.cgi?id=202005
+
+        * runtime/JSCJSValue.h:
+
+2019-09-19  Mark Lam  <mark.lam@apple.com>
+
         Refactoring: fix broken indentation in JSNonDestructibleProxy.h.
         https://bugs.webkit.org/show_bug.cgi?id=201989
 
