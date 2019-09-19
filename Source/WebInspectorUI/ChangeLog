@@ -1,3 +1,18 @@
+2019-09-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: console assertion when pressing up/down in empty console log view
+        https://bugs.webkit.org/show_bug.cgi?id=201948
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype._upArrowWasPressed):
+        (WI.LogContentView.prototype._downArrowWasPressed):
+        Ensure that a message exists before calling `_updateMessagesSelection`, which
+        would assert if given a bad message. Additionally, only perform preventDefault
+        when selecting a message. This allows us to fall back to a system beep if
+        this key event does nothing.
+
 2019-09-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: HTML Formatter - better handling for HTML specific tag cases (<p>/<li>)

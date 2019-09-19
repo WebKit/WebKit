@@ -985,14 +985,16 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
         var lastMessage = this._selectedMessages.lastValue;
         var previousMessage = this._previousMessage(lastMessage);
-        if (previousMessage)
+        if (previousMessage) {
             this._updateMessagesSelection(previousMessage, false, event.shiftKey, true);
-        else if (!event.shiftKey) {
+            event.preventDefault();
+        } else if (!event.shiftKey) {
             this._clearMessagesSelection();
-            this._updateMessagesSelection(messages[0], false, false, true);
+            if (messages.length) {
+                this._updateMessagesSelection(messages[0], false, false, true);
+                event.preventDefault();
+            }
         }
-
-        event.preventDefault();
     }
 
     _downArrowWasPressed(event)
@@ -1007,14 +1009,16 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
         var lastMessage = this._selectedMessages.lastValue;
         var nextMessage = this._nextMessage(lastMessage);
-        if (nextMessage)
+        if (nextMessage) {
             this._updateMessagesSelection(nextMessage, false, event.shiftKey, true);
-        else if (!event.shiftKey) {
+            event.preventDefault();
+        } else if (!event.shiftKey) {
             this._clearMessagesSelection();
-            this._updateMessagesSelection(messages.lastValue, false, false, true);
+            if (messages.length) {
+                this._updateMessagesSelection(messages.lastValue, false, false, true);
+                event.preventDefault();
+            }
         }
-
-        event.preventDefault();
     }
 
     _leftArrowWasPressed(event)
