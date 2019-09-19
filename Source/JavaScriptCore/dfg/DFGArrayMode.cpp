@@ -478,6 +478,7 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& va
         return value.m_structure.onlyStructure().get() == originalStructure;
     }
     }
+    return false;
 }
 
 bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& value) const
