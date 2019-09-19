@@ -1,3 +1,56 @@
+2019-09-19  Brent Fulgham  <bfulgham@apple.com>
+
+        Create InjectedBundle SPI to better support NSSecureCoding
+        https://bugs.webkit.org/show_bug.cgi?id=201810
+        <rdar://problem/55265713>
+
+        The encoding/decoding routines used by WebKit’s InjectedBundles are based on NSCoding.
+        While we have changed WebKit internals to use NSSecureCoding, there are a number of
+        injected bundles that need to serialize custom classes between the InjectedBundle and
+        the relevant WebKit UIProcess.
+
+        We need to lock down this communications channel by enforcing NSSecureCoding.
+
+        This patch creates new SPI to allow the UIProcess to specify classes that it will accept
+        in messages from the WebContet Process (and Injected Bundle).
+
+        It adds the following property to the WKProcessPoolConfiguration:
+
+            @property (nonatomic, copy) NSSet<Class> *customClassesForParameterCoder;
+
+        If no custom classes are specified, the standard serialization primitives are supported:
+            NSArray, NSData, NSDate, NSDictionary, NSNull, NSNumber, NSSet, NSString,
+            NSTimeZone, NSURL, and NSUUID.
+
+        Reviewed by Brady Eidson.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy): Copy any custom classes.
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationCopyCustomClassesForParameterCoder): Added.
+        (WKContextConfigurationSetCustomClassesForParameterCoder): Added.
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+        * UIProcess/API/Cocoa/WKProcessGroup.h:
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (toStringVector): Added.
+        (-[WKProcessGroup initWithInjectedBundleURL:andCustomClassesForParameterCoder:]):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setInputDelegate:]): Restrict serialization to allowed classes.
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration customClassesForParameterCoder]): Added.
+        (-[_WKProcessPoolConfiguration setCustomClassesForParameterCoder:]): Added.
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitialize): Register any custom classes
+        provided in the configuraton.
+        (WebKit::WebProcessPool::initializeClassesForParameterCoding): Added.
+        (WebKit::WebProcessPool::allowedClassesForParameterCoding const): Added.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::elementDidFocus): Restrict serialization to allowed
+        classes only.
+
 2019-09-18  Chris Dumez  <cdumez@apple.com>
 
         AddPlugInAutoStartOriginHash / PlugInDidReceiveUserInteraction IPC should not need to pass a SessionID

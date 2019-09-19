@@ -439,6 +439,8 @@
 		7A6A2C701DCCFA8C00C0D085 /* LocalStorageQuirkTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A6A2C6F1DCCF87B00C0D085 /* LocalStorageQuirkTest.mm */; };
 		7A6A2C721DCCFB5200C0D085 /* LocalStorageQuirkEnabled.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7A6A2C711DCCFB0200C0D085 /* LocalStorageQuirkEnabled.html */; };
 		7A7B0E7F1EAFE4C3006AB8AE /* LimitTitleSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A7B0E7E1EAFE454006AB8AE /* LimitTitleSize.mm */; };
+		7A89BB67233164320042CB1E /* BundleFormDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A89BB652331635D0042CB1E /* BundleFormDelegate.mm */; };
+		7A89BB682331643A0042CB1E /* BundleFormDelegatePlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A89BB662331635D0042CB1E /* BundleFormDelegatePlugIn.mm */; };
 		7A909A7D1D877480007E10F8 /* AffineTransform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A909A6F1D877475007E10F8 /* AffineTransform.cpp */; };
 		7A909A7E1D877480007E10F8 /* FloatPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A909A701D877475007E10F8 /* FloatPoint.cpp */; };
 		7A909A7F1D877480007E10F8 /* FloatRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A909A711D877475007E10F8 /* FloatRect.cpp */; };
@@ -1960,6 +1962,9 @@
 		7A6A2C6F1DCCF87B00C0D085 /* LocalStorageQuirkTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalStorageQuirkTest.mm; sourceTree = "<group>"; };
 		7A6A2C711DCCFB0200C0D085 /* LocalStorageQuirkEnabled.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = LocalStorageQuirkEnabled.html; sourceTree = "<group>"; };
 		7A7B0E7E1EAFE454006AB8AE /* LimitTitleSize.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LimitTitleSize.mm; sourceTree = "<group>"; };
+		7A89BB652331635D0042CB1E /* BundleFormDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleFormDelegate.mm; sourceTree = "<group>"; };
+		7A89BB662331635D0042CB1E /* BundleFormDelegatePlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleFormDelegatePlugIn.mm; sourceTree = "<group>"; };
+		7A89BB69233165650042CB1E /* BundleFormDelegateProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BundleFormDelegateProtocol.h; sourceTree = "<group>"; };
 		7A909A6F1D877475007E10F8 /* AffineTransform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AffineTransform.cpp; sourceTree = "<group>"; };
 		7A909A701D877475007E10F8 /* FloatPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloatPoint.cpp; sourceTree = "<group>"; };
 		7A909A711D877475007E10F8 /* FloatRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloatRect.cpp; sourceTree = "<group>"; };
@@ -2738,6 +2743,9 @@
 				374B7A5E1DF36EEE00ACCB6C /* BundleEditingDelegate.mm */,
 				374B7A5F1DF36EEE00ACCB6C /* BundleEditingDelegatePlugIn.mm */,
 				374B7A621DF3734C00ACCB6C /* BundleEditingDelegateProtocol.h */,
+				7A89BB652331635D0042CB1E /* BundleFormDelegate.mm */,
+				7A89BB662331635D0042CB1E /* BundleFormDelegatePlugIn.mm */,
+				7A89BB69233165650042CB1E /* BundleFormDelegateProtocol.h */,
 				A13EBBAC1B87436F00097110 /* BundleParameters.mm */,
 				A13EBBAE1B87436F00097110 /* BundleParametersPlugIn.mm */,
 				37A709AD1E3EA8B000CA5969 /* BundleRangeHandle.mm */,
@@ -4405,6 +4413,7 @@
 				7CCE7EB51A411A7E00447C4C /* BackForwardList.mm in Sources */,
 				1C7FEB20207C0F2E00D23278 /* BackgroundColor.mm in Sources */,
 				374B7A601DF36EEE00ACCB6C /* BundleEditingDelegate.mm in Sources */,
+				7A89BB67233164320042CB1E /* BundleFormDelegate.mm in Sources */,
 				A13EBBB11B87438000097110 /* BundleParameters.mm in Sources */,
 				37A709AE1E3EA8B000CA5969 /* BundleRangeHandle.mm in Sources */,
 				7CCE7EDC1A411A9200447C4C /* CalculationValue.cpp in Sources */,
@@ -4897,6 +4906,7 @@
 				754CEC811F6722F200D0039A /* AutoFillAvailable.mm in Sources */,
 				5C4259462266A68A0039AA7A /* BasicProposedCredentialPlugIn.mm in Sources */,
 				374B7A611DF371CF00ACCB6C /* BundleEditingDelegatePlugIn.mm in Sources */,
+				7A89BB682331643A0042CB1E /* BundleFormDelegatePlugIn.mm in Sources */,
 				A13EBBB01B87436F00097110 /* BundleParametersPlugIn.mm in Sources */,
 				37A709AF1E3EA97E00CA5969 /* BundleRangeHandlePlugIn.mm in Sources */,
 				5C75716122124C5200B9E5AC /* BundleRetainPagePlugIn.mm in Sources */,

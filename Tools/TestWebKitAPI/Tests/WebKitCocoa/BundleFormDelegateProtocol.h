@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,33 +25,10 @@
 
 #import <WebKit/WKFoundation.h>
 
-#import <Foundation/Foundation.h>
-#import <WebKit/WKConnection.h>
+#import <WebKit/WKWebProcessPlugInFormDelegatePrivate.h>
 
-@class WKProcessGroup;
+@protocol BundleFormDelegateProtocol <NSObject>
 
-@protocol WKProcessGroupDelegate <NSObject>
-@optional
-
-- (id)processGroupWillCreateConnectionToWebProcessPlugIn:(WKProcessGroup *)processGroup;
-
-@required
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-- (void)processGroup:(WKProcessGroup *)processGroup didCreateConnectionToWebProcessPlugIn:(WKConnection *)connection;
-#pragma clang diagnostic pop
-
-@end
-
-WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKProcessPool", macos(10.10, 10.14.4), ios(8.0, 12.2))
-@interface WKProcessGroup : NSObject
-
-- (id)initWithInjectedBundleURL:(NSURL *)bundleURL;
-- (id)initWithInjectedBundleURL:(NSURL *)bundleURL andCustomClassesForParameterCoder:(NSSet *)classesForCoder;
-
-#pragma mark Delegates
-
-@property (assign) id <WKProcessGroupDelegate> delegate;
+- (void)didGetFocus;
 
 @end

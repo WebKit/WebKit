@@ -40,10 +40,16 @@
 
 + (instancetype)_test_configurationWithTestPlugInClassName:(NSString *)className configureJSCForTesting:(BOOL)value
 {
+    return [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:className configureJSCForTesting:value andCustomParameterClasses:nil];
+}
+
++ (instancetype)_test_configurationWithTestPlugInClassName:(NSString *)className configureJSCForTesting:(BOOL)value andCustomParameterClasses:(NSSet<Class> *)parameterClasses
+{
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     [processPoolConfiguration setInjectedBundleURL:[[NSBundle mainBundle] URLForResource:@"TestWebKitAPI" withExtension:@"wkbundle"]];
     [processPoolConfiguration setConfigureJSCForTesting:value];
-
+    [processPoolConfiguration setCustomClassesForParameterCoder: parameterClasses];
+    
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
     [processPool _setObject:className forBundleParameter:TestWebKitAPI::Util::TestPlugInClassNameParameter];
 

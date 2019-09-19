@@ -26,6 +26,7 @@
 #import "config.h"
 #import "_WKProcessPoolConfigurationInternal.h"
 
+#import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
 
 @implementation _WKProcessPoolConfiguration
@@ -58,6 +59,31 @@
         [NSException raise:NSInvalidArgumentException format:@"Injected Bundle URL must be a file URL"];
 
     _processPoolConfiguration->setInjectedBundlePath(injectedBundleURL.path);
+}
+
+- (NSSet<Class> *)customClassesForParameterCoder
+{
+    auto classes = _processPoolConfiguration->customClassesForParameterCoder();
+    if (classes.isEmpty())
+        return [NSSet set];
+
+    NSMutableSet *result = [[NSMutableSet alloc] initWithCapacity:classes.size()];
+    for (const auto& value : classes)
+        [result addObject: objc_lookUpClass(value.utf8().data())];
+
+    return [result autorelease];
+}
+
+- (void)setCustomClassesForParameterCoder:(NSSet<Class> *)classesForCoder
+{
+    Vector<WTF::String> classes;
+    classes.reserveInitialCapacity(classesForCoder.count);
+    for (id classObj : classesForCoder) {
+        if (auto* string = NSStringFromClass(classObj))
+            classes.uncheckedAppend(string);
+    }
+
+    _processPoolConfiguration->setCustomClassesForParameterCoder(WTFMove(classes));
 }
 
 - (NSUInteger)maximumProcessCount

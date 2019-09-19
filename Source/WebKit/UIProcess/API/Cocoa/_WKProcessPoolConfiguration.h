@@ -32,6 +32,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface _WKProcessPoolConfiguration : NSObject <NSCopying>
 
 @property (nonatomic, copy) NSURL *injectedBundleURL;
+@property (nonatomic, copy) NSSet<Class> *customClassesForParameterCoder WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic) NSUInteger maximumProcessCount WK_API_DEPRECATED("It is no longer possible to limit the number of processes", macos(WK_MAC_TBA, WK_MAC_TBA), ios(WK_IOS_TBA, WK_IOS_TBA));
 @property (nonatomic) BOOL usesSingleWebProcess WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, nullable, copy) NSString *customWebContentServiceBundleIdentifier WK_API_AVAILABLE(macos(10.14.4), ios(12.2));

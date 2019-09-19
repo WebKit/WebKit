@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,6 +71,7 @@
 #if PLATFORM(COCOA)
 OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS NSObject;
+OBJC_CLASS NSSet;
 OBJC_CLASS NSString;
 #endif
 
@@ -213,6 +214,10 @@ public:
     bool hasPagesUsingWebsiteDataStore(WebsiteDataStore&) const;
 
     const String& injectedBundlePath() const { return m_configuration->injectedBundlePath(); }
+#if PLATFORM(COCOA)
+    NSSet *allowedClassesForParameterCoding() const;
+    void initializeClassesForParameterCoding();
+#endif
 
     DownloadProxy& download(WebPageProxy* initiatingPage, const WebCore::ResourceRequest&, const String& suggestedFilename = { });
     DownloadProxy& resumeDownload(WebPageProxy* initiatingPage, const API::Data* resumeData, const String& path);
@@ -737,6 +742,7 @@ private:
 #if PLATFORM(COCOA)
     RetainPtr<NSMutableDictionary> m_bundleParameters;
     ProcessSuppressionDisabledToken m_pluginProcessManagerProcessSuppressionDisabledToken;
+    mutable RetainPtr<NSSet> m_classesForParameterCoder;
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)

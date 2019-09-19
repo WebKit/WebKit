@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -5699,7 +5699,10 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
                 auto nsData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(data->bytes())) length:data->size() freeWhenDone:NO]);
                 auto unarchiver = secureUnarchiverFromData(nsData.get());
                 @try {
-                    userObject = [unarchiver decodeObjectOfClass:[NSObject class] forKey:@"userObject"];
+                    if (auto* allowedClasses = m_webView->_page->process().processPool().allowedClassesForParameterCoding())
+                        userObject = [unarchiver decodeObjectOfClasses:allowedClasses forKey:@"userObject"];
+                    else
+                        userObject = [unarchiver decodeObjectOfClass:[NSObject class] forKey:@"userObject"];
                 } @catch (NSException *exception) {
                     LOG_ERROR("Failed to decode user data: %@", exception);
                 }

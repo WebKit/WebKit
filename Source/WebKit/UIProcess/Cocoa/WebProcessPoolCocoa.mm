@@ -50,6 +50,7 @@
 #import <WebCore/PlatformPasteboard.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SharedBuffer.h>
+#import <objc/runtime.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <sys/param.h>
@@ -128,6 +129,7 @@ void WebProcessPool::platformInitialize()
 {
     registerUserDefaultsIfNeeded();
     registerNotificationObservers();
+    initializeClassesForParameterCoding();
 
     // FIXME: This should be able to share code with WebCore's MemoryPressureHandler (and be platform independent).
     // Right now it cannot because WebKit1 and WebKit2 need to be able to coexist in the UI process,
@@ -591,5 +593,35 @@ void WebProcessPool::applicationIsAboutToSuspend()
         processPool->handleMemoryPressureWarning(Critical::Yes);
 }
 #endif
+
+void WebProcessPool::initializeClassesForParameterCoding()
+{
+    const auto& customClasses = m_configuration->customClassesForParameterCoder();
+    if (customClasses.isEmpty())
+        return;
+
+    auto standardClasses = [NSSet setWithObjects:[NSArray class], [NSData class], [NSDate class], [NSDictionary class], [NSNull class],
+        [NSNumber class], [NSSet class], [NSString class], [NSTimeZone class], [NSURL class], [NSUUID class], nil];
+    
+    auto mutableSet = adoptNS([standardClasses mutableCopy]);
+
+    for (const auto& customClass : customClasses) {
+        const auto* className = customClass.utf8().data();
+        Class objectClass = objc_lookUpClass(className);
+        if (!objectClass) {
+            WTFLogAlways("InjectedBundle::extendClassesForParameterCoder - Class %s is not a valid Objective C class.\n", className);
+            break;
+        }
+
+        [mutableSet.get() addObject:objectClass];
+    }
+
+    m_classesForParameterCoder = mutableSet;
+}
+
+NSSet *WebProcessPool::allowedClassesForParameterCoding() const
+{
+    return m_classesForParameterCoder.get();
+}
 
 } // namespace WebKit

@@ -1,3 +1,46 @@
+2019-09-19  Brent Fulgham  <bfulgham@apple.com>
+
+        Create InjectedBundle SPI to better support NSSecureCoding
+        https://bugs.webkit.org/show_bug.cgi?id=201810
+        <rdar://problem/55265713>
+
+        The encoding/decoding routines used by WebKit’s InjectedBundles are based on NSCoding.
+        While we have changed WebKit internals to use NSSecureCoding, there are a number of
+        injected bundles that need to serialize custom classes between the InjectedBundle and
+        the relevant WebKit UIProcess.
+
+        We need to lock down this communications channel by enforcing NSSecureCoding.
+
+        This patch creates new SPI to allow the UIProcess to specify classes that it will accept
+        in messages from the WebContet Process (and Injected Bundle).
+
+        It adds the following property to the WKProcessPoolConfiguration:
+
+            @property (nonatomic, copy) NSSet<Class> *customClassesForParameterCoder;
+
+        If no custom classes are specified, the standard serialization primitives are supported:
+            NSArray, NSData, NSDate, NSDictionary, NSNull, NSNumber, NSSet, NSString,
+            NSTimeZone, NSURL, and NSUUID.
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/BundleFormDelegate.mm: Added.
+        (-[BundleFormDelegateRemoteObject didGetFocus]):
+        (-[FormInputDelegate _webView:decidePolicyForFocusedElement:]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/BundleFormDelegatePlugIn.mm: Added.
+        (-[BundleFormDelegatePlugIn webProcessPlugIn:didCreateBrowserContextController:]):
+        (-[BundleFormDelegatePlugIn _webProcessPlugInBrowserContextController:willBeginInputSessionForElement:inFrame:userIsInteracting:]):
+        (-[BundleFormDelegatePlugIn _webProcessPlugInBrowserContextController:didFocusTextField:inFrame:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/BundleFormDelegateProtocol.h: Copied from Tools/TestWebKitAPI/WKWebViewConfigurationExtras.h.
+        * TestWebKitAPI/Tests/WebKitCocoa/WKProcessPoolConfiguration.mm:
+        (TEST):
+        * TestWebKitAPI/WKWebViewConfigurationExtras.h:
+        * TestWebKitAPI/WKWebViewConfigurationExtras.mm:
+        (+[WKWebViewConfiguration _test_configurationWithTestPlugInClassName:configureJSCForTesting:]):
+        (+[WKWebViewConfiguration _test_configurationWithTestPlugInClassName:configureJSCForTesting:andCustomParameterClasses:]):
+
 2019-09-18  Zhifei Fang  <zhifei_fang@apple.com>
 
         [results.webkit.org] fix missing col classes
