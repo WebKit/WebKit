@@ -1,3 +1,24 @@
+2019-09-19  Antti Koivisto  <antti@apple.com>
+
+        Turn static DocumentRuleSets::s_isInvalidatingStyleWithRuleSets assertion bit into a member
+        https://bugs.webkit.org/show_bug.cgi?id=201985
+        <rdar://problem/54851871>
+
+        Reviewed by Zalan Bujtas.
+
+        This assert bit was catching cases that are not dangerous. Turn it into a member to narrow the scope.
+
+        * css/DocumentRuleSets.cpp:
+        (WebCore::DocumentRuleSets::~DocumentRuleSets):
+        (WebCore::DocumentRuleSets::collectFeatures const):
+        (): Deleted.
+        * css/DocumentRuleSets.h:
+        (WebCore::DocumentRuleSets::isInvalidatingStyleWithRuleSets):
+        * style/AttributeChangeInvalidation.cpp:
+        (WebCore::Style::AttributeChangeInvalidation::invalidateStyleWithRuleSets):
+        * style/ClassChangeInvalidation.cpp:
+        (WebCore::Style::ClassChangeInvalidation::invalidateStyleWithRuleSets):
+
 2019-09-19  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Remove redundant Layout::Box::ElementTypes

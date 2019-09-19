@@ -76,7 +76,7 @@ public:
 
     RuleFeatureSet& mutableFeatures();
 
-    static bool s_isInvalidatingStyleWithRuleSets;
+    bool& isInvalidatingStyleWithRuleSets() { return m_isInvalidatingStyleWithRuleSets; }
 
 private:
     void collectFeatures() const;
@@ -102,6 +102,9 @@ private:
     bool m_usesSharedUserStyle { false };
     bool m_isForShadowScope { false };
     bool m_isAuthorStyleDefined { false };
+
+    // For catching <rdar://problem/53413013>
+    bool m_isInvalidatingStyleWithRuleSets { false };
 };
 
 inline const RuleFeatureSet& DocumentRuleSets::features() const

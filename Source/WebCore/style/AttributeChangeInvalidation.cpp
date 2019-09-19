@@ -89,7 +89,7 @@ void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attribute
 
 void AttributeChangeInvalidation::invalidateStyleWithRuleSets()
 {
-    SetForScope<bool> isInvalidating(DocumentRuleSets::s_isInvalidatingStyleWithRuleSets, true);
+    SetForScope<bool> isInvalidating(m_element.styleResolver().ruleSets().isInvalidatingStyleWithRuleSets(), true);
 
     for (auto* invalidationRuleSet : m_invalidationRuleSets) {
         Invalidator invalidator(*invalidationRuleSet->ruleSet);
