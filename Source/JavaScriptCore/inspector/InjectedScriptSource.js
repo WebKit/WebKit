@@ -230,18 +230,16 @@ let InjectedScript = class InjectedScript
         return RemoteObject.createObjectPreviewForValue(object, true);
     }
 
-    getProperties(objectId, ownProperties, generatePreview)
+    getProperties(objectId, ownProperties, fetchStart, fetchCount, generatePreview)
     {
-        let nativeGettersAsValues = false;
         let collectionMode = ownProperties ? InjectedScript.CollectionMode.OwnProperties : InjectedScript.CollectionMode.AllProperties;
-        return this._getProperties(objectId, collectionMode, generatePreview, nativeGettersAsValues);
+        return this._getProperties(objectId, collectionMode, {fetchStart, fetchCount, generatePreview});
     }
 
-    getDisplayableProperties(objectId, generatePreview)
+    getDisplayableProperties(objectId, fetchStart, fetchCount, generatePreview)
     {
-        let nativeGettersAsValues = true;
         let collectionMode = InjectedScript.CollectionMode.OwnProperties | InjectedScript.CollectionMode.NativeGetterProperties;
-        return this._getProperties(objectId, collectionMode, generatePreview, nativeGettersAsValues);
+        return this._getProperties(objectId, collectionMode, {fetchStart, fetchCount, generatePreview, nativeGettersAsValues: true});
     }
 
     getInternalProperties(objectId, generatePreview)
@@ -269,7 +267,7 @@ let InjectedScript = class InjectedScript
         return descriptors;
     }
 
-    getCollectionEntries(objectId, objectGroupName, startIndex, numberToFetch)
+    getCollectionEntries(objectId, objectGroupName, fetchStart, fetchCount)
     {
         let parsedObjectId = this._parseObjectId(objectId);
         let object = this._objectForId(parsedObjectId);
@@ -281,7 +279,7 @@ let InjectedScript = class InjectedScript
         if (typeof object !== "object")
             return;
 
-        let entries = this._entries(object, InjectedScriptHost.subtype(object), startIndex, numberToFetch);
+        let entries = this._entries(object, InjectedScriptHost.subtype(object), fetchStart, fetchCount);
         return entries.map(function(entry) {
             entry.value = RemoteObject.create(entry.value, objectGroupName, false, true);
             if ("key" in entry)
@@ -581,7 +579,7 @@ let InjectedScript = class InjectedScript
         return callFrame;
     }
 
-    _getProperties(objectId, collectionMode, generatePreview, nativeGettersAsValues)
+    _getProperties(objectId, collectionMode, {fetchStart, fetchCount, generatePreview, nativeGettersAsValues})
     {
         let parsedObjectId = this._parseObjectId(objectId);
         let object = this._objectForId(parsedObjectId);
@@ -593,7 +591,7 @@ let InjectedScript = class InjectedScript
         if (isSymbol(object))
             return false;
 
-        let descriptors = this._propertyDescriptors(object, collectionMode, nativeGettersAsValues);
+        let descriptors = this._propertyDescriptors(object, collectionMode, {fetchStart, fetchCount, nativeGettersAsValues});
 
         for (let i = 0; i < descriptors.length; ++i) {
             let descriptor = descriptors[i];
@@ -603,10 +601,6 @@ let InjectedScript = class InjectedScript
                 descriptor.set = RemoteObject.create(descriptor.set, objectGroupName);
             if ("value" in descriptor)
                 descriptor.value = RemoteObject.create(descriptor.value, objectGroupName, false, generatePreview);
-            if (!("configurable" in descriptor))
-                descriptor.configurable = false;
-            if (!("enumerable" in descriptor))
-                descriptor.enumerable = false;
             if ("symbol" in descriptor)
                 descriptor.symbol = RemoteObject.create(descriptor.symbol, objectGroupName);
         }
@@ -624,18 +618,14 @@ let InjectedScript = class InjectedScript
         for (let i = 0; i < internalProperties.length; i++) {
             let property = internalProperties[i];
             let descriptor = {name: property.name, value: property.value};
-            if (completeDescriptor) {
-                descriptor.writable = false;
-                descriptor.configurable = false;
-                descriptor.enumerable = false;
+            if (completeDescriptor)
                 descriptor.isOwn = true;
-            }
             descriptors.push(descriptor);
         }
         return descriptors;
     }
 
-    _propertyDescriptors(object, collectionMode, nativeGettersAsValues)
+    _propertyDescriptors(object, collectionMode, {fetchStart, fetchCount, nativeGettersAsValues})
     {
         if (InjectedScriptHost.subtype(object) === "proxy")
             return [];
@@ -643,10 +633,28 @@ let InjectedScript = class InjectedScript
         let descriptors = [];
         let nameProcessed = new Set;
 
+        let start = fetchStart || 0;
+        if (start < 0)
+            start = 0;
+
+        let count = fetchCount || 0;
+        if (count < 0)
+            count = 0;
+        else if (count > 0 && start > 0)
+            count += start;
+
         function createFakeValueDescriptor(name, symbol, descriptor, isOwnProperty, possibleNativeBindingGetter)
         {
             try {
-                let fakeDescriptor = {name, value: object[name], writable: descriptor.writable || false, configurable: descriptor.configurable || false, enumerable: descriptor.enumerable || false};
+                let fakeDescriptor = {name, value: object[name]};
+                if (descriptor) {
+                    if (descriptor.writable)
+                        fakeDescriptor.writable = true;
+                    if (descriptor.configurable)
+                        fakeDescriptor.configurable = true;
+                    if (descriptor.enumerable)
+                        fakeDescriptor.enumerable = true;
+                }
                 if (possibleNativeBindingGetter)
                     fakeDescriptor.nativeGetter = true;
                 if (isOwnProperty)
@@ -693,6 +701,9 @@ let InjectedScript = class InjectedScript
         function processProperties(o, properties, isOwnProperty)
         {
             for (let i = 0; i < properties.length; ++i) {
+                if (count && descriptors.length === count)
+                    break;
+
                 let property = properties[i];
                 if (nameProcessed.has(property) || property === "__proto__")
                     continue;
@@ -706,7 +717,7 @@ let InjectedScript = class InjectedScript
                 if (!descriptor) {
                     // FIXME: Bad descriptor. Can we get here?
                     // Fall back to very restrictive settings.
-                    let fakeDescriptor = createFakeValueDescriptor(name, symbol, {writable: false, configurable: false, enumerable: false}, isOwnProperty);
+                    let fakeDescriptor = createFakeValueDescriptor(name, symbol, descriptor, isOwnProperty);
                     processDescriptor(fakeDescriptor, isOwnProperty);
                     continue;
                 }
@@ -740,8 +751,6 @@ let InjectedScript = class InjectedScript
             return array;
         }
 
-        // FIXME: <https://webkit.org/b/143589> Web Inspector: Better handling for large collections in Object Trees
-        // For array types with a large length we attempt to skip getOwnPropertyNames and instead just sublist of indexes.
         let isArrayLike = false;
         try {
             isArrayLike = RemoteObject.subtype(object) === "array" && isFinite(object.length) && object.length > 0;
@@ -750,94 +759,105 @@ let InjectedScript = class InjectedScript
         for (let o = object; isDefined(o); o = Object.getPrototypeOf(o)) {
             let isOwnProperty = o === object;
 
+            // FIXME: <https://webkit.org/b/201861> Web Inspector: show autocomplete entries for non-index properties on arrays
             if (isArrayLike && isOwnProperty)
-                processProperties(o, arrayIndexPropertyNames(o, Math.min(object.length, 100)), isOwnProperty);
-            else {
+                processProperties(o, arrayIndexPropertyNames(o, object.length), isOwnProperty);
+            else
                 processProperties(o, Object.getOwnPropertyNames(o), isOwnProperty);
-                if (Object.getOwnPropertySymbols)
-                    processProperties(o, Object.getOwnPropertySymbols(o), isOwnProperty);
+
+            if (count && descriptors.length === count)
+                break;
+
+            if (Object.getOwnPropertySymbols) {
+                processProperties(o, Object.getOwnPropertySymbols(o), isOwnProperty);
+
+                if (count && descriptors.length === count)
+                    break;
             }
 
             if (collectionMode === InjectedScript.CollectionMode.OwnProperties)
                 break;
         }
 
-        // Always include __proto__ at the end.
-        try {
-            if (object.__proto__)
-                descriptors.push({name: "__proto__", value: object.__proto__, writable: true, configurable: true, enumerable: false, isOwn: true});
-        } catch { }
+        // Always include __proto__ at the end, but only for the first fetch.
+        if (!start) {
+            try {
+                if (object.__proto__)
+                    descriptors.push({name: "__proto__", value: object.__proto__, writable: true, configurable: true, isOwn: true});
+            } catch { }
+            return descriptors;
+        }
 
-        return descriptors;
+        return descriptors.slice(start);
     }
 
-    _getSetEntries(object, skip, numberToFetch)
+    _getSetEntries(object, fetchStart, fetchCount)
     {
         let entries = [];
 
         // FIXME: This is observable if the page overrides Set.prototype[Symbol.iterator].
         for (let value of object) {
-            if (skip > 0) {
-                skip--;
+            if (fetchStart > 0) {
+                fetchStart--;
                 continue;
             }
 
             entries.push({value});
 
-            if (numberToFetch && entries.length === numberToFetch)
+            if (fetchCount && entries.length === fetchCount)
                 break;
         }
 
         return entries;
     }
 
-    _getMapEntries(object, skip, numberToFetch)
+    _getMapEntries(object, fetchStart, fetchCount)
     {
         let entries = [];
 
         // FIXME: This is observable if the page overrides Map.prototype[Symbol.iterator].
         for (let [key, value] of object) {
-            if (skip > 0) {
-                skip--;
+            if (fetchStart > 0) {
+                fetchStart--;
                 continue;
             }
 
             entries.push({key, value});
 
-            if (numberToFetch && entries.length === numberToFetch)
+            if (fetchCount && entries.length === fetchCount)
                 break;
         }
 
         return entries;
     }
 
-    _getWeakMapEntries(object, numberToFetch)
+    _getWeakMapEntries(object, fetchCount)
     {
-        return InjectedScriptHost.weakMapEntries(object, numberToFetch);
+        return InjectedScriptHost.weakMapEntries(object, fetchCount);
     }
 
-    _getWeakSetEntries(object, numberToFetch)
+    _getWeakSetEntries(object, fetchCount)
     {
-        return InjectedScriptHost.weakSetEntries(object, numberToFetch);
+        return InjectedScriptHost.weakSetEntries(object, fetchCount);
     }
 
-    _getIteratorEntries(object, numberToFetch)
+    _getIteratorEntries(object, fetchCount)
     {
-        return InjectedScriptHost.iteratorEntries(object, numberToFetch);
+        return InjectedScriptHost.iteratorEntries(object, fetchCount);
     }
 
-    _entries(object, subtype, startIndex, numberToFetch)
+    _entries(object, subtype, fetchStart, fetchCount)
     {
         if (subtype === "set")
-            return this._getSetEntries(object, startIndex, numberToFetch);
+            return this._getSetEntries(object, fetchStart, fetchCount);
         if (subtype === "map")
-            return this._getMapEntries(object, startIndex, numberToFetch);
+            return this._getMapEntries(object, fetchStart, fetchCount);
         if (subtype === "weakmap")
-            return this._getWeakMapEntries(object, numberToFetch);
+            return this._getWeakMapEntries(object, fetchCount);
         if (subtype === "weakset")
-            return this._getWeakSetEntries(object, numberToFetch);
+            return this._getWeakSetEntries(object, fetchCount);
         if (subtype === "iterator")
-            return this._getIteratorEntries(object, numberToFetch);
+            return this._getIteratorEntries(object, fetchCount);
 
         throw "unexpected type";
     }
@@ -1130,8 +1150,7 @@ let RemoteObject = class RemoteObject
                 return preview;
 
             // Properties.
-            let nativeGettersAsValues = true;
-            let descriptors = injectedScript._propertyDescriptors(object, InjectedScript.CollectionMode.AllProperties, nativeGettersAsValues);
+            let descriptors = injectedScript._propertyDescriptors(object, InjectedScript.CollectionMode.AllProperties, {nativeGettersAsValues: true});
             this._appendPropertyPreviews(object, preview, descriptors, false, propertiesThreshold, firstLevelKeys, secondLevelKeys);
             if (propertiesThreshold.indexes < 0 || propertiesThreshold.properties < 0)
                 return preview;

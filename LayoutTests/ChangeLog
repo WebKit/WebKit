@@ -1,3 +1,29 @@
+2019-09-18  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Better handling for large arrays and collections in Object Trees
+        https://bugs.webkit.org/show_bug.cgi?id=143589
+        <rdar://problem/16135388>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/runtime/getCollectionEntries.html: Added.
+        * inspector/runtime/getCollectionEntries-expected.txt: Added.
+        * inspector/runtime/getDisplayableProperties.html: Added.
+        * inspector/runtime/getDisplayableProperties-expected.txt: Added.
+        * inspector/runtime/getProperties.html:
+        * inspector/runtime/getProperties-expected.txt:
+        * inspector/runtime/resources/property-descriptor-utilities.js: Added.
+        (makeArray):
+        (makeObject):
+        (makeMap):
+        (makeSet):
+        (makeWeakMap):
+        (makeWeakSet):
+        (TestPage.registerInitializer.ProtocolTest.PropertyDescriptorUtilities.logForEach):
+        (TestPage.registerInitializer.ProtocolTest.PropertyDescriptorUtilities.stringifyRemoteObject):
+
+        * inspector/model/remote-object-weak-collection.html:
+
 2019-09-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening for iOS.

@@ -1,3 +1,58 @@
+2019-09-18  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Better handling for large arrays and collections in Object Trees
+        https://bugs.webkit.org/show_bug.cgi?id=143589
+        <rdar://problem/16135388>
+
+        Reviewed by Joseph Pecoraro.
+
+        Adds two buttons before the "Prototype" item in expanded object/collection previews:
+         - Show %d More
+         - Show All (%d More)
+
+        The default `fetchCount` increment is `100`. The first button will only be shown if there
+        are more than `100` items remaining (haven't been shown).
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype.getProperties):
+        (InjectedScript.prototype.getDisplayableProperties):
+        (InjectedScript.prototype.getCollectionEntries):
+        (InjectedScript.prototype._getProperties):
+        (InjectedScript.prototype._internalPropertyDescriptors):
+        (InjectedScript.prototype._propertyDescriptors):
+        (InjectedScript.prototype._propertyDescriptors.createFakeValueDescriptor):
+        (InjectedScript.prototype._propertyDescriptors.processProperties):
+        (InjectedScript.prototype._getSetEntries):
+        (InjectedScript.prototype._getMapEntries):
+        (InjectedScript.prototype._getWeakMapEntries):
+        (InjectedScript.prototype._getWeakSetEntries):
+        (InjectedScript.prototype._getIteratorEntries):
+        (InjectedScript.prototype._entries):
+        (RemoteObject.prototype._generatePreview):
+        (InjectedScript.prototype._propertyDescriptors.arrayIndexPropertyNames): Deleted.
+        Don't include boolean property descriptor values if they are `false.
+
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::weakMapEntries):
+        (Inspector::JSInjectedScriptHost::weakSetEntries):
+
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::getProperties):
+        (Inspector::InjectedScript::getDisplayableProperties):
+        (Inspector::InjectedScript::getCollectionEntries):
+
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::asInt): Added.
+        (Inspector::InspectorRuntimeAgent::getProperties):
+        (Inspector::InspectorRuntimeAgent::getDisplayableProperties):
+        (Inspector::InspectorRuntimeAgent::getCollectionEntries):
+
+        * inspector/protocol/Runtime.json:
+        Add `fetchStart`/`fetchCount` to `getProperties`/`getDisplayableProperties`/`getCollectionEntries`.
+        Mark boolean properties as optional so they can be omitted if `false`.
+
 2019-09-18  Joonghun Park  <pjh0718@gmail.com>
 
         Unreviewed. Remove build warning since r249976.

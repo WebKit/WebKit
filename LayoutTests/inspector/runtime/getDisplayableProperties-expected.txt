@@ -1,59 +1,64 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: 123
-Tests for the Runtime.getProperties command.
+Tests for the Runtime.getDisplayableProperties command.
 
 
-== Running test suite: Runtime.getProperties
--- Running test case: Runtime.getProperties.Object
+== Running test suite: Runtime.getDisplayableProperties
+-- Running test case: Runtime.getDisplayableProperties.Object
 Evaluating expression...
-Getting own properties...
+Getting displayable properties...
 Properties:
     "foo"        =>  "cat" (string)  [writable | enumerable | configurable | isOwn]
     "__proto__"  =>  "Number" (object)  [writable | configurable | isOwn]
 
--- Running test case: Runtime.getProperties.Array
+-- Running test case: Runtime.getDisplayableProperties.Array
 Evaluating expression...
-Getting own properties...
+Getting displayable properties...
 Properties:
     "0"          =>  "red" (string)  [writable | enumerable | configurable | isOwn]
     "1"          =>  "green" (string)  [writable | enumerable | configurable | isOwn]
     "2"          =>  "blue" (string)  [writable | enumerable | configurable | isOwn]
     "__proto__"  =>  "Array" (object array)  [writable | configurable | isOwn]
 
--- Running test case: Runtime.getProperties.Constructor
+-- Running test case: Runtime.getDisplayableProperties.Constructor
 Evaluating expression...
-Getting own properties...
+Getting displayable properties...
 Properties:
     "length"     =>  0 (number)  [configurable | isOwn]
     "prototype"  =>  "Test" (object)  [isOwn]
     "name"       =>  "Test" (string)  [configurable | isOwn]
+    "caller"     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "arguments"  =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 
--- Running test case: Runtime.getProperties.BoundConstructor
+-- Running test case: Runtime.getDisplayableProperties.BoundConstructor
 Evaluating expression...
-Getting own properties...
+Getting displayable properties...
 Properties:
     "name"       =>  "bound Test" (string)  [configurable | isOwn]
     "length"     =>  0 (number)  [configurable | isOwn]
+    "caller"     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "arguments"  =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 Internal Properties:
     "targetFunction"  =>  "class Test { }" (function class)  []
     "boundThis"       =>  null (object null)  []
 
--- Running test case: Runtime.getProperties.BoundConstructorArguments
+-- Running test case: Runtime.getDisplayableProperties.BoundConstructorArguments
 Evaluating expression...
-Getting own properties...
+Getting displayable properties...
 Properties:
     "name"       =>  "bound Test" (string)  [configurable | isOwn]
     "length"     =>  0 (number)  [configurable | isOwn]
+    "caller"     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "arguments"  =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 Internal Properties:
     "targetFunction"  =>  "class Test { }" (function class)  []
     "boundThis"       =>  null (object null)  []
     "boundArgs"       =>  "Array" (object array)  []
 
--- Running test case: Runtime.getProperties.Function
+-- Running test case: Runtime.getDisplayableProperties.Function
 Evaluating expression...
-Getting own properties...
+Getting displayable properties...
 Properties:
     "arguments"  =>  null (object null)  [isOwn]
     "caller"     =>  null (object null)  [isOwn]
@@ -62,9 +67,9 @@ Properties:
     "prototype"  =>  "Object" (object)  [writable | isOwn]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 
--- Running test case: Runtime.getProperties.FunctionNoParameters
+-- Running test case: Runtime.getDisplayableProperties.FunctionNoParameters
 Evaluating expression...
-Getting own properties...
+Getting displayable properties...
 Properties:
     "arguments"  =>  null (object null)  [isOwn]
     "caller"     =>  null (object null)  [isOwn]
@@ -73,73 +78,81 @@ Properties:
     "prototype"  =>  "Object" (object)  [writable | isOwn]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 
--- Running test case: Runtime.getProperties.BoundFunction
+-- Running test case: Runtime.getDisplayableProperties.BoundFunction
 Evaluating expression...
-Getting own properties...
+Getting displayable properties...
 Properties:
     "name"       =>  "bound " (string)  [configurable | isOwn]
     "length"     =>  3 (number)  [configurable | isOwn]
+    "caller"     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "arguments"  =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 Internal Properties:
     "targetFunction"  =>  "function (a, b, c){}" (function)  []
     "boundThis"       =>  null (object null)  []
 
--- Running test case: Runtime.getProperties.BoundFunctionWithArguments
+-- Running test case: Runtime.getDisplayableProperties.BoundFunctionWithArguments
 Evaluating expression...
-Getting own properties...
+Getting displayable properties...
 Properties:
     "name"       =>  "bound " (string)  [configurable | isOwn]
     "length"     =>  0 (number)  [configurable | isOwn]
+    "caller"     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "arguments"  =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 Internal Properties:
     "targetFunction"  =>  "function (a, b, c){}" (function)  []
     "boundThis"       =>  null (object null)  []
     "boundArgs"       =>  "Array" (object array)  []
 
--- Running test case: Runtime.getProperties.BoundFunctionNoParameters
+-- Running test case: Runtime.getDisplayableProperties.BoundFunctionNoParameters
 Evaluating expression...
-Getting own properties...
+Getting displayable properties...
 Properties:
     "name"       =>  "bound " (string)  [configurable | isOwn]
     "length"     =>  0 (number)  [configurable | isOwn]
+    "caller"     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "arguments"  =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 Internal Properties:
     "targetFunction"  =>  "function (){}" (function)  []
     "boundThis"       =>  null (object null)  []
 
--- Running test case: Runtime.getProperties.BoundFunctionNoParametersWithArguments
+-- Running test case: Runtime.getDisplayableProperties.BoundFunctionNoParametersWithArguments
 Evaluating expression...
-Getting own properties...
+Getting displayable properties...
 Properties:
     "name"       =>  "bound " (string)  [configurable | isOwn]
     "length"     =>  0 (number)  [configurable | isOwn]
+    "caller"     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "arguments"  =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 Internal Properties:
     "targetFunction"  =>  "function (){}" (function)  []
     "boundThis"       =>  null (object null)  []
     "boundArgs"       =>  "Array" (object array)  []
 
--- Running test case: Runtime.getProperties.Promise.Resolved
+-- Running test case: Runtime.getDisplayableProperties.Promise.Resolved
 Evaluating expression...
-Getting own properties...
+Getting displayable properties...
 Properties:
     "__proto__"  =>  "Promise" (object)  [writable | configurable | isOwn]
 Internal Properties:
     "status"  =>  "resolved" (string)  []
     "result"  =>  123 (number)  []
 
--- Running test case: Runtime.getProperties.Promise.Rejected
+-- Running test case: Runtime.getDisplayableProperties.Promise.Rejected
 Evaluating expression...
-Getting own properties...
+Getting displayable properties...
 Properties:
     "__proto__"  =>  "Promise" (object)  [writable | configurable | isOwn]
 Internal Properties:
     "status"  =>  "rejected" (string)  []
     "result"  =>  123 (number)  []
 
--- Running test case: Runtime.getProperties.fetchStart.Object
+-- Running test case: Runtime.getDisplayableProperties.fetchStart.Object
 Evaluating expression...
-Getting own properties with fetchStart 5...
+Getting displayable properties with fetchStart 5...
 Properties:
     "U"  =>  5 (number)  [writable | enumerable | configurable | isOwn]
     "G"  =>  6 (number)  [writable | enumerable | configurable | isOwn]
@@ -147,9 +160,9 @@ Properties:
     "I"  =>  8 (number)  [writable | enumerable | configurable | isOwn]
     "Q"  =>  9 (number)  [writable | enumerable | configurable | isOwn]
 
--- Running test case: Runtime.getProperties.fetchCount.Object
+-- Running test case: Runtime.getDisplayableProperties.fetchCount.Object
 Evaluating expression...
-Getting own properties with fetchCount 5...
+Getting displayable properties with fetchCount 5...
 ASSERT: Should only get 5 properties.
 Properties:
     "A"          =>  0 (number)  [writable | enumerable | configurable | isOwn]
@@ -159,18 +172,18 @@ Properties:
     "E"          =>  4 (number)  [writable | enumerable | configurable | isOwn]
     "__proto__"  =>  "Object" (object)  [writable | configurable | isOwn]
 
--- Running test case: Runtime.getProperties.fetchStartCount.Object
+-- Running test case: Runtime.getDisplayableProperties.fetchStartCount.Object
 Evaluating expression...
-Getting own properties with fetchStart 3 with fetchCount 4...
+Getting displayable properties with fetchStart 3 with fetchCount 4...
 Properties:
     "W"  =>  3 (number)  [writable | enumerable | configurable | isOwn]
     "E"  =>  4 (number)  [writable | enumerable | configurable | isOwn]
     "U"  =>  5 (number)  [writable | enumerable | configurable | isOwn]
     "G"  =>  6 (number)  [writable | enumerable | configurable | isOwn]
 
--- Running test case: Runtime.getProperties.fetchStart.Array
+-- Running test case: Runtime.getDisplayableProperties.fetchStart.Array
 Evaluating expression...
-Getting own properties with fetchStart 5...
+Getting displayable properties with fetchStart 5...
 Properties:
     "5"  =>  "U" (string)  [writable | enumerable | configurable | isOwn]
     "6"  =>  "G" (string)  [writable | enumerable | configurable | isOwn]
@@ -178,9 +191,9 @@ Properties:
     "8"  =>  "I" (string)  [writable | enumerable | configurable | isOwn]
     "9"  =>  "Q" (string)  [writable | enumerable | configurable | isOwn]
 
--- Running test case: Runtime.getProperties.fetchCount.Array
+-- Running test case: Runtime.getDisplayableProperties.fetchCount.Array
 Evaluating expression...
-Getting own properties with fetchCount 5...
+Getting displayable properties with fetchCount 5...
 ASSERT: Should only get 5 properties.
 Properties:
     "0"          =>  "A" (string)  [writable | enumerable | configurable | isOwn]
@@ -190,9 +203,9 @@ Properties:
     "4"          =>  "E" (string)  [writable | enumerable | configurable | isOwn]
     "__proto__"  =>  "Array" (object array)  [writable | configurable | isOwn]
 
--- Running test case: Runtime.getProperties.fetchStartCount.Array
+-- Running test case: Runtime.getDisplayableProperties.fetchStartCount.Array
 Evaluating expression...
-Getting own properties with fetchStart 3 with fetchCount 4...
+Getting displayable properties with fetchStart 3 with fetchCount 4...
 Properties:
     "3"  =>  "W" (string)  [writable | enumerable | configurable | isOwn]
     "4"  =>  "E" (string)  [writable | enumerable | configurable | isOwn]

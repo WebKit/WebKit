@@ -251,10 +251,8 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
 
         function receivedArrayPropertyNames(propertyNames)
         {
-            // FIXME: <https://webkit.org/b/143589> Web Inspector: Better handling for large collections in Object Trees
-            // If there was an array like object, we generate autocompletion up to 1000 indexes, but this should
-            // handle a list with arbitrary length.
             if (propertyNames && typeof propertyNames.length === "number") {
+                // FIXME <https://webkit.org/b/201909> Web Inspector: autocompletion of array indexes can't handle large arrays in a performant way
                 var max = Math.min(propertyNames.length, 1000);
                 for (var i = 0; i < max; ++i)
                     propertyNames[i] = true;

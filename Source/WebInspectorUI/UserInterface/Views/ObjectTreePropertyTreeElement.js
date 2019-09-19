@@ -32,6 +32,10 @@ WI.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement extends W
         this._mode = mode || WI.ObjectTreeView.Mode.Properties;
         this._prototypeName = prototypeName;
 
+        this._fetchStart = 0;
+        this._fetchEnd = WI.ObjectTreeView.showMoreFetchCount;
+        this._fetchEndIndex = 0;
+
         this.mainTitle = this._titleFragment();
         this.addClassName("object-tree-property");
 
@@ -55,6 +59,11 @@ WI.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement extends W
 
     onpopulate()
     {
+        if (this.children.length && !this.shouldRefreshChildren)
+            return;
+
+        this._fetchStart = 0;
+        this._fetchEndIndex = 0;
         this._updateChildren();
     }
 
@@ -318,59 +327,80 @@ WI.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement extends W
 
     _updateChildren()
     {
-        if (this.children.length && !this.shouldRefreshChildren)
-            return;
+        let resolvedValue = this.resolvedValue();
 
-        const options = {
+        let wrap = (handler, mode) => (list) => {
+            if (this._fetchEndIndex === 0)
+                this.removeChildren();
+
+            if (!list) {
+                let errorMessageElement = WI.ObjectTreeView.createEmptyMessageElement(WI.UIString("Could not fetch properties. Object may no longer exist."));
+                this.appendChild(new WI.TreeElement(errorMessageElement));
+                return;
+            }
+
+            handler.call(this, list, this.resolvedValuePropertyPath(), mode);
+
+            this.dispatchEventToListeners(WI.ObjectTreeView.Event.Updated);
+        };
+
+        let options = {
             ownProperties: true,
             generatePreview: true,
         };
 
-        var resolvedValue = this.resolvedValue();
-        if (resolvedValue.isCollectionType() && this._mode === WI.ObjectTreeView.Mode.Properties)
-            resolvedValue.getCollectionEntries(0, 100, this._updateChildrenInternal.bind(this, this._updateEntries, this._mode));
-        else if (this._mode === WI.ObjectTreeView.Mode.ClassAPI || this._mode === WI.ObjectTreeView.Mode.PureAPI)
-            resolvedValue.getPropertyDescriptors(this._updateChildrenInternal.bind(this, this._updateProperties, WI.ObjectTreeView.Mode.ClassAPI), options);
-        else if (this.property.name === "__proto__")
-            resolvedValue.getPropertyDescriptors(this._updateChildrenInternal.bind(this, this._updateProperties, WI.ObjectTreeView.Mode.PrototypeAPI), options);
-        else
-            resolvedValue.getDisplayablePropertyDescriptors(this._updateChildrenInternal.bind(this, this._updateProperties, this._mode));
-    }
-
-    _updateChildrenInternal(handler, mode, list)
-    {
-        this.removeChildren();
-
-        if (!list) {
-            var errorMessageElement = WI.ObjectTreeView.createEmptyMessageElement(WI.UIString("Could not fetch properties. Object may no longer exist."));
-            this.appendChild(new WI.TreeElement(errorMessageElement, null, false));
-            return;
+        if (isFinite(this._fetchEnd) && this._fetchEnd < resolvedValue.size) {
+            options.fetchStart = this._fetchStart;
+            options.fetchCount = this._fetchEnd - this._fetchStart;
         }
 
-        handler.call(this, list, this.resolvedValuePropertyPath(), mode);
+        if (resolvedValue.isCollectionType() && this._mode === WI.ObjectTreeView.Mode.Properties)
+            resolvedValue.getCollectionEntries(wrap(this._updateEntries, this._mode), options);
+        else if (this._mode === WI.ObjectTreeView.Mode.ClassAPI || this._mode === WI.ObjectTreeView.Mode.PureAPI)
+            resolvedValue.getPropertyDescriptors(wrap(this._updateProperties, WI.ObjectTreeView.Mode.ClassAPI), options);
+        else if (this.property.name === "__proto__")
+            resolvedValue.getPropertyDescriptors(wrap(this._updateProperties, WI.ObjectTreeView.Mode.PrototypeAPI), options);
+        else
+            resolvedValue.getDisplayablePropertyDescriptors(wrap(this._updateProperties, this._mode), options);
     }
 
     _updateEntries(entries, propertyPath, mode)
     {
-        for (var entry of entries) {
+        let resolvedValue = this.resolvedValue();
+
+        entries.forEach((entry, i) => {
             if (entry.key) {
-                this.appendChild(new WI.ObjectTreeMapKeyTreeElement(entry.key, propertyPath));
-                this.appendChild(new WI.ObjectTreeMapValueTreeElement(entry.value, propertyPath, entry.key));
+                this.insertChild(new WI.ObjectTreeMapKeyTreeElement(entry.key, propertyPath), this._fetchEndIndex++);
+                this.insertChild(new WI.ObjectTreeMapValueTreeElement(entry.value, propertyPath, entry.key), this._fetchEndIndex++);
             } else
-                this.appendChild(new WI.ObjectTreeSetIndexTreeElement(entry.value, propertyPath));
-        }
+                this.insertChild(new WI.ObjectTreeSetIndexTreeElement(entry.value, propertyPath), this._fetchEndIndex++);
+        });
 
         if (!this.children.length) {
-            var emptyMessageElement = WI.ObjectTreeView.createEmptyMessageElement(WI.UIString("No Entries"));
-            this.appendChild(new WI.TreeElement(emptyMessageElement, null, false));
+            let emptyMessageElement = WI.ObjectTreeView.createEmptyMessageElement(WI.UIString("No Entries"));
+            this.appendChild(new WI.TreeElement(emptyMessageElement));
+        } else {
+            console.assert(mode === WI.ObjectTreeView.Mode.Properties);
+            WI.ObjectTreeView.addShowMoreIfNeeded({
+                resolvedValue,
+                representation: this,
+                parentTreeElement: this,
+                handleShowMoreClicked: () => {
+                    this._updateChildren();
+                },
+                handleShowAllClicked: () => {
+                    this.shouldRefreshChildren = true;
+                },
+            });
         }
 
-        // Show the prototype so users can see the API.
-        var resolvedValue = this.resolvedValue();
-        resolvedValue.getOwnPropertyDescriptor("__proto__", (propertyDescriptor) => {
-            if (propertyDescriptor)
-                this.appendChild(new WI.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, mode));
-        });
+        // Show the prototype so users can see the API, but only fetch it the first time.
+        if (this._fetchStart === 0) {
+            resolvedValue.getOwnPropertyDescriptor("__proto__", (propertyDescriptor) => {
+                if (propertyDescriptor)
+                    this.appendChild(new WI.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, mode));
+            });
+        }
     }
 
     _updateProperties(properties, propertyPath, mode)
@@ -396,26 +426,39 @@ WI.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement extends W
             if (isAPI && propertyDescriptor.nativeGetter)
                 continue;
 
-            // COMPATIBILITY (iOS 8): Sometimes __proto__ is not a value, but a get/set property.
-            // In those cases it is actually not useful to show.
-            if (propertyDescriptor.name === "__proto__" && !propertyDescriptor.hasValue())
+            if (propertyDescriptor.name === "__proto__") {
+                // COMPATIBILITY (iOS 8): Sometimes __proto__ is not a value, but a get/set property.
+                // In those cases it is actually not useful to show.
+                if (!propertyDescriptor.hasValue())
+                    continue;
+
+                hadProto = true;
+                this.appendChild(new WI.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, mode, prototypeName));
                 continue;
+            }
 
             if (isArray && isPropertyMode) {
                 if (propertyDescriptor.isIndexProperty())
-                    this.appendChild(new WI.ObjectTreeArrayIndexTreeElement(propertyDescriptor, propertyPath));
-                else if (propertyDescriptor.name === "__proto__")
-                    this.appendChild(new WI.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, mode, prototypeName));
+                    this.insertChild(new WI.ObjectTreeArrayIndexTreeElement(propertyDescriptor, propertyPath), this._fetchEndIndex++);
             } else
-                this.appendChild(new WI.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, mode, prototypeName));
-
-            if (propertyDescriptor.name === "__proto__")
-                hadProto = true;
+                this.insertChild(new WI.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, mode, prototypeName), this._fetchEndIndex++);
         }
 
         if (!this.children.length || (hadProto && this.children.length === 1)) {
-            var emptyMessageElement = WI.ObjectTreeView.createEmptyMessageElement(WI.UIString("No Properties"));
-            this.insertChild(new WI.TreeElement(emptyMessageElement, null, false), 0);
+            let emptyMessageElement = WI.ObjectTreeView.createEmptyMessageElement(WI.UIString("No Properties"));
+            this.insertChild(new WI.TreeElement(emptyMessageElement), 0);
+        } else if (isArray && isPropertyMode) {
+            WI.ObjectTreeView.addShowMoreIfNeeded({
+                resolvedValue,
+                representation: this,
+                parentTreeElement: this,
+                handleShowMoreClicked: () => {
+                    this._updateChildren();
+                },
+                handleShowAllClicked: () => {
+                    this.shouldRefreshChildren = true;
+                },
+            });
         }
     }
 };

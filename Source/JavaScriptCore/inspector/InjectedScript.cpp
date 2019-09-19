@@ -164,11 +164,16 @@ void InjectedScript::getPreview(ErrorString& errorString, const String& objectId
     result = BindingTraits<Protocol::Runtime::ObjectPreview>::runtimeCast(WTFMove(resultValue));
 }
 
-void InjectedScript::getProperties(ErrorString& errorString, const String& objectId, bool ownProperties, bool generatePreview, RefPtr<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>& properties)
+void InjectedScript::getProperties(ErrorString& errorString, const String& objectId, bool ownProperties, int fetchStart, int fetchCount, bool generatePreview, RefPtr<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>& properties)
 {
+    ASSERT(fetchStart >= 0);
+    ASSERT(fetchCount >= 0);
+
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), "getProperties"_s, inspectorEnvironment()->functionCallHandler());
     function.appendArgument(objectId);
     function.appendArgument(ownProperties);
+    function.appendArgument(fetchStart);
+    function.appendArgument(fetchCount);
     function.appendArgument(generatePreview);
 
     RefPtr<JSON::Value> result = makeCall(function);
@@ -180,10 +185,15 @@ void InjectedScript::getProperties(ErrorString& errorString, const String& objec
     properties = BindingTraits<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>::runtimeCast(WTFMove(result));
 }
 
-void InjectedScript::getDisplayableProperties(ErrorString& errorString, const String& objectId, bool generatePreview, RefPtr<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>& properties)
+void InjectedScript::getDisplayableProperties(ErrorString& errorString, const String& objectId, int fetchStart, int fetchCount, bool generatePreview, RefPtr<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>& properties)
 {
+    ASSERT(fetchStart >= 0);
+    ASSERT(fetchCount >= 0);
+
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), "getDisplayableProperties"_s, inspectorEnvironment()->functionCallHandler());
     function.appendArgument(objectId);
+    function.appendArgument(fetchStart);
+    function.appendArgument(fetchCount);
     function.appendArgument(generatePreview);
 
     RefPtr<JSON::Value> result = makeCall(function);
@@ -211,13 +221,16 @@ void InjectedScript::getInternalProperties(ErrorString& errorString, const Strin
     properties = array->length() > 0 ? array : nullptr;
 }
 
-void InjectedScript::getCollectionEntries(ErrorString& errorString, const String& objectId, const String& objectGroup, int startIndex, int numberToFetch, RefPtr<JSON::ArrayOf<Protocol::Runtime::CollectionEntry>>& entries)
+void InjectedScript::getCollectionEntries(ErrorString& errorString, const String& objectId, const String& objectGroup, int fetchStart, int fetchCount, RefPtr<JSON::ArrayOf<Protocol::Runtime::CollectionEntry>>& entries)
 {
+    ASSERT(fetchStart >= 0);
+    ASSERT(fetchCount >= 0);
+
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), "getCollectionEntries"_s, inspectorEnvironment()->functionCallHandler());
     function.appendArgument(objectId);
     function.appendArgument(objectGroup);
-    function.appendArgument(startIndex);
-    function.appendArgument(numberToFetch);
+    function.appendArgument(fetchStart);
+    function.appendArgument(fetchCount);
 
     RefPtr<JSON::Value> result = makeCall(function);
     if (!result || result->type() != JSON::Value::Type::Array) {

@@ -485,23 +485,17 @@ JSValue JSInjectedScriptHost::weakMapEntries(ExecState* exec)
 
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue value = exec->uncheckedArgument(0);
-    JSWeakMap* weakMap = jsDynamicCast<JSWeakMap*>(vm, value);
+    auto* weakMap = jsDynamicCast<JSWeakMap*>(vm, exec->uncheckedArgument(0));
     if (!weakMap)
         return jsUndefined();
 
-    unsigned numberToFetch = 100;
-
-    JSValue numberToFetchArg = exec->argument(1);
-    double fetchDouble = numberToFetchArg.toInteger(exec);
-    if (fetchDouble >= 0)
-        numberToFetch = static_cast<unsigned>(fetchDouble);
+    MarkedArgumentBuffer buffer;
+    auto fetchCount = exec->argument(1).toInteger(exec);
+    weakMap->takeSnapshot(buffer, fetchCount >= 0 ? static_cast<unsigned>(fetchCount) : 0);
+    ASSERT(!buffer.hasOverflowed());
 
     JSArray* array = constructEmptyArray(exec, nullptr);
     RETURN_IF_EXCEPTION(scope, JSValue());
-
-    MarkedArgumentBuffer buffer;
-    weakMap->takeSnapshot(buffer, numberToFetch);
 
     for (unsigned index = 0; index < buffer.size(); index += 2) {
         JSObject* entry = constructEmptyObject(exec);
@@ -535,23 +529,17 @@ JSValue JSInjectedScriptHost::weakSetEntries(ExecState* exec)
 
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue value = exec->uncheckedArgument(0);
-    JSWeakSet* weakSet = jsDynamicCast<JSWeakSet*>(vm, value);
+    auto* weakSet = jsDynamicCast<JSWeakSet*>(vm, exec->uncheckedArgument(0));
     if (!weakSet)
         return jsUndefined();
 
-    unsigned numberToFetch = 100;
-
-    JSValue numberToFetchArg = exec->argument(1);
-    double fetchDouble = numberToFetchArg.toInteger(exec);
-    if (fetchDouble >= 0)
-        numberToFetch = static_cast<unsigned>(fetchDouble);
+    MarkedArgumentBuffer buffer;
+    auto fetchCount = exec->argument(1).toInteger(exec);
+    weakSet->takeSnapshot(buffer, fetchCount >= 0 ? static_cast<unsigned>(fetchCount) : 0);
+    ASSERT(!buffer.hasOverflowed());
 
     JSArray* array = constructEmptyArray(exec, nullptr);
     RETURN_IF_EXCEPTION(scope, JSValue());
-
-    MarkedArgumentBuffer buffer;
-    weakSet->takeSnapshot(buffer, numberToFetch);
 
     for (unsigned index = 0; index < buffer.size(); ++index) {
         JSObject* entry = constructEmptyObject(exec);

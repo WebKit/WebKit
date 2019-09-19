@@ -46,6 +46,10 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
         // listen for console clear events. Currently all ObjectTrees are in the console.
         this._inConsole = true;
 
+        this._fetchStart = 0;
+        this._fetchEnd = ObjectTreeView.showMoreFetchCount;
+        this._fetchEndIndex = 0;
+
         // Always force expanding for classes.
         if (this._object.isClass())
             forceExpanding = true;
@@ -97,6 +101,73 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
         emptyMessageElement.className = "empty-message";
         emptyMessageElement.textContent = message;
         return emptyMessageElement;
+    }
+
+    static get showMoreFetchCount() { return 100; }
+
+    static addShowMoreIfNeeded({resolvedValue, representation, parentTreeElement, handleShowMoreClicked, handleShowAllClicked})
+    {
+        console.assert(resolvedValue instanceof WI.RemoteObject, resolvedValue);
+        console.assert(resolvedValue.isArray() || resolvedValue.isCollectionType());
+        console.assert(typeof resolvedValue.size === "number" && resolvedValue.size > 0, resolvedValue);
+        console.assert("_fetchStart" in representation, representation);
+        console.assert("_fetchEnd" in representation, representation);
+        console.assert("_fetchEndIndex" in representation, representation);
+        console.assert(typeof handleShowMoreClicked === "function", handleShowMoreClicked);
+        console.assert(typeof handleShowAllClicked === "function", handleShowAllClicked);
+
+        // COMPATIBILITY (iOS 13): Runtime.getProperties/Runtime.getDisplayableProperties didn't support `fetchStart`/`fetchCount` yet.
+        if (!InspectorBackend.domains.Runtime.getProperties.supports("fetchStart"))
+            return;
+
+        let remaining = resolvedValue.size - representation._fetchEnd;
+        if (remaining <= 0)
+            return;
+
+        let treeElement = new WI.TreeElement(document.createElement("span"));
+        treeElement.selectable = false;
+        parentTreeElement.insertChild(treeElement, representation._fetchEndIndex);
+
+        // FIXME: <https://webkit.org/b/201965> Web Inspector: allow examining items in the middle of an array/collection without having to show all items before
+
+        let buttons = [];
+        let createButton = (textContent, handleClick) => {
+            let button = treeElement.title.appendChild(document.createElement("button"));
+            button.textContent = textContent;
+            button.addEventListener("click", (event) => {
+                event.stop();
+
+                representation.singleFireEventListener(ObjectTreeView.Event.Updated, () => {
+                    // The `treeElement` may have already been removed by some other means (e.g. `removeChildren`).
+                    if (treeElement.parent === parentTreeElement)
+                        parentTreeElement.removeChild(treeElement);
+                });
+
+                for (let other of buttons)
+                    other.disabled = true;
+
+                let spinner = new WI.IndeterminateProgressSpinner;
+                button.insertAdjacentElement("afterend", spinner.element);
+
+                handleClick();
+            });
+            buttons.push(button);
+        };
+
+        if (!resolvedValue.isWeakCollection() && remaining > ObjectTreeView.showMoreFetchCount) {
+            createButton(WI.UIString("Show %d More").format(ObjectTreeView.showMoreFetchCount), () => {
+                representation._fetchStart = representation._fetchEnd;
+                representation._fetchEnd = representation._fetchStart + ObjectTreeView.showMoreFetchCount;
+                handleShowMoreClicked();
+            });
+        }
+
+        createButton(WI.UIString("Show All (%d More)").format(remaining), () => {
+            representation._fetchStart = 0;
+            representation._fetchEnd = Infinity;
+            representation._fetchEndIndex = 0;
+            handleShowAllClicked();
+        });
     }
 
     static comparePropertyDescriptors(propertyA, propertyB)
@@ -254,58 +325,85 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
 
     update()
     {
-        const options = {
-            ownProperties: true,
-            generatePreview: true,
-        };
-
-        if (this._object.isCollectionType() && this._mode === WI.ObjectTreeView.Mode.Properties)
-            this._object.getCollectionEntries(0, 100, this._updateChildren.bind(this, this._updateEntries));
-        else if (this._object.isClass())
-            this._object.classPrototype.getDisplayablePropertyDescriptors(this._updateChildren.bind(this, this._updateProperties));
-        else if (this._mode === WI.ObjectTreeView.Mode.PureAPI)
-            this._object.getPropertyDescriptors(this._updateChildren.bind(this, this._updateProperties), options);
-        else
-            this._object.getDisplayablePropertyDescriptors(this._updateChildren.bind(this, this._updateProperties));
+        this._fetchStart = 0;
+        this._fetchEndIndex = 0;
+        this._updateChildren();
     }
 
     // Private
 
-    _updateChildren(handler, list)
+    _updateChildren()
     {
-        this._outline.removeChildren();
+        let options = {
+            ownProperties: true,
+            generatePreview: true,
+        };
 
-        if (!list) {
-            var errorMessageElement = WI.ObjectTreeView.createEmptyMessageElement(WI.UIString("Could not fetch properties. Object may no longer exist."));
-            this._outline.appendChild(new WI.TreeElement(errorMessageElement, null, false));
-            return;
+        if (isFinite(this._fetchEnd) && this._fetchEnd < this._object.size) {
+            options.fetchStart = this._fetchStart;
+            options.fetchCount = this._fetchEnd - this._fetchStart;
         }
 
-        handler.call(this, list, this._propertyPath);
+        let wrap = (handler) => (list) => {
+            if (this._fetchEndIndex === 0)
+                this._outline.removeChildren();
 
-        this.dispatchEventToListeners(WI.ObjectTreeView.Event.Updated);
+            if (!list) {
+                let errorMessageElement = WI.ObjectTreeView.createEmptyMessageElement(WI.UIString("Could not fetch properties. Object may no longer exist."));
+                this._outline.appendChild(new WI.TreeElement(errorMessageElement));
+                return;
+            }
+
+            handler.call(this, list, this._propertyPath);
+
+            this.dispatchEventToListeners(ObjectTreeView.Event.Updated);
+        };
+
+        if (this._object.isCollectionType() && this._mode === ObjectTreeView.Mode.Properties)
+            this._object.getCollectionEntries(wrap(this._updateEntries), options);
+        else if (this._object.isClass())
+            this._object.classPrototype.getDisplayablePropertyDescriptors(wrap(this._updateProperties), options);
+        else if (this._mode === ObjectTreeView.Mode.PureAPI)
+            this._object.getPropertyDescriptors(wrap(this._updateProperties), options);
+        else
+            this._object.getDisplayablePropertyDescriptors(wrap(this._updateProperties), options);
     }
 
     _updateEntries(entries, propertyPath)
     {
-        for (var entry of entries) {
+        entries.forEach((entry, i) => {
             if (entry.key) {
-                this._outline.appendChild(new WI.ObjectTreeMapKeyTreeElement(entry.key, propertyPath));
-                this._outline.appendChild(new WI.ObjectTreeMapValueTreeElement(entry.value, propertyPath, entry.key));
+                this._outline.insertChild(new WI.ObjectTreeMapKeyTreeElement(entry.key, propertyPath), this._fetchEndIndex++);
+                this._outline.insertChild(new WI.ObjectTreeMapValueTreeElement(entry.value, propertyPath, entry.key), this._fetchEndIndex++);
             } else
-                this._outline.appendChild(new WI.ObjectTreeSetIndexTreeElement(entry.value, propertyPath));
-        }
+                this._outline.insertChild(new WI.ObjectTreeSetIndexTreeElement(entry.value, propertyPath), this._fetchEndIndex++);
+        });
 
         if (!this._outline.children.length) {
-            var emptyMessageElement = WI.ObjectTreeView.createEmptyMessageElement(WI.UIString("No Entries"));
-            this._outline.appendChild(new WI.TreeElement(emptyMessageElement, null, false));
+            let emptyMessageElement = ObjectTreeView.createEmptyMessageElement(WI.UIString("No Entries"));
+            this._outline.appendChild(new WI.TreeElement(emptyMessageElement));
+        } else {
+            console.assert(this._mode === WI.ObjectTreeView.Mode.Properties);
+            ObjectTreeView.addShowMoreIfNeeded({
+                resolvedValue: this._object,
+                representation: this,
+                parentTreeElement: this._outline,
+                handleShowMoreClicked: () => {
+                    this._updateChildren();
+                },
+                handleShowAllClicked: () => {
+                    this.update();
+                },
+            });
         }
 
-        // Show the prototype so users can see the API.
-        this._object.getOwnPropertyDescriptor("__proto__", (propertyDescriptor) => {
-            if (propertyDescriptor)
-                this._outline.appendChild(new WI.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, this._mode));
-        });
+        // Show the prototype so users can see the API, but only fetch it the first time.
+        if (this._fetchStart === 0) {
+            this._object.getOwnPropertyDescriptor("__proto__", (propertyDescriptor) => {
+                if (propertyDescriptor)
+                    this._outline.appendChild(new WI.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, this._mode));
+            });
+        }
     }
 
     _updateProperties(properties, propertyPath)
@@ -328,20 +426,32 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
                 if (!this._includeProtoProperty)
                     continue;
                 hadProto = true;
+                this._outline.appendChild(new WI.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, this._mode, this._prototypeNameOverride));
+                continue;
             }
 
             if (isArray && isPropertyMode) {
                 if (propertyDescriptor.isIndexProperty())
-                    this._outline.appendChild(new WI.ObjectTreeArrayIndexTreeElement(propertyDescriptor, propertyPath));
-                else if (propertyDescriptor.name === "__proto__")
-                    this._outline.appendChild(new WI.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, this._mode, this._prototypeNameOverride));
+                    this._outline.insertChild(new WI.ObjectTreeArrayIndexTreeElement(propertyDescriptor, propertyPath), this._fetchEndIndex++);
             } else
-                this._outline.appendChild(new WI.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, this._mode, this._prototypeNameOverride));
+                this._outline.insertChild(new WI.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, this._mode, this._prototypeNameOverride), this._fetchEndIndex++);
         }
 
         if (!this._outline.children.length || (hadProto && this._outline.children.length === 1)) {
-            var emptyMessageElement = WI.ObjectTreeView.createEmptyMessageElement(WI.UIString("No Properties"));
-            this._outline.insertChild(new WI.TreeElement(emptyMessageElement, null, false), 0);
+            let emptyMessageElement = ObjectTreeView.createEmptyMessageElement(WI.UIString("No Properties"));
+            this._outline.insertChild(new WI.TreeElement(emptyMessageElement), 0);
+        } else if (isArray && isPropertyMode) {
+            ObjectTreeView.addShowMoreIfNeeded({
+                resolvedValue: this._object,
+                representation: this,
+                parentTreeElement: this._outline,
+                handleShowMoreClicked: () => {
+                    this._updateChildren();
+                },
+                handleShowAllClicked: () => {
+                    this.update();
+                },
+            });
         }
     }
 

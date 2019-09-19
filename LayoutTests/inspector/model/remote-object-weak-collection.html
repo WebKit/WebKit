@@ -57,7 +57,7 @@ function test()
         WI.runtimeManager.evaluateInInspectedWindow(step.expression, {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true, generatePreview: true}, function(remoteObject, wasThrown) {
             WI.runtimeManager.evaluateInInspectedWindow("GCController.collect()", {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true}, function() {
                 InspectorTest.assert(remoteObject instanceof WI.RemoteObject);
-                remoteObject.getCollectionEntries(0, 100, function(entries) {
+                remoteObject.getCollectionEntries(function(entries) {
                     InspectorTest.log("ENTRIES:");
                     entries.sort((a, b) => a.value.value - b.value.value);
                     for (let entry of entries)

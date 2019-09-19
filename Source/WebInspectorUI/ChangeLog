@@ -1,3 +1,56 @@
+2019-09-18  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Better handling for large arrays and collections in Object Trees
+        https://bugs.webkit.org/show_bug.cgi?id=143589
+        <rdar://problem/16135388>
+
+        Reviewed by Joseph Pecoraro.
+
+        Adds two buttons before the "Prototype" item in expanded object/collection previews:
+         - Show %d More
+         - Show All (%d More)
+
+        The default `fetchCount` increment is `100`. The first button will only be shown if there
+        are more than `100` items remaining (haven't been shown).
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WI.RemoteObject.prototype.getPropertyDescriptors):
+        (WI.RemoteObject.prototype.getDisplayablePropertyDescriptors):
+        (WI.RemoteObject.prototype.getCollectionEntries):
+        (WI.RemoteObject.prototype.getOwnPropertyDescriptor.wrappedCallback):
+        (WI.RemoteObject.prototype._getProperties): Added.
+        (WI.RemoteObject.prototype._getDisplayableProperties): Added.
+
+        * UserInterface/Views/ObjectTreeView.js:
+        (WI.ObjectTreeView):
+        (WI.ObjectTreeView.showMoreFetchCount): Added.
+        (WI.ObjectTreeView.addShowMoreIfNeeded): Added.
+        (WI.ObjectTreeView.prototype.update):
+        (WI.ObjectTreeView.prototype._updateChildren):
+        (WI.ObjectTreeView.prototype._updateEntries):
+        (WI.ObjectTreeView.prototype._updateProperties):
+        * UserInterface/Views/ObjectTreeView.css:
+        (.tree-outline.object li > button[disabled] + .indeterminate-progress-spinner): Added.
+        Avoid duplicating the button creation logic in `WI.ObjectTreePropertyTreeElement` by using a
+        `static` function. This expects the existence of and requires access to "private" values.
+
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        (WI.ObjectTreePropertyTreeElement):
+        (WI.ObjectTreePropertyTreeElement.prototype.onpopulate):
+        (WI.ObjectTreePropertyTreeElement.prototype._updateChildren):
+        (WI.ObjectTreePropertyTreeElement.prototype._updateEntries):
+        (WI.ObjectTreePropertyTreeElement.prototype._updateProperties):
+        (WI.ObjectTreePropertyTreeElement.prototype._updateChildrenInternal): Deleted.
+
+        * UserInterface/Controllers/JavaScriptRuntimeCompletionProvider.js:
+        (WI.JavaScriptRuntimeCompletionProvider.prototype.completionControllerCompletionsNeeded.evaluated):
+        (WI.JavaScriptRuntimeCompletionProvider.prototype.completionControllerCompletionsNeeded.receivedArrayPropertyNames): Deleted.
+
+        * UserInterface/Controllers/RuntimeManager.js:
+        (WI.RuntimeManager.prototype.getPropertiesForRemoteObject): Deleted.
+        Remove unused function.
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-09-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: console assertion when pressing up/down in empty console log view

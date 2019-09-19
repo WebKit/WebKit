@@ -133,6 +133,12 @@
     font-size: 12px;
 }
 
+.tree-outline.object li > button[disabled] + .indeterminate-progress-spinner {
+    display: inline-block;
+    -webkit-margin-start: 2px;
+    vertical-align: -4px;
+}
+
 .object-tree-property :matches(.formatted-string, .formatted-regexp) {
     white-space: nowrap;
 }

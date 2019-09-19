@@ -76,9 +76,9 @@
                 { "name": "writable", "type": "boolean", "optional": true, "description": "True if the value associated with the property may be changed (data descriptors only)." },
                 { "name": "get", "$ref": "RemoteObject", "optional": true, "description": "A function which serves as a getter for the property, or <code>undefined</code> if there is no getter (accessor descriptors only)." },
                 { "name": "set", "$ref": "RemoteObject", "optional": true, "description": "A function which serves as a setter for the property, or <code>undefined</code> if there is no setter (accessor descriptors only)." },
-                { "name": "configurable", "type": "boolean", "description": "True if the type of this property descriptor may be changed and if the property may be deleted from the corresponding object." },
-                { "name": "enumerable", "type": "boolean", "description": "True if this property shows up during enumeration of the properties on the corresponding object." },
                 { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True if the result was thrown during the evaluation." },
+                { "name": "configurable", "type": "boolean", "optional": true, "description": "True if the type of this property descriptor may be changed and if the property may be deleted from the corresponding object." },
+                { "name": "enumerable", "type": "boolean", "optional": true, "description": "True if this property shows up during enumeration of the properties on the corresponding object." },
                 { "name": "isOwn", "optional": true, "type": "boolean", "description": "True if the property is owned for the object." },
                 { "name": "symbol", "optional": true, "$ref": "Runtime.RemoteObject", "description": "Property symbol object, if the property is a symbol." },
                 { "name": "nativeGetter", "optional": true, "type": "boolean", "description": "True if the property value came from a native getter." }
@@ -275,11 +275,13 @@
             "parameters": [
                 { "name": "objectId", "$ref": "RemoteObjectId", "description": "Identifier of the object to return properties for." },
                 { "name": "ownProperties", "optional": true, "type": "boolean", "description": "If true, returns properties belonging only to the object itself, not to its prototype chain." },
+                { "name": "fetchStart", "optional": true, "type": "integer", "description": "If provided skip to this value before collecting values. Otherwise, start at the beginning. Has no effect when the `objectId` is for a `iterator`/`WeakMap`/`WeakSet` object." },
+                { "name": "fetchCount", "optional": true, "type": "integer", "description": "If provided only return `fetchCount` values. Otherwise, return values all the way to the end." },
                 { "name": "generatePreview", "type": "boolean", "optional": true, "description": "Whether preview should be generated for property values." }
             ],
             "returns": [
-                { "name": "result", "type": "array", "items": { "$ref": "PropertyDescriptor"}, "description": "Object properties." },
-                { "name": "internalProperties", "optional": true, "type": "array", "items": { "$ref": "InternalPropertyDescriptor"}, "description": "Internal object properties." }
+                { "name": "properties", "type": "array", "items": { "$ref": "PropertyDescriptor"}, "description": "Object properties." },
+                { "name": "internalProperties", "optional": true, "type": "array", "items": { "$ref": "InternalPropertyDescriptor"}, "description": "Internal object properties. Only included if `fetchStart` is 0." }
             ]
         },
         {
@@ -287,11 +289,13 @@
             "description": "Returns displayable properties of a given object. Object group of the result is inherited from the target object. Displayable properties are own properties, internal properties, and native getters in the prototype chain (assumed to be bindings and treated like own properties for the frontend).",
             "parameters": [
                 { "name": "objectId", "$ref": "RemoteObjectId", "description": "Identifier of the object to return properties for." },
+                { "name": "fetchStart", "optional": true, "type": "integer", "description": "If provided skip to this value before collecting values. Otherwise, start at the beginning. Has no effect when the `objectId` is for a `iterator`/`WeakMap`/`WeakSet` object." },
+                { "name": "fetchCount", "optional": true, "type": "integer", "description": "If provided only return `fetchCount` values. Otherwise, return values all the way to the end." },
                 { "name": "generatePreview", "type": "boolean", "optional": true, "description": "Whether preview should be generated for property values." }
             ],
             "returns": [
                 { "name": "properties", "type": "array", "items": { "$ref": "PropertyDescriptor"}, "description": "Object properties." },
-                { "name": "internalProperties", "optional": true, "type": "array", "items": { "$ref": "InternalPropertyDescriptor"}, "description": "Internal object properties." }
+                { "name": "internalProperties", "optional": true, "type": "array", "items": { "$ref": "InternalPropertyDescriptor"}, "description": "Internal object properties. Only included if `fetchStart` is 0." }
             ]
         },
         {
@@ -300,8 +304,8 @@
             "parameters": [
                 { "name": "objectId", "$ref": "Runtime.RemoteObjectId", "description": "Id of the collection to get entries for." },
                 { "name": "objectGroup", "optional": true, "type": "string", "description": "Symbolic group name that can be used to release multiple. If not provided, it will be the same objectGroup as the RemoteObject determined from <code>objectId</code>. This is useful for WeakMap to release the collection entries." },
-                { "name": "startIndex", "optional": true, "type": "integer", "description": "If provided skip to this index before collecting values. Otherwise, 0." },
-                { "name": "numberToFetch", "optional": true, "type": "integer", "description": "If provided only return <code>numberToFetch</code> values. Otherwise, return values all the way to the end." }
+                { "name": "fetchStart", "optional": true, "type": "integer", "description": "If provided skip to this value before collecting values. Otherwise, start at the beginning. Has no effect when the `objectId<` is for a `iterator<`/`WeakMap<`/`WeakSet<` object." },
+                { "name": "fetchCount", "optional": true, "type": "integer", "description": "If provided only return `fetchCount` values. Otherwise, return values all the way to the end." }
             ],
             "returns": [
                 { "name": "entries", "type": "array", "items": { "$ref": "CollectionEntry" }, "description": "Array of collection entries." }

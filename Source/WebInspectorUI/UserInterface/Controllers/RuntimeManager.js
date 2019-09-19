@@ -187,22 +187,6 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
             target.RuntimeAgent.saveResult(remoteObject.asCallArgument(), executionContextId, mycallback);
     }
 
-    getPropertiesForRemoteObject(objectId, callback)
-    {
-        this._activeExecutionContext.target.RuntimeAgent.getProperties(objectId, function(error, result) {
-            if (error) {
-                callback(error);
-                return;
-            }
-
-            let properties = new Map;
-            for (let property of result)
-                properties.set(property.name, property);
-
-            callback(null, properties);
-        });
-    }
-
     // Private
 
     _frameExecutionContextsCleared(event)

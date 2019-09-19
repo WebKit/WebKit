@@ -3,11 +3,14 @@
 <script src="../../http/tests/inspector/resources/protocol-test.js"></script>
 <script src="resources/property-descriptor-utilities.js"></script>
 <script>
+if (window.internals)
+    window.internals.settings.setUnhandledPromiseRejectionToConsoleEnabled(false);
+
 function test()
 {
-    let suite = ProtocolTest.createAsyncSuite("Runtime.getProperties");
+    let suite = ProtocolTest.createAsyncSuite("Runtime.getDisplayableProperties");
 
-    function addTestCase({name, expression, ownProperties, fetchStart, fetchCount}) {
+    function addTestCase({name, expression, fetchStart, fetchCount}) {
         suite.addTestCase({
             name,
             async test() {
@@ -18,27 +21,23 @@ function test()
                 });
                 ProtocolTest.assert(!evaluateResponse.wasThrown);
 
-                let getPropertiesPreLog = "Getting";
-                if (ownProperties)
-                    getPropertiesPreLog += " own";
-                getPropertiesPreLog += " properties";
+                let log = "Getting displayable properties";
                 if (fetchStart)
-                    getPropertiesPreLog += ` with fetchStart ${fetchStart}`;
+                    log += ` with fetchStart ${fetchStart}`;
                 if (fetchCount)
-                    getPropertiesPreLog += ` with fetchCount ${fetchCount}`;
-                ProtocolTest.log(getPropertiesPreLog + "...");
+                    log += ` with fetchCount ${fetchCount}`;
+                ProtocolTest.log(log + "...");
 
-                let getPropertiesResponse = await InspectorProtocol.awaitCommand({
-                    method: "Runtime.getProperties",
+                let getDisplayablePropertiesResponse = await InspectorProtocol.awaitCommand({
+                    method: "Runtime.getDisplayableProperties",
                     params: {
                         objectId: evaluateResponse.result.objectId,
-                        ownProperties,
                         fetchStart,
                         fetchCount,
                     },
                 });
 
-                let properties = getPropertiesResponse.properties;
+                let properties = getDisplayablePropertiesResponse.properties;
                 if (properties) {
                     ProtocolTest.assert(!fetchCount || properties.length <= fetchCount, `Should only get ${fetchCount} properties.`);
 
@@ -46,7 +45,7 @@ function test()
                     properties.forEach(ProtocolTest.PropertyDescriptorUtilities.logForEach);
                 }
 
-                let internalProperties = getPropertiesResponse.internalProperties;
+                let internalProperties = getDisplayablePropertiesResponse.internalProperties;
                 if (internalProperties) {
                     ProtocolTest.log("Internal Properties:");
                     internalProperties.forEach(ProtocolTest.PropertyDescriptorUtilities.logForEach);
@@ -56,112 +55,96 @@ function test()
     }
 
     addTestCase({
-        name: "Runtime.getProperties.Object",
+        name: "Runtime.getDisplayableProperties.Object",
         expression: `(function() { let r = Object(5); r.foo = "cat"; return r; })()`,
-        ownProperties: true,
     });
 
     addTestCase({
-        name: "Runtime.getProperties.Array",
+        name: "Runtime.getDisplayableProperties.Array",
         expression: `['red', 'green', 'blue']`,
-        ownProperties: true,
     });
 
     addTestCase({
-        name: "Runtime.getProperties.Constructor",
+        name: "Runtime.getDisplayableProperties.Constructor",
         expression: `(class Test { })`,
-        ownProperties: true,
     });
 
     addTestCase({
-        name: "Runtime.getProperties.BoundConstructor",
+        name: "Runtime.getDisplayableProperties.BoundConstructor",
         expression: `(class Test { }).bind(null)`,
-        ownProperties: true,
     });
 
     addTestCase({
-        name: "Runtime.getProperties.BoundConstructorArguments",
+        name: "Runtime.getDisplayableProperties.BoundConstructorArguments",
         expression: `(class Test { }).bind(null, 1, 2, 3)`,
-        ownProperties: true,
     });
 
     addTestCase({
-        name: "Runtime.getProperties.Function",
+        name: "Runtime.getDisplayableProperties.Function",
         expression: `(function(a, b, c){})`,
-        ownProperties: true,
     });
 
     addTestCase({
-        name: "Runtime.getProperties.FunctionNoParameters",
+        name: "Runtime.getDisplayableProperties.FunctionNoParameters",
         expression: `(function(){})`,
-        ownProperties: true,
     });
 
     addTestCase({
-        name: "Runtime.getProperties.BoundFunction",
+        name: "Runtime.getDisplayableProperties.BoundFunction",
         expression: `(function(a, b, c){}).bind(null)`,
-        ownProperties: true,
     });
 
     addTestCase({
-        name: "Runtime.getProperties.BoundFunctionWithArguments",
+        name: "Runtime.getDisplayableProperties.BoundFunctionWithArguments",
         expression: `(function(a, b, c){}).bind(null, 1, 2, 3)`,
-        ownProperties: true,
     });
 
     addTestCase({
-        name: "Runtime.getProperties.BoundFunctionNoParameters",
+        name: "Runtime.getDisplayableProperties.BoundFunctionNoParameters",
         expression: `(function(){}).bind(null)`,
-        ownProperties: true,
     });
 
     addTestCase({
-        name: "Runtime.getProperties.BoundFunctionNoParametersWithArguments",
+        name: "Runtime.getDisplayableProperties.BoundFunctionNoParametersWithArguments",
         expression: `(function(){}).bind(null, 1, 2, 3)`,
-        ownProperties: true,
     });
 
     addTestCase({
-        name: "Runtime.getProperties.Promise.Resolved",
+        name: "Runtime.getDisplayableProperties.Promise.Resolved",
         expression: `Promise.resolve(123)`,
-        ownProperties: true,
     });
 
     addTestCase({
-        name: "Runtime.getProperties.Promise.Rejected",
+        name: "Runtime.getDisplayableProperties.Promise.Rejected",
         expression: `Promise.reject(123)`,
-        ownProperties: true,
     });
 
     for (let type of ["Object", "Array"]) {
         addTestCase({
-            name: `Runtime.getProperties.fetchStart.${type}`,
+            name: `Runtime.getDisplayableProperties.fetchStart.${type}`,
             expression: `make${type}(10)`,
-            ownProperties: true,
             fetchStart: 5,
         });
 
         addTestCase({
-            name: `Runtime.getProperties.fetchCount.${type}`,
+            name: `Runtime.getDisplayableProperties.fetchCount.${type}`,
             expression: `make${type}(10)`,
-            ownProperties: true,
             fetchCount: 5,
         });
 
         addTestCase({
-            name: `Runtime.getProperties.fetchStartCount.${type}`,
+            name: `Runtime.getDisplayableProperties.fetchStartCount.${type}`,
             expression: `make${type}(10)`,
-            ownProperties: true,
             fetchStart: 3,
             fetchCount: 4,
         });
-    }
+   }
 
     suite.runTestCasesAndFinish();
 }
 </script>
 </head>
 <body onLoad="runTest()">
-<p>Tests for the Runtime.getProperties command.</p>
+<p>Tests for the Runtime.getDisplayableProperties command.</p>
 </body>
 </html>

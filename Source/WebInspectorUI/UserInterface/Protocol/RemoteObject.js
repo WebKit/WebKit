@@ -294,10 +294,10 @@ WI.RemoteObject = class RemoteObject
             return;
         }
 
-        this._target.RuntimeAgent.getProperties(this._objectId, options.ownProperties, options.generatePreview, this._getPropertyDescriptorsResolver.bind(this, callback));
+        this._getProperties(this._getPropertyDescriptorsResolver.bind(this, callback), options);
     }
 
-    getDisplayablePropertyDescriptors(callback)
+    getDisplayablePropertyDescriptors(callback, options = {})
     {
         if (!this._objectId || this._isSymbol() || this._isFakeObject()) {
             callback([]);
@@ -307,7 +307,7 @@ WI.RemoteObject = class RemoteObject
         // COMPATIBILITY (iOS 8): RuntimeAgent.getDisplayableProperties did not exist.
         // Here we do our best to reimplement it by getting all properties and reducing them down.
         if (!this._target.RuntimeAgent.getDisplayableProperties) {
-            this._target.RuntimeAgent.getProperties(this._objectId, function(error, allProperties) {
+            this._getProperties(options, (error, allProperties) => {
                 var ownOrGetterPropertiesList = [];
                 if (allProperties) {
                     for (var property of allProperties) {
@@ -324,13 +324,12 @@ WI.RemoteObject = class RemoteObject
                         }
                     }
                 }
-
                 this._getPropertyDescriptorsResolver(callback, error, ownOrGetterPropertiesList);
-            }.bind(this));
+            });
             return;
         }
 
-        this._target.RuntimeAgent.getDisplayableProperties(this._objectId, true, this._getPropertyDescriptorsResolver.bind(this, callback));
+        this._getDisplayableProperties(this._getPropertyDescriptorsResolver.bind(this, callback), options);
     }
 
     setPropertyValue(name, value, callback)
@@ -404,24 +403,20 @@ WI.RemoteObject = class RemoteObject
         return this._subtype === "weakmap" || this._subtype === "weakset";
     }
 
-    getCollectionEntries(start, numberToFetch, callback)
+    getCollectionEntries(callback, {fetchStart, fetchCount} = {})
     {
-        start = typeof start === "number" ? start : 0;
-        numberToFetch = typeof numberToFetch === "number" ? numberToFetch : 100;
-
-        console.assert(start >= 0);
-        console.assert(numberToFetch >= 0);
         console.assert(this.isCollectionType());
+        console.assert(typeof fetchStart === "undefined" || (typeof fetchStart === "number" && fetchStart >= 0), fetchStart);
+        console.assert(typeof fetchCount === "undefined" || (typeof fetchCount === "number" && fetchCount > 0), fetchCount);
 
         // WeakMaps and WeakSets are not ordered. We should never send a non-zero start.
-        console.assert((this._subtype === "weakmap" && start === 0) || this._subtype !== "weakmap");
-        console.assert((this._subtype === "weakset" && start === 0) || this._subtype !== "weakset");
+        console.assert(!this.isWeakCollection() || typeof fetchStart === "undefined" || fetchStart === 0, fetchStart);
 
         let objectGroup = this.isWeakCollection() ? this._weakCollectionObjectGroup() : "";
 
-        this._target.RuntimeAgent.getCollectionEntries(this._objectId, objectGroup, start, numberToFetch, (error, entries) => {
-            entries = entries.map((x) => WI.CollectionEntry.fromPayload(x, this._target));
-            callback(entries);
+        // COMPATIBILITY (iOS 13): `startIndex` and `numberToFetch` were renamed to `fetchStart` and `fetchCount` (but kept in the same position).
+        this._target.RuntimeAgent.getCollectionEntries(this._objectId, objectGroup, fetchStart, fetchCount, (error, entries) => {
+            callback(entries.map((x) => WI.CollectionEntry.fromPayload(x, this._target)));
         });
     }
 
@@ -545,7 +540,7 @@ WI.RemoteObject = class RemoteObject
                 return;
             }
 
-            var fakeDescriptor = {name: propertyName, value: result, writable: true, configurable: true, enumerable: false};
+            var fakeDescriptor = {name: propertyName, value: result, writable: true, configurable: true};
             var fakePropertyDescriptor = new WI.PropertyDescriptor(fakeDescriptor, null, true, false, false, false);
             callback(fakePropertyDescriptor);
         }
@@ -627,6 +622,30 @@ WI.RemoteObject = class RemoteObject
     _weakCollectionObjectGroup()
     {
         return JSON.stringify(this._objectId) + "-" + this._subtype;
+    }
+
+    _getProperties(callback, {ownProperties, fetchStart, fetchCount, generatePreview} = {})
+    {
+        // COMPATIBILITY (iOS 13): `result` was renamed to `properties` (but kept in the same position).
+        this._target.RuntimeAgent.getProperties.invoke({
+            objectId: this._objectId,
+            ownProperties,
+            fetchStart,
+            fetchCount,
+            generatePreview,
+        }, callback, this._target.RuntimeAgent);
+    }
+
+    _getDisplayableProperties(callback, {fetchStart, fetchCount, generatePreview} = {})
+    {
+        console.assert(this._target.RuntimeAgent.getDisplayableProperties);
+
+        this._target.RuntimeAgent.getDisplayableProperties.invoke({
+            objectId: this._objectId,
+            fetchStart,
+            fetchCount,
+            generatePreview,
+        }, callback, this._target.RuntimeAgent);
     }
 
     _getPropertyDescriptorsResolver(callback, error, properties, internalProperties)
