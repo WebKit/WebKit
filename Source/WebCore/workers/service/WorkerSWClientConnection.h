@@ -60,7 +60,6 @@ private:
     void scheduleJobInServer(const ServiceWorkerJobData&) final;
     void scheduleJob(DocumentOrWorkerIdentifier, const ServiceWorkerJobData&) final;
 
-    PAL::SessionID m_sessionID;
     Ref<WorkerThread> m_thread;
 
     uint64_t m_lastRequestIdentifier { 0 };

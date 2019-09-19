@@ -59,7 +59,7 @@ using namespace Inspector;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WorkerGlobalScope);
 
-WorkerGlobalScope::WorkerGlobalScope(const URL& url, Ref<SecurityOrigin>&& origin, const String& identifier, const String& userAgent, bool isOnline, WorkerThread& thread, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, PAL::SessionID sessionID)
+WorkerGlobalScope::WorkerGlobalScope(const URL& url, Ref<SecurityOrigin>&& origin, const String& identifier, const String& userAgent, bool isOnline, WorkerThread& thread, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
     : m_url(url)
     , m_identifier(identifier)
     , m_userAgent(userAgent)
@@ -76,7 +76,6 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, Ref<SecurityOrigin>&& origi
 #endif
     , m_socketProvider(socketProvider)
     , m_performance(Performance::create(this, timeOrigin))
-    , m_sessionID(sessionID)
 {
 #if !ENABLE(INDEXED_DATABASE)
     UNUSED_PARAM(connectionProxy);

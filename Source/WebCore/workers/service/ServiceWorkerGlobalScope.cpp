@@ -42,15 +42,15 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ServiceWorkerGlobalScope);
 
-Ref<ServiceWorkerGlobalScope> ServiceWorkerGlobalScope::create(const ServiceWorkerContextData& data, const URL& url, Ref<SecurityOrigin>&& origin, const String& identifier, const String& userAgent, bool isOnline, ServiceWorkerThread& thread, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, PAL::SessionID sessionID)
+Ref<ServiceWorkerGlobalScope> ServiceWorkerGlobalScope::create(const ServiceWorkerContextData& data, const URL& url, Ref<SecurityOrigin>&& origin, const String& identifier, const String& userAgent, bool isOnline, ServiceWorkerThread& thread, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
 {
-    auto scope = adoptRef(*new ServiceWorkerGlobalScope { data, url, WTFMove(origin), identifier, userAgent, isOnline, thread, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, connectionProxy, socketProvider, sessionID });
+    auto scope = adoptRef(*new ServiceWorkerGlobalScope { data, url, WTFMove(origin), identifier, userAgent, isOnline, thread, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, connectionProxy, socketProvider });
     scope->applyContentSecurityPolicyResponseHeaders(contentSecurityPolicy);
     return scope;
 }
 
-ServiceWorkerGlobalScope::ServiceWorkerGlobalScope(const ServiceWorkerContextData& data, const URL& url, Ref<SecurityOrigin>&& origin, const String& identifier, const String& userAgent, bool isOnline, ServiceWorkerThread& thread, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, PAL::SessionID sessionID)
-    : WorkerGlobalScope(url, WTFMove(origin), identifier, userAgent, isOnline, thread, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, connectionProxy, socketProvider, sessionID)
+ServiceWorkerGlobalScope::ServiceWorkerGlobalScope(const ServiceWorkerContextData& data, const URL& url, Ref<SecurityOrigin>&& origin, const String& identifier, const String& userAgent, bool isOnline, ServiceWorkerThread& thread, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
+    : WorkerGlobalScope(url, WTFMove(origin), identifier, userAgent, isOnline, thread, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, connectionProxy, socketProvider)
     , m_contextData(crossThreadCopy(data))
     , m_registration(ServiceWorkerRegistration::getOrCreate(*this, navigator().serviceWorker(), WTFMove(m_contextData.registration)))
     , m_clients(ServiceWorkerClients::create())

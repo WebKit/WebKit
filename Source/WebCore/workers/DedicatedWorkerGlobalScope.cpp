@@ -44,16 +44,16 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DedicatedWorkerGlobalScope);
 
-Ref<DedicatedWorkerGlobalScope> DedicatedWorkerGlobalScope::create(const URL& url, Ref<SecurityOrigin>&& origin, const String& name, const String& identifier, const String& userAgent, bool isOnline, DedicatedWorkerThread& thread, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, PAL::SessionID sessionID)
+Ref<DedicatedWorkerGlobalScope> DedicatedWorkerGlobalScope::create(const URL& url, Ref<SecurityOrigin>&& origin, const String& name, const String& identifier, const String& userAgent, bool isOnline, DedicatedWorkerThread& thread, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
 {
-    auto context = adoptRef(*new DedicatedWorkerGlobalScope(url, WTFMove(origin), name, identifier, userAgent, isOnline, thread, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, connectionProxy, socketProvider, sessionID));
+    auto context = adoptRef(*new DedicatedWorkerGlobalScope(url, WTFMove(origin), name, identifier, userAgent, isOnline, thread, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, connectionProxy, socketProvider));
     if (!shouldBypassMainWorldContentSecurityPolicy)
         context->applyContentSecurityPolicyResponseHeaders(contentSecurityPolicyResponseHeaders);
     return context;
 }
 
-DedicatedWorkerGlobalScope::DedicatedWorkerGlobalScope(const URL& url, Ref<SecurityOrigin>&& origin, const String& name, const String& identifier, const String& userAgent, bool isOnline, DedicatedWorkerThread& thread, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, PAL::SessionID sessionID)
-    : WorkerGlobalScope(url, WTFMove(origin), identifier, userAgent, isOnline, thread, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, connectionProxy, socketProvider, sessionID)
+DedicatedWorkerGlobalScope::DedicatedWorkerGlobalScope(const URL& url, Ref<SecurityOrigin>&& origin, const String& name, const String& identifier, const String& userAgent, bool isOnline, DedicatedWorkerThread& thread, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
+    : WorkerGlobalScope(url, WTFMove(origin), identifier, userAgent, isOnline, thread, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, connectionProxy, socketProvider)
     , m_name(name)
 {
 }

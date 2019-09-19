@@ -39,7 +39,6 @@
 #include "WorkerScriptController.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <memory>
-#include <pal/SessionID.h>
 
 namespace WebCore {
 
@@ -132,10 +131,8 @@ public:
 
     unsigned long createUniqueIdentifier() { return m_uniqueIdentifier++; }
 
-    PAL::SessionID sessionID() const final { return m_sessionID; }
-
 protected:
-    WorkerGlobalScope(const URL&, Ref<SecurityOrigin>&&, const String& identifier, const String& userAgent, bool isOnline, WorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, PAL::SessionID);
+    WorkerGlobalScope(const URL&, Ref<SecurityOrigin>&&, const String& identifier, const String& userAgent, bool isOnline, WorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
     void applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders&);
 
@@ -214,7 +211,6 @@ private:
     RefPtr<Performance> m_performance;
     mutable RefPtr<Crypto> m_crypto;
 
-    PAL::SessionID m_sessionID;
     RefPtr<WorkerCacheStorageConnection> m_cacheStorageConnection;
     std::unique_ptr<WorkerMessagePortChannelProvider> m_messagePortChannelProvider;
     unsigned long m_uniqueIdentifier { 1 };

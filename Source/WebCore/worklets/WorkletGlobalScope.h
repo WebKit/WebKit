@@ -120,7 +120,7 @@ private:
     bool unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) final { RELEASE_ASSERT_NOT_REACHED(); return false; }
 #endif
     URL completeURL(const String&) const final;
-    PAL::SessionID sessionID() const final { return m_sessionID; }
+    PAL::SessionID sessionID() const { return m_sessionID; }
     String userAgent(const URL&) const final;
     void disableEval(const String&) final;
     void disableWebAssembly(const String&) final;

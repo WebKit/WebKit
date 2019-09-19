@@ -788,8 +788,8 @@ void WebPage::updateThrottleState()
         m_userActivity.start();
 
 #if ENABLE(SERVICE_WORKER)
-    RunLoop::main().dispatch([isThrottleable, sessionID = sessionID()] {
-        if (auto* connection = ServiceWorkerProvider::singleton().existingServiceWorkerConnectionForSession(sessionID)) {
+    RunLoop::main().dispatch([isThrottleable] {
+        if (auto* connection = ServiceWorkerProvider::singleton().existingServiceWorkerConnection()) {
             if (isThrottleable != connection->isThrottleable())
                 connection->updateThrottleState();
         }

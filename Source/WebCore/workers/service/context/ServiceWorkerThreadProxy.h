@@ -77,7 +77,7 @@ public:
     WEBCORE_EXPORT void removeFetch(SWServerConnectionIdentifier, FetchIdentifier);
 
 private:
-    WEBCORE_EXPORT ServiceWorkerThreadProxy(PageConfiguration&&, const ServiceWorkerContextData&, PAL::SessionID, String&& userAgent, CacheStorageProvider&, SecurityOrigin::StorageBlockingPolicy);
+    WEBCORE_EXPORT ServiceWorkerThreadProxy(PageConfiguration&&, const ServiceWorkerContextData&, String&& userAgent, CacheStorageProvider&, SecurityOrigin::StorageBlockingPolicy);
 
     WEBCORE_EXPORT static void networkStateChanged(bool isOnLine);
 

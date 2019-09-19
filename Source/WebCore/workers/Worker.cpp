@@ -198,7 +198,7 @@ void Worker::notifyFinished()
 
     bool isOnline = platformStrategies()->loaderStrategy()->isOnLine();
     const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders = m_contentSecurityPolicyResponseHeaders ? m_contentSecurityPolicyResponseHeaders.value() : context->contentSecurityPolicy()->responseHeaders();
-    m_contextProxy.startWorkerGlobalScope(m_scriptLoader->url(), m_name, context->userAgent(m_scriptLoader->url()), isOnline, m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy, m_workerCreationTime, m_runtimeFlags, context->sessionID());
+    m_contextProxy.startWorkerGlobalScope(m_scriptLoader->url(), m_name, context->userAgent(m_scriptLoader->url()), isOnline, m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy, m_workerCreationTime, m_runtimeFlags);
     InspectorInstrumentation::scriptImported(*context, m_scriptLoader->identifier(), m_scriptLoader->script());
 }
 

@@ -60,9 +60,9 @@
 
 namespace WebCore {
 
-static inline SWClientConnection& mainThreadConnection(PAL::SessionID sessionID)
+static inline SWClientConnection& mainThreadConnection()
 {
-    return ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID);
+    return ServiceWorkerProvider::singleton().serviceWorkerConnection();
 }
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ServiceWorkerContainer);
@@ -126,7 +126,7 @@ ServiceWorker* ServiceWorkerContainer::controller() const
 void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, const RegistrationOptions& options, Ref<DeferredPromise>&& promise)
 {
     auto* context = scriptExecutionContext();
-    if (m_isStopped || !context->sessionID().isValid()) {
+    if (m_isStopped) {
         promise->reject(Exception(InvalidStateError));
         return;
     }
@@ -189,7 +189,7 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
 void ServiceWorkerContainer::removeRegistration(const URL& scopeURL, Ref<DeferredPromise>&& promise)
 {
     auto* context = scriptExecutionContext();
-    if (!context || !context->sessionID().isValid()) {
+    if (!context) {
         ASSERT_NOT_REACHED();
         promise->reject(Exception(InvalidStateError));
         return;
@@ -217,7 +217,6 @@ void ServiceWorkerContainer::updateRegistration(const URL& scopeURL, const URL& 
     ASSERT(!m_isStopped);
 
     auto& context = *scriptExecutionContext();
-    ASSERT(context.sessionID().isValid());
 
     if (!m_swConnection) {
         ASSERT_NOT_REACHED();
@@ -386,7 +385,7 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
     notifyIfExitEarly.release();
 
     scriptExecutionContext()->postTask([this, protectedThis = RefPtr<ServiceWorkerContainer>(this), promise = WTFMove(promise), jobIdentifier = job.identifier(), data = WTFMove(data), shouldNotifyWhenResolved](ScriptExecutionContext& context) mutable {
-        if (isStopped() || !context.sessionID().isValid()) {
+        if (isStopped()) {
             if (shouldNotifyWhenResolved == ShouldNotifyWhenResolved::Yes)
                 notifyRegistrationIsSettled(data.key);
             return;
@@ -419,8 +418,8 @@ void ServiceWorkerContainer::postMessage(MessageWithMessagePorts&& message, Serv
 
 void ServiceWorkerContainer::notifyRegistrationIsSettled(const ServiceWorkerRegistrationKey& registrationKey)
 {
-    callOnMainThread([sessionID = scriptExecutionContext()->sessionID(), registrationKey = registrationKey.isolatedCopy()] {
-        mainThreadConnection(sessionID).didResolveRegistrationPromise(registrationKey);
+    callOnMainThread([registrationKey = registrationKey.isolatedCopy()] {
+        mainThreadConnection().didResolveRegistrationPromise(registrationKey);
     });
 }
 
@@ -476,8 +475,8 @@ void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, con
 
     CONTAINER_RELEASE_LOG_IF_ALLOWED("jobFinishedLoadingScript: Successfuly finished fetching script for job %" PRIu64, job.identifier().toUInt64());
 
-    callOnMainThread([sessionID = scriptExecutionContext()->sessionID(), jobDataIdentifier = job.data().identifier(), registrationKey = job.data().registrationKey().isolatedCopy(), script = script.isolatedCopy(), contentSecurityPolicy = contentSecurityPolicy.isolatedCopy(), referrerPolicy = referrerPolicy.isolatedCopy()] {
-        mainThreadConnection(sessionID).finishFetchingScriptInServer({ jobDataIdentifier, registrationKey, script, contentSecurityPolicy, referrerPolicy, { } });
+    callOnMainThread([jobDataIdentifier = job.data().identifier(), registrationKey = job.data().registrationKey().isolatedCopy(), script = script.isolatedCopy(), contentSecurityPolicy = contentSecurityPolicy.isolatedCopy(), referrerPolicy = referrerPolicy.isolatedCopy()] {
+        mainThreadConnection().finishFetchingScriptInServer({ jobDataIdentifier, registrationKey, script, contentSecurityPolicy, referrerPolicy, { } });
     });
 }
 
@@ -499,8 +498,8 @@ void ServiceWorkerContainer::jobFailedLoadingScript(ServiceWorkerJob& job, const
 
 void ServiceWorkerContainer::notifyFailedFetchingScript(ServiceWorkerJob& job, const ResourceError& error)
 {
-    callOnMainThread([sessionID = scriptExecutionContext()->sessionID(), jobIdentifier = job.identifier(), registrationKey = job.data().registrationKey().isolatedCopy(), error = error.isolatedCopy()] {
-        mainThreadConnection(sessionID).failedFetchingScript(jobIdentifier, registrationKey, error);
+    callOnMainThread([jobIdentifier = job.identifier(), registrationKey = job.data().registrationKey().isolatedCopy(), error = error.isolatedCopy()] {
+        mainThreadConnection().failedFetchingScript(jobIdentifier, registrationKey, error);
     });
 }
 
@@ -537,13 +536,12 @@ void ServiceWorkerContainer::resume()
 SWClientConnection& ServiceWorkerContainer::ensureSWClientConnection()
 {
     ASSERT(scriptExecutionContext());
-    ASSERT(scriptExecutionContext()->sessionID().isValid());
     if (!m_swConnection) {
         auto& context = *scriptExecutionContext();
         if (is<WorkerGlobalScope>(context))
             m_swConnection = &downcast<WorkerGlobalScope>(context).swClientConnection();
         else
-            m_swConnection = &mainThreadConnection(context.sessionID());
+            m_swConnection = &mainThreadConnection();
     }
     return *m_swConnection;
 }

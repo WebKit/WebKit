@@ -538,14 +538,13 @@ void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::Regis
     }
 
     auto origin = (!m_frame->isMainFrame() && m_frame->document()) ? m_frame->document()->topOrigin().data() : SecurityOriginData::fromURL(url);
-    auto sessionID = m_frame->page()->sessionID();
     auto& provider = ServiceWorkerProvider::singleton();
-    if (!provider.mayHaveServiceWorkerRegisteredForOrigin(sessionID, origin)) {
+    if (!provider.mayHaveServiceWorkerRegisteredForOrigin(origin)) {
         callback(WTF::nullopt);
         return;
     }
 
-    auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID);
+    auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
     connection.matchRegistration(WTFMove(origin), url, WTFMove(callback));
 }
 
@@ -1104,7 +1103,7 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
             }
 
             if (m_frame->document()->activeServiceWorker() || SchemeRegistry::canServiceWorkersHandleURLScheme(m_frame->document()->url().protocol().toStringWithoutCopying()))
-                m_frame->document()->setServiceWorkerConnection(ServiceWorkerProvider::singleton().existingServiceWorkerConnectionForSession(m_frame->page()->sessionID()));
+                m_frame->document()->setServiceWorkerConnection(ServiceWorkerProvider::singleton().existingServiceWorkerConnection());
 
             // We currently unregister the temporary service worker client since we now registered the real document.
             // FIXME: We should make the real document use the temporary client identifier.
@@ -1879,7 +1878,7 @@ void DocumentLoader::registerTemporaryServiceWorkerClient(const URL& url)
         m_frame->page()->sessionID()
     };
 
-    auto& serviceWorkerConnection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(m_temporaryServiceWorkerClient->sessionID);
+    auto& serviceWorkerConnection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
 
     // FIXME: Compute ServiceWorkerClientFrameType appropriately.
     ServiceWorkerClientData data { { serviceWorkerConnection.serverConnectionIdentifier(), m_temporaryServiceWorkerClient->documentIdentifier }, ServiceWorkerClientType::Window, ServiceWorkerClientFrameType::None, url };
@@ -1901,7 +1900,7 @@ void DocumentLoader::unregisterTemporaryServiceWorkerClient()
     if (!m_temporaryServiceWorkerClient)
         return;
 
-    auto& serviceWorkerConnection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(m_temporaryServiceWorkerClient->sessionID);
+    auto& serviceWorkerConnection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
     serviceWorkerConnection.unregisterServiceWorkerClient(m_temporaryServiceWorkerClient->documentIdentifier);
     m_temporaryServiceWorkerClient = WTF::nullopt;
 #endif

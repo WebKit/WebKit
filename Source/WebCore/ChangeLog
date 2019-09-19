@@ -1,3 +1,101 @@
+2019-09-19  Chris Dumez  <cdumez@apple.com>
+
+        WorkerGlobalScope does not need a SessionID
+        https://bugs.webkit.org/show_bug.cgi?id=201991
+
+        Reviewed by Alex Christensen.
+
+        WorkerGlobalScope does not need a SessionID, now that we have a single session
+        per WebProcess.
+
+        * dom/Document.cpp:
+        (WebCore::Document::resume):
+        (WebCore::Document::privateBrowsingStateDidChange):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::matchRegistration):
+        (WebCore::DocumentLoader::commitData):
+        (WebCore::DocumentLoader::registerTemporaryServiceWorkerClient):
+        (WebCore::DocumentLoader::unregisterTemporaryServiceWorkerClient):
+        * testing/Internals.cpp:
+        (WebCore::Internals::serviceWorkerClientIdentifier const):
+        (WebCore::Internals::storeRegistrationsOnDisk):
+        (WebCore::Internals::hasServiceWorkerRegistration):
+        (WebCore::Internals::terminateServiceWorker):
+        (WebCore::Internals::hasServiceWorkerConnection):
+        * workers/DedicatedWorkerGlobalScope.cpp:
+        (WebCore::DedicatedWorkerGlobalScope::create):
+        (WebCore::DedicatedWorkerGlobalScope::DedicatedWorkerGlobalScope):
+        * workers/DedicatedWorkerGlobalScope.h:
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::DedicatedWorkerThread):
+        (WebCore::DedicatedWorkerThread::createWorkerGlobalScope):
+        * workers/DedicatedWorkerThread.h:
+        * workers/Worker.cpp:
+        (WebCore::Worker::notifyFinished):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerGlobalScopeProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope):
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadStartupData::WorkerThreadStartupData):
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::workerThread):
+        * workers/WorkerThread.h:
+        * workers/service/ServiceWorker.cpp:
+        (WebCore::ServiceWorker::postMessage):
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::mainThreadConnection):
+        (WebCore::ServiceWorkerContainer::addRegistration):
+        (WebCore::ServiceWorkerContainer::removeRegistration):
+        (WebCore::ServiceWorkerContainer::updateRegistration):
+        (WebCore::ServiceWorkerContainer::jobResolvedWithRegistration):
+        (WebCore::ServiceWorkerContainer::notifyRegistrationIsSettled):
+        (WebCore::ServiceWorkerContainer::jobFinishedLoadingScript):
+        (WebCore::ServiceWorkerContainer::notifyFailedFetchingScript):
+        (WebCore::ServiceWorkerContainer::ensureSWClientConnection):
+        * workers/service/ServiceWorkerGlobalScope.cpp:
+        (WebCore::ServiceWorkerGlobalScope::create):
+        (WebCore::ServiceWorkerGlobalScope::ServiceWorkerGlobalScope):
+        * workers/service/ServiceWorkerGlobalScope.h:
+        * workers/service/ServiceWorkerProvider.cpp:
+        (WebCore::ServiceWorkerProvider::mayHaveServiceWorkerRegisteredForOrigin):
+        (WebCore::ServiceWorkerProvider::registerServiceWorkerClients):
+        * workers/service/ServiceWorkerProvider.h:
+        * workers/service/WorkerSWClientConnection.cpp:
+        (WebCore::WorkerSWClientConnection::WorkerSWClientConnection):
+        (WebCore::WorkerSWClientConnection::matchRegistration):
+        (WebCore::WorkerSWClientConnection::getRegistrations):
+        (WebCore::WorkerSWClientConnection::whenRegistrationReady):
+        (WebCore::WorkerSWClientConnection::addServiceWorkerRegistrationInServer):
+        (WebCore::WorkerSWClientConnection::removeServiceWorkerRegistrationInServer):
+        (WebCore::WorkerSWClientConnection::didResolveRegistrationPromise):
+        (WebCore::WorkerSWClientConnection::postMessageToServiceWorker):
+        (WebCore::WorkerSWClientConnection::serverConnectionIdentifier const):
+        (WebCore::WorkerSWClientConnection::syncTerminateWorker):
+        (WebCore::WorkerSWClientConnection::registerServiceWorkerClient):
+        (WebCore::WorkerSWClientConnection::finishFetchingScriptInServer):
+        (WebCore::WorkerSWClientConnection::scheduleJob):
+        * workers/service/WorkerSWClientConnection.h:
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::ServiceWorkerThread):
+        (WebCore::ServiceWorkerThread::createWorkerGlobalScope):
+        * workers/service/context/ServiceWorkerThread.h:
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::ServiceWorkerThreadProxy::ServiceWorkerThreadProxy):
+        * workers/service/context/ServiceWorkerThreadProxy.h:
+        * worklets/WorkletGlobalScope.h:
+        (WebCore::WorkletGlobalScope::sessionID const):
+        * xml/DOMParser.cpp:
+        (WebCore::DOMParser::parseFromString):
+        * xml/DOMParser.h:
+        * xml/DOMParser.idl:
+        * xml/XMLHttpRequest.cpp:
+
 2019-09-19  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [SVG2]: Add auto behavior for rx and ry to the SVG <ellipse> and<rect> elements

@@ -40,8 +40,7 @@
 namespace WebCore {
 
 WorkerSWClientConnection::WorkerSWClientConnection(WorkerGlobalScope& scope)
-    : m_sessionID(scope.sessionID())
-    , m_thread(scope.thread())
+    : m_thread(scope.thread())
 {
 }
 
@@ -65,8 +64,8 @@ void WorkerSWClientConnection::matchRegistration(SecurityOriginData&& topOrigin,
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_matchRegistrationRequests.add(requestIdentifier, WTFMove(callback));
 
-    callOnMainThread([sessionID = m_sessionID, thread = m_thread.copyRef(), requestIdentifier, topOrigin = crossThreadCopy(WTFMove(topOrigin)), clientURL = crossThreadCopy(clientURL)]() mutable {
-        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID);
+    callOnMainThread([thread = m_thread.copyRef(), requestIdentifier, topOrigin = crossThreadCopy(WTFMove(topOrigin)), clientURL = crossThreadCopy(clientURL)]() mutable {
+        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection.matchRegistration(WTFMove(topOrigin), clientURL, [thread = WTFMove(thread), requestIdentifier](auto&& result) mutable {
             thread->runLoop().postTaskForMode([requestIdentifier, result = WTFMove(result)] (auto& scope) mutable {
                 auto callback = downcast<WorkerGlobalScope>(scope).swClientConnection().m_matchRegistrationRequests.take(requestIdentifier);
@@ -81,8 +80,8 @@ void WorkerSWClientConnection::getRegistrations(SecurityOriginData&& topOrigin, 
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_getRegistrationsRequests.add(requestIdentifier, WTFMove(callback));
 
-    callOnMainThread([sessionID = m_sessionID, thread = m_thread.copyRef(), requestIdentifier, topOrigin = crossThreadCopy(WTFMove(topOrigin)), clientURL = crossThreadCopy(clientURL)]() mutable {
-        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID);
+    callOnMainThread([thread = m_thread.copyRef(), requestIdentifier, topOrigin = crossThreadCopy(WTFMove(topOrigin)), clientURL = crossThreadCopy(clientURL)]() mutable {
+        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection.getRegistrations(WTFMove(topOrigin), clientURL, [thread = WTFMove(thread), requestIdentifier](auto&& data) mutable {
             thread->runLoop().postTaskForMode([requestIdentifier, data = crossThreadCopy(WTFMove(data))] (auto& scope) mutable {
                 auto callback = downcast<WorkerGlobalScope>(scope).swClientConnection().m_getRegistrationsRequests.take(requestIdentifier);
@@ -97,8 +96,8 @@ void WorkerSWClientConnection::whenRegistrationReady(const SecurityOriginData& t
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_whenRegistrationReadyRequests.add(requestIdentifier, WTFMove(callback));
 
-    callOnMainThread([sessionID = m_sessionID, thread = m_thread.copyRef(), requestIdentifier, topOrigin = topOrigin.isolatedCopy(), clientURL = crossThreadCopy(clientURL)]() mutable {
-        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID);
+    callOnMainThread([thread = m_thread.copyRef(), requestIdentifier, topOrigin = topOrigin.isolatedCopy(), clientURL = crossThreadCopy(clientURL)]() mutable {
+        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection.whenRegistrationReady(topOrigin, clientURL, [thread = WTFMove(thread), requestIdentifier](auto&& result) mutable {
             thread->runLoop().postTaskForMode([requestIdentifier, result = crossThreadCopy(WTFMove(result))] (auto& scope) mutable {
                 auto callback = downcast<WorkerGlobalScope>(scope).swClientConnection().m_whenRegistrationReadyRequests.take(requestIdentifier);
@@ -110,24 +109,24 @@ void WorkerSWClientConnection::whenRegistrationReady(const SecurityOriginData& t
 
 void WorkerSWClientConnection::addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier identifier)
 {
-    callOnMainThread([sessionID = m_sessionID, identifier]() mutable {
-        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID);
+    callOnMainThread([identifier]() mutable {
+        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection.addServiceWorkerRegistrationInServer(identifier);
     });
 }
 
 void WorkerSWClientConnection::removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier identifier)
 {
-    callOnMainThread([sessionID = m_sessionID, identifier]() mutable {
-        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID);
+    callOnMainThread([identifier]() mutable {
+        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection.removeServiceWorkerRegistrationInServer(identifier);
     });
 }
 
 void WorkerSWClientConnection::didResolveRegistrationPromise(const ServiceWorkerRegistrationKey& key)
 {
-    callOnMainThread([sessionID = m_sessionID, key = crossThreadCopy(key)]() mutable {
-        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID);
+    callOnMainThread([key = crossThreadCopy(key)]() mutable {
+        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection.didResolveRegistrationPromise(key);
     });
 }
@@ -135,7 +134,7 @@ void WorkerSWClientConnection::didResolveRegistrationPromise(const ServiceWorker
 void WorkerSWClientConnection::postMessageToServiceWorker(ServiceWorkerIdentifier destination, MessageWithMessagePorts&& ports, const ServiceWorkerOrClientIdentifier& source)
 {
     callOnMainThreadAndWait([&] {
-        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(m_sessionID);
+        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection.postMessageToServiceWorker(destination, WTFMove(ports), source);
     });
 }
@@ -144,7 +143,7 @@ SWServerConnectionIdentifier WorkerSWClientConnection::serverConnectionIdentifie
 {
     SWServerConnectionIdentifier identifier;
     callOnMainThreadAndWait([&] {
-        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(m_sessionID);
+        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         identifier = connection.serverConnectionIdentifier();
     });
     return identifier;
@@ -158,16 +157,16 @@ bool WorkerSWClientConnection::mayHaveServiceWorkerRegisteredForOrigin(const Sec
 
 void WorkerSWClientConnection::syncTerminateWorker(ServiceWorkerIdentifier identifier)
 {
-    callOnMainThread([sessionID = m_sessionID, identifier]() mutable {
-        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID);
+    callOnMainThread([identifier]() mutable {
+        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection.syncTerminateWorker(identifier);
     });
 }
 
 void WorkerSWClientConnection::registerServiceWorkerClient(const SecurityOrigin& topOrigin, const ServiceWorkerClientData& data, const Optional<ServiceWorkerRegistrationIdentifier>& identifier, const String& userAgent)
 {
-    callOnMainThread([sessionID = m_sessionID, topOrigin = topOrigin.isolatedCopy(), data = crossThreadCopy(data), identifier, userAgent = crossThreadCopy(userAgent)] {
-        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID);
+    callOnMainThread([topOrigin = topOrigin.isolatedCopy(), data = crossThreadCopy(data), identifier, userAgent = crossThreadCopy(userAgent)] {
+        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection.registerServiceWorkerClient(topOrigin, data, identifier, userAgent);
     });
 }
@@ -179,8 +178,8 @@ void WorkerSWClientConnection::unregisterServiceWorkerClient(DocumentIdentifier)
 
 void WorkerSWClientConnection::finishFetchingScriptInServer(const ServiceWorkerFetchResult& result)
 {
-    callOnMainThread([sessionID = m_sessionID, result = crossThreadCopy(result)]() mutable {
-        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID);
+    callOnMainThread([result = crossThreadCopy(result)]() mutable {
+        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection.finishFetchingScriptInServer(result);
     });
 }
@@ -196,8 +195,8 @@ void WorkerSWClientConnection::updateThrottleState()
 
 void WorkerSWClientConnection::scheduleJob(DocumentOrWorkerIdentifier identifier, const ServiceWorkerJobData& data)
 {
-    callOnMainThread([sessionID = m_sessionID, identifier, data = crossThreadCopy(data)]() mutable {
-        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID);
+    callOnMainThread([identifier, data = crossThreadCopy(data)]() mutable {
+        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection.scheduleJob(identifier, data);
     });
 }

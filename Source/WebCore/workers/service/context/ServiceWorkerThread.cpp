@@ -45,7 +45,6 @@
 #include "WorkerObjectProxy.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/RuntimeFlags.h>
-#include <pal/SessionID.h>
 #include <wtf/NeverDestroyed.h>
 
 using namespace PAL;
@@ -72,8 +71,8 @@ private:
 // FIXME: Use a valid WorkerObjectProxy
 // FIXME: Use valid runtime flags
 
-ServiceWorkerThread::ServiceWorkerThread(const ServiceWorkerContextData& data, PAL::SessionID, String&& userAgent, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, IDBClient::IDBConnectionProxy* idbConnectionProxy, SocketProvider* socketProvider)
-    : WorkerThread(data.scriptURL, emptyString(), "serviceworker:" + Inspector::IdentifiersFactory::createIdentifier(), WTFMove(userAgent), platformStrategies()->loaderStrategy()->isOnLine(), data.script, loaderProxy, debuggerProxy, DummyServiceWorkerThreadProxy::shared(), WorkerThreadStartMode::Normal, data.contentSecurityPolicy, false, data.registration.key.topOrigin().securityOrigin().get(), MonotonicTime::now(), idbConnectionProxy, socketProvider, JSC::RuntimeFlags::createAllEnabled(), data.sessionID)
+ServiceWorkerThread::ServiceWorkerThread(const ServiceWorkerContextData& data, String&& userAgent, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, IDBClient::IDBConnectionProxy* idbConnectionProxy, SocketProvider* socketProvider)
+    : WorkerThread(data.scriptURL, emptyString(), "serviceworker:" + Inspector::IdentifiersFactory::createIdentifier(), WTFMove(userAgent), platformStrategies()->loaderStrategy()->isOnLine(), data.script, loaderProxy, debuggerProxy, DummyServiceWorkerThreadProxy::shared(), WorkerThreadStartMode::Normal, data.contentSecurityPolicy, false, data.registration.key.topOrigin().securityOrigin().get(), MonotonicTime::now(), idbConnectionProxy, socketProvider, JSC::RuntimeFlags::createAllEnabled())
     , m_data(data.isolatedCopy())
     , m_workerObjectProxy(DummyServiceWorkerThreadProxy::shared())
 {
@@ -82,10 +81,10 @@ ServiceWorkerThread::ServiceWorkerThread(const ServiceWorkerContextData& data, P
 
 ServiceWorkerThread::~ServiceWorkerThread() = default;
 
-Ref<WorkerGlobalScope> ServiceWorkerThread::createWorkerGlobalScope(const URL& url, Ref<SecurityOrigin>&& origin, const String& name, const String& identifier, const String& userAgent, bool isOnline, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, PAL::SessionID sessionID)
+Ref<WorkerGlobalScope> ServiceWorkerThread::createWorkerGlobalScope(const URL& url, Ref<SecurityOrigin>&& origin, const String& name, const String& identifier, const String& userAgent, bool isOnline, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin)
 {
     UNUSED_PARAM(name);
-    return ServiceWorkerGlobalScope::create(m_data, url, WTFMove(origin), identifier, userAgent, isOnline, *this, contentSecurityPolicy, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, idbConnectionProxy(), socketProvider(), sessionID);
+    return ServiceWorkerGlobalScope::create(m_data, url, WTFMove(origin), identifier, userAgent, isOnline, *this, contentSecurityPolicy, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, idbConnectionProxy(), socketProvider());
 }
 
 void ServiceWorkerThread::runEventLoop()

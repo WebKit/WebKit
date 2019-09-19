@@ -5208,7 +5208,7 @@ void Document::resume(ReasonForSuspension reason)
 #if ENABLE(SERVICE_WORKER)
     if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && reason == ReasonForSuspension::PageCache) {
         ASSERT_WITH_MESSAGE(!activeServiceWorker(), "Documents with an active service worker should not go into PageCache in the first place");
-        setServiceWorkerConnection(ServiceWorkerProvider::singleton().existingServiceWorkerConnectionForSession(sessionID()));
+        setServiceWorkerConnection(ServiceWorkerProvider::singleton().existingServiceWorkerConnection());
     }
 #endif
 }
@@ -5276,11 +5276,6 @@ void Document::privateBrowsingStateDidChange(PAL::SessionID sessionID)
 
     for (auto* element : m_privateBrowsingStateChangedElements)
         element->privateBrowsingStateDidChange(sessionID);
-
-#if ENABLE(SERVICE_WORKER)
-    if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && m_serviceWorkerConnection)
-        setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID));
-#endif
 }
 
 void Document::registerForPrivateBrowsingStateChangedCallbacks(Element& element)

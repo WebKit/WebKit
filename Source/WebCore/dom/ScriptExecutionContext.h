@@ -52,10 +52,6 @@ class ConsoleMessage;
 class ScriptCallStack;
 }
 
-namespace PAL {
-class SessionID;
-}
-
 namespace WebCore {
 
 class CachedScript;
@@ -95,7 +91,6 @@ public:
 
     virtual const URL& url() const = 0;
     virtual URL completeURL(const String& url) const = 0;
-    virtual PAL::SessionID sessionID() const = 0;
 
     virtual String userAgent(const URL&) const = 0;
 

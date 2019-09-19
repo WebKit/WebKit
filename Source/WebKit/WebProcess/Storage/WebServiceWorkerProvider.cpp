@@ -54,15 +54,13 @@ WebServiceWorkerProvider::WebServiceWorkerProvider()
 {
 }
 
-WebCore::SWClientConnection& WebServiceWorkerProvider::serviceWorkerConnectionForSession(SessionID sessionID)
+WebCore::SWClientConnection& WebServiceWorkerProvider::serviceWorkerConnection()
 {
-    ASSERT_UNUSED(sessionID, sessionID == WebProcess::singleton().sessionID());
     return WebProcess::singleton().ensureNetworkProcessConnection().serviceWorkerConnection();
 }
 
-WebCore::SWClientConnection* WebServiceWorkerProvider::existingServiceWorkerConnectionForSession(SessionID sessionID)
+WebCore::SWClientConnection* WebServiceWorkerProvider::existingServiceWorkerConnection()
 {
-    ASSERT_UNUSED(sessionID, sessionID == WebProcess::singleton().sessionID());
     auto* networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
     if (!networkProcessConnection)
         return nullptr;

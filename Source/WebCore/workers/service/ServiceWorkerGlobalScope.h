@@ -44,7 +44,7 @@ class ServiceWorkerThread;
 class ServiceWorkerGlobalScope final : public WorkerGlobalScope {
     WTF_MAKE_ISO_ALLOCATED(ServiceWorkerGlobalScope);
 public:
-    static Ref<ServiceWorkerGlobalScope> create(const ServiceWorkerContextData&, const URL&, Ref<SecurityOrigin>&&, const String& identifier, const String& userAgent, bool isOnline, ServiceWorkerThread&, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, PAL::SessionID);
+    static Ref<ServiceWorkerGlobalScope> create(const ServiceWorkerContextData&, const URL&, Ref<SecurityOrigin>&&, const String& identifier, const String& userAgent, bool isOnline, ServiceWorkerThread&, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
     ~ServiceWorkerGlobalScope();
 
@@ -69,7 +69,7 @@ public:
     void setScriptResource(const URL&, ServiceWorkerContextData::ImportedScript&&);
 
 private:
-    ServiceWorkerGlobalScope(const ServiceWorkerContextData&, const URL&, Ref<SecurityOrigin>&&, const String& identifier, const String& userAgent, bool isOnline, ServiceWorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, PAL::SessionID);
+    ServiceWorkerGlobalScope(const ServiceWorkerContextData&, const URL&, Ref<SecurityOrigin>&&, const String& identifier, const String& userAgent, bool isOnline, ServiceWorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
     bool hasPendingEvents() const { return !m_extendedEvents.isEmpty(); }
 

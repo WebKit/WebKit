@@ -52,8 +52,8 @@ private:
     friend NeverDestroyed<WebServiceWorkerProvider>;
     WebServiceWorkerProvider();
 
-    WebCore::SWClientConnection* existingServiceWorkerConnectionForSession(PAL::SessionID) final;
-    WebCore::SWClientConnection& serviceWorkerConnectionForSession(PAL::SessionID) final;
+    WebCore::SWClientConnection* existingServiceWorkerConnection() final;
+    WebCore::SWClientConnection& serviceWorkerConnection() final;
 
     HashMap<WebCore::FetchIdentifier, Ref<ServiceWorkerClientFetch>> m_ongoingFetchTasks;
 }; // class WebServiceWorkerProvider

@@ -142,7 +142,7 @@ void WebSWContextManagerConnection::installServiceWorker(const ServiceWorkerCont
     pageConfiguration.loaderClientForMainFrame = frameLoaderClient.get();
     m_loaders.add(WTFMove(frameLoaderClient));
 
-    auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(pageConfiguration), data, WebProcess::singleton().sessionID(), WTFMove(effectiveUserAgent), WebProcess::singleton().cacheStorageProvider(), m_storageBlockingPolicy);
+    auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(pageConfiguration), data, WTFMove(effectiveUserAgent), WebProcess::singleton().cacheStorageProvider(), m_storageBlockingPolicy);
     SWContextManager::singleton().registerServiceWorkerThreadForInstall(WTFMove(serviceWorkerThreadProxy));
 
     LOG(ServiceWorker, "Context process PID: %i created worker thread\n", getCurrentProcessID());

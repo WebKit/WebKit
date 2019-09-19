@@ -38,7 +38,6 @@
 #include "ServiceWorkerClientIdentifier.h"
 #include "Settings.h"
 #include "WorkerGlobalScope.h"
-#include <pal/SessionID.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 
@@ -95,10 +94,10 @@ static HashSet<ServiceWorkerThreadProxy*>& allServiceWorkerThreadProxies()
     return set;
 }
 
-ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfiguration, const ServiceWorkerContextData& data, PAL::SessionID sessionID, String&& userAgent, CacheStorageProvider& cacheStorageProvider, SecurityOrigin::StorageBlockingPolicy storageBlockingPolicy)
+ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfiguration, const ServiceWorkerContextData& data, String&& userAgent, CacheStorageProvider& cacheStorageProvider, SecurityOrigin::StorageBlockingPolicy storageBlockingPolicy)
     : m_page(createPageForServiceWorker(WTFMove(pageConfiguration), data, storageBlockingPolicy))
     , m_document(*m_page->mainFrame().document())
-    , m_serviceWorkerThread(ServiceWorkerThread::create(data, sessionID, WTFMove(userAgent), *this, *this, idbConnectionProxy(m_document), m_document->socketProvider()))
+    , m_serviceWorkerThread(ServiceWorkerThread::create(data, WTFMove(userAgent), *this, *this, idbConnectionProxy(m_document), m_document->socketProvider()))
     , m_cacheStorageProvider(cacheStorageProvider)
     , m_inspectorProxy(*this)
 {
