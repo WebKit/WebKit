@@ -41,6 +41,8 @@ public:
 
     HTMLMediaElement& mediaElement() const { return downcast<HTMLMediaElement>(nodeForNonAnonymous()); }
 
+    bool shouldDisplayBrokenImageIcon() const final { return false; }
+
 protected:
     void layout() override;
 

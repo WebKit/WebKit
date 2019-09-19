@@ -390,6 +390,11 @@ bool RenderImage::isShowingAltText() const
     return isShowingMissingOrImageError() && !m_altText.isEmpty();
 }
 
+bool RenderImage::shouldDisplayBrokenImageIcon() const
+{
+    return imageResource().errorOccurred();
+}
+
 bool RenderImage::hasNonBitmapImage() const
 {
     if (!imageResource().cachedImage())
@@ -431,7 +436,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     float deviceScaleFactor = document().deviceScaleFactor();
     LayoutUnit missingImageBorderWidth(1 / deviceScaleFactor);
 
-    if (!imageResource().cachedImage() || imageResource().errorOccurred()) {
+    if (!imageResource().cachedImage() || shouldDisplayBrokenImageIcon()) {
         if (paintInfo.phase == PaintPhase::Selection)
             return;
 
@@ -449,17 +454,18 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
             bool errorPictureDrawn = false;
             LayoutSize imageOffset;
             // When calculating the usable dimensions, exclude the pixels of
-            // the ouline rect so the error image/alt text doesn't draw on it.
+            // the outline rect so the error image/alt text doesn't draw on it.
             LayoutSize usableSize = contentSize - LayoutSize(2 * missingImageBorderWidth, 2 * missingImageBorderWidth);
 
             RefPtr<Image> image = imageResource().image();
 
-            if (imageResource().errorOccurred() && !image->isNull() && usableSize.width() >= image->width() && usableSize.height() >= image->height()) {
+            if (shouldDisplayBrokenImageIcon() && !image->isNull() && usableSize.width() >= image->width() && usableSize.height() >= image->height()) {
                 // Call brokenImage() explicitly to ensure we get the broken image icon at the appropriate resolution.
                 std::pair<Image*, float> brokenImageAndImageScaleFactor = cachedImage()->brokenImage(deviceScaleFactor);
                 image = brokenImageAndImageScaleFactor.first;
                 FloatSize imageSize = image->size();
                 imageSize.scale(1 / brokenImageAndImageScaleFactor.second);
+
                 // Center the error image, accounting for border and padding.
                 LayoutUnit centerX { (usableSize.width() - imageSize.width()) / 2 };
                 if (centerX < 0)
@@ -827,8 +833,9 @@ void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, dou
             intrinsicSize.setHeight(box.availableLogicalHeight(IncludeMarginBorderPadding));
         }
     }
+
     // Don't compute an intrinsic ratio to preserve historical WebKit behavior if we're painting alt text and/or a broken image.
-    if (imageResource().errorOccurred()) {
+    if (shouldDisplayBrokenImageIcon()) {
         intrinsicRatio = 1;
         return;
     }

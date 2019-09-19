@@ -74,6 +74,8 @@ public:
     bool isShowingMissingOrImageError() const;
     bool isShowingAltText() const;
 
+    virtual bool shouldDisplayBrokenImageIcon() const;
+
     bool hasNonBitmapImage() const;
 
     bool isEditableImage() const;

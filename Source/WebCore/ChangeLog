@@ -1,3 +1,40 @@
+2019-09-19  Peng Liu  <peng.liu6@apple.com>
+
+        HTMLVideoElement with a broken poster image will take square dimension
+        https://bugs.webkit.org/show_bug.cgi?id=174122
+        <rdar://problem/33121806>
+
+        Reviewed by Daniel Bates.
+
+        For a video element, if only the width attribute is given and the height attribute is missing,
+        an invalid poster image will make its aspect ratio to be 1, which is the historical WebKit behavior
+        if we're painting alt text and/or a broken image. This fix prevents that behavior to impact video elements.
+
+        We add a virtual function shouldDisplayBrokenImageIcon() to RenderImage and it will return true
+        only when the image source is given but cannot be downloaded. RenderMedia overrides this virtual function
+        and always return false because it never shows the broken image icon. RenderVideo inherits
+        that behavior from RenderMedia.
+
+        Then, in RenderImage::computeIntrinsicRatioInformation(), we only set the aspect ratio to 1
+        when we need to show the broken image icon. It is the historical WebKit behavior that we want to keep
+        for image element, but we also want to avoid its impact (this bug) on video elements.
+
+        We also replace the imageResource().errorOccurred() with shouldDisplayBrokenImageIcon() in
+        TreeBuilder::createLayoutBox() for the same reason.
+
+        The logic to display the broken image icon in RenderImage::renderReplaced() is also cleaned up.
+
+        Test: media/video-poster-not-found.html
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createLayoutBox):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::shouldDisplayBrokenImageIcon const):
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::computeIntrinsicRatioInformation const):
+        * rendering/RenderImage.h:
+        * rendering/RenderMedia.h:
+
 2019-09-19  Antti Koivisto  <antti@apple.com>
 
         Turn static DocumentRuleSets::s_isInvalidatingStyleWithRuleSets assertion bit into a member

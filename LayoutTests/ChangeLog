@@ -1,3 +1,19 @@
+2019-09-19  Peng Liu  <peng.liu6@apple.com>
+
+        HTMLVideoElement with a broken poster image will take square dimension
+        https://bugs.webkit.org/show_bug.cgi?id=174122
+        <rdar://problem/33121806>
+
+        Reviewed by Daniel Bates.
+
+        When only the width (no height) attribute of a video element is given
+        and the the poster image is missing (cannot be downloaded),
+        the aspect ratio of the video element should not be 1, which is the default behavior
+        of WebKit to paint a broken image. Instead, it should be the aspect ratio of the video content.
+
+        * media/video-poster-not-found-expected.txt: Added.
+        * media/video-poster-not-found.html: Added.
+
 2019-09-19  Miguel Gomez  <magomez@igalia.com>
 
         [WPE][GTK] Gardening after r250087

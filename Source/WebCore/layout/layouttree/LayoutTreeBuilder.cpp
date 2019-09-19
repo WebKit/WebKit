@@ -142,7 +142,7 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const RenderElement& parentRen
             childLayoutBox->replaced()->setIntrinsicSize(downcast<RenderReplaced>(renderer).intrinsicSize());
         if (is<RenderImage>(renderer)) {
             auto& imageRenderer = downcast<RenderImage>(renderer);
-            if (imageRenderer.imageResource().errorOccurred())
+            if (imageRenderer.shouldDisplayBrokenImageIcon())
                 childLayoutBox->replaced()->setIntrinsicRatio(1);
         }
     } else {
