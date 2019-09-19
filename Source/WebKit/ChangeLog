@@ -1,5 +1,31 @@
 2019-09-18  Chris Dumez  <cdumez@apple.com>
 
+        WebStorageNamespaceProvider / StorageNamespaceImpl no longer need SessionIDs
+        https://bugs.webkit.org/show_bug.cgi?id=201922
+
+        Reviewed by Geoffrey Garen.
+
+        WebStorageNamespaceProvider / StorageNamespaceImpl no longer need SessionIDs, now that
+        we have a single session per WebProcess.
+
+        * WebProcess/WebStorage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::connect):
+        * WebProcess/WebStorage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::createSessionStorageNamespace):
+        (WebKit::StorageNamespaceImpl::createLocalStorageNamespace):
+        (WebKit::StorageNamespaceImpl::createTransientLocalStorageNamespace):
+        (WebKit::StorageNamespaceImpl::StorageNamespaceImpl):
+        (WebKit::StorageNamespaceImpl::sessionID const):
+        (WebKit::StorageNamespaceImpl::copy):
+        * WebProcess/WebStorage/StorageNamespaceImpl.h:
+        (): Deleted.
+        * WebProcess/WebStorage/WebStorageNamespaceProvider.cpp:
+        (WebKit::WebStorageNamespaceProvider::createSessionStorageNamespace):
+        (WebKit::WebStorageNamespaceProvider::createLocalStorageNamespace):
+        (WebKit::WebStorageNamespaceProvider::createTransientLocalStorageNamespace):
+
+2019-09-18  Chris Dumez  <cdumez@apple.com>
+
         Decrease use of sessionID in WebLoaderStrategy
         https://bugs.webkit.org/show_bug.cgi?id=201961
 

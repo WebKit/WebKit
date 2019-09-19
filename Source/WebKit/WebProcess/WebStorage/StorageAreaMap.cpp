@@ -353,12 +353,12 @@ void StorageAreaMap::connect()
     case StorageType::Local:
     case StorageType::TransientLocal:
         if (SecurityOrigin* topLevelOrigin = m_storageNamespace->topLevelOrigin())
-            WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::StorageManagerSet::ConnectToTransientLocalStorageArea(m_storageNamespace->sessionID(), m_storageNamespace->storageNamespaceID(), topLevelOrigin->data(), m_securityOrigin->data()), Messages::StorageManagerSet::ConnectToTransientLocalStorageArea::Reply(m_storageMapID), 0);
+            WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::StorageManagerSet::ConnectToTransientLocalStorageArea(WebProcess::singleton().sessionID(), m_storageNamespace->storageNamespaceID(), topLevelOrigin->data(), m_securityOrigin->data()), Messages::StorageManagerSet::ConnectToTransientLocalStorageArea::Reply(m_storageMapID), 0);
         else
-            WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::StorageManagerSet::ConnectToLocalStorageArea(m_storageNamespace->sessionID(), m_storageNamespace->storageNamespaceID(), m_securityOrigin->data()), Messages::StorageManagerSet::ConnectToLocalStorageArea::Reply(m_storageMapID), 0);
+            WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::StorageManagerSet::ConnectToLocalStorageArea(WebProcess::singleton().sessionID(), m_storageNamespace->storageNamespaceID(), m_securityOrigin->data()), Messages::StorageManagerSet::ConnectToLocalStorageArea::Reply(m_storageMapID), 0);
         break;
     case StorageType::Session:
-        WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::StorageManagerSet::ConnectToSessionStorageArea(m_storageNamespace->sessionID(), m_storageNamespace->storageNamespaceID(), m_securityOrigin->data()), Messages::StorageManagerSet::ConnectToSessionStorageArea::Reply(m_storageMapID), 0);
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::StorageManagerSet::ConnectToSessionStorageArea(WebProcess::singleton().sessionID(), m_storageNamespace->storageNamespaceID(), m_securityOrigin->data()), Messages::StorageManagerSet::ConnectToSessionStorageArea::Reply(m_storageMapID), 0);
     }
 
     if (m_storageMapID)
