@@ -316,7 +316,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 
     CLoopRegister t0, t1, t2, t3, t5, sp, cfr, lr, pc;
 #if USE(JSVALUE64)
-    CLoopRegister pcBase, tagTypeNumber, tagMask;
+    CLoopRegister pcBase, numberTag, notCellMask;
 #endif
     CLoopRegister metadataTable;
     CLoopDoubleRegister d0, d1;
@@ -356,8 +356,8 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 #if USE(JSVALUE64)
     // For the ASM llint, JITStubs takes care of this initialization. We do
     // it explicitly here for the C loop:
-    tagTypeNumber = 0xFFFF000000000000;
-    tagMask = 0xFFFF000000000002;
+    numberTag = JSValue::NumberTag;
+    notCellMask = JSValue::NotCellMask;
 #endif // USE(JSVALUE64)
 
     // Interpreter variables for value passing between opcodes and/or helpers:

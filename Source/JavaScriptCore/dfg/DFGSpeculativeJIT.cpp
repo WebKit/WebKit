@@ -670,7 +670,7 @@ void SpeculativeJIT::silentFill(const SilentRegisterSavePlan& plan)
         break;
     case Load32PayloadBoxInt:
         m_jit.load32(JITCompiler::payloadFor(plan.node()->virtualRegister()), plan.gpr());
-        m_jit.or64(GPRInfo::tagTypeNumberRegister, plan.gpr());
+        m_jit.or64(GPRInfo::numberTagRegister, plan.gpr());
         break;
     case Load32PayloadConvertToInt52:
         m_jit.load32(JITCompiler::payloadFor(plan.node()->virtualRegister()), plan.gpr());
@@ -1931,18 +1931,18 @@ void SpeculativeJIT::checkArgumentTypes()
 #if USE(JSVALUE64)
         switch (format) {
         case FlushedInt32: {
-            speculationCheck(BadType, valueSource, node, m_jit.branch64(MacroAssembler::Below, JITCompiler::addressFor(virtualRegister), GPRInfo::tagTypeNumberRegister));
+            speculationCheck(BadType, valueSource, node, m_jit.branch64(MacroAssembler::Below, JITCompiler::addressFor(virtualRegister), GPRInfo::numberTagRegister));
             break;
         }
         case FlushedBoolean: {
             GPRTemporary temp(this);
             m_jit.load64(JITCompiler::addressFor(virtualRegister), temp.gpr());
-            m_jit.xor64(TrustedImm32(static_cast<int32_t>(ValueFalse)), temp.gpr());
+            m_jit.xor64(TrustedImm32(JSValue::ValueFalse), temp.gpr());
             speculationCheck(BadType, valueSource, node, m_jit.branchTest64(MacroAssembler::NonZero, temp.gpr(), TrustedImm32(static_cast<int32_t>(~1))));
             break;
         }
         case FlushedCell: {
-            speculationCheck(BadType, valueSource, node, m_jit.branchTest64(MacroAssembler::NonZero, JITCompiler::addressFor(virtualRegister), GPRInfo::tagMaskRegister));
+            speculationCheck(BadType, valueSource, node, m_jit.branchTest64(MacroAssembler::NonZero, JITCompiler::addressFor(virtualRegister), GPRInfo::notCellMaskRegister));
             break;
         }
         default:
@@ -2409,7 +2409,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
                     JSValueRegs(gpr), node->child1(), ~SpecCellCheck, m_jit.branchIfCell(JSValueRegs(gpr)));
                 
                 // It's not a cell: so true turns into 1 and all else turns into 0.
-                m_jit.compare64(JITCompiler::Equal, gpr, TrustedImm32(ValueTrue), resultGpr);
+                m_jit.compare64(JITCompiler::Equal, gpr, TrustedImm32(JSValue::ValueTrue), resultGpr);
                 converted.append(m_jit.jump());
                 
                 isNumber.link(&m_jit);
@@ -2637,9 +2637,9 @@ void SpeculativeJIT::compileDoubleRep(Node* node)
             done.append(isNull);
 
             DFG_TYPE_CHECK(JSValueRegs(op1GPR), node->child1(), ~SpecCellCheck,
-                m_jit.branchTest64(JITCompiler::Zero, op1GPR, TrustedImm32(static_cast<int32_t>(TagBitBool))));
+                m_jit.branchTest64(JITCompiler::Zero, op1GPR, TrustedImm32(JSValue::BoolTag)));
 
-            JITCompiler::Jump isFalse = m_jit.branch64(JITCompiler::Equal, op1GPR, TrustedImm64(ValueFalse));
+            JITCompiler::Jump isFalse = m_jit.branch64(JITCompiler::Equal, op1GPR, TrustedImm64(JSValue::ValueFalse));
             static constexpr double one = 1;
             m_jit.loadDouble(TrustedImmPtr(&one), resultFPR);
             done.append(m_jit.jump());
@@ -3072,7 +3072,7 @@ bool SpeculativeJIT::getIntTypedArrayStoreOperand(
                     fpr, gpr, MacroAssembler::BranchIfTruncateSuccessful));
 
 #if USE(JSVALUE64)
-                m_jit.or64(GPRInfo::tagTypeNumberRegister, property);
+                m_jit.or64(GPRInfo::numberTagRegister, property);
                 boxDouble(fpr, gpr);
 #else
                 UNUSED_PARAM(property);
@@ -10485,7 +10485,7 @@ void SpeculativeJIT::speculateMisc(Edge edge, JSValueRegs regs)
 #if USE(JSVALUE64)
     DFG_TYPE_CHECK(
         regs, edge, SpecMisc,
-        m_jit.branch64(MacroAssembler::Above, regs.gpr(), MacroAssembler::TrustedImm64(TagBitTypeOther | TagBitBool | TagBitUndefined)));
+        m_jit.branch64(MacroAssembler::Above, regs.gpr(), MacroAssembler::TrustedImm64(JSValue::MiscTag)));
 #else
     IGNORE_WARNINGS_BEGIN("enum-compare")
     static_assert(JSValue::Int32Tag >= JSValue::UndefinedTag, "Int32Tag is included in >= JSValue::UndefinedTag range.");

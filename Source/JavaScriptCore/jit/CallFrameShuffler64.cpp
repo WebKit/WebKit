@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -88,11 +88,11 @@ void CallFrameShuffler::emitBox(CachedRecovery& cachedRecovery)
                 cachedRecovery.recovery().gpr(),
                 cachedRecovery.recovery().gpr());
             m_lockedRegisters.set(cachedRecovery.recovery().gpr());
-            if (tryAcquireTagTypeNumber())
-                m_jit.or64(m_tagTypeNumber, cachedRecovery.recovery().gpr());
+            if (tryAcquireNumberTagRegister())
+                m_jit.or64(m_numberTagRegister, cachedRecovery.recovery().gpr());
             else {
                 // We have to do this the hard way
-                m_jit.or64(MacroAssembler::TrustedImm64(TagTypeNumber),
+                m_jit.or64(MacroAssembler::TrustedImm64(JSValue::NumberTag),
                     cachedRecovery.recovery().gpr());
             }
             m_lockedRegisters.clear(cachedRecovery.recovery().gpr());
@@ -125,7 +125,7 @@ void CallFrameShuffler::emitBox(CachedRecovery& cachedRecovery)
         case DataFormatBoolean:
             if (verbose)
                 dataLog("   * Boxing ", cachedRecovery.recovery());
-            m_jit.add32(MacroAssembler::TrustedImm32(ValueFalse),
+            m_jit.add32(MacroAssembler::TrustedImm32(JSValue::ValueFalse),
                 cachedRecovery.recovery().gpr());
             cachedRecovery.setRecovery(
                 ValueRecovery::inGPR(cachedRecovery.recovery().gpr(), DataFormatJS));
@@ -148,10 +148,10 @@ void CallFrameShuffler::emitBox(CachedRecovery& cachedRecovery)
             m_jit.purifyNaN(cachedRecovery.recovery().fpr());
             m_jit.moveDoubleTo64(cachedRecovery.recovery().fpr(), resultGPR);
             m_lockedRegisters.set(resultGPR);
-            if (tryAcquireTagTypeNumber())
-                m_jit.sub64(m_tagTypeNumber, resultGPR);
+            if (tryAcquireNumberTagRegister())
+                m_jit.sub64(m_numberTagRegister, resultGPR);
             else
-                m_jit.sub64(MacroAssembler::TrustedImm64(TagTypeNumber), resultGPR);
+                m_jit.sub64(MacroAssembler::TrustedImm64(JSValue::NumberTag), resultGPR);
             m_lockedRegisters.clear(resultGPR);
             updateRecovery(cachedRecovery, ValueRecovery::inGPR(resultGPR, DataFormatJS));
             if (verbose)
@@ -349,18 +349,18 @@ void CallFrameShuffler::emitDisplace(CachedRecovery& cachedRecovery)
     ASSERT(m_registers[wantedReg] == &cachedRecovery);
 }
     
-bool CallFrameShuffler::tryAcquireTagTypeNumber()
+bool CallFrameShuffler::tryAcquireNumberTagRegister()
 {
-    if (m_tagTypeNumber != InvalidGPRReg)
+    if (m_numberTagRegister != InvalidGPRReg)
         return true;
 
-    m_tagTypeNumber = getFreeGPR();
+    m_numberTagRegister = getFreeGPR();
 
-    if (m_tagTypeNumber == InvalidGPRReg)
+    if (m_numberTagRegister == InvalidGPRReg)
         return false;
 
-    m_lockedRegisters.set(m_tagTypeNumber);
-    m_jit.move(MacroAssembler::TrustedImm64(TagTypeNumber), m_tagTypeNumber);
+    m_lockedRegisters.set(m_numberTagRegister);
+    m_jit.move(MacroAssembler::TrustedImm64(JSValue::NumberTag), m_numberTagRegister);
     return true;
 }
 

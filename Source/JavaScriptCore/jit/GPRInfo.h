@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -408,8 +408,8 @@ public:
 
     // These registers match the baseline JIT.
     static constexpr GPRReg callFrameRegister = X86Registers::ebp;
-    static constexpr GPRReg tagTypeNumberRegister = X86Registers::r14;
-    static constexpr GPRReg tagMaskRegister = X86Registers::r15;
+    static constexpr GPRReg numberTagRegister = X86Registers::r14;
+    static constexpr GPRReg notCellMaskRegister = X86Registers::r15;
 
     // Temporary registers.
     static constexpr GPRReg regT0 = X86Registers::eax;
@@ -515,8 +515,8 @@ public:
     {
         static const std::array<GPRReg, 3> reservedRegisters { {
             MacroAssembler::s_scratchRegister,
-            tagTypeNumberRegister,
-            tagMaskRegister,
+            numberTagRegister,
+            notCellMaskRegister,
         } };
         return reservedRegisters;
     }
@@ -608,8 +608,8 @@ public:
 
     // These registers match the baseline JIT.
     static constexpr GPRReg callFrameRegister = ARM64Registers::fp;
-    static constexpr GPRReg tagTypeNumberRegister = ARM64Registers::x27;
-    static constexpr GPRReg tagMaskRegister = ARM64Registers::x28;
+    static constexpr GPRReg numberTagRegister = ARM64Registers::x27;
+    static constexpr GPRReg notCellMaskRegister = ARM64Registers::x28;
     static constexpr GPRReg dataTempRegister = MacroAssembler::dataTempRegister;
     static constexpr GPRReg memoryTempRegister = MacroAssembler::memoryTempRegister;
     // Temporary registers.
@@ -637,8 +637,8 @@ public:
     static constexpr GPRReg regCS5 = ARM64Registers::x24; // Used by FTL only
     static constexpr GPRReg regCS6 = ARM64Registers::x25; // Used by FTL only
     static constexpr GPRReg regCS7 = ARM64Registers::x26;
-    static constexpr GPRReg regCS8 = ARM64Registers::x27; // tagTypeNumber
-    static constexpr GPRReg regCS9 = ARM64Registers::x28; // tagMask
+    static constexpr GPRReg regCS8 = ARM64Registers::x27; // numberTag
+    static constexpr GPRReg regCS9 = ARM64Registers::x28; // notCellMask
     // These constants provide the names for the general purpose argument & return value registers.
     static constexpr GPRReg argumentGPR0 = ARM64Registers::x0; // regT0
     static constexpr GPRReg argumentGPR1 = ARM64Registers::x1; // regT1
@@ -703,8 +703,8 @@ public:
         static const std::array<GPRReg, 4> reservedRegisters { {
             dataTempRegister,
             memoryTempRegister,
-            tagTypeNumberRegister,
-            tagMaskRegister,
+            numberTagRegister,
+            notCellMaskRegister,
         } };
         return reservedRegisters;
     }

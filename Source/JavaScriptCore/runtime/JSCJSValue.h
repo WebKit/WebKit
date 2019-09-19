@@ -410,9 +410,9 @@ public:
      *     Null:      0x02
      *
      * These values have the following properties:
-     * - Bit 1 (TagBitTypeOther) is set for all four values, allowing real pointers to be
+     * - Bit 1 (OtherTag) is set for all four values, allowing real pointers to be
      *   quickly distinguished from all immediate values, including these invalid pointers.
-     * - With bit 3 is masked out (TagBitUndefined) Undefined and Null share the
+     * - With bit 3 is masked out (UndefinedTag) Undefined and Null share the
      *   same value, allowing null & undefined to be quickly detected.
      *
      * No valid JSValue will have the bit pattern 0x0, this is used to represent array
@@ -423,37 +423,40 @@ public:
 
     // This value is 2^48, used to encode doubles such that the encoded value will begin
     // with a 16-bit pattern within the range 0x0001..0xFFFE.
-    #define DoubleEncodeOffset 0x1000000000000ll
+    static constexpr size_t DoubleEncodeOffsetBit = 48;
+    static constexpr int64_t DoubleEncodeOffset = 1ll << DoubleEncodeOffsetBit;
     // If all bits in the mask are set, this indicates an integer number,
     // if any but not all are set this value is a double precision number.
-    #define TagTypeNumber 0xffff000000000000ll
+    static constexpr int64_t NumberTag = 0xffff000000000000ll;
 
     // All non-numeric (bool, null, undefined) immediates have bit 2 set.
-    #define TagBitTypeOther 0x2ll
-    #define TagBitBool      0x4ll
-    #define TagBitUndefined 0x8ll
+    static constexpr int32_t OtherTag       = 0x2;
+    static constexpr int32_t BoolTag        = 0x4;
+    static constexpr int32_t UndefinedTag   = 0x8;
     // Combined integer value for non-numeric immediates.
-    #define ValueFalse     (TagBitTypeOther | TagBitBool | false)
-    #define ValueTrue      (TagBitTypeOther | TagBitBool | true)
-    #define ValueUndefined (TagBitTypeOther | TagBitUndefined)
-    #define ValueNull      (TagBitTypeOther)
+    static constexpr int32_t ValueFalse     = OtherTag | BoolTag | false;
+    static constexpr int32_t ValueTrue      = OtherTag | BoolTag | true;
+    static constexpr int32_t ValueUndefined = OtherTag | UndefinedTag;
+    static constexpr int32_t ValueNull      = OtherTag;
 
-    // TagMask is used to check for all types of immediate values (either number or 'other').
-    #define TagMask (TagTypeNumber | TagBitTypeOther)
+    static constexpr int64_t MiscTag = OtherTag | BoolTag | UndefinedTag;
 
+    // NotCellMask is used to check for all types of immediate values (either number or 'other').
+    static constexpr int64_t NotCellMask = NumberTag | OtherTag;
+    
     // These special values are never visible to JavaScript code; Empty is used to represent
     // Array holes, and for uninitialized JSValues. Deleted is used in hash table code.
     // These values would map to cell types in the JSValue encoding, but not valid GC cell
     // pointer should have either of these values (Empty is null, deleted is at an invalid
     // alignment for a GC cell, and in the zero page).
-    #define ValueEmpty   0x0ll
-    #define ValueDeleted 0x4ll
+    static constexpr int32_t ValueEmpty   = 0x0;
+    static constexpr int32_t ValueDeleted = 0x4;
 
-    #define TagBitsWasm (TagBitTypeOther | 0x1)
-    #define TagWasmMask (TagTypeNumber | 0x7)
+    static constexpr int64_t WasmTag = OtherTag | 0x1;
+    static constexpr int64_t WasmMask = NumberTag | 0x7;
     // We tag Wasm non-JSCell pointers with a 3 at the bottom. We can test if a 64-bit JSValue pattern
     // is a Wasm callee by masking the upper 16 bits and the lower 3 bits, and seeing if
-    // the resulting value is 3. The full test is: x & TagWasmMask == TagBitsWasm
+    // the resulting value is 3. The full test is: x & WasmMask == WasmTag
     // This works because the lower 3 bits of the non-number immediate values are as follows:
     // undefined: 0b010
     // null:      0b010
@@ -465,9 +468,9 @@ public:
     // their lower 3 bits. Note, this bit pattern also allows the normal JSValue isCell(), etc,
     // predicates to work on a Wasm::Callee because the various tests will fail if you
     // bit casted a boxed Wasm::Callee* to a JSValue. isCell() would fail since it sees
-    // TagBitTypeOther. The other tests also trivially fail, since it won't be a number,
+    // OtherTag. The other tests also trivially fail, since it won't be a number,
     // and it won't be equal to null, undefined, true, or false. The isBoolean() predicate
-    // will fail because we won't have TagBitBool set.
+    // will fail because we won't have BoolTag set.
 #endif
 
 private:

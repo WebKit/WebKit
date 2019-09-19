@@ -353,7 +353,7 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
                         jit.convertDoubleToFloat(scratchFPR, scratchFPR);
                         jit.storeFloat(scratchFPR, calleeFrame.withOffset(wasmOffset));
                     } else {
-                        jit.add64(GPRInfo::tagTypeNumberRegister, scratchGPR, scratchGPR);
+                        jit.add64(GPRInfo::numberTagRegister, scratchGPR, scratchGPR);
                         jit.store64(scratchGPR, calleeFrame.withOffset(wasmOffset));
                     }
                     auto done = jit.jump();

@@ -291,7 +291,7 @@ void JIT::emit_compareAndJumpSlow(const Instruction* instruction, DoubleConditio
 
         if (supportsFloatingPoint()) {
             Jump fail1 = branchIfNotNumber(regT0);
-            add64(tagTypeNumberRegister, regT0);
+            add64(numberTagRegister, regT0);
             move64ToDouble(regT0, fpRegT0);
 
             int32_t op2imm = getConstantOperand(op2).asInt32();
@@ -317,7 +317,7 @@ void JIT::emit_compareAndJumpSlow(const Instruction* instruction, DoubleConditio
 
         if (supportsFloatingPoint()) {
             Jump fail1 = branchIfNotNumber(regT1);
-            add64(tagTypeNumberRegister, regT1);
+            add64(numberTagRegister, regT1);
             move64ToDouble(regT1, fpRegT1);
 
             int32_t op1imm = getConstantOperand(op1).asInt32();
@@ -344,8 +344,8 @@ void JIT::emit_compareAndJumpSlow(const Instruction* instruction, DoubleConditio
         Jump fail1 = branchIfNotNumber(regT0);
         Jump fail2 = branchIfNotNumber(regT1);
         Jump fail3 = branchIfInt32(regT1);
-        add64(tagTypeNumberRegister, regT0);
-        add64(tagTypeNumberRegister, regT1);
+        add64(numberTagRegister, regT0);
+        add64(numberTagRegister, regT1);
         move64ToDouble(regT0, fpRegT0);
         move64ToDouble(regT1, fpRegT1);
 

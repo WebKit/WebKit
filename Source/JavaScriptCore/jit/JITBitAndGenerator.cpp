@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,7 +56,7 @@ void JITBitAndGenerator::generateFastPath(CCallHelpers& jit)
 #if USE(JSVALUE64)
             jit.and64(CCallHelpers::Imm32(constOpr.asConstInt32()), m_result.payloadGPR());
             if (constOpr.asConstInt32() >= 0)
-                jit.or64(GPRInfo::tagTypeNumberRegister, m_result.payloadGPR());
+                jit.or64(GPRInfo::numberTagRegister, m_result.payloadGPR());
 #else
             jit.and32(CCallHelpers::Imm32(constOpr.asConstInt32()), m_result.payloadGPR());
 #endif

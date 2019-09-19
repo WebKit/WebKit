@@ -471,7 +471,7 @@ void OSRExit::executeOSRExit(Context& context)
                 cpu.gpr(recovery->dest()) = cpu.gpr<uint32_t>(recovery->dest()) - cpu.gpr<uint32_t>(recovery->src());
 #if USE(JSVALUE64)
                 ASSERT(!(cpu.gpr(recovery->dest()) >> 32));
-                cpu.gpr(recovery->dest()) |= TagTypeNumber;
+                cpu.gpr(recovery->dest()) |= JSValue::NumberTag;
 #endif
                 break;
 
@@ -479,7 +479,7 @@ void OSRExit::executeOSRExit(Context& context)
                 cpu.gpr(recovery->dest()) = static_cast<uint32_t>(cpu.gpr<int32_t>(recovery->dest()) >> 1) ^ 0x80000000U;
 #if USE(JSVALUE64)
                 ASSERT(!(cpu.gpr(recovery->dest()) >> 32));
-                cpu.gpr(recovery->dest()) |= TagTypeNumber;
+                cpu.gpr(recovery->dest()) |= JSValue::NumberTag;
 #endif
                 break;
 
@@ -487,13 +487,13 @@ void OSRExit::executeOSRExit(Context& context)
                 cpu.gpr(recovery->dest()) = (cpu.gpr<uint32_t>(recovery->dest()) - recovery->immediate());
 #if USE(JSVALUE64)
                 ASSERT(!(cpu.gpr(recovery->dest()) >> 32));
-                cpu.gpr(recovery->dest()) |= TagTypeNumber;
+                cpu.gpr(recovery->dest()) |= JSValue::NumberTag;
 #endif
                 break;
 
             case BooleanSpeculationCheck:
 #if USE(JSVALUE64)
-                cpu.gpr(recovery->dest()) = cpu.gpr(recovery->dest()) ^ ValueFalse;
+                cpu.gpr(recovery->dest()) = cpu.gpr(recovery->dest()) ^ JSValue::ValueFalse;
 #endif
                 break;
 
@@ -546,8 +546,8 @@ void OSRExit::executeOSRExit(Context& context)
     ASSERT(!(context.fp<uintptr_t>() & 0x7));
 
 #if USE(JSVALUE64)
-    ASSERT(cpu.gpr(GPRInfo::tagTypeNumberRegister) == TagTypeNumber);
-    ASSERT(cpu.gpr(GPRInfo::tagMaskRegister) == TagMask);
+    ASSERT(cpu.gpr<int64_t>(GPRInfo::numberTagRegister) == JSValue::NumberTag);
+    ASSERT(cpu.gpr<int64_t>(GPRInfo::notCellMaskRegister) == JSValue::NotCellMask);
 #endif
 
     // Do all data format conversions and store the results into the stack.
@@ -686,8 +686,8 @@ void OSRExit::executeOSRExit(Context& context)
     saveCalleeSavesFor(context, baselineCodeBlock);
 
 #if USE(JSVALUE64)
-    cpu.gpr(GPRInfo::tagTypeNumberRegister) = static_cast<uintptr_t>(TagTypeNumber);
-    cpu.gpr(GPRInfo::tagMaskRegister) = static_cast<uintptr_t>(TagTypeNumber | TagBitTypeOther);
+    cpu.gpr(GPRInfo::numberTagRegister) = JSValue::NumberTag;
+    cpu.gpr(GPRInfo::notCellMaskRegister) = JSValue::NotCellMask;
 #endif
 
     if (exit.isExceptionHandler())
@@ -1121,7 +1121,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         case SpeculativeAdd:
             jit.sub32(recovery->src(), recovery->dest());
 #if USE(JSVALUE64)
-            jit.or64(GPRInfo::tagTypeNumberRegister, recovery->dest());
+            jit.or64(GPRInfo::numberTagRegister, recovery->dest());
 #endif
             break;
 
@@ -1130,20 +1130,20 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
             jit.rshift32(AssemblyHelpers::TrustedImm32(1), recovery->dest());
             jit.xor32(AssemblyHelpers::TrustedImm32(0x80000000), recovery->dest());
 #if USE(JSVALUE64)
-            jit.or64(GPRInfo::tagTypeNumberRegister, recovery->dest());
+            jit.or64(GPRInfo::numberTagRegister, recovery->dest());
 #endif
             break;
 
         case SpeculativeAddImmediate:
             jit.sub32(AssemblyHelpers::Imm32(recovery->immediate()), recovery->dest());
 #if USE(JSVALUE64)
-            jit.or64(GPRInfo::tagTypeNumberRegister, recovery->dest());
+            jit.or64(GPRInfo::numberTagRegister, recovery->dest());
 #endif
             break;
 
         case BooleanSpeculationCheck:
 #if USE(JSVALUE64)
-            jit.xor64(AssemblyHelpers::TrustedImm32(static_cast<int32_t>(ValueFalse)), recovery->dest());
+            jit.xor64(AssemblyHelpers::TrustedImm32(JSValue::ValueFalse), recovery->dest());
 #endif
             break;
 
@@ -1248,11 +1248,11 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         if (MethodOfGettingAValueProfile profile = exit.m_valueProfile) {
 #if USE(JSVALUE64)
             if (exit.m_jsValueSource.isAddress()) {
-                // We can't be sure that we have a spare register. So use the tagTypeNumberRegister,
+                // We can't be sure that we have a spare register. So use the numberTagRegister,
                 // since we know how to restore it.
-                jit.load64(AssemblyHelpers::Address(exit.m_jsValueSource.asAddress()), GPRInfo::tagTypeNumberRegister);
-                profile.emitReportValue(jit, JSValueRegs(GPRInfo::tagTypeNumberRegister));
-                jit.move(AssemblyHelpers::TrustedImm64(TagTypeNumber), GPRInfo::tagTypeNumberRegister);
+                jit.load64(AssemblyHelpers::Address(exit.m_jsValueSource.asAddress()), GPRInfo::numberTagRegister);
+                profile.emitReportValue(jit, JSValueRegs(GPRInfo::numberTagRegister));
+                jit.move(AssemblyHelpers::TrustedImm64(JSValue::NumberTag), GPRInfo::numberTagRegister);
             } else
                 profile.emitReportValue(jit, JSValueRegs(exit.m_jsValueSource.gpr()));
 #else // not USE(JSVALUE64)
@@ -1519,7 +1519,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
 #if USE(JSVALUE64)
             jit.load64(scratch + index, GPRInfo::regT0);
             jit.zeroExtend32ToPtr(GPRInfo::regT0, GPRInfo::regT0);
-            jit.or64(GPRInfo::tagTypeNumberRegister, GPRInfo::regT0);
+            jit.or64(GPRInfo::numberTagRegister, GPRInfo::regT0);
             jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
 #else
             jit.load32(

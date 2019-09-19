@@ -467,7 +467,7 @@ inline JSValue::JSValue(JSFalseTag)
 inline bool JSValue::isUndefinedOrNull() const
 {
     // Undefined and null share the same value, bar the 'undefined' bit in the extended tag.
-    return (u.asInt64 & ~TagBitUndefined) == ValueNull;
+    return (u.asInt64 & ~UndefinedTag) == ValueNull;
 }
 
 inline bool JSValue::isBoolean() const
@@ -477,12 +477,12 @@ inline bool JSValue::isBoolean() const
 
 inline bool JSValue::isCell() const
 {
-    return !(u.asInt64 & TagMask);
+    return !(u.asInt64 & NotCellMask);
 }
 
 inline bool JSValue::isInt32() const
 {
-    return (u.asInt64 & TagTypeNumber) == TagTypeNumber;
+    return (u.asInt64 & NumberTag) == NumberTag;
 }
 
 inline int64_t reinterpretDoubleToInt64(double value)
@@ -497,23 +497,23 @@ inline double reinterpretInt64ToDouble(int64_t value)
 ALWAYS_INLINE JSValue::JSValue(EncodeAsDoubleTag, double d)
 {
     ASSERT(!isImpureNaN(d));
-    u.asInt64 = reinterpretDoubleToInt64(d) + DoubleEncodeOffset;
+    u.asInt64 = reinterpretDoubleToInt64(d) + JSValue::DoubleEncodeOffset;
 }
 
 inline JSValue::JSValue(int i)
 {
-    u.asInt64 = TagTypeNumber | static_cast<uint32_t>(i);
+    u.asInt64 = JSValue::NumberTag | static_cast<uint32_t>(i);
 }
 
 inline double JSValue::asDouble() const
 {
     ASSERT(isDouble());
-    return reinterpretInt64ToDouble(u.asInt64 - DoubleEncodeOffset);
+    return reinterpretInt64ToDouble(u.asInt64 - JSValue::DoubleEncodeOffset);
 }
 
 inline bool JSValue::isNumber() const
 {
-    return u.asInt64 & TagTypeNumber;
+    return u.asInt64 & JSValue::NumberTag;
 }
 
 ALWAYS_INLINE JSCell* JSValue::asCell() const

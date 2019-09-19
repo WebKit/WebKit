@@ -54,8 +54,8 @@ require "config"
 # rbx =>             csr0 (callee-save, PB, unused in baseline)
 # r12 =>             csr1 (callee-save)
 # r13 =>             csr2 (callee-save)
-# r14 =>             csr3 (callee-save, tagTypeNumber)
-# r15 =>             csr4 (callee-save, tagMask)
+# r14 =>             csr3 (callee-save, numberTag)
+# r15 =>             csr4 (callee-save, notCellMask)
 # rsp => sp
 # rbp => cfr
 # r11 =>                  (scratch)
@@ -75,8 +75,8 @@ require "config"
 # rdi =>             csr2 (callee-save)
 # r12 =>             csr3 (callee-save)
 # r13 =>             csr4 (callee-save)
-# r14 =>             csr5 (callee-save, tagTypeNumber)
-# r15 =>             csr6 (callee-save, tagMask)
+# r14 =>             csr5 (callee-save, numberTag)
+# r15 =>             csr6 (callee-save, notCellMask)
 # rsp => sp
 # rbp => cfr
 # r11 =>                  (scratch)

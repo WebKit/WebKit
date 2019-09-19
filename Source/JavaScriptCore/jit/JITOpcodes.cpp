@@ -146,7 +146,7 @@ void JIT::emit_op_overrides_has_instance(const Instruction* currentInstruction)
     Jump done = jump();
 
     customhasInstanceValue.link(this);
-    move(TrustedImm32(ValueTrue), regT0);
+    move(TrustedImm32(JSValue::ValueTrue), regT0);
 
     done.link(this);
     emitPutVirtualRegister(dst);
@@ -223,7 +223,7 @@ void JIT::emit_op_is_undefined(const Instruction* currentInstruction)
     emitGetVirtualRegister(value, regT0);
     Jump isCell = branchIfCell(regT0);
 
-    compare64(Equal, regT0, TrustedImm32(ValueUndefined), regT0);
+    compare64(Equal, regT0, TrustedImm32(JSValue::ValueUndefined), regT0);
     Jump done = jump();
     
     isCell.link(this);
@@ -251,8 +251,8 @@ void JIT::emit_op_is_undefined_or_null(const Instruction* currentInstruction)
 
     emitGetVirtualRegister(value, regT0);
 
-    and64(TrustedImm32(~TagBitUndefined), regT0);
-    compare64(Equal, regT0, TrustedImm32(ValueNull), regT0);
+    and64(TrustedImm32(~JSValue::UndefinedTag), regT0);
+    compare64(Equal, regT0, TrustedImm32(JSValue::ValueNull), regT0);
 
     boxBoolean(regT0, JSValueRegs { regT0 });
     emitPutVirtualRegister(dst);
@@ -265,7 +265,7 @@ void JIT::emit_op_is_boolean(const Instruction* currentInstruction)
     int value = bytecode.m_operand.offset();
     
     emitGetVirtualRegister(value, regT0);
-    xor64(TrustedImm32(static_cast<int32_t>(ValueFalse)), regT0);
+    xor64(TrustedImm32(JSValue::ValueFalse), regT0);
     test64(Zero, regT0, TrustedImm32(static_cast<int32_t>(~1)), regT0);
     boxBoolean(regT0, JSValueRegs { regT0 });
     emitPutVirtualRegister(dst);
@@ -278,7 +278,7 @@ void JIT::emit_op_is_number(const Instruction* currentInstruction)
     int value = bytecode.m_operand.offset();
     
     emitGetVirtualRegister(value, regT0);
-    test64(NonZero, regT0, tagTypeNumberRegister, regT0);
+    test64(NonZero, regT0, numberTagRegister, regT0);
     boxBoolean(regT0, JSValueRegs { regT0 });
     emitPutVirtualRegister(dst);
 }
@@ -298,7 +298,7 @@ void JIT::emit_op_is_cell_with_type(const Instruction* currentInstruction)
     Jump done = jump();
 
     isNotCell.link(this);
-    move(TrustedImm32(ValueFalse), regT0);
+    move(TrustedImm32(JSValue::ValueFalse), regT0);
 
     done.link(this);
     emitPutVirtualRegister(dst);
@@ -318,7 +318,7 @@ void JIT::emit_op_is_object(const Instruction* currentInstruction)
     Jump done = jump();
 
     isNotCell.link(this);
-    move(TrustedImm32(ValueFalse), regT0);
+    move(TrustedImm32(JSValue::ValueFalse), regT0);
 
     done.link(this);
     emitPutVirtualRegister(dst);
@@ -373,9 +373,9 @@ void JIT::emit_op_not(const Instruction* currentInstruction)
     // Invert against JSValue(false); if the value was tagged as a boolean, then all bits will be
     // clear other than the low bit (which will be 0 or 1 for false or true inputs respectively).
     // Then invert against JSValue(true), which will add the tag back in, and flip the low bit.
-    xor64(TrustedImm32(static_cast<int32_t>(ValueFalse)), regT0);
+    xor64(TrustedImm32(JSValue::ValueFalse), regT0);
     addSlowCase(branchTestPtr(NonZero, regT0, TrustedImm32(static_cast<int32_t>(~1))));
-    xor64(TrustedImm32(static_cast<int32_t>(ValueTrue)), regT0);
+    xor64(TrustedImm32(JSValue::ValueTrue), regT0);
 
     emitPutVirtualRegister(bytecode.m_dst.offset());
 }
@@ -412,7 +412,7 @@ void JIT::emit_op_jeq_null(const Instruction* currentInstruction)
 
     // Now handle the immediate cases - undefined & null
     isImmediate.link(this);
-    and64(TrustedImm32(~TagBitUndefined), regT0);
+    and64(TrustedImm32(~JSValue::UndefinedTag), regT0);
     addJump(branch64(Equal, regT0, TrustedImm64(JSValue::encode(jsNull()))), target);            
 
     isNotMasqueradesAsUndefined.link(this);
@@ -436,7 +436,7 @@ void JIT::emit_op_jneq_null(const Instruction* currentInstruction)
 
     // Now handle the immediate cases - undefined & null
     isImmediate.link(this);
-    and64(TrustedImm32(~TagBitUndefined), regT0);
+    and64(TrustedImm32(~JSValue::UndefinedTag), regT0);
     addJump(branch64(NotEqual, regT0, TrustedImm64(JSValue::encode(jsNull()))), target);            
 
     wasNotImmediate.link(this);
@@ -450,7 +450,7 @@ void JIT::emit_op_jundefined_or_null(const Instruction* currentInstruction)
 
     emitGetVirtualRegister(value, regT0);
 
-    and64(TrustedImm32(~TagBitUndefined), regT0);
+    and64(TrustedImm32(~JSValue::UndefinedTag), regT0);
     addJump(branch64(Equal, regT0, TrustedImm64(JSValue::encode(jsNull()))), target);
 }
 
@@ -462,7 +462,7 @@ void JIT::emit_op_jnundefined_or_null(const Instruction* currentInstruction)
 
     emitGetVirtualRegister(value, regT0);
 
-    and64(TrustedImm32(~TagBitUndefined), regT0);
+    and64(TrustedImm32(~JSValue::UndefinedTag), regT0);
     addJump(branch64(NotEqual, regT0, TrustedImm64(JSValue::encode(jsNull()))), target);
 }
 
@@ -832,8 +832,8 @@ void JIT::emit_op_eq_null(const Instruction* currentInstruction)
 
     isImmediate.link(this);
 
-    and64(TrustedImm32(~TagBitUndefined), regT0);
-    compare64(Equal, regT0, TrustedImm32(ValueNull), regT0);
+    and64(TrustedImm32(~JSValue::UndefinedTag), regT0);
+    compare64(Equal, regT0, TrustedImm32(JSValue::ValueNull), regT0);
 
     wasNotImmediate.link(this);
     wasNotMasqueradesAsUndefined.link(this);
@@ -865,8 +865,8 @@ void JIT::emit_op_neq_null(const Instruction* currentInstruction)
 
     isImmediate.link(this);
 
-    and64(TrustedImm32(~TagBitUndefined), regT0);
-    compare64(NotEqual, regT0, TrustedImm32(ValueNull), regT0);
+    and64(TrustedImm32(~JSValue::UndefinedTag), regT0);
+    compare64(NotEqual, regT0, TrustedImm32(JSValue::ValueNull), regT0);
 
     wasNotImmediate.link(this);
     wasNotMasqueradesAsUndefined.link(this);

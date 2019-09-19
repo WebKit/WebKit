@@ -187,16 +187,16 @@ const MetadataOffsetTable32Offset = constexpr UnlinkedMetadataTable::s_offset16T
 
 # Some value representation constants.
 if JSVALUE64
-    const TagBitTypeOther = constexpr TagBitTypeOther
-    const TagBitBool      = constexpr TagBitBool
-    const TagBitUndefined = constexpr TagBitUndefined
-    const ValueEmpty      = constexpr ValueEmpty
-    const ValueFalse      = constexpr ValueFalse
-    const ValueTrue       = constexpr ValueTrue
-    const ValueUndefined  = constexpr ValueUndefined
-    const ValueNull       = constexpr ValueNull
-    const TagTypeNumber   = constexpr TagTypeNumber
-    const TagMask         = constexpr TagMask
+    const TagOther        = constexpr JSValue::OtherTag
+    const TagBool         = constexpr JSValue::BoolTag
+    const TagUndefined    = constexpr JSValue::UndefinedTag
+    const ValueEmpty      = constexpr JSValue::ValueEmpty
+    const ValueFalse      = constexpr JSValue::ValueFalse
+    const ValueTrue       = constexpr JSValue::ValueTrue
+    const ValueUndefined  = constexpr JSValue::ValueUndefined
+    const ValueNull       = constexpr JSValue::ValueNull
+    const TagNumber       = constexpr JSValue::NumberTag
+    const NotCellMask     = constexpr JSValue::NotCellMask
 else
     const Int32Tag = constexpr JSValue::Int32Tag
     const BooleanTag = constexpr JSValue::BooleanTag
@@ -266,22 +266,22 @@ if JSVALUE64
     if ARM64 or ARM64E
         const metadataTable = csr6
         const PB = csr7
-        const tagTypeNumber = csr8
-        const tagMask = csr9
+        const numberTag = csr8
+        const notCellMask = csr9
     elsif X86_64
         const metadataTable = csr1
         const PB = csr2
-        const tagTypeNumber = csr3
-        const tagMask = csr4
+        const numberTag = csr3
+        const notCellMask = csr4
     elsif X86_64_WIN
         const metadataTable = csr3
         const PB = csr4
-        const tagTypeNumber = csr5
-        const tagMask = csr6
+        const numberTag = csr5
+        const notCellMask = csr6
     elsif C_LOOP or C_LOOP_WIN
         const PB = csr0
-        const tagTypeNumber = csr1
-        const tagMask = csr2
+        const numberTag = csr1
+        const notCellMask = csr2
         const metadataTable = csr3
     end
 
@@ -1200,8 +1200,8 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
     loadp CodeBlock::m_metadata[t1], metadataTable
 
     if JSVALUE64
-        move TagTypeNumber, tagTypeNumber
-        addq TagBitTypeOther, tagTypeNumber, tagMask
+        move TagNumber, numberTag
+        addq TagOther, numberTag, notCellMask
     end
 end
 

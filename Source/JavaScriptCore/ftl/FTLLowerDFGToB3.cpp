@@ -260,13 +260,13 @@ public:
         auto preOrder = m_graph.blocksInPreOrder();
 
         m_callFrame = m_out.framePointer();
-        m_tagTypeNumber = m_out.constInt64(TagTypeNumber);
-        m_tagMask = m_out.constInt64(TagMask);
+        m_numberTag = m_out.constInt64(JSValue::NumberTag);
+        m_notCellMask = m_out.constInt64(JSValue::NotCellMask);
 
         // Make sure that B3 knows that we really care about the mask registers. This forces the
         // constants to be materialized in registers.
-        m_proc.addFastConstant(m_tagTypeNumber->key());
-        m_proc.addFastConstant(m_tagMask->key());
+        m_proc.addFastConstant(m_numberTag->key());
+        m_proc.addFastConstant(m_notCellMask->key());
         
         // We don't want the CodeBlock to have a weak pointer to itself because
         // that would cause it to always get collected.
@@ -1738,7 +1738,7 @@ private:
                 LBasicBlock convertBooleanFalseCase = m_out.newBlock();
 
                 m_out.appendTo(nonDoubleCase, undefinedCase);
-                LValue valueIsUndefined = m_out.equal(value, m_out.constInt64(ValueUndefined));
+                LValue valueIsUndefined = m_out.equal(value, m_out.constInt64(JSValue::ValueUndefined));
                 m_out.branch(valueIsUndefined, unsure(undefinedCase), unsure(testNullCase));
 
                 m_out.appendTo(undefinedCase, testNullCase);
@@ -1746,7 +1746,7 @@ private:
                 m_out.jump(continuation);
 
                 m_out.appendTo(testNullCase, nullCase);
-                LValue valueIsNull = m_out.equal(value, m_out.constInt64(ValueNull));
+                LValue valueIsNull = m_out.equal(value, m_out.constInt64(JSValue::ValueNull));
                 m_out.branch(valueIsNull, unsure(nullCase), unsure(testBooleanTrueCase));
 
                 m_out.appendTo(nullCase, testBooleanTrueCase);
@@ -1754,7 +1754,7 @@ private:
                 m_out.jump(continuation);
 
                 m_out.appendTo(testBooleanTrueCase, convertBooleanTrueCase);
-                LValue valueIsBooleanTrue = m_out.equal(value, m_out.constInt64(ValueTrue));
+                LValue valueIsBooleanTrue = m_out.equal(value, m_out.constInt64(JSValue::ValueTrue));
                 m_out.branch(valueIsBooleanTrue, unsure(convertBooleanTrueCase), unsure(convertBooleanFalseCase));
 
                 m_out.appendTo(convertBooleanTrueCase, convertBooleanFalseCase);
@@ -1763,7 +1763,7 @@ private:
 
                 m_out.appendTo(convertBooleanFalseCase, continuation);
 
-                LValue valueIsNotBooleanFalse = m_out.notEqual(value, m_out.constInt64(ValueFalse));
+                LValue valueIsNotBooleanFalse = m_out.notEqual(value, m_out.constInt64(JSValue::ValueFalse));
                 FTL_TYPE_CHECK(jsValueValue(value), m_node->child1(), ~SpecCellCheck, valueIsNotBooleanFalse);
                 ValueFromBlock convertedFalse = m_out.anchor(m_out.constDouble(0));
                 m_out.jump(continuation);
@@ -1913,7 +1913,7 @@ private:
             
             LBasicBlock lastNext = m_out.appendTo(booleanCase, continuation);
             ValueFromBlock booleanResult = m_out.anchor(m_out.bitOr(
-                m_out.zeroExt(unboxBoolean(value), Int64), m_tagTypeNumber));
+                m_out.zeroExt(unboxBoolean(value), Int64), m_numberTag));
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);
@@ -2151,8 +2151,8 @@ private:
 
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendSomeRegister(operand);
-        patchpoint->append(m_tagMask, ValueRep::lateReg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::lateReg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
         RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
         patchpoint->numGPScratchRegisters = 1;
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
@@ -2242,8 +2242,8 @@ private:
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendSomeRegister(left);
         patchpoint->appendSomeRegister(right);
-        patchpoint->append(m_tagMask, ValueRep::lateReg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::lateReg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
         RefPtr<PatchpointExceptionHandle> exceptionHandle =
             preparePatchpointForExceptions(patchpoint);
         patchpoint->numGPScratchRegisters = 1;
@@ -3821,8 +3821,8 @@ private:
         PatchpointValue* patchpoint = m_out.patchpoint(Void);
         patchpoint->appendSomeRegister(base);
         patchpoint->appendSomeRegister(value);
-        patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->append(m_notCellMask, ValueRep::reg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::reg(GPRInfo::numberTagRegister));
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
 
         // FIXME: If this is a PutByIdFlush, we might want to late-clobber volatile registers.
@@ -4256,7 +4256,7 @@ private:
             LValue index = lowInt32(m_graph.varArgChild(m_node, 1));
 
             speculate(OutOfBounds, noValue(), m_node, m_out.lessThan(index, m_out.int32Zero));
-            setJSValue(m_out.constInt64(ValueUndefined));
+            setJSValue(m_out.constInt64(JSValue::ValueUndefined));
             return;
         }
             
@@ -5292,7 +5292,7 @@ private:
             ValueFromBlock foundResult = m_out.anchor(index);
             switch (searchElementEdge.useKind()) {
             case Int32Use: {
-                // Empty value is ignored because of TagTypeNumber.
+                // Empty value is ignored because of JSValue::NumberTag.
                 LValue value = m_out.load64(m_out.baseIndex(m_heaps.indexedInt32Properties, storage, index));
                 m_out.branch(m_out.equal(value, searchElement), unsure(continuation), unsure(loopNext));
                 break;
@@ -7682,7 +7682,7 @@ private:
         m_out.jump(continuation);
 
         m_out.appendTo(outOfBounds, continuation);
-        ValueFromBlock outOfBoundsResult = m_out.anchor(m_out.constInt64(ValueUndefined));
+        ValueFromBlock outOfBoundsResult = m_out.anchor(m_out.constInt64(JSValue::ValueUndefined));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -8123,8 +8123,8 @@ private:
         RefPtr<PatchpointExceptionHandle> exceptionHandle =
             preparePatchpointForExceptions(patchpoint);
         
-        patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->append(m_notCellMask, ValueRep::reg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::reg(GPRInfo::numberTagRegister));
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
         patchpoint->resultConstraints = { ValueRep::reg(GPRInfo::returnValueGPR) };
@@ -8239,8 +8239,8 @@ private:
         
         if (isTail) {
             // The shuffler needs tags.
-            patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
-            patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
+            patchpoint->append(m_notCellMask, ValueRep::reg(GPRInfo::notCellMaskRegister));
+            patchpoint->append(m_numberTag, ValueRep::reg(GPRInfo::numberTagRegister));
         }
         
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
@@ -8425,8 +8425,8 @@ private:
         PatchpointValue* patchpoint = m_out.patchpoint(Void);
         patchpoint->appendVector(arguments);
 
-        patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->append(m_notCellMask, ValueRep::reg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::reg(GPRInfo::numberTagRegister));
 
         // Prevent any of the arguments from using the scratch register.
         patchpoint->clobberEarly(RegisterSet::macroScratchRegisters());
@@ -8560,8 +8560,8 @@ private:
         patchpoint->append(thisArg, ValueRep::WarmAny);
         patchpoint->append(argumentCountIncludingThis, ValueRep::WarmAny);
         patchpoint->appendVectorWithRep(patchpointArguments, ValueRep::WarmAny);
-        patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->append(m_notCellMask, ValueRep::reg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::reg(GPRInfo::numberTagRegister));
 
         RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
 
@@ -8864,8 +8864,8 @@ private:
         RefPtr<PatchpointExceptionHandle> exceptionHandle =
             preparePatchpointForExceptions(patchpoint);
         
-        patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->append(m_notCellMask, ValueRep::reg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::reg(GPRInfo::numberTagRegister));
 
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
@@ -9122,8 +9122,8 @@ private:
         
         RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
         
-        patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->append(m_notCellMask, ValueRep::reg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::reg(GPRInfo::numberTagRegister));
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
         patchpoint->resultConstraints = { ValueRep::reg(GPRInfo::returnValueGPR) };
@@ -10646,8 +10646,8 @@ private:
 
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendSomeRegister(base);
-        patchpoint->append(m_tagMask, ValueRep::lateReg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::lateReg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
 
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
 
@@ -10887,8 +10887,8 @@ private:
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendSomeRegister(value);
         patchpoint->appendSomeRegister(prototype);
-        patchpoint->append(m_tagMask, ValueRep::lateReg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::lateReg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
         patchpoint->numGPScratchRegisters = 2;
         patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister };
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
@@ -11229,7 +11229,7 @@ private:
         m_out.jump(continuation);
 
         m_out.appendTo(outOfBounds, continuation);
-        ValueFromBlock outOfBoundsResult = m_out.anchor(m_out.constInt64(ValueNull));
+        ValueFromBlock outOfBoundsResult = m_out.anchor(m_out.constInt64(JSValue::ValueNull));
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
@@ -11255,7 +11255,7 @@ private:
         m_out.jump(continuation);
 
         m_out.appendTo(outOfBounds, continuation);
-        ValueFromBlock outOfBoundsResult = m_out.anchor(m_out.constInt64(ValueNull));
+        ValueFromBlock outOfBoundsResult = m_out.anchor(m_out.constInt64(JSValue::ValueNull));
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
@@ -12285,8 +12285,8 @@ private:
 
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendSomeRegister(base);
-        patchpoint->append(m_tagMask, ValueRep::lateReg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::lateReg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
 
         // FIXME: If this is a GetByIdFlush/GetByIdDirectFlush, we might get some performance boost if we claim that it
         // clobbers volatile registers late. It's not necessary for correctness, though, since the
@@ -12358,8 +12358,8 @@ private:
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendSomeRegister(base);
         patchpoint->appendSomeRegister(thisValue);
-        patchpoint->append(m_tagMask, ValueRep::lateReg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::lateReg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
 
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
 
@@ -12740,8 +12740,8 @@ private:
         RefPtr<Snippet> domJIT = classInfo->checkSubClassSnippet();
         PatchpointValue* patchpoint = m_out.patchpoint(Void);
         patchpoint->appendSomeRegister(cell);
-        patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->append(m_notCellMask, ValueRep::reg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::reg(GPRInfo::numberTagRegister));
 
         NodeOrigin origin = m_origin;
         unsigned osrExitArgumentOffset = patchpoint->numChildren();
@@ -12865,8 +12865,8 @@ private:
         patchpoint->appendSomeRegister(base);
         if (domJIT->requireGlobalObject)
             patchpoint->appendSomeRegister(globalObject);
-        patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->append(m_notCellMask, ValueRep::reg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::reg(GPRInfo::numberTagRegister));
         RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->numGPScratchRegisters = domJIT->numGPScratchRegisters;
@@ -13468,8 +13468,8 @@ private:
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendSomeRegister(left);
         patchpoint->appendSomeRegister(right);
-        patchpoint->append(m_tagMask, ValueRep::lateReg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::lateReg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
         RefPtr<PatchpointExceptionHandle> exceptionHandle =
             preparePatchpointForExceptions(patchpoint);
         patchpoint->numGPScratchRegisters = 1;
@@ -13534,8 +13534,8 @@ private:
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendSomeRegister(left);
         patchpoint->appendSomeRegister(right);
-        patchpoint->append(m_tagMask, ValueRep::lateReg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::lateReg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
         RefPtr<PatchpointExceptionHandle> exceptionHandle =
             preparePatchpointForExceptions(patchpoint);
         patchpoint->numGPScratchRegisters = 1;
@@ -13589,8 +13589,8 @@ private:
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendSomeRegister(left);
         patchpoint->appendSomeRegister(right);
-        patchpoint->append(m_tagMask, ValueRep::lateReg(GPRInfo::tagMaskRegister));
-        patchpoint->append(m_tagTypeNumber, ValueRep::lateReg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
         RefPtr<PatchpointExceptionHandle> exceptionHandle =
             preparePatchpointForExceptions(patchpoint);
         patchpoint->numGPScratchRegisters = 1;
@@ -14322,10 +14322,10 @@ private:
         LValue primitiveResult;
         switch (primitiveMode) {
         case EqualNull:
-            primitiveResult = m_out.equal(value, m_out.constInt64(ValueNull));
+            primitiveResult = m_out.equal(value, m_out.constInt64(JSValue::ValueNull));
             break;
         case EqualUndefined:
-            primitiveResult = m_out.equal(value, m_out.constInt64(ValueUndefined));
+            primitiveResult = m_out.equal(value, m_out.constInt64(JSValue::ValueUndefined));
             break;
         case EqualNullOrUndefined:
             primitiveResult = isOther(value, provenType(edge));
@@ -14947,7 +14947,7 @@ private:
         m_out.appendTo(notNumberCase, notNullCase);
         LValue isNull;
         if (provenType(child) & SpecOther)
-            isNull = m_out.equal(value, m_out.constInt64(ValueNull));
+            isNull = m_out.equal(value, m_out.constInt64(JSValue::ValueNull));
         else
             isNull = m_out.booleanFalse;
         m_out.branch(isNull, unsure(reallyObjectCase), unsure(notNullCase));
@@ -15807,13 +15807,13 @@ private:
     {
         if (LValue proven = isProvenValue(type, SpecInt32Only))
             return proven;
-        return m_out.aboveOrEqual(jsValue, m_tagTypeNumber);
+        return m_out.aboveOrEqual(jsValue, m_numberTag);
     }
     LValue isNotInt32(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
         if (LValue proven = isProvenValue(type, ~SpecInt32Only))
             return proven;
-        return m_out.below(jsValue, m_tagTypeNumber);
+        return m_out.below(jsValue, m_numberTag);
     }
     LValue unboxInt32(LValue jsValue)
     {
@@ -15821,32 +15821,32 @@ private:
     }
     LValue boxInt32(LValue value)
     {
-        return m_out.add(m_out.zeroExt(value, Int64), m_tagTypeNumber);
+        return m_out.add(m_out.zeroExt(value, Int64), m_numberTag);
     }
     
     LValue isCellOrMisc(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
         if (LValue proven = isProvenValue(type, SpecCellCheck | SpecMisc))
             return proven;
-        return m_out.testIsZero64(jsValue, m_tagTypeNumber);
+        return m_out.testIsZero64(jsValue, m_numberTag);
     }
     LValue isNotCellOrMisc(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
         if (LValue proven = isProvenValue(type, ~(SpecCellCheck | SpecMisc)))
             return proven;
-        return m_out.testNonZero64(jsValue, m_tagTypeNumber);
+        return m_out.testNonZero64(jsValue, m_numberTag);
     }
 
     LValue unboxDouble(LValue jsValue, LValue* unboxedAsInt = nullptr)
     {
-        LValue asInt = m_out.add(jsValue, m_tagTypeNumber);
+        LValue asInt = m_out.add(jsValue, m_numberTag);
         if (unboxedAsInt)
             *unboxedAsInt = asInt;
         return m_out.bitCast(asInt, Double);
     }
     LValue boxDouble(LValue doubleValue)
     {
-        return m_out.sub(m_out.bitCast(doubleValue, Int64), m_tagTypeNumber);
+        return m_out.sub(m_out.bitCast(doubleValue, Int64), m_numberTag);
     }
     
     LValue jsValueToStrictInt52(Edge edge, LValue boxedValue)
@@ -15938,21 +15938,21 @@ private:
     {
         if (LValue proven = isProvenValue(type, ~SpecCellCheck))
             return proven;
-        return m_out.testNonZero64(jsValue, m_tagMask);
+        return m_out.testNonZero64(jsValue, m_notCellMask);
     }
     
     LValue isCell(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
         if (LValue proven = isProvenValue(type, SpecCellCheck))
             return proven;
-        return m_out.testIsZero64(jsValue, m_tagMask);
+        return m_out.testIsZero64(jsValue, m_notCellMask);
     }
     
     LValue isNotMisc(LValue value, SpeculatedType type = SpecFullTop)
     {
         if (LValue proven = isProvenValue(type, ~SpecMisc))
             return proven;
-        return m_out.above(value, m_out.constInt64(TagBitTypeOther | TagBitBool | TagBitUndefined));
+        return m_out.above(value, m_out.constInt64(JSValue::MiscTag));
     }
     
     LValue isMisc(LValue value, SpeculatedType type = SpecFullTop)
@@ -15967,7 +15967,7 @@ private:
         if (LValue proven = isProvenValue(type, ~SpecBoolean))
             return proven;
         return m_out.testNonZero64(
-            m_out.bitXor(jsValue, m_out.constInt64(ValueFalse)),
+            m_out.bitXor(jsValue, m_out.constInt64(JSValue::ValueFalse)),
             m_out.constInt64(~1));
     }
     LValue isBoolean(LValue jsValue, SpeculatedType type = SpecFullTop)
@@ -15985,7 +15985,7 @@ private:
     LValue boxBoolean(LValue value)
     {
         return m_out.select(
-            value, m_out.constInt64(ValueTrue), m_out.constInt64(ValueFalse));
+            value, m_out.constInt64(JSValue::ValueTrue), m_out.constInt64(JSValue::ValueFalse));
     }
     
     LValue isNotOther(LValue value, SpeculatedType type = SpecFullTop)
@@ -15993,16 +15993,16 @@ private:
         if (LValue proven = isProvenValue(type, ~SpecOther))
             return proven;
         return m_out.notEqual(
-            m_out.bitAnd(value, m_out.constInt64(~TagBitUndefined)),
-            m_out.constInt64(ValueNull));
+            m_out.bitAnd(value, m_out.constInt64(~JSValue::UndefinedTag)),
+            m_out.constInt64(JSValue::ValueNull));
     }
     LValue isOther(LValue value, SpeculatedType type = SpecFullTop)
     {
         if (LValue proven = isProvenValue(type, SpecOther))
             return proven;
         return m_out.equal(
-            m_out.bitAnd(value, m_out.constInt64(~TagBitUndefined)),
-            m_out.constInt64(ValueNull));
+            m_out.bitAnd(value, m_out.constInt64(~JSValue::UndefinedTag)),
+            m_out.constInt64(JSValue::ValueNull));
     }
     
     LValue isProvenValue(SpeculatedType provenType, SpeculatedType wantedType)
@@ -17722,8 +17722,8 @@ private:
     
     LValue m_callFrame;
     LValue m_captured;
-    LValue m_tagTypeNumber;
-    LValue m_tagMask;
+    LValue m_numberTag;
+    LValue m_notCellMask;
     
     HashMap<Node*, LoweredNodeValue> m_int32Values;
     HashMap<Node*, LoweredNodeValue> m_strictInt52Values;

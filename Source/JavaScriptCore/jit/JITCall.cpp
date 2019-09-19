@@ -182,7 +182,7 @@ bool JIT::compileTailCall(const OpTailCall& bytecode, CallLinkInfo* info, unsign
 {
     CallFrameShuffleData shuffleData;
     shuffleData.numPassedArgs = bytecode.m_argc;
-    shuffleData.tagTypeNumber = GPRInfo::tagTypeNumberRegister;
+    shuffleData.numberTagRegister = GPRInfo::numberTagRegister;
     shuffleData.numLocals =
         bytecode.m_argv - sizeof(CallerFrameAndPC) / sizeof(Register);
     shuffleData.args.resize(bytecode.m_argc);

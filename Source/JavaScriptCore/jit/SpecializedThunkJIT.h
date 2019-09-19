@@ -114,10 +114,10 @@ namespace JSC {
 #if USE(JSVALUE64)
             moveDoubleTo64(src, regT0);
             Jump zero = branchTest64(Zero, regT0);
-            sub64(tagTypeNumberRegister, regT0);
+            sub64(numberTagRegister, regT0);
             Jump done = jump();
             zero.link(this);
-            move(tagTypeNumberRegister, regT0);
+            move(numberTagRegister, regT0);
             done.link(this);
 #else
             moveDoubleToInts(src, regT0, regT1);
@@ -182,7 +182,7 @@ namespace JSC {
         void tagReturnAsInt32()
         {
 #if USE(JSVALUE64)
-            or64(tagTypeNumberRegister, regT0);
+            or64(numberTagRegister, regT0);
 #else
             move(TrustedImm32(JSValue::Int32Tag), regT1);
 #endif

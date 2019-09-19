@@ -671,7 +671,7 @@ inline void JIT::emitLoadInt32ToDouble(int index, FPRegisterID value)
 
 ALWAYS_INLINE JIT::PatchableJump JIT::emitPatchableJumpIfNotInt(RegisterID reg)
 {
-    return patchableBranch64(Below, reg, tagTypeNumberRegister);
+    return patchableBranch64(Below, reg, numberTagRegister);
 }
 
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotInt(RegisterID reg1, RegisterID reg2, RegisterID scratch)

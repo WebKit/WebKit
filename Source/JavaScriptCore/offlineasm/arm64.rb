@@ -47,8 +47,8 @@ require "risc"
 # x16  =>                  (scratch)
 # x17  =>                  (scratch)
 # x26  =>             csr0 (PB)
-# x27  =>             csr1 (tagTypeNumber)
-# x28  =>             csr2 (tagMask)
+# x27  =>             csr1 (numberTag)
+# x28  =>             csr2 (notCellMask)
 # x29  => cfr
 #  sp  => sp
 #  lr  => lr

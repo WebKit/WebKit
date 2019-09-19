@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +46,7 @@ void JITBitXorGenerator::generateFastPath(CCallHelpers& jit)
         jit.moveValueRegs(var, m_result);
 #if USE(JSVALUE64)
         jit.xor32(CCallHelpers::Imm32(constOpr.asConstInt32()), m_result.payloadGPR());
-        jit.or64(GPRInfo::tagTypeNumberRegister, m_result.payloadGPR());
+        jit.or64(GPRInfo::numberTagRegister, m_result.payloadGPR());
 #else
         jit.xor32(CCallHelpers::Imm32(constOpr.asConstInt32()), m_result.payloadGPR());
 #endif
@@ -61,7 +61,7 @@ void JITBitXorGenerator::generateFastPath(CCallHelpers& jit)
         jit.moveValueRegs(m_left, m_result);
 #if USE(JSVALUE64)
         jit.xor64(m_right.payloadGPR(), m_result.payloadGPR());
-        jit.or64(GPRInfo::tagTypeNumberRegister, m_result.payloadGPR());
+        jit.or64(GPRInfo::numberTagRegister, m_result.payloadGPR());
 #else
         jit.xor32(m_right.payloadGPR(), m_result.payloadGPR());
 #endif

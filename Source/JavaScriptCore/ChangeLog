@@ -1,3 +1,250 @@
+2019-09-19  Mark Lam  <mark.lam@apple.com>
+
+        Replace JSValue #defines with static constexpr values.
+        https://bugs.webkit.org/show_bug.cgi?id=201966
+
+        Reviewed by Yusuke Suzuki.
+
+        static constexpr is the modern C++ way to define these constants.
+
+        Some of the values are typed int64_t and some are int32_t.  The original #define
+        values are int64_t.  Hence, we adopt int64_t as the default type to use here.
+
+        However, some of these constants are being used as 32-bit values, and the code
+        was static_cast'ing them into int32_t.  This set of constants are all the small
+        values that fit in an int32_t anyway.  So, we're putting these in int32_t instead
+        so that we don't have to keep casting them.  In the few places where they are
+        used as int64_t, they will automatically get up-casted anyway.
+
+        In this patch, we also did the following:
+
+        1. Renamed TagMask to NotCellMask, because everywhere in the code, we're
+           basically using it to filter out cells like this:
+
+              if (value & NotCellMask) then goto handleNotCellCase;
+
+        2. Renamed TagTypeNumber to NumberTag for a shorter name.
+
+           Ditto for TagBitTypeOther, TagBitBool, TagBitUndefined, TagBitsWasm, and TagWasmMask.
+           They are now OtherTag, BoolTag, UndefinedTag, WasmTag, and WasmMask.
+
+        3. Introduced DoubleEncodeOffsetBit so that client code do not embed this value
+           as a literal constant.  We now define DoubleEncodeOffset based on
+           DoubleEncodeOffsetBit ensuring consistency.
+
+        4. Introduced MiscTag so that clients don't have to put this set of tags together
+           themselves.
+
+        5. Removed static asserts for tags in LLIntData.cpp because the offlineasm now
+           captures these values correctly with constexpr statements.  These static
+           asserts were holdovers from the old days back when we had to define LLInt
+           constant values manually, and we needed a mechanism to detect when the values
+           have changed in the source.
+
+        6. Replaced some runtime asserts in RegisterSet.cpp with static_asserts.
+
+        7. In Wasm::wasmToJS(), we were constructing the value of JSValue::DoubleEncodeOffset
+           constant by left shifting 1 by JSValue::DoubleEncodeOffsetBit.  There's no need
+           to do this for ARM64 because the constant can be loaded efficiently with a single
+           MOVZ instruction.  So, we add a CPU(ARM64) case to just move the constant into
+           the target register.
+
+        * assembler/AbortReason.h:
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateWithGuard):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::executeOSRExit):
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::silentFill):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        (JSC::DFG::SpeculativeJIT::compileDoubleRep):
+        (JSC::DFG::SpeculativeJIT::getIntTypedArrayStoreOperand):
+        (JSC::DFG::SpeculativeJIT::speculateMisc):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::spill):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compileObjectStrictEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileInt52Compare):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::moveTrueTo):
+        (JSC::DFG::SpeculativeJIT::moveFalseTo):
+        (JSC::DFG::SpeculativeJIT::blessBoolean):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDoubleRep):
+        (JSC::FTL::DFG::LowerDFGToB3::compileBooleanToNumber):
+        (JSC::FTL::DFG::LowerDFGToB3::compileUnaryMathIC):
+        (JSC::FTL::DFG::LowerDFGToB3::compileBinaryMathIC):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayIndexOf):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetArgument):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDirectCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallEval):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInstanceOf):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetEnumeratorStructurePname):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetEnumeratorGenericPname):
+        (JSC::FTL::DFG::LowerDFGToB3::getById):
+        (JSC::FTL::DFG::LowerDFGToB3::getByIdWithThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckSubClass):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOMGetter):
+        (JSC::FTL::DFG::LowerDFGToB3::emitBinarySnippet):
+        (JSC::FTL::DFG::LowerDFGToB3::emitBinaryBitOpSnippet):
+        (JSC::FTL::DFG::LowerDFGToB3::emitRightShiftSnippet):
+        (JSC::FTL::DFG::LowerDFGToB3::equalNullOrUndefined):
+        (JSC::FTL::DFG::LowerDFGToB3::buildTypeOf):
+        (JSC::FTL::DFG::LowerDFGToB3::isInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::isNotInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::boxInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::isCellOrMisc):
+        (JSC::FTL::DFG::LowerDFGToB3::isNotCellOrMisc):
+        (JSC::FTL::DFG::LowerDFGToB3::unboxDouble):
+        (JSC::FTL::DFG::LowerDFGToB3::boxDouble):
+        (JSC::FTL::DFG::LowerDFGToB3::isNotCell):
+        (JSC::FTL::DFG::LowerDFGToB3::isCell):
+        (JSC::FTL::DFG::LowerDFGToB3::isNotMisc):
+        (JSC::FTL::DFG::LowerDFGToB3::isNotBoolean):
+        (JSC::FTL::DFG::LowerDFGToB3::boxBoolean):
+        (JSC::FTL::DFG::LowerDFGToB3::isNotOther):
+        (JSC::FTL::DFG::LowerDFGToB3::isOther):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::reboxAccordingToFormat):
+        (JSC::FTL::compileStub):
+        * interpreter/CalleeBits.h:
+        (JSC::CalleeBits::boxWasm):
+        (JSC::CalleeBits::isWasm const):
+        (JSC::CalleeBits::asWasmCallee const):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::jitAssertIsJSInt32):
+        (JSC::AssemblyHelpers::jitAssertIsJSNumber):
+        (JSC::AssemblyHelpers::jitAssertIsJSDouble):
+        (JSC::AssemblyHelpers::jitAssertIsCell):
+        (JSC::AssemblyHelpers::jitAssertTagsInPlace):
+        (JSC::AssemblyHelpers::emitConvertValueToBoolean):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitSaveThenMaterializeTagRegisters):
+        (JSC::AssemblyHelpers::emitRestoreSavedTagRegisters):
+        (JSC::AssemblyHelpers::emitMaterializeTagCheckRegisters):
+        (JSC::AssemblyHelpers::branchIfNotCell):
+        (JSC::AssemblyHelpers::branchIfCell):
+        (JSC::AssemblyHelpers::branchIfOther):
+        (JSC::AssemblyHelpers::branchIfNotOther):
+        (JSC::AssemblyHelpers::branchIfInt32):
+        (JSC::AssemblyHelpers::branchIfNotInt32):
+        (JSC::AssemblyHelpers::branchIfNumber):
+        (JSC::AssemblyHelpers::branchIfNotNumber):
+        (JSC::AssemblyHelpers::branchIfNotDoubleKnownNotInt32):
+        (JSC::AssemblyHelpers::branchIfBoolean):
+        (JSC::AssemblyHelpers::branchIfNotBoolean):
+        (JSC::AssemblyHelpers::boxDouble):
+        (JSC::AssemblyHelpers::unboxDoubleWithoutAssertions):
+        (JSC::AssemblyHelpers::boxInt52):
+        (JSC::AssemblyHelpers::boxBooleanPayload):
+        (JSC::AssemblyHelpers::boxInt32):
+        * jit/CallFrameShuffleData.h:
+        * jit/CallFrameShuffler.cpp:
+        (JSC::CallFrameShuffler::CallFrameShuffler):
+        (JSC::CallFrameShuffler::dump const):
+        (JSC::CallFrameShuffler::prepareAny):
+        * jit/CallFrameShuffler.h:
+        (JSC::CallFrameShuffler::getFreeRegister const):
+        * jit/CallFrameShuffler64.cpp:
+        (JSC::CallFrameShuffler::emitBox):
+        (JSC::CallFrameShuffler::tryAcquireNumberTagRegister):
+        (JSC::CallFrameShuffler::tryAcquireTagTypeNumber): Deleted.
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::reservedRegisters):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_compareAndJumpSlow):
+        * jit/JITBitAndGenerator.cpp:
+        (JSC::JITBitAndGenerator::generateFastPath):
+        * jit/JITBitOrGenerator.cpp:
+        (JSC::JITBitOrGenerator::generateFastPath):
+        * jit/JITBitXorGenerator.cpp:
+        (JSC::JITBitXorGenerator::generateFastPath):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileTailCall):
+        * jit/JITDivGenerator.cpp:
+        (JSC::JITDivGenerator::generateFastPath):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitPatchableJumpIfNotInt):
+        * jit/JITLeftShiftGenerator.cpp:
+        (JSC::JITLeftShiftGenerator::generateFastPath):
+        * jit/JITMulGenerator.cpp:
+        (JSC::JITMulGenerator::generateFastPath):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_overrides_has_instance):
+        (JSC::JIT::emit_op_is_undefined):
+        (JSC::JIT::emit_op_is_undefined_or_null):
+        (JSC::JIT::emit_op_is_boolean):
+        (JSC::JIT::emit_op_is_number):
+        (JSC::JIT::emit_op_is_cell_with_type):
+        (JSC::JIT::emit_op_is_object):
+        (JSC::JIT::emit_op_not):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_jundefined_or_null):
+        (JSC::JIT::emit_op_jnundefined_or_null):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitGenericContiguousPutByVal):
+        (JSC::JIT::emitFloatTypedArrayPutByVal):
+        * jit/JITRightShiftGenerator.cpp:
+        (JSC::JITRightShiftGenerator::generateFastPath):
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::runtimeTagRegisters):
+        (JSC::RegisterSet::llintBaselineCalleeSaveRegisters):
+        (JSC::RegisterSet::dfgCalleeSaveRegisters):
+        (JSC::RegisterSet::ftlCalleeSaveRegisters):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::returnDouble):
+        (JSC::SpecializedThunkJIT::tagReturnAsInt32):
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualThunkFor):
+        (JSC::nativeForGenerator):
+        (JSC::arityFixupGenerator):
+        (JSC::absThunkGenerator):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/arm64.rb:
+        * offlineasm/cloop.rb:
+        * offlineasm/x86.rb:
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::isUndefinedOrNull const):
+        (JSC::JSValue::isCell const):
+        (JSC::JSValue::isInt32 const):
+        (JSC::JSValue::JSValue):
+        (JSC::JSValue::asDouble const):
+        (JSC::JSValue::isNumber const):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+
 2019-09-18  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Better handling for large arrays and collections in Object Trees

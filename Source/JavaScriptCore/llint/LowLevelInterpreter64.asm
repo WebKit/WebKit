@@ -504,12 +504,12 @@ end
 
 macro loadConstantOrVariableInt32(size, index, value, slow)
     loadConstantOrVariable(size, index, value)
-    bqb value, tagTypeNumber, slow
+    bqb value, numberTag, slow
 end
 
 macro loadConstantOrVariableCell(size, index, value, slow)
     loadConstantOrVariable(size, index, value)
-    btqnz value, tagMask, slow
+    btqnz value, notCellMask, slow
 end
 
 macro writeBarrierOnCellWithReload(cell, reloadAfterSlowPath)
@@ -526,7 +526,7 @@ macro writeBarrierOnCellWithReload(cell, reloadAfterSlowPath)
 end
 
 macro writeBarrierOnCellAndValueWithReload(cell, value, reloadAfterSlowPath)
-    btqnz value, tagMask, .writeBarrierDone
+    btqnz value, notCellMask, .writeBarrierDone
     btqz value, .writeBarrierDone
     writeBarrierOnCellWithReload(cell, reloadAfterSlowPath)
 .writeBarrierDone:
@@ -724,7 +724,7 @@ end)
 llintOpWithReturn(op_argument_count, OpArgumentCount, macro (size, get, dispatch, return)
     loadi PayloadOffset + ArgumentCount[cfr], t0
     subi 1, t0
-    orq TagTypeNumber, t0
+    orq TagNumber, t0
     return(t0)
 end)
 
@@ -739,7 +739,7 @@ end)
 llintOpWithMetadata(op_to_this, OpToThis, macro (size, get, dispatch, metadata, return)
     get(m_srcDst, t0)
     loadq [cfr, t0, 8], t0
-    btqnz t0, tagMask, .opToThisSlow
+    btqnz t0, notCellMask, .opToThisSlow
     bbneq JSCell::m_type[t0], FinalObjectType, .opToThisSlow
     loadi JSCell::m_structureID[t0], t1
     metadata(t2, t3)
@@ -806,7 +806,7 @@ macro equalNullComparisonOp(opcodeName, opcodeStruct, fn)
     llintOpWithReturn(opcodeName, opcodeStruct, macro (size, get, dispatch, return)
         get(m_operand, t0)
         loadq [cfr, t0, 8], t0
-        btqnz t0, tagMask, .immediate
+        btqnz t0, notCellMask, .immediate
         btbnz JSCell::m_flags[t0], MasqueradesAsUndefined, .masqueradesAsUndefined
         move 0, t0
         jmp .done
@@ -817,7 +817,7 @@ macro equalNullComparisonOp(opcodeName, opcodeStruct, fn)
         cpeq Structure::m_globalObject[t2], t0, t0
         jmp .done
     .immediate:
-        andq ~TagBitUndefined, t0
+        andq ~TagUndefined, t0
         cqeq t0, ValueNull, t0
     .done:
         fn(t0)
@@ -836,7 +836,7 @@ equalNullComparisonOp(op_neq_null, OpNeqNull,
 llintOpWithReturn(op_is_undefined_or_null, OpIsUndefinedOrNull, macro (size, get, dispatch, return)
     get(m_operand, t1)
     loadConstantOrVariable(size, t1, t0)
-    andq ~TagBitUndefined, t0
+    andq ~TagUndefined, t0
     cqeq t0, ValueNull, t0
     orq ValueFalse, t0
     return(t0)
@@ -851,12 +851,12 @@ macro strictEqOp(opcodeName, opcodeStruct, equalityOperation)
         loadConstantOrVariable(size, t2, t0)
         move t0, t2
         orq t1, t2
-        btqz t2, tagMask, .slow
-        bqaeq t0, tagTypeNumber, .leftOK
-        btqnz t0, tagTypeNumber, .slow
+        btqz t2, notCellMask, .slow
+        bqaeq t0, numberTag, .leftOK
+        btqnz t0, numberTag, .slow
     .leftOK:
-        bqaeq t1, tagTypeNumber, .rightOK
-        btqnz t1, tagTypeNumber, .slow
+        bqaeq t1, numberTag, .rightOK
+        btqnz t1, numberTag, .slow
     .rightOK:
         equalityOperation(t0, t1, t0)
         orq ValueFalse, t0
@@ -885,12 +885,12 @@ macro strictEqualityJumpOp(opcodeName, opcodeStruct, equalityOperation)
         loadConstantOrVariable(size, t3, t1)
         move t0, t2
         orq t1, t2
-        btqz t2, tagMask, .slow
-        bqaeq t0, tagTypeNumber, .leftOK
-        btqnz t0, tagTypeNumber, .slow
+        btqz t2, notCellMask, .slow
+        bqaeq t0, numberTag, .leftOK
+        btqnz t0, numberTag, .slow
     .leftOK:
-        bqaeq t1, tagTypeNumber, .rightOK
-        btqnz t1, tagTypeNumber, .slow
+        bqaeq t1, numberTag, .rightOK
+        btqnz t1, numberTag, .slow
     .rightOK:
         equalityOperation(t0, t1, .jumpTarget)
         dispatch()
@@ -917,9 +917,9 @@ macro preOp(opcodeName, opcodeStruct, arithmeticOperation)
     llintOp(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch)
         get(m_srcDst, t0)
         loadq [cfr, t0, 8], t1
-        bqb t1, tagTypeNumber, .slow
+        bqb t1, numberTag, .slow
         arithmeticOperation(t1, .slow)
-        orq tagTypeNumber, t1
+        orq numberTag, t1
         storeq t1, [cfr, t0, 8]
         dispatch()
     .slow:
@@ -931,8 +931,8 @@ end
 llintOpWithProfile(op_to_number, OpToNumber, macro (size, get, dispatch, return)
     get(m_operand, t0)
     loadConstantOrVariable(size, t0, t2)
-    bqaeq t2, tagTypeNumber, .opToNumberIsImmediate
-    btqz t2, tagTypeNumber, .opToNumberSlow
+    bqaeq t2, numberTag, .opToNumberIsImmediate
+    btqz t2, numberTag, .opToNumberSlow
 .opToNumberIsImmediate:
     return(t2)
 
@@ -945,7 +945,7 @@ end)
 llintOpWithReturn(op_to_string, OpToString, macro (size, get, dispatch, return)
     get(m_operand, t1)
     loadConstantOrVariable(size, t1, t0)
-    btqnz t0, tagMask, .opToStringSlow
+    btqnz t0, notCellMask, .opToStringSlow
     bbneq JSCell::m_type[t0], StringType, .opToStringSlow
 .opToStringIsString:
     return(t0)
@@ -959,7 +959,7 @@ end)
 llintOpWithProfile(op_to_object, OpToObject, macro (size, get, dispatch, return)
     get(m_operand, t0)
     loadConstantOrVariable(size, t0, t2)
-    btqnz t2, tagMask, .opToObjectSlow
+    btqnz t2, notCellMask, .opToObjectSlow
     bbb JSCell::m_type[t2], ObjectType, .opToObjectSlow
     return(t2)
 
@@ -974,15 +974,15 @@ llintOpWithMetadata(op_negate, OpNegate, macro (size, get, dispatch, metadata, r
     loadConstantOrVariable(size, t0, t3)
     metadata(t1, t2)
     loadi OpNegate::Metadata::m_arithProfile + ArithProfile::m_bits[t1], t2
-    bqb t3, tagTypeNumber, .opNegateNotInt
+    bqb t3, numberTag, .opNegateNotInt
     btiz t3, 0x7fffffff, .opNegateSlow
     negi t3
-    orq tagTypeNumber, t3
+    orq numberTag, t3
     ori ArithProfileInt, t2
     storei t2, OpNegate::Metadata::m_arithProfile + ArithProfile::m_bits[t1]
     return(t3)
 .opNegateNotInt:
-    btqz t3, tagTypeNumber, .opNegateSlow
+    btqz t3, numberTag, .opNegateSlow
     xorq 0x8000000000000000, t3
     ori ArithProfileNumber, t2
     storei t2, OpNegate::Metadata::m_arithProfile + ArithProfile::m_bits[t1]
@@ -1006,8 +1006,8 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         get(m_lhs, t2)
         loadConstantOrVariable(size, t0, t1)
         loadConstantOrVariable(size, t2, t0)
-        bqb t0, tagTypeNumber, .op1NotInt
-        bqb t1, tagTypeNumber, .op2NotInt
+        bqb t0, numberTag, .op1NotInt
+        bqb t1, numberTag, .op2NotInt
         get(m_dst, t2)
         integerOperationAndStore(t1, t0, .slow, t2)
 
@@ -1016,10 +1016,10 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
 
     .op1NotInt:
         # First operand is definitely not an int, the second operand could be anything.
-        btqz t0, tagTypeNumber, .slow
-        bqaeq t1, tagTypeNumber, .op1NotIntOp2Int
-        btqz t1, tagTypeNumber, .slow
-        addq tagTypeNumber, t1
+        btqz t0, numberTag, .slow
+        bqaeq t1, numberTag, .op1NotIntOp2Int
+        btqz t1, numberTag, .slow
+        addq numberTag, t1
         fq2d t1, ft1
         profile(ArithProfileNumberNumber)
         jmp .op1NotIntReady
@@ -1028,25 +1028,25 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         ci2d t1, ft1
     .op1NotIntReady:
         get(m_dst, t2)
-        addq tagTypeNumber, t0
+        addq numberTag, t0
         fq2d t0, ft0
         doubleOperation(ft1, ft0)
         fd2q ft0, t0
-        subq tagTypeNumber, t0
+        subq numberTag, t0
         storeq t0, [cfr, t2, 8]
         dispatch()
 
     .op2NotInt:
         # First operand is definitely an int, the second is definitely not.
         get(m_dst, t2)
-        btqz t1, tagTypeNumber, .slow
+        btqz t1, numberTag, .slow
         profile(ArithProfileIntNumber)
         ci2d t0, ft0
-        addq tagTypeNumber, t1
+        addq numberTag, t1
         fq2d t1, ft1
         doubleOperation(ft1, ft0)
         fd2q ft0, t0
-        subq tagTypeNumber, t0
+        subq numberTag, t0
         storeq t0, [cfr, t2, 8]
         dispatch()
 
@@ -1072,7 +1072,7 @@ if X86_64 or X86_64_WIN
             cdqi
             idivi t3
             btinz t1, slow
-            orq tagTypeNumber, t0
+            orq numberTag, t0
             storeq t0, [cfr, index, 8]
         end,
         macro (left, right) divd left, right end)
@@ -1090,7 +1090,7 @@ binaryOpCustomStore(mul, OpMul,
         bilt left, 0, slow
         bilt right, 0, slow
     .done:
-        orq tagTypeNumber, t3
+        orq numberTag, t3
         storeq t3, [cfr, index, 8]
     end,
     macro (left, right) muld left, right end)
@@ -1100,7 +1100,7 @@ macro binaryOp(opcodeName, opcodeStruct, integerOperation, doubleOperation)
     binaryOpCustomStore(opcodeName, opcodeStruct,
         macro (left, right, slow, index)
             integerOperation(left, right, slow)
-            orq tagTypeNumber, right
+            orq numberTag, right
             storeq right, [cfr, index, 8]
         end,
         doubleOperation)
@@ -1133,10 +1133,10 @@ macro commonBitOp(opKind, opcodeName, opcodeStruct, operation)
         get(m_lhs, t2)
         loadConstantOrVariable(size, t0, t1)
         loadConstantOrVariable(size, t2, t0)
-        bqb t0, tagTypeNumber, .slow
-        bqb t1, tagTypeNumber, .slow
+        bqb t0, numberTag, .slow
+        bqb t1, numberTag, .slow
         operation(t1, t0)
-        orq tagTypeNumber, t0
+        orq numberTag, t0
         return(t0)
 
     .slow:
@@ -1177,7 +1177,7 @@ llintOpWithProfile(op_bitnot, OpBitnot, macro (size, get, dispatch, return)
     get(m_operand, t0)
     loadConstantOrVariableInt32(size, t0, t3, .opBitNotSlow)
     noti t3
-    orq tagTypeNumber, t3
+    orq numberTag, t3
     return(t3)
 .opBitNotSlow:
     callSlowPath(_slow_path_bitnot)
@@ -1220,7 +1220,7 @@ end)
 llintOpWithReturn(op_is_undefined, OpIsUndefined, macro (size, get, dispatch, return)
     get(m_operand, t1)
     loadConstantOrVariable(size, t1, t0)
-    btqz t0, tagMask, .opIsUndefinedCell
+    btqz t0, notCellMask, .opIsUndefinedCell
     cqeq t0, ValueUndefined, t3
     orq ValueFalse, t3
     return(t3)
@@ -1251,7 +1251,7 @@ end)
 llintOpWithReturn(op_is_number, OpIsNumber, macro (size, get, dispatch, return)
     get(m_operand, t1)
     loadConstantOrVariable(size, t1, t0)
-    tqnz t0, tagTypeNumber, t1
+    tqnz t0, numberTag, t1
     orq ValueFalse, t1
     return(t1)
 end)
@@ -1261,7 +1261,7 @@ llintOpWithReturn(op_is_cell_with_type, OpIsCellWithType, macro (size, get, disp
     getu(size, OpIsCellWithType, m_type, t0)
     get(m_operand, t1)
     loadConstantOrVariable(size, t1, t3)
-    btqnz t3, tagMask, .notCellCase
+    btqnz t3, notCellMask, .notCellCase
     cbeq JSCell::m_type[t3], t0, t1
     orq ValueFalse, t1
     return(t1)
@@ -1273,7 +1273,7 @@ end)
 llintOpWithReturn(op_is_object, OpIsObject, macro (size, get, dispatch, return)
     get(m_operand, t1)
     loadConstantOrVariable(size, t1, t0)
-    btqnz t0, tagMask, .opIsObjectNotCell
+    btqnz t0, notCellMask, .opIsObjectNotCell
     cbaeq JSCell::m_type[t0], ObjectType, t1
     orq ValueFalse, t1
     return(t1)
@@ -1362,7 +1362,7 @@ llintOpWithMetadata(op_get_by_id, OpGetById, macro (size, get, dispatch, metadat
     loadCagedJSValue(JSObject::m_butterfly[t3], t0, t1)
     loadi -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], t0
     bilt t0, 0, .opGetByIdSlow
-    orq tagTypeNumber, t0
+    orq numberTag, t0
     valueProfile(OpGetById, t2, t0)
     return(t0)
 
@@ -1460,13 +1460,13 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
     end
 
     macro finishIntGetByVal(result, scratch)
-        orq tagTypeNumber, result
+        orq numberTag, result
         finishGetByVal(result, scratch)
     end
 
     macro finishDoubleGetByVal(result, scratch1, scratch2)
         fd2q result, scratch1
-        subq tagTypeNumber, scratch1
+        subq numberTag, scratch1
         finishGetByVal(scratch1, scratch2)
     end
 
@@ -1482,8 +1482,8 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
     loadConstantOrVariableInt32(size, t3, t1, .opGetByValSlow)
     sxi2q t1, t1
 
-    loadCagedJSValue(JSObject::m_butterfly[t0], t3, tagTypeNumber)
-    move TagTypeNumber, tagTypeNumber
+    loadCagedJSValue(JSObject::m_butterfly[t0], t3, numberTag)
+    move TagNumber, numberTag
 
     andi IndexingShapeMask, t2
     bieq t2, Int32Shape, .opGetByValIsContiguous
@@ -1503,7 +1503,7 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
     loadd [t3, t1, 8], ft0
     bdnequn ft0, ft0, .opGetByValSlow
     fd2q ft0, t2
-    subq tagTypeNumber, t2
+    subq numberTag, t2
     jmp .opGetByValDone
     
 .opGetByValNotDouble:
@@ -1647,15 +1647,15 @@ macro putByValOp(opcodeName, opcodeStruct)
         get(m_property, t0)
         loadConstantOrVariableInt32(size, t0, t3, .opPutByValSlow)
         sxi2q t3, t3
-        loadCagedJSValue(JSObject::m_butterfly[t1], t0, tagTypeNumber)
-        move TagTypeNumber, tagTypeNumber
+        loadCagedJSValue(JSObject::m_butterfly[t1], t0, numberTag)
+        move TagNumber, numberTag
         btinz t2, CopyOnWrite, .opPutByValSlow
         andi IndexingShapeMask, t2
         bineq t2, Int32Shape, .opPutByValNotInt32
         contiguousPutByVal(
             macro (operand, scratch, address)
                 loadConstantOrVariable(size, operand, scratch)
-                bqb scratch, tagTypeNumber, .opPutByValSlow
+                bqb scratch, numberTag, .opPutByValSlow
                 storeq scratch, address
                 writeBarrierOnOperands(size, get, m_base, m_value)
             end)
@@ -1665,11 +1665,11 @@ macro putByValOp(opcodeName, opcodeStruct)
         contiguousPutByVal(
             macro (operand, scratch, address)
                 loadConstantOrVariable(size, operand, scratch)
-                bqb scratch, tagTypeNumber, .notInt
+                bqb scratch, numberTag, .notInt
                 ci2d scratch, ft0
                 jmp .ready
             .notInt:
-                addq tagTypeNumber, scratch
+                addq numberTag, scratch
                 fq2d scratch, ft0
                 bdnequn ft0, ft0, .opPutByValSlow
             .ready:
@@ -1741,7 +1741,7 @@ macro equalNullJumpOp(opcodeName, opcodeStruct, cellHandler, immediateHandler)
         get(m_value, t0)
         assertNotConstant(size, t0)
         loadq [cfr, t0, 8], t0
-        btqnz t0, tagMask, .immediate
+        btqnz t0, notCellMask, .immediate
         loadStructureWithScratch(t0, t2, t1, t3)
         cellHandler(t2, JSCell::m_flags[t0], .target)
         dispatch()
@@ -1750,7 +1750,7 @@ macro equalNullJumpOp(opcodeName, opcodeStruct, cellHandler, immediateHandler)
         jump(m_targetLabel)
 
     .immediate:
-        andq ~TagBitUndefined, t0
+        andq ~TagUndefined, t0
         immediateHandler(t0, .target)
         dispatch()
     end)
@@ -1780,7 +1780,7 @@ macro undefinedOrNullJumpOp(opcodeName, opcodeStruct, fn)
     llintOpWithJump(op_%opcodeName%, opcodeStruct, macro (size, get, jump, dispatch)
         get(m_value, t1)
         loadConstantOrVariable(size, t1, t0)
-        andq ~TagBitUndefined, t0
+        andq ~TagUndefined, t0
         fn(t0, .target)
         dispatch()
 
@@ -1818,30 +1818,30 @@ macro compareJumpOp(opcodeName, opcodeStruct, integerCompare, doubleCompare)
         get(m_rhs, t3)
         loadConstantOrVariable(size, t2, t0)
         loadConstantOrVariable(size, t3, t1)
-        bqb t0, tagTypeNumber, .op1NotInt
-        bqb t1, tagTypeNumber, .op2NotInt
+        bqb t0, numberTag, .op1NotInt
+        bqb t1, numberTag, .op2NotInt
         integerCompare(t0, t1, .jumpTarget)
         dispatch()
 
     .op1NotInt:
-        btqz t0, tagTypeNumber, .slow
-        bqb t1, tagTypeNumber, .op1NotIntOp2NotInt
+        btqz t0, numberTag, .slow
+        bqb t1, numberTag, .op1NotIntOp2NotInt
         ci2d t1, ft1
         jmp .op1NotIntReady
     .op1NotIntOp2NotInt:
-        btqz t1, tagTypeNumber, .slow
-        addq tagTypeNumber, t1
+        btqz t1, numberTag, .slow
+        addq numberTag, t1
         fq2d t1, ft1
     .op1NotIntReady:
-        addq tagTypeNumber, t0
+        addq numberTag, t0
         fq2d t0, ft0
         doubleCompare(ft0, ft1, .jumpTarget)
         dispatch()
 
     .op2NotInt:
         ci2d t0, ft0
-        btqz t1, tagTypeNumber, .slow
-        addq tagTypeNumber, t1
+        btqz t1, numberTag, .slow
+        addq numberTag, t1
         fq2d t1, ft1
         doubleCompare(ft0, ft1, .jumpTarget)
         dispatch()
@@ -1912,7 +1912,7 @@ llintOpWithJump(op_switch_imm, OpSwitchImm, macro (size, get, jump, dispatch)
     muli sizeof SimpleJumpTable, t3
     loadp CodeBlock::RareData::m_switchJumpTables + VectorBufferOffset[t2], t2
     addp t3, t2
-    bqb t1, tagTypeNumber, .opSwitchImmNotInt
+    bqb t1, numberTag, .opSwitchImmNotInt
     subi SimpleJumpTable::min[t2], t1
     biaeq t1, SimpleJumpTable::branchOffsets + VectorSizeOffset[t2], .opSwitchImmFallThrough
     loadp SimpleJumpTable::branchOffsets + VectorBufferOffset[t2], t3
@@ -1921,7 +1921,7 @@ llintOpWithJump(op_switch_imm, OpSwitchImm, macro (size, get, jump, dispatch)
     dispatchIndirect(t1)
 
 .opSwitchImmNotInt:
-    btqnz t1, tagTypeNumber, .opSwitchImmSlow   # Go slow if it's a double.
+    btqnz t1, numberTag, .opSwitchImmSlow   # Go slow if it's a double.
 .opSwitchImmFallThrough:
     jump(m_defaultOffset)
 
@@ -1940,7 +1940,7 @@ llintOpWithJump(op_switch_char, OpSwitchChar, macro (size, get, jump, dispatch)
     muli sizeof SimpleJumpTable, t3
     loadp CodeBlock::RareData::m_switchJumpTables + VectorBufferOffset[t2], t2
     addp t3, t2
-    btqnz t1, tagMask, .opSwitchCharFallThrough
+    btqnz t1, notCellMask, .opSwitchCharFallThrough
     bbneq JSCell::m_type[t1], StringType, .opSwitchCharFallThrough
     loadp JSString::m_fiber[t1], t0
     btpnz t0, isRopeInPointer, .opSwitchOnRope
@@ -1976,7 +1976,7 @@ macro arrayProfileForCall(opcodeStruct, getu)
     getu(m_argv, t3)
     negp t3
     loadq ThisArgumentOffset[cfr, t3, 8], t0
-    btqnz t0, tagMask, .done
+    btqnz t0, notCellMask, .done
     loadi JSCell::m_structureID[t0], t3
     storei t3, %opcodeStruct%::Metadata::m_callLinkInfo.m_arrayProfile.m_lastSeenStructureID[t5]
 .done:
@@ -2022,7 +2022,7 @@ end)
 llintOpWithReturn(op_to_primitive, OpToPrimitive, macro (size, get, dispatch, return)
     get(m_src, t2)
     loadConstantOrVariable(size, t2, t0)
-    btqnz t0, tagMask, .opToPrimitiveIsImm
+    btqnz t0, notCellMask, .opToPrimitiveIsImm
     bbaeq JSCell::m_type[t0], ObjectType, .opToPrimitiveSlowCase
 .opToPrimitiveIsImm:
     return(t0)
@@ -2544,7 +2544,7 @@ llintOpWithMetadata(op_profile_type, OpProfileType, macro (size, get, dispatch, 
     loadp OpProfileType::Metadata::m_typeLocation[t5], t3
     storep t3, TypeProfilerLog::LogEntry::location[t2]
 
-    btqz t0, tagMask, .opProfileTypeIsCell
+    btqz t0, notCellMask, .opProfileTypeIsCell
     storei 0, TypeProfilerLog::LogEntry::structureID[t2]
     jmp .opProfileTypeSkipIsCell
 .opProfileTypeIsCell:
@@ -2583,7 +2583,7 @@ llintOpWithReturn(op_get_rest_length, OpGetRestLength, macro (size, get, dispatc
 .storeZero:
     move 0, t0
 .boxUp:
-    orq tagTypeNumber, t0
+    orq numberTag, t0
     return(t0)
 end)
 

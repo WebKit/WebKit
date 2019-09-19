@@ -289,7 +289,7 @@ JIT::JumpList JIT::emitGenericContiguousPutByVal(Op bytecode, PatchableJump& bad
         convertInt32ToDouble(regT3, fpRegT0);
         Jump ready = jump();
         notInt.link(this);
-        add64(tagTypeNumberRegister, regT3);
+        add64(numberTagRegister, regT3);
         move64ToDouble(regT3, fpRegT0);
         slowCases.append(branchIfNaN(fpRegT0));
         ready.link(this);
@@ -1902,7 +1902,7 @@ JIT::JumpList JIT::emitFloatTypedArrayPutByVal(Op bytecode, PatchableJump& badTy
     Jump ready = jump();
     doubleCase.link(this);
     slowCases.append(branchIfNotNumber(earlyScratch));
-    add64(tagTypeNumberRegister, earlyScratch);
+    add64(numberTagRegister, earlyScratch);
     move64ToDouble(earlyScratch, fpRegT0);
     ready.link(this);
 #else

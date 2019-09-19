@@ -420,9 +420,12 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
         bool hasMaterializedDoubleEncodeOffset = false;
         auto materializeDoubleEncodeOffset = [&hasMaterializedDoubleEncodeOffset, &jit] (GPRReg dest) {
             if (!hasMaterializedDoubleEncodeOffset) {
-                static_assert(DoubleEncodeOffset == 1ll << 48, "codegen assumes this below");
+#if CPU(ARM64)
+                jit.move(JIT::TrustedImm64(JSValue::DoubleEncodeOffset), dest);
+#else
                 jit.move(JIT::TrustedImm32(1), dest);
-                jit.lshift64(JIT::TrustedImm32(48), dest);
+                jit.lshift64(JIT::TrustedImm32(JSValue::DoubleEncodeOffsetBit), dest);
+#endif
                 hasMaterializedDoubleEncodeOffset = true;
             }
         };
@@ -501,7 +504,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
 
     jit.store64(importJSCellGPRReg, calleeFrame.withOffset(CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
     jit.store32(JIT::TrustedImm32(numberOfParameters), calleeFrame.withOffset(CallFrameSlot::argumentCount * static_cast<int>(sizeof(Register)) + PayloadOffset));
-    jit.store64(JIT::TrustedImm64(ValueUndefined), calleeFrame.withOffset(CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register))));
+    jit.store64(JIT::TrustedImm64(JSValue::ValueUndefined), calleeFrame.withOffset(CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register))));
 
     // FIXME Tail call if the wasm return type is void and no registers were spilled. https://bugs.webkit.org/show_bug.cgi?id=165488
 
@@ -578,7 +581,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
         done.append(jit.jump());
 
         isDouble.link(&jit);
-        jit.move(JIT::TrustedImm64(TagTypeNumber), GPRInfo::returnValueGPR2);
+        jit.move(JIT::TrustedImm64(JSValue::NumberTag), GPRInfo::returnValueGPR2);
         jit.add64(GPRInfo::returnValueGPR2, GPRInfo::returnValueGPR);
         jit.move64ToDouble(GPRInfo::returnValueGPR, FPRInfo::returnValueFPR);
         jit.convertDoubleToFloat(FPRInfo::returnValueFPR, FPRInfo::returnValueFPR);
@@ -613,7 +616,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
         done.append(jit.jump());
 
         isDouble.link(&jit);
-        jit.move(JIT::TrustedImm64(TagTypeNumber), GPRInfo::returnValueGPR2);
+        jit.move(JIT::TrustedImm64(JSValue::NumberTag), GPRInfo::returnValueGPR2);
         jit.add64(GPRInfo::returnValueGPR2, GPRInfo::returnValueGPR);
         jit.move64ToDouble(GPRInfo::returnValueGPR, FPRInfo::returnValueFPR);
         done.append(jit.jump());

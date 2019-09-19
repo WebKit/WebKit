@@ -412,9 +412,9 @@ private:
     RegisterMap<CachedRecovery*> m_registers;
 
 #if USE(JSVALUE64)
-    mutable GPRReg m_tagTypeNumber;
+    mutable GPRReg m_numberTagRegister;
 
-    bool tryAcquireTagTypeNumber();
+    bool tryAcquireNumberTagRegister();
 #endif
 
     // This stores, for each register, information about the recovery
@@ -448,11 +448,11 @@ private:
         }
 
 #if USE(JSVALUE64)
-        if (!nonTemp && m_tagTypeNumber != InvalidGPRReg && check(Reg { m_tagTypeNumber })) {
-            ASSERT(m_lockedRegisters.get(m_tagTypeNumber));
-            m_lockedRegisters.clear(m_tagTypeNumber);
-            nonTemp = Reg { m_tagTypeNumber };
-            m_tagTypeNumber = InvalidGPRReg;
+        if (!nonTemp && m_numberTagRegister != InvalidGPRReg && check(Reg { m_numberTagRegister })) {
+            ASSERT(m_lockedRegisters.get(m_numberTagRegister));
+            m_lockedRegisters.clear(m_numberTagRegister);
+            nonTemp = Reg { m_numberTagRegister };
+            m_numberTagRegister = InvalidGPRReg;
         }
 #endif
         return nonTemp;

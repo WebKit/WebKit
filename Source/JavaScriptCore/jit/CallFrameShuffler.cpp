@@ -79,9 +79,9 @@ CallFrameShuffler::CallFrameShuffler(CCallHelpers& jit, const CallFrameShuffleDa
             addNew(reg.fpr(), data.registers[reg]);
     }
 
-    m_tagTypeNumber = data.tagTypeNumber;
-    if (m_tagTypeNumber != InvalidGPRReg)
-        lockGPR(m_tagTypeNumber);
+    m_numberTagRegister = data.numberTagRegister;
+    if (m_numberTagRegister != InvalidGPRReg)
+        lockGPR(m_numberTagRegister);
 #endif
 }
 
@@ -216,8 +216,8 @@ void CallFrameShuffler::dump(PrintStream& out) const
     if (m_newFrameOffset)
         out.print("   New frame offset is ", m_newFrameOffset, "\n");
 #if USE(JSVALUE64)
-    if (m_tagTypeNumber != InvalidGPRReg)
-        out.print("   TagTypeNumber is currently in ", m_tagTypeNumber, "\n");
+    if (m_numberTagRegister != InvalidGPRReg)
+        out.print("   NumberTag is currently in ", m_numberTagRegister, "\n");
 #endif
 }
 
@@ -698,8 +698,8 @@ void CallFrameShuffler::prepareAny()
     }
 
 #if USE(JSVALUE64)
-    if (m_tagTypeNumber != InvalidGPRReg && m_newRegisters[m_tagTypeNumber])
-        releaseGPR(m_tagTypeNumber);
+    if (m_numberTagRegister != InvalidGPRReg && m_newRegisters[m_numberTagRegister])
+        releaseGPR(m_numberTagRegister);
 #endif
 
     // Handle 2) by loading all registers. We don't have to do any
@@ -717,8 +717,8 @@ void CallFrameShuffler::prepareAny()
     }
 
 #if USE(JSVALUE64)
-    if (m_tagTypeNumber != InvalidGPRReg)
-        releaseGPR(m_tagTypeNumber);
+    if (m_numberTagRegister != InvalidGPRReg)
+        releaseGPR(m_numberTagRegister);
 #endif
 
     // At this point, we have read everything we cared about from the

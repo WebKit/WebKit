@@ -113,25 +113,6 @@ void Data::performAssertions(VM& vm)
     STATIC_ASSERT(TagOffset == 4);
     STATIC_ASSERT(PayloadOffset == 0);
 #endif
-#if USE(JSVALUE32_64)
-    STATIC_ASSERT(JSValue::Int32Tag == static_cast<unsigned>(-1));
-    STATIC_ASSERT(JSValue::BooleanTag == static_cast<unsigned>(-2));
-    STATIC_ASSERT(JSValue::NullTag == static_cast<unsigned>(-3));
-    STATIC_ASSERT(JSValue::UndefinedTag == static_cast<unsigned>(-4));
-    STATIC_ASSERT(JSValue::CellTag == static_cast<unsigned>(-5));
-    STATIC_ASSERT(JSValue::EmptyValueTag == static_cast<unsigned>(-6));
-    STATIC_ASSERT(JSValue::DeletedValueTag == static_cast<unsigned>(-7));
-    STATIC_ASSERT(JSValue::LowestTag == static_cast<unsigned>(-7));
-#else
-    STATIC_ASSERT(TagBitTypeOther == 0x2);
-    STATIC_ASSERT(TagBitBool == 0x4);
-    STATIC_ASSERT(TagBitUndefined == 0x8);
-    STATIC_ASSERT(ValueEmpty == 0x0);
-    STATIC_ASSERT(ValueFalse == (TagBitTypeOther | TagBitBool));
-    STATIC_ASSERT(ValueTrue == (TagBitTypeOther | TagBitBool | 1));
-    STATIC_ASSERT(ValueUndefined == (TagBitTypeOther | TagBitUndefined));
-    STATIC_ASSERT(ValueNull == TagBitTypeOther);
-#endif
 
 #if ENABLE(C_LOOP)
     ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 1);
