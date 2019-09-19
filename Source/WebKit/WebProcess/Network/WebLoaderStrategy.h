@@ -79,7 +79,7 @@ public:
     void addURLSchemeTaskProxy(WebURLSchemeTaskProxy&);
     void removeURLSchemeTaskProxy(WebURLSchemeTaskProxy&);
 
-    void scheduleLoadFromNetworkProcess(WebCore::ResourceLoader&, const WebCore::ResourceRequest&, const WebResourceLoader::TrackingParameters&, PAL::SessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Seconds maximumBufferingTime);
+    void scheduleLoadFromNetworkProcess(WebCore::ResourceLoader&, const WebCore::ResourceRequest&, const WebResourceLoader::TrackingParameters&, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Seconds maximumBufferingTime);
 
     bool isOnLine() const final;
     void addOnlineStateChangeListener(Function<void(bool)>&&) final;
