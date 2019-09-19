@@ -150,11 +150,11 @@
     },
     {
       "name": "ews127",
-      "platform": "jsc-only"
+      "platform": "mac-highsierra"
     },
     {
       "name": "ews128",
-      "platform": "jsc-only"
+      "platform": "mac-highsierra"
     },
     {
       "name": "ews150",
@@ -422,7 +422,7 @@
       "shortname": "jsc",
       "icon": "buildAndTest",
       "factory": "JSCTestsFactory",
-      "platform": "jsc-only",
+      "platform": "mac-highsierra",
       "configuration": "release",
       "workernames": ["ews127", "ews128"]
     },

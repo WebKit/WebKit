@@ -1,3 +1,12 @@
+2019-09-19  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Fix platform for JSC EWS
+        https://bugs.webkit.org/show_bug.cgi?id=201997
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/config.json:
+
 2019-09-19  Brent Fulgham  <bfulgham@apple.com>
 
         Create InjectedBundle SPI to better support NSSecureCoding
