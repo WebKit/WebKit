@@ -1,5 +1,29 @@
 2019-09-18  Chris Dumez  <cdumez@apple.com>
 
+        AddPlugInAutoStartOriginHash / PlugInDidReceiveUserInteraction IPC should not need to pass a SessionID
+        https://bugs.webkit.org/show_bug.cgi?id=201962
+
+        Reviewed by Geoffrey Garen.
+
+        AddPlugInAutoStartOriginHash / PlugInDidReceiveUserInteraction IPC from the WebProcess to the UIProcess
+        should not need to pass a SessionID, since the UIProcess already knows the SessionID of a given WebProcess.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::addPlugInAutoStartOriginHash): Deleted.
+        (WebKit::WebProcessPool::plugInDidReceiveUserInteraction): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessPool.messages.in:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::addPlugInAutoStartOriginHash):
+        (WebKit::WebProcessProxy::plugInDidReceiveUserInteraction):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::plugInDidStartFromOrigin):
+        (WebKit::WebProcess::plugInDidReceiveUserInteraction):
+
+2019-09-18  Chris Dumez  <cdumez@apple.com>
+
         WebStorageNamespaceProvider / StorageNamespaceImpl no longer need SessionIDs
         https://bugs.webkit.org/show_bug.cgi?id=201922
 

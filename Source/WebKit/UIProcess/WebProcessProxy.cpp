@@ -1483,6 +1483,16 @@ PAL::SessionID WebProcessProxy::sessionID() const
     return m_websiteDataStore->sessionID();
 }
 
+void WebProcessProxy::addPlugInAutoStartOriginHash(String&& pageOrigin, uint32_t hash)
+{
+    processPool().plugInAutoStartProvider().addAutoStartOriginHash(WTFMove(pageOrigin), hash, sessionID());
+}
+
+void WebProcessProxy::plugInDidReceiveUserInteraction(uint32_t hash)
+{
+    processPool().plugInAutoStartProvider().didReceiveUserInteraction(hash, sessionID());
+}
+
 #if PLATFORM(WATCHOS)
 
 void WebProcessProxy::takeBackgroundActivityTokenForFullscreenInput()

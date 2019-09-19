@@ -361,6 +361,9 @@ private:
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void getPluginProcessConnection(uint64_t pluginProcessToken, Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply&&);
 #endif
+    void addPlugInAutoStartOriginHash(String&& pageOrigin, uint32_t hash);
+    void plugInDidReceiveUserInteraction(uint32_t hash);
+    
     void getNetworkProcessConnection(Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&&);
 
     bool platformIsBeingDebugged() const;

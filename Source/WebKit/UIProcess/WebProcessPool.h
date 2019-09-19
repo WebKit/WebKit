@@ -527,6 +527,8 @@ public:
     const String& javaScriptConfigurationDirectory() const { return m_javaScriptConfigurationDirectory; }
     
     WebProcessDataStoreParameters webProcessDataStoreParameters(WebProcessProxy&, WebsiteDataStore&);
+    
+    PlugInAutoStartProvider& plugInAutoStartProvider() { return m_plugInAutoStartProvider; }
 
 private:
     void platformInitialize();
@@ -588,9 +590,6 @@ private:
 #endif
 
     void setApplicationIsActive(bool);
-
-    void addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash, PAL::SessionID);
-    void plugInDidReceiveUserInteraction(unsigned plugInOriginHash, PAL::SessionID);
 
     void resolvePathsForSandboxExtensions();
     void platformResolvePathsForSandboxExtensions();
