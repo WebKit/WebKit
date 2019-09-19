@@ -1,5 +1,25 @@
 2019-09-19  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] InlineFormattingContext::InlineLayout should not need to call LayoutState::establishedFormattingState
+        https://bugs.webkit.org/show_bug.cgi?id=201972
+        <rdar://problem/55505869>
+
+        Reviewed by Antti Koivisto.
+
+        InlineLayout has access to InlineFormattingContext, so it should just query it instead of calling LayoutState::establishedFormattingState.
+
+        * layout/inlineformatting/InlineFormattingContext.h:
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::formattingContext const):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::formattingState):
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::InlineLayout):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::layout):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::createDisplayRuns):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::layout const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::createDisplayRuns const): Deleted.
+
+2019-09-19  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] FloatingContext should take the root container.
         https://bugs.webkit.org/show_bug.cgi?id=201968
         <rdar://problem/55505090>

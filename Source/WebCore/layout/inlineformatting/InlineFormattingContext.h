@@ -53,20 +53,21 @@ private:
 
     class InlineLayout {
     public:
-        InlineLayout(const InlineFormattingContext&);
-        void layout(const InlineItems&, LayoutUnit widthConstraint) const;
+        InlineLayout(InlineFormattingContext&);
+        void layout(const InlineItems&, LayoutUnit widthConstraint);
         LayoutUnit computedIntrinsicWidth(const InlineItems&, LayoutUnit widthConstraint) const;
 
     private:
         LayoutState& layoutState() const { return m_inlineFormattingContext.layoutState(); }
-        const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
+        InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
         const Container& formattingRoot() const { return m_inlineFormattingContext.root(); }
+        InlineFormattingState& formattingState() { return m_inlineFormattingContext.formattingState(); }
         LineContent placeInlineItems(const LineInput&) const;
-        void createDisplayRuns(const Line::Content&, const Vector<WeakPtr<InlineItem>>& floats, LayoutUnit widthConstraint) const;
+        void createDisplayRuns(const Line::Content&, const Vector<WeakPtr<InlineItem>>& floats, LayoutUnit widthConstraint);
         void alignRuns(TextAlignMode, InlineRuns&, unsigned firstRunIndex, LayoutUnit availableWidth) const;
 
     private:
-        const InlineFormattingContext& m_inlineFormattingContext;
+        InlineFormattingContext& m_inlineFormattingContext;
     };
 
     class Quirks : public FormattingContext::Quirks {
@@ -112,6 +113,7 @@ private:
     InlineFormattingState& formattingState() { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
     // FIXME: Come up with a structure that requires no friending.
     friend class Line;
+    friend class InlineLayout;
 };
 
 inline InlineFormattingContext::Geometry::Geometry(const InlineFormattingContext& inlineFormattingContext)

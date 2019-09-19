@@ -269,18 +269,17 @@ LineInput::LineInput(const Line::InitialConstraints& initialLineConstraints, Lin
 {
 }
 
-InlineFormattingContext::InlineLayout::InlineLayout(const InlineFormattingContext& inlineFormattingContext)
+InlineFormattingContext::InlineLayout::InlineLayout(InlineFormattingContext& inlineFormattingContext)
     : m_inlineFormattingContext(inlineFormattingContext)
 {
 }
 
-void InlineFormattingContext::InlineLayout::layout(const InlineItems& inlineItems, LayoutUnit widthConstraint) const
+void InlineFormattingContext::InlineLayout::layout(const InlineItems& inlineItems, LayoutUnit widthConstraint)
 {
-    auto& layoutState = this->layoutState();
     auto& formattingContext = this->formattingContext();
     auto& formattingRoot = this->formattingRoot();
     auto& formattingRootGeometry = formattingContext.geometryForBox(formattingRoot);
-    auto floatingContext = FloatingContext { formattingRoot, formattingContext, layoutState.establishedFormattingState(formattingRoot).floatingState() };
+    auto floatingContext = FloatingContext { formattingRoot, formattingContext, formattingState().floatingState() };
 
     auto lineLogicalTop = formattingRootGeometry.contentBoxTop();
     auto lineLogicalLeft = formattingRootGeometry.contentBoxLeft();
@@ -357,11 +356,10 @@ LayoutUnit InlineFormattingContext::InlineLayout::computedIntrinsicWidth(const I
     return maximumLineWidth;
 }
 
-void InlineFormattingContext::InlineLayout::createDisplayRuns(const Line::Content& lineContent, const Vector<WeakPtr<InlineItem>>& floats, LayoutUnit widthConstraint) const
+void InlineFormattingContext::InlineLayout::createDisplayRuns(const Line::Content& lineContent, const Vector<WeakPtr<InlineItem>>& floats, LayoutUnit widthConstraint)
 {
-    auto& layoutState = this->layoutState();
     auto& formattingContext = this->formattingContext();
-    auto& formattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(formattingRoot()));
+    auto& formattingState = this->formattingState();
     auto floatingContext = FloatingContext { formattingRoot(), formattingContext, formattingState.floatingState() };
 
     // Move floats to their final position.
