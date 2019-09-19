@@ -1,3 +1,19 @@
+2019-09-19  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst apps crash under TextCheckingControllerProxy::replaceRelativeToSelection when spell checking
+        https://bugs.webkit.org/show_bug.cgi?id=202010
+        <rdar://problem/54974971>
+
+        Reviewed by Beth Dakin.
+
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm:
+        (WebKit::TextCheckingControllerProxy::replaceRelativeToSelection):
+        relativeReplacementRange is in the coordinate space of the document's text,
+        not the replacement string. We need to adjust into replacement string
+        coordinates before slicing the replacement, or we'll throw an exception
+        trying to read past the end of the string, in the case where the
+        replacement string is shorter than the replaced string (by more than 2 characters).
+
 2019-09-19  Yury Semikhatsky  <yurys@chromium.org>
 
         WebStorageNamespaceProvider / StorageNamespaceImpl no longer need SessionIDs

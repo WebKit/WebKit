@@ -113,7 +113,7 @@ void TextCheckingControllerProxy::replaceRelativeToSelection(AttributedString an
             auto replacementRange = rangeAndOffsetOfReplacement->range;
             if (replacementRange) {
                 bool restoreSelection = frameSelection.selection().isRange();
-                frame.editor().replaceRangeForSpellChecking(*replacementRange, [[annotatedString.string string] substringWithRange:NSMakeRange(relativeReplacementLocation, relativeReplacementLength)]);
+                frame.editor().replaceRangeForSpellChecking(*replacementRange, [[annotatedString.string string] substringWithRange:NSMakeRange(relativeReplacementLocation, relativeReplacementLength + [annotatedString.string length] - length)]);
 
                 size_t selectionLocationToRestore = locationInRoot - selectionOffset;
                 if (restoreSelection && selectionLocationToRestore > locationInRoot + relativeReplacementLocation + relativeReplacementLength) {
