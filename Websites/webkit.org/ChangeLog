@@ -1,3 +1,28 @@
+2019-09-19  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Update messaging to reflect STP 92 requirement for demos
+        https://bugs.webkit.org/show_bug.cgi?id=201931
+
+        Reviewed by Jon Lee.
+
+        Demos don't work anymore on versions of Safari older than STP 92,
+        so update WebGPU feature detection to reflect that.
+
+        * demos/webgpu/babylon/babylonWebGpu.max.js:
+        * demos/webgpu/babylon/oneHelmetWebGPU.html:
+        * demos/webgpu/babylon/oneSphereWebGPU.html:
+        * demos/webgpu/compute-blur.html:
+        * demos/webgpu/compute-boids-compile.html:
+        * demos/webgpu/compute-boids.html:
+        * demos/webgpu/hello-cube.html:
+        * demos/webgpu/hello-triangle.html:
+        * demos/webgpu/scripts/compute-blur.js:
+        (async.init):
+        * demos/webgpu/scripts/compute-boids-compile.js:
+        * demos/webgpu/scripts/hello-triangle.js:
+        (async.helloTriangle):
+        * demos/webgpu/textured-cube.html:
+
 2019-09-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Update demos to work on STP 92

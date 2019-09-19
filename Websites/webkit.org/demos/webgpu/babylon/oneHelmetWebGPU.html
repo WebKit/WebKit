@@ -175,8 +175,8 @@
     let Shaderc = {Compiler, CompileOptions, shader_kind: ShaderKind};
 
     (async function() {
-        if (!navigator.gpu) {
-            alert("WebGPU is not enabled.");
+        if (!navigator.gpu || GPUBufferUsage.COPY_SRC === undefined) {
+            alert("WebGPU is not enabled. Are you using Safari Technology Preview 92 or above?");
             return;
         }
         const canvas = document.getElementById("renderCanvas");

@@ -35,9 +35,13 @@ p {
         Safari, first make sure the Developer Menu is visible (Preferences >
         Advanced), then Develop > Experimental Features > WebGPU.
     </p>
+    <p>
+        In addition, you must be using Safari Technology Preview 92 or above.
+        You can get the latest STP <a href="https://developer.apple.com/safari/download/">here</a>.
+    </p>
 </div>
 <script>
-if (!navigator.gpu)
+if (!navigator.gpu || GPUBufferUsage.COPY_SRC === undefined)
     document.body.className = 'error';
 
 const positionAttributeNum  = 0;

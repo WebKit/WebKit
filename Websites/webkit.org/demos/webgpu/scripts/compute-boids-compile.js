@@ -1,4 +1,4 @@
-if (!navigator.gpu)
+if (!navigator.gpu || GPUBufferUsage.COPY_SRC === undefined)
     document.body.className = "error";
 
 const isChrome = navigator.userAgent.indexOf("Chrome") >= 0;

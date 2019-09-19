@@ -1,5 +1,5 @@
 async function helloTriangle() {
-    if (!navigator.gpu) {
+    if (!navigator.gpu || GPUBufferUsage.COPY_SRC === undefined) {
         document.body.className = 'error';
         return;
     }
