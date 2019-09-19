@@ -401,8 +401,6 @@ void Path::addBezierCurveTo(const FloatPoint& cp1, const FloatPoint& cp2, const 
 
 void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
 {
-    ASSERT(m_activePath.get());
-
     FloatPoint p0 = currentPoint();
 
     if (p1 == p0 || p1 == p2 || WTF::areEssentiallyEqual(radius, 0.0f))

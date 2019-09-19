@@ -61,6 +61,9 @@ struct ImageBufferData {
 
     bool ensureBackingStore(const IntSize&) const;
     void loadDataToBitmapIfNeeded();
+    bool readDataFromBitmapIfNeeded(AlphaPremultiplication desiredFormat) const;
+    bool copyRectFromData(const IntRect&, RefPtr<Uint8ClampedArray>&) const;
+    bool copyRectFromSourceToData(const IntRect&, const Uint8ClampedArray&, AlphaPremultiplication);
     void markBufferOutOfSync() { bitmapBufferSync = BitmapBufferSync::BufferOutOfSync; }
 };
 

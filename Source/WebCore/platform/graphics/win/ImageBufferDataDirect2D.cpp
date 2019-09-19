@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,6 +79,102 @@ void swizzleAndPremultiply(const uint8_t* srcRows, unsigned rowCount, unsigned c
     }
 }
 
+static bool copyRectFromSourceToDest(const IntRect& sourceRect, const IntSize& sourceBufferSize, const uint8_t* source, const IntSize& destBufferSize, uint8_t* dest, const IntPoint& destBufferPosition)
+{
+    if (!IntRect({ }, destBufferSize).contains(IntRect(destBufferPosition, sourceRect.size())))
+        return false;
+
+    if (!IntRect({ }, sourceBufferSize).contains(sourceRect))
+        return false;
+
+    unsigned srcStride = sourceBufferSize.width() * 4;
+    unsigned destStride = destBufferSize.width() * 4;
+
+    unsigned srcRowOffset = sourceRect.location().x() * 4;
+    unsigned destRowOffset = destBufferPosition.x() * 4;
+
+    const uint8_t* srcRows = source + srcStride * sourceRect.location().y();
+    uint8_t* destRows = dest + destStride * destBufferPosition.y();
+
+    const unsigned bytesPerRow = sourceRect.width() * 4;
+    for (unsigned y = 0; y < sourceRect.height(); ++y) {
+        const uint8_t* srcRow = srcRows + srcStride * y + srcRowOffset;
+        uint8_t* destRow = destRows + destStride * y + destRowOffset;
+        memcpy(destRow, srcRow, bytesPerRow);
+    }
+
+    return true;
+}
+
+// Note: Assumes that bytes are already in RGBA format
+template <AlphaPremultiplication desiredFormat>
+bool copyRectFromSourceToDestAndSetPremultiplication(const IntRect& sourceRect, const IntSize& sourceBufferSize, const uint8_t* source, const IntSize& destBufferSize, uint8_t* dest, const IntPoint& destBufferPosition)
+{
+    if (!IntRect({ }, destBufferSize).contains(IntRect(destBufferPosition, sourceRect.size())))
+        return false;
+
+    if (!IntRect({ }, sourceBufferSize).contains(sourceRect))
+        return false;
+
+    unsigned srcStride = sourceBufferSize.width() * 4;
+    unsigned destStride = destBufferSize.width() * 4;
+
+    unsigned srcRowOffset = sourceRect.location().x() * 4;
+    unsigned destRowOffset = destBufferPosition.x() * 4;
+
+    const uint8_t* srcRows = source + srcStride * sourceRect.location().y();
+    uint8_t* destRows = dest + destStride * destBufferPosition.y();
+
+    const unsigned bytesPerRow = sourceRect.width() * 4;
+    for (unsigned y = 0; y < sourceRect.height(); ++y) {
+        const uint8_t* srcRow = srcRows + srcStride * y + srcRowOffset;
+        uint8_t* destRow = destRows + destStride * y + destRowOffset;
+
+        for (size_t x = 0; x < sourceRect.width(); ++x) {
+            unsigned pos = x * 4;
+
+            unsigned red = srcRow[x];
+            unsigned green = srcRow[x + 1];
+            unsigned blue = srcRow[x + 2];
+            unsigned alpha = srcRow[x + 3];
+
+            if (desiredFormat == AlphaPremultiplication::Premultiplied) {
+                if (alpha != 255) {
+                    red = (red * alpha + 254) / 255;
+                    green = (green * alpha + 254) / 255;
+                    blue = (blue * alpha + 254) / 255;
+                }
+            } else {
+                if (alpha && alpha != 255) {
+                    red = red * 255 / alpha;
+                    green = green * 255 / alpha;
+                    blue = blue * 255 / alpha;
+                }
+            }
+
+            uint32_t* pixel = reinterpret_cast<uint32_t*>(destRow) + x;
+            *pixel = (alpha << 24) | red  << 16 | green  << 8 | blue;
+        }
+    }
+
+    return true;
+}
+
+bool ImageBufferData::copyRectFromData(const IntRect& rect, RefPtr<Uint8ClampedArray>& result) const
+{
+    auto rawBitmapSize = bitmap->GetSize();
+
+    float scaleFactor = backingStoreSize.width() / rawBitmapSize.width;
+
+    IntRect scaledRect = rect;
+    scaledRect.scale(scaleFactor);
+
+    if (!IntRect(IntPoint(), backingStoreSize).contains(scaledRect))
+        return false;
+
+    return copyRectFromSourceToDest(scaledRect, backingStoreSize, data.data(), rect.size(), result->data(), IntPoint());
+}
+
 bool ImageBufferData::ensureBackingStore(const IntSize& size) const
 {
     if (size == backingStoreSize && !data.isEmpty())
@@ -91,73 +187,6 @@ bool ImageBufferData::ensureBackingStore(const IntSize& size) const
     backingStoreSize = size;
     data.resizeToFit(numBytes.unsafeGet());
     return data.capacity() == numBytes.unsafeGet();
-}
-
-RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication desiredFormat, const IntRect& rect, const IntSize& size, bool /* accelerateRendering */, float /* resolutionScale */) const
-{
-    auto numBytes = rect.area<RecordOverflow>() * 4;
-    if (numBytes.hasOverflowed())
-        return nullptr;
-
-    auto result = Uint8ClampedArray::tryCreateUninitialized(numBytes.unsafeGet());
-    if (!result)
-        return nullptr;
-
-    if (!bitmap)
-        return result;
-
-    auto bytesPerRowInData = rect.width() * 4;
-    auto height = rect.height();
-    auto width = rect.width();
-
-    if (bitmapBufferSync == BitmapBufferSync::BufferOutOfSync || data.size() != numBytes.unsafeGet()) {
-        context->endDraw();
-
-        COMPtr<ID2D1DeviceContext> d2dDeviceContext(Query, platformContext->renderTarget());
-        ASSERT(!!d2dDeviceContext);
-
-        // Copy GPU data from the ID2D1Bitmap to a CPU-backed ID2D1Bitmap1
-        COMPtr<ID2D1Bitmap1> cpuBitmap;
-        D2D1_BITMAP_PROPERTIES1 bitmapProperties2 = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_CPU_READ | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, Direct2D::pixelFormat());
-        HRESULT hr = d2dDeviceContext->CreateBitmap(size, nullptr, bytesPerRowInData, bitmapProperties2, &cpuBitmap);
-        if (!SUCCEEDED(hr))
-            return nullptr;
-
-        auto targetPos = D2D1::Point2U();
-        D2D1_RECT_U dataRect = rect;
-        hr = cpuBitmap->CopyFromBitmap(&targetPos, bitmap.get(), &dataRect);
-        if (!SUCCEEDED(hr))
-            return nullptr;
-
-        D2D1_MAPPED_RECT mappedData;
-        hr = cpuBitmap->Map(D2D1_MAP_OPTIONS_READ, &mappedData);
-        if (!SUCCEEDED(hr))
-            return nullptr;
-
-        if (mappedData.bits) {
-            if (!ensureBackingStore(bitmap->GetPixelSize()))
-                return nullptr;
-
-            // Software filters expect RGBA bytes. We need to swizzle from Direct2D's BGRA to be compatible.
-            if (desiredFormat == AlphaPremultiplication::Unpremultiplied)
-                swizzleAndPremultiply<AlphaPremultiplication::Unpremultiplied>(mappedData.bits, height, width, mappedData.pitch, bytesPerRowInData, data.data());
-            else
-                swizzleAndPremultiply<AlphaPremultiplication::Premultiplied>(mappedData.bits, height, width, mappedData.pitch, bytesPerRowInData, data.data());
-
-            byteFormat = desiredFormat;
-
-            bitmapBufferSync = BitmapBufferSync::InSync;
-        }
-
-        hr = cpuBitmap->Unmap();
-        ASSERT(SUCCEEDED(hr));
-
-        context->beginDraw();
-    }
-
-    result->setRange(data.data(), data.size(), 0);
-
-    return result;
 }
 
 // Swizzle the red and blue bytes of the pixels in a buffer
@@ -188,6 +217,138 @@ void inPlaceSwizzle(uint8_t* byteData, unsigned byteCount)
         *pixelData = (alpha << 24) | red  << 16 | green  << 8 | blue;
         ++pixelData;
     }
+}
+
+// Note: Assumes that bytes are already in RGBA format
+template <AlphaPremultiplication desiredFormat>
+void inPlaceChangePremultiplication(uint8_t* byteData, unsigned byteCount)
+{
+    size_t pixelCount = byteCount / 4;
+
+    for (size_t i = 0; i < pixelCount; ++i) {
+        unsigned x = pixelCount * 4;
+
+        unsigned red = byteData[x];
+        unsigned green = byteData[x + 1];
+        unsigned blue = byteData[x + 2];
+        unsigned alpha = byteData[x + 3];
+
+        if (desiredFormat == AlphaPremultiplication::Premultiplied) {
+            if (alpha != 255) {
+                red = (red * alpha + 254) / 255;
+                green = (green * alpha + 254) / 255;
+                blue = (blue * alpha + 254) / 255;
+            }
+        } else {
+            if (alpha && alpha != 255) {
+                red = red * 255 / alpha;
+                green = green * 255 / alpha;
+                blue = blue * 255 / alpha;
+            }
+        }
+
+        uint32_t* pixel = reinterpret_cast<uint32_t*>(byteData) + i;
+        *pixel = (alpha << 24) | red  << 16 | green  << 8 | blue;
+    }
+}
+
+RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication desiredFormat, const IntRect& rect, const IntSize& size, bool /* accelerateRendering */, float /* resolutionScale */) const
+{
+    auto numBytes = rect.area<RecordOverflow>() * 4;
+    if (numBytes.hasOverflowed())
+        return nullptr;
+
+    auto result = Uint8ClampedArray::tryCreateUninitialized(numBytes.unsafeGet());
+    if (!result)
+        return nullptr;
+
+    if (!bitmap)
+        return result;
+
+    if (!readDataFromBitmapIfNeeded(desiredFormat))
+        return nullptr;
+
+    auto rawBitmapSize = bitmap->GetSize();
+    IntSize bitmapSize(clampTo<int>(rawBitmapSize.width), clampTo<int>(rawBitmapSize.height));
+
+    if (rect.location() == IntPoint() && rect.size() == bitmapSize) {
+        RELEASE_ASSERT(numBytes.unsafeGet() == data.size());
+        result->setRange(data.data(), data.size(), 0);
+    } else {
+        // Only want part of the bitmap.
+        if (!copyRectFromData(rect, result))
+            return nullptr;
+    }
+
+    if (byteFormat != desiredFormat) {
+        // In-memory data does not match desired format. Need to swizzle the results.
+        if (desiredFormat == AlphaPremultiplication::Unpremultiplied)
+            inPlaceChangePremultiplication<AlphaPremultiplication::Unpremultiplied>(result->data(), result->length());
+        else
+            inPlaceChangePremultiplication<AlphaPremultiplication::Premultiplied>(result->data(), result->length());
+    }
+
+    return result;
+}
+
+bool ImageBufferData::readDataFromBitmapIfNeeded(AlphaPremultiplication desiredFormat) const
+{
+    if (bitmapBufferSync != BitmapBufferSync::BufferOutOfSync)
+        return true;
+
+    IntSize pixelSize = bitmap->GetPixelSize();
+
+    auto numBytes = pixelSize.area<RecordOverflow>() * 4;
+    if (numBytes.hasOverflowed())
+        return false;
+
+    context->endDraw();
+
+    COMPtr<ID2D1DeviceContext> d2dDeviceContext(Query, platformContext->renderTarget());
+    ASSERT(!!d2dDeviceContext);
+
+    auto bytesPerRowInData = pixelSize.width() * 4;
+
+    // Copy GPU data from the ID2D1Bitmap to a CPU-backed ID2D1Bitmap1
+    COMPtr<ID2D1Bitmap1> cpuBitmap;
+    D2D1_BITMAP_PROPERTIES1 bitmapProperties2 = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_CPU_READ | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, Direct2D::pixelFormat());
+    HRESULT hr = d2dDeviceContext->CreateBitmap(pixelSize, nullptr, bytesPerRowInData, bitmapProperties2, &cpuBitmap);
+    if (!SUCCEEDED(hr))
+        return false;
+
+    auto targetPos = D2D1::Point2U();
+    D2D1_RECT_U dataRect = D2D1::RectU(0, 0, pixelSize.width(), pixelSize.height());
+    hr = cpuBitmap->CopyFromBitmap(&targetPos, bitmap.get(), &dataRect);
+    if (!SUCCEEDED(hr))
+        return false;
+
+    D2D1_MAPPED_RECT mappedData;
+    hr = cpuBitmap->Map(D2D1_MAP_OPTIONS_READ, &mappedData);
+    if (!SUCCEEDED(hr))
+        return false;
+
+    if (!mappedData.bits)
+        return false;
+
+    if (!ensureBackingStore(pixelSize))
+        return false;
+
+    // Software filters expect RGBA bytes. We need to swizzle from Direct2D's BGRA to be compatible.
+    if (desiredFormat == AlphaPremultiplication::Premultiplied)
+        swizzleAndPremultiply<AlphaPremultiplication::Premultiplied>(mappedData.bits, pixelSize.height(), pixelSize.width(), mappedData.pitch, bytesPerRowInData, data.data());
+    else
+        swizzleAndPremultiply<AlphaPremultiplication::Unpremultiplied>(mappedData.bits, pixelSize.height(), pixelSize.width(), mappedData.pitch, bytesPerRowInData, data.data());
+
+    byteFormat = desiredFormat;
+
+    bitmapBufferSync = BitmapBufferSync::InSync;
+
+    hr = cpuBitmap->Unmap();
+    ASSERT(SUCCEEDED(hr));
+
+    context->beginDraw();
+
+    return true;
 }
 
 void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplication sourceFormat, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool /* accelerateRendering */, float resolutionScale)
@@ -229,20 +390,47 @@ void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplic
         return;
 
 #if !ASSERT_DISABLED
-    auto pixelSize = bitmap->GetPixelSize();
-    ASSERT(pixelSize.width >= sourceSize.width());
-    ASSERT(pixelSize.width >= size.width());
-    ASSERT(pixelSize.height >= sourceSize.height());
-    ASSERT(pixelSize.height >= size.height());
+    if (bitmap) {
+        auto pixelSize = bitmap->GetPixelSize();
+        ASSERT(pixelSize.width >= sourceSize.width());
+        ASSERT(pixelSize.width >= size.width());
+        ASSERT(pixelSize.height >= sourceSize.height());
+        ASSERT(pixelSize.height >= size.height());
+    }
 #endif
 
     if (!ensureBackingStore(size))
         return;
 
-    memcpy(data.data(), source.data(), source.length());
+    if (sourceSize == size) {
+        memcpy(data.data(), source.data(), source.length());
+        byteFormat = sourceFormat;
+    } else {
+        readDataFromBitmapIfNeeded(byteFormat);
+        if (!copyRectFromSourceToData(sourceRect, source, sourceFormat))
+            return;
+    }
 
-    byteFormat = sourceFormat;
     bitmapBufferSync = BitmapBufferSync::BitmapOutOfSync;
+}
+
+bool ImageBufferData::copyRectFromSourceToData(const IntRect& sourceRect, const Uint8ClampedArray& source, AlphaPremultiplication sourceFormat)
+{
+    IntSize pixelSize = bitmap->GetPixelSize();
+
+    IntRect sourceRectToCopy = sourceRect;
+    if (!IntRect(IntPoint(), pixelSize).contains(sourceRect))
+        return false;
+
+    auto destBufferPosition = sourceRect.location();
+
+    if (sourceFormat == byteFormat)
+        return copyRectFromSourceToDest(sourceRect, sourceRect.size(), source.data(), backingStoreSize, data.data(), destBufferPosition);
+
+    if (byteFormat == AlphaPremultiplication::Unpremultiplied)
+        copyRectFromSourceToDestAndSetPremultiplication<AlphaPremultiplication::Unpremultiplied>(sourceRect, sourceRect.size(), source.data(), backingStoreSize, data.data(), destBufferPosition);
+    else
+        copyRectFromSourceToDestAndSetPremultiplication<AlphaPremultiplication::Premultiplied>(sourceRect, sourceRect.size(), source.data(), backingStoreSize, data.data(), destBufferPosition);
 }
 
 void ImageBufferData::loadDataToBitmapIfNeeded()

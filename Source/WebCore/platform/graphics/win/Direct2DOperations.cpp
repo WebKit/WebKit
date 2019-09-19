@@ -667,9 +667,12 @@ void clearRect(PlatformContextDirect2D& platformContext, const FloatRect& rect)
         if (!rectToClear.intersects(renderTargetRect))
             return;
 
-        platformContext.setTags(1, __LINE__);
         rectToClear.intersect(renderTargetRect);
-        renderTarget->FillRectangle(rectToClear, platformContext.brushWithColor(Color(D2D1::ColorF(0, 0, 0, 0))).get());
+
+        platformContext.setTags(1, __LINE__);
+        renderTarget->PushAxisAlignedClip(rectToClear, D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+        renderTarget->Clear(D2D1::ColorF(0, 0, 0, 0));
+        renderTarget->PopAxisAlignedClip();
     });
 }
 
@@ -679,7 +682,7 @@ void drawGlyphs(PlatformContextDirect2D& platformContext, const FillSource& fill
     auto renderTarget = platformContext.renderTarget();
     const FontPlatformData& platformData = font.platformData();
 
-    platformContext.save();
+    PlatformContextStateSaver stateSaver(platformContext);
 
     D2D1_MATRIX_3X2_F matrix;
     renderTarget->GetTransform(&matrix);
@@ -737,7 +740,7 @@ void drawGlyphs(PlatformContextDirect2D& platformContext, const FillSource& fill
     // if (hasSimpleShadow)
     //     graphicsContext.setShadow(shadowOffset, shadowBlur, shadowColor);
 
-    platformContext.restore();
+    stateSaver.restore();
     platformContext.notifyPostDrawObserver();
 }
 
@@ -991,7 +994,6 @@ void flush(PlatformContextDirect2D& platformContext)
     ASSERT(platformContext.renderTarget());
     D2D1_TAG first, second;
     HRESULT hr = platformContext.renderTarget()->Flush(&first, &second);
-    platformContext.notifyPostDrawObserver();
 
     RELEASE_ASSERT(SUCCEEDED(hr));
 }
@@ -1166,13 +1168,8 @@ void clipPath(PlatformContextDirect2D& platformContext, const Path& path, WindRu
 
 void clipPath(PlatformContextDirect2D& platformContext, ID2D1Geometry* path)
 {
-    ASSERT(platformContext.hasSavedState());
-    if (!platformContext.hasSavedState())
-        return;
-
     COMPtr<ID2D1Layer> clipLayer;
     HRESULT hr = platformContext.renderTarget()->CreateLayer(&clipLayer);
-    ASSERT(SUCCEEDED(hr));
     if (!SUCCEEDED(hr))
         return;
 

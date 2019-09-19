@@ -1,3 +1,38 @@
+2019-09-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] Correct ImageBufferData and clear operations
+        https://bugs.webkit.org/show_bug.cgi?id=201862
+
+        Reviewed by Fujii Hironori.
+
+        This patch corrects several problems in the canvas implementation:
+        1. The implementation of ImageBufferDataDirect2D did not properly handle the case of a
+           'getData' request for less than the size of the full bitmap.
+        2. The implementation of 'Clear' was not correct when the size of the region to be
+           cleared is less than the size of the render target.
+        3. 'endDraw' fails if any clip regions are active at the end of the operation. The
+           stack needs to be unwound when endDraw is called.
+
+        This patch corrects all three problems.
+
+        Tested by canvas LayoutTests.
+
+        * platform/graphics/win/Direct2DOperations.cpp:
+        (WebCore::Direct2D::clearRect): Correct partial render target case.
+        * platform/graphics/win/ImageBufferDataDirect2D.cpp:
+        (WebCore::ImageBufferData::getData const): Correct partial buffer case.
+        (WebCore::ImageBufferData::putData): Ditto.
+        (WebCore::ImageBufferData::readDataFromBitmapIfNeeded): Added.
+        (WebCore::copyRectFromSourceToDest): Added.
+        (WebCore::ImageBufferData::copyRectFromSourceToData): Added.
+        * platform/graphics/win/PlatformContextDirect2D.cpp:
+        (WebCore::PlatformContextDirect2D::endDraw): Correct failures caused by
+        dangling clip regions when 'endDraw' is called.
+        (WebCore::PlatformContextDirect2D::flush): Don't call post-draw observer;
+        this is already handled in the draw operations, and endDraw.
+        (WebCore::PlatformContextDirect2D::restore): Recognize that the clip
+        and transparency stack might be empty when restore is called.
+
 2019-09-18  Andy Estes  <aestes@apple.com>
 
         Unreviewed, fixed a crash in ssl/applepay/ApplePayCancelEvent.https.html

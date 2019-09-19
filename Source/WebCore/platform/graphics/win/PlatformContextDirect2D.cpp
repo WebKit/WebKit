@@ -53,14 +53,23 @@ void PlatformContextDirect2D::restore()
 {
     ASSERT(m_renderTarget);
 
-    auto restoreState = m_renderStates.takeLast();
-    m_renderTarget->RestoreDrawingState(restoreState.m_drawingStateBlock.get());
+    // There should always be at least one manually saved state if a restore is being called.
+    ASSERT(m_stateStack.size() > 1);
 
-    for (auto clipType = restoreState.m_clips.rbegin(); clipType != restoreState.m_clips.rend(); ++clipType) {
-        if (*clipType == AxisAlignedClip)
-            m_renderTarget->PopAxisAlignedClip();
-        else
-            m_renderTarget->PopLayer();
+    // Can't restore if we never called save.
+    if (m_stateStack.size() == 1)
+        return;
+
+    if (!m_renderStates.isEmpty()) {
+        auto restoreState = m_renderStates.takeLast();
+        m_renderTarget->RestoreDrawingState(restoreState.m_drawingStateBlock.get());
+
+        for (auto clipType = restoreState.m_clips.rbegin(); clipType != restoreState.m_clips.rend(); ++clipType) {
+            if (*clipType == AxisAlignedClip)
+                m_renderTarget->PopAxisAlignedClip();
+            else
+                m_renderTarget->PopLayer();
+        }
     }
 
     m_stateStack.removeLast();
@@ -72,6 +81,7 @@ PlatformContextDirect2D::~PlatformContextDirect2D() = default;
 
 void PlatformContextDirect2D::save()
 {
+    ASSERT(m_stateStack.size() >= 1); // There should always be one state on the stack.
     ASSERT(m_renderTarget);
 
     m_stateStack.append(State());
@@ -253,6 +263,12 @@ void PlatformContextDirect2D::beginDraw()
 void PlatformContextDirect2D::endDraw()
 {
     ASSERT(m_renderTarget);
+
+    while (!m_renderStates.isEmpty())
+        restore();
+
+    ASSERT(m_stateStack.size() >= 1);
+
     D2D1_TAG first, second;
     HRESULT hr = m_renderTarget->EndDraw(&first, &second);
 
