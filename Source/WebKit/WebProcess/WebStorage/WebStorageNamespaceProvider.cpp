@@ -29,6 +29,7 @@
 #include "StorageNamespaceImpl.h"
 #include "WebPage.h"
 #include "WebPageGroupProxy.h"
+#include "WebProcess.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 

@@ -1,3 +1,18 @@
+2019-09-19  Yury Semikhatsky  <yurys@chromium.org>
+
+        WebStorageNamespaceProvider / StorageNamespaceImpl no longer need SessionIDs
+        https://bugs.webkit.org/show_bug.cgi?id=201922
+        <rdar://problem/55505906>
+
+        Reviewed by Chris Dumez.
+
+        Fix GTK Debug compilation after https://trac.webkit.org/changeset/250083:
+        ../../Source/WebKit/WebProcess/WebStorage/WebStorageNamespaceProvider.cpp:75:55: error: no member named 'singleton' in namespace 'WebCore::Process'
+        ASSERT_UNUSED(sessionID, sessionID == WebProcess::singleton().sessionID());
+                                          ~~~~~~~~~~~~^
+
+        * WebProcess/WebStorage/WebStorageNamespaceProvider.cpp:
+
 2019-09-19  Chris Dumez  <cdumez@apple.com>
 
         WorkerGlobalScope does not need a SessionID
