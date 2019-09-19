@@ -3854,6 +3854,17 @@ webkit.org/b/201266 media/audio-playback-restriction-play.html [ Failure ]
 
 webkit.org/b/201267 webrtc/video-h264.html [ Failure ]
 
+webkit.org/b/201982 fast/images/exif-orientation-background.html [ ImageOnlyFailure ]
+webkit.org/b/201982 fast/images/exif-orientation-canvas.html [ ImageOnlyFailure ]
+webkit.org/b/201982 fast/images/exif-orientation-composited.html [ ImageOnlyFailure ]
+webkit.org/b/201982 fast/images/exif-orientation-content.html [ ImageOnlyFailure ]
+webkit.org/b/201982 fast/images/exif-orientation-element-object-fit.html [ ImageOnlyFailure ]
+webkit.org/b/201982 fast/images/exif-orientation-element.html [ ImageOnlyFailure ]
+webkit.org/b/201982 fast/images/exif-orientation-image-document.html [ ImageOnlyFailure ]
+webkit.org/b/201982 fast/images/exif-orientation-image-object.html [ ImageOnlyFailure ]
+webkit.org/b/201982 fast/images/exif-orientation-svg-feimage.html [ ImageOnlyFailure ]
+webkit.org/b/201982 fast/images/exif-orientation-svg-image.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
