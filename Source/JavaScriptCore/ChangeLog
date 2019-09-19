@@ -1,3 +1,35 @@
+2019-09-19  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Syntax checker should report duplicate __proto__ properties
+        https://bugs.webkit.org/show_bug.cgi?id=201897
+        <rdar://problem/53201788>
+
+        Reviewed by Mark Lam.
+
+        Currently we have two ways of parsing object literals:
+        - parseObjectLiteral: this is called in sloppy mode, and as an optimization for syntax checking,
+          it doesn't allocate string literals while parsing properties. It does still allocate identifiers,
+          but it won't store them in the Property object that it creates for each parsed property. This
+          method backtracks and calls parseObjectStrictLiteral if it finds any getters or setters.
+        - parseObjectStrictLiteral: this is called in strict mode, or when the object contains getters/setters
+          as stated above. This will always allocate string literals as well as identifiers and store them in
+          the Property object, even during syntax checking.
+
+        From looking at the history, it seems that there was a distinction between these two methods:
+        parseStrictObjectLiteral was introduced in r62848 and contained an extra check for duplicate
+        getters/setters or properties defined as both getters/setters and constants. That distinction
+        was removed and the only distinction that remained was whether we build strings and store the
+        strings and properties as part of the Property object created by SyntaxChecker::createProperty.
+        However, this optimization is no longer valid, since we need to throw a SyntaxError for duplicate
+        __proto__ properties in object literals even in sloppy mode, which means that we do need to build
+        the strings and identifiers and store them as part of the Property objects.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseObjectLiteral):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        (JSC::Parser<LexerType>::parseStrictObjectLiteral): Deleted.
+        * parser/Parser.h:
+
 2019-09-19  Mark Lam  <mark.lam@apple.com>
 
         Remove a now unnecessary hack to work around static const needing external linkage.

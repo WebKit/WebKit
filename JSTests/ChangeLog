@@ -1,3 +1,14 @@
+2019-09-19  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Syntax checker should report duplicate __proto__ properties
+        https://bugs.webkit.org/show_bug.cgi?id=201897
+        <rdar://problem/53201788>
+
+        Reviewed by Mark Lam.
+
+        * stress/syntax-checker-duplicate-underscore-proto.js: Added.
+        (catch):
+
 2019-09-18  Saam Barati  <sbarati@apple.com>
 
         TOCTOU bug in havingABadTime related assertion in DFGSpeculativeJIT

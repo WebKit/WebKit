@@ -4204,62 +4204,6 @@ void Parser<LexerType>::recordFunctionLeaveLocation(const JSTextPosition& positi
 template <typename LexerType>
 template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLiteral(TreeBuilder& context)
 {
-    SavePoint savePoint = createSavePoint();
-    consumeOrFailWithFlags(OPENBRACE, TreeBuilder::DontBuildStrings, "Expected opening '{' at the start of an object literal");
-
-    int oldNonLHSCount = m_parserState.nonLHSCount;
-
-    JSTokenLocation location(tokenLocation());    
-    if (match(CLOSEBRACE)) {
-        next();
-        return context.createObjectLiteral(location);
-    }
-    
-    TreeProperty property = parseProperty(context, false);
-    failIfFalse(property, "Cannot parse object literal property");
-
-    if (context.getType(property) & (PropertyNode::Getter | PropertyNode::Setter)) {
-        restoreSavePoint(savePoint);
-        return parseStrictObjectLiteral(context);
-    }
-
-    bool seenUnderscoreProto = false;
-    if (shouldCheckPropertyForUnderscoreProtoDuplicate(context, property))
-        seenUnderscoreProto = *context.getName(property) == m_vm.propertyNames->underscoreProto;
-
-    TreePropertyList propertyList = context.createPropertyList(location, property);
-    TreePropertyList tail = propertyList;
-    while (match(COMMA)) {
-        next(TreeBuilder::DontBuildStrings);
-        if (match(CLOSEBRACE))
-            break;
-        JSTokenLocation propertyLocation(tokenLocation());
-        property = parseProperty(context, false);
-        failIfFalse(property, "Cannot parse object literal property");
-        if (context.getType(property) & (PropertyNode::Getter | PropertyNode::Setter)) {
-            restoreSavePoint(savePoint);
-            return parseStrictObjectLiteral(context);
-        }
-        if (shouldCheckPropertyForUnderscoreProtoDuplicate(context, property)) {
-            if (*context.getName(property) == m_vm.propertyNames->underscoreProto) {
-                semanticFailIfTrue(seenUnderscoreProto, "Attempted to redefine __proto__ property");
-                seenUnderscoreProto = true;
-            }
-        }
-        tail = context.createPropertyList(propertyLocation, property, tail);
-    }
-
-    location = tokenLocation();
-    handleProductionOrFail2(CLOSEBRACE, "}", "end", "object literal");
-    
-    m_parserState.nonLHSCount = oldNonLHSCount;
-    
-    return context.createObjectLiteral(location, propertyList);
-}
-
-template <typename LexerType>
-template <class TreeBuilder> TreeExpression Parser<LexerType>::parseStrictObjectLiteral(TreeBuilder& context)
-{
     consumeOrFail(OPENBRACE, "Expected opening '{' at the start of an object literal");
     
     int oldNonLHSCount = m_parserState.nonLHSCount;
@@ -4499,8 +4443,6 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
     case CLASSTOKEN:
         return parseClassExpression(context);
     case OPENBRACE:
-        if (strictMode())
-            return parseStrictObjectLiteral(context);
         return parseObjectLiteral(context);
     case OPENBRACKET:
         return parseArrayLiteral(context);
