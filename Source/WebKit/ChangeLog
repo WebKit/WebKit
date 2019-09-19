@@ -1,3 +1,44 @@
+2019-09-19  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r250069. rdar://problem/55524978
+
+    Eagerly create and add the m_layerHostingView to WKWebView.
+    https://bugs.webkit.org/show_bug.cgi?id=201942
+    
+    Reviewed by Tim Horton.
+    
+    Some apps will add subviews to WKWebView, and by the time we add our m_layerHostingView view we might be
+    adding it behind a view that should have been added behind our layer hosting view subview. This affected
+    the Spark email app, due to changes in order of loading delegate calls and when compositing is enabled.
+    Instead of delayed creation of m_layerHostingView, always create it and add it to to the WKWebView.
+    This ensures proper ordering of subviews when clients add a view behind all existing subviews.
+    
+    * UIProcess/Cocoa/WebViewImpl.mm:
+    (WebKit::WebViewImpl::WebViewImpl): Create and add m_layerHostingView here.
+    (WebKit::WebViewImpl::setAcceleratedCompositingRootLayer): Remove creation and removal of m_layerHostingView.
+    Just set the sublayers of m_layerHostingView's layer here.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250069 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-09-18  Timothy Hatcher  <timothy@apple.com>
+
+            Eagerly create and add the m_layerHostingView to WKWebView.
+            https://bugs.webkit.org/show_bug.cgi?id=201942
+
+            Reviewed by Tim Horton.
+
+            Some apps will add subviews to WKWebView, and by the time we add our m_layerHostingView view we might be
+            adding it behind a view that should have been added behind our layer hosting view subview. This affected
+            the Spark email app, due to changes in order of loading delegate calls and when compositing is enabled.
+            Instead of delayed creation of m_layerHostingView, always create it and add it to to the WKWebView.
+            This ensures proper ordering of subviews when clients add a view behind all existing subviews.
+
+            * UIProcess/Cocoa/WebViewImpl.mm:
+            (WebKit::WebViewImpl::WebViewImpl): Create and add m_layerHostingView here.
+            (WebKit::WebViewImpl::setAcceleratedCompositingRootLayer): Remove creation and removal of m_layerHostingView.
+            Just set the sublayers of m_layerHostingView's layer here.
+
 2019-09-11  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/55240886
