@@ -119,7 +119,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
             parameters.hostClientFileDescriptor = wpe_renderer_host_create_client();
             parameters.implementationLibraryName = FileSystem::fileSystemRepresentation(wpe_loader_get_loaded_implementation_library_name());
         }
-#else
+#elif USE(EGL)
         parameters.waylandCompositorDisplayName = WaylandCompositor::singleton().displayName();
 #endif
     }
