@@ -30,6 +30,8 @@
 #include "LoadParameters.h"
 #include "Logging.h"
 #include "WebPageMessages.h"
+#include "WebPageProxy.h"
+#include "WebProcessProxy.h"
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
@@ -217,12 +219,16 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection
             auto bufferSize = encoder->bufferSize();
             std::unique_ptr<IPC::Decoder> decoder = makeUnique<IPC::Decoder>(buffer, bufferSize, nullptr, Vector<IPC::Attachment> { });
             LoadParameters loadParameters;
-            String sandboxExtensionPath;
-            if (decoder->decode(loadParameters) && decoder->decode(sandboxExtensionPath)) {
-                SandboxExtension::createHandleForReadByPid(sandboxExtensionPath, processIdentifier(), loadParameters.sandboxExtensionHandle);
-                send(Messages::WebPage::LoadRequest(loadParameters), decoder->destinationID());
-                continue;
-            }
+            URL resourceDirectoryURL;
+            WebPageProxyIdentifier pageID;
+            if (decoder->decode(loadParameters) && decoder->decode(resourceDirectoryURL) && decoder->decode(pageID)) {
+                if (auto* page = WebProcessProxy::webPage(pageID)) {
+                    page->maybeInitializeSandboxExtensionHandle(static_cast<WebProcessProxy&>(*this), loadParameters.request.url(), resourceDirectoryURL, loadParameters.sandboxExtensionHandle);
+                    send(Messages::WebPage::LoadRequest(loadParameters), decoder->destinationID());
+                }
+            } else
+                ASSERT_NOT_REACHED();
+            continue;
         }
 #endif
         if (pendingMessage.asyncReplyInfo)

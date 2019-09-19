@@ -1066,6 +1066,13 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
     if (!url.isLocalFile())
         return;
 
+#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_PID)
+    // If the process is still launching then it does not have a PID yet. We will take care of creating the sandbox extension
+    // once the process has finished launching.
+    if (process.isLaunching())
+        return;
+#endif
+
     if (!resourceDirectoryURL.isEmpty()) {
         if (process.hasAssumedReadAccessToURL(resourceDirectoryURL))
             return;
@@ -1176,19 +1183,10 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     addPlatformLoadParameters(loadParameters);
 
 #if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_PID)
-    if (processIdentifier() || !url.isLocalFile())
+    if (!process->isLaunching() || !url.isLocalFile())
         process->send(Messages::WebPage::LoadRequest(loadParameters), webPageID);
-    else {
-        String sandboxExtensionPath;
-        if (!m_pageLoadState.resourceDirectoryURL().isEmpty()) {
-            sandboxExtensionPath = m_pageLoadState.resourceDirectoryURL().fileSystemPath();
-            process->assumeReadAccessToBaseURL(*this, m_pageLoadState.resourceDirectoryURL());
-        } else {
-            sandboxExtensionPath = "/";
-            willAcquireUniversalFileReadSandboxExtension(process);
-        }
-        process->send(Messages::WebPage::LoadRequestWaitingForPID(loadParameters, sandboxExtensionPath), webPageID);
-    }
+    else
+        process->send(Messages::WebPage::LoadRequestWaitingForPID(loadParameters, m_pageLoadState.resourceDirectoryURL(), m_identifier), webPageID);
 #else
     process->send(Messages::WebPage::LoadRequest(loadParameters), webPageID);
 #endif
@@ -1230,26 +1228,20 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
 
     m_pageLoadState.setPendingAPIRequest(transaction, { navigation->navigationID(), fileURLString }, resourceDirectoryURL);
 
-    String resourceDirectoryPath = resourceDirectoryURL.fileSystemPath();
-
     LoadParameters loadParameters;
     loadParameters.navigationID = navigation->navigationID();
     loadParameters.request = fileURL;
     loadParameters.shouldOpenExternalURLsPolicy = ShouldOpenExternalURLsPolicy::ShouldNotAllow;
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
-#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_PID)
-    SandboxExtension::createHandleForReadByPid(resourceDirectoryPath, processIdentifier(), loadParameters.sandboxExtensionHandle);
-#else
-    SandboxExtension::createHandle(resourceDirectoryPath, SandboxExtension::Type::ReadOnly, loadParameters.sandboxExtensionHandle);
-#endif
+    maybeInitializeSandboxExtensionHandle(m_process, fileURL, resourceDirectoryURL, loadParameters.sandboxExtensionHandle);
     addPlatformLoadParameters(loadParameters);
 
     m_process->assumeReadAccessToBaseURL(*this, resourceDirectoryURL);
 #if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_PID)
-    if (processIdentifier())
-        m_process->send(Messages::WebPage::LoadRequest(loadParameters), m_webPageID);
+    if (m_process->isLaunching())
+        m_process->send(Messages::WebPage::LoadRequestWaitingForPID(loadParameters, resourceDirectoryURL, m_identifier), m_webPageID);
     else
-        m_process->send(Messages::WebPage::LoadRequestWaitingForPID(loadParameters, resourceDirectoryPath), m_webPageID);
+        m_process->send(Messages::WebPage::LoadRequest(loadParameters), m_webPageID);
 #else
     m_process->send(Messages::WebPage::LoadRequest(loadParameters), m_webPageID);
 #endif
