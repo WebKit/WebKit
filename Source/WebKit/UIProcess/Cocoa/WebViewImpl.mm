@@ -1332,6 +1332,22 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
 
     [view addTrackingArea:m_primaryTrackingArea.get()];
 
+    // Create an NSView that will host our layer tree.
+    m_layerHostingView = adoptNS([[WKFlippedView alloc] initWithFrame:[m_view bounds]]);
+    [m_layerHostingView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+
+    [view addSubview:m_layerHostingView.get() positioned:NSWindowBelow relativeTo:nil];
+
+    // Create a root layer that will back the NSView.
+    RetainPtr<CALayer> layer = adoptNS([[CALayer alloc] init]);
+    [layer setDelegate:[WebActionDisablingCALayerDelegate shared]];
+#ifndef NDEBUG
+    [layer setName:@"Hosting root layer"];
+#endif
+
+    [m_layerHostingView setLayer:layer.get()];
+    [m_layerHostingView setWantsLayer:YES];
+
     m_page->setIntrinsicDeviceScaleFactor(intrinsicDeviceScaleFactor());
 
     if (Class gestureClass = NSClassFromString(@"NSImmediateActionGestureRecognizer")) {
@@ -3746,33 +3762,7 @@ void WebViewImpl::setAcceleratedCompositingRootLayer(CALayer *rootLayer)
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
-    if (rootLayer) {
-        if (!m_layerHostingView) {
-            // Create an NSView that will host our layer tree.
-            m_layerHostingView = adoptNS([[WKFlippedView alloc] initWithFrame:[m_view bounds]]);
-            [m_layerHostingView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-
-            [m_view addSubview:m_layerHostingView.get() positioned:NSWindowBelow relativeTo:nil];
-
-            // Create a root layer that will back the NSView.
-            RetainPtr<CALayer> layer = adoptNS([[CALayer alloc] init]);
-            [layer setDelegate:[WebActionDisablingCALayerDelegate shared]];
-#ifndef NDEBUG
-            [layer setName:@"Hosting root layer"];
-#endif
-
-            [m_layerHostingView setLayer:layer.get()];
-            [m_layerHostingView setWantsLayer:YES];
-        }
-
-        [m_layerHostingView layer].sublayers = [NSArray arrayWithObject:rootLayer];
-    } else if (m_layerHostingView) {
-        [m_layerHostingView removeFromSuperview];
-        [m_layerHostingView setLayer:nil];
-        [m_layerHostingView setWantsLayer:NO];
-
-        m_layerHostingView = nullptr;
-    }
+    [m_layerHostingView layer].sublayers = rootLayer ? @[ rootLayer ] : nil;
 
     [CATransaction commit];
 }
