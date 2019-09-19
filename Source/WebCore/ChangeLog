@@ -1,3 +1,26 @@
+2019-09-19  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] FloatingContext should take the root container.
+        https://bugs.webkit.org/show_bug.cgi?id=201968
+        <rdar://problem/55505090>
+
+        Reviewed by Antti Koivisto.
+
+        Now FormattingContext::root() does not need to be public anymore.
+
+        * layout/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::root const):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layoutInFlowContent):
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::FloatingContext):
+        (WebCore::Layout::FloatingContext::mapPointFromFormattingContextRootToFloatingStateRoot const):
+        * layout/floats/FloatingContext.h:
+        (WebCore::Layout::FloatingContext::root const):
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::layout const):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::createDisplayRuns const):
+
 2019-09-18  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] Correct ImageBufferData and clear operations

@@ -76,11 +76,10 @@ public:
     };
     const Display::Box& geometryForBox(const Box&, Optional<EscapeType> = WTF::nullopt) const;
 
-    const Container& root() const { return *m_root; }
-
 protected:
     using LayoutQueue = Vector<const Box*>;
 
+    const Container& root() const { return *m_root; }
     LayoutState& layoutState() const;
     const FormattingState& formattingState() const { return m_formattingState; }
     FormattingState& formattingState() { return m_formattingState; }

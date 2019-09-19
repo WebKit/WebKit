@@ -60,7 +60,7 @@ void BlockFormattingContext::layoutInFlowContent()
 
     auto& formattingRoot = root();
     LayoutQueue layoutQueue;
-    auto floatingContext = FloatingContext { *this, formattingState().floatingState() };
+    auto floatingContext = FloatingContext { formattingRoot, *this, formattingState().floatingState() };
     // This is a post-order tree traversal layout.
     // The root container layout is done in the formatting context it lives in, not that one it creates, so let's start with the first child.
     if (auto* firstChild = formattingRoot.firstInFlowOrFloatingChild())

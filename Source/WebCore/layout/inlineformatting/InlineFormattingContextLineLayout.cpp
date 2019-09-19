@@ -280,7 +280,7 @@ void InlineFormattingContext::InlineLayout::layout(const InlineItems& inlineItem
     auto& formattingContext = this->formattingContext();
     auto& formattingRoot = this->formattingRoot();
     auto& formattingRootGeometry = formattingContext.geometryForBox(formattingRoot);
-    auto floatingContext = FloatingContext { formattingContext, layoutState.establishedFormattingState(formattingRoot).floatingState() };
+    auto floatingContext = FloatingContext { formattingRoot, formattingContext, layoutState.establishedFormattingState(formattingRoot).floatingState() };
 
     auto lineLogicalTop = formattingRootGeometry.contentBoxTop();
     auto lineLogicalLeft = formattingRootGeometry.contentBoxLeft();
@@ -362,7 +362,7 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const Line::Conten
     auto& layoutState = this->layoutState();
     auto& formattingContext = this->formattingContext();
     auto& formattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(formattingRoot()));
-    auto floatingContext = FloatingContext { formattingContext, formattingState.floatingState() };
+    auto floatingContext = FloatingContext { formattingRoot(), formattingContext, formattingState.floatingState() };
 
     // Move floats to their final position.
     for (auto floatItem : floats) {

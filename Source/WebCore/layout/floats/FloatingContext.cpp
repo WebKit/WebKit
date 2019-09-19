@@ -156,8 +156,9 @@ struct FloatingContext::AbsoluteCoordinateValuesForFloatAvoider {
     HorizontalEdges containingBlockContentBox;
 };
 
-FloatingContext::FloatingContext(const FormattingContext& formattingContext, FloatingState& floatingState)
-    : m_formattingContext(formattingContext)
+FloatingContext::FloatingContext(const Container& floatingContextRoot, const FormattingContext& formattingContext, FloatingState& floatingState)
+    : m_root(makeWeakPtr(floatingContextRoot))
+    , m_formattingContext(formattingContext)
     , m_floatingState(floatingState)
 {
 }
@@ -457,7 +458,7 @@ LayoutUnit FloatingContext::mapTopToFloatingStateRoot(const Box& floatBox) const
 
 Point FloatingContext::mapPointFromFormattingContextRootToFloatingStateRoot(Point position) const
 {
-    auto& from = formattingContext().root();
+    auto& from = root();
     auto& to = floatingState().root();
     if (&from == &to)
         return position;
