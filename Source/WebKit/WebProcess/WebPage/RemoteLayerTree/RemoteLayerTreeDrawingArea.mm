@@ -121,7 +121,8 @@ void RemoteLayerTreeDrawingArea::adoptDisplayRefreshMonitorsFromDrawingArea(Draw
     if (is<RemoteLayerTreeDrawingArea>(drawingArea)) {
         auto& otherDrawingArea = downcast<RemoteLayerTreeDrawingArea>(drawingArea);
         m_displayRefreshMonitors = WTFMove(otherDrawingArea.m_displayRefreshMonitors);
-        otherDrawingArea.m_displayRefreshMonitorsToNotify = nullptr;
+        for (auto* monitor : m_displayRefreshMonitors)
+            monitor->updateDrawingArea(*this);
     }
 }
 

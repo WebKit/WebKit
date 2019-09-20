@@ -67,6 +67,11 @@ void RemoteLayerTreeDisplayRefreshMonitor::didUpdateLayers()
     handleDisplayRefreshedNotificationOnMainThread(this);
 }
 
+void RemoteLayerTreeDisplayRefreshMonitor::updateDrawingArea(RemoteLayerTreeDrawingArea& drawingArea)
+{
+    m_drawingArea = makeWeakPtr(drawingArea);
+}
+
 }
 
 #endif // USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)

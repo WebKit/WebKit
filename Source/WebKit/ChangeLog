@@ -1,3 +1,23 @@
+2019-09-20  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (iOS 13): rAF stops firing when navigating away cross-origin and then back
+        https://bugs.webkit.org/show_bug.cgi?id=201767
+        <rdar://problem/55350854>
+
+        Reviewed by Tim Horton.
+
+        This is a follow-up to r249961 to address crashes when navigating back cross-origin to a page
+        that uses requestAnimationFrame. r249961 took care of moving RemoteLayerTreeDisplayRefreshMonitor
+        objects from one RemoteLayerTreeDrawingArea to another but failed to tell those monitors
+        about their new drawingArea. As a result, RemoteLayerTreeDrawingArea::willDestroyDisplayRefreshMonitor()
+        would not get called on the new drawing area when it should have.
+
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.mm:
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::updateDrawingArea):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::adoptDisplayRefreshMonitorsFromDrawingArea):
+
 2019-09-20  Keith Rollin  <krollin@apple.com>
 
         Remove some support for < iOS 13

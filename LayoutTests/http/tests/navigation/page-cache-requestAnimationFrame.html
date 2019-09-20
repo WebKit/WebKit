@@ -37,7 +37,9 @@ function step() {
     if (i % 10 == 0 && restoredFromPageCache) {
         testPassed("requestAnimationFrame is running after restoring from PageCache.");
         clearTimeout(timerHandle);
-        finishJSTest();
+        setTimeout(() => {
+            finishJSTest();
+        }, 100);
     } else
         requestAnimationFrame(step);
 }

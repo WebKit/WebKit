@@ -44,6 +44,7 @@ public:
     bool requestRefreshCallback() override;
 
     void didUpdateLayers();
+    void updateDrawingArea(RemoteLayerTreeDrawingArea&);
 
 private:
     explicit RemoteLayerTreeDisplayRefreshMonitor(WebCore::PlatformDisplayID, RemoteLayerTreeDrawingArea&);
