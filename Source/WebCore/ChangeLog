@@ -1,5 +1,22 @@
 2019-09-20  Keith Rollin  <krollin@apple.com>
 
+        Remove check of setSourceAppPid selector that's no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=201971
+        <rdar://problem/55505761>
+
+        Reviewed by Andy Estes.
+
+        Bug 172152 introduced a check of the NEFilterSource selector
+        setSourceAppPid in order to support OS's that didn't support it. All
+        supported Cocoa platforms now support it, so the check can be removed.
+
+        No new tests -- no new or changed functionality.
+
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        (WebCore::NetworkExtensionContentFilter::initialize):
+
+2019-09-20  Keith Rollin  <krollin@apple.com>
+
         Remove some support for < iOS 13
         https://bugs.webkit.org/show_bug.cgi?id=201967
         <rdar://problem/55504738>
