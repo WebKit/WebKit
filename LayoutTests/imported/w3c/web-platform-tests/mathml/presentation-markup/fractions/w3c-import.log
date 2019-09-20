@@ -17,6 +17,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-1.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-bar-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-bar-001.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-bar-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-bar-002.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-color-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-color-001-notref.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-color-001.html
@@ -28,6 +30,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-created-dynamically-3.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-created-dynamically-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-created-dynamically.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-default-padding-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-default-padding.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-001.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-002.html
@@ -54,5 +58,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-005.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-006-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-006.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-rendering-from-in-flow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-rendering-from-in-flow.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-visibility-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-visibility-001.html

@@ -20,6 +20,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/tools/limits.py
 /LayoutTests/imported/w3c/web-platform-tests/mathml/tools/math-text.py
 /LayoutTests/imported/w3c/web-platform-tests/mathml/tools/mathvariant-transforms.py
+/LayoutTests/imported/w3c/web-platform-tests/mathml/tools/operator-dictionary.py
+/LayoutTests/imported/w3c/web-platform-tests/mathml/tools/operator-dictionary.xsl
 /LayoutTests/imported/w3c/web-platform-tests/mathml/tools/percentscaledown.py
 /LayoutTests/imported/w3c/web-platform-tests/mathml/tools/radicals.py
 /LayoutTests/imported/w3c/web-platform-tests/mathml/tools/scripts.py

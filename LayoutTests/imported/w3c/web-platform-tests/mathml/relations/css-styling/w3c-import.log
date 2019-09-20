@@ -41,6 +41,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/displaystyle-2.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/dynamic-dir-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/dynamic-dir-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-1.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-2.html

@@ -24,6 +24,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/css-inline-style-dynamic.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/css-inline-style-interface.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/display-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/display-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/display-2.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-1.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/href-click-1-expected.html
@@ -42,6 +44,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/math-global-event-handlers.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/required-extensions-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/required-extensions-2.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/tabindex-001.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/tabindex-002.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/unique-identifier-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/unique-identifier-1-iframe-1.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/html5-tree/unique-identifier-1-iframe-2.html

@@ -30,6 +30,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-movablelimits-dynamic-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-movablelimits-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-movablelimits-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-movablelimits-from-in-flow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-movablelimits-from-in-flow.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-movablelimits.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-paint-lspace-rspace-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-paint-lspace-rspace.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-001.html

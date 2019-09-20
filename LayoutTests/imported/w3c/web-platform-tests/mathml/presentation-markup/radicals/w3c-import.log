@@ -14,4 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/radicals/radical-rendering-from-in-flow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/radicals/radical-rendering-from-in-flow.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/radicals/root-parameters-1.html

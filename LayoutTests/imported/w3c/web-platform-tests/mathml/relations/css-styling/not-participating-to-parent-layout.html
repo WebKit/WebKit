@@ -22,7 +22,6 @@
         if (!FragmentHelper.isValidChildOfMrow(tag) ||
             FragmentHelper.isEmpty(tag))
             continue;
-        // TODO: Add floats too?
         ["display: none",
          "display: contents",
          "position: absolute",
@@ -54,17 +53,13 @@
             var reference = FragmentHelper.element(referenceContainer);
             FragmentHelper.forceNonEmptyElement(reference);
 
-            var epsilon = 1;
-
             test(function() {
-                // FIXME(fwang): Feature detection should be done per-tag.
-                assert_true(MathMLFeatureDetection.has_mspace());
+                assert_true(MathMLFeatureDetection[`has_${tag}`](), `${tag} is supported`);
                 assert_approx_equals(elementContainerWidth, referenceContainerWidth, epsilon);
             }, `${tag} preferred width calculation is not affected by children with "${style}" style`);
 
             test(function() {
-                // FIXME(fwang): Feature detection should be done per-tag.
-                assert_true(MathMLFeatureDetection.has_mspace());
+                assert_true(MathMLFeatureDetection[`has_${tag}`](), `${tag} is supported`);
                 compareLayout(element, reference, epsilon);
             }, `${tag} layout is not affected by children with "${style}" style`);
 
