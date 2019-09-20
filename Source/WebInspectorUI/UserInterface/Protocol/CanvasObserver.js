@@ -67,9 +67,9 @@ WI.CanvasObserver = class CanvasObserver
         WI.canvasManager.extensionEnabled(canvasId, extension);
     }
 
-    programCreated(canvasId, programId, programType)
+    programCreated(canvasId, programId)
     {
-        WI.canvasManager.programCreated(canvasId, programId, programType);
+        WI.canvasManager.programCreated(canvasId, programId);
     }
 
     programDeleted(programId)

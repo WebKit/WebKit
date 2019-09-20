@@ -27,41 +27,24 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WebGPUPipeline.h"
-#include <wtf/Forward.h>
+#include "GPUComputePipeline.h"
+#include "GPUObjectBase.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class GPUComputePipeline;
-class GPUPipeline;
-class GPUErrorScopes;
-class WebGPUDevice;
-
-class WebGPUComputePipeline final : public WebGPUPipeline {
+class WebGPUComputePipeline : public GPUObjectBase {
 public:
-    virtual ~WebGPUComputePipeline();
+    static Ref<WebGPUComputePipeline> create(RefPtr<GPUComputePipeline>&&, GPUErrorScopes&);
 
-    static Ref<WebGPUComputePipeline> create(WebGPUDevice&, RefPtr<GPUComputePipeline>&&, GPUErrorScopes&, Optional<WebGPUPipeline::ShaderData> computeShader);
-
-    bool isComputePipeline() const { return true; }
-
-    bool isValid() const { return computePipeline(); }
     const GPUComputePipeline* computePipeline() const { return m_computePipeline.get(); }
-    Optional<WebGPUPipeline::ShaderData> computeShader() const { return m_computeShader; }
-
-    bool recompile(const WebGPUDevice&);
 
 private:
-    WebGPUComputePipeline(WebGPUDevice&, RefPtr<GPUComputePipeline>&&, GPUErrorScopes&, Optional<WebGPUPipeline::ShaderData> computeShader);
+    WebGPUComputePipeline(RefPtr<GPUComputePipeline>&&, GPUErrorScopes&);
 
     RefPtr<GPUComputePipeline> m_computePipeline;
-
-    // Preserved for Web Inspector recompilation.
-    Optional<WebGPUPipeline::ShaderData> m_computeShader;
 };
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_WEBGPUPIPELINE(WebCore::WebGPUComputePipeline, isComputePipeline())
 
 #endif // ENABLE(WEBGPU)

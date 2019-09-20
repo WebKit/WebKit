@@ -26,43 +26,25 @@
 #pragma once
 
 #include <JavaScriptCore/InspectorProtocolObjects.h>
-#include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class InspectorCanvas;
-
-#if ENABLE(WEBGL)
 class WebGLProgram;
 class WebGLRenderingContextBase;
-#endif
+class WebGLShader;
 
-#if ENABLE(WEBGPU)
-class WebGPUPipeline;
-#endif
+typedef String ErrorString;
 
 class InspectorShaderProgram final : public RefCounted<InspectorShaderProgram> {
 public:
-#if ENABLE(WEBGL)
     static Ref<InspectorShaderProgram> create(WebGLProgram&, InspectorCanvas&);
-#endif
-#if ENABLE(WEBGPU)
-    static Ref<InspectorShaderProgram> create(WebGPUPipeline&, InspectorCanvas&);
-#endif
 
     const String& identifier() const { return m_identifier; }
     InspectorCanvas& canvas() const { return m_canvas; }
-
-#if ENABLE(WEBGL)
-    WebGLProgram* program() const;
-#endif
-#if ENABLE(WEBGPU)
-    WebGPUPipeline* pipeline() const;
-#endif
-
-    String requestShaderSource(Inspector::Protocol::Canvas::ShaderType);
-    bool updateShader(Inspector::Protocol::Canvas::ShaderType, const String& source);
+    WebGLRenderingContextBase& context() const;
+    WebGLProgram& program() const { return m_program; }
+    WebGLShader* shaderForType(const String&);
 
     bool disabled() const { return m_disabled; }
     void setDisabled(bool disabled) { m_disabled = disabled; }
@@ -70,26 +52,14 @@ public:
     bool highlighted() const { return m_highlighted; }
     void setHighlighted(bool value) { m_highlighted = value; }
 
+    ~InspectorShaderProgram() = default;
+
 private:
-#if ENABLE(WEBGL)
     InspectorShaderProgram(WebGLProgram&, InspectorCanvas&);
-#endif
-#if ENABLE(WEBGPU)
-    InspectorShaderProgram(WebGPUPipeline&, InspectorCanvas&);
-#endif
 
     String m_identifier;
+    WebGLProgram& m_program;
     InspectorCanvas& m_canvas;
-
-    Variant<
-#if ENABLE(WEBGL)
-        std::reference_wrapper<WebGLProgram>,
-#endif
-#if ENABLE(WEBGPU)
-        std::reference_wrapper<WebGPUPipeline>,
-#endif
-        Monostate
-    > m_program;
 
     bool m_disabled { false };
     bool m_highlighted { false };

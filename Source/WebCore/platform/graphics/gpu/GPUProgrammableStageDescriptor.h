@@ -38,13 +38,13 @@ struct GPUProgrammableStageDescriptorBase {
 };
 
 struct GPUProgrammableStageDescriptor : GPUProgrammableStageDescriptorBase {
-    GPUProgrammableStageDescriptor(Ref<GPUShaderModule>&& module, const GPUProgrammableStageDescriptorBase& base)
+    GPUProgrammableStageDescriptor(Ref<const GPUShaderModule>&& module, const GPUProgrammableStageDescriptorBase& base)
         : GPUProgrammableStageDescriptorBase(base)
         , module { WTFMove(module) }
     {
     }
 
-    Ref<GPUShaderModule> module;
+    Ref<const GPUShaderModule> module;
 };
 
 } // namespace WebCore

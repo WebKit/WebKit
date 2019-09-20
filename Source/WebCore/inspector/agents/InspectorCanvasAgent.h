@@ -33,7 +33,14 @@
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <initializer_list>
-#include <wtf/Forward.h>
+#include <wtf/HashMap.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
+
+#if ENABLE(WEBGL)
+#include "InspectorShaderProgram.h"
+#endif
 
 namespace Inspector {
 class InjectedScriptManager;
@@ -42,7 +49,6 @@ class InjectedScriptManager;
 namespace WebCore {
 
 class CanvasRenderingContext;
-class InspectorShaderProgram;
 #if ENABLE(WEBGL)
 class WebGLProgram;
 class WebGLRenderingContextBase;
@@ -50,7 +56,6 @@ class WebGLRenderingContextBase;
 #if ENABLE(WEBGPU)
 class GPUCanvasContext;
 class WebGPUDevice;
-class WebGPUPipeline;
 class WebGPUSwapChain;
 #endif
 
@@ -78,7 +83,7 @@ public:
     void setRecordingAutoCaptureFrameCount(ErrorString&, int count);
     void startRecording(ErrorString&, const String& canvasId, const int* frameCount, const int* memoryLimit);
     void stopRecording(ErrorString&, const String& canvasId);
-    void requestShaderSource(ErrorString&, const String& programId, const String& shaderType, String* source);
+    void requestShaderSource(ErrorString&, const String& programId, const String& shaderType, String*);
     void updateShader(ErrorString&, const String& programId, const String& shaderType, const String& source);
     void setShaderProgramDisabled(ErrorString&, const String& programId, bool disabled);
     void setShaderProgramHighlighted(ErrorString&, const String& programId, bool highlighted);
@@ -98,17 +103,15 @@ public:
     void consoleStartRecordingCanvas(CanvasRenderingContext&, JSC::ExecState&, JSC::JSObject* options);
 #if ENABLE(WEBGL)
     void didEnableExtension(WebGLRenderingContextBase&, const String&);
-    void didCreateWebGLProgram(WebGLRenderingContextBase&, WebGLProgram&);
-    void willDestroyWebGLProgram(WebGLProgram&);
-    bool isWebGLProgramDisabled(WebGLProgram&);
-    bool isWebGLProgramHighlighted(WebGLProgram&);
+    void didCreateProgram(WebGLRenderingContextBase&, WebGLProgram&);
+    void willDeleteProgram(WebGLProgram&);
+    bool isShaderProgramDisabled(WebGLProgram&);
+    bool isShaderProgramHighlighted(WebGLProgram&);
 #endif
 #if ENABLE(WEBGPU)
     void didCreateWebGPUDevice(WebGPUDevice&);
     void willDestroyWebGPUDevice(WebGPUDevice&);
     void willConfigureSwapChain(GPUCanvasContext&, WebGPUSwapChain&);
-    void didCreateWebGPUPipeline(WebGPUDevice&, WebGPUPipeline&);
-    void willDestroyWebGPUPipeline(WebGPUPipeline&);
 #endif
 
 private:
@@ -120,9 +123,7 @@ private:
     void startRecording(InspectorCanvas&, Inspector::Protocol::Recording::Initiator, RecordingOptions&& = { });
 
     void canvasDestroyedTimerFired();
-    void programDestroyedTimerFired();
-    void reset();
-
+    void clearCanvasData();
     InspectorCanvas& bindCanvas(CanvasRenderingContext&, bool captureBacktrace);
 #if ENABLE(WEBGPU)
     InspectorCanvas& bindCanvas(WebGPUDevice&, bool captureBacktrace);
@@ -134,13 +135,10 @@ private:
     RefPtr<InspectorCanvas> findInspectorCanvas(WebGPUDevice&);
 #endif
 
-    void unbindProgram(InspectorShaderProgram&);
-    RefPtr<InspectorShaderProgram> assertInspectorProgram(ErrorString&, const String& programId);
 #if ENABLE(WEBGL)
+    String unbindProgram(InspectorShaderProgram&);
+    RefPtr<InspectorShaderProgram> assertInspectorProgram(ErrorString&, const String& programId);
     RefPtr<InspectorShaderProgram> findInspectorProgram(WebGLProgram&);
-#endif
-#if ENABLE(WEBGPU)
-    RefPtr<InspectorShaderProgram> findInspectorProgram(WebGPUPipeline&);
 #endif
 
     std::unique_ptr<Inspector::CanvasFrontendDispatcher> m_frontendDispatcher;
@@ -150,14 +148,14 @@ private:
     Page& m_inspectedPage;
 
     HashMap<String, RefPtr<InspectorCanvas>> m_identifierToInspectorCanvas;
-    Vector<String> m_removedCanvasIdentifiers;
-    Timer m_canvasDestroyedTimer;
-
+#if ENABLE(WEBGL)
     HashMap<String, RefPtr<InspectorShaderProgram>> m_identifierToInspectorProgram;
-    Vector<String> m_removedProgramIdentifiers;
-    Timer m_programDestroyedTimer;
+#endif
+    Vector<String> m_removedCanvasIdentifiers;
 
     Optional<size_t> m_recordingAutoCaptureFrameCount;
+
+    Timer m_canvasDestroyedTimer;
 };
 
 } // namespace WebCore

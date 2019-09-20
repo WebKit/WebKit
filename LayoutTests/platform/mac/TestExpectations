@@ -1781,10 +1781,7 @@ webkit.org/b/190976 imported/w3c/web-platform-tests/media-source/mediasource-cha
 webkit.org/b/199275 [ HighSierra ] webgpu [ Skip ]
 webkit.org/b/199275 [ HighSierra ] inspector/canvas/create-context-webgpu.html [ Skip ]
 webkit.org/b/199275 [ HighSierra ] inspector/canvas/requestClientNodes-webgpu.html [ Skip ]
-webkit.org/b/199275 [ HighSierra ] inspector/canvas/requestShaderSource-webgpu.html [ Skip ]
 webkit.org/b/199275 [ HighSierra ] inspector/canvas/resolveContext-webgpu.html [ Skip ]
-webkit.org/b/199275 [ HighSierra ] inspector/canvas/shaderProgram-add-remove-webgpu.html [ Skip ]
-webkit.org/b/199275 [ HighSierra ] inspector/canvas/updateShader-webgpu.html [ Skip ]
 
 webkit.org/b/189680 platform/mac/media/audio-session-category-video-paused.html [ Pass Timeout ]
 

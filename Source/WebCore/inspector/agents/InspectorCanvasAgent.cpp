@@ -35,7 +35,6 @@
 #include "HTMLCanvasElement.h"
 #include "ImageBitmapRenderingContext.h"
 #include "InspectorDOMAgent.h"
-#include "InspectorShaderProgram.h"
 #include "InstrumentingAgents.h"
 #include "JSExecState.h"
 #include "Microtasks.h"
@@ -47,18 +46,14 @@
 #include <JavaScriptCore/InjectedScriptManager.h>
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <JavaScriptCore/JSCInlines.h>
-#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
-#include <wtf/Optional.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 #if ENABLE(WEBGL)
 #include "WebGLProgram.h"
 #include "WebGLRenderingContext.h"
 #include "WebGLRenderingContextBase.h"
+#include "WebGLShader.h"
 #endif
 
 #if ENABLE(WEBGL2)
@@ -67,11 +62,7 @@
 
 #if ENABLE(WEBGPU)
 #include "GPUCanvasContext.h"
-#include "WebGPUComputePipeline.h"
 #include "WebGPUDevice.h"
-#include "WebGPUPipeline.h"
-#include "WebGPURenderPipeline.h"
-#include "WebGPUSwapChain.h"
 #endif
 
 namespace WebCore {
@@ -85,7 +76,6 @@ InspectorCanvasAgent::InspectorCanvasAgent(PageAgentContext& context)
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_inspectedPage(context.inspectedPage)
     , m_canvasDestroyedTimer(*this, &InspectorCanvasAgent::canvasDestroyedTimerFired)
-    , m_programDestroyedTimer(*this, &InspectorCanvasAgent::programDestroyedTimerFired)
 {
 }
 
@@ -103,7 +93,7 @@ void InspectorCanvasAgent::willDestroyFrontendAndBackend(Inspector::DisconnectRe
 
 void InspectorCanvasAgent::discardAgent()
 {
-    reset();
+    clearCanvasData();
 }
 
 void InspectorCanvasAgent::enable(ErrorString&)
@@ -151,17 +141,7 @@ void InspectorCanvasAgent::enable(ErrorString&)
         LockHolder lock(WebGLProgram::instancesMutex());
         for (auto& [program, contextWebGLBase] : WebGLProgram::instances(lock)) {
             if (contextWebGLBase && existsInCurrentPage(contextWebGLBase->canvasBase().scriptExecutionContext()))
-                didCreateWebGLProgram(*contextWebGLBase, *program);
-        }
-    }
-#endif
-
-#if ENABLE(WEBGPU)
-    {
-        LockHolder lock(WebGPUPipeline::instancesMutex());
-        for (auto& [pipeline, device] : WebGPUPipeline::instances(lock)) {
-            if (device && existsInCurrentPage(device->scriptExecutionContext()) && pipeline->isValid())
-                didCreateWebGPUPipeline(*device, *pipeline);
+                didCreateProgram(*contextWebGLBase, *program);
         }
     }
 #endif
@@ -171,7 +151,7 @@ void InspectorCanvasAgent::disable(ErrorString&)
 {
     m_instrumentingAgents.setInspectorCanvasAgent(nullptr);
 
-    reset();
+    clearCanvasData();
 
     m_recordingAutoCaptureFrameCount = WTF::nullopt;
 }
@@ -300,65 +280,93 @@ void InspectorCanvasAgent::stopRecording(ErrorString& errorString, const String&
     didFinishRecordingCanvasFrame(*context, true);
 }
 
-void InspectorCanvasAgent::requestShaderSource(ErrorString& errorString, const String& programId, const String& shaderTypeString, String* outSource)
+void InspectorCanvasAgent::requestShaderSource(ErrorString& errorString, const String& programId, const String& shaderType, String* content)
 {
+#if ENABLE(WEBGL)
     auto inspectorProgram = assertInspectorProgram(errorString, programId);
     if (!inspectorProgram)
         return;
 
-    auto shaderType = Inspector::Protocol::InspectorHelpers::parseEnumValueFromString<Inspector::Protocol::Canvas::ShaderType>(shaderTypeString);
-    if (!shaderType) {
-        errorString = makeString("Unknown shaderType: "_s, shaderTypeString);
+    auto* shader = inspectorProgram->shaderForType(shaderType);
+    if (!shader) {
+        errorString = "Missing shader for given shaderType"_s;
         return;
     }
 
-    auto source = inspectorProgram->requestShaderSource(shaderType.value());
-    if (!source) {
-        errorString = "Missing shader of given shaderType for given programId"_s;
-        return;
-    }
-
-    *outSource = source;
+    *content = shader->getSource();
+#else
+    UNUSED_PARAM(programId);
+    UNUSED_PARAM(shaderType);
+    UNUSED_PARAM(content);
+    errorString = "Not supported"_s;
+#endif
 }
 
-void InspectorCanvasAgent::updateShader(ErrorString& errorString, const String& programId, const String& shaderTypeString, const String& source)
+void InspectorCanvasAgent::updateShader(ErrorString& errorString, const String& programId, const String& shaderType, const String& source)
 {
+#if ENABLE(WEBGL)
     auto inspectorProgram = assertInspectorProgram(errorString, programId);
     if (!inspectorProgram)
         return;
 
-    auto shaderType = Inspector::Protocol::InspectorHelpers::parseEnumValueFromString<Inspector::Protocol::Canvas::ShaderType>(shaderTypeString);
-    if (!shaderType) {
-        errorString = makeString("Unknown shaderType: "_s, shaderTypeString);
+    auto* shader = inspectorProgram->shaderForType(shaderType);
+    if (!shader) {
+        errorString = "Missing shader for given shaderType"_s;
         return;
     }
 
-    if (!inspectorProgram->updateShader(shaderType.value(), source))
-        errorString = "Failed to update shader of given shaderType for given programId"_s;
+    WebGLRenderingContextBase& contextWebGL = inspectorProgram->context();
+    contextWebGL.shaderSource(shader, source);
+    contextWebGL.compileShader(shader);
+
+    if (!shader->isValid()) {
+        errorString = "Failed to update shader"_s;
+        return;
+    }
+
+    contextWebGL.linkProgramWithoutInvalidatingAttribLocations(&inspectorProgram->program());
+#else
+    UNUSED_PARAM(programId);
+    UNUSED_PARAM(shaderType);
+    UNUSED_PARAM(source);
+    errorString = "Not supported"_s;
+#endif
 }
 
 void InspectorCanvasAgent::setShaderProgramDisabled(ErrorString& errorString, const String& programId, bool disabled)
 {
+#if ENABLE(WEBGL)
     auto inspectorProgram = assertInspectorProgram(errorString, programId);
     if (!inspectorProgram)
         return;
 
     inspectorProgram->setDisabled(disabled);
+#else
+    UNUSED_PARAM(programId);
+    UNUSED_PARAM(disabled);
+    errorString = "Not supported"_s;
+#endif
 }
 
 void InspectorCanvasAgent::setShaderProgramHighlighted(ErrorString& errorString, const String& programId, bool highlighted)
 {
+#if ENABLE(WEBGL)
     auto inspectorProgram = assertInspectorProgram(errorString, programId);
     if (!inspectorProgram)
         return;
 
     inspectorProgram->setHighlighted(highlighted);
+#else
+    UNUSED_PARAM(programId);
+    UNUSED_PARAM(highlighted);
+    errorString = "Not supported"_s;
+#endif
 }
 
 void InspectorCanvasAgent::frameNavigated(Frame& frame)
 {
     if (frame.isMainFrame()) {
-        reset();
+        clearCanvasData();
         return;
     }
 
@@ -560,7 +568,7 @@ void InspectorCanvasAgent::didEnableExtension(WebGLRenderingContextBase& context
     m_frontendDispatcher->extensionEnabled(inspectorCanvas->identifier(), extension);
 }
 
-void InspectorCanvasAgent::didCreateWebGLProgram(WebGLRenderingContextBase& context, WebGLProgram& program)
+void InspectorCanvasAgent::didCreateProgram(WebGLRenderingContextBase& context, WebGLProgram& program)
 {
     auto inspectorCanvas = findInspectorCanvas(context);
     ASSERT(inspectorCanvas);
@@ -570,19 +578,20 @@ void InspectorCanvasAgent::didCreateWebGLProgram(WebGLRenderingContextBase& cont
     auto inspectorProgram = InspectorShaderProgram::create(program, *inspectorCanvas);
     String programIdentifier = inspectorProgram->identifier();
     m_identifierToInspectorProgram.set(programIdentifier, WTFMove(inspectorProgram));
-    m_frontendDispatcher->programCreated(inspectorCanvas->identifier(), programIdentifier, Inspector::Protocol::Canvas::ProgramType::Render);
+    m_frontendDispatcher->programCreated(inspectorCanvas->identifier(), programIdentifier);
 }
 
-void InspectorCanvasAgent::willDestroyWebGLProgram(WebGLProgram& program)
+void InspectorCanvasAgent::willDeleteProgram(WebGLProgram& program)
 {
     auto inspectorProgram = findInspectorProgram(program);
     if (!inspectorProgram)
         return;
 
-    unbindProgram(*inspectorProgram);
+    String identifier = unbindProgram(*inspectorProgram);
+    m_frontendDispatcher->programDeleted(identifier);
 }
 
-bool InspectorCanvasAgent::isWebGLProgramDisabled(WebGLProgram& program)
+bool InspectorCanvasAgent::isShaderProgramDisabled(WebGLProgram& program)
 {
     auto inspectorProgram = findInspectorProgram(program);
     ASSERT(inspectorProgram);
@@ -592,7 +601,7 @@ bool InspectorCanvasAgent::isWebGLProgramDisabled(WebGLProgram& program)
     return inspectorProgram->disabled();
 }
 
-bool InspectorCanvasAgent::isWebGLProgramHighlighted(WebGLProgram& program)
+bool InspectorCanvasAgent::isShaderProgramHighlighted(WebGLProgram& program)
 {
     auto inspectorProgram = findInspectorProgram(program);
     ASSERT(inspectorProgram);
@@ -640,38 +649,6 @@ void InspectorCanvasAgent::willConfigureSwapChain(GPUCanvasContext& contextGPU, 
 
     notifyDeviceForSwapChain(newSwapChain);
 }
-
-void InspectorCanvasAgent::didCreateWebGPUPipeline(WebGPUDevice& device, WebGPUPipeline& pipeline)
-{
-    auto inspectorCanvas = findInspectorCanvas(device);
-    ASSERT(inspectorCanvas);
-    if (!inspectorCanvas)
-        return;
-
-    ASSERT(pipeline.isValid());
-
-    auto inspectorProgram = InspectorShaderProgram::create(pipeline, *inspectorCanvas);
-    String programIdentifier = inspectorProgram->identifier();
-    m_identifierToInspectorProgram.set(programIdentifier, WTFMove(inspectorProgram));
-
-    Optional<Inspector::Protocol::Canvas::ProgramType> programType;
-    if (is<WebGPUComputePipeline>(pipeline))
-        programType = Inspector::Protocol::Canvas::ProgramType::Compute;
-    else if (is<WebGPURenderPipeline>(pipeline))
-        programType = Inspector::Protocol::Canvas::ProgramType::Render;
-    ASSERT(programType);
-
-    m_frontendDispatcher->programCreated(inspectorCanvas->identifier(), programIdentifier, programType.value());
-}
-
-void InspectorCanvasAgent::willDestroyWebGPUPipeline(WebGPUPipeline& pipeline)
-{
-    auto inspectorProgram = findInspectorProgram(pipeline);
-    if (!inspectorProgram)
-        return;
-
-    unbindProgram(*inspectorProgram);
-}
 #endif
 
 void InspectorCanvasAgent::startRecording(InspectorCanvas& inspectorCanvas, Inspector::Protocol::Recording::Initiator initiator, RecordingOptions&& recordingOptions)
@@ -717,18 +694,7 @@ void InspectorCanvasAgent::canvasDestroyedTimerFired()
     m_removedCanvasIdentifiers.clear();
 }
 
-void InspectorCanvasAgent::programDestroyedTimerFired()
-{
-    if (!m_removedProgramIdentifiers.size())
-        return;
-
-    for (auto& identifier : m_removedProgramIdentifiers)
-        m_frontendDispatcher->programDeleted(identifier);
-
-    m_removedProgramIdentifiers.clear();
-}
-
-void InspectorCanvasAgent::reset()
+void InspectorCanvasAgent::clearCanvasData()
 {
     for (auto& inspectorCanvas : m_identifierToInspectorCanvas.values()) {
         if (auto* context = inspectorCanvas->canvasContext())
@@ -736,14 +702,13 @@ void InspectorCanvasAgent::reset()
     }
 
     m_identifierToInspectorCanvas.clear();
+#if ENABLE(WEBGL)
+    m_identifierToInspectorProgram.clear();
     m_removedCanvasIdentifiers.clear();
+#endif
+
     if (m_canvasDestroyedTimer.isActive())
         m_canvasDestroyedTimer.stop();
-
-    m_identifierToInspectorProgram.clear();
-    m_removedProgramIdentifiers.clear();
-    if (m_programDestroyedTimer.isActive())
-        m_programDestroyedTimer.stop();
 }
 
 InspectorCanvas& InspectorCanvasAgent::bindCanvas(CanvasRenderingContext& context, bool captureBacktrace)
@@ -840,18 +805,13 @@ RefPtr<InspectorCanvas> InspectorCanvasAgent::findInspectorCanvas(WebGPUDevice& 
 }
 #endif
 
-void InspectorCanvasAgent::unbindProgram(InspectorShaderProgram& inspectorProgram)
+#if ENABLE(WEBGL)
+String InspectorCanvasAgent::unbindProgram(InspectorShaderProgram& inspectorProgram)
 {
     String identifier = inspectorProgram.identifier();
     m_identifierToInspectorProgram.remove(identifier);
 
-    // This can be called in response to GC. Due to the single-process model used in WebKit1, the
-    // event must be dispatched from a timer to prevent the frontend from making JS allocations
-    // while the GC is still active.
-    m_removedProgramIdentifiers.append(identifier);
-
-    if (!m_programDestroyedTimer.isActive())
-        m_programDestroyedTimer.startOneShot(0_s);
+    return identifier;
 }
 
 RefPtr<InspectorShaderProgram> InspectorCanvasAgent::assertInspectorProgram(ErrorString& errorString, const String& programId)
@@ -864,22 +824,10 @@ RefPtr<InspectorShaderProgram> InspectorCanvasAgent::assertInspectorProgram(Erro
     return inspectorProgram;
 }
 
-#if ENABLE(WEBGL)
 RefPtr<InspectorShaderProgram> InspectorCanvasAgent::findInspectorProgram(WebGLProgram& program)
 {
     for (auto& inspectorProgram : m_identifierToInspectorProgram.values()) {
-        if (inspectorProgram->program() == &program)
-            return inspectorProgram;
-    }
-    return nullptr;
-}
-#endif
-
-#if ENABLE(WEBGPU)
-RefPtr<InspectorShaderProgram> InspectorCanvasAgent::findInspectorProgram(WebGPUPipeline& pipeline)
-{
-    for (auto& inspectorProgram : m_identifierToInspectorProgram.values()) {
-        if (inspectorProgram->pipeline() == &pipeline)
+        if (&inspectorProgram->program() == &program)
             return inspectorProgram;
     }
     return nullptr;

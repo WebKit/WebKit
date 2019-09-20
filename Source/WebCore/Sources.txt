@@ -373,7 +373,6 @@ Modules/webgpu/WebGPUComputePipelineDescriptor.cpp
 Modules/webgpu/WebGPUDevice.cpp
 Modules/webgpu/WebGPUDeviceErrorScopes.cpp
 Modules/webgpu/WebGPUQueue.cpp
-Modules/webgpu/WebGPUPipeline.cpp
 Modules/webgpu/WebGPUPipelineLayout.cpp
 Modules/webgpu/WebGPUPipelineLayoutDescriptor.cpp
 Modules/webgpu/WebGPUProgrammableStageDescriptor.cpp
@@ -1899,7 +1898,6 @@ platform/graphics/gpu/GPUDevice.cpp
 platform/graphics/gpu/GPUError.cpp
 platform/graphics/gpu/GPUErrorScopes.cpp
 platform/graphics/gpu/GPUValidationError.cpp
-platform/graphics/gpu/GPUPipeline.cpp
 platform/graphics/gpu/GPUPipelineLayout.cpp
 platform/graphics/gpu/GPUProgrammablePassEncoder.cpp
 

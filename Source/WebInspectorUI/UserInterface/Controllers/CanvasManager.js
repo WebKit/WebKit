@@ -234,7 +234,7 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         canvas.enableExtension(extension);
     }
 
-    programCreated(canvasIdentifier, programIdentifier, programType)
+    programCreated(canvasIdentifier, programIdentifier)
     {
         let canvas = this._canvasIdentifierMap.get(canvasIdentifier);
         console.assert(canvas);
@@ -243,11 +243,7 @@ WI.CanvasManager = class CanvasManager extends WI.Object
 
         console.assert(!this._shaderProgramIdentifierMap.has(programIdentifier), `ShaderProgram already exists with id ${programIdentifier}.`);
 
-        // COMPATIBILITY (iOS 13): `programType` did not exist yet.
-        if (!programType)
-            programType = WI.ShaderProgram.ProgramType.Render;
-
-        let program = new WI.ShaderProgram(programIdentifier, programType, canvas);
+        let program = new WI.ShaderProgram(programIdentifier, canvas);
         this._shaderProgramIdentifierMap.set(program.identifier, program);
 
         canvas.shaderProgramCollection.add(program);

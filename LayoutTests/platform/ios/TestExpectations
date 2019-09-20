@@ -45,10 +45,7 @@ webkit.org/b/200308 fast/events/touch/ios/content-observation/non-visible-conten
 webgpu [ Skip ]
 inspector/canvas/create-context-webgpu.html [ Skip ]
 inspector/canvas/requestClientNodes-webgpu.html [ Skip ]
-inspector/canvas/requestShaderSource-webgpu.html [ Skip ]
 inspector/canvas/resolveContext-webgpu.html [ Skip ]
-inspector/canvas/shaderProgram-add-remove-webgpu.html [ Skip ]
-inspector/canvas/updateShader-webgpu.html [ Skip ]
 
 # Encrypted Media Extensions are not enabled
 media/encrypted-media/

@@ -32,8 +32,6 @@
 
 namespace WebCore {
 
-class ScriptExecutionContext;
-class WebGLRenderingContextBase;
 class WebGLShader;
 
 class WebGLProgram final : public WebGLSharedObject {
@@ -43,8 +41,6 @@ public:
 
     static HashMap<WebGLProgram*, WebGLRenderingContextBase*>& instances(const LockHolder&);
     static Lock& instancesMutex();
-
-    ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
 
     unsigned numActiveAttribLocations();
     GC3Dint getActiveAttribLocation(GC3Duint index);
@@ -74,8 +70,6 @@ protected:
 private:
     void cacheActiveAttribLocations(GraphicsContext3D*);
     void cacheInfoIfNeeded();
-
-    ScriptExecutionContext* m_scriptExecutionContext;
 
     Vector<GC3Dint> m_activeAttribLocations;
 

@@ -27,8 +27,6 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUPipeline.h"
-#include "GPUProgrammableStageDescriptor.h"
 #include "WHLSLPrepare.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -40,39 +38,27 @@ namespace WebCore {
 
 class GPUDevice;
 class GPUErrorScopes;
-class GPUPipelineLayout;
 
 struct GPUComputePipelineDescriptor;
 
 using PlatformComputePipeline = MTLComputePipelineState;
 using PlatformComputePipelineSmartPtr = RetainPtr<MTLComputePipelineState>;
 
-class GPUComputePipeline final : public GPUPipeline {
+class GPUComputePipeline : public RefCounted<GPUComputePipeline> {
 public:
-    virtual ~GPUComputePipeline();
-
     static RefPtr<GPUComputePipeline> tryCreate(const GPUDevice&, const GPUComputePipelineDescriptor&, GPUErrorScopes&);
-
-    bool isComputePipeline() const { return true; }
-
-    bool recompile(const GPUDevice&, GPUProgrammableStageDescriptor&& computeStage);
 
     const PlatformComputePipeline* platformComputePipeline() const { return m_platformComputePipeline.get(); }
 
     WHLSL::ComputeDimensions computeDimensions() const { return m_computeDimensions; }
 
 private:
-    GPUComputePipeline(PlatformComputePipelineSmartPtr&&, WHLSL::ComputeDimensions, GPUPipelineLayout&);
+    GPUComputePipeline(PlatformComputePipelineSmartPtr&&, WHLSL::ComputeDimensions);
 
     PlatformComputePipelineSmartPtr m_platformComputePipeline;
     WHLSL::ComputeDimensions m_computeDimensions { 0, 0, 0 };
-
-    // Preserved for Web Inspector recompilation.
-    RefPtr<GPUPipelineLayout> m_layout;
 };
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_GPUPIPELINE(WebCore::GPUComputePipeline, isComputePipeline())
 
 #endif // ENABLE(WEBGPU)

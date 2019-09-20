@@ -1150,10 +1150,7 @@ webkit.org/b/168466 http/tests/security/bypassing-cors-checks-for-extension-urls
 webkit.org/b/191005 webgpu/ [ Skip ]
 webkit.org/b/191005 inspector/canvas/create-context-webgpu.html [ Skip ]
 webkit.org/b/191005 inspector/canvas/requestClientNodes-webgpu.html [ Skip ]
-webkit.org/b/191005 inspector/canvas/requestShaderSource-webgpu.html [ Skip ]
 webkit.org/b/191005 inspector/canvas/resolveContext-webgpu.html [ Skip ]
-webkit.org/b/191005 inspector/canvas/shaderProgram-add-remove-webgpu.html [ Skip ]
-webkit.org/b/191005 inspector/canvas/updateShader-webgpu.html [ Skip ]
 
 # No support for resource load statistics yet
 http/tests/resourceLoadStatistics/ [ Skip ]

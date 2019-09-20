@@ -37,7 +37,7 @@ namespace WebCore {
 struct WebGPUProgrammableStageDescriptor : GPUProgrammableStageDescriptorBase {
     Optional<GPUProgrammableStageDescriptor> tryCreateGPUProgrammableStageDescriptor() const;
 
-    RefPtr<WebGPUShaderModule> module;
+    RefPtr<const WebGPUShaderModule> module;
 };
 
 } // namespace WebCore

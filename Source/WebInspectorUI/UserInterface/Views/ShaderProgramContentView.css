@@ -23,46 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.content-view.shader-program > .shader {
-    display: flex;
-    flex-direction: column;
+.content-view.shader-program > .text-editor.shader {
     position: absolute;
     top: 0;
     bottom: 0;
+
+    --border-start-style: 1px solid lightgrey;
 }
 
-.content-view.shader-program > .shader.compute {
-    right: 0;
-    left: 0;
-}
-
-body[dir=ltr] .content-view.shader-program > .shader.vertex,
-body[dir=rtl] .content-view.shader-program > .shader.fragment {
+body[dir=ltr] .content-view.shader-program > .text-editor.shader.vertex,
+body[dir=rtl] .content-view.shader-program > .text-editor.shader.fragment {
     width: calc(50% - 1px);
     left: 0;
 }
 
-body[dir=ltr] .content-view.shader-program > .shader.fragment,
-body[dir=rtl] .content-view.shader-program > .shader.vertex {
+body[dir=ltr] .content-view.shader-program > .text-editor.shader.fragment,
+body[dir=rtl] .content-view.shader-program > .text-editor.shader.vertex {
     width: calc(50% + 1px);
     right: 0;
 }
 
-.content-view.shader-program > .shader + .shader {
-    border-left: 1px solid var(--border-color);
+body[dir=ltr] .content-view.shader-program > .text-editor.shader + .text-editor.shader {
+    border-left: var(--border-start-style);
 }
 
-.content-view.shader-program > .shader > header > * {
+body[dir=rtl] .content-view.shader-program > .text-editor.shader + .text-editor.shader {
+    border-right: var(--border-start-style);
+}
+
+.content-view.shader-program > .text-editor.shader > .type-title {
     padding: 2px 4px;
+    background-color: hsl(0, 0%, 95%);
     border-bottom: 1px solid lightgrey;
 }
 
-.content-view.shader-program > .shader > header > .shader-type {
-    background-color: hsl(0, 0%, 95%);
+.content-view.shader-program > .text-editor.shader > .CodeMirror {
+    top: 18px;
 }
 
 @media (prefers-color-scheme: dark) {
-    .content-view.shader-program > .shader > header {
+    .content-view.shader-program > .text-editor.shader {
+        --border-start-style: 1px solid var(--text-color-quaternary);
+    }
+
+    .content-view.shader-program > .text-editor.shader > .type-title {
         background-color: var(--background-color);
         border-bottom-color: var(--text-color-quaternary);
     }
