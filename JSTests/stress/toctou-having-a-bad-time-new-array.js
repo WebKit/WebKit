@@ -11,6 +11,6 @@ let code = `
     Object.defineProperty(proto, '0', {});
 `;
 
-for (let i = 0; i < 5000; i++) {
+for (let i = 0; i < 2000; i++) {
     runString(code);
 }

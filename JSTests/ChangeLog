@@ -1,3 +1,9 @@
+2019-09-20  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Make toctou-having-a-bad-time-new-array.js run for less time because it's timing out on the debug bots.
+
+        * stress/toctou-having-a-bad-time-new-array.js:
+
 2019-09-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DFG op_call_varargs should not assume that one-previous-local of freeReg is usable
