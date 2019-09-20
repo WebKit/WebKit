@@ -1,3 +1,19 @@
+2019-09-20  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r248832): Unable to quicklook HTML files in Mail
+        https://bugs.webkit.org/show_bug.cgi?id=202012
+        <rdar://problem/55285295>
+
+        Reviewed by Per Arne Vollan.
+
+        Follow-up to fix bug in r250110. Now that loadFile() calls
+        maybeInitializeSandboxExtensionHandle(), it no longer needs to
+        call assumeReadAccessToBaseURL(). This is because maybeInitializeSandboxExtensionHandle()
+        already take care of it.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadFile):
+
 2019-09-20  Joonghun Park  <pjh0718@gmail.com>
 
         Unreviewed. Remove duplicated HashMap iteration since r248734.

@@ -1236,7 +1236,6 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
     maybeInitializeSandboxExtensionHandle(m_process, fileURL, resourceDirectoryURL, loadParameters.sandboxExtensionHandle);
     addPlatformLoadParameters(loadParameters);
 
-    m_process->assumeReadAccessToBaseURL(*this, resourceDirectoryURL);
 #if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_PID)
     if (m_process->isLaunching())
         m_process->send(Messages::WebPage::LoadRequestWaitingForPID(loadParameters, resourceDirectoryURL, m_identifier), m_webPageID);
