@@ -1,3 +1,15 @@
+2019-09-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [SVG2]: Add auto behavior for rx and ry to the SVG <ellipse> and <rect> elements (Addressing review comments)
+        https://bugs.webkit.org/show_bug.cgi?id=199843
+
+        Reviewed by Darin Adler.
+
+        Make RenderSVGEllipse calculate of the ellipse's rx and ry more efficiently.
+
+        * rendering/svg/RenderSVGEllipse.cpp:
+        (WebCore::RenderSVGEllipse::calculateRadiiAndCenter):
+
 2019-09-20  Keith Rollin  <krollin@apple.com>
 
         Remove some support for < iOS 13
