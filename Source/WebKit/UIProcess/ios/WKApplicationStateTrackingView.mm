@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "ApplicationStateTracker.h"
+#import "Logging.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import <wtf/RetainPtr.h>
@@ -56,6 +57,8 @@
 
     _lastObservedStateWasBackground = [self isBackground];
 
+    auto page = [_webViewToTrack _page];
+    RELEASE_LOG(ViewState, "%p - WKApplicationStateTrackingView: View with page [%p, pageProxyID: %" PRIu64 "] was removed from a window, _lastObservedStateWasBackground: %d", self, page, page ? page->identifier().toUInt64() : 0, _lastObservedStateWasBackground);
     ASSERT(_applicationStateTracker);
     _applicationStateTracker = nullptr;
 }
@@ -65,6 +68,8 @@
     if (!self._contentView.window || _applicationStateTracker)
         return;
 
+    auto page = [_webViewToTrack _page];
+    RELEASE_LOG(ViewState, "%p - WKApplicationStateTrackingView: View with page [%p, pageProxyID: %" PRIu64 "] was added to a window, _lastObservedStateWasBackground: %d, isNowBackground: %d", self, page, page ? page->identifier().toUInt64() : 0, _lastObservedStateWasBackground, [self isBackground]);
     _applicationStateTracker = makeUnique<WebKit::ApplicationStateTracker>(self, @selector(_applicationDidEnterBackground), @selector(_applicationDidFinishSnapshottingAfterEnteringBackground), @selector(_applicationWillEnterForeground));
     
     if (_lastObservedStateWasBackground && ![self isBackground])
