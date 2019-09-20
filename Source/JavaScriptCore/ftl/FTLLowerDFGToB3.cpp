@@ -8311,7 +8311,7 @@ private:
                         CallLinkInfo::DirectTailCall, node->origin.semantic, InvalidGPRReg);
                     callLinkInfo->setExecutableDuringCompilation(executable);
                     if (numAllocatedArgs > numPassedArgs)
-                        callLinkInfo->setMaxNumArguments(numAllocatedArgs);
+                        callLinkInfo->setMaxArgumentCountIncludingThis(numAllocatedArgs);
                     
                     jit.addLinkTask(
                         [=] (LinkBuffer& linkBuffer) {
@@ -8345,7 +8345,7 @@ private:
                     node->origin.semantic, InvalidGPRReg);
                 callLinkInfo->setExecutableDuringCompilation(executable);
                 if (numAllocatedArgs > numPassedArgs)
-                    callLinkInfo->setMaxNumArguments(numAllocatedArgs);
+                    callLinkInfo->setMaxArgumentCountIncludingThis(numAllocatedArgs);
                 
                 params.addLatePath(
                     [=] (CCallHelpers& jit) {

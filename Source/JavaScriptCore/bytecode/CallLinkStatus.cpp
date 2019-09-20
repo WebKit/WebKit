@@ -157,7 +157,7 @@ CallLinkStatus CallLinkStatus::computeFor(
     UNUSED_PARAM(profiledBlock);
     
     CallLinkStatus result = computeFromCallLinkInfo(locker, callLinkInfo);
-    result.m_maxNumArguments = callLinkInfo.maxNumArguments();
+    result.m_maxArgumentCountIncludingThis = callLinkInfo.maxArgumentCountIncludingThis();
     return result;
 }
 
@@ -474,8 +474,8 @@ void CallLinkStatus::dump(PrintStream& out) const
     if (!m_variants.isEmpty())
         out.print(comma, listDump(m_variants));
     
-    if (m_maxNumArguments)
-        out.print(comma, "maxNumArguments = ", m_maxNumArguments);
+    if (m_maxArgumentCountIncludingThis)
+        out.print(comma, "maxArgumentCountIncludingThis = ", m_maxArgumentCountIncludingThis);
 }
 
 } // namespace JSC

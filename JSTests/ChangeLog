@@ -1,3 +1,13 @@
+2019-09-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG op_call_varargs should not assume that one-previous-local of freeReg is usable
+        https://bugs.webkit.org/show_bug.cgi?id=202014
+
+        Reviewed by Saam Barati.
+
+        * stress/call-varargs-inlining-should-not-clobber-previous-to-free-register.js: Added.
+        (__v0):
+
 2019-09-19  Tadeu Zagallo  <tzagallo@apple.com>
 
         Syntax checker should report duplicate __proto__ properties

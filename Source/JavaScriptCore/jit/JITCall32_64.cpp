@@ -202,9 +202,9 @@ JIT::compileSetupFrame(const Op& bytecode, CallLinkInfo* info)
 
     // Profile the argument count.
     load32(Address(regT1, CallFrameSlot::argumentCount * static_cast<int>(sizeof(Register)) + PayloadOffset), regT2);
-    load32(info->addressOfMaxNumArguments(), regT0);
+    load32(info->addressOfMaxArgumentCountIncludingThis(), regT0);
     Jump notBiggest = branch32(Above, regT0, regT2);
-    store32(regT2, info->addressOfMaxNumArguments());
+    store32(regT2, info->addressOfMaxArgumentCountIncludingThis());
     notBiggest.link(this);
     
     // Initialize 'this'.
