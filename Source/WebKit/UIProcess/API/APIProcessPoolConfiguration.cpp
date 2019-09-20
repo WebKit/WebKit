@@ -44,7 +44,6 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
 {
     auto copy = this->create();
 
-    copy->m_cacheModel = this->m_cacheModel;
     copy->m_diskCacheSpeculativeValidationEnabled = this->m_diskCacheSpeculativeValidationEnabled;
     copy->m_injectedBundlePath = this->m_injectedBundlePath;
     copy->m_customClassesForParameterCoder = this->m_customClassesForParameterCoder;
@@ -72,6 +71,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_processSwapsOnWindowOpenWithOpener = this->m_processSwapsOnWindowOpenWithOpener;
     copy->m_isAutomaticProcessWarmingEnabledByClient = this->m_isAutomaticProcessWarmingEnabledByClient;
     copy->m_usesWebProcessCache = this->m_usesWebProcessCache;
+    copy->m_usesPageCache = this->m_usesPageCache;
 #if PLATFORM(COCOA)
     copy->m_suppressesConnectionTerminationOnSystemChange = this->m_suppressesConnectionTerminationOnSystemChange;
 #endif

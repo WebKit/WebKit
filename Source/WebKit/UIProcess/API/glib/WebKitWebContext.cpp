@@ -27,6 +27,7 @@
 #include "APIPageConfiguration.h"
 #include "APIProcessPoolConfiguration.h"
 #include "APIString.h"
+#include "LegacyGlobalSettings.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
 #include "WebAutomationSession.h"
@@ -690,11 +691,9 @@ void webkit_web_context_set_automation_allowed(WebKitWebContext* context, gboole
  * specifying %WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER. The default value is
  * %WEBKIT_CACHE_MODEL_WEB_BROWSER.
  */
-void webkit_web_context_set_cache_model(WebKitWebContext* context, WebKitCacheModel model)
+void webkit_web_context_set_cache_model(WebKitWebContext*, WebKitCacheModel model)
 {
     CacheModel cacheModel;
-
-    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
 
     switch (model) {
     case WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER:
@@ -710,8 +709,8 @@ void webkit_web_context_set_cache_model(WebKitWebContext* context, WebKitCacheMo
         g_assert_not_reached();
     }
 
-    if (cacheModel != context->priv->processPool->cacheModel())
-        context->priv->processPool->setCacheModel(cacheModel);
+    if (cacheModel != LegacyGlobalSettings::singleton().cacheModel())
+        LegacyGlobalSettings::singleton().setCacheModel(cacheModel);
 }
 
 /**
@@ -728,7 +727,7 @@ WebKitCacheModel webkit_web_context_get_cache_model(WebKitWebContext* context)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), WEBKIT_CACHE_MODEL_WEB_BROWSER);
 
-    switch (context->priv->processPool->cacheModel()) {
+    switch (LegacyGlobalSettings::singleton().cacheModel()) {
     case CacheModel::DocumentViewer:
         return WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER;
     case CacheModel::PrimaryWebBrowser:

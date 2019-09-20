@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebProcessCache.h"
 
+#include "LegacyGlobalSettings.h"
 #include "Logging.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
@@ -150,7 +151,7 @@ RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableD
 
 void WebProcessCache::updateCapacity(WebProcessPool& processPool)
 {
-    if (!processPool.configuration().processSwapsOnNavigation() || !processPool.configuration().usesWebProcessCache() || processPool.cacheModel() != CacheModel::PrimaryWebBrowser) {
+    if (!processPool.configuration().processSwapsOnNavigation() || !processPool.configuration().usesWebProcessCache() || LegacyGlobalSettings::singleton().cacheModel() != CacheModel::PrimaryWebBrowser) {
         if (!processPool.configuration().processSwapsOnNavigation())
             RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::updateCapacity: Cache is disabled because process swap on navigation is disabled", this);
         else if (!processPool.configuration().usesWebProcessCache())

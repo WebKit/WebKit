@@ -281,7 +281,6 @@ public:
     VisitedLinkStore& visitedLinkStore() { return m_visitedLinkStore.get(); }
 
     void setCacheModel(CacheModel);
-    CacheModel cacheModel() const { return m_configuration->cacheModel(); }
 
     void setDefaultRequestTimeoutInterval(double);
 

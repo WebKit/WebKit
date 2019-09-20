@@ -1725,6 +1725,8 @@
 			compilerSpec = com.apple.compilers.proxy.script;
 			filePatterns = "*.h";
 			fileType = pattern.proxy;
+			inputFiles = (
+			);
 			isEditable = 1;
 			outputFiles = (
 				"$(HEADER_OUTPUT_DIR)/$(INPUT_FILE_NAME)",
@@ -3694,6 +3696,8 @@
 		5CE9120B2293C1E0005BEC78 /* WKMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKMain.h; sourceTree = "<group>"; };
 		5CE9120C2293C1E0005BEC78 /* WKMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKMain.mm; sourceTree = "<group>"; };
 		5CE9120F2293C25F005BEC78 /* AuxiliaryProcessMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AuxiliaryProcessMain.cpp; path = Cocoa/AuxiliaryProcessMain.cpp; sourceTree = "<group>"; };
+		5CEABA2A2333247700797797 /* LegacyGlobalSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyGlobalSettings.h; sourceTree = "<group>"; };
+		5CEABA2B2333251400797797 /* LegacyGlobalSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyGlobalSettings.cpp; sourceTree = "<group>"; };
 		5CFECB031E1ED1C800F88504 /* LegacyCustomProtocolManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyCustomProtocolManager.cpp; sourceTree = "<group>"; };
 		5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
 		617A52D71F43A9B600DCDC0A /* ServiceWorkerClientFetchMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ServiceWorkerClientFetchMessageReceiver.cpp; path = DerivedSources/WebKit2/ServiceWorkerClientFetchMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7755,6 +7759,8 @@
 				839A2F301E2067390039057E /* HighPerformanceGraphicsUsageSampler.h */,
 				A5E391FB2183C1E900C8FB31 /* InspectorTargetProxy.cpp */,
 				A5E391FC2183C1E900C8FB31 /* InspectorTargetProxy.h */,
+				5CEABA2B2333251400797797 /* LegacyGlobalSettings.cpp */,
+				5CEABA2A2333247700797797 /* LegacyGlobalSettings.h */,
 				31607F3819627002009B87DA /* LegacySessionStateCoding.h */,
 				BC6EDAA5111271C600E7678B /* PageClient.h */,
 				1AC75379183A9FDA0072CB15 /* PageLoadState.cpp */,

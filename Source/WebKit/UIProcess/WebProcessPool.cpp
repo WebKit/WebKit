@@ -492,7 +492,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
         m_websiteDataStore->websiteDataStore().networkingHasBegun();
     }
 
-    parameters.cacheModel = cacheModel();
+    parameters.cacheModel = LegacyGlobalSettings::singleton().cacheModel();
     parameters.canHandleHTTPSServerTrustEvaluation = m_canHandleHTTPSServerTrustEvaluation;
 
     for (auto& scheme : globalURLSchemesWithCustomProtocolHandlers())
@@ -919,7 +919,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     setJavaScriptConfigurationFileEnabledFromDefaults();
 #endif
 
-    parameters.cacheModel = cacheModel();
+    parameters.cacheModel = LegacyGlobalSettings::singleton().cacheModel();
     parameters.languages = configuration().overrideLanguages().isEmpty() ? userPreferredLanguages() : configuration().overrideLanguages();
 
     parameters.urlSchemesRegisteredAsEmptyDocument = copyToVector(m_schemesToRegisterAsEmptyDocument);
@@ -1575,10 +1575,13 @@ void WebProcessPool::registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String&
 
 void WebProcessPool::updateMaxSuspendedPageCount()
 {
+    if (!m_configuration->usesPageCache())
+        return;
+
     unsigned dummy = 0;
     Seconds dummyInterval;
     unsigned pageCacheSize = 0;
-    calculateMemoryCacheSizes(m_configuration->cacheModel(), dummy, dummy, dummy, dummyInterval, pageCacheSize);
+    calculateMemoryCacheSizes(LegacyGlobalSettings::singleton().cacheModel(), dummy, dummy, dummy, dummyInterval, pageCacheSize);
 
     m_maxSuspendedPageCount = pageCacheSize;
 
@@ -1588,7 +1591,6 @@ void WebProcessPool::updateMaxSuspendedPageCount()
 
 void WebProcessPool::setCacheModel(CacheModel cacheModel)
 {
-    m_configuration->setCacheModel(cacheModel);
     updateMaxSuspendedPageCount();
 
     sendToAllProcesses(Messages::WebProcess::SetCacheModel(cacheModel));

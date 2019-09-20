@@ -1,5 +1,42 @@
 2019-09-20  Alex Christensen  <achristensen@webkit.org>
 
+        Introduce LegacyGlobalSettings for settings the NetworkProcess needs from a WebProcessPool
+        https://bugs.webkit.org/show_bug.cgi?id=201970
+
+        Reviewed by Geoff Garen.
+
+        I'm starting by moving the cache model to this new abstraction.
+        We were using it in tests to disable the page cache, which should be done with a boolean on the pool configuration, not by changing the cache model.
+        We were also using it in WKContextSetCacheModel which has several clients that won't change quickly, so this abstraction is used to maintain existing behavior.
+        I need this so I can make a NetworkProcess not depend on anything from a WebProcessPool when starting.
+
+        * Sources.txt:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetCacheModel):
+        (WKContextGetCacheModel):
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration pageCacheEnabled]):
+        (-[_WKProcessPoolConfiguration setPageCacheEnabled:]):
+        * UIProcess/LegacyGlobalSettings.cpp: Added.
+        (WebKit::LegacyGlobalSettings::singleton):
+        (WebKit::LegacyGlobalSettings::setCacheModel):
+        * UIProcess/LegacyGlobalSettings.h: Added.
+        (WebKit::LegacyGlobalSettings::cacheModel const):
+        * UIProcess/WebProcessCache.cpp:
+        (WebKit::WebProcessCache::updateCapacity):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        (WebKit::WebProcessPool::updateMaxSuspendedPageCount):
+        (WebKit::WebProcessPool::setCacheModel):
+        * UIProcess/WebProcessPool.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
+2019-09-20  Alex Christensen  <achristensen@webkit.org>
+
         Deprecate unused C API aliases for WebsiteDataStore
         https://bugs.webkit.org/show_bug.cgi?id=202029
 

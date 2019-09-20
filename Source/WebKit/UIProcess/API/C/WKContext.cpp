@@ -35,6 +35,7 @@
 #include "APIURLRequest.h"
 #include "AuthenticationChallengeProxy.h"
 #include "DownloadProxy.h"
+#include "LegacyGlobalSettings.h"
 #include "WKAPICast.h"
 #include "WKArray.h"
 #include "WKContextConfigurationRef.h"
@@ -320,12 +321,12 @@ void WKContextClearVisitedLinks(WKContextRef contextRef)
 
 void WKContextSetCacheModel(WKContextRef contextRef, WKCacheModel cacheModel)
 {
-    WebKit::toImpl(contextRef)->setCacheModel(WebKit::toCacheModel(cacheModel));
+    LegacyGlobalSettings::singleton().setCacheModel(WebKit::toCacheModel(cacheModel));
 }
 
 WKCacheModel WKContextGetCacheModel(WKContextRef contextRef)
 {
-    return WebKit::toAPI(WebKit::toImpl(contextRef)->cacheModel());
+    return WebKit::toAPI(LegacyGlobalSettings::singleton().cacheModel());
 }
 
 void WKContextSetMaximumNumberOfProcesses(WKContextRef, unsigned)

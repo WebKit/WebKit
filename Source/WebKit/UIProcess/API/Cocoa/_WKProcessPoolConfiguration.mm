@@ -26,6 +26,7 @@
 #import "config.h"
 #import "_WKProcessPoolConfigurationInternal.h"
 
+#import "LegacyGlobalSettings.h"
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
 
@@ -313,15 +314,12 @@
 
 - (BOOL)pageCacheEnabled
 {
-    return _processPoolConfiguration->cacheModel() != WebKit::CacheModel::DocumentViewer;
+    return _processPoolConfiguration->usesPageCache();
 }
 
 - (void)setPageCacheEnabled:(BOOL)enabled
 {
-    if (!enabled)
-        _processPoolConfiguration->setCacheModel(WebKit::CacheModel::DocumentViewer);
-    else if (![self pageCacheEnabled])
-        _processPoolConfiguration->setCacheModel(WebKit::CacheModel::PrimaryWebBrowser);
+    return _processPoolConfiguration->setUsesPageCache(enabled);
 }
 
 - (BOOL)usesSingleWebProcess

@@ -74,8 +74,8 @@ public:
     bool diskCacheSpeculativeValidationEnabled() const { return m_diskCacheSpeculativeValidationEnabled; }
     void setDiskCacheSpeculativeValidationEnabled(bool enabled) { m_diskCacheSpeculativeValidationEnabled = enabled; }
 
-    WebKit::CacheModel cacheModel() const { return m_cacheModel; }
-    void setCacheModel(WebKit::CacheModel cacheModel) { m_cacheModel = cacheModel; }
+    void setUsesPageCache(bool value) { m_usesPageCache = value; }
+    bool usesPageCache() const { return m_usesPageCache; }
 
     const WTF::String& injectedBundlePath() const { return m_injectedBundlePath; }
     void setInjectedBundlePath(const WTF::String& injectedBundlePath) { m_injectedBundlePath = injectedBundlePath; }
@@ -158,7 +158,6 @@ public:
 
 private:
     bool m_diskCacheSpeculativeValidationEnabled { false };
-    WebKit::CacheModel m_cacheModel { WebKit::CacheModel::PrimaryWebBrowser };
 
     WTF::String m_injectedBundlePath;
     Vector<WTF::String> m_customClassesForParameterCoder;
@@ -181,6 +180,7 @@ private:
     bool m_processSwapsOnWindowOpenWithOpener { false };
     Optional<bool> m_isAutomaticProcessWarmingEnabledByClient;
     bool m_usesWebProcessCache { false };
+    bool m_usesPageCache { true };
     bool m_clientWouldBenefitFromAutomaticProcessPrewarming { false };
     WTF::String m_customWebContentServiceBundleIdentifier;
     bool m_shouldConfigureJSCForTesting { false };
