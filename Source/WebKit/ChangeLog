@@ -1,3 +1,15 @@
+2019-09-20  Joonghun Park  <pjh0718@gmail.com>
+
+        Unreviewed. Fix Build warning below since r248734.
+
+        warning: unused variable ‘foo’ [-Wunused-variable]
+
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::destroySessionStorageNamespace):
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+        (WebKit::StorageManagerSet::add):
+        (WebKit::StorageManagerSet::waitUntilTasksFinished):
+
 2019-09-19  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW, WinCairo] Support running tests in Release mode

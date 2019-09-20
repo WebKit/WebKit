@@ -59,8 +59,7 @@ void StorageManagerSet::add(PAL::SessionID sessionID, const String& localStorage
 {
     ASSERT(RunLoop::isMain());
 
-    auto[iter, isNewEntry] = m_storageManagerPaths.add(sessionID, localStorageDirectory);
-    if (isNewEntry) {
+    if (m_storageManagerPaths.add(sessionID, localStorageDirectory).isNewEntry) {
         if (!sessionID.isEphemeral())
             SandboxExtension::consumePermanently(localStorageDirectoryHandle);
 
@@ -126,7 +125,7 @@ void StorageManagerSet::waitUntilTasksFinished()
 
     BinarySemaphore semaphore;
     m_queue->dispatch([this, &semaphore] {
-        for (auto& [sessionID, storageManager] : m_storageManagers)
+        for (auto& storageManager : m_storageManagers.values())
             storageManager->clearStorageNamespaces();
 
         m_storageManagers.clear();
