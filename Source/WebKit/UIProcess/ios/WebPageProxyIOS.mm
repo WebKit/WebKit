@@ -1045,11 +1045,6 @@ void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const St
     notImplemented();
 }
 
-void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplicationRaw(const String&, const String&, const uint8_t*, unsigned long, const String&)
-{
-    notImplemented();
-}
-
 void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String&)
 {
     notImplemented();
