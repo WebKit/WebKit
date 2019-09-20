@@ -225,15 +225,17 @@ static inline void setVisible(TestWKWebView *webView)
 TEST(WebKit, QuotaDelegate)
 {
     done = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    _WKWebsiteDataStoreConfiguration *storeConfiguration = [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
+    storeConfiguration.perOriginStorageQuota = 1024 * 400;
+    WKWebsiteDataStore *dataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration] autorelease];
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:dataStore];
 
-    [[configuration websiteDataStore] _setPerOriginStorageQuota: 1024 * 400];
-    
     auto messageHandler = adoptNS([[QuotaMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"qt"];
 
@@ -286,14 +288,16 @@ TEST(WebKit, QuotaDelegate)
 TEST(WebKit, QuotaDelegateReload)
 {
     done = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    _WKWebsiteDataStoreConfiguration *storeConfiguration = [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
+    storeConfiguration.perOriginStorageQuota = 1024 * 400;
+    WKWebsiteDataStore *dataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration] autorelease];
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
     
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    
-    [[configuration websiteDataStore] _setPerOriginStorageQuota: 1024 * 400];
+    [configuration setWebsiteDataStore:dataStore];
     
     auto messageHandler = adoptNS([[QuotaMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"qt"];
@@ -332,14 +336,16 @@ TEST(WebKit, QuotaDelegateReload)
 TEST(WebKit, QuotaDelegateNavigateFragment)
 {
     done = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    _WKWebsiteDataStoreConfiguration *storeConfiguration = [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
+    storeConfiguration.perOriginStorageQuota = 1024 * 400;
+    WKWebsiteDataStore *dataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration] autorelease];
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-
-    [[configuration websiteDataStore] _setPerOriginStorageQuota: 1024 * 400];
+    [configuration setWebsiteDataStore:dataStore];
 
     auto messageHandler = adoptNS([[QuotaMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"qt"];

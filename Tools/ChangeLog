@@ -1,3 +1,18 @@
+2019-09-20  Alex Christensen  <achristensen@webkit.org>
+
+        Begin moving WebsiteDataStore setters to WebsiteDataStoreConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=202025
+
+        Reviewed by Chris Dumez.
+
+        One expected change in behavior is that the resource load statistics directory is not created on startup with an ephemeral session any more
+        because we call the constructor of WebsiteDataStoreConfiguration inside _WKWebsiteDataStoreConfiguration and set the default directory like we do the other directories.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/StorageQuota.mm:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::websiteDataStore):
+        (WTR::TestController::generatePageConfiguration):
+
 2019-09-20  Keith Rollin  <krollin@apple.com>
 
         Remove some support for < iOS 13
