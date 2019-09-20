@@ -208,7 +208,7 @@ HTMLFormatter = class HTMLFormatter
                 this._builder.appendNonToken("/");
             this._builder.appendNonToken(">");
 
-            if (node.__shouldHaveNoChildren)
+            if (node.selfClose || node.__shouldHaveNoChildren)
                 this._builder.appendNewline();
 
             if (!node.__inlineContent) {
