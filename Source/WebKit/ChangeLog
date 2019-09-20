@@ -1,6 +1,31 @@
 2019-09-20  Keith Rollin  <krollin@apple.com>
 
         Remove some support for < iOS 13
+        https://bugs.webkit.org/show_bug.cgi?id=202032
+        <rdar://problem/55548468>
+
+        Reviewed by Alex Christensen.
+
+        Remove some support for iOS versions less than 13.0.
+
+        Update conditionals that reference __IPHONE_OS_VERSION_MIN_REQUIRED
+        and __IPHONE_OS_VERSION_MAX_ALLOWED, assuming that they both have
+        values >= 130000. This means that expressions like
+        "__IPHONE_OS_VERSION_MIN_REQUIRED < 101300" are always False and
+        "__IPHONE_OS_VERSION_MIN_REQUIRED >= 101300" are always True.
+
+        This removal is part of a series of patches effecting the removal of
+        dead code for old versions of iOS. This particular pass involves
+        changes in which Dan Bates was involved. These changes are isolated
+        from other similar changes in order to facilitate the reviewing
+        process.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _interpretKeyEvent:isCharEvent:]):
+
+2019-09-20  Keith Rollin  <krollin@apple.com>
+
+        Remove some support for < iOS 13
         https://bugs.webkit.org/show_bug.cgi?id=201973
         <rdar://problem/55506966>
 

@@ -6070,12 +6070,10 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
         bool isCharEvent = platformEvent->type() == PlatformKeyboardEvent::Char;
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000
         if (!isCharEvent && [webView._UIKitDelegateForwarder handleKeyTextCommandForCurrentEvent])
             return YES;
         if (isCharEvent && [webView._UIKitDelegateForwarder handleKeyAppCommandForCurrentEvent])
             return YES;
-#endif
 
         NSString *s = [event characters];
         if (!s.length)

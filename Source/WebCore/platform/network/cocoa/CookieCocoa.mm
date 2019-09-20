@@ -29,7 +29,7 @@
 // FIXME: Remove NS_ASSUME_NONNULL_BEGIN/END and all _Nullable annotations once we remove the NSHTTPCookie forward declaration below.
 NS_ASSUME_NONNULL_BEGIN
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 && __MAC_OS_X_VERSION_MAX_ALLOWED < 101500) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000 && __IPHONE_OS_VERSION_MAX_ALLOWED < 130000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 && __MAC_OS_X_VERSION_MAX_ALLOWED < 101500)
 typedef NSString * NSHTTPCookieStringPolicy;
 @interface NSHTTPCookie (Staging)
 @property (nullable, readonly, copy) NSHTTPCookieStringPolicy sameSitePolicy;
@@ -84,7 +84,7 @@ static double cookieCreated(NSHTTPCookie *cookie)
     return 0;
 }
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS_FAMILY)
 static Cookie::SameSitePolicy coreSameSitePolicy(NSHTTPCookieStringPolicy _Nullable policy)
 {
     if (!policy)
@@ -128,7 +128,7 @@ Cookie::Cookie(NSHTTPCookie *cookie)
     , commentURL { cookie.commentURL }
     , ports { portVectorFromList(cookie.portList) }
 {
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS_FAMILY)
     ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     if ([cookie respondsToSelector:@selector(sameSitePolicy)])
         sameSite = coreSameSitePolicy(cookie.sameSitePolicy);
@@ -166,7 +166,7 @@ Cookie::operator NSHTTPCookie * _Nullable () const
     if (maxAge > 0)
         [properties setObject:[NSString stringWithFormat:@"%f", maxAge] forKey:NSHTTPCookieMaximumAge];
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS_FAMILY)
     [properties setObject:[NSNumber numberWithDouble:created / 1000.0 - NSTimeIntervalSince1970] forKey:@"Created"];
 #endif
 

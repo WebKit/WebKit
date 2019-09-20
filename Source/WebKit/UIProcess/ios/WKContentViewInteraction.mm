@@ -4860,12 +4860,10 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
     UIKeyboardImpl *keyboard = [UIKeyboardImpl sharedInstance];
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000
     if (!isCharEvent && [keyboard respondsToSelector:@selector(handleKeyTextCommandForCurrentEvent)] && [keyboard handleKeyTextCommandForCurrentEvent])
         return YES;
     if (isCharEvent && [keyboard respondsToSelector:@selector(handleKeyAppCommandForCurrentEvent)] && [keyboard handleKeyAppCommandForCurrentEvent])
         return YES;
-#endif
 
     // Don't insert character for an unhandled Command-key key command. This matches iOS and Mac platform conventions.
     if (event.modifierFlags & WebEventFlagMaskCommandKey)
