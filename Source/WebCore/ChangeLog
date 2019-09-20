@@ -1,3 +1,21 @@
+2019-09-20  Alex Christensen  <achristensen@webkit.org>
+
+        [resource-timing] Report performance entries with all HTTP status codes
+        https://bugs.webkit.org/show_bug.cgi?id=202040
+
+        Reviewed by Joseph Pecoraro.
+
+        This follows a Chromium change at https://chromium-review.googlesource.com/c/chromium/src/+/1796544
+        The spec change is being discussed at https://github.com/w3c/resource-timing/issues/165
+
+        Test: imported/w3c/web-platform-tests/resource-timing/status-codes-create-entry.html
+
+        I had to slightly modify the test to make sure the entry count was > 0 instead of == 1 to reduce flakyness because sometimes we load the 200 image twice.
+        I'll submit a PR to WPT, too.
+
+        * loader/ResourceTimingInformation.cpp:
+        (WebCore::ResourceTimingInformation::shouldAddResourceTiming):
+
 2019-09-20  Keith Rollin  <krollin@apple.com>
 
         Remove check of setSourceAppPid selector that's no longer needed
