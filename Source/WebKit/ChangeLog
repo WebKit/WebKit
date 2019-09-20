@@ -1,5 +1,15 @@
 2019-09-20  Joonghun Park  <pjh0718@gmail.com>
 
+        Unreviewed. Remove duplicated HashMap iteration since r248734.
+
+        ASSERT statement already exists for |storageNamespaceID|,
+        so |HashMap.get| for the parameter is not needed.
+
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::destroySessionStorageNamespace):
+
+2019-09-20  Joonghun Park  <pjh0718@gmail.com>
+
         Unreviewed. Fix Build warning below since r248734.
 
         warning: unused variable ‘foo’ [-Wunused-variable]

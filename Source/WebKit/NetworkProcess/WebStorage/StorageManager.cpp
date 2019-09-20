@@ -74,8 +74,7 @@ void StorageManager::destroySessionStorageNamespace(StorageNamespaceIdentifier s
     ASSERT(!RunLoop::isMain());
 
     ASSERT(m_sessionStorageNamespaces.contains(storageNamespaceID));
-    if (m_sessionStorageNamespaces.get(storageNamespaceID))
-        m_sessionStorageNamespaces.remove(storageNamespaceID);
+    m_sessionStorageNamespaces.remove(storageNamespaceID);
 }
 
 void StorageManager::cloneSessionStorageNamespace(StorageNamespaceIdentifier storageNamespaceID, StorageNamespaceIdentifier newStorageNamespaceID)
