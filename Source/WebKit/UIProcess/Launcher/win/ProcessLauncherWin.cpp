@@ -82,6 +82,10 @@ void ProcessLauncher::launchProcess()
     commandLineBuilder.append(String::number(m_launchOptions.processIdentifier.toUInt64()));
     commandLineBuilder.append(" -clientIdentifier ");
     commandLineBuilder.append(String::number(reinterpret_cast<uintptr_t>(clientIdentifier)));
+    if (m_client->shouldConfigureJSCForTesting())
+        commandLineBuilder.append(" -configure-jsc-for-testing");
+    if (!m_client->isJITEnabled())
+        commandLineBuilder.append(" -disable-jit");
     commandLineBuilder.append('\0');
 
     auto commandLine = commandLineBuilder.toString().wideCharacters();

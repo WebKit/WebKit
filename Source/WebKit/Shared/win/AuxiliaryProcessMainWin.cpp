@@ -26,6 +26,7 @@
 #include "config.h"
 #include "AuxiliaryProcessMain.h"
 
+#include <JavaScriptCore/ExecutableAllocator.h>
 #include <cstring>
 #include <wtf/text/WTFString.h>
 
@@ -40,7 +41,10 @@ bool AuxiliaryProcessMainBase::parseCommandLine(int argc, char** argv)
         } else if (!strcmp(argv[i], "-processIdentifier") && i + 1 < argc) {
             String str(argv[++i]);
             m_parameters.processIdentifier = makeObjectIdentifier<WebCore::ProcessIdentifierType>(str.toUInt64());
-        }
+        } else if (!strcmp(argv[i], "-configure-jsc-for-testing"))
+            JSC::Config::configureForTesting();
+        else if (!strcmp(argv[i], "-disable-jit"))
+            JSC::ExecutableAllocator::setJITEnabled(false);
     }
     return true;
 }

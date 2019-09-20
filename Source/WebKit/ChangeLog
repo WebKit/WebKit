@@ -1,3 +1,32 @@
+2019-09-19  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW, WinCairo] Support running tests in Release mode
+        https://bugs.webkit.org/show_bug.cgi?id=202021
+
+        Reviewed by Don Olmstead.
+
+        In Bug 201597, we added new features to better lock down JSC features in the
+        potentially untrusted WebContent process.
+
+        Unfortunately, this change included XPC Dictionary items used at startup to
+        lock down JSC features before entering the main execution of the process. These
+        changes were not done for the WinCairo or FTW ports.
+
+        We need to pass the state of the JIT and whether to enable certain JSC features
+        at process launch. Since the XPC mechanisms we use on macOS and iOS do not exist
+        on Windows, I am implementing them as command-line flags.
+
+            -configure-jsc-for-testing: Sets the JSC in testing mode.
+            -disable-jit: Disables the JIT.
+
+        See r249808 for the equivalent changes on macOS and iOS.
+
+        * PlatformFTW.cmake: Add some missing header files needed when building tests.
+        * Shared/win/AuxiliaryProcessMainWin.cpp:
+        (WebKit::AuxiliaryProcessMainBase::parseCommandLine):
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+
 2019-09-19  Chris Dumez  <cdumez@apple.com>
 
         Add better logging for when the view visibility state changes
