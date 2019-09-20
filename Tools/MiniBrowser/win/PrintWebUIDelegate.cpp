@@ -30,7 +30,6 @@
 #include "Common.h"
 #include "MainWindow.h"
 #include "WebKitLegacyBrowserWindow.h"
-#include <WebCore/COMPtr.h>
 #include <WebKitLegacy/WebKitCOMAPI.h>
 #include <comip.h>
 #include <commctrl.h>
@@ -87,13 +86,12 @@ HRESULT PrintWebUIDelegate::createWebViewWithRequest(_In_opt_ IWebView*, _In_opt
 
 static HWND getHandleFromWebView(IWebView* webView)
 {
-    COMPtr<IWebViewPrivate2> webViewPrivate;
-    HRESULT hr = webView->QueryInterface(&webViewPrivate);
-    if (FAILED(hr))
+    IWebViewPrivate2Ptr webViewPrivate(webView);
+    if (!webViewPrivate)
         return nullptr;
 
     HWND webViewWindow = nullptr;
-    hr = webViewPrivate->viewWindow(&webViewWindow);
+    HRESULT hr = webViewPrivate->viewWindow(&webViewWindow);
     if (FAILED(hr))
         return nullptr;
 
@@ -171,8 +169,8 @@ HRESULT PrintWebUIDelegate::webViewPrintingMarginRect(_In_opt_ IWebView* view, _
     if (FAILED(view->mainFrame(&mainFrame.GetInterfacePtr())))
         return E_FAIL;
 
-    IWebFramePrivatePtr privateFrame;
-    if (FAILED(mainFrame->QueryInterface(&privateFrame.GetInterfacePtr())))
+    IWebFramePrivatePtr privateFrame(mainFrame);
+    if (!privateFrame)
         return E_FAIL;
 
     privateFrame->frameBounds(rect);
@@ -295,7 +293,7 @@ HRESULT PrintWebUIDelegate::canRunModal(_In_opt_ IWebView*, _Out_ BOOL* canRunBo
 
 HRESULT PrintWebUIDelegate::runModal(_In_opt_ IWebView* webView)
 {
-    COMPtr<IWebView> protector(webView);
+    IWebViewPtr protector(webView);
 
     auto modalDialogOwner = ::GetWindow(m_modalDialogParent, GW_OWNER);
     auto topLevelParent = ::GetAncestor(modalDialogOwner, GA_ROOT);
@@ -324,7 +322,7 @@ HRESULT PrintWebUIDelegate::createModalDialog(_In_opt_ IWebView* sender, _In_opt
     if (!newWebView)
         return E_POINTER;
     
-    COMPtr<IWebView> webView;
+    IWebViewPtr webView;
     HRESULT hr = WebKitCreateInstance(CLSID_WebView, 0, IID_IWebView, (void**)&webView);
     if (FAILED(hr))
         return hr;
@@ -340,14 +338,14 @@ HRESULT PrintWebUIDelegate::createModalDialog(_In_opt_ IWebView* sender, _In_opt
     if (FAILED(hr))
         return hr;
 
-    COMPtr<IWebUIDelegate> uiDelegate;
+    IWebUIDelegatePtr uiDelegate;
     hr = sender->uiDelegate(&uiDelegate);
     if (FAILED(hr))
         return hr;
 
-    webView->setUIDelegate(uiDelegate.get());
+    webView->setUIDelegate(uiDelegate);
 
-    *newWebView = webView.leakRef();
+    *newWebView = webView.Detach();
 
     return S_OK;
 }

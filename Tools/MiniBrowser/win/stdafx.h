@@ -42,6 +42,7 @@
 #endif
 
 #include <assert.h>
+#include <comdef.h>
 #include <comip.h>
 #include <commctrl.h>
 #include <commdlg.h>

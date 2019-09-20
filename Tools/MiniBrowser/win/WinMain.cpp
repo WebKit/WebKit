@@ -95,7 +95,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     // Main message loop:
     __try {
-        _com_ptr_t<_com_IIID<IWebKitMessageLoop, &__uuidof(IWebKitMessageLoop)>> messageLoop;
+        IWebKitMessageLoopPtr messageLoop;
 
         hr = WebKitCreateInstance(CLSID_WebKitMessageLoop, 0, IID_IWebKitMessageLoop, reinterpret_cast<void**>(&messageLoop.GetInterfacePtr()));
         if (FAILED(hr))

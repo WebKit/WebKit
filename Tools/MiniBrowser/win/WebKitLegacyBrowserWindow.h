@@ -31,27 +31,32 @@
 #include <vector>
 #include <wtf/Ref.h>
 
-typedef _com_ptr_t<_com_IIID<IUnknown, &__uuidof(IUnknown)>> IUnknownPtr;
-typedef _com_ptr_t<_com_IIID<IWebFrame, &__uuidof(IWebFrame)>> IWebFramePtr;
-typedef _com_ptr_t<_com_IIID<IWebFrame2, &__uuidof(IWebFrame2)>> IWebFrame2Ptr;
-typedef _com_ptr_t<_com_IIID<IWebView, &__uuidof(IWebView)>> IWebViewPtr;
-typedef _com_ptr_t<_com_IIID<IWebViewPrivate2, &__uuidof(IWebViewPrivate2)>> IWebViewPrivatePtr;
-typedef _com_ptr_t<_com_IIID<IWebFrameLoadDelegate, &__uuidof(IWebFrameLoadDelegate)>> IWebFrameLoadDelegatePtr;
-typedef _com_ptr_t<_com_IIID<IWebHistory, &__uuidof(IWebHistory)>> IWebHistoryPtr;
-typedef _com_ptr_t<_com_IIID<IWebHistoryItem, &__uuidof(IWebHistoryItem)>> IWebHistoryItemPtr;
-typedef _com_ptr_t<_com_IIID<IWebPreferences, &__uuidof(IWebPreferences)>> IWebPreferencesPtr;
-typedef _com_ptr_t<_com_IIID<IWebPreferencesPrivate3, &__uuidof(IWebPreferencesPrivate3)>> IWebPreferencesPrivatePtr;
-typedef _com_ptr_t<_com_IIID<IWebUIDelegate, &__uuidof(IWebUIDelegate)>> IWebUIDelegatePtr;
-typedef _com_ptr_t<_com_IIID<IAccessibilityDelegate, &__uuidof(IAccessibilityDelegate)>> IAccessibilityDelegatePtr;
-typedef _com_ptr_t<_com_IIID<IWebInspector, &__uuidof(IWebInspector)>> IWebInspectorPtr;
-typedef _com_ptr_t<_com_IIID<IWebCoreStatistics, &__uuidof(IWebCoreStatistics)>> IWebCoreStatisticsPtr;
-typedef _com_ptr_t<_com_IIID<IWebCache, &__uuidof(IWebCache)>> IWebCachePtr;
-typedef _com_ptr_t<_com_IIID<IWebResourceLoadDelegate, &__uuidof(IWebResourceLoadDelegate)>> IWebResourceLoadDelegatePtr;
-typedef _com_ptr_t<_com_IIID<IWebDownloadDelegate, &__uuidof(IWebDownloadDelegate)>> IWebDownloadDelegatePtr;
-typedef _com_ptr_t<_com_IIID<IWebFramePrivate, &__uuidof(IWebFramePrivate)>> IWebFramePrivatePtr;
-typedef _com_ptr_t<_com_IIID<IWebMutableURLRequest, &__uuidof(IWebMutableURLRequest)>> IWebMutableURLRequestPtr;
-typedef _com_ptr_t<_com_IIID<IWebNotificationObserver, &__uuidof(IWebNotificationObserver)>> IWebNotificationObserverPtr;
-typedef _com_ptr_t<_com_IIID<IWebNotificationCenter, &__uuidof(IWebNotificationCenter)>> IWebNotificationCenterPtr;
+_COM_SMARTPTR_TYPEDEF(IAccessibilityDelegate, IID_IAccessibilityDelegate);
+_COM_SMARTPTR_TYPEDEF(IWebBackForwardList, IID_IWebBackForwardList);
+_COM_SMARTPTR_TYPEDEF(IWebCache, IID_IWebCache);
+_COM_SMARTPTR_TYPEDEF(IWebCoreStatistics, IID_IWebCoreStatistics);
+_COM_SMARTPTR_TYPEDEF(IWebDataSource, IID_IWebDataSource);
+_COM_SMARTPTR_TYPEDEF(IWebDownloadDelegate, IID_IWebDownloadDelegate);
+_COM_SMARTPTR_TYPEDEF(IWebFrame, IID_IWebFrame);
+_COM_SMARTPTR_TYPEDEF(IWebFrame2, IID_IWebFrame2);
+_COM_SMARTPTR_TYPEDEF(IWebFrameLoadDelegate, IID_IWebFrameLoadDelegate);
+_COM_SMARTPTR_TYPEDEF(IWebFramePrivate, IID_IWebFramePrivate);
+_COM_SMARTPTR_TYPEDEF(IWebHistory, IID_IWebHistory);
+_COM_SMARTPTR_TYPEDEF(IWebHistoryItem, IID_IWebHistoryItem);
+_COM_SMARTPTR_TYPEDEF(IWebHistoryPrivate, IID_IWebHistoryPrivate);
+_COM_SMARTPTR_TYPEDEF(IWebIBActions, IID_IWebIBActions);
+_COM_SMARTPTR_TYPEDEF(IWebInspector, IID_IWebInspector);
+_COM_SMARTPTR_TYPEDEF(IWebKitMessageLoop, IID_IWebKitMessageLoop);
+_COM_SMARTPTR_TYPEDEF(IWebMutableURLRequest, IID_IWebMutableURLRequest);
+_COM_SMARTPTR_TYPEDEF(IWebNotificationCenter, IID_IWebNotificationCenter);
+_COM_SMARTPTR_TYPEDEF(IWebNotificationObserver, IID_IWebNotificationObserver);
+_COM_SMARTPTR_TYPEDEF(IWebPreferences, IID_IWebPreferences);
+_COM_SMARTPTR_TYPEDEF(IWebPreferencesPrivate3, IID_IWebPreferencesPrivate3);
+_COM_SMARTPTR_TYPEDEF(IWebResourceLoadDelegate, IID_IWebResourceLoadDelegate);
+_COM_SMARTPTR_TYPEDEF(IWebUIDelegate, IID_IWebUIDelegate);
+_COM_SMARTPTR_TYPEDEF(IWebView, IID_IWebView);
+_COM_SMARTPTR_TYPEDEF(IWebViewPrivate2, IID_IWebViewPrivate2);
+_COM_SMARTPTR_TYPEDEF(IWebViewPrivate3, IID_IWebViewPrivate3);
 
 class WebKitLegacyBrowserWindow : public BrowserWindow {
 public:
@@ -84,7 +89,7 @@ private:
     HRESULT setDownloadDelegate(IWebDownloadDelegatePtr);
 
     IWebPreferencesPtr standardPreferences() { return m_standardPreferences;  }
-    IWebPreferencesPrivatePtr privatePreferences() { return m_prefsPrivate; }
+    IWebPreferencesPrivate3Ptr privatePreferences() { return m_prefsPrivate; }
     IWebFramePtr mainFrame();
     IWebCoreStatisticsPtr statistics() { return m_statistics; }
     IWebCachePtr webCache() { return m_webCache;  }
@@ -119,12 +124,12 @@ private:
     std::vector<IWebHistoryItemPtr> m_historyItems;
 
     IWebViewPtr m_webView;
-    IWebViewPrivatePtr m_webViewPrivate;
+    IWebViewPrivate2Ptr m_webViewPrivate;
 
     IWebHistoryPtr m_webHistory;
     IWebInspectorPtr m_inspector;
     IWebPreferencesPtr m_standardPreferences;
-    IWebPreferencesPrivatePtr m_prefsPrivate;
+    IWebPreferencesPrivate3Ptr m_prefsPrivate;
     IWebNotificationCenterPtr m_defaultNotificationCenter;
     IWebNotificationObserverPtr m_notificationObserver;
 

@@ -60,7 +60,7 @@ public:
 
     // IWebFrameLoadDelegatePrivate
     virtual HRESULT STDMETHODCALLTYPE didFinishDocumentLoadForFrame(_In_opt_ IWebView* sender, _In_opt_ IWebFrame*) { return S_OK; }
-    virtual HRESULT STDMETHODCALLTYPE didFirstLayoutInFrame(_In_opt_ IWebView* sender, _In_opt_ IWebFrame*);
+    virtual HRESULT STDMETHODCALLTYPE didFirstLayoutInFrame(_In_opt_ IWebView* sender, _In_opt_ IWebFrame*) { return S_OK; }
     virtual HRESULT STDMETHODCALLTYPE didHandleOnloadEventsForFrame(_In_opt_ IWebView*, _In_opt_ IWebFrame*);
     virtual HRESULT STDMETHODCALLTYPE didFirstVisuallyNonEmptyLayoutInFrame(_In_opt_ IWebView* sender, _In_opt_ IWebFrame*)  { return S_OK; }
 

@@ -1,3 +1,40 @@
+2019-09-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] Use _com_ptr_t methods instead of calling QueryInterface explictly
+        https://bugs.webkit.org/show_bug.cgi?id=201976
+
+        Reviewed by Don Olmstead.
+
+        This change consists of three refactorings:
+        1. Replaced explicit QueryInterface with _com_ptr_t methods
+        2. Replaced typedef with _COM_SMARTPTR_TYPEDEF macro
+        3. Replaced WebCore's COMPtr with _com_ptr_t because it is not a public WebKit API
+
+        * MiniBrowser/win/MiniBrowserWebHost.cpp:
+        (MiniBrowserWebHost::didFirstLayoutInFrame): Deleted.
+        * MiniBrowser/win/MiniBrowserWebHost.h:
+        (MiniBrowserWebHost::didFirstLayoutInFrame):
+        * MiniBrowser/win/PrintWebUIDelegate.cpp:
+        (getHandleFromWebView):
+        (PrintWebUIDelegate::webViewPrintingMarginRect):
+        (PrintWebUIDelegate::runModal):
+        (PrintWebUIDelegate::createModalDialog):
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.cpp:
+        (WebKitLegacyBrowserWindow::init):
+        (WebKitLegacyBrowserWindow::setToDefaultPreferences):
+        (WebKitLegacyBrowserWindow::showLastVisitedSites):
+        (WebKitLegacyBrowserWindow::reload):
+        (WebKitLegacyBrowserWindow::resetZoom):
+        (WebKitLegacyBrowserWindow::zoomIn):
+        (WebKitLegacyBrowserWindow::zoomOut):
+        (WebKitLegacyBrowserWindow::showLayerTree):
+        (WebKitLegacyBrowserWindow::print):
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.h:
+        (WebKitLegacyBrowserWindow::privatePreferences):
+        * MiniBrowser/win/WinMain.cpp:
+        (wWinMain):
+        * MiniBrowser/win/stdafx.h:
+
 2019-09-19  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] Dependency hunspell-en-gb cannot be found on Fedora 30
