@@ -48,7 +48,7 @@ HTMLCanvasElement* GPUBasedCanvasRenderingContext::htmlCanvas() const
 
 void GPUBasedCanvasRenderingContext::notifyCanvasContentChanged()
 {
-    if (auto* canvas = htmlCanvas()) {
+    if (htmlCanvas()) {
         RenderBox* renderBox = htmlCanvas()->renderBox();
         if (renderBox && renderBox->hasAcceleratedCompositing())
             renderBox->contentChanged(CanvasChanged);

@@ -1,3 +1,14 @@
+2019-09-19  Joonghun Park  <pjh0718@gmail.com>
+
+        Unreviewed. Fix Build error below since r248879.
+
+        warning: unused variable ‘canvas’ [-Wunused-variable]
+
+        No new tests, no new behavioral changes.
+
+        * html/canvas/GPUBasedCanvasRenderingContext.cpp:
+        (WebCore::GPUBasedCanvasRenderingContext::notifyCanvasContentChanged):
+
 2019-09-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: show WebGPU shader pipelines
