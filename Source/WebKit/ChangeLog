@@ -1,5 +1,21 @@
 2019-09-20  Chris Dumez  <cdumez@apple.com>
 
+        ApplicationStateTracker::m_isBackground initialization does not account for UIScenes
+        https://bugs.webkit.org/show_bug.cgi?id=202048
+
+        Reviewed by Geoffrey Garen.
+
+        ApplicationStateTracker::m_isBackground initialization does not account for UIScenes, it merely checks
+        the visibility state of the whole app. It should instead check the visibility state of the window's
+        UIScene.
+
+        This patch also refactors the code a little bit to reduce #ifdef'ing.
+
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::ApplicationStateTracker::ApplicationStateTracker):
+
+2019-09-20  Chris Dumez  <cdumez@apple.com>
+
         Document no longer needs to store a SessionID
         https://bugs.webkit.org/show_bug.cgi?id=202024
 
