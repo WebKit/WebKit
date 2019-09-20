@@ -1726,13 +1726,19 @@ void WebPageProxy::setSuppressVisibilityUpdates(bool flag)
 
 void WebPageProxy::updateActivityState(OptionSet<ActivityState::Flag> flagsToUpdate)
 {
+    bool wasVisible = isViewVisible();
     m_activityState.remove(flagsToUpdate);
     if (flagsToUpdate & ActivityState::IsFocused && pageClient().isViewFocused())
         m_activityState.add(ActivityState::IsFocused);
     if (flagsToUpdate & ActivityState::WindowIsActive && pageClient().isViewWindowActive())
         m_activityState.add(ActivityState::WindowIsActive);
-    if (flagsToUpdate & ActivityState::IsVisible && pageClient().isViewVisible())
-        m_activityState.add(ActivityState::IsVisible);
+    if (flagsToUpdate & ActivityState::IsVisible) {
+        bool isNowVisible = pageClient().isViewVisible();
+        if (isNowVisible)
+            m_activityState.add(ActivityState::IsVisible);
+        if (wasVisible != isNowVisible)
+            RELEASE_LOG_IF_ALLOWED(ViewState, "updateActivityState: view visibility state changed %d -> %d", wasVisible, isNowVisible);
+    }
     if (flagsToUpdate & ActivityState::IsVisibleOrOccluded && pageClient().isViewVisibleOrOccluded())
         m_activityState.add(ActivityState::IsVisibleOrOccluded);
     if (flagsToUpdate & ActivityState::IsInWindow && pageClient().isViewInWindow())
