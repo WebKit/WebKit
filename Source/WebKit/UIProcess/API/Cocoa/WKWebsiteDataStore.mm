@@ -307,6 +307,11 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         config->setHTTPProxy(configuration.httpProxy);
     if (configuration.httpsProxy)
         config->setHTTPSProxy(configuration.httpsProxy);
+
+    config->setAllowsCellularAccess(configuration.allowsCellularAccess);
+    config->setPerOriginStorageQuota(configuration.perOriginStorageQuota);
+    config->setBoundInterfaceIdentifier(configuration.boundInterfaceIdentifier);
+    config->setProxyConfiguration((__bridge CFDictionaryRef)[[configuration.proxyConfiguration copy] autorelease]);
     config->setDeviceManagementRestrictionsEnabled(configuration.deviceManagementRestrictionsEnabled);
     config->setAllLoadsBlockedByDeviceManagementRestrictionsForTesting(configuration.allLoadsBlockedByDeviceManagementRestrictionsForTesting);
 
@@ -366,12 +371,11 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (NSUInteger)_perOriginStorageQuota
 {
-    return _websiteDataStore->websiteDataStore().perOriginStorageQuota();
+    return 0;
 }
 
 - (void)_setPerOriginStorageQuota:(NSUInteger)size
 {
-    _websiteDataStore->websiteDataStore().setPerOriginStorageQuota(size);
 }
 
 - (NSString *)_cacheStorageDirectory

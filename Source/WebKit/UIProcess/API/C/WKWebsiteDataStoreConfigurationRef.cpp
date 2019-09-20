@@ -110,3 +110,13 @@ void WKWebsiteDataStoreConfigurationSetResourceLoadStatisticsDirectory(WKWebsite
 {
     WebKit::toImpl(configuration)->setResourceLoadStatisticsDirectory(WebKit::toImpl(directory)->string());
 }
+
+uint64_t WKWebsiteDataStoreConfigurationGetPerOriginStorageQuota(WKWebsiteDataStoreConfigurationRef configuration)
+{
+    return WebKit::toImpl(configuration)->perOriginStorageQuota();
+}
+
+void WKWebsiteDataStoreConfigurationSetPerOriginStorageQuota(WKWebsiteDataStoreConfigurationRef configuration, uint64_t quota)
+{
+    return WebKit::toImpl(configuration)->setPerOriginStorageQuota(quota);
+}

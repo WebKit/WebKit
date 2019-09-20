@@ -151,7 +151,7 @@ Ref<WebKit::WebsiteDataStoreConfiguration> WebsiteDataStore::defaultDataStoreCon
     configuration->setCacheStorageDirectory(defaultCacheStorageDirectory());
     configuration->setNetworkCacheDirectory(defaultNetworkCacheDirectory());
     configuration->setMediaCacheDirectory(defaultMediaCacheDirectory());
-
+    configuration->setResourceLoadStatisticsDirectory(defaultResourceLoadStatisticsDirectory());
     configuration->setIndexedDBDatabaseDirectory(defaultIndexedDBDatabaseDirectory());
     configuration->setServiceWorkerRegistrationDirectory(defaultServiceWorkerRegistrationDirectory());
     configuration->setWebSQLDatabaseDirectory(defaultWebSQLDatabaseDirectory());

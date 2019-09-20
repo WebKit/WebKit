@@ -30,10 +30,7 @@
 
 namespace WebKit {
 
-WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration()
-    : m_resourceLoadStatisticsDirectory(API::WebsiteDataStore::defaultResourceLoadStatisticsDirectory())
-{
-}
+WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration() = default;
 
 Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy()
 {
@@ -65,6 +62,12 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy()
     copy->m_httpsProxy = this->m_httpsProxy;
     copy->m_deviceManagementRestrictionsEnabled = this->m_deviceManagementRestrictionsEnabled;
     copy->m_allLoadsBlockedByDeviceManagementRestrictionsForTesting = this->m_allLoadsBlockedByDeviceManagementRestrictionsForTesting;
+    copy->m_boundInterfaceIdentifier = this->m_boundInterfaceIdentifier;
+    copy->m_allowsCellularAccess = this->m_allowsCellularAccess;
+#if PLATFORM(COCOA)
+    if (m_proxyConfiguration)
+        copy->m_proxyConfiguration = adoptCF(CFDictionaryCreateCopy(nullptr, this->m_proxyConfiguration.get()));
+#endif
 
     return copy;
 }

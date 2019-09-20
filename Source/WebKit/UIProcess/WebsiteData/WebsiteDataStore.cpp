@@ -102,8 +102,6 @@ WebsiteDataStore::WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&& configur
     , m_configuration(m_resolvedConfiguration->copy())
     , m_deviceIdHashSaltStorage(DeviceIdHashSaltStorage::create(isPersistent() ? m_configuration->deviceIdHashSaltsStorageDirectory() : String()))
     , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
-    , m_sourceApplicationBundleIdentifier(m_configuration->sourceApplicationBundleIdentifier())
-    , m_sourceApplicationSecondaryIdentifier(m_configuration->sourceApplicationSecondaryIdentifier())
 #if ENABLE(WEB_AUTHN)
     , m_authenticatorManager(makeUniqueRef<AuthenticatorManager>())
 #endif
@@ -2028,7 +2026,7 @@ bool WebsiteDataStore::setSourceApplicationSecondaryIdentifier(String&& identifi
 {
     if (m_networkingHasBegun)
         return false;
-    m_sourceApplicationSecondaryIdentifier = WTFMove(identifier);
+    m_resolvedConfiguration->setSourceApplicationSecondaryIdentifier(WTFMove(identifier));
     return true;
 }
 
@@ -2036,7 +2034,7 @@ bool WebsiteDataStore::setSourceApplicationBundleIdentifier(String&& identifier)
 {
     if (m_networkingHasBegun)
         return false;
-    m_sourceApplicationBundleIdentifier = WTFMove(identifier);
+    m_resolvedConfiguration->setSourceApplicationBundleIdentifier(WTFMove(identifier));
     return true;
 }
 

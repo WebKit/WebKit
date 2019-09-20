@@ -116,7 +116,6 @@ public:
 
     uint64_t perOriginStorageQuota() const { return m_resolvedConfiguration->perOriginStorageQuota(); }
     uint64_t perThirdPartyOriginStorageQuota() const;
-    void setPerOriginStorageQuota(uint64_t quota) { m_resolvedConfiguration->setPerOriginStorageQuota(quota); }
     const String& cacheStorageDirectory() const { return m_resolvedConfiguration->cacheStorageDirectory(); }
     void setCacheStorageDirectory(String&& directory) { m_resolvedConfiguration->setCacheStorageDirectory(WTFMove(directory)); }
     const String& serviceWorkerRegistrationDirectory() const { return m_resolvedConfiguration->serviceWorkerRegistrationDirectory(); }
@@ -210,23 +209,23 @@ public:
     void removePendingCookie(const WebCore::Cookie&);
     void clearPendingCookies();
 
-    void setBoundInterfaceIdentifier(String&& identifier) { m_boundInterfaceIdentifier = WTFMove(identifier); }
-    const String& boundInterfaceIdentifier() { return m_boundInterfaceIdentifier; }
+    void setBoundInterfaceIdentifier(String&& identifier) { m_resolvedConfiguration->setBoundInterfaceIdentifier(WTFMove(identifier)); }
+    const String& boundInterfaceIdentifier() { return m_resolvedConfiguration->boundInterfaceIdentifier(); }
 
-    const String& sourceApplicationBundleIdentifier() const { return m_sourceApplicationBundleIdentifier; }
+    const String& sourceApplicationBundleIdentifier() const { return m_resolvedConfiguration->sourceApplicationBundleIdentifier(); }
     bool setSourceApplicationBundleIdentifier(String&&);
 
-    const String& sourceApplicationSecondaryIdentifier() const { return m_sourceApplicationSecondaryIdentifier; }
+    const String& sourceApplicationSecondaryIdentifier() const { return m_resolvedConfiguration->sourceApplicationSecondaryIdentifier(); }
     bool setSourceApplicationSecondaryIdentifier(String&&);
 
     void networkingHasBegun() { m_networkingHasBegun = true; }
     
-    void setAllowsCellularAccess(AllowsCellularAccess allows) { m_allowsCellularAccess = allows; }
-    AllowsCellularAccess allowsCellularAccess() { return m_allowsCellularAccess; }
+    void setAllowsCellularAccess(AllowsCellularAccess allows) { m_resolvedConfiguration->setAllowsCellularAccess(allows == AllowsCellularAccess::Yes); }
+    AllowsCellularAccess allowsCellularAccess() { return m_resolvedConfiguration->allowsCellularAccess() ? AllowsCellularAccess::Yes : AllowsCellularAccess::No; }
 
 #if PLATFORM(COCOA)
-    void setProxyConfiguration(CFDictionaryRef configuration) { m_proxyConfiguration = configuration; }
-    CFDictionaryRef proxyConfiguration() { return m_proxyConfiguration.get(); }
+    void setProxyConfiguration(CFDictionaryRef configuration) { m_resolvedConfiguration->setProxyConfiguration(configuration); }
+    CFDictionaryRef proxyConfiguration() { return m_resolvedConfiguration->proxyConfiguration(); }
 #endif
 
 #if USE(CURL)
@@ -308,7 +307,6 @@ private:
 #if PLATFORM(COCOA)
     Vector<uint8_t> m_uiProcessCookieStorageIdentifier;
     RetainPtr<CFHTTPCookieStorageRef> m_cfCookieStorage;
-    RetainPtr<CFDictionaryRef> m_proxyConfiguration;
 #endif
 
 #if USE(CURL)
@@ -319,10 +317,6 @@ private:
     
     WeakHashSet<WebProcessProxy> m_processes;
 
-    String m_boundInterfaceIdentifier;
-    AllowsCellularAccess m_allowsCellularAccess { AllowsCellularAccess::Yes };
-    String m_sourceApplicationBundleIdentifier;
-    String m_sourceApplicationSecondaryIdentifier;
     bool m_networkingHasBegun { false };
 
 #if HAVE(SEC_KEY_PROXY)

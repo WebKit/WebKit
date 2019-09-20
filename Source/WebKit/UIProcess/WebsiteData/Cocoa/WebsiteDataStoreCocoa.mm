@@ -119,11 +119,11 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     WebsiteDataStoreParameters parameters;
     parameters.networkSessionParameters = {
         m_sessionID,
-        m_boundInterfaceIdentifier,
-        m_allowsCellularAccess,
-        m_proxyConfiguration,
-        m_sourceApplicationBundleIdentifier,
-        m_sourceApplicationSecondaryIdentifier,
+        boundInterfaceIdentifier(),
+        allowsCellularAccess(),
+        proxyConfiguration(),
+        sourceApplicationBundleIdentifier(),
+        sourceApplicationSecondaryIdentifier(),
         shouldLogCookieInformation,
         Seconds { [defaults integerForKey:WebKitNetworkLoadThrottleLatencyMillisecondsDefaultsKey] / 1000. },
         WTFMove(httpProxy),
@@ -154,8 +154,8 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     }
 
     parameters.uiProcessCookieStorageIdentifier = m_uiProcessCookieStorageIdentifier;
-    parameters.networkSessionParameters.sourceApplicationBundleIdentifier = m_sourceApplicationBundleIdentifier;
-    parameters.networkSessionParameters.sourceApplicationSecondaryIdentifier = m_sourceApplicationSecondaryIdentifier;
+    parameters.networkSessionParameters.sourceApplicationBundleIdentifier = sourceApplicationBundleIdentifier();
+    parameters.networkSessionParameters.sourceApplicationSecondaryIdentifier = sourceApplicationSecondaryIdentifier();
 
     parameters.pendingCookies = copyToVector(m_pendingCookies);
 

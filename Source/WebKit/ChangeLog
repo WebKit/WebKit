@@ -1,5 +1,62 @@
 2019-09-20  Alex Christensen  <achristensen@webkit.org>
 
+        Begin moving WebsiteDataStore setters to WebsiteDataStoreConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=202025
+
+        Reviewed by Chris Dumez.
+
+        Most of these were only needed before initNonPersistentConfiguration existed.
+
+        * UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.cpp:
+        (WKWebsiteDataStoreConfigurationGetPerOriginStorageQuota):
+        (WKWebsiteDataStoreConfigurationSetPerOriginStorageQuota):
+        * UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.h:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetPerOriginStorageQuota):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _initWithConfiguration:]):
+        (-[WKWebsiteDataStore _perOriginStorageQuota]):
+        (-[WKWebsiteDataStore _setPerOriginStorageQuota:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration perOriginStorageQuota]):
+        (-[_WKWebsiteDataStoreConfiguration setPerOriginStorageQuota:]):
+        (-[_WKWebsiteDataStoreConfiguration boundInterfaceIdentifier]):
+        (-[_WKWebsiteDataStoreConfiguration setBoundInterfaceIdentifier:]):
+        (-[_WKWebsiteDataStoreConfiguration allowsCellularAccess]):
+        (-[_WKWebsiteDataStoreConfiguration setAllowsCellularAccess:]):
+        (-[_WKWebsiteDataStoreConfiguration proxyConfiguration]):
+        (-[_WKWebsiteDataStoreConfiguration setProxyConfiguration:]):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+        (WebKit::WebsiteDataStore::setSourceApplicationSecondaryIdentifier):
+        (WebKit::WebsiteDataStore::setSourceApplicationBundleIdentifier):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::setBoundInterfaceIdentifier):
+        (WebKit::WebsiteDataStore::boundInterfaceIdentifier):
+        (WebKit::WebsiteDataStore::sourceApplicationBundleIdentifier const):
+        (WebKit::WebsiteDataStore::sourceApplicationSecondaryIdentifier const):
+        (WebKit::WebsiteDataStore::setAllowsCellularAccess):
+        (WebKit::WebsiteDataStore::allowsCellularAccess):
+        (WebKit::WebsiteDataStore::setProxyConfiguration):
+        (WebKit::WebsiteDataStore::proxyConfiguration):
+        (WebKit::WebsiteDataStore::setPerOriginStorageQuota): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::boundInterfaceIdentifier const):
+        (WebKit::WebsiteDataStoreConfiguration::setBoundInterfaceIdentifier):
+        (WebKit::WebsiteDataStoreConfiguration::allowsCellularAccess const):
+        (WebKit::WebsiteDataStoreConfiguration::setAllowsCellularAccess):
+        (WebKit::WebsiteDataStoreConfiguration::proxyConfiguration const):
+        (WebKit::WebsiteDataStoreConfiguration::setProxyConfiguration):
+
+2019-09-20  Alex Christensen  <achristensen@webkit.org>
+
         Introduce LegacyGlobalSettings for settings the NetworkProcess needs from a WebProcessPool
         https://bugs.webkit.org/show_bug.cgi?id=201970
 

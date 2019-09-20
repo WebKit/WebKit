@@ -35,6 +35,7 @@ namespace WebKit {
 class WebsiteDataStoreConfiguration : public API::ObjectImpl<API::Object::Type::WebsiteDataStoreConfiguration> {
 public:
     static Ref<WebsiteDataStoreConfiguration> create() { return adoptRef(*new WebsiteDataStoreConfiguration); }
+    WebsiteDataStoreConfiguration();
 
     Ref<WebsiteDataStoreConfiguration> copy();
 
@@ -68,6 +69,17 @@ public:
     const String& localStorageDirectory() const { return m_localStorageDirectory; }
     void setLocalStorageDirectory(String&& directory) { m_localStorageDirectory = WTFMove(directory); }
 
+    const String& boundInterfaceIdentifier() const { return m_boundInterfaceIdentifier; }
+    void setBoundInterfaceIdentifier(String&& identifier) { m_boundInterfaceIdentifier = WTFMove(identifier); }
+
+    bool allowsCellularAccess() const { return m_allowsCellularAccess; }
+    void setAllowsCellularAccess(bool allows) { m_allowsCellularAccess = allows; }
+
+#if PLATFORM(COCOA)
+    CFDictionaryRef proxyConfiguration() const { return m_proxyConfiguration.get(); }
+    void setProxyConfiguration(CFDictionaryRef configuration) { m_proxyConfiguration = configuration; }
+#endif
+    
     const String& deviceIdHashSaltsStorageDirectory() const { return m_deviceIdHashSaltsStorageDirectory; }
     void setDeviceIdHashSaltsStorageDirectory(String&& directory) { m_deviceIdHashSaltsStorageDirectory = WTFMove(directory); }
 
@@ -108,8 +120,6 @@ public:
     void setAllLoadsBlockedByDeviceManagementRestrictionsForTesting(bool blocked) { m_allLoadsBlockedByDeviceManagementRestrictionsForTesting = blocked; }
 
 private:
-    WebsiteDataStoreConfiguration();
-
     bool m_isPersistent { false };
 
     String m_cacheStorageDirectory;
@@ -132,10 +142,15 @@ private:
     String m_cookieStorageFile;
     String m_sourceApplicationBundleIdentifier;
     String m_sourceApplicationSecondaryIdentifier;
+    String m_boundInterfaceIdentifier;
     URL m_httpProxy;
     URL m_httpsProxy;
     bool m_deviceManagementRestrictionsEnabled { false };
     bool m_allLoadsBlockedByDeviceManagementRestrictionsForTesting { false };
+    bool m_allowsCellularAccess { true };
+#if PLATFORM(COCOA)
+    RetainPtr<CFDictionaryRef> m_proxyConfiguration;
+#endif
 };
 
 }

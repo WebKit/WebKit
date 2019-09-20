@@ -43,6 +43,10 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 @property (nonatomic, nullable, copy, setter=setHTTPProxy:) NSURL *httpProxy WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 @property (nonatomic, nullable, copy, setter=setHTTPSProxy:) NSURL *httpsProxy WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 @property (nonatomic) BOOL deviceManagementRestrictionsEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic) NSUInteger perOriginStorageQuota WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, nullable, copy) NSString *boundInterfaceIdentifier WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic) BOOL allowsCellularAccess WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, nullable, copy) NSDictionary *proxyConfiguration WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 // These properties only make sense for persistent data stores, and will throw
 // an exception if set for non-persistent stores.

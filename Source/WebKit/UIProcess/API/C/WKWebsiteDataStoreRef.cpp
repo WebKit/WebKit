@@ -605,9 +605,8 @@ void WKWebsiteDataStoreSetServiceWorkerRegistrationDirectory(WKWebsiteDataStoreR
     WebKit::toImpl(dataStoreRef)->websiteDataStore().setServiceWorkerRegistrationDirectory(WebKit::toImpl(serviceWorkerRegistrationDirectory)->string());
 }
 
-void WKWebsiteDataStoreSetPerOriginStorageQuota(WKWebsiteDataStoreRef dataStoreRef, uint64_t quota)
+void WKWebsiteDataStoreSetPerOriginStorageQuota(WKWebsiteDataStoreRef, uint64_t)
 {
-    WebKit::toImpl(dataStoreRef)->websiteDataStore().setPerOriginStorageQuota(quota);
 }
 
 void WKWebsiteDataStoreClearAllDeviceOrientationPermissions(WKWebsiteDataStoreRef dataStoreRef)

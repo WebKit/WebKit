@@ -42,6 +42,7 @@ static void checkURLArgument(NSURL *url)
     if (!self)
         return nil;
 
+    API::Object::constructInWrapper<WebKit::WebsiteDataStoreConfiguration>(self);
     _configuration->setPersistent(true);
 
     return self;
@@ -53,9 +54,16 @@ static void checkURLArgument(NSURL *url)
     if (!self)
         return nil;
 
+    API::Object::constructInWrapper<WebKit::WebsiteDataStoreConfiguration>(self);
     _configuration->setPersistent(false);
 
     return self;
+}
+
+- (void)dealloc
+{
+    _configuration->~WebsiteDataStoreConfiguration();
+    [super dealloc];
 }
 
 - (BOOL)isPersistent
@@ -282,6 +290,46 @@ static void checkURLArgument(NSURL *url)
 - (void)setDeviceManagementRestrictionsEnabled:(BOOL)enabled
 {
     _configuration->setDeviceManagementRestrictionsEnabled(enabled);
+}
+
+- (NSUInteger)perOriginStorageQuota
+{
+    return _configuration->perOriginStorageQuota();
+}
+
+- (void)setPerOriginStorageQuota:(NSUInteger)quota
+{
+    _configuration->setPerOriginStorageQuota(quota);
+}
+
+- (NSString *)boundInterfaceIdentifier
+{
+    return _configuration->boundInterfaceIdentifier();
+}
+
+- (void)setBoundInterfaceIdentifier:(NSString *)identifier
+{
+    _configuration->setBoundInterfaceIdentifier(identifier);
+}
+
+- (BOOL)allowsCellularAccess
+{
+    return _configuration->allowsCellularAccess();
+}
+
+- (void)setAllowsCellularAccess:(BOOL)allows
+{
+    _configuration->setAllowsCellularAccess(allows);
+}
+
+- (NSDictionary *)proxyConfiguration
+{
+    return (__bridge NSDictionary *)_configuration->proxyConfiguration();
+}
+
+- (void)setProxyConfiguration:(NSDictionary *)configuration
+{
+    _configuration->setProxyConfiguration((__bridge CFDictionaryRef)[configuration copy]);
 }
 
 - (BOOL)allLoadsBlockedByDeviceManagementRestrictionsForTesting

@@ -56,7 +56,10 @@ WK_EXPORT void WKWebsiteDataStoreConfigurationSetMediaKeysStorageDirectory(WKWeb
 
 WK_EXPORT WKStringRef WKWebsiteDataStoreConfigurationCopyResourceLoadStatisticsDirectory(WKWebsiteDataStoreConfigurationRef configuration);
 WK_EXPORT void WKWebsiteDataStoreConfigurationSetResourceLoadStatisticsDirectory(WKWebsiteDataStoreConfigurationRef configuration, WKStringRef directory);
-    
+
+WK_EXPORT uint64_t WKWebsiteDataStoreConfigurationGetPerOriginStorageQuota(WKWebsiteDataStoreConfigurationRef configuration);
+WK_EXPORT void WKWebsiteDataStoreConfigurationSetPerOriginStorageQuota(WKWebsiteDataStoreConfigurationRef configuration, uint64_t quota);
+
 #ifdef __cplusplus
 }
 #endif
