@@ -98,7 +98,6 @@ public:
         Terminated,
     };
     State state() const;
-    bool isLaunching() const { return state() == State::Launching; }
 
     ProcessID processIdentifier() const { return m_processLauncher ? m_processLauncher->processIdentifier() : 0; }
 

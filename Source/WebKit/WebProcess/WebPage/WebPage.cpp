@@ -1554,7 +1554,7 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
 }
 
 // LoadRequestWaitingForPID should never be sent to the WebProcess. It must always be converted to a LoadRequest message.
-NO_RETURN void WebPage::loadRequestWaitingForPID(LoadParameters&&, URL&&, PageIdentifier)
+NO_RETURN void WebPage::loadRequestWaitingForPID(LoadParameters&&, const String&)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
