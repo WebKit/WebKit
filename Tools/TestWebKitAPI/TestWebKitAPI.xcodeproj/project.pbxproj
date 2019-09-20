@@ -768,7 +768,6 @@
 		A13EBBB01B87436F00097110 /* BundleParametersPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = A13EBBAE1B87436F00097110 /* BundleParametersPlugIn.mm */; };
 		A13EBBB11B87438000097110 /* BundleParameters.mm in Sources */ = {isa = PBXBuildFile; fileRef = A13EBBAC1B87436F00097110 /* BundleParameters.mm */; };
 		A1409AD91E7254D4004949D9 /* password-protected.pages in Copy Resources */ = {isa = PBXBuildFile; fileRef = A1409AD81E7254AC004949D9 /* password-protected.pages */; };
-		A14AAB631E78D7DE00C1ADC2 /* WKPDFView.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14AAB611E78D7DE00C1ADC2 /* WKPDFView.mm */; };
 		A14AAB651E78DC5400C1ADC2 /* encrypted.pdf in Copy Resources */ = {isa = PBXBuildFile; fileRef = A14AAB641E78DC3F00C1ADC2 /* encrypted.pdf */; };
 		A14FC5881B8991BF00D107EB /* ContentFiltering.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14FC5861B8991B600D107EB /* ContentFiltering.mm */; };
 		A14FC58B1B89927100D107EB /* ContentFilteringPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14FC5891B89927100D107EB /* ContentFilteringPlugIn.mm */; };
@@ -2143,7 +2142,6 @@
 		A13EBBAC1B87436F00097110 /* BundleParameters.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleParameters.mm; sourceTree = "<group>"; };
 		A13EBBAE1B87436F00097110 /* BundleParametersPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleParametersPlugIn.mm; sourceTree = "<group>"; };
 		A1409AD81E7254AC004949D9 /* password-protected.pages */ = {isa = PBXFileReference; lastKnownFileType = file; path = "password-protected.pages"; sourceTree = "<group>"; };
-		A14AAB611E78D7DE00C1ADC2 /* WKPDFView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPDFView.mm; sourceTree = "<group>"; };
 		A14AAB641E78DC3F00C1ADC2 /* encrypted.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = encrypted.pdf; sourceTree = "<group>"; };
 		A14FC5831B89739100D107EB /* WKWebViewConfigurationExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewConfigurationExtras.mm; sourceTree = "<group>"; };
 		A14FC5841B89739100D107EB /* WKWebViewConfigurationExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewConfigurationExtras.h; sourceTree = "<group>"; };
@@ -2932,7 +2930,6 @@
 				DF4B273821A47727009BD1CA /* WKNSDictionaryEmptyDictionaryCrash.mm */,
 				375E0E151D66674400EFEC2C /* WKNSNumber.mm */,
 				37B47E2E1D64E7CA005F4EFF /* WKObject.mm */,
-				A14AAB611E78D7DE00C1ADC2 /* WKPDFView.mm */,
 				2D00065D1C1F58940088E6A7 /* WKPDFViewResizeCrash.mm */,
 				2D21FE581F04642800B58E7D /* WKPDFViewStablePresentationUpdateCallback.mm */,
 				3781746C2198AE2400062C26 /* WKProcessPoolConfiguration.mm */,
@@ -4842,7 +4839,6 @@
 				52D673EE1AFB127300FA19FE /* WKPageCopySessionStateWithFiltering.cpp in Sources */,
 				7CCE7F1F1A411AE600447C4C /* WKPageGetScaleFactorNotZero.cpp in Sources */,
 				7CCE7F201A411AE600447C4C /* WKPageIsPlayingAudio.cpp in Sources */,
-				A14AAB631E78D7DE00C1ADC2 /* WKPDFView.mm in Sources */,
 				2D00065F1C1F589A0088E6A7 /* WKPDFViewResizeCrash.mm in Sources */,
 				2D21FE591F04642900B58E7D /* WKPDFViewStablePresentationUpdateCallback.mm in Sources */,
 				7CCE7F211A411AE600447C4C /* WKPreferences.cpp in Sources */,

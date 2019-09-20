@@ -755,7 +755,7 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
         return;
     }
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+#if PLATFORM(IOS_FAMILY)
     if (NSURL *imageURL = info[UIImagePickerControllerImageURL]) {
         if (!imageURL.isFileURL) {
             LOG_ERROR("WKFileUploadPanel: Expected image URL to be a file path, it was not");

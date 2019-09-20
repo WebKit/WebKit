@@ -1,3 +1,33 @@
+2019-09-20  Keith Rollin  <krollin@apple.com>
+
+        Remove some support for < iOS 13
+        https://bugs.webkit.org/show_bug.cgi?id=201967
+        <rdar://problem/55504738>
+
+        Reviewed by Andy Estes.
+
+        Remove some support for iOS versions less than 13.0.
+
+        Update conditionals that reference __IPHONE_OS_VERSION_MIN_REQUIRED
+        and __IPHONE_OS_VERSION_MAX_ALLOWED, assuming that they both have
+        values >= 130000. This means that expressions like
+        "__IPHONE_OS_VERSION_MIN_REQUIRED < 101300" are always False and
+        "__IPHONE_OS_VERSION_MIN_REQUIRED >= 101300" are always True.
+
+        After version checks have been removed, there are some cases where the
+        preprocessor conditional looks like "#if PLATFORM(MAC) ||
+        PLATFORM(IOS_FAMILY)". These can be collapsed into "#if
+        PLATFORM(COCOA)". This additional cleanup will be performed in a
+        subsequent patch.
+
+        This removal is part of a series of patches effecting the removal of
+        dead code for old versions of iOS. This particular pass involves
+        changes in which Andy Estes was involved. These changes are isolated
+        from other similar changes in order to facilitate the reviewing
+        process.
+
+        * pal/spi/cocoa/NEFilterSourceSPI.h:
+
 2019-09-20  Alex Christensen  <achristensen@webkit.org>
 
         Remove functionality to disable TLS fallback
