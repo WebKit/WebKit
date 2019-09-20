@@ -1,3 +1,38 @@
+2019-09-19  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] Enable WebKitTestRunner build
+        https://bugs.webkit.org/show_bug.cgi?id=201996
+
+        Reviewed by Fujii Hironori.
+
+        It's time to start getting the test system up and running for FTW.
+
+        This patch does the following:
+
+        1. Adds relevant CMake changes to get things building.
+        2. Adds a "--ftw" flag to the build scripts that will trigger a relevant build.
+        3. Updates 'webkitpy' to recognize the 'ftw' port.
+
+        Note: Pixel tests are not yet supported.
+
+        * PlatformFTW.cmake: Build the WK2 test runner.
+        * Scripts/build-webkit: Update to recognize the FTW port.
+        * Scripts/webkitdirs.pm: Ditto.
+        * Scripts/webkitperl/webkitdirs_unittest/extractNonMacOSHostConfiguration.pl: Ditto.
+        * Scripts/webkitpy/common/config/ports.py: Ditto.
+        * Scripts/webkitpy/common/config/ports_unittest.py: Ditto.
+        * Scripts/webkitpy/common/version_name_map.py: Ditto.
+        * Scripts/webkitpy/port/factory.py: Ditto.
+        * Scripts/webkitpy/port/win.py: Ditto.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dumpDOMAsWebArchive): Don't build or run this method
+        on Windows.
+        * WebKitTestRunner/PlatformFTW.cmake: Added.
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        * WebKitTestRunner/win/TestInvocationDirect2D.cpp: Added.
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected): Add stub implementation.
+
 2019-09-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][MiniBrowser] Use _com_ptr_t methods instead of calling QueryInterface explictly

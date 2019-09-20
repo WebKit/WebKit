@@ -1,6 +1,6 @@
 # Copyright (C) 2009, Google Inc. All rights reserved.
 # Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
-# Copyright (C) 2015, 2017 Apple Inc. All rights reserved.
+# Copyright (C) 2015-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -63,6 +63,7 @@ class DeprecatedPort(object):
     @staticmethod
     def port(port_name):
         ports = {
+            "ftw": FTWPort,
             "gtk-wk2": GtkWK2Port,
             "ios-device": IOSPort,
             # FIXME: https://bugs.webkit.org/show_bug.cgi?id=169302
@@ -201,6 +202,20 @@ class WinCairoPort(DeprecatedPort):
     def run_webkit_tests_command(self, build_style=None):
         command = super(WinCairoPort, self).run_webkit_tests_command(build_style)
         command.append("--wincairo")
+        return command
+
+
+class FTWPort(DeprecatedPort):
+    port_flag_name = "ftw"
+
+    def build_webkit_command(self, build_style=None):
+        command = super(FTWPort, self).build_webkit_command(build_style=build_style)
+        command.append('--ftw')
+        return command
+
+    def run_webkit_tests_command(self, build_style=None):
+        command = super(FTWPort, self).run_webkit_tests_command(build_style)
+        command.append("--ftw")
         return command
 
 

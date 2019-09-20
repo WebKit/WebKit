@@ -1,5 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
-# Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+# Copyright (C) 2013-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -459,6 +459,45 @@ class WinPort(ApplePort):
 
 class WinCairoPort(WinPort):
     port_name = "wincairo"
+
+    DEFAULT_ARCHITECTURE = 'x86_64'
+
+    def default_baseline_search_path(self, **kwargs):
+        return map(self._webkit_baseline_path, self._search_paths())
+
+    def _port_specific_expectations_files(self, **kwargs):
+        return map(lambda x: self._filesystem.join(self._webkit_baseline_path(x), 'TestExpectations'), reversed(self._search_paths()))
+
+    def _search_paths(self):
+        paths = []
+        version_name_map = VersionNameMap.map(self.host.platform)
+        if self._os_version < self.VERSION_MIN or self._os_version > self.VERSION_MAX:
+            versions = [self._os_version]
+        else:
+            sorted_versions = sorted(version_name_map.mapping_for_platform(platform=self.port_name).values())
+            versions = sorted_versions[sorted_versions.index(self._os_version):]
+
+        normalize = lambda version: version.lower().replace(' ', '')
+        to_name = lambda version: version_name_map.to_name(version, platform=self.port_name)
+
+        wk_version = 'wk2' if self.get_option('webkit_test_runner') else 'wk1'
+
+        for version in versions:
+            name = self.port_name + '-' + normalize(to_name(version))
+            paths.append(name + '-' + wk_version)
+            paths.append(name)
+
+        paths.append(self.port_name + '-' + wk_version)
+        paths.append(self.port_name)
+        if self.get_option('webkit_test_runner'):
+            paths.append('wk2')
+        paths.extend(self.get_option("additional_platform_directory", []))
+
+        return paths
+
+
+class FTWPort(WinPort):
+    port_name = "ftw"
 
     DEFAULT_ARCHITECTURE = 'x86_64'
 

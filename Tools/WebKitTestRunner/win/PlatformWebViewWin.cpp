@@ -30,12 +30,18 @@
 #include "PlatformWebView.h"
 
 #include <WebCore/HWndDC.h>
-#include <cairo.h>
 #include <cstdio>
 #include <windows.h>
 #include <wtf/RunLoop.h>
 #include <wtf/win/GDIObject.h>
 
+#if USE(CAIRO)
+#include <cairo.h>
+#endif
+
+#if USE(DIRECT2D)
+#include <d2d1_1.h>
+#endif
 
 namespace WTR {
 

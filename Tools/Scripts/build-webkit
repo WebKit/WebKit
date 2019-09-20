@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
+# Copyright (C) 2005-2019 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2010 moiji-mobile.com All rights reserved.
 # Copyright (C) 2011 Research In Motion Limited. All rights reserved.
@@ -118,6 +118,7 @@ Usage: $programName [options] [options to pass to build system]
   --lto-mode=<mode>                 Set Link Time Optimization mode (full, thin, or none) (LLVM only)
   --[no-]xcbuild                    Force the use of XCBuild or not
 
+  --ftw                             Build the FTW Windows port
   --gtk                             Build the GTK+ port
   --wpe                             Build the WPE port
   --wincairo                        Build using Cairo (rather than CoreGraphics) on Windows
@@ -189,7 +190,7 @@ my $productDir = productDir();
 my @projects = ("Source/JavaScriptCore", "Source/WebCore", "Source/WebKitLegacy");
 
 # Build WTF as a separate static library on ports which support it.
-splice @projects, 0, 0, "Source/WTF" if isAppleWebKit() or isWinCairo();
+splice @projects, 0, 0, "Source/WTF" if isAppleWebKit() or isWinCairo() or isFTW();
 
 splice @projects, 0, 0, "Source/bmalloc" if isAppleCocoaWebKit();
 
@@ -202,7 +203,7 @@ if (!isCMakeBuild()) {
     }
 }
 
-if ((isAppleWebKit() || isWinCairo() || isPlayStation()) && !-d "WebKitLibraries") {
+if ((isAppleWebKit() || isWinCairo() || isPlayStation() || isFTW()) && !-d "WebKitLibraries") {
     die "Error: No WebKitLibraries directory found. Please do a fresh checkout.\n";
 }
 
@@ -306,7 +307,7 @@ if (isCMakeBuild() && !isAnyWindows()) {
 }
 
 my $baseProductDir = baseProductDir();
-if (isAppleWinWebKit() || isWinCairo() || isPlayStation()) {
+if (isAppleWinWebKit() || isWinCairo() || isPlayStation() || isFTW()) {
     my @featureArgs = cmakeArgsFromFeatures(@features, !$noExperimentalFeatures);
     removeCMakeCache(@featureArgs);
 
@@ -326,7 +327,7 @@ if (isAppleWinWebKit() || isWinCairo() || isPlayStation()) {
     }
     if (exitStatus($result)) {
         my $scriptDir = relativeScriptsDir();
-        if (isAppleWinWebKit() || isWinCairo()) {
+        if (isAppleWinWebKit() || isWinCairo() || isFTW()) {
             print "\n\n===== BUILD FAILED ======\n\n";
             print "Please ensure you have run $scriptDir/update-webkit to install dependencies.\n\n";
             print "You can view build errors by checking the BuildLog.htm files located at:\n$baseProductDir/obj/<project>/<config>.\n";

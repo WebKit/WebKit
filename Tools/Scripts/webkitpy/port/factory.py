@@ -1,5 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
-# Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+# Copyright (C) 2013-2019 Apple Inc. All rights reserved.
 # Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
 #
 # Redistribution and use in source and binary forms, with or without
@@ -65,6 +65,9 @@ def platform_options(use_globs=False):
         optparse.make_option('--wincairo', action='store_const', dest='platform',
             const=('wincairo'),
             help=('Alias for --platform=wincairo')),
+        optparse.make_option('--ftw', action='store_const', dest='platform',
+            const=('ftw'),
+            help=('Alias for --platform=ftw')),
         ] + (config.apple_additions().platform_options() if config.apple_additions() else [])
 
 
@@ -105,6 +108,7 @@ class PortFactory(object):
         'mac.MacPort',
         'mock_drt.MockDRTPort',
         'test.TestPort',
+        'win.FTWPort',
         'win.WinCairoPort',
         'win.WinPort',
         'wpe.WPEPort',
