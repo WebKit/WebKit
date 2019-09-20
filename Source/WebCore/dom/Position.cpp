@@ -37,6 +37,7 @@
 #include "InlineElementBox.h"
 #include "InlineIterator.h"
 #include "InlineTextBox.h"
+#include "LineLayoutInterfaceTextBoxes.h"
 #include "Logging.h"
 #include "NodeTraversal.h"
 #include "PositionIterator.h"
@@ -708,7 +709,10 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
         RenderObject* renderer = currentNode.renderer();
         if (!renderer || renderer->style().visibility() != Visibility::Visible)
             continue;
+
+        // FIXME: The code below doesn't need line boxes.
         ensureLineBoxesIfNeeded(*renderer);
+
         if (rule == CanCrossEditingBoundary && boundaryCrossed) {
             lastVisible = currentPosition;
             break;
@@ -733,8 +737,12 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
         // return current position if it is in rendered text
         if (is<RenderText>(*renderer)) {
             auto& textRenderer = downcast<RenderText>(*renderer);
-            if (!textRenderer.firstTextBox())
+
+            LineLayoutInterface::Provider lineLayoutProvider;
+            auto firstTextBox = lineLayoutProvider.firstTextBoxInTextOrderFor(textRenderer);
+            if (!firstTextBox)
                 continue;
+
             if (&currentNode != startNode) {
                 // This assertion fires in layout tests in the case-transform.html test because
                 // of a mix-up between offsets in the text in the DOM tree with text in the
@@ -745,40 +753,14 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
             }
 
             unsigned textOffset = currentPosition.offsetInLeafNode();
-            auto lastTextBox = textRenderer.lastTextBox();
-            for (auto* box = textRenderer.firstTextBox(); box; box = box->nextTextBox()) {
-                if (textOffset <= box->start() + box->len()) {
-                    if (textOffset > box->start())
+            for (auto box = firstTextBox; box; box.traverseNextInTextOrder()) {
+                if (textOffset <= box->localEndOffset()) {
+                    if (textOffset > box->localStartOffset())
                         return currentPosition;
                     continue;
                 }
 
-                if (box == lastTextBox || textOffset != box->start() + box->len() + 1)
-                    continue;
-
-                // The text continues on the next line only if the last text box is not on this line and
-                // none of the boxes on this line have a larger start offset.
-
-                bool continuesOnNextLine = true;
-                InlineBox* otherBox = box;
-                while (continuesOnNextLine) {
-                    otherBox = otherBox->nextLeafChild();
-                    if (!otherBox)
-                        break;
-                    if (otherBox == lastTextBox || (&otherBox->renderer() == &textRenderer && downcast<InlineTextBox>(*otherBox).start() > textOffset))
-                        continuesOnNextLine = false;
-                }
-
-                otherBox = box;
-                while (continuesOnNextLine) {
-                    otherBox = otherBox->prevLeafChild();
-                    if (!otherBox)
-                        break;
-                    if (otherBox == lastTextBox || (&otherBox->renderer() == &textRenderer && downcast<InlineTextBox>(*otherBox).start() > textOffset))
-                        continuesOnNextLine = false;
-                }
-
-                if (continuesOnNextLine)
+                if (textOffset == box->localEndOffset() + 1 && box->isLastOnLine() && !box->isLast())
                     return currentPosition;
             }
         }
@@ -810,7 +792,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
     bool boundaryCrossed = false;
     for (; !currentPosition.atEnd(); currentPosition.increment()) {
         auto& currentNode = *currentPosition.node();
-        
+
         // Don't check for an editability change if we haven't moved to a different node,
         // to avoid the expense of computing hasEditableStyle().
         if (&currentNode != lastNode) {
@@ -821,7 +803,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
                     break;
                 boundaryCrossed = true;
             }
-                
+
             lastNode = &currentNode;
         }
 
@@ -843,12 +825,15 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
         auto* renderer = currentNode.renderer();
         if (!renderer || renderer->style().visibility() != Visibility::Visible)
             continue;
+
+        // FIXME: The code below doesn't need line boxes.
         ensureLineBoxesIfNeeded(*renderer);
+
         if (rule == CanCrossEditingBoundary && boundaryCrossed) {
             lastVisible = currentPosition;
             break;
         }
-        
+
         // track last visible streamer position
         if (isStreamer(currentPosition))
             lastVisible = currentPosition;
@@ -863,56 +848,34 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
         // return current position if it is in rendered text
         if (is<RenderText>(*renderer)) {
             auto& textRenderer = downcast<RenderText>(*renderer);
-            if (!textRenderer.firstTextBox())
+
+            LineLayoutInterface::Provider lineLayoutProvider;
+            auto firstTextBox = lineLayoutProvider.firstTextBoxInTextOrderFor(textRenderer);
+            if (!firstTextBox)
                 continue;
+
             if (&currentNode != startNode) {
                 ASSERT(currentPosition.atStartOfNode());
-                return createLegacyEditingPosition(&currentNode, renderer->caretMinOffset());
+                return createLegacyEditingPosition(&currentNode, textRenderer.caretMinOffset());
             }
 
             unsigned textOffset = currentPosition.offsetInLeafNode();
-            auto lastTextBox = textRenderer.lastTextBox();
-            for (auto* box = textRenderer.firstTextBox(); box; box = box->nextTextBox()) {
-                if (!box->len() && textOffset == box->start())
+            for (auto box = firstTextBox; box; box.traverseNextInTextOrder()) {
+                if (!box->length() && textOffset == box->localStartOffset())
                     return currentPosition;
-            
-                if (textOffset < box->end()) {
-                    if (textOffset >= box->start())
+
+                if (textOffset < box->localEndOffset()) {
+                    if (textOffset >= box->localStartOffset())
                         return currentPosition;
                     continue;
                 }
 
-                if (box == lastTextBox || textOffset != box->start() + box->len())
-                    continue;
-
-                // The text continues on the next line only if the last text box is not on this line and
-                // none of the boxes on this line have a larger start offset.
-
-                bool continuesOnNextLine = true;
-                InlineBox* otherBox = box;
-                while (continuesOnNextLine) {
-                    otherBox = otherBox->nextLeafChild();
-                    if (!otherBox)
-                        break;
-                    if (otherBox == lastTextBox || (&otherBox->renderer() == &textRenderer && downcast<InlineTextBox>(*otherBox).start() >= textOffset))
-                        continuesOnNextLine = false;
-                }
-
-                otherBox = box;
-                while (continuesOnNextLine) {
-                    otherBox = otherBox->prevLeafChild();
-                    if (!otherBox)
-                        break;
-                    if (otherBox == lastTextBox || (&otherBox->renderer() == &textRenderer && downcast<InlineTextBox>(*otherBox).start() >= textOffset))
-                        continuesOnNextLine = false;
-                }
-
-                if (continuesOnNextLine)
+                if (textOffset == box->localEndOffset() && box->isLastOnLine() && !box->isLast())
                     return currentPosition;
             }
         }
     }
-    
+
     return lastVisible;
 }
 

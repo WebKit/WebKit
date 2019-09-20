@@ -61,6 +61,9 @@ public:
     unsigned localEndOffset() const;
     unsigned length() const;
 
+    bool isLastOnLine() const;
+    bool isLast() const;
+
 protected:
     TextBox() = default;
     TextBox(const TextBox&) = default;
@@ -108,6 +111,8 @@ private:
         const InlineTextBox* inlineTextBox;
         Vector<const InlineTextBox*> sortedInlineTextBoxes;
         size_t sortedInlineTextBoxIndex { 0 };
+
+        const InlineTextBox* nextInlineTextBoxInTextOrder() const;
     };
     Variant<SimplePath, ComplexPath> m_pathVariant;
 };

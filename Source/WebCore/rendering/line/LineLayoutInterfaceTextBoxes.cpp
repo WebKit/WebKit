@@ -150,6 +150,38 @@ unsigned TextBox::length() const
     return WTF::switchOn(iterator().m_pathVariant, simple, complex);
 }
 
+bool TextBox::isLastOnLine() const
+{
+    auto simple = [](const TextBoxIterator::SimplePath& path) {
+        auto next = path.iterator;
+        ++next;
+        return next == path.end || (*path.iterator).lineIndex() != (*next).lineIndex();
+    };
+
+    auto complex = [](const TextBoxIterator::ComplexPath& path) {
+        auto* next = path.nextInlineTextBoxInTextOrder();
+        return !next || &path.inlineTextBox->root() != &next->root();
+    };
+
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
+}
+
+bool TextBox::isLast() const
+{
+    auto simple = [](const TextBoxIterator::SimplePath& path) {
+        auto next = path.iterator;
+        ++next;
+        return next == path.end;
+    };
+
+    auto complex = [](const TextBoxIterator::ComplexPath& path) {
+        return !path.nextInlineTextBoxInTextOrder();
+    };
+
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
+}
+
+
 inline const TextBoxIterator& TextBox::iterator() const
 {
     return static_cast<const TextBoxIterator&>(*this);
@@ -184,6 +216,16 @@ TextBoxIterator& TextBoxIterator::traverseNextInVisualOrder()
     return *this;
 }
 
+const InlineTextBox* TextBoxIterator::ComplexPath::nextInlineTextBoxInTextOrder() const
+{
+    if (!sortedInlineTextBoxes.isEmpty()) {
+        if (sortedInlineTextBoxIndex + 1 < sortedInlineTextBoxes.size())
+            return sortedInlineTextBoxes[sortedInlineTextBoxIndex + 1];
+        return nullptr;
+    }
+    return inlineTextBox->nextTextBox();
+}
+
 TextBoxIterator& TextBoxIterator::traverseNextInTextOrder()
 {
     auto simple = [](SimplePath& path) {
@@ -191,14 +233,9 @@ TextBoxIterator& TextBoxIterator::traverseNextInTextOrder()
     };
 
     auto complex = [](ComplexPath& path) {
-        if (!path.sortedInlineTextBoxes.isEmpty()) {
+        path.inlineTextBox = path.nextInlineTextBoxInTextOrder();
+        if (!path.sortedInlineTextBoxes.isEmpty())
             ++path.sortedInlineTextBoxIndex;
-            if (path.sortedInlineTextBoxIndex < path.sortedInlineTextBoxes.size())
-                path.inlineTextBox = path.sortedInlineTextBoxes[path.sortedInlineTextBoxIndex];
-            else
-                path.inlineTextBox = nullptr;
-        } else
-            path.inlineTextBox = path.inlineTextBox->nextTextBox();
     };
 
     WTF::switchOn(m_pathVariant, simple, complex);
