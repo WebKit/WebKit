@@ -227,6 +227,7 @@ WI.SourceCode = class SourceCode extends WI.Object
         let content = rawContent;
         let error = parameters.error;
         let message = parameters.message;
+
         if (parameters.base64Encoded)
             content = content ? decodeBase64ToBlob(content, this.mimeType) : "";
 
@@ -235,6 +236,9 @@ WI.SourceCode = class SourceCode extends WI.Object
         this._ignoreRevisionContentDidChangeEvent = true;
         revision.content = content || null;
         this._ignoreRevisionContentDidChangeEvent = false;
+
+        if (this._currentRevision === this._originalRevision)
+            this.currentRevision = this._originalRevision.copy();
 
         // FIXME: Returning the content in this promise is misleading. It may not be current content
         // now, and it may become out-dated later on. We should drop content from this promise

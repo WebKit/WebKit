@@ -103,7 +103,6 @@ WI.loaded = function()
     // as event listeners on these managers.
     WI.managers = [
         WI.targetManager = new WI.TargetManager,
-        WI.branchManager = new WI.BranchManager,
         WI.networkManager = new WI.NetworkManager,
         WI.domStorageManager = new WI.DOMStorageManager,
         WI.databaseManager = new WI.DatabaseManager,

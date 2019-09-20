@@ -340,7 +340,7 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
     _textEditorContentDidChange(event)
     {
         this._ignoreSourceCodeContentDidChangeEvent = true;
-        WI.branchManager.currentBranch.revisionForRepresentedObject(this.resource).content = this._textEditor.string;
+        this.resource.currentRevision.content = this._textEditor.string;
         this._ignoreSourceCodeContentDidChangeEvent = false;
     }
 
