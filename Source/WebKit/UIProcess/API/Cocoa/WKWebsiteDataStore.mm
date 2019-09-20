@@ -443,13 +443,11 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (void)_setAllowsTLSFallback:(BOOL)allows
 {
-    if (!_websiteDataStore->websiteDataStore().setAllowsTLSFallback(allows))
-        [NSException raise:NSGenericException format:@"_setAllowsTLSFallback cannot be called after networking has begun"];
 }
 
 - (BOOL)_allowsTLSFallback
 {
-    return _websiteDataStore->websiteDataStore().allowsTLSFallback();
+    return NO;
 }
 
 - (NSDictionary *)_proxyConfiguration

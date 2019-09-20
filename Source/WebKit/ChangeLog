@@ -1,5 +1,33 @@
 2019-09-20  Alex Christensen  <achristensen@webkit.org>
 
+        Remove functionality to disable TLS fallback
+        https://bugs.webkit.org/show_bug.cgi?id=201998
+
+        Reviewed by Geoff Garen.
+
+        Since r249019 it is not used.  It was a useful experiment and I'm glad we didn't see any regressions.
+
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::privateSessionParameters):
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _setAllowsTLSFallback:]):
+        (-[WKWebsiteDataStore _allowsTLSFallback]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setAllowsTLSFallback): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::allowsTLSFallback const): Deleted.
+
+2019-09-20  Alex Christensen  <achristensen@webkit.org>
+
         Remove unused storage paths on APIProcessPoolConfiguration
         https://bugs.webkit.org/show_bug.cgi?id=202028
 

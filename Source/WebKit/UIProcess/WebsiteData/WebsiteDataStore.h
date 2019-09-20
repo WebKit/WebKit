@@ -219,9 +219,6 @@ public:
     const String& sourceApplicationSecondaryIdentifier() const { return m_sourceApplicationSecondaryIdentifier; }
     bool setSourceApplicationSecondaryIdentifier(String&&);
 
-    bool allowsTLSFallback() const { return m_allowsTLSFallback; }
-    bool setAllowsTLSFallback(bool);
-
     void networkingHasBegun() { m_networkingHasBegun = true; }
     
     void setAllowsCellularAccess(AllowsCellularAccess allows) { m_allowsCellularAccess = allows; }
@@ -326,7 +323,6 @@ private:
     AllowsCellularAccess m_allowsCellularAccess { AllowsCellularAccess::Yes };
     String m_sourceApplicationBundleIdentifier;
     String m_sourceApplicationSecondaryIdentifier;
-    bool m_allowsTLSFallback { true };
     bool m_networkingHasBegun { false };
 
 #if HAVE(SEC_KEY_PROXY)

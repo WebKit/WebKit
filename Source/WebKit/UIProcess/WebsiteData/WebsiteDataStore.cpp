@@ -2032,14 +2032,6 @@ bool WebsiteDataStore::setSourceApplicationSecondaryIdentifier(String&& identifi
     return true;
 }
 
-bool WebsiteDataStore::setAllowsTLSFallback(bool allows)
-{
-    if (m_networkingHasBegun)
-        return false;
-    m_allowsTLSFallback = allows;
-    return true;
-}
-    
 bool WebsiteDataStore::setSourceApplicationBundleIdentifier(String&& identifier)
 {
     if (m_networkingHasBegun)

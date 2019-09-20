@@ -995,10 +995,6 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     configuration._companionProxyPreference = NSURLSessionCompanionProxyPreferencePreferDirectToCloud;
 #endif
 
-    static SEL allowsTLSFallbackSetter = NSSelectorFromString(@"set_allowsTLSFallback:");
-    if (parameters.allowsTLSFallback == AllowsTLSFallback::No && [configuration respondsToSelector:allowsTLSFallbackSetter])
-        wtfObjCMsgSend<void>(configuration, allowsTLSFallbackSetter, NO);
-
     auto* storageSession = networkProcess.storageSession(parameters.sessionID);
     RELEASE_ASSERT(storageSession);
 
