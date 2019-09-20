@@ -45,8 +45,6 @@ namespace API {
 class ProcessPoolConfiguration final : public ObjectImpl<Object::Type::ProcessPoolConfiguration> {
 public:
     static Ref<ProcessPoolConfiguration> create();
-    static Ref<ProcessPoolConfiguration> createWithLegacyOptions();
-    static Ref<ProcessPoolConfiguration> createWithWebsiteDataStoreConfiguration(const WebKit::WebsiteDataStoreConfiguration&);
 
     explicit ProcessPoolConfiguration();
     virtual ~ProcessPoolConfiguration();
@@ -79,37 +77,8 @@ public:
     WebKit::CacheModel cacheModel() const { return m_cacheModel; }
     void setCacheModel(WebKit::CacheModel cacheModel) { m_cacheModel = cacheModel; }
 
-    const WTF::String& applicationCacheDirectory() const { return m_applicationCacheDirectory; }
-    void setApplicationCacheDirectory(const WTF::String& applicationCacheDirectory) { m_applicationCacheDirectory = applicationCacheDirectory; }
-
-    const WTF::String& applicationCacheFlatFileSubdirectoryName() const { return m_applicationCacheFlatFileSubdirectoryName; }
-
-    const WTF::String& diskCacheDirectory() const { return m_diskCacheDirectory; }
-    void setDiskCacheDirectory(const WTF::String& diskCacheDirectory) { m_diskCacheDirectory = diskCacheDirectory; }
-
-    const WTF::String& mediaCacheDirectory() const { return m_mediaCacheDirectory; }
-    void setMediaCacheDirectory(const WTF::String& mediaCacheDirectory) { m_mediaCacheDirectory = mediaCacheDirectory; }
-    
-    const WTF::String& indexedDBDatabaseDirectory() const { return m_indexedDBDatabaseDirectory; }
-    void setIndexedDBDatabaseDirectory(const WTF::String& indexedDBDatabaseDirectory) { m_indexedDBDatabaseDirectory = indexedDBDatabaseDirectory; }
-
     const WTF::String& injectedBundlePath() const { return m_injectedBundlePath; }
     void setInjectedBundlePath(const WTF::String& injectedBundlePath) { m_injectedBundlePath = injectedBundlePath; }
-
-    const WTF::String& localStorageDirectory() const { return m_localStorageDirectory; }
-    void setLocalStorageDirectory(const WTF::String& localStorageDirectory) { m_localStorageDirectory = localStorageDirectory; }
-
-    const WTF::String& deviceIdHashSaltsStorageDirectory() const { return m_deviceIdHashSaltsStorageDirectory; }
-    void setDeviceIdHashSaltsStorageDirectory(const WTF::String& directory) { m_deviceIdHashSaltsStorageDirectory = directory; }
-
-    const WTF::String& webSQLDatabaseDirectory() const { return m_webSQLDatabaseDirectory; }
-    void setWebSQLDatabaseDirectory(const WTF::String& webSQLDatabaseDirectory) { m_webSQLDatabaseDirectory = webSQLDatabaseDirectory; }
-
-    const WTF::String& mediaKeysStorageDirectory() const { return m_mediaKeysStorageDirectory; }
-    void setMediaKeysStorageDirectory(const WTF::String& mediaKeysStorageDirectory) { m_mediaKeysStorageDirectory = mediaKeysStorageDirectory; }
-
-    const WTF::String& resourceLoadStatisticsDirectory() const { return m_resourceLoadStatisticsDirectory; }
-    void setResourceLoadStatisticsDirectory(const WTF::String& resourceLoadStatisticsDirectory) { m_resourceLoadStatisticsDirectory = resourceLoadStatisticsDirectory; }
 
     const Vector<WTF::String>& customClassesForParameterCoder() const { return m_customClassesForParameterCoder; }
     void setCustomClassesForParameterCoder(Vector<WTF::String>&& classesForCoder) { m_customClassesForParameterCoder = WTFMove(classesForCoder); }
@@ -191,17 +160,7 @@ private:
     bool m_diskCacheSpeculativeValidationEnabled { false };
     WebKit::CacheModel m_cacheModel { WebKit::CacheModel::PrimaryWebBrowser };
 
-    WTF::String m_applicationCacheDirectory;
-    WTF::String m_applicationCacheFlatFileSubdirectoryName;
-    WTF::String m_diskCacheDirectory;
-    WTF::String m_mediaCacheDirectory;
-    WTF::String m_indexedDBDatabaseDirectory;
     WTF::String m_injectedBundlePath;
-    WTF::String m_localStorageDirectory;
-    WTF::String m_deviceIdHashSaltsStorageDirectory;
-    WTF::String m_webSQLDatabaseDirectory;
-    WTF::String m_mediaKeysStorageDirectory;
-    WTF::String m_resourceLoadStatisticsDirectory;
     Vector<WTF::String> m_customClassesForParameterCoder;
     Vector<WTF::String> m_cachePartitionedURLSchemes;
     Vector<WTF::String> m_alwaysRevalidatedURLSchemes;

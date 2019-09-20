@@ -502,9 +502,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     for (auto& scheme : m_urlSchemesRegisteredForCustomProtocols)
         parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
 
-    parameters.diskCacheDirectory = m_configuration->diskCacheDirectory();
-    if (!parameters.diskCacheDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(parameters.diskCacheDirectory, parameters.diskCacheDirectoryExtensionHandle);
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     parameters.shouldEnableNetworkCacheSpeculativeRevalidation = m_configuration->diskCacheSpeculativeValidationEnabled();
 #endif
@@ -545,12 +542,13 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     // *********
     // IMPORTANT: Do not change the directory structure for indexed databases on disk without first consulting a reviewer from Apple (<rdar://problem/17454712>)
     // *********
-    parameters.defaultDataStoreParameters.indexedDatabaseDirectory = m_configuration->indexedDBDatabaseDirectory();
-    if (parameters.defaultDataStoreParameters.indexedDatabaseDirectory.isEmpty())
+    if (API::WebsiteDataStore::defaultDataStoreExists())
         parameters.defaultDataStoreParameters.indexedDatabaseDirectory = API::WebsiteDataStore::defaultDataStore()->websiteDataStore().parameters().indexedDatabaseDirectory;
     
-    SandboxExtension::createHandleForReadWriteDirectory(parameters.defaultDataStoreParameters.indexedDatabaseDirectory, parameters.defaultDataStoreParameters.indexedDatabaseDirectoryExtensionHandle);
-    networkProcess->createSymLinkForFileUpgrade(parameters.defaultDataStoreParameters.indexedDatabaseDirectory);
+    if (!parameters.defaultDataStoreParameters.indexedDatabaseDirectory.isEmpty()) {
+        SandboxExtension::createHandleForReadWriteDirectory(parameters.defaultDataStoreParameters.indexedDatabaseDirectory, parameters.defaultDataStoreParameters.indexedDatabaseDirectoryExtensionHandle);
+        networkProcess->createSymLinkForFileUpgrade(parameters.defaultDataStoreParameters.indexedDatabaseDirectory);
+    }
 #endif
 
 #if ENABLE(SERVICE_WORKER)
@@ -769,11 +767,6 @@ void WebProcessPool::processDidCachePage(WebProcessProxy* process)
 void WebProcessPool::resolvePathsForSandboxExtensions()
 {
     m_resolvedPaths.injectedBundlePath = resolvePathForSandboxExtension(injectedBundlePath());
-    m_resolvedPaths.applicationCacheDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->applicationCacheDirectory());
-    m_resolvedPaths.webSQLDatabaseDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->webSQLDatabaseDirectory());
-    m_resolvedPaths.mediaCacheDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->mediaCacheDirectory());
-    m_resolvedPaths.mediaKeyStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->mediaKeysStorageDirectory());
-    m_resolvedPaths.indexedDatabaseDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->indexedDBDatabaseDirectory());
 
     m_resolvedPaths.additionalWebProcessSandboxExtensionPaths.reserveCapacity(m_configuration->additionalReadAccessAllowedPaths().size());
     for (const auto& path : m_configuration->additionalReadAccessAllowedPaths())
@@ -850,37 +843,23 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
     websiteDataStore.resolveDirectoriesIfNecessary();
 
     String applicationCacheDirectory = websiteDataStore.resolvedApplicationCacheDirectory();
-    if (applicationCacheDirectory.isEmpty())
-        applicationCacheDirectory = m_resolvedPaths.applicationCacheDirectory;
-
     SandboxExtension::Handle applicationCacheDirectoryExtensionHandle;
     if (!applicationCacheDirectory.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(applicationCacheDirectory, SandboxExtension::Type::ReadWrite, applicationCacheDirectoryExtensionHandle);
 
     String applicationCacheFlatFileSubdirectoryName = websiteDataStore.applicationCacheFlatFileSubdirectoryName();
-    if (applicationCacheFlatFileSubdirectoryName.isEmpty())
-        applicationCacheFlatFileSubdirectoryName = m_configuration->applicationCacheFlatFileSubdirectoryName();
 
     String webSQLDatabaseDirectory = websiteDataStore.resolvedDatabaseDirectory();
-    if (webSQLDatabaseDirectory.isEmpty())
-        webSQLDatabaseDirectory = m_resolvedPaths.webSQLDatabaseDirectory;
-
     SandboxExtension::Handle webSQLDatabaseDirectoryExtensionHandle;
     if (!webSQLDatabaseDirectory.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(webSQLDatabaseDirectory, SandboxExtension::Type::ReadWrite, webSQLDatabaseDirectoryExtensionHandle);
 
     String mediaCacheDirectory = websiteDataStore.resolvedMediaCacheDirectory();
-    if (mediaCacheDirectory.isEmpty())
-        mediaCacheDirectory = m_resolvedPaths.mediaCacheDirectory;
-
     SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
     if (!mediaCacheDirectory.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(mediaCacheDirectory, SandboxExtension::Type::ReadWrite, mediaCacheDirectoryExtensionHandle);
 
     String mediaKeyStorageDirectory = websiteDataStore.resolvedMediaKeysDirectory();
-    if (mediaKeyStorageDirectory.isEmpty())
-        mediaKeyStorageDirectory = m_resolvedPaths.mediaKeyStorageDirectory;
-
     SandboxExtension::Handle mediaKeyStorageDirectoryExtensionHandle;
     if (!mediaKeyStorageDirectory.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(mediaKeyStorageDirectory, SandboxExtension::Type::ReadWrite, mediaKeyStorageDirectoryExtensionHandle);

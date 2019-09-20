@@ -116,7 +116,7 @@ private:
     uint64_t m_perOriginStorageQuota { WebCore::StorageQuotaManager::defaultQuota() };
     String m_networkCacheDirectory;
     String m_applicationCacheDirectory;
-    String m_applicationCacheFlatFileSubdirectoryName;
+    String m_applicationCacheFlatFileSubdirectoryName { "Files"_s };
     String m_mediaCacheDirectory;
     String m_indexedDBDatabaseDirectory;
     String m_serviceWorkerRegistrationDirectory;

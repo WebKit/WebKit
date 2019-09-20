@@ -1754,7 +1754,7 @@ HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::processPools(size_t count, boo
     }
 
     if (processPools.isEmpty() && count && ensureAPoolExists) {
-        auto processPool = WebProcessPool::create(API::ProcessPoolConfiguration::createWithWebsiteDataStoreConfiguration(m_configuration));
+        auto processPool = WebProcessPool::create(API::ProcessPoolConfiguration::create());
         processPools.add(processPool.ptr());
     }
 

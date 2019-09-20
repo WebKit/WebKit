@@ -35,16 +35,12 @@
 
 namespace WebKit {
 
-NetworkProcessCreationParameters::NetworkProcessCreationParameters()
-{
-}
+NetworkProcessCreationParameters::NetworkProcessCreationParameters() = default;
 
 void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 {
     encoder.encodeEnum(cacheModel);
     encoder << canHandleHTTPSServerTrustEvaluation;
-    encoder << diskCacheDirectory;
-    encoder << diskCacheDirectoryExtensionHandle;
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     encoder << shouldEnableNetworkCacheSpeculativeRevalidation;
 #endif
@@ -102,15 +98,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
     if (!decoder.decode(result.canHandleHTTPSServerTrustEvaluation))
         return false;
-
-    if (!decoder.decode(result.diskCacheDirectory))
-        return false;
-    
-    Optional<SandboxExtension::Handle> diskCacheDirectoryExtensionHandle;
-    decoder >> diskCacheDirectoryExtensionHandle;
-    if (!diskCacheDirectoryExtensionHandle)
-        return false;
-    result.diskCacheDirectoryExtensionHandle = WTFMove(*diskCacheDirectoryExtensionHandle);
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     if (!decoder.decode(result.shouldEnableNetworkCacheSpeculativeRevalidation))

@@ -1,3 +1,52 @@
+2019-09-20  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused storage paths on APIProcessPoolConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=202028
+
+        Reviewed by Chris Dumez.
+
+        This is a piece of r249768.
+        There is no way to set these paths and they have been replaced by WebsiteDataStore paths.
+        There was one remaining use of the global disk cache directory in NetworkProcess::setCacheModel,
+        which I replaced with the default session's disk cache directory, which is equivalent.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setCacheModel):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::diskCacheDirectory const): Deleted.
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        (WebKit::NetworkProcessCreationParameters::NetworkProcessCreationParameters): Deleted.
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::open):
+        (WebKit::NetworkCache::Cache::Cache):
+        * NetworkProcess/cache/NetworkCache.h:
+        (WebKit::NetworkCache::Cache::storageDirectory):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        (API::ProcessPoolConfiguration::createWithWebsiteDataStoreConfiguration): Deleted.
+        (API::ProcessPoolConfiguration::ProcessPoolConfiguration): Deleted.
+        (API::ProcessPoolConfiguration::~ProcessPoolConfiguration): Deleted.
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        (webkit_web_context_set_disk_cache_directory):
+        (websiteDataStoreConfigurationForWebProcessPoolConfiguration): Deleted.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::resolvePathsForSandboxExtensions):
+        (WebKit::WebProcessPool::webProcessDataStoreParameters):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::processPools const):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+
 2019-09-20  Keith Rollin  <krollin@apple.com>
 
         Remove some support for < iOS 13

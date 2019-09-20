@@ -54,8 +54,6 @@ struct NetworkProcessCreationParameters {
     CacheModel cacheModel { CacheModel::DocumentViewer };
     bool canHandleHTTPSServerTrustEvaluation { true };
 
-    String diskCacheDirectory;
-    SandboxExtension::Handle diskCacheDirectoryExtensionHandle;
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     bool shouldEnableNetworkCacheSpeculativeRevalidation { false };
 #endif

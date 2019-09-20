@@ -36,60 +36,18 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::create()
     return adoptRef(*new ProcessPoolConfiguration);
 }
 
-Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithWebsiteDataStoreConfiguration(const WebKit::WebsiteDataStoreConfiguration& legacyConfiguration)
-{
-    auto configuration = ProcessPoolConfiguration::create();
+ProcessPoolConfiguration::ProcessPoolConfiguration() = default;
 
-    configuration->m_applicationCacheDirectory = legacyConfiguration.applicationCacheDirectory();
-    configuration->m_applicationCacheFlatFileSubdirectoryName = legacyConfiguration.applicationCacheFlatFileSubdirectoryName();
-    configuration->m_diskCacheDirectory = legacyConfiguration.networkCacheDirectory();
-    configuration->m_mediaCacheDirectory = legacyConfiguration.mediaCacheDirectory();
-    configuration->m_indexedDBDatabaseDirectory = legacyConfiguration.indexedDBDatabaseDirectory();
-    configuration->m_localStorageDirectory = legacyConfiguration.localStorageDirectory();
-    configuration->m_deviceIdHashSaltsStorageDirectory = legacyConfiguration.deviceIdHashSaltsStorageDirectory();
-    configuration->m_mediaKeysStorageDirectory = legacyConfiguration.mediaKeysStorageDirectory();
-    configuration->m_resourceLoadStatisticsDirectory = legacyConfiguration.resourceLoadStatisticsDirectory();
-    configuration->m_webSQLDatabaseDirectory = legacyConfiguration.webSQLDatabaseDirectory();
-
-    return configuration;
-}
-
-ProcessPoolConfiguration::ProcessPoolConfiguration()
-    : m_applicationCacheDirectory(WebsiteDataStore::defaultApplicationCacheDirectory())
-    , m_applicationCacheFlatFileSubdirectoryName("Files")
-    , m_diskCacheDirectory(WebsiteDataStore::defaultNetworkCacheDirectory())
-    , m_mediaCacheDirectory(WebsiteDataStore::defaultMediaCacheDirectory())
-    , m_indexedDBDatabaseDirectory(WebsiteDataStore::defaultIndexedDBDatabaseDirectory())
-    , m_localStorageDirectory(WebsiteDataStore::defaultLocalStorageDirectory())
-    , m_deviceIdHashSaltsStorageDirectory(WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory())
-    , m_webSQLDatabaseDirectory(WebsiteDataStore::defaultWebSQLDatabaseDirectory())
-    , m_mediaKeysStorageDirectory(WebsiteDataStore::defaultMediaKeysStorageDirectory())
-    , m_resourceLoadStatisticsDirectory(WebsiteDataStore::defaultResourceLoadStatisticsDirectory())
-{
-}
-
-ProcessPoolConfiguration::~ProcessPoolConfiguration()
-{
-}
+ProcessPoolConfiguration::~ProcessPoolConfiguration() = default;
 
 Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
 {
     auto copy = this->create();
 
     copy->m_cacheModel = this->m_cacheModel;
-    copy->m_diskCacheDirectory = this->m_diskCacheDirectory;
     copy->m_diskCacheSpeculativeValidationEnabled = this->m_diskCacheSpeculativeValidationEnabled;
-    copy->m_applicationCacheDirectory = this->m_applicationCacheDirectory;
-    copy->m_applicationCacheFlatFileSubdirectoryName = this->m_applicationCacheFlatFileSubdirectoryName;
-    copy->m_mediaCacheDirectory = this->m_mediaCacheDirectory;
-    copy->m_indexedDBDatabaseDirectory = this->m_indexedDBDatabaseDirectory;
     copy->m_injectedBundlePath = this->m_injectedBundlePath;
     copy->m_customClassesForParameterCoder = this->m_customClassesForParameterCoder;
-    copy->m_localStorageDirectory = this->m_localStorageDirectory;
-    copy->m_deviceIdHashSaltsStorageDirectory = this->m_deviceIdHashSaltsStorageDirectory;
-    copy->m_mediaKeysStorageDirectory = this->m_mediaKeysStorageDirectory;
-    copy->m_resourceLoadStatisticsDirectory = this->m_resourceLoadStatisticsDirectory;
-    copy->m_webSQLDatabaseDirectory = this->m_webSQLDatabaseDirectory;
     copy->m_cachePartitionedURLSchemes = this->m_cachePartitionedURLSchemes;
     copy->m_alwaysRevalidatedURLSchemes = this->m_alwaysRevalidatedURLSchemes;
     copy->m_additionalReadAccessAllowedPaths = this->m_additionalReadAccessAllowedPaths;

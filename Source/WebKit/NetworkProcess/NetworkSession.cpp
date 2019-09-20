@@ -87,9 +87,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 {
     if (!m_sessionID.isEphemeral()) {
         String networkCacheDirectory = parameters.networkCacheDirectory;
-        if (networkCacheDirectory.isNull())
-            networkCacheDirectory = networkProcess.diskCacheDirectory();
-        else
+        if (!networkCacheDirectory.isNull())
             SandboxExtension::consumePermanently(parameters.networkCacheDirectoryExtensionHandle);
 
         m_cache = NetworkCache::Cache::open(networkProcess, networkCacheDirectory, networkProcess.cacheOptions(), m_sessionID);

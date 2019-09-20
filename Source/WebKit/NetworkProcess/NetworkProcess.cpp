@@ -1985,7 +1985,17 @@ void NetworkProcess::setCacheModel(CacheModel cacheModel)
     unsigned urlCacheMemoryCapacity = 0;
     uint64_t urlCacheDiskCapacity = 0;
     uint64_t diskFreeSize = 0;
-    if (FileSystem::getVolumeFreeSpace(m_diskCacheDirectory, diskFreeSize)) {
+
+    // FIXME: Move the cache model to WebsiteDataStore so we don't need to assume the first cache is on the same volume as all caches.
+    String cacheStorageDirectory;
+    forEachNetworkSession([&](auto& session) {
+        if (!cacheStorageDirectory.isNull())
+            return;
+        if (auto* cache = session.cache())
+            cacheStorageDirectory = cache->storageDirectory();
+    });
+
+    if (FileSystem::getVolumeFreeSpace(cacheStorageDirectory, diskFreeSize)) {
         // As a fudge factor, use 1000 instead of 1024, in case the reported byte
         // count doesn't align exactly to a megabyte boundary.
         diskFreeSize /= KB * 1000;

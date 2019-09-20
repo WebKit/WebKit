@@ -764,12 +764,7 @@ private:
 
     struct Paths {
         String injectedBundlePath;
-        String applicationCacheDirectory;
-        String webSQLDatabaseDirectory;
-        String mediaCacheDirectory;
-        String mediaKeyStorageDirectory;
         String uiProcessBundleResourcePath;
-        String indexedDatabaseDirectory;
 
 #if PLATFORM(IOS_FAMILY)
         String cookieStorageDirectory;

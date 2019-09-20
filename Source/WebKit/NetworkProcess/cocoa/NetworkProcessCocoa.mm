@@ -90,7 +90,6 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     SandboxExtension::consumePermanently(parameters.defaultDataStoreParameters.indexedDatabaseTempBlobDirectoryExtensionHandle);
 #endif
 #endif
-    m_diskCacheDirectory = parameters.diskCacheDirectory;
 
     _CFNetworkSetATSContext(parameters.networkATSContext.get());
 
@@ -116,10 +115,6 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 
     ASSERT(!m_diskCacheIsDisabledForTesting);
 
-    if (m_diskCacheDirectory.isNull())
-        return;
-
-    SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);
     m_cacheOptions = { NetworkCache::CacheOption::RegisterNotify };
     if (parameters.shouldUseTestingNetworkSession)
         m_cacheOptions.add(NetworkCache::CacheOption::TestingMode);
