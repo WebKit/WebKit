@@ -1,3 +1,14 @@
+2019-09-19  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] Dependency hunspell-en-gb cannot be found on Fedora 30
+        https://bugs.webkit.org/show_bug.cgi?id=202009
+
+        Update package name to hunspell-en-GB.
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * gtk/install-dependencies:
+
 2019-09-19  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Collapse results with the same version name

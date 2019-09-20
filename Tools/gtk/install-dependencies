@@ -491,7 +491,7 @@ function installDependenciesWithDnf {
         dbus-x11 \
         gdb \
         hunspell-en \
-        hunspell-en-gb \
+        hunspell-en-GB \
         httpd \
         libgpg-error-devel \
         mod_bw \
