@@ -31,7 +31,7 @@
 #include "InlineFormattingState.h"
 #include "Invalidation.h"
 #include "LayoutBox.h"
-#include "LayoutState.h"
+#include "LayoutContext.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -39,9 +39,9 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InlineInvalidation);
 
-InvalidationResult InlineInvalidation::invalidate(const Box& layoutBox, StyleDiff, LayoutState& layoutState, InlineFormattingState&)
+InvalidationResult InlineInvalidation::invalidate(const Box& layoutBox, StyleDiff, LayoutContext& layoutContext, InlineFormattingState&)
 {
-    layoutState.markNeedsUpdate(layoutBox);
+    layoutContext.markNeedsUpdate(layoutBox);
     return { nullptr };
 }
 

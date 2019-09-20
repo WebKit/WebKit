@@ -35,6 +35,7 @@
 #include "LayoutBox.h"
 #include "LayoutChildIterator.h"
 #include "LayoutContainer.h"
+#include "LayoutContext.h"
 #include "LayoutDescendantIterator.h"
 #include "LayoutPhase.h"
 #include "LayoutState.h"
@@ -367,7 +368,7 @@ void printLayoutTreeForLiveDocuments()
         auto initialContainingBlock = TreeBuilder::createLayoutTree(renderView);
         auto layoutState = LayoutState { };
         layoutState.setQuirksMode(renderView.document().inLimitedQuirksMode() ? LayoutState::QuirksMode::Limited : (renderView.document().inQuirksMode() ? LayoutState::QuirksMode::Yes : LayoutState::QuirksMode::No));
-        layoutState.updateLayout();
+        LayoutContext(layoutState).layout();
         showLayoutTree(*initialContainingBlock, &layoutState);
     }
 }

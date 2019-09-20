@@ -29,6 +29,7 @@
 
 #include "DisplayBox.h"
 #include "LayoutBox.h"
+#include "LayoutContainer.h"
 #include "LayoutState.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>

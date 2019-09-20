@@ -40,7 +40,7 @@
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-#include "LayoutState.h"
+#include "LayoutContext.h"
 #endif
 
 #include <wtf/SetForScope.h>
@@ -54,7 +54,7 @@ static void layoutUsingFormattingContext(const RenderView& renderView)
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextEnabled())
         return;
-    Layout::LayoutState::run(renderView);
+    Layout::LayoutContext::run(renderView);
 } 
 #endif
 

@@ -1,3 +1,64 @@
+2019-09-20  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Introduce LayoutContext class
+        https://bugs.webkit.org/show_bug.cgi?id=202026
+        <rdar://problem/55546622>
+
+        Reviewed by Antti Koivisto.
+
+        Move context related functionality from LayoutState to LayoutContext.
+        To initiate a layout, create a LayoutContext, pass the current LayoutState object in and call layout().  
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowContent):
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::shrinkToFitWidth):
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::createFormattingStateForFormattingRootIfNeeded):
+        (WebCore::Layout::LayoutState::updateLayout): Deleted.
+        (WebCore::Layout::LayoutState::layoutFormattingContextSubtree): Deleted.
+        (WebCore::Layout::LayoutState::styleChanged): Deleted.
+        (WebCore::Layout::LayoutState::markNeedsUpdate): Deleted.
+        (WebCore::Layout::LayoutState::createFormattingContext): Deleted.
+        (WebCore::Layout::LayoutState::run): Deleted.
+        * layout/LayoutState.h:
+        (WebCore::Layout::LayoutState::hasFormattingState const):
+        (WebCore::Layout::LayoutState::setQuirksMode):
+        (WebCore::Layout::LayoutState::inNoQuirksMode const):
+        (WebCore::Layout::LayoutState::updateAll): Deleted.
+        * layout/Verification.cpp:
+        (WebCore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree):
+        (WebCore::Layout::LayoutState::verifyAndOutputMismatchingLayoutTree const): Deleted.
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layoutFormattingContextRoot):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::intrinsicWidthConstraints):
+        * layout/blockformatting/BlockInvalidation.cpp:
+        (WebCore::Layout::computeUpdateType):
+        (WebCore::Layout::computeUpdateTypeForAncestor):
+        (WebCore::Layout::BlockInvalidation::invalidate):
+        * layout/blockformatting/BlockInvalidation.h:
+        * layout/displaytree/DisplayBox.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeIntrinsicWidthForFormattingRoot):
+        (WebCore::Layout::InlineFormattingContext::layoutFormattingContextRoot):
+        * layout/inlineformatting/InlineInvalidation.cpp:
+        (WebCore::Layout::InlineInvalidation::invalidate):
+        * layout/inlineformatting/InlineInvalidation.h:
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::printLayoutTreeForLiveDocuments):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::layoutTableCellBox):
+        (WebCore::Layout::TableFormattingContext::computePreferredWidthForColumns):
+        * layout/tableformatting/TableInvalidation.cpp:
+        (WebCore::Layout::TableInvalidation::invalidate):
+        * layout/tableformatting/TableInvalidation.h:
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::layoutUsingFormattingContext):
+
 2019-09-19  Joonghun Park  <pjh0718@gmail.com>
 
         Unreviewed. Fix Build error below since r248879.

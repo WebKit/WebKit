@@ -1401,6 +1401,7 @@ layout/FormattingContext.cpp
 layout/FormattingContextGeometry.cpp
 layout/FormattingContextQuirks.cpp
 layout/FormattingState.cpp
+layout/LayoutContext.cpp
 layout/LayoutPhase.cpp
 layout/LayoutState.cpp
 layout/LayoutUnits.cpp

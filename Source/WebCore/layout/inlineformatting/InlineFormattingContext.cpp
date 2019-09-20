@@ -33,6 +33,7 @@
 #include "InlineTextItem.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
+#include "LayoutContext.h"
 #include "LayoutState.h"
 #include "Logging.h"
 #include "Textutil.h"
@@ -175,7 +176,7 @@ void InlineFormattingContext::computeIntrinsicWidthForFormattingRoot(const Box& 
     if (auto fixedWidth = geometry().fixedValue(formattingRoot.style().logicalWidth()))
         constraints = { *fixedWidth, *fixedWidth };
     else if (is<Container>(formattingRoot))
-        constraints = layoutState().createFormattingContext(downcast<Container>(formattingRoot))->computedIntrinsicWidthConstraints();
+        constraints = LayoutContext::createFormattingContext(downcast<Container>(formattingRoot), layoutState())->computedIntrinsicWidthConstraints();
     constraints = geometry().constrainByMinMaxWidth(formattingRoot, constraints);
     constraints.expand(geometryForBox(formattingRoot).horizontalMarginBorderAndPadding());
     formattingState().setIntrinsicWidthConstraintsForBox(formattingRoot, constraints);
@@ -237,10 +238,11 @@ void InlineFormattingContext::layoutFormattingContextRoot(const Box& root, UsedH
     formattingState().displayBox(root).setTopLeft({ 0, 0 });
     // Swich over to the new formatting context (the one that the root creates).
     if (is<Container>(root)) {
-        auto formattingContext = layoutState().createFormattingContext(downcast<Container>(root));
+        auto& rootContainer = downcast<Container>(root);
+        auto formattingContext = LayoutContext::createFormattingContext(rootContainer, layoutState());
         formattingContext->layoutInFlowContent();
         // Come back and finalize the root's height and margin.
-        computeHeightAndMargin(root);
+        computeHeightAndMargin(rootContainer);
         // Now that we computed the root's height, we can go back and layout the out-of-flow content.
         formattingContext->layoutOutOfFlowContent();
     } else

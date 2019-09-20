@@ -323,7 +323,7 @@ FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::Geometry::i
         }
 
         if (layoutBox.establishesFormattingContext() && is<Container>(layoutBox))
-            return layoutState().createFormattingContext(downcast<Container>(layoutBox))->computedIntrinsicWidthConstraints();
+            return LayoutContext::createFormattingContext(downcast<Container>(layoutBox), layoutState())->computedIntrinsicWidthConstraints();
 
         if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
             return { };

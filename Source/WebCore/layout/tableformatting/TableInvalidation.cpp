@@ -30,7 +30,6 @@
 
 #include "Invalidation.h"
 #include "LayoutBox.h"
-#include "LayoutState.h"
 #include "TableFormattingState.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -39,9 +38,9 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(TableInvalidation);
 
-InvalidationResult TableInvalidation::invalidate(const Box& layoutBox, StyleDiff, LayoutState& layoutState, TableFormattingState&)
+InvalidationResult TableInvalidation::invalidate(const Box& layoutBox, StyleDiff, LayoutContext& layoutContext, TableFormattingState&)
 {
-    layoutState.markNeedsUpdate(layoutBox);
+    layoutContext.markNeedsUpdate(layoutBox);
     return { nullptr };
 }
 

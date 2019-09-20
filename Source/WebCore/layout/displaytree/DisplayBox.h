@@ -43,6 +43,7 @@ class FloatBox;
 class FormattingContext;
 class FloatingContext;
 class InlineFormattingContext;
+class LayoutContext;
 class LayoutState;
 class TableFormattingContext;
 }
@@ -58,6 +59,8 @@ public:
     friend class Layout::FormattingContext;
     friend class Layout::FloatingContext;
     friend class Layout::InlineFormattingContext;
+    // This is temporary and should be removed when LayoutContext::run is no longer needed.
+    friend class Layout::LayoutContext;
     friend class Layout::LayoutState;
     friend class Layout::TableFormattingContext;
 

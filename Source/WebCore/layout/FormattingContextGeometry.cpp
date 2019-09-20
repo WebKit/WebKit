@@ -258,7 +258,7 @@ LayoutUnit FormattingContext::Geometry::shrinkToFitWidth(const Box& formattingRo
         auto& formattingStateForRoot = layoutState().createFormattingStateForFormattingRootIfNeeded(root);
         auto precomputedIntrinsicWidthConstraints = formattingStateForRoot.intrinsicWidthConstraints();
         if (!precomputedIntrinsicWidthConstraints)
-            intrinsicWidthConstraints = layoutState().createFormattingContext(root)->computedIntrinsicWidthConstraints();
+            intrinsicWidthConstraints = LayoutContext::createFormattingContext(root, layoutState())->computedIntrinsicWidthConstraints();
         else
             intrinsicWidthConstraints = *precomputedIntrinsicWidthConstraints;
     }

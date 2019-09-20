@@ -29,9 +29,11 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayBox.h"
+#include "InlineFormattingState.h"
 #include "InlineTextBox.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
+#include "LayoutContext.h"
 #include "LayoutTreeBuilder.h"
 #include "RenderBox.h"
 #include "RenderInline.h"
@@ -318,15 +320,15 @@ static bool verifyAndOutputSubtree(TextStream& stream, const LayoutState& contex
     return mismtachingGeometry;
 }
 
-void LayoutState::verifyAndOutputMismatchingLayoutTree(const RenderView& renderView, const Container& initialContainingBlock) const
+void LayoutContext::verifyAndOutputMismatchingLayoutTree(const LayoutState& layoutState, const RenderView& renderView, const Container& initialContainingBlock)
 {
     TextStream stream;
-    auto mismatchingGeometry = verifyAndOutputSubtree(stream, *this, renderView, initialContainingBlock);
+    auto mismatchingGeometry = verifyAndOutputSubtree(stream, layoutState, renderView, initialContainingBlock);
     if (!mismatchingGeometry)
         return;
 #if ENABLE(TREE_DEBUGGING)
     showRenderTree(&renderView);
-    showLayoutTree(initialContainingBlock, this);
+    showLayoutTree(initialContainingBlock, &layoutState);
 #endif
     WTFLogAlways("%s", stream.release().utf8().data());
     ASSERT_NOT_REACHED();

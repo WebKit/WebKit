@@ -32,6 +32,7 @@
 #include "FormattingState.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
+#include "LayoutContext.h"
 #include "LayoutDescendantIterator.h"
 #include "LayoutState.h"
 #include "Logging.h"
@@ -158,9 +159,10 @@ void FormattingContext::layoutOutOfFlowContent()
         computeBorderAndPadding(*outOfFlowBox);
         computeOutOfFlowHorizontalGeometry(*outOfFlowBox);
         if (is<Container>(*outOfFlowBox)) {
-            auto formattingContext = layoutState().createFormattingContext(downcast<Container>(*outOfFlowBox));
+            auto& outOfFlowRootContainer = downcast<Container>(*outOfFlowBox);
+            auto formattingContext = LayoutContext::createFormattingContext(outOfFlowRootContainer, layoutState());
             formattingContext->layoutInFlowContent();
-            computeOutOfFlowVerticalGeometry(*outOfFlowBox);
+            computeOutOfFlowVerticalGeometry(outOfFlowRootContainer);
             formattingContext->layoutOutOfFlowContent();            
         } else
             computeOutOfFlowVerticalGeometry(*outOfFlowBox);

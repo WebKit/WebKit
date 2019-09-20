@@ -36,14 +36,14 @@ namespace Layout {
 class Box;
 class TableFormattingState;
 struct InvalidationResult;
-class LayoutState;
+class LayoutContext;
 enum class StyleDiff;
 
 // This class implements box invalidation for table formatting context.
 class TableInvalidation {
     WTF_MAKE_ISO_ALLOCATED(TableInvalidation);
 public:
-    static InvalidationResult invalidate(const Box&, StyleDiff, LayoutState&, TableFormattingState&);
+    static InvalidationResult invalidate(const Box&, StyleDiff, LayoutContext&, TableFormattingState&);
 };
 
 }

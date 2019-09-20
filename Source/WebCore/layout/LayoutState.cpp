@@ -28,21 +28,9 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "BlockFormattingContext.h"
-#include "BlockFormattingState.h"
-#include "BlockInvalidation.h"
 #include "DisplayBox.h"
-#include "InlineFormattingContext.h"
-#include "InlineFormattingState.h"
-#include "InlineInvalidation.h"
-#include "Invalidation.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
-#include "LayoutPhase.h"
-#include "LayoutTreeBuilder.h"
-#include "RenderView.h"
-#include "TableFormattingContext.h"
-#include "TableFormattingState.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -50,51 +38,11 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutState);
 
-void LayoutState::updateLayout()
-{
-    PhaseScope scope(Phase::Type::Layout);
-
-    ASSERT(!m_formattingContextRootListForLayout.isEmpty());
-    for (auto* layoutRoot : m_formattingContextRootListForLayout)
-        layoutFormattingContextSubtree(*layoutRoot);
-    m_formattingContextRootListForLayout.clear();
-}
-
-void LayoutState::layoutFormattingContextSubtree(const Container& layoutRoot)
-{
-    RELEASE_ASSERT(layoutRoot.establishesFormattingContext());
-    auto formattingContext = createFormattingContext(layoutRoot);
-    formattingContext->layoutInFlowContent();
-    formattingContext->layoutOutOfFlowContent();
-}
-
 Display::Box& LayoutState::displayBoxForLayoutBox(const Box& layoutBox) const
 {
     return *m_layoutToDisplayBox.ensure(&layoutBox, [&layoutBox] {
         return makeUnique<Display::Box>(layoutBox.style());
     }).iterator->value;
-}
-
-void LayoutState::styleChanged(const Box& layoutBox, StyleDiff styleDiff)
-{
-    PhaseScope scope(Phase::Type::Invalidation);
-
-    auto& formattingState = formattingStateForBox(layoutBox);
-    const Container* invalidationRoot = nullptr;
-    if (is<BlockFormattingState>(formattingState))
-        invalidationRoot = BlockInvalidation::invalidate(layoutBox, styleDiff, *this, downcast<BlockFormattingState>(formattingState)).root;
-    else if (is<InlineFormattingState>(formattingState))
-        invalidationRoot = InlineInvalidation::invalidate(layoutBox, styleDiff, *this, downcast<InlineFormattingState>(formattingState)).root;
-    else
-        ASSERT_NOT_IMPLEMENTED_YET();
-    ASSERT(invalidationRoot);
-    m_formattingContextRootListForLayout.addVoid(invalidationRoot);
-}
-
-void LayoutState::markNeedsUpdate(const Box& layoutBox, OptionSet<UpdateType>)
-{
-    // FIXME: This should trigger proper invalidation instead of just adding the formatting context root to the dirty list. 
-    m_formattingContextRootListForLayout.addVoid(&(layoutBox.isInitialContainingBlock() ? downcast<Container>(layoutBox) : layoutBox.formattingContextRoot()));
 }
 
 FormattingState& LayoutState::formattingStateForBox(const Box& layoutBox) const
@@ -111,105 +59,44 @@ FormattingState& LayoutState::establishedFormattingState(const Container& format
     return *m_formattingStates.get(&formattingRoot);
 }
 
-FormattingState& LayoutState::createFormattingStateForFormattingRootIfNeeded(const Container& formattingRoot)
+FormattingState& LayoutState::createFormattingStateForFormattingRootIfNeeded(const Container& formattingContextRoot)
 {
-    ASSERT(formattingRoot.establishesFormattingContext());
+    ASSERT(formattingContextRoot.establishesFormattingContext());
 
-    if (formattingRoot.establishesInlineFormattingContext()) {
-        return *m_formattingStates.ensure(&formattingRoot, [&] {
+    if (formattingContextRoot.establishesInlineFormattingContext()) {
+        return *m_formattingStates.ensure(&formattingContextRoot, [&] {
 
             // If the block container box that initiates this inline formatting context also establishes a block context, the floats outside of the formatting root
             // should not interfere with the content inside.
             // <div style="float: left"></div><div style="overflow: hidden"> <- is a non-intrusive float, because overflow: hidden triggers new block formatting context.</div>
-            if (formattingRoot.establishesBlockFormattingContext())
-                return makeUnique<InlineFormattingState>(FloatingState::create(*this, formattingRoot), *this);
+            if (formattingContextRoot.establishesBlockFormattingContext())
+                return makeUnique<InlineFormattingState>(FloatingState::create(*this, formattingContextRoot), *this);
 
             // Otherwise, the formatting context inherits the floats from the parent formatting context.
             // Find the formatting state in which this formatting root lives, not the one it creates and use its floating state.
-            auto& parentFormattingState = createFormattingStateForFormattingRootIfNeeded(formattingRoot.formattingContextRoot()); 
+            auto& parentFormattingState = createFormattingStateForFormattingRootIfNeeded(formattingContextRoot.formattingContextRoot()); 
             auto& parentFloatingState = parentFormattingState.floatingState();
             return makeUnique<InlineFormattingState>(parentFloatingState, *this);
         }).iterator->value;
     }
 
-    if (formattingRoot.establishesBlockFormattingContext()) {
-        return *m_formattingStates.ensure(&formattingRoot, [&] {
+    if (formattingContextRoot.establishesBlockFormattingContext()) {
+        return *m_formattingStates.ensure(&formattingContextRoot, [&] {
 
             // Block formatting context always establishes a new floating state.
-            return makeUnique<BlockFormattingState>(FloatingState::create(*this, formattingRoot), *this);
+            return makeUnique<BlockFormattingState>(FloatingState::create(*this, formattingContextRoot), *this);
         }).iterator->value;
-    }
-
-    if (formattingRoot.establishesTableFormattingContext()) {
-        return *m_formattingStates.ensure(&formattingRoot, [&] {
-
-            // Table formatting context always establishes a new floating state -and it stays empty.
-            return makeUnique<TableFormattingState>(FloatingState::create(*this, formattingRoot), *this);
-        }).iterator->value;
-    }
-
-    CRASH();
-}
-
-std::unique_ptr<FormattingContext> LayoutState::createFormattingContext(const Container& formattingContextRoot)
-{
-    ASSERT(formattingContextRoot.establishesFormattingContext());
-    if (formattingContextRoot.establishesInlineFormattingContext()) {
-        auto& inlineFormattingState = downcast<InlineFormattingState>(createFormattingStateForFormattingRootIfNeeded(formattingContextRoot));
-        return makeUnique<InlineFormattingContext>(formattingContextRoot, inlineFormattingState);
-    }
-
-    if (formattingContextRoot.establishesBlockFormattingContext()) {
-        ASSERT(formattingContextRoot.establishesBlockFormattingContextOnly());
-        auto& blockFormattingState = downcast<BlockFormattingState>(createFormattingStateForFormattingRootIfNeeded(formattingContextRoot));
-        return makeUnique<BlockFormattingContext>(formattingContextRoot, blockFormattingState);
     }
 
     if (formattingContextRoot.establishesTableFormattingContext()) {
-        auto& tableFormattingState = downcast<TableFormattingState>(createFormattingStateForFormattingRootIfNeeded(formattingContextRoot));
-        return makeUnique<TableFormattingContext>(formattingContextRoot, tableFormattingState);
+        return *m_formattingStates.ensure(&formattingContextRoot, [&] {
+
+            // Table formatting context always establishes a new floating state -and it stays empty.
+            return makeUnique<TableFormattingState>(FloatingState::create(*this, formattingContextRoot), *this);
+        }).iterator->value;
     }
 
     CRASH();
-}
-
-void LayoutState::run(const RenderView& renderView)
-{
-    auto layoutState = LayoutState { };
-
-    auto initialContainingBlock = TreeBuilder::createLayoutTree(renderView);
-    layoutState.createFormattingStateForFormattingRootIfNeeded(*initialContainingBlock);
-
-    auto& displayBox = layoutState.displayBoxForLayoutBox(*initialContainingBlock);
-    displayBox.setHorizontalMargin({ });
-    displayBox.setHorizontalComputedMargin({ });
-    displayBox.setVerticalMargin({ });
-    displayBox.setBorder({ });
-    displayBox.setPadding({ });
-    displayBox.setTopLeft({ });
-    displayBox.setContentBoxHeight(LayoutUnit(initialContainingBlock->style().logicalHeight().value()));
-    displayBox.setContentBoxWidth(LayoutUnit(initialContainingBlock->style().logicalWidth().value()));
-
-    // Not efficient, but this is temporary anyway.
-    // Collect the out-of-flow descendants at the formatting root level (as opposed to at the containing block level, though they might be the same).
-    for (auto& descendant : descendantsOfType<Box>(*initialContainingBlock)) {
-        if (!descendant.isOutOfFlowPositioned())
-            continue;
-        auto& formattingState = layoutState.createFormattingStateForFormattingRootIfNeeded(descendant.formattingContextRoot());
-        formattingState.addOutOfFlowBox(descendant);
-    }
-    auto quirksMode = [&] {
-        auto& document = renderView.document();
-        if (document.inLimitedQuirksMode())
-            return QuirksMode::Limited;
-        if (document.inQuirksMode())
-            return QuirksMode::Yes;
-        return QuirksMode::No;
-    };
-    layoutState.setQuirksMode(quirksMode());
-    layoutState.markNeedsUpdate(*initialContainingBlock);
-    layoutState.updateLayout();
-    layoutState.verifyAndOutputMismatchingLayoutTree(renderView, *initialContainingBlock);
 }
 
 }

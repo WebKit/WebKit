@@ -166,10 +166,11 @@ void BlockFormattingContext::layoutFormattingContextRoot(FloatingContext& floati
     computeStaticHorizontalPosition(layoutBox);
     if (is<Container>(layoutBox)) {
         // Swich over to the new formatting context (the one that the root creates).
-        auto formattingContext = layoutState().createFormattingContext(downcast<Container>(layoutBox));
+        auto& rootContainer = downcast<Container>(layoutBox);
+        auto formattingContext = LayoutContext::createFormattingContext(rootContainer, layoutState());
         formattingContext->layoutInFlowContent();
         // Come back and finalize the root's geometry.
-        computeHeightAndMargin(layoutBox);
+        computeHeightAndMargin(rootContainer);
         // Now that we computed the root's height, we can go back and layout the out-of-flow content.
         formattingContext->layoutOutOfFlowContent();
     } else
