@@ -163,6 +163,7 @@ ShareableBitmap::ShareableBitmap(const IntSize& size, Configuration configuratio
     , m_configuration(configuration)
     , m_data(data)
 {
+    ASSERT(RunLoop::isMain());
 }
 
 ShareableBitmap::ShareableBitmap(const IntSize& size, Configuration configuration, RefPtr<SharedMemory> sharedMemory)
@@ -171,6 +172,8 @@ ShareableBitmap::ShareableBitmap(const IntSize& size, Configuration configuratio
     , m_sharedMemory(sharedMemory)
     , m_data(nullptr)
 {
+    ASSERT(RunLoop::isMain());
+
 #if USE(DIRECT2D)
     createSharedResource();
 #endif
@@ -178,6 +181,8 @@ ShareableBitmap::ShareableBitmap(const IntSize& size, Configuration configuratio
 
 ShareableBitmap::~ShareableBitmap()
 {
+    ASSERT(RunLoop::isMain());
+
     if (!isBackedBySharedMemory())
         fastFree(m_data);
 #if USE(DIRECT2D)

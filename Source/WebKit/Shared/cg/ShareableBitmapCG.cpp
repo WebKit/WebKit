@@ -87,6 +87,7 @@ unsigned ShareableBitmap::calculateBytesPerPixel(const Configuration& configurat
 
 std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
+    ASSERT(RunLoop::isMain());
     ref(); // Balanced by deref in releaseBitmapContextData.
 
     unsigned bytesPerPixel = calculateBytesPerPixel(m_configuration);
@@ -141,6 +142,13 @@ RetainPtr<CGImageRef> ShareableBitmap::createCGImage(CGDataProviderRef dataProvi
 
 void ShareableBitmap::releaseBitmapContextData(void* typelessBitmap, void* typelessData)
 {
+    if (!RunLoop::isMain()) {
+        RunLoop::main().dispatch([typelessBitmap, typelessData] {
+            releaseBitmapContextData(typelessBitmap, typelessData);
+        });
+        return;
+    }
+
     ShareableBitmap* bitmap = static_cast<ShareableBitmap*>(typelessBitmap);
     ASSERT_UNUSED(typelessData, bitmap->data() == typelessData);
     bitmap->deref(); // Balanced by ref in createGraphicsContext.
