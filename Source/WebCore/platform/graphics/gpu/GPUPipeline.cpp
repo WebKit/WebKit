@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.content-view.shader-program > .shader {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-}
+#include "config.h"
+#include "GPUPipeline.h"
 
-.content-view.shader-program > .shader.compute {
-    right: 0;
-    left: 0;
-}
+#if ENABLE(WEBGPU)
 
-body[dir=ltr] .content-view.shader-program > .shader.vertex,
-body[dir=rtl] .content-view.shader-program > .shader.fragment {
-    width: calc(50% - 1px);
-    left: 0;
-}
+namespace WebCore {
 
-body[dir=ltr] .content-view.shader-program > .shader.fragment,
-body[dir=rtl] .content-view.shader-program > .shader.vertex {
-    width: calc(50% + 1px);
-    right: 0;
-}
+GPUPipeline::~GPUPipeline() = default;
 
-.content-view.shader-program > .shader + .shader {
-    border-left: 1px solid var(--border-color);
-}
+} // namespace WebCore
 
-.content-view.shader-program > .shader > header > * {
-    padding: 2px 4px;
-    border-bottom: 1px solid lightgrey;
-}
-
-.content-view.shader-program > .shader > header > .shader-type {
-    background-color: hsl(0, 0%, 95%);
-}
-
-@media (prefers-color-scheme: dark) {
-    .content-view.shader-program > .shader > header {
-        background-color: var(--background-color);
-        border-bottom-color: var(--text-color-quaternary);
-    }
-}
+#endif // ENABLE(WEBGPU)

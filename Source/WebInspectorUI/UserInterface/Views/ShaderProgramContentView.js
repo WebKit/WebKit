@@ -31,13 +31,26 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
 
         super(shaderProgram);
 
+        let isWebGPU = this.representedObject.contextType === WI.Canvas.ContextType.WebGPU;
+
+        this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("refresh", WI.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
+        this._refreshButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._refreshContent, this);
+
         let contentDidChangeDebouncer = new Debouncer((event) => {
             this._contentDidChange(event);
         });
 
-        this.element.classList.add("shader-program");
+        this.element.classList.add("shader-program", this.representedObject.programType);
 
         let createEditor = (shaderType) => {
+            let container = this.element.appendChild(document.createElement("div"));
+
+            let header = container.appendChild(document.createElement("header"));
+
+            let shaderTypeContainer = header.appendChild(document.createElement("div"));
+            shaderTypeContainer.classList.add("shader-type");
+
             let textEditor = new WI.TextEditor;
             textEditor.readOnly = false;
             textEditor.addEventListener(WI.TextEditor.Event.Focused, this._editorFocused, this);
@@ -45,32 +58,61 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
             textEditor.addEventListener(WI.TextEditor.Event.ContentDidChange, (event) => {
                 contentDidChangeDebouncer.delayForTime(250, event);
             }, this);
-            textEditor.element.classList.add("shader");
-
-            let shaderTypeContainer = textEditor.element.insertAdjacentElement("afterbegin", document.createElement("div"));
-            shaderTypeContainer.classList.add("type-title");
 
             switch (shaderType) {
-            case WI.ShaderProgram.ShaderType.Vertex:
-                shaderTypeContainer.textContent = WI.UIString("Vertex Shader");
-                textEditor.mimeType = "x-shader/x-vertex";
-                textEditor.element.classList.add("vertex");
+            case WI.ShaderProgram.ShaderType.Compute:
+                shaderTypeContainer.textContent = WI.UIString("Compute Shader");
+                textEditor.mimeType = isWebGPU ? "x-pipeline/x-compute" : "x-shader/x-compute";
                 break;
 
             case WI.ShaderProgram.ShaderType.Fragment:
                 shaderTypeContainer.textContent = WI.UIString("Fragment Shader");
-                textEditor.mimeType = "x-shader/x-fragment";
-                textEditor.element.classList.add("fragment");
+                textEditor.mimeType = isWebGPU ? "x-pipeline/x-fragment" : "x-shader/x-fragment";
+                break;
+
+            case WI.ShaderProgram.ShaderType.Vertex:
+                shaderTypeContainer.textContent = WI.UIString("Vertex Shader");
+                textEditor.mimeType = isWebGPU ? "x-pipeline/x-vertex" : "x-shader/x-vertex";
                 break;
             }
 
             this.addSubview(textEditor);
-            return textEditor;
+            container.appendChild(textEditor.element);
+            container.classList.add("shader", shaderType);
+
+            return {container, textEditor};
         };
 
-        this._vertexEditor = createEditor(WI.ShaderProgram.ShaderType.Vertex);
-        this._fragmentEditor = createEditor(WI.ShaderProgram.ShaderType.Fragment);
-        this._lastActiveEditor = this._vertexEditor;
+        switch (this.representedObject.programType) {
+        case WI.ShaderProgram.ProgramType.Compute: {
+            let computeEditor = createEditor(WI.ShaderProgram.ShaderType.Compute);
+            this._computeContainer = computeEditor.container;
+            this._computeEditor = computeEditor.textEditor;
+
+            this._lastActiveEditor = this._computeEditor;
+            break;
+        }
+
+        case WI.ShaderProgram.ProgramType.Render: {
+            let vertexEditor = createEditor(WI.ShaderProgram.ShaderType.Vertex);
+            this._vertexContainer = vertexEditor.container;
+            this._vertexEditor = vertexEditor.textEditor;
+
+            let fragmentEditor = createEditor(WI.ShaderProgram.ShaderType.Fragment);
+            this._fragmentContainer = fragmentEditor.container;
+            this._fragmentEditor = fragmentEditor.textEditor;
+
+            this._lastActiveEditor = this._vertexEditor;
+            break;
+        }
+        }
+    }
+
+    // Public
+
+    get navigationItems()
+    {
+        return [this._refreshButtonNavigationItem];
     }
 
     // Protected
@@ -79,22 +121,32 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
     {
         super.shown();
 
-        this._vertexEditor.shown();
-        this._fragmentEditor.shown();
+        switch (this.representedObject.programType) {
+        case WI.ShaderProgram.ProgramType.Compute:
+            this._computeEditor.shown();
+            break;
 
-        this.representedObject.requestVertexShaderSource((content) => {
-            this._vertexEditor.string = content || "";
-        });
+        case WI.ShaderProgram.ProgramType.Render:
+            this._vertexEditor.shown();
+            this._fragmentEditor.shown();
+            break;
+        }
 
-        this.representedObject.requestFragmentShaderSource((content) => {
-            this._fragmentEditor.string = content || "";
-        });
+        this._refreshContent();
     }
 
     hidden()
     {
-        this._vertexEditor.hidden();
-        this._fragmentEditor.hidden();
+        switch (this.representedObject.programType) {
+        case WI.ShaderProgram.ProgramType.Compute:
+            this._computeEditor.hidden();
+            break;
+
+        case WI.ShaderProgram.ProgramType.Render:
+            this._vertexEditor.hidden();
+            this._fragmentEditor.hidden();
+            break;
+        }
 
         super.hidden();
     }
@@ -106,14 +158,34 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
 
     get saveData()
     {
-        let filename = WI.UIString("Shader");
-        if (this._lastActiveEditor === this._vertexEditor)
-            filename = WI.UIString("Vertex");
-        else if (this._lastActiveEditor === this._fragmentEditor)
+        let filename = "";
+        switch (this._lastActiveEditor) {
+        case this._computeEditor:
+            filename = WI.UIString("Compute");
+            break;
+        case this._fragmentEditor:
             filename = WI.UIString("Fragment");
+            break;
+        case this._vertexEditor:
+            filename = WI.UIString("Vertex");
+            break;
+        }
+        console.assert(filename);
+
+        let extension = "";
+        switch (this.representedObject.canvas.contextType) {
+        case WI.Canvas.ContextType.WebGL:
+        case WI.Canvas.ContextType.WebGL2:
+            extension = WI.unlocalizedString(".glsl");
+            break;
+        case WI.Canvas.ContextType.WebGPU:
+            extension = WI.unlocalizedString(".wsl");
+            break;
+        }
+        console.assert(extension);
 
         return {
-            url: WI.FileUtilities.inspectorURLForFilename(filename + ".glsl"),
+            url: WI.FileUtilities.inspectorURLForFilename(filename + extension),
             content: this._lastActiveEditor.string,
             forceSaveAs: true,
         };
@@ -171,6 +243,65 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
 
     // Private
 
+    _refreshContent()
+    {
+        let createCallback = (container, textEditor) => {
+            return (source, entryPoint) => {
+                if (source === null) {
+                    container.remove();
+                    return;
+                }
+
+                if (!container.parentNode) {
+                    switch (container) {
+                    case this._computeContainer:
+                    case this._vertexContainer:
+                        this.element.insertAdjacentElement("afterbegin", container);
+                        break;
+
+                    case this._fragmentContainer:
+                        this.element.insertAdjacentElement("beforeend", container);
+                        break;
+                    }
+                }
+
+                textEditor.string = source || "";
+            };
+        };
+
+        switch (this.representedObject.programType) {
+        case WI.ShaderProgram.ProgramType.Compute:
+            this.representedObject.requestShaderSource(WI.ShaderProgram.ShaderType.Compute, createCallback(this._computeContainer, this._computeEditor));
+            return;
+
+        case WI.ShaderProgram.ProgramType.Render:
+            this.representedObject.requestShaderSource(WI.ShaderProgram.ShaderType.Vertex, createCallback(this._vertexContainer, this._vertexEditor));
+            this.representedObject.requestShaderSource(WI.ShaderProgram.ShaderType.Fragment, createCallback(this._fragmentContainer, this._fragmentEditor));
+            return;
+        }
+
+        console.assert();
+    }
+
+    _updateShader(shaderType)
+    {
+        switch (shaderType) {
+        case WI.ShaderProgram.ShaderType.Compute:
+            this.representedObject.updateShader(shaderType, this._computeEditor.string);
+            return;
+
+        case WI.ShaderProgram.ShaderType.Fragment:
+            this.representedObject.updateShader(shaderType, this._fragmentEditor.string);
+            return;
+
+        case WI.ShaderProgram.ShaderType.Vertex:
+            this.representedObject.updateShader(shaderType, this._vertexEditor.string);
+            return;
+        }
+
+        console.assert();
+    }
+
     _editorFocused(event)
     {
         if (this._lastActiveEditor === event.target)
@@ -197,9 +328,20 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
 
     _contentDidChange(event)
     {
-        if (event.target === this._vertexEditor)
-            this.representedObject.updateVertexShader(this._vertexEditor.string);
-        else if (event.target === this._fragmentEditor)
-            this.representedObject.updateFragmentShader(this._fragmentEditor.string);
+        switch (event.target) {
+        case this._computeEditor:
+            this._updateShader(WI.ShaderProgram.ShaderType.Compute);
+            return;
+
+        case this._fragmentEditor:
+            this._updateShader(WI.ShaderProgram.ShaderType.Fragment);
+            return;
+
+        case this._vertexEditor:
+            this._updateShader(WI.ShaderProgram.ShaderType.Vertex);
+            return;
+        }
+
+        console.assert();
     }
 };

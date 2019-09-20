@@ -28,17 +28,41 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUComputePipeline.h"
+#include "GPUErrorScopes.h"
+#include "GPUPipeline.h"
+#include "GPUProgrammableStageDescriptor.h"
+#include "WebGPUDevice.h"
+#include <wtf/Optional.h>
+#include <wtf/Ref.h>
+
 namespace WebCore {
 
-Ref<WebGPUComputePipeline> WebGPUComputePipeline::create(RefPtr<GPUComputePipeline>&& pipeline, GPUErrorScopes& errorScopes)
+Ref<WebGPUComputePipeline> WebGPUComputePipeline::create(WebGPUDevice& device, RefPtr<GPUComputePipeline>&& pipeline, GPUErrorScopes& errorScopes, Optional<WebGPUPipeline::ShaderData> computeShader)
 {
-    return adoptRef(*new WebGPUComputePipeline(WTFMove(pipeline), errorScopes));
+    return adoptRef(*new WebGPUComputePipeline(device, WTFMove(pipeline), errorScopes, computeShader));
 }
 
-WebGPUComputePipeline::WebGPUComputePipeline(RefPtr<GPUComputePipeline>&& pipeline, GPUErrorScopes& errorScopes)
-    : GPUObjectBase(makeRef(errorScopes))
-    , m_computePipeline { WTFMove(pipeline) }
+WebGPUComputePipeline::WebGPUComputePipeline(WebGPUDevice& device, RefPtr<GPUComputePipeline>&& pipeline, GPUErrorScopes& errorScopes, Optional<WebGPUPipeline::ShaderData> computeShader)
+    : WebGPUPipeline(device, errorScopes)
+    , m_computePipeline(WTFMove(pipeline))
+    , m_computeShader(computeShader)
 {
+}
+
+WebGPUComputePipeline::~WebGPUComputePipeline() = default;
+
+bool WebGPUComputePipeline::recompile(const WebGPUDevice& device)
+{
+    if (m_computePipeline && m_computeShader) {
+        if (auto& webGPUComputeShaderModule = m_computeShader.value().module) {
+            if (auto* gpuComputeShaderModule = webGPUComputeShaderModule->module()) {
+                GPUProgrammableStageDescriptor computeStage(makeRef(*gpuComputeShaderModule), { m_computeShader.value().entryPoint });
+                return m_computePipeline->recompile(device.device(), WTFMove(computeStage));
+            }
+        }
+    }
+    return false;
 }
 
 } // namespace WebCore

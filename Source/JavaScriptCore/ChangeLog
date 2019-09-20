@@ -1,3 +1,14 @@
+2019-09-19  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: show WebGPU shader pipelines
+        https://bugs.webkit.org/show_bug.cgi?id=201675
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/protocol/Canvas.json:
+        Add a `ProgramType` enum that conveys the type of shader program/pipeline when notifying the
+        frontend of a new program
+
 2019-09-19  Mark Lam  <mark.lam@apple.com>
 
         Rename VMInspector::m_list to m_vmList.

@@ -682,6 +682,11 @@
     extraJSONTypes.forEach(function(type) {
         CodeMirror.defineMIME(type, {name: "javascript", json: true});
     });
+
+    // FIXME: Add WHLSL specific modes.
+    CodeMirror.defineMIME("x-pipeline/x-compute", "x-shader/x-vertex");
+    CodeMirror.defineMIME("x-pipeline/x-fragment", "x-shader/x-fragment");
+    CodeMirror.defineMIME("x-pipeline/x-vertex", "x-shader/x-vertex");
 })();
 
 WI.compareCodeMirrorPositions = function(a, b)

@@ -1,3 +1,156 @@
+2019-09-19  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: show WebGPU shader pipelines
+        https://bugs.webkit.org/show_bug.cgi?id=201675
+
+        Reviewed by Joseph Pecoraro.
+
+        Tests: inspector/canvas/requestShaderSource-webgpu.html
+               inspector/canvas/shaderProgram-add-remove-webgpu.html
+               inspector/canvas/updateShader-webgpu.html
+
+        Create common base classes for `WebGPUPipeline` and `GPUPipeline` so that Web Inspector can
+        instrument both render and compute shader pipelines.
+
+        Refactor `InspectorShaderProgram` to support both `WebGLProgram` and `WebGPUPipeline` so
+        that the same object can be used for all types of shader "program"s.
+
+        Keep a copy of each shader module's source, and allow the shader module to be updated.
+
+        * Modules/webgpu/WebGPUDevice.h:
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createShaderModule const):
+        (WebCore::WebGPUDevice::createRenderPipeline): Added.
+        (WebCore::WebGPUDevice::createComputePipeline): Added.
+        (WebCore::WebGPUDevice::createRenderPipeline const): Deleted.
+        (WebCore::WebGPUDevice::createComputePipeline const): Deleted.
+
+        * Modules/webgpu/WebGPUPipeline.h: Added.
+        (WebCore::WebGPUPipeline::isRenderPipeline const):
+        (WebCore::WebGPUPipeline::isComputePipeline const):
+        (WebCore::WebGPUPipeline::scriptExecutionContext const):
+        * Modules/webgpu/WebGPUPipeline.cpp: Added.
+        (WebCore::WebGPUPipeline::instancesMutex):
+        (WebCore::WebGPUPipeline::WebGPUPipeline):
+        (WebCore::WebGPUPipeline::~WebGPUPipeline):
+        * platform/graphics/gpu/GPUPipeline.cpp: Added.
+        * platform/graphics/gpu/GPUPipeline.h: Added.
+        (WebCore::GPUPipeline::isRenderPipeline const):
+        (WebCore::GPUPipeline::isComputePipeline const):
+
+        * Modules/webgpu/WebGPUComputePipeline.idl:
+        * Modules/webgpu/WebGPUComputePipeline.h:
+        (WebCore::WebGPUComputePipeline::computePipeline const): Deleted.
+        * Modules/webgpu/WebGPUComputePipeline.cpp:
+        (WebCore::WebGPUComputePipeline::create):
+        (WebCore::WebGPUComputePipeline::WebGPUComputePipeline):
+        (WebCore::WebGPUComputePipeline::recompile): Added.
+        * platform/graphics/gpu/GPUComputePipeline.h:
+        (WebCore::GPUComputePipeline::isComputePipeline): Added.
+        * platform/graphics/gpu/cocoa/GPUComputePipelineMetal.mm:
+        (WebCore::GPUComputePipeline::tryCreate):
+        (WebCore::GPUComputePipeline::GPUComputePipeline):
+        (WebCore::GPUComputePipeline::recompile): Added.
+
+        * Modules/webgpu/WebGPURenderPipeline.idl:
+        * Modules/webgpu/WebGPURenderPipeline.h:
+        (WebCore::WebGPURenderPipeline::renderPipeline const): Deleted.
+        * Modules/webgpu/WebGPURenderPipeline.cpp:
+        (WebCore::WebGPURenderPipeline::create):
+        (WebCore::WebGPURenderPipeline::WebGPURenderPipeline):
+        (WebCore::WebGPURenderPipeline::recompile): Added.
+        * platform/graphics/gpu/GPURenderPipeline.h:
+        (WebCore::GPURenderPipeline::isRenderPipeline): Added.
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::tryCreateMtlRenderPipelineState):
+        (WebCore::GPURenderPipeline::tryCreate):
+        (WebCore::GPURenderPipeline::GPURenderPipeline):
+        (WebCore::GPURenderPipeline::recompile): Added.
+
+        * Modules/webgpu/WebGPUShaderModule.h:
+        (WebCore::WebGPUShaderModule::source const): Added.
+        * Modules/webgpu/WebGPUShaderModule.cpp:
+        (WebCore::WebGPUShaderModule::update): Added.
+        * Modules/webgpu/WebGPUProgrammableStageDescriptor.h:
+        * platform/graphics/gpu/GPUProgrammableStageDescriptor.h:
+        (WebCore::GPUProgrammableStageDescriptor::GPUProgrammableStageDescriptor):
+
+        * inspector/InspectorShaderProgram.h:
+        * inspector/InspectorShaderProgram.cpp:
+        (WebCore::InspectorShaderProgram::create):
+        (WebCore::InspectorShaderProgram::InspectorShaderProgram):
+        (WebCore::InspectorShaderProgram::program const): Added.
+        (WebCore::InspectorShaderProgram::pipeline const): Added.
+        (WebCore::shaderForType): Added.
+        (WebCore::InspectorShaderProgram::requestShaderSource): Added.
+        (WebCore::InspectorShaderProgram::updateShader): Added.
+        (WebCore::InspectorShaderProgram::context const): Deleted.
+        (WebCore::InspectorShaderProgram::shaderForType): Deleted.
+
+        * inspector/agents/InspectorCanvasAgent.h:
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::InspectorCanvasAgent):
+        (WebCore::InspectorCanvasAgent::discardAgent):
+        (WebCore::InspectorCanvasAgent::enable):
+        (WebCore::InspectorCanvasAgent::disable):
+        (WebCore::InspectorCanvasAgent::requestShaderSource):
+        (WebCore::InspectorCanvasAgent::updateShader):
+        (WebCore::InspectorCanvasAgent::setShaderProgramDisabled):
+        (WebCore::InspectorCanvasAgent::setShaderProgramHighlighted):
+        (WebCore::InspectorCanvasAgent::frameNavigated):
+        (WebCore::InspectorCanvasAgent::didCreateWebGLProgram): Added.
+        (WebCore::InspectorCanvasAgent::willDestroyWebGLProgram): Added.
+        (WebCore::InspectorCanvasAgent::isWebGLProgramDisabled): Added.
+        (WebCore::InspectorCanvasAgent::isWebGLProgramHighlighted): Added.
+        (WebCore::InspectorCanvasAgent::didCreateWebGPUPipeline): Added.
+        (WebCore::InspectorCanvasAgent::willDestroyWebGPUPipeline): Added.
+        (WebCore::InspectorCanvasAgent::programDestroyedTimerFired): Added.
+        (WebCore::InspectorCanvasAgent::reset): Added.
+        (WebCore::InspectorCanvasAgent::unbindProgram):
+        (WebCore::InspectorCanvasAgent::findInspectorProgram):
+        (WebCore::InspectorCanvasAgent::didCreateProgram): Deleted.
+        (WebCore::InspectorCanvasAgent::willDeleteProgram): Deleted.
+        (WebCore::InspectorCanvasAgent::isShaderProgramDisabled): Deleted.
+        (WebCore::InspectorCanvasAgent::isShaderProgramHighlighted): Deleted.
+        (WebCore::InspectorCanvasAgent::clearCanvasData): Deleted.
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didCreateWebGLProgram): Added.
+        (WebCore::InspectorInstrumentation::willDestroyWebGLProgram): Added.
+        (WebCore::InspectorInstrumentation::isWebGLProgramDisabled): Added.
+        (WebCore::InspectorInstrumentation::isWebGLProgramHighlighted): Added.
+        (WebCore::InspectorInstrumentation::didCreateWebGPUPipeline): Added.
+        (WebCore::InspectorInstrumentation::willDestroyWebGPUPipeline): Added.
+        (WebCore::InspectorInstrumentation::didCreateProgram): Deleted.
+        (WebCore::InspectorInstrumentation::willDeleteProgram): Deleted.
+        (WebCore::InspectorInstrumentation::isShaderProgramDisabled): Deleted.
+        (WebCore::InspectorInstrumentation::isShaderProgramHighlighted): Deleted.
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCreateWebGLProgramImpl): Added.
+        (WebCore::InspectorInstrumentation::willDestroyWebGLProgramImpl): Added.
+        (WebCore::InspectorInstrumentation::isWebGLProgramDisabledImpl): Added.
+        (WebCore::InspectorInstrumentation::isWebGLProgramHighlightedImpl): Added.
+        (WebCore::InspectorInstrumentation::didCreateWebGPUPipelineImpl): Added.
+        (WebCore::InspectorInstrumentation::willDestroyWebGPUPipelineImpl): Added.
+        (WebCore::InspectorInstrumentation::didCreateProgramImpl): Deleted.
+        (WebCore::InspectorInstrumentation::willDeleteProgramImpl): Deleted.
+        (WebCore::InspectorInstrumentation::isShaderProgramDisabledImpl): Deleted.
+        (WebCore::InspectorInstrumentation::isShaderProgramHighlightedImpl): Deleted.
+
+        * html/canvas/WebGLProgram.h:
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::WebGLProgram):
+        (WebCore::WebGLProgram::~WebGLProgram):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::InspectorScopedShaderProgramHighlight::showHightlight):
+        (WebCore::WebGLRenderingContextBase::createProgram):
+        (WebCore::WebGLRenderingContextBase::deleteProgram):
+        (WebCore::WebGLRenderingContextBase::drawArrays):
+        (WebCore::WebGLRenderingContextBase::drawElements):
+        Rename WebGL program instrumentation points to be less ambiguous.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-09-19  Chris Dumez  <cdumez@apple.com>
 
         WorkerGlobalScope does not need a SessionID

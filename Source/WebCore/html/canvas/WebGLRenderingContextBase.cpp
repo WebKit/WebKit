@@ -411,7 +411,7 @@ public:
 private:
     void showHightlight()
     {
-        if (!m_program || LIKELY(!InspectorInstrumentation::isShaderProgramHighlighted(m_context, *m_program)))
+        if (!m_program || LIKELY(!InspectorInstrumentation::isWebGLProgramHighlighted(m_context, *m_program)))
             return;
 
         if (hasBufferBinding(GraphicsContext3D::FRAMEBUFFER_BINDING)) {
@@ -1754,7 +1754,7 @@ RefPtr<WebGLProgram> WebGLRenderingContextBase::createProgram()
     auto program = WebGLProgram::create(*this);
     addSharedObject(program.get());
 
-    InspectorInstrumentation::didCreateProgram(*this, program.get());
+    InspectorInstrumentation::didCreateWebGLProgram(*this, program.get());
 
     return program;
 }
@@ -1840,7 +1840,7 @@ void WebGLRenderingContextBase::deleteFramebuffer(WebGLFramebuffer* framebuffer)
 void WebGLRenderingContextBase::deleteProgram(WebGLProgram* program)
 {
     if (program)
-        InspectorInstrumentation::willDeleteProgram(*this, *program);
+        InspectorInstrumentation::willDestroyWebGLProgram(*program);
 
     deleteObject(program);
     // We don't reset m_currentProgram to 0 here because the deletion of the
@@ -2255,7 +2255,7 @@ void WebGLRenderingContextBase::drawArrays(GC3Denum mode, GC3Dint first, GC3Dsiz
     if (!validateDrawArrays("drawArrays", mode, first, count, 0))
         return;
 
-    if (m_currentProgram && InspectorInstrumentation::isShaderProgramDisabled(*this, *m_currentProgram))
+    if (m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *m_currentProgram))
         return;
 
     clearIfComposited();
@@ -2309,7 +2309,7 @@ void WebGLRenderingContextBase::drawElements(GC3Denum mode, GC3Dsizei count, GC3
     if (!validateDrawElements("drawElements", mode, count, type, offset, numElements, 0))
         return;
 
-    if (m_currentProgram && InspectorInstrumentation::isShaderProgramDisabled(*this, *m_currentProgram))
+    if (m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *m_currentProgram))
         return;
 
     clearIfComposited();

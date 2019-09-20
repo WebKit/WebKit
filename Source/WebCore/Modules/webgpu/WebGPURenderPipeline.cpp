@@ -28,17 +28,49 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUErrorScopes.h"
+#include "GPUPipeline.h"
+#include "GPUProgrammableStageDescriptor.h"
+#include "GPURenderPipeline.h"
+#include "WebGPUDevice.h"
+#include <wtf/Optional.h>
+#include <wtf/Ref.h>
+
 namespace WebCore {
 
-Ref<WebGPURenderPipeline> WebGPURenderPipeline::create(RefPtr<GPURenderPipeline>&& pipeline, GPUErrorScopes& errorScopes)
+Ref<WebGPURenderPipeline> WebGPURenderPipeline::create(WebGPUDevice& device, RefPtr<GPURenderPipeline>&& pipeline, GPUErrorScopes& errorScopes, Optional<WebGPUPipeline::ShaderData> vertexShader, Optional<WebGPUPipeline::ShaderData> fragmentShader)
 {
-    return adoptRef(*new WebGPURenderPipeline(WTFMove(pipeline), errorScopes));
+    return adoptRef(*new WebGPURenderPipeline(device, WTFMove(pipeline), errorScopes, vertexShader, fragmentShader));
 }
 
-WebGPURenderPipeline::WebGPURenderPipeline(RefPtr<GPURenderPipeline>&& pipeline, GPUErrorScopes& errorScopes)
-    : GPUObjectBase(makeRef(errorScopes))
+WebGPURenderPipeline::WebGPURenderPipeline(WebGPUDevice& device, RefPtr<GPURenderPipeline>&& pipeline, GPUErrorScopes& errorScopes, Optional<WebGPUPipeline::ShaderData> vertexShader, Optional<WebGPUPipeline::ShaderData> fragmentShader)
+    : WebGPUPipeline(device, errorScopes)
     , m_renderPipeline(WTFMove(pipeline))
+    , m_vertexShader(vertexShader)
+    , m_fragmentShader(fragmentShader)
 {
+}
+
+WebGPURenderPipeline::~WebGPURenderPipeline() = default;
+
+bool WebGPURenderPipeline::recompile(const WebGPUDevice& device)
+{
+    if (m_renderPipeline && m_vertexShader) {
+        if (auto& webGPUVertexShaderModule = m_vertexShader.value().module) {
+            if (auto* gpuVertexShaderModule = webGPUVertexShaderModule->module()) {
+                GPUProgrammableStageDescriptor vertexStage(makeRef(*gpuVertexShaderModule), { m_vertexShader.value().entryPoint });
+                Optional<GPUProgrammableStageDescriptor> fragmentStage;
+                if (m_fragmentShader) {
+                    if (auto& webGPUFragmentShaderModule = m_fragmentShader.value().module) {
+                        if (auto* gpuFragmentShaderModule = webGPUFragmentShaderModule->module())
+                            fragmentStage = GPUProgrammableStageDescriptor(makeRef(*gpuFragmentShaderModule), { m_fragmentShader.value().entryPoint });
+                    }
+                }
+                return m_renderPipeline->recompile(device.device(), WTFMove(vertexStage), WTFMove(fragmentStage));
+            }
+        }
+    }
+    return false;
 }
 
 } // namespace WebCore

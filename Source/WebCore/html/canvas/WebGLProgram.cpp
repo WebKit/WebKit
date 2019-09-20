@@ -28,6 +28,8 @@
 
 #if ENABLE(WEBGL)
 
+#include "InspectorInstrumentation.h"
+#include "ScriptExecutionContext.h"
 #include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
 #include "WebGLShader.h"
@@ -60,6 +62,7 @@ Ref<WebGLProgram> WebGLProgram::create(WebGLRenderingContextBase& ctx)
 
 WebGLProgram::WebGLProgram(WebGLRenderingContextBase& ctx)
     : WebGLSharedObject(ctx)
+    , m_scriptExecutionContext(ctx.scriptExecutionContext())
 {
     {
         LockHolder lock(instancesMutex());
@@ -71,6 +74,8 @@ WebGLProgram::WebGLProgram(WebGLRenderingContextBase& ctx)
 
 WebGLProgram::~WebGLProgram()
 {
+    InspectorInstrumentation::willDestroyWebGLProgram(*this);
+
     deleteObject(0);
 
     {

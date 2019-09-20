@@ -1,3 +1,53 @@
+2019-09-19  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: show WebGPU shader pipelines
+        https://bugs.webkit.org/show_bug.cgi?id=201675
+
+        Reviewed by Joseph Pecoraro.
+
+        Split existing shader tests into WebGL and WebGPU sub-tests for different platforms.
+
+        * inspector/canvas/requestShaderSource.html:
+        * inspector/canvas/requestShaderSource-expected.txt:
+        * inspector/canvas/updateShader.html:
+        * inspector/canvas/updateShader-expected.txt:
+
+        * inspector/canvas/resources/shaderProgram-utilities-webgpu.js: Added.
+        * inspector/canvas/requestShaderSource-webgpu.html: Added.
+        * inspector/canvas/requestShaderSource-webgpu-expected.txt: Added.
+        * inspector/canvas/shaderProgram-add-remove-webgpu.html: Added.
+        * inspector/canvas/shaderProgram-add-remove-webgpu-expected.txt: Added.
+        * inspector/canvas/updateShader-webgpu-expected.txt: Added.
+        * inspector/canvas/updateShader-webgpu.html: Added.
+
+        * inspector/canvas/resources/shaderProgram-utilities-webgl.js: Renamed from LayoutTests/inspector/canvas/resources/shaderProgram-utilities.js.
+        * inspector/canvas/console-record-webgl.html:
+        * inspector/canvas/console-record-webgl2.html:
+        * inspector/canvas/recording-webgl-frameCount.html:
+        * inspector/canvas/recording-webgl-full.html:
+        * inspector/canvas/recording-webgl-memoryLimit.html:
+        * inspector/canvas/recording-webgl-snapshots.html:
+        * inspector/canvas/recording-webgl2-frameCount.html:
+        * inspector/canvas/recording-webgl2-full.html:
+        * inspector/canvas/recording-webgl2-memoryLimit.html:
+        * inspector/canvas/recording-webgl2-snapshots.html:
+        * inspector/canvas/requestShaderSource-webgl.html: Added.
+        * inspector/canvas/requestShaderSource-webgl-expected.txt: Added.
+        * inspector/canvas/setShaderProgramDisabled.html:
+        * inspector/canvas/setShaderProgramHighlighted.html:
+        * inspector/canvas/shaderProgram-add-remove-webgl.html:
+        * inspector/canvas/shaderProgram-add-remove-webgl2.html:
+        * inspector/canvas/updateShader-webgl.html: Added.
+        * inspector/canvas/updateShader-webgl-expected.txt: Added.
+
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2019-09-19  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [SVG2]: Add auto behavior for rx and ry to the SVG <ellipse> and <rect> elements

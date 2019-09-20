@@ -31,6 +31,7 @@
 #import "GPUComputePipelineDescriptor.h"
 #import "GPUDevice.h"
 #import "GPUErrorScopes.h"
+#import "GPUPipelineLayout.h"
 #import "GPUPipelineMetalConvertLayout.h"
 #import "WHLSLPrepare.h"
 #import <Metal/Metal.h>
@@ -194,13 +195,33 @@ RefPtr<GPUComputePipeline> GPUComputePipeline::tryCreate(const GPUDevice& device
     if (!createResult)
         return nullptr;
 
-    return adoptRef(new GPUComputePipeline(WTFMove(createResult->pipelineState), createResult->computeDimensions));
+    ASSERT(descriptor.layout);
+    return adoptRef(new GPUComputePipeline(WTFMove(createResult->pipelineState), createResult->computeDimensions, *descriptor.layout));
 }
 
-GPUComputePipeline::GPUComputePipeline(RetainPtr<MTLComputePipelineState>&& pipeline, WHLSL::ComputeDimensions computeDimensions)
-    : m_platformComputePipeline(WTFMove(pipeline))
+GPUComputePipeline::GPUComputePipeline(RetainPtr<MTLComputePipelineState>&& pipeline, WHLSL::ComputeDimensions computeDimensions, GPUPipelineLayout& layout)
+    : GPUPipeline()
+    , m_platformComputePipeline(WTFMove(pipeline))
     , m_computeDimensions(computeDimensions)
+    , m_layout(makeRef(layout))
 {
+}
+
+GPUComputePipeline::~GPUComputePipeline() = default;
+
+bool GPUComputePipeline::recompile(const GPUDevice& device, GPUProgrammableStageDescriptor&& computeStage)
+{
+    if (m_layout) {
+        GPUComputePipelineDescriptor descriptor(makeRef(*m_layout), WTFMove(computeStage));
+        auto errorScopes = GPUErrorScopes::create([] (GPUError&&) { });
+        if (auto createResult = tryCreateMTLComputePipelineState(device, descriptor, errorScopes)) {
+            m_platformComputePipeline = WTFMove(createResult->pipelineState);
+            m_computeDimensions = createResult->computeDimensions;
+            return true;
+        }
+    }
+
+    return false;
 }
 
 } // namespace WebCore

@@ -20,10 +20,14 @@
             "description": "The type of rendering context backing the canvas element."
         },
         {
+            "id": "ProgramType",
+            "type": "string",
+            "enum": ["compute", "render"]
+        },
+        {
             "id": "ShaderType",
             "type": "string",
-            "enum": ["fragment", "vertex"],
-            "description": "Shader type. WebGL supports vertex and fragment shaders."
+            "enum": ["compute", "fragment", "vertex"]
         },
         {
             "id": "ContextAttributes",
@@ -136,7 +140,7 @@
                 { "name": "shaderType", "$ref": "ShaderType" }
             ],
             "returns": [
-                { "name": "content", "type": "string" }
+                { "name": "source", "type": "string" }
             ]
         },
         {
@@ -223,14 +227,15 @@
         {
             "name": "programCreated",
             "parameters": [
-                { "name": "canvasId", "$ref": "CanvasId", "description": "Canvas identifier." },
-                { "name": "programId", "$ref": "ProgramId", "description": "Program identifier." }
+                { "name": "canvasId", "$ref": "CanvasId"} ,
+                { "name": "programId", "$ref": "ProgramId" },
+                { "name": "programType", "$ref": "ProgramType" }
             ]
         },
         {
             "name": "programDeleted",
             "parameters": [
-                { "name": "programId", "$ref": "ProgramId", "description": "Program identifier." }
+                { "name": "programId", "$ref": "ProgramId" }
             ]
         }
     ]

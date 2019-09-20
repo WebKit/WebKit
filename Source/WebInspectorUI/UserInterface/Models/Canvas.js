@@ -45,7 +45,7 @@ WI.Canvas = class Canvas extends WI.Object
         this._shaderProgramCollection = new WI.ShaderProgramCollection;
         this._recordingCollection = new WI.RecordingCollection;
 
-        this._nextShaderProgramDisplayNumber = 1;
+        this._nextShaderProgramDisplayNumber = null;
 
         this._requestNodePromise = null;
 
@@ -409,11 +409,15 @@ WI.Canvas = class Canvas extends WI.Object
         this.dispatchEventToListeners(WI.Canvas.Event.RecordingStopped, {recording, initiatedByUser});
     }
 
-    nextShaderProgramDisplayNumber()
+    nextShaderProgramDisplayNumberForProgramType(programType)
     {
         // Called from WI.ShaderProgram.
 
-        return this._nextShaderProgramDisplayNumber++;
+        if (!this._nextShaderProgramDisplayNumber)
+            this._nextShaderProgramDisplayNumber = {};
+
+        this._nextShaderProgramDisplayNumber[programType] = (this._nextShaderProgramDisplayNumber[programType] || 0) + 1;
+        return this._nextShaderProgramDisplayNumber[programType];
     }
 };
 

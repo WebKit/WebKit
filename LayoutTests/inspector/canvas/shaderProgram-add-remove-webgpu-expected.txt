@@ -1,0 +1,28 @@
+CONSOLE MESSAGE: GPUDevice.createComputePipeline(): WHLSL compile error: Cannot lex: Cannot consume token
+CONSOLE MESSAGE: GPUDevice.createRenderPipeline(): WHLSL compile error: Cannot lex: Cannot consume token
+CONSOLE MESSAGE: GPUDevice.createComputePipeline(): WHLSL compile error: Cannot lex: Cannot consume token
+CONSOLE MESSAGE: GPUDevice.createRenderPipeline(): WHLSL compile error: Cannot lex: Cannot consume token
+Test that CanvasManager tracks creation and destruction of WebGPU shader programs.
+
+
+== Running test suite: Canvas.ShaderProgram.WebGPU
+-- Running test case: Canvas.ShaderProgram.WebGPU.Existing
+PASS: Added "compute" ShaderProgram.
+PASS: Added "render" ShaderProgram.
+PASS: There should be two ShaderProgram.
+
+-- Running test case: Canvas.ShaderProgram.WebGPU.Added.Compute.Valid
+PASS: Added "compute" ShaderProgram.
+
+-- Running test case: Canvas.ShaderProgram.WebGPU.Added.Compute.Invalid
+PASS: Should not create a ShaderProgram for an invalid descriptor.
+
+-- Running test case: Canvas.ShaderProgram.WebGPU.Added.Render.Valid
+PASS: Added "render" ShaderProgram.
+
+-- Running test case: Canvas.ShaderProgram.WebGPU.Added.Render.Invalid
+PASS: Should not create a ShaderProgram for an invalid descriptor.
+
+-- Running test case: Canvas.ShaderProgram.WebGPU.ParentDeviceRemoved
+PASS: Removed ShaderProgram before Canvas.
+

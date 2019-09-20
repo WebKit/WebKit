@@ -1,38 +1,8 @@
-CONSOLE MESSAGE: WebGL: ERROR: 0:1: 'INVALID' : syntax error
-CONSOLE MESSAGE: WebGL: ERROR: 0:1: 'INVALID' : syntax error
-Test compilation of shaders after being attached to a program, with and without syntax errors.
+Common tests for Canvas.updateShader command.
 
 
 == Running test suite: Canvas.updateShader
--- Running test case: Canvas.updateShader.vertexShaderValid
-
-    void main(void) {
-        gl_Position = vec4(1, 2, 3, 4);
-    }
-
-
--- Running test case: Canvas.updateShader.fragmentShaderValid
-
-    precision mediump float;
-
-    void main(void) {
-        gl_FragColor = vec4(0.1, 0.2, 0.3, 0.4);
-    }
-
-
--- Running test case: Canvas.updateShader.invalidProgramId
+-- Running test case: Canvas.updateShader.ProgramId.Invalid
 PASS: Should produce an error.
 Error: Missing program for given programId
-
--- Running test case: Canvas.updateShader.invalidShaderType
-PASS: Should produce an error.
-Error: Missing shader for given shaderType
-
--- Running test case: Canvas.updateShader.invalidVertexShaderSource
-PASS: Should produce error.
-Error: Failed to update shader
-
--- Running test case: Canvas.updateShader.invalidFragmentShaderSource
-PASS: Should produce error.
-Error: Failed to update shader
 
