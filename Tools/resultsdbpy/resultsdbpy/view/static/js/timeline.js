@@ -741,7 +741,7 @@ class TimelineFromEndpoint {
                     let timelinesBySDK = [];
                     childrenConfigsBySDK[config.toKey()].forEach(sdkConfig => {
                         timelinesBySDK.push(
-                            Timeline.SeriesWithHeaderComponent(`${sdkConfig.sdk}`,
+                            Timeline.SeriesWithHeaderComponent(`${Configuration.integerToVersion(sdkConfig.version)} (${sdkConfig.sdk})`,
                                 Timeline.CanvasSeriesComponent(resultsByKey[sdkConfig.toKey()], scale, {
                                     getScaleFunc: options.getScaleFunc,
                                     compareFunc: options.compareFunc,

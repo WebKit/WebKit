@@ -29,6 +29,7 @@ const REQUIRED_MEMBERS = ['architecture', 'version', 'is_simulator', 'platform']
 const OPTIONAL_MEMBERS = ['flavor', 'style', 'model', 'version_name'];
 const FILTERING_MEMBERS = ['sdk'];
 const VERSION_OFFSET_CONSTANT = 1000;
+const SDK_REGEX = /(\d+)([A-Z])(\d+)(.*)/;
 
 // This class is very similar to the Python Configuration class
 class Configuration {
@@ -105,15 +106,28 @@ class Configuration {
         this.flavor = json.flavor ? json.flavor : null;
         this.model = json.model ? json.model : null;
         this.architecture = json.architecture ? json.architecture : null;
+
+        // Mid-year releases really need to be treated with an entirely different version_name. The only way to reliably
+        // identify such a release is with the SDK (version numbers have historically ranged between .2 and .4)
+        // While appending E to all realese with an SDK after a mid-year release isn't entirely correct, it's close enough
+        // that the user can quickly dicern the differences by inspecting the specific SDK differences
+        if (this.sdk && this.version_name && !(json instanceof Configuration)) {
+            const match = this.sdk.match(SDK_REGEX);
+            const ending = this.version_name.substring(this.version_name.length - 2)
+            if (match && ending !== ' E' && match[2].localeCompare('E') >= 0)
+                this.version_name = `${this.version_name} E`;
+            else if (!match)
+                console.error(`'${this.sdk}' does not match the SDK regular expression`);
+        }
     }
     toKey() {
         let result = ''
         if (this.platform != null)
             result += ' ' + this.platform
-        if (this.version != null)
-            result += ' ' + Configuration.integerToVersion(this.version);
-        else if (this.version_name != null)
+        if (this.version_name != null)
             result += ' ' + this.version_name;
+        else if (this.version != null)
+            result += ' ' + Configuration.integerToVersion(this.version);
         if (this.sdk != null)
             result += ' (' + this.sdk + ')';
         if (this.is_simulator != null && this.is_simulator)
@@ -163,20 +177,28 @@ class Configuration {
         if (configuration === null)
             return 1;
 
-        const lst = ['platform', 'is_simulator', 'version', 'version_name', 'flavor', 'style', 'architecture', 'model'];
+        const lst = [['platform'], ['is_simulator'], ['version_name', 'version'], ['flavor'], ['style'], ['architecture'], ['model']];
         let result = 0;
-        lst.forEach(key => {
-            if (result != 0)
-                return;
+        lst.forEach(keyFamily => {
+            // Grouping keys into families allows keys to be ignored if another is defined.
+            // For example, if two configurations declare the same version name, despite having a different
+            // version number, they will be treated as identical
+            let wasKeyFamilyDefined = false;
 
-            if (this[key] !== null && configuration[key] !== null) {
-                if (typeof this[key] === 'string')
-                    result = this[key].localeCompare(configuration[key]);
-                else if (typeof this[key] === 'number' || typeof this[key] === 'boolean')
-                    result = this[key] - configuration[key];
-                else
-                    console.error(typeof this[key] + ' is not a recognized configuration type')
-            }
+            keyFamily.forEach(key => {
+                if (result || wasKeyFamilyDefined)
+                    return;
+
+                if (this[key] !== null && configuration[key] !== null) {
+                    if (typeof this[key] === 'string')
+                        result = this[key].localeCompare(configuration[key]);
+                    else if (typeof this[key] === 'number' || typeof this[key] === 'boolean')
+                        result = this[key] - configuration[key];
+                    else
+                        console.error(typeof this[key] + ' is not a recognized configuration type')
+                    wasKeyFamilyDefined = true;
+                }
+            });
         });
         return result;
     }
@@ -184,35 +206,38 @@ class Configuration {
         if (this.sdk === null || configuration.sdk === null)
             return 0;
 
-        const sdkRegex = /(\d+)([A-Z])(\d+)(.*)/;
-        const myMatch = this.sdk.match(sdkRegex);
-        const otherMatch = configuration.sdk.match(sdkRegex);
+        const thisMatch = this.sdk.match(SDK_REGEX);
+        const configurationMatch = configuration.sdk.match(SDK_REGEX);
 
-        if (!myMatch && !otherMatch) {
+        if (!thisMatch && !configurationMatch) {
             console.error(`'${this.sdk}' and '${configuration.sdk}' do not match the SDK regular expression`);
             return this.sdk.localeCompare(configuration.sdk);
         }
-        if (!myMatch && otherMatch)
+        if (!thisMatch && configurationMatch)
             return -1;
-        if (myMatch && !otherMatch)
+        if (thisMatch && !configurationMatch)
             return 1;
 
-        const majorDiff = parseInt(myMatch[1]) - parseInt(otherMatch[1]);
+        const majorDiff = parseInt(thisMatch[1]) - parseInt(configurationMatch[1]);
         if (majorDiff)
             return majorDiff;
-        const minorDiff = myMatch[2].localeCompare(otherMatch[2]);
+        const minorDiff = thisMatch[2].localeCompare(configurationMatch[2]);
         if (minorDiff)
             return minorDiff;
-        const buildDiff = parseInt(myMatch[3]) - parseInt(otherMatch[3]);
+        const buildDiff = parseInt(thisMatch[3]) - parseInt(configurationMatch[3]);
         if (buildDiff)
             return buildDiff;
-        return myMatch[4].localeCompare(otherMatch[4]);
+        return thisMatch[4].localeCompare(configurationMatch[4]);
     }
     toParams() {
+        let version_name = this.version_name;
+        const ending = this.version_name ? this.version_name.substring(this.version_name.length - 2) : null;
+        if (ending === ' E')
+            version_name = this.version_name.substring(0, this.version_name.length - 2)
         return {
             platform: [this.platform],
             version:[this.version ? Configuration.integerToVersion(this.version) : null],
-            version_name: [this.version_name],
+            version_name: [version_name],
             is_simulator: [this.is_simulator === null ? null : (this.is_simulator ? 'True' : 'False')],
             style: [this.style],
             flavor: [this.flavor],

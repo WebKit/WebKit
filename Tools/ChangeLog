@@ -1,3 +1,20 @@
+2019-09-19  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Collapse results with the same version name
+        https://bugs.webkit.org/show_bug.cgi?id=201779
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/static/js/configuration.js:
+        (Configuration.prototype.const.ending.this.version_name.substring):
+        (Configuration.prototype.toKey): Prefer version_name over version number in key.
+        (Configuration.prototype.compare): version_name comparison should always override version comparison.
+        (Configuration.prototype.compareSDKs): Make SDK regex global.
+        (Configuration.prototype.toParams): Remove E tag on version_name.
+        (Configuration): Append E tag on the version_name based on the SDK.
+        * resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (TimelineFromEndpoint.prototype.toString): Print version number with SDK.
+
 2019-09-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION: [iOS 13?] TestWebKitAPI.SharedBufferTest.tryCreateArrayBufferLargeSegments is failing
