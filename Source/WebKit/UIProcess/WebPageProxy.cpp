@@ -1160,7 +1160,7 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
 {
     ASSERT(!m_isClosed);
 
-    RELEASE_LOG_IF_ALLOWED(Loading, "loadRequestWithNavigation:");
+    RELEASE_LOG_IF_ALLOWED(Loading, "loadRequestWithNavigationShared:");
 
     auto transaction = m_pageLoadState.transaction();
 

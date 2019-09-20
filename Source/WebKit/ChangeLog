@@ -1,5 +1,12 @@
 2019-09-20  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, fix confusing release logging under WebPageProxy::loadRequestWithNavigationShared().
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadRequestWithNavigationShared):
+
+2019-09-20  Chris Dumez  <cdumez@apple.com>
+
         Regression(r248832): Unable to quicklook HTML files in Mail
         https://bugs.webkit.org/show_bug.cgi?id=202012
         <rdar://problem/55285295>
