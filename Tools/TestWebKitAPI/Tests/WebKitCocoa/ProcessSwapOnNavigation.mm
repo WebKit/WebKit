@@ -69,7 +69,7 @@ static bool didCreateWebView;
 static int numberOfDecidePolicyCalls;
 static bool didRepondToPolicyDecisionCall;
 
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+#if PLATFORM(IOS_FAMILY)
 static bool requestedQuickLookPassword;
 static bool didStartQuickLookLoad;
 static bool didFinishQuickLookLoad;
@@ -179,7 +179,7 @@ static RetainPtr<NSURL> clientRedirectDestinationURL;
     didPerformClientRedirect = true;
 }
 
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+#if PLATFORM(IOS_FAMILY)
 
 - (void)_webViewDidRequestPasswordForQuickLookDocument:(WKWebView *)webView
 {
