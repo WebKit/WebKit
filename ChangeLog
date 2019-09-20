@@ -1,3 +1,9 @@
+2019-09-20  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Bump WPE version numbers.
+
+        * Source/cmake/OptionsWPE.cmake:
+
 2019-09-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][curl] Define NOCRYPT to suppress libressl "Warning, overriding WinCrypt defines"
