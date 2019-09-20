@@ -70,11 +70,11 @@ const Deprecated::ScriptObject& InjectedScriptBase::injectedScriptObject() const
     return m_injectedScriptObject;
 }
 
-JSC::JSValue InjectedScriptBase::callFunctionWithEvalEnabled(Deprecated::ScriptFunctionCall& function, bool& hadException) const
+Expected<JSC::JSValue, NakedPtr<JSC::Exception>> InjectedScriptBase::callFunctionWithEvalEnabled(Deprecated::ScriptFunctionCall& function) const
 {
     JSC::ExecState* scriptState = m_injectedScriptObject.scriptState();
     JSC::DebuggerEvalEnabler evalEnabler(scriptState);
-    return function.call(hadException);
+    return function.call();
 }
 
 Ref<JSON::Value> InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& function)
@@ -82,14 +82,11 @@ Ref<JSON::Value> InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& fu
     if (hasNoValue() || !hasAccessToInspectedScriptState())
         return JSON::Value::null();
 
-    bool hadException = false;
-    auto resultJSValue = callFunctionWithEvalEnabled(function, hadException);
-
-    ASSERT(!hadException);
-    if (hadException)
+    auto result = callFunctionWithEvalEnabled(function);
+    if (!result)
         return JSON::Value::create("Exception while making a call.");
 
-    RefPtr<JSON::Value> resultJSONValue = toInspectorValue(*m_injectedScriptObject.scriptState(), resultJSValue);
+    RefPtr<JSON::Value> resultJSONValue = toInspectorValue(*m_injectedScriptObject.scriptState(), result.value());
     if (!resultJSONValue)
         return JSON::Value::create(makeString("Object has too long reference chain (must not be longer than ", JSON::Value::maxDepth, ')'));
 
@@ -129,12 +126,11 @@ void InjectedScriptBase::makeAsyncCall(Deprecated::ScriptFunctionCall& function,
 
     function.appendArgument(JSC::JSValue(jsFunction));
 
-    bool hadException = false;
-    auto resultJSValue = callFunctionWithEvalEnabled(function, hadException);
-    ASSERT_UNUSED(resultJSValue, resultJSValue.isUndefined());
+    auto result = callFunctionWithEvalEnabled(function);
+    ASSERT_UNUSED(result, result.value().isUndefined());
 
-    ASSERT(!hadException);
-    if (hadException) {
+    ASSERT(result);
+    if (!result) {
         // Since `callback` is moved above, we can't call it if there's an exception while trying to
         // execute the `JSNativeStdFunction` inside InjectedScriptSource.js.
         jsFunction->nativeStdFunctionCell()->function()(nullptr);

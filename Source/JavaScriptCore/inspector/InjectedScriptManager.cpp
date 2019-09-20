@@ -143,7 +143,7 @@ String InjectedScriptManager::injectedScriptSource()
     return StringImpl::createWithoutCopying(InjectedScriptSource_js, sizeof(InjectedScriptSource_js));
 }
 
-JSC::JSObject* InjectedScriptManager::createInjectedScript(const String& source, ExecState* scriptState, int id)
+Expected<JSObject*, NakedPtr<Exception>> InjectedScriptManager::createInjectedScript(const String& source, ExecState* scriptState, int id)
 {
     VM& vm = scriptState->vm();
     JSLockHolder lock(vm);
@@ -157,7 +157,7 @@ JSC::JSObject* InjectedScriptManager::createInjectedScript(const String& source,
     InspectorEvaluateHandler evaluateHandler = m_environment.evaluateHandler();
     JSValue functionValue = evaluateHandler(scriptState, sourceCode, globalThisValue, evaluationException);
     if (evaluationException)
-        return nullptr;
+        return makeUnexpected(evaluationException);
 
     CallData callData;
     CallType callType = getCallData(vm, functionValue, callData);
@@ -188,14 +188,27 @@ InjectedScript InjectedScriptManager::injectedScriptFor(ExecState* inspectedExec
         return InjectedScript();
 
     int id = injectedScriptIdFor(inspectedExecState);
-    auto injectedScriptObject = createInjectedScript(injectedScriptSource(), inspectedExecState, id);
-    if (!injectedScriptObject) {
-        WTFLogAlways("Failed to parse/execute InjectedScriptSource.js!");
-        WTFLogAlways("%s\n", injectedScriptSource().ascii().data());
+    auto createResult = createInjectedScript(injectedScriptSource(), inspectedExecState, id);
+    if (!createResult) {
+        auto& error = createResult.error();
+        ASSERT(error);
+
+        unsigned line = 0;
+        unsigned column = 0;
+        auto& stack = error->stack();
+        if (stack.size() > 0)
+            stack[0].computeLineAndColumn(line, column);
+        WTFLogAlways("Error when creating injected script: %s (%d:%d)\n", error->value().toWTFString(inspectedExecState).utf8().data(), line, column);
+        WTFLogAlways("%s\n", injectedScriptSource().utf8().data());
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    if (!createResult.value()) {
+        WTFLogAlways("Missing injected script object");
+        WTFLogAlways("%s\n", injectedScriptSource().utf8().data());
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    InjectedScript result({ inspectedExecState, injectedScriptObject }, &m_environment);
+    InjectedScript result({ inspectedExecState, createResult.value() }, &m_environment);
     m_idToInjectedScript.set(id, result);
     didCreateInjectedScript(result);
     return result;

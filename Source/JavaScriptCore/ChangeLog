@@ -1,3 +1,41 @@
+2019-09-20  Devin Rousso  <drousso@apple.com>
+
+        ASSERT NOT REACHED in Inspector::InjectedScriptModule::ensureInjected() seen with inspector/heap/getRemoteObject.html
+        https://bugs.webkit.org/show_bug.cgi?id=201713
+        <rdar://problem/55290349>
+
+        Reviewed by Joseph Pecoraro.
+
+        Expose the `Exception` object by leveraging an `Expected` of `JSValue` as the return value
+        instead of using a referenced `bool` (which wouldn't include any of the exception's info).
+
+        * bindings/ScriptFunctionCall.h:
+        * bindings/ScriptFunctionCall.cpp:
+        (Deprecated::ScriptFunctionCall::call):
+
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::wrapCallFrames const):
+        (Inspector::InjectedScript::wrapObject const):
+        (Inspector::InjectedScript::wrapJSONString const):
+        (Inspector::InjectedScript::wrapTable const):
+        (Inspector::InjectedScript::previewValue const):
+        (Inspector::InjectedScript::findObjectById const):
+        (Inspector::InjectedScript::releaseObjectGroup):
+
+        * inspector/InjectedScriptBase.h:
+        * inspector/InjectedScriptBase.cpp:
+        (Inspector::InjectedScriptBase::callFunctionWithEvalEnabled const):
+        (Inspector::InjectedScriptBase::makeCall):
+        (Inspector::InjectedScriptBase::makeAsyncCall):
+
+        * inspector/InjectedScriptManager.h:
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::createInjectedScript):
+        (Inspector::InjectedScriptManager::injectedScriptFor):
+
+        * inspector/InjectedScriptModule.cpp:
+        (Inspector::InjectedScriptModule::ensureInjected):
+
 2019-09-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DFG op_call_varargs should not assume that one-previous-local of freeReg is usable

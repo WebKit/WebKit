@@ -31,11 +31,14 @@
 
 #pragma once
 
+#include "Exception.h"
 #include "InspectorEnvironment.h"
 #include "InspectorProtocolObjects.h"
 #include "ScriptObject.h"
+#include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
+#include <wtf/NakedPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace Deprecated {
@@ -64,7 +67,7 @@ protected:
     bool hasAccessToInspectedScriptState() const;
 
     const Deprecated::ScriptObject& injectedScriptObject() const;
-    JSC::JSValue callFunctionWithEvalEnabled(Deprecated::ScriptFunctionCall&, bool& hadException) const;
+    Expected<JSC::JSValue, NakedPtr<JSC::Exception>> callFunctionWithEvalEnabled(Deprecated::ScriptFunctionCall&) const;
     Ref<JSON::Value> makeCall(Deprecated::ScriptFunctionCall&);
     void makeEvalCall(ErrorString&, Deprecated::ScriptFunctionCall&, RefPtr<Protocol::Runtime::RemoteObject>& resultObject, Optional<bool>& wasThrown, Optional<int>& savedResultIndex);
     void makeAsyncCall(Deprecated::ScriptFunctionCall&, AsyncCallCallback&&);

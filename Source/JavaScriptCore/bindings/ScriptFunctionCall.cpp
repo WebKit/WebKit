@@ -102,7 +102,7 @@ ScriptFunctionCall::ScriptFunctionCall(const Deprecated::ScriptObject& thisObjec
 {
 }
 
-JSValue ScriptFunctionCall::call(bool& hadException)
+Expected<JSValue, NakedPtr<Exception>> ScriptFunctionCall::call()
 {
     JSObject* thisObject = m_thisObject.jsObject();
 
@@ -111,10 +111,8 @@ JSValue ScriptFunctionCall::call(bool& hadException)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue function = thisObject->get(m_exec, Identifier::fromString(vm, m_name));
-    if (UNLIKELY(scope.exception())) {
-        hadException = true;
-        return { };
-    }
+    if (UNLIKELY(scope.exception()))
+        return makeUnexpected(scope.exception());
 
     CallData callData;
     CallType callType = getCallData(vm, function, callData);
@@ -130,17 +128,12 @@ JSValue ScriptFunctionCall::call(bool& hadException)
 
     if (exception) {
         // Do not treat a terminated execution exception as having an exception. Just treat it as an empty result.
-        hadException = !isTerminatedExecutionException(vm, exception);
+        if (!isTerminatedExecutionException(vm, exception))
+            return makeUnexpected(exception);
         return { };
     }
 
     return result;
-}
-
-JSC::JSValue ScriptFunctionCall::call()
-{
-    bool hadException;
-    return call(hadException);
 }
 
 } // namespace Deprecated
