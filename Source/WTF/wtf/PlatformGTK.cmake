@@ -12,6 +12,7 @@ list(APPEND WTF_PUBLIC_HEADERS
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
     list(APPEND WTF_PUBLIC_HEADERS
+        linux/ProcessMemoryFootprint.h
         linux/CurrentProcessMemoryStatus.h
     )
 endif ()

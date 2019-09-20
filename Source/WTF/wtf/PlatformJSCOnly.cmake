@@ -85,6 +85,7 @@ elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
         linux/MemoryPressureHandlerLinux.cpp
     )
     list(APPEND WTF_PUBLIC_HEADERS
+        linux/ProcessMemoryFootprint.h
         linux/CurrentProcessMemoryStatus.h
     )
 else ()

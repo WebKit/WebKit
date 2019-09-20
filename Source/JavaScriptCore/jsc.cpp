@@ -140,6 +140,11 @@
 
 #if OS(DARWIN)
 #include <wtf/spi/darwin/ProcessMemoryFootprint.h>
+#elif OS(LINUX)
+#include <wtf/linux/ProcessMemoryFootprint.h>
+#endif
+
+#if OS(DARWIN) || OS(LINUX)
 struct MemoryFootprint : ProcessMemoryFootprint {
     MemoryFootprint(const ProcessMemoryFootprint& src)
         : ProcessMemoryFootprint(src)

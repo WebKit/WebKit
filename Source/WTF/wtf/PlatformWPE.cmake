@@ -7,6 +7,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     glib/RunLoopSourcePriority.h
     glib/WTFGType.h
 
+    linux/ProcessMemoryFootprint.h
     linux/CurrentProcessMemoryStatus.h
 )
 

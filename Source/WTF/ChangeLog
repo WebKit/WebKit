@@ -1,3 +1,17 @@
+2019-09-20  Paulo Matos  <pmatos@igalia.com>
+
+        Implement memory monitoring functions for Linux OS
+        https://bugs.webkit.org/show_bug.cgi?id=200391
+
+        Reviewed by Žan Doberšek.
+
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformJSCOnly.cmake:
+        * wtf/PlatformWPE.cmake:
+        * wtf/linux/ProcessMemoryFootprint.h: Added.
+        (ProcessMemoryFootprint::now):
+        (ProcessMemoryFootprint::resetPeak):
+
 2019-09-20  Libor Bukata  <libor.bukata@oracle.com>
 
         UI process crash when using callOnMainThread() after the main thread dispatcher has been destroyed
