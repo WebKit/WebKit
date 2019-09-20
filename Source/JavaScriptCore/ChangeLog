@@ -1,5 +1,21 @@
 2019-09-19  Mark Lam  <mark.lam@apple.com>
 
+        Rename VMInspector::m_list to m_vmList.
+        https://bugs.webkit.org/show_bug.cgi?id=202015
+
+        Reviewed by Yusuke Suzuki.
+
+        m_vmList is more descriptive, and this rename helps grep-ability by disambiguating
+        it from other m_lists in the code base.
+
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::add):
+        (JSC::VMInspector::remove):
+        * tools/VMInspector.h:
+        (JSC::VMInspector::iterate):
+
+2019-09-19  Mark Lam  <mark.lam@apple.com>
+
         Reduce the number of required tag bits for the JSValue.
         https://bugs.webkit.org/show_bug.cgi?id=201990
 

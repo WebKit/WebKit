@@ -83,7 +83,7 @@ public:
 private:
     template <typename Functor> void iterate(const Functor& functor)
     {
-        for (VM* vm = m_list.head(); vm; vm = vm->next()) {
+        for (VM* vm = m_vmList.head(); vm; vm = vm->next()) {
             FunctorStatus status = functor(*vm);
             if (status == FunctorStatus::Done)
                 return;
@@ -91,7 +91,7 @@ private:
     }
 
     Lock m_lock;
-    DoublyLinkedList<VM> m_list;
+    DoublyLinkedList<VM> m_vmList;
 };
 
 } // namespace JSC

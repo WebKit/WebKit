@@ -56,13 +56,13 @@ VMInspector& VMInspector::instance()
 void VMInspector::add(VM* vm)
 {
     auto locker = holdLock(m_lock);
-    m_list.append(vm);
+    m_vmList.append(vm);
 }
 
 void VMInspector::remove(VM* vm)
 {
     auto locker = holdLock(m_lock);
-    m_list.remove(vm);
+    m_vmList.remove(vm);
 }
 
 auto VMInspector::lock(Seconds timeout) -> Expected<Locker, Error>
