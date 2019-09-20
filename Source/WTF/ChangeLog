@@ -1,3 +1,13 @@
+2019-09-20  Libor Bukata  <libor.bukata@oracle.com>
+
+        UI process crash when using callOnMainThread() after the main thread dispatcher has been destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=197266
+
+        Reviewed by Carlos Garcia Campos.
+
+        * wtf/generic/MainThreadGeneric.cpp:
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+
 2019-09-17  Mark Lam  <mark.lam@apple.com>
 
         Use constexpr instead of const in symbol definitions that are obviously constexpr.
