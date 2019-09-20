@@ -29,7 +29,7 @@ namespace WebCore {
 class HTMLDocument : public Document {
     WTF_MAKE_ISO_ALLOCATED(HTMLDocument);
 public:
-    static Ref<HTMLDocument> create(PAL::SessionID, Frame*, const URL&);
+    static Ref<HTMLDocument> create(Frame*, const URL&);
     static Ref<HTMLDocument> createSynthesizedDocument(Frame&, const URL&);
     virtual ~HTMLDocument();
 
@@ -54,7 +54,7 @@ public:
     static bool isCaseSensitiveAttribute(const QualifiedName&);
 
 protected:
-    HTMLDocument(PAL::SessionID, Frame*, const URL&, DocumentClassFlags = 0, unsigned constructionFlags = 0);
+    HTMLDocument(Frame*, const URL&, DocumentClassFlags = 0, unsigned constructionFlags = 0);
 
 private:
     bool isFrameSet() const final;
@@ -65,9 +65,9 @@ private:
     TreeScopeOrderedMap m_windowNamedItem;
 };
 
-inline Ref<HTMLDocument> HTMLDocument::create(PAL::SessionID sessionID, Frame* frame, const URL& url)
+inline Ref<HTMLDocument> HTMLDocument::create(Frame* frame, const URL& url)
 {
-    return adoptRef(*new HTMLDocument(sessionID, frame, url, HTMLDocumentClass));
+    return adoptRef(*new HTMLDocument(frame, url, HTMLDocumentClass));
 }
 
 } // namespace WebCore

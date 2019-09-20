@@ -30,8 +30,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGDocument);
 
-SVGDocument::SVGDocument(PAL::SessionID sessionID, Frame* frame, const URL& url)
-    : XMLDocument(sessionID, frame, url, SVGDocumentClass)
+SVGDocument::SVGDocument(Frame* frame, const URL& url)
+    : XMLDocument(frame, url, SVGDocumentClass)
 {
 }
 
@@ -69,7 +69,7 @@ void SVGDocument::updatePan(const FloatPoint& position) const
 
 Ref<Document> SVGDocument::cloneDocumentWithoutChildren() const
 {
-    return create(sessionID(), nullptr, url());
+    return create(nullptr, url());
 }
 
 }

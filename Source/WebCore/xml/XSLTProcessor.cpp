@@ -72,10 +72,10 @@ Ref<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString
 
     RefPtr<Document> result;
     if (sourceMIMEType == "text/plain") {
-        result = XMLDocument::createXHTML(ownerDocument->sessionID(), frame, sourceIsDocument ? ownerDocument->url() : URL());
+        result = XMLDocument::createXHTML(frame, sourceIsDocument ? ownerDocument->url() : URL());
         transformTextStringToXHTMLDocumentString(documentSource);
     } else
-        result = DOMImplementation::createDocument(ownerDocument->sessionID(), sourceMIMEType, frame, sourceIsDocument ? ownerDocument->url() : URL());
+        result = DOMImplementation::createDocument(sourceMIMEType, frame, sourceIsDocument ? ownerDocument->url() : URL());
 
     // Before parsing, we need to save & detach the old document and get the new document
     // in place. We have to do this only if we're rendering the result document.

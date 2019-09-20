@@ -76,11 +76,11 @@ void DOMPatchSupport::patchDocument(const String& markup)
 {
     RefPtr<Document> newDocument;
     if (m_document.isHTMLDocument())
-        newDocument = HTMLDocument::create(m_document.sessionID(), nullptr, URL());
+        newDocument = HTMLDocument::create(nullptr, URL());
     else if (m_document.isXHTMLDocument())
-        newDocument = XMLDocument::createXHTML(m_document.sessionID(), nullptr, URL());
+        newDocument = XMLDocument::createXHTML(nullptr, URL());
     else if (m_document.isSVGDocument())
-        newDocument = XMLDocument::create(m_document.sessionID(), nullptr, URL());
+        newDocument = XMLDocument::create(nullptr, URL());
 
     ASSERT(newDocument);
     RefPtr<DocumentParser> parser;

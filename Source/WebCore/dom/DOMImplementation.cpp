@@ -77,18 +77,18 @@ ExceptionOr<Ref<DocumentType>> DOMImplementation::createDocumentType(const Strin
     return DocumentType::create(m_document, qualifiedName, publicId, systemId);
 }
 
-static inline Ref<XMLDocument> createXMLDocument(PAL::SessionID sessionID, const String& namespaceURI)
+static inline Ref<XMLDocument> createXMLDocument(const String& namespaceURI)
 {
     if (namespaceURI == SVGNames::svgNamespaceURI)
-        return SVGDocument::create(sessionID, nullptr, URL());
+        return SVGDocument::create(nullptr, URL());
     if (namespaceURI == HTMLNames::xhtmlNamespaceURI)
-        return XMLDocument::createXHTML(sessionID, nullptr, URL());
-    return XMLDocument::create(sessionID, nullptr, URL());
+        return XMLDocument::createXHTML(nullptr, URL());
+    return XMLDocument::create(nullptr, URL());
 }
 
 ExceptionOr<Ref<XMLDocument>> DOMImplementation::createDocument(const String& namespaceURI, const String& qualifiedName, DocumentType* documentType)
 {
-    auto document = createXMLDocument(m_document.sessionID(), namespaceURI);
+    auto document = createXMLDocument(namespaceURI);
     document->setContextDocument(m_document.contextDocument());
     document->setSecurityOriginPolicy(m_document.securityOriginPolicy());
 
@@ -120,7 +120,7 @@ Ref<CSSStyleSheet> DOMImplementation::createCSSStyleSheet(const String&, const S
 
 Ref<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
 {
-    auto document = HTMLDocument::create(m_document.sessionID(), nullptr, URL());
+    auto document = HTMLDocument::create(nullptr, URL());
     document->open();
     document->write(nullptr, { "<!doctype html><html><head></head><body></body></html>"_s });
     if (!title.isNull()) {
@@ -134,7 +134,7 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
     return document;
 }
 
-Ref<Document> DOMImplementation::createDocument(PAL::SessionID sessionID, const String& type, Frame* frame, const URL& url)
+Ref<Document> DOMImplementation::createDocument(const String& type, Frame* frame, const URL& url)
 {
     // FIXME: Inelegant to have this here just because this is the home of DOM APIs for creating documents.
     // This is internal, not a DOM API. Maybe we should put it in a new class called DocumentFactory,
@@ -142,11 +142,11 @@ Ref<Document> DOMImplementation::createDocument(PAL::SessionID sessionID, const 
 
     // Plug-ins cannot take over for HTML, XHTML, plain text, or non-PDF images.
     if (equalLettersIgnoringASCIICase(type, "text/html"))
-        return HTMLDocument::create(sessionID, frame, url);
+        return HTMLDocument::create(frame, url);
     if (equalLettersIgnoringASCIICase(type, "application/xhtml+xml"))
-        return XMLDocument::createXHTML(sessionID, frame, url);
+        return XMLDocument::createXHTML(frame, url);
     if (equalLettersIgnoringASCIICase(type, "text/plain"))
-        return TextDocument::create(sessionID, frame, url);
+        return TextDocument::create(frame, url);
     bool isImage = MIMETypeRegistry::isSupportedImageMIMEType(type);
     if (frame && isImage && !MIMETypeRegistry::isPDFOrPostScriptMIMEType(type))
         return ImageDocument::create(*frame, url);
@@ -160,12 +160,12 @@ Ref<Document> DOMImplementation::createDocument(PAL::SessionID sessionID, const 
     parameters.type = ContentType { type };
     parameters.url = url;
     if (MediaPlayer::supportsType(parameters))
-        return MediaDocument::create(sessionID, frame, url);
+        return MediaDocument::create(frame, url);
 #endif
 
 #if ENABLE(FTPDIR)
     if (equalLettersIgnoringASCIICase(type, "application/x-ftp-directory"))
-        return FTPDirectoryDocument::create(sessionID, frame, url);
+        return FTPDirectoryDocument::create(frame, url);
 #endif
 
     if (frame && frame->loader().client().shouldAlwaysUsePluginDocument(type))
@@ -184,12 +184,12 @@ Ref<Document> DOMImplementation::createDocument(PAL::SessionID sessionID, const 
     if (frame && isImage)
         return ImageDocument::create(*frame, url);
     if (MIMETypeRegistry::isTextMIMEType(type))
-        return TextDocument::create(sessionID, frame, url);
+        return TextDocument::create(frame, url);
     if (equalLettersIgnoringASCIICase(type, "image/svg+xml"))
-        return SVGDocument::create(sessionID, frame, url);
+        return SVGDocument::create(frame, url);
     if (MIMETypeRegistry::isXMLMIMEType(type))
-        return XMLDocument::create(sessionID, frame, url);
-    return HTMLDocument::create(sessionID, frame, url);
+        return XMLDocument::create(frame, url);
+    return HTMLDocument::create(frame, url);
 }
 
 }

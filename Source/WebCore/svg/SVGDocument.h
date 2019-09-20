@@ -30,7 +30,7 @@ class SVGSVGElement;
 class SVGDocument final : public XMLDocument {
     WTF_MAKE_ISO_ALLOCATED(SVGDocument);
 public:
-    static Ref<SVGDocument> create(PAL::SessionID, Frame*, const URL&);
+    static Ref<SVGDocument> create(Frame*, const URL&);
 
     static RefPtr<SVGSVGElement> rootElement(const Document&);
 
@@ -39,16 +39,16 @@ public:
     void updatePan(const FloatPoint& position) const;
 
 private:
-    SVGDocument(PAL::SessionID, Frame*, const URL&);
+    SVGDocument(Frame*, const URL&);
 
     Ref<Document> cloneDocumentWithoutChildren() const override;
 
     FloatSize m_panningOffset;
 };
 
-inline Ref<SVGDocument> SVGDocument::create(PAL::SessionID sessionID, Frame* frame, const URL& url)
+inline Ref<SVGDocument> SVGDocument::create(Frame* frame, const URL& url)
 {
-    return adoptRef(*new SVGDocument(sessionID, frame, url));
+    return adoptRef(*new SVGDocument(frame, url));
 }
 
 } // namespace WebCore

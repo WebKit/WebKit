@@ -2750,8 +2750,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if ([attributeName isEqualToString:NSAccessibilityCaretBrowsingEnabledAttribute])
             return [NSNumber numberWithBool:m_object->caretBrowsingEnabled()];
         if ([attributeName isEqualToString:NSAccessibilityWebSessionIDAttribute]) {
-            if (Document* doc = m_object->topDocument())
-                return [NSNumber numberWithUnsignedLongLong:doc->sessionID().toUInt64()];
+            if (auto* document = m_object->topDocument()) {
+                if (auto* page = document->page())
+                    return [NSNumber numberWithUnsignedLongLong:page->sessionID().toUInt64()];
+            }
         }
     }
     

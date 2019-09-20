@@ -2967,7 +2967,7 @@ void Page::configureLoggingChannel(const String& channelName, WTFLogChannelState
 
 #if USE(LIBWEBRTC)
         if (channel == &LogWebRTC && m_mainFrame->document())
-            libWebRTCProvider().setEnableLogging(!m_mainFrame->document()->sessionID().isEphemeral());
+            libWebRTCProvider().setEnableLogging(!sessionID().isEphemeral());
 #endif
     }
 

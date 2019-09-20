@@ -120,14 +120,12 @@ private:
     bool unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) final { RELEASE_ASSERT_NOT_REACHED(); return false; }
 #endif
     URL completeURL(const String&) const final;
-    PAL::SessionID sessionID() const { return m_sessionID; }
     String userAgent(const URL&) const final;
     void disableEval(const String&) final;
     void disableWebAssembly(const String&) final;
 
     WeakPtr<Document> m_document;
 
-    PAL::SessionID m_sessionID;
     std::unique_ptr<WorkletScriptController> m_script;
 
     Ref<SecurityOrigin> m_topOrigin;

@@ -48,7 +48,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WorkletGlobalScope);
 
 WorkletGlobalScope::WorkletGlobalScope(Document& document, ScriptSourceCode&& code)
     : m_document(makeWeakPtr(document))
-    , m_sessionID(m_document->sessionID())
     , m_script(makeUnique<WorkletScriptController>(this))
     , m_topOrigin(SecurityOrigin::createUnique())
     , m_eventQueue(*this)

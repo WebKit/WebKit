@@ -144,8 +144,8 @@ void MediaDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)
     finish();
 }
     
-MediaDocument::MediaDocument(PAL::SessionID sessionID, Frame* frame, const URL& url)
-    : HTMLDocument(sessionID, frame, url, MediaDocumentClass)
+MediaDocument::MediaDocument(Frame* frame, const URL& url)
+    : HTMLDocument(frame, url, MediaDocumentClass)
     , m_replaceMediaElementTimer(*this, &MediaDocument::replaceMediaElementTimerFired)
 {
     setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);

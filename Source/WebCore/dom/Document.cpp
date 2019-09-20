@@ -511,7 +511,7 @@ static inline int currentOrientation(Frame* frame)
     return 0;
 }
 
-Document::Document(PAL::SessionID sessionID, Frame* frame, const URL& url, unsigned documentClasses, unsigned constructionFlags)
+Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsigned constructionFlags)
     : ContainerNode(*this, CreateDocument)
     , TreeScope(*this)
     , FrameDestructionObserver(frame)
@@ -561,12 +561,9 @@ Document::Document(PAL::SessionID sessionID, Frame* frame, const URL& url, unsig
     , m_isSynthesized(constructionFlags & Synthesized)
     , m_isNonRenderedPlaceholder(constructionFlags & NonRenderedPlaceholder)
     , m_orientationNotifier(currentOrientation(frame))
-    , m_sessionID(sessionID)
     , m_identifier(DocumentIdentifier::generate())
     , m_undoManager(UndoManager::create(*this))
 {
-    ASSERT(!frame || frame->sessionID() == m_sessionID);
-
     auto addResult = allDocumentsMap().add(m_identifier, this);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
@@ -597,7 +594,7 @@ Document::Document(PAL::SessionID sessionID, Frame* frame, const URL& url, unsig
 
 Ref<Document> Document::create(Document& contextDocument)
 {
-    auto document = adoptRef(*new Document(contextDocument.sessionID(), nullptr, URL()));
+    auto document = adoptRef(*new Document(nullptr, URL()));
     document->setContextDocument(contextDocument);
     document->setSecurityOriginPolicy(contextDocument.securityOriginPolicy());
     return document;
@@ -605,7 +602,7 @@ Ref<Document> Document::create(Document& contextDocument)
 
 Ref<Document> Document::createNonRenderedPlaceholder(Frame& frame, const URL& url)
 {
-    return adoptRef(*new Document(frame.sessionID(), &frame, url, DefaultDocumentClass, NonRenderedPlaceholder));
+    return adoptRef(*new Document(&frame, url, DefaultDocumentClass, NonRenderedPlaceholder));
 }
 
 Document::~Document()
@@ -3881,10 +3878,10 @@ Ref<Document> Document::cloneDocumentWithoutChildren() const
 {
     if (isXMLDocument()) {
         if (isXHTMLDocument())
-            return XMLDocument::createXHTML(sessionID(), nullptr, url());
-        return XMLDocument::create(sessionID(), nullptr, url());
+            return XMLDocument::createXHTML(nullptr, url());
+        return XMLDocument::create(nullptr, url());
     }
-    return create(sessionID(), url());
+    return create(url());
 }
 
 void Document::cloneDataFromDocument(const Document& other)
@@ -5068,9 +5065,10 @@ URL Document::completeURL(const String& url) const
     return completeURL(url, m_baseURL);
 }
 
-PAL::SessionID Document::sessionID() const
+Optional<PAL::SessionID> Document::sessionID() const
 {
-    return m_sessionID;
+    auto* page = this->page();
+    return page ? makeOptional(page->sessionID()) : WTF::nullopt;
 }
 
 void Document::setPageCacheState(PageCacheState state)
@@ -5270,7 +5268,6 @@ void Document::storageBlockingStateDidChange()
 
 void Document::privateBrowsingStateDidChange(PAL::SessionID sessionID)
 {
-    m_sessionID = sessionID;
     if (m_logger)
         m_logger->setEnabled(this, sessionID.isAlwaysOnLoggingAllowed());
 
@@ -6893,9 +6890,9 @@ Document& Document::ensureTemplateDocument()
         return const_cast<Document&>(*document);
 
     if (isHTMLDocument())
-        m_templateDocument = HTMLDocument::create(sessionID(), nullptr, WTF::blankURL());
+        m_templateDocument = HTMLDocument::create(nullptr, WTF::blankURL());
     else
-        m_templateDocument = create(sessionID(), WTF::blankURL());
+        m_templateDocument = create(WTF::blankURL());
 
     m_templateDocument->setContextDocument(contextDocument());
     m_templateDocument->setTemplateDocumentHost(this); // balanced in dtor.
@@ -7792,7 +7789,7 @@ Logger& Document::logger()
 {
     if (!m_logger) {
         m_logger = Logger::create(this);
-        m_logger->setEnabled(this, sessionID().isAlwaysOnLoggingAllowed());
+        m_logger->setEnabled(this, sessionID() && sessionID()->isAlwaysOnLoggingAllowed());
         m_logger->addObserver(*this);
     }
 
@@ -8041,17 +8038,18 @@ void Document::didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, Ve
         });
         return;
     }
-    if (!page())
+    auto* page = this->page();
+    if (!page)
         return;
 
-    ASSERT(sessionID().isAlwaysOnLoggingAllowed());
+    ASSERT(page->sessionID().isAlwaysOnLoggingAllowed());
 
     auto messageSource = messageSourceForWTFLogChannel(channel);
     if (messageSource == MessageSource::Other)
         return;
 
     m_logMessageTaskQueue.enqueueTask([this, level, messageSource, logMessages = WTFMove(logMessages)]() mutable {
-        if (!page())
+        if (!this->page())
             return;
 
         auto messageLevel = messageLevelFromWTFLogLevel(level);

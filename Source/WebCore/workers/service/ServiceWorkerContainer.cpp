@@ -621,8 +621,10 @@ bool ServiceWorkerContainer::isAlwaysOnLoggingAllowed() const
     if (!context)
         return false;
 
-    if (is<Document>(*context))
-        return downcast<Document>(*context).sessionID().isAlwaysOnLoggingAllowed();
+    if (is<Document>(*context)) {
+        auto sessionID = downcast<Document>(*context).sessionID();
+        return sessionID && sessionID->isAlwaysOnLoggingAllowed();
+    }
 
     // FIXME: No logging inside service workers for now.
     return false;

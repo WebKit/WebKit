@@ -198,7 +198,7 @@ void ImageDocumentParser::finish()
 }
 
 ImageDocument::ImageDocument(Frame& frame, const URL& url)
-    : HTMLDocument(frame.sessionID(), &frame, url, ImageDocumentClass)
+    : HTMLDocument(&frame, url, ImageDocumentClass)
     , m_imageElement(nullptr)
     , m_imageSizeIsKnown(false)
 #if !PLATFORM(IOS_FAMILY)

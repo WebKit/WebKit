@@ -54,7 +54,7 @@ private:
 };
 
 SinkDocument::SinkDocument(Frame& frame, const URL& url)
-    : HTMLDocument(frame.sessionID(), &frame, url)
+    : HTMLDocument(&frame, url)
 {
     setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
     lockCompatibilityMode();

@@ -31,13 +31,13 @@ namespace WebCore {
 class TextDocument final : public HTMLDocument {
     WTF_MAKE_ISO_ALLOCATED(TextDocument);
 public:
-    static Ref<TextDocument> create(PAL::SessionID sessionID, Frame* frame, const URL& url)
+    static Ref<TextDocument> create(Frame* frame, const URL& url)
     {
-        return adoptRef(*new TextDocument(sessionID, frame, url));
+        return adoptRef(*new TextDocument(frame, url));
     }
 
 private:
-    TextDocument(PAL::SessionID, Frame*, const URL&);
+    TextDocument(Frame*, const URL&);
     
     Ref<DocumentParser> createParser() override;
 };

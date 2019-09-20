@@ -90,7 +90,7 @@ String CookieJar::cookies(Document& document, const URL& url) const
     return result.first;
 }
 
-CookieRequestHeaderFieldProxy CookieJar::cookieRequestHeaderFieldProxy(const Document& document, const URL& url)
+CookieRequestHeaderFieldProxy CookieJar::cookieRequestHeaderFieldProxy(PAL::SessionID sessionID, const Document& document, const URL& url)
 {
     TraceScope scope(FetchCookiesStart, FetchCookiesEnd);
 
@@ -101,7 +101,7 @@ CookieRequestHeaderFieldProxy CookieJar::cookieRequestHeaderFieldProxy(const Doc
         pageID = frame->loader().client().pageID();
     }
 
-    return { document.sessionID(), document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldIncludeSecureCookies(document, url) };
+    return { sessionID, document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldIncludeSecureCookies(document, url) };
 }
 
 void CookieJar::setCookies(Document& document, const URL& url, const String& cookieString)
@@ -128,7 +128,7 @@ bool CookieJar::cookiesEnabled(const Document&) const
     return false;
 }
 
-std::pair<String, SecureCookiesAccessed> CookieJar::cookieRequestHeaderFieldValue(const PAL::SessionID&, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies) const
+std::pair<String, SecureCookiesAccessed> CookieJar::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies) const
 {
     if (auto* session = m_storageSessionProvider->storageSession()) {
         std::pair<String, bool> result = session->cookieRequestHeaderFieldValue(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies);
@@ -148,7 +148,7 @@ String CookieJar::cookieRequestHeaderFieldValue(Document& document, const URL& u
         pageID = frame->loader().client().pageID();
     }
 
-    auto result = cookieRequestHeaderFieldValue(document.sessionID(), document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldIncludeSecureCookies(document, url));
+    auto result = cookieRequestHeaderFieldValue(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldIncludeSecureCookies(document, url));
     if (result.second == SecureCookiesAccessed::Yes)
         document.setSecureCookiesAccessed();
     return result.first;

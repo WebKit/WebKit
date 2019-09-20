@@ -32,19 +32,19 @@ namespace WebCore {
 class XMLDocument : public Document {
     WTF_MAKE_ISO_ALLOCATED(XMLDocument);
 public:
-    static Ref<XMLDocument> create(PAL::SessionID sessionID, Frame* frame, const URL& url)
+    static Ref<XMLDocument> create(Frame* frame, const URL& url)
     {
-        return adoptRef(*new XMLDocument(sessionID, frame, url));
+        return adoptRef(*new XMLDocument(frame, url));
     }
 
-    static Ref<XMLDocument> createXHTML(PAL::SessionID sessionID, Frame* frame, const URL& url)
+    static Ref<XMLDocument> createXHTML(Frame* frame, const URL& url)
     {
-        return adoptRef(*new XMLDocument(sessionID, frame, url, XHTMLDocumentClass));
+        return adoptRef(*new XMLDocument(frame, url, XHTMLDocumentClass));
     }
 
 protected:
-    XMLDocument(PAL::SessionID sessionID, Frame* frame, const URL& url, unsigned documentClasses = DefaultDocumentClass)
-        : Document(sessionID, frame, url, XMLDocumentClass | documentClasses)
+    XMLDocument(Frame* frame, const URL& url, unsigned documentClasses = DefaultDocumentClass)
+        : Document(frame, url, XMLDocumentClass | documentClasses)
     { }
 };
 
