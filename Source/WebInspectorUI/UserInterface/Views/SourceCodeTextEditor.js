@@ -250,6 +250,8 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
         if (this._sourceCode instanceof WI.SourceMapResource)
             return false;
+        if (this._sourceCode instanceof WI.LocalResource)
+            return false;
 
         let caseSensitive = WI.SearchUtilities.defaultSettings.caseSensitive.value;
         let isRegex = WI.SearchUtilities.defaultSettings.regularExpression.value;
