@@ -677,7 +677,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
         if (networkDataTask->shouldCaptureExtraNetworkLoadMetrics()) {
             networkLoadMetrics.priority = toNetworkLoadPriority(task.priority);
 
-#if PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
             networkLoadMetrics.remoteAddress = String(m._remoteAddressAndPort);
             networkLoadMetrics.connectionIdentifier = String([m._connectionIdentifier UUIDString]);
 #endif
@@ -693,7 +693,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
             }];
             networkLoadMetrics.requestHeaders = WTFMove(requestHeaders);
 
-#if PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
             uint64_t requestHeaderBytesSent = 0;
             uint64_t responseHeaderBytesReceived = 0;
             uint64_t responseBodyBytesReceived = 0;
