@@ -1,3 +1,21 @@
+2019-09-21  Dan Bernstein  <mitz@apple.com>
+
+        Safari 13 may launch leftover 32-bit plug-in process from Safari 12’s WebKit, which crashes
+        https://bugs.webkit.org/show_bug.cgi?id=202077
+        <rdar://problem/55547063>
+
+        Reviewed by Sam Weinig.
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::getPluginArchitecture): Removed support for i386 plug-ins.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::serviceName): Assert that the requested process type is not Plugin32.
+
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::platformGetLaunchOptionsWithAttributes): Assert that the
+          plug-in architecture is x86_64.
+
 2019-09-21  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] touch-action set to pan-x or pan-y alone should disable scrolling altogether if the intial gesture is in the disallowed direction
