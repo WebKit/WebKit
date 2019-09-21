@@ -48,7 +48,6 @@ enum class HTTPCookieAcceptPolicy : uint8_t;
 namespace API {
 
 class APIWebCookieManagerProxyObserver;
-class WebsiteDataStore;
 
 class HTTPCookieStore final : public ObjectImpl<Object::Type::HTTPCookieStore> {
 public:

@@ -26,8 +26,8 @@
 #include "config.h"
 #include "APIProcessPoolConfiguration.h"
 
-#include "APIWebsiteDataStore.h"
 #include "WebProcessPool.h"
+#include "WebsiteDataStore.h"
 
 namespace API {
 

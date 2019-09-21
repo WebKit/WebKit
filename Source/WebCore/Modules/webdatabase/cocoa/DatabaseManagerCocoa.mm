@@ -35,6 +35,9 @@ namespace WebCore {
 
 void DatabaseManager::platformInitialize(const String& databasePath)
 {
+    if (databasePath.isEmpty())
+        return;
+
     // The path needs to exist so that we can resolve it via realPath().
     if (!FileSystem::fileExists(databasePath))
         FileSystem::makeAllDirectories(databasePath);

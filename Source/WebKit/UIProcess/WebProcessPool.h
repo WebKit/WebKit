@@ -28,7 +28,6 @@
 #include "APIDictionary.h"
 #include "APIObject.h"
 #include "APIProcessPoolConfiguration.h"
-#include "APIWebsiteDataStore.h"
 #include "DownloadProxyMap.h"
 #include "GenericCallback.h"
 #include "HiddenPageThrottlingAutoIncreasesCounter.h"
@@ -44,6 +43,7 @@
 #include "WebContextConnectionClient.h"
 #include "WebPreferencesStore.h"
 #include "WebProcessProxy.h"
+#include "WebsiteDataStore.h"
 #include <WebCore/CrossSiteNavigationDataTransfer.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
@@ -204,8 +204,8 @@ public:
     // Disconnect the process from the context.
     void disconnectProcess(WebProcessProxy*);
 
-    API::WebsiteDataStore* websiteDataStore() const { return m_websiteDataStore.get(); }
-    void setPrimaryDataStore(API::WebsiteDataStore& dataStore) { m_websiteDataStore = &dataStore; }
+    WebKit::WebsiteDataStore* websiteDataStore() const { return m_websiteDataStore.get(); }
+    void setPrimaryDataStore(WebKit::WebsiteDataStore& dataStore) { m_websiteDataStore = &dataStore; }
 
     Ref<WebPageProxy> createWebPage(PageClient&, Ref<API::PageConfiguration>&&);
 
@@ -677,7 +677,7 @@ private:
     bool m_memorySamplerEnabled { false };
     double m_memorySamplerInterval { 1400.0 };
 
-    RefPtr<API::WebsiteDataStore> m_websiteDataStore;
+    RefPtr<WebKit::WebsiteDataStore> m_websiteDataStore;
 
     typedef HashMap<const char*, RefPtr<WebContextSupplement>, PtrHash<const char*>> WebContextSupplementMap;
     WebContextSupplementMap m_supplements;

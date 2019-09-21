@@ -318,7 +318,6 @@ UIProcess/API/APIURLSchemeTask.cpp
 UIProcess/API/APIUserContentWorld.cpp
 UIProcess/API/APIUserScript.cpp
 UIProcess/API/APIUserStyleSheet.cpp
-UIProcess/API/APIWebsiteDataStore.cpp
 UIProcess/API/APIWebsitePolicies.cpp
 UIProcess/API/APIWindowFeatures.cpp
 

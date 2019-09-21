@@ -178,7 +178,6 @@
 		1A30066E1110F4F70031937C /* ResponsivenessTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A30066C1110F4F70031937C /* ResponsivenessTimer.h */; };
 		1A334DED16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A334DEB16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp */; };
 		1A334DEE16DE8F88006A8E38 /* StorageAreaMapMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A334DEC16DE8F88006A8E38 /* StorageAreaMapMessages.h */; };
-		1A3635AA1A3144A300ED6197 /* APIWebsiteDataStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3635A81A3144A300ED6197 /* APIWebsiteDataStore.h */; };
 		1A3C888018A5ABAE00C4C962 /* WKPreferencesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3C887F18A5ABAE00C4C962 /* WKPreferencesInternal.h */; };
 		1A3CC16718906ACF001E6ED8 /* WKWebView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3CC16518906ACF001E6ED8 /* WKWebView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A3CC16918907EB0001E6ED8 /* WKProcessPoolInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3CC16818907EB0001E6ED8 /* WKProcessPoolInternal.h */; };
@@ -2123,9 +2122,6 @@
 		1A334DEA16DE8B68006A8E38 /* StorageAreaMap.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = StorageAreaMap.messages.in; sourceTree = "<group>"; };
 		1A334DEB16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StorageAreaMapMessageReceiver.cpp; path = DerivedSources/WebKit2/StorageAreaMapMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A334DEC16DE8F88006A8E38 /* StorageAreaMapMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageAreaMapMessages.h; path = DerivedSources/WebKit2/StorageAreaMapMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
-		1A3635A71A3144A300ED6197 /* APIWebsiteDataStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIWebsiteDataStore.cpp; sourceTree = "<group>"; };
-		1A3635A81A3144A300ED6197 /* APIWebsiteDataStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIWebsiteDataStore.h; sourceTree = "<group>"; };
-		1A3635AB1A3145E500ED6197 /* APIWebsiteDataStoreCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = APIWebsiteDataStoreCocoa.mm; sourceTree = "<group>"; };
 		1A3A73CB1A48C6D4007231B3 /* APIPageGroupHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIPageGroupHandle.cpp; sourceTree = "<group>"; };
 		1A3A73CC1A48C6D4007231B3 /* APIPageGroupHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIPageGroupHandle.h; sourceTree = "<group>"; };
 		1A3C887F18A5ABAE00C4C962 /* WKPreferencesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferencesInternal.h; sourceTree = "<group>"; };
@@ -6371,7 +6367,6 @@
 				7CEFA9601AC0999300B910FD /* APIContentRuleListStoreCocoa.mm */,
 				5CA46E7A21F1A23900CE86B4 /* APIHTTPCookieStoreCocoa.mm */,
 				FED3C1DA1B447AE800E0EB7F /* APISerializedScriptValueCocoa.mm */,
-				1A3635AB1A3145E500ED6197 /* APIWebsiteDataStoreCocoa.mm */,
 				1AFDE64319510B5500C48FFA /* LegacyBundleForClass.mm */,
 				1C20935E22318CB000026A39 /* NSAttributedString.h */,
 				1C20935F22318CB000026A39 /* NSAttributedString.mm */,
@@ -7983,8 +7978,6 @@
 				2D8786221BDB58FF00D02ABB /* APIUserStyleSheet.h */,
 				1AE286811C7F93860069AC4F /* APIWebsiteDataRecord.cpp */,
 				1AE286821C7F93860069AC4F /* APIWebsiteDataRecord.h */,
-				1A3635A71A3144A300ED6197 /* APIWebsiteDataStore.cpp */,
-				1A3635A81A3144A300ED6197 /* APIWebsiteDataStore.h */,
 				5C8DD37D1FE4501100F2A556 /* APIWebsitePolicies.cpp */,
 				5C8DD37C1FE4501100F2A556 /* APIWebsitePolicies.h */,
 				1A6563E21B7A8C50009CF787 /* APIWindowFeatures.cpp */,
@@ -9388,7 +9381,6 @@
 				C5E1AFED16B21017006CC1F2 /* APIWebArchive.h in Headers */,
 				C5E1AFEF16B21029006CC1F2 /* APIWebArchiveResource.h in Headers */,
 				1AE286841C7F93860069AC4F /* APIWebsiteDataRecord.h in Headers */,
-				1A3635AA1A3144A300ED6197 /* APIWebsiteDataStore.h in Headers */,
 				1A6563E51B7A8C50009CF787 /* APIWindowFeatures.h in Headers */,
 				F48D2A8521583A7E00C6752B /* AppKitSPI.h in Headers */,
 				1AD4C1931B39F33200ABC28E /* ApplicationStateTracker.h in Headers */,

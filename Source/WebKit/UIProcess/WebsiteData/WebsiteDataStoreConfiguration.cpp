@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebsiteDataStoreConfiguration.h"
 
-#include "APIWebsiteDataStore.h"
+#include "WebsiteDataStore.h"
 
 namespace WebKit {
 

@@ -27,6 +27,7 @@
 #import "WebsiteDataStore.h"
 
 #import "CookieStorageUtilsCF.h"
+#import "SandboxUtilities.h"
 #import "StorageManager.h"
 #import "WebResourceLoadStatisticsStore.h"
 #import "WebsiteDataStoreParameters.h"
@@ -227,6 +228,163 @@ void WebsiteDataStore::platformDestroy()
 void WebsiteDataStore::platformRemoveRecentSearches(WallTime oldestTimeToRemove)
 {
     WebCore::removeRecentlyModifiedRecentSearches(oldestTimeToRemove);
+}
+
+NSString *WebDatabaseDirectoryDefaultsKey = @"WebDatabaseDirectory";
+NSString *WebStorageDirectoryDefaultsKey = @"WebKitLocalStorageDatabasePathPreferenceKey";
+NSString *WebKitMediaCacheDirectoryDefaultsKey = @"WebKitMediaCacheDirectory";
+NSString *WebKitMediaKeysStorageDirectoryDefaultsKey = @"WebKitMediaKeysStorageDirectory";
+
+WTF::String WebsiteDataStore::defaultApplicationCacheDirectory()
+{
+#if PLATFORM(IOS_FAMILY)
+    // This quirk used to make these apps share application cache storage, but doesn't accomplish that any more.
+    // Preserving it avoids the need to migrate data when upgrading.
+    // FIXME: Ideally we should just have Safari, WebApp, and webbookmarksd create a data store with
+    // this application cache path, but that's not supported as of right now.
+    if (WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isWebApp() || WebCore::IOSApplication::isWebBookmarksD()) {
+        NSString *cachePath = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches/com.apple.WebAppCache"];
+
+        return WebKit::stringByResolvingSymlinksInPath(cachePath.stringByStandardizingPath);
+    }
+#endif
+
+    return cacheDirectoryFileSystemRepresentation("OfflineWebApplicationCache");
+}
+
+WTF::String WebsiteDataStore::defaultCacheStorageDirectory()
+{
+    return cacheDirectoryFileSystemRepresentation("CacheStorage");
+}
+
+WTF::String WebsiteDataStore::defaultNetworkCacheDirectory()
+{
+    return cacheDirectoryFileSystemRepresentation("NetworkCache");
+}
+
+WTF::String WebsiteDataStore::defaultMediaCacheDirectory()
+{
+    return tempDirectoryFileSystemRepresentation("MediaCache");
+}
+
+WTF::String WebsiteDataStore::defaultIndexedDBDatabaseDirectory()
+{
+    return websiteDataDirectoryFileSystemRepresentation("IndexedDB");
+}
+
+WTF::String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory()
+{
+    return cacheDirectoryFileSystemRepresentation("ServiceWorkers");
+}
+
+WTF::String WebsiteDataStore::defaultLocalStorageDirectory()
+{
+    return websiteDataDirectoryFileSystemRepresentation("LocalStorage");
+}
+
+WTF::String WebsiteDataStore::defaultMediaKeysStorageDirectory()
+{
+    return websiteDataDirectoryFileSystemRepresentation("MediaKeys");
+}
+
+WTF::String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
+{
+    return websiteDataDirectoryFileSystemRepresentation("WebSQL");
+}
+
+WTF::String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
+{
+    return websiteDataDirectoryFileSystemRepresentation("ResourceLoadStatistics");
+}
+
+WTF::String WebsiteDataStore::defaultJavaScriptConfigurationDirectory()
+{
+    return tempDirectoryFileSystemRepresentation("JavaScriptCoreDebug", ShouldCreateDirectory::No);
+}
+
+WTF::String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const WTF::String& directoryName, ShouldCreateDirectory shouldCreateDirectory)
+{
+    static dispatch_once_t onceToken;
+    static NSURL *tempURL;
+    
+    dispatch_once(&onceToken, ^{
+        NSURL *url = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
+        if (!url)
+            RELEASE_ASSERT_NOT_REACHED();
+        
+        if (!WebKit::processHasContainer()) {
+            NSString *bundleIdentifier = [NSBundle mainBundle].bundleIdentifier;
+            if (!bundleIdentifier)
+                bundleIdentifier = [NSProcessInfo processInfo].processName;
+            url = [url URLByAppendingPathComponent:bundleIdentifier isDirectory:YES];
+        }
+        
+        tempURL = [[url URLByAppendingPathComponent:@"WebKit" isDirectory:YES] retain];
+    });
+    
+    NSURL *url = [tempURL URLByAppendingPathComponent:directoryName isDirectory:YES];
+
+    if (shouldCreateDirectory == ShouldCreateDirectory::Yes
+        && (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:nullptr]))
+        LOG_ERROR("Failed to create directory %@", url);
+    
+    return url.absoluteURL.path.fileSystemRepresentation;
+}
+
+WTF::String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const WTF::String& directoryName)
+{
+    static dispatch_once_t onceToken;
+    static NSURL *cacheURL;
+
+    dispatch_once(&onceToken, ^{
+        NSURL *url = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nullptr create:NO error:nullptr];
+        if (!url)
+            RELEASE_ASSERT_NOT_REACHED();
+
+        if (!WebKit::processHasContainer()) {
+            NSString *bundleIdentifier = [NSBundle mainBundle].bundleIdentifier;
+            if (!bundleIdentifier)
+                bundleIdentifier = [NSProcessInfo processInfo].processName;
+            url = [url URLByAppendingPathComponent:bundleIdentifier isDirectory:YES];
+        }
+
+        cacheURL = [[url URLByAppendingPathComponent:@"WebKit" isDirectory:YES] retain];
+    });
+
+    NSURL *url = [cacheURL URLByAppendingPathComponent:directoryName isDirectory:YES];
+    if (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:nullptr])
+        LOG_ERROR("Failed to create directory %@", url);
+
+    return url.absoluteURL.path.fileSystemRepresentation;
+}
+
+WTF::String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const WTF::String& directoryName)
+{
+    static dispatch_once_t onceToken;
+    static NSURL *websiteDataURL;
+
+    dispatch_once(&onceToken, ^{
+        NSURL *url = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nullptr create:NO error:nullptr];
+        if (!url)
+            RELEASE_ASSERT_NOT_REACHED();
+
+        url = [url URLByAppendingPathComponent:@"WebKit" isDirectory:YES];
+
+        if (!WebKit::processHasContainer()) {
+            NSString *bundleIdentifier = [NSBundle mainBundle].bundleIdentifier;
+            if (!bundleIdentifier)
+                bundleIdentifier = [NSProcessInfo processInfo].processName;
+            url = [url URLByAppendingPathComponent:bundleIdentifier isDirectory:YES];
+        }
+
+        websiteDataURL = [[url URLByAppendingPathComponent:@"WebsiteData" isDirectory:YES] retain];
+    });
+
+    NSURL *url = [websiteDataURL URLByAppendingPathComponent:directoryName isDirectory:YES];
+    if (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:nullptr])
+        LOG_ERROR("Failed to create directory %@", url);
+
+    return url.absoluteURL.path.fileSystemRepresentation;
 }
 
 }

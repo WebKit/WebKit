@@ -27,12 +27,12 @@
 #include "WKWebsitePolicies.h"
 
 #include "APIDictionary.h"
-#include "APIWebsiteDataStore.h"
 #include "APIWebsitePolicies.h"
 #include "WKAPICast.h"
 #include "WKArray.h"
 #include "WKDictionary.h"
 #include "WKRetainPtr.h"
+#include "WebsiteDataStore.h"
 
 using namespace WebKit;
 

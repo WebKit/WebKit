@@ -244,8 +244,8 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
         Process::setIdentifier(WebCore::ProcessIdentifier::generate());
     });
 
-    if (!m_websiteDataStore && API::WebsiteDataStore::defaultDataStoreExists())
-        m_websiteDataStore = API::WebsiteDataStore::defaultDataStore();
+    if (!m_websiteDataStore && WebKit::WebsiteDataStore::defaultDataStoreExists())
+        m_websiteDataStore = WebKit::WebsiteDataStore::defaultDataStore();
 
     for (auto& scheme : m_configuration->alwaysRevalidatedURLSchemes())
         m_schemesToRegisterAsAlwaysRevalidated.add(scheme);
@@ -483,13 +483,13 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     NetworkProcessCreationParameters parameters;
 
     if (m_websiteDataStore) {
-        parameters.defaultDataStoreParameters.pendingCookies = copyToVector(m_websiteDataStore->websiteDataStore().pendingCookies());
-        m_websiteDataStore->websiteDataStore().clearPendingCookies();
+        parameters.defaultDataStoreParameters.pendingCookies = copyToVector(m_websiteDataStore->pendingCookies());
+        m_websiteDataStore->clearPendingCookies();
 #if PLATFORM(COCOA)
-        parameters.defaultDataStoreParameters.networkSessionParameters.sourceApplicationBundleIdentifier = m_websiteDataStore->websiteDataStore().sourceApplicationBundleIdentifier();
-        parameters.defaultDataStoreParameters.networkSessionParameters.sourceApplicationSecondaryIdentifier = m_websiteDataStore->websiteDataStore().sourceApplicationSecondaryIdentifier();
+        parameters.defaultDataStoreParameters.networkSessionParameters.sourceApplicationBundleIdentifier = m_websiteDataStore->sourceApplicationBundleIdentifier();
+        parameters.defaultDataStoreParameters.networkSessionParameters.sourceApplicationSecondaryIdentifier = m_websiteDataStore->sourceApplicationSecondaryIdentifier();
 #endif
-        m_websiteDataStore->websiteDataStore().networkingHasBegun();
+        m_websiteDataStore->networkingHasBegun();
     }
 
     parameters.cacheModel = LegacyGlobalSettings::singleton().cacheModel();
@@ -541,8 +541,8 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     // *********
     // IMPORTANT: Do not change the directory structure for indexed databases on disk without first consulting a reviewer from Apple (<rdar://problem/17454712>)
     // *********
-    if (API::WebsiteDataStore::defaultDataStoreExists())
-        parameters.defaultDataStoreParameters.indexedDatabaseDirectory = API::WebsiteDataStore::defaultDataStore()->websiteDataStore().parameters().indexedDatabaseDirectory;
+    if (WebKit::WebsiteDataStore::defaultDataStoreExists())
+        parameters.defaultDataStoreParameters.indexedDatabaseDirectory = WebKit::WebsiteDataStore::defaultDataStore()->parameters().indexedDatabaseDirectory;
     
     if (!parameters.defaultDataStoreParameters.indexedDatabaseDirectory.isEmpty()) {
         SandboxExtension::createHandleForReadWriteDirectory(parameters.defaultDataStoreParameters.indexedDatabaseDirectory, parameters.defaultDataStoreParameters.indexedDatabaseDirectoryExtensionHandle);
@@ -552,9 +552,9 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 
 #if ENABLE(SERVICE_WORKER)
     if (m_websiteDataStore)
-        parameters.serviceWorkerRegistrationDirectory = m_websiteDataStore->websiteDataStore().resolvedServiceWorkerRegistrationDirectory();
+        parameters.serviceWorkerRegistrationDirectory = m_websiteDataStore->resolvedServiceWorkerRegistrationDirectory();
     if (!parameters.serviceWorkerRegistrationDirectory)
-        parameters.serviceWorkerRegistrationDirectory =  API::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory();
+        parameters.serviceWorkerRegistrationDirectory =  WebKit::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory();
     SandboxExtension::createHandleForReadWriteDirectory(parameters.serviceWorkerRegistrationDirectory, parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
 
     if (!m_schemesServiceWorkersCanHandle.isEmpty())
@@ -563,16 +563,16 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     parameters.shouldDisableServiceWorkerProcessTerminationDelay = m_shouldDisableServiceWorkerProcessTerminationDelay;
 #endif
 
-    auto localStorageDirectory = m_websiteDataStore ? m_websiteDataStore->websiteDataStore().resolvedLocalStorageDirectory() : nullString();
+    auto localStorageDirectory = m_websiteDataStore ? m_websiteDataStore->resolvedLocalStorageDirectory() : nullString();
     if (!localStorageDirectory)
-        localStorageDirectory = API::WebsiteDataStore::defaultLocalStorageDirectory();
+        localStorageDirectory = WebKit::WebsiteDataStore::defaultLocalStorageDirectory();
     parameters.defaultDataStoreParameters.localStorageDirectory = localStorageDirectory;
     SandboxExtension::createHandleForReadWriteDirectory(localStorageDirectory, parameters.defaultDataStoreParameters.localStorageDirectoryExtensionHandle);
 
     if (m_websiteDataStore)
-        parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectory = m_websiteDataStore->websiteDataStore().resolvedResourceLoadStatisticsDirectory();
+        parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectory = m_websiteDataStore->resolvedResourceLoadStatisticsDirectory();
     if (parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectory.isEmpty())
-        parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectory = API::WebsiteDataStore::defaultResourceLoadStatisticsDirectory();
+        parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectory = WebKit::WebsiteDataStore::defaultResourceLoadStatisticsDirectory();
 
     SandboxExtension::createHandleForReadWriteDirectory(parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectory, parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectoryExtensionHandle);
 
@@ -598,17 +598,17 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     } else if (m_websiteDataStore) {
         enableResourceLoadStatistics = m_websiteDataStore->resourceLoadStatisticsEnabled();
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-        enableResourceLoadStatisticsLogTestingEvent = m_websiteDataStore->websiteDataStore().hasStatisticsTestingCallback();
+        enableResourceLoadStatisticsLogTestingEvent = m_websiteDataStore->hasStatisticsTestingCallback();
 #endif
         if (enableResourceLoadStatistics) {
-            auto networkSessionParameters = m_websiteDataStore->websiteDataStore().parameters().networkSessionParameters;
+            auto networkSessionParameters = m_websiteDataStore->parameters().networkSessionParameters;
             shouldIncludeLocalhost = networkSessionParameters.shouldIncludeLocalhostInResourceLoadStatistics;
             enableResourceLoadStatisticsDebugMode = networkSessionParameters.enableResourceLoadStatisticsDebugMode;
             manualPrevalentResource = networkSessionParameters.resourceLoadStatisticsManualPrevalentResource;
         }
 
-        parameters.defaultDataStoreParameters.perOriginStorageQuota = m_websiteDataStore->websiteDataStore().perOriginStorageQuota();
-        parameters.defaultDataStoreParameters.perThirdPartyOriginStorageQuota = m_websiteDataStore->websiteDataStore().perThirdPartyOriginStorageQuota();
+        parameters.defaultDataStoreParameters.perOriginStorageQuota = m_websiteDataStore->perOriginStorageQuota();
+        parameters.defaultDataStoreParameters.perThirdPartyOriginStorageQuota = m_websiteDataStore->perThirdPartyOriginStorageQuota();
     }
 
     parameters.defaultDataStoreParameters.networkSessionParameters.enableResourceLoadStatistics = enableResourceLoadStatistics;
@@ -691,8 +691,8 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
 
     if (!websiteDataStore) {
         if (!m_websiteDataStore)
-            m_websiteDataStore = API::WebsiteDataStore::defaultDataStore().ptr();
-        websiteDataStore = &m_websiteDataStore->websiteDataStore();
+            m_websiteDataStore = WebKit::WebsiteDataStore::defaultDataStore().ptr();
+        websiteDataStore = m_websiteDataStore.get();
     }
 
     RegistrableDomainWithSessionID registrableDomainWithSessionID { RegistrableDomain { registrableDomain }, sessionID };
@@ -803,7 +803,7 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
 #if PLATFORM(GTK) || PLATFORM(WPE)
     // In platforms using Bubblewrap for sandboxing, prewarmed process is launched using the WebProcessPool primary WebsiteDataStore,
     // so we don't use it in case of using a different WebsiteDataStore.
-    if (m_sandboxEnabled && m_websiteDataStore && &m_websiteDataStore->websiteDataStore() != &websiteDataStore)
+    if (m_sandboxEnabled && m_websiteDataStore && m_websiteDataStore.get() != &websiteDataStore)
         return nullptr;
 #endif
 
@@ -1080,7 +1080,7 @@ void WebProcessPool::processDidFinishLaunching(WebProcessProxy* process)
     m_connectionClient.didCreateConnection(this, process->webConnection());
 
     if (m_websiteDataStore)
-        m_websiteDataStore->websiteDataStore().didCreateNetworkProcess();
+        m_websiteDataStore->didCreateNetworkProcess();
 }
 
 void WebProcessPool::disconnectProcess(WebProcessProxy* process)
@@ -1159,7 +1159,7 @@ WebProcessProxy& WebProcessPool::processForRegistrableDomain(WebsiteDataStore& w
         return createNewWebProcess(&websiteDataStore);
 
 #if PLATFORM(COCOA)
-    bool mustMatchDataStore = API::WebsiteDataStore::defaultDataStoreExists() && &websiteDataStore != &API::WebsiteDataStore::defaultDataStore()->websiteDataStore();
+    bool mustMatchDataStore = WebKit::WebsiteDataStore::defaultDataStoreExists() && &websiteDataStore != WebKit::WebsiteDataStore::defaultDataStore().ptr();
 #else
     bool mustMatchDataStore = false;
 #endif
@@ -1193,7 +1193,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         // We try to avoid creating the default data store as long as possible.
         // But if there is an attempt to create a web page without any specified data store, then we have to create it.
         if (!m_websiteDataStore)
-            m_websiteDataStore = API::WebsiteDataStore::defaultDataStore().ptr();
+            m_websiteDataStore = WebKit::WebsiteDataStore::defaultDataStore().ptr();
 
         pageConfiguration->setWebsiteDataStore(m_websiteDataStore.get());
     }
@@ -1204,8 +1204,8 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         // Sharing processes, e.g. when creating the page via window.open().
         process = &pageConfiguration->relatedPage()->ensureRunningProcess();
         // We do not support several WebsiteDataStores sharing a single process.
-        ASSERT(process.get() == m_dummyProcessProxy || &pageConfiguration->websiteDataStore()->websiteDataStore() == &process->websiteDataStore());
-        ASSERT(&pageConfiguration->relatedPage()->websiteDataStore() == &pageConfiguration->websiteDataStore()->websiteDataStore());
+        ASSERT(process.get() == m_dummyProcessProxy || pageConfiguration->websiteDataStore() == &process->websiteDataStore());
+        ASSERT(&pageConfiguration->relatedPage()->websiteDataStore() == pageConfiguration->websiteDataStore());
     } else if (!m_isDelayedWebProcessLaunchDisabled) {
         // In the common case, we delay process launch until something is actually loaded in the page.
         if (!m_dummyProcessProxy) {
@@ -1215,7 +1215,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         }
         process = m_dummyProcessProxy;
     } else
-        process = &processForRegistrableDomain(pageConfiguration->websiteDataStore()->websiteDataStore(), nullptr, { });
+        process = &processForRegistrableDomain(*pageConfiguration->websiteDataStore(), nullptr, { });
 
     ASSERT(process);
 
@@ -1265,7 +1265,7 @@ bool WebProcessPool::mayHaveRegisteredServiceWorkers(const WebsiteDataStore& sto
 
     String serviceWorkerRegistrationDirectory = store.resolvedServiceWorkerRegistrationDirectory();
     if (serviceWorkerRegistrationDirectory.isEmpty())
-        serviceWorkerRegistrationDirectory = API::WebsiteDataStore::defaultDataStoreConfiguration()->serviceWorkerRegistrationDirectory();
+        serviceWorkerRegistrationDirectory = WebKit::WebsiteDataStore::defaultDataStoreConfiguration()->serviceWorkerRegistrationDirectory();
 
     return m_mayHaveRegisteredServiceWorkers.ensure(serviceWorkerRegistrationDirectory, [&] {
         // FIXME: Make this computation on a background thread.

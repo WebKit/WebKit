@@ -26,12 +26,12 @@
 #include "config.h"
 #include "WKFramePolicyListener.h"
 
-#include "APIWebsiteDataStore.h"
 #include "APIWebsitePolicies.h"
 #include "WKAPICast.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFrameProxy.h"
 #include "WebProcessPool.h"
+#include "WebsiteDataStore.h"
 #include "WebsitePoliciesData.h"
 
 using namespace WebKit;

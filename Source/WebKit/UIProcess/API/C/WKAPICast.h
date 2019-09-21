@@ -69,7 +69,6 @@ class PageConfiguration;
 class ProcessPoolConfiguration;
 class SessionState;
 class UserScript;
-class WebsiteDataStore;
 class WebsitePolicies;
 class WindowFeatures;
 }
@@ -113,6 +112,7 @@ class WebResourceLoadStatisticsManager;
 class WebTextChecker;
 class WebUserContentControllerProxy;
 class WebViewportAttributes;
+class WebsiteDataStore;
 class WebsiteDataStoreConfiguration;
 
 WK_ADD_API_MAPPING(WKAuthenticationChallengeRef, AuthenticationChallengeProxy)
@@ -169,7 +169,7 @@ WK_ADD_API_MAPPING(WKUserMediaPermissionCheckRef, UserMediaPermissionCheckProxy)
 WK_ADD_API_MAPPING(WKUserMediaPermissionRequestRef, UserMediaPermissionRequestProxy)
 WK_ADD_API_MAPPING(WKUserScriptRef, API::UserScript)
 WK_ADD_API_MAPPING(WKViewportAttributesRef, WebViewportAttributes)
-WK_ADD_API_MAPPING(WKWebsiteDataStoreRef, API::WebsiteDataStore)
+WK_ADD_API_MAPPING(WKWebsiteDataStoreRef, WebKit::WebsiteDataStore)
 WK_ADD_API_MAPPING(WKWebsiteDataStoreConfigurationRef, WebKit::WebsiteDataStoreConfiguration)
 WK_ADD_API_MAPPING(WKWebsitePoliciesRef, API::WebsitePolicies)
 WK_ADD_API_MAPPING(WKWindowFeaturesRef, API::WindowFeatures)

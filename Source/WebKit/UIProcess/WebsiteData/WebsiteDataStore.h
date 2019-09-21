@@ -92,11 +92,19 @@ enum class StorageAccessPromptStatus;
 struct PluginModuleInfo;
 #endif
 
-class WebsiteDataStore : public RefCounted<WebsiteDataStore>, public Identified<WebsiteDataStore>, public CanMakeWeakPtr<WebsiteDataStore>  {
+class WebsiteDataStore : public API::ObjectImpl<API::Object::Type::WebsiteDataStore>, public Identified<WebsiteDataStore>, public CanMakeWeakPtr<WebsiteDataStore>  {
 public:
+    static Ref<WebsiteDataStore> defaultDataStore();
+    static bool defaultDataStoreExists();
+    static void deleteDefaultDataStoreForTesting();
+    static Ref<WebsiteDataStoreConfiguration> defaultDataStoreConfiguration();
+    
     static Ref<WebsiteDataStore> createNonPersistent();
     static Ref<WebsiteDataStore> create(Ref<WebsiteDataStoreConfiguration>&&, PAL::SessionID);
-    virtual ~WebsiteDataStore();
+
+    WebsiteDataStore(PAL::SessionID);
+    WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&&, PAL::SessionID);
+    ~WebsiteDataStore();
 
     static WebsiteDataStore* existingNonDefaultDataStoreForSessionID(PAL::SessionID);
 
@@ -261,10 +269,23 @@ public:
     SOAuthorizationCoordinator& soAuthorizationCoordinator() { return m_soAuthorizationCoordinator.get(); }
 #endif
 
+    static WTF::String defaultServiceWorkerRegistrationDirectory();
+    static WTF::String defaultLocalStorageDirectory();
+    static WTF::String defaultResourceLoadStatisticsDirectory();
+    static WTF::String defaultNetworkCacheDirectory();
+    static WTF::String defaultApplicationCacheDirectory();
+    static WTF::String defaultWebSQLDatabaseDirectory();
+#if USE(GLIB)
+    static WTF::String defaultHSTSDirectory();
+#endif
+    static WTF::String defaultIndexedDBDatabaseDirectory();
+    static WTF::String defaultCacheStorageDirectory();
+    static WTF::String defaultMediaCacheDirectory();
+    static WTF::String defaultMediaKeysStorageDirectory();
+    static WTF::String defaultDeviceIdHashSaltsStorageDirectory();
+    static WTF::String defaultJavaScriptConfigurationDirectory();
+    
 private:
-    explicit WebsiteDataStore(PAL::SessionID);
-    explicit WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&&, PAL::SessionID);
-
     void fetchDataAndApply(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, RefPtr<WorkQueue>&&, Function<void(Vector<WebsiteDataRecord>)>&& apply);
 
     void platformInitialize();
@@ -274,6 +295,13 @@ private:
 #if USE(CURL) || USE(SOUP)
     void platformSetNetworkParameters(WebsiteDataStoreParameters&);
 #endif
+
+    WebsiteDataStore();
+
+    enum class ShouldCreateDirectory { No, Yes };
+    static WTF::String tempDirectoryFileSystemRepresentation(const WTF::String& directoryName, ShouldCreateDirectory = ShouldCreateDirectory::Yes);
+    static WTF::String cacheDirectoryFileSystemRepresentation(const WTF::String& directoryName);
+    static WTF::String websiteDataDirectoryFileSystemRepresentation(const WTF::String& directoryName);
 
     HashSet<RefPtr<WebProcessPool>> processPools(size_t count = std::numeric_limits<size_t>::max(), bool ensureAPoolExists = true) const;
 

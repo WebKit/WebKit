@@ -416,7 +416,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_preferences(*m_configuration->preferences())
     , m_userContentController(*m_configuration->userContentController())
     , m_visitedLinkStore(*m_configuration->visitedLinkStore())
-    , m_websiteDataStore(m_configuration->websiteDataStore()->websiteDataStore())
+    , m_websiteDataStore(*m_configuration->websiteDataStore())
     , m_userAgent(standardUserAgent())
     , m_overrideContentSecurityPolicy { m_configuration->overrideContentSecurityPolicy() }
     , m_treatsSHA1CertificatesAsInsecure(m_configuration->treatsSHA1SignedCertificatesAsInsecure())
@@ -2865,8 +2865,8 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
     Optional<WebsitePoliciesData> data;
     if (policies) {
         data = policies->data();
-        if (policies->websiteDataStore() && &policies->websiteDataStore()->websiteDataStore() != websiteDataStore.ptr()) {
-            websiteDataStore = policies->websiteDataStore()->websiteDataStore();
+        if (policies->websiteDataStore() && policies->websiteDataStore() != websiteDataStore.ptr()) {
+            websiteDataStore = *policies->websiteDataStore();
             processSwapRequestedByClient = ProcessSwapRequestedByClient::Yes;
         }
     }

@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "APIWebsiteDataStore.h"
 #include "AuxiliaryProcessProxy.h"
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
 #include "LegacyCustomProtocolManagerProxy.h"
@@ -36,6 +35,7 @@
 #include "ProcessThrottlerClient.h"
 #include "UserContentControllerIdentifier.h"
 #include "WebProcessProxyMessages.h"
+#include "WebsiteDataStore.h"
 #include <WebCore/CrossSiteNavigationDataTransfer.h>
 #include <WebCore/RegistrableDomain.h>
 #include <memory>

@@ -26,9 +26,9 @@
 #include "config.h"
 #include "APIHTTPCookieStore.h"
 
-#include "APIWebsiteDataStore.h"
 #include "WebCookieManagerProxy.h"
 #include "WebProcessPool.h"
+#include "WebsiteDataStore.h"
 #include <WebCore/Cookie.h>
 #include <WebCore/CookieStorage.h>
 #include <WebCore/NetworkStorageSession.h>

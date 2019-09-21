@@ -321,12 +321,12 @@ void WKContextClearVisitedLinks(WKContextRef contextRef)
 
 void WKContextSetCacheModel(WKContextRef contextRef, WKCacheModel cacheModel)
 {
-    LegacyGlobalSettings::singleton().setCacheModel(WebKit::toCacheModel(cacheModel));
+    WebKit::LegacyGlobalSettings::singleton().setCacheModel(WebKit::toCacheModel(cacheModel));
 }
 
 WKCacheModel WKContextGetCacheModel(WKContextRef contextRef)
 {
-    return WebKit::toAPI(LegacyGlobalSettings::singleton().cacheModel());
+    return WebKit::toAPI(WebKit::LegacyGlobalSettings::singleton().cacheModel());
 }
 
 void WKContextSetMaximumNumberOfProcesses(WKContextRef, unsigned)

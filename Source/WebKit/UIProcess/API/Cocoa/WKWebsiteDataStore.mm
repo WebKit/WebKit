@@ -105,17 +105,17 @@ private:
 
 + (WKWebsiteDataStore *)defaultDataStore
 {
-    return wrapper(API::WebsiteDataStore::defaultDataStore());
+    return wrapper(WebKit::WebsiteDataStore::defaultDataStore());
 }
 
 + (WKWebsiteDataStore *)nonPersistentDataStore
 {
-    return wrapper(API::WebsiteDataStore::createNonPersistentDataStore());
+    return wrapper(WebKit::WebsiteDataStore::createNonPersistent());
 }
 
 - (void)dealloc
 {
-    _websiteDataStore->API::WebsiteDataStore::~WebsiteDataStore();
+    _websiteDataStore->WebKit::WebsiteDataStore::~WebsiteDataStore();
 
     [super dealloc];
 }
@@ -127,18 +127,9 @@ private:
 
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
-    if (!(self = [super init]))
-        return nil;
-
-    RetainPtr<WKWebsiteDataStore> dataStore;
     if ([coder decodeBoolForKey:@"isDefaultDataStore"])
-        dataStore = [WKWebsiteDataStore defaultDataStore];
-    else
-        dataStore = [WKWebsiteDataStore nonPersistentDataStore];
-
-    [self release];
-
-    return dataStore.leakRef();
+        return [[WKWebsiteDataStore defaultDataStore] retain];
+    return [[WKWebsiteDataStore nonPersistentDataStore] retain];
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder
@@ -169,7 +160,7 @@ private:
 
 - (WKHTTPCookieStore *)httpCookieStore
 {
-    return wrapper(_websiteDataStore->httpCookieStore());
+    return wrapper(_websiteDataStore->cookieStore());
 }
 
 static WallTime toSystemClockTime(NSDate *date)
@@ -186,7 +177,7 @@ static WallTime toSystemClockTime(NSDate *date)
 - (void)removeDataOfTypes:(NSSet *)dataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)(void))completionHandler
 {
     auto completionHandlerCopy = makeBlockPtr(completionHandler);
-    _websiteDataStore->websiteDataStore().removeData(WebKit::toWebsiteDataTypes(dataTypes), toSystemClockTime(date ? date : [NSDate distantPast]), [completionHandlerCopy] {
+    _websiteDataStore->removeData(WebKit::toWebsiteDataTypes(dataTypes), toSystemClockTime(date ? date : [NSDate distantPast]), [completionHandlerCopy] {
         completionHandlerCopy();
     });
 }
@@ -205,7 +196,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 {
     auto completionHandlerCopy = makeBlockPtr(completionHandler);
 
-    _websiteDataStore->websiteDataStore().removeData(WebKit::toWebsiteDataTypes(dataTypes), toWebsiteDataRecords(dataRecords), [completionHandlerCopy] {
+    _websiteDataStore->removeData(WebKit::toWebsiteDataTypes(dataTypes), toWebsiteDataRecords(dataRecords), [completionHandlerCopy] {
         completionHandlerCopy();
     });
 }
@@ -240,12 +231,12 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 + (BOOL)_defaultDataStoreExists
 {
-    return API::WebsiteDataStore::defaultDataStoreExists();
+    return WebKit::WebsiteDataStore::defaultDataStoreExists();
 }
 
 + (void)_deleteDefaultDataStoreForTesting
 {
-    return API::WebsiteDataStore::deleteDefaultDataStoreForTesting();
+    return WebKit::WebsiteDataStore::deleteDefaultDataStoreForTesting();
 }
 
 - (instancetype)_initWithConfiguration:(_WKWebsiteDataStoreConfiguration *)configuration
@@ -253,7 +244,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     if (!(self = [super init]))
         return nil;
 
-    auto config = configuration.isPersistent ? API::WebsiteDataStore::defaultDataStoreConfiguration() : WebKit::WebsiteDataStoreConfiguration::create();
+    auto config = configuration.isPersistent ? WebKit::WebsiteDataStore::defaultDataStoreConfiguration() : WebKit::WebsiteDataStoreConfiguration::create();
 
     RELEASE_ASSERT(config->isPersistent() == configuration.isPersistent);
 
@@ -317,7 +308,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
     auto sessionID = configuration.isPersistent ? PAL::SessionID::generatePersistentSessionID() : PAL::SessionID::generateEphemeralSessionID();
 
-    API::Object::constructInWrapper<API::WebsiteDataStore>(self, WTFMove(config), sessionID);
+    API::Object::constructInWrapper<WebKit::WebsiteDataStore>(self, WTFMove(config), sessionID);
 
     return self;
 }
@@ -330,7 +321,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     if (options & _WKWebsiteDataStoreFetchOptionComputeSizes)
         fetchOptions.add(WebKit::WebsiteDataFetchOption::ComputeSizes);
 
-    _websiteDataStore->websiteDataStore().fetchData(WebKit::toWebsiteDataTypes(dataTypes), fetchOptions, [completionHandlerCopy = WTFMove(completionHandlerCopy)](auto websiteDataRecords) {
+    _websiteDataStore->fetchData(WebKit::toWebsiteDataTypes(dataTypes), fetchOptions, [completionHandlerCopy = WTFMove(completionHandlerCopy)](auto websiteDataRecords) {
         Vector<RefPtr<API::Object>> elements;
         elements.reserveInitialCapacity(websiteDataRecords.size());
 
@@ -343,18 +334,18 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (BOOL)_resourceLoadStatisticsEnabled
 {
-    return _websiteDataStore->websiteDataStore().resourceLoadStatisticsEnabled();
+    return _websiteDataStore->resourceLoadStatisticsEnabled();
 }
 
 - (void)_setResourceLoadStatisticsEnabled:(BOOL)enabled
 {
-    _websiteDataStore->websiteDataStore().setResourceLoadStatisticsEnabled(enabled);
+    _websiteDataStore->setResourceLoadStatisticsEnabled(enabled);
 }
 
 - (BOOL)_resourceLoadStatisticsDebugMode
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    return _websiteDataStore->websiteDataStore().resourceLoadStatisticsDebugMode();
+    return _websiteDataStore->resourceLoadStatisticsDebugMode();
 #else
     return NO;
 #endif
@@ -363,7 +354,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 - (void)_setResourceLoadStatisticsDebugMode:(BOOL)enabled
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    _websiteDataStore->websiteDataStore().setResourceLoadStatisticsDebugMode(enabled);
+    _websiteDataStore->setResourceLoadStatisticsDebugMode(enabled);
 #else
     UNUSED_PARAM(enabled);
 #endif
@@ -380,68 +371,68 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (NSString *)_cacheStorageDirectory
 {
-    return _websiteDataStore->websiteDataStore().cacheStorageDirectory();
+    return _websiteDataStore->cacheStorageDirectory();
 }
 
 - (void)_setCacheStorageDirectory:(NSString *)directory
 {
-    _websiteDataStore->websiteDataStore().setCacheStorageDirectory(directory);
+    _websiteDataStore->setCacheStorageDirectory(directory);
 }
 
 - (NSString *)_serviceWorkerRegistrationDirectory
 {
-    return _websiteDataStore->websiteDataStore().serviceWorkerRegistrationDirectory();
+    return _websiteDataStore->serviceWorkerRegistrationDirectory();
 }
 
 - (void)_setServiceWorkerRegistrationDirectory:(NSString *)directory
 {
-    _websiteDataStore->websiteDataStore().setServiceWorkerRegistrationDirectory(directory);
+    _websiteDataStore->setServiceWorkerRegistrationDirectory(directory);
 }
 
 - (void)_setBoundInterfaceIdentifier:(NSString *)identifier
 {
-    _websiteDataStore->websiteDataStore().setBoundInterfaceIdentifier(identifier);
+    _websiteDataStore->setBoundInterfaceIdentifier(identifier);
 }
 
 - (NSString *)_boundInterfaceIdentifier
 {
-    return _websiteDataStore->websiteDataStore().boundInterfaceIdentifier();
+    return _websiteDataStore->boundInterfaceIdentifier();
 }
 
 - (void)_setAllowsCellularAccess:(BOOL)allows
 {
-    _websiteDataStore->websiteDataStore().setAllowsCellularAccess(allows ? WebKit::AllowsCellularAccess::Yes : WebKit::AllowsCellularAccess::No);
+    _websiteDataStore->setAllowsCellularAccess(allows ? WebKit::AllowsCellularAccess::Yes : WebKit::AllowsCellularAccess::No);
 }
 
 - (BOOL)_allowsCellularAccess
 {
-    return _websiteDataStore->websiteDataStore().allowsCellularAccess() == WebKit::AllowsCellularAccess::Yes;
+    return _websiteDataStore->allowsCellularAccess() == WebKit::AllowsCellularAccess::Yes;
 }
 
 - (void)_setProxyConfiguration:(NSDictionary *)configuration
 {
-    _websiteDataStore->websiteDataStore().setProxyConfiguration((__bridge CFDictionaryRef)configuration);
+    _websiteDataStore->setProxyConfiguration((__bridge CFDictionaryRef)configuration);
 }
 
 - (NSString *)_sourceApplicationBundleIdentifier
 {
-    return _websiteDataStore->websiteDataStore().sourceApplicationBundleIdentifier();
+    return _websiteDataStore->sourceApplicationBundleIdentifier();
 }
 
 - (void)_setSourceApplicationBundleIdentifier:(NSString *)identifier
 {
-    if (!_websiteDataStore->websiteDataStore().setSourceApplicationBundleIdentifier(identifier))
+    if (!_websiteDataStore->setSourceApplicationBundleIdentifier(identifier))
         [NSException raise:NSGenericException format:@"_setSourceApplicationBundleIdentifier cannot be called after networking has begun"];
 }
 
 - (NSString *)_sourceApplicationSecondaryIdentifier
 {
-    return _websiteDataStore->websiteDataStore().sourceApplicationSecondaryIdentifier();
+    return _websiteDataStore->sourceApplicationSecondaryIdentifier();
 }
 
 - (void)_setSourceApplicationSecondaryIdentifier:(NSString *)identifier
 {
-    if (!_websiteDataStore->websiteDataStore().setSourceApplicationSecondaryIdentifier(identifier))
+    if (!_websiteDataStore->setSourceApplicationSecondaryIdentifier(identifier))
         [NSException raise:NSGenericException format:@"_setSourceApplicationSecondaryIdentifier cannot be called after networking has begun"];
 }
 
@@ -456,18 +447,18 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (NSDictionary *)_proxyConfiguration
 {
-    return (__bridge NSDictionary *)_websiteDataStore->websiteDataStore().proxyConfiguration();
+    return (__bridge NSDictionary *)_websiteDataStore->proxyConfiguration();
 }
 
 - (NSURL *)_indexedDBDatabaseDirectory
 {
-    return [NSURL fileURLWithPath:_websiteDataStore->indexedDBDatabaseDirectory() isDirectory:YES];
+    return [NSURL fileURLWithPath:_websiteDataStore->configuration().indexedDBDatabaseDirectory() isDirectory:YES];
 }
 
 - (void)_resourceLoadStatisticsSetShouldSubmitTelemetry:(BOOL)value
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    auto* store = _websiteDataStore->resourceLoadStatistics();
     if (!store)
         return;
 
@@ -482,13 +473,13 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         return;
 
     if (callback) {
-        _websiteDataStore->websiteDataStore().setStatisticsTestingCallback([callback = makeBlockPtr(callback), self](const String& event) {
+        _websiteDataStore->setStatisticsTestingCallback([callback = makeBlockPtr(callback), self](const String& event) {
             callback(self, event);
         });
         return;
     }
 
-    _websiteDataStore->websiteDataStore().setStatisticsTestingCallback(nullptr);
+    _websiteDataStore->setStatisticsTestingCallback(nullptr);
 #endif
 }
 
@@ -511,7 +502,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    _websiteDataStore->websiteDataStore().getAllStorageAccessEntries(webPageProxy->identifier(), [completionHandler = makeBlockPtr(completionHandler)](auto domains) {
+    _websiteDataStore->getAllStorageAccessEntries(webPageProxy->identifier(), [completionHandler = makeBlockPtr(completionHandler)](auto domains) {
         Vector<RefPtr<API::Object>> apiDomains;
         apiDomains.reserveInitialCapacity(domains.size());
         for (auto& domain : domains)
@@ -526,7 +517,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 - (void)_scheduleCookieBlockingUpdate:(void (^)(void))completionHandler
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    _websiteDataStore->websiteDataStore().scheduleCookieBlockingUpdate([completionHandler = makeBlockPtr(completionHandler)]() {
+    _websiteDataStore->scheduleCookieBlockingUpdate([completionHandler = makeBlockPtr(completionHandler)]() {
         completionHandler();
     });
 #else
@@ -537,7 +528,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 - (void)_setPrevalentDomain:(NSURL *)domain completionHandler:(void (^)(void))completionHandler
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    _websiteDataStore->websiteDataStore().setPrevalentResource(URL(domain), [completionHandler = makeBlockPtr(completionHandler)]() {
+    _websiteDataStore->setPrevalentResource(URL(domain), [completionHandler = makeBlockPtr(completionHandler)]() {
         completionHandler();
     });
 #else
@@ -548,7 +539,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 - (void)_getIsPrevalentDomain:(NSURL *)domain completionHandler:(void (^)(BOOL))completionHandler
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    _websiteDataStore->websiteDataStore().isPrevalentResource(URL(domain), [completionHandler = makeBlockPtr(completionHandler)](bool enabled) {
+    _websiteDataStore->isPrevalentResource(URL(domain), [completionHandler = makeBlockPtr(completionHandler)](bool enabled) {
         completionHandler(enabled);
     });
 #else
@@ -559,7 +550,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 - (void)_clearPrevalentDomain:(NSURL *)domain completionHandler:(void (^)(void))completionHandler
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    _websiteDataStore->websiteDataStore().clearPrevalentResource(URL(domain), [completionHandler = makeBlockPtr(completionHandler)]() {
+    _websiteDataStore->clearPrevalentResource(URL(domain), [completionHandler = makeBlockPtr(completionHandler)]() {
         completionHandler();
     });
 #else
@@ -570,7 +561,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 - (void)_processStatisticsAndDataRecords:(void (^)(void))completionHandler
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    _websiteDataStore->websiteDataStore().scheduleStatisticsAndDataRecordsProcessing([completionHandler = makeBlockPtr(completionHandler)]() {
+    _websiteDataStore->scheduleStatisticsAndDataRecordsProcessing([completionHandler = makeBlockPtr(completionHandler)]() {
         completionHandler();
     });
 #else
@@ -580,18 +571,18 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (bool)_hasRegisteredServiceWorker
 {
-    return FileSystem::fileExists(WebCore::serviceWorkerRegistrationDatabaseFilename(_websiteDataStore->websiteDataStore().serviceWorkerRegistrationDirectory()));
+    return FileSystem::fileExists(WebCore::serviceWorkerRegistrationDatabaseFilename(_websiteDataStore->serviceWorkerRegistrationDirectory()));
 }
 
 - (id <_WKWebsiteDataStoreDelegate>)_delegate
 {
-    return _delegate.get();
+    return _delegate.get().get();
 }
 
 - (void)set_delegate:(id <_WKWebsiteDataStoreDelegate>)delegate
 {
     _delegate = delegate;
-    _websiteDataStore->websiteDataStore().setClient(makeUniqueRef<WebsiteDataStoreClient>(delegate));
+    _websiteDataStore->setClient(makeUniqueRef<WebsiteDataStoreClient>(delegate));
 }
 
 @end
