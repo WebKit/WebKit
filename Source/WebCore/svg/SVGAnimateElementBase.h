@@ -38,10 +38,12 @@ public:
 protected:
     SVGAnimateElementBase(const QualifiedName&, Document&);
 
+    bool hasValidAttributeType() const override;
+    virtual String animateRangeString(const String& string) const { return string; }
+
+private:
     SVGAttributeAnimator* animator() const;
     SVGAttributeAnimator* animatorIfExists() const { return m_animator.get(); }
-
-    bool hasValidAttributeType() const override;
 
     void setTargetElement(SVGElement*) override;
     void setAttributeName(const QualifiedName&) override;
@@ -57,9 +59,6 @@ protected:
     void clearAnimatedType(SVGElement* targetElement) override;
     Optional<float> calculateDistance(const String& fromString, const String& toString) override;
 
-    virtual String animateRangeString(const String& string) const { return string; }
-
-private:
     bool hasInvalidCSSAttributeType() const;
 
     mutable std::unique_ptr<SVGAttributeAnimator> m_animator;

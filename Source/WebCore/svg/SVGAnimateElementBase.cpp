@@ -75,7 +75,11 @@ bool SVGAnimateElementBase::hasInvalidCSSAttributeType() const
 
 bool SVGAnimateElementBase::isDiscreteAnimator() const
 {
-    return hasValidAttributeType() && animatorIfExists() && animatorIfExists()->isDiscrete();
+    if (!hasValidAttributeType())
+        return false;
+
+    auto* animator = this->animator();
+    return animator && animator->isDiscrete();
 }
 
 void SVGAnimateElementBase::setTargetElement(SVGElement* target)

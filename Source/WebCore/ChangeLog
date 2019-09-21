@@ -1,3 +1,35 @@
+2019-09-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Assertion fires when animating a discrete property with values range and multiple animators
+        https://bugs.webkit.org/show_bug.cgi?id=201926
+
+        Reviewed by Darin Adler.
+
+        The first animator of a property is considered the result element. The
+        other animators will be just contributers to the first animator. For the
+        first animator and in SVGSMILElement::progress(), we call resetAnimatedType()
+        which creates m_animator in SVGAnimateElementBase::animator(). But for 
+        the other animators we do not call resetAnimatedType(). So their m_animator
+        will stay null until they are used for the first time.
+
+        If SVGAnimationElement::startedActiveInterval() calls calculateToAtEndOfDurationValue()
+        for a discrete property this will have no effect and the call should be
+        ignored. So SVGAnimateElementBase::calculateToAtEndOfDurationValue()
+        should bail out early if isDiscreteAnimator() is true.
+
+        The bug is isDiscreteAnimator() will return false if the m_animator is 
+        null even if the animated property is discrete, e.g. SVGAnimatedString.
+        The fix is to make isDiscreteAnimator() ensure m_animator is created.
+
+        Unrelated change:
+        Make most of the protected methods of SVGAnimateElementBase be private.
+
+        Test: svg/animations/multiple-discrete-values-animate.svg
+
+        * svg/SVGAnimateElementBase.cpp:
+        (WebCore::SVGAnimateElementBase::calculateFromAndByValues):
+        (WebCore::SVGAnimateElementBase::calculateToAtEndOfDurationValue):
+
 2019-09-20  Keith Rollin  <krollin@apple.com>
 
         Remove dead code for a specific macOS and iOS SDK
