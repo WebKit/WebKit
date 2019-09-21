@@ -1,4 +1,4 @@
-//@ runDefault
+//@ if ["arm", "mips"].include?($architecture) then skip else runDefault end
 
 const a = [0];
 a.__proto__ = {};

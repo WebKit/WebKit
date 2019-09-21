@@ -1,3 +1,27 @@
+2019-09-21  Caio Lima  <ticaiolima@gmail.com>
+
+        stress/test-out-of-memory.js is not throwing OOM into ARMv7 and MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=202011
+
+        Reviewed by Mark Lam.
+
+        We are skipping this test into MIPS and ARMv7 because some of its assumptions
+        are not valid for them. The current behavior of the test in those architectures
+        is that it does not throw during `new ArrayBuffer(1000)` allocation site,
+        because eden collection keeps happening between iterations. The collection
+        is triggered on those architectures because the amount of stress 
+        `new Promise` generates into GC limits is not enough to avoid them
+        while loop is executing.
+
+        Changing the size of `UInt8Array` from `80000000` to `160000000` can
+        be an alternative fix to avoid collection happening during `ArrayBuffer`
+        allocation loop, but we can't guarantee this test is always going to execute
+        without error when Gigacage is disabled, given we can reach an OOM state in
+        some allocations that need to succeed, making this test flaky for those
+        architectures.
+
+        * stress/test-out-of-memory.js:
+
 2019-09-21  Tadeu Zagallo  <tzagallo@apple.com>
 
         AccessCase should strongly visit its dependencies while on stack
