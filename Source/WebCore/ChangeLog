@@ -1,3 +1,19 @@
+2019-09-21  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] LayoutContext::m_formattingContextRootListForLayout should be a WeakHashSet
+        https://bugs.webkit.org/show_bug.cgi?id=202068
+        <rdar://problem/55579352>
+
+        Reviewed by Alex Christensen.
+
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::layout):
+        (WebCore::Layout::LayoutContext::styleChanged):
+        (WebCore::Layout::LayoutContext::markNeedsUpdate):
+        * layout/LayoutContext.h:
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::layoutUsingFormattingContext):
+
 2019-09-19  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Clean up handling of summary items and payment method updates

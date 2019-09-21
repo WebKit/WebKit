@@ -59,9 +59,9 @@ void LayoutContext::layout()
 {
     PhaseScope scope(Phase::Type::Layout);
 
-    ASSERT(!m_formattingContextRootListForLayout.isEmpty());
-    for (auto* layoutRoot : m_formattingContextRootListForLayout)
-        layoutFormattingContextSubtree(*layoutRoot);
+    ASSERT(!m_formattingContextRootListForLayout.computesEmpty());
+    for (auto& layoutRoot : m_formattingContextRootListForLayout)
+        layoutFormattingContextSubtree(layoutRoot);
     m_formattingContextRootListForLayout.clear();
 }
 
@@ -86,13 +86,13 @@ void LayoutContext::styleChanged(const Box& layoutBox, StyleDiff styleDiff)
     else
         ASSERT_NOT_IMPLEMENTED_YET();
     ASSERT(invalidationRoot);
-    m_formattingContextRootListForLayout.addVoid(invalidationRoot);
+    m_formattingContextRootListForLayout.add(invalidationRoot);
 }
 
 void LayoutContext::markNeedsUpdate(const Box& layoutBox, OptionSet<UpdateType>)
 {
     // FIXME: This should trigger proper invalidation instead of just adding the formatting context root to the dirty list. 
-    m_formattingContextRootListForLayout.addVoid(&(layoutBox.isInitialContainingBlock() ? downcast<Container>(layoutBox) : layoutBox.formattingContextRoot()));
+    m_formattingContextRootListForLayout.add(&(layoutBox.isInitialContainingBlock() ? downcast<Container>(layoutBox) : layoutBox.formattingContextRoot()));
 }
 
 std::unique_ptr<FormattingContext> LayoutContext::createFormattingContext(const Container& formattingContextRoot, LayoutState& layoutState)

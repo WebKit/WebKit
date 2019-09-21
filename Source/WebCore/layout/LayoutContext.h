@@ -29,9 +29,9 @@
 
 #include "LayoutContainer.h"
 #include "LayoutState.h"
-#include <wtf/HashSet.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/OptionSet.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -79,7 +79,7 @@ private:
     LayoutState& layoutState() { return m_layoutState; }
 
     LayoutState& m_layoutState;
-    HashSet<const Container*> m_formattingContextRootListForLayout;
+    WeakHashSet<const Container> m_formattingContextRootListForLayout;
 };
 
 }
