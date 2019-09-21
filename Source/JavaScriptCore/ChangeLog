@@ -1,3 +1,14 @@
+2019-09-20  Mark Lam  <mark.lam@apple.com>
+
+        Harden assertion in StructureIDTable::get().
+        https://bugs.webkit.org/show_bug.cgi?id=202067
+        <rdar://problem/55577923>
+
+        Reviewed by Keith Miller.
+
+        * runtime/StructureIDTable.h:
+        (JSC::StructureIDTable::get):
+
 2019-09-20  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r250114.

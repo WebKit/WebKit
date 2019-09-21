@@ -172,7 +172,7 @@ inline Structure* StructureIDTable::get(StructureID structureID)
     ASSERT_WITH_SECURITY_IMPLICATION(structureID);
     ASSERT_WITH_SECURITY_IMPLICATION(!isNuked(structureID));
     uint32_t structureIndex = structureID >> s_numberOfEntropyBits;
-    ASSERT_WITH_SECURITY_IMPLICATION(structureIndex < m_capacity);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(structureIndex < m_capacity);
     return decode(table()[structureIndex].encodedStructureBits, structureID);
 }
 
