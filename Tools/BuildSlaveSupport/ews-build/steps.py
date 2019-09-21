@@ -744,7 +744,10 @@ class CompileWebKit(shell.Compile):
                 steps_to_add.append(InstallWpeDependencies())
             elif platform == 'gtk':
                 steps_to_add.append(InstallGtkDependencies())
-            steps_to_add.append(CompileWebKitToT())
+            if self.getProperty('group') == 'jsc':
+                steps_to_add.append(CompileJSCOnlyToT())
+            else:
+                steps_to_add.append(CompileWebKitToT())
             steps_to_add.append(AnalyzeCompileWebKitResults())
             # Using a single addStepsAfterCurrentStep because of https://github.com/buildbot/buildbot/issues/4874
             self.build.addStepsAfterCurrentStep(steps_to_add)
@@ -776,7 +779,10 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
     descriptionDone = ['analyze-compile-webkit-results']
 
     def start(self):
-        compile_webkit_tot_result = self.getStepResult(CompileWebKitToT.name)
+        compile_tot_step = CompileWebKitToT.name
+        if self.getProperty('group') == 'jsc':
+            compile_tot_step = CompileJSCOnlyToT.name
+        compile_webkit_tot_result = self.getStepResult(compile_tot_step)
 
         if compile_webkit_tot_result == FAILURE:
             self.finished(FAILURE)
@@ -804,6 +810,10 @@ class CompileJSCOnly(CompileWebKit):
     descriptionDone = ['Compiled JSC']
     command = ['perl', 'Tools/Scripts/build-jsc', WithProperties('--%(configuration)s')]
 
+    def start(self):
+        self.setProperty('group', 'jsc')
+        return CompileWebKit.start(self)
+
 
 class CompileJSCOnlyToT(CompileJSCOnly):
     name = 'build-jsc-tot'
@@ -813,6 +823,9 @@ class CompileJSCOnlyToT(CompileJSCOnly):
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
+
+    def evaluateCommand(self, cmd):
+        return shell.Compile.evaluateCommand(self, cmd)
 
 
 class RunJavaScriptCoreTests(shell.Test):

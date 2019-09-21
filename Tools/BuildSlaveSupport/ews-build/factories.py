@@ -118,9 +118,7 @@ class TestFactory(Factory):
 class JSCTestsFactory(Factory):
     def __init__(self, platform, configuration='release', architectures=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, checkRelevance=True)
-        self.addStep(CompileJSCOnly())
-        self.addStep(UnApplyPatchIfRequired())
-        self.addStep(CompileJSCOnlyToT())
+        self.addStep(CompileJSCOnly(skipUpload=True))
         self.addStep(RunJavaScriptCoreTests())
         self.addStep(ReRunJavaScriptCoreTests())
         self.addStep(UnApplyPatchIfRequired())

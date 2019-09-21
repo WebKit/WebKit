@@ -1,3 +1,21 @@
+2019-09-20  Aakash Jain  <aakash_jain@apple.com>
+
+        [EWS] JSC queues should re-build ToT and compare results on build failure
+        https://bugs.webkit.org/show_bug.cgi?id=201999
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+        (JSCTestsFactory.__init__): Do not add the UnApplyPatchIfRequired and CompileJSCOnlyToT step here, as
+        these are dynamically added (if required) in steps.py in CompileWebKit.evaluateCommand() using addStepsAfterCurrentStep().
+        Also setting skipUpload=False since we don't need to upload the archive for this queue. Building and testing is done in same build.
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CompileWebKit.evaluateCommand): Add CompileJSCOnlyToT or CompileWebKitToT build-step based on 'group' property.
+        (AnalyzeCompileWebKitResults.start): Ditto.
+        (CompileJSCOnly.start): Set the 'group' property to 'jsc'.
+        (CompileJSCOnlyToT.evaluateCommand): Over-ride evaluateCommand, so that base-class' (CompileWebKit) evaluateCommand is 
+        not used, base class evaluateCommand adds build-steps dynamically.
+
 2019-09-20  Keith Rollin  <krollin@apple.com>
 
         Remove some support for < iOS 13
