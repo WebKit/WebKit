@@ -546,7 +546,7 @@ void Graph::dump(PrintStream& out, DumpContext* context)
             out.print(prefix, "  Argument formats for entrypoint index: ", entrypointIndex, " : ", listDump(m_argumentFormats[entrypointIndex]), "\n");
     }
     else {
-        for (auto pair : m_rootToArguments)
+        for (const auto& pair : m_rootToArguments)
             out.print(prefix, "  Arguments for block#", pair.key->index, ": ", listDump(pair.value), "\n");
     }
     out.print("\n");

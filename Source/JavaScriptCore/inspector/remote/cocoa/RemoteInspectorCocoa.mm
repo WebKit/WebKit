@@ -239,7 +239,7 @@ void RemoteInspector::stopInternal(StopSource source)
 
     m_pushScheduled = false;
 
-    for (auto targetConnection : m_targetConnectionMap.values())
+    for (const auto& targetConnection : m_targetConnectionMap.values())
         targetConnection->close();
     m_targetConnectionMap.clear();
 
@@ -347,7 +347,7 @@ void RemoteInspector::xpcConnectionFailed(RemoteInspectorXPCConnection* relayCon
 
     m_pushScheduled = false;
 
-    for (auto targetConnection : m_targetConnectionMap.values())
+    for (const auto& targetConnection : m_targetConnectionMap.values())
         targetConnection->close();
     m_targetConnectionMap.clear();
 
@@ -437,7 +437,7 @@ void RemoteInspector::pushListingsNow()
     m_pushScheduled = false;
 
     RetainPtr<NSMutableDictionary> listings = adoptNS([[NSMutableDictionary alloc] init]);
-    for (RetainPtr<NSDictionary> listing : m_targetListingMap.values()) {
+    for (const auto& listing : m_targetListingMap.values()) {
         NSString *targetIdentifierString = [[listing.get() objectForKey:WIRTargetIdentifierKey] stringValue];
         [listings setObject:listing.get() forKey:targetIdentifierString];
     }

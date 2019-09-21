@@ -1056,7 +1056,7 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
 
     if (!enumerationMode.includeDontEnumProperties()) {
         // Filtering DontEnum properties is observable in proxies and must occur following the invariant checks above.
-        for (auto propertyName : trapResult) {
+        for (const auto& propertyName : trapResult) {
             PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
             auto result = getOwnPropertySlotCommon(exec, propertyName, slot);
             RETURN_IF_EXCEPTION(scope, void());
@@ -1067,7 +1067,7 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
             propertyNames.add(propertyName.impl());
         }
     } else {
-        for (auto propertyName : trapResult)
+        for (const auto& propertyName : trapResult)
             propertyNames.add(propertyName.impl());
     }
 }

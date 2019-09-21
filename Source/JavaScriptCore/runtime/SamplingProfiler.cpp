@@ -1013,7 +1013,7 @@ void SamplingProfiler::registerForReportAtExit()
     if (!profilesToReport) {
         profilesToReport = new HashSet<RefPtr<SamplingProfiler>>();
         atexit([]() {
-            for (auto profile : *profilesToReport)
+            for (const auto& profile : *profilesToReport)
                 profile->reportDataToOptionFile();
         });
     }
@@ -1066,7 +1066,7 @@ void SamplingProfiler::reportTopFunctions(PrintStream& out)
     auto takeMax = [&] () -> std::pair<String, size_t> {
         String maxFrameDescription;
         size_t maxFrameCount = 0;
-        for (auto entry : functionCounts) {
+        for (const auto& entry : functionCounts) {
             if (entry.value > maxFrameCount) {
                 maxFrameCount = entry.value;
                 maxFrameDescription = entry.key;
@@ -1146,7 +1146,7 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
     auto takeMax = [&] () -> std::pair<String, size_t> {
         String maxFrameDescription;
         size_t maxFrameCount = 0;
-        for (auto entry : bytecodeCounts) {
+        for (const auto& entry : bytecodeCounts) {
             if (entry.value > maxFrameCount) {
                 maxFrameCount = entry.value;
                 maxFrameDescription = entry.key;

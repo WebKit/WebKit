@@ -330,7 +330,7 @@ public:
 
         // We can now purge values from the captured candidates because they're captured in this scope.
         {
-            for (auto entry : m_lexicalVariables) {
+            for (const auto& entry : m_lexicalVariables) {
                 if (entry.value.isCaptured())
                     m_closedVariableCandidates.remove(entry.key.get());
             }

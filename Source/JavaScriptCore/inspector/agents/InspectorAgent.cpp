@@ -120,7 +120,7 @@ void InspectorAgent::activateExtraDomains(const Vector<String>& extraDomains)
         return;
 
     auto domainNames = JSON::ArrayOf<String>::create();
-    for (auto domainName : extraDomains)
+    for (const auto& domainName : extraDomains)
         domainNames->addItem(domainName);
 
     m_frontendDispatcher->activateExtraDomains(WTFMove(domainNames));

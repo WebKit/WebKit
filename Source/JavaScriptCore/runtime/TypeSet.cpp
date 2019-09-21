@@ -497,9 +497,9 @@ Ref<Inspector::Protocol::Runtime::StructureDescription> StructureShape::inspecto
     while (currentShape) {
         auto fields = JSON::ArrayOf<String>::create();
         auto optionalFields = JSON::ArrayOf<String>::create();
-        for (auto field : currentShape->m_fields)
+        for (const auto& field : currentShape->m_fields)
             fields->addItem(field.get());
-        for (auto field : currentShape->m_optionalFields)
+        for (const auto& field : currentShape->m_optionalFields)
             optionalFields->addItem(field.get());
 
         currentObject->setFields(&fields.get());
@@ -538,23 +538,23 @@ Ref<StructureShape> StructureShape::merge(Ref<StructureShape>&& a, Ref<Structure
     ASSERT(a->hasSamePrototypeChain(b.get()));
 
     auto merged = StructureShape::create();
-    for (auto field : a->m_fields) {
+    for (const auto& field : a->m_fields) {
         if (b->m_fields.contains(field))
             merged->m_fields.add(field);
         else
             merged->m_optionalFields.add(field);
     }
 
-    for (auto field : b->m_fields) {
+    for (const auto& field : b->m_fields) {
         if (!merged->m_fields.contains(field)) {
             auto addResult = merged->m_optionalFields.add(field);
             ASSERT_UNUSED(addResult, addResult.isNewEntry);
         }
     }
 
-    for (auto field : a->m_optionalFields)
+    for (const auto& field : a->m_optionalFields)
         merged->m_optionalFields.add(field);
-    for (auto field : b->m_optionalFields)
+    for (const auto& field : b->m_optionalFields)
         merged->m_optionalFields.add(field);
 
     ASSERT(a->m_constructorName == b->m_constructorName);

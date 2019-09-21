@@ -104,7 +104,7 @@ private:
 
         Logger::log(channel, level, arguments...);
 
-        for (auto logger : m_loggers) {
+        for (const auto& logger : m_loggers) {
             for (Observer& observer : logger->observers())
                 observer.didLogMessage(channel, level, { ConsoleLogValue<Argument>::toValue(arguments)... });
         }

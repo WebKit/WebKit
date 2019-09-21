@@ -2326,7 +2326,7 @@ void BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration(VariableEnvir
     move(scopeRegister(), loopScope);
 
     {
-        for (auto pair : activationValuesToCopyOver) {
+        for (const auto& pair : activationValuesToCopyOver) {
             const Identifier& identifier = pair.second;
             SymbolTableEntry entry = symbolTable->get(NoLockingNecessary, identifier.impl());
             RELEASE_ASSERT(!entry.isNull());

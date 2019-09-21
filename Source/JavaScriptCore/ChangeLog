@@ -1,3 +1,37 @@
+2019-09-21  David Kilzer  <ddkilzer@apple.com>
+
+        clang-tidy: Fix unnecessary copy/ref churn of for loop variables in WTF/JavaScriptCore
+        <https://webkit.org/b/202069>
+
+        Reviewed by Mark Lam.
+
+        Fix unwanted copying/ref churn of loop variables by making them
+        const references.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::setConstantIdentifierSetRegisters):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * inspector/agents/InspectorAgent.cpp:
+        (Inspector::InspectorAgent::activateExtraDomains):
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::stopInternal):
+        (Inspector::RemoteInspector::xpcConnectionFailed):
+        (Inspector::RemoteInspector::pushListingsNow):
+        * parser/Parser.h:
+        (JSC::Scope::computeLexicallyCapturedVariablesAndPurgeCandidates):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::registerForReportAtExit):
+        (JSC::SamplingProfiler::reportTopFunctions):
+        (JSC::SamplingProfiler::reportTopBytecodes):
+        * runtime/TypeSet.cpp:
+        (JSC::StructureShape::inspectorRepresentation):
+        (JSC::StructureShape::merge):
+
 2019-09-20  Keith Miller  <keith_miller@apple.com>
 
         eliding a move in Air O0 needs to mark the dest's old reg as available
