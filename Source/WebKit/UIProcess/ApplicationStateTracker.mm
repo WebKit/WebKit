@@ -108,14 +108,18 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
         m_isInBackground = window.windowScene.activationState == UISceneActivationStateBackground || window.windowScene.activationState == UISceneActivationStateUnattached;
         RELEASE_LOG(ViewState, "%p - ApplicationStateTracker::ApplicationStateTracker(): m_isInBackground: %d", this, m_isInBackground);
 
-        m_didEnterBackgroundObserver = [notificationCenter addObserverForName:UISceneDidEnterBackgroundNotification object:window.windowScene queue:nil usingBlock:[this](NSNotification *) {
-            RELEASE_LOG(ViewState, "%p - ApplicationStateTracker: UISceneDidEnterBackground", this);
-            applicationDidEnterBackground();
+        m_didEnterBackgroundObserver = [notificationCenter addObserverForName:UISceneDidEnterBackgroundNotification object:nil queue:nil usingBlock:[this](NSNotification *notification) {
+            if (notification.object == [[m_view window] windowScene]) {
+                RELEASE_LOG(ViewState, "%p - ApplicationStateTracker: UISceneDidEnterBackground", this);
+                applicationDidEnterBackground();
+            }
         }];
 
-        m_willEnterForegroundObserver = [notificationCenter addObserverForName:UISceneWillEnterForegroundNotification object:window.windowScene queue:nil usingBlock:[this](NSNotification *) {
-            RELEASE_LOG(ViewState, "%p - ApplicationStateTracker: UISceneWillEnterForeground", this);
-            applicationWillEnterForeground();
+        m_willEnterForegroundObserver = [notificationCenter addObserverForName:UISceneWillEnterForegroundNotification object:nil queue:nil usingBlock:[this](NSNotification *notification) {
+            if (notification.object == [[m_view window] windowScene]) {
+                RELEASE_LOG(ViewState, "%p - ApplicationStateTracker: UISceneWillEnterForeground", this);
+                applicationWillEnterForeground();
+            }
         }];
 #else
         m_isInBackground = application.applicationState == UIApplicationStateBackground;
@@ -180,6 +184,7 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
 
 ApplicationStateTracker::~ApplicationStateTracker()
 {
+    RELEASE_LOG(ViewState, "%p - ~ApplicationStateTracker", this);
     if (m_applicationStateMonitor) {
         [m_applicationStateMonitor invalidate];
         return;

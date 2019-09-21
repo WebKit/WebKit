@@ -1,3 +1,28 @@
+2019-09-21  Chris Dumez  <cdumez@apple.com>
+
+        Regression(iOS 13) web views do not deal properly with their window's UIScene changing
+        https://bugs.webkit.org/show_bug.cgi?id=202070
+        <rdar://problem/55580699>
+
+        Reviewed by Tim Horton.
+
+        Web views do not deal properly with their window's UIScene changing. If a Safari window is in the
+        background for 1 minute, its UIScene will be detached and the window will get a new UIScene if
+        the user later switches to this window. Our web views listen to UIScene notifications to determine
+        their visibility and currently stop receiving visibility updates once the window’s UIScene has
+        changed. This causes view freezes because our WebContent process does not know its view is visible
+        and keeps its layer tree frozen.
+
+        Previously, when our view would be added to a window, we would get this window's UIScene and listen
+        for UISceneDidEnterBackgroundNotification / UISceneWillEnterForegroundNotification for this UIScene
+        object. Instead, we now listen to these notifications for ALL the application's UIScenes. Our handler
+        then checks if the notification's UIScene object matches the current window's UIScene before
+        forwarding the notification to the rest of WebKit.
+
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::ApplicationStateTracker::ApplicationStateTracker):
+        (WebKit::ApplicationStateTracker::~ApplicationStateTracker):
+
 2019-09-21  Dan Bernstein  <mitz@apple.com>
 
         Safari 13 may launch leftover 32-bit plug-in process from Safari 12’s WebKit, which crashes
