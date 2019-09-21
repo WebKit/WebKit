@@ -57,11 +57,20 @@
 #include "PaymentCoordinator.h"
 #include "PaymentMerchantSession.h"
 #include "PaymentMethod.h"
+#include "PaymentMethodUpdate.h"
 #include "PaymentRequestValidator.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "UserGestureIndicator.h"
 #include <wtf/IsoMallocInlines.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/ApplePaySessionAdditions.cpp>
+#else
+namespace WebCore {
+static void finishConverting(PaymentMethodUpdate&, ApplePayPaymentMethodUpdate&&) { }
+}
+#endif
 
 namespace WebCore {
 
@@ -139,12 +148,13 @@ static ExceptionOr<ApplePaySessionPaymentRequest::LineItem> convertAndValidateTo
     if (!validateAmount(lineItem.amount))
         return Exception { TypeError, makeString("\"" + lineItem.amount, "\" is not a valid amount.") };
 
-    ApplePaySessionPaymentRequest::LineItem result;
-    result.amount = lineItem.amount;
-    result.type = lineItem.type;
-    result.label = lineItem.label;
+    ApplePaySessionPaymentRequest::LineItem total { lineItem.type, lineItem.amount, lineItem.label };
 
-    return WTFMove(result);
+    auto validatedTotal = PaymentRequestValidator::validateTotal(total);
+    if (validatedTotal.hasException())
+        return validatedTotal.releaseException();
+
+    return WTFMove(total);
 }
 
 static ExceptionOr<ApplePaySessionPaymentRequest::LineItem> convertAndValidate(ApplePayLineItem&& lineItem)
@@ -318,23 +328,16 @@ static ExceptionOr<PaymentAuthorizationResult> convertAndValidate(ApplePayPaymen
 
 static ExceptionOr<PaymentMethodUpdate> convertAndValidate(ApplePayPaymentMethodUpdate&& update)
 {
-    PaymentMethodUpdate convertedUpdate;
-
     auto convertedNewTotal = convertAndValidateTotal(WTFMove(update.newTotal));
     if (convertedNewTotal.hasException())
         return convertedNewTotal.releaseException();
-    convertedUpdate.newTotalAndLineItems.total = convertedNewTotal.releaseReturnValue();
-
-    // FIXME: Merge this validation into the validation we are doing above.
-    auto validatedTotal = PaymentRequestValidator::validateTotal(convertedUpdate.newTotalAndLineItems.total);
-    if (validatedTotal.hasException())
-        return validatedTotal.releaseException();
 
     auto convertedNewLineItems = convertAndValidate(WTFMove(update.newLineItems));
     if (convertedNewLineItems.hasException())
         return convertedNewLineItems.releaseException();
 
-    convertedUpdate.newTotalAndLineItems.lineItems = convertedNewLineItems.releaseReturnValue();
+    PaymentMethodUpdate convertedUpdate { convertedNewTotal.releaseReturnValue(), convertedNewLineItems.releaseReturnValue() };
+    finishConverting(convertedUpdate, WTFMove(update));
 
     return WTFMove(convertedUpdate);
 }
@@ -355,11 +358,6 @@ static ExceptionOr<ShippingContactUpdate> convertAndValidate(ApplePayShippingCon
         return convertedNewTotal.releaseException();
     convertedUpdate.newTotalAndLineItems.total = convertedNewTotal.releaseReturnValue();
 
-    // FIXME: Merge this validation into the validation we are doing above.
-    auto validatedTotal = PaymentRequestValidator::validateTotal(convertedUpdate.newTotalAndLineItems.total);
-    if (validatedTotal.hasException())
-        return validatedTotal.releaseException();
-
     auto convertedNewLineItems = convertAndValidate(WTFMove(update.newLineItems));
     if (convertedNewLineItems.hasException())
         return convertedNewLineItems.releaseException();
@@ -377,11 +375,6 @@ static ExceptionOr<ShippingMethodUpdate> convertAndValidate(ApplePayShippingMeth
         return convertedNewTotal.releaseException();
 
     convertedUpdate.newTotalAndLineItems.total = convertedNewTotal.releaseReturnValue();
-
-    // FIXME: Merge this validation into the validation we are doing above.
-    auto validatedTotal = PaymentRequestValidator::validateTotal(convertedUpdate.newTotalAndLineItems.total);
-    if (validatedTotal.hasException())
-        return validatedTotal.releaseException();
 
     auto convertedNewLineItems = convertAndValidate(WTFMove(update.newLineItems));
     if (convertedNewLineItems.hasException())

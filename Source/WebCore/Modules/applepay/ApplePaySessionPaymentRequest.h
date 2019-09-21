@@ -212,10 +212,6 @@ struct PaymentAuthorizationResult {
     Vector<PaymentError> errors;
 };
 
-struct PaymentMethodUpdate {
-    ApplePaySessionPaymentRequest::TotalAndLineItems newTotalAndLineItems;
-};
-
 struct ShippingContactUpdate {
     Vector<PaymentError> errors;
 

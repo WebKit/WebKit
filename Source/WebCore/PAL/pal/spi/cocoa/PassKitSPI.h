@@ -348,16 +348,20 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) PKPaymentAuthorizationStatus status;
 @end
 
-@interface PKPaymentRequestPaymentMethodUpdate : NSObject
-- (instancetype)initWithPaymentSummaryItems:(nonnull NSArray<PKPaymentSummaryItem *> *)paymentSummaryItems;
+@interface PKPaymentRequestUpdate : NSObject
+- (instancetype)initWithPaymentSummaryItems:(NSArray<PKPaymentSummaryItem *> *)paymentSummaryItems;
+@property (nonatomic, copy) NSArray<PKPaymentSummaryItem *> *paymentSummaryItems;
 @end
 
-@interface PKPaymentRequestUpdate : NSObject
+@interface PKPaymentRequestPaymentMethodUpdate : PKPaymentRequestUpdate
 @end
 
 @interface PKPaymentRequestShippingContactUpdate : PKPaymentRequestUpdate
-- (instancetype)initWithPaymentSummaryItems:(nonnull NSArray<PKPaymentSummaryItem *> *)summaryItems shippingMethods:(nonnull NSArray<PKShippingMethod *> *)shippingMethods;
 - (instancetype)initWithErrors:(nullable NSArray<NSError *> *)errors paymentSummaryItems:(nonnull NSArray<PKPaymentSummaryItem *> *)summaryItems shippingMethods:(nonnull NSArray<PKShippingMethod *> *)shippingMethods;
+@property (nonatomic, copy) NSArray<PKShippingMethod *> *shippingMethods;
+@end
+
+@interface PKPaymentRequestShippingMethodUpdate : PKPaymentRequestUpdate
 @end
 
 NS_ASSUME_NONNULL_END

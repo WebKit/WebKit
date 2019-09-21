@@ -109,41 +109,11 @@ static RetainPtr<NSSet> toPKContactFields(const WebCore::ApplePaySessionPaymentR
     return adoptNS([[NSSet alloc] initWithObjects:result.data() count:result.size()]);
 }
 
-PKPaymentSummaryItemType toPKPaymentSummaryItemType(WebCore::ApplePaySessionPaymentRequest::LineItem::Type type)
-{
-    switch (type) {
-    case WebCore::ApplePaySessionPaymentRequest::LineItem::Type::Final:
-        return PKPaymentSummaryItemTypeFinal;
-
-    case WebCore::ApplePaySessionPaymentRequest::LineItem::Type::Pending:
-        return PKPaymentSummaryItemTypePending;
-    }
-}
-
 NSDecimalNumber *toDecimalNumber(const String& amount)
 {
     if (!amount)
         return [NSDecimalNumber zero];
     return [NSDecimalNumber decimalNumberWithString:amount locale:@{ NSLocaleDecimalSeparator : @"." }];
-}
-
-PKPaymentSummaryItem *toPKPaymentSummaryItem(const WebCore::ApplePaySessionPaymentRequest::LineItem& lineItem)
-{
-    return [PAL::getPKPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
-}
-
-NSArray *toPKPaymentSummaryItems(const WebCore::ApplePaySessionPaymentRequest::TotalAndLineItems& totalAndLineItems)
-{
-    NSMutableArray *paymentSummaryItems = [NSMutableArray arrayWithCapacity:totalAndLineItems.lineItems.size() + 1];
-    for (auto& lineItem : totalAndLineItems.lineItems) {
-        if (PKPaymentSummaryItem *summaryItem = toPKPaymentSummaryItem(lineItem))
-            [paymentSummaryItems addObject:summaryItem];
-    }
-
-    if (PKPaymentSummaryItem *totalItem = toPKPaymentSummaryItem(totalAndLineItems.total))
-        [paymentSummaryItems addObject:totalItem];
-
-    return paymentSummaryItems;
 }
 
 static PKMerchantCapability toPKMerchantCapabilities(const WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities& merchantCapabilities)
@@ -256,16 +226,7 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
         [shippingMethods addObject:toPKShippingMethod(shippingMethod)];
     [result setShippingMethods:shippingMethods.get()];
 
-    auto paymentSummaryItems = adoptNS([[NSMutableArray alloc] init]);
-    for (auto& lineItem : paymentRequest.lineItems()) {
-        if (PKPaymentSummaryItem *summaryItem = toPKPaymentSummaryItem(lineItem))
-            [paymentSummaryItems addObject:summaryItem];
-    }
-
-    if (PKPaymentSummaryItem *totalItem = toPKPaymentSummaryItem(paymentRequest.total()))
-        [paymentSummaryItems addObject:totalItem];
-
-    [result setPaymentSummaryItems:paymentSummaryItems.get()];
+    [result setPaymentSummaryItems:WebCore::platformSummaryItems(paymentRequest.total(), paymentRequest.lineItems())];
 
     [result setExpectsMerchantSession:YES];
 

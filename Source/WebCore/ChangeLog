@@ -1,3 +1,44 @@
+2019-09-19  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Clean up handling of summary items and payment method updates
+        https://bugs.webkit.org/show_bug.cgi?id=202018
+        <rdar://problem/55470632>
+
+        Reviewed by Tim Horton.
+
+        Replaced the PaymentMethodUpdate struct with a class that knows how to convert from
+        ApplePayPaymentMethodUpdate structs to PKPaymentRequestPaymentMethodUpdate instances.
+
+        Moved some scattered-around free functions for converting payment summary items into
+        PaymentSummaryItems{.h,Cocoa.mm}.
+
+        * Modules/applepay/ApplePayPaymentMethodUpdate.h:
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::finishConverting):
+        (WebCore::convertAndValidateTotal):
+        (WebCore::convertAndValidate):
+        * Modules/applepay/ApplePaySessionPaymentRequest.h:
+        * Modules/applepay/PaymentCoordinator.h:
+        * Modules/applepay/PaymentCoordinatorClient.h:
+        * Modules/applepay/PaymentHeaders.h:
+        * Modules/applepay/PaymentMethodUpdate.h: Added.
+        * Modules/applepay/PaymentSummaryItems.h: Added.
+        * Modules/applepay/cocoa/PaymentMethodUpdateCocoa.mm: Added.
+        (WebCore::PaymentMethodUpdate::PaymentMethodUpdate):
+        (WebCore::PaymentMethodUpdate::totalAndLineItems const):
+        (WebCore::PaymentMethodUpdate::platformUpdate const):
+        * Modules/applepay/cocoa/PaymentSummaryItemsCocoa.mm: Added.
+        (WebCore::toDecimalNumber):
+        (WebCore::toPKPaymentSummaryItemType):
+        (WebCore::toPKPaymentSummaryItem):
+        (WebCore::platformSummaryItems):
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::ApplePayPaymentHandler::paymentMethodUpdated):
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * testing/MockPaymentCoordinator.cpp:
+        (WebCore::MockPaymentCoordinator::completePaymentMethodSelection):
+
 2019-09-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Assertion fires when animating a discrete property with values range and multiple animators

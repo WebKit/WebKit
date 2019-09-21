@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,15 +27,15 @@
 
 #if ENABLE(APPLE_PAY)
 
-#import <pal/spi/cocoa/PassKitSPI.h>
+#include "ApplePaySessionPaymentRequest.h"
 
-namespace WebKit {
+OBJC_CLASS NSArray;
 
-// FIXME: Rather than having these free functions scattered about, Apple Pay data types should know
-// how to convert themselves to and from their platform representations.
-NSDecimalNumber *toDecimalNumber(const String& amount);
-PKShippingMethod *toPKShippingMethod(const WebCore::ApplePaySessionPaymentRequest::ShippingMethod&);
+namespace WebCore {
 
-} // namespace WebKit
+WEBCORE_EXPORT NSArray *platformSummaryItems(const ApplePaySessionPaymentRequest::TotalAndLineItems&);
+WEBCORE_EXPORT NSArray *platformSummaryItems(const ApplePaySessionPaymentRequest::LineItem& total, const Vector<ApplePaySessionPaymentRequest::LineItem>&);
+
+} // namespace WebCore
 
 #endif // ENABLE(APPLE_PAY)

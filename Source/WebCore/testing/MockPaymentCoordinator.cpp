@@ -34,6 +34,7 @@
 #include "MockPaymentMethod.h"
 #include "Page.h"
 #include "PaymentCoordinator.h"
+#include "PaymentMethodUpdate.h"
 #include "PaymentSessionError.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/RunLoop.h>
@@ -160,7 +161,7 @@ void MockPaymentCoordinator::completeShippingContactSelection(Optional<ShippingC
 void MockPaymentCoordinator::completePaymentMethodSelection(Optional<PaymentMethodUpdate>&& paymentMethodUpdate)
 {
     if (paymentMethodUpdate)
-        updateTotalAndLineItems(paymentMethodUpdate->newTotalAndLineItems);
+        updateTotalAndLineItems(paymentMethodUpdate->totalAndLineItems());
 }
 
 void MockPaymentCoordinator::changeShippingOption(String&& shippingOption)

@@ -3004,6 +3004,8 @@
 		A1DF5AA61F7F64BB0058A477 /* PaymentHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5AA41F7F64BB0058A477 /* PaymentHandler.h */; };
 		A1DF5AAD1F8075F00058A477 /* ApplePayRequestBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5AAA1F8075F00058A477 /* ApplePayRequestBase.h */; };
 		A1DF5AB31F8077530058A477 /* JSApplePayRequestBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5AB11F8077520058A477 /* JSApplePayRequestBase.h */; };
+		A1DFD5252334593F0042FCDB /* PaymentMethodUpdate.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DFD5242334593A0042FCDB /* PaymentMethodUpdate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A1DFD526233459480042FCDB /* PaymentSummaryItems.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DFD5222334593A0042FCDB /* PaymentSummaryItems.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1ED778D1BE3294000DC1791 /* Device.h in Headers */ = {isa = PBXBuildFile; fileRef = A1ED778B1BE3294000DC1791 /* Device.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1F600441F4757A90077E83F /* PaymentRequestUpdateEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F600411F4757A90077E83F /* PaymentRequestUpdateEvent.h */; };
 		A1F600491F47594E0077E83F /* PaymentDetailsUpdate.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F600471F47594E0077E83F /* PaymentDetailsUpdate.h */; };
@@ -11308,6 +11310,10 @@
 		A1DF5AB01F8077520058A477 /* JSApplePayRequestBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSApplePayRequestBase.cpp; sourceTree = "<group>"; };
 		A1DF5AB11F8077520058A477 /* JSApplePayRequestBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSApplePayRequestBase.h; sourceTree = "<group>"; };
 		A1DF5AB41F8078F30058A477 /* ApplePayContactField.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ApplePayContactField.cpp; sourceTree = "<group>"; };
+		A1DFD5222334593A0042FCDB /* PaymentSummaryItems.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentSummaryItems.h; sourceTree = "<group>"; };
+		A1DFD5242334593A0042FCDB /* PaymentMethodUpdate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentMethodUpdate.h; sourceTree = "<group>"; };
+		A1DFD527233459730042FCDB /* PaymentSummaryItemsCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PaymentSummaryItemsCocoa.mm; sourceTree = "<group>"; };
+		A1DFD528233459740042FCDB /* PaymentMethodUpdateCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PaymentMethodUpdateCocoa.mm; sourceTree = "<group>"; };
 		A1E1154313015C3D0054AC8C /* DistantLightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DistantLightSource.cpp; sourceTree = "<group>"; };
 		A1E1154513015C4E0054AC8C /* PointLightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointLightSource.cpp; sourceTree = "<group>"; };
 		A1E1154713015C5D0054AC8C /* SpotLightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpotLightSource.cpp; sourceTree = "<group>"; };
@@ -16783,11 +16789,13 @@
 				7CF930E61E01F9AD00BAFFBE /* PaymentHeaders.h */,
 				1AE96A871D1A0CEB00B86768 /* PaymentMerchantSession.h */,
 				1A8A64391D19FC5300D0E00F /* PaymentMethod.h */,
+				A1DFD5242334593A0042FCDB /* PaymentMethodUpdate.h */,
 				1A8A64661D19FDFF00D0E00F /* PaymentRequestValidator.h */,
 				1A8A64651D19FDFF00D0E00F /* PaymentRequestValidator.mm */,
 				A1C2C5751FA2851600BA46FA /* PaymentSession.cpp */,
 				A1491DA21F859D870095F5D4 /* PaymentSession.h */,
 				A113E02723318293009C33A0 /* PaymentSessionError.h */,
+				A1DFD5222334593A0042FCDB /* PaymentSummaryItems.h */,
 			);
 			path = applepay;
 			sourceTree = "<group>";
@@ -16799,7 +16807,9 @@
 				1A8A646A1D19FF8700D0E00F /* PaymentContactCocoa.mm */,
 				1ADA4A1B1D22F2C0005A9A15 /* PaymentMerchantSessionCocoa.mm */,
 				1A8A646B1D19FF8700D0E00F /* PaymentMethodCocoa.mm */,
+				A1DFD528233459740042FCDB /* PaymentMethodUpdateCocoa.mm */,
 				A113E02A23318EBC009C33A0 /* PaymentSessionErrorCocoa.mm */,
+				A1DFD527233459730042FCDB /* PaymentSummaryItemsCocoa.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -31083,6 +31093,7 @@
 				1A8A643C1D19FC5300D0E00F /* PaymentMethod.h in Headers */,
 				A164A2472134BC7100509156 /* PaymentMethodChangeEvent.h in Headers */,
 				A1F76B191F44C3900014C318 /* PaymentMethodData.h in Headers */,
+				A1DFD5252334593F0042FCDB /* PaymentMethodUpdate.h in Headers */,
 				A1F76B2B1F44C4EF0014C318 /* PaymentOptions.h in Headers */,
 				A1F76B131F44C2450014C318 /* PaymentRequest.h in Headers */,
 				A1F600441F4757A90077E83F /* PaymentRequestUpdateEvent.h in Headers */,
@@ -31094,6 +31105,7 @@
 				A113E02823318293009C33A0 /* PaymentSessionError.h in Headers */,
 				A1F76B551F44D2C70014C318 /* PaymentShippingOption.h in Headers */,
 				A1F76B491F44D07A0014C318 /* PaymentShippingType.h in Headers */,
+				A1DFD526233459480042FCDB /* PaymentSummaryItems.h in Headers */,
 				A1677DFD213E006600A08C34 /* PaymentValidationErrors.h in Headers */,
 				B27535650B053814002CE64F /* PDFDocumentImage.h in Headers */,
 				5E2C43511BCEE2F60001E2BC /* PeerConnectionBackend.h in Headers */,
