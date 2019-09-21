@@ -1,3 +1,20 @@
+2019-09-21  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] touch-action set to pan-x or pan-y alone should disable scrolling altogether if the intial gesture is in the disallowed direction
+        https://bugs.webkit.org/show_bug.cgi?id=202053
+        <rdar://problem/54542190>
+
+        Reviewed by Tim Horton.
+
+        Add new tests checking that setting "touch-action: pan-y" on an element and initiating a horizontal panning gesture will disallow scrolling vertically
+        if a vertical scrolling gesture follows. We test both the case where scrolling would apply to the whole page and the case where scrolling would apply
+        to an "overflow: scroll" element.
+
+        * pointerevents/ios/touch-action-pan-y-horizontal-gesture-prevents-vertical-scrolling-expected.txt: Added.
+        * pointerevents/ios/touch-action-pan-y-horizontal-gesture-prevents-vertical-scrolling.html: Added.
+        * pointerevents/ios/touch-action-pan-y-in-overflow-scroll-horizontal-gesture-prevents-vertical-scrolling-expected.txt: Added.
+        * pointerevents/ios/touch-action-pan-y-in-overflow-scroll-horizontal-gesture-prevents-vertical-scrolling.html: Added.
+
 2019-09-20  Antoine Quint  <graouts@apple.com>
 
         releasePointerCapture() not working for implicit capture; can't opt-in to pointerenter/leave for touches

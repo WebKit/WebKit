@@ -716,6 +716,28 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 
     [self.layer addObserver:self forKeyPath:@"transform" options:NSKeyValueObservingOptionInitial context:nil];
 
+#if ENABLE(POINTER_EVENTS)
+    _touchActionLeftSwipeGestureRecognizer = adoptNS([[UISwipeGestureRecognizer alloc] initWithTarget:nil action:nil]);
+    [_touchActionLeftSwipeGestureRecognizer setDirection:UISwipeGestureRecognizerDirectionLeft];
+    [_touchActionLeftSwipeGestureRecognizer setDelegate:self];
+    [self addGestureRecognizer:_touchActionLeftSwipeGestureRecognizer.get()];
+
+    _touchActionRightSwipeGestureRecognizer = adoptNS([[UISwipeGestureRecognizer alloc] initWithTarget:nil action:nil]);
+    [_touchActionRightSwipeGestureRecognizer setDirection:UISwipeGestureRecognizerDirectionRight];
+    [_touchActionRightSwipeGestureRecognizer setDelegate:self];
+    [self addGestureRecognizer:_touchActionRightSwipeGestureRecognizer.get()];
+
+    _touchActionUpSwipeGestureRecognizer = adoptNS([[UISwipeGestureRecognizer alloc] initWithTarget:nil action:nil]);
+    [_touchActionUpSwipeGestureRecognizer setDirection:UISwipeGestureRecognizerDirectionUp];
+    [_touchActionUpSwipeGestureRecognizer setDelegate:self];
+    [self addGestureRecognizer:_touchActionUpSwipeGestureRecognizer.get()];
+
+    _touchActionDownSwipeGestureRecognizer = adoptNS([[UISwipeGestureRecognizer alloc] initWithTarget:nil action:nil]);
+    [_touchActionDownSwipeGestureRecognizer setDirection:UISwipeGestureRecognizerDirectionDown];
+    [_touchActionDownSwipeGestureRecognizer setDelegate:self];
+    [self addGestureRecognizer:_touchActionDownSwipeGestureRecognizer.get()];
+#endif
+
     _touchEventGestureRecognizer = adoptNS([[UIWebTouchEventsGestureRecognizer alloc] initWithTarget:self action:@selector(_webTouchEventsRecognized:) touchDelegate:self]);
     [_touchEventGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_touchEventGestureRecognizer.get()];
@@ -916,6 +938,10 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 
 #if ENABLE(POINTER_EVENTS)
     [self removeGestureRecognizer:_touchActionGestureRecognizer.get()];
+    [self removeGestureRecognizer:_touchActionLeftSwipeGestureRecognizer.get()];
+    [self removeGestureRecognizer:_touchActionRightSwipeGestureRecognizer.get()];
+    [self removeGestureRecognizer:_touchActionUpSwipeGestureRecognizer.get()];
+    [self removeGestureRecognizer:_touchActionDownSwipeGestureRecognizer.get()];
 #endif
 
     _layerTreeTransactionIdAtLastTouchStart = { };
@@ -993,6 +1019,10 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 #endif
 #if ENABLE(POINTER_EVENTS)
     [self removeGestureRecognizer:_touchActionGestureRecognizer.get()];
+    [self removeGestureRecognizer:_touchActionLeftSwipeGestureRecognizer.get()];
+    [self removeGestureRecognizer:_touchActionRightSwipeGestureRecognizer.get()];
+    [self removeGestureRecognizer:_touchActionUpSwipeGestureRecognizer.get()];
+    [self removeGestureRecognizer:_touchActionDownSwipeGestureRecognizer.get()];
 #endif
 }
 
@@ -1015,6 +1045,10 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 #endif
 #if ENABLE(POINTER_EVENTS)
     [self addGestureRecognizer:_touchActionGestureRecognizer.get()];
+    [self addGestureRecognizer:_touchActionLeftSwipeGestureRecognizer.get()];
+    [self addGestureRecognizer:_touchActionRightSwipeGestureRecognizer.get()];
+    [self addGestureRecognizer:_touchActionUpSwipeGestureRecognizer.get()];
+    [self addGestureRecognizer:_touchActionDownSwipeGestureRecognizer.get()];
 #endif
 }
 
@@ -1409,6 +1443,22 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
         }
     }
 }
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    if (gestureRecognizer != _touchActionLeftSwipeGestureRecognizer && gestureRecognizer != _touchActionRightSwipeGestureRecognizer && gestureRecognizer != _touchActionUpSwipeGestureRecognizer && gestureRecognizer != _touchActionDownSwipeGestureRecognizer)
+        return true;
+
+    // We update the enabled state of the various swipe gesture recognizers such that if we have a unidirectional touch-action
+    // specified (only pan-x or only pan-y) we enable the two recognizers in the opposite axis to prevent scrolling from starting
+    // if the initial gesture is such a swipe. Since the recognizers are specified to use a single finger for recognition, we don't
+    // need to worry about the case where there may be more than a single touch for a given UIScrollView.
+    auto touchActions = WebKit::touchActionsForPoint(self, WebCore::roundedIntPoint([touch locationInView:self]));
+    if (gestureRecognizer == _touchActionLeftSwipeGestureRecognizer || gestureRecognizer == _touchActionRightSwipeGestureRecognizer)
+        return touchActions == WebCore::TouchAction::PanY;
+    return touchActions == WebCore::TouchAction::PanX;
+}
+
 #endif
 
 #pragma mark - WKTouchActionGestureRecognizerDelegate implementation

@@ -225,6 +225,10 @@ struct WKAutoCorrectionData {
 
 #if ENABLE(POINTER_EVENTS)
     RetainPtr<WKTouchActionGestureRecognizer> _touchActionGestureRecognizer;
+    RetainPtr<UISwipeGestureRecognizer> _touchActionLeftSwipeGestureRecognizer;
+    RetainPtr<UISwipeGestureRecognizer> _touchActionRightSwipeGestureRecognizer;
+    RetainPtr<UISwipeGestureRecognizer> _touchActionUpSwipeGestureRecognizer;
+    RetainPtr<UISwipeGestureRecognizer> _touchActionDownSwipeGestureRecognizer;
 #endif
 
 #if PLATFORM(MACCATALYST)

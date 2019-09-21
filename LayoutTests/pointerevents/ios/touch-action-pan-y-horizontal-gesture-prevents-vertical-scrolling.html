@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script src="../../resources/basic-gestures.js"></script>
+<script>
+
+'use strict';
+
+target_test({ width: "200px", height: "200px" }, (target, test) => {
+    document.body.style.height = "2000px";
+
+    target.style.touchAction = "pan-y";
+    target.style.backgroundColor = "blue";
+
+    const eventTracker = new EventTracker(target, ["pointerdown", "pointerup", "pointercancel"]);
+
+    touchAndDragFromPointToPoint(150, 100, 50, 100)
+    .then(() => touchAndDragFromPointToPoint(50, 100, 50, 50))
+    .then(() => liftUpAtPoint(50, 50))
+    .then(() => {
+        assert_equals(window.pageYOffset, 0, "The page was not scrolled vertically.");
+        eventTracker.assertMatchesEvents([
+            { type: "pointerdown" },
+            { type: "pointerup" }
+        ]);
+        test.done();
+    });
+}, "Testing that panning in the x-axis first on an element with touch-action: pan-y prevents future vertical scrolling.");
+
+</script>
+</body>
+</html>
