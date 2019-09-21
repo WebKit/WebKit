@@ -242,6 +242,13 @@ public:
     {
         return condition().watchingRequiresReplacementWatchpoint();
     }
+
+    template<typename Functor>
+    void forEachDependentCell(const Functor& functor) const
+    {
+        functor(m_object);
+        m_condition.forEachDependentCell(functor);
+    }
     
     // This means that the objects involved in this are still live.
     bool isStillLive(VM&) const;

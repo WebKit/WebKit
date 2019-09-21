@@ -1,3 +1,56 @@
+2019-09-21  Tadeu Zagallo  <tzagallo@apple.com>
+
+        AccessCase should strongly visit its dependencies while on stack
+        https://bugs.webkit.org/show_bug.cgi?id=201986
+        <rdar://problem/55521953>
+
+        Reviewed by Saam Barati and Yusuke Suzuki.
+
+        AccessCase::doesCalls is responsible for specifying the cells it depends on, so that
+        MarkingGCAwareJITStubRoutine can strongly visit them while the stub is on stack. However,
+        it was missing most of its dependencies, which led to it being collected while on stack.
+        This manifested in the flaky test stress/ftl-put-by-id-setter-exception-interesting-live-state.js
+        as the PolymorphicAccess being collected and removing its exception handler from the code
+        block, which led to exception propagating past the try/catch.
+
+        In order to fix this, we abstract the dependency gathering logic from AccessCase into
+        forEachDependentCell and use it to implement visitWeak as well as doesCalls in order to
+        guarantee that their implementation is consistent.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::forEachDependentCell const):
+        (JSC::AccessCase::doesCalls const):
+        (JSC::AccessCase::visitWeak const):
+        * bytecode/AccessCase.h:
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::lastSeenCallee const):
+        (JSC::CallLinkInfo::haveLastSeenCallee const):
+        (JSC::CallLinkInfo::lastSeenCallee): Deleted.
+        (JSC::CallLinkInfo::haveLastSeenCallee): Deleted.
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::isDirect const):
+        (JSC::CallLinkInfo::isLinked const):
+        (JSC::CallLinkInfo::stub const):
+        (JSC::CallLinkInfo::forEachDependentCell const):
+        (JSC::CallLinkInfo::isLinked): Deleted.
+        (JSC::CallLinkInfo::stub): Deleted.
+        * bytecode/ObjectPropertyCondition.cpp:
+        (JSC::ObjectPropertyCondition::isStillLive const):
+        * bytecode/ObjectPropertyCondition.h:
+        (JSC::ObjectPropertyCondition::forEachDependentCell const):
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        (JSC::ObjectPropertyConditionSet::areStillLive const):
+        * bytecode/ObjectPropertyConditionSet.h:
+        (JSC::ObjectPropertyConditionSet::forEachDependentCell const):
+        * bytecode/PropertyCondition.cpp:
+        (JSC::PropertyCondition::isStillLive const):
+        * bytecode/PropertyCondition.h:
+        (JSC::PropertyCondition::forEachDependentCell const):
+        * jit/PolymorphicCallStubRoutine.cpp:
+        (JSC::PolymorphicCallStubRoutine::visitWeak):
+        * jit/PolymorphicCallStubRoutine.h:
+        (JSC::PolymorphicCallStubRoutine::forEachDependentCell):
+
 2019-09-21  David Kilzer  <ddkilzer@apple.com>
 
         clang-tidy: Fix unnecessary copy/ref churn of for loop variables in WTF/JavaScriptCore

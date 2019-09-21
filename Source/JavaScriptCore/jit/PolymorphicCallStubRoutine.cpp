@@ -129,11 +129,11 @@ void PolymorphicCallStubRoutine::clearCallNodesFor(CallLinkInfo* info)
 
 bool PolymorphicCallStubRoutine::visitWeak(VM& vm)
 {
-    for (auto& variant : m_variants) {
-        if (!vm.heap.isMarked(variant.get()))
-            return false;
-    }
-    return true;
+    bool isStillLive = true;
+    forEachDependentCell([&](JSCell* cell) {
+        isStillLive &= vm.heap.isMarked(cell);
+    });
+    return isStillLive;
 }
 
 void PolymorphicCallStubRoutine::markRequiredObjectsInternal(SlotVisitor& visitor)

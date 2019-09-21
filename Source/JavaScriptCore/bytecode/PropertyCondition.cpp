@@ -351,20 +351,6 @@ bool PropertyCondition::isWatchable(
         && isWatchableWhenValid(structure, effort);
 }
 
-bool PropertyCondition::isStillLive(VM& vm) const
-{
-    if (hasPrototype() && prototype() && !vm.heap.isMarked(prototype()))
-        return false;
-    
-    if (hasRequiredValue()
-        && requiredValue()
-        && requiredValue().isCell()
-        && !vm.heap.isMarked(requiredValue().asCell()))
-        return false;
-    
-    return true;
-}
-
 void PropertyCondition::validateReferences(const TrackedReferences& tracked) const
 {
     if (hasPrototype())

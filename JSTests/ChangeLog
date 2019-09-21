@@ -1,3 +1,15 @@
+2019-09-21  Tadeu Zagallo  <tzagallo@apple.com>
+
+        AccessCase should strongly visit its dependencies while on stack
+        https://bugs.webkit.org/show_bug.cgi?id=201986
+        <rdar://problem/55521953>
+
+        Reviewed by Saam Barati and Yusuke Suzuki.
+
+        * stress/ftl-put-by-id-setter-exception-interesting-live-state-2.js: Added.
+        (foo):
+        (warmup):
+
 2019-09-20  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Make toctou-having-a-bad-time-new-array.js run for less time because it's timing out on the debug bots.

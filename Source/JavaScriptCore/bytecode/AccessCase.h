@@ -219,6 +219,9 @@ private:
     friend class CodeBlock;
     friend class PolymorphicAccess;
 
+    template<typename Functor>
+    void forEachDependentCell(const Functor&) const;
+
     bool visitWeak(VM&) const;
     bool propagateTransitions(SlotVisitor&) const;
 

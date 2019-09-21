@@ -95,6 +95,13 @@ public:
 
     void clearCallNodesFor(CallLinkInfo*);
     
+    template<typename Functor>
+    void forEachDependentCell(const Functor& functor)
+    {
+        for (auto& variant : m_variants)
+            functor(variant.get());
+    }
+
     bool visitWeak(VM&) override;
 
 protected:

@@ -111,6 +111,14 @@ public:
     bool structuresEnsureValidityAssumingImpurePropertyWatchpoint() const;
     
     bool needImpurePropertyWatchpoint() const;
+
+    template<typename Functor>
+    void forEachDependentCell(const Functor& functor) const
+    {
+        for (const ObjectPropertyCondition& condition : *this)
+            condition.forEachDependentCell(functor);
+    }
+
     bool areStillLive(VM&) const;
     
     void dumpInContext(PrintStream&, DumpContext*) const;

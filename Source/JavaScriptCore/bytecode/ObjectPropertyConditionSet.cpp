@@ -143,11 +143,11 @@ bool ObjectPropertyConditionSet::needImpurePropertyWatchpoint() const
 
 bool ObjectPropertyConditionSet::areStillLive(VM& vm) const
 {
-    for (const ObjectPropertyCondition& condition : *this) {
-        if (!condition.isStillLive(vm))
-            return false;
-    }
-    return true;
+    bool stillLive = true;
+    forEachDependentCell([&](JSCell* cell) {
+        stillLive &= vm.heap.isMarked(cell);
+    });
+    return stillLive;
 }
 
 void ObjectPropertyConditionSet::dumpInContext(PrintStream& out, DumpContext* context) const

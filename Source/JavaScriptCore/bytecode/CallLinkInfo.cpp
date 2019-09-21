@@ -166,13 +166,13 @@ void CallLinkInfo::clearLastSeenCallee()
     m_lastSeenCalleeOrExecutable.clear();
 }
 
-JSObject* CallLinkInfo::lastSeenCallee()
+JSObject* CallLinkInfo::lastSeenCallee() const
 {
     RELEASE_ASSERT(!isDirect());
     return jsCast<JSObject*>(m_lastSeenCalleeOrExecutable.get());
 }
 
-bool CallLinkInfo::haveLastSeenCallee()
+bool CallLinkInfo::haveLastSeenCallee() const
 {
     RELEASE_ASSERT(!isDirect());
     return !!m_lastSeenCalleeOrExecutable;

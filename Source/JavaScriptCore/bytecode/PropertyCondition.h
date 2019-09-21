@@ -295,9 +295,16 @@ public:
     {
         return !!*this && m_header.type() == Equivalence;
     }
-    
-    // This means that the objects involved in this are still live.
-    bool isStillLive(VM&) const;
+
+    template<typename Functor>
+    void forEachDependentCell(const Functor& functor) const
+    {
+        if (hasPrototype() && prototype())
+            functor(prototype());
+
+        if (hasRequiredValue() && requiredValue() && requiredValue().isCell())
+            functor(requiredValue().asCell());
+    }
     
     void validateReferences(const TrackedReferences&) const;
 

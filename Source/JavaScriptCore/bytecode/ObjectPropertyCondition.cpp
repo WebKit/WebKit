@@ -147,10 +147,11 @@ bool ObjectPropertyCondition::isStillLive(VM& vm) const
     if (!*this)
         return false;
     
-    if (!vm.heap.isMarked(m_object))
-        return false;
-    
-    return m_condition.isStillLive(vm);
+    bool isStillLive = true;
+    forEachDependentCell([&](JSCell* cell) {
+        isStillLive &= vm.heap.isMarked(cell);
+    });
+    return isStillLive;
 }
 
 void ObjectPropertyCondition::validateReferences(const TrackedReferences& tracked) const
