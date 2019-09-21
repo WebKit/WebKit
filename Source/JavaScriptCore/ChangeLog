@@ -1,3 +1,20 @@
+2019-09-20  Keith Miller  <keith_miller@apple.com>
+
+        eliding a move in Air O0 needs to mark the dest's old reg as available
+        https://bugs.webkit.org/show_bug.cgi?id=202066
+
+        Reviewed by Saam Barati.
+
+        Also adds a new release method that handles all the invariants of
+        returning a register to the available register pool.
+
+        * b3/air/AirAllocateRegistersAndStackAndGenerateCode.cpp:
+        (JSC::B3::Air::GenerateAndAllocateRegisters::release):
+        (JSC::B3::Air::GenerateAndAllocateRegisters::spill):
+        (JSC::B3::Air::GenerateAndAllocateRegisters::freeDeadTmpsIfNeeded):
+        (JSC::B3::Air::GenerateAndAllocateRegisters::generate):
+        * b3/air/AirAllocateRegistersAndStackAndGenerateCode.h:
+
 2019-09-20  Mark Lam  <mark.lam@apple.com>
 
         Harden assertion in StructureIDTable::get().

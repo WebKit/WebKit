@@ -55,6 +55,7 @@ public:
 
 private:
     void insertBlocksForFlushAfterTerminalPatchpoints();
+    void release(Tmp, Reg);
     void flush(Tmp, Reg);
     void spill(Tmp, Reg);
     void alloc(Tmp, Reg, bool isDef);

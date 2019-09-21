@@ -123,6 +123,18 @@ static ALWAYS_INLINE CCallHelpers::Address callFrameAddr(CCallHelpers& jit, intp
     return CCallHelpers::Address(reg);
 }
 
+ALWAYS_INLINE void GenerateAndAllocateRegisters::release(Tmp tmp, Reg reg)
+{
+    ASSERT(reg);
+    ASSERT(m_currentAllocation->at(reg) == tmp);
+    m_currentAllocation->at(reg) = Tmp();
+    ASSERT(!m_availableRegs[tmp.bank()].contains(reg));
+    m_availableRegs[tmp.bank()].set(reg);
+    ASSERT(m_map[tmp].reg == reg);
+    m_map[tmp].reg = Reg();
+}
+
+
 ALWAYS_INLINE void GenerateAndAllocateRegisters::flush(Tmp tmp, Reg reg)
 {
     ASSERT(tmp);
@@ -137,10 +149,8 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::spill(Tmp tmp, Reg reg)
 {
     ASSERT(reg);
     ASSERT(m_map[tmp].reg == reg);
-    m_availableRegs[tmp.bank()].set(reg);
-    m_currentAllocation->at(reg) = Tmp();
     flush(tmp, reg);
-    m_map[tmp].reg = Reg();
+    release(tmp, reg);
 }
 
 ALWAYS_INLINE void GenerateAndAllocateRegisters::alloc(Tmp tmp, Reg reg, bool isDef)
@@ -180,10 +190,7 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::freeDeadTmpsIfNeeded()
         if (m_liveRangeEnd[tmp] >= m_globalInstIndex)
             continue;
 
-        Reg reg = Reg::fromIndex(i);
-        m_map[tmp].reg = Reg();
-        m_availableRegs[tmp.bank()].set(reg);
-        m_currentAllocation->at(i) = Tmp();
+        release(tmp, Reg::fromIndex(i));
     }
 }
 
@@ -447,14 +454,12 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                 if (dest.isReg() && dest.reg() != sourceReg)
                     return true;
 
-                if (Reg oldReg = m_map[dest.tmp()].reg) {
-                    ASSERT(m_currentAllocation->at(oldReg) == dest.tmp());
-                    m_currentAllocation->at(oldReg) = Tmp();
-                }
+                if (Reg oldReg = m_map[dest.tmp()].reg)
+                    release(dest.tmp(), oldReg);
 
+                m_map[dest.tmp()].reg = sourceReg;
                 m_currentAllocation->at(sourceReg) = dest.tmp();
                 m_map[source.tmp()].reg = Reg();
-                m_map[dest.tmp()].reg = sourceReg;
                 return false;
             })();
 
