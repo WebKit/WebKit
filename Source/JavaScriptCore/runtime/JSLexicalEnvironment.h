@@ -44,7 +44,7 @@ public:
     static CompleteSubspace* subspaceFor(VM& vm)
     {
         static_assert(!CellType::needsDestruction, "");
-        return &vm.jsValueGigacageCellSpace;
+        return &vm.variableSizedCellSpace;
     }
 
     using Base = JSSymbolTableObject;
