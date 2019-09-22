@@ -66,7 +66,6 @@ public:
 #if !USE(DIRECT2D)
     PlatformPatternPtr createPlatformPattern(const AffineTransform& userSpaceTransformation) const;
 #else
-    PlatformPatternPtr createPlatformPattern(PlatformGraphicsContext&, float alpha, const AffineTransform& userSpaceTransformation) const;
     PlatformPatternPtr createPlatformPattern(const GraphicsContext&, float alpha, const AffineTransform& userSpaceTransformation) const;
 #endif
     void setPatternSpaceTransform(const AffineTransform& patternSpaceTransformation);

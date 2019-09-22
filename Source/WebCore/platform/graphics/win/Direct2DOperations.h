@@ -74,7 +74,7 @@ bool isAcceleratedContext(PlatformContextDirect2D&);
 
 struct FillSource {
     FillSource() = default;
-    explicit FillSource(const GraphicsContextState&, PlatformContextDirect2D&);
+    explicit FillSource(const GraphicsContextState&, const GraphicsContext&);
 
     float globalAlpha { 0 };
     COMPtr<ID2D1Brush> brush;
@@ -85,7 +85,7 @@ struct FillSource {
 
 struct StrokeSource {
     StrokeSource() = default;
-    explicit StrokeSource(const GraphicsContextState&, PlatformContextDirect2D&);
+    explicit StrokeSource(const GraphicsContextState&, const GraphicsContext&);
 
     float globalAlpha { 0 };
     float thickness { 0 };

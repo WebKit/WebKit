@@ -589,7 +589,7 @@ void GraphicsContext::drawPath(const Path& path)
     ASSERT(hasPlatformContext());
     auto& state = this->state();
     auto& context = *platformContext();
-    Direct2D::drawPath(context, path, Direct2D::StrokeSource(state, context), Direct2D::ShadowState(state));
+    Direct2D::drawPath(context, path, Direct2D::StrokeSource(state, *this), Direct2D::ShadowState(state));
 }
 
 void GraphicsContext::fillPath(const Path& path)
@@ -605,7 +605,7 @@ void GraphicsContext::fillPath(const Path& path)
     ASSERT(hasPlatformContext());
     auto& state = this->state();
     auto& context = *platformContext();
-    Direct2D::fillPath(context, path, Direct2D::FillSource(state, context), Direct2D::ShadowState(state));
+    Direct2D::fillPath(context, path, Direct2D::FillSource(state, *this), Direct2D::ShadowState(state));
 }
 
 void GraphicsContext::strokePath(const Path& path)
@@ -621,7 +621,7 @@ void GraphicsContext::strokePath(const Path& path)
     ASSERT(hasPlatformContext());
     auto& state = this->state();
     auto& context = *platformContext();
-    Direct2D::strokePath(context, path, Direct2D::StrokeSource(state, context), Direct2D::ShadowState(state));
+    Direct2D::strokePath(context, path, Direct2D::StrokeSource(state, *this), Direct2D::ShadowState(state));
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect)
@@ -637,7 +637,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
     ASSERT(hasPlatformContext());
     auto& state = this->state();
     auto& context = *platformContext();
-    Direct2D::fillRect(context, rect, Direct2D::FillSource(state, context), Direct2D::ShadowState(state));
+    Direct2D::fillRect(context, rect, Direct2D::FillSource(state, *this), Direct2D::ShadowState(state));
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect, const Color& color)
@@ -681,7 +681,7 @@ void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const Float
     ASSERT(hasPlatformContext());
     auto& state = this->state();
     auto& context = *platformContext();
-    Direct2D::fillRectWithRoundedHole(context, rect, roundedHoleRect, Direct2D::FillSource(state, context), Direct2D::ShadowState(state));
+    Direct2D::fillRectWithRoundedHole(context, rect, roundedHoleRect, Direct2D::FillSource(state, *this), Direct2D::ShadowState(state));
 }
 
 void GraphicsContext::clip(const FloatRect& rect)
@@ -861,7 +861,7 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float lineWidth)
     ASSERT(hasPlatformContext());
     auto& state = this->state();
     auto& context = *platformContext();
-    Direct2D::strokeRect(context, rect, lineWidth, Direct2D::StrokeSource(state, context), Direct2D::ShadowState(state));
+    Direct2D::strokeRect(context, rect, lineWidth, Direct2D::StrokeSource(state, *this), Direct2D::ShadowState(state));
 }
 
 void GraphicsContext::setLineCap(LineCap cap)

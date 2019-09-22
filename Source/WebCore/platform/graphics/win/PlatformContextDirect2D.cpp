@@ -38,6 +38,10 @@ namespace WebCore {
 class PlatformContextDirect2D::State {
 public:
     State() = default;
+
+    COMPtr<ID2D1DrawingStateBlock> m_drawingStateBlock;
+    COMPtr<ID2D1Layer> m_activeLayer;
+    Vector<Direct2DLayerType> m_clips;
 };
 
 PlatformContextDirect2D::PlatformContextDirect2D(ID2D1RenderTarget* renderTarget, WTF::Function<void()>&& preDrawHandler, WTF::Function<void()>&& postDrawHandler)
@@ -47,6 +51,23 @@ PlatformContextDirect2D::PlatformContextDirect2D(ID2D1RenderTarget* renderTarget
 {
     m_stateStack.append(State());
     m_state = &m_stateStack.last();
+}
+
+ID2D1Layer* PlatformContextDirect2D::clipLayer() const
+{
+    return m_state->m_activeLayer.get();
+}
+
+void PlatformContextDirect2D::clearClips(Vector<Direct2DLayerType>& clips)
+{
+    for (auto clipType = clips.rbegin(); clipType != clips.rend(); ++clipType) {
+        if (*clipType == AxisAlignedClip)
+            m_renderTarget->PopAxisAlignedClip();
+        else
+            m_renderTarget->PopLayer();
+    }
+
+    clips.clear();
 }
 
 void PlatformContextDirect2D::restore()
@@ -60,17 +81,13 @@ void PlatformContextDirect2D::restore()
     if (m_stateStack.size() == 1)
         return;
 
-    if (!m_renderStates.isEmpty()) {
-        auto restoreState = m_renderStates.takeLast();
+    auto& restoreState = m_stateStack.last();
+    if (restoreState.m_drawingStateBlock) {
         m_renderTarget->RestoreDrawingState(restoreState.m_drawingStateBlock.get());
-
-        for (auto clipType = restoreState.m_clips.rbegin(); clipType != restoreState.m_clips.rend(); ++clipType) {
-            if (*clipType == AxisAlignedClip)
-                m_renderTarget->PopAxisAlignedClip();
-            else
-                m_renderTarget->PopLayer();
-        }
+        restoreState.m_drawingStateBlock = nullptr;
     }
+
+    clearClips(restoreState.m_clips);
 
     m_stateStack.removeLast();
     ASSERT(!m_stateStack.isEmpty());
@@ -87,24 +104,21 @@ void PlatformContextDirect2D::save()
     m_stateStack.append(State());
     m_state = &m_stateStack.last();
 
-    RenderState currentState;
-    GraphicsContext::systemFactory()->CreateDrawingStateBlock(&currentState.m_drawingStateBlock);
+    GraphicsContext::systemFactory()->CreateDrawingStateBlock(&m_state->m_drawingStateBlock);
 
-    m_renderTarget->SaveDrawingState(currentState.m_drawingStateBlock.get());
-
-    m_renderStates.append(currentState);
+    m_renderTarget->SaveDrawingState(m_state->m_drawingStateBlock.get());
 }
 
 void PlatformContextDirect2D::pushRenderClip(Direct2DLayerType clipType)
 {
     ASSERT(hasSavedState());
-    m_renderStates.last().m_clips.append(clipType);
+    m_state->m_clips.append(clipType);
 }
 
 void PlatformContextDirect2D::setActiveLayer(COMPtr<ID2D1Layer>&& layer)
 {
     ASSERT(hasSavedState());
-    m_renderStates.last().m_activeLayer = layer;
+    m_state->m_activeLayer = layer;
 }
 
 COMPtr<ID2D1SolidColorBrush> PlatformContextDirect2D::brushWithColor(const D2D1_COLOR_F& color)
@@ -264,8 +278,10 @@ void PlatformContextDirect2D::endDraw()
 {
     ASSERT(m_renderTarget);
 
-    while (!m_renderStates.isEmpty())
+    while (m_stateStack.size() > 1)
         restore();
+
+    clearClips(m_state->m_clips);
 
     ASSERT(m_stateStack.size() >= 1);
 
@@ -296,6 +312,11 @@ void PlatformContextDirect2D::notifyPreDrawObserver()
 void PlatformContextDirect2D::notifyPostDrawObserver()
 {
     m_postDrawHandler();
+}
+
+void PlatformContextDirect2D::pushClip(Direct2DLayerType clipType)
+{
+    m_state->m_clips.append(clipType);
 }
 
 } // namespace WebCore

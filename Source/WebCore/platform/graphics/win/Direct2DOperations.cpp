@@ -289,28 +289,34 @@ bool isAcceleratedContext(PlatformContextDirect2D& platformContext)
 
 } // namespace State
 
-FillSource::FillSource(const GraphicsContextState& state, PlatformContextDirect2D& platformContext)
+FillSource::FillSource(const GraphicsContextState& state, const GraphicsContext& context)
     : globalAlpha(state.alpha)
     , color(state.fillColor)
     , fillRule(state.fillRule)
 {
+    ASSERT(context.hasPlatformContext());
+    auto& platformContext = *context.platformContext();
+
     if (state.fillPattern) {
         AffineTransform userToBaseCTM; // FIXME: This isn't really needed on Windows
-        brush = state.fillPattern->createPlatformPattern(platformContext, state.alpha, userToBaseCTM);
-    } else if (state.fillGradient)
+        brush = state.fillPattern->createPlatformPattern(context, state.alpha, userToBaseCTM);
+    } else if (state.fillGradient && !state.fillGradient->stops().isEmpty())
         brush = state.fillGradient->createPlatformGradientIfNecessary(platformContext.renderTarget());
     else
         brush = platformContext.brushWithColor(color);
 }
 
-StrokeSource::StrokeSource(const GraphicsContextState& state, PlatformContextDirect2D& platformContext)
+StrokeSource::StrokeSource(const GraphicsContextState& state, const GraphicsContext& context)
     : globalAlpha(state.alpha)
     , thickness(state.strokeThickness)
     , color(state.strokeColor)
 {
+    ASSERT(context.hasPlatformContext());
+    auto& platformContext = *context.platformContext();
+
     if (state.strokePattern) {
         AffineTransform userToBaseCTM; // FIXME: This isn't really needed on Windows
-        brush = state.strokePattern->createPlatformPattern(platformContext, state.alpha, userToBaseCTM);
+        brush = state.strokePattern->createPlatformPattern(context, state.alpha, userToBaseCTM);
     } else if (state.strokeGradient)
         brush = state.strokeGradient->createPlatformGradientIfNecessary(platformContext.renderTarget());
     else
@@ -1116,11 +1122,8 @@ void endTransparencyLayer(PlatformContextDirect2D& platformContext)
 
 void clip(PlatformContextDirect2D& platformContext, const FloatRect& rect)
 {
-    if (platformContext.m_renderStates.isEmpty())
-        save(platformContext);
-
     platformContext.renderTarget()->PushAxisAlignedClip(rect, D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
-    platformContext.m_renderStates.last().m_clips.append(PlatformContextDirect2D::AxisAlignedClip);
+    platformContext.pushClip(PlatformContextDirect2D::AxisAlignedClip);
 
     if (auto* graphicsContextPrivate = platformContext.graphicsContextPrivate())
         graphicsContextPrivate->clip(rect);

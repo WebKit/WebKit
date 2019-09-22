@@ -1,3 +1,53 @@
+2019-09-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] Resolve crashes found while running canvas tests
+        https://bugs.webkit.org/show_bug.cgi?id=202062
+
+        Reviewed by Don Olmstead.
+
+        * platform/graphics/Pattern.h:
+        * platform/graphics/win/Direct2DOperations.cpp:
+        (WebCore::Direct2D::FillSource::FillSource): Take GraphicsContext as argument, rather than
+        a PlatformContextDirect2D since downstream operations require the former.        
+        (WebCore::Direct2D::StrokeSource::StrokeSource): Ditto.
+        (WebCore::Direct2D::clip): Use new 'pushClip' helper function.
+        * platform/graphics/win/Direct2DOperations.h:
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContext::drawPath):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRectWithRoundedHole):
+        (WebCore::GraphicsContext::strokeRect):
+        * platform/graphics/win/GraphicsContextImplDirect2D.cpp:
+        (WebCore::GraphicsContextImplDirect2D::fillRect): Update to pass GraphicsContext.
+        (WebCore::GraphicsContextImplDirect2D::fillRectWithRoundedHole): Ditto.
+        (WebCore::GraphicsContextImplDirect2D::fillPath): Ditto.
+        (WebCore::GraphicsContextImplDirect2D::strokeRect): Ditto.
+        (WebCore::GraphicsContextImplDirect2D::strokePath): Ditto.
+        (WebCore::GraphicsContextImplDirect2D::drawGlyphs): Ditto.
+        * platform/graphics/win/ImageBufferDataDirect2D.cpp:
+        (WebCore::ImageBufferData::copyRectFromSourceToData): Correct return behavior.
+        (WebCore::ImageBufferData::compatibleBitmap): Make a copy if the render target is
+        backed by the ID2D1Bitmap we are trying to draw with.
+        * platform/graphics/win/PatternDirect2D.cpp:
+        (WebCore::Pattern::createPlatformPattern const): Remove 'PlatformContextDirect2D' contructor,
+        since we always need a GraphicsContext for the Image class.
+        * platform/graphics/win/PlatformContextDirect2D.cpp:
+        (WebCore::PlatformContextDirect2D::clipLayer const): Added.
+        (WebCore::PlatformContextDirect2D::clearClips): Added.
+        (WebCore::PlatformContextDirect2D::restore): Update to use m_stateStack, rather than
+        the m_renderStates vector.
+        (WebCore::PlatformContextDirect2D::save): Ditto.
+        (WebCore::PlatformContextDirect2D::pushRenderClip): Ditto.
+        (WebCore::PlatformContextDirect2D::setActiveLayer): Ditto.
+        (WebCore::PlatformContextDirect2D::endDraw): Ditto.
+        (WebCore::PlatformContextDirect2D::notifyPostDrawObserver): Ditto.
+        (WebCore::PlatformContextDirect2D::pushClip): Ditto.
+        * platform/graphics/win/PlatformContextDirect2D.h:
+        (WebCore::PlatformContextDirect2D::hasSavedState const):
+        (WebCore::PlatformContextDirect2D::clipLayer const): Deleted.
+
 2019-09-20  Antoine Quint  <graouts@apple.com>
 
         releasePointerCapture() not working for implicit capture; can't opt-in to pointerenter/leave for touches

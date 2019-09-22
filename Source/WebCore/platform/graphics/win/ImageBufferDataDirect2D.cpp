@@ -428,9 +428,9 @@ bool ImageBufferData::copyRectFromSourceToData(const IntRect& sourceRect, const 
         return copyRectFromSourceToDest(sourceRect, sourceRect.size(), source.data(), backingStoreSize, data.data(), destBufferPosition);
 
     if (byteFormat == AlphaPremultiplication::Unpremultiplied)
-        copyRectFromSourceToDestAndSetPremultiplication<AlphaPremultiplication::Unpremultiplied>(sourceRect, sourceRect.size(), source.data(), backingStoreSize, data.data(), destBufferPosition);
-    else
-        copyRectFromSourceToDestAndSetPremultiplication<AlphaPremultiplication::Premultiplied>(sourceRect, sourceRect.size(), source.data(), backingStoreSize, data.data(), destBufferPosition);
+        return copyRectFromSourceToDestAndSetPremultiplication<AlphaPremultiplication::Unpremultiplied>(sourceRect, sourceRect.size(), source.data(), backingStoreSize, data.data(), destBufferPosition);
+
+    return copyRectFromSourceToDestAndSetPremultiplication<AlphaPremultiplication::Premultiplied>(sourceRect, sourceRect.size(), source.data(), backingStoreSize, data.data(), destBufferPosition);
 }
 
 void ImageBufferData::loadDataToBitmapIfNeeded()
@@ -478,8 +478,23 @@ COMPtr<ID2D1Bitmap> ImageBufferData::compatibleBitmap(ID2D1RenderTarget* renderT
     if (!renderTarget)
         return bitmap;
 
-    if (platformContext->renderTarget() == renderTarget)
-        return bitmap;
+    if (platformContext->renderTarget() == renderTarget) {
+        COMPtr<ID2D1BitmapRenderTarget> bitmapTarget(Query, renderTarget);
+        if (bitmapTarget) {
+            COMPtr<ID2D1Bitmap> backingBitmap;
+            if (SUCCEEDED(bitmapTarget->GetBitmap(&backingBitmap))) {
+                if (backingBitmap != bitmap)
+                    return bitmap;
+
+                // We can't draw an ID2D1Bitmap to itself. Must return a copy.
+                COMPtr<ID2D1Bitmap> copiedBitmap;
+                if (SUCCEEDED(renderTarget->CreateBitmap(bitmap->GetPixelSize(), Direct2D::bitmapProperties(), &copiedBitmap))) {
+                    if (SUCCEEDED(copiedBitmap->CopyFromBitmap(nullptr, bitmap.get(), nullptr)))
+                        return copiedBitmap;
+                }
+            }
+        }
+    }
 
     auto size = bitmap->GetPixelSize();
 

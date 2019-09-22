@@ -145,7 +145,7 @@ void GraphicsContextImplDirect2D::setMiterLimit(float miterLimit)
 void GraphicsContextImplDirect2D::fillRect(const FloatRect& rect)
 {
     auto& state = graphicsContext().state();
-    Direct2D::fillRect(m_platformContext, rect, Direct2D::FillSource(state, m_platformContext), Direct2D::ShadowState(state));
+    Direct2D::fillRect(m_platformContext, rect, Direct2D::FillSource(state, graphicsContext()), Direct2D::ShadowState(state));
 }
 
 void GraphicsContextImplDirect2D::fillRect(const FloatRect& rect, const Color& color)
@@ -192,7 +192,7 @@ void GraphicsContextImplDirect2D::fillRectWithRoundedHole(const FloatRect& rect,
 {
     auto& state = graphicsContext().state();
 
-    Direct2D::FillSource fillSource(state, m_platformContext);
+    Direct2D::FillSource fillSource(state, graphicsContext());
     fillSource.brush = m_platformContext.brushWithColor(color);
 
     Direct2D::fillRectWithRoundedHole(m_platformContext, rect, roundedHoleRect, fillSource, Direct2D::ShadowState(graphicsContext().state()));
@@ -201,7 +201,7 @@ void GraphicsContextImplDirect2D::fillRectWithRoundedHole(const FloatRect& rect,
 void GraphicsContextImplDirect2D::fillPath(const Path& path)
 {
     auto& state = graphicsContext().state();
-    Direct2D::fillPath(m_platformContext, path, Direct2D::FillSource(state, m_platformContext), Direct2D::ShadowState(state));
+    Direct2D::fillPath(m_platformContext, path, Direct2D::FillSource(state, graphicsContext()), Direct2D::ShadowState(state));
 }
 
 void GraphicsContextImplDirect2D::fillEllipse(const FloatRect& rect)
@@ -214,13 +214,13 @@ void GraphicsContextImplDirect2D::fillEllipse(const FloatRect& rect)
 void GraphicsContextImplDirect2D::strokeRect(const FloatRect& rect, float lineWidth)
 {
     auto& state = graphicsContext().state();
-    Direct2D::strokeRect(m_platformContext, rect, lineWidth, Direct2D::StrokeSource(state, m_platformContext), Direct2D::ShadowState(state));
+    Direct2D::strokeRect(m_platformContext, rect, lineWidth, Direct2D::StrokeSource(state, graphicsContext()), Direct2D::ShadowState(state));
 }
 
 void GraphicsContextImplDirect2D::strokePath(const Path& path)
 {
     auto& state = graphicsContext().state();
-    Direct2D::strokePath(m_platformContext, path, Direct2D::StrokeSource(state, m_platformContext), Direct2D::ShadowState(state));
+    Direct2D::strokePath(m_platformContext, path, Direct2D::StrokeSource(state, graphicsContext()), Direct2D::ShadowState(state));
 }
 
 void GraphicsContextImplDirect2D::strokeEllipse(const FloatRect& rect)
@@ -263,7 +263,7 @@ void GraphicsContextImplDirect2D::drawGlyphs(const Font& font, const GlyphBuffer
     double syntheticBoldOffset = font.syntheticBoldOffset();
 
     auto& state = graphicsContext().state();
-    Direct2D::drawGlyphs(m_platformContext, Direct2D::FillSource(state, m_platformContext), Direct2D::StrokeSource(state, m_platformContext),
+    Direct2D::drawGlyphs(m_platformContext, Direct2D::FillSource(state, graphicsContext()), Direct2D::StrokeSource(state, graphicsContext()),
         Direct2D::ShadowState(state), point, font, syntheticBoldOffset, glyphs, horizontalAdvances, glyphOffsets, xOffset,
         state.textDrawingMode, state.strokeThickness, state.shadowOffset, state.shadowColor);
 }

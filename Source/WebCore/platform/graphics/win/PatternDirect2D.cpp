@@ -39,14 +39,6 @@ namespace WebCore {
 
 ID2D1BitmapBrush* Pattern::createPlatformPattern(const GraphicsContext& context, float alpha, const AffineTransform& userSpaceTransformation) const
 {
-    auto platformContext = context.platformContext();
-    RELEASE_ASSERT(platformContext);
-
-    return createPlatformPattern(*platformContext, alpha, userSpaceTransformation);
-}
-
-ID2D1BitmapBrush* Pattern::createPlatformPattern(PlatformGraphicsContext& context, float alpha, const AffineTransform& userSpaceTransformation) const
-{
     AffineTransform patternTransform = userSpaceTransformation * m_patternSpaceTransformation;
     auto bitmapBrushProperties = D2D1::BitmapBrushProperties();
     bitmapBrushProperties.extendModeX = m_repeatX ? D2D1_EXTEND_MODE_WRAP : D2D1_EXTEND_MODE_CLAMP;
@@ -57,10 +49,15 @@ ID2D1BitmapBrush* Pattern::createPlatformPattern(PlatformGraphicsContext& contex
     brushProperties.opacity = alpha;
 
     auto& patternImage = tileImage();
-    auto nativeImage = patternImage.nativeImage(nullptr);
+    auto nativeImage = patternImage.nativeImage(&context);
+    if (!nativeImage)
+        return nullptr;
+
+    auto platformContext = context.platformContext();
+    RELEASE_ASSERT(platformContext);
 
     ID2D1BitmapBrush* patternBrush = nullptr;
-    HRESULT hr = context.renderTarget()->CreateBitmapBrush(nativeImage.get(), &bitmapBrushProperties, &brushProperties, &patternBrush);
+    HRESULT hr = platformContext->renderTarget()->CreateBitmapBrush(nativeImage.get(), &bitmapBrushProperties, &brushProperties, &patternBrush);
     ASSERT(SUCCEEDED(hr));
     return patternBrush;
 }

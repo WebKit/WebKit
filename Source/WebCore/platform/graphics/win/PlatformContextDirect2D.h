@@ -61,7 +61,7 @@ public:
     GraphicsContextPlatformPrivate* graphicsContextPrivate() { return m_graphicsContextPrivate; }
     void setGraphicsContextPrivate(GraphicsContextPlatformPrivate* graphicsContextPrivate) { m_graphicsContextPrivate = graphicsContextPrivate; }
 
-    ID2D1Layer* clipLayer() const { return m_renderStates.last().m_activeLayer.get(); }
+    ID2D1Layer* clipLayer() const;
     ID2D1StrokeStyle* strokeStyle();
     D2D1_STROKE_STYLE_PROPERTIES strokeStyleProperties() const;
     ID2D1StrokeStyle* platformStrokeStyle() const;
@@ -71,7 +71,7 @@ public:
     void save();
     void restore();
 
-    bool hasSavedState() const { return !m_renderStates.isEmpty(); }
+    bool hasSavedState() const { return !m_stateStack.isEmpty(); }
 
     void beginDraw();
     void endDraw();
@@ -82,13 +82,6 @@ public:
 
     void recomputeStrokeStyle();
     float strokeThickness() const { return m_strokeThickness; }
-
-    struct RenderState {
-        COMPtr<ID2D1DrawingStateBlock> m_drawingStateBlock;
-        COMPtr<ID2D1Layer> m_activeLayer;
-        Vector<Direct2DLayerType> m_clips;
-    };
-    Vector<RenderState> m_renderStates;
 
     struct TransparencyLayerState {
         COMPtr<ID2D1BitmapRenderTarget> renderTarget;
@@ -117,7 +110,11 @@ public:
     void notifyPreDrawObserver();
     void notifyPostDrawObserver();
 
+    void pushClip(Direct2DLayerType);
+
 private:
+    void clearClips(Vector<Direct2DLayerType>&);
+
     GraphicsContextPlatformPrivate* m_graphicsContextPrivate { nullptr };
 
     COMPtr<ID2D1RenderTarget> m_renderTarget;
