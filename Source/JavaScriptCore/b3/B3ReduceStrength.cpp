@@ -391,6 +391,15 @@ public:
         }
     }
 
+    IntRange zExt32()
+    {
+        ASSERT(m_min >= INT32_MIN);
+        ASSERT(m_max <= INT32_MAX);
+        int32_t min = m_min;
+        int32_t max = m_max;
+        return IntRange(static_cast<uint64_t>(static_cast<uint32_t>(min)), static_cast<uint64_t>(static_cast<uint32_t>(max)));
+    }
+
 private:
     int64_t m_min { 0 };
     int64_t m_max { 0 };
@@ -2594,6 +2603,14 @@ private:
         case Mul:
             return rangeFor(value->child(0), timeToLive - 1).mul(
                 rangeFor(value->child(1), timeToLive - 1), value->type());
+
+        case SExt8:
+        case SExt16:
+        case SExt32:
+            return rangeFor(value->child(0), timeToLive - 1);
+
+        case ZExt32:
+            return rangeFor(value->child(0), timeToLive - 1).zExt32();
 
         default:
             break;

@@ -932,6 +932,78 @@ void testCheckAddSelfOverflow32()
     CHECK(invoke<int32_t>(*code, std::numeric_limits<int32_t>::max()) == std::numeric_limits<int32_t>::max());
 }
 
+void testCheckAddRemoveCheckWithSExt8(int8_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg = root->appendNew<Value>(proc, SExt32, Origin(), root->appendNew<Value>(proc, SExt8, Origin(), root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))));
+    CheckValue* checkAdd = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), arg, arg);
+    checkAdd->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.abortWithReason(B3Oops);
+        });
+    root->appendNewControlValue(proc, Return, Origin(), checkAdd);
+
+    auto code = compileProc(proc);
+
+    CHECK(invoke<int64_t>(*code, value) == 2ll * static_cast<int32_t>(value));
+}
+
+void testCheckAddRemoveCheckWithSExt16(int16_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg = root->appendNew<Value>(proc, SExt32, Origin(), root->appendNew<Value>(proc, SExt16, Origin(), root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))));
+    CheckValue* checkAdd = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), arg, arg);
+    checkAdd->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.abortWithReason(B3Oops);
+        });
+    root->appendNewControlValue(proc, Return, Origin(), checkAdd);
+
+    auto code = compileProc(proc);
+
+    CHECK(invoke<int64_t>(*code, value) == 2ll * value);
+}
+
+void testCheckAddRemoveCheckWithSExt32(int32_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg = root->appendNew<Value>(proc, SExt32, Origin(), root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
+    CheckValue* checkAdd = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), arg, arg);
+    checkAdd->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.abortWithReason(B3Oops);
+        });
+    root->appendNewControlValue(proc, Return, Origin(), checkAdd);
+
+    auto code = compileProc(proc);
+
+    CHECK(invoke<int64_t>(*code, value) == 2ll * value);
+}
+
+void testCheckAddRemoveCheckWithZExt32(int32_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg = root->appendNew<Value>(proc, ZExt32, Origin(), root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
+    CheckValue* checkAdd = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), arg, arg);
+    checkAdd->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.abortWithReason(B3Oops);
+        });
+    root->appendNewControlValue(proc, Return, Origin(), checkAdd);
+
+    auto code = compileProc(proc);
+
+    CHECK(invoke<uint64_t>(*code, value) == static_cast<uint64_t>(2 * static_cast<uint64_t>(static_cast<uint32_t>(value))));
+}
+
 void testCheckSubImm()
 {
     Procedure proc;

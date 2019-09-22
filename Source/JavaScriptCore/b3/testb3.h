@@ -270,6 +270,8 @@ struct Operand {
 
 typedef Operand<int64_t> Int64Operand;
 typedef Operand<int32_t> Int32Operand;
+typedef Operand<int16_t> Int16Operand;
+typedef Operand<int8_t> Int8Operand;
 
 #define MAKE_OPERAND(value) Operand<decltype(value)> { #value, value }
 
@@ -339,6 +341,38 @@ inline Vector<Int32Operand> int32Operands()
         { "int32-min", std::numeric_limits<int32_t>::min() },
         { "uint32-max", static_cast<int32_t>(std::numeric_limits<uint32_t>::max()) },
         { "uint32-min", static_cast<int32_t>(std::numeric_limits<uint32_t>::min()) }
+    });
+    return operands;
+}
+
+inline Vector<Int16Operand> int16Operands()
+{
+    Vector<Int16Operand> operands({
+        { "0", 0 },
+        { "1", 1 },
+        { "-1", -1 },
+        { "42", 42 },
+        { "-42", -42 },
+        { "int16-max", std::numeric_limits<int16_t>::max() },
+        { "int16-min", std::numeric_limits<int16_t>::min() },
+        { "uint16-max", static_cast<int16_t>(std::numeric_limits<uint16_t>::max()) },
+        { "uint16-min", static_cast<int16_t>(std::numeric_limits<uint16_t>::min()) }
+    });
+    return operands;
+}
+
+inline Vector<Int8Operand> int8Operands()
+{
+    Vector<Int8Operand> operands({
+        { "0", 0 },
+        { "1", 1 },
+        { "-1", -1 },
+        { "42", 42 },
+        { "-42", -42 },
+        { "int8-max", std::numeric_limits<int8_t>::max() },
+        { "int8-min", std::numeric_limits<int8_t>::min() },
+        { "uint8-max", static_cast<int8_t>(std::numeric_limits<uint8_t>::max()) },
+        { "uint8-min", static_cast<int8_t>(std::numeric_limits<uint8_t>::min()) }
     });
     return operands;
 }
@@ -761,6 +795,10 @@ void testCheckAddArgumentAliasing64();
 void testCheckAddArgumentAliasing32();
 void testCheckAddSelfOverflow64();
 void testCheckAddSelfOverflow32();
+void testCheckAddRemoveCheckWithSExt8(int8_t);
+void testCheckAddRemoveCheckWithSExt16(int16_t);
+void testCheckAddRemoveCheckWithSExt32(int32_t);
+void testCheckAddRemoveCheckWithZExt32(int32_t);
 void testCheckSubImm();
 void testCheckSubBadImm();
 void testCheckSub();

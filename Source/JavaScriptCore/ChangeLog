@@ -1,3 +1,42 @@
+2019-09-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove CheckAdd in JetStream2/async-fs's Math.random function
+        https://bugs.webkit.org/show_bug.cgi?id=201633
+
+        Reviewed by Mark Lam.
+
+        Int52Rep is used in DFG and FTL to calculate Int52 things faster. This is typically used when user code see uint32_t type.
+        In JS, we handles Int32 well, but if the value exceeds Int32 range (like, using 0xffffffff), we use Int52 instead not to fallback to Double.
+
+        The problem is that we do not have optimizations for Int52's overflow checks. This emits many ArithAdd(Int52Rep x 2, CheckOverflow). Each
+        of them emits OSR exit, which prevents dead-store-elimination in B3, and makes ValueToInt32(Int52) alive if it is referenced from some variable which
+        can be seen if OSR exit occurs.
+
+        In this patch, we perform strength-reduction for CheckAdd, converting to Add. We already have such a thing. But the existing one does not handle instructions
+        well emitted when Int52 is used.
+
+        When Int52 is used, we typically have the sequence like,
+
+            Int64 @78 = SExt32(@73, DFG:@67<Int52>) // Widen Int32 to Int64
+            Int64 @81 = Shl(@78, $12(@80), DFG:@162<Int52>) // Convert Int32 to Int52
+
+        While we have Shl handling for integer-range optimization in B3ReduceStrength, we lack handling of SExt32 while it is very easy.
+        This patch adds SExt8, SExt16, SExt32, and ZExt32 handling to B3ReduceStrength's integer range analysis.
+        This converts many CheckAdd in JetStream2/async-fs's hot function to simple Add, and removes a bunch of unnecessary instructions which exist because of this OSR exit.
+        We can see ~5% improvement in JetStream2/async-fs.
+
+        * b3/B3ReduceStrength.cpp:
+        * b3/testb3.h:
+        (int16Operands):
+        (int8Operands):
+        * b3/testb3_1.cpp:
+        (run):
+        * b3/testb3_5.cpp:
+        (testCheckAddRemoveCheckWithSExt8):
+        (testCheckAddRemoveCheckWithSExt16):
+        (testCheckAddRemoveCheckWithSExt32):
+        (testCheckAddRemoveCheckWithZExt32):
+
 2019-09-21  Mark Lam  <mark.lam@apple.com>
 
         Move JSLexicalEnvironment, DirectArguments, and ScopedArguments cells out of the Gigacage.

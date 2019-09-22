@@ -342,6 +342,11 @@ void run(const char* filter)
     RUN(testIToDReducedToIToF64Arg());
     RUN(testIToDReducedToIToF32Arg());
 
+    RUN_UNARY(testCheckAddRemoveCheckWithSExt8, int8Operands());
+    RUN_UNARY(testCheckAddRemoveCheckWithSExt16, int16Operands());
+    RUN_UNARY(testCheckAddRemoveCheckWithSExt32, int32Operands());
+    RUN_UNARY(testCheckAddRemoveCheckWithZExt32, int32Operands());
+
     RUN(testStore32(44));
     RUN(testStoreConstant(49));
     RUN(testStoreConstantPtr(49));
