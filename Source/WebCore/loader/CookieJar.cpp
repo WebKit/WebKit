@@ -90,7 +90,7 @@ String CookieJar::cookies(Document& document, const URL& url) const
     return result.first;
 }
 
-CookieRequestHeaderFieldProxy CookieJar::cookieRequestHeaderFieldProxy(PAL::SessionID sessionID, const Document& document, const URL& url)
+CookieRequestHeaderFieldProxy CookieJar::cookieRequestHeaderFieldProxy(const Document& document, const URL& url)
 {
     TraceScope scope(FetchCookiesStart, FetchCookiesEnd);
 
@@ -101,7 +101,7 @@ CookieRequestHeaderFieldProxy CookieJar::cookieRequestHeaderFieldProxy(PAL::Sess
         pageID = frame->loader().client().pageID();
     }
 
-    return { sessionID, document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldIncludeSecureCookies(document, url) };
+    return { document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldIncludeSecureCookies(document, url) };
 }
 
 void CookieJar::setCookies(Document& document, const URL& url, const String& cookieString)

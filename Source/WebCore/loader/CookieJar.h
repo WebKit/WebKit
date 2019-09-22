@@ -51,7 +51,7 @@ class WEBCORE_EXPORT CookieJar : public RefCounted<CookieJar> {
 public:
     static Ref<CookieJar> create(Ref<StorageSessionProvider>&&);
     
-    static CookieRequestHeaderFieldProxy cookieRequestHeaderFieldProxy(PAL::SessionID, const Document&, const URL&);
+    static CookieRequestHeaderFieldProxy cookieRequestHeaderFieldProxy(const Document&, const URL&);
 
     String cookieRequestHeaderFieldValue(Document&, const URL&) const;
 

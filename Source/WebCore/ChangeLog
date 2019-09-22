@@ -1,5 +1,21 @@
 2019-09-21  Chris Dumez  <cdumez@apple.com>
 
+        CookieRequestHeaderFieldProxy does not need a SessionID
+        https://bugs.webkit.org/show_bug.cgi?id=202084
+
+        Reviewed by Alex Christensen.
+
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::didOpenSocketStream):
+        * loader/CookieJar.cpp:
+        (WebCore::CookieJar::cookieRequestHeaderFieldProxy):
+        * loader/CookieJar.h:
+        * platform/network/CookieRequestHeaderFieldProxy.h:
+        (WebCore::CookieRequestHeaderFieldProxy::encode const):
+        (WebCore::CookieRequestHeaderFieldProxy::decode):
+
+2019-09-21  Chris Dumez  <cdumez@apple.com>
+
         DocumentLoader::m_temporaryServiceWorkerClient does not need a sessionID
         https://bugs.webkit.org/show_bug.cgi?id=202083
 

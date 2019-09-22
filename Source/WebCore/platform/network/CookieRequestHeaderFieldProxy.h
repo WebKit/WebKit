@@ -29,13 +29,11 @@
 #include "FrameIdentifier.h"
 #include "PageIdentifier.h"
 #include "SameSiteInfo.h"
-#include <pal/SessionID.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
 
 struct CookieRequestHeaderFieldProxy {
-    PAL::SessionID sessionID;
     URL firstParty;
     SameSiteInfo sameSiteInfo;
     URL url;
@@ -50,7 +48,6 @@ struct CookieRequestHeaderFieldProxy {
 template<class Encoder>
 void CookieRequestHeaderFieldProxy::encode(Encoder& encoder) const
 {
-    encoder << sessionID;
     encoder << firstParty;
     encoder << sameSiteInfo;
     encoder << url;
@@ -62,11 +59,6 @@ void CookieRequestHeaderFieldProxy::encode(Encoder& encoder) const
 template<class Decoder>
 Optional<CookieRequestHeaderFieldProxy> CookieRequestHeaderFieldProxy::decode(Decoder& decoder)
 {
-    Optional<PAL::SessionID> sessionID;
-    decoder >> sessionID;
-    if (!sessionID)
-        return { };
-
     URL firstParty;
     if (!decoder.decode(firstParty))
         return WTF::nullopt;
@@ -93,7 +85,7 @@ Optional<CookieRequestHeaderFieldProxy> CookieRequestHeaderFieldProxy::decode(De
     if (!decoder.decode(includeSecureCookies))
         return WTF::nullopt;
 
-    return CookieRequestHeaderFieldProxy { *sessionID, WTFMove(firstParty), WTFMove(sameSiteInfo), WTFMove(url), *frameID, *pageID, includeSecureCookies };
+    return CookieRequestHeaderFieldProxy { WTFMove(firstParty), WTFMove(sameSiteInfo), WTFMove(url), *frameID, *pageID, includeSecureCookies };
 }
 
 } // namespace WebCore

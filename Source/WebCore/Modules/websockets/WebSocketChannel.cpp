@@ -271,8 +271,8 @@ void WebSocketChannel::didOpenSocketStream(SocketStreamHandle& handle)
     }
     auto handshakeMessage = m_handshake->clientHandshakeMessage();
     Optional<CookieRequestHeaderFieldProxy> cookieRequestHeaderFieldProxy;
-    if (m_allowCookies && m_document->page())
-        cookieRequestHeaderFieldProxy = CookieJar::cookieRequestHeaderFieldProxy(m_document->page()->sessionID(), *m_document, m_handshake->httpURLForAuthenticationAndCookies());
+    if (m_allowCookies)
+        cookieRequestHeaderFieldProxy = CookieJar::cookieRequestHeaderFieldProxy(*m_document, m_handshake->httpURLForAuthenticationAndCookies());
     handle.sendHandshake(WTFMove(handshakeMessage), WTFMove(cookieRequestHeaderFieldProxy), [this, protectedThis = makeRef(*this)] (bool success, bool didAccessSecureCookies) {
         if (!success)
             fail("Failed to send WebSocket handshake.");
