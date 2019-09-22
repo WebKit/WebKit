@@ -1,3 +1,11 @@
+2019-09-21  Dan Bernstein  <mitz@apple.com>
+
+        Fix an assertion failure introduced in r250186.
+
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::platformGetLaunchOptionsWithAttributes): Corrected the
+          assertion.
+
 2019-09-21  Chris Dumez  <cdumez@apple.com>
 
         Reduce use of SessionID::defaultSessionID() in WebKit
