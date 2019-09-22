@@ -30,7 +30,6 @@
 #include "ServiceWorkerJobDataIdentifier.h"
 #include "ServiceWorkerRegistrationData.h"
 #include "WorkerType.h"
-#include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 #include <wtf/URL.h>
 #include <wtf/URLHash.h>
@@ -77,7 +76,6 @@ struct ServiceWorkerContextData {
     String referrerPolicy;
     URL scriptURL;
     WorkerType workerType;
-    PAL::SessionID sessionID;
     bool loadedFromDisk;
     HashMap<URL, ImportedScript> scriptResourceMap;
 
@@ -90,7 +88,7 @@ struct ServiceWorkerContextData {
 template<class Encoder>
 void ServiceWorkerContextData::encode(Encoder& encoder) const
 {
-    encoder << jobDataIdentifier << registration << serviceWorkerIdentifier << script << contentSecurityPolicy << referrerPolicy << scriptURL << workerType << sessionID << loadedFromDisk;
+    encoder << jobDataIdentifier << registration << serviceWorkerIdentifier << script << contentSecurityPolicy << referrerPolicy << scriptURL << workerType << loadedFromDisk;
     encoder << scriptResourceMap;
 }
 
@@ -131,11 +129,6 @@ Optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& dec
     if (!decoder.decodeEnum(workerType))
         return WTF::nullopt;
 
-    Optional<PAL::SessionID> sessionID;
-    decoder >> sessionID;
-    if (!sessionID)
-        return WTF::nullopt;
-
     bool loadedFromDisk;
     if (!decoder.decode(loadedFromDisk))
         return WTF::nullopt;
@@ -144,7 +137,7 @@ Optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& dec
     if (!decoder.decode(scriptResourceMap))
         return WTF::nullopt;
 
-    return {{ WTFMove(*jobDataIdentifier), WTFMove(*registration), WTFMove(*serviceWorkerIdentifier), WTFMove(script), WTFMove(contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), workerType, *sessionID, loadedFromDisk, WTFMove(scriptResourceMap) }};
+    return {{ WTFMove(*jobDataIdentifier), WTFMove(*registration), WTFMove(*serviceWorkerIdentifier), WTFMove(script), WTFMove(contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), workerType, loadedFromDisk, WTFMove(scriptResourceMap) }};
 }
 
 } // namespace WebCore

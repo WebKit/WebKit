@@ -79,7 +79,7 @@ ServiceWorkerContextData SWServerWorker::contextData() const
 {
     ASSERT(m_registration);
 
-    return { WTF::nullopt, m_registration->data(), m_data.identifier, m_script, m_contentSecurityPolicy, m_referrerPolicy, m_data.scriptURL, m_data.type, m_server->sessionID(), false, m_scriptResourceMap };
+    return { WTF::nullopt, m_registration->data(), m_data.identifier, m_script, m_contentSecurityPolicy, m_referrerPolicy, m_data.scriptURL, m_data.type, false, m_scriptResourceMap };
 }
 
 void SWServerWorker::terminate()

@@ -96,7 +96,6 @@ static inline void cleanOldDatabases(const String& databaseDirectory)
 RegistrationDatabase::RegistrationDatabase(RegistrationStore& store, String&& databaseDirectory)
     : m_workQueue(WorkQueue::create("ServiceWorker I/O Thread", WorkQueue::Type::Serial))
     , m_store(makeWeakPtr(store))
-    , m_sessionID(m_store->server().sessionID())
     , m_databaseDirectory(WTFMove(databaseDirectory))
     , m_databaseFilePath(FileSystem::pathByAppendingComponent(m_databaseDirectory, databaseFilename()))
 {
@@ -418,7 +417,7 @@ String RegistrationDatabase::importRecords()
         auto registrationIdentifier = ServiceWorkerRegistrationIdentifier::generate();
         auto serviceWorkerData = ServiceWorkerData { workerIdentifier, scriptURL, ServiceWorkerState::Activated, *workerType, registrationIdentifier };
         auto registration = ServiceWorkerRegistrationData { WTFMove(*key), registrationIdentifier, URL(originURL, scopePath), *updateViaCache, lastUpdateCheckTime, WTF::nullopt, WTF::nullopt, WTFMove(serviceWorkerData) };
-        auto contextData = ServiceWorkerContextData { WTF::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), *workerType, m_sessionID, true, WTFMove(scriptResourceMap) };
+        auto contextData = ServiceWorkerContextData { WTF::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), *workerType, true, WTFMove(scriptResourceMap) };
 
         callOnMainThread([protectedThis = makeRef(*this), contextData = contextData.isolatedCopy()]() mutable {
             protectedThis->addRegistrationToStore(WTFMove(contextData));

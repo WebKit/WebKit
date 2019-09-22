@@ -1,5 +1,26 @@
 2019-09-21  Chris Dumez  <cdumez@apple.com>
 
+        ServiceWorkerContextData does not need a sessionID
+        https://bugs.webkit.org/show_bug.cgi?id=202087
+
+        Reviewed by Alex Christensen.
+
+        * workers/service/ServiceWorkerContextData.cpp:
+        (WebCore::ServiceWorkerContextData::isolatedCopy const):
+        * workers/service/ServiceWorkerContextData.h:
+        (WebCore::ServiceWorkerContextData::encode const):
+        (WebCore::ServiceWorkerContextData::decode):
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::RegistrationDatabase):
+        (WebCore::RegistrationDatabase::importRecords):
+        * workers/service/server/RegistrationDatabase.h:
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::updateWorker):
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::contextData const):
+
+2019-09-21  Chris Dumez  <cdumez@apple.com>
+
         WebIDBConnectionToClient does not need to be RefCounted or a SessionID
         https://bugs.webkit.org/show_bug.cgi?id=202089
 

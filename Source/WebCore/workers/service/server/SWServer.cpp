@@ -530,7 +530,7 @@ void SWServer::removeClientServiceWorkerRegistration(Connection& connection, Ser
 
 void SWServer::updateWorker(Connection&, const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerRegistration& registration, const URL& url, const String& script, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const String& referrerPolicy, WorkerType type, HashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap)
 {
-    tryInstallContextData({ jobDataIdentifier, registration.data(), ServiceWorkerIdentifier::generate(), script, contentSecurityPolicy, referrerPolicy, url, type, sessionID(), false, WTFMove(scriptResourceMap) });
+    tryInstallContextData({ jobDataIdentifier, registration.data(), ServiceWorkerIdentifier::generate(), script, contentSecurityPolicy, referrerPolicy, url, type, false, WTFMove(scriptResourceMap) });
 }
 
 void SWServer::tryInstallContextData(ServiceWorkerContextData&& data)
