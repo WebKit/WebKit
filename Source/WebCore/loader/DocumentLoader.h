@@ -613,11 +613,7 @@ private:
 
 #if ENABLE(SERVICE_WORKER)
     Optional<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;
-    struct TemporaryServiceWorkerClient {
-        DocumentIdentifier documentIdentifier;
-        PAL::SessionID sessionID;
-    };
-    Optional<TemporaryServiceWorkerClient> m_temporaryServiceWorkerClient;
+    Optional<DocumentIdentifier> m_temporaryServiceWorkerClient;
 #endif
 
 #ifndef NDEBUG

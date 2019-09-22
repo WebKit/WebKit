@@ -1873,15 +1873,12 @@ void DocumentLoader::registerTemporaryServiceWorkerClient(const URL& url)
     if (!m_serviceWorkerRegistrationData)
         return;
 
-    m_temporaryServiceWorkerClient = TemporaryServiceWorkerClient {
-        DocumentIdentifier::generate(),
-        m_frame->page()->sessionID()
-    };
+    m_temporaryServiceWorkerClient = DocumentIdentifier::generate();
 
     auto& serviceWorkerConnection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
 
     // FIXME: Compute ServiceWorkerClientFrameType appropriately.
-    ServiceWorkerClientData data { { serviceWorkerConnection.serverConnectionIdentifier(), m_temporaryServiceWorkerClient->documentIdentifier }, ServiceWorkerClientType::Window, ServiceWorkerClientFrameType::None, url };
+    ServiceWorkerClientData data { { serviceWorkerConnection.serverConnectionIdentifier(), *m_temporaryServiceWorkerClient }, ServiceWorkerClientType::Window, ServiceWorkerClientFrameType::None, url };
 
     RefPtr<SecurityOrigin> topOrigin;
     if (m_frame->isMainFrame())
@@ -1901,7 +1898,7 @@ void DocumentLoader::unregisterTemporaryServiceWorkerClient()
         return;
 
     auto& serviceWorkerConnection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
-    serviceWorkerConnection.unregisterServiceWorkerClient(m_temporaryServiceWorkerClient->documentIdentifier);
+    serviceWorkerConnection.unregisterServiceWorkerClient(*m_temporaryServiceWorkerClient);
     m_temporaryServiceWorkerClient = WTF::nullopt;
 #endif
 }

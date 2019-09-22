@@ -1,3 +1,15 @@
+2019-09-21  Chris Dumez  <cdumez@apple.com>
+
+        DocumentLoader::m_temporaryServiceWorkerClient does not need a sessionID
+        https://bugs.webkit.org/show_bug.cgi?id=202083
+
+        Reviewed by Alex Christensen.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::registerTemporaryServiceWorkerClient):
+        (WebCore::DocumentLoader::unregisterTemporaryServiceWorkerClient):
+        * loader/DocumentLoader.h:
+
 2019-09-21  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] Resolve crashes found while running canvas tests
