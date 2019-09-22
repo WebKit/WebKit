@@ -72,9 +72,6 @@ public:
     virtual void notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion) = 0;
 
     virtual void didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames) = 0;
-
-    virtual void ref() = 0;
-    virtual void deref() = 0;
 };
 
 } // namespace IDBServer

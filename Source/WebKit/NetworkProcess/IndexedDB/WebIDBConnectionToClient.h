@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,30 +48,30 @@ struct IDBGetRecordData;
 struct IDBIterateCursorData;
 struct IDBKeyRangeData;
 struct SecurityOriginData;
+
+namespace IDBServer {
+class IDBServer;
+}
 }
 
 namespace WebKit {
 
 class NetworkProcess;
 
-class WebIDBConnectionToClient final : public WebCore::IDBServer::IDBConnectionToClientDelegate, public IPC::MessageSender, public RefCounted<WebIDBConnectionToClient> {
+class WebIDBConnectionToClient final : public WebCore::IDBServer::IDBConnectionToClientDelegate, public IPC::MessageSender {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<WebIDBConnectionToClient> create(NetworkProcess&, IPC::Connection&, WebCore::IDBConnectionIdentifier, PAL::SessionID);
+    WebIDBConnectionToClient(NetworkConnectionToWebProcess&, WebCore::IDBConnectionIdentifier);
 
     virtual ~WebIDBConnectionToClient();
 
     WebCore::IDBServer::IDBConnectionToClient& connectionToClient();
     WebCore::IDBConnectionIdentifier identifier() const final { return m_identifier; }
 
-    void ref() override { RefCounted<WebIDBConnectionToClient>::ref(); }
-    void deref() override { RefCounted<WebIDBConnectionToClient>::deref(); }
-
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     void disconnectedFromWebProcess();
 
 private:
-    WebIDBConnectionToClient(NetworkProcess&, IPC::Connection&, WebCore::ProcessIdentifier, PAL::SessionID);
-
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final { return 0; }
 
@@ -135,12 +135,11 @@ private:
 
     template<class MessageType> void handleGetResult(const WebCore::IDBResultData&);
 
-    Ref<IPC::Connection> m_connection;
-    Ref<NetworkProcess> m_networkProcess;
+    WebCore::IDBServer::IDBServer& idbServer();
 
+    NetworkConnectionToWebProcess& m_connection;
     WebCore::IDBConnectionIdentifier m_identifier;
-    PAL::SessionID m_sessionID;
-    RefPtr<WebCore::IDBServer::IDBConnectionToClient> m_connectionToClient;
+    Ref<WebCore::IDBServer::IDBConnectionToClient> m_connectionToClient;
 };
 
 } // namespace WebKit

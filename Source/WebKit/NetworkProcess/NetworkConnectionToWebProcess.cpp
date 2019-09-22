@@ -848,7 +848,7 @@ void NetworkConnectionToWebProcess::establishIDBConnectionToServer()
     LOG(IndexedDB, "NetworkConnectionToWebProcess::establishIDBConnectionToServer - %" PRIu64, m_sessionID.toUInt64());
     ASSERT(!m_webIDBConnection);
     
-    m_webIDBConnection = WebIDBConnectionToClient::create(m_networkProcess, m_connection.get(), m_webProcessIdentifier, m_sessionID);
+    m_webIDBConnection = makeUnique<WebIDBConnectionToClient>(*this, m_webProcessIdentifier);
 }
 #endif
     

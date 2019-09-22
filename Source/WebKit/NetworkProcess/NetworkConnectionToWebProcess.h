@@ -321,7 +321,7 @@ private:
     RefPtr<CacheStorageEngineConnection> m_cacheStorageConnection;
 
 #if ENABLE(INDEXED_DATABASE)
-    RefPtr<WebIDBConnectionToClient> m_webIDBConnection;
+    std::unique_ptr<WebIDBConnectionToClient> m_webIDBConnection;
 #endif
 
 #if ENABLE(SERVICE_WORKER)
