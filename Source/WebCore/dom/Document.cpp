@@ -5065,12 +5065,6 @@ URL Document::completeURL(const String& url) const
     return completeURL(url, m_baseURL);
 }
 
-Optional<PAL::SessionID> Document::sessionID() const
-{
-    auto* page = this->page();
-    return page ? makeOptional(page->sessionID()) : WTF::nullopt;
-}
-
 void Document::setPageCacheState(PageCacheState state)
 {
     if (m_pageCacheState == state)
@@ -5266,6 +5260,7 @@ void Document::storageBlockingStateDidChange()
     securityOrigin().setStorageBlockingPolicy(settings().storageBlockingPolicy());
 }
 
+// Used only by WebKitLegacy.
 void Document::privateBrowsingStateDidChange(PAL::SessionID sessionID)
 {
     if (m_logger)
@@ -7789,7 +7784,8 @@ Logger& Document::logger()
 {
     if (!m_logger) {
         m_logger = Logger::create(this);
-        m_logger->setEnabled(this, sessionID() && sessionID()->isAlwaysOnLoggingAllowed());
+        auto* page = this->page();
+        m_logger->setEnabled(this, page && page->sessionID().isAlwaysOnLoggingAllowed());
         m_logger->addObserver(*this);
     }
 

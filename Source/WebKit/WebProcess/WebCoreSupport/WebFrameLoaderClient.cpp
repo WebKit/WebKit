@@ -1564,9 +1564,9 @@ bool WebFrameLoaderClient::canCachePage() const
     return !m_frameHasCustomContentProvider;
 }
 
-void WebFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader *documentLoader, PAL::SessionID sessionID, const ResourceRequest& request, const ResourceResponse& response)
+void WebFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader *documentLoader, const ResourceRequest& request, const ResourceResponse& response)
 {
-    m_frame->convertMainResourceLoadToDownload(documentLoader, sessionID, request, response);
+    m_frame->convertMainResourceLoadToDownload(documentLoader, request, response);
 }
 
 RefPtr<Frame> WebFrameLoaderClient::createFrame(const URL& url, const String& name, HTMLFrameOwnerElement& ownerElement,

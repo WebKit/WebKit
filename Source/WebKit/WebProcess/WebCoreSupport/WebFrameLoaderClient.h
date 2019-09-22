@@ -217,7 +217,7 @@ private:
     void dispatchDidBecomeFrameset(bool) final;
 
     bool canCachePage() const final;
-    void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, PAL::SessionID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&) final;
+    void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&) final;
 
     RefPtr<WebCore::Frame> createFrame(const URL&, const String& name, WebCore::HTMLFrameOwnerElement&, const String& referrer) final;
 

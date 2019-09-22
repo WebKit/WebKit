@@ -301,8 +301,6 @@ public:
     void selfOnlyRef();
     void selfOnlyDeref();
 
-    PAL::SessionID sessionID() const;
-
 private:
     friend class NavigationDisabler;
 

@@ -407,7 +407,8 @@ Optional<AdClickAttribution> HTMLAnchorElement::parseAdClickAttribution() const
     using Source = AdClickAttribution::Source;
     using Destination = AdClickAttribution::Destination;
 
-    if (!document().sessionID() || document().sessionID()->isEphemeral()
+    auto* page = document().page();
+    if (!page || page->sessionID().isEphemeral()
         || !RuntimeEnabledFeatures::sharedFeatures().adClickAttributionEnabled()
         || !UserGestureIndicator::processingUserGesture())
         return WTF::nullopt;

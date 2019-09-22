@@ -967,15 +967,11 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
         // Download may use this knowledge for purposes unrelated to cookies, notably for setting file quarantine data.
         frameLoader()->setOriginalURLForDownloadRequest(m_request);
 
-        PAL::SessionID sessionID = PAL::SessionID::defaultSessionID();
-        if (frame() && frame()->page())
-            sessionID = frame()->page()->sessionID();
-
         if (m_request.url().protocolIsData()) {
             // We decode data URL internally, there is no resource load to convert.
             frameLoader()->client().startDownload(m_request);
         } else
-            frameLoader()->client().convertMainResourceLoadToDownload(this, sessionID, m_request, m_response);
+            frameLoader()->client().convertMainResourceLoadToDownload(this, m_request, m_response);
 
         // The main resource might be loading from the memory cache, or its loader might have gone missing.
         if (mainResourceLoader()) {

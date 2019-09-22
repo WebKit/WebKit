@@ -104,13 +104,14 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& requestedUR
     if (m_identifier)
         InspectorInstrumentation::didCreateWebSocket(m_document.get(), m_identifier, validatedURL->url);
 
-    if (Frame* frame = m_document->frame()) {
-        ref();
-        Page* page = frame->page();
-        PAL::SessionID sessionID = page ? page->sessionID() : PAL::SessionID::defaultSessionID();
-        String partition = m_document->domainForCachePartition();
-        m_handle = m_socketProvider->createSocketStreamHandle(m_handshake->url(), *this, sessionID, partition, frame->loader().networkingContext());
-    }
+    auto* frame = m_document->frame();
+    auto* page = m_document->page();
+    if (!frame || !page)
+        return ConnectStatus::KO;
+
+    ref();
+    String partition = m_document->domainForCachePartition();
+    m_handle = m_socketProvider->createSocketStreamHandle(m_handshake->url(), *this, page->sessionID(), partition, frame->loader().networkingContext());
     return ConnectStatus::OK;
 }
 

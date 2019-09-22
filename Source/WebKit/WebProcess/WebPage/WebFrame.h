@@ -92,7 +92,7 @@ public:
     void continueWillSubmitForm(uint64_t);
 
     void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = { });
-    void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, PAL::SessionID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+    void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     void addConsoleMessage(MessageSource, MessageLevel, const String&, uint64_t requestID = 0);
 

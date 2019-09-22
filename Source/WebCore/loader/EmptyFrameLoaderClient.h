@@ -56,7 +56,7 @@ class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
     void detachedFromParent2() final { }
     void detachedFromParent3() final { }
 
-    void convertMainResourceLoadToDownload(DocumentLoader*, PAL::SessionID, const ResourceRequest&, const ResourceResponse&) final { }
+    void convertMainResourceLoadToDownload(DocumentLoader*, const ResourceRequest&, const ResourceResponse&) final { }
 
     void assignIdentifierToInitialRequest(unsigned long, DocumentLoader*, const ResourceRequest&) final { }
     bool shouldUseCredentialStorage(DocumentLoader*, unsigned long) override { return false; }

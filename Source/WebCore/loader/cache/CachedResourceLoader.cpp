@@ -188,16 +188,6 @@ Frame* CachedResourceLoader::frame() const
     return m_documentLoader ? m_documentLoader->frame() : nullptr;
 }
 
-PAL::SessionID CachedResourceLoader::sessionID() const
-{
-    auto sessionID = PAL::SessionID::defaultSessionID();
-    if (auto* frame = this->frame()) {
-        if (auto* page = frame->page())
-            sessionID = page->sessionID();
-    }
-    return sessionID;
-}
-
 ResourceErrorOr<CachedResourceHandle<CachedImage>> CachedResourceLoader::requestImage(CachedResourceRequest&& request)
 {
     if (Frame* frame = this->frame()) {
@@ -247,7 +237,7 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSSt
 
     auto& memoryCache = MemoryCache::singleton();
     if (request.allowsCaching()) {
-        if (CachedResource* existing = memoryCache.resourceForRequest(request.resourceRequest(), sessionID())) {
+        if (CachedResource* existing = memoryCache.resourceForRequest(request.resourceRequest(), page.sessionID())) {
             if (is<CachedCSSStyleSheet>(*existing))
                 return downcast<CachedCSSStyleSheet>(existing);
             memoryCache.remove(*existing);
@@ -687,14 +677,14 @@ static inline bool isResourceSuitableForDirectReuse(const CachedResource& resour
     return true;
 }
 
-CachedResourceHandle<CachedResource> CachedResourceLoader::updateCachedResourceWithCurrentRequest(const CachedResource& resource, CachedResourceRequest&& request, const PAL::SessionID& sessionID, const CookieJar* cookieJar)
+CachedResourceHandle<CachedResource> CachedResourceLoader::updateCachedResourceWithCurrentRequest(const CachedResource& resource, CachedResourceRequest&& request, const PAL::SessionID& sessionID, const CookieJar& cookieJar)
 {
     if (!isResourceSuitableForDirectReuse(resource, request)) {
         request.setCachingPolicy(CachingPolicy::DisallowCaching);
-        return loadResource(resource.type(), WTFMove(request), cookieJar);
+        return loadResource(resource.type(), sessionID, WTFMove(request), cookieJar);
     }
 
-    auto resourceHandle = createResource(resource.type(), WTFMove(request), sessionID, cookieJar);
+    auto resourceHandle = createResource(resource.type(), WTFMove(request), sessionID, &cookieJar);
     resourceHandle->loadFrom(resource);
     return resourceHandle;
 }
@@ -787,6 +777,13 @@ static FetchOptions::Destination destinationForType(CachedResource::Type type)
 
 ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requestResource(CachedResource::Type type, CachedResourceRequest&& request, ForPreload forPreload, DeferOption defer)
 {
+    if (!frame() || !frame()->page()) {
+        RELEASE_LOG_IF_ALLOWED("requestResource: failed because no frame or page");
+        return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, request.resourceRequest().url(), "Invalid loader state"_s });
+    }
+    auto& frame = *this->frame();
+    auto& page = *frame.page();
+
     request.setDestinationIfNotSet(destinationForType(type));
 
     // Entry point to https://fetch.spec.whatwg.org/#main-fetch.
@@ -800,7 +797,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     if (Document* document = this->document())
         request.upgradeInsecureRequestIfNeeded(*document);
 
-    if (InspectorInstrumentation::willInterceptRequest(frame(), request.resourceRequest()))
+    if (InspectorInstrumentation::willInterceptRequest(&frame, request.resourceRequest()))
         request.setCachingPolicy(CachingPolicy::DisallowCaching);
 
     request.updateReferrerPolicy(document() ? document()->referrerPolicy() : ReferrerPolicy::NoReferrerWhenDowngrade);
@@ -809,7 +806,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     LOG(ResourceLoading, "CachedResourceLoader::requestResource '%.255s', charset '%s', priority=%d, forPreload=%u", url.stringCenterEllipsizedToLength().latin1().data(), request.charset().latin1().data(), request.priority() ? static_cast<int>(request.priority().value()) : -1, forPreload == ForPreload::Yes);
 
     if (!url.isValid()) {
-        RELEASE_LOG_IF_ALLOWED("requestResource: URL is invalid (frame = %p)", frame());
+        RELEASE_LOG_IF_ALLOWED("requestResource: URL is invalid (frame = %p)", &frame);
         return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "URL is invalid"_s });
     }
 
@@ -817,22 +814,21 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
 
     // We are passing url as well as request, as request url may contain a fragment identifier.
     if (!canRequest(type, url, request, forPreload)) {
-        RELEASE_LOG_IF_ALLOWED("requestResource: Not allowed to request resource (frame = %p)", frame());
+        RELEASE_LOG_IF_ALLOWED("requestResource: Not allowed to request resource (frame = %p)", &frame);
         return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "Not allowed to request resource"_s, ResourceError::Type::AccessControl });
     }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (frame() && frame()->page() && m_documentLoader) {
+    if (m_documentLoader) {
         const auto& resourceRequest = request.resourceRequest();
-        auto* page = frame()->page();
-        auto results = page->userContentProvider().processContentRuleListsForLoad(resourceRequest.url(), ContentExtensions::toResourceType(type), *m_documentLoader);
+        auto results = page.userContentProvider().processContentRuleListsForLoad(resourceRequest.url(), ContentExtensions::toResourceType(type), *m_documentLoader);
         bool blockedLoad = results.summary.blockedLoad;
         bool madeHTTPS = results.summary.madeHTTPS;
-        request.applyResults(WTFMove(results), page);
+        request.applyResults(WTFMove(results), &page);
         if (blockedLoad) {
-            RELEASE_LOG_IF_ALLOWED("requestResource: Resource blocked by content blocker (frame = %p)", frame());
+            RELEASE_LOG_IF_ALLOWED("requestResource: Resource blocked by content blocker (frame = %p)", &frame);
             if (type == CachedResource::Type::MainResource) {
-                CachedResourceHandle<CachedResource> resource = createResource(type, WTFMove(request), page->sessionID(), &page->cookieJar());
+                CachedResourceHandle<CachedResource> resource = createResource(type, WTFMove(request), page.sessionID(), &page.cookieJar());
                 ASSERT(resource);
                 resource->error(CachedResource::Status::LoadError);
                 resource->setResourceError(ResourceError(ContentExtensions::WebKitContentBlockerDomain, 0, resourceRequest.url(), WEB_UI_STRING("The URL was blocked by a content blocker", "WebKitErrorBlockedByContentBlocker description")));
@@ -851,13 +847,13 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     }
 #endif
 
-    if (frame() && m_documentLoader && !m_documentLoader->customHeaderFields().isEmpty()) {
+    if (m_documentLoader && !m_documentLoader->customHeaderFields().isEmpty()) {
         bool sameOriginRequest = false;
         auto requestedOrigin = SecurityOrigin::create(url);
         if (type == CachedResource::Type::MainResource) {
-            if (frame()->isMainFrame())
+            if (frame.isMainFrame())
                 sameOriginRequest = true;
-            else if (auto* topDocument = frame()->mainFrame().document())
+            else if (auto* topDocument = frame.mainFrame().document())
                 sameOriginRequest = topDocument->securityOrigin().isSameSchemeHostPort(requestedOrigin.get());
         } else if (document()) {
             sameOriginRequest = document()->topDocument().securityOrigin().isSameSchemeHostPort(requestedOrigin.get())
@@ -888,14 +884,14 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         request.setDomainForCachePartition(*document());
 
     if (request.allowsCaching())
-        resource = memoryCache.resourceForRequest(request.resourceRequest(), sessionID());
+        resource = memoryCache.resourceForRequest(request.resourceRequest(), page.sessionID());
 
     if (resource && request.isLinkPreload() && !resource->isLinkPreload())
         resource->setLinkPreload();
 
-    logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::memoryCacheUsageKey(), resource ? DiagnosticLoggingKeys::inMemoryCacheKey() : DiagnosticLoggingKeys::notInMemoryCacheKey());
+    logMemoryCacheResourceRequest(&frame, DiagnosticLoggingKeys::memoryCacheUsageKey(), resource ? DiagnosticLoggingKeys::inMemoryCacheKey() : DiagnosticLoggingKeys::notInMemoryCacheKey());
 
-    auto* cookieJar = document() && document()->page() ? &document()->page()->cookieJar() : nullptr;
+    auto& cookieJar = page.cookieJar();
 
     RevalidationPolicy policy = determineRevalidationPolicy(type, request, resource.get(), forPreload, defer);
     switch (policy) {
@@ -904,12 +900,12 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         FALLTHROUGH;
     case Load:
         if (resource)
-            logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::memoryCacheEntryDecisionKey(), DiagnosticLoggingKeys::unusedKey());
-        resource = loadResource(type, WTFMove(request), cookieJar);
+            logMemoryCacheResourceRequest(&frame, DiagnosticLoggingKeys::memoryCacheEntryDecisionKey(), DiagnosticLoggingKeys::unusedKey());
+        resource = loadResource(type, page.sessionID(), WTFMove(request), cookieJar);
         break;
     case Revalidate:
         if (resource)
-            logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::memoryCacheEntryDecisionKey(), DiagnosticLoggingKeys::revalidatingKey());
+            logMemoryCacheResourceRequest(&frame, DiagnosticLoggingKeys::memoryCacheEntryDecisionKey(), DiagnosticLoggingKeys::revalidatingKey());
         resource = revalidateResource(WTFMove(request), *resource);
         break;
     case Use:
@@ -919,14 +915,14 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
                 return makeUnexpected(WTFMove(*error));
         }
         if (shouldUpdateCachedResourceWithCurrentRequest(*resource, request)) {
-            resource = updateCachedResourceWithCurrentRequest(*resource, WTFMove(request), document()->page()->sessionID(), cookieJar);
+            resource = updateCachedResourceWithCurrentRequest(*resource, WTFMove(request), page.sessionID(), cookieJar);
             if (resource->status() != CachedResource::Status::Cached)
                 policy = Load;
         } else {
             ResourceError error;
             if (!shouldContinueAfterNotifyingLoadedFromMemoryCache(request, *resource, error))
                 return makeUnexpected(WTFMove(error));
-            logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::memoryCacheEntryDecisionKey(), DiagnosticLoggingKeys::usedKey());
+            logMemoryCacheResourceRequest(&frame, DiagnosticLoggingKeys::memoryCacheEntryDecisionKey(), DiagnosticLoggingKeys::usedKey());
             loadTiming.setResponseEnd(MonotonicTime::now());
 
             memoryCache.resourceAccessed(*resource);
@@ -938,7 +934,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
                     downcast<CachedRawResource>(resource.get())->finishedTimingForWorkerLoad(WTFMove(resourceTiming));
                 } else {
                     ASSERT(initiatorContext == InitiatorContext::Document);
-                    m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, request.initiatorName(), frame());
+                    m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, request.initiatorName(), &frame);
                     m_resourceTimingInfo.addResourceTiming(*resource.get(), *document(), WTFMove(resourceTiming));
                 }
             }
@@ -1002,7 +998,6 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(Ca
     ASSERT(!memoryCache.disabled());
     ASSERT(resource.canUseCacheValidator());
     ASSERT(!resource.resourceToRevalidate());
-    ASSERT(resource.sessionID() == sessionID());
     ASSERT(resource.allowsCaching());
 
     CachedResourceHandle<CachedResource> newResource = createResource(resource.type(), WTFMove(request), resource.sessionID(), resource.cookieJar());
@@ -1019,15 +1014,15 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(Ca
     return newResource;
 }
 
-CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedResource::Type type, CachedResourceRequest&& request, const CookieJar* cookieJar)
+CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedResource::Type type, PAL::SessionID sessionID, CachedResourceRequest&& request, const CookieJar& cookieJar)
 {
     auto& memoryCache = MemoryCache::singleton();
-    ASSERT(!request.allowsCaching() || !memoryCache.resourceForRequest(request.resourceRequest(), sessionID())
+    ASSERT(!request.allowsCaching() || !memoryCache.resourceForRequest(request.resourceRequest(), sessionID)
         || request.resourceRequest().cachePolicy() == ResourceRequestCachePolicy::DoNotUseAnyCache || request.resourceRequest().cachePolicy() == ResourceRequestCachePolicy::ReloadIgnoringCacheData || request.resourceRequest().cachePolicy() == ResourceRequestCachePolicy::RefreshAnyCacheData);
 
     LOG(ResourceLoading, "Loading CachedResource for '%s'.", request.resourceRequest().url().stringCenterEllipsizedToLength().latin1().data());
 
-    CachedResourceHandle<CachedResource> resource = createResource(type, WTFMove(request), sessionID(), cookieJar);
+    CachedResourceHandle<CachedResource> resource = createResource(type, WTFMove(request), sessionID, &cookieJar);
 
     if (resource->allowsCaching())
         memoryCache.add(*resource);
