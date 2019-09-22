@@ -1,3 +1,11 @@
+2019-09-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, follow-up change after r250198
+        https://bugs.webkit.org/show_bug.cgi?id=201633
+
+        * b3/testb3_5.cpp:
+        (testCheckAddRemoveCheckWithSExt16):
+
 2019-09-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove CheckAdd in JetStream2/async-fs's Math.random function

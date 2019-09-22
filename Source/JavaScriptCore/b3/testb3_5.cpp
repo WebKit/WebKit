@@ -965,7 +965,7 @@ void testCheckAddRemoveCheckWithSExt16(int16_t value)
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<int64_t>(*code, value) == 2ll * value);
+    CHECK(invoke<int64_t>(*code, value) == 2ll * static_cast<int32_t>(value));
 }
 
 void testCheckAddRemoveCheckWithSExt32(int32_t value)
