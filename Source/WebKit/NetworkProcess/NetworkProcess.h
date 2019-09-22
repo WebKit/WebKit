@@ -164,7 +164,6 @@ public:
 
     void setSession(PAL::SessionID, std::unique_ptr<NetworkSession>&&);
     NetworkSession* networkSession(PAL::SessionID) const final;
-    NetworkSession* networkSessionByConnection(IPC::Connection&) const;
     void destroySession(PAL::SessionID);
 
     void forEachNetworkSession(const Function<void(NetworkSession&)>&);
@@ -324,8 +323,6 @@ public:
     CacheStorage::Engine& ensureCacheEngine(const PAL::SessionID&, Function<Ref<CacheStorage::Engine>()>&&);
     void removeCacheEngine(const PAL::SessionID&);
     void requestStorageSpace(PAL::SessionID, const WebCore::ClientOrigin&, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(Optional<uint64_t>)>&&);
-
-    WebCore::BlobRegistryImpl* blobRegistry(NetworkConnectionToWebProcess&);
 
     void storeAdClickAttribution(PAL::SessionID, WebCore::AdClickAttribution&&);
     void dumpAdClickAttribution(PAL::SessionID, CompletionHandler<void(String)>&&);
@@ -557,8 +554,6 @@ private:
     };
     HashMap<PAL::SessionID, StorageQuotaManagers> m_storageQuotaManagers;
     uint32_t m_downloadMonitorSpeedMultiplier { 1 };
-
-    HashMap<IPC::Connection::UniqueID, PAL::SessionID> m_sessionByConnection;
 
     OptionSet<NetworkCache::CacheOption> m_cacheOptions;
     WebCore::MessagePortChannelRegistry m_messagePortChannelRegistry;

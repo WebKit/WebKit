@@ -571,12 +571,6 @@ NetworkSession* NetworkProcess::networkSession(PAL::SessionID sessionID) const
     return m_networkSessions.get(sessionID);
 }
 
-NetworkSession* NetworkProcess::networkSessionByConnection(IPC::Connection& connection) const
-{
-    auto iterator = m_sessionByConnection.find(connection.uniqueID());
-    return iterator != m_sessionByConnection.end() ? networkSession(iterator->value) : nullptr;
-}
-
 void NetworkProcess::setSession(PAL::SessionID sessionID, std::unique_ptr<NetworkSession>&& session)
 {
     ASSERT(RunLoop::isMain());
@@ -606,13 +600,6 @@ void NetworkProcess::destroySession(PAL::SessionID sessionID)
     m_storageManagerSet->remove(sessionID);
 
     m_storageQuotaManagers.remove(sessionID);
-}
-
-BlobRegistryImpl* NetworkProcess::blobRegistry(NetworkConnectionToWebProcess& connection)
-{
-    // FIXME: Deprecate this method and use sessionID -> NetworkSession -> blob registry.
-    auto* session = networkSessionByConnection(connection.connection());
-    return session ? &session->blobRegistry() : nullptr;
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
