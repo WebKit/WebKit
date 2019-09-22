@@ -41,8 +41,7 @@
 
 namespace WebCore {
 
-CurlFormDataStream::CurlFormDataStream(const FormData* formData, PAL::SessionID sessionID)
-    : m_sessionID(sessionID)
+CurlFormDataStream::CurlFormDataStream(const FormData* formData)
 {
     ASSERT(isMainThread());
 

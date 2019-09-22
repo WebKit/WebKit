@@ -41,13 +41,13 @@
 
 namespace WebCore {
 
-CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestClient* client, PAL::SessionID sessionID, ShouldSuspend shouldSuspend, EnableMultipart enableMultipart, CaptureNetworkLoadMetrics captureExtraMetrics, MessageQueue<Function<void()>>* messageQueue)
+CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestClient* client, ShouldSuspend shouldSuspend, EnableMultipart enableMultipart, CaptureNetworkLoadMetrics captureExtraMetrics, MessageQueue<Function<void()>>* messageQueue)
     : m_client(client)
     , m_messageQueue(messageQueue)
     , m_request(request.isolatedCopy())
     , m_shouldSuspend(shouldSuspend == ShouldSuspend::Yes)
     , m_enableMultipart(enableMultipart == EnableMultipart::Yes)
-    , m_formDataStream(m_request.httpBody(), sessionID)
+    , m_formDataStream(m_request.httpBody())
     , m_captureExtraMetrics(captureExtraMetrics == CaptureNetworkLoadMetrics::Extended)
 {
     ASSERT(isMainThread());
