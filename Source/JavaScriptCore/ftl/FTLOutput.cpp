@@ -333,6 +333,18 @@ LValue Output::doubleToInt(LValue value)
     return result;
 }
 
+LValue Output::doubleToInt64(LValue value)
+{
+    PatchpointValue* result = patchpoint(Int64);
+    result->append(value, ValueRep::SomeRegister);
+    result->setGenerator(
+        [] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            jit.truncateDoubleToInt64(params[1].fpr(), params[0].gpr());
+        });
+    result->effects = Effects::none();
+    return result;
+}
+
 LValue Output::doubleToUInt(LValue value)
 {
     PatchpointValue* result = patchpoint(Int32);

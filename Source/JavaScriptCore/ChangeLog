@@ -1,5 +1,21 @@
 2019-09-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Int52Rep(DoubleRepAnyIntUse) should not call operation function
+        https://bugs.webkit.org/show_bug.cgi?id=202072
+
+        Reviewed by Mark Lam.
+
+        Inline doubleToStrictInt52 in FTL since it is very simple function.
+        This change improves JetStream2/stanford-crypto-sha256 by ~5%.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::doubleToStrictInt52):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::doubleToInt64):
+        * ftl/FTLOutput.h:
+
+2019-09-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, follow-up change after r250198
         https://bugs.webkit.org/show_bug.cgi?id=201633
 

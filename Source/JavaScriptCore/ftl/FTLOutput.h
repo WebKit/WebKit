@@ -188,6 +188,7 @@ public:
     LValue doubleLog(LValue);
 
     LValue doubleToInt(LValue);
+    LValue doubleToInt64(LValue);
     LValue doubleToUInt(LValue);
 
     LValue signExt32To64(LValue);

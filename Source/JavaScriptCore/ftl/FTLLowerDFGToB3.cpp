@@ -15885,16 +15885,33 @@ private:
             
         return m_out.phi(Int64, intToInt52, doubleToInt52);
     }
-    
+
     LValue doubleToStrictInt52(Edge edge, LValue value)
     {
-        LValue possibleResult = m_out.call(
-            Int64, m_out.operation(operationConvertDoubleToInt52), value);
-        FTL_TYPE_CHECK_WITH_EXIT_KIND(Int52Overflow,
-            doubleValue(value), edge, SpecAnyIntAsDouble,
-            m_out.equal(possibleResult, m_out.constInt64(JSValue::notInt52)));
-        
-        return possibleResult;
+        LValue integerValue = m_out.doubleToInt64(value);
+        LValue integerValueConvertedToDouble = m_out.intToDouble(integerValue);
+        LValue valueNotConvertibleToInteger = m_out.doubleNotEqualOrUnordered(value, integerValueConvertedToDouble);
+        speculate(Int52Overflow, doubleValue(value), edge.node(), valueNotConvertibleToInteger);
+
+        LBasicBlock valueIsZero = m_out.newBlock();
+        LBasicBlock valueIsNotZero = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+        m_out.branch(m_out.isZero64(integerValue), unsure(valueIsZero), unsure(valueIsNotZero));
+
+        LBasicBlock lastNext = m_out.appendTo(valueIsZero, valueIsNotZero);
+        LValue doubleBitcastToInt64 = m_out.bitCast(value, Int64);
+        LValue signBitSet = m_out.lessThan(doubleBitcastToInt64, m_out.constInt64(0));
+        speculate(Int52Overflow, doubleValue(value), edge.node(), signBitSet);
+        m_out.jump(continuation);
+
+        m_out.appendTo(valueIsNotZero, continuation);
+        speculate(Int52Overflow, doubleValue(value), edge.node(), m_out.greaterThanOrEqual(integerValue, m_out.constInt64(static_cast<int64_t>(1) << (JSValue::numberOfInt52Bits - 1))));
+        speculate(Int52Overflow, doubleValue(value), edge.node(), m_out.lessThan(integerValue, m_out.constInt64(-(static_cast<int64_t>(1) << (JSValue::numberOfInt52Bits - 1)))));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        m_interpreter.filter(edge, SpecAnyIntAsDouble);
+        return integerValue;
     }
 
     LValue convertDoubleToInt32(LValue value, bool shouldCheckNegativeZero)
