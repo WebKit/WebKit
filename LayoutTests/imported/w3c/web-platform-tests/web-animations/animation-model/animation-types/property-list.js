@@ -190,19 +190,17 @@ const gCSSProperties = {
   'border-image-outset': {
     // https://drafts.csswg.org/css-backgrounds-3/#border-image-outset
     types: [
-      { type: 'discrete', options: [ [ '1 2 3 4', '5 6 7 8' ] ] }
     ]
   },
   'border-image-repeat': {
     // https://drafts.csswg.org/css-backgrounds-3/#border-image-repeat
     types: [
-      { type: 'discrete', options: [ [ 'stretch stretch', 'repeat repeat' ] ] }
+      { type: 'discrete', options: [ [ 'stretch repeat', 'round space' ] ] }
     ]
   },
   'border-image-slice': {
     // https://drafts.csswg.org/css-backgrounds-3/#border-image-slice
     types: [
-      { type: 'discrete', options: [ [ '1 2 3 4', '5 6 7 8' ] ] }
     ]
   },
   'border-image-source': {
@@ -216,7 +214,6 @@ const gCSSProperties = {
   'border-image-width': {
     // https://drafts.csswg.org/css-backgrounds-3/#border-image-width
     types: [
-      { type: 'discrete', options: [ [ '1 2 3 4', '5 6 7 8' ] ] }
     ]
   },
   'border-left-color': {
@@ -679,18 +676,6 @@ const gCSSProperties = {
       { type: 'discrete', options: [ [ '". . a b" ". .a b"', 'none' ] ] }
     ]
   },
-  'grid-template-columns': {
-    // https://drafts.csswg.org/css-template/#grid-template-columns
-    types: [
-      { type: 'discrete', options: [ [ '1px', '5px' ] ] }
-    ]
-  },
-  'grid-template-rows': {
-    // https://drafts.csswg.org/css-template/#grid-template-rows
-    types: [
-      { type: 'discrete', options: [ [ '1px', '5px' ] ] }
-    ]
-  },
   'height': {
     // https://drafts.csswg.org/css21/visudet.html#propdef-height
     types: [
@@ -1005,6 +990,10 @@ const gCSSProperties = {
     types: [
     ]
   },
+  'offset-distance': {
+    // https://drafts.fxtf.org/motion-1/#offset-distance-property
+    types: [ 'lengthPercentageOrCalc' ]
+  },
   'offset-path': {
     // https://drafts.fxtf.org/motion-1/#offset-path-property
     types: [
@@ -1187,18 +1176,6 @@ const gCSSProperties = {
       { type: 'discrete', options: [ [ 'auto', 'smooth' ] ] }
     ]
   },
-  'scroll-snap-type-x': {
-    // https://developer.mozilla.org/en/docs/Web/CSS/scroll-snap-type-x
-    types: [
-      { type: 'discrete', options: [ [ 'mandatory', 'proximity' ] ] }
-    ]
-  },
-  'scroll-snap-type-y': {
-    // https://developer.mozilla.org/en/docs/Web/CSS/scroll-snap-type-y
-    types: [
-      { type: 'discrete', options: [ [ 'mandatory', 'proximity' ] ] }
-    ]
-  },
   'shape-outside': {
     // http://dev.w3.org/csswg/css-shapes/#propdef-shape-outside
     types: [
@@ -1230,7 +1207,7 @@ const gCSSProperties = {
     // https://svgwg.org/svg2-draft/painting.html#StrokeDasharrayProperty
     types: [
       'dasharray',
-      { type: 'discrete', options: [ [ 'none', '10, 20' ] ] }
+      { type: 'discrete', options: [ [ 'none', '10px, 20px' ] ] }
     ]
   },
   'stroke-dashoffset': {
@@ -1325,7 +1302,7 @@ const gCSSProperties = {
   'text-emphasis-style': {
     // http://dev.w3.org/csswg/css-text-decor-3/#propdef-text-emphasis-style
     types: [
-      { type: 'discrete', options: [ [ 'filled circle', 'open dot' ] ] }
+      { type: 'discrete', options: [ [ 'circle', 'open dot' ] ] }
     ]
   },
   'text-indent': {
@@ -1457,7 +1434,7 @@ const gCSSProperties = {
 function testAnimationSamples(animation, idlName, testSamples) {
   const type = animation.effect.target.type;
   const target = animation.effect.target.constructor.name === 'CSSPseudoElement'
-                 ? animation.effect.target.parentElement
+                 ? animation.effect.target.element
                  : animation.effect.target;
   for (const testSample of testSamples) {
     animation.currentTime = testSample.time;
@@ -1478,7 +1455,7 @@ function toOrderedArray(string) {
 function testAnimationSamplesWithAnyOrder(animation, idlName, testSamples) {
   const type = animation.effect.target.type;
   const target = animation.effect.target.constructor.name === 'CSSPseudoElement'
-                 ? animation.effect.target.parentElement
+                 ? animation.effect.target.element
                  : animation.effect.target;
   for (const testSample of testSamples) {
     animation.currentTime = testSample.time;
@@ -1495,12 +1472,34 @@ function testAnimationSamplesWithAnyOrder(animation, idlName, testSamples) {
   }
 }
 
+function RoundMatrix(style) {
+  var matrixMatch = style.match(/^(matrix(3d)?)\(.+\)$/);
+  if (!!matrixMatch) {
+    var matrixType = matrixMatch[1];
+    var matrixArgs = style.substr(matrixType.length);
+    var extractmatrix = function(matrixStr) {
+      var list = [];
+      var regex = /[+\-]?[0-9]+[.]?[0-9]*(e[+/-][0-9]+)?/g;
+      var match = undefined;
+      do {
+        match = regex.exec(matrixStr);
+        if (match) {
+          list.push(parseFloat(parseFloat(match[0]).toFixed(6)));
+        }
+      } while (match);
+      return list;
+    }
+    return matrixType + '(' + extractmatrix(matrixArgs).join(', ') + ')';
+  }
+  return style;
+}
+
 function testAnimationSampleMatrices(animation, idlName, testSamples) {
   const target = animation.effect.target;
   for (const testSample of testSamples) {
     animation.currentTime = testSample.time;
-    const actual = getComputedStyle(target)[idlName];
-    const expected = createMatrixFromArray(testSample.expected);
+    const actual = RoundMatrix(getComputedStyle(target)[idlName]);
+    const expected = RoundMatrix(createMatrixFromArray(testSample.expected));
     assert_matrix_equals(actual, expected,
                          `The value should be ${expected} at`
                          + ` ${testSample.time}ms but got ${actual}`);

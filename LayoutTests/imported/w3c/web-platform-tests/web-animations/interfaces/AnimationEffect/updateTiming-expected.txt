@@ -51,7 +51,6 @@ PASS Allows setting the easing to a step-end function
 PASS Allows setting the easing to a steps(1) function 
 PASS Allows setting the easing to a steps(1, end) function 
 PASS Allows setting the easing to a steps(2, end) function 
-FAIL Allows setting the easing to a frames function Type error
 PASS Allows setting the easing to a linear function 
 PASS Allows setting the easing to a ease function 
 PASS Allows setting the easing to a ease-in function 
@@ -67,6 +66,5 @@ PASS Updates the specified value when setting the easing to 'ease-in-out'
 PASS Updates the specified value when setting the easing to 'cubic-bezier(0.1, 5, 0.23, 0)' 
 PASS Updates the specified value when setting the easing to 'steps(3, start)' 
 PASS Updates the specified value when setting the easing to 'steps(3)' 
-FAIL Updates the specified value when setting the easing to 'frames(3)' Type error
 PASS Allows setting the easing of an animation in progress 
 

@@ -9,6 +9,7 @@ PASS Element.animate() accepts empty keyframe lists (input: undefined)
 PASS Element.animate() accepts a one property two value property-indexed keyframes specification 
 PASS Element.animate() accepts a one shorthand property two value property-indexed keyframes specification 
 PASS Element.animate() accepts a two property (one shorthand and one of its longhand components) two value property-indexed keyframes specification 
+FAIL Element.animate() accepts a two property (one shorthand and one of its shorthand components) two value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "border,borderColor,composite,computedOffset,easing,offset" but got "border,borderTopColor,composite,computedOffset,easing,offset"
 PASS Element.animate() accepts a two property two value property-indexed keyframes specification 
 PASS Element.animate() accepts a two property property-indexed keyframes specification with different numbers of values 
 PASS Element.animate() accepts a property-indexed keyframes specification with an invalid value 
@@ -19,6 +20,7 @@ PASS Element.animate() accepts a one property one value property-indexed keyfram
 PASS Element.animate() accepts a one property one non-array value property-indexed keyframes specification 
 PASS Element.animate() accepts a one property two value property-indexed keyframes specification where the first value is invalid 
 PASS Element.animate() accepts a one property two value property-indexed keyframes specification where the second value is invalid 
+FAIL Element.animate() accepts a property-indexed keyframes specification with a CSS variable as the property assert_equals: number of frames expected 2 but got 0
 PASS Element.animate() accepts a property-indexed keyframe with a single offset 
 PASS Element.animate() accepts a property-indexed keyframe with an array of offsets 
 PASS Element.animate() accepts a property-indexed keyframe with an array of offsets that is too short 
@@ -53,6 +55,7 @@ PASS Element.animate() accepts a two property keyframe sequence where one proper
 PASS Element.animate() accepts a one property two keyframe sequence that needs to stringify its values 
 PASS Element.animate() accepts a keyframe sequence with a CSS variable reference 
 PASS Element.animate() accepts a keyframe sequence with a CSS variable reference in a shorthand property 
+FAIL Element.animate() accepts a keyframe sequence with a CSS variable as its property assert_equals: properties on ComputedKeyframe #0 should match expected "--custom,composite,computedOffset,easing,offset" but got "composite,computedOffset,easing,offset"
 PASS Element.animate() accepts a keyframe sequence with duplicate values for a given interior offset 
 PASS Element.animate() accepts a keyframe sequence with duplicate values for offsets 0 and 1 
 PASS Element.animate() accepts a two property four keyframe sequence 
@@ -117,14 +120,6 @@ PASS Element.animate() does not accept invalid easing: 'steps(-3, end)'
 PASS Element.animate() does not accept invalid easing: 'function (a){return a}' 
 PASS Element.animate() does not accept invalid easing: 'function (x){return x}' 
 PASS Element.animate() does not accept invalid easing: 'function(x, y){return 0.3}' 
-PASS Element.animate() does not accept invalid easing: 'frames(1)' 
-PASS Element.animate() does not accept invalid easing: 'frames' 
-PASS Element.animate() does not accept invalid easing: 'frames()' 
-PASS Element.animate() does not accept invalid easing: 'frames(,)' 
-PASS Element.animate() does not accept invalid easing: 'frames(a)' 
-PASS Element.animate() does not accept invalid easing: 'frames(2.0)' 
-PASS Element.animate() does not accept invalid easing: 'frames(2.5)' 
-PASS Element.animate() does not accept invalid easing: 'frames(2 3)' 
 PASS Element.animate() does not accept invalid iterationStart value: -1 
 PASS Element.animate() does not accept invalid iterationStart value: NaN 
 PASS Element.animate() does not accept invalid iterationStart value: Infinity 
@@ -137,6 +132,9 @@ PASS Element.animate() correctly sets the id attribute
 PASS Element.animate() correctly sets the Animation's timeline 
 PASS Element.animate() correctly sets the Animation's timeline when triggered on an element in a different document 
 PASS Element.animate() calls play on the Animation 
+PASS Element.animate() does NOT trigger a style change event 
 PASS CSSPseudoElement.animate() creates an Animation object 
+FAIL CSSPseudoElement.animate() creates an Animation object for ::marker assert_true: expected true got false
 PASS CSSPseudoElement.animate() creates an Animation object targeting to the correct CSSPseudoElement object 
+FAIL CSSPseudoElement.animate() creates an Animation object targeting to the correct CSSPseudoElement object for ::marker assert_true: expected true got false
 

@@ -2606,7 +2606,10 @@ webkit.org/b/177997 webgl/1.0.2/conformance/textures/copy-tex-image-2d-formats.h
 
 webkit.org/b/179069 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox_032.htm [ Pass Failure ]
 
+webkit.org/b/202107 imported/w3c/web-platform-tests/web-animations/interfaces/Animation/style-change-events.html [ Pass Failure ]
+webkit.org/b/202108 imported/w3c/web-platform-tests/web-animations/interfaces/DocumentTimeline/style-change-events.html [ Pass Failure ]
 webkit.org/b/181121 imported/w3c/web-platform-tests/web-animations/timing-model/animations/updating-the-finished-state.html [ Pass Failure ]
+webkit.org/b/202109 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/update-and-send-events.html [ Pass Failure ]
 
 webkit.org/b/183836 imported/mozilla/css-animations/test_animations-dynamic-changes.html [ Pass Failure Timeout ]
 webkit.org/b/183844 imported/mozilla/css-animations/test_element-get-animations.html [ Pass Failure Timeout ]

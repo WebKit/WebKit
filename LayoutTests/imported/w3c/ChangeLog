@@ -1,3 +1,71 @@
+2019-09-23  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Update WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=202110
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/web-animations/README.md:
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/property-list.js:
+        * web-platform-tests/web-animations/animation-model/animation-types/property-types.js:
+        * web-platform-tests/web-animations/animation-model/combining-effects/effect-composition-expected.txt:
+        * web-platform-tests/web-animations/animation-model/combining-effects/effect-composition.html:
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/computed-keyframes-shorthands-expected.txt: Added.
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/computed-keyframes-shorthands.html: Added.
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-context-filling-expected.txt: Added.
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-context-filling.html: Added.
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-iteration-composite-operation.html:
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-replaced-animations-expected.txt: Added.
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-replaced-animations.html: Added.
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-transformed-distance-expected.txt:
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-transformed-distance.html:
+        * web-platform-tests/web-animations/interfaces/Animatable/animate-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animatable/animate.html:
+        * web-platform-tests/web-animations/interfaces/Animatable/getAnimations-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animatable/getAnimations.html:
+        * web-platform-tests/web-animations/interfaces/Animation/commitStyles-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/Animation/commitStyles.html: Added.
+        * web-platform-tests/web-animations/interfaces/Animation/persist-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/Animation/persist.html: Added.
+        * web-platform-tests/web-animations/interfaces/Animation/style-change-events-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/Animation/style-change-events.html: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationEffect/updateTiming-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Document/getAnimations-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Document/getAnimations.html:
+        * web-platform-tests/web-animations/interfaces/DocumentTimeline/constructor.html:
+        * web-platform-tests/web-animations/interfaces/DocumentTimeline/style-change-events-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/DocumentTimeline/style-change-events.html: Added.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/constructor-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/getKeyframes-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/getKeyframes.html: Added.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/setKeyframes-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/style-change-events-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/style-change-events.html: Added.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/target-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/target.html:
+        * web-platform-tests/web-animations/resources/easing-tests.js:
+        * web-platform-tests/web-animations/resources/keyframe-tests.js:
+        * web-platform-tests/web-animations/resources/timing-override.js: Added.
+        * web-platform-tests/web-animations/testcommon.js:
+        * web-platform-tests/web-animations/timing-model/animations/canceling-an-animation-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/canceling-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/finishing-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/pausing-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-start-time-of-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/the-current-time-of-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/updating-the-finished-state.html:
+        * web-platform-tests/web-animations/timing-model/time-transformations/transformed-progress-expected.txt:
+        * web-platform-tests/web-animations/timing-model/time-transformations/transformed-progress.html:
+        * web-platform-tests/web-animations/timing-model/timelines/document-timelines-expected.txt:
+        * web-platform-tests/web-animations/timing-model/timelines/document-timelines.html:
+        * web-platform-tests/web-animations/timing-model/timelines/update-and-send-events-expected.txt:
+        * web-platform-tests/web-animations/timing-model/timelines/update-and-send-events-replacement-expected.txt: Added.
+        * web-platform-tests/web-animations/timing-model/timelines/update-and-send-events-replacement.html: Added.
+        * web-platform-tests/web-animations/timing-model/timelines/update-and-send-events.html:
+
 2019-09-23  Daniel Bates  <dabates@apple.com>
 
         Improve CSP inheritance semantics

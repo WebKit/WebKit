@@ -1,0 +1,46 @@
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Removes an animation when another covers the same properties assert_equals: expected (string) "removed" but got (undefined) undefined
+FAIL Removes an animation after another animation finishes assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Removes an animation after multiple other animations finish assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Removes an animation after it finishes assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Removes an animation after seeking another animation assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Removes an animation after seeking it assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Removes an animation after updating the fill mode of another animation assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Removes an animation after updating its fill mode assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Removes an animation after updating another animation's effect to one with different timing assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Removes an animation after updating its effect to one with different timing assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Removes an animation after updating another animation's timeline assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Removes an animation after updating its timeline assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Removes an animation after updating another animation's effect's properties assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Removes an animation after updating its effect's properties assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Removes an animation after updating another animation's effect to one with different properties assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Removes an animation after updating its effect to one with different properties assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Removes an animation when another animation uses a shorthand assert_equals: expected (string) "removed" but got (undefined) undefined
+FAIL Removes an animation that uses a shorthand assert_equals: expected (string) "removed" but got (undefined) undefined
+FAIL Removes an animation by another animation using logical properties assert_equals: expected (string) "removed" but got (undefined) undefined
+FAIL Removes an animation using logical properties assert_equals: expected (string) "removed" but got (undefined) undefined
+FAIL Removes an animation by another animation using logical properties after updating the context assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Removes an animation after updating another animation's effect's target assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Removes an animation after updating its effect's target assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Removes an animation after updating another animation's effect to one with a different target assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Removes an animation after updating its effect to one with a different target assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Does NOT remove a CSS animation tied to markup assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Removes a CSS animation no longer tied to markup assert_equals: expected (string) "removed" but got (undefined) undefined
+FAIL Does NOT remove a CSS transition tied to markup assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Removes a CSS transition no longer tied to markup assert_equals: expected (string) "removed" but got (undefined) undefined
+TIMEOUT Dispatches an event when removing Test timed out
+NOTRUN Does NOT dispatch a remove event twice 
+NOTRUN Does NOT remove an animation after making a redundant change to another animation's current time 
+NOTRUN Does NOT remove an animation after making a redundant change to its current time 
+NOTRUN Does NOT remove an animation after making a redundant change to another animation's timeline 
+NOTRUN Does NOT remove an animation after making a redundant change to its timeline 
+NOTRUN Does NOT remove an animation after making a redundant change to another animation's effect's properties 
+NOTRUN Does NOT remove an animation after making a redundant change to its effect's properties 
+NOTRUN Updates ALL timelines before checking for replacement 
+NOTRUN Dispatches remove events after finish events 
+NOTRUN Fires remove event before requestAnimationFrame 
+NOTRUN Queues all remove events before running them 
+NOTRUN Performs removal in deeply nested iframes 
+

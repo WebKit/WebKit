@@ -3,6 +3,7 @@ PASS Keyframes can be replaced with an empty keyframe
 PASS Keyframes can be replaced with a one property two value property-indexed keyframes specification 
 PASS Keyframes can be replaced with a one shorthand property two value property-indexed keyframes specification 
 PASS Keyframes can be replaced with a two property (one shorthand and one of its longhand components) two value property-indexed keyframes specification 
+FAIL Keyframes can be replaced with a two property (one shorthand and one of its shorthand components) two value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "border,borderColor,composite,computedOffset,easing,offset" but got "border,borderTopColor,composite,computedOffset,easing,offset"
 PASS Keyframes can be replaced with a two property two value property-indexed keyframes specification 
 PASS Keyframes can be replaced with a two property property-indexed keyframes specification with different numbers of values 
 PASS Keyframes can be replaced with a property-indexed keyframes specification with an invalid value 
@@ -13,6 +14,7 @@ PASS Keyframes can be replaced with a one property one value property-indexed ke
 PASS Keyframes can be replaced with a one property one non-array value property-indexed keyframes specification 
 PASS Keyframes can be replaced with a one property two value property-indexed keyframes specification where the first value is invalid 
 PASS Keyframes can be replaced with a one property two value property-indexed keyframes specification where the second value is invalid 
+FAIL Keyframes can be replaced with a property-indexed keyframes specification with a CSS variable as the property assert_equals: number of frames expected 2 but got 0
 PASS Keyframes can be replaced with a property-indexed keyframe with a single offset 
 PASS Keyframes can be replaced with a property-indexed keyframe with an array of offsets 
 PASS Keyframes can be replaced with a property-indexed keyframe with an array of offsets that is too short 
@@ -47,6 +49,7 @@ PASS Keyframes can be replaced with a two property keyframe sequence where one p
 PASS Keyframes can be replaced with a one property two keyframe sequence that needs to stringify its values 
 PASS Keyframes can be replaced with a keyframe sequence with a CSS variable reference 
 PASS Keyframes can be replaced with a keyframe sequence with a CSS variable reference in a shorthand property 
+FAIL Keyframes can be replaced with a keyframe sequence with a CSS variable as its property assert_equals: properties on ComputedKeyframe #0 should match expected "--custom,composite,computedOffset,easing,offset" but got "composite,computedOffset,easing,offset"
 PASS Keyframes can be replaced with a keyframe sequence with duplicate values for a given interior offset 
 PASS Keyframes can be replaced with a keyframe sequence with duplicate values for offsets 0 and 1 
 PASS Keyframes can be replaced with a two property four keyframe sequence 
