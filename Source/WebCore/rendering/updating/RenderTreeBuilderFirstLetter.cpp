@@ -185,15 +185,15 @@ void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, 
             m_builder.attach(*newFirstLetter, WTFMove(toMove));
         }
 
-        RenderObject* nextSibling = firstLetter->nextSibling();
         if (RenderTextFragment* remainingText = downcast<RenderBoxModelObject>(*firstLetter).firstLetterRemainingText()) {
             ASSERT(remainingText->isAnonymous() || remainingText->textNode()->renderer() == remainingText);
             // Replace the old renderer with the new one.
             remainingText->setFirstLetter(*newFirstLetter);
             newFirstLetter->setFirstLetterRemainingText(*remainingText);
         }
+        WeakPtr<RenderObject> nextSibling = makeWeakPtr(firstLetter->nextSibling());
         m_builder.destroy(*firstLetter);
-        m_builder.attach(*firstLetterContainer, WTFMove(newFirstLetter), nextSibling);
+        m_builder.attach(*firstLetterContainer, WTFMove(newFirstLetter), nextSibling.get());
         return;
     }
 
