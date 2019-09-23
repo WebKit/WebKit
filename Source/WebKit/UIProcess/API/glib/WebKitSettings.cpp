@@ -35,6 +35,7 @@
 #include "WebKitSettingsPrivate.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
+#include <WebCore/HTTPParsers.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/TextEncodingRegistry.h>
 #include <WebCore/UserAgent.h>
@@ -3043,7 +3044,15 @@ void webkit_settings_set_user_agent(WebKitSettings* settings, const char* userAg
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     WebKitSettingsPrivate* priv = settings->priv;
-    CString newUserAgent = (!userAgent || !strlen(userAgent)) ? WebCore::standardUserAgent("").utf8() : userAgent;
+
+    String userAgentString;
+    if (userAgent && *userAgent) {
+        userAgentString = String::fromUTF8(userAgent);
+        g_return_if_fail(WebCore::isValidUserAgentHeaderValue(userAgentString));
+    } else
+        userAgentString = WebCore::standardUserAgent("");
+
+    CString newUserAgent = userAgentString.utf8();
     if (newUserAgent == priv->userAgent)
         return;
 

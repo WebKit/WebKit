@@ -130,6 +130,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/FloatSize.cpp
         Tests/WebCore/GridPosition.cpp
         Tests/WebCore/HTMLParserIdioms.cpp
+        Tests/WebCore/HTTPParsers.cpp
         Tests/WebCore/IntPoint.cpp
         Tests/WebCore/IntRect.cpp
         Tests/WebCore/IntSize.cpp

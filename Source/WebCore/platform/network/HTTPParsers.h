@@ -72,6 +72,7 @@ bool isValidReasonPhrase(const String&);
 bool isValidHTTPHeaderValue(const String&);
 bool isValidAcceptHeaderValue(const String&);
 bool isValidLanguageHeaderValue(const String&);
+WEBCORE_EXPORT bool isValidUserAgentHeaderValue(const String&);
 bool isValidHTTPToken(const String&);
 bool parseHTTPRefresh(const String& refresh, double& delay, String& url);
 Optional<WallTime> parseHTTPDate(const String&);
