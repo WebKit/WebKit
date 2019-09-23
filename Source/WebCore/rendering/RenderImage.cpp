@@ -647,12 +647,8 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
         imageResource().cachedImage()->addClientWaitingForAsyncDecoding(*this);
 
 #if USE(SYSTEM_PREVIEW)
-    WTFLogAlways("dino> checking for system preview image");
-    if (imageElement && imageElement->isSystemPreviewImage() && drawResult == ImageDrawResult::DidDraw && RuntimeEnabledFeatures::sharedFeatures().systemPreviewEnabled()) {
-        WTFLogAlways("dino> found system preview image");
-
+    if (imageElement && imageElement->isSystemPreviewImage() && drawResult == ImageDrawResult::DidDraw && RuntimeEnabledFeatures::sharedFeatures().systemPreviewEnabled())
         theme().paintSystemPreviewBadge(*img, paintInfo, rect);
-    }
 #endif
 
     return drawResult;

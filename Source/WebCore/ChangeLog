@@ -1,3 +1,14 @@
+2019-09-23  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r249855): Remove debug logging from WebCore::RenderImage::paintIntoRect()
+        <https://webkit.org/b/202103>
+
+        Reviewed by Zalan Bujtas.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintIntoRect): Remove debug logging
+        statements.
+
 2019-09-23  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Pass in the Used*Values to inline layout functions.
