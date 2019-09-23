@@ -1,3 +1,15 @@
+2019-09-23  Caio Lima  <ticaiolima@gmail.com>
+
+        Skip stress/regexp-unicode-surrogate-pair-increment-should-involve-length-check.js into ARMv7 and MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=202113
+
+        Unreviewed test gardening, skipped test in ARMv7 and MIPS.
+
+        It is going to be fixed in
+        https://bugs.webkit.org/show_bug.cgi?id=202041
+
+        * stress/regexp-unicode-surrogate-pair-increment-should-involve-length-check.js:
+
 2019-09-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Int52Rep(DoubleRepAnyIntUse) should not call operation function
