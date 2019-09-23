@@ -296,6 +296,9 @@ IGNORE_WARNINGS_END
 
 @end
 
+@interface DragAndDropSimulator () <UIDragAnimating>
+@end
+
 @implementation DragAndDropSimulator {
     RetainPtr<TestWKWebView> _webView;
     RetainPtr<MockDragSession> _dragSession;
@@ -314,6 +317,7 @@ IGNORE_WARNINGS_END
     RetainPtr<NSMutableArray<UITargetedDragPreview *>> _cancellationPreviews;
     RetainPtr<NSMutableArray> _dropPreviews;
     RetainPtr<NSMutableArray> _delayedDropPreviews;
+    RetainPtr<NSMutableArray> _defaultDropPreviewsForExternalItems;
 
     RetainPtr<NSMutableArray<_WKAttachment *>> _insertedAttachments;
     RetainPtr<NSMutableArray<_WKAttachment *>> _removedAttachments;
@@ -332,6 +336,7 @@ IGNORE_WARNINGS_END
     BlockPtr<UIDropOperation(UIDropOperation, id)> _overrideDragUpdateBlock;
     BlockPtr<void(BOOL, NSArray *)> _dropCompletionBlock;
     BlockPtr<void()> _sessionWillBeginBlock;
+    Vector<BlockPtr<void(UIViewAnimatingPosition)>> _dropAnimationCompletionBlocks;
 }
 
 - (instancetype)initWithWebViewFrame:(CGRect)frame
@@ -354,6 +359,7 @@ IGNORE_WARNINGS_END
         _shouldEnsureUIApplication = NO;
         _shouldBecomeFirstResponder = YES;
         _shouldAllowMoveOperation = YES;
+        _dropAnimationTiming = DropAnimationShouldFinishAfterHandlingDrop;
         [_webView setUIDelegate:self];
         [_webView _setInputDelegate:self];
         self.dragDestinationAction = WKDragDestinationActionAny & ~WKDragDestinationActionLoad;
@@ -480,8 +486,16 @@ IGNORE_WARNINGS_END
         NSInteger dropPreviewIndex = 0;
         __block NSUInteger numberOfPendingPreviews = [_dropSession items].count;
         _isDoneWaitingForDelayedDropPreviews = !numberOfPendingPreviews;
+        BOOL canUseDefaultDropPreviewsForExternalItems = [_defaultDropPreviewsForExternalItems count] == [_dropSession items].count;
         for (UIDragItem *item in [_dropSession items]) {
-            auto defaultPreview = adoptNS([[UITargetedDragPreview alloc] initWithView:_webView.get()]);
+            RetainPtr<UITargetedDragPreview> defaultPreview;
+            if (canUseDefaultDropPreviewsForExternalItems)
+                defaultPreview = [_defaultDropPreviewsForExternalItems objectAtIndex:dropPreviewIndex];
+            else {
+                // Just fall back to an arbitrary non-null drag preview if the test didn't specify one.
+                defaultPreview = adoptNS([[UITargetedDragPreview alloc] initWithView:_webView.get()]);
+            }
+
             id <UIDropInteractionDelegate_Staging_31075005> delegate = (id <UIDropInteractionDelegate_Staging_31075005>)[_webView dropInteractionDelegate];
             UIDropInteraction *interaction = [_webView dropInteraction];
             [_dropPreviews addObject:[delegate dropInteraction:interaction previewForDroppingItem:item withDefault:defaultPreview.get()] ?: NSNull.null];
@@ -497,6 +511,18 @@ IGNORE_WARNINGS_END
         }
         [[_webView dropInteractionDelegate] dropInteraction:[_webView dropInteraction] performDrop:_dropSession.get()];
         _phase = DragAndDropPhasePerformingDrop;
+
+        for (UIDragItem *item in [_dropSession items])
+            [[_webView dropInteractionDelegate] dropInteraction:[_webView dropInteraction] item:item willAnimateDropWithAnimator:self];
+
+        if (_dropAnimationTiming == DropAnimationShouldFinishBeforeHandlingDrop) {
+            [_webView evaluateJavaScript:@"" completionHandler:^(id, NSError *) {
+                // We need to at least ensure one round trip to the web process and back, to ensure that the UI process will have received any image placeholders
+                // that were just inserted as a result of performing the drop. However, this is guaranteed to run before the UI process receives the drop completion
+                // message, since item provider loading is asynchronous.
+                [self _invokeDropAnimationCompletionBlocksAndConcludeDrop];
+            }];
+        }
     } else {
         _isDoneWithCurrentRun = true;
         _phase = DragAndDropPhaseCancelled;
@@ -639,6 +665,7 @@ IGNORE_WARNINGS_END
 - (void)clearExternalDragInformation
 {
     _externalItemProviders = nil;
+    _defaultDropPreviewsForExternalItems = nil;
 }
 
 - (CGPoint)_currentLocation
@@ -667,6 +694,13 @@ IGNORE_WARNINGS_END
 - (void)setExternalItemProviders:(NSArray *)externalItemProviders
 {
     _externalItemProviders = adoptNS([externalItemProviders copy]);
+}
+
+- (void)setExternalItemProviders:(NSArray<NSItemProvider *> *)itemProviders defaultDropPreviews:(NSArray<UITargetedDragPreview *> *)previews
+{
+    ASSERT(itemProviders.count == previews.count);
+    self.externalItemProviders = itemProviders;
+    _defaultDropPreviewsForExternalItems = adoptNS(previews.copy);
 }
 
 - (DragAndDropPhase)phase
@@ -784,6 +818,25 @@ IGNORE_WARNINGS_END
     return _sessionWillBeginBlock.get();
 }
 
+- (void)addAnimations:(void (^)())animations
+{
+    // This is not implemented by the drag-and-drop simulator yet, since WebKit doesn't make use of
+    // "alongside" animations during drop.
+    ASSERT_NOT_REACHED();
+}
+
+- (void)addCompletion:(void (^)(UIViewAnimatingPosition))completion
+{
+    _dropAnimationCompletionBlocks.append(makeBlockPtr(completion));
+}
+
+- (void)_invokeDropAnimationCompletionBlocksAndConcludeDrop
+{
+    for (auto block : std::exchange(_dropAnimationCompletionBlocks, { }))
+        block(UIViewAnimatingPositionEnd);
+    [[_webView dropInteractionDelegate] dropInteraction:[_webView dropInteraction] concludeDrop:_dropSession.get()];
+}
+
 #pragma mark - WKUIDelegatePrivate
 
 - (void)_webView:(WKWebView *)webView dataInteraction:(UIDragInteraction *)interaction sessionWillBegin:(id <UIDragSession>)session
@@ -797,8 +850,13 @@ IGNORE_WARNINGS_END
     if (self.dropCompletionBlock)
         self.dropCompletionBlock(handled, itemProviders);
 
+    if (_dropAnimationTiming == DropAnimationShouldFinishBeforeHandlingDrop) {
+        _isDoneWithCurrentRun = true;
+        return;
+    }
+
     [_webView _doAfterReceivingEditDragSnapshotForTesting:^{
-        [[_webView dropInteractionDelegate] dropInteraction:[_webView dropInteraction] concludeDrop:_dropSession.get()];
+        [self _invokeDropAnimationCompletionBlocksAndConcludeDrop];
         _isDoneWithCurrentRun = true;
     }];
 }

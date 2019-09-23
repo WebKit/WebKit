@@ -1223,6 +1223,14 @@ void WebPageProxy::requestAdditionalItemsForDragSession(const IntPoint& clientPo
         m_process->send(Messages::WebPage::RequestAdditionalItemsForDragSession(clientPosition, globalPosition, allowedActions), m_webPageID);
 }
 
+void WebPageProxy::insertDroppedImagePlaceholders(const Vector<IntSize>& imageSizes, CompletionHandler<void(const Vector<IntRect>&, Optional<WebCore::TextIndicatorData>)>&& completionHandler)
+{
+    if (hasRunningProcess())
+        m_process->connection()->sendWithAsyncReply(Messages::WebPage::InsertDroppedImagePlaceholders(imageSizes), WTFMove(completionHandler), m_webPageID);
+    else
+        completionHandler({ }, WTF::nullopt);
+}
+
 void WebPageProxy::willReceiveEditDragSnapshot()
 {
     pageClient().willReceiveEditDragSnapshot();

@@ -93,6 +93,7 @@
 #import <WebCore/InputMode.h>
 #import <WebCore/KeyEventCodesIOS.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/Path.h>
@@ -102,6 +103,7 @@
 #import <WebCore/Scrollbar.h>
 #import <WebCore/ShareData.h>
 #import <WebCore/TextIndicator.h>
+#import <WebCore/UTIUtilities.h>
 #import <WebCore/VisibleSelection.h>
 #import <WebCore/WebEvent.h>
 #import <WebCore/WritingDirection.h>
@@ -6774,6 +6776,9 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     if (!unselectedSnapshotImage)
         return;
 
+    if (!_dropAnimationCount)
+        return;
+
     auto unselectedContentImageForEditDrag = adoptNS([[UIImage alloc] initWithCGImage:unselectedSnapshotImage.get() scale:_page->deviceScaleFactor() orientation:UIImageOrientationUp]);
     _unselectedContentSnapshot = adoptNS([[UIImageView alloc] initWithImage:unselectedContentImageForEditDrag.get()]);
     [_unselectedContentSnapshot setFrame:data->contentImageWithoutSelectionRectInRootViewCoordinates];
@@ -7039,6 +7044,72 @@ static WebKit::DocumentEditingContextRequest toWebRequest(UIWKDocumentRequest *r
 }
 
 #endif
+
+static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingItems(NSArray<NSItemProvider *> *itemProviders)
+{
+    Vector<WebCore::IntSize> sizes;
+    for (NSItemProvider *item in itemProviders) {
+        if (!WebCore::MIMETypeRegistry::isSupportedImageMIMEType(WebCore::MIMETypeFromUTI(item.web_fileUploadContentTypes.firstObject)))
+            return { };
+
+        WebCore::IntSize presentationSize(item.preferredPresentationSize);
+        if (presentationSize.isEmpty())
+            return { };
+
+        sizes.append(WTFMove(presentationSize));
+    }
+    return sizes;
+}
+
+- (BOOL)_handleDropByInsertingImagePlaceholders:(NSArray<NSItemProvider *> *)itemProviders session:(id <UIDropSession>)session
+{
+    if (!_webView._editable)
+        return NO;
+
+    if (_dragDropInteractionState.dragSession())
+        return NO;
+
+    if (session.items.count != itemProviders.count)
+        return NO;
+
+    auto imagePlaceholderSizes = sizesOfPlaceholderElementsToInsertWhenDroppingItems(itemProviders);
+    if (imagePlaceholderSizes.isEmpty())
+        return NO;
+
+    RELEASE_LOG(DragAndDrop, "Inserting dropped image placeholders for session: %p", session);
+
+    _page->insertDroppedImagePlaceholders(imagePlaceholderSizes, [protectedSelf = retainPtr(self), dragItems = retainPtr(session.items)] (auto& placeholderRects, auto data) {
+        auto& state = protectedSelf->_dragDropInteractionState;
+        if (!data || !protectedSelf->_dropAnimationCount) {
+            RELEASE_LOG(DragAndDrop, "Failed to animate image placeholders: missing text indicator data.");
+            state.clearAllDelayedItemPreviewProviders();
+            return;
+        }
+
+        auto snapshotWithoutSelection = data->contentImageWithoutSelection;
+        if (!snapshotWithoutSelection) {
+            RELEASE_LOG(DragAndDrop, "Failed to animate image placeholders: missing unselected content image.");
+            state.clearAllDelayedItemPreviewProviders();
+            return;
+        }
+
+        auto unselectedSnapshotImage = snapshotWithoutSelection->nativeImage();
+        if (!unselectedSnapshotImage) {
+            RELEASE_LOG(DragAndDrop, "Failed to animate image placeholders: could not decode unselected content image.");
+            state.clearAllDelayedItemPreviewProviders();
+            return;
+        }
+
+        auto unselectedContentImageForEditDrag = adoptNS([[UIImage alloc] initWithCGImage:unselectedSnapshotImage.get() scale:protectedSelf->_page->deviceScaleFactor() orientation:UIImageOrientationUp]);
+        auto snapshotView = adoptNS([[UIImageView alloc] initWithImage:unselectedContentImageForEditDrag.get()]);
+        [snapshotView setFrame:data->contentImageWithoutSelectionRectInRootViewCoordinates];
+        [protectedSelf addSubview:snapshotView.get()];
+        protectedSelf->_unselectedContentSnapshot = WTFMove(snapshotView);
+        state.deliverDelayedDropPreview(protectedSelf.get(), [protectedSelf unobscuredContentRect], dragItems.get(), placeholderRects);
+    });
+
+    return YES;
+}
 
 #pragma mark - UIDragInteractionDelegate
 
@@ -7320,6 +7391,7 @@ static WebKit::DocumentEditingContextRequest toWebRequest(UIWKDocumentRequest *r
     [[WebItemProviderPasteboard sharedInstance] setItemProviders:itemProviders];
     [[WebItemProviderPasteboard sharedInstance] incrementPendingOperationCount];
     auto dragData = [self dragDataForDropSession:session dragDestinationAction:WKDragDestinationActionAny];
+    BOOL shouldSnapshotView = ![self _handleDropByInsertingImagePlaceholders:itemProviders session:session];
 
     RELEASE_LOG(DragAndDrop, "Loading data from %tu item providers for session: %p", itemProviders.count, session);
     // Always loading content from the item provider ensures that the web process will be allowed to call back in to the UI
@@ -7327,7 +7399,7 @@ static WebKit::DocumentEditingContextRequest toWebRequest(UIWKDocumentRequest *r
     // or the page prevented default on `dragover`, but without this, dropping into a normal editable areas will fail due to
     // item providers not loading any data.
     RetainPtr<WKContentView> retainedSelf(self);
-    [[WebItemProviderPasteboard sharedInstance] doAfterLoadingProvidedContentIntoFileURLs:[retainedSelf, capturedDragData = WTFMove(dragData)] (NSArray *fileURLs) mutable {
+    [[WebItemProviderPasteboard sharedInstance] doAfterLoadingProvidedContentIntoFileURLs:[retainedSelf, capturedDragData = WTFMove(dragData), shouldSnapshotView] (NSArray *fileURLs) mutable {
         RELEASE_LOG(DragAndDrop, "Loaded data into %tu files", fileURLs.count);
         Vector<String> filenames;
         for (NSURL *fileURL in fileURLs)
@@ -7338,18 +7410,20 @@ static WebKit::DocumentEditingContextRequest toWebRequest(UIWKDocumentRequest *r
         WebKit::SandboxExtension::HandleArray sandboxExtensionForUpload;
         retainedSelf->_page->createSandboxExtensionsIfNeeded(filenames, sandboxExtensionHandle, sandboxExtensionForUpload);
         retainedSelf->_page->performDragOperation(capturedDragData, "data interaction pasteboard", WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));
-        retainedSelf->_visibleContentViewSnapshot = [retainedSelf snapshotViewAfterScreenUpdates:NO];
-        [UIView performWithoutAnimation:[retainedSelf] {
+        if (shouldSnapshotView) {
+            retainedSelf->_visibleContentViewSnapshot = [retainedSelf snapshotViewAfterScreenUpdates:NO];
             [retainedSelf->_visibleContentViewSnapshot setFrame:[retainedSelf bounds]];
             [retainedSelf addSubview:retainedSelf->_visibleContentViewSnapshot.get()];
-        }];
+        }
     }];
 }
 
 - (void)dropInteraction:(UIDropInteraction *)interaction item:(UIDragItem *)item willAnimateDropWithAnimator:(id <UIDragAnimating>)animator
 {
+    _dropAnimationCount++;
     [animator addCompletion:[strongSelf = retainPtr(self)] (UIViewAnimatingPosition) {
-        [std::exchange(strongSelf->_unselectedContentSnapshot, nil) removeFromSuperview];
+        if (!--strongSelf->_dropAnimationCount)
+            [std::exchange(strongSelf->_unselectedContentSnapshot, nil) removeFromSuperview];
     }];
 }
 
@@ -7363,6 +7437,8 @@ static WebKit::DocumentEditingContextRequest toWebRequest(UIWKDocumentRequest *r
 
 - (UITargetedDragPreview *)dropInteraction:(UIDropInteraction *)interaction previewForDroppingItem:(UIDragItem *)item withDefault:(UITargetedDragPreview *)defaultPreview
 {
+    _dragDropInteractionState.setDefaultDropPreview(item, defaultPreview);
+
     CGRect caretRect = _page->currentDragCaretRect();
     if (CGRectIsEmpty(caretRect))
         return nil;

@@ -28,6 +28,7 @@
 #if PLATFORM(MAC) || PLATFORM(IOS)
 
 #import "DragAndDropSimulator.h"
+#import "NSItemProviderAdditions.h"
 #import "PencilKitTestSPI.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
@@ -52,6 +53,21 @@ SOFT_LINK_CLASS(Contacts, CNMutableContact)
 SOFT_LINK_FRAMEWORK(MapKit)
 SOFT_LINK_CLASS(MapKit, MKMapItem)
 SOFT_LINK_CLASS(MapKit, MKPlacemark)
+
+@interface NSArray (AttachmentTestingHelpers)
+- (_WKAttachment *)_attachmentWithName:(NSString *)name;
+@end
+
+@implementation NSArray (AttachmentTestingHelpers)
+- (_WKAttachment *)_attachmentWithName:(NSString *)name
+{
+    for (_WKAttachment *attachment in self) {
+        if ([attachment.info.name isEqualToString:name])
+            return attachment;
+    }
+    return nil;
+}
+@end
 
 #define USES_MODERN_ATTRIBUTED_STRING_CONVERSION ((PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || PLATFORM(MAC))
 
@@ -269,6 +285,25 @@ static NSData *testPDFData()
     }];
     TestWebKitAPI::Util::run(&done);
     return attachment.autorelease();
+}
+
+- (NSArray<NSValue *> *)allBoundingClientRects:(NSString *)querySelector
+{
+    auto rects = adoptNS([[NSMutableArray alloc] init]);
+    bool doneEvaluatingScript = false;
+    NSString *script = [NSString stringWithFormat:@"Array.from(document.querySelectorAll('%@')).map(e => { const r = e.getBoundingClientRect(); return [r.left, r.top, r.width, r.height]; })", querySelector];
+    [self evaluateJavaScript:script completionHandler:[rects, &doneEvaluatingScript] (NSArray<NSArray<NSNumber *> *> *result, NSError *) {
+        for (NSArray<NSNumber *> *rectInfo in result) {
+#if PLATFORM(IOS_FAMILY)
+            [rects addObject:[NSValue valueWithCGRect:CGRectMake(rectInfo[0].floatValue, rectInfo[1].floatValue, rectInfo[2].floatValue, rectInfo[3].floatValue)]];
+#else
+            [rects addObject:[NSValue valueWithRect:NSMakeRect(rectInfo[0].floatValue, rectInfo[1].floatValue, rectInfo[2].floatValue, rectInfo[3].floatValue)]];
+#endif
+        }
+        doneEvaluatingScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingScript);
+    return rects.autorelease();
 }
 
 - (CGPoint)attachmentElementMidPoint
@@ -1649,6 +1684,90 @@ TEST(WKAttachmentTestsMac, DragAttachmentWithNoTypeShouldNotCrash)
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS_FAMILY)
+
+static RetainPtr<UITargetedDragPreview> targetedImageDragPreview(WKWebView *webView, NSData *imageData, CGSize size)
+{
+    auto imageView = adoptNS([[UIImageView alloc] initWithImage:[UIImage imageWithData:imageData]]);
+    [imageView setBounds:CGRectMake(0, 0, size.width, size.height)];
+    auto defaultDropTarget = adoptNS([[UIDragPreviewTarget alloc] initWithContainer:webView center:CGPointMake(450, 450)]);
+    auto parameters = adoptNS([[UIDragPreviewParameters alloc] init]);
+    return adoptNS([[UITargetedDragPreview alloc] initWithView:imageView.get() parameters:parameters.get() target:defaultDropTarget.get()]);
+}
+
+TEST(WKAttachmentTestsIOS, TargetedPreviewsWhenDroppingImages)
+{
+    auto webView = webViewForTestingAttachments();
+    [webView _setEditable:YES];
+
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+
+    // The first item preview should be scaled down by a factor of 2.
+    auto firstPreview = targetedImageDragPreview(webView.get(), testImageData(), CGSizeMake(430, 348));
+    auto firstItem = adoptNS([[NSItemProvider alloc] init]);
+    [firstItem registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePNG withData:testImageData() loadingDelay:0.5];
+    [firstItem setPreferredPresentationSize:CGSizeMake(215, 174)];
+    [firstItem setSuggestedName:@"icon"];
+
+    // The second item preview should be scaled up by a factor of 2.
+    auto secondPreview = targetedImageDragPreview(webView.get(), testGIFData(), CGSizeMake(26, 32));
+    auto secondItem = adoptNS([[NSItemProvider alloc] init]);
+    [secondItem registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeGIF withData:testGIFData() loadingDelay:0.5];
+    [secondItem setPreferredPresentationSize:CGSizeMake(52, 64)];
+    [secondItem setSuggestedName:@"apple"];
+
+    [simulator setDropAnimationTiming:DropAnimationShouldFinishBeforeHandlingDrop];
+    [simulator setExternalItemProviders:[NSArray arrayWithObjects:firstItem.get(), secondItem.get(), nil] defaultDropPreviews:[NSArray arrayWithObjects:firstPreview.get(), secondPreview.get(), nil]];
+    [simulator runFrom:CGPointMake(0, 0) to:CGPointMake(450, 450)];
+
+    EXPECT_EQ([simulator delayedDropPreviews].count, 2U);
+    UITargetedDragPreview *firstDelayedPreview = [simulator delayedDropPreviews].firstObject;
+    UITargetedDragPreview *secondDelayedPreview = [simulator delayedDropPreviews].lastObject;
+    auto imageElementBounds = retainPtr([webView allBoundingClientRects:@"IMG"]);
+
+    EXPECT_TRUE(CGAffineTransformEqualToTransform(CGAffineTransformMakeScale(0.5, 0.5), firstDelayedPreview.target.transform));
+    EXPECT_TRUE(CGRectEqualToRect(CGRectMake(0, 0, 430, 348), firstDelayedPreview.parameters.visiblePath.bounds));
+    EXPECT_TRUE(CGRectContainsPoint([imageElementBounds firstObject].CGRectValue, firstDelayedPreview.target.center));
+
+    EXPECT_TRUE(CGAffineTransformEqualToTransform(CGAffineTransformMakeScale(2, 2), secondDelayedPreview.target.transform));
+    EXPECT_TRUE(CGRectEqualToRect(CGRectMake(0, 0, 26, 32), secondDelayedPreview.parameters.visiblePath.bounds));
+    EXPECT_TRUE(CGRectContainsPoint([imageElementBounds lastObject].CGRectValue, secondDelayedPreview.target.center));
+
+    [webView expectElementCount:2 querySelector:@"IMG"];
+    _WKAttachment *pngAttachment = [[simulator insertedAttachments] _attachmentWithName:@"icon.png"];
+    _WKAttachment *gifAttachment = [[simulator insertedAttachments] _attachmentWithName:@"apple.gif"];
+    EXPECT_WK_STREQ(pngAttachment.info.contentType, @"image/png");
+    EXPECT_WK_STREQ(gifAttachment.info.contentType, @"image/gif");
+}
+
+TEST(WKAttachmentTestsIOS, TargetedPreviewIsClippedWhenDroppingTallImage)
+{
+    auto webView = webViewForTestingAttachments(CGSizeMake(800, 200));
+    [webView stringByEvaluatingJavaScript:@"document.body.style.margin = '0'"];
+    [webView _setEditable:YES];
+
+    auto imageData = retainPtr([NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+
+    auto preview = targetedImageDragPreview(webView.get(), imageData.get(), CGSizeMake(100, 100));
+    auto item = adoptNS([[NSItemProvider alloc] init]);
+    [item registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePNG withData:imageData.get() loadingDelay:0.5];
+    [item setPreferredPresentationSize:CGSizeMake(400, 400)];
+    [item setSuggestedName:@"green"];
+
+    [simulator setDropAnimationTiming:DropAnimationShouldFinishBeforeHandlingDrop];
+    [simulator setExternalItemProviders:[NSArray arrayWithObject:item.get()] defaultDropPreviews:[NSArray arrayWithObject:preview.get()]];
+    [simulator runFrom:CGPointMake(0, 0) to:CGPointMake(350, 350)];
+
+    EXPECT_EQ([simulator delayedDropPreviews].count, 1U);
+    UITargetedDragPreview *delayedPreview = [simulator delayedDropPreviews].firstObject;
+    EXPECT_TRUE(CGAffineTransformEqualToTransform(CGAffineTransformMakeScale(4, 4), delayedPreview.target.transform));
+    EXPECT_TRUE(CGRectEqualToRect(CGRectMake(0, 0, 100, 50), delayedPreview.parameters.visiblePath.bounds));
+    EXPECT_TRUE(CGPointEqualToPoint(CGPointMake(200, 100), delayedPreview.target.center));
+
+    [webView expectElementCount:1 querySelector:@"IMG"];
+    _WKAttachment *attachment = [[simulator insertedAttachments] _attachmentWithName:@"green.png"];
+    EXPECT_WK_STREQ(attachment.info.contentType, @"image/png");
+}
 
 TEST(WKAttachmentTestsIOS, InsertDroppedImageAsAttachment)
 {

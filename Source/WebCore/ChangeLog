@@ -1,3 +1,79 @@
+2019-09-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Drop animation when dragging images from Photos to WebKit2 Mail compose is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=201674
+        <rdar://problem/51250952>
+
+        Reviewed by Tim Horton.
+
+        Adds new helper methods on DragController to support the new image placeholder drop codepath. See WebKit
+        ChangeLog for more details.
+
+        Tests:  WKAttachmentTestsIOS.TargetedPreviewsWhenDroppingImages
+                WKAttachmentTestsIOS.TargetedPreviewIsClippedWhenDroppingTallImage
+
+        * editing/WebContentReader.h:
+
+        Fix the Windows build after including WebContentReader.h in DragController.cpp.
+
+        * html/HTMLImageElement.h:
+        (WebCore::HTMLImageElement::isDroppedImagePlaceholder const):
+        (WebCore::HTMLImageElement::setIsDroppedImagePlaceholder):
+
+        Add a flag to HTMLImageElement, indicating whether it is a dropped image placeholder. If so, we have special
+        logic to remove some temporary inline style properties from the image after it has finished loading (see
+        finalizeDroppedImagePlaceholder).
+
+        Note that this doesn't increase the size of HTMLImageElement.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::dragEnded):
+
+        Clean up any stale placeholders after the drag ends.
+
+        (WebCore::DragController::performDragOperation):
+        (WebCore::DragController::removeAllDroppedImagePlaceholders):
+
+        Add a private helper to clean up any dropped image placeholders after failing to update dropped image
+        placeholders for any reason.
+
+        (WebCore::DragController::tryToUpdateDroppedImagePlaceholders):
+
+        Invoked when performing the drag operation, after image data has been loaded; this function attempts to update
+        the list of image placeholder elements tracked by DragController that were previously inserted using
+        insertDroppedImagePlaceholdersAtCaret, and updates the source attribute of each element (as well as any backed
+        attachment element, if attachment elements are enabled). It achieves this by reading the dropped data as web
+        content, and matching up the images in the resulting fragment against the placeholder images. If each image in
+        the fragment can correspond to exactly one placeholder, we update the source of each placeholder image,
+        migrate attachment elements over to the placeholder images if needed, and finally discard the fragment.
+
+        A return value of false indicates that this process failed, in which case we clean up the placeholders and fall
+        back to handling the drop normally.
+
+        (WebCore::DragController::insertDroppedImagePlaceholdersAtCaret):
+
+        Invoked when handling the drop, before any image data has been loaded; this function takes a list of sizes
+        representing the preferred presentation sizes of each item provider that will be loaded as an image, and uses
+        ReplaceSelectionCommand to insert a list of (initially blank) placeholder images at the drop caret, sized
+        accordingly to each item provider's preferredPresentationSize.
+
+        To make this compatible with Mail compose (and all other known internal clients that use the _editable SPI), we
+        additionally enforce a max-width of 100% on each image and preserve the aspect ratio of the image by adjusting
+        the height if needed.
+
+        (WebCore::DragController::finalizeDroppedImagePlaceholder):
+        * page/DragController.h:
+
+        Have DragController keep track of the list of dropped image placeholders (in DOM order), as well as the dropped
+        image placeholder range. This information is used once item provider data arrives and the drag operation is
+        being performed, to update the source of each dropped image placeholder.
+
+        (WebCore::DragController::droppedImagePlaceholders const):
+        (WebCore::DragController::droppedImagePlaceholderRange const):
+        * platform/network/mac/UTIUtilities.h:
+
+        Mark an existing helper function as WEBCORE_EXPORT.
+
 2019-09-23  Daniel Bates  <dabates@apple.com>
 
         Improve CSP inheritance semantics

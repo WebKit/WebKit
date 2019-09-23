@@ -1029,6 +1029,7 @@
 		F4E0A2B42122402B00AF7C7F /* image-and-file-upload.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4E0A2B321223F2D00AF7C7F /* image-and-file-upload.html */; };
 		F4E0A2B82122847400AF7C7F /* TestFilePromiseReceiver.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4E0A2B72122847400AF7C7F /* TestFilePromiseReceiver.mm */; };
 		F4E3D80820F70BB9007B58C5 /* significant-text-milestone-article.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4E3D80720F708E4007B58C5 /* significant-text-milestone-article.html */; };
+		F4EB4E912328AC3000574DAB /* NSItemProviderAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4EB4E902328AC3000574DAB /* NSItemProviderAdditions.mm */; };
 		F4F137921D9B683E002BEC57 /* large-video-test-now-playing.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4F137911D9B6832002BEC57 /* large-video-test-now-playing.html */; };
 		F4F405BC1D4C0D1C007A9707 /* full-size-autoplaying-video-with-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4F405BA1D4C0CF8007A9707 /* full-size-autoplaying-video-with-audio.html */; };
 		F4F405BD1D4C0D1C007A9707 /* skinny-autoplaying-video-with-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4F405BB1D4C0CF8007A9707 /* skinny-autoplaying-video-with-audio.html */; };
@@ -2527,6 +2528,8 @@
 		F4E0A2B62122847400AF7C7F /* TestFilePromiseReceiver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestFilePromiseReceiver.h; sourceTree = "<group>"; };
 		F4E0A2B72122847400AF7C7F /* TestFilePromiseReceiver.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestFilePromiseReceiver.mm; sourceTree = "<group>"; };
 		F4E3D80720F708E4007B58C5 /* significant-text-milestone-article.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "significant-text-milestone-article.html"; sourceTree = "<group>"; };
+		F4EB4E8F2328AC3000574DAB /* NSItemProviderAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NSItemProviderAdditions.h; path = cocoa/NSItemProviderAdditions.h; sourceTree = SOURCE_ROOT; };
+		F4EB4E902328AC3000574DAB /* NSItemProviderAdditions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = NSItemProviderAdditions.mm; path = cocoa/NSItemProviderAdditions.mm; sourceTree = SOURCE_ROOT; };
 		F4F137911D9B6832002BEC57 /* large-video-test-now-playing.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-test-now-playing.html"; sourceTree = "<group>"; };
 		F4F405BA1D4C0CF8007A9707 /* full-size-autoplaying-video-with-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "full-size-autoplaying-video-with-audio.html"; sourceTree = "<group>"; };
 		F4F405BB1D4C0CF8007A9707 /* skinny-autoplaying-video-with-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "skinny-autoplaying-video-with-audio.html"; sourceTree = "<group>"; };
@@ -2834,6 +2837,8 @@
 				CD2D0D19213465560018C784 /* NowPlaying.mm */,
 				2ECFF5541D9B12F800B55394 /* NowPlayingControlsTests.mm */,
 				A10F047C1E3AD29C00C95E19 /* NSFileManagerExtras.mm */,
+				F4EB4E8F2328AC3000574DAB /* NSItemProviderAdditions.h */,
+				F4EB4E902328AC3000574DAB /* NSItemProviderAdditions.mm */,
 				37A22AA51DCAA27200AFBFC4 /* ObservedRenderingProgressEventsAfterCrash.mm */,
 				CEA6CF2219CCF5BD0064F5A7 /* OpenAndCloseWindow.mm */,
 				CEBCA12E1E3A660100C73293 /* OverrideContentSecurityPolicy.mm */,
@@ -4633,6 +4638,7 @@
 				2ECFF5551D9B12F800B55394 /* NowPlayingControlsTests.mm in Sources */,
 				A10F047E1E3AD29C00C95E19 /* NSFileManagerExtras.mm in Sources */,
 				F442851D2140DF2900CCDA22 /* NSFontPanelTesting.mm in Sources */,
+				F4EB4E912328AC3000574DAB /* NSItemProviderAdditions.mm in Sources */,
 				37A22AA71DCAA27200AFBFC4 /* ObservedRenderingProgressEventsAfterCrash.mm in Sources */,
 				2D70059921EDA4D0003463CB /* OffscreenWindow.mm in Sources */,
 				7CCE7F251A411AF600447C4C /* OpenAndCloseWindow.mm in Sources */,

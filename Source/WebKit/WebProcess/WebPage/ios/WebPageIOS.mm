@@ -894,6 +894,40 @@ void WebPage::requestAdditionalItemsForDragSession(const IntPoint& clientPositio
     send(Messages::WebPageProxy::DidHandleAdditionalDragItemsRequest(didHandleDrag));
 }
 
+void WebPage::insertDroppedImagePlaceholders(const Vector<IntSize>& imageSizes, CompletionHandler<void(const Vector<IntRect>&, Optional<WebCore::TextIndicatorData>)>&& reply)
+{
+    m_page->dragController().insertDroppedImagePlaceholdersAtCaret(imageSizes);
+    auto placeholderRects = m_page->dragController().droppedImagePlaceholders().map([&] (auto& element) {
+        return rootViewBoundsForElement(element);
+    });
+
+    auto imagePlaceholderRange = m_page->dragController().droppedImagePlaceholderRange();
+    if (placeholderRects.size() != imageSizes.size()) {
+        RELEASE_LOG(DragAndDrop, "Failed to insert dropped image placeholders: placeholder rect count (%tu) does not match image size count (%tu).", placeholderRects.size(), imageSizes.size());
+        reply({ }, WTF::nullopt);
+        return;
+    }
+
+    if (!imagePlaceholderRange) {
+        RELEASE_LOG(DragAndDrop, "Failed to insert dropped image placeholders: no image placeholder range.");
+        reply({ }, WTF::nullopt);
+        return;
+    }
+
+    Optional<TextIndicatorData> textIndicatorData;
+    OptionSet<TextIndicatorOption> textIndicatorOptions = {
+        TextIndicatorOptionIncludeSnapshotOfAllVisibleContentWithoutSelection,
+        TextIndicatorOptionExpandClipBeyondVisibleRect,
+        TextIndicatorOptionPaintAllContent,
+        TextIndicatorOptionUseSelectionRectForSizing
+    };
+
+    if (auto textIndicator = TextIndicator::createWithRange(*imagePlaceholderRange, textIndicatorOptions.toRaw(), TextIndicatorPresentationTransition::None, { }))
+        textIndicatorData = textIndicator->data();
+
+    reply(WTFMove(placeholderRects), WTFMove(textIndicatorData));
+}
+
 void WebPage::didConcludeDrop()
 {
     m_rangeForDropSnapshot = nullptr;
@@ -923,6 +957,9 @@ void WebPage::didConcludeEditDrag()
 
 void WebPage::didFinishLoadingImageForElement(WebCore::HTMLImageElement& element)
 {
+    if (element.isDroppedImagePlaceholder())
+        m_page->dragController().finalizeDroppedImagePlaceholder(element);
+
     if (m_pendingImageElementsForDropSnapshot.isEmpty())
         return;
 

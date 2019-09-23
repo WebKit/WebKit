@@ -23,11 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DragDropInteractionState.h"
+#import "config.h"
+#import "DragDropInteractionState.h"
 
 #if ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY)
 
+#import "Logging.h"
 #import <WebCore/DragItem.h>
 #import <WebCore/Image.h>
 
@@ -185,6 +186,31 @@ void DragDropInteractionState::dragSessionWillBegin()
     updatePreviewsForActiveDragSources();
 }
 
+void DragDropInteractionState::setDefaultDropPreview(UIDragItem *item, UITargetedDragPreview *preview)
+{
+    m_defaultDropPreviews.append({ item, preview });
+}
+
+UITargetedDragPreview *DragDropInteractionState::defaultDropPreview(UIDragItem *item) const
+{
+    auto matchIndex = m_defaultDropPreviews.findMatching([&] (auto& itemAndPreview) {
+        return itemAndPreview.item == item;
+    });
+    return matchIndex == notFound ? nil : m_defaultDropPreviews[matchIndex].preview.get();
+}
+
+BlockPtr<void(UITargetedDragPreview *)> DragDropInteractionState::dropPreviewProvider(UIDragItem *item)
+{
+    auto matchIndex = m_delayedItemPreviewProviders.findMatching([&] (auto& itemAndProvider) {
+        return itemAndProvider.item == item;
+    });
+
+    if (matchIndex == notFound)
+        return nil;
+
+    return m_delayedItemPreviewProviders[matchIndex].provider;
+}
+
 void DragDropInteractionState::prepareForDelayedDropPreview(UIDragItem *item, void(^provider)(UITargetedDragPreview *preview))
 {
     m_delayedItemPreviewProviders.append({ item, provider });
@@ -199,6 +225,61 @@ void DragDropInteractionState::deliverDelayedDropPreview(UIView *contentView, UI
     auto preview = createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, [UIColor colorWithCGColor:cachedCGColor(indicator.estimatedBackgroundColor)], nil);
     for (auto& itemAndPreviewProvider : m_delayedItemPreviewProviders)
         itemAndPreviewProvider.provider(preview.get());
+    m_delayedItemPreviewProviders.clear();
+}
+
+void DragDropInteractionState::deliverDelayedDropPreview(UIView *contentView, CGRect unobscuredContentRect, NSArray<UIDragItem *> *items, const Vector<IntRect>& placeholderRects)
+{
+    if (items.count != placeholderRects.size()) {
+        RELEASE_LOG(DragAndDrop, "Failed to animate image placeholders: number of drag items (%tu) does not match number of placeholders (%tu)", items.count, placeholderRects.size());
+        clearAllDelayedItemPreviewProviders();
+        return;
+    }
+
+    for (size_t i = 0; i < placeholderRects.size(); ++i) {
+        UIDragItem *item = [items objectAtIndex:i];
+        auto& placeholderRect = placeholderRects[i];
+        auto provider = dropPreviewProvider(item);
+        if (!provider)
+            continue;
+
+        auto defaultPreview = defaultDropPreview(item);
+        auto defaultPreviewSize = [defaultPreview size];
+        if (!defaultPreview || defaultPreviewSize.width <= 0 || defaultPreviewSize.height <= 0 || placeholderRect.isEmpty()) {
+            provider(nil);
+            continue;
+        }
+
+        FloatRect previewIntersectionRect = enclosingIntRect(CGRectIntersection(unobscuredContentRect, placeholderRect));
+        if (previewIntersectionRect.isEmpty()) {
+            // If the preview rect is completely offscreen, don't bother trying to clip out or scale the default preview;
+            // simply retarget the default preview.
+            auto target = adoptNS([[UIDragPreviewTarget alloc] initWithContainer:contentView center:placeholderRect.center()]);
+            provider([defaultPreview retargetedPreviewWithTarget:target.get()]);
+            continue;
+        }
+
+        // Targeted previews don't clip to the bounds of any enclosing view; this means that when targeting previews outside
+        // the visible bounds of the content view, the preview will spill out the web view. This is most noticeable when
+        // dropping a tall image into Mail compose on iOS 13, where the bottom of the compose window is not flush against
+        // the bottom of the window. To mitigate this, we use the preview target's `visiblePath` property to clip the default
+        // drop preview's view, by the same proportion that the final placeholder image is clipped (with respect to the
+        // unobscured content rect).
+        auto previewBounds = [defaultPreview view].bounds;
+        auto insetPreviewBounds = UIEdgeInsetsInsetRect(previewBounds, {
+            (previewIntersectionRect.y() - placeholderRect.y()) / placeholderRect.height() * previewBounds.size.height,
+            (previewIntersectionRect.x() - placeholderRect.x()) / placeholderRect.width() * previewBounds.size.width,
+            (placeholderRect.maxY() - previewIntersectionRect.maxY()) / placeholderRect.height() * previewBounds.size.height,
+            (placeholderRect.maxX() - previewIntersectionRect.maxX()) / placeholderRect.width() * previewBounds.size.width
+        });
+
+        auto transform = CGAffineTransformMakeScale(placeholderRect.width() / defaultPreviewSize.width, placeholderRect.height() / defaultPreviewSize.height);
+        auto target = adoptNS([[UIDragPreviewTarget alloc] initWithContainer:contentView center:previewIntersectionRect.center() transform:transform]);
+        [defaultPreview parameters].visiblePath = [UIBezierPath bezierPathWithRect:insetPreviewBounds];
+        auto newPreview = adoptNS([[UITargetedDragPreview alloc] initWithView:[defaultPreview view] parameters:[defaultPreview parameters] target:target.get()]);
+        provider(newPreview.get());
+    }
+
     m_delayedItemPreviewProviders.clear();
 }
 

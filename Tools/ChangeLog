@@ -1,3 +1,65 @@
+2019-09-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Drop animation when dragging images from Photos to WebKit2 Mail compose is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=201674
+        <rdar://problem/51250952>
+
+        Reviewed by Tim Horton.
+
+        Add a couple of new API tests to exercise the new image placeholder drop codepath, in addition to testing
+        infrastructure to simulate the timing of drop animation delegate calls.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (-[NSArray _attachmentWithName:]):
+        (-[TestWKWebView allBoundingClientRects:]):
+
+        Add some new API testing helper methods.
+
+        (TestWebKitAPI::targetedImageDragPreview):
+        (TestWebKitAPI::TEST):
+
+        Add two new tests, to:
+        (1) verify that images are dropped as attachment-backed placeholder image elements when the web view is editable
+            and enables attachment elements, and
+        (2) verify that when dropping an image taller than the web view, the bottom portion of the drop preview is
+            clipped using the targeted preview parameter's visiblePath.
+
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (-[NSItemProvider registerDataRepresentationForTypeIdentifier:withData:]): Deleted.
+        * TestWebKitAPI/cocoa/DragAndDropSimulator.h:
+        * TestWebKitAPI/cocoa/NSItemProviderAdditions.h: Added.
+        * TestWebKitAPI/cocoa/NSItemProviderAdditions.mm: Added.
+
+        Move some common helpers for registering data on a NSItemProvider to a separate file, so that it can be used in
+        both WKAttachmentTests and DragAndDropTests.
+
+        (-[NSItemProvider registerDataRepresentationForTypeIdentifier:withData:]):
+        (-[NSItemProvider registerDataRepresentationForTypeIdentifier:withData:loadingDelay:]):
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        (-[DragAndDropSimulator initWithWebView:]):
+        (-[DragAndDropSimulator _concludeDropAndPerformOperationIfNecessary]):
+        (-[DragAndDropSimulator clearExternalDragInformation]):
+        (-[DragAndDropSimulator setExternalItemProviders:defaultDropPreviews:]):
+
+        Add a new method to allow tests to specify both a list of externally dragged item providers, as well as default
+        targeted previews for each of the corresponding items. These default previews are used when invoking the drop
+        interaction delegate's preview generation methods.
+
+        (-[DragAndDropSimulator addAnimations:]):
+
+        Not implemented yet; for now, this simply asserts.
+
+        (-[DragAndDropSimulator addCompletion:]):
+
+        Queues a completion handler, which is invoked when the drop animation for each item completes. Depending on the
+        value of DragAndDropSimulator's -dropAnimationTiming, this may occur either before or after handling the drop.
+        By default, these will be invoked after the drop completes, which represents the common case where data can be
+        loaded quickly relative to the drop animation.
+
+        (-[DragAndDropSimulator _invokeDropAnimationCompletionBlocksAndConcludeDrop]):
+        (-[DragAndDropSimulator _webView:dataInteractionOperationWasHandled:forSession:itemProviders:]):
+
 2019-09-23  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Collapse results with the same version name (Follow-up fix)

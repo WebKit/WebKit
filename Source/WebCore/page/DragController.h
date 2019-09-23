@@ -40,6 +40,7 @@ class DragData;
 class Element;
 class Frame;
 class FrameSelection;
+class HTMLImageElement;
 class HTMLInputElement;
 class IntRect;
 class Page;
@@ -88,6 +89,12 @@ struct PromisedAttachmentInfo;
         WEBCORE_EXPORT void dragEnded();
         
         WEBCORE_EXPORT void placeDragCaret(const IntPoint&);
+
+        const Vector<Ref<HTMLImageElement>>& droppedImagePlaceholders() const { return m_droppedImagePlaceholders; }
+        const RefPtr<Range>& droppedImagePlaceholderRange() const { return m_droppedImagePlaceholderRange; }
+
+        WEBCORE_EXPORT void finalizeDroppedImagePlaceholder(HTMLImageElement&);
+        WEBCORE_EXPORT void insertDroppedImagePlaceholdersAtCaret(const Vector<IntSize>& imageSizes);
         
         bool startDrag(Frame& src, const DragState&, DragOperation srcOp, const PlatformMouseEvent& dragEvent, const IntPoint& dragOrigin, HasNonDefaultPasteboardData);
         static const IntSize& maxDragImageSize();
@@ -128,6 +135,9 @@ struct PromisedAttachmentInfo;
 #endif
         }
 
+        bool tryToUpdateDroppedImagePlaceholders(const DragData&);
+        void removeAllDroppedImagePlaceholders();
+
         String platformContentTypeForBlobType(const String& type) const;
 
         void cleanupAfterSystemDrag();
@@ -152,6 +162,8 @@ struct PromisedAttachmentInfo;
         IntPoint m_dragOffset;
         URL m_draggingImageURL;
         bool m_isPerformingDrop { false };
+        Vector<Ref<HTMLImageElement>> m_droppedImagePlaceholders;
+        RefPtr<Range> m_droppedImagePlaceholderRange;
     };
 
     WEBCORE_EXPORT bool isDraggableLink(const Element&);
