@@ -253,6 +253,23 @@ bool initializeGStreamer(Optional<Vector<String>>&& options)
         if (isGStreamerInitialized)
             gst_mpegts_initialize();
 #endif
+
+        // If the FDK-AAC decoder is available, promote it and downrank the
+        // libav AAC decoders, due to their broken LC support, as reported in:
+        // https://ffmpeg.org/pipermail/ffmpeg-devel/2019-July/247063.html
+        GRefPtr<GstElement> aacDecoder = adoptGRef(gst_element_factory_make("fdkaacdec", nullptr));
+        if (aacDecoder) {
+            GstElementFactory* factory = gst_element_get_factory(aacDecoder.get());
+            gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(factory), GST_RANK_PRIMARY);
+
+            const char* const elementNames[] = {"avdec_aac", "avdec_aac_fixed", "avdec_aac_latm"};
+            for (unsigned i = 0; i < G_N_ELEMENTS(elementNames); i++) {
+                GRefPtr<GstElement> avAACDecoder = adoptGRef(gst_element_factory_make(elementNames[i], nullptr));
+                if (avAACDecoder)
+                    gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(gst_element_get_factory(avAACDecoder.get())), GST_RANK_MARGINAL);
+            }
+        }
+
 #endif
     });
     return isGStreamerInitialized;
