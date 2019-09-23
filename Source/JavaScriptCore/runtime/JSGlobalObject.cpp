@@ -598,7 +598,7 @@ void JSGlobalObject::init(VM& vm)
             init.setPrototype(JS ## type ## ArrayPrototype::create(init.vm, init.global, JS ## type ## ArrayPrototype::createStructure(init.vm, init.global, init.global->m_typedArrayProto.get(init.global)))); \
             init.setStructure(JS ## type ## Array::createStructure(init.vm, init.global, init.prototype)); \
             init.setConstructor(JS ## type ## ArrayConstructor::create(init.vm, init.global, JS ## type ## ArrayConstructor::createStructure(init.vm, init.global, init.global->m_typedArraySuperConstructor.get(init.global)), init.prototype, #type "Array"_s, typedArrayConstructorAllocate ## type ## ArrayCodeGenerator(init.vm))); \
-            init.global->putDirectWithoutTransition(init.vm, init.vm.propertyNames->builtinNames().type ## ArrayPrivateName(), init.constructor, static_cast<unsigned>(PropertyAttribute::DontEnum)); \
+            init.global->putDirect(init.vm, init.vm.propertyNames->builtinNames().type ## ArrayPrivateName(), init.constructor, static_cast<unsigned>(PropertyAttribute::DontEnum)); \
         });
     FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(INIT_TYPED_ARRAY_LATER)
 #undef INIT_TYPED_ARRAY_LATER

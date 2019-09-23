@@ -1,3 +1,13 @@
+2019-09-23  Mark Lam  <mark.lam@apple.com>
+
+        Lazy JSGlobalObject property materialization should not use putDirectWithoutTransition.
+        https://bugs.webkit.org/show_bug.cgi?id=202122
+        <rdar://problem/55535249>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/lazy-global-object-property-materialization-should-not-putDirectWithoutTransition.js: Added.
+
 2019-09-23  Caio Lima  <ticaiolima@gmail.com>
 
         Skip stress/regexp-unicode-surrogate-pair-increment-should-involve-length-check.js into ARMv7 and MIPS

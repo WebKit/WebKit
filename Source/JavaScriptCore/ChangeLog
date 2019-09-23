@@ -1,5 +1,16 @@
 2019-09-23  Mark Lam  <mark.lam@apple.com>
 
+        Lazy JSGlobalObject property materialization should not use putDirectWithoutTransition.
+        https://bugs.webkit.org/show_bug.cgi?id=202122
+        <rdar://problem/55535249>
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+
+2019-09-23  Mark Lam  <mark.lam@apple.com>
+
         Reduce the amount of memory needed to store Options.
         https://bugs.webkit.org/show_bug.cgi?id=202105
 
