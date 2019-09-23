@@ -1,3 +1,79 @@
+2019-09-23  Tim Horton  <timothy_horton@apple.com>
+
+        macOS: <datalist> dropdown shadow is cropped, looks nothing like NSComboBox
+        https://bugs.webkit.org/show_bug.cgi?id=199350
+
+        Reviewed by Wenson Hsieh.
+
+        Improve the appearance of the macOS <datalist> dropdown, adopting the
+        roundly-cornered and backdrop-ful appearance of the current NSComboBox style.
+
+        Use the proper window shadow instead of our own inside the window, both
+        so that we match the system and so that it doesn't get clipped.
+
+        Allow vertical rubber-banding, because NSComboBox does.
+
+        Don't highlight on hover, because NSComboBox doesn't. Do use NSTableView's
+        selection mechanism instead of rolling our own for highlights driven by
+        keyboard-based navigation.
+
+        Make use of NSTableCellView, since it has some smarts around pixel alignment
+        that we don't need to duplicate (and things are blurry on 1x displays without).
+
+        Also rename some classes to make it a bit more clear what's going on:
+        WKDataListSuggestionCell -> WKDataListSuggestionView (it's a NSView, not an NSCell)
+        WKDataListSuggestionsView -> WKDataListSuggestionsController (it's not a view at all)
+
+        * Platform/spi/mac/AppKitSPI.h:
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.mm:
+        (WebKit::WebDataListSuggestionsDropdownMac::show):
+        (-[WKDataListSuggestionWindow initWithContentRect:styleMask:backing:defer:]):
+        (-[WKDataListSuggestionWindow canBecomeKeyWindow]):
+        (-[WKDataListSuggestionWindow hasKeyAppearance]):
+        (-[WKDataListSuggestionWindow shadowOptions]):
+        (-[WKDataListSuggestionView initWithFrame:]):
+        (-[WKDataListSuggestionView setText:]):
+        (-[WKDataListSuggestionView setBackgroundStyle:]):
+        (-[WKDataListSuggestionTableRowView drawSelectionInRect:]):
+        (-[WKDataListSuggestionTableView initWithElementRect:]):
+        (-[WKDataListSuggestionTableView layout]):
+        (-[WKDataListSuggestionTableView reload]):
+        (-[WKDataListSuggestionsController initWithInformation:inView:]):
+        (-[WKDataListSuggestionsController currentSelectedString]):
+        (-[WKDataListSuggestionsController updateWithInformation:]):
+        (-[WKDataListSuggestionsController moveSelectionByDirection:]):
+        (-[WKDataListSuggestionsController invalidate]):
+        (-[WKDataListSuggestionsController dropdownRectForElementRect:]):
+        (-[WKDataListSuggestionsController showSuggestionsDropdown:]):
+        (-[WKDataListSuggestionsController tableView:rowViewForRow:]):
+        (-[WKDataListSuggestionsController tableView:viewForTableColumn:row:]):
+        (-[WKDataListSuggestionCell initWithFrame:]): Deleted.
+        (-[WKDataListSuggestionCell setText:]): Deleted.
+        (-[WKDataListSuggestionCell setActive:]): Deleted.
+        (-[WKDataListSuggestionCell drawRect:]): Deleted.
+        (-[WKDataListSuggestionCell mouseEntered:]): Deleted.
+        (-[WKDataListSuggestionCell mouseExited:]): Deleted.
+        (-[WKDataListSuggestionCell acceptsFirstResponder]): Deleted.
+        (-[WKDataListSuggestionTable initWithElementRect:]): Deleted.
+        (-[WKDataListSuggestionTable setVisibleRect:]): Deleted.
+        (-[WKDataListSuggestionTable currentActiveRow]): Deleted.
+        (-[WKDataListSuggestionTable setActiveRow:]): Deleted.
+        (-[WKDataListSuggestionTable reload]): Deleted.
+        (-[WKDataListSuggestionTable acceptsFirstResponder]): Deleted.
+        (-[WKDataListSuggestionTable enclosingScrollView]): Deleted.
+        (-[WKDataListSuggestionTable removeFromSuperviewWithoutNeedingDisplay]): Deleted.
+        (-[WKDataListSuggestionsView initWithInformation:inView:]): Deleted.
+        (-[WKDataListSuggestionsView currentSelectedString]): Deleted.
+        (-[WKDataListSuggestionsView updateWithInformation:]): Deleted.
+        (-[WKDataListSuggestionsView moveSelectionByDirection:]): Deleted.
+        (-[WKDataListSuggestionsView invalidate]): Deleted.
+        (-[WKDataListSuggestionsView dropdownRectForElementRect:]): Deleted.
+        (-[WKDataListSuggestionsView showSuggestionsDropdown:]): Deleted.
+        (-[WKDataListSuggestionsView selectedRow:]): Deleted.
+        (-[WKDataListSuggestionsView numberOfRowsInTableView:]): Deleted.
+        (-[WKDataListSuggestionsView tableView:heightOfRow:]): Deleted.
+        (-[WKDataListSuggestionsView tableView:viewForTableColumn:row:]): Deleted.
+
 2019-09-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Drop animation when dragging images from Photos to WebKit2 Mail compose is incorrect

@@ -42,16 +42,21 @@
 @protocol NSTextInputClient_Async
 @end
 
-@interface NSWindow (NSInspectorBarSupport)
+typedef NS_OPTIONS(NSUInteger, NSWindowShadowOptions) {
+    NSWindowShadowSecondaryWindow = 0x2,
+};
+
+@interface NSWindow ()
 - (NSInspectorBar *)inspectorBar;
 - (void)setInspectorBar:(NSInspectorBar *)bar;
-@end
+
+@property (readonly) NSWindowShadowOptions shadowOptions;
 
 #if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101400
-@interface NSWindow (FullScreenSupport)
 @property CGFloat titlebarAlphaValue;
-@end
 #endif
+
+@end
 
 #endif
 

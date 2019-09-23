@@ -28,52 +28,31 @@
 
 #if ENABLE(DATALIST_ELEMENT) && USE(APPKIT)
 
+#import "AppKitSPI.h"
 #import "WebPageProxy.h"
 #import <WebCore/IntRect.h>
 #import <WebCore/LocalizedStrings.h>
 #import <pal/spi/cocoa/NSColorSPI.h>
 
-static const CGFloat dropdownTopMargin = 2;
+static const CGFloat dropdownTopMargin = 3;
+static const CGFloat dropdownVerticalPadding = 4;
 static const CGFloat dropdownRowHeight = 20;
-static const CGFloat dropdownShadowHeight = 5;
-static const CGFloat dropdownShadowBlurRadius = 3;
 static const size_t dropdownMaxSuggestions = 6;
-static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionCell";
+static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionView";
 
 @interface WKDataListSuggestionWindow : NSWindow
 @end
 
-@interface WKDataListSuggestionCell : NSView {
-    RetainPtr<NSTextField> _textField;
-    BOOL _mouseIsOver;
-    BOOL _active;
-}
-
-@property (nonatomic, assign) BOOL active;
-
-- (void)setText:(NSString *)text;
+@interface WKDataListSuggestionView : NSTableCellView
 @end
 
-@interface WKDataListSuggestionTable : NSTableView {
-    RetainPtr<NSScrollView> _enclosingScrollView;
-    Optional<size_t> _activeRow;
-}
-
-- (id)initWithElementRect:(const WebCore::IntRect&)rect;
-- (void)setVisibleRect:(NSRect)rect;
-- (void)setActiveRow:(size_t)row;
-- (Optional<size_t>)currentActiveRow;
-- (void)reload;
+@interface WKDataListSuggestionTableRowView : NSTableRowView
 @end
 
-@interface WKDataListSuggestionsView : NSObject<NSTableViewDataSource, NSTableViewDelegate> {
-@private
-    RetainPtr<WKDataListSuggestionTable> _table;
-    WebKit::WebDataListSuggestionsDropdownMac* _dropdown;
-    Vector<String> _suggestions;
-    NSView *_view;
-    RetainPtr<NSWindow> _enclosingWindow;
-}
+@interface WKDataListSuggestionTableView : NSTableView
+@end
+
+@interface WKDataListSuggestionsController : NSObject<NSTableViewDataSource, NSTableViewDelegate>
 
 - (id)initWithInformation:(WebCore::DataListSuggestionInformation&&)information inView:(NSView *)view;
 - (void)showSuggestionsDropdown:(WebKit::WebDataListSuggestionsDropdownMac*)dropdown;
@@ -82,6 +61,7 @@ static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionCe
 - (void)invalidate;
 
 - (String)currentSelectedString;
+
 @end
 
 namespace WebKit {
@@ -106,7 +86,7 @@ void WebDataListSuggestionsDropdownMac::show(WebCore::DataListSuggestionInformat
         return;
     }
 
-    m_dropdownUI = adoptNS([[WKDataListSuggestionsView alloc] initWithInformation:WTFMove(information) inView:m_view]);
+    m_dropdownUI = adoptNS([[WKDataListSuggestionsController alloc] initWithInformation:WTFMove(information) inView:m_view]);
     [m_dropdownUI showSuggestionsDropdown:this];
 }
 
@@ -148,78 +128,78 @@ void WebDataListSuggestionsDropdownMac::close()
 
 } // namespace WebKit
 
-@implementation WKDataListSuggestionWindow
+@implementation WKDataListSuggestionWindow {
+    RetainPtr<NSVisualEffectView> _backdropView;
+}
+
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)styleMask backing:(NSBackingStoreType)backingStoreType defer:(BOOL)defer
+{
+    self = [super initWithContentRect:contentRect styleMask:styleMask backing:backingStoreType defer:defer];
+    if (!self)
+        return nil;
+
+    self.hasShadow = YES;
+
+    _backdropView = [[NSVisualEffectView alloc] initWithFrame:contentRect];
+    [_backdropView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [_backdropView setMaterial:NSVisualEffectMaterialMenu];
+    [_backdropView setState:NSVisualEffectStateActive];
+    [_backdropView setBlendingMode:NSVisualEffectBlendingModeBehindWindow];
+
+    [self setContentView:_backdropView.get()];
+
+    return self;
+}
+
+- (BOOL)canBecomeKeyWindow
+{
+    return NO;
+}
+
+- (BOOL)hasKeyAppearance
+{
+    return YES;
+}
+
+- (NSWindowShadowOptions)shadowOptions
+{
+    return NSWindowShadowSecondaryWindow;
+}
+
 @end
 
-@implementation WKDataListSuggestionCell
-
-@synthesize active=_active;
+@implementation WKDataListSuggestionView {
+    RetainPtr<NSTextField> _textField;
+}
 
 - (id)initWithFrame:(NSRect)frameRect
 {
     if (!(self = [super initWithFrame:frameRect]))
         return self;
 
-    _textField = adoptNS([[NSTextField alloc] init]);
-    [_textField setEditable:NO];
-    [_textField setBezeled:NO];
-    [_textField setBackgroundColor:[NSColor clearColor]];
-    [self addSubview:_textField.get()];
+    _textField = adoptNS([[NSTextField alloc] initWithFrame:frameRect]);
+    self.textField = _textField.get();
 
-    [self setIdentifier:@"WKDataListSuggestionCell"];
+    [self addSubview:self.textField];
 
-    [self addTrackingRect:self.bounds owner:self userData:nil assumeInside:NO];
+    self.identifier = suggestionCellReuseIdentifier;
+    self.textField.editable = NO;
+    self.textField.bezeled = NO;
+    self.textField.font = [NSFont menuFontOfSize:0];
+    self.textField.drawsBackground = NO;
 
     return self;
 }
 
 - (void)setText:(NSString *)text
 {
-    [_textField setStringValue:text];
-    [_textField sizeToFit];
-
-    NSRect textFieldFrame = [_textField frame];
-    [_textField setFrame:NSMakeRect(0, (NSHeight(self.frame) - NSHeight(textFieldFrame)) / 2, NSWidth(textFieldFrame), NSHeight(textFieldFrame))];
-
-    _mouseIsOver = NO;
-    self.active = NO;
+    self.textField.stringValue = text;
 }
 
-- (void)setActive:(BOOL)shouldActivate
+- (void)setBackgroundStyle:(NSBackgroundStyle)backgroundStyle
 {
-    _active = shouldActivate;
-    [self setNeedsDisplay:YES];
-}
-
-- (void)drawRect:(NSRect)dirtyRect
-{
-    if (self.active) {
-        [[NSColor alternateSelectedControlColor] setFill];
-        [_textField setTextColor:[NSColor alternateSelectedControlTextColor]];
-    } else if (_mouseIsOver) {
-        [[NSColor quaternaryLabelColor] setFill];
-        [_textField setTextColor:[NSColor textColor]];
-    } else {
-        [[NSColor controlBackgroundColor] setFill];
-        [_textField setTextColor:[NSColor textColor]];
-    }
-
-    NSRectFill(dirtyRect);
-    [super drawRect:dirtyRect];
-}
-
-- (void)mouseEntered:(NSEvent *)event
-{
-    [super mouseEntered:event];
-    _mouseIsOver = YES;
-    [self setNeedsDisplay:YES];
-}
-
-- (void)mouseExited:(NSEvent *)event
-{
-    [super mouseExited:event];
-    _mouseIsOver = NO;
-    [self setNeedsDisplay:YES];
+    [super setBackgroundStyle:backgroundStyle];
+    self.textField.textColor = backgroundStyle == NSBackgroundStyleLight ? [NSColor textColor] : [NSColor alternateSelectedControlTextColor];
 }
 
 - (BOOL)acceptsFirstResponder
@@ -229,16 +209,28 @@ void WebDataListSuggestionsDropdownMac::close()
 
 @end
 
-@implementation WKDataListSuggestionTable
+@implementation WKDataListSuggestionTableRowView
+
+- (void)drawSelectionInRect:(NSRect)dirtyRect
+{
+    [self setEmphasized:YES];
+    [super drawSelectionInRect:dirtyRect];
+}
+
+@end
+
+@implementation WKDataListSuggestionTableView {
+    RetainPtr<NSScrollView> _enclosingScrollView;
+}
 
 - (id)initWithElementRect:(const WebCore::IntRect&)rect
 {
     if (!(self = [super initWithFrame:NSMakeRect(0, 0, rect.width(), 0)]))
         return self;
 
-    [self setIntercellSpacing:NSZeroSize];
     [self setHeaderView:nil];
-    [self setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleNone];
+    [self setBackgroundColor:[NSColor clearColor]];
+    [self setIntercellSpacing:NSMakeSize(0, self.intercellSpacing.height)];
 
     auto column = adoptNS([[NSTableColumn alloc] init]);
     [column setWidth:rect.width()];
@@ -246,48 +238,24 @@ void WebDataListSuggestionsDropdownMac::close()
 
     _enclosingScrollView = adoptNS([[NSScrollView alloc] init]);
     [_enclosingScrollView setHasVerticalScroller:YES];
-    [_enclosingScrollView setVerticalScrollElasticity:NSScrollElasticityNone];
+    [_enclosingScrollView setVerticalScrollElasticity:NSScrollElasticityAllowed];
     [_enclosingScrollView setHorizontalScrollElasticity:NSScrollElasticityNone];
     [_enclosingScrollView setDocumentView:self];
-
-    auto dropShadow = adoptNS([[NSShadow alloc] init]);
-    [dropShadow setShadowColor:[NSColor systemGrayColor]];
-    [dropShadow setShadowOffset:NSMakeSize(0, dropdownShadowHeight)];
-    [dropShadow setShadowBlurRadius:dropdownShadowBlurRadius];
-    [_enclosingScrollView setWantsLayer:YES];
-    [_enclosingScrollView setShadow:dropShadow.get()];
+    [_enclosingScrollView setDrawsBackground:NO];
+    [[_enclosingScrollView contentView] setAutomaticallyAdjustsContentInsets:NO];
+    [[_enclosingScrollView contentView] setContentInsets:NSEdgeInsetsMake(dropdownVerticalPadding, 0, dropdownVerticalPadding, 0)];
+    [[_enclosingScrollView contentView] scrollToPoint:NSMakePoint(0, -dropdownVerticalPadding)];
 
     return self;
 }
 
-- (void)setVisibleRect:(NSRect)rect
+- (void)layout
 {
-    [self setFrame:NSMakeRect(0, 0, NSWidth(rect) - dropdownShadowHeight * 2, 0)];
-    [_enclosingScrollView setFrame:NSMakeRect(dropdownShadowHeight, dropdownShadowHeight, NSWidth(rect) - dropdownShadowHeight * 2, NSHeight(rect) - dropdownShadowHeight)];
-}
-
-- (Optional<size_t>)currentActiveRow
-{
-    return _activeRow;
-}
-
-- (void)setActiveRow:(size_t)row
-{
-    if (_activeRow) {
-        WKDataListSuggestionCell *oldCell = (WKDataListSuggestionCell *)[self viewAtColumn:0 row:_activeRow.value() makeIfNecessary:NO];
-        oldCell.active = NO;
-    }
-
-    [self scrollRowToVisible:row];
-    WKDataListSuggestionCell *newCell = (WKDataListSuggestionCell *)[self viewAtColumn:0 row:row makeIfNecessary:NO];
-    newCell.active = YES;
-
-    _activeRow = row;
+    [_enclosingScrollView setFrame:[_enclosingScrollView superview].bounds];
 }
 
 - (void)reload
 {
-    _activeRow = WTF::nullopt;
     [self reloadData];
 }
 
@@ -309,24 +277,33 @@ void WebDataListSuggestionsDropdownMac::close()
 
 @end
 
-@implementation WKDataListSuggestionsView
+@implementation WKDataListSuggestionsController {
+    WebKit::WebDataListSuggestionsDropdownMac* _dropdown;
+    Vector<String> _suggestions;
+    NSView *_presentingView;
 
-- (id)initWithInformation:(WebCore::DataListSuggestionInformation&&)information inView:(NSView *)view
+    RetainPtr<WKDataListSuggestionWindow> _enclosingWindow;
+    RetainPtr<WKDataListSuggestionTableView> _table;
+}
+
+- (id)initWithInformation:(WebCore::DataListSuggestionInformation&&)information inView:(NSView *)presentingView
 {
     if (!(self = [super init]))
         return self;
 
-    _view = view;
+    _presentingView = presentingView;
     _suggestions = WTFMove(information.suggestions);
-    _table = adoptNS([[WKDataListSuggestionTable alloc] initWithElementRect:information.elementRect]);
+    _table = adoptNS([[WKDataListSuggestionTableView alloc] initWithElementRect:information.elementRect]);
 
-    _enclosingWindow = adoptNS([[WKDataListSuggestionWindow alloc] initWithContentRect:NSZeroRect styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO]);
+    _enclosingWindow = adoptNS([[WKDataListSuggestionWindow alloc] initWithContentRect:NSZeroRect styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskFullSizeContentView) backing:NSBackingStoreBuffered defer:NO]);
     [_enclosingWindow setReleasedWhenClosed:NO];
     [_enclosingWindow setFrame:[self dropdownRectForElementRect:information.elementRect] display:YES];
+    [_enclosingWindow setTitleVisibility:NSWindowTitleHidden];
+    [_enclosingWindow setTitlebarAppearsTransparent:YES];
+    [_enclosingWindow setMovable:NO];
     [_enclosingWindow setBackgroundColor:[NSColor clearColor]];
     [_enclosingWindow setOpaque:NO];
 
-    [_table setVisibleRect:[_enclosingWindow frame]];
     [_table setDelegate:self];
     [_table setDataSource:self];
     [_table setAction:@selector(selectedRow:)];
@@ -337,9 +314,10 @@ void WebDataListSuggestionsDropdownMac::close()
 
 - (String)currentSelectedString
 {
-    Optional<size_t> selectedRow = [_table currentActiveRow];
-    if (selectedRow && selectedRow.value() < _suggestions.size())
-        return _suggestions.at(selectedRow.value());
+    NSInteger selectedRow = [_table selectedRow];
+
+    if (selectedRow >= 0 && static_cast<size_t>(selectedRow) < _suggestions.size())
+        return _suggestions.at(selectedRow);
 
     return String();
 }
@@ -350,7 +328,6 @@ void WebDataListSuggestionsDropdownMac::close()
     [_table reload];
 
     [_enclosingWindow setFrame:[self dropdownRectForElementRect:information.elementRect] display:YES];
-    [_table setVisibleRect:[_enclosingWindow frame]];
 }
 
 - (void)notifyAccessibilityClients:(NSString *)info
@@ -364,19 +341,18 @@ void WebDataListSuggestionsDropdownMac::close()
 - (void)moveSelectionByDirection:(const String&)direction
 {
     size_t size = _suggestions.size();
-    Optional<size_t> oldSelection = [_table currentActiveRow];
+    NSInteger oldSelection = [_table selectedRow];
 
     size_t newSelection;
-    if (oldSelection) {
-        size_t oldValue = oldSelection.value();
+    if (oldSelection != -1) {
         if (direction == "Up")
-            newSelection = oldValue ? (oldValue - 1) : (size - 1);
+            newSelection = oldSelection ? (oldSelection - 1) : (size - 1);
         else
-            newSelection = (oldValue + 1) % size;
+            newSelection = (oldSelection + 1) % size;
     } else
         newSelection = (direction == "Up") ? (size - 1) : 0;
 
-    [_table setActiveRow:newSelection];
+    [_table selectRowIndexes:[NSIndexSet indexSetWithIndex:newSelection] byExtendingSelection:NO];
 
     // Notify accessibility clients of new selection.
     NSString *currentSelectedString = [self currentSelectedString];
@@ -393,7 +369,7 @@ void WebDataListSuggestionsDropdownMac::close()
 
     _table = nil;
 
-    [[_view window] removeChildWindow:_enclosingWindow.get()];
+    [[_presentingView window] removeChildWindow:_enclosingWindow.get()];
     [_enclosingWindow close];
     _enclosingWindow = nil;
 
@@ -404,9 +380,10 @@ void WebDataListSuggestionsDropdownMac::close()
 
 - (NSRect)dropdownRectForElementRect:(const WebCore::IntRect&)rect
 {
-    NSRect windowRect = [[_view window] convertRectToScreen:[_view convertRect:rect toView:nil]];
-    CGFloat height = std::min(_suggestions.size(), dropdownMaxSuggestions) * dropdownRowHeight;
-    return NSMakeRect(NSMinX(windowRect) - dropdownShadowHeight, NSMinY(windowRect) - height - dropdownShadowHeight - dropdownTopMargin, rect.width() + dropdownShadowHeight * 2, height + dropdownShadowHeight);
+    NSRect windowRect = [[_presentingView window] convertRectToScreen:[_presentingView convertRect:rect toView:nil]];
+    auto visibleSuggestionCount = std::min(_suggestions.size(), dropdownMaxSuggestions);
+    CGFloat height = visibleSuggestionCount * (dropdownRowHeight + [_table intercellSpacing].height) + (dropdownVerticalPadding * 2);
+    return NSMakeRect(NSMinX(windowRect), NSMinY(windowRect) - height - dropdownTopMargin, rect.width(), height);
 }
 
 - (void)showSuggestionsDropdown:(WebKit::WebDataListSuggestionsDropdownMac*)dropdown
@@ -414,7 +391,7 @@ void WebDataListSuggestionsDropdownMac::close()
     _dropdown = dropdown;
     [[_enclosingWindow contentView] addSubview:[_table enclosingScrollView]];
     [_table reload];
-    [[_view window] addChildWindow:_enclosingWindow.get() ordered:NSWindowAbove];
+    [[_presentingView window] addChildWindow:_enclosingWindow.get() ordered:NSWindowAbove];
     [[_table enclosingScrollView] flashScrollers];
 
     // Notify accessibility clients of datalist becoming visible.
@@ -438,20 +415,21 @@ void WebDataListSuggestionsDropdownMac::close()
     return dropdownRowHeight;
 }
 
+- (NSTableRowView *)tableView:(NSTableView *)tableView rowViewForRow:(NSInteger)row
+{
+    return [[[WKDataListSuggestionTableRowView alloc] init] autorelease];
+}
+
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
-    WKDataListSuggestionCell *result = [tableView makeViewWithIdentifier:suggestionCellReuseIdentifier owner:self];
+    WKDataListSuggestionView *result = [tableView makeViewWithIdentifier:suggestionCellReuseIdentifier owner:self];
 
     if (!result) {
-        result = [[[WKDataListSuggestionCell alloc] initWithFrame:NSMakeRect(0, 0, tableView.frame.size.width, dropdownRowHeight)] autorelease];
+        result = [[[WKDataListSuggestionView alloc] initWithFrame:NSMakeRect(0, 0, tableView.frame.size.width, dropdownRowHeight)] autorelease];
         [result setIdentifier:suggestionCellReuseIdentifier];
     }
 
-    [result setText:_suggestions.at(row)];
-
-    Optional<size_t> currentActiveRow = [_table currentActiveRow];
-    if (currentActiveRow && static_cast<size_t>(row) == currentActiveRow.value())
-        result.active = YES;
+    result.text = _suggestions.at(row);
 
     return result;
 }
