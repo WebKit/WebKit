@@ -39,8 +39,10 @@
 #include "GPUBufferBinding.h"
 #include "GPUBufferDescriptor.h"
 #include "GPUCommandBuffer.h"
+#include "GPUComputePipeline.h"
 #include "GPUComputePipelineDescriptor.h"
 #include "GPUProgrammableStageDescriptor.h"
+#include "GPURenderPipeline.h"
 #include "GPURenderPipelineDescriptor.h"
 #include "GPUSampler.h"
 #include "GPUSamplerDescriptor.h"
@@ -61,6 +63,7 @@
 #include "WebGPUCommandEncoder.h"
 #include "WebGPUComputePipeline.h"
 #include "WebGPUComputePipelineDescriptor.h"
+#include "WebGPUPipeline.h"
 #include "WebGPUPipelineLayout.h"
 #include "WebGPUPipelineLayoutDescriptor.h"
 #include "WebGPUProgrammableStageDescriptor.h"
@@ -124,17 +127,32 @@ WebGPUDevice::WebGPUDevice(ScriptExecutionContext& context, Ref<const WebGPUAdap
 {
     ASSERT(m_scriptExecutionContext.isDocument());
 
-    LockHolder lock(instancesMutex());
-    instances(lock).add(this);
+    {
+        LockHolder lock(instancesMutex());
+        instances(lock).add(this);
+    }
 }
 
 WebGPUDevice::~WebGPUDevice()
 {
     InspectorInstrumentation::willDestroyWebGPUDevice(*this);
 
-    LockHolder lock(instancesMutex());
-    ASSERT(instances(lock).contains(this));
-    instances(lock).remove(this);
+    {
+        LockHolder lock(WebGPUPipeline::instancesMutex());
+        for (auto& entry : WebGPUPipeline::instances(lock)) {
+            if (entry.value == this) {
+                // Don't remove any WebGPUPipeline from the instances list, as they may still exist.
+                // Only remove the association with a WebGPU device.
+                entry.value = nullptr;
+            }
+        }
+    }
+
+    {
+        LockHolder lock(instancesMutex());
+        ASSERT(instances(lock).contains(this));
+        instances(lock).remove(this);
+    }
 }
 
 Ref<WebGPUBuffer> WebGPUDevice::createBuffer(const GPUBufferDescriptor& descriptor) const
@@ -205,31 +223,47 @@ Ref<WebGPUShaderModule> WebGPUDevice::createShaderModule(const WebGPUShaderModul
 {
     // FIXME: What can be validated here?
     auto module = m_device->tryCreateShaderModule(GPUShaderModuleDescriptor { descriptor.code });
-    return WebGPUShaderModule::create(WTFMove(module));
+    return WebGPUShaderModule::create(WTFMove(module), descriptor.code);
 }
 
-Ref<WebGPURenderPipeline> WebGPUDevice::createRenderPipeline(const WebGPURenderPipelineDescriptor& descriptor) const
+Ref<WebGPURenderPipeline> WebGPUDevice::createRenderPipeline(const WebGPURenderPipelineDescriptor& descriptor)
 {
     m_errorScopes->setErrorPrefix("GPUDevice.createRenderPipeline(): ");
 
     auto gpuDescriptor = descriptor.tryCreateGPURenderPipelineDescriptor(m_errorScopes);
     if (!gpuDescriptor)
-        return WebGPURenderPipeline::create(nullptr, m_errorScopes);
+        return WebGPURenderPipeline::create(*this, nullptr, m_errorScopes, WTF::nullopt, WTF::nullopt);
 
-    auto pipeline = m_device->tryCreateRenderPipeline(*gpuDescriptor, m_errorScopes);
-    return WebGPURenderPipeline::create(WTFMove(pipeline), m_errorScopes);
+    auto gpuPipeline = m_device->tryCreateRenderPipeline(*gpuDescriptor, m_errorScopes);
+
+    WebGPUPipeline::ShaderData vertexShader = { descriptor.vertexStage.module, descriptor.vertexStage.entryPoint };
+
+    Optional<WebGPUPipeline::ShaderData> fragmentShader;
+    if (descriptor.fragmentStage)
+        fragmentShader = { { descriptor.fragmentStage.value().module, descriptor.fragmentStage.value().entryPoint } };
+
+    auto webGPUPipeline = WebGPURenderPipeline::create(*this, WTFMove(gpuPipeline), m_errorScopes, vertexShader, fragmentShader);
+    if (webGPUPipeline->isValid())
+        InspectorInstrumentation::didCreateWebGPUPipeline(*this, webGPUPipeline.get());
+    return webGPUPipeline;
 }
 
-Ref<WebGPUComputePipeline> WebGPUDevice::createComputePipeline(const WebGPUComputePipelineDescriptor& descriptor) const
+Ref<WebGPUComputePipeline> WebGPUDevice::createComputePipeline(const WebGPUComputePipelineDescriptor& descriptor)
 {
     m_errorScopes->setErrorPrefix("GPUDevice.createComputePipeline(): ");
 
     auto gpuDescriptor = descriptor.tryCreateGPUComputePipelineDescriptor(m_errorScopes);
     if (!gpuDescriptor)
-        return WebGPUComputePipeline::create(nullptr, m_errorScopes);
+        return WebGPUComputePipeline::create(*this, nullptr, m_errorScopes, WTF::nullopt);
 
-    auto pipeline = m_device->tryCreateComputePipeline(*gpuDescriptor, m_errorScopes);
-    return WebGPUComputePipeline::create(WTFMove(pipeline), m_errorScopes);
+    auto gpuPipeline = m_device->tryCreateComputePipeline(*gpuDescriptor, m_errorScopes);
+
+    WebGPUPipeline::ShaderData computeShader = { descriptor.computeStage.module, descriptor.computeStage.entryPoint };
+
+    auto webGPUPipeline = WebGPUComputePipeline::create(*this, WTFMove(gpuPipeline), m_errorScopes, computeShader);
+    if (webGPUPipeline->isValid())
+        InspectorInstrumentation::didCreateWebGPUPipeline(*this, webGPUPipeline.get());
+    return webGPUPipeline;
 }
 
 Ref<WebGPUCommandEncoder> WebGPUDevice::createCommandEncoder() const

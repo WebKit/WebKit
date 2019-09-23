@@ -25,27 +25,83 @@
 
 WI.ShaderProgram = class ShaderProgram extends WI.Object
 {
-    constructor(identifier, canvas)
+    constructor(identifier, programType, canvas)
     {
         console.assert(identifier);
+        console.assert(Object.values(ShaderProgram.ProgramType).includes(programType));
         console.assert(canvas instanceof WI.Canvas);
+        console.assert(ShaderProgram.contextTypeSupportsProgramType(canvas.contextType, programType));
 
         super();
 
         this._identifier = identifier;
+        this._programType = programType;
         this._canvas = canvas;
-        this._uniqueDisplayNumber = canvas.nextShaderProgramDisplayNumber();
         this._disabled = false;
+    }
+
+    // Static
+
+    static contextTypeSupportsProgramType(contextType, programType)
+    {
+        switch (contextType) {
+        case WI.Canvas.ContextType.WebGL:
+        case WI.Canvas.ContextType.WebGL2:
+            return programType === ShaderProgram.ProgramType.Render;
+
+        case WI.Canvas.ContextType.WebGPU:
+            return programType === ShaderProgram.ProgramType.Compute
+                || programType === ShaderProgram.ProgramType.Render;
+        }
+
+        console.assert();
+        return false;
+    }
+
+    static programTypeSupportsShaderType(programType, shaderType)
+    {
+        switch (programType) {
+        case ShaderProgram.ProgramType.Compute:
+            return shaderType === ShaderProgram.ShaderType.Compute;
+
+        case ShaderProgram.ProgramType.Render:
+            return shaderType === ShaderProgram.ShaderType.Fragment
+                || shaderType === ShaderProgram.ShaderType.Vertex;
+        }
+
+        console.assert();
+        return false;
     }
 
     // Public
 
     get identifier() { return this._identifier; }
+    get programType() { return this._programType; }
     get canvas() { return this._canvas; }
 
     get displayName()
     {
-        return WI.UIString("Program %d").format(this._uniqueDisplayNumber);
+        let format = null;
+        switch (this._canvas.contextType) {
+        case WI.Canvas.ContextType.WebGL:
+        case WI.Canvas.ContextType.WebGL2:
+            format = WI.UIString("Program %d");
+            break;
+        case WI.Canvas.ContextType.WebGPU:
+            switch (this._programType) {
+            case ShaderProgram.ProgramType.Compute:
+                format = WI.UIString("Compute Pipeline %d");
+                break;
+            case ShaderProgram.ProgramType.Render:
+                format = WI.UIString("Render Pipeline %d");
+                break;
+            }
+            break;
+        }
+        console.assert(format);
+        if (!this._uniqueDisplayNumber)
+            this._uniqueDisplayNumber = this._canvas.nextShaderProgramDisplayNumberForProgramType(this._programType);
+        return format.format(this._uniqueDisplayNumber);
     }
 
     get disabled()
@@ -55,6 +111,12 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
 
     set disabled(disabled)
     {
+        console.assert(this._programType === ShaderProgram.ProgramType.Render);
+        console.assert(this._canvas.contextType === WI.Canvas.ContextType.WebGL || this._canvas.contextType === WI.Canvas.ContextType.WebGL2);
+
+        if (this._canvas.contextType === WI.Canvas.ContextType.WebGPU)
+            return;
+
         if (this._disabled === disabled)
             return;
 
@@ -65,67 +127,57 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
         this.dispatchEventToListeners(ShaderProgram.Event.DisabledChanged);
     }
 
-    requestVertexShaderSource(callback)
+    requestShaderSource(shaderType, callback)
     {
-        this._requestShaderSource(CanvasAgent.ShaderType.Vertex, callback);
-    }
+        console.assert(Object.values(ShaderProgram.ShaderType).includes(shaderType));
+        console.assert(ShaderProgram.programTypeSupportsShaderType(this._programType, shaderType));
 
-    requestFragmentShaderSource(callback)
-    {
-        this._requestShaderSource(CanvasAgent.ShaderType.Fragment, callback);
-    }
-
-    updateVertexShader(source)
-    {
-        this._updateShader(CanvasAgent.ShaderType.Vertex, source);
-    }
-
-    updateFragmentShader(source)
-    {
-        this._updateShader(CanvasAgent.ShaderType.Fragment, source);
-    }
-
-    showHighlight()
-    {
-        const highlighted = true;
-        CanvasAgent.setShaderProgramHighlighted(this._identifier, highlighted, (error) => {
-            console.assert(!error, error);
-        });
-    }
-
-    hideHighlight()
-    {
-        const highlighted = false;
-        CanvasAgent.setShaderProgramHighlighted(this._identifier, highlighted, (error) => {
-            console.assert(!error, error);
-        });
-    }
-
-    // Private
-
-    _requestShaderSource(shaderType, callback)
-    {
-        CanvasAgent.requestShaderSource(this._identifier, shaderType, (error, content) => {
+        // COMPATIBILITY (iOS 13): `content` was renamed to `source`.
+        CanvasAgent.requestShaderSource(this._identifier, shaderType, (error, source) => {
             if (error) {
+                WI.reportInternalError(error);
                 callback(null);
                 return;
             }
 
-            callback(content);
+            callback(source);
         });
     }
 
-    _updateShader(shaderType, source)
+    updateShader(shaderType, source)
     {
-        CanvasAgent.updateShader(this._identifier, shaderType, source, (error) => {
-            console.assert(!error, error);
-        });
+        console.assert(Object.values(ShaderProgram.ShaderType).includes(shaderType));
+        console.assert(ShaderProgram.programTypeSupportsShaderType(this._programType, shaderType));
+
+        CanvasAgent.updateShader(this._identifier, shaderType, source);
+    }
+
+    showHighlight()
+    {
+        console.assert(this._programType === ShaderProgram.ProgramType.Render);
+        console.assert(this._canvas.contextType === WI.Canvas.ContextType.WebGL || this._canvas.contextType === WI.Canvas.ContextType.WebGL2);
+
+        CanvasAgent.setShaderProgramHighlighted(this._identifier, true);
+    }
+
+    hideHighlight()
+    {
+        console.assert(this._programType === ShaderProgram.ProgramType.Render);
+        console.assert(this._canvas.contextType === WI.Canvas.ContextType.WebGL || this._canvas.contextType === WI.Canvas.ContextType.WebGL2);
+
+        CanvasAgent.setShaderProgramHighlighted(this._identifier, false);
     }
 };
 
+WI.ShaderProgram.ProgramType = {
+    Compute: "compute",
+    Render: "render",
+};
+
 WI.ShaderProgram.ShaderType = {
-    Fragment: "shader-type-fragment",
-    Vertex: "shader-type-vertex",
+    Compute: "compute",
+    Fragment: "fragment",
+    Vertex: "vertex",
 };
 
 WI.ShaderProgram.Event = {

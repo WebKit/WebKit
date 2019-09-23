@@ -27,6 +27,8 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUPipeline.h"
+#include "GPUProgrammableStageDescriptor.h"
 #include "GPURenderPipelineDescriptor.h"
 #include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
@@ -46,9 +48,15 @@ class GPUErrorScopes;
 using PlatformRenderPipeline = MTLRenderPipelineState;
 using PlatformRenderPipelineSmartPtr = RetainPtr<MTLRenderPipelineState>;
 
-class GPURenderPipeline : public RefCounted<GPURenderPipeline> {
+class GPURenderPipeline final : public GPUPipeline {
 public:
+    virtual ~GPURenderPipeline();
+
     static RefPtr<GPURenderPipeline> tryCreate(const GPUDevice&, const GPURenderPipelineDescriptor&, GPUErrorScopes&);
+
+    bool isRenderPipeline() const { return true; }
+
+    bool recompile(const GPUDevice&, GPUProgrammableStageDescriptor&& vertexStage, Optional<GPUProgrammableStageDescriptor>&& fragmentStage);
 
 #if USE(METAL)
     MTLDepthStencilState *depthStencilState() const { return m_depthStencilState.get(); }
@@ -59,15 +67,21 @@ public:
 
 private:
 #if USE(METAL)
-    GPURenderPipeline(RetainPtr<MTLDepthStencilState>&&, PlatformRenderPipelineSmartPtr&&, GPUPrimitiveTopology, Optional<GPUIndexFormat>);
+    GPURenderPipeline(RetainPtr<MTLDepthStencilState>&&, PlatformRenderPipelineSmartPtr&&, GPUPrimitiveTopology, Optional<GPUIndexFormat>, const RefPtr<GPUPipelineLayout>&, const GPURenderPipelineDescriptorBase&);
 
     RetainPtr<MTLDepthStencilState> m_depthStencilState;
 #endif // USE(METAL)
     PlatformRenderPipelineSmartPtr m_platformRenderPipeline;
     GPUPrimitiveTopology m_primitiveTopology;
     Optional<GPUIndexFormat> m_indexFormat;
+
+    // Preserved for Web Inspector recompilation.
+    RefPtr<GPUPipelineLayout> m_layout;
+    GPURenderPipelineDescriptorBase m_renderDescriptorBase;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_GPUPIPELINE(WebCore::GPURenderPipeline, isRenderPipeline())
 
 #endif // ENABLE(WEBGPU)

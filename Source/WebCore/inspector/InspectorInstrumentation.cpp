@@ -1079,29 +1079,29 @@ void InspectorInstrumentation::didEnableExtensionImpl(InstrumentingAgents& instr
         canvasAgent->didEnableExtension(contextWebGLBase, extension);
 }
 
-void InspectorInstrumentation::didCreateProgramImpl(InstrumentingAgents& instrumentingAgents, WebGLRenderingContextBase& contextWebGLBase, WebGLProgram& program)
+void InspectorInstrumentation::didCreateWebGLProgramImpl(InstrumentingAgents& instrumentingAgents, WebGLRenderingContextBase& contextWebGLBase, WebGLProgram& program)
 {
     if (InspectorCanvasAgent* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
-        canvasAgent->didCreateProgram(contextWebGLBase, program);
+        canvasAgent->didCreateWebGLProgram(contextWebGLBase, program);
 }
 
-void InspectorInstrumentation::willDeleteProgramImpl(InstrumentingAgents& instrumentingAgents, WebGLProgram& program)
+void InspectorInstrumentation::willDestroyWebGLProgramImpl(InstrumentingAgents& instrumentingAgents, WebGLProgram& program)
 {
     if (InspectorCanvasAgent* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
-        canvasAgent->willDeleteProgram(program);
+        canvasAgent->willDestroyWebGLProgram(program);
 }
 
-bool InspectorInstrumentation::isShaderProgramDisabledImpl(InstrumentingAgents& instrumentingAgents, WebGLProgram& program)
+bool InspectorInstrumentation::isWebGLProgramDisabledImpl(InstrumentingAgents& instrumentingAgents, WebGLProgram& program)
 {
     if (InspectorCanvasAgent* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
-        return canvasAgent->isShaderProgramDisabled(program);
+        return canvasAgent->isWebGLProgramDisabled(program);
     return false;
 }
 
-bool InspectorInstrumentation::isShaderProgramHighlightedImpl(InstrumentingAgents& instrumentingAgents, WebGLProgram& program)
+bool InspectorInstrumentation::isWebGLProgramHighlightedImpl(InstrumentingAgents& instrumentingAgents, WebGLProgram& program)
 {
     if (InspectorCanvasAgent* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
-        return canvasAgent->isShaderProgramHighlighted(program);
+        return canvasAgent->isWebGLProgramHighlighted(program);
     return false;
 }
 #endif
@@ -1123,6 +1123,18 @@ void InspectorInstrumentation::willConfigureSwapChainImpl(InstrumentingAgents& i
 {
     if (auto* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
         canvasAgent->willConfigureSwapChain(contextGPU, newSwapChain);
+}
+
+void InspectorInstrumentation::didCreateWebGPUPipelineImpl(InstrumentingAgents& instrumentingAgents, WebGPUDevice& device, WebGPUPipeline& pipeline)
+{
+    if (auto* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
+        canvasAgent->didCreateWebGPUPipeline(device, pipeline);
+}
+
+void InspectorInstrumentation::willDestroyWebGPUPipelineImpl(InstrumentingAgents& instrumentingAgents, WebGPUPipeline& pipeline)
+{
+    if (auto* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
+        canvasAgent->willDestroyWebGPUPipeline(pipeline);
 }
 #endif
 

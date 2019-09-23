@@ -99,8 +99,8 @@ public:
     Ref<WebGPUBindGroup> createBindGroup(const WebGPUBindGroupDescriptor&) const;
 
     Ref<WebGPUShaderModule> createShaderModule(const WebGPUShaderModuleDescriptor&) const;
-    Ref<WebGPURenderPipeline> createRenderPipeline(const WebGPURenderPipelineDescriptor&) const;
-    Ref<WebGPUComputePipeline> createComputePipeline(const WebGPUComputePipelineDescriptor&) const;
+    Ref<WebGPURenderPipeline> createRenderPipeline(const WebGPURenderPipelineDescriptor&);
+    Ref<WebGPUComputePipeline> createComputePipeline(const WebGPUComputePipelineDescriptor&);
 
     Ref<WebGPUCommandEncoder> createCommandEncoder() const;
 

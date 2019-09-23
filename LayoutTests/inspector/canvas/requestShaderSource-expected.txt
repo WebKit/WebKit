@@ -1,28 +1,8 @@
-Test compilation of shaders after being attached to a program, with and without syntax errors.
+Common tests for Canvas.requestShaderSource command.
 
 
-== Running test suite: Canvas.getShaderSource
--- Running test case: Canvas.requestShaderSource.vertexShader
-
-    void main(void) {
-        gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
-    }
-
-
--- Running test case: Canvas.requestShaderSource.fragmentShader
-
-    precision mediump float;
-
-    void main(void) {
-        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-    }
-
-
--- Running test case: Canvas.requestShaderSource.invalidProgramId
+== Running test suite: Canvas.requestShaderSource
+-- Running test case: Canvas.requestShaderSource.ProgramId.Invalid
 PASS: Should produce an error.
 Error: Missing program for given programId
-
--- Running test case: Canvas.requestShaderSource.invalidShaderType
-PASS: Should produce an error.
-Error: Missing shader for given shaderType
 

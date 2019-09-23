@@ -10406,6 +10406,10 @@
 		9175CE5921E281EC00DF2C28 /* JSInspectorAuditAccessibilityObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInspectorAuditAccessibilityObject.cpp; sourceTree = "<group>"; };
 		9175CE5A21E281ED00DF2C27 /* InspectorAuditAccessibilityObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAuditAccessibilityObject.h; sourceTree = "<group>"; };
 		9175CE5A21E281ED00DF2C28 /* JSInspectorAuditAccessibilityObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInspectorAuditAccessibilityObject.h; sourceTree = "<group>"; };
+		9186F3B32329FB0500AFF857 /* GPUPipeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUPipeline.h; sourceTree = "<group>"; };
+		9186F3B62329FB4E00AFF857 /* WebGPUPipeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUPipeline.cpp; sourceTree = "<group>"; };
+		9186F3B72329FB4F00AFF857 /* WebGPUPipeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUPipeline.h; sourceTree = "<group>"; };
+		9186F3BA2329FE6800AFF857 /* GPUPipeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPUPipeline.cpp; sourceTree = "<group>"; };
 		91B8F0B321953D65000C2B00 /* CertificateInfoBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CertificateInfoBase.h; sourceTree = "<group>"; };
 		91B952221F58A58000931DC2 /* RecordingSwizzleTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordingSwizzleTypes.h; sourceTree = "<group>"; };
 		91C9F2F81AE3BE240095B61C /* AXTextStateChangeIntent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AXTextStateChangeIntent.h; sourceTree = "<group>"; };
@@ -18394,6 +18398,8 @@
 				D08AA02F220D0BD50058C502 /* GPULoadOp.h */,
 				D09AFB3722D7D5C600C4538C /* GPUObjectBase.h */,
 				D09AFB1922D6698A00C4538C /* GPUOutOfMemoryError.h */,
+				9186F3BA2329FE6800AFF857 /* GPUPipeline.cpp */,
+				9186F3B32329FB0500AFF857 /* GPUPipeline.h */,
 				312FF8C421A4C2F400EB199D /* GPUPipelineDescriptorBase.h */,
 				D003288721C9A4E500622AA6 /* GPUPipelineLayout.cpp */,
 				D003288621C9A4E500622AA6 /* GPUPipelineLayout.h */,
@@ -26129,6 +26135,8 @@
 				D09AFB0322D40CC500C4538C /* WebGPUDeviceErrorScopes.idl */,
 				D09AC00A231735BE00187762 /* WebGPUDeviceEventHandler.h */,
 				D09AC00B231735BE00187762 /* WebGPUDeviceEventHandler.idl */,
+				9186F3B62329FB4E00AFF857 /* WebGPUPipeline.cpp */,
+				9186F3B72329FB4F00AFF857 /* WebGPUPipeline.h */,
 				D0C419F02183EB31009EC1DE /* WebGPUPipelineDescriptorBase.h */,
 				D0C419F12183EB31009EC1DE /* WebGPUPipelineDescriptorBase.idl */,
 				D05A99E521C9BF2C00032B75 /* WebGPUPipelineLayout.cpp */,

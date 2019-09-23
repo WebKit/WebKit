@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.content-view.shader-program > .shader {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-}
+#pragma once
 
-.content-view.shader-program > .shader.compute {
-    right: 0;
-    left: 0;
-}
+#if ENABLE(WEBGPU)
 
-body[dir=ltr] .content-view.shader-program > .shader.vertex,
-body[dir=rtl] .content-view.shader-program > .shader.fragment {
-    width: calc(50% - 1px);
-    left: 0;
-}
+#include <wtf/RefCounted.h>
 
-body[dir=ltr] .content-view.shader-program > .shader.fragment,
-body[dir=rtl] .content-view.shader-program > .shader.vertex {
-    width: calc(50% + 1px);
-    right: 0;
-}
+namespace WebCore {
 
-.content-view.shader-program > .shader + .shader {
-    border-left: 1px solid var(--border-color);
-}
+class GPUPipeline : public RefCounted<GPUPipeline> {
+public:
+    virtual ~GPUPipeline();
 
-.content-view.shader-program > .shader > header > * {
-    padding: 2px 4px;
-    border-bottom: 1px solid lightgrey;
-}
+    virtual bool isRenderPipeline() const { return false; }
+    virtual bool isComputePipeline() const { return false; }
+};
 
-.content-view.shader-program > .shader > header > .shader-type {
-    background-color: hsl(0, 0%, 95%);
-}
+} // namespace WebCore
 
-@media (prefers-color-scheme: dark) {
-    .content-view.shader-program > .shader > header {
-        background-color: var(--background-color);
-        border-bottom-color: var(--text-color-quaternary);
-    }
-}
+#define SPECIALIZE_TYPE_TRAITS_GPUPIPELINE(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
+    static bool isType(const WebCore::GPUPipeline& pipeline) { return pipeline.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
+#endif // ENABLE(WEBGPU)

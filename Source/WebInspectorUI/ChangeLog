@@ -1,3 +1,79 @@
+2019-09-23  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: show WebGPU shader pipelines
+        https://bugs.webkit.org/show_bug.cgi?id=201675
+        <rdar://problem/55543450>
+
+        Reviewed by Joseph Pecoraro.
+
+        Show WebGPU shader pipelines ("programs") underneath each corresponding WebGPU device.
+
+        Allow editing of attached shader modules for each WebGPU shader pipeline, but don't allow
+        highlighting/disabling, as WebGPU pipelines don't have those capabilities/concepts yet.
+
+        * UserInterface/Protocol/CanvasObserver.js:
+        (WI.CanvasObserver.prototype.programCreated):
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager.prototype.programCreated):
+
+        * UserInterface/Models/Canvas.js:
+        (WI.Canvas.prototype.nextShaderProgramDisplayNumberForProgramType): Added.
+        (WI.Canvas.prototype.nextShaderProgramDisplayNumber): Deleted.
+
+        * UserInterface/Models/ShaderProgram.js:
+        (WI.ShaderProgram):
+        (WI.ShaderProgram.contextTypeSupportsProgramType): Added.
+        (WI.ShaderProgram.programTypeSupportsShaderType): Added.
+        (WI.ShaderProgram.prototype.get programType): Added.
+        (WI.ShaderProgram.prototype.get displayName):
+        (WI.ShaderProgram.prototype.set disabled):
+        (WI.ShaderProgram.prototype.requestShaderSource):
+        (WI.ShaderProgram.prototype.updateShader):
+        (WI.ShaderProgram.prototype.showHighlight):
+        (WI.ShaderProgram.prototype.hideHighlight):
+        (WI.ShaderProgram.prototype.requestVertexShaderSource): Deleted.
+        (WI.ShaderProgram.prototype.requestFragmentShaderSource): Deleted.
+        (WI.ShaderProgram.prototype.updateVertexShader): Deleted.
+        (WI.ShaderProgram.prototype.updateFragmentShader): Deleted.
+        (WI.ShaderProgram.prototype._requestShaderSource): Deleted.
+        (WI.ShaderProgram.prototype._updateShader): Deleted.
+
+        * UserInterface/Views/ShaderProgramContentView.js:
+        (WI.ShaderProgramContentView):
+        (WI.ShaderProgramContentView.prototype.get navigationItems): Added.
+        (WI.ShaderProgramContentView.prototype.shown):
+        (WI.ShaderProgramContentView.prototype.hidden):
+        (WI.ShaderProgramContentView.prototype.get saveData):
+        (WI.ShaderProgramContentView.prototype._refreshContent):
+        (WI.ShaderProgramContentView.prototype._updateShader):
+        (WI.ShaderProgramContentView.prototype._contentDidChange):
+        * UserInterface/Views/ShaderProgramContentView.css:
+        (.content-view.shader-program > .shader): Added.
+        (.content-view.shader-program > .shader.compute): Added.
+        (body[dir=ltr] .content-view.shader-program > .shader.vertex,): Added.
+        (body[dir=ltr] .content-view.shader-program > .shader.fragment,): Added.
+        (.content-view.shader-program > .shader + .shader): Added.
+        (.content-view.shader-program > .shader > header > *): Added.
+        (.content-view.shader-program > .shader > header > .shader-type): Added.
+        (@media (prefers-color-scheme: dark) .content-view.shader-program > .shader > header): Added.
+        (.content-view.shader-program > .text-editor.shader): Deleted.
+        (body[dir=ltr] .content-view.shader-program > .text-editor.shader.vertex,): Deleted.
+        (body[dir=ltr] .content-view.shader-program > .text-editor.shader.fragment,): Deleted.
+        (body[dir=ltr] .content-view.shader-program > .text-editor.shader + .text-editor.shader): Deleted.
+        (body[dir=rtl] .content-view.shader-program > .text-editor.shader + .text-editor.shader): Deleted.
+        (.content-view.shader-program > .text-editor.shader > .type-title): Deleted.
+        (.content-view.shader-program > .text-editor.shader > .CodeMirror): Deleted.
+        * UserInterface/Views/CodeMirrorAdditions.js:
+
+        * UserInterface/Views/ShaderProgramTreeElement.js:
+        (WI.ShaderProgramTreeElement):
+        (WI.ShaderProgramTreeElement.prototype.onattach):
+        (WI.ShaderProgramTreeElement.prototype.ondetach):
+        (WI.ShaderProgramTreeElement.prototype.canSelectOnMouseDown):
+        (WI.ShaderProgramTreeElement.prototype.populateContextMenu):
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-09-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve the Uncaught Exception View file a bug link

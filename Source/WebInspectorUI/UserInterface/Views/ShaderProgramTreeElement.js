@@ -32,10 +32,14 @@ WI.ShaderProgramTreeElement = class ShaderProgramTreeElement extends WI.GeneralT
         const subtitle = null;
         super("shader-program", shaderProgram.displayName, subtitle, shaderProgram);
 
-        this._disabledImageElement = document.createElement("img");
-        this._disabledImageElement.title = WI.UIString("Disable Program");
-        this._disabledImageElement.addEventListener("click", this._disabledImageElementClicked.bind(this));
-        this.status = this._disabledImageElement;
+        // FIXME: add support for disabling/highlighting WebGPU shader pipelines.
+        let contextType = this.representedObject.canvas.contextType;
+        if (contextType === WI.Canvas.ContextType.WebGL || contextType === WI.Canvas.ContextType.WebGL2) {
+            this._disabledImageElement = document.createElement("img");
+            this._disabledImageElement.title = WI.UIString("Disable Program");
+            this._disabledImageElement.addEventListener("click", this._disabledImageElementClicked.bind(this));
+            this.status = this._disabledImageElement;
+        }
     }
 
     // Protected
@@ -44,34 +48,45 @@ WI.ShaderProgramTreeElement = class ShaderProgramTreeElement extends WI.GeneralT
     {
         super.onattach();
 
-        this.representedObject.addEventListener(WI.ShaderProgram.Event.DisabledChanged, this._handleShaderProgramDisabledChanged, this);
+        // FIXME: add support for disabling/highlighting WebGPU shader pipelines.
+        let contextType = this.representedObject.canvas.contextType;
+        if (contextType === WI.Canvas.ContextType.WebGL || contextType === WI.Canvas.ContextType.WebGL2) {
+            this.representedObject.addEventListener(WI.ShaderProgram.Event.DisabledChanged, this._handleShaderProgramDisabledChanged, this);
 
-        this.element.addEventListener("mouseover", this._handleMouseOver.bind(this));
-        this.element.addEventListener("mouseout", this._handleMouseOut.bind(this));
+            this.element.addEventListener("mouseover", this._handleMouseOver.bind(this));
+            this.element.addEventListener("mouseout", this._handleMouseOut.bind(this));
+        }
     }
 
     ondetach()
     {
-        this.representedObject.removeEventListener(WI.ShaderProgram.Event.DisabledChanged, this._handleShaderProgramDisabledChanged, this);
+        // FIXME: add support for disabling/highlighting WebGPU shader pipelines.
+        let contextType = this.representedObject.canvas.contextType;
+        if (contextType === WI.Canvas.ContextType.WebGL || contextType === WI.Canvas.ContextType.WebGL2)
+            this.representedObject.removeEventListener(WI.ShaderProgram.Event.DisabledChanged, this._handleShaderProgramDisabledChanged, this);
 
         super.ondetach();
     }
 
     canSelectOnMouseDown(event)
     {
-        if (this._disabledImageElement.contains(event.target))
+        if (this._disabledImageElement && this._disabledImageElement.contains(event.target))
             return false;
         return super.canSelectOnMouseDown(event);
     }
 
     populateContextMenu(contextMenu, event)
     {
-        let disabled = this.representedObject.disabled;
-        contextMenu.appendItem(disabled ? WI.UIString("Enable Program") : WI.UIString("Disable Program"), () => {
-            this.representedObject.disabled = !disabled;
-        });
+        // FIXME: add support for disabling/highlighting WebGPU shader pipelines.
+        let contextType = this.representedObject.canvas.contextType;
+        if (contextType === WI.Canvas.ContextType.WebGL || contextType === WI.Canvas.ContextType.WebGL2) {
+            let disabled = this.representedObject.disabled;
+            contextMenu.appendItem(disabled ? WI.UIString("Enable Program") : WI.UIString("Disable Program"), () => {
+                this.representedObject.disabled = !disabled;
+            });
 
-        contextMenu.appendSeparator();
+            contextMenu.appendSeparator();
+        }
 
         super.populateContextMenu(contextMenu, event);
     }

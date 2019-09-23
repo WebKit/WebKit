@@ -2001,12 +2001,13 @@ inspector/canvas/recording-webgl2-memoryLimit.html [ Skip ]
 inspector/canvas/recording-webgl2-snapshots.html [ Skip ]
 inspector/canvas/requestContent-webgl.html [ Skip ]
 inspector/canvas/requestContent-webgl2.html [ Skip ]
-inspector/canvas/requestShaderSource.html [ Skip ]
+inspector/canvas/requestShaderSource-webgl.html [ Skip ]
 inspector/canvas/resolveContext-webgl.html [ Skip ]
 inspector/canvas/resolveContext-webgl2.html [ Skip ]
 inspector/canvas/shaderProgram-add-remove-webgl.html [ Skip ]
 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Skip ]
-inspector/canvas/updateShader.html [ Skip ]
+inspector/canvas/updateShader-webgl.html [ Skip ]
+
 ################################################################################
 #################          End WebGL Issues              #######################
 ################################################################################
@@ -4247,7 +4248,10 @@ webkit.org/b/190520 editing/pasteboard/copy-paste-across-shadow-boundaries-with-
 webgpu [ Skip ]
 inspector/canvas/create-context-webgpu.html [ Skip ]
 inspector/canvas/requestClientNodes-webgpu.html [ Skip ]
+inspector/canvas/requestShaderSource-webgpu.html [ Skip ]
 inspector/canvas/resolveContext-webgpu.html [ Skip ]
+inspector/canvas/shaderProgram-add-remove-webgpu.html [ Skip ]
+inspector/canvas/updateShader-webgpu.html [ Skip ]
 
 webkit.org/b/191194 fast/block/basic/inline-content-with-floating-image.html [ Failure ]
 webkit.org/b/191194 fast/block/basic/inline-content-with-floating-images2.html [ Failure ]

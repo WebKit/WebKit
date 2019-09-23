@@ -2,74 +2,12 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
-<script src="resources/shaderProgram-utilities.js"></script>
-<script id="vertex-shader" type="x-shader/x-vertex">
-    void main(void) {
-        gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
-    }
-</script>
-<script id="fragment-shader" type="x-shader/x-fragment">
-    precision mediump float;
-
-    void main(void) {
-        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-    }
-</script>
 <script>
-function load() {
-    createProgram("webgl");
-    linkProgram("vertex-shader", "fragment-shader");
-
-    runTest();
-}
-
 function test() {
     let suite = InspectorTest.createAsyncSuite("Canvas.updateShader");
 
-    function validSourceTest({name, shaderType, source}) {
-        suite.addTestCase({
-            name,
-            test(resolve, reject) {
-                let shaderProgram = WI.canvasManager.shaderPrograms[0];
-                if (!shaderProgram) {
-                    reject("Missing shader program")
-                    return;
-                }
-
-                let programId = shaderProgram.identifier;
-
-                CanvasAgent.updateShader(programId, shaderType, source)
-                .then(() => CanvasAgent.requestShaderSource(programId, shaderType))
-                .then(({content}) => InspectorTest.log(content))
-                .then(resolve, reject);
-            }
-        });
-    }
-
-    validSourceTest({
-        name: "Canvas.updateShader.vertexShaderValid",
-        shaderType: CanvasAgent.ShaderType.Vertex,
-        source: `
-    void main(void) {
-        gl_Position = vec4(1, 2, 3, 4);
-    }
-`,
-    });
-
-    validSourceTest({
-        name: "Canvas.updateShader.fragmentShaderValid",
-        shaderType: CanvasAgent.ShaderType.Fragment,
-        source: `
-    precision mediump float;
-
-    void main(void) {
-        gl_FragColor = vec4(0.1, 0.2, 0.3, 0.4);
-    }
-`,
-    });
-
     suite.addTestCase({
-        name: "Canvas.updateShader.invalidProgramId",
+        name: "Canvas.updateShader.ProgramId.Invalid",
         description: "Invalid program identifiers should cause an error.",
         test(resolve, reject) {
             const programId = "INVALID_PROGRAM_ID";
@@ -83,62 +21,11 @@ function test() {
         }
     });
 
-    suite.addTestCase({
-        name: "Canvas.updateShader.invalidShaderType",
-        description: "Invalid shader types should cause an error.",
-        test(resolve, reject) {
-            let shaderProgram = WI.canvasManager.shaderPrograms[0];
-            if (!shaderProgram) {
-                reject("Missing shader program")
-                return;
-            }
-
-            const shaderType = "INVALID_SHADER_TYPE";
-            const source = "INVALID_SOURCE";
-            CanvasAgent.updateShader(shaderProgram.identifier, shaderType, source, (error) => {
-                InspectorTest.expectThat(error, "Should produce an error.");
-                InspectorTest.log("Error: " + error);
-                resolve();
-            });
-        }
-    });
-
-    function invalidSourceTest({name, shaderType, source}) {
-        suite.addTestCase({
-            name,
-            test(resolve, reject) {
-                let shaderProgram = WI.canvasManager.shaderPrograms[0];
-                if (!shaderProgram) {
-                    reject("Missing shader program")
-                    return;
-                }
-
-                CanvasAgent.updateShader(shaderProgram.identifier, shaderType, source, (error) => {
-                    InspectorTest.expectThat(error, "Should produce error.");
-                    InspectorTest.log("Error: " + error);
-                    resolve();
-                });
-            }
-        });
-    }
-
-    invalidSourceTest({
-        name: "Canvas.updateShader.invalidVertexShaderSource",
-        shaderType: CanvasAgent.ShaderType.Vertex,
-        source: "INVALID",
-    });
-
-    invalidSourceTest({
-        name: "Canvas.updateShader.invalidFragmentShaderSource",
-        shaderType: CanvasAgent.ShaderType.Fragment,
-        source: "INVALID",
-    });
-
     suite.runTestCasesAndFinish();
 }
 </script>
 </head>
-<body onload="load()">
-    <p>Test compilation of shaders after being attached to a program, with and without syntax errors.</p>
+<body onload="runTest()">
+<p>Common tests for Canvas.updateShader command.</p>
 </body>
 </html>

@@ -28,16 +28,27 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUShaderModuleDescriptor.h"
+#include "WebGPUDevice.h"
+#include <wtf/RefPtr.h>
+
 namespace WebCore {
 
-Ref<WebGPUShaderModule> WebGPUShaderModule::create(RefPtr<GPUShaderModule>&& module)
+Ref<WebGPUShaderModule> WebGPUShaderModule::create(RefPtr<GPUShaderModule>&& module, const String& source)
 {
-    return adoptRef(*new WebGPUShaderModule(WTFMove(module)));
+    return adoptRef(*new WebGPUShaderModule(WTFMove(module), source));
 }
 
-WebGPUShaderModule::WebGPUShaderModule(RefPtr<GPUShaderModule>&& module)
+WebGPUShaderModule::WebGPUShaderModule(RefPtr<GPUShaderModule>&& module, const String& source)
     : m_module(WTFMove(module))
+    , m_source(source)
 {
+}
+
+void WebGPUShaderModule::update(const WebGPUDevice& device, const String& source)
+{
+    m_source = source;
+    m_module = GPUShaderModule::tryCreate(device.device(), { m_source });
 }
 
 } // namespace WebCore

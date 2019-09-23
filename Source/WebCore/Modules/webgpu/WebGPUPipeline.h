@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,19 +27,47 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUProgrammableStageDescriptor.h"
+#include "GPUObjectBase.h"
 #include "WebGPUShaderModule.h"
-#include <wtf/Optional.h>
-#include <wtf/RefPtr.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
-struct WebGPUProgrammableStageDescriptor : GPUProgrammableStageDescriptorBase {
-    Optional<GPUProgrammableStageDescriptor> tryCreateGPUProgrammableStageDescriptor() const;
+class ScriptExecutionContext;
+class GPUErrorScopes;
+class WebGPUDevice;
 
-    RefPtr<WebGPUShaderModule> module;
+class WebGPUPipeline : public GPUObjectBase {
+public:
+    virtual ~WebGPUPipeline();
+
+    static HashMap<WebGPUPipeline*, WebGPUDevice*>& instances(const LockHolder&);
+    static Lock& instancesMutex();
+
+    virtual bool isRenderPipeline() const { return false; }
+    virtual bool isComputePipeline() const { return false; }
+
+    ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
+    virtual bool isValid() const = 0;
+
+    struct ShaderData {
+        RefPtr<WebGPUShaderModule> module;
+        String entryPoint;
+    };
+
+    virtual bool recompile(const WebGPUDevice&) = 0;
+
+protected:
+    WebGPUPipeline(WebGPUDevice&, GPUErrorScopes&);
+
+    ScriptExecutionContext* m_scriptExecutionContext;
 };
 
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_WEBGPUPIPELINE(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
+    static bool isType(const WebCore::WebGPUPipeline& pipeline) { return pipeline.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(WEBGPU)

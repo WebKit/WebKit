@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,60 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebGPUPipeline.h"
 
 #if ENABLE(WEBGPU)
 
-#include "GPUProgrammableStageDescriptor.h"
-#include "WebGPUShaderModule.h"
-#include <wtf/Optional.h>
-#include <wtf/RefPtr.h>
+#include "GPUErrorScopes.h"
+#include "InspectorInstrumentation.h"
+#include "ScriptExecutionContext.h"
+#include "WebGPUDevice.h"
+#include <wtf/HashMap.h>
+#include <wtf/Lock.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
-struct WebGPUProgrammableStageDescriptor : GPUProgrammableStageDescriptorBase {
-    Optional<GPUProgrammableStageDescriptor> tryCreateGPUProgrammableStageDescriptor() const;
+HashMap<WebGPUPipeline*, WebGPUDevice*>& WebGPUPipeline::instances(const LockHolder&)
+{
+    static NeverDestroyed<HashMap<WebGPUPipeline*, WebGPUDevice*>> instances;
+    return instances;
+}
 
-    RefPtr<WebGPUShaderModule> module;
-};
+Lock& WebGPUPipeline::instancesMutex()
+{
+    static LazyNeverDestroyed<Lock> mutex;
+    static std::once_flag initializeMutex;
+    std::call_once(initializeMutex, [] {
+        mutex.construct();
+    });
+    return mutex.get();
+}
+
+WebGPUPipeline::WebGPUPipeline(WebGPUDevice& device, GPUErrorScopes& errorScopes)
+    : GPUObjectBase(makeRef(errorScopes))
+    , m_scriptExecutionContext(device.scriptExecutionContext())
+{
+    ASSERT(m_scriptExecutionContext);
+
+    {
+        LockHolder lock(instancesMutex());
+        instances(lock).add(this, &device);
+    }
+}
+
+WebGPUPipeline::~WebGPUPipeline()
+{
+    InspectorInstrumentation::willDestroyWebGPUPipeline(*this);
+
+    {
+        LockHolder lock(instancesMutex());
+        ASSERT(instances(lock).contains(this));
+        instances(lock).remove(this);
+    }
+}
 
 } // namespace WebCore
 
