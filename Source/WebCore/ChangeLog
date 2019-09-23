@@ -1,3 +1,10 @@
+2019-09-23  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed WinCairo/FTW Build fix after r250192.
+
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownload::createCurlRequest):
+
 2019-09-23  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Merge inline box compute functions
