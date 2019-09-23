@@ -1,3 +1,13 @@
+2019-09-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r249367): m_decodingPromises grows indefinitely until ImageLoader destruction
+        https://bugs.webkit.org/show_bug.cgi?id=201402
+
+        Reviewed by Youenn Fablet and Daniel Bates.
+
+        * fast/images/decode-resolve-reject-no-leak-expected.txt: Added.
+        * fast/images/decode-resolve-reject-no-leak.html: Added.
+
 2019-09-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         HTMLImageElement::decode() should return a resolved promise for decoding non bitmap images

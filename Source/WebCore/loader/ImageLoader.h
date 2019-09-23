@@ -61,6 +61,7 @@ public:
     CachedImage* image() const { return m_image.get(); }
     void clearImage(); // Cancels pending beforeload and load events, and doesn't dispatch new ones.
     
+    size_t pendingDecodePromisesCountForTesting() const { return m_decodingPromises.size(); }
     void decode(Ref<DeferredPromise>&&);
 
     void setLoadManually(bool loadManually) { m_loadManually = loadManually; }
@@ -95,6 +96,8 @@ private:
     void clearFailedLoadURL();
 
     bool hasPendingDecodePromises() const { return !m_decodingPromises.isEmpty(); }
+    void resolveDecodePromises();
+    void rejectDecodePromises(const char* message);
     void decode();
     
     void timerFired();
