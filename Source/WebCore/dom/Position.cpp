@@ -738,8 +738,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
         if (is<RenderText>(*renderer)) {
             auto& textRenderer = downcast<RenderText>(*renderer);
 
-            LineLayoutInterface::Provider lineLayoutProvider;
-            auto firstTextBox = lineLayoutProvider.firstTextBoxInTextOrderFor(textRenderer);
+            auto firstTextBox = LineLayoutInterface::firstTextBoxInTextOrderFor(textRenderer);
             if (!firstTextBox)
                 continue;
 
@@ -849,8 +848,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
         if (is<RenderText>(*renderer)) {
             auto& textRenderer = downcast<RenderText>(*renderer);
 
-            LineLayoutInterface::Provider lineLayoutProvider;
-            auto firstTextBox = lineLayoutProvider.firstTextBoxInTextOrderFor(textRenderer);
+            auto firstTextBox = LineLayoutInterface::firstTextBoxInTextOrderFor(textRenderer);
             if (!firstTextBox)
                 continue;
 

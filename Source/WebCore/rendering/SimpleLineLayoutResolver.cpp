@@ -68,7 +68,7 @@ FloatRect RunResolver::Run::rect() const
     FloatPoint position = linePosition(run.logicalLeft, baseline - resolver.m_ascent);
     FloatSize size = lineSize(run.logicalLeft, run.logicalRight, resolver.m_ascent + resolver.m_descent + resolver.m_visualOverflowOffset);
     bool moveLineBreakToBaseline = false;
-    if (run.start == run.end && m_iterator != resolver.begin() && m_iterator.inQuirksMode()) {
+    if (run.start == run.end && m_iterator != resolver.begin() && resolver.m_inQuirksMode) {
         auto previousRun = m_iterator;
         --previousRun;
         moveLineBreakToBaseline = !previousRun.simpleRun().isEndOfLine;
@@ -113,10 +113,12 @@ unsigned RunResolver::Run::localEnd() const
 }
 
 RunResolver::Iterator::Iterator(const RunResolver& resolver, unsigned runIndex, unsigned lineIndex)
-    : m_resolver(&resolver)
+    : m_layout(&resolver.m_layout)
+    , m_resolver(&resolver)
     , m_runIndex(runIndex)
     , m_lineIndex(lineIndex)
 {
+    ASSERT(&resolver == &m_layout->runResolver());
 }
 
 RunResolver::Iterator& RunResolver::Iterator::advance()
@@ -129,8 +131,8 @@ RunResolver::Iterator& RunResolver::Iterator::advance()
 
 RunResolver::Iterator& RunResolver::Iterator::advanceLines(unsigned lineCount)
 {
-    unsigned runCount = resolver().m_layout.runCount();
-    if (runCount == resolver().m_layout.lineCount()) {
+    unsigned runCount = layout().runCount();
+    if (runCount == layout().lineCount()) {
         m_runIndex = std::min(runCount, m_runIndex + lineCount);
         m_lineIndex = m_runIndex;
         return *this;

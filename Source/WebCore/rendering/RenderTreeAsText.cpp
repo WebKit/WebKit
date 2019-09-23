@@ -202,8 +202,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         // many test results.
         const RenderText& text = downcast<RenderText>(o);
         r = IntRect(text.firstRunLocation(), text.linesBoundingBox().size());
-        LineLayoutInterface::Provider lineLayoutProvider;
-        if (!lineLayoutProvider.firstTextBoxFor(text))
+        if (!LineLayoutInterface::hasTextBoxes(text))
             adjustForTableCells = false;
     } else if (o.isBR()) {
         const RenderLineBreak& br = downcast<RenderLineBreak>(o);
@@ -549,9 +548,8 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
     TextStream::IndentScope indentScope(ts);
 
     if (is<RenderText>(o)) {
-        LineLayoutInterface::Provider lineLayoutProvider;
         auto& text = downcast<RenderText>(o);
-        for (auto& textBox : lineLayoutProvider.textBoxRangeFor(text)) {
+        for (auto& textBox : LineLayoutInterface::textBoxRangeFor(text)) {
             ts << indent;
             writeTextBox(ts, text, textBox);
         }

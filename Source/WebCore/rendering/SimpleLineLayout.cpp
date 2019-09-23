@@ -972,7 +972,7 @@ static void createTextRuns(Layout::RunVector& runs, RenderBlockFlow& flow, unsig
     } while (!isEndOfContent);
 }
 
-std::unique_ptr<Layout> create(RenderBlockFlow& flow)
+Ref<Layout> create(RenderBlockFlow& flow)
 {
     unsigned lineCount = 0;
     Layout::RunVector runs;
@@ -980,10 +980,10 @@ std::unique_ptr<Layout> create(RenderBlockFlow& flow)
     return Layout::create(runs, lineCount, flow);
 }
 
-std::unique_ptr<Layout> Layout::create(const RunVector& runVector, unsigned lineCount, const RenderBlockFlow& blockFlow)
+Ref<Layout> Layout::create(const RunVector& runVector, unsigned lineCount, const RenderBlockFlow& blockFlow)
 {
     void* slot = WTF::fastMalloc(sizeof(Layout) + sizeof(Run) * runVector.size());
-    return std::unique_ptr<Layout>(new (NotNull, slot) Layout(runVector, lineCount, blockFlow));
+    return adoptRef(*new (NotNull, slot) Layout(runVector, lineCount, blockFlow));
 }
 
 Layout::Layout(const RunVector& runVector, unsigned lineCount, const RenderBlockFlow& blockFlow)

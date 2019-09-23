@@ -392,7 +392,7 @@ static void printPrefix(TextStream& stream, int& printedCharacters, int depth)
         stream << " ";
 }
 
-void outputLineLayoutForFlow(TextStream& stream, const RenderBlockFlow& flow, const Layout& layout, int depth)
+void outputLineLayoutForFlow(TextStream& stream, const RenderBlockFlow&, const Layout& layout, int depth)
 {
     int printedCharacters = 0;
     printPrefix(stream, printedCharacters, depth);
@@ -401,7 +401,7 @@ void outputLineLayoutForFlow(TextStream& stream, const RenderBlockFlow& flow, co
     stream.nextLine();
     ++depth;
 
-    for (auto run : runResolver(flow, layout)) {
+    for (auto run : layout.runResolver()) {
         FloatRect rect = run.rect();
         printPrefix(stream, printedCharacters, depth);
         if (run.start() < run.end()) {

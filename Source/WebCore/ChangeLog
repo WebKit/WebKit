@@ -1,3 +1,61 @@
+2019-09-23  Antti Koivisto  <antti@apple.com>
+
+        Refcount simple line layout
+        https://bugs.webkit.org/show_bug.cgi?id=202104
+
+        Reviewed by Zalan Bujtas.
+
+        Make SimpleLineLayout::Layout refcounted for safety and ease of use.
+
+        * dom/Position.cpp:
+        (WebCore::Position::upstream const):
+        (WebCore::Position::downstream const):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleTextNode):
+        (WebCore::TextIterator::handleTextBox):
+        (WebCore::TextIterator::handleTextNodeFirstLetter):
+        * editing/TextIterator.h:
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        (WebCore::write):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::create):
+        (WebCore::SimpleLineLayout::Layout::create):
+        * rendering/SimpleLineLayout.h:
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::outputLineLayoutForFlow):
+        * rendering/SimpleLineLayoutResolver.cpp:
+        (WebCore::SimpleLineLayout::RunResolver::Run::rect const):
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::Iterator):
+
+        Iterator now refs the layout. Since the resolver is owned by the layout, it is guaranteed to stay alive too.
+
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::advanceLines):
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::layout const):
+        (WebCore::SimpleLineLayout::RunResolver::Run::computeBaselinePosition const):
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::simpleRun const):
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::inQuirksMode const): Deleted.
+        (WebCore::SimpleLineLayout::runResolver): Deleted.
+
+        Always use the cached resolver owned by SimpleLineLayout::Layout.
+
+        * rendering/line/LineLayoutInterfaceTextBoxes.cpp:
+        (WebCore::LineLayoutInterface::firstTextBoxInVisualOrderFor):
+        (WebCore::LineLayoutInterface::firstTextBoxInTextOrderFor):
+        (WebCore::LineLayoutInterface::textBoxRangeFor):
+        (WebCore::LineLayoutInterface::Provider::firstTextBoxInVisualOrderFor): Deleted.
+        (WebCore::LineLayoutInterface::Provider::firstTextBoxInTextOrderFor): Deleted.
+        (WebCore::LineLayoutInterface::Provider::textBoxRangeFor): Deleted.
+
+        There is no need for a separate Provider class anymore as the iterator keeps SimpleLineLayout::Layout
+        and Resolver instances alive itself.
+
+        * rendering/line/LineLayoutInterfaceTextBoxes.h:
+        (WebCore::LineLayoutInterface::hasTextBoxes):
+        (WebCore::LineLayoutInterface::Provider::firstTextBoxFor): Deleted.
+
 2019-09-23  Youenn Fablet  <youenn@apple.com>
 
         Simplify UserMediaPermissionRequestManager management of UserMediaRequest

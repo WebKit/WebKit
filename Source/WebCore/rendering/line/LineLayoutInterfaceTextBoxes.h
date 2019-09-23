@@ -35,7 +35,6 @@
 namespace WebCore {
 
 class InlineTextBox;
-class Provider;
 class RenderText;
 
 namespace LineLayoutInterface {
@@ -131,19 +130,10 @@ private:
     TextBoxIterator m_begin;
 };
 
-class Provider {
-public:
-    Provider();
-    ~Provider();
-
-    TextBoxIterator firstTextBoxFor(const RenderText& text) { return firstTextBoxInVisualOrderFor(text); }
-    TextBoxIterator firstTextBoxInVisualOrderFor(const RenderText&);
-    TextBoxIterator firstTextBoxInTextOrderFor(const RenderText&);
-    TextBoxRange textBoxRangeFor(const RenderText&);
-
-private:
-    HashMap<const RenderBlockFlow*, std::unique_ptr<SimpleLineLayout::RunResolver>> m_simpleLineLayoutResolvers;
-};
+TextBoxIterator firstTextBoxInVisualOrderFor(const RenderText&);
+TextBoxIterator firstTextBoxInTextOrderFor(const RenderText&);
+TextBoxRange textBoxRangeFor(const RenderText&);
+inline bool hasTextBoxes(const RenderText& text) { return !firstTextBoxInVisualOrderFor(text).atEnd(); }
 
 }
 }

@@ -567,7 +567,7 @@ protected:
 
     // FIXME: Only one of these should be needed at any given time.
     std::unique_ptr<ComplexLineLayout> m_complexLineLayout;
-    std::unique_ptr<SimpleLineLayout::Layout> m_simpleLineLayout;
+    RefPtr<SimpleLineLayout::Layout> m_simpleLineLayout;
 
     friend class LineBreaker;
     friend class LineWidth; // Needs to know FloatingObject

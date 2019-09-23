@@ -181,8 +181,6 @@ private:
     bool m_lastTextNodeEndedWithCollapsedSpace { false };
     UChar m_lastCharacter { 0 };
 
-    LineLayoutInterface::Provider m_lineLayoutProvider;
-
     // Used when deciding whether to emit a "positioning" (e.g. newline) before any other content
     bool m_hasEmitted { false };
 

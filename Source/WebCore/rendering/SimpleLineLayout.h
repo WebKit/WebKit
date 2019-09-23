@@ -27,6 +27,7 @@
 
 #include "SimpleLineLayoutCoverage.h"
 #include "TextFlags.h"
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -75,12 +76,12 @@ struct SimpleLineStrut {
     float offset;
 };
 
-class Layout {
+class Layout : public RefCounted<Layout> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using RunVector = Vector<Run, 10>;
     using SimpleLineStruts = Vector<SimpleLineStrut, 4>;
-    static std::unique_ptr<Layout> create(const RunVector&, unsigned lineCount, const RenderBlockFlow&);
+    static Ref<Layout> create(const RunVector&, unsigned lineCount, const RenderBlockFlow&);
 
     ~Layout();
 
@@ -108,7 +109,7 @@ private:
     Run m_runs[0];
 };
 
-std::unique_ptr<Layout> create(RenderBlockFlow&);
+Ref<Layout> create(RenderBlockFlow&);
 
 }
 }

@@ -95,8 +95,9 @@ public:
         Iterator& advance();
         Iterator& advanceLines(unsigned);
         const RunResolver& resolver() const { return *m_resolver; }
-        bool inQuirksMode() const { return resolver().m_inQuirksMode; }
+        const Layout& layout() const { return *m_layout; }
 
+        RefPtr<const Layout> m_layout;
         const RunResolver* m_resolver;
         unsigned m_runIndex;
         unsigned m_lineIndex;
@@ -218,7 +219,7 @@ inline float RunResolver::Run::computeBaselinePosition() const
 {
     auto& resolver = m_iterator.resolver();
     auto offset = resolver.m_borderAndPaddingBefore + resolver.m_lineHeight * lineIndex();
-    if (!resolver.m_layout.hasLineStruts())
+    if (!m_iterator.layout().hasLineStruts())
         return offset + resolver.m_baseline;
     for (auto& strutEntry : resolver.m_layout.struts()) {
         if (strutEntry.lineBreak > lineIndex())
@@ -254,7 +255,7 @@ inline RunResolver::Run RunResolver::Iterator::operator*() const
 
 inline const SimpleLineLayout::Run& RunResolver::Iterator::simpleRun() const
 {
-    return resolver().m_layout.runAt(m_runIndex);
+    return layout().runAt(m_runIndex);
 }
 
 inline RunResolver::Iterator RunResolver::begin() const
@@ -297,11 +298,6 @@ inline WTF::IteratorRange<LineResolver::Iterator> LineResolver::rangeForRect(con
 {
     auto runRange = m_runResolver.rangeForRect(rect);
     return { Iterator(runRange.begin()), Iterator(runRange.end()) };
-}
-
-inline RunResolver runResolver(const RenderBlockFlow& flow, const Layout& layout)
-{
-    return RunResolver(flow, layout);
 }
 
 inline LineResolver lineResolver(const RunResolver& runResolver)

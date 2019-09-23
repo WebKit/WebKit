@@ -272,25 +272,17 @@ bool TextBoxIterator::atEnd() const
     return WTF::switchOn(m_pathVariant, simple, complex);
 }
 
-Provider::Provider() = default;
-Provider::~Provider() = default;
-
-TextBoxIterator Provider::firstTextBoxInVisualOrderFor(const RenderText& text)
+TextBoxIterator firstTextBoxInVisualOrderFor(const RenderText& text)
 {
     if (auto* simpleLineLayout = text.simpleLineLayout()) {
-        auto& parent = downcast<const RenderBlockFlow>(*text.parent());
-        auto& resolver = m_simpleLineLayoutResolvers.ensure(&parent, [&] {
-            return makeUnique<SimpleLineLayout::RunResolver>(parent, *simpleLineLayout);
-        }).iterator->value;
-
-        auto range = resolver->rangeForRenderer(text);
+        auto range = simpleLineLayout->runResolver().rangeForRenderer(text);
         return { range.begin(), range.end() };
     }
 
     return TextBoxIterator { text.firstTextBox() };
 }
 
-TextBoxIterator Provider::firstTextBoxInTextOrderFor(const RenderText& text)
+TextBoxIterator firstTextBoxInTextOrderFor(const RenderText& text)
 {
     if (!text.simpleLineLayout() && text.containsReversedText()) {
         Vector<const InlineTextBox*> sortedTextBoxes;
@@ -303,7 +295,7 @@ TextBoxIterator Provider::firstTextBoxInTextOrderFor(const RenderText& text)
     return firstTextBoxInVisualOrderFor(text);
 }
 
-TextBoxRange Provider::textBoxRangeFor(const RenderText& text)
+TextBoxRange textBoxRangeFor(const RenderText& text)
 {
     return { firstTextBoxInVisualOrderFor(text) };
 }
