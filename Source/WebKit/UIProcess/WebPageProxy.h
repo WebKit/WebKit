@@ -1731,13 +1731,17 @@ private:
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
     void setCanShortCircuitHorizontalWheelEvents(bool canShortCircuitHorizontalWheelEvents) { m_canShortCircuitHorizontalWheelEvents = canShortCircuitHorizontalWheelEvents; }
 
-    void launchProcess(const WebCore::RegistrableDomain&);
+    enum class ProcessLaunchReason {
+        InitialProcess,
+        ProcessSwap,
+        Crash
+    };
+
+    void launchProcess(const WebCore::RegistrableDomain&, ProcessLaunchReason);
     void swapToWebProcess(Ref<WebProcessProxy>&&, std::unique_ptr<DrawingAreaProxy>&&, RefPtr<WebFrameProxy>&& mainFrame);
     void didFailToSuspendAfterProcessSwap();
     void didSuspendAfterProcessSwap();
-
-    enum class IsProcessSwap { No, Yes };
-    void finishAttachingToWebProcess(IsProcessSwap);
+    void finishAttachingToWebProcess(ProcessLaunchReason);
 
     RefPtr<API::Navigation> launchProcessForReload();
     RefPtr<API::Navigation> launchProcessWithItem(WebBackForwardListItem&);

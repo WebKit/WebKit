@@ -718,7 +718,7 @@ void WebPageProxy::handleSynchronousMessage(IPC::Connection& connection, const S
     });
 }
 
-void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain)
+void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain, ProcessLaunchReason reason)
 {
     ASSERT(!m_isClosed);
     ASSERT(!hasRunningProcess());
@@ -740,7 +740,7 @@ void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain)
     m_process->addExistingWebPage(*this, WebProcessProxy::BeginsUsingDataStore::Yes);
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
 
-    finishAttachingToWebProcess(IsProcessSwap::No);
+    finishAttachingToWebProcess(reason);
 }
 
 bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Optional<FrameIdentifier> mainFrameID, ProcessSwapRequestedByClient processSwapRequestedByClient, ShouldDelayClosingUntilEnteringAcceleratedCompositingMode shouldDelayClosingUntilEnteringAcceleratedCompositingMode)
@@ -813,10 +813,10 @@ void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, std::unique_
     m_process->addExistingWebPage(*this, WebProcessProxy::BeginsUsingDataStore::No);
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
 
-    finishAttachingToWebProcess(IsProcessSwap::Yes);
+    finishAttachingToWebProcess(ProcessLaunchReason::ProcessSwap);
 }
 
-void WebPageProxy::finishAttachingToWebProcess(IsProcessSwap isProcessSwap)
+void WebPageProxy::finishAttachingToWebProcess(ProcessLaunchReason reason)
 {
     ASSERT(m_process->state() != AuxiliaryProcessProxy::State::Terminated);
 
@@ -826,7 +826,7 @@ void WebPageProxy::finishAttachingToWebProcess(IsProcessSwap isProcessSwap)
     didAttachToRunningProcess();
 
     // In the process-swap case, the ProvisionalPageProxy already took care of initializing the WebPage in the WebProcess.
-    if (isProcessSwap != IsProcessSwap::Yes)
+    if (reason != ProcessLaunchReason::ProcessSwap)
         initializeWebPage();
 
     m_inspector->updateForNewPageProcess(this);
@@ -840,7 +840,8 @@ void WebPageProxy::finishAttachingToWebProcess(IsProcessSwap isProcessSwap)
 
     pageClient().didRelaunchProcess();
     m_pageLoadState.didSwapWebProcesses();
-    m_drawingArea->waitForBackingStoreUpdateOnNextPaint();
+    if (reason != ProcessLaunchReason::InitialProcess)
+        m_drawingArea->waitForBackingStoreUpdateOnNextPaint();
 }
 
 void WebPageProxy::didAttachToRunningProcess()
@@ -890,7 +891,7 @@ RefPtr<API::Navigation> WebPageProxy::launchProcessForReload()
     
     ASSERT(!hasRunningProcess());
     auto registrableDomain = m_backForwardList->currentItem() ? RegistrableDomain { URL(URL(), m_backForwardList->currentItem()->url()) } : RegistrableDomain { };
-    launchProcess(registrableDomain);
+    launchProcess(registrableDomain, ProcessLaunchReason::Crash);
 
     if (!m_backForwardList->currentItem()) {
         RELEASE_LOG_IF_ALLOWED(Loading, "launchProcessForReload: no current item to reload: webPID = %i, pageID = %" PRIu64, m_process->processIdentifier(), m_pageID.toUInt64());
@@ -922,7 +923,7 @@ RefPtr<API::Navigation> WebPageProxy::launchProcessWithItem(WebBackForwardListIt
     }
 
     ASSERT(!hasRunningProcess());
-    launchProcess(RegistrableDomain { URL(URL(), item.url()) });
+    launchProcess(RegistrableDomain { URL(URL(), item.url()) }, ProcessLaunchReason::InitialProcess);
 
     if (&item != m_backForwardList->currentItem())
         m_backForwardList->goToItem(item);
@@ -1108,7 +1109,7 @@ void WebPageProxy::addPlatformLoadParameters(LoadParameters&)
 WebProcessProxy& WebPageProxy::ensureRunningProcess()
 {
     if (!hasRunningProcess())
-        launchProcess({ });
+        launchProcess({ }, ProcessLaunchReason::InitialProcess);
 
     return m_process;
 }
@@ -1121,7 +1122,7 @@ RefPtr<API::Navigation> WebPageProxy::loadRequest(ResourceRequest&& request, Sho
     RELEASE_LOG_IF_ALLOWED(Loading, "loadRequest: webPID = %i, pageID = %" PRIu64, m_process->processIdentifier(), m_pageID.toUInt64());
 
     if (!hasRunningProcess())
-        launchProcess(RegistrableDomain { request.url() });
+        launchProcess(RegistrableDomain { request.url() }, ProcessLaunchReason::InitialProcess);
 
     auto navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(request), m_backForwardList->currentItem());
     loadRequestWithNavigationShared(m_process.copyRef(), navigation.get(), WTFMove(request), shouldOpenExternalURLsPolicy, userData, ShouldTreatAsContinuingLoad::No);
@@ -1168,7 +1169,7 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
     }
 
     if (!hasRunningProcess())
-        launchProcess({ });
+        launchProcess({ }, ProcessLaunchReason::InitialProcess);
 
     URL fileURL = URL(URL(), fileURLString);
     if (!fileURL.isLocalFile()) {
@@ -1223,7 +1224,7 @@ RefPtr<API::Navigation> WebPageProxy::loadData(const IPC::DataReference& data, c
     }
 
     if (!hasRunningProcess())
-        launchProcess({ });
+        launchProcess({ }, ProcessLaunchReason::InitialProcess);
 
     auto navigation = m_navigationState->createLoadDataNavigation(makeUnique<API::SubstituteData>(data.vector(), MIMEType, encoding, baseURL, userData));
     loadDataWithNavigationShared(m_process.copyRef(), navigation, data, MIMEType, encoding, baseURL, userData, ShouldTreatAsContinuingLoad::No, WTF::nullopt, shouldOpenExternalURLsPolicy);
@@ -1273,7 +1274,7 @@ void WebPageProxy::loadAlternateHTML(const IPC::DataReference& htmlData, const S
         m_isLoadingAlternateHTMLStringForFailingProvisionalLoad = true;
 
     if (!hasRunningProcess())
-        launchProcess(RegistrableDomain { baseURL });
+        launchProcess(RegistrableDomain { baseURL }, ProcessLaunchReason::InitialProcess);
 
     auto transaction = m_pageLoadState.transaction();
 
@@ -1310,7 +1311,7 @@ void WebPageProxy::loadWebArchiveData(API::Data* webArchiveData, API::Object* us
     }
 
     if (!hasRunningProcess())
-        launchProcess({ });
+        launchProcess({ }, ProcessLaunchReason::InitialProcess);
 
     auto transaction = m_pageLoadState.transaction();
     m_pageLoadState.setPendingAPIRequest(transaction, { 0, WTF::blankURL().string() });
@@ -1340,7 +1341,7 @@ void WebPageProxy::navigateToPDFLinkWithSimulatedClick(const String& urlString, 
         return;
 
     if (!hasRunningProcess())
-        launchProcess(RegistrableDomain { URL(URL(), urlString) });
+        launchProcess(RegistrableDomain { URL(URL(), urlString) }, ProcessLaunchReason::InitialProcess);
 
     m_process->send(Messages::WebPage::NavigateToPDFLinkWithSimulatedClick(urlString, documentPoint, screenPoint), m_pageID);
     m_process->responsivenessTimer().start();
@@ -3649,7 +3650,7 @@ void WebPageProxy::replaceMatches(Vector<uint32_t>&& matchIndices, const String&
 void WebPageProxy::launchInitialProcessIfNecessary()
 {
     if (&process() == process().processPool().dummyProcessProxy())
-        launchProcess({ });
+        launchProcess({ }, ProcessLaunchReason::InitialProcess);
 }
 
 void WebPageProxy::runJavaScriptInMainFrame(const String& script, bool forceUserGesture, WTF::Function<void (API::SerializedScriptValue*, bool hadException, const ExceptionDetails&, CallbackBase::Error)>&& callbackFunction)
