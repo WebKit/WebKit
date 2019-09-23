@@ -35,16 +35,6 @@ using namespace WebKit;
 
 int main(int argc, char** argv)
 {
-    // Disable SSLv3 very early because it is practically impossible to safely
-    // use setenv() when multiple threads are running, as another thread calling
-    // getenv() could cause a crash, and many functions use getenv() internally.
-    // This workaround will stop working if glib-networking switches away from
-    // GnuTLS or simply stops parsing this variable. We intentionally do not
-    // overwrite this priority string if it's already set by the user.
-    // https://bugzilla.gnome.org/show_bug.cgi?id=738633
-    // WARNING: This needs to be KEPT IN SYNC with WebProcessMain.cpp.
-    setenv("G_TLS_GNUTLS_PRIORITY", "NORMAL:%COMPAT:!VERS-SSL3.0:!ARCFOUR-128", 0);
-
 #if USE(GCRYPT)
     PAL::GCrypt::initialize();
 #endif
