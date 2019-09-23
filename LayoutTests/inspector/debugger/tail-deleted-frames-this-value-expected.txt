@@ -6,13 +6,13 @@ Starting Test
 ------------------------------------
 Hit breakpoint at line: 3, column: 4
 ------------------------------------
-Expected frame: {"functionName":"a","thisValue":["aThis",2],"isTailDeleted":false}
+Expected frame: {"functionName":"a","thisValue":["aThis",3],"isTailDeleted":false}
 PASS: 'this' value should have expected property: aThis
 PASS: Call Frame 0 'this' value is correct.
-Expected frame: {"functionName":"b","thisValue":["bThis",1],"isTailDeleted":true}
+Expected frame: {"functionName":"b","thisValue":["bThis",2],"isTailDeleted":true}
 PASS: 'this' value should have expected property: bThis
 PASS: Call Frame 1 'this' value is correct.
-Expected frame: {"functionName":"c","thisValue":["cThis",0],"isTailDeleted":true}
+Expected frame: {"functionName":"c","thisValue":["cThis",1],"isTailDeleted":true}
 PASS: 'this' value should have expected property: cThis
 PASS: Call Frame 2 'this' value is correct.
 Tests done

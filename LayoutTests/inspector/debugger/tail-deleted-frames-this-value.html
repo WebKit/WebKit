@@ -34,9 +34,9 @@ function test()
 
         // top down list
         let expectedFrames = [
-            {functionName: 'a', thisValue: ['aThis', 2], isTailDeleted: false},
-            {functionName: 'b', thisValue: ['bThis', 1], isTailDeleted: true},
-            {functionName: 'c', thisValue: ['cThis', 0], isTailDeleted: true}
+            {functionName: 'a', thisValue: ['aThis', 3], isTailDeleted: false},
+            {functionName: 'b', thisValue: ['bThis', 2], isTailDeleted: true},
+            {functionName: 'c', thisValue: ['cThis', 1], isTailDeleted: true}
         ];
 
         let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
