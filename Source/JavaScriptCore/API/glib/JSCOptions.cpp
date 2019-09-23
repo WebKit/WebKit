@@ -168,7 +168,7 @@ static gboolean jscOptionsSetValue(const char* option, const GValue* value)
 {
 #define SET_OPTION_VALUE(type_, name_, defaultValue_, availability_, description_) \
     if (!g_strcmp0(#name_, option)) {                                   \
-        OptionEntry::type_ valueToSet;                                  \
+        OptionTypes::type_ valueToSet;                                  \
         if (!valueFromGValue(value, valueToSet))                        \
             return FALSE;                                               \
         Options::name_() = valueToSet;                                  \
@@ -186,7 +186,7 @@ static gboolean jscOptionsGetValue(const char* option, GValue* value)
 {
 #define GET_OPTION_VALUE(type_, name_, defaultValue_, availability_, description_) \
     if (!g_strcmp0(#name_, option)) {                                   \
-        OptionEntry::type_ valueToGet = Options::name_();               \
+        OptionTypes::type_ valueToGet = Options::name_();               \
         valueToGValue(valueToGet, value);                               \
         return TRUE;                                                    \
     }
@@ -616,8 +616,8 @@ void jsc_options_foreach(JSCOptionsFunc function, gpointer userData)
 
 #define VISIT_OPTION(type_, name_, defaultValue_, availability_, description_) \
     if (Options::Availability::availability_ == Options::Availability::Normal \
-        || Options::isAvailable(Options::name_##ID, Options::Availability::availability_)) { \
-        OptionEntry::type_ defaultValue { };                            \
+        || Options::isAvailable(OptionID::name_, Options::Availability::availability_)) { \
+        OptionTypes::type_ defaultValue { };                            \
         auto optionType = jscOptionsType(defaultValue);                 \
         if (function (#name_, optionType, description_, userData))      \
             return;                                                     \
@@ -666,7 +666,7 @@ GOptionGroup* jsc_options_get_option_group(void)
     GArray* entries = g_array_new(TRUE, TRUE, sizeof(GOptionEntry));
 #define REGISTER_OPTION(type_, name_, defaultValue_, availability_, description_) \
     if (Options::Availability::availability_ == Options::Availability::Normal \
-        || Options::isAvailable(Options::name_##ID, Options::Availability::availability_)) { \
+        || Options::isAvailable(OptionID::name_, Options::Availability::availability_)) { \
         GUniquePtr<char> name(g_strdup_printf("jsc-%s", #name_));       \
         entries = g_array_set_size(entries, entries->len + 1); \
         GOptionEntry* entry = &g_array_index(entries, GOptionEntry, entries->len - 1); \

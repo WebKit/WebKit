@@ -1,3 +1,125 @@
+2019-09-23  Mark Lam  <mark.lam@apple.com>
+
+        Reduce the amount of memory needed to store Options.
+        https://bugs.webkit.org/show_bug.cgi?id=202105
+
+        Reviewed by Yusuke Suzuki.
+
+        The size of the JSC::Config needed to store the Options is now reduced to 4K
+        instead of 16K, enabled by constexpr template magic.
+
+        1. Instead of all options in a large array of OptionEntry (which is a union of
+           all the option types), we now have separate arrays for each of the types of
+           options.  For example,
+
+                Removed g_jscConfig.options[].
+                Added g_jscConfig.typeBoolOptions[].
+                Added g_jscConfig.typeInt32Options[].
+                Added g_jscConfig.typeDoubleOptions[].
+                ...
+
+           We used to find the storage for the option using g_jscConfig.options[Options::ID].
+           We now find the storage for each type of option using
+           g_jscConfig.options[optionTypeSpecificIndex<OptionTypeID, OptionID>()].  For
+           example, Options::useJIT() used to be implemented as:
+
+               inline bool& Options::useJIT()
+               {
+                    return g_jscConfig.options[Options::useJITID];
+               }
+
+           ... which is now replaced with:
+
+               inline bool& Options::useJIT()
+               {
+                    return g_jscConfig.typeBoolOptions[optionTypeSpecificIndex<OptionTypeID::Bool, OptionID::useJIT>()];
+               }
+
+        2. Introduce the optionTypeSpecificIndex() constexpr template function for
+           computing the index of each option in their respective type specific options
+           array.
+
+        3. Introduce OptionTypes, OptionTypeID, and OptionID.
+
+           The OptionTypes namespace replaces OptionEntry as the container of option types.
+           The OptionID enum class replaces Options::ID.
+           The OptionTypeID enum class is new and is used together with OptionID in
+               constexpr templates to compute the typeSpecificIndex of options.
+
+        4. Removed the OptionEntry struct and OptionEntry.h.  After (1), this struct is
+           only used in the Option class.  We just moved the union of option types (that
+           OptionEntry embeds) into the Option class.
+
+           Moved class OptionRange into OptionsList.h.
+
+        5. Removed the large OptionEntry arrays from JSC::Config.
+           Added type specific options arrays.
+           Also ordered these arrays to maximize compactness and minimize internal fragmentation.
+
+        6. Changed scaleJITPolicy() to go directly to g_jscConfig.typeInt32Options[]
+           instead of going through the Option wrapper object.  This allows us to simplify
+           things and make the Option class a read only interface of options.
+
+        7. Changed Options::initialize() to only compute the option default value once.
+           The default value specified in the OptionsList may not always be a constant.
+           Sometimes, it is a function call.
+
+        8. The Option class now only gives read only access to the options.
+
+           The Option class' role is to provide an interface for reading an option at any
+           given OptionID without first knowing about the type of the specific option.
+           It is useful for iterating options, and is currently only used by
+           Options::dumpOption().
+
+           Technically, we could merge all the Option class code into its single client.
+           We opted not to do this because the amount of code is non-trivial, and the
+           Option class does a good job of encapsulating this functionality.
+
+        * API/glib/JSCOptions.cpp:
+        (jscOptionsSetValue):
+        (jscOptionsGetValue):
+        (jsc_options_foreach):
+        (jsc_options_get_option_group):
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSCConfig.h:
+        * runtime/OptionEntry.h: Removed.
+        * runtime/Options.cpp:
+        (JSC::Options::isAvailable):
+        (JSC::overrideOptionWithHeuristic):
+        (JSC::scaleJITPolicy):
+        (JSC::recomputeDependentOptions):
+        (JSC::Options::initialize):
+        (JSC::Options::setOptionWithoutAlias):
+        (JSC::Options::dumpAllOptions):
+        (JSC::Options::dumpOption):
+        (JSC::Option::Option):
+        (JSC::Option::defaultOption const):
+        (JSC::Option::dump const):
+        (JSC::Option::operator== const):
+        * runtime/Options.h:
+        (JSC::Option::id const):
+        (JSC::Option::name const):
+        (JSC::Option::description const):
+        (JSC::Option::type const):
+        (JSC::Option::availability const):
+        (JSC::Option::isOverridden const):
+        (JSC::Option::Option):
+        (JSC::Option::idIndex const):
+        (JSC::Option::defaultOption const): Deleted.
+        (JSC::Option::boolVal): Deleted.
+        (JSC::Option::unsignedVal): Deleted.
+        (JSC::Option::doubleVal): Deleted.
+        (JSC::Option::int32Val): Deleted.
+        (JSC::Option::optionRangeVal): Deleted.
+        (JSC::Option::optionStringVal): Deleted.
+        (JSC::Option::gcLogLevelVal): Deleted.
+        * runtime/OptionsList.h:
+        (JSC::OptionRange::operator= ):
+        (JSC::OptionRange::rangeString const):
+        (JSC::optionTypeSpecificIndex):
+        (JSC::countNumberOfJSCOptionsOfType):
+
 2019-09-23  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: show WebGPU shader pipelines

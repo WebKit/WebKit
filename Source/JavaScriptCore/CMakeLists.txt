@@ -919,7 +919,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ObjectInitializationScope.h
     runtime/ObjectPrototype.h
     runtime/Operations.h
-    runtime/OptionEntry.h
     runtime/Options.h
     runtime/OptionsList.h
     runtime/ParseInt.h

@@ -1872,7 +1872,6 @@
 		FE3022D71E42857300BAC493 /* VMInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3022D51E42856700BAC493 /* VMInspector.h */; };
 		FE318FE01CAC982F00DFCC54 /* ECMAScriptSpecInternalFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = FE318FDE1CAC8C5300DFCC54 /* ECMAScriptSpecInternalFunctions.h */; };
 		FE3422121D6B81C30032BE88 /* ThrowScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3422111D6B818C0032BE88 /* ThrowScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FE3842322324D51B009DD445 /* OptionEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3842302324D51A009DD445 /* OptionEntry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE3842332324D51B009DD445 /* OptionsList.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3842312324D51B009DD445 /* OptionsList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE384EE61ADDB7AD0055DE2C /* JSDollarVM.h in Headers */ = {isa = PBXBuildFile; fileRef = FE384EE21ADDB7AD0055DE2C /* JSDollarVM.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE3A06A61C10B72D00390FDD /* JITBitOrGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06A41C10B70800390FDD /* JITBitOrGenerator.h */; };
@@ -5070,7 +5069,6 @@
 		FE35C2FA21B1E6C7000F4CA8 /* Options.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = Options.rb; sourceTree = "<group>"; };
 		FE35C2FB21B1E6C7000F4CA8 /* OpcodeGroup.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = OpcodeGroup.rb; sourceTree = "<group>"; };
 		FE35C2FC21B1E6C7000F4CA8 /* Metadata.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = Metadata.rb; sourceTree = "<group>"; };
-		FE3842302324D51A009DD445 /* OptionEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionEntry.h; sourceTree = "<group>"; };
 		FE3842312324D51B009DD445 /* OptionsList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionsList.h; sourceTree = "<group>"; };
 		FE384EE11ADDB7AD0055DE2C /* JSDollarVM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDollarVM.cpp; sourceTree = "<group>"; };
 		FE384EE21ADDB7AD0055DE2C /* JSDollarVM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDollarVM.h; sourceTree = "<group>"; };
@@ -7370,7 +7368,6 @@
 				E39EEAF22281244C008474F4 /* ObjectToStringAdaptiveStructureWatchpoint.h */,
 				F692A8770255597D01FF60F7 /* Operations.cpp */,
 				F692A8780255597D01FF60F7 /* Operations.h */,
-				FE3842302324D51A009DD445 /* OptionEntry.h */,
 				0FE228EA1436AB2300196C48 /* Options.cpp */,
 				0FE228EB1436AB2300196C48 /* Options.h */,
 				FE3842312324D51B009DD445 /* OptionsList.h */,
@@ -9353,7 +9350,6 @@
 				0FEA0A10170513DB00BB722C /* FTLLowerDFGToB3.h in Headers */,
 				A7D89D0217A0B90400773AD8 /* FTLLoweredNodeValue.h in Headers */,
 				0F2B9CF919D0BAC100B1D1B5 /* FTLOperations.h in Headers */,
-				FE3842322324D51B009DD445 /* OptionEntry.h in Headers */,
 				0FD8A31C17D51F2200CA2C40 /* FTLOSREntry.h in Headers */,
 				0F235BDD17178E1C00690C7F /* FTLOSRExit.h in Headers */,
 				0F235BE017178E1C00690C7F /* FTLOSRExitCompiler.h in Headers */,
