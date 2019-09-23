@@ -1,3 +1,13 @@
+2019-09-23  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Collapse results with the same version name (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=201779
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/static/js/configuration.js:
+        (Configuration.prototype.compare): Correctly compare constructed version names.
+
 2019-09-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] LocalAuthenticator tests are failing on internal bots

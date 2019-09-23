@@ -190,8 +190,12 @@ class Configuration {
                     return;
 
                 if (this[key] !== null && configuration[key] !== null) {
-                    if (typeof this[key] === 'string')
-                        result = this[key].localeCompare(configuration[key]);
+                    if (typeof this[key] === 'string') {
+                        if (key === 'version_name' && this[key].startsWith(configuration[key]))
+                            result = 0;
+                        else
+                            result = this[key].localeCompare(configuration[key]);
+                    }
                     else if (typeof this[key] === 'number' || typeof this[key] === 'boolean')
                         result = this[key] - configuration[key];
                     else
