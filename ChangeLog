@@ -1,3 +1,9 @@
+2019-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.26.1 release
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2019-09-15  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Do not run the Bubblewrap executable when configuring for cross-compilation

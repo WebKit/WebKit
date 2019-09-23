@@ -1,4 +1,19 @@
 ================
+WebKitGTK 2.26.1
+================
+
+What's new in WebKitGTK+ 2.26.1?
+
+  - Fix MSE media player with GStreamer 1.14.
+  - Fix HTML alternate loads never finishing.
+  - Fix web view initialization delay on fisrt load.
+  - Validate user agent string set via API.
+  - Fix a crash when a web view is destroyed with accelerated compositing mode enabled.
+  - Fix EGL initialization with newer versions of Mesa.
+  - Do not enable the sandbox inside docker.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.26.0
 ================
 

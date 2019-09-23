@@ -1,3 +1,9 @@
+2019-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.26.1 release
+
+        * gtk/NEWS: Add release notes for 2.26.1.
+
 2019-09-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] Stop setting G_TLS_GNUTLS_PRIORITY
