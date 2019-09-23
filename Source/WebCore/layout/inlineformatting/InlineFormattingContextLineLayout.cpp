@@ -363,7 +363,7 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const Line::Conten
     auto floatingContext = FloatingContext { formattingRoot(), formattingContext, formattingState.floatingState() };
 
     // Move floats to their final position.
-    for (auto floatItem : floats) {
+    for (const auto& floatItem : floats) {
         auto& floatBox = floatItem->layoutBox();
         auto& displayBox = formattingState.displayBox(floatBox);
         // Set static position first.

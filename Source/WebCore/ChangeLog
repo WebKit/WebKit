@@ -1,3 +1,33 @@
+2019-09-22  David Kilzer  <ddkilzer@apple.com>
+
+        clang-tidy: Fix unnecessary copy/ref churn of for loop variables in WebCore
+        <https://webkit.org/b/202090>
+
+        Reviewed by Daniel Bates.
+
+        Fix unwanted copying/ref churn of loop variables by making them
+        const references.
+
+        * Modules/encryptedmedia/InitDataRegistry.cpp:
+        (WebCore::InitDataRegistry::extractKeyIDsCenc):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::getMisspellingRange const):
+        (WebCore::AccessibilityObject::performTextOperation):
+        * html/HTMLSlotElement.cpp:
+        (WebCore::flattenAssignedNodes):
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::checkAndStoreStyleSheet):
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::createDisplayRuns const):
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::updateSupportedTypeIdentifiers):
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard allDroppedFileURLs]):
+        * svg/SVGStringList.h:
+        * testing/MockLibWebRTCPeerConnection.cpp:
+        (WebCore::MockLibWebRTCPeerConnection::GetTransceivers const):
+        Also call transceivers.reserve() to optimize allocations.
+
 2019-09-21  Chris Dumez  <cdumez@apple.com>
 
         Reduce use of SessionID::defaultSessionID() in WebKit

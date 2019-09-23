@@ -490,7 +490,7 @@ RefPtr<Range> AccessibilityObject::getMisspellingRange(RefPtr<Range> const& star
     // So iterate forward or backwards depending on the desired search
     // direction to find the closest misspelling in that direction.
     if (direction == AccessibilitySearchDirection::Next) {
-        for (auto misspelling : misspellings) {
+        for (const auto& misspelling : misspellings) {
             auto misspellingRange = editor.rangeForTextCheckingResult(misspelling);
             if (!misspellingRange)
                 continue;
@@ -982,7 +982,7 @@ Vector<String> AccessibilityObject::performTextOperation(AccessibilityTextOperat
     if (!frame)
         return result;
 
-    for (auto textRange : operation.textRanges) {
+    for (const auto& textRange : operation.textRanges) {
         if (!frame->selection().setSelectedRange(textRange.get(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes))
             continue;
 

@@ -726,7 +726,7 @@ void PlatformPasteboard::updateSupportedTypeIdentifiers(const Vector<String>& ty
         return;
 
     NSMutableArray *typesArray = [NSMutableArray arrayWithCapacity:types.size()];
-    for (auto type : types)
+    for (const auto& type : types)
         [typesArray addObject:(NSString *)type];
 
     [m_pasteboard updateSupportedTypeIdentifiers:typesArray];

@@ -389,7 +389,7 @@ bool WebVTTParser::checkAndStoreStyleSheet(const String& line)
     if (!childRules.size())
         return true;
     
-    for (auto rule : childRules) {
+    for (const auto& rule : childRules) {
         if (!rule->isStyleRule())
             return true;
         const auto& styleRule = downcast<StyleRule>(rule.get());

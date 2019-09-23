@@ -171,7 +171,7 @@ Optional<Vector<Ref<SharedBuffer>>> InitDataRegistry::extractKeyIDsCenc(const Sh
 
             FourCC scheme = fpsPssh.initDataBox().info().scheme();
             if (CDMPrivateFairPlayStreaming::validFairPlayStreamingSchemes().contains(scheme)) {
-                for (auto request : fpsPssh.initDataBox().requests()) {
+                for (const auto& request : fpsPssh.initDataBox().requests()) {
                     auto& keyID = request.requestInfo().keyID();
                     keyIDs.append(SharedBuffer::create(keyID.data(), keyID.size()));
                 }

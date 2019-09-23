@@ -75,7 +75,7 @@ public:
     {
         StringBuilder builder;
 
-        for (auto string : m_items) {
+        for (const auto& string : m_items) {
             if (builder.length())
                 builder.append(' ');
 

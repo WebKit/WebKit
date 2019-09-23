@@ -661,7 +661,7 @@ static Class classForTypeIdentifier(NSString *typeIdentifier, NSString *&outType
 - (NSArray<NSURL *> *)allDroppedFileURLs
 {
     NSMutableArray<NSURL *> *fileURLs = [NSMutableArray array];
-    for (auto loadResult : _loadResults) {
+    for (const auto& loadResult : _loadResults) {
         if ([loadResult canBeRepresentedAsFileUpload])
             [fileURLs addObjectsFromArray:[loadResult loadedFileURLs]];
     }

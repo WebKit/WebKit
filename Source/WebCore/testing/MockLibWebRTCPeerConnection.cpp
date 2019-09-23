@@ -78,7 +78,8 @@ MockLibWebRTCPeerConnection::~MockLibWebRTCPeerConnection()
 std::vector<rtc::scoped_refptr<webrtc::RtpTransceiverInterface>> MockLibWebRTCPeerConnection::GetTransceivers() const
 {
     std::vector<rtc::scoped_refptr<webrtc::RtpTransceiverInterface>> transceivers;
-    for (auto transceiver : m_transceivers)
+    transceivers.reserve(m_transceivers.size());
+    for (const auto& transceiver : m_transceivers)
         transceivers.push_back(transceiver);
     return transceivers;
 }

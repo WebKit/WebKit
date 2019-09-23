@@ -116,7 +116,7 @@ static void flattenAssignedNodes(Vector<Ref<Node>>& nodes, const HTMLSlotElement
         }
         return;
     }
-    for (RefPtr<Node> node : *assignedNodes) {
+    for (const RefPtr<Node>& node : *assignedNodes) {
         if (is<HTMLSlotElement>(*node))
             flattenAssignedNodes(nodes, downcast<HTMLSlotElement>(*node));
         else
