@@ -4,19 +4,19 @@ PASS Operator dictionary chunk 1 - movablelimits
 PASS Operator dictionary chunk 1 - largeop 
 PASS Operator dictionary chunk 1 - stretchy 
 PASS Operator dictionary chunk 1 - symmetric 
-FAIL Operator dictionary chunk 1 - accent assert_approx_equals: Accent property for " postfix should be 'true' expected 22.421875 +/- 1 but got 7.5
+PASS Operator dictionary chunk 1 - accent 
 PASS Operator dictionary chunk 2 - lspace/rspace 
 PASS Operator dictionary chunk 2 - movablelimits 
 PASS Operator dictionary chunk 2 - largeop 
 PASS Operator dictionary chunk 2 - stretchy 
 PASS Operator dictionary chunk 2 - symmetric 
-FAIL Operator dictionary chunk 2 - accent assert_approx_equals: Accent property for ª postfix should be 'true' expected 22.421875 +/- 1 but got 7.5
+PASS Operator dictionary chunk 2 - accent 
 PASS Operator dictionary chunk 3 - lspace/rspace 
 PASS Operator dictionary chunk 3 - movablelimits 
 PASS Operator dictionary chunk 3 - largeop 
 PASS Operator dictionary chunk 3 - stretchy 
 PASS Operator dictionary chunk 3 - symmetric 
-FAIL Operator dictionary chunk 3 - accent assert_approx_equals: Accent property for ‛ postfix should be 'true' expected 22.421875 +/- 1 but got 7.5
+PASS Operator dictionary chunk 3 - accent 
 PASS Operator dictionary chunk 4 - lspace/rspace 
 PASS Operator dictionary chunk 4 - movablelimits 
 PASS Operator dictionary chunk 4 - largeop 
@@ -62,7 +62,7 @@ PASS Operator dictionary chunk 10 - accent
 PASS Operator dictionary chunk 11 - lspace/rspace 
 PASS Operator dictionary chunk 11 - movablelimits 
 PASS Operator dictionary chunk 11 - largeop 
-FAIL Operator dictionary chunk 11 - stretchy assert_approx_equals: Stretchy property for 〈 prefix should be 'true' expected 0 +/- 1 but got 45
+PASS Operator dictionary chunk 11 - stretchy 
 PASS Operator dictionary chunk 11 - symmetric 
 PASS Operator dictionary chunk 11 - accent 
 PASS Operator dictionary chunk 12 - lspace/rspace 
@@ -137,26 +137,4 @@ PASS Operator dictionary chunk 23 - largeop
 PASS Operator dictionary chunk 23 - stretchy 
 PASS Operator dictionary chunk 23 - symmetric 
 PASS Operator dictionary chunk 23 - accent 
-accent for """ (postfix): 
- 
-"
- VS 
- 
-"
-accent for "ª" (postfix): 
- 
-ª
- VS 
- 
-ª
-accent for "‛" (postfix): 
- 
-‛
- VS 
- 
-‛
-stretchy for "〈" (prefix): 
-〈
- VS 
-〈
 

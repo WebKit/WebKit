@@ -1,3 +1,14 @@
+2019-09-23  Rob Buis  <rbuis@igalia.com>
+
+        Sync operator dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=201974
+
+        Reviewed by Frédéric Wang.
+
+        Update improved test results.
+
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-001-expected.txt:
+
 2019-09-20  Alex Christensen  <achristensen@webkit.org>
 
         [resource-timing] Report performance entries with all HTTP status codes

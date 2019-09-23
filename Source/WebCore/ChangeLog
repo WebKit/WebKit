@@ -1,3 +1,17 @@
+2019-09-23  Rob Buis  <rbuis@igalia.com>
+
+        Sync operator dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=201974
+
+        Reviewed by Frédéric Wang.
+
+        Sync with operator dictionary list from
+        https://mathml-refresh.github.io/mathml-core/#operator-dictionary
+
+        Test: imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-001.html
+
+        * mathml/MathMLOperatorDictionary.cpp:
+
 2019-09-22  David Kilzer  <ddkilzer@apple.com>
 
         clang-tidy: Fix unnecessary copy/ref churn of for loop variables in WebCore

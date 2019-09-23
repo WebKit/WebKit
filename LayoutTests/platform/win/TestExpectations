@@ -2031,6 +2031,7 @@ mathml/presentation/mathvariant-tokens.html [ ImageOnlyFailure ]
 mathml/presentation/tokenElements-mathvariant.html [ ImageOnlyFailure ]
 mathml/non-core/lengths-1.html [ ImageOnlyFailure ]
 mathml/non-core/lengths-3.html [ Failure ]
+mathml/presentation/row-nonstretchy-or-horizontal.html [ ImageOnlyFailure ]
 ################################################################################
 #################          End MathML Issues                ####################
 ################################################################################
