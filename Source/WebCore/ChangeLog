@@ -1,3 +1,18 @@
+2019-09-23  Youenn Fablet  <youenn@apple.com>
+
+        Simplify UserMediaPermissionRequestManager management of UserMediaRequest
+        https://bugs.webkit.org/show_bug.cgi?id=201688
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing tests and modified test.
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::UserMediaRequest):
+        * Modules/mediastream/UserMediaRequest.h:
+        (WebCore::UserMediaRequest::identifier const):
+        Add an identifier generated for each request.
+
 2019-09-23  Charlie Turner  <cturner@igalia.com>
 
         [GStreamer] isAVC1CodecSupported is crashing several media source tests due to avc1.4d4001 codec type

@@ -1,3 +1,13 @@
+2019-09-23  Youenn Fablet  <youenn@apple.com>
+
+        Simplify UserMediaPermissionRequestManager management of UserMediaRequest
+        https://bugs.webkit.org/show_bug.cgi?id=201688
+
+        Reviewed by Eric Carlson.
+
+        * http/tests/media/media-stream/disconnected-frame-permission-denied-expected.txt:
+        * http/tests/media/media-stream/disconnected-frame-permission-denied.html:
+
 2019-09-23  Rob Buis  <rbuis@igalia.com>
 
         Sync operator dictionary

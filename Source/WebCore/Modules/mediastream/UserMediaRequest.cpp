@@ -60,6 +60,7 @@ Ref<UserMediaRequest> UserMediaRequest::create(Document& document, MediaStreamRe
 
 UserMediaRequest::UserMediaRequest(Document& document, MediaStreamRequest&& request, DOMPromiseDeferred<IDLInterface<MediaStream>>&& promise)
     : ActiveDOMObject(document)
+    , m_identifier(UserMediaRequestIdentifier::generate())
     , m_promise(WTFMove(promise))
     , m_request(WTFMove(request))
 {

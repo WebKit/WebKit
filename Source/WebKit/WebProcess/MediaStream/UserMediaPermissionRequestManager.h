@@ -58,15 +58,12 @@ private:
     // WebCore::MediaCanStartListener
     void mediaCanStart(WebCore::Document&) final;
 
-    void removeMediaRequestFromMaps(WebCore::UserMediaRequest&);
-
     WebPage& m_page;
 
-    HashMap<uint64_t, RefPtr<WebCore::UserMediaRequest>> m_idToUserMediaRequestMap;
-    HashMap<RefPtr<WebCore::UserMediaRequest>, uint64_t> m_userMediaRequestToIDMap;
-    HashMap<RefPtr<WebCore::Document>, Vector<RefPtr<WebCore::UserMediaRequest>>> m_blockedUserMediaRequests;
+    HashMap<WebCore::UserMediaRequestIdentifier, Ref<WebCore::UserMediaRequest>> m_ongoingUserMediaRequests;
+    HashMap<RefPtr<WebCore::Document>, Vector<Ref<WebCore::UserMediaRequest>>> m_pendingUserMediaRequests;
 
-    HashMap<WebCore::UserMediaClient::DeviceChangeObserverToken, WTF::Function<void()>> m_deviceChangeObserverMap;
+    HashMap<WebCore::UserMediaClient::DeviceChangeObserverToken, Function<void()>> m_deviceChangeObserverMap;
     bool m_monitoringDeviceChange { false };
 };
 

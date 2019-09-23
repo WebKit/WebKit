@@ -1,3 +1,30 @@
+2019-09-23  Youenn Fablet  <youenn@apple.com>
+
+        Simplify UserMediaPermissionRequestManager management of UserMediaRequest
+        https://bugs.webkit.org/show_bug.cgi?id=201688
+
+        Reviewed by Eric Carlson.
+
+        Instead of having two maps to go from ID to request and request to ID,
+        Make request own its ID and keep a single ID to request map.
+        Rename it to m_ongoingUserMediaRequests.
+
+        Rename requests that are not processed because the document cannot start media as m_pendingUserMediaRequests.
+        In case the request is cancelled following the stopping of active dom objects, we just remove it from m_pendingUserMediaRequests
+        instead of denying the request. This matches Chrome and Firefox behavior.
+
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::startUserMediaRequest):
+        (WebKit::UserMediaPermissionRequestManager::sendUserMediaRequest):
+        (WebKit::UserMediaPermissionRequestManager::cancelUserMediaRequest):
+        (WebKit::UserMediaPermissionRequestManager::mediaCanStart):
+        (WebKit::UserMediaPermissionRequestManager::userMediaAccessWasGranted):
+        (WebKit::UserMediaPermissionRequestManager::userMediaAccessWasDenied):
+        (WebKit::UserMediaPermissionRequestManager::addDeviceChangeObserver):
+        (WebKit::generateRequestID): Deleted.
+        (WebKit::UserMediaPermissionRequestManager::removeMediaRequestFromMaps): Deleted.
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.h:
+
 2019-09-23  Patrick Griffis  <pgriffis@igalia.com>
 
         [GTK][WPE] Don't use prgname in dbus-proxy socket path

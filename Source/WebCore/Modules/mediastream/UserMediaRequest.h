@@ -41,17 +41,22 @@
 #include "MediaStreamPrivate.h"
 #include "MediaStreamRequest.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebCore {
 
 class MediaStream;
 class SecurityOrigin;
 
+enum UserMediaRequestIdentifierType { };
+using UserMediaRequestIdentifier = ObjectIdentifier<UserMediaRequestIdentifierType>;
+
 class UserMediaRequest : public RefCounted<UserMediaRequest>, public ActiveDOMObject {
 public:
     static Ref<UserMediaRequest> create(Document&, MediaStreamRequest&&, DOMPromiseDeferred<IDLInterface<MediaStream>>&&);
     virtual ~UserMediaRequest();
 
+    UserMediaRequestIdentifier identifier() const { return m_identifier; }
     void start();
 
     WEBCORE_EXPORT void setAllowedMediaDeviceUIDs(const String& audioDeviceUID, const String& videoDeviceUID);
@@ -80,6 +85,8 @@ private:
     bool canSuspendForDocumentSuspension() const final;
 
     void mediaStreamDidFail(RealtimeMediaSource::Type);
+
+    UserMediaRequestIdentifier m_identifier;
 
     Vector<String> m_videoDeviceUIDs;
     Vector<String> m_audioDeviceUIDs;

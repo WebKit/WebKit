@@ -5,7 +5,7 @@
 </head>
 <body>
 <script>
-description("Tests that when a getUserMedia request is made, permission is denied and its Frame is disconnected before a callback is made, the error callback is invoked with PERMISSION_DENIED.");
+description("Tests that when a getUserMedia request is made, permission is denied and its Frame is disconnected before the promise is resolved, the promise never resolves.");
 window.jsTestIsAsync = true;
 
 if (window.testRunner)
@@ -39,11 +39,11 @@ function onIframeUnloaded() {
             finishJSTest();
         })
         .catch(err => {
-            testPassed('Error callback invoked');
+            testFailed('Error callback invoked');
             finishJSTest();
         });
     setTimeout(function() {
-        testFailed('No callbacks invoked');
+        testPassed('No callbacks invoked');
         finishJSTest();
     }, 100);
 }
