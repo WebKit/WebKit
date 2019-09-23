@@ -305,7 +305,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     m_diskCacheIsDisabledForTesting = parameters.shouldUseTestingNetworkSession;
 
-    setCacheModel(parameters.cacheModel);
+    setCacheModel(parameters.cacheModel, parameters.defaultDataStoreParameters.networkSessionParameters.networkCacheDirectory);
 
     setCanHandleHTTPSServerTrustEvaluation(parameters.canHandleHTTPSServerTrustEvaluation);
 
@@ -1961,7 +1961,7 @@ void NetworkProcess::continueDecidePendingDownloadDestination(DownloadID downloa
         downloadManager().continueDecidePendingDownloadDestination(downloadID, destination, WTFMove(sandboxExtensionHandle), allowOverwrite);
 }
 
-void NetworkProcess::setCacheModel(CacheModel cacheModel)
+void NetworkProcess::setCacheModel(CacheModel cacheModel, String cacheStorageDirectory)
 {
     if (m_hasSetCacheModel && (cacheModel == m_cacheModel))
         return;
@@ -1974,7 +1974,6 @@ void NetworkProcess::setCacheModel(CacheModel cacheModel)
     uint64_t diskFreeSize = 0;
 
     // FIXME: Move the cache model to WebsiteDataStore so we don't need to assume the first cache is on the same volume as all caches.
-    String cacheStorageDirectory;
     forEachNetworkSession([&](auto& session) {
         if (!cacheStorageDirectory.isNull())
             return;

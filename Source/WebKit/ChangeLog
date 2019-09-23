@@ -1,3 +1,24 @@
+2019-09-23  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(250143) Disk cache should be enabled for Safari
+        https://bugs.webkit.org/show_bug.cgi?id=202117
+
+        Reviewed by Brady Eidson.
+
+        r250143 made it so in Safari, when setCacheModel is called for the first time in NetworkProcess::initializeNetworkProcess,
+        it didn't have a path to check available disk space.  This resulted in disabling the disk cache in Safari, which caused a
+        huge performance regression.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::setCacheModel):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::setCacheModel):
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::setCacheModel):
+
 2019-09-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] LocalAuthenticator tests are failing on internal bots

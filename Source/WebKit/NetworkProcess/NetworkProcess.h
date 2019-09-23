@@ -409,7 +409,7 @@ private:
     void applicationDidEnterBackground();
     void applicationWillEnterForeground();
 
-    void setCacheModel(CacheModel);
+    void setCacheModel(CacheModel, String overrideCacheStorageDirectory);
     void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
     void setCanHandleHTTPSServerTrustEvaluation(bool);
     void getNetworkProcessStatistics(uint64_t callbackID);

@@ -72,7 +72,7 @@ messages -> NetworkProcess LegacyReceiver {
     GetNetworkProcessStatistics(uint64_t callbackID)
     
     ClearCacheForAllOrigins(uint32_t cachesToClear)
-    SetCacheModel(enum:uint8_t WebKit::CacheModel cacheModel);
+    SetCacheModel(enum:uint8_t WebKit::CacheModel cacheModel, String overrideCacheStorageDirectory);
 
     ProcessDidTransitionToBackground()
     ProcessDidTransitionToForeground()
