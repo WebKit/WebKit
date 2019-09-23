@@ -78,14 +78,8 @@ void InlineFormattingContext::layoutInFlowContent()
     while (layoutBox) {
         if (layoutBox->establishesFormattingContext())
             layoutFormattingContextRoot(*layoutBox, usedHorizontalValues, usedVerticalValues);
-        else if (is<Container>(*layoutBox))
-            computeMarginBorderAndPaddingForInlineContainer(downcast<Container>(*layoutBox), usedHorizontalValues);
-        else if (layoutBox->isReplaced())
-            computeWidthAndHeightForReplacedInlineBox(*layoutBox, usedHorizontalValues, usedVerticalValues);
-        else {
-            ASSERT(layoutBox->isInlineLevelBox());
-            initializeMarginBorderAndPaddingForGenericInlineBox(*layoutBox);
-        }
+        else
+            computeHorizontalAndVerticalGeometry(*layoutBox, usedHorizontalValues, usedVerticalValues);
         layoutBox = nextInPreOrder(*layoutBox, root());
     }
 
@@ -96,6 +90,54 @@ void InlineFormattingContext::layoutInFlowContent()
     collectInlineContent();
     InlineLayout(*this, usedHorizontalValues).layout(formattingState().inlineItems());
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root() << ")");
+}
+
+void InlineFormattingContext::layoutFormattingContextRoot(const Box& formattingContextRoot, UsedHorizontalValues usedHorizontalValues, UsedVerticalValues usedVerticalValues)
+{
+    ASSERT(formattingContextRoot.isFloatingPositioned() || formattingContextRoot.isInlineBlockBox());
+
+    computeBorderAndPadding(formattingContextRoot, usedHorizontalValues);
+    computeWidthAndMargin(formattingContextRoot, usedHorizontalValues);
+    // Swich over to the new formatting context (the one that the root creates).
+    if (is<Container>(formattingContextRoot)) {
+        auto& rootContainer = downcast<Container>(formattingContextRoot);
+        auto formattingContext = LayoutContext::createFormattingContext(rootContainer, layoutState());
+        formattingContext->layoutInFlowContent();
+        // Come back and finalize the root's height and margin.
+        computeHeightAndMargin(rootContainer, usedHorizontalValues, usedVerticalValues);
+        // Now that we computed the root's height, we can go back and layout the out-of-flow content.
+        formattingContext->layoutOutOfFlowContent();
+    } else
+        computeHeightAndMargin(formattingContextRoot, usedHorizontalValues, usedVerticalValues);
+}
+
+void InlineFormattingContext::computeHorizontalAndVerticalGeometry(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues, UsedVerticalValues usedVerticalValues)
+{
+    if (is<Container>(layoutBox)) {
+        // Inline containers (<span>) can't get sized/positioned yet. At this point we can only compute their margins, borders and paddings.
+        computeHorizontalMargin(layoutBox, usedHorizontalValues);
+        computeBorderAndPadding(layoutBox, usedHorizontalValues);
+        // Inline containers have 0 computed vertical margins.
+        formattingState().displayBox(layoutBox).setVerticalMargin({ { }, { } });
+        return;
+    }
+
+    if (layoutBox.isReplaced()) {
+        // Replaced elements (img, video) can be sized but not yet positioned.
+        computeBorderAndPadding(layoutBox, usedHorizontalValues);
+        computeWidthAndMargin(layoutBox, usedHorizontalValues);
+        computeHeightAndMargin(layoutBox, usedHorizontalValues, usedVerticalValues);
+        return;
+    }
+
+    // These are actual text boxes. No margins, borders or paddings.
+    ASSERT(layoutBox.isAnonymous() || layoutBox.isLineBreakBox());
+    auto& displayBox = formattingState().displayBox(layoutBox);
+
+    displayBox.setVerticalMargin({ { }, { } });
+    displayBox.setHorizontalMargin({ });
+    displayBox.setBorder({ { }, { } });
+    displayBox.setPadding({ });
 }
 
 FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstraints()
@@ -147,25 +189,6 @@ FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIn
     auto constraints = geometry().constrainByMinMaxWidth(root(), { maximumLineWidth(0), maximumLineWidth(LayoutUnit::max()) });
     formattingState().setIntrinsicWidthConstraints(constraints);
     return constraints;
-}
-
-void InlineFormattingContext::initializeMarginBorderAndPaddingForGenericInlineBox(const Box& layoutBox)
-{
-    ASSERT(layoutBox.isAnonymous() || layoutBox.isLineBreakBox());
-    auto& displayBox = formattingState().displayBox(layoutBox);
-
-    displayBox.setVerticalMargin({ { }, { } });
-    displayBox.setHorizontalMargin({ });
-    displayBox.setBorder({ { }, { } });
-    displayBox.setPadding({ });
-}
-
-void InlineFormattingContext::computeMarginBorderAndPaddingForInlineContainer(const Container& container, UsedHorizontalValues usedHorizontalValues)
-{
-    computeHorizontalMargin(container, usedHorizontalValues);
-    computeBorderAndPadding(container, usedHorizontalValues);
-    // Inline containers (<span>) have 0 vertical margins.
-    formattingState().displayBox(container).setVerticalMargin({ { }, { } });
 }
 
 void InlineFormattingContext::computeIntrinsicWidthForFormattingRoot(const Box& formattingRoot, UsedHorizontalValues usedHorizontalValues)
@@ -226,27 +249,6 @@ void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox, UsedH
     auto& displayBox = formattingState().displayBox(layoutBox);
     displayBox.setContentBoxHeight(heightAndMargin.height);
     displayBox.setVerticalMargin({ heightAndMargin.nonCollapsedMargin, { } });
-}
-
-void InlineFormattingContext::layoutFormattingContextRoot(const Box& root, UsedHorizontalValues usedHorizontalValues, UsedVerticalValues usedVerticalValues)
-{
-    ASSERT(root.isFloatingPositioned() || root.isInlineBlockBox());
-
-    computeBorderAndPadding(root, usedHorizontalValues);
-    computeWidthAndMargin(root, usedHorizontalValues);
-    // This is similar to static positioning in block formatting context. We just need to initialize the top left position.
-    formattingState().displayBox(root).setTopLeft({ 0, 0 });
-    // Swich over to the new formatting context (the one that the root creates).
-    if (is<Container>(root)) {
-        auto& rootContainer = downcast<Container>(root);
-        auto formattingContext = LayoutContext::createFormattingContext(rootContainer, layoutState());
-        formattingContext->layoutInFlowContent();
-        // Come back and finalize the root's height and margin.
-        computeHeightAndMargin(rootContainer, usedHorizontalValues, usedVerticalValues);
-        // Now that we computed the root's height, we can go back and layout the out-of-flow content.
-        formattingContext->layoutOutOfFlowContent();
-    } else
-        computeHeightAndMargin(root, usedHorizontalValues, usedVerticalValues);
 }
 
 void InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues, UsedVerticalValues usedVerticalValues)

@@ -102,10 +102,11 @@ private:
     InlineFormattingContext::Geometry geometry() const { return Geometry(*this); }
 
     void layoutFormattingContextRoot(const Box&, UsedHorizontalValues, UsedVerticalValues);
-    void computeMarginBorderAndPaddingForInlineContainer(const Container&, UsedHorizontalValues);
-    void initializeMarginBorderAndPaddingForGenericInlineBox(const Box&);
+    void computeHorizontalAndVerticalGeometry(const Box&, UsedHorizontalValues, UsedVerticalValues);
+
     void computeIntrinsicWidthForFormattingRoot(const Box&, UsedHorizontalValues);
     void computeWidthAndHeightForReplacedInlineBox(const Box&, UsedHorizontalValues, UsedVerticalValues);
+
     void computeHorizontalMargin(const Box&, UsedHorizontalValues);
     void computeHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues);
     void computeWidthAndMargin(const Box&, UsedHorizontalValues);
