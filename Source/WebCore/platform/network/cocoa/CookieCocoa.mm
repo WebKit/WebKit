@@ -183,7 +183,7 @@ Cookie::operator NSHTTPCookie * _Nullable () const
     if (httpOnly)
         [properties setObject:@YES forKey:@"HttpOnly"];
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS_FAMILY)
     if (auto* sameSitePolicy = nsSameSitePolicy(sameSite))
         [properties setObject:sameSitePolicy forKey:@"SameSite"];
 #endif
