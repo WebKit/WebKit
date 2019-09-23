@@ -511,7 +511,7 @@ void ResourceLoadStatisticsDatabaseStore::calculateAndSubmitTelemetry() const
 static String domainsToString(const HashSet<RegistrableDomain>& domains)
 {
     StringBuilder builder;
-    for (auto domainName : domains) {
+    for (const auto& domainName : domains) {
         if (!builder.isEmpty())
             builder.appendLiteral(", ");
         builder.append('"');

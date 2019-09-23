@@ -169,7 +169,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
 {
     NSMutableArray *suggestions = [NSMutableArray array];
 
-    for (auto suggestion : _suggestions) {
+    for (const auto& suggestion : _suggestions) {
         [suggestions addObject:[WKDataListTextSuggestion textSuggestionWithInputText:suggestion]];
         if (suggestions.count == 3)
             break;

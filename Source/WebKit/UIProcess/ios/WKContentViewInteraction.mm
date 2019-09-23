@@ -2538,7 +2538,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     }
 #endif
     auto actionsToPerform = std::exchange(_actionsToPerformAfterResettingSingleTapGestureRecognizer, { });
-    for (auto action : actionsToPerform)
+    for (const auto& action : actionsToPerform)
         action();
 }
 
