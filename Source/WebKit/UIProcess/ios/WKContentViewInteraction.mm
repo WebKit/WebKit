@@ -179,6 +179,8 @@ static NSString * const webkitShowLinkPreviewsPreferenceKey = @"WebKitShowLinkPr
 }
 @end
 
+#define UIWKWordNearTapIsMisspelled ((UIWKSelectionFlags)8)
+
 namespace WebKit {
 using namespace WebCore;
 using namespace WebKit;
@@ -3595,6 +3597,8 @@ static inline UIWKSelectionFlags toUIWKSelectionFlags(WebKit::SelectionFlags fla
         uiFlags |= UIWKWordIsNearTap;
     if (flags & WebKit::PhraseBoundaryChanged)
         uiFlags |= UIWKPhraseBoundaryChanged;
+    if (flags & WebKit::WordNearTapIsMisspelled)
+        uiFlags |= UIWKWordNearTapIsMisspelled;
 
     return static_cast<UIWKSelectionFlags>(uiFlags);
 }
@@ -3664,10 +3668,12 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)changeSelectionWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)state withFlags:(UIWKSelectionFlags)flags
 {
     _usingGestureForSelection = YES;
+    _processingChangeSelectionWithGestureCount++;
     _page->selectWithGesture(WebCore::IntPoint(point), WebCore::CharacterGranularity, static_cast<uint32_t>(toGestureType(gestureType)), static_cast<uint32_t>(toGestureRecognizerState(state)), [self _isInteractingWithFocusedElement], [self, state, flags](const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t innerFlags, WebKit::CallbackBase::Error error) {
         selectionChangedWithGesture(self, point, gestureType, gestureState, flags | innerFlags, error);
         if (state == UIGestureRecognizerStateEnded || state == UIGestureRecognizerStateCancelled)
             _usingGestureForSelection = NO;
+        _processingChangeSelectionWithGestureCount--;
     });
 }
 
@@ -6010,7 +6016,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     _selectionNeedsUpdate = YES;
     // If we are changing the selection with a gesture there is no need
     // to wait to paint the selection.
-    if (_usingGestureForSelection)
+    if (_usingGestureForSelection || _processingChangeSelectionWithGestureCount > 0)
         [self _updateChangedSelection];
 
 #if USE(UIKIT_KEYBOARD_ADDITIONS)

@@ -73,6 +73,7 @@ enum SelectionFlags {
     None = 0,
     WordIsNearTap = 1 << 0,
     PhraseBoundaryChanged = 1 << 1,
+    WordNearTapIsMisspelled = 1 << 2,
 };
 
 enum class SelectionHandlePosition {

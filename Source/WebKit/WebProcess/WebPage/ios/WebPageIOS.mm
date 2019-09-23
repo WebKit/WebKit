@@ -68,6 +68,7 @@
 #import <WebCore/DiagnosticLoggingClient.h>
 #import <WebCore/DiagnosticLoggingKeys.h>
 #import <WebCore/DocumentLoader.h>
+#import <WebCore/DocumentMarkerController.h>
 #import <WebCore/DragController.h>
 #import <WebCore/Editing.h>
 #import <WebCore/Editor.h>
@@ -1317,7 +1318,7 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
         return;
     }
     RefPtr<Range> range;
-    SelectionFlags flags = None;
+    OptionSet<SelectionFlags> flags;
     GestureRecognizerState wkGestureState = static_cast<GestureRecognizerState>(gestureState);
     switch (static_cast<GestureType>(gestureType)) {
     case GestureType::PhraseBoundary:
@@ -1329,10 +1330,11 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
             position = markedRange->startPosition();
         if (position > markedRange->endPosition())
             position = markedRange->endPosition();
-        if (wkGestureState != GestureRecognizerState::Began)
-            flags = distanceBetweenPositions(markedRange->startPosition(), frame.selection().selection().start()) != distanceBetweenPositions(markedRange->startPosition(), position) ? PhraseBoundaryChanged : None;
-        else
-            flags = PhraseBoundaryChanged;
+        if (wkGestureState != GestureRecognizerState::Began) {
+            if (distanceBetweenPositions(markedRange->startPosition(), frame.selection().selection().start()) != distanceBetweenPositions(markedRange->startPosition(), position))
+                flags.add(PhraseBoundaryChanged);
+        } else
+            flags.add(PhraseBoundaryChanged);
         range = Range::create(*frame.document(), position, position);
     }
         break;
@@ -1351,8 +1353,11 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
                 result = wordRange->startPosition();
                 if (distanceBetweenPositions(position, result) > 1)
                     result = wordRange->endPosition();
+
+                if (wordRange->ownerDocument().markers().hasMarkers(*wordRange, { DocumentMarker::Spelling }))
+                    flags.add(WordNearTapIsMisspelled);
             }
-            flags = WordIsNearTap;
+            flags.add(WordIsNearTap);
         } else if (atBoundaryOfGranularity(position, WordGranularity, DirectionBackward)) {
             // The position is at the end of a word.
             result = position;
@@ -1457,7 +1462,7 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
     if (range)
         frame.selection().setSelectedRange(range.get(), position.affinity(), WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
 
-    send(Messages::WebPageProxy::GestureCallback(point, gestureType, gestureState, static_cast<uint32_t>(flags), callbackID));
+    send(Messages::WebPageProxy::GestureCallback(point, gestureType, gestureState, flags.toRaw(), callbackID));
 }
 
 static RefPtr<Range> rangeForPointInRootViewCoordinates(Frame& frame, const IntPoint& pointInRootViewCoordinates, bool baseIsStart)
