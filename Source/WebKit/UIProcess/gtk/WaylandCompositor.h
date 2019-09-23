@@ -104,6 +104,8 @@ public:
     String displayName() const { return m_displayName; }
 
     void bindSurfaceToWebPage(Surface*, WebCore::PageIdentifier);
+    void bindWebPage(WebPageProxy&);
+    void unbindWebPage(WebPageProxy&);
     void registerWebPage(WebPageProxy&);
     void unregisterWebPage(WebPageProxy&);
 

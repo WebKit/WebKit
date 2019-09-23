@@ -148,9 +148,37 @@ AcceleratedBackingStoreWayland::~AcceleratedBackingStoreWayland()
         gdk_gl_context_clear_current();
 }
 
+void AcceleratedBackingStoreWayland::realize()
+{
+#if !USE(WPE_RENDERER)
+    WaylandCompositor::singleton().bindWebPage(m_webPage);
+#endif
+}
+
+void AcceleratedBackingStoreWayland::unrealize()
+{
+    if (!m_glContextInitialized)
+        return;
+
+#if USE(WPE_RENDERER)
+    if (m_viewTexture) {
+        if (makeContextCurrent())
+            glDeleteTextures(1, &m_viewTexture);
+        m_viewTexture = 0;
+    }
+#else
+    WaylandCompositor::singleton().unbindWebPage(m_webPage);
+#endif
+
+    if (m_gdkGLContext && m_gdkGLContext.get() == gdk_gl_context_get_current())
+        gdk_gl_context_clear_current();
+
+    m_glContextInitialized = false;
+}
+
 void AcceleratedBackingStoreWayland::tryEnsureGLContext()
 {
-    if (m_glContextInitialized)
+    if (m_glContextInitialized || !gtk_widget_get_realized(m_webPage.viewWidget()))
         return;
 
     m_glContextInitialized = true;
@@ -208,18 +236,6 @@ void AcceleratedBackingStoreWayland::displayBuffer(struct wpe_fdo_egl_exported_i
         return;
     }
 
-    if (!m_viewTexture) {
-        if (!makeContextCurrent())
-            return;
-
-        glGenTextures(1, &m_viewTexture);
-        glBindTexture(GL_TEXTURE_2D, m_viewTexture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    }
-
     if (m_pendingImage)
         wpe_view_backend_exportable_fdo_egl_dispatch_release_exported_image(m_exportable, m_pendingImage);
     m_pendingImage = image;
@@ -235,7 +251,7 @@ bool AcceleratedBackingStoreWayland::paint(cairo_t* cr, const IntRect& clipRect)
 
 #if USE(WPE_RENDERER)
     if (!makeContextCurrent())
-        return false;
+        return true;
 
     if (m_pendingImage) {
         wpe_view_backend_exportable_fdo_dispatch_frame_complete(m_exportable);
@@ -249,6 +265,14 @@ bool AcceleratedBackingStoreWayland::paint(cairo_t* cr, const IntRect& clipRect)
     if (!m_committedImage)
         return true;
 
+    if (!m_viewTexture) {
+        glGenTextures(1, &m_viewTexture);
+        glBindTexture(GL_TEXTURE_2D, m_viewTexture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    }
     glBindTexture(GL_TEXTURE_2D, m_viewTexture);
     glImageTargetTexture2D(GL_TEXTURE_2D, wpe_fdo_egl_exported_image_get_egl_image(m_committedImage));
 

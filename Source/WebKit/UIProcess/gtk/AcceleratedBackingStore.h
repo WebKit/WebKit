@@ -47,6 +47,8 @@ public:
 
     virtual void update(const LayerTreeContext&) { }
     virtual bool paint(cairo_t*, const WebCore::IntRect&) = 0;
+    virtual void realize() { };
+    virtual void unrealize() { };
     virtual bool makeContextCurrent() { return false; }
     virtual int renderHostFileDescriptor() { return -1; }
 
