@@ -23,6 +23,7 @@
 
 #include "AppendPipeline.h"
 #include "MediaPlayerPrivateGStreamerMSE.h"
+#include "PlaybackPipeline.h"
 #include "WebKitMediaSourceGStreamer.h"
 #include <gst/gst.h>
 
@@ -59,13 +60,14 @@ MediaSourcePrivate::AddStatus MediaSourceClientGStreamerMSE::addSourceBuffer(Ref
 {
     ASSERT(WTF::isMainThread());
 
+    ASSERT(m_playerPrivate.m_playbackPipeline);
     ASSERT(sourceBufferPrivate);
 
     RefPtr<AppendPipeline> appendPipeline = adoptRef(new AppendPipeline(*this, *sourceBufferPrivate, m_playerPrivate));
     GST_TRACE("Adding SourceBuffer to AppendPipeline: this=%p sourceBuffer=%p appendPipeline=%p", this, sourceBufferPrivate.get(), appendPipeline.get());
     m_playerPrivate.m_appendPipelinesMap.add(sourceBufferPrivate, appendPipeline);
 
-    return MediaSourcePrivate::Ok;
+    return m_playerPrivate.m_playbackPipeline->addSourceBuffer(sourceBufferPrivate);
 }
 
 const MediaTime& MediaSourceClientGStreamerMSE::duration()
@@ -135,17 +137,25 @@ void MediaSourceClientGStreamerMSE::append(RefPtr<SourceBufferPrivateGStreamer> 
     appendPipeline->pushNewBuffer(WTFMove(buffer));
 }
 
+void MediaSourceClientGStreamerMSE::markEndOfStream(MediaSourcePrivate::EndOfStreamStatus status)
+{
+    ASSERT(WTF::isMainThread());
+
+    m_playerPrivate.markEndOfStream(status);
+}
+
 void MediaSourceClientGStreamerMSE::removedFromMediaSource(RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivate)
 {
     ASSERT(WTF::isMainThread());
+
+    ASSERT(m_playerPrivate.m_playbackPipeline);
 
     // Remove the AppendPipeline from the map. This should cause its destruction since there should be no alive
     // references at this point.
     ASSERT(m_playerPrivate.m_appendPipelinesMap.get(sourceBufferPrivate)->hasOneRef());
     m_playerPrivate.m_appendPipelinesMap.remove(sourceBufferPrivate);
 
-    if (!sourceBufferPrivate->trackId().isNull())
-        webKitMediaSrcRemoveStream(WEBKIT_MEDIA_SRC(m_playerPrivate.m_source.get()), sourceBufferPrivate->trackId());
+    m_playerPrivate.m_playbackPipeline->removeSourceBuffer(sourceBufferPrivate);
 }
 
 void MediaSourceClientGStreamerMSE::flush(AtomString trackId)
@@ -154,41 +164,21 @@ void MediaSourceClientGStreamerMSE::flush(AtomString trackId)
 
     // This is only for on-the-fly reenqueues after appends. When seeking, the seek will do its own flush.
     if (!m_playerPrivate.m_seeking)
-        webKitMediaSrcFlush(WEBKIT_MEDIA_SRC(m_playerPrivate.m_source.get()), trackId);
+        m_playerPrivate.m_playbackPipeline->flush(trackId);
 }
 
-void MediaSourceClientGStreamerMSE::enqueueSample(Ref<MediaSample>&& sample, AtomString trackId)
+void MediaSourceClientGStreamerMSE::enqueueSample(Ref<MediaSample>&& sample)
 {
     ASSERT(WTF::isMainThread());
 
-    GST_TRACE("enqueing sample trackId=%s PTS=%f presentationSize=%.0fx%.0f at %" GST_TIME_FORMAT " duration: %" GST_TIME_FORMAT,
-        trackId.string().utf8().data(), sample->presentationTime().toFloat(),
-        sample->presentationSize().width(), sample->presentationSize().height(),
-        GST_TIME_ARGS(WebCore::toGstClockTime(sample->presentationTime())),
-        GST_TIME_ARGS(WebCore::toGstClockTime(sample->duration())));
-
-    GRefPtr<GstSample> gstSample = sample->platformSample().sample.gstSample;
-    ASSERT(gstSample);
-    ASSERT(gst_sample_get_buffer(gstSample.get()));
-
-    webKitMediaSrcEnqueueSample(WEBKIT_MEDIA_SRC(m_playerPrivate.m_source.get()), trackId, WTFMove(gstSample));
-}
-
-bool MediaSourceClientGStreamerMSE::isReadyForMoreSamples(const AtomString& trackId)
-{
-    return webKitMediaSrcIsReadyForMoreSamples(WEBKIT_MEDIA_SRC(m_playerPrivate.m_source.get()), trackId);
-}
-
-void MediaSourceClientGStreamerMSE::notifyClientWhenReadyForMoreSamples(const AtomString& trackId, SourceBufferPrivateClient* sourceBuffer)
-{
-    webKitMediaSrcNotifyWhenReadyForMoreSamples(WEBKIT_MEDIA_SRC(m_playerPrivate.m_source.get()), trackId, sourceBuffer);
+    m_playerPrivate.m_playbackPipeline->enqueueSample(WTFMove(sample));
 }
 
 void MediaSourceClientGStreamerMSE::allSamplesInTrackEnqueued(const AtomString& trackId)
 {
     ASSERT(WTF::isMainThread());
 
-    webKitMediaSrcEndOfStream(WEBKIT_MEDIA_SRC(m_playerPrivate.m_source.get()), trackId);
+    m_playerPrivate.m_playbackPipeline->allSamplesInTrackEnqueued(trackId);
 }
 
 GRefPtr<WebKitMediaSrc> MediaSourceClientGStreamerMSE::webKitMediaSrc()

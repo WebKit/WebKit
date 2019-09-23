@@ -52,9 +52,8 @@ public:
     void pushNewBuffer(GRefPtr<GstBuffer>&&);
     void resetParserState();
     Ref<SourceBufferPrivateGStreamer> sourceBufferPrivate() { return m_sourceBufferPrivate.get(); }
-    const GRefPtr<GstCaps>& appsinkCaps() { return m_appsinkCaps; }
+    GstCaps* appsinkCaps() { return m_appsinkCaps.get(); }
     RefPtr<WebCore::TrackPrivateBase> track() { return m_track; }
-    MediaSourceStreamTypeGStreamer streamType() { return m_streamType; }
     MediaPlayerPrivateGStreamerMSE* playerPrivate() { return m_playerPrivate; }
 
 private:
@@ -67,7 +66,6 @@ private:
     gint id();
 
     void handleAppsinkNewSampleFromStreamingThread(GstElement*);
-    void handleErrorConditionFromStreamingThread();
 
     // Takes ownership of caps.
     void parseDemuxerSrcPadCaps(GstCaps*);
@@ -82,6 +80,7 @@ private:
     GstElement* appsrc() { return m_appsrc.get(); }
     GstElement* appsink() { return m_appsink.get(); }
     GstCaps* demuxerSrcPadCaps() { return m_demuxerSrcPadCaps.get(); }
+    WebCore::MediaSourceStreamTypeGStreamer streamType() { return m_streamType; }
 
     void disconnectDemuxerSrcPadFromAppsinkFromAnyThread(GstPad*);
     void connectDemuxerSrcPadToAppsinkFromStreamingThread(GstPad*);

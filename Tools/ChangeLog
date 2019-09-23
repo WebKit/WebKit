@@ -62,18 +62,6 @@
         * Scripts/webkitpy/style/checker.py: White-list WPEQtView.h for
         readablity/parameter_name code styl checker rule.
 
-2019-08-28  Alicia Boya García  <aboya@igalia.com>
-
-        [MSE][GStreamer] WebKitMediaSrc rework
-        https://bugs.webkit.org/show_bug.cgi?id=199719
-
-        Reviewed by Xabier Rodriguez-Calvar.
-
-        Added WebKitMediaSourceGStreamer.cpp to the GStreamer-style coding
-        whitelist.
-
-        * Scripts/webkitpy/style/checker.py:
-
 2019-08-02  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK][WPE] Implement HSTS for the soup network backend

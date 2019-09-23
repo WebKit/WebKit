@@ -43,7 +43,7 @@ MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const Fl
 
     auto createMediaTime =
         [](GstClockTime time) -> MediaTime {
-            return MediaTime(time, GST_SECOND);
+            return MediaTime(GST_TIME_AS_USECONDS(time), G_USEC_PER_SEC);
         };
 
     if (GST_BUFFER_PTS_IS_VALID(buffer))

@@ -216,11 +216,11 @@ AppendPipeline::AppendPipeline(Ref<MediaSourceClientGStreamerMSE> mediaSourceCli
         return GST_FLOW_OK;
     }), this);
     g_signal_connect(m_appsink.get(), "eos", G_CALLBACK(+[](GstElement*, AppendPipeline* appendPipeline) {
-        if (appendPipeline->m_errorReceived)
-            return;
-
-        GST_ERROR("AppendPipeline's appsink received EOS. This is usually caused by an invalid initialization segment.");
-        appendPipeline->handleErrorConditionFromStreamingThread();
+        // basesrc will emit an EOS after it has received a GST_FLOW_ERROR. That's the only case we are expecting.
+        if (!appendPipeline->m_errorReceived) {
+            GST_ERROR("Unexpected appsink EOS in AppendPipeline");
+            ASSERT_NOT_REACHED();
+        }
     }), this);
 
     // Add_many will take ownership of a reference. That's why we used an assignment before.
@@ -279,9 +279,10 @@ AppendPipeline::~AppendPipeline()
         gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
 }
 
-void AppendPipeline::handleErrorConditionFromStreamingThread()
+void AppendPipeline::handleErrorSyncMessage(GstMessage* message)
 {
     ASSERT(!isMainThread());
+    GST_WARNING_OBJECT(m_pipeline.get(), "Demuxing error: %" GST_PTR_FORMAT, message);
     // Notify the main thread that the append has a decode error.
     auto response = m_taskQueue.enqueueTaskAndWait<AbortableTaskQueue::Void>([this]() {
         m_errorReceived = true;
@@ -291,13 +292,6 @@ void AppendPipeline::handleErrorConditionFromStreamingThread()
     });
     // The streaming thread has now been unblocked because we are aborting in the main thread.
     ASSERT(!response);
-}
-
-void AppendPipeline::handleErrorSyncMessage(GstMessage* message)
-{
-    ASSERT(!isMainThread());
-    GST_WARNING_OBJECT(m_pipeline.get(), "Demuxing error: %" GST_PTR_FORMAT, message);
-    handleErrorConditionFromStreamingThread();
 }
 
 GstPadProbeReturn AppendPipeline::appsrcEndOfAppendCheckerProbe(GstPadProbeInfo* padProbeInfo)
@@ -455,12 +449,6 @@ void AppendPipeline::appsinkNewSample(GRefPtr<GstSample>&& sample)
 
     if (UNLIKELY(!gst_sample_get_buffer(sample.get()))) {
         GST_WARNING("Received sample without buffer from appsink.");
-        return;
-    }
-
-    if (!GST_BUFFER_PTS_IS_VALID(gst_sample_get_buffer(sample.get()))) {
-        // When demuxing Vorbis, matroskademux creates several PTS-less frames with header information. We don't need those.
-        GST_DEBUG("Ignoring sample without PTS: %" GST_PTR_FORMAT, gst_sample_get_buffer(sample.get()));
         return;
     }
 
@@ -752,9 +740,6 @@ void AppendPipeline::connectDemuxerSrcPadToAppsink(GstPad* demuxerSrcPad)
     // Only one stream per demuxer is supported.
     ASSERT(!gst_pad_is_linked(sinkSinkPad.get()));
 
-    // As it is now, resetParserState() will cause the pads to be disconnected, so they will later be re-added on the next initialization segment.
-    bool firstTimeConnectingTrack = m_track == nullptr;
-
     GRefPtr<GstCaps> caps = adoptGRef(gst_pad_get_current_caps(GST_PAD(demuxerSrcPad)));
 
 #ifndef GST_DISABLE_GST_DEBUG
@@ -795,7 +780,7 @@ void AppendPipeline::connectDemuxerSrcPadToAppsink(GstPad* demuxerSrcPad)
     }
 
     m_appsinkCaps = WTFMove(caps);
-    m_playerPrivate->trackDetected(this, m_track, firstTimeConnectingTrack);
+    m_playerPrivate->trackDetected(this, m_track, true);
 }
 
 void AppendPipeline::disconnectDemuxerSrcPadFromAppsinkFromAnyThread(GstPad*)
