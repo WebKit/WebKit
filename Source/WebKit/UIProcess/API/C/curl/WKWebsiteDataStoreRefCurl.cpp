@@ -26,8 +26,8 @@
 #include "config.h"
 #include "WKWebsiteDataStoreRefCurl.h"
 
-#include "APIWebsiteDataStore.h"
 #include "WKAPICast.h"
+#include "WebsiteDataStore.h"
 #include <WebCore/CurlProxySettings.h>
 #include <WebKit/WKWebsiteDataStoreRef.h>
 #include <wtf/URL.h>
@@ -36,15 +36,15 @@ using namespace WebKit;
 
 void WKWebsiteDataStoreEnableDefaultNetworkProxySettings(WKWebsiteDataStoreRef dataStoreRef)
 {
-    toImpl(dataStoreRef)->websiteDataStore().setNetworkProxySettings(WebCore::CurlProxySettings(WebCore::CurlProxySettings::Mode::Default));
+    toImpl(dataStoreRef)->setNetworkProxySettings(WebCore::CurlProxySettings(WebCore::CurlProxySettings::Mode::Default));
 }
 
 void WKWebsiteDataStoreEnableCustomNetworkProxySettings(WKWebsiteDataStoreRef dataStoreRef, WKURLRef proxyUrl, WKStringRef ignoreHosts)
 {
-    toImpl(dataStoreRef)->websiteDataStore().setNetworkProxySettings(WebCore::CurlProxySettings(URL(URL(), toWTFString(proxyUrl)), toWTFString(ignoreHosts)));
+    toImpl(dataStoreRef)->setNetworkProxySettings(WebCore::CurlProxySettings(URL(URL(), toWTFString(proxyUrl)), toWTFString(ignoreHosts)));
 }
 
 void WKWebsiteDataStoreDisableNetworkProxySettings(WKWebsiteDataStoreRef dataStoreRef)
 {
-    toImpl(dataStoreRef)->websiteDataStore().setNetworkProxySettings(WebCore::CurlProxySettings(WebCore::CurlProxySettings::Mode::NoProxy));
+    toImpl(dataStoreRef)->setNetworkProxySettings(WebCore::CurlProxySettings(WebCore::CurlProxySettings::Mode::NoProxy));
 }
