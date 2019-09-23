@@ -336,7 +336,7 @@ static Vector<int64_t> int64Operands()
 #if CPU(X86_64)
 void testBranchTestBit32RegReg()
 {
-    for (uint32_t value : int32Operands()) {
+    for (auto value : int32Operands()) {
         auto test = compile([=] (CCallHelpers& jit) {
             emitFunctionPrologue(jit);
 
@@ -351,14 +351,14 @@ void testBranchTestBit32RegReg()
             jit.ret();
         });
 
-        for (uint32_t value2 : int32Operands())
+        for (auto value2 : int32Operands())
             CHECK_EQ(invoke<int>(test, value, value2), (value>>(value2%32))&1);
     }
 }
 
 void testBranchTestBit32RegImm()
 {
-    for (uint32_t value : int32Operands()) {
+    for (auto value : int32Operands()) {
         auto test = compile([=] (CCallHelpers& jit) {
             emitFunctionPrologue(jit);
 
@@ -373,14 +373,14 @@ void testBranchTestBit32RegImm()
             jit.ret();
         });
 
-        for (uint32_t value2 : int32Operands())
+        for (auto value2 : int32Operands())
             CHECK_EQ(invoke<int>(test, value2), (value2>>(value%32))&1);
     }
 }
 
 void testBranchTestBit32AddrImm()
 {
-    for (uint32_t value : int32Operands()) {
+    for (auto value : int32Operands()) {
         auto test = compile([=] (CCallHelpers& jit) {
             emitFunctionPrologue(jit);
 
@@ -395,14 +395,14 @@ void testBranchTestBit32AddrImm()
             jit.ret();
         });
 
-        for (uint32_t value2 : int32Operands())
+        for (auto value2 : int32Operands())
             CHECK_EQ(invoke<int>(test, &value2), (value2>>(value%32))&1);
     }
 }
 
 void testBranchTestBit64RegReg()
 {
-    for (uint64_t value : int64Operands()) {
+    for (auto value : int64Operands()) {
         auto test = compile([=] (CCallHelpers& jit) {
             emitFunctionPrologue(jit);
 
@@ -417,14 +417,14 @@ void testBranchTestBit64RegReg()
             jit.ret();
         });
 
-        for (uint64_t value2 : int64Operands())
+        for (auto value2 : int64Operands())
             CHECK_EQ(invoke<long int>(test, value, value2), (value>>(value2%64))&1);
     }
 }
 
 void testBranchTestBit64RegImm()
 {
-    for (uint64_t value : int64Operands()) {
+    for (auto value : int64Operands()) {
         auto test = compile([=] (CCallHelpers& jit) {
             emitFunctionPrologue(jit);
 
@@ -439,14 +439,14 @@ void testBranchTestBit64RegImm()
             jit.ret();
         });
 
-        for (uint64_t value2 : int64Operands())
+        for (auto value2 : int64Operands())
             CHECK_EQ(invoke<long int>(test, value2), (value2>>(value%64))&1);
     }
 }
 
 void testBranchTestBit64AddrImm()
 {
-    for (uint64_t value : int64Operands()) {
+    for (auto value : int64Operands()) {
         auto test = compile([=] (CCallHelpers& jit) {
             emitFunctionPrologue(jit);
 
@@ -461,7 +461,7 @@ void testBranchTestBit64AddrImm()
             jit.ret();
         });
 
-        for (uint64_t value2 : int64Operands())
+        for (auto value2 : int64Operands())
             CHECK_EQ(invoke<long int>(test, &value2), (value2>>(value%64))&1);
     }
 }

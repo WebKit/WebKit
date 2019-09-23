@@ -1,3 +1,22 @@
+2019-09-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        testmasm: integer operands loaded as unsigned values
+        https://bugs.webkit.org/show_bug.cgi?id=202099
+
+        Reviewed by Mark Lam.
+
+        Suppress GCC warnings about comparing signed and unsigned values in
+        test cases introduced in r247913 by using signed integer types for
+        loading 32-bit and 64-bit integer operand values.
+
+        * assembler/testmasm.cpp:
+        (JSC::testBranchTestBit32RegReg):
+        (JSC::testBranchTestBit32RegImm):
+        (JSC::testBranchTestBit32AddrImm):
+        (JSC::testBranchTestBit64RegReg):
+        (JSC::testBranchTestBit64RegImm):
+        (JSC::testBranchTestBit64AddrImm):
+
 2019-09-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Int52Rep(DoubleRepAnyIntUse) should not call operation function
