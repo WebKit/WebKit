@@ -293,8 +293,8 @@ public:
     WebCore::Page* corePage() const { return m_page.get(); }
     WebCore::PageIdentifier identifier() const { return m_identifier; }
     StorageNamespaceIdentifier sessionStorageNamespaceIdentifier() const { return makeObjectIdentifier<StorageNamespaceIdentifierType>(m_webPageProxyIdentifier.toUInt64()); }
-    PAL::SessionID sessionID() const { return m_page->sessionID(); }
-    bool usesEphemeralSession() const { return m_page->usesEphemeralSession(); }
+    PAL::SessionID sessionID() const;
+    bool usesEphemeralSession() const;
 
     void setSize(const WebCore::IntSize&);
     const WebCore::IntSize& size() const { return m_viewSize; }

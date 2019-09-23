@@ -6807,6 +6807,16 @@ Element* WebPage::elementForTextInputContext(const TextInputContext& textInputCo
     return document->searchForElementByIdentifier(textInputContext.elementIdentifier);
 }
 
+PAL::SessionID WebPage::sessionID() const
+{
+    return WebProcess::singleton().sessionID();
+}
+
+bool WebPage::usesEphemeralSession() const
+{
+    return sessionID().isEphemeral();
+}
+
 void WebPage::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
 {
     send(Messages::WebPageProxy::ConfigureLoggingChannel(channelName, state, level));
