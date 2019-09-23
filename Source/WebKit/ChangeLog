@@ -1,3 +1,18 @@
+2019-09-23  David Quesada  <david_quesada@apple.com>
+
+        [iOS] REGRESSION(r250151): Occasional assertion failures in ShareableBitmap::~ShareableBitmap()
+        https://bugs.webkit.org/show_bug.cgi?id=202112
+        rdar://problem/55624598
+
+        Reviewed by Chris Dumez.
+
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::releaseDataProviderData):
+        It is possible and valid for a UIImage created from a ShareableBitmap's CGImage representation
+        to be deallocated on a background thread. When this happens, releaseDataProviderData() should
+        ensure it's running on the main thread before deref'ing the ShareableBitmap. Otherwise the
+        bitmap can be deallocated on the background thread, violating an assertion added in r250151.
+
 2019-09-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve the Uncaught Exception View file a bug link
