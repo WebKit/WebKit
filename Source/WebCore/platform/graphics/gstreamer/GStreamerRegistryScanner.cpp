@@ -318,6 +318,21 @@ bool GStreamerRegistryScanner::isAVC1CodecSupported(const String& codec, bool sh
 
     const char* profile = gst_codec_utils_h264_get_profile(sps, 3);
     const char* level = gst_codec_utils_h264_get_level(sps, 3);
+
+    // To avoid going through a class hierarchy for such a simple
+    // string conversion, we use a little trick here: See
+    // https://bugs.webkit.org/show_bug.cgi?id=201870.
+    char levelAsStringFallback[2] = { '\0', '\0' };
+    if (!level && sps[2] > 0 && sps[2] <= 5) {
+        levelAsStringFallback[0] = static_cast<char>('0' + sps[2]);
+        level = levelAsStringFallback;
+    }
+
+    if (!profile || !level) {
+        GST_ERROR("H.264 profile / level was not recognised in codec %s", codec.utf8().data());
+        return false;
+    }
+
     GST_DEBUG("Codec %s translates to H.264 profile %s and level %s", codec.utf8().data(), profile, level);
 
     auto checkH264Caps = [&](const char* capsString) {

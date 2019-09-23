@@ -1,3 +1,37 @@
+2019-09-23  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer] isAVC1CodecSupported is crashing several media source tests due to avc1.4d4001 codec type
+        https://bugs.webkit.org/show_bug.cgi?id=201870
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The GStreamer codec-utils package expects all level_idc's to be
+        multiples of 10 from the spec idc, i.e., 1.1 -> 11, 3.1 -> 31, 1
+        -> 10, etc.
+
+        In the WPT tests, there is some confusion of this *10 multiplier,
+        and the level_idc is given in several places as simply "1". This
+        causes the get_level codec helper to return NULL, which the
+        registry scanner was not handling properly, and crashing on.
+
+        Fix this by special casing "web level idc's" that violate the *10
+        rule in isAVC1CodecSupported.
+
+        There is prior art along these lines in Gecko:
+        https://searchfox.org/mozilla-central/source/dom/media/VideoUtils.cpp#453
+        I assume Chrome/IE/etc must do something similar. The fix does not
+        belong in GStreamer since these are actually invalid inputs to the
+        get_level function.
+
+        Tested by imported/w3c/web-platform-tests/media-source
+
+        * platform/graphics/gstreamer/GStreamerRegistryScanner.cpp:
+        (WebCore::GStreamerRegistryScanner::isAVC1CodecSupported const):
+        Special case levels 1..5, even though these *should* be
+        represented as 10 through 50 respectively, they are not in
+        web-land. The two-byte local storage trick was contributed to me
+        by Adrian Perez de Castro.
+
 2019-09-23  Rob Buis  <rbuis@igalia.com>
 
         Sync operator dictionary
