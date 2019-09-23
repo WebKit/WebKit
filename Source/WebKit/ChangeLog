@@ -1,3 +1,19 @@
+2019-09-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [SOUP] Stop setting G_TLS_GNUTLS_PRIORITY
+        https://bugs.webkit.org/show_bug.cgi?id=172154
+
+        Reviewed by Carlos Garcia Campos.
+
+        Nowadays, I maintain glib-networking. WebKit doesn't need to override its defaults to be
+        secure anymore. By overriding glib-networking's default priority, WebKit is force-reenabling
+        TLS 1.0 and TLS 1.1 even when glib-networking has disabled them.
+
+        * NetworkProcess/EntryPoint/unix/NetworkProcessMain.cpp:
+        (main):
+        * WebProcess/EntryPoint/unix/WebProcessMain.cpp:
+        (main):
+
 2019-09-21  Dan Bernstein  <mitz@apple.com>
 
         Fix an assertion failure introduced in r250186.
