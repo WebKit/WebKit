@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Page.h"
+#include "PaymentCoordinator.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {

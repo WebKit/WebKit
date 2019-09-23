@@ -697,6 +697,11 @@ template<> struct ArgumentCoder<WebCore::ShippingMethodUpdate> {
     static Optional<WebCore::ShippingMethodUpdate> decode(Decoder&);
 };
 
+template<> struct ArgumentCoder<WebCore::PaymentSessionError> {
+    static void encode(Encoder&, const WebCore::PaymentSessionError&);
+    static Optional<WebCore::PaymentSessionError> decode(Decoder&);
+};
+
 #endif
 
 #if ENABLE(MEDIA_STREAM)

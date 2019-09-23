@@ -93,6 +93,7 @@ VPATH = \
 
 JS_BINDING_IDLS = \
     $(WebCore)/Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl \
+    $(WebCore)/Modules/applepay/ApplePayCancelEvent.idl \
     $(WebCore)/Modules/applepay/ApplePayContactField.idl \
     $(WebCore)/Modules/applepay/ApplePayError.idl \
     $(WebCore)/Modules/applepay/ApplePayErrorCode.idl \
@@ -111,6 +112,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/applepay/ApplePayPaymentRequest.idl \
     $(WebCore)/Modules/applepay/ApplePayRequestBase.idl \
     $(WebCore)/Modules/applepay/ApplePaySession.idl \
+    $(WebCore)/Modules/applepay/ApplePaySessionError.idl \
     $(WebCore)/Modules/applepay/ApplePayShippingContactSelectedEvent.idl \
     $(WebCore)/Modules/applepay/ApplePayShippingContactUpdate.idl \
     $(WebCore)/Modules/applepay/ApplePayShippingMethod.idl \

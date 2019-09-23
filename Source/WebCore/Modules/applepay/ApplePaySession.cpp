@@ -28,6 +28,7 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "ApplePayCancelEvent.h"
 #include "ApplePayLineItem.h"
 #include "ApplePayPaymentAuthorizationResult.h"
 #include "ApplePayPaymentAuthorizedEvent.h"
@@ -812,13 +813,13 @@ void ApplePaySession::didSelectPaymentMethod(const PaymentMethod& paymentMethod)
     dispatchEvent(event.get());
 }
 
-void ApplePaySession::didCancelPaymentSession()
+void ApplePaySession::didCancelPaymentSession(PaymentSessionError&& error)
 {
     ASSERT(canCancel());
 
     m_state = State::Canceled;
 
-    auto event = Event::create(eventNames().cancelEvent, Event::CanBubble::No, Event::IsCancelable::No);
+    auto event = ApplePayCancelEvent::create(eventNames().cancelEvent, WTFMove(error));
     dispatchEvent(event.get());
 
     didReachFinalState();

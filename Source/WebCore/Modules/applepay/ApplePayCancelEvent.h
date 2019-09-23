@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,33 @@
 
 #pragma once
 
-#include "ApplePaySessionPaymentRequest.h"
-#include "Payment.h"
-#include "PaymentContact.h"
-#include "PaymentMerchantSession.h"
-#include "PaymentMethod.h"
+#if ENABLE(APPLE_PAY)
+
+#include "Event.h"
 #include "PaymentSessionError.h"
+
+namespace WebCore {
+
+class PaymentSessionError;
+
+class ApplePayCancelEvent : public Event {
+public:
+    static Ref<ApplePayCancelEvent> create(const AtomString& type, PaymentSessionError&& sessionError)
+    {
+        return adoptRef(*new ApplePayCancelEvent(type, WTFMove(sessionError)));
+    }
+
+    ApplePaySessionError sessionError() const;
+
+private:
+    explicit ApplePayCancelEvent(const AtomString&, PaymentSessionError&&);
+
+    // Event.
+    EventInterface eventInterface() const final;
+
+    PaymentSessionError m_sessionError;
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(APPLE_PAY)

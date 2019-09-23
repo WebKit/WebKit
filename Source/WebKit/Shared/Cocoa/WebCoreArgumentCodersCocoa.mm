@@ -430,6 +430,20 @@ Optional<WebCore::ShippingMethodUpdate> ArgumentCoder<WebCore::ShippingMethodUpd
     return {{ WTFMove(*newTotalAndLineItems) }};
 }
 
+void ArgumentCoder<WebCore::PaymentSessionError>::encode(Encoder& encoder, const WebCore::PaymentSessionError& error)
+{
+    encoder << error.platformError();
+}
+
+Optional<WebCore::PaymentSessionError> ArgumentCoder<WebCore::PaymentSessionError>::decode(Decoder& decoder)
+{
+    auto platformError = IPC::decode<NSError>(decoder);
+    if (!platformError)
+        return WTF::nullopt;
+
+    return { WTFMove(*platformError) };
+}
+
 #endif // ENABLE(APPLEPAY)
 
 void ArgumentCoder<WebCore::DictionaryPopupInfo>::encodePlatformData(Encoder& encoder, const WebCore::DictionaryPopupInfo& info)

@@ -216,10 +216,10 @@ void WebPaymentCoordinatorProxy::cancelPaymentSession()
     didCancelPaymentSession();
 }
 
-void WebPaymentCoordinatorProxy::didCancelPaymentSession()
+void WebPaymentCoordinatorProxy::didCancelPaymentSession(WebCore::PaymentSessionError&& error)
 {
     ASSERT(canCancel());
-    send(Messages::WebPaymentCoordinator::DidCancelPaymentSession());
+    send(Messages::WebPaymentCoordinator::DidCancelPaymentSession(WTFMove(error)));
     hidePaymentUI();
     didReachFinalState();
 }
@@ -238,10 +238,10 @@ void WebPaymentCoordinatorProxy::presenterDidAuthorizePayment(PaymentAuthorizati
     send(Messages::WebPaymentCoordinator::DidAuthorizePayment(payment));
 }
 
-void WebPaymentCoordinatorProxy::presenterDidFinish(PaymentAuthorizationPresenter&, bool didReachFinalState)
+void WebPaymentCoordinatorProxy::presenterDidFinish(PaymentAuthorizationPresenter&, WebCore::PaymentSessionError&& error, bool didReachFinalState)
 {
     if (!didReachFinalState)
-        didCancelPaymentSession();
+        didCancelPaymentSession(WTFMove(error));
     else
         hidePaymentUI();
 }

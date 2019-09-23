@@ -592,7 +592,7 @@ void ApplePayPaymentHandler::didSelectPaymentMethod(const PaymentMethod& payment
     });
 }
 
-void ApplePayPaymentHandler::didCancelPaymentSession()
+void ApplePayPaymentHandler::didCancelPaymentSession(PaymentSessionError&&)
 {
     m_paymentRequest->cancel();
 }

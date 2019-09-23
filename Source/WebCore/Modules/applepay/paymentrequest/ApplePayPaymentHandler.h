@@ -80,7 +80,7 @@ private:
     void didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod&) final;
     void didSelectShippingContact(const PaymentContact&) final;
     void didSelectPaymentMethod(const PaymentMethod&) final;
-    void didCancelPaymentSession() final;
+    void didCancelPaymentSession(PaymentSessionError&&) final;
 
     PaymentRequest::MethodIdentifier m_identifier;
     Ref<PaymentRequest> m_paymentRequest;

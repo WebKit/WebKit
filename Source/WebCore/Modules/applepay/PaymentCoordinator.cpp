@@ -233,7 +233,7 @@ void PaymentCoordinator::didSelectShippingContact(const PaymentContact& shipping
     m_activeSession->didSelectShippingContact(shippingContact);
 }
 
-void PaymentCoordinator::didCancelPaymentSession()
+void PaymentCoordinator::didCancelPaymentSession(PaymentSessionError&& error)
 {
     if (!m_activeSession) {
         // It's possible that the payment has been aborted already.
@@ -241,7 +241,7 @@ void PaymentCoordinator::didCancelPaymentSession()
     }
 
     RELEASE_LOG_IF_ALLOWED("didCancelPaymentSession()");
-    m_activeSession->didCancelPaymentSession();
+    m_activeSession->didCancelPaymentSession(WTFMove(error));
     m_activeSession = nullptr;
 }
 

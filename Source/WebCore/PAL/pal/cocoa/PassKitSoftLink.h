@@ -61,6 +61,7 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKContactFieldPhoneNumber, PKContact
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKContactFieldPhoneticName, PKContactField)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKContactFieldPostalAddress, PKContactField)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKPaymentErrorContactFieldUserInfoKey, PKPaymentErrorKey)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKPassKitErrorDomain, NSString *)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKPaymentErrorDomain, NSString *)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKPaymentErrorPostalAddressUserInfoKey, PKPaymentErrorKey)
 
