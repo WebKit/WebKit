@@ -140,9 +140,8 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
 
     // Temporarily extend the lifetime of the existing document so that FrameLoader::clear() doesn't destroy it as
     // we need to retain its ongoing set of upgraded requests in new navigation contexts per <http://www.w3.org/TR/upgrade-insecure-requests/>
-    // and we may also need to inherit its Content Security Policy in FrameLoader::didBeginDocument().
+    // and we may also need to inherit its Content Security Policy below.
     RefPtr<Document> existingDocument = m_frame->document();
-    auto* previousContentSecurityPolicy = existingDocument ? existingDocument->contentSecurityPolicy() : nullptr;
 
     WTF::Function<void()> handleDOMWindowCreation = [this, document = document.copyRef(), url] {
         if (m_frame->loader().stateMachine().isDisplayingInitialEmptyDocument() && m_frame->document()->isSecureTransitionTo(url))
@@ -165,18 +164,31 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     m_frame->loader().setOutgoingReferrer(url);
     m_frame->setDocument(document.copyRef());
 
-    if (previousContentSecurityPolicy)
-        document->contentSecurityPolicy()->setInsecureNavigationRequestsToUpgrade(previousContentSecurityPolicy->takeNavigationRequestsToUpgrade());
-
     if (m_decoder)
         document->setDecoder(m_decoder.get());
     if (ownerDocument) {
+        // |document| is the result of evaluating a JavaScript URL.
         document->setCookieURL(ownerDocument->cookieURL());
         document->setSecurityOriginPolicy(ownerDocument->securityOriginPolicy());
         document->setStrictMixedContentMode(ownerDocument->isStrictMixedContentMode());
+
+        document->setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { url }, document));
+        document->contentSecurityPolicy()->copyStateFrom(ownerDocument->contentSecurityPolicy());
+        document->contentSecurityPolicy()->setInsecureNavigationRequestsToUpgrade(ownerDocument->contentSecurityPolicy()->takeNavigationRequestsToUpgrade());
+    } else if (existingDocument) {
+        if (url.protocolIsData() || url.protocolIsBlob()) {
+            document->setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { url }, document));
+            document->contentSecurityPolicy()->copyStateFrom(existingDocument->contentSecurityPolicy());
+
+            // Fix up 'self' for blob: and data:, which is inherited from its embedding document or opener.
+            auto* parentFrame = m_frame->tree().parent();
+            if (auto* ownerFrame = parentFrame ? parentFrame : m_frame->loader().opener())
+                document->contentSecurityPolicy()->updateSourceSelf(ownerFrame->document()->securityOrigin());
+        }
+        document->contentSecurityPolicy()->setInsecureNavigationRequestsToUpgrade(existingDocument->contentSecurityPolicy()->takeNavigationRequestsToUpgrade());
     }
 
-    m_frame->loader().didBeginDocument(dispatch, previousContentSecurityPolicy);
+    m_frame->loader().didBeginDocument(dispatch);
 
     document->implicitOpen();
 

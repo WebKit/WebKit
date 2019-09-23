@@ -1,9 +1,8 @@
 
-
 PASS <iframe>'s about:blank inherits policy. 
 PASS <iframe srcdoc>'s inherits policy. 
 PASS <iframe src='blob:...'>'s inherits policy. 
-FAIL <iframe src='data:...'>'s inherits policy. assert_equals: expected "load" but got "error"
+PASS <iframe src='data:...'>'s inherits policy. 
 PASS <iframe src='javascript:...'>'s inherits policy. 
-FAIL <iframe sandbox src='blob:...'>'s inherits policy. (opaque origin sandbox) assert_equals: expected "load" but got "error"
+PASS <iframe sandbox src='blob:...'>'s inherits policy. (opaque origin sandbox) 
 

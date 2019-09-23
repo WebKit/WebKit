@@ -231,7 +231,7 @@ public:
     void didExplicitOpen();
 
     // Callbacks from DocumentWriter
-    void didBeginDocument(bool dispatchWindowObjectAvailable, ContentSecurityPolicy* previousPolicy);
+    void didBeginDocument(bool dispatchWindowObjectAvailable);
 
     void receivedFirstData();
 

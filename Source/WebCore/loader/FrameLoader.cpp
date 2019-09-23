@@ -719,7 +719,7 @@ void FrameLoader::setOutgoingReferrer(const URL& url)
     m_outgoingReferrer = url.strippedForUseAsReferrer();
 }
 
-void FrameLoader::didBeginDocument(bool dispatch, ContentSecurityPolicy* previousPolicy)
+void FrameLoader::didBeginDocument(bool dispatch)
 {
     m_needsClear = true;
     m_isComplete = false;
@@ -735,7 +735,7 @@ void FrameLoader::didBeginDocument(bool dispatch, ContentSecurityPolicy* previou
         dispatchDidClearWindowObjectsInAllWorlds();
 
     updateFirstPartyForCookies();
-    m_frame.document()->initContentSecurityPolicy(previousPolicy);
+    m_frame.document()->initContentSecurityPolicy();
 
     const Settings& settings = m_frame.settings();
     m_frame.document()->cachedResourceLoader().setImagesEnabled(settings.areImagesEnabled());

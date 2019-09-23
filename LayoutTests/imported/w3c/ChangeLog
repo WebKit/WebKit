@@ -1,3 +1,16 @@
+2019-09-23  Daniel Bates  <dabates@apple.com>
+
+        Improve CSP inheritance semantics
+        https://bugs.webkit.org/show_bug.cgi?id=201884
+        <rdar://problem/50172407>
+
+        Reviewed by Brent Fulgham.
+
+        Update expected results now that we pass more sub-tests.
+
+        * web-platform-tests/content-security-policy/inheritance/iframe-all-local-schemes-inherit-self.sub-expected.txt:
+        * web-platform-tests/content-security-policy/inheritance/window-expected.txt:
+
 2019-09-23  Rob Buis  <rbuis@igalia.com>
 
         Sync operator dictionary

@@ -5851,14 +5851,15 @@ void Document::initSecurityContext()
         return;
     }
 
-    Document* openerDocument = openerFrame ? openerFrame->document() : nullptr;
+    contentSecurityPolicy()->copyStateFrom(ownerFrame->document()->contentSecurityPolicy());
+    contentSecurityPolicy()->updateSourceSelf(ownerFrame->document()->securityOrigin());
 
     // Per <http://www.w3.org/TR/upgrade-insecure-requests/>, new browsing contexts must inherit from an
     // ongoing set of upgraded requests. When opening a new browsing context, we need to capture its
     // existing upgrade request. Nested browsing contexts are handled during DocumentWriter::begin.
-    if (openerDocument)
+    if (auto* openerDocument = openerFrame ? openerFrame->document() : nullptr)
         contentSecurityPolicy()->inheritInsecureNavigationRequestsToUpgradeFromOpener(*openerDocument->contentSecurityPolicy());
-    
+
     if (isSandboxed(SandboxOrigin)) {
         // If we're supposed to inherit our security origin from our owner,
         // but we're also sandboxed, the only thing we inherit is the ability
@@ -5875,53 +5876,26 @@ void Document::initSecurityContext()
     setSecurityOriginPolicy(ownerFrame->document()->securityOriginPolicy());
 }
 
-// FIXME: The current criterion is stricter than <https://www.w3.org/TR/CSP3/#security-inherit-csp> (Editor's Draft, 28 February 2019).
-bool Document::shouldInheritContentSecurityPolicy() const
+void Document::initContentSecurityPolicy()
 {
-    ASSERT(m_frame);
-    if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(m_url))
-        return true;
-    if (m_url.protocolIsData() || m_url.protocolIsBlob())
-        return true;
-    if (!isPluginDocument())
-        return false;
-    if (m_frame->tree().parent())
-        return true;
-    Frame* openerFrame = m_frame->loader().opener();
-    if (!openerFrame)
-        return false;
-    return openerFrame->document()->securityOrigin().canAccess(securityOrigin());
-}
-
-void Document::initContentSecurityPolicy(ContentSecurityPolicy* previousPolicy)
-{
-    // 1. Inherit Upgrade Insecure Requests
-    Frame* parentFrame = m_frame->tree().parent();
+    auto* parentFrame = m_frame->tree().parent();
     if (parentFrame)
         contentSecurityPolicy()->copyUpgradeInsecureRequestStateFrom(*parentFrame->document()->contentSecurityPolicy());
 
-    // 2. Inherit Content Security Policy (without copying Upgrade Insecure Requests state).
-    if (!shouldInheritContentSecurityPolicy())
+    // FIXME: Remove this special plugin document logic. We are stricter than the CSP 3 spec. with regards to plugins: we prefer to
+    // inherit the full policy unless the plugin document is opened in a new window. The CSP 3 spec. implies that only plugin documents
+    // delivered with a local scheme (e.g. blob, file, data) should inherit a policy.
+    if (!isPluginDocument())
         return;
-    ContentSecurityPolicy* ownerPolicy = nullptr;
-    if (previousPolicy && (m_url.protocolIsData() || m_url.protocolIsBlob()))
-        ownerPolicy = previousPolicy;
-    if (!ownerPolicy) {
-        Frame* ownerFrame = parentFrame;
-        if (!ownerFrame)
-            ownerFrame = m_frame->loader().opener();
-        if (ownerFrame)
-            ownerPolicy = ownerFrame->document()->contentSecurityPolicy();
-    }
-    if (!ownerPolicy)
+    auto* openerFrame = m_frame->loader().opener();
+    bool shouldInhert = parentFrame || (openerFrame && openerFrame->document()->securityOrigin().canAccess(securityOrigin()));
+    if (!shouldInhert)
         return;
-    // FIXME: We are stricter than the CSP 3 spec. with regards to plugins: we prefer to inherit the full policy unless the plugin
-    // document is opened in a new window. The CSP 3 spec. implies that only plugin documents delivered with a local scheme (e.g. blob,
-    // file, data) should inherit a policy.
-    if (isPluginDocument() && m_frame->loader().opener())
-        contentSecurityPolicy()->createPolicyForPluginDocumentFrom(*ownerPolicy);
+    setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { m_url }, *this));
+    if (openerFrame)
+        contentSecurityPolicy()->createPolicyForPluginDocumentFrom(*openerFrame->document()->contentSecurityPolicy());
     else
-        contentSecurityPolicy()->copyStateFrom(ownerPolicy);
+        contentSecurityPolicy()->copyStateFrom(parentFrame->document()->contentSecurityPolicy());
 }
 
 bool Document::isContextThread() const
