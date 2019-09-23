@@ -1,3 +1,17 @@
+2019-09-23  Patrick Griffis  <pgriffis@igalia.com>
+
+        [GTK][WPE] Don't use prgname in dbus-proxy socket path
+        https://bugs.webkit.org/show_bug.cgi?id=201979
+
+        The path length for the socket is limited to 108 bytes so it is easy for a long
+        prgname to cause it to get truncated and fail. Since we only allow the socket
+        path into the sandbox the unique directory isn't necessary.
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::XDGDBusProxyLauncher::setAddress):
+
 2019-09-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] Stop setting G_TLS_GNUTLS_PRIORITY

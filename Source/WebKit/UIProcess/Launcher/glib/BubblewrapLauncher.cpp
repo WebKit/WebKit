@@ -30,6 +30,12 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
+#if PLATFORM(GTK)
+#define BASE_DIRECTORY "webkitgtk"
+#elif PLATFORM(WPE)
+#define BASE_DIRECTORY "wpe"
+#endif
+
 #if __has_include(<sys/memfd.h>)
 
 #include <sys/memfd.h>
@@ -129,7 +135,7 @@ public:
         if (!dbusPath.get())
             return;
 
-        GUniquePtr<char> appRunDir(g_build_filename(g_get_user_runtime_dir(), g_get_prgname(), nullptr));
+        GUniquePtr<char> appRunDir(g_build_filename(g_get_user_runtime_dir(), BASE_DIRECTORY, nullptr));
         m_proxyPath = makeProxyPath(appRunDir.get()).get();
 
         m_socket = dbusAddress;
