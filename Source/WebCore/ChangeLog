@@ -1,3 +1,31 @@
+2019-09-23  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Pass in the Used*Values to inline layout functions.
+        https://bugs.webkit.org/show_bug.cgi?id=202091
+        <rdar://problem/55601987>
+
+        Reviewed by Antti Koivisto.
+
+        Only the top level layout functions should generate constraint values.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::InlineFormattingContext::computeMarginBorderAndPaddingForInlineContainer):
+        (WebCore::Layout::InlineFormattingContext::computeIntrinsicWidthForFormattingRoot):
+        (WebCore::Layout::InlineFormattingContext::computeHorizontalMargin):
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndMargin):
+        (WebCore::Layout::InlineFormattingContext::computeHeightAndMargin):
+        (WebCore::Layout::InlineFormattingContext::layoutFormattingContextRoot):
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::widthConstraint const):
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::InlineLayout):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::layout):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::computedIntrinsicWidth const):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::createDisplayRuns):
+
 2019-09-23  Antti Koivisto  <antti@apple.com>
 
         Refcount simple line layout

@@ -53,21 +53,24 @@ private:
 
     class InlineLayout {
     public:
-        InlineLayout(InlineFormattingContext&);
-        void layout(const InlineItems&, LayoutUnit widthConstraint);
-        LayoutUnit computedIntrinsicWidth(const InlineItems&, LayoutUnit widthConstraint) const;
+        InlineLayout(InlineFormattingContext&, UsedHorizontalValues);
+        void layout(const InlineItems&);
+        LayoutUnit computedIntrinsicWidth(const InlineItems&) const;
 
     private:
         LayoutState& layoutState() const { return m_inlineFormattingContext.layoutState(); }
         InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
         const Container& formattingRoot() const { return m_inlineFormattingContext.root(); }
         InlineFormattingState& formattingState() { return m_inlineFormattingContext.formattingState(); }
+        LayoutUnit widthConstraint() const { return m_usedHorizontalValues.constraints.width; }
+
         LineContent placeInlineItems(const LineInput&) const;
-        void createDisplayRuns(const Line::Content&, const Vector<WeakPtr<InlineItem>>& floats, LayoutUnit widthConstraint);
+        void createDisplayRuns(const Line::Content&, const Vector<WeakPtr<InlineItem>>& floats);
         void alignRuns(TextAlignMode, InlineRuns&, unsigned firstRunIndex, LayoutUnit availableWidth) const;
 
     private:
         InlineFormattingContext& m_inlineFormattingContext;
+        UsedHorizontalValues m_usedHorizontalValues;
     };
 
     class Quirks : public FormattingContext::Quirks {
@@ -98,13 +101,13 @@ private:
     };
     InlineFormattingContext::Geometry geometry() const { return Geometry(*this); }
 
-    void layoutFormattingContextRoot(const Box&, UsedHorizontalValues);
+    void layoutFormattingContextRoot(const Box&, UsedHorizontalValues, UsedVerticalValues);
     void computeMarginBorderAndPaddingForInlineContainer(const Container&, UsedHorizontalValues);
     void initializeMarginBorderAndPaddingForGenericInlineBox(const Box&);
-    void computeIntrinsicWidthForFormattingRoot(const Box&);
-    void computeWidthAndHeightForReplacedInlineBox(const Box&, UsedHorizontalValues);
+    void computeIntrinsicWidthForFormattingRoot(const Box&, UsedHorizontalValues);
+    void computeWidthAndHeightForReplacedInlineBox(const Box&, UsedHorizontalValues, UsedVerticalValues);
     void computeHorizontalMargin(const Box&, UsedHorizontalValues);
-    void computeHeightAndMargin(const Box&);
+    void computeHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues);
     void computeWidthAndMargin(const Box&, UsedHorizontalValues);
 
     void collectInlineContent();
