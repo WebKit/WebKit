@@ -401,8 +401,7 @@ void LocalAuthenticator::getAssertion()
     }
 
     // Step 6.
-    // FIXME(rdar://problem/35900534): We don't have an UI to prompt users for selecting intersectedCredentials, and therefore we always use the first one for now.
-    NSDictionary *selectedCredentialAttributes = intersectedCredentialsAttributes[0];
+    auto *selectedCredentialAttributes = m_connection->selectCredential(intersectedCredentialsAttributes);
 
     // Step 7. Get user consent.
     // FIXME(rdar://problem/35900593): Update to a formal UI.

@@ -62,6 +62,7 @@ public:
     virtual void getUserConsent(const String& reason, UserConsentCallback&&) const;
     virtual void getUserConsent(const String& reason, SecAccessControlRef, UserConsentContextCallback&&) const;
     virtual void getAttestation(const String& rpId, const String& username, const Vector<uint8_t>& hash, AttestationCallback&&) const;
+    virtual NSDictionary *selectCredential(const NSArray *) const;
 };
 
 } // namespace WebKit

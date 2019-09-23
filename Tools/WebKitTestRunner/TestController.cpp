@@ -3552,7 +3552,7 @@ void TestController::addTestKeyToKeychain(const String&, const String&, const St
 {
 }
 
-void TestController::cleanUpKeychain(const String&)
+void TestController::cleanUpKeychain(const String&, const String&)
 {
 }
 

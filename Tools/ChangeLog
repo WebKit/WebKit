@@ -1,3 +1,37 @@
+2019-09-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] LocalAuthenticator tests are failing on internal bots
+        https://bugs.webkit.org/show_bug.cgi?id=201844
+        <rdar://problem/54278693>
+
+        Reviewed by Brent Fulgham.
+
+        LocalAuthenticator tests utilize Keychain for mock testing. Unlike iOS simulator tests which
+        each test runner is running in different simulator containers, all test runners are running
+        in the same macOS container in macOS. Therefore, Keychain is shared among all test runners
+        in macOS while it is not in iOS simulators. And therefore, race conditions would happen in
+        macOS which make the current tests flaky given they don't consider race conditions.
+
+        This patch then makes each test generate a random credential, and thus no other tests would
+        be able to access it, and therefore eliminate any race condition. To support this, a few new
+        functionalities are introduced to the mock test infrastructure as well:
+        1) TestRunner.cleanUpKeychain accepts a new parameter to more precisely identify an item.
+        2) WebAuthenticationMockConfiguration.Local has a new member to uniquely select a credential
+        for getAssertion ceremony when multiple presents.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setWebAuthenticationMockConfiguration):
+        (WTR::TestRunner::cleanUpKeychain):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::cleanUpKeychain):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::cleanUpKeychain):
+
 2019-09-20  Aakash Jain  <aakash_jain@apple.com>
 
         [EWS] JSC queues should re-build ToT and compare results on build failure

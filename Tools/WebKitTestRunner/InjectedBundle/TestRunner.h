@@ -488,7 +488,7 @@ public:
     void setWebAuthenticationMockConfiguration(JSValueRef);
     // FIXME(189876)
     void addTestKeyToKeychain(JSStringRef privateKeyBase64, JSStringRef attrLabel, JSStringRef applicationTagBase64);
-    void cleanUpKeychain(JSStringRef attrLabel);
+    void cleanUpKeychain(JSStringRef attrLabel, JSStringRef applicationTagBase64);
     bool keyExistsInKeychain(JSStringRef attrLabel, JSStringRef applicationTagBase64);
 
     void setCanHandleHTTPSServerTrustEvaluation(bool canHandle);

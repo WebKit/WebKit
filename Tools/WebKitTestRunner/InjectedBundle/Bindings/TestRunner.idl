@@ -391,7 +391,7 @@ interface TestRunner {
     // WebAuthN
     void setWebAuthenticationMockConfiguration(object configuration);
     void addTestKeyToKeychain(DOMString privateKeyBase64, DOMString attrLabel, DOMString applicationTagBase64);
-    void cleanUpKeychain(DOMString attrLabel);
+    void cleanUpKeychain(DOMString attrLabel, optional DOMString applicationTagBase64);
     boolean keyExistsInKeychain(DOMString attrLabel, DOMString applicationTagBase64);
 
     // Ad Click Attribution

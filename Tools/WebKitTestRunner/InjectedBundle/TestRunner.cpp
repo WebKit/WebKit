@@ -2579,7 +2579,7 @@ void TestRunner::setWebAuthenticationMockConfiguration(JSValueRef configurationV
             JSRetainPtr<JSStringRef> intermediateCACertificateBase64PropertyName(Adopt, JSStringCreateWithUTF8CString("intermediateCACertificateBase64"));
             JSValueRef intermediateCACertificateBase64Value = JSObjectGetProperty(context, local, intermediateCACertificateBase64PropertyName.get(), 0);
             if (!JSValueIsString(context, intermediateCACertificateBase64Value))
-            return;
+                return;
 
             localKeys.append(adoptWK(WKStringCreateWithUTF8CString("PrivateKeyBase64")));
             localValues.append(toWK(adopt(JSValueToStringCopy(context, privateKeyBase64Value, 0)).get()));
@@ -2587,6 +2587,16 @@ void TestRunner::setWebAuthenticationMockConfiguration(JSValueRef configurationV
             localValues.append(toWK(adopt(JSValueToStringCopy(context, userCertificateBase64Value, 0)).get()));
             localKeys.append(adoptWK(WKStringCreateWithUTF8CString("IntermediateCACertificateBase64")));
             localValues.append(toWK(adopt(JSValueToStringCopy(context, intermediateCACertificateBase64Value, 0)).get()));
+        }
+
+        JSRetainPtr<JSStringRef> preferredUserhandleBase64PropertyName(Adopt, JSStringCreateWithUTF8CString("preferredUserhandleBase64"));
+        JSValueRef preferredUserhandleBase64Value = JSObjectGetProperty(context, local, preferredUserhandleBase64PropertyName.get(), 0);
+        if (!JSValueIsUndefined(context, preferredUserhandleBase64Value) && !JSValueIsNull(context, preferredUserhandleBase64Value)) {
+            if (!JSValueIsString(context, preferredUserhandleBase64Value))
+                return;
+
+            localKeys.append(adoptWK(WKStringCreateWithUTF8CString("PreferredUserhandleBase64")));
+            localValues.append(toWK(adopt(JSValueToStringCopy(context, preferredUserhandleBase64Value, 0)).get()));
         }
 
         Vector<WKStringRef> rawLocalKeys;
@@ -2831,10 +2841,31 @@ void TestRunner::addTestKeyToKeychain(JSStringRef privateKeyBase64, JSStringRef 
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
-void TestRunner::cleanUpKeychain(JSStringRef attrLabel)
+void TestRunner::cleanUpKeychain(JSStringRef attrLabel, JSStringRef applicationTagBase64)
 {
+    Vector<WKRetainPtr<WKStringRef>> keys;
+    Vector<WKRetainPtr<WKTypeRef>> values;
+
+    keys.append(adoptWK(WKStringCreateWithUTF8CString("AttrLabel")));
+    values.append(toWK(attrLabel));
+
+    if (applicationTagBase64) {
+        keys.append(adoptWK(WKStringCreateWithUTF8CString("ApplicationTag")));
+        values.append(toWK(applicationTagBase64));
+    }
+
+    Vector<WKStringRef> rawKeys;
+    Vector<WKTypeRef> rawValues;
+    rawKeys.resize(keys.size());
+    rawValues.resize(values.size());
+
+    for (size_t i = 0; i < keys.size(); ++i) {
+        rawKeys[i] = keys[i].get();
+        rawValues[i] = values[i].get();
+    }
+
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CleanUpKeychain"));
-    WKRetainPtr<WKStringRef> messageBody = adoptWK(WKStringCreateWithJSString(attrLabel));
+    WKRetainPtr<WKDictionaryRef> messageBody = adoptWK(WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
 
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }

@@ -38,6 +38,7 @@ struct MockWebAuthenticationConfiguration {
         String privateKeyBase64;
         String userCertificateBase64;
         String intermediateCACertificateBase64;
+        String preferredUserhandleBase64;
     };
 
     struct Hid {

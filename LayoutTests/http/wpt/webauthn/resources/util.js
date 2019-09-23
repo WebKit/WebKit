@@ -3,9 +3,6 @@ const testES256PrivateKeyBase64 =
     "BDj/zxSkzKgaBuS3cdWDF558of8AaIpgFpsjF/Qm1749VBJPgqUIwfhWHJ91nb7U" +
     "PH76c0+WFOzZKslPyyFse4goGIW2R7k9VHLPEZl5nfnBgEVFh5zev+/xpHQIvuq6" +
     "RQ==";
-const testES256PublicKeyBase64 =
-    "BDj/zxSkzKgaBuS3cdWDF558of8AaIpgFpsjF/Qm1749VBJPgqUIwfhWHJ91nb7U" +
-    "PH76c0+WFOzZKslPyyFse4g=";
 const testRpId = "localhost";
 const testUserhandleBase64 = "AAECAwQFBgcICQ==";
 const testAttestationCertificateBase64 =
@@ -435,4 +432,44 @@ function checkU2fGetAssertionResult(credential, isAppID = false, appIDHash = "c2
         assert_equals(bytesToHexString(authData.rpIdHash), appIDHash);
     assert_equals(authData.flags, 1);
     assert_equals(authData.counter, 59);
+}
+
+function generateUserhandleBase64()
+{
+    let buffer = new Uint8Array(16);
+    crypto.getRandomValues(buffer);
+    return btoa(String.fromCharCode.apply(0, buffer));
+}
+
+async function generatePrivateKeyBase64()
+{
+    const algorithmKeyGen = {
+        name: "ECDSA",
+        namedCurve: "P-256"
+    };
+    const extractable = true;
+
+    const keyPair = await crypto.subtle.generateKey(algorithmKeyGen, extractable, ["sign", "verify"]);
+    const jwkPrivateKey = await crypto.subtle.exportKey("jwk", keyPair.privateKey);
+
+    const x = Base64URL.parse(jwkPrivateKey.x);
+    const y = Base64URL.parse(jwkPrivateKey.y);
+    const d = Base64URL.parse(jwkPrivateKey.d);
+
+    let buffer = new Uint8Array(x.length + y.length + d.length + 1);
+    buffer[0] = 0x04;
+    let pos = 1;
+    buffer.set(x, pos);
+    pos += x.length;
+    buffer.set(y, pos);
+    pos += y.length;
+    buffer.set(d, pos);
+
+    return btoa(String.fromCharCode.apply(0, buffer));
+}
+
+async function calculateCredentialID(privateKeyBase64) {
+    const privateKey = Base64URL.parse(privateKeyBase64);
+    const publicKey = privateKey.slice(0, 65);
+    return new Uint8Array(await crypto.subtle.digest("sha-1", publicKey));
 }

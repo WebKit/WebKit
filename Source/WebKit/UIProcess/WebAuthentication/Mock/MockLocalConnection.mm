@@ -108,6 +108,17 @@ void MockLocalConnection::getAttestation(const String& rpId, const String& usern
     });
 }
 
+NSDictionary *MockLocalConnection::selectCredential(const NSArray *credentials) const
+{
+    auto preferredUserhandle = adoptNS([[NSData alloc] initWithBase64EncodedString:m_configuration.local->preferredUserhandleBase64 options:0]);
+    for (NSDictionary *credential : credentials) {
+        if ([credential[(id)kSecAttrApplicationTag] isEqualToData:preferredUserhandle.get()])
+            return credential;
+    }
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)

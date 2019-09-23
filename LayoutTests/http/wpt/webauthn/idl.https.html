@@ -19,17 +19,6 @@
 <div id='log'></div>
 
 <script>
-if (window.testRunner)
-    testRunner.setWebAuthenticationMockConfiguration({
-        local: {
-            acceptAuthentication: true,
-            acceptAttestation: true,
-            privateKeyBase64: testES256PrivateKeyBase64,
-            userCertificateBase64: testAttestationCertificateBase64,
-            intermediateCACertificateBase64: testAttestationIssuingCACertificateBase64
-        }
-    });
-
 promise_test(async () => {
     const idlURL = ["WebAuthN.idl"];
     const idlArray = new IdlArray();
@@ -54,7 +43,7 @@ promise_test(async () => {
                 name: "localhost",
             },
             user: {
-                name: "John Appleseed",
+                name: testUserhandleBase64,
                 id: Base64URL.parse(testUserhandleBase64),
                 displayName: "Appleseed",
             },
@@ -62,20 +51,21 @@ promise_test(async () => {
             pubKeyCredParams: [{ type: "public-key", alg: -7 }],
         }
     };
+    // A mock attestation object
+    if (window.testRunner)
+        testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "request", subStage: "msg", error: "success", payloadBase64: [testCreationMessageBase64] } });
     createdCredential = await navigator.credentials.create(creationOptions);
-
 
     const requestOptions = {
         publicKey: {
             challenge: Base64URL.parse("MTIzNDU2"),
         }
     };
+    if (window.testRunner)
+        testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "request", subStage: "msg", error: "success", payloadBase64: [testAssertionMessageBase64] } });
     requestedCredential = await navigator.credentials.get(requestOptions);
 
     idlArray.add_objects({"PublicKeyCredential": ["createdCredential"], "AuthenticatorAttestationResponse": ["createdCredential.response"], "AuthenticatorAssertionResponse": ["requestedCredential.response"]});
     idlArray.test();
-
-    if (window.testRunner)
-        testRunner.cleanUpKeychain(testRpId);
 }, "Setup for WebAuthN API IDL tests.");
 </script>

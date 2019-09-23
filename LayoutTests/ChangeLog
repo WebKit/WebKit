@@ -1,3 +1,26 @@
+2019-09-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] LocalAuthenticator tests are failing on internal bots
+        https://bugs.webkit.org/show_bug.cgi?id=201844
+        <rdar://problem/54278693>
+
+        Reviewed by Brent Fulgham.
+
+        This patch makes each test to generate their own credentials to avoid race conditions in Keychain
+        accesses when multiple test runners present.
+
+        * http/wpt/credential-management/credentialscontainer-store-basics.https.html:
+        * http/wpt/webauthn/idl.https.html:
+        These two tests are changed to use hid authenticator instead of local to avoid any future Keychain issues.
+        * http/wpt/webauthn/public-key-credential-create-failure-local-silent.https.html:
+        * http/wpt/webauthn/public-key-credential-create-failure-local.https.html:
+        * http/wpt/webauthn/public-key-credential-create-success-local.https.html:
+        * http/wpt/webauthn/public-key-credential-get-failure-local-silent.https.html:
+        * http/wpt/webauthn/public-key-credential-get-failure-local.https.html:
+        * http/wpt/webauthn/public-key-credential-get-success-local.https.html:
+        * http/wpt/webauthn/resources/util.js:
+        * platform/mac-wk2/TestExpectations:
+
 2019-09-23  Youenn Fablet  <youenn@apple.com>
 
         Simplify UserMediaPermissionRequestManager management of UserMediaRequest

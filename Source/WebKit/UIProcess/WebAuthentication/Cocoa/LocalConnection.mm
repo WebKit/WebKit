@@ -110,6 +110,12 @@ void LocalConnection::getAttestation(const String& rpId, const String& username,
 #endif // HAVE(DEVICE_IDENTITY)
 }
 
+NSDictionary *LocalConnection::selectCredential(const NSArray *credentials) const
+{
+    // FIXME(rdar://problem/35900534): We don't have an UI to prompt users for selecting intersectedCredentials, and therefore we always use the first one for now.
+    return credentials[0];
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)
