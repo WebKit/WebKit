@@ -1,3 +1,19 @@
+2019-09-23  Aakash Jain  <aakash_jain@apple.com>
+
+        [EWS] Rename CompileJSCOnly to CompileJSC
+        https://bugs.webkit.org/show_bug.cgi?id=202118
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+        (JSCTestsFactory.__init__): Renamed CompileJSCOnly to CompileJSC.
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CompileWebKit.evaluateCommand): Ditto.
+        (AnalyzeCompileWebKitResults.start): Ditto.
+        (CompileJSC): Changed step-name to 'compile-jsc' to better match with similar steps like 'compile-webkit'. 
+        (CompileJSCToT): Ditto for 'compile-jsc-tot'.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Renamed CompileJSCOnly to CompileJSC and CompileJSCOnlyToT to CompileJSCToT.
+
 2019-09-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Drop animation when dragging images from Photos to WebKit2 Mail compose is incorrect

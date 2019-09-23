@@ -745,7 +745,7 @@ class CompileWebKit(shell.Compile):
             elif platform == 'gtk':
                 steps_to_add.append(InstallGtkDependencies())
             if self.getProperty('group') == 'jsc':
-                steps_to_add.append(CompileJSCOnlyToT())
+                steps_to_add.append(CompileJSCToT())
             else:
                 steps_to_add.append(CompileWebKitToT())
             steps_to_add.append(AnalyzeCompileWebKitResults())
@@ -781,7 +781,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
     def start(self):
         compile_tot_step = CompileWebKitToT.name
         if self.getProperty('group') == 'jsc':
-            compile_tot_step = CompileJSCOnlyToT.name
+            compile_tot_step = CompileJSCToT.name
         compile_webkit_tot_result = self.getStepResult(compile_tot_step)
 
         if compile_webkit_tot_result == FAILURE:
@@ -805,8 +805,8 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
                 return step.results
 
 
-class CompileJSCOnly(CompileWebKit):
-    name = 'build-jsc'
+class CompileJSC(CompileWebKit):
+    name = 'compile-jsc'
     descriptionDone = ['Compiled JSC']
     command = ['perl', 'Tools/Scripts/build-jsc', WithProperties('--%(configuration)s')]
 
@@ -815,8 +815,8 @@ class CompileJSCOnly(CompileWebKit):
         return CompileWebKit.start(self)
 
 
-class CompileJSCOnlyToT(CompileJSCOnly):
-    name = 'build-jsc-tot'
+class CompileJSCToT(CompileJSC):
+    name = 'compile-jsc-tot'
 
     def doStepIf(self, step):
         return self.getProperty('patchFailedToBuild')
