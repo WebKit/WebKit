@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,15 +27,39 @@
 
 #if ENABLE(APPLE_PAY)
 
-#import <pal/spi/cocoa/PassKitSPI.h>
+#include "ApplePaySessionPaymentRequest.h"
+#include <wtf/RetainPtr.h>
 
-namespace WebKit {
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/PaymentMethodUpdateAdditions.h>
+#endif
 
-// FIXME: Rather than having these free functions scattered about, Apple Pay data types should know
-// how to convert themselves to and from their platform representations.
-NSDecimalNumber *toDecimalNumber(const String& amount);
-PKShippingMethod *toPKShippingMethod(const WebCore::ApplePaySessionPaymentRequest::ShippingMethod&);
+OBJC_CLASS PKPaymentRequestPaymentMethodUpdate;
 
-} // namespace WebKit
+namespace WebCore {
+
+class WEBCORE_EXPORT PaymentMethodUpdate {
+public:
+    using LineItem = ApplePaySessionPaymentRequest::LineItem;
+    using TotalAndLineItems = ApplePaySessionPaymentRequest::TotalAndLineItems;
+
+    PaymentMethodUpdate(LineItem&& total, Vector<LineItem>&&);
+    explicit PaymentMethodUpdate(RetainPtr<PKPaymentRequestPaymentMethodUpdate>&&);
+    explicit PaymentMethodUpdate(TotalAndLineItems&&);
+
+    const TotalAndLineItems& totalAndLineItems() const;
+    PKPaymentRequestPaymentMethodUpdate *platformUpdate() const;
+
+#if defined(PAYMENTMETHODUPDATE_PUBLIC_ADDITIONS)
+PAYMENTMETHODUPDATE_PUBLIC_ADDITIONS
+#undef PAYMENTMETHODUPDATE_PUBLIC_ADDITIONS
+#endif
+    
+private:
+    Optional<TotalAndLineItems> m_totalAndLineItems;
+    RetainPtr<PKPaymentRequestPaymentMethodUpdate> m_platformUpdate;
+};
+
+} // namespace WebCore
 
 #endif // ENABLE(APPLE_PAY)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "PaymentMethodUpdate.h"
 
 #if ENABLE(APPLE_PAY)
 
-#import <pal/spi/cocoa/PassKitSPI.h>
+#import "PaymentSummaryItems.h"
+#import <pal/cocoa/PassKitSoftLink.h>
 
-namespace WebKit {
+namespace WebCore {
 
-// FIXME: Rather than having these free functions scattered about, Apple Pay data types should know
-// how to convert themselves to and from their platform representations.
-NSDecimalNumber *toDecimalNumber(const String& amount);
-PKShippingMethod *toPKShippingMethod(const WebCore::ApplePaySessionPaymentRequest::ShippingMethod&);
+PaymentMethodUpdate::PaymentMethodUpdate(LineItem&& total, Vector<LineItem>&& lineItems)
+    : m_totalAndLineItems { { WTFMove(total), WTFMove(lineItems) } }
+    , m_platformUpdate { adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:platformSummaryItems(*m_totalAndLineItems)]) }
+{
+}
 
-} // namespace WebKit
+PaymentMethodUpdate::PaymentMethodUpdate(RetainPtr<PKPaymentRequestPaymentMethodUpdate>&& platformUpdate)
+    : m_platformUpdate { WTFMove(platformUpdate) }
+{
+}
+
+PaymentMethodUpdate::PaymentMethodUpdate(TotalAndLineItems&& totalAndLineItems)
+    : PaymentMethodUpdate { WTFMove(totalAndLineItems.total), WTFMove(totalAndLineItems.lineItems) }
+{
+}
+
+const PaymentMethodUpdate::TotalAndLineItems& PaymentMethodUpdate::totalAndLineItems() const
+{
+    return *m_totalAndLineItems;
+}
+
+PKPaymentRequestPaymentMethodUpdate *PaymentMethodUpdate::platformUpdate() const
+{
+    return m_platformUpdate.get();
+}
+
+} // namespace WebCore
 
 #endif // ENABLE(APPLE_PAY)

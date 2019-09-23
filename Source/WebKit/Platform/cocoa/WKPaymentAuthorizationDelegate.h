@@ -59,15 +59,11 @@ using DidSelectShippingMethodCompletion = BlockPtr<void(PKPaymentAuthorizationSt
 
 - (instancetype)init NS_UNAVAILABLE;
 
-@property (nonatomic, readonly) BOOL didReachFinalState;
-@property (nonatomic, readonly) NSArray<PKPaymentSummaryItem *> *summaryItems;
-@property (nonatomic, readonly) NSArray<PKShippingMethod *> *shippingMethods;
-
 - (void)completeMerchantValidation:(PKPaymentMerchantSession *)session error:(NSError *)error;
-- (void)completePaymentMethodSelection:(NSArray<PKPaymentSummaryItem *> *)summaryItems;
+- (void)completePaymentMethodSelection:(PKPaymentRequestPaymentMethodUpdate *)paymentMethodUpdate;
 - (void)completePaymentSession:(PKPaymentAuthorizationStatus)status errors:(NSArray<NSError *> *)errors didReachFinalState:(BOOL)didReachFinalState;
-- (void)completeShippingContactSelection:(PKPaymentAuthorizationStatus)status summaryItems:(NSArray<PKPaymentSummaryItem *> *)summaryItems shippingMethods:(NSArray<PKShippingMethod *> *)shippingMethods errors:(NSArray<NSError *> *)errors;
-- (void)completeShippingMethodSelection:(NSArray<PKPaymentSummaryItem *> *)summaryItems;
+- (void)completeShippingContactSelection:(PKPaymentRequestShippingContactUpdate *)shippingContactUpdate;
+- (void)completeShippingMethodSelection:(PKPaymentRequestShippingMethodUpdate *)shippingMethodUpdate;
 - (void)invalidate;
 
 @end

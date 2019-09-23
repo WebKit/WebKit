@@ -39,11 +39,11 @@ class PaymentCoordinatorClient;
 class PaymentContact;
 class PaymentMerchantSession;
 class PaymentMethod;
+class PaymentMethodUpdate;
 class PaymentSession;
 class PaymentSessionError;
 enum class PaymentAuthorizationStatus;
 struct PaymentAuthorizationResult;
-struct PaymentMethodUpdate;
 struct ShippingContactUpdate;
 struct ShippingMethodUpdate;
 

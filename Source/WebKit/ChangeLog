@@ -1,5 +1,120 @@
 2019-09-23  Alan Coon  <alancoon@apple.com>
 
+        Apply patch. rdar://problem/55608031
+
+    Clean up handling of summary items and payment method updates https://bugs.webkit.org/show_bug.cgi?id=202018 <rdar://problem/55470632>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    Replaced the PaymentMethodUpdate struct with a class that knows how to convert from
+    ApplePayPaymentMethodUpdate structs to PKPaymentRequestPaymentMethodUpdate instances.
+    
+    Moved some scattered-around free functions for converting payment summary items into
+    PaymentSummaryItems{.h,Cocoa.mm}.
+    
+    * Modules/applepay/ApplePayPaymentMethodUpdate.h:
+    * Modules/applepay/ApplePaySession.cpp:
+    (WebCore::finishConverting):
+    (WebCore::convertAndValidateTotal):
+    (WebCore::convertAndValidate):
+    * Modules/applepay/ApplePaySessionPaymentRequest.h:
+    * Modules/applepay/PaymentCoordinator.h:
+    * Modules/applepay/PaymentCoordinatorClient.h:
+    * Modules/applepay/PaymentHeaders.h:
+    * Modules/applepay/PaymentMethodUpdate.h: Added.
+    * Modules/applepay/PaymentSummaryItems.h: Added.
+    * Modules/applepay/cocoa/PaymentMethodUpdateCocoa.mm: Added.
+    (WebCore::PaymentMethodUpdate::PaymentMethodUpdate):
+    (WebCore::PaymentMethodUpdate::totalAndLineItems const):
+    (WebCore::PaymentMethodUpdate::platformUpdate const):
+    * Modules/applepay/cocoa/PaymentSummaryItemsCocoa.mm: Added.
+    (WebCore::toDecimalNumber):
+    (WebCore::toPKPaymentSummaryItemType):
+    (WebCore::toPKPaymentSummaryItem):
+    (WebCore::platformSummaryItems):
+    * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+    (WebCore::ApplePayPaymentHandler::paymentMethodUpdated):
+    * SourcesCocoa.txt:
+    * WebCore.xcodeproj/project.pbxproj:
+    * testing/MockPaymentCoordinator.cpp:
+    (WebCore::MockPaymentCoordinator::completePaymentMethodSelection):
+    
+    Source/WebKit:
+    
+    Now that PaymentMethodUpdate knows how to convert itself to a
+    PKPaymentRequestPaymentMethodUpdate, PaymentAuthorizationPresenter can merely pass the
+    converted update directly to the platform delegate rather than passing the individual
+    components and relying on the delegate to instantiate the platform update itself. Added
+    FIXMEs for applying a similar treatment to ShippingContactUpdate and ShippingMethodUpdate.
+    
+    * Platform/cocoa/PaymentAuthorizationPresenter.h:
+    * Platform/cocoa/PaymentAuthorizationPresenter.mm:
+    (WebKit::PaymentAuthorizationPresenter::completePaymentMethodSelection):
+    (WebKit::PaymentAuthorizationPresenter::completeShippingContactSelection):
+    (WebKit::PaymentAuthorizationPresenter::completeShippingMethodSelection):
+    * Platform/cocoa/WKPaymentAuthorizationDelegate.h:
+    * Platform/cocoa/WKPaymentAuthorizationDelegate.mm:
+    (-[WKPaymentAuthorizationDelegate completePaymentMethodSelection:]):
+    (-[WKPaymentAuthorizationDelegate completeShippingContactSelection:]):
+    (-[WKPaymentAuthorizationDelegate completeShippingMethodSelection:]):
+    (-[WKPaymentAuthorizationDelegate _didSelectPaymentMethod:completion:]):
+    (-[WKPaymentAuthorizationDelegate _didSelectShippingContact:completion:]):
+    (-[WKPaymentAuthorizationDelegate _didSelectShippingMethod:completion:]):
+    (-[WKPaymentAuthorizationDelegate completeShippingContactSelection:summaryItems:shippingMethods:errors:]): Deleted.
+    * Shared/ApplePay/WebPaymentCoordinatorProxy.h:
+    * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.h:
+    * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+    (WebKit::WebPaymentCoordinatorProxy::platformPaymentRequest):
+    (WebKit::toPKPaymentSummaryItemType): Deleted.
+    (WebKit::toPKPaymentSummaryItem): Deleted.
+    (WebKit::toPKPaymentSummaryItems): Deleted.
+    * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+    (IPC::ArgumentCoder<WebCore::PaymentMethodUpdate>::encode):
+    (IPC::ArgumentCoder<WebCore::PaymentMethodUpdate>::decode):
+
+    2019-09-19  Andy Estes  <aestes@apple.com>
+
+            [Apple Pay] Clean up handling of summary items and payment method updates
+            https://bugs.webkit.org/show_bug.cgi?id=202018
+            <rdar://problem/55470632>
+
+            Reviewed by Tim Horton.
+
+            Now that PaymentMethodUpdate knows how to convert itself to a
+            PKPaymentRequestPaymentMethodUpdate, PaymentAuthorizationPresenter can merely pass the
+            converted update directly to the platform delegate rather than passing the individual
+            components and relying on the delegate to instantiate the platform update itself. Added
+            FIXMEs for applying a similar treatment to ShippingContactUpdate and ShippingMethodUpdate.
+
+            * Platform/cocoa/PaymentAuthorizationPresenter.h:
+            * Platform/cocoa/PaymentAuthorizationPresenter.mm:
+            (WebKit::PaymentAuthorizationPresenter::completePaymentMethodSelection):
+            (WebKit::PaymentAuthorizationPresenter::completeShippingContactSelection):
+            (WebKit::PaymentAuthorizationPresenter::completeShippingMethodSelection):
+            * Platform/cocoa/WKPaymentAuthorizationDelegate.h:
+            * Platform/cocoa/WKPaymentAuthorizationDelegate.mm:
+            (-[WKPaymentAuthorizationDelegate completePaymentMethodSelection:]):
+            (-[WKPaymentAuthorizationDelegate completeShippingContactSelection:]):
+            (-[WKPaymentAuthorizationDelegate completeShippingMethodSelection:]):
+            (-[WKPaymentAuthorizationDelegate _didSelectPaymentMethod:completion:]):
+            (-[WKPaymentAuthorizationDelegate _didSelectShippingContact:completion:]):
+            (-[WKPaymentAuthorizationDelegate _didSelectShippingMethod:completion:]):
+            (-[WKPaymentAuthorizationDelegate completeShippingContactSelection:summaryItems:shippingMethods:errors:]): Deleted.
+            * Shared/ApplePay/WebPaymentCoordinatorProxy.h:
+            * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.h:
+            * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+            (WebKit::WebPaymentCoordinatorProxy::platformPaymentRequest):
+            (WebKit::toPKPaymentSummaryItemType): Deleted.
+            (WebKit::toPKPaymentSummaryItem): Deleted.
+            (WebKit::toPKPaymentSummaryItems): Deleted.
+            * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+            (IPC::ArgumentCoder<WebCore::PaymentMethodUpdate>::encode):
+            (IPC::ArgumentCoder<WebCore::PaymentMethodUpdate>::decode):
+
+2019-09-23  Alan Coon  <alancoon@apple.com>
+
         Apply patch. rdar://problem/55608028
 
     Tell websites why a session was cancelled https://bugs.webkit.org/show_bug.cgi?id=201912 Source/WebCore:

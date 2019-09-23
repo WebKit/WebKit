@@ -51,6 +51,7 @@
 #include "PaymentCoordinator.h"
 #include "PaymentMerchantSession.h"
 #include "PaymentMethod.h"
+#include "PaymentMethodUpdate.h"
 #include "PaymentRequestValidator.h"
 #include "PaymentResponse.h"
 #include "PaymentValidationErrors.h"
@@ -473,14 +474,11 @@ ExceptionOr<void> ApplePayPaymentHandler::paymentMethodUpdated()
     ASSERT(m_isUpdating);
     m_isUpdating = false;
 
-    PaymentMethodUpdate update;
-
     auto newTotalAndLineItems = computeTotalAndLineItems();
     if (newTotalAndLineItems.hasException())
         return newTotalAndLineItems.releaseException();
-    update.newTotalAndLineItems = newTotalAndLineItems.releaseReturnValue();
 
-    paymentCoordinator().completePaymentMethodSelection(WTFMove(update));
+    paymentCoordinator().completePaymentMethodSelection(PaymentMethodUpdate { newTotalAndLineItems.releaseReturnValue() });
     return { };
 }
 

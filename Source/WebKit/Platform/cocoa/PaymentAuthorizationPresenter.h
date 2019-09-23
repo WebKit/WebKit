@@ -41,6 +41,7 @@ class Payment;
 class PaymentContact;
 class PaymentMerchantSession;
 class PaymentMethod;
+class PaymentMethodUpdate;
 class PaymentSessionError;
 }
 

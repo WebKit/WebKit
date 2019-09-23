@@ -33,6 +33,7 @@
 #import <WebCore/PaymentSessionError.h>
 
 @implementation WKPaymentAuthorizationDelegate {
+    BOOL _didReachFinalState;
     RetainPtr<NSArray<PKPaymentSummaryItem *>> _summaryItems;
     RetainPtr<NSArray<PKShippingMethod *>> _shippingMethods;
     RetainPtr<NSError> _sessionError;
@@ -59,15 +60,11 @@
     std::exchange(_didRequestMerchantSessionCompletion, nil)(session, error);
 }
 
-- (void)completePaymentMethodSelection:(NSArray<PKPaymentSummaryItem *> *)summaryItems
+- (void)completePaymentMethodSelection:(PKPaymentRequestPaymentMethodUpdate *)paymentMethodUpdate
 {
-    _summaryItems = summaryItems;
-#if HAVE(PASSKIT_GRANULAR_ERRORS)
-    auto update = adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()]);
-    std::exchange(_didSelectPaymentMethodCompletion, nil)(update.get());
-#else
-    std::exchange(_didSelectPaymentMethodCompletion, nil)(_summaryItems);
-#endif
+    PKPaymentRequestPaymentMethodUpdate *update = paymentMethodUpdate ?: [[PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()] autorelease];
+    _summaryItems = adoptNS([update.paymentSummaryItems copy]);
+    std::exchange(_didSelectPaymentMethodCompletion, nil)(update);
 }
 
 - (void)completePaymentSession:(PKPaymentAuthorizationStatus)status errors:(NSArray<NSError *> *)errors didReachFinalState:(BOOL)didReachFinalState
@@ -81,30 +78,19 @@
     std::exchange(_didAuthorizePaymentCompletion, nil)(status);
 #endif
 }
-
-- (void)completeShippingContactSelection:(PKPaymentAuthorizationStatus)status summaryItems:(NSArray<PKPaymentSummaryItem *> *)summaryItems shippingMethods:(NSArray<PKShippingMethod *> *)shippingMethods errors:(NSArray<NSError *> *)errors
+- (void)completeShippingContactSelection:(PKPaymentRequestShippingContactUpdate *)shippingContactUpdate
 {
-    _summaryItems = summaryItems;
-    _shippingMethods = shippingMethods;
-#if HAVE(PASSKIT_GRANULAR_ERRORS)
-    ASSERT(status == PKPaymentAuthorizationStatusSuccess);
-    auto update = adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:errors paymentSummaryItems:_summaryItems.get() shippingMethods:_shippingMethods.get()]);
-    std::exchange(_didSelectShippingContactCompletion, nil)(update.get());
-#else
-    ASSERT(!errors.count);
-    std::exchange(_didSelectShippingContactCompletion, nil)(status, _shippingMethods, _summaryItems);
-#endif
+    PKPaymentRequestShippingContactUpdate *update = shippingContactUpdate ?: [[PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:@[] paymentSummaryItems:_summaryItems.get() shippingMethods:_shippingMethods.get()] autorelease];
+    _summaryItems = adoptNS([update.paymentSummaryItems copy]);
+    _shippingMethods = adoptNS([update.shippingMethods copy]);
+    std::exchange(_didSelectShippingContactCompletion, nil)(update);
 }
 
-- (void)completeShippingMethodSelection:(NSArray<PKPaymentSummaryItem *> *)summaryItems
+- (void)completeShippingMethodSelection:(PKPaymentRequestShippingMethodUpdate *)shippingMethodUpdate
 {
-    _summaryItems = summaryItems;
-#if HAVE(PASSKIT_GRANULAR_ERRORS)
-    auto update = adoptNS([PAL::allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()]);
-    std::exchange(_didSelectShippingMethodCompletion, nil)(update.get());
-#else
-    std::exchange(_didSelectShippingMethodCompletion, nil)(PKPaymentAuthorizationStatusSuccess, _summaryItems);
-#endif
+    PKPaymentRequestShippingMethodUpdate *update = shippingMethodUpdate ?: [[PAL::allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()] autorelease];
+    _summaryItems = adoptNS([update.paymentSummaryItems copy]);
+    std::exchange(_didSelectShippingMethodCompletion, nil)(update);
 }
 
 - (void)invalidate
@@ -177,7 +163,7 @@
 
     auto presenter = _presenter.get();
     if (!presenter)
-        return [self completePaymentMethodSelection:@[ ]];
+        return [self completePaymentMethodSelection:nil];
 
     presenter->client().presenterDidSelectPaymentMethod(*presenter, WebCore::PaymentMethod(paymentMethod));
 }
@@ -189,7 +175,7 @@
 
     auto presenter = _presenter.get();
     if (!presenter)
-        return [self completeShippingContactSelection:PKPaymentAuthorizationStatusFailure summaryItems:@[ ] shippingMethods:@[ ] errors:@[ ]];
+        return [self completeShippingContactSelection:nil];
 
     presenter->client().presenterDidSelectShippingContact(*presenter, WebCore::PaymentContact(contact));
 }
@@ -214,7 +200,7 @@ static WebCore::ApplePaySessionPaymentRequest::ShippingMethod toShippingMethod(P
 
     auto presenter = _presenter.get();
     if (!presenter)
-        return [self completeShippingMethodSelection:@[ ]];
+        return [self completeShippingMethodSelection:nil];
 
     presenter->client().presenterDidSelectShippingMethod(*presenter, toShippingMethod(shippingMethod));
 }

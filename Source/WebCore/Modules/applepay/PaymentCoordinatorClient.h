@@ -39,8 +39,8 @@ namespace WebCore {
 
 class Document;
 class PaymentMerchantSession;
+class PaymentMethodUpdate;
 struct PaymentAuthorizationResult;
-struct PaymentMethodUpdate;
 struct ShippingContactUpdate;
 struct ShippingMethodUpdate;
 

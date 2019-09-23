@@ -32,6 +32,8 @@
 #import "WebPaymentCoordinatorProxyCocoa.h"
 #import <WebCore/PaymentAuthorizationStatus.h>
 #import <WebCore/PaymentMerchantSession.h>
+#import <WebCore/PaymentMethodUpdate.h>
+#import <WebCore/PaymentSummaryItems.h>
 #import <pal/cocoa/PassKitSoftLink.h>
 
 #if HAVE(PASSKIT_GRANULAR_ERRORS)
@@ -260,8 +262,12 @@ void PaymentAuthorizationPresenter::completeMerchantValidation(const WebCore::Pa
 void PaymentAuthorizationPresenter::completePaymentMethodSelection(const Optional<WebCore::PaymentMethodUpdate>& update)
 {
     ASSERT(platformDelegate());
-    NSArray *summaryItems = update ? toPKPaymentSummaryItems(update->newTotalAndLineItems) : platformDelegate().summaryItems;
-    [platformDelegate() completePaymentMethodSelection:summaryItems];
+    if (!update) {
+        [platformDelegate() completePaymentMethodSelection:nil];
+        return;
+    }
+
+    [platformDelegate() completePaymentMethodSelection:update->platformUpdate()];
 }
 
 void PaymentAuthorizationPresenter::completePaymentSession(const Optional<WebCore::PaymentAuthorizationResult>& result)
@@ -280,23 +286,35 @@ void PaymentAuthorizationPresenter::completePaymentSession(const Optional<WebCor
 void PaymentAuthorizationPresenter::completeShippingContactSelection(const Optional<WebCore::ShippingContactUpdate>& update)
 {
     ASSERT(platformDelegate());
-    NSArray *shippingMethods = update ? toPKShippingMethods(update->newShippingMethods) : platformDelegate().shippingMethods;
-    NSArray *summaryItems = update ? toPKPaymentSummaryItems(update->newTotalAndLineItems) : platformDelegate().summaryItems;
+    if (!update) {
+        [platformDelegate() completeShippingContactSelection:nil];
+        return;
+    }
+
 #if HAVE(PASSKIT_GRANULAR_ERRORS)
-    NSArray *errors = update ? toNSErrors(update->errors) : @[ ];
+    NSArray *errors = toNSErrors(update->errors);
     auto status = PKPaymentAuthorizationStatusSuccess;
 #else
     NSArray *errors = @[ ];
     auto status = toPKPaymentAuthorizationStatus(update);
 #endif
-    [platformDelegate() completeShippingContactSelection:status summaryItems:summaryItems shippingMethods:shippingMethods errors:errors];
+
+    // FIXME: WebCore::ShippingContactUpdate should know how to convert itself to a PKPaymentRequestShippingContactUpdate.
+    auto shippingContactUpdate = adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:errors paymentSummaryItems:WebCore::platformSummaryItems(update->newTotalAndLineItems) shippingMethods:toPKShippingMethods(update->newShippingMethods)]);
+    [platformDelegate() completeShippingContactSelection:shippingContactUpdate.get()];
 }
 
 void PaymentAuthorizationPresenter::completeShippingMethodSelection(const Optional<WebCore::ShippingMethodUpdate>& update)
 {
     ASSERT(platformDelegate());
-    NSArray *summaryItems = update ? toPKPaymentSummaryItems(update->newTotalAndLineItems) : platformDelegate().summaryItems;
-    [platformDelegate() completeShippingMethodSelection:summaryItems];
+    if (!update) {
+        [platformDelegate() completeShippingMethodSelection:nil];
+        return;
+    }
+
+    // FIXME: WebCore::ShippingMethodUpdate should know how to convert itself to a PKPaymentRequestShippingMethodUpdate.
+    auto shippingMethodUpdate = adoptNS([PAL::allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:WebCore::platformSummaryItems(update->newTotalAndLineItems)]);
+    [platformDelegate() completeShippingMethodSelection:shippingMethodUpdate.get()];
 }
 
 } // namespace WebKit
