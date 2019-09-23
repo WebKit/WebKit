@@ -222,6 +222,7 @@ private:
     void frontendLoaded();
     void didClose();
     void bringToFront();
+    void bringInspectedPageToFront();
     void attachAvailabilityChanged(bool);
     void inspectedURLChanged(const String&);
     void showCertificate(const WebCore::CertificateInfo&);

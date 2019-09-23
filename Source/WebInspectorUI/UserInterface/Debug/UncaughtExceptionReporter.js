@@ -243,24 +243,26 @@ function createErrorSheet() {
 
     let formattedErrorDetails = window.__uncaughtExceptions.map((entry) => formattedEntry(entry));
     let detailsForBugReport = formattedErrorDetails.map((line) => ` - ${line}`).join("\n");
-    topLevelItems.push("");
-    topLevelItems.push("Uncaught Exceptions:");
-    topLevelItems.push(detailsForBugReport);
 
-    let encodedBugDescription = encodeURIComponent(`-------
-${topLevelItems.join("\n")}
--------
+    let encodedBugDescription = encodeURIComponent(`Uncaught Exception in Web Inspector.
 
-* STEPS TO REPRODUCE
+Steps to Reproduce:
 1. What were you doing? Include setup or other preparations to reproduce the exception.
 2. Include explicit, accurate, and minimal steps taken. Do not include extraneous or irrelevant steps.
+3. What did you expect to have happen? What actually happened?
 
-* NOTES
-Document any additional information that might be useful in resolving the problem, such as screen shots or other included attachments.
+Uncaught Exceptions:
+-----------------------
+${detailsForBugReport}
+-----------------------
+
+Notes:
+${topLevelItems.join("\n")}
 `);
+
     let encodedBugTitle = encodeURIComponent(`Uncaught Exception: ${firstException.message}`);
     let encodedInspectedURL = encodeURIComponent(inspectedPageURL || "http://");
-    let prefilledBugReportLink = `https://bugs.webkit.org/enter_bug.cgi?alias=&assigned_to=webkit-unassigned%40lists.webkit.org&attach_text=&blocked=&bug_file_loc=${encodedInspectedURL}&bug_severity=Normal&bug_status=NEW&comment=${encodedBugDescription}&component=Web%20Inspector&contenttypeentry=&contenttypemethod=autodetect&contenttypeselection=text%2Fplain&data=&dependson=&description=&flag_type-1=X&flag_type-3=X&form_name=enter_bug&keywords=&op_sys=All&priority=P2&product=WebKit&rep_platform=All&short_desc=${encodedBugTitle}&version=WebKit%20Nightly%20Build`;
+    let prefilledBugReportLink = `https://bugs.webkit.org/enter_bug.cgi?alias=&assigned_to=webkit-unassigned%40lists.webkit.org&attach_text=&blocked=&bug_file_loc=${encodedInspectedURL}&bug_severity=Normal&bug_status=NEW&comment=${encodedBugDescription}&component=Web%20Inspector&contenttypeentry=&contenttypemethod=autodetect&contenttypeselection=text%2Fplain&data=&dependson=&description=&flag_type-1=X&flag_type-3=X&form_name=enter_bug&keywords=&op_sys=All&priority=P2&product=WebKit&rep_platform=All&short_desc=${encodedBugTitle}`;
     let detailsForHTML = formattedErrorDetails.map((line) => `<li>${insertWordBreakCharacters(line)}</li>`).join("\n");
 
     let dismissOptionHTML = !loadCompleted ? "" : `<dt>A frivolous exception will not stop me!</dt>
@@ -278,11 +280,9 @@ Document any additional information that might be useful in resolving the proble
         <dd>Usually, this is caused by a syntax error while modifying the Web Inspector
         UI, or running an updated frontend with out-of-date WebKit build.</dt>
         <dt>I didn't do anything...?</dt>
-        <dd>If you don't think you caused this error to happen,
-        <a href="${prefilledBugReportLink}" target="_blank">click to file a pre-populated
-        bug with this information</a>. It is possible that someone else broke it by accident.</dd>
+        <dd><a href="${prefilledBugReportLink}" id="uncaught-exception-bug-report-link" class="bypass-event-blocking">Click to file a bug</a> as this is likely a Web Inspector bug.</dd>
         <dt>Oops, can I try again?</dt>
-        <dd><a href="javascript:InspectorFrontendHost.reopen()">Click to reload the Inspector</a>
+        <dd><a href="javascript:InspectorFrontendHost.reopen()" class="bypass-event-blocking">Click to reload the Inspector</a>
         again after making local changes.</dd>
         ${dismissOptionHTML}
     </dl>
@@ -295,6 +295,12 @@ Document any additional information that might be useful in resolving the proble
 
     sheetElement.addEventListener("click", handleLinkClick, true);
     document.body.appendChild(sheetElement);
+
+    document.getElementById("uncaught-exception-bug-report-link").addEventListener("click", (event) => {
+        InspectorFrontendHost.openInNewTab(prefilledBugReportLink);
+        event.stopImmediatePropagation();
+        event.preventDefault();
+    });
 }
 
 window.addEventListener("error", handleUncaughtException);

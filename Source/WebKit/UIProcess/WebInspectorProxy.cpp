@@ -538,6 +538,11 @@ void WebInspectorProxy::bringToFront()
         open();
 }
 
+void WebInspectorProxy::bringInspectedPageToFront()
+{
+    platformBringInspectedPageToFront();
+}
+
 void WebInspectorProxy::attachAvailabilityChanged(bool available)
 {
     bool previousCanAttach = m_canAttach;
