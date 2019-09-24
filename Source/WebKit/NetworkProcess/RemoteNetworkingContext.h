@@ -26,8 +26,6 @@
 
 #pragma once
 
-#include <pal/SessionID.h>
-
 namespace WebKit {
 
 class NetworkProcess;

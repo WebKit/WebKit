@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <pal/SessionID.h>
+#include <wtf/Forward.h>
 #include <wtf/Markable.h>
 #include <wtf/WallTime.h>
 

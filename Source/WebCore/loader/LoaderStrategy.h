@@ -30,7 +30,6 @@
 #include "ResourceLoadPriority.h"
 #include "ResourceLoaderOptions.h"
 #include "StoredCredentialsPolicy.h"
-#include <pal/SessionID.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

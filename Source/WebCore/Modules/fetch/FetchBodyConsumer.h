@@ -32,7 +32,6 @@
 #include "JSDOMPromiseDeferred.h"
 #include "ReadableStreamSink.h"
 #include "SharedBuffer.h"
-#include <pal/SessionID.h>
 
 namespace WebCore {
 

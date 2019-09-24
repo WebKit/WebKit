@@ -27,7 +27,6 @@
 
 #include "WebCacheStorageConnection.h"
 #include <WebCore/CacheStorageProvider.h>
-#include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 
 namespace IPC {

@@ -29,7 +29,6 @@
 
 #include "SecurityOrigin.h"
 #include "ServiceWorkerRegistrationKey.h"
-#include <pal/SessionID.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>

@@ -35,7 +35,6 @@
 #include <wtf/URL.h>
 #include "TextEncoding.h"
 #include "ThreadableLoaderClient.h"
-#include <pal/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 

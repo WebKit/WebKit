@@ -63,10 +63,6 @@ OBJC_CLASS NSDictionary;
 OBJC_CLASS NSView;
 #endif
 
-namespace PAL {
-class SessionID;
-}
-
 namespace WebCore {
 
 class AuthenticationChallenge;

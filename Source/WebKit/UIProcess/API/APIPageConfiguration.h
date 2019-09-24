@@ -27,7 +27,6 @@
 
 #include "APIObject.h"
 #include "WebPreferencesStore.h"
-#include <pal/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
 

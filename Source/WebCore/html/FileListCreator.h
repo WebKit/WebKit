@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <pal/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/Ref.h>

@@ -31,6 +31,7 @@
 #include "IDBDatabaseIdentifier.h"
 #include "IDBResourceIdentifier.h"
 #include "MemoryBackingStoreTransaction.h"
+#include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {

@@ -44,10 +44,6 @@ namespace API {
 class Array;
 }
 
-namespace PAL {
-class SessionID;
-}
-
 namespace WebCore {
 class CertificateInfo;
 class Frame;

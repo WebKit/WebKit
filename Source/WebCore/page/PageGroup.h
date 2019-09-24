@@ -29,10 +29,6 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL {
-class SessionID;
-}
-
 namespace WebCore {
 
 class Page;

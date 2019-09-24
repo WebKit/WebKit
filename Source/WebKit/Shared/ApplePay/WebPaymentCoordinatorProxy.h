@@ -45,10 +45,6 @@ namespace IPC {
 class Connection;
 }
 
-namespace PAL {
-class SessionID;
-}
-
 namespace WebCore {
 enum class PaymentAuthorizationStatus;
 class Payment;

@@ -30,7 +30,6 @@
 #include "NetworkRTCMonitor.h"
 #include "RTCNetwork.h"
 #include <WebCore/LibWebRTCMacros.h>
-#include <pal/SessionID.h>
 #include <webrtc/p2p/base/basicpacketsocketfactory.h>
 #include <webrtc/rtc_base/third_party/sigslot/sigslot.h>
 #include <wtf/HashMap.h>

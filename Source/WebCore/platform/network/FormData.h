@@ -20,7 +20,6 @@
 #pragma once
 
 #include "BlobData.h"
-#include <pal/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/URL.h>

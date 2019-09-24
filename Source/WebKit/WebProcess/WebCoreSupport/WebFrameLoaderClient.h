@@ -29,10 +29,6 @@
 #include <WebCore/FrameLoaderClient.h>
 #include <pal/SessionID.h>
 
-namespace PAL {
-class SessionID;
-}
-
 namespace WebKit {
 
 class PluginView;

@@ -33,10 +33,6 @@
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerTypes.h"
 
-namespace PAL {
-class SessionID;
-}
-
 namespace WebCore {
 
 class SWServer;

@@ -35,10 +35,6 @@
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <wtf/MonotonicTime.h>
 
-namespace PAL {
-class SessionID;
-}
-
 namespace WebCore {
 
 class ContentSecurityPolicyResponseHeaders;

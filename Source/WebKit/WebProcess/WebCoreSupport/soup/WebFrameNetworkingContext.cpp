@@ -36,7 +36,6 @@
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SoupNetworkSession.h>
-#include <pal/SessionID.h>
 
 namespace WebKit {
 using namespace WebCore;

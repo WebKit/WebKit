@@ -58,7 +58,6 @@
 #include <WebCore/ServiceWorkerClientQueryOptions.h>
 #include <WebCore/ServiceWorkerJobDataIdentifier.h>
 #include <WebCore/UserAgent.h>
-#include <pal/SessionID.h>
 #include <wtf/ProcessID.h>
 
 #if USE(QUICK_LOOK)

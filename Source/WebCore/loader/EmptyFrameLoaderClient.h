@@ -27,7 +27,6 @@
 
 #include "FrameLoaderClient.h"
 #include "ResourceError.h"
-#include <pal/SessionID.h>
 
 #if USE(QUICK_LOOK)
 #include "PreviewLoaderClient.h"

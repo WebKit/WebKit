@@ -36,7 +36,6 @@
 #include "WorkerEventQueue.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/RuntimeFlags.h>
-#include <pal/SessionID.h>
 #include <wtf/URL.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/WeakPtr.h>

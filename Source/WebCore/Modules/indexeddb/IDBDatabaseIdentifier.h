@@ -29,7 +29,6 @@
 
 #include "ClientOrigin.h"
 #include "SecurityOriginData.h"
-#include <pal/SessionID.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 

@@ -26,7 +26,6 @@
 #include "CachedResourceHandle.h"
 #include "DragActions.h"
 #include "DragImage.h"
-#include <pal/SessionID.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

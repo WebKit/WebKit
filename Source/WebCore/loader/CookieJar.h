@@ -30,10 +30,6 @@
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL {
-class SessionID;
-}
-
 namespace WebCore {
 
 enum class IncludeSecureCookies : bool { No, Yes };

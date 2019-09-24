@@ -29,7 +29,6 @@
 #include "MessageSender.h"
 #include <WebCore/NetworkSendQueue.h>
 #include <WebCore/ThreadableWebSocketChannel.h>
-#include <pal/SessionID.h>
 #include <wtf/Identified.h>
 #include <wtf/WeakPtr.h>
 

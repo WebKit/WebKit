@@ -37,7 +37,6 @@
 #include "ServiceWorkerRegistration.h"
 #include "ServiceWorkerRegistrationOptions.h"
 #include "WorkerType.h"
-#include <pal/SessionID.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {

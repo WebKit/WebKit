@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CacheStorageConnection.h"
-#include <pal/SessionID.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

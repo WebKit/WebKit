@@ -57,10 +57,6 @@ namespace JSC { namespace Yarr {
 class RegularExpression;
 } }
 
-namespace PAL {
-class SessionID;
-}
-
 namespace WebCore {
 
 class CSSAnimationController;

@@ -28,7 +28,6 @@
 
 #include "NetworkProcessConnection.h"
 #include "WebProcess.h"
-#include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 

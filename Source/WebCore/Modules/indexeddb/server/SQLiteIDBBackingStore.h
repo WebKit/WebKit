@@ -33,6 +33,7 @@
 #include "IDBResourceIdentifier.h"
 #include "SQLiteIDBTransaction.h"
 #include <JavaScriptCore/Strong.h>
+#include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {

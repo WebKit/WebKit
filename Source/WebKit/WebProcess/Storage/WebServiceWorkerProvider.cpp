@@ -37,7 +37,6 @@
 #include <WebCore/ExceptionCode.h>
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/ServiceWorkerJob.h>
-#include <pal/SessionID.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

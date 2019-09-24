@@ -29,6 +29,7 @@
 #include "NetworkCacheData.h"
 #include "WebsiteData.h"
 #include <WebCore/ClientOrigin.h>
+#include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -36,10 +37,6 @@
 
 namespace IPC {
 class Connection;
-}
-
-namespace WebCore {
-class SessionID;
 }
 
 namespace WTF {

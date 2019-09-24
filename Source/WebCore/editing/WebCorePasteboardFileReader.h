@@ -26,7 +26,6 @@
 #pragma once
 
 #include "Pasteboard.h"
-#include <pal/SessionID.h>
 
 namespace WebCore {
 

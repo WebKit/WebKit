@@ -84,7 +84,6 @@
 #include <WebCore/VelocityData.h>
 #include <WebCore/ViewportArguments.h>
 #include <WebCore/WindowFeatures.h>
-#include <pal/SessionID.h>
 #include <wtf/URL.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>

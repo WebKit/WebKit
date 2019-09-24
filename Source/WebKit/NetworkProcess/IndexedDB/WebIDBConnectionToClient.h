@@ -32,7 +32,6 @@
 #include <WebCore/IDBConnectionToClient.h>
 #include <WebCore/IndexedDB.h>
 #include <WebCore/ProcessIdentifier.h>
-#include <pal/SessionID.h>
 
 namespace WebCore {
 class IDBCursorInfo;

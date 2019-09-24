@@ -27,7 +27,6 @@
 
 #include "WebFrame.h"
 #include <WebCore/FrameNetworkingContext.h>
-#include <pal/SessionID.h>
 
 namespace WebKit {
 

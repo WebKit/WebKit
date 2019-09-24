@@ -27,10 +27,6 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-namespace PAL {
-class SessionID;
-}
-
 namespace WebCore {
 
 class SWClientConnection;

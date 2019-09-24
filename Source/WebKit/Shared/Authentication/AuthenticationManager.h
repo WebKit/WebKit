@@ -41,6 +41,10 @@ namespace IPC {
 class MessageSender;
 }
 
+namespace PAL {
+class SessionID;
+}
+
 namespace WebCore {
 class AuthenticationChallenge;
 class Credential;

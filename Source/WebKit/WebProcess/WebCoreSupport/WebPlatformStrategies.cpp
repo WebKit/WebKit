@@ -59,7 +59,6 @@
 #include <WebCore/SameSiteInfo.h>
 #include <WebCore/StorageNamespace.h>
 #include <WebCore/SubframeLoader.h>
-#include <pal/SessionID.h>
 #include <wtf/Atomics.h>
 #include <wtf/URL.h>
 

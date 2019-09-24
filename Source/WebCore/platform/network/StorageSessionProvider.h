@@ -27,10 +27,6 @@
 
 #include <wtf/ThreadSafeRefCounted.h>
 
-namespace PAL {
-class SessionID;
-}
-
 namespace WebCore {
 
 class NetworkStorageSession;
