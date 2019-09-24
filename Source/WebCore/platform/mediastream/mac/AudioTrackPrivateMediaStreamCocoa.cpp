@@ -65,17 +65,16 @@ AudioTrackPrivateMediaStreamCocoa::~AudioTrackPrivateMediaStreamCocoa()
 
 void AudioTrackPrivateMediaStreamCocoa::playInternal()
 {
+    ASSERT(isMainThread());
+
     if (m_isPlaying)
         return;
 
-    if (m_remoteIOUnit) {
-        ASSERT(m_dataSource);
-        m_dataSource->setPaused(false);
-        if (!AudioOutputUnitStart(m_remoteIOUnit))
-            m_isPlaying = true;
-    }
+    m_isPlaying = true;
+    m_autoPlay = false;
 
-    m_autoPlay = !m_isPlaying;
+    if (m_dataSource)
+        m_dataSource->setPaused(false);
 }
 
 void AudioTrackPrivateMediaStreamCocoa::play()
@@ -85,11 +84,14 @@ void AudioTrackPrivateMediaStreamCocoa::play()
 
 void AudioTrackPrivateMediaStreamCocoa::pause()
 {
+    ASSERT(isMainThread());
+
+    if (!m_isPlaying)
+        return;
+
     m_isPlaying = false;
     m_autoPlay = false;
 
-    if (m_remoteIOUnit)
-        AudioOutputUnitStop(m_remoteIOUnit);
     if (m_dataSource)
         m_dataSource->setPaused(true);
 }
@@ -170,7 +172,17 @@ void AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable(const MediaTime& s
 {
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
 
+    if (!m_isPlaying) {
+        if (m_isAudioUnitStarted) {
+            if (m_remoteIOUnit)
+                AudioOutputUnitStop(m_remoteIOUnit);
+            m_isAudioUnitStarted = false;
+        }
+        return;
+    }
+
     if (!m_inputDescription || *m_inputDescription != description) {
+        m_isAudioUnitStarted = false;
 
         if (m_remoteIOUnit) {
             AudioOutputUnitStop(m_remoteIOUnit);
@@ -198,11 +210,14 @@ void AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable(const MediaTime& s
             return;
         }
 
-        if (m_isPlaying && AudioOutputUnitStart(remoteIOUnit)) {
+        if (auto error = AudioOutputUnitStart(remoteIOUnit)) {
+            ERROR_LOG(LOGIDENTIFIER, "AudioOutputUnitStart failed, error = ", error, " (", (const char*)&error, ")");
             AudioComponentInstanceDispose(remoteIOUnit);
             m_inputDescription = nullptr;
             return;
         }
+
+        m_isAudioUnitStarted = true;
 
         m_dataSource->setVolume(m_volume);
         m_remoteIOUnit = remoteIOUnit;
@@ -210,8 +225,21 @@ void AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable(const MediaTime& s
 
     m_dataSource->pushSamples(sampleTime, audioData, sampleCount);
 
-    if (m_autoPlay)
-        playInternal();
+    if (m_autoPlay && !m_hasStartedAutoplay) {
+        m_hasStartedAutoplay = true;
+        callOnMainThread([this, protectedThis = makeRef(*this)] {
+            if (m_autoPlay)
+                playInternal();
+        });
+    }
+
+    if (!m_isAudioUnitStarted) {
+        if (auto error = AudioOutputUnitStart(m_remoteIOUnit)) {
+            ERROR_LOG(LOGIDENTIFIER, "AudioOutputUnitStart failed, error = ", error, " (", (const char*)&error, ")");
+            return;
+        }
+        m_isAudioUnitStarted = true;
+    }
 }
 
 void AudioTrackPrivateMediaStreamCocoa::sourceStopped()

@@ -1,3 +1,23 @@
+2019-09-24  Youenn Fablet  <youenn@apple.com>
+
+        AudioTrackPrivateMediaStreamCocoa does not need to manipulate the audio unit in play/pause methods
+        https://bugs.webkit.org/show_bug.cgi?id=202097
+        <rdar://problem/51548144>
+
+        Reviewed by Eric Carlson.
+
+        Instead of manipulating the audio unit in play/pause methods, it is more convenient to do so in audioSamplesAvailable.
+        play/pause methods only update boolean values that audioSamplesAvailable will read.
+        In particular, m_autoPlay and m_isPlaying are no longer modified in the audio thread.
+
+        Behavior was racy so difficult to reproduce.
+
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.cpp:
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::playInternal):
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::pause):
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable):
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.h:
+
 2019-09-23  Youenn Fablet  <youenn@apple.com>
 
         Support sync-xhr feature policy
