@@ -293,10 +293,8 @@ void PaymentAuthorizationPresenter::completeShippingContactSelection(const Optio
 
 #if HAVE(PASSKIT_GRANULAR_ERRORS)
     NSArray *errors = toNSErrors(update->errors);
-    auto status = PKPaymentAuthorizationStatusSuccess;
 #else
     NSArray *errors = @[ ];
-    auto status = toPKPaymentAuthorizationStatus(update);
 #endif
 
     // FIXME: WebCore::ShippingContactUpdate should know how to convert itself to a PKPaymentRequestShippingContactUpdate.
