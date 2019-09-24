@@ -67,6 +67,9 @@ private:
     struct CapturingData {
         RefPtr<Element> pendingTargetOverride;
         RefPtr<Element> targetOverride;
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
+        RefPtr<Element> previousTarget;
+#endif
         String pointerType;
         bool cancelled { false };
         bool isPrimary { false };
@@ -75,6 +78,7 @@ private:
         short previousMouseButton { -1 };
     };
 
+    CapturingData& ensureCapturingDataForPointerEvent(const PointerEvent&);
     void pointerEventWillBeDispatched(const PointerEvent&, EventTarget*);
     void pointerEventWasDispatched(const PointerEvent&);
 
