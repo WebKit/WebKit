@@ -37,7 +37,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
+#if PLATFORM(COCOA)
 #include <wtf/spi/darwin/dyldSPI.h>
 #endif
 

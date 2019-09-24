@@ -28,7 +28,7 @@
 
 #include <JavaScriptCore/JSObjectRef.h>
 
-#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
 #define SUPPORTS_AX_TEXTMARKERS 1
 #else
 #define SUPPORTS_AX_TEXTMARKERS 0

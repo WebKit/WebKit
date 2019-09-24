@@ -218,7 +218,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 #endif
 @end
 
-#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
 @interface NSURLSessionTaskTransactionMetrics ()
 @property (copy, readonly) NSString* _remoteAddressAndPort;
 @property (copy, readonly) NSUUID* _connectionIdentifier;

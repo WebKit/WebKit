@@ -42,42 +42,22 @@ namespace WebCore {
 
 static NSString *subLocality(CNPostalAddress *address)
 {
-#if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
     return address.subLocality;
-#else
-    UNUSED_PARAM(address);
-    return nil;
-#endif
 }
 
 static void setSubLocality(CNMutablePostalAddress *address, NSString *subLocality)
 {
-#if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
     address.subLocality = subLocality;
-#else
-    UNUSED_PARAM(address);
-    UNUSED_PARAM(subLocality);
-#endif
 }
 
 static NSString *subAdministrativeArea(CNPostalAddress *address)
 {
-#if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
     return address.subAdministrativeArea;
-#else
-    UNUSED_PARAM(address);
-    return nil;
-#endif
 }
 
 static void setSubAdministrativeArea(CNMutablePostalAddress *address, NSString *subAdministrativeArea)
 {
-#if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
     address.subAdministrativeArea = subAdministrativeArea;
-#else
-    UNUSED_PARAM(address);
-    UNUSED_PARAM(subAdministrativeArea);
-#endif
 }
 
 static RetainPtr<PKContact> convert(unsigned version, const ApplePayPaymentContact& contact)

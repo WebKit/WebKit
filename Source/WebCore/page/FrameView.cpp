@@ -2977,7 +2977,7 @@ void FrameView::setBaseBackgroundColor(const Color& backgroundColor)
 void FrameView::updateBackgroundRecursively(const Optional<Color>& backgroundColor)
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
-#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
     static const auto cssValueControlBackground = CSSValueAppleSystemControlBackground;
 #else
     static const auto cssValueControlBackground = CSSValueWindow;

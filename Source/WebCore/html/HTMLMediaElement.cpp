@@ -7637,7 +7637,7 @@ String HTMLMediaElement::mediaSessionTitle() const
         return title;
 
     title = m_currentSrc.host().toString();
-#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
     if (!title.isEmpty())
         title = decodeHostName(title);
 #endif

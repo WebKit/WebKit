@@ -1,3 +1,42 @@
+2019-09-24  Keith Rollin  <krollin@apple.com>
+
+        Coalesce or remove PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+        https://bugs.webkit.org/show_bug.cgi?id=202119
+        <rdar://problem/55638792>
+
+        Reviewed by Alex Christensen.
+
+        After refactoring and other code evolution, some platform checks have
+        ended up looking like PLATFORM(MAC) || PLATFORM(IOS_FAMILY) (or
+        vice-versa). These can be converted into the equivalent
+        PLATFORM(COCOA). Where the instance occurs in a Cocoa-only file, the
+        check can be removed altogether (along with any "#else" branches).
+
+        No new tests -- no new or changed functionality.
+
+        * Modules/applepay/cocoa/PaymentContactCocoa.mm:
+        (WebCore::subLocality):
+        (WebCore::setSubLocality):
+        (WebCore::subAdministrativeArea):
+        (WebCore::setSubAdministrativeArea):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::isAppleLegacyCssValueKeyword):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaSessionTitle const):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::platform):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateBackgroundRecursively):
+        * platform/Timer.cpp:
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        (WebCore::NetworkExtensionContentFilter::initialize):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::displayP3ColorSpaceRef):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForScrollableFrame const):
+
 2019-09-24  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Unflake web-animations/timing-model/animations/updating-the-finished-state.html WPT test

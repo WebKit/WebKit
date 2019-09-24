@@ -26,7 +26,7 @@
 #include <wtf/text/StringView.h>
 #include <wtf/text/icu/TextBreakIteratorICU.h>
 
-#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
 #include <wtf/text/cf/TextBreakIteratorCF.h>
 #else
 #include <wtf/text/NullTextBreakIterator.h>
@@ -34,7 +34,7 @@
 
 namespace WTF {
 
-#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
 typedef TextBreakIteratorCF TextBreakIteratorPlatform;
 #else
 typedef NullTextBreakIterator TextBreakIteratorPlatform;

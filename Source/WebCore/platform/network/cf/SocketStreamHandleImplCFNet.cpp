@@ -58,7 +58,7 @@
 #include "WebCoreThreadInternal.h"
 #endif
 
-#if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
+#if PLATFORM(COCOA)
 extern "C" const CFStringRef kCFStreamPropertySourceApplication;
 extern "C" const CFStringRef _kCFStreamSocketSetNoDelay;
 #endif

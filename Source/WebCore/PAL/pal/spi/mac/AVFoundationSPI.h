@@ -54,14 +54,14 @@
 #import <AVFoundation/AVPlayerItem.h>
 #import <AVFoundation/AVPlayerLayer.h>
 
-#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
 NS_ASSUME_NONNULL_BEGIN
 @interface AVPlayerItem ()
 @property (nonatomic, readonly) NSTimeInterval seekableTimeRangesLastModifiedTime NS_AVAILABLE(10_13, 11_0);
 @property (nonatomic, readonly) NSTimeInterval liveUpdateInterval;
 @end
 NS_ASSUME_NONNULL_END
-#endif // PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(COCOA)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) || PLATFORM(IOS_FAMILY)
 

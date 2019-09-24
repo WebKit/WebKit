@@ -1611,7 +1611,7 @@ static JSValueRef mathPrescriptsDescriptionCallback(JSContextRef context, JSObje
 // Implementation
 
 // Unsupported methods on various platforms.
-#if !PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+#if !PLATFORM(MAC)
 JSRetainPtr<JSStringRef> AccessibilityUIElement::rangeForLine(int line) { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::rangeForPosition(int, int) { return 0; }
 void AccessibilityUIElement::setSelectedChild(AccessibilityUIElement*) const { }
@@ -1622,13 +1622,10 @@ AccessibilityUIElement AccessibilityUIElement::verticalScrollbar() const { retur
 AccessibilityUIElement AccessibilityUIElement::uiElementAttributeValue(JSStringRef) const { return { nullptr }; }
 #endif
 
-#if !PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
+#if !PLATFORM(COCOA)
 JSRetainPtr<JSStringRef> AccessibilityUIElement::speakAs() { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::pathDescription() const { return 0; }
 void AccessibilityUIElement::setValue(JSStringRef) { }
-#endif
-
-#if !PLATFORM(COCOA)
 void AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef, Vector<AccessibilityUIElement>&) const { }
 #endif
 

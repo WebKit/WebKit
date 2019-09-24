@@ -1,3 +1,20 @@
+2019-09-24  Keith Rollin  <krollin@apple.com>
+
+        Coalesce or remove PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+        https://bugs.webkit.org/show_bug.cgi?id=202119
+        <rdar://problem/55638792>
+
+        Reviewed by Alex Christensen.
+
+        After refactoring and other code evolution, some platform checks have
+        ended up looking like PLATFORM(MAC) || PLATFORM(IOS_FAMILY) (or
+        vice-versa). These can be converted into the equivalent
+        PLATFORM(COCOA). Where the instance occurs in a Cocoa-only file, the
+        check can be removed altogether (along with any "#else" branches).
+
+        * wtf/Platform.h:
+        * wtf/text/TextBreakIterator.h:
+
 2019-09-21  David Kilzer  <ddkilzer@apple.com>
 
         clang-tidy: Fix unnecessary copy/ref churn of for loop variables in WTF/JavaScriptCore

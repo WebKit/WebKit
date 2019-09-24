@@ -677,10 +677,8 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
         if (networkDataTask->shouldCaptureExtraNetworkLoadMetrics()) {
             networkLoadMetrics.priority = toNetworkLoadPriority(task.priority);
 
-#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
             networkLoadMetrics.remoteAddress = String(m._remoteAddressAndPort);
             networkLoadMetrics.connectionIdentifier = String([m._connectionIdentifier UUIDString]);
-#endif
 
 #if HAVE(CFNETWORK_NEGOTIATED_SSL_PROTOCOL_CIPHER)
             networkLoadMetrics.tlsProtocol = stringForSSLProtocol(m._negotiatedTLSProtocol);
@@ -693,7 +691,6 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
             }];
             networkLoadMetrics.requestHeaders = WTFMove(requestHeaders);
 
-#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
             uint64_t requestHeaderBytesSent = 0;
             uint64_t responseHeaderBytesReceived = 0;
             uint64_t responseBodyBytesReceived = 0;
@@ -711,7 +708,6 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
             networkLoadMetrics.responseHeaderBytesReceived = responseHeaderBytesReceived;
             networkLoadMetrics.responseBodyBytesReceived = responseBodyBytesReceived;
             networkLoadMetrics.responseBodyDecodedSize = responseBodyDecodedSize;
-#endif
         }
     }
 }

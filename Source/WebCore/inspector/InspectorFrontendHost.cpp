@@ -295,7 +295,7 @@ unsigned InspectorFrontendHost::inspectionLevel()
 
 String InspectorFrontendHost::platform()
 {
-#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
     return "mac"_s;
 #elif OS(WINDOWS)
     return "windows"_s;
