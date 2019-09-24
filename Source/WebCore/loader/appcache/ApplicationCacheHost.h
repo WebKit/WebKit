@@ -141,7 +141,7 @@ private:
 
     bool scheduleLoadFallbackResourceFromApplicationCache(ResourceLoader*, ApplicationCache* = nullptr);
     void setCandidateApplicationCacheGroup(ApplicationCacheGroup*);
-    ApplicationCacheGroup* candidateApplicationCacheGroup() const { return m_candidateApplicationCacheGroup; }
+    ApplicationCacheGroup* candidateApplicationCacheGroup() const;
     void setApplicationCache(RefPtr<ApplicationCache>&&);
     ApplicationCache* applicationCache() const { return m_applicationCache.get(); }
     ApplicationCache* mainResourceApplicationCache() const { return m_mainResourceApplicationCache.get(); }
@@ -158,7 +158,7 @@ private:
 
     // Before an application cache has finished loading, this will be the candidate application
     // group that the document loader is associated with.
-    ApplicationCacheGroup* m_candidateApplicationCacheGroup { nullptr };
+    WeakPtr<ApplicationCacheGroup> m_candidateApplicationCacheGroup;
 
     // This is the application cache the main resource was loaded from (if any).
     RefPtr<ApplicationCache> m_mainResourceApplicationCache;

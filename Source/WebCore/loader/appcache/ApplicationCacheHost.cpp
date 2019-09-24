@@ -63,6 +63,11 @@ ApplicationCacheHost::~ApplicationCacheHost()
         m_candidateApplicationCacheGroup->disassociateDocumentLoader(m_documentLoader);
 }
 
+ApplicationCacheGroup* ApplicationCacheHost::candidateApplicationCacheGroup() const
+{
+    return m_candidateApplicationCacheGroup.get();
+}
+
 void ApplicationCacheHost::selectCacheWithoutManifest()
 {
     ASSERT(m_documentLoader.frame());
@@ -144,7 +149,7 @@ void ApplicationCacheHost::mainResourceDataReceived(const char*, int, long long,
 
 void ApplicationCacheHost::failedLoadingMainResource()
 {
-    auto* group = m_candidateApplicationCacheGroup;
+    auto* group = m_candidateApplicationCacheGroup.get();
     if (!group && m_applicationCache) {
         if (mainResourceApplicationCache()) {
             // Even when the main resource is being loaded from an application cache, loading can fail if aborted.
@@ -389,7 +394,7 @@ void ApplicationCacheHost::dispatchDOMEvent(const AtomString& eventType, int tot
 void ApplicationCacheHost::setCandidateApplicationCacheGroup(ApplicationCacheGroup* group)
 {
     ASSERT(!m_applicationCache);
-    m_candidateApplicationCacheGroup = group;
+    m_candidateApplicationCacheGroup = makeWeakPtr(group);
 }
     
 void ApplicationCacheHost::setApplicationCache(RefPtr<ApplicationCache>&& applicationCache)
@@ -519,19 +524,23 @@ bool ApplicationCacheHost::swapCache()
     auto* cache = applicationCache();
     if (!cache)
         return false;
+    
+    auto* group = cache->group();
+    if (!group)
+        return false;
 
     // If the group of application caches to which cache belongs has the lifecycle status obsolete, unassociate document from cache.
-    if (cache->group()->isObsolete()) {
-        cache->group()->disassociateDocumentLoader(m_documentLoader);
+    if (group->isObsolete()) {
+        group->disassociateDocumentLoader(m_documentLoader);
         return true;
     }
 
     // If there is no newer cache, raise an InvalidStateError exception.
-    auto* newestCache = cache->group()->newestCache();
-    if (cache == newestCache)
+    auto* newestCache = group->newestCache();
+    if (!newestCache || cache == newestCache)
         return false;
     
-    ASSERT(cache->group() == newestCache->group());
+    ASSERT(group == newestCache->group());
     setApplicationCache(newestCache);
     InspectorInstrumentation::updateApplicationCacheStatus(m_documentLoader.frame());
     return true;

@@ -31,6 +31,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/URL.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -48,7 +49,7 @@ enum ApplicationCacheUpdateOption {
     ApplicationCacheUpdateWithoutBrowsingContext
 };
 
-class ApplicationCacheGroup {
+class ApplicationCacheGroup : public CanMakeWeakPtr<ApplicationCacheGroup> {
     WTF_MAKE_NONCOPYABLE(ApplicationCacheGroup);
     WTF_MAKE_FAST_ALLOCATED;
 public:

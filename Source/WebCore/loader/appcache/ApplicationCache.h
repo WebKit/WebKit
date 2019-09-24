@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/HashMap.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -45,10 +46,10 @@ public:
     void addResource(Ref<ApplicationCacheResource>&&);
 
     void setManifestResource(Ref<ApplicationCacheResource>&&);
-    ApplicationCacheResource* manifestResource() const { return m_manifest; }
+    ApplicationCacheResource* manifestResource() const;
 
     void setGroup(ApplicationCacheGroup*);
-    ApplicationCacheGroup* group() const { return m_group; }
+    ApplicationCacheGroup* group() const;
 
     bool isComplete();
 
@@ -83,9 +84,9 @@ public:
 private:
     ApplicationCache();
 
-    ApplicationCacheGroup* m_group { nullptr };
+    WeakPtr<ApplicationCacheGroup> m_group;
     ResourceMap m_resources;
-    ApplicationCacheResource* m_manifest { nullptr };
+    WeakPtr<ApplicationCacheResource> m_manifest;
 
     bool m_allowAllNetworkRequests { false };
     Vector<URL> m_onlineWhitelist;

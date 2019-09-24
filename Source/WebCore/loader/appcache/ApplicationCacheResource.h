@@ -26,10 +26,11 @@
 #pragma once
 
 #include "SubstituteResource.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class ApplicationCacheResource : public SubstituteResource {
+class ApplicationCacheResource : public SubstituteResource, public CanMakeWeakPtr<ApplicationCacheResource> {
 public:
     enum Type {
         Master = 1 << 0,

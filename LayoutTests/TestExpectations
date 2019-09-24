@@ -378,7 +378,6 @@ imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-ruby-ele
 [ Release ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/video-controls-vertical-writing-mode.html [ ImageOnlyFailure ]
 
 # Newly imported WPT tests that are crashing.
-[ Debug ] imported/w3c/web-platform-tests/html/browsers/offline/application-cache-api/api_swapcache_error.https.html [ Crash ]
 [ Debug ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/video-controls-vertical-writing-mode.html [ Crash ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-04.html [ ImageOnlyFailure Crash ]
 
