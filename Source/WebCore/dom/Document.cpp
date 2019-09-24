@@ -5899,7 +5899,7 @@ void Document::initContentSecurityPolicy()
     bool shouldInhert = parentFrame || (openerFrame && openerFrame->document()->securityOrigin().canAccess(securityOrigin()));
     if (!shouldInhert)
         return;
-    setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { m_url }, *this));
+    setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(URL { m_url }, *this));
     if (openerFrame)
         contentSecurityPolicy()->createPolicyForPluginDocumentFrom(*openerFrame->document()->contentSecurityPolicy());
     else
