@@ -1,3 +1,17 @@
+2019-09-24  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Improve summary for Validate Patch step
+        https://bugs.webkit.org/show_bug.cgi?id=202163
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py: Remove the redundant message saying:
+        'Some messages were logged while the patch was still eligible'.
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ValidatePatch.skip_build): Updated the descritionDone with the reason to skip the patch.
+        (ValidatePatch.getResultSummary): Overrode this method so as to prevent buildbot from automatically
+        appending '(failure)' at the end of the summary string.
+
 2019-09-24  Keith Rollin  <krollin@apple.com>
 
         Coalesce or remove PLATFORM(MAC) || PLATFORM(IOS_FAMILY)

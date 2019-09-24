@@ -402,16 +402,23 @@ class ValidatePatch(buildstep.BuildStep):
             return 1
         return 0
 
+    def getResultSummary(self):
+        if self.results == FAILURE:
+            return {u'step': unicode(self.descriptionDone)}
+        return super(ValidatePatch, self).getResultSummary()
+
     def skip_build(self, reason):
         self._addToLog('stdio', reason)
         self.finished(FAILURE)
         self.build.results = SKIPPED
+        self.descriptionDone = reason
         self.build.buildFinished([reason], SKIPPED)
 
     def start(self):
         patch_id = self.getProperty('patch_id', '')
         if not patch_id:
             self._addToLog('stdio', 'No patch_id found. Unable to proceed without patch_id.\n')
+            self.descriptionDone = 'No patch id found'
             self.finished(FAILURE)
             return None
 

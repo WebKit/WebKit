@@ -122,8 +122,6 @@ class StatusBubble(View):
                 bubble['details_message'] += ' Patch was already marked r- when EWS attempted to process it.'
             elif re.search(r'Patch .* is obsolete', build.state_string):
                 bubble['details_message'] += ' Patch was obsolete when EWS attempted to process it.'
-            bubble['details_message'] += '\nSome messages were logged while the patch was still eligible:\n\n'
-            bubble['details_message'] += self._steps_messages(build)
 
         elif build.result == Buildbot.EXCEPTION:
             bubble['state'] = 'error'
