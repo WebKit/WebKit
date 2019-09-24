@@ -1,3 +1,17 @@
+2019-09-24  Chris Dumez  <cdumez@apple.com>
+
+        Stop sampling PageCache-related AggD data
+        https://bugs.webkit.org/show_bug.cgi?id=202161
+
+        Reviewed by Geoffrey Garen.
+
+        Stop sampling PageCache-related AggD data to make it more actionable.
+
+        * history/PageCache.cpp:
+        (WebCore::logPageCacheFailureDiagnosticMessage):
+        (WebCore::canCacheFrame):
+        (WebCore::canCachePage):
+
 2019-09-24  Sihui Liu  <sihui_liu@apple.com>
 
         Stop refing UniqueIDBDatabaseTransaction in callbacks

@@ -61,7 +61,7 @@ namespace WebCore {
 
 static inline void logPageCacheFailureDiagnosticMessage(DiagnosticLoggingClient& client, const String& reason)
 {
-    client.logDiagnosticMessage(DiagnosticLoggingKeys::pageCacheFailureKey(), reason, ShouldSample::Yes);
+    client.logDiagnosticMessage(DiagnosticLoggingKeys::pageCacheFailureKey(), reason, ShouldSample::No);
 }
 
 static inline void logPageCacheFailureDiagnosticMessage(Page* page, const String& reason)
@@ -167,7 +167,7 @@ static bool canCacheFrame(Frame& frame, DiagnosticLoggingClient& diagnosticLoggi
         PCLOG("   -The document cannot suspend its active DOM Objects");
         for (auto* activeDOMObject : unsuspendableObjects) {
             PCLOG("    - Unsuspendable: ", activeDOMObject->activeDOMObjectName());
-            diagnosticLoggingClient.logDiagnosticMessage(DiagnosticLoggingKeys::unsuspendableDOMObjectKey(), activeDOMObject->activeDOMObjectName(), ShouldSample::Yes);
+            diagnosticLoggingClient.logDiagnosticMessage(DiagnosticLoggingKeys::unsuspendableDOMObjectKey(), activeDOMObject->activeDOMObjectName(), ShouldSample::No);
             UNUSED_PARAM(activeDOMObject);
         }
         logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::cannotSuspendActiveDOMObjectsKey());
@@ -285,7 +285,7 @@ static bool canCachePage(Page& page)
     else
         PCLOG(" Page CANNOT be cached\n--------");
 
-    diagnosticLoggingClient.logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageCacheKey(), DiagnosticLoggingKeys::canCacheKey(), isCacheable ? DiagnosticLoggingResultPass : DiagnosticLoggingResultFail, ShouldSample::Yes);
+    diagnosticLoggingClient.logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageCacheKey(), DiagnosticLoggingKeys::canCacheKey(), isCacheable ? DiagnosticLoggingResultPass : DiagnosticLoggingResultFail, ShouldSample::No);
     return isCacheable;
 }
 
