@@ -145,13 +145,6 @@ class WPTRunnerTest(unittest.TestCase):
             self.runner = WPTRunner(self.port, self.host, "wptrunner_unittest", options,
                 WPTRunnerTest.MockTestDownloader, WPTRunnerTest.MockWebDriver.create, spawn_wpt_func)
 
-        def prepare_mock_files_for_run(self):
-            self.host.filesystem.maybe_make_directory(self.port.wpt_metadata_directory())
-            self.host.filesystem.write_text_file(
-                "/mock-checkout/WebPlatformTests/MockPort/TestExpectations.json", "{}")
-            self.host.filesystem.write_text_file(
-                "/mock-checkout/WebPlatformTests/MockPort/TestManifest.ini", "{}")
-
     def test_prepare_wpt_checkout(self):
         # Tests the prepare_wpt_checkout() method with no WPT checkout specified in options.
 
@@ -175,37 +168,6 @@ class WPTRunnerTest(unittest.TestCase):
         self.assertTrue(instance.runner.prepare_wpt_checkout())
         self.assertEquals(instance.runner._options.wpt_checkout, specified_wpt_checkout)
 
-    def test_generate_metadata_directory(self):
-        # Tests the _generate_metadata_directory() method. TestExpectations.json file is mocked with
-        # TEST_EXPECTATIONS_JSON_CONTENT value as contents. Expected metadata is generated under
-        # /mock-metadata and should correspond to files and files' content in the
-        # EXPECTED_TEST_MANIFESTS dictionary.
-
-        expectations_json_path = "/mock-checkout/WebPlatformTests/MockPort/TestExpectations.json"
-        metadata_path = "/mock-metadata"
-
-        options, _ = parse_args([])
-        instance = WPTRunnerTest.TestInstance(options)
-
-        instance.host.filesystem.write_text_file(
-            "/mock-checkout/WebPlatformTests/MockPort/TestExpectations.json",
-            TEST_EXPECTATIONS_JSON_CONTENT)
-
-        # Specify a stale metadata file that should be removed before generation.
-        stale_metadata_file = "/mock-metadata/test/stale_metadata_file.html.ini"
-        instance.host.filesystem.write_text_file(
-            stale_metadata_file, "[This file should be removed during generation]")
-
-        self.assertTrue(instance.runner._generate_metadata_directory(metadata_path))
-
-        # Check that the stale metadata file was indeed removed.
-        self.assertFalse(instance.host.filesystem.exists(stale_metadata_file))
-
-        for path, content in EXPECTED_TEST_MANIFESTS.items():
-            manifest_path = instance.host.filesystem.join(metadata_path, path)
-            self.assertTrue(instance.host.filesystem.isfile(manifest_path))
-            self.assertEquals(instance.host.filesystem.read_text_file(manifest_path), content)
-
     def test_run(self):
         # Tests the run() method. Files are mocked to the point that helper methods don't fail.
         # Goal of this test is for the WPT spawn command to match the desired WPT directory and
@@ -214,16 +176,12 @@ class WPTRunnerTest(unittest.TestCase):
         spawn_wpt_func = WPTRunnerTest.MockSpawnWPT(self,
             "/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests",
             ["run", "--webkit-port=MockPort", "--processes=4",
-                "--metadata=/mock-path/mock-wpt-tests-metadata",
-                "--manifest=/mock-path/mock-wpt-manifest.json",
-                "--include-manifest=/mock-checkout/WebPlatformTests/MockPort/TestManifest.ini",
                 "--webdriver-binary=/mock-webdriver/bin/webdriver",
                 "--binary=/mock-webdriver/bin/browser",
                 "--binary-arg=webdriver_arg1", "--binary-arg=webdriver_arg2", "webkit"])
 
         options, _ = parse_args([])
         instance = WPTRunnerTest.TestInstance(options, spawn_wpt_func)
-        instance.prepare_mock_files_for_run()
 
         self.assertTrue(instance.runner.run([]))
 
@@ -234,26 +192,31 @@ class WPTRunnerTest(unittest.TestCase):
         # WPT checkout doesn't have an impact on the resulting WPT argument list, as intended.
         specified_wpt_checkout = "/mock-path/web-platform-tests"
         specified_wpt_metadata = "/mock-path/wpt-metadata"
+        specified_wpt_manifest = "/mock-path/wpt-manifest.json"
+        specified_wpt_include_manifest = "/mock-path/wpt-include-manifest.ini"
         specified_child_processes = 16
 
         spawn_wpt_func = WPTRunnerTest.MockSpawnWPT(self, specified_wpt_checkout,
             ["run", "--webkit-port=MockPort", "--processes=16",
                 "--metadata=/mock-path/wpt-metadata",
-                "--manifest=/mock-path/wpt-metadata/MANIFEST.json",
-                "--include-manifest=/mock-path/wpt-metadata/MockPort/TestManifest.ini",
+                "--manifest=/mock-path/wpt-manifest.json",
+                "--include-manifest=/mock-path/wpt-include-manifest.ini",
                 "--webdriver-binary=/mock-webdriver/bin/webdriver",
                 "--binary=/mock-webdriver/bin/browser",
                 "--binary-arg=webdriver_arg1", "--binary-arg=webdriver_arg2", "webkit"])
 
         options, _ = parse_args(["--wpt-checkout", specified_wpt_checkout,
             "--wpt-metadata", specified_wpt_metadata,
+            "--wpt-manifest", specified_wpt_manifest,
+            "--wpt-include-manifest", specified_wpt_include_manifest,
             "--child-processes", specified_child_processes])
         instance = WPTRunnerTest.TestInstance(options, spawn_wpt_func)
-        instance.prepare_mock_files_for_run()
 
         # Also create the mock WPT checkout and metadata directories.
         instance.host.filesystem.maybe_make_directory(specified_wpt_checkout)
         instance.host.filesystem.maybe_make_directory(specified_wpt_metadata)
+        instance.host.filesystem.write_text_file(specified_wpt_manifest, "{}")
+        instance.host.filesystem.write_text_file(specified_wpt_include_manifest, "skip: true");
 
         self.assertTrue(instance.runner.run([]))
 
@@ -268,15 +231,11 @@ class WPTRunnerTest(unittest.TestCase):
         spawn_wpt_func = WPTRunnerTest.MockSpawnWPT(self,
             "/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests",
             ["run", "--webkit-port=MockPort", "--processes=4",
-                "--metadata=/mock-path/mock-wpt-tests-metadata",
-                "--manifest=/mock-path/mock-wpt-manifest.json",
-                "--include-manifest=/mock-checkout/WebPlatformTests/MockPort/TestManifest.ini",
                 "--webdriver-binary=/mock-webdriver/bin/webdriver",
                 "--binary=/mock-webdriver/bin/browser",
                 "--binary-arg=webdriver_arg1", "--binary-arg=webdriver_arg2", "webkit"] + specified_args)
 
         options, _ = parse_args([])
         instance = WPTRunnerTest.TestInstance(options, spawn_wpt_func)
-        instance.prepare_mock_files_for_run()
 
         self.assertTrue(instance.runner.run(specified_args))

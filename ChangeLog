@@ -1,3 +1,16 @@
+2019-09-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        run-web-platform-tests: remove support for in-repository manifest, expectation management
+        https://bugs.webkit.org/show_bug.cgi?id=202037
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Remove the test expecations JSON and test manifest file that were used
+        for managing and generating the necessary wptrunner metadata.
+
+        * WebPlatformTests/gtk/TestExpectations.json: Removed.
+        * WebPlatformTests/gtk/TestManifest.ini: Removed.
+
 2019-09-20  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Bump WPE version numbers.

@@ -1,3 +1,45 @@
+2019-09-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        run-web-platform-tests: remove support for in-repository manifest, expectation management
+        https://bugs.webkit.org/show_bug.cgi?id=202037
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Instead of keeping wpt metadata inside the WebKit repository or have it
+        generated on-the-fly, provide additional option flags for the
+        run-web-platform-tests script that allows detailed specification of the
+        metadata, manifest and include manifest locations, if necessary.
+
+        If the metadata location is not provided, the wptrunner tool will simply
+        not rely on any metadata to adjust expected results. With no manifest
+        path specified, the manifest will be generated inside the wpt checkout.
+        If no include manifest is specified, all the tests will be initially
+        selected for running (until they're possibly filtered through additional
+        command line arguments).
+
+        * Scripts/webkitpy/common/config/ports_mock.py:
+        (MockPort.run_bindings_tests_command):
+        (MockPort.wpt_metadata_directory): Deleted.
+        (MockPort.wpt_manifest_file): Deleted.
+        * Scripts/webkitpy/port/base.py:
+        (Port.default_results_directory):
+        (Port.wpt_metadata_directory): Deleted.
+        (Port.wpt_manifest_file): Deleted.
+        * Scripts/webkitpy/w3c/wpt_runner.py:
+        (parse_args):
+        (WPTRunner.prepare_wpt_checkout):
+        (WPTRunner.run):
+        (WPTRunner._generate_metadata_directory): Deleted.
+        (WPTRunner._wpt_run_paths): Deleted.
+        * Scripts/webkitpy/w3c/wpt_runner_unittest.py:
+        (WPTRunnerTest.TestInstance.__init__):
+        (WPTRunnerTest.test_prepare_wpt_checkout_specified_path):
+        (WPTRunnerTest.test_run):
+        (WPTRunnerTest.test_run_with_specified_options):
+        (WPTRunnerTest.test_run_with_args):
+        (WPTRunnerTest.TestInstance.prepare_mock_files_for_run): Deleted.
+        (WPTRunnerTest.test_generate_metadata_directory): Deleted.
+
 2019-09-23  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][WebKitTestRunner] Implement EventSenderProxy::keyDown
