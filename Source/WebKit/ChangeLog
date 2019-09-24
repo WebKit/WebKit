@@ -1,3 +1,19 @@
+2019-09-24  Patrick Griffis  <pgriffis@igalia.com>
+
+        [GTK][WPE] Minor code cleanup in BubblewrapLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=201906
+
+        This just cleans up string handling and some
+        whitespace fixes.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::XDGDBusProxyLauncher::setAddress):
+        (WebKit::XDGDBusProxyLauncher::launch):
+        (WebKit::XDGDBusProxyLauncher::makeProxyPath):
+        (WebKit::XDGDBusProxyLauncher::dbusAddressToPath):
+
 2019-09-24  Zalan Bujtas  <zalan@apple.com>
 
         [iPadOs] The second click event is missing on double tap when dblclick handler is not present

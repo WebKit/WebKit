@@ -131,15 +131,15 @@ class XDGDBusProxyLauncher {
 public:
     void setAddress(const char* dbusAddress, DBusAddressType addressType)
     {
-        GUniquePtr<char> dbusPath = dbusAddressToPath(dbusAddress, addressType);
-        if (!dbusPath.get())
+        CString dbusPath = dbusAddressToPath(dbusAddress, addressType);
+        if (dbusPath.isNull())
             return;
 
         GUniquePtr<char> appRunDir(g_build_filename(g_get_user_runtime_dir(), BASE_DIRECTORY, nullptr));
-        m_proxyPath = makeProxyPath(appRunDir.get()).get();
+        m_proxyPath = makeProxyPath(appRunDir.get());
 
         m_socket = dbusAddress;
-        m_path = dbusPath.get();
+        m_path = WTFMove(dbusPath);
     }
 
     bool isRunning() const { return m_isRunning; };
@@ -160,7 +160,7 @@ public:
             return;
 
         int syncFds[2];
-        if (pipe2 (syncFds, O_CLOEXEC) == -1)
+        if (pipe2(syncFds, O_CLOEXEC) == -1)
             g_error("Failed to make syncfds for dbus-proxy: %s", g_strerror(errno));
 
         GUniquePtr<char> syncFdStr(g_strdup_printf("--fd=%d", syncFds[1]));
@@ -206,7 +206,7 @@ public:
         char out;
         // We need to ensure the proxy has created the socket.
         // FIXME: This is more blocking IO.
-        if (read (syncFds[0], &out, 1) != 1)
+        if (read(syncFds[0], &out, 1) != 1)
             g_error("Failed to fully launch dbus-proxy %s", g_strerror(errno));
 
         m_isRunning = true;
@@ -219,42 +219,42 @@ private:
         fcntl(fd, F_SETFD, 0); // Unset CLOEXEC
     }
 
-    static GUniquePtr<char> makeProxyPath(const char* appRunDir)
+    static CString makeProxyPath(const char* appRunDir)
     {
         if (g_mkdir_with_parents(appRunDir, 0700) == -1) {
             g_warning("Failed to mkdir for dbus proxy (%s): %s", appRunDir, g_strerror(errno));
-            return GUniquePtr<char>(nullptr);
+            return { };
         }
 
         GUniquePtr<char> proxySocketTemplate(g_build_filename(appRunDir, "dbus-proxy-XXXXXX", nullptr));
         int fd;
         if ((fd = g_mkstemp(proxySocketTemplate.get())) == -1) {
             g_warning("Failed to make socket file for dbus proxy: %s", g_strerror(errno));
-            return GUniquePtr<char>(nullptr);
+            return { };
         }
 
         close(fd);
-        return proxySocketTemplate;
+        return CString(proxySocketTemplate.get());
     };
 
-    static GUniquePtr<char> dbusAddressToPath(const char* address, DBusAddressType addressType = DBusAddressType::Normal)
+    static CString dbusAddressToPath(const char* address, DBusAddressType addressType = DBusAddressType::Normal)
     {
         if (!address)
-            return nullptr;
+            return { };
 
         if (!g_str_has_prefix(address, "unix:"))
-            return nullptr;
+            return { };
 
         const char* path = strstr(address, addressType == DBusAddressType::Abstract ? "abstract=" : "path=");
         if (!path)
-            return nullptr;
+            return { };
 
         path += strlen(addressType == DBusAddressType::Abstract ? "abstract=" : "path=");
         const char* pathEnd = path;
         while (*pathEnd && *pathEnd != ',')
             pathEnd++;
 
-        return GUniquePtr<char>(g_strndup(path, pathEnd - path));
+        return CString(path, pathEnd - path);
 }
 
     CString m_socket;
