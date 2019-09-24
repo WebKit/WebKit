@@ -520,7 +520,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 #endif
 #endif
 
-    parameters.hstsStorageDirectory = m_configuration->hstsStorageDirectory();
+    parameters.hstsStorageDirectory = LegacyGlobalSettings::singleton().hstsStorageDirectory();
     if (!parameters.hstsStorageDirectory.isNull())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.hstsStorageDirectory, parameters.hstsStorageDirectoryExtensionHandle);
 

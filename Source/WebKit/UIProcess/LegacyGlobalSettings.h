@@ -27,6 +27,7 @@
 
 #include "CacheModel.h"
 #include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
@@ -38,11 +39,15 @@ public:
     void setCacheModel(CacheModel);
     CacheModel cacheModel() const { return m_cacheModel; }
     
+    void setHSTSStorageDirectory(String&& directory) { m_hstsStorageDirectory = WTFMove(directory); }
+    const String& hstsStorageDirectory() const { return m_hstsStorageDirectory; }
+    
 private:
     friend class NeverDestroyed<LegacyGlobalSettings>;
     LegacyGlobalSettings();
     
     CacheModel m_cacheModel { CacheModel::PrimaryWebBrowser };
+    String m_hstsStorageDirectory;
 };
 
 } // namespace WebKit

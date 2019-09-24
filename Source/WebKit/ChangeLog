@@ -1,3 +1,25 @@
+2019-09-24  Alex Christensen  <achristensen@webkit.org>
+
+        Move HSTS storage directory to LegacyGlobalSettings
+        https://bugs.webkit.org/show_bug.cgi?id=202059
+
+        Reviewed by Tim Horton.
+
+        I continue my lamentation begun in r245075.
+        Remove the glib setting of it on the WebKitWebContext because they use it on the WebsiteDataStore.  We should do that too when we can.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration setHSTSStorageDirectory:]):
+        (-[_WKProcessPoolConfiguration hstsStorageDirectory]):
+        * UIProcess/LegacyGlobalSettings.h:
+        (WebKit::LegacyGlobalSettings::setHSTSStorageDirectory):
+        (WebKit::LegacyGlobalSettings::hstsStorageDirectory const):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
 2019-09-24  Keith Rollin  <krollin@apple.com>
 
         Coalesce or remove PLATFORM(MAC) || PLATFORM(IOS_FAMILY)

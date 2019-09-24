@@ -358,12 +358,12 @@
         [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", directory];
 
     // FIXME: Move this to _WKWebsiteDataStoreConfiguration once rdar://problem/50109631 is fixed.
-    _processPoolConfiguration->setHSTSStorageDirectory(directory.path);
+    WebKit::LegacyGlobalSettings::singleton().setHSTSStorageDirectory(directory.path);
 }
 
 - (NSURL *)hstsStorageDirectory
 {
-    return [NSURL fileURLWithPath:_processPoolConfiguration->hstsStorageDirectory() isDirectory:YES];
+    return [NSURL fileURLWithPath:WebKit::LegacyGlobalSettings::singleton().hstsStorageDirectory() isDirectory:YES];
 }
 
 - (void)setDownloadMonitorSpeedMultiplierForTesting:(NSUInteger)multiplier
