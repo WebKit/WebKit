@@ -695,7 +695,6 @@ imported/w3c/web-platform-tests/payment-request [ Skip ]
 
 imported/w3c/web-platform-tests/xhr/send-redirect-bogus-sync.htm [ DumpJSConsoleLogInStdErr ]
 
-imported/w3c/web-platform-tests/xhr/xmlhttprequest-sync-default-feature-policy.sub.html [ Skip ]
 webkit.org/b/179607 imported/w3c/web-platform-tests/xhr/access-control-and-redirects-async.htm [ Pass Failure ]
 webkit.org/b/179607 imported/w3c/web-platform-tests/xhr/access-control-and-redirects-async-same-origin.htm [ Pass Failure ]
 webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/access-control-preflight-async-header-denied.htm [ Failure ]

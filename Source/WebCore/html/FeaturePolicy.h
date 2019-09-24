@@ -37,7 +37,7 @@ class FeaturePolicy {
 public:
     static FeaturePolicy parse(Document&, StringView);
 
-    enum class Type { Camera, Microphone, DisplayCapture };
+    enum class Type { Camera, Microphone, DisplayCapture, SyncXHR };
     bool allows(Type, const SecurityOriginData&) const;
 
     struct AllowRule {
@@ -50,6 +50,7 @@ private:
     AllowRule m_cameraRule;
     AllowRule m_microphoneRule;
     AllowRule m_displayCaptureRule;
+    AllowRule m_syncXHRRule;
 };
 
 } // namespace WebCore

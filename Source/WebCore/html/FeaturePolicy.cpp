@@ -100,6 +100,7 @@ FeaturePolicy FeaturePolicy::parse(Document& document, StringView allowAttribute
     bool isCameraInitialized = false;
     bool isMicrophoneInitialized = false;
     bool isDisplayCaptureInitialized = false;
+    bool isSyncXHRInitialized = false;
     for (auto allowItem : allowAttributeValue.split(';')) {
         auto item = allowItem.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
         if (item.startsWith("camera")) {
@@ -117,6 +118,11 @@ FeaturePolicy FeaturePolicy::parse(Document& document, StringView allowAttribute
             updateList(document, policy.m_displayCaptureRule, item.substring(16));
             continue;
         }
+        if (item.startsWith("sync-xhr")) {
+            isSyncXHRInitialized = true;
+            updateList(document, policy.m_syncXHRRule, item.substring(8));
+            continue;
+        }
     }
 
     // By default, camera, microphone and display-capture policy is 'self'
@@ -126,6 +132,9 @@ FeaturePolicy FeaturePolicy::parse(Document& document, StringView allowAttribute
         policy.m_microphoneRule.allowedList.add(document.securityOrigin().data());
     if (!isDisplayCaptureInitialized)
         policy.m_displayCaptureRule.allowedList.add(document.securityOrigin().data());
+
+    if (!isSyncXHRInitialized)
+        policy.m_syncXHRRule.type = AllowRule::Type::All;
 
     return policy;
 }
@@ -139,6 +148,8 @@ bool FeaturePolicy::allows(Type type, const SecurityOriginData& origin) const
         return isAllowedByFeaturePolicy(m_microphoneRule, origin);
     case Type::DisplayCapture:
         return isAllowedByFeaturePolicy(m_displayCaptureRule, origin);
+    case Type::SyncXHR:
+        return isAllowedByFeaturePolicy(m_syncXHRRule, origin);
     }
     ASSERT_NOT_REACHED();
     return false;

@@ -33,6 +33,7 @@
 #include "EventNames.h"
 #include "File.h"
 #include "HTMLDocument.h"
+#include "HTMLIFrameElement.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPHeaderValues.h"
 #include "HTTPParsers.h"
@@ -569,6 +570,23 @@ ExceptionOr<void> XMLHttpRequest::sendBytesData(const void* data, size_t length)
     return createRequest();
 }
 
+static inline bool isSyncXHRAllowedByFeaturePolicy(Document& document)
+{
+    auto& topDocument = document.topDocument();
+    if (&document != &topDocument) {
+        for (auto* ancestorDocument = &document; ancestorDocument != &topDocument; ancestorDocument = ancestorDocument->parentDocument()) {
+            auto* element = ancestorDocument->ownerElement();
+            ASSERT(element);
+            if (element && is<HTMLIFrameElement>(*element)) {
+                auto& featurePolicy = downcast<HTMLIFrameElement>(*element).featurePolicy();
+                if (!featurePolicy.allows(FeaturePolicy::Type::SyncXHR, ancestorDocument->securityOrigin().data()))
+                    return false;
+            }
+        }
+    }
+    return true;
+}
+
 ExceptionOr<void> XMLHttpRequest::createRequest()
 {
     // Only GET request is supported for blob URL.
@@ -642,6 +660,9 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
         if (m_loader)
             setPendingActivity(*this);
     } else {
+        if (scriptExecutionContext()->isDocument() && !isSyncXHRAllowedByFeaturePolicy(*document()))
+            return Exception { NetworkError };
+
         request.setDomainForCachePartition(scriptExecutionContext()->domainForCachePartition());
         InspectorInstrumentation::willLoadXHRSynchronously(scriptExecutionContext());
         ThreadableLoader::loadResourceSynchronously(*scriptExecutionContext(), WTFMove(request), *this, options);

@@ -1,3 +1,15 @@
+2019-09-23  Youenn Fablet  <youenn@apple.com>
+
+        Support sync-xhr feature policy
+        https://bugs.webkit.org/show_bug.cgi?id=202098
+
+        Reviewed by Alex Christensen.
+
+        Update test to use hosts[alt][].
+
+        * web-platform-tests/xhr/xmlhttprequest-sync-default-feature-policy.sub-expected.txt:
+        * web-platform-tests/xhr/xmlhttprequest-sync-default-feature-policy.sub.html:
+
 2019-09-23  Alex Christensen  <achristensen@webkit.org>
 
         Fix WPT test html/browsers/offline/application-cache-api/api_swapcache_error.https.html

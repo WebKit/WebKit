@@ -1,3 +1,24 @@
+2019-09-23  Youenn Fablet  <youenn@apple.com>
+
+        Support sync-xhr feature policy
+        https://bugs.webkit.org/show_bug.cgi?id=202098
+
+        Reviewed by Alex Christensen.
+
+        Add support for sync-xhr feature policy parsing.
+        Use this feature policy to control use of sync XHR in documents
+        as per https://xhr.spec.whatwg.org/#the-send()-method step 12.
+
+        Covered by updated test.
+
+        * html/FeaturePolicy.cpp:
+        (WebCore::FeaturePolicy::parse):
+        (WebCore::FeaturePolicy::allows const):
+        * html/FeaturePolicy.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::isSyncXHRAllowedByFeaturePolicy):
+        (WebCore::XMLHttpRequest::createRequest):
+
 2019-09-23  Chris Dumez  <cdumez@apple.com>
 
         Drop unnecessary SessionID.h header includes
