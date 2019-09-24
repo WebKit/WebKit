@@ -504,6 +504,11 @@ static void recomputeDependentOptions()
 
     if (!Options::useCodeCache())
         Options::diskCachePath() = nullptr;
+
+    if (Options::randomIntegrityAuditRate() < 0)
+        Options::randomIntegrityAuditRate() = 0;
+    else if (Options::randomIntegrityAuditRate() > 1.0)
+        Options::randomIntegrityAuditRate() = 1.0;
 }
 
 void Options::initialize()

@@ -1911,6 +1911,9 @@
 		FEA3BBAC212C97CB00E93AD1 /* DFGCFG.h in Headers */ = {isa = PBXBuildFile; fileRef = FEA3BBAB212C97CB00E93AD1 /* DFGCFG.h */; };
 		FEB51F6C1A97B688001F921C /* Regress141809.mm in Sources */ = {isa = PBXBuildFile; fileRef = FEB51F6B1A97B688001F921C /* Regress141809.mm */; };
 		FEB58C15187B8B160098EF0B /* ErrorHandlingScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FEB58C13187B8B160098EF0B /* ErrorHandlingScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FEC5797323105B5100BCA83F /* VMInspectorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC5797223105B4800BCA83F /* VMInspectorInlines.h */; };
+		FEC5797623105F4E00BCA83F /* Integrity.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC5797523105F4300BCA83F /* Integrity.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FEC579782310954C00BCA83F /* IntegrityInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC579772310954B00BCA83F /* IntegrityInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FECB8B271D25BB85006F2463 /* FunctionOverridesTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FECB8B251D25BB6E006F2463 /* FunctionOverridesTest.cpp */; };
 		FED287B215EC9A5700DA8161 /* LLIntOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = FED287B115EC9A5700DA8161 /* LLIntOpcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FED94F2F171E3E2300BE77A4 /* Watchdog.h in Headers */ = {isa = PBXBuildFile; fileRef = FED94F2C171E3E2300BE77A4 /* Watchdog.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5135,6 +5138,10 @@
 		FEB51F6B1A97B688001F921C /* Regress141809.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Regress141809.mm; path = API/tests/Regress141809.mm; sourceTree = "<group>"; };
 		FEB58C12187B8B160098EF0B /* ErrorHandlingScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorHandlingScope.cpp; sourceTree = "<group>"; };
 		FEB58C13187B8B160098EF0B /* ErrorHandlingScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorHandlingScope.h; sourceTree = "<group>"; };
+		FEC5797223105B4800BCA83F /* VMInspectorInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMInspectorInlines.h; sourceTree = "<group>"; };
+		FEC5797423105F4200BCA83F /* Integrity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Integrity.cpp; sourceTree = "<group>"; };
+		FEC5797523105F4300BCA83F /* Integrity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Integrity.h; sourceTree = "<group>"; };
+		FEC579772310954B00BCA83F /* IntegrityInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntegrityInlines.h; sourceTree = "<group>"; };
 		FECB8B251D25BB6E006F2463 /* FunctionOverridesTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FunctionOverridesTest.cpp; path = API/tests/FunctionOverridesTest.cpp; sourceTree = "<group>"; };
 		FECB8B261D25BB6E006F2463 /* FunctionOverridesTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FunctionOverridesTest.h; path = API/tests/FunctionOverridesTest.h; sourceTree = "<group>"; };
 		FECB8B291D25CABB006F2463 /* testapi-function-overrides.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = "testapi-function-overrides.js"; path = "API/tests/testapi-function-overrides.js"; sourceTree = "<group>"; };
@@ -7583,6 +7590,9 @@
 				FEA0C4011CDD7D0E00481991 /* FunctionWhitelist.h */,
 				FE1BD0221E72052F00134BC9 /* HeapVerifier.cpp */,
 				FE1BD0231E72052F00134BC9 /* HeapVerifier.h */,
+				FEC5797423105F4200BCA83F /* Integrity.cpp */,
+				FEC5797523105F4300BCA83F /* Integrity.h */,
+				FEC579772310954B00BCA83F /* IntegrityInlines.h */,
 				FE384EE11ADDB7AD0055DE2C /* JSDollarVM.cpp */,
 				FE384EE21ADDB7AD0055DE2C /* JSDollarVM.h */,
 				86B5822C14D22F5F00A9C306 /* ProfileTreeNode.h */,
@@ -7591,6 +7601,7 @@
 				86B5826A14D35D5100A9C306 /* TieredMMapArray.h */,
 				FE3022D41E42856700BAC493 /* VMInspector.cpp */,
 				FE3022D51E42856700BAC493 /* VMInspector.h */,
+				FEC5797223105B4800BCA83F /* VMInspectorInlines.h */,
 			);
 			path = tools;
 			sourceTree = "<group>";
@@ -8999,6 +9010,7 @@
 				0FEC3C601F379F5300F59B6C /* CagedBarrierPtr.h in Headers */,
 				BC18C3ED0E16F5CD00B34460 /* CallData.h in Headers */,
 				0F64B27A1A7957B2006E4E66 /* CallEdge.h in Headers */,
+				FEC579782310954C00BCA83F /* IntegrityInlines.h in Headers */,
 				796DAA2B1E89CCD6005DF24A /* CalleeBits.h in Headers */,
 				1429D8DE0ED2205B00B89619 /* CallFrame.h in Headers */,
 				FEA3BBA8212B655900E93AD1 /* CallFrameInlines.h in Headers */,
@@ -9492,6 +9504,7 @@
 				7905BB691D12050E0019FE57 /* InlineAccess.h in Headers */,
 				148A7BF01B82975A002D9157 /* InlineCallFrame.h in Headers */,
 				0F24E55617F0B71C00ABB217 /* InlineCallFrameSet.h in Headers */,
+				FEC5797623105F4E00BCA83F /* Integrity.h in Headers */,
 				A584032018BFFBE1005A0811 /* InspectorAgent.h in Headers */,
 				A593CF7F1840362C00BFCE27 /* InspectorAgentBase.h in Headers */,
 				A593CF87184038CA00BFCE27 /* InspectorAgentRegistry.h in Headers */,
@@ -9924,6 +9937,7 @@
 				0FF729BE166AD360000F5BA3 /* ProfilerExecutionCounter.h in Headers */,
 				0F190CAD189D82F6000AE5F0 /* ProfilerJettisonReason.h in Headers */,
 				0FF729BF166AD360000F5BA3 /* ProfilerOrigin.h in Headers */,
+				FEC5797323105B5100BCA83F /* VMInspectorInlines.h in Headers */,
 				0FF729C0166AD360000F5BA3 /* ProfilerOriginStack.h in Headers */,
 				0FB1058C1675483300F8AB6E /* ProfilerOSRExit.h in Headers */,
 				0FB1058E1675483A00F8AB6E /* ProfilerOSRExitSite.h in Headers */,

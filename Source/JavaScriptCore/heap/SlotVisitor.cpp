@@ -33,6 +33,7 @@
 #include "HeapAnalyzer.h"
 #include "HeapCellInlines.h"
 #include "HeapProfiler.h"
+#include "IntegrityInlines.h"
 #include "JSArray.h"
 #include "JSDestructibleObject.h"
 #include "JSObject.h"
@@ -221,6 +222,7 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
     
         JSCell* jsCell = static_cast<JSCell*>(heapCell);
         validateCell(jsCell);
+        Integrity::auditCell(vm(), jsCell);
         
         jsCell->setCellState(CellState::PossiblyGrey);
 

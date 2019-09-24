@@ -233,7 +233,7 @@ private:
 
     static Optional<Digit> toShiftAmount(JSBigInt* x);
 
-    static size_t allocationSize(unsigned length);
+    inline static size_t allocationSize(unsigned length);
     inline static size_t offsetOfData()
     {
         return WTF::roundUpToMultipleOf<sizeof(Digit)>(sizeof(JSBigInt));
@@ -249,7 +249,15 @@ private:
 
     const unsigned m_length;
     bool m_sign { false };
+
+    friend class VMInspector;
 };
+
+inline size_t JSBigInt::allocationSize(unsigned length)
+{
+    size_t sizeWithPadding = WTF::roundUpToMultipleOf<sizeof(size_t)>(sizeof(JSBigInt));
+    return sizeWithPadding + length * sizeof(Digit);
+}
 
 inline JSBigInt* asBigInt(JSValue value)
 {

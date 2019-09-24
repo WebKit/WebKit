@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2017 Caio Lima <ticaiolima@gmail.com>
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,12 +81,6 @@ JSBigInt* JSBigInt::createZero(VM& vm)
 {
     JSBigInt* zeroBigInt = createWithLengthUnchecked(vm, 0);
     return zeroBigInt;
-}
-
-inline size_t JSBigInt::allocationSize(unsigned length)
-{
-    size_t sizeWithPadding = WTF::roundUpToMultipleOf<sizeof(size_t)>(sizeof(JSBigInt));
-    return sizeWithPadding + length * sizeof(Digit);
 }
 
 JSBigInt* JSBigInt::tryCreateWithLength(ExecState* exec, unsigned length)

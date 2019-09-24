@@ -80,6 +80,7 @@
 #include "WeakMapImplInlines.h"
 #include "WeakSetInlines.h"
 #include <algorithm>
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/ListDump.h>
 #include <wtf/MainThread.h>
 #include <wtf/ParallelVectorIterator.h>
@@ -1267,6 +1268,9 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
         dataLog("[GC<", RawPointer(this), ">: START ", gcConductorShortName(conn), " ", capacity() / 1024, "kb ");
 
     m_beforeGC = MonotonicTime::now();
+
+    if (!Options::seedOfVMRandomForFuzzer())
+        vm().random().setSeed(cryptographicallyRandomNumber());
 
     if (m_collectionScope) {
         dataLog("Collection scope already set during GC: ", *m_collectionScope, "\n");

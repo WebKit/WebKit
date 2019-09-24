@@ -80,6 +80,17 @@ public:
     JS_EXPORT_PRIVATE static void dumpCellMemoryToStream(JSCell*, PrintStream&);
     JS_EXPORT_PRIVATE static void dumpSubspaceHashes(VM*);
 
+    enum VerifierAction { ReleaseAssert, Custom };
+
+    using VerifyFunctor = bool(bool condition, const char* description, ...);
+    static bool unusedVerifier(bool, const char*, ...) { return false; }
+
+    template<VerifierAction, VerifyFunctor = unusedVerifier>
+    static bool verifyCellSize(VM&, JSCell*, size_t allocatorCellSize);
+
+    template<VerifierAction, VerifyFunctor = unusedVerifier>
+    static bool verifyCell(VM&, JSCell*);
+
 private:
     template <typename Functor> void iterate(const Functor& functor)
     {

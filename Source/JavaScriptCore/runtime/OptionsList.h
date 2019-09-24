@@ -344,6 +344,7 @@ namespace JSC {
     \
     v(Bool, alwaysGeneratePCToCodeOriginMap, false, Normal, "This will make sure we always generate a PCToCodeOriginMap for JITed code.") \
     \
+    v(Double, randomIntegrityAuditRate, 0.05, Normal, "Probability of random integrity audits [0.0 - 1.0]") \
     v(Bool, verifyHeap, false, Normal, nullptr) \
     v(Unsigned, numberOfGCCyclesToRecordForVerification, 3, Normal, nullptr) \
     \
@@ -366,6 +367,7 @@ namespace JSC {
     v(Unsigned, fireOSRExitFuzzAt, 0, Normal, nullptr) \
     v(Unsigned, fireOSRExitFuzzAtOrAfter, 0, Normal, nullptr) \
     \
+    v(Unsigned, seedOfVMRandomForFuzzer, 0, Normal, "0 means not fuzzing this; use a cryptographically random seed") \
     v(Bool, useRandomizingFuzzerAgent, false, Normal, nullptr) \
     v(Unsigned, seedOfRandomizingFuzzerAgent, 1, Normal, nullptr) \
     v(Bool, dumpRandomizingFuzzerAgentPredictions, false, Normal, nullptr) \

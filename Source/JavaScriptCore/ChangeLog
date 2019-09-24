@@ -1,3 +1,171 @@
+2019-09-23  Mark Lam  <mark.lam@apple.com>
+
+        Introducing Integrity audit functions.
+        https://bugs.webkit.org/show_bug.cgi?id=202085
+
+        Reviewed by Saam Barati.
+
+        This patch's main goal is to introduce the Integrity audit functions.  They can
+        be used wherever we want to audit a cell to probabilistically ensure it is not
+        corrupted.  However, to keep this patch small, we will only introduce the audit
+        tool here with one example use in SlotVisitor.  We'll follow up later with more
+        patches to deploy this tool throughout the VM.
+
+        1. Introduced Integrity audit functions that can be configured at several
+           AuditLevels:
+               None - don't do any audits.
+               Minimal - do a minimal quick audit (minimize perf impact).
+               Full - do a full audit of the many aspects of a cell.
+               Random - randomly do a full audit with a probability dictated by
+                    Options::randomIntegrityAuditRate() between 0.0 (never audit) and
+                    1.0 (audit at every chance).
+
+           The default AuditLevel for Debug builds is Random.
+           The default AuditLevel for Release builds is None.
+           The default Options::randomIntegrityAuditRate() is 0.05.
+
+           How full audits work?
+           ====================
+           The full audit uses the VMInspector::verifyCell() template function to do its
+           job.  The reason for keeping this separate is to allow the template function
+           to be used later for debug checks that want to take some custom action on
+           verification failure instead of crashing with a RELEASE_ASSERT.
+
+           Full audit of a cell pointer includes:
+           a. Verify that a cell designated as a LargeAllocation is in the heap's
+              set of LargeAllocations.
+
+           b. Verify that a cell not designated as a LargeAllocation is actually in its
+              MarkedBlock's bounds.
+
+           c. Verify that the cell's container (LargeAllocation / MarkedBlock) actually
+              belongs to the current VM.
+
+           d. Verify that a cell in a MarkedBlock is properly aligned on the block's
+              allocation unit size.
+
+           e. If the cell is not an ImmutableButterfly, verify that it is not located in
+              the Gigacage.
+
+           f. Verify that the cell's JSType matches its StructureBlob's JSType.
+
+           g. Verify that the cell size as dictated by the cell ClassInfo does not exceed
+              the size of the allocation unit size (as expected by the container
+              MarkedBlock or LargeAllocation).
+
+              Some cells are dynamically size (see isDynamicallySizedType()).  For these
+              cells, we compute their sizes and verify that the size does not exceed the
+              allocation unit size.  Their sizes should also be greater or equal to the
+              static cell size as dictated by their ClassInfo.
+
+           h. If a cell has a butterfly, verify that the butterfly is in its the JSValue
+              Gigacage.
+
+           We can add more verifications later, or make some these more robust, but this
+           is a start for now.
+
+           How random audits work?
+           ======================
+           Random audits are triggered by the m_triggerBits bits in VM::m_integrityRandom.
+           m_triggerBits is a 64-bit bitfield.
+
+           If Options::randomIntegrityAuditRate() is 0, m_triggerBits will always be 0,
+           and no audits will be done.
+
+           If Options::randomIntegrityAuditRate() is non-zero, m_triggerBits will be
+           initialized as follows:
+
+                | 1 reload bit | ... 63 trigger bits ... |
+
+           The reload bit is always set (more details below).
+           Each of the 63 trigger bits are randomly set depending if the following is true
+           for the bit:
+
+                VM::random() <= Options::randomIntegrityAuditRate() * UINT_MAX
+
+           When Integrity::auditCell() is called, we take the bottom bit as the trigger
+           bit for the current cell, and shifts the rest down by 1.
+
+           If m_triggerBits is non-null after the shift, the taken trigger bit will dictate
+           whether we do a full audit on the current cell or not.
+
+           Once the reload bit reaches the bottom, we call a reload function to
+           re-initialize m_triggerBits.  The reload function also returns a bool
+           indicating whether to trigger a full audit of the current cell.
+
+           With this scheme, we only need to call the reload function once every 64 calls
+           to Integrity::auditCell(), and can efficiently determine whether to trigger
+           the audit the other 63 times with the probability specified in
+           Options::randomIntegrityAuditRate().
+
+        2. Embedded the C++ class size of JSCells into their ClassInfo.  This is used in
+           the full audits to verify cell sizes.
+
+        3. Added isDynamicallySizedType() to check if a JSType has a dynamic size allocation
+           i.e. the size of instances of this type is not determined by the static C++
+           size of its class, but rather, depends on some runtime variable.
+
+        4. Made the VMInspector a friend of several classes so that it can access their
+           private methods and fields.
+
+        5. Moved the inline function JSBigInt::allocationSize() from BigInt.cpp to its
+           header file so that we can use it in VMInspector::verifyCellSize().
+
+        6. Gave the JSModuleNamespaceObject() its own JSType so that we can identify it
+           as a dynamically sized object.
+
+        7. Increased the randomness of VM::random() (which is implemented with WeakRandom)
+           by re-seeding it with a cryptographically random number each GC.
+
+        8. Called Integrity::auditCell() on SlotVisitor::appendJSCellOrAuxiliary()'s cell
+           as an example use of auditCell().  More uses will be added in later patches to
+           follow.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * heap/Heap.cpp:
+        (JSC::Heap::runBeginPhase):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::appendJSCellOrAuxiliary):
+        * runtime/ClassInfo.h:
+        * runtime/DirectArguments.h:
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::allocationSize): Deleted.
+        * runtime/JSBigInt.h:
+        (JSC::JSBigInt::allocationSize):
+        * runtime/JSModuleNamespaceObject.h:
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+        (JSC::isDynamicallySizedType):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/OptionsList.h:
+        * runtime/Structure.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::random):
+        (JSC::VM::integrityRandom):
+        * tools/Integrity.cpp: Added.
+        (JSC::Integrity::Random::Random):
+        (JSC::Integrity::Random::reloadAndCheckShouldAuditSlow):
+        (JSC::Integrity::auditCellFully):
+        (JSC::Integrity::auditCellMinimallySlow):
+        * tools/Integrity.h: Added.
+        (JSC::Integrity::auditCell):
+        * tools/IntegrityInlines.h: Added.
+        (JSC::Integrity::Random::shouldAudit):
+        (JSC::Integrity::auditCellMinimally):
+        (JSC::Integrity::auditCellRandomly):
+        * tools/VMInspector.h:
+        (JSC::VMInspector::unusedVerifier):
+        (JSC::VMInspector::verifyCellSize):
+        * tools/VMInspectorInlines.h: Added.
+        (JSC::VMInspector::verifyCellSize):
+        (JSC::VMInspector::verifyCell):
+
 2019-09-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r250262.

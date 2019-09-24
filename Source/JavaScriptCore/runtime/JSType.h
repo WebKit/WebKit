@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ *  Copyright (C) 2006-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -106,6 +106,7 @@ enum JSType : uint8_t {
     WithScopeType,
     // End JSScope types.
 
+    ModuleNamespaceObjectType,
     RegExpObjectType,
     ProxyObjectType,
     JSGeneratorType,
@@ -137,6 +138,18 @@ static_assert(LastJSCObjectType < 128, "The highest bit is reserved for embedder
 inline constexpr bool isTypedArrayType(JSType type)
 {
     return (static_cast<uint32_t>(type) - FirstTypedArrayType) < NumberOfTypedArrayTypesExcludingDataView;
+}
+
+inline constexpr bool isDynamicallySizedType(JSType type)
+{
+    if (type == BigIntType
+        || type == DirectArgumentsType
+        || type == FinalObjectType
+        || type == LexicalEnvironmentType
+        || type == ModuleEnvironmentType
+        || type == ModuleNamespaceObjectType)
+        return true;
+    return false;
 }
 
 } // namespace JSC

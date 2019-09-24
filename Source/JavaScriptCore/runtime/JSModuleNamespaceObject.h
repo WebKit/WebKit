@@ -59,7 +59,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ModuleNamespaceObjectType, StructureFlags), info());
     }
 
     AbstractModuleRecord* moduleRecord() { return m_moduleRecord.get(); }
@@ -103,6 +103,8 @@ private:
     ExportMap m_exports;
     Vector<Identifier> m_names;
     WriteBarrier<AbstractModuleRecord> m_moduleRecord;
+
+    friend class VMInspector;
 };
 
 } // namespace JSC

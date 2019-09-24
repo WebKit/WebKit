@@ -1001,6 +1001,11 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/WriteBarrier.h
     runtime/WriteBarrierInlines.h
 
+    tools/Integrity.h
+    tools/IntegrityInlines.h
+    tools/VMInspector.h
+    tools/VMInspectorInlines.h
+
     wasm/WasmCapabilities.h
     wasm/WasmCodeBlock.h
     wasm/WasmCompilationMode.h

@@ -185,7 +185,8 @@ struct MethodTable {
         &ClassName::estimatedSize, \
         &ClassName::visitOutputConstraints, \
     }, \
-    ClassName::TypedArrayStorageType
+    ClassName::TypedArrayStorageType, \
+    sizeof(ClassName)
 
 struct ClassInfo {
     // A string denoting the class name. Example: "Window".
@@ -221,6 +222,7 @@ struct ClassInfo {
     MethodTable methodTable;
 
     TypedArrayType typedArrayStorageType;
+    unsigned staticClassSize;
 };
 
 } // namespace JSC

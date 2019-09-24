@@ -40,6 +40,7 @@
 #include "FunctionHasExecutedCache.h"
 #include "FuzzerAgent.h"
 #include "Heap.h"
+#include "Integrity.h"
 #include "Intrinsic.h"
 #include "IsoCellSet.h"
 #include "IsoSubspace.h"
@@ -310,6 +311,9 @@ public:
     // Global object in which execution began.
     JS_EXPORT_PRIVATE JSGlobalObject* vmEntryGlobalObject(const CallFrame*) const;
 
+    WeakRandom& random() { return m_random; }
+    Integrity::Random& integrityRandom() { return m_integrityRandom; }
+
 private:
     unsigned nextID();
 
@@ -321,6 +325,9 @@ private:
     // These need to be initialized before heap below.
     RetainPtr<CFRunLoopRef> m_runLoop;
 #endif
+
+    WeakRandom m_random;
+    Integrity::Random m_integrityRandom;
 
 public:
     Heap heap;

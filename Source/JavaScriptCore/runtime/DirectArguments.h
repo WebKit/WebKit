@@ -184,6 +184,8 @@ private:
     uint32_t m_minCapacity; // The max of this and length determines the capacity of this object. It may be the actual capacity, or maybe something smaller. We arrange it this way to be kind to the JITs.
     using MappedArguments = CagedBarrierPtr<Gigacage::Primitive, bool>;
     MappedArguments m_mappedArguments; // If non-null, it means that length, callee, and caller are fully materialized properties.
+
+    friend class VMInspector;
 };
 
 } // namespace JSC

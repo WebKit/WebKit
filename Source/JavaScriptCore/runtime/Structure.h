@@ -786,6 +786,8 @@ private:
     PropertyOffset m_offset;
 
     uint32_t m_propertyHash;
+
+    friend class VMInspector;
 };
 
 } // namespace JSC
