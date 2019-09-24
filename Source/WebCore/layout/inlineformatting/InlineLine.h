@@ -43,6 +43,7 @@ public:
     struct InitialConstraints {
         LayoutPoint logicalTopLeft;
         LayoutUnit availableLogicalWidth;
+        bool lineIsConstrainedByFloat { false };
         struct HeightAndBaseline {
             LayoutUnit height;
             LayoutUnit baselineOffset;

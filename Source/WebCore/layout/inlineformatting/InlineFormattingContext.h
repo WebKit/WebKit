@@ -58,6 +58,8 @@ private:
         LayoutUnit computedIntrinsicWidth(const InlineItems&) const;
 
     private:
+        Line::InitialConstraints initialConstraintsForLine(const LayoutUnit lineLogicalTop);
+
         LayoutState& layoutState() const { return m_inlineFormattingContext.layoutState(); }
         InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
         const Container& formattingRoot() const { return m_inlineFormattingContext.root(); }

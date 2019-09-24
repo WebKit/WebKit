@@ -132,7 +132,7 @@ private:
     const LineInput& m_lineInput;
     Line m_line;
     LineBreaker m_lineBreaker;
-    bool m_lineHasFloatBox { false };
+    bool m_lineHasIntrusiveFloat { false };
     UncommittedContent m_uncommittedContent;
     unsigned m_committedInlineItemCount { 0 };
     Vector<WeakPtr<InlineItem>> m_floats;
@@ -156,7 +156,7 @@ LineLayout::LineLayout(const InlineFormattingContext& inlineFormattingContext, c
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_lineInput(lineInput)
     , m_line(inlineFormattingContext, lineInput.initialConstraints, lineInput.skipVerticalAligment)
-    , m_lineHasFloatBox(lineInput.floatMinimumLogicalBottom.hasValue())
+    , m_lineHasIntrusiveFloat(lineInput.initialConstraints.lineIsConstrainedByFloat)
 {
 }
 
@@ -172,7 +172,7 @@ void LineLayout::commitPendingContent()
 
 LineContent LineLayout::close()
 {
-    ASSERT(m_committedInlineItemCount || m_lineHasFloatBox);
+    ASSERT(m_committedInlineItemCount || m_lineHasIntrusiveFloat);
     if (!m_committedInlineItemCount)
         return LineContent { WTF::nullopt, WTFMove(m_floats), m_line.close() };
 
@@ -192,7 +192,7 @@ LineLayout::IsEndOfLine LineLayout::placeInlineItem(const InlineItem& inlineItem
     auto itemLogicalWidth = inlineItemWidth(formattingContext(), inlineItem, currentLogicalRight);
 
     // FIXME: Ensure LineContext::trimmableWidth includes uncommitted content if needed.
-    auto lineIsConsideredEmpty = !m_line.hasContent() && !m_lineHasFloatBox;
+    auto lineIsConsideredEmpty = !m_line.hasContent() && !m_lineHasIntrusiveFloat;
     auto breakingContext = m_lineBreaker.breakingContext(inlineItem, itemLogicalWidth, { availableWidth, currentLogicalRight, m_line.trailingTrimmableWidth(), lineIsConsideredEmpty });
     if (breakingContext.isAtBreakingOpportunity)
         commitPendingContent();
@@ -222,7 +222,7 @@ LineLayout::IsEndOfLine LineLayout::placeInlineItem(const InlineItem& inlineItem
         floatBox.isLeftFloatingPositioned() ? m_line.moveLogicalLeft(floatBoxWidth) : m_line.moveLogicalRight(floatBoxWidth);
         m_floats.append(makeWeakPtr(inlineItem));
         ++m_committedInlineItemCount;
-        m_lineHasFloatBox = true;
+        m_lineHasIntrusiveFloat = true;
         return IsEndOfLine::No;
     }
 
@@ -277,33 +277,53 @@ InlineFormattingContext::InlineLayout::InlineLayout(InlineFormattingContext& inl
 
 void InlineFormattingContext::InlineLayout::layout(const InlineItems& inlineItems)
 {
-    auto& formattingContext = this->formattingContext();
-    auto& formattingRoot = this->formattingRoot();
-    auto& formattingRootGeometry = formattingContext.geometryForBox(formattingRoot);
-    auto floatingContext = FloatingContext { formattingRoot, formattingContext, formattingState().floatingState() };
+    auto lineLogicalTop = formattingContext().geometryForBox(formattingRoot()).contentBoxTop();
+    IndexAndRange currentInlineItem;
+    while (currentInlineItem.index < inlineItems.size()) {
+        auto lineInput = LineInput { initialConstraintsForLine(lineLogicalTop), Line::SkipVerticalAligment::No, currentInlineItem, inlineItems };
+        auto lineLayout = LineLayout { formattingContext(), lineInput };
 
-    auto lineLogicalTop = formattingRootGeometry.contentBoxTop();
-    auto lineLogicalLeft = formattingRootGeometry.contentBoxLeft();
+        auto lineContent = lineLayout.layout();
+        createDisplayRuns(*lineContent.runs, lineContent.floats);
 
-    auto applyFloatConstraint = [&](auto& lineInput) {
-        // Check for intruding floats and adjust logical left/available width for this line accordingly.
-        if (floatingContext.isEmpty())
-            return;
-        auto availableWidth = lineInput.initialConstraints.availableLogicalWidth;
-        auto lineLogicalLeft = lineInput.initialConstraints.logicalTopLeft.x();
+        if (lineContent.lastCommitted) {
+            currentInlineItem = { lineContent.lastCommitted->index + 1, WTF::nullopt };
+            lineLogicalTop = lineContent.runs->logicalBottom();
+        } else {
+            // Floats prevented us placing any content on the line.
+            ASSERT(lineInput.initialConstraints.lineIsConstrainedByFloat);
+            ASSERT(lineContent.runs->isEmpty());
+            // Move the next line below the intrusive float.
+            auto floatingContext = FloatingContext { formattingRoot(), formattingContext(), formattingState().floatingState() };
+            auto floatConstraints = floatingContext.constraints({ lineLogicalTop });
+            ASSERT(floatConstraints.left || floatConstraints.right);
+            static auto inifitePoint = PointInContextRoot::max();
+            // In case of left and right constraints, we need to pick the one that's closer to the current line.
+            lineLogicalTop = std::min(floatConstraints.left.valueOr(inifitePoint).y, floatConstraints.right.valueOr(inifitePoint).y);
+            ASSERT(lineLogicalTop < inifitePoint.y);
+        }
+    }
+}
+
+Line::InitialConstraints InlineFormattingContext::InlineLayout::initialConstraintsForLine(const LayoutUnit lineLogicalTop)
+{
+    auto lineLogicalLeft = formattingContext().geometryForBox(formattingRoot()).contentBoxLeft();
+    auto availableWidth = widthConstraint();
+    auto lineIsConstrainedByFloat = false;
+
+    auto floatingContext = FloatingContext { formattingRoot(), formattingContext(), formattingState().floatingState() };
+    // Check for intruding floats and adjust logical left/available width for this line accordingly.
+    if (!floatingContext.isEmpty()) {
         auto floatConstraints = floatingContext.constraints({ lineLogicalTop });
         // Check if these constraints actually put limitation on the line.
-        if (floatConstraints.left && floatConstraints.left->x <= formattingRootGeometry.contentBoxLeft())
+        if (floatConstraints.left && floatConstraints.left->x <= lineLogicalLeft)
             floatConstraints.left = { };
 
-        if (floatConstraints.right && floatConstraints.right->x >= formattingRootGeometry.contentBoxRight())
+        auto lineLogicalRight = formattingContext().geometryForBox(formattingRoot()).contentBoxRight();
+        if (floatConstraints.right && floatConstraints.right->x >= lineLogicalRight)
             floatConstraints.right = { };
 
-        // Set the minimum float bottom value as a hint for the next line if needed.
-        static auto inifitePoint = PointInContextRoot::max();
-        auto floatMinimumLogicalBottom = std::min(floatConstraints.left.valueOr(inifitePoint).y, floatConstraints.right.valueOr(inifitePoint).y);
-        if (floatMinimumLogicalBottom != inifitePoint.y)
-            lineInput.floatMinimumLogicalBottom = floatMinimumLogicalBottom;
+        lineIsConstrainedByFloat = floatConstraints.left || floatConstraints.right;
 
         if (floatConstraints.left && floatConstraints.right) {
             ASSERT(floatConstraints.left->x <= floatConstraints.right->x);
@@ -317,27 +337,8 @@ void InlineFormattingContext::InlineLayout::layout(const InlineItems& inlineItem
             ASSERT(floatConstraints.right->x >= lineLogicalLeft);
             availableWidth = floatConstraints.right->x - lineLogicalLeft;
         }
-        lineInput.initialConstraints.availableLogicalWidth = availableWidth;
-        lineInput.initialConstraints.logicalTopLeft.setX(lineLogicalLeft);
-    };
-
-    IndexAndRange currentInlineItem;
-    auto quirks = formattingContext.quirks();
-    while (currentInlineItem.index < inlineItems.size()) {
-        auto lineInput = LineInput { { { lineLogicalLeft, lineLogicalTop }, widthConstraint(), quirks.lineHeightConstraints(formattingRoot) }, Line::SkipVerticalAligment::No, currentInlineItem, inlineItems };
-        applyFloatConstraint(lineInput);
-        auto lineContent = LineLayout(formattingContext, lineInput).layout();
-        createDisplayRuns(*lineContent.runs, lineContent.floats);
-        if (!lineContent.lastCommitted) {
-            // Floats prevented us putting any content on the line.
-            ASSERT(lineInput.floatMinimumLogicalBottom);
-            ASSERT(lineContent.runs->isEmpty());
-            lineLogicalTop = *lineInput.floatMinimumLogicalBottom;
-        } else {
-            currentInlineItem = { lineContent.lastCommitted->index + 1, WTF::nullopt };
-            lineLogicalTop = lineContent.runs->logicalBottom();
-        }
     }
+    return Line::InitialConstraints { { lineLogicalLeft, lineLogicalTop }, availableWidth, lineIsConstrainedByFloat, formattingContext().quirks().lineHeightConstraints(formattingRoot()) };
 }
 
 LayoutUnit InlineFormattingContext::InlineLayout::computedIntrinsicWidth(const InlineItems& inlineItems) const
@@ -347,7 +348,7 @@ LayoutUnit InlineFormattingContext::InlineLayout::computedIntrinsicWidth(const I
     IndexAndRange currentInlineItem;
     auto quirks = formattingContext.quirks();
     while (currentInlineItem.index < inlineItems.size()) {
-        auto lineContent = LineLayout(formattingContext, { { { }, widthConstraint(), quirks.lineHeightConstraints(formattingRoot()) }, Line::SkipVerticalAligment::Yes, currentInlineItem, inlineItems }).layout();
+        auto lineContent = LineLayout(formattingContext, { { { }, widthConstraint(), false, quirks.lineHeightConstraints(formattingRoot()) }, Line::SkipVerticalAligment::Yes, currentInlineItem, inlineItems }).layout();
         currentInlineItem = { lineContent.lastCommitted->index + 1, WTF::nullopt };
         LayoutUnit floatsWidth;
         for (auto& floatItem : lineContent.floats)

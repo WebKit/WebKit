@@ -1,3 +1,21 @@
+2019-09-24  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Move line constraints computation to a dedicated function
+        https://bugs.webkit.org/show_bug.cgi?id=202121
+        <rdar://problem/55640742>
+
+        Reviewed by Antti Koivisto.
+
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::LineLayout::LineLayout):
+        (WebCore::Layout::LineLayout::close):
+        (WebCore::Layout::LineLayout::placeInlineItem):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::layout):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::initialConstraintsForLine):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::computedIntrinsicWidth const):
+        * layout/inlineformatting/InlineLine.h:
+
 2019-09-24  Youenn Fablet  <youenn@apple.com>
 
         AudioTrackPrivateMediaStreamCocoa does not need to manipulate the audio unit in play/pause methods
