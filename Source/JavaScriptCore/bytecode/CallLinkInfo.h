@@ -295,17 +295,17 @@ public:
         return static_cast<CallType>(m_callType);
     }
 
-    uint32_t* addressOfMaxNumArguments()
+    uint32_t* addressOfMaxArgumentCountIncludingThis()
     {
-        return &m_maxNumArguments;
+        return &m_maxArgumentCountIncludingThis;
     }
 
-    uint32_t maxNumArguments()
+    uint32_t maxArgumentCountIncludingThis()
     {
-        return m_maxNumArguments;
+        return m_maxArgumentCountIncludingThis;
     }
     
-    void setMaxNumArguments(unsigned);
+    void setMaxArgumentCountIncludingThis(unsigned);
 
     static ptrdiff_t offsetOfSlowPathCount()
     {
@@ -342,7 +342,7 @@ public:
     }
 
 private:
-    uint32_t m_maxNumArguments { 0 }; // For varargs: the profiled maximum number of arguments. For direct: the number of stack slots allocated for arguments.
+    uint32_t m_maxArgumentCountIncludingThis { 0 }; // For varargs: the profiled maximum number of arguments. For direct: the number of stack slots allocated for arguments.
     CodeLocationLabel<JSInternalPtrTag> m_callReturnLocationOrPatchableJump;
     CodeLocationLabel<JSInternalPtrTag> m_hotPathBeginOrSlowPathStart;
     CodeLocationNearCall<JSInternalPtrTag> m_hotPathOther;

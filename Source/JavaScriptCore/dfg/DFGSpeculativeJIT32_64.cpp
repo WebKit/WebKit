@@ -826,7 +826,7 @@ void SpeculativeJIT::emitCall(Node* node)
 
     if (isDirect) {
         info->setExecutableDuringCompilation(executable);
-        info->setMaxNumArguments(numAllocatedArgs);
+        info->setMaxArgumentCountIncludingThis(numAllocatedArgs);
 
         if (isTail) {
             RELEASE_ASSERT(node->op() == DirectTailCall);

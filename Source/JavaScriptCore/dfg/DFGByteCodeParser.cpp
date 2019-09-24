@@ -1831,7 +1831,7 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, VirtualRegister
     NodeType callOp, InlineCallFrame::Kind kind)
 {
     VERBOSE_LOG("Handling inlining (Varargs)...\nStack: ", currentCodeOrigin(), "\n");
-    if (callLinkStatus.maxNumArguments() > Options::maximumVarargsForInlining()) {
+    if (callLinkStatus.maxArgumentCountIncludingThis() > Options::maximumVarargsForInlining()) {
         VERBOSE_LOG("Bailing inlining: too many arguments for varargs inlining.\n");
         return false;
     }
@@ -1849,16 +1849,16 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, VirtualRegister
         mandatoryMinimum = 0;
     
     // includes "this"
-    unsigned maxNumArguments = std::max(callLinkStatus.maxNumArguments(), mandatoryMinimum + 1);
+    unsigned maxArgumentCountIncludingThis = std::max(callLinkStatus.maxArgumentCountIncludingThis(), mandatoryMinimum + 1);
 
     CodeSpecializationKind specializationKind = InlineCallFrame::specializationKindFor(kind);
-    if (inliningCost(callVariant, maxNumArguments, kind) > getInliningBalance(callLinkStatus, specializationKind)) {
+    if (inliningCost(callVariant, maxArgumentCountIncludingThis, kind) > getInliningBalance(callLinkStatus, specializationKind)) {
         VERBOSE_LOG("Bailing inlining: inlining cost too high.\n");
         return false;
     }
     
-    int registerOffset = firstFreeReg + 1;
-    registerOffset -= maxNumArguments; // includes "this"
+    int registerOffset = firstFreeReg;
+    registerOffset -= maxArgumentCountIncludingThis;
     registerOffset -= CallFrame::headerSizeInRegisters;
     registerOffset = -WTF::roundUpToMultipleOf(stackAlignmentRegisters(), -registerOffset);
 
@@ -1879,7 +1879,7 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, VirtualRegister
         data->start = VirtualRegister(remappedArgumentStart + 1);
         data->count = VirtualRegister(remappedRegisterOffset + CallFrameSlot::argumentCount);
         data->offset = argumentsOffset;
-        data->limit = maxNumArguments;
+        data->limit = maxArgumentCountIncludingThis;
         data->mandatoryMinimum = mandatoryMinimum;
         
         if (callOp == TailCallForwardVarargs)
@@ -1908,7 +1908,7 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, VirtualRegister
         
         set(VirtualRegister(argumentStart), get(thisArgument), ImmediateNakedSet);
         unsigned numSetArguments = 0;
-        for (unsigned argument = 1; argument < maxNumArguments; ++argument) {
+        for (unsigned argument = 1; argument < maxArgumentCountIncludingThis; ++argument) {
             VariableAccessData* variable = newVariableAccessData(VirtualRegister(remappedArgumentStart + argument));
             variable->mergeShouldNeverUnbox(true); // We currently have nowhere to put the type check on the LoadVarargs. LoadVarargs is effectful, so after it finishes, we cannot exit.
             
@@ -1942,7 +1942,7 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, VirtualRegister
     // those arguments. Even worse, if the intrinsic decides to exit, it won't really have anywhere to
     // exit to: LoadVarargs is effectful and it's part of the op_call_varargs, so we can't exit without
     // calling LoadVarargs twice.
-    inlineCall(callTargetNode, result, callVariant, registerOffset, maxNumArguments, kind, nullptr, insertChecks);
+    inlineCall(callTargetNode, result, callVariant, registerOffset, maxArgumentCountIncludingThis, kind, nullptr, insertChecks);
 
     for (VirtualRegister reg : setArgumentMaybes)
         setDirect(reg, jsConstant(jsUndefined()), ImmediateNakedSet);

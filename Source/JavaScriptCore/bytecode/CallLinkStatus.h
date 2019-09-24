@@ -104,7 +104,7 @@ public:
 
     bool isClosureCall() const; // Returns true if any callee is a closure call.
     
-    unsigned maxNumArguments() const { return m_maxNumArguments; }
+    unsigned maxArgumentCountIncludingThis() const { return m_maxArgumentCountIncludingThis; }
     
     bool finalize(VM&);
     
@@ -129,7 +129,7 @@ private:
     bool m_couldTakeSlowPath { false };
     bool m_isProved { false };
     bool m_isBasedOnStub { false };
-    unsigned m_maxNumArguments { 0 };
+    unsigned m_maxArgumentCountIncludingThis { 0 };
 };
 
 } // namespace JSC
