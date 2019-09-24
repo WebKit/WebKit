@@ -89,13 +89,13 @@ public:
     void createIndex(UniqueIDBDatabaseTransaction&, const IDBIndexInfo&, ErrorCallback);
     void deleteIndex(UniqueIDBDatabaseTransaction&, uint64_t objectStoreIdentifier, const String& indexName, ErrorCallback);
     void renameIndex(UniqueIDBDatabaseTransaction&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName, ErrorCallback);
-    void putOrAdd(const IDBRequestData&, const IDBKeyData&, const IDBValue&, IndexedDB::ObjectStoreOverwriteMode, KeyDataCallback);
-    void getRecord(const IDBRequestData&, const IDBGetRecordData&, GetResultCallback);
-    void getAllRecords(const IDBRequestData&, const IDBGetAllRecordsData&, GetAllResultsCallback);
-    void getCount(const IDBRequestData&, const IDBKeyRangeData&, CountCallback);
-    void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&, ErrorCallback);
-    void openCursor(const IDBRequestData&, const IDBCursorInfo&, GetResultCallback);
-    void iterateCursor(const IDBRequestData&, const IDBIterateCursorData&, GetResultCallback);
+    void putOrAdd(UniqueIDBDatabaseTransaction&, const IDBRequestData&, const IDBKeyData&, const IDBValue&, IndexedDB::ObjectStoreOverwriteMode, KeyDataCallback);
+    void getRecord(UniqueIDBDatabaseTransaction&, const IDBRequestData&, const IDBGetRecordData&, GetResultCallback);
+    void getAllRecords(UniqueIDBDatabaseTransaction&, const IDBRequestData&, const IDBGetAllRecordsData&, GetAllResultsCallback);
+    void getCount(UniqueIDBDatabaseTransaction&, const IDBRequestData&, const IDBKeyRangeData&, CountCallback);
+    void deleteRecord(UniqueIDBDatabaseTransaction&, const IDBRequestData&, const IDBKeyRangeData&, ErrorCallback);
+    void openCursor(UniqueIDBDatabaseTransaction&, const IDBRequestData&, const IDBCursorInfo&, GetResultCallback);
+    void iterateCursor(UniqueIDBDatabaseTransaction&, const IDBRequestData&, const IDBIterateCursorData&, GetResultCallback);
     void commitTransaction(UniqueIDBDatabaseTransaction&, ErrorCallback);
 
     enum class WaitForPendingTasks { No, Yes };
@@ -247,8 +247,8 @@ private:
     void maybeFinishHardClose();
     bool isDoneWithHardClose();
 
-    void requestSpace(uint64_t taskSize, const char* errorMessage, CompletionHandler<void(Optional<IDBError>&&)>&&);
-    void waitForRequestSpaceCompletion(CompletionHandler<void(Optional<IDBError>&&)>&&);
+    void requestSpace(UniqueIDBDatabaseTransaction&, uint64_t taskSize, const char* errorMessage, CompletionHandler<void(Optional<IDBError>&&)>&&);
+    void waitForRequestSpaceCompletion(UniqueIDBDatabaseTransaction&, CompletionHandler<void(Optional<IDBError>&&)>&&);
     void updateSpaceUsedIfNeeded(Optional<uint64_t> optionalCallbackIdentifier = WTF::nullopt);
 
     Ref<IDBServer> m_server;

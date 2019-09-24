@@ -1,3 +1,51 @@
+2019-09-24  Sihui Liu  <sihui_liu@apple.com>
+
+        Stop refing UniqueIDBDatabaseTransaction in callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=202074
+
+        Reviewed by Youenn Fablet.
+
+        After quota check is introduced to IDB, callbacks that take the ref of UniqueIDBDatabaseTransaction will be 
+        passed to StorageQuotaManager. This can make UniqueIDBDatabaseTransaction live longer than UniqueIDBDatabase.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::requestSpace):
+        (WebCore::IDBServer::UniqueIDBDatabase::waitForRequestSpaceCompletion):
+        (WebCore::IDBServer::UniqueIDBDatabase::createObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::renameObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::clearObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::createIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::renameIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::putOrAdd):
+        (WebCore::IDBServer::UniqueIDBDatabase::getRecord):
+        (WebCore::IDBServer::UniqueIDBDatabase::getAllRecords):
+        (WebCore::IDBServer::UniqueIDBDatabase::getCount):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteRecord):
+        (WebCore::IDBServer::UniqueIDBDatabase::openCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::iterateCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::commitTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::abortTransaction):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::abort):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::commit):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::createObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::deleteObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::renameObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::clearObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::createIndex):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::deleteIndex):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::renameIndex):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::putOrAdd):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::getRecord):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::getAllRecords):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::getCount):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::deleteRecord):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::openCursor):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::iterateCursor):
+
 2019-09-24  Keith Rollin  <krollin@apple.com>
 
         Coalesce or remove PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
