@@ -120,6 +120,28 @@ void MixedContentChecker::checkFormForMixedContent(SecurityOrigin& securityOrigi
     client().didDisplayInsecureContent();
 }
 
+Optional<String> MixedContentChecker::checkForMixedContentInFrameTree(const URL& url)
+{
+    auto* document = m_frame.document();
+
+    while (document) {
+        RELEASE_ASSERT_WITH_MESSAGE(document->frame(), "An unparented document tried to connect to a websocket with url: %s", url.string().utf8().data());
+        
+        auto* frame = document->frame();
+        if (isMixedContent(document->securityOrigin(), url))
+            return makeString("The page at ", document->url().stringCenterEllipsizedToLength(), " was blocked from connecting insecurely to ", url.stringCenterEllipsizedToLength(), " either because the protocol is insecure or the page is embedded from an insecure page.");
+
+        if (frame->isMainFrame())
+            break;
+
+        frame = frame->tree().parent();
+        RELEASE_ASSERT_WITH_MESSAGE(frame, "Should never have a parentless non main frame");
+        document = frame->document();
+    }
+    
+    return WTF::nullopt;
+}
+
 void MixedContentChecker::logWarning(bool allowed, const String& action, const URL& target) const
 {
     const char* errorString = allowed ? " was allowed to " : " was not allowed to ";

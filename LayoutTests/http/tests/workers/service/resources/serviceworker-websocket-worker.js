@@ -6,8 +6,7 @@ async function doTest(event)
     }
 
     try {
-        var webSocket = new WebSocket('ws://localhost:8880/websocket/tests/hybi/workers/resources/echo');
-
+        var webSocket = new WebSocket('wss://localhost:9323/websocket/tests/hybi/workers/resources/echo');
         webSocket.onerror = (e) => {
             event.source.postMessage("FAIL: websocket had an error: " + e);
         };

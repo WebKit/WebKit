@@ -33,6 +33,7 @@
 
 #include "Blob.h"
 #include "Document.h"
+#include "FrameLoader.h"
 #include "ScriptExecutionContext.h"
 #include "SocketProvider.h"
 #include "ThreadableWebSocketChannelClientWrapper.h"
@@ -402,8 +403,19 @@ void WorkerThreadableWebSocketChannel::Bridge::connect(const URL& url, const Str
 
     m_loaderProxy.postTaskToLoader([peer = m_peer, url = url.isolatedCopy(), protocol = protocol.isolatedCopy()](ScriptExecutionContext& context) {
         ASSERT(isMainThread());
-        ASSERT_UNUSED(context, context.isDocument());
+        ASSERT(context.isDocument());
         ASSERT(peer);
+
+        auto& document = downcast<Document>(context);
+        
+        // FIXME: make this mixed content check equivalent to the document mixed content check currently in WebSocket::connect()
+        if (document.frame()) {
+            Optional<String> errorString = document.frame()->loader().mixedContentChecker().checkForMixedContentInFrameTree(url);
+            if (errorString) {
+                peer->fail(errorString.value());
+                return;
+            }
+        }
 
         if (peer->connect(url, protocol) == ThreadableWebSocketChannel::ConnectStatus::KO)
             peer->didReceiveMessageError();

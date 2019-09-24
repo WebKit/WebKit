@@ -1,3 +1,34 @@
+2019-09-24  Kate Cheney  <katherine_cheney@apple.com>
+
+        Mixed content blocking is bypassed for WebSockets in Workers (159726)
+        https://bugs.webkit.org/show_bug.cgi?id=159726
+        <rdar://problem/27326438>
+
+        Reviewed by Brady Eidson.
+
+        Tests: http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https-with-embedded-http.html
+               http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https.html
+               http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-https-with-embedded-http-with-embedded-https.https.html
+               http/tests/websocket/tests/hybi/non-document-mixed-content-blocked.https.html
+        
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::connect):
+        * loader/MixedContentChecker.cpp:
+        (WebCore::MixedContentChecker::checkForMixedContentInFrameTree):
+        * loader/MixedContentChecker.h:
+        Patch to block insecure WebSocket URL connection attempts by Workers
+        on secure pages. If the URL is ws, and any embedding iframe has protocol
+        https, and the context is a Worker, the connection should be blocked.
+
+        I was unable to write a test case to hit the case where a document
+        does not have a frame and tries to communicate via a worker to
+        connect to a WebSocket because after removing the subframe from its
+        parent, the subframe is unable to perform a postMessage to a worker
+        even in the same script execution to tell the worker to connect
+        to a WebSocket.
+
 2019-09-24  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Line::Content should use LineBox

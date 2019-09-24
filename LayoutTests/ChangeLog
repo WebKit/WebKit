@@ -1,3 +1,48 @@
+2019-09-24  Kate Cheney  <katherine_cheney@apple.com>
+
+        Mixed content blocking is bypassed for WebSockets in Workers (159726)
+        https://bugs.webkit.org/show_bug.cgi?id=159726
+        <rdar://problem/27326438>
+
+        Reviewed by Brady Eidson.
+
+        Added 4 test cases and 2 html resources utilized by the tests.
+        The cases test the following: 
+        1. an https page with a worker trying to connect via ws: url -->
+        fails.
+        2. an https page embedded in an http page trying to connect via ws
+        :url (through a worker) --> fails.
+        3. an http page embedded in an https page with an http top frame
+        trying to connect via an insecure ws url fails.
+        4. an https page embedded in an http page embedded in an https page
+        trying to connect to a ws :url via a worker --> fails.
+
+        * http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https-with-embedded-http-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https-with-embedded-http.html: Added.
+        * http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https.html: Added.
+        * http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-https-with-embedded-http-with-embedded-https.https-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-https-with-embedded-http-with-embedded-https.https.html: Added.
+        * http/tests/websocket/tests/hybi/non-document-mixed-content-blocked.https-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/non-document-mixed-content-blocked.https.html: Added.
+        * http/tests/websocket/tests/hybi/resources/non-document-mixed-content-blocked-embedded-http.https.html: Added.
+        * http/tests/websocket/tests/hybi/resources/non-document-mixed-content-blocked-embedding-https.js: Added.
+        (handleConnect.self.postMessage):
+        (handleConnect):
+        (runTests.ws.onopen):
+        (runTests.ws.onerror):
+        (runTests):
+        * http/tests/websocket/tests/hybi/resources/non-document-mixed-content-blocked.html: Added.
+        * http/tests/websocket/tests/hybi/resources/non-document-mixed-content-blocked.js: Added.
+        (handleConnect.self.postMessage):
+        (handleConnect):
+        (runTests.ws.onopen):
+        (runTests.ws.onerror):
+        (runTests):
+        * http/tests/workers/service/resources/serviceworker-websocket-worker.js:
+        (async.doTest):
+        Updated previous test which was hitting the fix to use a wss url 
+
 2019-09-23  Youenn Fablet  <youenn@apple.com>
 
         Support sync-xhr feature policy
