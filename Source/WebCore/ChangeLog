@@ -1,3 +1,80 @@
+2019-09-24  Kate Cheney  <katherine_cheney@apple.com>
+
+        Enable LayoutTests using ResourceLoadStatistics SQLite backend (195420)
+        https://bugs.webkit.org/show_bug.cgi?id=195420
+        <rdar://problem/54213551> 
+
+        Reviewed by Brent Fulgham.
+
+        Tests: http/tests/resourceLoadStatistics/add-blocking-to-redirect-database.html
+               http/tests/resourceLoadStatistics/blocking-in-web-worker-script-import-database.html
+               http/tests/resourceLoadStatistics/cap-cache-max-age-for-prevalent-resource-database.html
+               http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-database.html
+               http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-decoration-same-site-database.html
+               http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-fragment-from-prevalent-resource-database.html
+               http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-and-fragment-from-prevalent-resource-database.html
+               http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-from-prevalent-resource-database.html
+               http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-without-link-decoration-from-prevalent-resource-database.html
+               http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-mixed-statistics-database.html
+               http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-sub-frame-under-top-frame-origins-database.html
+               http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-under-top-frame-origins-database.html
+               http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-unique-redirects-to-database.html
+               http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-mixed-statistics-database.html
+               http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-sub-frame-under-top-frame-origins-database.html
+               http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-collusion-database.html
+               http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-to-prevalent-database.html
+               http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-under-top-frame-origins-database.html
+               http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-unique-redirects-to-database.html
+               http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion-database.html
+               http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-to-prevalent-database.html
+               http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-unique-redirects-to-database.html
+               http/tests/resourceLoadStatistics/classify-as-very-prevalent-based-on-mixed-statistics-database.html
+               http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-database.html
+               http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour-database.html
+               http/tests/resourceLoadStatistics/cookie-deletion-database.html
+               http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction-database.html
+               http/tests/resourceLoadStatistics/delete-script-accessible-cookies-database.html
+               http/tests/resourceLoadStatistics/do-not-block-top-level-navigation-redirect-database.html
+               http/tests/resourceLoadStatistics/do-not-capture-statistics-for-simple-top-navigations-database.html
+               http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect-database.html
+               http/tests/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction-database.html
+               http/tests/resourceLoadStatistics/downgraded-referrer-for-navigation-with-link-query-from-prevalent-resource-database.html
+               http/tests/resourceLoadStatistics/enable-debug-mode-database.html
+               http/tests/resourceLoadStatistics/grandfathering-database.html
+               http/tests/resourceLoadStatistics/non-prevalent-resource-with-user-interaction-database.html
+               http/tests/resourceLoadStatistics/non-prevalent-resource-without-user-interaction-database.html
+               http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context-database.html
+               http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-ip-to-localhost-to-ip-database.html
+               http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database.html
+               http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip-database.html
+               http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database.html
+               http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip-database.html
+               http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database.html
+               http/tests/resourceLoadStatistics/ping-to-prevalent-resource-database.html
+               http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown-database.html
+               http/tests/resourceLoadStatistics/prevalent-resource-unhandled-keydown-database.html
+               http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction-database.html
+               http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout-database.html
+               http/tests/resourceLoadStatistics/prevalent-resource-without-user-interaction-database.html
+               http/tests/resourceLoadStatistics/prune-statistics-database.html
+               http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-ip-to-localhost-to-ip-database.html
+               http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database.html
+               http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip-database.html
+               http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database.html
+               http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip-database.html
+               http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database.html
+               http/tests/resourceLoadStatistics/set-custom-prevalent-resource-in-debug-mode-database.html
+               http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-redirects-database.html
+               http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-requests-database.html
+               http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction-database.html
+               http/tests/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame-database.html
+               http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time-database.html
+               http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-removal-database.html
+
+        * platform/sql/SQLiteDatabase.h:
+        Added WEBCORE_EXPORT prefix to 2 functions needed in the ITP Database 
+        to clear out the database.
+
 2019-09-24  Chris Dumez  <cdumez@apple.com>
 
         Stop sampling PageCache-related AggD data

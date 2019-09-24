@@ -1691,6 +1691,14 @@ void WebsiteDataStore::setGrandfathered(const URL& url, bool isGrandfathered, Co
     }
 }
 
+void WebsiteDataStore::setUseITPDatabase(bool value)
+{
+    ASSERT(RunLoop::isMain());
+
+    for (auto& processPool : processPools())
+        processPool->ensureNetworkProcess().setUseITPDatabase(m_sessionID, value);
+}
+
 void WebsiteDataStore::setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());

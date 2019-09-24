@@ -1,3 +1,170 @@
+2019-09-24  Kate Cheney  <katherine_cheney@apple.com>
+
+        Enable LayoutTests using ResourceLoadStatistics SQLite backend (195420)
+        https://bugs.webkit.org/show_bug.cgi?id=195420
+        <rdar://problem/54213551>
+
+        Reviewed by Brent Fulgham.
+
+        Changed all RELEASE_LOG_ERROR() calls involving domain strings to
+        RELEASE_LOG_ERROR_IF_ALLOWED() to prevent leaking information about
+        the domain strings only if sessionID.isAlwaysOnLoggingAllowed().
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore):
+        Added autovacuuming to the constructor to avoid manually calling
+        runVacuumCommand(). Changed constructor to take in sessionID so it
+        can use RELEASE_LOG_ERROR_IF_ALLOWED which requires the sessionID.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::prepareStatements):
+        Added 2 statements that were not being prepared.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::relationshipExists const):
+        Corrected incorrect capitalization. Added check for nullopt in case
+        domainID is for a domain not in the database yet.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::domainID const):
+        Changed return value to Optional<unsigned>. Some tests were directly
+        checking for subframes under top frame domains on domains that had
+        not been inserted yet. Now, domainID() won't crash but will return
+        a nullopt value which can be checked to know that the tests failed.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertDomainRelationships):
+        Added a check to assure domainID exists and updated the domainID
+        interactions to work as Optionals.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::populateFromMemoryStore):
+        Moved the prepareStatements() call after the vacuum command in the case
+        where the database is empty. Otherwise called it before returning.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::recursivelyFindNonPrevalentDomainsThatRedirectedToThisDomain):
+        Added a space to the SQL commands to correct the syntax.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::findNotVeryPrevalentResources):
+        Corrected a bug in the SQL command for querying
+        subframeUnderTopFrameDomain. The old query was asking for subresource.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::reclassifyResources):
+        Spelling fix.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::requestStorageAccess):
+        Changed string concatenation to binding.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grandfatherDataForDomains):
+        The grandfathering.html test was failing because domains were being
+        "set" to grandfathered in the database before being inserted. This fix
+        ensures all domains before setting the grandfathering flag.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::logFrameNavigation):
+        Multiple tests were failing because the query to insert the relationship
+        for the source domain relies on the target domain being in the
+        ObservedDomains table. This patch ensures all domains are added before
+        performing the query.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setUserInteraction):
+        Added a != SQLITE_OK check to make sure an error is logged if the
+        statement fails to bind.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearUserInteraction):
+        Changed string concatenation to binding.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasHadUserInteraction):   
+        The SQL statement was being bound to a value and not being reset. This
+        patch resets the statement after binding. Additionally, the step()
+        function was being compared to SQLITE_DONE instead of SQLITE_ROW,
+        causing an error if the query returned results. The
+        ASSERT_NOT_REACHED() was causing null searches to crash instead of
+        returning false (i.e. if a domain is not in the database it should
+        return that it has no user interaction instead of crashing).
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setPrevalentResource): 
+        Updated domainID call to act as an Optional. 
+        
+        (WebKit::ResourceLoadStatisticsDatabaseStore::predicateValueForDomain const):
+        The SQL statement was being bound to a value and not being reset. This
+        patch resets the statement after binding. SQLITE_DONE changed to
+        SQLITE_ROW to return non-empty query results. ASSERT_NOT_REACHED()
+        removed for the same reasons as above. 
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ensureResourceStatisticsForRegistrableDomain):
+        Fixed the release log statement which was logging the wrong function 
+        name.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearDatabaseContents): 
+        Clears the database and rebuilds the tables on a clear command to
+        match the functionality in the Memory Store.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clear):                   
+        Call the clearDatabaseContents function to match the functionality 
+        in the Memory Store. 
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasUserGrantedStorageAccessThroughPrompt const):
+        Updated domainID call to act as an Optional. 
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasHadUnexpiredRecentUserInteraction):
+        Tests were failing because shouldRemoveAllWebsiteDataFor() was not 
+        checking for expired user interaction. Matched functionality in the
+        Memory Store.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::shouldRemoveAllWebsiteDataFor):
+        Tests were failing because shouldRemoveAllWebsiteDataFor() was not 
+        checking for expired user interaction. Matched functionality in the
+        Memory Store. 
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::registrableDomainsToRemoveWebsiteDataFor):
+        Spelling fix. 
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::pruneStatisticsIfNeeded): 
+        Last seen should be sorted in ascending order because you want to 
+        prune the older statistics first, which will have a lower lastSeen
+        field (secondsSinceEpoch() will be lower for older values).
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::shouldRemoveAllWebsiteDataFor const): Deleted.
+        Deleted const specifier because the function needs to clear the
+        database. 
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:      
+        Declared new functions. Updated spelling error (registerable --> 
+        registrable). Updated constructor to take sessionID. 
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp: 
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        ITP database flag now is stored in the NetworkProcess.
+        * NetworkProcess/NetworkProcess.cpp: 
+
+        (WebKit::NetworkProcess::initializeNetworkProcess): 
+        Set the ITP database flag which is now stored in the Network Process. 
+
+        (WebKit::NetworkProcess::addWebsiteDataStore):
+        SandboxExtension::consumePermanently was not getting called on the 
+        WebKitTestRunner resourceLoadStatistics path. This was preventing
+        the database file from opening. 
+
+        (WebKit::NetworkProcess::setUseITPDatabase): 
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::isITPDatabaseEnabled const):
+        * NetworkProcess/NetworkProcess.messages.in:
+        Passed the setUseITPDatabase flag to the initialization function 
+        of the statistics store to enable the database backend.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::recreateResourceLoadStatisticStore):
+        Destroy old WebResourceLoadStatisticsStore and create a new one using
+        the ITP database.
+
+        * NetworkProcess/NetworkSession.h:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetUseITPDatabase):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::setUseITPDatabase):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setUseITPDatabase):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        Passed the setUseITPDatabase flag to the initialization function
+        of the statistics store to enable the database backend. 
+
 2019-09-24  Alex Christensen  <achristensen@webkit.org>
 
         Make iOS WebProcessPool directory getters static
