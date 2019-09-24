@@ -94,11 +94,16 @@ TEST(FocusPreservationTests, ChangingFocusedNodeResetsFocusPreservationState)
     [webView evaluateJavaScript:@"document.querySelector('select').focus()" completionHandler:nil];
     Util::run(&selectFocused);
 
-    EXPECT_NOT_NULL(webView.textInputContentView.inputView);
+    BOOL isPhone = [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone;
+    if (isPhone)
+        EXPECT_NOT_NULL(webView.textInputContentView.inputView);
+
     [webView selectFormAccessoryPickerRow:1];
     [webView dismissFormAccessoryView];
-    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"document.activeElement == document.querySelector('select')"].boolValue);
     EXPECT_EQ(1, [webView stringByEvaluatingJavaScript:@"document.querySelector('select').selectedIndex"].intValue);
+
+    if (isPhone)
+        EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"document.activeElement == document.querySelector('select')"].boolValue);
 
     [webView.textInputContentView _restoreFocusWithToken:focusToken];
 }

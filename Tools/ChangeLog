@@ -1,3 +1,17 @@
+2019-09-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        FocusPreservationTests.ChangingFocusedNodeResetsFocusPreservationState triggers a debug assertion
+        https://bugs.webkit.org/show_bug.cgi?id=202145
+        <rdar://problem/51273128>
+
+        Reviewed by Tim Horton.
+
+        Fixes this API test to work on iPad as well as iPhone. Importantly, we show a popover when focusing
+        select elements on iPad, which means that there is no -inputView present on WKContentView, and upon
+        dismissing the form accessory view, the select element is still focused.
+
+        * TestWebKitAPI/Tests/ios/FocusPreservationTests.mm:
+
 2019-09-25  Cathie Chen  <cathiechen@igalia.com>
 
         Add Cathie Chen as WebKit committer

@@ -270,7 +270,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
     
     CGRect textRect = [cell textRectForContentRect:[cell contentRectForBounds:[cell bounds]]];
-    ASSERT(textRect.size.width > 0.0);
+    ASSERT_IMPLIES(CGRectGetWidth(tableView.bounds) > 0, textRect.size.width > 0);
     
     // Assume all cells have the same available text width.
     UIFont *font = cell.textLabel.font;
