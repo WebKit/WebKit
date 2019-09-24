@@ -1,3 +1,49 @@
+2019-09-24  Zhifei Fang  <zhifei_fang@apple.com>
+
+        Add tests for Ref.js.
+        https://bugs.webkit.org/show_bug.cgi?id=201778.
+
+        Reviewed by Jonathan Bedard.
+
+        * resultsdbpy/resultsdbpy/view/static/library/js/Ref.js:
+        (applyStateDiff): null, 0, false are all valid state
+        (Ref.prototype.setState): We should do nothing for undefined stateDiff
+        * resultsdbpy/resultsdbpy/view/static/library/js/Test.js: Added.
+        (AssertFailedError):
+        (Expect): Perform assertions during unit tests.
+        (Expect.prototype.isType):
+        (Expect.prototype.equalToValue):
+        (Expect.prototype.equalToHtmlWithoutRef):
+        (Expect.prototype.notEqualToValue):
+        (Expect.prototype.greaterThan):
+        (Expect.prototype.greaterThanOrEqualTo):
+        (Expect.prototype.lessThan):
+        (Expect.prototype.lessThanOrEqualTo):
+        (TestSuite): Common TestSuite class for user to extend. 
+        (TestSuite.prototype.expect):
+        (TestSuite.prototype.sleep): Test will sleep for certain ms
+        (TestSuite.prototype.waitForSignal): Wait until we receive a certain signal with timeout
+        (TestSuite.prototype.waitForRefMounted): Wait until we receive ref object's onElementMount signal with timeout
+        (TestSuite.prototype.waitForRefUnmounted): Wait until we receive ref object's onElementUnmount signal with timeout
+        (TestSuite.prototype.waitForStateUpdated):Wait until we receive ref object's onStateUpdate signal with timeout
+        (TestSuite.prototype.async.setup): Common interface for setup a test suite
+        (TestSuite.prototype.async.clearUp): Common interface for clear up a test suite
+        (getTestFucntionNames): Collect all the test method of a test instance.
+        (TestResult):
+        (TestResult.prototype.catchException):
+        (async.getTestResult): Run the test and generate a TestResult object
+        (TestController):
+        (TestController.prototype.addResultHandler): Test controller will send notification of a test result to result handler
+        (TestController.prototype.addSetupArgs): This gives some additional args for the common setup method for each test class, 
+        it is the best place to setup something like a root element, a fake data source, etc
+        (TestController.prototype.collect): This method used for collect the test classes.
+        (TestController.prototype.async.collectFile): It will import the file as a module dynamicly and collect all the test classes that module export
+        (TestController.prototype.async.runTest): It will run a test method of a test class
+        (TestController.prototype.async.run): It will run all test or a test class or a test method
+        * resultsdbpy/resultsdbpy/view/static/library/js/components/TestComponents.js: components for test app.
+        * resultsdbpy/resultsdbpy/view/static/library/js/test/RefTest.js: Ref.js test cases.
+        * resultsdbpy/resultsdbpy/view/static/library/js/test/index.html: Test app entry.
+
 2019-09-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         FocusPreservationTests.ChangingFocusedNodeResetsFocusPreservationState triggers a debug assertion

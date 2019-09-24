@@ -217,7 +217,7 @@ function isMergeableState(state) {
 }
 
 function applyStateDiff(state, diff) {
-    if (!diff)
+    if (diff === undefined)
         return state;
     if (!isMergeableState(diff))
         return diff;
@@ -275,6 +275,8 @@ class Ref {
         return this.key;
     }
     setState(stateDiff) {
+        if (stateDiff === undefined)
+            return;
         if (TRACE_STATE)
             this.stateTracer.push(stateDiff);
         else
