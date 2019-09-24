@@ -1,3 +1,14 @@
+2019-09-24  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] ANGLE's eglplatform.h is build broken with -DENABLE_X11_PLATFORM=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=198621
+
+        Reviewed by Carlos Garcia Campos.
+
+        * PlatformGTK.cmake: Define WL_EGL_PLATFORM to prefer Wayland type
+        definitions with ENABLE_WAYLAND_TARGET=ON and ENABLE_X11_TARGET=OFF
+        to avoid ANGLE's eglplatform.h from trying to include the X11 headers.
+
 2019-09-16  James Darpinian  <jdarpinian@chromium.org>
 
         Remove commit.h copying build steps
