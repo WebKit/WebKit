@@ -493,48 +493,39 @@ static NSString *pathToPDFOnDisk(const String& suggestedFilename)
     return path;
 }
 
-void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplicationRaw(const String& suggestedFilename, const String& originatingURLString, const uint8_t* data, unsigned long size, const String& pdfUUID)
+void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, const String& originatingURLString, const IPC::DataReference& data, const String& pdfUUID)
 {
     // FIXME: Write originatingURLString to the file's originating URL metadata (perhaps FileSystem::setMetadataURL()?).
     UNUSED_PARAM(originatingURLString);
 
-    if (!suggestedFilename.endsWithIgnoringASCIICase(".pdf")) {
-        WTFLogAlways("Cannot save file without .pdf extension to the temporary directory.");
-        return;
-    }
-
-    if (!size) {
+    if (data.isEmpty()) {
         WTFLogAlways("Cannot save empty PDF file to the temporary directory.");
         return;
     }
 
-    NSString *nsPath = pathToPDFOnDisk(suggestedFilename);
+    auto sanitizedFilename = ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename);
+    if (!sanitizedFilename.endsWithIgnoringASCIICase(".pdf")) {
+        WTFLogAlways("Cannot save file without .pdf extension to the temporary directory.");
+        return;
+    }
+
+    NSString *nsPath = pathToPDFOnDisk(sanitizedFilename);
 
     if (!nsPath)
         return;
 
     RetainPtr<NSNumber> permissions = adoptNS([[NSNumber alloc] initWithInt:S_IRUSR]);
     RetainPtr<NSDictionary> fileAttributes = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:permissions.get(), NSFilePosixPermissions, nil]);
-    RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytesNoCopy:(void*)data length:size freeWhenDone:NO]);
+    RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytesNoCopy:(void*)data.data() length:data.size() freeWhenDone:NO]);
 
     if (![[NSFileManager defaultManager] createFileAtPath:nsPath contents:nsData.get() attributes:fileAttributes.get()]) {
-        WTFLogAlways("Cannot create PDF file in the temporary directory (%s).", suggestedFilename.utf8().data());
+        WTFLogAlways("Cannot create PDF file in the temporary directory (%s).", sanitizedFilename.utf8().data());
         return;
     }
 
     m_temporaryPDFFiles.add(pdfUUID, nsPath);
 
     [[NSWorkspace sharedWorkspace] openFile:nsPath];
-}
-
-void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, const String& originatingURLString, const IPC::DataReference& data, const String& pdfUUID)
-{
-    if (data.isEmpty()) {
-        WTFLogAlways("Cannot save empty PDF file to the temporary directory.");
-        return;
-    }
-
-    savePDFToTemporaryFolderAndOpenWithNativeApplicationRaw(suggestedFilename, originatingURLString, data.data(), data.size(), pdfUUID);
 }
 
 void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String& pdfUUID)
