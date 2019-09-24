@@ -1,3 +1,16 @@
+2019-09-24  Youenn Fablet  <youenn@apple.com>
+
+        Delay capture sandbox extension revocation to after the page close message is sent
+        https://bugs.webkit.org/show_bug.cgi?id=202133
+
+        Reviewed by Eric Carlson.
+
+        This ensures that the sandbox extension is removed once no longer useful
+        and makes our WebProcess assertions fine.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::~UserMediaPermissionRequestManagerProxy):
+
 2019-09-23  Chris Dumez  <cdumez@apple.com>
 
         Drop unnecessary SessionID.h header includes

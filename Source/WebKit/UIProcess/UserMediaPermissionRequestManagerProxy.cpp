@@ -84,7 +84,9 @@ UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy(W
 UserMediaPermissionRequestManagerProxy::~UserMediaPermissionRequestManagerProxy()
 {
 #if ENABLE(MEDIA_STREAM)
-    UserMediaProcessManager::singleton().revokeSandboxExtensionsIfNeeded(page().process());
+    callOnMainRunLoop([process = makeRef(page().process())] {
+        UserMediaProcessManager::singleton().revokeSandboxExtensionsIfNeeded(process);
+    });
     proxies().remove(this);
 #endif
     invalidatePendingRequests();
