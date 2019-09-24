@@ -1227,7 +1227,7 @@ void WebPageProxy::requestAdditionalItemsForDragSession(const IntPoint& clientPo
 void WebPageProxy::insertDroppedImagePlaceholders(const Vector<IntSize>& imageSizes, CompletionHandler<void(const Vector<IntRect>&, Optional<WebCore::TextIndicatorData>)>&& completionHandler)
 {
     if (hasRunningProcess())
-        m_process->connection()->sendWithAsyncReply(Messages::WebPage::InsertDroppedImagePlaceholders(imageSizes), WTFMove(completionHandler), m_webPageID);
+        m_process->connection()->sendWithAsyncReply(Messages::WebPage::InsertDroppedImagePlaceholders(imageSizes), WTFMove(completionHandler), m_pageID);
     else
         completionHandler({ }, WTF::nullopt);
 }
