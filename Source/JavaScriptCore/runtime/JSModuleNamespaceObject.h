@@ -104,7 +104,7 @@ private:
     Vector<Identifier> m_names;
     WriteBarrier<AbstractModuleRecord> m_moduleRecord;
 
-    friend class VMInspector;
+    friend size_t cellSize(VM&, JSCell*);
 };
 
 } // namespace JSC

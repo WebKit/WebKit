@@ -140,18 +140,6 @@ inline constexpr bool isTypedArrayType(JSType type)
     return (static_cast<uint32_t>(type) - FirstTypedArrayType) < NumberOfTypedArrayTypesExcludingDataView;
 }
 
-inline constexpr bool isDynamicallySizedType(JSType type)
-{
-    if (type == BigIntType
-        || type == DirectArgumentsType
-        || type == FinalObjectType
-        || type == LexicalEnvironmentType
-        || type == ModuleEnvironmentType
-        || type == ModuleNamespaceObjectType)
-        return true;
-    return false;
-}
-
 } // namespace JSC
 
 namespace WTF {

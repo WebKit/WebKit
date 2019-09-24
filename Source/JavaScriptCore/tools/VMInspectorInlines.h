@@ -25,11 +25,7 @@
 
 #pragma once
 
-#include "DirectArguments.h"
-#include "JSBigInt.h"
-#include "JSLexicalEnvironment.h"
-#include "JSModuleEnvironment.h"
-#include "JSModuleNamespaceObject.h"
+#include "CellSize.h"
 #include "VMInspector.h"
 #include <wtf/Assertions.h>
 
@@ -51,44 +47,10 @@ bool VMInspector::verifyCellSize(VM& vm, JSCell* cell, size_t allocatorCellSize)
     JSType cellType = cell->type();
     AUDIT_VERIFY(action, verifier, cellType == structure->m_blob.type(), cell, cellType, structure->m_blob.type());
 
-    if (isDynamicallySizedType(cellType)) {
-        size_t cellSize = 0;
-        switch (cellType) {
-        case BigIntType: {
-            auto* bigInt = jsCast<JSBigInt*>(cell);
-            cellSize = JSBigInt::allocationSize(bigInt->length());
-            break;
-        }
-        case DirectArgumentsType: {
-            auto* args = jsCast<DirectArguments*>(cell);
-            cellSize = DirectArguments::allocationSize(args->m_minCapacity);
-            break;
-        }
-        case FinalObjectType:
-            cellSize = JSFinalObject::allocationSize(structure->inlineCapacity());
-            break;
-        case LexicalEnvironmentType: {
-            auto* env = jsCast<JSLexicalEnvironment*>(cell);
-            cellSize = JSLexicalEnvironment::allocationSize(env->symbolTable());
-            break;
-        }
-        case ModuleEnvironmentType: {
-            auto* env = jsCast<JSModuleEnvironment*>(cell);
-            cellSize = JSModuleEnvironment::allocationSize(env->symbolTable());
-            break;
-        }
-        case ModuleNamespaceObjectType: {
-            auto* obj = jsCast<JSModuleNamespaceObject*>(cell);
-            cellSize = JSModuleNamespaceObject::allocationSize(obj->m_names.capacity());
-            break;
-        }
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-        AUDIT_VERIFY(action, verifier, cellSize <= allocatorCellSize, cell, cellType, cellSize, allocatorCellSize);
-        AUDIT_VERIFY(action, verifier, cellSize >= classInfo->staticClassSize, cell, cellType, cellSize, classInfo->staticClassSize);
-    } else
-        AUDIT_VERIFY(action, verifier, classInfo->staticClassSize <= allocatorCellSize, cell, cellType, classInfo->staticClassSize, allocatorCellSize);
+    size_t size = cellSize(vm, cell);
+    AUDIT_VERIFY(action, verifier, size <= allocatorCellSize, cell, cellType, size, allocatorCellSize, classInfo->staticClassSize);
+    if (isDynamicallySizedType(cellType))
+        AUDIT_VERIFY(action, verifier, size >= classInfo->staticClassSize, cell, cellType, size, classInfo->staticClassSize);
 
     return true;
 }

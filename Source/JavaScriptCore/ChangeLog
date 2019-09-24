@@ -1,3 +1,23 @@
+2019-09-24  Mark Lam  <mark.lam@apple.com>
+
+        Refactor cellSize() out of VMInspector::verifyCellSize().
+        https://bugs.webkit.org/show_bug.cgi?id=202132
+
+        Reviewed by Saam Barati.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/CellSize.h: Added.
+        (JSC::isDynamicallySizedType):
+        (JSC::cellSize):
+        * runtime/DirectArguments.h:
+        * runtime/JSBigInt.h:
+        * runtime/JSModuleNamespaceObject.h:
+        * runtime/JSType.h:
+        (JSC::isDynamicallySizedType): Deleted.
+        * tools/VMInspectorInlines.h:
+        (JSC::VMInspector::verifyCellSize):
+
 2019-09-23  Mark Lam  <mark.lam@apple.com>
 
         Introducing Integrity audit functions.

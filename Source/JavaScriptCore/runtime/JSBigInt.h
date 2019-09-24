@@ -250,7 +250,7 @@ private:
     const unsigned m_length;
     bool m_sign { false };
 
-    friend class VMInspector;
+    friend size_t cellSize(VM&, JSCell*);
 };
 
 inline size_t JSBigInt::allocationSize(unsigned length)

@@ -1911,6 +1911,7 @@
 		FEA3BBAC212C97CB00E93AD1 /* DFGCFG.h in Headers */ = {isa = PBXBuildFile; fileRef = FEA3BBAB212C97CB00E93AD1 /* DFGCFG.h */; };
 		FEB51F6C1A97B688001F921C /* Regress141809.mm in Sources */ = {isa = PBXBuildFile; fileRef = FEB51F6B1A97B688001F921C /* Regress141809.mm */; };
 		FEB58C15187B8B160098EF0B /* ErrorHandlingScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FEB58C13187B8B160098EF0B /* ErrorHandlingScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FEC160322339E9F900A04CB8 /* CellSize.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC160312339E9F900A04CB8 /* CellSize.h */; };
 		FEC5797323105B5100BCA83F /* VMInspectorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC5797223105B4800BCA83F /* VMInspectorInlines.h */; };
 		FEC5797623105F4E00BCA83F /* Integrity.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC5797523105F4300BCA83F /* Integrity.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEC579782310954C00BCA83F /* IntegrityInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC579772310954B00BCA83F /* IntegrityInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5138,6 +5139,7 @@
 		FEB51F6B1A97B688001F921C /* Regress141809.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Regress141809.mm; path = API/tests/Regress141809.mm; sourceTree = "<group>"; };
 		FEB58C12187B8B160098EF0B /* ErrorHandlingScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorHandlingScope.cpp; sourceTree = "<group>"; };
 		FEB58C13187B8B160098EF0B /* ErrorHandlingScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorHandlingScope.h; sourceTree = "<group>"; };
+		FEC160312339E9F900A04CB8 /* CellSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CellSize.h; sourceTree = "<group>"; };
 		FEC5797223105B4800BCA83F /* VMInspectorInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMInspectorInlines.h; sourceTree = "<group>"; };
 		FEC5797423105F4200BCA83F /* Integrity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Integrity.cpp; sourceTree = "<group>"; };
 		FEC5797523105F4300BCA83F /* Integrity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Integrity.h; sourceTree = "<group>"; };
@@ -6949,6 +6951,7 @@
 				145C507F0D9DF63B0088F6B9 /* CallData.h */,
 				FE80C1981D775FB4008510C0 /* CatchScope.cpp */,
 				FE80C1961D775B27008510C0 /* CatchScope.h */,
+				FEC160312339E9F900A04CB8 /* CellSize.h */,
 				E326C4961ECBEF5700A9A905 /* ClassInfo.cpp */,
 				BC6AAAE40E1F426500AD87D8 /* ClassInfo.h */,
 				0FE0501C1AA9095600D33B33 /* ClonedArguments.cpp */,
@@ -9029,6 +9032,7 @@
 				FE1BD0211E72027900134BC9 /* CellProfile.h in Headers */,
 				0F1C3DDA1BBCE09E00E523E4 /* CellState.h in Headers */,
 				BC6AAAE50E1F426500AD87D8 /* ClassInfo.h in Headers */,
+				FEC160322339E9F900A04CB8 /* CellSize.h in Headers */,
 				0FE050261AA9095600D33B33 /* ClonedArguments.h in Headers */,
 				BC18C45E0E16F5CD00B34460 /* CLoopStack.h in Headers */,
 				A7C1EAF017987AB600299DB2 /* CLoopStackInlines.h in Headers */,

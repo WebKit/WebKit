@@ -767,6 +767,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/CagedBarrierPtr.h
     runtime/CallData.h
     runtime/CatchScope.h
+    runtime/CellSize.h
     runtime/ClassInfo.h
     runtime/CodeSpecializationKind.h
     runtime/CommonIdentifiers.h
