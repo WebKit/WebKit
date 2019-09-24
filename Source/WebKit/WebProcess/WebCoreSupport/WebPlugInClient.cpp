@@ -53,9 +53,8 @@ bool WebPlugInClient::shouldAutoStartFromOrigin(const String& pageOrigin, const 
     return WebProcess::singleton().shouldPlugInAutoStartFromOrigin(m_webPage, pageOrigin, pluginOrigin, mimeType);
 }
 
-void WebPlugInClient::didStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, PAL::SessionID sessionID)
+void WebPlugInClient::didStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType)
 {
-    ASSERT_UNUSED(sessionID, sessionID == WebProcess::singleton().sessionID());
     WebProcess::singleton().plugInDidStartFromOrigin(pageOrigin, pluginOrigin, mimeType);
 }
 
