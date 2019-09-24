@@ -1,3 +1,9 @@
+2019-09-24  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.26.1 release
+
+        * wpe/NEWS: Add release notes for 2.26.1.
+
 2019-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.26.1 release
