@@ -172,12 +172,12 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
         document->setSecurityOriginPolicy(ownerDocument->securityOriginPolicy());
         document->setStrictMixedContentMode(ownerDocument->isStrictMixedContentMode());
 
-        document->setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { url }, document));
+        document->setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(URL { url }, document));
         document->contentSecurityPolicy()->copyStateFrom(ownerDocument->contentSecurityPolicy());
         document->contentSecurityPolicy()->setInsecureNavigationRequestsToUpgrade(ownerDocument->contentSecurityPolicy()->takeNavigationRequestsToUpgrade());
     } else if (existingDocument) {
         if (url.protocolIsData() || url.protocolIsBlob()) {
-            document->setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { url }, document));
+            document->setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(URL { url }, document));
             document->contentSecurityPolicy()->copyStateFrom(existingDocument->contentSecurityPolicy());
 
             // Fix up 'self' for blob: and data:, which is inherited from its embedding document or opener.
