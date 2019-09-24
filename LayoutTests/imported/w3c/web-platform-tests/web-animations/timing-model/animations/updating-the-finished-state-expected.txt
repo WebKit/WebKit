@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS Updating the finished state when playing past end 
 PASS Updating the finished state when seeking past end 
 PASS Updating the finished state when seeking exactly to end 
@@ -24,8 +22,8 @@ PASS Finish notification steps run when the animation seeks past finish
 PASS Finish notification steps run when the animation completes with .finish(), even if we then seek away 
 PASS Animation finished promise is replaced after seeking back to start 
 PASS Animation finished promise is replaced after replaying from start 
-TIMEOUT Animation finish event is fired again after seeking back to start Test timed out
-TIMEOUT Animation finish event is fired again after replaying from start Test timed out
+PASS Animation finish event is fired again after seeking back to start 
+PASS Animation finish event is fired again after replaying from start 
 PASS finish event is not fired at the end of the active interval when the endDelay has not expired 
 PASS finish event is fired after the endDelay has expired 
 

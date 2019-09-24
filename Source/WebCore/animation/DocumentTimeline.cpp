@@ -404,8 +404,12 @@ void DocumentTimeline::internalUpdateAnimationsAndSendEvents()
         pendingEvent->target()->dispatchEvent(pendingEvent);
 
     // This will cancel any scheduled invalidation if we end up removing all animations.
-    for (auto& animation : animationsToRemove)
-        removeAnimation(*animation);
+    for (auto& animation : animationsToRemove) {
+        // An animation that was initially marked as irrelevant may have changed while we were sending events, so we run the same
+        // check that we ran to add it to animationsToRemove in the first place.
+        if (!animation->isRelevant() && !animation->needsTick())
+            removeAnimation(*animation);
+    }
 
     // Now that animations that needed removal have been removed, let's update the list of completed transitions.
     // This needs to happen after dealing with the list of animations to remove as the animation may have been
