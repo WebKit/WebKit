@@ -139,11 +139,9 @@ typedef enum {
 + (UIViewController *)viewControllerForView:(UIView *)view;
 @end
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
 @interface NSURL ()
 @property (nonatomic, copy, setter=_setTitle:) NSString *_title;
 @end
-#endif
 
 #endif // USE(APPLE_INTERNAL_SDK)
 

@@ -140,11 +140,7 @@ typedef enum {
 
 @interface CATransaction ()
 + (void)addCommitHandler:(void(^)(void))block forPhase:(CATransactionPhase)phase;
-
-#if PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
 + (CATransactionPhase)currentPhase;
-#endif
-
 @end
 
 @interface CALayerHost : CALayer

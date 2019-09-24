@@ -71,10 +71,6 @@ typedef CF_ENUM(uint8_t, CTCompositionLanguage)
     kCTCompositionLanguageTraditionalChinese,
 };
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED == 120000)
-extern const CFStringRef kCTTypesetterOptionAllowUnboundedLayout;
-#endif
-
 #endif
 
 WTF_EXTERN_C_BEGIN
