@@ -45,6 +45,7 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
 
     encoder << canBeValid;
     encoder << nodeAtPositionIsFocusedElement;
+    encoder << nodeAtPositionHasDoubleClickHandler;
 #if ENABLE(DATA_INTERACTION)
     encoder << hasSelectionAtPosition;
 #endif
@@ -95,6 +96,9 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
         return false;
 
     if (!decoder.decode(result.nodeAtPositionIsFocusedElement))
+        return false;
+
+    if (!decoder.decode(result.nodeAtPositionHasDoubleClickHandler))
         return false;
 
 #if ENABLE(DATA_INTERACTION)

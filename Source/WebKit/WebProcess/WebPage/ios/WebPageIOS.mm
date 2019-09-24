@@ -2767,10 +2767,11 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
     info.request = request;
 
     FloatPoint adjustedPoint;
-    Node* hitNode = m_page->mainFrame().nodeRespondingToClickEvents(request.point, adjustedPoint);
+    auto* nodeRespondingToClickEvents = m_page->mainFrame().nodeRespondingToClickEvents(request.point, adjustedPoint);
 
-    info.nodeAtPositionIsFocusedElement = hitNode == m_focusedElement;
+    info.nodeAtPositionIsFocusedElement = nodeRespondingToClickEvents == m_focusedElement;
     info.adjustedPointForNodeRespondingToClickEvents = adjustedPoint;
+    info.nodeAtPositionHasDoubleClickHandler = m_page->mainFrame().nodeRespondingToDoubleClickEvent(request.point, adjustedPoint);
 
 #if ENABLE(DATA_INTERACTION)
     info.hasSelectionAtPosition = m_page->hasSelectionAtPosition(adjustedPoint);
@@ -2779,8 +2780,8 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
     if (m_focusedElement)
         focusedElementPositionInformation(*this, *m_focusedElement, request, info);
 
-    if (is<Element>(hitNode)) {
-        Element& element = downcast<Element>(*hitNode);
+    if (is<Element>(nodeRespondingToClickEvents)) {
+        auto& element = downcast<Element>(*nodeRespondingToClickEvents);
         elementPositionInformation(*this, element, request, info);
 
         if (info.isLink && !info.isImage && request.includeSnapshot)
@@ -2792,10 +2793,8 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
 
     // Prevent the callout bar from showing when tapping on the datalist button.
 #if ENABLE(DATALIST_ELEMENT)
-    if (is<HTMLInputElement>(hitNode)) {
-        const HTMLInputElement& input = downcast<HTMLInputElement>(*hitNode);
-        textInteractionPositionInformation(*this, input, request, info);
-    }
+    if (is<HTMLInputElement>(nodeRespondingToClickEvents))
+        textInteractionPositionInformation(*this, downcast<HTMLInputElement>(*nodeRespondingToClickEvents), request, info);
 #endif
 
     return info;

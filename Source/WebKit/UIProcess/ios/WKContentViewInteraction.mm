@@ -2112,9 +2112,9 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     return _outstandingPositionInformationRequest && _outstandingPositionInformationRequest->isValidForRequest(request);
 }
 
-- (BOOL)_currentPositionInformationIsApproximatelyValidForRequest:(const WebKit::InteractionInformationRequest&)request
+- (BOOL)_currentPositionInformationIsApproximatelyValidForRequest:(const WebKit::InteractionInformationRequest&)request radiusForApproximation:(int)radius
 {
-    return _hasValidPositionInformation && _positionInformation.request.isApproximatelyValidForRequest(request);
+    return _hasValidPositionInformation && _positionInformation.request.isApproximatelyValidForRequest(request, radius);
 }
 
 - (void)_invokeAndRemovePendingHandlersValidForCurrentPositionInformation
@@ -2191,10 +2191,19 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (gestureRecognizer == _singleTapGestureRecognizer)
         return !isInterruptingDecelerationForScrollViewOrAncestor([_singleTapGestureRecognizer lastTouchedScrollView]);
 
+    if (gestureRecognizer == _doubleTapGestureRecognizerForDoubleClick) {
+        // Do not start the double-tap-for-double-click gesture recognizer unless we've got a dblclick event handler on the node at the tap location.
+        WebKit::InteractionInformationRequest request(WebCore::roundedIntPoint(point));
+        if ([self _currentPositionInformationIsApproximatelyValidForRequest:request radiusForApproximation:[_doubleTapGestureRecognizerForDoubleClick allowableMovement]])
+            return _positionInformation.nodeAtPositionHasDoubleClickHandler;
+        if (![self ensurePositionInformationIsUpToDate:request])
+            return NO;
+        return _positionInformation.nodeAtPositionHasDoubleClickHandler;
+    }
+
     if (gestureRecognizer == _highlightLongPressGestureRecognizer
         || gestureRecognizer == _doubleTapGestureRecognizer
         || gestureRecognizer == _nonBlockingDoubleTapGestureRecognizer
-        || gestureRecognizer == _doubleTapGestureRecognizerForDoubleClick
         || gestureRecognizer == _twoFingerDoubleTapGestureRecognizer) {
 
         if (hasFocusedElement(_focusedElementInformation)) {
@@ -4471,7 +4480,7 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
 #if PLATFORM(MACCATALYST)
     WebKit::InteractionInformationRequest request(WebCore::roundedIntPoint(point));
     [self requestAsynchronousPositionInformationUpdate:request];
-    if ([self _currentPositionInformationIsApproximatelyValidForRequest:request] && _positionInformation.isSelectable)
+    if ([self _currentPositionInformationIsApproximatelyValidForRequest:request radiusForApproximation:2] && _positionInformation.isSelectable)
         return [WKTextPosition textPositionWithRect:_positionInformation.caretRect];
 #endif
     return nil;

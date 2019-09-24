@@ -58,11 +58,8 @@ bool InteractionInformationRequest::decode(IPC::Decoder& decoder, InteractionInf
     return true;
 }
 
-bool InteractionInformationRequest::isValidForRequest(const InteractionInformationRequest& other)
+bool InteractionInformationRequest::isValidForRequest(const InteractionInformationRequest& other, int radius)
 {
-    if (other.point != point)
-        return false;
-
     if (other.includeSnapshot && !includeSnapshot)
         return false;
 
@@ -72,21 +69,12 @@ bool InteractionInformationRequest::isValidForRequest(const InteractionInformati
     if (other.linkIndicatorShouldHaveLegacyMargins != linkIndicatorShouldHaveLegacyMargins)
         return false;
 
-    return true;
+    return (other.point - point).diagonalLengthSquared() <= radius * radius;
 }
     
-bool InteractionInformationRequest::isApproximatelyValidForRequest(const InteractionInformationRequest& other)
+bool InteractionInformationRequest::isApproximatelyValidForRequest(const InteractionInformationRequest& other, int radius)
 {
-    if (other.includeSnapshot && !includeSnapshot)
-        return false;
-    
-    if (other.includeLinkIndicator && !includeLinkIndicator)
-        return false;
-
-    if (other.linkIndicatorShouldHaveLegacyMargins != linkIndicatorShouldHaveLegacyMargins)
-        return false;
-    
-    return (other.point - point).diagonalLengthSquared() <= 4;
+    return isValidForRequest(other, radius);
 }
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -51,6 +51,7 @@ struct InteractionInformationAtPosition {
 
     bool canBeValid { true };
     bool nodeAtPositionIsFocusedElement { false };
+    bool nodeAtPositionHasDoubleClickHandler { false };
 #if ENABLE(DATA_INTERACTION)
     bool hasSelectionAtPosition { false };
 #endif

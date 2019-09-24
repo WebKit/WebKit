@@ -1,3 +1,31 @@
+2019-09-24  Zalan Bujtas  <zalan@apple.com>
+
+        [iPadOs] The second click event is missing on double tap when dblclick handler is not present
+        https://bugs.webkit.org/show_bug.cgi?id=202006
+        <rdar://problem/51706828>
+
+        Reviewed by Wenson Hsieh.
+
+        While double tapping,
+        1. the first tap triggers a click event through the normal _singleTapIdentified/_singleTapRecognized codepath.
+        2. and the second tap should trigger either
+          a second single click event or
+          a second single click followed by a dblclick event when dblclick handler is present.
+        However the second click is dropped on the floor when the node under the cursor does not have a dblclick handler (see handleDoubleTapForDoubleClickAtPoint()) -so we end up sending one click event.
+
+        This patch fixes this case by sending the second tap through the normal single tap flow when the dblclick handler is not present.
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (WebKit::WebPage::positionInformation):
+        (WebKit::WebPage::requestPositionInformation):
+
 2019-09-24  Alex Christensen  <achristensen@webkit.org>
 
         Move HSTS storage directory to LegacyGlobalSettings
