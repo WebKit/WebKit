@@ -142,7 +142,7 @@ void WebProcessPool::platformInitialize()
 }
 
 #if PLATFORM(IOS_FAMILY)
-String WebProcessPool::cookieStorageDirectory() const
+String WebProcessPool::cookieStorageDirectory()
 {
     String path = pathForProcessContainer();
     if (path.isEmpty())
@@ -159,9 +159,9 @@ void WebProcessPool::platformResolvePathsForSandboxExtensions()
     m_resolvedPaths.uiProcessBundleResourcePath = resolvePathForSandboxExtension([[NSBundle mainBundle] resourcePath]);
 
 #if PLATFORM(IOS_FAMILY)
-    m_resolvedPaths.cookieStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(cookieStorageDirectory());
-    m_resolvedPaths.containerCachesDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(webContentCachesDirectory());
-    m_resolvedPaths.containerTemporaryDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(containerTemporaryDirectory());
+    m_resolvedPaths.cookieStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(WebProcessPool::cookieStorageDirectory());
+    m_resolvedPaths.containerCachesDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(WebProcessPool::webContentCachesDirectory());
+    m_resolvedPaths.containerTemporaryDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(WebProcessPool::containerTemporaryDirectory());
 #endif
 }
 
@@ -316,12 +316,12 @@ void WebProcessPool::platformInvalidateContext()
 }
 
 #if PLATFORM(IOS_FAMILY)
-String WebProcessPool::parentBundleDirectory() const
+String WebProcessPool::parentBundleDirectory()
 {
     return [[[NSBundle mainBundle] bundlePath] stringByStandardizingPath];
 }
 
-String WebProcessPool::networkingCachesDirectory() const
+String WebProcessPool::networkingCachesDirectory()
 {
     String path = pathForProcessContainer();
     if (path.isEmpty())
@@ -340,7 +340,7 @@ String WebProcessPool::networkingCachesDirectory() const
     return path;
 }
 
-String WebProcessPool::webContentCachesDirectory() const
+String WebProcessPool::webContentCachesDirectory()
 {
     String path = pathForProcessContainer();
     if (path.isEmpty())
@@ -359,7 +359,7 @@ String WebProcessPool::webContentCachesDirectory() const
     return path;
 }
 
-String WebProcessPool::containerTemporaryDirectory() const
+String WebProcessPool::containerTemporaryDirectory()
 {
     String path = NSTemporaryDirectory();
     return stringByResolvingSymlinksInPath(path);

@@ -576,14 +576,11 @@ private:
     bool usesSingleWebProcess() const { return m_configuration->usesSingleWebProcess(); }
 
 #if PLATFORM(IOS_FAMILY)
-    String cookieStorageDirectory() const;
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-    String parentBundleDirectory() const;
-    String networkingCachesDirectory() const;
-    String webContentCachesDirectory() const;
-    String containerTemporaryDirectory() const;
+    static String cookieStorageDirectory();
+    static String parentBundleDirectory();
+    static String networkingCachesDirectory();
+    static String webContentCachesDirectory();
+    static String containerTemporaryDirectory();
 #endif
 
 #if PLATFORM(COCOA)

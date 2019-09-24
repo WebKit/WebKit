@@ -503,15 +503,15 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    String cookieStorageDirectory = this->cookieStorageDirectory();
+    String cookieStorageDirectory = WebProcessPool::cookieStorageDirectory();
     if (!cookieStorageDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(cookieStorageDirectory, parameters.cookieStorageDirectoryExtensionHandle);
 
-    String containerCachesDirectory = this->networkingCachesDirectory();
+    String containerCachesDirectory = WebProcessPool::networkingCachesDirectory();
     if (!containerCachesDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(containerCachesDirectory, parameters.containerCachesDirectoryExtensionHandle);
 
-    String parentBundleDirectory = this->parentBundleDirectory();
+    String parentBundleDirectory = WebProcessPool::parentBundleDirectory();
     if (!parentBundleDirectory.isEmpty())
         SandboxExtension::createHandle(parentBundleDirectory, SandboxExtension::Type::ReadOnly, parameters.parentBundleDirectoryExtensionHandle);
 
