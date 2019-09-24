@@ -86,7 +86,7 @@ reportCompare(expect, actual, summary + ': sort');
 
 // push
 value  = 'abc';
-expect = 6;
+expect = 'TypeError: Attempted to assign to readonly property.';
 try
 {
   actual = Array.prototype.push.call(value, 'd', 'e', 'f');
@@ -96,7 +96,6 @@ catch(e)
   actual = e + '';
 }
 reportCompare(expect, actual, summary + ': push');
-reportCompare('abc', value, summary + ': push');
 
 // pop
 value  = 'abc';

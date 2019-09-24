@@ -8,7 +8,7 @@ function main() {
             const v15 = v10 + 127;
             const v16 = String();
             const v17 = String.fromCharCode(v10,v10,v15);
-            const v19 = Object.shift();
+            const v19 = v3.shift();
             function v23() {
                 let v28 = arguments;
             }
