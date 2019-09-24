@@ -8067,6 +8067,18 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
     return _private->page->mediaVolume();
 }
 
+- (void)suspendAllMediaPlayback
+{
+    if (_private->page)
+        _private->page->suspendAllMediaPlayback();
+}
+
+- (void)resumeAllMediaPlayback
+{
+    if (_private->page)
+        _private->page->resumeAllMediaPlayback();
+}
+
 - (void)addVisitedLinks:(NSArray *)visitedLinks
 {
     WebVisitedLinkStore& visitedLinkStore = _private->group->visitedLinkStore();
