@@ -1,3 +1,28 @@
+2019-09-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][WebKitTestRunner] Implement EventSenderProxy::keyDown
+        https://bugs.webkit.org/show_bug.cgi?id=201913
+
+        Reviewed by Ross Kirsling.
+
+        Implemented eventSender.keyDown for Windows WebKitTestRunner based
+        on DumpRenderTree implementation.
+
+        There is a difference between them. Only WTR truns KF_UP and
+        KF_REPEAT flags on for WM_KEYUP event.
+        EventSenderProxy::dispatchMessage is used in WTR. It calls
+        TranslateMessage, this introduces the difference. If I didn't turn
+        those bits, TranslateMessage posts WM_CHAR even for WM_KEYUP.
+        According the spec, WM_KEYUP needs those bits.
+        <https://docs.microsoft.com/en-us/windows/win32/inputdev/wm-keyup>
+        DRT doesn't need the those bits becasuse it doesn't use
+        TranslateMessage for WM_KEYUP.
+
+        * WebKitTestRunner/win/EventSenderProxyWin.cpp:
+        (WTR::makeKeyDataForScanCode): Added.
+        (WTR::pumpMessageQueue): Added.
+        (WTR::EventSenderProxy::keyDown): Implemented by using DRT code.
+
 2019-09-23  Aakash Jain  <aakash_jain@apple.com>
 
         [EWS] Rename CompileJSCOnly to CompileJSC
