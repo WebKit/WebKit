@@ -1,3 +1,11 @@
+2019-09-24  Patrick Griffis  <pgriffis@igalia.com>
+
+        Add Patrick Griffis to contributors.json
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2019-09-24  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Improve summary for Validate Patch step
