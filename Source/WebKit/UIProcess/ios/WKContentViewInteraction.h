@@ -356,6 +356,7 @@ struct WKAutoCorrectionData {
 
     BOOL _focusRequiresStrongPasswordAssistance;
     BOOL _waitingForEditDragSnapshot;
+    NSInteger _dropAnimationCount;
 
     BOOL _hasSetUpInteractions;
     NSUInteger _ignoreSelectionCommandFadeCount;

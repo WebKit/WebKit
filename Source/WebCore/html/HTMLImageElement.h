@@ -123,6 +123,9 @@ public:
 
     void defaultEventHandler(Event&) final;
 
+    bool isDroppedImagePlaceholder() const { return m_isDroppedImagePlaceholder; }
+    void setIsDroppedImagePlaceholder() { m_isDroppedImagePlaceholder = true; }
+
 protected:
     HTMLImageElement(const QualifiedName&, Document&, HTMLFormElement* = 0);
 
@@ -183,6 +186,7 @@ private:
     float m_imageDevicePixelRatio;
     bool m_experimentalImageMenuEnabled;
     bool m_hadNameBeforeAttributeChanged { false }; // FIXME: We only need this because parseAttribute() can't see the old value.
+    bool m_isDroppedImagePlaceholder { false };
 
     RefPtr<EditableImageReference> m_editableImage;
     WeakPtr<HTMLPictureElement> m_pictureElement;

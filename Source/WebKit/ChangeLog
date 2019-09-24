@@ -1,3 +1,383 @@
+2019-09-24  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r250256. rdar://problem/55644660
+
+    [iOS] Drop animation when dragging images from Photos to WebKit2 Mail compose is incorrect
+    https://bugs.webkit.org/show_bug.cgi?id=201674
+    <rdar://problem/51250952>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    Adds new helper methods on DragController to support the new image placeholder drop codepath. See WebKit
+    ChangeLog for more details.
+    
+    Tests:  WKAttachmentTestsIOS.TargetedPreviewsWhenDroppingImages
+            WKAttachmentTestsIOS.TargetedPreviewIsClippedWhenDroppingTallImage
+    
+    * editing/WebContentReader.h:
+    
+    Fix the Windows build after including WebContentReader.h in DragController.cpp.
+    
+    * html/HTMLImageElement.h:
+    (WebCore::HTMLImageElement::isDroppedImagePlaceholder const):
+    (WebCore::HTMLImageElement::setIsDroppedImagePlaceholder):
+    
+    Add a flag to HTMLImageElement, indicating whether it is a dropped image placeholder. If so, we have special
+    logic to remove some temporary inline style properties from the image after it has finished loading (see
+    finalizeDroppedImagePlaceholder).
+    
+    Note that this doesn't increase the size of HTMLImageElement.
+    
+    * page/DragController.cpp:
+    (WebCore::DragController::dragEnded):
+    
+    Clean up any stale placeholders after the drag ends.
+    
+    (WebCore::DragController::performDragOperation):
+    (WebCore::DragController::removeAllDroppedImagePlaceholders):
+    
+    Add a private helper to clean up any dropped image placeholders after failing to update dropped image
+    placeholders for any reason.
+    
+    (WebCore::DragController::tryToUpdateDroppedImagePlaceholders):
+    
+    Invoked when performing the drag operation, after image data has been loaded; this function attempts to update
+    the list of image placeholder elements tracked by DragController that were previously inserted using
+    insertDroppedImagePlaceholdersAtCaret, and updates the source attribute of each element (as well as any backed
+    attachment element, if attachment elements are enabled). It achieves this by reading the dropped data as web
+    content, and matching up the images in the resulting fragment against the placeholder images. If each image in
+    the fragment can correspond to exactly one placeholder, we update the source of each placeholder image,
+    migrate attachment elements over to the placeholder images if needed, and finally discard the fragment.
+    
+    A return value of false indicates that this process failed, in which case we clean up the placeholders and fall
+    back to handling the drop normally.
+    
+    (WebCore::DragController::insertDroppedImagePlaceholdersAtCaret):
+    
+    Invoked when handling the drop, before any image data has been loaded; this function takes a list of sizes
+    representing the preferred presentation sizes of each item provider that will be loaded as an image, and uses
+    ReplaceSelectionCommand to insert a list of (initially blank) placeholder images at the drop caret, sized
+    accordingly to each item provider's preferredPresentationSize.
+    
+    To make this compatible with Mail compose (and all other known internal clients that use the _editable SPI), we
+    additionally enforce a max-width of 100% on each image and preserve the aspect ratio of the image by adjusting
+    the height if needed.
+    
+    (WebCore::DragController::finalizeDroppedImagePlaceholder):
+    * page/DragController.h:
+    
+    Have DragController keep track of the list of dropped image placeholders (in DOM order), as well as the dropped
+    image placeholder range. This information is used once item provider data arrives and the drag operation is
+    being performed, to update the source of each dropped image placeholder.
+    
+    (WebCore::DragController::droppedImagePlaceholders const):
+    (WebCore::DragController::droppedImagePlaceholderRange const):
+    * platform/network/mac/UTIUtilities.h:
+    
+    Mark an existing helper function as WEBCORE_EXPORT.
+    
+    Source/WebKit:
+    
+    Our current logic for handling dropped content in editable elements on iOS works like this in the ideal case:
+    
+    (1)     UIKit asks us for a targeted preview for each UIDragItem. We don't know (and can't determine this
+            synchronously without blocking on the web process) so we simply retarget the preview to animate to the
+            last known caret location.
+    
+    (2)     Soonafter, UIKit hands us a drop preview update block, which may be used to retarget the drop preview
+            once, as long as the drop animation is less than 90% complete. We stash these update blocks for now.
+    
+    (3)     -dropInteraction:performDrop: is then called, and we start loading item provider data right away.
+    
+    (4)     When the data has finished loading, we perform the drop in the web process. After any inserted images
+            have finished loading, we take snapshots (of the dropped content as well as surrounding web content
+            minus the dropped content), and deliver these images to the UI process via TextIndicatorData.
+    
+    (5)     Upon receiving the TextIndicatorData sent in (4), we use the image data to create updated targeted drag
+            previews, and use these to invoke the preview update blocks we stored earlier in (2). We also obscure
+            the entire web view with a snapshot of the view minus any dropped content, such that the updated drop
+            previews may animate into place without also showing the final content.
+    
+    (6)     When the drop animation ends, we remove the unselected content snapshot view added in (5) simultaneously
+            as the targeted previews disappear, revealing the actual dropped content on the page. The drop is now
+            complete.
+    
+    However, note that the drag update block we invoke in (5) doesn't work if the drop animation is already more
+    than 90% complete. Since the lifecycle of the drop animation is distinct from that of item provider loading, if
+    the delay between (3) and (4) exceeds 90% of the total drop animation time, we'll fail to update the targeted
+    previews, such that the user only sees the initial drag preview fly on top of the caret and disappear. While we
+    typically win this race for data dragged from other WebKit apps, we almost always lose when dragging from Photos
+    and end up with a janky drop animation. This is especially true for any images that aren't locally available,
+    and need to be fetched from iCloud. An additional problem is that in step (5), we use the same final snapshot to
+    update the drop preview of every item, since we don't have a snapshot for the fragment corresponding to each
+    individual dropped item.
+    
+    To address these issues for Mail in the case where the user drops images with known sizes (i.e. -[NSItemProvider
+    preferredPresentationSize] is specified), we introduce an alternate codepath for handling dropped images that
+    performs the drop immediately upon receiving -dropInteraction:performDrop: in the UI process. Since the data has
+    yet to arrive, we instead handle the drop by inserting placeholder image elements at the drag caret position,
+    which initially have no source but are sized to fit their expected final image sizes. After doing so, we
+    snapshot the page (minus the dropped content range, as usual) and deliver this snapshot to the UI process, along
+    with the rects (in root view coordinates) of each placeholder image that was inserted. In the UI process, we
+    then take this snapshot and obscure the content view with it, and also use each of the placeholder rects to
+    provide an updated target for each drag preview, such that the drop previews now animate to their final
+    locations on the page.
+    
+    When the data eventually arrives, we handle the drop by detecting the placeholder elements we inserted earlier,
+    and using the dropped data to update the source attribute and attachment backing for each of these placeholder
+    elements instead of attempting to insert new content.
+    
+    Note that this codepath is currently only enabled for SPI clients that set -[WKWebView _editable] to YES, since
+    it involves us performing the editing action for the drop (thus changing the DOM) prior to the preventable drop
+    event, and prior to us having any data at all. However, the drop event can't come before the editing action,
+    since we need to have already loaded data from the item providers to expose it via the dataTransfer of the drop
+    event. This contradiction means that this image placeholder hack is only for _editable SPI clients that, at the
+    very least, will not require preventing default behavior when dropping only images with predetermined sizes.
+    
+    Covered by 2 new API tests. See comments below for more detail.
+    
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/ios/DragDropInteractionState.h:
+    * UIProcess/ios/DragDropInteractionState.mm:
+    (WebKit::DragDropInteractionState::setDefaultDropPreview):
+    
+    Add a way to keep track of default drop previews that we observed during each call to
+    -dropInteraction:previewForDroppingItem:withDefault:. In the image placeholder drop scenario, we use these
+    default drop previews later on to create retargeted drop previews after the placeholders have been inserted.
+    
+    (WebKit::DragDropInteractionState::defaultDropPreview const):
+    (WebKit::DragDropInteractionState::deliverDelayedDropPreview):
+    
+    Add an alternate version of deliverDelayedDropPreview that is used when inserting image placeholders. Rather
+    than use text indicator data of the final dropped content on the page, use the root-view-coordinate rects of
+    each of the placeholder elements to reposition the default drop previews.
+    
+    There's additional logic here to handle the case where the final image is taller than the height of the
+    unobscured content rect, in which case we clip the drop preview using UIDragPreviewParameter's visiblePath to
+    prevent the drop preview from being shown outside of the bounds of the web view.
+    
+    * UIProcess/ios/WKContentViewInteraction.h:
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView _deliverDelayedDropPreviewIfPossible:]):
+    (sizesOfPlaceholderElementsToInsertWhenDroppingItems):
+    
+    Collects the list of expected image sizes for the dropped item providers, or an empty list in the case where
+    any of the item providers may not be represented as inline images or do not have predetermined sizes.
+    
+    (-[WKContentView _handleDropByInsertingImagePlaceholders:session:]):
+    
+    If possible, handles the drop by inserting image placeholders instead of waiting for the data to finish loading
+    before dropping. Returns whether or not we decided to proceed with the image placeholder drop.
+    
+    (-[WKContentView dropInteraction:performDrop:]):
+    (-[WKContentView dropInteraction:item:willAnimateDropWithAnimator:]):
+    
+    Fixes a bug where the unselected content snapshot view could linger around on the web view forever after a drop
+    where the data doesn't load in time for the drop to finish by keeping track of whether there is an actively
+    animating drag item, and only applying the unselected content snapshot if so.
+    
+    (-[WKContentView dropInteraction:previewForDroppingItem:withDefault:]):
+    
+    Stash the default drop preview away here.
+    
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::WebPageProxy::insertDroppedImagePlaceholders):
+    * WebProcess/WebPage/WebPage.h:
+    * WebProcess/WebPage/WebPage.messages.in:
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::insertDroppedImagePlaceholders):
+    
+    See WebCore ChangeLog for more information.
+    
+    (WebKit::WebPage::didFinishLoadingImageForElement):
+    
+    If the image that finished loading is a dropped image placeholder, allow DragController to "finalize" it by
+    stripping away some styles that were temporarily added.
+    
+    Tools:
+    
+    Add a couple of new API tests to exercise the new image placeholder drop codepath, in addition to testing
+    infrastructure to simulate the timing of drop animation delegate calls.
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+    (-[NSArray _attachmentWithName:]):
+    (-[TestWKWebView allBoundingClientRects:]):
+    
+    Add some new API testing helper methods.
+    
+    (TestWebKitAPI::targetedImageDragPreview):
+    (TestWebKitAPI::TEST):
+    
+    Add two new tests, to:
+    (1) verify that images are dropped as attachment-backed placeholder image elements when the web view is editable
+        and enables attachment elements, and
+    (2) verify that when dropping an image taller than the web view, the bottom portion of the drop preview is
+        clipped using the targeted preview parameter's visiblePath.
+    
+    * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+    (-[NSItemProvider registerDataRepresentationForTypeIdentifier:withData:]): Deleted.
+    * TestWebKitAPI/cocoa/DragAndDropSimulator.h:
+    * TestWebKitAPI/cocoa/NSItemProviderAdditions.h: Added.
+    * TestWebKitAPI/cocoa/NSItemProviderAdditions.mm: Added.
+    
+    Move some common helpers for registering data on a NSItemProvider to a separate file, so that it can be used in
+    both WKAttachmentTests and DragAndDropTests.
+    
+    (-[NSItemProvider registerDataRepresentationForTypeIdentifier:withData:]):
+    (-[NSItemProvider registerDataRepresentationForTypeIdentifier:withData:loadingDelay:]):
+    * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+    (-[DragAndDropSimulator initWithWebView:]):
+    (-[DragAndDropSimulator _concludeDropAndPerformOperationIfNecessary]):
+    (-[DragAndDropSimulator clearExternalDragInformation]):
+    (-[DragAndDropSimulator setExternalItemProviders:defaultDropPreviews:]):
+    
+    Add a new method to allow tests to specify both a list of externally dragged item providers, as well as default
+    targeted previews for each of the corresponding items. These default previews are used when invoking the drop
+    interaction delegate's preview generation methods.
+    
+    (-[DragAndDropSimulator addAnimations:]):
+    
+    Not implemented yet; for now, this simply asserts.
+    
+    (-[DragAndDropSimulator addCompletion:]):
+    
+    Queues a completion handler, which is invoked when the drop animation for each item completes. Depending on the
+    value of DragAndDropSimulator's -dropAnimationTiming, this may occur either before or after handling the drop.
+    By default, these will be invoked after the drop completes, which represents the common case where data can be
+    loaded quickly relative to the drop animation.
+    
+    (-[DragAndDropSimulator _invokeDropAnimationCompletionBlocksAndConcludeDrop]):
+    (-[DragAndDropSimulator _webView:dataInteractionOperationWasHandled:forSession:itemProviders:]):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250256 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-09-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS] Drop animation when dragging images from Photos to WebKit2 Mail compose is incorrect
+            https://bugs.webkit.org/show_bug.cgi?id=201674
+            <rdar://problem/51250952>
+
+            Reviewed by Tim Horton.
+
+            Our current logic for handling dropped content in editable elements on iOS works like this in the ideal case:
+
+            (1)     UIKit asks us for a targeted preview for each UIDragItem. We don't know (and can't determine this
+                    synchronously without blocking on the web process) so we simply retarget the preview to animate to the
+                    last known caret location.
+
+            (2)     Soonafter, UIKit hands us a drop preview update block, which may be used to retarget the drop preview
+                    once, as long as the drop animation is less than 90% complete. We stash these update blocks for now.
+
+            (3)     -dropInteraction:performDrop: is then called, and we start loading item provider data right away.
+
+            (4)     When the data has finished loading, we perform the drop in the web process. After any inserted images
+                    have finished loading, we take snapshots (of the dropped content as well as surrounding web content
+                    minus the dropped content), and deliver these images to the UI process via TextIndicatorData.
+
+            (5)     Upon receiving the TextIndicatorData sent in (4), we use the image data to create updated targeted drag
+                    previews, and use these to invoke the preview update blocks we stored earlier in (2). We also obscure
+                    the entire web view with a snapshot of the view minus any dropped content, such that the updated drop
+                    previews may animate into place without also showing the final content.
+
+            (6)     When the drop animation ends, we remove the unselected content snapshot view added in (5) simultaneously
+                    as the targeted previews disappear, revealing the actual dropped content on the page. The drop is now
+                    complete.
+
+            However, note that the drag update block we invoke in (5) doesn't work if the drop animation is already more
+            than 90% complete. Since the lifecycle of the drop animation is distinct from that of item provider loading, if
+            the delay between (3) and (4) exceeds 90% of the total drop animation time, we'll fail to update the targeted
+            previews, such that the user only sees the initial drag preview fly on top of the caret and disappear. While we
+            typically win this race for data dragged from other WebKit apps, we almost always lose when dragging from Photos
+            and end up with a janky drop animation. This is especially true for any images that aren't locally available,
+            and need to be fetched from iCloud. An additional problem is that in step (5), we use the same final snapshot to
+            update the drop preview of every item, since we don't have a snapshot for the fragment corresponding to each
+            individual dropped item.
+
+            To address these issues for Mail in the case where the user drops images with known sizes (i.e. -[NSItemProvider
+            preferredPresentationSize] is specified), we introduce an alternate codepath for handling dropped images that
+            performs the drop immediately upon receiving -dropInteraction:performDrop: in the UI process. Since the data has
+            yet to arrive, we instead handle the drop by inserting placeholder image elements at the drag caret position,
+            which initially have no source but are sized to fit their expected final image sizes. After doing so, we
+            snapshot the page (minus the dropped content range, as usual) and deliver this snapshot to the UI process, along
+            with the rects (in root view coordinates) of each placeholder image that was inserted. In the UI process, we
+            then take this snapshot and obscure the content view with it, and also use each of the placeholder rects to
+            provide an updated target for each drag preview, such that the drop previews now animate to their final
+            locations on the page.
+
+            When the data eventually arrives, we handle the drop by detecting the placeholder elements we inserted earlier,
+            and using the dropped data to update the source attribute and attachment backing for each of these placeholder
+            elements instead of attempting to insert new content.
+
+            Note that this codepath is currently only enabled for SPI clients that set -[WKWebView _editable] to YES, since
+            it involves us performing the editing action for the drop (thus changing the DOM) prior to the preventable drop
+            event, and prior to us having any data at all. However, the drop event can't come before the editing action,
+            since we need to have already loaded data from the item providers to expose it via the dataTransfer of the drop
+            event. This contradiction means that this image placeholder hack is only for _editable SPI clients that, at the
+            very least, will not require preventing default behavior when dropping only images with predetermined sizes.
+
+            Covered by 2 new API tests. See comments below for more detail.
+
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/ios/DragDropInteractionState.h:
+            * UIProcess/ios/DragDropInteractionState.mm:
+            (WebKit::DragDropInteractionState::setDefaultDropPreview):
+
+            Add a way to keep track of default drop previews that we observed during each call to
+            -dropInteraction:previewForDroppingItem:withDefault:. In the image placeholder drop scenario, we use these
+            default drop previews later on to create retargeted drop previews after the placeholders have been inserted.
+
+            (WebKit::DragDropInteractionState::defaultDropPreview const):
+            (WebKit::DragDropInteractionState::deliverDelayedDropPreview):
+
+            Add an alternate version of deliverDelayedDropPreview that is used when inserting image placeholders. Rather
+            than use text indicator data of the final dropped content on the page, use the root-view-coordinate rects of
+            each of the placeholder elements to reposition the default drop previews.
+
+            There's additional logic here to handle the case where the final image is taller than the height of the
+            unobscured content rect, in which case we clip the drop preview using UIDragPreviewParameter's visiblePath to
+            prevent the drop preview from being shown outside of the bounds of the web view.
+
+            * UIProcess/ios/WKContentViewInteraction.h:
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView _deliverDelayedDropPreviewIfPossible:]):
+            (sizesOfPlaceholderElementsToInsertWhenDroppingItems):
+
+            Collects the list of expected image sizes for the dropped item providers, or an empty list in the case where
+            any of the item providers may not be represented as inline images or do not have predetermined sizes.
+
+            (-[WKContentView _handleDropByInsertingImagePlaceholders:session:]):
+
+            If possible, handles the drop by inserting image placeholders instead of waiting for the data to finish loading
+            before dropping. Returns whether or not we decided to proceed with the image placeholder drop.
+
+            (-[WKContentView dropInteraction:performDrop:]):
+            (-[WKContentView dropInteraction:item:willAnimateDropWithAnimator:]):
+
+            Fixes a bug where the unselected content snapshot view could linger around on the web view forever after a drop
+            where the data doesn't load in time for the drop to finish by keeping track of whether there is an actively
+            animating drag item, and only applying the unselected content snapshot if so.
+
+            (-[WKContentView dropInteraction:previewForDroppingItem:withDefault:]):
+
+            Stash the default drop preview away here.
+
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::insertDroppedImagePlaceholders):
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/WebPage.messages.in:
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::insertDroppedImagePlaceholders):
+
+            See WebCore ChangeLog for more information.
+
+            (WebKit::WebPage::didFinishLoadingImageForElement):
+
+            If the image that finished loading is a dropped image placeholder, allow DragController to "finalize" it by
+            stripping away some styles that were temporarily added.
+
 2019-09-23  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r250183. rdar://problem/55608006

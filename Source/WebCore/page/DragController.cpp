@@ -83,6 +83,7 @@
 #include "Text.h"
 #include "TextEvent.h"
 #include "VisiblePosition.h"
+#include "WebContentReader.h"
 #include "markup.h"
 
 #if ENABLE(DATA_INTERACTION)
@@ -212,6 +213,7 @@ void DragController::dragEnded()
     m_didInitiateDrag = false;
     m_documentUnderMouse = nullptr;
     clearDragCaret();
+    removeAllDroppedImagePlaceholders();
     
     m_client.dragEnded();
 }
@@ -244,6 +246,16 @@ inline static bool dragIsHandledByDocument(DragHandlingMethod dragHandlingMethod
 
 bool DragController::performDragOperation(const DragData& dragData)
 {
+    if (!m_droppedImagePlaceholders.isEmpty() && m_droppedImagePlaceholderRange && tryToUpdateDroppedImagePlaceholders(dragData)) {
+        m_droppedImagePlaceholders.clear();
+        m_droppedImagePlaceholderRange = nullptr;
+        m_documentUnderMouse = nullptr;
+        clearDragCaret();
+        return true;
+    }
+
+    removeAllDroppedImagePlaceholders();
+
     SetForScope<bool> isPerformingDrop(m_isPerformingDrop, true);
     TemporarySelectionChange ignoreSelectionChanges(m_page.focusController().focusedOrMainFrame(), WTF::nullopt, TemporarySelectionOption::IgnoreSelectionChanges);
 
@@ -1316,6 +1328,138 @@ void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, cons
         return;
 
     cleanupAfterSystemDrag();
+}
+
+void DragController::removeAllDroppedImagePlaceholders()
+{
+    m_droppedImagePlaceholderRange = nullptr;
+    for (auto& placeholder : std::exchange(m_droppedImagePlaceholders, { })) {
+        if (placeholder->isConnected())
+            placeholder->remove();
+    }
+}
+
+bool DragController::tryToUpdateDroppedImagePlaceholders(const DragData& dragData)
+{
+    ASSERT(!m_droppedImagePlaceholders.isEmpty());
+    ASSERT(m_droppedImagePlaceholderRange);
+
+    auto document = makeRef(m_droppedImagePlaceholders[0]->document());
+    auto frame = makeRefPtr(document->frame());
+    if (!frame)
+        return false;
+
+    WebContentReader reader(*frame, *m_droppedImagePlaceholderRange, true);
+    auto pasteboard = Pasteboard::createForDragAndDrop(dragData);
+    pasteboard->read(reader);
+
+    if (!reader.fragment)
+        return false;
+
+    Vector<Ref<HTMLImageElement>> imageElements;
+    for (auto& imageElement : descendantsOfType<HTMLImageElement>(*reader.fragment))
+        imageElements.append(imageElement);
+
+    if (imageElements.size() != m_droppedImagePlaceholders.size()) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    for (size_t i = 0; i < imageElements.size(); ++i) {
+        auto& imageElement = imageElements[i];
+        auto& placeholder = m_droppedImagePlaceholders[i];
+        placeholder->setAttributeWithoutSynchronization(HTMLNames::srcAttr, imageElement->attributeWithoutSynchronization(HTMLNames::srcAttr));
+#if ENABLE(ATTACHMENT_ELEMENT)
+        if (auto attachment = imageElement->attachmentElement())
+            placeholder->setAttachmentElement(attachment.releaseNonNull());
+#endif
+    }
+    return true;
+}
+
+void DragController::insertDroppedImagePlaceholdersAtCaret(const Vector<IntSize>& imageSizes)
+{
+    auto& caretController = m_page.dragCaretController();
+    if (!caretController.isContentRichlyEditable())
+        return;
+
+    auto dropCaret = caretController.caretPosition();
+    if (dropCaret.isNull())
+        return;
+
+    auto document = makeRefPtr(dropCaret.deepEquivalent().document());
+    if (!document)
+        return;
+
+    auto frame = makeRefPtr(document->frame());
+    if (!frame)
+        return;
+
+    TemporarySelectionChange selectionChange(*frame, WTF::nullopt, { TemporarySelectionOption::IgnoreSelectionChanges });
+
+    auto fragment = DocumentFragment::create(*document);
+    for (auto& size : imageSizes) {
+        ASSERT(!size.isEmpty());
+        auto image = HTMLImageElement::create(*document);
+        image->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomString::number(size.width()));
+        image->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomString::number(size.height()));
+        image->setInlineStyleProperty(CSSPropertyMaxWidth, 100, CSSPrimitiveValue::CSS_PERCENTAGE);
+        image->setInlineStyleProperty(CSSPropertyBackgroundColor, Color(Color::black).colorWithAlpha(0.05).cssText());
+        image->setIsDroppedImagePlaceholder();
+        fragment->appendChild(WTFMove(image));
+    }
+
+    frame->selection().setSelection(dropCaret);
+
+    auto command = ReplaceSelectionCommand::create(*document, WTFMove(fragment), { ReplaceSelectionCommand::PreventNesting, ReplaceSelectionCommand::SmartReplace }, EditAction::InsertFromDrop);
+    command->apply();
+
+    auto insertedContentRange = command->insertedContentRange();
+    if (!insertedContentRange) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto container = makeRefPtr(insertedContentRange->commonAncestorContainer());
+    if (!is<ContainerNode>(container)) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    Vector<Ref<HTMLImageElement>> placeholders;
+    for (auto& placeholder : descendantsOfType<HTMLImageElement>(downcast<ContainerNode>(*container))) {
+        auto intersectsNode = insertedContentRange->intersectsNode(placeholder);
+        if (!intersectsNode.hasException() && intersectsNode.returnValue())
+            placeholders.append(placeholder);
+    }
+
+    if (placeholders.size() != imageSizes.size()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    for (size_t i = 0; i < placeholders.size(); ++i) {
+        auto& placeholder = placeholders[i];
+        auto imageSize = imageSizes[i];
+        double clientWidth = placeholder->clientWidth();
+        double heightRespectingAspectRatio = (imageSize.height() * clientWidth) / imageSize.width();
+        placeholder->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomString::number(heightRespectingAspectRatio));
+    }
+
+    document->updateLayout();
+
+    m_droppedImagePlaceholders = WTFMove(placeholders);
+    m_droppedImagePlaceholderRange = WTFMove(insertedContentRange);
+
+    frame->selection().clear();
+    caretController.setCaretPosition(m_droppedImagePlaceholderRange->startPosition());
+}
+
+void DragController::finalizeDroppedImagePlaceholder(HTMLImageElement& placeholder)
+{
+    ASSERT(placeholder.isDroppedImagePlaceholder());
+    placeholder.removeAttribute(HTMLNames::heightAttr);
+    placeholder.removeInlineStyleProperty(CSSPropertyBackgroundColor);
 }
 
 // Manual drag caret manipulation

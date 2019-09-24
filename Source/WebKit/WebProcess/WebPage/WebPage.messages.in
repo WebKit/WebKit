@@ -311,6 +311,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
     RequestDragStart(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t allowedActions)
     RequestAdditionalItemsForDragSession(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t allowedActions)
+    InsertDroppedImagePlaceholders(Vector<WebCore::IntSize> imageSize) -> (Vector<WebCore::IntRect> dropPreviewRects, Optional<WebCore::TextIndicatorData> textIndicator) Async
     DidConcludeDrop()
 #endif
 

@@ -79,8 +79,8 @@ private:
     bool readImage(Ref<SharedBuffer>&&, const String& type, PresentationSize preferredPresentationSize = { }) override;
     bool readURL(const URL&, const String& title) override;
     bool readDataBuffer(SharedBuffer&, const String& type, const String& name, PresentationSize preferredPresentationSize = { }) override;
-#endif
     bool readPlainText(const String&) override;
+#endif
 };
 
 class WebContentMarkupReader final : public FrameWebContentReader {
@@ -103,8 +103,8 @@ private:
     bool readImage(Ref<SharedBuffer>&&, const String&, PresentationSize = { }) override { return false; }
     bool readURL(const URL&, const String&) override { return false; }
     bool readDataBuffer(SharedBuffer&, const String&, const String&, PresentationSize = { }) override { return false; }
-#endif
     bool readPlainText(const String&) override { return false; }
+#endif
 };
 
 #if PLATFORM(COCOA) && defined(__OBJC__)
