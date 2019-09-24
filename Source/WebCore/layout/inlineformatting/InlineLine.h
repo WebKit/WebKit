@@ -94,28 +94,15 @@ public:
         };
         using Runs = Vector<std::unique_ptr<Run>>;
         const Runs& runs() const { return m_runs; }
-        bool isEmpty() const { return m_runs.isEmpty(); }
-
-        LayoutUnit logicalTop() const { return m_logicalRect.top(); }
-        LayoutUnit logicalLeft() const { return m_logicalRect.left(); }
-        LayoutUnit logicalRight() const { return logicalLeft() + logicalWidth(); }
-        LayoutUnit logicalBottom() const { return logicalTop() + logicalHeight(); }
-        LayoutUnit logicalWidth() const { return m_logicalRect.width(); }
-        LayoutUnit logicalHeight() const { return m_logicalRect.height(); }
-        LineBox::Baseline baseline() const { return m_baseline; }
-        LayoutUnit baselineOffset() const { return m_baselineOffset; }
+        const LineBox& lineBox() const { return m_lineBox; }
 
     private:
         friend class Line;
 
-        void setLogicalRect(const Display::Rect& logicalRect) { m_logicalRect = logicalRect; }
-        void setBaseline(LineBox::Baseline baseline) { m_baseline = baseline; }
-        void setBaselineOffset(LayoutUnit baselineOffset) { m_baselineOffset = baselineOffset; }
+        void setLineBox(const LineBox& lineBox) { m_lineBox = lineBox; }
         Runs& runs() { return m_runs; }
 
-        Display::Rect m_logicalRect;
-        LineBox::Baseline m_baseline;
-        LayoutUnit m_baselineOffset;
+        LineBox m_lineBox;
         Runs m_runs;
     };
     std::unique_ptr<Content> close();
@@ -143,7 +130,7 @@ private:
     LayoutUnit logicalHeight() const { return m_lineLogicalHeight; }
 
     LayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
-    LayoutUnit baselineOffset() const { return m_baseline.ascent + m_baselineTop; }
+    LayoutUnit baselineOffset() const { return m_baseline.ascent() + m_baselineTop; }
 
     void appendNonBreakableSpace(const InlineItem&, const Display::Rect& logicalRect);
     void appendTextContent(const InlineTextItem&, LayoutUnit logicalWidth);

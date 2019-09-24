@@ -35,12 +35,28 @@ namespace Layout {
 class LineBox {
 public:
     struct Baseline {
-        LayoutUnit height() const { return ascent + descent; }
+        Baseline(LayoutUnit ascent, LayoutUnit descent);
+        Baseline() = default;
 
-        LayoutUnit ascent;
-        LayoutUnit descent;
+        void setAscent(LayoutUnit);
+        void setDescent(LayoutUnit);
+        void reset();
+
+        LayoutUnit height() const { return ascent() + descent(); }
+        LayoutUnit ascent() const;
+        LayoutUnit descent() const;
+
+    private:
+#if !ASSERT_DISABLED
+        bool m_hasValidAscent { false };
+        bool m_hasValidDescent { false };
+#endif
+        LayoutUnit m_ascent;
+        LayoutUnit m_descent;
     };
+
     LineBox(Display::Rect, const Baseline&, LayoutUnit baselineOffset);
+    LineBox() = default;
     
     LayoutPoint logicalTopLeft() const { return m_rect.topLeft(); }
 
@@ -68,9 +84,12 @@ public:
     //   | descent
     //   v
     // ------------------- line logical bottom
-    LayoutUnit baselineOffset() const { return m_baselineOffset; }
+    LayoutUnit baselineOffset() const;
 
 private:
+#if !ASSERT_DISABLED
+    bool m_hasValidBaselineOffset { false };
+#endif
     Display::Rect m_rect;
     Baseline m_baseline;
     LayoutUnit m_baselineOffset;
@@ -81,6 +100,63 @@ inline LineBox::LineBox(Display::Rect rect, const Baseline& baseline, LayoutUnit
     , m_baseline(baseline)
     , m_baselineOffset(baselineOffset)
 {
+#if !ASSERT_DISABLED
+    m_hasValidBaselineOffset = true;
+#endif
+}
+
+inline LayoutUnit LineBox::baselineOffset() const
+{
+    ASSERT(m_hasValidBaselineOffset);
+    return m_baselineOffset;
+}
+
+inline LineBox::Baseline::Baseline(LayoutUnit ascent, LayoutUnit descent)
+    : m_ascent(ascent)
+    , m_descent(descent)
+{
+#if !ASSERT_DISABLED
+    m_hasValidAscent = true;
+    m_hasValidDescent = true;
+#endif
+}
+
+inline void LineBox::Baseline::setAscent(LayoutUnit ascent)
+{
+#if !ASSERT_DISABLED
+    m_hasValidAscent = true;
+#endif
+    m_ascent = ascent;
+}
+
+inline void LineBox::Baseline::setDescent(LayoutUnit descent)
+{
+#if !ASSERT_DISABLED
+    m_hasValidDescent = true;
+#endif
+    m_descent = descent;
+}
+
+inline void LineBox::Baseline::reset()
+{
+#if !ASSERT_DISABLED
+    m_hasValidAscent = true;
+    m_hasValidDescent = true;
+#endif
+    m_ascent = { };
+    m_descent = { };
+}
+
+inline LayoutUnit LineBox::Baseline::ascent() const
+{
+    ASSERT(m_hasValidAscent);
+    return m_ascent;
+}
+
+inline LayoutUnit LineBox::Baseline::descent() const
+{
+    ASSERT(m_hasValidDescent);
+    return m_descent;
 }
 
 }

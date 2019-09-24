@@ -104,15 +104,15 @@ std::unique_ptr<Line::Content> Line::close()
     removeTrailingTrimmableContent();
     if (!m_skipVerticalAligment) {
         if (isVisuallyEmpty()) {
-            m_baseline = { };
+            m_baseline.reset();
             m_baselineTop = { };
             m_lineLogicalHeight = { };
         }
 
         // Remove descent when all content is baseline aligned but none of them have descent.
         if (formattingContext().quirks().lineDescentNeedsCollapsing(*m_content)) {
-            m_lineLogicalHeight -= m_baseline.descent;
-            m_baseline.descent = { };
+            m_lineLogicalHeight -= m_baseline.descent();
+            m_baseline.setDescent({ });
         }
 
         auto& layoutState = this->layoutState();
@@ -135,7 +135,7 @@ std::unique_ptr<Line::Content> Line::close()
                     // Spec makes us generate at least one line -even if it is empty.
                     ASSERT(!formattingState.lineBoxes().isEmpty());
                     auto inlineBlockBaseline = formattingState.lineBoxes().last().baseline();
-                    logicalTop = baselineOffset() - inlineBlockBaseline.ascent;
+                    logicalTop = baselineOffset() - inlineBlockBaseline.ascent();
                 } else
                     logicalTop = baselineOffset() - run->logicalRect().height();
                 break;
@@ -155,9 +155,7 @@ std::unique_ptr<Line::Content> Line::close()
             run->moveHorizontally(this->logicalLeft());
         }
     }
-    m_content->setLogicalRect({ logicalTop(), logicalLeft(), contentLogicalWidth(), logicalHeight() });
-    m_content->setBaseline(m_baseline);
-    m_content->setBaselineOffset(baselineOffset());
+    m_content->setLineBox(LineBox { Display::Rect { logicalTop(), logicalLeft(), contentLogicalWidth(), logicalHeight() }, m_baseline, baselineOffset() });
     return WTFMove(m_content);
 }
 
@@ -343,10 +341,10 @@ void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit 
         if (style.verticalAlign() == VerticalAlign::Baseline) {
             auto halfLeading = halfLeadingMetrics(fontMetrics, style.computedLineHeight());
             // Both halfleading ascent and descent could be negative (tall font vs. small line-height value)
-            if (halfLeading.descent > 0)
-                m_baseline.descent = std::max(m_baseline.descent, halfLeading.descent);
-            if (halfLeading.ascent > 0)
-                m_baseline.ascent = std::max(m_baseline.ascent, halfLeading.ascent);
+            if (halfLeading.descent() > 0)
+                m_baseline.setDescent(std::max(m_baseline.descent(), halfLeading.descent()));
+            if (halfLeading.ascent() > 0)
+                m_baseline.setAscent(std::max(m_baseline.ascent(), halfLeading.ascent()));
             contentHeight = m_baseline.height();
         } else
             contentHeight = fontMetrics.height();
@@ -360,8 +358,8 @@ void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit 
         // through the inline container (start) -see above. Normally the text content itself does not stretch the line.
         if (!m_initialStrut)
             return;
-        m_baseline.ascent = std::max(m_initialStrut->ascent, m_baseline.ascent);
-        m_baseline.descent = std::max(m_initialStrut->descent, m_baseline.descent);
+        m_baseline.setAscent(std::max(m_initialStrut->ascent(), m_baseline.ascent()));
+        m_baseline.setDescent(std::max(m_initialStrut->descent(), m_baseline.descent()));
         m_lineLogicalHeight = std::max(m_lineLogicalHeight, m_baseline.height());
         m_baselineTop = std::max(m_baselineTop, m_lineLogicalHeight - m_baseline.height());
         m_initialStrut = { };
@@ -379,8 +377,8 @@ void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit 
                 ASSERT(!formattingState.lineBoxes().isEmpty());
                 newBaselineCandidate = formattingState.lineBoxes().last().baseline();
             }
-            m_baseline.ascent = std::max(newBaselineCandidate.ascent, m_baseline.ascent);
-            m_baseline.descent = std::max(newBaselineCandidate.descent, m_baseline.descent);
+            m_baseline.setAscent(std::max(newBaselineCandidate.ascent(), m_baseline.ascent()));
+            m_baseline.setDescent(std::max(newBaselineCandidate.descent(), m_baseline.descent()));
             m_lineLogicalHeight = std::max(std::max(m_lineLogicalHeight, runHeight), m_baseline.height());
             // Baseline ascent/descent never shrink -> max.
             m_baselineTop = std::max(m_baselineTop, m_lineLogicalHeight - m_baseline.height());
