@@ -1,3 +1,13 @@
+2019-09-24  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the macOS branch build
+
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::twoFingerSingleTapAtPoint):
+        Untested and unreviewed. Introduce a empty implementation of
+        twoFingerSingleTapAtPoint for non-iOS targets. No longer
+        necessary on trunk because of r247898.
+
 2019-09-23  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r250015. rdar://problem/55579794
