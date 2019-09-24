@@ -1,3 +1,14 @@
+2019-09-23  Chris Dumez  <cdumez@apple.com>
+
+        FrameSpecificStorageAccessIdentifier does not need a sessionID
+        https://bugs.webkit.org/show_bug.cgi?id=202093
+
+        Reviewed by Geoffrey Garen.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestStorageAccess):
+
 2019-09-23  Tim Horton  <timothy_horton@apple.com>
 
         macOS: <datalist> dropdown shadow is cropped, looks nothing like NSComboBox
