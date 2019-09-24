@@ -1,5 +1,78 @@
 2019-09-23  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r250183. rdar://problem/55608006
+
+    [Pointer Events] touch-action set to pan-x or pan-y alone should disable scrolling altogether if the intial gesture is in the disallowed direction
+    https://bugs.webkit.org/show_bug.cgi?id=202053
+    <rdar://problem/54542190>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebKit:
+    
+    Although the Pointer Events specification does not specify this clearly (see https://github.com/w3c/pointerevents/issues/303), setting "touch-action" to a value
+    that only allows scrolling a specific direction ("pan-x" or "pan-y") should disable scrolling in the specified direction if the panning gesture initially is directed
+    in the opposite direction. In practice, this means that setting "touch-action: pan-y" on an element should disable scrolling if the user initially pans horizontally,
+    even if later on in the gesture the user pans vertically. This allows for sites that want to offer a programmatic horizontal scroller to disable vertical scrolling
+    if the user pans horizontally.
+    
+    In order to support this, we add four UISwipeGestureRecognizers, one for each direction, and we selectively allows touches to be recognizer for them based on the
+    "touch-action" value specified at the initial touch location for a given gesture. In the case of "touch-action: pan-y" we only allow the left and right swipe recognizers
+    to be enabled, and in the case of "touch-action: pan-x" we only allow the up and down swipe recognizers to be enabled. If any of those gesture recognizers is recognized,
+    scrolling will be disabled for the duration of this gesture. If a UIScrollView panning gesture recognizer is recognized prior to a swipe, they won't have a chance to be
+    recognized.
+    
+    * UIProcess/ios/WKContentViewInteraction.h:
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView setupInteraction]):
+    (-[WKContentView cleanupInteraction]):
+    (-[WKContentView _removeDefaultGestureRecognizers]):
+    (-[WKContentView _addDefaultGestureRecognizers]):
+    (-[WKContentView gestureRecognizer:shouldReceiveTouch:]):
+    
+    LayoutTests:
+    
+    Add new tests checking that setting "touch-action: pan-y" on an element and initiating a horizontal panning gesture will disallow scrolling vertically
+    if a vertical scrolling gesture follows. We test both the case where scrolling would apply to the whole page and the case where scrolling would apply
+    to an "overflow: scroll" element.
+    
+    * pointerevents/ios/touch-action-pan-y-horizontal-gesture-prevents-vertical-scrolling-expected.txt: Added.
+    * pointerevents/ios/touch-action-pan-y-horizontal-gesture-prevents-vertical-scrolling.html: Added.
+    * pointerevents/ios/touch-action-pan-y-in-overflow-scroll-horizontal-gesture-prevents-vertical-scrolling-expected.txt: Added.
+    * pointerevents/ios/touch-action-pan-y-in-overflow-scroll-horizontal-gesture-prevents-vertical-scrolling.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250183 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-09-21  Antoine Quint  <graouts@apple.com>
+
+            [Pointer Events] touch-action set to pan-x or pan-y alone should disable scrolling altogether if the intial gesture is in the disallowed direction
+            https://bugs.webkit.org/show_bug.cgi?id=202053
+            <rdar://problem/54542190>
+
+            Reviewed by Tim Horton.
+
+            Although the Pointer Events specification does not specify this clearly (see https://github.com/w3c/pointerevents/issues/303), setting "touch-action" to a value
+            that only allows scrolling a specific direction ("pan-x" or "pan-y") should disable scrolling in the specified direction if the panning gesture initially is directed
+            in the opposite direction. In practice, this means that setting "touch-action: pan-y" on an element should disable scrolling if the user initially pans horizontally,
+            even if later on in the gesture the user pans vertically. This allows for sites that want to offer a programmatic horizontal scroller to disable vertical scrolling
+            if the user pans horizontally.
+
+            In order to support this, we add four UISwipeGestureRecognizers, one for each direction, and we selectively allows touches to be recognizer for them based on the
+            "touch-action" value specified at the initial touch location for a given gesture. In the case of "touch-action: pan-y" we only allow the left and right swipe recognizers
+            to be enabled, and in the case of "touch-action: pan-x" we only allow the up and down swipe recognizers to be enabled. If any of those gesture recognizers is recognized,
+            scrolling will be disabled for the duration of this gesture. If a UIScrollView panning gesture recognizer is recognized prior to a swipe, they won't have a chance to be
+            recognized.
+
+            * UIProcess/ios/WKContentViewInteraction.h:
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView setupInteraction]):
+            (-[WKContentView cleanupInteraction]):
+            (-[WKContentView _removeDefaultGestureRecognizers]):
+            (-[WKContentView _addDefaultGestureRecognizers]):
+            (-[WKContentView gestureRecognizer:shouldReceiveTouch:]):
+
+2019-09-23  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r250157. rdar://problem/55607994
 
     Sanitize suggested filenames used for saving PDFs
