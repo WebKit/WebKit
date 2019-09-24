@@ -77,6 +77,11 @@ public:
     //       that already contains content.
     void setSecurityOriginPolicy(RefPtr<SecurityOriginPolicy>&&);
 
+    // Explicitly override the content security policy for this security context.
+    // Note: It is dangerous to change the content security policy of a script
+    //       context that already contains content.
+    void setContentSecurityPolicy(std::unique_ptr<ContentSecurityPolicy>&&);
+
     WEBCORE_EXPORT SecurityOrigin* securityOrigin() const;
 
     static SandboxFlags parseSandboxPolicy(const String& policy, String& invalidTokensErrorMessage);
@@ -104,8 +109,6 @@ public:
 protected:
     SecurityContext();
     virtual ~SecurityContext();
-
-    void setContentSecurityPolicy(std::unique_ptr<ContentSecurityPolicy>);
 
     // It's only appropriate to call this during security context initialization; it's needed for
     // flags that can't be disabled with allow-* attributes, such as SandboxNavigation.

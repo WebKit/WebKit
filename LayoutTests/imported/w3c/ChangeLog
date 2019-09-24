@@ -1,3 +1,98 @@
+2019-09-23  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r250255. rdar://problem/55644665
+
+    Improve CSP inheritance semantics
+    https://bugs.webkit.org/show_bug.cgi?id=201884
+    <rdar://problem/50172407>
+    
+    Reviewed by Brent Fulgham.
+    
+    LayoutTests/imported/w3c:
+    
+    Update expected results now that we pass more sub-tests.
+    
+    * web-platform-tests/content-security-policy/inheritance/iframe-all-local-schemes-inherit-self.sub-expected.txt:
+    * web-platform-tests/content-security-policy/inheritance/window-expected.txt:
+    
+    Source/WebCore:
+    
+    Update the CSP inheritance semantics to more closely match the logic in section Initialize a Document's CSP list
+    of the CSP3 spec., <https://w3c.github.io/webappsec-csp/#initialize-document-csp>.
+    
+    Towards this, move more of the inheritance logic out of Document::initContentSecurityPolicy() and into
+    DocumentWriter::begin() where details about the document being replaced live. This lets us remove the
+    need to track the previous content security policy to pass it to Document::initContentSecurityPolicy().
+    Moreover, DocumentWriter::begin() knows the owner document that will be replaced with the result of
+    executing a JavaScript URL. This is needed in order to fix up inheritance of CSP for such documents.
+    
+    Tests: http/tests/security/contentSecurityPolicy/iframe-allowed-when-loaded-via-javascript-url.html
+           http/tests/security/contentSecurityPolicy/iframe-blocked-when-loaded-via-javascript-url.html
+           http/tests/security/contentSecurityPolicy/iframe-blocked-when-loaded-via-javascript-url2.html
+    
+    * dom/Document.cpp:
+    (WebCore::Document::initSecurityContext): If we are inheriting the security origin from the owner
+    document then inherit its CSP policy. We copy over both the CSP state from the owner as well as
+    update 'self' to match the owner's origin so that CSP source expressions that include 'self' work
+    correctly even from about:blank documents.
+    (WebCore::Document::initContentSecurityPolicy): Move most of the logic from here into DocumentWriter::begin()
+    to take advantage of the fact that DocumentWriter::begin() knows about the outgoing document (if there
+    is one) as well as whether the outgoing document is being replaced with a new document that is the result
+    of evaluating a JavaScript URL. We need do know both these things in order to inherit the correct CSP
+    policy. This function only exists to copy some upgrade-insecure-requests state and to fix up plugin documents
+    as we currently do.
+    (WebCore::Document::shouldInheritContentSecurityPolicy const): Deleted.
+    * dom/Document.h:
+    * dom/SecurityContext.cpp:
+    (WebCore::SecurityContext::setContentSecurityPolicy): Modified to take its param by rvalue-reference
+    to make it less error prone to use.
+    * dom/SecurityContext.h: Expose setContentSecurityPolicy() so that we can invoke it from DocumentWriter::begin().
+    * loader/DocumentWriter.cpp:
+    (WebCore::DocumentWriter::begin): For documents being replaced with the result of a JavaScript URL (i.e. ownerDocument
+    is non-null) inherit the CSP from the owner document. Similarly, if we have an existing document in the frame
+    and the protocol of the new document's URL is data: or blob: then inherit the CSP from the existing page. The latter
+    is what we currently do just moved from Document::initContentSecurityPolicy() and re-written in terms of the
+    existingDocument instead of previousContentSecurityPolicy. Also call setInsecureNavigationRequestsToUpgrade()
+    both when we have a non-null ownerDocument as well as when we have a non-null existingDocument. The former fixes
+    the block-all-mixed-content feature for documents loaded via JavaScript URLs and the latter is what we do now.
+    * loader/FrameLoader.cpp:
+    (WebCore::FrameLoader::didBeginDocument): Remove parameter previousContentSecurityPolicy as the logic that
+    made use of it moved to DocumentWriter::begin().
+    * loader/FrameLoader.h:
+    * page/csp/ContentSecurityPolicy.h:
+    
+    LayoutTests:
+    
+    Add some more tests and update expected results of existing tests now that we pass more sub-tests.
+    
+    * http/tests/security/contentSecurityPolicy/iframe-allowed-when-loaded-via-javascript-url-expected.txt: Added.
+    * http/tests/security/contentSecurityPolicy/iframe-allowed-when-loaded-via-javascript-url.html: Added.
+    * http/tests/security/contentSecurityPolicy/iframe-blocked-when-loaded-via-javascript-url-expected.txt: Added.
+    * http/tests/security/contentSecurityPolicy/iframe-blocked-when-loaded-via-javascript-url.html: Added.
+    * http/tests/security/contentSecurityPolicy/iframe-blocked-when-loaded-via-javascript-url2-expected.txt: Added.
+    * http/tests/security/contentSecurityPolicy/iframe-blocked-when-loaded-via-javascript-url2.html: Added.
+    * http/tests/security/contentSecurityPolicy/user-style-sheet-font-crasher-expected.txt: I don't understand
+    why there is another duplicte console log message emitted, but there are already two such messages, which is
+    already one too many. The duplicate messages are more cosmetic than functional though there may be implications
+    with respect to CSP reporting. Filed <https://bugs.webkit.org/show_bug.cgi?id=202004> to track this issue.
+    * platform/mac-wk1/http/tests/security/contentSecurityPolicy/user-style-sheet-font-crasher-expected.txt:
+    * platform/win/http/tests/security/contentSecurityPolicy/user-style-sheet-font-crasher-expected.txt:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250255 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-09-23  Daniel Bates  <dabates@apple.com>
+
+            Improve CSP inheritance semantics
+            https://bugs.webkit.org/show_bug.cgi?id=201884
+            <rdar://problem/50172407>
+
+            Reviewed by Brent Fulgham.
+
+            Update expected results now that we pass more sub-tests.
+
+            * web-platform-tests/content-security-policy/inheritance/iframe-all-local-schemes-inherit-self.sub-expected.txt:
+            * web-platform-tests/content-security-policy/inheritance/window-expected.txt:
+
 2019-07-09  Cathie Chen  <cathiechen@igalia.com>
 
         Support writing-mode and direction for scrollIntoViewOptions.

@@ -1144,7 +1144,7 @@ public:
     HashSet<SVGUseElement*> const svgUseElements() const { return m_svgUseElements; }
 
     void initSecurityContext();
-    void initContentSecurityPolicy(ContentSecurityPolicy* previousPolicy);
+    void initContentSecurityPolicy();
 
     void updateURLForPushOrReplaceState(const URL&);
     void statePopped(Ref<SerializedScriptValue>&&);
@@ -1543,8 +1543,6 @@ private:
     friend class ThrowOnDynamicMarkupInsertionCountIncrementer;
     friend class IgnoreOpensDuringUnloadCountIncrementer;
     friend class IgnoreDestructiveWriteCountIncrementer;
-
-    bool shouldInheritContentSecurityPolicy() const;
 
     void updateTitleElement(Element& changingTitleElement);
     void willDetachPage() final;
