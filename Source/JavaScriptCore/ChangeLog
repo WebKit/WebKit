@@ -1,3 +1,22 @@
+2019-09-24  Alexey Proskuryakov  <ap@apple.com>
+
+        JavaScriptCore (still) doesn't unlock the engineering keychain
+        https://bugs.webkit.org/show_bug.cgi?id=202123
+
+        Reviewed by Dan Bernstein.
+
+        Unlike WebKit, JavaScriptCore only defines CODE_SIGN_IDENTITY in ToolExecutable
+        configuration, not in DebugRelease. As a result, it's not defined when running
+        the script for Unlock Keychain phase.
+
+        Fix this by moving CODE_SIGN_IDENTITY to DebugRelease configuration, matching
+        WebKit. As a result, we are now using consistent signing options in all targets.
+
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/ToolExecutable.xcconfig:
+        When moving, removed a special case for Production, as that's never used with
+        DebugRelease (also, the Profile case was incorrect).
+
 2019-09-24  Caio Lima  <ticaiolima@gmail.com>
 
         [BigInt] Add ValueBitRShift into DFG
