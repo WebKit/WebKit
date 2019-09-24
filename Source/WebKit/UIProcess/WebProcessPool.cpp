@@ -216,7 +216,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_defaultPageGroup(WebPageGroup::create())
     , m_injectedBundleClient(makeUnique<API::InjectedBundleClient>())
     , m_automationClient(makeUnique<API::AutomationClient>())
-    , m_downloadClient(makeUnique<API::DownloadClient>())
+    , m_downloadClient(makeUniqueRef<API::DownloadClient>())
     , m_historyClient(makeUnique<API::LegacyContextHistoryClient>())
     , m_customProtocolManagerClient(makeUnique<API::CustomProtocolManagerClient>())
     , m_visitedLinkStore(VisitedLinkStore::create())
@@ -360,12 +360,9 @@ void WebProcessPool::setHistoryClient(std::unique_ptr<API::LegacyContextHistoryC
         m_historyClient = WTFMove(historyClient);
 }
 
-void WebProcessPool::setDownloadClient(std::unique_ptr<API::DownloadClient>&& downloadClient)
+void WebProcessPool::setDownloadClient(UniqueRef<API::DownloadClient>&& downloadClient)
 {
-    if (!downloadClient)
-        m_downloadClient = makeUnique<API::DownloadClient>();
-    else
-        m_downloadClient = WTFMove(downloadClient);
+    m_downloadClient = WTFMove(downloadClient);
 }
 
 void WebProcessPool::setAutomationClient(std::unique_ptr<API::AutomationClient>&& automationClient)
@@ -1327,10 +1324,10 @@ bool WebProcessPool::hasPagesUsingWebsiteDataStore(WebsiteDataStore& dataStore) 
     return m_sessionToPageIDsMap.contains(dataStore.sessionID());
 }
 
-DownloadProxy& WebProcessPool::download(WebPageProxy* initiatingPage, const ResourceRequest& request, const String& suggestedFilename)
+DownloadProxy& WebProcessPool::download(WebsiteDataStore& dataStore, WebPageProxy* initiatingPage, const ResourceRequest& request, const String& suggestedFilename)
 {
-    auto& downloadProxy = createDownloadProxy(request, initiatingPage);
-    PAL::SessionID sessionID = initiatingPage ? initiatingPage->sessionID() : PAL::SessionID::defaultSessionID();
+    auto& downloadProxy = createDownloadProxy(dataStore, request, initiatingPage);
+    PAL::SessionID sessionID = dataStore.sessionID();
 
     if (initiatingPage)
         initiatingPage->handleDownloadRequest(downloadProxy);
@@ -1359,17 +1356,17 @@ DownloadProxy& WebProcessPool::download(WebPageProxy* initiatingPage, const Reso
     return downloadProxy;
 }
 
-DownloadProxy& WebProcessPool::resumeDownload(WebPageProxy* initiatingPage, const API::Data* resumeData, const String& path)
+DownloadProxy& WebProcessPool::resumeDownload(WebsiteDataStore& dataStore, WebPageProxy* initiatingPage, const API::Data& resumeData, const String& path)
 {
-    auto& downloadProxy = createDownloadProxy(ResourceRequest(), initiatingPage);
-    PAL::SessionID sessionID = initiatingPage ? initiatingPage->sessionID() : PAL::SessionID::defaultSessionID();
+    auto& downloadProxy = createDownloadProxy(dataStore, ResourceRequest(), initiatingPage);
+    PAL::SessionID sessionID = dataStore.sessionID();
 
     SandboxExtension::Handle sandboxExtensionHandle;
     if (!path.isEmpty())
         SandboxExtension::createHandle(path, SandboxExtension::Type::ReadWrite, sandboxExtensionHandle);
 
     if (networkProcess()) {
-        networkProcess()->send(Messages::NetworkProcess::ResumeDownload(sessionID, downloadProxy.downloadID(), resumeData->dataReference(), path, sandboxExtensionHandle), 0);
+        networkProcess()->send(Messages::NetworkProcess::ResumeDownload(sessionID, downloadProxy.downloadID(), resumeData.dataReference(), path, sandboxExtensionHandle), 0);
         return downloadProxy;
     }
 
@@ -1620,9 +1617,9 @@ void WebProcessPool::setDefaultRequestTimeoutInterval(double timeoutInterval)
     sendToAllProcesses(Messages::WebProcess::SetDefaultRequestTimeoutInterval(timeoutInterval));
 }
 
-DownloadProxy& WebProcessPool::createDownloadProxy(const ResourceRequest& request, WebPageProxy* originatingPage)
+DownloadProxy& WebProcessPool::createDownloadProxy(WebsiteDataStore& dataStore, const ResourceRequest& request, WebPageProxy* originatingPage)
 {
-    auto& downloadProxy = ensureNetworkProcess().createDownloadProxy(request);
+    auto& downloadProxy = ensureNetworkProcess().createDownloadProxy(dataStore, request);
     downloadProxy.setOriginatingPage(originatingPage);
     return downloadProxy;
 }

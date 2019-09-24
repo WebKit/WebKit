@@ -1,3 +1,13 @@
+2019-09-24  Alex Christensen  <achristensen@webkit.org>
+
+        Require a WebsiteDataStore when creating or resuming downloads
+        https://bugs.webkit.org/show_bug.cgi?id=202081
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DownloadProgress.mm:
+        (-[DownloadProgressTestRunner startDownload:expectedLength:]):
+
 2019-09-23  Zan Dobersek  <zdobersek@igalia.com>
 
         run-web-platform-tests: remove support for in-repository manifest, expectation management

@@ -2953,7 +2953,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* 
     DownloadID downloadID = { };
     if (action == PolicyAction::Download) {
         // Create a download proxy.
-        auto& download = m_process->processPool().createDownloadProxy(m_decidePolicyForResponseRequest, this);
+        auto& download = m_process->processPool().createDownloadProxy(m_websiteDataStore, m_decidePolicyForResponseRequest, this);
         if (navigation) {
             download.setWasUserInitiated(navigation->wasUserInitiated());
             download.setRedirectChain(navigation->takeRedirectChain());
@@ -6128,16 +6128,16 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
     }
 #endif
     if (item.action() == ContextMenuItemTagDownloadImageToDisk) {
-        m_process->processPool().download(this, URL(URL(), m_activeContextMenuContextData.webHitTestResultData().absoluteImageURL));
+        m_process->processPool().download(m_websiteDataStore, this, URL(URL(), m_activeContextMenuContextData.webHitTestResultData().absoluteImageURL));
         return;    
     }
     if (item.action() == ContextMenuItemTagDownloadLinkToDisk) {
         auto& hitTestResult = m_activeContextMenuContextData.webHitTestResultData();
-        m_process->processPool().download(this, URL(URL(), hitTestResult.absoluteLinkURL), hitTestResult.linkSuggestedFilename);
+        m_process->processPool().download(m_websiteDataStore, this, URL(URL(), hitTestResult.absoluteLinkURL), hitTestResult.linkSuggestedFilename);
         return;
     }
     if (item.action() == ContextMenuItemTagDownloadMediaToDisk) {
-        m_process->processPool().download(this, URL(URL(), m_activeContextMenuContextData.webHitTestResultData().absoluteMediaURL));
+        m_process->processPool().download(m_websiteDataStore, this, URL(URL(), m_activeContextMenuContextData.webHitTestResultData().absoluteMediaURL));
         return;
     }
     if (item.action() == ContextMenuItemTagCheckSpellingWhileTyping) {

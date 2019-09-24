@@ -362,7 +362,7 @@ static void webkitWebContextDispose(GObject* object)
     if (!priv->clientsDetached) {
         priv->clientsDetached = true;
         priv->processPool->setInjectedBundleClient(nullptr);
-        priv->processPool->setDownloadClient(nullptr);
+        priv->processPool->setDownloadClient(makeUniqueRef<API::DownloadClient>());
         priv->processPool->setLegacyCustomProtocolManagerClient(nullptr);
     }
 
@@ -1658,7 +1658,7 @@ WebKitDownload* webkitWebContextGetOrCreateDownload(DownloadProxy* downloadProxy
 WebKitDownload* webkitWebContextStartDownload(WebKitWebContext* context, const char* uri, WebPageProxy* initiatingPage)
 {
     WebCore::ResourceRequest request(String::fromUTF8(uri));
-    return webkitWebContextGetOrCreateDownload(&context->priv->processPool->download(initiatingPage, request));
+    return webkitWebContextGetOrCreateDownload(&context->priv->processPool->download(WebKit::WebsiteDataStore::defaultDataStore().get(), initiatingPage, request));
 }
 
 void webkitWebContextRemoveDownload(DownloadProxy* downloadProxy)

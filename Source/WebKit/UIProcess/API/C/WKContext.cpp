@@ -168,107 +168,87 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
     }
 }
 
-void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownloadClientBase* wkClient)
+void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadClientBase* wkClient)
 {
     class DownloadClient final : public API::Client<WKContextDownloadClientBase>, public API::DownloadClient {
     public:
-        explicit DownloadClient(const WKContextDownloadClientBase* client)
+        explicit DownloadClient(const WKContextDownloadClientBase* client, WKContextRef context)
+            : m_context(context)
         {
             initialize(client);
         }
     private:
-        void didStart(WebKit::WebProcessPool& processPool, WebKit::DownloadProxy& downloadProxy) final
+        void didStart(WebKit::DownloadProxy& downloadProxy) final
         {
             if (!m_client.didStart)
                 return;
-
-            m_client.didStart(WebKit::toAPI(&processPool), WebKit::toAPI(&downloadProxy), m_client.base.clientInfo);
+            m_client.didStart(m_context, WebKit::toAPI(&downloadProxy), m_client.base.clientInfo);
         }
-
-        void didReceiveAuthenticationChallenge(WebKit::WebProcessPool& processPool, WebKit::DownloadProxy& downloadProxy, WebKit::AuthenticationChallengeProxy& authenticationChallengeProxy) final
+        void didReceiveAuthenticationChallenge(WebKit::DownloadProxy& downloadProxy, WebKit::AuthenticationChallengeProxy& authenticationChallengeProxy) final
         {
             if (!m_client.didReceiveAuthenticationChallenge)
                 return;
-
-            m_client.didReceiveAuthenticationChallenge(WebKit::toAPI(&processPool), WebKit::toAPI(&downloadProxy), WebKit::toAPI(&authenticationChallengeProxy), m_client.base.clientInfo);
+            m_client.didReceiveAuthenticationChallenge(m_context, WebKit::toAPI(&downloadProxy), WebKit::toAPI(&authenticationChallengeProxy), m_client.base.clientInfo);
         }
-
-        void didReceiveResponse(WebKit::WebProcessPool& processPool, WebKit::DownloadProxy& downloadProxy, const WebCore::ResourceResponse& response) final
+        void didReceiveResponse(WebKit::DownloadProxy& downloadProxy, const WebCore::ResourceResponse& response) final
         {
             if (!m_client.didReceiveResponse)
                 return;
-
-            m_client.didReceiveResponse(WebKit::toAPI(&processPool), WebKit::toAPI(&downloadProxy), WebKit::toAPI(API::URLResponse::create(response).ptr()), m_client.base.clientInfo);
+            m_client.didReceiveResponse(m_context, WebKit::toAPI(&downloadProxy), WebKit::toAPI(API::URLResponse::create(response).ptr()), m_client.base.clientInfo);
         }
-
-        void didReceiveData(WebKit::WebProcessPool& processPool, WebKit::DownloadProxy& downloadProxy, uint64_t length) final
+        void didReceiveData(WebKit::DownloadProxy& downloadProxy, uint64_t length) final
         {
             if (!m_client.didReceiveData)
                 return;
-
-            m_client.didReceiveData(WebKit::toAPI(&processPool), WebKit::toAPI(&downloadProxy), length, m_client.base.clientInfo);
+            m_client.didReceiveData(m_context, WebKit::toAPI(&downloadProxy), length, m_client.base.clientInfo);
         }
-
-        void decideDestinationWithSuggestedFilename(WebKit::WebProcessPool& processPool, WebKit::DownloadProxy& downloadProxy, const String& filename, Function<void(WebKit::AllowOverwrite, WTF::String)>&& completionHandler) final
+        void decideDestinationWithSuggestedFilename(WebKit::DownloadProxy& downloadProxy, const String& filename, Function<void(WebKit::AllowOverwrite, WTF::String)>&& completionHandler) final
         {
             if (!m_client.decideDestinationWithSuggestedFilename)
                 return completionHandler(WebKit::AllowOverwrite::No, { });
-
             bool allowOverwrite = false;
-            auto destination = adoptWK(m_client.decideDestinationWithSuggestedFilename(WebKit::toAPI(&processPool), WebKit::toAPI(&downloadProxy), WebKit::toAPI(filename.impl()), &allowOverwrite, m_client.base.clientInfo));
+            auto destination = adoptWK(m_client.decideDestinationWithSuggestedFilename(m_context, WebKit::toAPI(&downloadProxy), WebKit::toAPI(filename.impl()), &allowOverwrite, m_client.base.clientInfo));
             completionHandler(allowOverwrite ? WebKit::AllowOverwrite::Yes : WebKit::AllowOverwrite::No, WebKit::toWTFString(destination.get()));
         }
-
-        void didCreateDestination(WebKit::WebProcessPool& processPool, WebKit::DownloadProxy& downloadProxy, const String& path) final
+        void didCreateDestination(WebKit::DownloadProxy& downloadProxy, const String& path) final
         {
             if (!m_client.didCreateDestination)
                 return;
-
-            m_client.didCreateDestination(WebKit::toAPI(&processPool), WebKit::toAPI(&downloadProxy), WebKit::toAPI(path.impl()), m_client.base.clientInfo);
+            m_client.didCreateDestination(m_context, WebKit::toAPI(&downloadProxy), WebKit::toAPI(path.impl()), m_client.base.clientInfo);
         }
-
-        void didFinish(WebKit::WebProcessPool& processPool, WebKit::DownloadProxy& downloadProxy) final
+        void didFinish(WebKit::DownloadProxy& downloadProxy) final
         {
             if (!m_client.didFinish)
                 return;
-
-            m_client.didFinish(WebKit::toAPI(&processPool), WebKit::toAPI(&downloadProxy), m_client.base.clientInfo);
+            m_client.didFinish(m_context, WebKit::toAPI(&downloadProxy), m_client.base.clientInfo);
         }
-
-        void didFail(WebKit::WebProcessPool& processPool, WebKit::DownloadProxy& downloadProxy, const WebCore::ResourceError& error) final
+        void didFail(WebKit::DownloadProxy& downloadProxy, const WebCore::ResourceError& error) final
         {
             if (!m_client.didFail)
                 return;
-
-            m_client.didFail(WebKit::toAPI(&processPool), WebKit::toAPI(&downloadProxy), WebKit::toAPI(error), m_client.base.clientInfo);
+            m_client.didFail(m_context, WebKit::toAPI(&downloadProxy), WebKit::toAPI(error), m_client.base.clientInfo);
         }
-        
-        void didCancel(WebKit::WebProcessPool& processPool, WebKit::DownloadProxy& downloadProxy) final
+        void didCancel(WebKit::DownloadProxy& downloadProxy) final
         {
             if (!m_client.didCancel)
                 return;
-            
-            m_client.didCancel(WebKit::toAPI(&processPool), WebKit::toAPI(&downloadProxy), m_client.base.clientInfo);
+            m_client.didCancel(m_context, WebKit::toAPI(&downloadProxy), m_client.base.clientInfo);
         }
-        
-        void processDidCrash(WebKit::WebProcessPool& processPool, WebKit::DownloadProxy& downloadProxy) final
+        void processDidCrash(WebKit::DownloadProxy& downloadProxy) final
         {
             if (!m_client.processDidCrash)
                 return;
-            
-            m_client.processDidCrash(WebKit::toAPI(&processPool), WebKit::toAPI(&downloadProxy), m_client.base.clientInfo);
+            m_client.processDidCrash(m_context, WebKit::toAPI(&downloadProxy), m_client.base.clientInfo);
         }
-
-        void willSendRequest(WebKit::WebProcessPool& processPool, WebKit::DownloadProxy& downloadProxy, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler) final
+        void willSendRequest(WebKit::DownloadProxy& downloadProxy, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler) final
         {
             if (m_client.didReceiveServerRedirect)
-                m_client.didReceiveServerRedirect(WebKit::toAPI(&processPool), WebKit::toAPI(&downloadProxy), WebKit::toURLRef(request.url().string().impl()), m_client.base.clientInfo);
-
+                m_client.didReceiveServerRedirect(m_context, WebKit::toAPI(&downloadProxy), WebKit::toURLRef(request.url().string().impl()), m_client.base.clientInfo);
             completionHandler(WTFMove(request));
         }
+        WKContextRef m_context;
     };
-
-    WebKit::toImpl(contextRef)->setDownloadClient(makeUnique<DownloadClient>(wkClient));
+    WebKit::toImpl(context)->setDownloadClient(makeUniqueRef<DownloadClient>(wkClient, context));
 }
 
 void WKContextSetConnectionClient(WKContextRef contextRef, const WKContextConnectionClientBase* wkClient)
@@ -276,14 +256,14 @@ void WKContextSetConnectionClient(WKContextRef contextRef, const WKContextConnec
     WebKit::toImpl(contextRef)->initializeConnectionClient(wkClient);
 }
 
-WKDownloadRef WKContextDownloadURLRequest(WKContextRef contextRef, WKURLRequestRef requestRef)
+WKDownloadRef WKContextDownloadURLRequest(WKContextRef, WKURLRequestRef)
 {
-    return WebKit::toAPI(&WebKit::toImpl(contextRef)->download(0, WebKit::toImpl(requestRef)->resourceRequest()));
+    return nullptr;
 }
 
-WKDownloadRef WKContextResumeDownload(WKContextRef contextRef, WKDataRef resumeData, WKStringRef path)
+WKDownloadRef WKContextResumeDownload(WKContextRef, WKDataRef, WKStringRef)
 {
-    return WebKit::toAPI(&WebKit::toImpl(contextRef)->resumeDownload(nullptr, WebKit::toImpl(resumeData), WebKit::toWTFString(path)));
+    return nullptr;
 }
 
 void WKContextSetInitializationUserDataForInjectedBundle(WKContextRef contextRef,  WKTypeRef userDataRef)

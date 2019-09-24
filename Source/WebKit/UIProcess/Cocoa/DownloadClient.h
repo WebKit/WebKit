@@ -47,17 +47,17 @@ public:
     
 private:
     // From API::DownloadClient
-    void didStart(WebProcessPool&, DownloadProxy&) final;
-    void didReceiveResponse(WebProcessPool&, DownloadProxy&, const WebCore::ResourceResponse&) final;
-    void didReceiveData(WebProcessPool&, DownloadProxy&, uint64_t length) final;
-    void decideDestinationWithSuggestedFilename(WebProcessPool&, DownloadProxy&, const String& suggestedFilename, Function<void(AllowOverwrite, String)>&&) final;
-    void didFinish(WebProcessPool&, DownloadProxy&) final;
-    void didFail(WebProcessPool&, DownloadProxy&, const WebCore::ResourceError&) final;
-    void didCancel(WebProcessPool&, DownloadProxy&) final;
-    void willSendRequest(WebProcessPool&, DownloadProxy&, WebCore::ResourceRequest&&, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&) final;
-    void didReceiveAuthenticationChallenge(WebProcessPool&, DownloadProxy&, AuthenticationChallengeProxy&) final;
-    void didCreateDestination(WebProcessPool&, DownloadProxy&, const String&) final;
-    void processDidCrash(WebProcessPool&, DownloadProxy&) final;
+    void didStart(DownloadProxy&) final;
+    void didReceiveResponse(DownloadProxy&, const WebCore::ResourceResponse&) final;
+    void didReceiveData(DownloadProxy&, uint64_t length) final;
+    void decideDestinationWithSuggestedFilename(DownloadProxy&, const String& suggestedFilename, Function<void(AllowOverwrite, String)>&&) final;
+    void didFinish(DownloadProxy&) final;
+    void didFail(DownloadProxy&, const WebCore::ResourceError&) final;
+    void didCancel(DownloadProxy&) final;
+    void willSendRequest(DownloadProxy&, WebCore::ResourceRequest&&, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&) final;
+    void didReceiveAuthenticationChallenge(DownloadProxy&, AuthenticationChallengeProxy&) final;
+    void didCreateDestination(DownloadProxy&, const String&) final;
+    void processDidCrash(DownloadProxy&) final;
 
 #if USE(SYSTEM_PREVIEW)
     void takeActivityToken(DownloadProxy&);

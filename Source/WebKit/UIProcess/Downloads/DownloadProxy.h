@@ -53,10 +53,11 @@ class DownloadID;
 class DownloadProxyMap;
 class WebPageProxy;
 class WebProcessPool;
+class WebsiteDataStore;
 
 class DownloadProxy : public API::ObjectImpl<API::Object::Type::Download>, public IPC::MessageReceiver {
 public:
-    static Ref<DownloadProxy> create(DownloadProxyMap&, WebProcessPool&, const WebCore::ResourceRequest&);
+    static Ref<DownloadProxy> create(DownloadProxyMap&, WebsiteDataStore&, WebProcessPool&, const WebCore::ResourceRequest&);
     ~DownloadProxy();
 
     DownloadID downloadID() const { return m_downloadID; }
@@ -99,7 +100,7 @@ public:
 #endif
 
 private:
-    explicit DownloadProxy(DownloadProxyMap&, WebProcessPool&, const WebCore::ResourceRequest&);
+    explicit DownloadProxy(DownloadProxyMap&, WebsiteDataStore&, WebProcessPool&, const WebCore::ResourceRequest&);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -118,6 +119,7 @@ private:
     void decideDestinationWithSuggestedFilenameAsync(DownloadID, const String& suggestedFilename);
 
     DownloadProxyMap& m_downloadProxyMap;
+    RefPtr<WebsiteDataStore> m_dataStore;
     RefPtr<WebProcessPool> m_processPool;
     DownloadID m_downloadID;
 

@@ -25,7 +25,7 @@
 #include "WebKitURIResponsePrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebViewPrivate.h"
-#include "WebProcessPool.h"
+#include "WebsiteDataStore.h"
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 
@@ -40,14 +40,14 @@ public:
     }
 
 private:
-    void didStart(WebProcessPool&, DownloadProxy& downloadProxy) override
+    void didStart(DownloadProxy& downloadProxy) override
     {
         GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
         webkitDownloadStarted(download.get());
         webkitWebContextDownloadStarted(m_webContext, download.get());
     }
 
-    void didReceiveAuthenticationChallenge(WebProcessPool&, DownloadProxy& downloadProxy, AuthenticationChallengeProxy& authenticationChallenge) override
+    void didReceiveAuthenticationChallenge(DownloadProxy& downloadProxy, AuthenticationChallengeProxy& authenticationChallenge) override
     {
         GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
         if (webkitDownloadIsCancelled(download.get()))
@@ -58,7 +58,7 @@ private:
             webkitWebViewHandleAuthenticationChallenge(webView, &authenticationChallenge);
     }
 
-    void didReceiveResponse(WebProcessPool&, DownloadProxy& downloadProxy, const ResourceResponse& resourceResponse) override
+    void didReceiveResponse(DownloadProxy& downloadProxy, const ResourceResponse& resourceResponse) override
     {
         GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
         if (webkitDownloadIsCancelled(download.get()))
@@ -68,13 +68,13 @@ private:
         webkitDownloadSetResponse(download.get(), response.get());
     }
 
-    void didReceiveData(WebProcessPool&, DownloadProxy& downloadProxy, uint64_t length) override
+    void didReceiveData(DownloadProxy& downloadProxy, uint64_t length) override
     {
         GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
         webkitDownloadNotifyProgress(download.get(), length);
     }
 
-    void decideDestinationWithSuggestedFilename(WebProcessPool&, DownloadProxy& downloadProxy, const String& filename, Function<void(AllowOverwrite, String)>&& completionHandler) override
+    void decideDestinationWithSuggestedFilename(DownloadProxy& downloadProxy, const String& filename, Function<void(AllowOverwrite, String)>&& completionHandler) override
     {
         GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
         bool allowOverwrite = false;
@@ -82,13 +82,13 @@ private:
         completionHandler(allowOverwrite ? AllowOverwrite::Yes : AllowOverwrite::No, destination);
     }
 
-    void didCreateDestination(WebProcessPool&, DownloadProxy& downloadProxy, const String& path) override
+    void didCreateDestination(DownloadProxy& downloadProxy, const String& path) override
     {
         GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
         webkitDownloadDestinationCreated(download.get(), path);
     }
 
-    void didFail(WebProcessPool&, DownloadProxy& downloadProxy, const ResourceError& error) override
+    void didFail(DownloadProxy& downloadProxy, const ResourceError& error) override
     {
         GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
         if (webkitDownloadIsCancelled(download.get())) {
@@ -99,14 +99,14 @@ private:
         webkitWebContextRemoveDownload(&downloadProxy);
     }
 
-    void didCancel(WebProcessPool&, DownloadProxy& downloadProxy) override
+    void didCancel(DownloadProxy& downloadProxy) override
     {
         GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
         webkitDownloadCancelled(download.get());
         webkitWebContextRemoveDownload(&downloadProxy);
     }
 
-    void didFinish(WebProcessPool&, DownloadProxy& downloadProxy) override
+    void didFinish(DownloadProxy& downloadProxy) override
     {
         GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
         webkitDownloadFinished(download.get());
@@ -118,5 +118,5 @@ private:
 
 void attachDownloadClientToContext(WebKitWebContext* webContext)
 {
-    webkitWebContextGetProcessPool(webContext).setDownloadClient(makeUnique<DownloadClient>(webContext));
+    webkitWebContextGetProcessPool(webContext).setDownloadClient(makeUniqueRef<DownloadClient>(webContext));
 }

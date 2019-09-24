@@ -65,7 +65,7 @@ DownloadClient::DownloadClient(id <_WKDownloadDelegate> delegate)
     m_delegateMethods.downloadProcessDidCrash = [delegate respondsToSelector:@selector(_downloadProcessDidCrash:)];
 }
 
-void DownloadClient::didStart(WebProcessPool&, DownloadProxy& downloadProxy)
+void DownloadClient::didStart(DownloadProxy& downloadProxy)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
@@ -82,7 +82,7 @@ void DownloadClient::didStart(WebProcessPool&, DownloadProxy& downloadProxy)
         [m_delegate _downloadDidStart:wrapper(downloadProxy)];
 }
 
-void DownloadClient::didReceiveResponse(WebProcessPool&, DownloadProxy& downloadProxy, const WebCore::ResourceResponse& response)
+void DownloadClient::didReceiveResponse(DownloadProxy& downloadProxy, const WebCore::ResourceResponse& response)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload() && response.isSuccessful()) {
@@ -98,7 +98,7 @@ void DownloadClient::didReceiveResponse(WebProcessPool&, DownloadProxy& download
         [m_delegate _download:wrapper(downloadProxy) didReceiveResponse:response.nsURLResponse()];
 }
 
-void DownloadClient::didReceiveData(WebProcessPool&, DownloadProxy& downloadProxy, uint64_t length)
+void DownloadClient::didReceiveData(DownloadProxy& downloadProxy, uint64_t length)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
@@ -113,7 +113,7 @@ void DownloadClient::didReceiveData(WebProcessPool&, DownloadProxy& downloadProx
         [m_delegate _download:wrapper(downloadProxy) didReceiveData:length];
 }
 
-void DownloadClient::didReceiveAuthenticationChallenge(WebProcessPool&, DownloadProxy& downloadProxy, AuthenticationChallengeProxy& authenticationChallenge)
+void DownloadClient::didReceiveAuthenticationChallenge(DownloadProxy& downloadProxy, AuthenticationChallengeProxy& authenticationChallenge)
 {
     // FIXME: System Preview needs code here.
     if (!m_delegateMethods.downloadDidReceiveAuthenticationChallengeCompletionHandler) {
@@ -147,7 +147,7 @@ void DownloadClient::didReceiveAuthenticationChallenge(WebProcessPool&, Download
     }).get()];
 }
 
-void DownloadClient::didCreateDestination(WebProcessPool&, DownloadProxy& downloadProxy, const String& destination)
+void DownloadClient::didCreateDestination(DownloadProxy& downloadProxy, const String& destination)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
@@ -160,7 +160,7 @@ void DownloadClient::didCreateDestination(WebProcessPool&, DownloadProxy& downlo
         [m_delegate _download:wrapper(downloadProxy) didCreateDestination:destination];
 }
 
-void DownloadClient::processDidCrash(WebProcessPool&, DownloadProxy& downloadProxy)
+void DownloadClient::processDidCrash(DownloadProxy& downloadProxy)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
@@ -175,7 +175,7 @@ void DownloadClient::processDidCrash(WebProcessPool&, DownloadProxy& downloadPro
         [m_delegate _downloadProcessDidCrash:wrapper(downloadProxy)];
 }
 
-void DownloadClient::decideDestinationWithSuggestedFilename(WebProcessPool&, DownloadProxy& downloadProxy, const String& filename, Function<void(AllowOverwrite, String)>&& completionHandler)
+void DownloadClient::decideDestinationWithSuggestedFilename(DownloadProxy& downloadProxy, const String& filename, Function<void(AllowOverwrite, String)>&& completionHandler)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
@@ -205,7 +205,7 @@ void DownloadClient::decideDestinationWithSuggestedFilename(WebProcessPool&, Dow
     }
 }
 
-void DownloadClient::didFinish(WebProcessPool&, DownloadProxy& downloadProxy)
+void DownloadClient::didFinish(DownloadProxy& downloadProxy)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
@@ -224,7 +224,7 @@ void DownloadClient::didFinish(WebProcessPool&, DownloadProxy& downloadProxy)
         [m_delegate _downloadDidFinish:wrapper(downloadProxy)];
 }
 
-void DownloadClient::didFail(WebProcessPool&, DownloadProxy& downloadProxy, const WebCore::ResourceError& error)
+void DownloadClient::didFail(DownloadProxy& downloadProxy, const WebCore::ResourceError& error)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
@@ -239,7 +239,7 @@ void DownloadClient::didFail(WebProcessPool&, DownloadProxy& downloadProxy, cons
         [m_delegate _download:wrapper(downloadProxy) didFailWithError:error.nsError()];
 }
 
-void DownloadClient::didCancel(WebProcessPool&, DownloadProxy& downloadProxy)
+void DownloadClient::didCancel(DownloadProxy& downloadProxy)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
@@ -254,7 +254,7 @@ void DownloadClient::didCancel(WebProcessPool&, DownloadProxy& downloadProxy)
         [m_delegate _downloadDidCancel:wrapper(downloadProxy)];
 }
 
-void DownloadClient::willSendRequest(WebProcessPool&, DownloadProxy& downloadProxy, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
+void DownloadClient::willSendRequest(DownloadProxy& downloadProxy, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
     if (m_delegateMethods.downloadDidReceiveServerRedirectToURL)
         [m_delegate _download:wrapper(downloadProxy) didReceiveServerRedirectToURL:[NSURL _web_URLWithWTFString:request.url().string()]];

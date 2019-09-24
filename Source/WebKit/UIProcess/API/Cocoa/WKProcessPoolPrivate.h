@@ -27,6 +27,7 @@
 #import <WebKit/WKSecurityOrigin.h>
 
 @class WKWebView;
+@class WKWebsiteDataStore;
 @class _WKAutomationSession;
 @class _WKDownload;
 @class _WKProcessPoolConfiguration;
@@ -81,8 +82,11 @@
 
 - (void)_registerURLSchemeAsCanDisplayOnlyIfCanRequest:(NSString *)scheme WK_API_AVAILABLE(macos(10.14), ios(12.0));
 
-- (_WKDownload *)_downloadURLRequest:(NSURLRequest *)request originatingWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
-- (_WKDownload *)_resumeDownloadFromData:(NSData *)resumeData path:(NSString *)path originatingWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
+- (_WKDownload *)_downloadURLRequest:(NSURLRequest *)request originatingWebView:(WKWebView *)webView WK_API_DEPRECATED_WITH_REPLACEMENT("_downloadURLRequest:websiteDataStore:originatingWebView:", macos(10.14.4, WK_MAC_TBA), ios(12.2, WK_IOS_TBA));
+- (_WKDownload *)_resumeDownloadFromData:(NSData *)resumeData path:(NSString *)path originatingWebView:(WKWebView *)webView WK_API_DEPRECATED_WITH_REPLACEMENT("_resumeDownloadFromData:websiteDataStore:path:originatingWebView:", macos(10.14.4, WK_MAC_TBA), ios(12.2, WK_IOS_TBA));
+
+- (_WKDownload *)_downloadURLRequest:(NSURLRequest *)request websiteDataStore:(WKWebsiteDataStore *)dataStore originatingWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (_WKDownload *)_resumeDownloadFromData:(NSData *)resumeData websiteDataStore:(WKWebsiteDataStore *)dataStore  path:(NSString *)path originatingWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 // Test only. Should be called only while no web content processes are running.
 - (void)_terminateNetworkProcess WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));

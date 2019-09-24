@@ -89,7 +89,7 @@ public:
 
     void getNetworkProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&&);
 
-    DownloadProxy& createDownloadProxy(const WebCore::ResourceRequest&);
+    DownloadProxy& createDownloadProxy(WebsiteDataStore&, const WebCore::ResourceRequest&);
 
     void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, CompletionHandler<void(WebsiteData)>&&);
     void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime modifiedSince, CompletionHandler<void()>&& completionHandler);

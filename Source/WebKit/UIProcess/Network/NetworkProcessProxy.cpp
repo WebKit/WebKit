@@ -28,6 +28,7 @@
 
 #include "APIContentRuleList.h"
 #include "AuthenticationChallengeProxy.h"
+#include "DownloadProxyMap.h"
 #include "DownloadProxyMessages.h"
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
 #include "LegacyCustomProtocolManagerProxyMessages.h"
@@ -176,12 +177,12 @@ void NetworkProcessProxy::synthesizeAppIsBackground(bool background)
     }
 }
 
-DownloadProxy& NetworkProcessProxy::createDownloadProxy(const ResourceRequest& resourceRequest)
+DownloadProxy& NetworkProcessProxy::createDownloadProxy(WebsiteDataStore& dataStore, const ResourceRequest& resourceRequest)
 {
     if (!m_downloadProxyMap)
         m_downloadProxyMap = makeUnique<DownloadProxyMap>(*this);
 
-    return m_downloadProxyMap->createDownloadProxy(m_processPool, resourceRequest);
+    return m_downloadProxyMap->createDownloadProxy(dataStore, m_processPool, resourceRequest);
 }
 
 void NetworkProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, CompletionHandler<void (WebsiteData)>&& completionHandler)

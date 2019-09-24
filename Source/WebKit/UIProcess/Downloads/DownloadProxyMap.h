@@ -45,6 +45,7 @@ class DownloadProxy;
 class NetworkProcessProxy;
 class ProcessAssertion;
 class WebProcessPool;
+class WebsiteDataStore;
 
 class DownloadProxyMap : public CanMakeWeakPtr<DownloadProxyMap> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -54,7 +55,7 @@ public:
     explicit DownloadProxyMap(NetworkProcessProxy&);
     ~DownloadProxyMap();
 
-    DownloadProxy& createDownloadProxy(WebProcessPool&, const WebCore::ResourceRequest&);
+    DownloadProxy& createDownloadProxy(WebsiteDataStore&, WebProcessPool&, const WebCore::ResourceRequest&);
     void downloadFinished(DownloadProxy&);
 
     bool isEmpty() const { return m_downloads.isEmpty(); }

@@ -28,7 +28,6 @@
 #include "APIDictionary.h"
 #include "APIObject.h"
 #include "APIProcessPoolConfiguration.h"
-#include "DownloadProxyMap.h"
 #include "GenericCallback.h"
 #include "HiddenPageThrottlingAutoIncreasesCounter.h"
 #include "MessageReceiver.h"
@@ -96,7 +95,6 @@ struct MockMediaDevice;
 
 namespace WebKit {
 
-class DownloadProxy;
 class HighPerformanceGraphicsUsageSampler;
 class UIGamepad;
 class PerActivityStateCPUUsageSampler;
@@ -171,7 +169,7 @@ public:
     void setInjectedBundleClient(std::unique_ptr<API::InjectedBundleClient>&&);
     void initializeConnectionClient(const WKContextConnectionClientBase*);
     void setHistoryClient(std::unique_ptr<API::LegacyContextHistoryClient>&&);
-    void setDownloadClient(std::unique_ptr<API::DownloadClient>&&);
+    void setDownloadClient(UniqueRef<API::DownloadClient>&&);
     void setAutomationClient(std::unique_ptr<API::AutomationClient>&&);
     void setLegacyCustomProtocolManagerClient(std::unique_ptr<API::CustomProtocolManagerClient>&&);
 
@@ -219,8 +217,8 @@ public:
     void initializeClassesForParameterCoding();
 #endif
 
-    DownloadProxy& download(WebPageProxy* initiatingPage, const WebCore::ResourceRequest&, const String& suggestedFilename = { });
-    DownloadProxy& resumeDownload(WebPageProxy* initiatingPage, const API::Data* resumeData, const String& path);
+    DownloadProxy& download(WebsiteDataStore&, WebPageProxy* initiatingPage, const WebCore::ResourceRequest&, const String& suggestedFilename = { });
+    DownloadProxy& resumeDownload(WebsiteDataStore&, WebPageProxy* initiatingPage, const API::Data& resumeData, const String& path);
 
     void setInjectedBundleInitializationUserData(RefPtr<API::Object>&& userData) { m_injectedBundleInitializationUserData = WTFMove(userData); }
 
@@ -294,8 +292,8 @@ public:
     void setEnhancedAccessibility(bool);
     
     // Downloads.
-    DownloadProxy& createDownloadProxy(const WebCore::ResourceRequest&, WebPageProxy* originatingPage);
-    API::DownloadClient& downloadClient() { return *m_downloadClient; }
+    DownloadProxy& createDownloadProxy(WebsiteDataStore&, const WebCore::ResourceRequest&, WebPageProxy* originatingPage);
+    API::DownloadClient& downloadClient() { return m_downloadClient.get(); }
 
     API::LegacyContextHistoryClient& historyClient() { return *m_historyClient; }
     WebContextClient& client() { return m_client; }
@@ -638,7 +636,7 @@ private:
     WebContextClient m_client;
     WebContextConnectionClient m_connectionClient;
     std::unique_ptr<API::AutomationClient> m_automationClient;
-    std::unique_ptr<API::DownloadClient> m_downloadClient;
+    UniqueRef<API::DownloadClient> m_downloadClient;
     std::unique_ptr<API::LegacyContextHistoryClient> m_historyClient;
     std::unique_ptr<API::CustomProtocolManagerClient> m_customProtocolManagerClient;
 
