@@ -128,7 +128,8 @@ private:
             return power > 31;
         }
             
-        case BitRShift:
+        case ArithBitRShift:
+        case ValueBitRShift:
         case BitURShift: {
             if (power > 31)
                 return true;
@@ -226,9 +227,10 @@ private:
         case ValueBitAnd:
         case ValueBitOr:
         case ValueBitXor:
-        case BitRShift:
         case ValueBitLShift:
         case ArithBitLShift:
+        case ArithBitRShift:
+        case ValueBitRShift:
         case BitURShift:
         case ArithIMul: {
             flags |= NodeBytecodeUsesAsInt;

@@ -5159,7 +5159,12 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpRshift>();
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
-            set(bytecode.m_dst, addToGraph(BitRShift, op1, op2));
+            if (op1->hasNumberOrAnyIntResult() && op2->hasNumberOrAnyIntResult())
+                set(bytecode.m_dst, addToGraph(ArithBitRShift, op1, op2));
+            else {
+                SpeculatedType prediction = getPredictionWithoutOSRExit();
+                set(bytecode.m_dst, addToGraph(ValueBitRShift, OpInfo(), OpInfo(prediction), op1, op2));
+            }
             NEXT_OPCODE(op_rshift);
         }
 

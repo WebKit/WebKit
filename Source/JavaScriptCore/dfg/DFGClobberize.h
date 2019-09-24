@@ -282,7 +282,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ArithBitOr:
     case ArithBitXor:
     case ArithBitLShift:
-    case BitRShift:
+    case ArithBitRShift:
     case BitURShift:
         if (node->child1().useKind() == UntypedUse || node->child2().useKind() == UntypedUse) {
             read(World);
@@ -686,6 +686,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ValueMod:
     case ValuePow:
     case ValueBitLShift:
+    case ValueBitRShift:
         if (node->isBinaryUseKind(BigIntUse)) {
             def(PureValue(node));
             return;

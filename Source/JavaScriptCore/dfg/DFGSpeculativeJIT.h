@@ -660,7 +660,7 @@ public:
     void shiftOp(NodeType op, GPRReg op1, int32_t shiftAmount, GPRReg result)
     {
         switch (op) {
-        case BitRShift:
+        case ArithBitRShift:
             m_jit.rshift32(op1, Imm32(shiftAmount), result);
             break;
         case ArithBitLShift:
@@ -676,7 +676,7 @@ public:
     void shiftOp(NodeType op, GPRReg op1, GPRReg shiftAmount, GPRReg result)
     {
         switch (op) {
-        case BitRShift:
+        case ArithBitRShift:
             m_jit.rshift32(op1, shiftAmount, result);
             break;
         case ArithBitLShift:
@@ -1325,6 +1325,7 @@ public:
 
     void emitUntypedRightShiftBitOp(Node*);
     void compileValueLShiftOp(Node*);
+    void compileValueBitRShift(Node*);
     void compileShiftOp(Node*);
 
     template <typename Generator, typename RepatchingFunction, typename NonRepatchingFunction>

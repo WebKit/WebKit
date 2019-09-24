@@ -2104,7 +2104,11 @@ void SpeculativeJIT::compile(Node* node)
         compileValueLShiftOp(node);
         break;
 
-    case BitRShift:
+    case ValueBitRShift:
+        compileValueBitRShift(node);
+        break;
+
+    case ArithBitRShift:
     case ArithBitLShift:
     case BitURShift:
         compileShiftOp(node);

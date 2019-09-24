@@ -261,7 +261,8 @@ bool AbstractInterpreter<AbstractStateType>::handleConstantBinaryBitwiseOp(Node*
         case ArithBitXor:
             setConstant(node, JSValue(a ^ b));
             break;
-        case BitRShift:
+        case ArithBitRShift:
+        case ValueBitRShift:
             setConstant(node, JSValue(a >> (static_cast<uint32_t>(b) & 0x1f)));
             break;
         case ValueBitLShift:
@@ -512,6 +513,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ValueBitXor:
     case ValueBitAnd:
     case ValueBitOr:
+    case ValueBitRShift:
     case ValueBitLShift: {
         if (handleConstantBinaryBitwiseOp(node))
             break;
@@ -528,7 +530,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ArithBitAnd:
     case ArithBitOr:
     case ArithBitXor:
-    case BitRShift:
+    case ArithBitRShift:
     case ArithBitLShift:
     case BitURShift: {
         if (node->child1().useKind() == UntypedUse || node->child2().useKind() == UntypedUse) {

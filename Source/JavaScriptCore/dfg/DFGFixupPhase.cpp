@@ -216,6 +216,7 @@ private:
         }
 
         case ValueBitLShift:
+        case ValueBitRShift:
         case ValueBitXor:
         case ValueBitOr:
         case ValueBitAnd: {
@@ -244,6 +245,9 @@ private:
                 break;
             case ValueBitLShift:
                 node->setOp(ArithBitLShift);
+                break;
+            case ValueBitRShift:
+                node->setOp(ArithBitRShift);
                 break;
             default:
                 DFG_CRASH(m_graph, node, "Unexpected node during ValueBit operation fixup");
@@ -281,6 +285,7 @@ private:
             break;
         }
 
+        case ArithBitRShift:
         case ArithBitLShift: 
         case ArithBitXor:
         case ArithBitOr:
@@ -290,7 +295,6 @@ private:
             break;
         }
 
-        case BitRShift:
         case BitURShift: {
             if (Node::shouldSpeculateUntypedForBitOps(node->child1().node(), node->child2().node())) {
                 fixEdge<UntypedUse>(node->child1());

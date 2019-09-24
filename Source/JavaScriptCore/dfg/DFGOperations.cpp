@@ -524,18 +524,15 @@ EncodedJSValue JIT_OPERATION operationValueBitLShift(ExecState* exec, EncodedJSV
 
 EncodedJSValue JIT_OPERATION operationValueBitRShift(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto bigIntOp = [] (ExecState* exec, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
+        return JSBigInt::signedRightShift(exec, left, right);
+    };
 
-    JSValue op1 = JSValue::decode(encodedOp1);
-    JSValue op2 = JSValue::decode(encodedOp2);
+    auto int32Op = [] (int32_t left, int32_t right) -> int32_t {
+        return left >> (right & 0x1f);
+    };
 
-    int32_t a = op1.toInt32(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    scope.release();
-    uint32_t b = op2.toUInt32(exec);
-    return JSValue::encode(jsNumber(a >> (b & 0x1f)));
+    return bitwiseBinaryOp(exec, encodedOp1, encodedOp2, bigIntOp, int32Op, "Invalid mix of BigInt and other type in signed right shift operation."_s);
 }
 
 EncodedJSValue JIT_OPERATION operationValueBitURShift(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
@@ -1481,6 +1478,17 @@ JSCell* JIT_OPERATION operationAddBigInt(ExecState* exec, JSCell* op1, JSCell* o
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
     
     return JSBigInt::add(exec, leftOperand, rightOperand);
+}
+
+JSCell* JIT_OPERATION operationBitRShiftBigInt(ExecState* exec, JSCell* op1, JSCell* op2)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    
+    JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
+    JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
+    
+    return JSBigInt::signedRightShift(exec, leftOperand, rightOperand);
 }
 
 JSCell* JIT_OPERATION operationBitOrBigInt(ExecState* exec, JSCell* op1, JSCell* op2)

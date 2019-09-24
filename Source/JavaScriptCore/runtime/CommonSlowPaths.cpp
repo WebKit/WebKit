@@ -772,13 +772,13 @@ SLOW_PATH_DECL(slow_path_rshift)
         if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
             JSBigInt* result = JSBigInt::signedRightShift(exec, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
             CHECK_EXCEPTION();
-            RETURN(result);
+            RETURN_PROFILED(result);
         }
 
-        THROW(createTypeError(exec, "Invalid mix of BigInt and other type in signed right shift operation."));
+        THROW(createTypeError(exec, "Invalid mix of BigInt and other type in signed right shift operation."_s));
     }
 
-    RETURN(jsNumber(WTF::get<int32_t>(leftNumeric) >> (WTF::get<int32_t>(rightNumeric) & 31)));
+    RETURN_PROFILED(jsNumber(WTF::get<int32_t>(leftNumeric) >> (WTF::get<int32_t>(rightNumeric) & 31)));
 }
 
 SLOW_PATH_DECL(slow_path_urshift)

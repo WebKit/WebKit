@@ -3764,9 +3764,9 @@ void SpeculativeJIT::compileBitwiseOp(Node* node)
 
 void SpeculativeJIT::emitUntypedRightShiftBitOp(Node* node)
 {
-    J_JITOperation_EJJ snippetSlowPathFunction = node->op() == BitRShift
+    J_JITOperation_EJJ snippetSlowPathFunction = node->op() == ValueBitRShift
         ? operationValueBitRShift : operationValueBitURShift;
-    JITRightShiftGenerator::ShiftType shiftType = node->op() == BitRShift
+    JITRightShiftGenerator::ShiftType shiftType = node->op() == ValueBitRShift
         ? JITRightShiftGenerator::SignedShift : JITRightShiftGenerator::UnsignedShift;
 
     Edge& leftChild = node->child1();
@@ -3889,6 +3889,34 @@ void SpeculativeJIT::compileValueLShiftOp(Node* node)
     emitUntypedBitOp<JITLeftShiftGenerator, operationValueBitLShift>(node);
 }
 
+void SpeculativeJIT::compileValueBitRShift(Node* node)
+{
+    Edge& leftChild = node->child1();
+    Edge& rightChild = node->child2();
+
+    if (node->isBinaryUseKind(BigIntUse)) {
+        SpeculateCellOperand left(this, leftChild);
+        SpeculateCellOperand right(this, rightChild);
+        GPRReg leftGPR = left.gpr();
+        GPRReg rightGPR = right.gpr();
+
+        speculateBigInt(leftChild, leftGPR);
+        speculateBigInt(rightChild, rightGPR);
+
+        flushRegisters();
+        GPRFlushedCallResult result(this);
+        GPRReg resultGPR = result.gpr();
+        callOperation(operationBitRShiftBigInt, resultGPR, leftGPR, rightGPR);
+        m_jit.exceptionCheck();
+
+        cellResult(resultGPR, node);
+        return;
+    }
+
+    ASSERT(leftChild.useKind() == UntypedUse && rightChild.useKind() == UntypedUse);
+    emitUntypedRightShiftBitOp(node);
+}
+
 void SpeculativeJIT::compileShiftOp(Node* node)
 {
     NodeType op = node->op();
@@ -3896,14 +3924,9 @@ void SpeculativeJIT::compileShiftOp(Node* node)
     Edge& rightChild = node->child2();
 
     if (leftChild.useKind() == UntypedUse || rightChild.useKind() == UntypedUse) {
-        switch (op) {
-        case BitRShift:
-        case BitURShift:
-            emitUntypedRightShiftBitOp(node);
-            return;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
+        RELEASE_ASSERT(op == BitURShift);
+        emitUntypedRightShiftBitOp(node);
+        return;
     }
 
     if (rightChild->isInt32Constant()) {

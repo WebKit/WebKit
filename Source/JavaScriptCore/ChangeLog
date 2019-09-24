@@ -1,3 +1,93 @@
+2019-09-24  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] Add ValueBitRShift into DFG
+        https://bugs.webkit.org/show_bug.cgi?id=192663
+
+        Reviewed by Robin Morisset.
+
+        We are introducing a new node called ValueBitRShift that is
+        responsible to handle speculation of `UntypedUse` and `BigIntUse` during
+        DFG. Following the approach of other bitwise operations, we
+        now have 2 nodes to handle ">>" operator during JIT, mainly because
+        of the introduction of BigInt, that makes this operator result into
+        Int32 or BigInt. We renamed `BitRShift` to `ArithBitRShift` and such
+        node handles Integers and Numbers speculation and can only return
+        Int32 values.
+
+        * bytecode/BytecodeList.rb:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/Opcode.h:
+
+        Adding support to ValueProfile to `op_rshift` to be used during
+        prediction propagation.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::handleConstantBinaryBitwiseOp):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
+        Adding support to still do constant propagation of ValueBitRShift when
+        it is `UntypedUse`.
+
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::isWithinPowerOfTwo):
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+
+        `ValueBitRshift` can trigger GC when it is `BigIntUse` because the
+        operation `JSBigInt::signedRightShift` potentially allocates new
+        JSBigInts. It also can trigger GC when it is `UntypedUse` because it
+        can execute arbitrary code.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
+        The fixup rule of `ValueBitRShift` checks if it should fixup for
+        `BigIntUse` or `UntypedUse`. If those checks fail, we fallback to
+        `ArithBitRShift`.
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasNumericResult):
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+
+        We are using the same rule used by `ValueBitLShift` to propagate
+        types. We try to propagate the type based on operation's input, but
+        fallback to `getHeapPrediction()` if this is not possible.
+
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitUntypedRightShiftBitOp):
+        (JSC::DFG::SpeculativeJIT::compileValueBitRShift):
+        (JSC::DFG::SpeculativeJIT::compileShiftOp):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::shiftOp):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueBitRShift):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithBitRShift):
+        (JSC::FTL::DFG::LowerDFGToB3::compileBitRShift): Deleted.
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+
 2019-09-24  Mark Lam  <mark.lam@apple.com>
 
         Refactor cellSize() out of VMInspector::verifyCellSize().

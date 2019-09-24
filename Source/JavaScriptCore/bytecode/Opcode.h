@@ -109,6 +109,7 @@ extern const unsigned opcodeLengths[];
     macro(OpBitnot) \
     macro(OpBitxor) \
     macro(OpLshift) \
+    macro(OpRshift) \
 
 #define FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(macro) \
     macro(OpHasIndexedProperty) \

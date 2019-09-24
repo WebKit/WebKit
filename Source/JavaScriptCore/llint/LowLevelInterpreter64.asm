@@ -1157,7 +1157,7 @@ bitOpProfiled(lshift, OpLshift,
     macro (left, right) lshifti left, right end)
 
 
-bitOp(rshift, OpRshift,
+bitOpProfiled(rshift, OpRshift,
     macro (left, right) rshifti left, right end)
 
 

@@ -179,6 +179,7 @@ private:
             break;
         }
 
+        case ValueBitRShift:
         case ValueBitLShift: {
             SpeculatedType left = node->child1()->prediction();
             SpeculatedType right = node->child2()->prediction();
@@ -783,7 +784,7 @@ private:
         case ArithBitAnd:
         case ArithBitOr:
         case ArithBitXor:
-        case BitRShift:
+        case ArithBitRShift:
         case ArithBitLShift:
         case BitURShift:
         case ArithIMul:
@@ -1166,6 +1167,7 @@ private:
         case ValueMod:
         case ValuePow:
         case ValueBitLShift:
+        case ValueBitRShift:
         case ArithAdd:
         case ArithSub:
         case ArithNegate:

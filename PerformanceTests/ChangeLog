@@ -1,3 +1,13 @@
+2019-09-24  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] Add ValueBitRShift into DFG
+        https://bugs.webkit.org/show_bug.cgi?id=192663
+
+        Reviewed by Robin Morisset.
+
+        * BigIntBench/big-int-simple-rshift.js: Added.
+        (bigInt):
+
 2019-09-09  Jon Lee  <jonlee@apple.com>
 
         Upload triangles tests for 3D suite in MotionMark
