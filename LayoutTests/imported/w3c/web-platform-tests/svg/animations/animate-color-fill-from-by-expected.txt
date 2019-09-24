@@ -1,0 +1,3 @@
+
+PASS Tests animation on 'currentColor'. 
+

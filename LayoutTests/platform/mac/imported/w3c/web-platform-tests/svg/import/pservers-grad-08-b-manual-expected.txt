@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (28,56) size 766x422
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGContainer {g} at (28,56) size 766x352 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
+        RenderSVGResourceLinearGradient {linearGradient} [id="Gradient"] [gradientUnits=userSpaceOnUse] [start=(10,10)] [end=(440,10)]
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#00FF00]
+        RenderSVGText {text} at (20,22) size 457x48 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 457x48
+            chunk 1 text run 1 at (20.00,70.00) startOffset 0 endOffset 16 width 456.13: "Gradient on fill"
+        RenderSVGText {text} at (20,121) size 440x39 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 440x39
+            chunk 1 text run 1 at (20.00,160.00) startOffset 0 endOffset 18 width 439.61: "Gradient on stroke"
+      RenderSVGContainer {g} at (50,198) size 662x280
+        RenderSVGText {text} at (40,119) size 347x33 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 347x33
+            chunk 1 text run 1 at (40.00,145.00) startOffset 0 endOffset 30 width 346.46: "Linear gradient on filled text"
+        RenderSVGText {text} at (30,254) size 397x33 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 397x33
+            chunk 1 text run 1 at (30.00,280.00) startOffset 0 endOffset 33 width 396.60: "Linear gradient on stroke of text"
+    RenderSVGContainer {g} at (16,517) size 411x62
+      RenderSVGText {text} at (10,310) size 246x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 246x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 245.72: "$Revision: 1.13 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

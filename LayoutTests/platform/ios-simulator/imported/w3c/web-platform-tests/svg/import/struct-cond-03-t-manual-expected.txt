@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (50,33) size 700x451
+      RenderSVGContainer {switch} at (50,33) size 700x217
+        RenderSVGContainer {g} at (50,33) size 700x217
+          RenderSVGRect {rect} at (50,33) size 700x217 [fill={[type=SOLID] [color=#20B2AA]}] [x=30.00] [y=20.00] [width=420.00] [height=130.00]
+          RenderSVGText {text} at (70,81) size 340x24 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 339x24
+              chunk 1 (middle anchor) text run 1 at (70.76,100.00) startOffset 0 endOffset 35 width 338.48: "This viewer does more than SVG Tiny"
+      RenderSVGContainer {switch} at (50,266) size 700x218 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,140.00)}]
+        RenderSVGContainer {g} at (50,266) size 700x218
+          RenderSVGRect {rect} at (50,266) size 700x218 [fill={[type=SOLID] [color=#00FF00]}] [x=30.00] [y=20.00] [width=420.00] [height=130.00]
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.7 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

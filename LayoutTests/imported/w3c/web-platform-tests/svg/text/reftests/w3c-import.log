@@ -1,0 +1,68 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-clipped-offscreen-move-onscreen-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-clipped-offscreen-move-onscreen.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-complex-001-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-complex-001.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-complex-002-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-complex-002.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-001-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-001.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-002-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-002.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-003-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-003.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-005-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-005.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-006-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-006.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-007-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-007.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-101-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-101.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-201-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-201.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-001-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-001.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-002-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-002.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-003-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-003.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-shape-inside-001-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-shape-inside-001.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-shape-inside-002-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-shape-inside-002.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-001-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-001.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-002-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-002.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-003-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-003.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-102-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-102.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-201-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-201.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-202-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-202.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-203-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-203.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-xml-space-001-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-xml-space-001.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/textpath-shape-001-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/textpath-shape-001.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/textpath-side-001-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/textpath-side-001.svg

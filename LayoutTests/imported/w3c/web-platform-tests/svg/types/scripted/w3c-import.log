@@ -1,0 +1,53 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedAngle.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedBoolean.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration-SVGClipPathElement.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration-SVGComponentTransferFunctionElement.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration-SVGFEColorMatrixElement.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration-SVGFECompositeElement.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration-SVGFEConvolveMatrixElement.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration-SVGFEDisplacementMapElement.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration-SVGFEMorphologyElement.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration-SVGFETurbulenceElement.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration-SVGFilterElement.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration-SVGGradientElement.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration-SVGMarkerElement.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration-SVGMaskElement.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration-SVGPatternElement.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration-SVGTextContentElement.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration-SVGTextPathElement.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedInteger.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedLength.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedLengthList.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedNumber.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedNumberList.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedPreserveAspectRatio.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedRect.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGeometryElement.getPointAtLength-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGeometryElement.isPointInFill-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGeometryElement.isPointInStroke-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGGraphicsElement.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-px-with-context.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-px.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLengthList-appendItem.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLengthList-appendItemFromClearedList.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLengthList-basics.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLengthList-getItem.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/event-handler-all-document-element-events.svg

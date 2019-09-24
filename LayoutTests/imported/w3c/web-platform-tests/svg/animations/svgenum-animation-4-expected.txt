@@ -1,0 +1,3 @@
+
+PASS Test CompositeOperationType enumeration animations 
+

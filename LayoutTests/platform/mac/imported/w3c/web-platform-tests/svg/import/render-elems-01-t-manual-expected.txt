@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (50,40) size 634x394
+      RenderSVGContainer {g} at (50,40) size 634x394 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,80.00)}]
+        RenderSVGContainer {g} at (50,133) size 300x301
+          RenderSVGPath {path} at (50,133) size 300x301 [fill={[type=SOLID] [color=#008000]}] [data="M 60 0 L 120 0 L 180 60 L 180 120 L 120 180 L 60 180 L 0 120 L 0 60 Z"]
+        RenderSVGContainer {g} at (383,133) size 301x301 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,0.00)}]
+          RenderSVGPath {path} at (383,133) size 301x301 [fill={[type=SOLID] [color=#000000]}] [data="M 60 0 L 120 0 L 180 60 L 180 120 L 120 180 L 60 180 L 0 120 L 0 60 Z"]
+        RenderSVGText {text} at (130,-56) size 117x33 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 117x33
+            chunk 1 text run 1 at (130.00,-30.00) startOffset 0 endOffset 10 width 116.01: "Shape fill"
+    RenderSVGContainer {g} at (16,517) size 381x62
+      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 229x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.6 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

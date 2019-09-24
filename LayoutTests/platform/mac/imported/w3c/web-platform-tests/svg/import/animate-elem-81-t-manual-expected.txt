@@ -1,0 +1,68 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (15,16) size 775x481
+      RenderSVGText {text} at (164,10) size 152x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 151x19
+          chunk 1 (middle anchor) text run 1 at (164.82,25.00) startOffset 0 endOffset 18 width 150.36: "<animateTransform>"
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGContainer {g} at (0,0) size 75x75
+          RenderSVGEllipse {circle} at (0,0) size 69x69 [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=2.00]}] [cx=0.00] [cy=0.00] [r=40.00]
+          RenderSVGPath {line} at (0,0) size 75x1 [stroke={[type=SOLID] [color=#C0C0C0]}] [x1=-45.00] [y1=0.00] [x2=45.00] [y2=0.00]
+          RenderSVGPath {line} at (0,0) size 1x75 [stroke={[type=SOLID] [color=#C0C0C0]}] [x1=0.00] [y1=-45.00] [x2=0.00] [y2=45.00]
+      RenderSVGContainer {g} at (15,93) size 775x404
+        RenderSVGContainer {g} at (15,93) size 170x163 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,90.00)}]
+          RenderSVGRect {rect} at (71,121) size 58x58 [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+          RenderSVGRect {rect} at (43,93) size 114x114 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+          RenderSVGText {text} at (-51,47) size 102x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 101x16
+              chunk 1 (middle anchor) text run 1 at (-50.44,60.00) startOffset 0 endOffset 16 width 100.89: "additive=replace"
+        RenderSVGContainer {g} at (210,93) size 180x163 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,90.00)}]
+          RenderSVGRect {rect} at (255,121) size 90x58 [transform={m=((1.00,0.00)(0.58,1.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+          RenderSVGRect {rect} at (210,93) size 180x114 [transform={m=((1.15,2.00)(-2.00,0.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+          RenderSVGText {text} at (-41,47) size 82x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 82x16
+              chunk 1 (middle anchor) text run 1 at (-40.85,60.00) startOffset 0 endOffset 12 width 81.69: "additive=sum"
+        RenderSVGContainer {g} at (408,93) size 184x188 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,90.00)}]
+          RenderSVGRect {rect} at (471,121) size 58x58 [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+          RenderSVGRect {rect} at (443,93) size 114x114 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+          RenderSVGText {text} at (-55,47) size 110x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 110x16
+              chunk 1 (middle anchor) text run 1 at (-54.66,60.00) startOffset 0 endOffset 15 width 109.33: "accumulate=none"
+          RenderSVGText {text} at (-51,62) size 102x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 101x16
+              chunk 1 (middle anchor) text run 1 at (-50.44,75.00) startOffset 0 endOffset 16 width 100.89: "additive=replace"
+        RenderSVGContainer {g} at (612,93) size 176x188 [transform={m=((1.00,0.00)(0.00,1.00)) t=(420.00,90.00)}]
+          RenderSVGRect {rect} at (0,0) size 0x0 [transform={m=((0.00,0.00)(0.00,0.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#808080] [stroke width=2.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-7.50] [y=-7.50] [width=15.00] [height=15.00]
+          RenderSVGRect {rect} at (643,93) size 114x114 [transform={m=((4.00,0.00)(0.00,4.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=2.00]}] [x=-7.50] [y=-7.50] [width=15.00] [height=15.00]
+          RenderSVGText {text} at (-53,47) size 106x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 105x16
+              chunk 1 (middle anchor) text run 1 at (-52.35,60.00) startOffset 0 endOffset 14 width 104.70: "accumulate=sum"
+          RenderSVGText {text} at (-51,62) size 102x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 101x16
+              chunk 1 (middle anchor) text run 1 at (-50.44,75.00) startOffset 0 endOffset 16 width 100.89: "additive=replace"
+        RenderSVGContainer {g} at (408,310) size 184x187 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,220.00)}]
+          RenderSVGRect {rect} at (455,338) size 90x57 [transform={m=((1.00,0.00)(0.58,1.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+          RenderSVGRect {rect} at (410,310) size 180x114 [transform={m=((2.00,0.00)(1.15,2.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+          RenderSVGText {text} at (-55,47) size 110x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 110x16
+              chunk 1 (middle anchor) text run 1 at (-54.66,60.00) startOffset 0 endOffset 15 width 109.33: "accumulate=none"
+          RenderSVGText {text} at (-41,62) size 82x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 82x16
+              chunk 1 (middle anchor) text run 1 at (-40.85,75.00) startOffset 0 endOffset 12 width 81.69: "additive=sum"
+        RenderSVGContainer {g} at (610,310) size 180x187 [transform={m=((1.00,0.00)(0.00,1.00)) t=(420.00,220.00)}]
+          RenderSVGRect {rect} at (0,0) size 0x0 [transform={m=((0.00,0.00)(0.00,0.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#808080] [stroke width=2.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-7.50] [y=-7.50] [width=15.00] [height=15.00]
+          RenderSVGRect {rect} at (610,310) size 180x114 [transform={m=((4.00,0.00)(2.31,4.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=2.00]}] [x=-7.50] [y=-7.50] [width=15.00] [height=15.00]
+          RenderSVGText {text} at (-53,47) size 106x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 105x16
+              chunk 1 (middle anchor) text run 1 at (-52.35,60.00) startOffset 0 endOffset 14 width 104.70: "accumulate=sum"
+          RenderSVGText {text} at (-41,62) size 82x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 82x16
+              chunk 1 (middle anchor) text run 1 at (-40.85,75.00) startOffset 0 endOffset 12 width 81.69: "additive=sum"
+    RenderSVGContainer {g} at (16,517) size 381x62
+      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 229x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.8 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

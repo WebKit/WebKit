@@ -1,0 +1,11 @@
+calcMode="paced"
+keyTimes="0;.25;.5;1"
+Time (s):
+0
+1.5
+4
+9
+$Revision: 1.5 $
+
+PASS A copy of the corresponding W3C-SVG-1.1 test, which dumps the animation at certain times 
+

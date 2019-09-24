@@ -324,7 +324,7 @@
     "web-platform-tests/storage": "skip", 
     "web-platform-tests/streams/writable-streams": "skip", 
     "web-platform-tests/subresource-integrity": "skip", 
-    "web-platform-tests/svg": "skip", 
+    "web-platform-tests/svg": "import", 
     "web-platform-tests/svg-aam": "skip", 
     "web-platform-tests/testharness_runner.html": "skip", 
     "web-platform-tests/tools": "import", 

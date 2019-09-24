@@ -1,0 +1,47 @@
+
+PASS SVGAnimatedPathData interface must be removed 
+PASS SVGColor interface must be removed 
+FAIL SVGDocument interface must be removed assert_false: expected false got true
+PASS SVGElementInstanceList interface must be removed 
+PASS SVGExternalResourcesRequired interface must be removed 
+PASS SVGICCColor interface must be removed 
+PASS SVGLangSpace interface must be removed 
+PASS SVGLocatable interface must be removed 
+PASS SVGTransformable interface must be removed 
+PASS SVGPaint interface must be removed 
+FAIL SVGPathSeg interface must be removed assert_false: expected false got true
+PASS SVGStylable interface must be removed 
+FAIL SVGViewSpec interface must be removed assert_false: expected false got true
+FAIL SVGZoomEvent interface must be removed assert_false: expected false got true
+PASS GetSVGDocument mixin interface must not be exposed 
+PASS SVGAnimatedPoints mixin interface must not be exposed 
+PASS SVGElementInstance mixin interface must not be exposed 
+PASS SVGFilterPrimitiveStandardAttributes mixin interface must not be exposed 
+PASS SVGFitToViewBox mixin interface must not be exposed 
+PASS SVGTests mixin interface must not be exposed 
+PASS SVGURIReference mixin interface must not be exposed 
+PASS SVGZoomAndPan mixin interface must not be exposed 
+FAIL SVGElement.prototype.getPresentationAttribute must be removed assert_false: expected false got true
+PASS SVGElement.prototype.xmlbase must be removed 
+FAIL SVGElement.prototype.xmllang must be removed assert_false: expected false got true
+FAIL SVGElement.prototype.xmlspace must be removed assert_false: expected false got true
+FAIL SVGGraphicsElement.prototype.getTransformToElement must be removed assert_false: expected false got true
+FAIL SVGGraphicsElement.prototype.hasExtension must be removed assert_false: expected false got true
+FAIL SVGGraphicsElement.prototype.requiredFeatures must be removed assert_false: expected false got true
+FAIL SVGSVGElement.prototype.currentView must be removed assert_false: expected false got true
+FAIL SVGSVGElement.prototype.pixelUnitToMillimeterX must be removed assert_false: expected false got true
+FAIL SVGSVGElement.prototype.pixelUnitToMillimeterY must be removed assert_false: expected false got true
+FAIL SVGSVGElement.prototype.screenPixelToMillimeterX must be removed assert_false: expected false got true
+FAIL SVGSVGElement.prototype.screenPixelToMillimeterY must be removed assert_false: expected false got true
+FAIL SVGSVGElement.prototype.useCurrentView must be removed assert_false: expected false got true
+FAIL SVGSVGElement.prototype.viewport must be removed assert_false: expected false got true
+FAIL SVGViewElement.prototype.viewTarget must be removed assert_false: expected false got true
+PASS SVGPathElement.prototype.getPointAtLength must be moved to SVGGeometryElement.prototype 
+PASS SVGPathElement.prototype.getTotalLength must be moved to SVGGeometryElement.prototype 
+PASS SVGPathElement.prototype.pathLength must be moved to SVGGeometryElement.prototype 
+PASS SVGClipPathElement must not implement SVGUnitTypes 
+PASS SVGFilterElement must not implement SVGUnitTypes 
+PASS SVGGradientElement must not implement SVGUnitTypes 
+PASS SVGMaskElement must not implement SVGUnitTypes 
+PASS SVGPatternElement must not implement SVGUnitTypes 
+

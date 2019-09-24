@@ -1,0 +1,47 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (5,10) size 741x556
+      RenderSVGRect {rect} at (5,10) size 631x130 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#C0C0C0]}] [x=5.00] [y=7.50] [width=375.00] [height=75.00]
+      RenderSVGRect {rect} at (5,185) size 631x130 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#C0C0C0]}] [x=5.00] [y=112.50] [width=375.00] [height=75.00]
+      RenderSVGContainer {g} at (18,18) size 614x289 [transform={m=((1.50,0.00)(0.00,1.50)) t=(0.00,0.00)}]
+        RenderSVGEllipse {circle} at (18,18) size 114x114 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#800080]}] [cx=30.00] [cy=30.00] [r=20.00]
+        RenderSVGEllipse {circle} at (18,193) size 114x114 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#800080]}] [cx=30.00] [cy=100.00] [r=20.00]
+        RenderSVGHiddenContainer {g} at (0,0) size 0x0
+          RenderSVGEllipse {circle} at (143,18) size 114x114 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#008000]}] [cx=80.00] [cy=30.00] [r=20.00]
+        RenderSVGEllipse {circle} at (143,193) size 114x114 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#008000]}] [cx=80.00] [cy=100.00] [r=20.00]
+        RenderSVGEllipse {circle} at (268,193) size 114x114 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#1E90FF]}] [cx=130.00] [cy=100.00] [r=20.00]
+        RenderSVGHiddenContainer {g} at (0,0) size 0x0
+          RenderSVGHiddenContainer {g} at (0,0) size 0x0
+            RenderSVGEllipse {circle} at (393,18) size 114x114 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#0000FF]}] [cx=180.00] [cy=30.00] [r=20.00]
+        RenderSVGEllipse {circle} at (393,193) size 114x114 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#0000FF]}] [cx=180.00] [cy=100.00] [r=20.00]
+        RenderSVGHiddenContainer {g} at (0,0) size 0x0
+          RenderSVGHiddenContainer {g} at (0,0) size 0x0
+            RenderSVGEllipse {circle} at (393,18) size 114x114 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=180.00] [cy=30.00] [r=20.00]
+        RenderSVGEllipse {circle} at (393,193) size 114x114 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=180.00] [cy=100.00] [r=20.00]
+        RenderSVGContainer {g} at (0,0) size 0x0
+        RenderSVGContainer {g} at (518,193) size 114x114
+          RenderSVGEllipse {circle} at (518,193) size 114x114 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FFFF]}] [cx=230.00] [cy=100.00] [r=20.00]
+      RenderSVGText {text} at (385,25) size 50x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 50x19
+          chunk 1 text run 1 at (385.00,40.00) startOffset 0 endOffset 7 width 49.49: "display"
+      RenderSVGText {text} at (385,132) size 63x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 63x22
+          chunk 1 text run 1 at (385.00,150.00) startOffset 0 endOffset 10 width 62.01: "visibility"
+      RenderSVGText {text} at (5,209) size 425x33 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 425x33
+          chunk 1 text run 1 at (5.00,235.00) startOffset 0 endOffset 36 width 424.92: "Test of display attribute animation."
+      RenderSVGText {text} at (5,247) size 437x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 437x22
+          chunk 1 text run 1 at (5.00,265.00) startOffset 0 endOffset 55 width 436.17: "Circles with same color should be visible at same time."
+      RenderSVGText {text} at (310,317) size 116x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 116x22
+          chunk 1 text run 1 at (310.00,335.00) startOffset 0 endOffset 15 width 115.06: "Test running..."
+        RenderSVGInlineText {#text} at (0,0) size 0x0
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.7 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -1,0 +1,3 @@
+
+PASS Correct events for short animations with syncbases 
+

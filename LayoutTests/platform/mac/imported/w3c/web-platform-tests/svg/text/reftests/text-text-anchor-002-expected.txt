@@ -1,0 +1,118 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (218,143) size 299x361
+    RenderSVGContainer {g} at (0,0) size 0x0
+    RenderSVGContainer {g} at (219,163) size 298x341
+      RenderSVGContainer {g} at (219,163) size 32x337
+        RenderSVGEllipse {circle} at (230,163) size 7x7 [fill={[type=SOLID] [color=#FF0000]}] [cx=140.00] [cy=100.00] [r=2.00]
+        RenderSVGText {text} at (90,99) size 200x20 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 200x19
+            RenderSVGInlineText {#text} at (0,0) size 200x19
+              chunk 1 text run 1 at (90.00,114.80) startOffset 0 endOffset 27 width 199.87: "Lorem ipsum dolor sit amet,"
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+      RenderSVGContainer {g} at (352,166) size 32x334 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,0.00)}]
+        RenderSVGEllipse {circle} at (363,330) size 7x7 [fill={[type=SOLID] [color=#FF0000]}] [cx=140.00] [cy=200.00] [r=2.00]
+        RenderSVGText {text} at (140,99) size 200x20 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 200x19
+            RenderSVGInlineText {#text} at (0,0) size 200x19
+              chunk 1 (middle anchor) text run 1 at (140.06,114.80) startOffset 0 endOffset 27 width 199.87: "Lorem ipsum dolor sit amet,"
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+      RenderSVGContainer {g} at (485,166) size 32x338 [transform={m=((1.00,0.00)(0.00,1.00)) t=(160.00,0.00)}]
+        RenderSVGEllipse {circle} at (496,496) size 8x8 [fill={[type=SOLID] [color=#FF0000]}] [cx=140.00] [cy=300.00] [r=2.00]
+        RenderSVGText {text} at (190,99) size 200x20 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 200x19
+            RenderSVGInlineText {#text} at (0,0) size 200x19
+              chunk 1 (end anchor) text run 1 at (190.13,114.80) startOffset 0 endOffset 27 width 199.87: "Lorem ipsum dolor sit amet,"
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+    RenderSVGContainer {g} at (218,143) size 298x357
+      RenderSVGContainer {g} at (218,166) size 32x334
+        RenderSVGText {text} at (130,100) size 20x200 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 19x200
+            chunk 1 (vertical) text run 1 at (134.68,100.00) startOffset 0 endOffset 1 height 18.60: "L"
+            chunk 1 (vertical) text run 2 at (134.68,109.01) startOffset 1 endOffset 2 height 18.60: "o"
+            chunk 1 (vertical) text run 3 at (134.68,118.02) startOffset 2 endOffset 3 height 18.60: "r"
+            chunk 1 (vertical) text run 4 at (134.68,123.41) startOffset 3 endOffset 4 height 18.60: "e"
+            chunk 1 (vertical) text run 5 at (134.68,132.42) startOffset 4 endOffset 5 height 18.60: "m"
+            chunk 1 (vertical) text run 6 at (134.68,145.92) startOffset 5 endOffset 6 height 18.60: " "
+            chunk 1 (vertical) text run 7 at (134.68,150.42) startOffset 6 endOffset 7 height 18.60: "i"
+            chunk 1 (vertical) text run 8 at (134.68,154.02) startOffset 7 endOffset 8 height 18.60: "p"
+            chunk 1 (vertical) text run 9 at (134.68,163.03) startOffset 8 endOffset 9 height 18.60: "s"
+            chunk 1 (vertical) text run 10 at (134.68,171.13) startOffset 9 endOffset 10 height 18.60: "u"
+            chunk 1 (vertical) text run 11 at (134.68,180.14) startOffset 10 endOffset 11 height 18.60: "m"
+            chunk 1 (vertical) text run 12 at (134.68,193.63) startOffset 11 endOffset 12 height 18.60: " "
+            chunk 1 (vertical) text run 13 at (134.68,198.13) startOffset 12 endOffset 13 height 18.60: "d"
+            chunk 1 (vertical) text run 14 at (134.68,207.14) startOffset 13 endOffset 14 height 18.60: "o"
+            chunk 1 (vertical) text run 15 at (134.68,216.15) startOffset 14 endOffset 15 height 18.60: "l"
+            chunk 1 (vertical) text run 16 at (134.68,219.75) startOffset 15 endOffset 16 height 18.60: "o"
+            chunk 1 (vertical) text run 17 at (134.68,228.76) startOffset 16 endOffset 17 height 18.60: "r"
+            chunk 1 (vertical) text run 18 at (134.68,234.16) startOffset 17 endOffset 18 height 18.60: " "
+            chunk 1 (vertical) text run 19 at (134.68,238.66) startOffset 18 endOffset 19 height 18.60: "s"
+            chunk 1 (vertical) text run 20 at (134.68,246.76) startOffset 19 endOffset 20 height 18.60: "i"
+            chunk 1 (vertical) text run 21 at (134.68,250.36) startOffset 20 endOffset 21 height 18.60: "t"
+            chunk 1 (vertical) text run 22 at (134.68,254.86) startOffset 21 endOffset 22 height 18.60: " "
+            chunk 1 (vertical) text run 23 at (134.68,259.36) startOffset 22 endOffset 23 height 18.60: "a"
+            chunk 1 (vertical) text run 24 at (134.68,268.37) startOffset 23 endOffset 24 height 18.60: "m"
+            chunk 1 (vertical) text run 25 at (134.68,281.86) startOffset 24 endOffset 25 height 18.60: "e"
+            chunk 1 (vertical) text run 26 at (134.68,290.87) startOffset 25 endOffset 26 height 18.60: "t"
+            chunk 1 (vertical) text run 27 at (134.68,295.37) startOffset 26 endOffset 27 height 18.60: ","
+      RenderSVGContainer {g} at (351,155) size 32x334 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,0.00)}]
+        RenderSVGText {text} at (130,93) size 20x200 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 19x200
+            chunk 1 (middle anchor, vertical) text run 1 at (134.68,93.01) startOffset 0 endOffset 1 height 18.60: "L"
+            chunk 1 (middle anchor, vertical) text run 2 at (134.68,102.02) startOffset 1 endOffset 2 height 18.60: "o"
+            chunk 1 (middle anchor, vertical) text run 3 at (134.68,111.03) startOffset 2 endOffset 3 height 18.60: "r"
+            chunk 1 (middle anchor, vertical) text run 4 at (134.68,116.43) startOffset 3 endOffset 4 height 18.60: "e"
+            chunk 1 (middle anchor, vertical) text run 5 at (134.68,125.44) startOffset 4 endOffset 5 height 18.60: "m"
+            chunk 1 (middle anchor, vertical) text run 6 at (134.68,138.93) startOffset 5 endOffset 6 height 18.60: " "
+            chunk 1 (middle anchor, vertical) text run 7 at (134.68,143.43) startOffset 6 endOffset 7 height 18.60: "i"
+            chunk 1 (middle anchor, vertical) text run 8 at (134.68,147.03) startOffset 7 endOffset 8 height 18.60: "p"
+            chunk 1 (middle anchor, vertical) text run 9 at (134.68,156.04) startOffset 8 endOffset 9 height 18.60: "s"
+            chunk 1 (middle anchor, vertical) text run 10 at (134.68,164.14) startOffset 9 endOffset 10 height 18.60: "u"
+            chunk 1 (middle anchor, vertical) text run 11 at (134.68,173.15) startOffset 10 endOffset 11 height 18.60: "m"
+            chunk 1 (middle anchor, vertical) text run 12 at (134.68,186.65) startOffset 11 endOffset 12 height 18.60: " "
+            chunk 1 (middle anchor, vertical) text run 13 at (134.68,191.15) startOffset 12 endOffset 13 height 18.60: "d"
+            chunk 1 (middle anchor, vertical) text run 14 at (134.68,200.16) startOffset 13 endOffset 14 height 18.60: "o"
+            chunk 1 (middle anchor, vertical) text run 15 at (134.68,209.17) startOffset 14 endOffset 15 height 18.60: "l"
+            chunk 1 (middle anchor, vertical) text run 16 at (134.68,212.77) startOffset 15 endOffset 16 height 18.60: "o"
+            chunk 1 (middle anchor, vertical) text run 17 at (134.68,221.78) startOffset 16 endOffset 17 height 18.60: "r"
+            chunk 1 (middle anchor, vertical) text run 18 at (134.68,227.17) startOffset 17 endOffset 18 height 18.60: " "
+            chunk 1 (middle anchor, vertical) text run 19 at (134.68,231.67) startOffset 18 endOffset 19 height 18.60: "s"
+            chunk 1 (middle anchor, vertical) text run 20 at (134.68,239.77) startOffset 19 endOffset 20 height 18.60: "i"
+            chunk 1 (middle anchor, vertical) text run 21 at (134.68,243.37) startOffset 20 endOffset 21 height 18.60: "t"
+            chunk 1 (middle anchor, vertical) text run 22 at (134.68,247.87) startOffset 21 endOffset 22 height 18.60: " "
+            chunk 1 (middle anchor, vertical) text run 23 at (134.68,252.37) startOffset 22 endOffset 23 height 18.60: "a"
+            chunk 1 (middle anchor, vertical) text run 24 at (134.68,261.38) startOffset 23 endOffset 24 height 18.60: "m"
+            chunk 1 (middle anchor, vertical) text run 25 at (134.68,274.88) startOffset 24 endOffset 25 height 18.60: "e"
+            chunk 1 (middle anchor, vertical) text run 26 at (134.68,283.89) startOffset 25 endOffset 26 height 18.60: "t"
+            chunk 1 (middle anchor, vertical) text run 27 at (134.68,288.39) startOffset 26 endOffset 27 height 18.60: ","
+      RenderSVGContainer {g} at (484,143) size 32x334 [transform={m=((1.00,0.00)(0.00,1.00)) t=(160.00,0.00)}]
+        RenderSVGText {text} at (130,86) size 20x200 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 19x200
+            chunk 1 (end anchor, vertical) text run 1 at (134.68,86.03) startOffset 0 endOffset 1 height 18.60: "L"
+            chunk 1 (end anchor, vertical) text run 2 at (134.68,95.04) startOffset 1 endOffset 2 height 18.60: "o"
+            chunk 1 (end anchor, vertical) text run 3 at (134.68,104.05) startOffset 2 endOffset 3 height 18.60: "r"
+            chunk 1 (end anchor, vertical) text run 4 at (134.68,109.44) startOffset 3 endOffset 4 height 18.60: "e"
+            chunk 1 (end anchor, vertical) text run 5 at (134.68,118.45) startOffset 4 endOffset 5 height 18.60: "m"
+            chunk 1 (end anchor, vertical) text run 6 at (134.68,131.95) startOffset 5 endOffset 6 height 18.60: " "
+            chunk 1 (end anchor, vertical) text run 7 at (134.68,136.45) startOffset 6 endOffset 7 height 18.60: "i"
+            chunk 1 (end anchor, vertical) text run 8 at (134.68,140.05) startOffset 7 endOffset 8 height 18.60: "p"
+            chunk 1 (end anchor, vertical) text run 9 at (134.68,149.06) startOffset 8 endOffset 9 height 18.60: "s"
+            chunk 1 (end anchor, vertical) text run 10 at (134.68,157.16) startOffset 9 endOffset 10 height 18.60: "u"
+            chunk 1 (end anchor, vertical) text run 11 at (134.68,166.16) startOffset 10 endOffset 11 height 18.60: "m"
+            chunk 1 (end anchor, vertical) text run 12 at (134.68,179.66) startOffset 11 endOffset 12 height 18.60: " "
+            chunk 1 (end anchor, vertical) text run 13 at (134.68,184.16) startOffset 12 endOffset 13 height 18.60: "d"
+            chunk 1 (end anchor, vertical) text run 14 at (134.68,193.17) startOffset 13 endOffset 14 height 18.60: "o"
+            chunk 1 (end anchor, vertical) text run 15 at (134.68,202.18) startOffset 14 endOffset 15 height 18.60: "l"
+            chunk 1 (end anchor, vertical) text run 16 at (134.68,205.78) startOffset 15 endOffset 16 height 18.60: "o"
+            chunk 1 (end anchor, vertical) text run 17 at (134.68,214.79) startOffset 16 endOffset 17 height 18.60: "r"
+            chunk 1 (end anchor, vertical) text run 18 at (134.68,220.18) startOffset 17 endOffset 18 height 18.60: " "
+            chunk 1 (end anchor, vertical) text run 19 at (134.68,224.68) startOffset 18 endOffset 19 height 18.60: "s"
+            chunk 1 (end anchor, vertical) text run 20 at (134.68,232.78) startOffset 19 endOffset 20 height 18.60: "i"
+            chunk 1 (end anchor, vertical) text run 21 at (134.68,236.38) startOffset 20 endOffset 21 height 18.60: "t"
+            chunk 1 (end anchor, vertical) text run 22 at (134.68,240.88) startOffset 21 endOffset 22 height 18.60: " "
+            chunk 1 (end anchor, vertical) text run 23 at (134.68,245.39) startOffset 22 endOffset 23 height 18.60: "a"
+            chunk 1 (end anchor, vertical) text run 24 at (134.68,254.39) startOffset 23 endOffset 24 height 18.60: "m"
+            chunk 1 (end anchor, vertical) text run 25 at (134.68,267.89) startOffset 24 endOffset 25 height 18.60: "e"
+            chunk 1 (end anchor, vertical) text run 26 at (134.68,276.90) startOffset 25 endOffset 26 height 18.60: "t"
+            chunk 1 (end anchor, vertical) text run 27 at (134.68,281.40) startOffset 26 endOffset 27 height 18.60: ","

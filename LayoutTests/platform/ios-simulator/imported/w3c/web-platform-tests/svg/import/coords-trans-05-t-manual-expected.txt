@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (16,86) size 643x269
+      RenderSVGContainer {g} at (16,86) size 643x269 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,30.00)}]
+        RenderSVGContainer {g} at (16,86) size 643x269
+          RenderSVGContainer {g} at (58,175) size 251x167 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-90.00,-450.00)}]
+            RenderSVGContainer {g} at (58,175) size 251x167 [transform={m=((7.50,0.00)(0.00,5.00)) t=(125.00,525.00)}]
+              RenderSVGRect {rect} at (58,175) size 251x9 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=20.00] [height=1.00]
+              RenderSVGRect {rect} at (58,175) size 9x167 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=0.67] [height=20.00]
+          RenderSVGContainer {g} at (16,86) size 643x269 [transform={m=((2.50,0.00)(0.00,2.50)) t=(-90.00,-450.00)}]
+            RenderSVGText {text} at (40,188) size 155x15 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 155x15
+                chunk 1 text run 1 at (40.00,200.00) startOffset 0 endOffset 31 width 154.07: "scale(25, 95) - translate(2, 2)"
+            RenderSVGRect {rect} at (50,166) size 21x22 [fill={[type=SOLID] [color=#000000]}] [x=48.00] [y=208.00] [width=5.00] [height=5.00]
+            RenderSVGRect {rect} at (300,166) size 21x22 [fill={[type=SOLID] [color=#0000FF]}] [x=108.00] [y=208.00] [width=5.00] [height=5.00]
+            RenderSVGRect {rect} at (50,333) size 21x22 [fill={[type=SOLID] [color=#FF0000]}] [x=48.00] [y=248.00] [width=5.00] [height=5.00]
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.7 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

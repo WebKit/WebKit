@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (8,1) size 791x598
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGRect {rect} at (400,1) size 399x598 [fill={[type=SOLID] [color=#000000]}] [x=240.00] [y=1.00] [width=239.00] [height=358.00]
+      RenderSVGContainer {use} at (400,1) size 399x598
+        RenderSVGRect {rect} at (400,1) size 399x598 [fill={[type=SOLID] [color=#808080]}] [x=240.00] [y=1.00] [width=239.00] [height=358.00]
+      RenderSVGText {text} at (0,-18) size 274x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 274x22
+          chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 36 width 273.13: "Click on the grey rectangle to start"
+      RenderSVGText {text} at (0,-18) size 279x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 279x22
+          chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 32 width 278.13: "Test for correspondingUseElement"
+      RenderSVGText {text} at (0,-18) size 247x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 247x22
+          chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 29 width 246.12: "Test for correspondingElement"
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.3 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

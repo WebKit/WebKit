@@ -1,0 +1,27 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a-download-click.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.rel-getter-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.rel-setter-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.text-getter-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.text-setter-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/href-animate-element.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/href-mpath-element.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/href-script-element-markup.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/href-script-element.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/rellist-feature-detection.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/testcommon.js

@@ -1,0 +1,44 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (33,29) size 717x434
+      RenderSVGText {text} at (100,17) size 289x29 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 289x29
+          chunk 1 text run 1 at (100.00,40.00) startOffset 0 endOffset 26 width 288.16: "Mouse event handlers test."
+      RenderSVGContainer {g} at (33,100) size 717x185 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,140.00)}]
+        RenderSVGText {text} at (-40,-80) size 93x38 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 93x38
+            chunk 1 text run 1 at (-40.00,-50.00) startOffset 0 endOffset 6 width 92.77: "Target"
+        RenderSVGText {text} at (60,-16) size 330x29 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 330x29
+            chunk 1 text run 1 at (60.00,7.00) startOffset 0 endOffset 32 width 329.51: "Use the target to trigger events"
+        RenderSVGContainer {g} at (49,182) size 102x103
+          RenderSVGEllipse {circle} at (49,182) size 102x103 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=0.00] [cy=0.00] [r=30.00]
+          RenderSVGPath {line} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [x1=-30.00] [y1=0.00] [x2=30.00] [y2=0.00]
+          RenderSVGPath {line} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-30.00] [x2=0.00] [y2=30.00]
+      RenderSVGContainer {g} at (83,300) size 393x163
+        RenderSVGContainer {g} at (83,300) size 393x163 [transform={m=((1.00,0.00)(0.00,1.00)) t=(65.00,190.00)}]
+          RenderSVGContainer {g} at (125,300) size 351x163
+            RenderSVGText {text} at (10,-10) size 195x38 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 195x38
+                chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 11 width 194.50: "onmouseover"
+            RenderSVGText {text} at (10,20) size 211x38 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 211x38
+                chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 11 width 210.55: "onmousemove"
+            RenderSVGText {text} at (10,50) size 177x38 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 177x38
+                chunk 1 text run 1 at (10.00,80.00) startOffset 0 endOffset 10 width 176.68: "onmouseout"
+          RenderSVGContainer {g} at (83,320) size 34x134
+            RenderSVGRect {rect} at (83,320) size 34x34 [fill={[type=SOLID] [color=#008000]}] [x=-15.00] [y=2.00] [width=20.00] [height=20.00]
+            RenderSVGRect {rect} at (83,320) size 34x34 [fill={[type=SOLID] [color=#FF0000]}] [x=-15.00] [y=2.00] [width=20.00] [height=20.00]
+            RenderSVGRect {rect} at (83,370) size 34x34 [fill={[type=SOLID] [color=#008000]}] [x=-15.00] [y=32.00] [width=20.00] [height=20.00]
+            RenderSVGRect {rect} at (83,370) size 34x34 [fill={[type=SOLID] [color=#FF0000]}] [x=-15.00] [y=32.00] [width=20.00] [height=20.00]
+            RenderSVGRect {rect} at (83,420) size 34x34 [fill={[type=SOLID] [color=#008000]}] [x=-15.00] [y=62.00] [width=20.00] [height=20.00]
+            RenderSVGRect {rect} at (83,420) size 34x34 [fill={[type=SOLID] [color=#FF0000]}] [x=-15.00] [y=62.00] [width=20.00] [height=20.00]
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.7 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

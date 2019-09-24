@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 15: Error: Problem parsing d="M 20 150 B -90 h 120 B 0 h 140 B 90 h 120 z"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 200x200
+  RenderSVGRoot {svg} at (0,0) size 0x0
+    RenderSVGPath {path} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#0000FF] [stroke width=3.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 20 150"]

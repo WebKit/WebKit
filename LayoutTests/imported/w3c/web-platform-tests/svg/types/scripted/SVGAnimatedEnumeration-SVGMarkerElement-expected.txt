@@ -1,0 +1,3 @@
+
+FAIL Use of SVGAnimatedEnumeration within SVGMarkerElement assert_equals: expected 0 but got 10
+

@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (69,23) size 679x492
+      RenderSVGContainer {g} at (69,23) size 679x492
+        RenderSVGText {text} at (48,14) size 299x43 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 299x42
+            chunk 1 text run 1 at (48.00,48.00) startOffset 0 endOffset 18 width 298.16: "Test a motion path"
+        RenderSVGText {text} at (48,61) size 262x43 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 262x42
+            chunk 1 text run 1 at (48.00,95.00) startOffset 0 endOffset 16 width 261.88: "'mpath' element."
+        RenderSVGPath {path} at (146,277) size 507x157 [stroke={[type=SOLID] [color=#000000] [stroke width=6.00]}] [data="M 90 258 C 90 258 216 120 390 198"]
+        RenderSVGRect {rect} at (95,325) size 110x110 [stroke={[type=SOLID] [color=#000000] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=60.00] [y=198.00] [width=60.00] [height=60.00]
+        RenderSVGText {text} at (41,266) size 98x43 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 97x42
+            chunk 1 (middle anchor) text run 1 at (41.98,300.00) startOffset 0 endOffset 6 width 96.05: "0 sec."
+        RenderSVGRect {rect} at (595,225) size 110x110 [stroke={[type=SOLID] [color=#000000] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=360.00] [y=138.00] [width=60.00] [height=60.00]
+        RenderSVGText {text} at (331,206) size 118x43 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 118x42
+            chunk 1 (middle anchor) text run 1 at (331.46,240.00) startOffset 0 endOffset 7 width 117.07: "6+ sec."
+        RenderSVGPath {path} at (91,318) size 118x117 [transform={m=((1.00,0.00)(0.00,1.00)) t=(90.00,258.00)}] [stroke={[type=SOLID] [color=#008000] [stroke width=6.00]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M -30 0 L 0 -60 L 30 0 Z"]
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.7 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -1,0 +1,3 @@
+
+PASS Should not crash on foreignObject under clipPath 
+

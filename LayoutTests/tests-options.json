@@ -1982,6 +1982,9 @@
     "imported/w3c/web-platform-tests/service-workers/service-worker/worker-interception.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/svg/animations/svglengthlist-animation-3.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-ontonechange-long.html": [
         "slow"
     ],

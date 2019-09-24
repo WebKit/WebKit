@@ -1,0 +1,44 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/animatedPoints-non-animated.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/circle-01-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/circle-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/ellipse-01-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/ellipse-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/ellipse-02-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/ellipse-02.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/ellipse-03-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/ellipse-03.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/ellipse-04-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/ellipse-04.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/ellipse-05.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/ellipse-06.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/ellipse-07-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/ellipse-07.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/ellipse-08.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/ellipse-09.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/line-dasharray-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/line-dasharray.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/line-getPointAtLength.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/line-pathLength.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/rect-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/rect-02.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/rect-03.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/rect-04.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/rect-05-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/rect-05.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/shapes/rx-ry-not-inherited.svg

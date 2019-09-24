@@ -1,0 +1,3 @@
+
+PASS Test accumulate=sum animation on SVGAnimateTransform. 
+

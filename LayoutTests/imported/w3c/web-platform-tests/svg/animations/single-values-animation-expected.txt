@@ -1,0 +1,3 @@
+
+PASS This tests values animation with just a single entry 
+

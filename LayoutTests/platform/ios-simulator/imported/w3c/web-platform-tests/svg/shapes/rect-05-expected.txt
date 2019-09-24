@@ -1,0 +1,7 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 100x100
+  RenderSVGRoot {svg} at (0,0) size 0x0
+    RenderSVGRect {rect} at (28,48) size 4x14 [stroke={[type=SOLID] [color=#FF0000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=30.00] [y=50.00] [width=0.00] [height=10.00]
+    RenderSVGRect {rect} at (48,48) size 14x4 [stroke={[type=SOLID] [color=#FF0000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=50.00] [y=50.00] [width=10.00] [height=0.00]
+    RenderSVGRect {rect} at (68,48) size 4x4 [stroke={[type=SOLID] [color=#FF0000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=70.00] [y=50.00] [width=0.00] [height=0.00]

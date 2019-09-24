@@ -1,0 +1,50 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (33,6) size 747x494
+      RenderSVGContainer {g} at (33,6) size 747x494
+        RenderSVGPath {line} at (313,75) size 7x425 [stroke={[type=SOLID] [color=#880000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=190.00] [y1=45.00] [x2=190.00] [y2=300.00]
+        RenderSVGPath {line} at (763,75) size 7x425 [stroke={[type=SOLID] [color=#880000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=460.00] [y1=45.00] [x2=460.00] [y2=300.00]
+        RenderSVGText {text} at (156,4) size 107x35 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 107x35
+            chunk 1 text run 1 at (156.00,32.00) startOffset 0 endOffset 8 width 106.71: "0-2 sec."
+        RenderSVGText {text} at (370,4) size 98x35 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 98x35
+            chunk 1 text run 1 at (370.00,32.00) startOffset 0 endOffset 7 width 97.56: "5+ sec."
+        RenderSVGContainer {g} at (33,95) size 287x59
+          RenderSVGRect {rect} at (263,96) size 57x58 [stroke={[type=SOLID] [color=#FF00FF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFAA44]}] [x=160.00] [y=60.00] [width=30.00] [height=30.00]
+          RenderSVGText {text} at (20,57) size 94x35 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 94x35
+              chunk 1 text run 1 at (20.00,85.00) startOffset 0 endOffset 7 width 93.35: "from to"
+        RenderSVGContainer {g} at (33,161) size 287x59
+          RenderSVGRect {rect} at (263,163) size 57x57 [stroke={[type=SOLID] [color=#FF00FF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFAA44]}] [x=160.00] [y=100.00] [width=30.00] [height=30.00]
+          RenderSVGText {text} at (20,97) size 101x35 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 101x35
+              chunk 1 text run 1 at (20.00,125.00) startOffset 0 endOffset 7 width 100.02: "from by"
+        RenderSVGContainer {g} at (33,228) size 287x59
+          RenderSVGRect {rect} at (263,230) size 57x57 [stroke={[type=SOLID] [color=#FF00FF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFAA44]}] [x=160.00] [y=140.00] [width=30.00] [height=30.00]
+          RenderSVGText {text} at (20,137) size 32x35 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 32x35
+              chunk 1 text run 1 at (20.00,165.00) startOffset 0 endOffset 2 width 31.68: "by"
+        RenderSVGContainer {g} at (33,295) size 287x59
+          RenderSVGRect {rect} at (263,296) size 57x58 [stroke={[type=SOLID] [color=#FF00FF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFAA44]}] [x=160.00] [y=180.00] [width=30.00] [height=30.00]
+          RenderSVGText {text} at (20,177) size 26x35 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 26x35
+              chunk 1 text run 1 at (20.00,205.00) startOffset 0 endOffset 2 width 25.02: "to"
+        RenderSVGContainer {g} at (33,361) size 287x59
+          RenderSVGRect {rect} at (263,363) size 57x57 [stroke={[type=SOLID] [color=#FF00FF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFAA44]}] [x=160.00] [y=220.00] [width=30.00] [height=30.00]
+          RenderSVGText {text} at (20,217) size 87x35 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 87x35
+              chunk 1 text run 1 at (20.00,245.00) startOffset 0 endOffset 6 width 86.72: "values"
+        RenderSVGContainer {g} at (33,428) size 287x59
+          RenderSVGRect {rect} at (263,430) size 57x57 [stroke={[type=SOLID] [color=#FF00FF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFAA44]}] [x=160.00] [y=260.00] [width=30.00] [height=30.00]
+          RenderSVGText {text} at (20,257) size 87x35 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 87x35
+              chunk 1 text run 1 at (20.00,285.00) startOffset 0 endOffset 6 width 86.72: "values"
+    RenderSVGContainer {g} at (16,517) size 381x62
+      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 229x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.7 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

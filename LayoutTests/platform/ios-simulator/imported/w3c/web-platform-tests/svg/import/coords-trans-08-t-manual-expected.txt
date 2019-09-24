@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (0,0) size 684x442
+      RenderSVGContainer {g} at (0,0) size 684x442
+        RenderSVGContainer {g} at (0,0) size 609x350 [transform={m=((2.00,1.00)(1.00,1.00)) t=(0.00,0.00)}]
+          RenderSVGRect {rect} at (0,0) size 509x259 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=150.00] [height=5.00]
+          RenderSVGRect {rect} at (0,0) size 100x92 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=5.00] [height=50.00]
+          RenderSVGRect {rect} at (500,250) size 100x92 [fill={[type=SOLID] [color=#000000]}] [x=150.00] [y=0.00] [width=5.00] [height=50.00]
+          RenderSVGRect {rect} at (83,83) size 509x259 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=50.00] [width=150.00] [height=5.00]
+          RenderSVGEllipse {ellipse} at (133,75) size 317x184 [fill={[type=SOLID] [color=#800080]}] [cx=75.00] [cy=25.00] [rx=40.00] [ry=15.00]
+        RenderSVGText {text} at (30,4) size 121x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 121x15
+            chunk 1 text run 1 at (30.00,16.00) startOffset 0 endOffset 19 width 120.38: "skewX(45)+skewY(45)"
+        RenderSVGContainer {g} at (333,0) size 351x442 [transform={m=((1.00,1.00)(1.00,2.00)) t=(200.00,0.00)}]
+          RenderSVGRect {rect} at (333,0) size 259x267 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=150.00] [height=5.00]
+          RenderSVGRect {rect} at (333,0) size 92x175 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=5.00] [height=50.00]
+          RenderSVGRect {rect} at (583,250) size 92x175 [fill={[type=SOLID] [color=#000000]}] [x=150.00] [y=0.00] [width=5.00] [height=50.00]
+          RenderSVGRect {rect} at (416,166) size 259x268 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=50.00] [width=150.00] [height=5.00]
+          RenderSVGEllipse {ellipse} at (408,91) size 184x234 [fill={[type=SOLID] [color=#800080]}] [cx=75.00] [cy=25.00] [rx=40.00] [ry=15.00]
+        RenderSVGText {text} at (230,4) size 121x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 121x15
+            chunk 1 text run 1 at (230.00,16.00) startOffset 0 endOffset 19 width 120.38: "skewY(45)+skewX(45)"
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.6 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

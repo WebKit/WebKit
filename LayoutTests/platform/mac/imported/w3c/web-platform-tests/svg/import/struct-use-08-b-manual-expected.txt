@@ -1,0 +1,31 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (46,82) size 721x359
+      RenderSVGContainer {g} at (46,82) size 308x240 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,50.00)}]
+        RenderSVGContainer {use} at (0,0) size 0x0
+        RenderSVGRect {rect} at (99,82) size 202x203 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=120.00] [height=120.00]
+        RenderSVGText {text} at (-32,127) size 184x17 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 184x16
+            chunk 1 (middle anchor) text run 1 at (-31.95,140.00) startOffset 0 endOffset 31 width 183.90: "'use' referencing 'svg' element"
+      RenderSVGContainer {g} at (433,82) size 334x240 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,50.00)}]
+        RenderSVGContainer {use} at (0,0) size 0x0
+        RenderSVGRect {rect} at (499,82) size 202x203 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=120.00] [height=120.00]
+        RenderSVGText {text} at (-41,127) size 201x17 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 201x16
+            chunk 1 (middle anchor) text run 1 at (-40.01,140.00) startOffset 0 endOffset 33 width 200.01: "'use' referencing 'image' element"
+      RenderSVGText {text} at (134,243) size 212x22 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 212x21
+          chunk 1 (middle anchor) text run 1 at (134.45,260.00) startOffset 0 endOffset 28 width 211.10: "This text should be visible."
+    RenderSVGContainer {g} at (16,517) size 381x62
+      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 229x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.5 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGContainer {g} at (0,0) size 800x39
+      RenderSVGRect {rect} at (0,0) size 800x36 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
+      RenderSVGText {text} at (206,-1) size 68x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 68x23
+          chunk 1 (middle anchor) text run 1 at (206.46,18.00) startOffset 0 endOffset 5 width 67.09: "DRAFT"

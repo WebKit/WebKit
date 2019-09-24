@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (65,44) size 245x458
+      RenderSVGContainer {a} at (65,44) size 245x125
+        RenderSVGPath {path} at (65,44) size 245x125 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#00FF00]}] [data="M 185 40 L 85 40 L 85 28 L 40 64 L 85 100 L 85 88 L 185 88 Z"]
+      RenderSVGContainer {g} at (65,211) size 245x125 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,100.00)}]
+        RenderSVGContainer {a} at (65,211) size 245x125
+          RenderSVGPath {path} at (65,211) size 245x125 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M 185 40 L 85 40 L 85 28 L 40 64 L 85 100 L 85 88 L 185 88 Z"]
+      RenderSVGContainer {g} at (65,378) size 245x124 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,200.00)}]
+        RenderSVGContainer {a} at (65,378) size 245x124
+          RenderSVGPath {path} at (65,378) size 245x124 [stroke={[type=SOLID] [color=#00FF00]}] [fill={[type=SOLID] [color=#800080]}] [data="M 185 40 L 85 40 L 85 28 L 40 64 L 85 100 L 85 88 L 185 88 Z"]
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.2 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGContainer {g} at (0,0) size 800x39
+      RenderSVGRect {rect} at (0,0) size 800x36 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
+      RenderSVGText {text} at (205,-1) size 70x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 69x24
+          chunk 1 (middle anchor) text run 1 at (205.95,18.00) startOffset 0 endOffset 5 width 68.10: "DRAFT"

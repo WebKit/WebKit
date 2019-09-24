@@ -1,0 +1,3 @@
+
+PASS Tests from-by SVGRect animation. 
+

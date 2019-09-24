@@ -1,0 +1,66 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (181,54) size 438x380
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourceMasker {mask} [id="emptymask"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
+        RenderSVGResourceMasker {mask} [id="hiddenmask"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
+          RenderSVGRect {rect} at (0,0) size 167x167 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+        RenderSVGResourceMasker {mask} [id="displaymask"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
+        RenderSVGResourceMasker {mask} [id="opacitymask"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
+          RenderSVGRect {rect} at (0,0) size 167x167 [opacity=0.00] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+        RenderSVGResourceMasker {mask} [id="strokefillmask"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
+          RenderSVGRect {rect} at (0,0) size 167x167 [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+        RenderSVGResourceMasker {mask} [id="strokewidthmask"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
+          RenderSVGRect {rect} at (50,50) size 67x67 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [x=40.00] [y=40.00] [width=20.00] [height=20.00]
+        RenderSVGResourceMasker {mask} [id="strokeopacitymask"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
+          RenderSVGRect {rect} at (50,50) size 67x67 [stroke={[type=SOLID] [color=#FFFFFF] [opacity=0.00] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [x=40.00] [y=40.00] [width=20.00] [height=20.00]
+        RenderSVGResourceMasker {mask} [id="fillopacitymask"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
+          RenderSVGRect {rect} at (0,0) size 167x167 [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGText {text} at (108,32) size 264x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 263x22
+          chunk 1 (middle anchor) text run 1 at (108.92,50.00) startOffset 0 endOffset 31 width 262.15: "Establishing a new masking path"
+      RenderSVGContainer {g} at (266,166) size 268x268 [transform={m=((0.50,0.00)(0.00,0.50)) t=(160.00,100.00)}]
+        RenderSVGRect {rect} at (266,166) size 84x84 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+        RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+          [masker="emptymask"] RenderSVGResourceMasker {mask} at (0,0) size 0x0
+        RenderSVGContainer {g} at (358,166) size 84x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(110.00,0.00)}]
+          RenderSVGRect {rect} at (358,166) size 84x84 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+          RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+            [masker="hiddenmask"] RenderSVGResourceMasker {mask} at (0,0) size 0x0
+        RenderSVGContainer {g} at (450,166) size 84x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(220.00,0.00)}]
+          RenderSVGRect {rect} at (450,166) size 84x84 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+          RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+            [masker="displaymask"] RenderSVGResourceMasker {mask} at (0,0) size 0x0
+        RenderSVGContainer {g} at (266,258) size 84x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,110.00)}]
+          RenderSVGRect {rect} at (267,258) size 83x84 [fill={[type=SOLID] [color=#FF0000]}] [x=0.50] [y=0.50] [width=99.00] [height=99.00]
+          RenderSVGRect {rect} at (266,258) size 84x84 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+        RenderSVGContainer {g} at (358,258) size 84x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(110.00,110.00)}]
+          RenderSVGRect {rect} at (358,258) size 84x84 [fill={[type=SOLID] [color=#00FF00]}] [x=0.50] [y=0.50] [width=99.00] [height=99.00]
+          RenderSVGRect {rect} at (358,258) size 84x84 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+            [masker="opacitymask"] RenderSVGResourceMasker {mask} at (0,0) size 100x100
+        RenderSVGContainer {g} at (450,258) size 84x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(220.00,110.00)}]
+          RenderSVGRect {rect} at (450,258) size 83x84 [fill={[type=SOLID] [color=#00FF00]}] [x=0.50] [y=0.50] [width=99.00] [height=99.00]
+          RenderSVGRect {rect} at (450,258) size 84x84 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+            [masker="strokefillmask"] RenderSVGResourceMasker {mask} at (0,0) size 100x100
+        RenderSVGContainer {g} at (266,350) size 84x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,220.00)}]
+          RenderSVGRect {rect} at (266,350) size 84x84 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+          RenderSVGRect {rect} at (291,375) size 34x34 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+            [masker="strokewidthmask"] RenderSVGResourceMasker {mask} at (30,30) size 40x40
+          RenderSVGRect {rect} at (290,374) size 36x36 [fill={[type=SOLID] [color=#00FF00]}] [x=29.00] [y=29.00] [width=42.00] [height=42.00]
+        RenderSVGContainer {g} at (358,350) size 84x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(110.00,220.00)}]
+          RenderSVGRect {rect} at (358,350) size 84x84 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+          RenderSVGRect {rect} at (383,375) size 34x34 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+            [masker="strokeopacitymask"] RenderSVGResourceMasker {mask} at (30,30) size 40x40
+        RenderSVGContainer {g} at (450,350) size 84x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(220.00,220.00)}]
+          RenderSVGRect {rect} at (450,350) size 83x83 [fill={[type=SOLID] [color=#00FF00]}] [x=0.50] [y=0.50] [width=99.00] [height=99.00]
+          RenderSVGRect {rect} at (450,350) size 84x84 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+            [masker="fillopacitymask"] RenderSVGResourceMasker {mask} at (0,0) size 100x100
+        RenderSVGRect {rect} at (266,166) size 268x268 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=320.00] [height=320.00]
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.4 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

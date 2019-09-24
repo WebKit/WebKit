@@ -1,0 +1,40 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/cx-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/cx-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/cx-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/cy-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/cy-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/cy-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/height-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/r-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/r-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/r-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/rx-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/rx-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/rx-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/ry-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/ry-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/ry-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/sizing-properties-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/width-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/x-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/x-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/x-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/y-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/y-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/geometry/parsing/y-valid.svg

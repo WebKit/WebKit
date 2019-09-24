@@ -1,0 +1,3 @@
+
+PASS Tests SVGAngle animation from deg to rad. 
+
