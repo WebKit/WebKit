@@ -1,3 +1,16 @@
+2019-09-24  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [ES6] Come up with a test for Proxy.[[GetOwnProperty]] that tests the isExtensible error when the  result of the trap is undefined
+        https://bugs.webkit.org/show_bug.cgi?id=154376
+
+        Reviewed by Ross Kirsling.
+
+        Adds 2 test cases:
+        1. If [[GetOwnProperty]] trap result is `undefined` and Proxy's target is non-extensible, TypeError is thrown.
+        2. If [[GetOwnProperty]] trap result is `undefined` and Proxy's target is another Proxy, its "isExtensible" trap is called.
+
+        * stress/proxy-get-own-property.js:
+
 2019-09-24  Caio Lima  <ticaiolima@gmail.com>
 
         [BigInt] Add ValueBitRShift into DFG

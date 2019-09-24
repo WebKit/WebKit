@@ -259,14 +259,9 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
             throwVMTypeError(exec, scope, "When the result of 'getOwnPropertyDescriptor' is undefined the target must be configurable"_s);
             return false;
         }
-        // FIXME: this doesn't work if 'target' is another Proxy. We don't have isExtensible implemented in a way that fits w/ Proxys.
-        // https://bugs.webkit.org/show_bug.cgi?id=154375
         bool isExtensible = target->isExtensible(exec);
         RETURN_IF_EXCEPTION(scope, false);
         if (!isExtensible) {
-            // FIXME: Come up with a test for this error. I'm not sure how to because
-            // Object.seal(o) will make all fields [[Configurable]] false.
-            // https://bugs.webkit.org/show_bug.cgi?id=154376
             throwVMTypeError(exec, scope, "When 'getOwnPropertyDescriptor' returns undefined, the 'target' of a Proxy should be extensible"_s);
             return false;
         }

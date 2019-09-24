@@ -1,3 +1,13 @@
+2019-09-24  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [ES6] Come up with a test for Proxy.[[GetOwnProperty]] that tests the isExtensible error when the  result of the trap is undefined
+        https://bugs.webkit.org/show_bug.cgi?id=154376
+
+        Reviewed by Ross Kirsling.
+
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty): Remove resolved FIXME comments.
+
 2019-09-24  Alexey Proskuryakov  <ap@apple.com>
 
         JavaScriptCore (still) doesn't unlock the engineering keychain

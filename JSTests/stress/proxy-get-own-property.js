@@ -69,6 +69,52 @@ function assert(b) {
 }
 
 {
+    let target = Object.preventExtensions({x: 1});
+    let handler = {
+        getOwnPropertyDescriptor: function(theTarget, propName) {
+            assert(theTarget === target);
+            assert(propName === "x");
+            return undefined;
+        }
+    };
+    let proxy = new Proxy(target, handler);
+    for (let i = 0; i < 500; i++) {
+        let threw = false;
+        try {
+            Object.getOwnPropertyDescriptor(proxy, "x");
+        } catch(e) {
+            assert(e.toString() === "TypeError: When 'getOwnPropertyDescriptor' returns undefined, the 'target' of a Proxy should be extensible");
+            threw = true;
+        }
+        assert(threw);
+    }
+}
+
+{
+    let isExtensibleTrapCalls = 0;
+    let target = new Proxy({x: 1}, {
+        isExtensible: function() {
+            isExtensibleTrapCalls++;
+            return true;
+        }
+    });
+
+    let handler = {
+        getOwnPropertyDescriptor: function(theTarget, propName) {
+            assert(theTarget === target);
+            assert(propName === "x");
+            return undefined;
+        }
+    };
+
+    let proxy = new Proxy(target, handler);
+    for (let i = 1; i <= 500; i++) {
+        assert(Object.getOwnPropertyDescriptor(proxy, "x") === undefined);
+        assert(isExtensibleTrapCalls === i);
+    }
+}
+
+{
     let target = {};
     Object.defineProperty(target, "x", {
         enumerable: true,
