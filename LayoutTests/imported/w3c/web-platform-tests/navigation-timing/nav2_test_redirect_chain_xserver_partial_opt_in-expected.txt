@@ -1,0 +1,10 @@
+Blocked access to external URL http://www.localhost:8800/common/redirect.py?location=http://www.localhost:8800/common/redirect-opt-in.py?location=http://localhost:8800/navigation-timing/resources/blank_page_green.html
+CONSOLE MESSAGE: line 23: TypeError: undefined is not an object (evaluating 'frame_performance.getEntriesByType("navigation")[0].type')
+Description
+
+This test validates the values of the window.performance.getEntriesByType("navigation")[0].redirectCount and the window.performance.getEntriesByType("navigation")[0].redirectStart/End times for a cross-origin server side redirect navigation when the redirect chooses to opt-in.
+
+
+
+FAIL Navigation Timing 2 WPT TypeError: undefined is not an object (evaluating 'frame_performance.getEntriesByType("navigation")[0].type')
+

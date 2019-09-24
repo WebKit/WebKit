@@ -1,3 +1,100 @@
+2019-09-24  Alex Christensen  <achristensen@webkit.org>
+
+        Import navigation-timing WPT tests that don't time out
+        https://bugs.webkit.org/show_bug.cgi?id=202131
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/navigation-timing/buffered-flag.window.js: Added.
+        (async_test.t):
+        * web-platform-tests/navigation-timing/idlharness.window.js: Added.
+        * web-platform-tests/navigation-timing/nav2_test_document_open-expected.txt: Added.
+        * web-platform-tests/navigation-timing/nav2_test_document_open.html: Added.
+        * web-platform-tests/navigation-timing/nav2_test_document_replaced-expected.txt: Added.
+        * web-platform-tests/navigation-timing/nav2_test_document_replaced.html: Added.
+        * web-platform-tests/navigation-timing/nav2_test_frame_removed-expected.txt: Added.
+        * web-platform-tests/navigation-timing/nav2_test_frame_removed.html: Added.
+        * web-platform-tests/navigation-timing/nav2_test_instance_accessible_from_the_start-expected.txt: Added.
+        * web-platform-tests/navigation-timing/nav2_test_instance_accessible_from_the_start.html: Added.
+        * web-platform-tests/navigation-timing/nav2_test_navigate_within_document-expected.txt: Added.
+        * web-platform-tests/navigation-timing/nav2_test_navigate_within_document.html: Added.
+        * web-platform-tests/navigation-timing/nav2_test_navigation_type_backforward-expected.txt: Added.
+        * web-platform-tests/navigation-timing/nav2_test_navigation_type_backforward.html: Added.
+        * web-platform-tests/navigation-timing/nav2_test_navigation_type_reload-expected.txt: Added.
+        * web-platform-tests/navigation-timing/nav2_test_navigation_type_reload.html: Added.
+        * web-platform-tests/navigation-timing/nav2_test_redirect_chain_xserver_partial_opt_in-expected.txt: Added.
+        * web-platform-tests/navigation-timing/nav2_test_redirect_chain_xserver_partial_opt_in.html: Added.
+        * web-platform-tests/navigation-timing/nav2_test_redirect_server-expected.txt: Added.
+        * web-platform-tests/navigation-timing/nav2_test_redirect_server.html: Added.
+        * web-platform-tests/navigation-timing/nav2_test_redirect_xserver-expected.txt: Added.
+        * web-platform-tests/navigation-timing/nav2_test_redirect_xserver.html: Added.
+        * web-platform-tests/navigation-timing/resources: Added.
+        * web-platform-tests/navigation-timing/resources/blank_page_green.html: Added.
+        * web-platform-tests/navigation-timing/resources/blank_page_green_with_onunload.html: Added.
+        * web-platform-tests/navigation-timing/resources/blank_page_meta_redirect.html: Added.
+        * web-platform-tests/navigation-timing/resources/blank_page_unload.html: Added.
+        * web-platform-tests/navigation-timing/resources/blank_page_yellow.html: Added.
+        * web-platform-tests/navigation-timing/resources/blank_page_yellow_with_onunload.html: Added.
+        * web-platform-tests/navigation-timing/resources/performance_attribute_sender.html: Added.
+        * web-platform-tests/navigation-timing/resources/secure-connection-interim.html: Added.
+        * web-platform-tests/navigation-timing/resources/secure-connection-interim.html.headers: Added.
+        * web-platform-tests/navigation-timing/resources/secure-connection-test.html: Added.
+        * web-platform-tests/navigation-timing/resources/webperftestharness.js: Added.
+        (test_namespace):
+        (test_timing_order):
+        (test_timing_equals):
+        (sleep_milliseconds):
+        (test_greater_than):
+        (test_greater_or_equals):
+        * web-platform-tests/navigation-timing/secure_connection_start_non_zero.https-expected.txt: Added.
+        * web-platform-tests/navigation-timing/secure_connection_start_non_zero.https.html: Added.
+        * web-platform-tests/navigation-timing/supported_navigation_type.window.js: Added.
+        (test):
+        (typeof.PerformanceObserver.supportedEntryTypes.string_appeared_here.PerformanceObserver.supportedEntryTypes.includes.promise_test.):
+        (typeof.PerformanceObserver.supportedEntryTypes.string_appeared_here.PerformanceObserver.supportedEntryTypes.includes):
+        * web-platform-tests/navigation-timing/test_document_open-expected.txt: Added.
+        * web-platform-tests/navigation-timing/test_document_open.html: Added.
+        * web-platform-tests/navigation-timing/test_document_readiness_exist-expected.txt: Added.
+        * web-platform-tests/navigation-timing/test_document_readiness_exist.html: Added.
+        * web-platform-tests/navigation-timing/test_navigate_within_document-expected.txt: Added.
+        * web-platform-tests/navigation-timing/test_navigate_within_document.html: Added.
+        * web-platform-tests/navigation-timing/test_navigation_attributes_exist-expected.txt: Added.
+        * web-platform-tests/navigation-timing/test_navigation_attributes_exist.html: Added.
+        * web-platform-tests/navigation-timing/test_navigation_redirectCount_none-expected.txt: Added.
+        * web-platform-tests/navigation-timing/test_navigation_redirectCount_none.html: Added.
+        * web-platform-tests/navigation-timing/test_navigation_type_backforward-expected.txt: Added.
+        * web-platform-tests/navigation-timing/test_navigation_type_backforward.html: Added.
+        * web-platform-tests/navigation-timing/test_navigation_type_enums-expected.txt: Added.
+        * web-platform-tests/navigation-timing/test_navigation_type_enums.html: Added.
+        * web-platform-tests/navigation-timing/test_navigation_type_reload-expected.txt: Added.
+        * web-platform-tests/navigation-timing/test_navigation_type_reload.html: Added.
+        * web-platform-tests/navigation-timing/test_no_previous_document-expected.txt: Added.
+        * web-platform-tests/navigation-timing/test_no_previous_document.html: Added.
+        * web-platform-tests/navigation-timing/test_performance_attributes.sub-expected.txt: Added.
+        * web-platform-tests/navigation-timing/test_performance_attributes.sub.html: Added.
+        * web-platform-tests/navigation-timing/test_performance_attributes_exist-expected.txt: Added.
+        * web-platform-tests/navigation-timing/test_performance_attributes_exist.html: Added.
+        * web-platform-tests/navigation-timing/test_performance_attributes_exist_in_object-expected.txt: Added.
+        * web-platform-tests/navigation-timing/test_performance_attributes_exist_in_object.html: Added.
+        * web-platform-tests/navigation-timing/test_readwrite-expected.txt: Added.
+        * web-platform-tests/navigation-timing/test_readwrite.html: Added.
+        * web-platform-tests/navigation-timing/test_timing_attributes_exist-expected.txt: Added.
+        * web-platform-tests/navigation-timing/test_timing_attributes_exist.html: Added.
+        * web-platform-tests/navigation-timing/test_timing_attributes_order-expected.txt: Added.
+        * web-platform-tests/navigation-timing/test_timing_attributes_order.html: Added.
+        * web-platform-tests/navigation-timing/test_timing_client_redirect-expected.txt: Added.
+        * web-platform-tests/navigation-timing/test_timing_client_redirect.html: Added.
+        * web-platform-tests/navigation-timing/test_timing_reload-expected.txt: Added.
+        * web-platform-tests/navigation-timing/test_timing_reload.html: Added.
+        * web-platform-tests/navigation-timing/test_timing_server_redirect-expected.txt: Added.
+        * web-platform-tests/navigation-timing/test_timing_server_redirect.html: Added.
+        * web-platform-tests/navigation-timing/test_timing_xserver_redirect-expected.txt: Added.
+        * web-platform-tests/navigation-timing/test_timing_xserver_redirect.html: Added.
+        * web-platform-tests/navigation-timing/test_unique_performance_objects-expected.txt: Added.
+        * web-platform-tests/navigation-timing/test_unique_performance_objects.html: Added.
+        * web-platform-tests/navigation-timing/unload-event-same-origin-check-expected.txt: Added.
+        * web-platform-tests/navigation-timing/unload-event-same-origin-check.html: Added.
+
 2019-09-23  Youenn Fablet  <youenn@apple.com>
 
         Support sync-xhr feature policy

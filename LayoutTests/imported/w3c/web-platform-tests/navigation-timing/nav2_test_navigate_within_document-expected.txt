@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 68: TypeError: undefined is not an object (evaluating 'timing[property]')
+Description
+
+This test validates that all of the window.performance.getEntriesByType("navigation") attributes remain unchanged after an in document navigation (URL fragment change).
+
+
+FAIL Navigation Timing 2 WPT TypeError: undefined is not an object (evaluating 'timing[property]')
+

@@ -1,0 +1,12 @@
+frame "<!--frame1-->" - has 1 onunload handler(s)
+frame "<!--frame1-->" - has 1 onunload handler(s)
+frame "<!--frame1-->" - has 1 onunload handler(s)
+CONSOLE MESSAGE: line 40: TypeError: undefined is not an object (evaluating 'pnt1.type')
+Description
+
+This test validates that a PerformanceNavigatingTiming corresponding to a detached document can't access a different document's state.
+
+
+
+FAIL Navigation Timing 2 WPT TypeError: undefined is not an object (evaluating 'pnt1.type')
+
