@@ -31,7 +31,7 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
 
         super(shaderProgram);
 
-        let isWebGPU = this.representedObject.contextType === WI.Canvas.ContextType.WebGPU;
+        let isWebGPU = this.representedObject.canvas.contextType === WI.Canvas.ContextType.WebGPU;
 
         this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("refresh", WI.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
         this._refreshButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
