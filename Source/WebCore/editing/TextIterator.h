@@ -28,7 +28,7 @@
 // FIXME: Move each iterator class into a separate header file.
 
 #include "FindOptions.h"
-#include "LineLayoutInterfaceTextBoxes.h"
+#include "LineLayoutTraversal.h"
 #include "Range.h"
 #include "TextIteratorBehavior.h"
 #include <wtf/Vector.h>
@@ -168,10 +168,10 @@ private:
 
     // Used when there is still some pending text from the current node; when these are false and null, we go back to normal iterating.
     Node* m_nodeForAdditionalNewline { nullptr };
-    LineLayoutInterface::TextBoxIterator m_textBox;
+    LineLayoutTraversal::TextBoxIterator m_textBox;
 
     // Used when iterating over :first-letter text to save pointer to remaining text box.
-    LineLayoutInterface::TextBoxIterator m_remainingTextBox;
+    LineLayoutTraversal::TextBoxIterator m_remainingTextBox;
 
     // Used to point to RenderText object for :first-letter.
     RenderText* m_firstLetterText { nullptr };

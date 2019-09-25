@@ -1,3 +1,62 @@
+2019-09-25  Antti Koivisto  <antti@apple.com>
+
+        Rename LineLayoutInterface to LineLayoutTraversal
+        https://bugs.webkit.org/show_bug.cgi?id=202202
+
+        Reviewed by Zalan Bujtas.
+
+        Use a bit more informative namespace name.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Position.cpp:
+        (WebCore::Position::upstream const):
+        (WebCore::Position::downstream const):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleTextNode):
+        (WebCore::TextIterator::handleTextBox):
+        (WebCore::TextIterator::handleTextNodeFirstLetter):
+        * editing/TextIterator.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        (WebCore::writeTextBox):
+        (WebCore::write):
+        * rendering/line/LineLayoutTraversal.cpp: Renamed from Source/WebCore/rendering/line/LineLayoutInterfaceTextBoxes.cpp.
+        (WebCore::LineLayoutTraversal::TextBox::rect const):
+        (WebCore::LineLayoutTraversal::TextBox::logicalRect const):
+        (WebCore::LineLayoutTraversal::TextBox::hasHyphen const):
+        (WebCore::LineLayoutTraversal::TextBox::isLeftToRightDirection const):
+        (WebCore::LineLayoutTraversal::TextBox::dirOverride const):
+        (WebCore::LineLayoutTraversal::TextBox::text const):
+        (WebCore::LineLayoutTraversal::TextBox::localStartOffset const):
+        (WebCore::LineLayoutTraversal::TextBox::localEndOffset const):
+        (WebCore::LineLayoutTraversal::TextBox::length const):
+        (WebCore::LineLayoutTraversal::TextBox::isLastOnLine const):
+        (WebCore::LineLayoutTraversal::TextBox::isLast const):
+        (WebCore::LineLayoutTraversal::TextBox::iterator const):
+        (WebCore::LineLayoutTraversal::TextBoxIterator::TextBoxIterator):
+        (WebCore::LineLayoutTraversal::TextBoxIterator::traverseNextInVisualOrder):
+        (WebCore::LineLayoutTraversal::TextBoxIterator::ComplexPath::nextInlineTextBoxInTextOrder const):
+        (WebCore::LineLayoutTraversal::TextBoxIterator::traverseNextInTextOrder):
+        (WebCore::LineLayoutTraversal::TextBoxIterator::operator== const):
+        (WebCore::LineLayoutTraversal::TextBoxIterator::atEnd const):
+        (WebCore::LineLayoutTraversal::firstTextBoxInVisualOrderFor):
+        (WebCore::LineLayoutTraversal::firstTextBoxInTextOrderFor):
+        (WebCore::LineLayoutTraversal::textBoxRangeFor):
+        * rendering/line/LineLayoutTraversal.h: Renamed from Source/WebCore/rendering/line/LineLayoutInterfaceTextBoxes.h.
+        (WebCore::LineLayoutTraversal::TextBoxIterator::TextBoxIterator):
+        (WebCore::LineLayoutTraversal::TextBoxIterator::operator++):
+        (WebCore::LineLayoutTraversal::TextBoxIterator::operator bool const):
+        (WebCore::LineLayoutTraversal::TextBoxIterator::operator!= const):
+        (WebCore::LineLayoutTraversal::TextBoxIterator::operator== const):
+        (WebCore::LineLayoutTraversal::TextBoxIterator::operator* const):
+        (WebCore::LineLayoutTraversal::TextBoxIterator::operator-> const):
+        (WebCore::LineLayoutTraversal::TextBoxRange::TextBoxRange):
+        (WebCore::LineLayoutTraversal::TextBoxRange::begin const):
+        (WebCore::LineLayoutTraversal::TextBoxRange::end const):
+        (WebCore::LineLayoutTraversal::hasTextBoxes):
+
 2019-09-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Use existing Line::Content::LineBox to track the current line geometry

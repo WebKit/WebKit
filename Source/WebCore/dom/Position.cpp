@@ -37,7 +37,7 @@
 #include "InlineElementBox.h"
 #include "InlineIterator.h"
 #include "InlineTextBox.h"
-#include "LineLayoutInterfaceTextBoxes.h"
+#include "LineLayoutTraversal.h"
 #include "Logging.h"
 #include "NodeTraversal.h"
 #include "PositionIterator.h"
@@ -738,7 +738,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
         if (is<RenderText>(*renderer)) {
             auto& textRenderer = downcast<RenderText>(*renderer);
 
-            auto firstTextBox = LineLayoutInterface::firstTextBoxInTextOrderFor(textRenderer);
+            auto firstTextBox = LineLayoutTraversal::firstTextBoxInTextOrderFor(textRenderer);
             if (!firstTextBox)
                 continue;
 
@@ -848,7 +848,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
         if (is<RenderText>(*renderer)) {
             auto& textRenderer = downcast<RenderText>(*renderer);
 
-            auto firstTextBox = LineLayoutInterface::firstTextBoxInTextOrderFor(textRenderer);
+            auto firstTextBox = LineLayoutTraversal::firstTextBoxInTextOrderFor(textRenderer);
             if (!firstTextBox)
                 continue;
 

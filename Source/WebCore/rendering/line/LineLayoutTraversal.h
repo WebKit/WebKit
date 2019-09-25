@@ -37,7 +37,7 @@ namespace WebCore {
 class InlineTextBox;
 class RenderText;
 
-namespace LineLayoutInterface {
+namespace LineLayoutTraversal {
 
 class TextBoxContext;
 class TextBoxIterator;

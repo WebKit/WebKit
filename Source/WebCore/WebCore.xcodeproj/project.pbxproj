@@ -4806,7 +4806,7 @@
 		E47C39331FE6E10800BBBC6B /* RenderTreeBuilderMultiColumn.h in Headers */ = {isa = PBXBuildFile; fileRef = E47C39271FE6E0DC00BBBC6B /* RenderTreeBuilderMultiColumn.h */; };
 		E47E276516036ED200EE2AFB /* ExtensionStyleSheets.h in Headers */ = {isa = PBXBuildFile; fileRef = E47E276416036ED200EE2AFB /* ExtensionStyleSheets.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E48137B91DB3B526005C59BF /* StyleValidity.h in Headers */ = {isa = PBXBuildFile; fileRef = E48137B81DB3B526005C59BF /* StyleValidity.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E484A33E23055325009ADE6A /* LineLayoutInterfaceTextBoxes.h in Headers */ = {isa = PBXBuildFile; fileRef = E484A33B23055303009ADE6A /* LineLayoutInterfaceTextBoxes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E484A33E23055325009ADE6A /* LineLayoutTraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = E484A33B23055303009ADE6A /* LineLayoutTraversal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E48944A3180B57D800F165D8 /* SimpleLineLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = E48944A1180B57D800F165D8 /* SimpleLineLayout.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4916FF7195DF6A0005AB349 /* LayerFlushThrottleState.h in Headers */ = {isa = PBXBuildFile; fileRef = E4916FF6195DF6A0005AB349 /* LayerFlushThrottleState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4946EAF156E64DD00D3297F /* StyleRuleImport.h in Headers */ = {isa = PBXBuildFile; fileRef = E4946EAD156E64DD00D3297F /* StyleRuleImport.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15022,8 +15022,8 @@
 		E47E276416036ED200EE2AFB /* ExtensionStyleSheets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionStyleSheets.h; sourceTree = "<group>"; };
 		E47E276716036EDC00EE2AFB /* ExtensionStyleSheets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtensionStyleSheets.cpp; sourceTree = "<group>"; };
 		E48137B81DB3B526005C59BF /* StyleValidity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleValidity.h; sourceTree = "<group>"; };
-		E484A33B23055303009ADE6A /* LineLayoutInterfaceTextBoxes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineLayoutInterfaceTextBoxes.h; sourceTree = "<group>"; };
-		E484A33D23055303009ADE6A /* LineLayoutInterfaceTextBoxes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LineLayoutInterfaceTextBoxes.cpp; sourceTree = "<group>"; };
+		E484A33B23055303009ADE6A /* LineLayoutTraversal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineLayoutTraversal.h; sourceTree = "<group>"; };
+		E484A33D23055303009ADE6A /* LineLayoutTraversal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LineLayoutTraversal.cpp; sourceTree = "<group>"; };
 		E48944A0180B57D800F165D8 /* SimpleLineLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayout.cpp; sourceTree = "<group>"; };
 		E48944A1180B57D800F165D8 /* SimpleLineLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayout.h; sourceTree = "<group>"; };
 		E4916FF6195DF6A0005AB349 /* LayerFlushThrottleState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerFlushThrottleState.h; sourceTree = "<group>"; };
@@ -28306,8 +28306,8 @@
 				FFB698CD1833F17600158A31 /* LineInfo.cpp */,
 				FFB698CE1833F17600158A31 /* LineInfo.h */,
 				FFEFAB2D183BCB6F00514534 /* LineInlineHeaders.h */,
-				E484A33D23055303009ADE6A /* LineLayoutInterfaceTextBoxes.cpp */,
-				E484A33B23055303009ADE6A /* LineLayoutInterfaceTextBoxes.h */,
+				E484A33D23055303009ADE6A /* LineLayoutTraversal.cpp */,
+				E484A33B23055303009ADE6A /* LineLayoutTraversal.h */,
 				FFEFAB2918380DA000514534 /* LineLayoutState.h */,
 				FFDBC046183D27B700407109 /* LineWidth.cpp */,
 				FFDBC045183D27B700407109 /* LineWidth.h */,
@@ -30744,7 +30744,7 @@
 				84730D911248F0B300D3A9C9 /* LightSource.h in Headers */,
 				B22279650D00BF220071B782 /* LinearGradientAttributes.h in Headers */,
 				AB31C91E10AE1B8E000C7B92 /* LineClampValue.h in Headers */,
-				E484A33E23055325009ADE6A /* LineLayoutInterfaceTextBoxes.h in Headers */,
+				E484A33E23055325009ADE6A /* LineLayoutTraversal.h in Headers */,
 				FFEFAB2A18380DA000514534 /* LineLayoutState.h in Headers */,
 				FFDBC047183D27B700407109 /* LineWidth.h in Headers */,
 				CBA9DC0B1DF44DF40005675C /* LinkHeader.h in Headers */,

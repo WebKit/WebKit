@@ -24,14 +24,14 @@
  */
 
 #include "config.h"
-#include "LineLayoutInterfaceTextBoxes.h"
+#include "LineLayoutTraversal.h"
 
 #include "InlineTextBox.h"
 #include "RenderText.h"
 #include "SimpleLineLayoutResolver.h"
 
 namespace WebCore {
-namespace LineLayoutInterface {
+namespace LineLayoutTraversal {
 
 FloatRect TextBox::rect() const
 {

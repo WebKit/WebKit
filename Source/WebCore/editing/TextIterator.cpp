@@ -615,7 +615,7 @@ bool TextIterator::handleTextNode()
         return true;
     }
 
-    m_textBox = LineLayoutInterface::firstTextBoxInTextOrderFor(renderer);
+    m_textBox = LineLayoutTraversal::firstTextBoxInTextOrderFor(renderer);
 
     bool shouldHandleFirstLetter = !m_handledFirstLetter && is<RenderTextFragment>(renderer) && !m_offset;
     if (shouldHandleFirstLetter)
@@ -642,7 +642,7 @@ void TextIterator::handleTextBox()
         return;
     }
 
-    auto firstTextBox = LineLayoutInterface::firstTextBoxInTextOrderFor(renderer);
+    auto firstTextBox = LineLayoutTraversal::firstTextBoxInTextOrderFor(renderer);
 
     String rendererText = renderer.text();
     unsigned start = m_offset;
@@ -736,7 +736,7 @@ void TextIterator::handleTextNodeFirstLetter(RenderTextFragment& renderer)
         if (auto* firstLetterText = firstRenderTextInFirstLetter(firstLetter)) {
             m_handledFirstLetter = true;
             m_remainingTextBox = m_textBox;
-            m_textBox = LineLayoutInterface::firstTextBoxInTextOrderFor(*firstLetterText);
+            m_textBox = LineLayoutTraversal::firstTextBoxInTextOrderFor(*firstLetterText);
             m_firstLetterText = firstLetterText;
         }
     }
