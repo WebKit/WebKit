@@ -150,21 +150,4 @@ Optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC::Dec
     return parameters;
 }
 
-WebsiteDataStoreParameters WebsiteDataStoreParameters::privateSessionParameters(PAL::SessionID sessionID)
-{
-    ASSERT(sessionID.isEphemeral());
-    return { { }, { }, { }, NetworkSessionCreationParameters::privateSessionParameters(sessionID)
-#if ENABLE(INDEXED_DATABASE)
-        , { }, { }
-#if PLATFORM(IOS_FAMILY)
-        , { }
-#endif
-#endif
-#if ENABLE(SERVICE_WORKER)
-        , { }, { }
-#endif
-        , { }, { }
-    };
-}
-
 } // namespace WebKit

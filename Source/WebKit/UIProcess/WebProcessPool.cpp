@@ -633,6 +633,12 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     // Add any platform specific parameters
     platformInitializeNetworkProcess(parameters);
 
+    // Make sure the network process knows about all the sessions that have been registered before it started.
+    for (auto& sessionID : m_sessionToPageIDsMap.keys()) {
+        if (auto* websiteDataStore = WebsiteDataStore::existingNonDefaultDataStoreForSessionID(sessionID))
+            parameters.nonDefaultDataStoreParameters.append(websiteDataStore->parameters());
+    }
+
     // Initialize the network process.
     networkProcess->send(Messages::NetworkProcess::InitializeNetworkProcess(parameters), 0);
 
@@ -648,12 +654,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     if (withWebsiteDataStore) {
         networkProcess->addSession(makeRef(*withWebsiteDataStore));
         withWebsiteDataStore->clearPendingCookies();
-    }
-
-    // Make sure the network process knows about all the sessions that have been registered before it started.
-    for (auto& sessionID : m_sessionToPageIDsMap.keys()) {
-        if (auto* websiteDataStore = WebsiteDataStore::existingNonDefaultDataStoreForSessionID(sessionID))
-            networkProcess->addSession(*websiteDataStore);
     }
 
     m_networkProcess = WTFMove(networkProcess);

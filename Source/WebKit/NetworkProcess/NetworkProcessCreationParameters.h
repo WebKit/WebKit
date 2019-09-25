@@ -82,6 +82,7 @@ struct NetworkProcessCreationParameters {
 #endif
 
     WebsiteDataStoreParameters defaultDataStoreParameters;
+    Vector<WebsiteDataStoreParameters> nonDefaultDataStoreParameters;
     
 #if USE(SOUP)
     HTTPCookieAcceptPolicy cookieAcceptPolicy { HTTPCookieAcceptPolicy::AlwaysAccept };

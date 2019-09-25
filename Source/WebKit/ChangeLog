@@ -1,5 +1,36 @@
 2019-09-25  Alex Christensen  <achristensen@webkit.org>
 
+        Replace WebsiteDataStoreParameters::privateSessionParameters with re-initializing all sessions immediately upon NetworkProcess resumption
+        https://bugs.webkit.org/show_bug.cgi?id=202211
+
+        Reviewed by Tim Horton.
+
+        Re-adding an ephemeral session after a NetworkProcess crash based on guessing that all its parameters are empty was added in r227590 with a test.
+        That test passes even when that re-adding code is removed because we re-add all sessions with parameters from the UIProcess when we restart a NetworkProcess.
+        I move the addition of non-default sessions to the initialization message instead of messages after the initialization message to remove race conditions that
+        might cause loads to happen before the NetworkProcess has received its second message from the UIProcess.  I also add a unit test to verify that session
+        resumption also works with non-default persistent WebsiteDataStores.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::privateSessionParameters): Deleted.
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * Shared/WebsiteDataStoreParameters.cpp:
+        (WebKit::WebsiteDataStoreParameters::privateSessionParameters): Deleted.
+        * Shared/WebsiteDataStoreParameters.h:
+        (WebKit::WebsiteDataStoreParameters::legacyPrivateSessionParameters): Deleted.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
+2019-09-25  Alex Christensen  <achristensen@webkit.org>
+
         Replace _WKProcessPoolConfiguration.CTDataConnectionServiceType with _WKWebsiteDataStoreConfiguration.dataConnectionServiceType
         https://bugs.webkit.org/show_bug.cgi?id=202174
 

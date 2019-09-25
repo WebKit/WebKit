@@ -66,6 +66,7 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << suppressesConnectionTerminationOnSystemChange;
 #endif
     encoder << defaultDataStoreParameters;
+    encoder << nonDefaultDataStoreParameters;
 #if USE(SOUP)
     encoder.encodeEnum(cookieAcceptPolicy);
     encoder << ignoreTLSErrors;
@@ -155,6 +156,12 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
     result.defaultDataStoreParameters = WTFMove(*defaultDataStoreParameters);
 
+    Optional<Vector<WebsiteDataStoreParameters>> nonDefaultDataStoreParameters;
+    decoder >> nonDefaultDataStoreParameters;
+    if (!nonDefaultDataStoreParameters)
+        return false;
+    result.nonDefaultDataStoreParameters = WTFMove(*nonDefaultDataStoreParameters);
+    
 #if USE(SOUP)
     if (!decoder.decodeEnum(result.cookieAcceptPolicy))
         return false;

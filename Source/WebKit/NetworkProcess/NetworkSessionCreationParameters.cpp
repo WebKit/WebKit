@@ -38,46 +38,6 @@
 
 namespace WebKit {
 
-NetworkSessionCreationParameters NetworkSessionCreationParameters::privateSessionParameters(const PAL::SessionID& sessionID)
-{
-    return {
-        sessionID
-        , { }
-        , AllowsCellularAccess::Yes
-#if PLATFORM(COCOA)
-        , { }
-        , { }
-        , { }
-        , false
-        , { }
-        , { }
-        , { }
-        , false
-#endif
-#if USE(SOUP)
-        , { }
-        , SoupCookiePersistentStorageType::Text
-#endif
-#if USE(CURL)
-        , { }
-        , { }
-#endif
-        , { }
-        , { }
-        , false
-        , false
-        , { }
-        , { }
-        , { }
-        , { }
-        , { }
-        , { }
-        , { }
-        , { }
-        , { }
-    };
-}
-
 void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
 {
     encoder << sessionID;
