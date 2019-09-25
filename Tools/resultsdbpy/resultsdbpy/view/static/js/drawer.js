@@ -40,7 +40,7 @@ function Drawer(controls = [], onCollapseChange) {
     const HIDDEN = false;
     const VISIBLE = true;
     let drawerState = VISIBLE;
-    let main = null;
+    let mains = [];
 
     const sidebarControl = document.getElementsByClassName('mobile-sidebar-control')[0];
     sidebarControl.classList.add('display');
@@ -50,12 +50,10 @@ function Drawer(controls = [], onCollapseChange) {
         onStateUpdate: (element, state) => {
             if (state) {
                 element.classList.remove("hidden");
-                if (main)
-                    main.classList.remove("hidden");
+                mains.forEach(main => main.classList.remove("hidden"));
             } else {
                 element.classList.add("hidden");
-                if (main)
-                    main.classList.add("hidden");
+                mains.forEach(main => main.classList.add("hidden"));
             }
 
             for (let node of element.children) {
@@ -68,8 +66,9 @@ function Drawer(controls = [], onCollapseChange) {
         },
         onElementMount: (element) => {
             let candidates = document.getElementsByClassName("main");
-            if (candidates.length)
-                main = candidates[0];
+            mains = [];
+            for (let count = 0; count < candidates.length; ++count)
+                mains.push(candidates[count]);
 
             sidebarControl.onclick = () => {
                 if (element.style.display)

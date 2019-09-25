@@ -1,3 +1,47 @@
+2019-09-25  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Add investigation drawer
+        https://bugs.webkit.org/show_bug.cgi?id=202106
+
+        Reviewed by Dewei Zhu.
+
+        * resultsdbpy/resultsdbpy/view/static/js/drawer.js: Support multiple 'main' classes.
+        * resultsdbpy/resultsdbpy/view/static/js/expectations.js: Added.
+        (Expectations.colorMap): Return a dictionary mapping type strings to colors.
+        (Expectations.stringToStateId): Map a string to a state ID for sorting.
+        (Expectations.typeForId): Return a type string given an ID.
+        (Expectations.symbolForId): Return a symbol for a type given an ID.
+        (Expectations.colorForId): Return a color given an ID.
+        (Expectations.unexpectedResults): Given a list of actual results and expected results,
+        return a state.
+        (Expectations):
+        * resultsdbpy/resultsdbpy/view/static/js/investigate.js: Added.
+        (commitsForUuid):
+        (testRunLink):
+        (elapsed):
+        (percentage):
+        (contentForAgregateData):
+        (contentForData):
+        (_InvestigateDrawer):
+        (_InvestigateDrawer.prototype.isRendered):
+        (_InvestigateDrawer.prototype.expand): Expand the investigation drawer.
+        (_InvestigateDrawer.prototype.collapse): Collapse the investigation drawer.
+        (_InvestigateDrawer.prototype.select): Select an element to investigate.
+        * resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (statsForSingleResult): Move Expectation constants.
+        (TimelineFromEndpoint.prototype.render): Investigate specific data points instead
+        of jumping to the build.
+        (Expectations.stringToStateId): Deleted.
+        (Expectations.unexpectedResults): Deleted.
+        (Expectations): Deleted.
+        * resultsdbpy/resultsdbpy/view/static/library/css/webkit.css:
+        (.drawer.display): Make minimum height.
+        (@media screen and (min-width: 600px)): Move main and sidebar so they override drawer.
+        (@media screen and (min-width: 768px)): Ditto.
+        * resultsdbpy/resultsdbpy/view/templates/commits.html:
+        * resultsdbpy/resultsdbpy/view/templates/search.html:
+        * resultsdbpy/resultsdbpy/view/templates/suite_results.html:
+
 2019-09-25  Alex Christensen  <achristensen@webkit.org>
 
         Remove duplicate WebsiteDataStoreConfiguration copying code

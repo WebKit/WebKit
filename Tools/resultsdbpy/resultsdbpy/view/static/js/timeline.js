@@ -24,6 +24,8 @@
 import {CommitBank} from '/assets/js/commit.js';
 import {Configuration} from '/assets/js/configuration.js';
 import {deepCompare, ErrorDisplay, escapeHTML, paramsToQuery, queryToParams} from '/assets/js/common.js';
+import {Expectations} from '/assets/js/expectations.js';
+import {InvestigateDrawer} from '/assets/js/investigate.js';
 import {ToolTip} from '/assets/js/tooltip.js';
 import {Timeline} from '/library/js/components/TimelineComponents.js';
 import {DOM, EventStream, REF, FP} from '/library/js/Ref.js';
@@ -31,53 +33,6 @@ import {DOM, EventStream, REF, FP} from '/library/js/Ref.js';
 
 const DEFAULT_LIMIT = 100;
 
-const stateToIDMapping = {
-    CRASH: 0x00,
-    TIMEOUT: 0x08,
-    IMAGE: 0x10,
-    AUDIO: 0x18,
-    TEXT: 0x20,
-    FAIL: 0x28,
-    ERROR: 0x30,
-    WARNING: 0x38,
-    PASS: 0x40,
-};
-
-const TestResultsSymbolMap = {
-    success: '✓',
-    failed: '𝖷',
-    timedout: '⎋',
-    crashed: '!',
-}
-
-class Expectations
-{
-    static stringToStateId(string) {
-        return stateToIDMapping[string];
-    }
-
-    static unexpectedResults(results, expectations)
-    {
-        let r = results.split('.');
-        expectations.split(' ').forEach(expectation => {
-            const i = r.indexOf(expectation);
-            if (i > -1)
-                r.splice(i, 1);
-            if (expectation === 'FAIL')
-                ['TEXT', 'AUDIO', 'IMAGE'].forEach(expectation => {
-                    const i = r.indexOf(expectation);
-                    if (i > -1)
-                        r.splice(i, 1);
-                });
-        });
-        let result = 'PASS';
-        r.forEach(candidate => {
-            if (Expectations.stringToStateId(candidate) < Expectations.stringToStateId(result))
-                result = candidate;
-        });
-        return result;
-    }
-}
 let willFilterExpected = false;
 
 function minimumUuidForResults(results, limit) {
@@ -258,12 +213,6 @@ function xAxisFromScale(scale, repository, updatesArray, isTop=false)
 }
 
 const testsRegex = /tests_([a-z])+/;
-const failureTypeOrder = ['failed', 'timedout', 'crashed'];
-const failureTypeMapping = {
-    failed: 'ERROR',
-    timedout: 'TIMEOUT',
-    crashed: 'CRASH',
-}
 
 function inPlaceCombine(out, obj)
 {
@@ -317,8 +266,8 @@ function statsForSingleResult(result) {
         tests_run: 1,
         tests_skipped: 0,
     }
-    failureTypeOrder.forEach(type => {
-        const idForType = Expectations.stringToStateId(failureTypeMapping[type]);
+    Expectations.failureTypes.forEach(type => {
+        const idForType = Expectations.stringToStateId(Expectations.failureTypeMap[type]);
         stats[`tests_${type}`] = actualId > idForType  ? 0 : 1;
         stats[`tests_unexpected_${type}`] = unexpectedId > idForType  ? 0 : 1;
     });
@@ -530,14 +479,7 @@ class TimelineFromEndpoint {
         const commits = commitsForResults(this.results, limit, this.allCommits);
         const scale = scaleForCommits(commits);
 
-        const computedStyle = getComputedStyle(document.body);
-        const colorMap = {
-            success: computedStyle.getPropertyValue('--greenLight').trim(),
-            failed: computedStyle.getPropertyValue('--redLight').trim(),
-            timedout: computedStyle.getPropertyValue('--orangeLight').trim(),
-            crashed: computedStyle.getPropertyValue('--purpleLight').trim(),
-        }
-
+        const colorMap = Expectations.colorMap();
         this.updates = [];
         const options = {
             getScaleFunc: (value) => {
@@ -552,7 +494,7 @@ class TimelineFromEndpoint {
 
                 let tag = null;
                 let color = colorMap.success;
-                let symbol = TestResultsSymbolMap.success;
+                let symbol = Expectations.symbolMap.success;
                 if (data.stats) {
                     tag = data.stats[`tests${willFilterExpected ? '_unexpected_' : '_'}failed`];
 
@@ -564,20 +506,20 @@ class TimelineFromEndpoint {
                         tag = `${tag} %`
                     }
 
-                    failureTypeOrder.forEach(type => {
+                    Expectations.failureTypes.forEach(type => {
                         if (data.stats[`tests${willFilterExpected ? '_unexpected_' : '_'}${type}`] > 0) {
                             color = colorMap[type];
-                            symbol = TestResultsSymbolMap[type];
+                            symbol = Expectations.symbolMap[type];
                         }
                     });
                 } else {
                     let resultId = Expectations.stringToStateId(data.actual);
                     if (willFilterExpected)
                         resultId = Expectations.stringToStateId(Expectations.unexpectedResults(data.actual, data.expected));
-                    failureTypeOrder.forEach(type => {
-                        if (Expectations.stringToStateId(failureTypeMapping[type]) >= resultId) {
+                    Expectations.failureTypes.forEach(type => {
+                        if (Expectations.stringToStateId(Expectations.failureTypeMap[type]) >= resultId) {
                             color = colorMap[type];
-                            symbol = TestResultsSymbolMap[type];
+                            symbol = Expectations.symbolMap[type];
                         }
                     });
                 }
@@ -588,20 +530,44 @@ class TimelineFromEndpoint {
 
         function onDotClickFactory(configuration) {
             return (data) => {
-                // FIXME: We should do something sane here, but we probably need another endpoint
-                if (!data.start_time) {
-                    alert('Node is a combination of multiple runs');
-                    return;
-                }
-
-                let buildParams = configuration.toParams();
-                buildParams['suite'] = [self.suite];
-                buildParams['uuid'] = [data.uuid];
-                buildParams['after_time'] = [data.start_time];
-                buildParams['before_time'] = [data.start_time];
-                if (branch)
-                    buildParams['branch'] = branch;
-                window.open(`/urls/build?${paramsToQuery(buildParams)}`, '_blank');
+                let allData = [];
+                let partialConfiguration = {};
+                self.configurations.forEach(configurationKey => {
+                    if (configurationKey.compare(configuration) || configurationKey.compareSDKs(configuration))
+                        return;
+                    self.results[configurationKey.toKey()].forEach(pair => {
+                        const computedConfiguration = new Configuration(pair.configuration);
+                        if (computedConfiguration.compare(configuration) || computedConfiguration.compareSDKs(configuration))
+                            return;
+                        let doesMatch = false;
+                        pair.results.forEach(node => {
+                            if (node.uuid !== data.uuid)
+                                return;
+                            doesMatch = true;
+                            let dataNode = {};
+                            Object.keys(node).forEach(key => {
+                                dataNode[key] = node[key];
+                            });
+                            dataNode['configuration'] = computedConfiguration;
+                            allData.push(dataNode);
+                        });
+                        if (doesMatch) {
+                            Configuration.members().forEach(member => {
+                                if (member in partialConfiguration) {
+                                    if (partialConfiguration[member] !== null && partialConfiguration[member] !== computedConfiguration[member])
+                                        partialConfiguration[member] = null;
+                                } else if (computedConfiguration[member] !== null)
+                                    partialConfiguration[member] = computedConfiguration[member];
+                            });
+                        }
+                    });
+                });
+                let agregateData = {};
+                Object.keys(data).forEach(key => {
+                    agregateData[key] = data[key];
+                });
+                agregateData['configuration'] = new Configuration(partialConfiguration);
+                InvestigateDrawer.expand(self.suite, agregateData, allData);
             }
         }
 
@@ -832,6 +798,7 @@ function LegendLabel(eventStream, filterExpectedText, filterUnexpectedText) {
 } 
 
 function Legend(callback=null, plural=false) {
+    InvestigateDrawer.willFilterExpected = willFilterExpected;
     let updateLabelEvents = new EventStream();
     const legendDetails = {
         success: {
@@ -873,7 +840,7 @@ function Legend(callback=null, plural=false) {
                     }
                 });
                 return `<div class="item">
-                        <div class="dot ${key}" ref="${dot}"><div class="text">${TestResultsSymbolMap[key]}</div></div>
+                        <div class="dot ${key}" ref="${dot}"><div class="text">${Expectations.symbolMap[key]}</div></div>
                         ${LegendLabel(updateLabelEvents, legendDetails[key].expected, legendDetails[key].unexpected)}
                     </div>`
             }).join('')}
@@ -888,6 +855,8 @@ function Legend(callback=null, plural=false) {
                     else
                         willFilterExpected = false;
                     updateLabelEvents.add(willFilterExpected);
+                    InvestigateDrawer.willFilterExpected = willFilterExpected;
+                    InvestigateDrawer.select(InvestigateDrawer.selected);
                     callback();
                 };
             },
