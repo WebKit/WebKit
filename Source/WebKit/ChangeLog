@@ -1,5 +1,25 @@
 2019-09-25  Alex Christensen  <achristensen@webkit.org>
 
+        Don't fall back to default session if session can't be found for cookie operations
+        https://bugs.webkit.org/show_bug.cgi?id=202222
+
+        Reviewed by Geoff Garen.
+
+        Apparently, during teardown of private browsing sessions, there is sometimes a race condition and cookies from a torn-down session are requested.
+        In this case, just fail like we do all other operations in this file.  Otherwise, it's a breach of privacy.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::storageSession):
+        (WebKit::NetworkConnectionToWebProcess::cookiesForDOM):
+        (WebKit::NetworkConnectionToWebProcess::setCookiesFromDOM):
+        (WebKit::NetworkConnectionToWebProcess::cookiesEnabled):
+        (WebKit::NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue):
+        (WebKit::NetworkConnectionToWebProcess::getRawCookies):
+        (WebKit::NetworkConnectionToWebProcess::deleteCookie):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+
+2019-09-25  Alex Christensen  <achristensen@webkit.org>
+
         Remove duplicate WebsiteDataStoreConfiguration copying code
         https://bugs.webkit.org/show_bug.cgi?id=202215
 

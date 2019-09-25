@@ -159,7 +159,7 @@ private:
     NetworkConnectionToWebProcess(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Identifier);
 
     void didFinishPreconnection(uint64_t preconnectionIdentifier, const WebCore::ResourceError&);
-    WebCore::NetworkStorageSession& storageSession();
+    WebCore::NetworkStorageSession* storageSession();
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

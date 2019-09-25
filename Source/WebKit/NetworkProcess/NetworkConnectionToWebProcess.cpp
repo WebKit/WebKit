@@ -494,17 +494,12 @@ void NetworkConnectionToWebProcess::didFinishPreconnection(uint64_t preconnectio
     m_connection->send(Messages::NetworkProcessConnection::DidFinishPreconnection(preconnectionIdentifier, error), 0);
 }
 
-NetworkStorageSession& NetworkConnectionToWebProcess::storageSession()
+NetworkStorageSession* NetworkConnectionToWebProcess::storageSession()
 {
-    if (m_sessionID != PAL::SessionID::defaultSessionID()) {
-        if (auto* storageSession = networkProcess().storageSession(m_sessionID))
-            return *storageSession;
-
-        // Some requests with private browsing mode requested may still be coming shortly after NetworkProcess was told to destroy its session.
-        // FIXME: Find a way to track private browsing sessions more rigorously.
+    auto* session = networkProcess().storageSession(m_sessionID);
+    if (!session)
         LOG_ERROR("Non-default storage session was requested, but there was no session for it. Please file a bug unless you just disabled private browsing, in which case it's an expected race.");
-    }
-    return networkProcess().defaultStorageSession();
+    return session;
 }
 
 void NetworkConnectionToWebProcess::startDownload(DownloadID downloadID, const ResourceRequest& request, const String& suggestedName)
@@ -533,12 +528,14 @@ void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(uint64_t m
 
 void NetworkConnectionToWebProcess::cookiesForDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&& completionHandler)
 {
-    auto& networkStorageSession = storageSession();
-    auto result = networkStorageSession.cookiesForDOM(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies);
+    auto* networkStorageSession = storageSession();
+    if (!networkStorageSession)
+        return completionHandler({ }, false);
+    auto result = networkStorageSession->cookiesForDOM(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies);
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     if (auto* session = networkSession()) {
         if (session->shouldLogCookieInformation())
-            NetworkResourceLoader::logCookieInformation(*this, "NetworkConnectionToWebProcess::cookiesForDOM", reinterpret_cast<const void*>(this), networkStorageSession, firstParty, sameSiteInfo, url, emptyString(), frameID, pageID, WTF::nullopt);
+            NetworkResourceLoader::logCookieInformation(*this, "NetworkConnectionToWebProcess::cookiesForDOM", reinterpret_cast<const void*>(this), *networkStorageSession, firstParty, sameSiteInfo, url, emptyString(), frameID, pageID, WTF::nullopt);
     }
 #endif
     completionHandler(WTFMove(result.first), result.second);
@@ -546,37 +543,51 @@ void NetworkConnectionToWebProcess::cookiesForDOM(const URL& firstParty, const S
 
 void NetworkConnectionToWebProcess::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<WebCore::FrameIdentifier> frameID, Optional<PageIdentifier> pageID, const String& cookieString)
 {
-    auto& networkStorageSession = storageSession();
-    networkStorageSession.setCookiesFromDOM(firstParty, sameSiteInfo, url, frameID, pageID, cookieString);
+    auto* networkStorageSession = storageSession();
+    if (!networkStorageSession)
+        return;
+    networkStorageSession->setCookiesFromDOM(firstParty, sameSiteInfo, url, frameID, pageID, cookieString);
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     if (auto* session = networkSession()) {
         if (session->shouldLogCookieInformation())
-            NetworkResourceLoader::logCookieInformation(*this, "NetworkConnectionToWebProcess::setCookiesFromDOM", reinterpret_cast<const void*>(this), networkStorageSession, firstParty, sameSiteInfo, url, emptyString(), frameID, pageID, WTF::nullopt);
+            NetworkResourceLoader::logCookieInformation(*this, "NetworkConnectionToWebProcess::setCookiesFromDOM", reinterpret_cast<const void*>(this), *networkStorageSession, firstParty, sameSiteInfo, url, emptyString(), frameID, pageID, WTF::nullopt);
     }
 #endif
 }
 
 void NetworkConnectionToWebProcess::cookiesEnabled(CompletionHandler<void(bool)>&& completionHandler)
 {
-    completionHandler(storageSession().cookiesEnabled());
+    auto* networkStorageSession = storageSession();
+    if (!networkStorageSession)
+        return completionHandler(false);
+    completionHandler(networkStorageSession->cookiesEnabled());
 }
 
 void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, CompletionHandler<void(String, bool)>&& completionHandler)
 {
-    auto result = storageSession().cookieRequestHeaderFieldValue(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies);
+    auto* networkStorageSession = storageSession();
+    if (!networkStorageSession)
+        return completionHandler({ }, false);
+    auto result = networkStorageSession->cookieRequestHeaderFieldValue(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies);
     completionHandler(WTFMove(result.first), result.second);
 }
 
 void NetworkConnectionToWebProcess::getRawCookies(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&& completionHandler)
 {
+    auto* networkStorageSession = storageSession();
+    if (!networkStorageSession)
+        return completionHandler({ });
     Vector<WebCore::Cookie> result;
-    storageSession().getRawCookies(firstParty, sameSiteInfo, url, frameID, pageID, result);
+    networkStorageSession->getRawCookies(firstParty, sameSiteInfo, url, frameID, pageID, result);
     completionHandler(WTFMove(result));
 }
 
 void NetworkConnectionToWebProcess::deleteCookie(const URL& url, const String& cookieName)
 {
-    storageSession().deleteCookie(url, cookieName);
+    auto* networkStorageSession = storageSession();
+    if (!networkStorageSession)
+        return;
+    networkStorageSession->deleteCookie(url, cookieName);
 }
 
 void NetworkConnectionToWebProcess::registerFileBlobURL(const URL& url, const String& path, SandboxExtension::Handle&& extensionHandle, const String& contentType)
