@@ -97,6 +97,7 @@ WEBCORE_EXPORT bool isFirefox();
 WEBCORE_EXPORT bool isAppleApplication();
 WEBCORE_EXPORT bool isEvernote();
 WEBCORE_EXPORT bool isEventbrite();
+WEBCORE_EXPORT bool isDataActivation();
 
 } // IOSApplication
 

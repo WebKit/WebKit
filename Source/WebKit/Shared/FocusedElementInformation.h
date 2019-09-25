@@ -140,6 +140,7 @@ struct FocusedElementInformation {
     bool isSpellCheckingEnabled { true };
     bool shouldAvoidResizingWhenInputViewBoundsChange { false };
     bool shouldAvoidScrollingWhenFocusedContentIsVisible { false };
+    bool shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation { false };
 
     FocusedElementIdentifier focusedElementIdentifier { 0 };
 

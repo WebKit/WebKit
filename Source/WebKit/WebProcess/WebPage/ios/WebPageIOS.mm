@@ -3060,6 +3060,7 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
     auto& quirks = m_focusedElement->document().quirks();
     information.shouldAvoidResizingWhenInputViewBoundsChange = quirks.shouldAvoidResizingWhenInputViewBoundsChange();
     information.shouldAvoidScrollingWhenFocusedContentIsVisible = quirks.shouldAvoidScrollingWhenFocusedContentIsVisible();
+    information.shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation = quirks.shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation();
 }
 
 void WebPage::autofillLoginCredentials(const String& username, const String& password)

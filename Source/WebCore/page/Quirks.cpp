@@ -546,6 +546,15 @@ bool Quirks::shouldAvoidScrollingWhenFocusedContentIsVisible() const
     return equalLettersIgnoringASCIICase(m_document->url().host(), "www.zillow.com");
 }
 
+bool Quirks::shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation() const
+{
+    if (!needsQuirks())
+        return false;
+
+    auto host = m_document->url().host();
+    return equalLettersIgnoringASCIICase(host, "att.com") || host.endsWithIgnoringASCIICase(".att.com");
+}
+
 bool Quirks::shouldOpenAsAboutBlank(const String& stringToOpen) const
 {
 #if PLATFORM(IOS_FAMILY)

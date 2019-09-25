@@ -106,7 +106,7 @@ HyperlinkAuditingEnabled:
 
 NeedsSiteSpecificQuirks:
   type: bool
-  defaultValue: false
+  defaultValue: true
 
 AcceleratedCompositingEnabled:
   type: bool

@@ -1306,7 +1306,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     if (!_webView._retainingActiveFocusedState) {
         // We need to complete the editing operation before we blur the element.
         [self _endEditing];
-        if ((reason == EndEditingReasonAccessoryDone && !currentUserInterfaceIdiomIsPad()) || _keyboardDidRequestDismissal) {
+        if ((reason == EndEditingReasonAccessoryDone && !currentUserInterfaceIdiomIsPad()) || _keyboardDidRequestDismissal || self._shouldUseLegacySelectPopoverDismissalBehavior) {
             _page->blurFocusedElement();
             // Don't wait for WebPageProxy::blurFocusedElement() to round-trip back to us to hide the keyboard
             // because we know that the user explicitly requested us to do so.
@@ -5562,6 +5562,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     _focusedElementInformation.shouldSynthesizeKeyEventsForEditing = false;
     _focusedElementInformation.shouldAvoidResizingWhenInputViewBoundsChange = false;
     _focusedElementInformation.shouldAvoidScrollingWhenFocusedContentIsVisible = false;
+    _focusedElementInformation.shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation = false;
     _inputPeripheral = nil;
     _focusRequiresStrongPasswordAssistance = NO;
     _additionalContextForStrongPasswordAssistance = nil;
@@ -6534,6 +6535,20 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 - (BOOL)_shouldAvoidScrollingWhenFocusedContentIsVisible
 {
     return _focusedElementInformation.shouldAvoidScrollingWhenFocusedContentIsVisible;
+}
+
+- (BOOL)_shouldUseLegacySelectPopoverDismissalBehavior
+{
+    if (!currentUserInterfaceIdiomIsPad())
+        return NO;
+
+    if (_focusedElementInformation.elementType != WebKit::InputType::Select)
+        return NO;
+
+    if (!_focusedElementInformation.shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation)
+        return NO;
+
+    return WebCore::IOSApplication::isDataActivation();
 }
 
 // FIXME: This is used for drag previews and context menu hints; it needs a better name.

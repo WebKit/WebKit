@@ -97,7 +97,7 @@ TEST(WebKit, WKPreferencesDefaults)
     EXPECT_TRUE(WKPreferencesGetAcceleratedCompositingEnabled(preference));
     EXPECT_FALSE(WKPreferencesGetCompositingBordersVisible(preference));
     EXPECT_FALSE(WKPreferencesGetCompositingRepaintCountersVisible(preference));
-    EXPECT_FALSE(WKPreferencesGetNeedsSiteSpecificQuirks(preference));
+    EXPECT_TRUE(WKPreferencesGetNeedsSiteSpecificQuirks(preference));
     EXPECT_EQ(kWKAllowAllStorage, WKPreferencesGetStorageBlockingPolicy(preference));
     EXPECT_FALSE(WKPreferencesGetTextAutosizingEnabled(preference));
 
