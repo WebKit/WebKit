@@ -1,3 +1,18 @@
+2019-09-25  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] JSC queues should run or skip tests based on runTests key from config.json
+        https://bugs.webkit.org/show_bug.cgi?id=202223
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/config.json: Added the runTests key.
+        * BuildSlaveSupport/ews-build/factories.py:
+        (JSCTestsFactory.__init__): Add RunJavaScriptCoreTests step based on runTests key.
+        * BuildSlaveSupport/ews-build/loadConfig.py:
+        (loadBuilderConfig): Pass the runTests key to the factory.
+        * BuildSlaveSupport/ews-build/loadConfig_unittest.py:
+        (ConfigDotJSONTest.test_builder_keys): Added the runTests key.
+
 2019-09-25  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Add investigation drawer

@@ -116,10 +116,11 @@ class TestFactory(Factory):
 
 
 class JSCTestsFactory(Factory):
-    def __init__(self, platform, configuration='release', architectures=None, additionalArguments=None, **kwargs):
+    def __init__(self, platform, configuration='release', architectures=None, additionalArguments=None, runTests='true', **kwargs):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, checkRelevance=True)
         self.addStep(CompileJSC(skipUpload=True))
-        self.addStep(RunJavaScriptCoreTests())
+        if runTests.lower() == 'true':
+            self.addStep(RunJavaScriptCoreTests())
 
 
 class APITestsFactory(TestFactory):

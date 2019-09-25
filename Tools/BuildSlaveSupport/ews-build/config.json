@@ -424,6 +424,7 @@
       "factory": "JSCTestsFactory",
       "platform": "mac-highsierra",
       "configuration": "release",
+      "runTests": "true",
       "workernames": ["ews127", "ews128"]
     },
     {
