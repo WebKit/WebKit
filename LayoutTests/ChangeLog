@@ -1,3 +1,13 @@
+2019-09-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Windows][webkitpy] _apache_config_file_name_for_platform should take the system PHP version into account
+        https://bugs.webkit.org/show_bug.cgi?id=202134
+
+        Reviewed by Jonathan Bedard.
+
+        * http/conf/cygwin-httpd.conf: Removed a stale conf file.
+        * http/conf/win-httpd-2.4-php5.conf: Renamed from LayoutTests/http/conf/apache2.4-httpd-win.conf.
+
 2019-09-24  Kate Cheney  <katherine_cheney@apple.com>
 
         Enable LayoutTests using ResourceLoadStatistics SQLite backend (195420)

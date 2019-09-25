@@ -1,3 +1,27 @@
+2019-09-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Windows][webkitpy] _apache_config_file_name_for_platform should take the system PHP version into account
+        https://bugs.webkit.org/show_bug.cgi?id=202134
+
+        Reviewed by Jonathan Bedard.
+
+        _apache_config_file_name_for_platform always returns a config file
+        name for PHP5 on Cygwin Python, one for PHP7 on Win32 Python. It
+        should detect the system PHP version as Linux ports do.
+
+        Both AppleWin and WinCairo are using XAMPP Apache. Unify the code
+        paths for them. And, remove a stale conf file.
+
+        This change makes it possible to use Cygwin Python with PHP7.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port._win_php_version): Added.
+        (Port._apache_config_file_name_for_platform): Unified cygwin and
+        win32 code path by using _win_php_version.
+        * Scripts/webkitpy/port/port_testcase.py:
+        (test_apache_config_file_name_for_platform): Updated cygwin and
+        win32 test cases.
+
 2019-09-24  Matt Lewis  <jlewis3@apple.com>
 
         Bring up queues for iPadOS Simulator Tests

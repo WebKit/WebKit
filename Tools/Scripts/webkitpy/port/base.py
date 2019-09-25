@@ -1288,12 +1288,20 @@ class Port(object):
             return "-php7"
         return ""
 
+    def _win_php_version(self):
+        root = os.environ.get('XAMPP_ROOT', 'C:\\xampp')
+        prefix = self._filesystem.join(root, 'php')
+        for version in ('5', '7'):
+            conf = self._filesystem.join(prefix, "php{}ts.dll".format(version))
+            if self._filesystem.exists(conf):
+                return "-php{}".format(version)
+        _log.error("No php?ts.dll found in {}".format(prefix))
+        return ""
+
     # We pass sys_platform into this method to make it easy to unit test.
     def _apache_config_file_name_for_platform(self, sys_platform):
-        if sys_platform == 'cygwin':
-            return 'apache' + self._apache_version() + '-httpd-win.conf'
-        if sys_platform == 'win32':
-            return 'win-httpd-' + self._apache_version() + '-php7.conf'
+        if sys_platform in ['cygwin', 'win32']:
+            return 'win-httpd-' + self._apache_version() + self._win_php_version() + '.conf'
         if sys_platform == 'darwin':
             return 'apache' + self._apache_version() + self._darwin_php_version() + '-httpd.conf'
         if sys_platform.startswith('linux'):
