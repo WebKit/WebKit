@@ -1,5 +1,35 @@
 2019-09-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Page temporarily jumps to an excessively small viewport scale while loading usatoday.com
+        https://bugs.webkit.org/show_bug.cgi?id=202224
+        <rdar://problem/52906640>
+
+        Reviewed by Tim Horton.
+
+        On some pages (e.g. usatoday.com), the content width of the page temporarily becomes very large during page
+        load. This causes a couple of viewport scaling behaviors (notably, the existing shrink-to-fit heuristic in
+        ViewportConfiguration::initialScaleFromSize, as well as the new iPad-specific content-aware shrink-to-fit
+        heuristic in WebPage::immediatelyShrinkToFitContent) to cause the page to shrink down excessively in an attempt
+        to fit all the content to the viewport. This causes a very ugly flash as the page appears zoomed out initially
+        during page load, before zooming back in.
+
+        To fix this, we add some sanity checks to these viewport scaling heuristics. In ViewportConfiguration's
+        initialScaleFromSize method, in the codepath where an initial scale is not specified, we always scale to fit the
+        contents of the page; instead, detect the case where the content width is enormous (with a threshold arbitrarily
+        chosen to be 1920) and fall back to the scaling to fit the viewport's width, if such a width has been explicitly
+        set. This ensures that we avoid excessive shrinking in the case where content is extremely wide, but also that
+        we do scale the viewport down to fit all the content in the case where the content isn't extremely wide (e.g. on
+        daringfireball.com).
+
+        See WebKit ChangeLog for more detail.
+
+        Test: fast/viewport/ios/shrink-to-fit-large-content-width.html
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::initialScaleFromSize const):
+
+2019-09-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iPadOS] [DataActivation] Focus moves away after focusing input fields on www.att.com
         https://bugs.webkit.org/show_bug.cgi?id=202167
         <rdar://problem/55185021>
