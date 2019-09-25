@@ -1,3 +1,41 @@
+2019-09-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Nicosia] Add implementations for fixed, positioned, sticky ScrollingTreeNodes
+        https://bugs.webkit.org/show_bug.cgi?id=202100
+
+        Reviewed by Carlos Garcia Campos.
+
+        Fill in the Nicosia implementations for the ScrollingTreeFixedNode,
+        ScrollingTreePositionedNode and ScrollingTreeStickyNode classes.
+
+        The implementations in majority repeat what the Cocoa implementations
+        do, with the main difference being the Nicosia-specific layer state
+        application. Sharing more of this logic should be investigated in the
+        future.
+
+        * PlatformPlayStation.cmake: Add ScrollingTreePositionedNode to build.
+        * SourcesGTK.txt: Ditto.
+        * SourcesWPE.txt: Ditto.
+        * page/scrolling/nicosia/ScrollingTreeFixedNode.cpp:
+        (WebCore::ScrollingTreeFixedNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeFixedNode::applyLayerPositions):
+        (WebCore::ScrollingTreeFixedNode::dumpProperties const):
+        * page/scrolling/nicosia/ScrollingTreeFixedNode.h:
+        * page/scrolling/nicosia/ScrollingTreePositionedNode.cpp: Added.
+        (WebCore::ScrollingTreePositionedNode::create):
+        (WebCore::ScrollingTreePositionedNode::ScrollingTreePositionedNode):
+        (WebCore::ScrollingTreePositionedNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreePositionedNode::applyLayerPositions):
+        (WebCore::ScrollingTreePositionedNode::dumpProperties const):
+        * page/scrolling/nicosia/ScrollingTreePositionedNode.h: Added.
+        (WebCore::ScrollingTreePositionedNode::relatedOverflowScrollingNodes const):
+        * page/scrolling/nicosia/ScrollingTreeStickyNode.cpp:
+        (WebCore::ScrollingTreeStickyNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeStickyNode::applyLayerPositions):
+        (WebCore::ScrollingTreeStickyNode::dumpProperties const):
+        (WebCore::ScrollingTreeStickyNode::computeLayerPosition const):
+        * page/scrolling/nicosia/ScrollingTreeStickyNode.h:
+
 2019-09-24  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Removing an element should only cancel its declarative animations

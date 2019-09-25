@@ -21,6 +21,7 @@ list(APPEND WebCore_SOURCES
     page/scrolling/nicosia/ScrollingTreeFixedNode.cpp
     page/scrolling/nicosia/ScrollingTreeFrameScrollingNodeNicosia.cpp
     page/scrolling/nicosia/ScrollingTreeNicosia.cpp
+    page/scrolling/nicosia/ScrollingTreePositionedNode.cpp
     page/scrolling/nicosia/ScrollingTreeStickyNode.cpp
 
     page/scrolling/generic/ScrollingThreadGeneric.cpp

@@ -40,27 +40,28 @@ class CompositionLayer;
 
 namespace WebCore {
 
-class ScrollingTreeStickyNode final : public ScrollingTreeNode {
+class ScrollingTreePositionedNode final : public ScrollingTreeNode {
 public:
-    static Ref<ScrollingTreeStickyNode> create(ScrollingTree&, ScrollingNodeID);
-    virtual ~ScrollingTreeStickyNode();
+    static Ref<ScrollingTreePositionedNode> create(ScrollingTree&, ScrollingNodeID);
+    virtual ~ScrollingTreePositionedNode();
+
+    const Vector<ScrollingNodeID>& relatedOverflowScrollingNodes() const { return m_relatedOverflowScrollingNodes; }
 
 private:
-    ScrollingTreeStickyNode(ScrollingTree&, ScrollingNodeID);
+    ScrollingTreePositionedNode(ScrollingTree&, ScrollingNodeID);
 
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
     void applyLayerPositions() override;
 
     void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 
-    FloatPoint computeLayerPosition() const;
-
-    StickyPositionViewportConstraints m_constraints;
+    Vector<ScrollingNodeID> m_relatedOverflowScrollingNodes;
+    AbsolutePositionConstraints m_constraints;
     RefPtr<Nicosia::CompositionLayer> m_layer;
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_SCROLLING_NODE(ScrollingTreeStickyNode, isStickyNode())
+SPECIALIZE_TYPE_TRAITS_SCROLLING_NODE(ScrollingTreePositionedNode, isPositionedNode())
 
 #endif // ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2018 Igalia S.L.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +31,14 @@
 
 #if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
+#include "Logging.h"
+#include "NicosiaPlatformLayer.h"
+#include "ScrollingStateStickyNode.h"
 #include "ScrollingTree.h"
+#include "ScrollingTreeFixedNode.h"
+#include "ScrollingTreeFrameScrollingNode.h"
+#include "ScrollingTreeOverflowScrollingNode.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -50,12 +58,90 @@ ScrollingTreeStickyNode::~ScrollingTreeStickyNode()
     scrollingTree().fixedOrStickyNodeRemoved();
 }
 
-void ScrollingTreeStickyNode::commitStateBeforeChildren(const ScrollingStateNode&)
+void ScrollingTreeStickyNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
+    auto& stickyStateNode = downcast<ScrollingStateStickyNode>(stateNode);
+
+    if (stickyStateNode.hasChangedProperty(ScrollingStateNode::Layer)) {
+        Nicosia::PlatformLayer* layer = stickyStateNode.layer();
+        m_layer = downcast<Nicosia::CompositionLayer>(layer);
+    }
+
+    if (stickyStateNode.hasChangedProperty(ScrollingStateStickyNode::ViewportConstraints))
+        m_constraints = stickyStateNode.viewportConstraints();
 }
 
 void ScrollingTreeStickyNode::applyLayerPositions()
 {
+    auto layerPosition = computeLayerPosition();
+
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeStickyNode " << scrollingNodeID() << " constrainingRectAtLastLayout " << m_constraints.constrainingRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout() << " layerPosition " << layerPosition);
+
+    layerPosition -= m_constraints.alignmentOffset();
+
+    ASSERT(m_layer);
+    m_layer->accessStaging(
+        [&layerPosition](Nicosia::CompositionLayer::LayerState& state)
+        {
+            state.position = layerPosition;
+            state.delta.positionChanged = true;
+        });
+}
+
+void ScrollingTreeStickyNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+{
+    ts << "sticky node";
+
+    ScrollingTreeNode::dumpProperties(ts, behavior);
+    ts.dumpProperty("sticky constraints", m_constraints);
+
+    if (behavior & ScrollingStateTreeAsTextBehaviorIncludeLayerPositions) {
+        FloatPoint layerTopLeft;
+        ASSERT(m_layer);
+        m_layer->accessCommitted(
+            [this, &layerTopLeft](Nicosia::CompositionLayer::LayerState& state)
+            {
+                layerTopLeft = state.position - toFloatSize(state.anchorPoint.xy()) * state.size + m_constraints.alignmentOffset();
+            });
+
+        ts.dumpProperty("layer top left", layerTopLeft);
+    }
+}
+
+FloatPoint ScrollingTreeStickyNode::computeLayerPosition() const
+{
+    auto computeLayerPositionForScrollingNode = [&](ScrollingTreeNode& scrollingNode) {
+        FloatRect constrainingRect;
+        if (is<ScrollingTreeFrameScrollingNode>(scrollingNode)) {
+            auto& frameScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(scrollingNode);
+            constrainingRect = frameScrollingNode.layoutViewport();
+        } else {
+            auto& overflowScrollingNode = downcast<ScrollingTreeOverflowScrollingNode>(scrollingNode);
+            constrainingRect = FloatRect(overflowScrollingNode.currentScrollPosition(), m_constraints.constrainingRectAtLastLayout().size());
+        }
+        return m_constraints.layerPositionForConstrainingRect(constrainingRect);
+    };
+
+    for (auto* ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
+        if (is<ScrollingTreeOverflowScrollProxyNode>(*ancestor)) {
+            auto& overflowProxyNode = downcast<ScrollingTreeOverflowScrollProxyNode>(*ancestor);
+            auto overflowNode = scrollingTree().nodeForID(overflowProxyNode.overflowScrollingNodeID());
+            if (!overflowNode)
+                break;
+
+            return computeLayerPositionForScrollingNode(*overflowNode);
+        }
+
+        if (is<ScrollingTreeScrollingNode>(*ancestor))
+            return computeLayerPositionForScrollingNode(*ancestor);
+
+        if (is<ScrollingTreeFixedNode>(*ancestor) || is<ScrollingTreeStickyNode>(*ancestor)) {
+            // FIXME: Do we need scrolling tree nodes at all for nested cases?
+            return m_constraints.layerPositionAtLastLayout();
+        }
+    }
+    ASSERT_NOT_REACHED();
+    return m_constraints.layerPositionAtLastLayout();
 }
 
 } // namespace WebCore

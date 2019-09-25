@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2018 Igalia S.L.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +31,12 @@
 
 #if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
+#include "Logging.h"
+#include "NicosiaPlatformLayer.h"
+#include "ScrollingStateFixedNode.h"
 #include "ScrollingTree.h"
+#include "ScrollingTreeOverflowScrollingNode.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -50,12 +56,74 @@ ScrollingTreeFixedNode::~ScrollingTreeFixedNode()
     scrollingTree().fixedOrStickyNodeRemoved();
 }
 
-void ScrollingTreeFixedNode::commitStateBeforeChildren(const ScrollingStateNode&)
+void ScrollingTreeFixedNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
+    auto& fixedStateNode = downcast<ScrollingStateFixedNode>(stateNode);
+
+    if (fixedStateNode.hasChangedProperty(ScrollingStateNode::Layer)) {
+        Nicosia::PlatformLayer* layer = fixedStateNode.layer();
+        m_layer = downcast<Nicosia::CompositionLayer>(layer);
+    }
+
+    if (fixedStateNode.hasChangedProperty(ScrollingStateFixedNode::ViewportConstraints))
+        m_constraints = fixedStateNode.viewportConstraints();
 }
 
 void ScrollingTreeFixedNode::applyLayerPositions()
 {
+    auto computeLayerPosition = [&] {
+        FloatSize overflowScrollDelta;
+        // FIXME: This code is wrong in complex cases where the fixed element is inside a positioned node as
+        //        the scroll container order does not match the scrolling tree ancestor order.
+        for (auto* node = parent(); node; node = node->parent()) {
+            if (is<ScrollingTreeFrameScrollingNode>(*node)) {
+                // Fixed nodes are positioned relative to the containing frame scrolling node.
+                // We bail out after finding one.
+                auto layoutViewport = downcast<ScrollingTreeFrameScrollingNode>(*node).layoutViewport();
+                return m_constraints.layerPositionForViewportRect(layoutViewport) - overflowScrollDelta;
+            }
+
+            if (is<ScrollingTreeOverflowScrollingNode>(*node)) {
+                // To keep the layer still during async scrolling we adjust by how much the position has changed since layout.
+                auto& overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(*node);
+                auto localDelta = overflowNode.lastCommittedScrollPosition() - overflowNode.currentScrollPosition();
+                overflowScrollDelta += localDelta;
+            }
+        }
+        ASSERT_NOT_REACHED();
+        return FloatPoint();
+    };
+
+    auto layerPosition = computeLayerPosition();
+
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFixedNode " << scrollingNodeID() << " relatedNodeScrollPositionDidChange: viewportRectAtLastLayout " << m_constraints.viewportRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout() << " layerPosition " << layerPosition);
+
+    ASSERT(m_layer);
+    m_layer->accessStaging(
+        [&layerPosition](Nicosia::CompositionLayer::LayerState& state)
+        {
+            state.position = layerPosition;
+            state.delta.positionChanged = true;
+        });
+}
+
+void ScrollingTreeFixedNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+{
+    ts << "fixed node";
+    ScrollingTreeNode::dumpProperties(ts, behavior);
+    ts.dumpProperty("fixed constraints", m_constraints);
+
+    if (behavior & ScrollingStateTreeAsTextBehaviorIncludeLayerPositions) {
+        FloatPoint layerTopLeft;
+        ASSERT(m_layer);
+        m_layer->accessCommitted(
+            [this, &layerTopLeft](Nicosia::CompositionLayer::LayerState& state)
+            {
+                layerTopLeft = state.position - toFloatSize(state.anchorPoint.xy()) * state.size + m_constraints.alignmentOffset();
+            });
+
+        ts.dumpProperty("layer top left", layerTopLeft);
+    }
 }
 
 } // namespace WebCore
