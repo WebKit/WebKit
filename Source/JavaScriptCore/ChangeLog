@@ -1,3 +1,16 @@
+2019-09-24  Christopher Reid  <chris.reid@sony.com>
+
+        [WinCairo] Start RemoteInspectorServer
+        https://bugs.webkit.org/show_bug.cgi?id=199938
+        <rdar://problem/53323048>
+
+        Reviewed by Fujii Hironori.
+
+        * inspector/remote/socket/RemoteInspectorSocket.cpp:
+        * inspector/remote/socket/win/RemoteInspectorSocketWin.cpp:
+          - Fixed some network byte order issues
+          - Need to check for POLLHUP in isReadable as closed windows sockets don't have POLLIN set
+
 2019-09-24  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [ES6] Come up with a test for Proxy.[[GetOwnProperty]] that tests the isExtensible error when the  result of the trap is undefined

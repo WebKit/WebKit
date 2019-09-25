@@ -57,7 +57,9 @@ private:
     void platformStopTask(WebPageProxy&, WebURLSchemeTask&) final { }
     void platformTaskCompleted(WebURLSchemeTask&) final { }
 
-    HashMap<String, std::unique_ptr<RemoteInspectorClient>> m_inspectorClients;
+    void runScript(const String&);
+
+    std::unique_ptr<RemoteInspectorClient> m_inspectorClient;
     WebPageProxy& m_page;
 };
 

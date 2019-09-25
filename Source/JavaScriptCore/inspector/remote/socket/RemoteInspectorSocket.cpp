@@ -50,6 +50,7 @@ RemoteInspector& RemoteInspector::singleton()
 RemoteInspector::RemoteInspector()
 {
     Socket::init();
+    start();
 }
 
 void RemoteInspector::didClose(ConnectionID id)
@@ -93,7 +94,7 @@ void RemoteInspector::start()
 
     m_enabled = true;
 
-    if (s_connectionIdentifier) {
+    if (s_connectionIdentifier != INVALID_SOCKET_VALUE) {
         m_clientID = createClient(s_connectionIdentifier);
         s_connectionIdentifier = INVALID_SOCKET_VALUE;
     } else
@@ -133,7 +134,7 @@ TargetListing RemoteInspector::listingForInspectionTarget(const RemoteInspection
     TargetListing targetListing = JSON::Object::create();
 
     targetListing->setString("name"_s, target.name());
-    targetListing->setString("url"_s, target.name());
+    targetListing->setString("url"_s, target.url());
     targetListing->setInteger("targetID"_s, target.targetIdentifier());
     targetListing->setBoolean("hasLocalDebugger"_s, target.hasLocalDebugger());
     if (target.type() == RemoteInspectionTarget::Type::Web)

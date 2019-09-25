@@ -1,3 +1,23 @@
+2019-09-24  Christopher Reid  <chris.reid@sony.com>
+
+        [WinCairo] Start RemoteInspectorServer
+        https://bugs.webkit.org/show_bug.cgi?id=199938
+        <rdar://problem/53323048>
+
+        Reviewed by Fujii Hironori.
+
+        Enable the remote inspector client on WinCairo.
+        The inspector server will run if the WEBKIT_INSPECTOR_SERVER environment variable is set.
+        WEBKIT_INSPECTOR_SERVER needs to be set in the form of <ip>:port e.g. WEBKIT_INSPECTOR_SERVER=127.0.0.1:1234.
+
+        Updated the protocol handler to update the target list with DOM manipulation.
+
+        * UIProcess/socket/RemoteInspectorClient.cpp:
+        * UIProcess/socket/RemoteInspectorClient.h:
+        * UIProcess/socket/RemoteInspectorProtocolHandler.cpp:
+        * UIProcess/socket/RemoteInspectorProtocolHandler.h:
+        * UIProcess/win/WebView.cpp:
+
 2019-09-24  Kate Cheney  <katherine_cheney@apple.com>
 
         Enable LayoutTests using ResourceLoadStatistics SQLite backend (195420)

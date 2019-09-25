@@ -34,6 +34,7 @@
 #include "WebPageProxy.h"
 #include "WebScriptMessageHandler.h"
 #include "WebUserContentControllerProxy.h"
+#include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringBuilder.h>
@@ -66,27 +67,48 @@ private:
 
 void RemoteInspectorProtocolHandler::inspect(const String& hostAndPort, ConnectionID connectionID, TargetID targetID, const String& type)
 {
-    if (auto* client = m_inspectorClients.get(hostAndPort))
-        client->inspect(connectionID, targetID, type);
+    if (m_inspectorClient)
+        m_inspectorClient->inspect(connectionID, targetID, type);
 }
 
-void RemoteInspectorProtocolHandler::targetListChanged(RemoteInspectorClient&)
+void RemoteInspectorProtocolHandler::runScript(const String& script)
 {
-    if (m_page.pageLoadState().isLoading())
-        return;
+    m_page.runJavaScriptInMainFrame(script, false,
+        [](API::SerializedScriptValue*, bool hadException, const WebCore::ExceptionDetails& exceptionDetails, CallbackBase::Error) {
+            if (hadException)
+                LOG_ERROR("Exception running script \"%s\"", exceptionDetails.message.utf8().data());
+    });
+}
 
-    m_page.reload({ });
+void RemoteInspectorProtocolHandler::targetListChanged(RemoteInspectorClient& client)
+{
+    StringBuilder html;
+    if (client.targets().isEmpty())
+        html.append("<p>No targets found</p>"_s);
+    else {
+        html.append("<table>");
+        for (auto& connectionID : client.targets().keys()) {
+            for (auto& target : client.targets().get(connectionID)) {
+                html.append(makeString(
+                    "<tbody><tr>"
+                    "<td class=\"data\"><div class=\"targetname\">", target.name, "</div><div class=\"targeturl\">", target.url, "</div></td>"
+                    "<td class=\"input\"><input type=\"button\" value=\"Inspect\" onclick=\"window.webkit.messageHandlers.inspector.postMessage(\\'", connectionID, ":", target.id, ":", target.type, "\\');\"></td>"
+                    "</tr></tbody>"
+                ));
+            }
+        }
+        html.append("</table>");
+    }
+    runScript(makeString("updateTargets('", html.toString(), "');"));
 }
 
 void RemoteInspectorProtocolHandler::platformStartTask(WebPageProxy& pageProxy, WebURLSchemeTask& task)
 {
     auto& requestURL = task.request().url();
-    if (!requestURL.port())
-        return;
 
-    auto* client = m_inspectorClients.ensure(requestURL.hostAndPort(), [this, &requestURL] {
-        return makeUnique<RemoteInspectorClient>(requestURL.host().utf8().data(), requestURL.port().value(), *this);
-    }).iterator->value.get();
+    // Destroy the client before creating a new connection so it can connect to the same port
+    m_inspectorClient = nullptr;
+    m_inspectorClient = makeUnique<RemoteInspectorClient>(requestURL, *this);
 
     // Setup target postMessage listener
     auto handler = WebScriptMessageHandler::create(makeUnique<ScriptMessageClient>(*this), "inspector", API::UserContentWorld::normalWorld());
@@ -111,29 +133,22 @@ void RemoteInspectorProtocolHandler::platformStartTask(WebPageProxy& pageProxy, 
         "  td.input { width: 64px; }"
         "  input { width: 100%; padding: 8px; }"
         "</style>"
-        "</head><body><h1>Inspectable targets</h1>");
-
-    if (client->targets().isEmpty())
-        htmlBuilder.append("<p>No targets found</p>");
-    else {
-        htmlBuilder.append("<table>");
-        for (auto& connectionID : client->targets().keys()) {
-            for (auto& target : client->targets().get(connectionID)) {
-                htmlBuilder.append(makeString(
-                    "<tbody><tr>"
-                    "<td class=\"data\"><div class=\"targetname\">", target.name, "</div><div class=\"targeturl\">", target.url, "</div></td>"
-                    "<td class=\"input\"><input type=\"button\" value=\"Inspect\" onclick=\"window.webkit.messageHandlers.inspector.postMessage('", connectionID, ":", target.id, ":", target.type, "');\"></td>"
-                    "</tr></tbody>"
-                ));
-            }
-        }
-        htmlBuilder.append("</table>");
-    }
-
-    htmlBuilder.append("</body></html>");
+        "</head><body><h1>Inspectable targets</h1>"
+        "<div id=\"targetlist\"><p>No targets found</p></div></body>"
+        "<script>"
+        "function updateTargets(str) {"
+            "let targetDiv = document.getElementById('targetlist');"
+            "targetDiv.innerHTML = str;"
+        "}"
+        "</script>");
+    htmlBuilder.append("</html>");
 
     auto html = htmlBuilder.toString().utf8();
-    pageProxy.loadData({ reinterpret_cast<const uint8_t*>(html.data()), html.length() }, "text/html"_s, "UTF-8"_s, requestURL);
+    auto data = SharedBuffer::create(html.data(), html.length());
+    ResourceResponse response(requestURL, "text/html"_s, html.length(), "UTF-8"_s);
+    task.didReceiveResponse(response);
+    task.didReceiveData(WTFMove(data));
+    task.didComplete(ResourceError());
 }
 
 } // namespace WebKit

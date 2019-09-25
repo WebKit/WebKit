@@ -215,7 +215,7 @@ Optional<std::array<PlatformSocketType, 2>> createPair()
     if (!server)
         return WTF::nullopt;
 
-    address.sin_port = getPort(server);
+    address.sin_port = htons(getPort(server));
 
     std::array<PlatformSocketType, 2> sockets;
     sockets[0] = connectTo(address);
@@ -259,7 +259,7 @@ uint16_t getPort(PlatformSocketType socket)
     struct sockaddr_in address = { };
     int len = sizeof(address);
     getsockname(socket, reinterpret_cast<struct sockaddr*>(&address), &len);
-    return address.sin_port;
+    return ntohs(address.sin_port);
 }
 
 Optional<size_t> read(PlatformSocketType socket, void* buffer, int bufferSize)
@@ -308,7 +308,7 @@ bool poll(Vector<PollingDescriptor>& pollDescriptors, int timeout)
 
 bool isReadable(const PollingDescriptor& poll)
 {
-    return poll.revents & POLLIN;
+    return (poll.revents & POLLIN) || (poll.revents & POLLHUP);
 }
 
 bool isWritable(const PollingDescriptor& poll)
