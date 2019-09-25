@@ -772,6 +772,9 @@ String MIMETypeRegistry::appendFileExtensionIfNecessary(const String& filename, 
     if (filename.isEmpty())
         return emptyString();
 
+    if (equalIgnoringASCIICase(mimeType, defaultMIMEType()))
+        return filename;
+
     if (filename.reverseFind('.') != notFound)
         return filename;
 
@@ -779,7 +782,7 @@ String MIMETypeRegistry::appendFileExtensionIfNecessary(const String& filename, 
     if (preferredExtension.isEmpty())
         return filename;
 
-    return filename + "." + preferredExtension;
+    return makeString(filename, '.', preferredExtension);
 }
 
 } // namespace WebCore

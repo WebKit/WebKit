@@ -1,3 +1,26 @@
+2019-09-25  Chris Dumez  <cdumez@apple.com>
+
+        [Cocoa] Regression(r212041) Safari adds a .dms extension automatically when downloading binaries with no extension
+        https://bugs.webkit.org/show_bug.cgi?id=202147
+        <rdar://problem/54886021>
+
+        Reviewed by Alexey Proskuryakov.
+
+        When getting a suggested filename without extension (either from Content-Disposition header or from the download
+        attribute), we determine a suitable file extension based on the Content-Type header and append it. This is useful
+        since a lot of operating systems (such as macOS) rely on the file extension to determine file type.
+
+        The issue is that if the Content-Type is not provided or when it is provided but is "application/octet-stream",
+        we would append a .dms extension, which was unexpected. This patch makes it so that we no longer try to append
+        an extension when the resolved content type is "application/octet-stream".
+
+        Tests: http/tests/download/anchor-download-attribute-content-disposition-no-extension-octet-stream.html
+               http/tests/download/anchor-download-attribute-content-disposition-no-extension-text-plain.html
+               http/tests/security/anchor-download-octet-stream-no-extension.html
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::appendFileExtensionIfNecessary):
+
 2019-09-25  Megan Gardner  <megan_gardner@apple.com>
 
         Update selections after scrolling for iframes and hide selections while iframes and overflow scrolls are scrolling.

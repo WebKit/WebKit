@@ -112,6 +112,9 @@ webkit.org/b/156069 http/tests/security/anchor-download-block-crossorigin.html [
 webkit.org/b/156069 http/tests/download/anchor-download-no-value.html [ Skip ]
 webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click.html [ Skip ]
 webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-download-click.html [ Skip ]
+webkit.org/b/156069 http/tests/download/anchor-download-attribute-content-disposition-no-extension-octet-stream.html [ Skip ]
+webkit.org/b/156069 http/tests/download/anchor-download-attribute-content-disposition-no-extension-text-plain.html [ Skip ]
+webkit.org/b/156069 http/tests/security/anchor-download-octet-stream-no-extension.html [ Skip ]
 
 # Not supported on WK1
 media/no-fullscreen-when-hidden.html [ Skip ]

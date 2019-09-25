@@ -1,3 +1,24 @@
+2019-09-25  Chris Dumez  <cdumez@apple.com>
+
+        [Cocoa] Regression(r212041) Safari adds a .dms extension automatically when downloading binaries with no extension
+        https://bugs.webkit.org/show_bug.cgi?id=202147
+        <rdar://problem/54886021>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add layout test coverage.
+
+        * http/tests/download/anchor-download-attribute-content-disposition-no-extension-octet-stream-expected.txt: Added.
+        * http/tests/download/anchor-download-attribute-content-disposition-no-extension-octet-stream.html: Added.
+        * http/tests/download/anchor-download-attribute-content-disposition-no-extension-text-plain-expected.txt: Added.
+        * http/tests/download/anchor-download-attribute-content-disposition-no-extension-text-plain.html: Added.
+        * http/tests/download/resources/content-disposition-pass-no-extension-octet-stream.php: Added.
+        * http/tests/download/resources/content-disposition-pass-no-extension-text-plain.php: Added.
+        * http/tests/security/anchor-download-octet-stream-no-extension-expected.txt: Added.
+        * http/tests/security/anchor-download-octet-stream-no-extension.html: Added.
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2019-09-25  Megan Gardner  <megan_gardner@apple.com>
 
         Update selections after scrolling for iframes and hide selections while iframes and overflow scrolls are scrolling.

@@ -476,6 +476,9 @@ http/tests/download/area-download.html [ Skip ]
 http/tests/security/anchor-download-allow-data.html [ Skip ]
 http/tests/security/anchor-download-allow-sameorigin.html [ Skip ]
 http/tests/download/anchor-download-no-value.html [ Skip ]
+http/tests/download/anchor-download-attribute-content-disposition-no-extension-octet-stream.html [ Skip ]
+http/tests/download/anchor-download-attribute-content-disposition-no-extension-text-plain.html [ Skip ]
+http/tests/security/anchor-download-octet-stream-no-extension.html [ Skip ]
 
 # testRunner.setShouldDownloadUndisplayableMIMETypes() is not supported on WK1.
 fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html [ Skip ]
