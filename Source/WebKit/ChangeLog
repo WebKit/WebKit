@@ -1,3 +1,17 @@
+2019-09-25  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r250336.
+        https://bugs.webkit.org/show_bug.cgi?id=202210
+
+        it is creating failures on iOS bots (Requested by youenn on
+        #webkit).
+
+        Reverted changeset:
+
+        "Make IsNSURLSessionWebSocketEnabled an experimental flag"
+        https://bugs.webkit.org/show_bug.cgi?id=202135
+        https://trac.webkit.org/changeset/250336
+
 2019-09-25  Youenn Fablet  <youenn@apple.com>
 
         Creation of a service worker connection for a service worker job should be based on the job scope

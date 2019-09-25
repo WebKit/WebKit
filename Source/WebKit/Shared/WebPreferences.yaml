@@ -1722,7 +1722,7 @@ IsNSURLSessionWebSocketEnabled:
   defaultValue: false
   humanReadableName: "NSURLSession WebSocket"
   humanReadableDescription: "Use NSURLSession WebSocket API"
-  category: experimental
+  category: internal
   webcoreBinding: RuntimeEnabledFeatures
   condition: HAVE(NSURLSESSION_WEBSOCKET)
 
