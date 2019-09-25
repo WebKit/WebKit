@@ -1,3 +1,23 @@
+2019-09-25  Aakash Jain  <aakash_jain@apple.com>
+
+        [EWS] JSC queues should dynamically add required build steps for re-testing the patch
+        https://bugs.webkit.org/show_bug.cgi?id=202170
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+        (JSCTestsFactory.__init__): Do not add ReRunJavaScriptCoreTests and related steps here, as
+        these are dynamically added (if required) in steps.py.
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CompileJSCToT): Remove doStepIf() and hideStepIf() method, these are no longer required as we add
+        this step dynamically only if required. We don't need an extra property ('patchFailedToBuild') to be set.
+        (RunJavaScriptCoreTests.evaluateCommand): Dynamically add ReRunJavaScriptCoreTests step if required.
+        (ReRunJavaScriptCoreTests): Removed doStepIf() and hideStepIf() method.
+        (ReRunJavaScriptCoreTests.evaluateCommand): Dynamically add UnApplyPatchIfRequired(), CompileJSCToT() and RunJavaScriptCoreTestsToT steps.
+        (RunJavaScriptCoreTestsToT.evaluateCommand): Overriden to avoid caling the base-class method which dynamically adds
+        more steps.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Updated unit-tests accordingly.
+
 2019-09-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPadOS] [DataActivation] Focus moves away after focusing input fields on www.att.com

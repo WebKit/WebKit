@@ -825,12 +825,6 @@ class CompileJSC(CompileWebKit):
 class CompileJSCToT(CompileJSC):
     name = 'compile-jsc-tot'
 
-    def doStepIf(self, step):
-        return self.getProperty('patchFailedToBuild')
-
-    def hideStepIf(self, results, step):
-        return not self.doStepIf(step)
-
     def evaluateCommand(self, cmd):
         return shell.Compile.evaluateCommand(self, cmd)
 
@@ -849,24 +843,31 @@ class RunJavaScriptCoreTests(shell.Test):
         return shell.Test.start(self)
 
     def evaluateCommand(self, cmd):
-        if cmd.didFail():
-            self.setProperty('patchFailedTests', True)
-
-        return super(RunJavaScriptCoreTests, self).evaluateCommand(cmd)
+        rc = shell.Test.evaluateCommand(self, cmd)
+        if rc == SUCCESS or rc == WARNINGS:
+            message = 'Passed JSC tests'
+            self.descriptionDone = message
+            self.build.results = SUCCESS
+            self.build.buildFinished([message], SUCCESS)
+        else:
+            self.build.addStepsAfterCurrentStep([ReRunJavaScriptCoreTests()])
+        return rc
 
 
 class ReRunJavaScriptCoreTests(RunJavaScriptCoreTests):
     name = 'jscore-test-rerun'
 
-    def doStepIf(self, step):
-        return self.getProperty('patchFailedTests')
-
-    def hideStepIf(self, results, step):
-        return not self.doStepIf(step)
-
     def evaluateCommand(self, cmd):
-        self.setProperty('patchFailedTests', cmd.didFail())
-        return super(RunJavaScriptCoreTests, self).evaluateCommand(cmd)
+        rc = shell.Test.evaluateCommand(self, cmd)
+        if rc == SUCCESS or rc == WARNINGS:
+            message = 'Passed JSC tests'
+            self.descriptionDone = message
+            self.build.results = SUCCESS
+            self.build.buildFinished([message], SUCCESS)
+        else:
+            self.setProperty('patchFailedTests', True)
+            self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(), CompileJSCToT(), RunJavaScriptCoreTestsToT()])
+        return rc
 
 
 class RunJavaScriptCoreTestsToT(RunJavaScriptCoreTests):
@@ -874,11 +875,8 @@ class RunJavaScriptCoreTestsToT(RunJavaScriptCoreTests):
     jsonFileName = 'jsc_results.json'
     command = ['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast', '--json-output={0}'.format(jsonFileName), WithProperties('--%(configuration)s')]
 
-    def doStepIf(self, step):
-        return self.getProperty('patchFailedTests')
-
-    def hideStepIf(self, results, step):
-        return not self.doStepIf(step)
+    def evaluateCommand(self, cmd):
+        return shell.Test.evaluateCommand(self, cmd)
 
 
 class CleanBuild(shell.Compile):

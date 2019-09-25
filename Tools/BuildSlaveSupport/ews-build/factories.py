@@ -27,9 +27,9 @@ from buildbot.steps import trigger
 from steps import (ApplyPatch, ApplyWatchList, CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance,
                    CheckStyle, CompileJSC, CompileWebKit, ConfigureBuild,
                    DownloadBuiltProduct, ExtractBuiltProduct, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
-                   PrintConfiguration, ReRunJavaScriptCoreTests, RunAPITests, RunBindingsTests, RunEWSBuildbotCheckConfig, RunEWSUnitTests,
-                   RunJavaScriptCoreTests, RunJavaScriptCoreTestsToT, RunWebKit1Tests, RunWebKitPerlTests,
-                   RunWebKitPyTests, RunWebKitTests, UnApplyPatchIfRequired, UpdateWorkingDirectory, ValidatePatch)
+                   PrintConfiguration, RunAPITests, RunBindingsTests, RunEWSBuildbotCheckConfig, RunEWSUnitTests,
+                   RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests,
+                   RunWebKitPyTests, RunWebKitTests, UpdateWorkingDirectory, ValidatePatch)
 
 
 class Factory(factory.BuildFactory):
@@ -120,9 +120,6 @@ class JSCTestsFactory(Factory):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, checkRelevance=True)
         self.addStep(CompileJSC(skipUpload=True))
         self.addStep(RunJavaScriptCoreTests())
-        self.addStep(ReRunJavaScriptCoreTests())
-        self.addStep(UnApplyPatchIfRequired())
-        self.addStep(RunJavaScriptCoreTestsToT())
 
 
 class APITestsFactory(TestFactory):
