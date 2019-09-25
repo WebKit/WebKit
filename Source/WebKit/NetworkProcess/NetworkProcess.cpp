@@ -314,9 +314,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
         m_defaultNetworkStorageSession = newTestingSession(PAL::SessionID::defaultSessionID());
     }
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    m_isITPDatabaseEnabled = parameters.shouldEnableITPDatabase;
-#endif
+    WebCore::RuntimeEnabledFeatures::sharedFeatures().setIsITPDatabaseEnabled(parameters.shouldEnableITPDatabase);
 
     WebCore::RuntimeEnabledFeatures::sharedFeatures().setAdClickAttributionDebugModeEnabled(parameters.enableAdClickAttributionDebugMode);
 
@@ -461,8 +459,6 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
 #if ENABLE(INDEXED_DATABASE)
     addIndexedDatabaseSession(parameters.networkSessionParameters.sessionID, parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
 #endif
-    
-    SandboxExtension::consumePermanently(parameters.networkSessionParameters.resourceLoadStatisticsDirectoryExtensionHandle);
 
 #if ENABLE(SERVICE_WORKER)
     if (parentProcessHasServiceWorkerEntitlement())
@@ -684,17 +680,6 @@ void NetworkProcess::setGrandfathered(PAL::SessionID sessionID, const Registrabl
         ASSERT_NOT_REACHED();
         completionHandler();
     }
-}
-
-void NetworkProcess::setUseITPDatabase(PAL::SessionID sessionID, bool value)
-{
-    if (auto* networkSession = this->networkSession(sessionID)) {
-        if (m_isITPDatabaseEnabled != value) {
-            m_isITPDatabaseEnabled = value;
-            networkSession->recreateResourceLoadStatisticStore();
-        }
-    } else
-        ASSERT_NOT_REACHED();
 }
 
 void NetworkProcess::setPrevalentResource(PAL::SessionID sessionID, const RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)

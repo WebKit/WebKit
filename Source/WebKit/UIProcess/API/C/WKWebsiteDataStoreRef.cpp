@@ -268,13 +268,6 @@ void WKWebsiteDataStoreIsStatisticsGrandfathered(WKWebsiteDataStoreRef dataStore
 #endif
 }
 
-void WKWebsiteDataStoreSetUseITPDatabase(WKWebsiteDataStoreRef dataStoreRef, bool value)
-{
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    WebKit::toImpl(dataStoreRef)->setUseITPDatabase(value);
-#endif
-}
-
 void WKWebsiteDataStoreSetStatisticsSubframeUnderTopFrameOrigin(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, WKStringRef topFrameHost)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

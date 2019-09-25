@@ -410,7 +410,6 @@ public:
     bool isStatisticsHasHadUserInteraction(JSStringRef hostName);
     void setStatisticsGrandfathered(JSStringRef hostName, bool value);
     bool isStatisticsGrandfathered(JSStringRef hostName);
-    void setUseITPDatabase(bool value);
     void setStatisticsSubframeUnderTopFrameOrigin(JSStringRef hostName, JSStringRef topFrameHostName);
     void setStatisticsSubresourceUnderTopFrameOrigin(JSStringRef hostName, JSStringRef topFrameHostName);
     void setStatisticsSubresourceUniqueRedirectTo(JSStringRef hostName, JSStringRef hostNameRedirectedTo);

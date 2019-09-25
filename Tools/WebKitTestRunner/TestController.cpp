@@ -3351,11 +3351,6 @@ bool TestController::isStatisticsGrandfathered(WKStringRef host)
     return context.result;
 }
 
-void TestController::setUseITPDatabase(bool value)
-{
-    WKWebsiteDataStoreSetUseITPDatabase(TestController::websiteDataStore(), value);
-}
-
 void TestController::setStatisticsSubframeUnderTopFrameOrigin(WKStringRef host, WKStringRef topFrameHost)
 {
     WKWebsiteDataStoreSetStatisticsSubframeUnderTopFrameOrigin(TestController::websiteDataStore(), host, topFrameHost);

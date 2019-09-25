@@ -1,3 +1,16 @@
+2019-09-25  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed, rolling out r250324.
+
+        Broke many mac wk2 layout tests
+
+        Reverted changeset:
+
+        "Enable LayoutTests using ResourceLoadStatistics SQLite
+        backend (195420)"
+        https://bugs.webkit.org/show_bug.cgi?id=195420
+        https://trac.webkit.org/changeset/250324
+
 2019-09-25  Youenn Fablet  <youenn@apple.com>
 
         Make IsNSURLSessionWebSocketEnabled an experimental flag

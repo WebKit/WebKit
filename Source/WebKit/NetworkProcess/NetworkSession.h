@@ -84,7 +84,6 @@ public:
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     WebResourceLoadStatisticsStore* resourceLoadStatistics() const { return m_resourceLoadStatistics.get(); }
     void setResourceLoadStatisticsEnabled(bool);
-    void recreateResourceLoadStatisticStore();
     void notifyResourceLoadStatisticsProcessed();
     void deleteWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType>, Vector<std::pair<WebCore::RegistrableDomain, WebsiteDataToRemove>>&&, bool shouldNotifyPage, CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&&);
     void registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType>, bool shouldNotifyPage, CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&);

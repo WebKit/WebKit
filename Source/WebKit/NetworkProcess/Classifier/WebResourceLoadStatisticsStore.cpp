@@ -156,10 +156,10 @@ WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(NetworkSession& n
     , m_dailyTasksTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::performDailyTasks)
 {
     RELEASE_ASSERT(RunLoop::isMain());
-
-    postTask([this, databaseEnabled = networkSession.networkProcess().isITPDatabaseEnabled(), resourceLoadStatisticsDirectory = resourceLoadStatisticsDirectory.isolatedCopy(), shouldIncludeLocalhost, sessionID = networkSession.sessionID()] {
-        if (databaseEnabled) {
-            m_statisticsStore = makeUnique<ResourceLoadStatisticsDatabaseStore>(*this, m_statisticsQueue, shouldIncludeLocalhost, resourceLoadStatisticsDirectory, sessionID);
+    
+    postTask([this, resourceLoadStatisticsDirectory = resourceLoadStatisticsDirectory.isolatedCopy(), shouldIncludeLocalhost] {
+        if (RuntimeEnabledFeatures::sharedFeatures().isITPDatabaseEnabled()) {
+            m_statisticsStore = makeUnique<ResourceLoadStatisticsDatabaseStore>(*this, m_statisticsQueue, shouldIncludeLocalhost, resourceLoadStatisticsDirectory);
 
             auto memoryStore = makeUnique<ResourceLoadStatisticsMemoryStore>(*this, m_statisticsQueue, shouldIncludeLocalhost);
             auto persistentStore = makeUnique<ResourceLoadStatisticsPersistentStorage>(*memoryStore, m_statisticsQueue, resourceLoadStatisticsDirectory);

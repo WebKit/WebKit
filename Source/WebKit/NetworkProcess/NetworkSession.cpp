@@ -159,12 +159,6 @@ void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
         m_resourceLoadStatistics->setPrevalentResourceForDebugMode(m_resourceLoadStatisticsManualPrevalentResource, [] { });
 }
 
-void NetworkSession::recreateResourceLoadStatisticStore()
-{
-    destroyResourceLoadStatistics();
-    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory, m_shouldIncludeLocalhostInResourceLoadStatistics);
-}
-
 void NetworkSession::notifyResourceLoadStatisticsProcessed()
 {
     m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::NotifyResourceLoadStatisticsProcessed(), 0);
