@@ -1,3 +1,16 @@
+2019-09-24  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Removing an element should only cancel its declarative animations
+        https://bugs.webkit.org/show_bug.cgi?id=202165
+
+        Reviewed by Dean Jackson.
+
+        When an element is removed, an Animation created using the JS API should not be canceled.
+        Only declarative animations should be.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::elementWasRemoved):
+
 2019-09-24  Alex Christensen  <achristensen@webkit.org>
 
         Remove SchemeRegistry's list of URL schemes allowing local storage in private browsing, which is unused

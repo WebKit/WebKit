@@ -197,8 +197,10 @@ Vector<RefPtr<WebAnimation>> AnimationTimeline::animationsForElement(Element& el
 
 void AnimationTimeline::elementWasRemoved(Element& element)
 {
-    for (auto& animation : animationsForElement(element))
-        animation->cancel(WebAnimation::Silently::Yes);
+    for (auto& cssTransition : m_elementToCSSTransitionsMap.get(&element))
+        cssTransition->cancel(WebAnimation::Silently::Yes);
+    for (auto& cssAnimation : m_elementToCSSAnimationsMap.get(&element))
+        cssAnimation->cancel(WebAnimation::Silently::Yes);
 }
 
 void AnimationTimeline::removeAnimationsForElement(Element& element)
