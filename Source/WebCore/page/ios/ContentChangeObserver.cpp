@@ -630,7 +630,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
 
 bool ContentChangeObserver::shouldObserveVisibilityChangeForElement(const Element& element)
 {
-    return isObservingContentChanges() && !visibleRendererWasDestroyed(element) && !element.document().quirks().shouldIgnoreContentChange(element);
+    return isObservingContentChanges() && !visibleRendererWasDestroyed(element);
 }
 
 ContentChangeObserver::StyleChangeScope::StyleChangeScope(Document& document, const Element& element)

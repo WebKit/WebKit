@@ -1,3 +1,18 @@
+2019-09-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove a content change observation quirk on united.com
+        https://bugs.webkit.org/show_bug.cgi?id=202175
+
+        Reviewed by Tim Horton.
+
+        Remove a site-specific quirk that is no longer necessary.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldIgnoreContentChange const): Deleted.
+        * page/Quirks.h:
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::shouldObserveVisibilityChangeForElement):
+
 2019-09-24  Kate Cheney  <katherine_cheney@apple.com>
 
         Enable LayoutTests using ResourceLoadStatistics SQLite backend (195420)

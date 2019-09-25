@@ -57,7 +57,6 @@ public:
     bool shouldMakeTouchEventNonCancelableForTarget(EventTarget*) const;
 #endif
     bool shouldDisablePointerEventsQuirk() const;
-    bool shouldIgnoreContentChange(const Element&) const;
     bool needsInputModeNoneImplicitly(const HTMLElement&) const;
     bool needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() const;
     bool shouldLightenJapaneseBoldSansSerif() const;
