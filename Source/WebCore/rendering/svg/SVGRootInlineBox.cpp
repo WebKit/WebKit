@@ -190,14 +190,14 @@ void SVGRootInlineBox::layoutRootBox(const FloatRect& childRect)
 
 InlineBox* SVGRootInlineBox::closestLeafChildForPosition(const LayoutPoint& point)
 {
-    InlineBox* firstLeaf = firstLeafChild();
-    InlineBox* lastLeaf = lastLeafChild();
+    InlineBox* firstLeaf = firstLeafDescendant();
+    InlineBox* lastLeaf = lastLeafDescendant();
     if (firstLeaf == lastLeaf)
         return firstLeaf;
 
     // FIXME: Check for vertical text!
     InlineBox* closestLeaf = nullptr;
-    for (InlineBox* leaf = firstLeaf; leaf; leaf = leaf->nextLeafChild()) {
+    for (InlineBox* leaf = firstLeaf; leaf; leaf = leaf->nextLeafOnLine()) {
         if (!leaf->isSVGInlineTextBox())
             continue;
         if (point.y() < leaf->y())
@@ -215,7 +215,7 @@ InlineBox* SVGRootInlineBox::closestLeafChildForPosition(const LayoutPoint& poin
 
 bool SVGRootInlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction hitTestAction)
 {
-    for (InlineBox* leaf = firstLeafChild(); leaf; leaf = leaf->nextLeafChild()) {
+    for (InlineBox* leaf = firstLeafDescendant(); leaf; leaf = leaf->nextLeafOnLine()) {
         if (!leaf->isSVGInlineTextBox())
             continue;
         if (leaf->nodeAtPoint(request, result, locationInContainer, accumulatedOffset, lineTop, lineBottom, hitTestAction))

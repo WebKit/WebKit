@@ -88,8 +88,8 @@ public:
 
     bool isLeaf() const final { return false; }
     
-    InlineBox* firstLeafChild() const;
-    InlineBox* lastLeafChild() const;
+    InlineBox* firstLeafDescendant() const;
+    InlineBox* lastLeafDescendant() const;
 
     typedef void (*CustomInlineBoxRangeReverse)(void* userData, Vector<InlineBox*>::iterator first, Vector<InlineBox*>::iterator last);
     void collectLeafBoxesInLogicalOrder(Vector<InlineBox*>&, CustomInlineBoxRangeReverse customReverseImplementation = nullptr, void* userData = nullptr) const;

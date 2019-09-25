@@ -220,42 +220,42 @@ bool InlineBox::previousOnLineExists() const
 {
     if (!parent())
         return false;
-    if (prevOnLine())
+    if (previousOnLine())
         return true;
     return parent()->previousOnLineExists();
 }
 
-InlineBox* InlineBox::nextLeafChild() const
+InlineBox* InlineBox::nextLeafOnLine() const
 {
     InlineBox* leaf = nullptr;
     for (InlineBox* box = nextOnLine(); box && !leaf; box = box->nextOnLine())
-        leaf = box->isLeaf() ? box : downcast<InlineFlowBox>(*box).firstLeafChild();
+        leaf = box->isLeaf() ? box : downcast<InlineFlowBox>(*box).firstLeafDescendant();
     if (!leaf && parent())
-        leaf = parent()->nextLeafChild();
+        leaf = parent()->nextLeafOnLine();
     return leaf;
 }
     
-InlineBox* InlineBox::prevLeafChild() const
+InlineBox* InlineBox::previousLeafOnLine() const
 {
     InlineBox* leaf = nullptr;
-    for (InlineBox* box = prevOnLine(); box && !leaf; box = box->prevOnLine())
-        leaf = box->isLeaf() ? box : downcast<InlineFlowBox>(*box).lastLeafChild();
+    for (InlineBox* box = previousOnLine(); box && !leaf; box = box->previousOnLine())
+        leaf = box->isLeaf() ? box : downcast<InlineFlowBox>(*box).lastLeafDescendant();
     if (!leaf && parent())
-        leaf = parent()->prevLeafChild();
+        leaf = parent()->previousLeafOnLine();
     return leaf;
 }
 
-InlineBox* InlineBox::nextLeafChildIgnoringLineBreak() const
+InlineBox* InlineBox::nextLeafOnLineIgnoringLineBreak() const
 {
-    InlineBox* leaf = nextLeafChild();
+    InlineBox* leaf = nextLeafOnLine();
     if (leaf && leaf->isLineBreak())
         return nullptr;
     return leaf;
 }
 
-InlineBox* InlineBox::prevLeafChildIgnoringLineBreak() const
+InlineBox* InlineBox::previousLeafOnLineIgnoringLineBreak() const
 {
-    InlineBox* leaf = prevLeafChild();
+    InlineBox* leaf = previousLeafOnLine();
     if (leaf && leaf->isLineBreak())
         return nullptr;
     return leaf;

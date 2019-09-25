@@ -1304,7 +1304,7 @@ ExpansionBehavior InlineTextBox::expansionBehavior() const
     ExpansionBehavior trailingBehavior;
     if (forceTrailingExpansion())
         trailingBehavior = ForceTrailingExpansion;
-    else if (expansion() && nextLeafChild() && !nextLeafChild()->isLineBreak())
+    else if (expansion() && nextLeafOnLine() && !nextLeafOnLine()->isLineBreak())
         trailingBehavior = AllowTrailingExpansion;
     else
         trailingBehavior = ForbidTrailingExpansion;

@@ -3328,7 +3328,7 @@ void RenderBlockFlow::clearTruncation()
 bool RenderBlockFlow::containsNonZeroBidiLevel() const
 {
     for (auto* root = firstRootBox(); root; root = root->nextRootBox()) {
-        for (auto* box = root->firstLeafChild(); box; box = box->nextLeafChild()) {
+        for (auto* box = root->firstLeafDescendant(); box; box = box->nextLeafOnLine()) {
             if (box->bidiLevel())
                 return true;
         }
@@ -3436,7 +3436,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
         if (fragment && root->containingFragment() != fragment)
             continue;
 
-        if (!root->firstLeafChild())
+        if (!root->firstLeafDescendant())
             continue;
         if (!firstRootBoxWithChildren)
             firstRootBoxWithChildren = root;
@@ -3451,7 +3451,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
         if (pointInLogicalContents.y() < root->selectionBottom() || (blocksAreFlipped && pointInLogicalContents.y() == root->selectionBottom())) {
             if (linesAreFlipped) {
                 RootInlineBox* nextRootBoxWithChildren = root->nextRootBox();
-                while (nextRootBoxWithChildren && !nextRootBoxWithChildren->firstLeafChild())
+                while (nextRootBoxWithChildren && !nextRootBoxWithChildren->firstLeafDescendant())
                     nextRootBoxWithChildren = nextRootBoxWithChildren->nextRootBox();
 
                 if (nextRootBoxWithChildren && nextRootBoxWithChildren->isFirstAfterPageBreak() && (pointInLogicalContents.y() > nextRootBoxWithChildren->lineTopWithLeading()
@@ -3476,9 +3476,9 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
             LayoutUnit firstRootBoxWithChildrenTop = std::min(firstRootBoxWithChildren->selectionTop(), LayoutUnit(firstRootBoxWithChildren->logicalTop()));
             if (pointInLogicalContents.y() < firstRootBoxWithChildrenTop
                 || (blocksAreFlipped && pointInLogicalContents.y() == firstRootBoxWithChildrenTop)) {
-                InlineBox* box = firstRootBoxWithChildren->firstLeafChild();
+                InlineBox* box = firstRootBoxWithChildren->firstLeafDescendant();
                 if (box->isLineBreak()) {
-                    if (InlineBox* newBox = box->nextLeafChildIgnoringLineBreak())
+                    if (InlineBox* newBox = box->nextLeafOnLineIgnoringLineBreak())
                         box = newBox;
                 }
                 // y coordinate is above first root line box, so return the start of the first

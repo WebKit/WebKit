@@ -824,7 +824,7 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
     } else {
         // Generated content (e.g. list markers and CSS :before and :after pseudoelements) have no corresponding DOM element,
         // and so cannot be represented by a VisiblePosition. Use whatever follows instead.
-        startBox = rootBox->firstLeafChild();
+        startBox = rootBox->firstLeafDescendant();
         while (true) {
             if (!startBox)
                 return VisiblePosition();
@@ -833,7 +833,7 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
             if (startNode)
                 break;
 
-            startBox = startBox->nextLeafChild();
+            startBox = startBox->nextLeafOnLine();
         }
     }
 
@@ -898,7 +898,7 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
     } else {
         // Generated content (e.g. list markers and CSS :before and :after pseudoelements) have no corresponding DOM element,
         // and so cannot be represented by a VisiblePosition. Use whatever precedes instead.
-        endBox = rootBox->lastLeafChild();
+        endBox = rootBox->lastLeafDescendant();
         while (true) {
             if (!endBox)
                 return VisiblePosition();
@@ -907,7 +907,7 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
             if (endNode)
                 break;
             
-            endBox = endBox->prevLeafChild();
+            endBox = endBox->previousLeafOnLine();
         }
     }
 
@@ -1046,7 +1046,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, int
         root = box->root().prevRootBox();
         // We want to skip zero height boxes.
         // This could happen in case it is a TrailingFloatsRootInlineBox.
-        if (!root || !root->logicalHeight() || !root->firstLeafChild())
+        if (!root || !root->logicalHeight() || !root->firstLeafDescendant())
             root = nullptr;
     }
 
@@ -1101,7 +1101,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, int lin
         root = box->root().nextRootBox();
         // We want to skip zero height boxes.
         // This could happen in case it is a TrailingFloatsRootInlineBox.
-        if (!root || !root->logicalHeight() || !root->firstLeafChild())
+        if (!root || !root->logicalHeight() || !root->firstLeafDescendant())
             root = nullptr;
     }
 

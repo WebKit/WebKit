@@ -120,31 +120,31 @@ public:
 
     void removeFromParent();
 
-    InlineBox* nextOnLine() const { return m_next; }
-    InlineBox* prevOnLine() const { return m_prev; }
+    InlineBox* nextOnLine() const { return m_nextOnLine; }
+    InlineBox* previousOnLine() const { return m_previousOnLine; }
     void setNextOnLine(InlineBox* next)
     {
         ASSERT(m_parent || !next);
-        m_next = next;
+        m_nextOnLine = next;
     }
-    void setPrevOnLine(InlineBox* prev)
+    void setPreviousOnLine(InlineBox* previous)
     {
-        ASSERT(m_parent || !prev);
-        m_prev = prev;
+        ASSERT(m_parent || !previous);
+        m_previousOnLine = previous;
     }
     bool nextOnLineExists() const;
     bool previousOnLineExists() const;
 
     virtual bool isLeaf() const { return true; }
     
-    InlineBox* nextLeafChild() const;
-    InlineBox* prevLeafChild() const;
+    InlineBox* nextLeafOnLine() const;
+    InlineBox* previousLeafOnLine() const;
 
     // Helper functions for editing and hit-testing code.
     // FIXME: These two functions should be moved to RenderedPosition once the code to convert between
     // Position and inline box, offset pair is moved to RenderedPosition.
-    InlineBox* nextLeafChildIgnoringLineBreak() const;
-    InlineBox* prevLeafChildIgnoringLineBreak() const;
+    InlineBox* nextLeafOnLineIgnoringLineBreak() const;
+    InlineBox* previousLeafOnLineIgnoringLineBreak() const;
 
     // FIXME: Hide this once all callers are using tighter types.
     RenderObject& renderer() const { return m_renderer; }
@@ -287,8 +287,8 @@ public:
     void setForceLeadingExpansion() { m_bitfields.setForceLeadingExpansion(true); }
 
 private:
-    InlineBox* m_next { nullptr }; // The next element on the same line as us.
-    InlineBox* m_prev { nullptr }; // The previous element on the same line as us.
+    InlineBox* m_nextOnLine { nullptr }; // The next element on the same line as us.
+    InlineBox* m_previousOnLine { nullptr }; // The previous element on the same line as us.
 
     InlineFlowBox* m_parent { nullptr }; // The box that contains us.
 
@@ -383,9 +383,9 @@ protected:
     {
     }
 
-    InlineBox(RenderObject& renderer, FloatPoint topLeft, float logicalWidth, bool firstLine, bool constructed, bool dirty, bool extracted, bool isHorizontal, InlineBox* next, InlineBox* prev, InlineFlowBox* parent)
-        : m_next(next)
-        , m_prev(prev)
+    InlineBox(RenderObject& renderer, FloatPoint topLeft, float logicalWidth, bool firstLine, bool constructed, bool dirty, bool extracted, bool isHorizontal, InlineBox* next, InlineBox* previous, InlineFlowBox* parent)
+        : m_nextOnLine(next)
+        , m_previousOnLine(previous)
         , m_parent(parent)
         , m_renderer(renderer)
         , m_logicalWidth(logicalWidth)

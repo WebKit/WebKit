@@ -94,7 +94,7 @@ void RootInlineBox::clearTruncation()
 
 bool RootInlineBox::isHyphenated() const
 {
-    for (InlineBox* box = firstLeafChild(); box; box = box->nextLeafChild()) {
+    for (InlineBox* box = firstLeafDescendant(); box; box = box->nextLeafOnLine()) {
         if (is<InlineTextBox>(*box) && downcast<InlineTextBox>(*box).hasHyphen())
             return true;
     }
@@ -452,7 +452,7 @@ GapRects RootInlineBox::lineSelectionGap(RenderBlock& rootBlock, const LayoutPoi
         // Now fill in any gaps on the line that occurred between two selected elements.
         LayoutUnit lastLogicalLeft { firstBox->logicalRight() };
         bool isPreviousBoxSelected = firstBox->selectionState() != RenderObject::SelectionNone;
-        for (InlineBox* box = firstBox->nextLeafChild(); box; box = box->nextLeafChild()) {
+        for (InlineBox* box = firstBox->nextLeafOnLine(); box; box = box->nextLeafOnLine()) {
             if (box->selectionState() != RenderObject::SelectionNone) {
                 LayoutRect logicalRect { lastLogicalLeft, selTop, LayoutUnit(box->logicalLeft() - lastLogicalLeft), selHeight };
                 logicalRect.move(renderer().isHorizontalWritingMode() ? offsetFromRootBlock : LayoutSize(offsetFromRootBlock.height(), offsetFromRootBlock.width()));
@@ -531,7 +531,7 @@ RenderObject::SelectionState RootInlineBox::selectionState()
 {
     // Walk over all of the selected boxes.
     RenderObject::SelectionState state = RenderObject::SelectionNone;
-    for (InlineBox* box = firstLeafChild(); box; box = box->nextLeafChild()) {
+    for (InlineBox* box = firstLeafDescendant(); box; box = box->nextLeafOnLine()) {
         RenderObject::SelectionState boxState = box->selectionState();
         if ((boxState == RenderObject::SelectionStart && state == RenderObject::SelectionEnd) ||
             (boxState == RenderObject::SelectionEnd && state == RenderObject::SelectionStart))
@@ -553,7 +553,7 @@ RenderObject::SelectionState RootInlineBox::selectionState()
 
 InlineBox* RootInlineBox::firstSelectedBox()
 {
-    for (auto* box = firstLeafChild(); box; box = box->nextLeafChild()) {
+    for (auto* box = firstLeafDescendant(); box; box = box->nextLeafOnLine()) {
         if (box->selectionState() != RenderObject::SelectionNone)
             return box;
     }
@@ -562,7 +562,7 @@ InlineBox* RootInlineBox::firstSelectedBox()
 
 InlineBox* RootInlineBox::lastSelectedBox()
 {
-    for (auto* box = lastLeafChild(); box; box = box->prevLeafChild()) {
+    for (auto* box = lastLeafDescendant(); box; box = box->previousLeafOnLine()) {
         if (box->selectionState() != RenderObject::SelectionNone)
             return box;
     }
@@ -766,14 +766,14 @@ InlineBox* RootInlineBox::closestLeafChildForPoint(const IntPoint& pointInConten
 
 InlineBox* RootInlineBox::closestLeafChildForLogicalLeftPosition(int leftPosition, bool onlyEditableLeaves)
 {
-    InlineBox* firstLeaf = firstLeafChild();
-    InlineBox* lastLeaf = lastLeafChild();
+    InlineBox* firstLeaf = firstLeafDescendant();
+    InlineBox* lastLeaf = lastLeafDescendant();
 
     if (firstLeaf != lastLeaf) {
         if (firstLeaf->isLineBreak())
-            firstLeaf = firstLeaf->nextLeafChildIgnoringLineBreak();
+            firstLeaf = firstLeaf->nextLeafOnLineIgnoringLineBreak();
         else if (lastLeaf->isLineBreak())
-            lastLeaf = lastLeaf->prevLeafChildIgnoringLineBreak();
+            lastLeaf = lastLeaf->previousLeafOnLineIgnoringLineBreak();
     }
 
     if (firstLeaf == lastLeaf && (!onlyEditableLeaves || isEditableLeaf(firstLeaf)))
@@ -791,7 +791,7 @@ InlineBox* RootInlineBox::closestLeafChildForLogicalLeftPosition(int leftPositio
         return lastLeaf;
 
     InlineBox* closestLeaf = nullptr;
-    for (InlineBox* leaf = firstLeaf; leaf; leaf = leaf->nextLeafChildIgnoringLineBreak()) {
+    for (InlineBox* leaf = firstLeaf; leaf; leaf = leaf->nextLeafOnLineIgnoringLineBreak()) {
         if (!leaf->renderer().isListMarker() && (!onlyEditableLeaves || isEditableLeaf(leaf))) {
             closestLeaf = leaf;
             if (leftPosition < leaf->logicalRight())

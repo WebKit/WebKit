@@ -127,13 +127,13 @@ static bool checkForMatchingTextRuns(const Display::Run& inlineRun, const Inline
 
 static void collectFlowBoxSubtree(const InlineFlowBox& flowbox, Vector<WebCore::InlineBox*>& inlineBoxes)
 {
-    auto* inlineBox = flowbox.firstLeafChild();
-    auto* lastLeafChild = flowbox.lastLeafChild();
+    auto* inlineBox = flowbox.firstLeafDescendant();
+    auto* lastLeafDescendant = flowbox.lastLeafDescendant();
     while (inlineBox) {
         inlineBoxes.append(inlineBox);
-        if (inlineBox == lastLeafChild)
+        if (inlineBox == lastLeafDescendant)
             break;
-        inlineBox = inlineBox->nextLeafChild();
+        inlineBox = inlineBox->nextLeafOnLine();
     }
 }
 

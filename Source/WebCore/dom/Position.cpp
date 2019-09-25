@@ -1244,7 +1244,7 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
 
             if (((caretOffset == caretMaxOffset) ^ (affinity == DOWNSTREAM))
                 || ((caretOffset == caretMinOffset) ^ (affinity == UPSTREAM))
-                || (caretOffset == caretMaxOffset && box->nextLeafChild() && box->nextLeafChild()->isLineBreak()))
+                || (caretOffset == caretMaxOffset && box->nextLeafOnLine() && box->nextLeafOnLine()->isLineBreak()))
                 break;
 
             candidate = box;
@@ -1285,41 +1285,41 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
 
     if (inlineBox->direction() == primaryDirection) {
         if (caretOffset == inlineBox->caretRightmostOffset()) {
-            InlineBox* nextBox = inlineBox->nextLeafChild();
+            InlineBox* nextBox = inlineBox->nextLeafOnLine();
             if (!nextBox || nextBox->bidiLevel() >= level)
                 return;
 
             level = nextBox->bidiLevel();
             InlineBox* prevBox = inlineBox;
             do {
-                prevBox = prevBox->prevLeafChild();
+                prevBox = prevBox->previousLeafOnLine();
             } while (prevBox && prevBox->bidiLevel() > level);
 
             if (prevBox && prevBox->bidiLevel() == level)   // For example, abc FED 123 ^ CBA
                 return;
 
             // For example, abc 123 ^ CBA
-            while (InlineBox* nextBox = inlineBox->nextLeafChild()) {
+            while (InlineBox* nextBox = inlineBox->nextLeafOnLine()) {
                 if (nextBox->bidiLevel() < level)
                     break;
                 inlineBox = nextBox;
             }
             caretOffset = inlineBox->caretRightmostOffset();
         } else {
-            InlineBox* prevBox = inlineBox->prevLeafChild();
+            InlineBox* prevBox = inlineBox->previousLeafOnLine();
             if (!prevBox || prevBox->bidiLevel() >= level)
                 return;
 
             level = prevBox->bidiLevel();
             InlineBox* nextBox = inlineBox;
             do {
-                nextBox = nextBox->nextLeafChild();
+                nextBox = nextBox->nextLeafOnLine();
             } while (nextBox && nextBox->bidiLevel() > level);
 
             if (nextBox && nextBox->bidiLevel() == level)
                 return;
 
-            while (InlineBox* prevBox = inlineBox->prevLeafChild()) {
+            while (InlineBox* prevBox = inlineBox->previousLeafOnLine()) {
                 if (prevBox->bidiLevel() < level)
                     break;
                 inlineBox = prevBox;
@@ -1330,10 +1330,10 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
     }
 
     if (caretOffset == inlineBox->caretLeftmostOffset()) {
-        InlineBox* prevBox = inlineBox->prevLeafChildIgnoringLineBreak();
+        InlineBox* prevBox = inlineBox->previousLeafOnLineIgnoringLineBreak();
         if (!prevBox || prevBox->bidiLevel() < level) {
             // Left edge of a secondary run. Set to the right edge of the entire run.
-            while (InlineBox* nextBox = inlineBox->nextLeafChildIgnoringLineBreak()) {
+            while (InlineBox* nextBox = inlineBox->nextLeafOnLineIgnoringLineBreak()) {
                 if (nextBox->bidiLevel() < level)
                     break;
                 inlineBox = nextBox;
@@ -1341,7 +1341,7 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
             caretOffset = inlineBox->caretRightmostOffset();
         } else if (prevBox->bidiLevel() > level) {
             // Right edge of a "tertiary" run. Set to the left edge of that run.
-            while (InlineBox* tertiaryBox = inlineBox->prevLeafChildIgnoringLineBreak()) {
+            while (InlineBox* tertiaryBox = inlineBox->previousLeafOnLineIgnoringLineBreak()) {
                 if (tertiaryBox->bidiLevel() <= level)
                     break;
                 inlineBox = tertiaryBox;
@@ -1349,10 +1349,10 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
             caretOffset = inlineBox->caretLeftmostOffset();
         }
     } else {
-        InlineBox* nextBox = inlineBox->nextLeafChildIgnoringLineBreak();
+        InlineBox* nextBox = inlineBox->nextLeafOnLineIgnoringLineBreak();
         if (!nextBox || nextBox->bidiLevel() < level) {
             // Right edge of a secondary run. Set to the left edge of the entire run.
-            while (InlineBox* prevBox = inlineBox->prevLeafChildIgnoringLineBreak()) {
+            while (InlineBox* prevBox = inlineBox->previousLeafOnLineIgnoringLineBreak()) {
                 if (prevBox->bidiLevel() < level)
                     break;
                 inlineBox = prevBox;
@@ -1360,7 +1360,7 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
             caretOffset = inlineBox->caretLeftmostOffset();
         } else if (nextBox->bidiLevel() > level) {
             // Left edge of a "tertiary" run. Set to the right edge of that run.
-            while (InlineBox* tertiaryBox = inlineBox->nextLeafChildIgnoringLineBreak()) {
+            while (InlineBox* tertiaryBox = inlineBox->nextLeafOnLineIgnoringLineBreak()) {
                 if (tertiaryBox->bidiLevel() <= level)
                     break;
                 inlineBox = tertiaryBox;

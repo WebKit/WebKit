@@ -1,3 +1,99 @@
+2019-09-25  Antti Koivisto  <antti@apple.com>
+
+        Rename InlineBox::nextLeafChild to nextLeafOnLine
+        https://bugs.webkit.org/show_bug.cgi?id=202197
+
+        Reviewed by Zalan Bujtas.
+
+        The name is confusing as it never returns a child of the inline box it is called on.
+        Rename it and other similar functions that traverse within a line.
+
+        * dom/Position.cpp:
+        (WebCore::Position::getInlineBoxAndOffset const):
+        * editing/RenderedPosition.cpp:
+        (WebCore::RenderedPosition::RenderedPosition):
+        (WebCore::RenderedPosition::previousLeafOnLine const):
+        (WebCore::RenderedPosition::nextLeafOnLine const):
+        (WebCore::RenderedPosition::isEquivalent const):
+        (WebCore::RenderedPosition::bidiLevelOnLeft const):
+        (WebCore::RenderedPosition::bidiLevelOnRight const):
+        (WebCore::RenderedPosition::leftBoundaryOfBidiRun):
+        (WebCore::RenderedPosition::rightBoundaryOfBidiRun):
+        (WebCore::RenderedPosition::atLeftBoundaryOfBidiRun const):
+        (WebCore::RenderedPosition::atRightBoundaryOfBidiRun const):
+        (WebCore::RenderedPosition::positionAtLeftBoundaryOfBiDiRun const):
+        (WebCore::RenderedPosition::positionAtRightBoundaryOfBiDiRun const):
+        (WebCore::RenderedPosition::prevLeafChild const): Deleted.
+        (WebCore::RenderedPosition::nextLeafChild const): Deleted.
+        * editing/RenderedPosition.h:
+        (WebCore::RenderedPosition::RenderedPosition):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::leftVisuallyDistinctCandidate const):
+        (WebCore::VisiblePosition::rightVisuallyDistinctCandidate const):
+        * editing/VisibleUnits.cpp:
+        (WebCore::startPositionForLine):
+        (WebCore::endPositionForLine):
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+        * layout/Verification.cpp:
+        (WebCore::Layout::collectFlowBoxSubtree):
+        * rendering/ComplexLineLayout.cpp:
+        (WebCore::ComplexLineLayout::updateRubyForJustifiedText):
+        (WebCore::expansionBehaviorForInlineTextBox):
+        (WebCore::ComplexLineLayout::computeInlineDirectionPositionsForSegment):
+        (WebCore::ComplexLineLayout::layoutRunsAndFloats):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::previousOnLineExists const):
+        (WebCore::InlineBox::nextLeafOnLine const):
+        (WebCore::InlineBox::previousLeafOnLine const):
+        (WebCore::InlineBox::nextLeafOnLineIgnoringLineBreak const):
+        (WebCore::InlineBox::previousLeafOnLineIgnoringLineBreak const):
+        (WebCore::InlineBox::nextLeafChild const): Deleted.
+        (WebCore::InlineBox::prevLeafChild const): Deleted.
+        (WebCore::InlineBox::nextLeafChildIgnoringLineBreak const): Deleted.
+        (WebCore::InlineBox::prevLeafChildIgnoringLineBreak const): Deleted.
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::nextOnLine const):
+        (WebCore::InlineBox::previousOnLine const):
+        (WebCore::InlineBox::setNextOnLine):
+        (WebCore::InlineBox::setPreviousOnLine):
+        (WebCore::InlineBox::InlineBox):
+        (WebCore::InlineBox::prevOnLine const): Deleted.
+        (WebCore::InlineBox::setPrevOnLine): Deleted.
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addToLine):
+        (WebCore::InlineFlowBox::removeChild):
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        (WebCore::InlineFlowBox::firstLeafDescendant const):
+        (WebCore::InlineFlowBox::lastLeafDescendant const):
+        (WebCore::InlineFlowBox::placeEllipsisBox):
+        (WebCore::InlineFlowBox::collectLeafBoxesInLogicalOrder const):
+        (WebCore::InlineFlowBox::checkConsistency const):
+        (WebCore::InlineFlowBox::firstLeafChild const): Deleted.
+        (WebCore::InlineFlowBox::lastLeafChild const): Deleted.
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::expansionBehavior const):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::containsNonZeroBidiLevel const):
+        (WebCore::RenderBlockFlow::positionForPointWithInlineChildren):
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::rendererRemovedFromTree):
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::lineDirectionPointFitsInBox):
+        (WebCore::createVisiblePositionAfterAdjustingOffsetForBiDi):
+        (WebCore::RenderTextLineBoxes::positionForPoint const):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::isHyphenated const):
+        (WebCore::RootInlineBox::lineSelectionGap):
+        (WebCore::RootInlineBox::selectionState):
+        (WebCore::RootInlineBox::firstSelectedBox):
+        (WebCore::RootInlineBox::lastSelectedBox):
+        (WebCore::RootInlineBox::closestLeafChildForLogicalLeftPosition):
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::closestLeafChildForPosition):
+        (WebCore::SVGRootInlineBox::nodeAtPoint):
+
 2019-09-25  Zan Dobersek  <zdobersek@igalia.com>
 
         [Nicosia] Add implementations for fixed, positioned, sticky ScrollingTreeNodes

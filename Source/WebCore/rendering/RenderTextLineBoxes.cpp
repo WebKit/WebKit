@@ -275,7 +275,7 @@ static bool lineDirectionPointFitsInBox(int pointLineDirection, const InlineText
     // the affinity must be downstream so the position doesn't jump back to the previous line
     // except when box is the first box in the line
     if (pointLineDirection <= box.logicalLeft()) {
-        shouldAffinityBeDownstream = !box.prevLeafChild() ? UpstreamIfPositionIsNotAtStart : AlwaysDownstream;
+        shouldAffinityBeDownstream = !box.previousLeafOnLine() ? UpstreamIfPositionIsNotAtStart : AlwaysDownstream;
         return true;
     }
 
@@ -290,10 +290,10 @@ static bool lineDirectionPointFitsInBox(int pointLineDirection, const InlineText
 
     // box is first on line
     // and the x coordinate is to the left of the first text box left edge
-    if (!box.prevLeafChildIgnoringLineBreak() && pointLineDirection < box.logicalLeft())
+    if (!box.previousLeafOnLineIgnoringLineBreak() && pointLineDirection < box.logicalLeft())
         return true;
 
-    if (!box.nextLeafChildIgnoringLineBreak()) {
+    if (!box.nextLeafOnLineIgnoringLineBreak()) {
         // box is last on line
         // and the x coordinate is to the right of the last text box right edge
         // generate VisiblePosition, use UPSTREAM affinity if possible
@@ -332,7 +332,7 @@ static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const In
     if (positionIsAtStartOfBox == box.isLeftToRightDirection()) {
         // offset is on the left edge
 
-        const InlineBox* prevBox = box.prevLeafChildIgnoringLineBreak();
+        const InlineBox* prevBox = box.previousLeafOnLineIgnoringLineBreak();
         if ((prevBox && prevBox->bidiLevel() == box.bidiLevel())
             || box.renderer().containingBlock()->style().direction() == box.direction()) // FIXME: left on 12CBA
             return createVisiblePositionForBox(box, box.caretLeftmostOffset(), shouldAffinityBeDownstream);
@@ -342,7 +342,7 @@ static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const In
             const InlineBox* leftmostBox;
             do {
                 leftmostBox = prevBox;
-                prevBox = leftmostBox->prevLeafChildIgnoringLineBreak();
+                prevBox = leftmostBox->previousLeafOnLineIgnoringLineBreak();
             } while (prevBox && prevBox->bidiLevel() > box.bidiLevel());
             return createVisiblePositionForBox(*leftmostBox, leftmostBox->caretRightmostOffset(), shouldAffinityBeDownstream);
         }
@@ -353,7 +353,7 @@ static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const In
             const InlineBox* nextBox = &box;
             do {
                 rightmostBox = nextBox;
-                nextBox = rightmostBox->nextLeafChildIgnoringLineBreak();
+                nextBox = rightmostBox->nextLeafOnLineIgnoringLineBreak();
             } while (nextBox && nextBox->bidiLevel() >= box.bidiLevel());
             return createVisiblePositionForBox(*rightmostBox,
                 box.isLeftToRightDirection() ? rightmostBox->caretMaxOffset() : rightmostBox->caretMinOffset(), shouldAffinityBeDownstream);
@@ -362,7 +362,7 @@ static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const In
         return createVisiblePositionForBox(box, box.caretRightmostOffset(), shouldAffinityBeDownstream);
     }
 
-    const InlineBox* nextBox = box.nextLeafChildIgnoringLineBreak();
+    const InlineBox* nextBox = box.nextLeafOnLineIgnoringLineBreak();
     if ((nextBox && nextBox->bidiLevel() == box.bidiLevel())
         || box.renderer().containingBlock()->style().direction() == box.direction())
         return createVisiblePositionForBox(box, box.caretRightmostOffset(), shouldAffinityBeDownstream);
@@ -373,7 +373,7 @@ static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const In
         const InlineBox* rightmostBox;
         do {
             rightmostBox = nextBox;
-            nextBox = rightmostBox->nextLeafChildIgnoringLineBreak();
+            nextBox = rightmostBox->nextLeafOnLineIgnoringLineBreak();
         } while (nextBox && nextBox->bidiLevel() > box.bidiLevel());
         return createVisiblePositionForBox(*rightmostBox, rightmostBox->caretLeftmostOffset(), shouldAffinityBeDownstream);
     }
@@ -384,7 +384,7 @@ static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const In
         const InlineBox* prevBox = &box;
         do {
             leftmostBox = prevBox;
-            prevBox = leftmostBox->prevLeafChildIgnoringLineBreak();
+            prevBox = leftmostBox->previousLeafOnLineIgnoringLineBreak();
         } while (prevBox && prevBox->bidiLevel() >= box.bidiLevel());
         return createVisiblePositionForBox(*leftmostBox,
             box.isLeftToRightDirection() ? leftmostBox->caretMinOffset() : leftmostBox->caretMaxOffset(), shouldAffinityBeDownstream);
@@ -404,7 +404,7 @@ VisiblePosition RenderTextLineBoxes::positionForPoint(const RenderText& renderer
 
     InlineTextBox* lastBox = nullptr;
     for (auto* box = m_first; box; box = box->nextTextBox()) {
-        if (box->isLineBreak() && !box->prevLeafChild() && box->nextLeafChild() && !box->nextLeafChild()->isLineBreak())
+        if (box->isLineBreak() && !box->previousLeafOnLine() && box->nextLeafOnLine() && !box->nextLeafOnLine()->isLineBreak())
             box = box->nextTextBox();
 
         auto& rootBox = box->root();

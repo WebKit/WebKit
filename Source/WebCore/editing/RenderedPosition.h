@@ -72,8 +72,8 @@ private:
     bool operator==(const RenderedPosition&) const { return false; }
     explicit RenderedPosition(RenderObject*, InlineBox*, int offset);
 
-    InlineBox* prevLeafChild() const;
-    InlineBox* nextLeafChild() const;
+    InlineBox* previousLeafOnLine() const;
+    InlineBox* nextLeafOnLine() const;
     bool atLeftmostOffsetInBox() const { return m_inlineBox && m_offset == m_inlineBox->caretLeftmostOffset(); }
     bool atRightmostOffsetInBox() const { return m_inlineBox && m_offset == m_inlineBox->caretRightmostOffset(); }
     bool atLeftBoundaryOfBidiRun(ShouldMatchBidiLevel, unsigned char bidiLevelOfRun) const;
@@ -86,14 +86,14 @@ private:
     static InlineBox* uncachedInlineBox() { return reinterpret_cast<InlineBox*>(1); }
     // Needs to be different form 0 so pick 1 because it's also on the null page.
 
-    mutable InlineBox* m_prevLeafChild;
-    mutable InlineBox* m_nextLeafChild;
+    mutable InlineBox* m_previousLeafOnLine;
+    mutable InlineBox* m_nextLeafOnLine;
 };
 
 inline RenderedPosition::RenderedPosition()
     : m_offset(0)
-    , m_prevLeafChild(uncachedInlineBox())
-    , m_nextLeafChild(uncachedInlineBox())
+    , m_previousLeafOnLine(uncachedInlineBox())
+    , m_nextLeafOnLine(uncachedInlineBox())
 {
 }
 
@@ -101,8 +101,8 @@ inline RenderedPosition::RenderedPosition(RenderObject* renderer, InlineBox* box
     : m_renderer(renderer)
     , m_inlineBox(box)
     , m_offset(offset)
-    , m_prevLeafChild(uncachedInlineBox())
-    , m_nextLeafChild(uncachedInlineBox())
+    , m_previousLeafOnLine(uncachedInlineBox())
+    , m_nextLeafOnLine(uncachedInlineBox())
 {
 }
 
