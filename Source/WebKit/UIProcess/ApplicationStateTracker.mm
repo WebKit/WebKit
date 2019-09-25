@@ -105,19 +105,24 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
     switch (applicationType(window)) {
     case ApplicationType::Application: {
         m_isInBackground = application.applicationState == UIApplicationStateBackground;
+        RELEASE_LOG(ProcessSuspension, "%p - ApplicationStateTracker::ApplicationStateTracker(): m_isInBackground: %d", this, m_isInBackground);
 
 #if HAVE(UISCENE)
         m_didEnterBackgroundObserver = [notificationCenter addObserverForName:UISceneDidEnterBackgroundNotification object:window.windowScene queue:nil usingBlock:[this](NSNotification *) {
+            RELEASE_LOG(ProcessSuspension, "%p - ApplicationStateTracker: UISceneDidEnterBackground", this);
 #else
         m_didEnterBackgroundObserver = [notificationCenter addObserverForName:UIApplicationDidEnterBackgroundNotification object:application queue:nil usingBlock:[this](NSNotification *) {
+            RELEASE_LOG(ProcessSuspension, "%p - ApplicationStateTracker: UIApplicationDidEnterBackground", this);
 #endif
             applicationDidEnterBackground();
         }];
 
 #if HAVE(UISCENE)
         m_willEnterForegroundObserver = [notificationCenter addObserverForName:UISceneWillEnterForegroundNotification object:window.windowScene queue:nil usingBlock:[this](NSNotification *) {
+            RELEASE_LOG(ProcessSuspension, "%p - ApplicationStateTracker: UISceneWillEnterForeground", this);
 #else
         m_willEnterForegroundObserver = [notificationCenter addObserverForName:UIApplicationWillEnterForegroundNotification object:application queue:nil usingBlock:[this](NSNotification *) {
+            RELEASE_LOG(ProcessSuspension, "%p - ApplicationStateTracker: UIApplicationWillEnterForeground", this);
 #endif
             applicationWillEnterForeground();
         }];
