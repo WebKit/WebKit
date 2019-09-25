@@ -1,5 +1,13 @@
 2019-09-25  Zalan Bujtas  <zalan@apple.com>
 
+        Adjust tap position to avoid double-tap issue across tests.
+
+        Unreviewed test gardening.
+
+        * fast/events/touch/ios/double-tap-for-two-clicks3.html:
+
+2019-09-25  Zalan Bujtas  <zalan@apple.com>
+
         Rebaselining after r250315.
 
         * fast/events/touch/ios/double-tap-for-double-click3-expected.txt:
