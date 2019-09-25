@@ -7339,7 +7339,6 @@ HRESULT WebView::registerURLSchemeAsSecure(_In_ BSTR scheme)
 
 HRESULT WebView::registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing(_In_ BSTR scheme)
 {
-    SchemeRegistry::registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing(toString(scheme));
     return S_OK;
 }
 

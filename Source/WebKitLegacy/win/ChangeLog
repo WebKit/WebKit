@@ -1,3 +1,15 @@
+2019-09-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove SchemeRegistry's list of URL schemes allowing local storage in private browsing, which is unused
+        https://bugs.webkit.org/show_bug.cgi?id=202181
+
+        Unreviewed build fix for Windows ports.
+
+        ..\..\Source\WebKitLegacy\win\WebView.cpp(7342): error C2039: 'registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing': is not a member of 'WebCore::SchemeRegistry'
+
+        * WebView.cpp:
+        (WebView::registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing): Removed calling the removed function.
+
 2019-09-21  Chris Dumez  <cdumez@apple.com>
 
         Reduce use of SessionID::defaultSessionID() in WebKit
