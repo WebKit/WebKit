@@ -1,0 +1,6 @@
+
+FAIL cursor.request from IDBObjectStore.openCursor assert_equals: cursor.request expected (object) object "[object IDBRequest]" but got (undefined) undefined
+FAIL cursor.request from IDBObjectStore.openKeyCursor assert_equals: cursor.request expected (object) object "[object IDBRequest]" but got (undefined) undefined
+FAIL cursor.request from IDBIndex.openCursor assert_equals: cursor.request expected (object) object "[object IDBRequest]" but got (undefined) undefined
+FAIL cursor.request from IDBIndex.openKeyCursor assert_equals: cursor.request expected (object) object "[object IDBRequest]" but got (undefined) undefined
+

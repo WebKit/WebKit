@@ -1,0 +1,3 @@
+
+FAIL Any errors in callbacks that run after an explicit commit will not stop the commit from being processed. promise_test: Unhandled rejection with value: object "TypeError: txn.commit is not a function. (In 'txn.commit()', 'txn.commit' is undefined)"
+

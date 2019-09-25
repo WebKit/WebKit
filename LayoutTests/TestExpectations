@@ -1004,7 +1004,6 @@ webkit.org/b/191508 fast/css-grid-layout/crash-large-positions.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-host-namespace.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/IndexedDB/abort-in-initial-upgradeneeded.html [ Pass Failure ]
 imported/w3c/web-platform-tests/IndexedDB/clone-before-keypath-eval.html [ Pass Failure ]
-imported/w3c/web-platform-tests/IndexedDB/bindings-inject-key.html [ Pass Failure ]
 
 # Those WPT tests are flaky when failing.
 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/allow-scripts-flag-changing-1.html [ Pass Failure ]
@@ -2145,7 +2144,7 @@ storage/indexeddb/deletedatabase-delayed-by-versionchange.html [ Skip ]
 storage/indexeddb/properties-disabled-at-runtime.html [ Failure ]
 
 # In debug builds, runs too slowly for the test timeout.
-[ Debug ] imported/w3c/web-platform-tests/IndexedDB/idbindex-multientry-big.htm [ Failure ]
+[ Debug ] imported/w3c/web-platform-tests/IndexedDB/idbindex-multientry-big.htm [ Pass Failure ]
 
 # Test is crashing
 webkit.org/b/184065 imported/w3c/web-platform-tests/IndexedDB/keypath-exceptions.htm [ Skip ]
@@ -2842,8 +2841,8 @@ webkit.org/b/184802 http/tests/security/contentTypeOptions/nosniff-importScript-
 
 webkit.org/b/181100 inspector/worker/worker-recover-if-inspector-close.html [ Pass Failure ]
 
-[ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html [ Failure ]
-[ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Failure ]
+[ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html [ Pass Failure ]
+[ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Pass Failure ]
 webkit.org/b/186574 media/video-buffering-allowed.html [ Pass Failure ]
 
 ### WebL Conformance Suite 2.0.0 tests that do not yet have support as of webkit.org/b/189686. Enable as support is implemented. ###

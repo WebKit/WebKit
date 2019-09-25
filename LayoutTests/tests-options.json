@@ -23,10 +23,16 @@
     "imported/w3c/web-platform-tests/IndexedDB/idbdatabase_createObjectStore8-parameters.htm": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/IndexedDB/idbindex-multientry-big.htm": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/IndexedDB/idbindex-rename.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-rename-store.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex15-autoincrement.htm": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex3-usable-right-away.htm": [

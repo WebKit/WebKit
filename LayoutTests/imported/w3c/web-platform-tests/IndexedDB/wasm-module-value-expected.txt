@@ -1,5 +1,0 @@
-
-FAIL WebAssembly module as an IndexedDB value The object can not be cloned.
-FAIL WebAssembly module in a JavaScript object IndexedDB value The object can not be cloned.
-FAIL WebAssembly module in an IndexedDB value with an inline key The object can not be cloned.
-

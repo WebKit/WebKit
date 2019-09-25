@@ -1,37 +1,6 @@
 
-PASS Test driver 
+PASS idl_test setup 
 PASS Partial interface mixin WindowOrWorkerGlobalScope: original interface mixin defined 
-PASS EventListener interface: existence and properties of interface object 
-PASS NodeList interface: existence and properties of interface object 
-PASS HTMLCollection interface: existence and properties of interface object 
-PASS MutationObserver interface: existence and properties of interface object 
-PASS MutationRecord interface: existence and properties of interface object 
-PASS Node interface: existence and properties of interface object 
-PASS Document interface: existence and properties of interface object 
-PASS XMLDocument interface: existence and properties of interface object 
-PASS DOMImplementation interface: existence and properties of interface object 
-PASS DocumentType interface: existence and properties of interface object 
-PASS DocumentFragment interface: existence and properties of interface object 
-PASS ShadowRoot interface: existence and properties of interface object 
-PASS Element interface: existence and properties of interface object 
-PASS NamedNodeMap interface: existence and properties of interface object 
-PASS Attr interface: existence and properties of interface object 
-PASS CharacterData interface: existence and properties of interface object 
-PASS Text interface: existence and properties of interface object 
-PASS CDATASection interface: existence and properties of interface object 
-PASS ProcessingInstruction interface: existence and properties of interface object 
-PASS Comment interface: existence and properties of interface object 
-PASS AbstractRange interface: existence and properties of interface object 
-PASS StaticRange interface: existence and properties of interface object 
-PASS Range interface: existence and properties of interface object 
-PASS NodeIterator interface: existence and properties of interface object 
-PASS TreeWalker interface: existence and properties of interface object 
-PASS NodeFilter interface: existence and properties of interface object 
-PASS DOMTokenList interface: existence and properties of interface object 
-PASS XPathResult interface: existence and properties of interface object 
-PASS XPathExpression interface: existence and properties of interface object 
-PASS XPathNSResolver interface: existence and properties of interface object 
-PASS XPathEvaluator interface: existence and properties of interface object 
 PASS IDBRequest interface: existence and properties of interface object 
 PASS IDBRequest interface object length 
 PASS IDBRequest interface object name 
@@ -61,10 +30,10 @@ PASS IDBVersionChangeEvent interface: existence and properties of interface prot
 PASS IDBVersionChangeEvent interface: existence and properties of interface prototype object's @@unscopables property 
 PASS IDBVersionChangeEvent interface: attribute oldVersion 
 PASS IDBVersionChangeEvent interface: attribute newVersion 
-PASS IDBVersionChangeEvent must be primary interface of [object IDBVersionChangeEvent] 
-PASS Stringification of [object IDBVersionChangeEvent] 
-PASS IDBVersionChangeEvent interface: [object IDBVersionChangeEvent] must inherit property "oldVersion" with the proper type 
-PASS IDBVersionChangeEvent interface: [object IDBVersionChangeEvent] must inherit property "newVersion" with the proper type 
+PASS IDBVersionChangeEvent must be primary interface of new IDBVersionChangeEvent("type") 
+PASS Stringification of new IDBVersionChangeEvent("type") 
+PASS IDBVersionChangeEvent interface: new IDBVersionChangeEvent("type") must inherit property "oldVersion" with the proper type 
+PASS IDBVersionChangeEvent interface: new IDBVersionChangeEvent("type") must inherit property "newVersion" with the proper type 
 PASS IDBFactory interface: existence and properties of interface object 
 PASS IDBFactory interface object length 
 PASS IDBFactory interface object name 
@@ -214,4 +183,6 @@ PASS IDBTransaction interface: operation abort()
 PASS IDBTransaction interface: attribute onabort 
 PASS IDBTransaction interface: attribute oncomplete 
 PASS IDBTransaction interface: attribute onerror 
+PASS Window interface: attribute indexedDB 
+PASS WorkerGlobalScope interface: existence and properties of interface object 
 

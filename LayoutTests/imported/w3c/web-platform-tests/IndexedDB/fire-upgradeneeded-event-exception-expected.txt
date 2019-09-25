@@ -1,10 +1,13 @@
-CONSOLE MESSAGE: line 26: Error
+CONSOLE MESSAGE: line 31: Error
 CONSOLE MESSAGE: line 37: Error
-CONSOLE MESSAGE: line 51: Error
-CONSOLE MESSAGE: line 63: Error
+CONSOLE MESSAGE: line 44: Error
+CONSOLE MESSAGE: line 62: Error
+CONSOLE MESSAGE: line 70: Error
 
 PASS Exception in upgradeneeded handler 
 PASS Exception in upgradeneeded listener 
+PASS Exception in upgradeneeded "handleEvent" lookup 
+FAIL Exception in upgradeneeded due to non-callable "handleEvent" assert_unreached: open should fail Reached unreachable code
 PASS Exception in second upgradeneeded listener 
 PASS Exception in first upgradeneeded listener, tx active in second 
 

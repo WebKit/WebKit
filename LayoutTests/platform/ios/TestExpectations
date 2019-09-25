@@ -3047,8 +3047,6 @@ webkit.org/b/183219 editing/pasteboard/data-transfer-get-data-on-pasting-html-us
 
 webkit.org/b/173928 storage/websql/database-lock-after-reload.html [ Pass Failure ]
 
-[ Debug ] imported/w3c/web-platform-tests/IndexedDB/interfaces.any.html [ Slow ]
-[ Debug ] imported/w3c/web-platform-tests/IndexedDB/interfaces.any.worker.html [ Slow ]
 [ Debug ] imported/w3c/web-platform-tests/hr-time/idlharness.html [ Slow ]
 
 webkit.org/b/183388 fast/scrolling/scroll-to-focused-element-asynchronously.html [ Pass Failure ]

@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,11 +14,13 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/README.md
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/abort-in-initial-upgradeneeded.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/bigint_value.htm
-/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/bindings-inject-key.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/bindings-inject-keys-bypass-setters.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/bindings-inject-values-bypass-chain.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/bindings-inject-values-bypass-setters.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/clone-before-keypath-eval.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/close-in-upgradeneeded.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/cursor-overloads.htm
@@ -28,10 +30,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/fire-upgradeneeded-event-exception.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/get-databases.any.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/globalscope-indexedDB-SameObject.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idb-binary-key-detached.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idb-binary-key-roundtrip.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idb-explicit-commit-throw.any.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idb-explicit-commit.any.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idb_binary_key_conversion.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idb_webworkers.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-advance-continue-async.htm
@@ -53,6 +58,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-key.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-primarykey.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-request-source.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-request.any.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-reused.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-source.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-update-exception-order.htm
@@ -143,12 +149,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbdatabase_transaction3.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbdatabase_transaction4.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbdatabase_transaction5.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory-databases-opaque-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory-deleteDatabase-opaque-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory-deleteDatabase-request-success.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory-open-error-properties.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory-open-opaque-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory-open-request-error.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory-open-request-success.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory-origin-isolation.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory_cmp.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory_cmp2.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbfactory_cmp3.htm
@@ -203,6 +211,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_getKey7.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_getKey8.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_indexNames.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_keyPath.any.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_openCursor.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_openCursor2.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_openCursor3.htm
@@ -285,6 +294,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_getAllKeys.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_getKey.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_index.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_keyPath.any.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_openCursor.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_openCursor_invalid.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_openKeyCursor.htm
@@ -316,8 +326,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbtransaction_objectStoreNames.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbversionchangeevent.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbworker.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idlharness.any.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/index_sort_order.htm
-/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/interfaces.any.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-common.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html
@@ -349,6 +359,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/request-event-ordering.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/request_bubble-and-capture.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/string-list-ordering.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/support-promises.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/support.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-abort-generator-revert.html
@@ -361,6 +372,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-lifetime-blocked.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-lifetime-empty.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-lifetime.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-relaxed-durability.tentative.any.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-requestqueue.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction_bubble-and-capture.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/upgrade-transaction-deactivation-timing.html
@@ -369,5 +381,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/upgrade-transaction-lifecycle-user-aborted.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/value.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/value_recursive.htm
-/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/wasm-module-value.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/writer-starvation.htm
