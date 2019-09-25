@@ -873,7 +873,6 @@ class ReRunJavaScriptCoreTests(RunJavaScriptCoreTests):
 class RunJavaScriptCoreTestsToT(RunJavaScriptCoreTests):
     name = 'jscore-test-tot'
     jsonFileName = 'jsc_results.json'
-    command = ['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast', '--json-output={0}'.format(jsonFileName), WithProperties('--%(configuration)s')]
 
     def evaluateCommand(self, cmd):
         return shell.Test.evaluateCommand(self, cmd)

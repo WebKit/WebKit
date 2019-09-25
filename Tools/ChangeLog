@@ -1,5 +1,16 @@
 2019-09-25  Aakash Jain  <aakash_jain@apple.com>
 
+        [EWS] RunJavaScriptCoreTestsToT should use the same command as RunJavaScriptCoreTests
+        https://bugs.webkit.org/show_bug.cgi?id=202216
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunJavaScriptCoreTestsToT): Removed the command so as to use the command from base class.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Updatd unit-tests.
+
+2019-09-25  Aakash Jain  <aakash_jain@apple.com>
+
         [ews] JSC queues should run or skip tests based on runTests key from config.json
         https://bugs.webkit.org/show_bug.cgi?id=202223
 
