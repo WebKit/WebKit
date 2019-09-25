@@ -129,6 +129,7 @@ public:
     virtual void textWillBeDeletedInTextField(Element*) = 0;
     virtual void textDidChangeInTextArea(Element*) = 0;
     virtual void overflowScrollPositionChanged() = 0;
+    virtual void subFrameScrollPositionChanged() = 0;
 
 #if PLATFORM(IOS_FAMILY)
     virtual void startDelayingAndCoalescingContentChangeNotifications() = 0;

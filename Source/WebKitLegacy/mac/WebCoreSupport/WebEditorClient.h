@@ -138,6 +138,7 @@ private:
     void textWillBeDeletedInTextField(WebCore::Element*) final;
     void textDidChangeInTextArea(WebCore::Element*) final;
     void overflowScrollPositionChanged() final { };
+    void subFrameScrollPositionChanged() final { };
 
 #if PLATFORM(IOS_FAMILY)
     void startDelayingAndCoalescingContentChangeNotifications() final;

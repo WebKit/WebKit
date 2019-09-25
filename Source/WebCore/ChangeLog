@@ -1,3 +1,21 @@
+2019-09-25  Megan Gardner  <megan_gardner@apple.com>
+
+        Update selections after scrolling for iframes and hide selections while iframes and overflow scrolls are scrolling.
+        https://bugs.webkit.org/show_bug.cgi?id=202125
+
+        Reviewed by Tim Horton.
+
+        Test: editing/selection/ios/update-selection-after-iframe-scroll.html
+
+        When we end scrolling, make sure that iframes get a final update to ensure that the 
+        selection is in the correct position. Pipe that to WebKit/UIProcess via
+        frame specific plath.
+
+        * loader/EmptyClients.cpp:
+        * page/EditorClient.h:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+
 2019-09-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Page temporarily jumps to an excessively small viewport scale while loading usatoday.com

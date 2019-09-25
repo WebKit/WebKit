@@ -102,6 +102,11 @@ void WebEditorClient::overflowScrollPositionChanged()
     m_page->didChangeOverflowScrollPosition();
 }
 
+void WebEditorClient::subFrameScrollPositionChanged()
+{
+    m_page->didChangeOverflowScrollPosition();
+}
+
 bool WebEditorClient::shouldAllowSingleClickToChangeSelection(WebCore::Node& targetNode, const WebCore::VisibleSelection& newSelection) const
 {
     // The text selection assistant will handle selection in the case where we are already editing the node
