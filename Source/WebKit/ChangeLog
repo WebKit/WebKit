@@ -1,3 +1,30 @@
+2019-09-24  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Regression(r249703) frequent 'kill() returned unexpected error' log messages
+        https://bugs.webkit.org/show_bug.cgi?id=202173
+
+        Reviewed by Geoffrey Garen.
+
+        The kill(pid, 0) command actually fails with an EPERM error when there is a process
+        running with the given pid, and this is causing us to log a lot of errors. The good
+        news is that we merely want to know that there is no process with the given PID and
+        we correctly get a ESRCH error in this case. I renamed the function from
+        isRunningProcessPID() to wasTerminated() and only check for ESRCH error now. I no
+        longer log any error otherwise since this is expected.
+
+        Also, for performance reason, I no longer call kill(pid, 0) from inside
+        AuxiliaryProcessProxy::state() as it gets called a lot. I instead only call it from
+        AuxiliaryProcessProxy::wasTerminated() and call it from
+        WebProcessPool::tryTakePrewarmedProcess().
+
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::state const):
+        (WebKit::AuxiliaryProcessProxy::wasTerminated const):
+        (WebKit::AuxiliaryProcessProxy::isRunningProcessPID): Deleted.
+        * UIProcess/AuxiliaryProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::tryTakePrewarmedProcess):
+
 2019-09-24  Christopher Reid  <chris.reid@sony.com>
 
         [WinCairo] Start RemoteInspectorServer

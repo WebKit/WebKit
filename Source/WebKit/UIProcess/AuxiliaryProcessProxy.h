@@ -99,6 +99,7 @@ public:
     };
     State state() const;
     bool isLaunching() const { return state() == State::Launching; }
+    bool wasTerminated() const;
 
     ProcessID processIdentifier() const { return m_processLauncher ? m_processLauncher->processIdentifier() : 0; }
 
@@ -124,7 +125,6 @@ protected:
 private:
     virtual void connectionWillOpen(IPC::Connection&);
     virtual void processWillShutDown(IPC::Connection&) = 0;
-    static bool isRunningProcessPID(ProcessID);
 
     struct PendingMessage {
         std::unique_ptr<IPC::Encoder> encoder;
