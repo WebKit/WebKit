@@ -95,6 +95,7 @@ public:
         using Runs = Vector<std::unique_ptr<Run>>;
         const Runs& runs() const { return m_runs; }
         const LineBox& lineBox() const { return m_lineBox; }
+        LineBox& lineBox() { return m_lineBox; }
 
     private:
         friend class Line;
@@ -116,21 +117,21 @@ public:
     void moveLogicalRight(LayoutUnit);
 
     LayoutUnit availableWidth() const { return logicalWidth() - contentLogicalWidth(); }
-    LayoutUnit contentLogicalRight() const { return logicalLeft() + contentLogicalWidth(); }
-    LayoutUnit logicalTop() const { return m_logicalTopLeft.y(); }
-    LayoutUnit logicalBottom() const { return logicalTop() + logicalHeight(); }
+    LayoutUnit contentLogicalRight() const { return m_content->lineBox().logicalRight(); }
+    LayoutUnit logicalTop() const { return m_content->lineBox().logicalTop(); }
+    LayoutUnit logicalBottom() const { return m_content->lineBox().logicalBottom(); }
 
     static LineBox::Baseline halfLeadingMetrics(const FontMetrics&, LayoutUnit lineLogicalHeight);
 
 private:
-    LayoutUnit logicalLeft() const { return m_logicalTopLeft.x(); }
+    LayoutUnit logicalLeft() const { return m_content->lineBox().logicalLeft(); }
     LayoutUnit logicalRight() const { return logicalLeft() + logicalWidth(); }
 
     LayoutUnit logicalWidth() const { return m_lineLogicalWidth; }
-    LayoutUnit logicalHeight() const { return m_lineLogicalHeight; }
+    LayoutUnit logicalHeight() const { return m_content->lineBox().logicalHeight(); }
 
-    LayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
-    LayoutUnit baselineOffset() const { return m_baseline.ascent() + m_baselineTop; }
+    LayoutUnit contentLogicalWidth() const { return m_content->lineBox().logicalWidth(); }
+    LayoutUnit baselineOffset() const { return m_content->lineBox().baselineOffset(); }
 
     void appendNonBreakableSpace(const InlineItem&, const Display::Rect& logicalRect);
     void appendTextContent(const InlineTextItem&, LayoutUnit logicalWidth);
@@ -153,14 +154,7 @@ private:
     std::unique_ptr<Content> m_content;
     ListHashSet<Content::Run*> m_trimmableContent;
 
-    LayoutPoint m_logicalTopLeft;
-    LayoutUnit m_contentLogicalWidth;
-
-    LineBox::Baseline m_baseline;
-    LayoutUnit m_baselineTop;
-
     Optional<LineBox::Baseline> m_initialStrut;
-    LayoutUnit m_lineLogicalHeight;
     LayoutUnit m_lineLogicalWidth;
     bool m_skipVerticalAligment { false };
 };

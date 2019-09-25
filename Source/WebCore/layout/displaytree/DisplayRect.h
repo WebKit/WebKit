@@ -39,6 +39,7 @@ class Rect {
 public:
     Rect() = default;
     Rect(LayoutUnit top, LayoutUnit left, LayoutUnit width, LayoutUnit height);
+    Rect(LayoutPoint topLeft, LayoutUnit width, LayoutUnit height);
     
     LayoutUnit top() const;
     LayoutUnit left() const;
@@ -107,6 +108,11 @@ inline Rect::Rect(LayoutUnit top, LayoutUnit left, LayoutUnit width, LayoutUnit 
     m_hasValidWidth = true;
     m_hasValidHeight = true;
 #endif
+}
+
+inline Rect::Rect(LayoutPoint topLeft, LayoutUnit width, LayoutUnit height)
+    : Rect(topLeft.y(), topLeft.x(), width, height)
+{
 }
 
 #if !ASSERT_DISABLED

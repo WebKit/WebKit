@@ -55,13 +55,13 @@ Line::Content::Run::Run(const InlineItem& inlineItem, const TextContext& textCon
 Line::Line(const InlineFormattingContext& inlineFormattingContext, const InitialConstraints& initialConstraints, SkipVerticalAligment skipVerticalAligment)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_content(makeUnique<Line::Content>())
-    , m_logicalTopLeft(initialConstraints.logicalTopLeft)
-    , m_baseline({ initialConstraints.heightAndBaseline.baselineOffset, initialConstraints.heightAndBaseline.height - initialConstraints.heightAndBaseline.baselineOffset })
     , m_initialStrut(initialConstraints.heightAndBaseline.strut)
-    , m_lineLogicalHeight(initialConstraints.heightAndBaseline.height)
     , m_lineLogicalWidth(initialConstraints.availableLogicalWidth)
     , m_skipVerticalAligment(skipVerticalAligment == SkipVerticalAligment::Yes)
 {
+    auto lineRect = Display::Rect { initialConstraints.logicalTopLeft, { }, initialConstraints.heightAndBaseline.height };
+    auto baseline = LineBox::Baseline { initialConstraints.heightAndBaseline.baselineOffset, initialConstraints.heightAndBaseline.height - initialConstraints.heightAndBaseline.baselineOffset };
+    m_content->setLineBox(LineBox { lineRect, baseline, { } });
 }
 
 static bool isInlineContainerConsideredEmpty(const FormattingContext& formattingContext, const Box& layoutBox)
@@ -102,17 +102,18 @@ bool Line::isVisuallyEmpty() const
 std::unique_ptr<Line::Content> Line::close()
 {
     removeTrailingTrimmableContent();
+    auto& lineBox = m_content->lineBox();
     if (!m_skipVerticalAligment) {
         if (isVisuallyEmpty()) {
-            m_baseline.reset();
-            m_baselineTop = { };
-            m_lineLogicalHeight = { };
+            lineBox.baseline().reset();
+            lineBox.setBaselineOffset({ });
+            lineBox.setLogicalHeight({ });
         }
 
         // Remove descent when all content is baseline aligned but none of them have descent.
         if (formattingContext().quirks().lineDescentNeedsCollapsing(*m_content)) {
-            m_lineLogicalHeight -= m_baseline.descent();
-            m_baseline.setDescent({ });
+            lineBox.shrinkVertically(lineBox.baseline().descent());
+            lineBox.baseline().setDescent({ });
         }
 
         auto& layoutState = this->layoutState();
@@ -155,7 +156,6 @@ std::unique_ptr<Line::Content> Line::close()
             run->moveHorizontally(this->logicalLeft());
         }
     }
-    m_content->setLineBox(LineBox { Display::Rect { logicalTop(), logicalLeft(), contentLogicalWidth(), logicalHeight() }, m_baseline, baselineOffset() });
     return WTFMove(m_content);
 }
 
@@ -168,7 +168,7 @@ void Line::removeTrailingTrimmableContent()
         trimmableRun->setTextIsCollapsed();
         trimmableWidth += trimmableRun->logicalRect().width();
     }
-    m_contentLogicalWidth -= trimmableWidth;
+    m_content->lineBox().shrinkHorizontally(trimmableWidth);
 }
 
 void Line::moveLogicalLeft(LayoutUnit delta)
@@ -176,8 +176,7 @@ void Line::moveLogicalLeft(LayoutUnit delta)
     if (!delta)
         return;
     ASSERT(delta > 0);
-    // Shrink the line and move the items.
-    m_logicalTopLeft.move(delta, 0);
+    m_content->lineBox().moveHorizontally(delta);
     m_lineLogicalWidth -= delta;
 }
 
@@ -215,7 +214,7 @@ void Line::append(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 void Line::appendNonBreakableSpace(const InlineItem& inlineItem, const Display::Rect& logicalRect)
 {
     m_content->runs().append(makeUnique<Content::Run>(inlineItem, logicalRect));
-    m_contentLogicalWidth += logicalRect.width();
+    m_content->lineBox().expandHorizontally(logicalRect.width());
 }
 
 void Line::appendInlineContainerStart(const InlineItem& inlineItem, LayoutUnit logicalWidth)
@@ -288,7 +287,8 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
         m_trimmableContent.add(lineItem.get());
 
     m_content->runs().append(WTFMove(lineItem));
-    m_contentLogicalWidth += isCompletelyCollapsed ? LayoutUnit() : logicalWidth;
+    if (!isCompletelyCollapsed)
+        m_content->lineBox().expandHorizontally(logicalWidth);
 }
 
 void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit logicalWidth)
@@ -305,7 +305,7 @@ void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit l
     }
 
     m_content->runs().append(makeUnique<Content::Run>(inlineItem, logicalRect));
-    m_contentLogicalWidth += (logicalWidth + horizontalMargin.start + horizontalMargin.end);
+    m_content->lineBox().expandHorizontally(logicalWidth + horizontalMargin.start + horizontalMargin.end);
     m_trimmableContent.clear();
 }
 
@@ -332,6 +332,8 @@ void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit 
     ASSERT(!inlineItem.isContainerEnd());
     auto& layoutBox = inlineItem.layoutBox();
     auto& style = layoutBox.style();
+    auto& lineBox = m_content->lineBox();
+    auto& baseline = lineBox.baseline();
 
     if (inlineItem.isContainerStart()) {
         // Inline containers stretch the line by their font size.
@@ -342,14 +344,13 @@ void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit 
             auto halfLeading = halfLeadingMetrics(fontMetrics, style.computedLineHeight());
             // Both halfleading ascent and descent could be negative (tall font vs. small line-height value)
             if (halfLeading.descent() > 0)
-                m_baseline.setDescent(std::max(m_baseline.descent(), halfLeading.descent()));
+                baseline.setDescentIfGreater(halfLeading.descent());
             if (halfLeading.ascent() > 0)
-                m_baseline.setAscent(std::max(m_baseline.ascent(), halfLeading.ascent()));
-            contentHeight = m_baseline.height();
+                baseline.setAscentIfGreater(halfLeading.ascent());
+            contentHeight = baseline.height();
         } else
             contentHeight = fontMetrics.height();
-        m_lineLogicalHeight = std::max(m_lineLogicalHeight, contentHeight);
-        m_baselineTop = std::max(m_baselineTop, m_lineLogicalHeight - m_baseline.height());
+        lineBox.setLogicalHeightIfGreater(contentHeight, LineBox::AdjustBaseline::Yes);
         return;
     }
 
@@ -358,10 +359,9 @@ void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit 
         // through the inline container (start) -see above. Normally the text content itself does not stretch the line.
         if (!m_initialStrut)
             return;
-        m_baseline.setAscent(std::max(m_initialStrut->ascent(), m_baseline.ascent()));
-        m_baseline.setDescent(std::max(m_initialStrut->descent(), m_baseline.descent()));
-        m_lineLogicalHeight = std::max(m_lineLogicalHeight, m_baseline.height());
-        m_baselineTop = std::max(m_baselineTop, m_lineLogicalHeight - m_baseline.height());
+        baseline.setAscentIfGreater(m_initialStrut->ascent());
+        baseline.setDescentIfGreater(m_initialStrut->descent());
+        lineBox.setLogicalHeightIfGreater(baseline.height(), LineBox::AdjustBaseline::Yes);
         m_initialStrut = { };
         return;
     }
@@ -377,23 +377,18 @@ void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit 
                 ASSERT(!formattingState.lineBoxes().isEmpty());
                 newBaselineCandidate = formattingState.lineBoxes().last().baseline();
             }
-            m_baseline.setAscent(std::max(newBaselineCandidate.ascent(), m_baseline.ascent()));
-            m_baseline.setDescent(std::max(newBaselineCandidate.descent(), m_baseline.descent()));
-            m_lineLogicalHeight = std::max(std::max(m_lineLogicalHeight, runHeight), m_baseline.height());
-            // Baseline ascent/descent never shrink -> max.
-            m_baselineTop = std::max(m_baselineTop, m_lineLogicalHeight - m_baseline.height());
+            baseline.setAscentIfGreater(newBaselineCandidate.ascent());
+            baseline.setDescentIfGreater(newBaselineCandidate.descent());
+            lineBox.setLogicalHeightIfGreater(std::max(runHeight, baseline.height()), LineBox::AdjustBaseline::Yes);
             break;
         }
         case VerticalAlign::Top:
             // Top align content never changes the baseline offset, it only pushes the bottom of the line further down.
-            m_lineLogicalHeight = std::max(runHeight, m_lineLogicalHeight);
+            lineBox.setLogicalHeightIfGreater(runHeight, LineBox::AdjustBaseline::No);
             break;
         case VerticalAlign::Bottom:
             // Bottom aligned, tall content pushes the baseline further down from the line top.
-            if (runHeight > m_lineLogicalHeight) {
-                m_baselineTop += (runHeight - m_lineLogicalHeight);
-                m_lineLogicalHeight = runHeight;
-            }
+            lineBox.setLogicalHeightIfGreater(runHeight, LineBox::AdjustBaseline::Yes);
             break;
         default:
             ASSERT_NOT_IMPLEMENTED_YET();

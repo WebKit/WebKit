@@ -40,6 +40,9 @@ public:
 
         void setAscent(LayoutUnit);
         void setDescent(LayoutUnit);
+        void setAscentIfGreater(LayoutUnit);
+        void setDescentIfGreater(LayoutUnit);
+
         void reset();
 
         LayoutUnit height() const { return ascent() + descent(); }
@@ -68,26 +71,45 @@ public:
     LayoutUnit logicalWidth() const { return m_rect.width(); }
     LayoutUnit logicalHeight() const { return m_rect.height(); }
 
-    Baseline baseline() const { return m_baseline; }
+    void setBaseline(Baseline);
+    const Baseline& baseline() const;
+    Baseline& baseline();
     // Baseline offset from line logical top. Note that offset does not necessarily equal to ascent.
     //
-    // ------------------- line logical top
-    //             ^
-    //             |
-    //   ^         | baseline offset
-    //   |         |
-    //   | ascent  |
-    //   |         |
-    //   v         v
-    //   ----------------- baseline
-    //   ^
-    //   | descent
+    // -------------------    line logical top     ------------------- (top align)
+    //             ^                                              ^
+    //             |                                  ^           |
+    //   ^         | baseline offset                  |           | baseline offset
+    //   |         |                                  |           |
+    //   | ascent  |                                  | ascent    |
+    //   |         |                                  v           v
+    //   v         v                               ------------------- baseline
+    //   ----------------- baseline                   ^
+    //   ^                                            | descent
+    //   | descent                                    v
     //   v
-    // ------------------- line logical bottom
+    // -------------------    line logical bottom  -------------------
     LayoutUnit baselineOffset() const;
+    void setBaselineOffset(LayoutUnit);
+
+    void setLogicalTopLeft(LayoutPoint logicalTopLeft) { m_rect.setTopLeft(logicalTopLeft); }
+    void setLogicalHeight(LayoutUnit logicalHeight) { m_rect.setHeight(logicalHeight); }
+
+    enum class AdjustBaseline { No, Yes };
+    void setLogicalHeightIfGreater(LayoutUnit logicalHeight, AdjustBaseline);
+    void setLogicalWidth(LayoutUnit logicalWidth) { m_rect.setWidth(logicalWidth); }
+
+    void moveHorizontally(LayoutUnit delta) { m_rect.moveHorizontally(delta); }
+
+    void expandHorizontally(LayoutUnit delta) { m_rect.expandHorizontally(delta); }
+    void shrinkHorizontally(LayoutUnit delta) { expandHorizontally(-delta); }
+
+    void expandVertically(LayoutUnit delta) { m_rect.expandVertically(delta); }
+    void shrinkVertically(LayoutUnit delta) { expandVertically(-delta); }
 
 private:
 #if !ASSERT_DISABLED
+    bool m_hasValidBaseline { false };
     bool m_hasValidBaselineOffset { false };
 #endif
     Display::Rect m_rect;
@@ -101,8 +123,47 @@ inline LineBox::LineBox(Display::Rect rect, const Baseline& baseline, LayoutUnit
     , m_baselineOffset(baselineOffset)
 {
 #if !ASSERT_DISABLED
+    m_hasValidBaseline = true;
     m_hasValidBaselineOffset = true;
 #endif
+}
+
+inline void LineBox::setLogicalHeightIfGreater(LayoutUnit logicalHeight, AdjustBaseline adjustBaseline)
+{
+    auto diff = logicalHeight - m_rect.height();
+    if (diff <= 0)
+        return;
+    if (adjustBaseline == AdjustBaseline::Yes)
+        setBaselineOffset(baselineOffset() + diff);
+    m_rect.setHeight(logicalHeight);
+}
+
+inline void LineBox::setBaseline(Baseline baseline)
+{
+#if !ASSERT_DISABLED
+    m_hasValidBaseline = true;
+#endif
+    m_baseline = baseline;
+}
+
+inline const LineBox::Baseline& LineBox::baseline() const
+{
+    ASSERT(m_hasValidBaseline);
+    return m_baseline;
+}
+
+inline LineBox::Baseline& LineBox::baseline()
+{
+    ASSERT(m_hasValidBaseline);
+    return m_baseline;
+}
+
+inline void LineBox::setBaselineOffset(LayoutUnit baselineOffset)
+{
+#if !ASSERT_DISABLED
+    m_hasValidBaselineOffset = true;
+#endif
+    m_baselineOffset = baselineOffset;
 }
 
 inline LayoutUnit LineBox::baselineOffset() const
@@ -135,6 +196,22 @@ inline void LineBox::Baseline::setDescent(LayoutUnit descent)
     m_hasValidDescent = true;
 #endif
     m_descent = descent;
+}
+
+inline void LineBox::Baseline::setAscentIfGreater(LayoutUnit ascent)
+{
+#if !ASSERT_DISABLED
+    m_hasValidAscent = true;
+#endif
+    m_ascent = std::max(ascent, m_ascent);
+}
+
+inline void LineBox::Baseline::setDescentIfGreater(LayoutUnit descent)
+{
+#if !ASSERT_DISABLED
+    m_hasValidDescent = true;
+#endif
+    m_descent = std::max(descent, m_descent);
 }
 
 inline void LineBox::Baseline::reset()
