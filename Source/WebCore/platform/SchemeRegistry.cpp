@@ -236,13 +236,6 @@ void SchemeRegistry::removeURLSchemeRegisteredAsLocal(const String& scheme)
     localURLSchemes().remove(scheme);
 }
 
-static URLSchemesMap& schemesAllowingLocalStorageAccessInPrivateBrowsing()
-{
-    ASSERT(isMainThread());
-    static NeverDestroyed<URLSchemesMap> schemesAllowingLocalStorageAccessInPrivateBrowsing;
-    return schemesAllowingLocalStorageAccessInPrivateBrowsing;
-}
-
 static URLSchemesMap& schemesAllowingDatabaseAccessInPrivateBrowsing()
 {
     ASSERT(isMainThread());
@@ -412,18 +405,6 @@ void SchemeRegistry::registerURLSchemeAsNotAllowingJavascriptURLs(const String& 
 bool SchemeRegistry::shouldTreatURLSchemeAsNotAllowingJavascriptURLs(const String& scheme)
 {
     return !scheme.isNull() && notAllowingJavascriptURLsSchemes().contains(scheme);
-}
-
-void SchemeRegistry::registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing(const String& scheme)
-{
-    if (scheme.isNull())
-        return;
-    schemesAllowingLocalStorageAccessInPrivateBrowsing().add(scheme);
-}
-
-bool SchemeRegistry::allowsLocalStorageAccessInPrivateBrowsing(const String& scheme)
-{
-    return !scheme.isNull() && schemesAllowingLocalStorageAccessInPrivateBrowsing().contains(scheme);
 }
 
 void SchemeRegistry::registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(const String& scheme)
