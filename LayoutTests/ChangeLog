@@ -1,3 +1,17 @@
+2019-09-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Layout Test http/tests/misc/bubble-drag-events.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=182130
+
+        Unreviewed test gardening for Windows ports.
+
+        It doesn't flaky crash these days for Windows ports.
+        <https://webkit-test-results.webkit.org/dashboards/flakiness_dashboard.html#tests=http%2Ftests%2Fmisc%2Fbubble-drag-events.html>
+
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        Unmarked it.
+
 2019-09-24  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Windows][webkitpy] _apache_config_file_name_for_platform should take the system PHP version into account

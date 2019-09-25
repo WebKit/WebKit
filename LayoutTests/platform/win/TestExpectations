@@ -3962,8 +3962,6 @@ webkit.org/b/182128 fast/dom/navigator-detached-no-crash.html [ Failure ]
 
 webkit.org/b/182129 editing/input/reveal-edit-on-paste-vertically.html [ Failure ]
 
-webkit.org/b/182130 http/tests/misc/bubble-drag-events.html [ Crash Pass ]
-
 webkit.org/b/182132 accessibility/aria-combobox-control-owns-elements.html [ Skip ]
 
 webkit.org/b/182133 fast/text/font-load-data-partitioned-alphabet.html [ Failure ]
