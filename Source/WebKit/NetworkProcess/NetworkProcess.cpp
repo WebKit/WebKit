@@ -2383,6 +2383,7 @@ SWServer& NetworkProcess::swServerForSession(PAL::SessionID sessionID)
         ASSERT(sessionID.isEphemeral() || !path.isEmpty());
         
         auto value = makeUnique<SWServer>(makeUniqueRef<WebSWOriginStore>(), WTFMove(path), sessionID, [this, sessionID](auto& registrableDomain) {
+            ASSERT(!registrableDomain.isEmpty());
             parentProcessConnection()->send(Messages::NetworkProcessProxy::EstablishWorkerContextConnectionToNetworkProcess { registrableDomain, sessionID }, 0);
         });
         if (m_shouldDisableServiceWorkerProcessTerminationDelay)

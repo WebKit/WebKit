@@ -242,7 +242,7 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
 
 void WebSWServerConnection::scheduleJobInServer(ServiceWorkerJobData&& jobData)
 {
-    RegistrableDomain registrableDomain(jobData.scriptURL);
+    RegistrableDomain registrableDomain(jobData.scopeURL);
     if (!server().contextConnectionForRegistrableDomain(registrableDomain))
         server().createContextConnection(registrableDomain);
 

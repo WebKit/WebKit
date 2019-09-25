@@ -1,3 +1,17 @@
+2019-09-25  Youenn Fablet  <youenn@apple.com>
+
+        Creation of a service worker connection for a service worker job should be based on the job scope
+        https://bugs.webkit.org/show_bug.cgi?id=202185
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::swServerForSession):
+        Assert that registrable domain is not empty.
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::scheduleJobInServer):
+        Use the scope URL instead of the script URL which may be empty in case of an unregister job.
+
 2019-09-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPadOS] [DataActivation] Focus moves away after focusing input fields on www.att.com
