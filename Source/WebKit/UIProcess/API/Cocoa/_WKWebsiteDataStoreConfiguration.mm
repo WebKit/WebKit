@@ -327,6 +327,16 @@ static void checkURLArgument(NSURL *url)
     return (__bridge NSDictionary *)_configuration->proxyConfiguration();
 }
 
+- (NSString *)dataConnectionServiceType
+{
+    return _configuration->dataConnectionServiceType();
+}
+
+- (void)setDataConnectionServiceType:(NSString *)type
+{
+    _configuration->setDataConnectionServiceType(type);
+}
+
 - (void)setProxyConfiguration:(NSDictionary *)configuration
 {
     _configuration->setProxyConfiguration((__bridge CFDictionaryRef)[configuration copy]);

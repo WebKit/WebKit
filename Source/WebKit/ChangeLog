@@ -1,3 +1,35 @@
+2019-09-25  Alex Christensen  <achristensen@webkit.org>
+
+        Replace _WKProcessPoolConfiguration.CTDataConnectionServiceType with _WKWebsiteDataStoreConfiguration.dataConnectionServiceType
+        https://bugs.webkit.org/show_bug.cgi?id=202174
+
+        Reviewed by Tim Horton.
+
+        _WKProcessPoolConfiguration.CTDataConnectionServiceType is used in one place and needs a replacement so we can
+        start a NetworkProcess without a WKProcessPool.  Since this SPI only does something in the low-level networking code,
+        I verified that the new SPI sets the String the way the old one does, and the old one keeps working in the interim.
+
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _initWithConfiguration:]):
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration dataConnectionServiceType]):
+        (-[_WKWebsiteDataStoreConfiguration setDataConnectionServiceType:]):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::dataConnectionServiceType const):
+        (WebKit::WebsiteDataStoreConfiguration::setDataConnectionServiceType):
+
 2019-09-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r250336.

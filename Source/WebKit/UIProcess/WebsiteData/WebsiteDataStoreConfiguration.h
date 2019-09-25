@@ -119,6 +119,9 @@ public:
     bool allLoadsBlockedByDeviceManagementRestrictionsForTesting() const { return m_allLoadsBlockedByDeviceManagementRestrictionsForTesting; }
     void setAllLoadsBlockedByDeviceManagementRestrictionsForTesting(bool blocked) { m_allLoadsBlockedByDeviceManagementRestrictionsForTesting = blocked; }
 
+    const String& dataConnectionServiceType() const { return m_dataConnectionServiceType; }
+    void setDataConnectionServiceType(String&& type) { m_dataConnectionServiceType = WTFMove(type); }
+    
 private:
     bool m_isPersistent { false };
 
@@ -143,6 +146,7 @@ private:
     String m_sourceApplicationBundleIdentifier;
     String m_sourceApplicationSecondaryIdentifier;
     String m_boundInterfaceIdentifier;
+    String m_dataConnectionServiceType;
     URL m_httpProxy;
     URL m_httpsProxy;
     bool m_deviceManagementRestrictionsEnabled { false };

@@ -305,6 +305,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     config->setProxyConfiguration((__bridge CFDictionaryRef)[[configuration.proxyConfiguration copy] autorelease]);
     config->setDeviceManagementRestrictionsEnabled(configuration.deviceManagementRestrictionsEnabled);
     config->setAllLoadsBlockedByDeviceManagementRestrictionsForTesting(configuration.allLoadsBlockedByDeviceManagementRestrictionsForTesting);
+    config->setDataConnectionServiceType(configuration.dataConnectionServiceType);
 
     auto sessionID = configuration.isPersistent ? PAL::SessionID::generatePersistentSessionID() : PAL::SessionID::generateEphemeralSessionID();
 

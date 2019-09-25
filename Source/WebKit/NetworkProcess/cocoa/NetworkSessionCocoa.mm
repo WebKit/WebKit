@@ -966,7 +966,9 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     configuration.connectionProxyDictionary = proxyDictionary(parameters.httpProxy, parameters.httpsProxy);
 
 #if PLATFORM(IOS_FAMILY)
-    auto& ctDataConnectionServiceType = globalCTDataConnectionServiceType();
+    String ctDataConnectionServiceType = parameters.dataConnectionServiceType;
+    if (ctDataConnectionServiceType.isEmpty())
+        ctDataConnectionServiceType = globalCTDataConnectionServiceType();
     if (!ctDataConnectionServiceType.isEmpty())
         configuration._CTDataConnectionServiceType = ctDataConnectionServiceType;
 #endif

@@ -93,6 +93,7 @@ struct NetworkSessionCreationParameters {
 
     String networkCacheDirectory;
     SandboxExtension::Handle networkCacheDirectoryExtensionHandle;
+    String dataConnectionServiceType;
 };
 
 } // namespace WebKit

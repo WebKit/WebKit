@@ -142,6 +142,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         WTFMove(resourceLoadStatisticsManualPrevalentResource),
         WTFMove(networkCacheDirectory),
         WTFMove(networkCacheDirectoryExtensionHandle),
+        m_configuration->dataConnectionServiceType(),
     };
     networkingHasBegun();
 
