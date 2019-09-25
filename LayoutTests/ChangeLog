@@ -1,3 +1,10 @@
+2019-09-25  Alicia Boya García  <aboya@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=202246
+
+        * platform/gtk/TestExpectations:
+
 2019-09-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Page temporarily jumps to an excessively small viewport scale while loading usatoday.com

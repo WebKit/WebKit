@@ -1181,6 +1181,9 @@ webkit.org/b/200165 imported/w3c/web-platform-tests/websockets/cookies/007.html 
 # No Mac system fonts in WebKitGTK
 editing/pasteboard/paste-cocoa-writer-markup-with-system-fonts.html [ Failure ]
 
+# We don't use Cocoa
+editing/pasteboard/paste-cocoa-writer-markup-with-webkit-standard-font-family.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -2018,7 +2021,6 @@ webkit.org/b/193311 fast/images/decode-render-animated-image.html [ ImageOnlyFai
 
 webkit.org/b/193318 webrtc/audio-replace-track.html [ Timeout Pass ]
 
-webkit.org/b/193490 [ Debug ] animations/animation-direction-normal.html [ Pass Failure ]
 webkit.org/b/193490 [ Debug ] animations/play-state-suspend.html [ Pass Failure ]
 
 webkit.org/b/128255 compositing/columns/composited-lr-paginated-repaint.html [ Pass Failure ]
@@ -2186,6 +2188,11 @@ webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Pass Failure ]
 webkit.org/b/201252 editing/pasteboard/paste-text-017.html [ Pass Failure ]
 
 webkit.org/b/201255 fullscreen/full-screen-request-removed-with-raf.html [ Pass Failure ]
+
+webkit.org/b/202230 editing/style/font-family-with-space.html [ Pass Failure ]
+webkit.org/b/202232 fast/forms/validation-message-appearance.html [ Pass Failure ]
+
+webkit.org/b/202239 http/tests/cookies/cookie-with-multiple-level-path.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -2556,6 +2563,10 @@ webkit.org/b/201272 http/tests/websocket/tests/hybi/bad-handshake-crash.html [ T
 webkit.org/b/201273 js/dom/custom-constructors.html [ Timeout ]
 
 webkit.org/b/201274 media/presentationmodechanged-fired-once.html [ Timeout ]
+
+webkit.org/b/202245 http/tests/workers/service/Client-properties-subframe.html [ Timeout ]
+webkit.org/b/202245 http/tests/workers/service/client-removed-from-clients-while-in-page-cache.html [ Timeout ]
+webkit.org/b/202245 http/tests/workers/service/registration-clear-redundant-worker.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -3867,6 +3878,52 @@ webkit.org/b/201982 fast/images/exif-orientation-image-document.html [ ImageOnly
 webkit.org/b/201982 fast/images/exif-orientation-image-object.html [ ImageOnlyFailure ]
 webkit.org/b/201982 fast/images/exif-orientation-svg-feimage.html [ ImageOnlyFailure ]
 webkit.org/b/201982 fast/images/exif-orientation-svg-image.html [ ImageOnlyFailure ]
+
+webkit.org/b/202225 accessibility/misspelling-range.html [ Failure ]
+webkit.org/b/202226 animations/animation-direction-normal.html [ Failure ]
+webkit.org/b/202227 compositing/backing/layer-outside-tiled-parent.html [ Failure ]
+webkit.org/b/202228 compositing/layer-creation/fixed-position-descendants-out-of-view.html [ Failure ]
+
+webkit.org/b/202229 css-dark-mode/color-scheme-css.html [ Failure ]
+webkit.org/b/202229 css-dark-mode/color-scheme-meta.html [ Failure ]
+webkit.org/b/202229 css-dark-mode/older-syntax/supported-color-schemes-css.html [ Failure ]
+webkit.org/b/202229 css-dark-mode/older-syntax/supported-color-schemes-meta.html [ Failure ]
+
+webkit.org/b/202231 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Failure ]
+
+webkit.org/b/202234 http/tests/IndexedDB/storage-limit-1.https.html [ Failure ]
+webkit.org/b/202234 http/tests/IndexedDB/storage-limit-2.https.html [ Failure ]
+webkit.org/b/202234 http/tests/IndexedDB/storage-limit.https.html [ Failure ]
+
+webkit.org/b/202235 http/tests/adClickAttribution/clear-through-website-data-removal.html [ Failure ]
+webkit.org/b/202236 http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html [ Failure ]
+webkit.org/b/202237 http/tests/appcache/document-cookie-http-only.php [ Failure ]
+
+webkit.org/b/202238 http/tests/cache-storage/cache-clearing-all.https.html [ Failure ]
+webkit.org/b/202238 http/tests/cache-storage/cache-clearing-origin.https.html [ Failure ]
+webkit.org/b/202238 http/tests/cache-storage/cache-origins.https.html [ Failure ]
+webkit.org/b/202238 http/tests/cache-storage/cache-persistency.https.html [ Failure ]
+
+webkit.org/b/202240 http/tests/cookies/private-cookie-storage.html [ Failure ]
+
+webkit.org/b/202241 http/tests/inspector/network/resource-timing.html [ Failure ]
+
+webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https-with-embedded-http.html [ Failure ]
+webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https.html [ Failure ]
+webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-https-with-embedded-http-with-embedded-https.https.html [ Failure ]
+webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked.https.html [ Failure ]
+webkit.org/b/202242 http/tests/websocket/tests/hybi/websocket-blocked-from-setting-cookie-as-third-party.html [ Failure ]
+
+webkit.org/b/202245 http/tests/workers/service/ServiceWorkerGlobalScope_register.html [ Failure ]
+webkit.org/b/202245 http/tests/workers/service/registration-updateViaCache-none-importScripts.html [ Failure ]
+webkit.org/b/202245 http/tests/workers/service/self_registration.html [ Failure ]
+webkit.org/b/202245 http/tests/workers/service/service-worker-getRegistration.html [ Failure ]
+webkit.org/b/202245 http/tests/workers/service/serviceworkerclients-matchAll.https.html [ Failure ]
+webkit.org/b/202245 http/wpt/service-workers/extendableEvent.https.html [ Failure ]
+webkit.org/b/202245 http/wpt/service-workers/fetchEvent.https.html [ Failure ]
+webkit.org/b/202245 http/wpt/service-workers/navigation-redirect.https.html [ Failure ]
+webkit.org/b/202245 http/wpt/service-workers/online.https.html [ Failure ]
+webkit.org/b/202245 imported/w3c/web-platform-tests/service-workers/service-worker/installing.https.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
