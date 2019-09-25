@@ -1,3 +1,9 @@
+2019-09-25  Zalan Bujtas  <zalan@apple.com>
+
+        Rebaselining after r250315.
+
+        * fast/events/touch/ios/double-tap-for-double-click3-expected.txt:
+
 2019-09-25  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Re-sync web-platform-tests/IndexedDB from upstream

@@ -1,2 +1,2 @@
 PASS if 'double click' text is NOT shown below.
-[click]
+[click][click]
