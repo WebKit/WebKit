@@ -1,3 +1,18 @@
+2019-09-25  Guillaume Emont  <guijemont@igalia.com>
+
+        testapi: slow devices need more time before watchdog fires
+        https://bugs.webkit.org/show_bug.cgi?id=202149
+
+        Reviewed by Mark Lam.
+
+        In testExecutionTimeLimit(), the time that we leave for the watchdog
+        to fire is often not enough on (slower) arm and mips devices, creating
+        a testapi failure.
+        This change also skips FTL-specific testing when FTL is disabled.
+
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        (testExecutionTimeLimit):
+
 2019-09-24  Christopher Reid  <chris.reid@sony.com>
 
         [WinCairo] Start RemoteInspectorServer
