@@ -42,8 +42,7 @@ static void checkURLArgument(NSURL *url)
     if (!self)
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebsiteDataStoreConfiguration>(self);
-    _configuration->setPersistent(true);
+    API::Object::constructInWrapper<WebKit::WebsiteDataStoreConfiguration>(self, WebKit::IsPersistent::Yes);
 
     return self;
 }
@@ -54,8 +53,7 @@ static void checkURLArgument(NSURL *url)
     if (!self)
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebsiteDataStoreConfiguration>(self);
-    _configuration->setPersistent(false);
+    API::Object::constructInWrapper<WebKit::WebsiteDataStoreConfiguration>(self, WebKit::IsPersistent::No);
 
     return self;
 }

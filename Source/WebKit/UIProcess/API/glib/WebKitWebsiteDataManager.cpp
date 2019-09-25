@@ -385,7 +385,7 @@ WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteData
 {
     WebKitWebsiteDataManagerPrivate* priv = manager->priv;
     if (!priv->websiteDataStore) {
-        auto configuration = WebsiteDataStoreConfiguration::create();
+        auto configuration = WebsiteDataStoreConfiguration::create(IsPersistent::Yes);
         configuration->setLocalStorageDirectory(!priv->localStorageDirectory ?
             WebKit::WebsiteDataStore::defaultLocalStorageDirectory() : FileSystem::stringFromFileSystemRepresentation(priv->localStorageDirectory.get()));
         configuration->setNetworkCacheDirectory(!priv->diskCacheDirectory ?

@@ -523,6 +523,12 @@ TEST(WebKit, ApplicationIdentifiers)
     EXPECT_TRUE([[websiteDataStoreConfiguration sourceApplicationBundleIdentifier] isEqualToString:@"testidentifier"]);
 }
 
+TEST(WebKit, WebsiteDataStoreConfigurationPathNull)
+{
+    EXPECT_TRUE([[[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease] _indexedDBDatabaseDirectory]);
+    EXPECT_FALSE([[[[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration] autorelease] _indexedDBDatabaseDirectory]);
+}
+
 TEST(WebKit, NetworkCacheDirectory)
 {
     using namespace TestWebKitAPI;

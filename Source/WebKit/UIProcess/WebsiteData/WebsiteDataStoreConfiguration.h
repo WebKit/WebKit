@@ -32,15 +32,16 @@
 
 namespace WebKit {
 
+enum class IsPersistent : bool { No, Yes };
+
 class WebsiteDataStoreConfiguration : public API::ObjectImpl<API::Object::Type::WebsiteDataStoreConfiguration> {
 public:
-    static Ref<WebsiteDataStoreConfiguration> create() { return adoptRef(*new WebsiteDataStoreConfiguration); }
-    WebsiteDataStoreConfiguration();
+    static Ref<WebsiteDataStoreConfiguration> create(IsPersistent isPersistent) { return adoptRef(*new WebsiteDataStoreConfiguration(isPersistent)); }
+    WebsiteDataStoreConfiguration(IsPersistent);
 
     Ref<WebsiteDataStoreConfiguration> copy();
 
-    bool isPersistent() const { return m_isPersistent; }
-    void setPersistent(bool isPersistent) { m_isPersistent = isPersistent; }
+    bool isPersistent() const { return m_isPersistent == IsPersistent::Yes; }
 
     uint64_t perOriginStorageQuota() const { return m_perOriginStorageQuota; }
     void setPerOriginStorageQuota(uint64_t quota) { m_perOriginStorageQuota = quota; }
@@ -123,7 +124,7 @@ public:
     void setDataConnectionServiceType(String&& type) { m_dataConnectionServiceType = WTFMove(type); }
     
 private:
-    bool m_isPersistent { false };
+    IsPersistent m_isPersistent { IsPersistent::No };
 
     String m_cacheStorageDirectory;
     uint64_t m_perOriginStorageQuota { WebCore::StorageQuotaManager::defaultQuota() };

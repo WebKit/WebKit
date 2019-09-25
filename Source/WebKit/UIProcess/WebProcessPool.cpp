@@ -1278,7 +1278,7 @@ bool WebProcessPool::mayHaveRegisteredServiceWorkers(const WebsiteDataStore& sto
 
     String serviceWorkerRegistrationDirectory = store.resolvedServiceWorkerRegistrationDirectory();
     if (serviceWorkerRegistrationDirectory.isEmpty())
-        serviceWorkerRegistrationDirectory = WebKit::WebsiteDataStore::defaultDataStoreConfiguration()->serviceWorkerRegistrationDirectory();
+        serviceWorkerRegistrationDirectory = WebsiteDataStore::defaultServiceWorkerRegistrationDirectory();
 
     return m_mayHaveRegisteredServiceWorkers.ensure(serviceWorkerRegistrationDirectory, [&] {
         // FIXME: Make this computation on a background thread.

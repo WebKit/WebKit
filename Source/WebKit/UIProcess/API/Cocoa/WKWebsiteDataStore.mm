@@ -38,7 +38,7 @@
 #import "WebResourceLoadStatisticsStore.h"
 #import "WebResourceLoadStatisticsTelemetry.h"
 #import "WebsiteDataFetchOption.h"
-#import "_WKWebsiteDataStoreConfiguration.h"
+#import "_WKWebsiteDataStoreConfigurationInternal.h"
 #import "_WKWebsiteDataStoreDelegate.h"
 #import <WebCore/Credential.h>
 #import <WebCore/RegistrationDatabase.h>
@@ -244,72 +244,8 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     if (!(self = [super init]))
         return nil;
 
-    auto config = configuration.isPersistent ? WebKit::WebsiteDataStore::defaultDataStoreConfiguration() : WebKit::WebsiteDataStoreConfiguration::create();
-
-    RELEASE_ASSERT(config->isPersistent() == configuration.isPersistent);
-
-    if (configuration.isPersistent) {
-        if (configuration._webStorageDirectory)
-            config->setLocalStorageDirectory(configuration._webStorageDirectory.path);
-        if (configuration._webSQLDatabaseDirectory)
-            config->setWebSQLDatabaseDirectory(configuration._webSQLDatabaseDirectory.path);
-        if (configuration._indexedDBDatabaseDirectory)
-            config->setIndexedDBDatabaseDirectory(configuration._indexedDBDatabaseDirectory.path);
-        if (configuration._cookieStorageFile)
-            config->setCookieStorageFile(configuration._cookieStorageFile.path);
-        if (configuration._resourceLoadStatisticsDirectory)
-            config->setResourceLoadStatisticsDirectory(configuration._resourceLoadStatisticsDirectory.path);
-        if (configuration._cacheStorageDirectory)
-            config->setCacheStorageDirectory(configuration._cacheStorageDirectory.path);
-        if (configuration._serviceWorkerRegistrationDirectory)
-            config->setServiceWorkerRegistrationDirectory(configuration._serviceWorkerRegistrationDirectory.path);
-        if (configuration.networkCacheDirectory)
-            config->setNetworkCacheDirectory(configuration.networkCacheDirectory.path);
-        if (configuration.deviceIdHashSaltsStorageDirectory)
-            config->setDeviceIdHashSaltsStorageDirectory(configuration.deviceIdHashSaltsStorageDirectory.path);
-        if (configuration.applicationCacheDirectory)
-            config->setApplicationCacheDirectory(configuration.applicationCacheDirectory.path);
-        if (configuration.applicationCacheFlatFileSubdirectoryName)
-            config->setApplicationCacheFlatFileSubdirectoryName(configuration.applicationCacheFlatFileSubdirectoryName);
-        if (configuration.mediaCacheDirectory)
-            config->setMediaCacheDirectory(configuration.mediaCacheDirectory.path);
-        if (configuration.mediaKeysStorageDirectory)
-            config->setMediaKeysStorageDirectory(configuration.mediaKeysStorageDirectory.path);
-    } else {
-        RELEASE_ASSERT(!configuration._webStorageDirectory);
-        RELEASE_ASSERT(!configuration._webSQLDatabaseDirectory);
-        RELEASE_ASSERT(!configuration._indexedDBDatabaseDirectory);
-        RELEASE_ASSERT(!configuration._cookieStorageFile);
-        RELEASE_ASSERT(!configuration._resourceLoadStatisticsDirectory);
-        RELEASE_ASSERT(!configuration._cacheStorageDirectory);
-        RELEASE_ASSERT(!configuration._serviceWorkerRegistrationDirectory);
-        RELEASE_ASSERT(!configuration.networkCacheDirectory);
-        RELEASE_ASSERT(!configuration.deviceIdHashSaltsStorageDirectory);
-        RELEASE_ASSERT(!configuration.applicationCacheDirectory);
-        RELEASE_ASSERT(!configuration.mediaCacheDirectory);
-        RELEASE_ASSERT(!configuration.mediaKeysStorageDirectory);
-    }
-
-    if (configuration.sourceApplicationBundleIdentifier)
-        config->setSourceApplicationBundleIdentifier(configuration.sourceApplicationBundleIdentifier);
-    if (configuration.sourceApplicationSecondaryIdentifier)
-        config->setSourceApplicationSecondaryIdentifier(configuration.sourceApplicationSecondaryIdentifier);
-    if (configuration.httpProxy)
-        config->setHTTPProxy(configuration.httpProxy);
-    if (configuration.httpsProxy)
-        config->setHTTPSProxy(configuration.httpsProxy);
-
-    config->setAllowsCellularAccess(configuration.allowsCellularAccess);
-    config->setPerOriginStorageQuota(configuration.perOriginStorageQuota);
-    config->setBoundInterfaceIdentifier(configuration.boundInterfaceIdentifier);
-    config->setProxyConfiguration((__bridge CFDictionaryRef)[[configuration.proxyConfiguration copy] autorelease]);
-    config->setDeviceManagementRestrictionsEnabled(configuration.deviceManagementRestrictionsEnabled);
-    config->setAllLoadsBlockedByDeviceManagementRestrictionsForTesting(configuration.allLoadsBlockedByDeviceManagementRestrictionsForTesting);
-    config->setDataConnectionServiceType(configuration.dataConnectionServiceType);
-
     auto sessionID = configuration.isPersistent ? PAL::SessionID::generatePersistentSessionID() : PAL::SessionID::generateEphemeralSessionID();
-
-    API::Object::constructInWrapper<WebKit::WebsiteDataStore>(self, WTFMove(config), sessionID);
+    API::Object::constructInWrapper<WebKit::WebsiteDataStore>(self, configuration->_configuration->copy(), sessionID);
 
     return self;
 }

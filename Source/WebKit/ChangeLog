@@ -1,5 +1,38 @@
 2019-09-25  Alex Christensen  <achristensen@webkit.org>
 
+        Remove duplicate WebsiteDataStoreConfiguration copying code
+        https://bugs.webkit.org/show_bug.cgi?id=202215
+
+        Reviewed by Tim Horton.
+
+        WKWebsiteDataStore's _initWithConfiguration was duplicating the functionality of WebsiteDataStoreConfiguration::copy.
+        The former should just call the latter.
+        This move has the side effect of making _WKWebsiteDataStoreConfiguration's paths readable, which I think is desirable so I added a unit test verifying it is so.
+
+        * UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.cpp:
+        (WKWebsiteDataStoreConfigurationCreate):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _initWithConfiguration:]):
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration init]):
+        (-[_WKWebsiteDataStoreConfiguration initNonPersistentConfiguration]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::mayHaveRegisteredServiceWorkers):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::createNonPersistent):
+        (WebKit::WebsiteDataStore::defaultDataStore):
+        (WebKit::WebsiteDataStore::defaultDataStoreConfiguration): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration):
+        (WebKit::WebsiteDataStoreConfiguration::copy):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::create):
+        (WebKit::WebsiteDataStoreConfiguration::isPersistent const):
+        (WebKit::WebsiteDataStoreConfiguration::setPersistent): Deleted.
+
+2019-09-25  Alex Christensen  <achristensen@webkit.org>
+
         Replace WebsiteDataStoreParameters::privateSessionParameters with re-initializing all sessions immediately upon NetworkProcess resumption
         https://bugs.webkit.org/show_bug.cgi?id=202211
 

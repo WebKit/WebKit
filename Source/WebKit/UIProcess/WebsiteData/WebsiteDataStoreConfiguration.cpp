@@ -30,13 +30,28 @@
 
 namespace WebKit {
 
-WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration() = default;
+WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPersistent)
+    : m_isPersistent(isPersistent)
+{
+    if (isPersistent == IsPersistent::Yes) {
+        setApplicationCacheDirectory(WebsiteDataStore::defaultApplicationCacheDirectory());
+        setCacheStorageDirectory(WebsiteDataStore::defaultCacheStorageDirectory());
+        setNetworkCacheDirectory(WebsiteDataStore::defaultNetworkCacheDirectory());
+        setMediaCacheDirectory(WebsiteDataStore::defaultMediaCacheDirectory());
+        setIndexedDBDatabaseDirectory(WebsiteDataStore::defaultIndexedDBDatabaseDirectory());
+        setServiceWorkerRegistrationDirectory(WebsiteDataStore::defaultServiceWorkerRegistrationDirectory());
+        setWebSQLDatabaseDirectory(WebsiteDataStore::defaultWebSQLDatabaseDirectory());
+        setLocalStorageDirectory(WebsiteDataStore::defaultLocalStorageDirectory());
+        setMediaKeysStorageDirectory(WebsiteDataStore::defaultMediaKeysStorageDirectory());
+        setResourceLoadStatisticsDirectory(WebsiteDataStore::defaultResourceLoadStatisticsDirectory());
+        setDeviceIdHashSaltsStorageDirectory(WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory());
+        setJavaScriptConfigurationDirectory(WebsiteDataStore::defaultJavaScriptConfigurationDirectory());
+    }
+}
 
 Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy()
 {
-    auto copy = WebsiteDataStoreConfiguration::create();
-
-    copy->m_isPersistent = this->m_isPersistent;
+    auto copy = WebsiteDataStoreConfiguration::create(m_isPersistent);
 
     copy->m_cacheStorageDirectory = this->m_cacheStorageDirectory;
     copy->m_perOriginStorageQuota = this->m_perOriginStorageQuota;

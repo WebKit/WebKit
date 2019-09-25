@@ -97,12 +97,10 @@ public:
     static Ref<WebsiteDataStore> defaultDataStore();
     static bool defaultDataStoreExists();
     static void deleteDefaultDataStoreForTesting();
-    static Ref<WebsiteDataStoreConfiguration> defaultDataStoreConfiguration();
     
     static Ref<WebsiteDataStore> createNonPersistent();
     static Ref<WebsiteDataStore> create(Ref<WebsiteDataStoreConfiguration>&&, PAL::SessionID);
 
-    WebsiteDataStore(PAL::SessionID);
     WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&&, PAL::SessionID);
     ~WebsiteDataStore();
 

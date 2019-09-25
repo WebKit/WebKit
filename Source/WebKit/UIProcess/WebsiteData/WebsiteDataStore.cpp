@@ -89,7 +89,7 @@ static HashMap<PAL::SessionID, WebsiteDataStore*>& nonDefaultDataStores()
 
 Ref<WebsiteDataStore> WebsiteDataStore::createNonPersistent()
 {
-    return adoptRef(*new WebsiteDataStore(PAL::SessionID::generateEphemeralSessionID()));
+    return adoptRef(*new WebsiteDataStore(WebsiteDataStoreConfiguration::create(IsPersistent::No), PAL::SessionID::generateEphemeralSessionID()));
 }
 
 Ref<WebsiteDataStore> WebsiteDataStore::create(Ref<WebsiteDataStoreConfiguration>&& configuration, PAL::SessionID sessionID)
@@ -112,26 +112,6 @@ WebsiteDataStore::WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&& configur
 #endif
 {
     WTF::setProcessPrivileges(allPrivileges());
-    maybeRegisterWithSessionIDMap();
-    platformInitialize();
-
-    ASSERT(RunLoop::isMain());
-}
-
-WebsiteDataStore::WebsiteDataStore(PAL::SessionID sessionID)
-    : m_sessionID(sessionID)
-    , m_resolvedConfiguration(WebsiteDataStoreConfiguration::create())
-    , m_configuration(m_resolvedConfiguration->copy())
-    , m_deviceIdHashSaltStorage(DeviceIdHashSaltStorage::create(isPersistent() ? m_configuration->deviceIdHashSaltsStorageDirectory() : String()))
-    , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
-#if ENABLE(WEB_AUTHN)
-    , m_authenticatorManager(makeUniqueRef<AuthenticatorManager>())
-#endif
-    , m_client(makeUniqueRef<WebsiteDataStoreClient>())
-#if HAVE(APP_SSO)
-    , m_soAuthorizationCoordinator(makeUniqueRef<SOAuthorizationCoordinator>())
-#endif
-{
     maybeRegisterWithSessionIDMap();
     platformInitialize();
 
@@ -166,7 +146,7 @@ Ref<WebsiteDataStore> WebsiteDataStore::defaultDataStore()
 
     auto& store = globalDefaultDataStore();
     if (!store)
-        store = adoptRef(new WebsiteDataStore(defaultDataStoreConfiguration(), PAL::SessionID::defaultSessionID()));
+        store = adoptRef(new WebsiteDataStore(WebsiteDataStoreConfiguration::create(IsPersistent::Yes), PAL::SessionID::defaultSessionID()));
 
     return *store;
 }
@@ -179,30 +159,6 @@ void WebsiteDataStore::deleteDefaultDataStoreForTesting()
 bool WebsiteDataStore::defaultDataStoreExists()
 {
     return !!globalDefaultDataStore();
-}
-
-Ref<WebKit::WebsiteDataStoreConfiguration> WebsiteDataStore::defaultDataStoreConfiguration()
-{
-    auto configuration = WebsiteDataStoreConfiguration::create();
-
-    configuration->setPersistent(true);
-
-    configuration->setApplicationCacheDirectory(defaultApplicationCacheDirectory());
-    configuration->setCacheStorageDirectory(defaultCacheStorageDirectory());
-    configuration->setNetworkCacheDirectory(defaultNetworkCacheDirectory());
-    configuration->setMediaCacheDirectory(defaultMediaCacheDirectory());
-
-    configuration->setIndexedDBDatabaseDirectory(defaultIndexedDBDatabaseDirectory());
-    configuration->setServiceWorkerRegistrationDirectory(defaultServiceWorkerRegistrationDirectory());
-    configuration->setWebSQLDatabaseDirectory(defaultWebSQLDatabaseDirectory());
-    configuration->setLocalStorageDirectory(defaultLocalStorageDirectory());
-    configuration->setMediaKeysStorageDirectory(defaultMediaKeysStorageDirectory());
-    configuration->setResourceLoadStatisticsDirectory(defaultResourceLoadStatisticsDirectory());
-    configuration->setDeviceIdHashSaltsStorageDirectory(defaultDeviceIdHashSaltsStorageDirectory());
-
-    configuration->setJavaScriptConfigurationDirectory(defaultJavaScriptConfigurationDirectory());
-
-    return configuration;
 }
 
 void WebsiteDataStore::maybeRegisterWithSessionIDMap()

@@ -1,5 +1,15 @@
 2019-09-25  Alex Christensen  <achristensen@webkit.org>
 
+        Remove duplicate WebsiteDataStoreConfiguration copying code
+        https://bugs.webkit.org/show_bug.cgi?id=202215
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
+2019-09-25  Alex Christensen  <achristensen@webkit.org>
+
         Replace WebsiteDataStoreParameters::privateSessionParameters with re-initializing all sessions immediately upon NetworkProcess resumption
         https://bugs.webkit.org/show_bug.cgi?id=202211
 
