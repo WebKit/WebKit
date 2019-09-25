@@ -1,3 +1,37 @@
+2019-09-24  Keith Rollin  <krollin@apple.com>
+
+        Address static analysis warning in Allocator.cpp: Null pointer argument in call to memory copy function
+        https://bugs.webkit.org/show_bug.cgi?id=202152
+        <rdar://problem/55671444>
+
+        Reviewed by Geoffrey Garen.
+
+        Xcode's static analysis facility flags the following:
+
+            .../OpenSource/Source/bmalloc/bmalloc/Allocator.cpp:98:5: warning: Null pointer argument in call to memory copy function
+                memcpy(result, object, copySize);
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        https://en.cppreference.com/w/cpp/string/byte/memcpy explains that
+        this is undefined behavior:
+
+            "If either dest or src is a null pointer, the behavior is
+             undefined, even if count is zero."
+
+        I suppose that passing in a null source pointer could be bad if the
+        implementation fetched the first source byte to copy before actually
+        checking the number of bytes to copy. So far, it doesn’t seem to be an
+        issue, but we should clean this up.
+
+        Simply adding "if (result && object)" before the memcpy will add tests
+        and branches in the hot path of this function and so might not be the
+        best solution. Instead, straighten out the code a little bit by
+        putting an early check and return on "object". This also allows us to
+        remove some intermediate code.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::reallocateImpl):
+
 2019-09-17  Mark Lam  <mark.lam@apple.com>
 
         Use constexpr instead of const in symbol definitions that are obviously constexpr.

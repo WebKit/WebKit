@@ -65,13 +65,12 @@ void* Allocator::allocateImpl(size_t alignment, size_t size, FailureAction actio
 
 void* Allocator::reallocateImpl(void* object, size_t newSize, FailureAction action)
 {
+    if (!object)
+        return allocateImpl(newSize, action);
+
     size_t oldSize = 0;
     switch (objectType(m_heap, object)) {
     case ObjectType::Small: {
-        BASSERT(objectType(m_heap, nullptr) == ObjectType::Small);
-        if (!object)
-            break;
-
         size_t sizeClass = Object(object).page()->sizeClass();
         oldSize = objectSize(sizeClass);
         break;
