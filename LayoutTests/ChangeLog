@@ -1,3 +1,13 @@
+2019-09-26  Russell Epstein  <repstein@apple.com>
+
+        [ iOS ] Layout Test scrollingcoordinator/ios/fixed-scrolling-with-keyboard.html is a Flaky Failure
+        https://bugs.webkit.org/show_bug.cgi?id=202283
+
+        Unreviewed Test Gardening.
+
+        * platform/ios/TestExpectations: Marked
+	scrollingcoordinator/ios/fixed-scrolling-with-keyboard.html as flaky
+
 2019-09-26  Chris Dumez  <cdumez@apple.com>
 
         Stop using testRunner.overridePreference() to turn on Page Cache
