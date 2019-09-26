@@ -1,3 +1,44 @@
+2019-09-26  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Move Line::Content::m_lineBox to Line.
+        https://bugs.webkit.org/show_bug.cgi?id=202280
+        <rdar://problem/55755798>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for Line producing Display::Runs instead of Line::Runs.
+
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::LineLayout::close):
+        (WebCore::Layout::LineLayout::placeInlineItem):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::layout):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::computedIntrinsicWidth const):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::createDisplayRuns):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::Line):
+        (WebCore::Layout::Line::close):
+        (WebCore::Layout::Line::removeTrailingTrimmableContent):
+        (WebCore::Layout::Line::moveLogicalLeft):
+        (WebCore::Layout::Line::appendNonBreakableSpace):
+        (WebCore::Layout::Line::appendTextContent):
+        (WebCore::Layout::Line::appendNonReplacedInlineBox):
+        (WebCore::Layout::Line::adjustBaselineAndLineHeight):
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Content::runs const):
+        (WebCore::Layout::Line::availableWidth const):
+        (WebCore::Layout::Line::lineBox const):
+        (WebCore::Layout::Line::logicalTop const):
+        (WebCore::Layout::Line::logicalBottom const):
+        (WebCore::Layout::Line::logicalLeft const):
+        (WebCore::Layout::Line::logicalHeight const):
+        (WebCore::Layout::Line::contentLogicalWidth const):
+        (WebCore::Layout::Line::contentLogicalRight const):
+        (WebCore::Layout::Line::baselineOffset const):
+        (WebCore::Layout::Line::Content::lineBox const): Deleted.
+        (WebCore::Layout::Line::Content::lineBox): Deleted.
+        (WebCore::Layout::Line::Content::setLineBox): Deleted.
+
 2019-09-26  Jiewen Tan  <jiewen_tan@apple.com>
 
         REGRESSION: [ Catalina WK2 ] http/wpt/webauthn/public-key-credential-create-success-u2f.https.html is failing

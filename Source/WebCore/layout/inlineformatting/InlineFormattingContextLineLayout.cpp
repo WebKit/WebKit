@@ -94,7 +94,8 @@ struct LineInput {
 struct LineContent {
     Optional<IndexAndRange> lastCommitted;
     Vector<WeakPtr<InlineItem>> floats;
-    std::unique_ptr<Line::Content> runs;
+    std::unique_ptr<const Line::Content> runs;
+    const LineBox lineBox;
 };
 
 class LineLayout {
@@ -174,7 +175,7 @@ LineContent LineLayout::close()
 {
     ASSERT(m_committedInlineItemCount || m_lineHasIntrusiveFloat);
     if (!m_committedInlineItemCount)
-        return LineContent { WTF::nullopt, WTFMove(m_floats), m_line.close() };
+        return LineContent { WTF::nullopt, WTFMove(m_floats), m_line.close(), m_line.lineBox() };
 
     auto lastInlineItemIndex = m_lineInput.firstInlineItem.index + m_committedInlineItemCount - 1;
     Optional<IndexAndRange::Range> partialContext;
@@ -182,13 +183,13 @@ LineContent LineLayout::close()
         partialContext = IndexAndRange::Range { m_trailingPartialInlineTextItem->start(), m_trailingPartialInlineTextItem->length() };
 
     auto lastCommitedItem = IndexAndRange { lastInlineItemIndex, partialContext };
-    return LineContent { lastCommitedItem, WTFMove(m_floats), m_line.close() };
+    return LineContent { lastCommitedItem, WTFMove(m_floats), m_line.close(), m_line.lineBox() };
 }
 
 LineLayout::IsEndOfLine LineLayout::placeInlineItem(const InlineItem& inlineItem)
 {
     auto availableWidth = m_line.availableWidth() - m_uncommittedContent.width();
-    auto currentLogicalRight = m_line.contentLogicalRight() + m_uncommittedContent.width();
+    auto currentLogicalRight = m_line.lineBox().logicalRight() + m_uncommittedContent.width();
     auto itemLogicalWidth = inlineItemWidth(formattingContext(), inlineItem, currentLogicalRight);
 
     // FIXME: Ensure LineContext::trimmableWidth includes uncommitted content if needed.
@@ -284,11 +285,11 @@ void InlineFormattingContext::InlineLayout::layout(const InlineItems& inlineItem
         auto lineLayout = LineLayout { formattingContext(), lineInput };
 
         auto lineContent = lineLayout.layout();
-        createDisplayRuns(*lineContent.runs, lineContent.floats);
+        createDisplayRuns(lineContent);
 
         if (lineContent.lastCommitted) {
             currentInlineItem = { lineContent.lastCommitted->index + 1, WTF::nullopt };
-            lineLogicalTop = lineContent.runs->lineBox().logicalBottom();
+            lineLogicalTop = lineContent.lineBox.logicalBottom();
         } else {
             // Floats prevented us placing any content on the line.
             ASSERT(lineInput.initialConstraints.lineIsConstrainedByFloat);
@@ -352,23 +353,23 @@ LayoutUnit InlineFormattingContext::InlineLayout::computedIntrinsicWidth(const I
         LayoutUnit floatsWidth;
         for (auto& floatItem : lineContent.floats)
             floatsWidth += formattingContext.geometryForBox(floatItem->layoutBox()).marginBoxWidth();
-        maximumLineWidth = std::max(maximumLineWidth, floatsWidth + lineContent.runs->lineBox().logicalWidth());
+        maximumLineWidth = std::max(maximumLineWidth, floatsWidth + lineContent.lineBox.logicalWidth());
     }
     return maximumLineWidth;
 }
 
-void InlineFormattingContext::InlineLayout::createDisplayRuns(const Line::Content& lineContent, const Vector<WeakPtr<InlineItem>>& floats)
+void InlineFormattingContext::InlineLayout::createDisplayRuns(const LineContent& lineContent)
 {
     auto& formattingContext = this->formattingContext();
     auto& formattingState = this->formattingState();
     auto floatingContext = FloatingContext { formattingRoot(), formattingContext, formattingState.floatingState() };
 
     // Move floats to their final position.
-    for (const auto& floatItem : floats) {
+    for (const auto& floatItem : lineContent.floats) {
         auto& floatBox = floatItem->layoutBox();
         auto& displayBox = formattingState.displayBox(floatBox);
         // Set static position first.
-        auto& lineBox = lineContent.lineBox();
+        auto& lineBox = lineContent.lineBox;
         displayBox.setTopLeft({ lineBox.logicalLeft(), lineBox.logicalTop() });
         // Float it.
         displayBox.setTopLeft(floatingContext.positionForFloat(floatBox));
@@ -381,7 +382,7 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const Line::Conten
     // A line box is always tall enough for all of the boxes it contains.
 
     // Create final display runs.
-    auto& lineRuns = lineContent.runs();
+    auto& lineRuns = lineContent.runs->runs();
     for (unsigned index = 0; index < lineRuns.size(); ++index) {
         auto& run = lineRuns.at(index);
         // Inline level containers (<span>) don't generate inline runs.
@@ -478,8 +479,8 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const Line::Conten
         ASSERT_NOT_REACHED();
     }
     // FIXME linebox needs to be ajusted after content alignment.
-    formattingState.addLineBox(lineContent.lineBox());
-    alignRuns(formattingRoot().style().textAlign(), inlineDisplayRuns, previousLineLastRunIndex.valueOr(-1) + 1, widthConstraint() - lineContent.lineBox().logicalWidth());
+    formattingState.addLineBox(lineContent.lineBox);
+    alignRuns(formattingRoot().style().textAlign(), inlineDisplayRuns, previousLineLastRunIndex.valueOr(-1) + 1, widthConstraint() - lineContent.lineBox.logicalWidth());
 }
 
 static Optional<LayoutUnit> horizontalAdjustmentForAlignment(TextAlignMode align, LayoutUnit remainingWidth)

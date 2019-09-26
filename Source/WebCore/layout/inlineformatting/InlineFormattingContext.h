@@ -67,7 +67,7 @@ private:
         LayoutUnit widthConstraint() const { return m_usedHorizontalValues.constraints.width; }
 
         LineContent placeInlineItems(const LineInput&) const;
-        void createDisplayRuns(const Line::Content&, const Vector<WeakPtr<InlineItem>>& floats);
+        void createDisplayRuns(const LineContent&);
         void alignRuns(TextAlignMode, InlineRuns&, unsigned firstRunIndex, LayoutUnit availableWidth) const;
 
     private:

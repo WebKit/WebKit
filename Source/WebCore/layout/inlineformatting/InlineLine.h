@@ -94,44 +94,40 @@ public:
         };
         using Runs = Vector<std::unique_ptr<Run>>;
         const Runs& runs() const { return m_runs; }
-        const LineBox& lineBox() const { return m_lineBox; }
-        LineBox& lineBox() { return m_lineBox; }
 
     private:
         friend class Line;
-
-        void setLineBox(const LineBox& lineBox) { m_lineBox = lineBox; }
         Runs& runs() { return m_runs; }
 
-        LineBox m_lineBox;
         Runs m_runs;
     };
     std::unique_ptr<Content> close();
 
     void append(const InlineItem&, LayoutUnit logicalWidth);
     bool hasContent() const { return !isVisuallyEmpty(); }
+    LayoutUnit availableWidth() const { return logicalWidth() - contentLogicalWidth(); }
 
     LayoutUnit trailingTrimmableWidth() const;
 
+    const LineBox& lineBox() const { return m_lineBox; }
     void moveLogicalLeft(LayoutUnit);
     void moveLogicalRight(LayoutUnit);
-
-    LayoutUnit availableWidth() const { return logicalWidth() - contentLogicalWidth(); }
-    LayoutUnit contentLogicalRight() const { return m_content->lineBox().logicalRight(); }
-    LayoutUnit logicalTop() const { return m_content->lineBox().logicalTop(); }
-    LayoutUnit logicalBottom() const { return m_content->lineBox().logicalBottom(); }
 
     static LineBox::Baseline halfLeadingMetrics(const FontMetrics&, LayoutUnit lineLogicalHeight);
 
 private:
-    LayoutUnit logicalLeft() const { return m_content->lineBox().logicalLeft(); }
+    LayoutUnit logicalTop() const { return m_lineBox.logicalTop(); }
+    LayoutUnit logicalBottom() const { return m_lineBox.logicalBottom(); }
+
+    LayoutUnit logicalLeft() const { return m_lineBox.logicalLeft(); }
     LayoutUnit logicalRight() const { return logicalLeft() + logicalWidth(); }
 
     LayoutUnit logicalWidth() const { return m_lineLogicalWidth; }
-    LayoutUnit logicalHeight() const { return m_content->lineBox().logicalHeight(); }
+    LayoutUnit logicalHeight() const { return m_lineBox.logicalHeight(); }
 
-    LayoutUnit contentLogicalWidth() const { return m_content->lineBox().logicalWidth(); }
-    LayoutUnit baselineOffset() const { return m_content->lineBox().baselineOffset(); }
+    LayoutUnit contentLogicalWidth() const { return m_lineBox.logicalWidth(); }
+    LayoutUnit contentLogicalRight() const { return m_lineBox.logicalRight(); }
+    LayoutUnit baselineOffset() const { return m_lineBox.baselineOffset(); }
 
     void appendNonBreakableSpace(const InlineItem&, const Display::Rect& logicalRect);
     void appendTextContent(const InlineTextItem&, LayoutUnit logicalWidth);
@@ -157,6 +153,7 @@ private:
     Optional<LineBox::Baseline> m_initialStrut;
     LayoutUnit m_lineLogicalWidth;
     bool m_skipVerticalAligment { false };
+    LineBox m_lineBox;
 };
 
 }
