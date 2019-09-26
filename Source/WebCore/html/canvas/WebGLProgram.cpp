@@ -62,9 +62,9 @@ Ref<WebGLProgram> WebGLProgram::create(WebGLRenderingContextBase& ctx)
 
 WebGLProgram::WebGLProgram(WebGLRenderingContextBase& ctx)
     : WebGLSharedObject(ctx)
-    , ContextDestructionObserver(ctx.scriptExecutionContext())
+    , m_scriptExecutionContext(ctx.scriptExecutionContext())
 {
-    ASSERT(scriptExecutionContext());
+    ASSERT(m_scriptExecutionContext);
 
     {
         LockHolder lock(instancesMutex());
@@ -85,13 +85,6 @@ WebGLProgram::~WebGLProgram()
         ASSERT(instances(lock).contains(this));
         instances(lock).remove(this);
     }
-}
-
-void WebGLProgram::contextDestroyed()
-{
-    InspectorInstrumentation::willDestroyWebGLProgram(*this);
-
-    ContextDestructionObserver::contextDestroyed();
 }
 
 void WebGLProgram::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject obj)

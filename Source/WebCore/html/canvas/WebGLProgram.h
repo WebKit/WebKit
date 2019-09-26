@@ -27,7 +27,6 @@
 
 #if ENABLE(WEBGL)
 
-#include "ContextDestructionObserver.h"
 #include "WebGLSharedObject.h"
 #include <wtf/Forward.h>
 
@@ -37,7 +36,7 @@ class ScriptExecutionContext;
 class WebGLRenderingContextBase;
 class WebGLShader;
 
-class WebGLProgram final : public WebGLSharedObject, public ContextDestructionObserver {
+class WebGLProgram final : public WebGLSharedObject {
 public:
     static Ref<WebGLProgram> create(WebGLRenderingContextBase&);
     virtual ~WebGLProgram();
@@ -45,7 +44,7 @@ public:
     static HashMap<WebGLProgram*, WebGLRenderingContextBase*>& instances(const LockHolder&);
     static Lock& instancesMutex();
 
-    void contextDestroyed() final;
+    ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
 
     unsigned numActiveAttribLocations();
     GC3Dint getActiveAttribLocation(GC3Duint index);
@@ -75,6 +74,8 @@ protected:
 private:
     void cacheActiveAttribLocations(GraphicsContext3D*);
     void cacheInfoIfNeeded();
+
+    ScriptExecutionContext* m_scriptExecutionContext;
 
     Vector<GC3Dint> m_activeAttribLocations;
 
