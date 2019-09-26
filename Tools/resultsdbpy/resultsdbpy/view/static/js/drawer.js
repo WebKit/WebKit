@@ -106,7 +106,7 @@ function Drawer(controls = [], onCollapseChange) {
     });
 
     return `<div class="sidebar right under-topbar-with-actions unselectable" ref="${drawerRef}">
-            <button class="button desktop-control" ref="${drawerControllerRef}" style="width:96%; margin: 10px 2% 10px 2%;"></button>
+            <button class="button desktop-control" ref="${drawerControllerRef}" style="cursor: pointer; width:96%; margin: 10px 2% 10px 2%;"></button>
             ${controls.map(control => {
                 return `<div class="list">
                         <div class="item">${control}</div>

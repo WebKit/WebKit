@@ -1,3 +1,13 @@
+2019-09-26  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Use cursor: pointer for clickable elements
+        https://bugs.webkit.org/show_bug.cgi?id=202268
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/static/js/drawer.js: Give collapse button a pointer for cursor.
+        * resultsdbpy/resultsdbpy/view/templates/search.html: Make 'X' to close test timeline a link-button.
+
 2019-09-26  Kate Cheney  <katherine_cheney@apple.com>
 
         Enable LayoutTests using ResourceLoadStatistics SQLite backend (195420) 
