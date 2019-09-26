@@ -167,11 +167,12 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         this._createConsoleSettingsView();
         this._createExperimentalSettingsView();
 
-        if (WI.isEngineeringBuild)
+        if (WI.isEngineeringBuild) {
             this._createEngineeringSettingsView();
 
-        WI.showDebugUISetting.addEventListener(WI.Setting.Event.Changed, this._updateDebugSettingsViewVisibility, this);
-        this._updateDebugSettingsViewVisibility();
+            WI.showDebugUISetting.addEventListener(WI.Setting.Event.Changed, this._updateDebugSettingsViewVisibility, this);
+            this._updateDebugSettingsViewVisibility();
+        }
 
         this.selectedSettingsView = this._settingsViews[0];
     }
