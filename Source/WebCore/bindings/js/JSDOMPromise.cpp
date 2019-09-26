@@ -57,7 +57,7 @@ void DOMPromise::whenSettled(std::function<void()>&& callback)
     whenPromiseIsSettled(globalObject(), promise(), WTFMove(callback));
 }
 
-void DOMPromise::whenPromiseIsSettled(JSDOMGlobalObject* globalObject, JSC::JSObject* promise, std::function<void()>&& callback)
+void DOMPromise::whenPromiseIsSettled(JSDOMGlobalObject* globalObject, JSC::JSObject* promise, Function<void()>&& callback)
 {
     auto& state = *globalObject->globalExec();
     auto& vm = state.vm();

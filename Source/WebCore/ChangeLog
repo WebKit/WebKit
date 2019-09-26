@@ -1,5 +1,43 @@
 2019-09-25  Chris Dumez  <cdumez@apple.com>
 
+        Add very basic PageCache support for RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=202244
+
+        Reviewed by Geoffrey Garen.
+
+        RTCPeerConnection::canSuspendForDocumentSuspension() returns true if
+        RTCPeerConnection::hasPendingActivity() return false. Previously, hasPendingActivity()
+        would return true unless the JS has called close() on the RTCPeerConnection
+        object.
+
+        On weather.com, an ad would construct an RTCPeerConnection just to do some feature
+        checking and then let the variable go out of scope (without calling close()). Because
+        of the previous implementation of RTCPeerConnection::hasPendingActivity(), this wrapper
+        and its implementation object would stay alive forever AND prevent the page from
+        entering PageCache on navigation.
+
+        To improve this, the implementation of hadPendingActivity() has been updated so that
+        it keeps returning false if close() has been called, but will also return false if
+        there are no pending Promises to be resolved and no event listeners.
+
+        Test: fast/mediastream/RTCPeerConnection-page-cache.html
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        WebCore::RTCPeerConnection::RTCPeerConnection:
+        Stop taking a pending activity in the constructor, this would be NOT keep the wrapper
+        alive since RTCPeerConnection::hasPendingActivity() was not checking
+        ActiveDOMObject::hasPendingActivity().
+
+        (WebCore::RTCPeerConnection::canSuspendForDocumentSuspension const):
+        (WebCore::RTCPeerConnection::hasPendingActivity const):
+        
+        * Modules/mediastream/RTCPeerConnection.h:
+
+        * bindings/js/JSDOMPromiseDeferred.h:
+        (WebCore::DOMPromiseDeferredBase::whenSettled):
+
+2019-09-25  Chris Dumez  <cdumez@apple.com>
+
         Improve Service worker support for Page Caching
         https://bugs.webkit.org/show_bug.cgi?id=202221
 

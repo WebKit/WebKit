@@ -69,7 +69,7 @@ void DeferredPromise::callFunction(ExecState& exec, JSValue function, JSValue re
         clear();
 }
 
-void DeferredPromise::whenSettled(std::function<void()>&& callback)
+void DeferredPromise::whenSettled(Function<void()>&& callback)
 {
     DOMPromise::whenPromiseIsSettled(globalObject(), deferred()->promise(), WTFMove(callback));
 }

@@ -70,10 +70,7 @@ Ref<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext& context
     auto& document = downcast<Document>(context);
     auto peerConnection = adoptRef(*new RTCPeerConnection(document));
     peerConnection->suspendIfNeeded();
-    // RTCPeerConnection may send events at about any time during its lifetime.
-    // Let's make it uncollectable until the pc is closed by JS or the page stops it.
     if (!peerConnection->isClosed()) {
-        peerConnection->m_pendingActivity = peerConnection->makePendingActivity(peerConnection.get());
         if (auto* page = document.page()) {
             peerConnection->registerToController(page->rtcController());
             page->libWebRTCProvider().setEnableLogging(!page->sessionID().isEphemeral());
@@ -197,6 +194,7 @@ void RTCPeerConnection::queuedCreateOffer(RTCOfferOptions&& options, SessionDesc
         return;
     }
 
+    addPendingPromise(promise);
     m_backend->createOffer(WTFMove(options), WTFMove(promise));
 }
 
@@ -208,6 +206,7 @@ void RTCPeerConnection::queuedCreateAnswer(RTCAnswerOptions&& options, SessionDe
         return;
     }
 
+    addPendingPromise(promise);
     m_backend->createAnswer(WTFMove(options), WTFMove(promise));
 }
 
@@ -219,6 +218,7 @@ void RTCPeerConnection::queuedSetLocalDescription(RTCSessionDescription& descrip
         return;
     }
 
+    addPendingPromise(promise);
     m_backend->setLocalDescription(description, WTFMove(promise));
 }
 
@@ -245,6 +245,7 @@ void RTCPeerConnection::queuedSetRemoteDescription(RTCSessionDescription& descri
         promise.reject(InvalidStateError);
         return;
     }
+    addPendingPromise(promise);
     m_backend->setRemoteDescription(description, WTFMove(promise));
 }
 
@@ -272,6 +273,7 @@ void RTCPeerConnection::queuedAddIceCandidate(RTCIceCandidate* rtcCandidate, DOM
         return;
     }
 
+    addPendingPromise(promise);
     m_backend->addIceCandidate(rtcCandidate, WTFMove(promise));
 }
 
@@ -399,6 +401,7 @@ void RTCPeerConnection::getStats(MediaStreamTrack* selector, Ref<DeferredPromise
             }
         }
     }
+    addPendingPromise(promise.get());
     m_backend->getStats(WTFMove(promise));
 }
 
@@ -474,7 +477,6 @@ void RTCPeerConnection::doStop()
     m_isStopped = true;
 
     m_backend->stop();
-    m_pendingActivity = nullptr;
 }
 
 void RTCPeerConnection::registerToController(RTCController& controller)
@@ -494,6 +496,7 @@ const char* RTCPeerConnection::activeDOMObjectName() const
     return "RTCPeerConnection";
 }
 
+    // FIXME: We should do better here, it is way too easy to prevent PageCache.
 bool RTCPeerConnection::canSuspendForDocumentSuspension() const
 {
     return !hasPendingActivity();
@@ -501,7 +504,15 @@ bool RTCPeerConnection::canSuspendForDocumentSuspension() const
 
 bool RTCPeerConnection::hasPendingActivity() const
 {
-    return !m_isStopped;
+    if (m_isStopped)
+        return false;
+
+    // This returns true if we have pending promises to be resolved.
+    if (ActiveDOMObject::hasPendingActivity())
+        return true;
+
+    // As long as the connection is not stopped and it has event listeners, it may dispatch events.
+    return hasEventListeners();
 }
 
 void RTCPeerConnection::addTransceiver(Ref<RTCRtpTransceiver>&& transceiver)
