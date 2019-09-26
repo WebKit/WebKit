@@ -1,3 +1,29 @@
+2019-09-25  Keith Rollin  <krollin@apple.com>
+
+        Address static analysis warning in UTextProviderLatin1.cpp: Array access results in a null pointer dereference
+        https://bugs.webkit.org/show_bug.cgi?id=202155
+        <rdar://problem/55672422>
+
+        Reviewed by Geoffrey Garen.
+
+        Xcode's static analysis reports:
+
+            .../OpenSource/Source/WTF/wtf/text/icu/UTextProviderLatin1.cpp:185:22: warning: Array access (from variable 'dest') results in a null pointer dereference
+                    dest[length] = 0;
+                    ~~~~         ^
+
+        This error is due to an earlier "if" statement that caused the static
+        analyzer to infer that "dest" could be NULL. It turns out that that
+        previous check was in error, in that it tested for "!dest" when it
+        should have tested for "dest". So this patch fixes that.
+
+        Even with that error fixed, the static analyzer will still infer that
+        "dest" could be NULL at the point shown above. Therefore, add a "dest"
+        test just before the assignment.
+
+        * wtf/text/icu/UTextProviderLatin1.cpp:
+        (WTF::uTextLatin1Extract):
+
 2019-09-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPadOS] [DataActivation] Focus moves away after focusing input fields on www.att.com
