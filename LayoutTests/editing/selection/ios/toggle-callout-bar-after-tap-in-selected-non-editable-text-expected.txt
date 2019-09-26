@@ -1,0 +1,13 @@
+This test verifies that tapping selected non-editable text toggles callout bar visibility. To manually test, tap the button to select the text above, and then tap inside the selection to show the callout bar; tap inside the selection again to dismiss the callout bar, and finally tap outside of the selected text to clear the selection.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Observed selection.
+PASS Showed callout bar after first tap in selection.
+PASS Dismissed callout bar after second tap in selection.
+PASS Dismissed selection after tap outside of selection.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

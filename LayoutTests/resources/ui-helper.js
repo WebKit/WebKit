@@ -1018,4 +1018,18 @@ window.UIHelper = class UIHelper {
         const uiScript = `uiController.doAfterDoubleTapDelay(() => uiController.uiScriptComplete(""))`;
         return new Promise(resolve => testRunner.runUIScript(uiScript, resolve));
     }
+
+    static async waitForSelectionToAppear() {
+        while (true) {
+            if ((await this.getUISelectionViewRects()).length > 0)
+                break;
+        }
+    }
+
+    static async waitForSelectionToDisappear() {
+        while (true) {
+            if (!(await this.getUISelectionViewRects()).length)
+                break;
+        }
+    }
 }

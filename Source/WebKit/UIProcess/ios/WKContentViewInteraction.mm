@@ -2165,6 +2165,33 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     return textSelectionRects;
 }
 
+- (BOOL)_shouldToggleSelectionCommandsAfterTapAt:(CGPoint)point
+{
+    if (_lastSelectionDrawingInfo.selectionRects.isEmpty())
+        return NO;
+
+    WebCore::FloatRect selectionBoundingRect;
+    BOOL pointIsInSelectionRect = NO;
+    for (auto& rectInfo : _lastSelectionDrawingInfo.selectionRects) {
+        auto rect = rectInfo.rect();
+        if (rect.isEmpty())
+            continue;
+
+        pointIsInSelectionRect |= rect.contains(WebCore::roundedIntPoint(point));
+        selectionBoundingRect.unite(rect);
+    }
+
+    WebCore::FloatRect unobscuredContentRect = self.unobscuredContentRect;
+    selectionBoundingRect.intersect(unobscuredContentRect);
+
+    float unobscuredArea = unobscuredContentRect.area();
+    float ratioForConsideringSelectionRectToCoverVastMajorityOfContent = 0.75;
+    if (!unobscuredArea || selectionBoundingRect.area() / unobscuredArea > ratioForConsideringSelectionRectToCoverVastMajorityOfContent)
+        return NO;
+
+    return pointIsInSelectionRect;
+}
+
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
     CGPoint point = [gestureRecognizer locationInView:self];
@@ -2187,8 +2214,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return NO;
     };
 
-    if (gestureRecognizer == _singleTapGestureRecognizer)
+    if (gestureRecognizer == _singleTapGestureRecognizer) {
+        if ([self _shouldToggleSelectionCommandsAfterTapAt:point])
+            return NO;
         return !isInterruptingDecelerationForScrollViewOrAncestor([_singleTapGestureRecognizer lastTouchedScrollView]);
+    }
 
     if (gestureRecognizer == _doubleTapGestureRecognizerForDoubleClick) {
         // Do not start the double-tap-for-double-click gesture recognizer unless we've got a dblclick event handler on the node at the tap location.

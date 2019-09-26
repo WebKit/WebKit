@@ -1,0 +1,60 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta charset="utf8">
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that tapping selected non-editable text toggles callout bar visibility. To manually test, tap the button to select the text above, and then tap inside the selection to show the callout bar; tap inside the selection again to dismiss the callout bar, and finally tap outside of the selected text to clear the selection.");
+
+    const text = document.getElementById("text");
+    const button = document.querySelector("button");
+    const target = document.getElementById("target");
+
+    button.addEventListener("mousedown", event => {
+        getSelection().selectAllChildren(text);
+        event.preventDefault();
+        button.remove();
+    });
+
+    await UIHelper.activateElement(button);
+    await UIHelper.waitForSelectionToAppear();
+    testPassed("Observed selection.");
+
+    await UIHelper.activateElement(text);
+    await UIHelper.waitForMenuToShow();
+    testPassed("Showed callout bar after first tap in selection.");
+
+    await UIHelper.activateElement(text);
+    await UIHelper.waitForMenuToHide();
+    testPassed("Dismissed callout bar after second tap in selection.");
+
+    await UIHelper.activateElement(target);
+    await UIHelper.waitForSelectionToDisappear();
+    testPassed("Dismissed selection after tap outside of selection.");
+
+    text.remove();
+    target.remove();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<button>Click to select text</button>
+<p id="text">Here’s to the crazy ones, the misfits, the rebels, the trouble makers, the round pegs in the square holes, the ones who see things differently. There not fond of rules, and they have no respect for the status quo, you can quote then, disagree with them, glorify or vilify them, about the only thing you can’t do is ignore them.  Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world are the ones who do.</p>
+<div id="target">Then click here</div>
+<p id="description"></p>
+<p id="console"></p>
+</body>
+</html>

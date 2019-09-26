@@ -1,3 +1,32 @@
+2019-09-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS 13] Tapping on a non-editable text selection should toggle callout bar visibility instead of clearing selection
+        https://bugs.webkit.org/show_bug.cgi?id=202254
+        <rdar://problem/54410263>
+
+        Reviewed by Megan Gardner.
+
+        In iOS 13, tapping a text selection should toggle callout bar visibility (i.e. "selection commands" in UIKit).
+        This currently does not work for non-editable text, since the synthetic click gesture simultaneously fires
+        alongside the text interaction assistant's non-editable tap gesture, which dispatches a click to the page which
+        then clears the selection.
+
+        To remedy this and match platform behavior, we avoid recognizing clicks that occur over the text selection, but
+        only in the case where the bounding rect of the text selection doesn't cover a large portion of the visible
+        content rect of the web view. This ensures that the user doesn't get stuck in a state where it's impossible to
+        dismiss a very large text selection (e.g. after selecting all the content on the page).
+
+        Tests:  editing/selection/ios/clear-selection-after-tap-in-large-selected-non-editable-text.html
+                editing/selection/ios/toggle-callout-bar-after-tap-in-selected-non-editable-text.html
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _shouldToggleSelectionCommandsAfterTapAt:]):
+
+        Check the last known selection rects (on _lastSelectionDrawingInfo) to see if the tapped point lies within at
+        least one of the selection rects.
+
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+
 2019-09-26  Patrick Griffis  <pgriffis@igalia.com>
 
         [GTK] Fix logic of dark theme detection

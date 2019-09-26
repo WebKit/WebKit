@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta charset="utf8">
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+#text {
+    font-size: 54px;
+    margin-top: 0;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that tapping selected non-editable text clears the text selection in the case where the selected text covers the vast majority of visible content. To manually test, tap the button to select the text above, and then tap inside the selection to clear it.");
+
+    const text = document.getElementById("text");
+    const button = document.querySelector("button");
+
+    button.addEventListener("mousedown", event => {
+        getSelection().selectAllChildren(text);
+        event.preventDefault();
+        button.remove();
+    });
+
+    await UIHelper.activateElement(button);
+    await UIHelper.waitForSelectionToAppear();
+    testPassed("Observed selection.");
+
+    await UIHelper.activateAt(150, 250);
+    await UIHelper.waitForSelectionToDisappear();
+    testPassed("Dismissed selection.");
+
+    text.remove();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<button>Click to select text</button>
+<p id="text">Here’s to the crazy ones, the misfits, the rebels, the trouble makers, the round pegs in the square holes, the ones who see things differently. There not fond of rules, and they have no respect for the status quo, you can quote then, disagree with them, glorify or vilify them, about the only thing you can’t do is ignore them.  Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world are the ones who do.</p>
+<p id="description"></p>
+<p id="console"></p>
+</body>
+</html>

@@ -1,3 +1,31 @@
+2019-09-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS 13] Tapping on a non-editable text selection should toggle callout bar visibility instead of clearing selection
+        https://bugs.webkit.org/show_bug.cgi?id=202254
+        <rdar://problem/54410263>
+
+        Reviewed by Megan Gardner.
+
+        * editing/selection/ios/clear-selection-after-tap-in-large-selected-non-editable-text-expected.txt: Added.
+        * editing/selection/ios/clear-selection-after-tap-in-large-selected-non-editable-text.html: Added.
+
+        Add a new layout test to verify that when tapping in a text selection that encompasses the entire page, we allow
+        the tap to dismiss the selection instead of toggling callout bar visibility.
+
+        * editing/selection/ios/toggle-callout-bar-after-tap-in-selected-non-editable-text-expected.txt: Added.
+        * editing/selection/ios/toggle-callout-bar-after-tap-in-selected-non-editable-text.html: Added.
+
+        Add another layout test to verify that when tapping inside a text selection, the callout bar is toggled, and
+        when tapping outside the selected text, the selection is dismissed.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.async.waitForSelectionToAppear):
+        (window.UIHelper.async.waitForSelectionToDisappear):
+
+        New helper methods to wait for selection rects to appear or disappear.
+
+        (window.UIHelper):
+
 2019-09-26  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         toExponential, toFixed, and toPrecision should allow arguments up to 100
