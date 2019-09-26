@@ -130,6 +130,17 @@ void ExecutableAllocator::setJITEnabled(bool enabled)
 
 #if PLATFORM(IOS_FAMILY) && (CPU(ARM64) || CPU(ARM))
     if (!enabled) {
+        // Because of an OS quirk, even after the JIT region has been unmapped,
+        // the OS thinks that region is reserved, and as such, can cause Gigacage
+        // allocation to fail. We work around this by initializing the Gigacage
+        // first.
+        // Note: when called, setJITEnabled() is always called extra early in the
+        // process bootstrap. Under normal operation (when setJITEnabled() isn't
+        // called at all), we will naturally initialize the Gigacage before we
+        // allocate the JIT region. Hence, this workaround is merely ensuring the
+        // same behavior of allocation ordering.
+        Gigacage::ensureGigacage();
+
         constexpr size_t size = 1;
         constexpr int protection = PROT_READ | PROT_WRITE | PROT_EXEC;
         constexpr int flags = MAP_PRIVATE | MAP_ANON | MAP_JIT;

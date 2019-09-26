@@ -1,3 +1,24 @@
+2019-09-26  Mark Lam  <mark.lam@apple.com>
+
+        We need to initialize the Gigacage first in setJITEnabled() when disabling the JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=202257
+
+        Reviewed by Saam Barati.
+
+        Because of an OS quirk, even after the JIT region has been unmapped, the OS thinks
+        that region is reserved, and as such, can cause Gigacage allocation to fail.  We
+        work around this by initializing the Gigacage first.
+
+        Note: when called, setJITEnabled() is always called extra early in the process
+        bootstrap.  Under normal operation (when setJITEnabled() isn't called at all), we
+        will naturally initialize the Gigacage before we allocate the JIT region. 
+        Hence, this workaround is merely ensuring the same behavior of allocation ordering.
+
+        This patch only applies to iOS.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::setJITEnabled):
+
 2019-09-25  Guillaume Emont  <guijemont@igalia.com>
 
         testapi: slow devices need more time before watchdog fires
