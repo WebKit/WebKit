@@ -8274,7 +8274,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
             return;
         }
 
-        if (strongSelf->_positionInformation.isImage) {
+        if (strongSelf->_positionInformation.isImage && !strongSelf->_positionInformation.isLink) {
             ASSERT(strongSelf->_positionInformation.image);
             auto cgImage = strongSelf->_positionInformation.image->makeCGImageCopy();
 

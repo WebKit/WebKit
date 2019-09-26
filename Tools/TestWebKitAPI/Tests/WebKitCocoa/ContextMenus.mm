@@ -180,6 +180,50 @@ TEST(WebKit, ContextMenuImage)
     EXPECT_FALSE(didEndCalled);
 }
 
+@interface TestContextMenuImageWithoutConfigurationUIDelegate : NSObject <WKUIDelegate>
+@end
+
+@implementation TestContextMenuImageWithoutConfigurationUIDelegate
+
+- (void)webView:(WKWebView *)webView contextMenuConfigurationForElement:(WKContextMenuElementInfo *)elementInfo completionHandler:(void(^)(UIContextMenuConfiguration * _Nullable))completionHandler
+{
+    EXPECT_TRUE([elementInfo.linkURL.absoluteString isEqualToString:[linkURL absoluteString]]);
+    contextMenuRequested = true;
+    // check that it is an image
+    completionHandler(nil);
+}
+
+- (void)webView:(WKWebView *)webView contextMenuWillPresentForElement:(WKContextMenuElementInfo *)elementInfo
+{
+    willPresentCalled = true;
+}
+
+- (void)webView:(WKWebView *)webView contextMenuForElement:(WKContextMenuElementInfo *)elementInfo willCommitWithAnimator:(id<UIContextMenuInteractionCommitAnimating>)animator
+{
+    willCommitCalled = true;
+}
+
+- (void)webView:(WKWebView *)webView contextMenuDidEndForElement:(WKContextMenuElementInfo *)elementInfo
+{
+    didEndCalled = true;
+}
+
+@end
+
+TEST(WebKit, ContextMenuImage)
+{
+    auto driver = contextMenuWebViewDriver([TestContextMenuImageWithoutConfigurationUIDelegate class], @"<a href='http://127.0.0.1/'><img width='500' height='500' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVQImWNgYGAAAAAEAAGjChXjAAAAAElFTkSuQmCC'></a>");
+    [driver begin:^(BOOL result) {
+        EXPECT_TRUE(result);
+        [driver clickDown];
+        [driver clickUp];
+    }];
+    TestWebKitAPI::Util::run(&willPresentCalled);
+    EXPECT_TRUE(contextMenuRequested);
+    EXPECT_TRUE(willPresentCalled);
+    EXPECT_FALSE(willCommitCalled);
+    EXPECT_FALSE(didEndCalled);
+}
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"

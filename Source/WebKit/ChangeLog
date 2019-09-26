@@ -1,3 +1,16 @@
+2019-09-26  Dean Jackson  <dino@apple.com>
+
+        ContextMenu on a link in an email no longer shows web preview
+        https://bugs.webkit.org/show_bug.cgi?id=201120
+        <rdar://54353617>
+
+        Reviewed by Wenson Hsieh.
+
+        Only go down the image path if we are not also a link.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView continueContextMenuInteraction:]):
+
 2019-09-26  Chris Dumez  <cdumez@apple.com>
 
         Stop using testRunner.overridePreference() to turn on Page Cache
