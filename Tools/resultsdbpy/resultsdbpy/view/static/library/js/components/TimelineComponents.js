@@ -279,7 +279,17 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
             });
             colorBatchRender.addSeq(color, (context, color) => {
                 context.arc(x + dotMargin + useRadius, baselineY, useRadius, 0, 2 * Math.PI);
-                if (typeof innerLabel === "number" || typeof innerLabel === "string") {
+                if (innerLabel instanceof Image || typeof innerLabel === "string" && (innerLabel.endsWith('.svg') || innerLabel.endsWith('.png') || innerLabel.endsWith('.jpg') || innerLabel.endsWith('.jpeg'))) {
+                    let image = innerLabel;
+                    if (typeof innerLabel === "string") {
+                        image = new Image();
+                        image.src = innerLabel;
+                    }
+                    const image_padding = useRadius - fontSize / 2;
+                    drawLabelsSeqs.push(() => {
+                        context.drawImage(image, x + dotMargin + image_padding, y + image_padding, fontSize, fontSize);
+                    });
+                } else if (typeof innerLabel === "number" || typeof innerLabel === "string") {
                     drawLabelsSeqs.push(() => {
                         // Draw the inner label
                         const innerLabelSize = context.measureText(innerLabel);

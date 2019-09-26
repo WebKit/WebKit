@@ -1,3 +1,16 @@
+2019-09-26  Zhifei Fang  <zhifei_fang@apple.com>
+
+        [results.webkit.org] Timeline support Image inner label
+        https://bugs.webkit.org/show_bug.cgi?id=202180
+
+        Reviewed by Jonathan Bedard.
+
+        * resultsdbpy/resultsdbpy/view/static/js/expectations.js:
+        * resultsdbpy/resultsdbpy/view/static/library/css/webkit.css:
+        (.lengend>.item .dot img): support img symbol for lengend and dot
+        * resultsdbpy/resultsdbpy/view/static/library/js/components/TimelineComponents.js:
+        (Timeline.CanvasSeriesComponent): Support user pass a Image object or a image url as inner label
+
 2019-09-26  Chris Dumez  <cdumez@apple.com>
 
         Stop using testRunner.overridePreference() to turn on Page Cache

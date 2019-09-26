@@ -592,6 +592,7 @@ pre {
   padding: 0;
   margin: 0 8px;
   background-color: var(--greyDark);
+  position: relative;
 }
 
 .dot.blink {
@@ -629,6 +630,16 @@ pre {
   margin-top: 1px;
 }
 
+.dot img, .dot.small img {
+    width: var(--tinySize);
+    height: var(--tinySize);
+    position: absolute;
+    top: calc((var(--smallSize) - var(--tinySize)) / 2);
+    left: calc((var(--smallSize) - var(--tinySize)) / 2);
+    padding: 0;
+    margin: 0;
+}
+
 .dot.medium {
   font-size: var(--smallSize)
   width: var(--mediumSize);
@@ -640,6 +651,16 @@ pre {
   padding-top: 3px;
 }
 
+.dot.medium img {
+    width: var(--smallSize);
+    height: var(--smallSize);
+    position: absolute;
+    top: calc((var(--mediumSize) - var(--smallSize)) / 2);
+    left: calc((var(--mediumSize) - var(--smallSize)) / 2);
+    padding: 0;
+    margin: 0;
+}
+
 .dot.large {
   font-size: var(--mediumSize);
   width: var(--largeSize);
@@ -649,6 +670,16 @@ pre {
 
 .dot.large * {
   padding-top: 4px;
+}
+
+.dot.large img {
+    width: var(--mediumSize);
+    height: var(--mediumSize);
+    position: absolute;
+    top: calc((var(--largeSize) - var(--mediumSize)) / 2);
+    left: calc((var(--largeSize) - var(--mediumSize)) / 2);
+    padding: 0;
+    margin: 0;
 }
 
 .dot.success {
@@ -2166,6 +2197,15 @@ a.disabled {
   -webkit-user-select: none;
   user-select: none;
   cursor: default;
+}
+.lengend>.item .dot img {
+    width: var(--tinySize);
+    height: var(--tinySize);
+    position: absolute;
+    top: calc((var(--smallSize) - var(--tinySize)) / 2);
+    left: calc((var(--smallSize) - var(--tinySize)) / 2);
+    padding: 0;
+    margin: 0;
 }
 .timeline.lengend>.item .dot::before{
   left: calc(0px - var(--tinySize));

@@ -93,10 +93,15 @@ Expectations.failureTypeMap = {
     timedout: 'TIMEOUT',
     crashed: 'CRASH',
 }
+const timeoutImage = new Image();
+timeoutImage.src = '/library/icons/clock.svg';
+timeoutImage.toString = function () {
+    return this.outerHTML;
+}
 Expectations.symbolMap = {
     success: '✓',
     failed: '𝖷',
-    timedout: '⎋',
+    timedout: timeoutImage,
     crashed: '!',
 }
 
