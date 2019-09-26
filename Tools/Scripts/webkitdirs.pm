@@ -2526,7 +2526,7 @@ sub setupIOSWebKitEnvironment($)
 sub iosSimulatorApplicationsPath()
 {
     # FIXME: We should ask simctl for this information, instead of guessing from available runtimes.
-    my $runtimePath = File::Spec->catdir(sdkPlatformDirectory("iphoneos"), "Developer", "Library", "CoreSimulator", "Profiles", "Runtimes");
+    my $runtimePath = File::Spec->catdir(sdkPlatformDirectory("iphoneos"), "Library", "Developer", "CoreSimulator", "Profiles", "Runtimes");
     opendir(RUNTIMES, $runtimePath);
     my @runtimes = grep {/.*\.simruntime/} readdir(RUNTIMES);
     close(RUNTIMES);

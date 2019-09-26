@@ -1,3 +1,17 @@
+2019-09-26  Frederic Wang  <fwang@igalia.com>
+
+        run-safari --ios-simulator is no longer working with Xcode 11
+        https://bugs.webkit.org/show_bug.cgi?id=199852
+
+        Path of MobileSafari.app has changed in Xcode 11. This patch updates
+        the run-safari script to use the new path. This removes support for
+        running Safari on iOS < 13, see discussions on bug 177595.
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitdirs.pm:
+        (iosSimulatorApplicationsPath):
+
 2019-09-26  Zhifei Fang  <zhifei_fang@apple.com>
 
         [results.webkit.org] Timeline support Image inner label
