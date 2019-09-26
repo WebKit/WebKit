@@ -64,7 +64,7 @@ TEST(WebKit, ReloadWithDifferingInitialScale)
 
     // Install the user script, so that the next time we load the page,
     // the document lays out very wide, causing the initial scale to be small.
-    auto userScript = adoptNS([[WKUserScript alloc] initWithSource:@"document.body.style.width = '2000px'; setTimeout(function () { window.webkit.messageHandlers.testHandler.postMessage('ranUserScript'); }, 0)" injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES]);
+    auto userScript = adoptNS([[WKUserScript alloc] initWithSource:@"document.body.style.width = '1500px'; setTimeout(function () { window.webkit.messageHandlers.testHandler.postMessage('ranUserScript'); }, 0)" injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES]);
     [[webView configuration].userContentController addUserScript:userScript.get()];
 
     // Reload, causing both the user script and the page state restoration code to run.
