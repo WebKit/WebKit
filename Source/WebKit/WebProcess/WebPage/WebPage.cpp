@@ -4660,6 +4660,14 @@ void WebPage::beginPrinting(FrameIdentifier frameID, const PrintInfo& printInfo)
     auto computedPageSize = m_printContext->computedPageSize(FloatSize(printInfo.availablePaperWidth, printInfo.availablePaperHeight), printInfo.margin);
     m_printContext->begin(computedPageSize.width(), computedPageSize.height());
 
+    // PrintContext::begin() performed a synchronous layout which might have executed a
+    // script that closed the WebPage, clearing m_printContext.
+    // See <rdar://problem/49731211> for cases of this happening.
+    if (!m_printContext) {
+        unfreezeLayerTree(LayerTreeFreezeReason::Printing);
+        return;
+    }
+
     float fullPageHeight;
     m_printContext->computePageRects(FloatRect(0, 0, computedPageSize.width(), computedPageSize.height()), 0, 0, printInfo.pageSetupScaleFactor, fullPageHeight, true);
 
