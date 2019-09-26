@@ -98,8 +98,7 @@ static Vector<uint8_t> createAttestedCredentialDataFromU2fRegisterResponse(const
     if (credentialId.isEmpty())
         return { };
 
-    Vector<uint8_t> aaguid(aaguidLength);
-    memset(aaguid.data(), 0, aaguidLength);
+    Vector<uint8_t> aaguid(aaguidLength, 0);
     return buildAttestedCredentialData(aaguid, credentialId, publicKey);
 }
 
