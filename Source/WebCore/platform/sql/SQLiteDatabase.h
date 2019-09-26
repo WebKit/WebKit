@@ -64,7 +64,7 @@ public:
     bool returnsAtLeastOneResult(const String&);
     
     WEBCORE_EXPORT bool tableExists(const String&);
-    void clearAllTables();
+    WEBCORE_EXPORT void clearAllTables();
     WEBCORE_EXPORT int runVacuumCommand();
     int runIncrementalVacuumCommand();
     
@@ -125,7 +125,7 @@ public:
     //               file, but removes the empty pages only when PRAGMA INCREMANTAL_VACUUM
     //               is called.
     enum AutoVacuumPragma { AutoVacuumNone = 0, AutoVacuumFull = 1, AutoVacuumIncremental = 2 };
-    bool turnOnIncrementalAutoVacuum();
+    WEBCORE_EXPORT bool turnOnIncrementalAutoVacuum();
 
     WEBCORE_EXPORT void setCollationFunction(const String& collationName, WTF::Function<int(int, const void*, int, const void*)>&&);
     void removeCollationFunction(const String& collationName);

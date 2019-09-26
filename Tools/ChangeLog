@@ -1,3 +1,24 @@
+2019-09-26  Kate Cheney  <katherine_cheney@apple.com>
+
+        Enable LayoutTests using ResourceLoadStatistics SQLite backend (195420) 
+        https://bugs.webkit.org/show_bug.cgi?id=195420                          
+        <rdar://problem/54213551>                                               
+
+        Reviewed by Brent Fulgham.                                             
+
+        Added in logic to send a message from the UIProcess to the Network      
+        Process which will initalize the ITP Database backend to allow for      
+        layout testing.                                                         
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setUseITPDatabase):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setUseITPDatabase):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2019-09-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         TestWebKitAPI.WebKit.ReloadWithDifferingInitialScale is failing consistently
