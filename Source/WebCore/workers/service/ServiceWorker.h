@@ -77,13 +77,17 @@ private:
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
+    void suspend(ReasonForSuspension) final;
+    void resume() final;
     void stop() final;
 
     bool isAlwaysOnLoggingAllowed() const;
 
     ServiceWorkerData m_data;
     bool m_isStopped { false };
+    bool m_isSuspended { false };
     RefPtr<PendingActivity<ServiceWorker>> m_pendingActivityForEventDispatch;
+    Vector<State> m_pendingStateChanges;
 };
 
 } // namespace WebCore

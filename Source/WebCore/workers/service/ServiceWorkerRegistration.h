@@ -92,6 +92,8 @@ private:
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
+    void suspend(ReasonForSuspension) final;
+    void resume() final;
     void stop() final;
 
     ServiceWorkerRegistrationData m_registrationData;
@@ -102,6 +104,8 @@ private:
     RefPtr<ServiceWorker> m_activeWorker;
 
     bool m_isStopped { false };
+    bool m_isSuspended { false };
+    bool m_shouldFireUpdateFoundEventUponResuming { false };
     RefPtr<PendingActivity<ServiceWorkerRegistration>> m_pendingActivityForEventDispatch;
     Timer m_softUpdateTimer;
 };

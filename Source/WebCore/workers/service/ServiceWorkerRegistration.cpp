@@ -211,6 +211,11 @@ void ServiceWorkerRegistration::fireUpdateFoundEvent()
     if (m_isStopped)
         return;
 
+    if (m_isSuspended) {
+        m_shouldFireUpdateFoundEventUponResuming = true;
+        return;
+    }
+
     REGISTRATION_RELEASE_LOG_IF_ALLOWED("fireUpdateFoundEvent: Firing updatefound event for registration %llu", identifier().toUInt64());
 
     ASSERT(m_pendingActivityForEventDispatch);
@@ -234,8 +239,23 @@ const char* ServiceWorkerRegistration::activeDOMObjectName() const
 
 bool ServiceWorkerRegistration::canSuspendForDocumentSuspension() const
 {
-    // FIXME: We should do better as this prevents a page from entering PageCache when there is a service worker registration.
-    return !hasPendingActivity();
+    return true;
+}
+
+void ServiceWorkerRegistration::suspend(ReasonForSuspension)
+{
+    m_isSuspended = true;
+}
+
+void ServiceWorkerRegistration::resume()
+{
+    m_isSuspended = false;
+    if (m_shouldFireUpdateFoundEventUponResuming) {
+        m_shouldFireUpdateFoundEventUponResuming = false;
+        scriptExecutionContext()->postTask([this, protectedThis = makeRef(*this)](auto&) {
+            fireUpdateFoundEvent();
+        });
+    }
 }
 
 void ServiceWorkerRegistration::stop()

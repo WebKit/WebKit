@@ -80,6 +80,11 @@ ServiceWorker::~ServiceWorker()
 
 void ServiceWorker::updateState(State state)
 {
+    if (m_isSuspended) {
+        m_pendingStateChanges.append(state);
+        return;
+    }
+
     WORKER_RELEASE_LOG_IF_ALLOWED("updateState: Updating service worker %llu state from %hhu to %hhu. Registration ID: %llu", identifier().toUInt64(), m_data.state, state, registrationIdentifier().toUInt64());
     m_data.state = state;
     if (state != State::Installing && !m_isStopped) {
@@ -141,8 +146,23 @@ const char* ServiceWorker::activeDOMObjectName() const
 
 bool ServiceWorker::canSuspendForDocumentSuspension() const
 {
-    // FIXME: We should do better as this prevents the page from entering PageCache when there is a Service Worker.
-    return !hasPendingActivity();
+    return true;
+}
+
+void ServiceWorker::suspend(ReasonForSuspension)
+{
+    m_isSuspended = true;
+}
+
+void ServiceWorker::resume()
+{
+    m_isSuspended = false;
+    if (!m_pendingStateChanges.isEmpty()) {
+        scriptExecutionContext()->postTask([this, protectedThis = makeRef(*this)](auto&) {
+            for (auto pendingStateChange : std::exchange(m_pendingStateChanges, { }))
+                updateState(pendingStateChange);
+        });
+    }
 }
 
 void ServiceWorker::stop()

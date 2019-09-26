@@ -563,7 +563,6 @@ http/tests/xmlhttprequest [ Skip ]
 
 # Service-workers tests that fail, time out or crash.
 webkit.org/b/175419 http/tests/workers/service/controller-change.html [ Skip ]
-webkit.org/b/175419 http/tests/workers/service/no-page-cache-when-controlled.html [ Skip ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/activation.https.html [ Skip ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/claim-with-redirect.https.html [ Skip ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-within-sw.https.html [ Skip ]

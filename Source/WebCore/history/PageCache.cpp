@@ -173,13 +173,7 @@ static bool canCacheFrame(Frame& frame, DiagnosticLoggingClient& diagnosticLoggi
         logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::cannotSuspendActiveDOMObjectsKey());
         isCacheable = false;
     }
-#if ENABLE(SERVICE_WORKER)
-    if (frame.document() && frame.document()->activeServiceWorker()) {
-        PCLOG("   -The document has an active service worker");
-        logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::serviceWorkerKey());
-        isCacheable = false;
-    }
-#endif
+
     // FIXME: We should investigating caching frames that have an associated
     // application cache. <rdar://problem/5917899> tracks that work.
     if (!documentLoader->applicationCacheHost().canCacheInPageCache()) {
