@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <html>
 <script>
 window.finish = function()
@@ -21,7 +22,6 @@ function test()
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
         testRunner.setCanOpenWindows();
-        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
     }
     log("open page with data urls");
     window.open("resources/cached-page-with-data-urls.html");

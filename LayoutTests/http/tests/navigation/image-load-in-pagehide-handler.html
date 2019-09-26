@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <html><head>
 <title>Image load in pagehide handler</title>
 <script>
@@ -8,7 +9,6 @@ function test() {
     if (!testCalled) {
         if (window.testRunner) {
             testRunner.dumpAsText();
-            testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
             testRunner.waitUntilDone();
         }
         testCalled = true;

@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -6,7 +7,6 @@
 if (window.testRunner) {
   testRunner.dumpAsText();
   testRunner.waitUntilDone();
-  testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
   testRunner.setCanOpenWindows();
 }
 

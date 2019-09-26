@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <html>
 <head>
     <title>Test resource load callbacks going back to a cached main resource</title>
@@ -7,7 +8,6 @@
         testRunner.dumpResourceLoadCallbacks();
         testRunner.setCanOpenWindows();
         testRunner.waitUntilDone();
-        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
     }
 
     // Window we will be controlling.

@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- webkit-test-runner [ enableProcessSwapOnNavigation=true ] -->
+<!DOCTYPE html><!-- webkit-test-runner [ enableProcessSwapOnNavigation=true enablePageCache=true ] -->
 <html>
 <head>
 <script>
@@ -7,7 +7,6 @@ if (window.testRunner) {
     testRunner.setCanOpenWindows();
     testRunner.setPopupBlockingEnabled(false);
     testRunner.setCloseRemainingWindowsWhenComplete(true);
-    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
     testRunner.waitUntilDone();
 }
 </script>

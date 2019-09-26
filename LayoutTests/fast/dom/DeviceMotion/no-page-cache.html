@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <html>
 <head>
 <script src="../../../resources/js-test-pre.js"></script>
@@ -9,7 +10,6 @@ description('Tests that pages that use DeviceMotion are not put in the page cach
 if (window.testRunner) {
     testRunner.waitUntilDone();
     testRunner.setCanOpenWindows();
-    testRunner.overridePreference('WebKitUsesPageCachePreferenceKey', 1);
 } else
     debug('This test can not be run without the TestRunner');
 

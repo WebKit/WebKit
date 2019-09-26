@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <html>
 <head>
 <title>Test what happens when navigating from a page with unconfirmed inline input when the page is cacheable</title>
@@ -7,10 +8,8 @@
 <script>
 jsTestIsAsync = true;
 
-if (window.testRunner) {
+if (window.testRunner)
     testRunner.setCanOpenWindows();
-    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
-}
 
 // Window we will be controlling.
 var target;

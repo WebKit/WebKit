@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <head>
 <style>
 html {
@@ -96,7 +97,6 @@ window.onload = function () {
 
     testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
 
-    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
 

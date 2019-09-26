@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
@@ -28,12 +29,8 @@ window.addEventListener("pagehide", function(event) {
 }, false);
 
 window.addEventListener('load', function() {
-
-    // Enable the PageCache and make this an async test.
-    if (window.testRunner) {
-        window.testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    if (window.testRunner)
         window.testRunner.waitUntilDone();
-    }
 
     // Access geolocation. It is enough to create the geolocation object.
     debug(navigator.geolocation);

@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <html>
 <script>
 
@@ -29,7 +30,6 @@ function runTestStep() {
     if (window.testRunner) {
       testRunner.dumpAsText();
       testRunner.waitUntilDone();
-      testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
     }
     window.resizeTo(300, 300);
     // Wait a bit before navigating away to make sure we have done layout due to the resizing.

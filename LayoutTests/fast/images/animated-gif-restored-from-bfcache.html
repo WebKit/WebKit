@@ -1,8 +1,7 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <script>
-    if (window.testRunner) {
+    if (window.testRunner)
         testRunner.dumpAsText();
-        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
-    }
 
     function runTest() {
         if (window.internals && window.testRunner) {

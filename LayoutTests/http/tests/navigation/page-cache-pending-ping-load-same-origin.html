@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -5,9 +6,6 @@
 <script>
 description('Tests that a page with pending ping loads can enter PageCache.');
 window.jsTestIsAsync = true;
-
-if (window.testRunner)
-    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 
 let afterPageCacheRestore = false;
 

@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -6,8 +7,6 @@
 <script>
 description("Tests that we do not crash when deleting a subframe from the pagehide event handler.");
 jsTestIsAsync = true;
-if (window.testRunner)
-    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 
 window.addEventListener("pageshow", function(event) {
     debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");

@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -29,9 +30,6 @@ window.addEventListener('pageshow', function() {
         }, 0);
         break;
     }
-
-    if (window.testRunner)
-        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", pageCacheEnabled);
 
     setTimeout(function() {
         window.location.href = "resources/page-go-back-onload.html";

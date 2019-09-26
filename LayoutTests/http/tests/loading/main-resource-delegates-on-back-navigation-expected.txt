@@ -19,8 +19,6 @@ http://127.0.0.1:8000/loading/main-resource-delegates-on-back-navigation.html - 
 http://127.0.0.1:8000/loading/main-resource-delegates-on-back-navigation.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/loading/main-resource-delegates-on-back-navigation.html, http status code 200>
 main frame - didCommitLoadForFrame
 http://127.0.0.1:8000/loading/main-resource-delegates-on-back-navigation.html - didFinishLoading
-main frame - didFinishDocumentLoadForFrame
-main frame - didHandleOnloadEventsForFrame
 main frame - didFinishLoadForFrame
 main frame - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resources/page-go-back-onload.html 
 main frame - didStartProvisionalLoadForFrame

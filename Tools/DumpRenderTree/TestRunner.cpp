@@ -583,6 +583,9 @@ static JSValueRef overridePreferenceCallback(JSContextRef context, JSObjectRef f
     auto value = adopt(JSValueToStringCopy(context, arguments[1], exception));
     ASSERT(!*exception);
 
+    // Should use `<!-- webkit-test-runner [ enablePageCache=true ] -->` instead.
+    RELEASE_ASSERT(!JSStringIsEqualToUTF8CString(key.get(), "WebKitUsesPageCachePreferenceKey"));
+
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->overridePreference(key.get(), value.get());
 

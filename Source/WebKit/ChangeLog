@@ -1,3 +1,13 @@
+2019-09-26  Chris Dumez  <cdumez@apple.com>
+
+        Stop using testRunner.overridePreference() to turn on Page Cache
+        https://bugs.webkit.org/show_bug.cgi?id=202274
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+
 2019-09-26  Andy Estes  <aestes@apple.com>
 
         Crash under WebPage::beginPrinting when m_printContext becomes null due to synchronous layout

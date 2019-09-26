@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,7 +8,6 @@ description("A cached page with a URL fragment shouldn't send the fragment in th
 
 if (window.testRunner) {
     testRunner.clearBackForwardList();
-    testRunner.overridePreference('WebKitUsesPageCachePreferenceKey', 1);
     testRunner.dumpAsText();
 
     testRunner.queueLoad('resources/success.html');

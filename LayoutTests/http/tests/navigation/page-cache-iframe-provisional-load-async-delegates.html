@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -9,8 +10,6 @@ window.jsTestIsAsync = true;
 if (window.testRunner) {
     if (testRunner.setShouldDecideNavigationPolicyAfterDelay)
           testRunner.setShouldDecideNavigationPolicyAfterDelay(true);
-
-    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 }
 
 window.addEventListener("pageshow", function(event) {

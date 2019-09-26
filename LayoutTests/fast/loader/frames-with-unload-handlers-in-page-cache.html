@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <html>
 <head>
 <script>
@@ -5,7 +6,6 @@
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
-    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 }
 
 window.onload = function() {

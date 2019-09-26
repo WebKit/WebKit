@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,7 +11,6 @@ function runTest() {
 		testRunner.dumpAsText();
 		testRunner.waitUntilDone();
 		testRunner.setCanOpenWindows();
-		testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 	}
 
 	// This test open two windows. One primary window will load animated-image.html.

@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -6,10 +7,8 @@
 description('Tests that a page with an open WebDatabase with no pending transaction goes into the page cache.');
 window.jsTestIsAsync = true;
 
-if (window.testRunner) {
-    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+if (window.testRunner)
     testRunner.clearAllDatabases();
-}
 
 window.addEventListener("pageshow", function(event) {
     debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");

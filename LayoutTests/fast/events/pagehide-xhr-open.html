@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <html>
 <script src="../../resources/js-test-pre.js"></script>
 <body>
@@ -6,10 +7,6 @@
 
 <script type="text/javascript">
 description('Tries to trigger an assert in xmlhttprequest during pagehide.');
-
-if (window.testRunner)
-    testRunner.overridePreference('WebKitUsesPageCachePreferenceKey', 1);
-
 
 onpageshow = function(event)
 {

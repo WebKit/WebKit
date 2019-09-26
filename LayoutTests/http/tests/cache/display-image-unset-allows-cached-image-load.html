@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <html>
 <head>
 <script>
@@ -10,7 +11,6 @@ function runTest()
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
         testRunner.setCanOpenWindows();
-        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 
         document.getElementById('result').innerHTML = 'FAILURE: image1.html not loaded';
         window.open("resources/image1.html", "_blank");

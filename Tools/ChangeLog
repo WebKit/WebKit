@@ -1,3 +1,15 @@
+2019-09-26  Chris Dumez  <cdumez@apple.com>
+
+        Stop using testRunner.overridePreference() to turn on Page Cache
+        https://bugs.webkit.org/show_bug.cgi?id=202274
+
+        Reviewed by Alex Christensen.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (overridePreferenceCallback):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::overridePreference):
+
 2019-09-26  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Use cursor: pointer for clickable elements

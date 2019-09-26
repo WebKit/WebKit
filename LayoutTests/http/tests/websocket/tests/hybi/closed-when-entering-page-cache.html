@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -6,8 +7,6 @@
 description("Test that an open WebSocket does not prevent a page from entering page cache.");
 
 window.jsTestIsAsync = true;
-if (window.testRunner)
-    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 
 var wasRestoredFromPageCache = false;
 var receivedErrorEvent = false;

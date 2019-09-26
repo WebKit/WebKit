@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,10 +20,6 @@
 
 <script type="text/javascript">
 description('Tests that all JS timers are suspended after the pagehide event is fired, so that timers created within it will not fire while the document is in the page cache.');
-
-if (window.testRunner)
-    testRunner.overridePreference('WebKitUsesPageCachePreferenceKey', 1);
-
 
 onpageshow = function(event)
 {

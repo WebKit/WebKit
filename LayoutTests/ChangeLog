@@ -1,3 +1,158 @@
+2019-09-26  Chris Dumez  <cdumez@apple.com>
+
+        Stop using testRunner.overridePreference() to turn on Page Cache
+        https://bugs.webkit.org/show_bug.cgi?id=202274
+
+        Reviewed by Alex Christensen.
+
+        Stop using testRunner.overridePreference() to turn on Page Cache, as this does not work
+        for WebKit2 when navigating cross-origin due to process swapping. Instead, update tests
+        to rely on `<!-- webkit-test-runner [ enablePageCache=true ] -->`.
+
+        * animations/resume-after-page-cache.html:
+        * compositing/accelerated-layers-after-back.html:
+        * compositing/iframes/page-cache-layer-tree.html:
+        * compositing/page-cache-back-crash.html:
+        * compositing/show-composited-iframe-on-back-button.html:
+        * editing/mac/input/unconfirmed-text-navigation-with-page-cache.html:
+        * fast/css/fontloader-page-cache.html:
+        * fast/dom/DeviceMotion/no-page-cache.html:
+        * fast/dom/DeviceOrientation/event-after-navigation.html:
+        * fast/dom/DeviceOrientation/no-page-cache.html:
+        * fast/dom/Window/timer-resume-on-navigation-back.html:
+        * fast/events/onunload-back-to-page-cache.html:
+        * fast/events/pagehide-timeout-expected.txt:
+        * fast/events/pagehide-timeout.html:
+        * fast/events/pagehide-xhr-open-expected.txt:
+        * fast/events/pagehide-xhr-open.html:
+        * fast/events/pageshow-pagehide-on-back-cached-with-frames.html:
+        * fast/events/pageshow-pagehide-on-back-cached.html:
+        * fast/events/suspend-timers-expected.txt:
+        * fast/events/suspend-timers.html:
+        * fast/forms/autocomplete-off-with-default-value-does-not-clear.html:
+        * fast/frames/frame-crash-with-page-cache.html:
+        * fast/frames/frame-unload-navigate-and-setTimeout-assert-fail.html:
+        * fast/frames/page-hide-document-open.html:
+        * fast/frames/restoring-page-cache-should-not-run-scripts-via-style-update.html:
+        * fast/frames/restoring-page-cache-should-not-run-scripts.html:
+        * fast/harness/page-cache-crash-on-data-urls.html:
+        * fast/harness/use-page-cache-expected.txt:
+        * fast/harness/use-page-cache.html:
+        * fast/history/back-from-page-with-focused-iframe.html:
+        * fast/history/go-back-to-iframe-with-plugin.html:
+        * fast/history/go-back-to-object-subframe.html:
+        * fast/history/history-back-while-pdf-in-pagecache.html:
+        * fast/history/page-cache-MessagePort-pending-message.html:
+        * fast/history/page-cache-after-window-open.html:
+        * fast/history/page-cache-back-navigation-crash.html:
+        * fast/history/page-cache-clearing-expected.txt:
+        * fast/history/page-cache-clearing.html:
+        * fast/history/page-cache-closed-audiocontext.html:
+        * fast/history/page-cache-createObjectURL-using-open-panel.html:
+        * fast/history/page-cache-createObjectURL.html:
+        * fast/history/page-cache-destroy-document.html:
+        * fast/history/page-cache-element-state-focused.html:
+        * fast/history/page-cache-execute-script-during-restore.html:
+        * fast/history/page-cache-geolocation-active-oneshot.html:
+        * fast/history/page-cache-geolocation-active-watcher.html:
+        * fast/history/page-cache-geolocation.html:
+        * fast/history/page-cache-indexed-closed-db.html:
+        * fast/history/page-cache-indexed-opened-db.html:
+        * fast/history/page-cache-media-source-closed-2.html:
+        * fast/history/page-cache-media-source-closed.html:
+        * fast/history/page-cache-media-source-opened.html:
+        * fast/history/page-cache-navigate-during-restore.html:
+        * fast/history/page-cache-notification-non-suspendable.html:
+        * fast/history/page-cache-notification-suspendable.html:
+        * fast/history/page-cache-removed-source-buffer.html:
+        * fast/history/page-cache-running-audiocontext.html:
+        * fast/history/page-cache-suspended-audiocontext.html:
+        * fast/history/page-cache-webdatabase-no-transaction-db-expected.txt:
+        * fast/history/page-cache-webdatabase-no-transaction-db.html:
+        * fast/history/page-cache-webdatabase-pending-transaction.html:
+        * fast/history/page-cache-with-opener.html:
+        * fast/history/pagehide-remove-iframe-crash.html:
+        * fast/history/resources/page-cache-window-with-iframe.html:
+        * fast/history/resources/page-cache-window-with-opener.html:
+        * fast/history/timed-refresh-in-cached-frame.html:
+        * fast/images/animated-gif-restored-from-bfcache.html:
+        * fast/loader/frames-with-unload-handlers-in-page-cache.html:
+        * fast/loader/image-in-page-cache.html:
+        * fast/loader/input-element-page-cache-crash.html:
+        * fast/loader/navigate-with-new-target-after-back-forward-navigation.html:
+        * fast/loader/navigate-with-post-to-new-target-after-back-forward-navigation.html:
+        * fast/loader/scroll-position-restored-on-back.html:
+        * fast/loader/stateobjects/no-popstate-when-back-to-stateless-entry-with-page-cache.html:
+        * fast/loader/stateobjects/popstate-fires-with-page-cache.html:
+        * fast/loader/unschedule-relayout-after-unload.html:
+        * fast/loader/window-properties-restored-from-page-cache.html:
+        * fast/overflow/horizontal-scroll-after-back.html:
+        * fast/scrolling/iframe-scrollable-after-back.html:
+        * fast/scrolling/ios/scroll-events-back-forward-after-pageshow.html:
+        * fast/scrolling/ios/scroll-events-back-forward.html:
+        * fast/scrolling/ios/touch-scroll-back-forward.html:
+        * fast/scrolling/overflow-scrollable-after-back.html:
+        * fast/scrolling/page-cache-back-overflow-scroll-restore.html:
+        * fast/text-autosizing/ios/text-autosizing-after-back.html:
+        * fast/viewport/ios/viewport-shrink-to-fit-on-new-navigation.html:
+        * fast/viewport/viewport-128.html:
+        * http/tests/cache/display-image-unset-allows-cached-image-load.html:
+        * http/tests/loading/main-resource-delegates-on-back-navigation-expected.txt:
+        * http/tests/loading/main-resource-delegates-on-back-navigation.html:
+        * http/tests/loading/unfinished-load-back-to-cached-page-callbacks.html:
+        * http/tests/loading/unfinished-main-resource-back-to-cached-page-callbacks.html:
+        * http/tests/media/reload-after-dialog.html:
+        * http/tests/navigation/go-back-to-error-page.html:
+        * http/tests/navigation/https-in-page-cache.html:
+        * http/tests/navigation/https-no-store-subframe-in-page-cache.html:
+        * http/tests/navigation/image-load-in-pagehide-handler.html:
+        * http/tests/navigation/page-cache-fragment-referrer.html:
+        * http/tests/navigation/page-cache-iframe-no-current-historyItem.html:
+        * http/tests/navigation/page-cache-iframe-provisional-load-async-delegates.html:
+        * http/tests/navigation/page-cache-iframe-provisional-load.html:
+        * http/tests/navigation/page-cache-pending-image-load-cache-partition.html:
+        * http/tests/navigation/page-cache-pending-image-load.html:
+        * http/tests/navigation/page-cache-pending-ping-load-cross-origin.html:
+        * http/tests/navigation/page-cache-pending-ping-load-same-origin.html:
+        * http/tests/navigation/page-cache-xhr-in-pagehide-expected.txt:
+        * http/tests/navigation/page-cache-xhr-in-pagehide.html:
+        * http/tests/navigation/page-cache-xhr.html:
+        * http/tests/navigation/resources/https-in-page-cache-1.php:
+        * http/tests/navigation/resources/https-in-page-cache-2.php:
+        * http/tests/navigation/resources/https-in-page-cache-3.html:
+        * http/tests/navigation/resources/https-no-store-subframe-in-page-cache.html:
+        * http/tests/navigation/subframe-pagehide-handler-starts-load.html:
+        * http/tests/navigation/subframe-pagehide-handler-starts-load2.html:
+        * http/tests/security/cross-origin-window-open-insert-script.html:
+        * http/tests/security/cross-origin-window-open-javascript-url.html:
+        * http/tests/security/navigate-when-restoring-cached-page.html:
+        * http/tests/security/xss-DENIED-click-and-form-submission-from-inactive-domwindow.html:
+        * http/tests/security/xss-DENIED-script-inject-into-inactive-window.html:
+        * http/tests/security/xss-DENIED-script-inject-into-inactive-window2-pson.html:
+        * http/tests/security/xss-DENIED-script-inject-into-inactive-window2.html:
+        * http/tests/security/xss-DENIED-script-inject-into-inactive-window3.html:
+        * http/tests/websocket/tests/hybi/closed-when-entering-page-cache.html:
+        * http/tests/websocket/tests/hybi/stop-on-resume-in-error-handler.html:
+        * http/tests/workers/service/client-added-to-clients-when-restored-from-page-cache.html:
+        * http/tests/workers/service/client-removed-from-clients-while-in-page-cache.html:
+        * http/wpt/beacon/support/sendBeacon-onpagehide-window.html:
+        * legacy-animation-engine/animations/resume-after-page-cache.html:
+        * loader/go-back-cached-main-resource.html:
+        * loader/go-back-to-different-window-size.html:
+        * media/crash-closing-page-with-media-as-plugin-fallback.html:
+        * media/restore-from-page-cache.html:
+        * platform/ios/ios/fixed/fixed-back-forward.html:
+        * plugins/crash-restoring-plugin-page-from-page-cache.html:
+        * plugins/frameset-with-plugin-frame.html:
+        * plugins/netscape-plugin-page-cache-works.html:
+        * swipe/basic-cached-back-swipe.html:
+        * swipe/main-frame-pinning-requirement.html:
+        * swipe/pushState-cached-back-swipe.html:
+        * swipe/pushState-programmatic-back-while-swiping-crash.html:
+        * swipe/pushstate-with-manual-scrollrestoration.html:
+        * tiled-drawing/scrolling/null-parent-back-crash.html:
+        * tiled-drawing/tiled-drawing-scroll-position-page-cache-restoration.html:
+
 2019-09-26  Kate Cheney  <katherine_cheney@apple.com>
 
         Enable LayoutTests using ResourceLoadStatistics SQLite backend (195420)

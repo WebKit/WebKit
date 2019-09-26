@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -13,7 +14,6 @@ var mockAccuracy = 100.0;
 var stage = "before_restore";
 
 if (window.testRunner) {
-    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
     testRunner.setGeolocationPermission(true);
     testRunner.setMockGeolocationPosition(mockLatitude, mockLongitude, mockAccuracy);
 }

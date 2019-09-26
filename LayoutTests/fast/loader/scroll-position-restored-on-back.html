@@ -1,13 +1,12 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <html>
 <head>
 <script>
-
 function navigate()
 {
     if (location.hash == "") {
         if (window.testRunner) {
             testRunner.dumpAsText();
-            testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
             testRunner.waitUntilDone();
         }
 

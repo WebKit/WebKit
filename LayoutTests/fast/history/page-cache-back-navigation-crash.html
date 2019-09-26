@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -6,10 +7,8 @@
 description('Tests that removing a frame in a detached document after navigation does not cause a crash on navigating back');
 window.jsTestIsAsync = true;
 
-if (window.testRunner) {
-    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+if (window.testRunner)
     testRunner.setCanOpenWindows();
-}
 
 function removeFrameInChild()
 {

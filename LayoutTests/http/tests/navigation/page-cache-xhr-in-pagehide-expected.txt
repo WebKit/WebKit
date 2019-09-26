@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 35: XMLHttpRequest cannot load http://127.0.0.1:8000/resources/load-and-stall.cgi?name=load-and-stall.cgi&stallFor=3&stallAt=0&mimeType=text/plain due to access control checks.
+CONSOLE MESSAGE: line 33: XMLHttpRequest cannot load http://127.0.0.1:8000/resources/load-and-stall.cgi?name=load-and-stall.cgi&stallFor=3&stallAt=0&mimeType=text/plain due to access control checks.
 Tests that a page with a loading XMLHttpRequest goes into the page cache.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

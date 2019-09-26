@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -12,9 +13,6 @@
 description('Tests that a page calling URL.createObjectURL() can use the page cache.');
 window.jsTestIsAsync = true;
 var blobURL = null;
-
-if (window.testRunner)
-    window.testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 
 function onInputFileChange()
 {

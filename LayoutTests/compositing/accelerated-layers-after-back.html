@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useAcceleratedDrawing=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useAcceleratedDrawing=true enablePageCache=true ] -->
 
 <html>
 <head>
@@ -19,7 +19,6 @@
         if (window.testRunner) {
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
-            window.testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
         }
         
         function doOnFirstLoad()

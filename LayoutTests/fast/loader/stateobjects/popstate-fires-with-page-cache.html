@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -11,10 +12,8 @@ var testWindow;
 
 onload = function()
 {
-    if (window.testRunner) {
+    if (window.testRunner)
         testRunner.setCanOpenWindows();
-        testRunner.overridePreference('WebKitUsesPageCachePreferenceKey', 1);
-    }
     testWindow = window.open('resources/popstate-fires-with-page-cache-1.html');
     if (!testWindow)
         testFailed('Could not open test window');

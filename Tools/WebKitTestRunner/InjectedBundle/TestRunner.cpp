@@ -857,6 +857,9 @@ static inline bool toBool(JSStringRef value)
 void TestRunner::overridePreference(JSStringRef preference, JSStringRef value)
 {
     auto& injectedBundle = InjectedBundle::singleton();
+    // Should use `<!-- webkit-test-runner [ enablePageCache=true ] -->` instead.
+    RELEASE_ASSERT(!JSStringIsEqualToUTF8CString(preference, "WebKitUsesPageCachePreferenceKey"));
+
     // FIXME: handle non-boolean preferences.
     WKBundleOverrideBoolPreferenceForTestRunner(injectedBundle.bundle(), injectedBundle.pageGroup(), toWK(preference).get(), toBool(value));
 }

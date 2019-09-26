@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -6,10 +7,8 @@
 log("* Tests that a client is removed from the list of service worker clients while it is in the page cache");
 log("");
 
-if (window.testRunner) {
+if (window.testRunner)
   testRunner.setCanOpenWindows();
-  testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
-}
 
 let topClientIdentifier = null;
 let windowClientIdentifier = null;

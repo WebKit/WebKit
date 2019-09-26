@@ -1,9 +1,9 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <html>
 <script>
 if (window.testRunner && window.internals) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
-    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
     internals.settings.setPageCacheSupportsPlugins(true);
 }
 

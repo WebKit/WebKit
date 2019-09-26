@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <html>
 <script>
 var timeoutValue = 100; //ms
@@ -28,7 +29,6 @@ function runTest() {
     if (window.testRunner) {
       testRunner.dumpAsText();
       testRunner.waitUntilDone();
-      testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
     }
     // Location changes need to happen outside the onload handler to generate history entries.
     setTimeout(function() {

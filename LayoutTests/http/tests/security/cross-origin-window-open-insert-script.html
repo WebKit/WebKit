@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -7,10 +8,8 @@
 description("Tests that inserting a script into newly opened window does not bypass origin checks.");
 debug("This test passes unless you see FAIL messages below");
 jsTestIsAsync = true;
-if (window.testRunner) {
+if (window.testRunner)
     testRunner.setCanOpenWindows();
-    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
-}
 
 window.onload = function() {
     let win = open("about:blank", "one");

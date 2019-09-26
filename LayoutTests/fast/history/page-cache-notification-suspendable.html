@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -6,10 +7,8 @@
 description('Tests that notifications do not prevent the Page from entering page cache if they are idle or closed.');
 window.jsTestIsAsync = true;
 
-if (window.testRunner) {
-    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+if (window.testRunner)
     testRunner.grantWebNotificationPermission("file://");
-}
 
 window.addEventListener("pageshow", function(event) {
     debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");

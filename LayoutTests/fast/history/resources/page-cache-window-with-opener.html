@@ -1,11 +1,9 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
 <script src="../../../resources/js-test-pre.js"></script>
 <script>
-if (window.testRunner)
-    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
-
 window.addEventListener("pageshow", function(event) {
     if (!window.sessionStorage.didStartPageCacheWindowWithOpenerTest) {
         if (event.persisted)

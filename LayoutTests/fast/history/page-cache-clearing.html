@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -6,17 +7,13 @@
 description("Tests that clearing the page cache doesn't leave pages in the cache.");
 window.jsTestIsAsync = true;
 
-// Enable page cache.
-if (window.testRunner)
-    window.testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
-
 if (!window.internals)
     debug("This test requires window.internals");
 
 window.addEventListener("pageshow", function(event) {
     debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
     if (event.persisted) {
-        shouldBe("window.internals.pageCacheSize()", "1");
+        shouldBeTrue("window.internals.pageCacheSize() > 0");
         evalAndLog("window.internals.clearPageCache()");
         shouldBe("window.internals.pageCacheSize()", "0");
         finishJSTest();

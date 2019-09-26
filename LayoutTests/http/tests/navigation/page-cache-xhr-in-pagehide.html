@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -7,9 +8,6 @@ description('Tests that a page with a loading XMLHttpRequest goes into the page 
 window.jsTestIsAsync = true;
 
 var restoredFromPageCache = false;
-
-if (window.testRunner)
-    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 
 window.addEventListener("pageshow", function(event) {
     debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");

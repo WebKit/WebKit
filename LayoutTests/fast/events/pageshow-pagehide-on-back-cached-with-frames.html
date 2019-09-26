@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <html>
 <body>
 Test pageshow/pagehide event behavior when navigating away from a page with frames, putting the page in the page cache, then back to it.
@@ -8,7 +9,6 @@ Test pageshow/pagehide event behavior when navigating away from a page with fram
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
-    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 }
 
 // We explicitly chain the loading of the subframes to ensure consistent test results between runs.

@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!doctype html>
 <html>
 <style>
@@ -22,7 +23,6 @@ function runTest() {
     if (window.testRunner) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
-        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
     }
     document.fonts.loadFont({ font: '10px TestFont', onsuccess: onsuccess, onerror: onerror });
 }

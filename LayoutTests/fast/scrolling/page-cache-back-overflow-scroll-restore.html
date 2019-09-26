@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <style>
 #puffin {
     font: Ahem 10px;
@@ -23,7 +24,6 @@
 <script>
 testRunner.dumpAsText();
 testRunner.waitUntilDone();
-testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 
 var testDiv = document.getElementById("puffin");
 

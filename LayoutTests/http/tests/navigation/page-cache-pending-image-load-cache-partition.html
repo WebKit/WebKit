@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -6,9 +7,6 @@
 description('Tests that a page with a loading image goes into the page cache (with non-empty cache partition).');
 window.jsTestIsAsync = true;
 internals.settings.setStorageBlockingPolicy('BlockThirdParty');
-
-if (window.testRunner)
-    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 
 window.addEventListener("pageshow", function(event) {
     debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");

@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true enablePageCache=true ] -->
 <html>
 <head>
   <script src="../../../resources/js-test-pre.js"></script>
@@ -42,9 +42,6 @@ function onPageShow()
 
 function onPageLoad()
 {
-    if (window.testRunner)
-      testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
-
     // Navigate in a timeout to make sure we create a history entry.
     setTimeout(function() {
       window.location.href = 'resources/jump-back.html';

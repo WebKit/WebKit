@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -9,7 +10,6 @@
 <script>
 
 if (window.testRunner) {
-    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
     testRunner.clearBackForwardList();
     testRunner.dumpAsText();
     testRunner.waitUntilDone();

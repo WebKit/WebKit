@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <html>
 <script>
 
@@ -28,7 +29,6 @@ function runTestStep()
     if (window.testRunner) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
-        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
     }
     window.setTimeout("navigateAwayAndBack()", 200);
 }

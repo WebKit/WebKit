@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -6,10 +7,8 @@
 description("Tests that a page that has called window.open() goes into the page cache.");
 window.jsTestIsAsync = true;
 
-if (window.testRunner) {
-    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+if (window.testRunner)
     testRunner.setCanOpenWindows();
-}
 
 window.addEventListener("pageshow", function(event) {
     if (!window.sessionStorage.didStartPageCacheAfterWindowOpenTest) {

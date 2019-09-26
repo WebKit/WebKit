@@ -1,9 +1,9 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 Passes if it does not crash.
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText();
-    testRunner.overridePreference('WebKitUsesPageCachePreferenceKey', 1);
     testRunner.setCanOpenWindows();
     testRunner.waitUntilDone();
 }

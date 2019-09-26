@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,9 +7,6 @@
 <script>
 const RESOURCES_DIR = "/beacon/resources/";
 var id = self.token();
-
-if (window.testRunner)
-    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 </script>
 </head>
 <body>
