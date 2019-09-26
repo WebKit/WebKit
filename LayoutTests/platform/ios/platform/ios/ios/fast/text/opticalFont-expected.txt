@@ -12,13 +12,13 @@ layer at (0,0) size 800x1189
       RenderBlock {DIV} at (0,58) size 784x74
         RenderText {#text} at (0,0) size 678x74
           text run at (0,0) width 678: "This is a test for -webkit-system-font, using the 'font'"
-          text run at (0,37) width 109: "property"
+          text run at (0,37) width 110: "property"
       RenderBlock {DIV} at (0,132) size 784x37
         RenderText {#text} at (0,0) size 715x37
           text run at (0,0) width 715: "This is a test for -apple-system, using the 'font' property"
       RenderBlock {DIV} at (0,169) size 784x37
-        RenderText {#text} at (0,0) size 653x37
-          text run at (0,0) width 653: "This is a test for system-ui, using the 'font' property"
+        RenderText {#text} at (0,0) size 654x37
+          text run at (0,0) width 654: "This is a test for system-ui, using the 'font' property"
       RenderBlock {DIV} at (0,206) size 784x29
         RenderInline {B} at (0,0) size 556x29
           RenderText {#text} at (0,0) size 556x29

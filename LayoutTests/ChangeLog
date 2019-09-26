@@ -1,3 +1,14 @@
+2019-09-26  Russell Epstein  <repstein@apple.com>
+
+        Layout Test platform/ios/ios/fast/text/opticalFont.html is Failing on iOS13.
+        https://bugs.webkit.org/show_bug.cgi?id=202278
+
+        Unreviewed Test Gardening.
+
+        * platform/ios/ios/fast/text/opticalFont-expected.txt: Removed.
+        * platform/ios/platform/ios/ios/fast/text/opticalFont-expected.txt:
+	Rebaselined for iOS 13.
+
 2019-09-25  Chris Dumez  <cdumez@apple.com>
 
         Add very basic PageCache support for RTCPeerConnection
