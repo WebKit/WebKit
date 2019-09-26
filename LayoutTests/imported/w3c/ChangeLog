@@ -1,3 +1,15 @@
+2019-09-26  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Non-callable "handleEvent" property is silently ignored
+        https://bugs.webkit.org/show_bug.cgi?id=200066
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/IndexedDB/fire-error-event-exception-expected.txt:
+        * web-platform-tests/IndexedDB/fire-success-event-exception-expected.txt:
+        * web-platform-tests/IndexedDB/fire-upgradeneeded-event-exception-expected.txt:
+        * web-platform-tests/dom/events/EventListener-handleEvent-expected.txt:
+
 2019-09-25  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Re-sync web-platform-tests/IndexedDB from upstream
