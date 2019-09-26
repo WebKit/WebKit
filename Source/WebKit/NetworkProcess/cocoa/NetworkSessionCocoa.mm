@@ -578,7 +578,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
             return completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
 
         // Handle server trust evaluation at platform-level if requested, for performance reasons and to use ATS defaults.
-        if (!_session->networkProcess().canHandleHTTPSServerTrustEvaluation()) {
+        if (!_session->networkProcess().canHandleHTTPSServerTrustEvaluation() || _session->fastServerTrustEvaluationEnabled()) {
 #if HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE)
             if (canNSURLSessionTrustEvaluate()) {
                 auto* networkDataTask = [self existingTask:task];
@@ -922,6 +922,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     , m_proxyConfiguration(parameters.proxyConfiguration)
     , m_shouldLogCookieInformation(parameters.shouldLogCookieInformation)
     , m_loadThrottleLatency(parameters.loadThrottleLatency)
+    , m_fastServerTrustEvaluationEnabled(parameters.fastServerTrustEvaluationEnabled)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 

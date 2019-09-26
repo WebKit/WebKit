@@ -1,3 +1,19 @@
+2019-09-25  Alex Christensen  <achristensen@webkit.org>
+
+        Add replacement SPI on _WKWebsiteDataStoreConfiguration for enabling speculative cache validation and IPC-free server trust evaluation
+        https://bugs.webkit.org/show_bug.cgi?id=202251
+
+        Reviewed by Tim Horton.
+
+        Adopt new SPI instead of deprecated SPI.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (persistentDataStore):
+        (defaultConfiguration):
+        (-[BrowserAppDelegate fetchDefaultStoreWebsiteData:]):
+        (-[BrowserAppDelegate fetchAndClearDefaultStoreWebsiteData:]):
+        (-[BrowserAppDelegate clearDefaultStoreWebsiteData:]):
+
 2019-09-25  Jonathan Bedard  <jbedard@apple.com>
 
         Python 3: Add support in webkitpy.common.system

@@ -143,6 +143,8 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         WTFMove(networkCacheDirectory),
         WTFMove(networkCacheDirectoryExtensionHandle),
         m_configuration->dataConnectionServiceType(),
+        m_configuration->fastServerTrustEvaluationEnabled(),
+        m_configuration->networkCacheSpeculativeValidationEnabled(),
     };
     networkingHasBegun();
 

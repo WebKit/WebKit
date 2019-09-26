@@ -39,6 +39,7 @@
 #import <WebKit/_WKInternalDebugFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserContentExtensionStore.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 
 enum {
     WebKit1NewWindowTag = 1,
@@ -78,19 +79,32 @@ enum {
         [NSApp setAutomaticCustomizeTouchBarMenuItemEnabled:YES];
 }
 
+static WKWebsiteDataStore *persistentDataStore()
+{
+    static WKWebsiteDataStore *dataStore;
+
+    if (!dataStore) {
+        _WKWebsiteDataStoreConfiguration *configuration = [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
+        configuration.networkCacheSpeculativeValidationEnabled = YES;
+        dataStore = [[WKWebsiteDataStore alloc] _initWithConfiguration:configuration];
+    }
+    
+    return dataStore;
+}
+
 static WKWebViewConfiguration *defaultConfiguration()
 {
     static WKWebViewConfiguration *configuration;
 
     if (!configuration) {
         configuration = [[WKWebViewConfiguration alloc] init];
+        configuration.websiteDataStore = persistentDataStore();
         configuration.preferences._fullScreenEnabled = YES;
         configuration.preferences._developerExtrasEnabled = YES;
         configuration.preferences._mediaDevicesEnabled = YES;
         configuration.preferences._mockCaptureDevicesEnabled = YES;
 
         _WKProcessPoolConfiguration *processConfiguration = [[[_WKProcessPoolConfiguration alloc] init] autorelease];
-        processConfiguration.diskCacheSpeculativeValidationEnabled = ![SettingsController shared].networkCacheSpeculativeRevalidationDisabled;
         if ([SettingsController shared].perWindowWebProcessesDisabled)
             processConfiguration.usesSingleWebProcess = YES;
         if ([SettingsController shared].processSwapOnWindowOpenWithOpenerEnabled)
@@ -308,16 +322,16 @@ WKPreferences *defaultPreferences()
 
 - (IBAction)fetchDefaultStoreWebsiteData:(id)sender
 {
-    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray *websiteDataRecords) {
+    [persistentDataStore() fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray *websiteDataRecords) {
         NSLog(@"did fetch default store website data %@.", websiteDataRecords);
     }];
 }
 
 - (IBAction)fetchAndClearDefaultStoreWebsiteData:(id)sender
 {
-    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray *websiteDataRecords) {
-        [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] forDataRecords:websiteDataRecords completionHandler:^{
-            [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray *websiteDataRecords) {
+    [persistentDataStore() fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray *websiteDataRecords) {
+        [persistentDataStore() removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] forDataRecords:websiteDataRecords completionHandler:^{
+            [persistentDataStore() fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray *websiteDataRecords) {
                 NSLog(@"did clear default store website data, after clearing data is %@.", websiteDataRecords);
             }];
         }];
@@ -326,7 +340,7 @@ WKPreferences *defaultPreferences()
 
 - (IBAction)clearDefaultStoreWebsiteData:(id)sender
 {
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^{
+    [persistentDataStore() removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^{
         NSLog(@"Did clear default store website data.");
     }];
 }

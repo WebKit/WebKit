@@ -93,6 +93,8 @@ struct NetworkSessionCreationParameters {
     String networkCacheDirectory;
     SandboxExtension::Handle networkCacheDirectoryExtensionHandle;
     String dataConnectionServiceType;
+    bool fastServerTrustEvaluationEnabled { false };
+    bool networkCacheSpeculativeValidationEnabled { false };
 };
 
 } // namespace WebKit

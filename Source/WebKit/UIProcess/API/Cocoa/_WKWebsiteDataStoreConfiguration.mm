@@ -290,6 +290,26 @@ static void checkURLArgument(NSURL *url)
     _configuration->setDeviceManagementRestrictionsEnabled(enabled);
 }
 
+- (BOOL)networkCacheSpeculativeValidationEnabled
+{
+    return _configuration->networkCacheSpeculativeValidationEnabled();
+}
+
+- (void)setNetworkCacheSpeculativeValidationEnabled:(BOOL)enabled
+{
+    _configuration->setNetworkCacheSpeculativeValidationEnabled(enabled);
+}
+
+- (BOOL)fastServerTrustEvaluationEnabled
+{
+    return _configuration->fastServerTrustEvaluationEnabled();
+}
+
+- (void)setFastServerTrustEvaluationEnabled:(BOOL)enabled
+{
+    return _configuration->setFastServerTrustEvaluationEnabled(enabled);
+}
+
 - (NSUInteger)perOriginStorageQuota
 {
     return _configuration->perOriginStorageQuota();

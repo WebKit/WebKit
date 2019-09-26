@@ -1,3 +1,42 @@
+2019-09-25  Alex Christensen  <achristensen@webkit.org>
+
+        Add replacement SPI on _WKWebsiteDataStoreConfiguration for enabling speculative cache validation and IPC-free server trust evaluation
+        https://bugs.webkit.org/show_bug.cgi?id=202251
+
+        Reviewed by Tim Horton.
+
+        These are two performance optimizations that are currently per-ProcessPool that need to be per-WebsiteDataStore.
+        This makes replacement SPI and deprecates the old SPI.  I'm going to adopt the new SPI then remove the old SPI.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration networkCacheSpeculativeValidationEnabled]):
+        (-[_WKWebsiteDataStoreConfiguration setNetworkCacheSpeculativeValidationEnabled:]):
+        (-[_WKWebsiteDataStoreConfiguration fastServerTrustEvaluationEnabled]):
+        (-[_WKWebsiteDataStoreConfiguration setFastServerTrustEvaluationEnabled:]):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::fastServerTrustEvaluationEnabled const):
+        (WebKit::WebsiteDataStoreConfiguration::setFastServerTrustEvaluationEnabled):
+        (WebKit::WebsiteDataStoreConfiguration::networkCacheSpeculativeValidationEnabled const):
+        (WebKit::WebsiteDataStoreConfiguration::setNetworkCacheSpeculativeValidationEnabled):
+
 2019-09-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix failing layout tests after trac.webkit.org/r250183

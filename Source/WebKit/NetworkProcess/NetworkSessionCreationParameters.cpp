@@ -75,6 +75,8 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << deviceManagementRestrictionsEnabled;
     encoder << allLoadsBlockedByDeviceManagementRestrictionsForTesting;
     encoder << dataConnectionServiceType;
+    encoder << fastServerTrustEvaluationEnabled;
+    encoder << networkCacheSpeculativeValidationEnabled;
 }
 
 Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::decode(IPC::Decoder& decoder)
@@ -224,6 +226,16 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     if (!dataConnectionServiceType)
         return WTF::nullopt;
     
+    Optional<bool> fastServerTrustEvaluationEnabled;
+    decoder >> fastServerTrustEvaluationEnabled;
+    if (!fastServerTrustEvaluationEnabled)
+        return WTF::nullopt;
+    
+    Optional<bool> networkCacheSpeculativeValidationEnabled;
+    decoder >> networkCacheSpeculativeValidationEnabled;
+    if (!networkCacheSpeculativeValidationEnabled)
+        return WTF::nullopt;
+    
     return {{
         *sessionID
         , WTFMove(*boundInterfaceIdentifier)
@@ -258,7 +270,9 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(*resourceLoadStatisticsManualPrevalentResource)
         , WTFMove(*networkCacheDirectory)
         , WTFMove(*networkCacheDirectoryExtensionHandle)
-        , WTFMove(*dataConnectionServiceType),
+        , WTFMove(*dataConnectionServiceType)
+        , WTFMove(*fastServerTrustEvaluationEnabled)
+        , WTFMove(*networkCacheSpeculativeValidationEnabled)
     }};
 }
 
