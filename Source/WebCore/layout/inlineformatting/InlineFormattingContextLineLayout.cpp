@@ -379,8 +379,41 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const Line::Conten
     auto previousLineLastRunIndex = Optional<unsigned> { inlineDisplayRuns.isEmpty() ? Optional<unsigned>() : inlineDisplayRuns.size() - 1 };
     // 9.4.2 Inline formatting contexts
     // A line box is always tall enough for all of the boxes it contains.
+
     // Create final display runs.
     auto& lineRuns = lineContent.runs();
+    for (unsigned index = 0; index < lineRuns.size(); ++index) {
+        auto& run = lineRuns.at(index);
+        // Inline level containers (<span>) don't generate inline runs.
+        if (run->isContainerStart() || run->isContainerEnd())
+            continue;
+        auto& logicalRect = run->logicalRect();
+        // Inline level box (replaced or inline-block) or <br>/<wbr>
+        if (run->isLineBreak() || run->isBox()) {
+            formattingState.addInlineRun(makeUnique<Display::Run>(logicalRect));
+            continue;
+        }
+        if (run->isText()) {
+            // Collapsed line runs don't generate display runs.
+            auto textContext = run->textContext();
+            if (textContext->isCollapsed)
+                continue;
+            // Try to join multiple text runs when possible.
+            const Line::Content::Run* previousRun = !index ? nullptr : lineRuns[index - 1].get();
+            auto previousRunCanBeExtended = previousRun && previousRun->textContext() ? previousRun->textContext()->canBeExtended : false;
+            auto currentRunCanBeMergedWithPrevious = !previousRun || &run->layoutBox() == &previousRun->layoutBox();
+
+            if (previousRunCanBeExtended && currentRunCanBeMergedWithPrevious) {
+                auto& previousDisplayRun = formattingState.inlineRuns().last();
+                previousDisplayRun->expandHorizontally(logicalRect.width());
+                previousDisplayRun->textContext()->expand(textContext->length);
+            } else
+                formattingState.addInlineRun(makeUnique<Display::Run>(logicalRect, Display::Run::TextContext { textContext->start, textContext->length }));
+            continue;
+        }
+        ASSERT_NOT_REACHED();
+    }
+
     auto geometry = formattingContext.geometry();
     for (unsigned index = 0; index < lineRuns.size(); ++index) {
         auto& lineRun = lineRuns.at(index);
@@ -392,7 +425,6 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const Line::Conten
             displayBox.setTopLeft(logicalRect.topLeft());
             displayBox.setContentBoxWidth(logicalRect.width());
             displayBox.setContentBoxHeight(logicalRect.height());
-            formattingState.addInlineRun(makeUnique<Display::Run>(logicalRect));
             continue;
         }
 
@@ -402,7 +434,6 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const Line::Conten
             if (layoutBox.isInFlowPositioned())
                 topLeft += geometry.inFlowPositionedPositionOffset(layoutBox, m_usedHorizontalValues);
             displayBox.setTopLeft(topLeft);
-            formattingState.addInlineRun(makeUnique<Display::Run>(logicalRect));
             continue;
         }
 
@@ -428,31 +459,23 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const Line::Conten
         }
 
         // Text content. Try to join multiple text runs when possible.
-        ASSERT(lineRun->isText());
-        auto textContext = lineRun->textContext();   
-        const Line::Content::Run* previousLineRun = !index ? nullptr : lineRuns[index - 1].get();
-        if (!textContext->isCollapsed) {
-            auto previousRunCanBeExtended = previousLineRun && previousLineRun->textContext() ? previousLineRun->textContext()->canBeExtended : false;
-            auto requiresNewRun = !index || !previousRunCanBeExtended || &layoutBox != &previousLineRun->layoutBox();
-            if (requiresNewRun)
-                formattingState.addInlineRun(makeUnique<Display::Run>(logicalRect, Display::Run::TextContext { textContext->start, textContext->length }));
-            else {
-                auto& lastDisplayRun = formattingState.inlineRuns().last();
-                lastDisplayRun->expandHorizontally(logicalRect.width());
-                lastDisplayRun->textContext()->expand(textContext->length);
+        if (lineRun->isText()) {
+            auto textContext = lineRun->textContext();
+            const Line::Content::Run* previousLineRun = !index ? nullptr : lineRuns[index - 1].get();
+            // FIXME take content breaking into account when part of the layout box is on the previous line.
+            auto firstInlineRunForLayoutBox = !previousLineRun || &previousLineRun->layoutBox() != &layoutBox;
+            if (firstInlineRunForLayoutBox) {
+                // Setup display box for the associated layout box.
+                displayBox.setTopLeft(logicalRect.topLeft());
+                displayBox.setContentBoxWidth(textContext->isCollapsed ? LayoutUnit() : logicalRect.width());
+                displayBox.setContentBoxHeight(logicalRect.height());
+            } else if (!textContext->isCollapsed) {
+                // FIXME fix it for multirun/multiline.
+                displayBox.setContentBoxWidth(displayBox.contentBoxWidth() + logicalRect.width());
             }
+            continue;
         }
-        // FIXME take content breaking into account when part of the layout box is on the previous line.
-        auto firstInlineRunForLayoutBox = !previousLineRun || &previousLineRun->layoutBox() != &layoutBox;
-        if (firstInlineRunForLayoutBox) {
-            // Setup display box for the associated layout box.
-            displayBox.setTopLeft(logicalRect.topLeft());
-            displayBox.setContentBoxWidth(textContext->isCollapsed ? LayoutUnit() : logicalRect.width());
-            displayBox.setContentBoxHeight(logicalRect.height());
-        } else if (!textContext->isCollapsed) {
-            // FIXME fix it for multirun/multiline.
-            displayBox.setContentBoxWidth(displayBox.contentBoxWidth() + logicalRect.width());
-        }
+        ASSERT_NOT_REACHED();
     }
     // FIXME linebox needs to be ajusted after content alignment.
     formattingState.addLineBox(lineContent.lineBox());
