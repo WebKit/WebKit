@@ -60,10 +60,9 @@ shouldBeEqualToString("(1234.567).toFixed(2)", "1234.57");
 shouldBeEqualToString("(1234.567).toFixed(2.9)", "1234.57");
 shouldBeEqualToString("(1234.567).toFixed(5)", "1234.56700");
 shouldBeEqualToString("(1234.567).toFixed(20)", "1234.56700000000000727596");
+shouldBeEqualToString("(1234.567).toFixed(21)", "1234.567000000000007275958");
+shouldBeEqualToString("(1234.567).toFixed(100)", "1234.5670000000000072759576141834259033203125000000000000000000000000000000000000000000000000000000000000");
 
-// SpiderMonkey allows precision values -20 to 100, the spec only allows 0 to 20
-shouldThrow("(1234.567).toFixed(21)");
-shouldThrow("(1234.567).toFixed(100)");
 shouldThrow("(1234.567).toFixed(101)");
 shouldThrow("(1234.567).toFixed(-1)");
 shouldThrow("(1234.567).toFixed(-4)");

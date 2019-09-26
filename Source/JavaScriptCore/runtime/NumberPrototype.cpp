@@ -113,25 +113,6 @@ static ALWAYS_INLINE EncodedJSValue throwVMToThisNumberError(ExecState* exec, Th
     return throwVMTypeError(exec, scope, WTF::makeString("thisNumberValue called on incompatible ", typeString));
 }
 
-static ALWAYS_INLINE bool getIntegerArgumentInRange(ExecState* exec, int low, int high, int& result, bool& isUndefined)
-{
-    result = 0;
-    isUndefined = false;
-
-    JSValue argument0 = exec->argument(0);
-    if (argument0.isUndefined()) {
-        isUndefined = true;
-        return true;
-    }
-
-    double asDouble = argument0.toInteger(exec);
-    if (asDouble < low || asDouble > high)
-        return false;
-
-    result = static_cast<int>(asDouble);
-    return true;
-}
-
 // The largest finite floating point number is 1.mantissa * 2^(0x7fe-0x3ff).
 // Since 2^N in binary is a one bit followed by N zero bits. 1 * 2^3ff requires
 // at most 1024 characters to the left of a decimal point, in base 2 (1025 if
@@ -414,27 +395,27 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
     if (!toThisNumber(vm, exec->thisValue(), x))
         return throwVMToThisNumberError(exec, scope, exec->thisValue());
 
+    JSValue arg = exec->argument(0);
     // Perform ToInteger on the argument before remaining steps.
-    int decimalPlacesInExponent;
-    bool isUndefined;
-    bool inRange = getIntegerArgumentInRange(exec, 0, 20, decimalPlacesInExponent, isUndefined);
+    int decimalPlaces = static_cast<int>(arg.toInteger(exec));
     RETURN_IF_EXCEPTION(scope, { });
 
     // Handle NaN and Infinity.
     if (!std::isfinite(x))
         return JSValue::encode(jsNontrivialString(vm, String::number(x)));
 
-    if (!inRange)
-        return throwVMError(exec, scope, createRangeError(exec, "toExponential() argument must be between 0 and 20"_s));
+    if (decimalPlaces < 0 || decimalPlaces > 100)
+        return throwVMRangeError(exec, scope, "toExponential() argument must be between 0 and 100"_s);
 
     // Round if the argument is not undefined, always format as exponential.
     NumberToStringBuffer buffer;
     DoubleConversionStringBuilder builder { &buffer[0], sizeof(buffer) };
     const DoubleToStringConverter& converter = DoubleToStringConverter::EcmaScriptConverter();
     builder.Reset();
-    isUndefined
-        ? converter.ToExponential(x, -1, &builder)
-        : converter.ToExponential(x, decimalPlacesInExponent, &builder);
+    if (arg.isUndefined())
+        converter.ToExponential(x, -1, &builder);
+    else
+        converter.ToExponential(x, decimalPlaces, &builder);
     return JSValue::encode(jsString(vm, builder.Finalize()));
 }
 
@@ -451,13 +432,10 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
     if (!toThisNumber(vm, exec->thisValue(), x))
         return throwVMToThisNumberError(exec, scope, exec->thisValue());
 
-    // Get the argument. 
-    int decimalPlaces;
-    bool isUndefined; // This is ignored; undefined treated as 0.
-    bool inRange = getIntegerArgumentInRange(exec, 0, 20, decimalPlaces, isUndefined);
+    int decimalPlaces = static_cast<int>(exec->argument(0).toInteger(exec));
     RETURN_IF_EXCEPTION(scope, { });
-    if (!inRange)
-        return throwVMError(exec, scope, createRangeError(exec, "toFixed() argument must be between 0 and 20"_s));
+    if (decimalPlaces < 0 || decimalPlaces > 100)
+        return throwVMRangeError(exec, scope, "toFixed() argument must be between 0 and 100"_s);
 
     // 15.7.4.5.7 states "If x >= 10^21, then let m = ToString(x)"
     // This also covers Ininity, and structure the check so that NaN
@@ -488,22 +466,21 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
     if (!toThisNumber(vm, exec->thisValue(), x))
         return throwVMToThisNumberError(exec, scope, exec->thisValue());
 
-    // Perform ToInteger on the argument before remaining steps.
-    int significantFigures;
-    bool isUndefined;
-    bool inRange = getIntegerArgumentInRange(exec, 1, 21, significantFigures, isUndefined);
-    RETURN_IF_EXCEPTION(scope, { });
-
+    JSValue arg = exec->argument(0);
     // To precision called with no argument is treated as ToString.
-    if (isUndefined)
+    if (arg.isUndefined())
         return JSValue::encode(jsString(vm, String::number(x)));
+
+    // Perform ToInteger on the argument before remaining steps.
+    int significantFigures = static_cast<int>(arg.toInteger(exec));
+    RETURN_IF_EXCEPTION(scope, { });
 
     // Handle NaN and Infinity.
     if (!std::isfinite(x))
         return JSValue::encode(jsNontrivialString(vm, String::number(x)));
 
-    if (!inRange)
-        return throwVMError(exec, scope, createRangeError(exec, "toPrecision() argument must be between 1 and 21"_s));
+    if (significantFigures < 1 || significantFigures > 100)
+        return throwVMRangeError(exec, scope, "toPrecision() argument must be between 1 and 100"_s);
 
     return JSValue::encode(jsString(vm, String::numberToStringFixedPrecision(x, significantFigures, KeepTrailingZeros)));
 }

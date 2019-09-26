@@ -38,18 +38,18 @@ class DoubleToStringConverter {
   // When calling ToFixed with a double > 10^kMaxFixedDigitsBeforePoint
   // or a requested_digits parameter > kMaxFixedDigitsAfterPoint then the
   // function returns false.
-  static const int kMaxFixedDigitsBeforePoint = 60;
-  static const int kMaxFixedDigitsAfterPoint = 60;
+  static const int kMaxFixedDigitsBeforePoint = 21;
+  static const int kMaxFixedDigitsAfterPoint = 100;
 
   // When calling ToExponential with a requested_digits
   // parameter > kMaxExponentialDigits then the function returns false.
-  static const int kMaxExponentialDigits = 120;
+  static const int kMaxExponentialDigits = 100;
 
   // When calling ToPrecision with a requested_digits
   // parameter < kMinPrecisionDigits or requested_digits > kMaxPrecisionDigits
   // then the function returns false.
   static const int kMinPrecisionDigits = 1;
-  static const int kMaxPrecisionDigits = 120;
+  static const int kMaxPrecisionDigits = 100;
 
   enum Flags {
     NO_FLAGS = 0,

@@ -1,3 +1,21 @@
+2019-09-26  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        toExponential, toFixed, and toPrecision should allow arguments up to 100
+        https://bugs.webkit.org/show_bug.cgi?id=199163
+
+        Reviewed by Ross Kirsling.
+
+        Previously, the spec gave fixed range of [0,20] for Number.prototype.{toExponential,toFixed} argument and
+        range of [1,21] for Number.prototype.toPrecision argument, but allowed implementations to permit a larger range.
+        Historically, only SpiderMonkey accepted a larger range, and other implementations threw a RangeError outside the range.
+        Later the spec was changed (see https://github.com/tc39/ecma262/pull/857) to specify the SpiderMonkey behavior.
+
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToExponential): Accept arguments between 0 and 100.
+        (JSC::numberProtoFuncToFixed): Accept arguments between 0 and 100.
+        (JSC::numberProtoFuncToPrecision): Accept arguments between 1 and 100.
+        (JSC::getIntegerArgumentInRange): Inline to improve readability.
+
 2019-09-26  Mark Lam  <mark.lam@apple.com>
 
         We need to initialize the Gigacage first in setJITEnabled() when disabling the JIT.

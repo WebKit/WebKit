@@ -1,3 +1,19 @@
+2019-09-26  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        toExponential, toFixed, and toPrecision should allow arguments up to 100
+        https://bugs.webkit.org/show_bug.cgi?id=199163
+
+        Reviewed by Ross Kirsling.
+
+        * js/dom/number-tofixed-expected.txt:
+        * js/dom/number-toprecision-expected.txt:
+        * js/dom/script-tests/number-tofixed.js:
+        * js/dom/script-tests/number-toprecision.js:
+        * js/kde/Number-expected.txt:
+        * js/kde/script-tests/Number.js:
+        * js/number-toExponential-expected.txt:
+        * js/script-tests/number-toExponential.js:
+
 2019-09-26  Russell Epstein  <repstein@apple.com>
 
         Layout Test platform/ios/ios/fast/text/opticalFont.html is Failing on iOS13.

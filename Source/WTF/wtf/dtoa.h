@@ -27,7 +27,7 @@
 
 namespace WTF {
 
-using NumberToStringBuffer = std::array<char, 96>;
+using NumberToStringBuffer = std::array<char, 123>;
 
 WTF_EXPORT_PRIVATE const char* numberToString(float, NumberToStringBuffer&);
 WTF_EXPORT_PRIVATE const char* numberToFixedPrecisionString(float, unsigned significantFigures, NumberToStringBuffer&, bool truncateTrailingZeros = false);
