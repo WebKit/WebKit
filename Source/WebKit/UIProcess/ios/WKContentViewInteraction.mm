@@ -1445,6 +1445,7 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
         }
     }
 }
+#endif // ENABLE(TOUCH_EVENTS)
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
@@ -1460,8 +1461,6 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
         return touchActions == WebCore::TouchAction::PanY;
     return touchActions == WebCore::TouchAction::PanX;
 }
-
-#endif
 
 #pragma mark - WKTouchActionGestureRecognizerDelegate implementation
 
@@ -1509,7 +1508,7 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
     _preventsPanningInXAxis = NO;
     _preventsPanningInYAxis = NO;
 }
-#endif
+#endif // ENABLE(POINTER_EVENTS)
 
 - (void)_inspectorNodeSearchRecognized:(UIGestureRecognizer *)gestureRecognizer
 {

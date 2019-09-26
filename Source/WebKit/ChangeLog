@@ -1,3 +1,24 @@
+2019-09-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fix failing layout tests after trac.webkit.org/r250183
+        https://bugs.webkit.org/show_bug.cgi?id=202053
+        <rdar://problem/54542190>
+
+        Reviewed by Tim Horton.
+
+        Followup to r250183: move the implementation of -gestureRecognizer:shouldReceiveTouch: out of
+        ENABLE(TOUCH_EVENTS) and into ENABLE(POINTER_EVENTS) instead. This logic is necessary in order for scrolling
+        via pan gestures to work on iOS, in the case where ENABLE(POINTER_EVENTS) is on but ENABLE(TOUCH_EVENTS) is off.
+        This is because the new swipe gesture recognizers added in r250183 will otherwise always take priority over the
+        scroll view's pan gestures.
+
+        Fixes the following layout tests:
+        - fast/scrolling/ios/reconcile-layer-position-recursive.html
+        - fast/scrolling/ios/click-events-during-momentum-scroll-in-main-frame.html
+        - fast/scrolling/ios/click-events-after-long-press-during-momentum-scroll-in-main-frame.html
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+
 2019-09-25  Megan Gardner  <megan_gardner@apple.com>
 
         Update selections after scrolling for iframes and hide selections while iframes and overflow scrolls are scrolling.
