@@ -1,3 +1,62 @@
+2019-09-26  Antti Koivisto  <antti@apple.com>
+
+        Use LineLayoutTraversal for RenderText functions
+        https://bugs.webkit.org/show_bug.cgi?id=202266
+
+        Reviewed by Zalan Bujtas.
+
+        Replace a bunch of functions that have separate simple and complex line layout versions with
+        shared functions that use LineLayoutTraversal.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteRects const):
+        (WebCore::RenderText::firstRunLocation const):
+        (WebCore::RenderText::linesBoundingBox const):
+
+        This is substantially simpler than RenderTextLineBoxes::boundingBox because it uses physical rects for all computations
+        instead of using logical rects and flipping to physical at the end.
+
+        (WebCore::RenderText::caretMinOffset const):
+        (WebCore::RenderText::caretMaxOffset const):
+        (WebCore::RenderText::countRenderedCharacterOffsetsUntil const):
+        (WebCore::containsOffset):
+        (WebCore::RenderText::containsRenderedCharacterOffset const):
+        (WebCore::RenderText::containsCaretOffset const):
+        (WebCore::RenderText::hasRenderedText const):
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::RenderTextLineBoxes::boundingBox const): Deleted.
+        (WebCore::RenderTextLineBoxes::firstRunLocation const): Deleted.
+        (WebCore::RenderTextLineBoxes::hasRenderedText const): Deleted.
+        (WebCore::RenderTextLineBoxes::caretMinOffset const): Deleted.
+        (WebCore::RenderTextLineBoxes::caretMaxOffset const): Deleted.
+        (WebCore::RenderTextLineBoxes::containsOffset const): Deleted.
+        (WebCore::RenderTextLineBoxes::countCharacterOffsetsUntil const): Deleted.
+        (WebCore::RenderTextLineBoxes::absoluteRects const): Deleted.
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::LineState::appendFragmentAndCreateRunIfNeeded):
+        * rendering/SimpleLineLayout.h:
+        (WebCore::SimpleLineLayout::Run::Run):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::computeFirstRunLocation): Deleted.
+        * rendering/SimpleLineLayoutFunctions.h:
+        (WebCore::SimpleLineLayout::findCaretMinimumOffset): Deleted.
+        (WebCore::SimpleLineLayout::findCaretMaximumOffset): Deleted.
+        (WebCore::SimpleLineLayout::containsOffset): Deleted.
+        (WebCore::SimpleLineLayout::isTextRendered): Deleted.
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::Run::isLineBreak const):
+        * rendering/line/LineLayoutTraversal.cpp:
+        (WebCore::LineLayoutTraversal::TextBox::isLineBreak const):
+        (WebCore::LineLayoutTraversal::firstTextBoxFor):
+        (WebCore::LineLayoutTraversal::firstTextBoxInTextOrderFor):
+        (WebCore::LineLayoutTraversal::textBoxesFor):
+        (WebCore::LineLayoutTraversal::firstTextBoxInVisualOrderFor): Deleted.
+        (WebCore::LineLayoutTraversal::textBoxRangeFor): Deleted.
+        * rendering/line/LineLayoutTraversal.h:
+        (WebCore::LineLayoutTraversal::hasTextBoxes):
+
 2019-09-26  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r250381.

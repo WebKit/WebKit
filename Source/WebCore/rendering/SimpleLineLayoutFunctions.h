@@ -49,13 +49,7 @@ void paintFlow(const RenderBlockFlow&, const Layout&, PaintInfo&, const LayoutPo
 bool hitTestFlow(const RenderBlockFlow&, const Layout&, const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 void collectFlowOverflow(RenderBlockFlow&, const Layout&);
 
-bool isTextRendered(const RenderText&, const Layout&);
-enum class OffsetType { CaretOffset, CharacterOffset };
-bool containsOffset(const RenderText&, const Layout&, unsigned, OffsetType);
-unsigned findCaretMinimumOffset(const RenderText&, const Layout&);
-unsigned findCaretMaximumOffset(const RenderText&, const Layout&);
 IntRect computeBoundingBox(const RenderObject&, const Layout&);
-IntPoint computeFirstRunLocation(const RenderObject&, const Layout&);
 
 Vector<IntRect> collectAbsoluteRects(const RenderObject&, const Layout&, const LayoutPoint& accumulatedOffset);
 Vector<FloatQuad> collectAbsoluteQuads(const RenderObject&, const Layout&, bool* wasFixed);
@@ -100,43 +94,6 @@ inline LayoutUnit computeFlowLastLineBaseline(const RenderBlockFlow& flow, const
 {
     ASSERT(layout.lineCount());
     return flow.borderAndPaddingBefore() + lineHeightFromFlow(flow) * (layout.lineCount() - 1) + baselineFromFlow(flow);
-}
-
-inline unsigned findCaretMinimumOffset(const RenderText&, const Layout& layout)
-{
-    if (!layout.runCount())
-        return 0;
-    return layout.runAt(0).start;
-}
-
-inline unsigned findCaretMaximumOffset(const RenderText& renderer, const Layout& layout)
-{
-    if (!layout.runCount())
-        return renderer.text().length();
-    auto& last = layout.runAt(layout.runCount() - 1);
-    return last.end;
-}
-
-inline bool containsOffset(const RenderText&, const Layout& layout, unsigned offset, OffsetType offsetType)
-{
-    for (unsigned i = 0; i < layout.runCount(); ++i) {
-        auto& run = layout.runAt(i);
-        if (offset < run.start)
-            return false;
-        if (offset < run.end || (offsetType == OffsetType::CaretOffset && offset == run.end))
-            return true;
-    }
-    return false;
-}
-
-inline bool isTextRendered(const RenderText&, const Layout& layout)
-{
-    for (unsigned i = 0; i < layout.runCount(); ++i) {
-        auto& run = layout.runAt(i);
-        if (run.end > run.start)
-            return true;
-    }
-    return false;
 }
 
 inline LayoutUnit lineHeightFromFlow(const RenderBlockFlow& flow)

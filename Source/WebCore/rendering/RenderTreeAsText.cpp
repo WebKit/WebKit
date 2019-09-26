@@ -549,7 +549,7 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
 
     if (is<RenderText>(o)) {
         auto& text = downcast<RenderText>(o);
-        for (auto& textBox : LineLayoutTraversal::textBoxRangeFor(text)) {
+        for (auto& textBox : LineLayoutTraversal::textBoxesFor(text)) {
             ts << indent;
             writeTextBox(ts, text, textBox);
         }

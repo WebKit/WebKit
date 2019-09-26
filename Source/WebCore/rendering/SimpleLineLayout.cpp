@@ -473,7 +473,7 @@ public:
         // New line needs new run.
         if (!m_runsWidth) {
             ASSERT(!m_uncompletedWidth);
-            runs.append(Run(fragment.start(), endPosition, m_runsWidth, m_runsWidth + fragment.width(), false, fragment.hasHyphen()));
+            runs.append(Run(fragment.start(), endPosition, m_runsWidth, m_runsWidth + fragment.width(), false, fragment.hasHyphen(), fragment.isLineBreak()));
         } else {
             // Advance last completed fragment when the previous fragment is all set (including multiple parts across renderers)
             if ((m_lastFragment.type() != fragment.type()) || !m_lastFragment.overlapsToNextRenderer()) {
@@ -492,7 +492,7 @@ public:
                 return;
             }
             if (m_lastFragment.isLastInRenderer() || m_lastFragment.isCollapsed())
-                runs.append(Run(fragment.start(), endPosition, m_runsWidth, m_runsWidth + fragment.width(), false, fragment.hasHyphen()));
+                runs.append(Run(fragment.start(), endPosition, m_runsWidth, m_runsWidth + fragment.width(), false, fragment.hasHyphen(), fragment.isLineBreak()));
             else {
                 Run& lastRun = runs.last();
                 lastRun.end = endPosition;

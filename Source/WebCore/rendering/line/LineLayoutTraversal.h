@@ -54,6 +54,7 @@ public:
     bool dirOverride() const;
 
     StringView text() const;
+    bool isLineBreak() const;
 
     // These offsets are relative to the text renderer (not flow).
     unsigned localStartOffset() const;
@@ -67,6 +68,7 @@ protected:
     TextBox() = default;
     TextBox(const TextBox&) = default;
     TextBox(TextBox&&) = default;
+    ~TextBox() = default;
     TextBox& operator=(const TextBox&) = default;
     TextBox& operator=(TextBox&&) = default;
 
@@ -130,10 +132,11 @@ private:
     TextBoxIterator m_begin;
 };
 
-TextBoxIterator firstTextBoxInVisualOrderFor(const RenderText&);
+TextBoxIterator firstTextBoxFor(const RenderText&);
 TextBoxIterator firstTextBoxInTextOrderFor(const RenderText&);
-TextBoxRange textBoxRangeFor(const RenderText&);
-inline bool hasTextBoxes(const RenderText& text) { return !firstTextBoxInVisualOrderFor(text).atEnd(); }
+TextBoxRange textBoxesFor(const RenderText&);
+
+inline bool hasTextBoxes(const RenderText& text) { return !firstTextBoxFor(text).atEnd(); }
 
 }
 }

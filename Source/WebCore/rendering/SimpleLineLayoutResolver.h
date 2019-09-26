@@ -63,6 +63,7 @@ public:
         const RenderObject& renderer() const;
         bool isEndOfLine() const;
         bool hasHyphen() const { return m_iterator.simpleRun().hasHyphen; }
+        bool isLineBreak() const { return m_iterator.simpleRun().isLineBreak; }
         const SimpleLineLayout::Run& simpleRun() const { return m_iterator.simpleRun(); }
 
         unsigned lineIndex() const;

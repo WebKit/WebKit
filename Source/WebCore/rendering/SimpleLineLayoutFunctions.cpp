@@ -197,16 +197,6 @@ IntRect computeBoundingBox(const RenderObject& renderer, const Layout& layout)
     return enclosingIntRect(boundingBoxRect);
 }
 
-IntPoint computeFirstRunLocation(const RenderObject& renderer, const Layout& layout)
-{
-    auto& resolver = layout.runResolver();
-    auto range = resolver.rangeForRenderer(renderer);
-    auto begin = range.begin();
-    if (begin == range.end())
-        return IntPoint(0, 0);
-    return flooredIntPoint((*begin).rect().location());
-}
-
 Vector<IntRect> collectAbsoluteRects(const RenderObject& renderer, const Layout& layout, const LayoutPoint& accumulatedOffset)
 {
     Vector<IntRect> rects;

@@ -111,6 +111,19 @@ StringView TextBox::text() const
     return WTF::switchOn(iterator().m_pathVariant, simple, complex);
 }
 
+bool TextBox::isLineBreak() const
+{
+    auto simple = [](const TextBoxIterator::SimplePath& path) {
+        return (*path.iterator).isLineBreak();
+    };
+
+    auto complex = [](const TextBoxIterator::ComplexPath& path) {
+        return path.inlineTextBox->isLineBreak();
+    };
+
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
+}
+
 unsigned TextBox::localStartOffset() const
 {
     auto simple = [](const TextBoxIterator::SimplePath& path) {
@@ -272,7 +285,7 @@ bool TextBoxIterator::atEnd() const
     return WTF::switchOn(m_pathVariant, simple, complex);
 }
 
-TextBoxIterator firstTextBoxInVisualOrderFor(const RenderText& text)
+TextBoxIterator firstTextBoxFor(const RenderText& text)
 {
     if (auto* simpleLineLayout = text.simpleLineLayout()) {
         auto range = simpleLineLayout->runResolver().rangeForRenderer(text);
@@ -292,12 +305,12 @@ TextBoxIterator firstTextBoxInTextOrderFor(const RenderText& text)
         return TextBoxIterator { WTFMove(sortedTextBoxes), 0 };
     }
 
-    return firstTextBoxInVisualOrderFor(text);
+    return firstTextBoxFor(text);
 }
 
-TextBoxRange textBoxRangeFor(const RenderText& text)
+TextBoxRange textBoxesFor(const RenderText& text)
 {
-    return { firstTextBoxInVisualOrderFor(text) };
+    return { firstTextBoxFor(text) };
 }
 
 }

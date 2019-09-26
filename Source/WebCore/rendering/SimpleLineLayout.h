@@ -51,19 +51,21 @@ struct Run {
 #if COMPILER(MSVC)
     Run() { }
 #endif
-    Run(unsigned start, unsigned end, float logicalLeft, float logicalRight, bool isEndOfLine, bool hasHyphen)
+    Run(unsigned start, unsigned end, float logicalLeft, float logicalRight, bool isEndOfLine, bool hasHyphen, bool isLineBreak)
         : end(end)
         , start(start)
         , isEndOfLine(isEndOfLine)
         , hasHyphen(hasHyphen)
+        , isLineBreak(isLineBreak)
         , logicalLeft(logicalLeft)
         , logicalRight(logicalRight)
     { }
 
     unsigned end;
-    unsigned start : 30;
+    unsigned start : 29;
     unsigned isEndOfLine : 1;
     unsigned hasHyphen : 1;
+    unsigned isLineBreak : 1;
     float logicalLeft;
     float logicalRight;
     // TODO: Move these optional items out of SimpleLineLayout::Run to a supplementary structure.

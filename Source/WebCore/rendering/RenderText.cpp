@@ -37,6 +37,7 @@
 #include "HTMLParserIdioms.h"
 #include "Hyphenation.h"
 #include "InlineTextBox.h"
+#include "LineLayoutTraversal.h"
 #include "Range.h"
 #include "RenderBlock.h"
 #include "RenderCombineText.h"
@@ -318,11 +319,10 @@ String RenderText::originalText() const
 
 void RenderText::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    if (auto* layout = simpleLineLayout()) {
-        rects.appendVector(SimpleLineLayout::collectAbsoluteRects(*this, *layout, accumulatedOffset));
-        return;
+    for (auto& box : LineLayoutTraversal::textBoxesFor(*this)) {
+        auto rect = box.rect();
+        rects.append(enclosingIntRect(FloatRect(accumulatedOffset + rect.location(), rect.size())));
     }
-    rects.appendVector(m_lineBoxes.absoluteRects(accumulatedOffset));
 }
 
 Vector<IntRect> RenderText::absoluteRectsForRange(unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
@@ -1080,10 +1080,10 @@ Vector<std::pair<unsigned, unsigned>> RenderText::draggedContentRangesBetweenOff
 
 IntPoint RenderText::firstRunLocation() const
 {
-    if (auto* layout = simpleLineLayout())
-        return SimpleLineLayout::computeFirstRunLocation(*this, *layout);
-
-    return m_lineBoxes.firstRunLocation();
+    auto first = LineLayoutTraversal::firstTextBoxFor(*this);
+    if (!first)
+        return { };
+    return IntPoint(first->rect().location());
 }
 
 void RenderText::setSelectionState(SelectionState state)
@@ -1382,10 +1382,15 @@ float RenderText::width(unsigned from, unsigned len, const FontCascade& f, float
 
 IntRect RenderText::linesBoundingBox() const
 {
-    if (auto* layout = simpleLineLayout())
-        return SimpleLineLayout::computeBoundingBox(*this, *layout);
+    auto first = LineLayoutTraversal::firstTextBoxFor(*this);
+    if (!first)
+        return { };
 
-    return m_lineBoxes.boundingBox(*this);
+    auto boundingBox = first->rect();
+    for (auto box = first; ++box;)
+        boundingBox.uniteEvenIfEmpty(box->rect());
+
+    return enclosingIntRect(boundingBox);
 }
 
 LayoutRect RenderText::linesVisualOverflowBoundingBox() const
@@ -1468,43 +1473,84 @@ LayoutRect RenderText::selectionRectForRepaint(const RenderLayerModelObject* rep
 
 int RenderText::caretMinOffset() const
 {
-    if (auto* layout = simpleLineLayout())
-        return SimpleLineLayout::findCaretMinimumOffset(*this, *layout);
-    return m_lineBoxes.caretMinOffset();
+    auto first = LineLayoutTraversal::firstTextBoxFor(*this);
+    if (!first)
+        return 0;
+
+    int minOffset = first->localStartOffset();
+    for (auto box = first; ++box;)
+        minOffset = std::min<int>(minOffset, box->localStartOffset());
+
+    return minOffset;
 }
 
 int RenderText::caretMaxOffset() const
 {
-    if (auto* layout = simpleLineLayout())
-        return SimpleLineLayout::findCaretMaximumOffset(*this, *layout);
-    return m_lineBoxes.caretMaxOffset(*this);
+    auto first = LineLayoutTraversal::firstTextBoxFor(*this);
+    if (!first)
+        return text().length();
+
+    int maxOffset = first->localEndOffset();
+    for (auto box = first; ++box;)
+        maxOffset = std::max<int>(maxOffset, box->localEndOffset());
+
+    return maxOffset;
 }
 
 unsigned RenderText::countRenderedCharacterOffsetsUntil(unsigned offset) const
 {
-    ASSERT(!simpleLineLayout());
-    return m_lineBoxes.countCharacterOffsetsUntil(offset);
+    unsigned result = 0;
+    for (auto& box : LineLayoutTraversal::textBoxesFor(*this)) {
+        auto start = box.localStartOffset();
+        auto length = box.length();
+        if (offset < start)
+            return result;
+        if (offset <= start + length) {
+            result += offset - start;
+            return result;
+        }
+        result += length;
+    }
+    return result;
+}
+
+enum class OffsetType { Character, Caret };
+static bool containsOffset(const RenderText& text, unsigned offset, OffsetType type)
+{
+    for (auto box = LineLayoutTraversal::firstTextBoxInTextOrderFor(text); box; box.traverseNextInTextOrder()) {
+        auto start = box->localStartOffset();
+        if (offset < start)
+            return false;
+        unsigned end = box->localEndOffset();
+        if (offset >= start && offset <= end) {
+            if (offset == end && (type == OffsetType::Character || box->isLineBreak()))
+                continue;
+            if (type == OffsetType::Character)
+                return true;
+            // Return false for offsets inside composed characters.
+            return !offset || offset == static_cast<unsigned>(text.nextOffset(text.previousOffset(offset)));
+        }
+    }
+    return false;
 }
 
 bool RenderText::containsRenderedCharacterOffset(unsigned offset) const
 {
-    if (auto* layout = simpleLineLayout())
-        return SimpleLineLayout::containsOffset(*this, *layout, offset, SimpleLineLayout::OffsetType::CharacterOffset);
-    return m_lineBoxes.containsOffset(*this, offset, RenderTextLineBoxes::CharacterOffset);
+    return containsOffset(*this, offset, OffsetType::Character);
 }
 
 bool RenderText::containsCaretOffset(unsigned offset) const
 {
-    if (auto* layout = simpleLineLayout())
-        return SimpleLineLayout::containsOffset(*this, *layout, offset, SimpleLineLayout::OffsetType::CaretOffset);
-    return m_lineBoxes.containsOffset(*this, offset, RenderTextLineBoxes::CaretOffset);
+    return containsOffset(*this, offset, OffsetType::Caret);
 }
 
 bool RenderText::hasRenderedText() const
 {
-    if (auto* layout = simpleLineLayout())
-        return SimpleLineLayout::isTextRendered(*this, *layout);
-    return m_lineBoxes.hasRenderedText();
+    for (auto& box : LineLayoutTraversal::textBoxesFor(*this)) {
+        if (box.length())
+            return true;
+    }
+    return false;
 }
 
 int RenderText::previousOffset(int current) const

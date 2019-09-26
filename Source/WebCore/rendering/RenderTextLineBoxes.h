@@ -56,24 +56,14 @@ public:
 
     InlineTextBox* findNext(int offset, int& position) const;
 
-    bool hasRenderedText() const;
-    int caretMinOffset() const;
-    int caretMaxOffset(const RenderText&) const;
-    enum OffsetType { CaretOffset, CharacterOffset };
-    bool containsOffset(const RenderText&, unsigned, OffsetType) const;
-    unsigned countCharacterOffsetsUntil(unsigned) const;
-
     VisiblePosition positionForPoint(const RenderText&, const LayoutPoint&) const;
 
     void setSelectionState(RenderText&, RenderObject::SelectionState);
     LayoutRect selectionRectForRange(unsigned start, unsigned end);
     void collectSelectionRectsForRange(unsigned start, unsigned end, Vector<LayoutRect>& rects);
 
-    IntRect boundingBox(const RenderText&) const;
-    IntPoint firstRunLocation() const;
     LayoutRect visualOverflowBoundingBox(const RenderText&) const;
 
-    Vector<IntRect> absoluteRects(const LayoutPoint& accumulatedOffset) const;
     Vector<IntRect> absoluteRectsForRange(const RenderText&, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const;
     enum ClippingOption { NoClipping, ClipToEllipsis };
     Vector<FloatQuad> absoluteQuads(const RenderText&, bool* wasFixed, ClippingOption) const;
