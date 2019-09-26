@@ -3,7 +3,7 @@ PASS Exception in error event handler on request
 PASS Exception in error event handler on request, with preventDefault 
 PASS Exception in error event listener on request 
 PASS Exception in error event listener ("handleEvent" lookup) on request 
-PASS Exception in error event listener (non-callable "handleEvent") on request 
+FAIL Exception in error event listener (non-callable "handleEvent") on request assert_equals: expected "AbortError" but got "ConstraintError"
 PASS Exception in second error event listener on request 
 PASS Exception in first error event listener on request, transaction active in second 
 PASS Exception in error event handler on transaction 

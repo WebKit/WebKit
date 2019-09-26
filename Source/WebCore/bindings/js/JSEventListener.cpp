@@ -148,12 +148,10 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
             return;
         }
         callType = getCallData(vm, handleEventFunction, callData);
-        if (callType == CallType::None) {
-            event.target()->uncaughtExceptionInEventHandler();
-            reportException(exec, createTypeError(exec, "'handleEvent' property of event listener should be callable"_s));
-            return;
-        }
     }
+
+    if (callType == CallType::None)
+        return;
 
     Ref<JSEventListener> protectedThis(*this);
 
