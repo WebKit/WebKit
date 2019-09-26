@@ -52,7 +52,7 @@ WI.TabContentView = class TabContentView extends WI.ContentView
         this._navigationSidebarCollapsedSetting = new WI.Setting(identifier + "-navigation-sidebar-collapsed", false);
         this._navigationSidebarWidthSetting = new WI.Setting(identifier + "-navigation-sidebar-width", defaultSidebarWidth);
 
-        this._detailsSidebarCollapsedSetting = new WI.Setting(identifier + "-details-sidebar-collapsed", true);
+        this._detailsSidebarCollapsedSetting = new WI.Setting(identifier + "-details-sidebar-collapsed", !this.detailsSidebarExpandedByDefault);
         this._detailsSidebarSelectedPanelSetting = new WI.Setting(identifier + "-details-sidebar-selected-panel", null);
         this._detailsSidebarWidthSetting = new WI.Setting(identifier + "-details-sidebar-width", defaultSidebarWidth);
 
@@ -96,6 +96,12 @@ WI.TabContentView = class TabContentView extends WI.ContentView
     }
 
     get managesDetailsSidebarPanels()
+    {
+        // Implemented by subclasses.
+        return false;
+    }
+
+    get detailsSidebarExpandedByDefault()
     {
         // Implemented by subclasses.
         return false;

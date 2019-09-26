@@ -1,3 +1,21 @@
+2019-09-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: REGRESSION: Elements detail sidebar sometimes starts collapsed
+        https://bugs.webkit.org/show_bug.cgi?id=202057
+        <rdar://problem/55572345>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WI.ElementsTabContentView.prototype.get detailsSidebarExpandedByDefault):
+        Default the Elements tab detail sidebar to be shown, not collapsed.
+
+        * UserInterface/Views/TabContentView.js:
+        (WI.TabContentView):
+        (WI.TabContentView.prototype.get detailsSidebarExpandedByDefault):
+        Allow classes to specify whether or not their detail sidebar should
+        be expanded by default.
+
 2019-09-25  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Uncaught Exception: TypeError: undefined is not an object (evaluating 'WI.showDebugUISetting.addEventListener')

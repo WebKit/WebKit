@@ -64,6 +64,11 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
         return true;
     }
 
+    get detailsSidebarExpandedByDefault()
+    {
+        return true;
+    }
+
     canShowRepresentedObject(representedObject)
     {
         return representedObject instanceof WI.DOMTree;
