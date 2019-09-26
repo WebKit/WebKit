@@ -36,6 +36,8 @@ from webkitpy.common.system.executive import Executive
 
 
 class PlatformInfo(object):
+    MAX = 2147483647
+
     """This class provides a consistent (and mockable) interpretation of
     system-specific values (like sys.platform and platform.mac_ver())
     to be used by the rest of the webkitpy code base.
@@ -118,11 +120,11 @@ class PlatformInfo(object):
 
     def total_bytes_memory(self):
         if self.is_mac():
-            return long(self._executive.run_command(["sysctl", "-n", "hw.memsize"]))
+            return int(self._executive.run_command(["sysctl", "-n", "hw.memsize"]))
         return None
 
     def terminal_width(self):
-        """Returns sys.maxint if the width cannot be determined."""
+        """Returns MAX if the width cannot be determined."""
         try:
             if self.is_win():
                 # From http://code.activestate.com/recipes/440694-determine-size-of-console-window-on-windows/
@@ -135,7 +137,7 @@ class PlatformInfo(object):
                     # Note that we return 1 less than the width since writing into the rightmost column
                     # automatically performs a line feed.
                     return right - left
-                return sys.maxint
+                return self.MAX
             else:
                 import fcntl
                 import struct
@@ -144,7 +146,7 @@ class PlatformInfo(object):
                 _, columns, _, _ = struct.unpack('HHHH', packed)
                 return columns
         except:
-            return sys.maxint
+            return self.MAX
 
     def build_version(self):
         if self.is_mac():

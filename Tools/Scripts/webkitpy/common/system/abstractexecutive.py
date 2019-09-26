@@ -24,7 +24,7 @@ import sys
 import time
 
 from webkitpy.common.system.filesystem import FileSystem
-
+from webkitpy.common import unicode_compatibility
 
 class AbstractExecutive(object):
 
@@ -101,20 +101,13 @@ class AbstractExecutive(object):
         pass
 
     def _stringify_args(self, args):
-        return map(unicode, args)
+        return map(unicode_compatibility.unicode, args)
 
     def command_for_printing(self, args):
         """Returns a print-ready string representing command args.
         The string should be copy/paste ready for execution in a shell."""
         args = self._stringify_args(args)
-        escaped_args = []
-        for arg in args:
-            if isinstance(arg, unicode):
-                # Escape any non-ascii characters for easy copy/paste
-                arg = arg.encode("unicode_escape")
-            # FIXME: Do we need to fix quotes here?
-            escaped_args.append(arg)
-        return " ".join(escaped_args)
+        return unicode_compatibility.decode_if_necessary(unicode_compatibility.encode_if_necessary(' '.join(args), 'unicode_escape'))
 
     def run_command(self, args, cwd=None, env=None, input=None, error_handler=None, ignore_errors=False,
         return_exit_code=False, return_stderr=True, decode_output=True):

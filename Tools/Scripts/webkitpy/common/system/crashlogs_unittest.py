@@ -27,7 +27,7 @@ from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.system.systemhost_mock import MockSystemHost
-from webkitpy.thirdparty.mock import Mock
+from webkitpy.common import unicode_compatibility
 
 # Needed to support Windows port tests
 from webkitpy.port.win import WinPort
@@ -298,6 +298,9 @@ class CrashLogsTest(unittest.TestCase):
         self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150721_quadzen.crash'] = None
         self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150722_quadzen.crash'] = self.other_process_mock_crash_report
         self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150723_quadzen.crash'] = self.misformatted_mock_crash_report
+
+        self.files = {key: unicode_compatibility.encode_if_necessary(value) for key, value in self.files.items()}
+
         self.filesystem = MockFileSystem(self.files)
         crash_logs = CrashLogs(MockSystemHost(filesystem=self.filesystem), CrashLogsTest.DARWIN_MOCK_CRASH_DIRECTORY)
         logs = self.filesystem.files_under('/Users/mock/Library/Logs/DiagnosticReports/')
@@ -313,8 +316,8 @@ class CrashLogsTest(unittest.TestCase):
         all_logs = crash_logs.find_all_logs()
         self.assertEqual(len(all_logs), 8)
 
-        for test, crash_log in all_logs.iteritems():
-            self.assertTrue(crash_log in self.files.values())
+        for test, crash_log in all_logs.items():
+            self.assertTrue(crash_log in [unicode_compatibility.decode_if_necessary(value) for value in self.files.values()])
             if test.split('-')[0] != 'Sandbox':
                 self.assertTrue(test == "Unknown" or int(test.split("-")[1]) in range(28527, 28531))
 

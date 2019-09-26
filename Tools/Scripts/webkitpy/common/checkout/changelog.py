@@ -30,11 +30,11 @@
 
 import logging
 import re
-from StringIO import StringIO
 import textwrap
 
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.system.filesystem import FileSystem
+from webkitpy.common.unicode_compatibility import StringIO
 import webkitpy.common.config.urls as config_urls
 
 _log = logging.getLogger(__name__)

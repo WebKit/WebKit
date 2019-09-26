@@ -26,10 +26,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import StringIO
 import logging
 import os
 
+from webkitpy.common.unicode_compatibility import BytesIO, unicode
 from webkitpy.common.system.executive import ScriptError
 
 _log = logging.getLogger(__name__)
@@ -38,9 +38,9 @@ _log = logging.getLogger(__name__)
 class MockProcess(object):
     def __init__(self, stdout='MOCK STDOUT\n', stderr=''):
         self.pid = 42
-        self.stdout = StringIO.StringIO(stdout)
-        self.stderr = StringIO.StringIO(stderr)
-        self.stdin = StringIO.StringIO()
+        self.stdout = BytesIO(stdout)
+        self.stderr = BytesIO(stderr)
+        self.stdin = BytesIO()
         self.returncode = 0
         self._is_running = False
 
@@ -56,6 +56,12 @@ class MockProcess(object):
         if self._is_running:
             return None
         return self.returncode
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.wait()
 
 
 # FIXME: This should be unified with MockExecutive2

@@ -26,14 +26,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import StringIO
-
 from webkitpy.common.config import urls
 from webkitpy.common.checkout.changelog import ChangeLog, parse_bug_id_from_changelog
 from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.checkout.scm import CommitMessage
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.unicode_compatibility import StringIO
 
 
 # This class represents the WebKit-specific parts of the checkout (like ChangeLogs).
@@ -61,7 +60,7 @@ class Checkout(object):
         # that ChangeLog files are utf-8.  parse_latest_entry_from_file
         # expects a file-like object which vends unicode(), so we decode here.
         # Old revisions of Sources/WebKit/wx/ChangeLog have some invalid utf8 characters.
-        changelog_file = StringIO.StringIO(changelog_contents.decode("utf-8", "ignore"))
+        changelog_file = StringIO(changelog_contents.decode("utf-8", "ignore"))
         return ChangeLog.parse_latest_entry_from_file(changelog_file)
 
     def changelog_entries_for_revision(self, revision, changed_files=None):

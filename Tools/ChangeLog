@@ -1,3 +1,128 @@
+2019-09-25  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Add support in webkitpy.common.system
+        https://bugs.webkit.org/show_bug.cgi?id=201826
+        <rdar://problem/55452671>
+
+        Reviewed by Stephanie Lewis.
+
+        Tested compatibility by running 'python3 -m unittest webkitpy.common.system.<_unittest>' on
+        each of the effected files.
+
+        * Scripts/webkitpy/common/checkout/changelog.py: Import StringIO from io module.
+        (set_reviewer):
+        (set_short_description_and_bug_url):
+        * Scripts/webkitpy/common/checkout/checkout.py:  Import StringIO from io module.
+        (Checkout._latest_entry_for_changelog_at_revision):
+        * Scripts/webkitpy/common/config/committers.py:
+        (CommitterList.load_json): iteritems -> items.
+        * Scripts/webkitpy/common/net/networktransaction.py:
+        (NetworkTransaction.run): urllib2 is urllib in Python3. 
+        * Scripts/webkitpy/common/system/abstractexecutive.py:
+        (AbstractExecutive._stringify_args):
+        (AbstractExecutive.command_for_printing): The str type is unicode in Python3.
+        * Scripts/webkitpy/common/system/crashlogs_unittest.py: Explicitly encode and decode binary crashlogs.
+        * Scripts/webkitpy/common/system/environment_unittest.py: Use absolute imports.
+        * Scripts/webkitpy/common/system/executive.py:
+        (ScriptError.message_with_output): The str type is unicode in Python3.
+        (Executive.WrappedPopen): Python3's Popen object is a context manager. To allow us to use it as one,
+        our Python2 Popen needs to be one as well.
+        (Executive.WrappedPopen.__init__):
+        (Executive.WrappedPopen.__enter__):
+        (Executive.WrappedPopen.__exit__):
+        (Executive._run_command_with_teed_output): Simplify loop, decode unicode strings.
+        (Executive.run_and_throw_if_fail): The child output file should not be unicode strings.
+        (Executive.running_pids): Use the Popen context manager to guarantee clean-up.
+        (Executive._compute_stdin):
+        (Executive.run_command): Use the Popen context manager to guarantee clean-up.
+        (Executive._stringify_args): The str type is unicode in Python3.
+        (Executive.popen): Return a context manager if the Popen object is not one.
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockProcess.__init__): StringIO -> BytesIO.
+        (MockProcess.__enter__):
+        (MockProcess):
+        (MockProcess.__exit__):
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (ExecutiveTest.test_auto_stringify_args): Use the Popen context manager to guarantee clean-up.
+        (ExecutiveTest.test_popen_args): Ditto.
+        (ExecutiveTest.serial_test_kill_process): Ditto.
+        (ExecutiveTest.serial_test_kill_all): Ditto.
+        * Scripts/webkitpy/common/system/filesystem.py:
+        (FileSystem.read_binary_file): Use 'open' instead of 'file'.
+        (FileSystem.write_binary_file): Ditto.
+        (FileSystem.write_text_file): The str type is unicode in Python3. 
+        (FileSystem.relpath):
+        (FileSystem.remove): The WindowsError is just anther OSError in Python3.
+        (FileSystem._WindowsError): Deleted.
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.glob): filter returns a generator instead of a list.
+        (WritableBinaryFileObject.__init__): Binary files are comprised of bytes, not string in Python3.
+        (WritableBinaryFileObject.write): Ditto.
+        (ReadableTextFileObject.__init__): Ditto.
+        * Scripts/webkitpy/common/system/filesystem_mock_unittest.py:
+        (MockFileSystemTest.test_normpath):
+        (MockFileSystemTest.test_dirs_under): assertEquals -> assertEqual.
+        * Scripts/webkitpy/common/system/filesystem_unittest.py:
+        (RealFileSystemTest.test_read_and_write_file): Explicitly define byte arrays instead of strings.
+        (RealFileSystemTest.test_remove_file_with_retry.remove_with_exception): The WindowsError is just
+        anther OSError in Python3.
+        * Scripts/webkitpy/common/system/outputcapture.py:
+        * Scripts/webkitpy/common/system/outputtee_unittest.py:
+        (SimpleTeeTest.test_simple_tee):
+        * Scripts/webkitpy/common/system/path.py:
+        (_escape): urllib library has been broken into parts.
+        * Scripts/webkitpy/common/system/pemfile.py:
+        (_parse_pem_format.find_end): Python3 does not define a maxint.
+        * Scripts/webkitpy/common/system/pemfile_unittest.py:
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo.total_bytes_memory): Not 'long' type in Python3.
+        * Scripts/webkitpy/common/system/platforminfo_unittest.py:
+        (TestPlatformInfo.test_real_code): assertNotEquals -> assertNotEqual.
+        (TestPlatformInfo.test_display_name): Ditto.
+        * Scripts/webkitpy/common/system/profiler.py:
+        (ProfilerFactory.create_profiler): Manually implement ifilter.
+        * Scripts/webkitpy/common/system/profiler_unittest.py: Use absolute imports.
+        * Scripts/webkitpy/common/system/stack_utils_unittest.py:
+        (current_thread_id): items() returns a generator in Python3.
+        * Scripts/webkitpy/common/system/systemhost.py: Use absolute imports.
+        * Scripts/webkitpy/common/system/urlfetcher.py: Removed.
+        * Scripts/webkitpy/common/system/urlfetcher_mock.py: Removed.
+        * Scripts/webkitpy/common/system/user.py:
+        (User.prompt): Use absolute imports, raw_input -> input.
+        (User.prompt_with_multiple_lists):
+        (User.prompt_with_list):
+        (User.confirm):
+        * Scripts/webkitpy/common/unicode.py: Tooling to manage compatibility between Python 2
+        and Python 3 unicode handling.
+        * Scripts/webkitpy/common/system/user_mock.py:
+        (MockUser.prompt): raw_input -> input.
+        (MockUser.prompt_with_list): Ditto.
+        * Scripts/webkitpy/common/version.py:
+        (Version.from_iterable): xrange -> range.
+        (Version.from_name): Use absolute import path.
+        (Version.__contains__): xrange -> range.
+        (Version.__str__): xrange -> range.
+        (Version.__cmp__): amp is no longer an operator in Python3, but versions are comprised
+        Of integers, so subtraction has the same effect.
+        (Version):
+        (Version.__eq__): __cmp__ operator is no longer respected, so we need to implement
+        each comparison.
+        (Version.__ne__): Ditto.
+        (Version.__lt__): Ditto.
+        (Version.__le__): Ditto.
+        (Version.__gt__): Ditto.
+        (Version.__ge__): Ditto.
+        * Scripts/webkitpy/common/version_name_map.py:
+        (VersionNameMap._automap_to_major_version):
+        (VersionNameMap.to_name): xrange -> range.
+        (VersionNameMap.from_name): iteritems -> items.
+        * Scripts/webkitpy/common/version_name_map_unittest.py: Use absolute imports.
+        * Scripts/webkitpy/common/version_unittest.py: Ditto.
+        * Scripts/webkitpy/common/wavediff.py:
+        (WaveDiff.__init__): StringIO -> BytesIO.
+        * Scripts/webkitpy/port/__init__.py:
+        (outside):
+
 2019-09-25  Aakash Jain  <aakash_jain@apple.com>
 
         [EWS] RunJavaScriptCoreTestsToT should use the same command as RunJavaScriptCoreTests

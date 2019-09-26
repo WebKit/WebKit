@@ -22,7 +22,7 @@
 
 import unittest
 
-from version import Version
+from webkitpy.common.version import Version
 
 
 class VersionTestCase(unittest.TestCase):

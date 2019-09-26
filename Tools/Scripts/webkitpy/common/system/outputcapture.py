@@ -31,7 +31,8 @@
 import logging
 import sys
 import unittest
-from StringIO import StringIO
+
+from webkitpy.common.unicode_compatibility import StringIO
 
 
 class OutputCapture(object):

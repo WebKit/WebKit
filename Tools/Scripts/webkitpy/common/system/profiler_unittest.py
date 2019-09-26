@@ -31,7 +31,7 @@ import unittest
 from webkitpy.common.system.platforminfo_mock import MockPlatformInfo
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 
-from .profiler import ProfilerFactory, GooglePProf
+from webkitpy.common.system.profiler import ProfilerFactory, GooglePProf
 
 
 class ProfilerFactoryTest(unittest.TestCase):

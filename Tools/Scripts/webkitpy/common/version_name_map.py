@@ -90,13 +90,13 @@ class VersionNameMap(object):
     def _automap_to_major_version(cls, prefix, minimum=Version(1), maximum=Version(1)):
         result = {}
         assert minimum <= maximum
-        for i in xrange((maximum.major + 1) - minimum.major):
+        for i in range((maximum.major + 1) - minimum.major):
             result['{} {}'.format(prefix, str(Version(minimum.major + i)))] = Version(minimum.major + i)
         return result
 
     def to_name(self, version, platform=None, table=PUBLIC_TABLE):
         closest_match = (None, None)
-        for os_name, os_version in self.mapping_for_platform(platform, table).iteritems():
+        for os_name, os_version in self.mapping_for_platform(platform, table).items():
             if version == os_version:
                 return os_name
             elif version in os_version:
@@ -126,16 +126,16 @@ class VersionNameMap(object):
 
     def from_name(self, name):
         # Exact match
-        for _, map in self.mapping.iteritems():
-            for os_name, os_map in map.iteritems():
+        for _, map in self.mapping.items():
+            for os_name, os_map in map.items():
                 if name in os_map:
                     return (os_name, os_map[name])
 
         # It's not an exact match, let's try unifying formatting
         unformatted = self.strip_name_formatting(name)
-        for _, map in self.mapping.iteritems():
-            for os_name, os_map in map.iteritems():
-                for version_name, version in os_map.iteritems():
+        for _, map in self.mapping.items():
+            for os_name, os_map in map.items():
+                for version_name, version in os_map.items():
                     if self.strip_name_formatting(version_name) == unformatted:
                         return (os_name, version)
         return (None, None)

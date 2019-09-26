@@ -201,7 +201,7 @@ class CommitterList(object):
         self._committers = []
         self._reviewers = []
 
-        for name, data in contributors.iteritems():
+        for name, data in contributors.items():
             contributor = None
             status = data.get('status')
             if status == "reviewer":

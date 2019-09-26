@@ -27,18 +27,22 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import sys
 
 _log = logging.getLogger(__name__)
+
+if sys.version_info < (3, 0):
+    input = raw_input
 
 
 class MockUser(object):
 
     @classmethod
-    def prompt(cls, message, repeat=1, raw_input=raw_input):
+    def prompt(cls, message, repeat=1, raw_input=input):
         return "Mock user response"
 
     @classmethod
-    def prompt_with_list(cls, list_title, list_items, can_choose_multiple=False, raw_input=raw_input):
+    def prompt_with_list(cls, list_title, list_items, can_choose_multiple=False, raw_input=input):
         pass
 
     def __init__(self):

@@ -30,7 +30,6 @@
 
 import codecs
 import errno
-import exceptions
 import filecmp
 import glob
 import hashlib
@@ -39,6 +38,8 @@ import shutil
 import sys
 import tempfile
 import time
+
+from webkitpy.common.unicode_compatibility import decode_if_necessary
 
 
 class FileSystem(object):
@@ -221,11 +222,11 @@ class FileSystem(object):
 
     def read_binary_file(self, path):
         """Return the contents of the file at the given path as a byte string."""
-        with file(path, 'rb') as f:
+        with open(path, 'rb') as f:
             return f.read()
 
     def write_binary_file(self, path, contents):
-        with file(path, 'wb') as f:
+        with open(path, 'wb') as f:
             f.write(contents)
 
     def open_text_file_for_reading(self, path, errors='strict'):
@@ -256,7 +257,7 @@ class FileSystem(object):
 
         The file is written encoded as UTF-8 with no BOM."""
         with codecs.open(path, 'w', 'utf-8', errors=errors) as f:
-            f.write(contents.decode('utf-8', errors=errors) if type(contents) == str else contents)
+            f.write(decode_if_necessary(contents, errors=errors))
 
     def sha1(self, path):
         contents = self.read_binary_file(path)
@@ -265,19 +266,15 @@ class FileSystem(object):
     def relpath(self, path, start='.'):
         return os.path.relpath(path, start)
 
-    class _WindowsError(exceptions.OSError):
-        """Fake exception for Linux and Mac."""
-        pass
-
     def remove(self, path, osremove=os.remove):
         """On Windows, if a process was recently killed and it held on to a
         file, the OS will hold on to the file for a short while.  This makes
         attempts to delete the file fail.  To work around that, this method
         will retry for a few seconds until Windows is done with the file."""
         try:
-            exceptions.WindowsError
-        except AttributeError:
-            exceptions.WindowsError = FileSystem._WindowsError
+            WinOSError = WindowsError
+        except NameError:
+            WinOSError = OSError
 
         retry_timeout_sec = 3.0
         sleep_interval = 0.1
@@ -285,7 +282,7 @@ class FileSystem(object):
             try:
                 osremove(path)
                 return True
-            except exceptions.WindowsError as e:
+            except WinOSError as e:
                 time.sleep(sleep_interval)
                 retry_timeout_sec -= sleep_interval
                 if retry_timeout_sec < 0:

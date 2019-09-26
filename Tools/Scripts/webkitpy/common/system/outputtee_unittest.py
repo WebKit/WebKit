@@ -26,15 +26,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import StringIO
 import unittest
 
 from webkitpy.common.system.outputtee import Tee, OutputTee
+from webkitpy.common.unicode_compatibility import StringIO
 
 
 class SimpleTeeTest(unittest.TestCase):
     def test_simple_tee(self):
-        file1, file2 = StringIO.StringIO(), StringIO.StringIO()
+        file1, file2 = StringIO(), StringIO()
         tee = Tee(file1, file2)
         tee.write("foo bar\n")
         tee.write("baz\n")

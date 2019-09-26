@@ -122,7 +122,7 @@ def _parse_pem_format(content):
 
         try:
             index = lines.index(end_marker)
-        except ValueError, e:
+        except ValueError:
             raise BadFormatError("Cannot find section end: {}".format(end_marker))
 
         return kind, "\n".join(lines[0:index + 1]) + "\n", lines[index + 1:]

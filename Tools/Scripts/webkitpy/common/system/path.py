@@ -35,7 +35,11 @@ import subprocess
 import sys
 import logging
 import threading
-import urllib
+
+if sys.version_info > (3, 0):
+    from urllib.parse import quote as urllib_quote
+else:
+    from urllib import quote as urllib_quote
 
 _log = logging.getLogger(__name__)
 
@@ -146,7 +150,7 @@ def _escape(path):
     # when converting filenames to files. Instead of using urllib's default
     # rules, we allow a small list of other characters through un-escaped.
     # It's unclear if this is the best possible solution.
-    return urllib.quote(path, safe='/+:')
+    return urllib_quote(path, safe='/+:')
 
 
 def _convert_path(platform, path):

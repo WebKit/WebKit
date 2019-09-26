@@ -27,7 +27,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import StringIO
 import errno
 import logging
 import multiprocessing
@@ -39,6 +38,7 @@ import time
 
 from webkitpy.common.system.abstractexecutive import AbstractExecutive
 from webkitpy.common.system.outputtee import Tee
+from webkitpy.common import unicode_compatibility
 
 
 _log = logging.getLogger(__name__)
@@ -71,7 +71,7 @@ class ScriptError(Exception):
                 return u"%s\n\nLast %s characters of output:\n%s" % \
                     (self, output_limit, self.output[-output_limit:])
             return u"%s\n\n%s" % (self, self.output)
-        return unicode(self)
+        return unicode_compatibility.unicode(self)
 
     def command_name(self):
         command_path = self.script_args
@@ -83,6 +83,19 @@ class ScriptError(Exception):
 class Executive(AbstractExecutive):
     PIPE = subprocess.PIPE
     STDOUT = subprocess.STDOUT
+
+    class WrappedPopen(object):
+        def __init__(self, popen):
+            for attribute in dir(popen):
+                if attribute.startswith('__'):
+                    continue
+                setattr(self, attribute, getattr(popen, attribute))
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            self.wait()
 
     def __init__(self):
         self.pid_to_system_pid = {}
@@ -108,18 +121,13 @@ class Executive(AbstractExecutive):
                                    close_fds=self._should_close_fds(),
                                    **kwargs)
 
-        # Use our own custom wait loop because Popen ignores a tee'd
-        # stderr/stdout.
-        # FIXME: This could be improved not to flatten output to stdout.
-        while True:
-            output_line = child_process.stdout.readline()
-            if output_line == "" and child_process.poll() != None:
-                # poll() is not threadsafe and can throw OSError due to:
-                # http://bugs.python.org/issue1731717
-                return child_process.poll()
-            # We assume that the child process wrote to us in utf-8,
-            # so no re-encoding is necessary before writing here.
-            teed_output.write(output_line)
+        with child_process:
+            # Use our own custom wait loop because Popen ignores a tee'd
+            # stderr/stdout.
+            # FIXME: This could be improved not to flatten output to stdout.
+            while child_process.poll() is None:
+                output_line = child_process.stdout.readline()
+                teed_output.write(unicode_compatibility.decode_for(output_line, str))
 
     # FIXME: Remove this deprecated method and move callers to run_command.
     # FIXME: This method is a hack to allow running command which both
@@ -128,21 +136,25 @@ class Executive(AbstractExecutive):
     # but still have the output to stuff into a log file.
     def run_and_throw_if_fail(self, args, quiet=False, decode_output=True, **kwargs):
         # Cache the child's output locally so it can be used for error reports.
-        child_out_file = StringIO.StringIO()
+        child_out_file = unicode_compatibility.StringIO()
         tee_stdout = sys.stdout
-        if quiet:
-            dev_null = open(os.devnull, "w")  # FIXME: Does this need an encoding?
-            tee_stdout = dev_null
-        child_stdout = Tee(child_out_file, tee_stdout)
-        exit_code = self._run_command_with_teed_output(args, child_stdout, **kwargs)
-        if quiet:
-            dev_null.close()
+        try:
+            if quiet:
+                dev_null = open(os.devnull, "w")  # FIXME: Does this need an encoding?
+                tee_stdout = dev_null
+            child_stdout = Tee(child_out_file, tee_stdout)
+            exit_code = self._run_command_with_teed_output(args, child_stdout, **kwargs)
+        finally:
+            if quiet:
+                dev_null.close()
 
         child_output = child_out_file.getvalue()
         child_out_file.close()
 
         if decode_output:
-            child_output = child_output.decode(self._child_process_encoding())
+            child_output = unicode_compatibility.decode_if_necessary(child_output, self._child_process_encoding())
+        else:
+            child_output = unicode_compatibility.encode_if_necessary(child_output, self._child_process_encoding())
 
         if exit_code:
             raise ScriptError(script_args=args,
@@ -286,17 +298,17 @@ class Executive(AbstractExecutive):
                 except ValueError as e:
                     pass
         else:
-            ps_process = self.popen(['ps', '-eo', 'pid,comm'], stdout=self.PIPE, stderr=self.PIPE)
-            stdout, _ = ps_process.communicate()
-            for line in stdout.splitlines():
-                try:
-                    # In some cases the line can contain one or more
-                    # leading white-spaces, so strip it before split.
-                    pid, process_name = line.strip().split(' ', 1)
-                    if process_name_filter(process_name):
-                        running_pids.append(int(pid))
-                except ValueError as e:
-                    pass
+            with self.popen(['ps', '-eo', 'pid,comm'], stdout=self.PIPE, stderr=self.PIPE) as ps_process:
+                stdout, _ = ps_process.communicate()
+                for line in stdout.splitlines():
+                    try:
+                        # In some cases the line can contain one or more
+                        # leading white-spaces, so strip it before split.
+                        pid, process_name = line.strip().split(' ', 1)
+                        if process_name_filter(process_name):
+                            running_pids.append(int(pid))
+                    except ValueError as e:
+                        pass
 
         return sorted(running_pids)
 
@@ -355,8 +367,7 @@ class Executive(AbstractExecutive):
         # See https://bugs.webkit.org/show_bug.cgi?id=37528
         # for an example of a regresion caused by passing a unicode string directly.
         # FIXME: We may need to encode differently on different platforms.
-        if isinstance(input, unicode):
-            input = input.encode(self._child_process_encoding())
+        input = unicode_compatibility.encode_if_necessary(input, self._child_process_encoding())
         return (self.PIPE, input)
 
     # FIXME: run_and_throw_if_fail should be merged into this method.
@@ -384,33 +395,37 @@ class Executive(AbstractExecutive):
                              cwd=cwd,
                              env=env,
                              close_fds=self._should_close_fds())
-        output = process.communicate(string_to_communicate)[0]
+        with process:
+            if not string_to_communicate:
+                output = process.communicate()[0]
+            else:
+                output = process.communicate(unicode_compatibility.encode_if_necessary(string_to_communicate, 'utf-8'))[0]
 
-        # run_command automatically decodes to unicode() and converts CRLF to LF unless explicitly told not to.
-        if decode_output:
-            output = output.decode(self._child_process_encoding()).replace('\r\n', '\n')
+            # run_command automatically decodes to unicode() and converts CRLF to LF unless explicitly told not to.
+            if decode_output:
+                output = unicode_compatibility.decode_if_necessary(output, self._child_process_encoding()).replace('\r\n', '\n')
 
-        # wait() is not threadsafe and can throw OSError due to:
-        # http://bugs.python.org/issue1731717
-        exit_code = process.wait()
+            # wait() is not threadsafe and can throw OSError due to:
+            # http://bugs.python.org/issue1731717
+            exit_code = process.wait()
 
-        _log.debug('"%s" took %.2fs' % (self.command_for_printing(args), time.time() - start_time))
+            _log.debug('"%s" took %.2fs' % (self.command_for_printing(args), time.time() - start_time))
 
-        if return_exit_code:
-            return exit_code
+            if return_exit_code:
+                return exit_code
 
-        if exit_code:
-            script_error = ScriptError(script_args=args,
-                                       exit_code=exit_code,
-                                       output=output,
-                                       cwd=cwd)
+            if exit_code:
+                script_error = ScriptError(script_args=args,
+                                           exit_code=exit_code,
+                                           output=output,
+                                           cwd=cwd)
 
-            if ignore_errors:
-                assert error_handler is None, "don't specify error_handler if ignore_errors is True"
-                error_handler = Executive.ignore_error
+                if ignore_errors:
+                    assert error_handler is None, "don't specify error_handler if ignore_errors is True"
+                    error_handler = Executive.ignore_error
 
-            (error_handler or self.default_error_handler)(script_error)
-        return output
+                (error_handler or self.default_error_handler)(script_error)
+            return output
 
     def _child_process_encoding(self):
         # Win32 Python 2.x uses CreateProcessA rather than CreateProcessW
@@ -441,11 +456,11 @@ class Executive(AbstractExecutive):
     def _encode_argument_if_needed(self, argument):
         if not self._should_encode_child_process_arguments():
             return argument
-        return argument.encode(self._child_process_encoding())
+        return unicode_compatibility.encode_if_necessary(argument, self._child_process_encoding())
 
     def _stringify_args(self, args):
         # Popen will throw an exception if args are non-strings (like int())
-        string_args = map(unicode, args)
+        string_args = map(unicode_compatibility.unicode, args)
         # The Windows implementation of Popen cannot handle unicode strings. :(
         return map(self._encode_argument_if_needed, string_args)
 
@@ -478,7 +493,12 @@ class Executive(AbstractExecutive):
             string_args = args
         else:
             string_args = self._stringify_args(args)
-        return subprocess.Popen(string_args, **kwargs)
+
+        # Python 3 treats Popen as a context manager, we should allow this in Python 2
+        result = subprocess.Popen(string_args, **kwargs)
+        if not callable(getattr(result, "__enter__", None)) and not callable(getattr(result, "__exit__", None)):
+            return self.WrappedPopen(result)
+        return result
 
     def run_in_parallel(self, command_lines_and_cwds, processes=None):
         """Runs a list of (cmd_line list, cwd string) tuples in parallel and returns a list of (retcode, stdout, stderr) tuples."""

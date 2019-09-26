@@ -36,8 +36,8 @@ import sys
 import subprocess
 import webbrowser
 
-from .executive import Executive
-from .platforminfo import PlatformInfo
+from webkitpy.common.system.executive import Executive
+from webkitpy.common.system.platforminfo import PlatformInfo
 
 
 _log = logging.getLogger(__name__)
@@ -49,6 +49,11 @@ except ImportError:
     if not sys.platform.startswith('win32'):
         # There is no readline module for win32, not much to do except cry.
         _log.warn("Unable to import readline.")
+
+if sys.version_info > (3, 0):
+    input_func = input
+else:
+    input_func = raw_input
 
 
 class User(object):
@@ -62,7 +67,7 @@ class User(object):
 
     # FIXME: These are @classmethods because bugzilla.py doesn't have a Tool object (thus no User instance).
     @classmethod
-    def prompt(cls, message, repeat=1, raw_input=raw_input):
+    def prompt(cls, message, repeat=1, raw_input=input_func):
         response = None
         while (repeat and not response):
             repeat -= 1
@@ -74,7 +79,7 @@ class User(object):
         return cls.prompt(message, repeat=repeat, raw_input=getpass.getpass)
 
     @classmethod
-    def prompt_with_multiple_lists(cls, list_title, subtitles, lists, can_choose_multiple=False, raw_input=raw_input):
+    def prompt_with_multiple_lists(cls, list_title, subtitles, lists, can_choose_multiple=False, raw_input=input_func):
         item_index = 0
         cumulated_list = []
         print(list_title)
@@ -114,7 +119,7 @@ class User(object):
                 return list_items[result]
 
     @classmethod
-    def prompt_with_list(cls, list_title, list_items, can_choose_multiple=False, raw_input=raw_input):
+    def prompt_with_list(cls, list_title, list_items, can_choose_multiple=False, raw_input=input_func):
         print(list_title)
         i = 0
         for item in list_items:
@@ -156,7 +161,7 @@ class User(object):
         except IOError as e:
             pass
 
-    def confirm(self, message=None, default=DEFAULT_YES, raw_input=raw_input):
+    def confirm(self, message=None, default=DEFAULT_YES, raw_input=input_func):
         if not message:
             message = "Continue?"
         choice = {'y': 'Y/n', 'n': 'y/N'}[default]

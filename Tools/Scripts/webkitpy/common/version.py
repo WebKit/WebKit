@@ -33,13 +33,13 @@ class Version(object):
     @staticmethod
     def from_iterable(val):
         result = Version()
-        for i in xrange(len(val)):
+        for i in range(len(val)):
             result[i] = int(val[i])
         return result
 
     @staticmethod
     def from_name(name):
-        from version_name_map import VersionNameMap
+        from webkitpy.common.version_name_map import VersionNameMap
         return VersionNameMap.map().from_name(name)[1]
 
     def __init__(self, major=0, minor=0, tiny=0, micro=0, nano=0):
@@ -99,7 +99,7 @@ class Version(object):
     def __contains__(self, version):
         assert isinstance(version, Version)
         does_match = True
-        for i in xrange(len(version)):
+        for i in range(len(version)):
             if self[i] != version[i]:
                 does_match = False
             if not does_match and self[i] != 0:
@@ -108,18 +108,37 @@ class Version(object):
 
     def __str__(self):
         len_to_print = 1
-        for i in xrange(len(self)):
+        for i in range(len(self)):
             if self[i]:
                 len_to_print = i + 1
         result = str(self.major)
-        for i in xrange(len_to_print - 1):
+        for i in range(len_to_print - 1):
             result += '.{}'.format(self[i + 1])
         return result
 
     def __cmp__(self, other):
         if other is None:
             return 1
-        for i in xrange(len(self)):
-            if cmp(self[i], other[i]):
-                return cmp(self[i], other[i])
+        for i in range(len(self)):
+            diff = self[i] - other[i]
+            if diff:
+                return diff
         return 0
+
+    def __eq__(self, other):
+        return self.__cmp__(other) == 0
+
+    def __ne__(self, other):
+        return self.__cmp__(other) != 0
+
+    def __lt__(self, other):
+        return self.__cmp__(other) < 0
+
+    def __le__(self, other):
+        return self.__cmp__(other) <= 0
+
+    def __gt__(self, other):
+        return self.__cmp__(other) > 0
+
+    def __ge__(self, other):
+        return self.__cmp__(other) >= 0

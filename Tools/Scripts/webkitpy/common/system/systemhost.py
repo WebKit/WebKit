@@ -31,7 +31,7 @@ import os
 import platform
 import sys
 
-from . import environment, executive, file_lock, filesystem, platforminfo, user, workspace
+from webkitpy.common.system import environment, executive, file_lock, filesystem, platforminfo, user, workspace
 
 
 class SystemHost(object):

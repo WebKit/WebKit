@@ -24,7 +24,7 @@ import unittest
 
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.version import Version
-from version_name_map import VersionNameMap
+from webkitpy.common.version_name_map import VersionNameMap
 
 
 class VersionMapTestCase(unittest.TestCase):

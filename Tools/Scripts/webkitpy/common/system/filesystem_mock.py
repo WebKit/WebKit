@@ -26,14 +26,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import StringIO
 import errno
 import hashlib
 import os
 import re
+import sys
 
+from webkitpy.common import unicode_compatibility
 from webkitpy.common.system import path
-
 
 class MockFileSystem(object):
     sep = '/'
@@ -186,7 +186,7 @@ class MockFileSystem(object):
 
         # We could use fnmatch.fnmatch, but that might not do the right thing on windows.
         existing_files = [path for path, contents in self.files.items() if contents is not None]
-        return filter(path_filter, existing_files) + filter(path_filter, self.dirs)
+        return list(filter(path_filter, existing_files)) + list(filter(path_filter, self.dirs))
 
     def isabs(self, path):
         return path.startswith(self.sep)
@@ -344,7 +344,7 @@ class MockFileSystem(object):
         return self.read_binary_file(path).decode('utf-8', errors=errors)
 
     def write_text_file(self, path, contents, errors='strict'):
-        return self.write_binary_file(path, contents.encode('utf-8', errors=errors))
+        return self.write_binary_file(path, unicode_compatibility.encode_if_necessary(contents, 'utf-8', errors=errors))
 
     def sha1(self, path):
         contents = self.read_binary_file(path)
@@ -441,7 +441,7 @@ class WritableBinaryFileObject(object):
         self.fs = fs
         self.path = path
         self.closed = False
-        self.fs.files[path] = ""
+        self.fs.files[path] = b''
 
     def __enter__(self):
         return self
@@ -452,14 +452,14 @@ class WritableBinaryFileObject(object):
     def close(self):
         self.closed = True
 
-    def write(self, str):
-        self.fs.files[self.path] += str
+    def write(self, string):
+        self.fs.files[self.path] += unicode_compatibility.encode_if_necessary(string, 'utf-8')
         self.fs.written_files[self.path] = self.fs.files[self.path]
 
 
 class WritableTextFileObject(WritableBinaryFileObject):
     def write(self, str):
-        WritableBinaryFileObject.write(self, str.encode('utf-8'))
+        WritableBinaryFileObject.write(self, unicode_compatibility.encode_if_necessary(str, 'utf-8'))
 
 
 class ReadableBinaryFileObject(object):
@@ -489,7 +489,7 @@ class ReadableBinaryFileObject(object):
 
 class ReadableTextFileObject(ReadableBinaryFileObject):
     def __init__(self, fs, path, data):
-        super(ReadableTextFileObject, self).__init__(fs, path, StringIO.StringIO(data.decode("utf-8")))
+        super(ReadableTextFileObject, self).__init__(fs, path, unicode_compatibility.UnicodeIO(unicode_compatibility.decode_for(data, unicode_compatibility.unicode)))
 
     def close(self):
         self.data.close()

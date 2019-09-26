@@ -34,8 +34,9 @@ from webkitpy.common.system import stack_utils
 
 
 def current_thread_id():
-    thread_id, _ = sys._current_frames().items()[0]
-    return thread_id
+    for thread_id in sys._current_frames().keys():
+        return thread_id
+    return None
 
 
 class StackUtilsTest(unittest.TestCase):

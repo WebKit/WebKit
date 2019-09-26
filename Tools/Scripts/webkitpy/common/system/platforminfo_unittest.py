@@ -76,10 +76,10 @@ class TestPlatformInfo(unittest.TestCase):
     def test_real_code(self):
         # This test makes sure the real (unmocked) code actually works.
         info = PlatformInfo(sys, platform, Executive())
-        self.assertNotEquals(info.os_name, '')
+        self.assertNotEqual(info.os_name, '')
         if info.is_mac() or info.is_win():
             self.assertIsNotNone(info.os_version)
-        self.assertNotEquals(info.display_name(), '')
+        self.assertNotEqual(info.display_name(), '')
         self.assertTrue(info.is_mac() or info.is_win() or info.is_linux() or info.is_freebsd())
         self.assertIsNotNone(info.terminal_width())
 
@@ -135,16 +135,16 @@ class TestPlatformInfo(unittest.TestCase):
 
     def test_display_name(self):
         info = self.make_info(fake_sys('darwin'))
-        self.assertNotEquals(info.display_name(), '')
+        self.assertNotEqual(info.display_name(), '')
 
         info = self.make_info(fake_sys('win32'), fake_platform(win_version_string='6.1.7600'))
-        self.assertNotEquals(info.display_name(), '')
+        self.assertNotEqual(info.display_name(), '')
 
         info = self.make_info(fake_sys('linux2'), fake_platform('', '10.4'))
-        self.assertNotEquals(info.display_name(), '')
+        self.assertNotEqual(info.display_name(), '')
 
         info = self.make_info(fake_sys('freebsd9'), fake_platform('', '9.0-RELEASE'))
-        self.assertNotEquals(info.display_name(), '')
+        self.assertNotEqual(info.display_name(), '')
 
     def test_total_bytes_memory(self):
         info = self.make_info(fake_sys('darwin'), fake_platform('10.6.3'), fake_executive('1234'))

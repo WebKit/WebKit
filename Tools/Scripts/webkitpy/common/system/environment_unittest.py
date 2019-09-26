@@ -28,7 +28,7 @@
 
 import unittest
 
-from .environment import Environment
+from webkitpy.common.system.environment import Environment
 
 
 class EnvironmentTest(unittest.TestCase):

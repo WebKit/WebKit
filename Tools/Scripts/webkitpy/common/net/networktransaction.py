@@ -27,8 +27,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import sys
 import time
-import urllib2
+
+if sys.version_info > (3, 0):
+    from urllib.error import HTTPError, URLError
+else:
+    from urllib2 import HTTPError, URLError
 
 _log = logging.getLogger(__name__)
 
@@ -51,13 +56,13 @@ class NetworkTransaction(object):
         while True:
             try:
                 return request()
-            except urllib2.HTTPError as e:
+            except HTTPError as e:
                 if self._convert_404_to_None and e.code == 404:
                     return None
                 self._check_for_timeout()
                 _log.warn("Received HTTP status %s loading \"%s\".  Retrying in %s seconds..." % (e.code, e.filename, self._backoff_seconds))
                 self._sleep()
-            except urllib2.URLError as e:
+            except URLError as e:
                 self._check_for_timeout()
                 _log.warn('Received URLError: "{}" while loading {}. Retrying in {} seconds...'.format(e.reason, url, self._backoff_seconds))
                 self._sleep()

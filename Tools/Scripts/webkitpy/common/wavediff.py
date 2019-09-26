@@ -20,11 +20,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import StringIO
 import struct
 import sys
 import tempfile
 import wave
+
+from io import BytesIO
 
 
 class WaveDiff(object):
@@ -37,11 +38,11 @@ class WaveDiff(object):
         if isinstance(in1, file):
             waveFile1 = wave.open(in1, 'rb')
         else:
-            waveFile1 = wave.open(StringIO.StringIO(in1), 'rb')
+            waveFile1 = wave.open(BytesIO(in1), 'rb')
         if isinstance(in2, file):
             waveFile1 = wave.open(in2, 'rb')
         else:
-            waveFile2 = wave.open(StringIO.StringIO(in2), 'rb')
+            waveFile2 = wave.open(BytesIO(in2), 'rb')
 
         params1 = waveFile1.getparams()
         params2 = waveFile2.getparams()
