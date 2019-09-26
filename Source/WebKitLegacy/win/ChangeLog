@@ -1,3 +1,11 @@
+2019-09-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed build fix for Windows ports.
+        https://bugs.webkit.org/show_bug.cgi?id=202125
+        <rdar://problem/14944104>
+
+        * WebCoreSupport/WebEditorClient.h: Added missing subFrameScrollPositionChanged.
+
 2019-09-24  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Remove SchemeRegistry's list of URL schemes allowing local storage in private browsing, which is unused
