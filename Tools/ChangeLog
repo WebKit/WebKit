@@ -1,5 +1,15 @@
 2019-09-26  Dean Jackson  <dino@apple.com>
 
+        Build fix.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ContextMenus.mm:
+        (-[TestContextMenuImageWithoutConfigurationUIDelegate webView:contextMenuConfigurationForElement:completionHandler:]): Deleted.
+        (-[TestContextMenuImageWithoutConfigurationUIDelegate webView:contextMenuWillPresentForElement:]): Deleted.
+        (-[TestContextMenuImageWithoutConfigurationUIDelegate webView:contextMenuForElement:willCommitWithAnimator:]): Deleted.
+        (-[TestContextMenuImageWithoutConfigurationUIDelegate webView:contextMenuDidEndForElement:]): Deleted.
+
+2019-09-26  Dean Jackson  <dino@apple.com>
+
         ContextMenu on a link in an email no longer shows web preview
         https://bugs.webkit.org/show_bug.cgi?id=201120
         <rdar://54353617>
