@@ -69,9 +69,16 @@ void ScrollingCoordinatorNicosia::commitTreeStateIfNeeded()
     m_scrollingStateTreeCommitterTimer.stop();
 }
 
-ScrollingEventResult ScrollingCoordinatorNicosia::handleWheelEvent(FrameView&, const PlatformWheelEvent&)
+ScrollingEventResult ScrollingCoordinatorNicosia::handleWheelEvent(FrameView&, const PlatformWheelEvent& wheelEvent)
 {
-    return ScrollingEventResult::DidNotHandleEvent;
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+    ASSERT(scrollingTree());
+
+    ScrollingThread::dispatch([threadedScrollingTree = makeRef(downcast<ThreadedScrollingTree>(*scrollingTree())), wheelEvent] {
+        threadedScrollingTree->handleWheelEvent(wheelEvent);
+    });
+    return ScrollingEventResult::DidHandleEvent;
 }
 
 void ScrollingCoordinatorNicosia::scheduleTreeStateCommit()

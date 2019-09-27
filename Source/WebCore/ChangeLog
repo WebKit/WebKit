@@ -1,5 +1,18 @@
 2019-09-27  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Nicosia] ScrollingCoordinatorNicosia should handle wheel events coming from the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=202275
+
+        Reviewed by Carlos Garcia Campos.
+
+        * page/scrolling/nicosia/ScrollingCoordinatorNicosia.cpp:
+        (WebCore::ScrollingCoordinatorNicosia::handleWheelEvent):
+        Handle wheel events that get rerouted through the main thread,
+        dispatching them back to the scrolling thread so that they end up
+        performing the desired scroll if possible.
+
+2019-09-27  Zan Dobersek  <zdobersek@igalia.com>
+
         [CoordinatedGraphics] support bounds origin
         https://bugs.webkit.org/show_bug.cgi?id=198998
 
