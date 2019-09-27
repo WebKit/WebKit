@@ -525,6 +525,7 @@ WKWebsiteDataStoreRef TestController::websiteDataStore()
             WKWebsiteDataStoreConfigurationSetResourceLoadStatisticsDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "ResourceLoadStatistics").get());
             WKWebsiteDataStoreConfigurationSetPerOriginStorageQuota(configuration.get(), 400 * 1024);
             WKWebsiteDataStoreConfigurationSetNetworkCacheSpeculativeValidationEnabled(configuration.get(), true);
+            WKWebsiteDataStoreConfigurationSetTestingSessionEnabled(configuration.get(), true);
         }
         dataStore = WKWebsiteDataStoreCreateWithConfiguration(configuration.get());
     }

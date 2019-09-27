@@ -62,7 +62,6 @@ struct NetworkProcessCreationParameters {
     SandboxExtension::Handle parentBundleDirectoryExtensionHandle;
 #endif
     bool shouldSuppressMemoryPressureHandler { false };
-    bool shouldUseTestingNetworkSession { false };
 
     Vector<String> urlSchemesRegisteredForCustomProtocols;
 

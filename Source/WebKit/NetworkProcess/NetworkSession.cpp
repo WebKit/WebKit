@@ -95,6 +95,8 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
         if (parameters.networkCacheSpeculativeValidationEnabled)
             cacheOptions.add(NetworkCache::CacheOption::SpeculativeRevalidation);
 #endif
+        if (parameters.shouldUseTestingNetworkSession)
+            cacheOptions.add(NetworkCache::CacheOption::TestingMode);
 
         m_cache = NetworkCache::Cache::open(networkProcess, networkCacheDirectory, cacheOptions, m_sessionID);
 

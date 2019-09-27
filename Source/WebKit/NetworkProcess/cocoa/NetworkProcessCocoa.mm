@@ -113,11 +113,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     // - disk cache size passed from UI process is effectively a minimum size.
     // One non-obvious constraint is that we need to use -setSharedURLCache: even in testing mode, to prevent creating a default one on disk later, when some other code touches the cache.
 
-    ASSERT(!m_diskCacheIsDisabledForTesting);
-
     m_cacheOptions = { NetworkCache::CacheOption::RegisterNotify };
-    if (parameters.shouldUseTestingNetworkSession)
-        m_cacheOptions.add(NetworkCache::CacheOption::TestingMode);
 
     // Disable NSURLCache.
     auto urlCache(adoptNS([[NSURLCache alloc] initWithMemoryCapacity:0 diskCapacity:0 diskPath:nil]));

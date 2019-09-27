@@ -1,5 +1,50 @@
 2019-09-27  Alex Christensen  <achristensen@webkit.org>
 
+        Move shouldUseTestingNetworkSession from NetworkProcessCreationParameters to NetworkSessionCreationParameters
+        https://bugs.webkit.org/show_bug.cgi?id=202327
+
+        Reviewed by Tim Horton.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::ensureSession):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * NetworkProcess/curl/RemoteNetworkingContextCurl.cpp:
+        (WebKit::RemoteNetworkingContext::ensureWebsiteDataStoreSession):
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensureWebsiteDataStoreSession):
+        * NetworkProcess/soup/RemoteNetworkingContextSoup.cpp:
+        (WebKit::RemoteNetworkingContext::ensureWebsiteDataStoreSession):
+        * UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.cpp:
+        (WKWebsiteDataStoreConfigurationSetPerOriginStorageQuota):
+        (WKWebsiteDataStoreConfigurationSetNetworkCacheSpeculativeValidationEnabled):
+        (WKWebsiteDataStoreConfigurationGetTestingSessionEnabled):
+        (WKWebsiteDataStoreConfigurationSetTestingSessionEnabled):
+        * UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::testingSessionEnabled const):
+        (WebKit::WebsiteDataStoreConfiguration::setTestingSessionEnabled):
+
+2019-09-27  Alex Christensen  <achristensen@webkit.org>
+
         Move legacy custom protocol registration from process pool to NetworkProcessProxy
         https://bugs.webkit.org/show_bug.cgi?id=202315
 

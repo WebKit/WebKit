@@ -1,5 +1,15 @@
 2019-09-27  Alex Christensen  <achristensen@webkit.org>
 
+        Move shouldUseTestingNetworkSession from NetworkProcessCreationParameters to NetworkSessionCreationParameters
+        https://bugs.webkit.org/show_bug.cgi?id=202327
+
+        Reviewed by Tim Horton.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::websiteDataStore):
+
+2019-09-27  Alex Christensen  <achristensen@webkit.org>
+
         Move service worker process termination delay disabling from process pool to website data store
         https://bugs.webkit.org/show_bug.cgi?id=202308
 

@@ -42,7 +42,7 @@ void RemoteNetworkingContext::ensureWebsiteDataStoreSession(NetworkProcess& netw
     if (networkProcess.storageSession(sessionID))
         return;
 
-    networkProcess.ensureSession(sessionID, String::number(sessionID.toUInt64()));
+    networkProcess.ensureSession(sessionID, parameters.networkSessionParameters.shouldUseTestingNetworkSession, String::number(sessionID.toUInt64()));
     networkProcess.setSession(sessionID, NetworkSession::create(networkProcess, WTFMove(parameters.networkSessionParameters)));
 }
 

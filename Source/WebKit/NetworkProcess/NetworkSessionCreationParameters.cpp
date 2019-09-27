@@ -77,6 +77,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << dataConnectionServiceType;
     encoder << fastServerTrustEvaluationEnabled;
     encoder << networkCacheSpeculativeValidationEnabled;
+    encoder << shouldUseTestingNetworkSession;
 }
 
 Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::decode(IPC::Decoder& decoder)
@@ -236,6 +237,11 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     if (!networkCacheSpeculativeValidationEnabled)
         return WTF::nullopt;
     
+    Optional<bool> shouldUseTestingNetworkSession;
+    decoder >> shouldUseTestingNetworkSession;
+    if (!shouldUseTestingNetworkSession)
+        return WTF::nullopt;
+    
     return {{
         *sessionID
         , WTFMove(*boundInterfaceIdentifier)
@@ -273,6 +279,7 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(*dataConnectionServiceType)
         , WTFMove(*fastServerTrustEvaluationEnabled)
         , WTFMove(*networkCacheSpeculativeValidationEnabled)
+        , WTFMove(*shouldUseTestingNetworkSession)
     }};
 }
 

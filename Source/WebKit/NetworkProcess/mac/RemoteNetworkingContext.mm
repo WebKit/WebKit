@@ -58,7 +58,7 @@ void RemoteNetworkingContext::ensureWebsiteDataStoreSession(NetworkProcess& netw
     if (!sessionID.isEphemeral() && !parameters.uiProcessCookieStorageIdentifier.isEmpty())
         uiProcessCookieStorage = cookieStorageFromIdentifyingData(parameters.uiProcessCookieStorageIdentifier);
 
-    networkProcess.ensureSession(sessionID, makeString(base, '.', sessionID.toUInt64()), WTFMove(uiProcessCookieStorage));
+    networkProcess.ensureSession(sessionID, parameters.networkSessionParameters.shouldUseTestingNetworkSession, makeString(base, '.', sessionID.toUInt64()), WTFMove(uiProcessCookieStorage));
 
     auto* session = networkProcess.storageSession(sessionID);
     for (const auto& cookie : parameters.pendingCookies)

@@ -95,6 +95,7 @@ struct NetworkSessionCreationParameters {
     String dataConnectionServiceType;
     bool fastServerTrustEvaluationEnabled { false };
     bool networkCacheSpeculativeValidationEnabled { false };
+    bool shouldUseTestingNetworkSession { false };
 };
 
 } // namespace WebKit

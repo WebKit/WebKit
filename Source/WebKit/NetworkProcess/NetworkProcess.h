@@ -173,9 +173,9 @@ public:
     WebCore::NetworkStorageSession& defaultStorageSession() const;
     std::unique_ptr<WebCore::NetworkStorageSession> newTestingSession(const PAL::SessionID&);
 #if PLATFORM(COCOA)
-    void ensureSession(const PAL::SessionID&, const String& identifier, RetainPtr<CFHTTPCookieStorageRef>&&);
+    void ensureSession(const PAL::SessionID&, bool shouldUseTestingNetworkSession, const String& identifier, RetainPtr<CFHTTPCookieStorageRef>&&);
 #else
-    void ensureSession(const PAL::SessionID&, const String& identifier);
+    void ensureSession(const PAL::SessionID&, bool shouldUseTestingNetworkSession, const String& identifier);
 #endif
 
     void processWillSuspendImminently();
@@ -476,7 +476,6 @@ private:
     bool m_hasSetCacheModel { false };
     CacheModel m_cacheModel { CacheModel::DocumentViewer };
     bool m_suppressMemoryPressureHandler { false };
-    bool m_diskCacheIsDisabledForTesting { false };
     String m_uiProcessBundleIdentifier;
     DownloadManager m_downloadManager;
 
@@ -491,7 +490,6 @@ private:
     HashMap<PAL::SessionID, std::unique_ptr<NetworkSession>> m_networkSessions;
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>> m_networkStorageSessions;
     mutable std::unique_ptr<WebCore::NetworkStorageSession> m_defaultNetworkStorageSession;
-    bool m_shouldUseTestingNetworkStorageSession { false };
 
     RefPtr<StorageManagerSet> m_storageManagerSet;
 

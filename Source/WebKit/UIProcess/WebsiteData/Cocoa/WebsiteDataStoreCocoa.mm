@@ -145,6 +145,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         m_configuration->dataConnectionServiceType(),
         m_configuration->fastServerTrustEvaluationEnabled(),
         m_configuration->networkCacheSpeculativeValidationEnabled(),
+        m_configuration->testingSessionEnabled()
     };
     networkingHasBegun();
 

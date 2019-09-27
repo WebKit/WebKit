@@ -303,14 +303,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
         memoryPressureHandler.install();
     }
 
-    m_diskCacheIsDisabledForTesting = parameters.shouldUseTestingNetworkSession;
-
     setCacheModel(parameters.cacheModel, parameters.defaultDataStoreParameters.networkSessionParameters.networkCacheDirectory);
-
-    if (parameters.shouldUseTestingNetworkSession) {
-        m_shouldUseTestingNetworkStorageSession = true;
-        m_defaultNetworkStorageSession = newTestingSession(PAL::SessionID::defaultSessionID());
-    }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     m_isITPDatabaseEnabled = parameters.shouldEnableITPDatabase;
@@ -507,9 +500,9 @@ std::unique_ptr<WebCore::NetworkStorageSession> NetworkProcess::newTestingSessio
 }
 
 #if PLATFORM(COCOA)
-void NetworkProcess::ensureSession(const PAL::SessionID& sessionID, const String& identifierBase, RetainPtr<CFHTTPCookieStorageRef>&& cookieStorage)
+void NetworkProcess::ensureSession(const PAL::SessionID& sessionID, bool shouldUseTestingNetworkSession, const String& identifierBase, RetainPtr<CFHTTPCookieStorageRef>&& cookieStorage)
 #else
-void NetworkProcess::ensureSession(const PAL::SessionID& sessionID, const String& identifierBase)
+void NetworkProcess::ensureSession(const PAL::SessionID& sessionID, bool shouldUseTestingNetworkSession, const String& identifierBase)
 #endif
 {
     ASSERT(sessionID != PAL::SessionID::defaultSessionID());
@@ -518,7 +511,7 @@ void NetworkProcess::ensureSession(const PAL::SessionID& sessionID, const String
     if (!addResult.isNewEntry)
         return;
 
-    if (m_shouldUseTestingNetworkStorageSession) {
+    if (shouldUseTestingNetworkSession) {
         addResult.iterator->value = newTestingSession(sessionID);
         return;
     }

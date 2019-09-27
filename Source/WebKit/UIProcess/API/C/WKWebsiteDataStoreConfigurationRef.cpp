@@ -117,7 +117,7 @@ uint64_t WKWebsiteDataStoreConfigurationGetPerOriginStorageQuota(WKWebsiteDataSt
 
 void WKWebsiteDataStoreConfigurationSetPerOriginStorageQuota(WKWebsiteDataStoreConfigurationRef configuration, uint64_t quota)
 {
-    return WebKit::toImpl(configuration)->setPerOriginStorageQuota(quota);
+    WebKit::toImpl(configuration)->setPerOriginStorageQuota(quota);
 }
 
 bool WKWebsiteDataStoreConfigurationGetNetworkCacheSpeculativeValidationEnabled(WKWebsiteDataStoreConfigurationRef configuration)
@@ -127,5 +127,15 @@ bool WKWebsiteDataStoreConfigurationGetNetworkCacheSpeculativeValidationEnabled(
 
 void WKWebsiteDataStoreConfigurationSetNetworkCacheSpeculativeValidationEnabled(WKWebsiteDataStoreConfigurationRef configuration, bool enabled)
 {
-    return WebKit::toImpl(configuration)->setNetworkCacheSpeculativeValidationEnabled(enabled);
+    WebKit::toImpl(configuration)->setNetworkCacheSpeculativeValidationEnabled(enabled);
+}
+
+bool WKWebsiteDataStoreConfigurationGetTestingSessionEnabled(WKWebsiteDataStoreConfigurationRef configuration)
+{
+    return WebKit::toImpl(configuration)->testingSessionEnabled();
+}
+
+void WKWebsiteDataStoreConfigurationSetTestingSessionEnabled(WKWebsiteDataStoreConfigurationRef configuration, bool enabled)
+{
+    WebKit::toImpl(configuration)->setTestingSessionEnabled(enabled);
 }

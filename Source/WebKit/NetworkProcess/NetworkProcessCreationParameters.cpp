@@ -49,7 +49,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << parentBundleDirectoryExtensionHandle;
 #endif
     encoder << shouldSuppressMemoryPressureHandler;
-    encoder << shouldUseTestingNetworkSession;
     encoder << urlSchemesRegisteredForCustomProtocols;
 #if PLATFORM(COCOA)
     encoder << uiProcessBundleIdentifier;
@@ -117,8 +116,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     result.parentBundleDirectoryExtensionHandle = WTFMove(*parentBundleDirectoryExtensionHandle);
 #endif
     if (!decoder.decode(result.shouldSuppressMemoryPressureHandler))
-        return false;
-    if (!decoder.decode(result.shouldUseTestingNetworkSession))
         return false;
     if (!decoder.decode(result.urlSchemesRegisteredForCustomProtocols))
         return false;

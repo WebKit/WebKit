@@ -513,8 +513,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     if (!parameters.hstsStorageDirectory.isNull())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.hstsStorageDirectory, parameters.hstsStorageDirectoryExtensionHandle);
 
-    parameters.shouldUseTestingNetworkSession = m_shouldUseTestingNetworkSession;
-
     parameters.urlSchemesRegisteredAsSecure = copyToVector(m_schemesToRegisterAsSecure);
     parameters.urlSchemesRegisteredAsBypassingContentSecurityPolicy = copyToVector(m_schemesToRegisterAsBypassingContentSecurityPolicy);
     parameters.urlSchemesRegisteredAsLocal = copyToVector(m_schemesToRegisterAsLocal);
