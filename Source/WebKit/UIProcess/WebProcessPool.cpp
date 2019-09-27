@@ -41,6 +41,7 @@
 #include "DownloadProxyMessages.h"
 #include "GamepadData.h"
 #include "HighPerformanceGraphicsUsageSampler.h"
+#include "LegacyGlobalSettings.h"
 #include "LogInitialization.h"
 #include "Logging.h"
 #include "NetworkProcessCreationParameters.h"

@@ -32,6 +32,18 @@ FrameLoadState::~FrameLoadState()
 {
 }
 
+void FrameLoadState::addObserver(Observer& observer)
+{
+    auto result = m_observers.add(observer);
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+void FrameLoadState::removeObserver(Observer& observer)
+{
+    auto result = m_observers.remove(observer);
+    ASSERT_UNUSED(result, result);
+}
+
 void FrameLoadState::didStartProvisionalLoad(const URL& url)
 {
     ASSERT(m_provisionalURL.isEmpty());
@@ -77,6 +89,12 @@ void FrameLoadState::didFinishLoad()
     ASSERT(m_provisionalURL.isEmpty());
 
     m_state = State::Finished;
+
+    Vector<Observer*> observersCopy;
+    for (auto& observer : m_observers)
+        observersCopy.append(&observer);
+    for (auto* observer : observersCopy)
+        observer->didFinishLoad();
 }
 
 void FrameLoadState::didFailLoad()

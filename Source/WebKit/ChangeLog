@@ -1,3 +1,52 @@
+2019-09-27  Jiewen Tan  <jiewen_tan@apple.com>
+
+        SubFrameSOAuthorizationSession should ensure messages are posted in the right order to the parent frame
+        https://bugs.webkit.org/show_bug.cgi?id=202061
+        <rdar://problem/55485666>
+
+        Reviewed by Youenn Fablet.
+
+        This patch ensures messages that signal the process of SOAuthorization interception are posted in
+        the right order to the parent frame. Before this patch, there are chances that SOAuthorizationDidCancel
+        could be posted to the parent before SOAuthorizationDidStart. There are few causes that lead to
+        this race condition:
+        1) SubFrameSOAuthorizationSession::beforeStart posts SOAuthorizationDidStart in the next runloop. So
+        extension could have the chance to invoke SubFrameSOAuthorizationSession::fallBackToWebPathInternal
+        before SOAuthorizationDidStart is posted.
+        2) Even if the order is right in the UI process, it is not guaranteed that Web process will strictly
+        follow the order as the loading process is async.
+
+        To fix the issue:
+        1) SubFrameSOAuthorizationSession::beforeStart now posts SOAuthorizationDidStart in the same runloop.
+        2) Observer is introduced in FrameLoadState such that SubFrameSOAuthorizationSession could know if
+        the loading is finished. With this new capacity, SubFrameSOAuthorizationSession can ensure it only
+        posts next message when the previous message has been posted.
+
+        Implementation wise, a deque to queue requests is provided to maintain order.
+        1) When new request is added to the deque, SubFrameSOAuthorizationSession will only load the request
+        if it is the only element in the deque. Otherwise, it does nothing.
+        2) When SubFrameSOAuthorizationSession receives didFinishLoad, it pops the head of the queue and loads
+        the next request in the queue if any.
+        The above design should guarantee all requests are loaded in sequence.
+
+        * UIProcess/Cocoa/SOAuthorization/SubFrameSOAuthorizationSession.h:
+        * UIProcess/Cocoa/SOAuthorization/SubFrameSOAuthorizationSession.mm:
+        (WebKit::SubFrameSOAuthorizationSession::SubFrameSOAuthorizationSession):
+        (WebKit::SubFrameSOAuthorizationSession::~SubFrameSOAuthorizationSession):
+        (WebKit::SubFrameSOAuthorizationSession::fallBackToWebPathInternal):
+        (WebKit::SubFrameSOAuthorizationSession::completeInternal):
+        (WebKit::SubFrameSOAuthorizationSession::beforeStart):
+        (WebKit::SubFrameSOAuthorizationSession::didFinishLoad):
+        (WebKit::SubFrameSOAuthorizationSession::appendRequestToLoad):
+        (WebKit::SubFrameSOAuthorizationSession::loadRequestToFrame):
+        (WebKit::SubFrameSOAuthorizationSession::loadDataToFrame): Deleted.
+        (WebKit::SubFrameSOAuthorizationSession::postDidCancelMessageToParent): Deleted.
+        * UIProcess/FrameLoadState.cpp:
+        (WebKit::FrameLoadState::addObserver):
+        (WebKit::FrameLoadState::removeObserver):
+        (WebKit::FrameLoadState::didFinishLoad):
+        * UIProcess/FrameLoadState.h:
+
 2019-09-26  Kate Cheney  <katherine_cheney@apple.com>
 
         Resource Load Statistics: Downgrade all third-party referrer headers

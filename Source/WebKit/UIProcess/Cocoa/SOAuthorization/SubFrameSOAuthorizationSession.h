@@ -27,6 +27,7 @@
 
 #if HAVE(APP_SSO)
 
+#include "FrameLoadState.h"
 #include "NavigationSOAuthorizationSession.h"
 
 namespace IPC {
@@ -35,14 +36,20 @@ class DataReference;
 
 namespace WebKit {
 
-class SubFrameSOAuthorizationSession final : public NavigationSOAuthorizationSession {
+class SubFrameSOAuthorizationSession final : public NavigationSOAuthorizationSession, public FrameLoadState::Observer {
 public:
     using Callback = CompletionHandler<void(bool)>;
+    using SOAuthorizationSession::weakPtrFactory;
+    using WeakValueType = SOAuthorizationSession::WeakValueType;
 
-    static Ref<SOAuthorizationSession> create(SOAuthorization *soAuthorization, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler);
+    static Ref<SOAuthorizationSession> create(SOAuthorization *, Ref<API::NavigationAction>&&, WebPageProxy&, Callback&&, WebCore::FrameIdentifier);
+
+    ~SubFrameSOAuthorizationSession();
 
 private:
-    SubFrameSOAuthorizationSession(SOAuthorization *, Ref<API::NavigationAction>&&, WebPageProxy&, Callback&&);
+    using Supplement = Variant<Vector<uint8_t>, String>;
+
+    SubFrameSOAuthorizationSession(SOAuthorization *, Ref<API::NavigationAction>&&, WebPageProxy&, Callback&&, WebCore::FrameIdentifier);
 
     // SOAuthorizationSession
     void fallBackToWebPathInternal() final;
@@ -52,8 +59,14 @@ private:
     // NavigationSOAuthorizationSession
     void beforeStart() final;
 
-    void loadDataToFrame(const IPC::DataReference&, const URL&);
-    void postDidCancelMessageToParent(Function<void()>&&);
+    // FrameLoadState::Observer
+    void didFinishLoad() final;
+
+    void appendRequestToLoad(URL&&, Supplement&&);
+    void loadRequestToFrame();
+
+    WebCore::FrameIdentifier m_frameID;
+    Deque<std::pair<URL, Supplement>> m_requestsToLoad;
 };
 
 } // namespace WebKit
