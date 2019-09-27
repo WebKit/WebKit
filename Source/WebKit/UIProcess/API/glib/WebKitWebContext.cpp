@@ -1138,7 +1138,7 @@ void webkit_web_context_register_uri_scheme(WebKitWebContext* context, const cha
     RefPtr<WebKitURISchemeHandler> handler = adoptRef(new WebKitURISchemeHandler(callback, userData, destroyNotify));
     auto addResult = context->priv->uriSchemeHandlers.set(String::fromUTF8(scheme), handler.get());
     if (addResult.isNewEntry)
-        context->priv->processPool->registerSchemeForCustomProtocol(String::fromUTF8(scheme));
+        WebKit::WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(String::fromUTF8(scheme));
 }
 
 /**

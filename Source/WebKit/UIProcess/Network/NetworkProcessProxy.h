@@ -191,6 +191,9 @@ public:
     
     void sendProcessWillSuspendImminentlyForTesting();
 
+    void registerSchemeForLegacyCustomProtocol(const String&);
+    void unregisterSchemeForLegacyCustomProtocol(const String&);
+
 private:
     // AuxiliaryProcessProxy
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;

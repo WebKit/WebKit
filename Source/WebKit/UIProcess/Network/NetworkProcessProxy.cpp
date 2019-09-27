@@ -31,6 +31,7 @@
 #include "DownloadProxyMap.h"
 #include "DownloadProxyMessages.h"
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
+#include "LegacyCustomProtocolManagerMessages.h"
 #include "LegacyCustomProtocolManagerProxyMessages.h"
 #endif
 #include "Logging.h"
@@ -1255,6 +1256,24 @@ void NetworkProcessProxy::requestStorageSpace(PAL::SessionID sessionID, const We
             });
         });
     });
+}
+
+void NetworkProcessProxy::registerSchemeForLegacyCustomProtocol(const String& scheme)
+{
+#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
+    send(Messages::LegacyCustomProtocolManager::RegisterScheme(scheme), 0);
+#else
+    UNUSED_PARAM(scheme);
+#endif
+}
+
+void NetworkProcessProxy::unregisterSchemeForLegacyCustomProtocol(const String& scheme)
+{
+#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
+    send(Messages::LegacyCustomProtocolManager::UnregisterScheme(scheme), 0);
+#else
+    UNUSED_PARAM(scheme);
+#endif
 }
 
 void NetworkProcessProxy::takeUploadAssertion()

@@ -102,10 +102,6 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
-#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
-#include "LegacyCustomProtocolManagerMessages.h"
-#endif
-
 #if ENABLE(SERVICE_CONTROLS)
 #include "ServicesController.h"
 #endif
@@ -493,9 +489,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     parameters.cacheModel = LegacyGlobalSettings::singleton().cacheModel();
 
     for (auto& scheme : globalURLSchemesWithCustomProtocolHandlers())
-        parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
-
-    for (auto& scheme : m_urlSchemesRegisteredForCustomProtocols)
         parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
 
 #if PLATFORM(IOS_FAMILY)
@@ -1517,8 +1510,10 @@ void WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(const
         return;
 
     globalURLSchemesWithCustomProtocolHandlers().add(urlScheme);
-    for (auto* processPool : allProcessPools())
-        processPool->registerSchemeForCustomProtocol(urlScheme);
+    for (auto* processPool : allProcessPools()) {
+        if (auto* networkProcess = processPool->networkProcess())
+            networkProcess->registerSchemeForLegacyCustomProtocol(urlScheme);
+    }
 }
 
 void WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(const String& urlScheme)
@@ -1527,8 +1522,10 @@ void WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(con
         return;
 
     globalURLSchemesWithCustomProtocolHandlers().remove(urlScheme);
-    for (auto* processPool : allProcessPools())
-        processPool->unregisterSchemeForCustomProtocol(urlScheme);
+    for (auto* processPool : allProcessPools()) {
+        if (auto* networkProcess = processPool->networkProcess())
+            networkProcess->unregisterSchemeForLegacyCustomProtocol(urlScheme);
+    }
 }
 
 void WebProcessPool::registerURLSchemeAsCachePartitioned(const String& urlScheme)
@@ -1968,23 +1965,6 @@ void WebProcessPool::setPlugInAutoStartOrigins(API::Array& array)
 void WebProcessPool::setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(API::Dictionary& dictionary, WallTime time)
 {
     m_plugInAutoStartProvider.setAutoStartOriginsFilteringOutEntriesAddedAfterTime(dictionary, time);
-}
-
-void WebProcessPool::registerSchemeForCustomProtocol(const String& scheme)
-{
-#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
-    if (!globalURLSchemesWithCustomProtocolHandlers().contains(scheme))
-        m_urlSchemesRegisteredForCustomProtocols.add(scheme);
-    sendToNetworkingProcess(Messages::LegacyCustomProtocolManager::RegisterScheme(scheme));
-#endif
-}
-
-void WebProcessPool::unregisterSchemeForCustomProtocol(const String& scheme)
-{
-#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
-    m_urlSchemesRegisteredForCustomProtocols.remove(scheme);
-    sendToNetworkingProcess(Messages::LegacyCustomProtocolManager::UnregisterScheme(scheme));
-#endif
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

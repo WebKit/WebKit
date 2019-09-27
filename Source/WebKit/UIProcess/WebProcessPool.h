@@ -410,9 +410,6 @@ public:
     void resetHSTSHosts();
     void resetHSTSHostsAddedAfterDate(double startDateIntervalSince1970);
 
-    void registerSchemeForCustomProtocol(const String&);
-    void unregisterSchemeForCustomProtocol(const String&);
-
     static void registerGlobalURLSchemeAsHavingCustomProtocolHandlers(const String&);
     static void unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(const String&);
 
@@ -677,7 +674,6 @@ private:
     HTTPCookieAcceptPolicy m_initialHTTPCookieAcceptPolicy { HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain };
     WebCore::SoupNetworkProxySettings m_networkProxySettings;
 #endif
-    HashSet<String, ASCIICaseInsensitiveHash> m_urlSchemesRegisteredForCustomProtocols;
 
 #if PLATFORM(MAC)
     RetainPtr<NSObject> m_enhancedAccessibilityObserver;
