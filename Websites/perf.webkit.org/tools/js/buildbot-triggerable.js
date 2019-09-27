@@ -184,10 +184,10 @@ class BuildbotTriggerable {
                     const newStatus = entry.buildRequestStatusIfUpdateIsNeeded(request);
                     if (newStatus) {
                         this._logger.log(`Updating the status of build request ${request.id()} from ${request.status()} to ${newStatus}`);
-                        updates[entry.buildRequestId()] = {status: newStatus, url: entry.url()};
-                    } else if (!request.statusUrl()) {
-                        this._logger.log(`Setting the status URL of build request ${request.id()} to ${entry.url()}`);
-                        updates[entry.buildRequestId()] = {status: request.status(), url: entry.url()};
+                        updates[entry.buildRequestId()] = {status: newStatus, url: entry.url(), statusDescription: entry.statusDescription()};
+                    } else if (!request.statusUrl() || request.statusDescription() != entry.statusDescription()) {
+                        this._logger.log(`Updating build request ${request.id()} status URL to ${entry.url()} and status detail from ${request.statusDescription()} to ${entry.statusDescription()}`);
+                        updates[entry.buildRequestId()] = {status: request.status(), url: entry.url(), statusDescription: entry.statusDescription()};
                     }
                 }
             });

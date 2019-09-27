@@ -57,10 +57,10 @@ describe('/api/build-requests', function () {
             content['buildRequests'][1]['createdAt'] = 0;
             content['buildRequests'][2]['createdAt'] = 0;
             content['buildRequests'][3]['createdAt'] = 0;
-            assert.deepEqual(content['buildRequests'][0], {id: '704', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '0', commitSet: '403', status: 'pending', url: null, build: null, createdAt: 0});
-            assert.deepEqual(content['buildRequests'][1], {id: '705', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '1', commitSet: '404', status: 'pending', url: null, build: null, createdAt: 0});
-            assert.deepEqual(content['buildRequests'][2], {id: '706', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '2', commitSet: '403', status: 'pending', url: null, build: null, createdAt: 0});
-            assert.deepEqual(content['buildRequests'][3], {id: '707', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '3', commitSet: '404', status: 'pending', url: null, build: null, createdAt: 0});
+            assert.deepEqual(content['buildRequests'][0], {id: '704', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '0', commitSet: '403', status: 'pending', statusDescription: null, url: null, build: null, createdAt: 0});
+            assert.deepEqual(content['buildRequests'][1], {id: '705', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '1', commitSet: '404', status: 'pending', statusDescription: null, url: null, build: null, createdAt: 0});
+            assert.deepEqual(content['buildRequests'][2], {id: '706', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '2', commitSet: '403', status: 'pending', statusDescription: null, url: null, build: null, createdAt: 0});
+            assert.deepEqual(content['buildRequests'][3], {id: '707', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '3', commitSet: '404', status: 'pending', statusDescription: null, url: null, build: null, createdAt: 0});
        });
     });
 

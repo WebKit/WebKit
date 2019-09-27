@@ -92,6 +92,7 @@ class BuildRequestsFetcher {
                 'url' => $row['request_url'],
                 'build' => $row['request_build'],
                 'createdAt' => $row['request_created_at'] ? strtotime($row['request_created_at']) * 1000 : NULL,
+                'statusDescription' => $row['request_status_description'],
             ));
         }
         return $requests;

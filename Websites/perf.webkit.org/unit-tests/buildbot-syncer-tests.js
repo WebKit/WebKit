@@ -283,7 +283,7 @@ function samplePendingBuildRequests(buildRequestId, buildTime, workerName, build
     };
 }
 
-function sampleBuildData(workerName, isComplete, buildRequestId, buildNumber, builderId)
+function sampleBuildData(workerName, isComplete, buildRequestId, buildNumber, builderId, state_string)
 {
     return {
         "builderid": builderId || 102,
@@ -295,21 +295,21 @@ function sampleBuildData(workerName, isComplete, buildRequestId, buildNumber, bu
         "masterid": 1,
         "results": null,
         "started_at": 1513725109,
-        "state_string": "building",
+        state_string,
         "workerid": 41,
         "properties": {
             "build_request_id": [buildRequestId || 16733, "Force Build Form"],
             "platform": ["mac", "Unknown"],
             "scheduler": ["ABTest-iPad-RunBenchmark-Tests-ForceScheduler", "Scheduler"],
             "slavename": [workerName || "ABTest-iPad-0", "Worker (deprecated)"],
-            "workername": [workerName || "ABTest-iPad-0", "Worker"]
+            "workername": [workerName || "ABTest-iPad-0", "Worker"],
         }
     };
 }
 
 function sampleInProgressBuildData(workerName)
 {
-    return sampleBuildData(workerName, false);
+    return sampleBuildData(workerName, false, null, null, null, 'building');
 }
 
 function sampleInProgressBuild(workerName)
@@ -1117,6 +1117,7 @@ describe('BuildbotSyncer', () => {
             assert.ok(!entry.isInProgress());
             assert.ok(!entry.hasFinished());
             assert.equal(entry.url(), 'http://build.webkit.org/#/buildrequests/17');
+            assert.equal(entry.statusDescription(), null);
         });
 
         it('should create BuildbotBuildEntry for in-progress build', () => {
@@ -1134,6 +1135,7 @@ describe('BuildbotSyncer', () => {
             assert.ok(entry.isInProgress());
             assert.ok(!entry.hasFinished());
             assert.equal(entry.url(), 'http://build.webkit.org/#/builders/102/builds/614');
+            assert.equal(entry.statusDescription(), 'building');
         });
 
         it('should create BuildbotBuildEntry for finished build', () => {
@@ -1151,6 +1153,7 @@ describe('BuildbotSyncer', () => {
             assert.ok(!entry.isInProgress());
             assert.ok(entry.hasFinished());
             assert.equal(entry.url(), 'http://build.webkit.org/#/builders/102/builds/1755');
+            assert.equal(entry.statusDescription(), null);
         });
 
         it('should create BuildbotBuildEntry for mix of in-progress and finished builds', () => {
@@ -1169,6 +1172,7 @@ describe('BuildbotSyncer', () => {
             assert.ok(entry.isInProgress());
             assert.ok(!entry.hasFinished());
             assert.equal(entry.url(), 'http://build.webkit.org/#/builders/102/builds/614');
+            assert.equal(entry.statusDescription(), 'building');
 
             entry = entries[1];
             assert.ok(entry instanceof BuildbotBuildEntry);
@@ -1179,6 +1183,7 @@ describe('BuildbotSyncer', () => {
             assert.ok(!entry.isInProgress());
             assert.ok(entry.hasFinished());
             assert.equal(entry.url(), 'http://build.webkit.org/#/builders/102/builds/1755');
+            assert.equal(entry.statusDescription(), null);
         });
     });
 

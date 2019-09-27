@@ -304,6 +304,7 @@ MockData = {
             "results": -1,
             "submitted_at": options.buildTime || (new Date('2016-03-23T03:49:43Z') / 1000),
             "waited_for": false,
+            "state_string": options.statusDescription || null,
             "properties": {
                 "build-request-id": [(options.buildRequestId || 702).toString(), "Force Build Form"],
                 "scheduler": ["ABTest-iPad-RunBenchmark-Tests-ForceScheduler", "Scheduler"],
@@ -335,7 +336,7 @@ MockData = {
             "masterid": 1,
             "results": null,
             "started_at": new Date('2017-12-19T23:11:49Z') / 1000,
-            "state_string": "building",
+            "state_string": options.statusDescription || null,
             "workerid": 41,
             "properties": {
                 "build-request-id": [(options.buildRequestId || 701).toString(), "Force Build Form"],

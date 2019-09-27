@@ -26,6 +26,7 @@ class BuildRequest extends DataModelObject {
         this._buildId = object.build;
         this._createdAt = new Date(object.createdAt);
         this._result = null;
+        this._statusDescription = object.statusDescription;
     }
 
     updateSingleton(object)
@@ -42,12 +43,14 @@ class BuildRequest extends DataModelObject {
         this._status = object.status;
         this._statusUrl = object.url;
         this._buildId = object.build;
+        this._statusDescription = object.statusDescription;
     }
 
     triggerable() { return this._triggerable; }
     analysisTaskId() { return this._analysisTaskId; }
     testGroupId() { return this._testGroupId; }
     testGroup() { return this._testGroup; }
+    statusDescription() { return this._statusDescription; }
     repositoryGroup() { return this._repositoryGroup; }
     platform() { return this._platform; }
     test() { return this._test; }

@@ -1,8 +1,16 @@
 
 class WarningIcon extends ButtonBase {
-    constructor()
+    constructor(warningMessage)
     {
         super('warning-icon');
+        this._warningMessage = warningMessage;
+    }
+
+    render()
+    {
+        super.render();
+        if (this._warningMessage)
+            this.setButtonTitle(this._warningMessage);
     }
 
     static sizeFactor() { return 0.7; }

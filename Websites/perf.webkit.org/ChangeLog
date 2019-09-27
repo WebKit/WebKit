@@ -1,3 +1,46 @@
+2019-07-30  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Provide build request status description information on dashboard.
+        https://bugs.webkit.org/show_bug.cgi?id=199810
+
+        Reviewed by Ryosuke Niwa.
+
+        Add build request status description to show detailed information for a build and show it in dashboard.
+        Update SQL for existing instance:
+            ALTER TABLE build_requests ADD COLUMN IF NOT EXISTS request_status_description varchar(1024) DEFAULT NULL;
+
+        * ReadMe.md: Updated instructions for initializing a database to include running 'migrate-database.sql'.
+        * init-database.sql: Added request_status_description column.
+        * migrate-database.sql: A file stores migration SQL for existing instance.
+        * public/api/build-requests.php: Added support for updating request_status_description.
+        * public/include/build-requests-fetcher.php: Exposed `statusDescription` to API.
+        * public/v3/components/test-group-revision-table.js: Added UI for showing build request status detail.
+        (TestGroupRevisionTable.prototype._renderTable):
+        (TestGroupRevisionTable.prototype._buildDescriptionCell):
+        (TestGroupRevisionTable.cssTemplate):
+        * public/v3/components/warning-icon.js: Extended warning icon to be able to customize information on hover.
+        (WarningIcon):
+        (WarningIcon.prototype.render):
+        * public/v3/components/button-base.js: Added a instance method to set button title.
+        (ButtonBase.prototype.setButtonTitle):
+        * public/v3/models/build-request.js: Added 'statusDescription' field.
+        (BuildRequest):
+        (BuildRequest.prototype.updateSingleton):
+        (BuildRequest.prototype.statusDescription):
+        * server-tests/api-build-requests-tests.js: Fixed unit tests.
+        * server-tests/resources/mock-data.js:
+        (MockData.set mockTestSyncConfigWithSingleBuilder): Added 'status_description' in buildbot mock data.
+        (MockData.sampleBuildData):
+        * server-tests/resources/test-server.js:
+        (TestServer.prototype.initDatabase): Added code to execute 'migrate-database.sql' on initialization.
+        * server-tests/tools-sync-buildbot-integration-tests.js: Added unit tests.
+        * tools/js/buildbot-syncer.js: Added 'statusDescription' field to 'BuildbotBuildEntry'.
+        (BuildbotBuildEntry.prototype.initialize):
+        (BuildbotBuildEntry.prototype.statusDescription):
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype._pullBuildbotOnAllSyncers):
+        * unit-tests/buildbot-syncer-tests.js: Added test code for BuildbotBuildEntry.statusDescription.
+
 2019-07-26  Dewei Zhu  <dewei_zhu@apple.com>
 
         Dashboard should defaults to first dashboard page when summary page is not available.

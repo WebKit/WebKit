@@ -13,6 +13,12 @@ class ButtonBase extends ComponentBase {
         this.enqueueToRender();
     }
 
+    setButtonTitle(title)
+    {
+        this.content('button').title = title;
+        this.enqueToRender();
+    }
+
     didConstructShadowTree()
     {
         this.content('button').addEventListener('click', this.createEventHandler(() => {

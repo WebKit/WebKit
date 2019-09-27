@@ -89,7 +89,6 @@ class TestGroupRevisionTable extends ComponentBase {
         const additionalRepositoryList = Repository.sortByNamePreferringOnesWithURL([...additionalRepositorySet]);
 
         const element = ComponentBase.createElement;
-        const link = ComponentBase.createLink;
         this.renderReplace(this.content('revision-table'), [
             element('thead', [
                 element('th', 'Configuration'),
@@ -106,10 +105,28 @@ class TestGroupRevisionTable extends ComponentBase {
                     requestedRepositoryList.map((repository) => this._buildCommitCell(entry, repository, patchedPepositorySet.has(repository))),
                     hasCustomRoots ? this._buildCustomRootsCell(entry) : [],
                     element('td', entry.label),
-                    element('td', request.statusUrl() ? link(request.statusLabel(), request.statusUrl()) : request.statusLabel()),
+                    this._buildDescriptionCell(request),
                     additionalRepositoryList.map((repository) => this._buildCommitCell(entry, repository)),
                 ]);
             }))]);
+    }
+
+    _buildDescriptionCell(request)
+    {
+        const link = ComponentBase.createLink;
+        const element = ComponentBase.createElement;
+        const showWarningIcon = request.hasFinished() && request.statusDescription();
+        const cellContent = [];
+        if (showWarningIcon)
+            cellContent.push(element('div', {class: 'warning-icon-container'}, new WarningIcon(`Last status: ${request.statusDescription()}`)));
+
+        cellContent.push(request.statusUrl() ? link(request.statusLabel(), request.statusDescription(), request.statusUrl()) : request.statusLabel());
+
+        const hasInProgressReport = !request.hasFinished() && request.statusDescription();
+        if (hasInProgressReport)
+            cellContent.push(element('span', {class: 'status-description'}, `${request.statusDescription()}`));
+
+        return element('td', {class: 'description-cell'},  cellContent);
     }
 
     _buildCommitCell(entry, repository, showRoot = false)
@@ -221,6 +238,24 @@ class TestGroupRevisionTable extends ComponentBase {
             }
             th {
                 font-weight: inherit;
+            }
+            .status-description {
+                display: inline-block;
+                max-width: 10rem;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
+            .status-description::before {
+                content: ': ';
+            }
+            .description-cell {
+                position: relative;
+            }
+            div.warning-icon-container {
+                position: absolute;
+                top: -0.2rem;
+                left: 0;
             }
             .roots {
                 max-width: 20rem;

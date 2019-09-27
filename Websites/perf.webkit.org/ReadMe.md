@@ -69,6 +69,9 @@ The setup script automatically starts the database but you may need to run the f
 Run `database/init-database.sql` in psql as `webkit-perf-db-user`:
 `/Applications/Server.app/Contents/ServerRoot/usr/bin/psql webkit-perf-db -h localhost --username webkit-perf-db-user -f init-database.sql`
 
+Then run:
+`/Applications/Server.app/Contents/ServerRoot/usr/bin/psql webkit-perf-db -h localhost --username webkit-perf-db-user -f migrate-database.sql`
+
 ### Making a Backup and Restoring
 
 Use `pg_dump` and `pg_restore` to backup and restore the database. If you're replicating the production database for development purposes, you may consider excluding `run_iterations` table, which takes up 2/3 of the storage space, to reduce the size of the database for your local copy. Adjust the number of concurrent processes to use by `--jobs` and adjust the compression level by `--compress` (0 is no compression, 9 is most compressed).
