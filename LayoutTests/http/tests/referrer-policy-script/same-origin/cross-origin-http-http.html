@@ -14,7 +14,10 @@ function checkReferrer(value) {
     shouldBeEqualToString("referrer", "");
     finishJSTest();
 }
+
+if (window.testRunner) {
+    testRunner.setStatisticsShouldDowngradeReferrer(false, function () { downgradeReferrerCallback('same-origin', 'localhost')});
+}
 </script>
-<script src="http://localhost:8000/referrer-policy/resources/script.php" referrerpolicy="same-origin"></script>
 </body>
 </html>

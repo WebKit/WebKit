@@ -6,15 +6,25 @@
 <html>
 <body>
 <script>
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "http://localhost:8080/cookies/resources/setCookies.cgi", false);
-    xhr.setRequestHeader("SET-COOKIE", "hello=world;path=/");
-    xhr.send(null);
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    testRunner.setStatisticsShouldDowngradeReferrer(false, function () {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:8080/cookies/resources/setCookies.cgi", false);
+        xhr.setRequestHeader("SET-COOKIE", "hello=world;path=/");
+        xhr.send(null);
+
+        // This image will generate a CSP violation report.
+        let imgElement = document.createElement("img");
+        imgElement.onload = imgElement.onerror = function () {
+            window.location = "/security/contentSecurityPolicy/resources/echo-report.php";
+        };
+        imgElement.src = "/security/resources/abe.png";
+        document.body.appendChild(imgElement);
+    });
+}
 </script>
-
-<!-- This image will generate a CSP violation report. -->
-<img src="/security/resources/abe.png">
-
-<script src="resources/go-to-echo-report.js"></script>
 </body>
 </html>

@@ -14,7 +14,10 @@ function checkReferrer(value) {
     shouldBeEqualToString("referrer", "http://127.0.0.1:8000/referrer-policy-script/unsafe-url/same-origin.html");
     finishJSTest();
 }
+
+if (window.testRunner) {
+    testRunner.setStatisticsShouldDowngradeReferrer(false, function () { downgradeReferrerCallback('unsafe-url', '127.0.0.1')});
+}
 </script>
-<script src="http://127.0.0.1:8000/referrer-policy/resources/script.php" referrerpolicy="unsafe-url"></script>
 </body>
 </html>

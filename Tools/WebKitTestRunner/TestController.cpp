@@ -3516,6 +3516,14 @@ bool TestController::hasStatisticsIsolatedSession(WKStringRef host)
     return context.result;
 }
 
+void TestController::setStatisticsShouldDowngradeReferrer(bool value)
+{
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreSetResourceLoadStatisticsShouldDowngradeReferrerForTesting(TestController::websiteDataStore(), value, &context, resourceStatisticsVoidResultCallback);
+    runUntil(context.done, noTimeout);
+    m_currentInvocation->didSetShouldDowngradeReferrer();
+}
+
 void TestController::statisticsResetToConsistentState()
 {
     ResourceStatisticsCallbackContext context(*this);

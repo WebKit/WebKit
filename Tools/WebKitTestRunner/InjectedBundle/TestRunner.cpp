@@ -741,6 +741,7 @@ enum {
     StatisticsDidClearThroughWebsiteDataRemovalCallbackID,
     StatisticsDidResetToConsistentStateCallbackID,
     StatisticsDidSetBlockCookiesForHostCallbackID,
+    StatisticsDidSetShouldDowngradeReferrerCallbackID,
     AllStorageAccessEntriesCallbackID,
     DidRemoveAllSessionCredentialsCallbackID,
     GetApplicationManifestCallbackID,
@@ -2098,6 +2099,23 @@ bool TestRunner::hasStatisticsIsolatedSession(JSStringRef hostName)
     WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get(), &returnData);
     ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
     return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
+}
+
+void TestRunner::setStatisticsShouldDowngradeReferrer(bool value, JSValueRef completionHandler)
+{
+    if (m_hasSetDowngradeReferrerCallback)
+        return;
+    
+    cacheTestRunnerCallback(StatisticsDidSetShouldDowngradeReferrerCallbackID, completionHandler);
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("SetStatisticsShouldDowngradeReferrer"));
+    WKRetainPtr<WKBooleanRef> messageBody = adoptWK(WKBooleanCreate(value));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+    m_hasSetDowngradeReferrerCallback = true;
+}
+
+void TestRunner::statisticsCallDidSetShouldDowngradeReferrerCallback()
+{
+    callTestRunnerCallback(StatisticsDidSetShouldDowngradeReferrerCallbackID);
 }
 
 void TestRunner::statisticsCallClearThroughWebsiteDataRemovalCallback()

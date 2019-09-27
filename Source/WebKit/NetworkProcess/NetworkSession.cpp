@@ -175,6 +175,11 @@ void NetworkSession::recreateResourceLoadStatisticStore()
     m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory, m_shouldIncludeLocalhostInResourceLoadStatistics);
 }
 
+bool NetworkSession::isResourceLoadStatisticsEnabled() const
+{
+    return !!m_resourceLoadStatistics;
+}
+
 void NetworkSession::notifyResourceLoadStatisticsProcessed()
 {
     m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::NotifyResourceLoadStatisticsProcessed(), 0);
@@ -199,6 +204,17 @@ void NetworkSession::registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType
 {
     m_networkProcess->registrableDomainsWithWebsiteData(m_sessionID, dataTypes, shouldNotifyPage, WTFMove(completionHandler));
 }
+
+void NetworkSession::setShouldDowngradeReferrerForTesting(bool enabled)
+{
+    m_downgradeReferrer = enabled;
+}
+
+bool NetworkSession::shouldDowngradeReferrer() const
+{
+    return m_downgradeReferrer;
+}
+
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
 void NetworkSession::storeAdClickAttribution(WebCore::AdClickAttribution&& adClickAttribution)

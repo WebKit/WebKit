@@ -327,6 +327,11 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetShouldDowngradeReferrer")) {
+        m_testRunner->statisticsCallDidSetShouldDowngradeReferrerCallback();
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidResetStatisticsToConsistentState")) {
         m_testRunner->statisticsCallDidResetToConsistentStateCallback();
         return;

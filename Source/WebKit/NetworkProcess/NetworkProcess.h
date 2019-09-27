@@ -265,6 +265,7 @@ public:
     void resetCrossSiteLoadsWithLinkDecorationForTesting(PAL::SessionID, CompletionHandler<void()>&&);
     void hasIsolatedSession(PAL::SessionID, const WebCore::RegistrableDomain&, CompletionHandler<void(bool)>&&) const;
     bool isITPDatabaseEnabled() const { return m_isITPDatabaseEnabled; }
+    void setShouldDowngradeReferrerForTesting(bool, CompletionHandler<void()>&&);
 #endif
 
     using CacheStorageRootPathCallback = CompletionHandler<void(String&&)>;

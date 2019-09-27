@@ -1489,6 +1489,13 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return result;
     }
     
+    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsShouldDowngradeReferrer")) {
+        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+        WKBooleanRef value = static_cast<WKBooleanRef>(messageBody);
+        TestController::singleton().setStatisticsShouldDowngradeReferrer(WKBooleanGetValue(value));
+        return nullptr;
+    }
+    
     if (WKStringIsEqualToUTF8CString(messageName, "RemoveAllSessionCredentials")) {
         TestController::singleton().removeAllSessionCredentials();
         return nullptr;
@@ -1767,6 +1774,12 @@ void TestInvocation::notifyDownloadDone()
 void TestInvocation::didClearStatisticsThroughWebsiteDataRemoval()
 {
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidClearStatisticsThroughWebsiteDataRemoval"));
+    WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
+}
+
+void TestInvocation::didSetShouldDowngradeReferrer()
+{
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidSetShouldDowngradeReferrer"));
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
 }
 

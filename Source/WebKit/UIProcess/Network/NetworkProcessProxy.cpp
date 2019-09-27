@@ -1029,6 +1029,15 @@ void NetworkProcessProxy::hasIsolatedSession(PAL::SessionID sessionID, const Reg
     sendWithAsyncReply(Messages::NetworkProcess::HasIsolatedSession(sessionID, domain), WTFMove(completionHandler));
 }
 
+void NetworkProcessProxy::setShouldDowngradeReferrerForTesting(bool enabled, CompletionHandler<void()>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler();
+        return;
+    }
+    
+    sendWithAsyncReply(Messages::NetworkProcess::SetShouldDowngradeReferrerForTesting(enabled), WTFMove(completionHandler));
+}
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
 void NetworkProcessProxy::sendProcessWillSuspendImminently()

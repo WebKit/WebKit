@@ -73,6 +73,7 @@ public:
     void notifyDownloadDone();
 
     void didClearStatisticsThroughWebsiteDataRemoval();
+    void didSetShouldDowngradeReferrer();
     void didResetStatisticsToConsistentState();
     void didSetBlockCookiesForHost();
     void didSetStatisticsDebugMode();

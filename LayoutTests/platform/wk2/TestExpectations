@@ -743,8 +743,8 @@ http/tests/websocket/connection-refusal-in-frame-resource-load-statistics.html [
 # These are only supported behind a compile time flag in macOS High Sierra + iOS 11, and above.
 http/tests/resourceLoadStatistics/cookie-deletion.html [ Skip ]
 http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction.html [ Skip ]
-http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-redirects.html [ Skip ]
-http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-requests.html [ Skip ]
+http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-third-party-redirects.html [ Skip ]
+http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-third-party-requests.html [ Skip ]
 http/tests/resourceLoadStatistics/add-blocking-to-redirect.html [ Skip ]
 http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Skip ]
 http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context.html [ Skip ]

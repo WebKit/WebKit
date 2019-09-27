@@ -3,7 +3,7 @@
 <head>
 <script src="/js-test-resources/js-test.js"></script>
 </head>
-<body>
+<body onload="runTest()">
 <script>
 description("Tests the behavior of no-referrer-when-downgrade referrer policy when cross origin.");
 jsTestIsAsync = true;
@@ -14,7 +14,14 @@ function checkReferrer(value) {
     shouldBeEqualToString("referrer", "http://127.0.0.1:8000/referrer-policy-script/no-referrer-when-downgrade/cross-origin-http-http.html");
     finishJSTest();
 }
+
+function runTest() {
+    if (window.testRunner) {
+        setTimeout(function() {
+            testRunner.setStatisticsShouldDowngradeReferrer(false, function () { downgradeReferrerCallback('no-referrer-when-downgrade', 'localhost')});
+        }, 1000);
+    }
+}
 </script>
-<script src="http://localhost:8000/referrer-policy/resources/script.php" referrerpolicy="no-referrer-when-downgrade"></script>
 </body>
 </html>

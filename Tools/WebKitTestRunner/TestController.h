@@ -249,6 +249,7 @@ public:
     bool isStatisticsHasLocalStorage(WKStringRef hostName);
     void setStatisticsCacheMaxAgeCap(double seconds);
     bool hasStatisticsIsolatedSession(WKStringRef hostName);
+    void setStatisticsShouldDowngradeReferrer(bool value);
     void statisticsResetToConsistentState();
 
     void getAllStorageAccessEntries();

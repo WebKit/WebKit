@@ -82,7 +82,11 @@ function runNextTest()
     document.body.appendChild(frame);    
 }
 
-runNextTest();
+if (window.testRunner) {
+    testRunner.setStatisticsShouldDowngradeReferrer(false, function () {
+        runNextTest();
+    });
+}
 </script>
 </body>
 </html>

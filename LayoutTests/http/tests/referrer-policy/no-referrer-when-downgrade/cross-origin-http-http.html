@@ -15,7 +15,14 @@ window.onmessage = function(event) {
     shouldBeEqualToString("referrer", "http://127.0.0.1:8000/referrer-policy/no-referrer-when-downgrade/cross-origin-http-http.html");
     finishJSTest();
 }
+
+if (window.testRunner) {
+    testRunner.setStatisticsShouldDowngradeReferrer(false, function () {
+        let iframeElement = document.createElement("iframe");
+        iframeElement.src = "http://localhost:8000/referrer-policy/resources/document.html";
+        document.body.appendChild(iframeElement);
+    });
+}
 </script>
-<iframe src="http://localhost:8000/referrer-policy/resources/document.html"></iframe>
 </body>
 </html>

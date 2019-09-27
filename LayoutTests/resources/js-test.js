@@ -895,3 +895,10 @@ if (isWorker()) {
         workerPort.postMessage(msg);
     };
 }
+
+function downgradeReferrerCallback(policy, host) {
+    let scriptElement = document.createElement("script");
+    scriptElement.src = "http://".concat(host, ":8000/referrer-policy/resources/script.php");
+    scriptElement.referrerPolicy = policy;
+    document.body.appendChild(scriptElement);
+}

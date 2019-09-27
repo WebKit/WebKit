@@ -1242,6 +1242,14 @@ void NetworkProcess::hasIsolatedSession(PAL::SessionID sessionID, const WebCore:
         result = networkSession->hasIsolatedSession(domain);
     completionHandler(result);
 }
+
+void NetworkProcess::setShouldDowngradeReferrerForTesting(bool enabled, CompletionHandler<void()>&& completionHandler)
+{
+    forEachNetworkSession([enabled](auto& networkSession) {
+        networkSession.setShouldDowngradeReferrerForTesting(enabled);
+    });
+    completionHandler();
+}
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
 bool NetworkProcess::sessionIsControlledByAutomation(PAL::SessionID sessionID) const
