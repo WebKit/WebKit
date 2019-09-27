@@ -28,3 +28,4 @@
 @interface WKWebViewConfiguration (TestWebKitAPIExtras)
 + (instancetype)_test_configurationWithTestPlugInClassName:(NSString *)className;
 @end
++ (instancetype)_test_configurationWithTestPlugInClassName:(NSString *)className configureJSCForTesting:(BOOL)value andCustomParameterClasses:(NSSet<Class> *)parameterClasses;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -197,6 +197,41 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
 
     auto configuration = API::ProcessPoolConfiguration::createWithLegacyOptions();
     configuration->setInjectedBundlePath(bundleURL ? String(bundleURL.path) : String());
+
+    _processPool = WebKit::WebProcessPool::create(configuration);
+
+    setUpConnectionClient(self, toAPI(_processPool.get()));
+    setUpInjectedBundleClient(self, toAPI(_processPool.get()));
+    setUpHistoryClient(self, toAPI(_processPool.get()));
+
+    return self;
+}
+
+static Vector<WTF::String> toStringVector(NSSet *input)
+{
+    Vector<WTF::String> vector;
+
+    NSUInteger size = input.count;
+    if (!size)
+        return vector;
+
+    vector.reserveInitialCapacity(size);
+    for (id classObj : input) {
+        if (auto* string = NSStringFromClass(classObj))
+            vector.uncheckedAppend(string);
+    }
+    return vector;
+}
+
+- (id)initWithInjectedBundleURL:(NSURL *)bundleURL andCustomClassesForParameterCoder:(NSSet *)classesForCoder
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    auto configuration = API::ProcessPoolConfiguration::create();
+    configuration->setInjectedBundlePath(bundleURL ? String(bundleURL.path) : String());
+    configuration->setCustomClassesForParameterCoder(toStringVector(classesForCoder));
 
     _processPool = WebKit::WebProcessPool::create(configuration);
 

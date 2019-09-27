@@ -33,7 +33,14 @@ TEST(WKProcessPoolConfiguration, Copy)
 {
     auto configuration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
 
+#if PLATFORM(IOS_FAMILY)
+    NSSet<Class> *testSet = [NSSet setWithObjects:[UIColor class], nil];
+#else
+    NSSet<Class> *testSet = [NSSet setWithObjects:[NSColor class], nil];
+#endif
+    
     [configuration setInjectedBundleURL:[NSURL fileURLWithPath:@"/path/to/injected.wkbundle"]];
+    [configuration setCustomClassesForParameterCoder:testSet];
     [configuration setCustomWebContentServiceBundleIdentifier:@"org.webkit.WebContent.custom"];
     [configuration setIgnoreSynchronousMessagingTimeoutsForTesting:YES];
     [configuration setAttrStyleEnabled:YES];
@@ -59,6 +66,7 @@ TEST(WKProcessPoolConfiguration, Copy)
     auto copy = adoptNS([configuration copy]);
 
     EXPECT_TRUE([[configuration injectedBundleURL] isEqual:[copy injectedBundleURL]]);
+    EXPECT_TRUE([[copy customClassesForParameterCoder] isEqualToSet:testSet]);
     EXPECT_TRUE([[configuration customWebContentServiceBundleIdentifier] isEqual:[copy customWebContentServiceBundleIdentifier]]);
     EXPECT_EQ([configuration ignoreSynchronousMessagingTimeoutsForTesting], [copy ignoreSynchronousMessagingTimeoutsForTesting]);
     EXPECT_EQ([configuration attrStyleEnabled], [copy attrStyleEnabled]);
