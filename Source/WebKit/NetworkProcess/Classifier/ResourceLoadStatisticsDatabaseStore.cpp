@@ -748,11 +748,12 @@ void ResourceLoadStatisticsDatabaseStore::hasStorageAccess(const SubFrameDomain&
     case CookieTreatmentResult::BlockAndPurge:
         completionHandler(false);
         return;
-    case CookieTreatmentResult::BlockAndKeep:
-        completionHandler(true);
-        return;
     case CookieTreatmentResult::Allow:
-        // Do nothing
+        // We should only return true if the context has asked for and been granted access.
+        completionHandler(false);
+        return;
+    case CookieTreatmentResult::BlockAndKeep:
+        // Do nothing. The below dispatch will complete the task.
         break;
     };
 

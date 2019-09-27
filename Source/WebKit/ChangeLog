@@ -1,3 +1,19 @@
+2019-09-27  John Wilander  <wilander@apple.com>
+
+        Storage Access API: document.hasStorageAccess() should return false by default
+        https://bugs.webkit.org/show_bug.cgi?id=202281
+        <rdar://problem/55718526>
+
+        Reviewed by Alex Christensen.
+
+        document.hasStorageAccess() should return false by default so that it only
+        returns true if the context has asked for and been granted storage access.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasStorageAccess):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::hasStorageAccess):
+
 2019-09-27  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Lock screen controls can fail to play web content
