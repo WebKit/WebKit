@@ -57,6 +57,8 @@ struct Run {
     Run(Rect logicalRect, TextContext);
     Run(const Run&);
 
+    const Rect& logicalRect() const { return m_logicalRect; }
+
     LayoutPoint logicalTopLeft() const { return m_logicalRect.topLeft(); }
     LayoutUnit logicalLeft() const { return m_logicalRect.left(); }
     LayoutUnit logicalRight() const { return m_logicalRect.right(); }

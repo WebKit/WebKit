@@ -37,16 +37,9 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Line);
 
-Line::Run::Run(const InlineItem& inlineItem, const Display::Rect& logicalRect)
+Line::Run::Run(const InlineItem& inlineItem, const Display::Run& displayRun)
     : m_inlineItem(inlineItem)
-    , m_logicalRect(logicalRect)
-{
-}
-
-Line::Run::Run(const InlineItem& inlineItem, const TextContext& textContext, const Display::Rect& logicalRect)
-    : m_inlineItem(inlineItem)
-    , m_logicalRect(logicalRect)
-    , m_textContext(textContext)
+    , m_displayRun(displayRun)
 {
 }
 
@@ -104,7 +97,7 @@ bool Line::isVisuallyEmpty() const
                 return false;
             continue;
         }
-        if (!run->textContext() || !run->isVisuallyEmpty())
+        if (!run->isText() || !run->isVisuallyEmpty())
             return false;
     }
     return true;
@@ -223,7 +216,7 @@ void Line::append(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 
 void Line::appendNonBreakableSpace(const InlineItem& inlineItem, const Display::Rect& logicalRect)
 {
-    m_runList.append(makeUnique<Run>(inlineItem, logicalRect));
+    m_runList.append(makeUnique<Run>(inlineItem, Display::Run { logicalRect }));
     m_lineBox.expandHorizontally(logicalRect.width());
 }
 
@@ -286,8 +279,7 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
         adjustBaselineAndLineHeight(inlineItem, runHeight);
     }
 
-    auto textContext = Run::TextContext { inlineItem.start(), inlineItem.isCollapsed() ? 1 : inlineItem.length() };
-    auto lineItem = makeUnique<Run>(inlineItem, textContext, logicalRect);
+    auto lineItem = makeUnique<Run>(inlineItem, Display::Run { logicalRect, Display::Run::TextContext { inlineItem.start(), inlineItem.isCollapsed() ? 1 : inlineItem.length() } });
     auto isVisuallyEmpty = willCollapseCompletely();
     if (isVisuallyEmpty)
         lineItem->setVisuallyIsEmpty();
@@ -313,7 +305,7 @@ void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit l
         logicalRect.setHeight(inlineItemContentHeight(inlineItem));
     }
 
-    m_runList.append(makeUnique<Run>(inlineItem, logicalRect));
+    m_runList.append(makeUnique<Run>(inlineItem, Display::Run { logicalRect }));
     m_lineBox.expandHorizontally(logicalWidth + horizontalMargin.start + horizontalMargin.end);
     m_trimmableContent.clear();
 }
@@ -333,7 +325,7 @@ void Line::appendHardLineBreak(const InlineItem& inlineItem)
         adjustBaselineAndLineHeight(inlineItem, { });
         logicalRect.setHeight(logicalHeight());
     }
-    m_runList.append(makeUnique<Run>(inlineItem, logicalRect));
+    m_runList.append(makeUnique<Run>(inlineItem, Display::Run { logicalRect }));
 }
 
 void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem, LayoutUnit runHeight)

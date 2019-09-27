@@ -66,16 +66,12 @@ public:
 
     struct Run {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        struct TextContext {
-            unsigned start { 0 };
-            unsigned length { 0 };
-        };
-        Run(const InlineItem&, const Display::Rect&);
-        Run(const InlineItem&, const TextContext&, const Display::Rect&);
+        Run(const InlineItem&, const Display::Run&);
 
+        const Display::Run& displayRun() const { return m_displayRun; }
         const Box& layoutBox() const { return m_inlineItem.layoutBox(); }
-        const Display::Rect& logicalRect() const { return m_logicalRect; }
-        const Optional<TextContext> textContext() const { return m_textContext; }
+
+        const Display::Rect& logicalRect() const { return m_displayRun.logicalRect(); }
 
         bool isText() const { return m_inlineItem.isText(); }
         bool isBox() const { return m_inlineItem.isBox(); }
@@ -89,15 +85,14 @@ public:
 
     private:
         friend class Line;
-        void adjustLogicalTop(LayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
-        void moveVertically(LayoutUnit offset) { m_logicalRect.moveVertically(offset); }
-        void moveHorizontally(LayoutUnit offset) { m_logicalRect.moveHorizontally(offset); }
+        void adjustLogicalTop(LayoutUnit logicalTop) { m_displayRun.setLogicalTop(logicalTop); }
+        void moveVertically(LayoutUnit offset) { m_displayRun.moveVertically(offset); }
+        void moveHorizontally(LayoutUnit offset) { m_displayRun.moveHorizontally(offset); }
         void setVisuallyIsEmpty() { m_isVisuallyEmpty = true; }
 
         const InlineItem& m_inlineItem;
-        Display::Rect m_logicalRect;
+        Display::Run m_displayRun;
         bool m_isVisuallyEmpty { false };
-        Optional<TextContext> m_textContext;
     };
     using RunList = Vector<std::unique_ptr<Run>>;
     RunList close();

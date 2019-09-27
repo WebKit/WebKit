@@ -39,7 +39,7 @@ namespace Layout {
 
 // Temp
 using InlineItems = Vector<std::unique_ptr<InlineItem>>;
-using InlineRuns = Vector<std::unique_ptr<Display::Run>>;
+using InlineRuns = Vector<Display::Run>;
 using LineBoxes = Vector<LineBox>;
 // InlineFormattingState holds the state for a particular inline formatting context tree.
 class InlineFormattingState : public FormattingState {
@@ -52,7 +52,7 @@ public:
     void addInlineItem(std::unique_ptr<InlineItem>&& inlineItem) { m_inlineItems.append(WTFMove(inlineItem)); }
 
     InlineRuns& inlineRuns() { return m_inlineRuns; }
-    void addInlineRun(std::unique_ptr<Display::Run>&& inlineRun) { m_inlineRuns.append(WTFMove(inlineRun)); }
+    void addInlineRun(const Display::Run& inlineRun) { m_inlineRuns.append(inlineRun); }
 
     LineBoxes& lineBoxes() { return m_lineBoxes; }
     void addLineBox(LineBox lineBox) { m_lineBoxes.append(lineBox); }

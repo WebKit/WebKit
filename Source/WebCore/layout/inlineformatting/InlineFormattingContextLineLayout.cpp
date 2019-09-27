@@ -391,12 +391,11 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const LineContent&
         auto& logicalRect = run->logicalRect();
         // Inline level box (replaced or inline-block) or <br>/<wbr>
         if (run->isLineBreak() || run->isBox()) {
-            formattingState.addInlineRun(makeUnique<Display::Run>(logicalRect));
+            formattingState.addInlineRun(run->displayRun());
             continue;
         }
         if (run->isText()) {
             // Collapsed line runs don't generate display runs.
-            auto textContext = run->textContext();
             if (run->isVisuallyEmpty())
                 continue;
             // Try to join multiple text runs when possible.
@@ -406,10 +405,10 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const LineContent&
 
             if (previousRunCanBeExtended && currentRunCanBeMergedWithPrevious) {
                 auto& previousDisplayRun = formattingState.inlineRuns().last();
-                previousDisplayRun->expandHorizontally(logicalRect.width());
-                previousDisplayRun->textContext()->expand(textContext->length);
+                previousDisplayRun.expandHorizontally(logicalRect.width());
+                previousDisplayRun.textContext()->expand(run->displayRun().textContext()->length());
             } else
-                formattingState.addInlineRun(makeUnique<Display::Run>(logicalRect, Display::Run::TextContext { textContext->start, textContext->length }));
+                formattingState.addInlineRun(run->displayRun());
             continue;
         }
         ASSERT_NOT_REACHED();
@@ -512,7 +511,7 @@ void InlineFormattingContext::InlineLayout::alignRuns(TextAlignMode textAlign, I
         return;
 
     for (unsigned index = firstRunIndex; index < inlineDisplayRuns.size(); ++index)
-        inlineDisplayRuns[index]->moveHorizontally(*adjustment);
+        inlineDisplayRuns[index].moveHorizontally(*adjustment);
 }
 
 }
