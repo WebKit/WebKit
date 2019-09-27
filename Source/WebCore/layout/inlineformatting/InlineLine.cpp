@@ -38,15 +38,13 @@ namespace Layout {
 WTF_MAKE_ISO_ALLOCATED_IMPL(Line);
 
 Line::Run::Run(const InlineItem& inlineItem, const Display::Rect& logicalRect)
-    : m_layoutBox(inlineItem.layoutBox())
-    , m_type(inlineItem.type())
+    : m_inlineItem(inlineItem)
     , m_logicalRect(logicalRect)
 {
 }
 
 Line::Run::Run(const InlineItem& inlineItem, const TextContext& textContext, const Display::Rect& logicalRect)
-    : m_layoutBox(inlineItem.layoutBox())
-    , m_type(inlineItem.type())
+    : m_inlineItem(inlineItem)
     , m_logicalRect(logicalRect)
     , m_textContext(textContext)
 {

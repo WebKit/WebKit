@@ -76,16 +76,15 @@ public:
         Run(const InlineItem&, const Display::Rect&);
         Run(const InlineItem&, const TextContext&, const Display::Rect&);
 
-        const Box& layoutBox() const { return m_layoutBox; }
+        const Box& layoutBox() const { return m_inlineItem.layoutBox(); }
         const Display::Rect& logicalRect() const { return m_logicalRect; }
         const Optional<TextContext> textContext() const { return m_textContext; }
-        InlineItem::Type type() const { return m_type; }
 
-        bool isText() const { return m_type == InlineItem::Type::Text; }
-        bool isBox() const { return m_type == InlineItem::Type::Box; }
-        bool isLineBreak() const { return m_type == InlineItem::Type::HardLineBreak; }
-        bool isContainerStart() const { return m_type == InlineItem::Type::ContainerStart; }
-        bool isContainerEnd() const { return m_type == InlineItem::Type::ContainerEnd; }
+        bool isText() const { return m_inlineItem.isText(); }
+        bool isBox() const { return m_inlineItem.isBox(); }
+        bool isLineBreak() const { return m_inlineItem.isLineBreak(); }
+        bool isContainerStart() const { return m_inlineItem.isContainerStart(); }
+        bool isContainerEnd() const { return m_inlineItem.isContainerEnd(); }
 
     private:
         friend class Line;
@@ -94,8 +93,7 @@ public:
         void moveHorizontally(LayoutUnit offset) { m_logicalRect.moveHorizontally(offset); }
         void setTextIsCollapsed() { m_textContext->isCollapsed = true; }
 
-        const Box& m_layoutBox;
-        const InlineItem::Type m_type;
+        const InlineItem& m_inlineItem;
         Display::Rect m_logicalRect;
         Optional<TextContext> m_textContext;
     };

@@ -46,25 +46,23 @@ bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const Line::Run
 
     for (auto& run : runList) {
         auto& layoutBox = run->layoutBox();
-        if (layoutBox.style().verticalAlign() != VerticalAlign::Baseline)
+        if (run->isContainerEnd() || layoutBox.style().verticalAlign() != VerticalAlign::Baseline)
             continue;
 
-        switch (run->type()) {
-        case InlineItem::Type::Text:
+        if (run->isLineBreak())
+            return false;
+        if (run->isText()) {
             if (!run->textContext() || !run->textContext()->isCollapsed)
                 return false;
-            break;
-        case InlineItem::Type::HardLineBreak:
-            return false;
-        case InlineItem::Type::ContainerStart: {
+            continue;
+        }
+        if (run->isContainerStart()) {
             auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
             if (boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value()))
                 return false;
-            break;
+            continue;
         }
-        case InlineItem::Type::ContainerEnd:
-            break;
-        case InlineItem::Type::Box: {
+        if (run->isBox()) {
             if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
                 auto& formattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(downcast<Container>(layoutBox)));
                 ASSERT(!formattingState.lineBoxes().isEmpty());
@@ -72,12 +70,9 @@ bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const Line::Run
                 if (inlineBlockBaseline.descent())
                     return false;
             }
-            break;
+            continue;
         }
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-        }
+        ASSERT_NOT_REACHED();
     }
     return true;
 }
