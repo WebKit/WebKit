@@ -660,6 +660,7 @@ localizedStrings["Live Size"] = "Live Size";
 localizedStrings["Load \u2014 %s"] = "Load \u2014 %s";
 localizedStrings["Load cancelled"] = "Load cancelled";
 localizedStrings["Local File"] = "Local File";
+localizedStrings["Local Override"] = "Local Override";
 localizedStrings["Local Override\u2026"] = "Local Override\u2026";
 localizedStrings["Local Overrides"] = "Local Overrides";
 localizedStrings["Local Storage"] = "Local Storage";

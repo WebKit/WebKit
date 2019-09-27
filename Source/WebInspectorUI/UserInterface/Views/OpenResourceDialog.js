@@ -111,6 +111,9 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
 
             treeElement.mainTitle = createHighlightedTitleFragment(resource.displayName, result.matchingTextRanges);
 
+            if (resource instanceof WI.LocalResource && resource.isLocalResourceOverride)
+                treeElement.subtitle = WI.UIString("Local Override");
+
             let path = resource.urlComponents.path;
             let lastPathComponent = resource.urlComponents.lastPathComponent;
             if (path && lastPathComponent) {
@@ -153,6 +156,8 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
             if (target !== WI.mainTarget)
                 this._addResourcesForTarget(target);
         }
+
+        this._addLocalResourceOverrides();
 
         this._updateFilter();
 
@@ -333,6 +338,23 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
                 continue;
             this._addResource(script, suppressFilterUpdate);
         }
+
+        for (let script of target.extraScriptCollection) {
+            if (script.resource)
+                continue;
+            this._addResource(script, suppressFilterUpdate);
+        }
+    }
+
+    _addLocalResourceOverrides()
+    {
+        if (!WI.NetworkManager.supportsLocalResourceOverrides())
+            return;
+
+        const suppressFilterUpdate = true;
+
+        for (let localResourceOverride of WI.networkManager.localResourceOverrides)
+            this._addResource(localResourceOverride.localResource, suppressFilterUpdate);
     }
 
     _mainResourceDidChange(event)

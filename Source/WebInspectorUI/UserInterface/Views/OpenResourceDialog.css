@@ -166,7 +166,8 @@ body[dir=rtl] .open-resource-dialog > .field > img {
 }
 
 .open-resource-dialog .tree-outline.large .item .titles .subtitle {
-    vertical-align: 2px;
+    font-size: 11px;
+    vertical-align: 1px;
 }
 
 .open-resource-dialog > .tree-outline .item.selected {

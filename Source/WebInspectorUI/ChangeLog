@@ -1,3 +1,27 @@
+2019-09-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Include LocalResourceOverrides in the Open Resource dialog
+        https://bugs.webkit.org/show_bug.cgi?id=202023
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WI.OpenResourceDialog.prototype._addScriptsForTarget):
+        Also walk the extraScriptCollection. Some Worker resource loads never
+        fully become resources.
+
+        (WI.OpenResourceDialog.prototype.didPresentDialog):
+        (WI.OpenResourceDialog.prototype._addLocalResourceOverrides):
+        Include local resource override resources.
+
+        (WI.OpenResourceDialog.prototype._populateResourceTreeOutline):
+        * Localizations/en.lproj/localizedStrings.js:
+        Include a subtitle for local resource overrides.
+
+        * UserInterface/Views/OpenResourceDialog.css:
+        (.open-resource-dialog .tree-outline.large .item .titles .subtitle):
+        Improved subtitle styling.
+
 2019-09-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: REGRESSION: Elements detail sidebar sometimes starts collapsed
