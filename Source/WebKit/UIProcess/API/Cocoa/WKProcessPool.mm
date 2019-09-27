@@ -201,7 +201,6 @@ static WKProcessPool *sharedProcessPool;
 
 - (void)_setCanHandleHTTPSServerTrustEvaluation:(BOOL)value
 {
-    _processPool->setCanHandleHTTPSServerTrustEvaluation(value);
 }
 
 static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAcceptPolicy policy)

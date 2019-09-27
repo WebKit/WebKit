@@ -307,8 +307,6 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     setCacheModel(parameters.cacheModel, parameters.defaultDataStoreParameters.networkSessionParameters.networkCacheDirectory);
 
-    setCanHandleHTTPSServerTrustEvaluation(parameters.canHandleHTTPSServerTrustEvaluation);
-
     if (parameters.shouldUseTestingNetworkSession) {
         m_shouldUseTestingNetworkStorageSession = true;
         m_defaultNetworkStorageSession = newTestingSession(PAL::SessionID::defaultSessionID());
@@ -2015,11 +2013,6 @@ void NetworkProcess::setCacheModel(CacheModel cacheModel, String cacheStorageDir
         if (auto* cache = session.cache())
             cache->setCapacity(urlCacheDiskCapacity);
     });
-}
-
-void NetworkProcess::setCanHandleHTTPSServerTrustEvaluation(bool value)
-{
-    m_canHandleHTTPSServerTrustEvaluation = value;
 }
 
 void NetworkProcess::getNetworkProcessStatistics(uint64_t callbackID)

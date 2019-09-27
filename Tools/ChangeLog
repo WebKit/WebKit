@@ -1,5 +1,37 @@
 2019-09-27  Alex Christensen  <achristensen@webkit.org>
 
+        Remove unused WebProcessPool::setCanHandleHTTPSServerTrustEvaluation
+        https://bugs.webkit.org/show_bug.cgi?id=202285
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (-[ServerTrustDelegate webView:didFinishNavigation:]):
+        (-[ServerTrustDelegate webView:didFailProvisionalNavigation:withError:]):
+        (-[ServerTrustDelegate waitForDidFinishNavigation]):
+        (-[ServerTrustDelegate waitForDidFailProvisionalNavigationError]):
+        (-[ServerTrustDelegate authenticationChallengeCount]):
+        (-[ServerTrustDelegate webView:didReceiveAuthenticationChallenge:completionHandler:]):
+        (TestWebKitAPI::TEST):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setCanHandleHTTPSServerTrustEvaluation): Deleted.
+        (WTR::TestRunner::canDoServerTrustEvaluationInNetworkProcess): Deleted.
+        (WTR::TestRunner::serverTrustEvaluationCallbackCallsCount): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::didReceiveAuthenticationChallenge):
+        (WTR::TestController::canDoServerTrustEvaluationInNetworkProcess const): Deleted.
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::serverTrustEvaluationCallbackCallsCount const): Deleted.
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::canDoServerTrustEvaluationInNetworkProcess const): Deleted.
+
+2019-09-27  Alex Christensen  <achristensen@webkit.org>
+
         Remove unused APIProcessPoolConfiguration::diskCacheSpeculativeValidationEnabled
         https://bugs.webkit.org/show_bug.cgi?id=202290
 

@@ -33,7 +33,11 @@
 #import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebsiteDataRecordPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
+#import <WebKit/_WKErrorRecoveryAttempting.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <wtf/Platform.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 
@@ -284,17 +288,47 @@ static void verifyCertificateAndPublicKey(SecTrustRef trust)
 }
 
 @interface ServerTrustDelegate : NSObject <WKNavigationDelegate>
+- (void)waitForDidFinishNavigation;
+- (NSError *)waitForDidFailProvisionalNavigationError;
+- (size_t)authenticationChallengeCount;
 @end
 
-@implementation ServerTrustDelegate
+@implementation ServerTrustDelegate {
+    size_t _authenticationChallengeCount;
+    bool _navigationFinished;
+    RetainPtr<NSError> _provisionalNavigationFailedError;
+}
 
-- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
-    navigationFinished = true;
+    _navigationFinished = true;
+}
+
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error
+{
+    _provisionalNavigationFailedError = error;
+}
+
+- (void)waitForDidFinishNavigation
+{
+    TestWebKitAPI::Util::run(&_navigationFinished);
+}
+
+- (NSError *)waitForDidFailProvisionalNavigationError
+{
+    while (!_provisionalNavigationFailedError)
+        TestWebKitAPI::Util::spinRunLoop();
+    return _provisionalNavigationFailedError.autorelease();
+}
+
+- (size_t)authenticationChallengeCount
+{
+    return _authenticationChallengeCount;
 }
 
 - (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * _Nullable credential))completionHandler
 {
+    _authenticationChallengeCount++;
     SecTrustRef trust = challenge.protectionSpace.serverTrust;
     verifyCertificateAndPublicKey(trust);
     completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:trust]);
@@ -321,9 +355,39 @@ TEST(WebKit, ServerTrust)
     [webView setNavigationDelegate:delegate.get()];
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://localhost:%d/", server.port()]]]];
-    TestWebKitAPI::Util::run(&navigationFinished);
+    [delegate waitForDidFinishNavigation];
 
     verifyCertificateAndPublicKey([webView serverTrust]);
+    EXPECT_EQ([delegate authenticationChallengeCount], 1u);
+}
+
+TEST(WebKit, FastServerTrust)
+{
+#if HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE)
+    TCPServer server(TCPServer::Protocol::HTTPS, TCPServer::respondWithOK);
+#else
+    TCPServer server(TCPServer::Protocol::HTTPS, [](SSL* ssl) {
+        EXPECT_FALSE(ssl);
+    });
+#endif
+    WKWebViewConfiguration *configuration = [[[WKWebViewConfiguration alloc] init] autorelease];
+    _WKWebsiteDataStoreConfiguration *dataStoreConfiguration = [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
+    dataStoreConfiguration.fastServerTrustEvaluationEnabled = YES;
+    configuration.websiteDataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration] autorelease];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    auto delegate = adoptNS([ServerTrustDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://localhost:%d/", server.port()]]]];
+#if HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE)
+    [delegate waitForDidFinishNavigation];
+    EXPECT_EQ([delegate authenticationChallengeCount], 1ull);
+#else
+    NSError *error = [delegate waitForDidFailProvisionalNavigationError];
+    EXPECT_WK_STREQ([error.userInfo[_WKRecoveryAttempterErrorKey] className], @"WKReloadFrameErrorRecoveryAttempter");
+    EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
+    EXPECT_EQ(error.code, NSURLErrorServerCertificateUntrusted);
+    EXPECT_EQ([delegate authenticationChallengeCount], 0ull);
+#endif
 }
 
 } // namespace TestWebKitAPI

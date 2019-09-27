@@ -67,7 +67,6 @@ messages -> NetworkProcess LegacyReceiver {
     SyncAllCookies()
 
     AllowSpecificHTTPSCertificateForHost(WebCore::CertificateInfo certificate, String host)
-    SetCanHandleHTTPSServerTrustEvaluation(bool value)
     
     GetNetworkProcessStatistics(uint64_t callbackID)
     

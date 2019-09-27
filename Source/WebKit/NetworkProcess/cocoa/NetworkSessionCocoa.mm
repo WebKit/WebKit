@@ -538,11 +538,6 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
 }
 
 #if HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE)
-static bool canNSURLSessionTrustEvaluate()
-{
-    return [NSURLSession respondsToSelector:@selector(_strictTrustEvaluate: queue: completionHandler:)];
-}
-
 static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NSURLAuthenticationChallenge *challenge, NetworkDataTaskCocoa::TaskIdentifier taskIdentifier, NetworkDataTaskCocoa* networkDataTask, CompletionHandler<void(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential)>&& completionHandler)
 {
     session->continueDidReceiveChallenge(challenge, taskIdentifier, networkDataTask, [completionHandler = WTFMove(completionHandler), secTrust = retainPtr(challenge.protectionSpace.serverTrust)] (WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) mutable {
@@ -578,25 +573,24 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
             return completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
 
         // Handle server trust evaluation at platform-level if requested, for performance reasons and to use ATS defaults.
-        if (!_session->networkProcess().canHandleHTTPSServerTrustEvaluation() || _session->fastServerTrustEvaluationEnabled()) {
+        if (_session->fastServerTrustEvaluationEnabled()) {
 #if HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE)
-            if (canNSURLSessionTrustEvaluate()) {
-                auto* networkDataTask = [self existingTask:task];
-                ASSERT(networkDataTask);
-                auto decisionHandler = makeBlockPtr([_session = makeWeakPtr(_session.get()), completionHandler = makeBlockPtr(completionHandler), taskIdentifier, networkDataTask = RefPtr<NetworkDataTaskCocoa>(networkDataTask)](NSURLAuthenticationChallenge *challenge, OSStatus trustResult) mutable {
-                    auto task = WTFMove(networkDataTask);
-                    auto* session = _session.get();
-                    if (trustResult == noErr || !session) {
-                        completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
-                        return;
-                    }
-                    processServerTrustEvaluation(session, challenge, taskIdentifier, task.get(), WTFMove(completionHandler));
-                });
-                [NSURLSession _strictTrustEvaluate:challenge queue:[NSOperationQueue mainQueue].underlyingQueue completionHandler:decisionHandler.get()];
-                return;
-            }
-#endif
+            auto* networkDataTask = [self existingTask:task];
+            ASSERT(networkDataTask);
+            auto decisionHandler = makeBlockPtr([_session = makeWeakPtr(_session.get()), completionHandler = makeBlockPtr(completionHandler), taskIdentifier, networkDataTask = RefPtr<NetworkDataTaskCocoa>(networkDataTask)](NSURLAuthenticationChallenge *challenge, OSStatus trustResult) mutable {
+                auto task = WTFMove(networkDataTask);
+                auto* session = _session.get();
+                if (trustResult == noErr || !session) {
+                    completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
+                    return;
+                }
+                processServerTrustEvaluation(session, challenge, taskIdentifier, task.get(), WTFMove(completionHandler));
+            });
+            [NSURLSession _strictTrustEvaluate:challenge queue:[NSOperationQueue mainQueue].underlyingQueue completionHandler:decisionHandler.get()];
+            return;
+#else
             return completionHandler(NSURLSessionAuthChallengeRejectProtectionSpace, nil);
+#endif
         }
     }
     _session->continueDidReceiveChallenge(challenge, taskIdentifier, [self existingTask:task], [completionHandler = makeBlockPtr(completionHandler)] (WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) mutable {

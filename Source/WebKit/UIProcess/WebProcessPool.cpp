@@ -491,7 +491,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     }
 
     parameters.cacheModel = LegacyGlobalSettings::singleton().cacheModel();
-    parameters.canHandleHTTPSServerTrustEvaluation = m_canHandleHTTPSServerTrustEvaluation;
 
     for (auto& scheme : globalURLSchemesWithCustomProtocolHandlers())
         parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
@@ -1503,15 +1502,6 @@ void WebProcessPool::setDomainRelaxationForbiddenForURLScheme(const String& urlS
 {
     m_schemesToSetDomainRelaxationForbiddenFor.add(urlScheme);
     sendToAllProcesses(Messages::WebProcess::SetDomainRelaxationForbiddenForURLScheme(urlScheme));
-}
-
-void WebProcessPool::setCanHandleHTTPSServerTrustEvaluation(bool value)
-{
-    m_canHandleHTTPSServerTrustEvaluation = value;
-    if (m_networkProcess) {
-        m_networkProcess->send(Messages::NetworkProcess::SetCanHandleHTTPSServerTrustEvaluation(value), 0);
-        return;
-    }
 }
 
 void WebProcessPool::registerURLSchemeAsLocal(const String& urlScheme)

@@ -1,3 +1,13 @@
+2019-09-27  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused WebProcessPool::setCanHandleHTTPSServerTrustEvaluation
+        https://bugs.webkit.org/show_bug.cgi?id=202285
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/ssl/certificate-validation-expected.txt: Removed.
+        * http/tests/ssl/certificate-validation.html: Removed.
+
 2019-09-26  Chris Dumez  <cdumez@apple.com>
 
         Pages frequently fails to enter the back/forward cache due to pending loads

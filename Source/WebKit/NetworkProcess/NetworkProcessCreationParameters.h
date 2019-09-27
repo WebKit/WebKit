@@ -52,7 +52,6 @@ struct NetworkProcessCreationParameters {
     static bool decode(IPC::Decoder&, NetworkProcessCreationParameters&);
 
     CacheModel cacheModel { CacheModel::DocumentViewer };
-    bool canHandleHTTPSServerTrustEvaluation { true };
 
 #if PLATFORM(MAC)
     Vector<uint8_t> uiProcessCookieStorageIdentifier;

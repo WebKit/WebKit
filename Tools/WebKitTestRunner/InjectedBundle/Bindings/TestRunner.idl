@@ -366,8 +366,6 @@ interface TestRunner {
     void terminateNetworkProcess();
     void terminateServiceWorkerProcess();
 
-    void setCanHandleHTTPSServerTrustEvaluation(boolean canHandle);
-    readonly attribute boolean canDoServerTrustEvaluationInNetworkProcess;
     readonly attribute unsigned long serverTrustEvaluationCallbackCallsCount;
 
     readonly attribute boolean didCancelClientRedirect;

@@ -494,8 +494,6 @@ public:
     void cleanUpKeychain(JSStringRef attrLabel, JSStringRef applicationTagBase64);
     bool keyExistsInKeychain(JSStringRef attrLabel, JSStringRef applicationTagBase64);
 
-    void setCanHandleHTTPSServerTrustEvaluation(bool canHandle);
-    bool canDoServerTrustEvaluationInNetworkProcess();
     unsigned long serverTrustEvaluationCallbackCallsCount();
 
     // Ad Click Attribution.

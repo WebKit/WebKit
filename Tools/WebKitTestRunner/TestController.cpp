@@ -3576,11 +3576,6 @@ bool TestController::keyExistsInKeychain(const String&, const String&)
     return false;
 }
 
-bool TestController::canDoServerTrustEvaluationInNetworkProcess() const
-{
-    return false;
-}
-
 void TestController::installCustomMenuAction(const String&, bool)
 {
 }

@@ -411,15 +411,6 @@ void TestController::setAllowsAnySSLCertificate(bool allows)
     [globalWebsiteDataStoreDelegateClient setAllowAnySSLCertificate: allows];
 }
 
-bool TestController::canDoServerTrustEvaluationInNetworkProcess() const
-{
-#if HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE)
-    return true;
-#else
-    return false;
-#endif
-}
-
 void TestController::installCustomMenuAction(const String& name, bool dismissesAutomatically)
 {
 #if PLATFORM(IOS_FAMILY)

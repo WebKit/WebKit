@@ -1629,18 +1629,6 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return result;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "SetCanHandleHTTPSServerTrustEvaluation")) {
-        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
-        auto canHandle = WKBooleanGetValue(static_cast<WKBooleanRef>(messageBody));
-        WKContextSetCanHandleHTTPSServerTrustEvaluation(TestController::singleton().context(), canHandle);
-        return nullptr;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "CanDoServerTrustEvaluationInNetworkProcess")) {
-        WKRetainPtr<WKTypeRef> result = adoptWK(WKBooleanCreate(TestController::singleton().canDoServerTrustEvaluationInNetworkProcess()));
-        return result;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "ServerTrustEvaluationCallbackCallsCount")) {
         WKRetainPtr<WKTypeRef> result = adoptWK(WKUInt64Create(TestController::singleton().serverTrustEvaluationCallbackCallsCount()));
         return result;
