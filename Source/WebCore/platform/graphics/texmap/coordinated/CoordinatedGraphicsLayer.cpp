@@ -261,6 +261,16 @@ void CoordinatedGraphicsLayer::setSize(const FloatSize& size)
     didChangeGeometry();
 }
 
+void CoordinatedGraphicsLayer::setBoundsOrigin(const FloatPoint& boundsOrigin)
+{
+    if (this->boundsOrigin() == boundsOrigin)
+        return;
+
+    GraphicsLayer::setBoundsOrigin(boundsOrigin);
+    m_nicosia.delta.boundsOriginChanged = true;
+    didChangeGeometry();
+}
+
 void CoordinatedGraphicsLayer::setTransform(const TransformationMatrix& t)
 {
     if (transform() == t)
@@ -1132,7 +1142,7 @@ FloatPoint CoordinatedGraphicsLayer::computePositionRelativeToBase()
 {
     FloatPoint offset;
     for (const GraphicsLayer* currLayer = this; currLayer; currLayer = currLayer->parent())
-        offset += currLayer->position();
+        offset += (currLayer->position() - currLayer->boundsOrigin());
 
     return offset;
 }

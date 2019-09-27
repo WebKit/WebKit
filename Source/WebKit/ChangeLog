@@ -1,3 +1,14 @@
+2019-09-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordinatedGraphics] support bounds origin
+        https://bugs.webkit.org/show_bug.cgi?id=198998
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::updateSceneState):
+        Apply bounds origin value to the TextureMapperLayer object.
+
 2019-09-27  Youenn Fablet  <youenn@apple.com>
 
         Make IsNSURLSessionWebSocketEnabled an experimental flag

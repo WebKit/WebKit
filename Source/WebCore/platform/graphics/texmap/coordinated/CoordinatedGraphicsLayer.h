@@ -75,6 +75,7 @@ public:
     void setPosition(const FloatPoint&) override;
     void setAnchorPoint(const FloatPoint3D&) override;
     void setSize(const FloatSize&) override;
+    void setBoundsOrigin(const FloatPoint&) override;
     void setTransform(const TransformationMatrix&) override;
     void setChildrenTransform(const TransformationMatrix&) override;
     void setPreserves3D(bool) override;

@@ -60,6 +60,7 @@ public:
     void setMaskLayer(TextureMapperLayer*);
     void setReplicaLayer(TextureMapperLayer*);
     void setPosition(const FloatPoint&);
+    void setBoundsOrigin(const FloatPoint&);
     void setSize(const FloatSize&);
     void setAnchorPoint(const FloatPoint3D&);
     void setPreserves3D(bool);
@@ -157,6 +158,7 @@ private:
     struct State {
         FloatPoint pos;
         FloatPoint3D anchorPoint;
+        FloatPoint boundsOrigin;
         FloatSize size;
         TransformationMatrix transform;
         TransformationMatrix childrenTransform;

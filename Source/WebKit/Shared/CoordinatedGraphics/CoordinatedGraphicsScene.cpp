@@ -291,6 +291,8 @@ void CoordinatedGraphicsScene::updateSceneState()
                             layer.setAnchorPoint(layerState.anchorPoint);
                         if (layerState.delta.sizeChanged)
                             layer.setSize(layerState.size);
+                        if (layerState.delta.boundsOriginChanged)
+                            layer.setBoundsOrigin(layerState.boundsOrigin);
 
                         if (layerState.delta.transformChanged)
                             layer.setTransform(layerState.transform);

@@ -68,7 +68,7 @@ void TextureMapperLayer::computeTransformsRecursive()
 
         m_layerTransforms.combined = parentTransform;
         m_layerTransforms.combined
-            .translate3d(originX + m_state.pos.x(), originY + m_state.pos.y(), m_state.anchorPoint.z())
+            .translate3d(originX + (m_state.pos.x() - m_state.boundsOrigin.x()), originY + (m_state.pos.y() - m_state.boundsOrigin.y()), m_state.anchorPoint.z())
             .multiply(m_layerTransforms.localTransform);
 
         m_layerTransforms.combinedForChildren = m_layerTransforms.combined;
@@ -89,7 +89,7 @@ void TextureMapperLayer::computeTransformsRecursive()
 
         m_layerTransforms.futureCombined = futureParentTransform;
         m_layerTransforms.futureCombined
-            .translate3d(originX + m_state.pos.x(), originY + m_state.pos.y(), m_state.anchorPoint.z())
+            .translate3d(originX + (m_state.pos.x() - m_state.boundsOrigin.x()), originY + (m_state.pos.y() - m_state.boundsOrigin.y()), m_state.anchorPoint.z())
             .multiply(m_layerTransforms.futureLocalTransform);
 
         m_layerTransforms.futureCombinedForChildren = m_layerTransforms.futureCombined;
@@ -540,6 +540,11 @@ void TextureMapperLayer::setReplicaLayer(TextureMapperLayer* replicaLayer)
 void TextureMapperLayer::setPosition(const FloatPoint& position)
 {
     m_state.pos = position;
+}
+
+void TextureMapperLayer::setBoundsOrigin(const FloatPoint& boundsOrigin)
+{
+    m_state.boundsOrigin = boundsOrigin;
 }
 
 void TextureMapperLayer::setSize(const FloatSize& size)
