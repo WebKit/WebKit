@@ -2497,17 +2497,17 @@ const WebEvent* WebPage::currentEvent()
 
 void WebPage::freezeLayerTree(LayerTreeFreezeReason reason)
 {
-    RELEASE_LOG(ProcessSuspension, "%p - WebPage (PageID=%llu) - Adding a reason %d to freeze layer tree; current reasons are %d",
-        this, m_identifier.toUInt64(), static_cast<unsigned>(reason), m_layerTreeFreezeReasons.toRaw());
+    auto oldReasons = m_layerTreeFreezeReasons.toRaw();
     m_layerTreeFreezeReasons.add(reason);
+    RELEASE_LOG(ProcessSuspension, "%p - WebPage (PageID=%llu) - Adding a reason %d to freeze layer tree (now %d); old reasons were %d", this, m_identifier.toUInt64(), static_cast<unsigned>(reason), m_layerTreeFreezeReasons.toRaw(), oldReasons);
     updateDrawingAreaLayerTreeFreezeState();
 }
 
 void WebPage::unfreezeLayerTree(LayerTreeFreezeReason reason)
 {
-    RELEASE_LOG(ProcessSuspension, "%p - WebPage (PageID=%llu) - Removing a reason %d to freeze layer tree; current reasons are %d",
-        this, m_identifier.toUInt64(), static_cast<unsigned>(reason), m_layerTreeFreezeReasons.toRaw());
+    auto oldReasons = m_layerTreeFreezeReasons.toRaw();
     m_layerTreeFreezeReasons.remove(reason);
+    RELEASE_LOG(ProcessSuspension, "%p - WebPage (PageID=%llu) - Removing a reason %d to freeze layer tree (now %d); old reasons were %d", this, m_identifier.toUInt64(), static_cast<unsigned>(reason), m_layerTreeFreezeReasons.toRaw(), oldReasons);
     updateDrawingAreaLayerTreeFreezeState();
 }
 

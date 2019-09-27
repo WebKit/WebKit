@@ -185,6 +185,7 @@
 #if PLATFORM(IOS_FAMILY)
 static const uint32_t firstSDKVersionWithLinkPreviewEnabledByDefault = 0xA0000;
 static const Seconds delayBeforeNoVisibleContentsRectsLogging = 1_s;
+static const Seconds delayBeforeNoCommitsLogging = 5_s;
 #endif
 
 #if PLATFORM(MAC)
@@ -317,6 +318,7 @@ static Optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayS
     BOOL _hasCommittedLoadForMainFrame;
     BOOL _needsResetViewStateAfterCommitLoadForMainFrame;
     WebKit::TransactionID _firstPaintAfterCommitLoadTransactionID;
+    WebKit::TransactionID _lastTransactionID;
     WebKit::DynamicViewportUpdateMode _dynamicViewportUpdateMode;
     WebKit::DynamicViewportSizeUpdateID _currentDynamicViewportSizeUpdateID;
     CATransform3D _resizeAnimationTransformAdjustments;
@@ -351,8 +353,10 @@ static Optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayS
     CGFloat _totalScrollViewBottomInsetAdjustmentForKeyboard;
     BOOL _currentlyAdjustingScrollViewInsetsForKeyboard;
 
-    BOOL _delayUpdateVisibleContentRects;
-    BOOL _hadDelayedUpdateVisibleContentRects;
+    BOOL _invokingUIScrollViewDelegateCallback;
+    BOOL _didDeferUpdateVisibleContentRectsForUIScrollViewDelegateCallback;
+    BOOL _didDeferUpdateVisibleContentRectsForAnyReason;
+    BOOL _didDeferUpdateVisibleContentRectsForUnstableScrollView;
 
     BOOL _waitingForEndAnimatedResize;
     BOOL _waitingForCommitAfterAnimatedResize;
@@ -371,6 +375,8 @@ static Optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayS
     // For release-logging for <rdar://problem/39281269>.
     MonotonicTime _timeOfRequestForVisibleContentRectUpdate;
     MonotonicTime _timeOfLastVisibleContentRectUpdate;
+
+    Optional<MonotonicTime> _timeOfFirstVisibleContentRectUpdateWithPendingCommit;
 
     NSUInteger _focusPreservationCount;
     NSUInteger _activeFocusedStateRetainCount;
@@ -795,8 +801,11 @@ static void validate(WKWebViewConfiguration *configuration)
 #if PLATFORM(IOS_FAMILY)
     _dragInteractionPolicy = _WKDragInteractionPolicyDefault;
 
-    _timeOfRequestForVisibleContentRectUpdate = MonotonicTime::now();
-    _timeOfLastVisibleContentRectUpdate = MonotonicTime::now();
+    auto timeNow = MonotonicTime::now();
+    _timeOfRequestForVisibleContentRectUpdate = timeNow;
+    _timeOfLastVisibleContentRectUpdate = timeNow;
+    _timeOfFirstVisibleContentRectUpdateWithPendingCommit = timeNow;
+
 #if PLATFORM(WATCHOS)
     _allowsViewportShrinkToFit = YES;
 #else
@@ -1691,14 +1700,14 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
 
 - (void)_willInvokeUIScrollViewDelegateCallback
 {
-    _delayUpdateVisibleContentRects = YES;
+    _invokingUIScrollViewDelegateCallback = YES;
 }
 
 - (void)_didInvokeUIScrollViewDelegateCallback
 {
-    _delayUpdateVisibleContentRects = NO;
-    if (_hadDelayedUpdateVisibleContentRects) {
-        _hadDelayedUpdateVisibleContentRects = NO;
+    _invokingUIScrollViewDelegateCallback = NO;
+    if (_didDeferUpdateVisibleContentRectsForUIScrollViewDelegateCallback) {
+        _didDeferUpdateVisibleContentRectsForUIScrollViewDelegateCallback = NO;
         [self _scheduleVisibleContentRectUpdate];
     }
 }
@@ -1881,8 +1890,10 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     _scrollOffsetToRestore = WTF::nullopt;
     _unobscuredCenterToRestore = WTF::nullopt;
     _scrollViewBackgroundColor = WebCore::Color();
-    _delayUpdateVisibleContentRects = NO;
-    _hadDelayedUpdateVisibleContentRects = NO;
+    _invokingUIScrollViewDelegateCallback = NO;
+    _didDeferUpdateVisibleContentRectsForUIScrollViewDelegateCallback = NO;
+    _didDeferUpdateVisibleContentRectsForAnyReason = NO;
+    _didDeferUpdateVisibleContentRectsForUnstableScrollView = NO;
     _currentlyAdjustingScrollViewInsetsForKeyboard = NO;
     _lastSentViewLayoutSize = WTF::nullopt;
     _lastSentMaximumUnobscuredSize = WTF::nullopt;
@@ -1893,6 +1904,8 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 
     _firstPaintAfterCommitLoadTransactionID = { };
     _firstTransactionIDAfterPageRestore = WTF::nullopt;
+
+    _lastTransactionID = { };
 
     _hasScheduledVisibleRectUpdate = NO;
     _commitDidRestoreScrollPosition = NO;
@@ -2020,10 +2033,24 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
 
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
 {
+    if (_didDeferUpdateVisibleContentRectsForUnstableScrollView) {
+        RELEASE_LOG_IF_ALLOWED("%p (PageID=%llu) -[WKWebView _didCommitLayerTree:] - received a commit (%llu) while deferring visible content rect updates (_dynamicViewportUpdateMode %d, _needsResetViewStateAfterCommitLoadForMainFrame %d (wants commit %llu), sizeChangedSinceLastVisibleContentRectUpdate %d, [_scrollView isZoomBouncing] %d, _currentlyAdjustingScrollViewInsetsForKeyboard %d)",
+        self, _page->identifier().toUInt64(), layerTreeTransaction.transactionID().toUInt64(), _dynamicViewportUpdateMode, _needsResetViewStateAfterCommitLoadForMainFrame, _firstPaintAfterCommitLoadTransactionID.toUInt64(), [_contentView sizeChangedSinceLastVisibleContentRectUpdate], [_scrollView isZoomBouncing], _currentlyAdjustingScrollViewInsetsForKeyboard);
+    }
+
+    if (_timeOfFirstVisibleContentRectUpdateWithPendingCommit) {
+        auto timeSinceFirstRequestWithPendingCommit = MonotonicTime::now() - *_timeOfFirstVisibleContentRectUpdateWithPendingCommit;
+        if (timeSinceFirstRequestWithPendingCommit > delayBeforeNoCommitsLogging)
+            RELEASE_LOG_IF_ALLOWED("%p (PageID=%llu) -[WKWebView _didCommitLayerTree:] - finally received commit %.2fs after visible content rect update request; transactionID %llu", self, _page->identifier().toUInt64(), timeSinceFirstRequestWithPendingCommit.value(), layerTreeTransaction.transactionID().toUInt64());
+        _timeOfFirstVisibleContentRectUpdateWithPendingCommit = WTF::nullopt;
+    }
+
+    _lastTransactionID = layerTreeTransaction.transactionID();
+
     if (![self usesStandardContentView])
         return;
 
-    LOG_WITH_STREAM(VisibleRects, stream << "-[WKWebView " << _page->identifier() << " _didCommitLayerTree:] transactionID " <<  layerTreeTransaction.transactionID() << " _dynamicViewportUpdateMode " << (int)_dynamicViewportUpdateMode);
+    LOG_WITH_STREAM(VisibleRects, stream << "-[WKWebView " << _page->identifier() << " _didCommitLayerTree:] transactionID " << layerTreeTransaction.transactionID() << " _dynamicViewportUpdateMode " << (int)_dynamicViewportUpdateMode);
 
     bool needUpdateVisibleContentRects = _page->updateLayoutViewportParameters(layerTreeTransaction);
 
@@ -3115,13 +3142,22 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
     if (![self usesStandardContentView]) {
         [_passwordView setFrame:self.bounds];
         [_customContentView web_computedContentInsetDidChange];
-        RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _updateVisibleContentRects:] - usesStandardContentView is NO, bailing", self);
+        _didDeferUpdateVisibleContentRectsForAnyReason = YES;
+        RELEASE_LOG_IF_ALLOWED("%p (PageID=%llu) -[WKWebView _updateVisibleContentRects:] - usesStandardContentView is NO, bailing", self, _page->identifier().toUInt64());
         return;
     }
 
-    if (_delayUpdateVisibleContentRects) {
-        _hadDelayedUpdateVisibleContentRects = YES;
-        RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _updateVisibleContentRects:] - _delayUpdateVisibleContentRects is YES, bailing", self);
+    auto timeNow = MonotonicTime::now();
+    if (_timeOfFirstVisibleContentRectUpdateWithPendingCommit) {
+        auto timeSinceFirstRequestWithPendingCommit = timeNow - *_timeOfFirstVisibleContentRectUpdateWithPendingCommit;
+        if (timeSinceFirstRequestWithPendingCommit > delayBeforeNoCommitsLogging)
+            RELEASE_LOG_IF_ALLOWED("%p (PageID=%llu) -[WKWebView _updateVisibleContentRects:] - have not received a commit %.2fs after visible content rect update; lastTransactionID %llu", self, _page->identifier().toUInt64(), timeSinceFirstRequestWithPendingCommit.value(), _lastTransactionID.toUInt64());
+    }
+
+    if (_invokingUIScrollViewDelegateCallback) {
+        _didDeferUpdateVisibleContentRectsForUIScrollViewDelegateCallback = YES;
+        _didDeferUpdateVisibleContentRectsForAnyReason = YES;
+        RELEASE_LOG_IF_ALLOWED("%p (PageID=%llu) -[WKWebView _updateVisibleContentRects:] - _invokingUIScrollViewDelegateCallback is YES, bailing", self, _page->identifier().toUInt64());
         return;
     }
 
@@ -3129,10 +3165,19 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
         || (_needsResetViewStateAfterCommitLoadForMainFrame && ![_contentView sizeChangedSinceLastVisibleContentRectUpdate])
         || [_scrollView isZoomBouncing]
         || _currentlyAdjustingScrollViewInsetsForKeyboard) {
-        RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _updateVisibleContentRects:] - scroll view state is non-stable, bailing (_dynamicViewportUpdateMode %d, _needsResetViewStateAfterCommitLoadForMainFrame %d, sizeChangedSinceLastVisibleContentRectUpdate %d, [_scrollView isZoomBouncing] %d, _currentlyAdjustingScrollViewInsetsForKeyboard %d)",
-            self, _dynamicViewportUpdateMode, _needsResetViewStateAfterCommitLoadForMainFrame, [_contentView sizeChangedSinceLastVisibleContentRectUpdate], [_scrollView isZoomBouncing], _currentlyAdjustingScrollViewInsetsForKeyboard);
+        _didDeferUpdateVisibleContentRectsForAnyReason = YES;
+        _didDeferUpdateVisibleContentRectsForUnstableScrollView = YES;
+        RELEASE_LOG_IF_ALLOWED("%p (PageID=%llu) -[WKWebView _updateVisibleContentRects:] - scroll view state is non-stable, bailing (_dynamicViewportUpdateMode %d, _needsResetViewStateAfterCommitLoadForMainFrame %d, sizeChangedSinceLastVisibleContentRectUpdate %d, [_scrollView isZoomBouncing] %d, _currentlyAdjustingScrollViewInsetsForKeyboard %d)",
+            self, _page->identifier().toUInt64(), _dynamicViewportUpdateMode, _needsResetViewStateAfterCommitLoadForMainFrame, [_contentView sizeChangedSinceLastVisibleContentRectUpdate], [_scrollView isZoomBouncing], _currentlyAdjustingScrollViewInsetsForKeyboard);
         return;
     }
+
+    if (_didDeferUpdateVisibleContentRectsForAnyReason)
+        RELEASE_LOG_IF_ALLOWED("%p (PageID=%llu) -[WKWebView _updateVisibleContentRects:] - performing first visible content rect update after deferring updates", self, _page->identifier().toUInt64());
+
+    _didDeferUpdateVisibleContentRectsForUIScrollViewDelegateCallback = NO;
+    _didDeferUpdateVisibleContentRectsForUnstableScrollView = NO;
+    _didDeferUpdateVisibleContentRectsForAnyReason = NO;
 
     CGRect visibleRectInContentCoordinates = [self _visibleContentRect];
 
@@ -3199,12 +3244,13 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
         auto callback = _visibleContentRectUpdateCallbacks.takeLast();
         callback();
     }
-    
-    auto timeNow = MonotonicTime::now();
+
     if ((timeNow - _timeOfRequestForVisibleContentRectUpdate) > delayBeforeNoVisibleContentsRectsLogging)
         RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _updateVisibleContentRects:] finally ran %.2fs after being scheduled", self, (timeNow - _timeOfRequestForVisibleContentRectUpdate).value());
 
     _timeOfLastVisibleContentRectUpdate = timeNow;
+    if (!_timeOfFirstVisibleContentRectUpdateWithPendingCommit)
+        _timeOfFirstVisibleContentRectUpdateWithPendingCommit = timeNow;
 }
 
 - (void)_didStartProvisionalLoadForMainFrame
@@ -3225,7 +3271,8 @@ static int32_t activeOrientation(WKWebView *webView)
 
 - (void)_cancelAnimatedResize
 {
-    LOG_WITH_STREAM(VisibleRects, stream << "-[WKWebView " << _page->identifier() << " _cancelAnimatedResize:] " << " _dynamicViewportUpdateMode " << (int)_dynamicViewportUpdateMode);
+    RELEASE_LOG_IF_ALLOWED("%p (PageID=%llu) -[WKWebView _cancelAnimatedResize] _dynamicViewportUpdateMode %d", self, _page->identifier().toUInt64(), _dynamicViewportUpdateMode);
+
     if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing)
         return;
 
@@ -3259,6 +3306,8 @@ static int32_t activeOrientation(WKWebView *webView)
         [self _cancelAnimatedResize];
         return;
     }
+
+    RELEASE_LOG_IF_ALLOWED("%p (PageID=%llu) -[WKWebView _didCompleteAnimatedResize]", self, _page->identifier().toUInt64());
 
     NSUInteger indexOfResizeAnimationView = [[_scrollView subviews] indexOfObject:_resizeAnimationView.get()];
     [_scrollView insertSubview:_contentView.get() atIndex:indexOfResizeAnimationView];
@@ -6163,6 +6212,8 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         return;
     }
 
+    RELEASE_LOG_IF_ALLOWED("%p (PageID=%llu) -[WKWebView _beginAnimatedResizeWithUpdates:]", self, _page->identifier().toUInt64());
+
     _dynamicViewportUpdateMode = WebKit::DynamicViewportUpdateMode::ResizingWithAnimation;
 
     auto oldViewLayoutSize = [self activeViewLayoutSize:self.bounds];
@@ -6275,7 +6326,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (void)_endAnimatedResize
 {
-    LOG_WITH_STREAM(VisibleRects, stream << "-[WKWebView " << _page->identifier() << " _endAnimatedResize:] " << " _dynamicViewportUpdateMode " << (int)_dynamicViewportUpdateMode);
+    RELEASE_LOG_IF_ALLOWED("%p (PageID=%llu) -[WKWebView _endAnimatedResize] _dynamicViewportUpdateMode %d", self, _page->identifier().toUInt64(), _dynamicViewportUpdateMode);
 
     // If we already have an up-to-date layer tree, immediately complete
     // the resize. Otherwise, we will defer completion until we do.
@@ -6286,7 +6337,8 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (void)_resizeWhileHidingContentWithUpdates:(void (^)(void))updateBlock
 {
-    LOG_WITH_STREAM(VisibleRects, stream << "-[WKWebView " << _page->identifier() << " _resizeWhileHidingContentWithUpdates:]");
+    RELEASE_LOG_IF_ALLOWED("%p (PageID=%llu) -[WKWebView _resizeWhileHidingContentWithUpdates:]", self, _page->identifier().toUInt64());
+
     [self _beginAnimatedResizeWithUpdates:updateBlock];
     if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::ResizingWithAnimation) {
         [_contentView setHidden:YES];

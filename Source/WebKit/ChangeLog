@@ -1,3 +1,55 @@
+2019-09-26  Tim Horton  <timothy_horton@apple.com>
+
+        Add some logging to help diagnose blank or stuck WKWebViews
+        https://bugs.webkit.org/show_bug.cgi?id=202297
+        <rdar://problem/55763610>
+
+        Reviewed by Wenson Hsieh.
+
+        Our current logging is insufficient to rule out some of the potential
+        causes of stuck/blank WKWebViews in <rdar://problem/53399054>. Add
+        some new logging, and improve some existing logging, to aid in diagnosis.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _willInvokeUIScrollViewDelegateCallback]):
+        (-[WKWebView _didInvokeUIScrollViewDelegateCallback]):
+        Rename _delayUpdateVisibleContentRects to be more specific that it
+        was due to us being underneath a UIScrollView delegate callback.
+
+        (-[WKWebView _processWillSwapOrDidExit]):
+        (-[WKWebView _didCommitLayerTree:]):
+        Add a log when we receive an incoming commit while visible content rect
+        updates are being deferred. Also, include the current transaction ID
+        and the transaction ID that _needsResetViewState... is waiting for, to
+        help rule out a class of potential problems.
+
+        Add a log when we receive an incoming commit more than 5 seconds after
+        a visible content rect update.
+
+        (-[WKWebView _updateVisibleContentRects]):
+        Keep track of when we defer visual content rect updates for any reason,
+        and log the first time we do an update after deferring them. This will make
+        it MUCH easier at-a-glance to tell if one of the "bailing" messages
+        represents a long-term state (a problem), or is expected.
+
+        Keep track of how long it's been since we sent a visible content rect update
+        and didn't get a commit back from the Web Content process; if it's been
+        more than 5 seconds, start logging.
+
+        (-[WKWebView _cancelAnimatedResize]):
+        (-[WKWebView _didCompleteAnimatedResize]):
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        (-[WKWebView _endAnimatedResize]):
+        (-[WKWebView _resizeWhileHidingContentWithUpdates:]):
+        Turn animated resize logging into release logging. It is a common culprit
+        for many kinds of bugs, while also not being high volume, so this is well worth it.
+        
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::freezeLayerTree):
+        (WebKit::WebPage::unfreezeLayerTree):
+        Show the current value of m_layerTreeFreezeReasons in addition to the old value and delta,
+        so you don't have to manually compute the current value when reading logs.
+
 2019-09-26  Dean Jackson  <dino@apple.com>
 
         ContextMenu on a link in an email no longer shows web preview
