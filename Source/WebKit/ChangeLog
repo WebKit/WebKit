@@ -1,3 +1,15 @@
+2019-09-26  Eric Carlson  <eric.carlson@apple.com>
+
+        REGRESSION (iOS 13): Trying to record just audio using HTML Media Capture crashes Safari
+        https://bugs.webkit.org/show_bug.cgi?id=202039
+        <rdar://problem/55566628>
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel _mediaTypesForPickerSourceType:]): UIImagePickerController doesn't 
+        support audio-only recording, so show the video recorder for "audio/*".
+
 2019-09-26  Tim Horton  <timothy_horton@apple.com>
 
         Add some logging to help diagnose blank or stuck WKWebViews

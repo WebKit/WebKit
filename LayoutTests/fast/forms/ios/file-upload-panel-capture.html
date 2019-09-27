@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true, shouldHandleRunOpenPanel=false, shouldPresentPopovers=false ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<input id="testInput" type="file" capture>
+<div id="console"></div>
+<script>
+description("Test that the iOS File Upload Panel doesn't crash when the 'capture' is present.");
+jsTestIsAsync = true;
+
+function dismissFilePicker()
+{
+    const uiScript = `uiController.dismissFilePicker(() => uiController.uiScriptComplete())`;
+    return new Promise(resolve => testRunner.runUIScript(uiScript, resolve));
+}
+
+function runCaptureTest(accept)
+{
+    return new Promise((resolve) => {
+        debug("* accept = " + accept);
+        testInput.accept = accept;
+
+        UIHelper.activateElement(testInput).then(() => {
+            debug("");
+            dismissFilePicker().then(() => { resolve(); });
+        });
+    });
+}
+
+async function runTests()
+{
+    document.getElementById("console").style = "display: none";
+
+    await runCaptureTest("image/*");
+    await runCaptureTest("video/*");
+    await runCaptureTest("audio/*");
+
+    document.getElementById("console").style = "";
+    finishJSTest();
+}
+
+
+onload = runTests;
+
+</script>
+</body>
+</html>

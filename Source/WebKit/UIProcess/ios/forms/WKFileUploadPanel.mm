@@ -343,7 +343,9 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
         else if ([mimeType caseInsensitiveCompare:@"video/*"] == NSOrderedSame)
             [mediaTypes addObject:(__bridge NSString *)kUTTypeMovie];
         else if ([mimeType caseInsensitiveCompare:@"audio/*"] == NSOrderedSame)
-            [mediaTypes addObject:(__bridge NSString *)kUTTypeAudio];
+            // UIImagePickerController doesn't allow audio-only recording, so show the video
+            // recorder for "audio/*".
+            [mediaTypes addObject:(__bridge NSString *)kUTTypeMovie];
         else {
             auto uti = WebCore::UTIFromMIMEType(mimeType);
             if (!uti.isEmpty())
@@ -371,7 +373,10 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
                 }
             }
         }
-        return mediaTypes;
+
+        ASSERT(mediaTypes.count);
+        if (mediaTypes.count)
+            return mediaTypes;
     }
 
     // Fallback to every supported media type if there is no filter.
