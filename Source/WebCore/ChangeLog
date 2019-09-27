@@ -1,3 +1,16 @@
+2019-09-27  Alex Christensen  <achristensen@webkit.org>
+
+        Move service worker process termination delay disabling from process pool to website data store
+        https://bugs.webkit.org/show_bug.cgi?id=202308
+
+        Reviewed by Chris Dumez.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::SWServer):
+        (WebCore::SWServer::unregisterServiceWorkerClient):
+        * workers/service/server/SWServer.h:
+        (WebCore::SWServer::disableServiceWorkerProcessTerminationDelay): Deleted.
+
 2019-09-27  Chris Dumez  <cdumez@apple.com>
 
         IDBRequest should not prevent a page from entering the back/forward cache

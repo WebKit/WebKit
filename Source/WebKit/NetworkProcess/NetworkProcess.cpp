@@ -331,12 +331,11 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
 #if ENABLE(SERVICE_WORKER)
     if (parentProcessHasServiceWorkerEntitlement()) {
-        addServiceWorkerSession(PAL::SessionID::defaultSessionID(), parameters.serviceWorkerRegistrationDirectory, parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
+        bool serviceWorkerProcessTerminationDelayEnabled = true;
+        addServiceWorkerSession(PAL::SessionID::defaultSessionID(), serviceWorkerProcessTerminationDelayEnabled, parameters.serviceWorkerRegistrationDirectory, parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
 
         for (auto& scheme : parameters.urlSchemesServiceWorkersCanHandle)
             registerURLSchemeServiceWorkersCanHandle(scheme);
-
-        m_shouldDisableServiceWorkerProcessTerminationDelay = parameters.shouldDisableServiceWorkerProcessTerminationDelay;
     }
 #endif
     initializeStorageQuota(parameters.defaultDataStoreParameters);
@@ -464,7 +463,7 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
 
 #if ENABLE(SERVICE_WORKER)
     if (parentProcessHasServiceWorkerEntitlement())
-        addServiceWorkerSession(parameters.networkSessionParameters.sessionID, parameters.serviceWorkerRegistrationDirectory, parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
+        addServiceWorkerSession(parameters.networkSessionParameters.sessionID, parameters.serviceWorkerProcessTerminationDelayEnabled, parameters.serviceWorkerRegistrationDirectory, parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
 #endif
 
     m_storageManagerSet->add(parameters.networkSessionParameters.sessionID, parameters.localStorageDirectory, parameters.localStorageDirectoryExtensionHandle);
@@ -596,7 +595,7 @@ void NetworkProcess::destroySession(PAL::SessionID sessionID)
 
 #if ENABLE(SERVICE_WORKER)
     m_swServers.remove(sessionID);
-    m_swDatabasePaths.remove(sessionID);
+    m_serviceWorkerInfo.remove(sessionID);
 #endif
 
     m_storageManagerSet->remove(sessionID);
@@ -1374,7 +1373,7 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    path = m_swDatabasePaths.get(sessionID);
+    path = m_serviceWorkerInfo.get(sessionID).databasePath;
     if (!path.isEmpty() && websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations)) {
         swServerForSession(sessionID).getOriginsWithRegistrations([callbackAggregator = callbackAggregator.copyRef()](const HashSet<SecurityOriginData>& securityOrigins) mutable {
             for (auto& origin : securityOrigins)
@@ -1755,7 +1754,7 @@ void NetworkProcess::deleteWebsiteDataForRegistrableDomains(PAL::SessionID sessi
 #endif
     
 #if ENABLE(SERVICE_WORKER)
-    path = m_swDatabasePaths.get(sessionID);
+    path = m_serviceWorkerInfo.get(sessionID).databasePath;
     if (!path.isEmpty() && websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations)) {
         swServerForSession(sessionID).getOriginsWithRegistrations([this, sessionID, domainsToDeleteAllButCookiesFor, callbackAggregator = callbackAggregator.copyRef()](const HashSet<SecurityOriginData>& securityOrigins) mutable {
             for (auto& securityOrigin : securityOrigins) {
@@ -1892,7 +1891,7 @@ void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID,
 #endif
     
 #if ENABLE(SERVICE_WORKER)
-    path = m_swDatabasePaths.get(sessionID);
+    path = m_serviceWorkerInfo.get(sessionID).databasePath;
     if (!path.isEmpty() && websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations)) {
         swServerForSession(sessionID).getOriginsWithRegistrations([callbackAggregator = callbackAggregator.copyRef()](const HashSet<SecurityOriginData>& securityOrigins) mutable {
             for (auto& securityOrigin : securityOrigins)
@@ -2392,20 +2391,17 @@ void NetworkProcess::forEachSWServer(const Function<void(SWServer&)>& callback)
 SWServer& NetworkProcess::swServerForSession(PAL::SessionID sessionID)
 {
     auto result = m_swServers.ensure(sessionID, [&] {
-        auto path = m_swDatabasePaths.get(sessionID);
+        auto info = m_serviceWorkerInfo.get(sessionID);
+        auto path = info.databasePath;
         // There should already be a registered path for this PAL::SessionID.
         // If there's not, then where did this PAL::SessionID come from?
         ASSERT(sessionID.isEphemeral() || !path.isEmpty());
-        
-        auto value = makeUnique<SWServer>(makeUniqueRef<WebSWOriginStore>(), WTFMove(path), sessionID, [this, sessionID](auto& registrableDomain) {
+
+        return makeUnique<SWServer>(makeUniqueRef<WebSWOriginStore>(), info.processTerminationDelayEnabled, WTFMove(path), sessionID, [this, sessionID](auto& registrableDomain) {
             ASSERT(!registrableDomain.isEmpty());
             parentProcessConnection()->send(Messages::NetworkProcessProxy::EstablishWorkerContextConnectionToNetworkProcess { registrableDomain, sessionID }, 0);
         });
-        if (m_shouldDisableServiceWorkerProcessTerminationDelay)
-            value->disableServiceWorkerProcessTerminationDelay();
-        return value;
     });
-
     return *result.iterator->value;
 }
 
@@ -2432,19 +2428,13 @@ void NetworkProcess::unregisterSWServerConnection(WebSWServerConnection& connect
         store->unregisterSWServerConnection(connection);
 }
 
-void NetworkProcess::disableServiceWorkerProcessTerminationDelay()
+void NetworkProcess::addServiceWorkerSession(PAL::SessionID sessionID, bool processTerminationDelayEnabled, String& serviceWorkerRegistrationDirectory, const SandboxExtension::Handle& handle)
 {
-    if (m_shouldDisableServiceWorkerProcessTerminationDelay)
-        return;
-    
-    m_shouldDisableServiceWorkerProcessTerminationDelay = true;
-    for (auto& swServer : m_swServers.values())
-        swServer->disableServiceWorkerProcessTerminationDelay();
-}
-
-void NetworkProcess::addServiceWorkerSession(PAL::SessionID sessionID, String& serviceWorkerRegistrationDirectory, const SandboxExtension::Handle& handle)
-{
-    auto addResult = m_swDatabasePaths.add(sessionID, serviceWorkerRegistrationDirectory);
+    ServiceWorkerInfo info {
+        serviceWorkerRegistrationDirectory,
+        processTerminationDelayEnabled,
+    };
+    auto addResult = m_serviceWorkerInfo.add(sessionID, WTFMove(info));
     if (addResult.isNewEntry) {
         SandboxExtension::consumePermanently(handle);
         if (!serviceWorkerRegistrationDirectory.isEmpty())

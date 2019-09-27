@@ -209,6 +209,16 @@ static void checkURLArgument(NSURL *url)
     _configuration->setServiceWorkerRegistrationDirectory(url.path);
 }
 
+- (BOOL)serviceWorkerProcessTerminationDelayEnabled
+{
+    return _configuration->serviceWorkerProcessTerminationDelayEnabled();
+}
+
+- (void)setServiceWorkerProcessTerminationDelayEnabled:(BOOL)enabled
+{
+    _configuration->setServiceWorkerProcessTerminationDelayEnabled(enabled);
+}
+
 - (void)setSourceApplicationBundleIdentifier:(NSString *)identifier
 {
     _configuration->setSourceApplicationBundleIdentifier(identifier);

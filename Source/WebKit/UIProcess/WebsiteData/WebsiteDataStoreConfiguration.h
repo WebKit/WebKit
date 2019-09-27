@@ -108,6 +108,9 @@ public:
     const String& serviceWorkerRegistrationDirectory() const { return m_serviceWorkerRegistrationDirectory; }
     void setServiceWorkerRegistrationDirectory(String&& directory) { m_serviceWorkerRegistrationDirectory = WTFMove(directory); }
     
+    bool serviceWorkerProcessTerminationDelayEnabled() const { return m_serviceWorkerProcessTerminationDelayEnabled; }
+    void setServiceWorkerProcessTerminationDelayEnabled(bool enabled) { m_serviceWorkerProcessTerminationDelayEnabled = enabled; }
+
     const String& sourceApplicationBundleIdentifier() const { return m_sourceApplicationBundleIdentifier; }
     void setSourceApplicationBundleIdentifier(String&& identifier) { m_sourceApplicationBundleIdentifier = WTFMove(identifier); }
 
@@ -163,6 +166,7 @@ private:
     bool m_allLoadsBlockedByDeviceManagementRestrictionsForTesting { false };
     bool m_allowsCellularAccess { true };
     bool m_fastServerTrustEvaluationEnabled { false };
+    bool m_serviceWorkerProcessTerminationDelayEnabled { true };
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
 #endif

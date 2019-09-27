@@ -151,10 +151,6 @@ messages -> NetworkProcess LegacyReceiver {
 
     SetCacheStorageParameters(PAL::SessionID sessionID, String cacheStorageDirectory, WebKit::SandboxExtension::Handle handle);
 
-#if ENABLE(SERVICE_WORKER)
-    DisableServiceWorkerProcessTerminationDelay()
-#endif
-
     SyncLocalStorage() -> () Synchronous
     ClearLegacyPrivateBrowsingLocalStorage()
 

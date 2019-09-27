@@ -552,8 +552,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 
     if (!m_schemesServiceWorkersCanHandle.isEmpty())
         parameters.urlSchemesServiceWorkersCanHandle = copyToVector(m_schemesServiceWorkersCanHandle);
-
-    parameters.shouldDisableServiceWorkerProcessTerminationDelay = m_shouldDisableServiceWorkerProcessTerminationDelay;
 #endif
 
     auto localStorageDirectory = m_websiteDataStore ? m_websiteDataStore->resolvedLocalStorageDirectory() : nullString();
@@ -727,18 +725,6 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
         serviceWorkerProcessProxyPtr->setServiceWorkerUserAgent(m_serviceWorkerUserAgent);
 }
 #endif
-
-void WebProcessPool::disableServiceWorkerProcessTerminationDelay()
-{
-#if ENABLE(SERVICE_WORKER)
-    if (m_shouldDisableServiceWorkerProcessTerminationDelay)
-        return;
-
-    m_shouldDisableServiceWorkerProcessTerminationDelay = true;
-    if (m_networkProcess)
-        m_networkProcess->send(Messages::NetworkProcess::DisableServiceWorkerProcessTerminationDelay(), 0);
-#endif
-}
 
 void WebProcessPool::windowServerConnectionStateChanged()
 {

@@ -1700,14 +1700,21 @@ TEST(ServiceWorkers, ProcessPerSite)
 
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
+    // Normally, service workers get terminated several seconds after their clients are gone.
+    // Disable this delay for the purpose of testing.
+    _WKWebsiteDataStoreConfiguration *dataStoreConfiguration = [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
+    dataStoreConfiguration.serviceWorkerProcessTerminationDelayEnabled = NO;
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration]);
+    
     // Start with a clean slate data store
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = dataStore.get();
 
     RetainPtr<SWMessageHandler> messageHandler = adoptNS([[SWMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
@@ -1727,10 +1734,6 @@ TEST(ServiceWorkers, ProcessPerSite)
     WKProcessPool *processPool = configuration.get().processPool;
     [processPool _registerURLSchemeServiceWorkersCanHandle:@"sw1"];
     [processPool _registerURLSchemeServiceWorkersCanHandle:@"sw2"];
-
-    // Normally, service workers get terminated several seconds after their clients are gone.
-    // Disable this delay for the purpose of testing.
-    [processPool _disableServiceWorkerProcessTerminationDelay];
 
     RetainPtr<WKWebView> webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 

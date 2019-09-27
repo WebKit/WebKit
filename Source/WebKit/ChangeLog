@@ -1,5 +1,49 @@
 2019-09-27  Alex Christensen  <achristensen@webkit.org>
 
+        Move service worker process termination delay disabling from process pool to website data store
+        https://bugs.webkit.org/show_bug.cgi?id=202308
+
+        Reviewed by Chris Dumez.
+
+        It's only there for a test, which still works quickly.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::addWebsiteDataStore):
+        (WebKit::NetworkProcess::destroySession):
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::registrableDomainsWithWebsiteData):
+        (WebKit::NetworkProcess::swServerForSession):
+        (WebKit::NetworkProcess::addServiceWorkerSession):
+        (WebKit::NetworkProcess::disableServiceWorkerProcessTerminationDelay): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * Shared/WebsiteDataStoreParameters.cpp:
+        (WebKit::WebsiteDataStoreParameters::encode const):
+        (WebKit::WebsiteDataStoreParameters::decode):
+        * Shared/WebsiteDataStoreParameters.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _disableServiceWorkerProcessTerminationDelay]): Deleted.
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration serviceWorkerProcessTerminationDelayEnabled]):
+        (-[_WKWebsiteDataStoreConfiguration setServiceWorkerProcessTerminationDelayEnabled:]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::disableServiceWorkerProcessTerminationDelay): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::serviceWorkerProcessTerminationDelayEnabled const):
+        (WebKit::WebsiteDataStoreConfiguration::setServiceWorkerProcessTerminationDelayEnabled):
+
+2019-09-27  Alex Christensen  <achristensen@webkit.org>
+
         Enable and disable ResourceLoadStatistics only by session
         https://bugs.webkit.org/show_bug.cgi?id=202298
 
