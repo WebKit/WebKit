@@ -1,3 +1,26 @@
+2019-09-27  Devin Rousso  <drousso@apple.com>
+
+        Flaky Test: inspector/canvas/updateShader.html
+        https://bugs.webkit.org/show_bug.cgi?id=202186
+        <rdar://problem/55716053>
+
+        Reviewed by Joseph Pecoraro.
+
+        If the `WebGLProgram` outlives it's `WebGLRenderingContext`, the `ScriptExecutionContext*`
+        that was provided in the constructor won't be invalidated leading to the bad access crash.
+
+        Rather than pass the `ScriptExecutionContext*` directly, have `WebGLProgram` inherit from
+        `ContextDestructionObserver` so that it can propertly invalidate (and notify Web Inspector)
+        when the related context is about to be destroyed.
+
+        Test: inspector/canvas/updateShader.html
+
+        * html/canvas/WebGLProgram.h:
+        (WebCore::WebGLProgram::scriptExecutionContext const): Deleted.
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::WebGLProgram):
+        (WebCore::WebGLProgram::contextDestroyed): Added.
+
 2019-09-27  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Replace Line::Run's logicalRect/textContext with Display::Run
