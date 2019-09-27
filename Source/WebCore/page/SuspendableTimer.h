@@ -29,20 +29,21 @@
 #include "ActiveDOMObject.h"
 #include "Timer.h"
 
+#include <wtf/Function.h>
 #include <wtf/Seconds.h>
 
 namespace WebCore {
 
-class SuspendableTimer : private TimerBase, public ActiveDOMObject {
+class SuspendableTimerBase : private TimerBase, public ActiveDOMObject {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit SuspendableTimer(ScriptExecutionContext&);
-    virtual ~SuspendableTimer();
+    explicit SuspendableTimerBase(ScriptExecutionContext*);
+    virtual ~SuspendableTimerBase();
 
     // A hook for derived classes to perform cleanup.
     virtual void didStop();
 
-    // Part of TimerBase interface used by SuspendableTimer clients, modified to work when suspended.
+    // Part of TimerBase interface used by SuspendableTimerBase clients, modified to work when suspended.
     bool isActive() const { return TimerBase::isActive() || (m_suspended && m_savedIsActive); }
     bool isSuspended() const { return m_suspended; }
 
@@ -75,6 +76,33 @@ private:
 
     bool m_suspended { false };
     bool m_savedIsActive { false };
+};
+
+class SuspendableTimer final : public SuspendableTimerBase {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    template <typename TimerFiredClass, typename TimerFiredBaseClass>
+    SuspendableTimer(ScriptExecutionContext* context, TimerFiredClass& object, void (TimerFiredBaseClass::*function)())
+        : SuspendableTimerBase(context)
+        , m_function(std::bind(function, &object))
+    {
+    }
+
+    SuspendableTimer(ScriptExecutionContext* context, WTF::Function<void ()>&& function)
+        : SuspendableTimerBase(context)
+        , m_function(WTFMove(function))
+    {
+    }
+
+private:
+    void fired() final
+    {
+        m_function();
+    }
+
+    const char* activeDOMObjectName() const final;
+
+    WTF::Function<void ()> m_function;
 };
 
 } // namespace WebCore

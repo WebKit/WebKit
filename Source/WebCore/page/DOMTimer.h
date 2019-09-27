@@ -40,7 +40,7 @@ class Document;
 class HTMLPlugInElement;
 class ScheduledAction;
 
-class DOMTimer final : public RefCounted<DOMTimer>, public SuspendableTimer {
+class DOMTimer final : public RefCounted<DOMTimer>, public SuspendableTimerBase {
     WTF_MAKE_NONCOPYABLE(DOMTimer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -72,7 +72,7 @@ private:
     bool isDOMTimersThrottlingEnabled(Document&) const;
     void updateThrottlingStateIfNecessary(const DOMTimerFireState&);
 
-    // SuspendableTimer
+    // SuspendableTimerBase
     void fired() override;
     void didStop() override;
     WEBCORE_EXPORT Optional<MonotonicTime> alignedFireTime(MonotonicTime) const override;

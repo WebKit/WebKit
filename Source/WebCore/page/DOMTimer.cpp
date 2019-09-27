@@ -161,7 +161,7 @@ private:
 bool NestedTimersMap::isTrackingNestedTimers = false;
 
 DOMTimer::DOMTimer(ScriptExecutionContext& context, std::unique_ptr<ScheduledAction> action, Seconds interval, bool singleShot)
-    : SuspendableTimer(context)
+    : SuspendableTimerBase(&context)
     , m_nestingLevel(context.timerNestingLevel())
     , m_action(WTFMove(action))
     , m_originalInterval(interval)

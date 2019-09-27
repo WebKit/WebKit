@@ -60,9 +60,10 @@ function runTest()
             return;
           
           clearInterval(interval_id);
-          
-          canvas = w.document.body.appendChild(document.createElement('canvas'));
-          context = canvas.getContext('webgl');
+
+          // Prevent entering PageCache.
+          peerConnection = new w.RTCPeerConnection();
+          peerConnection.addEventListener('onicecandidate', (e) => { });
           
           child_frame = w.document.body.appendChild(document.createElement('iframe'));
           child_frame.contentWindow.onunload = () => {

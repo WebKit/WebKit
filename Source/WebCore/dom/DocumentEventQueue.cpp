@@ -37,10 +37,10 @@
 
 namespace WebCore {
     
-class DocumentEventQueue::Timer final : public SuspendableTimer {
+class DocumentEventQueue::Timer final : public SuspendableTimerBase {
 public:
     Timer(DocumentEventQueue& eventQueue)
-        : SuspendableTimer(eventQueue.m_document)
+        : SuspendableTimerBase(&eventQueue.m_document)
         , m_eventQueue(eventQueue)
     {
     }

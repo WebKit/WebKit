@@ -680,7 +680,7 @@ protected:
 
     static bool s_allowSiteSpecificHacks;
 
-    WebCore::SuspendableTimer* m_closeWindowTimer { nullptr };
+    WebCore::SuspendableTimerBase* m_closeWindowTimer { nullptr };
     std::unique_ptr<TRACKMOUSEEVENT> m_mouseOutTracker;
 
     HWND m_topLevelParent { nullptr };

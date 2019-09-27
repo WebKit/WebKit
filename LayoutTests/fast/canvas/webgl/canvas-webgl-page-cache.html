@@ -1,0 +1,50 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
+<html>
+<head>
+<style>
+#example {
+  width: 100%;
+  height: 100%;
+}
+</style>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test-utils.js"> </script>
+<script>
+description('Tests that a page with a WebGLRenderingContext is able to enter the back/forward cache.');
+jsTestIsAsync = true;
+
+window.addEventListener("pageshow", function(event) {
+  debug("pageshow - " + (event.persisted ? "" : "not ") + "from page cache");
+  if (event.persisted) {
+      testPassed("Page entered page cache");
+      finishJSTest();
+  }
+});
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering page cache");
+    if (!event.persisted) {
+        testFailed("Page failed to enter page cache");
+        finishJSTest();
+    }
+});
+
+function start()
+{
+    canvas = document.getElementById('example');
+    gl = WebGLTestUtils.create3DContext(canvas);
+
+    setTimeout(() => {
+        window.location = "../../history/resources/page-cache-helper.html";
+    }, 0);
+}
+
+testPassed("Canvas did not crash on resize.");
+</script>
+</head>
+
+<body onload="start()">
+    <canvas id="example"></canvas>
+</body>
+</html>
+

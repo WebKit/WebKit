@@ -1,3 +1,51 @@
+2019-09-27  Chris Dumez  <cdumez@apple.com>
+
+        Pages using WebGLRenderingContext fail to enter the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=202318
+        <rdar://problem/55783612>
+
+        Reviewed by Tim Horton.
+
+        Allow pages with a WebGLRenderingContext to enter the back/forward cache by updating the
+        implementation to use SuspendableTimers to fire JS events. This guarantees that no events
+        will be fired (and thus no JS will run) while in the page cache.
+
+        This was preventing some of the pages on weather.com and facebook.com from entering the
+        back/forward cache.
+
+        Test: fast/canvas/webgl/canvas-webgl-page-cache.html
+
+        * dom/DocumentEventQueue.cpp:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::WebGLRenderingContextBase):
+        (WebCore::WebGLRenderingContextBase::canSuspendForDocumentSuspension const):
+        (WebCore::WebGLRenderingContextBase::suspend):
+        (WebCore::WebGLRenderingContextBase::resume):
+        (WebCore::WebGLRenderingContextBase::dispatchContextLostEvent):
+        (WebCore::WebGLRenderingContextBase::maybeRestoreContext):
+        (WebCore::WebGLRenderingContextBase::dispatchContextChangedNotification):
+        (WebCore::WebGLRenderingContextBase::dispatchContextChangedEvent):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::DOMTimer):
+        * page/DOMTimer.h:
+        * page/SuspendableTimer.cpp:
+        (WebCore::SuspendableTimerBase::SuspendableTimerBase):
+        (WebCore::SuspendableTimerBase::hasPendingActivity const):
+        (WebCore::SuspendableTimerBase::stop):
+        (WebCore::SuspendableTimerBase::suspend):
+        (WebCore::SuspendableTimerBase::resume):
+        (WebCore::SuspendableTimerBase::canSuspendForDocumentSuspension const):
+        (WebCore::SuspendableTimerBase::didStop):
+        (WebCore::SuspendableTimerBase::cancel):
+        (WebCore::SuspendableTimerBase::startRepeating):
+        (WebCore::SuspendableTimerBase::startOneShot):
+        (WebCore::SuspendableTimerBase::repeatInterval const):
+        (WebCore::SuspendableTimerBase::augmentFireInterval):
+        (WebCore::SuspendableTimerBase::augmentRepeatInterval):
+        (WebCore::SuspendableTimer::activeDOMObjectName const):
+        * page/SuspendableTimer.h:
+
 2019-09-27  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Fixes for non-unified builds after r249714

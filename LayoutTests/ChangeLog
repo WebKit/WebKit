@@ -1,3 +1,16 @@
+2019-09-27  Chris Dumez  <cdumez@apple.com>
+
+        Pages using WebGLRenderingContext fail to enter the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=202318
+        <rdar://problem/55783612>
+
+        Reviewed by Tim Horton.
+
+        Add layout test coverage.
+
+        * fast/canvas/webgl/canvas-webgl-page-cache-expected.txt: Added.
+        * fast/canvas/webgl/canvas-webgl-page-cache.html: Added.
+
 2019-09-27  Andres Gonzalez  <andresg_22@apple.com>
 
         Support accessibility for <figure> element on iOS.

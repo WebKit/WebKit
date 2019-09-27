@@ -31,19 +31,19 @@
 
 namespace WebCore {
 
-SuspendableTimer::SuspendableTimer(ScriptExecutionContext& context)
-    : ActiveDOMObject(&context)
+SuspendableTimerBase::SuspendableTimerBase(ScriptExecutionContext* context)
+    : ActiveDOMObject(context)
 {
 }
 
-SuspendableTimer::~SuspendableTimer() = default;
+SuspendableTimerBase::~SuspendableTimerBase() = default;
 
-bool SuspendableTimer::hasPendingActivity() const
+bool SuspendableTimerBase::hasPendingActivity() const
 {
     return isActive();
 }
 
-void SuspendableTimer::stop()
+void SuspendableTimerBase::stop()
 {
     if (!m_suspended)
         TimerBase::stop();
@@ -56,7 +56,7 @@ void SuspendableTimer::stop()
     didStop();
 }
 
-void SuspendableTimer::suspend(ReasonForSuspension)
+void SuspendableTimerBase::suspend(ReasonForSuspension)
 {
     ASSERT(!m_suspended);
     m_suspended = true;
@@ -69,7 +69,7 @@ void SuspendableTimer::suspend(ReasonForSuspension)
     }
 }
 
-void SuspendableTimer::resume()
+void SuspendableTimerBase::resume()
 {
     ASSERT(m_suspended);
     m_suspended = false;
@@ -78,16 +78,16 @@ void SuspendableTimer::resume()
         start(m_savedNextFireInterval, m_savedRepeatInterval);
 }
 
-bool SuspendableTimer::canSuspendForDocumentSuspension() const
+bool SuspendableTimerBase::canSuspendForDocumentSuspension() const
 {
     return true;
 }
 
-void SuspendableTimer::didStop()
+void SuspendableTimerBase::didStop()
 {
 }
 
-void SuspendableTimer::cancel()
+void SuspendableTimerBase::cancel()
 {
     if (!m_suspended)
         TimerBase::stop();
@@ -95,7 +95,7 @@ void SuspendableTimer::cancel()
         m_suspended = false;
 }
 
-void SuspendableTimer::startRepeating(Seconds repeatInterval)
+void SuspendableTimerBase::startRepeating(Seconds repeatInterval)
 {
     if (!m_suspended)
         TimerBase::startRepeating(repeatInterval);
@@ -106,7 +106,7 @@ void SuspendableTimer::startRepeating(Seconds repeatInterval)
     }
 }
 
-void SuspendableTimer::startOneShot(Seconds interval)
+void SuspendableTimerBase::startOneShot(Seconds interval)
 {
     if (!m_suspended)
         TimerBase::startOneShot(interval);
@@ -117,7 +117,7 @@ void SuspendableTimer::startOneShot(Seconds interval)
     }
 }
 
-Seconds SuspendableTimer::repeatInterval() const
+Seconds SuspendableTimerBase::repeatInterval() const
 {
     if (!m_suspended)
         return TimerBase::repeatInterval();
@@ -126,7 +126,7 @@ Seconds SuspendableTimer::repeatInterval() const
     return 0_s;
 }
 
-void SuspendableTimer::augmentFireInterval(Seconds delta)
+void SuspendableTimerBase::augmentFireInterval(Seconds delta)
 {
     if (!m_suspended)
         TimerBase::augmentFireInterval(delta);
@@ -139,7 +139,7 @@ void SuspendableTimer::augmentFireInterval(Seconds delta)
     }
 }
 
-void SuspendableTimer::augmentRepeatInterval(Seconds delta)
+void SuspendableTimerBase::augmentRepeatInterval(Seconds delta)
 {
     if (!m_suspended)
         TimerBase::augmentRepeatInterval(delta);
@@ -151,6 +151,11 @@ void SuspendableTimer::augmentRepeatInterval(Seconds delta)
         m_savedNextFireInterval = delta;
         m_savedRepeatInterval = delta;
     }
+}
+
+const char* SuspendableTimer::activeDOMObjectName() const
+{
+    return "SuspendableTimer";
 }
 
 } // namespace WebCore
