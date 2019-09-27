@@ -2710,7 +2710,10 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)_willStartScrollingOrZooming
 {
-    [_textSelectionAssistant willStartScrollingOverflow];
+    if ([_textSelectionAssistant respondsToSelector:@selector(willStartScrollingOrZooming)])
+        [_textSelectionAssistant willStartScrollingOrZooming];
+    else
+        [_textSelectionAssistant willStartScrollingOverflow];
     _page->setIsScrollingOrZooming(true);
 
 #if PLATFORM(WATCHOS)
@@ -2730,7 +2733,10 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 - (void)_didEndScrollingOrZooming
 {
     if (!_needsDeferredEndScrollingSelectionUpdate) {
-        [_textSelectionAssistant didEndScrollingOverflow];
+        if ([_textSelectionAssistant respondsToSelector:@selector(didEndScrollingOrZooming)])
+            [_textSelectionAssistant didEndScrollingOrZooming];
+        else
+            [_textSelectionAssistant didEndScrollingOverflow];
     }
     _page->setIsScrollingOrZooming(false);
 

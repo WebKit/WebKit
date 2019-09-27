@@ -1,5 +1,70 @@
 2019-09-27  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r250365. rdar://problem/55770710
+
+    Update selections after scrolling for iframes and hide selections while iframes and overflow scrolls are scrolling.
+    https://bugs.webkit.org/show_bug.cgi?id=202125
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    Test: editing/selection/ios/update-selection-after-iframe-scroll.html
+    
+    When we end scrolling, make sure that iframes get a final update to ensure that the
+    selection is in the correct position. Pipe that to WebKit/UIProcess via
+    frame specific plath.
+    
+    * loader/EmptyClients.cpp:
+    * page/EditorClient.h:
+    * page/scrolling/AsyncScrollingCoordinator.cpp:
+    (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+    
+    Source/WebKit:
+    
+    Add additional calls into UIKit differentiate between main frame scrolling and overflow/iframe scrolling.
+    Add piping for iframe specific scrolling.
+    
+    * Platform/spi/ios/UIKitSPI.h:
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView _willStartScrollingOrZooming]):
+    (-[WKContentView _didEndScrollingOrZooming]):
+    * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+    (WebKit::WebEditorClient::subFrameScrollPositionChanged):
+    * WebProcess/WebCoreSupport/WebEditorClient.h:
+    * WebProcess/WebCoreSupport/ios/WebEditorClientIOS.mm:
+    (WebKit::WebEditorClient::subFrameScrollPositionChanged):
+    
+    Source/WebKitLegacy/mac:
+    
+    Filling out unused functions needed for new fix.
+    
+    * WebCoreSupport/WebEditorClient.h:
+    
+    LayoutTests:
+    
+    Test that an iframe selection is updated after a scroll is completed.
+    
+    * editing/selection/ios/update-selection-after-iframe-scroll-expected.txt: Added.
+    * editing/selection/ios/update-selection-after-iframe-scroll.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250365 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-09-25  Megan Gardner  <megan_gardner@apple.com>
+
+            Update selections after scrolling for iframes and hide selections while iframes and overflow scrolls are scrolling.
+            https://bugs.webkit.org/show_bug.cgi?id=202125
+
+            Reviewed by Tim Horton.
+
+            Test that an iframe selection is updated after a scroll is completed.
+
+            * editing/selection/ios/update-selection-after-iframe-scroll-expected.txt: Added.
+            * editing/selection/ios/update-selection-after-iframe-scroll.html: Added.
+
+2019-09-27  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r250361. rdar://problem/55770728
 
     Page temporarily jumps to an excessively small viewport scale while loading usatoday.com

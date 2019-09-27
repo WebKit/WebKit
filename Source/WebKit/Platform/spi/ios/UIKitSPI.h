@@ -1085,6 +1085,11 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
+@interface UITextInteractionAssistant (Staging_55645619)
+- (void)didEndScrollingOrZooming;
+- (void)willStartScrollingOrZooming;
+@end
+
 @interface UIGestureRecognizer (Staging_45970040)
 @property (nonatomic, readonly, getter=_modifierFlags) UIKeyModifierFlags modifierFlags;
 @end

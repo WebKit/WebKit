@@ -215,6 +215,7 @@ private:
     void textWillBeDeletedInTextField(Element*) final { }
     void textDidChangeInTextArea(Element*) final { }
     void overflowScrollPositionChanged() final { }
+    void subFrameScrollPositionChanged() final { }
 
 #if PLATFORM(IOS_FAMILY)
     void startDelayingAndCoalescingContentChangeNotifications() final { }

@@ -112,6 +112,7 @@ private:
     void textWillBeDeletedInTextField(WebCore::Element*) final;
     void textDidChangeInTextArea(WebCore::Element*) final;
     void overflowScrollPositionChanged() final;
+    void subFrameScrollPositionChanged() final;
 
 #if PLATFORM(COCOA)
     void setInsertionPasteboard(const String& pasteboardName) final;
