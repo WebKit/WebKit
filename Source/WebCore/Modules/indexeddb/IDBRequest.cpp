@@ -262,7 +262,7 @@ const char* IDBRequest::activeDOMObjectName() const
 bool IDBRequest::canSuspendForDocumentSuspension() const
 {
     ASSERT(&originThread() == &Thread::current());
-    return false;
+    return true;
 }
 
 bool IDBRequest::hasPendingActivity() const

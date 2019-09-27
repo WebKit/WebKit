@@ -1,3 +1,16 @@
+2019-09-27  Chris Dumez  <cdumez@apple.com>
+
+        IDBRequest should not prevent a page from entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=202270
+        <rdar://problem/55744717>
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * storage/indexeddb/IDBRequest-page-cache-expected.txt: Added.
+        * storage/indexeddb/IDBRequest-page-cache.html: Added.
+
 2019-09-27  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused WebProcessPool::setCanHandleHTTPSServerTrustEvaluation
