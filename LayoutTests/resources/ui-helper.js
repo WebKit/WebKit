@@ -1043,4 +1043,18 @@ window.UIHelper = class UIHelper {
             })();`, resolve);
         });
     }
+
+    static async waitForSelectionToAppear() {
+        while (true) {
+            if ((await this.getUISelectionViewRects()).length > 0)
+                break;
+        }
+    }
+
+    static async waitForSelectionToDisappear() {
+        while (true) {
+            if (!(await this.getUISelectionViewRects()).length)
+                break;
+        }
+    }
 }
