@@ -1,5 +1,113 @@
 2019-09-27  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r250300. rdar://problem/55770718
+
+    Mixed content blocking is bypassed for WebSockets in Workers (159726)
+    https://bugs.webkit.org/show_bug.cgi?id=159726
+    <rdar://problem/27326438>
+    
+    Patch by Kate Cheney <katherine_cheney@apple.com> on 2019-09-24
+    Reviewed by Brady Eidson.
+    
+    Source/WebCore:
+    
+    Tests: http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https-with-embedded-http.html
+           http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https.html
+           http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-https-with-embedded-http-with-embedded-https.https.html
+           http/tests/websocket/tests/hybi/non-document-mixed-content-blocked.https.html
+    
+    * Modules/websockets/WebSocket.cpp:
+    (WebCore::WebSocket::connect):
+    * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+    (WebCore::WorkerThreadableWebSocketChannel::Bridge::connect):
+    * loader/MixedContentChecker.cpp:
+    (WebCore::MixedContentChecker::checkForMixedContentInFrameTree):
+    * loader/MixedContentChecker.h:
+    Patch to block insecure WebSocket URL connection attempts by Workers
+    on secure pages. If the URL is ws, and any embedding iframe has protocol
+    https, and the context is a Worker, the connection should be blocked.
+    
+    I was unable to write a test case to hit the case where a document
+    does not have a frame and tries to communicate via a worker to
+    connect to a WebSocket because after removing the subframe from its
+    parent, the subframe is unable to perform a postMessage to a worker
+    even in the same script execution to tell the worker to connect
+    to a WebSocket.
+    
+    LayoutTests:
+    
+    Added 4 test cases and 2 html resources utilized by the tests.
+    The cases test the following:
+    1. an https page with a worker trying to connect via ws: url -->
+    fails.
+    2. an https page embedded in an http page trying to connect via ws
+    :url (through a worker) --> fails.
+    3. an http page embedded in an https page with an http top frame
+    trying to connect via an insecure ws url fails.
+    4. an https page embedded in an http page embedded in an https page
+    trying to connect to a ws :url via a worker --> fails.
+    
+    * http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https-expected.txt: Added.
+    * http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https-with-embedded-http-expected.txt: Added.
+    * http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https-with-embedded-http.html: Added.
+    * http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https.html: Added.
+    * http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-https-with-embedded-http-with-embedded-https.https-expected.txt: Added.
+    * http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-https-with-embedded-http-with-embedded-https.https.html: Added.
+    * http/tests/websocket/tests/hybi/non-document-mixed-content-blocked.https-expected.txt: Added.
+    * http/tests/websocket/tests/hybi/non-document-mixed-content-blocked.https.html: Added.
+    * http/tests/websocket/tests/hybi/resources/non-document-mixed-content-blocked-embedded-http.https.html: Added.
+    * http/tests/websocket/tests/hybi/resources/non-document-mixed-content-blocked-embedding-https.js: Added.
+    (handleConnect.self.postMessage):
+    (handleConnect):
+    (runTests.ws.onopen):
+    (runTests.ws.onerror):
+    (runTests):
+    * http/tests/websocket/tests/hybi/resources/non-document-mixed-content-blocked.html: Added.
+    * http/tests/websocket/tests/hybi/resources/non-document-mixed-content-blocked.js: Added.
+    (handleConnect.self.postMessage):
+    (handleConnect):
+    (runTests.ws.onopen):
+    (runTests.ws.onerror):
+    (runTests):
+    * http/tests/workers/service/resources/serviceworker-websocket-worker.js:
+    (async.doTest):
+    Updated previous test which was hitting the fix to use a wss url
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250300 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-09-24  Kate Cheney  <katherine_cheney@apple.com>
+
+            Mixed content blocking is bypassed for WebSockets in Workers (159726)
+            https://bugs.webkit.org/show_bug.cgi?id=159726
+            <rdar://problem/27326438>
+
+            Reviewed by Brady Eidson.
+
+            Tests: http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https-with-embedded-http.html
+                   http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https.html
+                   http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-https-with-embedded-http-with-embedded-https.https.html
+                   http/tests/websocket/tests/hybi/non-document-mixed-content-blocked.https.html
+
+            * Modules/websockets/WebSocket.cpp:
+            (WebCore::WebSocket::connect):
+            * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+            (WebCore::WorkerThreadableWebSocketChannel::Bridge::connect):
+            * loader/MixedContentChecker.cpp:
+            (WebCore::MixedContentChecker::checkForMixedContentInFrameTree):
+            * loader/MixedContentChecker.h:
+            Patch to block insecure WebSocket URL connection attempts by Workers
+            on secure pages. If the URL is ws, and any embedding iframe has protocol
+            https, and the context is a Worker, the connection should be blocked.
+
+            I was unable to write a test case to hit the case where a document
+            does not have a frame and tries to communicate via a worker to
+            connect to a WebSocket because after removing the subframe from its
+            parent, the subframe is unable to perform a postMessage to a worker
+            even in the same script execution to tell the worker to connect
+            to a WebSocket.
+
+2019-09-27  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r250290. rdar://problem/55770704
 
     AudioTrackPrivateMediaStreamCocoa does not need to manipulate the audio unit in play/pause methods
