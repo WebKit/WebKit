@@ -555,6 +555,18 @@ bool Quirks::shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation() con
     return equalLettersIgnoringASCIICase(host, "att.com") || host.endsWithIgnoringASCIICase(".att.com");
 }
 
+bool Quirks::shouldIgnoreAriaForFastPathContentObservationCheck() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (!needsQuirks())
+        return false;
+
+    auto host = m_document->url().host();
+    return equalLettersIgnoringASCIICase(host, "www.ralphlauren.com");
+#endif
+    return false;
+}
+
 bool Quirks::shouldOpenAsAboutBlank(const String& stringToOpen) const
 {
 #if PLATFORM(IOS_FAMILY)

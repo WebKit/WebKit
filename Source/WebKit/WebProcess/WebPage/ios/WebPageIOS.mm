@@ -600,18 +600,6 @@ static void dispatchSyntheticMouseMove(Frame& mainFrame, const WebCore::FloatPoi
     mainFrame.eventHandler().dispatchSyntheticMouseMove(mouseEvent);
 }
 
-static bool nodeTriggersFastPath(const Node& targetNode)
-{
-    if (!is<Element>(targetNode))
-        return false;
-
-    if (is<HTMLFormControlElement>(targetNode))
-        return true;
-
-    auto ariaRole = AccessibilityObject::ariaRoleToWebCoreRole(downcast<Element>(targetNode).getAttribute(HTMLNames::roleAttr));
-    return AccessibilityObject::isARIAControl(ariaRole) || AccessibilityObject::isARIAInput(ariaRole);
-}
-
 void WebPage::generateSyntheticEditingCommand(SyntheticEditingCommandType command)
 {
     PlatformKeyboardEvent keyEvent;
@@ -707,9 +695,19 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
         return;
     }
 
-    auto observedContentChange = contentChangeObserver.observedContentChange();
+    auto nodeTriggersFastPath = [&](auto& targetNode) {
+        if (!is<Element>(targetNode))
+            return false;
+        if (is<HTMLFormControlElement>(targetNode))
+            return true;
+        if (targetNode.document().quirks().shouldIgnoreAriaForFastPathContentObservationCheck())
+            return false;
+        auto ariaRole = AccessibilityObject::ariaRoleToWebCoreRole(downcast<Element>(targetNode).getAttribute(HTMLNames::roleAttr));
+        return AccessibilityObject::isARIAControl(ariaRole) || AccessibilityObject::isARIAInput(ariaRole);
+    };
     auto targetNodeTriggersFastPath = nodeTriggersFastPath(nodeRespondingToClick);
 
+    auto observedContentChange = contentChangeObserver.observedContentChange();
     auto continueContentObservation = !(observedContentChange == WKContentVisibilityChange || targetNodeTriggersFastPath);
     if (continueContentObservation) {
         // Wait for callback to completePendingSyntheticClickForContentChangeObserver() to decide whether to send the click event.
