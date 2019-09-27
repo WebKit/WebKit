@@ -1,3 +1,16 @@
+2019-09-27  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused APIProcessPoolConfiguration::diskCacheSpeculativeValidationEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=202290
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKProcessPoolConfiguration.mm:
+        (TEST):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::websiteDataStore):
+        (WTR::TestController::generatePageConfiguration):
+
 2019-09-27  Youenn Fablet  <youenn@apple.com>
 
         Make IsNSURLSessionWebSocketEnabled an experimental flag

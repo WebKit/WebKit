@@ -409,9 +409,8 @@ void WKContextSetCustomWebContentServiceBundleIdentifier(WKContextRef contextRef
     WebKit::toImpl(contextRef)->setCustomWebContentServiceBundleIdentifier(WebKit::toImpl(name)->string());
 }
 
-void WKContextSetDiskCacheSpeculativeValidationEnabled(WKContextRef contextRef, bool value)
+void WKContextSetDiskCacheSpeculativeValidationEnabled(WKContextRef, bool)
 {
-    WebKit::toImpl(contextRef)->configuration().setDiskCacheSpeculativeValidationEnabled(value);
 }
 
 void WKContextPreconnectToServer(WKContextRef, WKURLRef)

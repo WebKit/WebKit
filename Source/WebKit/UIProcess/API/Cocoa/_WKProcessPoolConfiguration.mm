@@ -109,12 +109,11 @@
 
 - (BOOL)diskCacheSpeculativeValidationEnabled
 {
-    return _processPoolConfiguration->diskCacheSpeculativeValidationEnabled();
+    return NO;
 }
 
 - (void)setDiskCacheSpeculativeValidationEnabled:(BOOL)enabled
 {
-    _processPoolConfiguration->setDiskCacheSpeculativeValidationEnabled(enabled);
 }
 
 - (BOOL)ignoreSynchronousMessagingTimeoutsForTesting

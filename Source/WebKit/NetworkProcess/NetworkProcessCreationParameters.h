@@ -54,9 +54,6 @@ struct NetworkProcessCreationParameters {
     CacheModel cacheModel { CacheModel::DocumentViewer };
     bool canHandleHTTPSServerTrustEvaluation { true };
 
-#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    bool shouldEnableNetworkCacheSpeculativeRevalidation { false };
-#endif
 #if PLATFORM(MAC)
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
 #endif

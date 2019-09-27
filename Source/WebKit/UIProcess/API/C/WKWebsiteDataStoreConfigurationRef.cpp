@@ -119,3 +119,13 @@ void WKWebsiteDataStoreConfigurationSetPerOriginStorageQuota(WKWebsiteDataStoreC
 {
     return WebKit::toImpl(configuration)->setPerOriginStorageQuota(quota);
 }
+
+bool WKWebsiteDataStoreConfigurationGetNetworkCacheSpeculativeValidationEnabled(WKWebsiteDataStoreConfigurationRef configuration)
+{
+    return WebKit::toImpl(configuration)->networkCacheSpeculativeValidationEnabled();
+}
+
+void WKWebsiteDataStoreConfigurationSetNetworkCacheSpeculativeValidationEnabled(WKWebsiteDataStoreConfigurationRef configuration, bool enabled)
+{
+    return WebKit::toImpl(configuration)->setNetworkCacheSpeculativeValidationEnabled(enabled);
+}

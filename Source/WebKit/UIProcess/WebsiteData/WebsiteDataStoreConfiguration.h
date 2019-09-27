@@ -143,6 +143,9 @@ private:
     String m_webSQLDatabaseDirectory;
 #if USE(GLIB)
     String m_hstsStorageDirectory;
+    bool m_networkCacheSpeculativeValidationEnabled { true };
+#else
+    bool m_networkCacheSpeculativeValidationEnabled { false };
 #endif
     String m_localStorageDirectory;
     String m_mediaKeysStorageDirectory;
@@ -160,7 +163,6 @@ private:
     bool m_allLoadsBlockedByDeviceManagementRestrictionsForTesting { false };
     bool m_allowsCellularAccess { true };
     bool m_fastServerTrustEvaluationEnabled { false };
-    bool m_networkCacheSpeculativeValidationEnabled { false };
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
 #endif

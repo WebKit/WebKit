@@ -44,7 +44,6 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
 {
     auto copy = this->create();
 
-    copy->m_diskCacheSpeculativeValidationEnabled = this->m_diskCacheSpeculativeValidationEnabled;
     copy->m_injectedBundlePath = this->m_injectedBundlePath;
     copy->m_customClassesForParameterCoder = this->m_customClassesForParameterCoder;
     copy->m_cachePartitionedURLSchemes = this->m_cachePartitionedURLSchemes;

@@ -1,3 +1,33 @@
+2019-09-27  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused APIProcessPoolConfiguration::diskCacheSpeculativeValidationEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=202290
+
+        Reviewed by Carlos Garcia Campos.
+
+        The SPI to set this was deprecated in r250377 with a replacement that was adopted in rdar://problem/55731135
+
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetDiskCacheSpeculativeValidationEnabled):
+        * UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.cpp:
+        (WKWebsiteDataStoreConfigurationGetNetworkCacheSpeculativeValidationEnabled):
+        (WKWebsiteDataStoreConfigurationSetNetworkCacheSpeculativeValidationEnabled):
+        * UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration diskCacheSpeculativeValidationEnabled]):
+        (-[_WKProcessPoolConfiguration setDiskCacheSpeculativeValidationEnabled:]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
 2019-09-27  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordinatedGraphics] support bounds origin

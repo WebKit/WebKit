@@ -524,6 +524,7 @@ WKWebsiteDataStoreRef TestController::websiteDataStore()
             WKWebsiteDataStoreConfigurationSetMediaKeysStorageDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "MediaKeys").get());
             WKWebsiteDataStoreConfigurationSetResourceLoadStatisticsDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "ResourceLoadStatistics").get());
             WKWebsiteDataStoreConfigurationSetPerOriginStorageQuota(configuration.get(), 400 * 1024);
+            WKWebsiteDataStoreConfigurationSetNetworkCacheSpeculativeValidationEnabled(configuration.get(), true);
         }
         dataStore = WKWebsiteDataStoreCreateWithConfiguration(configuration.get());
     }
@@ -548,7 +549,6 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
             WKContextSetIconDatabasePath(m_context.get(), toWK(emptyString()).get());
         }
 
-        WKContextSetDiskCacheSpeculativeValidationEnabled(m_context.get(), true);
         WKContextUseTestingNetworkSession(m_context.get());
         WKContextSetCacheModel(m_context.get(), kWKCacheModelDocumentBrowser);
 

@@ -131,11 +131,6 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
     g_resolver_set_default(cachedResolver.get());
 
     m_cacheOptions = { NetworkCache::CacheOption::RegisterNotify };
-#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    if (parameters.shouldEnableNetworkCacheSpeculativeRevalidation)
-        m_cacheOptions.add(NetworkCache::CacheOption::SpeculativeRevalidation);
-#endif
-
     supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(parameters.cookieAcceptPolicy, OptionalCallbackID());
 
     if (!parameters.languages.isEmpty())

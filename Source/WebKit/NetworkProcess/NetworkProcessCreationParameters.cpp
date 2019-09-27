@@ -41,9 +41,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 {
     encoder.encodeEnum(cacheModel);
     encoder << canHandleHTTPSServerTrustEvaluation;
-#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    encoder << shouldEnableNetworkCacheSpeculativeRevalidation;
-#endif
 #if PLATFORM(MAC)
     encoder << uiProcessCookieStorageIdentifier;
 #endif
@@ -100,10 +97,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.canHandleHTTPSServerTrustEvaluation))
         return false;
 
-#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    if (!decoder.decode(result.shouldEnableNetworkCacheSpeculativeRevalidation))
-        return false;
-#endif
 #if PLATFORM(MAC)
     if (!decoder.decode(result.uiProcessCookieStorageIdentifier))
         return false;
