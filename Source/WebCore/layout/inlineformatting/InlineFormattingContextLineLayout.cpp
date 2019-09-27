@@ -285,7 +285,7 @@ void InlineFormattingContext::InlineLayout::layout(const InlineItems& inlineItem
         auto lineLayout = LineLayout { formattingContext(), lineInput };
 
         auto lineContent = lineLayout.layout();
-        createDisplayRuns(lineContent);
+        setupDisplayBoxes(lineContent);
 
         if (lineContent.lastCommitted) {
             currentInlineItem = { lineContent.lastCommitted->index + 1, WTF::nullopt };
@@ -358,7 +358,7 @@ LayoutUnit InlineFormattingContext::InlineLayout::computedIntrinsicWidth(const I
     return maximumLineWidth;
 }
 
-void InlineFormattingContext::InlineLayout::createDisplayRuns(const LineContent& lineContent)
+void InlineFormattingContext::InlineLayout::setupDisplayBoxes(const LineContent& lineContent)
 {
     auto& formattingContext = this->formattingContext();
     auto& formattingState = this->formattingState();
@@ -381,40 +381,16 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const LineContent&
     // 9.4.2 Inline formatting contexts
     // A line box is always tall enough for all of the boxes it contains.
 
-    // Create final display runs.
-    auto& lineRuns = lineContent.runList;
-    for (unsigned index = 0; index < lineRuns.size(); ++index) {
-        auto& run = lineRuns.at(index);
+    // Add final display runs to state.
+    for (auto& lineRun : lineContent.runList) {
         // Inline level containers (<span>) don't generate inline runs.
-        if (run->isContainerStart() || run->isContainerEnd())
+        if (lineRun->isContainerStart() || lineRun->isContainerEnd())
             continue;
-        auto& logicalRect = run->logicalRect();
-        // Inline level box (replaced or inline-block) or <br>/<wbr>
-        if (run->isLineBreak() || run->isBox()) {
-            formattingState.addInlineRun(run->displayRun());
-            continue;
-        }
-        if (run->isText()) {
-            // Collapsed line runs don't generate display runs.
-            if (run->isVisuallyEmpty())
-                continue;
-            // Try to join multiple text runs when possible.
-            const Line::Run* previousRun = !index ? nullptr : lineRuns[index - 1].get();
-            auto previousRunCanBeExtended = previousRun && previousRun->canBeExtended();
-            auto currentRunCanBeMergedWithPrevious = !previousRun || &run->layoutBox() == &previousRun->layoutBox();
-
-            if (previousRunCanBeExtended && currentRunCanBeMergedWithPrevious) {
-                auto& previousDisplayRun = formattingState.inlineRuns().last();
-                previousDisplayRun.expandHorizontally(logicalRect.width());
-                previousDisplayRun.textContext()->expand(run->displayRun().textContext()->length());
-            } else
-                formattingState.addInlineRun(run->displayRun());
-            continue;
-        }
-        ASSERT_NOT_REACHED();
+        formattingState.addInlineRun(lineRun->displayRun());
     }
 
     auto geometry = formattingContext.geometry();
+    auto& lineRuns = lineContent.runList;
     for (unsigned index = 0; index < lineRuns.size(); ++index) {
         auto& lineRun = lineRuns.at(index);
         auto& logicalRect = lineRun->logicalRect();
@@ -458,7 +434,6 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const LineContent&
             continue;
         }
 
-        // Text content. Try to join multiple text runs when possible.
         if (lineRun->isText()) {
             const Line::Run* previousLineRun = !index ? nullptr : lineRuns[index - 1].get();
             // FIXME take content breaking into account when part of the layout box is on the previous line.

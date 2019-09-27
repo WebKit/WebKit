@@ -159,6 +159,31 @@ Line::RunList Line::close()
             run->moveHorizontally(this->logicalLeft());
         }
     }
+
+    // Let's join text runs together when possible.
+    // FIXME: Check if we can do it as part of the loop above.
+    unsigned index = 1;
+    while (index < m_runList.size()) {
+        auto& previousRun = m_runList[index - 1];
+        if (!previousRun->canBeExtended()) {
+            ++index;
+            continue;
+        }
+        auto& currentRun = m_runList[index];
+        if (&currentRun->layoutBox() != &previousRun->layoutBox()) {
+            // Do not merge runs from different boxes (<span>foo</span><span>bar</span>).
+            ++index;
+            continue;
+        }
+        // Only text content can be extended atm.
+        ASSERT(previousRun->isText());
+        ASSERT(currentRun->isText());
+        auto& previousDisplayRun = previousRun->displayRun();
+        auto& currentDisplayRun = currentRun->displayRun();
+        previousDisplayRun.expandHorizontally(currentDisplayRun.logicalWidth());
+        previousDisplayRun.textContext()->expand(currentDisplayRun.textContext()->length());
+        m_runList.remove(index);
+    }
     return WTFMove(m_runList);
 }
 

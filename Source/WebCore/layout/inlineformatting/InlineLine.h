@@ -69,6 +69,7 @@ public:
         Run(const InlineItem&, const Display::Run&);
 
         const Display::Run& displayRun() const { return m_displayRun; }
+        Display::Run& displayRun() { return m_displayRun; }
         const Box& layoutBox() const { return m_inlineItem.layoutBox(); }
 
         const Display::Rect& logicalRect() const { return m_displayRun.logicalRect(); }

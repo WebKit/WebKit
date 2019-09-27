@@ -74,8 +74,8 @@ struct Run {
     void setLogicalRight(LayoutUnit logicalRight) { m_logicalRect.shiftRightTo(logicalRight); }
     void moveVertically(LayoutUnit delta) { m_logicalRect.moveVertically(delta); }
     void moveHorizontally(LayoutUnit delta) { m_logicalRect.moveHorizontally(delta); }
-    void expandVertically(LayoutUnit delta) { m_logicalRect.expand(0, delta); }
-    void expandHorizontally(LayoutUnit delta) { m_logicalRect.expand(delta, 0); }
+    void expandVertically(LayoutUnit delta) { m_logicalRect.expandVertically(delta); }
+    void expandHorizontally(LayoutUnit delta) { m_logicalRect.expandHorizontally(delta); }
 
     void setTextContext(TextContext textContext) { m_textContext.emplace(textContext); }
     Optional<TextContext>& textContext() { return m_textContext; }

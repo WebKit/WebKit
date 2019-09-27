@@ -1,3 +1,27 @@
+2019-09-27  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Line::close should merge the text runs.
+        https://bugs.webkit.org/show_bug.cgi?id=202319
+        <rdar://problem/55785949>
+
+        Reviewed by Antti Koivisto.
+
+        Now Line::close returns the final Display::Run list.
+
+        * layout/displaytree/DisplayRect.h:
+        (WebCore::Display::Rect::expandHorizontally):
+        (WebCore::Display::Rect::expandVertically):
+        (WebCore::Display::Rect::expand):
+        * layout/displaytree/DisplayRun.h:
+        (WebCore::Display::Run::expandVertically):
+        (WebCore::Display::Run::expandHorizontally):
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::createDisplayRuns):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::close):
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Run::displayRun):
+
 2019-09-27  Chris Dumez  <cdumez@apple.com>
 
         Allow pages served over HTTPS with `Cache-Control: no-store` header to enter the back/forward cache

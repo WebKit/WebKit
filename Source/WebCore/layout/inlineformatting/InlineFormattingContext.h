@@ -67,7 +67,7 @@ private:
         LayoutUnit widthConstraint() const { return m_usedHorizontalValues.constraints.width; }
 
         LineContent placeInlineItems(const LineInput&) const;
-        void createDisplayRuns(const LineContent&);
+        void setupDisplayBoxes(const LineContent&);
         void alignRuns(TextAlignMode, InlineRuns&, unsigned firstRunIndex, LayoutUnit availableWidth) const;
 
     private:
