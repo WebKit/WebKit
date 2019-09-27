@@ -1,3 +1,19 @@
+2019-09-27  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt new UIWebGeolocationPolicyDecider SPI to pass a view instead of a window
+        https://bugs.webkit.org/show_bug.cgi?id=202329
+        <rdar://problem/25963823>
+
+        Reviewed by Wenson Hsieh.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKGeolocationProviderIOS.mm:
+        (-[WKGeolocationProviderIOS geolocationAuthorizationGranted]):
+        * UIProcess/ios/WKGeolocationProviderIOSObjCSecurityOrigin.mm:
+        (WebKit::decidePolicyForGeolocationRequestFromOrigin):
+        Switch to newer SPI that takes a UIView instead of a UIWindow, so that
+        UIWebGeolocationPolicyDecider can find the correct presenting view controller.
+
 2019-09-27  Zalan Bujtas  <zalan@apple.com>
 
         [iPadOS] Can’t use RalphLauren.com on iPad because hover menus don’t stay up
