@@ -1,3 +1,24 @@
+2019-09-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [iOS]: When inserting a photo and then inserting auto-corrected text, the photo is removed
+        https://bugs.webkit.org/show_bug.cgi?id=202294
+
+        Reviewed by Wenson Hsieh.
+
+        WebPage::applyAutocorrectionInternal() calls wordRangeFromPosition() to
+        calculate the range of the word to be replaced with the auto-corrected
+        word. But if the text of the range does not match the original text,
+        applyAutocorrectionInternal() tries to correct the range by moving it
+        forward such that the length of the text range matches the length of the
+        original text.
+
+        Another case, which should correct the range also, is: the range does not
+        have a text but it is not collapsed. In this case, we should set the range
+        back to the selection range so non-text nodes is removed.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::applyAutocorrectionInternal):
+
 2019-09-27  John Wilander  <wilander@apple.com>
 
         Storage Access API: document.hasStorageAccess() should return false by default

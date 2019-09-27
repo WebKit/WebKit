@@ -2371,6 +2371,9 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
         VisiblePosition position = frame.selection().selection().start();
         range = wordRangeFromPosition(position);
         textForRange = plainTextReplacingNoBreakSpace(range.get());
+        
+        // If 'originalText' is not the same as 'textForRange' we need to move 'range'
+        // forward such that it matches the original selection as much as possible.
         if (foldQuoteMarks(textForRange) != originalTextWithFoldedQuoteMarks) {
             // Search for the original text before the selection caret.
             for (size_t i = 0; i < originalText.length(); ++i)
@@ -2378,8 +2381,7 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
             if (position.isNull())
                 position = startOfDocument(static_cast<Node*>(frame.document()->documentElement()));
             range = Range::create(*frame.document(), position, frame.selection().selection().start());
-            if (range)
-                textForRange = (range) ? plainTextReplacingNoBreakSpace(range.get()) : emptyString();
+            textForRange = plainTextReplacingNoBreakSpace(range.get());
             unsigned loopCount = 0;
             const unsigned maxPositionsAttempts = 10;
             while (textForRange.length() && textForRange.length() > originalText.length() && loopCount < maxPositionsAttempts) {
@@ -2388,9 +2390,15 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
                     range = nullptr;
                 else
                     range = Range::create(*frame.document(), position, frame.selection().selection().start());
-                textForRange = (range) ? plainTextReplacingNoBreakSpace(range.get()) : emptyString();
+                textForRange = plainTextReplacingNoBreakSpace(range.get());
                 loopCount++;
             }
+        } else if (textForRange.isEmpty() && range && !range->collapsed()) {
+            // If 'range' does not include any text but it is not collapsed, we need to set
+            // 'range' to match the selection. Otherwise non-text nodes will be removed.
+            range = Range::create(*frame.document(), position, position);
+            if (!range)
+                return false;
         }
     } else {
         // Range selection.
