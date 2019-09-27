@@ -397,11 +397,11 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const LineContent&
         if (run->isText()) {
             // Collapsed line runs don't generate display runs.
             auto textContext = run->textContext();
-            if (textContext->isCollapsed)
+            if (run->isVisuallyEmpty())
                 continue;
             // Try to join multiple text runs when possible.
             const Line::Run* previousRun = !index ? nullptr : lineRuns[index - 1].get();
-            auto previousRunCanBeExtended = previousRun && previousRun->textContext() ? previousRun->textContext()->canBeExtended : false;
+            auto previousRunCanBeExtended = previousRun && previousRun->canBeExtended();
             auto currentRunCanBeMergedWithPrevious = !previousRun || &run->layoutBox() == &previousRun->layoutBox();
 
             if (previousRunCanBeExtended && currentRunCanBeMergedWithPrevious) {
@@ -461,18 +461,18 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const LineContent&
 
         // Text content. Try to join multiple text runs when possible.
         if (lineRun->isText()) {
-            auto textContext = lineRun->textContext();
             const Line::Run* previousLineRun = !index ? nullptr : lineRuns[index - 1].get();
             // FIXME take content breaking into account when part of the layout box is on the previous line.
             auto firstInlineRunForLayoutBox = !previousLineRun || &previousLineRun->layoutBox() != &layoutBox;
+            auto logicalWidth = lineRun->isVisuallyEmpty() ? LayoutUnit() : logicalRect.width();
             if (firstInlineRunForLayoutBox) {
                 // Setup display box for the associated layout box.
                 displayBox.setTopLeft(logicalRect.topLeft());
-                displayBox.setContentBoxWidth(textContext->isCollapsed ? LayoutUnit() : logicalRect.width());
+                displayBox.setContentBoxWidth(logicalWidth);
                 displayBox.setContentBoxHeight(logicalRect.height());
-            } else if (!textContext->isCollapsed) {
+            } else {
                 // FIXME fix it for multirun/multiline.
-                displayBox.setContentBoxWidth(displayBox.contentBoxWidth() + logicalRect.width());
+                displayBox.setContentBoxWidth(displayBox.contentBoxWidth() + logicalWidth);
             }
             continue;
         }

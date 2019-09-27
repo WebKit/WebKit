@@ -1,3 +1,29 @@
+2019-09-27  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Remove redundant Line::TextContext member variables
+        https://bugs.webkit.org/show_bug.cgi?id=202300
+        <rdar://problem/55769916>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for using Display::Run in Line::Run instead of Display::Rect + TextContext.
+
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::createDisplayRuns):
+        * layout/inlineformatting/InlineFormattingContextQuirks.cpp:
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineDescentNeedsCollapsing const):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::Run::isWhitespace const):
+        (WebCore::Layout::Line::Run::canBeExtended const):
+        (WebCore::Layout::Line::isVisuallyEmpty const):
+        (WebCore::Layout::Line::removeTrailingTrimmableContent):
+        (WebCore::Layout::Line::trailingTrimmableWidth const):
+        (WebCore::Layout::Line::appendTextContent):
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Run::isVisuallyEmpty const):
+        (WebCore::Layout::Line::Run::setVisuallyIsEmpty):
+        (WebCore::Layout::Line::Run::setTextIsCollapsed): Deleted.
+
 2019-09-27  Zan Dobersek  <zdobersek@igalia.com>
 
         [Nicosia] Implement frame scrolling functionality

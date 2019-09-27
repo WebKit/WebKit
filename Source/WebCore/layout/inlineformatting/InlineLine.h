@@ -69,9 +69,6 @@ public:
         struct TextContext {
             unsigned start { 0 };
             unsigned length { 0 };
-            bool isCollapsed { false };
-            bool isWhitespace { false };
-            bool canBeExtended { false };
         };
         Run(const InlineItem&, const Display::Rect&);
         Run(const InlineItem&, const TextContext&, const Display::Rect&);
@@ -86,15 +83,20 @@ public:
         bool isContainerStart() const { return m_inlineItem.isContainerStart(); }
         bool isContainerEnd() const { return m_inlineItem.isContainerEnd(); }
 
+        bool isVisuallyEmpty() const { return m_isVisuallyEmpty; }
+        bool isWhitespace() const;
+        bool canBeExtended() const;
+
     private:
         friend class Line;
         void adjustLogicalTop(LayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
         void moveVertically(LayoutUnit offset) { m_logicalRect.moveVertically(offset); }
         void moveHorizontally(LayoutUnit offset) { m_logicalRect.moveHorizontally(offset); }
-        void setTextIsCollapsed() { m_textContext->isCollapsed = true; }
+        void setVisuallyIsEmpty() { m_isVisuallyEmpty = true; }
 
         const InlineItem& m_inlineItem;
         Display::Rect m_logicalRect;
+        bool m_isVisuallyEmpty { false };
         Optional<TextContext> m_textContext;
     };
     using RunList = Vector<std::unique_ptr<Run>>;

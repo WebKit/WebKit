@@ -52,7 +52,7 @@ bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const Line::Run
         if (run->isLineBreak())
             return false;
         if (run->isText()) {
-            if (!run->textContext() || !run->textContext()->isCollapsed)
+            if (!run->textContext() || !run->isVisuallyEmpty())
                 return false;
             continue;
         }

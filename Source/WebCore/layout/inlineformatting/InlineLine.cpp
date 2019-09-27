@@ -50,6 +50,20 @@ Line::Run::Run(const InlineItem& inlineItem, const TextContext& textContext, con
 {
 }
 
+bool Line::Run::isWhitespace() const
+{
+    if (!isText())
+        return false;
+    return downcast<InlineTextItem>(m_inlineItem).isWhitespace();
+}
+
+bool Line::Run::canBeExtended() const
+{
+    if (!isText())
+        return false;
+    return !downcast<InlineTextItem>(m_inlineItem).isCollapsed() && !isVisuallyEmpty();
+}
+
 Line::Line(const InlineFormattingContext& inlineFormattingContext, const InitialConstraints& initialConstraints, SkipVerticalAligment skipVerticalAligment)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_initialStrut(initialConstraints.heightAndBaseline.strut)
@@ -90,7 +104,7 @@ bool Line::isVisuallyEmpty() const
                 return false;
             continue;
         }
-        if (!run->textContext() || !run->textContext()->isCollapsed)
+        if (!run->textContext() || !run->isVisuallyEmpty())
             return false;
     }
     return true;
@@ -161,7 +175,7 @@ void Line::removeTrailingTrimmableContent()
     LayoutUnit trimmableWidth;
     for (auto* trimmableRun : m_trimmableContent) {
         ASSERT(trimmableRun->isText());
-        trimmableRun->setTextIsCollapsed();
+        trimmableRun->setVisuallyIsEmpty();
         trimmableWidth += trimmableRun->logicalRect().width();
     }
     m_lineBox.shrinkHorizontally(trimmableWidth);
@@ -186,7 +200,7 @@ LayoutUnit Line::trailingTrimmableWidth() const
 {
     LayoutUnit trimmableWidth;
     for (auto* trimmableRun : m_trimmableContent) {
-        ASSERT(!trimmableRun->textContext()->isCollapsed);
+        ASSERT(!trimmableRun->isVisuallyEmpty());
         trimmableWidth += trimmableRun->logicalRect().width();
     }
     return trimmableWidth;
@@ -240,7 +254,7 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
     if (!isTrimmable)
         m_trimmableContent.clear();
 
-    auto shouldCollapseCompletely = [&] {
+    auto willCollapseCompletely = [&] {
         // Empty run.
         if (!inlineItem.length()) {
             ASSERT(!logicalWidth);
@@ -257,16 +271,12 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
             if (run->isBox())
                 return false;
             if (run->isText())
-                return run->textContext()->isWhitespace && run->layoutBox().style().collapseWhiteSpace();
+                return run->isWhitespace() && run->layoutBox().style().collapseWhiteSpace();
             ASSERT(run->isContainerStart() || run->isContainerEnd());
         }
         return true;
     };
 
-    // Collapsed line items don't contribute to the line width.
-    auto isCompletelyCollapsed = shouldCollapseCompletely();
-    auto canBeExtended = !isCompletelyCollapsed && !inlineItem.isCollapsed();
-    
     auto logicalRect = Display::Rect { };
     logicalRect.setLeft(contentLogicalWidth());
     logicalRect.setWidth(logicalWidth);
@@ -276,13 +286,17 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
         adjustBaselineAndLineHeight(inlineItem, runHeight);
     }
 
-    auto textContext = Run::TextContext { inlineItem.start(), inlineItem.isCollapsed() ? 1 : inlineItem.length(), isCompletelyCollapsed, inlineItem.isWhitespace(), canBeExtended };
+    auto textContext = Run::TextContext { inlineItem.start(), inlineItem.isCollapsed() ? 1 : inlineItem.length() };
     auto lineItem = makeUnique<Run>(inlineItem, textContext, logicalRect);
-    if (isTrimmable && !isCompletelyCollapsed)
+    auto isVisuallyEmpty = willCollapseCompletely();
+    if (isVisuallyEmpty)
+        lineItem->setVisuallyIsEmpty();
+    else if (isTrimmable)
         m_trimmableContent.add(lineItem.get());
 
     m_runList.append(WTFMove(lineItem));
-    if (!isCompletelyCollapsed)
+    // Collapsed line items don't contribute to the line width.
+    if (!isVisuallyEmpty)
         m_lineBox.expandHorizontally(logicalWidth);
 }
 
