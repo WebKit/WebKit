@@ -1,3 +1,9 @@
+2019-09-27  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build-fix: wrap the AssertionServicesSPI.h in an IOS_FAMILY check.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+
 2019-09-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [iOS]: When inserting a photo and then inserting auto-corrected text, the photo is removed
