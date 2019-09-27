@@ -88,8 +88,10 @@ public:
     bool scrollLimitReached(const PlatformWheelEvent&) const;
     ScrollingTreeScrollingNode* scrollingNodeForPoint(LayoutPoint) const override;
 
-    const LayerRepresentation& scrollContainerLayer() const { return m_scrollContainerLayer; }
-    const LayerRepresentation& scrolledContentsLayer() const { return m_scrolledContentsLayer; }
+#if PLATFORM(COCOA)
+    CALayer *scrollContainerLayer() const { return m_scrollContainerLayer.get(); }
+    CALayer *scrolledContentsLayer() const { return m_scrolledContentsLayer.get(); }
+#endif
 
 protected:
     ScrollingTreeScrollingNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
@@ -151,8 +153,10 @@ private:
     bool m_expectsWheelEventTestTrigger { false };
     bool m_isFirstCommit { true };
 
-    LayerRepresentation m_scrollContainerLayer;
-    LayerRepresentation m_scrolledContentsLayer;
+#if PLATFORM(COCOA)
+    RetainPtr<CALayer> m_scrollContainerLayer;
+    RetainPtr<CALayer> m_scrolledContentsLayer;
+#endif
 };
 
 } // namespace WebCore
