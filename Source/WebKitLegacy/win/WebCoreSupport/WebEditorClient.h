@@ -94,6 +94,7 @@ private:
     void textWillBeDeletedInTextField(WebCore::Element* input) final;
     void textDidChangeInTextArea(WebCore::Element*) final;
     void overflowScrollPositionChanged() final { }
+    void subFrameScrollPositionChanged() final { }
 
     void handleKeyboardEvent(WebCore::KeyboardEvent&) final;
     void handleInputMethodKeydown(WebCore::KeyboardEvent&) final;

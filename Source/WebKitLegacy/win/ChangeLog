@@ -1,3 +1,23 @@
+2019-09-27  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r250374. rdar://problem/55770710
+
+    Unreviewed build fix for Windows ports.
+    https://bugs.webkit.org/show_bug.cgi?id=202125
+    <rdar://problem/14944104>
+    
+    * WebCoreSupport/WebEditorClient.h: Added missing subFrameScrollPositionChanged.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250374 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-09-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+            Unreviewed build fix for Windows ports.
+            https://bugs.webkit.org/show_bug.cgi?id=202125
+            <rdar://problem/14944104>
+
+            * WebCoreSupport/WebEditorClient.h: Added missing subFrameScrollPositionChanged.
+
 2019-08-12  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r248472. rdar://problem/54225658
