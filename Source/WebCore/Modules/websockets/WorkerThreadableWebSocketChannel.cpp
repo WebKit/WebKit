@@ -33,6 +33,7 @@
 
 #include "Blob.h"
 #include "Document.h"
+#include "Frame.h"
 #include "FrameLoader.h"
 #include "ScriptExecutionContext.h"
 #include "SocketProvider.h"

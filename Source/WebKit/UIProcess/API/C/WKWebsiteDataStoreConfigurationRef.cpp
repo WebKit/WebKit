@@ -36,7 +36,7 @@ WKTypeID WKWebsiteDataStoreConfigurationGetTypeID()
 
 WKWebsiteDataStoreConfigurationRef WKWebsiteDataStoreConfigurationCreate()
 {
-    auto configuration = WebKit::WebsiteDataStoreConfiguration::create(IsPersistent::Yes);
+    auto configuration = WebKit::WebsiteDataStoreConfiguration::create(WebKit::IsPersistent::Yes);
     return toAPI(&configuration.leakRef());
 }
 

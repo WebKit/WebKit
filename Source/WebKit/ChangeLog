@@ -1,3 +1,18 @@
+2019-09-27  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Fixes for non-unified builds after r249714
+        https://bugs.webkit.org/show_bug.cgi?id=202304
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/NetworkLoadChecker.h: Add missing inclusion of the pal/SessionID.h header.
+        * NetworkProcess/NetworkResourceLoadMap.cpp: Add missing inclusion of the
+        NetworkResourceLoader.h header.
+        * UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.cpp:
+        (WKWebsiteDataStoreConfigurationCreate): Add missing namespace to usage of the
+        WebKit::IsPersistent::Yes value.
+        * UIProcess/WebPageProxy.cpp: Add missing inclusion of the LegacyGlobalSettings.h header.
+
 2019-09-27  Tim Horton  <timothy_horton@apple.com>
 
         Adopt new UIWebGeolocationPolicyDecider SPI to pass a view instead of a window

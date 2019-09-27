@@ -28,6 +28,7 @@
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Variant.h>
 
 namespace WebCore {
 
@@ -88,7 +89,7 @@ private:
 #if ENABLE(WEBGPU)
         std::reference_wrapper<WebGPUPipeline>,
 #endif
-        Monostate
+        WTF::Monostate
     > m_program;
 
     bool m_disabled { false };

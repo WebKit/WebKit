@@ -61,6 +61,7 @@
 #include "EventDispatcherMessages.h"
 #include "FormDataReference.h"
 #include "FrameInfoData.h"
+#include "LegacyGlobalSettings.h"
 #include "LoadParameters.h"
 #include "Logging.h"
 #include "NativeWebGestureEvent.h"

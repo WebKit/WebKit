@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "NetworkResourceLoadMap.h"
+#include "NetworkResourceLoader.h"
 
 namespace WebKit {
 
