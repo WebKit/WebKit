@@ -1,3 +1,22 @@
+2019-09-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        ScrollingTreeScrollingNode: use LayerRepresentation for scroll container, scrolled contents layers
+        https://bugs.webkit.org/show_bug.cgi?id=202256
+
+        Reviewed by Simon Fraser.
+
+        Make the scroll container and scrolled contents layer holders
+        platform-independent by using the LayerRepresentation as the underlying
+        type for the two member variables in ScrollingTreeScrollingNode.
+
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::commitStateBeforeChildren):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::repositionScrollingLayers):
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::repositionScrollingLayers):
+
 2019-09-26  Chris Dumez  <cdumez@apple.com>
 
         Pages frequently fails to enter the back/forward cache due to pending loads
