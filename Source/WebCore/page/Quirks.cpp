@@ -579,4 +579,23 @@ bool Quirks::shouldOpenAsAboutBlank(const String& stringToOpen) const
 #endif
 }
 
+bool Quirks::needsPreloadAutoQuirk() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (!needsQuirks())
+        return false;
+
+    if (m_needsPreloadAutoQuirk)
+        return m_needsPreloadAutoQuirk.value();
+
+    auto domain = m_document->securityOrigin().domain().convertToASCIILowercase();
+
+    m_needsPreloadAutoQuirk = domain == "vimeo.com" || domain.endsWith("vimeo.com");
+
+    return m_needsPreloadAutoQuirk.value();
+#else
+    return false;
+#endif
+}
+
 }

@@ -1,3 +1,20 @@
+2019-09-27  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Vimeo fails to AirPlay in desktop mode
+        https://bugs.webkit.org/show_bug.cgi?id=202322
+
+        Reviewed by Eric Carlson.
+
+        Add a Quirk which opts Vimeo out of the preload=auto restriction, and allows their
+        second video element containing a HLS stream to correctly start AirPlaying when the
+        system route changes.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::finishInitialization):
+        * page/Quirks.cpp:
+        (WebCore::Quirks::needsPreloadAutoQuirk const):
+        * page/Quirks.h:
+
 2019-09-27  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Line::close should merge the text runs.
