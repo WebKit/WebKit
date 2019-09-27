@@ -42,6 +42,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 @interface NSObject (UIAccessibilityHidden)
 - (id)accessibilityHitTest:(CGPoint)point;
 - (id)accessibilityLinkedElement;
+- (id)accessibilityTitleElement;
 - (NSRange)accessibilityColumnRange;
 - (NSRange)accessibilityRowRange;
 - (id)accessibilityElementForRow:(NSInteger)row andColumn:(NSInteger)column;
@@ -326,6 +327,9 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedRowAtIndex(unsign
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::titleUIElement()
 {
+    id titleElement = [m_element accessibilityTitleElement];
+    if (titleElement)
+        return AccessibilityUIElement::create(titleElement);
     return nullptr;
 }
 
@@ -469,7 +473,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::subrole()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::roleDescription()
 {
-    return createEmptyJSString();
+    return concatenateAttributeAndValue(@"AXRoleDescription", [m_element accessibilityRoleDescription]);
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::computedRoleString()

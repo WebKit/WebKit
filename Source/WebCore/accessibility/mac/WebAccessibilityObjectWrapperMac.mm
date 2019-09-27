@@ -2490,8 +2490,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return AXDetailsText();
         case AccessibilityRole::Feed:
             return AXFeedText();
-        case AccessibilityRole::Figure:
-            return AXFigureText();
         case AccessibilityRole::Footer:
             return AXFooterRoleDescriptionText();
         case AccessibilityRole::Mark:

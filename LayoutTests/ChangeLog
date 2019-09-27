@@ -1,3 +1,14 @@
+2019-09-27  Andres Gonzalez  <andresg_22@apple.com>
+
+        Support accessibility for <figure> element on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=202272
+        <rdar://problem/54789907>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/figure-element-expected.txt: Added.
+        * accessibility/ios-simulator/figure-element.html: Added.
+
 2019-09-27  Truitt Savell  <tsavell@apple.com>
 
         fast/images/async-image-multiple-clients-repaint.html

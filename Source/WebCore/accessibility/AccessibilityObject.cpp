@@ -2614,9 +2614,17 @@ bool AccessibilityObject::hasHighlighting() const
 
 String AccessibilityObject::roleDescription() const
 {
-    return stripLeadingAndTrailingHTMLSpaces(getAttribute(aria_roledescriptionAttr));
+    // aria-roledescription takes precedence over any other rule.
+    String roleDescription = stripLeadingAndTrailingHTMLSpaces(getAttribute(aria_roledescriptionAttr));
+    if (!roleDescription.isEmpty())
+        return roleDescription;
+
+    if (roleValue() == AccessibilityRole::Figure)
+        return AXFigureText();
+
+    return roleDescription;
 }
-    
+
 bool nodeHasPresentationRole(Node* node)
 {
     return nodeHasRole(node, "presentation") || nodeHasRole(node, "none");

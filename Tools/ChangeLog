@@ -1,3 +1,16 @@
+2019-09-27  Andres Gonzalez  <andresg_22@apple.com>
+
+        Support accessibility for <figure> element on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=202272
+        <rdar://problem/54789907>
+
+        Reviewed by Chris Fleizach.
+
+        Implemented titleUIElement and roleDescription properties for <figure> elements on iOS.
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::titleUIElement):
+        (WTR::AccessibilityUIElement::roleDescription):
+
 2019-09-27  Alex Christensen  <achristensen@webkit.org>
 
         Move shouldUseTestingNetworkSession from NetworkProcessCreationParameters to NetworkSessionCreationParameters
