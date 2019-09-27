@@ -1,5 +1,27 @@
 2019-09-27  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r250197. rdar://problem/55612001
+
+    Fix an assertion failure introduced in r250186.
+    
+    * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+    (WebKit::PluginProcessProxy::platformGetLaunchOptionsWithAttributes): Corrected the
+      assertion.
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250197 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-09-21  Dan Bernstein  <mitz@apple.com>
+
+            Fix an assertion failure introduced in r250186.
+
+            * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+            (WebKit::PluginProcessProxy::platformGetLaunchOptionsWithAttributes): Corrected the
+              assertion.
+
+2019-09-27  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r250186. rdar://problem/55612001
 
     Safari 13 may launch leftover 32-bit plug-in process from Safari 12’s WebKit, which crashes
