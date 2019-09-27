@@ -579,7 +579,6 @@ static void validate(WKWebViewConfiguration *configuration)
     validate(_configuration.get());
 
     WebKit::WebProcessPool& processPool = *[_configuration processPool]->_processPool;
-    processPool.setResourceLoadStatisticsEnabled(configuration.websiteDataStore._resourceLoadStatisticsEnabled);
 
     auto pageConfiguration = [configuration copyPageConfiguration];
 

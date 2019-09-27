@@ -569,7 +569,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 
     SandboxExtension::createHandleForReadWriteDirectory(parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectory, parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectoryExtensionHandle);
 
-    bool enableResourceLoadStatistics = m_shouldEnableITPForDefaultSessions;
+    bool enableResourceLoadStatistics = false;
     bool enableResourceLoadStatisticsLogTestingEvent = false;
     bool shouldIncludeLocalhost = true;
     bool enableResourceLoadStatisticsDebugMode = false;
@@ -615,6 +615,8 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
             SandboxExtension::createHandle(networkCacheDirectory, SandboxExtension::Type::ReadWrite, parameters.defaultDataStoreParameters.networkSessionParameters.networkCacheDirectoryExtensionHandle);
         }
     } else {
+        if (WebsiteDataStore::defaultDataStoreExists())
+            enableResourceLoadStatistics = WebsiteDataStore::defaultDataStore()->resourceLoadStatisticsEnabled();
         auto networkCacheDirectory = WebsiteDataStore::defaultNetworkCacheDirectory();
         parameters.defaultDataStoreParameters.networkSessionParameters.networkCacheDirectory = networkCacheDirectory;
         SandboxExtension::createHandle(networkCacheDirectory, SandboxExtension::Type::ReadWrite, parameters.defaultDataStoreParameters.networkSessionParameters.networkCacheDirectoryExtensionHandle);
@@ -1462,15 +1464,6 @@ void WebProcessPool::setShouldUseFontSmoothing(bool useFontSmoothing)
 {
     m_shouldUseFontSmoothing = useFontSmoothing;
     sendToAllProcesses(Messages::WebProcess::SetShouldUseFontSmoothing(useFontSmoothing));
-}
-
-void WebProcessPool::setResourceLoadStatisticsEnabled(bool enabled)
-{
-    m_shouldEnableITPForDefaultSessions = enabled;
-    sendToAllProcesses(Messages::WebProcess::SetResourceLoadStatisticsEnabled(enabled));
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    sendToNetworkingProcess(Messages::NetworkProcess::SetResourceLoadStatisticsEnabled(enabled));
-#endif
 }
 
 void WebProcessPool::clearResourceLoadStatistics()

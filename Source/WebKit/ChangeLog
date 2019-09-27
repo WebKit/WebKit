@@ -1,5 +1,28 @@
 2019-09-27  Alex Christensen  <achristensen@webkit.org>
 
+        Enable and disable ResourceLoadStatistics only by session
+        https://bugs.webkit.org/show_bug.cgi?id=202298
+
+        Reviewed by Chris Dumez.
+
+        This is needed to keep per-session things per-session and per-process-pool things per-process-pool.
+        This was a strange case where we would take the current session's value and apply it globally.
+        This has no change in behavior because it is globally enabled and disabled by API clients anyways.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setResourceLoadStatisticsEnabled):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setResourceLoadStatisticsEnabled): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsEnabled):
+
+2019-09-27  Alex Christensen  <achristensen@webkit.org>
+
         Remove unused WebProcessPool::setCanHandleHTTPSServerTrustEvaluation
         https://bugs.webkit.org/show_bug.cgi?id=202285
 
