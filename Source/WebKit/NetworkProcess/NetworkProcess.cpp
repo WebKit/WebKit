@@ -322,8 +322,6 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     auto sessionID = parameters.defaultDataStoreParameters.networkSessionParameters.sessionID;
     setSession(sessionID, NetworkSession::create(*this, WTFMove(parameters.defaultDataStoreParameters.networkSessionParameters)));
-    for (auto&& parameters : WTFMove(parameters.nonDefaultDataStoreParameters))
-        addWebsiteDataStore(WTFMove(parameters));
 
 #if ENABLE(INDEXED_DATABASE)
     addIndexedDatabaseSession(sessionID, parameters.defaultDataStoreParameters.indexedDatabaseDirectory, parameters.defaultDataStoreParameters.indexedDatabaseDirectoryExtensionHandle);

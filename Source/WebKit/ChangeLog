@@ -1,3 +1,22 @@
+2019-09-27  Alex Christensen  <achristensen@webkit.org>
+
+        Layout Test http/tests/cache-storage/cache-records-persistency.https.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=202323
+
+        Reviewed by Tim Horton.
+
+        This reverts most of r250351.
+        It turns out NetworkProcessProxy::addSession has some side effects in the UIProcess that are useful for NetworkProcess resumption after crashes.  Let's keep that.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
 2019-09-27  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build-fix: wrap the AssertionServicesSPI.h in an IOS_FAMILY check.
