@@ -54,55 +54,6 @@ public:
     enum class SkipVerticalAligment { No, Yes };
     Line(const InlineFormattingContext&, const InitialConstraints&, SkipVerticalAligment);
 
-    class Content {
-        WTF_MAKE_FAST_ALLOCATED;
-    public:
-        struct Run {
-            WTF_MAKE_STRUCT_FAST_ALLOCATED;
-            struct TextContext {
-                unsigned start { 0 };
-                unsigned length { 0 };
-                bool isCollapsed { false };
-                bool isWhitespace { false };
-                bool canBeExtended { false };
-            };
-            Run(const InlineItem&, const Display::Rect&);
-            Run(const InlineItem&, const TextContext&, const Display::Rect&);
-
-            const Box& layoutBox() const { return m_layoutBox; }
-            const Display::Rect& logicalRect() const { return m_logicalRect; }
-            const Optional<TextContext> textContext() const { return m_textContext; }
-            InlineItem::Type type() const { return m_type; }
-
-            bool isText() const { return m_type == InlineItem::Type::Text; }
-            bool isBox() const { return m_type == InlineItem::Type::Box; }
-            bool isLineBreak() const { return m_type == InlineItem::Type::HardLineBreak; }
-            bool isContainerStart() const { return m_type == InlineItem::Type::ContainerStart; }
-            bool isContainerEnd() const { return m_type == InlineItem::Type::ContainerEnd; }
-
-        private:
-            friend class Line;
-            void adjustLogicalTop(LayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
-            void moveVertically(LayoutUnit offset) { m_logicalRect.moveVertically(offset); }
-            void moveHorizontally(LayoutUnit offset) { m_logicalRect.moveHorizontally(offset); }
-            void setTextIsCollapsed() { m_textContext->isCollapsed = true; }
-
-            const Box& m_layoutBox;
-            const InlineItem::Type m_type;
-            Display::Rect m_logicalRect;
-            Optional<TextContext> m_textContext;
-        };
-        using Runs = Vector<std::unique_ptr<Run>>;
-        const Runs& runs() const { return m_runs; }
-
-    private:
-        friend class Line;
-        Runs& runs() { return m_runs; }
-
-        Runs m_runs;
-    };
-    std::unique_ptr<Content> close();
-
     void append(const InlineItem&, LayoutUnit logicalWidth);
     bool hasContent() const { return !isVisuallyEmpty(); }
     LayoutUnit availableWidth() const { return logicalWidth() - contentLogicalWidth(); }
@@ -112,6 +63,44 @@ public:
     const LineBox& lineBox() const { return m_lineBox; }
     void moveLogicalLeft(LayoutUnit);
     void moveLogicalRight(LayoutUnit);
+
+    struct Run {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        struct TextContext {
+            unsigned start { 0 };
+            unsigned length { 0 };
+            bool isCollapsed { false };
+            bool isWhitespace { false };
+            bool canBeExtended { false };
+        };
+        Run(const InlineItem&, const Display::Rect&);
+        Run(const InlineItem&, const TextContext&, const Display::Rect&);
+
+        const Box& layoutBox() const { return m_layoutBox; }
+        const Display::Rect& logicalRect() const { return m_logicalRect; }
+        const Optional<TextContext> textContext() const { return m_textContext; }
+        InlineItem::Type type() const { return m_type; }
+
+        bool isText() const { return m_type == InlineItem::Type::Text; }
+        bool isBox() const { return m_type == InlineItem::Type::Box; }
+        bool isLineBreak() const { return m_type == InlineItem::Type::HardLineBreak; }
+        bool isContainerStart() const { return m_type == InlineItem::Type::ContainerStart; }
+        bool isContainerEnd() const { return m_type == InlineItem::Type::ContainerEnd; }
+
+    private:
+        friend class Line;
+        void adjustLogicalTop(LayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
+        void moveVertically(LayoutUnit offset) { m_logicalRect.moveVertically(offset); }
+        void moveHorizontally(LayoutUnit offset) { m_logicalRect.moveHorizontally(offset); }
+        void setTextIsCollapsed() { m_textContext->isCollapsed = true; }
+
+        const Box& m_layoutBox;
+        const InlineItem::Type m_type;
+        Display::Rect m_logicalRect;
+        Optional<TextContext> m_textContext;
+    };
+    using RunList = Vector<std::unique_ptr<Run>>;
+    RunList close();
 
     static LineBox::Baseline halfLeadingMetrics(const FontMetrics&, LayoutUnit lineLogicalHeight);
 
@@ -147,8 +136,8 @@ private:
     const InlineFormattingContext& formattingContext() const; 
 
     const InlineFormattingContext& m_inlineFormattingContext;
-    std::unique_ptr<Content> m_content;
-    ListHashSet<Content::Run*> m_trimmableContent;
+    RunList m_runList;
+    ListHashSet<Run*> m_trimmableContent;
 
     Optional<LineBox::Baseline> m_initialStrut;
     LayoutUnit m_lineLogicalWidth;

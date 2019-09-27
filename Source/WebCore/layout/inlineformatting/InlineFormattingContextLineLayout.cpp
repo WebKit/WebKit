@@ -94,7 +94,7 @@ struct LineInput {
 struct LineContent {
     Optional<IndexAndRange> lastCommitted;
     Vector<WeakPtr<InlineItem>> floats;
-    std::unique_ptr<const Line::Content> runs;
+    const Line::RunList runList;
     const LineBox lineBox;
 };
 
@@ -382,7 +382,7 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const LineContent&
     // A line box is always tall enough for all of the boxes it contains.
 
     // Create final display runs.
-    auto& lineRuns = lineContent.runs->runs();
+    auto& lineRuns = lineContent.runList;
     for (unsigned index = 0; index < lineRuns.size(); ++index) {
         auto& run = lineRuns.at(index);
         // Inline level containers (<span>) don't generate inline runs.
@@ -400,7 +400,7 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const LineContent&
             if (textContext->isCollapsed)
                 continue;
             // Try to join multiple text runs when possible.
-            const Line::Content::Run* previousRun = !index ? nullptr : lineRuns[index - 1].get();
+            const Line::Run* previousRun = !index ? nullptr : lineRuns[index - 1].get();
             auto previousRunCanBeExtended = previousRun && previousRun->textContext() ? previousRun->textContext()->canBeExtended : false;
             auto currentRunCanBeMergedWithPrevious = !previousRun || &run->layoutBox() == &previousRun->layoutBox();
 
@@ -462,7 +462,7 @@ void InlineFormattingContext::InlineLayout::createDisplayRuns(const LineContent&
         // Text content. Try to join multiple text runs when possible.
         if (lineRun->isText()) {
             auto textContext = lineRun->textContext();
-            const Line::Content::Run* previousLineRun = !index ? nullptr : lineRuns[index - 1].get();
+            const Line::Run* previousLineRun = !index ? nullptr : lineRuns[index - 1].get();
             // FIXME take content breaking into account when part of the layout box is on the previous line.
             auto firstInlineRunForLayoutBox = !previousLineRun || &previousLineRun->layoutBox() != &layoutBox;
             if (firstInlineRunForLayoutBox) {

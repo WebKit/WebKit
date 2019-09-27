@@ -36,7 +36,7 @@
 namespace WebCore {
 namespace Layout {
 
-bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const Line::Content& lineContent) const
+bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const Line::RunList& runList) const
 {
     // Collapse line descent in limited and full quirk mode when there's no baseline aligned content or
     // the baseline aligned content has no descent.
@@ -44,7 +44,7 @@ bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const Line::Con
     if (!layoutState.inQuirksMode() && !layoutState.inLimitedQuirksMode())
         return false;
 
-    for (auto& run : lineContent.runs()) {
+    for (auto& run : runList) {
         auto& layoutBox = run->layoutBox();
         if (layoutBox.style().verticalAlign() != VerticalAlign::Baseline)
             continue;
