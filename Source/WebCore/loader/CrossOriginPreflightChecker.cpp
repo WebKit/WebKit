@@ -169,9 +169,4 @@ void CrossOriginPreflightChecker::setDefersLoading(bool value)
         m_resource->setDefersLoading(value);
 }
 
-bool CrossOriginPreflightChecker::isXMLHttpRequest() const
-{
-    return m_loader.isXMLHttpRequest();
-}
-
 } // namespace WebCore

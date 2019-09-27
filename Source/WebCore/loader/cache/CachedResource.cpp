@@ -869,18 +869,6 @@ unsigned CachedResource::overheadSize() const
     return sizeof(CachedResource) + m_response.memoryUsage() + kAverageClientsHashMapSize + m_resourceRequest.url().string().length() * 2;
 }
 
-bool CachedResource::areAllClientsXMLHttpRequests() const
-{
-    if (type() != Type::RawResource)
-        return false;
-
-    for (auto& client : m_clients) {
-        if (!client.key->isXMLHttpRequest())
-            return false;
-    }
-    return true;
-}
-
 void CachedResource::setLoadPriority(const Optional<ResourceLoadPriority>& loadPriority)
 {
     if (loadPriority)

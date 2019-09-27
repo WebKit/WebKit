@@ -655,11 +655,6 @@ bool DocumentThreadableLoader::isAllowedRedirect(const URL& url)
     return m_sameOriginRequest && securityOrigin().canRequest(url);
 }
 
-bool DocumentThreadableLoader::isXMLHttpRequest() const
-{
-    return m_options.initiator == cachedResourceRequestInitiators().xmlhttprequest;
-}
-
 SecurityOrigin& DocumentThreadableLoader::securityOrigin() const
 {
     return m_origin ? *m_origin : m_document.securityOrigin();

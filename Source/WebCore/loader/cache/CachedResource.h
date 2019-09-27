@@ -165,8 +165,6 @@ public:
 
     SubresourceLoader* loader() { return m_loader.get(); }
 
-    bool areAllClientsXMLHttpRequests() const;
-
     bool isImage() const { return type() == Type::ImageResource; }
     // FIXME: CachedRawResource could be a main resource, an audio/video resource, or a raw XHR/icon resource.
     bool isMainOrMediaOrIconOrRawResource() const { return type() == Type::MainResource || type() == Type::MediaResource || type() == Type::Icon || type() == Type::RawResource || type() == Type::Beacon || type() == Type::Ping; }

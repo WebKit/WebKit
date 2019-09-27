@@ -233,11 +233,6 @@ String DiagnosticLoggingKeys::otherKey()
     return "other"_s;
 }
 
-String DiagnosticLoggingKeys::mainDocumentErrorKey()
-{
-    return "mainDocumentError"_s;
-}
-
 String DiagnosticLoggingKeys::mainResourceKey()
 {
     return "mainResource"_s;

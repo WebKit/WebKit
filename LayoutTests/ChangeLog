@@ -1,3 +1,16 @@
+2019-09-26  Chris Dumez  <cdumez@apple.com>
+
+        Pages frequently fails to enter the back/forward cache due to pending loads
+        https://bugs.webkit.org/show_bug.cgi?id=202289
+        <rdar://problem/55758506>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * http/tests/navigation/page-cache-pending-load-expected.txt: Added.
+        * http/tests/navigation/page-cache-pending-load.html: Added.
+
 2019-09-26  Kate Cheney  <katherine_cheney@apple.com>
 
         Resource Load Statistics: Downgrade all third-party referrer headers

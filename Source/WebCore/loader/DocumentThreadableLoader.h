@@ -102,8 +102,6 @@ namespace WebCore {
         bool isAllowedRedirect(const URL&);
         bool isAllowedByContentSecurityPolicy(const URL&, ContentSecurityPolicy::RedirectResponseReceived);
 
-        bool isXMLHttpRequest() const final;
-
         SecurityOrigin& securityOrigin() const;
         const ContentSecurityPolicy& contentSecurityPolicy() const;
 

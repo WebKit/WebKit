@@ -1,3 +1,37 @@
+2019-09-26  Chris Dumez  <cdumez@apple.com>
+
+        Pages frequently fails to enter the back/forward cache due to pending loads
+        https://bugs.webkit.org/show_bug.cgi?id=202289
+        <rdar://problem/55758506>
+
+        Reviewed by Geoffrey Garen.
+
+        Allow pages to enter the back / forward cache, even if they have pending loads.
+        Note that these pending loads get cancelled. Also note that we won't enter page
+        cache unless the 'load' event has been fired in the main frame, since a
+        HistoryItem would not get created otherwise. This was causing frequent transient
+        failures to enter the back / forward cache while browsing (e.g. on weather.com).
+
+        Test: http/tests/navigation/page-cache-pending-load.html
+
+        * history/PageCache.cpp:
+        (WebCore::canCacheFrame):
+        * loader/CrossOriginPreflightChecker.cpp:
+        * loader/CrossOriginPreflightChecker.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::setMainDocumentError):
+        (WebCore::DocumentLoader::stopLoading):
+        * loader/DocumentLoader.h:
+        * loader/DocumentThreadableLoader.cpp:
+        * loader/DocumentThreadableLoader.h:
+        * loader/cache/CachedResource.cpp:
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceClient.h:
+        (WebCore::CachedResourceClient::deprecatedDidReceiveCachedResource):
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::mainFrameHasNotFinishedLoadingKey):
+        * page/DiagnosticLoggingKeys.h:
+
 2019-09-26  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Line::Run should have a reference to the associated InlineItem

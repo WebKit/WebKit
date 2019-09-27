@@ -41,7 +41,6 @@ public:
     virtual ~CachedResourceClient() = default;
     virtual void notifyFinished(CachedResource&) { }
     virtual void deprecatedDidReceiveCachedResource(CachedResource&) { }
-    virtual bool isXMLHttpRequest() const { return false; }
 
     static CachedResourceClientType expectedType() { return BaseResourceType; }
     virtual CachedResourceClientType resourceClientType() const { return expectedType(); }

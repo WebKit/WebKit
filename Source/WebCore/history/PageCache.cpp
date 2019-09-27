@@ -116,15 +116,6 @@ static bool canCacheFrame(Frame& frame, DiagnosticLoggingClient& diagnosticLoggi
         PCLOG(" Determining if subframe with URL (", currentURL.string(), ") can be cached:");
      
     bool isCacheable = true;
-    if (!documentLoader->mainDocumentError().isNull()) {
-        PCLOG("   -Main document has an error");
-        logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::mainDocumentErrorKey());
-
-        if (documentLoader->mainDocumentError().isCancellation() && documentLoader->subresourceLoadersArePageCacheAcceptable())
-            PCLOG("    -But, it was a cancellation and all loaders during the cancelation were loading images or XHR.");
-        else
-            isCacheable = false;
-    }
     // Do not cache error pages (these can be recognized as pages with substitute data or unreachable URLs).
     if (documentLoader->substituteData().isValid() && !documentLoader->substituteData().failingURL().isEmpty()) {
         PCLOG("   -Frame is an error page");

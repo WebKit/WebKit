@@ -1,0 +1,54 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<script src="/resources/js-test-pre.js"></script>
+<script>
+description('Tests that a page with pending subresource loads goes into the page cache.');
+window.jsTestIsAsync = true;
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the page cache");
+        setTimeout(function() {
+            finishJSTest();
+        }, 0);
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener('load', function() {
+    var link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.type = "text/css";
+    link.href = "/incremental/resources/slow-utf8-css.pl";
+    document.head.appendChild(link);
+
+    var script = document.createElement("script");
+    script.async = true;
+    script.src = "/resources/slow-script.pl"
+    document.head.appendChild(script);
+
+    // This needs to happen in a setTimeout because a navigation inside the onload handler would
+    // not create a history entry.
+    setTimeout(function() {
+      // Force a back navigation back to this page.
+      window.location.href = "resources/page-cache-helper.html";
+    }, 0);
+}, false);
+
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

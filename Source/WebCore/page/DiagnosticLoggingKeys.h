@@ -88,7 +88,6 @@ public:
     WEBCORE_EXPORT static String isReloadIgnoringCacheDataKey();
     static String loadingKey();
     static String isLoadingKey();
-    static String mainDocumentErrorKey();
     static String mainResourceKey();
     static String mediaLoadedKey();
     static String mediaLoadingFailedKey();
