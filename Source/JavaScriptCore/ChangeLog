@@ -1,3 +1,17 @@
+2019-09-27  Keith Miller  <keith_miller@apple.com>
+
+        OSR exit shouldn't bother updating get_by_id array profiles that have changed modes
+        https://bugs.webkit.org/show_bug.cgi?id=202324
+        <rdar://problem/52669110>
+
+        Reviewed by Yusuke Suzuki.
+
+        This is an optimization that avoids polluting the array profile.
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::executeOSRExit):
+        (JSC::DFG::OSRExit::compileExit):
+
 2019-09-27  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Non-standard Error properties should not be enumerable
