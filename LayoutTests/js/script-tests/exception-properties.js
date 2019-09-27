@@ -1,13 +1,5 @@
 description("Test for correct properties on Error objects.");
 
-function enumerableProperties(object)
-{
-    var result = [];
-    for (var i in object)
-        result.push(i);
-    return result;
-}
-
 try {
     // generate a RangeError.
     [].length = -1;
@@ -15,8 +7,11 @@ try {
     var nativeError = rangeError;
     var error = new Error("message");
 
-    shouldBe('enumerableProperties(error).sort()', '["column", "line", "sourceURL"]');
-    shouldBe('enumerableProperties(nativeError).sort()', '["column", "line", "sourceURL"]');
+    shouldBe('Object.keys(error).sort()', '[]');
+    shouldBe('Object.keys(nativeError).sort()', '[]');
+
+    shouldBe('Object.getOwnPropertyNames(error).sort()', '["column", "line", "message", "sourceURL", "stack"]');
+    shouldBe('Object.getOwnPropertyNames(nativeError).sort()', '["column", "line", "message", "sourceURL", "stack"]');
 
     shouldBe('Object.getPrototypeOf(nativeError).name', '"RangeError"');
     shouldBe('Object.getPrototypeOf(nativeError).message', '""');

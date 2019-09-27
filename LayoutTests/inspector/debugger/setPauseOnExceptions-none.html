@@ -13,7 +13,7 @@ function test()
         InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { 1+1; }, 0);"});
         InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { noException(); }, 0);"});
         InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { catchNested(noException, 7); }, 0);"});
-        InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { try{ ({}).a.b.c.d } catch (e) { console.log('caught inline: ' + JSON.stringify(e)); } }, 0);"});
+        InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { try{ ({}).a.b.c.d } catch (e) { console.log(`caught inline: ${stringifyError(e)}`); } }, 0);"});
         InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { catchNested(exceptionBasic, 1); }, 0);"});
         InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { catchNested(exceptionDOM, 2); }, 0);"});
         InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { catchNested(exceptionInHostFunction, 3); }, 0);"});

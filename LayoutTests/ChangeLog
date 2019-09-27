@@ -1,3 +1,17 @@
+2019-09-27  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Non-standard Error properties should not be enumerable
+        https://bugs.webkit.org/show_bug.cgi?id=198975
+
+        Reviewed by Ross Kirsling.
+
+        * inspector/debugger/resources/exception.js: Introduce `stringifyError` helper.
+        * inspector/debugger/setPauseOnExceptions-all.html:
+        * inspector/debugger/setPauseOnExceptions-none.html:
+        * inspector/debugger/setPauseOnExceptions-uncaught.html:
+        * js/exception-properties-expected.txt:
+        * js/script-tests/exception-properties.js:
+
 2019-09-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [iOS]: When inserting a photo and then inserting auto-corrected text, the photo is removed

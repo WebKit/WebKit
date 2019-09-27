@@ -238,12 +238,14 @@ bool ErrorInstance::materializeErrorInfoIfNeeded(VM& vm)
     computeErrorInfo(vm);
 
     if (!m_stackString.isNull()) {
-        putDirect(vm, vm.propertyNames->line, jsNumber(m_line));
-        putDirect(vm, vm.propertyNames->column, jsNumber(m_column));
-        if (!m_sourceURL.isEmpty())
-            putDirect(vm, vm.propertyNames->sourceURL, jsString(vm, WTFMove(m_sourceURL)));
+        auto attributes = static_cast<unsigned>(PropertyAttribute::DontEnum);
 
-        putDirect(vm, vm.propertyNames->stack, jsString(vm, WTFMove(m_stackString)), static_cast<unsigned>(PropertyAttribute::DontEnum));
+        putDirect(vm, vm.propertyNames->line, jsNumber(m_line), attributes);
+        putDirect(vm, vm.propertyNames->column, jsNumber(m_column), attributes);
+        if (!m_sourceURL.isEmpty())
+            putDirect(vm, vm.propertyNames->sourceURL, jsString(vm, WTFMove(m_sourceURL)), attributes);
+
+        putDirect(vm, vm.propertyNames->stack, jsString(vm, WTFMove(m_stackString)), attributes);
     }
 
     m_errorInfoMaterialized = true;

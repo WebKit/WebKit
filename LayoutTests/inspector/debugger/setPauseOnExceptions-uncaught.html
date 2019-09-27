@@ -14,7 +14,7 @@ function test()
     ];
 
     var statementsWithCaughtExceptions = [
-        "try{ ({}).a.b.c.d } catch (e) { console.log('caught inline: ' + JSON.stringify(e)); }",
+        "try{ ({}).a.b.c.d } catch (e) { console.log(`caught inline: ${stringifyError(e)}`); }",
         "catchNested(exceptionBasic, 1);",
         "catchNested(exceptionDOM, 2);",
         "catchNested(exceptionInHostFunction, 3);",

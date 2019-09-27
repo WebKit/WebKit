@@ -1,7 +1,5 @@
 EvalError
-column         = (number)  14
 description    = (undefined)undefined
-line           = (number)  1
 number         = (undefined)undefined
 stack          = (string)  eval code
 eval@[native code]
@@ -10,9 +8,7 @@ global code@NativeErrors.js:68:5
 toString()     = EvalError
 
 RangeError('This is a range error')
-column         = (number)  15
 description    = (undefined)undefined
-line           = (number)  1
 number         = (undefined)undefined
 stack          = (string)  eval code
 eval@[native code]
@@ -21,9 +17,7 @@ global code@NativeErrors.js:69:5
 toString()     = RangeError: This is a range error
 
 ReferenceError
-column         = (number)  19
 description    = (undefined)undefined
-line           = (number)  1
 number         = (undefined)undefined
 stack          = (string)  eval code
 eval@[native code]
@@ -32,9 +26,7 @@ global code@NativeErrors.js:70:5
 toString()     = ReferenceError
 
 SyntaxError
-column         = (number)  16
 description    = (undefined)undefined
-line           = (number)  1
 number         = (undefined)undefined
 stack          = (string)  eval code
 eval@[native code]
@@ -43,9 +35,7 @@ global code@NativeErrors.js:71:5
 toString()     = SyntaxError
 
 TypeError('This is a type error')
-column         = (number)  14
 description    = (undefined)undefined
-line           = (number)  1
 number         = (undefined)undefined
 stack          = (string)  eval code
 eval@[native code]
@@ -54,9 +44,7 @@ global code@NativeErrors.js:72:5
 toString()     = TypeError: This is a type error
 
 URIError
-column         = (number)  13
 description    = (undefined)undefined
-line           = (number)  1
 number         = (undefined)undefined
 stack          = (string)  eval code
 eval@[native code]

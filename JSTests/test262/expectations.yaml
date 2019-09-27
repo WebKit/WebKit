@@ -1212,15 +1212,6 @@ test/built-ins/Map/proto-from-ctor-realm.js:
 test/built-ins/Number/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«0Â», Â«0Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«0Â») to be true'
-test/built-ins/Object/defineProperties/15.2.3.7-2-15.js:
-  default: 'TypeError: Property description must be an object.'
-  strict mode: 'TypeError: Property description must be an object.'
-test/built-ins/Object/defineProperties/15.2.3.7-5-a-16.js:
-  default: 'TypeError: Property description must be an object.'
-  strict mode: 'TypeError: Property description must be an object.'
-test/built-ins/Object/defineProperties/15.2.3.7-5-b-248.js:
-  default: 'TypeError: Property description must be an object.'
-  strict mode: 'TypeError: Property description must be an object.'
 test/built-ins/Object/internals/DefineOwnProperty/consistent-value-function-arguments.js:
   default: 'Test262Error: Expected SameValue(Â«nullÂ», Â«[object Arguments]Â») to be true'
 test/built-ins/Object/internals/DefineOwnProperty/consistent-value-function-caller.js:

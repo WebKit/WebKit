@@ -35,9 +35,21 @@ function catchNested(func, depth /* optionalArgsToFunc... */)
         try {
             func.apply(this, Array.prototype.slice.call(arguments, 2));
         } catch (e) {
-            console.log("catchNested caught exception: " + JSON.stringify(e));
+            console.log(`catchNested caught exception: ${stringifyError(e)}`);
         }
     }
+}
+
+function stringifyError(err)
+{
+    if (typeof err === "string")
+        return JSON.stringify(err);
+
+    return JSON.stringify({
+        line: err.line,
+        column: err.column,
+        sourceURL: err.sourceURL,
+    });
 }
 
 function noException()
