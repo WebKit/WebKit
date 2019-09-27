@@ -527,7 +527,7 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
-    ProcessTaskStateObserver m_taskStateObserver { *this };
+    Ref<ProcessTaskStateObserver> m_taskStateObserver;
 #endif
 
     enum PageMarkingLayersAsVolatileCounterType { };

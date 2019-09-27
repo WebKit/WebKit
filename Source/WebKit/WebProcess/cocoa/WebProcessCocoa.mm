@@ -27,6 +27,7 @@
 #import "WebProcess.h"
 #import "WebProcessCocoa.h"
 
+#import "AssertionServicesSPI.h"
 #import "LegacyCustomProtocolManager.h"
 #import "LogInitialization.h"
 #import "Logging.h"
@@ -294,6 +295,7 @@ void WebProcess::updateProcessName()
 #if PLATFORM(IOS_FAMILY)
 void WebProcess::processTaskStateDidChange(ProcessTaskStateObserver::TaskState taskState)
 {
+    // NOTE: This will be called from a background thread.
     RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processTaskStateDidChange() - taskState(%d)", this, taskState);
     if (taskState == ProcessTaskStateObserver::None)
         return;
@@ -311,8 +313,10 @@ void WebProcess::processTaskStateDidChange(ProcessTaskStateObserver::TaskState t
 
     // We were awakened from suspension unexpectedly. Notify the WebProcessProxy, but take a process assertion on our parent PID
     // to ensure that it too is awakened.
-    auto uiProcessAssertion = makeUnique<ProcessAssertion>(parentProcessConnection()->remoteProcessID(), "Unexpectedly resumed", AssertionState::Background, AssertionReason::FinishTask);
-    parentProcessConnection()->sendWithAsyncReply(Messages::WebProcessProxy::ProcessWasUnexpectedlyUnsuspended(), [uiProcessAssertion = WTFMove(uiProcessAssertion)] { });
+
+    auto uiProcessAssertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:parentProcessConnection()->remoteProcessID() flags:BKSProcessAssertionPreventTaskSuspend reason:BKSProcessAssertionReasonFinishTask name:@"Unexpectedly resumed" withHandler:nil]);
+    parentProcessConnection()->send(Messages::WebProcessProxy::ProcessWasUnexpectedlyUnsuspended(), 0);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), [assertion = WTFMove(uiProcessAssertion)] { [assertion invalidate]; });
 }
 #endif
 

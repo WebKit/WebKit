@@ -1,3 +1,53 @@
+2019-09-27  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Lock screen controls can fail to play web content
+        https://bugs.webkit.org/show_bug.cgi?id=202279
+
+        Reviewed by Chris Dumez.
+
+        When playback is paused from the lock screen via Now Playing controls, the WebProcess,
+        UIProcess, and Network Process will all be suspended. MediaRemote will take an assertion
+        and wake up the WebProcess when a remote control command to "play" is sent via the Now
+        Playing controls. However, if a synchronous message to the (suspended) Network or UIProcess
+        is issued before the notification that the process was unexpectedly unsuspended can be
+        issued (which will subsequently unsuspend the UIProcess and Network process), we can get
+        into a deadlocked state where the main thread is blocked on the sync message to a suspended
+        process.
+
+        To work around this problem, move all the processing from ProcessTaskStateObserver to a
+        WorkQueue / background thread. This requires making the ProcessTaskStateObserver thread-safe,
+        though its only current client is a Singleton (the WebProcess class), and so the risk of
+        thread safety issues is currently minimal. Regardless, access to the Client pointer must be
+        guarded by a Lock, and the Client itself must become ref-counted, so that the
+        ProcessTaskStateObserver can ref its Client (the WebProcess) during callback processing.
+
+        Unfortunately, sendWithAsyncReply() is not thread safe, nor is ProcessAssertion, so instead
+        just use send() and set a 5-second timeout before expiring the assertion, and just use
+        BKSProcessStateAssertion directly.
+
+        * Shared/Cocoa/ProcessTaskStateObserver.h:
+        (WebKit::ProcessTaskStateObserver::Client::ref):
+        (WebKit::ProcessTaskStateObserver::Client::deref):
+        (WebKit::ProcessTaskStateObserver::setClient): Deleted.
+        (WebKit::ProcessTaskStateObserver::client): Deleted.
+        * Shared/Cocoa/ProcessTaskStateObserver.mm:
+        (-[WKProcessTaskStateObserverDelegate process:taskStateDidChange:]):
+        (WebKit::ProcessTaskStateObserver::create):
+        (WebKit::ProcessTaskStateObserver::ProcessTaskStateObserver):
+        (WebKit::ProcessTaskStateObserver::~ProcessTaskStateObserver):
+        (WebKit::ProcessTaskStateObserver::invalidate):
+        (WebKit::ProcessTaskStateObserver::client):
+        (WebKit::ProcessTaskStateObserver::setTaskState):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::m_taskStateObserver):
+        * WebProcess/WebProcess.h:
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::processWasUnexpectedlyUnsuspended):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::processTaskStateDidChange):
+
 2019-09-27  Alex Christensen  <achristensen@webkit.org>
 
         Move service worker process termination delay disabling from process pool to website data store

@@ -47,10 +47,8 @@ typedef void(^TaskStateChangedCallbackType)(BKSProcessTaskState);
 {
     RELEASE_LOG(ProcessSuspension, "%p -[WKProcessTaskStateObserverDelegate process:taskStateDidChange:], process(%p), newState(%d)", self, process, (int)newState);
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (self.taskStateChangedCallback)
-            self.taskStateChangedCallback(newState);
-    });
+    if (auto callback = _taskStateChangedCallback)
+        callback(newState);
 }
 @end
 
@@ -64,25 +62,32 @@ static ProcessTaskStateObserver::TaskState toProcessTaskStateObserverTaskState(B
     return static_cast<ProcessTaskStateObserver::TaskState>(state);
 }
 
-ProcessTaskStateObserver::ProcessTaskStateObserver()
-    : m_process([getBKSProcessClass() currentProcess])
+Ref<ProcessTaskStateObserver> ProcessTaskStateObserver::create(Client& client)
+{
+    return adoptRef(*new ProcessTaskStateObserver(client));
+}
+
+ProcessTaskStateObserver::ProcessTaskStateObserver(Client& client)
+    : m_client(&client)
+    , m_process([getBKSProcessClass() currentProcess])
     , m_delegate(adoptNS([[WKProcessTaskStateObserverDelegate alloc] init]))
 {
     RELEASE_LOG(ProcessSuspension, "%p - ProcessTaskStateObserver::ProcessTaskStateObserver(), m_process(%p)", this, m_process.get());
-    m_delegate.get().taskStateChangedCallback = [this] (BKSProcessTaskState state) {
-        setTaskState(toProcessTaskStateObserverTaskState(state));
+    m_delegate.get().taskStateChangedCallback = [protectedThis = makeRefPtr(this)] (BKSProcessTaskState state) {
+        protectedThis->setTaskState(toProcessTaskStateObserverTaskState(state));
     };
     m_process.get().delegate = m_delegate.get();
 }
 
-ProcessTaskStateObserver::ProcessTaskStateObserver(Client& client)
-    : ProcessTaskStateObserver()
-{
-    setClient(client);
-}
-
 ProcessTaskStateObserver::~ProcessTaskStateObserver()
 {
+    m_delegate.get().taskStateChangedCallback = nil;
+}
+
+void ProcessTaskStateObserver::invalidate()
+{
+    LockHolder holder(m_clientLock);
+    m_client = nullptr;
     m_delegate.get().taskStateChangedCallback = nil;
 }
 
@@ -92,6 +97,8 @@ void ProcessTaskStateObserver::setTaskState(TaskState state)
         return;
 
     m_taskState = state;
+
+    LockHolder holder(m_clientLock);
     if (m_client)
         m_client->processTaskStateDidChange(state);
 }
