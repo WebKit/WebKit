@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2018 Igalia S.L.
+ * Copyright (C) 2012, 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +32,12 @@
 
 #include "ScrollingTreeFrameScrollingNode.h"
 
+#include <wtf/RefPtr.h>
+
+namespace Nicosia {
+class CompositionLayer;
+}
+
 namespace WebCore {
 
 class ScrollingTreeFrameScrollingNodeNicosia final : public ScrollingTreeFrameScrollingNode {
@@ -41,9 +48,24 @@ public:
 private:
     ScrollingTreeFrameScrollingNodeNicosia(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
 
+    void commitStateBeforeChildren(const ScrollingStateNode&) override;
+    void commitStateAfterChildren(const ScrollingStateNode&) override;
+
     ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&) override;
 
+    FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollPositionClamp) const override;
+
+    void currentScrollPositionChanged() override;
+
     void repositionScrollingLayers() override;
+    void repositionRelatedLayers() override;
+
+    RefPtr<Nicosia::CompositionLayer> m_rootContentsLayer;
+    RefPtr<Nicosia::CompositionLayer> m_counterScrollingLayer;
+    RefPtr<Nicosia::CompositionLayer> m_insetClipLayer;
+    RefPtr<Nicosia::CompositionLayer> m_contentShadowLayer;
+    RefPtr<Nicosia::CompositionLayer> m_headerLayer;
+    RefPtr<Nicosia::CompositionLayer> m_footerLayer;
 };
 
 } // namespace WebCore

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2018 Igalia S.L.
+ * Copyright (C) 2012, 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +31,11 @@
 
 #if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
+#include "FrameView.h"
+#include "NicosiaPlatformLayer.h"
+#include "ScrollingStateFrameScrollingNode.h"
+#include "ScrollingTree.h"
+
 namespace WebCore {
 
 Ref<ScrollingTreeFrameScrollingNode> ScrollingTreeFrameScrollingNodeNicosia::create(ScrollingTree& scrollingTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
@@ -44,13 +50,149 @@ ScrollingTreeFrameScrollingNodeNicosia::ScrollingTreeFrameScrollingNodeNicosia(S
 
 ScrollingTreeFrameScrollingNodeNicosia::~ScrollingTreeFrameScrollingNodeNicosia() = default;
 
-ScrollingEventResult ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent(const PlatformWheelEvent&)
+void ScrollingTreeFrameScrollingNodeNicosia::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    return ScrollingEventResult::DidNotHandleEvent;
+    ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(stateNode);
+
+    const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
+
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::RootContentsLayer)) {
+        Nicosia::PlatformLayer* layer = scrollingStateNode.rootContentsLayer();
+        m_rootContentsLayer = downcast<Nicosia::CompositionLayer>(layer);
+    }
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::CounterScrollingLayer)) {
+        Nicosia::PlatformLayer* layer = scrollingStateNode.counterScrollingLayer();
+        m_counterScrollingLayer = downcast<Nicosia::CompositionLayer>(layer);
+    }
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::InsetClipLayer)) {
+        Nicosia::PlatformLayer* layer = scrollingStateNode.insetClipLayer();
+        m_insetClipLayer = downcast<Nicosia::CompositionLayer>(layer);
+    }
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::ContentShadowLayer)) {
+        Nicosia::PlatformLayer* layer = scrollingStateNode.contentShadowLayer();
+        m_contentShadowLayer = downcast<Nicosia::CompositionLayer>(layer);
+    }
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::HeaderLayer)) {
+        Nicosia::PlatformLayer* layer = scrollingStateNode.headerLayer();
+        m_headerLayer = downcast<Nicosia::CompositionLayer>(layer);
+    }
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::FooterLayer)) {
+        Nicosia::PlatformLayer* layer = scrollingStateNode.footerLayer();
+        m_footerLayer = downcast<Nicosia::CompositionLayer>(layer);
+    }
+}
+
+void ScrollingTreeFrameScrollingNodeNicosia::commitStateAfterChildren(const ScrollingStateNode& stateNode)
+{
+    ScrollingTreeFrameScrollingNode::commitStateAfterChildren(stateNode);
+
+    const auto& scrollingStateNode = downcast<ScrollingStateScrollingNode>(stateNode);
+
+    // Update the scroll position after child nodes have been updated, because they need to have updated their constraints before any scrolling happens.
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition)) {
+        auto scrollType = scrollingStateNode.requestedScrollPositionRepresentsProgrammaticScroll() ? ScrollType::Programmatic : ScrollType::User;
+        scrollTo(scrollingStateNode.requestedScrollPosition(), scrollType);
+    }
+}
+
+ScrollingEventResult ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
+{
+    if (!canHaveScrollbars())
+        return ScrollingEventResult::DidNotHandleEvent;
+
+    if (wheelEvent.deltaX() || wheelEvent.deltaY()) {
+        Nicosia::PlatformLayer* scrollLayer = scrolledContentsLayer();
+        ASSERT(scrollLayer);
+        auto& compositionLayer = downcast<Nicosia::CompositionLayer>(*scrollLayer);
+
+        auto updateScope = compositionLayer.createUpdateScope();
+        scrollBy({ wheelEvent.deltaX(), -wheelEvent.deltaY() });
+    }
+
+    scrollingTree().setOrClearLatchedNode(wheelEvent, scrollingNodeID());
+
+    // FIXME: This needs to return whether the event was handled.
+    return ScrollingEventResult::DidHandleEvent;
+}
+
+FloatPoint ScrollingTreeFrameScrollingNodeNicosia::adjustedScrollPosition(const FloatPoint& position, ScrollPositionClamp clamp) const
+{
+    FloatPoint scrollPosition(roundf(position.x()), roundf(position.y()));
+    return ScrollingTreeFrameScrollingNode::adjustedScrollPosition(scrollPosition, clamp);
+}
+
+void ScrollingTreeFrameScrollingNodeNicosia::currentScrollPositionChanged()
+{
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFrameScrollingNodeNicosia::currentScrollPositionChanged to " << currentScrollPosition() << " min: " << minimumScrollPosition() << " max: " << maximumScrollPosition() << " sync: " << shouldUpdateScrollLayerPositionSynchronously());
+
+    if (shouldUpdateScrollLayerPositionSynchronously())
+        scrollingTree().scrollingTreeNodeDidScroll(*this, ScrollingLayerPositionAction::Set);
+    else
+        ScrollingTreeFrameScrollingNode::currentScrollPositionChanged();
 }
 
 void ScrollingTreeFrameScrollingNodeNicosia::repositionScrollingLayers()
 {
+    Nicosia::PlatformLayer* scrollLayer = scrolledContentsLayer();
+    ASSERT(scrollLayer);
+    auto& compositionLayer = downcast<Nicosia::CompositionLayer>(*scrollLayer);
+
+    auto scrollPosition = currentScrollPosition();
+
+    compositionLayer.accessStaging(
+        [&scrollPosition](Nicosia::CompositionLayer::LayerState& state)
+        {
+            state.position = -scrollPosition;
+            state.delta.positionChanged = true;
+        });
+}
+
+void ScrollingTreeFrameScrollingNodeNicosia::repositionRelatedLayers()
+{
+    auto scrollPosition = currentScrollPosition();
+    auto layoutViewport = this->layoutViewport();
+
+    FloatRect visibleContentRect(scrollPosition, scrollableAreaSize());
+
+    auto applyLayerPosition =
+        [](auto& layer, auto&& position)
+        {
+            layer.accessStaging(
+                [&position](Nicosia::CompositionLayer::LayerState& state)
+                {
+                    state.position = position;
+                    state.delta.positionChanged = true;
+                });
+        };
+
+    if (m_counterScrollingLayer)
+        applyLayerPosition(*m_counterScrollingLayer, layoutViewport.location());
+
+    float topContentInset = this->topContentInset();
+    if (m_insetClipLayer && m_rootContentsLayer) {
+        m_insetClipLayer->accessStaging(
+            [&scrollPosition, &topContentInset](Nicosia::CompositionLayer::LayerState& state)
+            {
+                state.position = { state.position.x(), FrameView::yPositionForInsetClipLayer(scrollPosition, topContentInset) };
+                state.delta.positionChanged = true;
+            });
+
+        auto rootContentsPosition = FrameView::positionForRootContentLayer(scrollPosition, scrollOrigin(), topContentInset, headerHeight());
+        applyLayerPosition(*m_rootContentsLayer, rootContentsPosition);
+        if (m_contentShadowLayer)
+            applyLayerPosition(*m_contentShadowLayer, rootContentsPosition);
+    }
+
+    if (m_headerLayer || m_footerLayer) {
+        // Generally the banners should have the same horizontal-position computation as a fixed element. However,
+        // the banners are not affected by the frameScaleFactor(), so if there is currently a non-1 frameScaleFactor()
+        // then we should recompute layoutViewport.x() for the banner with a scale factor of 1.
+        float horizontalScrollOffsetForBanner = layoutViewport.x();
+        if (m_headerLayer)
+            applyLayerPosition(*m_headerLayer, FloatPoint(horizontalScrollOffsetForBanner, FrameView::yPositionForHeaderLayer(scrollPosition, topContentInset)));
+        if (m_footerLayer)
+            applyLayerPosition(*m_footerLayer, FloatPoint(horizontalScrollOffsetForBanner, FrameView::yPositionForFooterLayer(scrollPosition, topContentInset, totalContentsSize().height(), footerHeight())));
+    }
 }
 
 } // namespace WebCore
