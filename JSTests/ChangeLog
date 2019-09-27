@@ -1,3 +1,24 @@
+2019-09-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG recursive-tail-call optimization should not emit jump to call-frame with varargs
+        https://bugs.webkit.org/show_bug.cgi?id=202299
+        <rdar://problem/52669116>
+
+        Reviewed by Saam Barati.
+
+        * stress/recursive-tail-call-optimization-should-not-jump-into-call-frame-with-varargs-simple.js: Added.
+        (foo):
+        (test):
+        * stress/recursive-tail-call-optimization-should-not-jump-into-call-frame-with-varargs.js: Added.
+        (foo):
+        (C1.prototype.baz):
+        (C1):
+        (bar):
+        (noInline.bar.goo):
+        (C2.prototype.baz):
+        (C2):
+        (test):
+
 2019-09-26  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         toExponential, toFixed, and toPrecision should allow arguments up to 100

@@ -424,6 +424,8 @@ public:
                     // We have to use an unchecked use because at least sometimes, the end of the block
                     // is not exitOK.
                     UseKind useKind = uncheckedUseKindFor(format);
+
+                    dataLogLnIf(verbose, "Inserting Upsilon for ", variable->local(), " propagating ", valueForOperand.operand(variable->local()), " to ", phiNode);
                     
                     m_insertionSet.insertNode(
                         upsilonInsertionPoint, SpecNone, Upsilon, upsilonOrigin,

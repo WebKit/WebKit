@@ -1397,9 +1397,18 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant c
         VERBOSE_LOG("   We found a recursive tail call, trying to optimize it into a jump.\n");
 
         if (auto* callFrame = stackEntry->m_inlineCallFrame) {
+            // FIXME: We only accept jump to CallFrame which has exact same argumentCountIncludingThis. But we can remove this by fixing up arguments.
+            // And we can also allow jumping into CallFrame with Varargs if the passing number of arguments is greater than or equal to mandatoryMinimum of CallFrame.
+            // https://bugs.webkit.org/show_bug.cgi?id=202317
+
             // Some code may statically use the argument count from the InlineCallFrame, so it would be invalid to loop back if it does not match.
             // We "continue" instead of returning false in case another stack entry further on the stack has the right number of arguments.
             if (argumentCountIncludingThis != static_cast<int>(callFrame->argumentCountIncludingThis))
+                continue;
+            // If the target InlineCallFrame is Varargs, we do not know how many arguments are actually filled by LoadVarargs. Varargs InlineCallFrame's
+            // argumentCountIncludingThis is maximum number of potentially filled arguments by LoadVarargs. We "continue" to the upper frame which may be
+            // a good target to jump into.
+            if (callFrame->isVarargs())
                 continue;
         } else {
             // We are in the machine code entry (i.e. the original caller).

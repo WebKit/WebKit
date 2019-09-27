@@ -1,3 +1,44 @@
+2019-09-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG recursive-tail-call optimization should not emit jump to call-frame with varargs
+        https://bugs.webkit.org/show_bug.cgi?id=202299
+        <rdar://problem/52669116>
+
+        Reviewed by Saam Barati.
+
+        When converting recursive-tail-call to jump to the upper call frame, we picked call-frame which is spread by LoadVarargs.
+        This is wrong since this call-frame does not know the exact number of arguments. We are using InlineCallFrame::argumentCountIncludingThis,
+        but this is maximal argumentCountIncludingThis when InlineCallFrame is Varargs call-frame. Let's see the simple example.
+
+            'use strict';
+            var count = 0;
+            function foo() {
+                count--;
+                if (count === 0)
+                    return 30;
+                return foo(42, 42); // HERE
+            }
+
+            function test() {
+                count = 100;
+                return foo(...[42, 42]); // THERE
+            }
+            noInline(test);
+
+        In the above case, currently, we convert HERE's foo call to the jump to the prologue of the foo function inlined by "test". But since foo is called
+        in a varargs form, "test" emits LoadVarargs, and it also emits `SetArgumentMaybe` for 1st and 2nd arguments. Since HERE's foo call is actually passing
+        two arguments, we emit a Phi node which Upsilon is from SetArgumentMaybe and 42 Constant. This is wrong since SetArgumentMaybe should not be used. Later,
+        SSA conversion phase emits Upsilon with SetArgumentMaybe, and since SetArgumentMaybe is simply removed in SSA conversion phase, it ends up emitting
+        Upsilon without a child.
+
+        We are currently only performing recursive-tail-call optimization when argument count matches. Given this condition, we should not pick varargs CallFrame
+        as a jump target.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleRecursiveTailCall):
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+
 2019-09-26  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         toExponential, toFixed, and toPrecision should allow arguments up to 100
