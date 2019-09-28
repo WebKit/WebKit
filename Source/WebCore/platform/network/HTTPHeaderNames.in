@@ -104,6 +104,7 @@ X-SourceMap
 X-WebKit-CSP
 X-WebKit-CSP-Report-Only
 X-XSS-Protection
+X-Temp-Tablet
 
 // These headers are specific to GStreamer.
 Icy-MetaInt

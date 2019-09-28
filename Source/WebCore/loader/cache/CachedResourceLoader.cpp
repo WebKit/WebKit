@@ -88,6 +88,10 @@
 #include "CachedTextTrack.h"
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#include "Device.h"
+#endif
+
 #undef RELEASE_LOG_IF_ALLOWED
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - CachedResourceLoader::" fmt, this, ##__VA_ARGS__)
 
@@ -866,6 +870,18 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
             }
         }
     }
+
+    // FIXME: This is temporary for <rdar://problem/55790994>.
+#if PLATFORM(IOS) && !PLATFORM(IOSMAC)
+    if (!page.sessionID().isEphemeral() && deviceHasIPadCapability() && request.resourceRequest().url().protocolIs("https")) {
+        RegistrableDomain registrableDomain(request.resourceRequest().url());
+        if (registrableDomain.string().startsWith("google.")) {
+            auto host = request.resourceRequest().url().host();
+            if (host.startsWithIgnoringASCIICase("google.") || host.startsWithIgnoringASCIICase("www.google.") || host.startsWithIgnoringASCIICase("images.google."))
+                request.resourceRequest().setHTTPHeaderField(HTTPHeaderName::XTempTablet, "1"_s);
+        }
+    }
+#endif
 
     LoadTiming loadTiming;
     loadTiming.markStartTimeAndFetchStart();
