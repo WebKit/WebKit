@@ -515,13 +515,17 @@ void OSRExit::executeOSRExit(Context& context)
             break;
 
         // Begin extra initilization level: ArrayProfileUpdate
-        ArrayProfile* arrayProfile = exitState.arrayProfile;
-        if (arrayProfile) {
+        if (ArrayProfile* arrayProfile = exitState.arrayProfile) {
             ASSERT(!!exit.m_jsValueSource);
             ASSERT(exit.m_kind == BadCache || exit.m_kind == BadIndexingType);
-            Structure* structure = profiledValue.asCell()->structure(vm);
-            arrayProfile->observeStructure(structure);
-            arrayProfile->observeArrayMode(arrayModesFromStructure(structure));
+            CodeBlock* profiledCodeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(exit.m_codeOriginForExitProfile, baselineCodeBlock);
+            const Instruction* instruction = profiledCodeBlock->instructions().at(exit.m_codeOriginForExitProfile.bytecodeIndex()).ptr();
+            bool doProfile = !instruction->is<OpGetById>() || instruction->as<OpGetById>().metadata(profiledCodeBlock).m_modeMetadata.mode == GetByIdMode::ArrayLength;
+            if (doProfile) {
+                Structure* structure = profiledValue.asCell()->structure(vm);
+                arrayProfile->observeStructure(structure);
+                arrayProfile->observeArrayMode(arrayModesFromStructure(structure));
+            }
         }
         if (extraInitializationLevel <= ExtraInitializationLevel::ArrayProfileUpdate)
             break;
@@ -1166,7 +1170,15 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
             // property access, or due to an array profile).
 
             CodeOrigin codeOrigin = exit.m_codeOriginForExitProfile;
-            if (ArrayProfile* arrayProfile = jit.baselineCodeBlockFor(codeOrigin)->getArrayProfile(codeOrigin.bytecodeIndex())) {
+            CodeBlock* codeBlock = jit.baselineCodeBlockFor(codeOrigin);
+            if (ArrayProfile* arrayProfile = codeBlock->getArrayProfile(codeOrigin.bytecodeIndex())) {
+                const Instruction* instruction = codeBlock->instructions().at(codeOrigin.bytecodeIndex()).ptr();
+                CCallHelpers::Jump skipProfile;
+                if (instruction->is<OpGetById>()) {
+                    auto& metadata = instruction->as<OpGetById>().metadata(codeBlock);
+                    skipProfile = jit.branch8(CCallHelpers::NotEqual, CCallHelpers::AbsoluteAddress(&metadata.m_modeMetadata.mode), CCallHelpers::TrustedImm32(static_cast<uint8_t>(GetByIdMode::ArrayLength)));
+                }
+
 #if USE(JSVALUE64)
                 GPRReg usedRegister;
                 if (exit.m_jsValueSource.isAddress())
@@ -1242,6 +1254,9 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
                     jit.pop(scratch2);
                     jit.pop(scratch1);
                 }
+
+                if (skipProfile.isSet())
+                    skipProfile.link(&jit);
             }
         }
 
