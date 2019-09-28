@@ -1,3 +1,21 @@
+2019-09-28  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Line::Box should have a const public interface
+        https://bugs.webkit.org/show_bug.cgi?id=202336
+        <rdar://problem/55798628>
+
+        Reviewed by Antti Koivisto.
+
+        Clean up Line::Box interface.
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::close):
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Run::displayRun const):
+        (WebCore::Layout::Line::Run::isVisuallyEmpty const):
+        (WebCore::Layout::Line::Run::expand):
+        (WebCore::Layout::Line::Run::displayRun): Deleted.
+
 2019-09-27  Chris Dumez  <cdumez@apple.com>
 
         Pages using WebGLRenderingContext fail to enter the back/forward cache

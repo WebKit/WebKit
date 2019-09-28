@@ -178,10 +178,7 @@ Line::RunList Line::close()
         // Only text content can be extended atm.
         ASSERT(previousRun->isText());
         ASSERT(currentRun->isText());
-        auto& previousDisplayRun = previousRun->displayRun();
-        auto& currentDisplayRun = currentRun->displayRun();
-        previousDisplayRun.expandHorizontally(currentDisplayRun.logicalWidth());
-        previousDisplayRun.textContext()->expand(currentDisplayRun.textContext()->length());
+        previousRun->expand(*currentRun);
         m_runList.remove(index);
     }
     return WTFMove(m_runList);

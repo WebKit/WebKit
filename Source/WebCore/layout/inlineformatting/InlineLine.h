@@ -69,10 +69,10 @@ public:
         Run(const InlineItem&, const Display::Run&);
 
         const Display::Run& displayRun() const { return m_displayRun; }
-        Display::Run& displayRun() { return m_displayRun; }
         const Box& layoutBox() const { return m_inlineItem.layoutBox(); }
 
         const Display::Rect& logicalRect() const { return m_displayRun.logicalRect(); }
+        bool isVisuallyEmpty() const { return m_isVisuallyEmpty; }
 
         bool isText() const { return m_inlineItem.isText(); }
         bool isBox() const { return m_inlineItem.isBox(); }
@@ -80,16 +80,18 @@ public:
         bool isContainerStart() const { return m_inlineItem.isContainerStart(); }
         bool isContainerEnd() const { return m_inlineItem.isContainerEnd(); }
 
-        bool isVisuallyEmpty() const { return m_isVisuallyEmpty; }
-        bool isWhitespace() const;
-        bool canBeExtended() const;
-
     private:
         friend class Line;
         void adjustLogicalTop(LayoutUnit logicalTop) { m_displayRun.setLogicalTop(logicalTop); }
         void moveVertically(LayoutUnit offset) { m_displayRun.moveVertically(offset); }
         void moveHorizontally(LayoutUnit offset) { m_displayRun.moveHorizontally(offset); }
+
+        void expand(const Run&);
+
         void setVisuallyIsEmpty() { m_isVisuallyEmpty = true; }
+
+        bool isWhitespace() const;
+        bool canBeExtended() const;
 
         const InlineItem& m_inlineItem;
         Display::Run m_displayRun;
@@ -140,6 +142,16 @@ private:
     bool m_skipVerticalAligment { false };
     LineBox m_lineBox;
 };
+
+inline void Line::Run::expand(const Run& other)
+{
+    ASSERT(isText());
+    ASSERT(other.isText());
+
+    auto& otherDisplayRun = other.displayRun();
+    m_displayRun.expandHorizontally(otherDisplayRun.logicalWidth());
+    m_displayRun.textContext()->expand(otherDisplayRun.textContext()->length());
+}
 
 }
 }
