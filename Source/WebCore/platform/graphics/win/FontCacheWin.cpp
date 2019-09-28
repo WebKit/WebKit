@@ -394,8 +394,9 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
             return *simpleFont;
     }
     
-    ASSERT_NOT_REACHED();
-    return *simpleFont;
+    auto hFont = adoptGDIObject(static_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)));
+    FontPlatformData platformData(WTFMove(hFont), fontDescription.computedPixelSize(), false, false, false);
+    return fontForPlatformData(platformData);
 }
 
 static LONG toGDIFontWeight(FontSelectionValue fontWeight)
