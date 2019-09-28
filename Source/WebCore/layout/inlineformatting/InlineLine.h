@@ -49,7 +49,7 @@ public:
             LayoutUnit baselineOffset;
             Optional<LineBox::Baseline> strut;
         };
-        HeightAndBaseline heightAndBaseline;
+        Optional<HeightAndBaseline> heightAndBaseline;
     };
     enum class SkipVerticalAligment { No, Yes };
     Line(const InlineFormattingContext&, const InitialConstraints&, SkipVerticalAligment);

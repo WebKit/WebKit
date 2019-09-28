@@ -1,3 +1,19 @@
+2019-09-28  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Line::InitialConstraints's heightAndBaseline should be optional
+        https://bugs.webkit.org/show_bug.cgi?id=202348
+
+        Reviewed by Antti Koivisto.
+
+        Vertical properties are undefined while computing the preferred width.
+
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::LineInput::LineInput):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::computedIntrinsicWidth const):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::Line):
+        * layout/inlineformatting/InlineLine.h:
+
 2019-09-28  Chris Dumez  <cdumez@apple.com>
 
         [Experiment][iOS] Add temporary HTTP header to distinguish iPads for requests to Google

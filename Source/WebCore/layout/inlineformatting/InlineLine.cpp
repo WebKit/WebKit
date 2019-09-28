@@ -59,12 +59,15 @@ bool Line::Run::canBeExtended() const
 
 Line::Line(const InlineFormattingContext& inlineFormattingContext, const InitialConstraints& initialConstraints, SkipVerticalAligment skipVerticalAligment)
     : m_inlineFormattingContext(inlineFormattingContext)
-    , m_initialStrut(initialConstraints.heightAndBaseline.strut)
+    , m_initialStrut(initialConstraints.heightAndBaseline ? initialConstraints.heightAndBaseline->strut : WTF::nullopt)
     , m_lineLogicalWidth(initialConstraints.availableLogicalWidth)
     , m_skipVerticalAligment(skipVerticalAligment == SkipVerticalAligment::Yes)
 {
-    auto lineRect = Display::Rect { initialConstraints.logicalTopLeft, { }, initialConstraints.heightAndBaseline.height };
-    auto baseline = LineBox::Baseline { initialConstraints.heightAndBaseline.baselineOffset, initialConstraints.heightAndBaseline.height - initialConstraints.heightAndBaseline.baselineOffset };
+    ASSERT(m_skipVerticalAligment || initialConstraints.heightAndBaseline);
+    auto initialLineHeight = initialConstraints.heightAndBaseline ? initialConstraints.heightAndBaseline->height : LayoutUnit();
+    auto initialBaselineOffset = initialConstraints.heightAndBaseline ? initialConstraints.heightAndBaseline->baselineOffset : LayoutUnit();
+    auto lineRect = Display::Rect { initialConstraints.logicalTopLeft, { }, initialLineHeight };
+    auto baseline = LineBox::Baseline { initialBaselineOffset, initialLineHeight - initialBaselineOffset };
     m_lineBox = LineBox { lineRect, baseline, { } };
 }
 

@@ -91,6 +91,14 @@ struct LineInput {
     Optional<LayoutUnit> floatMinimumLogicalBottom;
 };
 
+LineInput::LineInput(const Line::InitialConstraints& initialLineConstraints, Line::SkipVerticalAligment skipVerticalAligment, IndexAndRange firstToProcess, const InlineItems& inlineItems)
+    : initialConstraints(initialLineConstraints)
+    , skipVerticalAligment(skipVerticalAligment)
+    , firstInlineItem(firstToProcess)
+    , inlineItems(inlineItems)
+{
+}
+
 struct LineContent {
     Optional<IndexAndRange> lastCommitted;
     Vector<WeakPtr<InlineItem>> floats;
@@ -262,14 +270,6 @@ LineContent LineLayout::layout()
     return close();
 }
 
-LineInput::LineInput(const Line::InitialConstraints& initialLineConstraints, Line::SkipVerticalAligment skipVerticalAligment, IndexAndRange firstToProcess, const InlineItems& inlineItems)
-    : initialConstraints(initialLineConstraints)
-    , skipVerticalAligment(skipVerticalAligment)
-    , firstInlineItem(firstToProcess)
-    , inlineItems(inlineItems)
-{
-}
-
 InlineFormattingContext::InlineLayout::InlineLayout(InlineFormattingContext& inlineFormattingContext, UsedHorizontalValues usedHorizontalValues)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_usedHorizontalValues(usedHorizontalValues)
@@ -346,10 +346,14 @@ LayoutUnit InlineFormattingContext::InlineLayout::computedIntrinsicWidth(const I
     auto& formattingContext = this->formattingContext();
     LayoutUnit maximumLineWidth;
     IndexAndRange currentInlineItem;
-    auto quirks = formattingContext.quirks();
     while (currentInlineItem.index < inlineItems.size()) {
-        auto lineContent = LineLayout(formattingContext, { { { }, widthConstraint(), false, quirks.lineHeightConstraints(formattingRoot()) }, Line::SkipVerticalAligment::Yes, currentInlineItem, inlineItems }).layout();
-        currentInlineItem = { lineContent.lastCommitted->index + 1, WTF::nullopt };
+        // Only the horiztonal available width is constrained when computing intrinsic width.
+        auto initialLineConstraints = Line::InitialConstraints { { }, widthConstraint(), false, { } };
+        auto lineInput = LineInput { initialLineConstraints, Line::SkipVerticalAligment::Yes, currentInlineItem, inlineItems };
+
+        auto lineContent = LineLayout(formattingContext, lineInput).layout();
+
+        currentInlineItem = { lineContent.lastCommitted->index + 1, { } };
         LayoutUnit floatsWidth;
         for (auto& floatItem : lineContent.floats)
             floatsWidth += formattingContext.geometryForBox(floatItem->layoutBox()).marginBoxWidth();
