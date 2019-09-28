@@ -2292,7 +2292,7 @@ JSString* JIT_OPERATION operationToLowerCase(ExecState* exec, JSString* string, 
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    const String& inputString = string->value(exec);
+    String inputString = string->value(exec);
     RETURN_IF_EXCEPTION(scope, nullptr);
     if (!inputString.length())
         return vm.smallStrings.emptyString();

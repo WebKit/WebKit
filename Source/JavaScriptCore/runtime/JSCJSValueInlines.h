@@ -1030,7 +1030,9 @@ ALWAYS_INLINE bool JSValue::equalSlowCaseInline(ExecState* exec, JSValue v1, JSV
             RELEASE_AND_RETURN(scope, asString(v1)->equal(exec, asString(v2)));
 
         if (v1.isBigInt() && s2) {
-            JSBigInt* n = JSBigInt::stringToBigInt(exec, asString(v2)->value(exec));
+            String v2String = asString(v2)->value(exec);
+            RETURN_IF_EXCEPTION(scope, false);
+            JSBigInt* n = JSBigInt::stringToBigInt(exec, v2String);
             RETURN_IF_EXCEPTION(scope, false);
             if (!n)
                 return false;
@@ -1040,7 +1042,9 @@ ALWAYS_INLINE bool JSValue::equalSlowCaseInline(ExecState* exec, JSValue v1, JSV
         }
 
         if (s1 && v2.isBigInt()) {
-            JSBigInt* n = JSBigInt::stringToBigInt(exec, asString(v1)->value(exec));
+            String v1String = asString(v1)->value(exec);
+            RETURN_IF_EXCEPTION(scope, false);
+            JSBigInt* n = JSBigInt::stringToBigInt(exec, v1String);
             RETURN_IF_EXCEPTION(scope, false);
             if (!n)
                 return false;

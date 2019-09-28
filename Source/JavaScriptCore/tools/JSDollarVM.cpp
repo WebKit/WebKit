@@ -2049,7 +2049,7 @@ static EncodedJSValue JSC_HOST_CALL functionCreateBuiltin(ExecState* exec)
     String functionText = asString(exec->argument(0))->value(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    const SourceCode& source = makeSource(functionText, { });
+    SourceCode source = makeSource(functionText, { });
     JSFunction* func = JSFunction::create(vm, createBuiltinExecutable(vm, source, Identifier::fromString(vm, "foo"), ConstructorKind::None, ConstructAbility::CannotConstruct)->link(vm, nullptr, source), exec->lexicalGlobalObject());
 
     return JSValue::encode(func);

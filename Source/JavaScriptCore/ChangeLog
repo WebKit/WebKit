@@ -1,3 +1,38 @@
+2019-09-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Keep JSString::value(ExecState*)'s result as String instead of `const String&`
+        https://bugs.webkit.org/show_bug.cgi?id=202330
+
+        Reviewed by Saam Barati.
+
+        In toLocaleLowerCase and toLocaleUpperCase, we get `const String&` from JSString* and use it.
+        But if this string is newly created one in toLocaleLowerCase and toLocaleUpperCase (like, passing a number, and number.toString() is called
+        in C++), after getting `const String&`, our C++ code potentially does not have any reference to the owner of this `const String&`. So, this
+        JSString* can be collected by GC, while `const String&` is used. This makes `const String&` destroyed, and causes crash.
+
+        In this patch, we receive it as `String` instead of `const String&` to ref it. This ensures that this string is live even if the owner is collected.
+        I grepped the source code and make this changes conservatively to places which looks dangerous. And I added error checks more after calling `value(exec)`.
+
+        In this patch, I didn't introduce the change like that: `JSString::value(ExecState*)` returns `String` instead of `const String&`. Some of places are
+        really performance sensitive and we want to use the current behavior when we can ensure the owners are alive. We could figure out these points, and we
+        can change the default behavior of `JSString::value` function to returning `String`. But for now, I plan it as a future work.
+
+        * dfg/DFGOperations.cpp:
+        * jsc.cpp:
+        (GlobalObject::moduleLoaderImportModule):
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::equalSlowCaseInline):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::createRegExpMatchesArray):
+        * runtime/StringPrototype.cpp:
+        (JSC::toLocaleCase):
+        (JSC::stringProtoFuncToLocaleLowerCase):
+        (JSC::stringProtoFuncToLocaleUpperCase):
+        * tools/JSDollarVM.cpp:
+        (JSC::functionCreateBuiltin):
+
 2019-09-27  Keith Miller  <keith_miller@apple.com>
 
         OSR exit shouldn't bother updating get_by_id array profiles that have changed modes

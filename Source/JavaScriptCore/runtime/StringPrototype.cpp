@@ -1520,10 +1520,21 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(ExecState* exec)
 }
 
 #if ENABLE(INTL)
-static EncodedJSValue toLocaleCase(ExecState* state, int32_t (*convertCase)(UChar*, int32_t, const UChar*, int32_t, const char*, UErrorCode*))
+enum class CaseConversionMode {
+    Upper,
+    Lower,
+};
+template<CaseConversionMode mode>
+static EncodedJSValue toLocaleCase(ExecState* state)
 {
     VM& vm = state->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto convertCase = [&] (auto&&... args) {
+        if (mode == CaseConversionMode::Lower)
+            return u_strToLower(std::forward<decltype(args)>(args)...);
+        return u_strToUpper(std::forward<decltype(args)>(args)...);
+    };
 
     // 1. Let O be RequireObjectCoercible(this value).
     JSValue thisValue = state->thisValue();
@@ -1533,7 +1544,7 @@ static EncodedJSValue toLocaleCase(ExecState* state, int32_t (*convertCase)(UCha
     // 2. Let S be ToString(O).
     JSString* sVal = thisValue.toString(state);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    const String& s = sVal->value(state);
+    String s = sVal->value(state);
 
     // 3. ReturnIfAbrupt(S).
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -1608,7 +1619,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToLocaleLowerCase(ExecState* state)
 {
     // 13.1.2 String.prototype.toLocaleLowerCase ([locales])
     // http://ecma-international.org/publications/standards/Ecma-402.htm
-    return toLocaleCase(state, u_strToLower);
+    return toLocaleCase<CaseConversionMode::Lower>(state);
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncToLocaleUpperCase(ExecState* state)
@@ -1616,7 +1627,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToLocaleUpperCase(ExecState* state)
     // 13.1.3 String.prototype.toLocaleUpperCase ([locales])
     // http://ecma-international.org/publications/standards/Ecma-402.htm
     // This function interprets a string value as a sequence of code points, as described in ES2015, 6.1.4. This function behaves in exactly the same way as String.prototype.toLocaleLowerCase, except that characters are mapped to their uppercase equivalents as specified in the Unicode character database.
-    return toLocaleCase(state, u_strToUpper);
+    return toLocaleCase<CaseConversionMode::Upper>(state);
 }
 #endif // ENABLE(INTL)
 

@@ -133,7 +133,9 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, JSValue n
             JSValue primitive = arg0.toPrimitive(exec);
             RETURN_IF_EXCEPTION(scope, nullptr);
             if (primitive.isString()) {
-                value = parseDate(exec, vm, asString(primitive)->value(exec));
+                String primitiveString = asString(primitive)->value(exec);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                value = parseDate(exec, vm, primitiveString);
                 RETURN_IF_EXCEPTION(scope, nullptr);
             } else
                 value = primitive.toNumber(exec);

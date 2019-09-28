@@ -167,8 +167,14 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
 
 inline JSArray* createRegExpMatchesArray(ExecState* exec, JSGlobalObject* globalObject, JSString* string, RegExp* regExp, unsigned startOffset)
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     MatchResult ignoredResult;
-    return createRegExpMatchesArray(globalObject->vm(), globalObject, string, string->value(exec), regExp, startOffset, ignoredResult);
+    String input = string->value(exec);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, createRegExpMatchesArray(vm, globalObject, string, input, regExp, startOffset, ignoredResult));
 }
 JSArray* createEmptyRegExpMatchesArray(JSGlobalObject*, JSString*, RegExp*);
 Structure* createRegExpMatchesArrayStructure(VM&, JSGlobalObject*);
