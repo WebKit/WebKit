@@ -521,7 +521,7 @@ void HTMLMediaElement::finishInitialization()
             m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureToShowPlaybackTargetPicker);
 #endif
 
-        if (!document.settings().mediaDataLoadsAutomatically())
+        if (!document.settings().mediaDataLoadsAutomatically() && !document.quirks().needsPreloadAutoQuirk())
             m_mediaSession->addBehaviorRestriction(MediaElementSession::AutoPreloadingNotPermitted);
 
         if (document.settings().mainContentUserGestureOverrideEnabled())

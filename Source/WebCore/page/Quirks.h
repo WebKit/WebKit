@@ -79,6 +79,8 @@ public:
 
     bool shouldOpenAsAboutBlank(const String&) const;
 
+    bool needsPreloadAutoQuirk() const;
+
 private:
     bool needsQuirks() const;
 
@@ -93,6 +95,7 @@ private:
 #if PLATFORM(IOS_FAMILY)
     mutable Optional<bool> m_needsGMailOverflowScrollQuirk;
     mutable Optional<bool> m_needsYouTubeOverflowScrollQuirk;
+    mutable Optional<bool> m_needsPreloadAutoQuirk;
 #endif
 };
 
