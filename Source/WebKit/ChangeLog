@@ -1,3 +1,79 @@
+2019-09-20  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/55564031
+
+    2019-09-20  Chris Dumez  <cdumez@apple.com>
+
+            Regression(r248832): Unable to quicklook HTML files in Mail
+            https://bugs.webkit.org/show_bug.cgi?id=202012
+            <rdar://problem/55285295>
+
+            Reviewed by Geoff Garen and Brent Fulgham.
+
+            r248832 inadvertently reverted the fix for Mail that landed in r247400 by not using
+            the same logic to initialize the sandbox extension if the process had already
+            finished launching or not. In particular, the new code path that happens on process
+            launch unconditionally used '/' as resource directory for the sandbox extension if
+            the client did not provide one. The logic in maybeInitializeSandboxExtensionHandle()
+            would use the file URL's base URL as resource directory when creating a sandbox
+            extension for '/' would fail (which it often does).
+
+            To address the issue, have the logic that runs on process launch call
+            maybeInitializeSandboxExtensionHandle() so avoid duplicating code and make sure
+            both cases now have the Mail fix.
+
+            * UIProcess/AuxiliaryProcessProxy.cpp:
+            (WebKit::AuxiliaryProcessProxy::didFinishLaunching):
+            * UIProcess/AuxiliaryProcessProxy.h:
+            (WebKit::AuxiliaryProcessProxy::isLaunching const):
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::maybeInitializeSandboxExtensionHandle):
+            (WebKit::WebPageProxy::loadRequestWithNavigationShared):
+            (WebKit::WebPageProxy::loadFile):
+            * UIProcess/WebPageProxy.h:
+            * WebProcess/WebPage/WebPage.messages.in:
+
+2019-09-19  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r250069. rdar://problem/55524978
+
+    Eagerly create and add the m_layerHostingView to WKWebView.
+    https://bugs.webkit.org/show_bug.cgi?id=201942
+    
+    Reviewed by Tim Horton.
+    
+    Some apps will add subviews to WKWebView, and by the time we add our m_layerHostingView view we might be
+    adding it behind a view that should have been added behind our layer hosting view subview. This affected
+    the Spark email app, due to changes in order of loading delegate calls and when compositing is enabled.
+    Instead of delayed creation of m_layerHostingView, always create it and add it to to the WKWebView.
+    This ensures proper ordering of subviews when clients add a view behind all existing subviews.
+    
+    * UIProcess/Cocoa/WebViewImpl.mm:
+    (WebKit::WebViewImpl::WebViewImpl): Create and add m_layerHostingView here.
+    (WebKit::WebViewImpl::setAcceleratedCompositingRootLayer): Remove creation and removal of m_layerHostingView.
+    Just set the sublayers of m_layerHostingView's layer here.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250069 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-09-18  Timothy Hatcher  <timothy@apple.com>
+
+            Eagerly create and add the m_layerHostingView to WKWebView.
+            https://bugs.webkit.org/show_bug.cgi?id=201942
+
+            Reviewed by Tim Horton.
+
+            Some apps will add subviews to WKWebView, and by the time we add our m_layerHostingView view we might be
+            adding it behind a view that should have been added behind our layer hosting view subview. This affected
+            the Spark email app, due to changes in order of loading delegate calls and when compositing is enabled.
+            Instead of delayed creation of m_layerHostingView, always create it and add it to to the WKWebView.
+            This ensures proper ordering of subviews when clients add a view behind all existing subviews.
+
+            * UIProcess/Cocoa/WebViewImpl.mm:
+            (WebKit::WebViewImpl::WebViewImpl): Create and add m_layerHostingView here.
+            (WebKit::WebViewImpl::setAcceleratedCompositingRootLayer): Remove creation and removal of m_layerHostingView.
+            Just set the sublayers of m_layerHostingView's layer here.
+
 2019-09-11  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/55240886
