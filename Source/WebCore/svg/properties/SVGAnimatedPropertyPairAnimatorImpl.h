@@ -40,7 +40,7 @@ class SVGAnimatedAngleOrientAnimator final : public SVGAnimatedPropertyPairAnima
 public:
     static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedAngle>& animated1, Ref<SVGAnimatedOrientType>& animated2, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
     {
-        return makeUnique<SVGAnimatedAngleOrientAnimator>(attributeName, animated1, animated2, animationMode, calcMode, isAccumulated, isAdditive);
+        return adoptRef(*new SVGAnimatedAngleOrientAnimator(attributeName, animated1, animated2, animationMode, calcMode, isAccumulated, isAdditive));
     }
 
 private:
@@ -113,7 +113,7 @@ class SVGAnimatedIntegerPairAnimator final : public SVGAnimatedPropertyPairAnima
 public:
     static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedInteger>& animated1, Ref<SVGAnimatedInteger>& animated2, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
     {
-        return makeUnique<SVGAnimatedIntegerPairAnimator>(attributeName, animated1, animated2, animationMode, calcMode, isAccumulated, isAdditive);
+        return adoptRef(*new SVGAnimatedIntegerPairAnimator(attributeName, animated1, animated2, animationMode, calcMode, isAccumulated, isAdditive));
     }
 
 private:
@@ -156,7 +156,7 @@ class SVGAnimatedNumberPairAnimator final : public SVGAnimatedPropertyPairAnimat
 public:
     static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedNumber>& animated1, Ref<SVGAnimatedNumber>& animated2, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
     {
-        return makeUnique<SVGAnimatedNumberPairAnimator>(attributeName, animated1, animated2, animationMode, calcMode, isAccumulated, isAdditive);
+        return adoptRef(*new SVGAnimatedNumberPairAnimator(attributeName, animated1, animated2, animationMode, calcMode, isAccumulated, isAdditive));
     }
 
 private:

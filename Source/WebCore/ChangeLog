@@ -1,3 +1,64 @@
+2019-09-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Crash when removing the target element while animating its attributes
+        https://bugs.webkit.org/show_bug.cgi?id=202247
+
+        Reviewed by Darin Adler.
+
+        If SMIL is animating a CSS attribute, there is a chance the animation is
+        ended while it is being started or progressed. For that reason, the member
+        SVGAnimateElementBase::m_animator has to be made RefPtr and it has to be
+        be protected in resetAnimatedType() and calculateAnimatedValue().
+
+        While SMILTimeContainer::updateAnimations() is calling progress() for the
+        scheduled animation elements, SMILTimeContainer::unschedule() might get
+        called if processing an animation causes events to be dispatched. For that
+        reason we need to copy the scheduled animations Vector before processing
+        them so we avoid changing the Vector while looping through its items.
+
+        Remove the guard SMILTimeContainer::m_preventScheduledAnimationsChanges
+        which was added in r129670 for debugging purposes. In some situations, 
+        the scheduled animations map could be modified out from under some of the
+        functions of SMILTimeContainer.
+
+        Test: svg/animations/animate-and-remove-target-element.html
+
+        * svg/SVGAnimateElementBase.cpp:
+        (WebCore::SVGAnimateElementBase::resetAnimatedType):
+        (WebCore::SVGAnimateElementBase::calculateAnimatedValue):
+        * svg/SVGAnimateElementBase.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::createAnimator):
+        * svg/SVGElement.h:
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::schedule):
+        (WebCore::SMILTimeContainer::unschedule):
+        (WebCore::SMILTimeContainer::setElapsed):
+        (WebCore::SMILTimeContainer::sortByPriority):
+        (WebCore::SMILTimeContainer::processAnimations):
+        (WebCore::SMILTimeContainer::processScheduledAnimations):
+        (WebCore::SMILTimeContainer::updateAnimations):
+        (WebCore::SMILTimeContainer::~SMILTimeContainer): Deleted.
+        * svg/animation/SMILTimeContainer.h:
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::calculateNextProgressTime const):
+        * svg/properties/SVGAnimatedPropertyAccessorImpl.h:
+        * svg/properties/SVGAnimatedPropertyAnimatorImpl.h:
+        * svg/properties/SVGAnimatedPropertyPairAccessorImpl.h:
+        * svg/properties/SVGAnimatedPropertyPairAnimator.h:
+        * svg/properties/SVGAnimatedPropertyPairAnimatorImpl.h:
+        * svg/properties/SVGAttributeAnimator.h:
+        * svg/properties/SVGMemberAccessor.h:
+        (WebCore::SVGMemberAccessor::createAnimator const):
+        * svg/properties/SVGPrimitivePropertyAnimator.h:
+        (WebCore::SVGPrimitivePropertyAnimator::create):
+        * svg/properties/SVGPropertyAnimatorFactory.h:
+        (WebCore::SVGPropertyAnimatorFactory::createAnimator):
+        * svg/properties/SVGPropertyOwnerRegistry.h:
+        * svg/properties/SVGPropertyRegistry.h:
+        * svg/properties/SVGValuePropertyAnimatorImpl.h:
+        * svg/properties/SVGValuePropertyListAnimatorImpl.h:
+
 2019-09-28  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Move horizontal alignment to Line

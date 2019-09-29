@@ -47,7 +47,7 @@ public:
     virtual bool matches(const OwnerType&, const SVGAnimatedProperty&) const { return false; }
     virtual Optional<String> synchronize(const OwnerType&) const { return WTF::nullopt; }
 
-    virtual std::unique_ptr<SVGAttributeAnimator> createAnimator(OwnerType&, const QualifiedName&, AnimationMode, CalcMode, bool, bool) const { return nullptr; }
+    virtual RefPtr<SVGAttributeAnimator> createAnimator(OwnerType&, const QualifiedName&, AnimationMode, CalcMode, bool, bool) const { return nullptr; }
     virtual void appendAnimatedInstance(OwnerType&, SVGAttributeAnimator&) const { }
 
 protected:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,22 +44,11 @@ SMILTimeContainer::SMILTimeContainer(SVGSVGElement& owner)
 {
 }
 
-SMILTimeContainer::~SMILTimeContainer()
-{
-#ifndef NDEBUG
-    ASSERT(!m_preventScheduledAnimationsChanges);
-#endif
-}
-
 void SMILTimeContainer::schedule(SVGSMILElement* animation, SVGElement* target, const QualifiedName& attributeName)
 {
     ASSERT(animation->timeContainer() == this);
     ASSERT(target);
     ASSERT(animation->hasValidAttributeName());
-
-#ifndef NDEBUG
-    ASSERT(!m_preventScheduledAnimationsChanges);
-#endif
 
     ElementAttributePair key(target, attributeName);
     std::unique_ptr<AnimationsVector>& scheduled = m_scheduledAnimations.add(key, nullptr).iterator->value;
@@ -76,10 +65,6 @@ void SMILTimeContainer::schedule(SVGSMILElement* animation, SVGElement* target, 
 void SMILTimeContainer::unschedule(SVGSMILElement* animation, SVGElement* target, const QualifiedName& attributeName)
 {
     ASSERT(animation->timeContainer() == this);
-
-#ifndef NDEBUG
-    ASSERT(!m_preventScheduledAnimationsChanges);
-#endif
 
     ElementAttributePair key(target, attributeName);
     AnimationsVector* scheduled = m_scheduledAnimations.get(key);
@@ -184,16 +169,9 @@ void SMILTimeContainer::setElapsed(SMILTime time)
     } else
         m_resumeTime = m_beginTime;
 
-#ifndef NDEBUG
-    m_preventScheduledAnimationsChanges = true;
-#endif
-    for (auto& animation : m_scheduledAnimations.values()) {
-        for (auto& element : *animation)
-            element->reset();
-    }
-#ifndef NDEBUG
-    m_preventScheduledAnimationsChanges = false;
-#endif
+    processScheduledAnimations([](auto* animation) {
+        animation->reset();
+    });
 
     updateAnimations(time, true);
 }
@@ -244,85 +222,77 @@ struct PriorityCompare {
     SMILTime m_elapsed;
 };
 
-void SMILTimeContainer::sortByPriority(Vector<SVGSMILElement*>& smilElements, SMILTime elapsed)
+void SMILTimeContainer::sortByPriority(AnimationsVector& animations, SMILTime elapsed)
 {
     if (m_documentOrderIndexesDirty)
         updateDocumentOrderIndexes();
-    std::sort(smilElements.begin(), smilElements.end(), PriorityCompare(elapsed));
+    std::sort(animations.begin(), animations.end(), PriorityCompare(elapsed));
+}
+
+void SMILTimeContainer::processAnimations(const AnimationsVector& animations, Function<void(SVGSMILElement*)>&& callback)
+{
+    // 'animations' may change if 'callback' causes an animation to end which will end up calling
+    // unschedule(). Copy 'animations' so none of the items gets deleted out from underneath us.
+    auto animationsCopy = animations;
+    for (auto* animation : animations)
+        callback(animation);
+}
+
+void SMILTimeContainer::processScheduledAnimations(Function<void(SVGSMILElement*)>&& callback)
+{
+    for (auto& it : m_scheduledAnimations)
+        processAnimations(*it.value, WTFMove(callback));
 }
 
 void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
 {
-    SMILTime earliestFireTime = SMILTime::unresolved();
-
     // Don't mutate the DOM while updating the animations.
     EventQueueScope scope;
-    
-#ifndef NDEBUG
-    // This boolean will catch any attempts to schedule/unschedule scheduledAnimations during this critical section.
-    // Similarly, any elements removed will unschedule themselves, so this will catch modification of animationsToApply.
-    m_preventScheduledAnimationsChanges = true;
-#endif
+
+    processScheduledAnimations([](auto* animation) {
+        if (!animation->hasConditionsConnected())
+            animation->connectConditions();
+    });
 
     AnimationsVector animationsToApply;
-    for (auto& it : m_scheduledAnimations) {
-        AnimationsVector* scheduled = it.value.get();
-        for (auto* animation : *scheduled) {
-            if (!animation->hasConditionsConnected())
-                animation->connectConditions();
-        }
-    }
-    
-    for (auto& it : m_scheduledAnimations) {
-        AnimationsVector* scheduled = it.value.get();
+    SMILTime earliestFireTime = SMILTime::unresolved();
 
+    for (auto& it : m_scheduledAnimations) {
         // Sort according to priority. Elements with later begin time have higher priority.
-        // In case of a tie, document order decides. 
+        // In case of a tie, document order decides.
         // FIXME: This should also consider timing relationships between the elements. Dependents
         // have higher priority.
-        sortByPriority(*scheduled, elapsed);
+        sortByPriority(*it.value, elapsed);
 
-        RefPtr<SVGSMILElement> resultElement;
-        for (auto& animation : *scheduled) {
+        RefPtr<SVGSMILElement> firstAnimation;
+        processAnimations(*it.value, [&](auto* animation) {
             ASSERT(animation->timeContainer() == this);
             ASSERT(animation->targetElement());
             ASSERT(animation->hasValidAttributeName());
 
             // Results are accumulated to the first animation that animates and contributes to a particular element/attribute pair.
-            if (!resultElement) {
+            if (!firstAnimation) {
                 if (!animation->hasValidAttributeType())
-                    continue;
-                resultElement = animation;
+                    return;
+                firstAnimation = animation;
             }
 
             // This will calculate the contribution from the animation and add it to the resultsElement.
-            if (!animation->progress(elapsed, resultElement.get(), seekToTime) && resultElement == animation)
-                resultElement = nullptr;
+            if (!animation->progress(elapsed, firstAnimation.get(), seekToTime) && firstAnimation == animation)
+                firstAnimation = nullptr;
 
             SMILTime nextFireTime = animation->nextProgressTime();
             if (nextFireTime.isFinite())
                 earliestFireTime = std::min(nextFireTime, earliestFireTime);
-        }
+        });
 
-        if (resultElement)
-            animationsToApply.append(resultElement.get());
-    }
-
-    if (animationsToApply.isEmpty()) {
-#ifndef NDEBUG
-        m_preventScheduledAnimationsChanges = false;
-#endif
-        startTimer(elapsed, earliestFireTime, animationFrameDelay());
-        return;
+        if (firstAnimation)
+            animationsToApply.append(firstAnimation.get());
     }
 
     // Apply results to target elements.
     for (auto& animation : animationsToApply)
         animation->applyResultsToTarget();
-
-#ifndef NDEBUG
-    m_preventScheduledAnimationsChanges = false;
-#endif
 
     startTimer(elapsed, earliestFireTime, animationFrameDelay());
 }

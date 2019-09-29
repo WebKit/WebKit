@@ -61,7 +61,7 @@ private:
 
     bool hasInvalidCSSAttributeType() const;
 
-    mutable std::unique_ptr<SVGAttributeAnimator> m_animator;
+    mutable RefPtr<SVGAttributeAnimator> m_animator;
     mutable Optional<bool> m_hasInvalidCSSAttributeType;
 };
 
