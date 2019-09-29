@@ -127,8 +127,9 @@ void setStrokeStyle(PlatformContextDirect2D& platformContext, StrokeStyle stroke
 
 void setCompositeOperation(PlatformContextDirect2D& platformContext, CompositeOperator compositeOperation, BlendMode blendMode)
 {
-    D2D1_BLEND_MODE targetBlendMode = D2D1_BLEND_MODE_SCREEN;
-    D2D1_COMPOSITE_MODE targetCompositeMode = D2D1_COMPOSITE_MODE_SOURCE_ATOP;
+
+    D2D1_BLEND_MODE targetBlendMode = D2D1_BLEND_MODE_MULTIPLY;
+    D2D1_COMPOSITE_MODE targetCompositeMode = D2D1_COMPOSITE_MODE_FORCE_DWORD;
 
     if (blendMode != BlendMode::Normal) {
         switch (blendMode) {
@@ -192,10 +193,10 @@ void setCompositeOperation(PlatformContextDirect2D& platformContext, CompositeOp
             // FIXME: targetBlendMode = D2D1_BLEND_MODE_CLEAR;
             break;
         case CompositeCopy:
-            // FIXME: targetBlendMode = D2D1_BLEND_MODE_COPY;
+            targetCompositeMode = D2D1_COMPOSITE_MODE_SOURCE_COPY;
             break;
         case CompositeSourceOver:
-            // FIXME: kCGBlendModeNormal
+            targetCompositeMode = D2D1_COMPOSITE_MODE_SOURCE_OVER;
             break;
         case CompositeSourceIn:
             targetCompositeMode = D2D1_COMPOSITE_MODE_SOURCE_IN;
@@ -222,10 +223,10 @@ void setCompositeOperation(PlatformContextDirect2D& platformContext, CompositeOp
             targetCompositeMode = D2D1_COMPOSITE_MODE_XOR;
             break;
         case CompositePlusDarker:
-            targetBlendMode = D2D1_BLEND_MODE_DARKER_COLOR;
+            targetBlendMode = D2D1_BLEND_MODE_DARKEN;
             break;
         case CompositePlusLighter:
-            targetBlendMode = D2D1_BLEND_MODE_LIGHTER_COLOR;
+            targetBlendMode = D2D1_BLEND_MODE_LIGHTEN;
             break;
         case CompositeDifference:
             targetBlendMode = D2D1_BLEND_MODE_DIFFERENCE;
@@ -233,8 +234,7 @@ void setCompositeOperation(PlatformContextDirect2D& platformContext, CompositeOp
         }
     }
 
-    platformContext.setBlendMode(targetBlendMode);
-    platformContext.setCompositeMode(targetCompositeMode);
+    platformContext.setBlendAndCompositeMode(targetBlendMode, targetCompositeMode);
 }
 
 void setShouldAntialias(PlatformContextDirect2D& platformContext, bool enable)
@@ -411,15 +411,10 @@ void fillRect(PlatformContextDirect2D& platformContext, const FloatRect& rect, c
     auto context = platformContext.renderTarget();
 
     platformContext.setTags(1, __LINE__);
-    Function<void(ID2D1RenderTarget*)> drawFunction = [&platformContext, rect, &fillSource](ID2D1RenderTarget* renderTarget) {
+    drawWithShadow(platformContext, rect, shadowState, [&platformContext, rect, &fillSource](ID2D1RenderTarget* renderTarget) {
         const D2D1_RECT_F d2dRect = rect;
         renderTarget->FillRectangle(&d2dRect, fillSource.brush.get());
-    };
-
-    if (shadowState.isVisible())
-        drawWithShadow(platformContext, rect, shadowState, drawFunction);
-    else
-        drawWithoutShadow(platformContext, rect, drawFunction);
+    });
 }
 
 void fillRect(PlatformContextDirect2D& platformContext, const FloatRect& rect, const Color& color, const ShadowState& shadowState)
@@ -427,15 +422,10 @@ void fillRect(PlatformContextDirect2D& platformContext, const FloatRect& rect, c
     auto context = platformContext.renderTarget();
 
     platformContext.setTags(1, __LINE__);
-    Function<void(ID2D1RenderTarget*)> drawFunction = [&platformContext, color, rect](ID2D1RenderTarget* renderTarget) {
+    drawWithShadow(platformContext, rect, shadowState, [&platformContext, color, rect](ID2D1RenderTarget* renderTarget) {
         const D2D1_RECT_F d2dRect = rect;
         renderTarget->FillRectangle(&d2dRect, platformContext.brushWithColor(color).get());
-    };
-
-    if (shadowState.isVisible())
-        drawWithShadow(platformContext, rect, shadowState, drawFunction);
-    else
-        drawWithoutShadow(platformContext, rect, drawFunction);
+    });
 }
 
 void fillRoundedRect(PlatformContextDirect2D& platformContext, const FloatRoundedRect& rect, const Color& color, const ShadowState& shadowState)
@@ -450,15 +440,10 @@ void fillRoundedRect(PlatformContextDirect2D& platformContext, const FloatRounde
     bool equalHeights = (radii.topLeft().height() == radii.bottomLeft().height() && radii.bottomLeft().height() == radii.topRight().height() && radii.topRight().height() == radii.bottomRight().height());
     bool hasCustomFill = false; // FIXME: Why isn't a FillSource passed to this function?
     if (!hasCustomFill && equalWidths && equalHeights && radii.topLeft().width() * 2 == r.width() && radii.topLeft().height() * 2 == r.height()) {
-        Function<void(ID2D1RenderTarget*)> drawFunction = [&platformContext, color, rect, radii, r](ID2D1RenderTarget* renderTarget) {
+        drawWithShadow(platformContext, r, shadowState, [&platformContext, color, rect, radii, r](ID2D1RenderTarget* renderTarget) {
             auto roundedRect = D2D1::RoundedRect(r, radii.topLeft().width(), radii.topLeft().height());
             renderTarget->FillRoundedRectangle(&roundedRect, platformContext.brushWithColor(color).get());
-        };
-
-        if (shadowState.isVisible())
-            drawWithShadow(platformContext, r, shadowState, drawFunction);
-        else
-            drawWithoutShadow(platformContext, r, drawFunction);
+        });
     } else {
         Path path;
         path.addRoundedRect(rect);
@@ -488,15 +473,11 @@ void fillRectWithRoundedHole(PlatformContextDirect2D& platformContext, const Flo
 
 void fillRectWithGradient(PlatformContextDirect2D& platformContext, const FloatRect& rect, ID2D1Brush* gradient)
 {
-    auto context = platformContext.renderTarget();
-
     platformContext.setTags(1, __LINE__);
-    Function<void(ID2D1RenderTarget*)> drawFunction = [&platformContext, rect, &gradient](ID2D1RenderTarget* renderTarget) {
+    drawWithoutShadow(platformContext, [&platformContext, rect, &gradient](ID2D1RenderTarget* renderTarget) {
         const D2D1_RECT_F d2dRect = rect;
         renderTarget->FillRectangle(&d2dRect, gradient);
-    };
-
-    drawWithoutShadow(platformContext, rect, drawFunction);
+    });
 }
 
 void fillPath(PlatformContextDirect2D& platformContext, const Path& path, const FillSource& fillSource, const ShadowState& shadowState)
@@ -517,11 +498,9 @@ void fillPath(PlatformContextDirect2D& platformContext, const Path& path, const 
 
     if (shadowState.isVisible()) {
         FloatRect boundingRect = path.fastBoundingRect();
-        drawWithShadow(platformContext, boundingRect, shadowState, drawFunction);
-    } else {
-        FloatRect contextRect(FloatPoint(), context->GetSize());
-        drawWithoutShadow(platformContext, contextRect, drawFunction);
-    }
+        drawWithShadow(platformContext, boundingRect, shadowState, WTFMove(drawFunction));
+    } else
+        drawWithoutShadow(platformContext, WTFMove(drawFunction));
 }
 
 void fillPath(PlatformContextDirect2D& platformContext, const Path& path, const Color& color, const ShadowState& shadowState)
@@ -541,25 +520,18 @@ void fillPath(PlatformContextDirect2D& platformContext, const Path& path, const 
 
     if (shadowState.isVisible()) {
         FloatRect boundingRect = path.fastBoundingRect();
-        drawWithShadow(platformContext, boundingRect, shadowState, drawFunction);
-    } else {
-        FloatRect contextRect(FloatPoint(), context->GetSize());
-        drawWithoutShadow(platformContext, contextRect, drawFunction);
-    }
+        drawWithShadow(platformContext, boundingRect, shadowState, WTFMove(drawFunction));
+    } else
+        drawWithoutShadow(platformContext, WTFMove(drawFunction));
 }
 
 void strokeRect(PlatformContextDirect2D& platformContext, const FloatRect& rect, float lineWidth, const StrokeSource& strokeSource, const ShadowState& shadowState)
 {
-    Function<void(ID2D1RenderTarget*)> drawFunction = [&platformContext, &strokeSource, rect, lineWidth](ID2D1RenderTarget* renderTarget) {
+    drawWithShadow(platformContext, rect, shadowState, [&platformContext, &strokeSource, rect, lineWidth](ID2D1RenderTarget* renderTarget) {
         platformContext.setTags(1, __LINE__);
         const D2D1_RECT_F d2dRect = rect;
         renderTarget->DrawRectangle(&d2dRect, strokeSource.brush.get(), lineWidth, platformContext.strokeStyle());
-    };
-
-    if (shadowState.isVisible())
-        drawWithShadow(platformContext, rect, shadowState, drawFunction);
-    else
-        drawWithoutShadow(platformContext, rect, drawFunction);
+    });
 }
 
 void strokePath(PlatformContextDirect2D& platformContext, const Path& path, const StrokeSource& strokeSource, const ShadowState& shadowState)
@@ -568,15 +540,15 @@ void strokePath(PlatformContextDirect2D& platformContext, const Path& path, cons
     
     platformContext.setTags(1, __LINE__);
 
-    auto boundingRect = path.fastBoundingRect();
     Function<void(ID2D1RenderTarget*)> drawFunction = [&platformContext, &path, &strokeSource](ID2D1RenderTarget* renderTarget) {
         renderTarget->DrawGeometry(path.platformPath(), strokeSource.brush.get(), strokeSource.thickness, platformContext.strokeStyle());
     };
 
-    if (shadowState.isVisible())
-        drawWithShadow(platformContext, boundingRect, shadowState, drawFunction);
-    else
-        drawWithoutShadow(platformContext, boundingRect, drawFunction);
+    if (shadowState.isVisible()) {
+        auto boundingRect = path.fastBoundingRectForStroke(platformContext);
+        drawWithShadow(platformContext, boundingRect, shadowState, WTFMove(drawFunction));
+    } else
+        drawWithoutShadow(platformContext, WTFMove(drawFunction));
 }
 
 void drawPath(PlatformContextDirect2D& platformContext, const Path& path, const StrokeSource& strokeSource, const ShadowState&)
@@ -587,71 +559,142 @@ void drawPath(PlatformContextDirect2D& platformContext, const Path& path, const 
 
     platformContext.setTags(1, __LINE__);
 
-    auto rect = path.fastBoundingRect();
-    drawWithoutShadow(platformContext, rect, [&platformContext, &strokeSource, &path](ID2D1RenderTarget* renderTarget) {
+    drawWithoutShadow(platformContext, [&platformContext, &strokeSource, &path](ID2D1RenderTarget* renderTarget) {
         renderTarget->DrawGeometry(path.platformPath(), strokeSource.brush.get(), strokeSource.thickness, platformContext.strokeStyle());
     });
 
     flush(platformContext);
 }
 
-void drawWithShadowHelper(ID2D1RenderTarget* context, ID2D1Bitmap* bitmap, const Color& shadowColor, const FloatSize& shadowOffset, float shadowBlur)
+static void drawWithShadowHelper(ID2D1RenderTarget* context, ID2D1BitmapRenderTarget* bitmapTarget, const FloatRect& boundingRect, const Color& shadowColor, const FloatSize& shadowOffset, float shadowBlur)
 {
-    COMPtr<ID2D1DeviceContext> deviceContext;
-    HRESULT hr = context->QueryInterface(&deviceContext);
+    COMPtr<ID2D1Bitmap> currentCanvas = Direct2D::createBitmapCopyFromContext(bitmapTarget);
+    if (!currentCanvas)
+        return;
+
+    COMPtr<ID2D1DeviceContext> shadowDeviceContext;
+    HRESULT hr = bitmapTarget->QueryInterface(&shadowDeviceContext);
     RELEASE_ASSERT(SUCCEEDED(hr));
 
     // Create the shadow effect
     COMPtr<ID2D1Effect> shadowEffect;
-    hr = deviceContext->CreateEffect(CLSID_D2D1Shadow, &shadowEffect);
+    hr = shadowDeviceContext->CreateEffect(CLSID_D2D1Shadow, &shadowEffect);
     RELEASE_ASSERT(SUCCEEDED(hr));
 
-    shadowEffect->SetInput(0, bitmap);
+    shadowEffect->SetInput(0, currentCanvas.get());
     shadowEffect->SetValue(D2D1_SHADOW_PROP_COLOR, static_cast<D2D1_VECTOR_4F>(shadowColor));
-    shadowEffect->SetValue(D2D1_SHADOW_PROP_BLUR_STANDARD_DEVIATION, shadowBlur);
 
-    COMPtr<ID2D1Effect> transformEffect;
-    hr = deviceContext->CreateEffect(CLSID_D2D12DAffineTransform, &transformEffect);
+    float blurDeviation = 0.5 * shadowBlur;
+    shadowEffect->SetValue(D2D1_SHADOW_PROP_BLUR_STANDARD_DEVIATION, blurDeviation);
+
+    COMPtr<ID2D1Effect> shadowTransformEffect;
+    hr = shadowDeviceContext->CreateEffect(CLSID_D2D12DAffineTransform, &shadowTransformEffect);
     RELEASE_ASSERT(SUCCEEDED(hr));
 
-    transformEffect->SetInputEffect(0, shadowEffect.get());
+    shadowTransformEffect->SetInputEffect(0, shadowEffect.get());
 
-    auto translation = D2D1::Matrix3x2F::Translation(shadowOffset.width(), shadowOffset.height());
-    transformEffect->SetValue(D2D1_2DAFFINETRANSFORM_PROP_TRANSFORM_MATRIX, translation);
+    // Must flip the axis for the shadow offset, since Direct2D's Y axis is inverted.
+    auto shadowTranslation = D2D1::Matrix3x2F::Translation(shadowOffset.width(), -shadowOffset.height());
+    shadowTransformEffect->SetValue(D2D1_2DAFFINETRANSFORM_PROP_TRANSFORM_MATRIX, shadowTranslation);
 
     COMPtr<ID2D1Effect> compositor;
-    hr = deviceContext->CreateEffect(CLSID_D2D1Composite, &compositor);
+    hr = shadowDeviceContext->CreateEffect(CLSID_D2D1Composite, &compositor);
     RELEASE_ASSERT(SUCCEEDED(hr));
 
-    compositor->SetInputEffect(0, transformEffect.get());
-    compositor->SetInput(1, bitmap);
+    compositor->SetInputEffect(0, shadowTransformEffect.get());
+    compositor->SetInput(1, currentCanvas.get());
 
-    deviceContext->DrawImage(compositor.get(), D2D1_INTERPOLATION_MODE_LINEAR);
-}
-
-void drawWithShadow(PlatformContextDirect2D& platformContext, const FloatRect& boundingRect, const ShadowState& shadowState, const WTF::Function<void(ID2D1RenderTarget*)>& drawCommands)
-{
-    platformContext.notifyPreDrawObserver();
-
-    auto context = platformContext.renderTarget();
-
-    // Render the current geometry to a bitmap context
-    COMPtr<ID2D1BitmapRenderTarget> bitmapTarget = createBitmapRenderTarget(context);
-
-    bitmapTarget->BeginDraw();
-    drawCommands(bitmapTarget.get());
-    HRESULT hr = bitmapTarget->EndDraw();
+    shadowDeviceContext->BeginDraw();
+    shadowDeviceContext->Clear(D2D1::ColorF(0, 0, 0, 0));
+    shadowDeviceContext->DrawImage(compositor.get());
+    hr = shadowDeviceContext->EndDraw();
     RELEASE_ASSERT(SUCCEEDED(hr));
 
     COMPtr<ID2D1Bitmap> bitmap;
     hr = bitmapTarget->GetBitmap(&bitmap);
     RELEASE_ASSERT(SUCCEEDED(hr));
 
-    drawWithShadowHelper(context, bitmap.get(), shadowState.color, shadowState.offset, shadowState.blur);
+    IntSize pixelSize = context->GetPixelSize();
+    COMPtr<ID2D1Bitmap> cropped = Direct2D::createBitmap(bitmapTarget, pixelSize);
+    if (!cropped)
+        return;
+
+    auto scaleFactor = bitmapResolution(context);
+
+    FloatRect scaledBoundingRect(boundingRect);
+    scaledBoundingRect.scale(scaleFactor.width(), scaleFactor.height());
+
+    // Take the magnitude of the offset. If the origin was outside the drawing context, we stretched to include those points,
+    // and so we need to crop them out. If the origin was inside, we want to honor the offset.
+    int x = clampTo<int>(std::abs(scaledBoundingRect.x()));
+    int y = clampTo<int>(std::abs(scaledBoundingRect.y()));
+    int width = clampTo<int>(scaledBoundingRect.width());
+    int height = clampTo<int>(scaledBoundingRect.height());
+
+    IntRect outputRect(IntPoint(x, y), IntSize(width, height));
+    IntRect destContextRect(IntPoint(), pixelSize);
+    if (outputRect.intersects(destContextRect))
+        outputRect.intersect(destContextRect);
+
+    D2D1_RECT_U cropRect = outputRect;
+    auto targetPoint = D2D1::Point2U();
+    cropped->CopyFromBitmap(&targetPoint, bitmap.get(), &cropRect);
+
+    context->DrawBitmap(cropped.get());
+}
+
+void drawWithShadow(PlatformContextDirect2D& platformContext, FloatRect boundingRect, const ShadowState& shadowState, WTF::Function<void(ID2D1RenderTarget*)>&& drawCommands)
+{
+    if (!shadowState.isVisible()) {
+        drawWithoutShadow(platformContext, WTFMove(drawCommands));
+        return;
+    }
+
+    platformContext.notifyPreDrawObserver();
+
+    auto* context = platformContext.renderTarget();
+
+    FloatSize renderTargetSize = context->GetSize();
+    const FloatRect contextRect(FloatPoint(), renderTargetSize);
+    FloatRect workingContextRect(contextRect);
+
+    if (boundingRect.isInfinite())
+        boundingRect = workingContextRect;
+
+    if (!contextRect.contains(boundingRect))
+        workingContextRect.unite(boundingRect);
+
+    workingContextRect.expand(std::abs(shadowState.offset.width()) + shadowState.blur, std::abs(shadowState.offset.height()) + shadowState.blur);
+
+    auto scaleFactor = bitmapResolution(context);
+
+    workingContextRect.scale(scaleFactor);
+
+    IntSize pixelDimensions(clampTo<int>(workingContextRect.width()), clampTo<int>(workingContextRect.height()));
+
+    // Render the current geometry to a bitmap context
+    COMPtr<ID2D1BitmapRenderTarget> bitmapTarget = createBitmapRenderTargetOfSize(pixelDimensions, context);
+
+    D2D1_MATRIX_3X2_F currentTransform;
+    bitmapTarget->GetTransform(&currentTransform);
+
+    if (!contextRect.contains(boundingRect.location())) {
+        auto translation = D2D1::Matrix3x2F::Translation(-boundingRect.location().x(), -boundingRect.location().y());
+        bitmapTarget->SetTransform(translation * currentTransform);
+    }
+
+    bitmapTarget->BeginDraw();
+    drawCommands(bitmapTarget.get());
+    HRESULT hr = bitmapTarget->EndDraw();
+    RELEASE_ASSERT(SUCCEEDED(hr));
+
+    bitmapTarget->SetTransform(currentTransform);
+
+    drawWithShadowHelper(context, bitmapTarget.get(), boundingRect, shadowState.color, shadowState.offset, shadowState.blur);
     platformContext.notifyPostDrawObserver();
 }
 
-void drawWithoutShadow(PlatformContextDirect2D& platformContext, const FloatRect& /*boundingRect*/, const WTF::Function<void(ID2D1RenderTarget*)>& drawCommands)
+void drawWithoutShadow(PlatformContextDirect2D& platformContext, WTF::Function<void(ID2D1RenderTarget*)>&& drawCommands)
 {
     platformContext.notifyPreDrawObserver();
     drawCommands(platformContext.renderTarget());
@@ -660,7 +703,7 @@ void drawWithoutShadow(PlatformContextDirect2D& platformContext, const FloatRect
 
 void clearRect(PlatformContextDirect2D& platformContext, const FloatRect& rect)
 {
-    drawWithoutShadow(platformContext, rect, [&platformContext, rect](ID2D1RenderTarget* renderTarget) {
+    drawWithoutShadow(platformContext, [&platformContext, rect](ID2D1RenderTarget* renderTarget) {
         FloatRect renderTargetRect(FloatPoint(), renderTarget->GetSize());
         FloatRect rectToClear(rect);
 
@@ -812,14 +855,9 @@ void drawNativeImage(PlatformContextDirect2D& platformContext, ID2D1Bitmap* imag
     }
 
     platformContext.setTags(1, __LINE__);
-    Function<void(ID2D1RenderTarget*)> drawFunction = [image, adjustedDestRect, globalAlpha, srcRect](ID2D1RenderTarget* renderTarget) {
+    drawWithShadow(platformContext, adjustedDestRect, shadowState, [image, adjustedDestRect, globalAlpha, srcRect](ID2D1RenderTarget* renderTarget) {
         renderTarget->DrawBitmap(image, adjustedDestRect, globalAlpha, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, srcRect);
-    };
-
-    if (shadowState.isVisible())
-        drawWithShadow(platformContext, adjustedDestRect, shadowState, drawFunction);
-    else
-        drawWithoutShadow(platformContext, adjustedDestRect, drawFunction);
+    });
 
     if (!stateSaver.didSave())
         context->SetTransform(ctm);
@@ -869,7 +907,7 @@ void drawPattern(PlatformContextDirect2D& platformContext, COMPtr<ID2D1Bitmap>&&
     if (!SUCCEEDED(hr))
         return;
 
-    drawWithoutShadow(platformContext, destRect, [destRect, patternBrush](ID2D1RenderTarget* renderTarget) {
+    drawWithoutShadow(platformContext, [destRect, patternBrush](ID2D1RenderTarget* renderTarget) {
         const D2D1_RECT_F d2dRect = destRect;
         renderTarget->FillRectangle(&d2dRect, patternBrush.get());
     });
@@ -880,10 +918,8 @@ void drawRect(PlatformContextDirect2D& platformContext, const FloatRect& rect, f
     // FIXME: this function does not handle patterns and gradients like drawPath does, it probably should.
     ASSERT(!rect.isEmpty());
 
-    auto context = platformContext.renderTarget();
-
     platformContext.setTags(1, __LINE__);
-    drawWithoutShadow(platformContext, rect, [&platformContext, rect, fillColor, strokeColor, strokeStyle](ID2D1RenderTarget* renderTarget) {
+    drawWithoutShadow(platformContext, [&platformContext, rect, fillColor, strokeColor, strokeStyle](ID2D1RenderTarget* renderTarget) {
         const D2D1_RECT_F d2dRect = rect;
         auto fillBrush = platformContext.brushWithColor(fillColor);
         renderTarget->FillRectangle(&d2dRect, fillBrush.get());
@@ -935,9 +971,7 @@ void drawLine(PlatformContextDirect2D& platformContext, const FloatPoint& point1
 
     platformContext.setTags(1, __LINE__);
 
-    FloatRect boundingRect(p1, p2);
-
-    drawWithoutShadow(platformContext, boundingRect, [&platformContext, p1, p2, d2dStrokeStyle, strokeColor, strokeThickness](ID2D1RenderTarget* renderTarget) {
+    drawWithoutShadow(platformContext, [&platformContext, p1, p2, d2dStrokeStyle, strokeColor, strokeThickness](ID2D1RenderTarget* renderTarget) {
         renderTarget->DrawLine(p1, p2, platformContext.brushWithColor(strokeColor).get(), strokeThickness, d2dStrokeStyle.get());
     });
 }
@@ -956,10 +990,8 @@ void fillEllipse(PlatformContextDirect2D& platformContext, const FloatRect& rect
 {
     auto ellipse = D2D1::Ellipse(rect.center(), 0.5 * rect.width(), 0.5 * rect.height());
 
-    auto context = platformContext.renderTarget();
-
     platformContext.setTags(1, __LINE__);
-    drawWithoutShadow(platformContext, rect, [&platformContext, ellipse, fillColor, strokeStyle, strokeColor, strokeThickness](ID2D1RenderTarget* renderTarget) {
+    drawWithoutShadow(platformContext, [&platformContext, ellipse, fillColor, strokeStyle, strokeColor, strokeThickness](ID2D1RenderTarget* renderTarget) {
         auto fillBrush = platformContext.brushWithColor(fillColor);
         renderTarget->FillEllipse(&ellipse, fillBrush.get());
         if (strokeStyle != StrokeStyle::NoStroke) {
@@ -976,10 +1008,8 @@ void drawEllipse(PlatformContextDirect2D& platformContext, const FloatRect& rect
 
     auto ellipse = D2D1::Ellipse(rect.center(), 0.5 * rect.width(), 0.5 * rect.height());
 
-    auto context = platformContext.renderTarget();
-
     platformContext.setTags(1, __LINE__);
-    drawWithoutShadow(platformContext, rect, [&platformContext, ellipse, strokeColor, strokeThickness](ID2D1RenderTarget* renderTarget) {
+    drawWithoutShadow(platformContext, [&platformContext, ellipse, strokeColor, strokeThickness](ID2D1RenderTarget* renderTarget) {
         auto strokeBrush = platformContext.brushWithColor(strokeColor);
         renderTarget->DrawEllipse(&ellipse, strokeBrush.get(), strokeThickness, platformContext.strokeStyle());
     });
@@ -1099,15 +1129,15 @@ void endTransparencyLayer(PlatformContextDirect2D& platformContext)
     HRESULT hr = renderTarget->EndDraw();
     RELEASE_ASSERT(SUCCEEDED(hr));
 
-    COMPtr<ID2D1Bitmap> bitmap;
-    hr = renderTarget->GetBitmap(&bitmap);
-    RELEASE_ASSERT(SUCCEEDED(hr));
-
     auto context = platformContext.renderTarget();
 
     if (currentLayer.hasShadow)
-        drawWithShadowHelper(context, bitmap.get(), currentLayer.shadowColor, currentLayer.shadowOffset, currentLayer.shadowBlur);
+        drawWithShadowHelper(context, renderTarget.get(), FloatRect(), currentLayer.shadowColor, currentLayer.shadowOffset, currentLayer.shadowBlur);
     else {
+        COMPtr<ID2D1Bitmap> bitmap;
+        hr = renderTarget->GetBitmap(&bitmap);
+        RELEASE_ASSERT(SUCCEEDED(hr));
+
         COMPtr<ID2D1BitmapBrush> bitmapBrush;
         auto bitmapBrushProperties = D2D1::BitmapBrushProperties();
         auto brushProperties = D2D1::BrushProperties();

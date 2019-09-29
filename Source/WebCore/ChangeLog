@@ -1,3 +1,44 @@
+2019-09-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] Correct compositing, shadow, and radial gradient implementations
+        https://bugs.webkit.org/show_bug.cgi?id=202177
+
+        Reviewed by Fujii Hironori.
+
+        This patch corrects a number of implementation errors in basic Canvas
+        drawing operations.
+
+        Tested by canvas/philip/tests 
+
+        * platform/graphics/win/Direct2DOperations.cpp:
+        (WebCore::Direct2D::State::setCompositeOperation): Initialize blend and
+        composite modes to correct defaults.
+        (WebCore::Direct2D::drawWithShadowHelper): Correct value used for blur
+        standard deviation to more closely match other browser output.
+        * platform/graphics/win/Direct2DUtilities.cpp:
+        (WebCore::Direct2D::createBitmapCopyFromContext): Added helper function.
+        * platform/graphics/win/Direct2DUtilities.h:
+        * platform/graphics/win/GradientDirect2D.cpp:
+        (WebCore::Gradient::generateGradient): Properly handle the case of a non-zero
+        initial gradient radius. Properly compute the final radius.
+        * platform/graphics/win/ImageBufferDataDirect2D.cpp:
+        (WebCore::ImageBufferData::readDataFromBitmapIfNeeded const): Update to use ID2D1DeviceContext
+        from platformContext, rather than searching for it each time.
+        (WebCore::ImageBufferData::compatibleBitmap): Ditto.
+        * platform/graphics/win/PlatformContextDirect2D.cpp:
+        (WebCore::PlatformContextDirect2D::PlatformContextDirect2D): Grab the ID2D1DeviceContext for
+        the RenderTarget at construction time.
+        (WebCore::PlatformContextDirect2D::setRenderTarget): Ditto.
+        (WebCore::PlatformContextDirect2D::endDraw): Perform compositing operations when needed.
+        (WebCore::PlatformContextDirect2D::compositeIfNeeded): Added.
+        (WebCore::PlatformContextDirect2D::setBlendAndCompositeMode): Update to properly set the
+        blend and compositing mode (depending on global value set for the canvas.)
+        * platform/graphics/win/PlatformContextDirect2D.h:
+        (WebCore::PlatformContextDirect2D::deviceContext):
+        (WebCore::PlatformContextDirect2D::setRenderTarget): Deleted.
+        (WebCore::PlatformContextDirect2D::setBlendMode): Deleted.
+        (WebCore::PlatformContextDirect2D::setCompositeMode): Deleted.
+
 2019-09-29  Zan Dobersek  <zdobersek@igalia.com>
 
         Tighten up LayerRepresentation operators

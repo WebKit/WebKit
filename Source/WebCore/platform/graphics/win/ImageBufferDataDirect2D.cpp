@@ -304,7 +304,7 @@ bool ImageBufferData::readDataFromBitmapIfNeeded(AlphaPremultiplication desiredF
 
     context->endDraw();
 
-    COMPtr<ID2D1DeviceContext> d2dDeviceContext(Query, platformContext->renderTarget());
+    COMPtr<ID2D1DeviceContext> d2dDeviceContext = platformContext->deviceContext();
     ASSERT(!!d2dDeviceContext);
 
     auto bytesPerRowInData = pixelSize.width() * 4;
@@ -497,6 +497,7 @@ COMPtr<ID2D1Bitmap> ImageBufferData::compatibleBitmap(ID2D1RenderTarget* renderT
     }
 
     auto size = bitmap->GetPixelSize();
+    ASSERT(size.height && size.width);
 
     Checked<unsigned, RecordOverflow> numBytes = size.width * size.height * 4;
     if (numBytes.hasOverflowed())
@@ -506,16 +507,13 @@ COMPtr<ID2D1Bitmap> ImageBufferData::compatibleBitmap(ID2D1RenderTarget* renderT
     // We cannot access the data backing an IWICBitmap while an active draw session is open.
     context->endDraw();
 
-    COMPtr<ID2D1DeviceContext> sourceDeviceContext;
-    HRESULT hr = platformContext->renderTarget()->QueryInterface(__uuidof(ID2D1DeviceContext), reinterpret_cast<void**>(&sourceDeviceContext));
-    ASSERT(SUCCEEDED(hr));
-
+    COMPtr<ID2D1DeviceContext> sourceDeviceContext = platformContext->deviceContext();
     if (!sourceDeviceContext)
         return nullptr;
 
     COMPtr<ID2D1Bitmap1> sourceCPUBitmap;
     D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_CPU_READ | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, Direct2D::pixelFormat());
-    hr = sourceDeviceContext->CreateBitmap(bitmap->GetPixelSize(), nullptr, bytesPerRow.unsafeGet(), bitmapProperties, &sourceCPUBitmap);
+    HRESULT hr = sourceDeviceContext->CreateBitmap(bitmap->GetPixelSize(), nullptr, bytesPerRow.unsafeGet(), bitmapProperties, &sourceCPUBitmap);
     if (!SUCCEEDED(hr))
         return nullptr;
 

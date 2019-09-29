@@ -53,7 +53,9 @@ public:
     ~PlatformContextDirect2D();
 
     ID2D1RenderTarget* renderTarget() { return m_renderTarget.get(); }
-    void setRenderTarget(ID2D1RenderTarget* renderTarget) { m_renderTarget = renderTarget; }
+    void setRenderTarget(ID2D1RenderTarget*);
+
+    ID2D1DeviceContext* deviceContext() { return m_deviceContext.get(); }
 
     ID3D11Device1* d3dDevice() const { return m_d3dDevice.get(); }
     void setD3DDevice(ID3D11Device1* device) { m_d3dDevice = device; }
@@ -103,8 +105,7 @@ public:
     void setStrokeThickness(float);
     void setDashes(const DashArray&);
 
-    void setBlendMode(D2D1_BLEND_MODE mode) { m_blendMode = mode; }
-    void setCompositeMode(D2D1_COMPOSITE_MODE mode) { m_compositeMode = mode; }
+    void setBlendAndCompositeMode(D2D1_BLEND_MODE, D2D1_COMPOSITE_MODE);
 
     void setTags(D2D1_TAG tag1, D2D1_TAG tag2);
     void notifyPreDrawObserver();
@@ -114,10 +115,12 @@ public:
 
 private:
     void clearClips(Vector<Direct2DLayerType>&);
+    void compositeIfNeeded();
 
     GraphicsContextPlatformPrivate* m_graphicsContextPrivate { nullptr };
 
     COMPtr<ID2D1RenderTarget> m_renderTarget;
+    COMPtr<ID2D1DeviceContext> m_deviceContext;
     COMPtr<ID2D1StrokeStyle> m_d2dStrokeStyle;
 
     HashMap<uint32_t, COMPtr<ID2D1SolidColorBrush>> m_solidColoredBrushCache;
@@ -129,6 +132,8 @@ private:
     COMPtr<ID2D1BitmapBrush> m_patternFillBrush;
 
     COMPtr<ID3D11Device1> m_d3dDevice;
+
+    COMPtr<ID2D1Bitmap> m_compositeSource;
 
     WTF::Function<void()> m_preDrawHandler;
     WTF::Function<void()> m_postDrawHandler;

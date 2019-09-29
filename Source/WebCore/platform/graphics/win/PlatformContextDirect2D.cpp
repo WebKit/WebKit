@@ -29,6 +29,7 @@
 #if USE(DIRECT2D)
 
 #include "Direct2DOperations.h"
+#include "Direct2DUtilities.h"
 #include <d2d1.h>
 
 namespace WebCore {
@@ -51,6 +52,17 @@ PlatformContextDirect2D::PlatformContextDirect2D(ID2D1RenderTarget* renderTarget
 {
     m_stateStack.append(State());
     m_state = &m_stateStack.last();
+
+    m_deviceContext.query(m_renderTarget.get());
+    RELEASE_ASSERT(!!m_deviceContext);
+}
+
+void PlatformContextDirect2D::setRenderTarget(ID2D1RenderTarget* renderTarget)
+{
+    m_renderTarget = renderTarget;
+
+    m_deviceContext.query(m_renderTarget.get());
+    RELEASE_ASSERT(!!m_deviceContext);
 }
 
 ID2D1Layer* PlatformContextDirect2D::clipLayer() const
@@ -74,10 +86,7 @@ void PlatformContextDirect2D::restore()
 {
     ASSERT(m_renderTarget);
 
-    // There should always be at least one manually saved state if a restore is being called.
-    ASSERT(m_stateStack.size() > 1);
-
-    // Can't restore if we never called save.
+    // No need to restore if we don't have a saved element on the stack.
     if (m_stateStack.size() == 1)
         return;
 
@@ -278,7 +287,7 @@ void PlatformContextDirect2D::endDraw()
 {
     ASSERT(m_renderTarget);
 
-    while (m_stateStack.size() > 1)
+    if (m_stateStack.size() > 1)
         restore();
 
     clearClips(m_state->m_clips);
@@ -292,6 +301,8 @@ void PlatformContextDirect2D::endDraw()
         WTFLogAlways("Failed in PlatformContextDirect2D::endDraw: hr=%xd, first=%ld, second=%ld", hr, first, second);
 
     --beginDrawCount;
+
+    compositeIfNeeded();
 }
 
 void PlatformContextDirect2D::setTags(D2D1_TAG tag1, D2D1_TAG tag2)
@@ -317,6 +328,68 @@ void PlatformContextDirect2D::notifyPostDrawObserver()
 void PlatformContextDirect2D::pushClip(Direct2DLayerType clipType)
 {
     m_state->m_clips.append(clipType);
+}
+
+void PlatformContextDirect2D::compositeIfNeeded()
+{
+    if (!m_compositeSource)
+        return;
+
+    COMPtr<ID2D1BitmapRenderTarget> bitmapTarget(Query, m_renderTarget.get());
+    if (!bitmapTarget)
+        return;
+
+    COMPtr<ID2D1Bitmap> currentCanvas = Direct2D::createBitmapCopyFromContext(bitmapTarget.get());
+    if (!currentCanvas)
+        return;
+
+    COMPtr<ID2D1Effect> effect;
+
+    if (m_compositeMode != D2D1_COMPOSITE_MODE_FORCE_DWORD) {
+        m_deviceContext->CreateEffect(CLSID_D2D1Composite, &effect);
+        effect->SetInput(0, m_compositeSource.get());
+        effect->SetInput(1, currentCanvas.get());
+        effect->SetValue(D2D1_COMPOSITE_PROP_MODE, m_compositeMode);
+    } else if (m_blendMode != D2D1_BLEND_MODE_FORCE_DWORD) {
+        m_deviceContext->CreateEffect(CLSID_D2D1Blend, &effect);
+        effect->SetInput(0, currentCanvas.get());
+        effect->SetInput(1, m_compositeSource.get());
+        effect->SetValue(D2D1_BLEND_PROP_MODE, m_blendMode);
+    }
+
+    if (effect) {
+        m_deviceContext->BeginDraw();
+        m_deviceContext->Clear(D2D1::ColorF(0, 0, 0, 0));
+        m_deviceContext->DrawImage(effect.get());
+        m_deviceContext->EndDraw();
+    }
+
+    m_compositeSource = nullptr;
+}
+
+void PlatformContextDirect2D::setBlendAndCompositeMode(D2D1_BLEND_MODE blend, D2D1_COMPOSITE_MODE mode)
+{
+    if (mode == m_compositeMode && blend == m_blendMode)
+        return;
+
+    // Direct2D handles compositing based on bitmaps. If we are changing the
+    // compositing mode, we need to capture the current state of the rendering
+    // in a bitmap, perform drawing operations until we finish, then handle
+    // the composting of the two layers.
+    COMPtr<ID2D1BitmapRenderTarget> bitmapTarget(Query, m_renderTarget.get());
+    if (!bitmapTarget)
+        return;
+
+    endDraw();
+
+    m_compositeMode = mode;
+    m_blendMode = blend;
+
+    m_compositeSource = Direct2D::createBitmapCopyFromContext(bitmapTarget.get());
+
+    beginDraw();
+
+    m_deviceContext->Clear(D2D1::ColorF(0, 0, 0, 0));
 }
 
 } // namespace WebCore

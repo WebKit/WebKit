@@ -30,6 +30,7 @@
 #include "GraphicsContext.h"
 #include "PlatformContextDirect2D.h"
 #include <d2d1.h>
+#include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
 
 #define GRADIENT_DRAWING 3
@@ -70,6 +71,35 @@ void Gradient::generateGradient(ID2D1RenderTarget* renderTarget)
         gradientStops.append(D2D1::GradientStop(stop.offset, D2D1::ColorF(r, g, b, a)));
     }
 
+    WTF::switchOn(m_data,
+        [&] (const LinearData&) {
+            // No action needed.
+        },
+        [&] (const RadialData& data) {
+            if (data.startRadius && data.endRadius) {
+                float startPosition = std::abs(data.startRadius / data.endRadius);
+                if (startPosition > 1.0)
+                    startPosition = 1.0 / startPosition;
+                float availableRange = 1.0 - startPosition;
+                RELEASE_ASSERT(availableRange <= 1.0 && availableRange >= 0);
+
+                for (auto& stop : gradientStops) {
+                    stop.position *= availableRange;
+                    stop.position += startPosition;
+                }
+
+                // Restore the 'start' position
+                auto firstStop = gradientStops.first();
+                firstStop.position = 0;
+
+                gradientStops.insert(0, firstStop);
+            }
+        },
+        [&] (const ConicData&) {
+            // FIXME: Assess whether needed for Conic Gradients.
+        }
+    );
+
     COMPtr<ID2D1GradientStopCollection> gradientStopCollection;
     HRESULT hr = renderTarget->CreateGradientStopCollection(gradientStops.data(), gradientStops.size(), &gradientStopCollection);
     RELEASE_ASSERT(SUCCEEDED(hr));
@@ -90,12 +120,14 @@ void Gradient::generateGradient(ID2D1RenderTarget* renderTarget)
             m_gradient = linearGradient;
         },
         [&] (const RadialData& data) {
-            FloatSize offset = data.point1 - data.point0;
-            ID2D1RadialGradientBrush* radialGradient = nullptr;
-            float radiusX = data.endRadius + offset.width();
+            FloatSize offset = data.point0 - data.point1;
+            FloatPoint center = data.point1;
+            float radiusX = data.endRadius;
             float radiusY = radiusX / data.aspectRatio;
+
+            ID2D1RadialGradientBrush* radialGradient = nullptr;
             hr = renderTarget->CreateRadialGradientBrush(
-                D2D1::RadialGradientBrushProperties(data.point0, D2D1::Point2F(offset.width(), offset.height()), radiusX, radiusY),
+                D2D1::RadialGradientBrushProperties(center, D2D1::Point2F(offset.width(), offset.height()), radiusX, radiusY),
                 D2D1::BrushProperties(), gradientStopCollection.get(),
                 &radialGradient);
             RELEASE_ASSERT(SUCCEEDED(hr));

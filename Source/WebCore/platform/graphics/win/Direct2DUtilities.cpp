@@ -65,33 +65,45 @@ FloatSize bitmapSize(ID2D1Bitmap* bitmapSource)
     return bitmapSource->GetSize();
 }
 
-FloatPoint bitmapResolution(IWICBitmapSource* bitmapSource)
+FloatSize bitmapResolution(IWICBitmapSource* bitmapSource)
 {
-    constexpr double dpiBase = 96.0;
+    constexpr double dpiBase = 96;
 
     double dpiX, dpiY;
     HRESULT hr = bitmapSource->GetResolution(&dpiX, &dpiY);
     if (!SUCCEEDED(hr))
         return { };
 
-    FloatPoint result(dpiX, dpiY);
+    FloatSize result(dpiX, dpiY);
     result.scale(1.0 / dpiBase);
     return result;
 }
 
-FloatPoint bitmapResolution(ID2D1Bitmap* bitmap)
+FloatSize bitmapResolution(ID2D1Bitmap* bitmap)
 {
-    constexpr double dpiBase = 96.0;
+    constexpr double dpiBase = 96;
 
     float dpiX, dpiY;
     bitmap->GetDpi(&dpiX, &dpiY);
 
-    FloatPoint result(dpiX, dpiY);
+    FloatSize result(dpiX, dpiY);
     result.scale(1.0 / dpiBase);
     return result;
 
 }
 
+FloatSize bitmapResolution(ID2D1RenderTarget* target)
+{
+    constexpr double dpiBase = 96;
+
+    float dpiX, dpiY;
+    target->GetDpi(&dpiX, &dpiY);
+
+    FloatSize result(dpiX, dpiY);
+    result.scale(1.0 / dpiBase);
+    return result;
+
+}
 unsigned bitsPerPixel(GUID bitmapFormat)
 {
     COMPtr<IWICComponentInfo> componentInfo;
@@ -470,6 +482,30 @@ COMPtr<IDXGISwapChain> swapChainOfSizeForWindowAndDevice(const WebCore::IntSize&
 
     COMPtr<IDXGISwapChain> swapChain(Query, swapChain1);
     return swapChain;
+}
+
+COMPtr<ID2D1Bitmap> createBitmapCopyFromContext(ID2D1BitmapRenderTarget* bitmapTarget)
+{
+    COMPtr<ID2D1Bitmap> currentCanvas;
+    HRESULT hr = bitmapTarget->GetBitmap(&currentCanvas);
+    if (!SUCCEEDED(hr))
+        return nullptr;
+
+    auto bitmapCreateProperties = bitmapProperties();
+
+    COMPtr<ID2D1Bitmap> bitmap;
+    D2D1_SIZE_U bitmapSize = currentCanvas->GetPixelSize();
+    hr = bitmapTarget->CreateBitmap(bitmapSize, bitmapCreateProperties, &bitmap);
+    if (!SUCCEEDED(hr))
+        return nullptr;
+
+    auto targetPos = D2D1::Point2U();
+    D2D1_RECT_U dataRect = D2D1::RectU(0, 0, bitmapSize.width, bitmapSize.height);
+    hr = bitmap->CopyFromBitmap(&targetPos, currentCanvas.get(), &dataRect);
+    if (!SUCCEEDED(hr))
+        return false;
+
+    return bitmap;
 }
 
 } // namespace Direct2D

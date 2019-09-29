@@ -327,6 +327,22 @@ FloatRect Path::fastBoundingRect() const
     return bounds;
 }
 
+FloatRect Path::fastBoundingRectForStroke(const PlatformContextDirect2D& platformContext) const
+{
+    if (isNull())
+        return FloatRect();
+
+    float tolerance = 10;
+
+    auto* strokeStyle = const_cast<PlatformContextDirect2D&>(platformContext).strokeStyle();
+
+    D2D1_RECT_F bounds = { };
+    if (!SUCCEEDED(m_path->GetWidenedBounds(platformContext.strokeThickness(), strokeStyle, nullptr, tolerance, &bounds)))
+        return FloatRect();
+
+    return bounds;
+}
+
 FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
 {
     if (isNull())
