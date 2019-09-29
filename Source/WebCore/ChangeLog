@@ -1,3 +1,33 @@
+2019-09-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [IDL] Support record<DOMString, *Callback> in bindings
+        https://bugs.webkit.org/show_bug.cgi?id=202326
+
+        Reviewed by Sam Weinig.
+
+        Currently, IDLRecord's converter assumes that the value type (template argument V) can be converted by passing
+        in only an ExecState and the JSValue, since it calls `auto typedValue = Converter<V>::convert(state, subValue)`.
+        However, IDLCallbackFunctions additionally require the JSDOMGlobalObject (see JSDOMConverterCallbacks.h). This
+        results in a compilation error in generated code, when attempting to convert the record.
+
+        To fix this, teach Converter<IDLRecord<K, V>> to accept three arguments (the ExecState, value, and global
+        object) in the case where V requires the global object. Additionally, let the bindings generator know that
+        JSValue to native object conversion requires the global object, by returning whether or not the value type of
+        the IDL record requires the global object, in the case where the given type is a record.
+
+        * bindings/js/JSDOMConvertRecord.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (JSValueToNativeDOMConvertNeedsGlobalObject):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+
+        Test this scenario by augmenting TestObj.idl with record<DOMString, VoidCallback>.
+
+        (WebCore::jsTestObjStringVoidCallbackRecordAttrGetter):
+        (WebCore::jsTestObjStringVoidCallbackRecordAttr):
+        (WebCore::setJSTestObjStringVoidCallbackRecordAttrSetter):
+        (WebCore::setJSTestObjStringVoidCallbackRecordAttr):
+        * bindings/scripts/test/TestObj.idl:
+
 2019-09-28  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Line::InitialConstraints's heightAndBaseline should be optional

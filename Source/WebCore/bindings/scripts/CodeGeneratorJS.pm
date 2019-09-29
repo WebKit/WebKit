@@ -6616,6 +6616,7 @@ sub JSValueToNativeDOMConvertNeedsGlobalObject
 
     return 1 if $codeGenerator->IsCallbackInterface($type);
     return 1 if $codeGenerator->IsCallbackFunction($type);
+    return JSValueToNativeDOMConvertNeedsGlobalObject(@{$type->subtypes}[1]) if $codeGenerator->IsRecordType($type);
     return 1 if $type->name eq "ScheduledAction";
     return 0;
 }

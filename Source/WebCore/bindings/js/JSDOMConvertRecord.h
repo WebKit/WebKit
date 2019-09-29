@@ -64,7 +64,19 @@ template<typename K, typename V> struct Converter<IDLRecord<K, V>> : DefaultConv
     using KeyType = typename K::ImplementationType;
     using ValueType = typename V::ImplementationType;
 
+    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, JSDOMGlobalObject& globalObject)
+    {
+        return convertRecord<JSDOMGlobalObject&>(state, value, globalObject);
+    }
+
     static ReturnType convert(JSC::ExecState& state, JSC::JSValue value)
+    {
+        return convertRecord(state, value);
+    }
+
+private:
+    template<class...Args>
+    static ReturnType convertRecord(JSC::ExecState& state, JSC::JSValue value, Args ... args)
     {
         auto& vm = state.vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
@@ -111,7 +123,7 @@ template<typename K, typename V> struct Converter<IDLRecord<K, V>> : DefaultConv
                 RETURN_IF_EXCEPTION(scope, { });
 
                 // 3. Let typedValue be value converted to an IDL value of type V.
-                auto typedValue = Converter<V>::convert(state, subValue);
+                auto typedValue = Converter<V>::convert(state, subValue, args...);
                 RETURN_IF_EXCEPTION(scope, { });
                 
                 // 4. If typedKey is already a key in result, set its value to typedValue.

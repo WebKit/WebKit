@@ -74,6 +74,7 @@
 #include "JSTestStandaloneDictionary.h"
 #include "JSTestStandaloneEnumeration.h"
 #include "JSTestSubObj.h"
+#include "JSVoidCallback.h"
 #include "JSWindowProxy.h"
 #include "JSXPathNSResolver.h"
 #include "RuntimeEnabledFeatures.h"
@@ -1651,6 +1652,8 @@ JSC::EncodedJSValue jsTestObjStringObjRecordAttr(JSC::ExecState*, JSC::EncodedJS
 bool setJSTestObjStringObjRecordAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjStringNullableObjRecordAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjStringNullableObjRecordAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestObjStringVoidCallbackRecordAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestObjStringVoidCallbackRecordAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjDictionaryAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjDictionaryAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjNullableDictionaryAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -2020,6 +2023,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "usvstringLongRecordAttr", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjUsvstringLongRecordAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjUsvstringLongRecordAttr) } },
     { "stringObjRecordAttr", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringObjRecordAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStringObjRecordAttr) } },
     { "stringNullableObjRecordAttr", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringNullableObjRecordAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStringNullableObjRecordAttr) } },
+    { "stringVoidCallbackRecordAttr", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringVoidCallbackRecordAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStringVoidCallbackRecordAttr) } },
     { "dictionaryAttr", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjDictionaryAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjDictionaryAttr) } },
     { "nullableDictionaryAttr", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjNullableDictionaryAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjNullableDictionaryAttr) } },
     { "annotatedTypeInUnionAttr", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAnnotatedTypeInUnionAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAnnotatedTypeInUnionAttr) } },
@@ -3462,6 +3466,38 @@ static inline bool setJSTestObjStringNullableObjRecordAttrSetter(ExecState& stat
 bool setJSTestObjStringNullableObjRecordAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjStringNullableObjRecordAttrSetter>(*state, thisValue, encodedValue, "stringNullableObjRecordAttr");
+}
+
+static inline JSValue jsTestObjStringVoidCallbackRecordAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS<IDLRecord<IDLDOMString, IDLCallbackFunction<JSVoidCallback>>>(state, *thisObject.globalObject(), throwScope, impl.stringVoidCallbackRecordAttr());
+    return result;
+}
+
+EncodedJSValue jsTestObjStringVoidCallbackRecordAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    return IDLAttribute<JSTestObj>::get<jsTestObjStringVoidCallbackRecordAttrGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "stringVoidCallbackRecordAttr");
+}
+
+static inline bool setJSTestObjStringVoidCallbackRecordAttrSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = convert<IDLRecord<IDLDOMString, IDLCallbackFunction<JSVoidCallback>>>(state, value, *thisObject.globalObject());
+    RETURN_IF_EXCEPTION(throwScope, false);
+    AttributeSetter::call(state, throwScope, [&] {
+        return impl.setStringVoidCallbackRecordAttr(WTFMove(nativeValue));
+    });
+    return true;
+}
+
+bool setJSTestObjStringVoidCallbackRecordAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    return IDLAttribute<JSTestObj>::set<setJSTestObjStringVoidCallbackRecordAttrSetter>(*state, thisValue, encodedValue, "stringVoidCallbackRecordAttr");
 }
 
 static inline JSValue jsTestObjDictionaryAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
