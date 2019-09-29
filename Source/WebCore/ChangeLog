@@ -1,3 +1,33 @@
+2019-09-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Nicosia] Add overflow, overflow proxy node implementations
+        https://bugs.webkit.org/show_bug.cgi?id=202306
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add the ScrollingTreeOverflowScrollProxyNode and
+        ScrollingTreeOverflowScrollingNodeNicosia classes, implementing the
+        missing overlfow node types. Both implementations are based on the
+        corresponsing classes for Cocoa/Mac platforms and should ideally
+        share most of the platform-agnostic logic.
+
+        * SourcesWPE.txt:
+        * page/scrolling/nicosia/ScrollingTreeOverflowScrollProxyNode.cpp: Added.
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::create):
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::ScrollingTreeOverflowScrollProxyNode):
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::applyLayerPositions):
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::dumpProperties const):
+        * page/scrolling/nicosia/ScrollingTreeOverflowScrollProxyNode.h: Added.
+        * page/scrolling/nicosia/ScrollingTreeOverflowScrollingNodeNicosia.cpp: Added.
+        (WebCore::ScrollingTreeOverflowScrollingNodeNicosia::create):
+        (WebCore::ScrollingTreeOverflowScrollingNodeNicosia::ScrollingTreeOverflowScrollingNodeNicosia):
+        (WebCore::ScrollingTreeOverflowScrollingNodeNicosia::commitStateAfterChildren):
+        (WebCore::ScrollingTreeOverflowScrollingNodeNicosia::adjustedScrollPosition const):
+        (WebCore::ScrollingTreeOverflowScrollingNodeNicosia::repositionScrollingLayers):
+        (WebCore::ScrollingTreeOverflowScrollingNodeNicosia::handleWheelEvent):
+        * page/scrolling/nicosia/ScrollingTreeOverflowScrollingNodeNicosia.h: Added.
+
 2019-09-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Crash when removing the target element while animating its attributes
