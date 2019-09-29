@@ -1,3 +1,12 @@
+2019-09-28  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Fix non-unified build issue caused by r250440
+        https://bugs.webkit.org/show_bug.cgi?id=202349
+
+        Reviewed by Mark Lam.
+
+        * dfg/DFGOSRExit.cpp: Add missing inclusion of the BytecodeUseDef.h header.
+
 2019-09-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Keep JSString::value(ExecState*)'s result as String instead of `const String&`

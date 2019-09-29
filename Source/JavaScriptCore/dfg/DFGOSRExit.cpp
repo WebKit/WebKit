@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "AssemblyHelpers.h"
+#include "BytecodeUseDef.h"
 #include "ClonedArguments.h"
 #include "DFGGraph.h"
 #include "DFGMayExit.h"
