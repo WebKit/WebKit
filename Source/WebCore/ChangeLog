@@ -1,3 +1,51 @@
+2019-09-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Remove InlineLayout abstraction layer
+        https://bugs.webkit.org/show_bug.cgi?id=202352
+        <rdar://problem/55811532>
+
+        Reviewed by Antti Koivisto.
+
+        Move InlineLayout functions to InlineFormattingContext. Now inline layout has
+        1. InlineFormattingContext -high level layout and preferred width computation, collecting inline content, constructing display boxes
+        2. LineLayout -responsible for placing inline content on the current line (partial inline content handling, line breaking etc)
+        3. Line -represents an actual line, turns inline content into runs.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthForConstraint const):
+        (WebCore::Layout::InlineFormattingContext::initialConstraintsForLine):
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::layoutState const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::formattingContext const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::formattingRoot const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::formattingState): Deleted.
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::widthConstraint const): Deleted.
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp: Removed.
+        * layout/inlineformatting/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::inlineItems const):
+        * layout/inlineformatting/InlineLineLayout.cpp: Added.
+        (WebCore::Layout::inlineItemWidth):
+        (WebCore::Layout::LineLayout::LineInput::LineInput):
+        (WebCore::Layout::LineLayout::UncommittedContent::add):
+        (WebCore::Layout::LineLayout::UncommittedContent::reset):
+        (WebCore::Layout::LineLayout::LineLayout):
+        (WebCore::Layout::LineLayout::commitPendingContent):
+        (WebCore::Layout::LineLayout::close):
+        (WebCore::Layout::LineLayout::placeInlineItem):
+        (WebCore::Layout::LineLayout::layout):
+        * layout/inlineformatting/InlineLineLayout.h: Added.
+        (WebCore::Layout::LineLayout::formattingContext const):
+        (WebCore::Layout::LineLayout::UncommittedContent::runs):
+        (WebCore::Layout::LineLayout::UncommittedContent::isEmpty const):
+        (WebCore::Layout::LineLayout::UncommittedContent::size const):
+        (WebCore::Layout::LineLayout::UncommittedContent::width const):
+
 2019-09-29  Zan Dobersek  <zdobersek@igalia.com>
 
         [Nicosia] Add overflow, overflow proxy node implementations

@@ -49,6 +49,7 @@ public:
     virtual ~InlineFormattingState();
 
     InlineItems& inlineItems() { return m_inlineItems; }
+    const InlineItems& inlineItems() const { return m_inlineItems; }
     void addInlineItem(std::unique_ptr<InlineItem>&& inlineItem) { m_inlineItems.append(WTFMove(inlineItem)); }
 
     InlineRuns& inlineRuns() { return m_inlineRuns; }

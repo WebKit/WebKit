@@ -1419,12 +1419,12 @@ layout/floats/FloatingContext.cpp
 layout/floats/FloatingState.cpp
 layout/inlineformatting/InlineFormattingContext.cpp
 layout/inlineformatting/InlineFormattingContextGeometry.cpp
-layout/inlineformatting/InlineFormattingContextLineLayout.cpp
 layout/inlineformatting/InlineFormattingContextQuirks.cpp
 layout/inlineformatting/InlineFormattingState.cpp
 layout/inlineformatting/InlineInvalidation.cpp
 layout/inlineformatting/InlineLine.cpp
 layout/inlineformatting/InlineLineBreaker.cpp
+layout/inlineformatting/InlineLineLayout.cpp
 layout/inlineformatting/InlineTextItem.cpp
 layout/inlineformatting/text/TextUtil.cpp
 layout/layouttree/LayoutBox.cpp
