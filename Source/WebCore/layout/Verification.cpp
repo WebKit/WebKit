@@ -99,7 +99,11 @@ static bool outputMismatchingSimpleLineInformationIfNeeded(TextStream& stream, c
         if (matchingRuns)
             continue;
 
-        stream << "Mismatching: simple run(" << simpleRun.start << ", " << simpleRun.end << ") (" << simpleRun.logicalLeft << ", " << simpleRun.logicalRight << ") layout run(" << inlineRun.textContext()->start() << ", " << inlineRun.textContext()->end() << ") (" << inlineRun.logicalLeft() << ", " << inlineRun.logicalRight() << ")";
+        stream << "Mismatching: simple run(" << simpleRun.start << ", " << simpleRun.end << ") (" << simpleRun.logicalLeft << ", " << simpleRun.logicalRight << ")";
+        stream << " inline run";
+        if (inlineRun.textContext())
+            stream << " (" << inlineRun.textContext()->start() << ", " << inlineRun.textContext()->end() << ")";
+        stream << " (" << inlineRun.logicalLeft() << ", " << inlineRun.logicalTop() << ") (" << inlineRun.logicalWidth() << "x" << inlineRun.logicalHeight() << ")";
         stream.nextLine();
         mismatched = true;
     }

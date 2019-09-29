@@ -81,19 +81,29 @@ struct IndexAndRange {
 };
 
 struct LineInput {
-    LineInput(const Line::InitialConstraints& initialLineConstraints, Line::SkipVerticalAligment, IndexAndRange firstToProcess, const InlineItems&);
+    LineInput(const Line::InitialConstraints&, TextAlignMode, IndexAndRange firstToProcess, const InlineItems&);
+    LineInput(const Line::InitialConstraints&, IndexAndRange firstToProcess, const InlineItems&);
 
     Line::InitialConstraints initialConstraints;
+    TextAlignMode horizontalAlignment;
     // FIXME Alternatively we could just have a second pass with vertical positioning (preferred width computation opts out) 
-    Line::SkipVerticalAligment skipVerticalAligment;
+    Line::SkipAlignment skipAlignment { Line::SkipAlignment::No };
     IndexAndRange firstInlineItem;
     const InlineItems& inlineItems;
     Optional<LayoutUnit> floatMinimumLogicalBottom;
 };
 
-LineInput::LineInput(const Line::InitialConstraints& initialLineConstraints, Line::SkipVerticalAligment skipVerticalAligment, IndexAndRange firstToProcess, const InlineItems& inlineItems)
+LineInput::LineInput(const Line::InitialConstraints& initialLineConstraints, TextAlignMode horizontalAlignment, IndexAndRange firstToProcess, const InlineItems& inlineItems)
     : initialConstraints(initialLineConstraints)
-    , skipVerticalAligment(skipVerticalAligment)
+    , horizontalAlignment(horizontalAlignment)
+    , firstInlineItem(firstToProcess)
+    , inlineItems(inlineItems)
+{
+}
+
+LineInput::LineInput(const Line::InitialConstraints& initialLineConstraints, IndexAndRange firstToProcess, const InlineItems& inlineItems)
+    : initialConstraints(initialLineConstraints)
+    , skipAlignment(Line::SkipAlignment::Yes)
     , firstInlineItem(firstToProcess)
     , inlineItems(inlineItems)
 {
@@ -164,7 +174,7 @@ void LineLayout::UncommittedContent::reset()
 LineLayout::LineLayout(const InlineFormattingContext& inlineFormattingContext, const LineInput& lineInput)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_lineInput(lineInput)
-    , m_line(inlineFormattingContext, lineInput.initialConstraints, lineInput.skipVerticalAligment)
+    , m_line(inlineFormattingContext, lineInput.initialConstraints, lineInput.horizontalAlignment, lineInput.skipAlignment)
     , m_lineHasIntrusiveFloat(lineInput.initialConstraints.lineIsConstrainedByFloat)
 {
 }
@@ -281,7 +291,7 @@ void InlineFormattingContext::InlineLayout::layout(const InlineItems& inlineItem
     auto lineLogicalTop = formattingContext().geometryForBox(formattingRoot()).contentBoxTop();
     IndexAndRange currentInlineItem;
     while (currentInlineItem.index < inlineItems.size()) {
-        auto lineInput = LineInput { initialConstraintsForLine(lineLogicalTop), Line::SkipVerticalAligment::No, currentInlineItem, inlineItems };
+        auto lineInput = LineInput { initialConstraintsForLine(lineLogicalTop), formattingRoot().style().textAlign(), currentInlineItem, inlineItems };
         auto lineLayout = LineLayout { formattingContext(), lineInput };
 
         auto lineContent = lineLayout.layout();
@@ -349,7 +359,7 @@ LayoutUnit InlineFormattingContext::InlineLayout::computedIntrinsicWidth(const I
     while (currentInlineItem.index < inlineItems.size()) {
         // Only the horiztonal available width is constrained when computing intrinsic width.
         auto initialLineConstraints = Line::InitialConstraints { { }, widthConstraint(), false, { } };
-        auto lineInput = LineInput { initialLineConstraints, Line::SkipVerticalAligment::Yes, currentInlineItem, inlineItems };
+        auto lineInput = LineInput { initialLineConstraints, currentInlineItem, inlineItems };
 
         auto lineContent = LineLayout(formattingContext, lineInput).layout();
 
@@ -380,11 +390,6 @@ void InlineFormattingContext::InlineLayout::setupDisplayBoxes(const LineContent&
         floatingContext.append(floatBox);
     }
 
-    auto& inlineDisplayRuns = formattingState.inlineRuns();
-    auto previousLineLastRunIndex = Optional<unsigned> { inlineDisplayRuns.isEmpty() ? Optional<unsigned>() : inlineDisplayRuns.size() - 1 };
-    // 9.4.2 Inline formatting contexts
-    // A line box is always tall enough for all of the boxes it contains.
-
     // Add final display runs to state.
     for (auto& lineRun : lineContent.runList) {
         // Inline level containers (<span>) don't generate inline runs.
@@ -393,6 +398,7 @@ void InlineFormattingContext::InlineLayout::setupDisplayBoxes(const LineContent&
         formattingState.addInlineRun(lineRun->displayRun());
     }
 
+    // Compute box final geometry.
     auto geometry = formattingContext.geometry();
     auto& lineRuns = lineContent.runList;
     for (unsigned index = 0; index < lineRuns.size(); ++index) {
@@ -456,41 +462,7 @@ void InlineFormattingContext::InlineLayout::setupDisplayBoxes(const LineContent&
         }
         ASSERT_NOT_REACHED();
     }
-    // FIXME linebox needs to be ajusted after content alignment.
     formattingState.addLineBox(lineContent.lineBox);
-    alignRuns(formattingRoot().style().textAlign(), inlineDisplayRuns, previousLineLastRunIndex.valueOr(-1) + 1, widthConstraint() - lineContent.lineBox.logicalWidth());
-}
-
-static Optional<LayoutUnit> horizontalAdjustmentForAlignment(TextAlignMode align, LayoutUnit remainingWidth)
-{
-    switch (align) {
-    case TextAlignMode::Left:
-    case TextAlignMode::WebKitLeft:
-    case TextAlignMode::Start:
-        return { };
-    case TextAlignMode::Right:
-    case TextAlignMode::WebKitRight:
-    case TextAlignMode::End:
-        return std::max(remainingWidth, 0_lu);
-    case TextAlignMode::Center:
-    case TextAlignMode::WebKitCenter:
-        return std::max(remainingWidth / 2, 0_lu);
-    case TextAlignMode::Justify:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-void InlineFormattingContext::InlineLayout::alignRuns(TextAlignMode textAlign, InlineRuns& inlineDisplayRuns, unsigned firstRunIndex, LayoutUnit availableWidth) const
-{
-    auto adjustment = horizontalAdjustmentForAlignment(textAlign, availableWidth);
-    if (!adjustment)
-        return;
-
-    for (unsigned index = firstRunIndex; index < inlineDisplayRuns.size(); ++index)
-        inlineDisplayRuns[index].moveHorizontally(*adjustment);
 }
 
 }

@@ -1,3 +1,33 @@
+2019-09-28  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Move horizontal alignment to Line
+        https://bugs.webkit.org/show_bug.cgi?id=202351
+        <rdar://problem/55810139>
+
+        Reviewed by Antti Koivisto.
+
+        Line should be able to finalize the run placement including horizontal alignment.
+
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingSimpleLineInformationIfNeeded):
+        * layout/inlineformatting/InlineFormattingContextLineLayout.cpp:
+        (WebCore::Layout::LineInput::LineInput):
+        (WebCore::Layout::LineLayout::LineLayout):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::layout):
+        (WebCore::Layout::InlineFormattingContext::InlineLayout::computedIntrinsicWidth const):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::Line):
+        (WebCore::Layout::Line::isVisuallyEmpty const):
+        (WebCore::Layout::Line::close):
+        (WebCore::Layout::Line::verticalAlignContent):
+        (WebCore::Layout::Line::horizontalAlignContent):
+        (WebCore::Layout::Line::appendInlineContainerStart):
+        (WebCore::Layout::Line::appendTextContent):
+        (WebCore::Layout::Line::appendNonReplacedInlineBox):
+        (WebCore::Layout::Line::appendHardLineBreak):
+        (WebCore::Layout::Line::inlineItemContentHeight const):
+        * layout/inlineformatting/InlineLine.h:
+
 2019-09-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [IDL] Support record<DOMString, *Callback> in bindings

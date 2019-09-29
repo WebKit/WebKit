@@ -68,7 +68,6 @@ private:
 
         LineContent placeInlineItems(const LineInput&) const;
         void setupDisplayBoxes(const LineContent&);
-        void alignRuns(TextAlignMode, InlineRuns&, unsigned firstRunIndex, LayoutUnit availableWidth) const;
 
     private:
         InlineFormattingContext& m_inlineFormattingContext;

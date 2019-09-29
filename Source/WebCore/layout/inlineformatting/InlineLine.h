@@ -51,8 +51,8 @@ public:
         };
         Optional<HeightAndBaseline> heightAndBaseline;
     };
-    enum class SkipVerticalAligment { No, Yes };
-    Line(const InlineFormattingContext&, const InitialConstraints&, SkipVerticalAligment);
+    enum class SkipAlignment { No, Yes };
+    Line(const InlineFormattingContext&, const InitialConstraints&, Optional<TextAlignMode>, SkipAlignment);
 
     void append(const InlineItem&, LayoutUnit logicalWidth);
     bool hasContent() const { return !isVisuallyEmpty(); }
@@ -125,6 +125,8 @@ private:
     void appendHardLineBreak(const InlineItem&);
 
     void removeTrailingTrimmableContent();
+    void alignContentHorizontally();
+    void alignContentVertically();
 
     void adjustBaselineAndLineHeight(const InlineItem&, LayoutUnit runHeight);
     LayoutUnit inlineItemContentHeight(const InlineItem&) const;
@@ -139,7 +141,8 @@ private:
 
     Optional<LineBox::Baseline> m_initialStrut;
     LayoutUnit m_lineLogicalWidth;
-    bool m_skipVerticalAligment { false };
+    Optional<TextAlignMode> m_horizontalAlignment;
+    bool m_skipAlignment { false };
     LineBox m_lineBox;
 };
 
