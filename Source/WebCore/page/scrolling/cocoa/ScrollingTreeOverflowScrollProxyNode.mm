@@ -52,7 +52,7 @@ void ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren(const Scrol
     const ScrollingStateOverflowScrollProxyNode& overflowProxyStateNode = downcast<ScrollingStateOverflowScrollProxyNode>(stateNode);
 
     if (stateNode.hasChangedProperty(ScrollingStateNode::Layer))
-        m_layer = stateNode.layer();
+        m_layer = static_cast<CALayer*>(stateNode.layer());
 
     if (overflowProxyStateNode.hasChangedProperty(ScrollingStateOverflowScrollProxyNode::OverflowScrollingNode))
         m_overflowScrollingNodeID = overflowProxyStateNode.overflowScrollingNode();

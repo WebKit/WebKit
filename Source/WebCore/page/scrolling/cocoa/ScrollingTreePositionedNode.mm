@@ -55,7 +55,7 @@ void ScrollingTreePositionedNode::commitStateBeforeChildren(const ScrollingState
     const ScrollingStatePositionedNode& positionedStateNode = downcast<ScrollingStatePositionedNode>(stateNode);
 
     if (positionedStateNode.hasChangedProperty(ScrollingStateNode::Layer))
-        m_layer = positionedStateNode.layer();
+        m_layer = static_cast<CALayer*>(positionedStateNode.layer());
 
     if (positionedStateNode.hasChangedProperty(ScrollingStatePositionedNode::RelatedOverflowScrollingNodes))
         m_relatedOverflowScrollingNodes = positionedStateNode.relatedOverflowScrollingNodes();

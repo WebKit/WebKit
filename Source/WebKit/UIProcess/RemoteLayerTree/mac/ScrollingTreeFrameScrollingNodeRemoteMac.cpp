@@ -56,10 +56,10 @@ void ScrollingTreeFrameScrollingNodeRemoteMac::commitStateBeforeChildren(const S
 
     // FIXME: Push to ScrollingTreeScrollingNodeDelegateMac?
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::VerticalScrollbarLayer))
-        m_scrollerPair->verticalScroller().setHostLayer(scrollingStateNode.verticalScrollbarLayer());
+        m_scrollerPair->verticalScroller().setHostLayer(static_cast<CALayer*>(scrollingStateNode.verticalScrollbarLayer()));
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::HorizontalScrollbarLayer))
-        m_scrollerPair->horizontalScroller().setHostLayer(scrollingStateNode.horizontalScrollbarLayer());
+        m_scrollerPair->horizontalScroller().setHostLayer(static_cast<CALayer*>(scrollingStateNode.horizontalScrollbarLayer()));
 
     m_scrollerPair->updateValues();
 }

@@ -85,22 +85,22 @@ void ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren(const Scrolli
     const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::RootContentsLayer))
-        m_rootContentsLayer = scrollingStateNode.rootContentsLayer();
+        m_rootContentsLayer = static_cast<CALayer*>(scrollingStateNode.rootContentsLayer());
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::CounterScrollingLayer))
-        m_counterScrollingLayer = scrollingStateNode.counterScrollingLayer();
+        m_counterScrollingLayer = static_cast<CALayer*>(scrollingStateNode.counterScrollingLayer());
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::InsetClipLayer))
-        m_insetClipLayer = scrollingStateNode.insetClipLayer();
+        m_insetClipLayer = static_cast<CALayer*>(scrollingStateNode.insetClipLayer());
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::ContentShadowLayer))
-        m_contentShadowLayer = scrollingStateNode.contentShadowLayer();
+        m_contentShadowLayer = static_cast<CALayer*>(scrollingStateNode.contentShadowLayer());
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::HeaderLayer))
-        m_headerLayer = scrollingStateNode.headerLayer();
+        m_headerLayer = static_cast<CALayer*>(scrollingStateNode.headerLayer());
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::FooterLayer))
-        m_footerLayer = scrollingStateNode.footerLayer();
+        m_footerLayer = static_cast<CALayer*>(scrollingStateNode.footerLayer());
 
     bool logScrollingMode = !m_hadFirstUpdate;
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::ReasonsForSynchronousScrolling))

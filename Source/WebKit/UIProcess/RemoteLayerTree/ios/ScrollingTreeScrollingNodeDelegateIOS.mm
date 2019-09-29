@@ -228,7 +228,7 @@ void ScrollingTreeScrollingNodeDelegateIOS::resetScrollViewDelegate()
 void ScrollingTreeScrollingNodeDelegateIOS::commitStateBeforeChildren(const ScrollingStateScrollingNode& scrollingStateNode)
 {
     if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollContainerLayer))
-        m_scrollLayer = scrollingStateNode.scrollContainerLayer();
+        m_scrollLayer = static_cast<CALayer*>(scrollingStateNode.scrollContainerLayer());
 }
 
 void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const ScrollingStateScrollingNode& scrollingStateNode)

@@ -57,13 +57,13 @@ void ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateBeforeChildren(const S
     const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::CounterScrollingLayer))
-        m_counterScrollingLayer = scrollingStateNode.counterScrollingLayer();
+        m_counterScrollingLayer = static_cast<CALayer*>(scrollingStateNode.counterScrollingLayer());
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::HeaderLayer))
-        m_headerLayer = scrollingStateNode.headerLayer();
+        m_headerLayer = static_cast<CALayer*>(scrollingStateNode.headerLayer());
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::FooterLayer))
-        m_footerLayer = scrollingStateNode.footerLayer();
+        m_footerLayer = static_cast<CALayer*>(scrollingStateNode.footerLayer());
 
     if (stateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollContainerLayer)) {
         if (scrollContainerLayer())

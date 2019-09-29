@@ -1,3 +1,27 @@
+2019-09-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        Tighten up LayerRepresentation operators
+        https://bugs.webkit.org/show_bug.cgi?id=202344
+
+        Reviewed by Simon Fraser.
+
+        With LayerRepresentation operators now being explicit, we require
+        to manually specify conversion to CALayer pointers or
+        GraphicsLayer::PlatformLayerID values.
+
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeFrameScrollingNodeRemoteIOS.mm:
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateBeforeChildren):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::commitStateBeforeChildren):
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.cpp:
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteMac::commitStateBeforeChildren):
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeOverflowScrollingNodeRemoteMac.cpp:
+        (WebKit::ScrollingTreeOverflowScrollingNodeRemoteMac::commitStateBeforeChildren):
+
 2019-09-27  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Fixes for non-unified builds after r249714

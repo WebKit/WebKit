@@ -1,3 +1,40 @@
+2019-09-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        Tighten up LayerRepresentation operators
+        https://bugs.webkit.org/show_bug.cgi?id=202344
+
+        Reviewed by Simon Fraser.
+
+        Make the operators on the LayerRepresentation class explicit.
+        Additionally, the bool operator is added to the class, allowing objects
+        of this class to be safely used in boolean contexts like null checks.
+        Before, use in such contexts fell back to using the
+        GraphicsLayer::PlatformLayerID operator which caused asserts when the
+        internal representation was of different type.
+
+        While the explicit operators prevent misuse, they do require additional
+        conversion casts to retrieve the internal LayerRepresentation value.
+
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::LayerRepresentation::operator GraphicsLayer* const):
+        (WebCore::LayerRepresentation::operator PlatformLayer* const):
+        (WebCore::LayerRepresentation::operator GraphicsLayer::PlatformLayerID const):
+        (WebCore::LayerRepresentation::operator bool const):
+        (WebCore::LayerRepresentation::toRepresentation const):
+        Add a missing ASSERT_NOT_REACHED() invocation.
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::commitStateBeforeChildren):
+        * page/scrolling/cocoa/ScrollingTreeFixedNode.mm:
+        (WebCore::ScrollingTreeFixedNode::commitStateBeforeChildren):
+        * page/scrolling/cocoa/ScrollingTreeOverflowScrollProxyNode.mm:
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren):
+        * page/scrolling/cocoa/ScrollingTreePositionedNode.mm:
+        (WebCore::ScrollingTreePositionedNode::commitStateBeforeChildren):
+        * page/scrolling/cocoa/ScrollingTreeStickyNode.mm:
+        (WebCore::ScrollingTreeStickyNode::commitStateBeforeChildren):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren):
+
 2019-09-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Remove InlineLayout abstraction layer

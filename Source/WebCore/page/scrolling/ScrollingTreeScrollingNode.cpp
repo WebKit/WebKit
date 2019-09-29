@@ -102,10 +102,10 @@ void ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateN
 
 #if PLATFORM(COCOA)
     if (state.hasChangedProperty(ScrollingStateScrollingNode::ScrollContainerLayer))
-        m_scrollContainerLayer = state.scrollContainerLayer();
+        m_scrollContainerLayer = static_cast<CALayer*>(state.scrollContainerLayer());
 
     if (state.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
-        m_scrolledContentsLayer = state.scrolledContentsLayer();
+        m_scrolledContentsLayer = static_cast<CALayer*>(state.scrolledContentsLayer());
 #endif
 }
 

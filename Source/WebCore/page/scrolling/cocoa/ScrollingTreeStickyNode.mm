@@ -61,7 +61,7 @@ void ScrollingTreeStickyNode::commitStateBeforeChildren(const ScrollingStateNode
     const ScrollingStateStickyNode& stickyStateNode = downcast<ScrollingStateStickyNode>(stateNode);
 
     if (stickyStateNode.hasChangedProperty(ScrollingStateNode::Layer))
-        m_layer = stickyStateNode.layer();
+        m_layer = static_cast<CALayer*>(stickyStateNode.layer());
 
     if (stateNode.hasChangedProperty(ScrollingStateStickyNode::ViewportConstraints))
         m_constraints = stickyStateNode.viewportConstraints();
