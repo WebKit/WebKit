@@ -7,7 +7,7 @@ PASS navigator.sendBeacon("http://localhost:8000/blink/sendbeacon/resources/save
 PASS Beacon sent successfully
 PASS Content-Type: text/plain;charset=UTF-8
 PASS Origin: http://127.0.0.1:8000
-PASS Referer: http://127.0.0.1:8000/blink/sendbeacon/beacon-cross-origin.html
+PASS Referer: http://127.0.0.1:8000/
 PASS Request-Method: POST
 PASS Length: 11
 PASS Body: CrossOrigin

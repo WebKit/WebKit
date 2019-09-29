@@ -18,7 +18,14 @@ window.onmessage = function(event) {
     shouldBeEqualToString("referrer", "");
     finishJSTest();
 }
+
+if (window.testRunner) {
+    testRunner.setStatisticsShouldDowngradeReferrer(false, function () {
+        let iframeElement = document.createElement("iframe");
+        iframeElement.src = "http://localhost:8000/referrer-policy/resources/document.html";
+        document.body.appendChild(iframeElement);
+    });
+}
 </script>
-<iframe src="http://localhost:8000/referrer-policy/resources/document.html"></iframe>
 </body>
 </html>

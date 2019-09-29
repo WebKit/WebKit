@@ -1217,6 +1217,13 @@ void NetworkProcess::resetCrossSiteLoadsWithLinkDecorationForTesting(PAL::Sessio
         ASSERT_NOT_REACHED();
     completionHandler();
 }
+
+void NetworkProcess::setShouldDowngradeReferrerForTesting(bool enabled, CompletionHandler<void()>&& completionHandler)
+{
+    for (auto& networkSession : m_networkSessions.values())
+        networkSession.get().setShouldDowngradeReferrerForTesting(enabled);
+    completionHandler();
+}
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
 bool NetworkProcess::sessionIsControlledByAutomation(PAL::SessionID sessionID) const

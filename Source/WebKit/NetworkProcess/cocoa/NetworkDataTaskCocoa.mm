@@ -150,7 +150,7 @@ void NetworkDataTaskCocoa::applyCookieBlockingPolicy(bool shouldBlock)
 }
 #endif
 
-bool NetworkDataTaskCocoa::isThirdPartyRequest(const WebCore::ResourceRequest& request)
+bool NetworkDataTaskCocoa::isThirdPartyRequest(const WebCore::ResourceRequest& request) const
 {
     return !WebCore::areRegistrableDomainsEqual(request.url(), request.firstPartyForCookies());
 }
@@ -207,7 +207,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     shouldBlockCookies = storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStatelessCookieless
         || (session.networkStorageSession() && session.networkStorageSession()->shouldBlockCookies(request, frameID, pageID));
 #endif
-    restrictRequestReferrerToOriginIfNeeded(request, shouldBlockCookies);
+    restrictRequestReferrerToOriginIfNeeded(request);
 
     NSURLRequest *nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
     applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, shouldContentSniff == WebCore::ContentSniffingPolicy::SniffContent && !url.isLocalFile(), shouldContentEncodingSniff == WebCore::ContentEncodingSniffingPolicy::Sniff);
@@ -289,9 +289,9 @@ NetworkDataTaskCocoa::~NetworkDataTaskCocoa()
     }
 }
 
-void NetworkDataTaskCocoa::restrictRequestReferrerToOriginIfNeeded(WebCore::ResourceRequest& request, bool shouldBlockCookies)
+void NetworkDataTaskCocoa::restrictRequestReferrerToOriginIfNeeded(WebCore::ResourceRequest& request)
 {
-    if (shouldBlockCookies || (m_session->sessionID().isEphemeral() && isThirdPartyRequest(request)))
+    if ((m_session->sessionID().isEphemeral() || m_session->isResourceLoadStatisticsEnabled()) && m_session->shouldDowngradeReferrer() && isThirdPartyRequest(request))
         request.setExistingHTTPReferrerToOriginString();
 }
 
@@ -405,14 +405,8 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
         m_client->willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), [completionHandler = WTFMove(completionHandler), this, weakThis = makeWeakPtr(*this)] (auto&& request) mutable {
             if (!weakThis)
                 return completionHandler({ });
-            if (!request.isNull()) {
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-                bool shouldBlockCookies = m_session->networkStorageSession() && m_session->networkStorageSession()->shouldBlockCookies(request, m_frameID, m_pageID);
-#else
-                bool shouldBlockCookies = false;
-#endif
-                restrictRequestReferrerToOriginIfNeeded(request, shouldBlockCookies);
-            }
+            if (!request.isNull())
+                restrictRequestReferrerToOriginIfNeeded(request);
             completionHandler(WTFMove(request));
         });
     else {

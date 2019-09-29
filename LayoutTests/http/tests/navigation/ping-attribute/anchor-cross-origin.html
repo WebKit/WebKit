@@ -10,6 +10,7 @@ var testCalled = false;
 function test() {
     if (!testCalled) {
         if (window.testRunner && window.internals) {
+            testRunner.setStatisticsShouldDowngradeReferrer(false, function () { });
             testRunner.dumpAsText();
             internals.settings.setHyperlinkAuditingEnabled(true);
             testRunner.waitUntilDone();

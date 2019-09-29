@@ -27,6 +27,9 @@ if (self.testRunner) {
         self.AudioContext = self.webkitAudioContext;
         self.OfflineAudioContext = self.webkitOfflineAudioContext;
     }
+
+    if (testRunner.setStatisticsShouldDowngradeReferrer) 
+       testRunner.setStatisticsShouldDowngradeReferrer(false, function() { });
 }
 
 if (self.internals && internals.setDisableGetDisplayMediaUserGestureConstraint)

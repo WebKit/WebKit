@@ -244,6 +244,7 @@ public:
     void statisticsDeleteCookiesForHost(WKStringRef host, bool includeHttpOnlyCookies);
     bool isStatisticsHasLocalStorage(WKStringRef hostName);
     void setStatisticsCacheMaxAgeCap(double seconds);
+    void setStatisticsShouldDowngradeReferrer(bool value);
     void statisticsResetToConsistentState();
 
     void getAllStorageAccessEntries();

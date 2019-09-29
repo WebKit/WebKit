@@ -1,3 +1,59 @@
+2019-09-29  Babak Shafiei  <bshafiei@apple.com>
+
+        Apply patch. rdar://problem/55801087
+
+    2019-09-29  John Wilander  <wilander@apple.com>
+
+            Cherry-pick r250413.
+
+            Patch by Kate Cheney <katherine_cheney@apple.com> on 2019-09-26.
+
+            Resource Load Statistics: Downgrade all third-party referrer headers
+            https://bugs.webkit.org/show_bug.cgi?id=201353
+            <rdar://problem/54895650>
+
+            Majority of this patch was written by John Wilander <wilander@apple.com>.
+
+            Reviewed by Brent Fulgham.
+
+            When tracking protections are enabled, we should downgrade all third-party
+            referrers to their origins. Note that this downgrade will be specific to
+            Cocoa so other ports will have to adopt as they see fit.
+
+            Cocoa already does this downgrade in ephemeral sessions (shipping).
+
+            The majority of these changes are test infrastructure. The functional
+            change is in WebKit::NetworkDataTaskCocoa and WebKit::NetworkSession.
+
+            * NetworkProcess/NetworkProcess.cpp:
+            (WebKit::NetworkProcess::setShouldDowngradeReferrerForTesting):
+            * NetworkProcess/NetworkProcess.h:
+            * NetworkProcess/NetworkProcess.messages.in:
+            * NetworkProcess/NetworkSession.cpp:
+            (WebKit::NetworkSession::isResourceLoadStatisticsEnabled const):
+            (WebKit::NetworkSession::setShouldDowngradeReferrerForTesting):
+            (WebKit::NetworkSession::shouldDowngradeReferrer const):
+            * NetworkProcess/NetworkSession.h:
+            * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+            * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+            (WebKit::NetworkDataTaskCocoa::isThirdPartyRequest const):
+            (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+            (WebKit::NetworkDataTaskCocoa::restrictRequestReferrerToOriginIfNeeded):
+            (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+            (WebKit::NetworkDataTaskCocoa::isThirdPartyRequest): Deleted.
+            * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+            (WKWebsiteDataStoreSetResourceLoadStatisticsShouldDowngradeReferrerForTesting):
+            (WKWebsiteDataStoreStatisticsResetToConsistentState):
+            * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+            * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+                Added missing property configureJSCForTesting to fix the build.
+            * UIProcess/Network/NetworkProcessProxy.cpp:
+            (WebKit::NetworkProcessProxy::setShouldDowngradeReferrerForTesting):
+            * UIProcess/Network/NetworkProcessProxy.h:
+            * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+            (WebKit::WebsiteDataStore::setResourceLoadStatisticsShouldDowngradeReferrerForTesting):
+            * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2019-09-27  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r250432. rdar://problem/55801091

@@ -336,6 +336,7 @@ interface TestRunner {
     boolean isStatisticsHasLocalStorage(DOMString hostName);
     void setStatisticsCacheMaxAgeCap(double seconds);
     void statisticsResetToConsistentState(object completionHandler);
+    void setStatisticsShouldDowngradeReferrer(boolean value, object callback);
 
     // Injected bundle form client.
     void installTextDidChangeInTextFieldCallback(object callback);

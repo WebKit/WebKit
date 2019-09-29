@@ -728,6 +728,7 @@ enum {
     StatisticsDidClearThroughWebsiteDataRemovalCallbackID,
     StatisticsDidResetToConsistentStateCallbackID,
     StatisticsDidSetBlockCookiesForHostCallbackID,
+    StatisticsDidSetShouldDowngradeReferrerCallbackID,
     AllStorageAccessEntriesCallbackID,
     DidRemoveAllSessionCredentialsCallbackID,
     GetApplicationManifestCallbackID,
@@ -2071,6 +2072,23 @@ void TestRunner::setStatisticsCacheMaxAgeCap(double seconds)
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("SetStatisticsCacheMaxAgeCap"));
     WKRetainPtr<WKDoubleRef> messageBody = adoptWK(WKDoubleCreate(seconds));
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
+void TestRunner::setStatisticsShouldDowngradeReferrer(bool value, JSValueRef completionHandler)
+{
+    if (m_hasSetDowngradeReferrerCallback)
+        return;
+
+    cacheTestRunnerCallback(StatisticsDidSetShouldDowngradeReferrerCallbackID, completionHandler);
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("SetStatisticsShouldDowngradeReferrer"));
+    WKRetainPtr<WKBooleanRef> messageBody = adoptWK(WKBooleanCreate(value));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+    m_hasSetDowngradeReferrerCallback = true;
+}
+
+void TestRunner::statisticsCallDidSetShouldDowngradeReferrerCallback()
+{
+    callTestRunnerCallback(StatisticsDidSetShouldDowngradeReferrerCallbackID);
 }
 
 void TestRunner::statisticsCallClearThroughWebsiteDataRemovalCallback()

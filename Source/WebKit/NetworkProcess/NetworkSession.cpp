@@ -151,6 +151,11 @@ void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
         m_resourceLoadStatistics->setPrevalentResourceForDebugMode(m_resourceLoadStatisticsManualPrevalentResource, [] { });
 }
 
+bool NetworkSession::isResourceLoadStatisticsEnabled() const
+{
+    return !!m_resourceLoadStatistics;
+}
+
 void NetworkSession::notifyResourceLoadStatisticsProcessed()
 {
     m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::NotifyResourceLoadStatisticsProcessed(), 0);
@@ -174,6 +179,16 @@ void NetworkSession::deleteWebsiteDataForRegistrableDomains(OptionSet<WebsiteDat
 void NetworkSession::registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType> dataTypes, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
 {
     m_networkProcess->registrableDomainsWithWebsiteData(m_sessionID, dataTypes, shouldNotifyPage, WTFMove(completionHandler));
+}
+
+void NetworkSession::setShouldDowngradeReferrerForTesting(bool enabled)
+{
+    m_downgradeReferrer = enabled;
+}
+
+bool NetworkSession::shouldDowngradeReferrer() const
+{
+    return m_downgradeReferrer;
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 

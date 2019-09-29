@@ -80,13 +80,13 @@ private:
     bool tryPasswordBasedAuthentication(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&);
     void applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(__strong NSURLRequest*&, bool shouldContentSniff, bool shouldContentEncodingSniff);
 
-    void restrictRequestReferrerToOriginIfNeeded(WebCore::ResourceRequest&, bool shouldBlockCookies);
+    void restrictRequestReferrerToOriginIfNeeded(WebCore::ResourceRequest&);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     static NSHTTPCookieStorage *statelessCookieStorage();
     void applyCookieBlockingPolicy(bool shouldBlock);
 #endif
-    bool isThirdPartyRequest(const WebCore::ResourceRequest&);
+    bool isThirdPartyRequest(const WebCore::ResourceRequest&) const;
     bool isAlwaysOnLoggingAllowed() const;
 
     RefPtr<SandboxExtension> m_sandboxExtension;
