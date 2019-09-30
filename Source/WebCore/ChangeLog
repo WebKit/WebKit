@@ -1,5 +1,54 @@
 2019-09-30  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r248172. rdar://problem/55826873
+
+    Document::resume should delay resetting of form control elements.
+    https://bugs.webkit.org/show_bug.cgi?id=200376
+    
+    Reviewed by Geoffrey Garen.
+    
+    Source/WebCore:
+    
+    Delay the execution of form control element resets until the next task
+    to avoid synchronously mutating DOM during page cache restoration.
+    
+    Test: fast/frames/restoring-page-cache-should-not-run-scripts.html
+    
+    * html/HTMLFormElement.cpp:
+    (WebCore::HTMLFormElement::resumeFromDocumentSuspension):
+    * html/HTMLInputElement.cpp:
+    (WebCore::HTMLInputElement::resumeFromDocumentSuspension):
+    
+    LayoutTests:
+    
+    Added a regression test.
+    
+    * fast/frames/restoring-page-cache-should-not-run-scripts-expected.txt: Added.
+    * fast/frames/restoring-page-cache-should-not-run-scripts.html: Added.
+    * platform/win/TestExpectations: Skip this test on Windows since navigating to blob fails on Windows.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248172 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Document::resume should delay resetting of form control elements.
+            https://bugs.webkit.org/show_bug.cgi?id=200376
+
+            Reviewed by Geoffrey Garen.
+
+            Delay the execution of form control element resets until the next task
+            to avoid synchronously mutating DOM during page cache restoration.
+
+            Test: fast/frames/restoring-page-cache-should-not-run-scripts.html
+
+            * html/HTMLFormElement.cpp:
+            (WebCore::HTMLFormElement::resumeFromDocumentSuspension):
+            * html/HTMLInputElement.cpp:
+            (WebCore::HTMLInputElement::resumeFromDocumentSuspension):
+
+2019-09-30  Babak Shafiei  <bshafiei@apple.com>
+
         Revert r250483. rdar://problem/55825351
 
 2019-09-29  Alan Coon  <alancoon@apple.com>

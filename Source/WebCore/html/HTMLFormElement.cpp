@@ -836,9 +836,9 @@ void HTMLFormElement::resumeFromDocumentSuspension()
 {
     ASSERT(!shouldAutocomplete());
 
-    Ref<HTMLFormElement> protectedThis(*this);
-
-    resetAssociatedFormControlElements();
+    document().postTask([formElement = makeRef(*this)] (ScriptExecutionContext&) {
+        formElement->resetAssociatedFormControlElements();
+    });
 }
 
 void HTMLFormElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
