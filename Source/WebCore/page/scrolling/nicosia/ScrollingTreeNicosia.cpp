@@ -33,6 +33,9 @@
 #include "ScrollingTreeFixedNode.h"
 #include "ScrollingTreeFrameHostingNode.h"
 #include "ScrollingTreeFrameScrollingNodeNicosia.h"
+#include "ScrollingTreeOverflowScrollProxyNode.h"
+#include "ScrollingTreeOverflowScrollingNodeNicosia.h"
+#include "ScrollingTreePositionedNode.h"
 #include "ScrollingTreeStickyNode.h"
 
 namespace WebCore {
@@ -56,14 +59,15 @@ Ref<ScrollingTreeNode> ScrollingTreeNicosia::createScrollingTreeNode(ScrollingNo
     case ScrollingNodeType::FrameHosting:
         return ScrollingTreeFrameHostingNode::create(*this, nodeID);
     case ScrollingNodeType::Overflow:
-        // Should not be reached -- caught by ASSERT_NOT_REACHED() below.
-        break;
+        return ScrollingTreeOverflowScrollingNodeNicosia::create(*this, nodeID);
+    case ScrollingNodeType::OverflowProxy:
+        return ScrollingTreeOverflowScrollProxyNode::create(*this, nodeID);
     case ScrollingNodeType::Fixed:
         return ScrollingTreeFixedNode::create(*this, nodeID);
     case ScrollingNodeType::Sticky:
         return ScrollingTreeStickyNode::create(*this, nodeID);
     case ScrollingNodeType::Positioned:
-        RELEASE_ASSERT_NOT_REACHED();
+        return ScrollingTreePositionedNode::create(*this, nodeID);
     }
 
     RELEASE_ASSERT_NOT_REACHED();
