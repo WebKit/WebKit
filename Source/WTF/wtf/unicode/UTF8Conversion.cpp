@@ -92,6 +92,7 @@ bool convertUTF8ToUTF16(const char* source, const char* sourceEnd, UChar** targe
     RELEASE_ASSERT(sourceEnd - source <= std::numeric_limits<int>::max());
     UBool error = false;
     UChar* target = *targetStart;
+    RELEASE_ASSERT(targetEnd - target <= std::numeric_limits<int>::max());
     UChar32 orAllData = 0;
     int targetOffset = 0;
     for (int sourceOffset = 0; sourceOffset < sourceEnd - source; ) {
@@ -104,6 +105,7 @@ bool convertUTF8ToUTF16(const char* source, const char* sourceEnd, UChar** targe
             return false;
         orAllData |= character;
     }
+    RELEASE_ASSERT(target + targetOffset <= targetEnd);
     *targetStart = target + targetOffset;
     if (sourceAllASCII)
         *sourceAllASCII = isASCII(orAllData);

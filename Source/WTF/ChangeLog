@@ -1,3 +1,14 @@
+2019-09-30  Mark Lam  <mark.lam@apple.com>
+
+        Add some assertions to convertUTF8ToUTF16().
+        https://bugs.webkit.org/show_bug.cgi?id=202356
+        <rdar://problem/52846813>
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/unicode/UTF8Conversion.cpp:
+        (WTF::Unicode::convertUTF8ToUTF16):
+
 2019-09-30  Guillaume Emont  <guijemont@igalia.com>
 
         Don't try to use backtrace() on MIPS
