@@ -1,3 +1,21 @@
+2019-09-30  Rob Buis  <rbuis@igalia.com>
+
+        No-Cors check should take into account same-origin
+        https://bugs.webkit.org/show_bug.cgi?id=202353
+
+        Reviewed by Youenn Fablet.
+
+        No-Cors check should take into account same-origin, in that case the
+        check should bail out, since same-origin is already handled in
+        the first step of [1].
+
+        Test: imported/web-platform-tests/fetch/api/redirect/redirect-mode.any.html
+
+        [1] https://fetch.spec.whatwg.org/#main-fetch Step 5
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::canRequest):
+
 2019-09-30  Zan Dobersek  <zdobersek@igalia.com>
 
         [Nicosia] Complete ScrollingTreeNicosia::createScrollingTreeNode()

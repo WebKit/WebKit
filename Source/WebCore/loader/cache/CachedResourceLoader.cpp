@@ -507,7 +507,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
         return false;
     }
 
-    if (options.mode == FetchOptions::Mode::NoCors && options.redirect != FetchOptions::Redirect::Follow && type != CachedResource::Type::Ping) {
+    if (options.mode == FetchOptions::Mode::NoCors && !m_document->securityOrigin().canRequest(url) && options.redirect != FetchOptions::Redirect::Follow && type != CachedResource::Type::Ping) {
         ASSERT(type != CachedResource::Type::MainResource);
         frame()->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "No-Cors mode requires follow redirect mode"_s);
         return false;

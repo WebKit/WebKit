@@ -1,3 +1,15 @@
+2019-09-30  Rob Buis  <rbuis@igalia.com>
+
+        No-Cors check should take into account same-origin
+        https://bugs.webkit.org/show_bug.cgi?id=202353
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/fetch/api/redirect/redirect-mode-expected.txt: Removed.
+        * web-platform-tests/fetch/api/redirect/redirect-mode.any-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-mode.any.worker-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-redirect.https-expected.txt:
+
 2019-09-26  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r250385.
