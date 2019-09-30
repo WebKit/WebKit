@@ -10,7 +10,6 @@ function testRegExpInbounds(re, str, substrEnd)
     if (match !== null && match[0] === str) 
         throw "Error: Read past end of a Unicode substring processing a Unicode RegExp";
     else if (match === null || match[0] !== subStr) {
-        print("Error: match[0].length = " + match[0].length + ", match[0] = \"" + match[0] + "\"");
         throw "Error: Didn't properly match a Unicode substring with a matching Unicode RegExp";
     }
 }

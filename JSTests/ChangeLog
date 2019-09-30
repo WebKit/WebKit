@@ -1,5 +1,56 @@
 2019-09-30  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r249926. rdar://problem/55826870
+
+    [JSC] Perform check again when we found non-BMP characters
+    https://bugs.webkit.org/show_bug.cgi?id=201647
+    
+    Reviewed by Yusuke Suzuki.
+    
+    JSTests:
+    
+    * stress/regexp-unicode-surrogate-pair-increment-should-involve-length-check.js: Added.
+    * stress/regexp-unicode-within-string.js: Updated test to eliminate the bogus print().
+    (testRegExpInbounds):
+    
+    Source/JavaScriptCore:
+    
+    We need to check for end of input for non-BMP characters when matching a character class that contains
+    both BMP and non-BMP characters.  In advanceIndexAfterCharacterClassTermMatch() we were checking for
+    end of input for both BMP and non-BMP characters.  For BMP characters, this check is redundant.
+    After moving the check to after the "is BMP check", we need to decrement index after reaching the failure
+    label to back out the index++ for the first surrogate of the non-BMP character.
+    
+    Added the same kind of check in generateCharacterClassOnce().  In that case, we have pre-checked the
+    first character (surrogate) for a non-BMP codepoint, so we just need to check for end of input before
+    we increment for the second surrogate.
+    
+    While writing tests, I found an off by one error in backtrackCharacterClassGreedy() and changed the
+    loop to check the count at loop top instead of loop bottom.
+    
+    * yarr/YarrJIT.cpp:
+    (JSC::Yarr::YarrGenerator::advanceIndexAfterCharacterClassTermMatch):
+    (JSC::Yarr::YarrGenerator::generateCharacterClassOnce):
+    (JSC::Yarr::YarrGenerator::generateCharacterClassGreedy):
+    (JSC::Yarr::YarrGenerator::backtrackCharacterClassGreedy):
+    (JSC::Yarr::YarrGenerator::backtrackCharacterClassNonGreedy):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249926 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-09-16  Michael Saboff  <msaboff@apple.com>
+
+            [JSC] Perform check again when we found non-BMP characters
+            https://bugs.webkit.org/show_bug.cgi?id=201647
+
+            Reviewed by Yusuke Suzuki.
+
+            * stress/regexp-unicode-surrogate-pair-increment-should-involve-length-check.js: Added.
+            * stress/regexp-unicode-within-string.js: Updated test to eliminate the bogus print().
+            (testRegExpInbounds):
+
+2019-09-30  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r249777. rdar://problem/55826876
 
     JSC crashes due to stack overflow while building RegExp

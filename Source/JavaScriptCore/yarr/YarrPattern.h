@@ -258,6 +258,11 @@ struct PatternTerm {
         return m_capture;
     }
 
+    bool isFixedWidthCharacterClass() const
+    {
+        return type == TypeCharacterClass && characterClass->hasOneCharacterSize() && !invert();
+    }
+
     bool containsAnyCaptures()
     {
         ASSERT(this->type == TypeParenthesesSubpattern);
