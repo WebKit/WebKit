@@ -66,6 +66,9 @@ static GQuark miniBrowserErrorQuark()
 
 static gchar *argumentToURL(const char *filename)
 {
+    if (g_str_equal(filename, "about:gpu"))
+        filename = "webkit://gpu";
+
     GFile *gfile = g_file_new_for_commandline_arg(filename);
     gchar *fileURL = g_file_get_uri(gfile);
     g_object_unref(gfile);

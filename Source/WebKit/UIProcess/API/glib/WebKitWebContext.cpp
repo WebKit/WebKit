@@ -43,6 +43,7 @@
 #include "WebKitNotificationProvider.h"
 #include "WebKitPluginPrivate.h"
 #include "WebKitPrivate.h"
+#include "WebKitProtocolHandler.h"
 #include "WebKitSecurityManagerPrivate.h"
 #include "WebKitSecurityOriginPrivate.h"
 #include "WebKitSettingsPrivate.h"
@@ -192,6 +193,7 @@ struct _WebKitWebContextPrivate {
     std::unique_ptr<WebKitAutomationClient> automationClient;
     GRefPtr<WebKitAutomationSession> automationSession;
 #endif
+    std::unique_ptr<WebKitProtocolHandler> webkitProtocolHandler;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -353,6 +355,7 @@ static void webkitWebContextConstructed(GObject* object)
 #if PLATFORM(GTK) && ENABLE(REMOTE_INSPECTOR)
     priv->remoteInspectorProtocolHandler = makeUnique<RemoteInspectorProtocolHandler>(webContext);
 #endif
+    priv->webkitProtocolHandler = makeUnique<WebKitProtocolHandler>(webContext);
 }
 
 static void webkitWebContextDispose(GObject* object)

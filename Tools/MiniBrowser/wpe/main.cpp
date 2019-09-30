@@ -306,7 +306,11 @@ int main(int argc, char *argv[])
         webkit_web_view_set_background_color(webView, &color);
 
     if (uriArguments) {
-        GFile* file = g_file_new_for_commandline_arg(uriArguments[0]);
+        const char* uri = uriArguments[0];
+        if (g_str_equal(uri, "about:gpu"))
+            uri = "webkit://gpu";
+
+        GFile* file = g_file_new_for_commandline_arg(uri);
         char* url = g_file_get_uri(file);
         g_object_unref(file);
         webkit_web_view_load_uri(webView, url);

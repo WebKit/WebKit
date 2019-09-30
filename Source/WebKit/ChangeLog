@@ -1,3 +1,28 @@
+2019-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add about:gpu
+        https://bugs.webkit.org/show_bug.cgi?id=202305
+
+        Reviewed by Žan Doberšek.
+
+        A builtin protocol handler to show information about hardware acceleration. This is useful information we need
+        from people reporting issues in accelerated compositing mode.
+
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/API/glib/WebKitProtocolHandler.cpp: Added.
+        (WebKit::WebKitProtocolHandler::WebKitProtocolHandler):
+        (WebKit::WebKitProtocolHandler::handleRequest):
+        (WebKit::webkitPortName):
+        (WebKit::hardwareAccelerationPolicy):
+        (WebKit::webGLEnabled):
+        (WebKit::openGLAPI):
+        (WebKit::nativeInterface):
+        (WebKit::WebKitProtocolHandler::handleGPU):
+        * UIProcess/API/glib/WebKitProtocolHandler.h: Added.
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+
 2019-09-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r250291.

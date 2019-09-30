@@ -163,6 +163,7 @@ UIProcess/API/glib/WebKitPermissionRequest.cpp @no-unify
 UIProcess/API/glib/WebKitPlugin.cpp @no-unify
 UIProcess/API/glib/WebKitPolicyDecision.cpp @no-unify
 UIProcess/API/glib/WebKitPrivate.cpp @no-unify
+UIProcess/API/glib/WebKitProtocolHandler.cpp @no-unify
 UIProcess/API/glib/WebKitResponsePolicyDecision.cpp @no-unify
 UIProcess/API/glib/WebKitScriptDialog.cpp @no-unify
 UIProcess/API/glib/WebKitSecurityManager.cpp @no-unify

@@ -1,3 +1,15 @@
+2019-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add about:gpu
+        https://bugs.webkit.org/show_bug.cgi?id=202305
+
+        Reviewed by Žan Doberšek.
+
+        Add SVN_REVISION definition to the build.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2019-09-23  Zan Dobersek  <zdobersek@igalia.com>
 
         run-web-platform-tests: remove support for in-repository manifest, expectation management

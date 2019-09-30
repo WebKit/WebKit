@@ -462,6 +462,9 @@ static void browser_tab_class_init(BrowserTabClass *klass)
 
 static char *getInternalURI(const char *uri)
 {
+    if (g_str_equal(uri, "about:gpu"))
+        return g_strdup("webkit://gpu");
+
     /* Internally we use minibrowser-about: as about: prefix is ignored by WebKit. */
     if (g_str_has_prefix(uri, "about:") && !g_str_equal(uri, "about:blank"))
         return g_strconcat(BROWSER_ABOUT_SCHEME, uri + strlen ("about"), NULL);

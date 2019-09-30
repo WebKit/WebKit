@@ -1,3 +1,20 @@
+2019-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add about:gpu
+        https://bugs.webkit.org/show_bug.cgi?id=202305
+
+        Reviewed by Žan Doberšek.
+
+        Allow to use about:gpu in MiniBrowser. Add a script to get the current svn revision.
+
+        * MiniBrowser/gtk/BrowserTab.c:
+        (getInternalURI):
+        * MiniBrowser/gtk/main.c:
+        (argumentToURL):
+        * MiniBrowser/wpe/main.cpp:
+        (main):
+        * glib/svn-revision: Added.
+
 2019-09-27  Andres Gonzalez  <andresg_22@apple.com>
 
         Support accessibility for <figure> element on iOS.
