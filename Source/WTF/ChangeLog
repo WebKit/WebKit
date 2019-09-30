@@ -1,3 +1,25 @@
+2019-09-29  Keith Rollin  <krollin@apple.com>
+
+        Address static analysis warning in ParkingLot.cpp: Access to field 'size' results in a dereference of a null pointer
+        https://bugs.webkit.org/show_bug.cgi?id=202154
+        <rdar://problem/55672103>
+
+        Reviewed by Brent Fulgham.
+
+        Static analysis reports the following:
+
+            .../OpenSource/Source/WTF/wtf/ParkingLot.cpp:376:30: warning: Access to field 'size' results in a dereference of a null pointer (loaded from variable 'oldHashtable')
+                RELEASE_ASSERT(newSize > oldHashtable->size);
+                                         ^~~~~~~~~~~~~~~~~~
+
+        This warning arises because earlier code checks to see if oldHashtable
+        is NULL, leading the static analyzer to think that it *could* be NULL.
+        However, even earlier code actually ensures that oldHashtable will not
+        be NULL. Address this by removing the NULL check, and back it up with
+        an ASSERT to ensure that it's not NULL.
+
+        * wtf/ParkingLot.cpp:
+
 2019-09-26  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         toExponential, toFixed, and toPrecision should allow arguments up to 100
