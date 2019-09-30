@@ -81,7 +81,7 @@ function assert(b) {
             assert(e.message === "%ArrayIteratorPrototype%.next requires that |this| be an Array Iterator instance");
             threw = true;
         }
-        assert(!threw);
+        assert(threw);
         assert(!sawPrivateSymbolAsString);
         sawPrivateSymbolAsString = false;
     }
