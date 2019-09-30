@@ -1189,10 +1189,23 @@ MacroAssemblerCodeRef<JITThunkPtrTag> boundThisNoArgsFunctionCallGenerator(VM* v
     if (extraStackNeeded)
         jit.add32(CCallHelpers::TrustedImm32(extraStackNeeded), GPRInfo::regT2);
     
-    // At this point regT1 has the actual argument count and regT2 has the amount of stack we will
-    // need.
+    // At this point regT1 has the actual argument count and regT2 has the amount of stack we will need.
+    // Check to see if we have enough stack space.
     
-    jit.subPtr(GPRInfo::regT2, CCallHelpers::stackPointerRegister);
+    jit.negPtr(GPRInfo::regT2);
+    jit.addPtr(CCallHelpers::stackPointerRegister, GPRInfo::regT2);
+    CCallHelpers::Jump haveStackSpace = jit.branchPtr(CCallHelpers::BelowOrEqual, CCallHelpers::AbsoluteAddress(vm->addressOfSoftStackLimit()), GPRInfo::regT2);
+
+    // Throw Stack Overflow exception
+    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm->topEntryFrame);
+    jit.setupArguments<decltype(throwStackOverflowErrorFromThunk)>(CCallHelpers::TrustedImmPtr(vm), GPRInfo::callFrameRegister);
+    jit.move(CCallHelpers::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(throwStackOverflowErrorFromThunk)), GPRInfo::nonArgGPR0);
+    emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
+    jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
+    jit.jumpToExceptionHandler(*vm);
+
+    haveStackSpace.link(&jit);
+    jit.move(GPRInfo::regT2, CCallHelpers::stackPointerRegister);
 
     // Do basic callee frame setup, including 'this'.
     
