@@ -228,13 +228,12 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
 
     recordLinkOffsets(m_assemblerStorage, readPtr, initialSize, readPtr - writePtr);
         
-    for (unsigned i = 0; i < jumpCount; ++i) {
 #if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
-        auto memcpyFunction = memcpy;
+    auto memcpyFunction = tagCFunctionPtr<CopyFunctionPtrTag>(memcpy);
 #else
-        auto memcpyFunction = performJITMemcpy;
+    auto memcpyFunction = tagCFunctionPtr<CopyFunctionPtrTag>(performJITMemcpy);
 #endif
-
+    for (unsigned i = 0; i < jumpCount; ++i) {
         uint8_t* location = codeOutData + jumpsToLink[i].from();
         uint8_t* target = codeOutData + jumpsToLink[i].to() - executableOffsetFor(jumpsToLink[i].to());
         MacroAssembler::link(jumpsToLink[i], outData + jumpsToLink[i].from(), location, target, memcpyFunction);
