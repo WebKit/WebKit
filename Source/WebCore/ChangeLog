@@ -1,3 +1,77 @@
+2019-09-30  Antti Koivisto  <antti@apple.com>
+
+        RenderLineBreak should use LineLayoutTraversal
+        https://bugs.webkit.org/show_bug.cgi?id=202316
+
+        Reviewed by Zalan Bujtas.
+
+        Replace more path specific code with LineLayoutTraversal.
+
+        * Headers.cmake:
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::linesBoundingBox const):
+        (WebCore::RenderLineBreak::absoluteRects const):
+        (WebCore::RenderLineBreak::absoluteQuads const):
+        (WebCore::simpleLineLayout): Deleted.
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        (WebCore::writeTextBox):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::computeBoundingBox): Deleted.
+        (WebCore::SimpleLineLayout::collectAbsoluteRects): Deleted.
+        (WebCore::SimpleLineLayout::rendererForPosition): Deleted.
+        * rendering/SimpleLineLayoutFunctions.h:
+        * rendering/line/LineLayoutTraversal.cpp:
+        (WebCore::LineLayoutTraversal::ElementBoxIterator::ElementBoxIterator):
+        (WebCore::LineLayoutTraversal::ElementBoxIterator::atEnd const):
+        (WebCore::LineLayoutTraversal::elementBoxFor):
+        (WebCore::LineLayoutTraversal::TextBox::rect const): Deleted.
+        (WebCore::LineLayoutTraversal::TextBox::logicalRect const): Deleted.
+        (WebCore::LineLayoutTraversal::TextBox::hasHyphen const): Deleted.
+        (WebCore::LineLayoutTraversal::TextBox::isLeftToRightDirection const): Deleted.
+        (WebCore::LineLayoutTraversal::TextBox::dirOverride const): Deleted.
+        (WebCore::LineLayoutTraversal::TextBox::text const): Deleted.
+        (WebCore::LineLayoutTraversal::TextBox::isLineBreak const): Deleted.
+        (WebCore::LineLayoutTraversal::TextBox::localStartOffset const): Deleted.
+        (WebCore::LineLayoutTraversal::TextBox::localEndOffset const): Deleted.
+        (WebCore::LineLayoutTraversal::TextBox::length const): Deleted.
+        (WebCore::LineLayoutTraversal::TextBox::isLastOnLine const): Deleted.
+        (WebCore::LineLayoutTraversal::TextBox::isLast const): Deleted.
+        (WebCore::LineLayoutTraversal::TextBox::iterator const): Deleted.
+
+        Move to header as templates.
+
+        * rendering/line/LineLayoutTraversal.h:
+        (WebCore::LineLayoutTraversal::ElementBoxIterator::ElementBoxIterator):
+        (WebCore::LineLayoutTraversal::ElementBoxIterator::operator bool const):
+        (WebCore::LineLayoutTraversal::ElementBoxIterator::operator* const):
+        (WebCore::LineLayoutTraversal::ElementBoxIterator::operator-> const):
+
+        Add a new iterator type for element boxes.
+        It doesn't currently really iterate, is just allows testing for end.
+
+        (WebCore::LineLayoutTraversal::Box<Iterator>::rect const):
+        (WebCore::LineLayoutTraversal::Box<Iterator>::logicalRect const):
+        (WebCore::LineLayoutTraversal::Box<Iterator>::isLeftToRightDirection const):
+        (WebCore::LineLayoutTraversal::Box<Iterator>::dirOverride const):
+        (WebCore::LineLayoutTraversal::Box<Iterator>::isLineBreak const):
+        (WebCore::LineLayoutTraversal::Box<Iterator>::iterator const):
+
+        Split properties that all inline boxes have out from TextBox.
+        Make it a template class.
+
+        (WebCore::LineLayoutTraversal::TextBox<Iterator>::hasHyphen const):
+        (WebCore::LineLayoutTraversal::TextBox<Iterator>::text const):
+        (WebCore::LineLayoutTraversal::TextBox<Iterator>::localStartOffset const):
+        (WebCore::LineLayoutTraversal::TextBox<Iterator>::localEndOffset const):
+        (WebCore::LineLayoutTraversal::TextBox<Iterator>::length const):
+        (WebCore::LineLayoutTraversal::TextBox<Iterator>::isLastOnLine const):
+        (WebCore::LineLayoutTraversal::TextBox<Iterator>::isLast const):
+
+        Make a template class.
+
+        (WebCore::LineLayoutTraversal::hasTextBoxes): Deleted.
+
 2019-09-30  Rob Buis  <rbuis@igalia.com>
 
         No-Cors check should take into account same-origin

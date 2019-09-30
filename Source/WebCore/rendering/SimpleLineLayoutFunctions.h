@@ -49,9 +49,6 @@ void paintFlow(const RenderBlockFlow&, const Layout&, PaintInfo&, const LayoutPo
 bool hitTestFlow(const RenderBlockFlow&, const Layout&, const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 void collectFlowOverflow(RenderBlockFlow&, const Layout&);
 
-IntRect computeBoundingBox(const RenderObject&, const Layout&);
-
-Vector<IntRect> collectAbsoluteRects(const RenderObject&, const Layout&, const LayoutPoint& accumulatedOffset);
 Vector<FloatQuad> collectAbsoluteQuads(const RenderObject&, const Layout&, bool* wasFixed);
 unsigned textOffsetForPoint(const LayoutPoint&, const RenderText&, const Layout&);
 Vector<FloatQuad> collectAbsoluteQuadsForRange(const RenderObject&, unsigned start, unsigned end, const Layout&, bool* wasFixed);
@@ -61,8 +58,6 @@ LayoutUnit baselineFromFlow(const RenderBlockFlow&);
 
 bool canUseForLineBoxTree(RenderBlockFlow&, const Layout&);
 void generateLineBoxTree(RenderBlockFlow&, const Layout&);
-
-const RenderObject& rendererForPosition(const FlowContents&, unsigned);
 
 void simpleLineLayoutWillBeDeleted(const Layout&);
 

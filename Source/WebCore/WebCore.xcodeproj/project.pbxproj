@@ -3657,7 +3657,7 @@
 		B562DB6017D3CD630010AF96 /* HTMLElementTypeHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = B562DB5E17D3CD560010AF96 /* HTMLElementTypeHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B562DB6117D3CD660010AF96 /* SVGElementTypeHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = B562DB5F17D3CD560010AF96 /* SVGElementTypeHelpers.h */; };
 		B56579B51824D12A00E79F23 /* RenderChildIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = B56579B41824D12A00E79F23 /* RenderChildIterator.h */; };
-		B57CB52E182A3EFC0079A647 /* InlineElementBox.h in Headers */ = {isa = PBXBuildFile; fileRef = B57CB52B182A37F60079A647 /* InlineElementBox.h */; };
+		B57CB52E182A3EFC0079A647 /* InlineElementBox.h in Headers */ = {isa = PBXBuildFile; fileRef = B57CB52B182A37F60079A647 /* InlineElementBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B595FF471824CEE300FF51CD /* RenderIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = B595FF461824CEE300FF51CD /* RenderIterator.h */; };
 		B59DD699119029E5007E9684 /* JSDatabaseCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B59DD697119029E5007E9684 /* JSDatabaseCallback.h */; };
 		B59DD69D11902A42007E9684 /* JSSQLTransactionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B59DD69B11902A42007E9684 /* JSSQLTransactionCallback.h */; };

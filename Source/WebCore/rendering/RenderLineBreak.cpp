@@ -27,11 +27,11 @@
 #include "HTMLElement.h"
 #include "HTMLWBRElement.h"
 #include "InlineElementBox.h"
+#include "LineLayoutTraversal.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "RenderBlock.h"
 #include "RenderView.h"
 #include "RootInlineBox.h"
-#include "SimpleLineLayoutFunctions.h"
 #include "VisiblePosition.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -44,13 +44,6 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderLineBreak);
 
 static const int invalidLineHeight = -1;
-
-static const SimpleLineLayout::Layout* simpleLineLayout(const RenderLineBreak& renderer)
-{
-    if (!is<RenderBlockFlow>(*renderer.parent()))
-        return nullptr;
-    return downcast<RenderBlockFlow>(*renderer.parent()).simpleLineLayout();
-}
 
 RenderLineBreak::RenderLineBreak(HTMLElement& element, RenderStyle&& style)
     : RenderBoxModelObject(element, WTFMove(style), 0)
@@ -183,45 +176,31 @@ LayoutRect RenderLineBreak::localCaretRect(InlineBox* inlineBox, unsigned caretO
 
 IntRect RenderLineBreak::linesBoundingBox() const
 {
-    if (auto* layout = simpleLineLayout(*this))
-        return SimpleLineLayout::computeBoundingBox(*this, *layout);
+    auto box = LineLayoutTraversal::elementBoxFor(*this);
+    if (!box)
+        return { };
 
-    if (!m_inlineBoxWrapper)
-        return IntRect();
-
-    float logicalLeftSide = m_inlineBoxWrapper->logicalLeft();
-    float logicalRightSide = m_inlineBoxWrapper->logicalRight();
-
-    bool isHorizontal = style().isHorizontalWritingMode();
-
-    float x = isHorizontal ? logicalLeftSide : m_inlineBoxWrapper->x();
-    float y = isHorizontal ? m_inlineBoxWrapper->y() : logicalLeftSide;
-    float width = isHorizontal ? logicalRightSide - logicalLeftSide : m_inlineBoxWrapper->logicalBottom() - x;
-    float height = isHorizontal ? m_inlineBoxWrapper->logicalBottom() - y : logicalRightSide - logicalLeftSide;
-    return enclosingIntRect(FloatRect(x, y, width, height));
+    return enclosingIntRect(box->rect());
 }
 
 void RenderLineBreak::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    if (auto* layout = simpleLineLayout(*this)) {
-        rects.appendVector(SimpleLineLayout::collectAbsoluteRects(*this, *layout, accumulatedOffset));
+    auto box = LineLayoutTraversal::elementBoxFor(*this);
+    if (!box)
         return;
-    }
 
-    if (!m_inlineBoxWrapper)
-        return;
-    rects.append(enclosingIntRect(FloatRect(accumulatedOffset + m_inlineBoxWrapper->topLeft(), m_inlineBoxWrapper->size())));
+    auto rect = box->rect();
+    rects.append(enclosingIntRect(FloatRect(accumulatedOffset + rect.location(), rect.size())));
 }
 
 void RenderLineBreak::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-    if (auto* layout = simpleLineLayout(*this)) {
-        quads.appendVector(SimpleLineLayout::collectAbsoluteQuads(*this, *layout, wasFixed));
+    auto box = LineLayoutTraversal::elementBoxFor(*this);
+    if (!box)
         return;
-    }
-    if (!m_inlineBoxWrapper)
-        return;
-    quads.append(localToAbsoluteQuad(FloatRect(m_inlineBoxWrapper->topLeft(), m_inlineBoxWrapper->size()), UseTransforms, wasFixed));
+
+    auto rect = box->rect();
+    quads.append(localToAbsoluteQuad(FloatRect(rect.location(), rect.size()), UseTransforms, wasFixed));
 }
 
 void RenderLineBreak::updateFromStyle()

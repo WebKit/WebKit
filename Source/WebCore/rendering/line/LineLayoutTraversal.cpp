@@ -26,179 +26,10 @@
 #include "config.h"
 #include "LineLayoutTraversal.h"
 
-#include "InlineTextBox.h"
-#include "RenderText.h"
-#include "SimpleLineLayoutResolver.h"
+#include "RenderLineBreak.h"
 
 namespace WebCore {
 namespace LineLayoutTraversal {
-
-FloatRect TextBox::rect() const
-{
-    auto simple = [](const TextBoxIterator::SimplePath& path) {
-        return (*path.iterator).rect();
-    };
-
-    auto complex = [](const TextBoxIterator::ComplexPath& path) {
-        return path.inlineTextBox->frameRect();
-    };
-
-    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
-}
-
-FloatRect TextBox::logicalRect() const
-{
-    auto simple = [](const TextBoxIterator::SimplePath& path) {
-        return (*path.iterator).rect();
-    };
-
-    auto complex = [](const TextBoxIterator::ComplexPath& path) {
-        return path.inlineTextBox->logicalFrameRect();
-    };
-
-    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
-}
-
-bool TextBox::hasHyphen() const
-{
-    auto simple = [](const TextBoxIterator::SimplePath& path) {
-        return (*path.iterator).hasHyphen();
-    };
-
-    auto complex = [](const TextBoxIterator::ComplexPath& path) {
-        return path.inlineTextBox->hasHyphen();
-    };
-
-    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
-}
-
-bool TextBox::isLeftToRightDirection() const
-{
-    auto simple = [](const TextBoxIterator::SimplePath&) {
-        return true;
-    };
-
-    auto complex = [](const TextBoxIterator::ComplexPath& path) {
-        return path.inlineTextBox->isLeftToRightDirection();
-    };
-
-    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
-}
-
-bool TextBox::dirOverride() const
-{
-    auto simple = [](const TextBoxIterator::SimplePath&) {
-        return false;
-    };
-
-    auto complex = [](const TextBoxIterator::ComplexPath& path) {
-        return path.inlineTextBox->dirOverride();
-    };
-
-    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
-}
-
-StringView TextBox::text() const
-{
-    auto simple = [](const TextBoxIterator::SimplePath& path) {
-        return (*path.iterator).text();
-    };
-
-    auto complex = [](const TextBoxIterator::ComplexPath& path) {
-        return StringView(path.inlineTextBox->renderer().text()).substring(path.inlineTextBox->start(), path.inlineTextBox->len());
-    };
-
-    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
-}
-
-bool TextBox::isLineBreak() const
-{
-    auto simple = [](const TextBoxIterator::SimplePath& path) {
-        return (*path.iterator).isLineBreak();
-    };
-
-    auto complex = [](const TextBoxIterator::ComplexPath& path) {
-        return path.inlineTextBox->isLineBreak();
-    };
-
-    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
-}
-
-unsigned TextBox::localStartOffset() const
-{
-    auto simple = [](const TextBoxIterator::SimplePath& path) {
-        return (*path.iterator).localStart();
-    };
-
-    auto complex = [](const TextBoxIterator::ComplexPath& path) {
-        return path.inlineTextBox->start();
-    };
-
-    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
-}
-
-unsigned TextBox::localEndOffset() const
-{
-    auto simple = [](const TextBoxIterator::SimplePath& path) {
-        return (*path.iterator).localEnd();
-    };
-
-    auto complex = [](const TextBoxIterator::ComplexPath& path) {
-        return path.inlineTextBox->end();
-    };
-
-    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
-}
-
-unsigned TextBox::length() const
-{
-    auto simple = [](const TextBoxIterator::SimplePath& path) {
-        return (*path.iterator).end() - (*path.iterator).start();
-    };
-
-    auto complex = [](const TextBoxIterator::ComplexPath& path) {
-        return path.inlineTextBox->len();
-    };
-
-    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
-}
-
-bool TextBox::isLastOnLine() const
-{
-    auto simple = [](const TextBoxIterator::SimplePath& path) {
-        auto next = path.iterator;
-        ++next;
-        return next == path.end || (*path.iterator).lineIndex() != (*next).lineIndex();
-    };
-
-    auto complex = [](const TextBoxIterator::ComplexPath& path) {
-        auto* next = path.nextInlineTextBoxInTextOrder();
-        return !next || &path.inlineTextBox->root() != &next->root();
-    };
-
-    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
-}
-
-bool TextBox::isLast() const
-{
-    auto simple = [](const TextBoxIterator::SimplePath& path) {
-        auto next = path.iterator;
-        ++next;
-        return next == path.end;
-    };
-
-    auto complex = [](const TextBoxIterator::ComplexPath& path) {
-        return !path.nextInlineTextBoxInTextOrder();
-    };
-
-    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
-}
-
-
-inline const TextBoxIterator& TextBox::iterator() const
-{
-    return static_cast<const TextBoxIterator&>(*this);
-}
 
 TextBoxIterator::TextBoxIterator(const InlineTextBox* inlineTextBox)
     : m_pathVariant(ComplexPath { inlineTextBox, { } })
@@ -221,7 +52,7 @@ TextBoxIterator& TextBoxIterator::traverseNextInVisualOrder()
     };
 
     auto complex = [](ComplexPath& path) {
-        path.inlineTextBox = path.inlineTextBox->nextTextBox();
+        path.inlineBox = path.inlineBox->nextTextBox();
     };
 
     WTF::switchOn(m_pathVariant, simple, complex);
@@ -236,7 +67,7 @@ const InlineTextBox* TextBoxIterator::ComplexPath::nextInlineTextBoxInTextOrder(
             return sortedInlineTextBoxes[sortedInlineTextBoxIndex + 1];
         return nullptr;
     }
-    return inlineTextBox->nextTextBox();
+    return inlineBox->nextTextBox();
 }
 
 TextBoxIterator& TextBoxIterator::traverseNextInTextOrder()
@@ -246,7 +77,7 @@ TextBoxIterator& TextBoxIterator::traverseNextInTextOrder()
     };
 
     auto complex = [](ComplexPath& path) {
-        path.inlineTextBox = path.nextInlineTextBoxInTextOrder();
+        path.inlineBox = path.nextInlineTextBoxInTextOrder();
         if (!path.sortedInlineTextBoxes.isEmpty())
             ++path.sortedInlineTextBoxIndex;
     };
@@ -266,7 +97,7 @@ bool TextBoxIterator::operator==(const TextBoxIterator& other) const
     };
 
     auto complex = [&](const ComplexPath& path) {
-        return path.inlineTextBox == WTF::get<ComplexPath>(other.m_pathVariant).inlineTextBox;
+        return path.inlineBox == WTF::get<ComplexPath>(other.m_pathVariant).inlineBox;
     };
 
     return WTF::switchOn(m_pathVariant, simple, complex);
@@ -279,7 +110,7 @@ bool TextBoxIterator::atEnd() const
     };
 
     auto complex = [&](const ComplexPath& path) {
-        return !path.inlineTextBox;
+        return !path.inlineBox;
     };
 
     return WTF::switchOn(m_pathVariant, simple, complex);
@@ -311,6 +142,40 @@ TextBoxIterator firstTextBoxInTextOrderFor(const RenderText& text)
 TextBoxRange textBoxesFor(const RenderText& text)
 {
     return { firstTextBoxFor(text) };
+}
+
+ElementBoxIterator::ElementBoxIterator(const InlineElementBox* inlineElementBox)
+    : m_pathVariant(ComplexPath { inlineElementBox })
+{
+}
+ElementBoxIterator::ElementBoxIterator(SimpleLineLayout::RunResolver::Iterator iterator, SimpleLineLayout::RunResolver::Iterator end)
+    : m_pathVariant(SimplePath { iterator, end })
+{
+}
+
+bool ElementBoxIterator::atEnd() const
+{
+    auto simple = [&](const SimplePath& path) {
+        return path.iterator == path.end;
+    };
+
+    auto complex = [&](const ComplexPath& path) {
+        return !path.inlineBox;
+    };
+
+    return WTF::switchOn(m_pathVariant, simple, complex);
+}
+
+ElementBoxIterator elementBoxFor(const RenderLineBreak& renderElement)
+{
+    if (auto& parent = *renderElement.parent(); is<RenderBlockFlow>(parent)) {
+        if (auto* simpleLineLayout = downcast<RenderBlockFlow>(parent).simpleLineLayout()) {
+            auto range = simpleLineLayout->runResolver().rangeForRenderer(renderElement);
+            return { range.begin(), range.end() };
+        }
+    }
+
+    return ElementBoxIterator { renderElement.inlineBoxWrapper() };
 }
 
 }

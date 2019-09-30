@@ -183,31 +183,6 @@ void collectFlowOverflow(RenderBlockFlow& flow, const Layout& layout)
     }
 }
 
-IntRect computeBoundingBox(const RenderObject& renderer, const Layout& layout)
-{
-    auto& resolver = layout.runResolver();
-    FloatRect boundingBoxRect;
-    for (auto run : resolver.rangeForRenderer(renderer)) {
-        FloatRect rect = run.rect();
-        if (boundingBoxRect == FloatRect())
-            boundingBoxRect = rect;
-        else
-            boundingBoxRect.uniteEvenIfEmpty(rect);
-    }
-    return enclosingIntRect(boundingBoxRect);
-}
-
-Vector<IntRect> collectAbsoluteRects(const RenderObject& renderer, const Layout& layout, const LayoutPoint& accumulatedOffset)
-{
-    Vector<IntRect> rects;
-    auto& resolver = layout.runResolver();
-    for (auto run : resolver.rangeForRenderer(renderer)) {
-        FloatRect rect = run.rect();
-        rects.append(enclosingIntRect(FloatRect(accumulatedOffset + rect.location(), rect.size())));
-    }
-    return rects;
-}
-
 Vector<FloatQuad> collectAbsoluteQuads(const RenderObject& renderer, const Layout& layout, bool* wasFixed)
 {
     Vector<FloatQuad> quads;
@@ -260,11 +235,6 @@ Vector<FloatQuad> collectAbsoluteQuadsForRange(const RenderObject& renderer, uns
         quads.append(renderer.localToAbsoluteQuad(FloatQuad(runRect), UseTransforms, wasFixed));
     }
     return quads;
-}
-
-const RenderObject& rendererForPosition(const FlowContents& flowContents, unsigned position)
-{
-    return flowContents.segmentForPosition(position).renderer;
 }
 
 void simpleLineLayoutWillBeDeleted(const Layout& layout)

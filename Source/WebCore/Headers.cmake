@@ -1251,7 +1251,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/HitTestRequest.h
     rendering/HitTestResult.h
     rendering/InlineBox.h
+    rendering/InlineElementBox.h
     rendering/InlineFlowBox.h
+    rendering/InlineTextBox.h
     rendering/LayerAncestorClippingStack.h
     rendering/LayerFragment.h
     rendering/MarkedText.h

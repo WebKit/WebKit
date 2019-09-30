@@ -26,6 +26,9 @@
 #pragma once
 
 #include "FloatRect.h"
+#include "InlineElementBox.h"
+#include "InlineTextBox.h"
+#include "RenderText.h"
 #include "SimpleLineLayoutResolver.h"
 #include <wtf/HashMap.h>
 #include <wtf/IteratorRange.h>
@@ -34,7 +37,7 @@
 
 namespace WebCore {
 
-class InlineTextBox;
+class RenderLineBreak;
 class RenderText;
 
 namespace LineLayoutTraversal {
@@ -44,17 +47,32 @@ class TextBoxIterator;
 
 struct EndIterator { };
 
-class TextBox {
+template<class Iterator>
+class Box {
 public:
     FloatRect rect() const;
     FloatRect logicalRect() const;
 
-    bool hasHyphen() const;
     bool isLeftToRightDirection() const;
     bool dirOverride() const;
-
-    StringView text() const;
     bool isLineBreak() const;
+
+protected:
+    Box() = default;
+    Box(const Box&) = default;
+    Box(Box&&) = default;
+    ~Box() = default;
+    Box& operator=(const Box&) = default;
+    Box& operator=(Box&&) = default;
+
+    const Iterator& iterator() const;
+};
+
+template<class Iterator>
+class TextBox : public Box<Iterator> {
+public:
+    bool hasHyphen() const;
+    StringView text() const;
 
     // These offsets are relative to the text renderer (not flow).
     unsigned localStartOffset() const;
@@ -72,16 +90,15 @@ protected:
     TextBox& operator=(const TextBox&) = default;
     TextBox& operator=(TextBox&&) = default;
 
-private:
-    const TextBoxIterator& iterator() const;
+    using Box<Iterator>::iterator;
 };
 
-class TextBoxIterator : private TextBox {
+class TextBoxIterator : private TextBox<TextBoxIterator> {
 public:
     TextBoxIterator() : m_pathVariant(ComplexPath { nullptr, { } }) { };
+
     explicit TextBoxIterator(const InlineTextBox*);
     TextBoxIterator(Vector<const InlineTextBox*>&& sorted, size_t index);
-    
     TextBoxIterator(SimpleLineLayout::RunResolver::Iterator, SimpleLineLayout::RunResolver::Iterator end);
 
     TextBoxIterator& operator++() { return traverseNextInVisualOrder(); }
@@ -101,19 +118,51 @@ public:
 
     bool atEnd() const;
 
+    using BoxType = TextBox<TextBoxIterator>;
+
 private:
-    friend class TextBox;
+    friend class Box<TextBoxIterator>;
+    friend class TextBox<TextBoxIterator>;
 
     struct SimplePath {
         SimpleLineLayout::RunResolver::Iterator iterator;
         SimpleLineLayout::RunResolver::Iterator end;
     };
     struct ComplexPath {
-        const InlineTextBox* inlineTextBox;
+        const InlineTextBox* inlineBox;
         Vector<const InlineTextBox*> sortedInlineTextBoxes;
         size_t sortedInlineTextBoxIndex { 0 };
 
         const InlineTextBox* nextInlineTextBoxInTextOrder() const;
+    };
+    Variant<SimplePath, ComplexPath> m_pathVariant;
+};
+
+class ElementBoxIterator : private Box<ElementBoxIterator> {
+public:
+    ElementBoxIterator() : m_pathVariant(ComplexPath { nullptr }) { };
+
+    explicit ElementBoxIterator(const InlineElementBox*);
+    ElementBoxIterator(SimpleLineLayout::RunResolver::Iterator, SimpleLineLayout::RunResolver::Iterator end);
+
+    explicit operator bool() const { return !atEnd(); }
+
+    const Box& operator*() const { return *this; }
+    const Box* operator->() const { return this; }
+
+    bool atEnd() const;
+
+    using BoxType = Box<ElementBoxIterator>;
+
+private:
+    friend class Box<ElementBoxIterator>;
+
+    struct SimplePath {
+        SimpleLineLayout::RunResolver::Iterator iterator;
+        SimpleLineLayout::RunResolver::Iterator end;
+    };
+    struct ComplexPath {
+        const InlineElementBox* inlineBox;
     };
     Variant<SimplePath, ComplexPath> m_pathVariant;
 };
@@ -135,8 +184,175 @@ private:
 TextBoxIterator firstTextBoxFor(const RenderText&);
 TextBoxIterator firstTextBoxInTextOrderFor(const RenderText&);
 TextBoxRange textBoxesFor(const RenderText&);
+ElementBoxIterator elementBoxFor(const RenderLineBreak&);
 
-inline bool hasTextBoxes(const RenderText& text) { return !firstTextBoxFor(text).atEnd(); }
+// -----------------------------------------------
+
+template<class Iterator> inline FloatRect Box<Iterator>::rect() const
+{
+    auto simple = [](const typename Iterator::SimplePath& path) {
+        return (*path.iterator).rect();
+    };
+
+    auto complex = [](const typename Iterator::ComplexPath& path) {
+        return path.inlineBox->frameRect();
+    };
+
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
+}
+
+template<class Iterator> inline FloatRect Box<Iterator>::logicalRect() const
+{
+    auto simple = [](const typename Iterator::SimplePath& path) {
+        return (*path.iterator).rect();
+    };
+
+    auto complex = [](const typename Iterator::ComplexPath& path) {
+        return path.inlineBox->logicalFrameRect();
+    };
+
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
+}
+
+template<class Iterator> inline bool Box<Iterator>::isLeftToRightDirection() const
+{
+    auto simple = [](const typename Iterator::SimplePath&) {
+        return true;
+    };
+
+    auto complex = [](const typename Iterator::ComplexPath& path) {
+        return path.inlineBox->isLeftToRightDirection();
+    };
+
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
+}
+
+template<class Iterator> inline bool Box<Iterator>::dirOverride() const
+{
+    auto simple = [](const typename Iterator::SimplePath&) {
+        return false;
+    };
+
+    auto complex = [](const typename Iterator::ComplexPath& path) {
+        return path.inlineBox->dirOverride();
+    };
+
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
+}
+
+template<class Iterator> inline bool Box<Iterator>::isLineBreak() const
+{
+    auto simple = [](const typename Iterator::SimplePath& path) {
+        return (*path.iterator).isLineBreak();
+    };
+
+    auto complex = [](const typename Iterator::ComplexPath& path) {
+        return path.inlineBox->isLineBreak();
+    };
+
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
+}
+
+template<class Iterator> inline const Iterator& Box<Iterator>::iterator() const
+{
+    return static_cast<const Iterator&>(*this);
+}
+
+template<class Iterator> inline bool TextBox<Iterator>::hasHyphen() const
+{
+    auto simple = [](const typename Iterator::SimplePath& path) {
+        return (*path.iterator).hasHyphen();
+    };
+
+    auto complex = [](const typename Iterator::ComplexPath& path) {
+        return path.inlineBox->hasHyphen();
+    };
+
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
+}
+
+template<class Iterator> inline StringView TextBox<Iterator>::text() const
+{
+    auto simple = [](const typename Iterator::SimplePath& path) {
+        return (*path.iterator).text();
+    };
+
+    auto complex = [](const typename Iterator::ComplexPath& path) {
+        return StringView(path.inlineBox->renderer().text()).substring(path.inlineBox->start(), path.inlineBox->len());
+    };
+
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
+}
+
+template<class Iterator> inline unsigned TextBox<Iterator>::localStartOffset() const
+{
+    auto simple = [](const typename Iterator::SimplePath& path) {
+        return (*path.iterator).localStart();
+    };
+
+    auto complex = [](const typename Iterator::ComplexPath& path) {
+        return path.inlineBox->start();
+    };
+
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
+}
+
+template<class Iterator> inline unsigned TextBox<Iterator>::localEndOffset() const
+{
+    auto simple = [](const typename Iterator::SimplePath& path) {
+        return (*path.iterator).localEnd();
+    };
+
+    auto complex = [](const typename Iterator::ComplexPath& path) {
+        return path.inlineBox->end();
+    };
+
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
+}
+
+template<class Iterator> inline unsigned TextBox<Iterator>::length() const
+{
+    auto simple = [](const typename Iterator::SimplePath& path) {
+        return (*path.iterator).end() - (*path.iterator).start();
+    };
+
+    auto complex = [](const typename Iterator::ComplexPath& path) {
+        return path.inlineBox->len();
+    };
+
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
+}
+
+template<class Iterator> inline bool TextBox<Iterator>::isLastOnLine() const
+{
+    auto simple = [](const typename Iterator::SimplePath& path) {
+        auto next = path.iterator;
+        ++next;
+        return next == path.end || (*path.iterator).lineIndex() != (*next).lineIndex();
+    };
+
+    auto complex = [](const typename Iterator::ComplexPath& path) {
+        auto* next = path.nextInlineTextBoxInTextOrder();
+        return !next || &path.inlineBox->root() != &next->root();
+    };
+
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
+}
+
+template<class Iterator> inline bool TextBox<Iterator>::isLast() const
+{
+    auto simple = [](const typename Iterator::SimplePath& path) {
+        auto next = path.iterator;
+        ++next;
+        return next == path.end;
+    };
+
+    auto complex = [](const typename Iterator::ComplexPath& path) {
+        return !path.nextInlineTextBoxInTextOrder();
+    };
+
+    return WTF::switchOn(iterator().m_pathVariant, simple, complex);
+}
 
 }
 }
