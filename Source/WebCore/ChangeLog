@@ -1,3 +1,21 @@
+2019-09-27  Keith Rollin  <krollin@apple.com>
+
+        Coalesce or remove PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+        https://bugs.webkit.org/show_bug.cgi?id=202119
+        <rdar://problem/55638792>
+
+        Unreviewed, address post landing review comments for r248533 from
+        Darin Adler.
+
+        No new tests -- no new or changed functionality.
+
+        * Modules/applepay/cocoa/PaymentContactCocoa.mm:
+        (WebCore::convert):
+        (WebCore::subLocality): Deleted.
+        (WebCore::setSubLocality): Deleted.
+        (WebCore::subAdministrativeArea): Deleted.
+        (WebCore::setSubAdministrativeArea): Deleted.
+
 2019-09-30  Antti Koivisto  <antti@apple.com>
 
         RenderLineBreak should use LineLayoutTraversal

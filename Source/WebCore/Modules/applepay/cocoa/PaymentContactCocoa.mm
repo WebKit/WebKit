@@ -40,26 +40,6 @@ SOFT_LINK_CLASS(Contacts, CNPhoneNumber)
 
 namespace WebCore {
 
-static NSString *subLocality(CNPostalAddress *address)
-{
-    return address.subLocality;
-}
-
-static void setSubLocality(CNMutablePostalAddress *address, NSString *subLocality)
-{
-    address.subLocality = subLocality;
-}
-
-static NSString *subAdministrativeArea(CNPostalAddress *address)
-{
-    return address.subAdministrativeArea;
-}
-
-static void setSubAdministrativeArea(CNMutablePostalAddress *address, NSString *subAdministrativeArea)
-{
-    address.subAdministrativeArea = subAdministrativeArea;
-}
-
 static RetainPtr<PKContact> convert(unsigned version, const ApplePayPaymentContact& contact)
 {
     auto result = adoptNS([PAL::allocPKContactInstance() init]);
@@ -113,13 +93,13 @@ static RetainPtr<PKContact> convert(unsigned version, const ApplePayPaymentConta
         [address setStreet:builder.toString()];
 
         if (!contact.subLocality.isEmpty())
-            setSubLocality(address.get(), contact.subLocality);
+            [address setSubLocality:contact.subLocality];
         if (!contact.locality.isEmpty())
             [address setCity:contact.locality];
         if (!contact.postalCode.isEmpty())
             [address setPostalCode:contact.postalCode];
         if (!contact.subAdministrativeArea.isEmpty())
-            setSubAdministrativeArea(address.get(), contact.subAdministrativeArea);
+            [address setSubAdministrativeArea:contact.subAdministrativeArea];
         if (!contact.administrativeArea.isEmpty())
             [address setState:contact.administrativeArea];
         if (!contact.country.isEmpty())
@@ -161,10 +141,10 @@ static ApplePayPaymentContact convert(unsigned version, PKContact *contact)
         Vector<String> addressLines = String(postalAddress.street).split('\n');
         result.addressLines = WTFMove(addressLines);
     }
-    result.subLocality = subLocality(postalAddress);
+    result.subLocality = postalAddress.subLocality;
     result.locality = postalAddress.city;
     result.postalCode = postalAddress.postalCode;
-    result.subAdministrativeArea = subAdministrativeArea(postalAddress);
+    result.subAdministrativeArea = postalAddress.subAdministrativeArea;
     result.administrativeArea = postalAddress.state;
     result.country = postalAddress.country;
     result.countryCode = postalAddress.ISOCountryCode;

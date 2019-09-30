@@ -69,10 +69,8 @@ typedef void (^NEFilterSourceDecisionHandler)(NEFilterSourceStatus, NSDictionary
 - (void)receivedData:(NSData *)data decisionHandler:(NEFilterSourceDecisionHandler)decisionHandler;
 - (void)finishedLoadingWithDecisionHandler:(NEFilterSourceDecisionHandler)decisionHandler;
 - (void)remediateWithDecisionHandler:(NEFilterSourceDecisionHandler)decisionHandler;
-#if PLATFORM(COCOA)
 @property (copy) NSString *sourceAppIdentifier;
 @property (assign) pid_t sourceAppPid;
-#endif
 @end
 
 #endif // !USE(APPLE_INTERNAL_SDK)
