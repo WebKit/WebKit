@@ -52,17 +52,14 @@ body[dir=rtl] .content-view.shader-program > .shader.vertex {
     border-left: 1px solid var(--border-color);
 }
 
-.content-view.shader-program > .shader > header > * {
+.content-view.shader-program > .shader > header > .shader-type {
     padding: 2px 4px;
+    background-color: hsl(0, 0%, 95%);
     border-bottom: 1px solid lightgrey;
 }
 
-.content-view.shader-program > .shader > header > .shader-type {
-    background-color: hsl(0, 0%, 95%);
-}
-
 @media (prefers-color-scheme: dark) {
-    .content-view.shader-program > .shader > header {
+    .content-view.shader-program > .shader > header > .shader-type {
         background-color: var(--background-color);
         border-bottom-color: var(--text-color-quaternary);
     }
