@@ -1,3 +1,15 @@
+2019-09-30  Christopher Reid  <chris.reid@sony.com>
+
+        [WinCairo] Move Remote Inspector Server initialization out of WebView
+        https://bugs.webkit.org/show_bug.cgi?id=202369
+
+        Reviewed by Ross Kirsling.
+        
+        Move Remote Inspector Server initialization to Windows WebProcessPool initialization.
+
+        * UIProcess/win/WebProcessPoolWin.cpp:
+        * UIProcess/win/WebView.cpp:
+
 2019-09-30  Alex Christensen  <achristensen@webkit.org>
 
         Move DownloadMonitor test speed multiplier from WebProcessPool to WebsiteDataStoreConfiguration

@@ -60,7 +60,6 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include "RemoteInspectorProtocolHandler.h"
-#include <JavaScriptCore/RemoteInspectorServer.h>
 #endif
 
 #if USE(CAIRO)
@@ -86,25 +85,6 @@ static const int kMaxToolTipWidth = 250;
 enum {
     UpdateActiveStateTimer = 1,
 };
-
-#if ENABLE(REMOTE_INSPECTOR)
-static void initializeRemoteInspectorServer(StringView address)
-{
-    if (Inspector::RemoteInspectorServer::singleton().isRunning())
-        return;
-
-    auto pos = address.find(':');
-    if (pos == notFound)
-        return;
-    auto host = address.substring(0, pos);
-    auto port = address.substring(pos + 1).toUInt64Strict();
-
-    if (!port)
-        return;
-
-    Inspector::RemoteInspectorServer::singleton().start(host.utf8().data(), port.value());
-}
-#endif
 
 LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -245,13 +225,6 @@ WebView::WebView(RECT rect, const API::PageConfiguration& configuration, HWND pa
 {
     registerWebViewWindowClass();
 
-#if ENABLE(REMOTE_INSPECTOR)
-    if (const char* address = getenv("WEBKIT_INSPECTOR_SERVER")) {
-        initializeRemoteInspectorServer(address);
-        auto port = Inspector::RemoteInspectorServer::singleton().listenForTargets();
-        Inspector::RemoteInspector::setServerPort(port.valueOr(0));
-    }
-#endif
     m_window = ::CreateWindowExW(0, kWebKit2WebViewWindowClassName, 0, WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE,
         rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, parentWindow ? parentWindow : HWND_MESSAGE, 0, instanceHandle(), this);
     ASSERT(::IsWindow(m_window));

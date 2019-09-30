@@ -31,11 +31,40 @@
 #include <WebCore/NotImplemented.h>
 #include <wtf/FileSystem.h>
 
+#if ENABLE(REMOTE_INSPECTOR)
+#include <JavaScriptCore/RemoteInspectorServer.h>
+#endif
+
 namespace WebKit {
+
+#if ENABLE(REMOTE_INSPECTOR)
+static void initializeRemoteInspectorServer(StringView address)
+{
+    if (Inspector::RemoteInspectorServer::singleton().isRunning())
+        return;
+
+    auto pos = address.find(':');
+    if (pos == notFound)
+        return;
+    auto host = address.substring(0, pos);
+    auto port = address.substring(pos + 1).toUInt64Strict();
+
+    if (!port)
+        return;
+
+    Inspector::RemoteInspectorServer::singleton().start(host.utf8().data(), port.value());
+}
+#endif
 
 void WebProcessPool::platformInitialize()
 {
-    notImplemented();
+#if ENABLE(REMOTE_INSPECTOR)
+    if (const char* address = getenv("WEBKIT_INSPECTOR_SERVER")) {
+        initializeRemoteInspectorServer(address);
+        auto port = Inspector::RemoteInspectorServer::singleton().listenForTargets();
+        Inspector::RemoteInspector::setServerPort(port.valueOr(0));
+    }
+#endif
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters&)
