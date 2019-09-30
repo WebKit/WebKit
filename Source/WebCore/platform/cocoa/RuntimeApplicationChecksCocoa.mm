@@ -318,6 +318,12 @@ bool IOSApplication::isEventbrite()
     return isEventbrite;
 }
 
+bool IOSApplication::isDataActivation()
+{
+    static bool isDataActivation = applicationBundleIsEqualTo("com.apple.DataActivation"_s);
+    return isDataActivation;
+}
+
 #endif
 
 } // namespace WebCore

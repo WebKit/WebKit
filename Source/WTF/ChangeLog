@@ -1,3 +1,125 @@
+2019-09-29  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r250345. rdar://problem/55825352
+
+    [iPadOS] [DataActivation] Focus moves away after focusing input fields on www.att.com
+    https://bugs.webkit.org/show_bug.cgi?id=202167
+    <rdar://problem/55185021>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    Adds a new site-specific quirk. See WebKit ChangeLog for more details.
+    
+    * page/Quirks.cpp:
+    (WebCore::Quirks::shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation const):
+    * page/Quirks.h:
+    * platform/RuntimeApplicationChecks.h:
+    * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+    (WebCore::IOSApplication::isDataActivation):
+    
+    Source/WebKit:
+    
+    When using the data activation page on www.att.com, one of the sections on the page contains several select
+    elements; in the case where the user agent:
+    
+    1. contains the string "iPad", and
+    2. does not contain the string "Safari"
+    
+    ...www.att.com's data activation page will opt into a mode where it adds blur event listeners to the select
+    elements; in this blur event listener, www.att.com proceeds to programmatically focus a non-editable div element
+    after a 1 second timeout. The reasons for this behavior remain unclear to me, though it's worth noting that the
+    blur event handler name is "screenReaderFocus", which suggests that this is in place to ensure compatibility
+    with screen readers.
+    
+    In iOS 12, dismissing the popover would blur the focused select menu with an animation. Since the animation
+    would take a slightly less than 1 second, www.att.com's logic would have the effect of moving focus to the div
+    element shortly after dismissing the select menu. However, after r243808, we no longer attempt to blur the
+    focused select element when dismissing the popover. This means that the select element is only blurred the next
+    time the user activates another focused element, such as one of the input fields on the page, or a different
+    select element. Consequently, the logic to move focus into a div element now occurs only after a different
+    element has already been focused; this results in focus moving away from newly focused elements after 1 second
+    in the case where a select element has previously focused.
+    
+    To mitigate this, restore iOS 12 behavior behind a site- and app-specific quirk. See comments below for more
+    details.
+    
+    * Shared/FocusedElementInformation.cpp:
+    (WebKit::FocusedElementInformation::encode const):
+    (WebKit::FocusedElementInformation::decode):
+    * Shared/FocusedElementInformation.h:
+    
+    Add a new behavioral quirk flag to FocusedElementInformation to determine whether we should use "legacy" select
+    popover dismissal behavior (i.e. blurring the focused select element when dismissing the select popover, as well
+    as dismissing the popover with animation).
+    
+    * Shared/WebPreferences.yaml:
+    
+    Enable site-specific quirks by default in WKWebView. With regards to this bug, this change allows for
+    site-specific hacks (namely, legacy select popover dismissal) in DataActivation. However, this also fixes
+    various known bugs that are otherwise addressed in Safari only, via site-specific quirks.
+    
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView _initializeWithConfiguration:]):
+    
+    For apps linked on or before iOS 13 and macOS 10.15, revert the default of value of NeedsSiteSpecificQuirks to
+    false. This is done here instead of in a default value function in WebPreferencesDefaultValues to prevent the
+    default values of NeedsSiteSpecificQuirks in the web process and UI process from going out of sync, since the
+    web process is not necessarily linked against the same SDK as the application.
+    
+    * UIProcess/Cocoa/VersionChecks.h:
+    
+    Add a new DYLD version check for the first version of iOS and macOS where site-specific quirks are enabled by
+    default.
+    
+    * UIProcess/ios/WKContentViewInteraction.h:
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView endEditingAndUpdateFocusAppearanceWithReason:]):
+    (-[WKContentView _elementDidBlur]):
+    (-[WKContentView _shouldUseLegacySelectPopoverDismissalBehavior]):
+    
+    We only use "legacy" select popover dismissal behavior in the case where the site-specific quirk flag is on, a
+    select popover is used (i.e. the device is an iPad and a select element is focused), and the application bundle
+    is "com.apple.DataActivation".
+    
+    * UIProcess/ios/forms/WKFormSelectPopover.mm:
+    (-[WKSelectTableViewController shouldDismissWithAnimation]):
+    
+    Keyed off of _shouldUseLegacySelectPopoverDismissalBehavior.
+    
+    (-[WKSelectPopover controlEndEditing]):
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::getFocusedElementInformation):
+    
+    Source/WTF:
+    
+    Declare DYLD_IOS_VERSION_13_2.
+    
+    * wtf/spi/darwin/dyldSPI.h:
+    
+    Tools:
+    
+    Rebaseline an API test.
+    
+    * TestWebKitAPI/Tests/WebKit/WKPreferences.cpp:
+    (TestWebKitAPI::TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250345 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-09-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iPadOS] [DataActivation] Focus moves away after focusing input fields on www.att.com
+            https://bugs.webkit.org/show_bug.cgi?id=202167
+            <rdar://problem/55185021>
+
+            Reviewed by Tim Horton.
+
+            Declare DYLD_IOS_VERSION_13_2.
+
+            * wtf/spi/darwin/dyldSPI.h:
+
 2019-08-19  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r248852. rdar://problem/54454547

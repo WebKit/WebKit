@@ -98,7 +98,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     WKContentView *_contentView;
 }
 
-@property(nonatomic,assign) WKSelectPopover *popover;
+@property (nonatomic, readonly) BOOL shouldDismissWithAnimation;
+@property (nonatomic, assign) WKSelectPopover *popover;
 @end
 
 @implementation WKSelectTableViewController
@@ -364,6 +365,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 }
 
+- (BOOL)shouldDismissWithAnimation
+{
+    return _contentView._shouldUseLegacySelectPopoverDismissalBehavior;
+}
+
 #if !USE(UIKIT_KEYBOARD_ADDITIONS)
 #pragma mark UIKeyInput delegate methods
 
@@ -447,7 +453,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)controlEndEditing
 {
-    [self dismissPopoverAnimated:NO];
+    [self dismissPopoverAnimated:[_tableViewController shouldDismissWithAnimation]];
 }
 
 - (void)_userActionDismissedPopover:(id)sender
