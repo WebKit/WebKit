@@ -51,7 +51,7 @@ enum class CalcMode : uint8_t {
     Spline
 };
 
-class SVGAttributeAnimator {
+class SVGAttributeAnimator : public RefCounted<SVGAttributeAnimator> {
 public:
     SVGAttributeAnimator(const QualifiedName& attributeName)
         : m_attributeName(attributeName)

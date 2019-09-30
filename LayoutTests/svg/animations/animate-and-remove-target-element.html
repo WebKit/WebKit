@@ -1,0 +1,33 @@
+<body>
+    <p>Passes if it does not crash.</p>
+    <form>
+        <select id="select" onfocus="onFocus()" multiple></select>
+        <keygen/>
+    </form>
+    <svg id="svg">
+        <animate attributeName="opacity" onbegin="onBegin()"/>
+    </svg>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        window.addEventListener('load', (event) => {
+            select.autofocus = true;
+        });
+
+        function onFocus(){
+            svg.remove();
+        }
+
+        function onBegin(){
+            select.removeAttribute("multiple");
+            svg.setCurrentTime(9);
+            setTimeout(() => {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        }
+    </script>
+</body>

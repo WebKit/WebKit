@@ -266,9 +266,9 @@ public:
         return isAnimatedLengthAttribute(attributeName) && animatedStyleAttributes.get().contains(attributeName.impl());
     }
 
-    std::unique_ptr<SVGAttributeAnimator> createAnimator(const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const override
+    RefPtr<SVGAttributeAnimator> createAnimator(const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const override
     {
-        std::unique_ptr<SVGAttributeAnimator> animator;
+        RefPtr<SVGAttributeAnimator> animator;
         enumerateRecursively([&](const auto& entry) -> bool {
             if (!entry.key.matches(attributeName))
                 return true;

@@ -44,7 +44,7 @@ class SVGPrimitivePropertyAnimator : public SVGPropertyAnimator<AnimationFunctio
 public:
     static auto create(const QualifiedName& attributeName, Ref<SVGProperty>&& property, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
     {
-        return std::make_unique<SVGPrimitivePropertyAnimator>(attributeName, WTFMove(property), animationMode, calcMode, isAccumulated, isAdditive);
+        return adoptRef(*new SVGPrimitivePropertyAnimator(attributeName, WTFMove(property), animationMode, calcMode, isAccumulated, isAdditive));
     }
     
     template<typename... Arguments>
