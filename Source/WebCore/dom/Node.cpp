@@ -2554,6 +2554,9 @@ void Node::incrementConnectedSubframeCount(unsigned amount)
 
 void Node::decrementConnectedSubframeCount(unsigned amount)
 {
+    ASSERT(rareData());
+    if (!hasRareData())
+        return; // Defend against type confusion when the above assertion fails. See webkit.org/b/200300.
     rareData()->decrementConnectedSubframeCount(amount);
 }
 
