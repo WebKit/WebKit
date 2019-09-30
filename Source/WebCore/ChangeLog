@@ -1,5 +1,27 @@
 2019-09-30  Chris Dumez  <cdumez@apple.com>
 
+        Refine restrictions for X-Temp-Tablet HTTP header experiment
+        https://bugs.webkit.org/show_bug.cgi?id=202367
+        <rdar://problem/55849139>
+
+        Reviewed by Geoffrey Garen.
+
+        Refine restrictions for X-Temp-Tablet HTTP header experiment:
+        1. Only send the header if the embedding application is MobileSafari.
+        2. Only send the header if the first party is google.com
+        3. Only send the header if the current date is before 2/1/2020
+        4. Send the header even if using an ephemeral session
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::isXTempTabletHeaderExperimentOver):
+        (WebCore::CachedResourceLoader::CachedResourceLoader):
+        (WebCore::isGoogleSearch):
+        (WebCore::CachedResourceLoader::shouldSendXTempTabletHeader const):
+        (WebCore::CachedResourceLoader::requestResource):
+        * loader/cache/CachedResourceLoader.h:
+
+2019-09-30  Chris Dumez  <cdumez@apple.com>
+
         Pages with Web Workers cannot enter the back / forward cache
         https://bugs.webkit.org/show_bug.cgi?id=202296
         <rdar://problem/55764073>

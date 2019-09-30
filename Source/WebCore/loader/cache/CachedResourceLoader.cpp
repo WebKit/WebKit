@@ -45,6 +45,7 @@
 #include "CrossOriginAccessControl.h"
 #include "CustomHeaderFields.h"
 #include "DOMWindow.h"
+#include "DateComponents.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "Document.h"
@@ -66,6 +67,7 @@
 #include "RenderElement.h"
 #include "ResourceLoadInfo.h"
 #include "ResourceTiming.h"
+#include "RuntimeApplicationChecks.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
@@ -151,6 +153,16 @@ static CachedResource* createResource(CachedResource::Type type, CachedResourceR
     return nullptr;
 }
 
+#if PLATFORM(IOS) && !PLATFORM(IOSMAC)
+static bool isXTempTabletHeaderExperimentOver()
+{
+    DateComponents date;
+    date.setMillisecondsSinceEpochForMonth(WallTime::now().secondsSinceEpoch().milliseconds());
+    // End of experiment is 02-01-2020.
+    return date.fullYear() > 2020 || (date.fullYear() == 2020 && date.month() >= 1);
+}
+#endif
+
 CachedResourceLoader::CachedResourceLoader(DocumentLoader* documentLoader)
     : m_document(nullptr)
     , m_documentLoader(documentLoader)
@@ -160,6 +172,9 @@ CachedResourceLoader::CachedResourceLoader(DocumentLoader* documentLoader)
     , m_autoLoadImages(true)
     , m_imagesEnabled(true)
     , m_allowStaleResources(false)
+#if PLATFORM(IOS) && !PLATFORM(IOSMAC)
+    , m_isXTempTabletHeaderExperimentOver(isXTempTabletHeaderExperimentOver())
+#endif
 {
 }
 
@@ -779,6 +794,36 @@ static FetchOptions::Destination destinationForType(CachedResource::Type type)
     return FetchOptions::Destination::EmptyString;
 }
 
+#if PLATFORM(IOS) && !PLATFORM(IOSMAC)
+static bool isGoogleSearch(const URL& url)
+{
+    if (!url.protocolIs("https"))
+        return false;
+
+    RegistrableDomain registrableDomain(url);
+    if (!registrableDomain.string().startsWith("google."))
+        return false;
+
+    auto host = url.host();
+    return host.startsWithIgnoringASCIICase("google.") || host.startsWithIgnoringASCIICase("www.google.") || host.startsWithIgnoringASCIICase("images.google.");
+}
+
+bool CachedResourceLoader::shouldSendXTempTabletHeader(CachedResource::Type type, Frame& frame, const URL& url) const
+{
+    if (m_isXTempTabletHeaderExperimentOver || !IOSApplication::isMobileSafari())
+        return false;
+
+    if (!isGoogleSearch(url))
+        return false;
+
+    if (type == CachedResource::Type::MainResource && frame.isMainFrame())
+        return true;
+
+    auto* topDocument = frame.mainFrame().document();
+    return topDocument && isGoogleSearch(topDocument->url());
+}
+#endif
+
 ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requestResource(CachedResource::Type type, CachedResourceRequest&& request, ForPreload forPreload, DeferOption defer)
 {
     if (!frame() || !frame()->page()) {
@@ -873,14 +918,8 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
 
     // FIXME: This is temporary for <rdar://problem/55790994>.
 #if PLATFORM(IOS) && !PLATFORM(IOSMAC)
-    if (!page.sessionID().isEphemeral() && deviceHasIPadCapability() && request.resourceRequest().url().protocolIs("https")) {
-        RegistrableDomain registrableDomain(request.resourceRequest().url());
-        if (registrableDomain.string().startsWith("google.")) {
-            auto host = request.resourceRequest().url().host();
-            if (host.startsWithIgnoringASCIICase("google.") || host.startsWithIgnoringASCIICase("www.google.") || host.startsWithIgnoringASCIICase("images.google."))
-                request.resourceRequest().setHTTPHeaderField(HTTPHeaderName::XTempTablet, "1"_s);
-        }
-    }
+    if (deviceHasIPadCapability() && shouldSendXTempTabletHeader(type, frame, request.resourceRequest().url()))
+        request.resourceRequest().setHTTPHeaderField(HTTPHeaderName::XTempTablet, "1"_s);
 #endif
 
     LoadTiming loadTiming;
