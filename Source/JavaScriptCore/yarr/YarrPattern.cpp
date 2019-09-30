@@ -702,6 +702,11 @@ public:
     // skip alternatives with m_startsWithBOL set true.
     PatternDisjunction* copyDisjunction(PatternDisjunction* disjunction, bool filterStartsWithBOL = false)
     {
+        if (UNLIKELY(!isSafeToRecurse())) {
+            m_error = ErrorCode::PatternTooLarge;
+            return 0;
+        }
+
         std::unique_ptr<PatternDisjunction> newDisjunction;
         for (unsigned alt = 0; alt < disjunction->m_alternatives.size(); ++alt) {
             PatternAlternative* alternative = disjunction->m_alternatives[alt].get();
@@ -717,6 +722,11 @@ public:
             }
         }
         
+        if (hasError(error())) {
+            newDisjunction = 0;
+            return 0;
+        }
+
         if (!newDisjunction)
             return 0;
 
@@ -727,6 +737,11 @@ public:
     
     PatternTerm copyTerm(PatternTerm& term, bool filterStartsWithBOL = false)
     {
+        if (UNLIKELY(!isSafeToRecurse())) {
+            m_error = ErrorCode::PatternTooLarge;
+            return PatternTerm(term);
+        }
+
         if ((term.type != PatternTerm::TypeParenthesesSubpattern) && (term.type != PatternTerm::TypeParentheticalAssertion))
             return PatternTerm(term);
         
@@ -1100,6 +1115,8 @@ public:
         }
     }
 
+    ErrorCode error() { return m_error; }
+
 private:
     bool isSafeToRecurse() const
     {
@@ -1116,6 +1133,7 @@ private:
     CharacterClassConstructor m_characterClassConstructor;
     Vector<String> m_unmatchedNamedForwardReferences;
     void* m_stackLimit;
+    ErrorCode m_error { ErrorCode::NoError };
     bool m_invertCharacterClass;
     bool m_invertParentheticalAssertion { false };
 };
@@ -1150,6 +1168,9 @@ ErrorCode YarrPattern::compile(const String& patternString, void* stackLimit)
     constructor.checkForTerminalParentheses();
     constructor.optimizeDotStarWrappedExpressions();
     constructor.optimizeBOL();
+
+    if (hasError(constructor.error()))
+        return constructor.error();
 
     {
         ErrorCode error = constructor.setupOffsets();
