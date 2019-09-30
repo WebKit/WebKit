@@ -1,3 +1,29 @@
+2019-09-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Nicosia] Add missing conversion casts for LayerRepresentation objects
+        https://bugs.webkit.org/show_bug.cgi?id=202357
+
+        Reviewed by Carlos Garcia Campos.
+
+        After r250491, we have to request explicit conversion of
+        LayerRepresentation objects to Nicosia::PlatformLayer pointers.
+
+        * page/scrolling/nicosia/ScrollingTreeFixedNode.cpp:
+        (WebCore::ScrollingTreeFixedNode::commitStateBeforeChildren):
+        * page/scrolling/nicosia/ScrollingTreeFrameScrollingNodeNicosia.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNodeNicosia::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent):
+        (WebCore::ScrollingTreeFrameScrollingNodeNicosia::repositionScrollingLayers):
+        * page/scrolling/nicosia/ScrollingTreeOverflowScrollProxyNode.cpp:
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren):
+        * page/scrolling/nicosia/ScrollingTreeOverflowScrollingNodeNicosia.cpp:
+        (WebCore::ScrollingTreeOverflowScrollingNodeNicosia::repositionScrollingLayers):
+        (WebCore::ScrollingTreeOverflowScrollingNodeNicosia::handleWheelEvent):
+        * page/scrolling/nicosia/ScrollingTreePositionedNode.cpp:
+        (WebCore::ScrollingTreePositionedNode::commitStateBeforeChildren):
+        * page/scrolling/nicosia/ScrollingTreeStickyNode.cpp:
+        (WebCore::ScrollingTreeStickyNode::commitStateBeforeChildren):
+
 2019-09-29  Zan Dobersek  <zdobersek@igalia.com>
 
         ScrollingTreeScrollingNode: use LayerRepresentation for scroll container, scrolled contents layers

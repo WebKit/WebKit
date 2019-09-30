@@ -61,7 +61,7 @@ void ScrollingTreeFixedNode::commitStateBeforeChildren(const ScrollingStateNode&
     auto& fixedStateNode = downcast<ScrollingStateFixedNode>(stateNode);
 
     if (fixedStateNode.hasChangedProperty(ScrollingStateNode::Layer)) {
-        Nicosia::PlatformLayer* layer = fixedStateNode.layer();
+        auto* layer = static_cast<Nicosia::PlatformLayer*>(fixedStateNode.layer());
         m_layer = downcast<Nicosia::CompositionLayer>(layer);
     }
 

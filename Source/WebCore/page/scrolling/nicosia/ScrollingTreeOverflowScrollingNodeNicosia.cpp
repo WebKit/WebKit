@@ -67,7 +67,7 @@ FloatPoint ScrollingTreeOverflowScrollingNodeNicosia::adjustedScrollPosition(con
 
 void ScrollingTreeOverflowScrollingNodeNicosia::repositionScrollingLayers()
 {
-    Nicosia::PlatformLayer* scrollLayer = scrolledContentsLayer();
+    auto* scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrolledContentsLayer());
     ASSERT(scrollLayer);
     auto& compositionLayer = downcast<Nicosia::CompositionLayer>(*scrollLayer);
 
@@ -87,7 +87,7 @@ ScrollingEventResult ScrollingTreeOverflowScrollingNodeNicosia::handleWheelEvent
         return ScrollingEventResult::DidNotHandleEvent;
 
     if (wheelEvent.deltaX() || wheelEvent.deltaY()) {
-        Nicosia::PlatformLayer* scrollLayer = scrollContainerLayer();
+        auto* scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrollContainerLayer());
         ASSERT(scrollLayer);
         auto& compositionLayer = downcast<Nicosia::CompositionLayer>(*scrollLayer);
 

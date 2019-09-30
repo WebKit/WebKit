@@ -57,27 +57,27 @@ void ScrollingTreeFrameScrollingNodeNicosia::commitStateBeforeChildren(const Scr
     const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::RootContentsLayer)) {
-        Nicosia::PlatformLayer* layer = scrollingStateNode.rootContentsLayer();
+        auto* layer = static_cast<Nicosia::PlatformLayer*>(scrollingStateNode.rootContentsLayer());
         m_rootContentsLayer = downcast<Nicosia::CompositionLayer>(layer);
     }
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::CounterScrollingLayer)) {
-        Nicosia::PlatformLayer* layer = scrollingStateNode.counterScrollingLayer();
+        auto* layer = static_cast<Nicosia::PlatformLayer*>(scrollingStateNode.counterScrollingLayer());
         m_counterScrollingLayer = downcast<Nicosia::CompositionLayer>(layer);
     }
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::InsetClipLayer)) {
-        Nicosia::PlatformLayer* layer = scrollingStateNode.insetClipLayer();
+        auto* layer = static_cast<Nicosia::PlatformLayer*>(scrollingStateNode.insetClipLayer());
         m_insetClipLayer = downcast<Nicosia::CompositionLayer>(layer);
     }
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::ContentShadowLayer)) {
-        Nicosia::PlatformLayer* layer = scrollingStateNode.contentShadowLayer();
+        auto* layer = static_cast<Nicosia::PlatformLayer*>(scrollingStateNode.contentShadowLayer());
         m_contentShadowLayer = downcast<Nicosia::CompositionLayer>(layer);
     }
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::HeaderLayer)) {
-        Nicosia::PlatformLayer* layer = scrollingStateNode.headerLayer();
+        auto* layer = static_cast<Nicosia::PlatformLayer*>(scrollingStateNode.headerLayer());
         m_headerLayer = downcast<Nicosia::CompositionLayer>(layer);
     }
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::FooterLayer)) {
-        Nicosia::PlatformLayer* layer = scrollingStateNode.footerLayer();
+        auto* layer = static_cast<Nicosia::PlatformLayer*>(scrollingStateNode.footerLayer());
         m_footerLayer = downcast<Nicosia::CompositionLayer>(layer);
     }
 }
@@ -101,7 +101,7 @@ ScrollingEventResult ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent(co
         return ScrollingEventResult::DidNotHandleEvent;
 
     if (wheelEvent.deltaX() || wheelEvent.deltaY()) {
-        Nicosia::PlatformLayer* scrollLayer = scrolledContentsLayer();
+        auto* scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrolledContentsLayer());
         ASSERT(scrollLayer);
         auto& compositionLayer = downcast<Nicosia::CompositionLayer>(*scrollLayer);
 
@@ -133,7 +133,7 @@ void ScrollingTreeFrameScrollingNodeNicosia::currentScrollPositionChanged()
 
 void ScrollingTreeFrameScrollingNodeNicosia::repositionScrollingLayers()
 {
-    Nicosia::PlatformLayer* scrollLayer = scrolledContentsLayer();
+    auto* scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrolledContentsLayer());
     ASSERT(scrollLayer);
     auto& compositionLayer = downcast<Nicosia::CompositionLayer>(*scrollLayer);
 
