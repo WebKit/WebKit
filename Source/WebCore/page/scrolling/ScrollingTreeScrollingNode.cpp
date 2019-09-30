@@ -100,13 +100,11 @@ void ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateN
     if (state.hasChangedProperty(ScrollingStateScrollingNode::ExpectsWheelEventTestTrigger))
         m_expectsWheelEventTestTrigger = state.expectsWheelEventTestTrigger();
 
-#if PLATFORM(COCOA)
     if (state.hasChangedProperty(ScrollingStateScrollingNode::ScrollContainerLayer))
-        m_scrollContainerLayer = static_cast<CALayer*>(state.scrollContainerLayer());
+        m_scrollContainerLayer = state.scrollContainerLayer();
 
     if (state.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
-        m_scrolledContentsLayer = static_cast<CALayer*>(state.scrolledContentsLayer());
-#endif
+        m_scrolledContentsLayer = state.scrolledContentsLayer();
 }
 
 void ScrollingTreeScrollingNode::commitStateAfterChildren(const ScrollingStateNode& stateNode)

@@ -156,7 +156,7 @@ void RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations(const
             auto* overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(m_scrollingTree->nodeForID(overflowNodeID));
             if (!overflowNode)
                 continue;
-            stationaryScrollContainerIDs.append(RemoteLayerTreeNode::layerID(overflowNode->scrollContainerLayer()));
+            stationaryScrollContainerIDs.append(RemoteLayerTreeNode::layerID(static_cast<CALayer*>(overflowNode->scrollContainerLayer())));
         }
 
         if (auto* layerNode = RemoteLayerTreeNode::forCALayer(positionedNode->layer())) {
@@ -170,7 +170,7 @@ void RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations(const
         if (!overflowNode)
             continue;
         if (auto* layerNode = RemoteLayerTreeNode::forCALayer(scrollProxyNode->layer())) {
-            layerNode->setActingScrollContainerID(RemoteLayerTreeNode::layerID(overflowNode->scrollContainerLayer()));
+            layerNode->setActingScrollContainerID(RemoteLayerTreeNode::layerID(static_cast<CALayer*>(overflowNode->scrollContainerLayer())));
             m_layersWithScrollingRelations.add(layerNode->layerID());
         }
     }
