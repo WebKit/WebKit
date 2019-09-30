@@ -84,7 +84,7 @@ void NetworkStateNotifier::startObserving()
     if (DeprecatedGlobalSettings::shouldOptOutOfNetworkStateObservation())
         return;
     m_observer = adoptNS([[WebNetworkStateObserver alloc] initWithBlock:^ {
-        WebThreadRun(^ {
+        callOnMainThread([] {
             NetworkStateNotifier::singleton().updateStateSoon();
         });
     }]);
