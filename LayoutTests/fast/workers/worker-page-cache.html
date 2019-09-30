@@ -1,0 +1,51 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that pages with workers can go into the page cache.");
+jsTestIsAsync = true;
+
+let restoredFromPageCache = false;
+
+window.addEventListener("pageshow", function(event) {
+  debug("pageshow - " + (event.persisted ? "" : "not ") + "from page cache");
+  if (event.persisted) {
+      testPassed("Page entered page cache");
+      restoredFromPageCache = true;
+  }
+});
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering page cache");
+    if (!event.persisted) {
+        testFailed("Page failed to enter page cache");
+        finishJSTest();
+    }
+});
+
+let firstMessage = true;
+onload = () => {
+    worker = new Worker('resources/worker-event-listener.js');
+    setInterval(() => {
+        worker.postMessage("");
+    }, 1);
+
+    worker.onmessage = function(evt) {
+        if (firstMessage) {
+            firstMessage = false;
+            testPassed("Received message before restoring from page cache.");
+            window.location = "../history/resources/page-cache-helper.html";
+            return;
+        }
+        if (restoredFromPageCache) {
+            restoredFromPageCache = false;
+            testPassed("Received message after restoring from page cache.");
+            finishJSTest();
+        }
+    };
+}
+</script>
+</body>
+</html>

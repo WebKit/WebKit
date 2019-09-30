@@ -168,7 +168,7 @@ private:
     MediaTime m_duration;
     MediaTime m_pendingSeekTime;
     ReadyState m_readyState { ReadyState::Closed };
-    GenericEventQueue m_asyncEventQueue;
+    MainThreadGenericEventQueue m_asyncEventQueue;
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier { nullptr };

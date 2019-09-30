@@ -972,7 +972,7 @@ private:
     GenericTaskQueue<Timer> m_fullscreenTaskQueue;
     GenericTaskQueue<Timer> m_playbackTargetIsWirelessQueue;
     RefPtr<TimeRanges> m_playedTimeRanges;
-    GenericEventQueue m_asyncEventQueue;
+    MainThreadGenericEventQueue m_asyncEventQueue;
 #if PLATFORM(IOS_FAMILY)
     DeferrableTask<Timer> m_volumeRevertTaskQueue;
 #endif

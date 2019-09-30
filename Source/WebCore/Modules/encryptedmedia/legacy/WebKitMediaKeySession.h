@@ -90,7 +90,7 @@ private:
     String m_keySystem;
     String m_sessionId;
     RefPtr<WebKitMediaKeyError> m_error;
-    GenericEventQueue m_asyncEventQueue;
+    MainThreadGenericEventQueue m_asyncEventQueue;
     std::unique_ptr<LegacyCDMSession> m_session;
 
     struct PendingKeyRequest {

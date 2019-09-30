@@ -35,12 +35,14 @@ namespace WebCore {
 class Event;
 class EventTarget;
 class Timer;
+class ScriptExecutionContext;
 
-class GenericEventQueue {
+template<typename T>
+class GenericEventQueueBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit GenericEventQueue(EventTarget&);
-    ~GenericEventQueue();
+    explicit GenericEventQueueBase(EventTarget&);
+    ~GenericEventQueueBase();
 
     void enqueueEvent(RefPtr<Event>&&);
     void close();
@@ -52,14 +54,34 @@ public:
     void suspend();
     void resume();
 
+    bool isSuspended() const { return m_isSuspended; }
+
 private:
     void dispatchOneEvent();
 
     EventTarget& m_owner;
-    GenericTaskQueue<Timer> m_taskQueue;
+    GenericTaskQueue<T> m_taskQueue;
     Deque<RefPtr<Event>> m_pendingEvents;
-    bool m_isClosed;
+    bool m_isClosed { false };
     bool m_isSuspended { false };
+};
+
+// All instances of MainThreadGenericEventQueue use a shared Timer for dispatching events.
+class MainThreadGenericEventQueue : public GenericEventQueueBase<Timer> {
+public:
+    explicit MainThreadGenericEventQueue(EventTarget& eventTarget)
+        : GenericEventQueueBase<Timer>(eventTarget)
+    {
+    }
+};
+
+class GenericEventQueue : public GenericEventQueueBase<ScriptExecutionContext> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit GenericEventQueue(EventTarget& eventTarget)
+        : GenericEventQueueBase<ScriptExecutionContext>(eventTarget)
+    {
+    }
 };
 
 } // namespace WebCore

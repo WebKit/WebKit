@@ -217,7 +217,7 @@ private:
 
     Ref<SourceBufferPrivate> m_private;
     MediaSource* m_source;
-    GenericEventQueue m_asyncEventQueue;
+    MainThreadGenericEventQueue m_asyncEventQueue;
     AppendMode m_mode { AppendMode::Segments };
 
     Vector<unsigned char> m_pendingAppendData;

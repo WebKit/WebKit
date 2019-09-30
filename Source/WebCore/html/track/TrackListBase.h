@@ -86,7 +86,7 @@ private:
 
     HTMLMediaElement* m_element;
 
-    GenericEventQueue m_asyncEventQueue;
+    MainThreadGenericEventQueue m_asyncEventQueue;
 };
 
 } // namespace WebCore

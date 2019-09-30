@@ -84,7 +84,7 @@ private:
     void stop() final;
     const char* activeDOMObjectName() const final;
 
-    GenericEventQueue m_asyncEventQueue;
+    MainThreadGenericEventQueue m_asyncEventQueue;
 
     Vector<RefPtr<SourceBuffer>> m_list;
 };

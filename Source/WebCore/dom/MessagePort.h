@@ -29,6 +29,7 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
+#include "GenericEventQueue.h"
 #include "MessagePortChannel.h"
 #include "MessagePortIdentifier.h"
 #include "MessageWithMessagePorts.h"
@@ -84,6 +85,8 @@ public:
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
+    void suspend(ReasonForSuspension) final;
+    void resume() final;
     void contextDestroyed() final;
     void stop() final { close(); }
     bool hasPendingActivity() const final;
@@ -126,6 +129,7 @@ private:
     MessagePortIdentifier m_remoteIdentifier;
 
     mutable std::atomic<unsigned> m_refCount { 1 };
+    GenericEventQueue m_eventQueue;
 };
 
 } // namespace WebCore

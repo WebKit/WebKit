@@ -1,3 +1,81 @@
+2019-09-30  Chris Dumez  <cdumez@apple.com>
+
+        Pages with Web Workers cannot enter the back / forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=202296
+        <rdar://problem/55764073>
+
+        Reviewed by Jer Noble.
+
+        Allow pages that use Web Workers to enter the back / forward cache.
+        This involves adding an EventQueue for all event firing on Woker
+        objects and suspending this EventQueue while in the page cache.
+
+        This was preventing some of the pages on weather.com to enter the
+        back / forward cache.
+
+        Test: fast/workers/worker-page-cache.html
+
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.h:
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/mediasource/SourceBufferList.h:
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::AudioContext):
+        * Modules/webaudio/AudioContext.h:
+        * animation/DeclarativeAnimation.h:
+
+        * dom/GenericEventQueue.cpp:
+        (WebCore::TaskQueueConstructor::construct):
+        (WebCore::TaskQueueConstructor<Timer>::construct):
+        (WebCore::GenericEventQueueBase<T>::GenericEventQueueBase):
+        (WebCore::GenericEventQueueBase<T>::enqueueEvent):
+        (WebCore::GenericEventQueueBase<T>::dispatchOneEvent):
+        (WebCore::GenericEventQueueBase<T>::close):
+        (WebCore::GenericEventQueueBase<T>::cancelAllEvents):
+        (WebCore::GenericEventQueueBase<T>::hasPendingEvents const):
+        (WebCore::GenericEventQueueBase<T>::hasPendingEventsOfType const):
+        (WebCore::GenericEventQueueBase<T>::suspend):
+        (WebCore::GenericEventQueueBase<T>::resume):
+        * dom/GenericEventQueue.h:
+        (WebCore::GenericEventQueueBase::isSuspended const):
+        (WebCore::MainThreadGenericEventQueue::MainThreadGenericEventQueue):
+        (WebCore::GenericEventQueue::GenericEventQueue):
+        Rename GenericEventQueue to MainThreadGenericEventQueue since its implementation relies
+        on a global shared Timer to fire events. Introduce a new GenericEventQueue which can
+        actually be used from any thread. This is useful for MessagePort, which is used both
+        on the main thread and on worker threads.
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::MessagePort):
+        (WebCore::MessagePort::close):
+        (WebCore::MessagePort::suspend):
+        (WebCore::MessagePort::resume):
+        (WebCore::MessagePort::dispatchMessages):
+        * dom/MessagePort.h:
+        Use an GenericEventQueue in MessagePort for consistency with Worker.
+        MessagePort is an ActiveDOMobject which returns true in canSuspend(),
+        we therefore need to make sure it suspends event firing while
+        suspended.
+
+        * html/HTMLMediaElement.h:
+        * html/track/TrackListBase.h:
+        * workers/Worker.cpp:
+        (WebCore::Worker::Worker):
+        (WebCore::Worker::terminate):
+        (WebCore::Worker::canSuspendForDocumentSuspension const):
+        (WebCore::Worker::suspend):
+        (WebCore::Worker::resume):
+        (WebCore::Worker::stop):
+        (WebCore::Worker::hasPendingActivity const):
+        (WebCore::Worker::notifyFinished):
+        (WebCore::Worker::enqueueEvent):
+        (WebCore::Worker::dispatchEvent):
+        * workers/Worker.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerObject):
+        (WebCore::WorkerMessagingProxy::postExceptionToWorkerObject):
+
 2019-09-27  Keith Rollin  <krollin@apple.com>
 
         Coalesce or remove PLATFORM(MAC) || PLATFORM(IOS_FAMILY)

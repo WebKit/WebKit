@@ -104,7 +104,7 @@ void WorkerMessagingProxy::postMessageToWorkerObject(MessageWithMessagePorts&& m
             return;
 
         auto ports = MessagePort::entanglePorts(context, WTFMove(message.transferredPorts));
-        workerObject->dispatchEvent(MessageEvent::create(WTFMove(ports), message.message.releaseNonNull()));
+        workerObject->enqueueEvent(MessageEvent::create(WTFMove(ports), message.message.releaseNonNull()));
     });
 }
 
@@ -154,18 +154,14 @@ bool WorkerMessagingProxy::postTaskForModeToWorkerGlobalScope(ScriptExecutionCon
 
 void WorkerMessagingProxy::postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)
 {
-    m_scriptExecutionContext->postTask([this, errorMessage = errorMessage.isolatedCopy(), sourceURL = sourceURL.isolatedCopy(), lineNumber, columnNumber] (ScriptExecutionContext& context) {
+    m_scriptExecutionContext->postTask([this, errorMessage = errorMessage.isolatedCopy(), sourceURL = sourceURL.isolatedCopy(), lineNumber, columnNumber] (ScriptExecutionContext&) {
         Worker* workerObject = this->workerObject();
         if (!workerObject)
             return;
 
         // We don't bother checking the askedToTerminate() flag here, because exceptions should *always* be reported even if the thread is terminated.
         // This is intentionally different than the behavior in MessageWorkerTask, because terminated workers no longer deliver messages (section 4.6 of the WebWorker spec), but they do report exceptions.
-
-        auto event = ErrorEvent::create(errorMessage, sourceURL, lineNumber, columnNumber, { });
-        workerObject->dispatchEvent(event);
-        if (!event->defaultPrevented())
-            context.reportException(errorMessage, lineNumber, columnNumber, sourceURL, nullptr, nullptr);
+        workerObject->enqueueEvent(ErrorEvent::create(errorMessage, sourceURL, lineNumber, columnNumber, { }));
     });
 }
 

@@ -28,6 +28,7 @@
 #include "Worker.h"
 
 #include "ContentSecurityPolicy.h"
+#include "ErrorEvent.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "InspectorInstrumentation.h"
@@ -67,6 +68,7 @@ inline Worker::Worker(ScriptExecutionContext& context, JSC::RuntimeFlags runtime
     , m_identifier("worker:" + Inspector::IdentifiersFactory::createIdentifier())
     , m_contextProxy(WorkerGlobalScopeProxy::create(*this))
     , m_runtimeFlags(runtimeFlags)
+    , m_eventQueue(*this)
 {
     static bool addedListener;
     if (!addedListener) {
@@ -144,12 +146,22 @@ ExceptionOr<void> Worker::postMessage(JSC::ExecState& state, JSC::JSValue messag
 void Worker::terminate()
 {
     m_contextProxy.terminateWorkerGlobalScope();
+    m_eventQueue.cancelAllEvents();
 }
 
 bool Worker::canSuspendForDocumentSuspension() const
 {
-    // FIXME: It is not currently possible to suspend a worker, so pages with workers can not go into page cache.
-    return false;
+    return true;
+}
+
+void Worker::suspend(ReasonForSuspension)
+{
+    m_eventQueue.suspend();
+}
+
+void Worker::resume()
+{
+    m_eventQueue.resume();
 }
 
 const char* Worker::activeDOMObjectName() const
@@ -160,11 +172,12 @@ const char* Worker::activeDOMObjectName() const
 void Worker::stop()
 {
     terminate();
+    m_eventQueue.close();
 }
 
 bool Worker::hasPendingActivity() const
 {
-    return m_contextProxy.hasPendingActivity() || ActiveDOMObject::hasPendingActivity();
+    return m_contextProxy.hasPendingActivity() || ActiveDOMObject::hasPendingActivity() || m_eventQueue.hasPendingEvents();
 }
 
 void Worker::notifyNetworkStateChange(bool isOnLine)
@@ -192,7 +205,7 @@ void Worker::notifyFinished()
         return;
 
     if (m_scriptLoader->failed()) {
-        dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::Yes));
+        enqueueEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::Yes));
         return;
     }
 
@@ -200,6 +213,22 @@ void Worker::notifyFinished()
     const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders = m_contentSecurityPolicyResponseHeaders ? m_contentSecurityPolicyResponseHeaders.value() : context->contentSecurityPolicy()->responseHeaders();
     m_contextProxy.startWorkerGlobalScope(m_scriptLoader->url(), m_name, context->userAgent(m_scriptLoader->url()), isOnline, m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy, m_workerCreationTime, m_runtimeFlags);
     InspectorInstrumentation::scriptImported(*context, m_scriptLoader->identifier(), m_scriptLoader->script());
+}
+
+void Worker::enqueueEvent(Ref<Event>&& event)
+{
+    m_eventQueue.enqueueEvent(WTFMove(event));
+}
+
+void Worker::dispatchEvent(Event& event)
+{
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_eventQueue.isSuspended());
+
+    AbstractWorker::dispatchEvent(event);
+    if (is<ErrorEvent>(event) && !event.defaultPrevented() && event.isTrusted() && scriptExecutionContext()) {
+        auto& errorEvent = downcast<ErrorEvent>(event);
+        scriptExecutionContext()->reportException(errorEvent.message(), errorEvent.lineno(), errorEvent.colno(), errorEvent.filename(), nullptr, nullptr);
+    }
 }
 
 } // namespace WebCore
