@@ -559,7 +559,7 @@ static void webkitWebViewRequestFavicon(WebKitWebView* webView)
     WebKitWebViewPrivate* priv = webView->priv;
     priv->faviconCancellable = adoptGRef(g_cancellable_new());
     WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(priv->context.get());
-    webkit_favicon_database_get_favicon(database, priv->activeURI.data(), priv->faviconCancellable.get(), gotFaviconCallback, webView);
+    webkitFaviconDatabaseGetFaviconInternal(database, priv->activeURI.data(), priv->isEphemeral, priv->faviconCancellable.get(), gotFaviconCallback, webView);
 }
 
 static void webkitWebViewUpdateFaviconURI(WebKitWebView* webView, const char* faviconURI)
@@ -2169,14 +2169,19 @@ void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView* webView, const char* fa
 #if PLATFORM(GTK)
 void webkitWebViewGetLoadDecisionForIcon(WebKitWebView* webView, const LinkIcon& icon, Function<void(bool)>&& completionHandler)
 {
+    // We only support favicons for now.
+    if (icon.type != LinkIconType::Favicon) {
+        completionHandler(false);
+        return;
+    }
     WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(webView->priv->context.get());
-    webkitFaviconDatabaseGetLoadDecisionForIcon(database, icon, getPage(webView).pageLoadState().activeURL(), WTFMove(completionHandler));
+    webkitFaviconDatabaseGetLoadDecisionForIcon(database, icon, getPage(webView).pageLoadState().activeURL(), webView->priv->isEphemeral, WTFMove(completionHandler));
 }
 
 void webkitWebViewSetIcon(WebKitWebView* webView, const LinkIcon& icon, API::Data& iconData)
 {
     WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(webView->priv->context.get());
-    webkitFaviconDatabaseSetIconForPageURL(database, icon, iconData, getPage(webView).pageLoadState().activeURL());
+    webkitFaviconDatabaseSetIconForPageURL(database, icon, iconData, getPage(webView).pageLoadState().activeURL(), webView->priv->isEphemeral);
 }
 #endif
 

@@ -1,5 +1,62 @@
 2019-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] IconDatabase is not thread-safe
+        https://bugs.webkit.org/show_bug.cgi?id=201303
+
+        Reviewed by Žan Doberšek.
+
+        Rewrite the IconDatabase implementation. Now that we are the only users of this code, we can simply it a lot and
+        design it specifically for our API, which implementation has been simplified a lot too. There's no change in
+        the database schema nor in behavior from the API point of view.
+
+        * UIProcess/API/glib/IconDatabase.cpp:
+        (WebKit::IconDatabase::IconDatabase):
+        (WebKit::IconDatabase::~IconDatabase):
+        (WebKit::IconDatabase::createTablesIfNeeded):
+        (WebKit::IconDatabase::populatePageURLToIconURLMap):
+        (WebKit::IconDatabase::clearStatements):
+        (WebKit::IconDatabase::pruneTimerFired):
+        (WebKit::IconDatabase::startPruneTimer):
+        (WebKit::IconDatabase::clearLoadedIconsTimerFired):
+        (WebKit::IconDatabase::startClearLoadedIconsTimer):
+        (WebKit::IconDatabase::iconIDForIconURL):
+        (WebKit::IconDatabase::setIconIDForPageURL):
+        (WebKit::IconDatabase::iconData):
+        (WebKit::IconDatabase::addIcon):
+        (WebKit::IconDatabase::updateIconTimestamp):
+        (WebKit::IconDatabase::deleteIcon):
+        (WebKit::IconDatabase::checkIconURLAndSetPageURLIfNeeded):
+        (WebKit::IconDatabase::loadIconForPageURL):
+        (WebKit::IconDatabase::iconURLForPageURL):
+        (WebKit::IconDatabase::setIconForPageURL):
+        (WebKit::IconDatabase::clear):
+        * UIProcess/API/glib/IconDatabase.h:
+        (WebKit::IconDatabase::create):
+        * UIProcess/API/glib/WebKitFaviconDatabase.cpp:
+        (webkitFaviconDatabaseCreate):
+        (webkitFaviconDatabaseIsOpen):
+        (webkitFaviconDatabaseOpen):
+        (webkitFaviconDatabaseClose):
+        (webkitFaviconDatabaseGetLoadDecisionForIcon):
+        (webkitFaviconDatabaseSetIconForPageURL):
+        (webkitFaviconDatabaseGetFaviconInternal):
+        (webkit_favicon_database_get_favicon):
+        (webkit_favicon_database_get_favicon_finish):
+        (webkit_favicon_database_get_favicon_uri):
+        (webkit_favicon_database_clear):
+        * UIProcess/API/glib/WebKitFaviconDatabasePrivate.h:
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextDispose):
+        (webkit_web_context_set_favicon_database_directory):
+        (webkitWebContextCreatePageForWebView):
+        (webkitWebContextWebViewDestroyed):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewRequestFavicon):
+        (webkitWebViewGetLoadDecisionForIcon):
+        (webkitWebViewSetIcon):
+
+2019-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Add about:gpu
         https://bugs.webkit.org/show_bug.cgi?id=202305
 

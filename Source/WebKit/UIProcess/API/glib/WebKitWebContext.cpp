@@ -180,7 +180,6 @@ struct _WebKitWebContextPrivate {
     WebKitProcessModel processModel;
 
     HashMap<uint64_t, WebKitWebView*> webViews;
-    unsigned ephemeralPageCount;
 
     CString webExtensionsDirectory;
     GRefPtr<GVariant> webExtensionsInitializationUserData;
@@ -371,6 +370,11 @@ static void webkitWebContextDispose(GObject* object)
     if (priv->websiteDataManager) {
         webkitWebsiteDataManagerRemoveProcessPool(priv->websiteDataManager.get(), *priv->processPool);
         priv->websiteDataManager = nullptr;
+    }
+
+    if (priv->faviconDatabase) {
+        webkitFaviconDatabaseClose(priv->faviconDatabase.get());
+        priv->faviconDatabase = nullptr;
     }
 
     G_OBJECT_CLASS(webkit_web_context_parent_class)->dispose(object);
@@ -873,31 +877,6 @@ static void ensureFaviconDatabase(WebKitWebContext* context)
     priv->faviconDatabase = adoptGRef(webkitFaviconDatabaseCreate());
 }
 
-static void webkitWebContextEnableIconDatabasePrivateBrowsingIfNeeded(WebKitWebContext* context, WebKitWebView* webView)
-{
-    if (webkit_web_context_is_ephemeral(context))
-        return;
-    if (!webkit_web_view_is_ephemeral(webView))
-        return;
-
-    if (!context->priv->ephemeralPageCount && context->priv->faviconDatabase)
-        webkitFaviconDatabaseSetPrivateBrowsingEnabled(context->priv->faviconDatabase.get(), true);
-    context->priv->ephemeralPageCount++;
-}
-
-static void webkitWebContextDisableIconDatabasePrivateBrowsingIfNeeded(WebKitWebContext* context, WebKitWebView* webView)
-{
-    if (webkit_web_context_is_ephemeral(context))
-        return;
-    if (!webkit_web_view_is_ephemeral(webView))
-        return;
-
-    ASSERT(context->priv->ephemeralPageCount);
-    context->priv->ephemeralPageCount--;
-    if (!context->priv->ephemeralPageCount && context->priv->faviconDatabase)
-        webkitFaviconDatabaseSetPrivateBrowsingEnabled(context->priv->faviconDatabase.get(), false);
-}
-
 /**
  * webkit_web_context_set_favicon_database_directory:
  * @context: a #WebKitWebContext
@@ -938,10 +917,7 @@ void webkit_web_context_set_favicon_database_directory(WebKitWebContext* context
         "WebpageIcons.db", nullptr));
 
     // Setting the path will cause the icon database to be opened.
-    webkitFaviconDatabaseOpen(priv->faviconDatabase.get(), FileSystem::stringFromFileSystemRepresentation(faviconDatabasePath.get()));
-
-    if (webkit_web_context_is_ephemeral(context))
-        webkitFaviconDatabaseSetPrivateBrowsingEnabled(priv->faviconDatabase.get(), true);
+    webkitFaviconDatabaseOpen(priv->faviconDatabase.get(), FileSystem::stringFromFileSystemRepresentation(faviconDatabasePath.get()), webkit_web_context_is_ephemeral(context));
 }
 
 /**
@@ -1729,10 +1705,6 @@ bool webkitWebContextIsLoadingCustomProtocol(WebKitWebContext* context, uint64_t
 
 void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebView* webView, WebKitUserContentManager* userContentManager, WebKitWebView* relatedView)
 {
-    // FIXME: icon database private mode is global, not per page, so while there are
-    // pages in private mode we need to enable the private mode in the icon database.
-    webkitWebContextEnableIconDatabasePrivateBrowsingIfNeeded(context, webView);
-
     auto pageConfiguration = API::PageConfiguration::create();
     pageConfiguration->setProcessPool(context->priv->processPool.get());
     pageConfiguration->setPreferences(webkitSettingsGetPreferences(webkit_web_view_get_settings(webView)));
@@ -1751,7 +1723,6 @@ void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebVi
 
 void webkitWebContextWebViewDestroyed(WebKitWebContext* context, WebKitWebView* webView)
 {
-    webkitWebContextDisableIconDatabasePrivateBrowsingIfNeeded(context, webView);
     context->priv->webViews.remove(webkit_web_view_get_page_id(webView));
 }
 

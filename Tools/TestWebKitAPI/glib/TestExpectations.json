@@ -173,12 +173,5 @@
                 "expected": {"all@Debug": {"slow": true}}
             }
         }
-    },
-    "TestWebKitFaviconDatabase": {
-        "subtests": {
-            "/webkit/WebKitFaviconDatabase/favicon-database-test": {
-                "expected": {"gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/188110"}}
-            }
-        }
     }
 }
