@@ -1,3 +1,12 @@
+2019-09-30  Zhifei Fang  <zhifei_fang@apple.com>
+
+        [results.webkit.org Timeline] New axis style
+        https://bugs.webkit.org/show_bug.cgi?id=202292
+
+        Reviewed by Jonathan Bedard.
+
+        * resultsdbpy/resultsdbpy/view/static/library/js/components/TimelineComponents.js:
+
 2019-09-30  Alex Christensen  <achristensen@webkit.org>
 
         Move DownloadMonitor test speed multiplier from WebProcessPool to WebsiteDataStoreConfiguration
