@@ -1,5 +1,70 @@
 2019-09-30  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r248591. rdar://problem/55826878
+
+    FrameLoader::open can execute scritps via style recalc in Frame::setDocument
+    https://bugs.webkit.org/show_bug.cgi?id=200377
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    Fixed the bug that FrameLoader::open can execute arbitrary author scripts via post style update callbacks
+    by adding PostResolutionCallbackDisabler, WidgetHierarchyUpdatesSuspensionScope, and NavigationDisabler
+    to CachedFrameBase::restore and FrameLoader::open.
+    
+    This ensures all frames are restored from the page cache before any of them would start running scripts.
+    
+    Test: fast/frames/restoring-page-cache-should-not-run-scripts-via-style-update.html
+    
+    * history/CachedFrame.cpp:
+    (WebCore::CachedFrameBase::restore):
+    * loader/FrameLoader.cpp:
+    (WebCore::FrameLoader::open):
+    * page/FrameViewLayoutContext.cpp:
+    (WebCore::FrameViewLayoutContext::layout): Fixed the debug assertion. The layout of a document may be
+    updated while we're preparing to put a page into the page cache.
+    * rendering/RenderLayerCompositor.cpp:
+    (WebCore::RenderLayerCompositor::updateCompositingLayers): Ditto.
+    
+    LayoutTests:
+    
+    Added a regression test.
+    
+    * fast/frames/restoring-page-cache-should-not-run-scripts-via-style-update-expected.txt: Added.
+    * fast/frames/restoring-page-cache-should-not-run-scripts-via-style-update.html: Added.
+    * platform/win/TestExpectations: Skip the newly added test.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248591 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+            FrameLoader::open can execute scritps via style recalc in Frame::setDocument
+            https://bugs.webkit.org/show_bug.cgi?id=200377
+
+            Reviewed by Antti Koivisto.
+
+            Fixed the bug that FrameLoader::open can execute arbitrary author scripts via post style update callbacks
+            by adding PostResolutionCallbackDisabler, WidgetHierarchyUpdatesSuspensionScope, and NavigationDisabler
+            to CachedFrameBase::restore and FrameLoader::open.
+
+            This ensures all frames are restored from the page cache before any of them would start running scripts.
+
+            Test: fast/frames/restoring-page-cache-should-not-run-scripts-via-style-update.html
+
+            * history/CachedFrame.cpp:
+            (WebCore::CachedFrameBase::restore):
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::open):
+            * page/FrameViewLayoutContext.cpp:
+            (WebCore::FrameViewLayoutContext::layout): Fixed the debug assertion. The layout of a document may be
+            updated while we're preparing to put a page into the page cache.
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::updateCompositingLayers): Ditto.
+
+2019-09-30  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r248173. rdar://problem/55826879
 
     Harden NodeRareData::m_connectedFrameCount

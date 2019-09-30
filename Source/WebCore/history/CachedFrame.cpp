@@ -39,12 +39,15 @@
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
 #include "Logging.h"
+#include "NavigationDisabler.h"
 #include "Page.h"
 #include "PageCache.h"
+#include "RenderWidget.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGDocumentExtensions.h"
 #include "ScriptController.h"
 #include "SerializedScriptValue.h"
+#include "StyleTreeResolver.h"
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/text/CString.h>
 
@@ -93,44 +96,50 @@ void CachedFrameBase::restore()
     if (m_isMainFrame)
         m_view->setParentVisible(true);
 
-    Frame& frame = m_view->frame();
-    m_cachedFrameScriptData->restore(frame);
+    auto frame = makeRef(m_view->frame());
+    {
+        Style::PostResolutionCallbackDisabler disabler(*m_document);
+        WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+        NavigationDisabler disableNavigation { nullptr }; // Disable navigation globally.
 
-    if (m_document->svgExtensions())
-        m_document->accessSVGExtensions().unpauseAnimations();
+        m_cachedFrameScriptData->restore(frame.get());
 
-    m_document->resume(ReasonForSuspension::PageCache);
+        if (m_document->svgExtensions())
+            m_document->accessSVGExtensions().unpauseAnimations();
 
-    // It is necessary to update any platform script objects after restoring the
-    // cached page.
-    frame.script().updatePlatformScriptObjects();
+        m_document->resume(ReasonForSuspension::PageCache);
 
-    frame.loader().client().didRestoreFromPageCache();
+        // It is necessary to update any platform script objects after restoring the
+        // cached page.
+        frame->script().updatePlatformScriptObjects();
 
-    pruneDetachedChildFrames();
+        frame->loader().client().didRestoreFromPageCache();
 
-    // Reconstruct the FrameTree. And open the child CachedFrames in their respective FrameLoaders.
-    for (auto& childFrame : m_childFrames) {
-        ASSERT(childFrame->view()->frame().page());
-        frame.tree().appendChild(childFrame->view()->frame());
-        childFrame->open();
-        ASSERT_WITH_SECURITY_IMPLICATION(m_document == frame.document());
+        pruneDetachedChildFrames();
+
+        // Reconstruct the FrameTree. And open the child CachedFrames in their respective FrameLoaders.
+        for (auto& childFrame : m_childFrames) {
+            ASSERT(childFrame->view()->frame().page());
+            frame->tree().appendChild(childFrame->view()->frame());
+            childFrame->open();
+            ASSERT_WITH_SECURITY_IMPLICATION(m_document == frame->document());
+        }
     }
 
 #if PLATFORM(IOS_FAMILY)
     if (m_isMainFrame) {
-        frame.loader().client().didRestoreFrameHierarchyForCachedFrame();
+        frame->loader().client().didRestoreFrameHierarchyForCachedFrame();
 
         if (DOMWindow* domWindow = m_document->domWindow()) {
             // FIXME: Add SCROLL_LISTENER to the list of event types on Document, and use m_document->hasListenerType(). See <rdar://problem/9615482>.
             // FIXME: Can use Document::hasListenerType() now.
-            if (domWindow->scrollEventListenerCount() && frame.page())
-                frame.page()->chrome().client().setNeedsScrollNotifications(frame, true);
+            if (domWindow->scrollEventListenerCount() && frame->page())
+                frame->page()->chrome().client().setNeedsScrollNotifications(frame, true);
         }
     }
 #endif
 
-    frame.view()->didRestoreFromPageCache();
+    frame->view()->didRestoreFromPageCache();
 }
 
 CachedFrame::CachedFrame(Frame& frame)
