@@ -64,13 +64,13 @@ void SVGLinearGradientElement::parseAttribute(const QualifiedName& name, const A
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::x1Attr)
-        m_x1->setBaseValInternal(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_x1->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, value, parseError));
     else if (name == SVGNames::y1Attr)
-        m_y1->setBaseValInternal(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_y1->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, value, parseError));
     else if (name == SVGNames::x2Attr)
-        m_x2->setBaseValInternal(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_x2->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, value, parseError));
     else if (name == SVGNames::y2Attr)
-        m_y2->setBaseValInternal(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_y2->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, value, parseError));
 
     reportAttributeParsingError(parseError, name, value);
 

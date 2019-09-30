@@ -57,10 +57,10 @@ private:
     const SVGPropertyRegistry& propertyRegistry() const override { return m_propertyRegistry; }
 
     PropertyRegistry m_propertyRegistry { *this };
-    Ref<SVGAnimatedLengthList> m_x { SVGAnimatedLengthList::create(this, LengthModeWidth) };
-    Ref<SVGAnimatedLengthList> m_y { SVGAnimatedLengthList::create(this, LengthModeHeight) };
-    Ref<SVGAnimatedLengthList> m_dx { SVGAnimatedLengthList::create(this, LengthModeWidth) };
-    Ref<SVGAnimatedLengthList> m_dy { SVGAnimatedLengthList::create(this, LengthModeHeight) };
+    Ref<SVGAnimatedLengthList> m_x { SVGAnimatedLengthList::create(this, SVGLengthMode::Width) };
+    Ref<SVGAnimatedLengthList> m_y { SVGAnimatedLengthList::create(this, SVGLengthMode::Height) };
+    Ref<SVGAnimatedLengthList> m_dx { SVGAnimatedLengthList::create(this, SVGLengthMode::Width) };
+    Ref<SVGAnimatedLengthList> m_dy { SVGAnimatedLengthList::create(this, SVGLengthMode::Height) };
     Ref<SVGAnimatedNumberList> m_rotate { SVGAnimatedNumberList::create(this) };
 };
 

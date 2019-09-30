@@ -82,8 +82,8 @@ public:
     static String initialMarkerMidResource() { return String(); }
     static String initialMarkerEndResource() { return String(); }
     static MaskType initialMaskType() { return MaskType::Luminance; }
-    static SVGLengthValue initialBaselineShiftValue();
-    static SVGLengthValue initialKerning();
+    static SVGLengthValue initialBaselineShiftValue() { return SVGLengthValue(0, SVGLengthType::Number); }
+    static SVGLengthValue initialKerning() { return SVGLengthValue(0, SVGLengthType::Number); }
 
     // SVG CSS Property setters
     void setAlignmentBaseline(AlignmentBaseline val) { m_nonInheritedFlags.flagBits.alignmentBaseline = static_cast<unsigned>(val); }
@@ -255,20 +255,6 @@ private:
     DataRef<StyleLayoutData> m_layoutData;
     DataRef<StyleResourceData> m_nonInheritedResourceData;
 };
-
-inline SVGLengthValue SVGRenderStyle::initialBaselineShiftValue()
-{
-    SVGLengthValue length;
-    length.newValueSpecifiedUnits(LengthTypeNumber, 0);
-    return length;
-}
-
-inline SVGLengthValue SVGRenderStyle::initialKerning()
-{
-    SVGLengthValue length;
-    length.newValueSpecifiedUnits(LengthTypeNumber, 0);
-    return length;
-}
 
 inline void SVGRenderStyle::setCx(const Length& length)
 {

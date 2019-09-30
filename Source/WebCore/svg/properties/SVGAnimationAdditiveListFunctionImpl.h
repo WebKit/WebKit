@@ -69,7 +69,7 @@ public:
 
         SVGLengthContext lengthContext(targetElement);
         for (unsigned i = 0; i < toItems.size(); ++i) {
-            SVGLengthType unitType = (i < fromItems.size() && progress < 0.5 ? fromItems : toItems)[i]->value().unitType();
+            SVGLengthType lengthType = (i < fromItems.size() && progress < 0.5 ? fromItems : toItems)[i]->value().lengthType();
 
             float from = i < fromItems.size() ? fromItems[i]->value().value(lengthContext) : 0;
             float to = toItems[i]->value().value(lengthContext);
@@ -77,7 +77,7 @@ public:
             float value = animatedItems[i]->value().value(lengthContext);
 
             value = Base::animate(progress, repeatCount, from, to, toAtEndOfDuration, value);
-            animatedItems[i]->value().setValue(lengthContext, value, lengthMode, unitType);
+            animatedItems[i]->value().setValue(lengthContext, value, lengthType, lengthMode);
         }
     }
 
@@ -94,7 +94,7 @@ private:
         for (unsigned i = 0; i < fromItems.size(); ++i) {
             const SVGLengthValue& fromValue = fromItems[i]->value();
             SVGLengthValue& toValue = toItems[i]->value();
-            toValue.setValue(toValue.value(lengthContext) + fromValue.value(lengthContext), lengthContext);
+            toValue.setValue(lengthContext, toValue.value(lengthContext) + fromValue.value(lengthContext));
         }
     }
 };

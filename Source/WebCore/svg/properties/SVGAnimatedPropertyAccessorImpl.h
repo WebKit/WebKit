@@ -123,7 +123,7 @@ private:
 
     std::unique_ptr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
     {
-        SVGLengthMode lengthMode = property(owner)->baseVal()->value().unitMode();
+        SVGLengthMode lengthMode = property(owner)->baseVal()->value().lengthMode();
         return SVGAnimatedLengthAnimator::create(attributeName, property(owner), animationMode, calcMode, isAccumulated, isAdditive, lengthMode);
     }
 
@@ -146,7 +146,7 @@ public:
 private:
     std::unique_ptr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
     {
-        return SVGAnimatedLengthListAnimator::create(attributeName, property(owner), animationMode, calcMode, isAccumulated, isAdditive, LengthModeWidth);
+        return SVGAnimatedLengthListAnimator::create(attributeName, property(owner), animationMode, calcMode, isAccumulated, isAdditive, SVGLengthMode::Width);
     }
 
     void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final

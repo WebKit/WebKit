@@ -78,6 +78,7 @@ class StyleRulePage;
 class StyleSheet;
 class StyleSheetList;
 class StyledElement;
+class SVGElement;
 class SVGSVGElement;
 class ViewportStyleResolver;
 struct ResourceLoaderOptions;

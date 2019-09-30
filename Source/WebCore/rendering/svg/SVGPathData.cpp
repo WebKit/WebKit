@@ -52,8 +52,8 @@ static Path pathFromCircleElement(const SVGElement& element)
     SVGLengthContext lengthContext(&element);
     float r = lengthContext.valueForLength(style.svgStyle().r());
     if (r > 0) {
-        float cx = lengthContext.valueForLength(style.svgStyle().cx(), LengthModeWidth);
-        float cy = lengthContext.valueForLength(style.svgStyle().cy(), LengthModeHeight);
+        float cx = lengthContext.valueForLength(style.svgStyle().cx(), SVGLengthMode::Width);
+        float cy = lengthContext.valueForLength(style.svgStyle().cy(), SVGLengthMode::Height);
         path.addEllipse(FloatRect(cx - r, cy - r, r * 2, r * 2));
     }
     return path;
@@ -67,17 +67,17 @@ static Path pathFromEllipseElement(const SVGElement& element)
 
     auto& style = renderer->style();
     SVGLengthContext lengthContext(&element);
-    float rx = lengthContext.valueForLength(style.svgStyle().rx(), LengthModeWidth);
+    float rx = lengthContext.valueForLength(style.svgStyle().rx(), SVGLengthMode::Width);
     if (rx <= 0)
         return { };
 
-    float ry = lengthContext.valueForLength(style.svgStyle().ry(), LengthModeHeight);
+    float ry = lengthContext.valueForLength(style.svgStyle().ry(), SVGLengthMode::Height);
     if (ry <= 0)
         return { };
 
     Path path;
-    float cx = lengthContext.valueForLength(style.svgStyle().cx(), LengthModeWidth);
-    float cy = lengthContext.valueForLength(style.svgStyle().cy(), LengthModeHeight);
+    float cx = lengthContext.valueForLength(style.svgStyle().cx(), SVGLengthMode::Width);
+    float cy = lengthContext.valueForLength(style.svgStyle().cy(), SVGLengthMode::Height);
     path.addEllipse(FloatRect(cx - rx, cy - ry, rx * 2, ry * 2));
     return path;
 }
@@ -138,19 +138,19 @@ static Path pathFromRectElement(const SVGElement& element)
 
     auto& style = renderer->style();
     SVGLengthContext lengthContext(&element);
-    float width = lengthContext.valueForLength(style.width(), LengthModeWidth);
+    float width = lengthContext.valueForLength(style.width(), SVGLengthMode::Width);
     if (width <= 0)
         return { };
 
-    float height = lengthContext.valueForLength(style.height(), LengthModeHeight);
+    float height = lengthContext.valueForLength(style.height(), SVGLengthMode::Height);
     if (height <= 0)
         return { };
 
     Path path;
-    float x = lengthContext.valueForLength(style.svgStyle().x(), LengthModeWidth);
-    float y = lengthContext.valueForLength(style.svgStyle().y(), LengthModeHeight);
-    float rx = lengthContext.valueForLength(style.svgStyle().rx(), LengthModeWidth);
-    float ry = lengthContext.valueForLength(style.svgStyle().ry(), LengthModeHeight);
+    float x = lengthContext.valueForLength(style.svgStyle().x(), SVGLengthMode::Width);
+    float y = lengthContext.valueForLength(style.svgStyle().y(), SVGLengthMode::Height);
+    float rx = lengthContext.valueForLength(style.svgStyle().rx(), SVGLengthMode::Width);
+    float ry = lengthContext.valueForLength(style.svgStyle().ry(), SVGLengthMode::Height);
     bool hasRx = rx > 0;
     bool hasRy = ry > 0;
     if (hasRx || hasRy) {
