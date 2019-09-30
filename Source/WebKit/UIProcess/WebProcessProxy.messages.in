@@ -81,6 +81,6 @@ messages -> WebProcessProxy LegacyReceiver {
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    ProcessWasUnexpectedlyUnsuspended() -> () Async
+    ProcessWasUnexpectedlyUnsuspended()
 #endif
 }

@@ -190,12 +190,11 @@ void WebProcessProxy::releaseHighPerformanceGPU()
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-void WebProcessProxy::processWasUnexpectedlyUnsuspended(CompletionHandler<void()>&& completion)
+void WebProcessProxy::processWasUnexpectedlyUnsuspended()
 {
     if (m_throttler.shouldBeRunnable()) {
         // The process becoming unsuspended was not unexpected; it likely was notified of its running state
         // before receiving a procsessDidResume() message from the UIProcess.
-        completion();
         return;
     }
 
@@ -206,7 +205,6 @@ void WebProcessProxy::processWasUnexpectedlyUnsuspended(CompletionHandler<void()
         RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::processWasUnexpectedlyUnsuspended() - lambda, background activity timed out", weakThis.get());
     };
     m_unexpectedActivityTimer = std::make_unique<WebCore::DeferrableOneShotTimer>(WTFMove(backgroundActivityTimeoutHandler), unexpectedActivityDuration);
-    completion();
 }
 #endif
 

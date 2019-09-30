@@ -303,7 +303,7 @@ public:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    void processWasUnexpectedlyUnsuspended(CompletionHandler<void()>&&);
+    void processWasUnexpectedlyUnsuspended();
 #endif
 
     void webPageMediaStateDidChange(WebPageProxy&);

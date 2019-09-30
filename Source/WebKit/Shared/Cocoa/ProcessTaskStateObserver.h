@@ -27,19 +27,20 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#include <wtf/Lock.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 OBJC_CLASS WKProcessTaskStateObserverDelegate;
 OBJC_CLASS BKSProcess;
 
 namespace WebKit {
 
-class ProcessTaskStateObserver {
+class ProcessTaskStateObserver : public ThreadSafeRefCounted<ProcessTaskStateObserver> {
 public:
     class Client;
 
-    ProcessTaskStateObserver();
-    explicit ProcessTaskStateObserver(Client&);
+    static Ref<ProcessTaskStateObserver> create(Client&);
     ~ProcessTaskStateObserver();
     
     enum TaskState {
@@ -54,15 +55,15 @@ public:
         virtual void processTaskStateDidChange(TaskState) = 0;
     };
 
-    void setClient(Client& client) { m_client = &client; }
-    Client* client() { return m_client; }
-
+    void invalidate();
     TaskState taskState() const { return m_taskState; }
 
 private:
+    explicit ProcessTaskStateObserver(Client&);
     void setTaskState(TaskState);
 
-    Client* m_client { nullptr };
+    Client* m_client;
+    Lock m_clientLock;
     TaskState m_taskState { None };
     RetainPtr<BKSProcess> m_process;
     RetainPtr<WKProcessTaskStateObserverDelegate> m_delegate;
