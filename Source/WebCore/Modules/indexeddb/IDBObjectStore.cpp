@@ -77,7 +77,7 @@ const char* IDBObjectStore::activeDOMObjectName() const
 
 bool IDBObjectStore::canSuspendForDocumentSuspension() const
 {
-    return false;
+    return true;
 }
 
 bool IDBObjectStore::hasPendingActivity() const

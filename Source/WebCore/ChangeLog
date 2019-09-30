@@ -1,5 +1,26 @@
 2019-09-30  Chris Dumez  <cdumez@apple.com>
 
+        IDBTransaction / IDBObjectStore should not prevent a page from entering the back / forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=202291
+        <rdar://problem/55760106>
+
+        Reviewed by Geoffrey Garen.
+
+        IDBObjectStore does not fire any events and should therefore not cause any problem while in PageCache.
+        IDBTransaction can only fire abort/complete/error events, all of which are being enqueued to the
+        DocumentEventQueue. The DocumentEventQueue subclasses SuspendableTimer which will correctly suspend
+        while the document is in page cache. IDBTransaction will therefore not cause events to fire (and JS
+        to run) while in page cache.
+
+        Test: storage/indexeddb/IDBTransaction-page-cache.html
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::canSuspendForDocumentSuspension const):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::canSuspendForDocumentSuspension const):
+
+2019-09-30  Chris Dumez  <cdumez@apple.com>
+
         Refine restrictions for X-Temp-Tablet HTTP header experiment
         https://bugs.webkit.org/show_bug.cgi?id=202367
         <rdar://problem/55849139>
