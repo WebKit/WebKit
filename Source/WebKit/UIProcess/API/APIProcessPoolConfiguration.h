@@ -54,9 +54,6 @@ public:
     bool usesSingleWebProcess() const { return m_usesSingleWebProcess; }
     void setUsesSingleWebProcess(bool enabled) { m_usesSingleWebProcess = enabled; }
 
-    uint32_t downloadMonitorSpeedMultiplier() const { return m_downloadMonitorSpeedMultiplier; }
-    void setDownloadMonitorSpeedMultiplier(uint32_t multiplier) { m_downloadMonitorSpeedMultiplier = multiplier; }
-    
     bool isAutomaticProcessWarmingEnabled() const
     {
         return m_isAutomaticProcessWarmingEnabledByClient.valueOr(m_clientWouldBenefitFromAutomaticProcessPrewarming);
@@ -178,7 +175,6 @@ private:
     bool m_shouldConfigureJSCForTesting { false };
     bool m_isJITEnabled { true };
     bool m_usesSingleWebProcess { false };
-    uint32_t m_downloadMonitorSpeedMultiplier { 1 };
 
 #if PLATFORM(IOS_FAMILY)
     WTF::String m_ctDataConnectionServiceType;

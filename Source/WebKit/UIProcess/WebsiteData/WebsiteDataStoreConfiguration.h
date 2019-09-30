@@ -85,6 +85,9 @@ public:
     bool testingSessionEnabled() const { return m_testingSessionEnabled; }
     void setTestingSessionEnabled(bool enabled) { m_testingSessionEnabled = enabled; }
     
+    unsigned testSpeedMultiplier() const { return m_testSpeedMultiplier; }
+    void setTestSpeedMultiplier(unsigned multiplier) { m_testSpeedMultiplier = multiplier; }
+    
 #if PLATFORM(COCOA)
     CFDictionaryRef proxyConfiguration() const { return m_proxyConfiguration.get(); }
     void setProxyConfiguration(CFDictionaryRef configuration) { m_proxyConfiguration = configuration; }
@@ -171,6 +174,7 @@ private:
     bool m_fastServerTrustEvaluationEnabled { false };
     bool m_serviceWorkerProcessTerminationDelayEnabled { true };
     bool m_testingSessionEnabled { false };
+    unsigned m_testSpeedMultiplier { 1 };
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
 #endif

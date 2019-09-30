@@ -346,11 +346,6 @@
     _processPoolConfiguration->setJITEnabled(enabled);
 }
 
-- (NSUInteger)downloadMonitorSpeedMultiplierForTesting
-{
-    return _processPoolConfiguration->downloadMonitorSpeedMultiplier();
-}
-
 - (void)setHSTSStorageDirectory:(NSURL *)directory
 {
     if (directory && ![directory isFileURL])
@@ -363,11 +358,6 @@
 - (NSURL *)hstsStorageDirectory
 {
     return [NSURL fileURLWithPath:WebKit::LegacyGlobalSettings::singleton().hstsStorageDirectory() isDirectory:YES];
-}
-
-- (void)setDownloadMonitorSpeedMultiplierForTesting:(NSUInteger)multiplier
-{
-    _processPoolConfiguration->setDownloadMonitorSpeedMultiplier(multiplier);
 }
 
 - (void)setSuppressesConnectionTerminationOnSystemChange:(BOOL)suppressesConnectionTerminationOnSystemChange

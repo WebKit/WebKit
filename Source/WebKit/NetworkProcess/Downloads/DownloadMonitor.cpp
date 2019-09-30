@@ -103,12 +103,12 @@ void DownloadMonitor::applicationDidEnterBackground()
     RELEASE_LOG_IF_ALLOWED("applicationDidEnterBackground (id = %" PRIu64 ")", m_download.downloadID().downloadID());
     ASSERT(!m_timer.isActive());
     ASSERT(!m_interval);
-    m_timer.startOneShot(throughputIntervals[0].time / speedMultiplier());
+    m_timer.startOneShot(throughputIntervals[0].time / testSpeedMultiplier());
 }
 
-uint32_t DownloadMonitor::speedMultiplier() const
+uint32_t DownloadMonitor::testSpeedMultiplier() const
 {
-    return m_download.manager().client().downloadMonitorSpeedMultiplier();
+    return m_download.testSpeedMultiplier();
 }
 
 void DownloadMonitor::timerFired()
@@ -121,7 +121,7 @@ void DownloadMonitor::timerFired()
         m_download.cancel();
     } else if (m_interval + 1 < WTF_ARRAY_LENGTH(throughputIntervals)) {
         RELEASE_LOG_IF_ALLOWED("timerFired: sufficient throughput rate (id = %" PRIu64 ")", m_download.downloadID().downloadID());
-        m_timer.startOneShot(timeUntilNextInterval(m_interval++) / speedMultiplier());
+        m_timer.startOneShot(timeUntilNextInterval(m_interval++) / testSpeedMultiplier());
     } else
         RELEASE_LOG_IF_ALLOWED("timerFired: Download reached threshold to not be terminated (id = %" PRIu64 ")", m_download.downloadID().downloadID());
 }

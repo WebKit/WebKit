@@ -122,6 +122,8 @@ public:
 
     WebCore::BlobRegistryImpl& blobRegistry() { return m_blobRegistry; }
 
+    unsigned testSpeedMultiplier() const { return m_testSpeedMultiplier; }
+
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
 
@@ -153,6 +155,7 @@ protected:
 #endif
     RefPtr<NetworkCache::Cache> m_cache;
     WebCore::BlobRegistryImpl m_blobRegistry;
+    unsigned m_testSpeedMultiplier { 1 };
 };
 
 } // namespace WebKit

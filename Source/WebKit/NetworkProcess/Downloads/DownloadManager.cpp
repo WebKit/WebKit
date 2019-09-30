@@ -123,7 +123,10 @@ void DownloadManager::resumeDownload(PAL::SessionID sessionID, DownloadID downlo
 #if !PLATFORM(COCOA)
     notImplemented();
 #else
-    auto download = makeUnique<Download>(*this, downloadID, nullptr, sessionID);
+    auto* networkSession = m_client.networkSession(sessionID);
+    if (!networkSession)
+        return;
+    auto download = makeUnique<Download>(*this, downloadID, nullptr, *networkSession);
 
     download->resume(resumeData, path, WTFMove(sandboxExtensionHandle));
     ASSERT(!m_downloads.contains(downloadID));

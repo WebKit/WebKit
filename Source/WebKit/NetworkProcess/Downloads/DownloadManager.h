@@ -76,7 +76,6 @@ public:
         virtual NetworkSession* networkSession(PAL::SessionID) const = 0;
         virtual void ref() const = 0;
         virtual void deref() const = 0;
-        virtual uint32_t downloadMonitorSpeedMultiplier() const = 0;
     };
 
     explicit DownloadManager(Client&);

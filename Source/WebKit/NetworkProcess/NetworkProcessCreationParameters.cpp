@@ -80,7 +80,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << serviceWorkerRegistrationDirectory << serviceWorkerRegistrationDirectoryExtensionHandle << urlSchemesServiceWorkersCanHandle << shouldDisableServiceWorkerProcessTerminationDelay;
 #endif
     encoder << shouldEnableITPDatabase;
-    encoder << downloadMonitorSpeedMultiplier;
     encoder << enableAdClickAttributionDebugMode;
     encoder << hstsStorageDirectory;
     encoder << hstsStorageDirectoryExtensionHandle;
@@ -187,12 +186,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
 
     if (!decoder.decode(result.shouldEnableITPDatabase))
         return false;
-
-    Optional<uint32_t> downloadMonitorSpeedMultiplier;
-    decoder >> downloadMonitorSpeedMultiplier;
-    if (!downloadMonitorSpeedMultiplier)
-        return false;
-    result.downloadMonitorSpeedMultiplier = *downloadMonitorSpeedMultiplier;
 
     if (!decoder.decode(result.enableAdClickAttributionDebugMode))
         return false;

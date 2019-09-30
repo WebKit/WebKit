@@ -787,7 +787,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
         Ref<NetworkDataTaskCocoa> protectedNetworkDataTask(*networkDataTask);
         auto downloadID = networkDataTask->pendingDownloadID();
         auto& downloadManager = _session->networkProcess().downloadManager();
-        auto download = makeUnique<WebKit::Download>(downloadManager, downloadID, downloadTask, _session->sessionID(), networkDataTask->suggestedFilename());
+        auto download = makeUnique<WebKit::Download>(downloadManager, downloadID, downloadTask, *_session, networkDataTask->suggestedFilename());
         networkDataTask->transferSandboxExtensionToDownload(*download);
         ASSERT(FileSystem::fileExists(networkDataTask->pendingDownloadLocation()));
         download->didCreateDestination(networkDataTask->pendingDownloadLocation());

@@ -50,13 +50,14 @@
 namespace WebKit {
 using namespace WebCore;
 
-Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NetworkDataTask& download, const PAL::SessionID& sessionID, const String& suggestedName)
+Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NetworkDataTask& download, NetworkSession& session, const String& suggestedName)
     : m_downloadManager(downloadManager)
     , m_downloadID(downloadID)
     , m_client(downloadManager.client())
     , m_download(&download)
-    , m_sessionID(sessionID)
+    , m_sessionID(session.sessionID())
     , m_suggestedName(suggestedName)
+    , m_testSpeedMultiplier(session.testSpeedMultiplier())
 {
     ASSERT(m_downloadID.downloadID());
 
@@ -64,13 +65,14 @@ Download::Download(DownloadManager& downloadManager, DownloadID downloadID, Netw
 }
 
 #if PLATFORM(COCOA)
-Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NSURLSessionDownloadTask* download, const PAL::SessionID& sessionID, const String& suggestedName)
+Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NSURLSessionDownloadTask* download, NetworkSession& session, const String& suggestedName)
     : m_downloadManager(downloadManager)
     , m_downloadID(downloadID)
     , m_client(downloadManager.client())
     , m_downloadTask(download)
-    , m_sessionID(sessionID)
+    , m_sessionID(session.sessionID())
     , m_suggestedName(suggestedName)
+    , m_testSpeedMultiplier(session.testSpeedMultiplier())
 {
     ASSERT(m_downloadID.downloadID());
 

@@ -1,3 +1,13 @@
+2019-09-30  Alex Christensen  <achristensen@webkit.org>
+
+        Move DownloadMonitor test speed multiplier from WebProcessPool to WebsiteDataStoreConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=202339
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (TestWebKitAPI::webViewWithDownloadMonitorSpeedMultiplier):
+
 2019-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] IconDatabase is not thread-safe

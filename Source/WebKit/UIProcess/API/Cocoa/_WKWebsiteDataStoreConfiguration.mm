@@ -330,6 +330,16 @@ static void checkURLArgument(NSURL *url)
     _configuration->setPerOriginStorageQuota(quota);
 }
 
+- (NSUInteger)testSpeedMultiplier
+{
+    return _configuration->testSpeedMultiplier();
+}
+
+- (void)setTestSpeedMultiplier:(NSUInteger)quota
+{
+    _configuration->setTestSpeedMultiplier(quota);
+}
+
 - (NSString *)boundInterfaceIdentifier
 {
     return _configuration->boundInterfaceIdentifier();

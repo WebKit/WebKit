@@ -100,7 +100,6 @@ struct NetworkProcessCreationParameters {
     bool shouldDisableServiceWorkerProcessTerminationDelay { false };
 #endif
     bool shouldEnableITPDatabase { false };
-    uint32_t downloadMonitorSpeedMultiplier { 1 };
     bool enableAdClickAttributionDebugMode { false };
     String hstsStorageDirectory;
     SandboxExtension::Handle hstsStorageDirectoryExtensionHandle;

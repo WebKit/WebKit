@@ -380,7 +380,6 @@ private:
     IPC::Connection* parentProcessConnectionForDownloads() override { return parentProcessConnection(); }
     AuthenticationManager& downloadsAuthenticationManager() override;
     void pendingDownloadCanceled(DownloadID) override;
-    uint32_t downloadMonitorSpeedMultiplier() const override { return m_downloadMonitorSpeedMultiplier; }
 
     // Message Handlers
     void didReceiveSyncNetworkProcessMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
@@ -557,7 +556,6 @@ private:
         HashMap<WebCore::ClientOrigin, std::unique_ptr<WebCore::StorageQuotaManager>> m_managersPerOrigin;
     };
     HashMap<PAL::SessionID, StorageQuotaManagers> m_storageQuotaManagers;
-    uint32_t m_downloadMonitorSpeedMultiplier { 1 };
 
     OptionSet<NetworkCache::CacheOption> m_cacheOptions;
     WebCore::MessagePortChannelRegistry m_messagePortChannelRegistry;

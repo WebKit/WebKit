@@ -84,6 +84,7 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy()
     copy->m_allowsCellularAccess = this->m_allowsCellularAccess;
     copy->m_dataConnectionServiceType = this->m_dataConnectionServiceType;
     copy->m_testingSessionEnabled = this->m_testingSessionEnabled;
+    copy->m_testSpeedMultiplier = this->m_testSpeedMultiplier;
 #if PLATFORM(COCOA)
     if (m_proxyConfiguration)
         copy->m_proxyConfiguration = adoptCF(CFDictionaryCreateCopy(nullptr, this->m_proxyConfiguration.get()));

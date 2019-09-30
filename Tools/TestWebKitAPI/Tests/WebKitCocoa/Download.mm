@@ -39,9 +39,11 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKDownload.h>
 #import <WebKit/_WKDownloadDelegate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/FileSystem.h>
 #import <wtf/MainThread.h>
 #import <wtf/MonotonicTime.h>
@@ -849,10 +851,11 @@ RetainPtr<WKWebView> webViewWithDownloadMonitorSpeedMultiplier(size_t multiplier
     static auto navigationDelegate = adoptNS([DownloadNavigationDelegate new]);
     static auto downloadDelegate = adoptNS([DownloadMonitorTestDelegate new]);
     auto processPoolConfiguration = adoptNS([_WKProcessPoolConfiguration new]);
-    [processPoolConfiguration setDownloadMonitorSpeedMultiplierForTesting:multiplier];
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+    _WKWebsiteDataStoreConfiguration *dataStoreConfiguration = [[_WKWebsiteDataStoreConfiguration new] autorelease];
+    dataStoreConfiguration.testSpeedMultiplier = multiplier;
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
-    [webViewConfiguration setProcessPool:processPool.get()];
+    [webViewConfiguration setWebsiteDataStore:[[[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration] autorelease]];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     [webView setNavigationDelegate:navigationDelegate.get()];
     [webView configuration].processPool._downloadDelegate = downloadDelegate.get();

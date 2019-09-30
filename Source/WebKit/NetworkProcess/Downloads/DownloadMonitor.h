@@ -46,7 +46,7 @@ private:
     Download& m_download;
 
     double measuredThroughputRate() const;
-    uint32_t speedMultiplier() const;
+    uint32_t testSpeedMultiplier() const;
     
     struct Timestamp {
         MonotonicTime time;
