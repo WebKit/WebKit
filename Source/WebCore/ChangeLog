@@ -1,3 +1,74 @@
+2019-09-29  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r249893. rdar://problem/55825342
+
+    Expose misspelling ranges for editable content to accessibility clients.
+    https://bugs.webkit.org/show_bug.cgi?id=201752
+    <rdar://problem/49556828>
+    
+    Patch by Andres Gonzalez <andresg_22@apple.com> on 2019-09-16
+    Reviewed by Chris Fleizach.
+    
+    Source/WebCore:
+    
+    Test: accessibility/misspelling-range.html
+    
+    Added [WebAccessibilityObjectWrapper misspellingTextMarkerRange] and
+    underlying AccessibilityObject implementation to expose misspellings to
+    accessibility clients that provide an alternative user interface to
+    spell checking.
+    * accessibility/AccessibilityObject.cpp:
+    (WebCore::AccessibilityObject::getMisspellingRange const):
+    * accessibility/AccessibilityObject.h:
+    * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+    (-[WebAccessibilityObjectWrapper misspellingTextMarkerRange:direction:]):
+    * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+    (accessibilityMisspellingSearchCriteriaForParameterizedAttribute):
+    (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+    
+    Tools:
+    
+    Test code needed for LayoutTests/accessibility/misspelling-range.html.
+    * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+    * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+    * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+    (WTR::AccessibilityUIElement::misspellingTextMarkerRange):
+    (WTR::AccessibilityUIElement::indexForTextMarker):
+    * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+    (WTR::misspellingSearchParameterizedAttributeForCriteria):
+    (WTR::AccessibilityUIElement::misspellingTextMarkerRange):
+    
+    LayoutTests:
+    
+    * accessibility/misspelling-range-expected.txt: Added.
+    * accessibility/misspelling-range.html: Added.
+    * platform/ios-simulator/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249893 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-09-16  Andres Gonzalez  <andresg_22@apple.com>
+
+            Expose misspelling ranges for editable content to accessibility clients.
+            https://bugs.webkit.org/show_bug.cgi?id=201752
+            <rdar://problem/49556828>
+
+            Reviewed by Chris Fleizach.
+
+            Test: accessibility/misspelling-range.html
+
+            Added [WebAccessibilityObjectWrapper misspellingTextMarkerRange] and
+            underlying AccessibilityObject implementation to expose misspellings to
+            accessibility clients that provide an alternative user interface to
+            spell checking.
+            * accessibility/AccessibilityObject.cpp:
+            (WebCore::AccessibilityObject::getMisspellingRange const):
+            * accessibility/AccessibilityObject.h:
+            * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+            (-[WebAccessibilityObjectWrapper misspellingTextMarkerRange:direction:]):
+            * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+            (accessibilityMisspellingSearchCriteriaForParameterizedAttribute):
+            (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2019-09-27  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r250441. rdar://problem/55801089

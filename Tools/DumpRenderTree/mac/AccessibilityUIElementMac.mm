@@ -1673,6 +1673,19 @@ AccessibilityTextMarkerRange AccessibilityUIElement::lineTextMarkerRangeForTextM
     return nullptr;
 }
 
+AccessibilityTextMarkerRange AccessibilityUIElement::misspellingTextMarkerRange(AccessibilityTextMarkerRange* start, bool forward)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    [parameters setObject:(__bridge id)start->platformTextMarkerRange() forKey:@"AXStartTextMarkerRange"];
+    [parameters setObject:[NSNumber numberWithBool:forward] forKey:@"AXSearchTextDirection"];
+    id textMarkerRange = [m_element accessibilityAttributeValue:@"AXMisspellingTextMarkerRange" forParameter:parameters];
+    return AccessibilityTextMarkerRange((__bridge CFTypeRef)textMarkerRange);
+    END_AX_OBJC_EXCEPTIONS
+
+    return nullptr;
+}
+
 AccessibilityTextMarkerRange AccessibilityUIElement::textMarkerRangeForElement(AccessibilityUIElement* element)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
