@@ -1719,6 +1719,8 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
             document().invalidateAccessKeyCache();
         else if (name == HTMLNames::classAttr)
             classAttributeChanged(newValue);
+        else if (name == HTMLNames::partAttr)
+            partAttributeChanged(newValue);
         else if (name == HTMLNames::idAttr) {
             AtomString oldId = elementData()->idForStyleResolution();
             AtomString newId = makeIdForStyleResolution(newValue, document().inQuirksMode());
@@ -1761,7 +1763,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
 }
 
 template <typename CharacterType>
-static inline bool classStringHasClassName(const CharacterType* characters, unsigned length)
+static inline bool isNonEmptyTokenList(const CharacterType* characters, unsigned length)
 {
     ASSERT(length > 0);
 
@@ -1775,16 +1777,16 @@ static inline bool classStringHasClassName(const CharacterType* characters, unsi
     return i < length;
 }
 
-static inline bool classStringHasClassName(const AtomString& newClassString)
+static inline bool isNonEmptyTokenList(const AtomString& stringValue)
 {
-    unsigned length = newClassString.length();
+    unsigned length = stringValue.length();
 
     if (!length)
         return false;
 
-    if (newClassString.is8Bit())
-        return classStringHasClassName(newClassString.characters8(), length);
-    return classStringHasClassName(newClassString.characters16(), length);
+    if (stringValue.is8Bit())
+        return isNonEmptyTokenList(stringValue.characters8(), length);
+    return isNonEmptyTokenList(stringValue.characters16(), length);
 }
 
 void Element::classAttributeChanged(const AtomString& newClassString)
@@ -1794,7 +1796,7 @@ void Element::classAttributeChanged(const AtomString& newClassString)
         ensureUniqueElementData();
 
     bool shouldFoldCase = document().inQuirksMode();
-    bool newStringHasClasses = classStringHasClassName(newClassString);
+    bool newStringHasClasses = isNonEmptyTokenList(newClassString);
 
     auto oldClassNames = elementData()->classNames();
     auto newClassNames = newStringHasClasses ? SpaceSplitString(newClassString, shouldFoldCase) : SpaceSplitString();
@@ -1806,6 +1808,23 @@ void Element::classAttributeChanged(const AtomString& newClassString)
     if (hasRareData()) {
         if (auto* classList = elementRareData()->classList())
             classList->associatedAttributeValueChanged(newClassString);
+    }
+}
+
+void Element::partAttributeChanged(const AtomString& newValue)
+{
+    if (!RuntimeEnabledFeatures::sharedFeatures().cssShadowPartsEnabled())
+        return;
+
+    bool hasParts = isNonEmptyTokenList(newValue);
+    if (hasParts || !partNames().isEmpty()) {
+        auto newParts = hasParts ? SpaceSplitString(newValue, false) : SpaceSplitString();
+        ensureElementRareData().setPartNames(WTFMove(newParts));
+    }
+
+    if (hasRareData()) {
+        if (auto* partList = elementRareData()->partList())
+            partList->associatedAttributeValueChanged(newValue);
     }
 }
 
@@ -3412,6 +3431,19 @@ DOMTokenList& Element::classList()
     if (!data.classList())
         data.setClassList(makeUnique<DOMTokenList>(*this, HTMLNames::classAttr));
     return *data.classList();
+}
+
+inline SpaceSplitString Element::partNames() const
+{
+    return elementRareData() ? elementRareData()->partNames() : SpaceSplitString();
+}
+
+DOMTokenList& Element::part()
+{
+    auto& data = ensureElementRareData();
+    if (!data.partList())
+        data.setPartList(makeUnique<DOMTokenList>(*this, HTMLNames::partAttr));
+    return *data.partList();
 }
 
 DatasetDOMStringMap& Element::dataset()

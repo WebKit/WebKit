@@ -140,6 +140,7 @@ PASS a["id"] is foo
 PASS a["className"] is 
 PASS a["classList"] is 
 PASS a["slot"] is 
+PASS a["part"] is 
 PASS a["attributes"] is [object NamedNodeMap]
 PASS a["shadowRoot"] is null
 PASS a["scrollTop"] is 0

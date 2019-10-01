@@ -615,6 +615,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setLinkPreloadResponsiveImagesEnabled:(BOOL)flag;
 - (BOOL)linkPreloadResponsiveImagesEnabled;
 
+- (void)setCSSShadowPartsEnabled:(BOOL)flag;
+- (BOOL)cssShadowPartsEnabled;
+
 @property (nonatomic) BOOL visualViewportAPIEnabled;
 @property (nonatomic) BOOL CSSOMViewScrollingAPIEnabled;
 @property (nonatomic) BOOL largeImageAsyncDecodingEnabled;

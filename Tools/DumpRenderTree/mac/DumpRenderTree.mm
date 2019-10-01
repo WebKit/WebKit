@@ -880,6 +880,7 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setMediaRecorderEnabled:YES];
     [preferences setReferrerPolicyAttributeEnabled:YES];
     [preferences setLinkPreloadResponsiveImagesEnabled:YES];
+    [preferences setCSSShadowPartsEnabled:YES];
 }
 
 // Called before each test.

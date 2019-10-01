@@ -1,3 +1,13 @@
+2019-10-01  Antti Koivisto  <antti@apple.com>
+
+        [CSS Shadow Parts] Parse 'part' attribute
+        https://bugs.webkit.org/show_bug.cgi?id=202409
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/css/css-shadow-parts/invalidation-change-part-name-idl-domtokenlist-expected.txt:
+        * web-platform-tests/css/css-shadow-parts/part-name-idl-expected.txt:
+
 2019-10-01  Rob Buis  <rbuis@igalia.com>
 
         [Mac] Layout Test imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location.any.html fails

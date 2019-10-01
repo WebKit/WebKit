@@ -1441,6 +1441,14 @@ FetchAPIKeepAliveEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   webcoreName: fetchAPIKeepAliveEnabled
 
+CSSShadowPartsEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "CSS Shadow Parts"
+  humanReadableDescription: "Enable CSS Shadow Parts"
+  category: experimental
+  webcoreBinding: RuntimeEnabledFeatures
+
 # For internal features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableDescription for all debug features. They

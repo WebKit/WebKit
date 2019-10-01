@@ -691,6 +691,7 @@ public:
 #endif
         @NO, WebKitCoreMathMLEnabledPreferenceKey,
         @NO, WebKitLinkPreloadResponsiveImagesEnabledPreferenceKey,
+        @NO, WebKitCSSShadowPartsEnabledPreferenceKey,
         nil];
 
 #if !PLATFORM(IOS_FAMILY)
@@ -3505,6 +3506,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setLinkPreloadResponsiveImagesEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitLinkPreloadResponsiveImagesEnabledPreferenceKey];
+}
+
+- (BOOL)cssShadowPartsEnabled
+{
+    return [self _boolValueForKey:WebKitCSSShadowPartsEnabledPreferenceKey];
+}
+
+- (void)setCSSShadowPartsEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitCSSShadowPartsEnabledPreferenceKey];
 }
 
 @end

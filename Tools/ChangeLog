@@ -1,3 +1,13 @@
+2019-10-01  Antti Koivisto  <antti@apple.com>
+
+        [CSS Shadow Parts] Parse 'part' attribute
+        https://bugs.webkit.org/show_bug.cgi?id=202409
+
+        Reviewed by Ryosuke Niwa.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (enableExperimentalFeatures):
+
 2019-10-01  Aakash Jain  <aakash_jain@apple.com>
 
         Follow-up fix to r250572 to fix a typo.

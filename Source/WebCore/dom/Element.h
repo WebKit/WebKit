@@ -451,6 +451,9 @@ public:
 
     WEBCORE_EXPORT DOMTokenList& classList();
 
+    SpaceSplitString partNames() const;
+    DOMTokenList& part();
+
     DatasetDOMStringMap& dataset();
 
 #if ENABLE(VIDEO)
@@ -613,10 +616,8 @@ protected:
     void clearTabIndexExplicitlyIfNeeded();
     void setTabIndexExplicitly(int);
 
-    // classAttributeChanged() exists to share code between
-    // parseAttribute (called via setAttribute()) and
-    // svgAttributeChanged (called when element.className.baseValue is set)
     void classAttributeChanged(const AtomString& newClassString);
+    void partAttributeChanged(const AtomString& newValue);
 
     void addShadowRoot(Ref<ShadowRoot>&&);
 

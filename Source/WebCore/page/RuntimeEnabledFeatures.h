@@ -373,6 +373,9 @@ public:
     void setLazyImageLoadingEnabled(bool areEnabled) { m_lazyImageLoadingEnabled = areEnabled; }
     bool lazyImageLoadingEnabled() const { return m_lazyImageLoadingEnabled; }
 
+    void setCSSShadowPartsEnabled(bool isEnabled) { m_isCSSShadowPartsEnabled = isEnabled; }
+    bool cssShadowPartsEnabled() const { return m_isCSSShadowPartsEnabled; }
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 #if HAVE(NSURLSESSION_WEBSOCKET)
@@ -574,6 +577,7 @@ private:
 
     bool m_lazyImageLoadingEnabled { false };
     bool m_secureContextChecksEnabled { true };
+    bool m_isCSSShadowPartsEnabled { false };
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };
