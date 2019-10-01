@@ -1,3 +1,15 @@
+2019-10-01  Alex Christensen  <achristensen@webkit.org>
+
+        Unify more WebKitLegacy sources
+        https://bugs.webkit.org/show_bug.cgi?id=202410
+
+        Reviewed by Tim Horton.
+
+        * SourcesCocoa.txt:
+        * UnifiedSources-output.xcfilelist:
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+        * scripts/generate-unified-sources.sh:
+
 2019-09-30  Alex Christensen  <achristensen@webkit.org>
 
         Resurrect Mac CMake build

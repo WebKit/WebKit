@@ -127,7 +127,7 @@ static inline WebDataSourcePrivate* toPrivate(void* privateAttribute)
     toPrivate(_private)->representationFinishedLoading = NO;
 }
 
-static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *supportTypes)
+void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *supportTypes)
 {
     NSEnumerator *enumerator = [supportTypes objectEnumerator];
     ASSERT(enumerator != nil);

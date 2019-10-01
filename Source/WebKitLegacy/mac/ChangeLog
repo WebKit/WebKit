@@ -1,5 +1,81 @@
 2019-10-01  Alex Christensen  <achristensen@webkit.org>
 
+        Unify more WebKitLegacy sources
+        https://bugs.webkit.org/show_bug.cgi?id=202410
+
+        Reviewed by Tim Horton.
+
+        * DOM/DOMHTML.mm:
+        (-[DOMHTMLElement scrollXOffset]):
+        (-[DOMHTMLElement scrollYOffset]):
+        (-[DOMHTMLElement setScrollXOffset:scrollYOffset:adjustForIOSCaret:]):
+        (-[DOMHTMLElement absolutePosition::::]):
+        (-[DOMHTMLInputElement setValueWithChangeEvent:]):
+        (-[DOMHTMLInputElement setValueAsNumberWithChangeEvent:]):
+        * DOM/DOMHTMLTextAreaElement.mm:
+        (unwrap):
+        (core):
+        (kit):
+        (-[DOMHTMLTextAreaElement autofocus]):
+        (-[DOMHTMLTextAreaElement setAutofocus:]):
+        (-[DOMHTMLTextAreaElement dirName]):
+        (-[DOMHTMLTextAreaElement setDirName:]):
+        (-[DOMHTMLTextAreaElement disabled]):
+        (-[DOMHTMLTextAreaElement setDisabled:]):
+        (-[DOMHTMLTextAreaElement form]):
+        (-[DOMHTMLTextAreaElement maxLength]):
+        (-[DOMHTMLTextAreaElement setMaxLength:]):
+        (-[DOMHTMLTextAreaElement name]):
+        (-[DOMHTMLTextAreaElement setName:]):
+        (-[DOMHTMLTextAreaElement placeholder]):
+        (-[DOMHTMLTextAreaElement setPlaceholder:]):
+        (-[DOMHTMLTextAreaElement readOnly]):
+        (-[DOMHTMLTextAreaElement setReadOnly:]):
+        (-[DOMHTMLTextAreaElement required]):
+        (-[DOMHTMLTextAreaElement setRequired:]):
+        (-[DOMHTMLTextAreaElement rows]):
+        (-[DOMHTMLTextAreaElement setRows:]):
+        (-[DOMHTMLTextAreaElement cols]):
+        (-[DOMHTMLTextAreaElement setCols:]):
+        (-[DOMHTMLTextAreaElement wrap]):
+        (-[DOMHTMLTextAreaElement setWrap:]):
+        (-[DOMHTMLTextAreaElement type]):
+        (-[DOMHTMLTextAreaElement defaultValue]):
+        (-[DOMHTMLTextAreaElement setDefaultValue:]):
+        (-[DOMHTMLTextAreaElement value]):
+        (-[DOMHTMLTextAreaElement setValue:]):
+        (-[DOMHTMLTextAreaElement textLength]):
+        (-[DOMHTMLTextAreaElement willValidate]):
+        (-[DOMHTMLTextAreaElement labels]):
+        (-[DOMHTMLTextAreaElement selectionStart]):
+        (-[DOMHTMLTextAreaElement setSelectionStart:]):
+        (-[DOMHTMLTextAreaElement selectionEnd]):
+        (-[DOMHTMLTextAreaElement setSelectionEnd:]):
+        (-[DOMHTMLTextAreaElement selectionDirection]):
+        (-[DOMHTMLTextAreaElement setSelectionDirection:]):
+        (-[DOMHTMLTextAreaElement accessKey]):
+        (-[DOMHTMLTextAreaElement setAccessKey:]):
+        (-[DOMHTMLTextAreaElement autocomplete]):
+        (-[DOMHTMLTextAreaElement setAutocomplete:]):
+        (-[DOMHTMLTextAreaElement select]):
+        (-[DOMHTMLTextAreaElement setRangeText:]):
+        (-[DOMHTMLTextAreaElement setRangeText:start:end:selectionMode:]):
+        (-[DOMHTMLTextAreaElement setSelectionRange:end:]):
+        * DOM/DOMUIKitExtensions.mm:
+        (-[DOMRange move:inDirection:]):
+        (-[DOMRange extend:inDirection:]):
+        (-[DOMNode borderRadii]):
+        (-[DOMNode isSelectableBlock]):
+        (-[DOMNode findExplodedTextNodeAtPoint:]):
+        (-[DOMHTMLElement structuralComplexityContribution]):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (dataSource):
+        * WebView/WebDataSource.mm:
+        (addTypesFromClass):
+
+2019-10-01  Alex Christensen  <achristensen@webkit.org>
+
         Fix internal build after r250549
         https://bugs.webkit.org/show_bug.cgi?id=202390
 

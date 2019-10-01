@@ -196,7 +196,7 @@ NSString *WebPluginContainerKey = @"WebPluginContainer";
 
 @end
 
-static inline WebDataSource *dataSource(WebCore::DocumentLoader* loader)
+WebDataSource *dataSource(WebCore::DocumentLoader* loader)
 {
     return loader ? static_cast<WebDocumentLoaderMac*>(loader)->dataSource() : nil;
 }

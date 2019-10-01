@@ -24,7 +24,6 @@
  *
  */
 
-
 #if PLATFORM(IOS_FAMILY)
 
 #import "DOMUIKitExtensions.h"
@@ -66,8 +65,6 @@
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WAKAppKitStubs.h>
 
-using namespace WebCore;
-
 using WebCore::Node;
 using WebCore::Position;
 using WebCore::Range;
@@ -82,22 +79,22 @@ using WebCore::VisiblePosition;
 - (void)move:(UInt32)amount inDirection:(WebTextAdjustmentDirection)direction
 {
     Range *range = core(self);
-    FrameSelection frameSelection;
+    WebCore::FrameSelection frameSelection;
     frameSelection.moveTo(range);
     
-    TextGranularity granularity = CharacterGranularity;
+    WebCore::TextGranularity granularity = WebCore::CharacterGranularity;
     // Until WebKit supports vertical layout, "down" is equivalent to "forward by a line" and
     // "up" is equivalent to "backward by a line".
     if (direction == WebTextAdjustmentDown) {
         direction = WebTextAdjustmentForward;
-        granularity = LineGranularity;
+        granularity = WebCore::LineGranularity;
     } else if (direction == WebTextAdjustmentUp) {
         direction = WebTextAdjustmentBackward;
-        granularity = LineGranularity;
+        granularity = WebCore::LineGranularity;
     }
     
     for (UInt32 i = 0; i < amount; i++)
-        frameSelection.modify(FrameSelection::AlterationMove, (SelectionDirection)direction, granularity);
+        frameSelection.modify(WebCore::FrameSelection::AlterationMove, (WebCore::SelectionDirection)direction, granularity);
     
     Position start = frameSelection.selection().start().parentAnchoredEquivalent();
     Position end = frameSelection.selection().end().parentAnchoredEquivalent();
@@ -110,11 +107,11 @@ using WebCore::VisiblePosition;
 - (void)extend:(UInt32)amount inDirection:(WebTextAdjustmentDirection)direction
 {
     Range *range = core(self);
-    FrameSelection frameSelection;
+    WebCore::FrameSelection frameSelection;
     frameSelection.moveTo(range);
     
     for (UInt32 i = 0; i < amount; i++)
-        frameSelection.modify(FrameSelection::AlterationExtend, (SelectionDirection)direction, CharacterGranularity);    
+        frameSelection.modify(WebCore::FrameSelection::AlterationExtend, (WebCore::SelectionDirection)direction, WebCore::CharacterGranularity);
     
     Position start = frameSelection.selection().start().parentAnchoredEquivalent();
     Position end = frameSelection.selection().end().parentAnchoredEquivalent();
@@ -184,11 +181,11 @@ using WebCore::VisiblePosition;
     RenderObject* renderer = core(self)->renderer();
     
     if (is<RenderBox>(renderer)) {
-        RoundedRect::Radii radii = downcast<RenderBox>(*renderer).borderRadii();
-        return @[[NSValue valueWithSize:(FloatSize)radii.topLeft()],
-                 [NSValue valueWithSize:(FloatSize)radii.topRight()],
-                 [NSValue valueWithSize:(FloatSize)radii.bottomLeft()],
-                 [NSValue valueWithSize:(FloatSize)radii.bottomRight()]];
+        WebCore::RoundedRect::Radii radii = downcast<RenderBox>(*renderer).borderRadii();
+        return @[[NSValue valueWithSize:(WebCore::FloatSize)radii.topLeft()],
+            [NSValue valueWithSize:(WebCore::FloatSize)radii.topRight()],
+            [NSValue valueWithSize:(WebCore::FloatSize)radii.bottomLeft()],
+            [NSValue valueWithSize:(WebCore::FloatSize)radii.bottomRight()]];
     }
     NSValue *emptyValue = [NSValue valueWithSize:CGSizeZero];
     return @[emptyValue, emptyValue, emptyValue, emptyValue];
@@ -206,7 +203,7 @@ using WebCore::VisiblePosition;
 - (BOOL)isSelectableBlock
 {
     RenderObject* renderer = core(self)->renderer();
-    return renderer && (is<RenderBlockFlow>(*renderer) || (is<RenderBlock>(*renderer) && downcast<RenderBlock>(*renderer).inlineContinuation() != nil));
+    return renderer && (is<WebCore::RenderBlockFlow>(*renderer) || (is<RenderBlock>(*renderer) && downcast<RenderBlock>(*renderer).inlineContinuation() != nil));
 }
 
 - (DOMRange *)rangeOfContainingParagraph
@@ -241,10 +238,10 @@ using WebCore::VisiblePosition;
 - (DOMNode *)findExplodedTextNodeAtPoint:(CGPoint)point
 {
     auto* renderer = core(self)->renderer();
-    if (!is<RenderBlockFlow>(renderer))
+    if (!is<WebCore::RenderBlockFlow>(renderer))
         return nil;
 
-    auto* renderText = downcast<RenderBlockFlow>(*renderer).findClosestTextAtAbsolutePoint(point);
+    auto* renderText = downcast<WebCore::RenderBlockFlow>(*renderer).findClosestTextAtAbsolutePoint(point);
     if (renderText && renderText->textNode())
         return kit(renderText->textNode());
 
@@ -271,7 +268,7 @@ using WebCore::VisiblePosition;
             result = INT_MAX;
         } else if (!renderer->firstChildSlow()) {
             result = 0;
-        } else if (is<RenderBlockFlow>(*renderer) || (is<RenderBlock>(*renderer) && downcast<RenderBlock>(*renderer).inlineContinuation())) {
+        } else if (is<WebCore::RenderBlockFlow>(*renderer) || (is<RenderBlock>(*renderer) && downcast<RenderBlock>(*renderer).inlineContinuation())) {
             BOOL noCost = NO;
             if (is<RenderBox>(*renderer)) {
                 RenderBox& asBox = renderer->enclosingBox();

@@ -172,7 +172,6 @@
 		598ADA461202275000ABAE4E /* WebDeviceOrientationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 598ADA451202275000ABAE4E /* WebDeviceOrientationProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C40CD2122D8F9C000E9DAD5 /* PopupMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C01CB82173435C900C5D807 /* PopupMenuMac.mm */; };
 		5C40CD2222D8F9C300E9DAD5 /* SearchPopupMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C01CB84173435C900C5D807 /* SearchPopupMenuMac.mm */; };
-		5C5D0F7722D9629A00E841DB /* DOMImplementation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93D435451D57ABEE00AB85EA /* DOMImplementation.mm */; };
 		5C7DCC4922D9632D00CFEB59 /* UnifiedSource4-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7DCC4722D9631100CFEB59 /* UnifiedSource4-mm.mm */; };
 		5C7DCC4F22D963BD00CFEB59 /* UnifiedSource3-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7DCC4D22D9639B00CFEB59 /* UnifiedSource3-mm.mm */; };
 		5C7DCC5022D9643A00CFEB59 /* UnifiedSource8-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7E786322D95FE20006A230 /* UnifiedSource8-mm.mm */; };
@@ -195,8 +194,6 @@
 		5C9D925B22D7E8AD008E9266 /* SourcesCocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5C9D925922D7E8AD008E9266 /* SourcesCocoa.txt */; };
 		5C9EF2F521F061BE003BDC56 /* PageStorageSessionProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C9EF2F421F061BE003BDC56 /* PageStorageSessionProvider.h */; };
 		5CA46E7821F1451D00CE86B4 /* NetworkStorageSessionMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CA46E7621F1451D00CE86B4 /* NetworkStorageSessionMap.h */; };
-		5CA4B3BD22DCF26E00676415 /* DOMHTMLAreaElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93D435681D57ABEE00AB85EA /* DOMHTMLAreaElement.mm */; };
-		5CA4B3BE22DCF27600676415 /* DOMHTMLAnchorElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93D435641D57ABEE00AB85EA /* DOMHTMLAnchorElement.mm */; };
 		5CC19FCC22D7F28D00BBC952 /* UnifiedSource1-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CC19FB822D7F23B00BBC952 /* UnifiedSource1-mm.mm */; };
 		5CC19FCD22D7F28D00BBC952 /* UnifiedSource1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC19FBB22D7F23B00BBC952 /* UnifiedSource1.cpp */; };
 		5CC19FCE22D7F28D00BBC952 /* UnifiedSource2-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CC19FBE22D7F23C00BBC952 /* UnifiedSource2-mm.mm */; };
@@ -205,6 +202,7 @@
 		5CC19FD122D7F28D00BBC952 /* UnifiedSource5-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CC19FBC22D7F23B00BBC952 /* UnifiedSource5-mm.mm */; };
 		5CC19FD222D7F28D00BBC952 /* UnifiedSource5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC19FB922D7F23B00BBC952 /* UnifiedSource5.cpp */; };
 		5CE44F4A206D70EA003EFD01 /* PingHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE44F49206D70E9003EFD01 /* PingHandle.h */; };
+		5CEFBA2F2343BE66009C41F8 /* UnifiedSource21-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CEFBA2E2343BE66009C41F8 /* UnifiedSource21-mm.mm */; };
 		5D7BF8140C2A1D90008CE06D /* WebInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D7BF8120C2A1D90008CE06D /* WebInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5DE83A7A0D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5DE83A740D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.xib */; };
 		65488DA1084FBCCB00831AD0 /* WebNSDictionaryExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65488D9F084FBCCB00831AD0 /* WebNSDictionaryExtras.h */; };
@@ -935,8 +933,8 @@
 		5C7E786722D95FE20006A230 /* UnifiedSource7-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource7-mm.mm"; sourceTree = "<group>"; };
 		5C7E786822D95FE20006A230 /* UnifiedSource12-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource12-mm.mm"; sourceTree = "<group>"; };
 		5C7E786922D95FE20006A230 /* UnifiedSource11-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource11-mm.mm"; sourceTree = "<group>"; };
-		5C97EF612342C534006020D4 /* UnifiedSource19-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "UnifiedSource19-mm.mm"; path = "UnifiedSource19-mm.mm"; sourceTree = "<group>"; };
-		5C97EF622342C534006020D4 /* UnifiedSource20-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "UnifiedSource20-mm.mm"; path = "UnifiedSource20-mm.mm"; sourceTree = "<group>"; };
+		5C97EF612342C534006020D4 /* UnifiedSource19-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource19-mm.mm"; sourceTree = "<group>"; };
+		5C97EF622342C534006020D4 /* UnifiedSource20-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource20-mm.mm"; sourceTree = "<group>"; };
 		5C9D925822D7E8AD008E9266 /* Sources.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sources.txt; sourceTree = "<group>"; };
 		5C9D925922D7E8AD008E9266 /* SourcesCocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SourcesCocoa.txt; sourceTree = "<group>"; };
 		5C9EF2F421F061BE003BDC56 /* PageStorageSessionProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PageStorageSessionProvider.h; path = WebCoreSupport/PageStorageSessionProvider.h; sourceTree = SOURCE_ROOT; };
@@ -950,6 +948,7 @@
 		5CC19FBD22D7F23B00BBC952 /* UnifiedSource3.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource3.cpp; sourceTree = "<group>"; };
 		5CC19FBE22D7F23C00BBC952 /* UnifiedSource2-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource2-mm.mm"; sourceTree = "<group>"; };
 		5CE44F49206D70E9003EFD01 /* PingHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PingHandle.h; path = WebCoreSupport/PingHandle.h; sourceTree = SOURCE_ROOT; };
+		5CEFBA2E2343BE66009C41F8 /* UnifiedSource21-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource21-mm.mm"; sourceTree = "<group>"; };
 		5D7BF8120C2A1D90008CE06D /* WebInspector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebInspector.h; sourceTree = "<group>"; };
 		5D7BF8130C2A1D90008CE06D /* WebInspector.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspector.mm; sourceTree = "<group>"; };
 		5DE83A750D0F7F9400CAD12A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/WebJavaScriptTextInputPanel.xib; sourceTree = SOURCE_ROOT; };
@@ -1921,6 +1920,7 @@
 				5C7E785E22D95FE10006A230 /* UnifiedSource18-mm.mm */,
 				5C97EF612342C534006020D4 /* UnifiedSource19-mm.mm */,
 				5C97EF622342C534006020D4 /* UnifiedSource20-mm.mm */,
+				5CEFBA2E2343BE66009C41F8 /* UnifiedSource21-mm.mm */,
 			);
 			path = "unified-sources";
 			sourceTree = "<group>";
@@ -3399,9 +3399,6 @@
 				1A9119F61DB0470A0087D1FD /* BackForwardList.mm in Sources */,
 				1A60519117502A5D00BC62F5 /* BinaryPropertyList.cpp in Sources */,
 				B82958D4132707D0000D0E79 /* CorrectionPanel.mm in Sources */,
-				5CA4B3BE22DCF27600676415 /* DOMHTMLAnchorElement.mm in Sources */,
-				5CA4B3BD22DCF26E00676415 /* DOMHTMLAreaElement.mm in Sources */,
-				5C5D0F7722D9629A00E841DB /* DOMImplementation.mm in Sources */,
 				5C9A4E5322DE4627007DB353 /* DOMUIKitExtensions.mm in Sources */,
 				1A60519317502A5D00BC62F5 /* HistoryPropertyList.mm in Sources */,
 				1A8DED510EE88B8A00F25022 /* HostedNetscapePluginStream.mm in Sources */,
@@ -3446,6 +3443,7 @@
 				5C7E786B22D95FE20006A230 /* UnifiedSource18-mm.mm in Sources */,
 				5C97EF632342C534006020D4 /* UnifiedSource19-mm.mm in Sources */,
 				5C97EF642342C534006020D4 /* UnifiedSource20-mm.mm in Sources */,
+				5CEFBA2F2343BE66009C41F8 /* UnifiedSource21-mm.mm in Sources */,
 				CEDA12DB152CBE6800D9E08D /* WebAlternativeTextClient.mm in Sources */,
 				9398111D0824BF01008DF038 /* WebArchive.mm in Sources */,
 				939810CF0824BF01008DF038 /* WebAuthenticationPanel.m in Sources */,

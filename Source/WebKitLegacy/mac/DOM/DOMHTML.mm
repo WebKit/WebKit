@@ -24,7 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-
 #import "DOMDocumentFragmentInternal.h"
 #import "DOMExtensions.h"
 #import "DOMHTMLCollectionInternal.h"
@@ -63,37 +62,35 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-using namespace WebCore;
-
 @implementation DOMHTMLElement (DOMHTMLElementExtensions)
 
 - (int)scrollXOffset
 {
-    RenderObject *renderer = core(self)->renderer();
+    auto* renderer = core(self)->renderer();
     if (!renderer)
         return 0;
 
-    if (!is<RenderBlockFlow>(*renderer))
+    if (!is<WebCore::RenderBlockFlow>(*renderer))
         renderer = renderer->containingBlock();
 
-    if (!is<RenderBox>(*renderer) || !renderer->hasOverflowClip())
+    if (!is<WebCore::RenderBox>(*renderer) || !renderer->hasOverflowClip())
         return 0;
 
-    return downcast<RenderBox>(*renderer).layer()->scrollOffset().x();
+    return downcast<WebCore::RenderBox>(*renderer).layer()->scrollOffset().x();
 }
 
 - (int)scrollYOffset
 {
-    RenderObject* renderer = core(self)->renderer();
+    auto* renderer = core(self)->renderer();
     if (!renderer)
         return 0;
 
-    if (!is<RenderBlockFlow>(*renderer))
+    if (!is<WebCore::RenderBlockFlow>(*renderer))
         renderer = renderer->containingBlock();
-    if (!is<RenderBox>(*renderer) || !renderer->hasOverflowClip())
+    if (!is<WebCore::RenderBox>(*renderer) || !renderer->hasOverflowClip())
         return 0;
 
-    return downcast<RenderBox>(*renderer).layer()->scrollOffset().y();
+    return downcast<WebCore::RenderBox>(*renderer).layer()->scrollOffset().y();
 }
 
 - (void)setScrollXOffset:(int)x scrollYOffset:(int)y
@@ -103,35 +100,35 @@ using namespace WebCore;
 
 - (void)setScrollXOffset:(int)x scrollYOffset:(int)y adjustForIOSCaret:(BOOL)adjustForIOSCaret
 {
-    RenderObject* renderer = core(self)->renderer();
+    auto* renderer = core(self)->renderer();
     if (!renderer)
         return;
 
-    if (!is<RenderBlockFlow>(*renderer))
+    if (!is<WebCore::RenderBlockFlow>(*renderer))
         renderer = renderer->containingBlock();
-    if (!renderer->hasOverflowClip() || !is<RenderBox>(*renderer))
+    if (!renderer->hasOverflowClip() || !is<WebCore::RenderBox>(*renderer))
         return;
 
-    RenderLayer* layer = downcast<RenderBox>(*renderer).layer();
+    auto* layer = downcast<WebCore::RenderBox>(*renderer).layer();
     if (adjustForIOSCaret)
         layer->setAdjustForIOSCaretWhenScrolling(true);
-    layer->scrollToOffset(ScrollOffset(x, y), ScrollType::Programmatic, ScrollClamping::Unclamped);
+    layer->scrollToOffset(WebCore::ScrollOffset(x, y), WebCore::ScrollType::Programmatic, WebCore::ScrollClamping::Unclamped);
     if (adjustForIOSCaret)
         layer->setAdjustForIOSCaretWhenScrolling(false);
 }
 
 - (void)absolutePosition:(int *)x :(int *)y :(int *)w :(int *)h
 {
-    RenderBox *renderer = core(self)->renderBox();
+    auto* renderer = core(self)->renderBox();
     if (renderer) {
         if (w)
             *w = renderer->width();
         if (h)
             *h = renderer->width();
         if (x && y) {
-            FloatPoint floatPoint(*x, *y);
+            WebCore::FloatPoint floatPoint(*x, *y);
             renderer->localToAbsolute(floatPoint);
-            IntPoint point = roundedIntPoint(floatPoint);
+            WebCore::IntPoint point = roundedIntPoint(floatPoint);
             *x = point.x();
             *y = point.y();
         }
@@ -265,13 +262,13 @@ static WebAutocapitalizeType webAutocapitalizeType(AutocapitalizeType type)
 - (void)setValueWithChangeEvent:(NSString *)newValue
 {
     WebCore::JSMainThreadNullState state;
-    core(self)->setValue(newValue, DispatchInputAndChangeEvent);
+    core(self)->setValue(newValue, WebCore::DispatchInputAndChangeEvent);
 }
 
 - (void)setValueAsNumberWithChangeEvent:(double)newValueAsNumber
 {
     WebCore::JSMainThreadNullState state;
-    core(self)->setValueAsNumber(newValueAsNumber, DispatchInputAndChangeEvent);
+    core(self)->setValueAsNumber(newValueAsNumber, WebCore::DispatchInputAndChangeEvent);
 }
 
 @end

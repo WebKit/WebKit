@@ -15,7 +15,7 @@ if [ -z "${BUILD_SCRIPTS_DIR}" ]; then
 fi
 
 UnifiedSourceCppFileCount=5
-UnifiedSourceMmFileCount=20
+UnifiedSourceMmFileCount=21
 
 if [ $# -eq 0 ]; then
     echo "Using unified source list files: Sources.txt, SourcesCocoa.txt"

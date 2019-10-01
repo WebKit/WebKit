@@ -58,9 +58,9 @@ mac/DOM/DOMEvents.mm
 mac/DOM/DOMFile.mm
 mac/DOM/DOMFileList.mm
 mac/DOM/DOMHTML.mm
-mac/DOM/DOMHTMLAnchorElement.mm @no-unify
+mac/DOM/DOMHTMLAnchorElement.mm
 mac/DOM/DOMHTMLAppletElement.mm
-mac/DOM/DOMHTMLAreaElement.mm @no-unify
+mac/DOM/DOMHTMLAreaElement.mm
 mac/DOM/DOMHTMLBRElement.mm
 mac/DOM/DOMHTMLBaseElement.mm
 mac/DOM/DOMHTMLBaseFontElement.mm
@@ -118,7 +118,7 @@ mac/DOM/DOMHTMLTextAreaElement.mm
 mac/DOM/DOMHTMLTitleElement.mm
 mac/DOM/DOMHTMLUListElement.mm
 mac/DOM/DOMHTMLVideoElement.mm
-mac/DOM/DOMImplementation.mm @no-unify
+mac/DOM/DOMImplementation.mm
 mac/DOM/DOMInternal.mm
 mac/DOM/DOMKeyboardEvent.mm
 mac/DOM/DOMMediaError.mm
@@ -144,7 +144,7 @@ mac/DOM/DOMTimeRanges.mm
 mac/DOM/DOMTokenList.mm
 mac/DOM/DOMTreeWalker.mm
 mac/DOM/DOMUIEvent.mm
-mac/DOM/DOMUIKitExtensions.mm @no-unify
+mac/DOM/DOMUIKitExtensions.mm
 mac/DOM/DOMUtility.mm
 mac/DOM/DOMWheelEvent.mm
 mac/DOM/DOMXPath.mm
