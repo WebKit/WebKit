@@ -1,3 +1,21 @@
+2019-10-01  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Sources: clicking on a breakpoint changes the path components to not match the script's path
+        https://bugs.webkit.org/show_bug.cgi?id=196450
+        <rdar://problem/49488100>
+
+        Reviewed by Matt Baker.
+
+        When selecting any tree element that isn't in the resources tree outline, attempt to find
+        the corresponding tree element in the resources tree outline and silently select that as
+        well so that the hierarchical path component shows the right breadcrumb trail.
+
+        If the tree element is for a `WI.Script` which has a corresponding `WI.Resource`, use the
+        `WI.Resource` instead.
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel.prototype._handleTreeSelectionDidChange):
+
 2019-09-30  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: JS Formatter: unexpected newlines added inside template string expression

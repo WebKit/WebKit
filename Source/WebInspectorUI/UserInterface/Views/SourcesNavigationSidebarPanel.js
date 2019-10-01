@@ -1681,12 +1681,32 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             return;
         }
 
+        // Silently select the corresponding tree element in the resources tree outline to update
+        // the hierarchical path components to show the right ancestor(s).
+        let selectTreeElementInResourcesTreeOutline = (sourceCode) => {
+            let resourceTreeElement = this._resourcesTreeOutline.findTreeElement(sourceCode);
+            if (!resourceTreeElement)
+                return;
+
+            const omitFocus = true;
+            const selectedByUser = false;
+            const suppressNotification = true;
+            resourceTreeElement.select(omitFocus, selectedByUser, suppressNotification);
+        };
+
         if (treeElement instanceof WI.FolderTreeElement
             || treeElement instanceof WI.OriginTreeElement
             || treeElement instanceof WI.ResourceTreeElement
             || treeElement instanceof WI.ScriptTreeElement
             || treeElement instanceof WI.CSSStyleSheetTreeElement) {
             let representedObject = treeElement.representedObject;
+
+            if (representedObject instanceof WI.Script && representedObject.resource)
+                representedObject = representedObject.resource;
+
+            if (treeElement.treeOutline !== this._resourcesTreeOutline)
+                selectTreeElementInResourcesTreeOutline(representedObject);
+
             if (representedObject instanceof WI.Collection || representedObject instanceof WI.SourceCode || representedObject instanceof WI.Frame)
                 WI.showRepresentedObject(representedObject);
             return;
@@ -1711,18 +1731,13 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             if (WI.debuggerManager.isBreakpointSpecial(breakpoint))
                 return;
 
-            if (treeElement.treeOutline === this._pauseReasonTreeOutline) {
-                WI.showSourceCodeLocation(breakpoint.sourceCodeLocation);
-                return;
-            }
+            let sourceCode = breakpoint.sourceCodeLocation.displaySourceCode;
+            if (sourceCode instanceof WI.Script && sourceCode.resource)
+                sourceCode = sourceCode.resource;
+            selectTreeElementInResourcesTreeOutline(sourceCode);
 
-            if (treeElement.parent.representedObject) {
-                console.assert(treeElement.parent.representedObject instanceof WI.SourceCode);
-                if (treeElement.parent.representedObject instanceof WI.SourceCode) {
-                    WI.showSourceCodeLocation(breakpoint.sourceCodeLocation);
-                    return;
-                }
-            }
+            WI.showSourceCodeLocation(breakpoint.sourceCodeLocation);
+            return;
         }
 
         console.error("Unknown tree element", treeElement);
