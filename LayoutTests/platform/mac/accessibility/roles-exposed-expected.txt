@@ -129,6 +129,11 @@ legend
       AXSubrole: 
       AXRoleDescription: 
       
+figure
+      AXRole: AXGroup
+      AXSubrole: 
+      AXRoleDescription: figure
+      
 footer
       AXRole: AXGroup
       AXSubrole: AXLandmarkContentInfo
