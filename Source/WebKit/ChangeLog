@@ -1,5 +1,13 @@
 2019-10-01  Alex Christensen  <achristensen@webkit.org>
 
+        Fix GTK build after r250558
+        https://bugs.webkit.org/show_bug.cgi?id=202390
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.cpp:
+        (webkit_dom_dom_window_confirm):
+
+2019-10-01  Alex Christensen  <achristensen@webkit.org>
+
         Fix an internal build.
 
         Ignore some deprecation warnings.  We'll adopt new SPI soon.

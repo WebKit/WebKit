@@ -660,7 +660,7 @@ gboolean webkit_dom_dom_window_confirm(WebKitDOMDOMWindow* self, const gchar* me
     g_return_val_if_fail(message, FALSE);
     WebCore::DOMWindow* item = WebKit::core(self);
     WTF::String convertedMessage = WTF::String::fromUTF8(message);
-    gboolean result = item->confirm(convertedMessage);
+    gboolean result = item->confirmForBindings(convertedMessage);
     return result;
 }
 
