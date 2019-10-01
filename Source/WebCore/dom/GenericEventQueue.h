@@ -70,7 +70,7 @@ private:
     bool isSuspendedOrPausedByClient() const { return m_isSuspended || m_isPausedByClient; }
 
     EventTarget& m_owner;
-    GenericTaskQueue<T> m_taskQueue;
+    UniqueRef<GenericTaskQueue<T>> m_taskQueue;
     Deque<RefPtr<Event>> m_pendingEvents;
     bool m_isClosed { false };
     bool m_isPausedByClient { false };

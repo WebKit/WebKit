@@ -73,6 +73,7 @@ private:
 
 template <typename T>
 class GenericTaskQueue : public CanMakeWeakPtr<GenericTaskQueue<T>> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     GenericTaskQueue()
         : m_dispatcher()
@@ -89,9 +90,6 @@ public:
         , m_isClosed(!t)
     {
     }
-
-    GenericTaskQueue(GenericTaskQueue&&) = default;
-    GenericTaskQueue& operator=(GenericTaskQueue&&) = default;
 
     typedef WTF::Function<void ()> TaskFunction;
 

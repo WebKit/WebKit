@@ -1,3 +1,19 @@
+2019-10-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed attempt to fix Windows build after r250527.
+
+        * dom/GenericEventQueue.cpp:
+        (WebCore::TaskQueueConstructor::construct):
+        (WebCore::TaskQueueConstructor<Timer>::construct):
+        (WebCore::GenericEventQueueBase<T>::enqueueEvent):
+        (WebCore::GenericEventQueueBase<T>::close):
+        (WebCore::GenericEventQueueBase<T>::cancelAllEvents):
+        (WebCore::GenericEventQueueBase<T>::setPaused):
+        (WebCore::GenericEventQueueBase<T>::suspend):
+        (WebCore::GenericEventQueueBase<T>::rescheduleAllEventsIfNeeded):
+        * dom/GenericEventQueue.h:
+        * platform/GenericTaskQueue.h:
+
 2019-10-01  Alex Christensen  <achristensen@webkit.org>
 
         Fix internal build after r250549

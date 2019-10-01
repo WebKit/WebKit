@@ -37,11 +37,11 @@
 namespace WebCore {
 
 template<typename T> struct TaskQueueConstructor {
-    static GenericTaskQueue<T> construct(ScriptExecutionContext* context) { return GenericTaskQueue<T>(context); }
+    static UniqueRef<GenericTaskQueue<T>> construct(ScriptExecutionContext* context) { return makeUniqueRef<GenericTaskQueue<T>>(context); }
 };
 
 template<> struct TaskQueueConstructor<Timer> {
-    static GenericTaskQueue<Timer> construct(ScriptExecutionContext*) { return GenericTaskQueue<Timer>(); }
+    static UniqueRef<GenericTaskQueue<Timer>> construct(ScriptExecutionContext*) { return makeUniqueRef<GenericTaskQueue<Timer>>(); }
 };
 
 template<typename T>
@@ -69,7 +69,7 @@ void GenericEventQueueBase<T>::enqueueEvent(RefPtr<Event>&& event)
     if (isSuspendedOrPausedByClient())
         return;
 
-    m_taskQueue.enqueueTask(std::bind(&GenericEventQueueBase::dispatchOneEvent, this));
+    m_taskQueue->enqueueTask(std::bind(&GenericEventQueueBase::dispatchOneEvent, this));
 }
 
 template<typename T>
@@ -91,14 +91,14 @@ void GenericEventQueueBase<T>::close()
 {
     m_isClosed = true;
 
-    m_taskQueue.close();
+    m_taskQueue->close();
     m_pendingEvents.clear();
 }
 
 template<typename T>
 void GenericEventQueueBase<T>::cancelAllEvents()
 {
-    m_taskQueue.cancelAllTasks();
+    m_taskQueue->cancelAllTasks();
     m_pendingEvents.clear();
 }
 
@@ -127,7 +127,7 @@ void GenericEventQueueBase<T>::setPaused(bool shouldPause)
 
     m_isPausedByClient = shouldPause;
     if (shouldPause)
-        m_taskQueue.cancelAllTasks();
+        m_taskQueue->cancelAllTasks();
     else
         rescheduleAllEventsIfNeeded();
 }
@@ -145,7 +145,7 @@ void GenericEventQueueBase<T>::suspend(ReasonForSuspension)
         return;
 
     m_isSuspended = true;
-    m_taskQueue.cancelAllTasks();
+    m_taskQueue->cancelAllTasks();
 }
 
 template<typename T>
@@ -165,7 +165,7 @@ void GenericEventQueueBase<T>::rescheduleAllEventsIfNeeded()
         return;
 
     for (unsigned i = 0; i < m_pendingEvents.size(); ++i)
-        m_taskQueue.enqueueTask(std::bind(&GenericEventQueueBase::dispatchOneEvent, this));
+        m_taskQueue->enqueueTask(std::bind(&GenericEventQueueBase::dispatchOneEvent, this));
 }
 
 template<typename T>
