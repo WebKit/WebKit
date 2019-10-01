@@ -1,3 +1,98 @@
+2019-09-30  Saam Barati  <sbarati@apple.com>
+
+        Inline caching is wrong for custom accessors and custom values
+        https://bugs.webkit.org/show_bug.cgi?id=201994
+        <rdar://problem/50850326>
+
+        Reviewed by Yusuke Suzuki.
+
+        There was an oversight in our inline caching code for custom accessors and
+        custom values. We used to assume that if an object O had a custom function for
+        property P, then O will forever respond to the same custom function for
+        property P.
+        
+        This assumption was very wrong. These custom accessors/values might be
+        properties in JS which are configurable, so they can be rewritten to be
+        other properties. Our inline caching code would be wrong in the scenarios
+        where these property descriptors got redefined.
+        
+        This patch makes it so that we now properly watchpoint for custom functions
+        being changed. If the custom accessor has been materialized, we place an
+        Equivalence watchpoint on the custom accessor. This patch also teaches
+        StructureStubInfo how to watchpoint on property value equivalence. Before,
+        we just watchpointed on structure transitions.
+        
+        This patch also adds a new property condition kind for when the custom function
+        exists inside the static property table. This case is really easy to test for
+        because we just need to see if the structure still has static properties and
+        the static property table has the entry for a particular property. This
+        property condition kind just needs to watch for structure transitions because
+        an entry in the static property table can't be mutated.
+        
+        This patch is neutral on the microbenchmarks I've added.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::AccessCase):
+        (JSC::AccessCase::couldStillSucceed const):
+        (JSC::AccessCase::generateImpl):
+        * bytecode/AdaptiveInferredPropertyValueWatchpointBase.h:
+        * bytecode/ObjectPropertyCondition.cpp:
+        (JSC::ObjectPropertyCondition::structureEnsuresValidityAssumingImpurePropertyWatchpoint const):
+        * bytecode/ObjectPropertyCondition.h:
+        (JSC::ObjectPropertyCondition::customFunctionEquivalence):
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        (JSC::ObjectPropertyConditionSet::hasOneSlotBaseCondition const):
+        (JSC::ObjectPropertyConditionSet::slotBaseCondition const):
+        (JSC::generateConditionsForPrototypePropertyHitCustom):
+        * bytecode/ObjectPropertyConditionSet.h:
+        * bytecode/PolyProtoAccessChain.cpp:
+        (JSC::PolyProtoAccessChain::create):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::installWatchpoint):
+        (JSC::PolymorphicAccess::commit):
+        (JSC::AccessGenerationState::addWatchpoint): Deleted.
+        * bytecode/PolymorphicAccess.h:
+        * bytecode/PropertyCondition.cpp:
+        (JSC::PropertyCondition::dumpInContext const):
+        (JSC::PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint const):
+        (JSC::PropertyCondition::validityRequiresImpurePropertyWatchpoint const):
+        (JSC::PropertyCondition::isStillValid const):
+        (JSC::PropertyCondition::isWatchableWhenValid const):
+        (WTF::printInternal):
+        * bytecode/PropertyCondition.h:
+        (JSC::PropertyCondition::customFunctionEquivalence):
+        (JSC::PropertyCondition::hash const):
+        (JSC::PropertyCondition::operator== const):
+        * bytecode/StructureStubClearingWatchpoint.cpp:
+        (JSC::StructureTransitionStructureStubClearingWatchpoint::fireInternal):
+        (JSC::WatchpointsOnStructureStubInfo::addWatchpoint):
+        (JSC::WatchpointsOnStructureStubInfo::ensureReferenceAndInstallWatchpoint):
+        (JSC::WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint):
+        (JSC::AdaptiveValueStructureStubClearingWatchpoint::handleFire):
+        (JSC::StructureStubClearingWatchpoint::fireInternal): Deleted.
+        * bytecode/StructureStubClearingWatchpoint.h:
+        * bytecode/Watchpoint.h:
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        (JSC::tryCachePutByID):
+        * runtime/ClassInfo.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::findPropertyHashEntry const):
+        * runtime/JSObject.h:
+        * runtime/ObjectPropertyChangeAdaptiveWatchpoint.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::findPropertyHashEntry const):
+        * runtime/Structure.h:
+        * tools/JSDollarVM.cpp:
+        (JSC::testStaticAccessorGetter):
+        (JSC::testStaticAccessorPutter):
+        (JSC::StaticCustomAccessor::StaticCustomAccessor):
+        (JSC::StaticCustomAccessor::createStructure):
+        (JSC::StaticCustomAccessor::create):
+        (JSC::StaticCustomAccessor::getOwnPropertySlot):
+        (JSC::functionCreateStaticCustomAccessor):
+        (JSC::JSDollarVM::finishCreation):
+
 2019-09-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] AI folds CompareEq wrongly when it sees proven Boolean and Number

@@ -176,7 +176,7 @@ ObjectPropertyConditionSet generateConditionsForPrototypePropertyHit(
     UniquedStringImpl* uid);
 ObjectPropertyConditionSet generateConditionsForPrototypePropertyHitCustom(
     VM&, JSCell* owner, ExecState*, Structure* headStructure, JSObject* prototype,
-    UniquedStringImpl* uid);
+    UniquedStringImpl* uid, unsigned attributes);
 
 ObjectPropertyConditionSet generateConditionsForInstanceOf(
     VM&, JSCell* owner, ExecState*, Structure* headStructure, JSObject* prototype, bool shouldHit);

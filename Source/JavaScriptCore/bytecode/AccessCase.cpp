@@ -61,6 +61,7 @@ AccessCase::AccessCase(VM& vm, JSCell* owner, AccessType type, PropertyOffset of
 {
     m_structure.setMayBeNull(vm, owner, structure);
     m_conditionSet = conditionSet;
+    RELEASE_ASSERT(m_conditionSet.isValid());
 }
 
 std::unique_ptr<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain)
@@ -310,7 +311,16 @@ bool AccessCase::doesCalls(Vector<JSCell*>* cellsToMarkIfDoesCalls) const
 
 bool AccessCase::couldStillSucceed() const
 {
-    return m_conditionSet.structuresEnsureValidityAssumingImpurePropertyWatchpoint();
+    for (const ObjectPropertyCondition& condition : m_conditionSet) {
+        if (condition.condition().kind() == PropertyCondition::Equivalence) {
+            if (!condition.isWatchableAssumingImpurePropertyWatchpoint(PropertyCondition::WatchabilityEffort::EnsureWatchability))
+                return false;
+        } else {
+            if (!condition.structureEnsuresValidityAssumingImpurePropertyWatchpoint())
+                return false;
+        }
+    }
+    return true;
 }
 
 bool AccessCase::canReplace(const AccessCase& other) const
@@ -709,19 +719,18 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     GPRReg thisGPR = state.thisGPR != InvalidGPRReg ? state.thisGPR : baseGPR;
     GPRReg scratchGPR = state.scratchGPR;
 
-    ASSERT(m_conditionSet.structuresEnsureValidityAssumingImpurePropertyWatchpoint());
-
     for (const ObjectPropertyCondition& condition : m_conditionSet) {
         RELEASE_ASSERT(!m_polyProtoAccessChain);
 
-        Structure* structure = condition.object()->structure(vm);
-
-        if (condition.isWatchableAssumingImpurePropertyWatchpoint()) {
-            structure->addTransitionWatchpoint(state.addWatchpoint(condition));
+        if (condition.isWatchableAssumingImpurePropertyWatchpoint(PropertyCondition::WatchabilityEffort::EnsureWatchability)) {
+            state.installWatchpoint(condition);
             continue;
         }
 
-        if (!condition.structureEnsuresValidityAssumingImpurePropertyWatchpoint(structure)) {
+        // For now, we only allow equivalence when it's watchable.
+        RELEASE_ASSERT(condition.condition().kind() != PropertyCondition::Equivalence);
+
+        if (!condition.structureEnsuresValidityAssumingImpurePropertyWatchpoint()) {
             // The reason why this cannot happen is that we require that PolymorphicAccess calls
             // AccessCase::generate() only after it has verified that
             // AccessCase::couldStillSucceed() returned true.
@@ -731,6 +740,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         }
 
         // We will emit code that has a weak reference that isn't otherwise listed anywhere.
+        Structure* structure = condition.object()->structure(vm);
         state.weakReferences.append(WriteBarrier<JSCell>(vm, codeBlock, structure));
 
         jit.move(CCallHelpers::TrustedImmPtr(condition.object()), scratchGPR);

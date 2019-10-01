@@ -51,12 +51,6 @@ std::unique_ptr<PolyProtoAccessChain> PolyProtoAccessChain::create(JSGlobalObjec
     for (unsigned iterationNumber = 0; true; ++iterationNumber) {
         Structure* structure = current->structure(vm);
 
-        if (!structure->propertyAccessesAreCacheable())
-            return nullptr;
-
-        if (structure->isProxy())
-            return nullptr;
-
         if (structure->isDictionary()) {
             ASSERT(structure->isObject());
             if (structure->hasBeenFlattenedBefore())
@@ -64,6 +58,12 @@ std::unique_ptr<PolyProtoAccessChain> PolyProtoAccessChain::create(JSGlobalObjec
 
             structure->flattenDictionaryStructure(vm, asObject(current));
         }
+
+        if (!structure->propertyAccessesAreCacheable())
+            return nullptr;
+
+        if (structure->isProxy())
+            return nullptr;
 
         // To save memory, we don't include the base in the chain. We let
         // AccessCase provide the base to us as needed.

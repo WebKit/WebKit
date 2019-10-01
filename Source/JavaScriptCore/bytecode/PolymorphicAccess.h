@@ -212,7 +212,7 @@ struct AccessGenerationState {
     std::unique_ptr<WatchpointsOnStructureStubInfo> watchpoints;
     Vector<WriteBarrier<JSCell>> weakReferences;
 
-    Watchpoint* addWatchpoint(const ObjectPropertyCondition& = ObjectPropertyCondition());
+    void installWatchpoint(const ObjectPropertyCondition&);
 
     void restoreScratch();
     void succeed();

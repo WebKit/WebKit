@@ -46,18 +46,12 @@ void ObjectPropertyCondition::dump(PrintStream& out) const
     dumpInContext(out, nullptr);
 }
 
-bool ObjectPropertyCondition::structureEnsuresValidityAssumingImpurePropertyWatchpoint(
-    Structure* structure) const
-{
-    return m_condition.isStillValidAssumingImpurePropertyWatchpoint(structure);
-}
-
 bool ObjectPropertyCondition::structureEnsuresValidityAssumingImpurePropertyWatchpoint() const
 {
     if (!*this)
         return false;
     
-    return structureEnsuresValidityAssumingImpurePropertyWatchpoint(m_object->structure());
+    return m_condition.isStillValidAssumingImpurePropertyWatchpoint(m_object->structure(), nullptr);
 }
 
 bool ObjectPropertyCondition::validityRequiresImpurePropertyWatchpoint(Structure* structure) const

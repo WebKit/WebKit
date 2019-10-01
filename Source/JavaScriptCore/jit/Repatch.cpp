@@ -321,7 +321,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
                         } else {
                             conditionSet = generateConditionsForPrototypePropertyHitCustom(
                                 vm, codeBlock, exec, structure, slot.slotBase(),
-                                propertyName.impl());
+                                propertyName.impl(), slot.attributes());
                         }
 
                         if (!conditionSet.isValid())
@@ -549,7 +549,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
                         prototypeAccessChain = nullptr;
                         conditionSet =
                             generateConditionsForPrototypePropertyHitCustom(
-                                vm, codeBlock, exec, structure, slot.base(), ident.impl());
+                                vm, codeBlock, exec, structure, slot.base(), ident.impl(), static_cast<unsigned>(PropertyAttribute::None));
                         if (!conditionSet.isValid())
                             return GiveUpOnCache;
                     }

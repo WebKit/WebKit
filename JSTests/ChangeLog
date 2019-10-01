@@ -1,3 +1,50 @@
+2019-09-30  Saam Barati  <sbarati@apple.com>
+
+        Inline caching is wrong for custom accessors and custom values
+        https://bugs.webkit.org/show_bug.cgi?id=201994
+        <rdar://problem/50850326>
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/custom-accessor-materialized.js: Added.
+        (assert):
+        (test4.get const):
+        * microbenchmarks/custom-accessor-thin-air.js: Added.
+        (assert):
+        (test5.get const):
+        (test5.get proto):
+        * microbenchmarks/custom-accessor.js: Added.
+        (assert):
+        (test3.get const):
+        * microbenchmarks/custom-value-2.js: Added.
+        (assert):
+        (test1.getMultiline):
+        (test1):
+        * microbenchmarks/custom-value.js: Added.
+        (assert):
+        (test1.getMultiline):
+        (test1):
+        * stress/custom-accessor-delete-1.js: Added.
+        (assert):
+        (test3.get const):
+        * stress/custom-accessor-delete-2.js: Added.
+        (assert):
+        (test4.get const):
+        * stress/custom-accessor-delete-3.js: Added.
+        (assert):
+        (test5.get const):
+        (test5.get proto):
+        * stress/custom-value-delete-property-1.js: Added.
+        (assert):
+        (test1.getMultiline):
+        (test1):
+        * stress/custom-value-delete-property-2.js: Added.
+        (test2.foo):
+        (test2):
+        * stress/custom-value-delete-property-3.js: Added.
+        (test6.foo):
+        (test6):
+
 2019-09-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] AI folds CompareEq wrongly when it sees proven Boolean and Number

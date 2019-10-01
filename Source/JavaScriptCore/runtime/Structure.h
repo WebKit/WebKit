@@ -61,6 +61,8 @@ class StructureShape;
 class SlotVisitor;
 class JSString;
 struct DumpContext;
+struct HashTable;
+struct HashTableValue;
 
 // The out-of-line property storage capacity to use when first allocating out-of-line
 // storage. Note that all objects start out without having any out-of-line storage;
@@ -615,6 +617,12 @@ public:
     unsigned propertyHash() const { return m_propertyHash; }
 
     static bool shouldConvertToPolyProto(const Structure* a, const Structure* b);
+
+    struct PropertyHashEntry {
+        const HashTable* table;
+        const HashTableValue* value;
+    };
+    Optional<PropertyHashEntry> findPropertyHashEntry(PropertyName) const;
     
     DECLARE_EXPORT_INFO;
 

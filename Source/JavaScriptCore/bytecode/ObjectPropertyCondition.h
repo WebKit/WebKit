@@ -121,6 +121,17 @@ public:
             vm.heap.writeBarrier(owner);
         return equivalenceWithoutBarrier(object, uid, value);
     }
+
+    static ObjectPropertyCondition customFunctionEquivalence(
+        VM& vm, JSCell* owner, JSObject* object, UniquedStringImpl* uid)
+    {
+        ObjectPropertyCondition result;
+        result.m_object = object;
+        result.m_condition = PropertyCondition::customFunctionEquivalence(uid);
+        if (owner)
+            vm.heap.writeBarrier(owner);
+        return result;
+    }
     
     static ObjectPropertyCondition hasPrototypeWithoutBarrier(JSObject* object, JSObject* prototype)
     {
@@ -193,7 +204,6 @@ public:
     
     // Checks if the object's structure claims that the property won't be intercepted. Validity
     // does not require watchpoints on the object.
-    bool structureEnsuresValidityAssumingImpurePropertyWatchpoint(Structure*) const;
     bool structureEnsuresValidityAssumingImpurePropertyWatchpoint() const;
     
     // Returns true if we need an impure property watchpoint to ensure validity even if
@@ -227,7 +237,7 @@ public:
         PropertyCondition::WatchabilityEffort = PropertyCondition::MakeNoChanges) const;
 
     // This means that it's still valid and we could enforce validity by setting a transition
-    // watchpoint on the structure.
+    // watchpoint on the structure, and a value change watchpoint if we're Equivalence.
     bool isWatchable(
         Structure*,
         PropertyCondition::WatchabilityEffort = PropertyCondition::MakeNoChanges) const;

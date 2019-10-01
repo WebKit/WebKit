@@ -55,9 +55,9 @@ void AccessGenerationResult::dump(PrintStream& out) const
         out.print(":", m_code);
 }
 
-Watchpoint* AccessGenerationState::addWatchpoint(const ObjectPropertyCondition& condition)
+void AccessGenerationState::installWatchpoint(const ObjectPropertyCondition& condition)
 {
-    return WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint(
+    WatchpointsOnStructureStubInfo::ensureReferenceAndInstallWatchpoint(
         watchpoints, jit->codeBlock(), stubInfo, condition);
 }
 
@@ -373,7 +373,7 @@ void PolymorphicAccess::commit(
     for (WatchpointSet* set : accessCase.commit(vm, ident)) {
         Watchpoint* watchpoint =
             WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint(
-                watchpoints, codeBlock, &stubInfo, ObjectPropertyCondition());
+                watchpoints, codeBlock, &stubInfo);
         
         set->add(watchpoint);
     }

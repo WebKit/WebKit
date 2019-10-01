@@ -32,6 +32,8 @@
 
 namespace JSC {
 
+// FIXME: This isn't actually a Watchpoint. We should probably have a name which better reflects that:
+// https://bugs.webkit.org/show_bug.cgi?id=202381
 class AdaptiveInferredPropertyValueWatchpointBase {
     WTF_MAKE_NONCOPYABLE(AdaptiveInferredPropertyValueWatchpointBase);
     WTF_MAKE_FAST_ALLOCATED;

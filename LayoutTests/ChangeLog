@@ -1,3 +1,14 @@
+2019-09-30  Saam Barati  <sbarati@apple.com>
+
+        Inline caching is wrong for custom accessors and custom values
+        https://bugs.webkit.org/show_bug.cgi?id=201994
+        <rdar://problem/50850326>
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/dom/custom-accessor-redefine-expected.txt: Added.
+        * js/dom/custom-accessor-redefine.html: Added.
+
 2019-09-30  Chris Dumez  <cdumez@apple.com>
 
         IDBTransaction / IDBObjectStore should not prevent a page from entering the back / forward cache

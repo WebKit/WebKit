@@ -1238,4 +1238,15 @@ bool Structure::canAccessPropertiesQuicklyForEnumeration() const
     return true;
 }
 
+auto Structure::findPropertyHashEntry(PropertyName propertyName) const -> Optional<PropertyHashEntry>
+{
+    for (const ClassInfo* info = classInfo(); info; info = info->parentClass) {
+        if (const HashTable* propHashTable = info->staticPropHashTable) {
+            if (const HashTableValue* entry = propHashTable->entry(propertyName))
+                return PropertyHashEntry { propHashTable, entry };
+        }
+    }
+    return WTF::nullopt;
+}
+
 } // namespace JSC

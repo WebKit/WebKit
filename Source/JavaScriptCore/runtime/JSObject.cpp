@@ -2222,15 +2222,9 @@ bool JSObject::getOwnStaticPropertySlot(VM& vm, PropertyName propertyName, Prope
     return false;
 }
 
-auto JSObject::findPropertyHashEntry(VM& vm, PropertyName propertyName) const -> Optional<PropertyHashEntry>
+Optional<Structure::PropertyHashEntry> JSObject::findPropertyHashEntry(VM& vm, PropertyName propertyName) const
 {
-    for (const ClassInfo* info = classInfo(vm); info; info = info->parentClass) {
-        if (const HashTable* propHashTable = info->staticPropHashTable) {
-            if (const HashTableValue* entry = propHashTable->entry(propertyName))
-                return PropertyHashEntry { propHashTable, entry };
-        }
-    }
-    return WTF::nullopt;
+    return structure(vm)->findPropertyHashEntry(propertyName);
 }
 
 bool JSObject::hasInstance(ExecState* exec, JSValue value, JSValue hasInstanceValue)

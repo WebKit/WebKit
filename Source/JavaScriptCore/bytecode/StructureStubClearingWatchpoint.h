@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "ObjectPropertyCondition.h"
-#include "Watchpoint.h"
-
 #if ENABLE(JIT)
 
+#include "AdaptiveInferredPropertyValueWatchpointBase.h"
+#include "ObjectPropertyCondition.h"
+#include "Watchpoint.h"
 #include <wtf/Bag.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
@@ -40,12 +40,12 @@ class CodeBlock;
 class StructureStubInfo;
 class WatchpointsOnStructureStubInfo;
 
-class StructureStubClearingWatchpoint final : public Watchpoint {
-    WTF_MAKE_NONCOPYABLE(StructureStubClearingWatchpoint);
+class StructureTransitionStructureStubClearingWatchpoint final : public Watchpoint {
+    WTF_MAKE_NONCOPYABLE(StructureTransitionStructureStubClearingWatchpoint);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    StructureStubClearingWatchpoint(const ObjectPropertyCondition& key, WatchpointsOnStructureStubInfo& holder)
-        : Watchpoint(Watchpoint::Type::StructureStubClearing)
+    StructureTransitionStructureStubClearingWatchpoint(const ObjectPropertyCondition& key, WatchpointsOnStructureStubInfo& holder)
+        : Watchpoint(Watchpoint::Type::StructureTransitionStructureStubClearing)
         , m_holder(&holder)
         , m_key(key)
     {
@@ -59,6 +59,26 @@ private:
     JSC_WATCHPOINT_FIELD(ObjectPropertyCondition, m_key);
 };
 
+class AdaptiveValueStructureStubClearingWatchpoint final : public AdaptiveInferredPropertyValueWatchpointBase {
+    using Base = AdaptiveInferredPropertyValueWatchpointBase;
+    WTF_MAKE_NONCOPYABLE(AdaptiveValueStructureStubClearingWatchpoint);
+    WTF_MAKE_FAST_ALLOCATED;
+
+    void handleFire(VM&, const FireDetail&) override;
+
+public:
+    AdaptiveValueStructureStubClearingWatchpoint(const ObjectPropertyCondition& key, WatchpointsOnStructureStubInfo& holder)
+        : Base(key)
+        , m_holder(&holder)
+    {
+        RELEASE_ASSERT(key.condition().kind() == PropertyCondition::Equivalence);
+    }
+
+
+private:
+    PackedPtr<WatchpointsOnStructureStubInfo> m_holder;
+};
+
 class WatchpointsOnStructureStubInfo {
     WTF_MAKE_NONCOPYABLE(WatchpointsOnStructureStubInfo);
     WTF_MAKE_FAST_ALLOCATED;
@@ -69,11 +89,16 @@ public:
     {
     }
     
-    StructureStubClearingWatchpoint* addWatchpoint(const ObjectPropertyCondition& key);
+    using Node = Variant<StructureTransitionStructureStubClearingWatchpoint, AdaptiveValueStructureStubClearingWatchpoint>;
+
+    Node& addWatchpoint(const ObjectPropertyCondition& key);
     
-    static StructureStubClearingWatchpoint* ensureReferenceAndAddWatchpoint(
+    static void ensureReferenceAndInstallWatchpoint(
         std::unique_ptr<WatchpointsOnStructureStubInfo>& holderRef,
         CodeBlock*, StructureStubInfo*, const ObjectPropertyCondition& key);
+    static Watchpoint* ensureReferenceAndAddWatchpoint(
+        std::unique_ptr<WatchpointsOnStructureStubInfo>& holderRef,
+        CodeBlock*, StructureStubInfo*);
     
     CodeBlock* codeBlock() const { return m_codeBlock; }
     StructureStubInfo* stubInfo() const { return m_stubInfo; }
@@ -83,7 +108,9 @@ public:
 private:
     CodeBlock* m_codeBlock;
     StructureStubInfo* m_stubInfo;
-    Bag<StructureStubClearingWatchpoint> m_watchpoints;
+    // FIXME: use less memory for the entries in this Bag:
+    // https://bugs.webkit.org/show_bug.cgi?id=202380
+    Bag<WTF::Variant<StructureTransitionStructureStubClearingWatchpoint, AdaptiveValueStructureStubClearingWatchpoint>> m_watchpoints;
 };
 
 } // namespace JSC

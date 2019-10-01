@@ -903,6 +903,8 @@ public:
     bool mayBePrototype() const;
     void didBecomePrototype();
 
+    Optional<Structure::PropertyHashEntry> findPropertyHashEntry(VM&, PropertyName) const;
+
     DECLARE_EXPORT_INFO;
 
 protected:
@@ -1032,7 +1034,7 @@ protected:
         
     // This is relevant to undecided, int32, double, and contiguous.
     unsigned countElements();
-        
+
 private:
     friend class LLIntOffsetsExtractor;
     friend class VMInspector;
@@ -1060,11 +1062,6 @@ private:
     void fillCustomGetterPropertySlot(VM&, PropertySlot&, CustomGetterSetter*, unsigned, Structure*);
 
     JS_EXPORT_PRIVATE bool getOwnStaticPropertySlot(VM&, PropertyName, PropertySlot&);
-    struct PropertyHashEntry {
-        const HashTable* table;
-        const HashTableValue* value;
-    };
-    Optional<PropertyHashEntry> findPropertyHashEntry(VM&, PropertyName) const;
         
     bool putByIndexBeyondVectorLength(ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
     bool putDirectIndexBeyondVectorLengthWithArrayStorage(ExecState*, unsigned propertyName, JSValue, unsigned attributes, PutDirectIndexMode, ArrayStorage*);

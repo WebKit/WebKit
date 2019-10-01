@@ -586,6 +586,79 @@ private:
     Vector<int> m_vector;
 };
 
+static const struct CompactHashIndex staticCustomAccessorTableIndex[2] = {
+    { 0, -1 },
+    { -1, -1 },
+};
+
+static EncodedJSValue testStaticAccessorGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName)
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = exec->vm();
+    
+    JSObject* thisObject = jsDynamicCast<JSObject*>(vm, JSValue::decode(thisValue));
+    RELEASE_ASSERT(thisObject);
+
+    if (JSValue result = thisObject->getDirect(vm, PropertyName(Identifier::fromString(vm, "testField"))))
+        return JSValue::encode(result);
+    return JSValue::encode(jsUndefined());
+}
+
+static bool testStaticAccessorPutter(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue value)
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = exec->vm();
+    
+    JSObject* thisObject = jsDynamicCast<JSObject*>(vm, JSValue::decode(thisValue));
+    RELEASE_ASSERT(thisObject);
+
+    return thisObject->putDirect(vm, PropertyName(Identifier::fromString(vm, "testField")), JSValue::decode(value));
+}
+
+static const struct HashTableValue staticCustomAccessorTableValues[1] = {
+    { "testStaticAccessor", static_cast<unsigned>(PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(testStaticAccessorGetter), (intptr_t)static_cast<PutPropertySlot::PutValueFunc>(testStaticAccessorPutter) } },
+};
+
+static const struct HashTable staticCustomAccessorTable =
+    { 1, 1, true, nullptr, staticCustomAccessorTableValues, staticCustomAccessorTableIndex };
+
+class StaticCustomAccessor : public JSNonFinalObject {
+    using Base = JSNonFinalObject;
+public:
+    StaticCustomAccessor(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    {
+        DollarVMAssertScope assertScope;
+    }
+
+    DECLARE_INFO;
+
+    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable | OverridesGetOwnPropertySlot;
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        DollarVMAssertScope assertScope;
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
+
+    static StaticCustomAccessor* create(VM& vm, Structure* structure)
+    {
+        DollarVMAssertScope assertScope;
+        StaticCustomAccessor* accessor = new (NotNull, allocateCell<StaticCustomAccessor>(vm.heap)) StaticCustomAccessor(vm, structure);
+        accessor->finishCreation(vm);
+        return accessor;
+    }
+
+    static bool getOwnPropertySlot(JSObject* thisObject, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+    {
+        if (String(propertyName.uid()) == "thinAirCustomGetter") {
+            slot.setCacheableCustom(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor, testStaticAccessorGetter);
+            return true;
+        }
+        return JSNonFinalObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
+    }
+};
+
 class DOMJITNode : public JSNonFinalObject {
 public:
     DOMJITNode(VM& vm, Structure* structure)
@@ -728,6 +801,7 @@ void DOMJITGetter::finishCreation(VM& vm)
     auto* customGetterSetter = DOMAttributeGetterSetter::create(vm, domJIT->getter(), nullptr, DOMAttributeAnnotation { DOMJITNode::info(), domJIT });
     putDirectCustomAccessor(vm, Identifier::fromString(vm, "customGetter"), customGetterSetter, PropertyAttribute::ReadOnly | PropertyAttribute::CustomAccessor);
 }
+
 
 class DOMJITGetterComplex : public DOMJITNode {
 public:
@@ -1198,6 +1272,8 @@ const ClassInfo DOMJITFunctionObject::s_info = { "DOMJITFunctionObject", &Base::
 #endif
 const ClassInfo DOMJITCheckSubClassObject::s_info = { "DOMJITCheckSubClassObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITCheckSubClassObject) };
 const ClassInfo JSTestCustomGetterSetter::s_info = { "JSTestCustomGetterSetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCustomGetterSetter) };
+
+const ClassInfo StaticCustomAccessor::s_info = { "StaticCustomAccessor", &Base::s_info, &staticCustomAccessorTable, nullptr, CREATE_METHOD_TABLE(StaticCustomAccessor) };
 
 ElementHandleOwner* Element::handleOwner()
 {
@@ -2015,6 +2091,16 @@ static EncodedJSValue JSC_HOST_CALL functionCreateWasmStreamingParser(ExecState*
 }
 #endif
 
+static EncodedJSValue JSC_HOST_CALL functionCreateStaticCustomAccessor(ExecState* exec)
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = exec->vm();
+    JSLockHolder lock(vm);
+    Structure* structure = StaticCustomAccessor::createStructure(vm, exec->lexicalGlobalObject(), jsNull());
+    auto* result = StaticCustomAccessor::create(vm, structure);
+    return JSValue::encode(result);
+}
+
 static EncodedJSValue JSC_HOST_CALL functionSetImpureGetterDelegate(ExecState* exec)
 {
     DollarVMAssertScope assertScope;
@@ -2537,6 +2623,7 @@ void JSDollarVM::finishCreation(VM& vm)
 #if ENABLE(WEBASSEMBLY)
     addFunction(vm, "createWasmStreamingParser", functionCreateWasmStreamingParser, 0);
 #endif
+    addFunction(vm, "createStaticCustomAccessor", functionCreateStaticCustomAccessor, 0);
     addFunction(vm, "getPrivateProperty", functionGetPrivateProperty, 2);
     addFunction(vm, "setImpureGetterDelegate", functionSetImpureGetterDelegate, 2);
 
