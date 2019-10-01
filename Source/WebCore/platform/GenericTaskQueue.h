@@ -90,6 +90,9 @@ public:
     {
     }
 
+    GenericTaskQueue(GenericTaskQueue&&) = default;
+    GenericTaskQueue& operator=(GenericTaskQueue&&) = default;
+
     typedef WTF::Function<void ()> TaskFunction;
 
     void enqueueTask(TaskFunction&& task)
