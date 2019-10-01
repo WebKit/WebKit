@@ -73,9 +73,11 @@ public:
     bool replaceChild(GraphicsLayer*, Ref<GraphicsLayer>&&) override;
     void removeFromParent() override;
     void setPosition(const FloatPoint&) override;
+    void syncPosition(const FloatPoint&) override;
     void setAnchorPoint(const FloatPoint3D&) override;
     void setSize(const FloatSize&) override;
     void setBoundsOrigin(const FloatPoint&) override;
+    void syncBoundsOrigin(const FloatPoint&) override;
     void setTransform(const TransformationMatrix&) override;
     void setChildrenTransform(const TransformationMatrix&) override;
     void setPreserves3D(bool) override;
@@ -155,6 +157,11 @@ public:
     void requestBackingStoreUpdate();
 
 private:
+    enum class FlushNotification {
+        Required,
+        NotRequired,
+    };
+
     bool isCoordinatedGraphicsLayer() const override;
 
     void updatePlatformLayer();
@@ -162,7 +169,7 @@ private:
     void setDebugBorder(const Color&, float width) override;
 
     void didChangeAnimations();
-    void didChangeGeometry();
+    void didChangeGeometry(FlushNotification = FlushNotification::Required);
     void didChangeChildren();
     void didChangeFilters();
     void didUpdateTileBuffers();
