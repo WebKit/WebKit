@@ -81,7 +81,6 @@ NetworkSendQueue RTCDataChannel::createMessageQueue(Document& document, RTCDataC
 RTCDataChannel::RTCDataChannel(Document& document, std::unique_ptr<RTCDataChannelHandler>&& handler, String&& label, RTCDataChannelInit&& options)
     : ActiveDOMObject(document)
     , m_handler(WTFMove(handler))
-    , m_scheduledEventTimer(*this, &RTCDataChannel::scheduledEventTimerFired)
     , m_label(WTFMove(label))
     , m_options(WTFMove(options))
     , m_messageQueue(createMessageQueue(document, *this))
@@ -194,17 +193,11 @@ void RTCDataChannel::didChangeReadyState(RTCDataChannelState newState)
 
 void RTCDataChannel::didReceiveStringData(const String& text)
 {
-    if (m_stopped)
-        return;
-
     scheduleDispatchEvent(MessageEvent::create(text));
 }
 
 void RTCDataChannel::didReceiveRawData(const char* data, size_t dataLength)
 {
-    if (m_stopped)
-        return;
-
     switch (m_binaryType) {
     case BinaryType::Blob:
         scheduleDispatchEvent(MessageEvent::create(Blob::create(SharedBuffer::create(data, dataLength), emptyString()), { }));
@@ -218,17 +211,11 @@ void RTCDataChannel::didReceiveRawData(const char* data, size_t dataLength)
 
 void RTCDataChannel::didDetectError()
 {
-    if (m_stopped)
-        return;
-
     scheduleDispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void RTCDataChannel::bufferedAmountIsDecreasing(size_t amount)
 {
-    if (m_stopped)
-        return;
-
     if (amount <= m_bufferedAmountLowThreshold)
         scheduleDispatchEvent(Event::create(eventNames().bufferedamountlowEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
@@ -240,22 +227,11 @@ void RTCDataChannel::stop()
 
 void RTCDataChannel::scheduleDispatchEvent(Ref<Event>&& event)
 {
-    m_scheduledEvents.append(WTFMove(event));
-
-    if (!m_scheduledEventTimer.isActive())
-        m_scheduledEventTimer.startOneShot(0_s);
-}
-
-void RTCDataChannel::scheduledEventTimerFired()
-{
     if (m_stopped)
         return;
 
-    Vector<Ref<Event>> events;
-    events.swap(m_scheduledEvents);
-
-    for (auto& event : events)
-        dispatchEvent(event);
+    event->setTarget(this);
+    scriptExecutionContext()->eventQueue().enqueueEvent(WTFMove(event));
 }
 
 } // namespace WebCore

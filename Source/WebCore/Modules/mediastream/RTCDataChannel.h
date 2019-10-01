@@ -84,7 +84,6 @@ private:
     static NetworkSendQueue createMessageQueue(Document&, RTCDataChannel&);
 
     void scheduleDispatchEvent(Ref<Event>&&);
-    void scheduledEventTimerFired();
 
     EventTargetInterface eventTargetInterface() const final { return RTCDataChannelEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return m_scriptExecutionContext; }
@@ -95,7 +94,7 @@ private:
     // ActiveDOMObject API
     void stop() final;
     const char* activeDOMObjectName() const final { return "RTCDataChannel"; }
-    bool canSuspendForDocumentSuspension() const final { return m_readyState == RTCDataChannelState::Closed; }
+    bool canSuspendForDocumentSuspension() const final { return m_readyState != RTCDataChannelState::Open; }
 
     // RTCDataChannelHandlerClient API
     void didChangeReadyState(RTCDataChannelState) final;
@@ -112,9 +111,6 @@ private:
 
     enum class BinaryType { Blob, ArrayBuffer };
     BinaryType m_binaryType { BinaryType::ArrayBuffer };
-
-    Timer m_scheduledEventTimer;
-    Vector<Ref<Event>> m_scheduledEvents;
 
     String m_label;
     RTCDataChannelInit m_options;
