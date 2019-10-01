@@ -1169,6 +1169,18 @@ double Element::clientWidth()
     
     if (RenderBox* renderer = renderBox()) {
         LayoutUnit clientWidth = subpixelMetricsEnabled(renderer->document()) ? renderer->clientWidth() : LayoutUnit(roundToInt(renderer->clientWidth()));
+        // clientWidth/Height is the visual portion of the box content, not including
+        // borders or scroll bars, but includes padding. And per
+        // https://www.w3.org/TR/CSS2/tables.html#model,
+        // table wrapper box is a principal block box that contains the table box
+        // itself and any caption boxes, and table grid box is a block-level box that
+        // contains the table's internal table boxes. When table's border is specified
+        // in CSS, the border is added to table grid box, not table wrapper box.
+        // Currently, WebKit doesn't have table wrapper box, and we are supposed to
+        // retrieve clientWidth/Height from table wrapper box, not table grid box. So
+        // when we retrieve clientWidth/Height, it includes table's border size.
+        if (renderer->isTable())
+            clientWidth += renderer->borderLeft() + renderer->borderRight();
         return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(clientWidth, *renderer).toDouble(), renderer->document());
     }
     return 0;
@@ -1190,6 +1202,18 @@ double Element::clientHeight()
 
     if (RenderBox* renderer = renderBox()) {
         LayoutUnit clientHeight = subpixelMetricsEnabled(renderer->document()) ? renderer->clientHeight() : LayoutUnit(roundToInt(renderer->clientHeight()));
+        // clientWidth/Height is the visual portion of the box content, not including
+        // borders or scroll bars, but includes padding. And per
+        // https://www.w3.org/TR/CSS2/tables.html#model,
+        // table wrapper box is a principal block box that contains the table box
+        // itself and any caption boxes, and table grid box is a block-level box that
+        // contains the table's internal table boxes. When table's border is specified
+        // in CSS, the border is added to table grid box, not table wrapper box.
+        // Currently, WebKit doesn't have table wrapper box, and we are supposed to
+        // retrieve clientWidth/Height from table wrapper box, not table grid box. So
+        // when we retrieve clientWidth/Height, it includes table's border size.
+        if (renderer->isTable())
+            clientHeight += renderer->borderTop() + renderer->borderBottom();
         return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(clientHeight, *renderer).toDouble(), renderer->document());
     }
     return 0;

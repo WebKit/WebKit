@@ -1,3 +1,36 @@
+2019-10-01  Joonghun Park  <jh718.park@samsung.com>
+
+        Make table's clientWidth/Height include its border sizes.
+        https://bugs.webkit.org/show_bug.cgi?id=200974
+
+        WebKit doesn't have table wrapper box currently
+        while Gecko has it,
+        so this CL tries to mimic the behavior that
+        clientWidth/Height refers to table wrapper box
+        which doesn't have borders applied to itself
+        and table grid box has the borders.
+
+        This CL adds table's border sizes
+        to clientWidth/Height
+        at |LayoutBox::PixelSnappedClientWidth/Height|.
+
+        As a result of this CL, table's clientWidth/Height
+        and offsetWidth/Height are equal now, respectively.
+
+        The corresponding csswg discussion is
+        https://github.com/w3c/csswg-drafts/issues/4245.
+
+        Reviewed by Antti Koivisto.
+
+        Tests: fast/table/border-collapsing/bug236727.html
+               imported/w3c/web-platform-tests/css/cssom-view/table-border-collapse-client-width-height.html
+               imported/w3c/web-platform-tests/css/cssom-view/table-border-separate-client-width-height.html
+               imported/w3c/web-platform-tests/css/cssom-view/table-with-border-client-width-height.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::clientWidth):
+        (WebCore::Element::clientHeight):
+
 2019-10-01  youenn fablet  <youenn@apple.com>
 
         Remove races condition when validating capture sandbox extension revocation
