@@ -29,8 +29,6 @@
 #import "WebSecurityOriginInternal.h"
 #import <WebCore/ApplicationCacheStorage.h>
 
-using namespace WebCore;
-
 @implementation WebApplicationCacheQuotaManager
 
 - (id)initWithOrigin:(WebSecurityOrigin *)origin

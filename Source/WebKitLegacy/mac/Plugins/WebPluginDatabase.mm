@@ -49,8 +49,6 @@
 #import "WebUIKitSupport.h"
 #endif
 
-using namespace WebCore;
-
 static void checkCandidate(WebBasePluginPackage **currentPlugin, WebBasePluginPackage **candidatePlugin);
 
 @interface WebPluginDatabase (Internal)
@@ -292,7 +290,7 @@ static NSArray *additionalWebPlugInPaths;
         NSMutableSet *MIMETypes = [[NSMutableSet alloc] init];
         pluginEnumerator = [plugins objectEnumerator];
         while ((plugin = [pluginEnumerator nextObject])) {
-            const PluginInfo& pluginInfo = [plugin pluginInfo];
+            const auto& pluginInfo = [plugin pluginInfo];
             for (size_t i = 0; i < pluginInfo.mimes.size(); ++i)
                 [MIMETypes addObject:pluginInfo.mimes[i].type];
         }
@@ -440,7 +438,7 @@ static NSArray *additionalWebPlugInPaths;
     ASSERT(plugin);
 
     // Unregister plug-in's MIME type registrations
-    const PluginInfo& pluginInfo = [plugin pluginInfo];
+    const auto& pluginInfo = [plugin pluginInfo];
     for (size_t i = 0; i < pluginInfo.mimes.size(); ++i) {
         NSString *MIMEType = pluginInfo.mimes[i].type;
 

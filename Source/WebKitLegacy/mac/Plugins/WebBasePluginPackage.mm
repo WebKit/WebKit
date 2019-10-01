@@ -55,8 +55,6 @@
 - (NSArray *)_web_lowercaseStrings;
 @end;
 
-using namespace WebCore;
-
 @implementation WebBasePluginPackage
 
 + (void)initialize
@@ -155,7 +153,7 @@ using namespace WebCore;
         if (isEnabled && [isEnabled boolValue] == NO)
             continue;
 
-        MimeClassInfo mimeClassInfo;
+        WebCore::MimeClassInfo mimeClassInfo;
         
         NSArray *extensions = [[MIMEDictionary objectForKey:WebPluginExtensionsKey] _web_lowercaseStrings];
         for (NSString *extension in extensions) {
@@ -186,7 +184,7 @@ using namespace WebCore;
     pluginInfo.desc = description;
 
     pluginInfo.isApplicationPlugin = false;
-    pluginInfo.clientLoadPolicy = PluginLoadClientPolicyUndefined;
+    pluginInfo.clientLoadPolicy = WebCore::PluginLoadClientPolicyUndefined;
 #if PLATFORM(MAC)
     pluginInfo.bundleIdentifier = self.bundleIdentifier;
     pluginInfo.versionString = self.bundleVersion;
@@ -216,7 +214,7 @@ using namespace WebCore;
     return path;
 }
 
-- (const PluginInfo&)pluginInfo
+- (const WebCore::PluginInfo&)pluginInfo
 {
     return pluginInfo;
 }

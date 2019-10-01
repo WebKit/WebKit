@@ -51,8 +51,6 @@
 #import <wtf/RunLoop.h>
 #import <wtf/StdLibExtras.h>
 
-using namespace WebCore;
-
 typedef HashMap<BackForwardList*, WebBackForwardList*> BackForwardListMap;
 
 // FIXME: Instead of this we could just create a class derived from BackForwardList
@@ -166,7 +164,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
     unsigned size = historyItems.size();
     NSMutableArray *entriesArray = [[NSMutableArray alloc] initWithCapacity:size];
     for (unsigned i = 0; i < size; ++i)
-        [entriesArray addObject:[kit(const_cast<HistoryItem*>(historyItems[i].ptr())) dictionaryRepresentationIncludingChildren:NO]];
+        [entriesArray addObject:[kit(const_cast<WebCore::HistoryItem*>(historyItems[i].ptr())) dictionaryRepresentationIncludingChildren:NO]];
     
     NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys:
         entriesArray, WebBackForwardListDictionaryEntriesKey,
@@ -238,7 +236,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
     return [[kit(core(self)->forwardItem().get()) retain] autorelease];
 }
 
-static NSArray* vectorToNSArray(Vector<Ref<HistoryItem>>& list)
+static NSArray* vectorToNSArray(Vector<Ref<WebCore::HistoryItem>>& list)
 {
     unsigned size = list.size();
     NSMutableArray *result = [[[NSMutableArray alloc] initWithCapacity:size] autorelease];
@@ -262,7 +260,7 @@ static bool bumperCarBackForwardHackNeeded()
 
 - (NSArray *)backListWithLimit:(int)limit
 {
-    Vector<Ref<HistoryItem>> list;
+    Vector<Ref<WebCore::HistoryItem>> list;
     core(self)->backListWithLimit(limit, list);
     NSArray *result = vectorToNSArray(list);
     
@@ -277,7 +275,7 @@ static bool bumperCarBackForwardHackNeeded()
 
 - (NSArray *)forwardListWithLimit:(int)limit
 {
-    Vector<Ref<HistoryItem>> list;
+    Vector<Ref<WebCore::HistoryItem>> list;
     core(self)->forwardListWithLimit(limit, list);
     NSArray *result = vectorToNSArray(list);
     
@@ -321,7 +319,7 @@ static bool bumperCarBackForwardHackNeeded()
         }   
         [result appendFormat:@"%2d) ", i];
         int currPos = [result length];
-        [result appendString:[kit(const_cast<HistoryItem*>(entries[i].ptr())) description]];
+        [result appendString:[kit(const_cast<WebCore::HistoryItem*>(entries[i].ptr())) description]];
 
         // shift all the contents over.  a bit slow, but this is for debugging
         NSRange replRange = { static_cast<NSUInteger>(currPos), [result length] - currPos };
@@ -342,7 +340,7 @@ static bool bumperCarBackForwardHackNeeded()
 
 - (NSUInteger)pageCacheSize
 {
-    return [core(self)->webView() usesPageCache] ? PageCache::singleton().maxSize() : 0;
+    return [core(self)->webView() usesPageCache] ? WebCore::PageCache::singleton().maxSize() : 0;
 }
 
 - (int)backListCount

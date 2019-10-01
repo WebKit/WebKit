@@ -38,8 +38,6 @@
 #import <WebCore/WebSQLiteDatabaseTrackerClient.h>
 #endif
 
-using namespace WebCore;
-
 @implementation WebApplicationCache
 
 #if PLATFORM(IOS_FAMILY)
@@ -54,7 +52,7 @@ static NSString *overrideBundleIdentifier;
     if (initialized)
         return;
 
-    SQLiteDatabaseTracker::setClient(&WebSQLiteDatabaseTrackerClient::sharedWebSQLiteDatabaseTrackerClient());
+    WebCore::SQLiteDatabaseTracker::setClient(&WebCore::WebSQLiteDatabaseTrackerClient::sharedWebSQLiteDatabaseTrackerClient());
 
     ASSERT(!overrideBundleIdentifier);
     overrideBundleIdentifier = [bundleIdentifier copy];
@@ -139,7 +137,7 @@ static NSString *applicationCachePath()
 
 WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
 {
-    static ApplicationCacheStorage& storage = ApplicationCacheStorage::create(applicationCachePath(), "ApplicationCache").leakRef();
+    static WebCore::ApplicationCacheStorage& storage = WebCore::ApplicationCacheStorage::create(applicationCachePath(), "ApplicationCache").leakRef();
 
     return storage;
 }

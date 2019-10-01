@@ -45,8 +45,6 @@
 #import <wtf/Assertions.h>
 #import <wtf/ObjCRuntimeExtras.h>
 
-using namespace WebCore;
-
 #if PLATFORM(IOS_FAMILY)
 @interface WebPluginController (SecretsIKnow)
 - (WebFrame *)webFrame; // FIXME: This file calls -[WebPluginController webFrame], which is not declared in WebPluginController.h.  Merge issue?  Are the plug-in files out of date?
@@ -84,12 +82,12 @@ using namespace WebCore;
     [super dealloc];
 }
 
-- (void)_continueWithPolicy:(PolicyAction)policy
+- (void)_continueWithPolicy:(WebCore::PolicyAction)policy
 {
     if (_contextInfo)
-        wtfObjCMsgSend<void>(_resultObject, _resultSelector, (policy == PolicyAction::Use), _contextInfo);
+        wtfObjCMsgSend<void>(_resultObject, _resultSelector, (policy == WebCore::PolicyAction::Use), _contextInfo);
     else     
-        wtfObjCMsgSend<void>(_resultObject, _resultSelector, (policy == PolicyAction::Use));
+        wtfObjCMsgSend<void>(_resultObject, _resultSelector, (policy == WebCore::PolicyAction::Use));
 
     // this will call indirectly call cancel
     [_controller _webPluginContainerCancelCheckIfAllowedToLoadRequest:self];
@@ -97,10 +95,10 @@ using namespace WebCore;
 
 - (BOOL)_isForbiddenFileLoad
 {
-    Frame* coreFrame = core([_controller webFrame]);
+    auto* coreFrame = core([_controller webFrame]);
     ASSERT(coreFrame);
     if (!coreFrame->document()->securityOrigin().canDisplay([_request URL])) {
-        [self _continueWithPolicy:PolicyAction::Ignore];
+        [self _continueWithPolicy:WebCore::PolicyAction::Ignore];
         return YES;
     }
 

@@ -1,3 +1,50 @@
+2019-10-01  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal build after r250549
+        https://bugs.webkit.org/show_bug.cgi?id=202390
+
+        Remove some more "using namespace WebCore"
+
+        * History/WebBackForwardList.mm:
+        (-[WebBackForwardList dictionaryRepresentation]):
+        (vectorToNSArray):
+        (-[WebBackForwardList backListWithLimit:]):
+        (-[WebBackForwardList forwardListWithLimit:]):
+        (-[WebBackForwardList description]):
+        (-[WebBackForwardList pageCacheSize]):
+        * Misc/WebSharingServicePickerController.mm:
+        (WebSharingServicePickerClient::pageForSharingServicePicker):
+        (WebSharingServicePickerClient::screenRectForCurrentSharingServicePickerItem):
+        (-[WebSharingServicePickerController didShareImageData:confirmDataIsValidTIFFData:]):
+        (-[WebSharingServicePickerController sharingService:didShareItems:]):
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage getPluginInfoFromPLists]):
+        (-[WebBasePluginPackage pluginInfo]):
+        * Plugins/WebPluginContainerCheck.mm:
+        (-[WebPluginContainerCheck _continueWithPolicy:]):
+        (-[WebPluginContainerCheck _isForbiddenFileLoad]):
+        * Plugins/WebPluginController.mm:
+        (initializeAudioSession):
+        (-[WebPluginController plugInViewWithArguments:fromPluginPackage:]):
+        (-[WebPluginController superlayerForPluginView:]):
+        (-[WebPluginController stopOnePlugin:]):
+        (-[WebPluginController stopOnePluginForPageCache:]):
+        (-[WebPluginController destroyOnePlugin:]):
+        (-[WebPluginController startAllPlugins]):
+        (-[WebPluginController addPlugin:]):
+        (-[WebPluginController destroyPlugin:]):
+        (-[WebPluginController destroyAllPlugins]):
+        (-[WebPluginController processingUserGesture]):
+        (-[WebPluginController webPlugInContainerLoadRequest:inFrame:]):
+        (-[WebPluginController webPlugInContainerSelectionColor]):
+        * Plugins/WebPluginDatabase.mm:
+        (-[WebPluginDatabase refresh]):
+        (-[WebPluginDatabase _removePlugin:]):
+        * WebCoreSupport/WebApplicationCache.mm:
+        (+[WebApplicationCache initializeWithBundleIdentifier:]):
+        (webApplicationCacheStorage):
+        * WebCoreSupport/WebApplicationCacheQuotaManager.mm:
+
 2019-09-30  Alex Christensen  <achristensen@webkit.org>
 
         Resurrect Mac CMake build

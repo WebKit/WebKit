@@ -40,8 +40,6 @@
 
 static NSString *serviceControlsPasteboardName = @"WebKitServiceControlsPasteboard";
 
-using namespace WebCore;
-
 WebSharingServicePickerClient::WebSharingServicePickerClient(WebView *webView)
     : m_webView(webView)
 {
@@ -51,7 +49,7 @@ void WebSharingServicePickerClient::sharingServicePickerWillBeDestroyed(WebShari
 {
 }
 
-Page* WebSharingServicePickerClient::pageForSharingServicePicker(WebSharingServicePickerController &)
+WebCore::Page* WebSharingServicePickerClient::pageForSharingServicePicker(WebSharingServicePickerController &)
 {
     return [m_webView page];
 }
@@ -61,9 +59,9 @@ RetainPtr<NSWindow> WebSharingServicePickerClient::windowForSharingServicePicker
     return [m_webView window];
 }
 
-FloatRect WebSharingServicePickerClient::screenRectForCurrentSharingServicePickerItem(WebSharingServicePickerController &)
+WebCore::FloatRect WebSharingServicePickerClient::screenRectForCurrentSharingServicePickerItem(WebSharingServicePickerController &)
 {
-    return FloatRect();
+    return WebCore::FloatRect();
 }
 
 RetainPtr<NSImage> WebSharingServicePickerClient::imageForCurrentSharingServicePickerItem(WebSharingServicePickerController &)
@@ -125,7 +123,7 @@ RetainPtr<NSImage> WebSharingServicePickerClient::imageForCurrentSharingServiceP
 
 - (void)didShareImageData:(NSData *)data confirmDataIsValidTIFFData:(BOOL)confirmData
 {
-    Page* page = _pickerClient->pageForSharingServicePicker(*self);
+    auto* page = _pickerClient->pageForSharingServicePicker(*self);
     if (!page)
         return;
 
@@ -143,8 +141,8 @@ RetainPtr<NSImage> WebSharingServicePickerClient::imageForCurrentSharingServiceP
     [pasteboard declareTypes:@[ NSPasteboardTypeTIFF ] owner:nil];
     [pasteboard setData:data forType:NSPasteboardTypeTIFF];
 
-    if (Node* node = page->contextMenuController().context().hitTestResult().innerNode()) {
-        if (Frame* frame = node->document().frame())
+    if (auto* node = page->contextMenuController().context().hitTestResult().innerNode()) {
+        if (auto* frame = node->document().frame())
             frame->editor().replaceNodeFromPasteboard(node, serviceControlsPasteboardName);
     }
 
@@ -216,7 +214,7 @@ RetainPtr<NSImage> WebSharingServicePickerClient::imageForCurrentSharingServiceP
         }];
     }
     else if ([item isKindOfClass:[NSAttributedString class]]) {
-        Frame& frame = _pickerClient->pageForSharingServicePicker(*self)->focusController().focusedOrMainFrame();
+        auto& frame = _pickerClient->pageForSharingServicePicker(*self)->focusController().focusedOrMainFrame();
         frame.editor().replaceSelectionWithAttributedString(item);
     } else
         LOG_ERROR("sharingService:didShareItems: - Unknown item type returned\n");
