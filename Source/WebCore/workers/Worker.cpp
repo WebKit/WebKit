@@ -68,7 +68,7 @@ inline Worker::Worker(ScriptExecutionContext& context, JSC::RuntimeFlags runtime
     , m_identifier("worker:" + Inspector::IdentifiersFactory::createIdentifier())
     , m_contextProxy(WorkerGlobalScopeProxy::create(*this))
     , m_runtimeFlags(runtimeFlags)
-    , m_eventQueue(*this)
+    , m_eventQueue(GenericEventQueue::create(*this))
 {
     static bool addedListener;
     if (!addedListener) {
@@ -146,22 +146,12 @@ ExceptionOr<void> Worker::postMessage(JSC::ExecState& state, JSC::JSValue messag
 void Worker::terminate()
 {
     m_contextProxy.terminateWorkerGlobalScope();
-    m_eventQueue.cancelAllEvents();
+    m_eventQueue->cancelAllEvents();
 }
 
 bool Worker::canSuspendForDocumentSuspension() const
 {
     return true;
-}
-
-void Worker::suspend(ReasonForSuspension)
-{
-    m_eventQueue.suspend();
-}
-
-void Worker::resume()
-{
-    m_eventQueue.resume();
 }
 
 const char* Worker::activeDOMObjectName() const
@@ -172,12 +162,11 @@ const char* Worker::activeDOMObjectName() const
 void Worker::stop()
 {
     terminate();
-    m_eventQueue.close();
 }
 
 bool Worker::hasPendingActivity() const
 {
-    return m_contextProxy.hasPendingActivity() || ActiveDOMObject::hasPendingActivity() || m_eventQueue.hasPendingEvents();
+    return m_contextProxy.hasPendingActivity() || ActiveDOMObject::hasPendingActivity() || m_eventQueue->hasPendingEvents();
 }
 
 void Worker::notifyNetworkStateChange(bool isOnLine)
@@ -217,12 +206,12 @@ void Worker::notifyFinished()
 
 void Worker::enqueueEvent(Ref<Event>&& event)
 {
-    m_eventQueue.enqueueEvent(WTFMove(event));
+    m_eventQueue->enqueueEvent(WTFMove(event));
 }
 
 void Worker::dispatchEvent(Event& event)
 {
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_eventQueue.isSuspended());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_eventQueue->isSuspended());
 
     AbstractWorker::dispatchEvent(event);
     if (is<ErrorEvent>(event) && !event.defaultPrevented() && event.isTrusted() && scriptExecutionContext()) {

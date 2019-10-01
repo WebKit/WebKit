@@ -1,5 +1,114 @@
 2019-09-30  Chris Dumez  <cdumez@apple.com>
 
+        Make GenericEventQueue an ActiveDOMObject
+        https://bugs.webkit.org/show_bug.cgi?id=202373
+
+        Reviewed by Eric Carlson.
+
+        Make GenericEventQueue an ActiveDOMObject so that it is guaranteed to never fire any events while
+        suspended without requiring the client to explicitly suspend/resume the event queue.
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::MediaKeySession):
+        (WebCore::MediaKeySession::enqueueMessage):
+        (WebCore::MediaKeySession::updateKeyStatuses):
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.cpp:
+        (WebCore::WebKitMediaKeySession::WebKitMediaKeySession):
+        (WebCore::WebKitMediaKeySession::~WebKitMediaKeySession):
+        (WebCore::WebKitMediaKeySession::addKeyTimerFired):
+        (WebCore::WebKitMediaKeySession::sendMessage):
+        (WebCore::WebKitMediaKeySession::sendError):
+        (WebCore::WebKitMediaKeySession::hasPendingActivity const):
+        (WebCore::WebKitMediaKeySession::stop):
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.h:
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::MediaSource):
+        (WebCore::MediaSource::hasPendingActivity const):
+        (WebCore::MediaSource::stop):
+        (WebCore::MediaSource::canSuspendForDocumentSuspension const):
+        (WebCore::MediaSource::scheduleEvent):
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::SourceBuffer):
+        (WebCore::SourceBuffer::hasPendingActivity const):
+        (WebCore::SourceBuffer::stop):
+        (WebCore::SourceBuffer::scheduleEvent):
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/mediasource/SourceBufferList.cpp:
+        (WebCore::SourceBufferList::SourceBufferList):
+        (WebCore::SourceBufferList::scheduleEvent):
+        (WebCore::SourceBufferList::canSuspendForDocumentSuspension const):
+        * Modules/mediasource/SourceBufferList.h:
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::AudioContext):
+        (WebCore::AudioContext::stop):
+        * Modules/webaudio/AudioContext.h:
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::DeclarativeAnimation):
+        (WebCore::DeclarativeAnimation::tick):
+        (WebCore::DeclarativeAnimation::needsTick const):
+        (WebCore::DeclarativeAnimation::remove):
+        (WebCore::DeclarativeAnimation::enqueueDOMEvent):
+        (WebCore::DeclarativeAnimation::stop):
+        (WebCore::DeclarativeAnimation::suspend):
+        (WebCore::DeclarativeAnimation::resume):
+        * animation/DeclarativeAnimation.h:
+        * dom/GenericEventQueue.cpp:
+        (WebCore::GenericEventQueueBase<T>::GenericEventQueueBase):
+        (WebCore::GenericEventQueueBase<T>::setPaused):
+        (WebCore::GenericEventQueueBase<T>::canSuspendForDocumentSuspension const):
+        (WebCore::GenericEventQueueBase<T>::suspend):
+        (WebCore::GenericEventQueueBase<T>::resume):
+        (WebCore::GenericEventQueueBase<T>::rescheduleAllEventsIfNeeded):
+        (WebCore::GenericEventQueueBase<T>::stop):
+        (WebCore::GenericEventQueueBase<T>::activeDOMObjectName const):
+        (WebCore::GenericEventQueue::create):
+        (WebCore::MainThreadGenericEventQueue::create):
+        * dom/GenericEventQueue.h:
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::MessagePort):
+        (WebCore::MessagePort::close):
+        (WebCore::MessagePort::dispatchMessages):
+        * dom/MessagePort.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::scheduleEvent):
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues):
+        (WebCore::HTMLMediaElement::cancelPendingEventsAndCallbacks):
+        (WebCore::HTMLMediaElement::mediaPlayerKeyNeeded):
+        (WebCore::HTMLMediaElement::mediaPlayerInitializationDataEncountered):
+        (WebCore::HTMLMediaElement::closeTaskQueues):
+        (WebCore::HTMLMediaElement::suspend):
+        (WebCore::HTMLMediaElement::resume):
+        (WebCore::HTMLMediaElement::hasPendingActivity const):
+        (WebCore::HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent):
+        * html/HTMLMediaElement.h:
+        * html/track/TrackListBase.cpp:
+        (WebCore::TrackListBase::TrackListBase):
+        (WebCore::TrackListBase::scheduleTrackEvent):
+        (WebCore::TrackListBase::scheduleChangeEvent):
+        (WebCore::TrackListBase::isChangeEventScheduled const):
+        (WebCore::TrackListBase::canSuspendForDocumentSuspension const):
+        * html/track/TrackListBase.h:
+        * workers/Worker.cpp:
+        (WebCore::Worker::Worker):
+        (WebCore::Worker::terminate):
+        (WebCore::Worker::stop):
+        (WebCore::Worker::hasPendingActivity const):
+        (WebCore::Worker::enqueueEvent):
+        (WebCore::Worker::dispatchEvent):
+        * workers/Worker.h:
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::ServiceWorkerContainer):
+        (WebCore::ServiceWorkerContainer::startMessages):
+        (WebCore::ServiceWorkerContainer::postMessage):
+        (WebCore::ServiceWorkerContainer::stop):
+        * workers/service/ServiceWorkerContainer.h:
+
+2019-09-30  Chris Dumez  <cdumez@apple.com>
+
         IDBTransaction / IDBObjectStore should not prevent a page from entering the back / forward cache
         https://bugs.webkit.org/show_bug.cgi?id=202291
         <rdar://problem/55760106>

@@ -88,7 +88,7 @@ private:
     bool m_wasPending { false };
     AnimationEffectPhase m_previousPhase { AnimationEffectPhase::Idle };
 
-    MainThreadGenericEventQueue m_eventQueue;
+    UniqueRef<MainThreadGenericEventQueue> m_eventQueue;
 
     Element* m_owningElement;
     Ref<Animation> m_backingAnimation;

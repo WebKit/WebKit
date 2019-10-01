@@ -144,8 +144,6 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    void suspend(ReasonForSuspension) final;
-    void resume() final;
     void stop() final;
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
@@ -217,7 +215,7 @@ private:
 
     Ref<SourceBufferPrivate> m_private;
     MediaSource* m_source;
-    MainThreadGenericEventQueue m_asyncEventQueue;
+    UniqueRef<MainThreadGenericEventQueue> m_asyncEventQueue;
     AppendMode m_mode { AppendMode::Segments };
 
     Vector<unsigned char> m_pendingAppendData;

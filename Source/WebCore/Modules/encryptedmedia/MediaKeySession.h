@@ -114,7 +114,7 @@ private:
     MediaKeySessionType m_sessionType;
     Ref<CDM> m_implementation;
     Ref<CDMInstanceSession> m_instanceSession;
-    MainThreadGenericEventQueue m_eventQueue;
+    UniqueRef<MainThreadGenericEventQueue> m_eventQueue;
     GenericTaskQueue<Timer> m_taskQueue;
     Vector<Ref<SharedBuffer>> m_recordOfKeyUsage;
     double m_firstDecryptTime { 0 };

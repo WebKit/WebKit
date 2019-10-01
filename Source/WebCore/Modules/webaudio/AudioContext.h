@@ -45,6 +45,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -417,7 +418,7 @@ private:
     Vector<Vector<DOMPromiseDeferred<void>>> m_stateReactions;
 
     std::unique_ptr<PlatformMediaSession> m_mediaSession;
-    std::unique_ptr<MainThreadGenericEventQueue> m_eventQueue;
+    UniqueRef<MainThreadGenericEventQueue> m_eventQueue;
 
     RefPtr<AudioBuffer> m_renderTarget;
     RefPtr<AudioDestinationNode> m_destinationNode;

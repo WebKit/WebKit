@@ -44,7 +44,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DeclarativeAnimation);
 
 DeclarativeAnimation::DeclarativeAnimation(Element& owningElement, const Animation& backingAnimation)
     : WebAnimation(owningElement.document())
-    , m_eventQueue(owningElement)
+    , m_eventQueue(MainThreadGenericEventQueue::create(owningElement))
     , m_owningElement(&owningElement)
     , m_backingAnimation(const_cast<Animation&>(backingAnimation))
 {
@@ -67,7 +67,7 @@ void DeclarativeAnimation::tick()
     // maps containing running CSS Transitions and CSS Animations for a given element.
     if (wasRelevant && playState() == WebAnimation::PlayState::Idle) {
         disassociateFromOwningElement();
-        m_eventQueue.close();
+        m_eventQueue->close();
     }
 }
 
@@ -83,12 +83,12 @@ void DeclarativeAnimation::disassociateFromOwningElement()
 
 bool DeclarativeAnimation::needsTick() const
 {
-    return WebAnimation::needsTick() || m_eventQueue.hasPendingEvents();
+    return WebAnimation::needsTick() || m_eventQueue->hasPendingEvents();
 }
 
 void DeclarativeAnimation::remove()
 {
-    m_eventQueue.close();
+    m_eventQueue->close();
     WebAnimation::remove();
 }
 
@@ -335,26 +335,23 @@ void DeclarativeAnimation::enqueueDOMEvent(const AtomString& eventType, Seconds 
     ASSERT(m_owningElement);
     auto time = secondsToWebAnimationsAPITime(elapsedTime) / 1000;
     if (is<CSSAnimation>(this))
-        m_eventQueue.enqueueEvent(AnimationEvent::create(eventType, downcast<CSSAnimation>(this)->animationName(), time));
+        m_eventQueue->enqueueEvent(AnimationEvent::create(eventType, downcast<CSSAnimation>(this)->animationName(), time));
     else if (is<CSSTransition>(this))
-        m_eventQueue.enqueueEvent(TransitionEvent::create(eventType, downcast<CSSTransition>(this)->transitionProperty(), time, PseudoElement::pseudoElementNameForEvents(m_owningElement->pseudoId())));
+        m_eventQueue->enqueueEvent(TransitionEvent::create(eventType, downcast<CSSTransition>(this)->transitionProperty(), time, PseudoElement::pseudoElementNameForEvents(m_owningElement->pseudoId())));
 }
 
 void DeclarativeAnimation::stop()
 {
-    m_eventQueue.close();
     WebAnimation::stop();
 }
 
 void DeclarativeAnimation::suspend(ReasonForSuspension reason)
 {
-    m_eventQueue.suspend();
     WebAnimation::suspend(reason);
 }
 
 void DeclarativeAnimation::resume()
 {
-    m_eventQueue.resume();
     WebAnimation::resume();
 }
 

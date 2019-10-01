@@ -140,7 +140,7 @@ AudioContext::AudioContext(Document& document)
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
     , m_mediaSession(PlatformMediaSession::create(*this))
-    , m_eventQueue(makeUnique<MainThreadGenericEventQueue>(*this))
+    , m_eventQueue(MainThreadGenericEventQueue::create(*this))
 {
     // According to spec AudioContext must die only after page navigate.
     // Lets mark it as ActiveDOMObject with pending activity and unmark it in clear method.
@@ -166,7 +166,7 @@ AudioContext::AudioContext(Document& document, unsigned numberOfChannels, size_t
 #endif
     , m_isOfflineContext(true)
     , m_mediaSession(PlatformMediaSession::create(*this))
-    , m_eventQueue(makeUnique<MainThreadGenericEventQueue>(*this))
+    , m_eventQueue(MainThreadGenericEventQueue::create(*this))
 {
     constructCommon();
 
@@ -335,8 +335,6 @@ void AudioContext::stop()
 
     ASSERT(document());
     document()->updateIsPlayingMedia();
-
-    m_eventQueue->close();
 
     uninitialize();
     clear();

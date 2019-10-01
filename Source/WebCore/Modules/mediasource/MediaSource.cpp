@@ -101,7 +101,7 @@ MediaSource::MediaSource(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
     , m_duration(MediaTime::invalidTime())
     , m_pendingSeekTime(MediaTime::invalidTime())
-    , m_asyncEventQueue(*this)
+    , m_asyncEventQueue(MainThreadGenericEventQueue::create(*this))
 #if !RELEASE_LOG_DISABLED
     , m_logger(downcast<Document>(context).logger())
 #endif
@@ -973,38 +973,14 @@ void MediaSource::openIfInEndedState()
 
 bool MediaSource::hasPendingActivity() const
 {
-    return m_private || m_asyncEventQueue.hasPendingEvents()
+    return m_private || m_asyncEventQueue->hasPendingEvents()
         || ActiveDOMObject::hasPendingActivity();
-}
-
-void MediaSource::suspend(ReasonForSuspension reason)
-{
-    ALWAYS_LOG(LOGIDENTIFIER, static_cast<int>(reason));
-
-    switch (reason) {
-    case ReasonForSuspension::PageCache:
-    case ReasonForSuspension::PageWillBeSuspended:
-        m_asyncEventQueue.suspend();
-        break;
-    case ReasonForSuspension::JavaScriptDebuggerPaused:
-    case ReasonForSuspension::WillDeferLoading:
-        // Do nothing, we don't pause media playback in these cases.
-        break;
-    }
-}
-
-void MediaSource::resume()
-{
-    ALWAYS_LOG(LOGIDENTIFIER);
-
-    m_asyncEventQueue.resume();
 }
 
 void MediaSource::stop()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_asyncEventQueue.close();
     if (m_mediaElement)
         m_mediaElement->detachMediaSource();
     m_readyState = ReadyState::Closed;
@@ -1013,7 +989,8 @@ void MediaSource::stop()
 
 bool MediaSource::canSuspendForDocumentSuspension() const
 {
-    return isClosed() && !m_asyncEventQueue.hasPendingEvents();
+    // FIXME: Do better.
+    return isClosed();
 }
 
 const char* MediaSource::activeDOMObjectName() const
@@ -1080,7 +1057,7 @@ void MediaSource::scheduleEvent(const AtomString& eventName)
     auto event = Event::create(eventName, Event::CanBubble::No, Event::IsCancelable::No);
     event->setTarget(this);
 
-    m_asyncEventQueue.enqueueEvent(WTFMove(event));
+    m_asyncEventQueue->enqueueEvent(WTFMove(event));
 }
 
 ScriptExecutionContext* MediaSource::scriptExecutionContext() const

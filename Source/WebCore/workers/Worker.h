@@ -83,8 +83,6 @@ private:
     void notifyFinished() final;
 
     bool canSuspendForDocumentSuspension() const final;
-    void suspend(ReasonForSuspension) final;
-    void resume() final;
     void stop() final;
     const char* activeDOMObjectName() const final;
 
@@ -98,7 +96,7 @@ private:
     MonotonicTime m_workerCreationTime;
     bool m_shouldBypassMainWorldContentSecurityPolicy { false };
     JSC::RuntimeFlags m_runtimeFlags;
-    GenericEventQueue m_eventQueue;
+    UniqueRef<GenericEventQueue> m_eventQueue;
 };
 
 } // namespace WebCore

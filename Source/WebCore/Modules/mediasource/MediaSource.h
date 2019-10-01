@@ -126,8 +126,6 @@ public:
 private:
     explicit MediaSource(ScriptExecutionContext&);
 
-    void suspend(ReasonForSuspension) final;
-    void resume() final;
     void stop() final;
     bool canSuspendForDocumentSuspension() const final;
     const char* activeDOMObjectName() const final;
@@ -168,7 +166,7 @@ private:
     MediaTime m_duration;
     MediaTime m_pendingSeekTime;
     ReadyState m_readyState { ReadyState::Closed };
-    MainThreadGenericEventQueue m_asyncEventQueue;
+    UniqueRef<MainThreadGenericEventQueue> m_asyncEventQueue;
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier { nullptr };

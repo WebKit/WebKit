@@ -76,9 +76,6 @@ private:
     void scheduleTrackEvent(const AtomString& eventName, Ref<TrackBase>&&);
 
     bool canSuspendForDocumentSuspension() const final;
-    void suspend(ReasonForSuspension) final;
-    void resume() final;
-    void stop() final;
 
     // EventTarget
     void refEventTarget() final { ref(); }
@@ -86,7 +83,7 @@ private:
 
     HTMLMediaElement* m_element;
 
-    MainThreadGenericEventQueue m_asyncEventQueue;
+    UniqueRef<MainThreadGenericEventQueue> m_asyncEventQueue;
 };
 
 } // namespace WebCore

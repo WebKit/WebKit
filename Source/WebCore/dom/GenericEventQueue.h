@@ -25,10 +25,12 @@
 
 #pragma once
 
+#include "ActiveDOMObject.h"
 #include "GenericTaskQueue.h"
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
@@ -38,7 +40,7 @@ class Timer;
 class ScriptExecutionContext;
 
 template<typename T>
-class GenericEventQueueBase {
+class GenericEventQueueBase : public ActiveDOMObject {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit GenericEventQueueBase(EventTarget&);
@@ -51,24 +53,37 @@ public:
     bool hasPendingEvents() const;
     bool hasPendingEventsOfType(const AtomString&) const;
 
-    void suspend();
-    void resume();
+    void setPaused(bool);
 
     bool isSuspended() const { return m_isSuspended; }
 
 private:
     void dispatchOneEvent();
 
+    const char* activeDOMObjectName() const final;
+    bool canSuspendForDocumentSuspension() const final;
+    void stop() final;
+    void suspend(ReasonForSuspension) final;
+    void resume() final;
+
+    void rescheduleAllEventsIfNeeded();
+    bool isSuspendedOrPausedByClient() const { return m_isSuspended || m_isPausedByClient; }
+
     EventTarget& m_owner;
     GenericTaskQueue<T> m_taskQueue;
     Deque<RefPtr<Event>> m_pendingEvents;
     bool m_isClosed { false };
+    bool m_isPausedByClient { false };
     bool m_isSuspended { false };
 };
 
 // All instances of MainThreadGenericEventQueue use a shared Timer for dispatching events.
 class MainThreadGenericEventQueue : public GenericEventQueueBase<Timer> {
 public:
+    static UniqueRef<MainThreadGenericEventQueue> create(EventTarget&);
+
+private:
+    friend UniqueRef<MainThreadGenericEventQueue> WTF::makeUniqueRefWithoutFastMallocCheck<MainThreadGenericEventQueue, WebCore::EventTarget&>(WebCore::EventTarget&);
     explicit MainThreadGenericEventQueue(EventTarget& eventTarget)
         : GenericEventQueueBase<Timer>(eventTarget)
     {
@@ -78,6 +93,10 @@ public:
 class GenericEventQueue : public GenericEventQueueBase<ScriptExecutionContext> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    static UniqueRef<GenericEventQueue> create(EventTarget&);
+
+private:
+    friend UniqueRef<GenericEventQueue> WTF::makeUniqueRefWithoutFastMallocCheck<GenericEventQueue, WebCore::EventTarget&>(WebCore::EventTarget&);
     explicit GenericEventQueue(EventTarget& eventTarget)
         : GenericEventQueueBase<ScriptExecutionContext>(eventTarget)
     {

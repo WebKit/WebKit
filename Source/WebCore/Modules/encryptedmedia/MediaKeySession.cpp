@@ -68,7 +68,7 @@ MediaKeySession::MediaKeySession(ScriptExecutionContext& context, WeakPtr<MediaK
     , m_sessionType(sessionType)
     , m_implementation(WTFMove(implementation))
     , m_instanceSession(WTFMove(instanceSession))
-    , m_eventQueue(*this)
+    , m_eventQueue(MainThreadGenericEventQueue::create(*this))
 {
     // https://w3c.github.io/encrypted-media/#dom-mediakeys-createsession
     // W3C Editor's Draft 09 November 2016
@@ -614,7 +614,7 @@ void MediaKeySession::enqueueMessage(MediaKeyMessageType messageType, const Shar
     //    interface with its type attribute set to message and its isTrusted attribute initialized to true, and dispatch it at the
     //    session.
     auto messageEvent = MediaKeyMessageEvent::create(eventNames().messageEvent, {messageType, message.tryCreateArrayBuffer()}, Event::IsTrusted::Yes);
-    m_eventQueue.enqueueEvent(WTFMove(messageEvent));
+    m_eventQueue->enqueueEvent(WTFMove(messageEvent));
 }
 
 void MediaKeySession::updateKeyStatuses(CDMInstanceSession::KeyStatusVector&& inputStatuses)
@@ -659,7 +659,7 @@ void MediaKeySession::updateKeyStatuses(CDMInstanceSession::KeyStatusVector&& in
         m_statuses.uncheckedAppend({ WTFMove(status.first), toMediaKeyStatus(status.second) });
 
     // 5. Queue a task to fire a simple event named keystatuseschange at the session.
-    m_eventQueue.enqueueEvent(Event::create(eventNames().keystatuseschangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    m_eventQueue->enqueueEvent(Event::create(eventNames().keystatuseschangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
     // 6. Queue a task to run the Attempt to Resume Playback If Necessary algorithm on each of the media element(s) whose mediaKeys attribute is the MediaKeys object that created the session.
     m_taskQueue.enqueueTask(

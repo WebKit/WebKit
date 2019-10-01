@@ -46,7 +46,8 @@ template<> struct TaskQueueConstructor<Timer> {
 
 template<typename T>
 GenericEventQueueBase<T>::GenericEventQueueBase(EventTarget& owner)
-    : m_owner(owner)
+    : ActiveDOMObject(owner.scriptExecutionContext())
+    , m_owner(owner)
     , m_taskQueue(TaskQueueConstructor<T>::construct(owner.scriptExecutionContext()))
 {
 }
@@ -65,7 +66,7 @@ void GenericEventQueueBase<T>::enqueueEvent(RefPtr<Event>&& event)
 
     m_pendingEvents.append(WTFMove(event));
 
-    if (m_isSuspended)
+    if (isSuspendedOrPausedByClient())
         return;
 
     m_taskQueue.enqueueTask(std::bind(&GenericEventQueueBase::dispatchOneEvent, this));
@@ -119,9 +120,30 @@ bool GenericEventQueueBase<T>::hasPendingEventsOfType(const AtomString& type) co
 }
 
 template<typename T>
-void GenericEventQueueBase<T>::suspend()
+void GenericEventQueueBase<T>::setPaused(bool shouldPause)
 {
-    ASSERT(!m_isSuspended);
+    if (m_isPausedByClient == shouldPause)
+        return;
+
+    m_isPausedByClient = shouldPause;
+    if (shouldPause)
+        m_taskQueue.cancelAllTasks();
+    else
+        rescheduleAllEventsIfNeeded();
+}
+
+template<typename T>
+bool GenericEventQueueBase<T>::canSuspendForDocumentSuspension() const
+{
+    return true;
+}
+
+template<typename T>
+void GenericEventQueueBase<T>::suspend(ReasonForSuspension)
+{
+    if (m_isSuspended)
+        return;
+
     m_isSuspended = true;
     m_taskQueue.cancelAllTasks();
 }
@@ -133,12 +155,46 @@ void GenericEventQueueBase<T>::resume()
         return;
 
     m_isSuspended = false;
+    rescheduleAllEventsIfNeeded();
+}
+
+template<typename T>
+void GenericEventQueueBase<T>::rescheduleAllEventsIfNeeded()
+{
+    if (isSuspendedOrPausedByClient())
+        return;
 
     for (unsigned i = 0; i < m_pendingEvents.size(); ++i)
         m_taskQueue.enqueueTask(std::bind(&GenericEventQueueBase::dispatchOneEvent, this));
 }
 
+template<typename T>
+void GenericEventQueueBase<T>::stop()
+{
+    close();
+}
+
+template<typename T>
+const char* GenericEventQueueBase<T>::activeDOMObjectName() const
+{
+    return "GenericEventQueueBase";
+}
+
 template class GenericEventQueueBase<Timer>;
 template class GenericEventQueueBase<ScriptExecutionContext>;
+
+UniqueRef<GenericEventQueue> GenericEventQueue::create(EventTarget& eventTarget)
+{
+    auto eventQueue = makeUniqueRef<GenericEventQueue>(eventTarget);
+    eventQueue->suspendIfNeeded();
+    return eventQueue;
+}
+
+UniqueRef<MainThreadGenericEventQueue> MainThreadGenericEventQueue::create(EventTarget& eventTarget)
+{
+    auto eventQueue = makeUniqueRef<MainThreadGenericEventQueue>(eventTarget);
+    eventQueue->suspendIfNeeded();
+    return eventQueue;
+}
 
 }

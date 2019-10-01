@@ -426,7 +426,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_scanTimer(*this, &HTMLMediaElement::scanTimerFired)
     , m_playbackControlsManagerBehaviorRestrictionsTimer(*this, &HTMLMediaElement::playbackControlsManagerBehaviorRestrictionsTimerFired)
     , m_seekToPlaybackPositionEndedTimer(*this, &HTMLMediaElement::seekToPlaybackPositionEndedTimerFired)
-    , m_asyncEventQueue(*this)
+    , m_asyncEventQueue(MainThreadGenericEventQueue::create(*this))
     , m_lastTimeUpdateEventMovieTime(MediaTime::positiveInfiniteTime())
     , m_firstTimePlaying(true)
     , m_playing(false)
@@ -572,7 +572,7 @@ HTMLMediaElement::~HTMLMediaElement()
     beginIgnoringTrackDisplayUpdateRequests();
     allMediaElements().remove(this);
 
-    m_asyncEventQueue.close();
+    m_asyncEventQueue->close();
 
     setShouldDelayLoadEvent(false);
     unregisterWithDocument(document());
@@ -1021,7 +1021,7 @@ void HTMLMediaElement::scheduleEvent(const AtomString& eventName)
     // Don't set the event target, the event queue will set it in GenericEventQueue::timerFired and setting it here
     // will trigger an ASSERT if this element has been marked for deletion.
 
-    m_asyncEventQueue.enqueueEvent(WTFMove(event));
+    m_asyncEventQueue->enqueueEvent(WTFMove(event));
 }
 
 void HTMLMediaElement::scheduleResolvePendingPlayPromises()
@@ -1849,11 +1849,11 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
         if (eventTask.second->startTime() >= eventTask.second->endTime()) {
             auto enterEvent = Event::create(eventNames().enterEvent, Event::CanBubble::No, Event::IsCancelable::No);
             enterEvent->setTarget(eventTask.second);
-            m_asyncEventQueue.enqueueEvent(WTFMove(enterEvent));
+            m_asyncEventQueue->enqueueEvent(WTFMove(enterEvent));
 
             auto exitEvent = Event::create(eventNames().exitEvent, Event::CanBubble::No, Event::IsCancelable::No);
             exitEvent->setTarget(eventTask.second);
-            m_asyncEventQueue.enqueueEvent(WTFMove(exitEvent));
+            m_asyncEventQueue->enqueueEvent(WTFMove(exitEvent));
         } else {
             RefPtr<Event> event;
             if (eventTask.first == eventTask.second->startMediaTime())
@@ -1861,7 +1861,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
             else
                 event = Event::create(eventNames().exitEvent, Event::CanBubble::No, Event::IsCancelable::No);
             event->setTarget(eventTask.second);
-            m_asyncEventQueue.enqueueEvent(WTFMove(event));
+            m_asyncEventQueue->enqueueEvent(WTFMove(event));
         }
     }
 
@@ -1874,7 +1874,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
     for (auto& affectedTrack : affectedTracks) {
         auto event = Event::create(eventNames().cuechangeEvent, Event::CanBubble::No, Event::IsCancelable::No);
         event->setTarget(affectedTrack);
-        m_asyncEventQueue.enqueueEvent(WTFMove(event));
+        m_asyncEventQueue->enqueueEvent(WTFMove(event));
 
         // ... if the text track has a corresponding track element, to then fire a
         // simple event named cuechange at the track element as well.
@@ -1883,7 +1883,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
             auto trackElement = makeRefPtr(downcast<LoadableTextTrack>(*affectedTrack).trackElement());
             ASSERT(trackElement);
             event->setTarget(trackElement);
-            m_asyncEventQueue.enqueueEvent(WTFMove(event));
+            m_asyncEventQueue->enqueueEvent(WTFMove(event));
         }
     }
 
@@ -2223,7 +2223,7 @@ void HTMLMediaElement::mediaLoadingFailedFatally(MediaPlayer::NetworkState error
 void HTMLMediaElement::cancelPendingEventsAndCallbacks()
 {
     INFO_LOG(LOGIDENTIFIER);
-    m_asyncEventQueue.cancelAllEvents();
+    m_asyncEventQueue->cancelAllEvents();
 
     for (auto& source : childrenOfType<HTMLSourceElement>(*this))
         source.cancelPendingErrorEvent();
@@ -2614,7 +2614,7 @@ bool HTMLMediaElement::mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array* initData)
 
     auto event = WebKitMediaKeyNeededEvent::create(eventNames().webkitneedkeyEvent, initData);
     event->setTarget(this);
-    m_asyncEventQueue.enqueueEvent(WTFMove(event));
+    m_asyncEventQueue->enqueueEvent(WTFMove(event));
 
     return true;
 }
@@ -2761,7 +2761,7 @@ void HTMLMediaElement::mediaPlayerInitializationDataEncountered(const String& in
     //      initDataType = initDataType
     //      initData = initData
     MediaEncryptedEventInit initializer { initDataType, WTFMove(initData) };
-    m_asyncEventQueue.enqueueEvent(MediaEncryptedEvent::create(eventNames().encryptedEvent, initializer, Event::IsTrusted::Yes));
+    m_asyncEventQueue->enqueueEvent(MediaEncryptedEvent::create(eventNames().encryptedEvent, initializer, Event::IsTrusted::Yes));
 }
 
 void HTMLMediaElement::mediaPlayerWaitingForKeyChanged()
@@ -5720,7 +5720,7 @@ void HTMLMediaElement::closeTaskQueues()
 #if ENABLE(ENCRYPTED_MEDIA)
     m_encryptedMediaQueue.close();
 #endif
-    m_asyncEventQueue.close();
+    m_asyncEventQueue->close();
 #if PLATFORM(IOS_FAMILY)
     m_volumeRevertTaskQueue.close();
 #endif
@@ -5761,7 +5761,6 @@ void HTMLMediaElement::suspend(ReasonForSuspension reason)
     switch (reason) {
     case ReasonForSuspension::PageCache:
         stopWithoutDestroyingMediaPlayer();
-        m_asyncEventQueue.suspend();
         setBufferingPolicy(BufferingPolicy::MakeResourcesPurgeable);
         m_mediaSession->addBehaviorRestriction(MediaElementSession::RequirePageConsentToResumeMedia);
         break;
@@ -5778,8 +5777,6 @@ void HTMLMediaElement::resume()
     INFO_LOG(LOGIDENTIFIER);
 
     setInActiveDocument(true);
-
-    m_asyncEventQueue.resume();
 
     if (!m_mediaSession->pageAllowsPlaybackAfterResuming())
         document().addMediaCanStartListener(*this);
@@ -5803,7 +5800,7 @@ void HTMLMediaElement::resume()
 
 bool HTMLMediaElement::hasPendingActivity() const
 {
-    return (hasAudio() && isPlaying()) || m_asyncEventQueue.hasPendingEvents() || m_creatingControls;
+    return (hasAudio() && isPlaying()) || m_asyncEventQueue->hasPendingEvents() || m_creatingControls;
 }
 
 void HTMLMediaElement::mediaVolumeDidChange()
@@ -5952,7 +5949,7 @@ void HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent()
     INFO_LOG(LOGIDENTIFIER, "hasTargets = ", hasTargets);
     auto event = WebKitPlaybackTargetAvailabilityEvent::create(eventNames().webkitplaybacktargetavailabilitychangedEvent, hasTargets);
     event->setTarget(this);
-    m_asyncEventQueue.enqueueEvent(WTFMove(event));
+    m_asyncEventQueue->enqueueEvent(WTFMove(event));
     scheduleUpdateMediaState();
 }
 

@@ -111,8 +111,6 @@ private:
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
-    void suspend(ReasonForSuspension) final;
-    void resume() final;
     
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     EventTargetInterface eventTargetInterface() const final { return ServiceWorkerContainerEventTargetInterfaceType; }
@@ -143,8 +141,7 @@ private:
 
     uint64_t m_lastOngoingSettledRegistrationIdentifier { 0 };
     HashMap<uint64_t, ServiceWorkerRegistrationKey> m_ongoingSettledRegistrations;
-    GenericEventQueue m_messageQueue;
-
+    UniqueRef<GenericEventQueue> m_messageQueue;
 };
 
 } // namespace WebCore
