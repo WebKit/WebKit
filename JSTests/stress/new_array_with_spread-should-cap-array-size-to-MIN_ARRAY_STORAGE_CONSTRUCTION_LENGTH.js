@@ -1,4 +1,5 @@
-//@ skip if $memoryLimited or $buildType == "debug"
+//@ skip
+// FIXME: This test is timing out and we should look into it. See: https://bugs.webkit.org/show_bug.cgi?id=202422
 
 function test() {
     function makeFoo(n) {
