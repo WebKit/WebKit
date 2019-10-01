@@ -1,3 +1,20 @@
+2019-09-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] AI folds CompareEq wrongly when it sees proven Boolean and Number
+        https://bugs.webkit.org/show_bug.cgi?id=202382
+        <rdar://problem/52669112>
+
+        Reviewed by Saam Barati.
+
+        If CompareEq(Untyped, Untyped) finds that it gets proven Boolean and Number types on its arguments,
+        we fold it to constant False. But this is wrong since `false == 0` is true in JS.
+        This patch adds leastUpperBoundOfEquivalentSpeculations, which merges Number, BigInt, and Boolean types
+        if one of them are seen.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::leastUpperBoundOfEquivalentSpeculations):
+        (JSC::valuesCouldBeEqual):
+
 2019-09-28  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Fix non-unified build issue caused by r250440

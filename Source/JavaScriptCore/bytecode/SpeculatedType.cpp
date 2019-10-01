@@ -624,10 +624,21 @@ SpeculatedType leastUpperBoundOfStrictlyEquivalentSpeculations(SpeculatedType ty
     return type;
 }
 
+static inline SpeculatedType leastUpperBoundOfEquivalentSpeculations(SpeculatedType type)
+{
+    type = leastUpperBoundOfStrictlyEquivalentSpeculations(type);
+
+    // Boolean or BigInt can be converted to Number when performing non-strict equal.
+    if (type & (SpecIntAnyFormat | SpecNonIntAsDouble | SpecBoolean | SpecBigInt))
+        type |= (SpecIntAnyFormat | SpecNonIntAsDouble | SpecBoolean | SpecBigInt);
+
+    return type;
+}
+
 bool valuesCouldBeEqual(SpeculatedType a, SpeculatedType b)
 {
-    a = leastUpperBoundOfStrictlyEquivalentSpeculations(a);
-    b = leastUpperBoundOfStrictlyEquivalentSpeculations(b);
+    a = leastUpperBoundOfEquivalentSpeculations(a);
+    b = leastUpperBoundOfEquivalentSpeculations(b);
     
     // Anything could be equal to a string.
     if (a & SpecString)
