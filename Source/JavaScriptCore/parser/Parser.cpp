@@ -427,7 +427,7 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseModuleSo
     while (true) {
         TreeStatement statement = 0;
         switch (m_token.m_type) {
-        case EXPORT:
+        case EXPORT_:
             statement = parseExportDeclaration(context);
             if (statement)
                 recordPauseLocation(context.breakpointLocation(statement));
@@ -3380,7 +3380,7 @@ template <typename LexerType>
 template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclaration(TreeBuilder& context)
 {
     // http://www.ecma-international.org/ecma-262/6.0/#sec-exports
-    ASSERT(match(EXPORT));
+    ASSERT(match(EXPORT_));
     JSTokenLocation exportLocation(tokenLocation());
     next();
 

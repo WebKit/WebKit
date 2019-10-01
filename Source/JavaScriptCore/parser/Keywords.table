@@ -43,7 +43,7 @@ yield	YIELD
 
 # Reserved for future use.
 enum            RESERVED
-export          EXPORT
+export          EXPORT_
 import          IMPORT
 
 # Reserved for future use in strict code.

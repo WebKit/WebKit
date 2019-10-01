@@ -85,7 +85,7 @@ enum JSTokenType {
     DEBUGGER,
     ELSE,
     IMPORT,
-    EXPORT,
+    EXPORT_,
     CLASSTOKEN,
     EXTENDS,
     SUPER,
