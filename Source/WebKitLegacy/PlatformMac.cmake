@@ -2,8 +2,10 @@ find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
 find_library(QUARTZ_LIBRARY Quartz)
 add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks)
 add_definitions(-iframework ${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks)
+add_definitions(-DJSC_CLASS_AVAILABLE\\\(...\\\)=)
 
 list(APPEND WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
+    "${WEBKITLEGACY_DIR}"
     "${WEBKITLEGACY_DIR}/mac"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebCore"
@@ -13,6 +15,7 @@ list(APPEND WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
 list(APPEND WebKitLegacy_UNIFIED_SOURCE_LIST_FILES
     SourcesCocoa.txt
 )
+WEBKIT_COMPUTE_SOURCES(WebKitLegacy)
 
 list(APPEND WebKitLegacy_SOURCES
     cf/WebCoreSupport/WebInspectorClientCF.cpp
@@ -112,6 +115,7 @@ list(APPEND WebKitLegacy_SOURCES
     mac/WebCoreSupport/WebProgressTrackerClient.mm
     mac/WebCoreSupport/WebSecurityOrigin.mm
     mac/WebCoreSupport/WebSelectionServiceController.mm
+    mac/WebCoreSupport/WebSwitchingGPUClient.cpp
     mac/WebCoreSupport/WebValidationMessageClient.mm
     mac/WebCoreSupport/WebVisitedLinkStore.mm
 
@@ -132,6 +136,7 @@ list(APPEND WebKitLegacy_SOURCES
     mac/WebView/WebHTMLRepresentation.mm
     mac/WebView/WebIndicateLayer.mm
     mac/WebView/WebJSPDFDoc.mm
+    mac/WebView/WebMediaPlaybackTargetPicker.mm
     mac/WebView/WebNavigationData.mm
     mac/WebView/WebNotification.mm
     mac/WebView/WebPDFDocumentExtras.mm
@@ -140,10 +145,13 @@ list(APPEND WebKitLegacy_SOURCES
     mac/WebView/WebResource.mm
     mac/WebView/WebTextCompletionController.mm
     mac/WebView/WebTextIterator.mm
+    mac/WebView/WebVideoFullscreenController.mm
+    mac/WebView/WebVideoFullscreenHUDWindowController.mm
     mac/WebView/WebViewData.mm
+    mac/WebView/WebWindowAnimation.mm
 )
 
-set(WebKitLegacy_FORWARDING_HEADERS_FILES
+set(WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES
     mac/DOM/DOMHTMLHeadingElement.h
     mac/DOM/DOMHTMLBaseFontElement.h
     mac/DOM/DOMCSSUnknownRule.h
@@ -619,6 +627,14 @@ foreach (_file ${WebKitLegacy_SOURCES})
         set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS -std=c++1z)
     else ()
         set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS "-ObjC++ -std=c++17")
+    endif ()
+endforeach ()
+
+foreach (_file ${WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES})
+    get_filename_component(_name "${_file}" NAME)
+    set(_target_filename "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKitLegacy/${_name}")
+    if (NOT EXISTS ${_target_filename})
+        file(WRITE ${_target_filename} "#import \"${_file}\"")
     endif ()
 endforeach ()
 

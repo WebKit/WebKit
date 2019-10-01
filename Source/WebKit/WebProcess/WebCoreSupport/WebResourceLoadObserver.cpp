@@ -28,6 +28,7 @@
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 
+#include "Logging.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "WebCoreArgumentCoders.h"

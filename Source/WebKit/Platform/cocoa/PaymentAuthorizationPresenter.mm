@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PaymentAuthorizationPresenter.h"
 
-#if USE(PASSKIT)
+#if USE(PASSKIT) && ENABLE(APPLE_PAY)
 
 #import "WKPaymentAuthorizationDelegate.h"
 #import "WebPaymentCoordinatorProxyCocoa.h"
@@ -231,4 +231,4 @@ void PaymentAuthorizationPresenter::completeShippingMethodSelection(const Option
 
 } // namespace WebKit
 
-#endif // USE(PASSKIT)
+#endif // USE(PASSKIT) && ENABLE(APPLE_PAY)

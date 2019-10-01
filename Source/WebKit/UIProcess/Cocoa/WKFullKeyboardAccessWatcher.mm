@@ -28,8 +28,11 @@
 
 #if ENABLE(FULL_KEYBOARD_ACCESS)
 
-#import "AccessibilitySupportSPI.h"
 #import "WebProcessPool.h"
+
+#if PLATFORM(IOS_FAMILY)
+#import "AccessibilitySupportSPI.h"
+#endif
 
 #if PLATFORM(MAC)
 static NSString * const KeyboardUIModeDidChangeNotification = @"com.apple.KeyboardUIModeDidChange";

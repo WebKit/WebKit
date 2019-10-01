@@ -53,7 +53,6 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/MIMETypeRegistry.h>
-#import <WebCore/PreviewLoaderClient.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -72,6 +71,7 @@
 #endif
 
 #if USE(QUICK_LOOK)
+#import <WebCore/PreviewLoaderClient.h>
 #import <WebCore/QuickLook.h>
 #endif
 

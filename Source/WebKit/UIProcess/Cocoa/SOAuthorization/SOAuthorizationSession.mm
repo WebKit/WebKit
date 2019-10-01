@@ -35,7 +35,7 @@
 #import "SOAuthorizationLoadPolicy.h"
 #import "WKUIDelegatePrivate.h"
 #import "WebPageProxy.h"
-#import "WebSiteDataStore.h"
+#import "WebsiteDataStore.h"
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/SecurityOrigin.h>
 #import <pal/cocoa/AppSSOSoftLink.h>

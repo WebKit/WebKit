@@ -1156,7 +1156,6 @@
 		6EE849C81368D9390038D481 /* WKInspectorPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE849C61368D92D0038D481 /* WKInspectorPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		711725A9228D564300018514 /* WebsiteLegacyOverflowScrollingTouchPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 711725A8228D563A00018514 /* WebsiteLegacyOverflowScrollingTouchPolicy.h */; };
 		71A676A622C62325007D6295 /* WKTouchActionGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 71A676A422C62318007D6295 /* WKTouchActionGestureRecognizer.h */; };
-		71A676A722C6232F007D6295 /* WKTouchActionGestureRecognizer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 71A676A522C62318007D6295 /* WKTouchActionGestureRecognizer.mm */; };
 		71FB810B2260627E00323677 /* WebsiteSimulatedMouseEventsDispatchPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 71FB810A2260627A00323677 /* WebsiteSimulatedMouseEventsDispatchPolicy.h */; };
 		728E86F11795188C0087879E /* WebColorPickerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 728E86EF1795188C0087879E /* WebColorPickerMac.h */; };
 		75A8D2C8187CCFAB00C39C9E /* WKWebsiteDataStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 75A8D2C4187CCF9F00C39C9E /* WKWebsiteDataStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -11553,7 +11552,6 @@
 				5CA26D83217AD1B800F97A35 /* WKSafeBrowsingWarning.mm in Sources */,
 				1DB01944211CF005009FB3E8 /* WKShareSheet.mm in Sources */,
 				7A78FF332241919B0096483E /* WKStorageAccessAlert.mm in Sources */,
-				71A676A722C6232F007D6295 /* WKTouchActionGestureRecognizer.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

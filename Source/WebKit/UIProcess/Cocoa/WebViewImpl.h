@@ -29,13 +29,13 @@
 
 #include "PluginComplexTextInputState.h"
 #include "ShareableBitmap.h"
-#include "WKDragDestinationAction.h"
 #include "WKLayoutMode.h"
 #include "_WKOverlayScrollbarStyle.h"
 #include <WebCore/FocusDirection.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/TextIndicatorWindow.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
+#include <WebKit/WKDragDestinationAction.h>
 #include <pal/spi/cocoa/AVKitSPI.h>
 #include <wtf/BlockPtr.h>
 #include <wtf/RetainPtr.h>

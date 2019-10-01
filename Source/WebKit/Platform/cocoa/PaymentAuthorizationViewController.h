@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if USE(PASSKIT)
+#if USE(PASSKIT) && ENABLE(APPLE_PAY)
 
 #include "PaymentAuthorizationPresenter.h"
 #include <wtf/RetainPtr.h>
@@ -57,4 +57,4 @@ private:
 
 } // namespace WebKit
 
-#endif // USE(PASSKIT)
+#endif // USE(PASSKIT) && ENABLE(APPLE_PAY)

@@ -3,6 +3,7 @@ list(APPEND PAL_PUBLIC_HEADERS
 
     cf/CoreMediaSoftLink.h
 
+    cocoa/AppSSOSoftLink.h
     cocoa/AVFoundationSoftLink.h
     cocoa/PassKitSoftLink.h
 
@@ -18,6 +19,8 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cg/CoreGraphicsSPI.h
     spi/cg/ImageIOSPI.h
 
+    spi/cocoa/AppSSOSPI.h
+    spi/cocoa/AuthKitSPI.h
     spi/cocoa/AVKitSPI.h
     spi/cocoa/AudioToolboxSPI.h
     spi/cocoa/CFNSURLConnectionSPI.h
@@ -45,8 +48,10 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/NSURLConnectionSPI.h
     spi/cocoa/NSURLDownloadSPI.h
     spi/cocoa/NSURLFileTypeMappingsSPI.h
+    spi/cocoa/NSXPCConnectionSPI.h
     spi/cocoa/PassKitSPI.h
     spi/cocoa/QuartzCoreSPI.h
+    spi/cocoa/SecKeyProxySPI.h
     spi/cocoa/ServersSPI.h
     spi/cocoa/URLFormattingSPI.h
     spi/cocoa/WebFilterEvaluatorSPI.h
@@ -105,6 +110,7 @@ list(APPEND PAL_SOURCES
 
     cf/CoreMediaSoftLink.cpp
 
+    cocoa/AppSSOSoftLink.mm
     cocoa/AVFoundationSoftLink.mm
     cocoa/FileSizeFormatterCocoa.mm
     cocoa/PassKitSoftLink.mm

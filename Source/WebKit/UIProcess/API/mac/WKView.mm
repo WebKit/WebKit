@@ -32,7 +32,6 @@
 #import "APIIconLoadingClient.h"
 #import "APIPageConfiguration.h"
 #import "WKBrowsingContextGroupPrivate.h"
-#import "WKDragDestinationAction.h"
 #import "WKNSData.h"
 #import "WKProcessGroupPrivate.h"
 #import "WebBackForwardListItem.h"
@@ -43,6 +42,7 @@
 #import "WebProcessPool.h"
 #import "WebViewImpl.h"
 #import "_WKLinkIconParametersInternal.h"
+#import <WebKit/WKDragDestinationAction.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/BlockPtr.h>
 

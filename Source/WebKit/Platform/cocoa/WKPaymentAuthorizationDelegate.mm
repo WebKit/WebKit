@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKPaymentAuthorizationDelegate.h"
 
-#if USE(PASSKIT)
+#if USE(PASSKIT) && ENABLE(APPLE_PAY)
 
 #import <WebCore/Payment.h>
 #import <WebCore/PaymentMethod.h>
@@ -216,4 +216,4 @@ static WebCore::ApplePaySessionPaymentRequest::ShippingMethod toShippingMethod(P
 
 @end
 
-#endif // USE(PASSKIT)
+#endif // USE(PASSKIT) && ENABLE(APPLE_PAY)

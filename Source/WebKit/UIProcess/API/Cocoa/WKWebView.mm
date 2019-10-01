@@ -59,7 +59,6 @@
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
-#import "WKDragDestinationAction.h"
 #import "WKErrorInternal.h"
 #import "WKHistoryDelegatePrivate.h"
 #import "WKLayoutMode.h"
@@ -117,6 +116,7 @@
 #import <WebCore/ValidationBubble.h>
 #import <WebCore/ViewportArguments.h>
 #import <WebCore/WritingMode.h>
+#import <WebKit/WKDragDestinationAction.h>
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <pal/spi/mac/NSTextFinderSPI.h>
 #import <wtf/BlockPtr.h>

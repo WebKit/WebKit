@@ -1,5 +1,14 @@
 2019-10-01  Alex Christensen  <achristensen@webkit.org>
 
+        Progress towards successful CMake build on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=202426
+
+        Rubber-stamped by Tim Horton.
+
+        * PlatformMac.cmake:
+
+2019-10-01  Alex Christensen  <achristensen@webkit.org>
+
         Unify more WebKitLegacy sources
         https://bugs.webkit.org/show_bug.cgi?id=202410
 

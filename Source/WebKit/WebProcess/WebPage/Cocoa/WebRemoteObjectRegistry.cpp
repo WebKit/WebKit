@@ -28,6 +28,7 @@
 
 #include "RemoteObjectRegistryMessages.h"
 #include "WebPage.h"
+#include "WebProcess.h"
 
 namespace WebKit {
 

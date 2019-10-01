@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PaymentAuthorizationViewController.h"
 
-#if USE(PASSKIT)
+#if USE(PASSKIT) && ENABLE(APPLE_PAY)
 
 #import "WKPaymentAuthorizationDelegate.h"
 #import <pal/cocoa/PassKitSoftLink.h>
@@ -150,4 +150,4 @@ void PaymentAuthorizationViewController::present(UIViewController *presentingVie
 
 } // namespace WebKit
 
-#endif // USE(PASSKIT)
+#endif // USE(PASSKIT) && ENABLE(APPLE_PAY)

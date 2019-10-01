@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if USE(QUICK_LOOK)
+
 #include "QuickLookDocumentData.h"
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PreviewLoaderClient.h>
@@ -59,3 +61,5 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // USE(QUICK_LOOK)

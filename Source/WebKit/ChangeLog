@@ -1,3 +1,36 @@
+2019-10-01  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards successful CMake build on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=202426
+
+        Rubber-stamped by Tim Horton.
+
+        * Platform/cocoa/PaymentAuthorizationPresenter.h:
+        * Platform/cocoa/PaymentAuthorizationPresenter.mm:
+        * Platform/cocoa/PaymentAuthorizationViewController.h:
+        * Platform/cocoa/PaymentAuthorizationViewController.mm:
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.mm:
+        * PlatformMac.cmake:
+        * Shared/SandboxExtension.h:
+        (WebKit::SandboxExtension::createHandleForReadByPid):
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _hasRegisteredServiceWorker]):
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/Cocoa/SOAuthorization/PopUpSOAuthorizationSession.mm:
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm:
+        * UIProcess/Cocoa/WKFullKeyboardAccessWatcher.mm:
+        * UIProcess/Cocoa/WKShareSheet.mm:
+        (-[WKShareSheet delegate]):
+        (-[WKShareSheet setDelegate:]):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp:
+        * WebProcess/WebCoreSupport/ios/WebPreviewLoaderClient.h:
+        * WebProcess/WebPage/Cocoa/WebRemoteObjectRegistry.cpp:
+
 2019-10-01  Tim Horton  <timothy_horton@apple.com>
 
         Clean up some includes to make the build a bit faster

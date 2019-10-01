@@ -18,9 +18,15 @@ if (NOT AVFAUDIO_LIBRARY-NOTFOUND)
     list(APPEND WebKit_LIBRARIES ${AVFAUDIO_LIBRARY})
 endif ()
 
+list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
+    "SourcesCocoa.txt"
+)
+
 list(APPEND WebKit_SOURCES
     NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
     NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.cpp
+
+    NetworkProcess/cocoa/WebSocketTaskCocoa.mm
 
     NetworkProcess/Cookies/mac/WebCookieManagerMac.mm
 
@@ -31,6 +37,7 @@ list(APPEND WebKit_SOURCES
     NetworkProcess/Downloads/PendingDownload.cpp
 
     NetworkProcess/Downloads/cocoa/DownloadCocoa.mm
+    NetworkProcess/Downloads/cocoa/WKDownloadProgress.mm
 
     NetworkProcess/WebStorage/StorageManager.cpp
 
@@ -106,6 +113,7 @@ list(APPEND WebKit_SOURCES
     Shared/Cocoa/CompletionHandlerCallChecker.mm
     Shared/Cocoa/DataDetectionResult.mm
     Shared/Cocoa/LoadParametersCocoa.mm
+    Shared/Cocoa/SandboxExtensionCocoa.mm
     Shared/Cocoa/WKNSArray.mm
     Shared/Cocoa/WKNSData.mm
     Shared/Cocoa/WKNSDictionary.mm
@@ -255,6 +263,8 @@ list(APPEND WebKit_SOURCES
     UIProcess/Cocoa/VersionChecks.mm
     UIProcess/Cocoa/WKFullKeyboardAccessWatcher.mm
     UIProcess/Cocoa/WKReloadFrameErrorRecoveryAttempter.mm
+    UIProcess/Cocoa/WKSafeBrowsingWarning.mm
+    UIProcess/Cocoa/WKShareSheet.mm
     UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm
     UIProcess/Cocoa/WebPageProxyCocoa.mm
     UIProcess/Cocoa/WebPasteboardProxyCocoa.mm
@@ -384,10 +394,13 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/API/C/mac"
     "${WEBKIT_DIR}/UIProcess/API/Cocoa"
     "${WEBKIT_DIR}/UIProcess/API/mac"
+    "${WEBKIT_DIR}/UIProcess/Authentication/cocoa"
     "${WEBKIT_DIR}/UIProcess/Cocoa"
+    "${WEBKIT_DIR}/UIProcess/Cocoa/SOAuthorization"
     "${WEBKIT_DIR}/UIProcess/Launcher/mac"
     "${WEBKIT_DIR}/UIProcess/RemoteLayerTree"
     "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/ios"
+    "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/mac"
     "${WEBKIT_DIR}/UIProcess/ios"
     "${WEBKIT_DIR}/Platform/cg"
     "${WEBKIT_DIR}/Platform/classifier"
@@ -422,6 +435,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/WebPage/RemoteLayerTree"
     "${WEBKIT_DIR}/WebProcess/WebPage/mac"
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport/mac"
+    "${WEBKITLEGACY_DIR}"
     "${FORWARDING_HEADERS_DIR}/WebCore"
 )
 
@@ -468,16 +482,25 @@ list(APPEND WebKit_MESSAGES_IN_FILES
 
     UIProcess/ViewGestureController.messages.in
 
+    UIProcess/Cocoa/PlaybackSessionManagerProxy.messages.in
     UIProcess/Cocoa/VideoFullscreenManagerProxy.messages.in
 
     UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.messages.in
 
     UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.messages.in
 
+    UIProcess/ios/EditableImageController.messages.in
+
     UIProcess/mac/SecItemShimProxy.messages.in
 
-    WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.messages.in
+    WebProcess/cocoa/PlaybackSessionManager.messages.in
+    WebProcess/cocoa/VideoFullscreenManager.messages.in
+
     WebProcess/WebPage/ViewGestureGeometryCollector.messages.in
+
+    WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.messages.in
+
+    WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.messages.in
 )
 
 set(WebKit_FORWARDING_HEADERS_DIRECTORIES
@@ -737,7 +760,7 @@ list(APPEND WebKit_AUTOMATION_PROTOCOL_GENERATOR_EXTRA_FLAGS
 # FIXME: These should not be necessary.
 file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/WKImageCG.h "#import <WebKit/Shared/API/c/cg/WKImageCG.h>")
 
-set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION}")
+set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION} -weak_framework SafariSafeBrowsing -lsandbox -framework AuthKit -framework SecurityInterface")
 
 set(WebKit_OUTPUT_NAME WebKit)
 

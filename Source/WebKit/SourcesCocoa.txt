@@ -431,7 +431,7 @@ UIProcess/ios/WKScrollView.mm
 UIProcess/ios/WKSyntheticFlagsChangedWebEvent.mm
 UIProcess/ios/WKSyntheticTapGestureRecognizer.mm
 UIProcess/ios/WKSystemPreviewView.mm
-UIProcess/ios/WKTouchActionGestureRecognizer.m
+UIProcess/ios/WKTouchActionGestureRecognizer.mm
 UIProcess/ios/WKWebEvent.mm
 
 UIProcess/Launcher/mac/ProcessLauncherMac.mm

@@ -48,6 +48,7 @@
 
 @implementation WKShareSheet {
     WeakObjCPtr<WKWebView> _webView;
+    WeakObjCPtr<id <WKShareSheetDelegate> > _delegate;
     WTF::CompletionHandler<void(bool)> _completionHandler;
 
 #if PLATFORM(MAC)
@@ -56,6 +57,16 @@
     RetainPtr<UIActivityViewController> _shareSheetViewController;
     RetainPtr<UIViewController> _presentationViewController;
 #endif
+}
+
+- (id<WKShareSheetDelegate>)delegate
+{
+    return _delegate.get().get();
+}
+
+- (void)setDelegate:(id<WKShareSheetDelegate>)delegate
+{
+    _delegate = delegate;
 }
 
 - (instancetype)initWithView:(WKWebView *)view

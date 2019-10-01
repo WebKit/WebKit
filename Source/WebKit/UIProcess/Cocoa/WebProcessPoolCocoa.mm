@@ -26,7 +26,6 @@
 #import "config.h"
 #import "WebProcessPool.h"
 
-#import "AccessibilitySupportSPI.h"
 #import "CookieStorageUtilsCF.h"
 #import "LegacyCustomProtocolManagerClient.h"
 #import "Logging.h"
@@ -63,6 +62,7 @@
 #if PLATFORM(MAC)
 #import <QuartzCore/CARemoteLayerServer.h>
 #else
+#import "AccessibilitySupportSPI.h"
 #import "UIKitSPI.h"
 #endif
 

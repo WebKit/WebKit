@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if USE(PASSKIT)
+#if USE(PASSKIT) && ENABLE(APPLE_PAY)
 
 #include <WebCore/ApplePaySessionPaymentRequest.h>
 #include <wtf/FastMalloc.h>
@@ -91,4 +91,4 @@ private:
 
 } // namespace WebKit
 
-#endif // USE(PASSKIT)
+#endif // USE(PASSKIT) && ENABLE(APPLE_PAY)

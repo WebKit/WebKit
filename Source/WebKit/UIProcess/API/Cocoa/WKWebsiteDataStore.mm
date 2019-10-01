@@ -508,7 +508,11 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (bool)_hasRegisteredServiceWorker
 {
+#if ENABLE(SERVICE_WORKER)
     return FileSystem::fileExists(WebCore::serviceWorkerRegistrationDatabaseFilename(_websiteDataStore->serviceWorkerRegistrationDirectory()));
+#else
+    return NO;
+#endif
 }
 
 - (id <_WKWebsiteDataStoreDelegate>)_delegate
