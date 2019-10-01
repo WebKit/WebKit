@@ -100,8 +100,9 @@ void PeerConnectionBackend::createOfferSucceeded(String&& sdp)
         return;
 
     ASSERT(m_offerAnswerPromise);
-    m_offerAnswerPromise->resolve(RTCSessionDescription::Init { RTCSdpType::Offer, filterSDP(WTFMove(sdp)) });
-    m_offerAnswerPromise = WTF::nullopt;
+    m_peerConnection.doTask([promise = WTFMove(m_offerAnswerPromise), sdp = filterSDP(WTFMove(sdp))]() mutable {
+        promise->resolve(RTCSessionDescription::Init { RTCSdpType::Offer, sdp });
+    });
 }
 
 void PeerConnectionBackend::createOfferFailed(Exception&& exception)
@@ -113,8 +114,9 @@ void PeerConnectionBackend::createOfferFailed(Exception&& exception)
         return;
 
     ASSERT(m_offerAnswerPromise);
-    m_offerAnswerPromise->reject(WTFMove(exception));
-    m_offerAnswerPromise = WTF::nullopt;
+    m_peerConnection.doTask([promise = WTFMove(m_offerAnswerPromise), exception = WTFMove(exception)]() mutable {
+        promise->reject(WTFMove(exception));
+    });
 }
 
 void PeerConnectionBackend::createAnswer(RTCAnswerOptions&& options, PeerConnection::SessionDescriptionPromise&& promise)
@@ -135,8 +137,9 @@ void PeerConnectionBackend::createAnswerSucceeded(String&& sdp)
         return;
 
     ASSERT(m_offerAnswerPromise);
-    m_offerAnswerPromise->resolve(RTCSessionDescription::Init { RTCSdpType::Answer, WTFMove(sdp) });
-    m_offerAnswerPromise = WTF::nullopt;
+    m_peerConnection.doTask([promise = WTFMove(m_offerAnswerPromise), sdp = WTFMove(sdp)]() mutable {
+        promise->resolve(RTCSessionDescription::Init { RTCSdpType::Answer, sdp });
+    });
 }
 
 void PeerConnectionBackend::createAnswerFailed(Exception&& exception)
@@ -148,8 +151,9 @@ void PeerConnectionBackend::createAnswerFailed(Exception&& exception)
         return;
 
     ASSERT(m_offerAnswerPromise);
-    m_offerAnswerPromise->reject(WTFMove(exception));
-    m_offerAnswerPromise = WTF::nullopt;
+    m_peerConnection.doTask([promise = WTFMove(m_offerAnswerPromise), exception = WTFMove(exception)]() mutable {
+        promise->reject(WTFMove(exception));
+    });
 }
 
 static inline bool isLocalDescriptionTypeValidForState(RTCSdpType type, RTCSignalingState state)
@@ -192,10 +196,11 @@ void PeerConnectionBackend::setLocalDescriptionSucceeded()
     if (m_peerConnection.isClosed())
         return;
 
-    ASSERT(m_setDescriptionPromise);
 
-    m_setDescriptionPromise->resolve();
-    m_setDescriptionPromise = WTF::nullopt;
+    ASSERT(m_setDescriptionPromise);
+    m_peerConnection.doTask([promise = WTFMove(m_setDescriptionPromise)]() mutable {
+        promise->resolve();
+    });
 }
 
 void PeerConnectionBackend::setLocalDescriptionFailed(Exception&& exception)
@@ -207,9 +212,9 @@ void PeerConnectionBackend::setLocalDescriptionFailed(Exception&& exception)
         return;
 
     ASSERT(m_setDescriptionPromise);
-
-    m_setDescriptionPromise->reject(WTFMove(exception));
-    m_setDescriptionPromise = WTF::nullopt;
+    m_peerConnection.doTask([promise = WTFMove(m_setDescriptionPromise), exception = WTFMove(exception)]() mutable {
+        promise->reject(WTFMove(exception));
+    });
 }
 
 static inline bool isRemoteDescriptionTypeValidForState(RTCSdpType type, RTCSignalingState state)
@@ -255,7 +260,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded()
     for (auto& event : events) {
         auto& track = event.track.get();
 
-        m_peerConnection.fireEvent(RTCTrackEvent::create(eventNames().trackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(event.receiver), WTFMove(event.track), WTFMove(event.streams), WTFMove(event.transceiver)));
+        m_peerConnection.dispatchEventWhenFeasible(RTCTrackEvent::create(eventNames().trackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(event.receiver), WTFMove(event.track), WTFMove(event.streams), WTFMove(event.transceiver)));
 
         if (m_peerConnection.isClosed())
             return;
@@ -267,10 +272,11 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded()
     if (m_peerConnection.isClosed())
         return;
 
-    ASSERT(m_setDescriptionPromise);
 
-    m_setDescriptionPromise->resolve();
-    m_setDescriptionPromise = WTF::nullopt;
+    ASSERT(m_setDescriptionPromise);
+    m_peerConnection.doTask([promise = WTFMove(m_setDescriptionPromise)]() mutable {
+        promise->resolve();
+    });
 }
 
 void PeerConnectionBackend::setRemoteDescriptionFailed(Exception&& exception)
@@ -283,9 +289,9 @@ void PeerConnectionBackend::setRemoteDescriptionFailed(Exception&& exception)
 
     ASSERT(!m_peerConnection.isClosed());
     ASSERT(m_setDescriptionPromise);
-
-    m_setDescriptionPromise->reject(WTFMove(exception));
-    m_setDescriptionPromise = WTF::nullopt;
+    m_peerConnection.doTask([promise = WTFMove(m_setDescriptionPromise), exception = WTFMove(exception)]() mutable {
+        promise->reject(WTFMove(exception));
+    });
 }
 
 void PeerConnectionBackend::addPendingTrackEvent(PendingTrackEvent&& event)
@@ -332,9 +338,9 @@ void PeerConnectionBackend::addIceCandidateSucceeded()
         return;
 
     ASSERT(m_addIceCandidatePromise);
-
-    m_addIceCandidatePromise->resolve();
-    m_addIceCandidatePromise = WTF::nullopt;
+    m_peerConnection.doTask([promise = WTFMove(m_addIceCandidatePromise)]() mutable {
+        promise->resolve();
+    });
 }
 
 void PeerConnectionBackend::addIceCandidateFailed(Exception&& exception)
@@ -346,16 +352,16 @@ void PeerConnectionBackend::addIceCandidateFailed(Exception&& exception)
         return;
 
     ASSERT(m_addIceCandidatePromise);
-
-    m_addIceCandidatePromise->reject(WTFMove(exception));
-    m_addIceCandidatePromise = WTF::nullopt;
+    m_peerConnection.doTask([promise = WTFMove(m_addIceCandidatePromise), exception = WTFMove(exception)]() mutable {
+        promise->reject(WTFMove(exception));
+    });
 }
 
 void PeerConnectionBackend::fireICECandidateEvent(RefPtr<RTCIceCandidate>&& candidate, String&& serverURL)
 {
     ASSERT(isMainThread());
 
-    m_peerConnection.fireEvent(RTCPeerConnectionIceEvent::create(Event::CanBubble::No, Event::IsCancelable::No, WTFMove(candidate), WTFMove(serverURL)));
+    m_peerConnection.dispatchEventWhenFeasible(RTCPeerConnectionIceEvent::create(Event::CanBubble::No, Event::IsCancelable::No, WTFMove(candidate), WTFMove(serverURL)));
 }
 
 void PeerConnectionBackend::enableICECandidateFiltering()
@@ -459,7 +465,7 @@ void PeerConnectionBackend::doneGatheringCandidates()
     if (m_waitingForMDNSRegistration)
         return;
 
-    m_peerConnection.fireEvent(RTCPeerConnectionIceEvent::create(Event::CanBubble::No, Event::IsCancelable::No, nullptr, { }));
+    m_peerConnection.dispatchEventWhenFeasible(RTCPeerConnectionIceEvent::create(Event::CanBubble::No, Event::IsCancelable::No, nullptr, { }));
     m_peerConnection.updateIceGatheringState(RTCIceGatheringState::Complete);
     m_pendingICECandidates.clear();
 }
@@ -508,7 +514,7 @@ void PeerConnectionBackend::updateSignalingState(RTCSignalingState newSignalingS
 
     if (newSignalingState != m_peerConnection.signalingState()) {
         m_peerConnection.setSignalingState(newSignalingState);
-        m_peerConnection.fireEvent(Event::create(eventNames().signalingstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        m_peerConnection.dispatchEventWhenFeasible(Event::create(eventNames().signalingstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
     }
 }
 

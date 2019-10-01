@@ -1,3 +1,40 @@
+2019-10-01  youenn fablet  <youenn@apple.com>
+
+        Queue events and promise resolution in RTCPeerConnection when suspended for page cache
+        https://bugs.webkit.org/show_bug.cgi?id=202396
+
+        Reviewed by Chris Dumez.
+
+        This patch prepares RTCPeerConnection to be suspendable to enter page cache.
+        For that purpose, we queue events and promise resolution/rejection tasks if the RTCPeerConnection m_shouldDelayTasks is set to true.
+        This queueing is enabled when RTCPeerConnection is asked to suspend itself.
+        The queued tasks are then executed at resume time.
+        Renamed fireEvent to dispatchEventWhenFeasible.
+        No change of behavior for now.
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::createOfferSucceeded):
+        (WebCore::PeerConnectionBackend::createOfferFailed):
+        (WebCore::PeerConnectionBackend::createAnswerSucceeded):
+        (WebCore::PeerConnectionBackend::createAnswerFailed):
+        (WebCore::PeerConnectionBackend::setLocalDescriptionSucceeded):
+        (WebCore::PeerConnectionBackend::setLocalDescriptionFailed):
+        (WebCore::PeerConnectionBackend::setRemoteDescriptionSucceeded):
+        (WebCore::PeerConnectionBackend::setRemoteDescriptionFailed):
+        (WebCore::PeerConnectionBackend::addIceCandidateSucceeded):
+        (WebCore::PeerConnectionBackend::addIceCandidateFailed):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::doClose):
+        (WebCore::RTCPeerConnection::suspend):
+        (WebCore::RTCPeerConnection::resume):
+        (WebCore::RTCPeerConnection::updateIceGatheringState):
+        (WebCore::RTCPeerConnection::updateIceConnectionState):
+        (WebCore::RTCPeerConnection::updateConnectionState):
+        (WebCore::RTCPeerConnection::scheduleNegotiationNeededEvent):
+        (WebCore::RTCPeerConnection::doTask):
+        (WebCore::RTCPeerConnection::fireEvent):
+        * Modules/mediastream/RTCPeerConnection.h:
+
 2019-10-01  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] Correct additional canvas test failures

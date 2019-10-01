@@ -165,7 +165,7 @@ public:
 
     void scheduleNegotiationNeededEvent();
 
-    void fireEvent(Event&);
+    void dispatchEventWhenFeasible(Ref<Event>&&);
 
     void disableICECandidateFiltering() { m_backend->disableICECandidateFiltering(); }
     void enableICECandidateFiltering() { m_backend->enableICECandidateFiltering(); }
@@ -176,6 +176,8 @@ public:
     bool hasPendingActivity() const final;
     
     Document* document();
+
+    void doTask(Function<void()>&&);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
@@ -210,6 +212,8 @@ private:
     WEBCORE_EXPORT void stop() final;
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
+    void suspend(ReasonForSuspension) final;
+    void resume() final;
 
     void updateConnectionState();
     bool doClose();
@@ -235,6 +239,8 @@ private:
     RTCConfiguration m_configuration;
     RTCController* m_controller { nullptr };
     Vector<RefPtr<RTCCertificate>> m_certificates;
+    bool m_shouldDelayTasks { false };
+    Vector<Function<void()>> m_pendingTasks;
 };
 
 } // namespace WebCore
