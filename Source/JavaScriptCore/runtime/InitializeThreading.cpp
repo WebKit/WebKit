@@ -71,6 +71,8 @@ void initializeThreading()
 
         initializePtrTagLookup();
 
+        VM::initializeTLS();
+
 #if ENABLE(WRITE_BARRIER_PROFILING)
         WriteBarrierCounters::initialize();
 #endif

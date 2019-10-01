@@ -1,3 +1,16 @@
+2019-10-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Place VM* in TLS
+        https://bugs.webkit.org/show_bug.cgi?id=202391
+
+        Reviewed by Mark Lam.
+
+        Use JSLockHolder instead. It automatically puts VM* in TLS.
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::toJS):
+        (WebCore::deserializeIDBValueToJSValue):
+
 2019-10-01  youenn fablet  <youenn@apple.com>
 
         Queue events and promise resolution in RTCPeerConnection when suspended for page cache

@@ -1,3 +1,40 @@
+2019-10-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Place VM* in TLS
+        https://bugs.webkit.org/show_bug.cgi?id=202391
+
+        Reviewed by Mark Lam.
+
+        This patch puts VM* in TLS mainly for debugging purpose. In JSLockHolder, we put VM* and save the old VM* in TLS.
+        And JSLockHolder's destructor restores it. It is possible that we have two VMs A and B. After locking A, we enter
+        B. In this case, when B's lock is released, we should restore TLS to A. We put the old VM* in JSLockHolder::m_previousVMInTLS
+        so that we can restore it in JSLockHolder's destructor.
+
+        This patch also cleans up Lock<JSLock> / std::lock_guard<JSLock> usage in JSRunLoopTimer and JSManagedValue by introducing
+        JSLockHolder with LockIfVMIsLive tag. Previously, we are intentionally use `std::lock_guard<JSLock>` since VM* can be dead
+        at these places. JSLockHolder with LockIfVMIsLive handles this case carefully: it locks JSLock when VM* is live.
+
+        * API/JSManagedValue.mm:
+        (-[JSManagedValue value]):
+        * API/glib/JSCWeakValue.cpp:
+        (jsc_weak_value_get_value):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+        * runtime/JSLock.cpp:
+        (JSC::JSLockHolder::JSLockHolder):
+        (JSC::JSLockHolder::~JSLockHolder):
+        (JSC::JSLock::DropAllLocks::DropAllLocks):
+        (JSC::JSLock::DropAllLocks::~DropAllLocks):
+        * runtime/JSLock.h:
+        (JSC::JSLockHolder::vm):
+        * runtime/JSRunLoopTimer.cpp:
+        (JSC::JSRunLoopTimer::timerDidFire):
+        * runtime/VM.cpp:
+        (JSC::VM::initializeTLS):
+        * runtime/VM.h:
+        (JSC::VM::exchange):
+        (JSC::VM::current):
+
 2019-10-01  Michael Saboff  <msaboff@apple.com> and Paulo Matos  <pmatos@igalia.com>
 
         [YARR] Properly handle surrogates when matching back references

@@ -133,7 +133,7 @@ JSValue toJS(ExecState& state, JSGlobalObject& globalObject, IDBKey* key)
     }
 
     VM& vm = state.vm();
-    Locker<JSLock> locker(vm.apiLock());
+    JSLockHolder locker(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     switch (key->type()) {
@@ -386,10 +386,9 @@ static JSValue deserializeIDBValueToJSValue(ExecState& state, JSC::JSGlobalObjec
 
     auto serializedValue = SerializedScriptValue::createFromWireBytes(Vector<uint8_t>(data));
 
-    state.vm().apiLock().lock();
+    JSLockHolder locker(globalObject.vm());
     Vector<RefPtr<MessagePort>> messagePorts;
     JSValue result = serializedValue->deserialize(state, &globalObject, messagePorts, value.blobURLs(), value.blobFilePaths(), SerializationErrorMode::NonThrowing);
-    state.vm().apiLock().unlock();
 
     return result;
 }

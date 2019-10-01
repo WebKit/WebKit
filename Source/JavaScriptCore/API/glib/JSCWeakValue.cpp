@@ -189,12 +189,10 @@ JSCValue* jsc_weak_value_get_value(JSCWeakValue* weakValue)
     g_return_val_if_fail(JSC_IS_WEAK_VALUE(weakValue), nullptr);
 
     JSCWeakValuePrivate* priv = weakValue->priv;
-    WTF::Locker<JSC::JSLock> locker(priv->lock.get());
-    JSC::VM* vm = priv->lock->vm();
-    if (!vm)
+    JSC::JSLockHolder locker(JSC::JSLockHolder::LockIfVMIsLive, *priv->lock.get());
+    if (!locker.vm())
         return nullptr;
 
-    JSC::JSLockHolder apiLocker(vm);
     if (!priv->globalObject || priv->weakValueRef.isClear())
         return nullptr;
 

@@ -314,6 +314,39 @@ public:
     WeakRandom& random() { return m_random; }
     Integrity::Random& integrityRandom() { return m_integrityRandom; }
 
+#if HAVE(FAST_TLS)
+    static constexpr pthread_key_t tlsKey = WTF_VM_KEY;
+
+    static VM* exchange(VM* vm)
+    {
+        VM* previous = current();
+        _pthread_setspecific_direct(tlsKey, bitwise_cast<void*>(vm));
+        return previous;
+    }
+
+    static VM* current()
+    {
+        return bitwise_cast<VM*>(_pthread_getspecific_direct(tlsKey));
+    }
+#else
+    static WTF::ThreadSpecificKey tlsKey;
+
+    static VM* exchange(VM* vm)
+    {
+        ASSERT(tlsKey != WTF::InvalidThreadSpecificKey);
+        VM* previous = current();
+        WTF::threadSpecificSet(tlsKey, vm);
+        return previous;
+    }
+
+    static VM* current()
+    {
+        ASSERT(tlsKey != WTF::InvalidThreadSpecificKey);
+        return bitwise_cast<VM*>(WTF::threadSpecificGet(tlsKey));
+    }
+#endif
+    static void initializeTLS();
+
 private:
     unsigned nextID();
 

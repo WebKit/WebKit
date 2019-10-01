@@ -51,6 +51,7 @@ namespace JSC {
 
 class ExecState;
 class VM;
+class JSLock;
 
 // This class is used to protect the initialization of the legacy single 
 // shared VM.
@@ -63,31 +64,33 @@ private:
     static Lock s_sharedInstanceMutex;
 };
 
+// Only JSLockHolder can take a JSLock.
 class JSLockHolder {
+    WTF_MAKE_NONCOPYABLE(JSLockHolder);
+    WTF_FORBID_HEAP_ALLOCATION(JSLockHolder);
 public:
     JS_EXPORT_PRIVATE JSLockHolder(VM*);
     JS_EXPORT_PRIVATE JSLockHolder(VM&);
     JS_EXPORT_PRIVATE JSLockHolder(ExecState*);
 
+    enum LockIfVMIsLiveTag { LockIfVMIsLive };
+    JS_EXPORT_PRIVATE JSLockHolder(LockIfVMIsLiveTag, JSLock&);
+
     JS_EXPORT_PRIVATE ~JSLockHolder();
+
+    VM* vm() { return m_vm.get(); }
 
 private:
     RefPtr<VM> m_vm;
+    VM* m_previousVMInTLS { nullptr };
 };
 
 class JSLock : public ThreadSafeRefCounted<JSLock> {
     WTF_MAKE_NONCOPYABLE(JSLock);
+    friend class JSLockHolder;
 public:
     JSLock(VM*);
     JS_EXPORT_PRIVATE ~JSLock();
-
-    JS_EXPORT_PRIVATE void lock();
-    JS_EXPORT_PRIVATE void unlock();
-
-    static void lock(ExecState*);
-    static void unlock(ExecState*);
-    static void lock(VM&);
-    static void unlock(VM&);
 
     VM* vm() { return m_vm; }
 
@@ -126,6 +129,10 @@ public:
     bool isWebThreadAware() const { return m_isWebThreadAware; }
 
 private:
+    // This is called only from JSLockHolder or DropAllLocks.
+    JS_EXPORT_PRIVATE void lock();
+    JS_EXPORT_PRIVATE void unlock();
+
     void lock(intptr_t lockCount);
     void unlock(intptr_t unlockCount);
 

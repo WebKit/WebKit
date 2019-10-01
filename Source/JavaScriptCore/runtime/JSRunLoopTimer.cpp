@@ -297,14 +297,12 @@ void JSRunLoopTimer::timerDidFire()
         }
     }
 
-    std::lock_guard<JSLock> lock(m_apiLock.get());
-    RefPtr<VM> vm = m_apiLock->vm();
-    if (!vm) {
+    JSLockHolder locker(JSLockHolder::LockIfVMIsLive, m_apiLock.get());
+    if (!locker.vm()) {
         // The VM has been destroyed, so we should just give up.
         return;
     }
-
-    doWork(*vm);
+    doWork(*locker.vm());
 }
 
 JSRunLoopTimer::JSRunLoopTimer(VM& vm)

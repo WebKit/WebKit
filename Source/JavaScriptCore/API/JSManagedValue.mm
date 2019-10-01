@@ -147,12 +147,9 @@ static JSManagedValueHandleOwner& managedValueHandleOwner()
 
 - (JSValue *)value
 {
-    WTF::Locker<JSC::JSLock> locker(m_lock.get());
-    JSC::VM* vm = m_lock->vm();
-    if (!vm)
+    JSC::JSLockHolder locker(JSC::JSLockHolder::LockIfVMIsLive, *m_lock.get());
+    if (!locker.vm())
         return nil;
-
-    JSC::JSLockHolder apiLocker(vm);
     if (!m_globalObject)
         return nil;
     if (m_weakValue.isClear())
