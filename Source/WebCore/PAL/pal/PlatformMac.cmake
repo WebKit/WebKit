@@ -39,6 +39,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/NSFileManagerSPI.h
     spi/cocoa/NSFileSizeFormatterSPI.h
     spi/cocoa/NSKeyedArchiverSPI.h
+    spi/cocoa/NSProgressSPI.h
     spi/cocoa/NSStringSPI.h
     spi/cocoa/NSTouchBarSPI.h
     spi/cocoa/NSURLConnectionSPI.h

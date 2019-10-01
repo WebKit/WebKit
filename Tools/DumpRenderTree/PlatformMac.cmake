@@ -52,7 +52,6 @@ list(APPEND DumpRenderTree_Cpp_SOURCES
 )
 
 list(APPEND DumpRenderTree_ObjC_SOURCES
-    DefaultPolicyDelegate.m
     DumpRenderTreeFileDraggingSource.m
 
     mac/AppleScriptController.m

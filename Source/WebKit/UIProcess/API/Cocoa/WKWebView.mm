@@ -34,7 +34,6 @@
 #import "DiagnosticLoggingClient.h"
 #import "DynamicViewportSizeUpdate.h"
 #import "FindClient.h"
-#import "FrontBoardServicesSPI.h"
 #import "FullscreenClient.h"
 #import "GlobalFindInPageState.h"
 #import "IconLoadingDelegate.h"
@@ -140,6 +139,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+#import "FrontBoardServicesSPI.h"
 #import "InteractionInformationAtPosition.h"
 #import "InteractionInformationRequest.h"
 #import "ProcessThrottler.h"

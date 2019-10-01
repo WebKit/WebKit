@@ -1,3 +1,13 @@
+
+2019-09-30  Alex Christensen  <achristensen@webkit.org>
+
+        Resurrect Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=202384
+
+        Rubber-stamped by Tim Horton.
+
+        * wtf/PlatformMac.cmake:
+
 2019-09-30  Mark Lam  <mark.lam@apple.com>
 
         Add some assertions to convertUTF8ToUTF16().

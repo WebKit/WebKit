@@ -18,6 +18,9 @@ list(APPEND test_wtf_LIBRARIES
     ${COCOA_LIBRARY}
     ${COREFOUNDATION_LIBRARY}
 )
+list(APPEND TestWTF_SOURCES
+    cocoa/UtilitiesCocoa.mm
+)
 
 list(APPEND TestWebKitAPI_LIBRARIES
     ${CARBON_LIBRARY}

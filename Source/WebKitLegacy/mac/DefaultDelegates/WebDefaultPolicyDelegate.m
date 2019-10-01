@@ -81,7 +81,7 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
                                                          frame:(WebFrame *)frame
                                               decisionListener:(id <WebPolicyDecisionListener>)listener
 {
-    WebNavigationType navType = [[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
+    WebNavigationType navType = (WebNavigationType)[[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
 
     if ([WebView _canHandleRequest:request forMainFrame:frame == [wv mainFrame]]) {
         [listener use];

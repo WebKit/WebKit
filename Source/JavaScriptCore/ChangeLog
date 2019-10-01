@@ -1,5 +1,14 @@
 2019-09-30  Alex Christensen  <achristensen@webkit.org>
 
+        Resurrect Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=202384
+
+        Rubber-stamped by Tim Horton.
+
+        * PlatformMac.cmake:
+
+2019-09-30  Alex Christensen  <achristensen@webkit.org>
+
         Rename JSTokenType::EXPORT to EXPORT_ to avoid naming conflict with internal header
         https://bugs.webkit.org/show_bug.cgi?id=202385
 

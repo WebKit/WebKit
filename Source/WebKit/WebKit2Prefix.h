@@ -47,9 +47,21 @@
 #if USE(APPKIT)
 #import <Cocoa/Cocoa.h>
 #endif
-#endif
+#endif // __OBJC__
 
+#ifdef BUILDING_WITH_CMAKE
+#ifndef JSC_API_AVAILABLE
+#define JSC_API_AVAILABLE(...)
 #endif
+#ifndef JSC_CLASS_AVAILABLE
+#define JSC_CLASS_AVAILABLE(...) JS_EXPORT
+#endif
+#ifndef JSC_API_DEPRECATED
+#define JSC_API_DEPRECATED(...)
+#endif
+#endif // BUILDING_WITH_CMAKE
+
+#endif // PLATFORM(COCOA)
 
 /* When C++ exceptions are disabled, the C++ library defines |try| and |catch|
 * to allow C++ code that expects exceptions to build. These definitions

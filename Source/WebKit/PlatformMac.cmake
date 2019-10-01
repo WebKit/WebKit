@@ -177,7 +177,6 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/API/Cocoa/APIContentRuleListStoreCocoa.mm
     UIProcess/API/Cocoa/APISerializedScriptValueCocoa.mm
-    UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm
     UIProcess/API/Cocoa/LegacyBundleForClass.mm
     UIProcess/API/Cocoa/WKBackForwardList.mm
     UIProcess/API/Cocoa/WKBackForwardListItem.mm
@@ -399,14 +398,17 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Platform/spi/Cocoa"
     "${WEBKIT_DIR}/Platform/spi/mac"
     "${WEBKIT_DIR}/Platform/IPC/mac"
+    "${WEBKIT_DIR}/Platform/IPC/cocoa"
     "${WEBKIT_DIR}/Platform/spi/Cocoa"
     "${WEBKIT_DIR}/Shared/API/Cocoa"
     "${WEBKIT_DIR}/Shared/API/c/cf"
     "${WEBKIT_DIR}/Shared/API/c/cg"
     "${WEBKIT_DIR}/Shared/API/c/mac"
+    "${WEBKIT_DIR}/Shared/Authentication/cocoa"
+    "${WEBKIT_DIR}/Shared/ios"
     "${WEBKIT_DIR}/Shared/cf"
     "${WEBKIT_DIR}/Shared/Cocoa"
-    "${WEBKIT_DIR}/Shared/EntryPointUtilities/mac/XPCService"
+    "${WEBKIT_DIR}/Shared/EntryPointUtilities/Cocoa/XPCService"
     "${WEBKIT_DIR}/Shared/mac"
     "${WEBKIT_DIR}/Shared/Plugins/mac"
     "${WEBKIT_DIR}/Shared/Scrolling"

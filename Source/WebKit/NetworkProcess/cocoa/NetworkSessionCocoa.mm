@@ -55,6 +55,7 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/URL.h>
 #import <wtf/text/WTFString.h>
+#import <wtf/BlockPtr.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/NetworkSessionCocoaAdditions.h>

@@ -1,3 +1,13 @@
+2019-09-30  Alex Christensen  <achristensen@webkit.org>
+
+        Resurrect Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=202384
+
+        Rubber-stamped by Tim Horton.
+
+        * DumpRenderTree/PlatformMac.cmake:
+        * TestWebKitAPI/PlatformMac.cmake:
+
 2019-09-30  Zhifei Fang  <zhifei_fang@apple.com>
 
         [results.webkit.org Timeline] New axis style

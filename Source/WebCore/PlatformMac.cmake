@@ -449,6 +449,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/mac/TextIndicatorWindow.h
     page/mac/WebCoreFrameView.h
 
+    page/scrolling/ScrollingStateOverflowScrollProxyNode.h
     page/scrolling/cocoa/ScrollingTreeFixedNode.h
     page/scrolling/cocoa/ScrollingTreePositionedNode.h
     page/scrolling/cocoa/ScrollingTreeStickyNode.h

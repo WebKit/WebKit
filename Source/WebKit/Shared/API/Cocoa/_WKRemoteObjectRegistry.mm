@@ -41,6 +41,7 @@
 #import "_WKRemoteObjectInterface.h"
 #import <objc/runtime.h>
 
+extern "C" const char *_protocol_getMethodTypeEncoding(Protocol *p, SEL sel, BOOL isRequiredMethod, BOOL isInstanceMethod);
 extern "C" id __NSMakeSpecialForwardingCaptureBlock(const char *signature, void (^handler)(NSInvocation *inv));
 
 static const void* replyBlockKey = &replyBlockKey;

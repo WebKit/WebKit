@@ -33,6 +33,7 @@
 #import "WKProcessPool.h"
 #import "WKRetainPtr.h"
 #import "WKUserContentController.h"
+#import "WKWebpagePreferencesInternal.h"
 #import "WKWebView.h"
 #import "WKWebViewContentProviderRegistry.h"
 #import "WebKit2Initialize.h"
