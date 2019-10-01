@@ -74,7 +74,39 @@ public:
         stackPointerAligned.link(this);
 #endif
     }
-    
+
+    void store64FromReg(Reg src, Address dst)
+    {
+        if (src.isFPR())
+            storeDouble(src.fpr(), dst);
+        else
+            store64(src.gpr(), dst);
+    }
+
+    void store32FromReg(Reg src, Address dst)
+    {
+        if (src.isFPR())
+            storeFloat(src.fpr(), dst);
+        else
+            store32(src.gpr(), dst);
+    }
+
+    void load64ToReg(Address src, Reg dst)
+    {
+        if (dst.isFPR())
+            loadDouble(src, dst.fpr());
+        else
+            load64(src, dst.gpr());
+    }
+
+    void load32ToReg(Address src, Reg dst)
+    {
+        if (dst.isFPR())
+            loadFloat(src, dst.fpr());
+        else
+            load32(src, dst.gpr());
+    }
+
     template<typename T>
     void storeCell(T cell, Address address)
     {

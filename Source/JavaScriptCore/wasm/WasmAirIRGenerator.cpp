@@ -30,6 +30,7 @@
 
 #include "AirCode.h"
 #include "AirGenerate.h"
+#include "AirHelpers.h"
 #include "AirOpcodeUtils.h"
 #include "AirValidate.h"
 #include "AllowMacroScratchRegisterUsageIf.h"
@@ -67,6 +68,7 @@ namespace JSC { namespace Wasm {
 using namespace B3::Air;
 
 struct ConstrainedTmp {
+    ConstrainedTmp() = default;
     ConstrainedTmp(Tmp tmp)
         : ConstrainedTmp(tmp, tmp.isReg() ? B3::ValueRep::reg(tmp.reg()) : B3::ValueRep::SomeRegister)
     { }
@@ -76,6 +78,8 @@ struct ConstrainedTmp {
         , rep(rep)
     {
     }
+
+    explicit operator bool() const { return !!tmp; }
 
     Tmp tmp;
     B3::ValueRep rep;
@@ -114,27 +118,30 @@ public:
     Tmp tmp() const { return m_tmp; }
     Type type() const { return m_type; }
 
+    void dump(PrintStream& out) const
+    {
+        out.print("(", m_tmp, ", ", m_type, ")");
+    }
+
 private:
 
     Tmp m_tmp;
     Type m_type;
 };
 
+using TypedTmps = Vector<TypedTmp, 1>;
+
 class AirIRGenerator {
 public:
     struct ControlData {
-        ControlData(B3::Origin origin, Type returnType, TypedTmp resultTmp, BlockType type, BasicBlock* continuation, BasicBlock* special = nullptr)
-            : blockType(type)
+        ControlData(B3::Origin origin, BlockSignature result, TypedTmps resultTmps, BlockType type, BasicBlock* continuation, BasicBlock* special = nullptr)
+            : controlBlockType(type)
             , continuation(continuation)
             , special(special)
-            , returnType(returnType)
+            , results(resultTmps)
+            , returnType(result)
         {
-            UNUSED_PARAM(origin); // FIXME: Use origin.
-            if (resultTmp) {
-                ASSERT(returnType != Type::Void);
-                result.append(resultTmp);
-            } else
-                ASSERT(returnType == Type::Void);
+            UNUSED_PARAM(origin);
         }
 
         ControlData()
@@ -143,7 +150,7 @@ public:
 
         void dump(PrintStream& out) const
         {
-            switch (type()) {
+            switch (blockType()) {
             case BlockType::If:
                 out.print("If:       ");
                 break;
@@ -162,51 +169,45 @@ public:
                 out.print(*special);
             else
                 out.print("None");
+
+            CommaPrinter comma(", ", " Result Tmps: [");
+            for (const auto& tmp : results)
+                out.print(comma, tmp);
+            if (comma.didPrint())
+                out.print("]");
         }
 
-        BlockType type() const { return blockType; }
-
-        Type signature() const { return returnType; }
-
-        bool hasNonVoidSignature() const { return result.size(); }
+        BlockType blockType() const { return controlBlockType; }
+        BlockSignature signature() const { return returnType; }
 
         BasicBlock* targetBlockForBranch()
         {
-            if (type() == BlockType::Loop)
+            if (blockType() == BlockType::Loop)
                 return special;
             return continuation;
         }
 
         void convertIfToBlock()
         {
-            ASSERT(type() == BlockType::If);
-            blockType = BlockType::Block;
+            ASSERT(blockType() == BlockType::If);
+            controlBlockType = BlockType::Block;
             special = nullptr;
-        }
-
-        using ResultList = Vector<TypedTmp, 1>;
-
-        ResultList resultForBranch() const
-        {
-            if (type() == BlockType::Loop)
-                return ResultList();
-            return result;
         }
 
     private:
         friend class AirIRGenerator;
-        BlockType blockType;
+        BlockType controlBlockType;
         BasicBlock* continuation;
         BasicBlock* special;
-        ResultList result;
-        Type returnType;
+        TypedTmps results;
+        BlockSignature returnType;
     };
 
     using ExpressionType = TypedTmp;
     using ControlType = ControlData;
     using ExpressionList = Vector<ExpressionType, 1>;
     using Stack = ExpressionList;
-    using ResultList = ControlData::ResultList;
+    using ResultList = TypedTmps;
     using ControlEntry = FunctionParser<AirIRGenerator>::ControlEntry;
 
     static ExpressionType emptyExpression() { return { }; };
@@ -235,6 +236,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
     ExpressionType addConstant(Type, uint64_t);
     ExpressionType addConstant(BasicBlock*, Type, uint64_t);
+    ExpressionType addBottom(BasicBlock*, Type);
 
     // References
     PartialResult WARN_UNUSED_RETURN addRefIsNull(ExpressionType& value, ExpressionType& result);
@@ -269,10 +271,10 @@ public:
     PartialResult WARN_UNUSED_RETURN addSelect(ExpressionType condition, ExpressionType nonZero, ExpressionType zero, ExpressionType& result);
 
     // Control flow
-    ControlData WARN_UNUSED_RETURN addTopLevel(Type signature);
-    ControlData WARN_UNUSED_RETURN addBlock(Type signature);
-    ControlData WARN_UNUSED_RETURN addLoop(Type signature, const Stack&, uint32_t loopIndex);
-    PartialResult WARN_UNUSED_RETURN addIf(ExpressionType condition, Type signature, ControlData& result);
+    ControlData WARN_UNUSED_RETURN addTopLevel(BlockSignature);
+    PartialResult WARN_UNUSED_RETURN addBlock(BlockSignature, Stack& enclosingStack, ControlType& newBlock, Stack& newStack);
+    PartialResult WARN_UNUSED_RETURN addLoop(BlockSignature, Stack& enclosingStack, ControlType& block, Stack& newStack, uint32_t loopIndex);
+    PartialResult WARN_UNUSED_RETURN addIf(ExpressionType condition, BlockSignature, Stack& enclosingStack, ControlType& result, Stack& newStack);
     PartialResult WARN_UNUSED_RETURN addElse(ControlData&, const Stack&);
     PartialResult WARN_UNUSED_RETURN addElseToUnreachable(ControlData&);
 
@@ -280,12 +282,13 @@ public:
     PartialResult WARN_UNUSED_RETURN addBranch(ControlData&, ExpressionType condition, const Stack& returnValues);
     PartialResult WARN_UNUSED_RETURN addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTargets, const Stack& expressionStack);
     PartialResult WARN_UNUSED_RETURN endBlock(ControlEntry&, Stack& expressionStack);
-    PartialResult WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&);
+    PartialResult WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&, const Stack& expressionStack = { });
 
     // Calls
-    PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const Signature&, Vector<ExpressionType>& args, ExpressionType& result);
-    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const Signature&, Vector<ExpressionType>& args, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const Signature&, Vector<ExpressionType>& args, Vector<ExpressionType, 1>& results);
+    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const Signature&, Vector<ExpressionType>& args, Vector<ExpressionType, 1>& results);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
+    B3::PatchpointValue* WARN_UNUSED_RETURN emitCallPatchpoint(BasicBlock*, const Signature&, const Vector<ExpressionType, 1>& results, const Vector<TypedTmp>& args, Vector<ConstrainedTmp>&& extraArgs = { });
 
     PartialResult addShift(Type, B3::Air::Opcode, ExpressionType value, ExpressionType shift, ExpressionType& result);
     PartialResult addIntegerSub(B3::Air::Opcode, ExpressionType lhs, ExpressionType rhs, ExpressionType& result);
@@ -309,11 +312,15 @@ public:
     }
 
 private:
+    B3::Type toB3ResultType(BlockSignature returnType);
     ALWAYS_INLINE void validateInst(Inst& inst)
     {
         if (!ASSERT_DISABLED) {
             if (!inst.isValidForm()) {
-                dataLogLn(inst);
+                dataLogLn("Inst validation failed:");
+                dataLogLn(inst, "\n");
+                if (inst.origin)
+                    dataLogLn(deepDump(inst.origin), "\n");
                 CRASH();
             }
         }
@@ -389,6 +396,14 @@ private:
         }
     }
 
+    TypedTmps tmpsForSignature(BlockSignature signature)
+    {
+        TypedTmps result(signature->returnCount());
+        for (unsigned i = 0; i < signature->returnCount(); ++i)
+            result[i] = tmpForType(signature->returnType(i));
+        return result;
+    }
+
     B3::PatchpointValue* addPatchpoint(B3::Type type)
     {
         auto* result = m_proc.add<B3::PatchpointValue>(type, B3::Origin());
@@ -406,39 +421,60 @@ private:
     template <typename ...Args>
     void emitPatchpoint(BasicBlock* basicBlock, B3::PatchpointValue* patch, Tmp result, Args... theArgs)
     {
-        emitPatchpoint(basicBlock, patch, result, Vector<ConstrainedTmp, sizeof...(Args)>::from(theArgs...));
+        emitPatchpoint(basicBlock, patch, Vector<Tmp, 1> { result }, Vector<ConstrainedTmp, sizeof...(Args)>::from(theArgs...));
     }
 
     void emitPatchpoint(BasicBlock* basicBlock, B3::PatchpointValue* patch, Tmp result)
     {
-        emitPatchpoint(basicBlock, patch, result, Vector<ConstrainedTmp>());
+        emitPatchpoint(basicBlock, patch, Vector<Tmp, 1> { result }, Vector<ConstrainedTmp>());
     }
 
-    template <size_t inlineSize>
-    void emitPatchpoint(BasicBlock* basicBlock, B3::PatchpointValue* patch, Tmp result, Vector<ConstrainedTmp, inlineSize>&& args)
+    template <typename ResultTmpType, size_t inlineSize>
+    void emitPatchpoint(BasicBlock* basicBlock, B3::PatchpointValue* patch, const Vector<ResultTmpType, 1>&  results, Vector<ConstrainedTmp, inlineSize>&& args)
     {
         if (!m_patchpointSpecial)
             m_patchpointSpecial = static_cast<B3::PatchpointSpecial*>(m_code.addSpecial(makeUnique<B3::PatchpointSpecial>()));
 
+        auto toTmp = [&] (ResultTmpType tmp) {
+            if constexpr (std::is_same_v<ResultTmpType, Tmp>)
+                return tmp;
+            else
+                return tmp.tmp();
+        };
+
         Inst inst(Patch, patch, Arg::special(m_patchpointSpecial));
-        Inst resultMov;
-        if (result) {
-            ASSERT(patch->type() != B3::Void);
-            switch (patch->resultConstraints[0].kind()) {
-            case B3::ValueRep::Register:
-                inst.args.append(Tmp(patch->resultConstraints[0].reg()));
-                resultMov = Inst(result.isGP() ? Move : MoveDouble, nullptr, Tmp(patch->resultConstraints[0].reg()), result);
-                break;
-            case B3::ValueRep::SomeRegister:
-                inst.args.append(result);
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
+        Vector<Inst, 1> resultMovs;
+        switch (patch->type().kind()) {
+        case B3::Void:
+            break;
+        default: {
+            ASSERT(results.size());
+            for (unsigned i = 0; i < results.size(); ++i) {
+                switch (patch->resultConstraints[i].kind()) {
+                case B3::ValueRep::StackArgument: {
+                    Arg arg = Arg::callArg(patch->resultConstraints[i].offsetFromSP());
+                    inst.args.append(arg);
+                    resultMovs.append(Inst(B3::Air::moveForType(m_proc.typeAtOffset(patch->type(), i)), nullptr, arg, toTmp(results[i])));
+                    break;
+                }
+                case B3::ValueRep::Register: {
+                    inst.args.append(Tmp(patch->resultConstraints[i].reg()));
+                    resultMovs.append(Inst(B3::Air::relaxedMoveForType(m_proc.typeAtOffset(patch->type(), i)), nullptr, Tmp(patch->resultConstraints[i].reg()), toTmp(results[i])));
+                    break;
+                }
+                case B3::ValueRep::SomeRegister: {
+                    inst.args.append(toTmp(results[i]));
+                    break;
+                }
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
             }
-        } else
-            ASSERT(patch->type() == B3::Void);
-        
-        for (ConstrainedTmp& tmp : args) {
+        }
+        }
+
+        for (unsigned i = 0; i < args.size(); ++i) {
+            ConstrainedTmp& tmp = args[i];
             // FIXME: This is less than ideal to create dummy values just to satisfy Air's
             // validation. We should abstrcat Patch enough so ValueRep's don't need to be
             // backed by Values.
@@ -456,8 +492,10 @@ private:
                 inst.args.append(Tmp(tmp.rep.reg()));
                 break;
             case B3::ValueRep::StackArgument: {
-                auto arg = Arg::callArg(tmp.rep.offsetFromSP());
+                ASSERT(!patch->effects.terminal);
+                Arg arg = Arg::callArg(tmp.rep.offsetFromSP());
                 append(basicBlock, tmp.tmp.isGP() ? Move : MoveDouble, tmp.tmp, arg);
+                ASSERT(arg.canRepresent(patch->child(i)->type()));
                 inst.args.append(arg);
                 break;
             }
@@ -466,8 +504,10 @@ private:
             }
         }
 
-        if (patch->resultConstraints[0].isReg())
-            patch->lateClobbered().clear(patch->resultConstraints[0].reg());
+        for (auto valueRep : patch->resultConstraints) {
+            if (valueRep.isReg())
+                patch->lateClobbered().clear(valueRep.reg());
+        }
         for (unsigned i = patch->numGPScratchRegisters; i--;)
             inst.args.append(g64().tmp());
         for (unsigned i = patch->numFPScratchRegisters; i--;)
@@ -475,9 +515,9 @@ private:
 
         validateInst(inst);
         basicBlock->append(WTFMove(inst));
-        if (resultMov) {
-            validateInst(resultMov);
-            basicBlock->append(WTFMove(resultMov));
+        for (Inst result : resultMovs) {
+            validateInst(result);
+            basicBlock->append(WTFMove(result));
         }
     }
 
@@ -637,6 +677,7 @@ private:
     Vector<Tmp, 8> m_freeGPs;
     Vector<Tmp, 8> m_freeFPs;
 
+    HashMap<BlockSignature, B3::Type> m_tupleMap;
     // This is only filled if we are dumping IR.
     Bag<B3::PatchpointValue*> m_patchpoints;
 
@@ -745,14 +786,14 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
 
     m_code.setNumEntrypoints(1);
 
-    GPRReg contextInstance = Context::useFastTLS() ? wasmCallingConventionAir().prologueScratch(1) : m_wasmContextInstanceGPR;
+    GPRReg contextInstance = Context::useFastTLS() ? wasmCallingConvention().prologueScratchGPRs[1] : m_wasmContextInstanceGPR;
 
     Ref<B3::Air::PrologueGenerator> prologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([=] (CCallHelpers& jit, B3::Air::Code& code) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         code.emitDefaultPrologue(jit);
 
         {
-            GPRReg calleeGPR = wasmCallingConventionAir().prologueScratch(0);
+            GPRReg calleeGPR = wasmCallingConvention().prologueScratchGPRs[0];
             auto moveLocation = jit.moveWithPatch(MacroAssembler::TrustedImmPtr(nullptr), calleeGPR);
             jit.addLinkTask([compilation, moveLocation] (LinkBuffer& linkBuffer) {
                 compilation->calleeMoveLocation = linkBuffer.locationOf<WasmEntryPtrTag>(moveLocation);
@@ -775,7 +816,7 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
                 // This allows us to elide stack checks in the Wasm -> Embedder call IC stub. Since these will
                 // spill all arguments to the stack, we ensure that a stack check here covers the
                 // stack that such a stub would use.
-                (Checked<uint32_t>(m_maxNumJSCallArguments) * sizeof(Register) + jscCallingConvention().headerSizeInBytes()).unsafeGet()
+                (Checked<uint32_t>(m_maxNumJSCallArguments) * sizeof(Register) + jsCallingConvention().headerSizeInBytes).unsafeGet()
             ));
             const int32_t checkSize = m_makesCalls ? (wasmFrameSize + extraFrameSize).unsafeGet() : wasmFrameSize.unsafeGet();
             bool needUnderflowCheck = static_cast<unsigned>(checkSize) > Options::reservedZoneSize();
@@ -784,7 +825,7 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
             // This allows leaf functions to not do stack checks if their frame size is within
             // certain limits since their caller would have already done the check.
             if (needsOverflowCheck) {
-                GPRReg scratch = wasmCallingConventionAir().prologueScratch(0);
+                GPRReg scratch = wasmCallingConvention().prologueScratchGPRs[0];
 
                 if (Context::useFastTLS())
                     jit.loadWasmContextInstance(contextInstance);
@@ -820,7 +861,11 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
         m_locals[i] = tmpForType(type);
     }
 
-    wasmCallingConventionAir().loadArguments(signature, [&] (const Arg& arg, unsigned i) {
+    CallInformation wasmCallInfo = wasmCallingConvention().callInformationFor(signature, CallRole::Callee);
+
+    for (unsigned i = 0; i < wasmCallInfo.params.size(); ++i) {
+        B3::ValueRep location = wasmCallInfo.params[i];
+        Arg arg = location.isReg() ? Arg(Tmp(location.reg())) : Arg::addr(Tmp(GPRInfo::callFrameRegister), location.offsetFromFP());
         switch (signature.argument(i)) {
         case Type::I32:
             append(Move32, arg, m_locals[i]);
@@ -839,9 +884,26 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
-    });
+    }
 
     emitEntryTierUpCheck();
+}
+
+B3::Type AirIRGenerator::toB3ResultType(BlockSignature returnType)
+{
+    if (returnType->returnsVoid())
+        return B3::Void;
+
+    if (returnType->returnCount() == 1)
+        return toB3Type(returnType->returnType(0));
+
+    auto result = m_tupleMap.ensure(returnType, [&] {
+        Vector<B3::Type> result;
+        for (unsigned i = 0; i < returnType->returnCount(); ++i)
+            result.append(toB3Type(returnType->returnType(i)));
+        return m_proc.addTuple(WTFMove(result));
+    });
+    return result.iterator->value;
 }
 
 void AirIRGenerator::restoreWebAssemblyGlobalState(RestoreCachedStackLimit restoreCachedStackLimit, const MemoryInformation& memory, TypedTmp instance, BasicBlock* block)
@@ -964,6 +1026,12 @@ auto AirIRGenerator::addConstant(BasicBlock* block, Type type, uint64_t value) -
     }
 
     return result;
+}
+
+auto AirIRGenerator::addBottom(BasicBlock* block, Type type) -> ExpressionType
+{
+    append(block, B3::Air::Oops);
+    return addConstant(type, 0);
 }
 
 auto AirIRGenerator::addArguments(const Signature& signature) -> PartialResult
@@ -1675,7 +1743,7 @@ void AirIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex)
         for (auto& value : expressionStack)
             patchArgs.append(ConstrainedTmp(value, B3::ValueRep::ColdAny));
 
-        const auto& results = m_parser->controlStack()[controlIndex].controlData.result;
+        const auto& results = m_parser->controlStack()[controlIndex].controlData.results;
         for (auto& value : results)
             patchArgs.append(ConstrainedTmp(value, B3::ValueRep::ColdAny));
     }
@@ -1706,13 +1774,21 @@ void AirIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex)
         });
     });
 
-    emitPatchpoint(patch, Tmp(), WTFMove(patchArgs));
+    emitPatchpoint(m_currentBlock, patch, Vector<Tmp, 1>(), WTFMove(patchArgs));
 }
 
-AirIRGenerator::ControlData AirIRGenerator::addLoop(Type signature, const Stack&, uint32_t loopIndex)
+AirIRGenerator::ControlData AirIRGenerator::addTopLevel(BlockSignature signature)
+{
+    return ControlData(B3::Origin(), signature, tmpsForSignature(signature), BlockType::TopLevel, m_code.addBlock());
+}
+
+auto AirIRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, ControlType& block, Stack& newStack, uint32_t loopIndex) -> PartialResult
 {
     BasicBlock* body = m_code.addBlock();
     BasicBlock* continuation = m_code.addBlock();
+
+    newStack = splitStack(signature, enclosingStack);
+    block = ControlData(origin(), signature, newStack, BlockType::Loop, continuation, body);
 
     append(Jump);
     m_currentBlock->setSuccessors(body);
@@ -1720,20 +1796,17 @@ AirIRGenerator::ControlData AirIRGenerator::addLoop(Type signature, const Stack&
     m_currentBlock = body;
     emitLoopTierUpCheck(loopIndex);
 
-    return ControlData(origin(), signature, tmpForType(signature), BlockType::Loop, continuation, body);
+    return { };
 }
 
-AirIRGenerator::ControlData AirIRGenerator::addTopLevel(Type signature)
+auto AirIRGenerator::addBlock(BlockSignature signature, Stack& enclosingStack, ControlType& newBlock, Stack& newStack) -> PartialResult
 {
-    return ControlData(B3::Origin(), signature, tmpForType(signature), BlockType::TopLevel, m_code.addBlock());
+    newStack = splitStack(signature, enclosingStack);
+    newBlock = ControlData(origin(), signature, tmpsForSignature(signature), BlockType::Block, m_code.addBlock());
+    return { };
 }
 
-AirIRGenerator::ControlData AirIRGenerator::addBlock(Type signature)
-{
-    return ControlData(origin(), signature, tmpForType(signature), BlockType::Block, m_code.addBlock());
-}
-
-auto AirIRGenerator::addIf(ExpressionType condition, Type signature, ControlType& result) -> PartialResult
+auto AirIRGenerator::addIf(ExpressionType condition, BlockSignature signature, Stack& enclosingStack, ControlType& result, Stack& newStack) -> PartialResult
 {
     BasicBlock* taken = m_code.addBlock();
     BasicBlock* notTaken = m_code.addBlock();
@@ -1744,13 +1817,14 @@ auto AirIRGenerator::addIf(ExpressionType condition, Type signature, ControlType
     m_currentBlock->setSuccessors(taken, notTaken);
 
     m_currentBlock = taken;
-    result = ControlData(origin(), signature, tmpForType(signature), BlockType::If, continuation, notTaken);
+    newStack = splitStack(signature, enclosingStack);
+    result = ControlData(origin(), signature, tmpsForSignature(signature), BlockType::If, continuation, notTaken);
     return { };
 }
 
 auto AirIRGenerator::addElse(ControlData& data, const Stack& currentStack) -> PartialResult
 {
-    unifyValuesWithBlock(currentStack, data.result);
+    unifyValuesWithBlock(currentStack, data.results);
     append(Jump);
     m_currentBlock->setSuccessors(data.continuation);
     return addElseToUnreachable(data);
@@ -1758,7 +1832,7 @@ auto AirIRGenerator::addElse(ControlData& data, const Stack& currentStack) -> Pa
 
 auto AirIRGenerator::addElseToUnreachable(ControlData& data) -> PartialResult
 {
-    ASSERT(data.type() == BlockType::If);
+    ASSERT(data.blockType() == BlockType::If);
     m_currentBlock = data.special;
     data.convertIfToBlock();
     return { };
@@ -1766,34 +1840,43 @@ auto AirIRGenerator::addElseToUnreachable(ControlData& data) -> PartialResult
 
 auto AirIRGenerator::addReturn(const ControlData& data, const ExpressionList& returnValues) -> PartialResult
 {
-    ASSERT(returnValues.size() <= 1);
-    if (returnValues.size()) {
-        Tmp returnValueGPR = Tmp(GPRInfo::returnValueGPR);
-        Tmp returnValueFPR = Tmp(FPRInfo::returnValueFPR);
-        switch (data.signature()) {
-        case Type::I32:
-            append(Move32, returnValues[0], returnValueGPR);
-            append(Ret32, returnValueGPR);
-            break;
-        case Type::I64:
-        case Type::Anyref:
-        case Type::Funcref:
-            append(Move, returnValues[0], returnValueGPR);
-            append(Ret64, returnValueGPR);
-            break;
-        case Type::F32:
-            append(MoveFloat, returnValues[0], returnValueFPR);
-            append(RetFloat, returnValueFPR);
-            break;
-        case Type::F64:
-            append(MoveDouble, returnValues[0], returnValueFPR);
-            append(RetFloat, returnValueFPR);
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-    } else
+    CallInformation wasmCallInfo = wasmCallingConvention().callInformationFor(*data.signature(), CallRole::Callee);
+    if (!wasmCallInfo.results.size()) {
         append(RetVoid);
+        return { };
+    }
+
+    B3::PatchpointValue* patch = addPatchpoint(B3::Void);
+    patch->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        auto calleeSaves = params.code().calleeSaveRegisterAtOffsetList();
+
+        for (RegisterAtOffset calleeSave : calleeSaves)
+            jit.load64ToReg(CCallHelpers::Address(GPRInfo::callFrameRegister, calleeSave.offset()), calleeSave.reg());
+
+        jit.emitFunctionEpilogue();
+        jit.ret();
+    });
+    patch->effects.terminal = true;
+
+    ASSERT(returnValues.size() >= wasmCallInfo.results.size());
+    unsigned offset = returnValues.size() - wasmCallInfo.results.size();
+    Vector<ConstrainedTmp, 8> returnConstraints;
+    for (unsigned i = 0; i < wasmCallInfo.results.size(); ++i) {
+        B3::ValueRep rep = wasmCallInfo.results[i];
+        TypedTmp tmp = returnValues[offset + i];
+
+        if (rep.isStack()) {
+            append(moveForType(toB3Type(tmp.type())), tmp, Arg::addr(Tmp(GPRInfo::callFrameRegister), rep.offsetFromFP()));
+            continue;
+        }
+
+        ASSERT(rep.isReg());
+        if (data.signature()->returnType(i) == I32)
+            append(Move32, tmp, tmp);
+        returnConstraints.append(ConstrainedTmp(tmp, wasmCallInfo.results[i]));
+    }
+
+    emitPatchpoint(m_currentBlock, patch, Vector<Tmp, 1>(), WTFMove(returnConstraints));
     return { };
 }
 
@@ -1801,7 +1884,7 @@ auto AirIRGenerator::addReturn(const ControlData& data, const ExpressionList& re
 
 auto AirIRGenerator::addBranch(ControlData& data, ExpressionType condition, const Stack& returnValues) -> PartialResult
 {
-    unifyValuesWithBlock(returnValues, data.resultForBranch());
+    unifyValuesWithBlock(returnValues, data.results);
 
     BasicBlock* target = data.targetBlockForBranch();
     if (condition) {
@@ -1822,10 +1905,10 @@ auto AirIRGenerator::addSwitch(ExpressionType condition, const Vector<ControlDat
     auto& successors = m_currentBlock->successors();
     ASSERT(successors.isEmpty());
     for (const auto& target : targets) {
-        unifyValuesWithBlock(expressionStack, target->resultForBranch());
+        unifyValuesWithBlock(expressionStack, target->results);
         successors.append(target->targetBlockForBranch());
     }
-    unifyValuesWithBlock(expressionStack, defaultTarget.resultForBranch());
+    unifyValuesWithBlock(expressionStack, defaultTarget.results);
     successors.append(defaultTarget.targetBlockForBranch());
 
     ASSERT(condition.type() == Type::I32);
@@ -1884,46 +1967,78 @@ auto AirIRGenerator::endBlock(ControlEntry& entry, Stack& expressionStack) -> Pa
 {
     ControlData& data = entry.controlData;
 
-    unifyValuesWithBlock(expressionStack, data.result);
+    if (data.blockType() != BlockType::Loop)
+        unifyValuesWithBlock(expressionStack, data.results);
     append(Jump);
     m_currentBlock->setSuccessors(data.continuation);
 
-    return addEndToUnreachable(entry);
+    return addEndToUnreachable(entry, expressionStack);
 }
 
 
-auto AirIRGenerator::addEndToUnreachable(ControlEntry& entry) -> PartialResult
+auto AirIRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expressionStack) -> PartialResult
 {
     ControlData& data = entry.controlData;
     m_currentBlock = data.continuation;
 
-    if (data.type() == BlockType::If) {
+    if (data.blockType() == BlockType::If) {
         append(data.special, Jump);
         data.special->setSuccessors(m_currentBlock);
     }
 
-    if (data.type() == BlockType::Loop)
+    if (data.blockType() == BlockType::Loop) {
         m_outerLoops.removeLast();
-
-    for (const auto& result : data.result)
-        entry.enclosedExpressionStack.append(result);
+        for (unsigned i = 0; i < data.signature()->returnCount(); ++i) {
+            if (i < expressionStack.size())
+                entry.enclosedExpressionStack.append(expressionStack[i]);
+            else
+                entry.enclosedExpressionStack.append(addBottom(m_currentBlock, data.signature()->returnType(i)));
+        }
+    } else {
+        for (const auto& result : data.results)
+            entry.enclosedExpressionStack.append(result);
+    }
 
     // TopLevel does not have any code after this so we need to make sure we emit a return here.
-    if (data.type() == BlockType::TopLevel)
+    if (data.blockType() == BlockType::TopLevel)
         return addReturn(data, entry.enclosedExpressionStack);
 
     return { };
 }
 
-auto AirIRGenerator::addCall(uint32_t functionIndex, const Signature& signature, Vector<ExpressionType>& args, ExpressionType& result) -> PartialResult
+B3::PatchpointValue* AirIRGenerator::emitCallPatchpoint(BasicBlock* block, const Signature& signature, const Vector<ExpressionType, 1>& results, const Vector<TypedTmp>& args, Vector<ConstrainedTmp>&& patchArgs)
+{
+    auto* patchpoint = addPatchpoint(toB3ResultType(&signature));
+    patchpoint->effects.writesPinned = true;
+    patchpoint->effects.readsPinned = true;
+    patchpoint->clobberEarly(RegisterSet::macroScratchRegisters());
+    patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
+
+    CallInformation locations = wasmCallingConvention().callInformationFor(signature);
+    m_code.requestCallArgAreaSizeInBytes(WTF::roundUpToMultipleOf(stackAlignmentBytes(), locations.headerAndArgumentStackSizeInBytes));
+
+    size_t offset = patchArgs.size();
+    Checked<size_t> newSize = checkedSum<size_t>(patchArgs.size(), args.size());
+    RELEASE_ASSERT(!newSize.hasOverflowed());
+
+    patchArgs.grow(newSize.unsafeGet());
+    for (unsigned i = 0; i < args.size(); ++i)
+        patchArgs[i + offset] = ConstrainedTmp(args[i], locations.params[i]);
+
+    if (patchpoint->type() != B3::Void)
+        patchpoint->resultConstraints = WTFMove(locations.results);
+    emitPatchpoint(block, patchpoint, results, WTFMove(patchArgs));
+    return patchpoint;
+}
+
+auto AirIRGenerator::addCall(uint32_t functionIndex, const Signature& signature, Vector<ExpressionType>& args, Vector<ExpressionType, 1>& results) -> PartialResult
 {
     ASSERT(signature.argumentCount() == args.size());
 
     m_makesCalls = true;
 
-    Type returnType = signature.returnType();
-    if (returnType != Type::Void)
-        result = tmpForType(returnType);
+    for (unsigned i = 0; i < signature.returnCount(); ++i)
+        results.append(tmpForType(signature.returnType(i)));
 
     Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls = &m_unlinkedWasmToWasmCalls;
 
@@ -1949,18 +2064,11 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const Signature& signature,
         m_currentBlock->setSuccessors(isWasmBlock, isEmbedderBlock);
 
         {
-            auto* patchpoint = addPatchpoint(toB3Type(returnType));
-            patchpoint->effects.writesPinned = true;
-            patchpoint->effects.readsPinned = true;
+            auto* patchpoint = emitCallPatchpoint(isWasmBlock, signature, results, args);
             // We need to clobber all potential pinned registers since we might be leaving the instance.
             // We pessimistically assume we could be calling to something that is bounds checking.
             // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
             patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
-
-            Vector<ConstrainedTmp> patchArgs;
-            wasmCallingConventionAir().setupCall(m_code, returnType, patchpoint, toTmpVector(args), [&] (Tmp tmp, B3::ValueRep rep) {
-                patchArgs.append({ tmp, rep });
-            });
 
             patchpoint->setGenerator([unlinkedWasmToWasmCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1970,7 +2078,6 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const Signature& signature,
                 });
             });
 
-            emitPatchpoint(isWasmBlock, patchpoint, result, WTFMove(patchArgs));
             append(isWasmBlock, Jump);
             isWasmBlock->setSuccessors(continuation);
         }
@@ -1981,27 +2088,18 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const Signature& signature,
             append(isEmbedderBlock, Add64, instanceValue(), jumpDestination);
             append(isEmbedderBlock, Move, Arg::addr(jumpDestination), jumpDestination);
 
-            auto* patchpoint = addPatchpoint(toB3Type(returnType));
-            patchpoint->effects.writesPinned = true;
-            patchpoint->effects.readsPinned = true;
+            Vector<ConstrainedTmp> jumpArgs;
+            jumpArgs.append({ jumpDestination, B3::ValueRep::SomeRegister });
+            auto* patchpoint = emitCallPatchpoint(isEmbedderBlock, signature, results, args, WTFMove(jumpArgs));
             // We need to clobber all potential pinned registers since we might be leaving the instance.
             // We pessimistically assume we could be calling to something that is bounds checking.
             // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
             patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
-
-            Vector<ConstrainedTmp> patchArgs;
-            patchArgs.append(jumpDestination);
-
-            wasmCallingConventionAir().setupCall(m_code, returnType, patchpoint, toTmpVector(args), [&] (Tmp tmp, B3::ValueRep rep) {
-                patchArgs.append({ tmp, rep });
-            });
-
-            patchpoint->setGenerator([returnType] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+            patchpoint->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
-                jit.call(params[returnType == Void ? 0 : 1].gpr(), WasmEntryPtrTag);
+                jit.call(params[params.proc().resultCount(params.value()->type())].gpr(), WasmEntryPtrTag);
             });
 
-            emitPatchpoint(isEmbedderBlock, patchpoint, result, WTFMove(patchArgs));
             append(isEmbedderBlock, Jump);
             isEmbedderBlock->setSuccessors(continuation);
         }
@@ -2010,15 +2108,7 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const Signature& signature,
         // The call could have been to another WebAssembly instance, and / or could have modified our Memory.
         restoreWebAssemblyGlobalState(RestoreCachedStackLimit::Yes, m_info.memory, currentInstance, continuation);
     } else {
-        auto* patchpoint = addPatchpoint(toB3Type(returnType));
-        patchpoint->effects.writesPinned = true;
-        patchpoint->effects.readsPinned = true;
-
-        Vector<ConstrainedTmp> patchArgs;
-        wasmCallingConventionAir().setupCall(m_code, returnType, patchpoint, toTmpVector(args), [&] (Tmp tmp, B3::ValueRep rep) {
-            patchArgs.append({ tmp, rep });
-        });
-
+        auto* patchpoint = emitCallPatchpoint(m_currentBlock, signature, results, args);
         patchpoint->setGenerator([unlinkedWasmToWasmCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
             CCallHelpers::Call call = jit.threadSafePatchableNearCall();
@@ -2026,14 +2116,12 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const Signature& signature,
                 unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndex });
             });
         });
-
-        emitPatchpoint(m_currentBlock, patchpoint, result, WTFMove(patchArgs));
     }
 
     return { };
 }
 
-auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signature, Vector<ExpressionType>& args, ExpressionType& result) -> PartialResult
+auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signature, Vector<ExpressionType>& args, Vector<ExpressionType, 1>& results) -> PartialResult
 {
     ExpressionType calleeIndex = args.takeLast();
     ASSERT(signature.argumentCount() == args.size());
@@ -2162,31 +2250,26 @@ auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signa
 
     append(Move, Arg::addr(calleeCode), calleeCode);
 
-    Type returnType = signature.returnType();
-    if (returnType != Type::Void)
-        result = tmpForType(returnType);
+    Vector<ConstrainedTmp> extraArgs;
+    extraArgs.append(calleeCode);
 
-    auto* patch = addPatchpoint(toB3Type(returnType));
-    patch->effects.writesPinned = true;
-    patch->effects.readsPinned = true;
+    for (unsigned i = 0; i < signature.returnCount(); ++i)
+        results.append(tmpForType(signature.returnType(i)));
+
+    auto* patchpoint = emitCallPatchpoint(m_currentBlock, signature, results, args, WTFMove(extraArgs));
+
     // We need to clobber all potential pinned registers since we might be leaving the instance.
     // We pessimistically assume we're always calling something that is bounds checking so
     // because the wasm->wasm thunk unconditionally overrides the size registers.
     // FIXME: We should not have to do this, but the wasm->wasm stub assumes it can
     // use all the pinned registers as scratch: https://bugs.webkit.org/show_bug.cgi?id=172181
-    patch->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
 
-    Vector<ConstrainedTmp> emitArgs;
-    emitArgs.append(calleeCode);
-    wasmCallingConventionAir().setupCall(m_code, returnType, patch, toTmpVector(args), [&] (Tmp tmp, B3::ValueRep rep) {
-        emitArgs.append({ tmp, rep });
-    });
-    patch->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+    patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
+
+    patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
-        jit.call(params[returnType == Void ? 0 : 1].gpr(), WasmEntryPtrTag);
+        jit.call(params[params.proc().resultCount(params.value()->type())].gpr(), WasmEntryPtrTag);
     });
-
-    emitPatchpoint(m_currentBlock, patch, result, WTFMove(emitArgs));
 
     // The call could have been to another WebAssembly instance, and / or could have modified our Memory.
     restoreWebAssemblyGlobalState(RestoreCachedStackLimit::Yes, m_info.memory, currentInstance, m_currentBlock);
@@ -2208,8 +2291,27 @@ void AirIRGenerator::unifyValuesWithBlock(const Stack& resultStack, const Result
         unify(result[result.size() - 1 - i], resultStack[resultStack.size() - 1 - i]);
 }
 
-void AirIRGenerator::dump(const Vector<ControlEntry>&, const Stack*)
+static void dumpExpressionStack(const CommaPrinter& comma, const AirIRGenerator::Stack& expressionStack)
 {
+    dataLog(comma, "ExpressionStack:");
+    for (const auto& expression : expressionStack)
+        dataLog(comma, expression);
+}
+
+void AirIRGenerator::dump(const Vector<ControlEntry>& controlStack, const Stack* stack)
+{
+    dataLogLn("Processing Graph:");
+    dataLog(m_code);
+    dataLogLn("With current block:", *m_currentBlock);
+    dataLogLn("Control stack:");
+    for (size_t i = controlStack.size(); i--;) {
+        dataLog("  ", controlStack[i].controlData, ": ");
+        CommaPrinter comma(", ", "");
+        dumpExpressionStack(comma, *stack);
+        stack = &controlStack[i].enclosedExpressionStack;
+        dataLogLn();
+    }
+    dataLogLn("\n");
 }
 
 auto AirIRGenerator::origin() -> B3::Origin
@@ -2832,7 +2934,7 @@ auto AirIRGenerator::addOp<OpType::I64TruncUF64>(ExpressionType arg, ExpressionT
     });
 
     result = g64();
-    emitPatchpoint(m_currentBlock, patchpoint, result, WTFMove(args));
+    emitPatchpoint(m_currentBlock, patchpoint, Vector<Tmp, 1> { result }, WTFMove(args));
     return { };
 }
 
@@ -2889,7 +2991,7 @@ auto AirIRGenerator::addOp<OpType::I64TruncUF32>(ExpressionType arg, ExpressionT
     auto* patchpoint = addPatchpoint(B3::Int64);
     patchpoint->effects = B3::Effects::none();
     patchpoint->clobber(RegisterSet::macroScratchRegisters());
-    Vector<ConstrainedTmp> args;
+    Vector<ConstrainedTmp, 2> args;
     args.append(arg);
     if (isX86()) {
         args.append(signBitConstant);
@@ -2907,7 +3009,7 @@ auto AirIRGenerator::addOp<OpType::I64TruncUF32>(ExpressionType arg, ExpressionT
     });
 
     result = g64();
-    emitPatchpoint(m_currentBlock, patchpoint, result, WTFMove(args));
+    emitPatchpoint(m_currentBlock, patchpoint, Vector<Tmp, 1> { result }, WTFMove(args));
 
     return { };
 }

@@ -40,6 +40,19 @@ enum class BlockType {
     TopLevel
 };
 
+template<typename Stack>
+Stack splitStack(BlockSignature signature, Stack& stack)
+{
+    Stack result;
+    result.reserveInitialCapacity(signature->argumentCount());
+    ASSERT(stack.size() >= signature->argumentCount());
+    unsigned offset = stack.size() - signature->argumentCount();
+    for (unsigned i = 0; i < signature->argumentCount(); ++i)
+        result.uncheckedAppend(stack.at(i + offset));
+    stack.shrink(offset);
+    return result;
+}
+
 template<typename Context>
 class FunctionParser : public Parser<void> {
 public:
@@ -47,6 +60,7 @@ public:
     using ControlType = typename Context::ControlType;
     using ExpressionList = typename Context::ExpressionList;
     using Stack = typename Context::Stack;
+    using ResultList = typename Context::ResultList;
 
     FunctionParser(Context&, const uint8_t* functionStart, size_t functionLength, const Signature&, const ModuleInformation&);
 
@@ -54,11 +68,13 @@ public:
 
     struct ControlEntry {
         Stack enclosedExpressionStack;
+        Stack elseBlockStack;
         ControlType controlData;
     };
 
     OpType currentOpcode() const { return m_currentOpcode; }
     size_t currentOpcodeStartingOffset() const { return m_currentOpcodeStartingOffset; }
+    const Signature& signature() const { return m_signature; }
 
     Vector<ControlEntry>& controlStack() { return m_controlStack; }
 
@@ -102,7 +118,6 @@ template<typename Context>
 FunctionParser<Context>::FunctionParser(Context& context, const uint8_t* functionStart, size_t functionLength, const Signature& signature, const ModuleInformation& info)
     : Parser(functionStart, functionLength)
     , m_context(context)
-    , m_expressionStack(context.createStack())
     , m_signature(signature)
     , m_info(info)
 {
@@ -139,7 +154,7 @@ auto FunctionParser<Context>::parse() -> Result
 template<typename Context>
 auto FunctionParser<Context>::parseBody() -> PartialResult
 {
-    m_controlStack.append({ m_context.createStack(), m_context.addTopLevel(m_signature.returnType()) });
+    m_controlStack.append({ { }, { }, m_context.addTopLevel(&m_signature) });
     uint8_t op;
     while (m_controlStack.size()) {
         m_currentOpcodeStartingOffset = m_offset;
@@ -425,11 +440,10 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
             args.uncheckedAppend(m_expressionStack.at(i));
         m_expressionStack.shrink(firstArgumentIndex);
 
-        ExpressionType result = Context::emptyExpression();
-        WASM_TRY_ADD_TO_CONTEXT(addCall(functionIndex, calleeSignature, args, result));
+        ResultList results;
+        WASM_TRY_ADD_TO_CONTEXT(addCall(functionIndex, calleeSignature, args, results));
 
-        if (result != Context::emptyExpression())
-            m_expressionStack.append(result);
+        m_expressionStack.appendVector(results);
 
         return { };
     }
@@ -455,49 +469,67 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
             args.uncheckedAppend(m_expressionStack.at(i));
         m_expressionStack.shrink(firstArgumentIndex);
 
-        ExpressionType result = Context::emptyExpression();
-        WASM_TRY_ADD_TO_CONTEXT(addCallIndirect(tableIndex, calleeSignature, args, result));
-
-        if (result != Context::emptyExpression())
-            m_expressionStack.append(result);
+        ResultList results;
+        WASM_TRY_ADD_TO_CONTEXT(addCallIndirect(tableIndex, calleeSignature, args, results));
+        m_expressionStack.appendVector(results);
 
         return { };
     }
 
     case Block: {
-        Type inlineSignature;
-        WASM_PARSER_FAIL_IF(!parseResultType(inlineSignature), "can't get block's inline signature");
-        m_controlStack.append({ WTFMove(m_expressionStack), m_context.addBlock(inlineSignature) });
-        m_expressionStack = m_context.createStack();
+        BlockSignature inlineSignature;
+        WASM_PARSER_FAIL_IF(!parseBlockSignature(m_info, inlineSignature), "can't get block's signature");
+
+        int64_t oldSize = m_expressionStack.size();
+        Stack newStack;
+        ControlType block;
+        WASM_TRY_ADD_TO_CONTEXT(addBlock(inlineSignature, m_expressionStack, block, newStack));
+        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature->argumentCount());
+        ASSERT(newStack.size() == inlineSignature->argumentCount());
+
+        m_controlStack.append({ WTFMove(m_expressionStack), { },  WTFMove(block) });
+        m_expressionStack = WTFMove(newStack);
         return { };
     }
 
     case Loop: {
-        Type inlineSignature;
-        WASM_PARSER_FAIL_IF(!parseResultType(inlineSignature), "can't get loop's inline signature");
-        auto expressionStack = WTFMove(m_expressionStack);
-        auto loop = m_context.addLoop(inlineSignature, expressionStack, m_loopIndex++);
-        m_controlStack.append({ expressionStack, loop });
-        m_expressionStack = m_context.createStack();
+        BlockSignature inlineSignature;
+        WASM_PARSER_FAIL_IF(!parseBlockSignature(m_info, inlineSignature), "can't get loop's signature");
+
+        int64_t oldSize = m_expressionStack.size();
+        Stack newStack;
+        ControlType loop;
+        WASM_TRY_ADD_TO_CONTEXT(addLoop(inlineSignature, m_expressionStack, loop, newStack, m_loopIndex++));
+        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature->argumentCount());
+        ASSERT(newStack.size() == inlineSignature->argumentCount());
+
+        m_controlStack.append({ WTFMove(m_expressionStack), { }, WTFMove(loop) });
+        m_expressionStack = WTFMove(newStack);
         return { };
     }
 
     case If: {
-        Type inlineSignature;
+        BlockSignature inlineSignature;
         ExpressionType condition;
-        ControlType control;
-        WASM_PARSER_FAIL_IF(!parseResultType(inlineSignature), "can't get if's inline signature");
+        WASM_PARSER_FAIL_IF(!parseBlockSignature(m_info, inlineSignature), "can't get if's signature");
         WASM_TRY_POP_EXPRESSION_STACK_INTO(condition, "if condition");
-        WASM_TRY_ADD_TO_CONTEXT(addIf(condition, inlineSignature, control));
-        m_controlStack.append({ WTFMove(m_expressionStack), control });
-        m_expressionStack = m_context.createStack();
+
+        int64_t oldSize = m_expressionStack.size();
+        Stack newStack;
+        ControlType control;
+        WASM_TRY_ADD_TO_CONTEXT(addIf(condition, inlineSignature, m_expressionStack, control, newStack));
+        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature->argumentCount());
+        ASSERT(newStack.size() == inlineSignature->argumentCount());
+
+        m_controlStack.append({ WTFMove(m_expressionStack), newStack, WTFMove(control) });
+        m_expressionStack = WTFMove(newStack);
         return { };
     }
 
     case Else: {
         WASM_PARSER_FAIL_IF(m_controlStack.size() == 1, "can't use else block at the top-level of a function");
         WASM_TRY_ADD_TO_CONTEXT(addElse(m_controlStack.last().controlData, m_expressionStack));
-        m_expressionStack.shrink(0);
+        m_expressionStack = WTFMove(m_controlStack.last().elseBlockStack);
         return { };
     }
 
@@ -546,20 +578,17 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
     }
 
     case Return: {
-        ExpressionList returnValues;
-        if (m_signature.returnType() != Void) {
-            ExpressionType returnValue;
-            WASM_TRY_POP_EXPRESSION_STACK_INTO(returnValue, "return");
-            returnValues.append(returnValue);
-        }
-
-        WASM_TRY_ADD_TO_CONTEXT(addReturn(m_controlStack[0].controlData, returnValues));
+        WASM_TRY_ADD_TO_CONTEXT(addReturn(m_controlStack[0].controlData, m_expressionStack));
         m_unreachableBlocks = 1;
         return { };
     }
 
     case End: {
         ControlEntry data = m_controlStack.takeLast();
+        if (data.controlData.blockType() == BlockType::If) {
+            WASM_TRY_ADD_TO_CONTEXT(addElse(data.controlData, m_expressionStack));
+            m_expressionStack = WTFMove(data.elseBlockStack);
+        }
         // FIXME: This is a little weird in that it will modify the expressionStack for the result of the block.
         // That's a little too effectful for me but I don't have a better API right now.
         // see: https://bugs.webkit.org/show_bug.cgi?id=164353
@@ -634,14 +663,20 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         ControlEntry& data = m_controlStack.last();
         m_unreachableBlocks = 0;
         WASM_TRY_ADD_TO_CONTEXT(addElseToUnreachable(data.controlData));
-        m_expressionStack.shrink(0);
+        m_expressionStack = WTFMove(data.elseBlockStack);
         return { };
     }
 
     case End: {
         if (m_unreachableBlocks == 1) {
             ControlEntry data = m_controlStack.takeLast();
-            WASM_TRY_ADD_TO_CONTEXT(addEndToUnreachable(data));
+            if (data.controlData.blockType() == BlockType::If) {
+                WASM_TRY_ADD_TO_CONTEXT(addElseToUnreachable(data.controlData));
+                m_expressionStack = WTFMove(data.elseBlockStack);
+                WASM_TRY_ADD_TO_CONTEXT(endBlock(data, m_expressionStack));
+            } else
+                WASM_TRY_ADD_TO_CONTEXT(addEndToUnreachable(data));
+
             m_expressionStack.swap(data.enclosedExpressionStack);
         }
         m_unreachableBlocks--;
@@ -652,8 +687,8 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case If:
     case Block: {
         m_unreachableBlocks++;
-        Type unused;
-        WASM_PARSER_FAIL_IF(!parseResultType(unused), "can't get inline type for ", m_currentOpcode, " in unreachable context");
+        BlockSignature unused;
+        WASM_PARSER_FAIL_IF(!parseBlockSignature(m_info, unused), "can't get inline type for ", m_currentOpcode, " in unreachable context");
         return { };
     }
 

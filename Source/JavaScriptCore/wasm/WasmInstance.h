@@ -36,7 +36,11 @@
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
-namespace JSC { namespace Wasm {
+namespace JSC {
+
+class JSWebAssemblyInstance;
+
+namespace Wasm {
 
 struct Context;
 class Instance;

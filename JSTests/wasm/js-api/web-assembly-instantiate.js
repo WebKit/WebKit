@@ -76,7 +76,7 @@ assert.eq(WebAssembly.instantiate.length, 1);
             let {module, instance} = await WebAssembly.instantiate(bin);
         } catch(e) {
             assert.truthy(e instanceof WebAssembly.CompileError);
-            assert.eq(e.message, "WebAssembly.Module doesn't validate: control flow returns with unexpected type, in function at index 0");
+            assert.eq(e.message, "WebAssembly.Module doesn't validate: control flow returns with unexpected type. F32 is not a subtype of I32, in function at index 0");
         }
     }
 

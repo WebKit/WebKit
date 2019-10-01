@@ -470,7 +470,7 @@ void VMInspector::dumpStack(CallFrame* topCallFrame, unsigned framesToSkip)
 
 void VMInspector::dumpValue(JSValue value)
 {
-    dataLog(value);
+    dataLogLn(value);
 }
 
 void VMInspector::dumpCellMemory(JSCell* cell)

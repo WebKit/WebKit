@@ -54,7 +54,7 @@ void PatchpointSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgC
     unsigned argIndex = 1;
 
     Type type = patchpoint->type();
-    for (; argIndex <= procedure.returnCount(type); ++argIndex) {
+    for (; argIndex <= procedure.resultCount(type); ++argIndex) {
         Arg::Role role;
         if (patchpoint->resultConstraints[argIndex - 1].kind() == ValueRep::SomeEarlyRegister)
             role = Arg::EarlyDef;
@@ -81,7 +81,7 @@ bool PatchpointSpecial::isValid(Inst& inst)
     unsigned argIndex = 1;
 
     Type type = patchpoint->type();
-    for (; argIndex <= procedure.returnCount(type); ++argIndex) {
+    for (; argIndex <= procedure.resultCount(type); ++argIndex) {
         if (argIndex >= inst.args.size())
             return false;
         
@@ -118,7 +118,7 @@ bool PatchpointSpecial::admitsStack(Inst& inst, unsigned argIndex)
     ASSERT(argIndex);
 
     Type type = inst.origin->type();
-    unsigned returnCount = code().proc().returnCount(type);
+    unsigned returnCount = code().proc().resultCount(type);
 
     if (argIndex <= returnCount) {
         switch (inst.origin->as<PatchpointValue>()->resultConstraints[argIndex - 1].kind()) {
@@ -156,7 +156,7 @@ CCallHelpers::Jump PatchpointSpecial::generate(Inst& inst, CCallHelpers& jit, Ai
     unsigned offset = 1;
 
     Type type = value->type();
-    while (offset <= procedure.returnCount(type))
+    while (offset <= procedure.resultCount(type))
         reps.append(repForArg(*context.code, inst.args[offset++]));
     reps.appendVector(repsImpl(context, 0, offset, inst));
     offset += value->numChildren();

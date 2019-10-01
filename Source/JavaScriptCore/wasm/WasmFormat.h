@@ -54,6 +54,8 @@ namespace Wasm {
 struct CompilationContext;
 struct ModuleInformation;
 
+using BlockSignature = const Signature*;
+
 enum class TableElementType : uint8_t {
     Anyref,
     Funcref

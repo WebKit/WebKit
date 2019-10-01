@@ -46,12 +46,14 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
     const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
     JIT jit;
 
-    GPRReg scratch = wasmCallingConventionAir().prologueScratch(0);
+    GPRReg scratch = wasmCallingConvention().prologueScratchGPRs[0];
     GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
+    ASSERT(baseMemory != GPRReg::InvalidGPRReg);
     ASSERT(baseMemory != scratch);
     ASSERT(pinnedRegs.sizeRegister != baseMemory);
     ASSERT(pinnedRegs.sizeRegister != scratch);
     GPRReg sizeRegAsScratch = pinnedRegs.sizeRegister;
+    ASSERT(sizeRegAsScratch != GPRReg::InvalidGPRReg);
 
     // B3's call codegen ensures that the JSCell is a WebAssemblyFunction.
     jit.loadWasmContextInstance(sizeRegAsScratch); // Old Instance*
@@ -67,7 +69,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
     // FIXME the following code assumes that all Wasm::Instance have the same pinned registers. https://bugs.webkit.org/show_bug.cgi?id=162952
     // Set up the callee's baseMemory register as well as the memory size registers.
     {
-        GPRReg scratchOrSize = !Gigacage::isEnabled(Gigacage::Primitive) ? pinnedRegs.sizeRegister : wasmCallingConventionAir().prologueScratch(1);
+        GPRReg scratchOrSize = !Gigacage::isEnabled(Gigacage::Primitive) ? pinnedRegs.sizeRegister : wasmCallingConvention().prologueScratchGPRs[1];
 
         jit.loadPtr(JIT::Address(baseMemory, Wasm::Instance::offsetOfCachedMemorySize()), pinnedRegs.sizeRegister); // Memory size.
         jit.loadPtr(JIT::Address(baseMemory, Wasm::Instance::offsetOfCachedMemory()), baseMemory); // Wasm::Memory::TaggedArrayStoragePtr<void> (void*).
@@ -82,7 +84,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
     if (UNLIKELY(patchBuffer.didFailToAllocate()))
         return makeUnexpected(BindingFailure::OutOfMemory);
 
-    return FINALIZE_CODE(patchBuffer, WasmEntryPtrTag, "WebAssembly->WebAssembly import[%i]", importIndex);
+    return FINALIZE_WASM_CODE(patchBuffer, WasmEntryPtrTag, "WebAssembly->WebAssembly import[%i]", importIndex);
 }
 
 } } // namespace JSC::Wasm

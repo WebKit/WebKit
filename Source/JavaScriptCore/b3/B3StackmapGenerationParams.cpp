@@ -30,6 +30,7 @@
 
 #include "AirCode.h"
 #include "AirGenerationContext.h"
+#include "B3Procedure.h"
 #include "B3StackmapValue.h"
 
 namespace JSC { namespace B3 {
@@ -82,6 +83,11 @@ bool StackmapGenerationParams::fallsThroughToSuccessor(unsigned successorIndex) 
 Procedure& StackmapGenerationParams::proc() const
 {
     return m_context.code->proc();
+}
+
+Air::Code& StackmapGenerationParams::code() const
+{
+    return proc().code();
 }
 
 StackmapGenerationParams::StackmapGenerationParams(

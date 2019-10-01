@@ -196,12 +196,14 @@ public:
             : base(base)
             , offset(0)
         {
+            ASSERT(base != RegisterID::InvalidGPRReg);
         }
 
         ImplicitAddress(Address address)
             : base(address.base)
             , offset(address.offset)
         {
+            ASSERT(base != RegisterID::InvalidGPRReg);
         }
 
         RegisterID base;

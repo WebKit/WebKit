@@ -1306,8 +1306,8 @@ public:
         {
         }
 
-        void didReceiveSectionData(Wasm::Section) override { }
-        void didReceiveFunctionData(unsigned, const Wasm::FunctionData&) override { }
+        bool didReceiveSectionData(Wasm::Section) override { return true; }
+        bool didReceiveFunctionData(unsigned, const Wasm::FunctionData&) override { return true; }
         void didFinishParsing() override { }
 
         WasmStreamingParser* m_parser;

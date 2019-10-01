@@ -39,8 +39,8 @@ namespace JSC { namespace Wasm {
 class StreamingParserClient {
 public:
     virtual ~StreamingParserClient() = default;
-    virtual void didReceiveSectionData(Section) { }
-    virtual void didReceiveFunctionData(unsigned, const FunctionData&) { }
+    virtual bool didReceiveSectionData(Section) { return true; };
+    virtual bool didReceiveFunctionData(unsigned, const FunctionData&) = 0;
     virtual void didFinishParsing() { }
 };
 
@@ -79,6 +79,8 @@ public:
 
     const String& errorMessage() const { return m_errorMessage; }
 
+    void reportError() { moveToStateIfNotFailed(failOnState(State::FatalError)); }
+
 private:
     static constexpr unsigned moduleHeaderSize = 8;
     static constexpr unsigned sectionIDSize = 1;
@@ -97,6 +99,7 @@ private:
     Optional<Vector<uint8_t>> consume(const uint8_t* bytes, size_t, size_t&, size_t);
     Expected<uint32_t, State> consumeVarUInt32(const uint8_t* bytes, size_t, size_t&, IsEndOfStream);
 
+    void moveToStateIfNotFailed(State);
     template <typename ...Args> NEVER_INLINE State WARN_UNUSED_RETURN fail(Args...);
 
     State failOnState(State);
@@ -120,6 +123,7 @@ private:
 
     uint32_t m_functionSize { 0 };
 
+    Lock m_stateLock;
     State m_state { State::ModuleHeader };
     Section m_section { Section::Begin };
     Section m_previousKnownSection { Section::Begin };

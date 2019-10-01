@@ -453,7 +453,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
         const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
         // The start function must not take any arguments or return anything. This is enforced by the parser.
         ASSERT(!signature.argumentCount());
-        ASSERT(signature.returnType() == Wasm::Void);
+        ASSERT(signature.returnsVoid());
         if (startFunctionIndexSpace < codeBlock->functionImportCount()) {
             JSObject* startFunction = m_instance->instance().importFunction<WriteBarrier<JSObject>>(startFunctionIndexSpace)->get();
             m_startFunction.set(vm, this, startFunction);

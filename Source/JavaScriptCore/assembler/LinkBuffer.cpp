@@ -33,6 +33,7 @@
 #include "JITCode.h"
 #include "JSCInlines.h"
 #include "Options.h"
+#include "WasmCompilationMode.h"
 #include <wtf/CompilationThread.h>
 
 #if OS(LINUX)
@@ -46,6 +47,22 @@ bool shouldDumpDisassemblyFor(CodeBlock* codeBlock)
     if (codeBlock && JITCode::isOptimizingJIT(codeBlock->jitType()) && Options::dumpDFGDisassembly())
         return true;
     return Options::dumpDisassembly();
+}
+
+bool shouldDumpDisassemblyFor(Wasm::CompilationMode mode)
+{
+    if (Options::asyncDisassembly() || Options::dumpDisassembly() || Options::dumpWasmDisassembly())
+        return true;
+    switch (mode) {
+    case Wasm::CompilationMode::BBQMode:
+        return Options::dumpBBQDisassembly();
+    case Wasm::CompilationMode::OMGMode:
+    case Wasm::CompilationMode::OMGForOSREntryMode:
+        return Options::dumpOMGDisassembly();
+    default:
+        break;
+    }
+    return false;
 }
 
 LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithoutDisassemblyImpl()

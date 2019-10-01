@@ -57,28 +57,31 @@ auto SectionParser::parseType() -> PartialResult
         WASM_PARSER_FAIL_IF(type != Func, i, "th Type is non-Func ", type);
         WASM_PARSER_FAIL_IF(!parseVarUInt32(argumentCount), "can't get ", i, "th Type's argument count");
         WASM_PARSER_FAIL_IF(argumentCount > maxFunctionParams, i, "th argument count is too big ", argumentCount, " maximum ", maxFunctionParams);
-        RefPtr<Signature> maybeSignature = Signature::tryCreate(argumentCount);
-        WASM_PARSER_FAIL_IF(!maybeSignature, "can't allocate enough memory for Type section's ", i, "th signature");
-        Ref<Signature> signature = maybeSignature.releaseNonNull();
+        Vector<Type> arguments;
+        WASM_PARSER_FAIL_IF(!arguments.tryReserveCapacity(argumentCount), "can't allocate enough memory for Type section's ", i, "th signature");
 
         for (unsigned i = 0; i < argumentCount; ++i) {
             Type argumentType;
             WASM_PARSER_FAIL_IF(!parseValueType(argumentType), "can't get ", i, "th argument Type");
-            signature->argument(i) = argumentType;
+            arguments.append(argumentType);
         }
 
-        uint8_t returnCount;
-        WASM_PARSER_FAIL_IF(!parseVarUInt1(returnCount), "can't get ", i, "th Type's return count");
-        Type returnType;
-        if (returnCount) {
+        uint32_t returnCount;
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(returnCount), "can't get ", i, "th Type's return count");
+        WASM_PARSER_FAIL_IF(returnCount > 1 && !Options::useWebAssemblyMultiValues(), "Signatures cannot have more than one result type yet.");
+
+        Vector<Type, 1> returnTypes;
+        WASM_PARSER_FAIL_IF(!returnTypes.tryReserveCapacity(argumentCount), "can't allocate enough memory for Type section's ", i, "th signature");
+        for (unsigned i = 0; i < returnCount; ++i) {
             Type value;
             WASM_PARSER_FAIL_IF(!parseValueType(value), "can't get ", i, "th Type's return value");
-            returnType = static_cast<Type>(value);
-        } else
-            returnType = Type::Void;
-        signature->returnType() = returnType;
+            returnTypes.append(value);
+        }
 
-        m_info->usedSignatures.uncheckedAppend(SignatureInformation::adopt(WTFMove(signature)));
+        RefPtr<Signature> signature = SignatureInformation::signatureFor(returnTypes, arguments);
+        WASM_PARSER_FAIL_IF(!signature, "can't allocate enough memory for Type section's ", i, "th signature");
+
+        m_info->usedSignatures.uncheckedAppend(signature.releaseNonNull());
     }
     return { };
 }
@@ -359,7 +362,7 @@ auto SectionParser::parseStart() -> PartialResult
     SignatureIndex signatureIndex = m_info->signatureIndexFromFunctionIndexSpace(startFunctionIndex);
     const Signature& signature = SignatureInformation::get(signatureIndex);
     WASM_PARSER_FAIL_IF(signature.argumentCount(), "Start function can't have arguments");
-    WASM_PARSER_FAIL_IF(signature.returnType() != Void, "Start function can't return a value");
+    WASM_PARSER_FAIL_IF(!signature.returnsVoid(), "Start function can't return a value");
     m_info->startFunctionIndexSpace = startFunctionIndex;
     return { };
 }

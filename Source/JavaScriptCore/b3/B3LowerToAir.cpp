@@ -31,6 +31,7 @@
 #include "AirBlockInsertionSet.h"
 #include "AirCCallSpecial.h"
 #include "AirCode.h"
+#include "AirHelpers.h"
 #include "AirInsertionSet.h"
 #include "AirInstInlines.h"
 #include "AirPrintSpecial.h"
@@ -79,6 +80,9 @@ using Arg = Air::Arg;
 using Inst = Air::Inst;
 using Code = Air::Code;
 using Tmp = Air::Tmp;
+
+using Air::moveForType;
+using Air::relaxedMoveForType;
 
 // FIXME: We wouldn't need this if Air supported Width modifiers in Air::Kind.
 // https://bugs.webkit.org/show_bug.cgi?id=169247
@@ -155,10 +159,10 @@ public:
         for (B3::StackSlot* stack : m_procedure.stackSlots())
             m_stackToStack.add(stack, m_code.addStackSlot(stack));
         for (Variable* variable : m_procedure.variables()) {
-            auto addResult = m_variableToTmps.add(variable, Vector<Tmp, 1>(m_procedure.returnCount(variable->type())));
+            auto addResult = m_variableToTmps.add(variable, Vector<Tmp, 1>(m_procedure.resultCount(variable->type())));
             ASSERT(addResult.isNewEntry);
-            for (unsigned i = 0; i < m_procedure.returnCount(variable->type()); ++i)
-                addResult.iterator->value[i] = tmpForType(variable->type().isNumeric() ? variable->type() : m_procedure.extractFromTuple(variable->type(), i));
+            for (unsigned i = 0; i < m_procedure.resultCount(variable->type()); ++i)
+                addResult.iterator->value[i] = tmpForType(m_procedure.typeAtOffset(variable->type(), i));
         }
 
         // Figure out which blocks are not rare.
@@ -1171,62 +1175,6 @@ private:
         kind.effects |= memory->traps();
         
         append(createStore(kind, memory->child(0), dest));
-    }
-
-    Air::Opcode moveForType(Type type)
-    {
-        using namespace Air;
-        switch (type.kind()) {
-        case Int32:
-            return Move32;
-        case Int64:
-            RELEASE_ASSERT(is64Bit());
-            return Move;
-        case Float:
-            return MoveFloat;
-        case Double:
-            return MoveDouble;
-        case Void:
-        case Tuple:
-            break;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-        return Air::Oops;
-    }
-
-    Air::Opcode relaxedMoveForType(Type type)
-    {
-        using namespace Air;
-        switch (type.kind()) {
-        case Int32:
-        case Int64:
-            // For Int32, we could return Move or Move32. It's a trade-off.
-            //
-            // Move32: Using Move32 guarantees that we use the narrower move, but in cases where the
-            //     register allocator can't prove that the variables involved are 32-bit, this will
-            //     disable coalescing.
-            //
-            // Move: Using Move guarantees that the register allocator can coalesce normally, but in
-            //     cases where it can't prove that the variables are 32-bit and it doesn't coalesce,
-            //     this will force us to use a full 64-bit Move instead of the slightly cheaper
-            //     32-bit Move32.
-            //
-            // Coalescing is a lot more profitable than turning Move into Move32. So, it's better to
-            // use Move here because in cases where the register allocator cannot prove that
-            // everything is 32-bit, we still get coalescing.
-            return Move;
-        case Float:
-            // MoveFloat is always coalescable and we never convert MoveDouble to MoveFloat, so we
-            // should use MoveFloat when we know that the temporaries involved are 32-bit.
-            return MoveFloat;
-        case Double:
-            return MoveDouble;
-        case Void:
-        case Tuple:
-            break;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-        return Air::Oops;
     }
 
 #if ENABLE(MASM_PROBE)

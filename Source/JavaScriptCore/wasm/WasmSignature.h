@@ -52,12 +52,12 @@ using SignatureIndex = uint64_t;
 
 class Signature : public ThreadSafeRefCounted<Signature> {
     WTF_MAKE_FAST_ALLOCATED;
-    static const constexpr SignatureArgCount s_retCount = 1;
 
     Signature() = delete;
     Signature(const Signature&) = delete;
-    Signature(SignatureArgCount argCount)
-        : m_argCount(argCount)
+    Signature(SignatureArgCount retCount, SignatureArgCount argCount)
+        : m_retCount(retCount)
+        , m_argCount(argCount)
     {
     }
 
@@ -66,47 +66,37 @@ class Signature : public ThreadSafeRefCounted<Signature> {
         return i + reinterpret_cast<Type*>(reinterpret_cast<char*>(this) + sizeof(Signature));
     }
     Type* storage(SignatureArgCount i) const { return const_cast<Signature*>(this)->storage(i); }
-    static size_t allocatedSize(Checked<SignatureArgCount> argCount)
+    static size_t allocatedSize(Checked<SignatureArgCount> retCount, Checked<SignatureArgCount> argCount)
     {
-        return (sizeof(Signature) + (s_retCount + argCount) * sizeof(Type)).unsafeGet();
+        return (sizeof(Signature) + (retCount + argCount) * sizeof(Type)).unsafeGet();
     }
 
 public:
-    Type& returnType() { return *storage(0); }
-    Type returnType() const { return *storage(0); }
-    SignatureArgCount returnCount() const { return s_retCount; }
+    SignatureArgCount returnCount() const { return m_retCount; }
     SignatureArgCount argumentCount() const { return m_argCount; }
-    Type& argument(SignatureArgCount i)
-    {
-        ASSERT(i < argumentCount());
-        return *storage(returnCount() + i);
-    }
-    Type argument(SignatureArgCount i) const { return const_cast<Signature*>(this)->argument(i); }
+
+    Type returnType(SignatureArgCount i) const { ASSERT(i < returnCount()); return const_cast<Signature*>(this)->getReturnType(i); }
+    bool returnsVoid() const { return !returnCount(); }
+    Type argument(SignatureArgCount i) const { return const_cast<Signature*>(this)->getArgument(i); }
     SignatureIndex index() const { return bitwise_cast<SignatureIndex>(this); }
 
     WTF::String toString() const;
     void dump(WTF::PrintStream& out) const;
-    bool operator==(const Signature& rhs) const
-    {
-        if (argumentCount() != rhs.argumentCount())
-            return false;
-        if (returnType() != rhs.returnType())
-            return false;
-        for (unsigned i = 0; i < argumentCount(); ++i) {
-            if (argument(i) != rhs.argument(i))
-                return false;
-        }
-        return true;
-    }
+    bool operator==(const Signature& rhs) const { return this == &rhs; }
     unsigned hash() const;
-
-    static RefPtr<Signature> tryCreate(SignatureArgCount);
 
     // Signatures are uniqued and, for call_indirect, validated at runtime. Tables can create invalid SignatureIndex values which cause call_indirect to fail. We use 0 as the invalidIndex so that the codegen can easily test for it and trap, and we add a token invalid entry in SignatureInformation.
     static const constexpr SignatureIndex invalidIndex = 0;
 
 private:
     friend class SignatureInformation;
+    friend struct ParameterTypes;
+
+    static RefPtr<Signature> tryCreate(SignatureArgCount returnCount, SignatureArgCount argumentCount);
+    Type& getReturnType(SignatureArgCount i) { ASSERT(i < returnCount()); return *storage(i); }
+    Type& getArgument(SignatureArgCount i) { ASSERT(i < argumentCount()); return *storage(returnCount() + i); }
+
+    SignatureArgCount m_retCount;
     SignatureArgCount m_argCount;
     // Return Type and arguments are stored here.
 };
@@ -116,14 +106,12 @@ struct SignatureHash {
     SignatureHash() = default;
     explicit SignatureHash(Ref<Signature>&& key)
         : key(WTFMove(key))
-    {
-    }
+    { }
     explicit SignatureHash(WTF::HashTableDeletedValueType)
         : key(WTF::HashTableDeletedValue)
-    {
-    }
+    { }
     bool operator==(const SignatureHash& rhs) const { return equal(*this, rhs); }
-    static bool equal(const SignatureHash& lhs, const SignatureHash& rhs) { return lhs.key == rhs.key || (lhs.key && rhs.key && *lhs.key == *rhs.key); }
+    static bool equal(const SignatureHash& lhs, const SignatureHash& rhs) { return lhs.key == rhs.key; }
     static unsigned hash(const SignatureHash& signature) { return signature.key ? signature.key->hash() : 0; }
     static constexpr bool safeToCompareToEmptyOrDeleted = false;
     bool isHashTableDeletedValue() const { return key.isHashTableDeletedValue(); }
@@ -150,7 +138,6 @@ template<> struct HashTraits<JSC::Wasm::SignatureHash> : SimpleClassHashTraits<J
 namespace JSC { namespace Wasm {
 
 // Signature information is held globally and shared by the entire process to allow all signatures to be unique. This is required when wasm calls another wasm instance, and must work when modules are shared between multiple VMs.
-// Note: signatures are never removed because that would require accounting for all WebAssembly.Module and which signatures they use. The maximum number of signatures is bounded, and isn't worth the counting overhead. We could clear everything when we reach zero outstanding WebAssembly.Module. https://bugs.webkit.org/show_bug.cgi?id=166037
 class SignatureInformation {
     WTF_MAKE_NONCOPYABLE(SignatureInformation);
     WTF_MAKE_FAST_ALLOCATED;
@@ -160,13 +147,16 @@ class SignatureInformation {
 public:
     static SignatureInformation& singleton();
 
-    static Ref<Signature> WARN_UNUSED_RETURN adopt(Ref<Signature>&&);
-    static const Signature& WARN_UNUSED_RETURN get(SignatureIndex);
-    static SignatureIndex WARN_UNUSED_RETURN get(const Signature&);
+    static RefPtr<Signature> signatureFor(const Vector<Type, 1>& returnTypes, const Vector<Type>& argumentTypes);
+    ALWAYS_INLINE const Signature* thunkFor(Type type) const { return thunkSignatures[linearizeType(type)]; }
+
+    static const Signature& get(SignatureIndex);
+    static SignatureIndex get(const Signature&);
     static void tryCleanup();
 
 private:
     HashSet<Wasm::SignatureHash> m_signatureSet;
+    const Signature* thunkSignatures[numTypes];
     Lock m_lock;
 
     JS_EXPORT_PRIVATE static SignatureInformation* theOne;

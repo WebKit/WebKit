@@ -43,6 +43,10 @@
 
 namespace JSC {
 
+namespace Wasm {
+enum class CompilationMode : uint8_t;
+}
+
 class CodeBlock;
 
 // LinkBuffer:
@@ -393,6 +397,16 @@ bool shouldDumpDisassemblyFor(CodeBlock*);
 
 #define FINALIZE_REGEXP_CODE(linkBufferReference, resultPtrTag, dataLogFArgumentsForHeading)  \
     FINALIZE_CODE_IF(JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly() || Options::dumpRegExpDisassembly(), linkBufferReference, resultPtrTag, dataLogFArgumentsForHeading)
+
+bool shouldDumpDisassemblyFor(Wasm::CompilationMode);
+
+#define FINALIZE_WASM_CODE(linkBufferReference, resultPtrTag, ...)  \
+    FINALIZE_CODE_IF((JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly() || Options::dumpWasmDisassembly()), linkBufferReference, resultPtrTag, __VA_ARGS__)
+
+#define FINALIZE_WASM_CODE_FOR_MODE(mode, linkBufferReference, resultPtrTag, ...)  \
+    FINALIZE_CODE_IF(shouldDumpDisassemblyFor(mode), linkBufferReference, resultPtrTag, __VA_ARGS__)
+
+
 
 } // namespace JSC
 

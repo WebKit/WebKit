@@ -38,7 +38,7 @@ namespace JSC { namespace Wasm {
 static Vector<GPRReg> getPinnedRegisters(unsigned remainingPinnedRegisters)
 {
     Vector<GPRReg> registers;
-    jscCallingConvention().m_calleeSaveRegisters.forEach([&] (Reg reg) {
+    jsCallingConvention().calleeSaveRegisters.forEach([&] (Reg reg) {
         if (!reg.isGPR())
             return;
         GPRReg gpr = reg.gpr();

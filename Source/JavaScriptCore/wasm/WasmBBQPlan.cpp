@@ -96,7 +96,7 @@ void BBQPlan::moveToState(State state)
     m_state = state;
 }
 
-void BBQPlan::didReceiveFunctionData(unsigned functionIndex, const FunctionData& function)
+bool BBQPlan::didReceiveFunctionData(unsigned functionIndex, const FunctionData& function)
 {
     dataLogLnIf(WasmBBQPlanInternal::verbose, "Processing function starting at: ", function.start, " and ending at: ", function.end);
     size_t functionLength = function.end - function.start;
@@ -113,6 +113,7 @@ void BBQPlan::didReceiveFunctionData(unsigned functionIndex, const FunctionData&
         }
         fail(holdLock(m_lock), makeString(validationResult.error(), ", in function at index ", String::number(functionIndex))); // FIXME make this an Expected.
     }
+    return !!validationResult;
 }
 
 bool BBQPlan::parseAndValidateModule(const uint8_t* source, size_t sourceLength)
@@ -126,15 +127,17 @@ bool BBQPlan::parseAndValidateModule(const uint8_t* source, size_t sourceLength)
         startTime = MonotonicTime::now();
 
     m_streamingParser.addBytes(source, sourceLength);
-    if (m_streamingParser.finalize() != StreamingParser::State::Finished) {
-        fail(holdLock(m_lock), String(m_streamingParser.errorMessage()));
-        return false;
-    }
     {
         auto locker = holdLock(m_lock);
         if (failed())
             return false;
     }
+
+    if (m_streamingParser.finalize() != StreamingParser::State::Finished) {
+        fail(holdLock(m_lock), String(m_streamingParser.errorMessage()));
+        return false;
+    }
+
     if (WasmBBQPlanInternal::verbose || Options::reportCompileTimes())
         dataLogLn("Took ", (MonotonicTime::now() - startTime).microseconds(), " us to validate module");
 
@@ -326,7 +329,7 @@ void BBQPlan::complete(const AbstractLocker& locker)
                 }
 
                 m_wasmInternalFunctions[functionIndex]->entrypoint.compilation = makeUnique<B3::Compilation>(
-                    FINALIZE_CODE(linkBuffer, B3CompilationPtrTag, "WebAssembly BBQ function[%i] %s name %s", functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
+                    FINALIZE_WASM_CODE_FOR_MODE(CompilationMode::BBQMode, linkBuffer, B3CompilationPtrTag, "WebAssembly BBQ function[%i] %s name %s", functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
                     WTFMove(context.wasmEntrypointByproducts));
             }
 
@@ -338,7 +341,7 @@ void BBQPlan::complete(const AbstractLocker& locker)
                 }
 
                 embedderToWasmInternalFunction->entrypoint.compilation = makeUnique<B3::Compilation>(
-                    FINALIZE_CODE(linkBuffer, B3CompilationPtrTag, "Embedder->WebAssembly entrypoint[%i] %s name %s", functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
+                    FINALIZE_WASM_CODE_FOR_MODE(CompilationMode::EmbedderEntrypointMode, linkBuffer, B3CompilationPtrTag, "Embedder->WebAssembly entrypoint[%i] %s name %s", functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
                     WTFMove(context.embedderEntrypointByproducts));
             }
         }

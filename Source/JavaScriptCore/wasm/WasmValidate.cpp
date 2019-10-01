@@ -30,6 +30,7 @@
 
 #include "JSCJSValueInlines.h"
 #include "WasmFunctionParser.h"
+#include "WasmSignature.h"
 #include <wtf/CommaPrinter.h>
 
 namespace JSC { namespace Wasm {
@@ -38,19 +39,16 @@ class Validate {
 public:
     class ControlData {
     public:
-        ControlData(BlockType type, Type signature)
+        ControlData() = default;
+        ControlData(BlockType type, BlockSignature signature)
             : m_blockType(type)
             , m_signature(signature)
         {
         }
 
-        ControlData()
-        {
-        }
-
         void dump(PrintStream& out) const
         {
-            switch (type()) {
+            switch (blockType()) {
             case BlockType::If:
                 out.print("If:       ");
                 break;
@@ -64,18 +62,25 @@ public:
                 out.print("TopLevel: ");
                 break;
             }
-            out.print(makeString(signature()));
+            const Signature& sig = *signature();
+            out.print(sig);
         }
 
-        bool hasNonVoidSignature() const { return m_signature != Void; }
+        BlockType blockType() const { return m_blockType; }
+        BlockSignature signature() const { return m_signature; }
 
-        BlockType type() const { return m_blockType; }
-        Type signature() const { return m_signature; }
-        Type branchTargetSignature() const { return type() == BlockType::Loop ? Void : signature(); }
+        unsigned branchTargetArity() const { return blockType() == BlockType::Loop ? signature()->argumentCount() : signature()->returnCount(); }
+        Type branchTargetType(unsigned i) const
+        {
+            ASSERT(i < branchTargetArity());
+            return blockType() == BlockType::Loop ? signature()->argument(i) : signature()->returnType(i);
+        }
+
     private:
         BlockType m_blockType;
-        Type m_signature;
+        BlockSignature m_signature;
     };
+
     typedef String ErrorType;
     typedef Unexpected<ErrorType> UnexpectedResult;
     typedef Expected<void, ErrorType> Result;
@@ -83,20 +88,26 @@ public:
     using ExpressionList = Vector<ExpressionType, 1>;
     using Stack = ExpressionList;
     typedef ControlData ControlType;
+    typedef ExpressionList ResultList;
     typedef FunctionParser<Validate>::ControlEntry ControlEntry;
 
     static constexpr ExpressionType emptyExpression() { return Void; }
     Stack createStack() { return Stack(); }
 
     template <typename ...Args>
-    NEVER_INLINE UnexpectedResult WARN_UNUSED_RETURN fail(Args... args) const
+    NEVER_INLINE UnexpectedResult WARN_UNUSED_RETURN fail(const Args&... args) const
     {
         using namespace FailureHelper; // See ADL comment in WasmParser.h.
-        return UnexpectedResult(makeString("WebAssembly.Module doesn't validate: "_s, makeString(args)...));
+        if (UNLIKELY(!ASSERT_DISABLED && Options::crashOnFailedWebAssemblyValidate()))
+            WTFBreakpointTrap();
+
+        StringPrintStream out;
+        out.print("WebAssembly.Module doesn't validate: "_s, args...);
+        return UnexpectedResult(out.toString());
     }
 #define WASM_VALIDATOR_FAIL_IF(condition, ...) do { \
         if (UNLIKELY(condition))                    \
-        return fail(__VA_ARGS__);                   \
+            return fail(__VA_ARGS__);               \
     } while (0)
 
     Result WARN_UNUSED_RETURN addArguments(const Signature&);
@@ -133,10 +144,10 @@ public:
     Result WARN_UNUSED_RETURN addSelect(ExpressionType condition, ExpressionType nonZero, ExpressionType zero, ExpressionType& result);
 
     // Control flow
-    ControlData WARN_UNUSED_RETURN addTopLevel(Type signature);
-    ControlData WARN_UNUSED_RETURN addBlock(Type signature);
-    ControlData WARN_UNUSED_RETURN addLoop(Type signature, const Stack&, uint32_t);
-    Result WARN_UNUSED_RETURN addIf(ExpressionType condition, Type signature, ControlData& result);
+    ControlData WARN_UNUSED_RETURN addTopLevel(BlockSignature);
+    Result WARN_UNUSED_RETURN addBlock(BlockSignature, Stack& enclosingStack, ControlType& newBlock, Stack& newStack);
+    Result WARN_UNUSED_RETURN addLoop(BlockSignature, Stack& enclosingStack, ControlType& block, Stack& newStack, uint32_t loopIndex);
+    Result WARN_UNUSED_RETURN addIf(ExpressionType condition, BlockSignature, Stack& enclosingStack, ControlType& result, Stack& newStack);
     Result WARN_UNUSED_RETURN addElse(ControlData&, const Stack&);
     Result WARN_UNUSED_RETURN addElseToUnreachable(ControlData&);
 
@@ -151,8 +162,8 @@ public:
     Result WARN_UNUSED_RETURN addUnreachable() { return { }; }
 
     // Calls
-    Result WARN_UNUSED_RETURN addCall(unsigned calleeIndex, const Signature&, const Vector<ExpressionType>& args, ExpressionType& result);
-    Result WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const Signature&, const Vector<ExpressionType>& args, ExpressionType& result);
+    Result WARN_UNUSED_RETURN addCall(unsigned calleeIndex, const Signature&, const Vector<ExpressionType>& args, ResultList&);
+    Result WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const Signature&, const Vector<ExpressionType>& args, ResultList&);
 
     bool hasMemory() const { return !!m_module.memory; }
 
@@ -184,7 +195,7 @@ auto Validate::addTableGet(unsigned tableIndex, ExpressionType& index, Expressio
 {
     WASM_VALIDATOR_FAIL_IF(tableIndex >= m_module.tableCount(), "table index ", tableIndex, " is invalid, limit is ", m_module.tableCount());
     result = m_module.tables[tableIndex].wasmType();
-    WASM_VALIDATOR_FAIL_IF(Type::I32 != index, "table.get index to type ", index, " expected ", Type::I32);
+    WASM_VALIDATOR_FAIL_IF(Type::I32 != index, "table.get index to type ", makeString(index), " expected ", makeString(Type::I32));
 
     return { };
 }
@@ -213,7 +224,7 @@ auto Validate::addTableGrow(unsigned tableIndex, ExpressionType& fill, Expressio
     result = Type::I32;
     WASM_VALIDATOR_FAIL_IF(tableIndex >= m_module.tableCount(), "table index ", tableIndex, " is invalid, limit is ", m_module.tableCount());
     WASM_VALIDATOR_FAIL_IF(!isSubtype(fill, m_module.tables[tableIndex].wasmType()), "table.grow expects fill value of type ", m_module.tables[tableIndex].wasmType(), " got ", fill);
-    WASM_VALIDATOR_FAIL_IF(Type::I32 != delta, "table.grow expects an i32 delta value, got ", delta);
+    WASM_VALIDATOR_FAIL_IF(Type::I32 != delta, "table.grow expects an i32 delta value, got ", makeString(delta));
 
     return { };
 }
@@ -222,8 +233,8 @@ auto Validate::addTableFill(unsigned tableIndex, ExpressionType& offset, Express
 {
     WASM_VALIDATOR_FAIL_IF(tableIndex >= m_module.tableCount(), "table index ", tableIndex, " is invalid, limit is ", m_module.tableCount());
     WASM_VALIDATOR_FAIL_IF(!isSubtype(fill, m_module.tables[tableIndex].wasmType()), "table.fill expects fill value of type ", m_module.tables[tableIndex].wasmType(), " got ", fill);
-    WASM_VALIDATOR_FAIL_IF(Type::I32 != offset, "table.fill expects an i32 offset value, got ", offset);
-    WASM_VALIDATOR_FAIL_IF(Type::I32 != count, "table.fill expects an i32 count value, got ", count);
+    WASM_VALIDATOR_FAIL_IF(Type::I32 != offset, "table.fill expects an i32 offset value, got ", makeString(offset));
+    WASM_VALIDATOR_FAIL_IF(Type::I32 != count, "table.fill expects an i32 count value, got ", makeString(count));
 
     return { };
 }
@@ -231,7 +242,7 @@ auto Validate::addTableFill(unsigned tableIndex, ExpressionType& offset, Express
 auto Validate::addRefIsNull(ExpressionType& value, ExpressionType& result) -> Result
 {
     result = Type::I32;
-    WASM_VALIDATOR_FAIL_IF(!isSubtype(value, Type::Anyref), "ref.is_null to type ", value, " expected ", Type::Anyref);
+    WASM_VALIDATOR_FAIL_IF(!isSubtype(value, Type::Anyref), "ref.is_null to type ", makeString(value), " expected ", makeString(Type::Anyref));
 
     return { };
 }
@@ -291,19 +302,41 @@ auto Validate::setGlobal(uint32_t index, ExpressionType value) -> Result
     return { };
 }
 
-Validate::ControlType Validate::addTopLevel(Type signature)
+Validate::ControlType Validate::addTopLevel(BlockSignature signature)
 {
     return ControlData(BlockType::TopLevel, signature);
 }
 
-Validate::ControlType Validate::addBlock(Type signature)
+static Validate::Stack splitStack(BlockSignature signature, Validate::Stack& stack)
 {
-    return ControlData(BlockType::Block, signature);
+    Validate::Stack result;
+    result.reserveInitialCapacity(signature->argumentCount());
+    ASSERT(stack.size() >= signature->argumentCount());
+    unsigned offset = stack.size() - signature->argumentCount();
+    for (unsigned i = 0; i < signature->argumentCount(); ++i)
+        result.uncheckedAppend(stack[i + offset]);
+    stack.shrink(offset);
+    return result;
 }
 
-Validate::ControlType Validate::addLoop(Type signature, const Stack&, uint32_t)
+auto Validate::addBlock(BlockSignature signature, Stack& enclosingStack, ControlType& newBlock, Stack& newStack) -> Result
 {
-    return ControlData(BlockType::Loop, signature);
+    WASM_VALIDATOR_FAIL_IF(enclosingStack.size() < signature->argumentCount(), "Too few values on stack for block. Block expects ", signature->argumentCount(), ", but only ", enclosingStack.size(), " were present. Block has signature: ", *signature);
+    newStack = splitStack(signature, enclosingStack);
+    newBlock = ControlData(BlockType::Block, signature);
+    for (unsigned i = 0; i < signature->argumentCount(); ++i)
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(newStack[i], signature->argument(i)), "Loop expects the argument at index", i, " to be a subtype of ", signature->argument(i), " but argument has type ", newStack[i]);
+    return { };
+}
+
+auto Validate::addLoop(BlockSignature signature, Stack& enclosingStack, ControlType& loop, Stack& newStack, uint32_t) -> Result
+{
+    WASM_VALIDATOR_FAIL_IF(enclosingStack.size() < signature->argumentCount(), "Too few values on stack for loop block. Loop expects ", signature->argumentCount(), ", but only ", enclosingStack.size(), " were present. Loop has signature: ", *signature);
+    newStack = splitStack(signature, enclosingStack);
+    loop = ControlData(BlockType::Loop, signature);
+    for (unsigned i = 0; i < signature->argumentCount(); ++i)
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(newStack[i], signature->argument(i)), "Loop expects the argument at index", i, " to be a subtype of ", signature->argument(i), " but argument has type ", newStack[i]);
+    return { };
 }
 
 auto Validate::addSelect(ExpressionType condition, ExpressionType nonZero, ExpressionType zero, ExpressionType& result) -> Result
@@ -314,10 +347,14 @@ auto Validate::addSelect(ExpressionType condition, ExpressionType nonZero, Expre
     return { };
 }
 
-auto Validate::addIf(ExpressionType condition, Type signature, ControlType& result) -> Result
+auto Validate::addIf(ExpressionType condition, BlockSignature signature, Stack& enclosingStack, ControlType& result, Stack& newStack) -> Result
 {
-    WASM_VALIDATOR_FAIL_IF(condition != I32, "if condition must be i32, got ", condition);
+    WASM_VALIDATOR_FAIL_IF(condition != I32, "if condition must be i32, got ", makeString(condition));
+    WASM_VALIDATOR_FAIL_IF(enclosingStack.size() < signature->argumentCount(), "Too few arguments on stack for if block. If expects ", signature->argumentCount(), ", but only ", enclosingStack.size(), " were present. If block has signature: ", *signature);
+    newStack = splitStack(signature, enclosingStack);
     result = ControlData(BlockType::If, signature);
+    for (unsigned i = 0; i < signature->argumentCount(); ++i)
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(newStack[i], signature->argument(i)), "Loop expects the argument at index", i, " to be a subtype of ", signature->argument(i), " but argument has type ", newStack[i]);
     return { };
 }
 
@@ -329,28 +366,28 @@ auto Validate::addElse(ControlType& current, const Stack& values) -> Result
 
 auto Validate::addElseToUnreachable(ControlType& current) -> Result
 {
-    WASM_VALIDATOR_FAIL_IF(current.type() != BlockType::If, "else block isn't associated to an if");
+    WASM_VALIDATOR_FAIL_IF(current.blockType() != BlockType::If, "else block isn't associated to an if");
     current = ControlData(BlockType::Block, current.signature());
     return { };
 }
 
 auto Validate::addReturn(ControlType& topLevel, const ExpressionList& returnValues) -> Result
 {
-    ASSERT(topLevel.type() == BlockType::TopLevel);
-    if (topLevel.signature() == Void)
-        return { };
-    ASSERT(returnValues.size() == 1);
-    WASM_VALIDATOR_FAIL_IF(topLevel.signature() != returnValues[0], "return type ", returnValues[0], " doesn't match function's return type ", topLevel.signature());
-    return { };
+    ASSERT(topLevel.blockType() == BlockType::TopLevel);
+    return checkBranchTarget(topLevel, returnValues);
 }
 
 auto Validate::checkBranchTarget(ControlType& target, const Stack& expressionStack) -> Result
 {
-    if (target.branchTargetSignature() == Void)
+    if (!target.branchTargetArity())
         return { };
 
-    WASM_VALIDATOR_FAIL_IF(expressionStack.isEmpty(), target.type() == BlockType::TopLevel ? "branch out of function" : "branch to block", " on empty expression stack, but expected ", target.signature());
-    WASM_VALIDATOR_FAIL_IF(target.branchTargetSignature() != expressionStack.last(), "branch's stack type doesn't match block's type");
+    WASM_VALIDATOR_FAIL_IF(expressionStack.size() < target.branchTargetArity(), target.blockType() == BlockType::TopLevel ? "branch out of function" : "branch to block", " on expression stack of size ", expressionStack.size(), ", but block, ", target , " expects ", target.branchTargetArity(), " values");
+
+
+    unsigned expressionStackOffset = expressionStack.size() - target.branchTargetArity();
+    for (unsigned i = 0; i < target.branchTargetArity(); ++i)
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(target.branchTargetType(i), expressionStack[expressionStackOffset + i]), "branch's stack type is not a subtype of block's type branch target type. Stack value has type", expressionStack[expressionStackOffset + i], " but branch target expects a value with subtype of ", target.branchTargetType(i), " at index ", i);
 
     return { };
 }
@@ -366,15 +403,19 @@ auto Validate::addSwitch(ExpressionType condition, const Vector<ControlData*>& t
 {
     WASM_VALIDATOR_FAIL_IF(condition != I32, "br_table with non-i32 condition ", condition);
 
-    for (auto target : targets)
-        WASM_VALIDATOR_FAIL_IF(defaultTarget.branchTargetSignature() != target->branchTargetSignature(), "br_table target type mismatch");
+    for (unsigned i = 0; i < targets.size(); ++i) {
+        auto* target = targets[i];
+        WASM_VALIDATOR_FAIL_IF(defaultTarget.branchTargetArity() != target->branchTargetArity(), "br_table target type size mismatch. Default has size: ", defaultTarget.branchTargetArity(), "but target: ", i, " has size: ", target->branchTargetArity());
+        for (unsigned type = 0; type < defaultTarget.branchTargetArity(); ++type)
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(defaultTarget.branchTargetType(type), target->branchTargetType(type)), "br_table target type mismatch at offset ", type, " expected: ", defaultTarget.branchTargetType(type), " but saw: ", target->branchTargetType(type), " when targeting block", *target);
+    }
 
     return checkBranchTarget(defaultTarget, expressionStack);
 }
 
 auto Validate::addGrowMemory(ExpressionType delta, ExpressionType& result) -> Result
 {
-    WASM_VALIDATOR_FAIL_IF(delta != I32, "grow_memory with non-i32 delta");
+    WASM_VALIDATOR_FAIL_IF(delta != I32, "grow_memory with non-i32 delta argument has type: ", delta);
     result = I32;
     return { };
 }
@@ -394,49 +435,50 @@ auto Validate::endBlock(ControlEntry& entry, Stack& stack) -> Result
 auto Validate::addEndToUnreachable(ControlEntry& entry) -> Result
 {
     auto block = entry.controlData;
-    if (block.signature() != Void) {
-        WASM_VALIDATOR_FAIL_IF(block.type() == BlockType::If, "If-block had a non-void result type: ", block.signature(), " but had no else-block");
-        entry.enclosedExpressionStack.append(block.signature());
-    }
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(block.blockType() != BlockType::If);
+
+    for (unsigned i = 0; i < block.signature()->returnCount(); ++i)
+        entry.enclosedExpressionStack.append(block.signature()->returnType(i));
     return { };
 }
 
-auto Validate::addCall(unsigned, const Signature& signature, const Vector<ExpressionType>& args, ExpressionType& result) -> Result
+auto Validate::addCall(unsigned, const Signature& signature, const Vector<ExpressionType>& args, ResultList& results) -> Result
 {
-    WASM_VALIDATOR_FAIL_IF(signature.argumentCount() != args.size(), "arity mismatch in call, got ", args.size(), " arguments, expected ", signature.argumentCount());
+    RELEASE_ASSERT(signature.argumentCount() == args.size());
 
     for (unsigned i = 0; i < args.size(); ++i)
         WASM_VALIDATOR_FAIL_IF(!isSubtype(args[i], signature.argument(i)), "argument type mismatch in call, got ", args[i], ", expected ", signature.argument(i));
 
-    result = signature.returnType();
+    for (unsigned i = 0; i < signature.returnCount(); ++i)
+        results.append(signature.returnType(i));
     return { };
 }
 
-auto Validate::addCallIndirect(unsigned tableIndex, const Signature& signature, const Vector<ExpressionType>& args, ExpressionType& result) -> Result
+auto Validate::addCallIndirect(unsigned tableIndex, const Signature& signature, const Vector<ExpressionType>& args, ResultList& results) -> Result
 {
     RELEASE_ASSERT(tableIndex < m_module.tableCount());
     RELEASE_ASSERT(m_module.tables[tableIndex].type() == TableElementType::Funcref);
     const auto argumentCount = signature.argumentCount();
-    WASM_VALIDATOR_FAIL_IF(argumentCount != args.size() - 1, "arity mismatch in call_indirect, got ", args.size() - 1, " arguments, expected ", argumentCount);
+    RELEASE_ASSERT(argumentCount == args.size() - 1);
 
     for (unsigned i = 0; i < argumentCount; ++i)
         WASM_VALIDATOR_FAIL_IF(!isSubtype(args[i], signature.argument(i)), "argument type mismatch in call_indirect, got ", args[i], ", expected ", signature.argument(i));
 
     WASM_VALIDATOR_FAIL_IF(args.last() != I32, "non-i32 call_indirect index ", args.last());
 
-    result = signature.returnType();
+    for (unsigned i = 0; i < signature.returnCount(); ++i)
+        results.append(signature.returnType(i));
     return { };
 }
 
 auto Validate::unify(const Stack& values, const ControlType& block) -> Result
 {
-    if (block.signature() == Void) {
-        WASM_VALIDATOR_FAIL_IF(!values.isEmpty(), "void block should end with an empty stack");
-        return { };
-    }
+    WASM_VALIDATOR_FAIL_IF(block.signature()->returnCount() != values.size(), " block with type: ", *block.signature(), " returns: ", block.signature()->returnCount(), " but stack has: ", values.size(), " values");
 
-    WASM_VALIDATOR_FAIL_IF(values.size() != 1, "block with type: ", block.signature(), " ends with a stack containing more than one value");
-    WASM_VALIDATOR_FAIL_IF(!isSubtype(values[0], block.signature()), "control flow returns with unexpected type");
+    for (unsigned i = 0; i < block.signature()->returnCount(); ++i)
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(values[i], block.signature()->returnType(i)), "control flow returns with unexpected type. ", values[i], " is not a subtype of ", block.signature()->returnType(i));
+
+    // WASM_VALIDATOR_FAIL_IF(values.size() != 1, "block with type: ", makeString(*block.signature()), " ends with a stack containing more than one value");
     return { };
 }
 

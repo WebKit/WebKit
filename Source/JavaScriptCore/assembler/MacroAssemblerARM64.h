@@ -35,6 +35,7 @@
 namespace JSC {
 
 using Assembler = TARGET_ASSEMBLER;
+class Reg;
 
 class MacroAssemblerARM64 : public AbstractMacroAssembler<Assembler> {
 public:
@@ -3208,6 +3209,14 @@ public:
     ALWAYS_INLINE Call call(RegisterID callTag) { return UNUSED_PARAM(callTag), call(NoPtrTag); }
     ALWAYS_INLINE Call call(RegisterID target, RegisterID callTag) { return UNUSED_PARAM(callTag), call(target, NoPtrTag); }
     ALWAYS_INLINE Call call(Address address, RegisterID callTag) { return UNUSED_PARAM(callTag), call(address, NoPtrTag); }
+
+    void callOperation(const FunctionPtr<OperationPtrTag> operation)
+    {
+        auto tmp = getCachedDataTempRegisterIDAndInvalidate();
+        invalidateAllTempRegisters();
+        move(TrustedImmPtr(operation.executableAddress()), tmp);
+        m_assembler.blr(tmp);
+    }
 
     ALWAYS_INLINE Jump jump()
     {

@@ -1,3 +1,312 @@
+2019-10-01  Keith Miller  <keith_miller@apple.com>
+
+        Add support for the Wasm multi-value proposal
+        https://bugs.webkit.org/show_bug.cgi?id=202250
+
+        Reviewed by Saam Barati.
+
+        The wasm multi-value proposal makes two major changes to the
+        spec. The first is that functions may now return more than one
+        value across calls. When calling to/from JS, if there is more than
+        one return type we return/receive a JSArray/Iterable,
+        respectively. In the Wasm calls JS case, if the iteratable object
+        does not vend the exact number of objects expected by the
+        signature an error is thrown.
+
+        The second major change in the multi-value proposal allows blocks
+        to have any signature type. This works in a backwards compatible
+        way by exploiting the fact that the old value-type thunk signatures
+        (where the block takes no arguments and returns just the value
+        type i.e. [] -> [type]) were always encoded as a negative
+        number. If a block has a function signature, it is encoded as a
+        positive index into the type section. When a block has a function
+        signature type then the values from the enclosing stack are popped
+        off that stack and added to the new block's stack. In the case of
+        a br/br_if to a Loop block the "argument" values should be on the
+        brancher's stack.
+
+        The biggest change in this patch is stripping down the
+        WasmCallingConventions file into one simpler API that just tells
+        you where the each argument should be located. It also now handles
+        adding or subtracting sizeof(CallerFrameAndPC) depending on
+        whether you are caller or callee. Additionally, when computing
+        locations for the callee it returns a B3::ValueRep that has the
+        offsetFromFP rather than offsetFromSP. Since the code has been
+        cleaned up I tried to also reduce code duplication in the various
+        stubs for wasm code. This patch also removes the Air specific
+        calling convention code and moves that logic into the Air IR
+        generator.
+
+        Since blocks can now have arbitrary signatures the control entries
+        now use a const signature* rather than just the return
+        type. Additionally, what used to be the result phi is now the phis
+        for all the results for non-loop blocks and the arguments for a
+        loop block. Due to the control flow restrictions of wasm
+        conveniently we don't have to worry about generating non-optimal
+        SSA, thus we can just use phis directly rather than using a
+        variable.
+
+        Lastly, to help clean up some code in the IR generators new helper
+        methods were added to create call Patchpoints. These helpers do
+        most of the boiler-plate initialization.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::ImplicitAddress::ImplicitAddress):
+        * assembler/LinkBuffer.cpp:
+        (JSC::shouldDumpDisassemblyFor):
+        * assembler/LinkBuffer.h:
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::callOperation):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::callOperation):
+        * b3/B3LowerToAir.cpp:
+        * b3/B3PatchpointSpecial.cpp:
+        (JSC::B3::PatchpointSpecial::forEachArg):
+        (JSC::B3::PatchpointSpecial::isValid):
+        (JSC::B3::PatchpointSpecial::admitsStack):
+        (JSC::B3::PatchpointSpecial::generate):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::resultCount const):
+        (JSC::B3::Procedure::typeAtOffset const):
+        (JSC::B3::Procedure::returnCount const): Deleted.
+        * b3/B3StackmapGenerationParams.cpp:
+        (JSC::B3::StackmapGenerationParams::code const):
+        * b3/B3StackmapGenerationParams.h:
+        * b3/B3ValueRep.h:
+        * b3/air/AirHelpers.h: Added.
+        (JSC::B3::Air::moveForType):
+        (JSC::B3::Air::relaxedMoveForType):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::store64FromReg):
+        (JSC::AssemblyHelpers::store32FromReg):
+        (JSC::AssemblyHelpers::load64ToReg):
+        (JSC::AssemblyHelpers::load32ToReg):
+        * runtime/JSCConfig.h:
+        * runtime/OptionsList.h:
+        * tools/JSDollarVM.cpp:
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::dumpValue):
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::ConstrainedTmp::operator bool const):
+        (JSC::Wasm::TypedTmp::dump const):
+        (JSC::Wasm::AirIRGenerator::ControlData::ControlData):
+        (JSC::Wasm::AirIRGenerator::ControlData::dump const):
+        (JSC::Wasm::AirIRGenerator::ControlData::blockType const):
+        (JSC::Wasm::AirIRGenerator::ControlData::signature const):
+        (JSC::Wasm::AirIRGenerator::ControlData::targetBlockForBranch):
+        (JSC::Wasm::AirIRGenerator::ControlData::convertIfToBlock):
+        (JSC::Wasm::AirIRGenerator::addEndToUnreachable):
+        (JSC::Wasm::AirIRGenerator::emitCallPatchpoint):
+        (JSC::Wasm::AirIRGenerator::validateInst):
+        (JSC::Wasm::AirIRGenerator::tmpsForSignature):
+        (JSC::Wasm::AirIRGenerator::emitPatchpoint):
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::AirIRGenerator::toB3ResultType):
+        (JSC::Wasm::AirIRGenerator::addBottom):
+        (JSC::Wasm::AirIRGenerator::emitLoopTierUpCheck):
+        (JSC::Wasm::AirIRGenerator::addTopLevel):
+        (JSC::Wasm::AirIRGenerator::addLoop):
+        (JSC::Wasm::AirIRGenerator::addBlock):
+        (JSC::Wasm::AirIRGenerator::addIf):
+        (JSC::Wasm::AirIRGenerator::addElse):
+        (JSC::Wasm::AirIRGenerator::addElseToUnreachable):
+        (JSC::Wasm::AirIRGenerator::addReturn):
+        (JSC::Wasm::AirIRGenerator::addBranch):
+        (JSC::Wasm::AirIRGenerator::addSwitch):
+        (JSC::Wasm::AirIRGenerator::endBlock):
+        (JSC::Wasm::AirIRGenerator::addCall):
+        (JSC::Wasm::AirIRGenerator::addCallIndirect):
+        (JSC::Wasm::dumpExpressionStack):
+        (JSC::Wasm::AirIRGenerator::dump):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncUF64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncUF32>):
+        (JSC::Wasm::AirIRGenerator::ControlData::type const): Deleted.
+        (JSC::Wasm::AirIRGenerator::ControlData::hasNonVoidSignature const): Deleted.
+        (JSC::Wasm::AirIRGenerator::ControlData::resultForBranch const): Deleted.
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::ControlData::ControlData):
+        (JSC::Wasm::B3IRGenerator::ControlData::dump const):
+        (JSC::Wasm::B3IRGenerator::ControlData::blockType const):
+        (JSC::Wasm::B3IRGenerator::ControlData::hasNonVoidresult const):
+        (JSC::Wasm::B3IRGenerator::ControlData::targetBlockForBranch):
+        (JSC::Wasm::B3IRGenerator::ControlData::convertIfToBlock):
+        (JSC::Wasm::B3IRGenerator::addEndToUnreachable):
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::framePointer):
+        (JSC::Wasm::B3IRGenerator::toB3ResultType):
+        (JSC::Wasm::B3IRGenerator::addArguments):
+        (JSC::Wasm::B3IRGenerator::addGrowMemory):
+        (JSC::Wasm::B3IRGenerator::addLoop):
+        (JSC::Wasm::B3IRGenerator::addTopLevel):
+        (JSC::Wasm::B3IRGenerator::addBlock):
+        (JSC::Wasm::B3IRGenerator::addIf):
+        (JSC::Wasm::B3IRGenerator::addElse):
+        (JSC::Wasm::B3IRGenerator::addElseToUnreachable):
+        (JSC::Wasm::B3IRGenerator::addReturn):
+        (JSC::Wasm::B3IRGenerator::addBranch):
+        (JSC::Wasm::B3IRGenerator::addSwitch):
+        (JSC::Wasm::B3IRGenerator::endBlock):
+        (JSC::Wasm::B3IRGenerator::createCallPatchpoint):
+        (JSC::Wasm::B3IRGenerator::addCall):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        (JSC::Wasm::B3IRGenerator::ControlData::type const): Deleted.
+        (JSC::Wasm::B3IRGenerator::ControlData::hasNonVoidSignature const): Deleted.
+        (JSC::Wasm::B3IRGenerator::ControlData::resultForBranch const): Deleted.
+        (JSC::Wasm::B3IRGenerator::createStack): Deleted.
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::didReceiveFunctionData):
+        (JSC::Wasm::BBQPlan::parseAndValidateModule):
+        (JSC::Wasm::BBQPlan::complete):
+        * wasm/WasmBBQPlan.h:
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmCallingConvention.cpp:
+        (JSC::Wasm::jsCallingConvention):
+        (JSC::Wasm::wasmCallingConvention):
+        (JSC::Wasm::jscCallingConvention): Deleted.
+        (JSC::Wasm::jscCallingConventionAir): Deleted.
+        (JSC::Wasm::wasmCallingConventionAir): Deleted.
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::CallInformation::CallInformation):
+        (JSC::Wasm::CallInformation::computeResultsOffsetList):
+        (JSC::Wasm::WasmCallingConvention::WasmCallingConvention):
+        (JSC::Wasm::WasmCallingConvention::marshallLocationImpl const):
+        (JSC::Wasm::WasmCallingConvention::marshallLocation const):
+        (JSC::Wasm::WasmCallingConvention::callInformationFor const):
+        (JSC::Wasm::JSCallingConvention::JSCallingConvention):
+        (JSC::Wasm::JSCallingConvention::marshallLocationImpl const):
+        (JSC::Wasm::JSCallingConvention::marshallLocation const):
+        (JSC::Wasm::JSCallingConvention::callInformationFor const):
+        (JSC::Wasm::CallingConvention::CallingConvention): Deleted.
+        (JSC::Wasm::CallingConvention::marshallArgumentImpl const): Deleted.
+        (JSC::Wasm::CallingConvention::marshallArgument const): Deleted.
+        (JSC::Wasm::CallingConvention::headerSizeInBytes): Deleted.
+        (JSC::Wasm::CallingConvention::setupFrameInPrologue const): Deleted.
+        (JSC::Wasm::CallingConvention::loadArguments const): Deleted.
+        (JSC::Wasm::CallingConvention::setupCall const): Deleted.
+        (JSC::Wasm::CallingConventionAir::CallingConventionAir): Deleted.
+        (JSC::Wasm::CallingConventionAir::prologueScratch const): Deleted.
+        (JSC::Wasm::CallingConventionAir::marshallArgumentImpl const): Deleted.
+        (JSC::Wasm::CallingConventionAir::marshallArgument const): Deleted.
+        (JSC::Wasm::CallingConventionAir::headerSizeInBytes): Deleted.
+        (JSC::Wasm::CallingConventionAir::loadArguments const): Deleted.
+        (JSC::Wasm::CallingConventionAir::setupCall const): Deleted.
+        (JSC::Wasm::nextJSCOffset): Deleted.
+        * wasm/WasmFormat.h:
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::splitStack):
+        (JSC::Wasm::FunctionParser::signature const):
+        (JSC::Wasm::FunctionParser<Context>::FunctionParser):
+        (JSC::Wasm::FunctionParser<Context>::parseBody):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        * wasm/WasmInstance.h:
+        * wasm/WasmMemoryInformation.cpp:
+        (JSC::Wasm::getPinnedRegisters):
+        * wasm/WasmOMGForOSREntryPlan.cpp:
+        (JSC::Wasm::OMGForOSREntryPlan::work):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmParser.h:
+        (JSC::Wasm::FailureHelper::makeString):
+        (JSC::Wasm::Parser<SuccessType>::Parser):
+        (JSC::Wasm::Parser<SuccessType>::peekInt7):
+        (JSC::Wasm::Parser<SuccessType>::parseBlockSignature):
+        (JSC::Wasm::Parser<SuccessType>::parseValueType):
+        (JSC::Wasm::Parser<SuccessType>::parseResultType): Deleted.
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseType):
+        (JSC::Wasm::SectionParser::parseStart):
+        * wasm/WasmSectionParser.h:
+        * wasm/WasmSignature.cpp:
+        (JSC::Wasm::Signature::toString const):
+        (JSC::Wasm::Signature::dump const):
+        (JSC::Wasm::computeHash):
+        (JSC::Wasm::Signature::hash const):
+        (JSC::Wasm::Signature::tryCreate):
+        (JSC::Wasm::SignatureInformation::SignatureInformation):
+        (JSC::Wasm::ParameterTypes::hash):
+        (JSC::Wasm::ParameterTypes::equal):
+        (JSC::Wasm::ParameterTypes::translate):
+        (JSC::Wasm::SignatureInformation::signatureFor):
+        (JSC::Wasm::SignatureInformation::adopt): Deleted.
+        * wasm/WasmSignature.h:
+        (JSC::Wasm::Signature::Signature):
+        (JSC::Wasm::Signature::allocatedSize):
+        (JSC::Wasm::Signature::returnCount const):
+        (JSC::Wasm::Signature::returnType const):
+        (JSC::Wasm::Signature::returnsVoid const):
+        (JSC::Wasm::Signature::argument const):
+        (JSC::Wasm::Signature::operator== const):
+        (JSC::Wasm::Signature::getReturnType):
+        (JSC::Wasm::Signature::getArgument):
+        (JSC::Wasm::SignatureHash::SignatureHash):
+        (JSC::Wasm::SignatureHash::equal):
+        (JSC::Wasm::SignatureInformation::thunkFor const):
+        (JSC::Wasm::Signature::returnType): Deleted.
+        (JSC::Wasm::Signature::argument): Deleted.
+        * wasm/WasmStreamingParser.cpp:
+        (JSC::Wasm::StreamingParser::parseCodeSectionSize):
+        (JSC::Wasm::StreamingParser::parseFunctionPayload):
+        (JSC::Wasm::StreamingParser::parseSectionPayload):
+        * wasm/WasmStreamingParser.h:
+        (JSC::Wasm::StreamingParserClient::didReceiveSectionData):
+        (JSC::Wasm::StreamingParser::reportError):
+        (JSC::Wasm::StreamingParserClient::didReceiveFunctionData): Deleted.
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::throwExceptionFromWasmThunkGenerator):
+        (JSC::Wasm::throwStackOverflowFromWasmThunkGenerator):
+        (JSC::Wasm::triggerOMGEntryTierUpThunkGenerator):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::ControlData::ControlData):
+        (JSC::Wasm::Validate::ControlData::dump const):
+        (JSC::Wasm::Validate::ControlData::blockType const):
+        (JSC::Wasm::Validate::ControlData::signature const):
+        (JSC::Wasm::Validate::ControlData::branchTargetArity const):
+        (JSC::Wasm::Validate::ControlData::branchTargetType const):
+        (JSC::Wasm::Validate::fail const):
+        (JSC::Wasm::Validate::addTableGet):
+        (JSC::Wasm::Validate::addTableGrow):
+        (JSC::Wasm::Validate::addTableFill):
+        (JSC::Wasm::Validate::addRefIsNull):
+        (JSC::Wasm::Validate::addTopLevel):
+        (JSC::Wasm::splitStack):
+        (JSC::Wasm::Validate::addBlock):
+        (JSC::Wasm::Validate::addLoop):
+        (JSC::Wasm::Validate::addIf):
+        (JSC::Wasm::Validate::addElseToUnreachable):
+        (JSC::Wasm::Validate::addReturn):
+        (JSC::Wasm::Validate::checkBranchTarget):
+        (JSC::Wasm::Validate::addSwitch):
+        (JSC::Wasm::Validate::addGrowMemory):
+        (JSC::Wasm::Validate::addEndToUnreachable):
+        (JSC::Wasm::Validate::addCall):
+        (JSC::Wasm::Validate::addCallIndirect):
+        (JSC::Wasm::Validate::unify):
+        (JSC::Wasm::Validate::ControlData::hasNonVoidSignature const): Deleted.
+        (JSC::Wasm::Validate::ControlData::type const): Deleted.
+        (JSC::Wasm::Validate::ControlData::branchTargetSignature const): Deleted.
+        * wasm/generateWasmOpsHeader.py:
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::boxWasmResult):
+        (JSC::Wasm::allocateResultsArray):
+        (JSC::Wasm::marshallJSResult):
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/JSToWasm.h:
+        * wasm/js/JSWebAssemblyCodeBlock.cpp:
+        (JSC::JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::handleBadI64Use):
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WasmToJS.h:
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        (JSC::WebAssemblyFunction::useTagRegisters const):
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+
 2019-09-30  Alex Christensen  <achristensen@webkit.org>
 
         Resurrect Mac CMake build

@@ -307,6 +307,20 @@ inline const char* makeString(OpType op)
 
 } } // namespace JSC::Wasm
 
+namespace WTF {
+
+inline void printInternal(PrintStream& out, JSC::Wasm::Type type)
+{
+    out.print(JSC::Wasm::makeString(type));
+}
+
+inline void printInternal(PrintStream& out, JSC::Wasm::OpType op)
+{
+    out.print(JSC::Wasm::makeString(op));
+}
+
+} // namespace WTF
+
 #endif // ENABLE(WEBASSEMBLY)
 
 """

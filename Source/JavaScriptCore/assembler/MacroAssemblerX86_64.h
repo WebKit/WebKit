@@ -241,6 +241,12 @@ public:
         return result;
     }
 
+    void callOperation(const FunctionPtr<OperationPtrTag> operation)
+    {
+        move(TrustedImmPtr(operation.executableAddress()), scratchRegister());
+        m_assembler.call(scratchRegister());
+    }
+
     ALWAYS_INLINE Call call(RegisterID callTag) { return UNUSED_PARAM(callTag), call(NoPtrTag); }
 
     // Address is a memory location containing the address to jump to

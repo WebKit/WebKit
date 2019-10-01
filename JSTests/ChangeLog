@@ -1,3 +1,63 @@
+2019-10-01  Keith Miller  <keith_miller@apple.com>
+
+        Add support for the Wasm multi-value proposal
+        https://bugs.webkit.org/show_bug.cgi?id=202250
+
+        Reviewed by Saam Barati.
+
+        This patch adds a new way to run stress tests via the .wat text
+        format. By attaching an asm.js compiled version of the wabt tool
+        we can easily create wat files programatically and convert them
+        into a wasm blob to compile. To make this easy there is a
+        wabt-wrapper.js module file that exports two useful functions that
+        correspond to WebAssembly.compile and WebAssembly.instantiate.
+
+        * wasm.yaml:
+        * wasm/function-tests/if-no-else-non-void.js:
+        * wasm/js-api/web-assembly-instantiate.js:
+        (assert.asyncTest.async.test):
+        (assert.asyncTest):
+        * wasm/libwabt.js: Added.
+        (WabtModule):
+        (set get if):
+        * wasm/references/func_ref.js:
+        * wasm/references/validation.js:
+        (assert.throws):
+        * wasm/spec-harness/index.js:
+        * wasm/spec-tests/block.wast.js:
+        * wasm/spec-tests/br.wast.js:
+        * wasm/spec-tests/br_if.wast.js:
+        * wasm/spec-tests/call.wast.js:
+        * wasm/spec-tests/call_indirect.wast.js:
+        * wasm/spec-tests/func.wast.js:
+        * wasm/spec-tests/if.wast.js:
+        * wasm/spec-tests/loop.wast.js:
+        * wasm/spec-tests/type.wast.js:
+        * wasm/stress/js-wasm-call-many-return-types-on-stack-no-args.js: Added.
+        (buildWat):
+        * wasm/stress/js-wasm-js-varying-arities.js: Added.
+        (paramForwarder):
+        * wasm/stress/wasm-js-call-many-return-types-on-stack-no-args.js: Added.
+        (buildWat):
+        * wasm/stress/wasm-js-multi-value-exception-in-iterator.js: Added.
+        (buildWat.throwError):
+        (buildWat.throwErrorInIterator):
+        (buildWat.tooManyValues):
+        (buildWat.tooFewValues):
+        (buildWat):
+        * wasm/stress/wasm-wasm-call-indirect-many-return-types-on-stack.js: Added.
+        (buildWat):
+        * wasm/stress/wasm-wasm-call-many-return-types-on-stack-no-args.js: Added.
+        (buildWat):
+        * wasm/wabt-wrapper.js: Added.
+        (export.compile):
+        * wasm/wast-tests/br-if-at-end-of-block.wasm: Added.
+        * wasm/wast-tests/br-if-at-end-of-block.wast: Added.
+        * wasm/wast-tests/harness.js:
+        (async.runWasmFile):
+        * wasm/wast-tests/single-param-loop-signature.wasm: Added.
+        * wasm/wast-tests/single-param-loop-signature.wast: Added.
+
 2019-09-30  Tadeu Zagallo  <tzagallo@apple.com>
 
         Make assertion in JSObject::putOwnDataProperty more precise

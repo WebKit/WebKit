@@ -96,8 +96,9 @@ public:
     // patchpoint.
     JS_EXPORT_PRIVATE bool fallsThroughToSuccessor(unsigned successorIndex) const;
 
-    // This is provided for convenience; it means that you don't have to capture it if you don't want to.
+    // These are provided for convenience; they mean that you don't have to capture them if you don't want to.
     JS_EXPORT_PRIVATE Procedure& proc() const;
+    JS_EXPORT_PRIVATE Air::Code& code() const;
     
     // The Air::GenerationContext gives you even more power.
     Air::GenerationContext& context() const { return m_context; };

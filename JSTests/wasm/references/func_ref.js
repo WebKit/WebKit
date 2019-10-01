@@ -246,7 +246,7 @@ assert.throws(() => new WebAssembly.Module((new Builder())
     .Function("h", { params: ["anyref"], ret: "funcref" })
       .GetLocal(0)
     .End()
-  .End().WebAssembly().get()), Error, "WebAssembly.Module doesn't validate: control flow returns with unexpected type, in function at index 0 (evaluating 'new WebAssembly.Module')");
+  .End().WebAssembly().get()), Error, "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Anyref is not a subtype of Funcref, in function at index 0 (evaluating 'new WebAssembly.Module')");
 
 assert.throws(() => new WebAssembly.Module((new Builder())
   .Type().End()

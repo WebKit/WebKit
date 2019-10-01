@@ -40,7 +40,7 @@ constexpr size_t PageSize = 16 * KB;
 constexpr size_t PageSize = 4 * KB;
 #endif
 
-constexpr size_t ConfigSizeToProtect = 16 * KB;
+constexpr size_t ConfigSizeToProtect = 32 * KB;
 
 #if ENABLE(SEPARATED_WX_HEAP)
 using JITWriteSeparateHeapsFunction = void (*)(off_t, const void*, size_t);

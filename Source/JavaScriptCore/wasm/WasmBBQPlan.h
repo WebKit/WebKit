@@ -122,7 +122,7 @@ public:
     bool hasBeenPrepared() const { return m_state >= State::Prepared; }
     bool multiThreaded() const override { return hasBeenPrepared(); }
 
-    void didReceiveFunctionData(unsigned, const FunctionData&) override;
+    bool didReceiveFunctionData(unsigned, const FunctionData&) override;
 
 private:
     class ThreadCountHolder;

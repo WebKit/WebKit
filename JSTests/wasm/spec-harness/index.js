@@ -243,6 +243,7 @@ function exports(name, instance) {
 }
 
 function run(action) {
+    print("running new test: " + (new Error()).stack);
     let result = action();
 
     _assert(result instanceof Result);
@@ -312,9 +313,9 @@ function assert_exhaustion(action) {
     }, "A wast module that must exhaust the stack space.");
 }
 
-function assert_return(action, expected) {
-    if (expected instanceof Result) {
-        if (expected.isError())
+function assert_return(action, ...expectedValues) {
+    if (expectedValues[0] instanceof Result) {
+        if (expectedValues[0].isError())
             return;
         expected = expected.value;
     }
@@ -326,7 +327,7 @@ function assert_return(action, expected) {
     uniqueTest(() => {
         assert_true(!result.isError(), `expected success result, got: ${result.value}.`);
         if (!result.isError()) {
-            assert_equals(result.value, expected);
+            assert_equals(result.value, expectedValues.length < 2 ? expectedValues[0] : expectedValues);
         };
     }, "A wast module that must return a particular value.");
 };

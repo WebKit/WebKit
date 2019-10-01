@@ -45,9 +45,8 @@ namespace JSC { namespace Wasm {
 
 namespace FailureHelper {
 // FIXME We should move this to makeString. It's in its own namespace to enable C++ Argument Dependent Lookup à la std::swap: user code can deblare its own "boxFailure" and the fail() helper will find it.
-static inline auto makeString(const char *failure) { return failure; }
-template <typename Int, typename = typename std::enable_if<std::is_integral<Int>::value>::type>
-static inline auto makeString(Int failure) { return String::number(failure); }
+template<typename T>
+inline String makeString(const T& failure) { return WTF::toString(failure); }
 }
 
 template<typename SuccessType>
@@ -71,6 +70,7 @@ protected:
 
     bool WARN_UNUSED_RETURN parseVarUInt1(uint8_t&);
     bool WARN_UNUSED_RETURN parseInt7(int8_t&);
+    bool WARN_UNUSED_RETURN peekInt7(int8_t&);
     bool WARN_UNUSED_RETURN parseUInt7(uint8_t&);
     bool WARN_UNUSED_RETURN parseUInt8(uint8_t&);
     bool WARN_UNUSED_RETURN parseUInt32(uint32_t&);
@@ -81,7 +81,7 @@ protected:
     bool WARN_UNUSED_RETURN parseVarInt32(int32_t&);
     bool WARN_UNUSED_RETURN parseVarInt64(int64_t&);
 
-    bool WARN_UNUSED_RETURN parseResultType(Type&);
+    PartialResult WARN_UNUSED_RETURN parseBlockSignature(const ModuleInformation&, BlockSignature&);
     bool WARN_UNUSED_RETURN parseValueType(Type&);
     bool WARN_UNUSED_RETURN parseExternalKind(ExternalKind&);
 
@@ -107,12 +107,15 @@ protected:
 private:
     const uint8_t* m_source;
     size_t m_sourceLength;
+    // We keep a local reference to the global table so we don't have to fetch it to find thunk signatures.
+    const SignatureInformation& m_signatureInformation;
 };
 
 template<typename SuccessType>
 ALWAYS_INLINE Parser<SuccessType>::Parser(const uint8_t* sourceBuffer, size_t sourceLength)
     : m_source(sourceBuffer)
     , m_sourceLength(sourceLength)
+    , m_signatureInformation(SignatureInformation::singleton())
 {
 }
 
@@ -236,6 +239,16 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseInt7(int8_t& result)
 }
 
 template<typename SuccessType>
+ALWAYS_INLINE bool Parser<SuccessType>::peekInt7(int8_t& result)
+{
+    if (m_offset >= length())
+        return false;
+    uint8_t v = source()[m_offset];
+    result = (v & 0x40) ? WTF::bitwise_cast<int8_t>(uint8_t(v | 0x80)) : v;
+    return (v & 0x80) == 0;
+}
+
+template<typename SuccessType>
 ALWAYS_INLINE bool Parser<SuccessType>::parseUInt7(uint8_t& result)
 {
     if (m_offset >= length())
@@ -257,21 +270,38 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseVarUInt1(uint8_t& result)
 }
 
 template<typename SuccessType>
-ALWAYS_INLINE bool Parser<SuccessType>::parseResultType(Type& result)
+ALWAYS_INLINE typename Parser<SuccessType>::PartialResult Parser<SuccessType>::parseBlockSignature(const ModuleInformation& info, BlockSignature& result)
 {
     int8_t value;
-    if (!parseInt7(value))
-        return false;
-    if (!isValidType(value))
-        return false;
-    result = static_cast<Type>(value);
-    return true;
+    if (peekInt7(value) && isValidType(value)) {
+        Type type = static_cast<Type>(value);
+        WASM_PARSER_FAIL_IF(!(isValueType(type) || type == Void), "result type of block: ", makeString(type), " is not a value type or Void");
+        result = m_signatureInformation.thunkFor(type);
+        m_offset++;
+        return { };
+    }
+
+    WASM_PARSER_FAIL_IF(!Options::useWebAssemblyMultiValues(), "Type table indices for block signatures are not supported yet");
+
+    int64_t index;
+    WASM_PARSER_FAIL_IF(!parseVarInt64(index), "Block-like instruction doesn't return value type but can't decode type section index");
+    WASM_PARSER_FAIL_IF(index < 0, "Block-like instruction signature index is negative");
+    WASM_PARSER_FAIL_IF(static_cast<size_t>(index) >= info.usedSignatures.size(), "Block-like instruction signature index is out of bounds. Index: ", index, " type index space: ", info.usedSignatures.size());
+
+    result = &info.usedSignatures[index].get();
+    return { };
 }
 
 template<typename SuccessType>
 ALWAYS_INLINE bool Parser<SuccessType>::parseValueType(Type& result)
 {
-    return parseResultType(result) && isValueType(result);
+    int8_t value;
+    if (!parseInt7(value))
+        return false;
+    if (!isValidType(value) || !isValueType(static_cast<Type>(value)))
+        return false;
+    result = static_cast<Type>(value);
+    return true;
 }
 
 template<typename SuccessType>
