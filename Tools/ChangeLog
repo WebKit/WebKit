@@ -1,3 +1,11 @@
+2019-10-01  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        Update my affiliation - since today I work for Igalia.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2019-10-01  Keith Miller  <keith_miller@apple.com>
 
         Add support for the Wasm multi-value proposal

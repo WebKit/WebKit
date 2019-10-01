@@ -4196,7 +4196,8 @@
          "zimmermann@physik.rwth-aachen.de",
          "zimmermann@webkit.org",
          "nzimmermann@blackberry.com",
-         "nzimmermann@rim.com"
+         "nzimmermann@rim.com",
+         "nzimmermann@igalia.com"
       ],
       "expertise" : "Core KHTML contributor, The QtWebKit Port, Text Layout, JavaScript DOM bindings, Code generation in general, XML, SVG (Scalable Vector Graphics)",
       "nicks" : [
