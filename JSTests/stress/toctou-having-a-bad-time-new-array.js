@@ -1,3 +1,5 @@
+//@ skip if $buildType == "debug"
+
 let code = `
     function foo() {
       return [Date.prototype];
