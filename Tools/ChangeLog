@@ -1,3 +1,13 @@
+2019-10-01  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Add method to retry a build using Buildbot API
+        https://bugs.webkit.org/show_bug.cgi?id=202408
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/common/buildbot.py:
+        (Buildbot.retry_build): Method to retry given build using Buildbot API.
+
 2019-10-01  David Kilzer  <ddkilzer@apple.com>
 
         clang-tidy: Fix unnecessary copying/ref churn of for loop variables in Tools

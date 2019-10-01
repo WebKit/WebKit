@@ -25,6 +25,7 @@ from future.utils import lrange
 import logging
 import os
 import re
+import requests
 import subprocess
 
 import ews.common.util as util
@@ -98,3 +99,27 @@ class Buildbot():
             Buildbot.icons_for_queues_mapping[shortname] = builder.get('icon')
 
         return Buildbot.icons_for_queues_mapping
+
+    @classmethod
+    def retry_build(cls, builder_id, build_number):
+        if not (util.is_valid_id(builder_id) and util.is_valid_id(build_number)):
+            return False
+
+        build_url = 'https://{}/api/v2/builders/{}/builds/{}'.format(config.BUILDBOT_SERVER_HOST, builder_id, build_number)
+        username = os.getenv('EWS_ADMIN_USERNAME')
+        password = os.getenv('EWS_ADMIN_PASSWORD1')
+        session = requests.Session()
+        response = session.head('https://{}/auth/login'.format(config.BUILDBOT_SERVER_HOST), auth=(username, password))
+        if (not response) or response.status_code not in (200, 302):
+            _log.error('Authentication to {} failed. Please check username/password.'.format(config.BUILDBOT_SERVER_HOST))
+            return False
+
+        json_data = {'method': 'rebuild', 'id': 1, 'jsonrpc': '2.0', 'params': {'reason': 'retried-by-user'}}
+        response = session.post(build_url, json=json_data)
+
+        if response and response.status_code == 200:
+            _log.info('Successfuly submitted retry request for build: {}'.format(build_url))
+            return True
+
+        _log.error('Failed to retry build: {}, http response code: {}'.format(build_url, response.status_code))
+        return False
