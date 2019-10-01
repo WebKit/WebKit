@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if 0
-
 #import "config.h"
 
 #if PLATFORM(IOS) && USE(UICONTEXTMENU)
@@ -347,5 +345,3 @@ TEST(WebKit, ContextMenuSuggestedActions)
 }
 
 #endif // PLATFORM(IOS) && USE(UICONTEXTMENU)
-
-#endif
