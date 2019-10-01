@@ -33,7 +33,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#if !PLATFORM(WATCHOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
+#if PLATFORM(IOS) || PLATFORM(MACCATALYST)
 #import <AVKit/AVBackgroundView.h>
 #endif
 
@@ -90,7 +90,7 @@ typedef NS_ENUM(NSInteger, AVPlayerViewControllerExitFullScreenReason) {
 
 NS_ASSUME_NONNULL_END
 
-#elif __IPHONE_OS_VERSION_MAX_ALLOWED < 120200
+#elif PLATFORM(APPLETV)
 NS_ASSUME_NONNULL_BEGIN
 @interface AVPlayerViewController (AVPlayerViewController_WebKitOnly_OverrideRouteSharingPolicy)
 - (void)setWebKitOverrideRouteSharingPolicy:(NSUInteger)routeSharingPolicy routingContextUID:(NSString *)routingContextUID;

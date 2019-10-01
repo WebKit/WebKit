@@ -1313,7 +1313,7 @@ double MediaPlayerPrivateAVFoundationObjC::rate() const
 
 double MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesLastModifiedTime() const
 {
-#if PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(MACCATALYST)
     return [m_avPlayerItem seekableTimeRangesLastModifiedTime];
 #else
     return 0;
@@ -1322,7 +1322,7 @@ double MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesLastModifiedTime() 
 
 double MediaPlayerPrivateAVFoundationObjC::liveUpdateInterval() const
 {
-#if PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(MACCATALYST)
     return [m_avPlayerItem liveUpdateInterval];
 #else
     return 0;

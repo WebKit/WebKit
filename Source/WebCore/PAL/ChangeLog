@@ -1,3 +1,28 @@
+2019-10-01  Keith Rollin  <krollin@apple.com>
+
+        Remove some support for < iOS 13
+        https://bugs.webkit.org/show_bug.cgi?id=202386
+        <rdar://problem/55863017>
+
+        Reviewed by Eric Carlson.
+
+        Remove some support for iOS versions less than 13.0.
+
+        Update conditionals that reference __IPHONE_OS_VERSION_MIN_REQUIRED
+        and __IPHONE_OS_VERSION_MAX_ALLOWED, assuming that they both have
+        values >= 130000. This means that expressions like
+        "__IPHONE_OS_VERSION_MIN_REQUIRED < 101300" are always False and
+        "__IPHONE_OS_VERSION_MIN_REQUIRED >= 101300" are always True.
+
+        This removal is part of a series of patches effecting the removal of
+        dead code for old versions of iOS. This particular pass involves
+        changes in which Jer Noble was involved. These changes are isolated
+        from other similar changes in order to facilitate the reviewing
+        process.
+
+        * pal/spi/cocoa/AVKitSPI.h:
+        * pal/spi/mac/AVFoundationSPI.h:
+
 2019-09-30  Alex Christensen  <achristensen@webkit.org>
 
         Resurrect Mac CMake build
