@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-8-a-1
 description: >
     Array.prototype.lastIndexOf - added properties in step 2 are
     visible here

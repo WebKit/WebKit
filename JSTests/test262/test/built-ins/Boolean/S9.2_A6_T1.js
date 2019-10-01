@@ -4,7 +4,6 @@
 /*---
 info: Result of boolean conversion from object is true
 esid: sec-toboolean
-es5id: 9.2_A6_T1
 description: Different objects convert to Boolean by explicit transformation
 ---*/
 

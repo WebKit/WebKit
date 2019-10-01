@@ -3,8 +3,6 @@
 
 /*---
 info: The length property of encodeURIComponent is 1
-es5id: 15.1.3.4_A5.4
-es6id: 18.2.6.5
 esid: sec-encodeuricomponent-uricomponent
 description: encodeURIComponent.length === 1
 ---*/

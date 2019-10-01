@@ -3,8 +3,6 @@
 
 /*---
 info: The isFinite property has not prototype property
-es5id: 15.1.2.5_A2.6
-es6id: 18.2.2
 esid: sec-isfinite-number
 description: Checking isFinite.prototype
 ---*/

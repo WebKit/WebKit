@@ -7,8 +7,6 @@ info: |
     string.charAt(k + 5)) or (string.charAt(k + 7) and
     string.charAt(k + 8)) or (string.charAt(k + 10) and
     string.charAt(k + 11)) do not represent hexadecimal digits, throw URIError
-es5id: 15.1.3.1_A1.12_T2
-es6id: 18.2.6.2
 esid: sec-decodeuri-encodeduri
 description: >
     Complex tests, string.charAt(k + 7) and string.charAt(k + 7)  do

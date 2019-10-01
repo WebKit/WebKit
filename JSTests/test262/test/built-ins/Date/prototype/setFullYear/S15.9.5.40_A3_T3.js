@@ -6,7 +6,6 @@ info: |
     The Date.prototype.setFullYear property "length" has { ReadOnly,
     DontDelete, DontEnum } attributes
 esid: sec-date.prototype.setfullyear
-es5id: 15.9.5.40_A3_T3
 description: Checking DontEnum attribute
 ---*/
 

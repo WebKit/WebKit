@@ -4,7 +4,6 @@
 /*---
 description: Rest object doesn't contain non-enumerable properties (function expression)
 esid: sec-function-definitions-runtime-semantics-evaluation
-es6id: 14.1.20
 features: [object-rest, destructuring-binding]
 flags: [generated]
 includes: [propertyHelper.js]

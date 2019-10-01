@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-dataview-constructor
-es6id: 24.2.2
 description: >
   The DataView constructor is the %DataView% intrinsic object and the initial
   value of the DataView property of the global object.

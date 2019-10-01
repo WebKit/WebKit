@@ -4,7 +4,6 @@
 /*---
 description: Binding property list evaluation is interrupted by an abrupt completion (function declaration (default parameter))
 esid: sec-function-definitions-runtime-semantics-instantiatefunctionobject
-es6id: 14.1.19
 features: [destructuring-binding, default-parameters]
 flags: [generated]
 info: |

@@ -4,7 +4,6 @@
 /*---
 description: Nested object destructuring with a null value (for statement)
 esid: sec-for-statement-runtime-semantics-labelledevaluation
-es6id: 13.7.4.7
 features: [destructuring-binding]
 flags: [generated]
 info: |

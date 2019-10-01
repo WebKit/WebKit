@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 description: Compare the values of an iterator with an array of expected values
+defines: [assert.compareIterator]
 ---*/
 
 // Example:

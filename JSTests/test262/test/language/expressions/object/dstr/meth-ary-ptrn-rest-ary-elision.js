@@ -4,7 +4,6 @@
 /*---
 description: Rest element containing an elision (method)
 esid: sec-runtime-semantics-definemethod
-es6id: 14.3.8
 features: [generators, destructuring-binding]
 flags: [generated]
 info: |

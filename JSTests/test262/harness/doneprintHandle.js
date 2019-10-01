@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 description: |
-
+defines: [$DONE]
 ---*/
 
 function __consolePrintHandle__(msg) {

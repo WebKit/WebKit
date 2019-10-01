@@ -3,8 +3,6 @@
 
 /*---
 info: The parseFloat property can't be used as constructor
-es5id: 15.1.2.3_A7.7
-es6id: 18.2.4
 esid: sec-parsefloat-string
 description: >
     If property does not implement the internal [[Construct]] method,

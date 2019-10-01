@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.some
-es5id: 15.4.4.17-7-6
 description: >
     Array.prototype.some visits deleted element in array after the
     call when same index is also present in prototype

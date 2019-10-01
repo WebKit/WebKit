@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.filter
-es5id: 15.4.4.20-2-18
 description: >
     Array.prototype.filter applied to String object, which implements
     its own property get method

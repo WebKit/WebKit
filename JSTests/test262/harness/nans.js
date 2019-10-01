@@ -6,6 +6,7 @@ description: |
     to create distinct bit representations on various platforms. These provide a
     weak basis for assertions regarding the consistent canonicalization of NaN
     values in Array buffers.
+defines: [NaNs]
 ---*/
 
 var NaNs = [

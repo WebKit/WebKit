@@ -3,7 +3,7 @@
 // - src/accessor-names/private/cls-private-expr-inst.template
 /*---
 description: Private IdentifierName - ℘ (Class expression, instance private method)
-features: [class-methods-private]
+features: [class, class-methods-private]
 flags: [generated]
 info: |
     ClassElement :

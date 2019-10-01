@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-arraybuffer.prototype.slice
-es6id: 24.1.4.3
 description: >
   Returns zero-length buffer if `start` index exceeds `end` index.
 info: |

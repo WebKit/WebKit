@@ -13,7 +13,7 @@ info: |
 
   NOTE: Because NaN always compares greater than any other value, NaN property
   values always sort to the end of the result when comparefn is not provided.
-includes: [testTypedArray.js, compareArray.js]
+includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 

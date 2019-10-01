@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.indexof
-es5id: 15.4.4.14-9-a-2
 description: >
     Array.prototype.indexOf - added properties in step 5 are visible
     here on an Array-like object

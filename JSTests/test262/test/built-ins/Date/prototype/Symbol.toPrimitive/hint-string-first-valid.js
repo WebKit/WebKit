@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-date.prototype-@@toprimitive
-es6id: 20.3.4.45
 description: >
     Behavior when `hint` is "string" and first try returns a valid value
 info: |

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-2-14
 description: >
     Array.prototype.every applied to the Array-like object that
     'length' property doesn't exist

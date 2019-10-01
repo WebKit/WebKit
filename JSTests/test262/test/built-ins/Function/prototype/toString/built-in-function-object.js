@@ -13,7 +13,7 @@ info: |
   NativeFunction:
     function IdentifierName_opt ( FormalParameters ) { [ native code ] }
 
-includes: [fnGlobalObject.js, nativeFunctionMatcher.js, wellKnownIntrinsicObjects.js]
+includes: [nativeFunctionMatcher.js, wellKnownIntrinsicObjects.js]
 features: [arrow-function]
 ---*/
 

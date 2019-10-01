@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-generatorvalidate
-es6id: 25.3.3.2
 description: >
     A TypeError should be thrown if the generator is resumed while in the
     "executing" state and the generator should be marked as "completed"

@@ -4,7 +4,6 @@
 /*---
 description: No property access occurs for an "empty" object binding pattern (arrow function expression)
 esid: sec-arrow-function-definitions-runtime-semantics-evaluation
-es6id: 14.2.16
 features: [destructuring-binding]
 flags: [generated]
 info: |

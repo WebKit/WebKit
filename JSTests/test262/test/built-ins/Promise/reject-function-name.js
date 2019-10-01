@@ -8,9 +8,14 @@ info: |
   A promise reject function is an anonymous built-in function.
 
   17 ECMAScript Standard Built-in Objects:
-    Every built-in Function object, including constructors, that is not
-    identified as an anonymous function has a name property whose value
-    is a String.
+    Every built-in function object, including constructors, has a `name`
+    property whose value is a String. Functions that are identified as
+    anonymous functions use the empty string as the value of the `name`
+    property.
+    Unless otherwise specified, the `name` property of a built-in function
+    object has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*,
+    [[Configurable]]: *true* }.
+includes: [propertyHelper.js]
 ---*/
 
 var rejectFunction;
@@ -18,5 +23,6 @@ new Promise(function(resolve, reject) {
   rejectFunction = reject;
 });
 
-assert.sameValue(Object.prototype.hasOwnProperty.call(rejectFunction, "name"), false);
-assert.sameValue(rejectFunction.name, "");
+verifyProperty(rejectFunction, "name", {
+  value: "", writable: false, enumerable: false, configurable: true
+});

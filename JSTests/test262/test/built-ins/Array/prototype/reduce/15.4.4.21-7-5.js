@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduce
-es5id: 15.4.4.21-7-5
 description: >
     Array.prototype.reduce returns initialValue if 'length' is 0 and
     initialValue is present (subclassed Array, length overridden to

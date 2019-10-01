@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-2-14
 description: >
     Array.prototype.map - applied to the Array-like object that
     'length' property doesn't exist

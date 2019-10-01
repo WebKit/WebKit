@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-8-7
 description: >
     Array.prototype.every returns true if 'length' is 0 (subclassed
     Array, length overridden with obj w/o valueOf (toString))

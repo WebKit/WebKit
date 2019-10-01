@@ -6,7 +6,6 @@ info: |
     The [[Class]] property of the newly constructed object
     is set to "Date"
 esid: sec-date-year-month-date-hours-minutes-seconds-ms
-es5id: 15.9.3.1_A3_T4.2
 description: >
     Test based on overwriting prototype.toString - 5 arguments, (year,
     month, date, hours, minutes)

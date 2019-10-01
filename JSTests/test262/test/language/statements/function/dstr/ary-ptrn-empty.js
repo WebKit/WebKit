@@ -4,7 +4,6 @@
 /*---
 description: No iteration occurs for an "empty" array binding pattern (function declaration)
 esid: sec-function-definitions-runtime-semantics-instantiatefunctionobject
-es6id: 14.1.19
 features: [generators, destructuring-binding]
 flags: [generated]
 info: |

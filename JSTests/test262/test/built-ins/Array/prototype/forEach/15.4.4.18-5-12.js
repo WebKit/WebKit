@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.foreach
-es5id: 15.4.4.18-5-12
 description: Array.prototype.forEach - Boolean Object can be used as thisArg
 ---*/
 

@@ -4,7 +4,6 @@
 /*---
 description: Error forwarding when IteratorStep returns an abrupt completion (method)
 esid: sec-runtime-semantics-definemethod
-es6id: 14.3.8
 features: [generators, destructuring-binding]
 flags: [generated]
 info: |

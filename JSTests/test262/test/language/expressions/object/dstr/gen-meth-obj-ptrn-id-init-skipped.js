@@ -4,7 +4,6 @@
 /*---
 description: Destructuring initializer is not evaluated when value is not `undefined` (generator method)
 esid: sec-generator-function-definitions-runtime-semantics-propertydefinitionevaluation
-es6id: 14.4.13
 features: [generators, destructuring-binding]
 flags: [generated]
 info: |

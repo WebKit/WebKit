@@ -4,7 +4,6 @@
 /*---
 info: The sort property of Array can't be used as constructor
 esid: sec-array.prototype.sort
-es5id: 15.4.4.11_A7.7
 description: >
     If property does not implement the internal [[Construct]] method,
     throw a TypeError exception

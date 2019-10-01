@@ -7,8 +7,6 @@ info: |
     a number value; it ignores any characters that cannot be interpreted as part
     of the notation of an decimal literal, and no indication is given that any such
     characters were ignored.
-es5id: 15.1.2.3_A6
-es6id: 18.2.4
 esid: sec-parsefloat-string
 description: Complex test without eval
 includes: [decimalToHexString.js]

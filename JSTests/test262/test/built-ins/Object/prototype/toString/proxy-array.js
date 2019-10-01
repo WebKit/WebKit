@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-object.prototype.tostring
-es6id: 19.1.3.6
 description: Proxy of an array is treated as an array
 info: |
   [...]

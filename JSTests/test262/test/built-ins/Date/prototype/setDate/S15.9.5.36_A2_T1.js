@@ -4,7 +4,6 @@
 /*---
 info: The "length" property of the "setDate" is 1
 esid: sec-date.prototype.setdate
-es5id: 15.9.5.36_A2_T1
 description: The "length" property of the "setDate" is 1
 ---*/
 

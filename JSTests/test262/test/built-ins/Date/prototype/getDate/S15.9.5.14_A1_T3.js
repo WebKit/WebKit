@@ -4,7 +4,6 @@
 /*---
 info: The Date.prototype property "getDate" has { DontEnum } attributes
 esid: sec-date.prototype.getdate
-es5id: 15.9.5.14_A1_T3
 description: Checking DontEnum attribute
 ---*/
 

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-date.prototype.setutcdate
-es6id: 20.3.4.28
 description: >
   Date.prototype.setUTCDate.name is "setUTCDate".
 info: |

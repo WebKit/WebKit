@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduce
-es5id: 15.4.4.21-8-c-4
 description: >
     Array.prototype.reduce doesn't throw error when array has no own
     properties but prototype contains a single property

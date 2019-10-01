@@ -4,7 +4,6 @@
 /*---
 description: IteratorClose is invoked when evaluation of AssignmentElementList returns a "throw" completion and the iterator has not been marked as "done" (AssignmentExpression)
 esid: sec-variable-statement-runtime-semantics-evaluation
-es6id: 13.3.2.4
 features: [Symbol.iterator, destructuring-binding]
 flags: [generated]
 info: |

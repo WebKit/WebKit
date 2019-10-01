@@ -14,7 +14,7 @@ info: |
     b. Let kValue be ? Get(O, Pk).
     c. Let mappedValue be ? Call(callbackfn, T, « kValue, k, O »).
   ...
-includes: [testTypedArray.js, compareArray.js]
+includes: [testTypedArray.js]
 features: [Symbol, TypedArray]
 ---*/
 

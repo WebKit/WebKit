@@ -4,7 +4,6 @@
 /*---
 info: The Date.prototype property "getUTCFullYear" has { DontEnum } attributes
 esid: sec-date.prototype.getutcfullyear
-es5id: 15.9.5.11_A1_T3
 description: Checking DontEnum attribute
 ---*/
 

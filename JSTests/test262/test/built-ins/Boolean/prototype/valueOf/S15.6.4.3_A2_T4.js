@@ -7,7 +7,6 @@ info: |
     to other kinds of objects for use as a method and there is should be
     a TypeError exception if its this value is not a Boolean object
 esid: sec-boolean.prototype.valueof
-es5id: 15.6.4.3_A2_T4
 description: transferring to the Object objects
 ---*/
 

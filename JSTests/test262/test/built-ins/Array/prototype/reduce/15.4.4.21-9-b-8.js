@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduce
-es5id: 15.4.4.21-9-b-8
 description: >
     Array.prototype.reduce - deleting own property in step 8 causes
     deleted index property not to be visited on an Array-like object

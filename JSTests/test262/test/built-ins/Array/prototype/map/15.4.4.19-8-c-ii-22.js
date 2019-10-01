@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-8-c-ii-22
 description: >
     Array.prototype.map - callbackfn called with correct parameters
     (the index k is correct)

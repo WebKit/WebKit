@@ -4,7 +4,6 @@
 /*---
 description: Rest object contains just unextracted data (static class expression method)
 esid: sec-runtime-semantics-bindingclassdeclarationevaluation
-es6id: 14.5.15
 features: [object-rest, destructuring-binding]
 flags: [generated]
 includes: [propertyHelper.js]

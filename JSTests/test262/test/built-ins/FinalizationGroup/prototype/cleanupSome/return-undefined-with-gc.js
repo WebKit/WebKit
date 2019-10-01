@@ -14,6 +14,8 @@ info: |
   5. Perform ? CleanupFinalizationGroup(finalizationGroup, callback).
   6. Return undefined.
 features: [FinalizationGroup, arrow-function, async-functions, async-iteration, class, host-gc-required]
+includes: [async-gc.js]
+flags: [async, non-deterministic]
 ---*/
 
 var called;
@@ -28,42 +30,55 @@ var cb = function() {
 var fg = new FinalizationGroup(fn);
 
 function emptyCells() {
-  called = 0;
-  (function() {
-    var o = {};
-    fg.register(o);
-  })();
-  $262.gc();
+  var target = {};
+  fg.register(target);
+
+  var prom = asyncGC(target);
+  target = null;
+
+  return prom;
 }
 
-emptyCells();
-assert.sameValue(fg.cleanupSome(cb), undefined, 'regular callback');
-assert.sameValue(called, 1);
+var tests = [];
 
-emptyCells();
-assert.sameValue(fg.cleanupSome(fn), undefined, 'regular callback, same FG cleanup function');
-assert.sameValue(called, 1);
+tests.push(emptyCells().then(function() {
+  called = 0;
+  assert.sameValue(fg.cleanupSome(cb), undefined, 'regular callback');
+  assert.sameValue(called, 1);
+}));
 
-emptyCells();
-assert.sameValue(fg.cleanupSome(() => 1), undefined, 'arrow function');
+tests.push(emptyCells().then(function() {
+  called = 0;
+  assert.sameValue(fg.cleanupSome(fn), undefined, 'regular callback, same FG cleanup function');
+  assert.sameValue(called, 1);
+}));
 
-emptyCells();
-assert.sameValue(fg.cleanupSome(fg.cleanupSome), undefined, 'cleanupSome itself');
+tests.push(emptyCells().then(function() {
+  called = 0;
+  assert.sameValue(fg.cleanupSome(), undefined, 'undefined (implicit) callback, defer to FB callback');
+  assert.sameValue(called, 1);
+}));
 
-emptyCells();
-assert.sameValue(fg.cleanupSome(class {}), undefined, 'class expression');
+tests.push(emptyCells().then(function() {
+  called = 0;
+  assert.sameValue(fg.cleanupSome(undefined), undefined, 'undefined (explicit) callback, defer to FB callback');
+  assert.sameValue(called, 1);
+}));
 
-emptyCells();
-assert.sameValue(fg.cleanupSome(async function() {}), undefined, 'async function');
+tests.push(emptyCells().then(function() {
+  assert.sameValue(fg.cleanupSome(() => 1), undefined, 'arrow function');  
+}));
 
-emptyCells();
-assert.sameValue(fg.cleanupSome(function *() {}), undefined, 'generator');
+tests.push(emptyCells().then(function() {
+  assert.sameValue(fg.cleanupSome(async function() {}), undefined, 'async function');
+}));
 
-emptyCells();
-assert.sameValue(fg.cleanupSome(async function *() {}), undefined, 'async generator');
+tests.push(emptyCells().then(function() {
+  assert.sameValue(fg.cleanupSome(function *() {}), undefined, 'generator');
+}));
 
-emptyCells();
-assert.sameValue(fg.cleanupSome(), undefined, 'undefined, implicit');
+tests.push(emptyCells().then(function() {
+  assert.sameValue(fg.cleanupSome(async function *() {}), undefined, 'async generator');
+}));
 
-emptyCells();
-assert.sameValue(fg.cleanupSome(undefined), undefined, 'undefined, explicit');
+Promise.all(tests).then(() => { $DONE(); }, resolveAsyncGC);

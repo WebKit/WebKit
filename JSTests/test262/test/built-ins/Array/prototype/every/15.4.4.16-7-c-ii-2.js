@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-7-c-ii-2
 description: Array.prototype.every - callbackfn takes 3 arguments
 ---*/
 

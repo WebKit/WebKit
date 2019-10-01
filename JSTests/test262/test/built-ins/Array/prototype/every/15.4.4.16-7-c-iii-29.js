@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-7-c-iii-29
 description: >
     Array.prototype.every - return value (new Boolean(false)) of
     callbackfn is treated as true value

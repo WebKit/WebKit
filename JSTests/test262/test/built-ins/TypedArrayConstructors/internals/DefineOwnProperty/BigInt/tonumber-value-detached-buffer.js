@@ -36,7 +36,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
     {
       value: {
         valueOf: function() {
-          $262.detachArrayBuffer(ta.buffer);
+          $DETACHBUFFER(ta.buffer);
           return 42n;
         }
       }

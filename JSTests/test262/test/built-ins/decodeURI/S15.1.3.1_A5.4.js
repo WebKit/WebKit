@@ -3,8 +3,6 @@
 
 /*---
 info: The length property of decodeURI is 1
-es5id: 15.1.3.1_A5.4
-es6id: 18.2.6.2
 esid: sec-decodeuri-encodeduri
 description: decodeURI.length === 1
 ---*/

@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-date.prototype.setmonth
-es6id: 20.3.4.25
 description: Return value for valid dates (setting month)
 info: |
   1. Let t be LocalTime(? thisTimeValue(this value)).

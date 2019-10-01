@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-7-3
 description: >
     Array.prototype.lastIndexOf returns -1 when abs('fromIndex') is
     length of array - 1

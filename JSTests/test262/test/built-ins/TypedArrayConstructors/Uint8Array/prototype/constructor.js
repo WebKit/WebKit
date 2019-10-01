@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 22.2.6.2
 esid: sec-typedarray.prototype.constructor
 description: >
   The initial value of Uint8Array.prototype.constructor is the Uint8Array object.

@@ -6,7 +6,6 @@ info: |
     If this object does not have a property named by ToString(j),
     and this object does not have a property named by ToString(k), return +0
 esid: sec-array.prototype.sort
-es5id: 15.4.4.11_A1.1_T1
 description: If comparefn is undefined, use SortCompare operator
 ---*/
 

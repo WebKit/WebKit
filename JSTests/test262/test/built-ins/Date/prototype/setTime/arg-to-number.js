@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-date.prototype.settime
-es6id: 20.3.4.27
 description: Type coercion of provided argument
 info: |
   1. Perform ? thisTimeValue(this value).

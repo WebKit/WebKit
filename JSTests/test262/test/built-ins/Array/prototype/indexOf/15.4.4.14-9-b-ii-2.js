@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.indexof
-es5id: 15.4.4.14-9-b-ii-2
 description: >
     Array.prototype.indexOf - both type of array element and type of
     search element are Undefined

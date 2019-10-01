@@ -4,7 +4,6 @@
 /*---
 description: Rest element containing an "empty" array pattern (method (default parameter))
 esid: sec-runtime-semantics-definemethod
-es6id: 14.3.8
 features: [generators, destructuring-binding, default-parameters]
 flags: [generated]
 info: |

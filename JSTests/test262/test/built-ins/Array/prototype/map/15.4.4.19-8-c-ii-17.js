@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-8-c-ii-17
 description: >
     Array.prototype.map - 'this' object when T is not an object (T is
     a number)

@@ -4,7 +4,6 @@
 /*---
 description: A block-scoped binding is created (Funtion declaration in the `default` clause of a `switch` statement in the global scope)
 esid: sec-web-compat-globaldeclarationinstantiation
-es6id: B.3.3.2
 flags: [generated, noStrict]
 info: |
     13.2.14 Runtime Semantics: BlockDeclarationInstantiation

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-dataview.prototype.getint32
-es6id: 24.2.4.9
 description: >
   DataView.prototype.getInt32.name is "getInt32".
 info: |

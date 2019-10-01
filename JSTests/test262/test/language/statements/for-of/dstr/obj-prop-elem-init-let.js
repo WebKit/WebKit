@@ -4,7 +4,6 @@
 /*---
 description: Value retrieval of Initializer obeys `let` semantics. (For..of statement)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
-es6id: 13.7.5.11
 features: [let, destructuring-binding]
 flags: [generated]
 info: |

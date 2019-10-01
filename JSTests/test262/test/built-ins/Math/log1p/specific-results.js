@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 20.2.2.21
 esid: sec-math.log1p
 description: >
   Return specific results

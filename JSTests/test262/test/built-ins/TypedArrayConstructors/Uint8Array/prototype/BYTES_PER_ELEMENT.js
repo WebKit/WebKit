@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 22.2.6.1
 esid: sec-properties-of-typedarray-prototype-objects
 description: >
   The initial value of Uint8Array.prototype.BYTES_PER_ELEMENT is 1.

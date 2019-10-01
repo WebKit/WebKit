@@ -4,7 +4,6 @@
 /*---
 info: The "length" property of the "getUTCMilliseconds" is 0
 esid: sec-date.prototype.getutcmilliseconds
-es5id: 15.9.5.25_A2_T1
 description: The "length" property of the "getUTCMilliseconds" is 0
 ---*/
 

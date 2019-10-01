@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.some
-es5id: 15.4.4.17-7-c-iii-9
 description: >
     Array.prototype.some - return value of callbackfn is a number
     (value is negative number)

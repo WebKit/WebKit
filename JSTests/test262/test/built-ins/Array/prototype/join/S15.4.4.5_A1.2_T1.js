@@ -4,7 +4,6 @@
 /*---
 info: If separator is undefined, a single comma is used as the separator
 esid: sec-array.prototype.join
-es5id: 15.4.4.5_A1.2_T1
 description: Checking this use new Array() and []
 ---*/
 

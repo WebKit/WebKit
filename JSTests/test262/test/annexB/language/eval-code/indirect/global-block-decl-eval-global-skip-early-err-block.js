@@ -4,7 +4,6 @@
 /*---
 description: Extension not observed when creation of variable binding would produce an early error (Block statement) (Block statement in eval code containing a function declaration)
 esid: sec-web-compat-evaldeclarationinstantiation
-es6id: B.3.3.3
 flags: [generated, noStrict]
 info: |
     B.3.3.3 Changes to EvalDeclarationInstantiation

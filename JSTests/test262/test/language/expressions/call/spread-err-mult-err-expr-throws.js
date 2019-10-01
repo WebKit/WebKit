@@ -4,7 +4,6 @@
 /*---
 description: Spread operator following other arguments when evaluation throws (CallExpression)
 esid: sec-function-calls-runtime-semantics-evaluation
-es6id: 12.3.4.1
 features: [generators]
 flags: [generated]
 info: |

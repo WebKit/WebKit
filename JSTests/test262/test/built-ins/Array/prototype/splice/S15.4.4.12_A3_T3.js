@@ -4,7 +4,6 @@
 /*---
 info: Check ToLength(length) for non Array objects
 esid: sec-array.prototype.splice
-es5id: 15.4.4.12_A3_T3
 description: length is arbitrarily
 ---*/
 

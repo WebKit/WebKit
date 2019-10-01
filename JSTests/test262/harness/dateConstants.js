@@ -3,6 +3,17 @@
 /*---
 description: |
     Collection of date-centric values
+defines:
+  - date_1899_end
+  - date_1900_start
+  - date_1969_end
+  - date_1970_start
+  - date_1999_end
+  - date_2000_start
+  - date_2099_end
+  - date_2100_start
+  - start_of_time
+  - end_of_time
 ---*/
 
 var date_1899_end = -2208988800001;

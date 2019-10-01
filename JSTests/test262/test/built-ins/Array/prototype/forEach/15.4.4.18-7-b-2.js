@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.foreach
-es5id: 15.4.4.18-7-b-2
 description: >
     Array.prototype.forEach - added properties in step 2 are visible
     here

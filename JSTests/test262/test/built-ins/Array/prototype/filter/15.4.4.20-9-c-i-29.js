@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.filter
-es5id: 15.4.4.20-9-c-i-29
 description: >
     Array.prototype.filter - element changed by getter on previous
     iterations is observed on an Array-like object

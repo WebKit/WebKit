@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-8-b-ii-1
 description: >
     Array.prototype.lastIndexOf - type of array element is different
     from type of search element

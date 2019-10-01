@@ -6,7 +6,6 @@ info: |
     If start is negative, use max(start + length, 0).
     If deleteCount is positive, use min(deleteCount, length - start)
 esid: sec-array.prototype.splice
-es5id: 15.4.4.12_A1.4_T6
 description: length = deleteCount > -start > 0, itemCount > 0
 ---*/
 

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-boolean.prototype.tostring
-es6id: 19.3.3.2
 description: >
   Boolean.prototype.toString.name is "toString".
 info: |

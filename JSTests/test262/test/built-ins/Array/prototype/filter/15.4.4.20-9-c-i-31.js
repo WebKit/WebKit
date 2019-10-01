@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.filter
-es5id: 15.4.4.20-9-c-i-31
 description: >
     Array.prototype.filter - unnhandled exceptions happened in getter
     terminate iteration on an Array

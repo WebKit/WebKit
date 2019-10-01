@@ -1,7 +1,6 @@
 // Copyright (C) 2015 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 23.3.1.1
 esid: sec-weakmap-iterable
 description: >
   Returns the new WeakMap adding the objects from the iterable parameter.
@@ -12,7 +11,6 @@ info: |
   9. Repeat
     k. Let status be Call(adder, map, «k.[[value]], v.[[value]]»).
     l. If status is an abrupt completion, return IteratorClose(iter, status).
-includes: [compareArray.js]
 ---*/
 
 var first = {};

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-arraybuffer-length
-es6id: 24.1.2.1
 description: >
   The new ArrayBuffer instance is created prior to allocating the Data Block.
 info: |

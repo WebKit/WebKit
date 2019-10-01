@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-arraybuffer.isview
-es6id: 24.1.3.1
 description: >
   ArrayBuffer.isView.name is "isView".
 info: |

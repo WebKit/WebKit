@@ -4,7 +4,6 @@
 /*---
 description: Rest element (object binding pattern) may not be followed by any element (arrow function expression)
 esid: sec-arrow-function-definitions-runtime-semantics-evaluation
-es6id: 14.2.16
 features: [destructuring-binding]
 flags: [generated]
 negative:

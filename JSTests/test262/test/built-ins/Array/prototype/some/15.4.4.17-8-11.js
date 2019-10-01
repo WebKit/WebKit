@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.some
-es5id: 15.4.4.17-8-11
 description: >
     Array.prototype.some returns false when all calls to callbackfn
     return false

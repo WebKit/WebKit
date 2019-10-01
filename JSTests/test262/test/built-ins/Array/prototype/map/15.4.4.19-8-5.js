@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-8-5
 description: >
     Array.prototype.map doesn't consider newly added elements in
     sparse array

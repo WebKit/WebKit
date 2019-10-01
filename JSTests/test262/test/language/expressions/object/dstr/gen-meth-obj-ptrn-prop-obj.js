@@ -4,7 +4,6 @@
 /*---
 description: Object binding pattern with "nested" object binding pattern not using initializer (generator method)
 esid: sec-generator-function-definitions-runtime-semantics-propertydefinitionevaluation
-es6id: 14.4.13
 features: [generators, destructuring-binding]
 flags: [generated]
 info: |

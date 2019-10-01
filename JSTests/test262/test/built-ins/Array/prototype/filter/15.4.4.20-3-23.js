@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.filter
-es5id: 15.4.4.20-3-23
 description: >
     Array.prototype.filter uses inherited valueOf method when 'length'
     is an object with an own toString and inherited valueOf methods

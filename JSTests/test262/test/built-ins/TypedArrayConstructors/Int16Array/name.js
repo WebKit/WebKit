@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 22.2.5
 esid: sec-properties-of-the-typedarray-constructors
 description: >
   Int16Array.name is "Int16Array".

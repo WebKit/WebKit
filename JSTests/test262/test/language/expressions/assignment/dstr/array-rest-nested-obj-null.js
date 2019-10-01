@@ -4,7 +4,6 @@
 /*---
 description: When DestructuringAssignmentTarget is an object literal and the iterable emits `null` as the only value, an array with a single `null` element should be used as the value of the nested DestructuringAssignment. (AssignmentExpression)
 esid: sec-variable-statement-runtime-semantics-evaluation
-es6id: 13.3.2.4
 features: [destructuring-binding]
 flags: [generated]
 info: |

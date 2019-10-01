@@ -4,7 +4,6 @@
 /*---
 description: Proper setting in the values for rest name equal to a property name. (For..of statement)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
-es6id: 13.7.5.11
 features: [object-rest, destructuring-binding]
 flags: [generated]
 info: |
@@ -41,7 +40,7 @@ for ({ x, ...z } of [o]) {
   assert.sameValue(z.y, 39);
   assert.sameValue(z.z, 'cheeseburger');
 
-  var keys = Object.keys(z);
+  var keys = Object.getOwnPropertyNames(z);
   assert.sameValue(keys.length, 2);
   assert.sameValue(keys[0], 'y');
   assert.sameValue(keys[1], 'z');

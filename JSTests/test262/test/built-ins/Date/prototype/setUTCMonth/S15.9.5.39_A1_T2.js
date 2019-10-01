@@ -4,7 +4,6 @@
 /*---
 info: The Date.prototype property "setUTCMonth" has { DontEnum } attributes
 esid: sec-date.prototype.setutcmonth
-es5id: 15.9.5.39_A1_T2
 description: Checking absence of DontDelete attribute
 ---*/
 

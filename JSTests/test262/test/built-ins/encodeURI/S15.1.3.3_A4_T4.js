@@ -3,8 +3,6 @@
 
 /*---
 info: URI tests
-es5id: 15.1.3.3_A4_T4
-es6id: 18.2.6.4
 esid: sec-encodeuri-uri
 description: Test some url
 ---*/

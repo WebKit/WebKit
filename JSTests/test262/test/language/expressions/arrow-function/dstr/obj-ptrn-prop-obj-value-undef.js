@@ -4,7 +4,6 @@
 /*---
 description: Object binding pattern with "nested" object binding pattern taking the `null` value (arrow function expression)
 esid: sec-arrow-function-definitions-runtime-semantics-evaluation
-es6id: 14.2.16
 features: [destructuring-binding]
 flags: [generated]
 info: |

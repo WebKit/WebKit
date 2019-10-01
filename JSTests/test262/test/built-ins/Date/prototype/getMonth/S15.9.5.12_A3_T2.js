@@ -6,7 +6,6 @@ info: |
     The Date.prototype.getMonth property "length" has { ReadOnly, !
     DontDelete, DontEnum } attributes
 esid: sec-date.prototype.getmonth
-es5id: 15.9.5.12_A3_T2
 description: Checking DontDelete attribute
 ---*/
 

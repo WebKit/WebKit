@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-toboolean
-es6id: 7.1.2
 description: >
     Boolean coercion operations on Symbols
 features: [Symbol]

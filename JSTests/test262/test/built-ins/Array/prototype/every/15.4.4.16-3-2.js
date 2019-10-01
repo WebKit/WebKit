@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-3-2
 description: >
     Array.prototype.every on an Array-like object if 'length' is 1
     (length overridden to true(type conversion))

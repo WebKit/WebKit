@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.some
-es5id: 15.4.4.17-7-b-16
 description: >
     Array.prototype.some - decreasing length of array does not delete
     non-configurable properties

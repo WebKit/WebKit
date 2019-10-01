@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.indexof
-es5id: 15.4.4.14-3-21
 description: >
     Array.prototype.indexOf - 'length' is an object that has an own
     valueOf method that returns an object and toString method that

@@ -4,7 +4,6 @@
 /*---
 info: The "length" property of the "getTime" is 0
 esid: sec-date.prototype.getseconds
-es5id: 15.9.5.9_A2_T1
 description: The "length" property of the "getTime" is 0
 ---*/
 

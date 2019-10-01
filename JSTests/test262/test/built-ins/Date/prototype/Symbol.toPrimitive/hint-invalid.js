@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-date.prototype-@@toprimitive
-es6id: 20.3.4.45
 description: Behavior when an invalid `hint` argument is specified
 info: |
     1. Let O be the this value.

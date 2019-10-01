@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.indexof
-es5id: 15.4.4.14-9-b-ii-6
 description: >
     Array.prototype.indexOf - array element is +0 and search element
     is -0

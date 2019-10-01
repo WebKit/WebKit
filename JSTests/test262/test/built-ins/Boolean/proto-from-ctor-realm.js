@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-boolean-constructor-boolean-value
-es6id: 19.3.1.1
 description: Default [[Prototype]] value derived from realm of the newTarget
 info: |
     [...]

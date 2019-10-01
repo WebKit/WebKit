@@ -2,7 +2,6 @@
 // This code is governed by the license found in the LICENSE file.
 /*---
 esid: sec-array.from
-es6id: 22.1.2.1
 description: Return empty array if items argument is an ArrayBuffer
 info: |
   22.1.2.1 Array.from ( items [ , mapfn [ , thisArg ] ] )

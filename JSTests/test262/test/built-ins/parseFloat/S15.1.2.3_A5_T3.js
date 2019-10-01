@@ -3,8 +3,6 @@
 
 /*---
 info: Return the number value for the MV of Result(4)
-es5id: 15.1.2.3_A5_T3
-es6id: 18.2.4
 esid: sec-parsefloat-string
 description: Checking . DecimalDigits ExponentPart_opt
 ---*/

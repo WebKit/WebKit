@@ -4,7 +4,6 @@
 description: >
   Error thrown when invoking the instance's `then` method (closing iterator)
 esid: sec-performpromiseall
-es6id: 25.4.4.1
 info: |
     11. Let result be PerformPromiseAll(iteratorRecord, C, promiseCapability).
     12. If result is an abrupt completion,

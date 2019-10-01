@@ -7,8 +7,6 @@ info: |
     that is represented by Z in radix-R notation, using the
     letters A-Z and a-z for digits with values 10 through 35.
     Compute the number value for Result(16)
-es5id: 15.1.2.2_A7.2_T1
-es6id: 18.2.5
 esid: sec-parseint-string-radix
 description: Complex test. Check algorithm
 ---*/

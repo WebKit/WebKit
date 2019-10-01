@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-8-b-i-29
 description: >
     Array.prototype.lastIndexOf - side-effects are visible in
     subsequent iterations on an Array-like object

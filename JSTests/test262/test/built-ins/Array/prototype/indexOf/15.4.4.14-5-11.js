@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.indexof
-es5id: 15.4.4.14-5-11
 description: >
     Array.prototype.indexOf - value of 'fromIndex' is a number (value
     is negative number)

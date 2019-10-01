@@ -3,8 +3,6 @@
 
 /*---
 info: Operator use ToInt32
-es5id: 15.1.2.2_A3.2_T3
-es6id: 18.2.5
 esid: sec-parseint-string-radix
 description: ToInt32 use modulo
 ---*/

@@ -4,7 +4,6 @@
 /*---
 description: The iterator is properly consumed by the destructuring pattern (for statement)
 esid: sec-for-statement-runtime-semantics-labelledevaluation
-es6id: 13.7.4.7
 features: [generators, destructuring-binding]
 flags: [generated]
 info: |

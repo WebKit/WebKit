@@ -4,7 +4,6 @@
 /*---
 info: "[[Get]] from not an inherited property"
 esid: sec-array.prototype.push
-es5id: 15.4.4.7_A5_T1
 description: >
     [[Prototype]] of Array instance is Array.prototype, [[Prototype]
     of Array.prototype is Object.prototype

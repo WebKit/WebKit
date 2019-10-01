@@ -4,7 +4,6 @@
 /*---
 description: Variable binding is initialized to `undefined` in outer scope (Block statement in the global scope containing a function declaration)
 esid: sec-web-compat-globaldeclarationinstantiation
-es6id: B.3.3.2
 flags: [generated, noStrict]
 includes: [fnGlobalObject.js, propertyHelper.js]
 info: |

@@ -1,7 +1,6 @@
 // Copyright (C) 2016 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 22.1.3.23
 esid: sec-array.prototype.slice
 description: The value `-0` is converted to `0`
 info: |

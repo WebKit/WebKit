@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduceright
-es5id: 15.4.4.22-9-c-ii-19
 description: >
     Array.prototype.reduceRight - value of 'accumulator' used for
     first iteration is the value of max index property which is not

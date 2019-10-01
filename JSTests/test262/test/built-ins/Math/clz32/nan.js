@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 20.2.2.11
 esid: sec-math.clz32
 description: >
   Return 32 if x is NaN

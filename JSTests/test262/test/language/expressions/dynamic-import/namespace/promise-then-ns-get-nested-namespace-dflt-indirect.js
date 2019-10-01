@@ -101,7 +101,7 @@ import('./get-nested-namespace-dflt-skip-named_FIXTURE.js').then(ns => {
     assert.sameValue(desc.writable, true, 'ns.namedNS2: is writable');
     assert.sameValue(desc.configurable, false, 'ns.namedNS2: is non-configurable');
 
-    var keys = Object.keys(ns.namedNS2);
+    var keys = Object.getOwnPropertyNames(ns.namedNS2);
 
     assert.sameValue(keys.length, 2);
     assert.sameValue(keys[0], 'default');

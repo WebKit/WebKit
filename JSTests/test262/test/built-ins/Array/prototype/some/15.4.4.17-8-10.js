@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.some
-es5id: 15.4.4.17-8-10
 description: Array.prototype.some - subclassed array when length is reduced
 ---*/
 

@@ -4,7 +4,6 @@
 /*---
 description: Outside of strict mode, if the the assignment target is an unresolvable reference, a new `var` binding should be created in the environment record. (AssignmentExpression)
 esid: sec-variable-statement-runtime-semantics-evaluation
-es6id: 13.3.2.4
 features: [destructuring-binding]
 flags: [generated, noStrict]
 info: |

@@ -6,7 +6,6 @@ info: |
     The Date.prototype property "getTimezoneOffset" has { DontEnum }
     attributes
 esid: sec-date.prototype.gettimezoneoffset
-es5id: 15.9.5.26_A1_T1
 description: Checking absence of ReadOnly attribute
 ---*/
 

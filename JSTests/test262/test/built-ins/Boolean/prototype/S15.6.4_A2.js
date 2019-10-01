@@ -5,7 +5,6 @@
 info: |
     The value of the internal [[Prototype]] property of the Boolean
     prototype object is the Object prototype object
-es5id: 15.6.4_A2
 esid: sec-properties-of-the-boolean-prototype-object
 description: Checking Object.prototype.isPrototypeOf(Boolean.prototype)
 ---*/

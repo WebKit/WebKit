@@ -3,11 +3,10 @@
 
 /*---
 description: >
-    Objects whose specified property is not configurable satisfy the assertion
-    in strict mode.
+    Objects whose specified property is not configurable satisfy the assertion.
 includes: [propertyHelper.js]
-flags: [onlyStrict]
 ---*/
+
 var obj = {};
 Object.defineProperty(obj, 'a', {
   configurable: false

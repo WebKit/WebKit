@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-date.prototype.setfullyear
-es6id: 20.3.4.21
 description: Return value for valid dates (setting month)
 info: |
   1. Let t be ? thisTimeValue(this value).

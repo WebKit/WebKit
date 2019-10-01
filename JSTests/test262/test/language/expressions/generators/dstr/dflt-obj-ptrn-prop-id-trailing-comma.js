@@ -4,7 +4,6 @@
 /*---
 description: Trailing comma is allowed following BindingPropertyList (generator function expression (default parameter))
 esid: sec-generator-function-definitions-runtime-semantics-evaluation
-es6id: 14.4.14
 features: [generators, destructuring-binding, default-parameters]
 flags: [generated]
 info: |

@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-date.prototype.setmilliseconds
-es6id: 20.3.4.23
 description: Abrupt completion during type coercion of provided argument
 info: |
   1. Let t be LocalTime(? thisTimeValue(this value)).

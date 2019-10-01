@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-string-exotic-objects-getownproperty-p
-es6id: 9.4.3.1
 description: >
   Property descriptor for numeric "own" properties of an exotic String object
 info: |

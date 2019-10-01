@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.filter
-es5id: 15.4.4.20-5-1-s
 description: Array.prototype.filter - thisArg not passed to strict callbackfn
 flags: [noStrict]
 ---*/

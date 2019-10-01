@@ -26,6 +26,8 @@ info: |
   1. Let iterator be the this value.
   2. If Type(iterator) is not Object, throw a TypeError exception.
 features: [FinalizationGroup, host-gc-required, Symbol]
+includes: [async-gc.js]
+flags: [async, non-deterministic]
 ---*/
 
 var FinalizationGroupCleanupIteratorPrototype;
@@ -37,46 +39,51 @@ function callback(iterator) {
   FinalizationGroupCleanupIteratorPrototype = Object.getPrototypeOf(iterator);
 }
 
-(function() {
-  var o = {};
-  fg.register(o);
-})();
+function emptyCells() {
+  var target = {};
+  fg.register(target);
 
-$262.gc();
+  var prom = asyncGC(target);
+  target = null;
 
-fg.cleanupSome(callback);
+  return prom;
+}
 
-assert.sameValue(called, 1, 'cleanup successful');
+emptyCells().then(function() {
+  fg.cleanupSome(callback);
 
-assert.sameValue(typeof FinalizationGroupCleanupIteratorPrototype.next, 'function');
+  assert.sameValue(called, 1, 'cleanup successful');
 
-var next = FinalizationGroupCleanupIteratorPrototype.next;
+  assert.sameValue(typeof FinalizationGroupCleanupIteratorPrototype.next, 'function');
 
-assert.throws(TypeError, function() {
-  next.call(undefined);
-}, 'undefined');
+  var next = FinalizationGroupCleanupIteratorPrototype.next;
 
-assert.throws(TypeError, function() {
-  next.call(null);
-}, 'null');
+  assert.throws(TypeError, function() {
+    next.call(undefined);
+  }, 'undefined');
 
-assert.throws(TypeError, function() {
-  next.call(true);
-}, 'true');
+  assert.throws(TypeError, function() {
+    next.call(null);
+  }, 'null');
 
-assert.throws(TypeError, function() {
-  next.call(false);
-}, 'false');
+  assert.throws(TypeError, function() {
+    next.call(true);
+  }, 'true');
 
-assert.throws(TypeError, function() {
-  next.call(1);
-}, '1');
+  assert.throws(TypeError, function() {
+    next.call(false);
+  }, 'false');
 
-assert.throws(TypeError, function() {
-  next.call('string');
-}, 'string');
+  assert.throws(TypeError, function() {
+    next.call(1);
+  }, '1');
 
-var symbol = Symbol();
-assert.throws(TypeError, function() {
-  next.call(symbol);
-}, 'symbol');
+  assert.throws(TypeError, function() {
+    next.call('string');
+  }, 'string');
+
+  var symbol = Symbol();
+  assert.throws(TypeError, function() {
+    next.call(symbol);
+  }, 'symbol');
+}).then($DONE, resolveAsyncGC);

@@ -4,7 +4,6 @@
 /*---
 description: Error thrown when accessing the corresponding property of the value object (function expression)
 esid: sec-function-definitions-runtime-semantics-evaluation
-es6id: 14.1.20
 features: [destructuring-binding]
 flags: [generated]
 info: |

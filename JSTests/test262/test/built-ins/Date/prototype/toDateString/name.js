@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-date.prototype.todatestring
-es6id: 20.3.4.35
 description: >
   Date.prototype.toDateString.name is "toDateString".
 info: |

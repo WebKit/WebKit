@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-3-21
 description: >
     Array.prototype.map - 'length' is an object that has an own
     valueOf method that returns an object and toString method that

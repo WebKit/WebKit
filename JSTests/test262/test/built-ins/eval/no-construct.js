@@ -3,8 +3,6 @@
 
 /*---
 info: The eval property can't be used as constructor
-es5id: 15.1.2.1_A4.7
-es6id: 18.2.1
 esid: sec-eval-x
 description: >
     If property does not implement the internal [[Construct]] method,

@@ -4,7 +4,6 @@
 /*---
 description: Variable binding is initialized to `undefined` in outer scope (Block statement in function scope containing a function declaration)
 esid: sec-web-compat-functiondeclarationinstantiation
-es6id: B.3.3.1
 flags: [generated, noStrict]
 info: |
     B.3.3.1 Changes to FunctionDeclarationInstantiation

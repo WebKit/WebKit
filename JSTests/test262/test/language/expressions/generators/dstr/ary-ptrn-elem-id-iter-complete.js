@@ -4,7 +4,6 @@
 /*---
 description: SingleNameBinding when value iteration completes (generator function expression)
 esid: sec-generator-function-definitions-runtime-semantics-evaluation
-es6id: 14.4.14
 features: [generators, destructuring-binding]
 flags: [generated]
 info: |

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-2-6
 description: >
     Array.prototype.lastIndexOf - 'length' is an inherited data
     property on an Array-like object

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-8-c-ii-5
 description: >
     Array.prototype.map - k values are accessed during each iteration
     and not prior to starting the loop.

@@ -4,7 +4,6 @@
 /*---
 description: Iterator is closed when not exhausted by pattern evaluation (class expression method (default parameter))
 esid: sec-class-definitions-runtime-semantics-evaluation
-es6id: 14.5.16
 features: [Symbol.iterator, generators, destructuring-binding, default-parameters]
 flags: [generated]
 info: |

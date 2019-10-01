@@ -3,8 +3,7 @@
 
 /*---
 description: >
-    Objects whose specified property is not writable satisfy the assertion in
-    strict mode.
+    Objects whose specified property is not writable satisfy the assertion.
 includes: [propertyHelper.js]
 ---*/
 

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.filter
-es5id: 15.4.4.20-9-c-iii-14
 description: >
     Array.prototype.filter return value of callbackfn is an empty
     string

@@ -3,8 +3,6 @@
 
 /*---
 info: Operator remove leading StrWhiteSpaceChar
-es5id: 15.1.2.3_A2_T7
-es6id: 18.2.4
 esid: sec-parsefloat-string
 description: "StrWhiteSpaceChar :: LF (U+000A)"
 ---*/

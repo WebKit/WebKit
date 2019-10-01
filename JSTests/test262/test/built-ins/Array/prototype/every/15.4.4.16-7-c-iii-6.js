@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-7-c-iii-6
 description: >
     Array.prototype.every - return value of callbackfn is a number
     (value is +0)

@@ -3,8 +3,6 @@
 
 /*---
 info: Operator use ToString
-es5id: 15.1.2.3_A1_T5
-es6id: 18.2.4
 esid: sec-parsefloat-string
 description: Checking for Number object
 ---*/

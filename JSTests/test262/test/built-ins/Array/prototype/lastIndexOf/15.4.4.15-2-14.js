@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-2-14
 description: >
     Array.prototype.lastIndexOf - 'length' is undefined property on an
     Array-like object

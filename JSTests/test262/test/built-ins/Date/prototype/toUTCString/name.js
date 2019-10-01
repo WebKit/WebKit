@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-date.prototype.toutcstring
-es6id: 20.3.4.43
 description: >
   Date.prototype.toUTCString.name is "toUTCString".
 info: |

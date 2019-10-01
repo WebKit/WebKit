@@ -4,7 +4,6 @@
 /*---
 description: Spread operator applied to the only argument when reference is unresolvable (CallExpression)
 esid: sec-function-calls-runtime-semantics-evaluation
-es6id: 12.3.4.1
 flags: [generated]
 info: |
     CallExpression : MemberExpression Arguments

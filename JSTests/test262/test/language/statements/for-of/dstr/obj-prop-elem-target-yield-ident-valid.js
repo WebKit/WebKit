@@ -4,7 +4,6 @@
 /*---
 description: When a `yield` token appears within the DestructuringAssignmentTarget of an AssignmentElement and outside of a generator function body, it should behave as an IdentifierReference. (For..of statement)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
-es6id: 13.7.5.11
 features: [destructuring-binding]
 flags: [generated, noStrict]
 info: |

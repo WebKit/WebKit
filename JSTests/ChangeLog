@@ -1,3 +1,13 @@
+2019-10-01  Keith Miller  <keith_miller@apple.com>
+
+        Test262 update
+
+        Rubber-stamped by Michael Saboff.
+
+        Note, this was too big to effectivetly put on bugzilla as it's a 10MB patch...
+
+        * test262/*:
+
 2019-10-01  Michael Saboff  <msaboff@apple.com> and Paulo Matos  <pmatos@igalia.com>
 
         [YARR] Properly handle surrogates when matching back references

@@ -4,7 +4,6 @@
 /*---
 description: When a `yield` token appears within the Initializer of an AssignmentElement within a generator function body, it behaves as a YieldExpression. (AssignmentExpression)
 esid: sec-variable-statement-runtime-semantics-evaluation
-es6id: 13.3.2.4
 features: [generators, destructuring-binding]
 flags: [generated]
 info: |

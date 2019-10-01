@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.foreach
-es5id: 15.4.4.18-2-12
 description: >
     Array.prototype.forEach - 'length' is own accessor property
     without a get function that overrides an inherited accessor

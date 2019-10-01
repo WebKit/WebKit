@@ -4,7 +4,6 @@
 /*---
 description: Extension not observed when there is a formal parameter with the same name (IfStatement without an else clause in function scope)
 esid: sec-functiondeclarations-in-ifstatement-statement-clauses
-es6id: B.3.4
 flags: [generated, noStrict]
 info: |
     The following rules for IfStatement augment those in 13.6:

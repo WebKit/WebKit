@@ -4,7 +4,6 @@
 /*---
 description: When a `yield` token appears within the DestructuringAssignmentTarget of an AssignmentRestElement and within the body of a generator function, it should behave as a YieldExpression. (AssignmentExpression)
 esid: sec-variable-statement-runtime-semantics-evaluation
-es6id: 13.3.2.4
 features: [generators, destructuring-binding]
 flags: [generated]
 info: |

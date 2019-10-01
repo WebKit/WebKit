@@ -10,7 +10,6 @@ info: |
   9. Else if the number of actual arguments is 1, then
     a. Let insertCount be 0.
     b. Let actualDeleteCount be len – actualStart.
-es6id: 22.1.3.25
 esid: sec-array.prototype.splice
 ---*/
 

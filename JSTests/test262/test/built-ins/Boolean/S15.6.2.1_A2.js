@@ -7,7 +7,6 @@ info: |
     is set to the original Boolean prototype object, the one that is the
     initial value of Boolean.prototype
 esid: sec-boolean-constructor
-es5id: 15.6.2.1_A2
 description: Checking prototype property of the newly created object
 ---*/
 

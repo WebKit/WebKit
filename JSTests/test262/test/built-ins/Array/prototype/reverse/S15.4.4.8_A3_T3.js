@@ -4,7 +4,6 @@
 /*---
 info: Check ToLength(length) for non Array objects
 esid: sec-array.prototype.reverse
-es5id: 15.4.4.8_A3_T3
 description: length = -4294967294
 ---*/
 

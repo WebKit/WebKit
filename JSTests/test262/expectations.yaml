@@ -621,12 +621,21 @@ test/annexB/language/statements/for-of/iterator-close-return-emulates-undefined-
 test/built-ins/Array/of/return-abrupt-from-data-property.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Array/proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(Â«Â», Â«Â») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«Â», Â«Â») to be true'
+test/built-ins/Array/proto-from-ctor-realm-one.js:
+  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«Â», Â«Â») to be true'
+  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«Â», Â«Â») to be true'
+test/built-ins/Array/proto-from-ctor-realm-two.js:
+  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«Â», Â«Â») to be true'
+  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«Â», Â«Â») to be true'
+test/built-ins/Array/proto-from-ctor-realm-zero.js:
+  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«Â», Â«Â») to be true'
+  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«Â», Â«Â») to be true'
 test/built-ins/Array/prototype/filter/target-array-with-non-writable-property.js:
   default: 'TypeError: Attempted to assign to readonly property.'
   strict mode: 'TypeError: Attempted to assign to readonly property.'
+test/built-ins/Array/prototype/flatMap/array-like-objects-nested.js:
+  default: 'Exception: should not even consider the length property'
+  strict mode: 'Exception: should not even consider the length property'
 test/built-ins/Array/prototype/indexOf/calls-only-has-on-prototype-after-length-zeroed.js:
   default: 'Test262Error: [[GetPrototypeOf]] trap called'
   strict mode: 'Test262Error: [[GetPrototypeOf]] trap called'
@@ -661,11 +670,11 @@ test/built-ins/Array/prototype/reverse/length-exceeding-integer-limit-with-proxy
   default: 'Test262Error: Expected a StopReverse but got a Test262Error'
   strict mode: 'Test262Error: Expected a StopReverse but got a Test262Error'
 test/built-ins/Array/prototype/slice/length-exceeding-integer-limit-proxied-array.js:
-  default: 'Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. slice(9007199254740989)'
-  strict mode: 'Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. slice(9007199254740989)'
+  default: 'Test262Error: Expected [] and ["9007199254740989", "9007199254740990"] to have the same contents. slice(9007199254740989)'
+  strict mode: 'Test262Error: Expected [] and ["9007199254740989", "9007199254740990"] to have the same contents. slice(9007199254740989)'
 test/built-ins/Array/prototype/slice/length-exceeding-integer-limit.js:
-  default: 'Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. slice(9007199254740989)'
-  strict mode: 'Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. slice(9007199254740989)'
+  default: 'Test262Error: Expected [] and ["9007199254740989", "9007199254740990"] to have the same contents. slice(9007199254740989)'
+  strict mode: 'Test262Error: Expected [] and ["9007199254740989", "9007199254740990"] to have the same contents. slice(9007199254740989)'
 test/built-ins/Array/prototype/slice/target-array-with-non-writable-property.js:
   default: 'TypeError: Attempted to assign to readonly property.'
   strict mode: 'TypeError: Attempted to assign to readonly property.'
@@ -682,14 +691,14 @@ test/built-ins/Array/prototype/splice/create-species-length-exceeding-integer-li
   default: 'Test262Error: Expected a StopSplice but got a Test262Error'
   strict mode: 'Test262Error: Expected a StopSplice but got a Test262Error'
 test/built-ins/Array/prototype/splice/length-and-deleteCount-exceeding-integer-limit.js:
-  default: "Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. arrayLike['9007199254740989'] and arrayLike['9007199254740990'] are removed"
-  strict mode: "Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. arrayLike['9007199254740989'] and arrayLike['9007199254740990'] are removed"
+  default: "Test262Error: Expected [] and [\"9007199254740989\", \"9007199254740990\"] to have the same contents. arrayLike['9007199254740989'] and arrayLike['9007199254740990'] are removed"
+  strict mode: "Test262Error: Expected [] and [\"9007199254740989\", \"9007199254740990\"] to have the same contents. arrayLike['9007199254740989'] and arrayLike['9007199254740990'] are removed"
 test/built-ins/Array/prototype/splice/length-exceeding-integer-limit-shrink-array.js:
-  default: "Test262Error: Expected [] and [9007199254740987] to have the same contents. arrayLike['9007199254740987'] is removed"
-  strict mode: "Test262Error: Expected [] and [9007199254740987] to have the same contents. arrayLike['9007199254740987'] is removed"
+  default: "Test262Error: Expected [] and [\"9007199254740987\"] to have the same contents. arrayLike['9007199254740987'] is removed"
+  strict mode: "Test262Error: Expected [] and [\"9007199254740987\"] to have the same contents. arrayLike['9007199254740987'] is removed"
 test/built-ins/Array/prototype/splice/property-traps-order-with-species.js:
-  default: 'Test262Error: Expected [defineProperty, defineProperty, set, getOwnPropertyDescriptor, defineProperty] and [defineProperty, defineProperty] to have the same contents. undefined'
-  strict mode: 'Test262Error: Expected [defineProperty, defineProperty, set, getOwnPropertyDescriptor, defineProperty] and [defineProperty, defineProperty] to have the same contents. undefined'
+  default: 'Test262Error: Expected ["defineProperty", "defineProperty", "set", "getOwnPropertyDescriptor", "defineProperty"] and ["defineProperty", "defineProperty"] to have the same contents. undefined'
+  strict mode: 'Test262Error: Expected ["defineProperty", "defineProperty", "set", "getOwnPropertyDescriptor", "defineProperty"] and ["defineProperty", "defineProperty"] to have the same contents. undefined'
 test/built-ins/Array/prototype/splice/target-array-with-non-writable-property.js:
   default: 'TypeError: Attempted to assign to readonly property.'
   strict mode: 'TypeError: Attempted to assign to readonly property.'
@@ -732,6 +741,9 @@ test/built-ins/ArrayBuffer/prototype/slice/species.js:
 test/built-ins/ArrayIteratorPrototype/next/detach-typedarray-in-progress.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
+test/built-ins/AsyncFunction/proto-from-ctor-realm.js:
+  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object AsyncFunction]Â», Â«[object AsyncFunction]Â») to be true'
+  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object AsyncFunction]Â», Â«[object AsyncFunction]Â») to be true'
 test/built-ins/Boolean/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«falseÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«falseÂ», Â«falseÂ») to be true'
@@ -850,14 +862,14 @@ test/built-ins/DataView/prototype/setUint8/detached-buffer.js:
   default: 'Test262Error: Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: Expected a TypeError but got a RangeError'
 test/built-ins/Date/proto-from-ctor-realm-one.js:
-  default: 'TypeError: Type error'
-  strict mode: 'TypeError: Type error'
+  default: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
 test/built-ins/Date/proto-from-ctor-realm-two.js:
-  default: 'TypeError: Type error'
-  strict mode: 'TypeError: Type error'
+  default: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
 test/built-ins/Date/proto-from-ctor-realm-zero.js:
-  default: 'TypeError: Type error'
-  strict mode: 'TypeError: Type error'
+  default: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
 test/built-ins/Error/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«ErrorÂ», Â«ErrorÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«ErrorÂ», Â«ErrorÂ») to be true'
@@ -940,9 +952,6 @@ test/built-ins/FinalizationGroup/prototype/cleanupSome/cleanupcallback-iterator-
   default: "ReferenceError: Can't find variable: FinalizationGroup"
   strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
 test/built-ins/FinalizationGroup/prototype/cleanupSome/custom-this.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/cleanupSome/gc-cleanup-not-prevented-with-wr-deref.js:
   default: "ReferenceError: Can't find variable: FinalizationGroup"
   strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
 test/built-ins/FinalizationGroup/prototype/cleanupSome/iterator-dynamic.js:
@@ -1195,8 +1204,8 @@ test/built-ins/Function/prototype/toString/unicode.js:
   default: "Test262Error: Conforms to NativeFunction Syntax: 'function a(\\u{62}, \\u0063) { \\u0062 = \\u{00063}; return b; }'.(function \\u0061(\\u{62}, \\u0063) { \\u0062 = \\u{00063}; return b; })"
   strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'function a(\\u{62}, \\u0063) { \\u0062 = \\u{00063}; return b; }'.(function \\u0061(\\u{62}, \\u0063) { \\u0062 = \\u{00063}; return b; })"
 test/built-ins/GeneratorFunction/proto-from-ctor-realm.js:
-  default: 'TypeError: Type error'
-  strict mode: 'TypeError: Type error'
+  default: 'Test262Error: Expected SameValue(Â«[object GeneratorFunction]Â», Â«[object GeneratorFunction]Â») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«[object GeneratorFunction]Â», Â«[object GeneratorFunction]Â») to be true'
 test/built-ins/JSON/parse/revived-proxy.js:
   default: 'Test262Error: proxy for array Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: proxy for array Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
@@ -1209,6 +1218,24 @@ test/built-ins/JSON/parse/reviver-array-length-get-err.js:
 test/built-ins/Map/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object Map]Â», Â«[object Map]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object Map]Â», Â«[object Map]Â») to be true'
+test/built-ins/NativeErrors/EvalError/proto-from-ctor-realm.js:
+  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«EvalErrorÂ», Â«EvalErrorÂ») to be true'
+  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«EvalErrorÂ», Â«EvalErrorÂ») to be true'
+test/built-ins/NativeErrors/RangeError/proto-from-ctor-realm.js:
+  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«RangeErrorÂ», Â«RangeErrorÂ») to be true'
+  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«RangeErrorÂ», Â«RangeErrorÂ») to be true'
+test/built-ins/NativeErrors/ReferenceError/proto-from-ctor-realm.js:
+  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«ReferenceErrorÂ», Â«ReferenceErrorÂ») to be true'
+  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«ReferenceErrorÂ», Â«ReferenceErrorÂ») to be true'
+test/built-ins/NativeErrors/SyntaxError/proto-from-ctor-realm.js:
+  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«SyntaxErrorÂ», Â«SyntaxErrorÂ») to be true'
+  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«SyntaxErrorÂ», Â«SyntaxErrorÂ») to be true'
+test/built-ins/NativeErrors/TypeError/proto-from-ctor-realm.js:
+  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«TypeErrorÂ», Â«TypeErrorÂ») to be true'
+  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«TypeErrorÂ», Â«TypeErrorÂ») to be true'
+test/built-ins/NativeErrors/URIError/proto-from-ctor-realm.js:
+  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«URIErrorÂ», Â«URIErrorÂ») to be true'
+  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«URIErrorÂ», Â«URIErrorÂ») to be true'
 test/built-ins/Number/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«0Â», Â«0Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«0Â») to be true'
@@ -1220,9 +1247,9 @@ test/built-ins/Object/internals/DefineOwnProperty/consistent-value-regexp-dollar
   default: 'Test262Error: Expected SameValue(Â«Â», Â«xÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«Â», Â«xÂ») to be true'
 test/built-ins/Object/keys/property-traps-order-with-proxied-array.js:
-  default: 'Test262Error: Expected [ownKeys, getOwnPropertyDescriptor] and [ownKeys] to have the same contents. undefined'
-  strict mode: 'Test262Error: Expected [ownKeys, getOwnPropertyDescriptor] and [ownKeys] to have the same contents. undefined'
-test/built-ins/Object/proto-from-ctor.js:
+  default: 'Test262Error: Expected ["ownKeys", "getOwnPropertyDescriptor"] and ["ownKeys"] to have the same contents. undefined'
+  strict mode: 'Test262Error: Expected ["ownKeys", "getOwnPropertyDescriptor"] and ["ownKeys"] to have the same contents. undefined'
+test/built-ins/Object/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
 test/built-ins/Object/prototype/toString/proxy-function.js:
@@ -1237,27 +1264,45 @@ test/built-ins/Object/prototype/toString/symbol-tag-non-str-proxy-function.js:
 test/built-ins/Promise/all/invoke-resolve-get-error-close.js:
   default: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
+test/built-ins/Promise/all/resolve-element-function-name.js:
+  default: 'Test262Error: obj should have an own property name'
+  strict mode: 'Test262Error: obj should have an own property name'
 test/built-ins/Promise/all/resolve-element-function-nonconstructor.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/Promise/allSettled/invoke-resolve-get-error-close.js:
   default: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
+test/built-ins/Promise/allSettled/reject-element-function-name.js:
+  default: 'Test262Error: obj should have an own property name'
+  strict mode: 'Test262Error: obj should have an own property name'
 test/built-ins/Promise/allSettled/reject-element-function-nonconstructor.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/Promise/allSettled/resolve-element-function-name.js:
+  default: 'Test262Error: obj should have an own property name'
+  strict mode: 'Test262Error: obj should have an own property name'
 test/built-ins/Promise/allSettled/resolve-element-function-nonconstructor.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/Promise/executor-function-name.js:
+  default: 'Test262Error: obj should have an own property name'
+  strict mode: 'Test262Error: obj should have an own property name'
 test/built-ins/Promise/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object Promise]Â», Â«[object Promise]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object Promise]Â», Â«[object Promise]Â») to be true'
 test/built-ins/Promise/race/invoke-resolve-get-error-close.js:
   default: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«1Â») to be true'
+test/built-ins/Promise/reject-function-name.js:
+  default: 'Test262Error: obj should have an own property name'
+  strict mode: 'Test262Error: obj should have an own property name'
 test/built-ins/Promise/reject-function-nonconstructor.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/Promise/resolve-function-name.js:
+  default: 'Test262Error: obj should have an own property name'
+  strict mode: 'Test262Error: obj should have an own property name'
 test/built-ins/Promise/resolve-function-nonconstructor.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -1297,6 +1342,48 @@ test/built-ins/Proxy/construct/return-not-object-throws-undefined-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 'Test262Error: Expected a TypeError but got a TypeError'
   strict mode: 'Test262Error: Expected a TypeError but got a TypeError'
+test/built-ins/Proxy/revocable/revocation-function-name.js:
+  default: 'Test262Error: obj should have an own property name'
+  strict mode: 'Test262Error: obj should have an own property name'
+test/built-ins/RegExp/match-indices/indices-array-element.js:
+  default: "TypeError: undefined is not an object (evaluating 'indices[0]')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'indices[0]')"
+test/built-ins/RegExp/match-indices/indices-array-matched.js:
+  default: "TypeError: undefined is not an object (evaluating 'indices.length')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'indices.length')"
+test/built-ins/RegExp/match-indices/indices-array-non-unicode-match.js:
+  default: 'Test262Error: Expected [[1, 2], [1, 2]] to be structurally equal to undefined. '
+  strict mode: 'Test262Error: Expected [[1, 2], [1, 2]] to be structurally equal to undefined. '
+test/built-ins/RegExp/match-indices/indices-array-properties.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/built-ins/RegExp/match-indices/indices-array-unicode-match.js:
+  default: 'Test262Error: Expected [[1, 2], [1, 2]] to be structurally equal to undefined. '
+  strict mode: 'Test262Error: Expected [[1, 2], [1, 2]] to be structurally equal to undefined. '
+test/built-ins/RegExp/match-indices/indices-array-unicode-property-names.js:
+  default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
+test/built-ins/RegExp/match-indices/indices-array-unmatched.js:
+  default: "TypeError: undefined is not an object (evaluating 'indices.length')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'indices.length')"
+test/built-ins/RegExp/match-indices/indices-array.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(indices)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(indices)')"
+test/built-ins/RegExp/match-indices/indices-groups-object-undefined.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/built-ins/RegExp/match-indices/indices-groups-object-unmatched.js:
+  default: "TypeError: undefined is not an object (evaluating 'result.groups')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'result.groups')"
+test/built-ins/RegExp/match-indices/indices-groups-object.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/built-ins/RegExp/match-indices/indices-groups-properties.js:
+  default: "TypeError: undefined is not an object (evaluating '/(?<fst>.)|(?<snd>.)/u.exec(\"abcd\").indices.groups')"
+  strict mode: "TypeError: undefined is not an object (evaluating '/(?<fst>.)|(?<snd>.)/u.exec(\"abcd\").indices.groups')"
+test/built-ins/RegExp/match-indices/indices-property.js:
+  default: 'Test262Error: obj should have an own property indices'
+  strict mode: 'Test262Error: obj should have an own property indices'
 test/built-ins/RegExp/named-groups/groups-object-subclass-sans.js:
   default: 'Test262Error: Expected SameValue(Â«bÂ», Â«$<a>Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«bÂ», Â«$<a>Â») to be true'
@@ -1726,6 +1813,9 @@ test/built-ins/ThrowTypeError/frozen.js:
 test/built-ins/ThrowTypeError/length.js:
   default: 'Test262Error: Expected obj[length] to have configurable:false.'
   strict mode: 'Test262Error: Expected obj[length] to have configurable:false.'
+test/built-ins/ThrowTypeError/name.js:
+  default: 'Test262Error: obj should have an own property name'
+  strict mode: 'Test262Error: obj should have an own property name'
 test/built-ins/ThrowTypeError/unique-per-realm-non-simple.js:
   default: 'Test262Error: callee.get Expected SameValue(Â«function () {'
 test/built-ins/TypedArray/prototype/fill/fill-values-conversion-once.js:
@@ -1780,20 +1870,20 @@ test/built-ins/TypedArrayConstructors/ctors/buffer-arg/length-to-number-detachbu
   default: 'Test262Error: Expected a TypeError but got a RangeError (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError but got a RangeError (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/ctors/buffer-arg/proto-from-ctor-realm.js:
-  default: 'TypeError: Receiver should be a typed array view (Testing with Float64Array.)'
-  strict mode: 'TypeError: Receiver should be a typed array view (Testing with Float64Array.)'
+  default: 'Test262Error: Expected SameValue(Â«[object Float64ArrayPrototype]Â», Â«[object Float64ArrayPrototype]Â») to be true (Testing with Float64Array.)'
+  strict mode: 'Test262Error: Expected SameValue(Â«[object Float64ArrayPrototype]Â», Â«[object Float64ArrayPrototype]Â») to be true (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/ctors/length-arg/proto-from-ctor-realm.js:
-  default: 'TypeError: Receiver should be a typed array view (Testing with Float64Array.)'
-  strict mode: 'TypeError: Receiver should be a typed array view (Testing with Float64Array.)'
+  default: 'Test262Error: Expected SameValue(Â«[object Float64ArrayPrototype]Â», Â«[object Float64ArrayPrototype]Â») to be true (Testing with Float64Array.)'
+  strict mode: 'Test262Error: Expected SameValue(Â«[object Float64ArrayPrototype]Â», Â«[object Float64ArrayPrototype]Â») to be true (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/ctors/no-args/proto-from-ctor-realm.js:
-  default: 'TypeError: Receiver should be a typed array view (Testing with Float64Array.)'
-  strict mode: 'TypeError: Receiver should be a typed array view (Testing with Float64Array.)'
+  default: 'Test262Error: Expected SameValue(Â«[object Float64ArrayPrototype]Â», Â«[object Float64ArrayPrototype]Â») to be true (Testing with Float64Array.)'
+  strict mode: 'Test262Error: Expected SameValue(Â«[object Float64ArrayPrototype]Â», Â«[object Float64ArrayPrototype]Â») to be true (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/ctors/object-arg/length-excessive-throws.js:
   default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/ctors/object-arg/proto-from-ctor-realm.js:
-  default: 'TypeError: Receiver should be a typed array view (Testing with Float64Array.)'
-  strict mode: 'TypeError: Receiver should be a typed array view (Testing with Float64Array.)'
+  default: 'Test262Error: Expected SameValue(Â«[object Float64ArrayPrototype]Â», Â«[object Float64ArrayPrototype]Â») to be true (Testing with Float64Array.)'
+  strict mode: 'Test262Error: Expected SameValue(Â«[object Float64ArrayPrototype]Â», Â«[object Float64ArrayPrototype]Â») to be true (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/detached-when-species-retrieved-different-type.js:
   default: 'Test262Error: TypeError thrown for detached source buffer Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: TypeError thrown for detached source buffer Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
@@ -1822,8 +1912,8 @@ test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/other-ctor-buffer-cto
   default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/proto-from-ctor-realm.js:
-  default: 'TypeError: Receiver should be a typed array view (Testing with Float64Array.)'
-  strict mode: 'TypeError: Receiver should be a typed array view (Testing with Float64Array.)'
+  default: 'Test262Error: Expected SameValue(Â«[object Float64ArrayPrototype]Â», Â«[object Float64ArrayPrototype]Â») to be true (Testing with Float64Array.)'
+  strict mode: 'Test262Error: Expected SameValue(Â«[object Float64ArrayPrototype]Â», Â«[object Float64ArrayPrototype]Â») to be true (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor-access-throws.js:
   default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
@@ -2013,12 +2103,15 @@ test/built-ins/WeakSet/proto-from-ctor-realm.js:
 test/intl402/Collator/missing-unicode-ext-value-defaults-to-true.js:
   default: 'Test262Error: "kn" should be returned in locale. Expected SameValue(Â«falseÂ», Â«trueÂ») to be true'
   strict mode: 'Test262Error: "kn" should be returned in locale. Expected SameValue(Â«falseÂ», Â«trueÂ») to be true'
+test/intl402/Collator/proto-from-ctor-realm.js:
+  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
+  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
 test/intl402/Collator/prototype/compare/compare-function-name.js:
-  default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
+  default: 'Test262Error: descriptor value should be '
+  strict mode: 'Test262Error: descriptor value should be '
 test/intl402/Collator/usage-de.js:
-  default: 'Test262Error: Expected [Ã, AE] and [AE, Ã] to have the same contents. search'
-  strict mode: 'Test262Error: Expected [Ã, AE] and [AE, Ã] to have the same contents. search'
+  default: 'Test262Error: Expected ["Ã", "AE"] and ["AE", "Ã"] to have the same contents. search'
+  strict mode: 'Test262Error: Expected ["Ã", "AE"] and ["AE", "Ã"] to have the same contents. search'
 test/intl402/DateTimeFormat/constructor-options-dayPeriod-invalid.js:
   default: 'Test262Error: new Intl.DateTimeFormat("en", { dayPeriod: "" }) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: new Intl.DateTimeFormat("en", { dayPeriod: "" }) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
@@ -2032,23 +2125,23 @@ test/intl402/DateTimeFormat/constructor-options-fractionalSecondDigits-valid.js:
   default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«0Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«0Â») to be true'
 test/intl402/DateTimeFormat/constructor-options-order-dayPeriod.js:
-  default: 'Test262Error: Expected [day, hour, day, hour] and [day, dayPeriod, hour, day, dayPeriod, hour] to have the same contents. undefined'
-  strict mode: 'Test262Error: Expected [day, hour, day, hour] and [day, dayPeriod, hour, day, dayPeriod, hour] to have the same contents. undefined'
+  default: 'Test262Error: Expected ["day", "hour", "day", "hour"] and ["day", "dayPeriod", "hour", "day", "dayPeriod", "hour"] to have the same contents. undefined'
+  strict mode: 'Test262Error: Expected ["day", "hour", "day", "hour"] and ["day", "dayPeriod", "hour", "day", "dayPeriod", "hour"] to have the same contents. undefined'
 test/intl402/DateTimeFormat/constructor-options-order-fractionalSecondDigits.js:
-  default: 'Test262Error: Expected [second, localeMatcher, second, timeZoneName, formatMatcher] and [second, fractionalSecondDigits, localeMatcher, second, timeZoneName, fractionalSecondDigits, formatMatcher] to have the same contents. undefined'
-  strict mode: 'Test262Error: Expected [second, localeMatcher, second, timeZoneName, formatMatcher] and [second, fractionalSecondDigits, localeMatcher, second, timeZoneName, fractionalSecondDigits, formatMatcher] to have the same contents. undefined'
+  default: 'Test262Error: Expected ["second", "localeMatcher", "second", "timeZoneName", "formatMatcher"] and ["second", "fractionalSecondDigits", "localeMatcher", "second", "timeZoneName", "fractionalSecondDigits", "formatMatcher"] to have the same contents. undefined'
+  strict mode: 'Test262Error: Expected ["second", "localeMatcher", "second", "timeZoneName", "formatMatcher"] and ["second", "fractionalSecondDigits", "localeMatcher", "second", "timeZoneName", "fractionalSecondDigits", "formatMatcher"] to have the same contents. undefined'
 test/intl402/DateTimeFormat/constructor-options-throwing-getters-dayPeriod.js:
   default: 'Test262Error: Exception from dayPeriod getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Exception from dayPeriod getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
 test/intl402/DateTimeFormat/constructor-options-throwing-getters-fractionalSecondDigits.js:
   default: 'Test262Error: Exception from fractionalSecondDigits getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Exception from fractionalSecondDigits getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
-test/intl402/DateTimeFormat/constructor-options-throwing-getters-quarter.js:
-  default: 'Test262Error: Exception from quarter getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Exception from quarter getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
 test/intl402/DateTimeFormat/numbering-system-calendar-options.js:
   default: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(Â«arabÂ», Â«latnÂ») to be true"
   strict mode: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(Â«arabÂ», Â«latnÂ») to be true"
+test/intl402/DateTimeFormat/proto-from-ctor-realm.js:
+  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
+  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
 test/intl402/DateTimeFormat/prototype/format/dayPeriod-long-en.js:
   default: 'Test262Error: 00:00, long format Expected SameValue(Â«12/12/2017Â», Â«at nightÂ») to be true'
   strict mode: 'Test262Error: 00:00, long format Expected SameValue(Â«12/12/2017Â», Â«at nightÂ») to be true'
@@ -2059,8 +2152,8 @@ test/intl402/DateTimeFormat/prototype/format/dayPeriod-short-en.js:
   default: 'Test262Error: 00:00, short format Expected SameValue(Â«12/12/2017Â», Â«at nightÂ») to be true'
   strict mode: 'Test262Error: 00:00, short format Expected SameValue(Â«12/12/2017Â», Â«at nightÂ») to be true'
 test/intl402/DateTimeFormat/prototype/format/format-function-name.js:
-  default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
+  default: 'Test262Error: descriptor value should be '
+  strict mode: 'Test262Error: descriptor value should be '
 test/intl402/DateTimeFormat/prototype/format/fractionalSecondDigits.js:
   default: 'Test262Error: 1 fractionalSecondDigits round down Expected SameValue(Â«02:03Â», Â«02:03.2Â») to be true'
   strict mode: 'Test262Error: 1 fractionalSecondDigits round down Expected SameValue(Â«02:03Â», Â«02:03.2Â») to be true'
@@ -2077,14 +2170,14 @@ test/intl402/DateTimeFormat/prototype/formatToParts/fractionalSecondDigits.js:
   default: 'Test262Error: length should be 5, 1 fractionalSecondDigits round down Expected SameValue(Â«3Â», Â«5Â») to be true'
   strict mode: 'Test262Error: length should be 5, 1 fractionalSecondDigits round down Expected SameValue(Â«3Â», Â«5Â») to be true'
 test/intl402/DateTimeFormat/prototype/resolvedOptions/order-dayPeriod.js:
-  default: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, hour, hourCycle, hour12, minute] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, dayPeriod, hour, minute] to have the same contents. undefined'
-  strict mode: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, hour, hourCycle, hour12, minute] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, dayPeriod, hour, minute] to have the same contents. undefined'
+  default: 'Test262Error: Expected ["locale", "calendar", "numberingSystem", "timeZone", "hour", "hourCycle", "hour12", "minute"] and ["locale", "calendar", "numberingSystem", "timeZone", "hourCycle", "hour12", "dayPeriod", "hour", "minute"] to have the same contents. undefined'
+  strict mode: 'Test262Error: Expected ["locale", "calendar", "numberingSystem", "timeZone", "hour", "hourCycle", "hour12", "minute"] and ["locale", "calendar", "numberingSystem", "timeZone", "hourCycle", "hour12", "dayPeriod", "hour", "minute"] to have the same contents. undefined'
 test/intl402/DateTimeFormat/prototype/resolvedOptions/order-fractionalSecondDigits.js:
-  default: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, minute, second] and [locale, calendar, numberingSystem, timeZone, minute, second, fractionalSecondDigits] to have the same contents. undefined'
-  strict mode: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, minute, second] and [locale, calendar, numberingSystem, timeZone, minute, second, fractionalSecondDigits] to have the same contents. undefined'
+  default: 'Test262Error: Expected ["locale", "calendar", "numberingSystem", "timeZone", "minute", "second"] and ["locale", "calendar", "numberingSystem", "timeZone", "minute", "second", "fractionalSecondDigits"] to have the same contents. undefined'
+  strict mode: 'Test262Error: Expected ["locale", "calendar", "numberingSystem", "timeZone", "minute", "second"] and ["locale", "calendar", "numberingSystem", "timeZone", "minute", "second", "fractionalSecondDigits"] to have the same contents. undefined'
 test/intl402/DateTimeFormat/prototype/resolvedOptions/order.js:
-  default: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, weekday, era, year, month, day, hour, hourCycle, hour12, minute, second, timeZoneName] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, weekday, era, year, month, day, hour, minute, second, timeZoneName] to have the same contents. undefined'
-  strict mode: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, weekday, era, year, month, day, hour, hourCycle, hour12, minute, second, timeZoneName] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, weekday, era, year, month, day, hour, minute, second, timeZoneName] to have the same contents. undefined'
+  default: 'Test262Error: Expected ["locale", "calendar", "numberingSystem", "timeZone", "weekday", "era", "year", "month", "day", "hour", "hourCycle", "hour12", "minute", "second", "timeZoneName"] and ["locale", "calendar", "numberingSystem", "timeZone", "hourCycle", "hour12", "weekday", "era", "year", "month", "day", "hour", "minute", "second", "timeZoneName"] to have the same contents. undefined'
+  strict mode: 'Test262Error: Expected ["locale", "calendar", "numberingSystem", "timeZone", "weekday", "era", "year", "month", "day", "hour", "hourCycle", "hour12", "minute", "second", "timeZoneName"] and ["locale", "calendar", "numberingSystem", "timeZone", "hourCycle", "hour12", "weekday", "era", "year", "month", "day", "hour", "minute", "second", "timeZoneName"] to have the same contents. undefined'
 test/intl402/Intl/getCanonicalLocales/canonicalized-tags.js:
   default: 'Test262Error: Expected SameValue(Â«cmnÂ», Â«zhÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«cmnÂ», Â«zhÂ») to be true'
@@ -2106,12 +2199,18 @@ test/intl402/Intl/getCanonicalLocales/preferred-variant.js:
 test/intl402/NumberFormat/numbering-system-options.js:
   default: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(Â«arabÂ», Â«latnÂ») to be true"
   strict mode: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(Â«arabÂ», Â«latnÂ») to be true"
+test/intl402/NumberFormat/proto-from-ctor-realm.js:
+  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
+  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
 test/intl402/NumberFormat/prototype/format/format-function-name.js:
-  default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
+  default: 'Test262Error: descriptor value should be '
+  strict mode: 'Test262Error: descriptor value should be '
 test/intl402/NumberFormat/prototype/format/format-negative-numbers.js:
   default: 'Test262Error: Intl.NumberFormat is formatting 0 and -0 the same way. Expected SameValue(Â«0Â», Â«0Â») to be false'
   strict mode: 'Test262Error: Intl.NumberFormat is formatting 0 and -0 the same way. Expected SameValue(Â«0Â», Â«0Â») to be false'
+test/intl402/PluralRules/proto-from-ctor-realm.js:
+  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
+  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
 test/intl402/language-tags-invalid.js:
   default: 'Test262Error: Test data "de-gregory-gregory" is a canonicalized and structurally valid language tag.'
   strict mode: 'Test262Error: Test data "de-gregory-gregory" is a canonicalized and structurally valid language tag.'
@@ -2216,21 +2315,12 @@ test/language/block-scope/syntax/redeclaration/var-redeclaration-attempt-after-f
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/var-redeclaration-attempt-after-generator.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/computed-property-names/class/static/method-number.js:
-  default: "Test262Error: `compareArray(Object.getOwnPropertyNames(C), ['1', '2', 'length', 'prototype', 'name', 'a', 'c'])` returns `true`"
-  strict mode: "Test262Error: `compareArray(Object.getOwnPropertyNames(C), ['1', '2', 'length', 'prototype', 'name', 'a', 'c'])` returns `true`"
-test/language/computed-property-names/class/static/method-string.js:
-  default: "Test262Error: `compareArray(Object.getOwnPropertyNames(C), ['length', 'prototype', 'name', 'a', 'b', 'c', 'd'])` returns `true`"
-  strict mode: "Test262Error: `compareArray(Object.getOwnPropertyNames(C), ['length', 'prototype', 'name', 'a', 'b', 'c', 'd'])` returns `true`"
-test/language/computed-property-names/class/static/method-symbol.js:
-  default: "Test262Error: `compareArray(Object.getOwnPropertyNames(C), ['length', 'prototype', 'name', 'a', 'c'])` returns `true`"
-  strict mode: "Test262Error: `compareArray(Object.getOwnPropertyNames(C), ['length', 'prototype', 'name', 'a', 'c'])` returns `true`"
 test/language/computed-property-names/to-name-side-effects/class.js:
-  default: 'Test262Error: The result of `counter++` is `0` Expected SameValue(Â«1Â», Â«0Â») to be true'
-  strict mode: 'Test262Error: The result of `counter++` is `0` Expected SameValue(Â«1Â», Â«0Â») to be true'
+  default: 'Test262Error: Expected [0, 1] and [0] to have the same contents. order set for key1'
+  strict mode: 'Test262Error: Expected [0, 1] and [0] to have the same contents. order set for key1'
 test/language/computed-property-names/to-name-side-effects/numbers-class.js:
-  default: 'Test262Error: The result of `counter++` is `0` Expected SameValue(Â«1Â», Â«0Â») to be true'
-  strict mode: 'Test262Error: The result of `counter++` is `0` Expected SameValue(Â«1Â», Â«0Â») to be true'
+  default: 'Test262Error: Expected [0, 1] and [0] to have the same contents. order set for key1'
+  strict mode: 'Test262Error: Expected [0, 1] and [0] to have the same contents. order set for key1'
 test/language/computed-property-names/to-name-side-effects/object.js:
   default: 'Test262Error: The result of `counter++` is `0` Expected SameValue(Â«1Â», Â«0Â») to be true'
   strict mode: 'Test262Error: The result of `counter++` is `0` Expected SameValue(Â«1Â», Â«0Â») to be true'
@@ -2292,11 +2382,11 @@ test/language/expressions/assignment/S11.13.1_A7_T3.js:
   default: 'Test262Error: Expected a DummyError but got a Test262Error'
   strict mode: 'Test262Error: Expected a DummyError but got a Test262Error'
 test/language/expressions/assignment/destructuring/iterator-destructuring-property-reference-target-evaluation-order.js:
-  default: 'Test262Error: Expected [source, iterator, iterator-step, iterator-done, target, target-key, target-key-tostring, set] and [source, iterator, target, target-key, target-key-tostring, iterator-step, iterator-done, set] to have the same contents. undefined'
-  strict mode: 'Test262Error: Expected [source, iterator, iterator-step, iterator-done, target, target-key, target-key-tostring, set] and [source, iterator, target, target-key, target-key-tostring, iterator-step, iterator-done, set] to have the same contents. undefined'
+  default: 'Test262Error: Expected ["source", "iterator", "iterator-step", "iterator-done", "target", "target-key", "target-key-tostring", "set"] and ["source", "iterator", "target", "target-key", "target-key-tostring", "iterator-step", "iterator-done", "set"] to have the same contents. undefined'
+  strict mode: 'Test262Error: Expected ["source", "iterator", "iterator-step", "iterator-done", "target", "target-key", "target-key-tostring", "set"] and ["source", "iterator", "target", "target-key", "target-key-tostring", "iterator-step", "iterator-done", "set"] to have the same contents. undefined'
 test/language/expressions/assignment/destructuring/keyed-destructuring-property-reference-target-evaluation-order.js:
-  default: 'Test262Error: Expected [source, source-key, source-key-tostring, get, target, target-key, target-key-tostring, set] and [source, source-key, source-key-tostring, target, target-key, target-key-tostring, get, set] to have the same contents. undefined'
-  strict mode: 'Test262Error: Expected [source, source-key, source-key-tostring, get, target, target-key, target-key-tostring, set] and [source, source-key, source-key-tostring, target, target-key, target-key-tostring, get, set] to have the same contents. undefined'
+  default: 'Test262Error: Expected ["source", "source-key", "source-key-tostring", "get", "target", "target-key", "target-key-tostring", "set"] and ["source", "source-key", "source-key-tostring", "target", "target-key", "target-key-tostring", "get", "set"] to have the same contents. undefined'
+  strict mode: 'Test262Error: Expected ["source", "source-key", "source-key-tostring", "get", "target", "target-key", "target-key-tostring", "set"] and ["source", "source-key", "source-key-tostring", "target", "target-key", "target-key-tostring", "get", "set"] to have the same contents. undefined'
 test/language/expressions/assignment/destructuring/obj-prop-__proto__dup.js:
   default: 'SyntaxError: Attempted to redefine __proto__ property.'
   strict mode: 'SyntaxError: Attempted to redefine __proto__ property.'
@@ -2363,12 +2453,81 @@ test/language/expressions/assignment/dstr/array-rest-iter-thrw-close.js:
 test/language/expressions/assignment/dstr/array-rest-lref-err.js:
   default: 'Test262Error: Expected SameValue(Â«1Â», Â«0Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«1Â», Â«0Â») to be true'
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-break-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-case-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'c\\u0061se'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-catch-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'c\\u0061tch'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-class-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'cl\\u0061ss'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-const-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0063onst'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-continue-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0063ontinue'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-debugger-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064ebugger'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-default-escaped-ext.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'def\\u{61}ult'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-default-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'def\\u0061ult'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-delete-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064elete'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-do-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064o'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-else-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065lse'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-enum-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065num'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-export-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065xport'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-extends-escaped-ext.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u{65}xtends'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-extends-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065xtends'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-finally-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066inally'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-for-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066or'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-function-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066unction'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-if-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'i\\u0066'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-import-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069mport'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-in-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069n'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-instanceof-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069nstanceof'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-let-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'l\\u0065t'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-new-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'n\\u0065w'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-return-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'r\\u0065turn'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-super-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'sup\\u0065r'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-switch-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'sw\\u0069tch'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-this-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'th\\u0069s'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-throw-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 't\\u0068row'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-try-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'tr\\u0079'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-typeof-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'typ\\u0065of'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-var-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'v\\u0061r'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-void-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'voi\\u0064'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-while-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'whil\\u0065'"
+test/language/expressions/assignment/dstr/ident-name-prop-name-literal-with-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'w\\u0069th'"
 test/language/expressions/assignment/fn-name-lhs-cover.js:
-  default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
-test/language/expressions/assignment/fn-name-lhs-member.js:
-  default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
+  default: 'Test262Error: descriptor value should be '
+  strict mode: 'Test262Error: descriptor value should be '
 test/language/expressions/call/eval-realm-indirect.js:
   default: 'Test262Error: Expected SameValue(Â«insideÂ», Â«outsideÂ») to be true'
 test/language/expressions/call/eval-spread-empty-leading.js:
@@ -2416,9 +2575,135 @@ test/language/expressions/class/elements/syntax/valid/grammar-static-ctor-async-
 test/language/expressions/class/elements/syntax/valid/grammar-static-ctor-gen-meth-valid.js:
   default: "SyntaxError: Cannot declare a generator function named 'constructor'."
   strict mode: "SyntaxError: Cannot declare a generator function named 'constructor'."
-test/language/expressions/class/name.js:
-  default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
+test/language/expressions/class/ident-name-method-def-break-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"
+test/language/expressions/class/ident-name-method-def-case-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'c\\u0061se'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'c\\u0061se'"
+test/language/expressions/class/ident-name-method-def-catch-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'c\\u0061tch'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'c\\u0061tch'"
+test/language/expressions/class/ident-name-method-def-class-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'cl\\u0061ss'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'cl\\u0061ss'"
+test/language/expressions/class/ident-name-method-def-const-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0063onst'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0063onst'"
+test/language/expressions/class/ident-name-method-def-continue-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0063ontinue'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0063ontinue'"
+test/language/expressions/class/ident-name-method-def-debugger-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064ebugger'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064ebugger'"
+test/language/expressions/class/ident-name-method-def-default-escaped-ext.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'def\\u{61}ult'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'def\\u{61}ult'"
+test/language/expressions/class/ident-name-method-def-default-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'def\\u0061ult'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'def\\u0061ult'"
+test/language/expressions/class/ident-name-method-def-delete-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064elete'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064elete'"
+test/language/expressions/class/ident-name-method-def-do-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064o'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064o'"
+test/language/expressions/class/ident-name-method-def-else-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065lse'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065lse'"
+test/language/expressions/class/ident-name-method-def-enum-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065num'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065num'"
+test/language/expressions/class/ident-name-method-def-export-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065xport'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065xport'"
+test/language/expressions/class/ident-name-method-def-extends-escaped-ext.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u{65}xtends'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u{65}xtends'"
+test/language/expressions/class/ident-name-method-def-extends-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065xtends'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065xtends'"
+test/language/expressions/class/ident-name-method-def-finally-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066inally'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066inally'"
+test/language/expressions/class/ident-name-method-def-for-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066or'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066or'"
+test/language/expressions/class/ident-name-method-def-function-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066unction'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066unction'"
+test/language/expressions/class/ident-name-method-def-if-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'i\\u0066'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'i\\u0066'"
+test/language/expressions/class/ident-name-method-def-implements-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069mplements'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069mplements'"
+test/language/expressions/class/ident-name-method-def-import-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069mport'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069mport'"
+test/language/expressions/class/ident-name-method-def-in-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069n'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069n'"
+test/language/expressions/class/ident-name-method-def-instanceof-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069nstanceof'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069nstanceof'"
+test/language/expressions/class/ident-name-method-def-interface-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'interf\\u0061ce'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'interf\\u0061ce'"
+test/language/expressions/class/ident-name-method-def-let-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'l\\u0065t'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'l\\u0065t'"
+test/language/expressions/class/ident-name-method-def-new-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'n\\u0065w'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'n\\u0065w'"
+test/language/expressions/class/ident-name-method-def-package-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'p\\u0061ckage'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'p\\u0061ckage'"
+test/language/expressions/class/ident-name-method-def-private-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'privat\\u0065'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'privat\\u0065'"
+test/language/expressions/class/ident-name-method-def-protected-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'prot\\u0065cted'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'prot\\u0065cted'"
+test/language/expressions/class/ident-name-method-def-public-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'pu\\u0062lic'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'pu\\u0062lic'"
+test/language/expressions/class/ident-name-method-def-return-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'r\\u0065turn'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'r\\u0065turn'"
+test/language/expressions/class/ident-name-method-def-static-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'st\\u0061tic'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'st\\u0061tic'"
+test/language/expressions/class/ident-name-method-def-super-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'sup\\u0065r'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'sup\\u0065r'"
+test/language/expressions/class/ident-name-method-def-switch-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'sw\\u0069tch'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'sw\\u0069tch'"
+test/language/expressions/class/ident-name-method-def-this-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'th\\u0069s'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'th\\u0069s'"
+test/language/expressions/class/ident-name-method-def-throw-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 't\\u0068row'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 't\\u0068row'"
+test/language/expressions/class/ident-name-method-def-try-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'tr\\u0079'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'tr\\u0079'"
+test/language/expressions/class/ident-name-method-def-typeof-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'typ\\u0065of'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'typ\\u0065of'"
+test/language/expressions/class/ident-name-method-def-var-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'v\\u0061r'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'v\\u0061r'"
+test/language/expressions/class/ident-name-method-def-void-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'voi\\u0064'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'voi\\u0064'"
+test/language/expressions/class/ident-name-method-def-while-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'whil\\u0065'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'whil\\u0065'"
+test/language/expressions/class/ident-name-method-def-with-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'w\\u0069th'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'w\\u0069th'"
 test/language/expressions/class/poisoned-underscore-proto.js:
   default: 'Test262Error: should not be called'
   strict mode: 'Test262Error: should not be called'
@@ -2579,9 +2864,6 @@ test/language/expressions/compound-assignment/S11.13.2_A7.9_T4.js:
 test/language/expressions/conditional/in-branch-1.js:
   default: "SyntaxError: Unexpected keyword 'in'. Expected ':' in ternary operator."
   strict mode: "SyntaxError: Unexpected keyword 'in'. Expected ':' in ternary operator."
-test/language/expressions/function/name.js:
-  default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
 test/language/expressions/function/scope-body-lex-distinct.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/function/scope-param-elem-var-close.js:
@@ -2593,9 +2875,6 @@ test/language/expressions/function/scope-param-rest-elem-var-close.js:
 test/language/expressions/generators/generator-created-after-decl-inst.js:
   default: 'Test262Error: Expected SameValue(Â«[object Generator]Â», Â«[object Generator]Â») to be false'
   strict mode: 'Test262Error: Expected SameValue(Â«[object Generator]Â», Â«[object Generator]Â») to be false'
-test/language/expressions/generators/name.js:
-  default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
-  strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
 test/language/expressions/generators/scope-body-lex-distinct.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/generators/scope-param-elem-var-close.js:
@@ -2622,6 +2901,372 @@ test/language/expressions/object/__proto__-permitted-dup.js:
 test/language/expressions/object/computed-property-evaluation-order.js:
   default: 'Test262Error: Expected SameValue(Â«2Â», Â«1Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«2Â», Â«1Â») to be true'
+test/language/expressions/object/covered-ident-name-prop-name-literal-break-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-case-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'c\\u0061se'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'c\\u0061se'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-catch-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'c\\u0061tch'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'c\\u0061tch'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-class-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'cl\\u0061ss'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'cl\\u0061ss'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-const-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0063onst'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0063onst'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-continue-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0063ontinue'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0063ontinue'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-debugger-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064ebugger'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064ebugger'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-default-escaped-ext.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'def\\u{61}ult'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'def\\u{61}ult'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-default-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'def\\u0061ult'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'def\\u0061ult'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-delete-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064elete'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064elete'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-do-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064o'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064o'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-else-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065lse'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065lse'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-enum-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065num'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065num'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-export-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065xport'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065xport'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-extends-escaped-ext.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u{65}xtends'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u{65}xtends'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-extends-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065xtends'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065xtends'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-finally-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066inally'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066inally'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-for-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066or'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066or'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-function-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066unction'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066unction'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-if-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'i\\u0066'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'i\\u0066'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-implements-escaped.js:
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069mplements'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-import-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069mport'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069mport'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-in-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069n'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069n'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-instanceof-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069nstanceof'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069nstanceof'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-interface-escaped.js:
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'interf\\u0061ce'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-let-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'l\\u0065t'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'l\\u0065t'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-new-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'n\\u0065w'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'n\\u0065w'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-package-escaped.js:
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'p\\u0061ckage'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-private-escaped.js:
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'privat\\u0065'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-protected-escaped.js:
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'prot\\u0065cted'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-public-escaped.js:
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'pu\\u0062lic'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-return-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'r\\u0065turn'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'r\\u0065turn'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-static-escaped.js:
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'st\\u0061tic'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-super-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'sup\\u0065r'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'sup\\u0065r'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-switch-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'sw\\u0069tch'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'sw\\u0069tch'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-this-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'th\\u0069s'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'th\\u0069s'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-throw-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 't\\u0068row'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 't\\u0068row'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-try-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'tr\\u0079'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'tr\\u0079'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-typeof-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'typ\\u0065of'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'typ\\u0065of'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-var-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'v\\u0061r'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'v\\u0061r'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-void-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'voi\\u0064'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'voi\\u0064'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-while-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'whil\\u0065'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'whil\\u0065'"
+test/language/expressions/object/covered-ident-name-prop-name-literal-with-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'w\\u0069th'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'w\\u0069th'"
+test/language/expressions/object/ident-name-method-def-break-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"
+test/language/expressions/object/ident-name-method-def-case-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'c\\u0061se'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'c\\u0061se'"
+test/language/expressions/object/ident-name-method-def-catch-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'c\\u0061tch'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'c\\u0061tch'"
+test/language/expressions/object/ident-name-method-def-class-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'cl\\u0061ss'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'cl\\u0061ss'"
+test/language/expressions/object/ident-name-method-def-const-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0063onst'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0063onst'"
+test/language/expressions/object/ident-name-method-def-continue-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0063ontinue'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0063ontinue'"
+test/language/expressions/object/ident-name-method-def-debugger-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064ebugger'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064ebugger'"
+test/language/expressions/object/ident-name-method-def-default-escaped-ext.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'def\\u{61}ult'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'def\\u{61}ult'"
+test/language/expressions/object/ident-name-method-def-default-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'def\\u0061ult'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'def\\u0061ult'"
+test/language/expressions/object/ident-name-method-def-delete-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064elete'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064elete'"
+test/language/expressions/object/ident-name-method-def-do-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064o'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064o'"
+test/language/expressions/object/ident-name-method-def-else-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065lse'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065lse'"
+test/language/expressions/object/ident-name-method-def-enum-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065num'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065num'"
+test/language/expressions/object/ident-name-method-def-export-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065xport'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065xport'"
+test/language/expressions/object/ident-name-method-def-extends-escaped-ext.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u{65}xtends'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u{65}xtends'"
+test/language/expressions/object/ident-name-method-def-extends-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065xtends'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065xtends'"
+test/language/expressions/object/ident-name-method-def-finally-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066inally'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066inally'"
+test/language/expressions/object/ident-name-method-def-for-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066or'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066or'"
+test/language/expressions/object/ident-name-method-def-function-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066unction'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066unction'"
+test/language/expressions/object/ident-name-method-def-if-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'i\\u0066'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'i\\u0066'"
+test/language/expressions/object/ident-name-method-def-implements-escaped.js:
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069mplements'"
+test/language/expressions/object/ident-name-method-def-import-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069mport'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069mport'"
+test/language/expressions/object/ident-name-method-def-in-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069n'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069n'"
+test/language/expressions/object/ident-name-method-def-instanceof-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069nstanceof'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069nstanceof'"
+test/language/expressions/object/ident-name-method-def-interface-escaped.js:
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'interf\\u0061ce'"
+test/language/expressions/object/ident-name-method-def-let-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'l\\u0065t'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'l\\u0065t'"
+test/language/expressions/object/ident-name-method-def-new-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'n\\u0065w'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'n\\u0065w'"
+test/language/expressions/object/ident-name-method-def-package-escaped.js:
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'p\\u0061ckage'"
+test/language/expressions/object/ident-name-method-def-private-escaped.js:
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'privat\\u0065'"
+test/language/expressions/object/ident-name-method-def-protected-escaped.js:
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'prot\\u0065cted'"
+test/language/expressions/object/ident-name-method-def-public-escaped.js:
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'pu\\u0062lic'"
+test/language/expressions/object/ident-name-method-def-return-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'r\\u0065turn'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'r\\u0065turn'"
+test/language/expressions/object/ident-name-method-def-static-escaped.js:
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'st\\u0061tic'"
+test/language/expressions/object/ident-name-method-def-super-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'sup\\u0065r'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'sup\\u0065r'"
+test/language/expressions/object/ident-name-method-def-switch-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'sw\\u0069tch'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'sw\\u0069tch'"
+test/language/expressions/object/ident-name-method-def-this-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'th\\u0069s'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'th\\u0069s'"
+test/language/expressions/object/ident-name-method-def-throw-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 't\\u0068row'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 't\\u0068row'"
+test/language/expressions/object/ident-name-method-def-try-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'tr\\u0079'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'tr\\u0079'"
+test/language/expressions/object/ident-name-method-def-typeof-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'typ\\u0065of'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'typ\\u0065of'"
+test/language/expressions/object/ident-name-method-def-var-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'v\\u0061r'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'v\\u0061r'"
+test/language/expressions/object/ident-name-method-def-void-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'voi\\u0064'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'voi\\u0064'"
+test/language/expressions/object/ident-name-method-def-while-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'whil\\u0065'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'whil\\u0065'"
+test/language/expressions/object/ident-name-method-def-with-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'w\\u0069th'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'w\\u0069th'"
+test/language/expressions/object/ident-name-prop-name-literal-break-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"
+test/language/expressions/object/ident-name-prop-name-literal-case-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'c\\u0061se'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'c\\u0061se'"
+test/language/expressions/object/ident-name-prop-name-literal-catch-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'c\\u0061tch'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'c\\u0061tch'"
+test/language/expressions/object/ident-name-prop-name-literal-class-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'cl\\u0061ss'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'cl\\u0061ss'"
+test/language/expressions/object/ident-name-prop-name-literal-const-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0063onst'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0063onst'"
+test/language/expressions/object/ident-name-prop-name-literal-continue-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0063ontinue'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0063ontinue'"
+test/language/expressions/object/ident-name-prop-name-literal-debugger-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064ebugger'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064ebugger'"
+test/language/expressions/object/ident-name-prop-name-literal-default-escaped-ext.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'def\\u{61}ult'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'def\\u{61}ult'"
+test/language/expressions/object/ident-name-prop-name-literal-default-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'def\\u0061ult'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'def\\u0061ult'"
+test/language/expressions/object/ident-name-prop-name-literal-delete-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064elete'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064elete'"
+test/language/expressions/object/ident-name-prop-name-literal-do-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064o'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064o'"
+test/language/expressions/object/ident-name-prop-name-literal-else-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065lse'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065lse'"
+test/language/expressions/object/ident-name-prop-name-literal-enum-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065num'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065num'"
+test/language/expressions/object/ident-name-prop-name-literal-export-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065xport'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065xport'"
+test/language/expressions/object/ident-name-prop-name-literal-extends-escaped-ext.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u{65}xtends'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u{65}xtends'"
+test/language/expressions/object/ident-name-prop-name-literal-extends-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065xtends'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065xtends'"
+test/language/expressions/object/ident-name-prop-name-literal-finally-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066inally'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066inally'"
+test/language/expressions/object/ident-name-prop-name-literal-for-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066or'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066or'"
+test/language/expressions/object/ident-name-prop-name-literal-function-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066unction'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066unction'"
+test/language/expressions/object/ident-name-prop-name-literal-if-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'i\\u0066'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'i\\u0066'"
+test/language/expressions/object/ident-name-prop-name-literal-implements-escaped.js:
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069mplements'"
+test/language/expressions/object/ident-name-prop-name-literal-import-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069mport'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069mport'"
+test/language/expressions/object/ident-name-prop-name-literal-in-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069n'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069n'"
+test/language/expressions/object/ident-name-prop-name-literal-instanceof-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069nstanceof'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069nstanceof'"
+test/language/expressions/object/ident-name-prop-name-literal-interface-escaped.js:
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'interf\\u0061ce'"
+test/language/expressions/object/ident-name-prop-name-literal-let-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'l\\u0065t'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'l\\u0065t'"
+test/language/expressions/object/ident-name-prop-name-literal-new-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'n\\u0065w'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'n\\u0065w'"
+test/language/expressions/object/ident-name-prop-name-literal-package-escaped.js:
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'p\\u0061ckage'"
+test/language/expressions/object/ident-name-prop-name-literal-private-escaped.js:
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'privat\\u0065'"
+test/language/expressions/object/ident-name-prop-name-literal-protected-escaped.js:
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'prot\\u0065cted'"
+test/language/expressions/object/ident-name-prop-name-literal-public-escaped.js:
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'pu\\u0062lic'"
+test/language/expressions/object/ident-name-prop-name-literal-return-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'r\\u0065turn'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'r\\u0065turn'"
+test/language/expressions/object/ident-name-prop-name-literal-static-escaped.js:
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'st\\u0061tic'"
+test/language/expressions/object/ident-name-prop-name-literal-super-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'sup\\u0065r'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'sup\\u0065r'"
+test/language/expressions/object/ident-name-prop-name-literal-switch-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'sw\\u0069tch'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'sw\\u0069tch'"
+test/language/expressions/object/ident-name-prop-name-literal-this-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'th\\u0069s'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'th\\u0069s'"
+test/language/expressions/object/ident-name-prop-name-literal-throw-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 't\\u0068row'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 't\\u0068row'"
+test/language/expressions/object/ident-name-prop-name-literal-try-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'tr\\u0079'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'tr\\u0079'"
+test/language/expressions/object/ident-name-prop-name-literal-typeof-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'typ\\u0065of'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'typ\\u0065of'"
+test/language/expressions/object/ident-name-prop-name-literal-var-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'v\\u0061r'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'v\\u0061r'"
+test/language/expressions/object/ident-name-prop-name-literal-void-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'voi\\u0064'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'voi\\u0064'"
+test/language/expressions/object/ident-name-prop-name-literal-while-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'whil\\u0065'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'whil\\u0065'"
+test/language/expressions/object/ident-name-prop-name-literal-with-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'w\\u0069th'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'w\\u0069th'"
 test/language/expressions/object/method-definition/escaped-get.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
@@ -2648,6 +3293,42 @@ test/language/expressions/object/scope-meth-param-rest-elem-var-close.js:
   default: 'Test262Error: Expected SameValue(Â«insideÂ», Â«outsideÂ») to be true'
 test/language/expressions/object/scope-setter-body-lex-distinc.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
+test/language/expressions/optional-chaining/call-expression.js:
+  default: "SyntaxError: Unexpected token '.'"
+  strict mode: "SyntaxError: Unexpected token '.'"
+test/language/expressions/optional-chaining/member-expression-async-identifier.js:
+  default: "SyntaxError: Unexpected token '.'"
+  strict mode: "SyntaxError: Unexpected token '.'"
+test/language/expressions/optional-chaining/member-expression-async-literal.js:
+  default: "SyntaxError: Unexpected token '.'"
+  strict mode: "SyntaxError: Unexpected token '.'"
+test/language/expressions/optional-chaining/member-expression-async-this.js:
+  default: "SyntaxError: Unexpected token '.'"
+  strict mode: "SyntaxError: Unexpected token '.'"
+test/language/expressions/optional-chaining/member-expression.js:
+  default: "SyntaxError: Unexpected token '.'"
+  strict mode: "SyntaxError: Unexpected token '.'"
+test/language/expressions/optional-chaining/optional-chain-async-optional-chain-square-brackets.js:
+  default: "SyntaxError: Unexpected token '.'"
+  strict mode: "SyntaxError: Unexpected token '.'"
+test/language/expressions/optional-chaining/optional-chain-async-square-brackets.js:
+  default: "SyntaxError: Unexpected token '.'"
+  strict mode: "SyntaxError: Unexpected token '.'"
+test/language/expressions/optional-chaining/optional-chain-expression-optional-expression.js:
+  default: "SyntaxError: Unexpected token '.'"
+  strict mode: "SyntaxError: Unexpected token '.'"
+test/language/expressions/optional-chaining/optional-chain.js:
+  default: "SyntaxError: Unexpected token '.'"
+  strict mode: "SyntaxError: Unexpected token '.'"
+test/language/expressions/optional-chaining/optional-expression.js:
+  default: "SyntaxError: Unexpected token '.'"
+  strict mode: "SyntaxError: Unexpected token '.'"
+test/language/expressions/optional-chaining/runtime-semantics-evaluation.js:
+  default: "SyntaxError: Unexpected token '.'"
+  strict mode: "SyntaxError: Unexpected token '.'"
+test/language/expressions/optional-chaining/short-circuiting.js:
+  default: "SyntaxError: Unexpected token '.'"
+  strict mode: "SyntaxError: Unexpected token '.'"
 test/language/expressions/postfix-decrement/S11.3.2_A5_T1.js:
   default: "ReferenceError: Can't find variable: x"
 test/language/expressions/postfix-decrement/S11.3.2_A5_T2.js:
@@ -2861,6 +3542,482 @@ test/language/module-code/parse-err-hoist-lex-fun.js:
   module: 'Test262: This statement should not be evaluated.'
 test/language/module-code/parse-err-hoist-lex-gen.js:
   module: 'Test262: This statement should not be evaluated.'
+test/language/module-code/top-level-await/await-awaits-thenable-not-callable.js:
+  module: "SyntaxError: Unexpected identifier 'thenable'. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/await-awaits-thenables-that-throw.js:
+  module: "SyntaxError: Unexpected identifier 'thenable'"
+test/language/module-code/top-level-await/await-awaits-thenables.js:
+  module: "SyntaxError: Unexpected identifier 'thenable'. Expected ')' to end an argument list."
+test/language/module-code/top-level-await/await-dynamic-import-rejection.js:
+  module: "SyntaxError: Unexpected keyword 'import'"
+test/language/module-code/top-level-await/await-dynamic-import-resolution.js:
+  module: "SyntaxError: Unexpected keyword 'import'. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/await-expr-func-expression.js:
+  module: "SyntaxError: Unexpected keyword 'function'"
+test/language/module-code/top-level-await/await-expr-new-expr-reject.js:
+  module: "SyntaxError: Unexpected identifier 'Promise'"
+test/language/module-code/top-level-await/await-expr-new-expr.js:
+  module: "SyntaxError: Unexpected keyword 'new'. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/await-expr-regexp.js:
+  module: "ReferenceError: Can't find variable: await"
+test/language/module-code/top-level-await/await-expr-reject-throws.js:
+  module: "SyntaxError: Unexpected identifier 'Promise'"
+test/language/module-code/top-level-await/await-expr-resolution.js:
+  module: "SyntaxError: Unexpected number '42'"
+test/language/module-code/top-level-await/await-void-expr.js:
+  module: "SyntaxError: Unexpected keyword 'void'. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/if-await-expr.js:
+  module: "SyntaxError: Unexpected identifier 'p'. Expected ')' to end an 'if' condition."
+test/language/module-code/top-level-await/module-async-import-async-resolution-ticks.js:
+  module: "SyntaxError: Unexpected number '1'"
+test/language/module-code/top-level-await/module-import-rejection-body.js:
+  module: "SyntaxError: Unexpected identifier 'rejection'"
+test/language/module-code/top-level-await/module-import-rejection-tick.js:
+  module: "SyntaxError: Unexpected identifier 'Promise'"
+test/language/module-code/top-level-await/module-import-rejection.js:
+  module: "SyntaxError: Unexpected number '42'. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/module-import-resolution.js:
+  module: "SyntaxError: Unexpected number '1'"
+test/language/module-code/top-level-await/module-import-unwrapped.js:
+  module: "SyntaxError: Unexpected identifier 'mod'. Expected ')' to end an argument list."
+test/language/module-code/top-level-await/module-self-import-async-resolution-ticks.js:
+  module: "SyntaxError: Unexpected identifier 'Promise'. Expected a ';' following a targeted export declaration."
+test/language/module-code/top-level-await/module-sync-import-async-resolution-ticks.js:
+  module: "SyntaxError: Unexpected number '1'"
+test/language/module-code/top-level-await/no-operand.js:
+  module: 'Test262: This statement should not be evaluated.'
+test/language/module-code/top-level-await/syntax/await-expr-dyn-import.js:
+  module: "SyntaxError: Unexpected keyword 'import'"
+test/language/module-code/top-level-await/syntax/block-await-expr-array-literal.js:
+  module: "SyntaxError: Unexpected token ']'"
+test/language/module-code/top-level-await/syntax/block-await-expr-func-expression.js:
+  module: "SyntaxError: Unexpected keyword 'function'"
+test/language/module-code/top-level-await/syntax/block-await-expr-identifier.js:
+  module: "SyntaxError: Unexpected identifier 'foo'"
+test/language/module-code/top-level-await/syntax/block-await-expr-literal-number.js:
+  module: "SyntaxError: Unexpected number '1'"
+test/language/module-code/top-level-await/syntax/block-await-expr-literal-string.js:
+  module: "SyntaxError: Unexpected string literal ''"
+test/language/module-code/top-level-await/syntax/block-await-expr-nested.js:
+  module: "SyntaxError: Unexpected identifier 'await'"
+test/language/module-code/top-level-await/syntax/block-await-expr-new-expr.js:
+  module: "SyntaxError: Unexpected keyword 'new'"
+test/language/module-code/top-level-await/syntax/block-await-expr-null.js:
+  module: "SyntaxError: Unexpected keyword 'null'"
+test/language/module-code/top-level-await/syntax/block-await-expr-obj-literal.js:
+  module: "SyntaxError: Unexpected token '{'"
+test/language/module-code/top-level-await/syntax/block-await-expr-regexp.js:
+  module: "SyntaxError: Unexpected token ';'"
+test/language/module-code/top-level-await/syntax/block-await-expr-template-literal.js:
+  module: "ReferenceError: Can't find variable: await"
+test/language/module-code/top-level-await/syntax/block-await-expr-this.js:
+  module: "SyntaxError: Unexpected keyword 'this'"
+test/language/module-code/top-level-await/syntax/catch-parameter.js:
+  module: "SyntaxError: Unexpected number '42'. Expected either a closing '}' or an ',' after a property destructuring pattern."
+test/language/module-code/top-level-await/syntax/export-class-decl-await-expr-array-literal.js:
+  module: "SyntaxError: Unexpected token ']'"
+test/language/module-code/top-level-await/syntax/export-class-decl-await-expr-func-expression.js:
+  module: "SyntaxError: Unexpected keyword 'function'. Expected ')' to end an argument list."
+test/language/module-code/top-level-await/syntax/export-class-decl-await-expr-identifier.js:
+  module: "SyntaxError: Unexpected identifier 'foo'. Expected ')' to end an argument list."
+test/language/module-code/top-level-await/syntax/export-class-decl-await-expr-literal-number.js:
+  module: "SyntaxError: Unexpected number '1'. Expected ')' to end an argument list."
+test/language/module-code/top-level-await/syntax/export-class-decl-await-expr-literal-string.js:
+  module: "SyntaxError: Unexpected string literal ''. Expected ')' to end an argument list."
+test/language/module-code/top-level-await/syntax/export-class-decl-await-expr-nested.js:
+  module: "SyntaxError: Unexpected identifier 'await'. Expected ')' to end an argument list."
+test/language/module-code/top-level-await/syntax/export-class-decl-await-expr-new-expr.js:
+  module: "SyntaxError: Unexpected keyword 'new'. Expected ')' to end an argument list."
+test/language/module-code/top-level-await/syntax/export-class-decl-await-expr-null.js:
+  module: "SyntaxError: Unexpected keyword 'null'. Expected ')' to end an argument list."
+test/language/module-code/top-level-await/syntax/export-class-decl-await-expr-obj-literal.js:
+  module: "SyntaxError: Unexpected token '{'. Expected ')' to end an argument list."
+test/language/module-code/top-level-await/syntax/export-class-decl-await-expr-regexp.js:
+  module: "SyntaxError: Unexpected token ')'"
+test/language/module-code/top-level-await/syntax/export-class-decl-await-expr-template-literal.js:
+  module: "ReferenceError: Can't find variable: await"
+test/language/module-code/top-level-await/syntax/export-class-decl-await-expr-this.js:
+  module: "SyntaxError: Unexpected keyword 'this'. Expected ')' to end an argument list."
+test/language/module-code/top-level-await/syntax/export-dflt-assign-expr-await-expr-array-literal.js:
+  module: "SyntaxError: Unexpected token ']'"
+test/language/module-code/top-level-await/syntax/export-dflt-assign-expr-await-expr-func-expression.js:
+  module: "SyntaxError: Unexpected keyword 'function'. Expected a ';' following a targeted export declaration."
+test/language/module-code/top-level-await/syntax/export-dflt-assign-expr-await-expr-identifier.js:
+  module: "SyntaxError: Unexpected identifier 'foo'. Expected a ';' following a targeted export declaration."
+test/language/module-code/top-level-await/syntax/export-dflt-assign-expr-await-expr-literal-number.js:
+  module: "SyntaxError: Unexpected number '1'. Expected a ';' following a targeted export declaration."
+test/language/module-code/top-level-await/syntax/export-dflt-assign-expr-await-expr-literal-string.js:
+  module: "SyntaxError: Unexpected string literal ''. Expected a ';' following a targeted export declaration."
+test/language/module-code/top-level-await/syntax/export-dflt-assign-expr-await-expr-nested.js:
+  module: "SyntaxError: Unexpected identifier 'await'. Expected a ';' following a targeted export declaration."
+test/language/module-code/top-level-await/syntax/export-dflt-assign-expr-await-expr-new-expr.js:
+  module: "SyntaxError: Unexpected keyword 'new'. Expected a ';' following a targeted export declaration."
+test/language/module-code/top-level-await/syntax/export-dflt-assign-expr-await-expr-null.js:
+  module: "SyntaxError: Unexpected keyword 'null'. Expected a ';' following a targeted export declaration."
+test/language/module-code/top-level-await/syntax/export-dflt-assign-expr-await-expr-obj-literal.js:
+  module: "SyntaxError: Unexpected token '{'. Expected a ';' following a targeted export declaration."
+test/language/module-code/top-level-await/syntax/export-dflt-assign-expr-await-expr-regexp.js:
+  module: "SyntaxError: Unexpected token ';'"
+test/language/module-code/top-level-await/syntax/export-dflt-assign-expr-await-expr-template-literal.js:
+  module: "ReferenceError: Can't find variable: await"
+test/language/module-code/top-level-await/syntax/export-dflt-assign-expr-await-expr-this.js:
+  module: "SyntaxError: Unexpected keyword 'this'. Expected a ';' following a targeted export declaration."
+test/language/module-code/top-level-await/syntax/export-dft-class-decl-await-expr-array-literal.js:
+  module: "SyntaxError: Unexpected token ']'"
+test/language/module-code/top-level-await/syntax/export-dft-class-decl-await-expr-func-expression.js:
+  module: "SyntaxError: Unexpected keyword 'function'. Expected ')' to end an argument list."
+test/language/module-code/top-level-await/syntax/export-dft-class-decl-await-expr-identifier.js:
+  module: "SyntaxError: Unexpected identifier 'foo'. Expected ')' to end an argument list."
+test/language/module-code/top-level-await/syntax/export-dft-class-decl-await-expr-literal-number.js:
+  module: "SyntaxError: Unexpected number '1'. Expected ')' to end an argument list."
+test/language/module-code/top-level-await/syntax/export-dft-class-decl-await-expr-literal-string.js:
+  module: "SyntaxError: Unexpected string literal ''. Expected ')' to end an argument list."
+test/language/module-code/top-level-await/syntax/export-dft-class-decl-await-expr-nested.js:
+  module: "SyntaxError: Unexpected identifier 'await'. Expected ')' to end an argument list."
+test/language/module-code/top-level-await/syntax/export-dft-class-decl-await-expr-new-expr.js:
+  module: "SyntaxError: Unexpected keyword 'new'. Expected ')' to end an argument list."
+test/language/module-code/top-level-await/syntax/export-dft-class-decl-await-expr-null.js:
+  module: "SyntaxError: Unexpected keyword 'null'. Expected ')' to end an argument list."
+test/language/module-code/top-level-await/syntax/export-dft-class-decl-await-expr-obj-literal.js:
+  module: "SyntaxError: Unexpected token '{'. Expected ')' to end an argument list."
+test/language/module-code/top-level-await/syntax/export-dft-class-decl-await-expr-regexp.js:
+  module: "SyntaxError: Unexpected token ')'"
+test/language/module-code/top-level-await/syntax/export-dft-class-decl-await-expr-template-literal.js:
+  module: "ReferenceError: Can't find variable: await"
+test/language/module-code/top-level-await/syntax/export-dft-class-decl-await-expr-this.js:
+  module: "SyntaxError: Unexpected keyword 'this'. Expected ')' to end an argument list."
+test/language/module-code/top-level-await/syntax/export-lex-decl-await-expr-array-literal.js:
+  module: "SyntaxError: Unexpected token ']'"
+test/language/module-code/top-level-await/syntax/export-lex-decl-await-expr-func-expression.js:
+  module: "SyntaxError: Unexpected keyword 'function'. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/syntax/export-lex-decl-await-expr-identifier.js:
+  module: "SyntaxError: Unexpected identifier 'foo'. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/syntax/export-lex-decl-await-expr-literal-number.js:
+  module: "SyntaxError: Unexpected number '1'. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/syntax/export-lex-decl-await-expr-literal-string.js:
+  module: "SyntaxError: Unexpected string literal ''. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/syntax/export-lex-decl-await-expr-nested.js:
+  module: "SyntaxError: Unexpected identifier 'await'. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/syntax/export-lex-decl-await-expr-new-expr.js:
+  module: "SyntaxError: Unexpected keyword 'new'. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/syntax/export-lex-decl-await-expr-null.js:
+  module: "SyntaxError: Unexpected keyword 'null'. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/syntax/export-lex-decl-await-expr-obj-literal.js:
+  module: "SyntaxError: Unexpected token '{'. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/syntax/export-lex-decl-await-expr-regexp.js:
+  module: "SyntaxError: Unexpected token ';'"
+test/language/module-code/top-level-await/syntax/export-lex-decl-await-expr-template-literal.js:
+  module: "ReferenceError: Can't find variable: await"
+test/language/module-code/top-level-await/syntax/export-lex-decl-await-expr-this.js:
+  module: "SyntaxError: Unexpected keyword 'this'. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/syntax/export-var-await-expr-array-literal.js:
+  module: "SyntaxError: Unexpected token ']'"
+test/language/module-code/top-level-await/syntax/export-var-await-expr-func-expression.js:
+  module: "SyntaxError: Unexpected keyword 'function'. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/syntax/export-var-await-expr-identifier.js:
+  module: "SyntaxError: Unexpected identifier 'foo'. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/syntax/export-var-await-expr-literal-number.js:
+  module: "SyntaxError: Unexpected number '1'. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/syntax/export-var-await-expr-literal-string.js:
+  module: "SyntaxError: Unexpected string literal ''. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/syntax/export-var-await-expr-nested.js:
+  module: "SyntaxError: Unexpected identifier 'await'. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/syntax/export-var-await-expr-new-expr.js:
+  module: "SyntaxError: Unexpected keyword 'new'. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/syntax/export-var-await-expr-null.js:
+  module: "SyntaxError: Unexpected keyword 'null'. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/syntax/export-var-await-expr-obj-literal.js:
+  module: "SyntaxError: Unexpected token '{'. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/syntax/export-var-await-expr-regexp.js:
+  module: "SyntaxError: Unexpected token ';'"
+test/language/module-code/top-level-await/syntax/export-var-await-expr-template-literal.js:
+  module: "ReferenceError: Can't find variable: await"
+test/language/module-code/top-level-await/syntax/export-var-await-expr-this.js:
+  module: "SyntaxError: Unexpected keyword 'this'. Expected ';' after variable declaration."
+test/language/module-code/top-level-await/syntax/for-await-expr-array-literal.js:
+  default: "SyntaxError: Unexpected token ']'"
+  strict mode: "SyntaxError: Unexpected token ']'"
+test/language/module-code/top-level-await/syntax/for-await-expr-func-expression.js:
+  default: "SyntaxError: Unexpected keyword 'function'. Expected either 'in' or 'of' in enumeration syntax."
+  strict mode: "SyntaxError: Unexpected keyword 'function'. Expected either 'in' or 'of' in enumeration syntax."
+test/language/module-code/top-level-await/syntax/for-await-expr-identifier.js:
+  default: "SyntaxError: Unexpected identifier 'foo'. Expected either 'in' or 'of' in enumeration syntax."
+  strict mode: "SyntaxError: Unexpected identifier 'foo'. Expected either 'in' or 'of' in enumeration syntax."
+test/language/module-code/top-level-await/syntax/for-await-expr-literal-number.js:
+  default: "SyntaxError: Unexpected number '1'. Expected either 'in' or 'of' in enumeration syntax."
+  strict mode: "SyntaxError: Unexpected number '1'. Expected either 'in' or 'of' in enumeration syntax."
+test/language/module-code/top-level-await/syntax/for-await-expr-literal-string.js:
+  default: "SyntaxError: Unexpected string literal ''. Expected either 'in' or 'of' in enumeration syntax."
+  strict mode: "SyntaxError: Unexpected string literal ''. Expected either 'in' or 'of' in enumeration syntax."
+test/language/module-code/top-level-await/syntax/for-await-expr-nested.js:
+  default: "SyntaxError: Unexpected identifier 'await'. Expected either 'in' or 'of' in enumeration syntax."
+  strict mode: "SyntaxError: Unexpected identifier 'await'. Expected either 'in' or 'of' in enumeration syntax."
+test/language/module-code/top-level-await/syntax/for-await-expr-new-expr.js:
+  default: "SyntaxError: Unexpected keyword 'new'. Expected either 'in' or 'of' in enumeration syntax."
+  strict mode: "SyntaxError: Unexpected keyword 'new'. Expected either 'in' or 'of' in enumeration syntax."
+test/language/module-code/top-level-await/syntax/for-await-expr-null.js:
+  default: "SyntaxError: Unexpected keyword 'null'. Expected either 'in' or 'of' in enumeration syntax."
+  strict mode: "SyntaxError: Unexpected keyword 'null'. Expected either 'in' or 'of' in enumeration syntax."
+test/language/module-code/top-level-await/syntax/for-await-expr-obj-literal.js:
+  default: "SyntaxError: Unexpected token '{'. Expected either 'in' or 'of' in enumeration syntax."
+  strict mode: "SyntaxError: Unexpected token '{'. Expected either 'in' or 'of' in enumeration syntax."
+test/language/module-code/top-level-await/syntax/for-await-expr-regexp.js:
+  default: "SyntaxError: Unexpected token ';'"
+  strict mode: "SyntaxError: Unexpected token ';'"
+test/language/module-code/top-level-await/syntax/for-await-expr-template-literal.js:
+  default: "ReferenceError: Can't find variable: await"
+  strict mode: "ReferenceError: Can't find variable: await"
+test/language/module-code/top-level-await/syntax/for-await-expr-this.js:
+  default: "SyntaxError: Unexpected keyword 'this'. Expected either 'in' or 'of' in enumeration syntax."
+  strict mode: "SyntaxError: Unexpected keyword 'this'. Expected either 'in' or 'of' in enumeration syntax."
+test/language/module-code/top-level-await/syntax/for-in-await-expr-array-literal.js:
+  default: "SyntaxError: Unexpected token ']'"
+  strict mode: "SyntaxError: Unexpected token ']'"
+test/language/module-code/top-level-await/syntax/for-in-await-expr-func-expression.js:
+  default: "SyntaxError: Unexpected keyword 'function'. Expected either a closing ']' or a ',' following an array element."
+  strict mode: "SyntaxError: Unexpected keyword 'function'. Expected either a closing ']' or a ',' following an array element."
+test/language/module-code/top-level-await/syntax/for-in-await-expr-identifier.js:
+  default: "SyntaxError: Unexpected identifier 'foo'. Expected either a closing ']' or a ',' following an array element."
+  strict mode: "SyntaxError: Unexpected identifier 'foo'. Expected either a closing ']' or a ',' following an array element."
+test/language/module-code/top-level-await/syntax/for-in-await-expr-literal-number.js:
+  default: "SyntaxError: Unexpected number '1'. Expected either a closing ']' or a ',' following an array element."
+  strict mode: "SyntaxError: Unexpected number '1'. Expected either a closing ']' or a ',' following an array element."
+test/language/module-code/top-level-await/syntax/for-in-await-expr-literal-string.js:
+  default: "SyntaxError: Unexpected string literal ''. Expected either a closing ']' or a ',' following an array element."
+  strict mode: "SyntaxError: Unexpected string literal ''. Expected either a closing ']' or a ',' following an array element."
+test/language/module-code/top-level-await/syntax/for-in-await-expr-nested.js:
+  default: "SyntaxError: Unexpected identifier 'await'. Expected either a closing ']' or a ',' following an array element."
+  strict mode: "SyntaxError: Unexpected identifier 'await'. Expected either a closing ']' or a ',' following an array element."
+test/language/module-code/top-level-await/syntax/for-in-await-expr-new-expr.js:
+  default: "SyntaxError: Unexpected keyword 'new'. Expected either a closing ']' or a ',' following an array element."
+  strict mode: "SyntaxError: Unexpected keyword 'new'. Expected either a closing ']' or a ',' following an array element."
+test/language/module-code/top-level-await/syntax/for-in-await-expr-null.js:
+  default: "SyntaxError: Unexpected keyword 'null'. Expected either a closing ']' or a ',' following an array element."
+  strict mode: "SyntaxError: Unexpected keyword 'null'. Expected either a closing ']' or a ',' following an array element."
+test/language/module-code/top-level-await/syntax/for-in-await-expr-obj-literal.js:
+  default: "SyntaxError: Unexpected token '{'. Expected either a closing ']' or a ',' following an array element."
+  strict mode: "SyntaxError: Unexpected token '{'. Expected either a closing ']' or a ',' following an array element."
+test/language/module-code/top-level-await/syntax/for-in-await-expr-regexp.js:
+  default: "SyntaxError: Unexpected token ']'"
+  strict mode: "SyntaxError: Unexpected token ']'"
+test/language/module-code/top-level-await/syntax/for-in-await-expr-template-literal.js:
+  default: "ReferenceError: Can't find variable: await"
+  strict mode: "ReferenceError: Can't find variable: await"
+test/language/module-code/top-level-await/syntax/for-in-await-expr-this.js:
+  default: "SyntaxError: Unexpected keyword 'this'. Expected either a closing ']' or a ',' following an array element."
+  strict mode: "SyntaxError: Unexpected keyword 'this'. Expected either a closing ']' or a ',' following an array element."
+test/language/module-code/top-level-await/syntax/for-of-await-expr-array-literal.js:
+  default: "SyntaxError: Unexpected token ']'"
+  strict mode: "SyntaxError: Unexpected token ']'"
+test/language/module-code/top-level-await/syntax/for-of-await-expr-func-expression.js:
+  default: "SyntaxError: Unexpected keyword 'function'. Expected either a closing ']' or a ',' following an array element."
+  strict mode: "SyntaxError: Unexpected keyword 'function'. Expected either a closing ']' or a ',' following an array element."
+test/language/module-code/top-level-await/syntax/for-of-await-expr-identifier.js:
+  default: "SyntaxError: Unexpected identifier 'foo'. Expected either a closing ']' or a ',' following an array element."
+  strict mode: "SyntaxError: Unexpected identifier 'foo'. Expected either a closing ']' or a ',' following an array element."
+test/language/module-code/top-level-await/syntax/for-of-await-expr-literal-number.js:
+  default: "SyntaxError: Unexpected number '1'. Expected either a closing ']' or a ',' following an array element."
+  strict mode: "SyntaxError: Unexpected number '1'. Expected either a closing ']' or a ',' following an array element."
+test/language/module-code/top-level-await/syntax/for-of-await-expr-literal-string.js:
+  default: "SyntaxError: Unexpected string literal ''. Expected either a closing ']' or a ',' following an array element."
+  strict mode: "SyntaxError: Unexpected string literal ''. Expected either a closing ']' or a ',' following an array element."
+test/language/module-code/top-level-await/syntax/for-of-await-expr-nested.js:
+  default: "SyntaxError: Unexpected identifier 'await'. Expected either a closing ']' or a ',' following an array element."
+  strict mode: "SyntaxError: Unexpected identifier 'await'. Expected either a closing ']' or a ',' following an array element."
+test/language/module-code/top-level-await/syntax/for-of-await-expr-new-expr.js:
+  default: "SyntaxError: Unexpected keyword 'new'. Expected either a closing ']' or a ',' following an array element."
+  strict mode: "SyntaxError: Unexpected keyword 'new'. Expected either a closing ']' or a ',' following an array element."
+test/language/module-code/top-level-await/syntax/for-of-await-expr-null.js:
+  default: "SyntaxError: Unexpected keyword 'null'. Expected either a closing ']' or a ',' following an array element."
+  strict mode: "SyntaxError: Unexpected keyword 'null'. Expected either a closing ']' or a ',' following an array element."
+test/language/module-code/top-level-await/syntax/for-of-await-expr-obj-literal.js:
+  default: "SyntaxError: Unexpected token '{'. Expected either a closing ']' or a ',' following an array element."
+  strict mode: "SyntaxError: Unexpected token '{'. Expected either a closing ']' or a ',' following an array element."
+test/language/module-code/top-level-await/syntax/for-of-await-expr-regexp.js:
+  default: "SyntaxError: Unexpected token ']'"
+  strict mode: "SyntaxError: Unexpected token ']'"
+test/language/module-code/top-level-await/syntax/for-of-await-expr-template-literal.js:
+  default: "ReferenceError: Can't find variable: await"
+  strict mode: "ReferenceError: Can't find variable: await"
+test/language/module-code/top-level-await/syntax/for-of-await-expr-this.js:
+  default: "SyntaxError: Unexpected keyword 'this'. Expected either a closing ']' or a ',' following an array element."
+  strict mode: "SyntaxError: Unexpected keyword 'this'. Expected either a closing ']' or a ',' following an array element."
+test/language/module-code/top-level-await/syntax/if-block-await-expr-array-literal.js:
+  module: "SyntaxError: Unexpected token ']'"
+test/language/module-code/top-level-await/syntax/if-block-await-expr-func-expression.js:
+  module: "SyntaxError: Unexpected keyword 'function'"
+test/language/module-code/top-level-await/syntax/if-block-await-expr-identifier.js:
+  module: "SyntaxError: Unexpected identifier 'foo'"
+test/language/module-code/top-level-await/syntax/if-block-await-expr-literal-number.js:
+  module: "SyntaxError: Unexpected number '1'"
+test/language/module-code/top-level-await/syntax/if-block-await-expr-literal-string.js:
+  module: "SyntaxError: Unexpected string literal ''"
+test/language/module-code/top-level-await/syntax/if-block-await-expr-nested.js:
+  module: "SyntaxError: Unexpected identifier 'await'"
+test/language/module-code/top-level-await/syntax/if-block-await-expr-new-expr.js:
+  module: "SyntaxError: Unexpected keyword 'new'"
+test/language/module-code/top-level-await/syntax/if-block-await-expr-null.js:
+  module: "SyntaxError: Unexpected keyword 'null'"
+test/language/module-code/top-level-await/syntax/if-block-await-expr-obj-literal.js:
+  module: "SyntaxError: Unexpected token '{'"
+test/language/module-code/top-level-await/syntax/if-block-await-expr-regexp.js:
+  module: "SyntaxError: Unexpected token ';'"
+test/language/module-code/top-level-await/syntax/if-block-await-expr-template-literal.js:
+  module: "ReferenceError: Can't find variable: await"
+test/language/module-code/top-level-await/syntax/if-block-await-expr-this.js:
+  module: "SyntaxError: Unexpected keyword 'this'"
+test/language/module-code/top-level-await/syntax/if-expr-await-expr-array-literal.js:
+  module: "SyntaxError: Unexpected token ']'"
+test/language/module-code/top-level-await/syntax/if-expr-await-expr-func-expression.js:
+  module: "SyntaxError: Unexpected keyword 'function'. Expected ')' to end an 'if' condition."
+test/language/module-code/top-level-await/syntax/if-expr-await-expr-identifier.js:
+  module: "SyntaxError: Unexpected identifier 'foo'. Expected ')' to end an 'if' condition."
+test/language/module-code/top-level-await/syntax/if-expr-await-expr-literal-number.js:
+  module: "SyntaxError: Unexpected number '1'. Expected ')' to end an 'if' condition."
+test/language/module-code/top-level-await/syntax/if-expr-await-expr-literal-string.js:
+  module: "SyntaxError: Unexpected string literal ''. Expected ')' to end an 'if' condition."
+test/language/module-code/top-level-await/syntax/if-expr-await-expr-nested.js:
+  module: "SyntaxError: Unexpected identifier 'await'. Expected ')' to end an 'if' condition."
+test/language/module-code/top-level-await/syntax/if-expr-await-expr-new-expr.js:
+  module: "SyntaxError: Unexpected keyword 'new'. Expected ')' to end an 'if' condition."
+test/language/module-code/top-level-await/syntax/if-expr-await-expr-null.js:
+  module: "SyntaxError: Unexpected keyword 'null'. Expected ')' to end an 'if' condition."
+test/language/module-code/top-level-await/syntax/if-expr-await-expr-obj-literal.js:
+  module: "SyntaxError: Unexpected token '{'. Expected ')' to end an 'if' condition."
+test/language/module-code/top-level-await/syntax/if-expr-await-expr-regexp.js:
+  module: "SyntaxError: Unexpected token ')'"
+test/language/module-code/top-level-await/syntax/if-expr-await-expr-template-literal.js:
+  module: "ReferenceError: Can't find variable: await"
+test/language/module-code/top-level-await/syntax/if-expr-await-expr-this.js:
+  module: "SyntaxError: Unexpected keyword 'this'. Expected ')' to end an 'if' condition."
+test/language/module-code/top-level-await/syntax/top-level-await-expr-array-literal.js:
+  module: "SyntaxError: Unexpected token ']'"
+test/language/module-code/top-level-await/syntax/top-level-await-expr-func-expression.js:
+  module: "SyntaxError: Unexpected keyword 'function'"
+test/language/module-code/top-level-await/syntax/top-level-await-expr-identifier.js:
+  module: "SyntaxError: Unexpected identifier 'foo'"
+test/language/module-code/top-level-await/syntax/top-level-await-expr-literal-number.js:
+  module: "SyntaxError: Unexpected number '1'"
+test/language/module-code/top-level-await/syntax/top-level-await-expr-literal-string.js:
+  module: "SyntaxError: Unexpected string literal ''"
+test/language/module-code/top-level-await/syntax/top-level-await-expr-nested.js:
+  module: "SyntaxError: Unexpected identifier 'await'"
+test/language/module-code/top-level-await/syntax/top-level-await-expr-new-expr.js:
+  module: "SyntaxError: Unexpected keyword 'new'"
+test/language/module-code/top-level-await/syntax/top-level-await-expr-null.js:
+  module: "SyntaxError: Unexpected keyword 'null'"
+test/language/module-code/top-level-await/syntax/top-level-await-expr-obj-literal.js:
+  module: "SyntaxError: Unexpected token '{'"
+test/language/module-code/top-level-await/syntax/top-level-await-expr-regexp.js:
+  module: "SyntaxError: Unexpected token ';'"
+test/language/module-code/top-level-await/syntax/top-level-await-expr-template-literal.js:
+  module: "ReferenceError: Can't find variable: await"
+test/language/module-code/top-level-await/syntax/top-level-await-expr-this.js:
+  module: "SyntaxError: Unexpected keyword 'this'"
+test/language/module-code/top-level-await/syntax/try-await-expr-array-literal.js:
+  module: "SyntaxError: Unexpected token ']'"
+test/language/module-code/top-level-await/syntax/try-await-expr-func-expression.js:
+  module: "SyntaxError: Unexpected keyword 'function'"
+test/language/module-code/top-level-await/syntax/try-await-expr-identifier.js:
+  module: "SyntaxError: Unexpected identifier 'foo'"
+test/language/module-code/top-level-await/syntax/try-await-expr-literal-number.js:
+  module: "SyntaxError: Unexpected number '1'"
+test/language/module-code/top-level-await/syntax/try-await-expr-literal-string.js:
+  module: "SyntaxError: Unexpected string literal ''"
+test/language/module-code/top-level-await/syntax/try-await-expr-nested.js:
+  module: "SyntaxError: Unexpected identifier 'await'"
+test/language/module-code/top-level-await/syntax/try-await-expr-new-expr.js:
+  module: "SyntaxError: Unexpected keyword 'new'"
+test/language/module-code/top-level-await/syntax/try-await-expr-null.js:
+  module: "SyntaxError: Unexpected keyword 'null'"
+test/language/module-code/top-level-await/syntax/try-await-expr-obj-literal.js:
+  module: "SyntaxError: Unexpected token '{'"
+test/language/module-code/top-level-await/syntax/try-await-expr-regexp.js:
+  module: "SyntaxError: Unexpected token ';'"
+test/language/module-code/top-level-await/syntax/try-await-expr-template-literal.js:
+  module: "ReferenceError: Can't find variable: await"
+test/language/module-code/top-level-await/syntax/try-await-expr-this.js:
+  module: "SyntaxError: Unexpected keyword 'this'"
+test/language/module-code/top-level-await/syntax/typeof-await-expr-array-literal.js:
+  module: "SyntaxError: Unexpected token ']'"
+test/language/module-code/top-level-await/syntax/typeof-await-expr-func-expression.js:
+  module: "SyntaxError: Unexpected keyword 'function'. Parse error."
+test/language/module-code/top-level-await/syntax/typeof-await-expr-identifier.js:
+  module: "SyntaxError: Unexpected identifier 'foo'. Parse error."
+test/language/module-code/top-level-await/syntax/typeof-await-expr-literal-number.js:
+  module: "SyntaxError: Unexpected number '1'. Parse error."
+test/language/module-code/top-level-await/syntax/typeof-await-expr-literal-string.js:
+  module: "SyntaxError: Unexpected string literal ''. Parse error."
+test/language/module-code/top-level-await/syntax/typeof-await-expr-nested.js:
+  module: "SyntaxError: Unexpected identifier 'await'. Parse error."
+test/language/module-code/top-level-await/syntax/typeof-await-expr-new-expr.js:
+  module: "SyntaxError: Unexpected keyword 'new'. Parse error."
+test/language/module-code/top-level-await/syntax/typeof-await-expr-null.js:
+  module: "SyntaxError: Unexpected keyword 'null'. Parse error."
+test/language/module-code/top-level-await/syntax/typeof-await-expr-obj-literal.js:
+  module: "SyntaxError: Unexpected token '{'. Parse error."
+test/language/module-code/top-level-await/syntax/typeof-await-expr-regexp.js:
+  module: "SyntaxError: Unexpected token ';'"
+test/language/module-code/top-level-await/syntax/typeof-await-expr-template-literal.js:
+  module: "ReferenceError: Can't find variable: await"
+test/language/module-code/top-level-await/syntax/typeof-await-expr-this.js:
+  module: "SyntaxError: Unexpected keyword 'this'. Parse error."
+test/language/module-code/top-level-await/syntax/void-await-expr-array-literal.js:
+  module: "SyntaxError: Unexpected token ']'"
+test/language/module-code/top-level-await/syntax/void-await-expr-func-expression.js:
+  module: "SyntaxError: Unexpected keyword 'function'. Parse error."
+test/language/module-code/top-level-await/syntax/void-await-expr-identifier.js:
+  module: "SyntaxError: Unexpected identifier 'foo'. Parse error."
+test/language/module-code/top-level-await/syntax/void-await-expr-literal-number.js:
+  module: "SyntaxError: Unexpected number '1'. Parse error."
+test/language/module-code/top-level-await/syntax/void-await-expr-literal-string.js:
+  module: "SyntaxError: Unexpected string literal ''. Parse error."
+test/language/module-code/top-level-await/syntax/void-await-expr-nested.js:
+  module: "SyntaxError: Unexpected identifier 'await'. Parse error."
+test/language/module-code/top-level-await/syntax/void-await-expr-new-expr.js:
+  module: "SyntaxError: Unexpected keyword 'new'. Parse error."
+test/language/module-code/top-level-await/syntax/void-await-expr-null.js:
+  module: "SyntaxError: Unexpected keyword 'null'. Parse error."
+test/language/module-code/top-level-await/syntax/void-await-expr-obj-literal.js:
+  module: "SyntaxError: Unexpected token '{'. Parse error."
+test/language/module-code/top-level-await/syntax/void-await-expr-regexp.js:
+  module: "SyntaxError: Unexpected token ';'"
+test/language/module-code/top-level-await/syntax/void-await-expr-template-literal.js:
+  module: "ReferenceError: Can't find variable: await"
+test/language/module-code/top-level-await/syntax/void-await-expr-this.js:
+  module: "SyntaxError: Unexpected keyword 'this'. Parse error."
+test/language/module-code/top-level-await/syntax/while-await-expr-array-literal.js:
+  module: "SyntaxError: Unexpected token ']'"
+test/language/module-code/top-level-await/syntax/while-await-expr-func-expression.js:
+  module: "SyntaxError: Unexpected keyword 'function'. Expected ')' to end a while loop condition."
+test/language/module-code/top-level-await/syntax/while-await-expr-identifier.js:
+  module: "SyntaxError: Unexpected identifier 'foo'. Expected ')' to end a while loop condition."
+test/language/module-code/top-level-await/syntax/while-await-expr-literal-number.js:
+  module: "SyntaxError: Unexpected number '1'. Expected ')' to end a while loop condition."
+test/language/module-code/top-level-await/syntax/while-await-expr-literal-string.js:
+  module: "SyntaxError: Unexpected string literal ''. Expected ')' to end a while loop condition."
+test/language/module-code/top-level-await/syntax/while-await-expr-nested.js:
+  module: "SyntaxError: Unexpected identifier 'await'. Expected ')' to end a while loop condition."
+test/language/module-code/top-level-await/syntax/while-await-expr-new-expr.js:
+  module: "SyntaxError: Unexpected keyword 'new'. Expected ')' to end a while loop condition."
+test/language/module-code/top-level-await/syntax/while-await-expr-null.js:
+  module: "SyntaxError: Unexpected keyword 'null'. Expected ')' to end a while loop condition."
+test/language/module-code/top-level-await/syntax/while-await-expr-obj-literal.js:
+  module: "SyntaxError: Unexpected token '{'. Expected ')' to end a while loop condition."
+test/language/module-code/top-level-await/syntax/while-await-expr-regexp.js:
+  module: "SyntaxError: Unexpected token ')'"
+test/language/module-code/top-level-await/syntax/while-await-expr-template-literal.js:
+  module: "ReferenceError: Can't find variable: await"
+test/language/module-code/top-level-await/syntax/while-await-expr-this.js:
+  module: "SyntaxError: Unexpected keyword 'this'. Expected ')' to end a while loop condition."
+test/language/module-code/top-level-await/top-level-ticks-2.js:
+  module: "SyntaxError: Unexpected identifier 'actual'"
+test/language/module-code/top-level-await/top-level-ticks.js:
+  module: "SyntaxError: Unexpected number '1'"
+test/language/module-code/top-level-await/void-await-expr.js:
+  module: "SyntaxError: Unexpected identifier 'x'. Parse error."
+test/language/module-code/top-level-await/while-dynamic-evaluation.js:
+  module: "SyntaxError: Unexpected identifier 'p'. Expected ')' to end a while loop condition."
 test/language/statements/class/class-name-ident-await-escaped.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
   strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
@@ -2877,6 +4034,135 @@ test/language/statements/class/elements/syntax/valid/grammar-static-ctor-async-m
 test/language/statements/class/elements/syntax/valid/grammar-static-ctor-gen-meth-valid.js:
   default: "SyntaxError: Cannot declare a generator function named 'constructor'."
   strict mode: "SyntaxError: Cannot declare a generator function named 'constructor'."
+test/language/statements/class/ident-name-method-def-break-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"
+test/language/statements/class/ident-name-method-def-case-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'c\\u0061se'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'c\\u0061se'"
+test/language/statements/class/ident-name-method-def-catch-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'c\\u0061tch'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'c\\u0061tch'"
+test/language/statements/class/ident-name-method-def-class-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'cl\\u0061ss'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'cl\\u0061ss'"
+test/language/statements/class/ident-name-method-def-const-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0063onst'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0063onst'"
+test/language/statements/class/ident-name-method-def-continue-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0063ontinue'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0063ontinue'"
+test/language/statements/class/ident-name-method-def-debugger-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064ebugger'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064ebugger'"
+test/language/statements/class/ident-name-method-def-default-escaped-ext.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'def\\u{61}ult'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'def\\u{61}ult'"
+test/language/statements/class/ident-name-method-def-default-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'def\\u0061ult'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'def\\u0061ult'"
+test/language/statements/class/ident-name-method-def-delete-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064elete'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064elete'"
+test/language/statements/class/ident-name-method-def-do-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064o'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0064o'"
+test/language/statements/class/ident-name-method-def-else-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065lse'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065lse'"
+test/language/statements/class/ident-name-method-def-enum-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065num'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065num'"
+test/language/statements/class/ident-name-method-def-export-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065xport'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065xport'"
+test/language/statements/class/ident-name-method-def-extends-escaped-ext.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u{65}xtends'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u{65}xtends'"
+test/language/statements/class/ident-name-method-def-extends-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065xtends'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0065xtends'"
+test/language/statements/class/ident-name-method-def-finally-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066inally'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066inally'"
+test/language/statements/class/ident-name-method-def-for-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066or'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066or'"
+test/language/statements/class/ident-name-method-def-function-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066unction'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0066unction'"
+test/language/statements/class/ident-name-method-def-if-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'i\\u0066'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'i\\u0066'"
+test/language/statements/class/ident-name-method-def-implements-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069mplements'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069mplements'"
+test/language/statements/class/ident-name-method-def-import-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069mport'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069mport'"
+test/language/statements/class/ident-name-method-def-in-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069n'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069n'"
+test/language/statements/class/ident-name-method-def-instanceof-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069nstanceof'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: '\\u0069nstanceof'"
+test/language/statements/class/ident-name-method-def-interface-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'interf\\u0061ce'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'interf\\u0061ce'"
+test/language/statements/class/ident-name-method-def-let-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'l\\u0065t'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'l\\u0065t'"
+test/language/statements/class/ident-name-method-def-new-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'n\\u0065w'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'n\\u0065w'"
+test/language/statements/class/ident-name-method-def-package-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'p\\u0061ckage'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'p\\u0061ckage'"
+test/language/statements/class/ident-name-method-def-private-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'privat\\u0065'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'privat\\u0065'"
+test/language/statements/class/ident-name-method-def-protected-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'prot\\u0065cted'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'prot\\u0065cted'"
+test/language/statements/class/ident-name-method-def-public-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'pu\\u0062lic'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'pu\\u0062lic'"
+test/language/statements/class/ident-name-method-def-return-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'r\\u0065turn'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'r\\u0065turn'"
+test/language/statements/class/ident-name-method-def-static-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'st\\u0061tic'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'st\\u0061tic'"
+test/language/statements/class/ident-name-method-def-super-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'sup\\u0065r'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'sup\\u0065r'"
+test/language/statements/class/ident-name-method-def-switch-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'sw\\u0069tch'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'sw\\u0069tch'"
+test/language/statements/class/ident-name-method-def-this-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'th\\u0069s'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'th\\u0069s'"
+test/language/statements/class/ident-name-method-def-throw-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 't\\u0068row'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 't\\u0068row'"
+test/language/statements/class/ident-name-method-def-try-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'tr\\u0079'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'tr\\u0079'"
+test/language/statements/class/ident-name-method-def-typeof-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'typ\\u0065of'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'typ\\u0065of'"
+test/language/statements/class/ident-name-method-def-var-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'v\\u0061r'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'v\\u0061r'"
+test/language/statements/class/ident-name-method-def-void-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'voi\\u0064'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'voi\\u0064'"
+test/language/statements/class/ident-name-method-def-while-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'whil\\u0065'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'whil\\u0065'"
+test/language/statements/class/ident-name-method-def-with-escaped.js:
+  default: "SyntaxError: Unexpected escaped characters in keyword token: 'w\\u0069th'"
+  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'w\\u0069th'"
 test/language/statements/class/poisoned-underscore-proto.js:
   default: 'Test262Error: should not be called'
   strict mode: 'Test262Error: should not be called'

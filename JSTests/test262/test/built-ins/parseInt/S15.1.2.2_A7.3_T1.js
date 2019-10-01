@@ -3,8 +3,6 @@
 
 /*---
 info: Return sign * Result(17)
-es5id: 15.1.2.2_A7.3_T1
-es6id: 18.2.5
 esid: sec-parseint-string-radix
 description: Complex test. Check algorithm
 ---*/

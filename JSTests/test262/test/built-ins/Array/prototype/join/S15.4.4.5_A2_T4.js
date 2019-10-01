@@ -6,7 +6,6 @@ info: |
     The join function is intentionally generic.
     It does not require that its this value be an Array object
 esid: sec-array.prototype.join
-es5id: 15.4.4.5_A2_T4
 description: >
     Operator use ToNumber from length.  If Type(value) is Object,
     evaluate ToPrimitive(value, Number)

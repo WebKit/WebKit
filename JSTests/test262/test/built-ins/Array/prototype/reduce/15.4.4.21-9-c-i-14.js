@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduce
-es5id: 15.4.4.21-9-c-i-14
 description: >
     Array.prototype.reduce - element to be retrieved is own accessor
     property that overrides an inherited accessor property on an Array

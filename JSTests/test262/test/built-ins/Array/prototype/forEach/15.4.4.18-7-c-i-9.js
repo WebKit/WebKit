@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.foreach
-es5id: 15.4.4.18-7-c-i-9
 description: >
     Array.prototype.forEach - element to be retrieved is own accessor
     property on an Array-like object

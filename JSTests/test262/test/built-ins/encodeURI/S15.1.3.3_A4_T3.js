@@ -3,8 +3,6 @@
 
 /*---
 info: URI tests
-es5id: 15.1.3.3_A4_T3
-es6id: 18.2.6.4
 esid: sec-encodeuri-uri
 description: Checking URL with Line Terminator
 ---*/

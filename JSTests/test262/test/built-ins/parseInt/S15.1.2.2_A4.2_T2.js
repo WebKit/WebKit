@@ -3,8 +3,6 @@
 
 /*---
 info: If R < 2 or R > 36, then return NaN
-es5id: 15.1.2.2_A4.2_T2
-es6id: 18.2.5
 esid: sec-parseint-string-radix
 description: R = 37
 ---*/

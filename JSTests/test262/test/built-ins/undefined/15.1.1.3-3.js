@@ -2,8 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es5id: 15.1.1.3-3
-es6id: 18.1.3
 esid: sec-undefined
 description: >
     undefined is not writable, simple assignment should return the

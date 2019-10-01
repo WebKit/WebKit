@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-8-13
 description: Array.prototype.every doesn't visit expandos
 ---*/
 

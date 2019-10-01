@@ -4,7 +4,6 @@
 /*---
 info: The "length" property of the "toLocaleDateString" is 0
 esid: sec-date.prototype.tolocaledatestring
-es5id: 15.9.5.6_A2_T1
 description: The "length" property of the "toLocaleDateString" is 0
 ---*/
 

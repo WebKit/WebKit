@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 20.2
 esid: sec-math-object
 description: >
   The prototype of Math is Object.prototype

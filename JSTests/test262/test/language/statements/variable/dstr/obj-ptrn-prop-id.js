@@ -4,7 +4,6 @@
 /*---
 description: Binding as specified via property name and identifier (`var` statement)
 esid: sec-variable-statement-runtime-semantics-evaluation
-es6id: 13.3.2.4
 features: [destructuring-binding]
 flags: [generated]
 info: |

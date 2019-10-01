@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduce
-es5id: 15.4.4.21-2-17
 description: >
     Array.prototype.reduce applied to the Arguments object, which
     implements its own property get method

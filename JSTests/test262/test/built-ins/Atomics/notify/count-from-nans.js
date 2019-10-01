@@ -20,7 +20,7 @@ info: |
   2. If number is NaN, return +0.
   ...
 
-includes: [nans.js, atomicsHelper.js]
+includes: [nans.js]
 features: [Atomics, SharedArrayBuffer, TypedArray]
 ---*/
 

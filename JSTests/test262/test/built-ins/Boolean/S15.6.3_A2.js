@@ -6,7 +6,6 @@ info: |
     The value of the internal [[Prototype]] property of the Boolean
     constructor is the Function prototype object
 esid: sec-boolean.prototype
-es5id: 15.6.3_A2
 description: Checking prototype of the Boolean constructor
 ---*/
 

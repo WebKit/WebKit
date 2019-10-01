@@ -3,8 +3,6 @@
 
 /*---
 info: The length property of parseFloat has the attribute DontEnum
-es5id: 15.1.2.3_A7.1
-es6id: 18.2.4
 esid: sec-parsefloat-string
 description: Checking use propertyIsEnumerable, for-in
 ---*/

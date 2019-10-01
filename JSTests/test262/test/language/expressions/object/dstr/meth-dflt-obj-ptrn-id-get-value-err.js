@@ -4,7 +4,6 @@
 /*---
 description: Error thrown when accessing the corresponding property of the value object (method (default parameter))
 esid: sec-runtime-semantics-definemethod
-es6id: 14.3.8
 features: [destructuring-binding, default-parameters]
 flags: [generated]
 info: |

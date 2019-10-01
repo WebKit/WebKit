@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduceright
-es5id: 15.4.4.22-3-21
 description: >
     Array.prototype.reduceRight - 'length' is an object that has an
     own valueOf method that returns an object and toString method that

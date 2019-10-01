@@ -16,7 +16,7 @@ var entries = [
 ];
 
 var result = Object.fromEntries(entries);
-assert.sameValue(result['z'], 1);
-assert.sameValue(result['y'], 4);
-assert.sameValue(result['x'], 3);
-assert.compareArray(Object.keys(result), ['z', 'y', 'x']);
+assert.sameValue(result.z, 1);
+assert.sameValue(result.y, 4);
+assert.sameValue(result.x, 3);
+assert.compareArray(Object.getOwnPropertyNames(result), ['z', 'y', 'x']);

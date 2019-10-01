@@ -5,8 +5,6 @@
 info: |
     unescapedURISet containing one instance of each character valid in
     uriReserved
-es5id: 15.1.3.3_A3.1_T1
-es6id: 18.2.6.4
 esid: sec-encodeuri-uri
 description: Complex tests
 ---*/

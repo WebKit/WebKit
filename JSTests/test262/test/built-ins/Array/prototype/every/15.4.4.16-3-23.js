@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-3-23
 description: >
     Array.prototype.every uses inherited valueOf method when 'length'
     is an object with an own toString and inherited valueOf methods

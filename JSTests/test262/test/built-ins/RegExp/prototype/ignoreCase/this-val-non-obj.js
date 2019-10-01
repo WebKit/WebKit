@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-get-regexp.prototype.ignorecase
-es6id: 21.2.5.5
 description: A TypeError is thrown when the "this" value is not an Object
 info: |
   1. Let R be the this value.

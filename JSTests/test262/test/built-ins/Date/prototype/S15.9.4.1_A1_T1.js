@@ -6,7 +6,6 @@ info: |
     The Date property "prototype" has { DontEnum, DontDelete, ReadOnly }
     attributes
 esid: sec-date.prototype
-es5id: 15.9.4.1_A1_T1
 description: Checking ReadOnly attribute
 includes: [propertyHelper.js]
 ---*/

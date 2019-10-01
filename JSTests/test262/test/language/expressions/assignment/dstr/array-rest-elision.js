@@ -4,7 +4,6 @@
 /*---
 description: ArrayAssignmentPattern may include elisions at any position preceding a AssignmentRestElement in a AssignmentElementList. (AssignmentExpression)
 esid: sec-variable-statement-runtime-semantics-evaluation
-es6id: 13.3.2.4
 features: [destructuring-binding]
 flags: [generated]
 info: |

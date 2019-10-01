@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-symbol.for
-es6id: 19.4.2.1
 description: Retrieval of previously-created value
 info: |
     1. Let stringKey be ? ToString(key).

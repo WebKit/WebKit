@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-8-c-ii-11
 description: Array.prototype.map - callbackfn is called with 2 formal parameters
 ---*/
 

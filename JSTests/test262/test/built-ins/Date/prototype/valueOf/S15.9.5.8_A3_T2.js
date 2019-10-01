@@ -6,7 +6,6 @@ info: |
     The Date.prototype.valueOf property "length" has { ReadOnly, !
     DontDelete, DontEnum } attributes
 esid: sec-date.prototype.valueof
-es5id: 15.9.5.8_A3_T2
 description: Checking DontDelete attribute
 ---*/
 

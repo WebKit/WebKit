@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-7-c-i-30
 description: >
     Array.prototype.every - unnhandled exceptions happened in getter
     terminate iteration on an Array-like object

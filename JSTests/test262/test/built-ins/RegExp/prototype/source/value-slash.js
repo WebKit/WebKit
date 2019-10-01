@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-get-regexp.prototype.source
-es6id: 21.2.5.10
 description: Return value can be used to create an equivalent RegExp
 info: |
   [...]

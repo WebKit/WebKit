@@ -1,7 +1,6 @@
 // Copyright (C) 2016 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 9.5.2
 esid: sec-proxy-object-internal-methods-and-internal-slots-call-thisargument-argumentslist
 description: >
   Return abrupt getting handler trap

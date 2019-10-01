@@ -6,7 +6,6 @@ info: |
     note that prior to the finally ES5 draft SameValue was used for comparisions
     and hence NaNs could be found using lastIndexOf *
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-8-10
 description: Array.prototype.lastIndexOf must return correct index (NaN)
 ---*/
 

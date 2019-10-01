@@ -16,7 +16,6 @@ info: |
       i. Let funcResult be Call(callbackfn, T, «e.[[value]], e.[[key]], M»).
       ii. ReturnIfAbrupt(funcResult).
   ...
-flags: [noStrict]
 ---*/
 
 var map = new Map([[0, 0]]);

@@ -29,6 +29,8 @@ info: |
     c. Return CreateIterResultObject(cell.[[Holdings]], false).
   9. Otherwise, return CreateIterResultObject(undefined, true).
 features: [FinalizationGroup, host-gc-required, Symbol]
+includes: [async-gc.js]
+flags: [async, non-deterministic]
 ---*/
 
 var called = 0;
@@ -67,32 +69,38 @@ function callback(iterator) {
   endOfCall += 1;
 }
 
-(function() {
+function emptyCells() {
   var o1 = {};
   var o2 = {};
   fg.register(o1, 'holdings 1');
   fg.register(o2, 'holdings 2');
-})();
 
-$262.gc();
+  var prom = asyncGC(o1, o2);
+  o1 = null;
+  o2 = null;
 
-fg.cleanupSome(callback);
+  return prom;
+}
 
-// Make sure everything is set
-assert.sameValue(called, 4, 'cleanup successfully');
-assert.sameValue(endOfCall, 4, 'cleanup ended successfully');
+emptyCells().then(function() {
+  fg.cleanupSome(callback);
 
-assert.notSameValue(firstIter, secondIter, 'callback is not called with the same iterator #1');
-assert.notSameValue(firstIter, thirdIter, 'callback is not called with the same iterator #2');
-assert.notSameValue(secondIter, thirdIter, 'callback is not called with the same iterator #3');
-
-assert.sameValue(first.value, undefined, 'iterator is already consumed');
-assert.sameValue(first.done, true, 'first callback will find no empty Targets');
-assert.sameValue(second.done, false, 'second callback will find an empty Target');
-assert.sameValue(third.done, false, 'third callback will find an empty Target');
-
-// 8.a. Choose any such cell.
-var holdings = [second.value, third.value];
-
-assert(holdings.includes('holdings 1'), 'iterators consume emptied cells #1');
-assert(holdings.includes('holdings 2'), 'iterators consume emptied cells #2');
+  // Make sure everything is set
+  assert.sameValue(called, 4, 'cleanup successfully');
+  assert.sameValue(endOfCall, 4, 'cleanup ended successfully');
+  
+  assert.notSameValue(firstIter, secondIter, 'callback is not called with the same iterator #1');
+  assert.notSameValue(firstIter, thirdIter, 'callback is not called with the same iterator #2');
+  assert.notSameValue(secondIter, thirdIter, 'callback is not called with the same iterator #3');
+  
+  assert.sameValue(first.value, undefined, 'iterator is already consumed');
+  assert.sameValue(first.done, true, 'first callback will find no empty Targets');
+  assert.sameValue(second.done, false, 'second callback will find an empty Target');
+  assert.sameValue(third.done, false, 'third callback will find an empty Target');
+  
+  // 8.a. Choose any such cell.
+  var holdings = [second.value, third.value];
+  
+  assert(holdings.includes('holdings 1'), 'iterators consume emptied cells #1');
+  assert(holdings.includes('holdings 2'), 'iterators consume emptied cells #2');  
+}).then($DONE, resolveAsyncGC);

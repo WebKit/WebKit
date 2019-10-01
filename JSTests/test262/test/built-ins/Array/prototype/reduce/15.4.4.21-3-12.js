@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduce
-es5id: 15.4.4.21-3-12
 description: >
     Array.prototype.reduce - 'length' is a string containing a
     negative number

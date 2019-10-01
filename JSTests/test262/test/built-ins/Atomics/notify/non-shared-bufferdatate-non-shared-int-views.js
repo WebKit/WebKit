@@ -5,7 +5,6 @@
 esid: sec-atomics.notify
 description: >
   Test Atomics.notify on non-shared integer TypedArrays
-includes: [testTypedArray.js]
 features: [ArrayBuffer, Atomics, TypedArray]
 ---*/
 

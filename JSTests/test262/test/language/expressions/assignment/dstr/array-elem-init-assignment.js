@@ -4,7 +4,6 @@
 /*---
 description: If the Initializer is present and v is undefined, the Initializer should be evaluated and the result assigned to the target reference. (AssignmentExpression)
 esid: sec-variable-statement-runtime-semantics-evaluation
-es6id: 13.3.2.4
 features: [destructuring-binding]
 flags: [generated]
 info: |

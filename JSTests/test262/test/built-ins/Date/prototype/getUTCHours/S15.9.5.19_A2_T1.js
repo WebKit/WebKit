@@ -4,7 +4,6 @@
 /*---
 info: The "length" property of the "getUTCHours" is 0
 esid: sec-date.prototype.getutchours
-es5id: 15.9.5.19_A2_T1
 description: The "length" property of the "getUTCHours" is 0
 ---*/
 

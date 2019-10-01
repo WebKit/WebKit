@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-8-b-i-30
 description: >
     Array.prototype.lastIndexOf terminates iteration on unhandled
     exception on an Array

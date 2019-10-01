@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-3-29
 description: >
     Array.prototype.map - value of 'length' is boundary value (2^32 +
     1)

@@ -5,7 +5,6 @@
 description: Static private methods not accessible via default Proxy handler
 esid: prod-FieldDefinition
 features: [class, class-static-methods-private]
-includes: [propertyHelper.js]
 info: |
     ClassElement :
       ...

@@ -4,7 +4,6 @@
 /*---
 description: It is a Syntax Error if LeftHandSideExpression is neither an ObjectLiteral nor an ArrayLiteral and IsValidSimpleAssignmentTarget(LeftHandSideExpression) is false. (For..of statement)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
-es6id: 13.7.5.11
 features: [destructuring-binding]
 flags: [generated, onlyStrict]
 negative:

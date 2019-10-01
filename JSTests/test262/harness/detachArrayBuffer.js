@@ -5,7 +5,7 @@ description: |
     A function used in the process of asserting correctness of TypedArray objects.
 
     $262.detachArrayBuffer is defined by a host.
-
+defines: [$DETACHBUFFER]
 ---*/
 
 function $DETACHBUFFER(buffer) {

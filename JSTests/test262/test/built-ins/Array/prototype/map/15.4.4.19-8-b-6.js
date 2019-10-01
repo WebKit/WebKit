@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-8-b-6
 description: >
     Array.prototype.map - properties can be added to prototype after
     current position are visited on an Array-like object

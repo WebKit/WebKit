@@ -5,8 +5,6 @@
 info: |
     If B = 11110xxx (n = 4) and C != 10xxxxxx (C - first of octets after B),
     throw URIError
-es5id: 15.1.3.2_A1.15_T5
-es6id: 18.2.6.3
 esid: sec-decodeuricomponent-encodeduricomponent
 description: Complex tests. B = [0xF0 - 0x0F7], C = [0xC0, 0xFF]
 includes: [decimalToHexString.js]

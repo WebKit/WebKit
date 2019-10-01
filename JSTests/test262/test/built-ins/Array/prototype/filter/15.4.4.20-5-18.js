@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.filter
-es5id: 15.4.4.20-5-18
 description: Array.prototype.filter - Error Object can be used as thisArg
 ---*/
 

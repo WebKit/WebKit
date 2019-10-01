@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 20.1.2.4
 esid: sec-number.isnan
 description: >
   Return false if argument is not Number

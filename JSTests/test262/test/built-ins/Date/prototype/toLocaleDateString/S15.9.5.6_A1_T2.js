@@ -6,7 +6,6 @@ info: |
     The Date.prototype property "toLocaleDateString" has { DontEnum }
     attributes
 esid: sec-date.prototype.tolocaledatestring
-es5id: 15.9.5.6_A1_T2
 description: Checking absence of DontDelete attribute
 ---*/
 

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.some
-es5id: 15.4.4.17-2-9
 description: >
     Array.prototype.some - 'length' is an own accessor property that
     overrides an inherited accessor property on an Array-like object

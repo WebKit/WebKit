@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-date.prototype.toisostring
-es5id: 15.9.5.43-0-3
 description: Date.prototype.toISOString must exist as a function
 ---*/
 

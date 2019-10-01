@@ -4,7 +4,6 @@
 /*---
 description: Getter manipulates outter object before it's spread operation (SuperCall)
 esid: sec-super-keyword-runtime-semantics-evaluation
-es6id: 12.3.5.1
 features: [object-spread]
 flags: [generated]
 info: |

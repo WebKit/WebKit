@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-6-1
 description: >
     Array.prototype.map - Array.isArray returns true when input
     argument is the ourput array

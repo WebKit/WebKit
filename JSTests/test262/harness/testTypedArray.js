@@ -3,6 +3,13 @@
 /*---
 description: |
     Collection of functions used to assert the correctness of TypedArray objects.
+defines:
+  - typedArrayConstructors
+  - floatArrayConstructors
+  - intArrayConstructors
+  - TypedArray
+  - testWithTypedArrayConstructors
+  - testTypedArrayConversions
 ---*/
 
 /**

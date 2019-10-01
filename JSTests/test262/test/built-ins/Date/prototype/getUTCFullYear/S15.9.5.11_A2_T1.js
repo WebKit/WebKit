@@ -4,7 +4,6 @@
 /*---
 info: The "length" property of the "getUTCFullYear" is 0
 esid: sec-date.prototype.getutcfullyear
-es5id: 15.9.5.11_A2_T1
 description: The "length" property of the "getUTCFullYear" is 0
 ---*/
 

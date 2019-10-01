@@ -6,7 +6,6 @@ info: |
     The Date.prototype.getUTCFullYear property "length" has { ReadOnly, !
     DontDelete, DontEnum } attributes
 esid: sec-date.prototype.getutcfullyear
-es5id: 15.9.5.11_A3_T2
 description: Checking DontDelete attribute
 ---*/
 

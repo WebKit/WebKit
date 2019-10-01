@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-proxy-object-internal-methods-and-internal-slots-call-thisargument-argumentslist
-es6id: 9.5.13
 description: >
     trap is called with handler object as its context, and parameters are:
     target, the call context and and an array list with the called arguments

@@ -5,8 +5,6 @@
 info: |
     Compute the longest prefix of Result(2), which might be Result(2) itself,
     which satisfies the syntax of a StrDecimalLiteral
-es5id: 15.1.2.3_A4_T1
-es6id: 18.2.4
 esid: sec-parsefloat-string
 description: Some wrong number
 ---*/

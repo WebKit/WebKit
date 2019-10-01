@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-8-a-10
 description: >
     Array.prototype.lastIndexOf - properties can be added to prototype
     after current position are visited on an Array

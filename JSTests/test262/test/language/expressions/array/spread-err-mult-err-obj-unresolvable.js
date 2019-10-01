@@ -4,7 +4,6 @@
 /*---
 description: Object Spread operator results in error when using an unresolvable reference (Array initializer)
 esid: sec-runtime-semantics-arrayaccumulation
-es6id: 12.2.5.2
 features: [object-spread]
 flags: [generated]
 info: |

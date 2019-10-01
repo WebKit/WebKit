@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-promise.prototype
-es6id: 25.4.4.2
 description: Property descriptor of 'prototype' property
 info: |
   This property has the attributes { [[Writable]]: false, [[Enumerable]]:

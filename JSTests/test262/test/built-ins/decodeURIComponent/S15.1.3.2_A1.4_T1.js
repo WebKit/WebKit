@@ -3,8 +3,6 @@
 
 /*---
 info: If B = 110xxxxx (n = 2) and (k + 2) + 3 >= length, throw URIError
-es5id: 15.1.3.2_A1.4_T1
-es6id: 18.2.6.3
 esid: sec-decodeuricomponent-encodeduricomponent
 description: Complex tests. B = [0xC0 - 0xDF]
 includes: [decimalToHexString.js]

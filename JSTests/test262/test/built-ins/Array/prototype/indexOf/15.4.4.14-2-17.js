@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.indexof
-es5id: 15.4.4.14-2-17
 description: >
     Array.prototype.indexOf applied to Arguments object which
     implements its own property get method

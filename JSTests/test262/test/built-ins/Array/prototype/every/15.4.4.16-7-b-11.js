@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-7-b-11
 description: >
     Array.prototype.every - deleting property of prototype causes
     prototype index property not to be visited on an Array

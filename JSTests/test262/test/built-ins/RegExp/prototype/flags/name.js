@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-get-regexp.prototype.flags
-es6id: 21.2.5.3
 description: >
   get RegExp.prototype.flags.name is "get flags".
 info: |

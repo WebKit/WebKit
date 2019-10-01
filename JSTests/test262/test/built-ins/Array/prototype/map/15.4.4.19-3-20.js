@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-3-20
 description: >
     Array.prototype.map - value of 'length' is an Object which has an
     own valueOf method

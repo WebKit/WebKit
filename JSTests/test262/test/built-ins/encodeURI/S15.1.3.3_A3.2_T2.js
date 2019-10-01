@@ -5,8 +5,6 @@
 info: |
     unescapedURISet containing one instance of each character valid in
     uriUnescaped
-es5id: 15.1.3.3_A3.2_T2
-es6id: 18.2.6.4
 esid: sec-encodeuri-uri
 description: "Complex tests, uriUnescaped :: DecimalDigit"
 ---*/

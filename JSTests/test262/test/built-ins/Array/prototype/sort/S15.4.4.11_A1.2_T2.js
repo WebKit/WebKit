@@ -7,7 +7,6 @@ info: |
     ToString(j), return 1. If this object does not have a property
     named by ToString(k), return -1
 esid: sec-array.prototype.sort
-es5id: 15.4.4.11_A1.2_T2
 description: If comparefn is not undefined
 ---*/
 

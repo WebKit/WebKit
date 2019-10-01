@@ -4,7 +4,6 @@
 /*---
 description: Rest element (array binding pattern) may not be followed by any element (method)
 esid: sec-runtime-semantics-definemethod
-es6id: 14.3.8
 features: [destructuring-binding]
 flags: [generated]
 negative:

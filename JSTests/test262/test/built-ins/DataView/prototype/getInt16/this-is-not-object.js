@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-dataview.prototype.getint16
-es6id: 24.2.4.8
 description: Throws a TypeError if this is not Object
 info: |
   24.2.4.8 DataView.prototype.getInt16 ( byteOffset [ , littleEndian ] )

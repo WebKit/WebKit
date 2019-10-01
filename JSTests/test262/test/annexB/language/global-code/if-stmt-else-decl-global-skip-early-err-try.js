@@ -4,7 +4,6 @@
 /*---
 description: Extension is observed when creation of variable binding would not produce an early error (try statement) (IfStatement with a declaration in the second statement position in the global scope)
 esid: sec-functiondeclarations-in-ifstatement-statement-clauses
-es6id: B.3.4
 flags: [generated, noStrict]
 info: |
     The following rules for IfStatement augment those in 13.6:

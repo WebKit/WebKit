@@ -6,7 +6,6 @@ info: |
     Returns a boolean value (not a Boolean object) computed by
     ToBoolean(value)
 esid: sec-terms-and-definitions-boolean-value
-es5id: 15.6.1.1_A1_T1
 description: >
     Used values 1, new String("1"), new Object(1) and called without
     argument

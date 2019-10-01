@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 24.1.2.1
 esid: sec-arraybuffer-length
 description: >
   Throws a RangeError if length >= 2 ** 53

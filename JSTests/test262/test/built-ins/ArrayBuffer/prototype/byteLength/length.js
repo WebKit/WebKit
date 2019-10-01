@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-get-arraybuffer.prototype.bytelength
-es6id: 24.1.4.1
 description: >
   get ArrayBuffer.prototype.byteLength.length is 0.
 info: |

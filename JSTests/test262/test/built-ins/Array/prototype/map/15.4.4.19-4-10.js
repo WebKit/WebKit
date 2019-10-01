@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-4-10
 description: >
     Array.prototype.map - the exception is not thrown if exception was
     thrown by step 2

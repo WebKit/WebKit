@@ -6,7 +6,6 @@ info: |
     The Date.prototype.setUTCHours property "length" has { ReadOnly,
     DontDelete, DontEnum } attributes
 esid: sec-date.prototype.setutchours
-es5id: 15.9.5.35_A3_T3
 description: Checking DontEnum attribute
 ---*/
 

@@ -6,7 +6,6 @@ description: Use yield value in a object spread position (Named async generator 
 esid: prod-AsyncGeneratorExpression
 features: [object-spread, async-iteration]
 flags: [generated, async]
-includes: [compareArray.js]
 info: |
     Async Generator Function Definitions
 

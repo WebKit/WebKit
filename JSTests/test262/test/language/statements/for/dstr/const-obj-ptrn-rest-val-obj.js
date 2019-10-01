@@ -4,7 +4,6 @@
 /*---
 description: Rest object contains just unextracted data (for statement)
 esid: sec-for-statement-runtime-semantics-labelledevaluation
-es6id: 13.7.4.7
 features: [object-rest, destructuring-binding]
 flags: [generated]
 includes: [propertyHelper.js]

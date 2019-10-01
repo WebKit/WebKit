@@ -3,7 +3,7 @@
 // - src/accessor-names/private/cls-private-decl-static.template
 /*---
 description: Private IdentifierName - common (Class declaration, static method)
-features: [class-static-methods-private]
+features: [class, class-static-methods-private]
 flags: [generated]
 info: |
     ClassElement :

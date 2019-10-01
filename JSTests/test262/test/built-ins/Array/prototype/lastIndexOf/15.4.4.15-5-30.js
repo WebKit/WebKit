@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-5-30
 description: >
     Array.prototype.lastIndexOf - side effects produced by step 3 are
     visible when an exception occurs

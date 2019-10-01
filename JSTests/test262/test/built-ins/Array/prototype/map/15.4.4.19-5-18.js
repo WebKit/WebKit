@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-5-18
 description: Array.prototype.map - Error object can be used as thisArg
 ---*/
 

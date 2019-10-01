@@ -5,8 +5,6 @@
 info: |
     If B = 1110xxxx (n = 3) and string.charAt(k + 3),
     string.charAt(k + 6) not equal "%", throw URIError
-es5id: 15.1.3.1_A1.8_T2
-es6id: 18.2.6.2
 esid: sec-decodeuri-encodeduri
 description: >
     Complex tests. B = [0xE0 - 0xEF],  string.charAt(k + 6) not equal "%"

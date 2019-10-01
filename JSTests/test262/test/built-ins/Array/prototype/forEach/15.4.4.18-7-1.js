@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.foreach
-es5id: 15.4.4.18-7-1
 description: >
     Array.prototype.forEach doesn't consider new elements added to
     array after the call

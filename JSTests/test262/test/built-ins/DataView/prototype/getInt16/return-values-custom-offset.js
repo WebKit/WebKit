@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-dataview.prototype.getint16
-es6id: 24.2.4.8
 description: >
   Return values from Buffer using a custom offset
 info: |

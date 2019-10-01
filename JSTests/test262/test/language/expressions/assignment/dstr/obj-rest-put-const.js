@@ -4,7 +4,6 @@
 /*---
 description: The object rest deconstruction assignment target should obey `const` semantics. (AssignmentExpression)
 esid: sec-variable-statement-runtime-semantics-evaluation
-es6id: 13.3.2.4
 features: [object-rest, destructuring-binding]
 flags: [generated]
 info: |

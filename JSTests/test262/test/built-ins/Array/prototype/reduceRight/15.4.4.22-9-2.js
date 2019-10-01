@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduceright
-es5id: 15.4.4.22-9-2
 description: >
     Array.prototype.reduceRight considers new value of elements in
     array after it is called

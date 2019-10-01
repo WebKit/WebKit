@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduceright
-es5id: 15.4.4.22-3-4
 description: >
     Array.prototype.reduceRight - value of 'length' is a number (value
     is +0)

@@ -14,20 +14,24 @@ info: |
     b. Return target.
   6. Return undefined.
 features: [WeakRef, host-gc-required]
+includes: [async-gc.js]
+flags: [async, non-deterministic]
 ---*/
 
 var deref = false;
+var wr;
 
 function emptyCells() {
-  var wr;
-  (function() {
-    var a = {};
-    wr = new WeakRef(a);
-  })();
-  $262.gc();
-  deref = wr.deref();
+  var target = {};
+  wr = new WeakRef(target);
+
+  var prom = asyncGC(target);
+  target = null;
+
+  return prom;
 }
 
-emptyCells();
-
-assert.sameValue(deref, undefined);
+emptyCells().then(function() {
+  deref = wr.deref();
+  assert.sameValue(deref, undefined);
+}).then($DONE, resolveAsyncGC);

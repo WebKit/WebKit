@@ -27,6 +27,8 @@ info: |
   2. If Type(iterator) is not Object, throw a TypeError exception.
   3. If iterator does not have a [[FinalizationGroup]] internal slot, throw a TypeError exception.
 features: [FinalizationGroup, WeakRef, host-gc-required, Symbol]
+includes: [async-gc.js]
+flags: [async, non-deterministic]
 ---*/
 
 var FinalizationGroupCleanupIteratorPrototype;
@@ -70,14 +72,19 @@ function callback(iterator) {
   endOfCall += 1;
 }
 
-(function() {
-  var o = {};
-  fg.register(o);
-})();
+function emptyCells() {
+  var target = {};
+  fg.register(target);
 
-$262.gc();
+  var prom = asyncGC(target);
+  target = null;
 
-fg.cleanupSome(callback);
+  return prom;
+}
 
-assert.sameValue(called, 1, 'cleanup successful');
-assert.sameValue(endOfCall, 1, 'Abrupt completions are not directly returned.');
+emptyCells().then(function() {
+  fg.cleanupSome(callback);
+
+  assert.sameValue(called, 1, 'cleanup successful');
+  assert.sameValue(endOfCall, 1, 'Abrupt completions are not directly returned.');
+}).then($DONE, resolveAsyncGC);

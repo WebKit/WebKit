@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-arraybuffer-length
-es6id: 24.1.1.1
 description: Default [[Prototype]] value derived from realm of the newTarget
 info: |
     [...]

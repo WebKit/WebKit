@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.indexof
-es5id: 15.4.4.14-2-12
 description: >
     Array.prototype.indexOf - 'length' is own accessor property
     without a get function that overrides an inherited accessor

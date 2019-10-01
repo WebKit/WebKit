@@ -6,7 +6,6 @@ info: |
     The Date.prototype property "getUTCMilliseconds" has { DontEnum }
     attributes
 esid: sec-date.prototype.getutcmilliseconds
-es5id: 15.9.5.25_A1_T3
 description: Checking DontEnum attribute
 ---*/
 

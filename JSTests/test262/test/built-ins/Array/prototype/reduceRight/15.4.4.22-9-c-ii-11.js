@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduceright
-es5id: 15.4.4.22-9-c-ii-11
 description: >
     Array.prototype.reduceRight - callbackfn is called with 2 formal
     parameter

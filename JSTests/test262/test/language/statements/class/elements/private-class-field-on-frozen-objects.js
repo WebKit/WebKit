@@ -13,7 +13,6 @@ info: |
       a. Assert: IsPropertyKey(fieldName) is true.
       b. Perform ? CreateDataPropertyOrThrow(receiver, fieldName, initValue).
     10. Return.
-includes: [compareArray.js]
 features: [class, class-fields-private, class-fields-public]
 flags: [onlyStrict]
 ---*/

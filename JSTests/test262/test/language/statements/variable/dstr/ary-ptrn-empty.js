@@ -4,7 +4,6 @@
 /*---
 description: No iteration occurs for an "empty" array binding pattern (`var` statement)
 esid: sec-variable-statement-runtime-semantics-evaluation
-es6id: 13.3.2.4
 features: [generators, destructuring-binding]
 flags: [generated]
 info: |

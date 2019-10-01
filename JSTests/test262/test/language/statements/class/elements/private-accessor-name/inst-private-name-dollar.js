@@ -3,7 +3,7 @@
 // - src/accessor-names/private/cls-private-decl-inst.template
 /*---
 description: Private IdentifierName - $ (Class declaration, private instance method)
-features: [class-methods-private]
+features: [class, class-methods-private]
 flags: [generated]
 info: |
     ClassElement :

@@ -4,7 +4,6 @@
 /*---
 description: BindingElement with object binding pattern and initializer is not used (class expression method (default parameter))
 esid: sec-class-definitions-runtime-semantics-evaluation
-es6id: 14.5.16
 features: [destructuring-binding, default-parameters]
 flags: [generated]
 info: |

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-5-13
 description: >
     Array.prototype.lastIndexOf - value of 'fromIndex' is a number
     (value is -Infinity)

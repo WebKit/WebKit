@@ -4,7 +4,6 @@
 /*---
 description: Spread operator applied to the only argument when evaluation throws (SuperCall)
 esid: sec-super-keyword-runtime-semantics-evaluation
-es6id: 12.3.5.1
 features: [generators]
 flags: [generated]
 info: |

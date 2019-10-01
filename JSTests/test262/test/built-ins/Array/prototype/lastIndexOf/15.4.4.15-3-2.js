@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-3-2
 description: >
     Array.prototype.lastIndexOf return -1 when value of 'length' is a
     boolean (value is true)

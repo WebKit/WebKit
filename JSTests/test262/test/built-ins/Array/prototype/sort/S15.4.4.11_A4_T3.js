@@ -4,7 +4,6 @@
 /*---
 info: Check ToLength(length) for non Array objects
 esid: sec-array.prototype.sort
-es5id: 15.4.4.11_A4_T3
 description: length = -4294967294
 ---*/
 

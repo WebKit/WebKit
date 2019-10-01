@@ -25,7 +25,7 @@ info: |
     a. Let realm be ? GetFunctionRealm(constructor).
     b. Set proto to realm's intrinsic object named intrinsicDefaultProto.
   5. Return proto.
-features: [FinalizationGroup, cross-realm, Reflect]
+features: [FinalizationGroup, cross-realm, Reflect, Symbol]
 ---*/
 
 var other = $262.createRealm().global;

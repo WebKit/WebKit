@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-date-year-month-date-hours-minutes-seconds-ms
-es6id: 20.3.2.1
 description: Default [[Prototype]] value derived from realm of the newTarget
 info: |
     [...]

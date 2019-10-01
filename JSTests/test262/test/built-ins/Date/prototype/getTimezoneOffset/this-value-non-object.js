@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-date.prototype.gettimezoneoffset
-es6id: 20.3.4.11
 description: Behavior when "this" value is not an Object
 info: |
   1. Let t be ? thisTimeValue(this value).

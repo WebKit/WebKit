@@ -4,7 +4,6 @@
 /*---
 description: When DestructuringAssignmentTarget is an array literal and the iterable emits `undefined` as the only value, an array with a single `undefined` element should be used as the value of the nested DestructuringAssignment. (For..of statement)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
-es6id: 13.7.5.11
 features: [destructuring-binding]
 flags: [generated]
 info: |

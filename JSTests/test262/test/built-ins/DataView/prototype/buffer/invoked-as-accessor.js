@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-get-dataview.prototype.buffer
-es6id: 24.2.4.1
 description: >
   Requires this value to have a [[DataView]] internal slot
 info: |

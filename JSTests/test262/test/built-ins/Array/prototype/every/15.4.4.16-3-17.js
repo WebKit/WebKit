@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-3-17
 description: >
     Array.prototype.every - 'length' is a string containing a number
     with leading zeros

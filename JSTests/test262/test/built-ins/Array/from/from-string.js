@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.from
-es6id: 22.1.2.1
 description: Testing Array.from when passed a String
 author: Hank Yates (hankyates@gmail.com)
 ---*/

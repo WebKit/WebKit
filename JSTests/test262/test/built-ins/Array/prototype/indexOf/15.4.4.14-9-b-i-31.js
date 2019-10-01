@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.indexof
-es5id: 15.4.4.14-9-b-i-31
 description: >
     Array.prototype.indexOf - terminates iteration on unhandled
     exception on an Array-like object

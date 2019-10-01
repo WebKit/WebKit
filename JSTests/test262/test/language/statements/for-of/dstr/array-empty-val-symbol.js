@@ -4,7 +4,6 @@
 /*---
 description: An ArrayAssignmentPattern without an AssignmentElementList requires iterable values and throws for Symbol values. (For..of statement)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
-es6id: 13.7.5.11
 features: [Symbol, destructuring-binding]
 flags: [generated]
 info: |

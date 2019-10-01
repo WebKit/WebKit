@@ -4,7 +4,6 @@
 /*---
 info: The Date.prototype property "getUTCMonth" has { DontEnum } attributes
 esid: sec-date.prototype.getutcmonth
-es5id: 15.9.5.13_A1_T1
 description: Checking absence of ReadOnly attribute
 ---*/
 

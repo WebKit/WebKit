@@ -4,7 +4,6 @@
 /*---
 description: Rest element (nested object pattern) does not support initializer (for statement)
 esid: sec-for-statement-runtime-semantics-labelledevaluation
-es6id: 13.7.4.7
 features: [destructuring-binding]
 flags: [generated]
 negative:

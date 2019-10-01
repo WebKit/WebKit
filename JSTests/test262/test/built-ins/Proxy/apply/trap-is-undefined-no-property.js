@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 9.5.13
 esid: sec-proxy-object-internal-methods-and-internal-slots-call-thisargument-argumentslist
 description: >
     If trap is not set, propagate the call to the target object.

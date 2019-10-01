@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-dataview.prototype.setfloat32
-es6id: 24.2.4.13
 description: >
   Set value as undefined (cast to NaN) when value argument is not present
 info: |

@@ -4,7 +4,6 @@
 /*---
 description: Error forwarding when IteratorStep returns an abrupt completion (class expression method)
 esid: sec-class-definitions-runtime-semantics-evaluation
-es6id: 14.5.16
 features: [Symbol.iterator, generators, destructuring-binding]
 flags: [generated]
 info: |

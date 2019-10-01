@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduceright
-es5id: 15.4.4.22-3-23
 description: >
     Array.prototype.reduceRight uses inherited valueOf method when
     'length' is an object with an own toString and inherited valueOf

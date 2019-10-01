@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-dataview.prototype.setuint16
-es6id: 24.2.4.19
 description: >
   Set values on the little endian order
 info: |

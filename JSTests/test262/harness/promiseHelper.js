@@ -6,6 +6,7 @@ description: |
     and incrementing by 1 for each entry in the array. Used by
     Promise tests to assert the order of execution in deep Promise
     resolution pipelines.
+defines: [checkSequence, checkSettledPromises]
 ---*/
 
 function checkSequence(arr, message) {

@@ -4,7 +4,6 @@
 /*---
 description: Proper setting in the values for rest name equal to a property name. (AssignmentExpression)
 esid: sec-variable-statement-runtime-semantics-evaluation
-es6id: 13.3.2.4
 features: [object-rest, destructuring-binding]
 flags: [generated]
 info: |
@@ -34,7 +33,7 @@ assert.sameValue(y, undefined);
 assert.sameValue(z.y, 39);
 assert.sameValue(z.z, 'cheeseburger');
 
-var keys = Object.keys(z);
+var keys = Object.getOwnPropertyNames(z);
 assert.sameValue(keys.length, 2);
 assert.sameValue(keys[0], 'y');
 assert.sameValue(keys[1], 'z');

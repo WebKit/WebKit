@@ -4,7 +4,6 @@
 /*---
 description: Getter is called when obj is being deconstructed to a rest Object (generator function declaration (default parameter))
 esid: sec-generator-function-definitions-runtime-semantics-instantiatefunctionobject
-es6id: 14.4.12
 features: [object-rest, generators, destructuring-binding, default-parameters]
 flags: [generated]
 includes: [propertyHelper.js]

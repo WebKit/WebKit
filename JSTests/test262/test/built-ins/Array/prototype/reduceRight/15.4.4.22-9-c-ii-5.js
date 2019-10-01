@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduceright
-es5id: 15.4.4.22-9-c-ii-5
 description: >
     Array.prototype.reduceRight - k values are accessed during each
     iteration and not prior to starting the loop on an Array

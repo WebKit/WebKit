@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-symbol-constructor
-es6id: 19.4.1
 description: The value "undefined" is reported as the empty string
 info: |
     1. If NewTarget is not undefined, throw a TypeError exception.

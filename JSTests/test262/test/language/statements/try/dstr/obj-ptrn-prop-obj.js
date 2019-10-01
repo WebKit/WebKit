@@ -4,7 +4,6 @@
 /*---
 description: Object binding pattern with "nested" object binding pattern not using initializer (try statement)
 esid: sec-runtime-semantics-catchclauseevaluation
-es6id: 13.15.7
 features: [destructuring-binding]
 flags: [generated]
 info: |

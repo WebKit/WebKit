@@ -3,6 +3,7 @@
 /*---
 description: |
     Verify that a subArray is contained within an array.
+defines: [arrayContains]
 ---*/
 
 /**

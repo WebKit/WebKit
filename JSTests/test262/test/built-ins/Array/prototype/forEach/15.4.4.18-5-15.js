@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.foreach
-es5id: 15.4.4.18-5-15
 description: Array.prototype.forEach - Date Object can be used as thisArg
 ---*/
 

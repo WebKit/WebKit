@@ -22,7 +22,7 @@ info: |
     5. Assert: calleeContext is now the running execution context.
     ...
 
-features: [tail-call-optimization, class]
+features: [tail-call-optimization, class, cross-realm]
 ---*/
 
 // - The class constructor call is in a valid tail-call position, which means PrepareForTailCall is performed.

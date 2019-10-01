@@ -6,7 +6,6 @@ info: |
     The Date.prototype.setMilliseconds property "length" has { ReadOnly,
     DontDelete, DontEnum } attributes
 esid: sec-date.prototype.setmilliseconds
-es5id: 15.9.5.28_A3_T3
 description: Checking DontEnum attribute
 ---*/
 

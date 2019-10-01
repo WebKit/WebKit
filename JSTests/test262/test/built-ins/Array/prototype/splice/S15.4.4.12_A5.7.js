@@ -4,7 +4,6 @@
 /*---
 info: The splice property of Array can't be used as constructor
 esid: sec-array.prototype.splice
-es5id: 15.4.4.12_A5.7
 description: >
     If property does not implement the internal [[Construct]] method,
     throw a TypeError exception

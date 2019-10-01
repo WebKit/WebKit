@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.filter
-es5id: 15.4.4.20-2-3
 description: >
     Array.prototype.filter applied to Array-like object, 'length' is
     an own data property that overrides an inherited data property

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-8-b-iii-1
 description: >
     Array.prototype.lastIndexOf returns index of last one when more
     than two elements in array are eligible

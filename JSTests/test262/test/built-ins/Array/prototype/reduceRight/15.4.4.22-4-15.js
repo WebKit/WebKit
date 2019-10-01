@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduceright
-es5id: 15.4.4.22-4-15
 description: >
     Array.prototype.reduceRight - calling with no callbackfn is the
     same as passing undefined for callbackfn

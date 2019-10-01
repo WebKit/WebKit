@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-3-7
 description: >
     Array.prototype.lastIndexOf - value of 'length' is a number (value
     is a negative number)

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduce
-es5id: 15.4.4.21-8-b-ii-2
 description: >
     Array.prototype.reduce - deleted properties in step 2 are visible
     here

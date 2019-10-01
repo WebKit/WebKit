@@ -5,7 +5,6 @@
 info: |
  Map has a property at `Symbol.species`
 esid: sec-get-map-@@species
-es6id: 23.1.2.2
 author: Sam Mikes
 description: Map[Symbol.species] exists per spec
 includes: [propertyHelper.js]

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.some
-es5id: 15.4.4.17-8-5
 description: >
     Array.prototype.some returns false if 'length' is 0 (subclassed
     Array, length overridden to '0' (type conversion))

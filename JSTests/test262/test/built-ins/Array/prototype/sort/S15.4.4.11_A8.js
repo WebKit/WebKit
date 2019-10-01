@@ -4,7 +4,6 @@
 /*---
 info: Call the comparefn passing undefined as the this value (step 13b)
 esid: sec-array.prototype.sort
-es5id: 15.4.4.11_A8
 description: comparefn tests that its this value is undefined
 flags: [noStrict]
 ---*/

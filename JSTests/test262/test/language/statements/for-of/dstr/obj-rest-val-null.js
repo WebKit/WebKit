@@ -4,7 +4,6 @@
 /*---
 description: TypeError is thrown when rhs is null because of 7.1.13 ToObject ( argument ) used by CopyDataProperties (For..of statement)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
-es6id: 13.7.5.11
 features: [object-rest, destructuring-binding]
 flags: [generated]
 info: |

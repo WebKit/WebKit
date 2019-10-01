@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.indexof
-es5id: 15.4.4.14-4-7
 description: >
     Array.prototype.indexOf returns -1 if 'length' is 0 ( length is
     object overridden with obj w/o valueOf (toString))

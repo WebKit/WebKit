@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-dataview.prototype.setuint8
-es6id: 24.2.4.18
 description: >
   Return abrupt from ToNumber(symbol value)
 info: |

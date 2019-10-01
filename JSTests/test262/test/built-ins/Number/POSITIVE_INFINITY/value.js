@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 20.1.2.14
 esid: sec-number.positive_infinity
 description: >
   The value of Number.POSITIVE_INFINITY is +Infinity

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduceright
-es5id: 15.4.4.22-3-2
 description: >
     Array.prototype.reduceRight applied to an Array-like object,
     'length' is 0 (length overridden to false(type conversion))

@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 22.2.5.2
 esid: sec-typedarray.prototype
 description: >
   The initial value of Float64Array.prototype is the Float64Array prototype object.

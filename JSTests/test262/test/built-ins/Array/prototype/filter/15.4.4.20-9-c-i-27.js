@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.filter
-es5id: 15.4.4.20-9-c-i-27
 description: >
     Array.prototype.filter - This object is the Arguments object which
     implements its own property get method (number of arguments is

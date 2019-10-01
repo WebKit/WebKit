@@ -4,7 +4,6 @@
 /*---
 description: yield is not a valid IdentifierReference in an AssignmentProperty within generator function bodies. (AssignmentExpression)
 esid: sec-variable-statement-runtime-semantics-evaluation
-es6id: 13.3.2.4
 features: [generators, destructuring-binding]
 flags: [generated, noStrict]
 negative:

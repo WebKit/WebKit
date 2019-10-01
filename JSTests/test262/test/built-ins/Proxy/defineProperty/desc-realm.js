@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-proxy-object-internal-methods-and-internal-slots-defineownproperty-p-desc
-es6id: 9.5.6
 description: >
   Property descriptor object is created in the Realm of the current execution
   context

@@ -3,7 +3,7 @@
 // - src/accessor-names/private/cls-private-expr-static.template
 /*---
 description: Private IdentifierName - ZWNJ (Class expression, static private method)
-features: [class-static-methods-private]
+features: [class, class-static-methods-private]
 flags: [generated]
 info: |
     ClassElement :

@@ -3,8 +3,6 @@
 
 /*---
 info: unescapedURISet containing "#"
-es5id: 15.1.3.3_A3.3_T1
-es6id: 18.2.6.4
 esid: sec-encodeuri-uri
 description: encodeURI("#") === "#"
 ---*/

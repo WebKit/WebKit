@@ -4,7 +4,6 @@
 /*---
 description: Object created from rest deconstruction doesn't copy source object property descriptors. (For..of statement)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
-es6id: 13.7.5.11
 features: [object-rest, destructuring-binding]
 flags: [generated]
 includes: [propertyHelper.js]

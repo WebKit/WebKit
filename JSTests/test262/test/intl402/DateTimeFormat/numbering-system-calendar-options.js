@@ -7,7 +7,6 @@ description: >
     Tests that the options numberingSystem and calendar can be  set through
     either the locale or the options.
 author: Norbert Lindenberg, Daniel Ehrenberg
-includes: [testIntl.js]
 ---*/
 
 let defaultLocale = new Intl.DateTimeFormat().resolvedOptions().locale;

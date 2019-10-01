@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-array.from
-es6id: 22.1.2.1
 description: >
     `this` value of mapping function with custom `this` argument (traversed via iterator)
 info: |

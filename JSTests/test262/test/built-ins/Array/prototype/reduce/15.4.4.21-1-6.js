@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduce
-es5id: 15.4.4.21-1-6
 description: Array.prototype.reduce applied to Number object
 ---*/
 

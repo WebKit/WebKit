@@ -4,7 +4,6 @@
 /*---
 description: Rest element containing a rest element (class expression method (default parameter))
 esid: sec-class-definitions-runtime-semantics-evaluation
-es6id: 14.5.16
 features: [destructuring-binding, default-parameters]
 flags: [generated]
 info: |

@@ -4,7 +4,6 @@
 /*---
 info: The Date.prototype has the property "getUTCSeconds"
 esid: sec-properties-of-the-date-prototype-object
-es5id: 15.9.5_A23_T1
 description: The Date.prototype has the property "getUTCSeconds"
 ---*/
 

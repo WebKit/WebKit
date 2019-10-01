@@ -14,7 +14,6 @@ info: |
   Assert: Type(desc) is String.
   Return the string-concatenation of "Symbol(", desc, and ")".
 
-includes: [propertyHelper.js]
 features: [Symbol.prototype.description]
 ---*/
 

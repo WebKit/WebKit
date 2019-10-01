@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduce
-es5id: 15.4.4.21-3-23
 description: >
     Array.prototype.reduce uses inherited valueOf method - 'length' is
     an object with an own toString and inherited valueOf methods

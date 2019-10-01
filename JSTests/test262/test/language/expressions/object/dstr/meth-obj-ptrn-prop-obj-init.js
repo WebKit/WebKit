@@ -4,7 +4,6 @@
 /*---
 description: Object binding pattern with "nested" object binding pattern using initializer (method)
 esid: sec-runtime-semantics-definemethod
-es6id: 14.3.8
 features: [destructuring-binding]
 flags: [generated]
 info: |

@@ -4,7 +4,6 @@
 /*---
 description: If the Initializer is present and v is undefined, the Initializer should be evaluated and the result assigned to the target reference. (For..of statement)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
-es6id: 13.7.5.11
 features: [destructuring-binding]
 flags: [generated]
 info: |

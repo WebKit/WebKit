@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.filter
-es5id: 15.4.4.20-9-c-ii-8
 description: >
     Array.prototype.filter - element changed by callbackfn on previous
     iterations is observed

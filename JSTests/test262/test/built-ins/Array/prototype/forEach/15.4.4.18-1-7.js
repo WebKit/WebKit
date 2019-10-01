@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.foreach
-es5id: 15.4.4.18-1-7
 description: Array.prototype.forEach applied to string primitive
 ---*/
 

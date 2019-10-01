@@ -25,7 +25,7 @@ var result = Object.assign(target, "1a2c3", {
   a: 5
 });
 
-assert.sameValue(Object.keys(result).length, 7, "The length should be 7 in the final object.");
+assert.sameValue(Object.getOwnPropertyNames(result).length, 7, "The length should be 7 in the final object.");
 assert.sameValue(result.a, 5, "The value should be {a:5}.");
 assert.sameValue(result[0], "1", "The value should be {\"0\":\"1\"}.");
 assert.sameValue(result[1], "a", "The value should be {\"1\":\"a\"}.");

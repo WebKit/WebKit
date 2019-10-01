@@ -4,7 +4,6 @@
 /*---
 description: Rest object doesn't contain non-enumerable properties (method (default parameter))
 esid: sec-runtime-semantics-definemethod
-es6id: 14.3.8
 features: [object-rest, destructuring-binding, default-parameters]
 flags: [generated]
 includes: [propertyHelper.js]

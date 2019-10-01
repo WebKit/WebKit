@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.indexof
-es5id: 15.4.4.14-4-11
 description: Array.prototype.indexOf - 'length' is an empty string
 ---*/
 

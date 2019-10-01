@@ -1,13 +1,16 @@
 // Copyright (C) 2015 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 9.5.9
+esid: sec-proxy-object-internal-methods-and-internal-slots-set-p-v-receiver
 description: >
-    [[Set]] ( P, V, Receiver)
+  Proxy "set" trap is called with correct arguments.
+info: |
+  [[Set]] ( P, V, Receiver )
 
-    9. Let booleanTrapResult be ToBoolean(Call(trap, handler, «target, P, V,
-    Receiver»)).
-
+  ...
+  8. Let booleanTrapResult be ! ToBoolean(? Call(trap, handler, « target, P, V, Receiver »)).
+  ...
+  12. Return true.
 features: [Proxy]
 ---*/
 
@@ -20,7 +23,7 @@ var handler = {
     _prop = prop;
     _value = value;
     _receiver = receiver;
-    return t[prop] = value;
+    return true;
   }
 };
 var p = new Proxy(target, handler);

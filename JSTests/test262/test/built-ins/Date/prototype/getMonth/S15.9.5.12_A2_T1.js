@@ -4,7 +4,6 @@
 /*---
 info: The "length" property of the "getMonth" is 0
 esid: sec-date.prototype.getmonth
-es5id: 15.9.5.12_A2_T1
 description: The "length" property of the "getMonth" is 0
 ---*/
 

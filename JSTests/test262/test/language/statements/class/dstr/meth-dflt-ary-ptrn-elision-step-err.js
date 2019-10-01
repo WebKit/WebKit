@@ -4,7 +4,6 @@
 /*---
 description: Elision advances iterator and forwards abrupt completions (class expression method (default parameter))
 esid: sec-runtime-semantics-bindingclassdeclarationevaluation
-es6id: 14.5.15
 features: [generators, destructuring-binding, default-parameters]
 flags: [generated]
 info: |

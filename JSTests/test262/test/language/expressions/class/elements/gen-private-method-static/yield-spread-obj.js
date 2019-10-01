@@ -6,7 +6,6 @@ description: Use yield value in a object spread position (Static generator priva
 esid: prod-GeneratorPrivateMethod
 features: [object-spread, generators, class-static-methods-private]
 flags: [generated]
-includes: [compareArray.js]
 info: |
     ClassElement :
       static PrivateMethodDefinition

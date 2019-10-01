@@ -6,7 +6,6 @@ info: |
     When Boolean is called as part of a new expression it is
     a constructor: it initialises the newly created object
 esid: sec-boolean-constructor
-es5id: 15.6.2.1_A1
 description: Checking type of the newly created object and it value
 ---*/
 

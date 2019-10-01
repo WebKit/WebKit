@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-array.of
-es6id: 22.1.2.3
 description: >
   Return abrupt from Data Property creation
 info: |

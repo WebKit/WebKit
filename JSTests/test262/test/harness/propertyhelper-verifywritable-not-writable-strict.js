@@ -4,10 +4,8 @@
 /*---
 description: >
     Objects whose specified property is not writable do not satisfy the
-    assertion in strict mode.
-
+    assertion.
 includes: [propertyHelper.js]
-flags: [onlyStrict]
 ---*/
 var threw = false;
 var obj = {};

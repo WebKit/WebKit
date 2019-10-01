@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-9-1
 description: Array.prototype.lastIndexOf returns -1 for elements not present
 ---*/
 

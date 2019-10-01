@@ -6,8 +6,24 @@ description: |
     This file contains shared functions for the tests in the conformance test
     suite for the ECMAScript Internationalization API.
 author: Norbert Lindenberg
+defines:
+  - testWithIntlConstructors
+  - taintDataProperty
+  - taintMethod
+  - taintProperties
+  - taintArray
+  - getLocaleSupportInfo
+  - getInvalidLanguageTags
+  - isCanonicalizedStructurallyValidLanguageTag
+  - getInvalidLocaleArguments
+  - testOption
+  - testForUnwantedRegExpChanges
+  - isValidNumberingSystem
+  - testNumberFormat
+  - getDateTimeComponents
+  - getDateTimeComponentValues
+  - isCanonicalizedStructurallyValidTimeZoneName
 ---*/
-
 /**
  */
 

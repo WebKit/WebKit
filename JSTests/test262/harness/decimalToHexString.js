@@ -3,6 +3,7 @@
 /*---
 description: |
     Collection of functions used to assert the correctness of various encoding operations.
+defines: [decimalToHexString, decimalToPercentHexString]
 ---*/
 
 function decimalToHexString(n) {

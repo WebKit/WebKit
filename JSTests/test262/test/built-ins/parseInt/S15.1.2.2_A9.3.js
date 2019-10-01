@@ -3,8 +3,6 @@
 
 /*---
 info: The length property of parseInt has the attribute ReadOnly
-es5id: 15.1.2.2_A9.3
-es6id: 18.2.5
 esid: sec-parseint-string-radix
 description: Checking if varying the length property fails
 includes: [propertyHelper.js]

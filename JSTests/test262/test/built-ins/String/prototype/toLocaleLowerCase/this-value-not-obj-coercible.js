@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-string.prototype.tolocalelowercase
-es6id: 21.1.3.20
 description: The "this" value must be object-coercible
 info: |
   This function works exactly the same as toLowerCase except that its result is

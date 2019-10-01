@@ -4,7 +4,6 @@
 /*---
 description: An ArrayAssignmentPattern containing only Elisions requires iterable values and throws for symbol values. (AssignmentExpression)
 esid: sec-variable-statement-runtime-semantics-evaluation
-es6id: 13.3.2.4
 features: [Symbol, destructuring-binding]
 flags: [generated]
 info: |

@@ -4,7 +4,6 @@
 /*---
 description: BindingElement with object binding pattern and initializer is not used (try statement)
 esid: sec-runtime-semantics-catchclauseevaluation
-es6id: 13.15.7
 features: [destructuring-binding]
 flags: [generated]
 info: |

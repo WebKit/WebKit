@@ -3,8 +3,6 @@
 
 /*---
 info: If B1 = 0xxxxxxxx ([0x00 - 0x7F]), return B1
-es5id: 15.1.3.2_A2.2_T1
-es6id: 18.2.6.3
 esid: sec-decodeuricomponent-encodeduricomponent
 description: Complex tests, use RFC 3629
 includes: [decimalToHexString.js]

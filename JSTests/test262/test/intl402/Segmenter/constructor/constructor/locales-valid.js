@@ -8,7 +8,6 @@ info: |
     Intl.Segmenter ([ locales [ , options ]])
 
     3. Let _requestedLocales_ be ? CanonicalizeLocaleList(_locales_).
-includes: [testIntl.js]
 features: [Intl.Segmenter]
 ---*/
 

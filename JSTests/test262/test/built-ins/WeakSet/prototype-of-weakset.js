@@ -1,7 +1,6 @@
 // Copyright (C) 2015 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 23.4.2
 esid: sec-properties-of-the-weakset-constructor
 description: >
   The value of the [[Prototype]] internal slot of the WeakSet constructor

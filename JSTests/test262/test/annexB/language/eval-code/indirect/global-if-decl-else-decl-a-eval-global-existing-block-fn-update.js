@@ -4,7 +4,6 @@
 /*---
 description: Variable-scoped binding is updated (IfStatement with a declaration in both statement positions in eval code)
 esid: sec-functiondeclarations-in-ifstatement-statement-clauses
-es6id: B.3.3
 flags: [generated, noStrict]
 info: |
     The following rules for IfStatement augment those in 13.6:

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-8-a-14
 description: >
     Array.prototype.lastIndexOf -  deleting property of prototype
     causes prototype index property not to be visited on an Array

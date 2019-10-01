@@ -3,8 +3,6 @@
 
 /*---
 info: The length property of eval does not have the attribute DontDelete
-es5id: 15.1.2.1_A4.2
-es6id: 18.2.1
 esid: sec-eval-x
 description: Checking use hasOwnProperty, delete
 ---*/

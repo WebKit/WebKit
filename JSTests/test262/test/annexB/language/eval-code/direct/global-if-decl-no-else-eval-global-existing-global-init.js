@@ -4,7 +4,6 @@
 /*---
 description: Variable binding is left in place by legacy function hoisting (IfStatement without an else clause in eval code)
 esid: sec-functiondeclarations-in-ifstatement-statement-clauses
-es6id: B.3.4
 flags: [generated, noStrict]
 includes: [fnGlobalObject.js, propertyHelper.js]
 info: |

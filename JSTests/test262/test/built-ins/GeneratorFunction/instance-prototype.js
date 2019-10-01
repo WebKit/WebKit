@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-generatorfunction
-es6id: 25.2.1.1
 description: Definition of instance `prototype` property
 info: |
     [...]

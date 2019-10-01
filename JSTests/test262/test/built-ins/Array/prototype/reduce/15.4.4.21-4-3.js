@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduce
-es5id: 15.4.4.21-4-3
 description: Array.prototype.reduce throws TypeError if callbackfn is null
 ---*/
 

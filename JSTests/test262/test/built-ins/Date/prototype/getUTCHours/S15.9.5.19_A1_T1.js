@@ -4,7 +4,6 @@
 /*---
 info: The Date.prototype property "getUTCHours" has { DontEnum } attributes
 esid: sec-date.prototype.getutchours
-es5id: 15.9.5.19_A1_T1
 description: Checking absence of ReadOnly attribute
 ---*/
 

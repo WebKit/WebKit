@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduce
-es5id: 15.4.4.21-4-7
 description: >
     Array.prototype.reduce throws TypeError if callbackfn is Object
     without [[Call]] internal method

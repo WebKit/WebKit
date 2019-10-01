@@ -4,7 +4,6 @@
 /*---
 description: Rest object contains just unextracted data (method (default parameter))
 esid: sec-runtime-semantics-definemethod
-es6id: 14.3.8
 features: [object-rest, destructuring-binding, default-parameters]
 flags: [generated]
 includes: [propertyHelper.js]

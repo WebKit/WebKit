@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-get-dataview.prototype.buffer
-es6id: 24.2.4.1
 description: Throws a TypeError exception when `this` is not Object
 info: |
   24.2.4.1 get DataView.prototype.buffer

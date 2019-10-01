@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.some
-es5id: 15.4.4.17-3-18
 description: >
     Array.prototype.some - value of 'length' is a string that can't
     convert to a number

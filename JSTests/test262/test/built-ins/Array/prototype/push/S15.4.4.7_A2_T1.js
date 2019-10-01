@@ -6,7 +6,6 @@ info: |
     The push function is intentionally generic.
     It does not require that its this value be an Array object
 esid: sec-array.prototype.push
-es5id: 15.4.4.7_A2_T1
 description: >
     The arguments are appended to the end of the array, in  the order
     in which they appear. The new length of the array is returned  as

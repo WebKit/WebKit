@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 24.3.2
+esid: sec-json.stringify
 description: >
   JSON.stringify.name is "stringify".
 info: |
@@ -19,8 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(JSON.stringify.name, "stringify");
-
-verifyNotEnumerable(JSON.stringify, "name");
-verifyNotWritable(JSON.stringify, "name");
-verifyConfigurable(JSON.stringify, "name");
+verifyProperty(JSON.stringify, 'name', {
+  value: 'stringify',
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

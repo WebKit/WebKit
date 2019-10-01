@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-date-time-string-format
-es5id: 15.9.1.15-1
 description: >
     Date Time String Format - specified default values will be set for
     all optional fields(MM, DD, mm, ss and time zone) when they are

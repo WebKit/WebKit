@@ -7,7 +7,6 @@ info: |
     is set to the original Date prototype object, the one that is the
     initial value of Date.prototype
 esid: sec-date-year-month-date-hours-minutes-seconds-ms
-es5id: 15.9.3.1_A2_T6
 description: 7 arguments, (year, month, date, hours, minutes, seconds, ms)
 ---*/
 

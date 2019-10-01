@@ -4,7 +4,6 @@
 /*---
 description: Rest element (identifier) may not be followed by any element (try statement)
 esid: sec-runtime-semantics-catchclauseevaluation
-es6id: 13.15.7
 features: [destructuring-binding]
 flags: [generated]
 negative:

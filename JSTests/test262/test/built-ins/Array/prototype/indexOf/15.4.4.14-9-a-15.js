@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.indexof
-es5id: 15.4.4.14-9-a-15
 description: >
     Array.prototype.indexOf - deleting own property with prototype
     property causes prototype index property to be visited on an

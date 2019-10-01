@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.filter
-es5id: 15.4.4.20-3-24
 description: >
     Array.prototype.filter - value of 'length' is a positive
     non-integer, ensure truncation occurs in the proper direction

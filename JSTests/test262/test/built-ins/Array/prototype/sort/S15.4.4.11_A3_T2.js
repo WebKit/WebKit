@@ -6,7 +6,6 @@ info: |
     The sort function is intentionally generic.
     It does not require that its this value be an Array object
 esid: sec-array.prototype.sort
-es5id: 15.4.4.11_A3_T2
 description: If comparefn is not undefined
 ---*/
 

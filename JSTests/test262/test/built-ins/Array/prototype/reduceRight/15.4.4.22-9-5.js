@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduceright
-es5id: 15.4.4.22-9-5
 description: >
     Array.prototype.reduceRight - callbackfn not called for array with
     one element

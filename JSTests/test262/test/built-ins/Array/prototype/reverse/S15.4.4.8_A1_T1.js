@@ -6,7 +6,6 @@ info: |
     The elements of the array are rearranged so as to reverse their order.
     The object is returned as the result of the call
 esid: sec-array.prototype.reverse
-es5id: 15.4.4.8_A1_T1
 description: Checking case when reverse is given no arguments or one argument
 ---*/
 

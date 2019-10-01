@@ -6,7 +6,6 @@ info: |
     The Date property "prototype" has { DontEnum, DontDelete, ReadOnly }
     attributes
 esid: sec-date.prototype
-es5id: 15.9.4.1_A1_T3
 description: Checking DontEnum attribute
 ---*/
 

@@ -6,8 +6,6 @@ info: |
     If B = 1110xxxx (n = 3) and (string.charAt(k + 4) and
     string.charAt(k + 5)) or (string.charAt(k + 7) and
     string.charAt(k + 8)) do not represent hexadecimal digits, throw URIError
-es5id: 15.1.3.2_A1.11_T2
-es6id: 18.2.6.3
 esid: sec-decodeuricomponent-encodeduricomponent
 description: >
     Complex tests, string.charAt(k + 7) and string.charAt(k + 8)  do

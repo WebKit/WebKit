@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-regexp-pattern-flags
-es6id: 21.2.3.1
 description: Initial state of the `lastIndex` property
 info: |
   [...]

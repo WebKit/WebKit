@@ -3,8 +3,6 @@
 
 /*---
 info: The length property of parseFloat is 1
-es5id: 15.1.2.3_A7.4
-es6id: 18.2.4
 esid: sec-parsefloat-string
 description: parseFloat.length === 1
 ---*/

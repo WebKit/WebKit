@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.filter
-es5id: 15.4.4.20-9-c-ii-23
 description: >
     Array.prototype.filter - callbackfn called with correct parameters
     (this object O is correct)

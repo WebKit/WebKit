@@ -6,7 +6,6 @@ info: |
     The Date.prototype.toDateString property "length" has { ReadOnly,
     DontDelete, DontEnum } attributes
 esid: sec-date.prototype.todatestring
-es5id: 15.9.5.3_A3_T1
 description: Checking ReadOnly attribute
 includes: [propertyHelper.js]
 ---*/

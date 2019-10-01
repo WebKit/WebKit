@@ -1,7 +1,6 @@
 // Copyright (C) 2015 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 23.3.1.1
 esid: sec-weakmap-iterable
 description: >
   Return IteratorClose(iter, status) if fail on adding value on constructing.

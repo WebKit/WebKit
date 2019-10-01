@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-3-1
 description: Array.prototype.every - value of 'length' is undefined
 ---*/
 

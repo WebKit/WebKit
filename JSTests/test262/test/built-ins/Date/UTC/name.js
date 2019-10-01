@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-date.utc
-es6id: 20.3.3.4
 description: >
   Date.UTC.name is "UTC".
 info: |

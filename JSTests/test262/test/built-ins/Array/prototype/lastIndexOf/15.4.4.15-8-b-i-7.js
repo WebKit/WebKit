@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-8-b-i-7
 description: >
     Array.prototype.lastIndexOf - element to be retrieved is inherited
     data property on an Array

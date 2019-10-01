@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.some
-es5id: 15.4.4.17-2-14
 description: >
     Array.prototype.some - 'length' property doesn't exist on an
     Array-like object

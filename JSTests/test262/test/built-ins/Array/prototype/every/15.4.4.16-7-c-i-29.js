@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-7-c-i-29
 description: >
     Array.prototype.every - element changed by getter on previous
     iterations is observed on an Array-like object

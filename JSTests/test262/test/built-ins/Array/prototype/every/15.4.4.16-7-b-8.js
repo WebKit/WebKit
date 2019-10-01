@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-7-b-8
 description: >
     Array.prototype.every - deleting own property causes index
     property not to be visited on an Array-like object

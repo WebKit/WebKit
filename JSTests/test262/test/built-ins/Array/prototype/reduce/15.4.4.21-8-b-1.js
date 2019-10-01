@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduce
-es5id: 15.4.4.21-8-b-1
 description: Array.prototype.reduce - no observable effects occur if 'len' is 0
 ---*/
 

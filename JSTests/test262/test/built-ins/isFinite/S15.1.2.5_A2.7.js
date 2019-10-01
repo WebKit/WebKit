@@ -3,8 +3,6 @@
 
 /*---
 info: The isFinite property can't be used as constructor
-es5id: 15.1.2.5_A2.7
-es6id: 18.2.2
 esid: sec-isfinite-number
 description: >
     If property does not implement the internal [[Construct]] method,

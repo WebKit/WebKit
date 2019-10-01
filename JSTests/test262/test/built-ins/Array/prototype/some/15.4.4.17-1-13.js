@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.some
-es5id: 15.4.4.17-1-13
 description: Array.prototype.some applied to the JSON object
 ---*/
 

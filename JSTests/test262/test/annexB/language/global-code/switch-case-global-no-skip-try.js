@@ -4,7 +4,6 @@
 /*---
 description: Extension is observed when creation of variable binding would not produce an early error (try statement) (Function declaration in the `case` clause of a `switch` statement in the global scope)
 esid: sec-web-compat-globaldeclarationinstantiation
-es6id: B.3.3.2
 flags: [generated, noStrict]
 info: |
     B.3.3.2 Changes to GlobalDeclarationInstantiation

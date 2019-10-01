@@ -4,8 +4,26 @@
 description: |
     Collection of functions used to safely verify the correctness of
     property descriptors.
+defines:
+  - verifyProperty
+  - verifyEqualTo
+  - verifyWritable
+  - verifyNotWritable
+  - verifyEnumerable
+  - verifyNotEnumerable
+  - verifyConfigurable
+  - verifyNotConfigurable
 ---*/
 
+// @ts-check
+
+/**
+ * @param {object} obj
+ * @param {string|symbol} name
+ * @param {PropertyDescriptor|undefined} desc
+ * @param {object} [options]
+ * @param {boolean} [options.restore]
+ */
 function verifyProperty(obj, name, desc, options) {
   assert(
     arguments.length > 2,
@@ -83,6 +101,7 @@ function verifyProperty(obj, name, desc, options) {
 }
 
 function isConfigurable(obj, name) {
+  var hasOwnProperty = Object.prototype.hasOwnProperty;
   try {
     delete obj[name];
   } catch (e) {
@@ -90,7 +109,7 @@ function isConfigurable(obj, name) {
       $ERROR("Expected TypeError, got " + e);
     }
   }
-  return !Object.prototype.hasOwnProperty.call(obj, name);
+  return !hasOwnProperty.call(obj, name);
 }
 
 function isEnumerable(obj, name) {

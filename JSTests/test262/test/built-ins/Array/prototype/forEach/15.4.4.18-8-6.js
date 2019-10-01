@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.foreach
-es5id: 15.4.4.18-8-6
 description: >
     Array.prototype.forEach doesn't call callbackfn if 'length' is 0
     (subclassed Array, length overridden with obj with valueOf)

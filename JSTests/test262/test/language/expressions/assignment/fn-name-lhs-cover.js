@@ -2,26 +2,26 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 12.14.4
+esid: sec-assignment-operators-runtime-semantics-evaluation
 description: Left-hand side as a CoverParenthesizedExpression
 info: |
-    AssignmentExpression[In, Yield] :
-        LeftHandSideExpression[?Yield] = AssignmentExpression[?In, ?Yield]
+    AssignmentExpression[In, Yield, Await] :
+        LeftHandSideExpression[?Yield, ?Await] = AssignmentExpression[?In, ?Yield, ?Await]
 
     1. If LeftHandSideExpression is neither an ObjectLiteral nor an
        ArrayLiteral, then
        [...]
-       e. If IsAnonymousFunctionDefinition(AssignmentExpression) and
+       c. If IsAnonymousFunctionDefinition(AssignmentExpression) and
           IsIdentifierRef of LeftHandSideExpression are both true, then
-
-          i. Let hasNameProperty be HasOwnProperty(rval, "name").
-          ii. ReturnIfAbrupt(hasNameProperty).
-          iii. If hasNameProperty is false, perform SetFunctionName(rval,
-               GetReferencedName(lref)).
+          i. Let rval be NamedEvaluation of AssignmentExpression with argument
+             GetReferencedName(lref).
+includes: [propertyHelper.js]
 ---*/
 
 var fn;
 
 (fn) = function() {};
 
-assert.sameValue(Object.hasOwnProperty.call(fn, 'name'), false);
+verifyProperty(fn, "name", {
+  value: "", writable: false, enumerable: false, configurable: true
+});

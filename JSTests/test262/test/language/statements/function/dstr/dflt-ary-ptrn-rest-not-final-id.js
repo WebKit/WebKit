@@ -4,7 +4,6 @@
 /*---
 description: Rest element (identifier) may not be followed by any element (function declaration (default parameter))
 esid: sec-function-definitions-runtime-semantics-instantiatefunctionobject
-es6id: 14.1.19
 features: [destructuring-binding, default-parameters]
 flags: [generated]
 negative:

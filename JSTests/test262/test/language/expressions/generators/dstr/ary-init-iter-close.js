@@ -4,7 +4,6 @@
 /*---
 description: Iterator is closed when not exhausted by pattern evaluation (generator function expression)
 esid: sec-generator-function-definitions-runtime-semantics-evaluation
-es6id: 14.4.14
 features: [Symbol.iterator, generators, destructuring-binding]
 flags: [generated]
 info: |

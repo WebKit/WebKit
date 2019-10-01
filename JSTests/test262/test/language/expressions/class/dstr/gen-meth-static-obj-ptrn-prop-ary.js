@@ -4,7 +4,6 @@
 /*---
 description: Object binding pattern with "nested" array binding pattern not using initializer (static class expression generator method)
 esid: sec-class-definitions-runtime-semantics-evaluation
-es6id: 14.5.16
 features: [generators, destructuring-binding]
 flags: [generated]
 info: |

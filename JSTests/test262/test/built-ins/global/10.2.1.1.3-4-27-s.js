@@ -4,10 +4,8 @@
 /*---
 es5id: 10.2.1.1.3-4-27-s
 description: >
-    Strict Mode - TypeError is not thrown when changing the value of
-    the Constructor Properties of the Global Object under strict mode
-    (Number)
-flags: [onlyStrict]
+  TypeError is not thrown when changing the value of the Constructor Properties
+  of the Global Object (Number)
 ---*/
 
 var numBak = Number;

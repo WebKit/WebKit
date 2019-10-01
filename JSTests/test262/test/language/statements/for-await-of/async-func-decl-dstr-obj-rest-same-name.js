@@ -40,7 +40,7 @@ async function fn() {
     assert.sameValue(z.y, 39);
     assert.sameValue(z.z, 'cheeseburger');
 
-    let keys = Object.keys(z);
+    let keys = Object.getOwnPropertyNames(z);
     assert.sameValue(keys.length, 2);
     assert.sameValue(keys[0], 'y');
     assert.sameValue(keys[1], 'z');

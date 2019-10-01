@@ -4,7 +4,6 @@
 /*---
 description: Variable binding is initialized to `undefined` in outer scope (Funtion declaration in the `default` clause of a `switch` statement in eval code in the global scope)
 esid: sec-web-compat-evaldeclarationinstantiation
-es6id: B.3.3.3
 flags: [generated, noStrict]
 includes: [fnGlobalObject.js, propertyHelper.js]
 info: |

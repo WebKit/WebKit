@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.indexof
-es5id: 15.4.4.14-3-29
 description: >
     Array.prototype.indexOf - value of 'length' is boundary value
     (2^32 + 1)

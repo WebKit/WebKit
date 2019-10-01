@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-2-7
 description: >
     Array.prototype.every applied to Array-like object, 'length' is an
     own accessor property

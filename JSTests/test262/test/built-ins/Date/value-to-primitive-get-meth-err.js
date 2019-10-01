@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-date-value
-es6id: 20.3.2.2
 description: Error retrieving `Symbol.toPrimitive` method from object value
 info: |
   3. If NewTarget is not undefined, then

@@ -3,8 +3,6 @@
 
 /*---
 info: The length property of decodeURI does not have the attribute DontDelete
-es5id: 15.1.3.1_A5.2
-es6id: 18.2.6.2
 esid: sec-decodeuri-encodeduri
 description: Checking use hasOwnProperty, delete
 ---*/

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.foreach
-es5id: 15.4.4.18-7-c-i-11
 description: >
     Array.prototype.forEach - element to be retrieved is own accessor
     property that overrides an inherited data property on an

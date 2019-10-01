@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.foreach
-es5id: 15.4.4.18-7-b-16
 description: >
     Array.prototype.forEach - decreasing length of array does not
     delete non-configurable properties

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-9-11
 description: >
     Array.prototype.map - returns an empty array if 'length' is 0
     (subclassed Array, length overridden with obj w/o valueOf

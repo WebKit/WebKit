@@ -6,7 +6,6 @@ info: |
     The [[Class]] property of the newly constructed object
     is set to "Date"
 esid: sec-date-year-month-date-hours-minutes-seconds-ms
-es5id: 15.9.3.1_A3_T6.1
 description: 7 arguments, (year, month, date, hours, minutes, seconds, ms)
 ---*/
 

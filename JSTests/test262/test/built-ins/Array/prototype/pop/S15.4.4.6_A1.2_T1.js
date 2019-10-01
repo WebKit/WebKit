@@ -6,7 +6,6 @@ info: |
     The last element of the array is removed from the array
     and returned
 esid: sec-array.prototype.pop
-es5id: 15.4.4.6_A1.2_T1
 description: Checking this use new Array() and []
 ---*/
 

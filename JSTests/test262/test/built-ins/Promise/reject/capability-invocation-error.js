@@ -3,7 +3,6 @@
 /*---
 description: Abrupt completion returned by "reject" capability
 esid: sec-promise.reject
-es6id: 25.4.4.4
 info: |
     1. Let C be the this value.
     [...]

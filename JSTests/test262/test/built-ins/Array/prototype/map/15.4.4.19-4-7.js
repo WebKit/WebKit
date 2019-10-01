@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-4-7
 description: >
     Array.prototype.map throws TypeError if callbackfn is Object
     without Call internal method

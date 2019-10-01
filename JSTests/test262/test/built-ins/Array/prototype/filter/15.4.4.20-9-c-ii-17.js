@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.filter
-es5id: 15.4.4.20-9-c-ii-17
 description: >
     Array.prototype.filter -'this' of 'callbackfn' is a Number object
     when T is not an object (T is a number)

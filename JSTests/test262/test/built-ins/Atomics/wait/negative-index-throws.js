@@ -14,7 +14,6 @@ info: |
         ...
         2.b If integerIndex < 0, throw a RangeError exception
 
-includes: [atomicsHelper.js]
 features: [Atomics, SharedArrayBuffer, TypedArray]
 ---*/
 

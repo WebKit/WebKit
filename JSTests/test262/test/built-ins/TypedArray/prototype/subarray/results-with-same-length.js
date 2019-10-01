@@ -8,7 +8,7 @@ info: |
 
   ...
   17. Return ? TypedArraySpeciesCreate(O, argumentsList).
-includes: [testTypedArray.js, compareArray.js]
+includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 

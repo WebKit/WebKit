@@ -10,8 +10,6 @@ info: |
   24. Let setStatus be Set(O, "length", len – actualDeleteCount + itemCount, true).
   25. ReturnIfAbrupt(setStatus).
 esid: sec-array.prototype.splice
-es5id: 15.4.4.12
-es6id: 22.1.3.25
 ---*/
 
 var getCallCount = 0,

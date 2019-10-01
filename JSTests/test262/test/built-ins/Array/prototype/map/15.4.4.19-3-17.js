@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-3-17
 description: >
     Array.prototype.map - when 'length' is a string containing a
     number with leading zeros

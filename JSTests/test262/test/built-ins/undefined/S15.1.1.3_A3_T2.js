@@ -3,8 +3,6 @@
 
 /*---
 info: The undefined is DontDelete
-es5id: 15.1.1.3_A3.1
-es6id: 18.1.3
 esid: sec-undefined
 description: Use delete
 flags: [noStrict]

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.filter
-es5id: 15.4.4.20-9-c-iii-30
 description: >
     Array.prototype.filter - return value (new Boolean(false)) of
     callbackfn is treated as true value

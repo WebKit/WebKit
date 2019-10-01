@@ -4,7 +4,6 @@
 /*---
 description: BindingElement with object binding pattern and initializer is not used (`var` statement)
 esid: sec-variable-statement-runtime-semantics-evaluation
-es6id: 13.3.2.4
 features: [destructuring-binding]
 flags: [generated]
 info: |

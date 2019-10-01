@@ -4,7 +4,6 @@
 /*---
 info: If array element is undefined or null, use the empty string
 esid: sec-array.prototype.join
-es5id: 15.4.4.5_A1.3_T1
 description: Checking this use new Array() and []
 ---*/
 

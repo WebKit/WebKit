@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.indexof
-es5id: 15.4.4.14-9-a-19
 description: >
     Array.prototype.indexOf - decreasing length of array does not
     delete non-configurable properties

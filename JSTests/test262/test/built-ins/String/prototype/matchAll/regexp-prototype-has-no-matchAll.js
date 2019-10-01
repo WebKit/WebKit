@@ -15,7 +15,6 @@ info: |
     5. Return ? Invoke(rx, @@matchAll, « S »).
 
 features: [Symbol.matchAll, String.prototype.matchAll]
-includes: [compareArray.js, compareIterator.js, regExpUtils.js]
 ---*/
 
 assert.sameValue(typeof String.prototype.matchAll, "function");

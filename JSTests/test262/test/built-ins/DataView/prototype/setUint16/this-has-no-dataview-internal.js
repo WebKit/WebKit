@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-dataview.prototype.setuint16
-es6id: 24.2.4.19
 description: >
   Throws a TypeError if this does not have a [[DataView]] internal slot
 info: |

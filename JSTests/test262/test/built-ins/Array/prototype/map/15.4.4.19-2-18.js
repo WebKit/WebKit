@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-2-18
 description: >
     Array.prototype.map - applied to String object, which implements
     its own property get method

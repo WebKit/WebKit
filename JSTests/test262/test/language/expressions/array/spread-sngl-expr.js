@@ -4,7 +4,6 @@
 /*---
 description: Spread operator applied to AssignmentExpression as only element (Array initializer)
 esid: sec-runtime-semantics-arrayaccumulation
-es6id: 12.2.5.2
 flags: [generated]
 info: |
     SpreadElement : ...AssignmentExpression

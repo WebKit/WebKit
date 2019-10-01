@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-math.min
-es6id: 20.2.2.25
 description: >
   +0 is considered to be larger than -0
 info: |

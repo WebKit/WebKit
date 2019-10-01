@@ -2,32 +2,35 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 14.1.20
+esid: sec-function-definitions-runtime-semantics-evaluation
 description: Assignment of function `name` attribute
 info: |
     FunctionExpression : function ( FormalParameters ) { FunctionBody }
 
-    1. If the function code for FunctionExpression is strict mode code, let
-       strict be true. Otherwise let strict be false.
-    2. Let scope be the LexicalEnvironment of the running execution context.
-    3. Let closure be FunctionCreate(Normal, FormalParameters, FunctionBody,
-       scope, strict).
-    4. Perform MakeConstructor(closure).
+    1. Let scope be the LexicalEnvironment of the running execution context.
+    2. Let closure be FunctionCreate(Normal, FormalParameters, FunctionBody,
+       scope, "").
+    ...
     5. Return closure.
 
-    FunctionExpression :
-        function BindingIdentifier ( FormalParameters ) { FunctionBody }
+    FunctionExpression : function BindingIdentifier ( FormalParameters ) { FunctionBody }
 
-    [...]
-    5. Let name be StringValue of BindingIdentifier.
-    [...]
-    9. Perform SetFunctionName(closure, name).
+    1. Let scope be the running execution context's LexicalEnvironment.
+    2. Let funcEnv be NewDeclarativeEnvironment(scope).
+    3. Let envRec be funcEnv's EnvironmentRecord.
+    4. Let name be StringValue of BindingIdentifier.
+    5. Perform envRec.CreateImmutableBinding(name, false).
+    6. Let closure be FunctionCreate(Normal, FormalParameters, FunctionBody,
+       funcEnv, name).
+    ...
+    10. Return closure.
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Object.hasOwnProperty.call(function() {}, 'name'), false);
+verifyProperty(function() {}, "name", {
+  value: "", writable: false, enumerable: false, configurable: true
+});
 
-assert.sameValue(function func() {}.name, 'func');
-verifyNotEnumerable(function func() {}, 'name');
-verifyNotWritable(function func() {}, 'name');
-verifyConfigurable(function func() {}, 'name');
+verifyProperty(function func() {}, "name", {
+  value: "func", writable: false, enumerable: false, configurable: true
+});

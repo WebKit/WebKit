@@ -4,7 +4,6 @@
 /*---
 description: yield is a valid IdentifierReference in an AssignmentProperty outside of strict mode and generator functions. (For..of statement)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
-es6id: 13.7.5.11
 features: [destructuring-binding]
 flags: [generated, noStrict]
 info: |

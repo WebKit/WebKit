@@ -6,7 +6,6 @@ info: |
     The Date.prototype.getUTCSeconds property "length" has { ReadOnly,
     DontDelete, DontEnum } attributes
 esid: sec-date.prototype.getutcseconds
-es5id: 15.9.5.23_A3_T1
 description: Checking ReadOnly attribute
 includes: [propertyHelper.js]
 ---*/

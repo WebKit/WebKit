@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-2-17
 description: >
     Array.prototype.lastIndexOf applied to Arguments object which
     implements its own property get method

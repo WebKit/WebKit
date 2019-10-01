@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.foreach
-es5id: 15.4.4.18-7-b-13
 description: >
     Array.prototype.forEach - deleting own property with prototype
     property causes prototype index property to be visited on an Array

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.indexof
-es5id: 15.4.4.14-9-a-7
 description: >
     Array.prototype.indexOf - properties added into own object after
     current position are visited on an Array-like object

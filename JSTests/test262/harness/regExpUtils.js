@@ -3,6 +3,7 @@
 /*---
 description: |
     Collection of functions used to assert the correctness of RegExp objects.
+defines: [buildString, testPropertyEscapes, matchValidator]
 ---*/
 
 function buildString({ loneCodePoints, ranges }) {

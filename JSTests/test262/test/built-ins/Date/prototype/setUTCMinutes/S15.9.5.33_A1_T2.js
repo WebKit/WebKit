@@ -4,7 +4,6 @@
 /*---
 info: The Date.prototype property "setUTCMinutes" has { DontEnum } attributes
 esid: sec-date.prototype.setutcminutes
-es5id: 15.9.5.33_A1_T2
 description: Checking absence of DontDelete attribute
 ---*/
 

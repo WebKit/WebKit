@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.filter
-es5id: 15.4.4.20-4-15
 description: >
     Array.prototype.filter - calling with no callbackfn is the same as
     passing undefined for callbackfn

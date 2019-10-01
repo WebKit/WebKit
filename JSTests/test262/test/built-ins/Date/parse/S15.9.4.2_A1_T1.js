@@ -4,7 +4,6 @@
 /*---
 info: The Date property "parse" has { DontEnum } attributes
 esid: sec-date.parse
-es5id: 15.9.4.2_A1_T1
 description: Checking absence of ReadOnly attribute
 ---*/
 

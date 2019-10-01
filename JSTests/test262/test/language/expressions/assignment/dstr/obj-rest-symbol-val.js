@@ -4,7 +4,6 @@
 /*---
 description: RestBindingInitialization creates a new object if lhs is a Symbol (AssignmentExpression)
 esid: sec-variable-statement-runtime-semantics-evaluation
-es6id: 13.3.2.4
 features: [Symbol, object-rest, destructuring-binding]
 flags: [generated]
 info: |

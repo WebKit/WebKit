@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 22.2.5.1
 esid: sec-typedarray.bytes_per_element
 description: >
   The initial value of Uint32Array.BYTES_PER_ELEMENT is 4.

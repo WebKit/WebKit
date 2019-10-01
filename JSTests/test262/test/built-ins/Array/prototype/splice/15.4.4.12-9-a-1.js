@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.splice
-es5id: 15.4.4.12-9-a-1
 description: >
     Array.prototype.splice - 'from' is the result of
     ToString(actualStart+k) in an Array

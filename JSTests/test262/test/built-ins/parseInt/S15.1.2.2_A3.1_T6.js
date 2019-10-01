@@ -5,7 +5,6 @@
 info: Operator use ToNumber
 es5id: 15.1.2.2_A3.1_T6
 description: Checking for String object
-es6id: 18.2.5
 esid: sec-parseint-string-radix
 ---*/
 

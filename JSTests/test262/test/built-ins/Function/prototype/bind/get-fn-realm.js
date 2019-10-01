@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-getfunctionrealm
-es6id: 7.3.22
 description: >
     The realm of a bound function exotic object is the realm of its target
     function

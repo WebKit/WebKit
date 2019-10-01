@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.foreach
-es5id: 15.4.4.18-7-c-ii-2
 description: Array.prototype.forEach - callbackfn takes 3 arguments
 ---*/
 

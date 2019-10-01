@@ -4,7 +4,6 @@
 /*---
 description: Elision advances iterator and forwards abrupt completions (for statement)
 esid: sec-for-statement-runtime-semantics-labelledevaluation
-es6id: 13.7.4.7
 features: [generators, destructuring-binding]
 flags: [generated]
 info: |

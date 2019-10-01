@@ -4,7 +4,6 @@
 /*---
 description: Object binding pattern with "nested" array binding pattern taking the `null` value (generator function declaration (default parameter))
 esid: sec-generator-function-definitions-runtime-semantics-instantiatefunctionobject
-es6id: 14.4.12
 features: [generators, destructuring-binding, default-parameters]
 flags: [generated]
 info: |

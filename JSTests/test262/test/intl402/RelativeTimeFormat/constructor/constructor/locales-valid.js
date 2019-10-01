@@ -7,7 +7,6 @@ description: Checks various cases for the locales argument to the RelativeTimeFo
 info: |
     InitializeRelativeTimeFormat (relativeTimeFormat, locales, options)
     3. Let _requestedLocales_ be ? CanonicalizeLocaleList(_locales_).
-includes: [testIntl.js]
 features: [Intl.RelativeTimeFormat]
 ---*/
 

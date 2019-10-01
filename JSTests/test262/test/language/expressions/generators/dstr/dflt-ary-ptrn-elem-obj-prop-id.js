@@ -4,7 +4,6 @@
 /*---
 description: BindingElement with object binding pattern and initializer is not used (generator function expression (default parameter))
 esid: sec-generator-function-definitions-runtime-semantics-evaluation
-es6id: 14.4.14
 features: [generators, destructuring-binding, default-parameters]
 flags: [generated]
 info: |

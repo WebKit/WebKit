@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-5-4
 description: >
     Array.prototype.every - thisArg is object from object
     template(prototype)

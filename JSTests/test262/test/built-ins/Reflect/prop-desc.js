@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-math-object
+esid: sec-reflect-object
 description: >
   Property descriptor of Reflect
 info: |

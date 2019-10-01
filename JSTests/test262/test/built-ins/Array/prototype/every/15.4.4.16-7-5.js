@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-7-5
 description: >
     Array.prototype.every doesn't consider newly added elements in
     sparse array

@@ -28,6 +28,8 @@ $DONOTEVALUATE();
 
 class C extends B
 {
+  #x() {}
+
   method() {
     super.#x();
   }

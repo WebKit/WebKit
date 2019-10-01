@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-date.utc
-es6id: 20.3.3.4
 description: Infinite values specified to MakeTime produce NaN
 info: |
   [...]

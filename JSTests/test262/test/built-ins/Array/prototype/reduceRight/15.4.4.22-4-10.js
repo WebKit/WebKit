@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduceright
-es5id: 15.4.4.22-4-10
 description: >
     Array.prototype.reduceRight - the exception is not thrown if
     exception was thrown by step 2

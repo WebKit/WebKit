@@ -4,6 +4,30 @@
 description: |
     Functions to help generate test cases for testing type coercion abstract
     operations like ToNumber.
+defines:
+  - testCoercibleToIndexZero
+  - testCoercibleToIndexOne
+  - testCoercibleToIndexFromIndex
+  - testCoercibleToIntegerZero
+  - testCoercibleToIntegerOne
+  - testCoercibleToNumberZero
+  - testCoercibleToNumberNan
+  - testCoercibleToNumberOne
+  - testCoercibleToIntegerFromInteger
+  - testPrimitiveWrappers
+  - testCoercibleToPrimitiveWithMethod
+  - testNotCoercibleToIndex
+  - testNotCoercibleToInteger
+  - testNotCoercibleToNumber
+  - testNotCoercibleToPrimitive
+  - testCoercibleToString
+  - testNotCoercibleToString
+  - testCoercibleToBooleanTrue
+  - testCoercibleToBooleanFalse
+  - testCoercibleToBigIntZero
+  - testCoercibleToBigIntOne
+  - testCoercibleToBigIntFromBigInt
+  - testNotCoercibleToBigInt
 ---*/
 
 function testCoercibleToIndexZero(test) {

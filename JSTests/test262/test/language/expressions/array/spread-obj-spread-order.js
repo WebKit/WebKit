@@ -4,7 +4,6 @@
 /*---
 description: Spread operation follows [[OwnPropertyKeys]] order (Array initializer)
 esid: sec-runtime-semantics-arrayaccumulation
-es6id: 12.2.5.2
 features: [Symbol, object-spread]
 flags: [generated]
 includes: [compareArray.js]

@@ -21,10 +21,9 @@ assert.sameValue(new C().a(), 'A', "`new C().a()` returns `'A'`, from `a() { ret
 assert.sameValue(new C()[1](), 'B', "`new C()[1]()` returns `'B'`, from `[1]() { return 'B'; }`");
 assert.sameValue(new C().c(), 'C', "`new C().c()` returns `'C'`, from `c() { return 'C'; }`");
 assert.sameValue(new C()[2](), 'D', "`new C()[2]()` returns `'D'`, from `[ID(2)]() { return 'D'; }`");
-assert(
-  compareArray(Object.keys(C.prototype), []),
-  "`compareArray(Object.keys(C.prototype), [])` returns `true`"
-);
+
+assert.sameValue(Object.keys(C.prototype).length, 0, "No enum keys from C.prototype");
+
 assert(
   compareArray(Object.getOwnPropertyNames(C.prototype), ['1', '2', 'constructor', 'a', 'c']),
   "`compareArray(Object.getOwnPropertyNames(C.prototype), ['1', '2', 'constructor', 'a', 'c'])` returns `true`"

@@ -4,7 +4,6 @@
 /*---
 description: Evaluation of property name returns an abrupt completion (`let` statement)
 esid: sec-let-and-const-declarations-runtime-semantics-evaluation
-es6id: 13.3.1.4
 features: [destructuring-binding]
 flags: [generated]
 info: |

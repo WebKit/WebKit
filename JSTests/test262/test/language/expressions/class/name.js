@@ -2,31 +2,53 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 14.5.16
+esid: sec-class-definitions-runtime-semantics-evaluation
 description: Assignment of function `name` attribute
 info: |
-    ClassExpression : class BindingIdentifieropt ClassTail
+    ClassExpression : class ClassTail
 
-    5. If className is not undefined, then
-       a. Let hasNameProperty be HasOwnProperty(value, "name").
-       b. ReturnIfAbrupt(hasNameProperty).
-       c. If hasNameProperty is false, then
-          i. Perform SetFunctionName(value, className).
+    1. Let value be ? ClassDefinitionEvaluation of ClassTail with arguments
+       undefined and "".
+    ...
+    4. Return value.
+
+    ClassExpression : class BindingIdentifier ClassTail
+
+    1. Let className be StringValue of BindingIdentifier.
+    2. Let value be ? ClassDefinitionEvaluation of ClassTail with arguments
+       className and className.
+    ...
+    4. Return value.
+
+    14.6.13 Runtime Semantics: ClassDefinitionEvaluation
+
+    ...
+    12. Let constructorInfo be DefineMethod of constructor with arguments proto,
+        className as the optional name argument, and constructorParent.
+    ...
+
+    14.3.7 Runtime Semantics: DefineMethod
+
+    ...
+    7. Let closure be FunctionCreate(kind, UniqueFormalParameters, FunctionBody,
+       scope, name, prototype).
+    ...
+
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Object.hasOwnProperty.call(class {}, 'name'), false);
+verifyProperty(class {}, "name", {
+  value: "", writable: false, enumerable: false, configurable: true
+});
 
-assert.sameValue(class cls {}.name, 'cls');
-verifyNotEnumerable(class cls {}, 'name');
-verifyNotWritable(class cls {}, 'name');
-verifyConfigurable(class cls {}, 'name');
+verifyProperty(class cls {}, "name", {
+  value: "cls", writable: false, enumerable: false, configurable: true
+});
 
-assert.sameValue(
-  Object.hasOwnProperty.call(class { constructor() {} }, 'name'), false
-);
+verifyProperty(class { constructor() {} }, "name", {
+  value: "", writable: false, enumerable: false, configurable: true
+});
 
-assert.sameValue(class cls { constructor() {} }.name, 'cls');
-verifyNotEnumerable(class cls { constructor() {} }, 'name');
-verifyNotWritable(class cls { constructor() {} }, 'name');
-verifyConfigurable(class cls { constructor() {} }, 'name');
+verifyProperty(class cls { constructor() {} }, "name", {
+  value: "cls", writable: false, enumerable: false, configurable: true
+});

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.indexof
-es5id: 15.4.4.14-9-a-6
 description: >
     Array.prototype.indexOf - deleted properties in step 5 are visible
     here on an Array

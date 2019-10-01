@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduce
-es5id: 15.4.4.21-9-9
 description: >
     Array.prototype.reduce - modifications to length don't change
     number of iterations in step 9

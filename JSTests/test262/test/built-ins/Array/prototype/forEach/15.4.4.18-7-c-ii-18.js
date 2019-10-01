@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.foreach
-es5id: 15.4.4.18-7-c-ii-18
 description: >
     Array.prototype.forEach - 'this' of 'callbackfn' is an String
     object when T is not an object (T is a string)

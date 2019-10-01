@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.prototype.slice
 description: slice may return a new empty instance
-includes: [testTypedArray.js, compareArray.js]
+includes: [testTypedArray.js]
 features: [TypedArray]
 ---*/
 

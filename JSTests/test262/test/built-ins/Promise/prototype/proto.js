@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-properties-of-the-promise-prototype-object
-es6id: 25.4.5
 description: Promise.prototype [[Prototype]] is %ObjectPrototype%
 info: |
   The Promise prototype object is the intrinsic object %PromisePrototype%. The

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduce
-es5id: 15.4.4.21-2-12
 description: >
     Array.prototype.reduce - 'length' is own accessor property without
     a get function that overrides an inherited accessor property on an

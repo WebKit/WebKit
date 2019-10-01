@@ -5,7 +5,6 @@
 description: >
   Error retrieving the constructor's `resolve` method (rejecting promise)
 esid: sec-performpromiseall
-es6id: 25.4.4.1
 info: |
     11. Let result be PerformPromiseAll(iteratorRecord, C, promiseCapability).
     12. If result is an abrupt completion,

@@ -3,8 +3,6 @@
 
 /*---
 info: If R = 0 or R = undefined, then R = 10
-es5id: 15.1.2.2_A4.1_T1
-es6id: 18.2.5
 esid: sec-parseint-string-radix
 description: R = 0
 ---*/

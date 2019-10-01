@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-7-c-ii-21
 description: >
     Array.prototype.every - callbackfn called with correct parameters
     (kValue is correct)

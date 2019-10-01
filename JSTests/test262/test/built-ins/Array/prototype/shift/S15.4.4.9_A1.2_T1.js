@@ -6,7 +6,6 @@ info: |
     The first element of the array is removed from the array and
     returned
 esid: sec-array.prototype.shift
-es5id: 15.4.4.9_A1.2_T1
 description: Checking this use new Array() and []
 ---*/
 

@@ -4,7 +4,6 @@
 /*---
 description: Iterator is not closed when exhausted by pattern evaluation (arrow function expression)
 esid: sec-arrow-function-definitions-runtime-semantics-evaluation
-es6id: 14.2.16
 features: [Symbol.iterator, destructuring-binding]
 flags: [generated]
 info: |

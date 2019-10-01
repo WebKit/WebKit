@@ -6,7 +6,6 @@ info: |
     The Date.prototype.getDate property "length" has { ReadOnly, DontDelete,
     DontEnum } attributes
 esid: sec-date.prototype.getdate
-es5id: 15.9.5.14_A3_T3
 description: Checking DontEnum attribute
 ---*/
 

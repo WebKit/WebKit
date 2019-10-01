@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-properties-of-the-regexp-prototype-object
-es6id: 21.2.5
 description: >
   The RegExp prototype object does not have a [[RegExpMatcher]] internal slot
 info: |

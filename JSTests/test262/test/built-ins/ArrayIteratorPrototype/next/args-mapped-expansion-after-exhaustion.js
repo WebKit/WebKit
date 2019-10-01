@@ -1,7 +1,6 @@
 // Copyright (C) 2014 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 9.4.4.7
 esid: sec-%arrayiteratorprototype%.next
 description: >
     Once exhausted, iterators for mapped arguments exotic objects should not

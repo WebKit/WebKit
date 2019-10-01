@@ -6,7 +6,6 @@ info: |
     The pop function is intentionally generic.
     It does not require that its this value be an Array object
 esid: sec-array.prototype.pop
-es5id: 15.4.4.6_A2_T1
 description: >
     If ToUint32(length) equal zero, call the [[Put]] method  of this
     object with arguments "length" and 0 and return undefined

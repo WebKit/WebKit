@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduceright
-es5id: 15.4.4.22-10-7
 description: >
     Array.prototype.reduceRight - subclassed array when length to 1
     and initialvalue provided

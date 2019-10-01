@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-6-2
 description: Array.prototype.map - the returned array is instanceof Array
 ---*/
 

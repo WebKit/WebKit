@@ -4,7 +4,6 @@
 /*---
 info: The "length" property of the "setUTCMinutes" is 3
 esid: sec-date.prototype.setutcminutes
-es5id: 15.9.5.33_A2_T1
 description: The "length" property of the "setUTCMinutes" is 3
 ---*/
 

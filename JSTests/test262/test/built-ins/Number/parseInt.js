@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 20.1.2.13
 esid: sec-number.parseint
 description: >
   "parseInt" property descriptor and value of Number

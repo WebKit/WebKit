@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-dataview.prototype.setfloat64
-es6id: 24.2.4.14
 description: >
   DataView.prototype.setFloat64.name is "setFloat64".
 info: |

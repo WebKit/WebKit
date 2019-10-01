@@ -3,8 +3,6 @@
 
 /*---
 info: The length property of eval has the attribute ReadOnly
-es5id: 15.1.2.1_A4.3
-es6id: 18.2.1
 esid: sec-eval-x
 description: Checking if varying the length property fails
 includes: [propertyHelper.js]

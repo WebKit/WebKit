@@ -65,7 +65,6 @@ info: |
     2. Let int64bit be n modulo 2^64.
     3. Return int64bit.
 
-includes: [testBigIntTypedArray.js]
 features: [BigInt, TypedArray]
 ---*/
 

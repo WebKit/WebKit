@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-get-arraybuffer-@@species
-es6id: 24.1.3.3
 description: >
   get ArrayBuffer [ @@species ].length is 0.
 info: |

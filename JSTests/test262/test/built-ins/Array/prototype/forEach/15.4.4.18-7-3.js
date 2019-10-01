@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.foreach
-es5id: 15.4.4.18-7-3
 description: >
     Array.prototype.forEach doesn't visit deleted elements when
     Array.length is decreased

@@ -4,7 +4,6 @@
 /*---
 description: RestElement applied to an exhausted iterator (function expression (default parameter))
 esid: sec-function-definitions-runtime-semantics-evaluation
-es6id: 14.1.20
 features: [Symbol.iterator, destructuring-binding, default-parameters]
 flags: [generated]
 info: |

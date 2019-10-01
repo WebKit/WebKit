@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-date.prototype.getutcmonth
-es6id: 20.3.4.18
 description: >
   Date.prototype.getUTCMonth.name is "getUTCMonth".
 info: |

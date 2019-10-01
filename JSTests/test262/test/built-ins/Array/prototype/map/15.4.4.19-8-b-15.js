@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-8-b-15
 description: >
     Array.prototype.map - decreasing length of array with prototype
     property causes prototype index property to be visited

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-4-8
 description: >
     Array.prototype.map - Side effects produced by step 2 are visible
     when an exception occurs

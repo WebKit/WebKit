@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 22.2.3.30
 esid: sec-%typedarray%.prototype.values
 description: >
   The prototype of the returned iterator is ArrayIteratorPrototype

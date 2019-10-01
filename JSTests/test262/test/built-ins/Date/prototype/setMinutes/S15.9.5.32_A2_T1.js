@@ -4,7 +4,6 @@
 /*---
 info: The "length" property of the "setMinutes" is 3
 esid: sec-date.prototype.setminutes
-es5id: 15.9.5.32_A2_T1
 description: The "length" property of the "setMinutes" is 3
 ---*/
 

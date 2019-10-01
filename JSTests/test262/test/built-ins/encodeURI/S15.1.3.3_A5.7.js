@@ -3,8 +3,6 @@
 
 /*---
 info: The encodeURI property can't be used as constructor
-es5id: 15.1.3.3_A5.7
-es6id: 18.2.6.4
 esid: sec-encodeuri-uri
 description: >
     If property does not implement the internal [[Construct]] method,

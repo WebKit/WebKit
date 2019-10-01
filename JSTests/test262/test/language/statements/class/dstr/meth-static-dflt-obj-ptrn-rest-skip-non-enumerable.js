@@ -4,7 +4,6 @@
 /*---
 description: Rest object doesn't contain non-enumerable properties (static class expression method (default parameter))
 esid: sec-runtime-semantics-bindingclassdeclarationevaluation
-es6id: 14.5.15
 features: [object-rest, destructuring-binding, default-parameters]
 flags: [generated]
 includes: [propertyHelper.js]

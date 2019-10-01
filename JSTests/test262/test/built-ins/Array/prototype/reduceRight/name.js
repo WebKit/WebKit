@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduceright
-es6id: 22.1.3.19
 description: >
   Array.prototype.reduceRight.name is "reduceRight".
 info: |

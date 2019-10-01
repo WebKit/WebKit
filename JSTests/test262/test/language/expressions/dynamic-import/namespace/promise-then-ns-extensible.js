@@ -6,7 +6,6 @@ description: Module namespace objects are not extensible. (value from promise th
 esid: sec-finishdynamicimport
 features: [dynamic-import]
 flags: [generated, async]
-includes: [propertyHelper.js]
 info: |
     Runtime Semantics: FinishDynamicImport ( referencingScriptOrModule, specifier, promiseCapability, completion )
 

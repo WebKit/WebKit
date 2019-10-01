@@ -2,8 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-json.stringify
-es6id: 24.3.2
-description: Revoked proxy value produces a TypeError
+description: Revoked proxy value produces a TypeError.
 info: |
   [...]
   4. If Type(replacer) is Object, then

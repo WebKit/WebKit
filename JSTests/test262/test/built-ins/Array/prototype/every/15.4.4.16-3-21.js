@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-3-21
 description: >
     Array.prototype.every - 'length' is an object that has an own
     valueOf method that returns an object and toString method that

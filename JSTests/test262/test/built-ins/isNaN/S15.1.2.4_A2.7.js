@@ -3,8 +3,6 @@
 
 /*---
 info: The isNaN property can't be used as constructor
-es5id: 15.1.2.4_A2.7
-es6id: 18.2.3
 esid: sec-isnan-number
 description: >
     If property does not implement the internal [[Construct]] method,

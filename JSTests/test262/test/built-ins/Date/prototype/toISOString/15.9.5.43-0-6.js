@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-date.prototype.toisostring
-es5id: 15.9.5.43-0-6
 description: >
     Date.prototype.toISOString - TypeError is thrown when this is any
     other objects instead of Date object

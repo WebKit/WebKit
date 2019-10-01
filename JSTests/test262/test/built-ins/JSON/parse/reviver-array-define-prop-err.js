@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-internalizejsonproperty
-es6id: 24.3.1.1
 description: Abrupt completion from defining array property while reviving
 info: |
   JSON.parse ( text [ , reviver ] )

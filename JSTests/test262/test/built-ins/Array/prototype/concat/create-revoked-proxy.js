@@ -1,7 +1,6 @@
 // Copyright (C) 2016 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 22.1.3.1
 esid: sec-array.prototype.concat
 description: Abrupt completion from constructor that is a revoked Proxy object
 info: |

@@ -4,7 +4,6 @@
 /*---
 info: The Date.prototype property "toTimeString" has { DontEnum } attributes
 esid: sec-date.prototype.totimestring
-es5id: 15.9.5.4_A1_T1
 description: Checking absence of ReadOnly attribute
 ---*/
 

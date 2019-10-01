@@ -4,7 +4,6 @@
 /*---
 description: Spread operation follows [[OwnPropertyKeys]] order (`new` operator)
 esid: sec-new-operator-runtime-semantics-evaluation
-es6id: 12.3.3.1
 features: [Symbol, object-spread]
 flags: [generated]
 includes: [compareArray.js]

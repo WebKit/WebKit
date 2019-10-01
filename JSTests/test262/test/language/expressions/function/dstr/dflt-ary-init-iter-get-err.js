@@ -4,7 +4,6 @@
 /*---
 description: Abrupt completion returned by GetIterator (function expression (default parameter))
 esid: sec-function-definitions-runtime-semantics-evaluation
-es6id: 14.1.20
 features: [Symbol.iterator, destructuring-binding, default-parameters]
 flags: [generated]
 info: |

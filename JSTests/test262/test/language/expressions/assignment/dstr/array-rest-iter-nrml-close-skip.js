@@ -4,7 +4,6 @@
 /*---
 description: IteratorClose is not called when assignment evaluation has exhausted the iterator (AssignmentExpression)
 esid: sec-variable-statement-runtime-semantics-evaluation
-es6id: 13.3.2.4
 features: [Symbol.iterator, destructuring-binding]
 flags: [generated]
 info: |

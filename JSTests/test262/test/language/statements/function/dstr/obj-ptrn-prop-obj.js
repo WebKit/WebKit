@@ -4,7 +4,6 @@
 /*---
 description: Object binding pattern with "nested" object binding pattern not using initializer (function declaration)
 esid: sec-function-definitions-runtime-semantics-instantiatefunctionobject
-es6id: 14.1.19
 features: [destructuring-binding]
 flags: [generated]
 info: |

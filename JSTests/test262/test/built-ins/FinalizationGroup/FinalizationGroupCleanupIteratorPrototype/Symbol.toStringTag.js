@@ -26,8 +26,9 @@ info: |
   The initial value of the @@toStringTag property is the String value "FinalizationGroup Cleanup Iterator".
 
   This property has the attributes { [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]: true }.
-includes: [propertyHelper.js]
 features: [FinalizationGroup, host-gc-required, Symbol, Symbol.toStringTag]
+includes: [async-gc.js, propertyHelper.js]
+flags: [async, non-deterministic]
 ---*/
 
 var FinalizationGroupCleanupIteratorPrototype;
@@ -39,20 +40,25 @@ function callback(iterator) {
   FinalizationGroupCleanupIteratorPrototype = Object.getPrototypeOf(iterator);
 }
 
-(function() {
-  var o = {};
-  fg.register(o);
-})();
+function emptyCells() {
+  var target = {};
+  fg.register(target);
 
-$262.gc();
+  var prom = asyncGC(target);
+  target = null;
 
-fg.cleanupSome(callback);
+  return prom;
+}
 
-assert.sameValue(called, 1, 'cleanup successful');
+emptyCells().then(function() {
+  fg.cleanupSome(callback);
 
-verifyProperty(FinalizationGroupCleanupIteratorPrototype, Symbol.toStringTag, {
-  value: 'FinalizationGroup Cleanup Iterator',
-  writable: false,
-  enumerable: false,
-  configurable: true
-});
+  assert.sameValue(called, 1, 'cleanup successful');
+  
+  verifyProperty(FinalizationGroupCleanupIteratorPrototype, Symbol.toStringTag, {
+    value: 'FinalizationGroup Cleanup Iterator',
+    writable: false,
+    enumerable: false,
+    configurable: true
+  });  
+}).then($DONE, resolveAsyncGC);

@@ -3,6 +3,7 @@
 /*---
 description: |
     Used in website/scripts/sth.js
+defines: [setTimeout]
 ---*/
 //setTimeout is not available, hence this script was loaded
 if (Promise === undefined && this.setTimeout === undefined) {

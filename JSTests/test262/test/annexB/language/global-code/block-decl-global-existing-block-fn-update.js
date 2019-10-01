@@ -4,7 +4,6 @@
 /*---
 description: Variable-scoped binding is updated (Block statement in the global scope containing a function declaration)
 esid: sec-web-compat-globaldeclarationinstantiation
-es6id: B.3.3.2
 flags: [generated, noStrict]
 info: |
     B.3.3.2 Changes to GlobalDeclarationInstantiation

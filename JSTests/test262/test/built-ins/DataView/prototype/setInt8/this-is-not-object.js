@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-dataview.prototype.setint8
-es6id: 24.2.4.15
 description: Throws a TypeError if this is not Object
 info: |
   24.2.4.15 DataView.prototype.setInt8 ( byteOffset, value )

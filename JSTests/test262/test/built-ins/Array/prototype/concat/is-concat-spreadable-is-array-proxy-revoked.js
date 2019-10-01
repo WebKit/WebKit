@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-isconcatspreadable
-es6id: 22.1.3.1.1
 description: Revoked proxy value produces a TypeError when supplied to IsArray
 info: |
   [...]

@@ -4,7 +4,6 @@
 /*---
 info: Check ToUint32(length) for non Array objects
 esid: sec-array.prototype.slice
-es5id: 15.4.4.10_A3_T3
 description: length = -1
 ---*/
 

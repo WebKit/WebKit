@@ -1,7 +1,6 @@
 // Copyright (C) 2016 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 22.2.3.14
 esid: sec-array.prototype.includes
 description: >
   Throws a TypeError exception when `this` cannot be coerced to Object

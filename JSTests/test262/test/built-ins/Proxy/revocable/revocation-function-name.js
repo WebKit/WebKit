@@ -8,12 +8,19 @@ info: |
   A Proxy revocation function is an anonymous function.
 
   17 ECMAScript Standard Built-in Objects:
-    Every built-in Function object, including constructors, that is not
-    identified as an anonymous function has a name property whose value
-    is a String.
+    Every built-in function object, including constructors, has a `name`
+    property whose value is a String. Functions that are identified as
+    anonymous functions use the empty string as the value of the `name`
+    property.
+    Unless otherwise specified, the `name` property of a built-in function
+    object has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*,
+    [[Configurable]]: *true* }.
+includes: [propertyHelper.js]
 features: [Proxy]
 ---*/
 
 var revocationFunction = Proxy.revocable({}, {}).revoke;
 
-assert.sameValue(Object.prototype.hasOwnProperty.call(revocationFunction, "name"), false);
+verifyProperty(revocationFunction, "name", {
+  value: "", writable: false, enumerable: false, configurable: true
+});

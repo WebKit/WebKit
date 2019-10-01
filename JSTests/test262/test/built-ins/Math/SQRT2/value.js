@@ -3,7 +3,6 @@
 /*---
 description: Math.SQRT2 is a numeric value
 esid: sec-math.sqrt2
-es6id: 20.2.1.8
 info: |
     The Number value for the square root of 2, which is approximately
     1.4142135623730951.

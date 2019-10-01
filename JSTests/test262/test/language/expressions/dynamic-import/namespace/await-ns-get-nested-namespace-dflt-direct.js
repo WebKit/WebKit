@@ -102,7 +102,7 @@ async function fn() {
     assert.sameValue(desc.writable, true, 'ns.productionNS2: is writable');
     assert.sameValue(desc.configurable, false, 'ns.productionNS2: is non-configurable');
 
-    var keys = Object.keys(ns.productionNS2);
+    var keys = Object.getOwnPropertyNames(ns.productionNS2);
 
     assert.sameValue(keys.length, 2);
     assert.sameValue(keys[0], 'default');

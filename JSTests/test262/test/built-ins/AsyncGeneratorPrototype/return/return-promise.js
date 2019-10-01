@@ -18,7 +18,6 @@ info: |
   ...
   9. Return promiseCapability.[[Promise]].
 
-includes: [propertyHelper.js]
 features: [async-iteration]
 ---*/
 

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-8-b-1
 description: Array.prototype.lastIndexOf - undefined property wouldn't be called
 ---*/
 

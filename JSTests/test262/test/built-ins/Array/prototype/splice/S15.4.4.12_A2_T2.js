@@ -6,7 +6,6 @@ info: |
     The splice function is intentionally generic.
     It does not require that its this value be an Array object
 esid: sec-array.prototype.splice
-es5id: 15.4.4.12_A2_T2
 description: >
     If start is negative, use max(start + length, 0).  If deleteCount
     is negative, use 0

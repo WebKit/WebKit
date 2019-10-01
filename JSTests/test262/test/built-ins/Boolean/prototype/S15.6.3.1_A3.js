@@ -4,7 +4,6 @@
 /*---
 info: Boolean.prototype has the attribute DontDelete
 esid: sec-boolean.prototype
-es5id: 15.6.3.1_A3
 description: Checking if deleting the Boolean.prototype property fails
 includes: [propertyHelper.js]
 ---*/

@@ -4,7 +4,6 @@
 /*---
 description: Binding property list evaluation is interrupted by an abrupt completion (function expression)
 esid: sec-function-definitions-runtime-semantics-evaluation
-es6id: 14.1.20
 features: [destructuring-binding]
 flags: [generated]
 info: |

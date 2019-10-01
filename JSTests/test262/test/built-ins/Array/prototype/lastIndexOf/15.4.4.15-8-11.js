@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-8-11
 description: >
     Array.prototype.lastIndexOf - the length of iteration isn't
     changed by adding elements to the array during iteration

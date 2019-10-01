@@ -3,6 +3,7 @@
 /*---
 description: |
     An Array of all representable Well-Known Intrinsic Objects
+defines: [WellKnownIntrinsicObjects]
 ---*/
 
 const WellKnownIntrinsicObjects = [

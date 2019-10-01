@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-5-33
 description: >
     Array.prototype.lastIndexOf - match on the first element, a middle
     element and the last element when 'fromIndex' is passed

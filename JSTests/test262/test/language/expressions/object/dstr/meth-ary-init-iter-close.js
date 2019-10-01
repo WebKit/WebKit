@@ -4,7 +4,6 @@
 /*---
 description: Iterator is closed when not exhausted by pattern evaluation (method)
 esid: sec-runtime-semantics-definemethod
-es6id: 14.3.8
 features: [Symbol.iterator, destructuring-binding]
 flags: [generated]
 info: |

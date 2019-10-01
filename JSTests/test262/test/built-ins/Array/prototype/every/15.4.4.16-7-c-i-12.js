@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-7-c-i-12
 description: >
     Array.prototype.every - element to be retrieved is own accessor
     property that overrides an inherited data property on an Array

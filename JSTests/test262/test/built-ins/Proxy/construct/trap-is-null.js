@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 9.5.14
 esid: sec-proxy-object-internal-methods-and-internal-slots-construct-argumentslist-newtarget
 description: >
     If the construct trap value is null, propagate the construct to the target object.

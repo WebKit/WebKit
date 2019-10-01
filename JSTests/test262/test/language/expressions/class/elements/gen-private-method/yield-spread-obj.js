@@ -6,7 +6,6 @@ description: Use yield value in a object spread position (Generator private meth
 esid: prod-GeneratorPrivateMethod
 features: [object-spread, generators, class-methods-private]
 flags: [generated]
-includes: [compareArray.js]
 info: |
     ClassElement :
       PrivateMethodDefinition

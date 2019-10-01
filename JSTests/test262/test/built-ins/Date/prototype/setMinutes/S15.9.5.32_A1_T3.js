@@ -4,7 +4,6 @@
 /*---
 info: The Date.prototype property "setMinutes" has { DontEnum } attributes
 esid: sec-date.prototype.setminutes
-es5id: 15.9.5.32_A1_T3
 description: Checking DontEnum attribute
 ---*/
 

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-arraybuffer.prototype.slice
-es6id: 24.1.4.3
 description: >
   New ArrayBuffer instance is created from SpeciesConstructor.
 info: |

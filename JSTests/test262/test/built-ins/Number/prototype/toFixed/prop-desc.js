@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 20.1.3.3
 esid: sec-number.prototype.tofixed
 description: >
   "toFixed" property of Number.prototype

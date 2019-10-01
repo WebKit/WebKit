@@ -4,7 +4,6 @@
 /*---
 info: The Date.prototype property "getTime" has { DontEnum } attributes
 esid: sec-date.prototype.getseconds
-es5id: 15.9.5.9_A1_T1
 description: Checking absence of ReadOnly attribute
 ---*/
 

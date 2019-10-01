@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-8-c-ii-19
 description: Array.prototype.map - non-indexed properties are not called.
 ---*/
 

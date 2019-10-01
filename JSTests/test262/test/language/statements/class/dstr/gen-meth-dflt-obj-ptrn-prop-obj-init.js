@@ -4,7 +4,6 @@
 /*---
 description: Object binding pattern with "nested" object binding pattern using initializer (class expression method (default parameters))
 esid: sec-class-definitions-runtime-semantics-evaluation
-es6id: 14.5.16
 features: [generators, destructuring-binding, default-parameters]
 flags: [generated]
 info: |

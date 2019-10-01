@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-arraybuffer-length
-es6id: 24.1.2.1
 description: >
   Throws a RangeError if requested Data Block is too large.
 info: |

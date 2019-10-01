@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-proxy-object-internal-methods-and-internal-slots-defineownproperty-p-desc
-es6id: 9.5.6
 description: >
     Throw a TypeError exception if Desc is not configurable and target is not
     extensible, and trap result is true (honoring the realm of the current

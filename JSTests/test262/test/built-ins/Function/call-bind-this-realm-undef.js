@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-ecmascript-function-objects-call-thisargument-argumentslist
-es6id: 9.2.1
 description: The "this" value is set to the global This value
 info: |
   [...]

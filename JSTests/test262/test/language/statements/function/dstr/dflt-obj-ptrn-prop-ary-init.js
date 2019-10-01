@@ -4,7 +4,6 @@
 /*---
 description: Object binding pattern with "nested" array binding pattern using initializer (function declaration (default parameter))
 esid: sec-function-definitions-runtime-semantics-instantiatefunctionobject
-es6id: 14.1.19
 features: [destructuring-binding, default-parameters]
 flags: [generated]
 info: |

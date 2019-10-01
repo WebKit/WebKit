@@ -4,7 +4,6 @@
 /*---
 description: Spread operator following other arguments when reference is unresolvable (Array initializer)
 esid: sec-runtime-semantics-arrayaccumulation
-es6id: 12.2.5.2
 flags: [generated]
 info: |
     SpreadElement : ...AssignmentExpression

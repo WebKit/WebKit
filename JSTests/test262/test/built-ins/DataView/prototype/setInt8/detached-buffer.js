@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-dataview.prototype.setint8
-es6id: 24.2.4.15
 description: >
   Throws a TypeError if buffer is detached
 info: |

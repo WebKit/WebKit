@@ -39,7 +39,6 @@ info: |
     3. Let newDesc be the PropertyDescriptor { [[Value]]: V, [[Writable]]: true, [[Enumerable]]: true,
       [[Configurable]]: true }.
     4. Return ? O.[[DefineOwnProperty]](P, newDesc).
-includes: [propertyHelper.js]
 ---*/
 
 var x = "constructor";

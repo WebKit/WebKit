@@ -4,7 +4,6 @@
 /*---
 description: Spread operator following other arguments when GetIterator fails (@@iterator property access) (Array initializer)
 esid: sec-runtime-semantics-arrayaccumulation
-es6id: 12.2.5.2
 features: [Symbol.iterator]
 flags: [generated]
 info: |

@@ -3,8 +3,6 @@
 
 /*---
 info: If B = 10xxxxxx or B = 11111xxx, throw URIError
-es5id: 15.1.3.1_A1.3_T1
-es6id: 18.2.6.2
 esid: sec-decodeuri-encodeduri
 description: Complex tests. B = 10xxxxxx -> B in [0x80 - 0xBF]
 includes: [decimalToHexString.js]

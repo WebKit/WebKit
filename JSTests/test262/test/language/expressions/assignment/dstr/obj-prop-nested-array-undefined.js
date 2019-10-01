@@ -4,7 +4,6 @@
 /*---
 description: When DestructuringAssignmentTarget is an array literal and the value is not defined, a TypeError should be thrown. (AssignmentExpression)
 esid: sec-variable-statement-runtime-semantics-evaluation
-es6id: 13.3.2.4
 features: [destructuring-binding]
 flags: [generated]
 info: |

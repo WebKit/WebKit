@@ -3,8 +3,6 @@
 
 /*---
 info: The initial value of undefined is undefined
-es5id: 15.1.1.3_A1
-es6id: 18.1.3
 esid: sec-undefined
 description: Use typeof, isNaN, isFinite
 ---*/

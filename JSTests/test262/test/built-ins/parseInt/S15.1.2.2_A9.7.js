@@ -3,8 +3,6 @@
 
 /*---
 info: The parseInt property can't be used as constructor
-es5id: 15.1.2.2_A9.7
-es6id: 18.2.5
 esid: sec-parseint-string-radix
 description: >
     If property does not implement the internal [[Construct]] method,

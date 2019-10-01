@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-7-c-i-22
 description: >
     Array.prototype.every - element to be retrieved is inherited
     accessor property without a get function on an Array

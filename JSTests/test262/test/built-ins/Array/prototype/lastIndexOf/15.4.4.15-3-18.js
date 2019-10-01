@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-3-18
 description: >
     Array.prototype.lastIndexOf - value of 'length' is a string that
     can't convert to a number

@@ -4,7 +4,6 @@
 /*---
 info: The "length" property of the "setHours" is 4
 esid: sec-date.prototype.sethours
-es5id: 15.9.5.34_A2_T1
 description: The "length" property of the "setHours" is 4
 ---*/
 

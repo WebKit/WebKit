@@ -32,7 +32,7 @@ testWithTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function() {
     Reflect.set(ta, 0, {
       valueOf: function() {
-        $262.detachArrayBuffer(ta.buffer);
+        $DETACHBUFFER(ta.buffer);
         return 42;
       }
     });

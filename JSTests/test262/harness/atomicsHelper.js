@@ -3,6 +3,11 @@
 /*---
 description: >
     Collection of functions used to interact with Atomics.* operations across agent boundaries.
+defines:
+  - $262.agent.getReport
+  - $262.agent.safeBroadcast
+  - $262.agent.tryYield
+  - $262.trySleep
 ---*/
 
 /**

@@ -3,8 +3,6 @@
 
 /*---
 esid: sec-get-regexp.prototype.source
-es5id: 15.10.7.1-2
-es6id: 21.2.5.10
 description: >
     RegExp.prototype.source is an accessor property whose set accessor
     function is undefined

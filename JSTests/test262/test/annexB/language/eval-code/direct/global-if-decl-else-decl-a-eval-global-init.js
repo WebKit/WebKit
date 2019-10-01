@@ -4,7 +4,6 @@
 /*---
 description: Variable binding is initialized to `undefined` in outer scope (IfStatement with a declaration in both statement positions in eval code)
 esid: sec-functiondeclarations-in-ifstatement-statement-clauses
-es6id: B.3.3
 flags: [generated, noStrict]
 includes: [fnGlobalObject.js, propertyHelper.js]
 info: |

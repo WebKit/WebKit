@@ -6,7 +6,7 @@ esid: sec-Intl.PluralRules.prototype.resolvedOptions
 description: >
     Tests that Intl.PluralRules.prototype.resolvedOptions creates a new array
     for the pluralCategories property on every call.
-includes: [testIntl.js, propertyHelper.js, compareArray.js]
+includes: [propertyHelper.js, compareArray.js]
 ---*/
 
 const allowedValues = ["zero", "one", "two", "few", "many", "other"];

@@ -5,8 +5,6 @@
 info: |
     If string.charAt(k) in [0xD800 - 0xDBFF] and string.length = k + 1, throw
     URIError
-es5id: 15.1.3.4_A1.2_T2
-es6id: 18.2.6.5
 esid: sec-encodeuricomponent-uricomponent
 description: Complex tests
 includes: [decimalToHexString.js]

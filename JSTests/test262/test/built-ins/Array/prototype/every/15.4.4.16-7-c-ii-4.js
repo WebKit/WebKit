@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-7-c-ii-4
 description: >
     Array.prototype.every - k values are passed in ascending numeric
     order

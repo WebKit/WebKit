@@ -5,8 +5,6 @@
 info: |
     If the length of S is at least 2 and the first two characters of S
     are either 0x or 0X, then remove the first two characters from S and let R = 16
-es5id: 15.1.2.2_A5.2_T1
-es6id: 18.2.5
 esid: sec-parseint-string-radix
 description: ": 0x"
 ---*/

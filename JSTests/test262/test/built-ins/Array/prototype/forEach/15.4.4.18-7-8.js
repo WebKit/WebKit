@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.foreach
-es5id: 15.4.4.18-7-8
 description: Array.prototype.forEach - no observable effects occur if len is 0
 ---*/
 

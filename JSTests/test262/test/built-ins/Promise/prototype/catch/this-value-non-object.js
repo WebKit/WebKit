@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-promise.prototype.catch
-es6id: 25.4.5.1
 description: >
   Promise.prototype.catch called with a non-object-coercible `this` value
 info: |

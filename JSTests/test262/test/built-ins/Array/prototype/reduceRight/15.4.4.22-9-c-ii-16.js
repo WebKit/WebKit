@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduceright
-es5id: 15.4.4.22-9-c-ii-16
 description: >
     Array.prototype.reduceRight - non-indexed properties are not
     called on an Array-like object

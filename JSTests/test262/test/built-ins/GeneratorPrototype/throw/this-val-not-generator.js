@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-generator.prototype.throw
-es6id: 25.3.1.4
 description: >
     A TypeError should be thrown from GeneratorValidate (25.3.3.2) if the
     context of `throw` does not define the [[GeneratorState]] internal slot.

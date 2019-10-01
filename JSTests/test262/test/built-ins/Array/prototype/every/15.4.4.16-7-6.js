@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-7-6
 description: >
     Array.prototype.every visits deleted element in array after the
     call when same index is also present in prototype

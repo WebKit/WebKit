@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-6-6
 description: >
     Array.prototype.lastIndexOf returns correct index when 'fromIndex'
     is 1

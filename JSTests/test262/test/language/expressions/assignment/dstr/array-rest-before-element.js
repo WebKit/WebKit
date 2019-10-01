@@ -4,7 +4,6 @@
 /*---
 description: An AssignmentElement may not follow an AssignmentRestElement in an AssignmentElementList. (AssignmentExpression)
 esid: sec-variable-statement-runtime-semantics-evaluation
-es6id: 13.3.2.4
 features: [destructuring-binding]
 flags: [generated]
 negative:

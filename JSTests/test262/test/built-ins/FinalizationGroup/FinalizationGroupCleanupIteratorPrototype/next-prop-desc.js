@@ -26,7 +26,8 @@ info: |
   Every other data property described in clauses 18 through 26 and in Annex B.2
   has the attributes { [[Writable]]: true, [[Enumerable]]: false,
   [[Configurable]]: true } unless otherwise specified.
-includes: [propertyHelper.js]
+includes: [propertyHelper.js, async-gc.js]
+flags: [async, non-deterministic]
 features: [FinalizationGroup, host-gc-required, Symbol]
 ---*/
 
@@ -39,23 +40,28 @@ function callback(iterator) {
   FinalizationGroupCleanupIteratorPrototype = Object.getPrototypeOf(iterator);
 }
 
-(function() {
-  var o = {};
-  fg.register(o);
-})();
+function emptyCells() {
+  var target = {};
+  fg.register(target);
 
-$262.gc();
+  var prom = asyncGC(target);
+  target = null;
 
-fg.cleanupSome(callback);
+  return prom;
+}
 
-assert.sameValue(called, 1, 'cleanup successful');
+emptyCells().then(function() {
+  fg.cleanupSome(callback);
 
-assert.sameValue(typeof FinalizationGroupCleanupIteratorPrototype.next, 'function');
+  assert.sameValue(called, 1, 'cleanup successful');
 
-var next = FinalizationGroupCleanupIteratorPrototype.next;
+  assert.sameValue(typeof FinalizationGroupCleanupIteratorPrototype.next, 'function');
 
-verifyProperty(FinalizationGroupCleanupIteratorPrototype, 'next', {
-  enumerable: false,
-  writable: true,
-  configurable: true,
-});
+  var next = FinalizationGroupCleanupIteratorPrototype.next;
+
+  verifyProperty(FinalizationGroupCleanupIteratorPrototype, 'next', {
+    enumerable: false,
+    writable: true,
+    configurable: true,
+  });
+}).then($DONE, resolveAsyncGC);

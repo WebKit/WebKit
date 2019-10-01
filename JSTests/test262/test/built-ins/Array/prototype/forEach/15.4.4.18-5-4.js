@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.foreach
-es5id: 15.4.4.18-5-4
 description: >
     Array.prototype.forEach - thisArg is object from object
     template(prototype)

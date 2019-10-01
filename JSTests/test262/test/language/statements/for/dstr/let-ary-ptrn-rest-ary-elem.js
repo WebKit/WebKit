@@ -4,7 +4,6 @@
 /*---
 description: Rest element containing an array BindingElementList pattern (for statement)
 esid: sec-for-statement-runtime-semantics-labelledevaluation
-es6id: 13.7.4.7
 features: [destructuring-binding]
 flags: [generated]
 info: |

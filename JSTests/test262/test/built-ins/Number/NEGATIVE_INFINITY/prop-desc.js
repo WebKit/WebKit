@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 20.1.2.11
 esid: sec-number.negative_infinity
 description: >
   "NEGATIVE_INFINITY" property of Number

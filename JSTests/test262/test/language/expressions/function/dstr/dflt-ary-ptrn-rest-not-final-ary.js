@@ -4,7 +4,6 @@
 /*---
 description: Rest element (array binding pattern) may not be followed by any element (function expression (default parameter))
 esid: sec-function-definitions-runtime-semantics-evaluation
-es6id: 14.1.20
 features: [destructuring-binding, default-parameters]
 flags: [generated]
 negative:

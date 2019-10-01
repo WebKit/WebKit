@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.indexof
-es5id: 15.4.4.14-5-29
 description: >
     Array.prototype.indexOf - side effects produced by step 2 are
     visible when an exception occurs

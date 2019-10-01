@@ -4,7 +4,6 @@
 /*---
 info: The "length" property of the "setMonth" is 2
 esid: sec-date.prototype.setmonth
-es5id: 15.9.5.38_A2_T1
 description: The "length" property of the "setMonth" is 2
 ---*/
 

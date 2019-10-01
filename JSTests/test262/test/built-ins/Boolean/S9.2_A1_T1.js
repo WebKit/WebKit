@@ -4,7 +4,6 @@
 /*---
 info: Result of boolean conversion from undefined value is false
 esid: sec-toboolean
-es5id: 9.2_A1_T1
 description: >
     Undefined, void and others are converted to Boolean by explicit
     transformation

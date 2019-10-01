@@ -4,7 +4,6 @@
 /*---
 description: Variable binding is left in place by legacy function hoisting. CreateGlobalVariableBinding leaves the binding as non-enumerable even if it has the chance to change it to be enumerable. (IfStatement with a declaration in both statement positions in the global scope)
 esid: sec-functiondeclarations-in-ifstatement-statement-clauses
-es6id: B.3.4
 flags: [generated, noStrict]
 includes: [fnGlobalObject.js, propertyHelper.js]
 info: |

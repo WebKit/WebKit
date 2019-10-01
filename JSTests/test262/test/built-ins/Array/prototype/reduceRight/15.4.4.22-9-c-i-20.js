@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduceright
-es5id: 15.4.4.22-9-c-i-20
 description: >
     Array.prototype.reduceRight - element to be retrieved is own
     accessor property without a get function that overrides an

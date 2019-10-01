@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-9-13
 description: >
     Array.prototype.map - if there are no side effects of the
     functions, O is unmodified

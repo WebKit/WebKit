@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-date.prototype.sethours
-es6id: 20.3.4.22
 description: >
   Date.prototype.setHours.name is "setHours".
 info: |

@@ -4,7 +4,6 @@
 /*---
 description: Multiple Object Spread usage calls getter multiple times (Array initializer)
 esid: sec-runtime-semantics-arrayaccumulation
-es6id: 12.2.5.2
 features: [object-spread]
 flags: [generated]
 info: |

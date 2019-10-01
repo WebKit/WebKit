@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 /*---
 esid: sec-array.from
-es6id: 22.1.2.1
 description: >
   If this is a constructor, and items doesn't have an @@iterator,
   returns a new instance of this

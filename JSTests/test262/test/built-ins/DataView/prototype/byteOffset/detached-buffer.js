@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-get-dataview.prototype.byteoffset
-es6id: 24.2.4.3
 description: Throws a TypeError if the instance has a detached buffer
 info: |
   24.2.4.3 get DataView.prototype.byteOffset

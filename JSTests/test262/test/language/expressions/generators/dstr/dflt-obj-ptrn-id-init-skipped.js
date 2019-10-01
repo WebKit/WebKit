@@ -4,7 +4,6 @@
 /*---
 description: Destructuring initializer is not evaluated when value is not `undefined` (generator function expression (default parameter))
 esid: sec-generator-function-definitions-runtime-semantics-evaluation
-es6id: 14.4.14
 features: [generators, destructuring-binding, default-parameters]
 flags: [generated]
 info: |

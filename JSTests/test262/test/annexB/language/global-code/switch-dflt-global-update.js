@@ -4,7 +4,6 @@
 /*---
 description: Variable binding value is updated following evaluation (Funtion declaration in the `default` clause of a `switch` statement in the global scope)
 esid: sec-web-compat-globaldeclarationinstantiation
-es6id: B.3.3.2
 flags: [generated, noStrict]
 info: |
     B.3.3.2 Changes to GlobalDeclarationInstantiation

@@ -6,7 +6,6 @@ info: |
     The join function is intentionally generic.
     It does not require that its this value be an Array object
 esid: sec-array.prototype.join
-es5id: 15.4.4.5_A2_T1
 description: If ToUint32(length) is zero, return the empty string
 ---*/
 

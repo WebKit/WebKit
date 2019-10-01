@@ -1,7 +1,6 @@
 // Copyright (C) 2015 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 23.3.1.1
 esid: sec-weakmap-iterable
 description: >
   If the iterable argument is empty, return new WeakMap object.

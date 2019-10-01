@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-4-5
 description: >
     Array.prototype.lastIndexOf returns -1 if 'length' is 0 ( length
     overridden to '0' (type conversion))

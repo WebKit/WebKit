@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-8-a-17
 description: >
     Array.prototype.lastIndexOf -  decreasing length of array causes
     index property not to be visited

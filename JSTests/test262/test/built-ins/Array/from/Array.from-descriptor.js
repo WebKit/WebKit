@@ -6,7 +6,6 @@ description: Testing descriptor property of Array.from
 includes:
     - propertyHelper.js
 esid: sec-array.from
-es6id: 22.1.2.1
 ---*/
 
 verifyWritable(Array, "from");

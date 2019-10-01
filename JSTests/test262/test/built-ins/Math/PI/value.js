@@ -3,7 +3,6 @@
 /*---
 description: Math.PI is a numeric value
 esid: sec-math.pi
-es6id: 20.2.1.6
 info: |
     The Number value for pi, the ratio of the circumference of a circle to its
     diameter, which is approximately 3.1415926535897932.

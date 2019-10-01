@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-7-c-ii-18
 description: >
     Array.prototype.every - 'this' of 'callbackfn' is an String object
     when T is not an object (T is a string primitive)

@@ -1,7 +1,6 @@
 // Copyright (C) 2015 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 9.5.14
 esid: sec-proxy-object-internal-methods-and-internal-slots-construct-argumentslist-newtarget
 description: >
     If the construct trap is not set, propagate the construct to the target object.

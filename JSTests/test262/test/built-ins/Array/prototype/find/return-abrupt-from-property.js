@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-array.prototype.find
-es6id: 22.1.3.8
 description: >
   Returns abrupt from getting property value from `this`.
 info: |

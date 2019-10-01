@@ -6,7 +6,6 @@ info: |
     The shift function is intentionally generic.
     It does not require that its this value be an Array object
 esid: sec-array.prototype.shift
-es5id: 15.4.4.9_A2_T3
 description: >
     The first element of the array is removed from the array and
     returned

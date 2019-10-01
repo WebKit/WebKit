@@ -4,7 +4,6 @@
 /*---
 description: Extension not observed when creation of variable binding would produce an early error (Block statement) (IfStatement with a declaration in the second statement position in eval code)
 esid: sec-functiondeclarations-in-ifstatement-statement-clauses
-es6id: B.3.4
 flags: [generated, noStrict]
 info: |
     The following rules for IfStatement augment those in 13.6:

@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-invariants-of-the-essential-internal-methods
-es6id: 6.1.7.3
 description: >
   Value of non-writable, non-configurable data property must not change
   ("arguments" property of a non-strict function)

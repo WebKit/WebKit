@@ -6,6 +6,7 @@ description: |
 
     - An error class to avoid false positives when testing for thrown exceptions
     - A function to explicitly throw an exception using the Test262Error class
+defines: [Test262Error, $ERROR, $DONOTEVALUATE]
 ---*/
 
 

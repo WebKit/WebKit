@@ -4,7 +4,6 @@
 /*---
 info: "[[Get]], [[Delete]] from not an inherited property"
 esid: sec-array.prototype.sort
-es5id: 15.4.4.11_A6_T2
 description: >
     [[Prototype]] of Array instance is Array.prototype, [[Prototype]
     of Array.prototype is Object.prototype

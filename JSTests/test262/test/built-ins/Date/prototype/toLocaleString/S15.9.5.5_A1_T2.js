@@ -4,7 +4,6 @@
 /*---
 info: The Date.prototype property "toLocaleString" has { DontEnum } attributes
 esid: sec-date.prototype.tolocalestring
-es5id: 15.9.5.5_A1_T2
 description: Checking absence of DontDelete attribute
 ---*/
 

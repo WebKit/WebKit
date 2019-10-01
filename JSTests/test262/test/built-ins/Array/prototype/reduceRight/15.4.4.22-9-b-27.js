@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduceright
-es5id: 15.4.4.22-9-b-27
 description: >
     Array.prototype.reduceRight - decreasing length of array causes
     deleted index property not to be visited

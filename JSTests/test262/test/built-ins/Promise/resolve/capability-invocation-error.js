@@ -3,7 +3,6 @@
 /*---
 description: Abrupt completion returned by "resolve" capability
 esid: sec-promise.resolve
-es6id: 25.4.4.5
 info: |
     1. Let C be the this value.
     [...]

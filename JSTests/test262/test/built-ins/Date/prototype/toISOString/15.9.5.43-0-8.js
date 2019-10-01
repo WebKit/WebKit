@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-date.prototype.toisostring
-es5id: 15.9.5.43-0-8
 description: >
     Date.prototype.toISOString - RangeError is thrown when value of
     date is Date(1970, 0, -99999999, 0, 0, 0, -1), the time zone is

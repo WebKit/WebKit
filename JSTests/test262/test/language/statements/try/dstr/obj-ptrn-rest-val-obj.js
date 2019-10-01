@@ -4,7 +4,6 @@
 /*---
 description: Rest object contains just unextracted data (try statement)
 esid: sec-runtime-semantics-catchclauseevaluation
-es6id: 13.15.7
 features: [object-rest, destructuring-binding]
 flags: [generated]
 includes: [propertyHelper.js]

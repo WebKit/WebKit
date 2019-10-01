@@ -4,7 +4,6 @@
 /*---
 description: IteratorClose is called when AssignmentRestEvaluation produces a "return" completion due to reference evaluation (AssignmentExpression)
 esid: sec-variable-statement-runtime-semantics-evaluation
-es6id: 13.3.2.4
 features: [Symbol.iterator, generators, destructuring-binding]
 flags: [generated]
 info: |

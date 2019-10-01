@@ -1,7 +1,6 @@
 // Copyright (C) 2014 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 22.1.5.2.1
 esid: sec-%arrayiteratorprototype%.next
 description: >
     Visits each element of the array in order and ceases iteration once all

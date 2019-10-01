@@ -6,7 +6,6 @@ description: Use yield value in a object spread position (Static generator metho
 esid: prod-GeneratorMethod
 features: [object-spread, generators]
 flags: [generated]
-includes: [compareArray.js]
 info: |
     ClassElement :
       static MethodDefinition

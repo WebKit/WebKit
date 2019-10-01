@@ -4,7 +4,6 @@
 /*---
 description: Destructuring initializer with a "hole" (function declaration)
 esid: sec-function-definitions-runtime-semantics-instantiatefunctionobject
-es6id: 14.1.19
 features: [destructuring-binding]
 flags: [generated]
 info: |

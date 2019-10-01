@@ -4,7 +4,6 @@
 /*---
 description: No iteration occurs for an "empty" array binding pattern (for statement)
 esid: sec-for-statement-runtime-semantics-labelledevaluation
-es6id: 13.7.4.7
 features: [generators, destructuring-binding]
 flags: [generated]
 info: |

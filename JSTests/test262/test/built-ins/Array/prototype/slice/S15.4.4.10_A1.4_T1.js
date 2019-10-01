@@ -6,7 +6,6 @@ info: |
     If start is negative, use max(start + length, 0).
     If end is negative, use max(end + length, 0)
 esid: sec-array.prototype.slice
-es5id: 15.4.4.10_A1.4_T1
 description: -length = start < end < 0
 ---*/
 

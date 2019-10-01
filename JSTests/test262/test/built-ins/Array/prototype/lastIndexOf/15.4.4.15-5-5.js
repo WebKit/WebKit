@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-5-5
 description: Array.prototype.lastIndexOf when fromIndex is null
 ---*/
 

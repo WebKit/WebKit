@@ -6,8 +6,6 @@ info: |
     If S contains any character that is not a radix-R digit,
     then let Z be the substring of S consisting of all characters before
     the first such character; otherwise, let Z be S
-es5id: 15.1.2.2_A6.1_T4
-es6id: 18.2.5
 esid: sec-parseint-string-radix
 description: Complex test. Radix-R notation in [0..9, A-Z]
 ---*/

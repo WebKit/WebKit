@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.some
-es5id: 15.4.4.17-7-c-iii-28
 description: Array.prototype.some - true prevents further side effects
 ---*/
 

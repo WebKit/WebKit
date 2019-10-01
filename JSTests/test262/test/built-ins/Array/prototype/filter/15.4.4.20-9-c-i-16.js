@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.filter
-es5id: 15.4.4.20-9-c-i-16
 description: >
     Array.prototype.filter - element to be retrieved is inherited
     accessor property on an Array

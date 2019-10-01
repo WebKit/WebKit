@@ -1,7 +1,7 @@
 // Copyright (C) 2014 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 12.2.5
+esid: sec-object-initializer
 description: >
     In a class, static computed property method names can be a number
 includes: [compareArray.js]
@@ -21,6 +21,6 @@ assert(
   "`compareArray(Object.keys(C), [])` returns `true`"
 );
 assert(
-  compareArray(Object.getOwnPropertyNames(C), ['1', '2', 'length', 'prototype', 'name', 'a', 'c']),
-  "`compareArray(Object.getOwnPropertyNames(C), ['1', '2', 'length', 'prototype', 'name', 'a', 'c'])` returns `true`"
+  compareArray(Object.getOwnPropertyNames(C), ['1', '2', 'length', 'name', 'prototype', 'a', 'c']),
+  "`compareArray(Object.getOwnPropertyNames(C), ['1', '2', 'length', 'name', 'prototype', 'a', 'c'])` returns `true`"
 );

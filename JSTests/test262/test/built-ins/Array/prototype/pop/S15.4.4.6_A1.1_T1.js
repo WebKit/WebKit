@@ -6,7 +6,6 @@ info: |
     If length equal zero, call the [[Put]] method of this object
     with arguments "length" and 0 and return undefined
 esid: sec-array.prototype.pop
-es5id: 15.4.4.6_A1.1_T1
 description: Checking this algorithm
 ---*/
 

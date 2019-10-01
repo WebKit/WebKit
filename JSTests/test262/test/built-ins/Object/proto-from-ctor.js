@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-object-value
-es6id: 19.1.1.1
 description: Default [[Prototype]] value derived from realm of the newTarget
 info: |
     1. If NewTarget is neither undefined nor the active function, then

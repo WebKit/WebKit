@@ -4,7 +4,6 @@
 /*---
 description: Nested array destructuring with a null value (method (default parameter))
 esid: sec-runtime-semantics-definemethod
-es6id: 14.3.8
 features: [destructuring-binding, default-parameters]
 flags: [generated]
 info: |

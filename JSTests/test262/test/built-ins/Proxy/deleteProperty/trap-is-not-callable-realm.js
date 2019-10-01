@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-proxy-object-internal-methods-and-internal-slots-delete-p
-es6id: 9.5.10
 description: >
   Throws when trap is not callable. (honoring the Realm of the current
   execution context)

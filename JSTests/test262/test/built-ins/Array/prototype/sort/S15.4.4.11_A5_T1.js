@@ -4,7 +4,6 @@
 /*---
 info: Array.sort should not eat exceptions
 esid: sec-array.prototype.sort
-es5id: 15.4.4.11_A5_T1
 description: comparefn function throw "error"
 ---*/
 

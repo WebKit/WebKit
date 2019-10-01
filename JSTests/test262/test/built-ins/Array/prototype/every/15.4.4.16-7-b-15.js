@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-7-b-15
 description: >
     Array.prototype.every - decreasing length of array with prototype
     property causes prototype index property to be visited

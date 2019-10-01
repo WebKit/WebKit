@@ -3,8 +3,6 @@
 
 /*---
 info: The length property of parseInt does not have the attribute DontDelete
-es5id: 15.1.2.2_A9.2
-es6id: 18.2.5
 esid: sec-parseint-string-radix
 description: Checking use hasOwnProperty, delete
 ---*/

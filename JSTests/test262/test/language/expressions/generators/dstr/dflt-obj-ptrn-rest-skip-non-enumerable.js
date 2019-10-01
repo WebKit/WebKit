@@ -4,7 +4,6 @@
 /*---
 description: Rest object doesn't contain non-enumerable properties (generator function expression (default parameter))
 esid: sec-generator-function-definitions-runtime-semantics-evaluation
-es6id: 14.4.14
 features: [object-rest, generators, destructuring-binding, default-parameters]
 flags: [generated]
 includes: [propertyHelper.js]

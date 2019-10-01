@@ -4,7 +4,6 @@
 /*---
 info: Operator use ToString from separator
 esid: sec-array.prototype.join
-es5id: 15.4.4.5_A3.1_T2
 description: >
     If Type(separator) is Object, evaluate ToPrimitive(separator,
     String)

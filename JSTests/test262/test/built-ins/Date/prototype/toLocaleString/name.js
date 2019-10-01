@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-date.prototype.tolocalestring
-es6id: 20.3.4.39
 description: >
   Date.prototype.toLocaleString.name is "toLocaleString".
 info: |

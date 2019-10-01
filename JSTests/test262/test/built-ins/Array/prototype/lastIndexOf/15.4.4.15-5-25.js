@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-5-25
 description: >
     Array.prototype.lastIndexOf use inherited valueOf method when
     value of 'fromIndex' is an object with an own toString and

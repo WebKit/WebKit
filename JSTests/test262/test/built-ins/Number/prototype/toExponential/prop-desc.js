@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 20.1.3.2
 esid: sec-number.prototype.toexponential
 description: >
   "toExponential" property of Number.prototype

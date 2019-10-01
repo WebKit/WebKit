@@ -1,7 +1,6 @@
 // Copyright (C) 2015 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 9.5.2
 esid: sec-proxy-object-internal-methods-and-internal-slots-setprototypeof-v
 description: >
   Return target.[[SetPrototypeOf]] (V) if trap is undefined or null.

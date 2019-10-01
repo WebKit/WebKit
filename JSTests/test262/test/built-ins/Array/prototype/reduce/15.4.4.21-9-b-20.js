@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduce
-es5id: 15.4.4.21-9-b-20
 description: >
     Array.prototype.reduce - properties can be added to prototype are
     visited on an Array

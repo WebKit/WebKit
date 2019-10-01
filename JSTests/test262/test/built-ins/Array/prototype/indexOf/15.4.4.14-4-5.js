@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.indexof
-es5id: 15.4.4.14-4-5
 description: >
     Array.prototype.indexOf returns -1 if 'length' is 0 ( length
     overridden to '0' (type conversion))

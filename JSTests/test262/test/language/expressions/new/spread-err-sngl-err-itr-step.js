@@ -4,7 +4,6 @@
 /*---
 description: Spread operator applied to the only argument when IteratorStep fails (`new` operator)
 esid: sec-new-operator-runtime-semantics-evaluation
-es6id: 12.3.3.1
 features: [Symbol.iterator]
 flags: [generated]
 info: |

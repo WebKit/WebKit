@@ -5,6 +5,7 @@ description: |
     Verify that the given date object's Number representation describes the
     correct number of milliseconds since the Unix epoch relative to the local
     time zone (as interpreted at the specified date).
+defines: [assertRelativeDateMs]
 ---*/
 
 /**

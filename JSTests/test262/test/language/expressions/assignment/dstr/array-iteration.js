@@ -4,7 +4,6 @@
 /*---
 description: Value iteration only proceeds for the number of elements in the ArrayAssignmentPattern. (AssignmentExpression)
 esid: sec-variable-statement-runtime-semantics-evaluation
-es6id: 13.3.2.4
 features: [generators, destructuring-binding]
 flags: [generated]
 info: |

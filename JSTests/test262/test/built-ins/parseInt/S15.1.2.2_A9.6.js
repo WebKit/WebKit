@@ -3,8 +3,6 @@
 
 /*---
 info: The parseInt property has not prototype property
-es5id: 15.1.2.2_A9.6
-es6id: 18.2.5
 esid: sec-parseint-string-radix
 description: Checking parseInt.prototype
 ---*/

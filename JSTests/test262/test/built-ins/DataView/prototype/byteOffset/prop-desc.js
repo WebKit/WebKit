@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-get-dataview.prototype.byteoffset
-es6id: 24.2.4.3
 description: >
   "byteOffset" property of DataView.prototype
 info: |

@@ -6,7 +6,6 @@ info: |
     The Date.prototype.toLocaleString property "length" has { ReadOnly, !
     DontDelete, DontEnum } attributes
 esid: sec-date.prototype.tolocalestring
-es5id: 15.9.5.5_A3_T2
 description: Checking DontDelete attribute
 ---*/
 

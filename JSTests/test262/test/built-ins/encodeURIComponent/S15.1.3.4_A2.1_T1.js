@@ -5,8 +5,6 @@
 info: |
     If string.charAt(k) in [0x0000 - 0x007F]\[uriUnescaped], return 1 octet
     (00000000 0zzzzzzz -> 0zzzzzzz)
-es5id: 15.1.3.4_A2.1_T1
-es6id: 18.2.6.5
 esid: sec-encodeuricomponent-uricomponent
 description: Complex tests, use RFC 3629
 includes: [decimalToHexString.js]

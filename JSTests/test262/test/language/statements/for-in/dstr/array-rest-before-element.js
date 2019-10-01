@@ -4,7 +4,6 @@
 /*---
 description: An AssignmentElement may not follow an AssignmentRestElement in an AssignmentElementList. (For..in statement)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
-es6id: 13.7.5.11
 features: [destructuring-binding]
 flags: [generated]
 negative:

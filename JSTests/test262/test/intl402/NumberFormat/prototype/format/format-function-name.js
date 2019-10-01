@@ -8,15 +8,19 @@ description: >
 info: |
   11.4.3 get Intl.NumberFormat.prototype.compare
 
-  ...
-  4. If nf.[[boundFormat]] is undefined, then
-    a. Let F be a new built-in function object as defined in Number Format Functions (11.1.3).
-    b. Let bf be BoundFunctionCreate(F, nf, « »).
-    c. Perform ! DefinePropertyOrThrow(bf, "length", PropertyDescriptor {[[Value]]: 1, [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]: true}).
-    d. Set nf.[[boundFormat]] to bf.
-  ...
+  17 ECMAScript Standard Built-in Objects:
+    Every built-in function object, including constructors, has a `name`
+    property whose value is a String. Functions that are identified as
+    anonymous functions use the empty string as the value of the `name`
+    property.
+    Unless otherwise specified, the `name` property of a built-in function
+    object has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*,
+    [[Configurable]]: *true* }.
+includes: [propertyHelper.js]
 ---*/
 
 var formatFn = new Intl.NumberFormat().format;
 
-assert.sameValue(Object.prototype.hasOwnProperty.call(formatFn, "name"), false);
+verifyProperty(formatFn, "name", {
+  value: "", writable: false, enumerable: false, configurable: true
+});

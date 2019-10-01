@@ -4,7 +4,6 @@
 /*---
 description: Rest element containing an "empty" array pattern (generator function expression (default parameter))
 esid: sec-generator-function-definitions-runtime-semantics-evaluation
-es6id: 14.4.14
 features: [generators, destructuring-binding, default-parameters]
 flags: [generated]
 info: |

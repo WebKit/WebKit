@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-date-value
-es6id: 20.3.2.2
 description: >
   Exotic `Symbol.toPrimitive` method returns a primitive value other than a
   string

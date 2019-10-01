@@ -4,7 +4,6 @@
 /*---
 description: A block-scoped binding is created (Block statement in function scope containing a function declaration)
 esid: sec-web-compat-functiondeclarationinstantiation
-es6id: B.3.3.1
 flags: [generated, noStrict]
 info: |
     13.2.14 Runtime Semantics: BlockDeclarationInstantiation

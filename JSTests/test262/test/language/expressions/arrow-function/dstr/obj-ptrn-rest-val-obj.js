@@ -4,7 +4,6 @@
 /*---
 description: Rest object contains just unextracted data (arrow function expression)
 esid: sec-arrow-function-definitions-runtime-semantics-evaluation
-es6id: 14.2.16
 features: [object-rest, destructuring-binding]
 flags: [generated]
 includes: [propertyHelper.js]

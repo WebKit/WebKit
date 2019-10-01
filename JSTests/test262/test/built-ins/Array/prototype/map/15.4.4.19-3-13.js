@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-3-13
 description: >
     Array.prototype.map - value of 'length' is string that is able to
     convert to number primitive (value is a decimal number)

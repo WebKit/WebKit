@@ -5,7 +5,6 @@ description: >
     Rejected promises ignore resolution after immediate invocation of the
     provided reject function
 esid: sec-promise-executor
-es6id: 25.4.3.3
 info: |
     [...]
     9. Let completion be Call(executor, undefined,

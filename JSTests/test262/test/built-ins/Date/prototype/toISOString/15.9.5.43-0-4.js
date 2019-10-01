@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-date.prototype.toisostring
-es5id: 15.9.5.43-0-4
 description: >
     Date.prototype.toISOString - format of returned string is
     'YYYY-MM-DDTHH:mm:ss.sssZ', the time zone is UTC(0)

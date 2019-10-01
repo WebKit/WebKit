@@ -3,6 +3,10 @@
 /*---
 description: |
     Collection of functions used to assert the correctness of SharedArrayBuffer objects.
+defines:
+  - testWithAtomicsOutOfBoundsIndices
+  - testWithAtomicsInBoundsIndices
+  - testWithAtomicsNonViewValues
 ---*/
 
 

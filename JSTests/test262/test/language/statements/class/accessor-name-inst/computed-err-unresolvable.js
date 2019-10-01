@@ -4,7 +4,7 @@
 /*---
 description: Abrupt completion when resolving reference value (Class declaration, instance method)
 esid: sec-runtime-semantics-classdefinitionevaluation
-es6id: 14.5.14
+features: [class]
 flags: [generated]
 info: |
     [...]
@@ -12,6 +12,7 @@ info: |
         a. If IsStatic of m is false, then
            i. Let status be the result of performing PropertyDefinitionEvaluation
               for m with arguments proto and false.
+
 
     12.2.6.7 Runtime Semantics: Evaluation
 

@@ -4,7 +4,6 @@
 /*---
 info: The "length" property of the "getUTCMonth" is 0
 esid: sec-date.prototype.getutcmonth
-es5id: 15.9.5.13_A2_T1
 description: The "length" property of the "getUTCMonth" is 0
 ---*/
 

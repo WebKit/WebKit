@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduce
-es5id: 15.4.4.21-8-b-3
 description: Array.prototype.reduce - loop is broken once 'kPresent' is true
 ---*/
 

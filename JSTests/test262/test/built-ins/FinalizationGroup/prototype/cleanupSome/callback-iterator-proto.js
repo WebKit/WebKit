@@ -48,6 +48,8 @@ info: |
   6. Set iterator.[[FinalizationGroup]] to finalizationGroup.
   7. Return iterator.
 features: [FinalizationGroup, host-gc-required]
+includes: [async-gc.js]
+flags: [async, non-deterministic]
 ---*/
 
 var IteratorPrototype = Object.getPrototypeOf(Object.getPrototypeOf([][Symbol.iterator]()));
@@ -65,23 +67,32 @@ var fg = new FinalizationGroup(function() {
   cleanupCallbackCalled += 1;
 });
 
-(function() {
-  let o = {};
-  fg.register(o);
-})();
+async function register() {
+  var target = {};
+  fg.register(target);
+  var prom = asyncGC(target);
+  
+  target = null;
+  assert.sameValue(called, 0); // never called in sync execution
 
-assert.sameValue(called, 0);
+  return prom;
+}
 
-$262.gc();
-fg.cleanupSome(callback);
+register()
+  .then(function() {
+    // We can't observe if the cleanupCallback was called, but we can make sure cleanupSome won't call it.
+    cleanupCallbackCalled = 0;
 
-assert.sameValue(called, 1);
+    fg.cleanupSome(callback);
 
-var proto = Object.getPrototypeOf(FinalizationGroupCleanupIteratorPrototype);
-assert.sameValue(
-  proto, IteratorPrototype,
-  '[[Prototype]] internal slot whose value is the intrinsic object %IteratorPrototype%'
-);
+    assert.sameValue(called, 1);
 
+    var proto = Object.getPrototypeOf(FinalizationGroupCleanupIteratorPrototype);
+    assert.sameValue(
+      proto, IteratorPrototype,
+      '[[Prototype]] internal slot whose value is the intrinsic object %IteratorPrototype%'
+    );
 
-assert.sameValue(cleanupCallbackCalled, 0, 'if a callback is given, do not call cleanupCallback');
+    assert.sameValue(cleanupCallbackCalled, 0, 'if a callback is given, do not call cleanupCallback');
+  })
+  .then($DONE, resolveAsyncGC);

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.some
-es5id: 15.4.4.17-4-2
 description: >
     Array.prototype.some throws ReferenceError if callbackfn is
     unreferenced

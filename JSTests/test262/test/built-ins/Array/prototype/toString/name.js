@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.tostring
-es6id: 22.1.3.27
 description: >
   Array.prototype.toString.name is "toString".
 info: |

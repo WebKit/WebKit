@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduce
-es5id: 15.4.4.21-2-2
 description: Array.prototype.reduce - 'length' is own data property on an Array
 ---*/
 

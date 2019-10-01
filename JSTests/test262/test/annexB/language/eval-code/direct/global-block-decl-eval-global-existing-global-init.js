@@ -4,7 +4,6 @@
 /*---
 description: Variable binding is left in place by legacy function hoisting (Block statement in eval code containing a function declaration)
 esid: sec-web-compat-evaldeclarationinstantiation
-es6id: B.3.3.3
 flags: [generated, noStrict]
 includes: [fnGlobalObject.js, propertyHelper.js]
 info: |

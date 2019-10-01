@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-4-12
 description: Array.prototype.map - 'callbackfn' is a function
 ---*/
 

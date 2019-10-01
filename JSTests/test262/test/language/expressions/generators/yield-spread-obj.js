@@ -6,7 +6,6 @@ description: Use yield value in a object spread position (Unnamed generator expr
 esid: prod-GeneratorExpression
 features: [object-spread, generators]
 flags: [generated]
-includes: [compareArray.js]
 info: |
     14.4 Generator Function Definitions
 

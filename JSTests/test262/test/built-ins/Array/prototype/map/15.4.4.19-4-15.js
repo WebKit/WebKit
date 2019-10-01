@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-4-15
 description: >
     Array.prototype.map - calling with no callbackfn is the same as
     passing undefined for callbackfn

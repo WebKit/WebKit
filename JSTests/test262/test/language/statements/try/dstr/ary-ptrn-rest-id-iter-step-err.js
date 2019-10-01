@@ -4,7 +4,6 @@
 /*---
 description: Error forwarding when IteratorStep returns an abrupt completion (try statement)
 esid: sec-runtime-semantics-catchclauseevaluation
-es6id: 13.15.7
 features: [generators, destructuring-binding]
 flags: [generated]
 info: |

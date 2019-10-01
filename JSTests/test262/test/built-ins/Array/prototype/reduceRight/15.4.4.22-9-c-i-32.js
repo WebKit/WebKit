@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduceright
-es5id: 15.4.4.22-9-c-i-32
 description: >
     Array.prototype.reduceRight - unnhandled exceptions happened in
     getter terminate iteration on an Array-like object

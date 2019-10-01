@@ -26,7 +26,7 @@ var p = new Proxy(target, {
 
 Object.preventExtensions(target);
 
-var keys = Object.keys(p);
+var keys = Object.getOwnPropertyNames(p);
 
 assert.sameValue(keys[0], "foo");
 assert.sameValue(keys[1], "bar");

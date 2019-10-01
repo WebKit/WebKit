@@ -3,8 +3,6 @@
 
 /*---
 info: If string.charAt(k) in [0xDC00 - 0xDFFF], throw URIError
-es5id: 15.1.3.4_A1.1_T2
-es6id: 18.2.6.5
 esid: sec-encodeuricomponent-uricomponent
 description: Complex tests
 includes: [decimalToHexString.js]

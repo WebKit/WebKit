@@ -15,7 +15,7 @@ var o = {
   [++counter]: ++counter,
 }
 
-var keys = Object.keys(o);
+var keys = Object.getOwnPropertyNames(o);
 
 assert.sameValue(keys.length, 3, '3 PropertyDefinitions should result in 3 properties');
 assert.sameValue(keys[0], '1');

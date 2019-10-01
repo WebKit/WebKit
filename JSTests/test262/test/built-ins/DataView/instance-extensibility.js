@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 24.2.2.1
 esid: sec-dataview-buffer-byteoffset-bytelength
 description: >
   The new instance is extensible

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.foreach
-es5id: 15.4.4.18-5-1-s
 description: Array.prototype.forEach - thisArg not passed to strict callbackfn
 flags: [noStrict]
 ---*/

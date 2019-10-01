@@ -4,7 +4,6 @@
 /*---
 info: Check ToLength(length) for non Array objects
 esid: sec-array.prototype.slice
-es5id: 15.4.4.10_A3_T1
 description: length = 4294967296
 ---*/
 

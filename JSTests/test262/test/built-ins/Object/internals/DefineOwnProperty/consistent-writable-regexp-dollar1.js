@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-invariants-of-the-essential-internal-methods
-es6id: 6.1.7.3
 description: >
   A property made non-writable, non-configurable must not be reported as writable
   ("$1" property of the RegExp built-in)

@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-json.parse
-es6id: 24.3.1
 description: >
   JSON.parse.name is "parse".
 info: |

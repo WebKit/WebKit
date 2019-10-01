@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-7-8
 description: Array.prototype.every - no observable effects occur if len is 0
 ---*/
 

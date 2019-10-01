@@ -7,7 +7,6 @@ info: |
     constructors, return the object
 es5id: 11.1.1_A3.2
 description: Create function. It have property, that returned "this"
-flags: [noStrict]
 ---*/
 
 //CHECK#1

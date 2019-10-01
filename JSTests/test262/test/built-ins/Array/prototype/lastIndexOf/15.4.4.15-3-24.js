@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-3-24
 description: >
     Array.prototype.lastIndexOf - value of 'length' is a positive
     non-integer, ensure truncation occurs in the proper direction

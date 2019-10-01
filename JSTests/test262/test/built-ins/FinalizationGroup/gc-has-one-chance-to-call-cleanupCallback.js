@@ -26,7 +26,8 @@ info: |
     a. Set cell.[[Target]] to empty.
     b. Optionally, perform ! HostCleanupFinalizationGroup(fg).
 features: [FinalizationGroup, async-functions, host-gc-required]
-flags: [async]
+flags: [async, non-deterministic]
+includes: [async-gc.js]
 ---*/
 
 var cleanupCallback = 0;
@@ -44,16 +45,14 @@ var fg = new FinalizationGroup(function() {
 });
 
 function emptyCells() {
-  (function() {
-    var a = {};
-    fg.register(a, 'a');
-  })();
+  var target = {};
+  fg.register(target, 'a');
 
-  // GC is called here
-  $262.gc();
+  var prom = asyncGC(target);
+  target = null;
+
+  return prom;
 }
-
-emptyCells();
 
 // Let's add some async ticks, as the cleanupCallback is not meant to interrupt
 // synchronous operations.
@@ -76,7 +75,7 @@ async function fn() {
   // callback is not called again.
   cleanupCallback = 0;
 
-  $262.gc();
+  await $262.gc();
   await Promise.resolve(2); // tick
 
   fg.cleanupSome(cb);
@@ -86,7 +85,7 @@ async function fn() {
   assert.sameValue(called, 2, 'cleanupSome callback for the second time');
   assert.sameValue(cleanupCallback, 0, 'cleanupCallback is not called again #1');
 
-  $262.gc();
+  await $262.gc();
   await Promise.resolve(3); // tick
 
   fg.cleanupSome(cb);
@@ -94,11 +93,12 @@ async function fn() {
   assert.sameValue(called, 3, 'cleanupSome callback for the third time');
   assert.sameValue(cleanupCallback, 0, 'cleanupCallback is not called again #2');
 
-  $262.gc();
+  await $262.gc();
 }
 
-fn()
-  .then(async function() { // tick
+emptyCells()
+  .then(async function() {
+    await fn();// tick
     await Promise.resolve(4); // tick
 
     assert.sameValue(cleanupCallback, 0, 'cleanupCallback is not called again #3');
@@ -108,7 +108,7 @@ fn()
     assert.sameValue(called, 4, 'cleanupSome callback for the fourth time');
     assert.sameValue(cleanupCallback, 0, 'cleanupCallback is not called again #4');
     
-    $262.gc();
+    await $262.gc();
 
     // Now we are exhausting the iterator, so cleanupSome callback will also not be called.
     fg.cleanupSome(iterator => {
@@ -121,7 +121,7 @@ fn()
     assert.sameValue(called, 5, 'cleanupSome callback for the fifth time');
     assert.sameValue(cleanupCallback, 0, 'cleanupCallback is not called again #4');
 
-    $262.gc();
+    await $262.gc();
 
     await Promise.resolve(5); // tick
     await await Promise.resolve(6); // more ticks
@@ -132,4 +132,4 @@ fn()
     assert.sameValue(called, 5, 'cleanupSome callback is not called anymore, no empty cells');
     assert.sameValue(cleanupCallback, 0, 'cleanupCallback is not called again #5');
   })
-  .then($DONE, $DONE);
+  .then($DONE, resolveAsyncGC);

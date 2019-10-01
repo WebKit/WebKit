@@ -19,7 +19,6 @@ info: |
       i.  Let upperValue be Get(O, upperP).
       ii. ReturnIfAbrupt(upperValue).
 esid: sec-array.prototype.reverse
-es6id: 22.1.3.20
 ---*/
 
 var array = ["first", "second"];

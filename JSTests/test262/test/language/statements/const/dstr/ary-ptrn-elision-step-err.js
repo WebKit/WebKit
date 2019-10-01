@@ -4,7 +4,6 @@
 /*---
 description: Elision advances iterator and forwards abrupt completions (`const` statement)
 esid: sec-let-and-const-declarations-runtime-semantics-evaluation
-es6id: 13.3.1.4
 features: [generators, destructuring-binding]
 flags: [generated]
 info: |

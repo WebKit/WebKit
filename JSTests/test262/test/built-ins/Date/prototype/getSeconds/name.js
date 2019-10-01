@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-date.prototype.getseconds
-es6id: 20.3.4.9
 description: >
   Date.prototype.getSeconds.name is "getSeconds".
 info: |

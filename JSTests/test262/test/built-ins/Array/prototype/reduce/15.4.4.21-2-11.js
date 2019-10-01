@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduce
-es5id: 15.4.4.21-2-11
 description: >
     Array.prototype.reduce applied to Array-like object, 'length' is
     an own accessor property without a get function

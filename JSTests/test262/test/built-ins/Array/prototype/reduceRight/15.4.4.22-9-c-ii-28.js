@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduceright
-es5id: 15.4.4.22-9-c-ii-28
 description: >
     Array.prototype.reduceRight - Boolean Object can be used as
     accumulator

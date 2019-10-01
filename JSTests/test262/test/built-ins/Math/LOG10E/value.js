@@ -3,7 +3,6 @@
 /*---
 description: Math.LOG10E is a numeric value
 esid: sec-math.log10e
-es6id: 20.2.1.4
 info: |
     The Number value for the base-10 logarithm of e, the base of the natural
     logarithms; this value is approximately 0.4342944819032518.

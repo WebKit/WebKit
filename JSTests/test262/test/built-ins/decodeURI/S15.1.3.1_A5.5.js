@@ -3,8 +3,6 @@
 
 /*---
 info: The decodeURI property has the attribute DontEnum
-es5id: 15.1.3.1_A5.5
-es6id: 18.2.6.2
 esid: sec-decodeuri-encodeduri
 description: Checking use propertyIsEnumerable, for-in
 ---*/

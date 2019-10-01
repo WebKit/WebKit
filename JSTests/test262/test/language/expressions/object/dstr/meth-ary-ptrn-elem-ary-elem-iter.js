@@ -4,7 +4,6 @@
 /*---
 description: BindingElement with array binding pattern and initializer is not used (method)
 esid: sec-runtime-semantics-definemethod
-es6id: 14.3.8
 features: [destructuring-binding]
 flags: [generated]
 info: |

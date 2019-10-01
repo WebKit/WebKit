@@ -3,8 +3,6 @@
 
 /*---
 info: Operator use ToString
-es5id: 15.1.3.4_A6_T1
-es6id: 18.2.6.5
 esid: sec-encodeuricomponent-uricomponent
 description: If Type(value) is Object, evaluate ToPrimitive(value, String)
 ---*/

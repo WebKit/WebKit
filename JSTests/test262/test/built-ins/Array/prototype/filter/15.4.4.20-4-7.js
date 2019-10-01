@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.filter
-es5id: 15.4.4.20-4-7
 description: >
     Array.prototype.filter throws TypeError if callbackfn is Object
     without [[Call]] internal method

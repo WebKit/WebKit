@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-date.prototype.getutcmilliseconds
-es6id: 20.3.4.16
 description: >
   Date.prototype.getUTCMilliseconds.name is "getUTCMilliseconds".
 info: |

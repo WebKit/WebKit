@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-5-21
 description: >
     Array.prototype.lastIndexOf - value of 'fromIndex' which is an
     Object, and has an own toString method

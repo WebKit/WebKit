@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-2-12
 description: >
     Array.prototype.every - 'length' is own accessor property without
     a get function that overrides an inherited accessor property

@@ -6,7 +6,6 @@ info: |
     The Date.prototype.setUTCMinutes property "length" has { ReadOnly,
     DontDelete, DontEnum } attributes
 esid: sec-date.prototype.setutcminutes
-es5id: 15.9.5.33_A3_T3
 description: Checking DontEnum attribute
 ---*/
 

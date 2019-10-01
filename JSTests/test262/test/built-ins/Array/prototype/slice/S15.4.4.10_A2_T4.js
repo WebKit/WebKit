@@ -6,7 +6,6 @@ info: |
     The slice function is intentionally generic.
     It does not require that its this value be an Array object
 esid: sec-array.prototype.slice
-es5id: 15.4.4.10_A2_T4
 description: >
     If start is negative, use max(start + length, 0).  If end is
     negative, use max(end + length, 0)

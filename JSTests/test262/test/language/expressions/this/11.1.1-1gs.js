@@ -3,10 +3,7 @@
 
 /*---
 es5id: 11.1.1-1gs
-description: Strict Mode - 'this' object at the global scope is not undefined
-flags: [onlyStrict]
+description: the 'this' object at the global scope is not undefined
 ---*/
-
-"use strict";
 
 assert.notSameValue(this, undefined);

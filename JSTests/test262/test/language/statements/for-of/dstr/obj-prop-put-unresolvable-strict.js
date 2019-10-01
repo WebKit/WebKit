@@ -4,7 +4,6 @@
 /*---
 description: In strict mode, if the the assignment target is an unresolvable reference, a ReferenceError should be thrown. (For..of statement)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
-es6id: 13.7.5.11
 features: [destructuring-binding]
 flags: [generated, onlyStrict]
 info: |

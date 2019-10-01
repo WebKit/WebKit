@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-1-14
 description: Array.prototype.every applied to Error object
 ---*/
 

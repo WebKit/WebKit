@@ -4,7 +4,6 @@
 /*---
 description: SingleNameBinding with normal value iteration (static class expression method (default parameter))
 esid: sec-class-definitions-runtime-semantics-evaluation
-es6id: 14.5.16
 features: [destructuring-binding, default-parameters]
 flags: [generated]
 info: |

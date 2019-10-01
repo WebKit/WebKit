@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-8-c-i-30
 description: >
     Array.prototype.map - unhandled exceptions happened in getter
     terminate iteration on an Array-like object

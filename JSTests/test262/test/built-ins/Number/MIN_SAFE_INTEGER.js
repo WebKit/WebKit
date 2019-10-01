@@ -3,7 +3,6 @@
 /*---
 description: Property descriptor for `Number.MIN_SAFE_INTEGER`
 esid: sec-number.min_safe_integer
-es6id: 20.1.2.8
 info: |
     The value of Number.MIN_SAFE_INTEGER is −9007199254740991
 

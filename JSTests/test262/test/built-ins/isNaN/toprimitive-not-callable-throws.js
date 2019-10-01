@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 18.2.3
 esid: sec-isnan-number
 description: >
   Throws a TypeError if number.@@toPrimitive is not null, undefined, or callable

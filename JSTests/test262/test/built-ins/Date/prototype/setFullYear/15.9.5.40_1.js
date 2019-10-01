@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-date.prototype.setfullyear
-es5id: 15.9.5.40_1
 description: >
     Date.prototype.setFullYear - Date.prototype is itself not an
     instance of Date

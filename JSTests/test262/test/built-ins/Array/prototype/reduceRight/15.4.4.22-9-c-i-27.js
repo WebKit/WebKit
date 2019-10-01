@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduceright
-es5id: 15.4.4.22-9-c-i-27
 description: >
     Array.prototype.reduceRight - This object is the Arguments object
     which implements its own property get method (number of arguments

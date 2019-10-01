@@ -6,7 +6,6 @@ info: |
     Returns a boolean value (not a Boolean object) computed by
     ToBoolean(value)
 esid: sec-terms-and-definitions-boolean-value
-es5id: 15.6.1.1_A1_T4
 description: Used various undefined values and null as argument
 ---*/
 

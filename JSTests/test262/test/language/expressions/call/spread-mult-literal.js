@@ -4,7 +4,6 @@
 /*---
 description: Spread operator applied to AssignmentExpression following other elements (CallExpression)
 esid: sec-function-calls-runtime-semantics-evaluation
-es6id: 12.3.4.1
 flags: [generated]
 info: |
     CallExpression : MemberExpression Arguments

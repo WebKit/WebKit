@@ -4,7 +4,6 @@
 /*---
 description: Error forwarding when IteratorStep returns an abrupt completion (generator function declaration)
 esid: sec-generator-function-definitions-runtime-semantics-instantiatefunctionobject
-es6id: 14.4.12
 features: [Symbol.iterator, generators, destructuring-binding]
 flags: [generated]
 info: |

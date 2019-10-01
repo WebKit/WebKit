@@ -5,8 +5,6 @@
 info: |
     If neither Result(2) nor any prefix of Result(2) satisfies the syntax of a
     StrDecimalLiteral (see 9.3.1), return NaN
-es5id: 15.1.2.3_A3_T1
-es6id: 18.2.4
 esid: sec-parsefloat-string
 description: parseFloat("some string") return NaN
 ---*/

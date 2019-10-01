@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.every
-es5id: 15.4.4.16-7-c-ii-8
 description: >
     Array.prototype.every - element changed by callbackfn on previous
     iterations is observed

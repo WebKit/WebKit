@@ -4,7 +4,6 @@
 /*---
 info: Array.prototype.splice sets `length` on `this`
 esid: sec-array.prototype.splice
-es5id: 15.4.4.12_A6.1_T3
 description: Array.prototype.splice throws if `length` is read-only
 ---*/
 

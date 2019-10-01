@@ -5,7 +5,6 @@
 info: |
     The Boolean prototype object is itself a Boolean object
     (its [[Class]] is "Boolean") whose value is false
-es5id: 15.6.4_A1
 esid: sec-properties-of-the-boolean-prototype-object
 description: Checking type and value of Boolean.prototype
 ---*/

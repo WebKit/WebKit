@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.map
-es5id: 15.4.4.19-8-c-i-29
 description: >
     Array.prototype.map - element changed by getter on previous
     iterations is observed on an Array-like object

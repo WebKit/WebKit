@@ -12,7 +12,6 @@ info: |
     12. Set the [[Value]] property of the newly constructed object to
     TimeClip(UTC(Result(11)))
 esid: sec-date-year-month-date-hours-minutes-seconds-ms
-es5id: 15.9.3.1_A5_T4
 description: 5 arguments, (year, month, date, hours, minutes)
 includes: [assertRelativeDateMs.js]
 ---*/

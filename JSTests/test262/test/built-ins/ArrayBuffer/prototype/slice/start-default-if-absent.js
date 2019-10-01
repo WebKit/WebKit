@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-arraybuffer.prototype.slice
-es6id: 24.1.4.3
 description: >
   The `start` index defaults to 0 if absent.
 info: |

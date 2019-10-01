@@ -13,7 +13,6 @@ info: |
       a. Assert: IsPropertyKey(fieldName) is true.
       b. Perform ? CreateDataPropertyOrThrow(receiver, fieldName, initValue).
     10. Return.
-includes: [propertyHelper.js]
 features: [class, class-fields-public]
 ---*/
 

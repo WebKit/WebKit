@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-date.prototype.toisostring
-es5id: 15.9.5.43-0-16
 description: >
     Date.prototype.toISOString - when this is a String object that
     value format is 'YYYY-MM-DDTHH:mm:ss.sssZ'

@@ -6,7 +6,6 @@ info: |
     When Date is called as part of a new expression it is
     a constructor: it initializes the newly created object
 esid: sec-date-year-month-date-hours-minutes-seconds-ms
-es5id: 15.9.3.1_A1_T5
 description: 6 arguments, (year, month, date, hours, minutes, seconds)
 ---*/
 

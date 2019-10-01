@@ -4,7 +4,6 @@
 /*---
 info: The Date.prototype property "setMonth" has { DontEnum } attributes
 esid: sec-date.prototype.setmonth
-es5id: 15.9.5.38_A1_T1
 description: Checking absence of ReadOnly attribute
 ---*/
 

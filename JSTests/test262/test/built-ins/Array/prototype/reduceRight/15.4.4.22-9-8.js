@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.reduceright
-es5id: 15.4.4.22-9-8
 description: >
     Array.prototype.reduceRight - no observable effects occur if 'len'
     is 0

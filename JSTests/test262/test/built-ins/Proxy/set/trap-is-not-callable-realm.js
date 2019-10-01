@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-proxy-object-internal-methods-and-internal-slots-set-p-v-receiver
-es6id: 9.5.9
 description: >
   Throws if trap is not callable (honoring the Realm of the current execution
   context)

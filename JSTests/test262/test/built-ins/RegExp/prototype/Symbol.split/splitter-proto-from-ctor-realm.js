@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-regexp.prototype-@@split
-es6id: 21.2.5.11
 description: Default [[Prototype]] value derived from realm of the constructor
 info: |
     10. Let splitter be ? Construct(C, « rx, newFlags »).

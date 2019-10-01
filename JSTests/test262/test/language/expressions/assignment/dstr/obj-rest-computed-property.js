@@ -4,7 +4,6 @@
 /*---
 description: Destructuring field can be a computed property, i.e it can be defined only at runtime. Rest operantion needs to skip these properties as well. (AssignmentExpression)
 esid: sec-variable-statement-runtime-semantics-evaluation
-es6id: 13.3.2.4
 features: [object-rest, destructuring-binding]
 flags: [generated]
 includes: [propertyHelper.js]

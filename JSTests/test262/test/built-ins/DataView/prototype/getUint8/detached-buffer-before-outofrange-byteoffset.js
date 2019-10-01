@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-dataview.prototype.getuint8
-es6id: 24.2.4.10
 description: >
   Detached buffer is checked before out of range byteOffset's value
 info: |

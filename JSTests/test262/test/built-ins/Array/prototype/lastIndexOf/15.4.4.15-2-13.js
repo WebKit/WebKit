@@ -3,7 +3,6 @@
 
 /*---
 esid: sec-array.prototype.lastindexof
-es5id: 15.4.4.15-2-13
 description: >
     Array.prototype.lastIndexOf - 'length' is inherited accessor
     property without a get function on an Array-like object

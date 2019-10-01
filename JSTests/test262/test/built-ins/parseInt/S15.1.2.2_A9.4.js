@@ -3,8 +3,6 @@
 
 /*---
 info: The length property of parseInt is 2
-es5id: 15.1.2.2_A9.4
-es6id: 18.2.5
 esid: sec-parseint-string-radix
 description: parseInt.length === 2
 ---*/

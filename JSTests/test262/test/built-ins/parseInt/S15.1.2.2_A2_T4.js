@@ -3,8 +3,6 @@
 
 /*---
 info: Operator remove leading StrWhiteSpaceChar
-es5id: 15.1.2.2_A2_T4
-es6id: 18.2.5
 esid: sec-parseint-string-radix
 description: "StrWhiteSpaceChar :: FF (U+000C)"
 ---*/

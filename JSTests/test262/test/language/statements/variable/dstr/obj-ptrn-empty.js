@@ -4,7 +4,6 @@
 /*---
 description: No property access occurs for an "empty" object binding pattern (`var` statement)
 esid: sec-variable-statement-runtime-semantics-evaluation
-es6id: 13.3.2.4
 features: [destructuring-binding]
 flags: [generated]
 info: |

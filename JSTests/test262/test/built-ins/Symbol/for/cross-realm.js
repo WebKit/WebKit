@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-symbol.for
-es6id: 19.4.2.1
 description: Global symbol registry is shared by all realms
 info: |
     The GlobalSymbolRegistry is a List that is globally available. It is shared

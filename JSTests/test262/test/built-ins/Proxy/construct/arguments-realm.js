@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-proxy-object-internal-methods-and-internal-slots-construct-argumentslist-newtarget
-es6id: 9.5.14
 description: >
   Arguments array is created in the Realm of the current execution context
 info: |
