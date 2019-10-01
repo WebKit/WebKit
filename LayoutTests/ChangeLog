@@ -1,3 +1,16 @@
+2019-10-01  Rob Buis  <rbuis@igalia.com>
+
+        [Mac] Layout Test imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location.any.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=202350
+
+        Reviewed by Alex Christensen.
+
+        Remove expectation for non-existing tests.
+
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-worker-expected.txt: Removed.
+
 2019-10-01  Andres Gonzalez  <andresg_22@apple.com>
 
         Support accessibility for <figure> element on iOS.

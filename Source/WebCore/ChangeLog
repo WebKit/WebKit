@@ -1,3 +1,18 @@
+2019-10-01  Rob Buis  <rbuis@igalia.com>
+
+        [Mac] Layout Test imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location.any.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=202350
+
+        Reviewed by Alex Christensen.
+
+        In some cases didReceiveResponse will deliver redirects (normally willSendRequestInternal will be used for redirects).
+        When this is done in manual redirect mode make sure the response type is opaque redirect.
+
+        Test: imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location.any.html
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse):
+
 2019-10-01  Keith Rollin  <krollin@apple.com>
 
         Remove some support for < iOS 13

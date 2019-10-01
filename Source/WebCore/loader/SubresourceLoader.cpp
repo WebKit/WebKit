@@ -385,6 +385,15 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
         return;
     }
 
+    if (options().redirect == FetchOptions::Redirect::Manual && response.isRedirection()) {
+        ResourceResponse opaqueRedirectedResponse = response;
+        opaqueRedirectedResponse.setType(ResourceResponse::Type::Opaqueredirect);
+        opaqueRedirectedResponse.setTainting(ResourceResponse::Tainting::Opaqueredirect);
+        m_resource->responseReceived(opaqueRedirectedResponse);
+        if (!reachedTerminalState())
+            ResourceLoader::didReceiveResponse(opaqueRedirectedResponse, [completionHandlerCaller = WTFMove(completionHandlerCaller)] { });
+        return;
+    }
     m_resource->responseReceived(response);
     if (reachedTerminalState())
         return;
