@@ -10,8 +10,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/unified-sources/UnifiedSource1
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/unified-sources/UnifiedSource16-mm.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/unified-sources/UnifiedSource17-mm.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/unified-sources/UnifiedSource18-mm.mm
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/unified-sources/UnifiedSource19-mm.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/unified-sources/UnifiedSource2-mm.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/unified-sources/UnifiedSource2.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/unified-sources/UnifiedSource20-mm.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/unified-sources/UnifiedSource3-mm.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/unified-sources/UnifiedSource3.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/unified-sources/UnifiedSource4-mm.mm

@@ -72,8 +72,6 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
 @implementation WebAnimationController
 @end
 
-using namespace WebCore;
-
 @implementation WebImmediateActionController
 
 - (instancetype)initWithWebView:(WebView *)webView recognizer:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
@@ -106,7 +104,7 @@ using namespace WebCore;
 {
     [_currentQLPreviewMenuItem close];
     [self _clearImmediateActionState];
-    [_webView _clearTextIndicatorWithAnimation:TextIndicatorWindowDismissalAnimation::None];
+    [_webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorWindowDismissalAnimation::None];
 }
 
 - (NSImmediateActionGestureRecognizer *)immediateActionRecognizer
@@ -121,7 +119,7 @@ using namespace WebCore;
     [_immediateActionRecognizer setEnabled:YES];
 
     [self _clearImmediateActionState];
-    [_webView _clearTextIndicatorWithAnimation:TextIndicatorWindowDismissalAnimation::FadeOut];
+    [_webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorWindowDismissalAnimation::FadeOut];
 }
 
 - (void)_clearImmediateActionState
@@ -145,14 +143,14 @@ using namespace WebCore;
 
 - (void)performHitTestAtPoint:(NSPoint)viewPoint
 {
-    Frame* coreFrame = core([_webView _selectedOrMainFrame]);
+    WebCore::Frame* coreFrame = core([_webView _selectedOrMainFrame]);
     if (!coreFrame)
         return;
 
-    _hitTestResult = coreFrame->eventHandler().hitTestResultAtPoint(IntPoint(viewPoint), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent);
-    coreFrame->mainFrame().eventHandler().setImmediateActionStage(ImmediateActionStage::PerformedHitTest);
+    _hitTestResult = coreFrame->eventHandler().hitTestResultAtPoint(WebCore::IntPoint(viewPoint), WebCore::HitTestRequest::ReadOnly | WebCore::HitTestRequest::Active | WebCore::HitTestRequest::DisallowUserAgentShadowContent | WebCore::HitTestRequest::AllowChildFrameContent);
+    coreFrame->mainFrame().eventHandler().setImmediateActionStage(WebCore::ImmediateActionStage::PerformedHitTest);
 
-    if (Element* element = _hitTestResult.targetElement())
+    if (auto* element = _hitTestResult.targetElement())
         _contentPreventsDefault = element->dispatchMouseForceWillBegin();
 }
 
@@ -206,8 +204,8 @@ using namespace WebCore;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    if (Frame* coreFrame = [_webView _mainCoreFrame])
-        coreFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionUpdated);
+    if (WebCore::Frame* coreFrame = [_webView _mainCoreFrame])
+        coreFrame->eventHandler().setImmediateActionStage(WebCore::ImmediateActionStage::ActionUpdated);
 
     if (_contentPreventsDefault)
         return;
@@ -220,17 +218,17 @@ using namespace WebCore;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    if (Frame* coreFrame = [_webView _mainCoreFrame]) {
-        ImmediateActionStage lastStage = coreFrame->eventHandler().immediateActionStage();
-        if (lastStage == ImmediateActionStage::ActionUpdated)
-            coreFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCancelledAfterUpdate);
+    if (WebCore::Frame* coreFrame = [_webView _mainCoreFrame]) {
+        WebCore::ImmediateActionStage lastStage = coreFrame->eventHandler().immediateActionStage();
+        if (lastStage == WebCore::ImmediateActionStage::ActionUpdated)
+            coreFrame->eventHandler().setImmediateActionStage(WebCore::ImmediateActionStage::ActionCancelledAfterUpdate);
         else
-            coreFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCancelledWithoutUpdate);
+            coreFrame->eventHandler().setImmediateActionStage(WebCore::ImmediateActionStage::ActionCancelledWithoutUpdate);
     }
 
     [_webView _setTextIndicatorAnimationProgress:0];
     [self _clearImmediateActionState];
-    [_webView _clearTextIndicatorWithAnimation:TextIndicatorWindowDismissalAnimation::None];
+    [_webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorWindowDismissalAnimation::None];
     [_webView _setMaintainsInactiveSelection:NO];
 }
 
@@ -239,8 +237,8 @@ using namespace WebCore;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    if (Frame* coreFrame = [_webView _mainCoreFrame])
-        coreFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCompleted);
+    if (WebCore::Frame* coreFrame = [_webView _mainCoreFrame])
+        coreFrame->eventHandler().setImmediateActionStage(WebCore::ImmediateActionStage::ActionCompleted);
 
     [_webView _setTextIndicatorAnimationProgress:1];
     [_webView _setMaintainsInactiveSelection:NO];
@@ -269,10 +267,10 @@ using namespace WebCore;
         if (WTF::protocolIsInHTTPFamily(absoluteURLString)) {
             _type = WebImmediateActionLinkPreview;
 
-            RefPtr<Range> linkRange = rangeOfContents(*_hitTestResult.URLElement());
-            auto indicator = TextIndicator::createWithRange(*linkRange, TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges, TextIndicatorPresentationTransition::FadeIn);
+            RefPtr<WebCore::Range> linkRange = rangeOfContents(*_hitTestResult.URLElement());
+            auto indicator = WebCore::TextIndicator::createWithRange(*linkRange, WebCore::TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges, WebCore::TextIndicatorPresentationTransition::FadeIn);
             if (indicator)
-                [_webView _setTextIndicator:*indicator withLifetime:TextIndicatorWindowLifetime::Permanent];
+                [_webView _setTextIndicator:*indicator withLifetime:WebCore::TextIndicatorWindowLifetime::Permanent];
 
             QLPreviewMenuItem *item = [NSMenuItem standardQuickLookMenuItem];
             item.previewStyle = QLPreviewStylePopover;
@@ -282,7 +280,7 @@ using namespace WebCore;
         }
     }
 
-    Node* node = _hitTestResult.innerNode();
+    WebCore::Node* node = _hitTestResult.innerNode();
     if ((node && node->isTextNode()) || _hitTestResult.isOverTextInsideFormControlElement()) {
         if (auto animationController = [self _animationControllerForDataDetectedText]) {
             _type = WebImmediateActionDataDetectedItem;
@@ -323,7 +321,7 @@ using namespace WebCore;
 
 #if PLATFORM(MAC)
     // FIXME: We should not permanently disable this for iTunes. rdar://problem/19461358
-    if (MacApplication::isITunes()) {
+    if (WebCore::MacApplication::isITunes()) {
         [self _cancelImmediateAction];
         return;
     }
@@ -358,25 +356,25 @@ using namespace WebCore;
 - (void)menuItemDidClose:(NSMenuItem *)menuItem
 {
     [self _clearImmediateActionState];
-    [_webView _clearTextIndicatorWithAnimation:TextIndicatorWindowDismissalAnimation::FadeOut];
+    [_webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorWindowDismissalAnimation::FadeOut];
 }
 
-static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
+static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::Node* node)
 {
     if (!node)
-        return IntRect();
+        return { };
 
-    Frame* frame = node->document().frame();
+    WebCore::Frame* frame = node->document().frame();
     if (!frame)
-        return IntRect();
+        return { };
 
-    FrameView* view = frame->view();
+    WebCore::FrameView* view = frame->view();
     if (!view)
-        return IntRect();
+        return { };
 
-    RenderObject* renderer = node->renderer();
+    WebCore::RenderObject* renderer = node->renderer();
     if (!renderer)
-        return IntRect();
+        return { };
 
     return view->contentsToWindow(renderer->absoluteBoundingBoxRect());
 }
@@ -386,7 +384,7 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
     if (!_webView)
         return NSZeroRect;
 
-    Node* node = _hitTestResult.innerNode();
+    WebCore::Node* node = _hitTestResult.innerNode();
     if (!node)
         return NSZeroRect;
 
@@ -399,7 +397,7 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
         return NSZeroSize;
 
     NSSize screenSize = _webView.window.screen.frame.size;
-    FloatRect largestRect = largestRectWithAspectRatioInsideRect(screenSize.width / screenSize.height, _webView.bounds);
+    WebCore::FloatRect largestRect = WebCore::largestRectWithAspectRatioInsideRect(screenSize.width / screenSize.height, _webView.bounds);
     return NSMakeSize(largestRect.width() * 0.75, largestRect.height() * 0.75);
 }
 
@@ -410,8 +408,8 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
     if (!DataDetectorsLibrary())
         return nil;
 
-    RefPtr<Range> detectedDataRange;
-    FloatRect detectedDataBoundingBox;
+    RefPtr<WebCore::Range> detectedDataRange;
+    WebCore::FloatRect detectedDataBoundingBox;
     RetainPtr<DDActionContext> actionContext;
 
     if ([[_webView UIDelegate] respondsToSelector:@selector(_webView:actionContextForHitTestResult:range:)]) {
@@ -426,7 +424,7 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
 
     // If the client didn't give us an action context, try to scan around the hit point.
     if (!actionContext || !detectedDataRange)
-        actionContext = DataDetection::detectItemAroundHitTestResult(_hitTestResult, detectedDataBoundingBox, detectedDataRange);
+        actionContext = WebCore::DataDetection::detectItemAroundHitTestResult(_hitTestResult, detectedDataBoundingBox, detectedDataRange);
 
     if (!actionContext || !detectedDataRange)
         return nil;
@@ -436,14 +434,14 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
     if (![[getDDActionsManagerClass() sharedManager] hasActionsForResult:[actionContext mainResult] actionContext:actionContext.get()])
         return nil;
 
-    auto indicator = TextIndicator::createWithRange(*detectedDataRange, TextIndicatorOptionDefault, TextIndicatorPresentationTransition::FadeIn);
+    auto indicator = WebCore::TextIndicator::createWithRange(*detectedDataRange, WebCore::TextIndicatorOptionDefault, WebCore::TextIndicatorPresentationTransition::FadeIn);
 
     _currentActionContext = [actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {
         if (indicator)
-            [_webView _setTextIndicator:*indicator withLifetime:TextIndicatorWindowLifetime::Permanent];
+            [_webView _setTextIndicator:*indicator withLifetime:WebCore::TextIndicatorWindowLifetime::Permanent];
     } interactionStoppedHandler:^() {
-        [_webView _clearTextIndicatorWithAnimation:TextIndicatorWindowDismissalAnimation::FadeOut];
+        [_webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorWindowDismissalAnimation::FadeOut];
     }];
 
     [_currentActionContext setHighlightFrame:[_webView.window convertRectToScreen:detectedDataBoundingBox]];
@@ -468,17 +466,17 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
     [actionContext setAltMode:YES];
     [actionContext setImmediate:YES];
 
-    RefPtr<Range> linkRange = rangeOfContents(*_hitTestResult.URLElement());
+    RefPtr<WebCore::Range> linkRange = rangeOfContents(*_hitTestResult.URLElement());
     if (!linkRange)
         return nullptr;
-    auto indicator = TextIndicator::createWithRange(*linkRange, TextIndicatorOptionDefault, TextIndicatorPresentationTransition::FadeIn);
+    auto indicator = WebCore::TextIndicator::createWithRange(*linkRange, WebCore::TextIndicatorOptionDefault, WebCore::TextIndicatorPresentationTransition::FadeIn);
 
     _currentActionContext = [actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {
         if (indicator)
-            [_webView _setTextIndicator:*indicator withLifetime:TextIndicatorWindowLifetime::Permanent];
+            [_webView _setTextIndicator:*indicator withLifetime:WebCore::TextIndicatorWindowLifetime::Permanent];
     } interactionStoppedHandler:^() {
-        [_webView _clearTextIndicatorWithAnimation:TextIndicatorWindowDismissalAnimation::FadeOut];
+        [_webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorWindowDismissalAnimation::FadeOut];
     }];
 
     [_currentActionContext setHighlightFrame:[_webView.window convertRectToScreen:elementBoundingBoxInWindowCoordinatesFromNode(_hitTestResult.URLElement())]];
@@ -492,35 +490,35 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
 
 #pragma mark Text action
 
-+ (DictionaryPopupInfo)_dictionaryPopupInfoForRange:(Range&)range inFrame:(Frame*)frame withLookupOptions:(NSDictionary *)lookupOptions indicatorOptions:(TextIndicatorOptions)indicatorOptions transition:(TextIndicatorPresentationTransition)presentationTransition
++ (WebCore::DictionaryPopupInfo)_dictionaryPopupInfoForRange:(WebCore::Range&)range inFrame:(WebCore::Frame*)frame withLookupOptions:(NSDictionary *)lookupOptions indicatorOptions:(WebCore::TextIndicatorOptions)indicatorOptions transition:(WebCore::TextIndicatorPresentationTransition)presentationTransition
 {
-    Editor& editor = frame->editor();
+    WebCore::Editor& editor = frame->editor();
     editor.setIsGettingDictionaryPopupInfo(true);
 
     // Dictionary API will accept a whitespace-only string and display UI as if it were real text,
     // so bail out early to avoid that.
-    DictionaryPopupInfo popupInfo;
+    WebCore::DictionaryPopupInfo popupInfo;
     if (range.text().stripWhiteSpace().isEmpty()) {
         editor.setIsGettingDictionaryPopupInfo(false);
         return popupInfo;
     }
 
-    const RenderStyle* style = range.startContainer().renderStyle();
+    const WebCore::RenderStyle* style = range.startContainer().renderStyle();
     float scaledDescent = style ? style->fontMetrics().descent() * frame->page()->pageScaleFactor() : 0;
 
-    Vector<FloatQuad> quads;
+    Vector<WebCore::FloatQuad> quads;
     range.absoluteTextQuads(quads);
     if (quads.isEmpty()) {
         editor.setIsGettingDictionaryPopupInfo(false);
         return popupInfo;
     }
 
-    IntRect rangeRect = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
+    WebCore::IntRect rangeRect = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
 
     popupInfo.origin = NSMakePoint(rangeRect.x(), rangeRect.y() + scaledDescent);
     popupInfo.options = lookupOptions;
 
-    NSAttributedString *nsAttributedString = editingAttributedStringFromRange(range, IncludeImagesInAttributedString::No);
+    NSAttributedString *nsAttributedString = editingAttributedStringFromRange(range, WebCore::IncludeImagesInAttributedString::No);
     RetainPtr<NSMutableAttributedString> scaledNSAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[nsAttributedString string]]);
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
 
@@ -538,7 +536,7 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
 
     popupInfo.attributedString = scaledNSAttributedString.get();
 
-    if (auto textIndicator = TextIndicator::createWithRange(range, indicatorOptions, presentationTransition))
+    if (auto textIndicator = WebCore::TextIndicator::createWithRange(range, indicatorOptions, presentationTransition))
         popupInfo.textIndicator = textIndicator->data();
 
     editor.setIsGettingDictionaryPopupInfo(false);
@@ -550,19 +548,19 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
     if (!PAL::getLULookupDefinitionModuleClass())
         return nil;
 
-    Node* node = _hitTestResult.innerNode();
+    WebCore::Node* node = _hitTestResult.innerNode();
     if (!node)
         return nil;
 
-    Frame* frame = node->document().frame();
+    WebCore::Frame* frame = node->document().frame();
     if (!frame)
         return nil;
 
-    auto [dictionaryRange, options] = DictionaryLookup::rangeAtHitTestResult(_hitTestResult);
+    auto [dictionaryRange, options] = WebCore::DictionaryLookup::rangeAtHitTestResult(_hitTestResult);
     if (!dictionaryRange)
         return nil;
 
-    auto dictionaryPopupInfo = [WebImmediateActionController _dictionaryPopupInfoForRange:*dictionaryRange inFrame:frame withLookupOptions:options indicatorOptions:TextIndicatorOptionDefault transition: TextIndicatorPresentationTransition::FadeIn];
+    auto dictionaryPopupInfo = [WebImmediateActionController _dictionaryPopupInfoForRange:*dictionaryRange inFrame:frame withLookupOptions:options indicatorOptions:WebCore::TextIndicatorOptionDefault transition: WebCore::TextIndicatorPresentationTransition::FadeIn];
     if (!dictionaryPopupInfo.attributedString)
         return nil;
 

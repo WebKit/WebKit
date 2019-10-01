@@ -43,15 +43,12 @@
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <WebCore/runtime_root.h>
 
-using namespace JSC;
-using namespace WebCore;
-
 // FIXME: these error strings should be public for future use by WebScriptObject and in WebScriptObject.h
 NSString * const WebScriptErrorDomain = @"WebScriptErrorDomain";
 NSString * const WebScriptErrorDescriptionKey = @"WebScriptErrorDescription";
 NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
-@interface WebScriptCallFrame (WebScriptDebugDelegateInternal)
+@interface WebScriptCallFrame (WebScriptDebugDelegateInternalForDelegate)
 
 - (id)_convertValueToObjcValue:(JSC::JSValue)value;
 
@@ -103,11 +100,11 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     if (value == [globalObject _imp])
         return globalObject;
 
-    Bindings::RootObject* root1 = [globalObject _originRootObject];
+    JSC::Bindings::RootObject* root1 = [globalObject _originRootObject];
     if (!root1)
         return nil;
 
-    Bindings::RootObject* root2 = [globalObject _rootObject];
+    JSC::Bindings::RootObject* root2 = [globalObject _rootObject];
     if (!root2)
         return nil;
 

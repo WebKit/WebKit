@@ -47,15 +47,13 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 
-using namespace WebCore;
-
 static const CFTimeInterval defaultAnimationDuration = 0.5;
 
-static IntRect screenRectOfContents(Element* element)
+static WebCore::IntRect screenRectOfContents(WebCore::Element* element)
 {
     ASSERT(element);
     if (element->renderer() && element->renderer()->hasLayer() && element->renderer()->enclosingLayer()->isComposited()) {
-        FloatQuad contentsBox = static_cast<FloatRect>(element->renderer()->enclosingLayer()->backing()->contentsBox());
+        WebCore::FloatQuad contentsBox = static_cast<WebCore::FloatRect>(element->renderer()->enclosingLayer()->backing()->contentsBox());
         contentsBox = element->renderer()->localToAbsoluteQuad(contentsBox);
         return element->renderer()->view().frameView().contentsToScreen(contentsBox.enclosingBoundingBox());
     }
@@ -65,8 +63,8 @@ static IntRect screenRectOfContents(Element* element)
 @interface WebFullScreenController(Private)<NSAnimationDelegate>
 - (void)_updateMenuAndDockForFullScreen;
 - (void)_swapView:(NSView*)view with:(NSView*)otherView;
-- (Document*)_document;
-- (FullscreenManager*)_manager;
+- (WebCore::Document*)_document;
+- (WebCore::FullscreenManager*)_manager;
 - (void)_startEnterFullScreenAnimationWithDuration:(NSTimeInterval)duration;
 - (void)_startExitFullScreenAnimationWithDuration:(NSTimeInterval)duration;
 @end
@@ -134,12 +132,12 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     return _webViewPlaceholder.get();
 }
 
-- (Element*)element
+- (WebCore::Element*)element
 {
     return _element.get();
 }
 
-- (void)setElement:(RefPtr<Element>&&)element
+- (void)setElement:(RefPtr<WebCore::Element>&&)element
 {
     _element = WTFMove(element);
 }
@@ -452,12 +450,12 @@ static void setClipRectForWindow(NSWindow *window, NSRect clipRect)
 #pragma mark -
 #pragma mark Utility Functions
 
-- (Document*)_document 
+- (WebCore::Document*)_document
 {
     return &_element->document();
 }
 
-- (FullscreenManager*)_manager
+- (WebCore::FullscreenManager*)_manager
 {
     return &_element->document().fullscreenManager();
 }

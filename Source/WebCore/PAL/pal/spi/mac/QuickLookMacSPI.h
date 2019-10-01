@@ -25,6 +25,12 @@
 
 #import <Quartz/Quartz.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+
+#import <Quartz/QuartzPrivate.h>
+
+#else
+
 @protocol QLPreviewMenuItemDelegate <NSObject>
 @optional
 
@@ -51,3 +57,5 @@ typedef NS_ENUM(NSInteger, QLPreviewStyle) {
 @property (assign) id<QLPreviewMenuItemDelegate> delegate;
 @property QLPreviewStyle previewStyle;
 @end
+
+#endif // USE(APPLE_INTERNAL_SDK)

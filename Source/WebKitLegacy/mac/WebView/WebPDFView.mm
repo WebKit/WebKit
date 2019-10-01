@@ -71,8 +71,6 @@ extern "C" {
     bool CGContextGetAllowsFontSubpixelQuantization(CGContextRef context);
 }
 
-using namespace WebCore;
-
 // Redeclarations of PDFKit notifications. We can't use the API since we use a weak link to the framework.
 #define _webkit_PDFViewDisplayModeChangedNotification @"PDFViewDisplayModeChanged"
 #define _webkit_PDFViewScaleChangedNotification @"PDFViewScaleChanged"
@@ -649,7 +647,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
 {
     BOOL inRange = NO;
-    for (HTMLFrameOwnerElement* ownerElement = core(frame)->ownerElement(); ownerElement; ownerElement = ownerElement->document().frame()->ownerElement()) {
+    for (auto* ownerElement = core(frame)->ownerElement(); ownerElement; ownerElement = ownerElement->document().frame()->ownerElement()) {
         if (&ownerElement->document() == &core(range)->ownerDocument()) {
             inRange = [range intersectsNode:kit(ownerElement)];
             break;
@@ -927,28 +925,28 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
 
 - (NSArray *)pasteboardTypesForSelection
 {
-    return [NSArray arrayWithObjects:legacyRTFDPasteboardType(), legacyRTFPasteboardType(), legacyStringPasteboardType(), nil];
+    return [NSArray arrayWithObjects:WebCore::legacyRTFDPasteboardType(), WebCore::legacyRTFPasteboardType(), WebCore::legacyStringPasteboardType(), nil];
 }
 
 - (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
 {
     NSAttributedString *attributedString = [self selectedAttributedString];
     
-    if ([types containsObject:legacyRTFDPasteboardType()]) {
+    if ([types containsObject:WebCore::legacyRTFDPasteboardType()]) {
         NSData *RTFDData = [attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:@{ }];
-        [pasteboard setData:RTFDData forType:legacyRTFDPasteboardType()];
+        [pasteboard setData:RTFDData forType:WebCore::legacyRTFDPasteboardType()];
     }        
     
-    if ([types containsObject:legacyRTFPasteboardType()]) {
+    if ([types containsObject:WebCore::legacyRTFPasteboardType()]) {
         if ([attributedString containsAttachments])
-            attributedString = attributedStringByStrippingAttachmentCharacters(attributedString);
+            attributedString = WebCore::attributedStringByStrippingAttachmentCharacters(attributedString);
 
         NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:@{ }];
-        [pasteboard setData:RTFData forType:legacyRTFPasteboardType()];
+        [pasteboard setData:RTFData forType:WebCore::legacyRTFPasteboardType()];
     }
     
-    if ([types containsObject:legacyStringPasteboardType()])
-        [pasteboard setString:[self selectedString] forType:legacyStringPasteboardType()];
+    if ([types containsObject:WebCore::legacyStringPasteboardType()])
+        [pasteboard setString:[self selectedString] forType:WebCore::legacyStringPasteboardType()];
 }
 
 // MARK: PDFView DELEGATE METHODS
@@ -962,7 +960,7 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
     NSEvent *nsEvent = [window currentEvent];
     const int noButton = -2;
     int button = noButton;
-    RefPtr<Event> event;
+    RefPtr<WebCore::Event> event;
     switch ([nsEvent type]) {
     case NSEventTypeLeftMouseUp:
         button = 0;
@@ -974,9 +972,9 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
         button = [nsEvent buttonNumber];
         break;
     case NSEventTypeKeyDown: {
-        PlatformKeyboardEvent pe = PlatformEventFactory::createPlatformKeyboardEvent(nsEvent);
-        pe.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown);
-        event = KeyboardEvent::create(pe, nullptr);
+        auto pe = WebCore::PlatformEventFactory::createPlatformKeyboardEvent(nsEvent);
+        pe.disambiguateKeyDownEvent(WebCore::PlatformEvent::RawKeyDown);
+        event = WebCore::KeyboardEvent::create(pe, nullptr);
         break;
     }
     default:
@@ -984,14 +982,14 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
     }
     if (button != noButton) {
         // FIXME: Use createPlatformMouseEvent instead.
-        event = MouseEvent::create(eventNames().clickEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes, Event::IsComposed::Yes,
-            MonotonicTime::now(), nullptr, [nsEvent clickCount], { }, { }, { }, modifiersForEvent(nsEvent),
-            button, [NSEvent pressedMouseButtons], nullptr, WebCore::ForceAtClick, 0, nullptr, MouseEvent::IsSimulated::Yes);
+        event = WebCore::MouseEvent::create(WebCore::eventNames().clickEvent, WebCore::Event::CanBubble::Yes, WebCore::Event::IsCancelable::Yes, WebCore::Event::IsComposed::Yes,
+            MonotonicTime::now(), nullptr, [nsEvent clickCount], { }, { }, { }, WebCore::modifiersForEvent(nsEvent),
+            button, [NSEvent pressedMouseButtons], nullptr, WebCore::ForceAtClick, 0, nullptr, WebCore::MouseEvent::IsSimulated::Yes);
     }
 
     // Call to the frame loader because this is where our security checks are made.
-    Frame* frame = core([dataSource webFrame]);
-    FrameLoadRequest frameLoadRequest { *frame->document(), frame->document()->securityOrigin(), { URL }, { }, LockHistory::No, LockBackForwardList::No, NeverSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, ShouldOpenExternalURLsPolicy::ShouldNotAllow, InitiatedByMainFrame::Unknown };
+    auto* frame = core([dataSource webFrame]);
+    WebCore::FrameLoadRequest frameLoadRequest { *frame->document(), frame->document()->securityOrigin(), { URL }, { }, WebCore::LockHistory::No, WebCore::LockBackForwardList::No, WebCore::NeverSendReferrer, WebCore::AllowNavigationToInvalidURL::Yes, WebCore::NewFrameOpenerPolicy::Allow, WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow, WebCore::InitiatedByMainFrame::Unknown };
     frame->loader().loadFrameRequest(WTFMove(frameLoadRequest), event.get(), nullptr);
 }
 

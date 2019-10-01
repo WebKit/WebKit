@@ -82,8 +82,6 @@
 #import "WebNSWindowExtras.h"
 #endif
 
-using namespace WebCore;
-
 #if !PLATFORM(IOS_FAMILY)
 @interface NSWindow (WindowPrivate)
 - (BOOL)_needsToResetDragMargins;
@@ -135,7 +133,7 @@ enum {
     return [[self _scrollView] verticalLineScroll];
 }
 
-- (Frame*)_web_frame
+- (WebCore::Frame*)_web_frame
 {
     return core(_private->webFrame);
 }
@@ -181,7 +179,7 @@ enum {
 #else
     ASSERT(_private->webFrame);
 
-    Frame* frame = core(_private->webFrame);
+    auto* frame = core(_private->webFrame);
 
     ASSERT(frame);
     ASSERT(frame->page());
@@ -245,19 +243,7 @@ enum {
 - (float)_verticalPageScrollDistance
 {
     float height = [[self _contentView] bounds].size.height;
-    return std::max<float>(height * Scrollbar::minFractionToStepWhenPaging(), height - Scrollbar::maxOverlapBetweenPages());
-}
-
-static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *supportTypes)
-{
-    NSEnumerator *enumerator = [supportTypes objectEnumerator];
-    ASSERT(enumerator != nil);
-    NSString *mime = nil;
-    while ((mime = [enumerator nextObject]) != nil) {
-        // Don't clobber previously-registered classes.
-        if ([allTypes objectForKey:mime] == nil)
-            [allTypes setObject:objCClass forKey:mime];
-    }
+    return std::max<float>(height * WebCore::Scrollbar::minFractionToStepWhenPaging(), height - WebCore::Scrollbar::maxOverlapBetweenPages());
 }
 
 + (NSMutableDictionary *)_viewTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission
@@ -318,7 +304,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     ASSERT(_private->webFrame);
     ASSERT(_private->frameScrollView);
 
-    Frame* frame = core(_private->webFrame);
+    auto* frame = core(_private->webFrame);
 
     ASSERT(frame);
     ASSERT(frame->page());
@@ -327,12 +313,12 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     // won't ever get installed in the view hierarchy.
     ASSERT(frame->isMainFrame() || frame->ownerElement());
 
-    FrameView* view = frame->view();
+    auto* view = frame->view();
 
     view->setPlatformWidget(_private->frameScrollView);
 
     // FIXME: Frame tries to do this too. Is this code needed?
-    if (RenderWidget* owner = frame->ownerRenderer()) {
+    if (WebCore::RenderWidget* owner = frame->ownerRenderer()) {
         owner->setWidget(view);
         // Now the RenderWidget owns the view, so we don't any more.
     }
@@ -345,9 +331,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     // See WebFrameLoaderClient::provisionalLoadStarted.
     if ([[[self webFrame] webView] drawsBackground])
         [[self _scrollView] setDrawsBackground:YES];
-    if (Frame* coreFrame = [self _web_frame]) {
-        if (FrameView* coreFrameView = coreFrame->view())
-            coreFrameView->availableContentSizeChanged(ScrollableArea::AvailableSizeChangeReason::AreaSizeChanged);
+    if (auto* coreFrame = [self _web_frame]) {
+        if (auto* coreFrameView = coreFrame->view())
+            coreFrameView->availableContentSizeChanged(WebCore::ScrollableArea::AvailableSizeChangeReason::AreaSizeChanged);
     }
 }
 
@@ -371,15 +357,15 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 #if !PLATFORM(IOS_FAMILY)
         if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_MAIN_THREAD_EXCEPTIONS))
-            setDefaultThreadViolationBehavior(LogOnFirstThreadViolation, ThreadViolationRoundOne);
+            setDefaultThreadViolationBehavior(WebCore::LogOnFirstThreadViolation, WebCore::ThreadViolationRoundOne);
 
         bool throwExceptionsForRoundTwo = WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_ROUND_TWO_MAIN_THREAD_EXCEPTIONS);
         if (!throwExceptionsForRoundTwo)
-            setDefaultThreadViolationBehavior(LogOnFirstThreadViolation, ThreadViolationRoundTwo);
+            setDefaultThreadViolationBehavior(WebCore::LogOnFirstThreadViolation, WebCore::ThreadViolationRoundTwo);
 
         bool throwExceptionsForRoundThree = WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_ROUND_THREE_MAIN_THREAD_EXCEPTIONS);
         if (!throwExceptionsForRoundThree)
-            setDefaultThreadViolationBehavior(LogOnFirstThreadViolation, ThreadViolationRoundThree);
+            setDefaultThreadViolationBehavior(WebCore::LogOnFirstThreadViolation, WebCore::ThreadViolationRoundThree);
 #endif
     }
 
@@ -396,7 +382,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     [scrollView setHasVerticalScroller:NO];
     [scrollView setHasHorizontalScroller:NO];
     [scrollView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-    [scrollView setLineScroll:Scrollbar::pixelsPerLineStep()];
+    [scrollView setLineScroll:WebCore::Scrollbar::pixelsPerLineStep()];
     [self addSubview:scrollView];
 
     // Don't call our overridden version of setNextKeyView here; we need to make the standard NSView
@@ -517,7 +503,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
             NSRectFill(rect);
 #else
             CGContextRef cgContext = WKGetCurrentGraphicsContext();
-            CGContextSetFillColorWithColor(cgContext, cachedCGColor(Color::white));
+            CGContextSetFillColorWithColor(cgContext, WebCore::cachedCGColor(WebCore::Color::white));
             WKRectFill(cgContext, rect);
 #endif
         }
@@ -529,7 +515,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
             NSRectFill(rect);
 #else
             CGContextRef cgContext = WKGetCurrentGraphicsContext();
-            CGContextSetFillColorWithColor(cgContext, cachedCGColor(Color::cyan));
+            CGContextSetFillColorWithColor(cgContext, WebCore::cachedCGColor(WebCore::Color::cyan));
             WKRectFill(cgContext, rect);
 #endif
         }
@@ -613,12 +599,12 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     [super viewDidMoveToWindow];
 }
 
-- (BOOL)_scrollOverflowInDirection:(ScrollDirection)direction granularity:(ScrollGranularity)granularity
+- (BOOL)_scrollOverflowInDirection:(WebCore::ScrollDirection)direction granularity:(WebCore::ScrollGranularity)granularity
 {
     // scrolling overflows is only applicable if we're dealing with an WebHTMLView
     if (![[self documentView] isKindOfClass:[WebHTMLView class]])
         return NO;
-    Frame* frame = core([self webFrame]);
+    auto* frame = core([self webFrame]);
     if (!frame)
         return NO;
     return frame->eventHandler().scrollOverflow(direction, granularity);
@@ -627,13 +613,13 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (BOOL)_isVerticalDocument
 {
-    Frame* coreFrame = [self _web_frame];
+    auto* coreFrame = [self _web_frame];
     if (!coreFrame)
         return YES;
-    Document* document = coreFrame->document();
+    auto* document = coreFrame->document();
     if (!document)
         return YES;
-    RenderView* renderView = document->renderView();
+    auto* renderView = document->renderView();
     if (!renderView)
         return YES;
     return renderView->style().isHorizontalWritingMode();
@@ -641,13 +627,13 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (BOOL)_isFlippedDocument
 {
-    Frame* coreFrame = [self _web_frame];
+    auto* coreFrame = [self _web_frame];
     if (!coreFrame)
         return NO;
-    Document* document = coreFrame->document();
+    auto* document = coreFrame->document();
     if (!document)
         return NO;
-    RenderView* renderView = document->renderView();
+    auto* renderView = document->renderView();
     if (!renderView)
         return NO;
     return renderView->style().isFlippedBlocksWritingMode();
@@ -655,7 +641,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (BOOL)_scrollToBeginningOfDocument
 {
-    if ([self _scrollOverflowInDirection:ScrollUp granularity:ScrollByDocument])
+    if ([self _scrollOverflowInDirection:WebCore::ScrollUp granularity:WebCore::ScrollByDocument])
         return YES;
     if (![self _isScrollable])
         return NO;
@@ -667,7 +653,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (BOOL)_scrollToEndOfDocument
 {
-    if ([self _scrollOverflowInDirection:ScrollDown granularity:ScrollByDocument])
+    if ([self _scrollOverflowInDirection:WebCore::ScrollDown granularity:WebCore::ScrollByDocument])
         return YES;
     if (![self _isScrollable])
         return NO;
@@ -759,12 +745,12 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 - (float)_horizontalPageScrollDistance
 {
     float width = [[self _contentView] bounds].size.width;
-    return std::max<float>(width * Scrollbar::minFractionToStepWhenPaging(), width - Scrollbar::maxOverlapBetweenPages());
+    return std::max<float>(width * WebCore::Scrollbar::minFractionToStepWhenPaging(), width - WebCore::Scrollbar::maxOverlapBetweenPages());
 }
 
 - (BOOL)_pageVertically:(BOOL)up
 {
-    if ([self _scrollOverflowInDirection:up ? ScrollUp : ScrollDown granularity:ScrollByPage])
+    if ([self _scrollOverflowInDirection:up ? WebCore::ScrollUp : WebCore::ScrollDown granularity:WebCore::ScrollByPage])
         return YES;
     
     if (![self _isScrollable])
@@ -776,7 +762,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (BOOL)_pageHorizontally:(BOOL)left
 {
-    if ([self _scrollOverflowInDirection:left ? ScrollLeft : ScrollRight granularity:ScrollByPage])
+    if ([self _scrollOverflowInDirection:left ? WebCore::ScrollLeft : WebCore::ScrollRight granularity:WebCore::ScrollByPage])
         return YES;
 
     if (![self _isScrollable])
@@ -798,7 +784,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (BOOL)_scrollLineVertically:(BOOL)up
 {
-    if ([self _scrollOverflowInDirection:up ? ScrollUp : ScrollDown granularity:ScrollByLine])
+    if ([self _scrollOverflowInDirection:up ? WebCore::ScrollUp : WebCore::ScrollDown granularity:WebCore::ScrollByLine])
         return YES;
 
     if (![self _isScrollable])
@@ -810,7 +796,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (BOOL)_scrollLineHorizontally:(BOOL)left
 {
-    if ([self _scrollOverflowInDirection:left ? ScrollLeft : ScrollRight granularity:ScrollByLine])
+    if ([self _scrollOverflowInDirection:left ? WebCore::ScrollLeft : WebCore::ScrollRight granularity:WebCore::ScrollByLine])
         return YES;
 
     if (![self _isScrollable])
@@ -909,7 +895,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 #endif
     int index, count;
     BOOL callSuper = YES;
-    Frame* coreFrame = [self _web_frame];
+    auto* coreFrame = [self _web_frame];
     BOOL maintainsBackForwardList = coreFrame && static_cast<BackForwardList&>(coreFrame->page()->backForward().client()).enabled() ? YES : NO;
 
     count = [characters length];

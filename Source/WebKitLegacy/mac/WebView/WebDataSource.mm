@@ -75,8 +75,6 @@
 #import <WebCore/QuickLook.h>
 #endif
 
-using namespace WebCore;
-
 class WebDataSourcePrivate
 {
 public:
@@ -320,7 +318,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
             DOMDocumentFragment *fragment = [[self webFrame] _documentFragmentWithMarkupString:markupString baseURLString:[[mainResource URL] _web_originalDataAsString]];
             [markupString release];
             return fragment;
-        } else if (MIMETypeRegistry::isSupportedImageMIMEType(MIMEType)) {
+        } else if (WebCore::MIMETypeRegistry::isSupportedImageMIMEType(MIMEType)) {
             return [self _documentFragmentWithImageResource:mainResource];
             
         }
@@ -397,7 +395,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 #endif
 }
 
-- (DocumentLoader*)_documentLoader
+- (WebCore::DocumentLoader*)_documentLoader
 {
     return toPrivate(_private)->loader.ptr();
 }
@@ -441,7 +439,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (instancetype)initWithRequest:(NSURLRequest *)request
 {
-    return [self _initWithDocumentLoader:WebDocumentLoaderMac::create(request, SubstituteData())];
+    return [self _initWithDocumentLoader:WebDocumentLoaderMac::create(request, WebCore::SubstituteData())];
 }
 
 - (void)dealloc
@@ -455,7 +453,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 #if USE(QUICK_LOOK)
     // Added in -[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:].
     if (NSURL *url = [[self response] URL])
-        removeQLPreviewConverterForURL(url);
+        WebCore::removeQLPreviewConverterForURL(url);
 #endif
 
     delete toPrivate(_private);
@@ -465,7 +463,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSData *)data
 {
-    RefPtr<SharedBuffer> mainResourceData = toPrivate(_private)->loader->mainResourceData();
+    RefPtr<WebCore::SharedBuffer> mainResourceData = toPrivate(_private)->loader->mainResourceData();
     if (!mainResourceData)
         return nil;
     return mainResourceData->createNSData().autorelease();
@@ -478,7 +476,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (WebFrame *)webFrame
 {
-    if (Frame* frame = toPrivate(_private)->loader->frame())
+    if (auto* frame = toPrivate(_private)->loader->frame())
         return kit(frame);
 
     return nil;
@@ -486,17 +484,17 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSURLRequest *)initialRequest
 {
-    return toPrivate(_private)->loader->originalRequest().nsURLRequest(HTTPBodyUpdatePolicy::UpdateHTTPBody);
+    return toPrivate(_private)->loader->originalRequest().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
 }
 
 - (NSMutableURLRequest *)request
 {
-    FrameLoader* frameLoader = toPrivate(_private)->loader->frameLoader();
+    auto* frameLoader = toPrivate(_private)->loader->frameLoader();
     if (!frameLoader || !frameLoader->frameHasLoaded())
         return nil;
 
     // FIXME: this cast is dubious
-    return (NSMutableURLRequest *)toPrivate(_private)->loader->request().nsURLRequest(HTTPBodyUpdatePolicy::UpdateHTTPBody);
+    return (NSMutableURLRequest *)toPrivate(_private)->loader->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
 }
 
 - (NSURLResponse *)response
@@ -537,7 +535,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     if (!toPrivate(_private)->loader->isCommitted())
         return nil;
         
-    return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(*core([self webFrame]))] autorelease];
+    return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:WebCore::LegacyWebArchive::create(*core([self webFrame]))] autorelease];
 }
 
 - (WebResource *)mainResource

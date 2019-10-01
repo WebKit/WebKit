@@ -1,3 +1,603 @@
+2019-09-30  Alex Christensen  <achristensen@webkit.org>
+
+        Unify more WebKitLegacy sources
+        https://bugs.webkit.org/show_bug.cgi?id=202390
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (dataSource):
+        (WebFrameLoaderClient::pageID const):
+        (WebFrameLoaderClient::frameID const):
+        (WebFrameLoaderClient::makeRepresentation):
+        (WebFrameLoaderClient::forceLayoutOnRestoreFromPageCache):
+        (WebFrameLoaderClient::convertMainResourceLoadToDownload):
+        (WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache):
+        (WebFrameLoaderClient::assignIdentifierToInitialRequest):
+        (WebFrameLoaderClient::dispatchWillSendRequest):
+        (WebFrameLoaderClient::shouldUseCredentialStorage):
+        (WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        (WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace):
+        (WebFrameLoaderClient::connectionProperties):
+        (WebFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebFrameLoaderClient::willCacheResponse const):
+        (WebFrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebFrameLoaderClient::dispatchDidFinishLoading):
+        (WebFrameLoaderClient::dispatchDidFailLoading):
+        (WebFrameLoaderClient::dispatchWillPerformClientRedirect):
+        (WebFrameLoaderClient::dispatchDidReceiveTitle):
+        (WebFrameLoaderClient::dispatchDidCommitLoad):
+        (WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebFrameLoaderClient::dispatchDidFailLoad):
+        (WebFrameLoaderClient::dispatchDidReachLayoutMilestone):
+        (WebFrameLoaderClient::dispatchCreatePage):
+        (WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        (shouldTryAppLink):
+        (WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebFrameLoaderClient::dispatchUnableToImplementPolicy):
+        (makeFormFieldValuesDictionary):
+        (WebFrameLoaderClient::dispatchWillSubmitForm):
+        (WebFrameLoaderClient::revertToProvisionalState):
+        (WebFrameLoaderClient::setMainDocumentError):
+        (WebFrameLoaderClient::startDownload):
+        (WebFrameLoaderClient::willChangeTitle):
+        (WebFrameLoaderClient::didChangeTitle):
+        (WebFrameLoaderClient::didReplaceMultipartContent):
+        (WebFrameLoaderClient::committedLoad):
+        (WebFrameLoaderClient::finishedLoading):
+        (WebFrameLoaderClient::updateGlobalHistory):
+        (WebFrameLoaderClient::updateGlobalHistoryRedirectLinks):
+        (WebFrameLoaderClient::shouldGoToHistoryItem const):
+        (WebFrameLoaderClient::didDisplayInsecureContent):
+        (WebFrameLoaderClient::didRunInsecureContent):
+        (WebFrameLoaderClient::cancelledError):
+        (WebFrameLoaderClient::blockedError):
+        (WebFrameLoaderClient::blockedByContentBlockerError):
+        (WebFrameLoaderClient::cannotShowURLError):
+        (WebFrameLoaderClient::interruptedForPolicyChangeError):
+        (WebFrameLoaderClient::blockedByContentFilterError):
+        (WebFrameLoaderClient::cannotShowMIMETypeError):
+        (WebFrameLoaderClient::fileDoesNotExistError):
+        (WebFrameLoaderClient::pluginWillHandleLoadError):
+        (WebFrameLoaderClient::shouldFallBack):
+        (WebFrameLoaderClient::canHandleRequest const):
+        (WebFrameLoaderClient::saveViewStateToItem):
+        (WebFrameLoaderClient::restoreViewState):
+        (WebFrameLoaderClient::createDocumentLoader):
+        (WebFrameLoaderClient::setTitle):
+        (WebFrameLoaderClient::savePlatformDataToCachedFrame):
+        (WebFrameLoaderClient::transitionToCommittedFromCachedFrame):
+        (WebFrameLoaderClient::transitionToCommittedForNewPage):
+        (WebFrameLoaderClient::setUpPolicyListener):
+        (WebFrameLoaderClient::actionDictionary const):
+        (WebFrameLoaderClient::canCachePage const):
+        (WebFrameLoaderClient::createFrame):
+        (WebFrameLoaderClient::objectContentType):
+        (PluginWidget::PluginWidget):
+        (PluginWidget::invalidateRect):
+        (NetscapePluginWidget::handleEvent):
+        (NetscapePluginWidget::notifyWidget):
+        (shouldBlockPlugin):
+        (WebFrameLoaderClient::createPlugin):
+        (WebFrameLoaderClient::redirectDataToPlugin):
+        (WebFrameLoaderClient::createJavaAppletWidget):
+        (shouldBlockWebGL):
+        (WebFrameLoaderClient::webGLPolicyForURL const):
+        (WebFrameLoaderClient::resolveWebGLPolicyForURL const):
+        (WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld):
+        (WebFrameLoaderClient::createNetworkingContext):
+        (WebFrameLoaderClient::createPreviewLoaderClient):
+        (WebFrameLoaderClient::getLoadDecisionForIcons):
+        (webGetNSImage):
+        (WebFrameLoaderClient::finishedLoadingIcon):
+        (-[WebFramePolicyListener initWithFrame:identifier:policyFunction:defaultPolicy:]):
+        (-[WebFramePolicyListener initWithFrame:identifier:policyFunction:defaultPolicy:appLinkURL:]):
+        (-[WebFramePolicyListener invalidate]):
+        (-[WebFramePolicyListener receivedPolicyDecision:]):
+        (-[WebFramePolicyListener ignore]):
+        (-[WebFramePolicyListener download]):
+        (-[WebFramePolicyListener use]):
+        (-[WebFramePolicyListener continue]):
+        * WebInspector/WebInspector.mm:
+        (-[WebInspector showWindow]):
+        (-[WebInspector evaluateInFrontend:script:]):
+        * WebView/WebClipView.mm:
+        (-[WebClipView visibleRect]):
+        (-[WebClipView _immediateScrollToPoint:]):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _documentFragmentWithArchive:]):
+        (-[WebDataSource _documentLoader]):
+        (-[WebDataSource initWithRequest:]):
+        (-[WebDataSource dealloc]):
+        (-[WebDataSource data]):
+        (-[WebDataSource webFrame]):
+        (-[WebDataSource initialRequest]):
+        (-[WebDataSource request]):
+        (-[WebDataSource webArchive]):
+        * WebView/WebFrame.mm:
+        (core):
+        (kit):
+        (getWebView):
+        (+[WebFrame _createFrameWithPage:frameName:frameView:ownerElement:]):
+        (+[WebFrame _createMainFrameWithPage:frameName:frameView:]):
+        (+[WebFrame _createSubframeWithOwnerElement:frameName:frameView:]):
+        (+[WebFrame _createMainFrameWithSimpleHTMLDocumentWithPage:frameView:style:]):
+        (-[WebFrame _attachScriptDebugger]):
+        (-[WebFrame _updateBackgroundAndUpdatesWhileOffscreen]):
+        (-[WebFrame _unmarkAllBadGrammar]):
+        (-[WebFrame _unmarkAllMisspellings]):
+        (-[WebFrame _hasSelection]):
+        (-[WebFrame _atMostOneFrameHasSelection]):
+        (-[WebFrame _findFrameWithSelection]):
+        (-[WebFrame _nodesFromList:]):
+        (-[WebFrame _stringForRange:]):
+        (-[WebFrame _paintBehaviorForDestinationContext:]):
+        (-[WebFrame _drawRect:contentsOnly:]):
+        (-[WebFrame _getVisibleRect:]):
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+        (-[WebFrame _caretRectAtPosition:affinity:]):
+        (-[WebFrame _scrollDOMRangeToVisible:]):
+        (-[WebFrame _scrollDOMRangeToVisible:withInset:]):
+        (-[WebFrame _rangeByAlteringCurrentSelection:direction:granularity:]):
+        (-[WebFrame _selectionGranularity]):
+        (-[WebFrame _convertToNSRange:]):
+        (-[WebFrame _convertToDOMRange:]):
+        (-[WebFrame _convertToDOMRange:rangeIsRelativeTo:]):
+        (-[WebFrame _documentFragmentWithMarkupString:baseURLString:]):
+        (-[WebFrame _documentFragmentWithNodesAsParagraphs:]):
+        (-[WebFrame _visiblePositionForPoint:]):
+        (-[WebFrame _characterRangeAtPoint:]):
+        (-[WebFrame _typingStyle]):
+        (-[WebFrame _setTypingStyle:withUndoAction:]):
+        (-[WebFrame _dragSourceEndedAt:operation:]):
+        (-[WebFrame _canProvideDocumentSource]):
+        (-[WebFrame _commitData:]):
+        (-[WebFrame _isDescendantOfFrame:]):
+        (-[WebFrame _bodyBackgroundColor]):
+        (-[WebFrame _isFrameSet]):
+        (-[WebFrame _isVisuallyNonEmpty]):
+        (toWebFrameLoadType):
+        (-[WebFrame _rectsForRange:]):
+        (-[WebFrame _selectionRangeForFirstPoint:secondPoint:]):
+        (-[WebFrame _selectionRangeForPoint:]):
+        (-[WebFrame _selectNSRange:]):
+        (-[WebFrame _isDisplayingStandaloneImage]):
+        (-[WebFrame _recursive_resumeNullEventsForAllNetscapePlugins]):
+        (-[WebFrame _recursive_pauseNullEventsForAllNetscapePlugins]):
+        (-[WebFrame setTimeoutsPaused:]):
+        (-[WebFrame prepareForPause]):
+        (-[WebFrame resumeFromPause]):
+        (-[WebFrame selectWithoutClosingTypingNSRange:]):
+        (-[WebFrame _saveViewState]):
+        (-[WebFrame deviceOrientationChanged]):
+        (-[WebFrame renderedSizeOfNode:constrainedToWidth:]):
+        (-[WebFrame deepestNodeAtViewportLocation:]):
+        (-[WebFrame scrollableNodeAtViewportLocation:]):
+        (-[WebFrame approximateNodeAtViewportLocation:]):
+        (-[WebFrame revealSelectionAtExtent:]):
+        (-[WebFrame setCaretColor:]):
+        (-[WebFrame isTelephoneNumberParsingAllowed]):
+        (-[WebFrame isTelephoneNumberParsingEnabled]):
+        (-[WebFrame setSelectedDOMRange:affinity:closeTyping:]):
+        (-[WebFrame selectNSRange:onElement:]):
+        (-[WebFrame setMarkedText:selectedRange:]):
+        (-[WebFrame setMarkedText:forCandidates:]):
+        (-[WebFrame getDictationResultRanges:andMetadatas:]):
+        (-[WebFrame dictationResultMetadataForRange:]):
+        (+[WebFrame stringWithData:textEncodingName:]):
+        (-[WebFrame fontForSelection:]):
+        (-[WebFrame _userScrolled]):
+        (-[WebFrame _replaceSelectionWithText:selectReplacement:smartReplace:matchStyle:]):
+        (-[WebFrame resetTextAutosizingBeforeLayout]):
+        (-[WebFrame _setTextAutosizingWidth:]):
+        (-[WebFrame _replaceSelectionWithFragment:selectReplacement:smartReplace:matchStyle:]):
+        (-[WebFrame _replaceSelectionWithText:selectReplacement:smartReplace:]):
+        (-[WebFrame _smartInsertForString:replacingRange:beforeString:afterString:]):
+        (-[WebFrame _cacheabilityDictionary]):
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:withGlobalObject:inScriptWorld:]):
+        (-[WebFrame _globalContextForScriptWorld:]):
+        (-[WebFrame setAccessibleName:]):
+        (-[WebFrame enhancedAccessibilityEnabled]):
+        (-[WebFrame setEnhancedAccessibility:]):
+        (-[WebFrame _layerTreeAsText]):
+        (-[WebFrame accessibilityRoot]):
+        (-[WebFrame _clearOpener]):
+        (-[WebFrame _computePageRectsWithPrintScaleFactor:pageSize:]):
+        (-[WebFrame focusedNodeHasContent]):
+        (-[WebFrame _dispatchDidReceiveTitle:]):
+        (-[WebFrame jsWrapperForNode:inScriptWorld:]):
+        (-[WebFrame elementAtPoint:]):
+        (-[WebFrame name]):
+        (needsMicrosoftMessengerDOMDocumentWorkaround):
+        (-[WebFrame DOMDocument]):
+        (-[WebFrame frameElement]):
+        (-[WebFrame provisionalDataSource]):
+        (-[WebFrame dataSource]):
+        (-[WebFrame loadRequest:]):
+        (-[WebFrame _loadData:MIMEType:textEncodingName:baseURL:unreachableURL:]):
+        (-[WebFrame findFrameNamed:]):
+        (-[WebFrame parentFrame]):
+        (-[WebFrame childFrames]):
+        (-[WebFrame windowObject]):
+        (-[WebFrame globalContext]):
+        (-[WebFrame javaScriptContext]):
+        (dataSource): Deleted.
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _web_frame]):
+        (-[WebFrameView _setDocumentView:]):
+        (-[WebFrameView _verticalPageScrollDistance]):
+        (-[WebFrameView _install]):
+        (-[WebFrameView _frameSizeChanged]):
+        (-[WebFrameView initWithFrame:]):
+        (-[WebFrameView drawRect:]):
+        (-[WebFrameView _scrollOverflowInDirection:granularity:]):
+        (-[WebFrameView _isVerticalDocument]):
+        (-[WebFrameView _isFlippedDocument]):
+        (-[WebFrameView _scrollToBeginningOfDocument]):
+        (-[WebFrameView _scrollToEndOfDocument]):
+        (-[WebFrameView _horizontalPageScrollDistance]):
+        (-[WebFrameView _pageVertically:]):
+        (-[WebFrameView _pageHorizontally:]):
+        (-[WebFrameView _scrollLineVertically:]):
+        (-[WebFrameView _scrollLineHorizontally:]):
+        (-[WebFrameView keyDown:keyDown:]):
+        (addTypesFromClass): Deleted.
+        * WebView/WebFullScreenController.mm:
+        (screenRectOfContents):
+        (-[WebFullScreenController element]):
+        (-[WebFullScreenController setElement:]):
+        (-[WebFullScreenController _document]):
+        (-[WebFullScreenController _manager]):
+        * WebView/WebHTMLView.mm:
+        (toAction):
+        (toTag):
+        (-[NSView _web_setNeedsDisplayInRect:]):
+        (promisedDataClient):
+        (+[WebHTMLView _excludedElementsForAttributedStringConversion]):
+        (-[WebHTMLView _documentFragmentFromPasteboard:inContext:allowPlainText:]):
+        (-[WebHTMLView _plainTextFromPasteboard:]):
+        (-[WebHTMLView _pasteWithPasteboard:allowPlainText:]):
+        (-[WebHTMLView readSelectionFromPasteboard:]):
+        (-[WebHTMLView _selectedRange]):
+        (-[WebHTMLView _writeSelectionWithPasteboardTypes:toPasteboard:cachedAttributedString:]):
+        (-[WebHTMLView _frameOrBoundsChanged]):
+        (-[WebHTMLView _updateMouseoverWithEvent:]):
+        (+[WebHTMLView _insertablePasteboardTypes]):
+        (+[WebHTMLView _selectionPasteboardTypes]):
+        (-[WebHTMLView pasteboard:provideDataForType:]):
+        (-[WebHTMLView setScale:]):
+        (-[WebHTMLView _canEdit]):
+        (-[WebHTMLView _canEditRichly]):
+        (-[WebHTMLView _hasSelection]):
+        (-[WebHTMLView _hasSelectionOrInsertionPoint]):
+        (-[WebHTMLView _hasInsertionPoint]):
+        (-[WebHTMLView _isEditable]):
+        (-[WebHTMLView _selectionDraggingImage]):
+        (-[WebHTMLView _insertOrderedList]):
+        (-[WebHTMLView _insertUnorderedList]):
+        (-[WebHTMLView _canIncreaseSelectionListLevel]):
+        (-[WebHTMLView _canDecreaseSelectionListLevel]):
+        (-[WebHTMLView _increaseSelectionListLevel]):
+        (-[WebHTMLView _increaseSelectionListLevelOrdered]):
+        (-[WebHTMLView _increaseSelectionListLevelUnordered]):
+        (-[WebHTMLView _decreaseSelectionListLevel]):
+        (-[WebHTMLView _writeSelectionToPasteboard:]):
+        (-[WebHTMLView _documentFragmentFromPasteboard:forType:inContext:subresources:]):
+        (-[WebHTMLView _beginPrintModeWithMinimumPageWidth:height:maximumPageWidth:]):
+        (-[WebHTMLView _beginPrintModeWithPageWidth:height:shrinkToFit:]):
+        (-[WebHTMLView _beginScreenPaginationModeWithPageSize:shrinkToFit:]):
+        (-[WebHTMLView _adjustedBottomOfPageWithTop:bottom:limit:]):
+        (-[WebHTMLView coreCommandBySelector:]):
+        (-[WebHTMLView coreCommandByName:]):
+        (-[WebHTMLView validRequestorForSendType:returnType:]):
+        (-[WebHTMLView jumpToSelection:]):
+        (-[WebHTMLView validateUserInterfaceItemWithoutDelegate:]):
+        (-[WebHTMLView maintainsInactiveSelection]):
+        (-[WebHTMLView reapplyStyles]):
+        (-[WebHTMLView layoutToMinimumPageWidth:height:originalPageWidth:originalPageHeight:maximumShrinkRatio:adjustingViewSize:]):
+        (-[WebHTMLView rightMouseUp:]):
+        (fixMenusReceivedFromOldClients):
+        (createShareMenuItem):
+        (createMenuItem):
+        (createMenuItems):
+        (customMenuFromDefaultItems):
+        (-[WebHTMLView menuForEvent:]):
+        (-[WebHTMLView clearFocus]):
+        (-[WebHTMLView setLayer:]):
+        (-[WebHTMLView setNeedsLayout:]):
+        (-[WebHTMLView setNeedsToApplyStyles:]):
+        (-[WebHTMLView _invalidateGStatesForTree]):
+        (-[WebHTMLView scrollWheel:]):
+        (-[WebHTMLView acceptsFirstMouse:]):
+        (-[WebHTMLView shouldDelayWindowOrderingForEvent:]):
+        (-[WebHTMLView mouseDown:]):
+        (-[WebHTMLView touch:]):
+        (-[WebHTMLView mouseDragged:]):
+        (-[WebHTMLView draggingSourceOperationMaskForLocal:]):
+        (-[WebHTMLView draggedImage:endedAt:operation:]):
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]):
+        (-[WebHTMLView draggingSession:sourceOperationMaskForDraggingContext:]):
+        (-[WebHTMLView draggingSession:endedAtPoint:operation:]):
+        (-[WebHTMLView mouseUp:]):
+        (-[WebHTMLView pressureChangeWithEvent:]):
+        (isTextInput):
+        (isInPasswordField):
+        (currentKeyboardEvent):
+        (-[WebHTMLView becomeFirstResponder]):
+        (-[WebHTMLView resignFirstResponder]):
+        (-[WebHTMLView _setPrinting:minimumPageLogicalWidth:logicalHeight:originalPageWidth:originalPageHeight:maximumShrinkRatio:adjustViewSize:paginateScreenContent:]):
+        (-[WebHTMLView _scaleFactorForPrintOperation:]):
+        (-[WebHTMLView keyDown:]):
+        (-[WebHTMLView keyUp:]):
+        (-[WebHTMLView flagsChanged:]):
+        (-[WebHTMLView centerSelectionInVisibleArea:]):
+        (-[WebHTMLView _selectionStartFontAttributesAsRTF]):
+        (-[WebHTMLView _fontAttributesFromFontPasteboard]):
+        (-[WebHTMLView _applyStyleToSelection:withUndoAction:]):
+        (-[WebHTMLView _applyEditingStyleToSelection:withUndoAction:]):
+        (-[WebHTMLView performKeyEquivalent:]):
+        (-[WebHTMLView copyFont:]):
+        (-[WebHTMLView pasteFont:]):
+        (-[WebHTMLView changeFont:]):
+        (-[WebHTMLView changeAttributes:]):
+        (-[WebHTMLView _undoActionFromColorPanelWithSelector:]):
+        (-[WebHTMLView _changeCSSColorUsingSelector:inRange:]):
+        (-[WebHTMLView changeColor:]):
+        (-[WebHTMLView checkSpelling:]):
+        (-[WebHTMLView showGuessPanel:]):
+        (-[WebHTMLView toggleBaseWritingDirection:]):
+        (-[WebHTMLView changeBaseWritingDirection:]):
+        (-[WebHTMLView _changeBaseWritingDirectionTo:]):
+        (-[WebHTMLView _updateControlTints]):
+        (-[WebHTMLView _selectionChanged]):
+        (-[WebHTMLView _updateFontPanel]):
+        (-[WebHTMLView _canSmartCopyOrDelete]):
+        (-[WebHTMLView _lookUpInDictionaryFromMenu:]):
+        (-[WebHTMLView quickLookWithEvent:]):
+        (-[WebHTMLView _executeSavedKeypressCommands]):
+        (-[WebHTMLView _interpretKeyEvent:savingCommands:]):
+        (-[WebHTMLView _handleEditingKeyEvent:]):
+        (-[WebHTMLView _web_updateLayoutAndStyleIfNeededRecursive]):
+        (-[WebHTMLView ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+        (-[WebHTMLView attributedSubstringFromRange:]):
+        (-[WebHTMLView hasMarkedText]):
+        (extractUnderlines):
+        (-[WebHTMLView setMarkedText:selectedRange:]):
+        (-[WebHTMLView doCommandBySelector:]):
+        (-[WebHTMLView insertText:]):
+        (-[WebHTMLView _updateSecureInputState]):
+        (-[WebHTMLView _updateSelectionForInputManager]):
+        (-[WebHTMLView selectionTextRects]):
+        (imageFromRect):
+        (selectionImage):
+        (-[WebHTMLView selectionImageForcingBlackText:selectionImageForcingBlackText:]):
+        (-[WebHTMLView selectAll]):
+        (-[WebHTMLView deselectAll]):
+        (-[WebHTMLView _legacyAttributedStringFrom:offset:to:offset:]):
+        (-[WebHTMLView attributedString]):
+        (-[WebHTMLView selectedAttributedString]):
+        (-[WebHTMLView elementAtPoint:allowShadowContent:]):
+        (-[WebHTMLView countMatchesForText:inDOMRange:options:limit:markMatches:]):
+        (-[WebHTMLView setMarkedTextMatchesAreHighlighted:]):
+        (-[WebHTMLView markedTextMatchesAreHighlighted]):
+        (-[WebHTMLView unmarkAllTextMatches]):
+        (-[WebHTMLView rectsForTextMatches]):
+        (-[WebHTMLView _findString:options:]):
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController webView:didHandleScrollWheel:]):
+        (-[WebImmediateActionController _cancelImmediateAction]):
+        (-[WebImmediateActionController performHitTestAtPoint:]):
+        (-[WebImmediateActionController immediateActionRecognizerDidUpdateAnimation:]):
+        (-[WebImmediateActionController immediateActionRecognizerDidCancelAnimation:]):
+        (-[WebImmediateActionController immediateActionRecognizerDidCompleteAnimation:]):
+        (-[WebImmediateActionController _defaultAnimationController]):
+        (-[WebImmediateActionController _updateImmediateActionItem]):
+        (-[WebImmediateActionController menuItemDidClose:]):
+        (elementBoundingBoxInWindowCoordinatesFromNode):
+        (-[WebImmediateActionController menuItem:itemFrameForPoint:]):
+        (-[WebImmediateActionController menuItem:maxSizeForPoint:]):
+        (-[WebImmediateActionController _animationControllerForDataDetectedText]):
+        (-[WebImmediateActionController _animationControllerForDataDetectedLink]):
+        (+[WebImmediateActionController _dictionaryPopupInfoForRange:inFrame:withLookupOptions:indicatorOptions:transition:]):
+        (-[WebImmediateActionController _animationControllerForText]):
+        * WebView/WebPDFView.mm:
+        (isFrameInRange):
+        (-[WebPDFView pasteboardTypesForSelection]):
+        (-[WebPDFView writeSelectionWithPasteboardTypes:toPasteboard:]):
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]):
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFrame _convertValueToObjcValue:]):
+        * WebView/WebScriptDebugger.mm:
+        (toNSString):
+        (toWebFrame):
+        (WebScriptDebugger::WebScriptDebugger):
+        (WebScriptDebugger::sourceParsed):
+        (WebScriptDebugger::handlePause):
+        * WebView/WebScriptWorld.mm:
+        (-[WebScriptWorld initWithWorld:]):
+        (-[WebScriptWorld init]):
+        (+[WebScriptWorld standardWorld]):
+        (+[WebScriptWorld scriptWorldForGlobalContext:]):
+        (core):
+        (+[WebScriptWorld findOrCreateWorld:]):
+        * WebView/WebView.mm:
+        (coreOptions):
+        (coreLayoutMilestones):
+        (kitLayoutMilestones):
+        (kit):
+        (WebKit::DeferredPageDestructor::createDeferredPageDestructor):
+        (WebKit::DeferredPageDestructor::DeferredPageDestructor):
+        (-[WebUITextIndicatorData initWithImage:textIndicatorData:scale:]):
+        (+[WebView _standardUserAgentWithApplicationName:]):
+        (+[WebView _reportException:inContext:]):
+        (shouldEnableLoadDeferring):
+        (shouldRestrictWindowFocus):
+        (needsOutlookQuirksScript):
+        (-[WebView _injectOutlookQuirksScript]):
+        (shouldUseLegacyBackgroundSizeShorthandBehavior):
+        (shouldAllowWindowOpenWithoutUserGesture):
+        (WebKitInitializeGamepadProviderIfNecessary):
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+        (-[WebView _replaceCurrentHistoryItem:]):
+        (-[WebView updateLayoutIgnorePendingStyleSheets]):
+        (-[WebView _requestStartDataInteraction:globalPosition:]):
+        (-[WebView _startDrag:]):
+        (-[WebView dragDataForSession:client:global:operation:]):
+        (-[WebView _didConcludeEditDrag]):
+        (+[WebView _setAlwaysUsesComplexTextCodePath:]):
+        (+[WebView canCloseAllWebViews]):
+        (+[WebView closeAllWebViews]):
+        (-[WebView _dispatchUnloadEvent]):
+        (-[WebView styleAtSelectionStart]):
+        (-[WebView _didFinishScrollingOrZooming]):
+        (-[WebView _close]):
+        (-[WebView _isProcessingUserGesture]):
+        (+[WebView _enableRemoteInspector]):
+        (+[WebView _disableRemoteInspector]):
+        (+[WebView _disableAutoStartRemoteInspector]):
+        (+[WebView _isRemoteInspectorEnabled]):
+        (+[WebView _hasRemoteInspectorSession]):
+        (-[WebView _setHostApplicationProcessIdentifier:auditToken:]):
+        (-[WebView _loadBackForwardListFromOtherView:]):
+        (-[WebView _needsKeyboardEventDisambiguationQuirks]):
+        (needsSelfRetainWhileLoadingQuirk):
+        (-[WebView _needsPreHTML5ParserQuirks]):
+        (-[WebView _preferencesChanged:]):
+        (-[WebView _cacheFrameLoadDelegateImplementations]):
+        (+[WebView _unregisterViewClassAndRepresentationClassForMIMEType:]):
+        (+[WebView _registerViewClass:representationClass:forURLScheme:]):
+        (+[WebView _decodeData:]):
+        (-[WebView _didStartProvisionalLoadForFrame:]):
+        (-[WebView _checkDidPerformFirstNavigation]):
+        (-[WebView _cachedResponseForURL:]):
+        (+[WebView _setShouldUseFontSmoothing:]):
+        (+[WebView _shouldUseFontSmoothing]):
+        (+[WebView _setUsesTestModeFocusRingColor:]):
+        (+[WebView _usesTestModeFocusRingColor]):
+        (-[WebView setAlwaysShowVerticalScroller:]):
+        (-[WebView alwaysShowVerticalScroller]):
+        (-[WebView setAlwaysShowHorizontalScroller:]):
+        (-[WebView setProhibitsMainFrameScrolling:]):
+        (-[WebView alwaysShowHorizontalScroller]):
+        (-[WebView _setMediaLayer:forPluginView:]):
+        (-[WebView _attachScriptDebuggerToAllFrames]):
+        (-[WebView _detachScriptDebuggerFromAllFrames]):
+        (+[WebView _productivityDocumentMIMETypes]):
+        (-[WebView _setFixedLayoutSize:]):
+        (-[WebView _synchronizeCustomFixedPositionLayoutRect]):
+        (-[WebView _viewGeometryDidChange]):
+        (-[WebView _overflowScrollPositionChangedTo:forNode:isUserScroll:]):
+        (+[WebView _doNotStartObservingNetworkReachability]):
+        (-[WebView _touchEventRegions]):
+        (-[WebView textIteratorForRect:]):
+        (-[WebView _executeCoreCommandByName:value:]):
+        (-[WebView _isUsingAcceleratedCompositing]):
+        (-[WebView _isSoftwareRenderable]):
+        (-[WebView setTracksRepaints:]):
+        (-[WebView isTrackingRepaints]):
+        (-[WebView resetTrackedRepaints]):
+        (-[WebView trackedRepaintRects]):
+        (+[WebView _addOriginAccessWhitelistEntryWithSourceOrigin:destinationProtocol:destinationHost:allowDestinationSubdomains:]):
+        (+[WebView _removeOriginAccessWhitelistEntryWithSourceOrigin:destinationProtocol:destinationHost:allowDestinationSubdomains:]):
+        (+[WebView _resetOriginAccessWhitelists]):
+        (+[WebView _addUserScriptToGroup:world:source:url:whitelist:blacklist:injectionTime:injectedFrames:]):
+        (+[WebView _addUserStyleSheetToGroup:world:source:url:whitelist:blacklist:injectedFrames:]):
+        (-[WebView allowsNewCSSAnimationsWhileSuspended]):
+        (-[WebView setAllowsNewCSSAnimationsWhileSuspended:]):
+        (-[WebView cssAnimationsSuspended]):
+        (-[WebView setCSSAnimationsSuspended:]):
+        (+[WebView _setDomainRelaxationForbidden:forURLScheme:]):
+        (+[WebView _registerURLSchemeAsSecure:]):
+        (+[WebView _registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing:]):
+        (-[WebView _scaleWebView:atOrigin:]):
+        (-[WebView _setUseFixedLayout:]):
+        (-[WebView _useFixedLayout]):
+        (-[WebView _fixedLayoutSize]):
+        (-[WebView _setPaginationMode:]):
+        (-[WebView _paginationMode]):
+        (-[WebView _listenForLayoutMilestones:]):
+        (-[WebView _layoutMilestones]):
+        (-[WebView _setPaginationBehavesLikeColumns:]):
+        (-[WebView _paginationBehavesLikeColumns]):
+        (-[WebView _setPageLength:]):
+        (-[WebView _pageLength]):
+        (-[WebView _setGapBetweenPages:]):
+        (-[WebView _gapBetweenPages]):
+        (-[WebView _setPaginationLineGridEnabled:]):
+        (-[WebView _paginationLineGridEnabled]):
+        (-[WebView _pageCount]):
+        (+[WebView _HTTPPipeliningEnabled]):
+        (+[WebView _setHTTPPipeliningEnabled:]):
+        (-[WebView shouldRequestCandidates]):
+        (-[WebView removePluginInstanceViewsFor:]):
+        (+[WebView registerURLSchemeAsLocal:]):
+        (-[WebView doWindowDidChangeScreen]):
+        (-[WebView _updateScreenScaleFromWindow]):
+        (-[WebView goToBackForwardItem:]):
+        (-[WebView _setZoomMultiplier:isTextOnly:]):
+        (-[WebView setCustomTextEncodingName:]):
+        (-[WebView windowScriptObject]):
+        (-[WebView setHostWindow:]):
+        (-[WebView applicationFlags:]):
+        (-[WebView actionMaskForDraggingInfo:]):
+        (-[WebView draggingEntered:]):
+        (-[WebView draggingUpdated:]):
+        (-[WebView draggingExited:]):
+        (-[WebView performDragOperation:]):
+        (incrementFrame):
+        (+[WebView registerViewClass:representationClass:forMIMEType:]):
+        (-[WebView moveDragCaretToPoint:]):
+        (-[WebView removeDragCaret]):
+        (-[WebView mainFrameIconURL]):
+        (coreTextCheckingType):
+        (textCheckingResultFromNSTextCheckingResult):
+        (-[WebView candidateListTouchBarItem:endSelectingCandidateAtIndex:]):
+        (-[WebView candidateListTouchBarItem:changedCandidateListVisibility:]):
+        (-[WebView shouldClose]):
+        (aeDescFromJSValue):
+        (-[WebView aeDescByEvaluatingJavaScriptFromString:]):
+        (-[WebView editableDOMRangeForPoint:]):
+        (-[WebView setSelectedDOMRange:affinity:]):
+        (-[WebView selectedDOMRange]):
+        (-[WebView selectionAffinity]):
+        (-[WebView setEditable:]):
+        (-[WebView setTypingStyle:]):
+        (-[WebView deleteSelection]):
+        (-[WebView applyStyle:]):
+        (-[WebView insertDictationPhrases:metadata:]):
+        (-[WebView _selectionIsCaret]):
+        (-[WebView _selectionIsAll]):
+        (-[WebView _simplifyMarkup:endNode:]):
+        (+[WebView _setCacheModel:]):
+        (-[WebView _searchWithGoogleFromMenu:]):
+        (-[WebView _retrieveKeyboardUIModeFromPreferences:]):
+        (-[WebView _keyboardUIMode]):
+        (-[WebView _mainCoreFrame]):
+        (-[WebView _clearCredentials]):
+        (-[WebView _flushCompositingChanges]):
+        (-[WebView _scheduleLayerFlushForPendingTileCacheRepaint]):
+        (-[WebView _hasActiveVideoForControlsInterface]):
+        (-[WebView _setUpPlaybackControlsManagerForMediaElement:]):
+        (-[WebView handleAcceptedAlternativeText:]):
+        (-[WebView _getWebCoreDictationAlternatives:fromTextAlternatives:]):
+        (-[WebView _animationControllerForDictionaryLookupPopupInfo:]):
+        (-[WebView _setTextIndicator:]):
+        (-[WebView _setTextIndicator:withLifetime:]):
+        (-[WebView _clearTextIndicatorWithAnimation:]):
+        (-[WebView _showDictionaryLookupPopup:]):
+        (-[WebView _dictionaryLookupPopoverWillClose:]):
+        (-[WebView showFormValidationMessage:withAnchorRect:]):
+        (-[WebView textTouchBar]):
+        (nsTextAlignmentFromRenderStyle):
+        (-[WebView updateTextTouchBar]):
+        (-[WebView updateTouchBar]):
+        (-[WebView candidateList]):
+        (-[WebView _geolocationDidFailWithMessage:]):
+        (-[WebView _resetAllGeolocationPermission]):
+        (-[WebView _notificationIDForTesting:]):
+
 2019-09-25  Megan Gardner  <megan_gardner@apple.com>
 
         Update selections after scrolling for iframes and hide selections while iframes and overflow scrolls are scrolling.
