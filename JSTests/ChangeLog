@@ -1,3 +1,17 @@
+2019-10-01  Michael Saboff  <msaboff@apple.com> and Paulo Matos  <pmatos@igalia.com>
+
+        [YARR] Properly handle surrogates when matching back references
+        https://bugs.webkit.org/show_bug.cgi?id=202041
+
+        Reviewed by Keith Miller.
+
+        Unchanged from the workin progress patch posted by Paulo Matos <pmatos@igalia.com>.
+
+        Updated test.
+
+        * stress/regexp-unicode-surrogate-pair-increment-should-involve-length-check.js:
+        (testRegExpNotMatch):
+
 2019-10-01  Keith Miller  <keith_miller@apple.com>
 
         Add support for the Wasm multi-value proposal

@@ -13,10 +13,21 @@ function testRegExpMatch(re, str)
     }
 }
 
+function testRegExpNotMatch(re, str)
+{
+    for (let i = 0; i < 100; ++i) {
+        let match = re.exec(str);
+        if (match) {
+            print(match);
+            throw "Expected " + re + " to match \"" + str + "\" but it didn't";
+        }
+    }
+}
+
 let testString = "\ud800\ud800\udc00";
 let greedyRegExp = /([^x]+)[^]*\1([^])/u;
 
-testRegExpMatch(greedyRegExp, testString);
+testRegExpNotMatch(greedyRegExp, testString);
 
 let nonGreedyRegExp = /(.*[^x]+?)[^]*([^])/u;
 

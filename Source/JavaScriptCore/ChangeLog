@@ -1,3 +1,28 @@
+2019-10-01  Michael Saboff  <msaboff@apple.com> and Paulo Matos  <pmatos@igalia.com>
+
+        [YARR] Properly handle surrogates when matching back references
+        https://bugs.webkit.org/show_bug.cgi?id=202041
+
+        Reviewed by Keith Miller.
+
+        This patch is based on a work in progress patch by Paulo Matos <pmatos@igalia.com>.
+
+        When handling back references in Unicode patterns, we can't match un-decoded surrogate characters,
+        instead we need to read and process surrogate pairs.  Changed matchBackreference() to do this,
+        including properly incrementing the back reference pattern and search indexes.
+
+        In support of this change, on X86_64 we needed to free up r10 to be used exclusively for
+        "patternIndex".  It was also used as a temp in tryReadUnicodeCharImpl().  Made a new named
+        temp register, called unicodeTemp, to take the place of regT2(r10) in tryReadUnicodeCharImpl.
+        This new temp is r14 on X86_64 and X5 on ARM64.  To free up r14 on X86_64, changed the
+        old leadingSurrogateTag to be a literal.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::tryReadUnicodeCharImpl):
+        (JSC::Yarr::YarrGenerator::matchBackreference):
+        (JSC::Yarr::YarrGenerator::generateEnter):
+        (JSC::Yarr::YarrGenerator::readCharacterDontDecodeSurrogates): Deleted.
+
 2019-10-01  Keith Miller  <keith_miller@apple.com>
 
         Add support for the Wasm multi-value proposal
