@@ -1,3 +1,14 @@
+2019-10-01  David Kilzer  <ddkilzer@apple.com>
+
+        clang-tidy: Fix unnecessary copying/ref churn of for loop variables in Tools
+        <https://webkit.org/b/202387>
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::setAllowedMenuActions): Make loop variable
+        a reference to fix unnecessary copying/ref churn.
+
 2019-10-01  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         Update my affiliation - since today I work for Igalia.

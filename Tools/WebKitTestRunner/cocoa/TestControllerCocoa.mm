@@ -429,7 +429,7 @@ void TestController::setAllowedMenuActions(const Vector<String>& actions)
 {
 #if PLATFORM(IOS_FAMILY)
     auto actionNames = adoptNS([[NSMutableArray<NSString *> alloc] initWithCapacity:actions.size()]);
-    for (auto action : actions)
+    for (auto& action : actions)
         [actionNames addObject:action];
     [m_mainWebView->platformView() setAllowedMenuActions:actionNames.get()];
 #else
