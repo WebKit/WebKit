@@ -1,5 +1,28 @@
 2019-09-30  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: JS Formatter: unexpected newlines added inside template string expression
+        https://bugs.webkit.org/show_bug.cgi?id=202374
+
+        Reviewed by Joseph Pecoraro.
+
+        Wrap every "add newline" with a check to see if the current node is inside a template
+        literal node. If so (and we aren't forcibly adding a newline), prevent the newline from
+        being added.
+
+        * UserInterface/Workers/Formatter/JSFormatter.js:
+        (JSFormatter.prototype._appendNewline): Added.
+        (JSFormatter.prototype._insertNewlinesBeforeToken):
+        (JSFormatter.prototype._insertComment):
+        (JSFormatter.prototype._insertSameLineTrailingComments):
+        (JSFormatter.prototype._insertCommentsAndNewlines):
+        (JSFormatter.prototype._before):
+        (JSFormatter.prototype._after):
+        (JSFormatter.prototype._handleTokenAtNode):
+        (JSFormatter.prototype._exitNode):
+        (JSFormatter.prototype._afterProgram):
+
+2019-09-30  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Canvas: shader type header is white in dark mode
         https://bugs.webkit.org/show_bug.cgi?id=202253
 

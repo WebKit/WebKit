@@ -94,23 +94,35 @@ JSFormatter = class JSFormatter
 
     // Private
 
-    _insertNewlinesBeforeToken(token)
+    _appendNewline(node, force)
+    {
+        if (!force && node.type !== "TemplateElement") {
+            while (node = node.parent) {
+                if (node.type === "TemplateLiteral")
+                    return;
+            }
+        }
+
+        this._builder.appendNewline(force);
+    }
+
+    _insertNewlinesBeforeToken(node, token)
     {
         let force = false;
         while (token.range[0] > this._lineEndings[this._lineEndingsIndex]) {
-            this._builder.appendNewline(force);
+            this._appendNewline(node, force);
             this._lineEndingsIndex++;
             force = true;
         }
     }
 
-    _insertComment(comment)
+    _insertComment(node, comment)
     {
         if (comment.type === "Line")
             this._builder.appendToken("//" + comment.value, comment.range[0]);
         else if (comment.type === "Block")
             this._builder.appendToken("/*" + comment.value + "*/", comment.range[0]);
-        this._builder.appendNewline();
+        this._appendNewline(node);
         comment.__handled = true;
     }
 
@@ -122,11 +134,11 @@ JSFormatter = class JSFormatter
                 break;
             this._builder.removeLastNewline();
             this._builder.appendSpace();
-            this._insertComment(comment);
+            this._insertComment(node, comment);
         }
     }
 
-    _insertCommentsAndNewlines(comments)
+    _insertCommentsAndNewlines(node, comments)
     {
         for (let comment of comments) {
             // A previous node may have handled this as a trailing comment.
@@ -139,7 +151,7 @@ JSFormatter = class JSFormatter
             if (comment.range[0] > this._lineEndings[this._lineEndingsIndex + 1])
                 this._builder.appendNewline(true);
 
-            this._insertComment(comment);
+            this._insertComment(node, comment);
 
             // Remove line endings for this comment.
             while (comment.range[1] > this._lineEndings[this._lineEndingsIndex])
@@ -155,12 +167,12 @@ JSFormatter = class JSFormatter
         // Handle the tokens before this node, so in the context of our parent node.
         while (this._tokenIndex < this._tokensLength && this._tokens[this._tokenIndex].range[0] < node.range[0]) {
             let token = this._tokens[this._tokenIndex++];
-            this._insertNewlinesBeforeToken(token);
+            this._insertNewlinesBeforeToken(node, token);
             this._handleTokenAtNode(token, node.parent);
         }
 
         if (node.leadingComments)
-            this._insertCommentsAndNewlines(node.leadingComments);
+            this._insertCommentsAndNewlines(node, node.leadingComments);
     }
 
     _after(node)
@@ -168,7 +180,7 @@ JSFormatter = class JSFormatter
         // Handle any other tokens inside of this node before exiting.
         while (this._tokenIndex < this._tokensLength && this._tokens[this._tokenIndex].range[0] < node.range[1]) {
             let token = this._tokens[this._tokenIndex++];
-            this._insertNewlinesBeforeToken(token);
+            this._insertNewlinesBeforeToken(node, token);
             this._handleTokenAtNode(token, node);
         }
 
@@ -269,7 +281,7 @@ JSFormatter = class JSFormatter
             }
 
             builder.appendToken(tokenValue, tokenOffset);
-            builder.appendNewline();
+            this._appendNewline(node);
             return;
         }
 
@@ -306,21 +318,21 @@ JSFormatter = class JSFormatter
             if (tokenValue === "{") {
                 // Class methods we put the opening brace on its own line.
                 if (node.parent && node.parent.parent && node.parent.parent.type === "MethodDefinition" && node.body.length) {
-                    builder.appendNewline();
+                    this._appendNewline(node);
                     builder.appendToken(tokenValue, tokenOffset);
-                    builder.appendNewline();
+                    this._appendNewline(node);
                     builder.indent();
                     return;
                 }
                 builder.appendToken(tokenValue, tokenOffset);
                 if (node.body.length && !isSingleStatementArrowFunctionWithUnlikelyMultilineContent)
-                    builder.appendNewline();
+                    this._appendNewline(node);
                 builder.indent();
                 return;
             }
             if (tokenValue === "}") {
                 if (node.body.length && !isSingleStatementArrowFunctionWithUnlikelyMultilineContent)
-                    builder.appendNewline();
+                    this._appendNewline(node);
                 builder.dedent();
                 builder.appendToken(tokenValue, tokenOffset);
                 return;
@@ -338,7 +350,7 @@ JSFormatter = class JSFormatter
                     return;
                 }
                 builder.appendToken(tokenValue, tokenOffset);
-                builder.appendNewline();
+                this._appendNewline(node);
                 return;
             }
             builder.appendToken(tokenValue, tokenOffset);
@@ -377,7 +389,7 @@ JSFormatter = class JSFormatter
                     builder.appendToken(tokenValue, tokenOffset);
 
                     if (node.alternate && (node.alternate.type !== "BlockStatement" && node.alternate.type !== "IfStatement")) {
-                        builder.appendNewline();
+                        this._appendNewline(node);
                         builder.indent();
                         node.__autoDedent = true;
                     } else
@@ -401,7 +413,7 @@ JSFormatter = class JSFormatter
                 }
 
                 builder.appendToken(tokenValue, tokenOffset);
-                builder.appendNewline();
+                this._appendNewline(node);
                 builder.indent();
                 node.__autoDedent = true;
                 return;
@@ -475,7 +487,7 @@ JSFormatter = class JSFormatter
                 }
 
                 builder.appendToken(tokenValue, tokenOffset);
-                builder.appendNewline();
+                this._appendNewline(node);
                 builder.indent();
                 node.__autoDedent = true;
                 return;
@@ -508,7 +520,7 @@ JSFormatter = class JSFormatter
                 }
 
                 builder.appendToken(tokenValue, tokenOffset);
-                builder.appendNewline();
+                this._appendNewline(node);
                 builder.indent();
                 node.__autoDedent = true;
                 return;
@@ -533,13 +545,13 @@ JSFormatter = class JSFormatter
                 }
                 if (tokenValue === "{") {
                     builder.appendToken(tokenValue, tokenOffset);
-                    builder.appendNewline();
+                    this._appendNewline(node);
                     return;
                 }
                 if (tokenValue === "}") {
-                    builder.appendNewline();
+                    this._appendNewline(node);
                     builder.appendToken(tokenValue, tokenOffset);
-                    builder.appendNewline();
+                    this._appendNewline(node);
                     return;
                 }
             }
@@ -565,7 +577,7 @@ JSFormatter = class JSFormatter
 
             if (tokenValue === ":") {
                 builder.appendToken(tokenValue, tokenOffset);
-                builder.appendNewline();
+                this._appendNewline(node);
                 if (node.consequent.length) {
                     builder.indent();
                     node.__autoDedent = true;
@@ -649,14 +661,14 @@ JSFormatter = class JSFormatter
             if (tokenValue === "{") {
                 builder.appendToken(tokenValue, tokenOffset);
                 if (node.properties.length) {
-                    builder.appendNewline();
+                    this._appendNewline(node);
                     builder.indent();
                 }
                 return;
             }
             if (tokenValue === "}") {
                 if (node.properties.length) {
-                    builder.appendNewline();
+                    this._appendNewline(node);
                     builder.dedent();
                 }
                 builder.appendToken(tokenValue, tokenOffset);
@@ -665,7 +677,7 @@ JSFormatter = class JSFormatter
             if (tokenValue === ",") {
                 builder.appendToken(tokenValue, tokenOffset);
                 if (node.properties.length)
-                    builder.appendNewline();
+                    this._appendNewline(node);
                 else
                     builder.appendSpace();
                 return;
@@ -874,42 +886,42 @@ JSFormatter = class JSFormatter
             if (node.parent) {
                 // Newline after if(){}
                 if (node.parent.type === "IfStatement" && (!node.parent.alternate || node.parent.consequent !== node)) {
-                    this._builder.appendNewline();
+                    this._appendNewline(node);
                     return;
                 }
                 // Newline after for(){}
                 if (node.parent.type === "ForStatement" || node.parent.type === "ForOfStatement" || node.parent.type === "ForInStatement") {
-                    this._builder.appendNewline();
+                    this._appendNewline(node);
                     return;
                 }
                 // Newline after while(){}
                 if (node.parent.type === "WhileStatement") {
-                    this._builder.appendNewline();
+                    this._appendNewline(node);
                     return;
                 }
                 // Newline after function(){}
                 if (node.parent.type === "FunctionDeclaration") {
-                    this._builder.appendNewline();
+                    this._appendNewline(node);
                     return;
                 }
                 // Newline after catch block in try{}catch(e){}
                 if (node.parent.type === "CatchClause" && !node.parent.parent.finalizer) {
-                    this._builder.appendNewline();
+                    this._appendNewline(node);
                     return;
                 }
                 // Newline after finally block in try{}catch(e){}finally{}
                 if (node.parent.type === "TryStatement" && node.parent.finalizer && node.parent.finalizer === node) {
-                    this._builder.appendNewline();
+                    this._appendNewline(node);
                     return;
                 }
                 // Newline after class body methods in class {method(){}}
                 if (node.parent.parent && node.parent.parent.type === "MethodDefinition") {
-                    this._builder.appendNewline();
+                    this._appendNewline(node);
                     return;
                 }
                 // Newline after anonymous block inside a block or program.
                 if (node.parent.type === "BlockStatement" || node.parent.type === "Program") {
-                    this._builder.appendNewline();
+                    this._appendNewline(node);
                     return;
                 }
             }
@@ -932,10 +944,10 @@ JSFormatter = class JSFormatter
         if (programNode.body.length) {
             let lastNode = programNode.body[programNode.body.length - 1];
             if (lastNode.trailingComments)
-                this._insertCommentsAndNewlines(lastNode.trailingComments);
+                this._insertCommentsAndNewlines(lastNode, lastNode.trailingComments);
         } else {
             if (programNode.leadingComments)
-                this._insertCommentsAndNewlines(programNode.leadingComments);
+                this._insertCommentsAndNewlines(programNode, programNode.leadingComments);
             console.assert(!programNode.trailingComments);
         }
     }

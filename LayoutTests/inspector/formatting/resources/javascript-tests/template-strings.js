@@ -8,3 +8,14 @@
 tag`tagged template string`
 tag `tagged template string` 
 tag`before ${1+1} after`
+
+`
+    before ${ 1 + 1 } after
+    before ${ x } after
+    before ${ func() } after
+    before ${ { a: 1 } } after
+    before ${ [ 1 ] } after
+    before ${
+        y
+    } after
+`
