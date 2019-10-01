@@ -348,14 +348,13 @@ FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
     if (isNull())
         return FloatRect();
 
-    if (!applier)
-        return boundingRect();
+    PlatformContextDirect2D scratchContextD2D(scratchRenderTarget());
+    GraphicsContext scratchContext(&scratchContextD2D, GraphicsContext::BitmapRenderingContextType::GPUMemory);
 
-    UNUSED_PARAM(applier);
-    notImplemented();
+    if (applier)
+        applier->strokeStyle(&scratchContext);
 
-    // Just return regular bounding rect for now.
-    return boundingRect();
+    return fastBoundingRectForStroke(scratchContextD2D);
 }
 
 void Path::openFigureAtCurrentPointIfNecessary()

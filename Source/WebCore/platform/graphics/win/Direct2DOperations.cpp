@@ -705,18 +705,28 @@ void clearRect(PlatformContextDirect2D& platformContext, const FloatRect& rect)
 {
     drawWithoutShadow(platformContext, [&platformContext, rect](ID2D1RenderTarget* renderTarget) {
         FloatRect renderTargetRect(FloatPoint(), renderTarget->GetSize());
+
+        D2D1::Matrix3x2F matrix;
+        renderTarget->GetTransform(&matrix);
+
+        AffineTransform transform(matrix);
+
         FloatRect rectToClear(rect);
+        if (!transform.preservesAxisAlignment()) {
+            COMPtr<ID2D1RectangleGeometry> rectangle;
+            HRESULT hr = GraphicsContext::systemFactory()->CreateRectangleGeometry(rectToClear, &rectangle);
+            RELEASE_ASSERT(SUCCEEDED(hr));
+            renderTarget->FillGeometry(rectangle.get(), platformContext.brushWithColor(D2D1::ColorF(0, 0, 0, 0)).get());
+            return;
+        }
+
+        rectToClear = transform.mapRect(rectToClear);
 
         if (rectToClear.contains(renderTargetRect)) {
             platformContext.setTags(1, __LINE__);
             renderTarget->Clear(D2D1::ColorF(0, 0, 0, 0));
             return;
         }
-
-        if (!rectToClear.intersects(renderTargetRect))
-            return;
-
-        rectToClear.intersect(renderTargetRect);
 
         platformContext.setTags(1, __LINE__);
         renderTarget->PushAxisAlignedClip(rectToClear, D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);

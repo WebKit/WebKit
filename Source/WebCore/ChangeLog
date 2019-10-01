@@ -1,3 +1,23 @@
+2019-10-01  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] Correct additional canvas test failures
+        https://bugs.webkit.org/show_bug.cgi?id=202388
+
+        Reviewed by Fujii Hironori.
+
+        This patch corrects a handful of errors in Direct2D's drawing code.
+
+        * platform/graphics/win/Direct2DOperations.cpp:
+        (WebCore::Direct2D::clearRect): Use the transformed dimensions of
+        rects to determine whether they intersect with the render target.
+        * platform/graphics/win/ImageBufferDataDirect2D.cpp:
+        (WebCore::ImageBufferData::copyRectFromData const):
+        (WebCore::ImageBufferData::loadDataToBitmapIfNeeded): It is not
+        necessary (or correct) to 'endDraw' when loading image data to the
+        Bitmap target.
+        * platform/graphics/win/PathDirect2D.cpp:
+        (WebCore::Path::strokeBoundingRect const): Provide an implementation.
+
 2019-10-01  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards successful CMake build on Mac

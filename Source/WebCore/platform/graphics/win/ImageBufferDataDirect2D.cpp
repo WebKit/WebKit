@@ -169,8 +169,11 @@ bool ImageBufferData::copyRectFromData(const IntRect& rect, RefPtr<Uint8ClampedA
     IntRect scaledRect = rect;
     scaledRect.scale(scaleFactor);
 
-    if (!IntRect(IntPoint(), backingStoreSize).contains(scaledRect))
-        return false;
+    if (!IntRect(IntPoint(), backingStoreSize).contains(scaledRect)) {
+        // Requested rect is outside the buffer. Return zero-filled buffer.
+        result->zeroFill();
+        return true;
+    }
 
     return copyRectFromSourceToDest(scaledRect, backingStoreSize, data.data(), rect.size(), result->data(), IntPoint());
 }
@@ -453,20 +456,10 @@ void ImageBufferData::loadDataToBitmapIfNeeded()
     else
         inPlaceSwizzle<AlphaPremultiplication::Premultiplied>(data.data(), data.size()); // PRGBA -> PBGRA
 
-    // Copy the bits from current renderTarget to the output target.
-    // We cannot access the data backing an IWICBitmap or ID2D1Bitmap while an active draw session is open.
-    context->endDraw();
-
-    COMPtr<ID2D1BitmapRenderTarget> bitmapRenderTarget;
-    HRESULT hr = platformContext->renderTarget()->QueryInterface(&bitmapRenderTarget);
-    ASSERT(SUCCEEDED(hr));
-
     auto bytesPerRowInData = backingStoreSize.width() * 4;
 
-    hr = bitmap->CopyFromMemory(nullptr, data.data(), bytesPerRowInData);
+    HRESULT hr = bitmap->CopyFromMemory(nullptr, data.data(), bytesPerRowInData);
     ASSERT(SUCCEEDED(hr));
-
-    context->beginDraw();
 
     bitmapBufferSync = BitmapBufferSync::InSync;
 }
