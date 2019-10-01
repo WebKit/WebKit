@@ -669,6 +669,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
         networkLoadMetrics.markComplete();
         networkLoadMetrics.protocol = String(m.networkProtocolName);
 
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (networkDataTask->shouldCaptureExtraNetworkLoadMetrics()) {
             networkLoadMetrics.priority = toNetworkLoadPriority(task.priority);
 
@@ -704,6 +705,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
             networkLoadMetrics.responseBodyBytesReceived = responseBodyBytesReceived;
             networkLoadMetrics.responseBodyDecodedSize = responseBodyDecodedSize;
         }
+        ALLOW_DEPRECATED_DECLARATIONS_END
     }
 }
 

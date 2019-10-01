@@ -1,3 +1,12 @@
+2019-10-01  Alex Christensen  <achristensen@webkit.org>
+
+        Fix an internal build.
+
+        Ignore some deprecation warnings.  We'll adopt new SPI soon.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didFinishCollectingMetrics:]):
+
 2019-10-01  youenn fablet  <youenn@apple.com>
 
         Remove races condition when validating capture sandbox extension revocation
