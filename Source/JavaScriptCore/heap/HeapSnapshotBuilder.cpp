@@ -150,6 +150,8 @@ void HeapSnapshotBuilder::setOpaqueRootReachabilityReasonForCell(JSCell* cell, c
     if (!reason || !*reason || m_snapshotType != SnapshotType::GCDebuggingSnapshot)
         return;
 
+    std::lock_guard<Lock> lock(m_buildingEdgeMutex);
+
     m_rootData.ensure(cell, [] () -> RootData {
         return { };
     }).iterator->value.reachabilityFromOpaqueRootReasons = reason;

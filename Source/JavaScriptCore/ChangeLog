@@ -1,3 +1,17 @@
+2019-09-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] HeapSnapshotBuilder m_rootData should be protected with a lock too
+        https://bugs.webkit.org/show_bug.cgi?id=202389
+        <rdar://problem/50717564>
+
+        Reviewed by Mark Lam.
+
+        While we are protecting HeapSnapshotBuilder::m_edges with a lock, we are not protecting m_rootData, which is also concurrently modified.
+        This patch protects it.
+
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::setOpaqueRootReachabilityReasonForCell):
+
 2019-09-30  Saam Barati  <sbarati@apple.com>
 
         Inline caching is wrong for custom accessors and custom values
