@@ -1,3 +1,24 @@
+2019-10-01  Saam Barati  <sbarati@apple.com>
+
+        ObjectAllocationSinkingPhase shouldn't insert hints for allocations which are no longer valid
+        https://bugs.webkit.org/show_bug.cgi?id=199361
+        <rdar://problem/52454940>
+
+        Reviewed by Yusuke Suzuki.
+
+        In a prior fix to the object allocation sinking phase, I added code where we
+        made sure to insert PutHints over Phis for fields of an object at control flow
+        merge points. However, that code didn't consider that the base of the PutHint
+        may no longer be a valid heap location. This could cause us to emit invalid
+        SSA code by referring to a node which does not dominate the PutHint location.
+        This patch fixes the bug to only emit the PutHints when valid.
+
+        This patch also makes it so that DFGValidate actually validates that the graph
+        is in valid SSA form. E.g, any use of a node N must be dominated by N.
+
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGValidate.cpp:
+
 2019-10-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Place VM* in TLS

@@ -1,3 +1,20 @@
+2019-10-01  Saam Barati  <sbarati@apple.com>
+
+        ObjectAllocationSinkingPhase shouldn't insert hints for allocations which are no longer valid
+        https://bugs.webkit.org/show_bug.cgi?id=199361
+        <rdar://problem/52454940>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/allocation-sinking-hints-are-valid-ssa-2.js: Added.
+        (main.fn):
+        (main.executor):
+        (main):
+        * stress/allocation-sinking-hints-are-valid-ssa.js: Added.
+        (main.fn):
+        (main.executor):
+        (main):
+
 2019-10-01  Keith Miller  <keith_miller@apple.com>
 
         skip test until we figure out why it's timing out
