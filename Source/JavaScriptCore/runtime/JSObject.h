@@ -727,6 +727,9 @@ public:
     // This is used by JSLexicalEnvironment.
     bool putOwnDataProperty(VM&, PropertyName, JSValue, PutPropertySlot&);
     bool putOwnDataPropertyMayBeIndex(ExecState*, PropertyName, JSValue, PutPropertySlot&);
+private:
+    void validatePutOwnDataProperty(VM&, PropertyName, JSValue);
+public:
 
     // Fast access to known property offsets.
     ALWAYS_INLINE JSValue getDirect(PropertyOffset offset) const { return locationForOffset(offset)->get(); }
@@ -1488,30 +1491,6 @@ inline JSValue JSObject::get(ExecState* exec, unsigned propertyName) const
         RELEASE_AND_RETURN(scope, slot.getValue(exec, propertyName));
 
     return jsUndefined();
-}
-
-inline bool JSObject::putOwnDataProperty(VM& vm, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
-{
-    ASSERT(value);
-    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
-    ASSERT(!structure(vm)->hasGetterSetterProperties());
-    ASSERT(!structure(vm)->hasCustomGetterSetterProperties());
-
-    return putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot);
-}
-
-inline bool JSObject::putOwnDataPropertyMayBeIndex(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
-{
-    VM& vm = exec->vm();
-    ASSERT(value);
-    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
-    ASSERT(!structure(vm)->hasGetterSetterProperties());
-    ASSERT(!structure(vm)->hasCustomGetterSetterProperties());
-
-    if (Optional<uint32_t> index = parseIndex(propertyName))
-        return putDirectIndex(exec, index.value(), value, 0, PutDirectIndexLikePutDirect);
-
-    return putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot);
 }
 
 inline bool JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)

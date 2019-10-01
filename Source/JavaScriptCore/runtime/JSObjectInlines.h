@@ -462,5 +462,40 @@ inline void JSObject::setIndexQuicklyForTypedArray(unsigned i, JSValue value)
     }
 }
     
+inline void JSObject::validatePutOwnDataProperty(VM& vm, PropertyName propertyName, JSValue value)
+{
+#if !ASSERT_DISABLED
+    ASSERT(value);
+    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
+    unsigned attributes;
+    PropertyOffset offset = structure(vm)->get(vm, propertyName, attributes);
+    if (isValidOffset(offset))
+        ASSERT(!(attributes & (PropertyAttribute::Accessor | PropertyAttribute::CustomAccessor | PropertyAttribute::ReadOnly)));
+    else if (TypeInfo::hasStaticPropertyTable(inlineTypeFlags())) {
+        if (auto entry = findPropertyHashEntry(vm, propertyName))
+            ASSERT(!(entry->value->attributes() & (PropertyAttribute::Accessor | PropertyAttribute::CustomAccessor | PropertyAttribute::ReadOnly)));
+    }
+#else
+    UNUSED_PARAM(vm);
+    UNUSED_PARAM(propertyName);
+    UNUSED_PARAM(value);
+#endif
+}
+
+inline bool JSObject::putOwnDataProperty(VM& vm, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+{
+    validatePutOwnDataProperty(vm, propertyName, value);
+    return putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot);
+}
+
+inline bool JSObject::putOwnDataPropertyMayBeIndex(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+{
+    VM& vm = exec->vm();
+    validatePutOwnDataProperty(vm, propertyName, value);
+    if (Optional<uint32_t> index = parseIndex(propertyName))
+        return putDirectIndex(exec, index.value(), value, 0, PutDirectIndexLikePutDirect);
+
+    return putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot);
+}
 
 } // namespace JSC

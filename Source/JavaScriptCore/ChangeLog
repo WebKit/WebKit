@@ -1,3 +1,23 @@
+2019-09-30  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Make assertion in JSObject::putOwnDataProperty more precise
+        https://bugs.webkit.org/show_bug.cgi?id=202379
+        <rdar://problem/49515980>
+
+        Reviewed by Yusuke Suzuki.
+
+        Currently, we assert that the structure has no accessors/custom accessors, but that assertion is
+        too conservative. All we need to prove is that the property being inserted either does not exist
+        in the target object or is neither an accessor nor read-only.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::putOwnDataProperty): Deleted.
+        (JSC::JSObject::putOwnDataPropertyMayBeIndex): Deleted.
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::validatePutOwnDataProperty):
+        (JSC::JSObject::putOwnDataProperty):
+        (JSC::JSObject::putOwnDataPropertyMayBeIndex):
+
 2019-09-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] HeapSnapshotBuilder m_rootData should be protected with a lock too
