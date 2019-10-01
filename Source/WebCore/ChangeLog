@@ -1,3 +1,16 @@
+2019-10-01  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal build after r250549
+        https://bugs.webkit.org/show_bug.cgi?id=202390
+
+        There is an internal #define confirm on some systems, so rename DOMWindow::confirm to DOMWindow::confirmForBindings.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::confirmForBindings):
+        (WebCore::DOMWindow::confirm): Deleted.
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
 2019-10-01  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed attempt to fix Windows build after r250527.

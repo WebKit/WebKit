@@ -86,7 +86,7 @@ typedef USVString CSSOMString;
     // User prompts.
     void alert();
     void alert(DOMString message);
-    boolean confirm(optional DOMString message = "");
+    [ImplementedAs=confirmForBindings]boolean confirm(optional DOMString message = "");
     DOMString? prompt(optional DOMString message = "", optional DOMString defaultValue = "");
     void print();
 

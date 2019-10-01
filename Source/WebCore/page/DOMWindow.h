@@ -184,7 +184,7 @@ public:
     void prewarmLocalStorageIfNecessary();
 
     void alert(const String& message = emptyString());
-    bool confirm(const String& message);
+    bool confirmForBindings(const String& message);
     String prompt(const String& message, const String& defaultValue);
 
     bool find(const String&, bool caseSensitive, bool backwards, bool wrap, bool wholeWord, bool searchInFrames, bool showDialog) const;
