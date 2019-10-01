@@ -1,3 +1,52 @@
+2019-10-01  Tim Horton  <timothy_horton@apple.com>
+
+        Clean up some includes to make the build a bit faster
+        https://bugs.webkit.org/show_bug.cgi?id=202417
+
+        Reviewed by Jer Noble.
+
+        No new tests, just reorganizing.
+
+        Apply some profile-guided optimizations to our headers.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        * WebCorePrefix.h:
+        Add HashMap, which ends up included in all source files.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::HTMLImageElement):
+        (WebCore::HTMLImageElement::selectImageSource):
+        (WebCore::HTMLImageElement::didAttachRenderers):
+        (WebCore::HTMLImageElement::insertedIntoAncestor):
+        (WebCore::HTMLImageElement::width):
+        (WebCore::HTMLImageElement::height):
+        (WebCore::HTMLImageElement::naturalWidth const):
+        (WebCore::HTMLImageElement::naturalHeight const):
+        (WebCore::HTMLImageElement::complete const):
+        (WebCore::HTMLImageElement::decode):
+        (WebCore::HTMLImageElement::didMoveToNewDocument):
+        (WebCore::HTMLImageElement::cachedImage const):
+        (WebCore::HTMLImageElement::setLoadManually):
+        (WebCore::HTMLImageElement::hasPendingActivity const):
+        (WebCore::HTMLImageElement::pendingDecodePromisesCountForTesting const):
+        * html/HTMLImageElement.h:
+        (WebCore::HTMLImageElement::cachedImage const): Deleted.
+        (WebCore::HTMLImageElement::setLoadManually): Deleted.
+        (WebCore::HTMLImageElement::hasPendingActivity const): Deleted.
+        (WebCore::HTMLImageElement::pendingDecodePromisesCountForTesting const): Deleted.
+        HTMLImageLoader brings in JSDOMPromiseDeferred, which is known to be horribly expensive.
+        Out-of-line m_imageLoader.
+
+        * platform/graphics/GraphicsLayer.h:
+        Swap Animation for TimingFunction, which is much smaller.
+
+        * platform/graphics/MediaPlayer.h:
+        InbandTextTrackPrivate brings in SerializedPlatformRepresentation.h,
+        which is very expensive. MediaPlayer.h is included in many places.
+        Break the link.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+
 2019-10-01  youenn fablet  <youenn@apple.com>
 
         RTCDataChannel should not prevent entering page cache except if in open state

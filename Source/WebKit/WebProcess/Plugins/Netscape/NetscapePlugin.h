@@ -42,6 +42,7 @@ class MachSendRight;
 }
 
 namespace WebCore {
+class Element;
 class HTTPHeaderMap;
 class ProtectionSpace;
 class SharedBuffer;

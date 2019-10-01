@@ -28,13 +28,15 @@
 #include "GraphicsLayer.h"
 #include "GraphicsTypes.h"
 #include "HTMLElement.h"
-#include "HTMLImageLoader.h"
 
 namespace WebCore {
 
+class CachedImage;
+class DeferredPromise;
 class EditableImageReference;
 class HTMLAttachmentElement;
 class HTMLFormElement;
+class HTMLImageLoader;
 class HTMLMapElement;
 
 struct ImageCandidate;
@@ -65,9 +67,9 @@ public:
 
     CompositeOperator compositeOperator() const { return m_compositeOperator; }
 
-    CachedImage* cachedImage() const { return m_imageLoader.image(); }
+    WEBCORE_EXPORT CachedImage* cachedImage() const;
 
-    void setLoadManually(bool loadManually) { m_imageLoader.setLoadManually(loadManually); }
+    void setLoadManually(bool);
 
     bool matchesUsemap(const AtomStringImpl&) const;
     HTMLMapElement* associatedMapElement() const;
@@ -103,8 +105,8 @@ public:
     const String& attachmentIdentifier() const;
 #endif
 
-    bool hasPendingActivity() const { return m_imageLoader.hasPendingActivity(); }
-    size_t pendingDecodePromisesCountForTesting() const { return m_imageLoader.pendingDecodePromisesCountForTesting(); }
+    bool hasPendingActivity() const;
+    WEBCORE_EXPORT size_t pendingDecodePromisesCountForTesting() const;
 
     bool canContainRangeEndPoint() const override { return false; }
 
@@ -180,7 +182,7 @@ private:
     bool childShouldCreateRenderer(const Node&) const override;
 #endif
 
-    HTMLImageLoader m_imageLoader;
+    std::unique_ptr<HTMLImageLoader> m_imageLoader;
     WeakPtr<HTMLFormElement> m_form;
     WeakPtr<HTMLFormElement> m_formSetByParser;
 

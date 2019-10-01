@@ -37,6 +37,7 @@
 #include "HTMLAttachmentElement.h"
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
+#include "HTMLImageLoader.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLPictureElement.h"
 #include "HTMLMapElement.h"
@@ -70,7 +71,7 @@ using namespace HTMLNames;
 
 HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
     : HTMLElement(tagName, document)
-    , m_imageLoader(*this)
+    , m_imageLoader(WTF::makeUnique<HTMLImageLoader>(*this))
     , m_form(nullptr)
     , m_formSetByParser(makeWeakPtr(form))
     , m_compositeOperator(CompositeSourceOver)
@@ -213,7 +214,7 @@ void HTMLImageElement::selectImageSource()
         candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), attributeWithoutSynchronization(srcAttr), attributeWithoutSynchronization(srcsetAttr), sourceSize);
     }
     setBestFitURLAndDPRFromImageCandidate(candidate);
-    m_imageLoader.updateFromElementIgnoringPreviousError();
+    m_imageLoader->updateFromElementIgnoringPreviousError();
 }
 
 void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -313,7 +314,7 @@ void HTMLImageElement::didAttachRenderers()
 {
     if (!is<RenderImage>(renderer()))
         return;
-    if (m_imageLoader.hasPendingBeforeLoadEvent())
+    if (m_imageLoader->hasPendingBeforeLoadEvent())
         return;
 
 #if ENABLE(SERVICE_CONTROLS)
@@ -324,11 +325,11 @@ void HTMLImageElement::didAttachRenderers()
     RenderImageResource& renderImageResource = renderImage.imageResource();
     if (renderImageResource.cachedImage())
         return;
-    renderImageResource.setCachedImage(m_imageLoader.image());
+    renderImageResource.setCachedImage(m_imageLoader->image());
 
     // If we have no image at all because we have no src attribute, set
     // image height and width for the alt text instead.
-    if (!m_imageLoader.image() && !renderImageResource.cachedImage())
+    if (!m_imageLoader->image() && !renderImageResource.cachedImage())
         renderImage.setImageSizeForAltText();
 }
 
@@ -368,8 +369,8 @@ Node::InsertedIntoAncestorResult HTMLImageElement::insertedIntoAncestor(Insertio
 
     // If we have been inserted from a renderer-less document,
     // our loader may have not fetched the image, so do it now.
-    if (insertionType.connectedToDocument && !m_imageLoader.image())
-        m_imageLoader.updateFromElement();
+    if (insertionType.connectedToDocument && !m_imageLoader->image())
+        m_imageLoader->updateFromElement();
 
     return insertNotificationRequest;
 }
@@ -473,8 +474,8 @@ unsigned HTMLImageElement::width(bool ignorePendingStylesheets)
             return optionalWidth.value();
 
         // if the image is available, use its width
-        if (m_imageLoader.image())
-            return m_imageLoader.image()->imageSizeForRenderer(renderer(), 1.0f).width().toUnsigned();
+        if (m_imageLoader->image())
+            return m_imageLoader->image()->imageSizeForRenderer(renderer(), 1.0f).width().toUnsigned();
     }
 
     if (ignorePendingStylesheets)
@@ -498,8 +499,8 @@ unsigned HTMLImageElement::height(bool ignorePendingStylesheets)
             return optionalHeight.value();
 
         // if the image is available, use its height
-        if (m_imageLoader.image())
-            return m_imageLoader.image()->imageSizeForRenderer(renderer(), 1.0f).height().toUnsigned();
+        if (m_imageLoader->image())
+            return m_imageLoader->image()->imageSizeForRenderer(renderer(), 1.0f).height().toUnsigned();
     }
 
     if (ignorePendingStylesheets)
@@ -516,18 +517,18 @@ unsigned HTMLImageElement::height(bool ignorePendingStylesheets)
 
 int HTMLImageElement::naturalWidth() const
 {
-    if (!m_imageLoader.image())
+    if (!m_imageLoader->image())
         return 0;
 
-    return m_imageLoader.image()->imageSizeForRenderer(renderer(), 1.0f).width();
+    return m_imageLoader->image()->imageSizeForRenderer(renderer(), 1.0f).width();
 }
 
 int HTMLImageElement::naturalHeight() const
 {
-    if (!m_imageLoader.image())
+    if (!m_imageLoader->image())
         return 0;
 
-    return m_imageLoader.image()->imageSizeForRenderer(renderer(), 1.0f).height();
+    return m_imageLoader->image()->imageSizeForRenderer(renderer(), 1.0f).height();
 }
 
 bool HTMLImageElement::isURLAttribute(const Attribute& attribute) const
@@ -635,7 +636,7 @@ int HTMLImageElement::y() const
 
 bool HTMLImageElement::complete() const
 {
-    return m_imageLoader.imageComplete();
+    return m_imageLoader->imageComplete();
 }
 
 DecodingMode HTMLImageElement::decodingMode() const
@@ -650,7 +651,7 @@ DecodingMode HTMLImageElement::decodingMode() const
     
 void HTMLImageElement::decode(Ref<DeferredPromise>&& promise)
 {
-    return m_imageLoader.decode(WTFMove(promise));
+    return m_imageLoader->decode(WTFMove(promise));
 }
 
 void HTMLImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
@@ -664,7 +665,7 @@ void HTMLImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 
 void HTMLImageElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
-    m_imageLoader.elementDidMoveToNewDocument();
+    m_imageLoader->elementDidMoveToNewDocument();
     HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
@@ -838,6 +839,26 @@ void HTMLImageElement::defaultEventHandler(Event& event)
         return;
     }
     HTMLElement::defaultEventHandler(event);
+}
+
+CachedImage* HTMLImageElement::cachedImage() const
+{
+    return m_imageLoader->image();
+}
+
+void HTMLImageElement::setLoadManually(bool loadManually)
+{
+    m_imageLoader->setLoadManually(loadManually);
+}
+
+bool HTMLImageElement::hasPendingActivity() const
+{
+    return m_imageLoader->hasPendingActivity();
+}
+
+size_t HTMLImageElement::pendingDecodePromisesCountForTesting() const
+{
+    return m_imageLoader->pendingDecodePromisesCountForTesting();
 }
 
 }

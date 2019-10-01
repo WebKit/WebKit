@@ -29,6 +29,7 @@
 #include "DrawingArea.h"
 #include "WebInspector.h"
 #include "WebPage.h"
+#include <WebCore/Animation.h>
 #include <WebCore/Frame.h>
 #include <WebCore/InspectorController.h>
 #include <WebCore/Page.h>

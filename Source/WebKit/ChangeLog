@@ -1,3 +1,14 @@
+2019-10-01  Tim Horton  <timothy_horton@apple.com>
+
+        Clean up some includes to make the build a bit faster
+        https://bugs.webkit.org/show_bug.cgi?id=202417
+
+        Reviewed by Jer Noble.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Plugin.h:
+        Fix the build.
+
 2019-10-01  Alex Christensen  <achristensen@webkit.org>
 
         Fix GTK build after r250558

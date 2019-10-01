@@ -30,7 +30,6 @@
 #include "AudioTrackPrivate.h"
 #include "ContentType.h"
 #include "GraphicsTypes3D.h"
-#include "InbandTextTrackPrivate.h"
 #include "LayoutRect.h"
 #include "LegacyCDMSession.h"
 #include "MediaPlayerEnums.h"
@@ -64,6 +63,7 @@ class CDMInstance;
 class CachedResourceLoader;
 class GraphicsContext3D;
 class GraphicsContext;
+class InbandTextTrackPrivate;
 class LegacyCDMSessionClient;
 class MediaPlaybackTarget;
 class MediaPlayer;

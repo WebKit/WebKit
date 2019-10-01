@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "Animation.h"
 #include "GraphicsLayer.h"
 
 namespace WebCore {

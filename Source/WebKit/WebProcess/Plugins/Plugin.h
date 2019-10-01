@@ -53,6 +53,7 @@ class Decoder;
 
 namespace WebCore {
 class AffineTransform;
+class Element;
 class FloatPoint;
 class GraphicsContext;
 class IntPoint;

@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "Animation.h"
 #include "Color.h"
 #include "EventRegion.h"
 #include "FilterOperations.h"
@@ -38,6 +37,7 @@
 #include "PlatformLayer.h"
 #include "Region.h"
 #include "ScrollableArea.h"
+#include "TimingFunction.h"
 #include "TransformOperations.h"
 #include "WindRule.h"
 #include <wtf/Function.h>
@@ -53,6 +53,7 @@ class TextStream;
 
 namespace WebCore {
 
+class Animation;
 class GraphicsContext;
 class GraphicsLayerFactory;
 class Image;
