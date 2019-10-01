@@ -77,6 +77,7 @@
     "web-platform-tests/css/css-properties-values-api": "import", 
     "web-platform-tests/css/css-pseudo": "import", 
     "web-platform-tests/css/css-scoping": "import", 
+    "web-platform-tests/css/css-shadow-parts": "import", 
     "web-platform-tests/css/css-shapes": "import", 
     "web-platform-tests/css/css-shapes/test-plan/index.html": "skip", 
     "web-platform-tests/css/css-text": "import", 

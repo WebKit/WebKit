@@ -3824,3 +3824,6 @@ fast/text/design-system-ui-16.html [ ImageOnlyFailure ]
 
 webkit.org/b/196698 imported/w3c/web-platform-tests/loading/lazyload/image-loading-lazy.tentative.html
 webkit.org/b/196698 imported/w3c/web-platform-tests/loading/lazyload/iframe-loading-lazy.tentative.html
+
+# CSS Shadow Parts
+webkit.org/b/149443 imported/w3c/web-platform-tests/css/css-shadow-parts/interaction-with-placeholder.html [ ImageOnlyFailure ]

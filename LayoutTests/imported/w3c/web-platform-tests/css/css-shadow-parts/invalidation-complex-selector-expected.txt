@@ -1,0 +1,4 @@
+The following text should be green:
+
+FAIL Part in selected host changed color assert_not_equals: got disallowed value "rgb(0, 128, 0)"
+

@@ -1,0 +1,4 @@
+The following text should be green:
+
+FAIL Complex selector for host works assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+

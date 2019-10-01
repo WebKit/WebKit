@@ -1,0 +1,6 @@
+
+FAIL Access to .part returns an empty DOMTokenList. undefined is not an object (evaluating 'parts.length')
+FAIL Multiple names give a DOMTokenList with multiple entries. undefined is not an object (evaluating 'parts.length')
+FAIL DOMTokenList created by access is persisted. undefined is not an object (evaluating 'parts.length')
+FAIL Changes in DOMTokenList are refected in attribute. undefined is not an object (evaluating 'parts.length')
+

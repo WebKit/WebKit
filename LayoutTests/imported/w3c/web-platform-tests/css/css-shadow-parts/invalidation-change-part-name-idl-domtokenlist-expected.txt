@@ -1,0 +1,4 @@
+The following text should be green:
+
+FAIL Part in selected host changed color via part IDL DOMTokenList attribute. undefined is not an object (evaluating 'el.part.remove')
+

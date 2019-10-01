@@ -1,3 +1,67 @@
+2019-10-01  Antti Koivisto  <antti@apple.com>
+
+        Import WPT tests for CSS Shadow Parts
+        https://bugs.webkit.org/show_bug.cgi?id=202393
+
+        Reviewed by Antoine Quint.
+
+        From https://github.com/web-platform-tests/wpt/tree/master/css/css-shadow-parts
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-shadow-parts/META.yml: Added.
+        * web-platform-tests/css/css-shadow-parts/all-hosts-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/all-hosts.html: Added.
+        * web-platform-tests/css/css-shadow-parts/chaining-invalid-selector-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/chaining-invalid-selector.html: Added.
+        * web-platform-tests/css/css-shadow-parts/complex-matching-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/complex-matching.html: Added.
+        * web-platform-tests/css/css-shadow-parts/complex-non-matching-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/complex-non-matching.html: Added.
+        * web-platform-tests/css/css-shadow-parts/different-host-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/different-host.html: Added.
+        * web-platform-tests/css/css-shadow-parts/double-forward-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/double-forward.html: Added.
+        * web-platform-tests/css/css-shadow-parts/host-stylesheet-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/host-stylesheet.html: Added.
+        * web-platform-tests/css/css-shadow-parts/inner-host-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/inner-host.html: Added.
+        * web-platform-tests/css/css-shadow-parts/interaction-with-placeholder-expected.html: Added.
+        * web-platform-tests/css/css-shadow-parts/interaction-with-placeholder.html: Added.
+        * web-platform-tests/css/css-shadow-parts/interaction-with-pseudo-elements-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/interaction-with-pseudo-elements.html: Added.
+        * web-platform-tests/css/css-shadow-parts/invalidation-change-exportparts-forward-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/invalidation-change-exportparts-forward.html: Added.
+        * web-platform-tests/css/css-shadow-parts/invalidation-change-part-name-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/invalidation-change-part-name-forward-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/invalidation-change-part-name-forward.html: Added.
+        * web-platform-tests/css/css-shadow-parts/invalidation-change-part-name-idl-domtokenlist-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/invalidation-change-part-name-idl-domtokenlist.html: Added.
+        * web-platform-tests/css/css-shadow-parts/invalidation-change-part-name-idl-setter-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/invalidation-change-part-name-idl-setter.html: Added.
+        * web-platform-tests/css/css-shadow-parts/invalidation-change-part-name.html: Added.
+        * web-platform-tests/css/css-shadow-parts/invalidation-complex-selector-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/invalidation-complex-selector-forward-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/invalidation-complex-selector-forward.html: Added.
+        * web-platform-tests/css/css-shadow-parts/invalidation-complex-selector.html: Added.
+        * web-platform-tests/css/css-shadow-parts/multiple-parts-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/multiple-parts.html: Added.
+        * web-platform-tests/css/css-shadow-parts/part-name-idl-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/part-name-idl.html: Added.
+        * web-platform-tests/css/css-shadow-parts/precedence-part-vs-part-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/precedence-part-vs-part.html: Added.
+        * web-platform-tests/css/css-shadow-parts/simple-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/simple-forward-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/simple-forward-shorthand-expected.txt: Added.
+        * web-platform-tests/css/css-shadow-parts/simple-forward-shorthand.html: Added.
+        * web-platform-tests/css/css-shadow-parts/simple-forward.html: Added.
+        * web-platform-tests/css/css-shadow-parts/simple.html: Added.
+        * web-platform-tests/css/css-shadow-parts/support/shadow-helper.js: Added.
+        (getElementByShadowIds):
+        (ceClass.):
+        (installCustomElement):
+        * web-platform-tests/css/css-shadow-parts/support/w3c-import.log: Added.
+        * web-platform-tests/css/css-shadow-parts/w3c-import.log: Added.
+
 2019-10-01  Joonghun Park  <jh718.park@samsung.com>
 
         Make table's clientWidth/Height include its border sizes.

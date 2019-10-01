@@ -1,0 +1,4 @@
+The following text should be green: 
+
+FAIL Style from document overrides style from outer CE assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 255)"
+

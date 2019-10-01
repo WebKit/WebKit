@@ -1,0 +1,5 @@
+The following text should be green: The following text should be green: 
+
+FAIL ::part with host selector styles in first host assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL ::part with host selector styles in second host assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+
