@@ -485,11 +485,15 @@ void MediaStreamTrack::muteCapture()
 
 void MediaStreamTrack::endCapture(Document& document)
 {
+    bool didEndCapture = false;
     for (auto* captureTrack : allCaptureTracks()) {
         if (captureTrack->document() != &document)
             continue;
         captureTrack->stopTrack(MediaStreamTrack::StopMode::PostEvent);
+        didEndCapture = true;
     }
+    if (didEndCapture)
+        document.updateIsPlayingMedia();
 }
 
 void MediaStreamTrack::trackStarted(MediaStreamTrackPrivate&)

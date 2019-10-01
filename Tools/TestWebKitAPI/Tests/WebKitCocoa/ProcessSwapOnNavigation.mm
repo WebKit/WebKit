@@ -6119,6 +6119,7 @@ navigator.mediaDevices.getUserMedia({video: true});
 TEST(ProcessSwap, GetUserMediaCaptureState)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
+    processPoolConfiguration.get().pageCacheEnabled = NO;
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
