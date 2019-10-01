@@ -37,8 +37,30 @@
 static bool contextMenuRequested;
 static bool willPresentCalled;
 static bool willCommitCalled;
+static bool previewingViewControllerCalled;
+static bool previewActionItemsCalled;
 static bool didEndCalled;
-static RetainPtr<NSURL> simpleURL;
+static bool alternateURLRequested;
+static RetainPtr<NSURL> linkURL;
+
+static RetainPtr<TestContextMenuDriver> contextMenuWebViewDriver(Class delegateClass, NSString *customHTMLString = nil)
+{
+    static auto window = adoptNS([[UIWindow alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    static auto driver = adoptNS([TestContextMenuDriver new]);
+    static auto uiDelegate = adoptNS((NSObject<WKUIDelegate> *)[delegateClass new]);
+    static auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration _setClickInteractionDriverForTesting:driver.get()];
+    static auto webViewController = adoptNS([[TestWKWebViewController alloc] initWithFrame:CGRectMake(0, 0, 200, 200) configuration:configuration.get()]);
+    TestWKWebView *webView = [webViewController webView];
+    [window addSubview:webView];
+    [webView setUIDelegate:uiDelegate.get()];
+    if (!customHTMLString) {
+        linkURL = [NSURL URLWithString:@"http://127.0.0.1/"];
+        [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<a href='%@'>This is a link</a>", linkURL.get()]];
+    } else
+        [webView synchronouslyLoadHTMLString:customHTMLString];
+    return driver;
+}
 
 @interface TestContextMenuUIDelegate : NSObject <WKUIDelegate>
 @end
@@ -47,7 +69,7 @@ static RetainPtr<NSURL> simpleURL;
 
 - (void)webView:(WKWebView *)webView contextMenuConfigurationForElement:(WKContextMenuElementInfo *)elementInfo completionHandler:(void(^)(UIContextMenuConfiguration * _Nullable))completionHandler
 {
-    EXPECT_TRUE([elementInfo.linkURL.absoluteString isEqualToString:[simpleURL absoluteString]]);
+    EXPECT_TRUE([elementInfo.linkURL.absoluteString isEqualToString:[linkURL absoluteString]]);
     contextMenuRequested = true;
     UIContextMenuContentPreviewProvider previewProvider = ^UIViewController * ()
     {
@@ -77,25 +99,9 @@ static RetainPtr<NSURL> simpleURL;
 
 @end
 
-static RetainPtr<TestContextMenuDriver> contextMenuWebViewDriver()
-{
-    static auto window = adoptNS([[UIWindow alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    static auto driver = adoptNS([TestContextMenuDriver new]);
-    static auto uiDelegate = adoptNS([TestContextMenuUIDelegate new]);
-    static auto configuration = adoptNS([WKWebViewConfiguration new]);
-    [configuration _setClickInteractionDriverForTesting:(id<_UIClickInteractionDriving>)driver.get()];
-    static auto webViewController = adoptNS([[TestWKWebViewController alloc] initWithFrame:CGRectMake(0, 0, 200, 200) configuration:configuration.get()]);
-    TestWKWebView *webView = [webViewController webView];
-    [window addSubview:webView];
-    [webView setUIDelegate:uiDelegate.get()];
-    simpleURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
-    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<a href='%@'>This is a link</a>", simpleURL.get()]];
-    return driver;
-}
-
 TEST(WebKit, ContextMenuClick)
 {
-    auto driver = contextMenuWebViewDriver();
+    auto driver = contextMenuWebViewDriver([TestContextMenuUIDelegate class]);
     [driver begin:^(BOOL result) {
         EXPECT_TRUE(result);
         [driver clickDown];
@@ -110,7 +116,7 @@ TEST(WebKit, ContextMenuClick)
 
 TEST(WebKit, ContextMenuEnd)
 {
-    auto driver = contextMenuWebViewDriver();
+    auto driver = contextMenuWebViewDriver([TestContextMenuUIDelegate class]);
     [driver begin:^(BOOL result) {
         EXPECT_TRUE(result);
         [driver end];
