@@ -918,7 +918,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
 
     // FIXME: This is temporary for <rdar://problem/55790994>.
 #if PLATFORM(IOS) && !PLATFORM(IOSMAC)
-    if (deviceHasIPadCapability() && shouldSendXTempTabletHeader(type, frame, request.resourceRequest().url()))
+    if (deviceHasIPadCapability() && frame() && shouldSendXTempTabletHeader(type, *frame(), request.resourceRequest().url()))
         request.resourceRequest().setHTTPHeaderField(HTTPHeaderName::XTempTablet, "1"_s);
 #endif
 
