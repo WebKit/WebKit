@@ -92,7 +92,7 @@ Copyright (C) 2019 Apple Inc. All rights reserved.
   --formLabelPadding: 14px;
   --middleZIndex: 50;
   --topZIndex: 100;
-  --boldInverseColor: var(--black);
+  --inverseColor: var(--black);
 }
 
 @media screen and (min-width: 600px) {
@@ -124,7 +124,7 @@ Copyright (C) 2019 Apple Inc. All rights reserved.
     --borderColorInlineElement: var(--greyDarker);
     --borderColorSection: var(--blackDark);
     --borderColorHard: var(--blackDarker);
-    --boldInverseColor: var(--white);
+    --inverseColor: var(--white);
   }
 }
 
@@ -2268,6 +2268,10 @@ a.disabled {
   align-items: center;
 }
 
+select, input {
+  font-weight: calc(2.5 * var(--fontWeight));
+}
+
 .row .input {
   margin: 0;
   margin-right: var(--colPaddingSize);
@@ -2276,12 +2280,7 @@ a.disabled {
 .input>label {
   margin: 0;
   margin-left: var(--formLabelPadding);
-  color: var(--greyDarker);
-}
-@media (prefers-color-scheme: dark) {
-  .input>label {
-    color: var(--grey);
-  }
+  font-color: var(--inverseColor);
 }
 
 .input>label.switch {
@@ -2333,7 +2332,7 @@ a.disabled {
   padding-right: var(--formLabelPadding);
   text-align: left;
   border-radius: 4px;
-  border: 1px solid var(--grey);
+  border: 1px solid var(--greyDarker);
   background: none;
   vertical-align: top;
 }
@@ -2354,7 +2353,7 @@ a.disabled {
   display: block;
   position: absolute;
   top: calc((var(--tinySize) + 4px) / 2);
-  color: var(--greyDarker);
+  color: var(--inverseColor);
   transition-timing-function: ease-in;
   transition-duration: .125s;
   font-size: var(--smallSize);

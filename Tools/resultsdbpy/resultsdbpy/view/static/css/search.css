@@ -28,7 +28,7 @@
     position: absolute;
     -webkit-backdrop-filter: blur(5px) brightness(88%);
     backdrop-filter: blur(5px) brightness(88%);
-    color: var(--boldInverseColor);
+    color: var(--inverseColor);
     border: 1px solid #ccc;
     border-radius: 5px;
     margin: 5px 0 0 0;

@@ -794,7 +794,7 @@ function LegendLabel(eventStream, filterExpectedText, filterUnexpectedText) {
         }
     });
     eventStream.action((willFilterExpected) => ref.setState(willFilterExpected));
-    return `<div class="label" ref="${ref}"></div>`;
+    return `<div class="label" style="font-size: var(--smallSize)" ref="${ref}"></div>`;
 } 
 
 function Legend(callback=null, plural=false) {
@@ -863,7 +863,7 @@ function Legend(callback=null, plural=false) {
         });
 
         result += `<div class="input">
-            <label style="font-size: var(--tinySize); color: var(--boldInverseColor)">Filter expected results</label>
+            <label>Filter expected results</label>
             <label class="switch">
                 <input type="checkbox"${willFilterExpected ? ' checked': ''} ref="${swtch}">
                 <span class="slider"></span>

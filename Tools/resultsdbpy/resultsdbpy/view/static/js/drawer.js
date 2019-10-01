@@ -222,8 +222,8 @@ function LimitSlider(callback, max = 10000, defaultValue = 1000) {
         onStateUpdate: (element, state) => {element.value = state;}
     });
     return `<div class="input">
-            <label style="color:var(--boldInverseColor)">Limit:</label>
-            <input type="range" min="0" max="${max}" ref="${sliderRef}" style="background:var(--boldInverseColor)"></input>
+            <label>Limit:</label>
+            <input type="range" min="0" max="${max}" ref="${sliderRef}" style="background:var(--inverseColor)"></input>
             <input type="number" min="1" ref="${numberRef}" pattern="^[0-9]"></input>
         </div>`
 }

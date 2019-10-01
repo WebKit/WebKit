@@ -1,3 +1,20 @@
+2019-10-01  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Standardize styles in the drawer
+        https://bugs.webkit.org/show_bug.cgi?id=202428
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/static/css/search.css: Rename boldInverseColor.
+        * resultsdbpy/resultsdbpy/view/static/css/tooltip.css: Ditto.
+        * resultsdbpy/resultsdbpy/view/static/js/drawer.js: Move style specifications into webkit.css.
+        * resultsdbpy/resultsdbpy/view/static/js/timeline.js: Ditto.
+        * resultsdbpy/resultsdbpy/view/static/library/css/webkit.css:
+        (.input>label): Use the boldInverseColor instead of grey.
+        (.input>input[type="text"][required], .input>input[type="number"][required],): Darken the border,
+        decrease the font weight.
+        (.input>input[type="text"][required]~label, .input>input[type="number"][required]~label,): Use the inverseColor instead of grey.
+
 2019-10-01  Antti Koivisto  <antti@apple.com>
 
         [CSS Shadow Parts] Parse 'part' attribute
