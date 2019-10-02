@@ -454,8 +454,13 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
                 callback(error);
                 return;
             }
-
             callback();
+
+            // Update validity of each property for rules that don't match the selected DOM node.
+            // These rules don't get updated by CSSAgent.getMatchedStylesForNode.
+            if (style.ownerRule && !style.ownerRule.matchedSelectorIndices.length)
+                this._parseStyleDeclarationPayload(stylePayload, this._node, false, null, style.type, style.ownerRule, false);
+
             this.refresh();
         };
 
@@ -548,7 +553,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         return new WI.CSSProperty(index, text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange);
     }
 
-    _parseStyleDeclarationPayload(payload, node, inherited, pseudoId, type, rule)
+    _parseStyleDeclarationPayload(payload, node, inherited, pseudoId, type, rule, matchesNode = true)
     {
         if (!payload)
             return null;
@@ -564,24 +569,21 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             mapKey += ":" + node.id + ":attribute";
 
         let style = rule ? rule.style : null;
+        console.assert(matchesNode || style);
 
-        let existingStyles = this._stylesMap.get(mapKey);
-        if (existingStyles && !style) {
-            for (let existingStyle of existingStyles) {
-                if (existingStyle.node === node && existingStyle.inherited === inherited) {
-                    style = existingStyle;
-                    break;
+        if (matchesNode) {
+            let existingStyles = this._stylesMap.get(mapKey);
+            if (existingStyles && !style) {
+                for (let existingStyle of existingStyles) {
+                    if (existingStyle.node === node && existingStyle.inherited === inherited) {
+                        style = existingStyle;
+                        break;
+                    }
                 }
             }
-        }
 
-        if (style)
-            this._stylesMap.add(mapKey, style);
-
-        var shorthands = {};
-        for (var i = 0; payload.shorthandEntries && i < payload.shorthandEntries.length; ++i) {
-            var shorthand = payload.shorthandEntries[i];
-            shorthands[shorthand.name] = shorthand.value;
+            if (style)
+                this._stylesMap.add(mapKey, style);
         }
 
         var inheritedPropertyCount = 0;
@@ -604,6 +606,9 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             style.update(text, properties, styleSheetTextRange);
             return style;
         }
+
+        if (!matchesNode)
+            return null;
 
         var styleSheet = id ? WI.cssManager.styleSheetForIdentifier(id.styleSheetId) : null;
         if (styleSheet) {

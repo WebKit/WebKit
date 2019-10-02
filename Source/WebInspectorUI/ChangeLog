@@ -1,3 +1,24 @@
+2019-10-02  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: for rules that don't match selected node, property values always show as invalid
+        https://bugs.webkit.org/show_bug.cgi?id=201571
+
+        Reviewed by Matt Baker.
+
+        The gist of the bug:
+        - WI.CSSProperty is instantiated with `valid` false.
+        - CSSAgent.getMatchedStylesForNode never updates WI.CSSProperty instances because
+          the edited style does not in fact match the selected DOM node. A valid CSS property
+          is shown as invalid.
+
+        To resolve this, WI.CSSProperty instances are now updated after editing
+        in the callback of `CSSAgent.setStyleText`.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles.prototype.changeStyleText):
+        (WI.DOMNodeStyles.prototype._parseStyleDeclarationPayload):
+        Don't store `style` in `this._stylesMap` of WI.DOMNodeStyles when the style doesn't match the selected node.
+
 2019-10-02  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r250149): changing CSS via the Styles details sidebar panel doesn't update the associated resource
