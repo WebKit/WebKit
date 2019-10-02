@@ -243,10 +243,10 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
             // using the procedures defined for converting an ECMAScript value to an IDL value [WEBIDL].
             // If property values is a single DOMString, replace property values with a sequence of DOMStrings with the original value of property
             // Values as the only element.
-            if (rawValue.isString())
-                propertyValues = { rawValue.toWTFString(&state) };
-            else if (rawValue.isObject())
+            if (rawValue.isObject())
                 propertyValues = convert<IDLSequence<IDLDOMString>>(state, rawValue);
+            else
+                propertyValues = { rawValue.toWTFString(&state) };
         } else {
             // Otherwise,
             // Let property values be the result of converting raw value to a DOMString using the procedure for converting an ECMAScript value to a DOMString.

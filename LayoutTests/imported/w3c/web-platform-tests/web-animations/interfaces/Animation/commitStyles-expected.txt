@@ -1,32 +1,32 @@
 
-FAIL Commits styles animation.commitStyles is not a function. (In 'animation.commitStyles()', 'animation.commitStyles' is undefined)
-FAIL Commits styles for an animation that has been removed promise_test: Unhandled rejection with value: object "TypeError: animA.commitStyles is not a function. (In 'animA.commitStyles()', 'animA.commitStyles' is undefined)"
-FAIL Commits shorthand styles animation.commitStyles is not a function. (In 'animation.commitStyles()', 'animation.commitStyles' is undefined)
-FAIL Commits logical properties animation.commitStyles is not a function. (In 'animation.commitStyles()', 'animation.commitStyles' is undefined)
-FAIL Commits values calculated mid-interval animation.commitStyles is not a function. (In 'animation.commitStyles()', 'animation.commitStyles' is undefined)
-FAIL Commits variables as their computed values animation.commitStyles is not a function. (In 'animation.commitStyles()', 'animation.commitStyles' is undefined)
-FAIL Commits em units as pixel values animation.commitStyles is not a function. (In 'animation.commitStyles()', 'animation.commitStyles' is undefined)
-FAIL Commits the intermediate value of an animation in the middle of stack promise_test: Unhandled rejection with value: object "TypeError: animA.persist is not a function. (In 'animA.persist()', 'animA.persist' is undefined)"
-FAIL Triggers mutation observers when updating style promise_test: Unhandled rejection with value: object "TypeError: animation.commitStyles is not a function. (In 'animation.commitStyles()', 'animation.commitStyles' is undefined)"
-FAIL Does NOT trigger mutation observers when the change to style is redundant promise_test: Unhandled rejection with value: object "TypeError: animation.commitStyles is not a function. (In 'animation.commitStyles()', 'animation.commitStyles' is undefined)"
+FAIL Commits styles assert_approx_equals: expected 0.2 +/- 0.0001 but got 0.10000000149011612
+FAIL Commits styles for an animation that has been removed assert_approx_equals: expected 0.2 +/- 0.0001 but got 0.10000000149011612
+FAIL Commits shorthand styles assert_equals: expected "20px" but got "10px"
+FAIL Commits logical properties assert_equals: expected "20px" but got "10px"
+FAIL Commits values calculated mid-interval assert_approx_equals: expected 0.45 +/- 0.0001 but got 1
+FAIL Commits variables as their computed values assert_approx_equals: expected 0.5 +/- 0.0001 but got 1
+FAIL Commits em units as pixel values assert_approx_equals: expected 100 +/- 0.0001 but got 784
+FAIL Commits the intermediate value of an animation in the middle of stack assert_approx_equals: expected 0.4 +/- 0.0001 but got 0.10000000149011612
+FAIL Triggers mutation observers when updating style assert_equals: Should have one mutation record expected 1 but got 0
+PASS Does NOT trigger mutation observers when the change to style is redundant 
 FAIL Throws if the target element is a pseudo element assert_throws: function "() => {
     animation.commitStyles();
-  }" threw object "TypeError: animation.commitStyles is not a function. (In 'animation.commitStyles()', 'animation.commitStyles' is undefined)" that is not a DOMException NoModificationAllowedError: property "code" is equal to undefined, expected 7
+  }" did not throw
 FAIL Throws if the target element is not something with a style attribute assert_throws: function "() => {
     animation.commitStyles();
-  }" threw object "TypeError: animation.commitStyles is not a function. (In 'animation.commitStyles()', 'animation.commitStyles' is undefined)" that is not a DOMException NoModificationAllowedError: property "code" is equal to undefined, expected 7
+  }" did not throw
 FAIL Throws if the target effect is display:none assert_throws: function "() => {
     animation.commitStyles();
-  }" threw object "TypeError: animation.commitStyles is not a function. (In 'animation.commitStyles()', 'animation.commitStyles' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+  }" did not throw
 FAIL Throws if the target effect's ancestor is display:none assert_throws: function "() => {
     animation.commitStyles();
-  }" threw object "TypeError: animation.commitStyles is not a function. (In 'animation.commitStyles()', 'animation.commitStyles' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
-FAIL Treats display:contents as rendered animation.commitStyles is not a function. (In 'animation.commitStyles()', 'animation.commitStyles' is undefined)
+  }" did not throw
+PASS Treats display:contents as rendered 
 FAIL Treats display:contents in a display:none subtree as not rendered assert_throws: function "() => {
     animation.commitStyles();
-  }" threw object "TypeError: animation.commitStyles is not a function. (In 'animation.commitStyles()', 'animation.commitStyles' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+  }" did not throw
 FAIL Throws if the target effect is disconnected assert_throws: function "() => {
     animation.commitStyles();
-  }" threw object "TypeError: animation.commitStyles is not a function. (In 'animation.commitStyles()', 'animation.commitStyles' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+  }" did not throw
 FAIL Checks the pseudo element condition before the not rendered condition undefined is not an object (evaluating 'pseudo.element.remove')
 

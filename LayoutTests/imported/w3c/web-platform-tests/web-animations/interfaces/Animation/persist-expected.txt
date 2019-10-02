@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Allows an animation to be persisted after being removed Test timed out
-FAIL Allows an animation to be persisted before being removed promise_test: Unhandled rejection with value: object "TypeError: animA.persist is not a function. (In 'animA.persist()', 'animA.persist' is undefined)"
+PASS Allows an animation to be persisted after being removed 
+PASS Allows an animation to be persisted before being removed 
 
