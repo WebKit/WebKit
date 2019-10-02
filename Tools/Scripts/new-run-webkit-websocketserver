@@ -35,7 +35,7 @@ import optparse
 import tempfile
 
 from webkitpy.common.host import Host
-from webkitpy.layout_tests.servers import websocket_server
+from webkitpy.layout_tests.servers.websocket_server import PyWebSocket
 from webkitpy.port import platform_options
 
 
@@ -81,11 +81,9 @@ def main():
 
     if not options.port:
         if options.use_tls:
-            # FIXME: We shouldn't grab at this private variable.
-            options.port = websocket_server._DEFAULT_WSS_PORT
+            options.port = PyWebSocket.DEFAULT_WSS_PORT
         else:
-            # FIXME: We shouldn't grab at this private variable.
-            options.port = websocket_server._DEFAULT_WS_PORT
+            options.port = PyWebSocket.DEFAULT_WS_PORT
 
     if not options.output_dir:
         options.output_dir = tempfile.gettempdir()
@@ -104,7 +102,7 @@ def main():
 
     host = Host()
     port_obj = host.port_factory.get(options.platform, options=options)
-    pywebsocket = websocket_server.PyWebSocket(port_obj, options.output_dir, **kwds)
+    pywebsocket = PyWebSocket(port_obj, options.output_dir, **kwds)
 
     log_level = logging.WARN
     if options.verbose:

@@ -1,3 +1,18 @@
+2019-10-01  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [win-ews] No such file or directory: u'/cygdrive/C/cygwin/home/buildbot/WebKit/WebKitBuild/Release/bin32/layout-test-results/pywebsocket.ws.log-out.txt'
+        https://bugs.webkit.org/show_bug.cgi?id=188640
+
+        Reviewed by Alex Christensen.
+
+        1. Properly shutdown WebSocket server so that port 8880 is released.
+        2. Prevent failure of WebSocket tests when launched in freshly cloned repository.
+
+        * Scripts/new-run-webkit-websocketserver:
+        (main): Tweak import and use class constants of PyWebSocket directly.
+        * Scripts/webkitpy/layout_tests/servers/websocket_server.py:
+        (PyWebSocket._prepare_config): Create test output directory if it doesn't exist.
+
 2019-10-01  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards a functioning CMake build on Mac

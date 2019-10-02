@@ -109,6 +109,7 @@ class PyWebSocket(http_server.Lighttpd):
         return [self._port]
 
     def _prepare_config(self):
+        self._filesystem.maybe_make_directory(self._output_dir)
         log_file_name = self._log_prefix
         # FIXME: Doesn't Executive have a devnull, so that we don't have to use os.devnull directly?
         self._wsin = open(os.devnull, 'r')
