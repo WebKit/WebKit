@@ -1,3 +1,55 @@
+2019-10-02  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Implement replaced animations
+        https://bugs.webkit.org/show_bug.cgi?id=202190
+        <rdar://55697719>
+
+        Reviewed by Dean Jackson.
+
+        Implementing section "5.5 Replacing Animations" (https://drafts.csswg.org/web-animations/#replacing-animations) of the Web Animations
+        specification which allows for Web Animations to be destroyed when they are superseded by another animation and the developer doesn't
+        explicitly opt into persisting them using the persist() method.
+
+        An animation is marked as replaceable (to sum up) when it's finished and another animation for the same property takes precedence.
+        As part of DocumentTimeline::internalUpdateAnimationsAndSendEvents(), we'll go through all replaceable animations, dispatch a "remove"
+        DOM event, and remove them from our list of animations.
+
+        We also make a couple of fixes in this patch that were uncovered while working on the WPT tests for replaced animations:
+        
+        - we would incorrectly parse single values for a property that allows lists (change in KeyframeEffect's processKeyframeLikeObject())
+        - we didn't account for the position in the global animation list when sorted animations by composite order (AnimationTimeline::animationsForElement())
+
+        Finally, to get more readable results, we implement a stub of commitStyles(). Its full implementation is tracked by http://wkb.ug/202193.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::animationTimingDidChange): Mark the position of the animation in the global animation list, to which it may only be added once.
+        (WebCore::AnimationTimeline::animationsForElement const): Account for the animation's position in the global animation when sorting.
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::bindingsReplaceState const): Flush pending styles when querying the ready state for a declarative animation.
+        * animation/DeclarativeAnimation.h:
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::internalUpdateAnimationsAndSendEvents): Run the "remove replaced animations" procedure as the second step in the "update animations
+        and send events" procedure.
+        (WebCore::DocumentTimeline::animationCanBeRemoved): Determine whether a given animation may be removed based on its finished state, replace state and whether
+        it is fully superseded by another animation targeting the same property on the same target element.
+        (WebCore::DocumentTimeline::removeReplacedAnimations): Remove any removable animation and dispatch a "remove" DOM event for each removed animation. 
+        * animation/DocumentTimeline.h:
+        * animation/KeyframeEffect.cpp:
+        (WebCore::processKeyframeLikeObject): Fix an issue found in a replaced animations WPT test that showed that we didn't record the value of an animation that allows lists.
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::isReplaceable const):
+        (WebCore::WebAnimation::persist): Mark the replace state as "persisted" and ensure the animation is set on the animation list for its target element in case it had already
+        been removed based on its persisted state.
+        (WebCore::WebAnimation::commitStyles): Stub for a new function.
+        * animation/WebAnimation.h:
+        (WebCore::WebAnimation::replaceState const):
+        (WebCore::WebAnimation::setReplaceState):
+        (WebCore::WebAnimation::bindingsReplaceState const):
+        (WebCore::WebAnimation::globalPosition const):
+        (WebCore::WebAnimation::setGlobalPosition):
+        * animation/WebAnimation.idl:
+        * dom/EventNames.h: Add the new "remove" event so that the "onremove" DOM property is available on Animation objects. 
+
 2019-10-02  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed build fix in Nicosia's ScrollingTreePositionedNode class.

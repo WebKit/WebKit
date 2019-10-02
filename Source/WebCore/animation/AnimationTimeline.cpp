@@ -62,6 +62,7 @@ void AnimationTimeline::forgetAnimation(WebAnimation* animation)
 void AnimationTimeline::animationTimingDidChange(WebAnimation& animation)
 {
     if (m_animations.add(&animation)) {
+        animation.setGlobalPosition(m_allAnimations.size());
         m_allAnimations.append(makeWeakPtr(&animation));
         auto* timeline = animation.timeline();
         if (timeline && timeline != this)
@@ -169,7 +170,7 @@ Vector<RefPtr<WebAnimation>> AnimationTimeline::animationsForElement(Element& el
     if (m_elementToCSSTransitionsMap.contains(&element)) {
         const auto& cssTransitions = m_elementToCSSTransitionsMap.get(&element);
         if (ordering == Ordering::Sorted) {
-            Vector<RefPtr<WebAnimation>> sortedCSSTransitions;
+            Vector<RefPtr<WebAnimation>> sortedCSSTransitions(cssTransitions.size());
             sortedCSSTransitions.appendRange(cssTransitions.begin(), cssTransitions.end());
             std::sort(sortedCSSTransitions.begin(), sortedCSSTransitions.end(), [](auto& lhs, auto& rhs) {
                 // Sort transitions first by their generation time, and then by transition-property.
@@ -190,7 +191,15 @@ Vector<RefPtr<WebAnimation>> AnimationTimeline::animationsForElement(Element& el
     }
     if (m_elementToAnimationsMap.contains(&element)) {
         const auto& webAnimations = m_elementToAnimationsMap.get(&element);
-        animations.appendRange(webAnimations.begin(), webAnimations.end());
+        if (ordering == Ordering::Sorted) {
+            Vector<RefPtr<WebAnimation>> sortedWebAnimations(webAnimations.size());
+            sortedWebAnimations.appendRange(webAnimations.begin(), webAnimations.end());
+            std::sort(sortedWebAnimations.begin(), sortedWebAnimations.end(), [](auto& lha, auto& rha) {
+                return lha->globalPosition() < rha->globalPosition();
+            });
+            animations.appendVector(sortedWebAnimations);
+        } else
+            animations.appendRange(webAnimations.begin(), webAnimations.end());
     }
     return animations;
 }

@@ -213,6 +213,7 @@ namespace WebCore {
     macro(ratechange) \
     macro(readystatechange) \
     macro(rejectionhandled) \
+    macro(remove) \
     macro(removesourcebuffer) \
     macro(removestream) \
     macro(removetrack) \

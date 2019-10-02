@@ -74,6 +74,10 @@ public:
     enum class PlayState : uint8_t { Idle, Running, Paused, Finished };
     PlayState playState() const;
 
+    enum class ReplaceState : uint8_t { Active, Removed, Persisted };
+    ReplaceState replaceState() const { return m_replaceState; }
+    void setReplaceState(ReplaceState replaceState) { m_replaceState = replaceState; }
+
     bool pending() const { return hasPendingPauseTask() || hasPendingPlayTask(); }
 
     using ReadyPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<WebAnimation>>;
@@ -89,12 +93,15 @@ public:
     void updatePlaybackRate(double);
     ExceptionOr<void> pause();
     ExceptionOr<void> reverse();
+    void persist();
+    ExceptionOr<void> commitStyles();
 
     virtual Optional<double> startTime() const;
     virtual void setStartTime(Optional<double>);
     virtual Optional<double> bindingsCurrentTime() const;
     virtual ExceptionOr<void> setBindingsCurrentTime(Optional<double>);
     virtual PlayState bindingsPlayState() const { return playState(); }
+    virtual ReplaceState bindingsReplaceState() const { return replaceState(); }
     virtual bool bindingsPending() const { return pending(); }
     virtual ReadyPromise& bindingsReady() { return ready(); }
     virtual FinishedPromise& bindingsFinished() { return finished(); }
@@ -116,7 +123,12 @@ public:
     void unsuspendEffectInvalidation();
     void setSuspended(bool);
     bool isSuspended() const { return m_isSuspended; }
+    bool isReplaceable() const;
     virtual void remove();
+    void enqueueAnimationPlaybackEvent(const AtomString&, Optional<Seconds>, Optional<Seconds>);
+
+    unsigned globalPosition() const { return m_globalPosition; }
+    void setGlobalPosition(unsigned globalPosition) { m_globalPosition = globalPosition; }
 
     bool hasPendingActivity() const final;
 
@@ -137,7 +149,6 @@ private:
 
     void timingDidChange(DidSeek, SynchronouslyNotify);
     void updateFinishedState(DidSeek, SynchronouslyNotify);
-    void enqueueAnimationPlaybackEvent(const AtomString&, Optional<Seconds>, Optional<Seconds>);
     Seconds effectEndTime() const;
     WebAnimation& readyPromiseResolve();
     WebAnimation& finishedPromiseResolve();
@@ -179,6 +190,8 @@ private:
     bool m_shouldSkipUpdatingFinishedStateWhenResolving;
     TimeToRunPendingTask m_timeToRunPendingPlayTask { TimeToRunPendingTask::NotScheduled };
     TimeToRunPendingTask m_timeToRunPendingPauseTask { TimeToRunPendingTask::NotScheduled };
+    ReplaceState m_replaceState { ReplaceState::Active };
+    unsigned m_globalPosition;
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;

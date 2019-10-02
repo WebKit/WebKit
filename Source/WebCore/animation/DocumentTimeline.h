@@ -98,6 +98,8 @@ private:
     void updateListOfElementsWithRunningAcceleratedAnimationsForElement(Element&);
     void transitionDidComplete(RefPtr<CSSTransition>);
     void scheduleNextTick();
+    void removeReplacedAnimations();
+    bool animationCanBeRemoved(WebAnimation&);
 
     Timer m_tickScheduleTimer;
     GenericTaskQueue<Timer> m_currentTimeClearingTaskQueue;

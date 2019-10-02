@@ -378,14 +378,17 @@ void DocumentTimeline::internalUpdateAnimationsAndSendEvents()
         }
     }
 
-    // 2. Perform a microtask checkpoint.
+    // 2. Remove replaced animations for doc.
+    removeReplacedAnimations();
+
+    // 3. Perform a microtask checkpoint.
     MicrotaskQueue::mainThreadQueue().performMicrotaskCheckpoint();
 
-    // 3. Let events to dispatch be a copy of doc's pending animation event queue.
-    // 4. Clear doc's pending animation event queue.
+    // 4. Let events to dispatch be a copy of doc's pending animation event queue.
+    // 5. Clear doc's pending animation event queue.
     auto pendingAnimationEvents = WTFMove(m_pendingAnimationEvents);
 
-    // 5. Perform a stable sort of the animation events in events to dispatch as follows.
+    // 6. Perform a stable sort of the animation events in events to dispatch as follows.
     std::stable_sort(pendingAnimationEvents.begin(), pendingAnimationEvents.end(), [] (const Ref<AnimationPlaybackEvent>& lhs, const Ref<AnimationPlaybackEvent>& rhs) {
         // 1. Sort the events by their scheduled event time such that events that were scheduled to occur earlier, sort before events scheduled to occur later
         // and events whose scheduled event time is unresolved sort before events with a resolved scheduled event time.
@@ -399,7 +402,7 @@ void DocumentTimeline::internalUpdateAnimationsAndSendEvents()
         return lhs->timelineTime().value() < rhs->timelineTime().value();
     });
 
-    // 6. Dispatch each of the events in events to dispatch at their corresponding target using the order established in the previous step.
+    // 7. Dispatch each of the events in events to dispatch at their corresponding target using the order established in the previous step.
     for (auto& pendingEvent : pendingAnimationEvents)
         pendingEvent->target()->dispatchEvent(pendingEvent);
 
@@ -416,6 +419,81 @@ void DocumentTimeline::internalUpdateAnimationsAndSendEvents()
     // removed from the list of completed transitions otherwise.
     for (auto& completedTransition : completedTransitions)
         transitionDidComplete(completedTransition);
+}
+
+bool DocumentTimeline::animationCanBeRemoved(WebAnimation& animation)
+{
+    // https://drafts.csswg.org/web-animations/#removing-replaced-animations
+
+    ASSERT(m_document);
+
+    // - is replaceable, and
+    if (!animation.isReplaceable())
+        return false;
+
+    // - has a replace state of active, and
+    if (animation.replaceState() != WebAnimation::ReplaceState::Active)
+        return false;
+
+    // - has an associated animation effect whose target element is a descendant of doc, and
+    auto* effect = animation.effect();
+    if (!is<KeyframeEffect>(effect))
+        return false;
+
+    auto* keyframeEffect = downcast<KeyframeEffect>(effect);
+    auto* target = keyframeEffect->target();
+    if (!target || !target->isDescendantOf(*m_document))
+        return false;
+
+    HashSet<CSSPropertyID> propertiesToMatch = keyframeEffect->animatedProperties();
+    auto animations = animationsForElement(*target, AnimationTimeline::Ordering::Sorted);
+    for (auto& animationWithHigherCompositeOrder : WTF::makeReversedRange(animations)) {
+        if (&animation == animationWithHigherCompositeOrder)
+            break;
+
+        if (animationWithHigherCompositeOrder && animationWithHigherCompositeOrder->isReplaceable()) {
+            auto* effectWithHigherCompositeOrder = animationWithHigherCompositeOrder->effect();
+            if (is<KeyframeEffect>(effectWithHigherCompositeOrder)) {
+                auto* keyframeEffectWithHigherCompositeOrder = downcast<KeyframeEffect>(effectWithHigherCompositeOrder);
+                for (auto cssPropertyId : keyframeEffectWithHigherCompositeOrder->animatedProperties()) {
+                    if (propertiesToMatch.remove(cssPropertyId) && propertiesToMatch.isEmpty())
+                        break;
+                }
+            }
+        }
+    }
+
+    return propertiesToMatch.isEmpty();
+}
+
+void DocumentTimeline::removeReplacedAnimations()
+{
+    // https://drafts.csswg.org/web-animations/#removing-replaced-animations
+
+    Vector<RefPtr<WebAnimation>> animationsToRemove;
+
+    // When asked to remove replaced animations for a Document, doc, then for every animation, animation
+    for (auto& animation : m_allAnimations) {
+        if (animation && animationCanBeRemoved(*animation)) {
+            // perform the following steps:
+            // 1. Set animation's replace state to removed.
+            animation->setReplaceState(WebAnimation::ReplaceState::Removed);
+            // 2. Create an AnimationPlaybackEvent, removeEvent.
+            // 3. Set removeEvent's type attribute to remove.
+            // 4. Set removeEvent's currentTime attribute to the current time of animation.
+            // 5. Set removeEvent's timelineTime attribute to the current time of the timeline with which animation is associated.
+            // 6. If animation has a document for timing, then append removeEvent to its document for timing's pending animation
+            //    event queue along with its target, animation. For the scheduled event time, use the result of applying the procedure
+            //    to convert timeline time to origin-relative time to the current time of the timeline with which animation is associated.
+            //    Otherwise, queue a task to dispatch removeEvent at animation. The task source for this task is the DOM manipulation task source.
+            animation->enqueueAnimationPlaybackEvent(eventNames().removeEvent, animation->currentTime(), currentTime());
+
+            animationsToRemove.append(animation.get());
+        }
+    }
+
+    for (auto& animation : animationsToRemove)
+        removeAnimation(*animation);
 }
 
 void DocumentTimeline::transitionDidComplete(RefPtr<CSSTransition> transition)

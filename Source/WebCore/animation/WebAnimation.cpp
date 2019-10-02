@@ -29,6 +29,7 @@
 #include "AnimationEffect.h"
 #include "AnimationPlaybackEvent.h"
 #include "AnimationTimeline.h"
+#include "DeclarativeAnimation.h"
 #include "Document.h"
 #include "DocumentTimeline.h"
 #include "EventNames.h"
@@ -1201,6 +1202,58 @@ bool WebAnimation::computeRelevance()
     // - the animation effect is in the active phase, and
     // - the animation effect is associated with an animation that is not finished.
     return timing.phase == AnimationEffectPhase::Before || (timing.phase == AnimationEffectPhase::Active && playState() != PlayState::Finished);
+}
+
+bool WebAnimation::isReplaceable() const
+{
+    // An animation is replaceable if all of the following conditions are true:
+    // https://drafts.csswg.org/web-animations/#removing-replaced-animations
+
+    // The existence of the animation is not prescribed by markup. That is, it is not a CSS animation with an owning element,
+    // nor a CSS transition with an owning element.
+    if (isDeclarativeAnimation() && downcast<DeclarativeAnimation>(this)->owningElement())
+        return false;
+
+    // The animation's play state is finished.
+    if (playState() != PlayState::Finished)
+        return false;
+
+    // The animation's replace state is not removed.
+    if (m_replaceState == ReplaceState::Removed)
+        return false;
+
+    // The animation is associated with a monotonically increasing timeline.
+    if (!m_timeline)
+        return false;
+
+    // The animation has an associated target effect.
+    if (!m_effect)
+        return false;
+
+    // The target effect associated with the animation is in effect.
+    if (!m_effect->getBasicTiming().activeTime)
+        return false;
+
+    // The target effect has an associated target element.
+    if (!is<KeyframeEffect>(m_effect) || !downcast<KeyframeEffect>(m_effect.get())->target())
+        return false;
+
+    return true;
+}
+
+void WebAnimation::persist()
+{
+    auto previousReplaceState = std::exchange(m_replaceState, ReplaceState::Persisted);
+
+    if (previousReplaceState == ReplaceState::Removed && m_timeline) {
+        if (is<KeyframeEffect>(m_effect))
+            m_timeline->animationWasAddedToElement(*this, *downcast<KeyframeEffect>(m_effect.get())->target());
+    }
+}
+
+ExceptionOr<void> WebAnimation::commitStyles()
+{
+    return { };
 }
 
 Seconds WebAnimation::timeToNextTick() const

@@ -1,3 +1,19 @@
+2019-10-02  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Implement replaced animations
+        https://bugs.webkit.org/show_bug.cgi?id=202190
+        <rdar://55697719>
+
+        Reviewed by Dean Jackson.
+
+        Mark WPT progressions.
+
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-replaced-animations-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animatable/getAnimations-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animation/commitStyles-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animation/persist-expected.txt:
+        * web-platform-tests/web-animations/timing-model/timelines/update-and-send-events-replacement-expected.txt:
+
 2019-10-01  Antti Koivisto  <antti@apple.com>
 
         [CSS Shadow Parts] Parse 'part' attribute

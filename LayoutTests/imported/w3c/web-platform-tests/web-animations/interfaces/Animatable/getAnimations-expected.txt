@@ -19,7 +19,7 @@ PASS Returns animations based on dynamic changes to individual animations' durat
 PASS Returns animations based on dynamic changes to individual animations' end delay 
 PASS Returns animations based on dynamic changes to individual animations' iteration count 
 PASS Returns animations based on dynamic changes to individual animations' current time 
-FAIL Does not return an animation that has been removed assert_array_equals: lengths differ, expected 1 got 2
-FAIL Returns an animation that has been persisted promise_test: Unhandled rejection with value: object "TypeError: animA.persist is not a function. (In 'animA.persist()', 'animA.persist' is undefined)"
+PASS Does not return an animation that has been removed 
+PASS Returns an animation that has been persisted 
 PASS Triggers a style change event 
 

@@ -30,6 +30,12 @@ enum AnimationPlayState {
     "finished"
 };
 
+enum AnimationReplaceState {
+    "active",
+    "removed",
+    "persisted"
+};
+
 [
     ActiveDOMObject,
     EnabledAtRuntime=WebAnimations,
@@ -44,9 +50,11 @@ enum AnimationPlayState {
     [MayThrowException, ImplementedAs=bindingsCurrentTime] attribute double? currentTime;
     attribute double playbackRate;
     [ImplementedAs=bindingsPlayState] readonly attribute AnimationPlayState playState;
+    [ImplementedAs=bindingsReplaceState] readonly attribute AnimationReplaceState replaceState;
     [ImplementedAs=bindingsPending] readonly attribute boolean pending;
     attribute EventHandler onfinish;
     attribute EventHandler oncancel;
+    attribute EventHandler onremove;
     [ImplementedAs=bindingsReady] readonly attribute Promise<WebAnimation> ready;
     [ImplementedAs=bindingsFinished] readonly attribute Promise<WebAnimation> finished;
     void cancel();
@@ -55,4 +63,6 @@ enum AnimationPlayState {
     [MayThrowException, ImplementedAs=bindingsPause] void pause();
     void updatePlaybackRate(double playbackRate);
     [MayThrowException] void reverse();
+    void persist();
+    [MayThrowException] void commitStyles();
 };
