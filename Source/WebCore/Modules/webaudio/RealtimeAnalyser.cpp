@@ -30,6 +30,7 @@
 
 #include "AudioBus.h"
 #include "AudioUtilities.h"
+#include "FFTFrame.h"
 #include "VectorMath.h"
 #include <JavaScriptCore/Float32Array.h>
 #include <JavaScriptCore/Uint8Array.h>

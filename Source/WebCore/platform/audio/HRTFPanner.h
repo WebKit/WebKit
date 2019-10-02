@@ -27,10 +27,11 @@
 
 #include "DelayDSPKernel.h"
 #include "FFTConvolver.h"
-#include "HRTFDatabaseLoader.h"
 #include "Panner.h"
 
 namespace WebCore {
+
+class HRTFDatabaseLoader;
 
 class HRTFPanner final : public Panner {
 public:

@@ -1,3 +1,15 @@
+2019-10-01  Tim Horton  <timothy_horton@apple.com>
+
+        Clean up some includes to make the build a bit faster
+        https://bugs.webkit.org/show_bug.cgi?id=202437
+
+        Reviewed by Jer Noble.
+
+        * Modules/webaudio/PannerNode.h:
+        * Modules/webaudio/RealtimeAnalyser.h:
+        * platform/audio/HRTFPanner.h:
+        FFTFrame includes Accelerate.h, which is quite expensive.
+
 2019-10-01  Antti Koivisto  <antti@apple.com>
 
         [CSS Shadow Parts] Parse 'part' attribute

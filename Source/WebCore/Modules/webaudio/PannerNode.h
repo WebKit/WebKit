@@ -32,13 +32,14 @@
 #include "Cone.h"
 #include "Distance.h"
 #include "FloatPoint3D.h"
-#include "HRTFDatabaseLoader.h"
 #include "Panner.h"
 #include <memory>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 
 namespace WebCore {
+
+class HRTFDatabaseLoader;
 
 // PannerNode is an AudioNode with one input and one output.
 // It positions a sound in 3D space, with the exact effect dependent on the panning model.
