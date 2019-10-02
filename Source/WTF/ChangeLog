@@ -1,3 +1,14 @@
+2019-10-01  Jonathan Bedard  <jbedard@apple.com>
+
+        WebKitTestRunner: Many tests timeout on macOS Catalina
+        https://bugs.webkit.org/show_bug.cgi?id=201616
+        <rdar://problem/55200897>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wtf/Platform.h: USE_SOURCE_APPLICATION_AUDIT_DATA should only be enabled on
+        builds which allow restricted entitlements.
+
 2019-10-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Place VM* in TLS
