@@ -49,12 +49,6 @@ public:
         
         // Call this last. It's expected that the constructor is initialized to point to the
         // prototype already. This will automatically set prototype.constructor=constructor.
-        // This will also stuff the constructor into the global object at the given property.
-        // Note that the variant that does not take a property name attempts to deduce it by
-        // casting constructor to either JSFunction or InternalFunction. Also, you can pass
-        // nullptr for the property name, in which case we don't assign the property to the
-        // global object.
-        void setConstructor(PropertyName, JSObject* constructor);
         void setConstructor(JSObject* constructor);
         
         VM& vm;
