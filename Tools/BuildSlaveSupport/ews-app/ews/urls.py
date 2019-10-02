@@ -25,6 +25,7 @@ from django.conf.urls import url
 from ews.views.index import Index
 from ews.views.results import Results
 from ews.views.statusbubble import StatusBubble
+from ews.views.retrypatch import RetryPatch
 from ews.views.submittoews import SubmitToEWS
 
 app_name = 'ews'
@@ -33,6 +34,8 @@ urlpatterns = [
     url(r'^$', Index.as_view(), name='index'),
     # ex: /results/
     url(r'^results/$', Results.as_view(), name='results'),
+    # ex: /retry/
+    url(r'^retry/$', RetryPatch.as_view(), name='retrypatch'),
     # ex: /status-bubble/5
     url(r'^status-bubble/(?P<patch_id>[0-9]+)/$', StatusBubble.as_view(), name='statusbubble'),
     # ex: /submit-to-ews/

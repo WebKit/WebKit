@@ -1,3 +1,20 @@
+2019-10-01  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Add API endpoint to retry failed builds for a patch
+        https://bugs.webkit.org/show_bug.cgi?id=202424
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/urls.py: Added url mapping for /retry.
+        * BuildSlaveSupport/ews-app/ews/views/retrypatch.py: Added.
+        (RetryPatch.get): Display the web-form to retry the patch. Retry button which will be added soon will 
+        use this form.
+        (RetryPatch.post): Handle the post request and retry the patch.
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble.find_failed_builds_for_patch): Method to find failed builds for a patch.
+        * BuildSlaveSupport/ews-app/ews/templates/retry.html: Added, similar to submittoews.html. This
+        allows to retry a patch through a web-form as well.
+
 2019-10-02  Kate Cheney  <katherine_cheney@apple.com>
 
         Updated resource load statistics are never merged into the SQLite Database backend (202372).

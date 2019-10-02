@@ -209,6 +209,19 @@ class StatusBubble(View):
     def get_builds_for_queue(self, patch, queue):
         return [build for build in patch.build_set.all() if build.builder_display_name == queue]
 
+    def find_failed_builds_for_patch(self, patch_id):
+        patch = Patch.get_patch(patch_id)
+        if not patch:
+            return []
+        failed_builds = []
+        for queue in StatusBubble.ALL_QUEUES:
+            build, _ = self.get_latest_build_for_queue(patch, queue)
+            if not build:
+                continue
+            if build.result in (Buildbot.FAILURE, Buildbot.EXCEPTION, Buildbot.CANCELLED):
+                failed_builds.append(build)
+        return failed_builds
+
     def _should_show_bubble_for_build(self, build):
         if build and build.result == Buildbot.SKIPPED and re.search(r'Patch .* doesn\'t have relevant changes', build.state_string):
             return False
