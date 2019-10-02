@@ -1,5 +1,11 @@
 2019-10-02  Tim Horton  <timothy_horton@apple.com>
 
+        Another build fix
+
+        * css/typedom/TypedOMCSSImageValue.h:
+
+2019-10-02  Tim Horton  <timothy_horton@apple.com>
+
         Try to fix the Windows build
 
         * css/typedom/TypedOMCSSImageValue.cpp:
