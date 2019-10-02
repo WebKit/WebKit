@@ -3261,6 +3261,14 @@ void TestController::setStatisticsLastSeen(WKStringRef host, double seconds)
     m_currentInvocation->didSetLastSeen();
 }
 
+void TestController::setStatisticsMergeStatistic(WKStringRef host, WKStringRef topFrameDomain, double lastSeen, bool hadUserInteraction, double mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, int dataRecordsRemoved)
+{
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreSetStatisticsMergeStatistic(TestController::websiteDataStore(), host, topFrameDomain, lastSeen, hadUserInteraction, mostRecentUserInteraction, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, &context, resourceStatisticsVoidResultCallback);
+    runUntil(context.done, noTimeout);
+    m_currentInvocation->didMergeStatistic();
+}
+
 void TestController::setStatisticsPrevalentResource(WKStringRef host, bool value)
 {
     ResourceStatisticsCallbackContext context(*this);

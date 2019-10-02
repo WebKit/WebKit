@@ -159,9 +159,11 @@ public:
     void scheduleStatisticsAndDataRecordsProcessing(CompletionHandler<void()>&&);
     void submitTelemetry();
     void setGrandfathered(const URL&, bool, CompletionHandler<void()>&&);
+    void isGrandfathered(const URL&, CompletionHandler<void(bool)>&&);
     void setUseITPDatabase(bool);
     void setGrandfatheringTime(Seconds, CompletionHandler<void()>&&);
     void setLastSeen(const URL&, Seconds, CompletionHandler<void()>&&);
+    void mergeStatisticForTesting(const URL&, const URL& topFrameUrl, Seconds lastSeen, bool hadUserInteraction, Seconds mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, CompletionHandler<void()>&&);
     void setNotifyPagesWhenDataRecordsWereScanned(bool, CompletionHandler<void()>&&);
     void setIsRunningResourceLoadStatisticsTest(bool, CompletionHandler<void()>&&);
     void setPruneEntriesDownTo(size_t, CompletionHandler<void()>&&);

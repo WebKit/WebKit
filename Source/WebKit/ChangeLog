@@ -1,3 +1,134 @@
+2019-10-02  Kate Cheney  <katherine_cheney@apple.com>
+
+        Updated resource load statistics are never merged into the SQLite Database backend (202372).
+        https://bugs.webkit.org/show_bug.cgi?id=202372
+        <rdar://problem/55854542>
+
+        Reviewed by Brent Fulgham. 
+
+        This patch has a lot of changes to the test infrastructure to be able 
+        to test the mergeStatistics function. Merging functionality mimics
+        that of the ResourceLoadStatisticsMemoryStore and the merge() function in
+        ResourceLoadStatistics.cpp.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore):
+        Added new SQLite queries that are needed to merge new statistics.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::prepareStatements):
+        Added new prepare statements for new SQLite queries.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertObservedDomain):
+        Updated to use domainID() instead of confirmDomainDoesNotExist which 
+        was deleted. Changed the insert bind parameters
+        to utilize new enum of Observed Domain table indices which will help
+        reduce errors in the future if the database schema changes.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::relationshipExists const):
+        Changed {public} to {private} in logging statement to avoid leaking
+        sensitive information when logging the query error.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::confirmDomainDoesNotExist const): Deleted.
+        This function essentially does the exact same thing as domainID and
+        we can reduce code duplication by deleting it and transitioning all
+        other functions to use domainID instead.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::domainID const):
+        Changed {public} to {private} in logging statement to avoid leaking
+        sensitive information when logging the query error.
+        
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertDomainRelationships):
+        In order to reuse this code for the merge statistics function, I added
+        a check before each insert call to ensure the relationship does not
+        already exist in the database. This was not needed before because it
+        was only called on an empty database.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::merge):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::mergeStatistic):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::mergeStatistics):
+        Merges new statistic.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::incrementRecordsDeletedCountForDomains):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::recursivelyFindNonPrevalentDomainsThatRedirectedToThisDomain):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::markAsPrevalentIfHasRedirectedToPrevalent):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::requestStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::requestStorageAccessUnderOpener):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grandfatherDataForDomains):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ensurePrevalentResourcesForDebugMode):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasHadUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setPrevalentResource):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setDomainsAsPrevalent):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::predicateValueForDomain const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearPrevalentResource):
+        Changed {public} to {private} in logging statement to avoid leaking
+        sensitive information when logging the query error.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setGrandfathered):
+        Fix a bug uncovered by the new test cases.
+        
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ensureResourceStatisticsForRegistrableDomain):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearDatabaseContents):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::cookieTreatmentForOrigin const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearExpiredUserInteractions):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearGrandfathering):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::pruneStatisticsIfNeeded):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::updateLastSeen):
+        Changed {public} to {private} in logging statement to avoid leaking
+        sensitive information when logging the query error.
+        
+        (WebKit::ResourceLoadStatisticsDatabaseStore::updateDataRecordsRemoved):
+        A new function that utilizes a query needed for the merging of two
+        statistics.
+        
+        (WebKit::ResourceLoadStatisticsDatabaseStore::confirmDomainDoesNotExist const): Deleted.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::mergeStatistics):
+        (WebKit::ResourceLoadStatisticsMemoryStore::wasAccessedAsFirstPartyDueToUserInteraction const): Deleted.
+        Removed the check for updating times accessed due to first party 
+        interaction, which is data no longer needed in updated ITP. 
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        Added the mergeStatistics function (previously only in the memory
+        store) to the parent class now that it is used by both stores.
+        
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+        This function now calls mergeStatistics on the database store if
+        enabled.
+
+        (WebKit::WebResourceLoadStatisticsStore::mergeStatisticForTesting):
+        This function builds a vector from the sample data to test the
+        mergeStatistics() function of the database store.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::mergeStatisticForTesting):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetStatisticsMergeStatistic):
+        Fixed bug where isGrandfathered function in WKWebsiteDataStoreRef
+        was calling hasHadUserInteraction by mistake.
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::mergeStatisticForTesting):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        This code is for testing the mergeStatistics() function.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::isGrandfathered):
+        (WebKit::WebsiteDataStore::mergeStatisticForTesting):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        Added this function which contacts the networkProcess to retrieve the
+        grandfathered value for a domain. This was not included before because
+        of a bug in WKWebsiteDataStoreRef.
+
 2019-10-02  Dean Jackson  <dino@apple.com>
 
         Provide originating website URL to AR QuickLook

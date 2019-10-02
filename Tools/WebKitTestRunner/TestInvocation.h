@@ -79,6 +79,7 @@ public:
     void didSetStatisticsDebugMode();
     void didSetPrevalentResourceForDebugMode();
     void didSetLastSeen();
+    void didMergeStatistic();
     void didSetPrevalentResource();
     void didSetVeryPrevalentResource();
     void didSetHasHadUserInteraction();

@@ -1,3 +1,29 @@
+2019-10-02  Kate Cheney  <katherine_cheney@apple.com>
+
+        Updated resource load statistics are never merged into the SQLite Database backend (202372).
+        https://bugs.webkit.org/show_bug.cgi?id=202372
+        <rdar://problem/55854542>
+
+        Reviewed by Brent Fulgham. 
+
+        Added testing functionality to the mergeStatistics() function of the 
+        SQLite backend.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setStatisticsMergeStatistic):
+        (WTR::TestRunner::statisticsCallDidSetMergeStatisticCallback):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setStatisticsMergeStatistic):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        (WTR::TestInvocation::didMergeStatistic):
+        * WebKitTestRunner/TestInvocation.h:
+
 2019-10-02  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] windows or wincairo queue should use del instead of rm command

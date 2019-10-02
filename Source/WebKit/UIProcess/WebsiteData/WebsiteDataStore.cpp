@@ -1214,6 +1214,24 @@ void WebsiteDataStore::isPrevalentResource(const URL& url, CompletionHandler<voi
     }
 }
 
+void WebsiteDataStore::isGrandfathered(const URL& url, CompletionHandler<void(bool isPrevalent)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+    
+    if (url.protocolIsAbout() || url.isEmpty()) {
+        completionHandler(false);
+        return;
+    }
+
+    for (auto& processPool : processPools()) {
+        if (auto* process = processPool->networkProcess()) {
+            process->isGrandfathered(m_sessionID, WebCore::RegistrableDomain { url }, WTFMove(completionHandler));
+            RELEASE_ASSERT(processPools().size() == 1);
+            break;
+        }
+    }
+}
+
 void WebsiteDataStore::setPrevalentResource(const URL& url, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -1530,6 +1548,21 @@ void WebsiteDataStore::setLastSeen(const URL& url, Seconds seconds, CompletionHa
     for (auto& processPool : processPools()) {
         if (auto* process = processPool->networkProcess())
             process->setLastSeen(m_sessionID, WebCore::RegistrableDomain { url }, seconds, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
+    }
+}
+
+void WebsiteDataStore::mergeStatisticForTesting(const URL& url , const URL& topFrameUrl, Seconds lastSeen, bool hadUserInteraction, Seconds mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, CompletionHandler<void()>&& completionHandler)
+{
+    if (url.protocolIsAbout() || url.isEmpty()) {
+        completionHandler();
+        return;
+    }
+
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+
+    for (auto& processPool : processPools()) {
+        if (auto* process = processPool->networkProcess())
+            process->mergeStatisticForTesting(m_sessionID, WebCore::RegistrableDomain { url }, WebCore::RegistrableDomain { topFrameUrl }, lastSeen, hadUserInteraction, mostRecentUserInteraction, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
 }
 

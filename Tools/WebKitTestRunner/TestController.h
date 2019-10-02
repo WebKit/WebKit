@@ -210,6 +210,7 @@ public:
     void setStatisticsDebugMode(bool value);
     void setStatisticsPrevalentResourceForDebugMode(WKStringRef hostName);
     void setStatisticsLastSeen(WKStringRef hostName, double seconds);
+    void setStatisticsMergeStatistic(WKStringRef host, WKStringRef topFrameDomain, double lastSeen, bool hadUserInteraction, double mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, int dataRecordsRemoved);
     void setStatisticsPrevalentResource(WKStringRef hostName, bool value);
     void setStatisticsVeryPrevalentResource(WKStringRef hostName, bool value);
     String dumpResourceLoadStatistics();

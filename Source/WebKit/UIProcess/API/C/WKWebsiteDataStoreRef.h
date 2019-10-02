@@ -49,6 +49,8 @@ WK_EXPORT void WKWebsiteDataStoreSetResourceLoadStatisticsDebugModeWithCompletio
 WK_EXPORT void WKWebsiteDataStoreSetResourceLoadStatisticsPrevalentResourceForDebugMode(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, void* context, WKWebsiteDataStoreStatisticsDebugModeFunction completionHandler);    
 typedef void (*WKWebsiteDataStoreStatisticsLastSeenFunction)(void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreSetStatisticsLastSeen(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, double seconds, void* context, WKWebsiteDataStoreStatisticsLastSeenFunction completionHandler);
+typedef void (*WKWebsiteDataStoreStatisticsMergeStatisticFunction)(void* functionContext);
+WK_EXPORT void WKWebsiteDataStoreSetStatisticsMergeStatistic(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, WKStringRef topFrameDomain, double lastSeen, bool hadUserInteraction, double mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, void* context, WKWebsiteDataStoreStatisticsMergeStatisticFunction completionHandler);
 typedef void (*WKWebsiteDataStoreStatisticsPrevalentResourceFunction)(void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreSetStatisticsPrevalentResource(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, bool value, void* context, WKWebsiteDataStoreStatisticsPrevalentResourceFunction completionHandler);
 typedef void (*WKWebsiteDataStoreStatisticsVeryPrevalentResourceFunction)(void* functionContext);

@@ -61,7 +61,7 @@ public:
     std::unique_ptr<WebCore::KeyedEncoder> createEncoderFromData() const;
     void mergeWithDataFromDecoder(WebCore::KeyedDecoder&);
 
-    void mergeStatistics(Vector<ResourceLoadStatistics>&&);
+    void mergeStatistics(Vector<ResourceLoadStatistics>&&) override;
     void processStatistics(const Function<void(const ResourceLoadStatistics&)>&) const;
 
     void updateCookieBlocking(CompletionHandler<void()>&&) override;
@@ -117,7 +117,6 @@ private:
     bool hasHadUnexpiredRecentUserInteraction(ResourceLoadStatistics&, OperatingDatesWindow) const;
     bool shouldRemoveAllWebsiteDataFor(ResourceLoadStatistics&, bool shouldCheckForGrandfathering) const;
     bool shouldRemoveAllButCookiesFor(ResourceLoadStatistics&, bool shouldCheckForGrandfathering) const;
-    bool wasAccessedAsFirstPartyDueToUserInteraction(const ResourceLoadStatistics& current, const ResourceLoadStatistics& updated) const;
     void incrementRecordsDeletedCountForDomains(HashSet<RegistrableDomain>&&) override;
     void setPrevalentResource(ResourceLoadStatistics&, ResourceLoadPrevalence);
     unsigned recursivelyGetAllDomainsThatHaveRedirectedToThisDomain(const ResourceLoadStatistics&, HashSet<RedirectedToDomain>&, unsigned numberOfRecursiveCalls) const;

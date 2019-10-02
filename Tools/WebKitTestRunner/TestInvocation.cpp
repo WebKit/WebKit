@@ -1100,6 +1100,36 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
     
+    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsMergeStatistic")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+
+        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+        WKRetainPtr<WKStringRef> hostNameKey = adoptWK(WKStringCreateWithUTF8CString("HostName"));
+        WKRetainPtr<WKStringRef> topFrameDomainKey = adoptWK(WKStringCreateWithUTF8CString("TopFrameDomain"));
+        WKRetainPtr<WKStringRef> lastSeenKey = adoptWK(WKStringCreateWithUTF8CString("LastSeen"));
+        WKRetainPtr<WKStringRef> hadUserInteractionKey = adoptWK(WKStringCreateWithUTF8CString("HadUserInteraction"));
+        WKRetainPtr<WKStringRef> mostRecentUserInteractionKey = adoptWK(WKStringCreateWithUTF8CString("MostRecentUserInteraction"));
+        WKRetainPtr<WKStringRef> isGrandfatheredKey = adoptWK(WKStringCreateWithUTF8CString("IsGrandfathered"));
+        WKRetainPtr<WKStringRef> isPrevalentKey = adoptWK(WKStringCreateWithUTF8CString("IsPrevalent"));
+        WKRetainPtr<WKStringRef> isVeryPrevalentKey = adoptWK(WKStringCreateWithUTF8CString("IsVeryPrevalent"));
+        WKRetainPtr<WKStringRef> dataRecordsRemovedKey = adoptWK(WKStringCreateWithUTF8CString("DataRecordsRemoved"));
+        WKRetainPtr<WKStringRef> timesAccessedFirstPartyInteractionKey = adoptWK(WKStringCreateWithUTF8CString("TimesAccessedFirstPartyInteraction"));
+
+        WKStringRef hostName = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, hostNameKey.get()));
+        WKStringRef topFrameDomain = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, topFrameDomainKey.get()));
+        WKDoubleRef lastSeen = static_cast<WKDoubleRef>(WKDictionaryGetItemForKey(messageBodyDictionary, lastSeenKey.get()));
+        WKBooleanRef hadUserInteraction = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, hadUserInteractionKey.get()));
+        WKDoubleRef mostRecentUserInteraction = static_cast<WKDoubleRef>(WKDictionaryGetItemForKey(messageBodyDictionary, mostRecentUserInteractionKey.get()));
+        WKBooleanRef isGrandfathered = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, isGrandfatheredKey.get()));
+        WKBooleanRef isPrevalent = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, isPrevalentKey.get()));
+        WKBooleanRef isVeryPrevalent = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, isVeryPrevalentKey.get()));
+        WKUInt64Ref dataRecordsRemoved = static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, dataRecordsRemovedKey.get()));
+        
+        TestController::singleton().setStatisticsMergeStatistic(hostName, topFrameDomain, WKDoubleGetValue(lastSeen), WKBooleanGetValue(hadUserInteraction), WKDoubleGetValue(mostRecentUserInteraction), WKBooleanGetValue(isGrandfathered), WKBooleanGetValue(isPrevalent), WKBooleanGetValue(isVeryPrevalent), WKUInt64GetValue(dataRecordsRemoved));
+
+        return nullptr;
+    }
+    
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsPrevalentResource")) {
         ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
 
@@ -1798,6 +1828,12 @@ void TestInvocation::didSetPrevalentResourceForDebugMode()
 void TestInvocation::didSetLastSeen()
 {
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidSetLastSeen"));
+    WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
+}
+
+void TestInvocation::didMergeStatistic()
+{
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidMergeStatistic"));
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
 }
 

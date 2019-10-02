@@ -54,7 +54,7 @@ public:
     ResourceLoadStatisticsDatabaseStore(WebResourceLoadStatisticsStore&, WorkQueue&, ShouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID);
 
     void populateFromMemoryStore(const ResourceLoadStatisticsMemoryStore&);
-
+    void mergeStatistics(Vector<ResourceLoadStatistics>&&) override;
     void clear(CompletionHandler<void()>&&) override;
     bool isEmpty() const override;
 
@@ -105,16 +105,17 @@ public:
     void setLastSeen(const RegistrableDomain&, Seconds) override;
 
 private:
+    void mergeStatistic(const ResourceLoadStatistics&);
+    void merge(WebCore::SQLiteStatement&, const ResourceLoadStatistics&);
     void clearDatabaseContents();
     bool insertObservedDomain(const ResourceLoadStatistics&);
     void insertDomainRelationships(const ResourceLoadStatistics&);
     bool insertDomainRelationship(WebCore::SQLiteStatement&, unsigned domainID, const RegistrableDomain& topFrameDomain);
     bool relationshipExists(WebCore::SQLiteStatement&, Optional<unsigned> firstDomainID, const RegistrableDomain& secondDomain) const;
     Optional<unsigned> domainID(const RegistrableDomain&) const;
-#ifndef NDEBUG
-    bool confirmDomainDoesNotExist(const RegistrableDomain&) const;
-#endif
+    bool domainExists(const RegistrableDomain&) const;
     void updateLastSeen(const RegistrableDomain&, WallTime);
+    void updateDataRecordsRemoved(const RegistrableDomain&, int);
     void setUserInteraction(const RegistrableDomain&, bool hadUserInteraction, WallTime);
     Vector<RegistrableDomain> domainsToBlockAndDeleteCookiesFor() const;
     Vector<RegistrableDomain> domainsToBlockButKeepCookiesFor() const;
@@ -175,6 +176,7 @@ private:
     WebCore::SQLiteStatement m_insertTopLevelDomainStatement;
     mutable WebCore::SQLiteStatement m_domainIDFromStringStatement;
     WebCore::SQLiteStatement m_storageAccessUnderTopFrameDomainsStatement;
+    WebCore::SQLiteStatement m_storageAccessUnderTopFrameDomainsExistsStatement;
     WebCore::SQLiteStatement m_topFrameUniqueRedirectsTo;
     mutable WebCore::SQLiteStatement m_topFrameUniqueRedirectsToExists;
     WebCore::SQLiteStatement m_topFrameUniqueRedirectsFrom;
@@ -191,6 +193,7 @@ private:
     mutable WebCore::SQLiteStatement m_subresourceUniqueRedirectsFromExists;
     WebCore::SQLiteStatement m_mostRecentUserInteractionStatement;
     WebCore::SQLiteStatement m_updateLastSeenStatement;
+    mutable WebCore::SQLiteStatement m_updateDataRecordsRemovedStatement;
     WebCore::SQLiteStatement m_updatePrevalentResourceStatement;
     mutable WebCore::SQLiteStatement m_isPrevalentResourceStatement;
     WebCore::SQLiteStatement m_updateVeryPrevalentResourceStatement;

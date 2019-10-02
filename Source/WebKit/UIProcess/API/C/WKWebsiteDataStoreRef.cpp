@@ -119,6 +119,17 @@ void WKWebsiteDataStoreSetStatisticsLastSeen(WKWebsiteDataStoreRef dataStoreRef,
 #endif
 }
 
+void WKWebsiteDataStoreSetStatisticsMergeStatistic(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, WKStringRef topFrameDomain, double lastSeen, bool hadUserInteraction, double mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, void* context, WKWebsiteDataStoreStatisticsMergeStatisticFunction completionHandler)
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    WebKit::toImpl(dataStoreRef)->mergeStatisticForTesting(URL(URL(), WebKit::toImpl(host)->string()), URL(URL(), WebKit::toImpl(topFrameDomain)->string()), Seconds { lastSeen }, hadUserInteraction, Seconds { mostRecentUserInteraction }, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, [context, completionHandler] {
+        completionHandler(context);
+    });
+#else
+    completionHandler(context);
+#endif
+}
+
 void WKWebsiteDataStoreSetStatisticsPrevalentResource(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, bool value, void* context, WKWebsiteDataStoreStatisticsPrevalentResourceFunction completionHandler)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -260,7 +271,7 @@ void WKWebsiteDataStoreSetStatisticsGrandfathered(WKWebsiteDataStoreRef dataStor
 void WKWebsiteDataStoreIsStatisticsGrandfathered(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, void* context, WKWebsiteDataStoreIsStatisticsGrandfatheredFunction callback)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    WebKit::toImpl(dataStoreRef)->hasHadUserInteraction(URL(URL(), WebKit::toImpl(host)->string()), [context, callback](bool isGrandfathered) {
+    WebKit::toImpl(dataStoreRef)->isGrandfathered(URL(URL(), WebKit::toImpl(host)->string()), [context, callback](bool isGrandfathered) {
         callback(isGrandfathered, context);
     });
 #else

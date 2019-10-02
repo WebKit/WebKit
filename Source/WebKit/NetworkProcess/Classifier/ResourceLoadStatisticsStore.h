@@ -108,6 +108,7 @@ public:
     virtual void classifyPrevalentResources() = 0;
     virtual void syncStorageIfNeeded() = 0;
     virtual void syncStorageImmediately() = 0;
+    virtual void mergeStatistics(Vector<ResourceLoadStatistics>&&) = 0;
 
     virtual void requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&&, WebCore::PageIdentifier openerID, OpenerDomain&&) = 0;
     void removeAllStorageAccess(CompletionHandler<void()>&&);

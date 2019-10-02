@@ -298,6 +298,7 @@ interface TestRunner {
     void setStatisticsDebugMode(boolean value, object completionHandler);
     void setStatisticsPrevalentResourceForDebugMode(DOMString hostName, object completionHandler);
     void setStatisticsLastSeen(DOMString hostName, double seconds, object completionHandler);
+    void setStatisticsMergeStatistic(DOMString hostName, DOMString topFrameDomain, double lastSeen, boolean hadUserInteraction, double mostRecentUserInteraction, boolean isGrandfathered, boolean isPrevalent, boolean isVeryPrevalent, unsigned long dataRecordsRemoved, object completionHandler);
     void setStatisticsPrevalentResource(DOMString hostName, boolean value, object completionHandler);
     void setStatisticsVeryPrevalentResource(DOMString hostName, boolean value, object completionHandler);
     boolean isStatisticsPrevalentResource(DOMString hostName);

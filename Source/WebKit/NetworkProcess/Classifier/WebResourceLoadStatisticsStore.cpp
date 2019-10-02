@@ -264,19 +264,17 @@ void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<Resour
     // coming from IPC. ResourceLoadStatistics only contains strings which are safe to move to other threads as long
     // as nobody on this thread holds a reference to those strings.
     postTask([this, statistics = WTFMove(statistics)]() mutable {
-        if (!m_statisticsStore || !is<ResourceLoadStatisticsMemoryStore>(*m_statisticsStore))
+        if (!m_statisticsStore)
             return;
 
-        auto& memoryStore = downcast<ResourceLoadStatisticsMemoryStore>(*m_statisticsStore);
-    
-        memoryStore.mergeStatistics(WTFMove(statistics));
+        m_statisticsStore->mergeStatistics(WTFMove(statistics));
 
         // We can cancel any pending request to process statistics since we're doing it synchronously below.
-        memoryStore.cancelPendingStatisticsProcessingRequest();
+        m_statisticsStore->cancelPendingStatisticsProcessingRequest();
 
         // Fire before processing statistics to propagate user interaction as fast as possible to the network process.
-        memoryStore.updateCookieBlocking([]() { });
-        memoryStore.processStatisticsAndDataRecords();
+        m_statisticsStore->updateCookieBlocking([]() { });
+        m_statisticsStore->processStatisticsAndDataRecords();
     });
 }
 
@@ -594,6 +592,35 @@ void WebResourceLoadStatisticsStore::setLastSeen(const RegistrableDomain& domain
     postTask([this, domain = domain.isolatedCopy(), seconds, completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_statisticsStore)
             m_statisticsStore->setLastSeen(domain, seconds);
+        postTaskReply(WTFMove(completionHandler));
+    });
+}
+
+void WebResourceLoadStatisticsStore::mergeStatisticForTesting(const RegistrableDomain& domain, const RegistrableDomain& topFrameDomain, Seconds lastSeen, bool hadUserInteraction, Seconds mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    postTask([this, domain = domain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), lastSeen, hadUserInteraction, mostRecentUserInteraction, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, completionHandler = WTFMove(completionHandler)]() mutable {
+        if (m_statisticsStore) {
+            ResourceLoadStatistics statistic(domain);
+            statistic.lastSeen = WallTime::fromRawSeconds(lastSeen.seconds());
+            statistic.hadUserInteraction = hadUserInteraction;
+            statistic.mostRecentUserInteractionTime = WallTime::fromRawSeconds(mostRecentUserInteraction.seconds());
+            statistic.grandfathered = isGrandfathered;
+            statistic.isPrevalentResource = isPrevalent;
+            statistic.isVeryPrevalentResource = isVeryPrevalent;
+            statistic.dataRecordsRemoved = dataRecordsRemoved;
+            
+            if (!topFrameDomain.isEmpty()) {
+                HashSet<RegistrableDomain> topFrameDomains;
+                topFrameDomains.add(topFrameDomain);
+                statistic.subframeUnderTopFrameDomains = WTFMove(topFrameDomains);
+            }
+
+            Vector<ResourceLoadStatistics> statistics;
+            statistics.append(WTFMove(statistic));
+            m_statisticsStore->mergeStatistics(WTFMove(statistics));
+        }
         postTaskReply(WTFMove(completionHandler));
     });
 }

@@ -396,6 +396,8 @@ public:
     void statisticsCallDidSetPrevalentResourceForDebugModeCallback();
     void setStatisticsLastSeen(JSStringRef hostName, double seconds, JSValueRef completionHandler);
     void statisticsCallDidSetLastSeenCallback();
+    void setStatisticsMergeStatistic(JSStringRef hostName, JSStringRef topFrameDomain, double lastSeen, bool hadUserInteraction, double mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, JSValueRef completionHandler);
+    void statisticsCallDidSetMergeStatisticCallback();
     void setStatisticsPrevalentResource(JSStringRef hostName, bool value, JSValueRef completionHandler);
     void statisticsCallDidSetPrevalentResourceCallback();
     void setStatisticsVeryPrevalentResource(JSStringRef hostName, bool value, JSValueRef completionHandler);

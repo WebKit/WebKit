@@ -1,3 +1,21 @@
+2019-10-02  Kate Cheney  <katherine_cheney@apple.com>
+
+        Updated resource load statistics are never merged into the SQLite Database backend (202372).
+        https://bugs.webkit.org/show_bug.cgi?id=202372
+        <rdar://problem/55854542>
+
+        Reviewed by Brent Fulgham. 
+
+        Added layout tests to test succesful merging of resource load
+        statistics into SQLite backend.
+
+        * http/tests/resourceLoadStatistics/merge-statistic-does-not-overwrite-database-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/merge-statistic-does-not-overwrite-database.html: Added.
+        * http/tests/resourceLoadStatistics/merge-statistic-does-overwrite-database-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/merge-statistic-does-overwrite-database.html: Added.
+        * http/tests/resourceLoadStatistics/merge-statistic-does-partially-overwrite-database-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/merge-statistic-does-partially-overwrite-database.html: Added.
+
 2019-10-02  Miguel Gomez  <magomez@igalia.com>
 
         [WPE] Unreviewed gardening: add new expectations after r250602

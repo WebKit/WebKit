@@ -732,6 +732,7 @@ enum {
     SetStatisticsDebugModeCallbackID,
     SetStatisticsPrevalentResourceForDebugModeCallbackID,
     SetStatisticsLastSeenCallbackID,
+    SetStatisticsMergeStatisticCallbackID,
     SetStatisticsPrevalentResourceCallbackID,
     SetStatisticsVeryPrevalentResourceCallbackID,
     SetStatisticsHasHadUserInteractionCallbackID,
@@ -1451,6 +1452,57 @@ void TestRunner::setStatisticsLastSeen(JSStringRef hostName, double seconds, JSV
 void TestRunner::statisticsCallDidSetLastSeenCallback()
 {
     callTestRunnerCallback(SetStatisticsLastSeenCallbackID);
+}
+
+void TestRunner::setStatisticsMergeStatistic(JSStringRef hostName, JSStringRef topFrameDomain, double lastSeen, bool hadUserInteraction, double mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, JSValueRef completionHandler)
+{
+    cacheTestRunnerCallback(SetStatisticsMergeStatisticCallbackID, completionHandler);
+
+    Vector<WKRetainPtr<WKStringRef>> keys;
+    Vector<WKRetainPtr<WKTypeRef>> values;
+
+    keys.append(adoptWK(WKStringCreateWithUTF8CString("HostName")));
+    values.append(adoptWK(WKStringCreateWithJSString(hostName)));
+    
+    keys.append(adoptWK(WKStringCreateWithUTF8CString("TopFrameDomain")));
+    values.append(adoptWK(WKStringCreateWithJSString(topFrameDomain)));
+
+    keys.append(adoptWK(WKStringCreateWithUTF8CString("LastSeen")));
+    values.append(adoptWK(WKDoubleCreate(lastSeen)));
+
+    keys.append(adoptWK(WKStringCreateWithUTF8CString("HadUserInteraction")));
+    values.append(adoptWK(WKBooleanCreate(hadUserInteraction)));
+
+    keys.append(adoptWK(WKStringCreateWithUTF8CString("MostRecentUserInteraction")));
+    values.append(adoptWK(WKDoubleCreate(mostRecentUserInteraction)));
+
+    keys.append(adoptWK(WKStringCreateWithUTF8CString("IsGrandfathered")));
+    values.append(adoptWK(WKBooleanCreate(isGrandfathered)));
+
+    keys.append(adoptWK(WKStringCreateWithUTF8CString("IsPrevalent")));
+    values.append(adoptWK(WKBooleanCreate(isPrevalent)));
+
+    keys.append(adoptWK(WKStringCreateWithUTF8CString("IsVeryPrevalent")));
+    values.append(adoptWK(WKBooleanCreate(isVeryPrevalent)));
+
+    keys.append(adoptWK(WKStringCreateWithUTF8CString("DataRecordsRemoved")));
+    values.append(adoptWK(WKUInt64Create(dataRecordsRemoved)));
+
+    Vector<WKStringRef> rawKeys(keys.size());
+    Vector<WKTypeRef> rawValues(values.size());
+
+    for (size_t i = 0; i < keys.size(); ++i) {
+        rawKeys[i] = keys[i].get();
+        rawValues[i] = values[i].get();
+    }
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("SetStatisticsMergeStatistic"));
+    WKRetainPtr<WKDictionaryRef> messageBody = adoptWK(WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
+void TestRunner::statisticsCallDidSetMergeStatisticCallback()
+{
+    callTestRunnerCallback(SetStatisticsMergeStatisticCallbackID);
 }
 
 void TestRunner::setStatisticsPrevalentResource(JSStringRef hostName, bool value, JSValueRef completionHandler)
