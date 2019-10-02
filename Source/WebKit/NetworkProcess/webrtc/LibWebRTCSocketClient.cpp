@@ -37,7 +37,7 @@
 
 namespace WebKit {
 
-LibWebRTCSocketClient::LibWebRTCSocketClient(uint64_t identifier, NetworkRTCProvider& rtcProvider, std::unique_ptr<rtc::AsyncPacketSocket>&& socket, Type type)
+LibWebRTCSocketClient::LibWebRTCSocketClient(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, std::unique_ptr<rtc::AsyncPacketSocket>&& socket, Type type)
     : m_identifier(identifier)
     , m_type(type)
     , m_rtcProvider(rtcProvider)

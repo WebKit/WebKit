@@ -28,6 +28,7 @@
 #if USE(LIBWEBRTC)
 
 #include <WebCore/LibWebRTCProvider.h>
+#include <WebCore/LibWebRTCSocketIdentifier.h>
 #include <webrtc/rtc_base/asyncpacketsocket.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
@@ -51,10 +52,10 @@ class LibWebRTCSocket final : public rtc::AsyncPacketSocket {
 public:
     enum class Type { UDP, ServerTCP, ClientTCP, ServerConnectionTCP };
 
-    LibWebRTCSocket(LibWebRTCSocketFactory&, uint64_t identifier, Type, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress);
+    LibWebRTCSocket(LibWebRTCSocketFactory&, Type, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress);
     ~LibWebRTCSocket();
 
-    uint64_t identifier() const { return m_identifier; }
+    WebCore::LibWebRTCSocketIdentifier identifier() const { return m_identifier; }
     const rtc::SocketAddress& localAddress() const { return m_localAddress; }
     const rtc::SocketAddress& remoteAddress() const { return m_remoteAddress; }
 
@@ -87,7 +88,7 @@ private:
     static void sendOnMainThread(Function<void(IPC::Connection&)>&&);
 
     LibWebRTCSocketFactory& m_factory;
-    uint64_t m_identifier { 0 };
+    WebCore::LibWebRTCSocketIdentifier m_identifier;
     Type m_type;
     rtc::SocketAddress m_localAddress;
     rtc::SocketAddress m_remoteAddress;

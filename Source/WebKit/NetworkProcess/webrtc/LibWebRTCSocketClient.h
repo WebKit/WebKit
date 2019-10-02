@@ -41,10 +41,10 @@ namespace WebKit {
 class LibWebRTCSocketClient final : public NetworkRTCProvider::Socket, public sigslot::has_slots<> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    LibWebRTCSocketClient(uint64_t identifier, NetworkRTCProvider&, std::unique_ptr<rtc::AsyncPacketSocket>&&, Type);
+    LibWebRTCSocketClient(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, std::unique_ptr<rtc::AsyncPacketSocket>&&, Type);
 
 private:
-    uint64_t identifier() const final { return m_identifier; }
+    WebCore::LibWebRTCSocketIdentifier identifier() const final { return m_identifier; }
     Type type() const final { return m_type; }
     void close() final;
 
@@ -60,7 +60,7 @@ private:
 
     void signalAddressReady();
 
-    uint64_t m_identifier;
+    WebCore::LibWebRTCSocketIdentifier m_identifier;
     Type m_type;
     NetworkRTCProvider& m_rtcProvider;
     std::unique_ptr<rtc::AsyncPacketSocket> m_socket;

@@ -23,12 +23,13 @@
 #if USE(LIBWEBRTC)
 
 messages -> NetworkRTCProvider {
-    CreateUDPSocket(int identifier, WebKit::RTCNetwork::SocketAddress localAddress, uint16_t minPort, uint16_t maxPort)
-    CreateServerTCPSocket(int identifier, WebKit::RTCNetwork::SocketAddress localAddress, uint16_t minPort, uint16_t maxPort, int options)
-    CreateClientTCPSocket(int identifier, WebKit::RTCNetwork::SocketAddress localAddress, WebKit::RTCNetwork::SocketAddress remoteAddress, String userAgent, int options)
+    CreateUDPSocket(WebCore::LibWebRTCSocketIdentifier identifier, WebKit::RTCNetwork::SocketAddress localAddress, uint16_t minPort, uint16_t maxPort)
+    CreateServerTCPSocket(WebCore::LibWebRTCSocketIdentifier identifier, WebKit::RTCNetwork::SocketAddress localAddress, uint16_t minPort, uint16_t maxPort, int options)
+    CreateClientTCPSocket(WebCore::LibWebRTCSocketIdentifier identifier, WebKit::RTCNetwork::SocketAddress localAddress, WebKit::RTCNetwork::SocketAddress remoteAddress, String userAgent, int options)
+    WrapNewTCPConnection(WebCore::LibWebRTCSocketIdentifier identifier, WebCore::LibWebRTCSocketIdentifier newConnectionSocketIdentifier)
+
     CreateResolver(uint64_t identifier, String address)
     StopResolver(uint64_t identifier)
-    WrapNewTCPConnection(uint64_t identifier, uint64_t newConnectionSocketIdentifier)
 }
 
 #endif // USE(LIBWEBRTC)

@@ -36,7 +36,7 @@
 
 namespace WebKit {
 
-NetworkRTCSocket::NetworkRTCSocket(uint64_t identifier, NetworkRTCProvider& rtcProvider)
+NetworkRTCSocket::NetworkRTCSocket(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider)
     : m_identifier(identifier)
     , m_rtcProvider(rtcProvider)
 {

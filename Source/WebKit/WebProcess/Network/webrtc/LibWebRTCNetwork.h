@@ -33,6 +33,7 @@
 #endif
 
 #include "WebMDNSRegister.h"
+#include <WebCore/LibWebRTCSocketIdentifier.h>
 
 namespace WebKit {
 
@@ -47,7 +48,7 @@ public:
 
     void disableNonLocalhostConnections() { socketFactory().disableNonLocalhostConnections(); }
 
-    WebRTCSocket socket(uint64_t identifier) { return WebRTCSocket(socketFactory(), identifier); }
+    WebRTCSocket socket(WebCore::LibWebRTCSocketIdentifier identifier) { return WebRTCSocket(socketFactory(), identifier); }
     WebRTCResolver resolver(uint64_t identifier) { return WebRTCResolver(socketFactory(), identifier); }
 #endif
 

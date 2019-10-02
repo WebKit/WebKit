@@ -30,6 +30,7 @@
 #include "RTCNetwork.h"
 
 #include <WebCore/LibWebRTCMacros.h>
+#include <WebCore/LibWebRTCSocketIdentifier.h>
 #include <webrtc/rtc_base/asyncpacketsocket.h>
 #include <webrtc/rtc_base/third_party/sigslot/sigslot.h>
 
@@ -58,14 +59,14 @@ struct RTCPacketOptions;
 
 class NetworkRTCSocket {
 public:
-    NetworkRTCSocket(uint64_t, NetworkRTCProvider&);
+    NetworkRTCSocket(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&);
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 private:
     void sendTo(const IPC::DataReference&, RTCNetwork::SocketAddress&&, RTCPacketOptions&&);
     void close();
     void setOption(int option, int value);
 
-    uint64_t m_identifier;
+    WebCore::LibWebRTCSocketIdentifier m_identifier;
     NetworkRTCProvider& m_rtcProvider;
 };
 

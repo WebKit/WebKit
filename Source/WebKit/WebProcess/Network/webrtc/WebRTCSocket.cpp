@@ -36,8 +36,9 @@
 #include <wtf/Function.h>
 
 namespace WebKit {
+using namespace WebCore;
 
-void WebRTCSocket::signalOnNetworkThread(LibWebRTCSocketFactory& factory, uint64_t identifier, Function<void(LibWebRTCSocket&)>&& callback)
+void WebRTCSocket::signalOnNetworkThread(LibWebRTCSocketFactory& factory, LibWebRTCSocketIdentifier identifier, Function<void(LibWebRTCSocket&)>&& callback)
 {
     // factory is staying valid during the process lifetime.
     WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([&factory, identifier, callback = WTFMove(callback)]() {
@@ -48,7 +49,7 @@ void WebRTCSocket::signalOnNetworkThread(LibWebRTCSocketFactory& factory, uint64
     });
 }
 
-WebRTCSocket::WebRTCSocket(LibWebRTCSocketFactory& factory, uint64_t identifier)
+WebRTCSocket::WebRTCSocket(LibWebRTCSocketFactory& factory, LibWebRTCSocketIdentifier identifier)
     : m_factory(factory)
     , m_identifier(identifier)
 {
@@ -71,28 +72,28 @@ void WebRTCSocket::signalReadPacket(const IPC::DataReference& data, const RTCNet
 
 void WebRTCSocket::signalSentPacket(int rtcPacketID, int64_t sendTimeMs)
 {
-    signalOnNetworkThread(m_factory, m_identifier, [rtcPacketID, sendTimeMs](LibWebRTCSocket& socket) {
+    signalOnNetworkThread(m_factory, m_identifier, [rtcPacketID, sendTimeMs](auto& socket) {
         socket.signalSentPacket(rtcPacketID, sendTimeMs);
     });
 }
 
 void WebRTCSocket::signalConnect()
 {
-    signalOnNetworkThread(m_factory, m_identifier, [](LibWebRTCSocket& socket) {
+    signalOnNetworkThread(m_factory, m_identifier, [](auto& socket) {
         socket.signalConnect();
     });
 }
 
 void WebRTCSocket::signalClose(int error)
 {
-    signalOnNetworkThread(m_factory, m_identifier, [error](LibWebRTCSocket& socket) {
+    signalOnNetworkThread(m_factory, m_identifier, [error](auto& socket) {
         socket.signalClose(error);
     });
 }
 
-void WebRTCSocket::signalNewConnection(uint64_t newSocketIdentifier, const RTCNetwork::SocketAddress& remoteAddress)
+void WebRTCSocket::signalNewConnection(LibWebRTCSocketIdentifier newSocketIdentifier, const RTCNetwork::SocketAddress& remoteAddress)
 {
-    signalOnNetworkThread(m_factory, m_identifier, [newSocketIdentifier, remoteAddress = RTCNetwork::isolatedCopy(remoteAddress.value)](LibWebRTCSocket& socket) {
+    signalOnNetworkThread(m_factory, m_identifier, [newSocketIdentifier, remoteAddress = RTCNetwork::isolatedCopy(remoteAddress.value)](auto& socket) {
         socket.signalNewConnection(socket.m_factory.createNewConnectionSocket(socket, newSocketIdentifier, remoteAddress));
     });
 }

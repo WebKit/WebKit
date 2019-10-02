@@ -40,9 +40,9 @@
 
 namespace WebKit {
 
-LibWebRTCSocket::LibWebRTCSocket(LibWebRTCSocketFactory& factory, uint64_t identifier, Type type, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress)
+LibWebRTCSocket::LibWebRTCSocket(LibWebRTCSocketFactory& factory, Type type, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress)
     : m_factory(factory)
-    , m_identifier(identifier)
+    , m_identifier(WebCore::LibWebRTCSocketIdentifier::generate())
     , m_type(type)
     , m_localAddress(localAddress)
     , m_remoteAddress(remoteAddress)

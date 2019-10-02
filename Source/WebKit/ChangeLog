@@ -1,3 +1,60 @@
+2019-10-02  youenn fablet  <youenn@apple.com>
+
+        Use strongly typed identifiers for webrtc sockets
+        https://bugs.webkit.org/show_bug.cgi?id=202400
+
+        Reviewed by Chris Dumez.
+
+        Refactoring to use LibWebRTCSocketIdentifier instead of uint64_t.
+
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.cpp:
+        (WebKit::LibWebRTCSocketClient::LibWebRTCSocketClient):
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::createSocket):
+        (WebKit::NetworkRTCProvider::createUDPSocket):
+        (WebKit::NetworkRTCProvider::createServerTCPSocket):
+        (WebKit::NetworkRTCProvider::createClientTCPSocket):
+        (WebKit::NetworkRTCProvider::wrapNewTCPConnection):
+        (WebKit::NetworkRTCProvider::addSocket):
+        (WebKit::NetworkRTCProvider::takeSocket):
+        (WebKit::NetworkRTCProvider::newConnection):
+        (WebKit::NetworkRTCProvider::didReceiveNetworkRTCSocketMessage):
+        (WebKit::NetworkRTCProvider::closeListeningSockets):
+        (WebKit::NetworkRTCProvider::callSocket):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.messages.in:
+        * NetworkProcess/webrtc/NetworkRTCSocket.cpp:
+        (WebKit::NetworkRTCSocket::NetworkRTCSocket):
+        * NetworkProcess/webrtc/NetworkRTCSocket.h:
+        * Scripts/webkit/messages.py:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        * WebProcess/Network/webrtc/LibWebRTCNetwork.h:
+        (WebKit::LibWebRTCNetwork::socket):
+        * WebProcess/Network/webrtc/LibWebRTCSocket.cpp:
+        (WebKit::LibWebRTCSocket::LibWebRTCSocket):
+        * WebProcess/Network/webrtc/LibWebRTCSocket.h:
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp:
+        (WebKit::LibWebRTCSocketFactory::createServerTcpSocket):
+        (WebKit::LibWebRTCSocketFactory::createUdpSocket):
+        (WebKit::LibWebRTCSocketFactory::createClientTcpSocket):
+        (WebKit::LibWebRTCSocketFactory::createNewConnectionSocket):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.h:
+        (WebKit::LibWebRTCSocketFactory::socket):
+        (WebKit::LibWebRTCSocketFactory::resolver):
+        (WebKit::LibWebRTCSocketFactory::takeResolver):
+        (WebKit::LibWebRTCSocketFactory::disableNonLocalhostConnections):
+        * WebProcess/Network/webrtc/WebRTCSocket.cpp:
+        (WebKit::WebRTCSocket::signalOnNetworkThread):
+        (WebKit::WebRTCSocket::WebRTCSocket):
+        (WebKit::WebRTCSocket::signalSentPacket):
+        (WebKit::WebRTCSocket::signalConnect):
+        (WebKit::WebRTCSocket::signalClose):
+        (WebKit::WebRTCSocket::signalNewConnection):
+        * WebProcess/Network/webrtc/WebRTCSocket.h:
+        * WebProcess/Network/webrtc/WebRTCSocket.messages.in:
+
 2019-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Stop using legacy custom protocol implementation

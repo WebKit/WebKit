@@ -108,7 +108,7 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
 
 #if USE(LIBWEBRTC)
     if (decoder.messageReceiverName() == Messages::WebRTCSocket::messageReceiverName()) {
-        WebProcess::singleton().libWebRTCNetwork().socket(decoder.destinationID()).didReceiveMessage(connection, decoder);
+        WebProcess::singleton().libWebRTCNetwork().socket(makeObjectIdentifier<LibWebRTCSocketIdentifierType>(decoder.destinationID())).didReceiveMessage(connection, decoder);
         return;
     }
     if (decoder.messageReceiverName() == Messages::WebRTCMonitor::messageReceiverName()) {

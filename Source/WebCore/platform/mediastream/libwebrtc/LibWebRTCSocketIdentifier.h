@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
+ *    notice , this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
@@ -25,43 +25,11 @@
 
 #pragma once
 
-#if USE(LIBWEBRTC)
+#include <wtf/ObjectIdentifier.h>
 
-#include "RTCNetwork.h"
-#include <WebCore/LibWebRTCSocketIdentifier.h>
-#include <wtf/Function.h>
+namespace WebCore {
 
-namespace IPC {
-class Connection;
-class DataReference;
-class Decoder;
-}
+enum LibWebRTCSocketIdentifierType { };
+using LibWebRTCSocketIdentifier = ObjectIdentifier<LibWebRTCSocketIdentifierType>;
 
-namespace WebKit {
-
-class LibWebRTCSocket;
-class LibWebRTCSocketFactory;
-
-class WebRTCSocket {
-public:
-    WebRTCSocket(LibWebRTCSocketFactory&, WebCore::LibWebRTCSocketIdentifier);
-
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
-
-    static void signalOnNetworkThread(LibWebRTCSocketFactory&, WebCore::LibWebRTCSocketIdentifier, Function<void(LibWebRTCSocket&)>&&);
-
-private:
-    void signalReadPacket(const IPC::DataReference&, const RTCNetwork::IPAddress&, uint16_t port, int64_t);
-    void signalSentPacket(int, int64_t);
-    void signalAddressReady(const RTCNetwork::SocketAddress&);
-    void signalConnect();
-    void signalClose(int);
-    void signalNewConnection(WebCore::LibWebRTCSocketIdentifier newSocketIdentifier, const WebKit::RTCNetwork::SocketAddress&);
-
-    LibWebRTCSocketFactory& m_factory;
-    WebCore::LibWebRTCSocketIdentifier m_identifier;
-};
-
-} // namespace WebKit
-
-#endif // USE(LIBWEBRTC)
+} // namespace WebCore
