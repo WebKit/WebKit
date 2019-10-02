@@ -1,3 +1,12 @@
+2019-10-02  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Add test-webkitpy for Python 3 (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=201954
+
+        Unreviewed follow-up fix.
+
+        * Scripts/test-webkitpy-python3: Add copyright.
+
 2019-10-02  Thibault Saunier  <tsaunier@igalia.com>
 
         [GSTreamer] Let playbin handle redirects for us when appropriate
