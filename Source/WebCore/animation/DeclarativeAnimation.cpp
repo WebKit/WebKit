@@ -153,12 +153,6 @@ WebAnimation::PlayState DeclarativeAnimation::bindingsPlayState() const
     return WebAnimation::bindingsPlayState();
 }
 
-WebAnimation::ReplaceState DeclarativeAnimation::bindingsReplaceState() const
-{
-    flushPendingStyleChanges();
-    return WebAnimation::bindingsReplaceState();
-}
-
 bool DeclarativeAnimation::bindingsPending() const
 {
     flushPendingStyleChanges();
