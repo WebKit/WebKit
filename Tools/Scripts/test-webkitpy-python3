@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+import sys
+sys.dont_write_bytecode = True
+
+import argparse
+import os
+import sys
+import unittest
+
+
+PYTHON3_COMPATIBLE_DIRECTORIES = [
+  'webkitpy.common.system',
+  'webkitpy.common.thread',
+]
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Run unit tests with Python3. This is intended as a temporary script during the Python2/3 transition')
+    parser.add_argument(
+        '-v', '--verbose',
+        default=False, action='store_true',
+        help='Verbose output',
+    )
+    parser.add_argument(
+        '-f', '--stop-on-fail',
+        default=False, action='store_true',
+        help='Stop on first fail or error',
+    )
+
+    if len(PYTHON3_COMPATIBLE_DIRECTORIES) == 1:
+        compatible_directories_readable = PYTHON3_COMPATIBLE_DIRECTORIES[0]
+    else:
+        compatible_directories_readable = '{} and {}'.format(
+            ', '.join(PYTHON3_COMPATIBLE_DIRECTORIES[:-1]),
+            PYTHON3_COMPATIBLE_DIRECTORIES[-1],
+        )
+    parser.add_argument(
+        'modules_to_test', nargs='*',
+        help='Modules to be tested. By default, this is {}'.format(compatible_directories_readable),
+        default=PYTHON3_COMPATIBLE_DIRECTORIES,
+    )
+    options = parser.parse_args()
+
+    root = os.path.dirname(os.path.abspath(__file__))
+
+    suite = unittest.TestSuite()
+    for module_name in options.modules_to_test:
+        module_suite = unittest.defaultTestLoader.discover(os.path.join(root, module_name.replace('.', '/')), pattern='*test.py', top_level_dir=root)
+        for test in (module_suite or []):
+            suite.addTest(test)
+
+    if suite.countTestCases() == 0:
+        raise RuntimeError('No matching tests found.')
+
+    result = unittest.TextTestRunner(verbosity=int(options.verbose) + 1, failfast=options.stop_on_fail, buffer=not options.verbose).run(suite)
+    return len(result.errors)
+
+if __name__ == '__main__':
+    sys.exit(main())
