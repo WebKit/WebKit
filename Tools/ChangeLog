@@ -1,3 +1,15 @@
+2019-10-02  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] windows or wincairo queue should use del instead of rm command
+        https://bugs.webkit.org/show_bug.cgi?id=202477
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CleanUpGitIndexLock.start): Use 'del' command instead of rm for windows and wincairo.
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestCleanUpGitIndexLock.test_success_wincairo): Added unit-test.
+
 2019-10-02  youenn fablet  <youenn@apple.com>
 
         Add a test to check the case of launching two service worker processes shortly one after the other

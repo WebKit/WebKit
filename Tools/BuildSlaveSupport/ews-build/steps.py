@@ -122,6 +122,13 @@ class CleanUpGitIndexLock(shell.ShellCommand):
     def __init__(self, **kwargs):
         super(CleanUpGitIndexLock, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
 
+    def start(self):
+        platform = self.getProperty('platform', '*')
+        platform = platform.split('-')[0]
+        if platform in ('win', 'wincairo'):
+            self.command = ['del', '.git\index.lock']
+        return shell.ShellCommand.start(self)
+
     def evaluateCommand(self, cmd):
         self.build.buildFinished(['Git issue, retrying build'], RETRY)
         return super(CleanUpGitIndexLock, self).evaluateCommand(cmd)

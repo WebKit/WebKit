@@ -616,6 +616,20 @@ class TestCleanUpGitIndexLock(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Deleted .git/index.lock')
         return self.runStep()
 
+    def test_success_wincairo(self):
+        self.setupStep(CleanUpGitIndexLock())
+        self.setProperty('platform', 'wincairo')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=120,
+                        logEnviron=False,
+                        command=['del', '.git\index.lock'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Deleted .git/index.lock')
+        return self.runStep()
+
     def test_failure(self):
         self.setupStep(CleanUpGitIndexLock())
         self.expectRemoteCommands(
