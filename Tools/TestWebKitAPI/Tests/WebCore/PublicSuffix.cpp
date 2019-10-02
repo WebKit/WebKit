@@ -179,6 +179,7 @@ TEST_F(PublicSuffix, TopPrivatelyControlledDomain)
     EXPECT_EQ(String("localhost"), topPrivatelyControlledDomain("LocalHost"));
     EXPECT_EQ(String("åäö"), topPrivatelyControlledDomain("åäö"));
     EXPECT_EQ(String("ÅÄÖ"), topPrivatelyControlledDomain("ÅÄÖ"));
+    EXPECT_EQ(String("test.com"), topPrivatelyControlledDomain(".test.com"));
 }
 
 }

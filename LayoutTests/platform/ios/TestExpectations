@@ -2799,7 +2799,9 @@ http/tests/storageAccess/deny-storage-access-under-opener.html [ Pass ]
 http/tests/storageAccess/deny-storage-access-under-opener-if-auto-dismiss.html [ Pass ]
 http/tests/resourceLoadStatistics/cap-cache-max-age-for-prevalent-resource.html [ Pass ]
 http/tests/storageAccess/has-storage-access-false-by-default.html [ Pass ]
-
+http/tests/storageAccess/has-storage-access-false-by-default-ephemeral.html [ Pass ]
+http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.html [ Pass ]
+http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies.html [ Pass ]
 
 # Skipped in general expectations since they only work on iOS and Mac, WK2.
 http/tests/security/strip-referrer-to-origin-for-third-party-redirects-in-private-mode.html [ Pass ]

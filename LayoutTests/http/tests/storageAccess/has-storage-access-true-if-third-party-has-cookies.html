@@ -3,10 +3,9 @@
 <html>
 <head>
     <script src="/js-test-resources/js-test.js"></script>
-    <script src="/js-test-resources/ui-helper.js"></script>
     <script src="/resourceLoadStatistics/resources/util.js"></script>
     <script>
-        description("Tests that document.hasStorageAccess() returns true for a 3rd-party iframe if there is no way to request access (feature off).");
+        description("Tests that document.hasStorageAccess() returns true for a 3rd-party iframe if the 3rd-party has cookies set.");
         jsTestIsAsync = true;
 
         window.addEventListener("message", receiveMessage, false);
@@ -23,14 +22,18 @@
         }
 
         const hostUnderTest = "localhost:8000";
-        const statisticsUrl = "http://" + hostUnderTest + "/temp";
+        const statisticsUrl = "http://" + hostUnderTest;
         function runTest() {
-            setEnableFeature(false, function() {
+            if (document.location.hash !== "#firstPartyCookieSet") {
+                setEnableFeature(false, function() {
+                    document.location.href = statisticsUrl + "/storageAccess/resources/set-cookie.php?name=firstPartyCookie&value=value#http://127.0.0.1:8000/storageAccess/has-storage-access-true-if-third-party-has-cookies.html#firstPartyCookieSet";
+                });
+            } else {
                 let iframeElement = document.createElement("iframe");
                 iframeElement.id = "TheIframeThatRequestsStorageAccess";
                 iframeElement.src = "http://localhost:8000/storageAccess/resources/has-storage-access-iframe.html#policyShouldGrantAccess";
                 document.body.appendChild(iframeElement);
-            });
+            }
         }
     </script>
 </head>

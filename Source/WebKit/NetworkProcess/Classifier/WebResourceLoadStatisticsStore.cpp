@@ -434,6 +434,20 @@ void WebResourceLoadStatisticsStore::callGrantStorageAccessHandler(const Registr
     completionHandler(grantStorageAccess(subFrameDomain, topFrameDomain, frameID, pageID));
 }
 
+void WebResourceLoadStatisticsStore::hasCookies(const RegistrableDomain& domain, CompletionHandler<void(bool)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (m_networkSession) {
+        if (auto* storageSession = m_networkSession->networkStorageSession()) {
+            storageSession->hasCookies(domain, WTFMove(completionHandler));
+            return;
+        }
+    }
+    
+    completionHandler(false);
+}
+
 void WebResourceLoadStatisticsStore::didCreateNetworkProcess()
 {
     ASSERT(RunLoop::isMain());

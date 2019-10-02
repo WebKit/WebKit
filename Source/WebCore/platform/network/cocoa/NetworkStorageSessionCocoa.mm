@@ -102,6 +102,20 @@ Vector<Cookie> NetworkStorageSession::getCookies(const URL& url)
     return nsCookiesToCookieVector([nsCookieStorage() cookiesForURL:(NSURL *)url]);
 }
 
+void NetworkStorageSession::hasCookies(const RegistrableDomain& domain, CompletionHandler<void(bool)>&& completionHandler) const
+{
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
+    
+    for (NSHTTPCookie *nsCookie in nsCookieStorage().cookies) {
+        if (RegistrableDomain::uncheckedCreateFromHost(nsCookie.domain) == domain) {
+            completionHandler(true);
+            return;
+        }
+    }
+
+    completionHandler(false);
+}
+
 void NetworkStorageSession::flushCookieStore()
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));

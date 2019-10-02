@@ -716,10 +716,13 @@ void NetworkConnectionToWebProcess::hasStorageAccess(const RegistrableDomain& su
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
             resourceLoadStatistics->hasStorageAccess(subFrameDomain, topFrameDomain, frameID, pageID, WTFMove(completionHandler));
             return;
+        } else {
+            storageSession()->hasCookies(subFrameDomain, WTFMove(completionHandler));
+            return;
         }
     }
 
-    completionHandler(true);
+    completionHandler(false);
 }
 
 void NetworkConnectionToWebProcess::requestStorageAccess(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, FrameIdentifier frameID, PageIdentifier webPageID, WebPageProxyIdentifier webPageProxyID, CompletionHandler<void(WebCore::StorageAccessWasGranted wasGranted, WebCore::StorageAccessPromptWasShown promptWasShown)>&& completionHandler)

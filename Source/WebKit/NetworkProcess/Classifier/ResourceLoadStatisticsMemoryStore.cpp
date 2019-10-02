@@ -217,8 +217,19 @@ void ResourceLoadStatisticsMemoryStore::hasStorageAccess(const SubFrameDomain& s
 
     auto& subFrameStatistic = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
     // Return false if this domain cannot ask for storage access.
-    if (shouldBlockAndPurgeCookies(subFrameStatistic) || !shouldBlockAndKeepCookies(subFrameStatistic)) {
+    if (shouldBlockAndPurgeCookies(subFrameStatistic)) {
         completionHandler(false);
+        return;
+    }
+
+    if (!shouldBlockAndKeepCookies(subFrameStatistic)) {
+        RunLoop::main().dispatch([store = makeRef(store()), subFrameDomain = subFrameDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+            store->hasCookies(subFrameDomain, [store = store.copyRef(), completionHandler = WTFMove(completionHandler)](bool result) mutable {
+                store->statisticsQueue().dispatch([completionHandler = WTFMove(completionHandler), result] () mutable {
+                    completionHandler(result);
+                });
+            });
+        });
         return;
     }
 
