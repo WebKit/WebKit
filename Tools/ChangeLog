@@ -1,3 +1,12 @@
+2019-10-02  youenn fablet  <youenn@apple.com>
+
+        Add a test to check the case of launching two service worker processes shortly one after the other
+        https://bugs.webkit.org/show_bug.cgi?id=202450
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2019-10-02  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Dedicate a bot for macOS-High-Sierra-Debug-Build-EWS queue
