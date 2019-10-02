@@ -1,3 +1,20 @@
+2019-10-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][Clang][ANGLE] global_state.cpp(39,1): error: static_assert failed due to requirement 'std::is_trivially_constructible<std::atomic<std::mutex *>>::value' "global mutex is not trivially constructible"
+        https://bugs.webkit.org/show_bug.cgi?id=201751
+
+        Reviewed by Alex Christensen.
+
+        Clang-cl couldn't compile the latest ANGLE with MS STL owing to a
+        static_assert failure.
+
+        Fix it by cherri-picking the upstream fix.
+        <https://chromium.googlesource.com/angle/angle/+/755417dd79071d6149c81418e1404b0c61d19672>
+
+        * AUTHORS:
+        * src/common/angleutils.h:
+        * src/libGLESv2/global_state.cpp:
+
 2019-09-24  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] ANGLE's eglplatform.h is build broken with -DENABLE_X11_PLATFORM=OFF

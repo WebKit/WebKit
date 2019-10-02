@@ -333,4 +333,10 @@ std::string ToString(const T &value)
 #    define ANGLE_MAYBE_UNUSED
 #endif  // __has_cpp_attribute(maybe_unused)
 
+#if __has_cpp_attribute(require_constant_initialization)
+#    define ANGLE_REQUIRE_CONSTANT_INIT [[require_constant_initialization]]
+#else
+#    define ANGLE_REQUIRE_CONSTANT_INIT
+#endif  // __has_cpp_attribute(require_constant_initialization)
+
 #endif  // COMMON_ANGLEUTILS_H_
