@@ -46,10 +46,6 @@
 #include <usp10.h>
 #endif
 
-#if USE(CG)
-#include <pal/spi/cg/CoreGraphicsSPI.h>
-#endif
-
 #if USE(DIRECT2D)
 interface IDWriteFactory5;
 interface IDWriteGdiInterop;

@@ -103,6 +103,7 @@
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/markup.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "WebMailDelegate.h"

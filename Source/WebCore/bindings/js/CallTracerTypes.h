@@ -33,7 +33,6 @@
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
-#include "ImageBitmap.h"
 #include "ImageData.h"
 #include "Path2D.h"
 #include "TypedOMCSSImageValue.h"

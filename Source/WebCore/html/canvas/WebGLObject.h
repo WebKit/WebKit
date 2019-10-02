@@ -27,10 +27,12 @@
 
 #if ENABLE(WEBGL)
 
-#include "GraphicsContext3D.h"
+#include "GraphicsTypes3D.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
+class GraphicsContext3D;
 class WebGLContextGroup;
 class WebGLRenderingContextBase;
 

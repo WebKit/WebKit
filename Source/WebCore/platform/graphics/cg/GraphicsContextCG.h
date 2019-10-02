@@ -36,10 +36,7 @@ WEBCORE_EXPORT CGColorSpaceRef extendedSRGBColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef displayP3ColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef linearRGBColorSpaceRef();
 
-inline CGAffineTransform getUserToBaseCTM(CGContextRef context)
-{
-    return CGAffineTransformConcat(CGContextGetCTM(context), CGAffineTransformInvert(CGContextGetBaseCTM(context)));
-}
+CGAffineTransform getUserToBaseCTM(CGContextRef);
 
 static inline CGColorSpaceRef cachedCGColorSpace(ColorSpace colorSpace)
 {

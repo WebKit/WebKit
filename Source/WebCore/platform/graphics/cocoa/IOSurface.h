@@ -28,6 +28,7 @@
 #if HAVE(IOSURFACE)
 
 #include <objc/objc.h>
+#include <pal/spi/cocoa/IOSurfaceSPI.h>
 #include "GraphicsContext.h"
 #include "IntSize.h"
 

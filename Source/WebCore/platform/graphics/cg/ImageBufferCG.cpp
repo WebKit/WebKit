@@ -40,6 +40,7 @@
 #include <math.h>
 #include <CoreGraphics/CoreGraphics.h>
 #include <ImageIO/ImageIO.h>
+#include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/Assertions.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MainThread.h>

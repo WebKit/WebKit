@@ -39,6 +39,10 @@
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
+#if USE(CG)
+#include <pal/spi/cg/CoreGraphicsSPI.h>
+#endif
+
 namespace WebCore {
 
 BitmapImage::BitmapImage(ImageObserver* observer)

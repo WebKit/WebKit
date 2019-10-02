@@ -42,6 +42,7 @@
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorCanvasAgent.h"
+#include "InspectorController.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMDebuggerAgent.h"
 #include "InspectorDOMStorageAgent.h"
@@ -66,7 +67,10 @@
 #include "WebConsoleAgent.h"
 #include "WebDebuggerAgent.h"
 #include "WebGLRenderingContextBase.h"
+#include "WebGPUDevice.h"
 #include "WebSocketFrame.h"
+#include "WorkerGlobalScope.h"
+#include "WorkerInspectorController.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/InspectorDebuggerAgent.h>
@@ -1136,6 +1140,11 @@ void InspectorInstrumentation::willDestroyWebGPUPipelineImpl(InstrumentingAgents
     if (auto* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
         canvasAgent->willDestroyWebGPUPipeline(pipeline);
 }
+
+InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForWebGPUDevice(WebGPUDevice& device)
+{
+    return instrumentingAgentsForContext(device.scriptExecutionContext());
+}
 #endif
 
 #if ENABLE(RESOURCE_USAGE)
@@ -1278,6 +1287,26 @@ void InspectorInstrumentation::renderLayerDestroyedImpl(InstrumentingAgents& ins
 {
     if (InspectorLayerTreeAgent* layerTreeAgent = instrumentingAgents.inspectorLayerTreeAgent())
         layerTreeAgent->renderLayerDestroyed(renderLayer);
+}
+
+InstrumentingAgents& InspectorInstrumentation::instrumentingAgentsForWorkerGlobalScope(WorkerGlobalScope& workerGlobalScope)
+{
+    return workerGlobalScope.inspectorController().m_instrumentingAgents;
+}
+
+InstrumentingAgents& InspectorInstrumentation::instrumentingAgentsForPage(Page& page)
+{
+    ASSERT(isMainThread());
+    return page.inspectorController().m_instrumentingAgents.get();
+}
+
+InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForContext(ScriptExecutionContext& context)
+{
+    if (is<Document>(context))
+        return instrumentingAgentsForPage(downcast<Document>(context).page());
+    if (is<WorkerGlobalScope>(context))
+        return &instrumentingAgentsForWorkerGlobalScope(downcast<WorkerGlobalScope>(context));
+    return nullptr;
 }
 
 } // namespace WebCore

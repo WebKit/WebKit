@@ -28,8 +28,6 @@
 #if ENABLE(CSS_TYPED_OM)
 
 #include "CSSImageValue.h"
-#include "ImageBitmap.h"
-#include "RenderElement.h"
 #include "TypedOMCSSStyleValue.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/StringConcatenateNumbers.h>

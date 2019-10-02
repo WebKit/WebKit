@@ -67,6 +67,11 @@ static void setCGStrokeColor(CGContextRef context, const Color& color)
     CGContextSetStrokeColorWithColor(context, cachedCGColor(color));
 }
 
+inline CGAffineTransform getUserToBaseCTM(CGContextRef context)
+{
+    return CGAffineTransformConcat(CGContextGetCTM(context), CGAffineTransformInvert(CGContextGetBaseCTM(context)));
+}
+
 CGColorSpaceRef sRGBColorSpaceRef()
 {
     static CGColorSpaceRef sRGBColorSpace;

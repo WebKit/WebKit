@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGL)
 
+#include "GraphicsContext3D.h"
 #include "WebGLBuffer.h"
 #include "WebGLContextObject.h"
 

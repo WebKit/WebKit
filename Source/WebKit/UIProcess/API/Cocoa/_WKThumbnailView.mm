@@ -34,6 +34,7 @@
 #import "WKViewInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 
 // FIXME: Make it possible to leave a snapshot of the content presented in the WKView while the thumbnail is live.
 // FIXME: Don't make new speculative tiles while thumbnailed.

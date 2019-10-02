@@ -32,6 +32,7 @@
 #import "SharedBuffer.h"
 #import <Quartz/Quartz.h>
 #import <objc/objc-class.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 

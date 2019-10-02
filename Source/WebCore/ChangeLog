@@ -1,3 +1,40 @@
+2019-10-01  Tim Horton  <timothy_horton@apple.com>
+
+        Clean up some includes to make the build a bit faster
+        https://bugs.webkit.org/show_bug.cgi?id=202444
+
+        Reviewed by Geoff Garen.
+
+        No new tests, just reorganizing.
+
+        Apply some profile-guided optimizations to our headers.
+
+        * bindings/js/CallTracerTypes.h:
+        * css/typedom/TypedOMCSSImageValue.h:
+        * html/canvas/WebGLObject.h:
+        * html/canvas/WebGLVertexArrayObjectBase.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForWebGPUDevice):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForWorkerGlobalScope):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForPage):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForContext):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didCreateWebGPUDevice):
+        (WebCore::InspectorInstrumentation::willDestroyWebGPUDevice):
+        (WebCore::InspectorInstrumentation::didCreateWebGPUPipeline):
+        * platform/graphics/BitmapImage.cpp:
+        * platform/graphics/Font.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::getUserToBaseCTM):
+        * platform/graphics/cg/GraphicsContextCG.h:
+        (WebCore::getUserToBaseCTM): Deleted.
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        * platform/graphics/cocoa/IOSurface.h:
+        * platform/graphics/mac/PDFDocumentImageMac.mm:
+        InspectorInstrumentation.h is one of the most expensive headers in the entire project.
+        While not included in many places (70), it is fairly straightforward to reduce
+        its per-inclusion cost by rougly 80%.
+
 2019-10-01  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards a functioning CMake build on Mac

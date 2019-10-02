@@ -42,15 +42,11 @@
 #include "FormData.h"
 #include "Frame.h"
 #include "HitTestResult.h"
-#include "InspectorController.h"
 #include "InspectorInstrumentationCookie.h"
 #include "InspectorInstrumentationPublic.h"
-#include "OffscreenCanvas.h"
 #include "Page.h"
 #include "StorageArea.h"
-#include "WorkerGlobalScope.h"
-#include "WorkerInspectorController.h"
-#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/ConsoleMessage.h>
 #include <initializer_list>
 #include <wtf/CompletionHandler.h>
 #include <wtf/MemoryPressureHandler.h>
@@ -62,7 +58,6 @@
 
 #if ENABLE(WEBGPU)
 #include "GPUCanvasContext.h"
-#include "WebGPUDevice.h"
 #include "WebGPUPipeline.h"
 #endif
 
@@ -99,6 +94,7 @@ class ShadowRoot;
 class SharedBuffer;
 class TimerBase;
 class WebKitNamedFlow;
+class WorkerGlobalScope;
 class WorkerInspectorProxy;
 
 #if ENABLE(WEBGL)
@@ -106,6 +102,7 @@ class WebGLProgram;
 #endif
 
 #if ENABLE(WEBGPU)
+class WebGPUDevice;
 class WebGPUSwapChain;
 #endif
 
@@ -495,6 +492,7 @@ private:
     static void willConfigureSwapChainImpl(InstrumentingAgents&, GPUCanvasContext&, WebGPUSwapChain&);
     static void didCreateWebGPUPipelineImpl(InstrumentingAgents&, WebGPUDevice&, WebGPUPipeline&);
     static void willDestroyWebGPUPipelineImpl(InstrumentingAgents&, WebGPUPipeline&);
+    static InstrumentingAgents* instrumentingAgentsForWebGPUDevice(WebGPUDevice&);
 #endif
 
     static void layerTreeDidChangeImpl(InstrumentingAgents&);
@@ -1424,14 +1422,14 @@ inline bool InspectorInstrumentation::isWebGLProgramHighlighted(WebGLRenderingCo
 inline void InspectorInstrumentation::didCreateWebGPUDevice(WebGPUDevice& device)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (auto* instrumentingAgents = instrumentingAgentsForContext(device.scriptExecutionContext()))
+    if (auto* instrumentingAgents = instrumentingAgentsForWebGPUDevice(device))
         didCreateWebGPUDeviceImpl(*instrumentingAgents, device);
 }
 
 inline void InspectorInstrumentation::willDestroyWebGPUDevice(WebGPUDevice& device)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (auto* instrumentingAgents = instrumentingAgentsForContext(device.scriptExecutionContext()))
+    if (auto* instrumentingAgents = instrumentingAgentsForWebGPUDevice(device))
         willDestroyWebGPUDeviceImpl(*instrumentingAgents, device);
 }
 
@@ -1445,7 +1443,7 @@ inline void InspectorInstrumentation::willConfigureSwapChain(GPUCanvasContext& c
 inline void InspectorInstrumentation::didCreateWebGPUPipeline(WebGPUDevice& device, WebGPUPipeline& pipeline)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (auto* instrumentingAgents = instrumentingAgentsForContext(device.scriptExecutionContext()))
+    if (auto* instrumentingAgents = instrumentingAgentsForWebGPUDevice(device))
         didCreateWebGPUPipelineImpl(*instrumentingAgents, device, pipeline);
 }
 
@@ -1629,15 +1627,6 @@ inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForCont
     return context ? instrumentingAgentsForContext(*context) : nullptr;
 }
 
-inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForContext(ScriptExecutionContext& context)
-{
-    if (is<Document>(context))
-        return instrumentingAgentsForPage(downcast<Document>(context).page());
-    if (is<WorkerGlobalScope>(context))
-        return &instrumentingAgentsForWorkerGlobalScope(downcast<WorkerGlobalScope>(context));
-    return nullptr;
-}
-
 inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForFrame(const Frame* frame)
 {
     return frame ? instrumentingAgentsForFrame(*frame) : nullptr;
@@ -1666,20 +1655,9 @@ inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForPage
     return page ? &instrumentingAgentsForPage(*page) : nullptr;
 }
 
-inline InstrumentingAgents& InspectorInstrumentation::instrumentingAgentsForPage(Page& page)
-{
-    ASSERT(isMainThread());
-    return page.inspectorController().m_instrumentingAgents.get();
-}
-
 inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForWorkerGlobalScope(WorkerGlobalScope* workerGlobalScope)
 {
     return workerGlobalScope ? &instrumentingAgentsForWorkerGlobalScope(*workerGlobalScope) : nullptr;
-}
-
-inline InstrumentingAgents& InspectorInstrumentation::instrumentingAgentsForWorkerGlobalScope(WorkerGlobalScope& workerGlobalScope)
-{
-    return workerGlobalScope.inspectorController().m_instrumentingAgents;
 }
 
 inline void InspectorInstrumentation::frontendCreated()
