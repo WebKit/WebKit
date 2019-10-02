@@ -75,6 +75,7 @@ public:
 #endif
     }
 
+#if USE(JSVALUE64)
     void store64FromReg(Reg src, Address dst)
     {
         if (src.isFPR())
@@ -82,7 +83,8 @@ public:
         else
             store64(src.gpr(), dst);
     }
-
+#endif
+    
     void store32FromReg(Reg src, Address dst)
     {
         if (src.isFPR())
@@ -91,6 +93,7 @@ public:
             store32(src.gpr(), dst);
     }
 
+#if USE(JSVALUE64)
     void load64ToReg(Address src, Reg dst)
     {
         if (dst.isFPR())
@@ -98,7 +101,8 @@ public:
         else
             load64(src, dst.gpr());
     }
-
+#endif
+    
     void load32ToReg(Address src, Reg dst)
     {
         if (dst.isFPR())
