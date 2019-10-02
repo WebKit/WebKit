@@ -1,3 +1,43 @@
+2019-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Stop using legacy custom protocol implementation
+        https://bugs.webkit.org/show_bug.cgi?id=202407
+
+        Reviewed by Žan Doberšek.
+
+        Use the new approach, which is simpler and doesn't require to go to the network process to load custom
+        protocols.
+
+        * NetworkProcess/CustomProtocols/soup/LegacyCustomProtocolManagerSoup.cpp: Removed.
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::m_messagePortChannelRegistry):
+        * NetworkProcess/soup/WebKitSoupRequestInputStream.cpp: Removed.
+        * NetworkProcess/soup/WebKitSoupRequestInputStream.h: Removed.
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/API/glib/WebKitCustomProtocolManagerClient.cpp: Removed.
+        * UIProcess/API/glib/WebKitCustomProtocolManagerClient.h: Removed.
+        * UIProcess/API/glib/WebKitURISchemeRequest.cpp:
+        (webkitURISchemeRequestCreate):
+        (webkit_uri_scheme_request_get_scheme):
+        (webkit_uri_scheme_request_get_uri):
+        (webkit_uri_scheme_request_get_path):
+        (webkit_uri_scheme_request_get_web_view):
+        (webkitURISchemeRequestReadCallback):
+        (webkit_uri_scheme_request_finish_error):
+        * UIProcess/API/glib/WebKitURISchemeRequestPrivate.h:
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        (webkitWebContextDispose):
+        (webkit_web_context_register_uri_scheme):
+        (webkitWebContextCreatePageForWebView):
+        * UIProcess/API/glib/WebKitWebContextPrivate.h:
+        * UIProcess/WebURLSchemeTask.h:
+        (WebKit::WebURLSchemeTask::request const):
+        * UIProcess/soup/WebProcessPoolSoup.cpp:
+
 2019-10-02  Zan Dobersek  <zdobersek@igalia.com>
 
         [Nicosia] Enable async scrolling at build-time for Nicosia-using ports

@@ -45,7 +45,6 @@
 namespace WebCore {
 
 static bool gIgnoreTLSErrors;
-static GType gCustomProtocolRequestType;
 
 static CString& initialAcceptLanguages()
 {
@@ -133,8 +132,6 @@ SoupNetworkSession::SoupNetworkSession(PAL::SessionID sessionID)
         SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_WEBSOCKET_EXTENSION_MANAGER,
 #endif
         nullptr);
-
-    setupCustomProtocols();
 
     if (!initialAcceptLanguages().isNull())
         setAcceptLanguages(initialAcceptLanguages());
@@ -335,24 +332,6 @@ void SoupNetworkSession::setInitialAcceptLanguages(const CString& languages)
 void SoupNetworkSession::setAcceptLanguages(const CString& languages)
 {
     g_object_set(m_soupSession.get(), "accept-language", languages.data(), nullptr);
-}
-
-void SoupNetworkSession::setCustomProtocolRequestType(GType requestType)
-{
-    ASSERT(g_type_is_a(requestType, SOUP_TYPE_REQUEST));
-    gCustomProtocolRequestType = requestType;
-}
-
-void SoupNetworkSession::setupCustomProtocols()
-{
-    if (!g_type_is_a(gCustomProtocolRequestType, SOUP_TYPE_REQUEST))
-        return;
-
-    auto* requestClass = static_cast<SoupRequestClass*>(g_type_class_peek(gCustomProtocolRequestType));
-    if (!requestClass || !requestClass->schemes)
-        return;
-
-    soup_session_add_feature_by_type(m_soupSession.get(), gCustomProtocolRequestType);
 }
 
 void SoupNetworkSession::setShouldIgnoreTLSErrors(bool ignoreTLSErrors)

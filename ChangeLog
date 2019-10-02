@@ -1,3 +1,17 @@
+2019-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Stop using legacy custom protocol implementation
+        https://bugs.webkit.org/show_bug.cgi?id=202407
+
+        Reviewed by Žan Doberšek.
+
+        Make LEGACY_CUSTOM_PROTOCOL_MANAGER disabled by default.
+
+        * Source/cmake/OptionsFTW.cmake:
+        * Source/cmake/OptionsPlayStation.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2019-10-02  Zan Dobersek  <zdobersek@igalia.com>
 
         [Nicosia] Enable async scrolling at build-time for Nicosia-using ports

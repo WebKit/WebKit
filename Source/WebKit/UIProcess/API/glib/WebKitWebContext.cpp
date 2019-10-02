@@ -21,7 +21,6 @@
 #include "WebKitWebContext.h"
 
 #include "APIAutomationClient.h"
-#include "APICustomProtocolManagerClient.h"
 #include "APIDownloadClient.h"
 #include "APIInjectedBundleClient.h"
 #include "APIPageConfiguration.h"
@@ -33,7 +32,6 @@
 #include "WebAutomationSession.h"
 #include "WebCertificateInfo.h"
 #include "WebKitAutomationSessionPrivate.h"
-#include "WebKitCustomProtocolManagerClient.h"
 #include "WebKitDownloadClient.h"
 #include "WebKitDownloadPrivate.h"
 #include "WebKitFaviconDatabasePrivate.h"
@@ -53,6 +51,7 @@
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWebsiteDataManagerPrivate.h"
 #include "WebNotificationManagerProxy.h"
+#include "WebURLSchemeHandler.h"
 #include "WebsiteDataType.h"
 #include <JavaScriptCore/RemoteInspector.h>
 #include <glib/gi18n-lib.h>
@@ -125,13 +124,11 @@ enum {
     LAST_SIGNAL
 };
 
-class WebKitURISchemeHandler: public RefCounted<WebKitURISchemeHandler> {
+class WebKitURISchemeHandler final : public WebURLSchemeHandler {
 public:
-    WebKitURISchemeHandler(WebKitURISchemeRequestCallback callback, void* userData, GDestroyNotify destroyNotify)
-        : m_callback(callback)
-        , m_userData(userData)
-        , m_destroyNotify(destroyNotify)
+    static Ref<WebKitURISchemeHandler> create(WebKitWebContext* context, WebKitURISchemeRequestCallback callback, void* userData, GDestroyNotify destroyNotify)
     {
+        return adoptRef(*new WebKitURISchemeHandler(context, callback, userData, destroyNotify));
     }
 
     ~WebKitURISchemeHandler()
@@ -140,22 +137,46 @@ public:
             m_destroyNotify(m_userData);
     }
 
-    bool hasCallback()
-    {
-        return m_callback;
-    }
-
-    void performCallback(WebKitURISchemeRequest* request)
-    {
-        ASSERT(m_callback);
-
-        m_callback(request, m_userData);
-    }
-
 private:
+    WebKitURISchemeHandler(WebKitWebContext* context, WebKitURISchemeRequestCallback callback, void* userData, GDestroyNotify destroyNotify)
+        : m_context(context)
+        , m_callback(callback)
+        , m_userData(userData)
+        , m_destroyNotify(destroyNotify)
+    {
+    }
+
+    void platformStartTask(WebPageProxy& page, WebURLSchemeTask& task) final
+    {
+        if (!m_callback)
+            return;
+
+        GRefPtr<WebKitURISchemeRequest> request = adoptGRef(webkitURISchemeRequestCreate(m_context, page, task));
+        auto addResult = m_requests.add(task.identifier(), WTFMove(request));
+        ASSERT(addResult.isNewEntry);
+        m_callback(addResult.iterator->value.get(), m_userData);
+    }
+
+    void platformStopTask(WebPageProxy&, WebURLSchemeTask& task) final
+    {
+        auto it = m_requests.find(task.identifier());
+        if (it == m_requests.end())
+            return;
+
+        webkitURISchemeRequestCancel(it->value.get());
+        m_requests.remove(it);
+    }
+
+    void platformTaskCompleted(WebURLSchemeTask& task) final
+    {
+        m_requests.remove(task.identifier());
+    }
+
+    WebKitWebContext* m_context { nullptr };
     WebKitURISchemeRequestCallback m_callback { nullptr };
     void* m_userData { nullptr };
     GDestroyNotify m_destroyNotify { nullptr };
+    HashMap<uint64_t, GRefPtr<WebKitURISchemeRequest>> m_requests;
 };
 
 typedef HashMap<String, RefPtr<WebKitURISchemeHandler> > URISchemeHandlerMap;
@@ -170,7 +191,6 @@ struct _WebKitWebContextPrivate {
     GRefPtr<WebKitFaviconDatabase> faviconDatabase;
     GRefPtr<WebKitSecurityManager> securityManager;
     URISchemeHandlerMap uriSchemeHandlers;
-    URISchemeRequestMap uriSchemeRequests;
     GRefPtr<WebKitGeolocationManager> geolocationManager;
     std::unique_ptr<WebKitNotificationProvider> notificationProvider;
     GRefPtr<WebKitWebsiteDataManager> websiteDataManager;
@@ -347,7 +367,6 @@ static void webkitWebContextConstructed(GObject* object)
 
     attachInjectedBundleClientToContext(webContext);
     attachDownloadClientToContext(webContext);
-    attachCustomProtocolManagerClientToContext(webContext);
 
     priv->geolocationManager = adoptGRef(webkitGeolocationManagerCreate(priv->processPool->supplement<WebGeolocationManagerProxy>()));
     priv->notificationProvider = makeUnique<WebKitNotificationProvider>(priv->processPool->supplement<WebNotificationManagerProxy>(), webContext);
@@ -364,7 +383,6 @@ static void webkitWebContextDispose(GObject* object)
         priv->clientsDetached = true;
         priv->processPool->setInjectedBundleClient(nullptr);
         priv->processPool->setDownloadClient(makeUniqueRef<API::DownloadClient>());
-        priv->processPool->setLegacyCustomProtocolManagerClient(nullptr);
     }
 
     if (priv->websiteDataManager) {
@@ -1114,10 +1132,10 @@ void webkit_web_context_register_uri_scheme(WebKitWebContext* context, const cha
     g_return_if_fail(scheme);
     g_return_if_fail(callback);
 
-    RefPtr<WebKitURISchemeHandler> handler = adoptRef(new WebKitURISchemeHandler(callback, userData, destroyNotify));
-    auto addResult = context->priv->uriSchemeHandlers.set(String::fromUTF8(scheme), handler.get());
-    if (addResult.isNewEntry)
-        WebKit::WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(String::fromUTF8(scheme));
+    auto handler = WebKitURISchemeHandler::create(context, callback, userData, destroyNotify);
+    auto addResult = context->priv->uriSchemeHandlers.set(String::fromUTF8(scheme), WTFMove(handler));
+    for (auto* webView : context->priv->webViews.values())
+        webkitWebViewGetPage(webView).setURLSchemeHandlerForScheme(*addResult.iterator->value, String::fromUTF8(scheme));
 }
 
 /**
@@ -1664,45 +1682,6 @@ WebProcessPool& webkitWebContextGetProcessPool(WebKitWebContext* context)
     return *context->priv->processPool;
 }
 
-void webkitWebContextStartLoadingCustomProtocol(WebKitWebContext* context, uint64_t customProtocolID, const WebCore::ResourceRequest& resourceRequest, LegacyCustomProtocolManagerProxy& manager)
-{
-    GRefPtr<WebKitURISchemeRequest> request = adoptGRef(webkitURISchemeRequestCreate(customProtocolID, context, resourceRequest, manager));
-    String scheme(String::fromUTF8(webkit_uri_scheme_request_get_scheme(request.get())));
-    RefPtr<WebKitURISchemeHandler> handler = context->priv->uriSchemeHandlers.get(scheme);
-    ASSERT(handler.get());
-    if (!handler->hasCallback())
-        return;
-
-    context->priv->uriSchemeRequests.set(customProtocolID, request.get());
-    handler->performCallback(request.get());
-}
-
-void webkitWebContextStopLoadingCustomProtocol(WebKitWebContext* context, uint64_t customProtocolID)
-{
-    GRefPtr<WebKitURISchemeRequest> request = context->priv->uriSchemeRequests.get(customProtocolID);
-    if (!request.get())
-        return;
-    webkitURISchemeRequestCancel(request.get());
-}
-
-void webkitWebContextInvalidateCustomProtocolRequests(WebKitWebContext* context, LegacyCustomProtocolManagerProxy& manager)
-{
-    for (auto& request : copyToVector(context->priv->uriSchemeRequests.values())) {
-        if (webkitURISchemeRequestGetManager(request.get()) == &manager)
-            webkitURISchemeRequestInvalidate(request.get());
-    }
-}
-
-void webkitWebContextDidFinishLoadingCustomProtocol(WebKitWebContext* context, uint64_t customProtocolID)
-{
-    context->priv->uriSchemeRequests.remove(customProtocolID);
-}
-
-bool webkitWebContextIsLoadingCustomProtocol(WebKitWebContext* context, uint64_t customProtocolID)
-{
-    return context->priv->uriSchemeRequests.get(customProtocolID);
-}
-
 void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebView* webView, WebKitUserContentManager* userContentManager, WebKitWebView* relatedView)
 {
     auto pageConfiguration = API::PageConfiguration::create();
@@ -1717,6 +1696,12 @@ void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebVi
         manager = context->priv->websiteDataManager.get();
     pageConfiguration->setWebsiteDataStore(&webkitWebsiteDataManagerGetDataStore(manager));
     webkitWebViewCreatePage(webView, WTFMove(pageConfiguration));
+
+    auto& page = webkitWebViewGetPage(webView);
+    for (auto& it : context->priv->uriSchemeHandlers) {
+        Ref<WebURLSchemeHandler> handler(*it.value);
+        page.setURLSchemeHandlerForScheme(WTFMove(handler), it.key);
+    }
 
     context->priv->webViews.set(webkit_web_view_get_page_id(webView), webView);
 }

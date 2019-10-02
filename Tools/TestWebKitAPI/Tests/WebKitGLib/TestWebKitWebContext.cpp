@@ -161,7 +161,6 @@ static const int errorCode = 10;
 
 static const char* genericErrorMessage = "Error message.";
 static const char* beforeReceiveResponseErrorMessage = "Error before didReceiveResponse.";
-static const char* afterInitialChunkErrorMessage = "Error after reading the initial chunk.";
 
 class URISchemeTest: public LoadTrackingTest {
 public:
@@ -240,26 +239,8 @@ public:
         webkit_web_context_register_uri_scheme(m_webContext.get(), scheme, uriSchemeRequestCallback, this, 0);
     }
 
-    void loadCommitted() override
-    {
-        if (m_finishOnCommitted) {
-            GUniquePtr<GError> error(g_error_new_literal(g_quark_from_string(errorDomain), errorCode, afterInitialChunkErrorMessage));
-            webkit_uri_scheme_request_finish_error(m_uriSchemeRequest.get(), error.get());
-        }
-
-        LoadTrackingTest::loadCommitted();
-    }
-
-    void finishOnCommittedAndWaitUntilLoadFinished()
-    {
-        m_finishOnCommitted = true;
-        waitUntilLoadFinished();
-        m_finishOnCommitted = false;
-    }
-
     GRefPtr<WebKitURISchemeRequest> m_uriSchemeRequest;
     HashMap<String, URISchemeHandler> m_handlersMap;
-    bool m_finishOnCommitted { false };
 };
 
 String generateHTMLContent(unsigned contentLength)
@@ -318,13 +299,13 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     g_assert_cmpint(mainResourceDataSize, ==, strlen(echoHTML.get()));
     g_assert_cmpint(strncmp(mainResourceData, echoHTML.get(), mainResourceDataSize), ==, 0);
 
-    test->registerURISchemeHandler("nomime", kBarHTML, -1, 0);
+    test->registerURISchemeHandler("nomime", kBarHTML, -1, nullptr);
     test->m_loadEvents.clear();
     test->loadURI("nomime:foo-bar");
     test->waitUntilLoadFinished();
     g_assert_true(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
 
-    test->registerURISchemeHandler("empty", 0, 0, "text/html");
+    test->registerURISchemeHandler("empty", nullptr, 0, "text/html");
     test->m_loadEvents.clear();
     test->loadURI("empty:nothing");
     test->waitUntilLoadFinished();
@@ -352,16 +333,7 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     g_assert_error(test->m_error.get(), g_quark_from_string(errorDomain), errorCode);
     g_assert_cmpstr(test->m_error->message, ==, beforeReceiveResponseErrorMessage);
 
-    test->m_loadEvents.clear();
-    test->loadURI("error:after-first-chunk");
-    test->finishOnCommittedAndWaitUntilLoadFinished();
-    g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
-    g_assert_true(test->m_loadEvents.contains(LoadTrackingTest::LoadFailed));
-    g_assert_true(test->m_loadFailed);
-    g_assert_error(test->m_error.get(), g_quark_from_string(errorDomain), errorCode);
-    g_assert_cmpstr(test->m_error->message, ==, afterInitialChunkErrorMessage);
-
-    test->registerURISchemeHandler("closed", 0, 0, 0);
+    test->registerURISchemeHandler("closed", nullptr, 0, nullptr);
     test->m_loadEvents.clear();
     test->loadURI("closed:input-stream");
     test->waitUntilLoadFinished();

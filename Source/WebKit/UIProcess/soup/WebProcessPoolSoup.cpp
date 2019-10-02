@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebProcessPool.h"
 
-#include "APICustomProtocolManagerClient.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
 #include "WebCookieManagerProxy.h"

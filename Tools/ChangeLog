@@ -1,3 +1,15 @@
+2019-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Stop using legacy custom protocol implementation
+        https://bugs.webkit.org/show_bug.cgi?id=202407
+
+        Reviewed by Žan Doberšek.
+
+        Remove the tests to check failure after committed, because it's not possible to test it with current code.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp:
+        (testWebContextURIScheme):
+
 2019-10-01  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [win-ews] No such file or directory: u'/cygdrive/C/cygwin/home/buildbot/WebKit/WebKitBuild/Release/bin32/layout-test-results/pywebsocket.ws.log-out.txt'

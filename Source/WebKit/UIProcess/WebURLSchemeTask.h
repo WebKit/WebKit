@@ -62,12 +62,10 @@ public:
     WebPageProxyIdentifier pageProxyID() const { ASSERT(RunLoop::isMain()); return m_pageProxyID; }
     WebCore::PageIdentifier webPageID() const { ASSERT(RunLoop::isMain()); return m_webPageID; }
     WebProcessProxy* process() { ASSERT(RunLoop::isMain()); return m_process.get(); }
+    const WebCore::ResourceRequest& request() const { ASSERT(RunLoop::isMain()); return m_request; }
 
 #if PLATFORM(COCOA)
     NSURLRequest *nsRequest() const;
-#endif
-#if PLATFORM(WIN)
-    const WebCore::ResourceRequest& request() const { ASSERT(RunLoop::isMain()); return m_request; }
 #endif
 
     enum class ExceptionType {

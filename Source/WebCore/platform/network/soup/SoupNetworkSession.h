@@ -72,9 +72,6 @@ public:
     static Optional<ResourceError> checkTLSErrors(const URL&, GTlsCertificate*, GTlsCertificateFlags);
     static void allowSpecificHTTPSCertificateForHost(const CertificateInfo&, const String& host);
 
-    static void setCustomProtocolRequestType(GType);
-    void setupCustomProtocols();
-
     void getHostNamesWithHSTSCache(HashSet<String>&);
     void deleteHSTSCacheForHostNames(const Vector<String>&);
     void clearHSTSCache(WallTime);

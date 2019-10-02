@@ -26,10 +26,6 @@ NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.cpp
 
 NetworkProcess/Cookies/soup/WebCookieManagerSoup.cpp
 
-NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp
-
-NetworkProcess/CustomProtocols/soup/LegacyCustomProtocolManagerSoup.cpp
-
 NetworkProcess/cache/NetworkCacheDataSoup.cpp
 NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp
 
@@ -41,7 +37,6 @@ NetworkProcess/soup/NetworkProcessMainSoup.cpp
 NetworkProcess/soup/NetworkProcessSoup.cpp
 NetworkProcess/soup/NetworkSessionSoup.cpp
 NetworkProcess/soup/RemoteNetworkingContextSoup.cpp
-NetworkProcess/soup/WebKitSoupRequestInputStream.cpp
 NetworkProcess/soup/WebSocketTaskSoup.cpp
 
 NetworkProcess/webrtc/LibWebRTCSocketClient.cpp
@@ -134,7 +129,6 @@ UIProcess/API/glib/WebKitBackForwardListItem.cpp @no-unify
 UIProcess/API/glib/WebKitContextMenuClient.cpp @no-unify
 UIProcess/API/glib/WebKitCookieManager.cpp @no-unify
 UIProcess/API/glib/WebKitCredential.cpp @no-unify
-UIProcess/API/glib/WebKitCustomProtocolManagerClient.cpp @no-unify
 UIProcess/API/glib/WebKitDeviceInfoPermissionRequest.cpp @no-unify
 UIProcess/API/glib/WebKitDownload.cpp @no-unify
 UIProcess/API/glib/WebKitDownloadClient.cpp @no-unify
@@ -214,8 +208,6 @@ UIProcess/geoclue/GeoclueGeolocationProvider.cpp
 
 UIProcess/Launcher/glib/ProcessLauncherGLib.cpp @no-unify
 UIProcess/Launcher/glib/BubblewrapLauncher.cpp @no-unify
-
-UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.cpp
 
 UIProcess/linux/MemoryPressureMonitor.cpp
 

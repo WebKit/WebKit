@@ -75,12 +75,6 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
     "SourcesWPE.txt"
 )
 
-list(APPEND WebKit_MESSAGES_IN_FILES
-    NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.messages.in
-
-    UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.messages.in
-)
-
 list(APPEND WebKit_DERIVED_SOURCES
     ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.c
 
@@ -232,7 +226,6 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${FORWARDING_HEADERS_WPE_DOM_DIR}"
     "${DERIVED_SOURCES_DIR}"
     "${DERIVED_SOURCES_WPE_API_DIR}"
-    "${WEBKIT_DIR}/NetworkProcess/CustomProtocols/soup"
     "${WEBKIT_DIR}/NetworkProcess/glib"
     "${WEBKIT_DIR}/NetworkProcess/soup"
     "${WEBKIT_DIR}/NetworkProcess/unix"
@@ -252,7 +245,6 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/API/glib"
     "${WEBKIT_DIR}/UIProcess/API/wpe"
     "${WEBKIT_DIR}/UIProcess/CoordinatedGraphics"
-    "${WEBKIT_DIR}/UIProcess/Network/CustomProtocols/soup"
     "${WEBKIT_DIR}/UIProcess/geoclue"
     "${WEBKIT_DIR}/UIProcess/gstreamer"
     "${WEBKIT_DIR}/UIProcess/linux"

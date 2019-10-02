@@ -19,12 +19,11 @@
 
 #pragma once
 
-#include "LegacyCustomProtocolManagerProxy.h"
 #include "WebKitURISchemeRequest.h"
 #include "WebKitWebContext.h"
+#include "WebPageProxy.h"
+#include "WebURLSchemeTask.h"
 #include <WebCore/ResourceRequest.h>
 
-WebKitURISchemeRequest* webkitURISchemeRequestCreate(uint64_t requestID, WebKitWebContext*, const WebCore::ResourceRequest&, WebKit::LegacyCustomProtocolManagerProxy&);
+WebKitURISchemeRequest* webkitURISchemeRequestCreate(WebKitWebContext*, WebKit::WebPageProxy&, WebKit::WebURLSchemeTask&);
 void webkitURISchemeRequestCancel(WebKitURISchemeRequest*);
-WebKit::LegacyCustomProtocolManagerProxy* webkitURISchemeRequestGetManager(WebKitURISchemeRequest*);
-void webkitURISchemeRequestInvalidate(WebKitURISchemeRequest*);
