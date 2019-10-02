@@ -28,6 +28,7 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "BytecodeStructs.h"
 #include "DFGOSRExitCompilerCommon.h"
 #include "DFGOSRExitPreparation.h"
 #include "FTLExitArgumentForOperand.h"
@@ -248,7 +249,15 @@ static void compileStub(
         
         if (exit.m_kind == BadCache || exit.m_kind == BadIndexingType) {
             CodeOrigin codeOrigin = exit.m_codeOriginForExitProfile;
-            if (ArrayProfile* arrayProfile = jit.baselineCodeBlockFor(codeOrigin)->getArrayProfile(codeOrigin.bytecodeIndex())) {
+            CodeBlock* codeBlock = jit.baselineCodeBlockFor(codeOrigin);
+            if (ArrayProfile* arrayProfile = codeBlock->getArrayProfile(codeOrigin.bytecodeIndex())) {
+                const Instruction* instruction = codeBlock->instructions().at(codeOrigin.bytecodeIndex()).ptr();
+                CCallHelpers::Jump skipProfile;
+                if (instruction->is<OpGetById>()) {
+                    auto& metadata = instruction->as<OpGetById>().metadata(codeBlock);
+                    skipProfile = jit.branch8(CCallHelpers::NotEqual, CCallHelpers::AbsoluteAddress(&metadata.m_modeMetadata.mode), CCallHelpers::TrustedImm32(static_cast<uint8_t>(GetByIdMode::ArrayLength)));
+                }
+
                 jit.load32(MacroAssembler::Address(GPRInfo::regT0, JSCell::structureIDOffset()), GPRInfo::regT1);
                 jit.store32(GPRInfo::regT1, arrayProfile->addressOfLastSeenStructureID());
 
@@ -266,6 +275,9 @@ static void compileStub(
                 jit.lshift32(GPRInfo::regT1, GPRInfo::regT2);
                 storeArrayModes.link(&jit);
                 jit.or32(GPRInfo::regT2, MacroAssembler::AbsoluteAddress(arrayProfile->addressOfArrayModes()));
+
+                if (skipProfile.isSet())
+                    skipProfile.link(&jit);
             }
         }
 

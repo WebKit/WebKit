@@ -1,3 +1,16 @@
+2019-10-02  Keith Miller  <keith_miller@apple.com>
+
+        FTL OSR exit shouldn't bother updating get_by_id array profiles that have changed modes
+        https://bugs.webkit.org/show_bug.cgi?id=202493
+
+        Reviewed by Saam Barati.
+
+        I added this optimization for DFG but forgot to do it for the FTL
+        at the same time. This patch rectifies that.
+
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+
 2019-10-02  Paulo Matos  <pmatos@igalia.com>
 
         Gardening build fix: Hide store64/load64 functions from 32bit
