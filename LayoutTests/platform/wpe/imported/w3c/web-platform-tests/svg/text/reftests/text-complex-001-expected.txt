@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGContainer {g} at (0,0) size 0x0
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGEllipse {circle} at (33,133) size 334x334 [fill={[type=SOLID] [color=#000000]}] [cx=120.00] [cy=180.00] [r=100.00]
+      RenderSVGEllipse {circle} at (433,233) size 334x334 [fill={[type=SOLID] [color=#000000]}] [cx=360.00] [cy=240.00] [r=100.00]
+      RenderSVGRect {rect} at (200,133) size 400x134 [fill={[type=SOLID] [color=#000000]}] [x=120.00] [y=80.00] [width=240.00] [height=80.00]
+      RenderSVGRect {rect} at (200,433) size 400x134 [fill={[type=SOLID] [color=#000000]}] [x=120.00] [y=260.00] [width=240.00] [height=80.00]
+      RenderSVGEllipse {circle} at (66,166) size 268x268 [fill={[type=SOLID] [color=#000000]}] [cx=120.00] [cy=180.00] [r=80.00]
+      RenderSVGEllipse {circle} at (466,266) size 268x268 [fill={[type=SOLID] [color=#000000]}] [cx=360.00] [cy=240.00] [r=80.00]
+      RenderSVGRect {rect} at (166,100) size 468x200 [fill={[type=SOLID] [color=#000000]}] [x=100.00] [y=60.00] [width=280.00] [height=120.00]
+      RenderSVGRect {rect} at (166,400) size 468x200 [fill={[type=SOLID] [color=#000000]}] [x=100.00] [y=240.00] [width=280.00] [height=120.00]
+    RenderSVGContainer {g} at (32,132) size 736x436
+      RenderSVGContainer {use} at (199,132) size 402x136
+        RenderSVGRect {rect} at (199,132) size 402x136 [stroke={[type=SOLID] [color=#ADD8E6]}] [x=120.00] [y=80.00] [width=240.00] [height=80.00]
+      RenderSVGContainer {use} at (199,432) size 402x136
+        RenderSVGRect {rect} at (199,432) size 402x136 [stroke={[type=SOLID] [color=#ADD8E6]}] [x=120.00] [y=260.00] [width=240.00] [height=80.00]
+      RenderSVGContainer {use} at (32,132) size 336x336
+        RenderSVGEllipse {circle} at (32,132) size 336x336 [stroke={[type=SOLID] [color=#ADD8E6]}] [cx=120.00] [cy=180.00] [r=100.00]
+      RenderSVGContainer {use} at (432,232) size 336x336
+        RenderSVGEllipse {circle} at (432,232) size 336x336 [stroke={[type=SOLID] [color=#ADD8E6]}] [cx=360.00] [cy=240.00] [r=100.00]
+    RenderSVGContainer {g} at (65,99) size 670x501
+      RenderSVGContainer {use} at (165,99) size 470x202
+        RenderSVGRect {rect} at (165,99) size 470x202 [stroke={[type=SOLID] [color=#ADD8E6] [dash array={5.00, 5.00}]}] [x=100.00] [y=60.00] [width=280.00] [height=120.00]
+      RenderSVGContainer {use} at (165,399) size 470x201
+        RenderSVGRect {rect} at (165,399) size 470x201 [stroke={[type=SOLID] [color=#ADD8E6] [dash array={5.00, 5.00}]}] [x=100.00] [y=240.00] [width=280.00] [height=120.00]
+      RenderSVGContainer {use} at (65,165) size 270x270
+        RenderSVGEllipse {circle} at (65,165) size 270x270 [stroke={[type=SOLID] [color=#ADD8E6] [dash array={5.00, 5.00}]}] [cx=120.00] [cy=180.00] [r=80.00]
+      RenderSVGContainer {use} at (465,265) size 270x270
+        RenderSVGEllipse {circle} at (465,265) size 270x270 [stroke={[type=SOLID] [color=#ADD8E6] [dash array={5.00, 5.00}]}] [cx=360.00] [cy=240.00] [r=80.00]
+    RenderSVGContainer {g} at (0,0) size 800x6
+      RenderSVGText {text} at (0,-15) size 3079x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 3079x18
+          chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 446 width 3078.60: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."

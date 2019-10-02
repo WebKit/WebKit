@@ -1,3 +1,12 @@
+2019-10-02  Miguel Gomez  <magomez@igalia.com>
+
+        [WPE] Unreviewed gardening: add new expectations after r250602
+        https://bugs.webkit.org/show_bug.cgi?id=202461
+
+        Unreviewed WPE gardening. Add missing results after r250276.
+
+        * platform/wpe/imported/w3c/web-platform-tests/svg/: Added.
+
 2019-10-02  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: Debugger: support emulateUserGesture parameter in Debugger.evaluateOnCallFrame

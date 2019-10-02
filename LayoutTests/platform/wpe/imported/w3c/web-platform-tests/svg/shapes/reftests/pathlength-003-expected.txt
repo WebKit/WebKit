@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 768x568
+    RenderSVGContainer {g} at (0,0) size 0x0
+    RenderSVGContainer {g} at (0,0) size 768x568
+      RenderSVGEllipse {circle} at (32,232) size 336x336 [stroke={[type=SOLID] [color=#000000]}] [cx=120.00] [cy=240.00] [r=100.00]
+      RenderSVGEllipse {circle} at (432,232) size 336x336 [stroke={[type=SOLID] [color=#000000]}] [cx=360.00] [cy=240.00] [r=100.00]
+      RenderSVGText {text} at (0,0) size 0x0 contains 1 chunk(s)
+        RenderSVGTextPath {textPath} at (0,0) size 0x0
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+      RenderSVGText {text} at (0,0) size 0x0 contains 1 chunk(s)
+        RenderSVGTextPath {textPath} at (0,0) size 0x0
+          RenderSVGInlineText {#text} at (0,0) size 0x0
