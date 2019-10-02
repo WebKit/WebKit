@@ -1,3 +1,10 @@
+2019-10-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed build fix for non-Mac ports after r250600.
+
+        * UIProcess/WebProcessPool.cpp:
+        Make the CoreGraphicsSPI.h header include exclusive to the Mac port.
+
 2019-10-02  Antoine Quint  <graouts@apple.com>
 
         Unreviewed build fix for macOS, broken by r250595.

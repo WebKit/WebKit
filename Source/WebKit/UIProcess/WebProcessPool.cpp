@@ -91,7 +91,6 @@
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
 #include <pal/SessionID.h>
-#include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/Language.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
@@ -117,6 +116,10 @@
 
 #if PLATFORM(COCOA)
 #include "VersionChecks.h"
+#endif
+
+#if PLATFORM(MAC)
+#include <pal/spi/cg/CoreGraphicsSPI.h>
 #endif
 
 #ifndef NDEBUG
