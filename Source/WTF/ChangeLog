@@ -1,3 +1,13 @@
+2019-10-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Nicosia] Enable async scrolling at build-time for Nicosia-using ports
+        https://bugs.webkit.org/show_bug.cgi?id=202397
+
+        Reviewed by Carlos Garcia Campos.
+
+        * wtf/Platform.h:
+        Flip ENABLE_KINETIC_SCROLLING to 1 also for PlayStation and WPE ports
+        when ASYNC_SCROLLING is enabled.
 2019-10-01  Jonathan Bedard  <jbedard@apple.com>
 
         WebKitTestRunner: Many tests timeout on macOS Catalina
