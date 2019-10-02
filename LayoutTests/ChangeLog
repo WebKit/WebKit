@@ -1,3 +1,9 @@
+2019-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK gardening. Add missing results after r250276.
+
+        * platform/gtk/imported/w3c/web-platform-tests/svg/: Added.
+
 2019-10-01  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [win-ews] No such file or directory: u'/cygdrive/C/cygwin/home/buildbot/WebKit/WebKitBuild/Release/bin32/layout-test-results/pywebsocket.ws.log-out.txt'
