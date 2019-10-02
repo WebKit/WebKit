@@ -2166,6 +2166,19 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
         URL baseUrl = gst_uri_is_valid(newLocation) ? URL() : m_url;
         URL newUrl = URL(baseUrl, newLocation);
 
+        GUniqueOutPtr<gchar> playbinUrlStr;
+        g_object_get(m_pipeline.get(), "current-uri", &playbinUrlStr.outPtr(), nullptr);
+        URL playbinUrl(URL(), playbinUrlStr.get());
+
+        if (playbinUrl == newUrl) {
+            GST_DEBUG_OBJECT(pipeline(), "Playbin already handled redirection.");
+
+            m_url = playbinUrl;
+
+            return true;
+        }
+
+        changePipelineState(GST_STATE_READY);
         auto securityOrigin = SecurityOrigin::create(m_url);
         if (securityOrigin->canRequest(newUrl)) {
             GST_INFO_OBJECT(pipeline(), "New media url: %s", newUrl.string().utf8().data());
@@ -2178,7 +2191,6 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
 
             // Reset pipeline state.
             m_resetPipeline = true;
-            changePipelineState(GST_STATE_READY);
 
             GstState state;
             gst_element_get_state(m_pipeline.get(), &state, nullptr, 0);

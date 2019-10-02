@@ -1,3 +1,17 @@
+2019-10-02  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Let playbin handle redirects for us when appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=195326
+
+        A simplified mechanism has been added in GStreamer to handle corner cases.
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Not easily testable at our level
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::loadNextLocation):
+
 2019-10-02  Tim Horton  <timothy_horton@apple.com>
 
         Another build fix
