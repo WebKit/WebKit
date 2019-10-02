@@ -1,3 +1,27 @@
+2019-10-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r250149): changing CSS via the Styles details sidebar panel doesn't update the associated resource
+        https://bugs.webkit.org/show_bug.cgi?id=202446
+
+        Reviewed by Joseph Pecoraro.
+
+        When updating the text of a `WI.CSSProperty` (or the selector of a `WI.CSSRule`) is updated,
+        Web Inspector will update the backend style sheet, which will notify the `WI.CSSManager` of
+        the change, without ever going through the associated `WI.SourceCode`. `WI.CSSManager` then
+        updates the content of the `WI.SourceCode` to reflect these changes, but at that point the
+        `WI.SourceCode` hadn't yet "moved" it's `currentRevision` forward of it's `originalRevision`
+        which means it would get overridden the first time the `WI.SourceCode` updates itself.
+
+        Modify `WI.SourceCode` such that every path to get the `currentRevision` ensures that it is
+        "moved" forward before the `WI.SourceCodeRevision` value is returned.
+
+        * UserInterface/Models/SourceCode.js:
+        (WI.SourceCode.prototype.get currentRevision):
+        (WI.SourceCode.prototype.get content):
+        (WI.SourceCode.prototype.revisionContentDidChange):
+        (WI.SourceCode.prototype._initializeCurrentRevisionIfNeeded): Added.
+        (WI.SourceCode.prototype._processContent):
+
 2019-10-01  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Sources: clicking on a breakpoint changes the path components to not match the script's path

@@ -66,6 +66,7 @@ WI.SourceCode = class SourceCode extends WI.Object
 
     get currentRevision()
     {
+        this._initializeCurrentRevisionIfNeeded();
         return this._currentRevision;
     }
 
@@ -86,7 +87,7 @@ WI.SourceCode = class SourceCode extends WI.Object
 
     get content()
     {
-        return this._currentRevision.content;
+        return this.currentRevision.content;
     }
 
     get url()
@@ -180,7 +181,7 @@ WI.SourceCode = class SourceCode extends WI.Object
         if (this._ignoreRevisionContentDidChangeEvent)
             return;
 
-        if (revision !== this._currentRevision)
+        if (revision !== this.currentRevision)
             return;
 
         this.handleCurrentRevisionContentChange();
@@ -220,6 +221,12 @@ WI.SourceCode = class SourceCode extends WI.Object
 
     // Private
 
+    _initializeCurrentRevisionIfNeeded()
+    {
+        if (this._currentRevision === this._originalRevision)
+            this.currentRevision = this._originalRevision.copy();
+    }
+
     _processContent(parameters)
     {
         // Different backend APIs return one of `content, `body`, `text`, or `scriptSource`.
@@ -237,8 +244,7 @@ WI.SourceCode = class SourceCode extends WI.Object
         revision.content = content || null;
         this._ignoreRevisionContentDidChangeEvent = false;
 
-        if (this._currentRevision === this._originalRevision)
-            this.currentRevision = this._originalRevision.copy();
+        this._initializeCurrentRevisionIfNeeded();
 
         // FIXME: Returning the content in this promise is misleading. It may not be current content
         // now, and it may become out-dated later on. We should drop content from this promise
