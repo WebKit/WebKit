@@ -46,6 +46,12 @@ SOFT_LINK_CLASS(ARKit, ARQuickLookPreviewItem);
 SOFT_LINK_PRIVATE_FRAMEWORK(AssetViewer);
 SOFT_LINK_CLASS(AssetViewer, ARQuickLookWebKitItem);
 
+static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParameterKey";
+
+@interface ARQuickLookWebKitItem ()
+- (void)setAdditionalParameters:(NSDictionary *)parameters;
+@end
+
 @interface _WKPreviewControllerDataSource : NSObject <QLPreviewControllerDataSource, ARQuickLookWebKitItemDelegate> {
 #else
 @interface _WKPreviewControllerDataSource : NSObject <QLPreviewControllerDataSource> {
@@ -108,6 +114,12 @@ SOFT_LINK_CLASS(AssetViewer, ARQuickLookWebKitItem);
 
     _item = [allocARQuickLookWebKitItemInstance() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType previewTitle:@"Preview" fileSize:@(0) previewItem:previewItem];
     [_item setDelegate:self];
+
+    if ([_item respondsToSelector:(@selector(setAdditionalParameters:))]) {
+        NSURL *urlParameter = _originatingPageURL;
+        [_item setAdditionalParameters:@{ _WKARQLWebsiteURLParameterKey: urlParameter }];
+    }
+
 #else
     _item = adoptNS([PAL::allocQLItemInstance() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType previewTitle:@"Preview" fileSize:@(0)]);
 #endif
