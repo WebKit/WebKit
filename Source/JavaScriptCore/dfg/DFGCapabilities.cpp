@@ -118,6 +118,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case op_create_this:
     case op_create_promise:
     case op_create_generator:
+    case op_create_async_generator:
     case op_bitnot:
     case op_bitand:
     case op_bitor:

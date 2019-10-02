@@ -323,6 +323,7 @@ private:
             case NewObject:
             case NewPromise:
             case NewGenerator:
+            case NewAsyncGenerator:
             case NewArray:
             case NewArrayWithSize:
             case NewArrayBuffer:

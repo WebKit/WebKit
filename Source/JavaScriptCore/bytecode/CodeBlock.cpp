@@ -1279,6 +1279,9 @@ void CodeBlock::finalizeLLIntInlineCaches()
         m_metadata->forEach<OpCreateGenerator>([&] (auto& metadata) {
             handleCreateBytecode(metadata, "op_create_generator"_s);
         });
+        m_metadata->forEach<OpCreateAsyncGenerator>([&] (auto& metadata) {
+            handleCreateBytecode(metadata, "op_create_async_generator"_s);
+        });
 
         m_metadata->forEach<OpResolveScope>([&] (auto& metadata) {
             // Right now this isn't strictly necessary. Any symbol tables that this will refer to

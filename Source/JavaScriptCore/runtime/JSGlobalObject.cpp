@@ -833,6 +833,7 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 
     m_asyncGeneratorPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, m_asyncGeneratorFunctionPrototype.get(), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     m_asyncGeneratorFunctionPrototype->putDirectWithoutTransition(vm, vm.propertyNames->prototype, m_asyncGeneratorPrototype.get(), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    m_asyncGeneratorStructure.set(vm, this, JSAsyncGenerator::createStructure(vm, this, m_asyncGeneratorPrototype.get()));
     
     m_objectPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, objectConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     m_functionPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, functionConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -1769,6 +1770,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_asyncFunctionStructure);
     visitor.append(thisObject->m_asyncGeneratorFunctionStructure);
     visitor.append(thisObject->m_generatorStructure);
+    visitor.append(thisObject->m_asyncGeneratorStructure);
     thisObject->m_iteratorResultObjectStructure.visit(visitor);
     visitor.append(thisObject->m_regExpMatchesArrayStructure);
     visitor.append(thisObject->m_regExpMatchesArrayWithGroupsStructure);

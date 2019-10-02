@@ -1,3 +1,143 @@
+2019-10-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] AsyncGenerator should have internal fields
+        https://bugs.webkit.org/show_bug.cgi?id=201498
+
+        Reviewed by Saam Barati.
+
+        This patch introduces JSAsyncGenerator. We did this already for JSGenerator. This patch does the same thing for JSAsyncGenerator
+        This patch cleans up JSGenerator's code to share it with JSAsyncGenerator, e.g. JSGenerator::initialValues etc.
+        It improves JetStream2/async-fs by ~10%.
+
+        We also fixed the pre-existing bug. We are using OpcodeID for the key of hashmap. And using op_add code as a part of key.
+        By adding a new bytecode, it suddenly becomes 0. And 0 is not valid key in WTF::HashMap. This patch adds 1 to opcodeID when using
+        for HashMap's key to fix this issue.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * builtins/AsyncGeneratorPrototype.js:
+        (globalPrivate.asyncGeneratorQueueIsEmpty):
+        (globalPrivate.asyncGeneratorQueueEnqueue):
+        (globalPrivate.asyncGeneratorQueueDequeue):
+        (globalPrivate.isExecutionState):
+        (globalPrivate.isSuspendYieldState):
+        (globalPrivate.asyncGeneratorReject):
+        (globalPrivate.asyncGeneratorResolve):
+        (asyncGeneratorYieldAwaited):
+        (globalPrivate.asyncGeneratorYield):
+        (globalPrivate.doAsyncGeneratorBodyCall):
+        (globalPrivate.asyncGeneratorResumeNext):
+        (globalPrivate.asyncGeneratorEnqueue):
+        * builtins/BuiltinNames.h:
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitPutAsyncGeneratorFields):
+        (JSC::BytecodeGenerator::emitCreateAsyncGenerator):
+        (JSC::BytecodeGenerator::emitYieldPoint):
+        (JSC::BytecodeGenerator::emitYield):
+        (JSC::BytecodeGenerator::emitAwait):
+        (JSC::BytecodeGenerator::emitDelegateYield):
+        (JSC::BytecodeGenerator::emitGeneratorStateChange):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitIsAsyncGenerator):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::asyncGeneratorInternalFieldIndex):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_getAsyncGeneratorInternalField):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_putAsyncGeneratorInternalField):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_isAsyncGenerator):
+        (JSC::YieldExprNode::emitBytecode):
+        (JSC::AwaitExprNode::emitBytecode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::handleCreateInternalFieldObject):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToNewInternalFieldObject):
+        (JSC::DFG::Node::hasStructure):
+        (JSC::DFG::Node::convertToNewGenerator): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCreateInternalFieldObject):
+        (JSC::DFG::SpeculativeJIT::compileCreateGenerator):
+        (JSC::DFG::SpeculativeJIT::compileCreateAsyncGenerator):
+        (JSC::DFG::SpeculativeJIT::compileNewInternalFieldObject):
+        (JSC::DFG::SpeculativeJIT::compileNewGenerator):
+        (JSC::DFG::SpeculativeJIT::compileNewAsyncGenerator):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewInternalFieldObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewGenerator):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewAsyncGenerator):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateInternalFieldObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateGenerator):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateAsyncGenerator):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JITInlines.h:
+        (JSC::JIT::copiedArithProfile):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::createInternalFieldObject):
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/JSAsyncGenerator.cpp: Copied from Source/JavaScriptCore/runtime/JSGenerator.cpp.
+        (JSC::JSAsyncGenerator::create):
+        (JSC::JSAsyncGenerator::createStructure):
+        (JSC::JSAsyncGenerator::JSAsyncGenerator):
+        (JSC::JSAsyncGenerator::finishCreation):
+        (JSC::JSAsyncGenerator::visitChildren):
+        * runtime/JSAsyncGenerator.h: Copied from Source/JavaScriptCore/runtime/JSGenerator.h.
+        * runtime/JSAsyncGeneratorFunction.h:
+        * runtime/JSGenerator.cpp:
+        (JSC::JSGenerator::finishCreation):
+        * runtime/JSGenerator.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::asyncGeneratorStructure const):
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+
 2019-10-02  Keith Miller  <keith_miller@apple.com>
 
         FTL OSR exit shouldn't bother updating get_by_id array profiles that have changed modes

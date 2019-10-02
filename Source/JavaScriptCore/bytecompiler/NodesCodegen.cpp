@@ -32,6 +32,7 @@
 #include "BytecodeGenerator.h"
 #include "CallFrame.h"
 #include "JIT.h"
+#include "JSAsyncGenerator.h"
 #include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSGenerator.h"
@@ -1034,6 +1035,26 @@ static JSGenerator::Field generatorInternalFieldIndex(BytecodeIntrinsicNode* nod
     return JSGenerator::Field::State;
 }
 
+static JSAsyncGenerator::Field asyncGeneratorInternalFieldIndex(BytecodeIntrinsicNode* node)
+{
+    if (node->emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldState)
+        return JSAsyncGenerator::Field::State;
+    if (node->emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldNext)
+        return JSAsyncGenerator::Field::Next;
+    if (node->emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldThis)
+        return JSAsyncGenerator::Field::This;
+    if (node->emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldFrame)
+        return JSAsyncGenerator::Field::Frame;
+    if (node->emitter() == &BytecodeIntrinsicNode::emit_intrinsic_asyncGeneratorFieldSuspendReason)
+        return JSAsyncGenerator::Field::SuspendReason;
+    if (node->emitter() == &BytecodeIntrinsicNode::emit_intrinsic_asyncGeneratorFieldQueueFirst)
+        return JSAsyncGenerator::Field::QueueFirst;
+    if (node->emitter() == &BytecodeIntrinsicNode::emit_intrinsic_asyncGeneratorFieldQueueLast)
+        return JSAsyncGenerator::Field::QueueLast;
+    RELEASE_ASSERT_NOT_REACHED();
+    return JSAsyncGenerator::Field::State;
+}
+
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getPromiseInternalField(BytecodeGenerator& generator, RegisterID* dst)
 {
     ArgumentListNode* node = m_args->m_listNode;
@@ -1055,6 +1076,19 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getGeneratorInternalField(Byte
     RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
     unsigned index = static_cast<unsigned>(generatorInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
     ASSERT(index < JSGenerator::numberOfInternalFields);
+    ASSERT(!node->m_next);
+
+    return generator.emitGetInternalField(generator.finalDestination(dst), base.get(), index);
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getAsyncGeneratorInternalField(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> base = generator.emitNode(node);
+    node = node->m_next;
+    RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
+    unsigned index = static_cast<unsigned>(asyncGeneratorInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
+    ASSERT(index < JSAsyncGenerator::numberOfInternalFields);
     ASSERT(!node->m_next);
 
     return generator.emitGetInternalField(generator.finalDestination(dst), base.get(), index);
@@ -1153,6 +1187,22 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putGeneratorInternalField(Byte
     RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
     unsigned index = static_cast<unsigned>(generatorInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
     ASSERT(index < JSGenerator::numberOfInternalFields);
+    node = node->m_next;
+    RefPtr<RegisterID> value = generator.emitNode(node);
+
+    ASSERT(!node->m_next);
+
+    return generator.move(dst, generator.emitPutInternalField(base.get(), index, value.get()));
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putAsyncGeneratorInternalField(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> base = generator.emitNode(node);
+    node = node->m_next;
+    RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
+    unsigned index = static_cast<unsigned>(asyncGeneratorInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
+    ASSERT(index < JSAsyncGenerator::numberOfInternalFields);
     node = node->m_next;
     RefPtr<RegisterID> value = generator.emitNode(node);
 
@@ -1283,7 +1333,16 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_isGenerator(JSC::BytecodeGener
 
     return generator.move(dst, generator.emitIsGenerator(generator.tempDestination(dst), src.get()));
 }
-    
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_isAsyncGenerator(JSC::BytecodeGenerator& generator, JSC::RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> src = generator.emitNode(node);
+    ASSERT(!node->m_next);
+
+    return generator.move(dst, generator.emitIsAsyncGenerator(generator.tempDestination(dst), src.get()));
+}
+
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_isJSArray(JSC::BytecodeGenerator& generator, JSC::RegisterID* dst)
 {
     ArgumentListNode* node = m_args->m_listNode;
@@ -4158,7 +4217,7 @@ RegisterID* YieldExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
             generator.emitNode(arg.get(), argument());
         } else
             arg = generator.emitLoad(nullptr, jsUndefined());
-        RefPtr<RegisterID> value = generator.emitYield(arg.get(), JSAsyncGeneratorFunction::AsyncGeneratorSuspendReason::Yield);
+        RefPtr<RegisterID> value = generator.emitYield(arg.get(), JSAsyncGenerator::AsyncGeneratorSuspendReason::Yield);
         if (dst == generator.ignoredResult())
             return nullptr;
         return generator.move(generator.finalDestination(dst), value.get());
@@ -4177,7 +4236,7 @@ RegisterID* AwaitExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
 {
     RefPtr<RegisterID> arg = generator.newTemporary();
     generator.emitNode(arg.get(), argument());
-    RefPtr<RegisterID> value = generator.emitYield(arg.get(), JSAsyncGeneratorFunction::AsyncGeneratorSuspendReason::Await);
+    RefPtr<RegisterID> value = generator.emitYield(arg.get(), JSAsyncGenerator::AsyncGeneratorSuspendReason::Await);
     if (dst == generator.ignoredResult())
         return nullptr;
     return generator.move(generator.finalDestination(dst), value.get());

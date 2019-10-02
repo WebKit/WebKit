@@ -25,65 +25,66 @@
 
 #pragma once
 
+#include "JSGenerator.h"
 #include "JSInternalFieldObjectImpl.h"
 
 namespace JSC {
 
-class JSGenerator final : public JSInternalFieldObjectImpl<5> {
+class JSAsyncGenerator final : public JSInternalFieldObjectImpl<8> {
 public:
-    using Base = JSInternalFieldObjectImpl<5>;
+    using Base = JSInternalFieldObjectImpl<8>;
 
-    // JSGenerator has one inline storage slot, which is pointing internalField(0).
+    // JSAsyncGenerator has one inline storage slot, which is pointing internalField(0).
     static size_t allocationSize(Checked<size_t> inlineCapacity)
     {
         ASSERT_UNUSED(inlineCapacity, inlineCapacity == 0U);
-        return sizeof(JSGenerator);
+        return sizeof(JSAsyncGenerator);
     }
 
-    enum class GeneratorResumeMode : int32_t {
-        NormalMode = 0,
-        ReturnMode = 1,
-        ThrowMode = 2
-    };
-
-    enum class GeneratorState : int32_t {
+    enum class AsyncGeneratorState : int32_t {
         Completed = -1,
         Executing = -2,
-        Init = 0,
+        SuspendedStart = -3,
+        SuspendedYield = -4,
+        AwaitingReturn = -5,
     };
+    static_assert(static_cast<int32_t>(AsyncGeneratorState::Completed) == static_cast<int32_t>(JSGenerator::GeneratorState::Completed));
+    static_assert(static_cast<int32_t>(AsyncGeneratorState::Executing) == static_cast<int32_t>(JSGenerator::GeneratorState::Executing));
 
-    // [this], @generator, @generatorState, @generatorValue, @generatorResumeMode, @generatorFrame.
-    enum class GeneratorArgument : int32_t {
-        ThisValue = 0,
-        Generator = 1,
-        State = 2,
-        Value = 3,
-        ResumeMode = 4,
-        Frame = 5,
+    enum class AsyncGeneratorSuspendReason : int32_t {
+        None = 0,
+        Yield = -1,
+        Await = -2
     };
 
     enum class Field : uint32_t {
-        // FIXME: JSGenerator should support PolyProto, since generator tends to be created with poly proto mode.
+        // FIXME: JSAsyncGenerator should support PolyProto, since generator tends to be created with poly proto mode.
         // We reserve the first internal field for PolyProto property. This offset is identical to JSFinalObject's first inline storage slot which will be used for PolyProto.
         PolyProto = 0,
         State,
         Next,
         This,
         Frame,
+        SuspendReason,
+        QueueFirst,
+        QueueLast,
     };
-    static_assert(numberOfInternalFields == 5);
+    static_assert(numberOfInternalFields == 8);
     static std::array<JSValue, numberOfInternalFields> initialValues()
     {
         return { {
             jsNull(),
-            jsNumber(static_cast<int32_t>(GeneratorState::Init)),
+            jsNumber(static_cast<int32_t>(AsyncGeneratorState::SuspendedStart)),
             jsUndefined(),
             jsUndefined(),
             jsUndefined(),
+            jsNumber(static_cast<int32_t>(AsyncGeneratorSuspendReason::None)),
+            jsNull(),
+            jsNull(),
         } };
     }
 
-    static JSGenerator* create(VM&, Structure*);
+    static JSAsyncGenerator* create(VM&, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_EXPORT_INFO;
@@ -91,7 +92,7 @@ public:
     static void visitChildren(JSCell*, SlotVisitor&);
 
 protected:
-    JSGenerator(VM&, Structure*);
+    JSAsyncGenerator(VM&, Structure*);
     void finishCreation(VM&);
 };
 

@@ -108,15 +108,10 @@ namespace JSC {
     macro(generatorFrame) \
     macro(generatorValue) \
     macro(generatorThis) \
+    macro(generatorResumeMode) \
     macro(syncIterator) \
     macro(nextMethod) \
-    macro(asyncGeneratorState) \
-    macro(asyncGeneratorSuspendReason) \
-    macro(asyncGeneratorQueue) \
-    macro(asyncGeneratorQueueFirst) \
-    macro(asyncGeneratorQueueLast) \
     macro(asyncGeneratorQueueItemNext) \
-    macro(generatorResumeMode) \
     macro(dateTimeFormat) \
     macro(intlSubstituteValue) \
     macro(thisTimeValue) \

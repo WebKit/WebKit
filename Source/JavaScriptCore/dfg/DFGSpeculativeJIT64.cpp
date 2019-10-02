@@ -3492,6 +3492,11 @@ void SpeculativeJIT::compile(Node* node)
         compileCreateGenerator(node);
         break;
     }
+
+    case CreateAsyncGenerator: {
+        compileCreateAsyncGenerator(node);
+        break;
+    }
         
     case NewObject: {
         compileNewObject(node);
@@ -3505,6 +3510,11 @@ void SpeculativeJIT::compile(Node* node)
 
     case NewGenerator: {
         compileNewGenerator(node);
+        break;
+    }
+
+    case NewAsyncGenerator: {
+        compileNewAsyncGenerator(node);
         break;
     }
 

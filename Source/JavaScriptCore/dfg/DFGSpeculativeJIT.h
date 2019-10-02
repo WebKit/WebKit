@@ -1476,9 +1476,11 @@ public:
     void compileCreateThis(Node*);
     void compileCreatePromise(Node*);
     void compileCreateGenerator(Node*);
+    void compileCreateAsyncGenerator(Node*);
     void compileNewObject(Node*);
     void compileNewPromise(Node*);
     void compileNewGenerator(Node*);
+    void compileNewAsyncGenerator(Node*);
     void compileToPrimitive(Node*);
     void compileLogShadowChickenPrologue(Node*);
     void compileLogShadowChickenTail(Node*);
@@ -1487,6 +1489,11 @@ public:
     void compileClearCatchLocals(Node*);
     void compileProfileType(Node*);
     void compileStringCodePointAt(Node*);
+
+    template<typename JSClass, typename Operation>
+    void compileCreateInternalFieldObject(Node*, Operation);
+    template<typename JSClass, typename Operation>
+    void compileNewInternalFieldObject(Node*, Operation);
 
     void moveTrueTo(GPRReg);
     void moveFalseTo(GPRReg);

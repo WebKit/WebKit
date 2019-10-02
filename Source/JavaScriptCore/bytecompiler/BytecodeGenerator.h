@@ -33,7 +33,7 @@
 #include "CodeBlock.h"
 #include "Instruction.h"
 #include "Interpreter.h"
-#include "JSAsyncGeneratorFunction.h"
+#include "JSAsyncGenerator.h"
 #include "JSBigInt.h"
 #include "JSGenerator.h"
 #include "JSTemplateObjectDescriptor.h"
@@ -725,6 +725,7 @@ namespace JSC {
         RegisterID* emitCreateThis(RegisterID* dst);
         RegisterID* emitCreatePromise(RegisterID* dst, RegisterID* newTarget, bool isInternalPromise);
         RegisterID* emitCreateGenerator(RegisterID* dst, RegisterID* newTarget);
+        RegisterID* emitCreateAsyncGenerator(RegisterID* dst, RegisterID* newTarget);
         void emitTDZCheck(RegisterID* target);
         bool needsTDZCheck(const Variable&);
         void emitTDZCheckIfNecessary(const Variable&, RegisterID* target, RegisterID* scope);
@@ -869,6 +870,7 @@ namespace JSC {
 
         RegisterID* emitIsCellWithType(RegisterID* dst, RegisterID* src, JSType);
         RegisterID* emitIsGenerator(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, JSGeneratorType); }
+        RegisterID* emitIsAsyncGenerator(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, JSAsyncGeneratorType); }
         RegisterID* emitIsJSArray(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, ArrayType); }
         RegisterID* emitIsPromise(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, JSPromiseType); }
         RegisterID* emitIsProxyObject(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, ProxyObjectType); }
@@ -985,11 +987,11 @@ namespace JSC {
         void beginSwitch(RegisterID*, SwitchInfo::SwitchType);
         void endSwitch(uint32_t clauseCount, const Vector<Ref<Label>, 8>&, ExpressionNode**, Label& defaultLabel, int32_t min, int32_t range);
 
-        void emitYieldPoint(RegisterID*, JSAsyncGeneratorFunction::AsyncGeneratorSuspendReason);
+        void emitYieldPoint(RegisterID*, JSAsyncGenerator::AsyncGeneratorSuspendReason);
 
         void emitGeneratorStateLabel();
         void emitGeneratorStateChange(int32_t state);
-        RegisterID* emitYield(RegisterID* argument, JSAsyncGeneratorFunction::AsyncGeneratorSuspendReason = JSAsyncGeneratorFunction::AsyncGeneratorSuspendReason::Yield);
+        RegisterID* emitYield(RegisterID* argument, JSAsyncGenerator::AsyncGeneratorSuspendReason = JSAsyncGenerator::AsyncGeneratorSuspendReason::Yield);
         RegisterID* emitDelegateYield(RegisterID* argument, ThrowableExpressionData*);
         RegisterID* generatorStateRegister() { return &m_parameters[static_cast<int32_t>(JSGenerator::GeneratorArgument::State)]; }
         RegisterID* generatorValueRegister() { return &m_parameters[static_cast<int32_t>(JSGenerator::GeneratorArgument::Value)]; }

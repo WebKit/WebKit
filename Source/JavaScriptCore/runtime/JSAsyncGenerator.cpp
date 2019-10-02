@@ -24,33 +24,33 @@
  */
 
 #include "config.h"
-#include "JSGenerator.h"
+#include "JSAsyncGenerator.h"
 
 #include "JSCInlines.h"
 #include "JSInternalFieldObjectImplInlines.h"
 
 namespace JSC {
 
-const ClassInfo JSGenerator::s_info = { "Generator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSGenerator) };
+const ClassInfo JSAsyncGenerator::s_info = { "AsyncGenerator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSAsyncGenerator) };
 
-JSGenerator* JSGenerator::create(VM& vm, Structure* structure)
+JSAsyncGenerator* JSAsyncGenerator::create(VM& vm, Structure* structure)
 {
-    JSGenerator* generator = new (NotNull, allocateCell<JSGenerator>(vm.heap)) JSGenerator(vm, structure);
+    JSAsyncGenerator* generator = new (NotNull, allocateCell<JSAsyncGenerator>(vm.heap)) JSAsyncGenerator(vm, structure);
     generator->finishCreation(vm);
     return generator;
 }
 
-Structure* JSGenerator::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+Structure* JSAsyncGenerator::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-    return Structure::create(vm, globalObject, prototype, TypeInfo(JSGeneratorType, StructureFlags), info());
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSAsyncGeneratorType, StructureFlags), info());
 }
 
-JSGenerator::JSGenerator(VM& vm, Structure* structure)
+JSAsyncGenerator::JSAsyncGenerator(VM& vm, Structure* structure)
     : Base(vm, structure)
 {
 }
 
-void JSGenerator::finishCreation(VM& vm)
+void JSAsyncGenerator::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     auto values = initialValues();
@@ -59,9 +59,9 @@ void JSGenerator::finishCreation(VM& vm)
         internalField(index).set(vm, this, values[index]);
 }
 
-void JSGenerator::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void JSAsyncGenerator::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    auto* thisObject = jsCast<JSGenerator*>(cell);
+    auto* thisObject = jsCast<JSAsyncGenerator*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 }

@@ -76,6 +76,7 @@
 #include "JITRightShiftGenerator.h"
 #include "JITSubGenerator.h"
 #include "JSAsyncFunction.h"
+#include "JSAsyncGenerator.h"
 #include "JSAsyncGeneratorFunction.h"
 #include "JSCInlines.h"
 #include "JSGenerator.h"
@@ -1055,6 +1056,9 @@ private:
         case NewGenerator:
             compileNewGenerator();
             break;
+        case NewAsyncGenerator:
+            compileNewAsyncGenerator();
+            break;
         case NewStringObject:
             compileNewStringObject();
             break;
@@ -1075,6 +1079,9 @@ private:
             break;
         case CreateGenerator:
             compileCreateGenerator();
+            break;
+        case CreateAsyncGenerator:
+            compileCreateAsyncGenerator();
             break;
         case Spread:
             compileSpread();
@@ -5932,29 +5939,39 @@ private:
         setJSValue(m_out.phi(pointerType(), fastResult, slowResult));
     }
 
-    void compileNewGenerator()
+    template<typename JSClass, typename Operation>
+    void compileNewInternalFieldObject(Operation operation)
     {
         LBasicBlock slowCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowCase);
 
-        LValue generator = allocateObject<JSGenerator>(m_node->structure(), m_out.intPtrZero, slowCase);
-        m_out.store64(m_out.constInt64(JSValue::encode(jsNull())), generator, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSGenerator::Field::PolyProto)]);
-        m_out.store64(m_out.constInt64(JSValue::encode(jsNumber(static_cast<int32_t>(JSGenerator::GeneratorState::Init)))), generator, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSGenerator::Field::State)]);
-        m_out.store64(m_out.constInt64(JSValue::encode(jsUndefined())), generator, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSGenerator::Field::Next)]);
-        m_out.store64(m_out.constInt64(JSValue::encode(jsUndefined())), generator, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSGenerator::Field::This)]);
-        m_out.store64(m_out.constInt64(JSValue::encode(jsUndefined())), generator, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSGenerator::Field::Frame)]);
+        LValue object = allocateObject<JSClass>(m_node->structure(), m_out.intPtrZero, slowCase);
+        auto initialValues = JSClass::initialValues();
+        ASSERT(initialValues.size() == JSClass::numberOfInternalFields);
+        for (unsigned index = 0; index < initialValues.size(); ++index)
+            m_out.store64(m_out.constInt64(JSValue::encode(initialValues[index])), object, m_heaps.JSInternalFieldObjectImpl_internalFields[index]);
         mutatorFence();
-        ValueFromBlock fastResult = m_out.anchor(generator);
+        ValueFromBlock fastResult = m_out.anchor(object);
         m_out.jump(continuation);
 
         m_out.appendTo(slowCase, continuation);
-        ValueFromBlock slowResult = m_out.anchor(vmCall(pointerType(), m_out.operation(operationNewGenerator), m_callFrame, frozenPointer(m_graph.freezeStrong(m_node->structure().get()))));
+        ValueFromBlock slowResult = m_out.anchor(vmCall(pointerType(), m_out.operation(operation), m_callFrame, frozenPointer(m_graph.freezeStrong(m_node->structure().get()))));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
         setJSValue(m_out.phi(pointerType(), fastResult, slowResult));
+    }
+
+    void compileNewGenerator()
+    {
+        compileNewInternalFieldObject<JSGenerator>(operationNewGenerator);
+    }
+
+    void compileNewAsyncGenerator()
+    {
+        compileNewInternalFieldObject<JSAsyncGenerator>(operationNewAsyncGenerator);
     }
 
     void compileNewStringObject()
@@ -6373,7 +6390,8 @@ private:
         setJSValue(result);
     }
 
-    void compileCreateGenerator()
+    template<typename JSClass, typename Operation>
+    void compileCreateInternalFieldObject(Operation operation)
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
 
@@ -6398,30 +6416,39 @@ private:
         m_out.branch(m_out.isZero64(structure), rarely(slowCase), usually(hasStructure));
 
         m_out.appendTo(hasStructure, checkGlobalObjectCase);
-        m_out.branch(m_out.equal(m_out.loadPtr(structure, m_heaps.Structure_classInfo), m_out.constIntPtr(JSGenerator::info())), usually(checkGlobalObjectCase), rarely(slowCase));
+        m_out.branch(m_out.equal(m_out.loadPtr(structure, m_heaps.Structure_classInfo), m_out.constIntPtr(JSClass::info())), usually(checkGlobalObjectCase), rarely(slowCase));
 
         m_out.appendTo(checkGlobalObjectCase, fastAllocationCase);
         m_out.branch(m_out.equal(m_out.loadPtr(structure, m_heaps.Structure_globalObject), weakPointer(globalObject)), usually(fastAllocationCase), rarely(slowCase));
 
         m_out.appendTo(fastAllocationCase, slowCase);
-        LValue generator = allocateObject<JSGenerator>(structure, m_out.intPtrZero, slowCase);
-        m_out.store64(m_out.constInt64(JSValue::encode(jsNull())), generator, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSGenerator::Field::PolyProto)]);
-        m_out.store64(m_out.constInt64(JSValue::encode(jsNumber(static_cast<int32_t>(JSGenerator::GeneratorState::Init)))), generator, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSGenerator::Field::State)]);
-        m_out.store64(m_out.constInt64(JSValue::encode(jsUndefined())), generator, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSGenerator::Field::Next)]);
-        m_out.store64(m_out.constInt64(JSValue::encode(jsUndefined())), generator, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSGenerator::Field::This)]);
-        m_out.store64(m_out.constInt64(JSValue::encode(jsUndefined())), generator, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSGenerator::Field::Frame)]);
+        LValue object = allocateObject<JSClass>(structure, m_out.intPtrZero, slowCase);
+        auto initialValues = JSClass::initialValues();
+        ASSERT(initialValues.size() == JSClass::numberOfInternalFields);
+        for (unsigned index = 0; index < initialValues.size(); ++index)
+            m_out.store64(m_out.constInt64(JSValue::encode(initialValues[index])), object, m_heaps.JSInternalFieldObjectImpl_internalFields[index]);
         mutatorFence();
-        ValueFromBlock fastResult = m_out.anchor(generator);
+        ValueFromBlock fastResult = m_out.anchor(object);
         m_out.jump(continuation);
 
         m_out.appendTo(slowCase, continuation);
-        ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, m_out.operation(operationCreateGenerator), m_callFrame, callee, weakPointer(globalObject)));
+        ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, m_out.operation(operation), m_callFrame, callee, weakPointer(globalObject)));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
         LValue result = m_out.phi(Int64, fastResult, slowResult);
 
         setJSValue(result);
+    }
+
+    void compileCreateGenerator()
+    {
+        compileCreateInternalFieldObject<JSGenerator>(operationCreateGenerator);
+    }
+
+    void compileCreateAsyncGenerator()
+    {
+        compileCreateInternalFieldObject<JSAsyncGenerator>(operationCreateAsyncGenerator);
     }
 
     void compileSpread()

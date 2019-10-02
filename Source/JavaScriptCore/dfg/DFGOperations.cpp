@@ -408,6 +408,16 @@ JSCell* JIT_OPERATION operationCreateGenerator(ExecState* exec, JSObject* constr
     RELEASE_AND_RETURN(scope, JSGenerator::create(vm, structure));
 }
 
+JSCell* JIT_OPERATION operationCreateAsyncGenerator(ExecState* exec, JSObject* constructor, JSGlobalObject* globalObject)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    Structure* structure = InternalFunction::createSubclassStructure(exec, nullptr, constructor, globalObject->asyncGeneratorStructure());
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    RELEASE_AND_RETURN(scope, JSAsyncGenerator::create(vm, structure));
+}
+
 JSCell* JIT_OPERATION operationCallObjectConstructor(ExecState* exec, JSGlobalObject* globalObject, EncodedJSValue encodedTarget)
 {
     VM& vm = exec->vm();

@@ -134,18 +134,22 @@ op :new_promise,
         isInternalPromise: bool,
     }
 
-op :create_generator,
+op :new_generator,
+    args: {
+        dst: VirtualRegister,
+    }
+
+op_group :CreateInternalFieldObjectOp,
+    [
+        :create_generator,
+        :create_async_generator,
+    ],
     args: {
         dst: VirtualRegister,
         callee: VirtualRegister,
     },
     metadata: {
         cachedCallee: WriteBarrier[JSCell]
-    }
-
-op :new_generator,
-    args: {
-        dst: VirtualRegister,
     }
 
 op :get_argument,

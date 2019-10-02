@@ -309,16 +309,16 @@ SLOW_PATH_DECL(slow_path_new_promise)
     RETURN(result);
 }
 
-SLOW_PATH_DECL(slow_path_create_generator)
+template<typename JSClass, typename Bytecode>
+static JSClass* createInternalFieldObject(ExecState* exec, VM& vm, const Bytecode& bytecode, Structure* baseStructure)
 {
-    BEGIN();
-    auto bytecode = pc->as<OpCreateGenerator>();
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSObject* constructorAsObject = asObject(GET(bytecode.m_callee).jsValue());
 
-    Structure* structure = InternalFunction::createSubclassStructure(exec, nullptr, constructorAsObject, globalObject->generatorStructure());
-    CHECK_EXCEPTION();
-    JSGenerator* result = JSGenerator::create(vm, structure);
+    Structure* structure = InternalFunction::createSubclassStructure(exec, nullptr, constructorAsObject, baseStructure);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    JSClass* result = JSClass::create(vm, structure);
 
     JSFunction* constructor = jsDynamicCast<JSFunction*>(vm, constructorAsObject);
     if (constructor && constructor->canUseAllocationProfile()) {
@@ -328,7 +328,21 @@ SLOW_PATH_DECL(slow_path_create_generator)
         else if (cachedCallee.unvalidatedGet() != JSCell::seenMultipleCalleeObjects() && cachedCallee.get() != constructor)
             cachedCallee.setWithoutWriteBarrier(JSCell::seenMultipleCalleeObjects());
     }
-    RETURN(result);
+    RELEASE_AND_RETURN(scope, result);
+}
+
+SLOW_PATH_DECL(slow_path_create_generator)
+{
+    BEGIN();
+    auto bytecode = pc->as<OpCreateGenerator>();
+    RETURN(createInternalFieldObject<JSGenerator>(exec, vm, bytecode, exec->lexicalGlobalObject()->generatorStructure()));
+}
+
+SLOW_PATH_DECL(slow_path_create_async_generator)
+{
+    BEGIN();
+    auto bytecode = pc->as<OpCreateAsyncGenerator>();
+    RETURN(createInternalFieldObject<JSAsyncGenerator>(exec, vm, bytecode, exec->lexicalGlobalObject()->asyncGeneratorStructure()));
 }
 
 SLOW_PATH_DECL(slow_path_new_generator)

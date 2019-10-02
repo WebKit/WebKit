@@ -203,6 +203,8 @@ private:
     void handleNewFunc(NodeType, Bytecode);
     template <typename Bytecode>
     void handleNewFuncExp(NodeType, Bytecode);
+    template <typename Bytecode>
+    void handleCreateInternalFieldObject(const ClassInfo*, NodeType createOp, NodeType newOp, Bytecode);
 
     // Create a presence ObjectPropertyCondition based on some known offset and structure set. Does not
     // check the validity of the condition, but it may return a null one if it encounters a contradiction.
@@ -4954,49 +4956,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_create_generator: {
-            JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
-            auto bytecode = currentInstruction->as<OpCreateGenerator>();
-            Node* callee = get(VirtualRegister(bytecode.m_callee));
-
-            bool alreadyEmitted = false;
-
-            JSFunction* function = callee->dynamicCastConstant<JSFunction*>(*m_vm);
-            if (!function) {
-                JSCell* cachedFunction = bytecode.metadata(codeBlock).m_cachedCallee.unvalidatedGet();
-                if (cachedFunction
-                    && cachedFunction != JSCell::seenMultipleCalleeObjects()
-                    && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
-                    ASSERT(cachedFunction->inherits<JSFunction>(*m_vm));
-
-                    FrozenValue* frozen = m_graph.freeze(cachedFunction);
-                    addToGraph(CheckCell, OpInfo(frozen), callee);
-
-                    function = static_cast<JSFunction*>(cachedFunction);
-                }
-            }
-
-            if (function) {
-                if (FunctionRareData* rareData = function->rareData()) {
-                    if (rareData->allocationProfileWatchpointSet().isStillValid()) {
-                        Structure* structure = rareData->internalFunctionAllocationStructure();
-                        if (structure
-                            && structure->classInfo() == JSGenerator::info()
-                            && structure->globalObject() == globalObject
-                            && rareData->allocationProfileWatchpointSet().isStillValid()) {
-                            m_graph.freeze(rareData);
-                            m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
-
-                            set(VirtualRegister(bytecode.m_dst), addToGraph(NewGenerator, OpInfo(m_graph.registerStructure(structure))));
-                            // The callee is still live up to this point.
-                            addToGraph(Phantom, callee);
-                            alreadyEmitted = true;
-                        }
-                    }
-                }
-            }
-            if (!alreadyEmitted)
-                set(VirtualRegister(bytecode.m_dst), addToGraph(CreateGenerator, callee));
+            handleCreateInternalFieldObject(JSGenerator::info(), CreateGenerator, NewGenerator, currentInstruction->as<OpCreateGenerator>());
             NEXT_OPCODE(op_create_generator);
+        }
+
+        case op_create_async_generator: {
+            handleCreateInternalFieldObject(JSAsyncGenerator::info(), CreateAsyncGenerator, NewAsyncGenerator, currentInstruction->as<OpCreateAsyncGenerator>());
+            NEXT_OPCODE(op_create_async_generator);
         }
 
         case op_new_object: {
@@ -7508,6 +7474,51 @@ void ByteCodeParser::handleNewFuncExp(NodeType op, Bytecode bytecode)
     // For the non-constant case: NewFunction could be DCE'd, but baseline's implementation
     // won't be able to handle an Undefined scope.
     addToGraph(Phantom, scope);
+}
+
+template <typename Bytecode>
+void ByteCodeParser::handleCreateInternalFieldObject(const ClassInfo* classInfo, NodeType createOp, NodeType newOp, Bytecode bytecode)
+{
+    CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
+    JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
+    Node* callee = get(VirtualRegister(bytecode.m_callee));
+
+    JSFunction* function = callee->dynamicCastConstant<JSFunction*>(*m_vm);
+    if (!function) {
+        JSCell* cachedFunction = bytecode.metadata(codeBlock).m_cachedCallee.unvalidatedGet();
+        if (cachedFunction
+            && cachedFunction != JSCell::seenMultipleCalleeObjects()
+            && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
+            ASSERT(cachedFunction->inherits<JSFunction>(*m_vm));
+
+            FrozenValue* frozen = m_graph.freeze(cachedFunction);
+            addToGraph(CheckCell, OpInfo(frozen), callee);
+
+            function = static_cast<JSFunction*>(cachedFunction);
+        }
+    }
+
+    if (function) {
+        if (FunctionRareData* rareData = function->rareData()) {
+            if (rareData->allocationProfileWatchpointSet().isStillValid()) {
+                Structure* structure = rareData->internalFunctionAllocationStructure();
+                if (structure
+                    && structure->classInfo() == classInfo
+                    && structure->globalObject() == globalObject
+                    && rareData->allocationProfileWatchpointSet().isStillValid()) {
+                    m_graph.freeze(rareData);
+                    m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
+
+                    set(VirtualRegister(bytecode.m_dst), addToGraph(newOp, OpInfo(m_graph.registerStructure(structure))));
+                    // The callee is still live up to this point.
+                    addToGraph(Phantom, callee);
+                    return;
+                }
+            }
+        }
+    }
+
+    set(VirtualRegister(bytecode.m_dst), addToGraph(createOp, callee));
 }
 
 void ByteCodeParser::parse()

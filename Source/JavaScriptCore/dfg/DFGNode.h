@@ -767,10 +767,10 @@ public:
         m_opInfo2 = internal;
     }
 
-    void convertToNewGenerator(RegisteredStructure structure)
+    void convertToNewInternalFieldObject(NodeType newOp, RegisteredStructure structure)
     {
-        ASSERT(m_op == CreateGenerator);
-        setOpAndDefaultFlags(NewGenerator);
+        ASSERT(m_op == CreateAsyncGenerator || m_op == CreateGenerator);
+        setOpAndDefaultFlags(newOp);
         children.reset();
         m_opInfo = structure;
         m_opInfo2 = OpInfoWrapper();
@@ -1923,6 +1923,7 @@ public:
         case NewObject:
         case NewPromise:
         case NewGenerator:
+        case NewAsyncGenerator:
         case NewStringObject:
             return true;
         default:

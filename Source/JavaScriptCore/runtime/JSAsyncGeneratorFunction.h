@@ -56,19 +56,6 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
     }
 
-    enum class AsyncGeneratorState : int32_t {
-        Completed = -1,
-        Executing = -2,
-        SuspendedStart = -3,
-        SuspendedYield = -4,
-        AwaitingReturn = -5
-    };
-    
-    enum class AsyncGeneratorSuspendReason : int32_t {
-        None = 0,
-        Yield = -1,
-        Await = -2
-    };
 private:
     JSAsyncGeneratorFunction(VM&, FunctionExecutable*, JSScope*, Structure*);
 

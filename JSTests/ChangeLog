@@ -1,3 +1,26 @@
+2019-10-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] AsyncGenerator should have internal fields
+        https://bugs.webkit.org/show_bug.cgi?id=201498
+
+        Reviewed by Saam Barati.
+
+        * stress/async-generator-construct-failure.js: Added.
+        (shouldThrow):
+        (async.gen):
+        (TypeError):
+        * stress/async-generator-prototype-change.js: Added.
+        (shouldBe):
+        (async.gen):
+        * stress/async-generator-prototype-closure.js: Added.
+        (shouldBe):
+        (test.async.gen):
+        (test):
+        * stress/create-async-generator.js: Added.
+        (shouldBe):
+        (test.async.generator):
+        (test):
+
 2019-10-01  Saam Barati  <sbarati@apple.com>
 
         ObjectAllocationSinkingPhase shouldn't insert hints for allocations which are no longer valid

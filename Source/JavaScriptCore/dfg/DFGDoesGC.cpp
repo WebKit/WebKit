@@ -334,6 +334,7 @@ bool doesGC(Graph& graph, Node* node)
     case CreateThis:
     case CreatePromise:
     case CreateGenerator:
+    case CreateAsyncGenerator:
     case ObjectCreate:
     case ObjectKeys:
     case AllocatePropertyStorage:
@@ -343,6 +344,7 @@ bool doesGC(Graph& graph, Node* node)
     case NewObject:
     case NewPromise:
     case NewGenerator:
+    case NewAsyncGenerator:
     case NewArray:
     case NewArrayWithSpread:
     case Spread:

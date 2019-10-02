@@ -385,6 +385,7 @@ SLOW_PATH_HIDDEN_DECL(slow_path_is_var_scope);
 SLOW_PATH_HIDDEN_DECL(slow_path_resolve_scope_for_hoisting_func_decl_in_eval);
 SLOW_PATH_HIDDEN_DECL(slow_path_create_promise);
 SLOW_PATH_HIDDEN_DECL(slow_path_create_generator);
+SLOW_PATH_HIDDEN_DECL(slow_path_create_async_generator);
 SLOW_PATH_HIDDEN_DECL(slow_path_create_rest);
 SLOW_PATH_HIDDEN_DECL(slow_path_get_by_id_with_this);
 SLOW_PATH_HIDDEN_DECL(slow_path_get_by_val_with_this);

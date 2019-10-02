@@ -37,6 +37,7 @@
 #include "GetterSetter.h"
 #include "HashMapImpl.h"
 #include "JITOperations.h"
+#include "JSAsyncGenerator.h"
 #include "JSGenerator.h"
 #include "JSImmutableButterfly.h"
 #include "JSInternalPromise.h"
@@ -2688,28 +2689,47 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case CreateGenerator: {
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
-        if (JSValue base = forNode(node->child1()).m_value) {
-            if (auto* function = jsDynamicCast<JSFunction*>(m_graph.m_vm, base)) {
-                if (FunctionRareData* rareData = function->rareData()) {
-                    if (rareData->allocationProfileWatchpointSet().isStillValid()) {
-                        Structure* structure = rareData->internalFunctionAllocationStructure();
-                        if (structure
-                            && structure->classInfo() == JSGenerator::info()
-                            && structure->globalObject() == globalObject
-                            && rareData->allocationProfileWatchpointSet().isStillValid()) {
-                            m_graph.freeze(rareData);
-                            m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
-                            m_state.setFoundConstants(true);
-                            didFoldClobberWorld();
-                            setForNode(node, structure);
-                            break;
+    case CreateGenerator:
+    case CreateAsyncGenerator: {
+        auto tryToFold = [&] (const ClassInfo* classInfo) -> bool {
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+            if (JSValue base = forNode(node->child1()).m_value) {
+                if (auto* function = jsDynamicCast<JSFunction*>(m_graph.m_vm, base)) {
+                    if (FunctionRareData* rareData = function->rareData()) {
+                        if (rareData->allocationProfileWatchpointSet().isStillValid()) {
+                            Structure* structure = rareData->internalFunctionAllocationStructure();
+                            if (structure
+                                && structure->classInfo() == classInfo
+                                && structure->globalObject() == globalObject
+                                && rareData->allocationProfileWatchpointSet().isStillValid()) {
+                                m_graph.freeze(rareData);
+                                m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
+                                m_state.setFoundConstants(true);
+                                didFoldClobberWorld();
+                                setForNode(node, structure);
+                                return true;
+                            }
                         }
                     }
                 }
             }
+            return false;
+        };
+
+        bool found = false;
+        switch (node->op()) {
+        case CreateGenerator:
+            found = tryToFold(JSGenerator::info());
+            break;
+        case CreateAsyncGenerator:
+            found = tryToFold(JSAsyncGenerator::info());
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
         }
+        if (found)
+            break;
         clobberWorld();
         setTypeForNode(node, SpecObjectOther);
         break;
@@ -2721,6 +2741,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
 
     case NewGenerator:
+    case NewAsyncGenerator:
         ASSERT(!!node->structure().get());
         setForNode(node, node->structure());
         break;

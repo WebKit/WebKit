@@ -59,6 +59,7 @@ bool clobbersExitState(Graph& graph, Node* node)
     case NewObject:
     case NewPromise:
     case NewGenerator:
+    case NewAsyncGenerator:
     case NewRegexp:
     case NewSymbol:
     case NewStringObject:

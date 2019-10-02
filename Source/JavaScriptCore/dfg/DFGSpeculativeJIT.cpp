@@ -12766,7 +12766,9 @@ void SpeculativeJIT::compileCreatePromise(Node* node)
     cellResult(resultGPR, node);
 }
 
-void SpeculativeJIT::compileCreateGenerator(Node* node)
+
+template<typename JSClass, typename Operation>
+void SpeculativeJIT::compileCreateInternalFieldObject(Node* node, Operation operation)
 {
     JSGlobalObject* globalObject = m_jit.globalObjectFor(node->origin.semantic);
 
@@ -12792,23 +12794,32 @@ void SpeculativeJIT::compileCreateGenerator(Node* node)
     slowCases.append(m_jit.branchTestPtr(MacroAssembler::Zero, rareDataGPR));
     m_jit.loadPtr(JITCompiler::Address(rareDataGPR, FunctionRareData::offsetOfInternalFunctionAllocationProfile() + InternalFunctionAllocationProfile::offsetOfStructure()), structureGPR);
     slowCases.append(m_jit.branchTestPtr(CCallHelpers::Zero, structureGPR));
-    m_jit.move(TrustedImmPtr(JSGenerator::info()), scratch1GPR);
+    m_jit.move(TrustedImmPtr(JSClass::info()), scratch1GPR);
     slowCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(structureGPR, Structure::classInfoOffset())));
     m_jit.move(TrustedImmPtr::weakPointer(m_jit.graph(), globalObject), scratch1GPR);
     slowCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(structureGPR, Structure::globalObjectOffset())));
 
     auto butterfly = TrustedImmPtr(nullptr);
-    emitAllocateJSObjectWithKnownSize<JSGenerator>(resultGPR, structureGPR, butterfly, scratch1GPR, scratch2GPR, slowCases, sizeof(JSGenerator));
-    m_jit.storeTrustedValue(jsNull(), CCallHelpers::Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(static_cast<unsigned>(JSGenerator::Field::PolyProto))));
-    m_jit.storeTrustedValue(jsNumber(static_cast<int32_t>(JSGenerator::GeneratorState::Init)), CCallHelpers::Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(static_cast<unsigned>(JSGenerator::Field::State))));
-    m_jit.storeTrustedValue(jsUndefined(), CCallHelpers::Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(static_cast<unsigned>(JSGenerator::Field::Next))));
-    m_jit.storeTrustedValue(jsUndefined(), CCallHelpers::Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(static_cast<unsigned>(JSGenerator::Field::This))));
-    m_jit.storeTrustedValue(jsUndefined(), CCallHelpers::Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(static_cast<unsigned>(JSGenerator::Field::Frame))));
+    emitAllocateJSObjectWithKnownSize<JSClass>(resultGPR, structureGPR, butterfly, scratch1GPR, scratch2GPR, slowCases, sizeof(JSClass));
+    auto initialValues = JSClass::initialValues();
+    ASSERT(initialValues.size() == JSClass::numberOfInternalFields);
+    for (unsigned index = 0; index < initialValues.size(); ++index)
+        m_jit.storeTrustedValue(initialValues[index], CCallHelpers::Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(index)));
     m_jit.mutatorFence(m_jit.vm());
 
-    addSlowPathGenerator(slowPathCall(slowCases, this, operationCreateGenerator, resultGPR, calleeGPR, TrustedImmPtr::weakPointer(m_jit.graph(), globalObject)));
+    addSlowPathGenerator(slowPathCall(slowCases, this, operation, resultGPR, calleeGPR, TrustedImmPtr::weakPointer(m_jit.graph(), globalObject)));
 
     cellResult(resultGPR, node);
+}
+
+void SpeculativeJIT::compileCreateGenerator(Node* node)
+{
+    compileCreateInternalFieldObject<JSGenerator>(node, operationCreateGenerator);
+}
+
+void SpeculativeJIT::compileCreateAsyncGenerator(Node* node)
+{
+    compileCreateInternalFieldObject<JSAsyncGenerator>(node, operationCreateAsyncGenerator);
 }
 
 void SpeculativeJIT::compileNewObject(Node* node)
@@ -12867,7 +12878,8 @@ void SpeculativeJIT::compileNewPromise(Node* node)
     cellResult(resultGPR, node);
 }
 
-void SpeculativeJIT::compileNewGenerator(Node* node)
+template<typename JSClass, typename Operation>
+void SpeculativeJIT::compileNewInternalFieldObject(Node* node, Operation operation)
 {
     GPRTemporary result(this);
     GPRTemporary scratch1(this);
@@ -12881,17 +12893,26 @@ void SpeculativeJIT::compileNewGenerator(Node* node)
 
     FrozenValue* structure = m_graph.freezeStrong(node->structure().get());
     auto butterfly = TrustedImmPtr(nullptr);
-    emitAllocateJSObjectWithKnownSize<JSGenerator>(resultGPR, TrustedImmPtr(structure), butterfly, scratch1GPR, scratch2GPR, slowCases, sizeof(JSGenerator));
-    m_jit.storeTrustedValue(jsNull(), CCallHelpers::Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(static_cast<unsigned>(JSGenerator::Field::PolyProto))));
-    m_jit.storeTrustedValue(jsNumber(static_cast<int32_t>(JSGenerator::GeneratorState::Init)), CCallHelpers::Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(static_cast<unsigned>(JSGenerator::Field::State))));
-    m_jit.storeTrustedValue(jsUndefined(), CCallHelpers::Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(static_cast<unsigned>(JSGenerator::Field::Next))));
-    m_jit.storeTrustedValue(jsUndefined(), CCallHelpers::Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(static_cast<unsigned>(JSGenerator::Field::This))));
-    m_jit.storeTrustedValue(jsUndefined(), CCallHelpers::Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(static_cast<unsigned>(JSGenerator::Field::Frame))));
+    emitAllocateJSObjectWithKnownSize<JSClass>(resultGPR, TrustedImmPtr(structure), butterfly, scratch1GPR, scratch2GPR, slowCases, sizeof(JSClass));
+    auto initialValues = JSClass::initialValues();
+    ASSERT(initialValues.size() == JSClass::numberOfInternalFields);
+    for (unsigned index = 0; index < initialValues.size(); ++index)
+        m_jit.storeTrustedValue(initialValues[index], CCallHelpers::Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(index)));
     m_jit.mutatorFence(m_jit.vm());
 
-    addSlowPathGenerator(slowPathCall(slowCases, this, operationNewGenerator, resultGPR, TrustedImmPtr(structure)));
+    addSlowPathGenerator(slowPathCall(slowCases, this, operation, resultGPR, TrustedImmPtr(structure)));
 
     cellResult(resultGPR, node);
+}
+
+void SpeculativeJIT::compileNewGenerator(Node* node)
+{
+    compileNewInternalFieldObject<JSGenerator>(node, operationNewGenerator);
+}
+
+void SpeculativeJIT::compileNewAsyncGenerator(Node* node)
+{
+    compileNewInternalFieldObject<JSAsyncGenerator>(node, operationNewAsyncGenerator);
 }
 
 void SpeculativeJIT::compileToPrimitive(Node* node)

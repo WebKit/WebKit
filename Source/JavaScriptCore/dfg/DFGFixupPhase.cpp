@@ -1652,6 +1652,7 @@ private:
         case CreateThis:
         case CreatePromise:
         case CreateGenerator:
+        case CreateAsyncGenerator:
         case GetButterfly: {
             fixEdge<CellUse>(node->child1());
             break;
@@ -2410,6 +2411,7 @@ private:
         case NewObject:
         case NewPromise:
         case NewGenerator:
+        case NewAsyncGenerator:
         case NewRegexp:
         case DeleteById:
         case DeleteByVal:

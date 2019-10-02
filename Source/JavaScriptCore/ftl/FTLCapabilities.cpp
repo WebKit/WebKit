@@ -76,6 +76,7 @@ inline CapabilityLevel canCompile(Node* node)
     case NewObject:
     case NewPromise:
     case NewGenerator:
+    case NewAsyncGenerator:
     case NewStringObject:
     case NewSymbol:
     case NewArray:
@@ -383,6 +384,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CreateThis:
     case CreatePromise:
     case CreateGenerator:
+    case CreateAsyncGenerator:
     case DataViewGetInt:
     case DataViewGetFloat:
     case DataViewSet:

@@ -1402,6 +1402,14 @@ JSCell* JIT_OPERATION operationNewGenerator(ExecState* exec, Structure* structur
     return JSGenerator::create(vm, structure);
 }
 
+JSCell* JIT_OPERATION operationNewAsyncGenerator(ExecState* exec, Structure* structure)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    return JSAsyncGenerator::create(vm, structure);
+}
+
 JSCell* JIT_OPERATION operationNewRegexp(ExecState* exec, JSCell* regexpPtr)
 {
     SuperSamplerScope superSamplerScope(false);

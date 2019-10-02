@@ -41,7 +41,7 @@
 #include "CatchScope.h"
 #include "DefinePropertyAttributes.h"
 #include "Interpreter.h"
-#include "JSAsyncGeneratorFunction.h"
+#include "JSAsyncGenerator.h"
 #include "JSBigInt.h"
 #include "JSCInlines.h"
 #include "JSFixedArray.h"
@@ -702,8 +702,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         // https://bugs.webkit.org/show_bug.cgi?id=151586
         emitToThis();
 
-        move(m_generatorRegister, &m_calleeRegister);
-        emitCreateThis(m_generatorRegister);
+        emitCreateAsyncGenerator(m_generatorRegister, &m_calleeRegister);
         break;
     }
 
@@ -876,10 +875,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             // Generatorification inserts lexical environment creation if necessary. Otherwise, we convert it to op_mov frame, `undefined`.
             OpCreateGeneratorFrameEnvironment::emit(this, generatorFrameRegister(), scopeRegister(), VirtualRegister { symbolTableConstantIndex }, addConstantValue(jsUndefined()));
         }
-        if (parseMode == SourceParseMode::AsyncGeneratorBodyMode)
-            emitPutById(generatorRegister(), propertyNames().builtinNames().generatorFramePrivateName(), generatorFrameRegister());
-        else
-            emitPutInternalField(generatorRegister(), static_cast<unsigned>(JSGenerator::Field::Frame), generatorFrameRegister());
+        static_assert(static_cast<unsigned>(JSGenerator::Field::Frame) == static_cast<unsigned>(JSAsyncGenerator::Field::Frame));
+        emitPutInternalField(generatorRegister(), static_cast<unsigned>(JSGenerator::Field::Frame), generatorFrameRegister());
     }
 
     bool shouldInitializeBlockScopedFunctions = false; // We generate top-level function declarations in ::generate().
@@ -2723,18 +2720,8 @@ void BytecodeGenerator::emitPutAsyncGeneratorFields(RegisterID* nextFunction)
 {
     ASSERT(isAsyncGeneratorWrapperParseMode(parseMode()));
 
-    emitDirectPutById(m_generatorRegister, propertyNames().builtinNames().generatorNextPrivateName(), nextFunction, PropertyNode::KnownDirect);
-        
-    emitDirectPutById(m_generatorRegister, propertyNames().builtinNames().generatorThisPrivateName(), &m_thisRegister, PropertyNode::KnownDirect);
-        
-    emitDirectPutById(m_generatorRegister, propertyNames().builtinNames().generatorStatePrivateName(), emitLoad(nullptr, jsNumber(static_cast<int32_t>(JSAsyncGeneratorFunction::AsyncGeneratorState::SuspendedStart))), PropertyNode::KnownDirect);
-        
-    emitDirectPutById(m_generatorRegister, propertyNames().builtinNames().generatorFramePrivateName(), emitLoad(nullptr, jsNull()), PropertyNode::KnownDirect);
-
-    emitDirectPutById(m_generatorRegister, propertyNames().builtinNames().asyncGeneratorSuspendReasonPrivateName(), emitLoad(nullptr, jsNumber(static_cast<int32_t>(JSAsyncGeneratorFunction::AsyncGeneratorSuspendReason::None))), PropertyNode::KnownDirect);
-
-    emitDirectPutById(m_generatorRegister, propertyNames().builtinNames().asyncGeneratorQueueFirstPrivateName(), emitLoad(nullptr, jsNull()), PropertyNode::KnownDirect);
-    emitDirectPutById(m_generatorRegister, propertyNames().builtinNames().asyncGeneratorQueueLastPrivateName(), emitLoad(nullptr, jsNull()), PropertyNode::KnownDirect);
+    emitPutInternalField(m_generatorRegister, static_cast<unsigned>(JSAsyncGenerator::Field::Next), nextFunction);
+    emitPutInternalField(m_generatorRegister, static_cast<unsigned>(JSAsyncGenerator::Field::This), &m_thisRegister);
 }
 
 RegisterID* BytecodeGenerator::emitDeleteById(RegisterID* dst, RegisterID* base, const Identifier& property)
@@ -2872,6 +2859,12 @@ RegisterID* BytecodeGenerator::emitCreateGenerator(RegisterID* dst, RegisterID* 
 RegisterID* BytecodeGenerator::emitNewGenerator(RegisterID* dst)
 {
     OpNewGenerator::emit(this, dst);
+    return dst;
+}
+
+RegisterID* BytecodeGenerator::emitCreateAsyncGenerator(RegisterID* dst, RegisterID* newTarget)
+{
+    OpCreateAsyncGenerator::emit(this, dst, newTarget);
     return dst;
 }
 
@@ -4515,7 +4508,7 @@ void BytecodeGenerator::emitRequireObjectCoercible(RegisterID* value, const Stri
     emitLabel(target.get());
 }
 
-void BytecodeGenerator::emitYieldPoint(RegisterID* argument, JSAsyncGeneratorFunction::AsyncGeneratorSuspendReason result)
+void BytecodeGenerator::emitYieldPoint(RegisterID* argument, JSAsyncGenerator::AsyncGeneratorSuspendReason result)
 {
     Ref<Label> mergePoint = newLabel();
     unsigned yieldPointIndex = m_yieldPoints++;
@@ -4523,7 +4516,7 @@ void BytecodeGenerator::emitYieldPoint(RegisterID* argument, JSAsyncGeneratorFun
 
     if (parseMode() == SourceParseMode::AsyncGeneratorBodyMode) {
         int suspendReason = static_cast<int32_t>(result);
-        emitPutById(generatorRegister(), propertyNames().builtinNames().asyncGeneratorSuspendReasonPrivateName(), emitLoad(nullptr, jsNumber(suspendReason)));
+        emitPutInternalField(generatorRegister(), static_cast<unsigned>(JSAsyncGenerator::Field::SuspendReason), emitLoad(nullptr, jsNumber(suspendReason)));
     }
 
     // Split the try range here.
@@ -4555,7 +4548,7 @@ void BytecodeGenerator::emitYieldPoint(RegisterID* argument, JSAsyncGeneratorFun
     emitLabel(mergePoint.get());
 }
 
-RegisterID* BytecodeGenerator::emitYield(RegisterID* argument, JSAsyncGeneratorFunction::AsyncGeneratorSuspendReason result)
+RegisterID* BytecodeGenerator::emitYield(RegisterID* argument, JSAsyncGenerator::AsyncGeneratorSuspendReason result)
 {
     emitYieldPoint(argument, result);
 
@@ -4595,7 +4588,7 @@ RegisterID* BytecodeGenerator::emitCallIterator(RegisterID* iterator, RegisterID
 
 void BytecodeGenerator::emitAwait(RegisterID* value)
 {
-    emitYield(value, JSAsyncGeneratorFunction::AsyncGeneratorSuspendReason::Await);
+    emitYield(value, JSAsyncGenerator::AsyncGeneratorSuspendReason::Await);
     move(value, generatorValueRegister());
 }
 
@@ -4667,7 +4660,7 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
 
             Ref<Label> branchOnResult = newLabel();
             {
-                emitYieldPoint(value.get(), JSAsyncGeneratorFunction::AsyncGeneratorSuspendReason::Yield);
+                emitYieldPoint(value.get(), JSAsyncGenerator::AsyncGeneratorSuspendReason::Yield);
 
                 Ref<Label> normalLabel = newLabel();
                 Ref<Label> returnLabel = newLabel();
@@ -4778,10 +4771,8 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
 void BytecodeGenerator::emitGeneratorStateChange(int32_t state)
 {
     RegisterID* completedState = emitLoad(nullptr, jsNumber(state));
-    if (m_codeBlock->parseMode() == SourceParseMode::AsyncGeneratorBodyMode)
-        emitPutById(generatorRegister(), propertyNames().builtinNames().generatorStatePrivateName(), completedState);
-    else
-        emitPutInternalField(generatorRegister(), static_cast<unsigned>(JSGenerator::Field::State), completedState);
+    static_assert(static_cast<unsigned>(JSGenerator::Field::State) == static_cast<unsigned>(JSAsyncGenerator::Field::State));
+    emitPutInternalField(generatorRegister(), static_cast<unsigned>(JSGenerator::Field::State), completedState);
 }
 
 bool BytecodeGenerator::emitJumpViaFinallyIfNeeded(int targetLabelScopeDepth, Label& jumpTarget)
