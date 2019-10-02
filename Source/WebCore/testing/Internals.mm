@@ -35,8 +35,11 @@
 #import "MediaPlayerPrivate.h"
 #import "Range.h"
 #import <AVFoundation/AVPlayer.h>
-#import <pal/ios/UIKitSoftLink.h>
 #import <wtf/cocoa/NSURLExtras.h>
+
+#if PLATFORM(IOS_FAMILY)
+#import <pal/ios/UIKitSoftLink.h>
+#endif
 
 namespace WebCore {
 

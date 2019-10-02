@@ -26,6 +26,8 @@
 #import "config.h"
 #import "ClassMethodSwizzler.h"
 
+#include <Foundation/Foundation.h>
+
 ClassMethodSwizzler::ClassMethodSwizzler(Class cls, SEL originalSelector, IMP implementation)
     : m_method(class_getClassMethod(objc_getMetaClass(NSStringFromClass(cls).UTF8String), originalSelector))
     , m_originalImplementation(method_setImplementation(m_method, implementation))

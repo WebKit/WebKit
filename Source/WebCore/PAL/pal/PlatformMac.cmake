@@ -27,6 +27,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/CommonCryptoSPI.h
     spi/cocoa/CoreTextSPI.h
     spi/cocoa/DataDetectorsCoreSPI.h
+    spi/cocoa/IOKitSPI.h
     spi/cocoa/IOPMLibSPI.h
     spi/cocoa/IOPSLibSPI.h
     spi/cocoa/IOReturnSPI.h

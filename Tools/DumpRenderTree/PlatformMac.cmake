@@ -2,6 +2,9 @@ find_library(QUARTZ_LIBRARY Quartz)
 find_library(CARBON_LIBRARY Carbon)
 find_library(CORESERVICES_LIBRARY CoreServices)
 
+add_definitions(-DJSC_API_AVAILABLE\\\(...\\\)=)
+add_definitions(-DJSC_CLASS_AVAILABLE\\\(...\\\)=)
+
 # FIXME: We shouldn't need to define NS_RETURNS_RETAINED.
 add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks -iframework ${CORESERVICES_LIBRARY}/Frameworks -DNS_RETURNS_RETAINED=)
 
@@ -30,6 +33,9 @@ list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
     ${FORWARDING_HEADERS_DIR}/WebKit
     ${FORWARDING_HEADERS_DIR}/WebKitLegacy
     ${WEBCORE_DIR}/testing/cocoa
+    ${WEBKITLEGACY_DIR}
+    ${WEBKIT_TESTRUNNER_SHARED_DIR}/cocoa
+    ${WEBKIT_TESTRUNNER_SHARED_DIR}/spi
 )
 
 # Common ${TestNetscapePlugIn_SOURCES} from CMakeLists.txt are C++ source files.
@@ -56,7 +62,6 @@ list(APPEND DumpRenderTree_ObjC_SOURCES
 
     mac/AppleScriptController.m
     mac/NavigationController.m
-    mac/ObjCController.m
     mac/ObjCPlugin.m
     mac/ObjCPluginFunction.m
     mac/TextInputControllerMac.m
@@ -67,6 +72,7 @@ list(APPEND DumpRenderTree_Cpp_SOURCES
 )
 
 list(APPEND DumpRenderTree_ObjCpp_SOURCES
+    DefaultPolicyDelegate.mm
     mac/AccessibilityCommonMac.mm
     mac/AccessibilityControllerMac.mm
     mac/AccessibilityNotificationHandler.mm
@@ -84,6 +90,7 @@ list(APPEND DumpRenderTree_ObjCpp_SOURCES
     mac/HistoryDelegate.mm
     mac/MockGeolocationProvider.mm
     mac/MockWebNotificationProvider.mm
+    mac/ObjCController.m
     mac/PixelDumpSupportMac.mm
     mac/PolicyDelegate.mm
     mac/ResourceLoadDelegate.mm
@@ -91,6 +98,8 @@ list(APPEND DumpRenderTree_ObjCpp_SOURCES
     mac/UIDelegate.mm
     mac/UIScriptControllerMac.mm
     mac/WorkQueueItemMac.mm
+    ${WEBKIT_TESTRUNNER_SHARED_DIR}/cocoa/ClassMethodSwizzler.mm
+    ${WEBKIT_TESTRUNNER_SHARED_DIR}/cocoa/LayoutTestSpellChecker.mm
 )
 
 set(DumpRenderTree_SOURCES

@@ -1,7 +1,13 @@
+find_library(CARBON_LIBRARY Carbon)
+find_library(QUARTZCORE_LIBRARY QuartzCore)
+
 set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+add_definitions(-DJSC_API_AVAILABLE\\\(...\\\)=)
+add_definitions(-DJSC_CLASS_AVAILABLE\\\(...\\\)=)
 
 include_directories(
     "${FORWARDING_HEADERS_DIR}"
+    "${ICU_INCLUDE_DIRS}"
 )
 
 set(test_main_SOURCES
@@ -26,6 +32,18 @@ list(APPEND TestWebKitAPI_LIBRARIES
     ${CARBON_LIBRARY}
 )
 
+list(APPEND TestWebKitLegacy_LIBRARIES
+    WTF
+    WebKit
+    ${CARBON_LIBRARY}
+)
+
+list(APPEND TestWebCore_LIBRARIES
+    JavaScriptCore
+    WTF
+    WebKit
+)
+
 set(bundle_harness_SOURCES
     ${TESTWEBKITAPI_DIR}/cocoa/PlatformUtilitiesCocoa.mm
     ${TESTWEBKITAPI_DIR}/cocoa/UtilitiesCocoa.mm
@@ -38,4 +56,28 @@ set(bundle_harness_SOURCES
 
 list(APPEND TestWebKitLegacy_SOURCES
     ${test_main_SOURCES}
+)
+set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-framework Cocoa")
+set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} "-framework Cocoa")
+
+list(APPEND TestWebKit_LIBRARIES
+    JavaScriptCore
+    WTF
+    ${CARBON_LIBRARY}
+)
+
+list(APPEND TestWebCore_LIBRARIES
+    ${QUARTZCORE_LIBRARY}
+)
+
+list(APPEND TestWebCore_SOURCES
+    cocoa/UtilitiesCocoa.mm
+)
+
+list(APPEND TestWebKit_SOURCES
+    cocoa/UtilitiesCocoa.mm
+
+    mac/OffscreenWindow.mm
+    mac/PlatformUtilitiesMac.mm
+    mac/PlatformWebViewMac.mm
 )
