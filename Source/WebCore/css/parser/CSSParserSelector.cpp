@@ -53,15 +53,8 @@ std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePagePseudoSelector(St
 std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoElementSelector(StringView pseudoTypeString)
 {
     auto pseudoType = CSSSelector::parsePseudoElementType(pseudoTypeString);
-    if (pseudoType == CSSSelector::PseudoElementUnknown) {
-        // FIXME-NEWPARSER: We can't add "slotted" to the map without breaking the old
-        // parser, so this hack ensures the new parser still recognizes it. When the new
-        // parser turns on, we can add "slotted" to the map and remove this code.
-        if (pseudoTypeString.startsWithIgnoringASCIICase("slotted"))
-            pseudoType = CSSSelector::PseudoElementSlotted;
-        else
-            return nullptr;
-    }
+    if (pseudoType == CSSSelector::PseudoElementUnknown)
+        return nullptr;
 
     auto selector = makeUnique<CSSParserSelector>();
     selector->m_selector->setMatch(CSSSelector::PseudoElement);

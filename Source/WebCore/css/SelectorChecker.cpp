@@ -1124,27 +1124,38 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         }
         return false;
     }
-#if ENABLE(VIDEO_TRACK)
-    if (selector.match() == CSSSelector::PseudoElement && selector.pseudoElementType() == CSSSelector::PseudoElementCue) {
-        LocalContext subcontext(context);
 
-        const CSSSelector* const & selector = context.selector;
-        for (subcontext.selector = selector->selectorList()->first(); subcontext.selector; subcontext.selector = CSSSelectorList::next(subcontext.selector)) {
-            subcontext.firstSelectorOfTheFragment = subcontext.selector;
-            subcontext.inFunctionalPseudoClass = true;
-            subcontext.pseudoElementEffective = false;
-            PseudoIdSet ignoredDynamicPseudo;
-            unsigned ignoredSpecificity = 0;
-            if (matchRecursively(checkingContext, subcontext, ignoredDynamicPseudo, ignoredSpecificity).match == Match::SelectorMatches)
-                return true;
+    if (selector.match() == CSSSelector::PseudoElement) {
+        switch (selector.pseudoElementType()) {
+#if ENABLE(VIDEO_TRACK)
+        case CSSSelector::PseudoElementCue: {
+            LocalContext subcontext(context);
+
+            const CSSSelector* const & selector = context.selector;
+            for (subcontext.selector = selector->selectorList()->first(); subcontext.selector; subcontext.selector = CSSSelectorList::next(subcontext.selector)) {
+                subcontext.firstSelectorOfTheFragment = subcontext.selector;
+                subcontext.inFunctionalPseudoClass = true;
+                subcontext.pseudoElementEffective = false;
+                PseudoIdSet ignoredDynamicPseudo;
+                unsigned ignoredSpecificity = 0;
+                if (matchRecursively(checkingContext, subcontext, ignoredDynamicPseudo, ignoredSpecificity).match == Match::SelectorMatches)
+                    return true;
+            }
+            return false;
         }
-        return false;
-    }
 #endif
-    if (selector.match() == CSSSelector::PseudoElement && selector.pseudoElementType() == CSSSelector::PseudoElementSlotted) {
-        // We see ::slotted() pseudo elements when collecting slotted rules from the slot shadow tree only.
-        ASSERT(checkingContext.resolvingMode == Mode::CollectingRules);
-        return is<HTMLSlotElement>(element);
+        case CSSSelector::PseudoElementSlotted:
+            // We see ::slotted() pseudo elements when collecting slotted rules from the slot shadow tree only.
+            ASSERT(checkingContext.resolvingMode == Mode::CollectingRules);
+            return is<HTMLSlotElement>(element);
+
+        case CSSSelector::PseudoElementPart:
+            // FIXME: Support ::part() with multiple parts.
+            return element.partNames().contains(selector.argument());
+
+        default:
+            return true;
+        }
     }
     return true;
 }

@@ -1,3 +1,20 @@
+2019-10-02  Antti Koivisto  <antti@apple.com>
+
+        [CSS Shadow Parts] Basic ::part() pseudo element support
+        https://bugs.webkit.org/show_bug.cgi?id=202456
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/css/css-shadow-parts/all-hosts-expected.txt:
+        * web-platform-tests/css/css-shadow-parts/complex-matching-expected.txt:
+        * web-platform-tests/css/css-shadow-parts/inner-host-expected.txt:
+        * web-platform-tests/css/css-shadow-parts/invalidation-change-part-name-expected.txt:
+        * web-platform-tests/css/css-shadow-parts/invalidation-change-part-name-idl-domtokenlist-expected.txt:
+        * web-platform-tests/css/css-shadow-parts/invalidation-change-part-name-idl-setter-expected.txt:
+        * web-platform-tests/css/css-shadow-parts/invalidation-complex-selector-expected.txt:
+        * web-platform-tests/css/css-shadow-parts/precedence-part-vs-part-expected.txt:
+        * web-platform-tests/css/css-shadow-parts/simple-expected.txt:
+
 2019-10-02  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Implement replaced animations

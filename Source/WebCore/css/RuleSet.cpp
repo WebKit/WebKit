@@ -221,6 +221,7 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, unsigned selector
     const CSSSelector* hostPseudoClassSelector = nullptr;
     const CSSSelector* customPseudoElementSelector = nullptr;
     const CSSSelector* slottedPseudoElementSelector = nullptr;
+    const CSSSelector* partPseudoElementSelector = nullptr;
 #if ENABLE(VIDEO_TRACK)
     const CSSSelector* cuePseudoElementSelector = nullptr;
 #endif
@@ -256,6 +257,9 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, unsigned selector
                 break;
             case CSSSelector::PseudoElementSlotted:
                 slottedPseudoElementSelector = selector;
+                break;
+            case CSSSelector::PseudoElementPart:
+                partPseudoElementSelector = selector;
                 break;
 #if ENABLE(VIDEO_TRACK)
             case CSSSelector::PseudoElementCue:
@@ -311,6 +315,13 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, unsigned selector
         // ::slotted pseudo elements work accross shadow boundary making filtering difficult.
         ruleData.disableSelectorFiltering();
         m_slottedPseudoElementRules.append(ruleData);
+        return;
+    }
+
+    if (partPseudoElementSelector) {
+        // Filtering doesn't work accross shadow boundaries.
+        ruleData.disableSelectorFiltering();
+        m_partPseudoElementRules.append(ruleData);
         return;
     }
 

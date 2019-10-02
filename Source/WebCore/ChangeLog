@@ -1,3 +1,44 @@
+2019-10-02  Antti Koivisto  <antti@apple.com>
+
+        [CSS Shadow Parts] Basic ::part() pseudo element support
+        https://bugs.webkit.org/show_bug.cgi?id=202456
+
+        Reviewed by Ryosuke Niwa.
+
+        Implement basic parsing and selector matching for ::part() pseudo element.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId):
+        (WebCore::CSSSelector::parsePseudoElementType):
+        (WebCore::CSSSelector::selectorText const):
+        * css/CSSSelector.h:
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::matchAuthorRules):
+        (WebCore::ElementRuleCollector::matchPartPseudoElementRules):
+        * css/ElementRuleCollector.h:
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addRule):
+        * css/RuleSet.h:
+        (WebCore::RuleSet::partPseudoElementRules const):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne const):
+        * css/SelectorPseudoElementTypeMap.in:
+        * css/parser/CSSParserSelector.cpp:
+        (WebCore::CSSParserSelector::parsePseudoElementSelector):
+
+        Also added ::slotted to SelectorPseudoElementTypeMap.in to resolve a FIXME here.
+
+        * css/parser/CSSParserSelector.h:
+        (WebCore::CSSParserSelector::needsImplicitShadowCombinatorForMatching const):
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::isOnlyPseudoElementFunction):
+        (WebCore::CSSSelectorParser::consumePseudo):
+
+        Parse single values only, multipart ::part(foo bar) case is not yet handled.
+
+        * dom/Element.cpp:
+        (WebCore::Element::partNames const):
+
 2019-10-02  Antoine Quint  <graouts@apple.com>
 
         Adopt copyToVector() in AnimationTimeline::animationsForElement()

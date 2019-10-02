@@ -6,6 +6,7 @@ cue
 first-letter
 first-line
 marker
+part
 placeholder, PseudoElementWebKitCustom
 -webkit-input-placeholder, PseudoElementWebKitCustomLegacyPrefixed
 -webkit-resizer
@@ -16,3 +17,4 @@ placeholder, PseudoElementWebKitCustom
 -webkit-scrollbar-track
 -webkit-scrollbar-track-piece
 selection
+slotted

@@ -178,6 +178,7 @@ namespace WebCore {
             PseudoElementFirstLetter,
             PseudoElementFirstLine,
             PseudoElementMarker,
+            PseudoElementPart,
             PseudoElementResizer,
             PseudoElementScrollbar,
             PseudoElementScrollbarButton,

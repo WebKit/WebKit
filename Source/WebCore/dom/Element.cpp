@@ -3433,9 +3433,9 @@ DOMTokenList& Element::classList()
     return *data.classList();
 }
 
-inline SpaceSplitString Element::partNames() const
+SpaceSplitString Element::partNames() const
 {
-    return elementRareData() ? elementRareData()->partNames() : SpaceSplitString();
+    return hasRareData() ? elementRareData()->partNames() : SpaceSplitString();
 }
 
 DOMTokenList& Element::part()

@@ -107,6 +107,7 @@ inline bool CSSParserSelector::needsImplicitShadowCombinatorForMatching() const
 #if ENABLE(VIDEO_TRACK)
             || pseudoElementType() == CSSSelector::PseudoElementCue
 #endif
+            || pseudoElementType() == CSSSelector::PseudoElementPart
             || pseudoElementType() == CSSSelector::PseudoElementWebKitCustomLegacyPrefixed);
 }
 

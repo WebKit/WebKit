@@ -138,6 +138,7 @@ public:
 #endif
     const RuleDataVector& hostPseudoClassRules() const { return m_hostPseudoClassRules; }
     const RuleDataVector& slottedPseudoElementRules() const { return m_slottedPseudoElementRules; }
+    const RuleDataVector& partPseudoElementRules() const { return m_partPseudoElementRules; }
     const RuleDataVector* focusPseudoClassRules() const { return &m_focusPseudoClassRules; }
     const RuleDataVector* universalRules() const { return &m_universalRules; }
 
@@ -162,6 +163,7 @@ private:
 #endif
     RuleDataVector m_hostPseudoClassRules;
     RuleDataVector m_slottedPseudoElementRules;
+    RuleDataVector m_partPseudoElementRules;
     RuleDataVector m_focusPseudoClassRules;
     RuleDataVector m_universalRules;
     Vector<StyleRulePage*> m_pageRules;

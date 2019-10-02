@@ -201,8 +201,12 @@ void ElementRuleCollector::matchAuthorRules(bool includeEmptyRules)
     if (m_element.shadowRoot())
         matchHostPseudoClassRules(includeEmptyRules, ruleRange);
 
-    if (m_element.isInShadowTree())
+    if (m_element.isInShadowTree()) {
         matchAuthorShadowPseudoElementRules(includeEmptyRules, ruleRange);
+
+        if (!m_element.partNames().isEmpty())
+            matchPartPseudoElementRules(includeEmptyRules, ruleRange);
+    }
 
     sortAndTransferMatchedRules();
 }
@@ -257,6 +261,16 @@ void ElementRuleCollector::matchSlottedPseudoElementRules(bool includeEmptyRules
 
         m_keepAliveSlottedPseudoElementRules.append(WTFMove(slottedPseudoElementRules));
     }
+}
+
+void ElementRuleCollector::matchPartPseudoElementRules(bool includeEmptyRules, StyleResolver::RuleRange& ruleRange)
+{
+    ASSERT(m_element.isInShadowTree());
+    auto& shadowRoot = *m_element.containingShadowRoot();
+    auto& hostAuthorRules = Style::Scope::forNode(*shadowRoot.host()).resolver().ruleSets().authorStyle();
+
+    MatchRequest hostAuthorRequest { &hostAuthorRules, includeEmptyRules, Style::ScopeOrdinal::ContainingHost };
+    collectMatchingRulesForList(&hostAuthorRules.partPseudoElementRules(), hostAuthorRequest, ruleRange);
 }
 
 void ElementRuleCollector::collectMatchingShadowPseudoElementRules(const MatchRequest& matchRequest, StyleResolver::RuleRange& ruleRange)

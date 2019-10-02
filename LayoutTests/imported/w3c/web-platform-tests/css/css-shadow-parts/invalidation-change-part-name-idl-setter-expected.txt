@@ -1,4 +1,4 @@
 The following text should be green:
 
-FAIL Part in selected host changed color via part IDL attribute setter. assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 255)"
+PASS Part in selected host changed color via part IDL attribute setter. 
 

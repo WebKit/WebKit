@@ -29,6 +29,7 @@
 #include "CSSMarkup.h"
 #include "CSSSelectorList.h"
 #include "HTMLNames.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SelectorPseudoTypeMap.h"
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
@@ -298,6 +299,7 @@ PseudoId CSSSelector::pseudoId(PseudoElementType type)
     case PseudoElementCue:
 #endif
     case PseudoElementSlotted:
+    case PseudoElementPart:
     case PseudoElementUnknown:
     case PseudoElementWebKitCustom:
     case PseudoElementWebKitCustomLegacyPrefixed:
@@ -317,6 +319,9 @@ CSSSelector::PseudoElementType CSSSelector::parsePseudoElementType(StringView na
         if (name.startsWith("-webkit-"))
             type = PseudoElementWebKitCustom;
     }
+    if (type == PseudoElementPart && !RuntimeEnabledFeatures::sharedFeatures().cssShadowPartsEnabled())
+        return PseudoElementUnknown;
+
     return type;
 }
 
@@ -660,6 +665,11 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoElementSlotted:
                 str.appendLiteral("::slotted(");
                 cs->selectorList()->buildSelectorsText(str);
+                str.append(')');
+                break;
+            case CSSSelector::PseudoElementPart:
+                str.appendLiteral("::part(");
+                str.append(cs->argument());
                 str.append(')');
                 break;
             case CSSSelector::PseudoElementWebKitCustomLegacyPrefixed:

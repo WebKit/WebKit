@@ -462,6 +462,7 @@ static bool isOnlyPseudoElementFunction(CSSSelector::PseudoElementType pseudoEle
 {
     // Note that we omit cue since it can be both an ident or a function.
     switch (pseudoElementType) {
+    case CSSSelector::PseudoElementPart:
     case CSSSelector::PseudoElementSlotted:
         return true;
     default:
@@ -616,6 +617,16 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             return selector;
         }
 #endif
+        case CSSSelector::PseudoElementPart: {
+            DisallowPseudoElementsScope scope(this);
+
+            // FIXME: Parse a list of parts.
+            const CSSParserToken& ident = block.consumeIncludingWhitespace();
+            if (ident.type() != IdentToken || !block.atEnd())
+                return nullptr;
+            selector->setArgument(ident.value().toAtomString());
+            return selector;
+        }
         case CSSSelector::PseudoElementSlotted: {
             DisallowPseudoElementsScope scope(this);
 
