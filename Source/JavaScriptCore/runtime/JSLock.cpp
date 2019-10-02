@@ -310,7 +310,7 @@ JSLock::DropAllLocks::~DropAllLocks()
         return;
     m_vm->apiLock().grabAllLocks(this, m_droppedLockCount);
     VM* previousVMInTLS = VM::exchange(m_vm.get());
-    ASSERT_UNUSED(previousVMInTLS, previousVMInTLS);
+    ASSERT_UNUSED(previousVMInTLS, !previousVMInTLS);
 }
 
 } // namespace JSC

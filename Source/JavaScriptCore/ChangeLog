@@ -1,3 +1,11 @@
+2019-10-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix incorrect assertion
+        https://bugs.webkit.org/show_bug.cgi?id=202391
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::DropAllLocks::~DropAllLocks):
+
 2019-10-01  Saam Barati  <sbarati@apple.com>
 
         ObjectAllocationSinkingPhase shouldn't insert hints for allocations which are no longer valid
