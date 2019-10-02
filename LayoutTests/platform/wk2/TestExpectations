@@ -510,10 +510,6 @@ http/tests/security/feed-urls-from-remote.html
 # First two lines are reversed when test is flaky.
 fast/preloader/document-write-2.html [ Pass Failure ]
 
-# User interaction is a WK2 concept.
-inspector/debugger/evaluateOnCallFrame-emulateUserGesture-userIsInteracting.html [ Skip ]
-inspector/runtime/evaluate-emulateUserGesture-userIsInteracting.html [ Skip ]
-
 ### END OF (3) Unclassified failures
 ########################################
 
@@ -763,6 +759,10 @@ storage/indexeddb/IDBObject-leak.html [ Pass ]
 fast/forms/call-text-did-change-in-text-field-when-typing.html [ Pass ]
 
 http/tests/adClickAttribution [ Pass ]
+
+# User interaction is a WebKit2 concept.
+inspector/debugger/evaluateOnCallFrame-emulateUserGesture-userIsInteracting.html [ Pass ]
+inspector/runtime/evaluate-emulateUserGesture-userIsInteracting.html [ Pass ]
 
 ### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
 ########################################
