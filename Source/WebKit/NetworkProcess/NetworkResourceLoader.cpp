@@ -323,10 +323,23 @@ void NetworkResourceLoader::cleanup(LoadResult result)
 {
     ASSERT(RunLoop::isMain());
 
-    m_connection->stopTrackingResourceLoad(m_parameters.identifier,
-        result == LoadResult::Success ? NetworkActivityTracker::CompletionCode::Success :
-        result == LoadResult::Failure ? NetworkActivityTracker::CompletionCode::Failure :
-        NetworkActivityTracker::CompletionCode::None);
+    NetworkActivityTracker::CompletionCode code;
+    switch (result) {
+    case LoadResult::Unknown:
+        code = NetworkActivityTracker::CompletionCode::Undefined;
+        break;
+    case LoadResult::Success:
+        code = NetworkActivityTracker::CompletionCode::Success;
+        break;
+    case LoadResult::Failure:
+        code = NetworkActivityTracker::CompletionCode::Failure;
+        break;
+    case LoadResult::Cancel:
+        code = NetworkActivityTracker::CompletionCode::Cancel;
+        break;
+    }
+
+    m_connection->stopTrackingResourceLoad(m_parameters.identifier, code);
 
     m_bufferingTimer.stop();
 

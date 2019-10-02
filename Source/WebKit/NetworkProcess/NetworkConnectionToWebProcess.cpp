@@ -825,7 +825,7 @@ void NetworkConnectionToWebProcess::stopTrackingResourceLoad(ResourceLoadIdentif
 void NetworkConnectionToWebProcess::stopAllNetworkActivityTracking()
 {
     for (auto& activityTracker : m_networkActivityTrackers)
-        activityTracker.networkActivity.complete(NetworkActivityTracker::CompletionCode::None);
+        activityTracker.networkActivity.complete(NetworkActivityTracker::CompletionCode::Cancel);
 
     m_networkActivityTrackers.clear();
 }
@@ -834,7 +834,7 @@ void NetworkConnectionToWebProcess::stopAllNetworkActivityTrackingForPage(PageId
 {
     for (auto& activityTracker : m_networkActivityTrackers) {
         if (activityTracker.pageID == pageID)
-            activityTracker.networkActivity.complete(NetworkActivityTracker::CompletionCode::None);
+            activityTracker.networkActivity.complete(NetworkActivityTracker::CompletionCode::Cancel);
     }
 
     m_networkActivityTrackers.removeAllMatching([&](const auto& activityTracker) {

@@ -62,11 +62,24 @@ void NetworkActivityTracker::complete(CompletionCode code)
     m_isCompleted = true;
 
     ASSERT(m_networkActivity.get());
-    auto reason =
-        code == CompletionCode::None ? nw_activity_completion_reason_none :
-        code == CompletionCode::Success ? nw_activity_completion_reason_success :
-        code == CompletionCode::Failure ? nw_activity_completion_reason_failure :
-        nw_activity_completion_reason_invalid;
+    nw_activity_completion_reason_t reason;
+    switch (code) {
+    case CompletionCode::Undefined:
+        reason = nw_activity_completion_reason_invalid;
+        break;
+    case CompletionCode::None:
+        reason = nw_activity_completion_reason_none;
+        break;
+    case CompletionCode::Success:
+        reason = nw_activity_completion_reason_success;
+        break;
+    case CompletionCode::Failure:
+        reason = nw_activity_completion_reason_failure;
+        break;
+    case CompletionCode::Cancel:
+        reason = nw_activity_completion_reason_cancelled;
+        break;
+    }
     nw_activity_complete_with_reason(m_networkActivity.get(), reason);
     m_networkActivity.clear();
 }

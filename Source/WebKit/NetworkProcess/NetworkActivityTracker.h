@@ -62,6 +62,7 @@ public:
         None,
         Success,
         Failure,
+        Cancel,
     };
 
     NetworkActivityTracker() = default;
