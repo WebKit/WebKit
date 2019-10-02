@@ -1,3 +1,24 @@
+2019-10-02  Mark Lam  <mark.lam@apple.com>
+
+        DoubleToStringConverter::ToExponential() should null terminate its string.
+        https://bugs.webkit.org/show_bug.cgi?id=202492
+        <rdar://problem/55907708>
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/dtoa/double-conversion.cc:
+        - DoubleToStringConverter::DoubleToAscii() always produces a null terminated
+          string.  Fixed the padding loop in DoubleToStringConverter::ToExponential()
+          that follows it to also keep the null terminator.
+
+        * wtf/dtoa/utils.h:
+        (WTF::double_conversion::StringBuilder::AddSubstring):
+        - An assertion in here was using strlen() which indicates that it expects a null
+          terminator in the incoming string.  However, this requirement is too restrictive.
+          The code does not actually depend on the string having a null terminator, only
+          that a null terminator does not manifest before the nth character.  Changed
+          the assertion to use strnlen() instead to reflect this.
+
 2019-10-02  Zan Dobersek  <zdobersek@igalia.com>
 
         [Nicosia] Enable async scrolling at build-time for Nicosia-using ports
