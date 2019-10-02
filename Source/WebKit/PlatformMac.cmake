@@ -1,6 +1,8 @@
 add_definitions("-ObjC++ -std=c++17")
 find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
 find_library(CARBON_LIBRARY Carbon)
+find_library(SECURITY_LIBRARY Security)
+find_library(SECURITYINTERFACE_LIBRARY SecurityInterface)
 find_library(QUARTZ_LIBRARY Quartz)
 find_library(AVFOUNDATION_LIBRARY AVFoundation)
 find_library(AVFAUDIO_LIBRARY AVFAudio HINTS ${AVFOUNDATION_LIBRARY}/Versions/*/Frameworks)
@@ -9,9 +11,13 @@ add_definitions(-iframework ${CARBON_LIBRARY}/Frameworks)
 add_definitions(-iframework ${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks)
 add_definitions(-DWK_XPC_SERVICE_SUFFIX=".Development")
 
+set(MACOSX_FRAMEWORK_IDENTIFIER com.apple.WebKit)
+
 list(APPEND WebKit_LIBRARIES
+    SecItemShim
     WebKitLegacy
     ${APPLICATIONSERVICES_LIBRARY}
+    ${SECURITYINTERFACE_LIBRARY}
 )
 
 if (NOT AVFAUDIO_LIBRARY-NOTFOUND)
@@ -410,16 +416,30 @@ list(APPEND WebKit_AUTOMATION_PROTOCOL_GENERATOR_EXTRA_FLAGS
     --platform=macOS
 )
 
+set(SecItemShimDirectory ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions/A/Frameworks)
+add_library(SecItemShim SHARED WebProcess/mac/SecItemShimLibrary.mm)
+WEBKIT_CREATE_SYMLINK(SecItemShim ${SecItemShimDirectory} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Frameworks)
+set_target_properties(SecItemShim PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${SecItemShimDirectory})
+set_target_properties(SecItemShim PROPERTIES PREFIX "")
+target_link_libraries(SecItemShim ${SECURITY_LIBRARY})
+target_include_directories(SecItemShim PRIVATE
+    ${CMAKE_BINARY_DIR}
+    ${FORWARDING_HEADERS_DIR}
+    ${WEBKIT_DIR}
+)
+
 # FIXME: These should not be necessary.
 file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/WKImageCG.h "#import <WebKit/Shared/API/c/cg/WKImageCG.h>")
 
-set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION} -weak_framework SafariSafeBrowsing -lsandbox -framework AuthKit -framework SecurityInterface")
+set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION}")
+set(WebKit_LINK_OPTIONS -weak_framework SafariSafeBrowsing -lsandbox -framework AuthKit)
 
 set(WebKit_OUTPUT_NAME WebKit)
 
 # XPC Services
 
 function(WEBKIT_DEFINE_XPC_SERVICES)
+    set(RUNLOOP_TYPE _WebKit)
     set(WebKit_XPC_SERVICE_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions/A/XPCServices)
     WEBKIT_CREATE_SYMLINK(WebProcess ${WebKit_XPC_SERVICE_DIR} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/XPCServices)
 

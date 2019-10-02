@@ -1,4 +1,6 @@
-set(WEBKIT_MAC_VERSION 602.1.27)
+# FIXME: These should line up with versions in Version.xcconfig
+set(WEBKIT_MAC_VERSION 609.1.6)
+set(MACOSX_FRAMEWORK_BUNDLE_VERSION 609.1.6+)
 
 WEBKIT_OPTION_BEGIN()
 # Private options shared with other WebKit ports. Add options here only if

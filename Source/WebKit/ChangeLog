@@ -1,3 +1,13 @@
+2019-10-02  Alex Christensen  <achristensen@webkit.org>
+
+        CMake-built WebKit.framework should launch XPC services successfully
+        https://bugs.webkit.org/show_bug.cgi?id=202490
+
+        Rubber-stamped by Tim Horton.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+
 2019-10-02  Kate Cheney  <katherine_cheney@apple.com>
 
         Updated resource load statistics are never merged into the SQLite Database backend (202372).
