@@ -33,7 +33,7 @@
 #include "GraphicsContextPlatformPrivateCG.h"
 #include "Path.h"
 
-#include <CoreGraphics/CGBitmapContext.h>
+#include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/win/GDIObject.h>
 
 

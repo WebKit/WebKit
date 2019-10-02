@@ -30,7 +30,7 @@
 #if USE(CG)
 
 #include "GraphicsContextCG.h"
-#include <CoreGraphics/CoreGraphics.h>
+#include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {

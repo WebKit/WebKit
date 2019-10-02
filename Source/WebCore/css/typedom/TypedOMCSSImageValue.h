@@ -28,7 +28,6 @@
 #if ENABLE(CSS_TYPED_OM)
 
 #include "CSSImageValue.h"
-#include "Document.h"
 #include "TypedOMCSSStyleValue.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -47,7 +46,7 @@ public:
     String toString() final { return m_cssValue->cssText(); }
 
     CachedImage* image() { return m_cssValue->cachedImage(); }
-    Document* document() const { return m_document.get(); }
+    Document* document() const;
 
 private:
     TypedOMCSSImageValue(CSSImageValue& cssValue, Document& document)

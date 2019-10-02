@@ -1,3 +1,18 @@
+2019-10-02  Tim Horton  <timothy_horton@apple.com>
+
+        Try to fix the Windows build
+
+        * css/typedom/TypedOMCSSImageValue.cpp:
+        (WebCore::TypedOMCSSImageValue::document const):
+        * css/typedom/TypedOMCSSImageValue.h:
+        Out-of-line this instead of including Document.h in TypedOMCSSImageValue,
+        which was an earlier build fix from r250610.
+
+        * platform/graphics/cg/GradientCG.cpp:
+        * platform/graphics/win/GlyphPageTreeNodeCGWin.cpp:
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        Try to fix the build.
+
 2019-10-02  Keith Rollin  <krollin@apple.com>
 
         Unreviewed build fix after r250595.

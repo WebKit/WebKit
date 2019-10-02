@@ -30,6 +30,8 @@
 #include "config.h"
 #include "TypedOMCSSImageValue.h"
 
+#include "Document.h"
+
 #if ENABLE(CSS_TYPED_OM)
 
 #include <wtf/IsoMallocInlines.h>
@@ -37,6 +39,8 @@
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(TypedOMCSSImageValue);
+
+Document* TypedOMCSSImageValue::document() const { return m_document.get(); }
 
 } // namespace WebCore
 

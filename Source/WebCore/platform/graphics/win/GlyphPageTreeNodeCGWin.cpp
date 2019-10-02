@@ -32,6 +32,7 @@
 #if USE(CG)
 
 #include "Font.h"
+#include <pal/spi/cg/CoreGraphicsSPI.h>
 
 namespace WebCore {
 
