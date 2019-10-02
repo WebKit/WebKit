@@ -85,7 +85,7 @@ void ScrollingTreePositionedNode::applyLayerPositions()
 
     FloatPoint layerPosition = m_constraints.layerPositionAtLastLayout() + delta;
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreePositionedNode " << scrollingNodeID() << " applyLayerPositions: overflow delta " << scrollOffsetSinceLastCommit << " moving layer to " << layerPosition);
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreePositionedNode " << scrollingNodeID() << " applyLayerPositions: overflow delta " << delta << " moving layer to " << layerPosition);
 
     layerPosition -= m_constraints.alignmentOffset();
 

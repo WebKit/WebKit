@@ -1,3 +1,11 @@
+2019-10-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed build fix in Nicosia's ScrollingTreePositionedNode class.
+
+        * page/scrolling/nicosia/ScrollingTreePositionedNode.cpp:
+        (WebCore::ScrollingTreePositionedNode::applyLayerPositions):
+        Fix the name of the variable included in the log call.
+
 2019-10-02  youenn fablet  <youenn@apple.com>
 
         Use strongly typed identifiers for webrtc sockets
