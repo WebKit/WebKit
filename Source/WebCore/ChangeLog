@@ -2,6 +2,15 @@
 
         Another build fix
 
+        * css/typedom/TypedOMCSSImageValue.cpp:
+        (WebCore::TypedOMCSSImageValue::TypedOMCSSImageValue):
+        * css/typedom/TypedOMCSSImageValue.h:
+        I feel like I am actively being thwarted.
+
+2019-10-02  Tim Horton  <timothy_horton@apple.com>
+
+        Another build fix
+
         * css/typedom/TypedOMCSSImageValue.h:
 
 2019-10-02  Tim Horton  <timothy_horton@apple.com>

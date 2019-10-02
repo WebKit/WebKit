@@ -50,11 +50,7 @@ public:
     Document* document() const;
 
 private:
-    TypedOMCSSImageValue(CSSImageValue& cssValue, Document& document)
-        : m_cssValue(makeRef(cssValue))
-        , m_document(makeWeakPtr(document))
-    {
-    }
+    TypedOMCSSImageValue(CSSImageValue& cssValue, Document& document);
 
     bool isImageValue() final { return true; }
 
