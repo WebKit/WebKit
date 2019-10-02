@@ -170,8 +170,7 @@ Vector<RefPtr<WebAnimation>> AnimationTimeline::animationsForElement(Element& el
     if (m_elementToCSSTransitionsMap.contains(&element)) {
         const auto& cssTransitions = m_elementToCSSTransitionsMap.get(&element);
         if (ordering == Ordering::Sorted) {
-            Vector<RefPtr<WebAnimation>> sortedCSSTransitions;
-            sortedCSSTransitions.appendRange(cssTransitions.begin(), cssTransitions.end());
+            auto sortedCSSTransitions = copyToVector(cssTransitions);
             std::sort(sortedCSSTransitions.begin(), sortedCSSTransitions.end(), [](auto& lhs, auto& rhs) {
                 // Sort transitions first by their generation time, and then by transition-property.
                 // https://drafts.csswg.org/css-transitions-2/#animation-composite-order
@@ -192,8 +191,7 @@ Vector<RefPtr<WebAnimation>> AnimationTimeline::animationsForElement(Element& el
     if (m_elementToAnimationsMap.contains(&element)) {
         const auto& webAnimations = m_elementToAnimationsMap.get(&element);
         if (ordering == Ordering::Sorted) {
-            Vector<RefPtr<WebAnimation>> sortedWebAnimations;
-            sortedWebAnimations.appendRange(webAnimations.begin(), webAnimations.end());
+            auto sortedWebAnimations = copyToVector(webAnimations);
             std::sort(sortedWebAnimations.begin(), sortedWebAnimations.end(), [](auto& lha, auto& rha) {
                 return lha->globalPosition() < rha->globalPosition();
             });

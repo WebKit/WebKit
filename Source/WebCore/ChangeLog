@@ -1,3 +1,13 @@
+2019-10-02  Antoine Quint  <graouts@apple.com>
+
+        Adopt copyToVector() in AnimationTimeline::animationsForElement()
+        https://bugs.webkit.org/show_bug.cgi?id=202488
+
+        Reviewed by Wenson Hsieh.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::animationsForElement const):
+
 2019-10-02  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Let playbin handle redirects for us when appropriate
