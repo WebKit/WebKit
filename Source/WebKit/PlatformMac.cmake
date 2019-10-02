@@ -14,7 +14,6 @@ add_definitions(-DWK_XPC_SERVICE_SUFFIX=".Development")
 set(MACOSX_FRAMEWORK_IDENTIFIER com.apple.WebKit)
 
 list(APPEND WebKit_LIBRARIES
-    SecItemShim
     WebKitLegacy
     ${APPLICATIONSERVICES_LIBRARY}
     ${SECURITYINTERFACE_LIBRARY}
@@ -114,6 +113,10 @@ set(PluginProcess_SOURCES
 list(APPEND NetworkProcess_SOURCES
     NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkServiceEntryPoint.mm
     ${XPCService_SOURCES}
+)
+
+list(APPEND NetworkProcess_LIBRARIES
+    SecItemShim
 )
 
 # FIXME: These should not have Development in production builds.
