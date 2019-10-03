@@ -1,5 +1,33 @@
 2019-10-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r250619. rdar://problem/55927263
+
+    Provide originating website URL to AR QuickLook
+    https://bugs.webkit.org/show_bug.cgi?id=202451
+    
+    Reviewed by Antoine Quint.
+    
+    Declare the setAdditionalParameters method and
+    call it with the originating page URL if available.
+    
+    * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250619 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-10-02  Dean Jackson  <dino@apple.com>
+
+            Provide originating website URL to AR QuickLook
+            https://bugs.webkit.org/show_bug.cgi?id=202451
+
+            Reviewed by Antoine Quint.
+
+            Declare the setAdditionalParameters method and
+            call it with the originating page URL if available.
+
+            * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+
+2019-10-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r249855. rdar://problem/55927247
 
     Provide a prototype for AR QuickLook to trigger processing in the originating page
