@@ -88,10 +88,23 @@ static inline uint64_t estimateSize(const IDBValue& value)
     return size;
 }
 
+static inline uint64_t estimateSize(const IDBKeyPath& keyPath)
+{
+    return WTF::switchOn(keyPath, [](const String& path) {
+        return path.sizeInBytes();
+    }, [](const Vector<String>& paths) {
+        uint64_t size = 0;
+        for (auto path : paths)
+            size += path.sizeInBytes();
+        return size;
+    });
+}
+
 static inline uint64_t estimateSize(const IDBIndexInfo& info)
 {
     uint64_t size = 4;
     size += info.name().sizeInBytes();
+    size += estimateSize(info.keyPath());
     return size;
 }
 
@@ -99,9 +112,8 @@ static inline uint64_t estimateSize(const IDBObjectStoreInfo& info)
 {
     uint64_t size = 4;
     size += info.name().sizeInBytes();
-    // FIXME: estimate keyPath.
-    for (auto& indexInfo : info.indexMap().values())
-        size += estimateSize(indexInfo);
+    if (auto keyPath = info.keyPath())
+        size += estimateSize(*keyPath);
     return size;
 }
 
