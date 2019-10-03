@@ -1,3 +1,84 @@
+2019-10-03  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r250658. rdar://problem/55954221
+
+    [WebAuthn] Implement dummy _WKWebAuthenticationPanel SPI
+    https://bugs.webkit.org/show_bug.cgi?id=202507
+    <rdar://problem/55918793>
+    
+    Reviewed by Brent Fulgham.
+    
+    This patch implements dummy _WKWebAuthenticationPanel SPI to unblock Safari.
+    
+    Here are the illustrations for each SPI:
+    1) -[WKUIDelegatePrivate webView:runWebAuthenticationPanel:initiatedByFrame:completionHandler:] is used at the beginning of
+    any WebAuthn ceremonies. A WKFrameInfo is provided for more info of the initiating frame so clients could decide either show
+    the RP ID or the origin of the frame which may or may not be the RP ID. A callback of _WKWebAuthenticationPanelResult is
+    provided such that clients could inform WebKit to continue the ceremony or not. Case like rate limiting of a modular dialog
+    could result in _WKWebAuthenticationPanelResultDidNotPresent. Then WebKit will abort the operation.
+    _WKWebAuthenticationPanelResultUnavailable tells WebKit the client has no UI implemented and therefore WebKit will operate
+    in a non UI mode which basically will only enable HID authenticators, and is the current behavior of macOS Safari.
+    2) -[_WKWebAuthenticationPanelDelegate panel:updateWebAuthenticationPanel:] is primarily to instruct users to do some
+    actionable thing to recover from some error state. However, it could be used for pure info as well. For
+    _WKWebAuthenticationPanelInfoMultipleNFCTagPresents, users can be instructed to only hold one NFC tag to the scanner. For
+    _WKWebAuthenticationPanelInfoNoCredentialsFound, users can potentially switch to another security key that could hit a match.
+    3) -[_WKWebAuthenticationPanelDelegate panel:dismissWebAuthenticationPanelWithResult:] is to dismiss UI.
+    _WKWebAuthenticationResult is provided such that client could show different animations as a hint to the user. The reasons for
+    failure could either be timeout or InvalidStateError which will be reported to the page as well. InvalidStateError signals a
+    credential matching an entry of the exclude list (excludeCredentials) is found on the authenticator.
+    4) -[_WKWebAuthenticationPanel cancel] is the way clients tell WebKit a user cancel.
+    
+    * SourcesCocoa.txt:
+    * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+    * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h: Added.
+    * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm: Added.
+    (-[_WKWebAuthenticationPanel _initWithRelayingPartyID:]):
+    (-[_WKWebAuthenticationPanel relyingPartyID]):
+    (-[_WKWebAuthenticationPanel cancel]):
+    * UIProcess/API/Cocoa/_WKWebAuthenticationPanelInternal.h: Added.
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250658 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-10-03  Jiewen Tan  <jiewen_tan@apple.com>
+
+            [WebAuthn] Implement dummy _WKWebAuthenticationPanel SPI
+            https://bugs.webkit.org/show_bug.cgi?id=202507
+            <rdar://problem/55918793>
+
+            Reviewed by Brent Fulgham.
+
+            This patch implements dummy _WKWebAuthenticationPanel SPI to unblock Safari.
+
+            Here are the illustrations for each SPI:
+            1) -[WKUIDelegatePrivate webView:runWebAuthenticationPanel:initiatedByFrame:completionHandler:] is used at the beginning of
+            any WebAuthn ceremonies. A WKFrameInfo is provided for more info of the initiating frame so clients could decide either show
+            the RP ID or the origin of the frame which may or may not be the RP ID. A callback of _WKWebAuthenticationPanelResult is
+            provided such that clients could inform WebKit to continue the ceremony or not. Case like rate limiting of a modular dialog
+            could result in _WKWebAuthenticationPanelResultDidNotPresent. Then WebKit will abort the operation.
+            _WKWebAuthenticationPanelResultUnavailable tells WebKit the client has no UI implemented and therefore WebKit will operate
+            in a non UI mode which basically will only enable HID authenticators, and is the current behavior of macOS Safari.
+            2) -[_WKWebAuthenticationPanelDelegate panel:updateWebAuthenticationPanel:] is primarily to instruct users to do some
+            actionable thing to recover from some error state. However, it could be used for pure info as well. For
+            _WKWebAuthenticationPanelInfoMultipleNFCTagPresents, users can be instructed to only hold one NFC tag to the scanner. For
+            _WKWebAuthenticationPanelInfoNoCredentialsFound, users can potentially switch to another security key that could hit a match.
+            3) -[_WKWebAuthenticationPanelDelegate panel:dismissWebAuthenticationPanelWithResult:] is to dismiss UI.
+            _WKWebAuthenticationResult is provided such that client could show different animations as a hint to the user. The reasons for
+            failure could either be timeout or InvalidStateError which will be reported to the page as well. InvalidStateError signals a
+            credential matching an entry of the exclude list (excludeCredentials) is found on the authenticator.
+            4) -[_WKWebAuthenticationPanel cancel] is the way clients tell WebKit a user cancel.
+
+            * SourcesCocoa.txt:
+            * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+            * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h: Added.
+            * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm: Added.
+            (-[_WKWebAuthenticationPanel _initWithRelayingPartyID:]):
+            (-[_WKWebAuthenticationPanel relyingPartyID]):
+            (-[_WKWebAuthenticationPanel cancel]):
+            * UIProcess/API/Cocoa/_WKWebAuthenticationPanelInternal.h: Added.
+            * WebKit.xcodeproj/project.pbxproj:
+
 2019-10-02  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r250619. rdar://problem/55927263

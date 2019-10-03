@@ -1032,6 +1032,8 @@
 		53CFBBC82224D1B500266546 /* TextCheckerCompletion.h in Headers */ = {isa = PBXBuildFile; fileRef = 53CFBBC72224D1B000266546 /* TextCheckerCompletion.h */; };
 		570AB8F320AE3BD700B8BE87 /* SecKeyProxyStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 570AB8F220AE3BD700B8BE87 /* SecKeyProxyStore.h */; };
 		572FD44322265CE200A1ECC3 /* WebViewDidMoveToWindowObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 572FD44122265CE200A1ECC3 /* WebViewDidMoveToWindowObserver.h */; };
+		574728D123456E98001700AF /* _WKWebAuthenticationPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 574728CF23456E98001700AF /* _WKWebAuthenticationPanel.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		574728D4234570AE001700AF /* _WKWebAuthenticationPanelInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 574728D3234570AE001700AF /* _WKWebAuthenticationPanelInternal.h */; };
 		57597EB921811D9A0037F924 /* CtapHidDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 57597EB721811D9A0037F924 /* CtapHidDriver.h */; };
 		57597EBD218184900037F924 /* CtapHidAuthenticator.h in Headers */ = {isa = PBXBuildFile; fileRef = 57597EBB2181848F0037F924 /* CtapHidAuthenticator.h */; };
 		576CA9D722B862180030143C /* SOAuthorizationNSURLExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317322B35148008D0E8B /* SOAuthorizationNSURLExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3456,6 +3458,9 @@
 		570AB90020B2517400B8BE87 /* AuthenticationChallengeProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AuthenticationChallengeProxyCocoa.mm; sourceTree = "<group>"; };
 		570AB90320B2541C00B8BE87 /* SecKeyProxyStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SecKeyProxyStore.mm; sourceTree = "<group>"; };
 		572FD44122265CE200A1ECC3 /* WebViewDidMoveToWindowObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebViewDidMoveToWindowObserver.h; sourceTree = "<group>"; };
+		574728CF23456E98001700AF /* _WKWebAuthenticationPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebAuthenticationPanel.h; sourceTree = "<group>"; };
+		574728D023456E98001700AF /* _WKWebAuthenticationPanel.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebAuthenticationPanel.mm; sourceTree = "<group>"; };
+		574728D3234570AE001700AF /* _WKWebAuthenticationPanelInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebAuthenticationPanelInternal.h; sourceTree = "<group>"; };
 		575075A720AB763600693EA9 /* WebCredentialMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCredentialMac.mm; sourceTree = "<group>"; };
 		5750F32A2032D4E500389347 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
 		5756DD74218D104900D4EE6A /* MockHidService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockHidService.h; sourceTree = "<group>"; };
@@ -6286,6 +6291,9 @@
 				1A81B37F18BD66AD0007FDAC /* _WKVisitedLinkStore.h */,
 				1A81B37E18BD66AD0007FDAC /* _WKVisitedLinkStore.mm */,
 				1A81B38418BD673A0007FDAC /* _WKVisitedLinkStoreInternal.h */,
+				574728CF23456E98001700AF /* _WKWebAuthenticationPanel.h */,
+				574728D023456E98001700AF /* _WKWebAuthenticationPanel.mm */,
+				574728D3234570AE001700AF /* _WKWebAuthenticationPanelInternal.h */,
 				1AE286761C7E76510069AC4F /* _WKWebsiteDataSize.h */,
 				1AE286751C7E76510069AC4F /* _WKWebsiteDataSize.mm */,
 				1AE2867F1C7F92BF0069AC4F /* _WKWebsiteDataSizeInternal.h */,
@@ -9207,6 +9215,8 @@
 				2D8786201BDB57F500D02ABB /* _WKUserStyleSheetInternal.h in Headers */,
 				1A81B38118BD66AD0007FDAC /* _WKVisitedLinkStore.h in Headers */,
 				1A81B38518BD673A0007FDAC /* _WKVisitedLinkStoreInternal.h in Headers */,
+				574728D123456E98001700AF /* _WKWebAuthenticationPanel.h in Headers */,
+				574728D4234570AE001700AF /* _WKWebAuthenticationPanelInternal.h in Headers */,
 				1AE286781C7E76510069AC4F /* _WKWebsiteDataSize.h in Headers */,
 				1AE286801C7F92C00069AC4F /* _WKWebsiteDataSizeInternal.h in Headers */,
 				1AFB4C721ADF155D00B33339 /* _WKWebsiteDataStore.h in Headers */,
