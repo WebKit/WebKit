@@ -1,3 +1,15 @@
+2019-10-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Nicosia] Enable runtime checks and triggers for async non-main-frame scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=202509
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        Allow the non-main-frame compositing trigger for the Nicosia-using ports
+        as well. This will enable non-main-frame compositing if the related
+        setting is also enabled.
+
 2019-10-03  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK] Don't hardcode swipe navigation gesture style

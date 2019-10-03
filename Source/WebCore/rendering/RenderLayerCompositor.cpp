@@ -2972,7 +2972,7 @@ bool RenderLayerCompositor::requiresCompositingForScrollableFrame(RequiresCompos
     if (isMainFrameCompositor())
         return false;
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(NICOSIA)
     if (!m_renderView.settings().asyncFrameScrollingEnabled())
         return false;
 #endif

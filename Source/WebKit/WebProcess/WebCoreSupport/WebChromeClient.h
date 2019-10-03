@@ -239,7 +239,7 @@ private:
             VideoTrigger |
             PluginTrigger|
             CanvasTrigger |
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(NICOSIA)
             ScrollableNonMainFrameTrigger |
 #endif
 #if PLATFORM(IOS_FAMILY)
