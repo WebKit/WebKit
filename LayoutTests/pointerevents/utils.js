@@ -59,6 +59,8 @@ class EventTracker
             this._handlePointerEvent(event);
         else if (event instanceof MouseEvent)
             this._handleMouseEvent(event);
+        else if (event instanceof TouchEvent)
+            this._handleTouchEvent(event);
     }
 
     _handlePointerEvent(event)
@@ -86,6 +88,11 @@ class EventTracker
             x: event.clientX,
             y: event.clientY,
         });
+    }
+
+    _handleTouchEvent(event)
+    {
+        this.events.push({ type: event.type });
     }
 
     assertMatchesEvents(expectedEvents)
