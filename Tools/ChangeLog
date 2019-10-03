@@ -1,3 +1,13 @@
+2019-10-03  Jonathan Bedard  <jbedard@apple.com>
+
+        Add myself to various tools watchlists
+        https://bugs.webkit.org/show_bug.cgi?id=202532
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/common/config/watchlist: Add myself to the watchlist of
+        PerformanceTests, SVNScripts, webkitperl and webkitpy.
+
 2019-10-03  Jiewen Tan  <jiewen_tan@apple.com>
 
         Support googleLegacyAppidSupport extension
