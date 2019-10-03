@@ -24,12 +24,13 @@
  */
 
 #include "config.h"
-#include "CtapHidAuthenticator.h"
+#include "CtapAuthenticator.h"
 
 #if ENABLE(WEB_AUTHN) && PLATFORM(MAC)
 
+#include "CtapDriver.h"
 #include "CtapHidDriver.h"
-#include "U2fHidAuthenticator.h"
+#include "U2fAuthenticator.h"
 #include <WebCore/DeviceRequestConverter.h>
 #include <WebCore/DeviceResponseConverter.h>
 #include <WebCore/ExceptionData.h>
@@ -40,7 +41,7 @@ namespace WebKit {
 using namespace WebCore;
 using namespace fido;
 
-CtapHidAuthenticator::CtapHidAuthenticator(std::unique_ptr<CtapHidDriver>&& driver, AuthenticatorGetInfoResponse&& info)
+CtapAuthenticator::CtapAuthenticator(std::unique_ptr<CtapDriver>&& driver, AuthenticatorGetInfoResponse&& info)
     : m_driver(WTFMove(driver))
     , m_info(WTFMove(info))
 {
@@ -48,7 +49,7 @@ CtapHidAuthenticator::CtapHidAuthenticator(std::unique_ptr<CtapHidDriver>&& driv
     ASSERT(m_driver);
 }
 
-void CtapHidAuthenticator::makeCredential()
+void CtapAuthenticator::makeCredential()
 {
     ASSERT(!m_isDowngraded);
     auto cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, requestData().creationOptions, m_info.options().userVerificationAvailability());
@@ -60,7 +61,7 @@ void CtapHidAuthenticator::makeCredential()
     });
 }
 
-void CtapHidAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&& data) const
+void CtapAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&& data) const
 {
     auto response = readCTAPMakeCredentialResponse(data, requestData().creationOptions.attestation);
     if (!response) {
@@ -74,7 +75,7 @@ void CtapHidAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<ui
     receiveRespond(WTFMove(*response));
 }
 
-void CtapHidAuthenticator::getAssertion()
+void CtapAuthenticator::getAssertion()
 {
     ASSERT(!m_isDowngraded);
     auto cborCmd = encodeGetAssertionRequestAsCBOR(requestData().hash, requestData().requestOptions, m_info.options().userVerificationAvailability());
@@ -86,7 +87,7 @@ void CtapHidAuthenticator::getAssertion()
     });
 }
 
-void CtapHidAuthenticator::continueGetAssertionAfterResponseReceived(Vector<uint8_t>&& data)
+void CtapAuthenticator::continueGetAssertionAfterResponseReceived(Vector<uint8_t>&& data)
 {
     auto response = readCTAPGetAssertionResponse(data);
     if (!response) {
@@ -99,7 +100,7 @@ void CtapHidAuthenticator::continueGetAssertionAfterResponseReceived(Vector<uint
     receiveRespond(WTFMove(*response));
 }
 
-bool CtapHidAuthenticator::tryDowngrade()
+bool CtapAuthenticator::tryDowngrade()
 {
     if (m_info.versions().find(ProtocolVersion::kU2f) == m_info.versions().end())
         return false;
@@ -108,7 +109,7 @@ bool CtapHidAuthenticator::tryDowngrade()
 
     m_isDowngraded = true;
     m_driver->setProtocol(ProtocolVersion::kU2f);
-    observer()->downgrade(this, U2fHidAuthenticator::create(WTFMove(m_driver)));
+    observer()->downgrade(this, U2fAuthenticator::create(WTFMove(m_driver)));
     return true;
 }
 

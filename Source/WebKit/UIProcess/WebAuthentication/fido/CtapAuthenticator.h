@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,53 +28,32 @@
 #if ENABLE(WEB_AUTHN) && PLATFORM(MAC)
 
 #include "Authenticator.h"
-#include <wtf/RunLoop.h>
-
-namespace apdu {
-class ApduResponse;
-}
+#include <WebCore/AuthenticatorGetInfoResponse.h>
 
 namespace WebKit {
 
-class CtapHidDriver;
+class CtapDriver;
 
-class U2fHidAuthenticator final : public Authenticator {
+class CtapAuthenticator final : public Authenticator {
 public:
-    static Ref<U2fHidAuthenticator> create(std::unique_ptr<CtapHidDriver>&& driver)
+    static Ref<CtapAuthenticator> create(std::unique_ptr<CtapDriver>&& driver, fido::AuthenticatorGetInfoResponse&& info)
     {
-        return adoptRef(*new U2fHidAuthenticator(WTFMove(driver)));
+        return adoptRef(*new CtapAuthenticator(WTFMove(driver), WTFMove(info)));
     }
 
 private:
-    explicit U2fHidAuthenticator(std::unique_ptr<CtapHidDriver>&&);
+    explicit CtapAuthenticator(std::unique_ptr<CtapDriver>&&, fido::AuthenticatorGetInfoResponse&&);
 
     void makeCredential() final;
-    void checkExcludeList(size_t index);
-    void issueRegisterCommand();
+    void continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&&) const;
     void getAssertion() final;
-    void issueSignCommand(size_t index);
+    void continueGetAssertionAfterResponseReceived(Vector<uint8_t>&&);
 
-    enum class CommandType : uint8_t {
-        RegisterCommand,
-        CheckOnlyCommand,
-        BogusCommand,
-        SignCommand
-    };
-    void issueNewCommand(Vector<uint8_t>&& command, CommandType);
-    void retryLastCommand() { issueCommand(m_lastCommand, m_lastCommandType); }
-    void issueCommand(const Vector<uint8_t>& command, CommandType);
-    void responseReceived(Vector<uint8_t>&& response, CommandType);
-    void continueRegisterCommandAfterResponseReceived(apdu::ApduResponse&&);
-    void continueCheckOnlyCommandAfterResponseReceived(apdu::ApduResponse&&);
-    void continueBogusCommandAfterResponseReceived(apdu::ApduResponse&&);
-    void continueSignCommandAfterResponseReceived(apdu::ApduResponse&&);
+    bool tryDowngrade();
 
-    std::unique_ptr<CtapHidDriver> m_driver;
-    RunLoop::Timer<U2fHidAuthenticator> m_retryTimer;
-    Vector<uint8_t> m_lastCommand;
-    CommandType m_lastCommandType;
-    size_t m_nextListIndex { 0 };
-    bool m_isAppId { false };
+    std::unique_ptr<CtapDriver> m_driver;
+    fido::AuthenticatorGetInfoResponse m_info;
+    bool m_isDowngraded { false };
 };
 
 } // namespace WebKit

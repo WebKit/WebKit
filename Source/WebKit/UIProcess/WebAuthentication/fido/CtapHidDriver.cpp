@@ -194,7 +194,7 @@ void CtapHidDriver::continueAfterChannelAllocated(Optional<FidoHidMessage>&& mes
     m_channelId |= static_cast<uint32_t>(payload[index++]) << 8;
     m_channelId |= static_cast<uint32_t>(payload[index]);
     // FIXME(191534): Check the reset of the payload.
-    auto cmd = FidoHidMessage::create(m_channelId, m_protocol == ProtocolVersion::kCtap ? FidoHidDeviceCommand::kCbor : FidoHidDeviceCommand::kMsg, m_requestData);
+    auto cmd = FidoHidMessage::create(m_channelId, protocol() == ProtocolVersion::kCtap ? FidoHidDeviceCommand::kCbor : FidoHidDeviceCommand::kMsg, m_requestData);
     ASSERT(cmd);
     m_worker->transact(WTFMove(*cmd), [weakThis = makeWeakPtr(*this)](Optional<FidoHidMessage>&& response) mutable {
         ASSERT(RunLoop::isMain());

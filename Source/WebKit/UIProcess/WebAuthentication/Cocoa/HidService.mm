@@ -28,10 +28,10 @@
 
 #if ENABLE(WEB_AUTHN) && PLATFORM(MAC)
 
-#import "CtapHidAuthenticator.h"
+#import "CtapAuthenticator.h"
 #import "CtapHidDriver.h"
 #import "HidConnection.h"
-#import "U2fHidAuthenticator.h"
+#import "U2fAuthenticator.h"
 #import <WebCore/DeviceRequestConverter.h>
 #import <WebCore/DeviceResponseConverter.h>
 #import <WebCore/FidoConstants.h>
@@ -112,12 +112,12 @@ void HidService::continueAddDeviceAfterGetInfo(CtapHidDriver* ptr, Vector<uint8_
 
     auto info = readCTAPGetInfoResponse(response);
     if (info && info->versions().find(ProtocolVersion::kCtap) != info->versions().end()) {
-        observer()->authenticatorAdded(CtapHidAuthenticator::create(WTFMove(driver), WTFMove(*info)));
+        observer()->authenticatorAdded(CtapAuthenticator::create(WTFMove(driver), WTFMove(*info)));
         return;
     }
     LOG_ERROR("Couldn't parse a ctap get info response.");
     driver->setProtocol(ProtocolVersion::kU2f);
-    observer()->authenticatorAdded(U2fHidAuthenticator::create(WTFMove(driver)));
+    observer()->authenticatorAdded(U2fAuthenticator::create(WTFMove(driver)));
 }
 
 } // namespace WebKit
