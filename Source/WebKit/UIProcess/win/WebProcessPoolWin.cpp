@@ -29,15 +29,28 @@
 
 #include "WebProcessCreationParameters.h"
 #include <WebCore/NotImplemented.h>
-#include <wtf/FileSystem.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/RemoteInspectorServer.h>
+#include <WebCore/WebCoreBundleWin.h>
 #endif
 
 namespace WebKit {
 
 #if ENABLE(REMOTE_INSPECTOR)
+static String backendCommandsPath()
+{
+    RetainPtr<CFURLRef> urlRef = adoptCF(CFBundleCopyResourceURL(WebCore::webKitBundle(), CFSTR("InspectorBackendCommands"), CFSTR("js"), CFSTR("WebInspectorUI\\Protocol")));
+    if (!urlRef)
+        return { };
+
+    char path[MAX_PATH];
+    if (!CFURLGetFileSystemRepresentation(urlRef.get(), false, reinterpret_cast<UInt8*>(path), MAX_PATH))
+        return { };
+
+    return path;
+}
+
 static void initializeRemoteInspectorServer(StringView address)
 {
     if (Inspector::RemoteInspectorServer::singleton().isRunning())
@@ -46,12 +59,13 @@ static void initializeRemoteInspectorServer(StringView address)
     auto pos = address.find(':');
     if (pos == notFound)
         return;
+
     auto host = address.substring(0, pos);
     auto port = address.substring(pos + 1).toUInt64Strict();
-
     if (!port)
         return;
 
+    Inspector::RemoteInspectorServer::singleton().setBackendCommandsPath(backendCommandsPath());
     Inspector::RemoteInspectorServer::singleton().start(host.utf8().data(), port.value());
 }
 #endif

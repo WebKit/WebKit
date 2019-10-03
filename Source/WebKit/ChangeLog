@@ -1,3 +1,21 @@
+2019-10-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Socket RWI client should acquire backend commands from server
+        https://bugs.webkit.org/show_bug.cgi?id=202421
+
+        Reviewed by Devin Rousso.
+
+        * UIProcess/socket/RemoteInspectorClient.cpp:
+        (WebKit::RemoteInspectorClient::dispatchMap):
+        (WebKit::RemoteInspectorClient::setBackendCommands):
+        * UIProcess/socket/RemoteInspectorClient.h:
+        Receive "BackendCommands" message from server (which is already base64-encoded) and hand it over to RWIProxy.
+
+        * UIProcess/win/WebProcessPoolWin.cpp:
+        (WebKit::backendCommandsPath):
+        (WebKit::initializeRemoteInspectorServer):
+        On Windows, initialize server with the path to InspectorBackendCommands.js from the CFBundle.
+
 2019-10-03  Alex Christensen  <achristensen@webkit.org>
 
         Replace _WKProcessPoolConfiguration.suppressesConnectionTerminationOnSystemChange with SPI on _WKWebsiteDataStoreConfiguration

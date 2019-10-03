@@ -46,6 +46,8 @@ public:
     JS_EXPORT_PRIVATE Optional<uint16_t> listenForTargets();
     JS_EXPORT_PRIVATE Optional<PlatformSocketType> connect();
 
+    void setBackendCommandsPath(const String& backendCommandsPath) { m_backendCommandsPath = backendCommandsPath; }
+
 private:
     friend class NeverDestroyed<RemoteInspectorServer>;
     RemoteInspectorServer() { Socket::init(); }
@@ -67,6 +69,8 @@ private:
 
     void sendWebInspectorEvent(ConnectionID, const String&);
 
+    String backendCommands() const;
+
     HashMap<String, CallHandler>& dispatchMap() override;
 
     HashSet<std::pair<ConnectionID, TargetID>> m_inspectionTargets;
@@ -82,6 +86,8 @@ private:
 
     // Connection from RemoteInspectorClient.
     Optional<ConnectionID> m_clientConnection;
+
+    String m_backendCommandsPath;
 };
 
 } // namespace Inspector

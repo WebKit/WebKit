@@ -29,9 +29,10 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "RemoteInspectorMessageParser.h"
-
+#include <wtf/FileSystem.h>
 #include <wtf/JSONValues.h>
 #include <wtf/MainThread.h>
+#include <wtf/text/Base64.h>
 
 namespace Inspector {
 
@@ -150,6 +151,11 @@ void RemoteInspectorServer::setupInspectorClient(const Event&)
 {
     ASSERT(isMainThread());
 
+    auto backendCommandsEvent = JSON::Object::create();
+    backendCommandsEvent->setString("event"_s, "BackendCommands"_s);
+    backendCommandsEvent->setString("message"_s, base64Encode(backendCommands().utf8()));
+    sendWebInspectorEvent(m_clientConnection.value(), backendCommandsEvent->toJSONString());
+
     auto setupEvent = JSON::Object::create();
     setupEvent->setString("event"_s, "GetTargetList"_s);
 
@@ -247,6 +253,26 @@ void RemoteInspectorServer::sendMessageToFrontend(const Event& event)
     sendEvent->setInteger("connectionID"_s, event.clientID);
     sendEvent->setString("message"_s, event.message.value());
     sendWebInspectorEvent(m_clientConnection.value(), sendEvent->toJSONString());
+}
+
+String RemoteInspectorServer::backendCommands() const
+{
+    if (m_backendCommandsPath.isEmpty())
+        return { };
+
+    auto handle = FileSystem::openFile(m_backendCommandsPath, FileSystem::FileOpenMode::Read);
+    if (!FileSystem::isHandleValid(handle))
+        return { };
+
+    String result;
+    long long size;
+    if (FileSystem::getFileSize(handle, size)) {
+        Vector<LChar> buffer(size);
+        if (FileSystem::readFromFile(handle, reinterpret_cast<char*>(buffer.data()), size) == size)
+            result = String::adopt(WTFMove(buffer));
+    }
+    FileSystem::closeFile(handle);
+    return result;
 }
 
 } // namespace Inspector

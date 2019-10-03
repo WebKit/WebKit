@@ -63,6 +63,7 @@ public:
     };
 
     const HashMap<ConnectionID, Vector<Target>>& targets() const { return m_targets; }
+    const String& backendCommandsURL() const { return m_backendCommandsURL; }
 
     void inspect(ConnectionID, TargetID, const String&);
     void sendMessageToBackend(ConnectionID, TargetID, const String&);
@@ -83,6 +84,7 @@ private:
 
     void sendWebInspectorEvent(const String&);
 
+    String m_backendCommandsURL;
     RemoteInspectorObserver& m_observer;
     Optional<ConnectionID> m_connectionID;
     HashMap<ConnectionID, Vector<Target>> m_targets;

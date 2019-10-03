@@ -1,3 +1,18 @@
+2019-10-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Socket RWI client should acquire backend commands from server
+        https://bugs.webkit.org/show_bug.cgi?id=202421
+
+        Reviewed by Devin Rousso.
+
+        * inspector/remote/socket/RemoteInspectorServer.cpp:
+        (Inspector::RemoteInspectorServer::setupInspectorClient):
+        (Inspector::RemoteInspectorServer::backendCommands const):
+        * inspector/remote/socket/RemoteInspectorServer.h:
+        (Inspector::RemoteInspectorServer::setBackendCommandsPath):
+        Assuming a path to InspectorBackendCommands.js has been provided,
+        read the file and send off its base64-encoded contents in a "BackendCommands" message when setting up a client.
+
 2019-10-03  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: tests under LayoutTests/inspector/debugger are flaky
