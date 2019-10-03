@@ -1535,7 +1535,7 @@ public:
 
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
-    Document(PAL::SessionID, Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
+    Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
 
     void clearXMLVersion() { m_xmlVersion = String(); }
 
