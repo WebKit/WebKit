@@ -634,7 +634,7 @@ public:
     WEBCORE_EXPORT AXObjectCache* axObjectCache() const;
     void clearAXObjectCache();
 
-    Optional<PageIdentifier> pageID() const;
+    WEBCORE_EXPORT Optional<PageIdentifier> pageID() const;
     // to get visually ordered hebrew and arabic pages right
     void setVisuallyOrdered();
     bool visuallyOrdered() const { return m_visuallyOrdered; }
@@ -1529,9 +1529,13 @@ public:
     bool inHitTesting() const { return m_inHitTesting; }
 #endif
 
+#if USE(SYSTEM_PREVIEW)
+    WEBCORE_EXPORT void dispatchSystemPreviewActionEvent(const String& message);
+#endif
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
-    Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
+    Document(PAL::SessionID, Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
 
     void clearXMLVersion() { m_xmlVersion = String(); }
 

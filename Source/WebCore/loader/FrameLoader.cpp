@@ -1417,9 +1417,8 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     bool isRedirect = m_quickRedirectComing;
 #if USE(SYSTEM_PREVIEW)
     bool isSystemPreview = frameLoadRequest.isSystemPreview();
-    request.setSystemPreview(isSystemPreview);
     if (isSystemPreview)
-        request.setSystemPreviewRect(frameLoadRequest.systemPreviewRect());
+        request.setSystemPreviewInfo(frameLoadRequest.systemPreviewInfo());
 #endif
     loadWithNavigationAction(request, WTFMove(action), lockHistory, newLoadType, WTFMove(formState), allowNavigationToInvalidURL, frameLoadRequest.downloadAttribute(), [this, isRedirect, sameURL, newLoadType, protectedFrame = makeRef(m_frame), completionHandler = completionHandlerCaller.release()] () mutable {
         if (isRedirect) {

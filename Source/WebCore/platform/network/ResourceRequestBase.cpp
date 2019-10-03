@@ -603,22 +603,17 @@ void ResourceRequestBase::setHTTPHeaderFields(HTTPHeaderMap headerFields)
 #if USE(SYSTEM_PREVIEW)
 bool ResourceRequestBase::isSystemPreview() const
 {
-    return m_isSystemPreview;
+    return m_systemPreviewInfo.hasValue();
 }
 
-void ResourceRequestBase::setSystemPreview(bool s)
+SystemPreviewInfo ResourceRequestBase::systemPreviewInfo() const
 {
-    m_isSystemPreview = s;
+    return m_systemPreviewInfo.valueOr(SystemPreviewInfo { });
 }
 
-const IntRect& ResourceRequestBase::systemPreviewRect() const
+void ResourceRequestBase::setSystemPreviewInfo(const SystemPreviewInfo& info)
 {
-    return m_systemPreviewRect;
-}
-
-void ResourceRequestBase::setSystemPreviewRect(const IntRect& rect)
-{
-    m_systemPreviewRect = rect;
+    m_systemPreviewInfo = info;
 }
 #endif
 

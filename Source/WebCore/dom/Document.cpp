@@ -8237,4 +8237,15 @@ void Document::setApplePayIsActive()
 
 #endif
 
+
+#if USE(SYSTEM_PREVIEW)
+void Document::dispatchSystemPreviewActionEvent(const String& message)
+{
+    auto event = MessageEvent::create(message, origin());
+    UserGestureIndicator gestureIndicator(ProcessingUserGesture, this);
+    dispatchWindowEvent(event, domWindow());
+}
+#endif
+
+
 } // namespace WebCore

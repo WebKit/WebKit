@@ -45,9 +45,13 @@ SOFT_LINK_PRIVATE_FRAMEWORK(ARKit);
 SOFT_LINK_CLASS(ARKit, ARQuickLookPreviewItem);
 SOFT_LINK_PRIVATE_FRAMEWORK(AssetViewer);
 SOFT_LINK_CLASS(AssetViewer, ARQuickLookWebKitItem);
-#endif
 
+@protocol ARQuickLookWebKitItemDelegate;
+
+@interface _WKPreviewControllerDataSource : NSObject <QLPreviewControllerDataSource, ARQuickLookWebKitItemDelegate> {
+#else
 @interface _WKPreviewControllerDataSource : NSObject <QLPreviewControllerDataSource> {
+#endif
     RetainPtr<NSItemProvider> _itemProvider;
 #if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
     RetainPtr<ARQuickLookWebKitItem> _item;
@@ -56,6 +60,7 @@ SOFT_LINK_CLASS(AssetViewer, ARQuickLookWebKitItem);
 #endif
     URL _originatingPageURL;
     URL _downloadedURL;
+    WebKit::SystemPreviewController* _previewController;
 };
 
 @property (strong) NSItemProviderCompletionHandler completionHandler;
@@ -65,11 +70,12 @@ SOFT_LINK_CLASS(AssetViewer, ARQuickLookWebKitItem);
 
 @implementation _WKPreviewControllerDataSource
 
-- (instancetype)initWithMIMEType:(NSString*)mimeType originatingPageURL:(URL)url
+- (instancetype)initWithSystemPreviewController:(WebKit::SystemPreviewController*)previewController MIMEType:(NSString*)mimeType originatingPageURL:(URL)url
 {
     if (!(self = [super init]))
         return nil;
 
+    _previewController = previewController;
     _originatingPageURL = url;
     _mimeType = [mimeType copy];
 
@@ -103,6 +109,7 @@ SOFT_LINK_CLASS(AssetViewer, ARQuickLookWebKitItem);
     previewItem.canonicalWebPageURL = _originatingPageURL;
 
     _item = [allocARQuickLookWebKitItemInstance() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType previewTitle:@"Preview" fileSize:@(0) previewItem:previewItem];
+    [_item setDelegate:self];
 #else
     _item = adoptNS([PAL::allocQLItemInstance() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType previewTitle:@"Preview" fileSize:@(0)]);
 #endif
@@ -142,6 +149,17 @@ SOFT_LINK_CLASS(AssetViewer, ARQuickLookWebKitItem);
         self.completionHandler(nil, error);
 }
 
+#if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
+- (void)previewItem:(ARQuickLookWebKitItem *)previewItem didReceiveMessage:(NSDictionary *)message
+{
+    if (!_previewController)
+        return;
+
+    if ([[message[@"callToAction"] stringValue] isEqualToString:@"buttonTapped"])
+        _previewController->triggerSystemPreviewAction();
+}
+#endif
+
 @end
 
 @interface _WKPreviewControllerDelegate : NSObject <QLPreviewControllerDelegate> {
@@ -152,13 +170,12 @@ SOFT_LINK_CLASS(AssetViewer, ARQuickLookWebKitItem);
 
 @implementation _WKPreviewControllerDelegate
 
-- (id)initWithSystemPreviewController:(WebKit::SystemPreviewController*)previewController fromRect:(WebCore::IntRect)rect
+- (id)initWithSystemPreviewController:(WebKit::SystemPreviewController*)previewController
 {
     if (!(self = [super init]))
         return nil;
 
     _previewController = previewController;
-    _linkRect = rect;
     return self;
 }
 
@@ -185,16 +202,15 @@ SOFT_LINK_CLASS(AssetViewer, ARQuickLookWebKitItem);
 
     *view = presentingViewController.view;
 
-    if (_linkRect.isEmpty()) {
-        CGRect frame;
-        frame.size.width = presentingViewController.view.frame.size.width / 2.0;
-        frame.size.height = presentingViewController.view.frame.size.height / 2.0;
-        frame.origin.x = (presentingViewController.view.frame.size.width - frame.size.width) / 2.0;
-        frame.origin.y = (presentingViewController.view.frame.size.height - frame.size.height) / 2.0;
-        return frame;
-    }
+    if (!_previewController->previewInfo().previewRect.isEmpty())
+        return _previewController->page().syncRootViewToScreen(_previewController->previewInfo().previewRect);
 
-    return _previewController->page().syncRootViewToScreen(_linkRect);
+    CGRect frame;
+    frame.size.width = (*view).frame.size.width / 2.0;
+    frame.size.height = (*view).frame.size.height / 2.0;
+    frame.origin.x = ((*view).frame.size.width - frame.size.width) / 2.0;
+    frame.origin.y = ((*view).frame.size.height - frame.size.height) / 2.0;
+    return frame;
 }
 
 - (UIImage *)previewController:(QLPreviewController *)controller transitionImageForPreviewItem:(id <QLPreviewItem>)item contentRect:(CGRect *)contentRect
@@ -218,7 +234,7 @@ SOFT_LINK_CLASS(AssetViewer, ARQuickLookWebKitItem);
 
 namespace WebKit {
 
-void SystemPreviewController::start(URL originatingPageURL, const String& mimeType, const WebCore::IntRect& fromRect)
+void SystemPreviewController::start(URL originatingPageURL, const String& mimeType, const WebCore::SystemPreviewInfo& systemPreviewInfo)
 {
     ASSERT(!m_qlPreviewController);
     if (m_qlPreviewController)
@@ -229,12 +245,14 @@ void SystemPreviewController::start(URL originatingPageURL, const String& mimeTy
     if (!presentingViewController)
         return;
 
+    m_systemPreviewInfo = systemPreviewInfo;
+
     m_qlPreviewController = adoptNS([PAL::allocQLPreviewControllerInstance() init]);
 
-    m_qlPreviewControllerDelegate = adoptNS([[_WKPreviewControllerDelegate alloc] initWithSystemPreviewController:this fromRect:fromRect]);
+    m_qlPreviewControllerDelegate = adoptNS([[_WKPreviewControllerDelegate alloc] initWithSystemPreviewController:this]);
     [m_qlPreviewController setDelegate:m_qlPreviewControllerDelegate.get()];
 
-    m_qlPreviewControllerDataSource = adoptNS([[_WKPreviewControllerDataSource alloc] initWithMIMEType:mimeType originatingPageURL:originatingPageURL]);
+    m_qlPreviewControllerDataSource = adoptNS([[_WKPreviewControllerDataSource alloc] initWithSystemPreviewController:this MIMEType:mimeType originatingPageURL:originatingPageURL]);
     [m_qlPreviewController setDataSource:m_qlPreviewControllerDataSource.get()];
 
     [presentingViewController presentViewController:m_qlPreviewController.get() animated:YES completion:nullptr];
@@ -266,6 +284,18 @@ void SystemPreviewController::fail(const WebCore::ResourceError& error)
 {
     if (m_qlPreviewControllerDataSource)
         [m_qlPreviewControllerDataSource failWithError:error.nsError()];
+}
+
+void SystemPreviewController::triggerSystemPreviewAction()
+{
+    page().systemPreviewActionTriggered(m_systemPreviewInfo, "_apple_ar_quicklook_button_tapped");
+}
+
+void SystemPreviewController::triggerSystemPreviewActionWithTargetForTesting(uint64_t frameID, uint64_t pageID)
+{
+    m_systemPreviewInfo.globalFrameID.frameID = makeObjectIdentifier<WebCore::FrameIdentifierType>(frameID);
+    m_systemPreviewInfo.globalFrameID.pageID = makeObjectIdentifier<WebCore::PageIdentifierType>(pageID);
+    triggerSystemPreviewAction();
 }
 
 }

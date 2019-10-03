@@ -91,8 +91,8 @@ public:
 
     InitiatedByMainFrame initiatedByMainFrame() const { return m_initiatedByMainFrame; }
 
-    bool isSystemPreview() const { return m_systemPreviewInfo.isSystemPreview; }
-    const IntRect& systemPreviewRect() const { return m_systemPreviewInfo.systemPreviewRect; }
+    bool isSystemPreview() const { return m_systemPreviewInfo.isPreview; }
+    const SystemPreviewInfo& systemPreviewInfo() const { return m_systemPreviewInfo; }
 
     void setIsRequestFromClientOrUserInput() { m_isRequestFromClientOrUserInput = true; }
     bool isRequestFromClientOrUserInput() const { return m_isRequestFromClientOrUserInput; }
