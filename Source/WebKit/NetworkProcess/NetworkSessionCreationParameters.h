@@ -97,6 +97,7 @@ struct NetworkSessionCreationParameters {
     bool networkCacheSpeculativeValidationEnabled { false };
     bool shouldUseTestingNetworkSession { false };
     unsigned testSpeedMultiplier { 1 };
+    bool suppressesConnectionTerminationOnSystemChange { false };
 };
 
 } // namespace WebKit

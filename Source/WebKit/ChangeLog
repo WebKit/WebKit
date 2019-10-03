@@ -1,3 +1,32 @@
+2019-10-03  Alex Christensen  <achristensen@webkit.org>
+
+        Replace _WKProcessPoolConfiguration.suppressesConnectionTerminationOnSystemChange with SPI on _WKWebsiteDataStoreConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=202544
+
+        Reviewed by Tim Horton.
+
+        The _WKProcessPoolConfiguration SPI was originally introduced in rdar://problem/40650244
+        Keep both working during the transition period, but we need it to not be on the process pool.
+
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration suppressesConnectionTerminationOnSystemChange]):
+        (-[_WKWebsiteDataStoreConfiguration setSuppressesConnectionTerminationOnSystemChange:]):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::suppressesConnectionTerminationOnSystemChange const):
+        (WebKit::WebsiteDataStoreConfiguration::setSuppressesConnectionTerminationOnSystemChange):
+
 2019-10-03  Per Arne Vollan  <pvollan@apple.com>
 
         REGRESSION(249649): Unable to open local files in MiniBrowser on macOS

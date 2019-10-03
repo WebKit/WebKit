@@ -138,6 +138,9 @@ public:
     const String& dataConnectionServiceType() const { return m_dataConnectionServiceType; }
     void setDataConnectionServiceType(String&& type) { m_dataConnectionServiceType = WTFMove(type); }
     
+    bool suppressesConnectionTerminationOnSystemChange() const { return m_suppressesConnectionTerminationOnSystemChange; }
+    void setSuppressesConnectionTerminationOnSystemChange(bool suppresses) { m_suppressesConnectionTerminationOnSystemChange = suppresses; }
+
 private:
     IsPersistent m_isPersistent { IsPersistent::No };
 
@@ -174,6 +177,7 @@ private:
     bool m_fastServerTrustEvaluationEnabled { false };
     bool m_serviceWorkerProcessTerminationDelayEnabled { true };
     bool m_testingSessionEnabled { false };
+    bool m_suppressesConnectionTerminationOnSystemChange { false };
     unsigned m_testSpeedMultiplier { 1 };
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;

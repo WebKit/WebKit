@@ -85,6 +85,7 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy()
     copy->m_dataConnectionServiceType = this->m_dataConnectionServiceType;
     copy->m_testingSessionEnabled = this->m_testingSessionEnabled;
     copy->m_testSpeedMultiplier = this->m_testSpeedMultiplier;
+    copy->m_suppressesConnectionTerminationOnSystemChange = this->m_suppressesConnectionTerminationOnSystemChange;
 #if PLATFORM(COCOA)
     if (m_proxyConfiguration)
         copy->m_proxyConfiguration = adoptCF(CFDictionaryCreateCopy(nullptr, this->m_proxyConfiguration.get()));
