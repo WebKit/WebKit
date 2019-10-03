@@ -36,13 +36,13 @@ void Authenticator::handleRequest(const WebAuthenticationRequestData& data)
 {
     m_pendingRequestData = data;
     // Enforce asynchronous execution of makeCredential/getAssertion.
-    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
+    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), this] {
         if (!weakThis)
             return;
-        if (weakThis->m_pendingRequestData.isCreationRequest)
-            weakThis->makeCredential();
+        if (WTF::holds_alternative<WebCore::PublicKeyCredentialCreationOptions>(m_pendingRequestData.options))
+            makeCredential();
         else
-            weakThis->getAssertion();
+            getAssertion();
     });
 }
 

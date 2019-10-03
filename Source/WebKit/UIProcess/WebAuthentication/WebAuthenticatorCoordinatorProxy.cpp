@@ -55,21 +55,15 @@ WebAuthenticatorCoordinatorProxy::~WebAuthenticatorCoordinatorProxy()
 
 void WebAuthenticatorCoordinatorProxy::makeCredential(uint64_t messageId, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions& options)
 {
-    auto callback = [messageId, weakThis = makeWeakPtr(*this)] (Variant<WebCore::PublicKeyCredentialData, WebCore::ExceptionData>&& result) {
-        ASSERT(RunLoop::isMain());
-        if (!weakThis)
-            return;
-
-        WTF::switchOn(result, [&](const WebCore::PublicKeyCredentialData& data) {
-            weakThis->requestReply(messageId, data, { });
-        }, [&](const  WebCore::ExceptionData& exception) {
-            weakThis->requestReply(messageId, { }, exception);
-        });
-    };
-    m_webPageProxy.websiteDataStore().authenticatorManager().makeCredential(hash, options, WTFMove(callback));
+    handleRequest(messageId, { hash, options, m_webPageProxy.preferences().copy() });
 }
 
 void WebAuthenticatorCoordinatorProxy::getAssertion(uint64_t messageId, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions& options)
+{
+    handleRequest(messageId, { hash, options, m_webPageProxy.preferences().copy() });
+}
+
+void WebAuthenticatorCoordinatorProxy::handleRequest(uint64_t messageId, WebAuthenticationRequestData&& data)
 {
     auto callback = [messageId, weakThis = makeWeakPtr(*this)] (Variant<WebCore::PublicKeyCredentialData, WebCore::ExceptionData>&& result) {
         ASSERT(RunLoop::isMain());
@@ -82,7 +76,7 @@ void WebAuthenticatorCoordinatorProxy::getAssertion(uint64_t messageId, const Ve
             weakThis->requestReply(messageId, { }, exception);
         });
     };
-    m_webPageProxy.websiteDataStore().authenticatorManager().getAssertion(hash, options, WTFMove(callback));
+    m_webPageProxy.websiteDataStore().authenticatorManager().handleRequest(WTFMove(data), WTFMove(callback));
 }
 
 void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable(uint64_t messageId)

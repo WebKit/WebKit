@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "WebPreferencesKeys.h"
 #include <WebCore/AuthenticatorTransport.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <wtf/MonotonicTime.h>
@@ -119,7 +120,7 @@ AuthenticatorManager::AuthenticatorManager()
 {
 }
 
-void AuthenticatorManager::makeCredential(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions& options, Callback&& callback)
+void AuthenticatorManager::handleRequest(WebAuthenticationRequestData&& data, Callback&& callback)
 {
     using namespace AuthenticatorManagerInternal;
 
@@ -130,32 +131,17 @@ void AuthenticatorManager::makeCredential(const Vector<uint8_t>& hash, const Pub
     clearState();
 
     // 1. Save request for async operations.
-    m_pendingRequestData = { hash, true, options, { } };
+    m_pendingRequestData = WTFMove(data);
     m_pendingCompletionHandler = WTFMove(callback);
-    initTimeOutTimer(options.timeout);
 
     // 2. Get available transports and start discovering authenticators on them.
-    startDiscovery(collectTransports(options.authenticatorSelection));
-}
-
-void AuthenticatorManager::getAssertion(const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions& options, Callback&& callback)
-{
-    using namespace AuthenticatorManagerInternal;
-
-    if (m_pendingCompletionHandler) {
-        m_pendingCompletionHandler(ExceptionData { NotAllowedError, "This request has been cancelled by a new request."_s });
-        m_requestTimeOutTimer.stop();
-    }
-    clearState();
-
-    // 1. Save request for async operations.
-    m_pendingRequestData = { hash, false, { }, options };
-    m_pendingCompletionHandler = WTFMove(callback);
-    initTimeOutTimer(options.timeout);
-
-    // 2. Get available transports and start discovering authenticators on them.
-    ASSERT(m_services.isEmpty());
-    startDiscovery(collectTransports(options.allowCredentials));
+    WTF::switchOn(m_pendingRequestData.options, [&](const PublicKeyCredentialCreationOptions& options) {
+        initTimeOutTimer(options.timeout);
+        startDiscovery(collectTransports(options.authenticatorSelection));
+    }, [&](const  PublicKeyCredentialRequestOptions& options) {
+        initTimeOutTimer(options.timeout);
+        startDiscovery(collectTransports(options.allowCredentials));
+    });
 }
 
 void AuthenticatorManager::clearStateAsync()
@@ -228,8 +214,10 @@ void AuthenticatorManager::startDiscovery(const TransportSet& transports)
 {
     using namespace AuthenticatorManagerInternal;
 
-    ASSERT(m_services.isEmpty() && transports.size() <= maxTransportNumber);
+    ASSERT(m_services.isEmpty() && transports.size() <= maxTransportNumber && m_pendingRequestData.preferences);
     for (auto& transport : transports) {
+        if (transport == AuthenticatorTransport::Internal && !m_pendingRequestData.preferences->store().getBoolValueForKey(WebPreferencesKey::webAuthenticationLocalAuthenticatorEnabledKey()))
+            continue;
         auto service = createService(transport, *this);
         service->startDiscovery();
         m_services.append(WTFMove(service));
