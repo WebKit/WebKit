@@ -1,3 +1,13 @@
+2019-10-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION (r245672): <select> dropdown with text-rendering: optimizeLegibility freezes Safari
+        https://bugs.webkit.org/show_bug.cgi?id=202198
+
+        Reviewed by Tim Horton.
+
+        * fast/forms/select-font-optical-size-expected.txt: Added.
+        * fast/forms/select-font-optical-size.html: Added.
+
 2019-10-02  Kate Cheney  <katherine_cheney@apple.com>
 
         Updated resource load statistics are never merged into the SQLite Database backend (202372).
