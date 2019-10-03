@@ -916,7 +916,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<String> cookie();
     WEBCORE_EXPORT ExceptionOr<void> setCookie(const String&);
 
-    WEBCORE_EXPORT String referrer() const;
+    WEBCORE_EXPORT String referrer();
 
     WEBCORE_EXPORT String origin() const final;
 

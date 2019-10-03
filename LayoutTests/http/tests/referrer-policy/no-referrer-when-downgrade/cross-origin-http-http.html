@@ -9,10 +9,15 @@
 description("Tests the behavior of no-referrer-when-downgrade referrer policy when cross origin.");
 jsTestIsAsync = true;
 
+if (window.internals)
+    internals.setResourceLoadStatisticsEnabled(false);
+
 window.onmessage = function(event) {
     referrer = event.data.referrer;
     // Should be the full URL
     shouldBeEqualToString("referrer", "http://127.0.0.1:8000/referrer-policy/no-referrer-when-downgrade/cross-origin-http-http.html");
+    if (window.internals)
+        internals.setResourceLoadStatisticsEnabled(true);
     finishJSTest();
 }
 

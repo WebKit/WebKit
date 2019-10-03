@@ -8,10 +8,15 @@
 description("Tests the behavior of same-origin referrer policy when same origin.");
 jsTestIsAsync = true;
 
+if (window.internals)
+    internals.setResourceLoadStatisticsEnabled(false);
+
 window.onmessage = function(event) {
     referrer = event.data.referrer;
     // Should be the full URL because we are same-origin.
     shouldBeEqualToString("referrer", "http://127.0.0.1:8000/referrer-policy-iframe/same-origin/same-origin.html");
+    if (window.internals)
+        internals.setResourceLoadStatisticsEnabled(true);
     finishJSTest();
 }
 </script>

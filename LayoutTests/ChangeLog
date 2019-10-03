@@ -1,3 +1,72 @@
+2019-10-03  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Downgrade document.referrer for all third-party iframes
+        https://bugs.webkit.org/show_bug.cgi?id=202506
+        <rdar://problem/55786397>
+
+        Reviewed by Brent Fulgham.
+
+        The tests that are not new rely on document.referrer and so they are made to turn off
+        ITP before they run to maintain a full referrer.
+
+        * http/tests/media/media-stream/enumerate-devices-source-id.html:
+        * http/tests/referrer-policy-iframe/no-referrer-when-downgrade/cross-origin-http-http.html:
+        * http/tests/referrer-policy-iframe/no-referrer-when-downgrade/cross-origin-http.https.html:
+        * http/tests/referrer-policy-iframe/no-referrer-when-downgrade/same-origin.html:
+        * http/tests/referrer-policy-iframe/no-referrer/cross-origin-http-http.html:
+        * http/tests/referrer-policy-iframe/no-referrer/cross-origin-http.https.html:
+        * http/tests/referrer-policy-iframe/no-referrer/same-origin.html:
+        * http/tests/referrer-policy-iframe/origin-when-cross-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-iframe/origin-when-cross-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-iframe/origin-when-cross-origin/same-origin.html:
+        * http/tests/referrer-policy-iframe/origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-iframe/origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-iframe/origin/same-origin.html:
+        * http/tests/referrer-policy-iframe/same-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-iframe/same-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-iframe/same-origin/same-origin.html:
+        * http/tests/referrer-policy-iframe/strict-origin-when-cross-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-iframe/strict-origin-when-cross-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-iframe/strict-origin-when-cross-origin/same-origin.html:
+        * http/tests/referrer-policy-iframe/strict-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-iframe/strict-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-iframe/strict-origin/same-origin.html:
+        * http/tests/referrer-policy-iframe/unsafe-url/cross-origin-http-http.html:
+        * http/tests/referrer-policy-iframe/unsafe-url/cross-origin-http.https.html:
+        * http/tests/referrer-policy-iframe/unsafe-url/same-origin.html:
+        * http/tests/referrer-policy/no-referrer-when-downgrade/cross-origin-http-http.html:
+        * http/tests/referrer-policy/no-referrer-when-downgrade/cross-origin-http.https.html:
+        * http/tests/referrer-policy/no-referrer-when-downgrade/same-origin.html:
+        * http/tests/referrer-policy/no-referrer/cross-origin-http-http.html:
+        * http/tests/referrer-policy/no-referrer/cross-origin-http.https.html:
+        * http/tests/referrer-policy/no-referrer/same-origin.html:
+        * http/tests/referrer-policy/origin-when-cross-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy/origin-when-cross-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy/origin-when-cross-origin/same-origin.html:
+        * http/tests/referrer-policy/origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy/origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy/origin/same-origin.html:
+        * http/tests/referrer-policy/same-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy/same-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy/same-origin/same-origin.html:
+        * http/tests/referrer-policy/strict-origin-when-cross-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy/strict-origin-when-cross-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy/strict-origin-when-cross-origin/same-origin.html:
+        * http/tests/referrer-policy/strict-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy/strict-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy/strict-origin/same-origin.html:
+        * http/tests/referrer-policy/unsafe-url/cross-origin-http-http.html:
+        * http/tests/referrer-policy/unsafe-url/cross-origin-http.https.html:
+        * http/tests/referrer-policy/unsafe-url/same-origin.html:
+        * http/tests/resourceLoadStatistics/downgrade-document-referrer-nested-third-party-iframe-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/downgrade-document-referrer-nested-third-party-iframe.html: Added.
+        * http/tests/resourceLoadStatistics/downgrade-document-referrer-third-party-iframe-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/downgrade-document-referrer-third-party-iframe.html: Added.
+        * http/tests/resourceLoadStatistics/leave-empty-document-referrer-alone-third-party-iframe-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/leave-empty-document-referrer-alone-third-party-iframe.html: Added.
+        * http/tests/resourceLoadStatistics/resources/nest-iframe-report-document-referrer.html: Added.
+        * http/tests/resourceLoadStatistics/resources/report-document-referrer.html: Added.
+
 2019-10-03  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: touchend doesn't trigger on element when touch is released outside of its bounds
