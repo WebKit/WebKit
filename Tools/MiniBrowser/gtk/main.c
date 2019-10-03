@@ -532,7 +532,9 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    WebKitWebContext *webContext = (privateMode || automationMode) ? webkit_web_context_new_ephemeral() : webkit_web_context_get_default();
+    WebKitWebsiteDataManager *manager = (privateMode || automationMode) ? webkit_website_data_manager_new_ephemeral() : webkit_website_data_manager_new(NULL);
+    WebKitWebContext *webContext = g_object_new(WEBKIT_TYPE_WEB_CONTEXT, "website-data-manager", manager, "process-swap-on-cross-site-navigation-enabled", TRUE, NULL);
+    g_object_unref(manager);
 
     if (cookiesPolicy) {
         WebKitCookieManager *cookieManager = webkit_web_context_get_cookie_manager(webContext);

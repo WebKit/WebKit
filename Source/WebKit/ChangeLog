@@ -1,5 +1,22 @@
 2019-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Make PSON optional
+        https://bugs.webkit.org/show_bug.cgi?id=200967
+
+        Reviewed by Michael Catanzaro.
+
+        It's not possible to enable PSON by default and keep backwards compatibility, applications might need to use new
+        API to monitor the page ID changes in the Web view. So, this patch adds a construct only property to
+        WebKitWebContext to enable PSON.
+
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextGetProperty):
+        (webkitWebContextSetProperty):
+        (webkitWebContextConstructed):
+        (webkit_web_context_class_init):
+
+2019-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Add WebKitWebView:page-id property
         https://bugs.webkit.org/show_bug.cgi?id=201642
 

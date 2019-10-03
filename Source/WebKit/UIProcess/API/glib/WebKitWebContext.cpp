@@ -112,7 +112,10 @@ enum {
 #if PLATFORM(GTK)
     PROP_LOCAL_STORAGE_DIRECTORY,
 #endif
-    PROP_WEBSITE_DATA_MANAGER
+    PROP_WEBSITE_DATA_MANAGER,
+#if PLATFORM(GTK)
+    PROP_PSON_ENABLED
+#endif
 };
 
 enum {
@@ -187,6 +190,9 @@ class WebKitAutomationClient;
 struct _WebKitWebContextPrivate {
     RefPtr<WebProcessPool> processPool;
     bool clientsDetached;
+#if PLATFORM(GTK)
+    bool psonEnabled;
+#endif
 
     GRefPtr<WebKitFaviconDatabase> faviconDatabase;
     GRefPtr<WebKitSecurityManager> securityManager;
@@ -308,6 +314,11 @@ static void webkitWebContextGetProperty(GObject* object, guint propID, GValue* v
     case PROP_WEBSITE_DATA_MANAGER:
         g_value_set_object(value, webkit_web_context_get_website_data_manager(context));
         break;
+#if PLATFORM(GTK)
+    case PROP_PSON_ENABLED:
+        g_value_set_boolean(value, context->priv->psonEnabled);
+        break;
+#endif
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
     }
@@ -328,6 +339,11 @@ static void webkitWebContextSetProperty(GObject* object, guint propID, const GVa
         context->priv->websiteDataManager = manager ? WEBKIT_WEBSITE_DATA_MANAGER(manager) : nullptr;
         break;
     }
+#if PLATFORM(GTK)
+    case PROP_PSON_ENABLED:
+        context->priv->psonEnabled = g_value_get_boolean(value);
+        break;
+#endif
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
     }
@@ -339,11 +355,15 @@ static void webkitWebContextConstructed(GObject* object)
 
     GUniquePtr<char> bundleFilename(g_build_filename(injectedBundleDirectory(), INJECTED_BUNDLE_FILENAME, nullptr));
 
-    API::ProcessPoolConfiguration configuration;
-    configuration.setInjectedBundlePath(FileSystem::stringFromFileSystemRepresentation(bundleFilename.get()));
-
     WebKitWebContext* webContext = WEBKIT_WEB_CONTEXT(object);
     WebKitWebContextPrivate* priv = webContext->priv;
+
+    API::ProcessPoolConfiguration configuration;
+    configuration.setInjectedBundlePath(FileSystem::stringFromFileSystemRepresentation(bundleFilename.get()));
+#if PLATFORM(GTK)
+    configuration.setProcessSwapsOnNavigation(priv->psonEnabled);
+#endif
+
     if (!priv->websiteDataManager)
         priv->websiteDataManager = adoptGRef(webkit_website_data_manager_new("local-storage-directory", priv->localStorageDirectory.data(), nullptr));
 
@@ -447,6 +467,25 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
             _("The WebKitWebsiteDataManager associated with this context"),
             WEBKIT_TYPE_WEBSITE_DATA_MANAGER,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+
+#if PLATFORM(GTK)
+    /**
+     * WebKitWebContext:process-swap-on-cross-site-navigation-enabled:
+     *
+     * Whether swap Web processes on cross-site navigations is enabled.
+     *
+     * Since: 2.28
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_PSON_ENABLED,
+        g_param_spec_boolean(
+            "process-swap-on-cross-site-navigation-enabled",
+            _("Swap Processes on Cross-Site Navigation"),
+            _("Whether swap Web processes on cross-site navigations is enabled"),
+            FALSE,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+#endif
 
     /**
      * WebKitWebContext::download-started:

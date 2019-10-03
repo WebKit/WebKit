@@ -129,7 +129,12 @@ public:
             "disk-cache-directory", diskCacheDirectory.get(), "offline-application-cache-directory", applicationCacheDirectory.get(),
             "websql-directory", webSQLDirectory.get(), "hsts-cache-directory", hstsDirectory.get(), nullptr));
 
-        m_webContext = adoptGRef(webkit_web_context_new_with_website_data_manager(websiteDataManager.get()));
+        m_webContext = adoptGRef(WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT,
+            "website-data-manager", websiteDataManager.get(),
+#if PLATFORM(GTK)
+            "process-swap-on-cross-site-navigation-enabled", TRUE,
+#endif
+            nullptr)));
         g_signal_connect(m_webContext.get(), "initialize-web-extensions", G_CALLBACK(initializeWebExtensionsCallback), this);
     }
 

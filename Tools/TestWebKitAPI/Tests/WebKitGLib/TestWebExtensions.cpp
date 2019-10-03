@@ -488,6 +488,53 @@ static void testWebExtensionPageID(WebViewTest* test, gconstpointer)
     g_assert_false(pageIDChangedEmitted);
     g_assert_cmpuint(pageID, ==, webkit_web_view_get_page_id(test->m_webView));
     checkTitle(test, proxy.get(), "Title4");
+
+    // Register a custom URI scheme to test history navigation.
+    webkit_web_context_register_uri_scheme(test->m_webContext.get(), "foo",
+        [](WebKitURISchemeRequest* request, gpointer) {
+            SoupURI* uri = soup_uri_new(webkit_uri_scheme_request_get_uri(request));
+            GRefPtr<GInputStream> inputStream = adoptGRef(g_memory_input_stream_new());
+            char* html = g_strdup_printf("<html><head><title>%s</title></head><body></body></html>", !strcmp(uri->host, "host5") ? "Title5" : "Title6");
+            soup_uri_free(uri);
+            g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(inputStream.get()), html, strlen(html), g_free);
+            webkit_uri_scheme_request_finish(request, inputStream.get(), strlen(html), "text/html");
+        }, nullptr, nullptr);
+
+    test->loadURI("foo://host5/");
+    test->waitUntilLoadFinished();
+    g_assert_true(pageIDChangedEmitted);
+    pageIDChangedEmitted = false;
+    g_assert_cmpuint(pageID, <, webkit_web_view_get_page_id(test->m_webView));
+    pageID = webkit_web_view_get_page_id(test->m_webView);
+    proxy = test->extensionProxy();
+    checkTitle(test, proxy.get(), "Title5");
+
+    test->loadURI("foo://host6/");
+    test->waitUntilLoadFinished();
+    g_assert_true(pageIDChangedEmitted);
+    pageIDChangedEmitted = false;
+    g_assert_cmpuint(pageID, <, webkit_web_view_get_page_id(test->m_webView));
+    pageID = webkit_web_view_get_page_id(test->m_webView);
+    proxy = test->extensionProxy();
+    checkTitle(test, proxy.get(), "Title6");
+
+    test->goBack();
+    test->waitUntilLoadFinished();
+    g_assert_true(pageIDChangedEmitted);
+    pageIDChangedEmitted = false;
+    g_assert_cmpuint(pageID, >, webkit_web_view_get_page_id(test->m_webView));
+    pageID = webkit_web_view_get_page_id(test->m_webView);
+    proxy = test->extensionProxy();
+    checkTitle(test, proxy.get(), "Title5");
+
+    test->goForward();
+    test->waitUntilLoadFinished();
+    g_assert_true(pageIDChangedEmitted);
+    pageIDChangedEmitted = false;
+    g_assert_cmpuint(pageID, <, webkit_web_view_get_page_id(test->m_webView));
+    pageID = webkit_web_view_get_page_id(test->m_webView);
+    proxy = test->extensionProxy();
+    checkTitle(test, proxy.get(), "Title6");
 }
 
 void beforeAll()
