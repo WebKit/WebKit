@@ -5,6 +5,7 @@ class ButtonBase extends ComponentBase {
     {
         super(name);
         this._disabled = false;
+        this._title = null;
     }
 
     setDisabled(disabled)
@@ -15,8 +16,8 @@ class ButtonBase extends ComponentBase {
 
     setButtonTitle(title)
     {
-        this.content('button').title = title;
-        this.enqueToRender();
+        this._title = title;
+        this.enqueueToRender();
     }
 
     didConstructShadowTree()
@@ -33,6 +34,10 @@ class ButtonBase extends ComponentBase {
             this.content('button').setAttribute('disabled', '');
         else
             this.content('button').removeAttribute('disabled');
+        if (this._title)
+            this.content('button').setAttribute('title', this._title);
+        else
+            this.content('button').removeAttribute('title');
     }
 
     static htmlTemplate()

@@ -117,8 +117,11 @@ class TestGroupRevisionTable extends ComponentBase {
         const element = ComponentBase.createElement;
         const showWarningIcon = request.hasFinished() && request.statusDescription();
         const cellContent = [];
-        if (showWarningIcon)
-            cellContent.push(element('div', {class: 'warning-icon-container'}, new WarningIcon(`Last status: ${request.statusDescription()}`)));
+        if (showWarningIcon) {
+            const warningIcon = new WarningIcon;
+            warningIcon.setWarning(`Last status: ${request.statusDescription()}`);
+            cellContent.push(element('div', {class: 'warning-icon-container'}, warningIcon));
+        }
 
         cellContent.push(request.statusUrl() ? link(request.statusLabel(), request.statusDescription(), request.statusUrl()) : request.statusLabel());
 

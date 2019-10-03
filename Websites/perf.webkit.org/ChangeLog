@@ -1,3 +1,23 @@
+2019-10-02  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Fix a bug that warning icon causes infinite rendering when it has warning message.
+        https://bugs.webkit.org/show_bug.cgi?id=202502
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix the problem that a warning icon with a warning message will result in infinite rendering.
+
+        * public/v3/components/button-base.js:
+        (ButtonBase):
+        (ButtonBase.prototype.setButtonTitle): Fixed a typo in function name and moved the title update to
+        render function.
+        (ButtonBase.prototype.render): Added the logic to render title.
+        * public/v3/components/test-group-revision-table.js: Set warning message by invoking setButtonTitle.
+        * public/v3/components/warning-icon.js: Removed the warning messge related code and leave the responsibility
+        to ButtonBase.
+        (WarningIcon):
+        (WarningIcon.prototype.render):
+
 2019-07-30  Dewei Zhu  <dewei_zhu@apple.com>
 
         Provide build request status description information on dashboard.
