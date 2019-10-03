@@ -1,5 +1,34 @@
 2019-10-03  youenn fablet  <youenn@apple.com>
 
+        Regression: iOS 13.1 MediaStreamTrack.enabled = false kills audio track
+        https://bugs.webkit.org/show_bug.cgi?id=202405
+        <rdar://problem/55922616>
+
+        Reviewed by Eric Carlson.
+
+        When the web page is setting enabled to false, media session might change from PlayRecord to None.
+        This might trigger CoreAudio to no longer output audio samples, thus triggering our audio capture failure timer.
+        This would end the track after 2 seconds.
+        Given audio tracks can be reenabled by a web page, we should not change the Media Session setup based on that.
+        This patch updates MediaStream::mediaType to return independently of the enabled state.
+
+        Add internals API to write a cross platform test.
+
+        Test: fast/mediastream/audio-track-enabled.html
+        Manually tested as well.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::mediaType const):
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::hasCaptureAudioSource const):
+        * testing/Internals.cpp:
+        (WebCore::Internals::supportsAudioSession const):
+        (WebCore::Internals::audioSessionCategory const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+2019-10-03  youenn fablet  <youenn@apple.com>
+
         http/tests/security/navigate-when-restoring-cached-page.html should not use RTCPeerConnection to not enter in page cache
         https://bugs.webkit.org/show_bug.cgi?id=202521
 

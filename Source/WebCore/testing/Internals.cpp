@@ -4853,6 +4853,15 @@ void Internals::setDisableGetDisplayMediaUserGestureConstraint(bool value)
 }
 #endif
 
+bool Internals::supportsAudioSession() const
+{
+#if USE(AUDIO_SESSION)
+    return true;
+#else
+    return false;
+#endif
+}
+
 String Internals::audioSessionCategory() const
 {
 #if USE(AUDIO_SESSION)

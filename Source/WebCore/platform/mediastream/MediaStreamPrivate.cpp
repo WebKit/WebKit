@@ -229,7 +229,7 @@ bool MediaStreamPrivate::hasCaptureVideoSource() const
 bool MediaStreamPrivate::hasCaptureAudioSource() const
 {
     for (auto& track : m_trackSet.values()) {
-        if (track->type() == RealtimeMediaSource::Type::Audio && track->isCaptureTrack())
+        if (track->type() == RealtimeMediaSource::Type::Audio && track->isCaptureTrack() && !track->ended() && !track->muted())
             return true;
     }
     return false;

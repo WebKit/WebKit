@@ -735,6 +735,7 @@ enum CompositingPolicy {
 
     void setConsoleMessageListener(StringCallback callback);
 
+    readonly attribute boolean supportsAudioSession;
     DOMString audioSessionCategory();
     double preferredAudioBufferSize();
     boolean audioSessionActive();

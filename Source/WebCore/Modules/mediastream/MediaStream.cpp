@@ -403,7 +403,7 @@ PlatformMediaSession::MediaType MediaStream::mediaType() const
 {
     // We only need to override the type when capturing audio, HTMLMediaElement and/or WebAudio
     // will do the right thing when a stream is attached to a media element or an audio context.
-    if (m_private->hasAudio() && m_isProducingData && m_private->hasCaptureAudioSource())
+    if (m_private->hasCaptureAudioSource())
         return PlatformMediaSession::MediaStreamCapturingAudio;
 
     return PlatformMediaSession::None;

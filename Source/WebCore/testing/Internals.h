@@ -736,6 +736,7 @@ public:
     void setDisableGetDisplayMediaUserGestureConstraint(bool);
 #endif
 
+    bool supportsAudioSession() const;
     String audioSessionCategory() const;
     double preferredAudioBufferSize() const;
     bool audioSessionActive() const;

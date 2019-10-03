@@ -1,5 +1,16 @@
 2019-10-03  youenn fablet  <youenn@apple.com>
 
+        Regression: iOS 13.1 MediaStreamTrack.enabled = false kills audio track
+        https://bugs.webkit.org/show_bug.cgi?id=202405
+        <rdar://problem/55922616>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/audio-track-enabled-expected.txt: Added.
+        * fast/mediastream/audio-track-enabled.html: Added.
+
+2019-10-03  youenn fablet  <youenn@apple.com>
+
         http/tests/security/navigate-when-restoring-cached-page.html should not use RTCPeerConnection to not enter in page cache
         https://bugs.webkit.org/show_bug.cgi?id=202521
 
