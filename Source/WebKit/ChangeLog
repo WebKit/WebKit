@@ -1,3 +1,16 @@
+2019-08-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a build fix after r248319. 
+
+        Use HAVE(DATA_PROTECTION_KEYCHAIN) instead of HAVE_DATA_PROTECTION_KEYCHAIN.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::makeCredential):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterUserConsented):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterAttested):
+        (WebKit::LocalAuthenticator::getAssertion):
+        (WebKit::LocalAuthenticator::continueGetAssertionAfterUserConsented):
+
 2019-10-03  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r248319. rdar://problem/55964805
