@@ -1,5 +1,17 @@
 2019-10-03  Chris Dumez  <cdumez@apple.com>
 
+        Provisional / scheduled loads in subframes should not prevent a page from entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=202474
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage.
+
+        * fast/history/page-cache-subframes-with-provisional-load-expected.txt: Added.
+        * fast/history/page-cache-subframes-with-provisional-load.html: Added.
+
+2019-10-03  Chris Dumez  <cdumez@apple.com>
+
         XMLHttpRequest sometimes prevents pages from entering the back/forward cache
         https://bugs.webkit.org/show_bug.cgi?id=202434
         <rdar://problem/55890340>

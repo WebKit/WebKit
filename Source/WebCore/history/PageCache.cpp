@@ -421,7 +421,12 @@ bool PageCache::addIfCacheable(HistoryItem& item, Page* page)
     if (item.isInPageCache())
         return false;
 
-    if (!page || !canCache(*page))
+    if (!page)
+        return false;
+
+    page->mainFrame().loader().stopForPageCache();
+
+    if (!canCache(*page))
         return false;
 
     ASSERT_WITH_MESSAGE(!page->isUtilityPage(), "Utility pages such as SVGImage pages should never go into PageCache");
@@ -440,10 +445,7 @@ bool PageCache::addIfCacheable(HistoryItem& item, Page* page)
 
     // Stop all loads again before checking if we can still cache the page after firing the pagehide
     // event, since the page may have started ping loads in its pagehide event handler.
-    for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (auto* documentLoader = frame->loader().documentLoader())
-            documentLoader->stopLoading();
-    }
+    page->mainFrame().loader().stopForPageCache();
 
     // Check that the page is still page-cacheable after firing the pagehide event. The JS event handlers
     // could have altered the page in a way that could prevent caching.

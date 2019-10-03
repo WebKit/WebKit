@@ -1845,6 +1845,27 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItem
     m_inStopAllLoaders = false;    
 }
 
+void FrameLoader::stopForPageCache()
+{
+    // Make sure there are no scheduled loads or policy checks.
+    policyChecker().stopCheck();
+    m_frame.navigationScheduler().cancel();
+
+    // Stop provisional loads in subframes (The one in the main frame is about to be committed).
+    if (!m_frame.isMainFrame()) {
+        if (m_provisionalDocumentLoader)
+            m_provisionalDocumentLoader->stopLoading();
+        setProvisionalDocumentLoader(nullptr);
+    }
+
+    // Stop current loads.
+    if (m_documentLoader)
+        m_documentLoader->stopLoading();
+
+    for (RefPtr<Frame> child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling())
+        child->loader().stopForPageCache();
+}
+
 void FrameLoader::stopAllLoadersAndCheckCompleteness()
 {
     stopAllLoaders();
