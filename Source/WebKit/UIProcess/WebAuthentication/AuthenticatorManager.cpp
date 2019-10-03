@@ -74,7 +74,7 @@ static AuthenticatorManager::TransportSet collectTransports(const Optional<Publi
     return result;
 }
 
-// FIXME(188624, 188625): Support NFC and BLE authenticators.
+// FIXME(188625): Support BLE authenticators.
 // The goal is to find a union of different transports from allowCredentials.
 // If it is not specified or any of its credentials doesn't specify its own. We should discover all.
 // This is a variant of Step. 18.*.4 from https://www.w3.org/TR/webauthn/#discover-from-external-source
@@ -99,18 +99,28 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
             result.add(AuthenticatorTransport::Nfc);
             return result;
         }
-        if (!result.contains(AuthenticatorTransport::Internal) && allowCredential.transports.contains(AuthenticatorTransport::Internal))
-            result.add(AuthenticatorTransport::Internal);
-        if (!result.contains(AuthenticatorTransport::Usb) && allowCredential.transports.contains(AuthenticatorTransport::Usb))
-            result.add(AuthenticatorTransport::Usb);
-        if (!result.contains(AuthenticatorTransport::Nfc) && allowCredential.transports.contains(AuthenticatorTransport::Nfc))
-            result.add(AuthenticatorTransport::Nfc);
-        if (result.size() >= maxTransportNumber)
-            return result;
+
+        for (const auto& transport : allowCredential.transports) {
+            if (transport == AuthenticatorTransport::Ble)
+                continue;
+            result.add(transport);
+            if (result.size() >= maxTransportNumber)
+                return result;
+        }
     }
 
     ASSERT(result.size() < maxTransportNumber);
     return result;
+}
+
+// Only roaming authenticators are supported for Google legacy AppID support.
+static void processGoogleLegacyAppIdSupportExtension(const Optional<AuthenticationExtensionsClientInputs>& extensions, AuthenticatorManager::TransportSet& transports)
+{
+    // AuthenticatorCoordinator::create should always set it.
+    ASSERT(!!extensions);
+    if (!extensions->googleLegacyAppidSupport)
+        return;
+    transports.remove(AuthenticatorTransport::Internal);
 }
 
 } // namespace AuthenticatorManagerInternal
@@ -137,7 +147,10 @@ void AuthenticatorManager::handleRequest(WebAuthenticationRequestData&& data, Ca
     // 2. Get available transports and start discovering authenticators on them.
     WTF::switchOn(m_pendingRequestData.options, [&](const PublicKeyCredentialCreationOptions& options) {
         initTimeOutTimer(options.timeout);
-        startDiscovery(collectTransports(options.authenticatorSelection));
+
+        auto transports = collectTransports(options.authenticatorSelection);
+        processGoogleLegacyAppIdSupportExtension(options.extensions, transports);
+        startDiscovery(WTFMove(transports));
     }, [&](const  PublicKeyCredentialRequestOptions& options) {
         initTimeOutTimer(options.timeout);
         startDiscovery(collectTransports(options.allowCredentials));

@@ -1,5 +1,24 @@
 2019-10-03  Jiewen Tan  <jiewen_tan@apple.com>
 
+        Support googleLegacyAppidSupport extension
+        https://bugs.webkit.org/show_bug.cgi?id=202427
+        <rdar://problem/55887473>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManagerInternal::collectTransports):
+        (WebKit::AuthenticatorManagerInternal::processGoogleLegacyAppIdSupportExtension):
+        (WebKit::AuthenticatorManager::handleRequest):
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+        (WebKit::CtapAuthenticator::makeCredential):
+        (WebKit::CtapAuthenticator::processGoogleLegacyAppIdSupportExtension):
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.h:
+        * UIProcess/WebAuthentication/fido/U2fAuthenticator.cpp:
+        (WebKit::U2fAuthenticator::continueRegisterCommandAfterResponseReceived):
+
+2019-10-03  Jiewen Tan  <jiewen_tan@apple.com>
+
         [WebAuthn] Implement dummy _WKWebAuthenticationPanel SPI
         https://bugs.webkit.org/show_bug.cgi?id=202507
         <rdar://problem/55918793>

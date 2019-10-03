@@ -1,3 +1,16 @@
+2019-10-03  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Support googleLegacyAppidSupport extension
+        https://bugs.webkit.org/show_bug.cgi?id=202427
+        <rdar://problem/55887473>
+
+        Reviewed by Brent Fulgham.
+
+        Add tests to confirm the googleLegacyAppidSupport extension is ignored for RP ID != google.com.
+
+        * http/wpt/webauthn/public-key-credential-create-success-hid.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-success-hid.https.html:
+
 2019-10-03  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: tests under LayoutTests/inspector/debugger are flaky

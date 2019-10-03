@@ -103,7 +103,8 @@ Optional<Vector<uint8_t>> convertToU2fRegisterCommand(const Vector<uint8_t>& cli
     if (!isConvertibleToU2fRegisterCommand(request))
         return WTF::nullopt;
 
-    return constructU2fRegisterCommand(produceRpIdHash(request.rp.id), clientDataHash);
+    auto appId = processGoogleLegacyAppIdSupportExtension(request.extensions);
+    return constructU2fRegisterCommand(produceRpIdHash(!appId ? request.rp.id : appId), clientDataHash);
 }
 
 Optional<Vector<uint8_t>> convertToU2fCheckOnlySignCommand(const Vector<uint8_t>& clientDataHash, const PublicKeyCredentialCreationOptions& request, const PublicKeyCredentialDescriptor& keyHandle)
@@ -128,6 +129,15 @@ Optional<Vector<uint8_t>> convertToU2fSignCommand(const Vector<uint8_t>& clientD
 Vector<uint8_t> constructBogusU2fRegistrationCommand()
 {
     return constructU2fRegisterCommand(convertBytesToVector(kBogusAppParam, sizeof(kBogusAppParam)), convertBytesToVector(kBogusChallenge, sizeof(kBogusChallenge)));
+}
+
+String processGoogleLegacyAppIdSupportExtension(const Optional<AuthenticationExtensionsClientInputs>& extensions)
+{
+    // AuthenticatorCoordinator::create should always set it.
+    ASSERT(!!extensions);
+    if (!extensions->googleLegacyAppidSupport)
+        return String();
+    return "https://www.gstatic.com/securitykey/origins.json"_s;
 }
 
 } // namespace fido

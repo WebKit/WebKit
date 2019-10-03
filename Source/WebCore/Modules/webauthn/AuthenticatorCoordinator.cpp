@@ -54,7 +54,7 @@ enum class ClientDataType {
     Get
 };
 
-// FIXME(181948): Add token binding ID and extensions.
+// FIXME(181948): Add token binding ID.
 static Ref<ArrayBuffer> produceClientDataJson(ClientDataType type, const BufferSource& challenge, const SecurityOrigin& origin)
 {
     auto object = JSON::Object::create();
@@ -112,6 +112,16 @@ static String processAppIdExtension(const SecurityOrigin& facetId, const String&
     return appId;
 }
 
+// The default behaviour for google.com is to always turn on the legacy AppID support.
+static bool processGoogleLegacyAppIdSupportExtension(const Optional<AuthenticationExtensionsClientInputs>& extensions, const String& rpId)
+{
+    if (rpId != "google.com"_s)
+        return false;
+    if (!extensions)
+        return true;
+    return extensions->googleLegacyAppidSupport;
+}
+
 } // namespace AuthenticatorCoordinatorInternal
 
 AuthenticatorCoordinator::AuthenticatorCoordinator(std::unique_ptr<AuthenticatorCoordinatorClient>&& client)
@@ -129,7 +139,6 @@ void AuthenticatorCoordinator::create(const SecurityOrigin& callerOrigin, const 
     using namespace AuthenticatorCoordinatorInternal;
 
     // The following implements https://www.w3.org/TR/webauthn/#createCredential as of 5 December 2017.
-    // Extensions are not supported. Skip Step 11-12.
     // Step 1, 3, 16 are handled by the caller.
     // Step 2.
     if (!sameOriginWithAncestors) {
@@ -160,6 +169,10 @@ void AuthenticatorCoordinator::create(const SecurityOrigin& callerOrigin, const 
         promise.reject(Exception { NotSupportedError, "No desired properties of the to be created credential are provided."_s });
         return;
     }
+
+    // Step 11-12.
+    // Only Google Legacy AppID Support Extension is supported.
+    options.extensions = AuthenticationExtensionsClientInputs { String(), processGoogleLegacyAppIdSupportExtension(options.extensions, options.rp.id) };
 
     // Step 13-15.
     auto clientDataJson = produceClientDataJson(ClientDataType::Create, options.challenge, callerOrigin);
