@@ -621,4 +621,11 @@ template<> struct ArgumentCoder<SHA1::Digest> {
     static bool decode(Decoder&, SHA1::Digest&);
 };
 
+#if HAVE(AUDIT_TOKEN)
+template<> struct ArgumentCoder<audit_token_t> {
+    static void encode(Encoder&, const audit_token_t&);
+    static bool decode(Decoder&, audit_token_t&);
+};
+#endif
+
 } // namespace IPC

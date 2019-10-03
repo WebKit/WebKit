@@ -49,7 +49,7 @@ public:
         ReadWrite,
         Mach,
         Generic,
-        ReadByPid
+        ReadByProcess
     };
 
     class Handle {
@@ -106,6 +106,9 @@ public:
     static bool createHandleForGenericExtension(const String& extensionClass, Handle&);
     static bool createHandleForMachLookupByPid(const String& service, ProcessID, Handle&);
     static bool createHandleForReadByPid(const String& path, ProcessID, Handle&);
+#if HAVE(AUDIT_TOKEN)
+    static bool createHandleForReadByAuditToken(const String& path, audit_token_t, Handle&);
+#endif
     ~SandboxExtension();
 
     bool consume();

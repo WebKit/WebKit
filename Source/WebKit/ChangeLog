@@ -1,3 +1,57 @@
+2019-10-03  Per Arne Vollan  <pvollan@apple.com>
+
+        REGRESSION(249649): Unable to open local files in MiniBrowser on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=201798
+
+        Reviewed by Brent Fulgham.
+
+        The commit <https://trac.webkit.org/changeset/249649> introduced a MiniBrowser regression on macOS where MiniBrowser
+        is not able to open local files. The change set r249649 fixed a problem where the WebContent process PID was not ready
+        to be used when creating a sandbox extension. This happened in the cases where the WebContent process had not finished
+        launching when the load started. The WebContent process is also creating sandbox extensions for the Networking process
+        for the files being loaded, and also needs to be passing the audit token of the Networking process when creating these.
+        This patch implements getting the audit token for the Networking process when the WebProcess is sending a message to
+        the UI process to establish the Networking process connection. The audit token is stored in the NetworkProcessConnection
+        object, and passed to the NetworkLoadParameters object when the load is started. Finally, when encoding the Network
+        resources load parameters, the audit token is used to create an extension for the Networking process.
+
+        API test: WKWebView.LoadFileWithLoadRequest
+
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        * Platform/IPC/ArgumentCoders.cpp:
+        (IPC::ArgumentCoder<audit_token_t>::encode):
+        (IPC::ArgumentCoder<audit_token_t>::decode):
+        * Platform/IPC/ArgumentCoders.h:
+        * Shared/Cocoa/SandboxExtensionCocoa.mm:
+        (WebKit::SandboxExtensionImpl::create):
+        (WebKit::SandboxExtensionImpl::sandboxExtensionForType):
+        (WebKit::SandboxExtensionImpl::SandboxExtensionImpl):
+        (WebKit::SandboxExtension::createHandleForMachLookupByPid):
+        (WebKit::SandboxExtension::createHandleForReadByPid):
+        (WebKit::SandboxExtension::createHandleForReadByAuditToken):
+        * Shared/SandboxExtension.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::openNetworkProcessConnection):
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/NetworkProcessConnection.h:
+        (WebKit::NetworkProcessConnection::setNetworkProcessAuditToken):
+        (WebKit::NetworkProcessConnection::networkProcessAuditToken const):
+        * WebProcess/Network/NetworkProcessConnectionInfo.h: Added.
+        (WebKit::NetworkProcessConnectionInfo::identifier):
+        (WebKit::NetworkProcessConnectionInfo::encode const):
+        (WebKit::NetworkProcessConnectionInfo::decode):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        (WebKit::WebLoaderStrategy::startPingLoad):
+        (WebKit::WebLoaderStrategy::preconnectTo):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::getNetworkProcessConnection):
+        (WebKit::WebProcess::ensureNetworkProcessConnection):
+
 2019-10-03  Konstantin Tokarev  <annulen@yandex.ru>
 
         CMake-built WebKit.framework should launch XPC services successfully

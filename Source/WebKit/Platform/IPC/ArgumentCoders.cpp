@@ -188,4 +188,21 @@ bool ArgumentCoder<SHA1::Digest>::decode(Decoder& decoder, SHA1::Digest& digest)
     return decoder.decodeFixedLengthData(digest.data(), sizeof(digest), 1);
 }
 
+#if HAVE(AUDIT_TOKEN)
+void ArgumentCoder<audit_token_t>::encode(Encoder& encoder, const audit_token_t& auditToken)
+{
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(auditToken.val); i++)
+        encoder << auditToken.val[i];
+}
+
+bool ArgumentCoder<audit_token_t>::decode(Decoder& decoder, audit_token_t& auditToken)
+{
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(auditToken.val); i++) {
+        if (!decoder.decode(auditToken.val[i]))
+            return false;
+    }
+    return true;
+}
+#endif
+
 } // namespace IPC

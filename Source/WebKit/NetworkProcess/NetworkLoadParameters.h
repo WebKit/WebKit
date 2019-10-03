@@ -46,6 +46,9 @@ public:
     WebCore::FrameIdentifier webFrameID;
     RefPtr<WebCore::SecurityOrigin> topOrigin;
     WTF::ProcessID parentPID { 0 };
+#if HAVE(AUDIT_TOKEN)
+    Optional<audit_token_t> networkProcessAuditToken;
+#endif
     WebCore::ResourceRequest request;
     WebCore::ContentSniffingPolicy contentSniffingPolicy { WebCore::ContentSniffingPolicy::SniffContent };
     WebCore::ContentEncodingSniffingPolicy contentEncodingSniffingPolicy { WebCore::ContentEncodingSniffingPolicy::Sniff };

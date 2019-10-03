@@ -1,3 +1,14 @@
+2019-10-03  Per Arne Vollan  <pvollan@apple.com>
+
+        REGRESSION(249649): Unable to open local files in MiniBrowser on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=201798
+
+        Reviewed by Brent Fulgham.
+
+        Added API test WKWebView.LoadFileWithLoadRequest.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/LoadFileURL.mm:
+
 2019-10-03  Jonathan Bedard  <jbedard@apple.com>
 
         Add myself to various tools watchlists

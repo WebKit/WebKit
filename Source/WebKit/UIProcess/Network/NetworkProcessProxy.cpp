@@ -36,6 +36,7 @@
 #endif
 #include "Logging.h"
 #include "NetworkContentRuleListManagerMessages.h"
+#include "NetworkProcessConnectionInfo.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
 #include "SandboxExtension.h"
@@ -158,10 +159,10 @@ void NetworkProcessProxy::openNetworkProcessConnection(uint64_t connectionReques
         auto request = m_connectionRequests.take(connectionRequestIdentifier);
 
 #if USE(UNIX_DOMAIN_SOCKETS) || OS(WINDOWS)
-        request.reply(*connectionIdentifier);
+        request.reply(NetworkProcessConnectionInfo { WTFMove(*connectionIdentifier) });
 #elif OS(DARWIN)
         MESSAGE_CHECK(MACH_PORT_VALID(connectionIdentifier->port()));
-        request.reply(IPC::Attachment { connectionIdentifier->port(), MACH_MSG_TYPE_MOVE_SEND });
+        request.reply(NetworkProcessConnectionInfo { IPC::Attachment { connectionIdentifier->port(), MACH_MSG_TYPE_MOVE_SEND }, connection()->getAuditToken() });
 #else
         notImplemented();
 #endif

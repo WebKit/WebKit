@@ -286,6 +286,9 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.webPageID = trackingParameters.pageID;
     loadParameters.webFrameID = trackingParameters.frameID;
     loadParameters.parentPID = presentingApplicationPID();
+#if HAVE(AUDIT_TOKEN)
+    loadParameters.networkProcessAuditToken = WebProcess::singleton().ensureNetworkProcessConnection().networkProcessAuditToken();
+#endif
     loadParameters.request = request;
     loadParameters.contentSniffingPolicy = contentSniffingPolicy;
     loadParameters.contentEncodingSniffingPolicy = contentEncodingSniffingPolicy;
@@ -561,6 +564,9 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsi
     loadParameters.webPageID = pageID;
     loadParameters.webFrameID = frameID;
     loadParameters.parentPID = presentingApplicationPID();
+#if HAVE(AUDIT_TOKEN)
+    loadParameters.networkProcessAuditToken = WebProcess::singleton().ensureNetworkProcessConnection().networkProcessAuditToken();
+#endif
     loadParameters.request = request;
     loadParameters.contentSniffingPolicy = ContentSniffingPolicy::SniffContent;
     loadParameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Sniff;
@@ -630,6 +636,9 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
     loadParameters.sourceOrigin = &document->securityOrigin();
     loadParameters.topOrigin = &document->topOrigin();
     loadParameters.parentPID = presentingApplicationPID();
+#if HAVE(AUDIT_TOKEN)
+    loadParameters.networkProcessAuditToken = WebProcess::singleton().ensureNetworkProcessConnection().networkProcessAuditToken();
+#endif
     loadParameters.storedCredentialsPolicy = options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
     loadParameters.options = options;
     loadParameters.originalRequestHeaders = originalRequestHeaders;
@@ -690,6 +699,9 @@ void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const URL& url, S
     parameters.webPageID = webPage->identifier();
     parameters.webFrameID = webFrame->frameID();
     parameters.parentPID = presentingApplicationPID();
+#if HAVE(AUDIT_TOKEN)
+    parameters.networkProcessAuditToken = WebProcess::singleton().ensureNetworkProcessConnection().networkProcessAuditToken();
+#endif
     parameters.storedCredentialsPolicy = storedCredentialsPolicy;
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
     parameters.shouldRestrictHTTPResponseAccess = shouldPerformSecurityChecks();

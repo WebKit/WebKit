@@ -76,6 +76,11 @@ public:
     WebSWClientConnection& serviceWorkerConnection();
 #endif
 
+#if HAVE(AUDIT_TOKEN)
+    void setNetworkProcessAuditToken(Optional<audit_token_t> auditToken) { m_networkProcessAuditToken = auditToken; }
+    Optional<audit_token_t> networkProcessAuditToken() const { return m_networkProcessAuditToken; }
+#endif
+
 private:
     NetworkProcessConnection(IPC::Connection::Identifier);
 
@@ -99,6 +104,9 @@ private:
 
     // The connection from the web process to the network process.
     Ref<IPC::Connection> m_connection;
+#if HAVE(AUDIT_TOKEN)
+    Optional<audit_token_t> m_networkProcessAuditToken;
+#endif
 
 #if ENABLE(INDEXED_DATABASE)
     RefPtr<WebIDBConnectionToServer> m_webIDBConnection;

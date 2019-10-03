@@ -36,7 +36,7 @@ messages -> WebProcessProxy LegacyReceiver {
     GetPlugins(bool refresh) -> (Vector<WebCore::PluginInfo> plugins, Vector<WebCore::PluginInfo> applicationPlugins, struct Optional<Vector<WebCore::SupportedPluginIdentifier>> supportedPluginIdentifiers) Synchronous
     GetPluginProcessConnection(uint64_t pluginProcessToken) -> (IPC::Attachment connectionHandle, bool supportsAsynchronousInitialization) Synchronous
 #endif
-    GetNetworkProcessConnection() -> (IPC::Attachment connectionHandle) Synchronous
+    GetNetworkProcessConnection() -> (struct WebKit::NetworkProcessConnectionInfo connectionInfo) Synchronous
     ProcessReadyToSuspend()
     DidCancelProcessSuspension()
 

@@ -32,6 +32,17 @@
 #import <WebKit/WebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
+TEST(WKWebView, LoadFileWithLoadRequest)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    auto delegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [delegate waitForDidFinishNavigation];
+}
 
 TEST(WKWebView, LoadTwoFiles)
 {
