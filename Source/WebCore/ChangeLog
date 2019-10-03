@@ -1,3 +1,40 @@
+2019-10-02  Andy Estes  <aestes@apple.com>
+
+        [iOS] When hit testing for a context menu interaction, do not consider whether the element is contenteditable
+        https://bugs.webkit.org/show_bug.cgi?id=202498
+        <rdar://problem/54723131>
+
+        Reviewed by Tim Horton.
+
+        When the user selects a context menu action, WebKit performs a hit test in order to find the
+        acted-on element on the page. This is separate from the hit test performed to generate the
+        context menu's targeted preview. Since an arbitrary amount of time can elapse between
+        preview generation and action selection, this second hit-tests might return a different
+        element.
+
+        One case where we know a different element can be returned is in apps that dynamically
+        enable and disable editing. If editing is disabled when the first hit test occurs but is
+        enabled when the second one occurs, different elements will be returned due to
+        Frame::qualifyingNodeAtViewportLocation preferring to return the root editable element when
+        the approximate node is contenteditable.
+
+        While the appropriate long-term fix is to only hit-test once and use that element for both
+        preview generation and action selection, this patch implements a short-term fix to address
+        the specific problem in rdar://problem/54723131 by disabling the contenteditable behavior
+        described above for context menu interaction hit testing.
+
+        The long-term fix is tracked by <https://webkit.org/b/202499>.
+
+        * page/Frame.h:
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::qualifyingNodeAtViewportLocation):
+        (WebCore::Frame::approximateNodeAtViewportLocationLegacy):
+        (WebCore::ancestorRespondingToClickEventsNodeQualifier):
+        (WebCore::Frame::nodeRespondingToClickEvents):
+        (WebCore::Frame::nodeRespondingToDoubleClickEvent):
+        (WebCore::Frame::nodeRespondingToInteraction):
+        (WebCore::Frame::nodeRespondingToScrollWheelEvents):
+
 2019-10-02  Antti Koivisto  <antti@apple.com>
 
         [CSS Shadow Parts] Basic ::part() pseudo element support

@@ -2813,8 +2813,14 @@ void WebPage::requestPositionInformation(const InteractionInformationRequest& re
 
 void WebPage::startInteractionWithElementAtPosition(const WebCore::IntPoint& point)
 {
+    // FIXME: We've already performed a hit test when the long-press gesture was recognized and we
+    // used that result to generate the targeted preview, but now we are hit testing again in order
+    // to perform the selected action. Since an arbitrary amount of time can elapse between
+    // generating the targeted preview and the user selecting an action, it's possible that this
+    // second hit test will find a different element than the first one, leading to bugs like
+    // <rdar://problem/54723131>. We should re-use the results of the first hit test instead.
     FloatPoint adjustedPoint;
-    m_interactionNode = m_page->mainFrame().nodeRespondingToClickEvents(point, adjustedPoint);
+    m_interactionNode = m_page->mainFrame().nodeRespondingToInteraction(point, adjustedPoint);
 }
 
 void WebPage::stopInteraction()

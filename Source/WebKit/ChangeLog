@@ -1,3 +1,15 @@
+2019-10-02  Andy Estes  <aestes@apple.com>
+
+        [iOS] When hit testing for a context menu interaction, do not consider whether the element is contenteditable
+        https://bugs.webkit.org/show_bug.cgi?id=202498
+        <rdar://problem/54723131>
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::startInteractionWithElementAtPosition): Changed to call
+        WebCore::Frame::nodeRespondingToInteraction.
+
 2019-10-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION (r245672): <select> dropdown with text-rendering: optimizeLegibility freezes Safari
