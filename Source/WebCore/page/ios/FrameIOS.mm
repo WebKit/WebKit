@@ -266,8 +266,12 @@ bool Frame::hitTestResultAtViewportLocation(const FloatPoint& viewportLocation, 
     return true;
 }
 
-Node* Frame::qualifyingNodeAtViewportLocation(const FloatPoint& viewportLocation, FloatPoint& adjustedViewportLocation, const NodeQualifier& nodeQualifierFunction, bool shouldApproximate)
+Node* Frame::qualifyingNodeAtViewportLocation(const FloatPoint& viewportLocation, FloatPoint& adjustedViewportLocation, const NodeQualifier& nodeQualifierFunction, ShouldApproximate shouldApproximate, ShouldFindRootEditableElement shouldFindRootEditableElement)
 {
+#if !USE(UIKIT_EDITING)
+    UNUSED_PARAM(shouldFindRootEditableElement);
+#endif
+
     adjustedViewportLocation = viewportLocation;
 
     IntPoint testCenter;
@@ -282,12 +286,12 @@ Node* Frame::qualifyingNodeAtViewportLocation(const FloatPoint& viewportLocation
     Node* approximateNode = nodeQualifierFunction(candidateInfo, 0, 0);
 
 #if USE(UIKIT_EDITING)
-    if (approximateNode && approximateNode->isContentEditable()) {
+    if (shouldFindRootEditableElement == ShouldFindRootEditableElement::Yes && approximateNode && approximateNode->isContentEditable()) {
         // If we are in editable content, we look for the root editable element.
         approximateNode = approximateNode->rootEditableElement();
         // If we have a focusable node, there is no need to approximate.
         if (approximateNode)
-            shouldApproximate = false;
+            shouldApproximate = ShouldApproximate::No;
     }
 #endif
 
@@ -298,7 +302,7 @@ Node* Frame::qualifyingNodeAtViewportLocation(const FloatPoint& viewportLocation
     static const float unscaledSearchRadius = 15;
     int searchRadius = static_cast<int>(unscaledSearchRadius * ppiFactor / scale);
 
-    if (approximateNode && shouldApproximate) {
+    if (approximateNode && shouldApproximate == ShouldApproximate::Yes) {
         const float testOffsets[] = {
             -.3f, -.3f,
             -.6f, -.6f,
@@ -319,7 +323,7 @@ Node* Frame::qualifyingNodeAtViewportLocation(const FloatPoint& viewportLocation
                 break;
             }
         }
-    } else if (!approximateNode && shouldApproximate) {
+    } else if (!approximateNode && shouldApproximate == ShouldApproximate::Yes) {
         // Grab the closest parent element of our failed candidate node.
         Node* candidate = candidateInfo.innerNode();
         Node* failedNode = candidate;
@@ -367,7 +371,7 @@ Node* Frame::qualifyingNodeAtViewportLocation(const FloatPoint& viewportLocation
         IntPoint p = m_view->contentsToWindow(bestPoint);
         adjustedViewportLocation = p;
 #if USE(UIKIT_EDITING)
-        if (approximateNode->isContentEditable()) {
+        if (shouldFindRootEditableElement == ShouldFindRootEditableElement::Yes && approximateNode->isContentEditable()) {
             // When in editable content, look for the root editable node again,
             // since this could be the node found with the approximation.
             approximateNode = approximateNode->rootEditableElement();
@@ -448,12 +452,12 @@ Node* Frame::approximateNodeAtViewportLocationLegacy(const FloatPoint& viewportL
         return nullptr;
     };
 
-    return qualifyingNodeAtViewportLocation(viewportLocation, adjustedViewportLocation, WTFMove(ancestorRespondingToClickEvents), true);
+    return qualifyingNodeAtViewportLocation(viewportLocation, adjustedViewportLocation, WTFMove(ancestorRespondingToClickEvents), ShouldApproximate::Yes);
 }
 
-Node* Frame::nodeRespondingToClickEvents(const FloatPoint& viewportLocation, FloatPoint& adjustedViewportLocation, SecurityOrigin* securityOrigin)
+static inline NodeQualifier ancestorRespondingToClickEventsNodeQualifier(SecurityOrigin* securityOrigin = nullptr)
 {
-    auto&& ancestorRespondingToClickEvents = [securityOrigin](const HitTestResult& hitTestResult, Node* terminationNode, IntRect* nodeBounds) -> Node* {
+    return [securityOrigin](const HitTestResult& hitTestResult, Node* terminationNode, IntRect* nodeBounds) -> Node* {
         if (nodeBounds)
             *nodeBounds = IntRect();
 
@@ -478,8 +482,11 @@ Node* Frame::nodeRespondingToClickEvents(const FloatPoint& viewportLocation, Flo
 
         return nullptr;
     };
+}
 
-    return qualifyingNodeAtViewportLocation(viewportLocation, adjustedViewportLocation, WTFMove(ancestorRespondingToClickEvents), true);
+Node* Frame::nodeRespondingToClickEvents(const FloatPoint& viewportLocation, FloatPoint& adjustedViewportLocation, SecurityOrigin* securityOrigin)
+{
+    return qualifyingNodeAtViewportLocation(viewportLocation, adjustedViewportLocation, ancestorRespondingToClickEventsNodeQualifier(securityOrigin), ShouldApproximate::Yes);
 }
 
 Node* Frame::nodeRespondingToDoubleClickEvent(const FloatPoint& viewportLocation, FloatPoint& adjustedViewportLocation)
@@ -506,7 +513,12 @@ Node* Frame::nodeRespondingToDoubleClickEvent(const FloatPoint& viewportLocation
         return nullptr;
     };
 
-    return qualifyingNodeAtViewportLocation(viewportLocation, adjustedViewportLocation, WTFMove(ancestorRespondingToDoubleClickEvent), true);
+    return qualifyingNodeAtViewportLocation(viewportLocation, adjustedViewportLocation, WTFMove(ancestorRespondingToDoubleClickEvent), ShouldApproximate::Yes);
+}
+
+Node* Frame::nodeRespondingToInteraction(const FloatPoint& viewportLocation, FloatPoint& adjustedViewportLocation)
+{
+    return qualifyingNodeAtViewportLocation(viewportLocation, adjustedViewportLocation, ancestorRespondingToClickEventsNodeQualifier(), ShouldApproximate::Yes, ShouldFindRootEditableElement::No);
 }
 
 Node* Frame::nodeRespondingToScrollWheelEvents(const FloatPoint& viewportLocation)
@@ -539,7 +551,7 @@ Node* Frame::nodeRespondingToScrollWheelEvents(const FloatPoint& viewportLocatio
     };
 
     FloatPoint adjustedViewportLocation;
-    return qualifyingNodeAtViewportLocation(viewportLocation, adjustedViewportLocation, WTFMove(ancestorRespondingToScrollWheelEvents), false);
+    return qualifyingNodeAtViewportLocation(viewportLocation, adjustedViewportLocation, WTFMove(ancestorRespondingToScrollWheelEvents), ShouldApproximate::No);
 }
 
 int Frame::preferredHeight() const
