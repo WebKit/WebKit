@@ -36,6 +36,8 @@
 
 namespace WebCore {
 
+class Document;
+
 class TypedOMCSSImageValue final : public TypedOMCSSStyleValue {
     WTF_MAKE_ISO_ALLOCATED(TypedOMCSSImageValue);
 public:

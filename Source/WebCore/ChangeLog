@@ -1,3 +1,10 @@
+2019-10-03  Tim Horton  <timothy_horton@apple.com>
+
+        Yet another build fix
+
+        * css/typedom/TypedOMCSSImageValue.h:
+        Forward declare Document.
+
 2019-10-03  Jiewen Tan  <jiewen_tan@apple.com>
 
         Support googleLegacyAppidSupport extension
