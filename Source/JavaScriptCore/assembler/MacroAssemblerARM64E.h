@@ -188,6 +188,13 @@ public:
         return call(dataTempRegister, tag);
     }
 
+    ALWAYS_INLINE void callOperation(const FunctionPtr<OperationPtrTag> operation)
+    {
+        auto tmp = getCachedDataTempRegisterIDAndInvalidate();
+        move(TrustedImmPtr(operation.executableAddress()), tmp);
+        call(tmp, OperationPtrTag);
+    }
+
     ALWAYS_INLINE Jump jump() { return MacroAssemblerARM64::jump(); }
 
     void farJump(RegisterID target, PtrTag tag)

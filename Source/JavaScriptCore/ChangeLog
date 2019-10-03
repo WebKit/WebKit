@@ -1,3 +1,15 @@
+2019-10-03  Keith Miller  <keith_miller@apple.com>
+
+        Fix assembler on ARM64E
+        https://bugs.webkit.org/show_bug.cgi?id=202528
+
+        Reviewed by Michael Saboff.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::callOperation):
+        * assembler/MacroAssemblerARM64E.h:
+        (JSC::MacroAssemblerARM64E::callOperation):
+
 2019-10-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] AsyncGenerator should have internal fields
