@@ -26,7 +26,7 @@
 #include "config.h"
 #include "U2fAuthenticator.h"
 
-#if ENABLE(WEB_AUTHN) && PLATFORM(MAC)
+#if ENABLE(WEB_AUTHN)
 
 #include "CtapDriver.h"
 #include <WebCore/ApduResponse.h>
@@ -238,4 +238,4 @@ void U2fAuthenticator::continueSignCommandAfterResponseReceived(ApduResponse&& a
 
 } // namespace WebKit
 
-#endif // ENABLE(WEB_AUTHN) && PLATFORM(MAC)
+#endif // ENABLE(WEB_AUTHN)

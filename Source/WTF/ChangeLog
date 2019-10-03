@@ -1,3 +1,158 @@
+2019-10-03  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r249059. rdar://problem/55927255
+
+    [WebAuthn] Support NFC authenticators for iOS
+    https://bugs.webkit.org/show_bug.cgi?id=188624
+    <rdar://problem/43354214>
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebCore:
+    
+    Tests: http/wpt/webauthn/ctap-nfc-failure.https.html
+           http/wpt/webauthn/public-key-credential-create-failure-nfc.https.html
+           http/wpt/webauthn/public-key-credential-create-success-nfc.https.html
+           http/wpt/webauthn/public-key-credential-get-failure-nfc.https.html
+           http/wpt/webauthn/public-key-credential-get-success-nfc.https.html
+    
+    * Modules/webauthn/apdu/ApduResponse.h:
+    Adds a new method to support moving m_data.
+    * Modules/webauthn/fido/FidoConstants.h:
+    Adds constants for NFC applet selection.
+    
+    Source/WebKit:
+    
+    This patch implements support for NFC authenticators including both FIDO2 and U2F ones. It utilizes a private
+    framework called NearField instead of CoreNFC to be able to supply a custom UI later if necessary.
+    
+    The patch follows almost the same flow as previous HID and Local authenticator support.
+    1) Discovery is via NfcService which will invoke NFHardwareManager to start a generic NFC reader session.
+    2) Once a reader session is established, a NfcConnection is created to start the polling and register the WKNFReaderSessionDelegate
+    to wait for 'didDetectTags'.
+    3) When tags are detected, NfcConnection will determine if it meets our requriements: { type, connectability, fido applet availability }.
+    The first tag that meets all requirement will then be returned for WebAuthn operations.
+    4) The first WebAuthn operation is to send authenticatorGetInfo command to determine the supported protocol, and then initialize corresponding
+    authenticators. Noted, the sending/receiving of this command is now abstracted into FidoService which will be shared across HidService and NfcService.
+    5) From then, the actual WebAuthn request, either makeCredential or getAssertion will be sent.
+    
+    For testing, this patch follows the same flow as well.
+    1) MockNfcService overrides NfcService to mock the behavior of NFC Tags discovery.
+    2) The same class also swizzles methods from NFReaderSession to mock tag connection and communication.
+    
+    * Platform/spi/Cocoa/NearFieldSPI.h: Added.
+    * Sources.txt:
+    * SourcesCocoa.txt:
+    * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+    (WKWebsiteDataStoreSetWebAuthenticationMockConfiguration):
+    * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+    (WebKit::AuthenticatorManagerInternal::collectTransports):
+    * UIProcess/WebAuthentication/AuthenticatorTransportService.cpp:
+    (WebKit::AuthenticatorTransportService::create):
+    (WebKit::AuthenticatorTransportService::createMock):
+    * UIProcess/WebAuthentication/Cocoa/HidService.h:
+    * UIProcess/WebAuthentication/Cocoa/HidService.mm:
+    (WebKit::HidService::HidService):
+    (WebKit::HidService::deviceAdded):
+    (WebKit::HidService::continueAddDeviceAfterGetInfo): Deleted.
+    * UIProcess/WebAuthentication/Cocoa/NearFieldSoftLink.h: Copied from Source/WebKit/UIProcess/WebAuthentication/Cocoa/HidService.h.
+    * UIProcess/WebAuthentication/Cocoa/NearFieldSoftLink.mm: Copied from Source/WebKit/UIProcess/WebAuthentication/Cocoa/HidService.h.
+    * UIProcess/WebAuthentication/Cocoa/NfcConnection.h: Copied from Source/WebKit/UIProcess/WebAuthentication/Cocoa/HidService.h.
+    * UIProcess/WebAuthentication/Cocoa/NfcConnection.mm: Added.
+    (WebKit::fido::compareVersion):
+    (WebKit::NfcConnection::NfcConnection):
+    (WebKit::NfcConnection::~NfcConnection):
+    (WebKit::NfcConnection::transact const):
+    (WebKit::NfcConnection::didDetectTags const):
+    * UIProcess/WebAuthentication/Cocoa/NfcService.h: Copied from Source/WebKit/UIProcess/WebAuthentication/Cocoa/HidService.h.
+    * UIProcess/WebAuthentication/Cocoa/NfcService.mm: Added.
+    (WebKit::NfcService::NfcService):
+    (WebKit::NfcService::~NfcService):
+    (WebKit::NfcService::didConnectTag):
+    (WebKit::NfcService::startDiscoveryInternal):
+    (WebKit::NfcService::platformStartDiscovery):
+    * UIProcess/WebAuthentication/Cocoa/WKNFReaderSessionDelegate.h: Copied from Source/WebKit/UIProcess/WebAuthentication/Cocoa/HidService.h.
+    * UIProcess/WebAuthentication/Cocoa/WKNFReaderSessionDelegate.mm: Copied from Source/WebKit/UIProcess/WebAuthentication/Cocoa/HidService.h.
+    (-[WKNFReaderSessionDelegate initWithConnection:]):
+    (-[WKNFReaderSessionDelegate readerSession:didDetectTags:]):
+    * UIProcess/WebAuthentication/Mock/MockHidConnection.cpp:
+    (WebKit::MockHidConnection::send):
+    (WebKit::MockHidConnection::registerDataReceivedCallbackInternal):
+    (WebKit::MockHidConnection::parseRequest):
+    (WebKit::MockHidConnection::feedReports):
+    (WebKit::MockHidConnection::shouldContinueFeedReports):
+    * UIProcess/WebAuthentication/Mock/MockNfcService.h: Copied from Source/WebKit/UIProcess/WebAuthentication/Cocoa/HidService.h.
+    * UIProcess/WebAuthentication/Mock/MockNfcService.mm: Added.
+    (-[WKMockNFTag type]):
+    (-[WKMockNFTag initWithNFTag:]):
+    (-[WKMockNFTag description]):
+    (-[WKMockNFTag isEqualToNFTag:]):
+    (-[WKMockNFTag initWithType:]):
+    (WebKit::MockNfcService::MockNfcService):
+    (WebKit::MockNfcService::transceive):
+    (WebKit::MockNfcService::platformStartDiscovery):
+    (WebKit::MockNfcService::detectTags const):
+    * UIProcess/WebAuthentication/Mock/MockWebAuthenticationConfiguration.h:
+    * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+    * UIProcess/WebAuthentication/fido/CtapAuthenticator.h:
+    * UIProcess/WebAuthentication/fido/CtapNfcDriver.cpp: Added.
+    (WebKit::CtapNfcDriver::CtapNfcDriver):
+    (WebKit::CtapNfcDriver::transact):
+    (WebKit::CtapNfcDriver::respondAsync const):
+    * UIProcess/WebAuthentication/fido/CtapNfcDriver.h: Copied from Source/WebKit/UIProcess/WebAuthentication/Cocoa/HidService.h.
+    * UIProcess/WebAuthentication/fido/FidoService.cpp: Added.
+    (WebKit::FidoService::FidoService):
+    (WebKit::FidoService::getInfo):
+    (WebKit::FidoService::continueAfterGetInfo):
+    * UIProcess/WebAuthentication/fido/FidoService.h: Copied from Source/WebKit/UIProcess/WebAuthentication/Cocoa/HidService.h.
+    * UIProcess/WebAuthentication/fido/U2fAuthenticator.cpp:
+    * UIProcess/WebAuthentication/fido/U2fAuthenticator.h:
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    Source/WTF:
+    
+    * wtf/Platform.h:
+    Add a feature flag for NearField.
+    
+    Tools:
+    
+    * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+    (WTR::TestRunner::setWebAuthenticationMockConfiguration):
+    Setup NFC mock testing configuration.
+    
+    LayoutTests:
+    
+    * http/wpt/webauthn/ctap-nfc-failure.https-expected.txt: Added.
+    * http/wpt/webauthn/ctap-nfc-failure.https.html: Added.
+    * http/wpt/webauthn/public-key-credential-create-failure-nfc.https-expected.txt: Added.
+    * http/wpt/webauthn/public-key-credential-create-failure-nfc.https.html: Added.
+    * http/wpt/webauthn/public-key-credential-create-success-hid.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-create-success-hid.https.html:
+    This patch replaces the "local" keyword with "hid".
+    * http/wpt/webauthn/public-key-credential-create-success-nfc.https-expected.txt: Added.
+    * http/wpt/webauthn/public-key-credential-create-success-nfc.https.html: Added.
+    * http/wpt/webauthn/public-key-credential-get-failure-nfc.https-expected.txt: Added.
+    * http/wpt/webauthn/public-key-credential-get-failure-nfc.https.html: Added.
+    * http/wpt/webauthn/public-key-credential-get-success-nfc.https-expected.txt: Added.
+    * http/wpt/webauthn/public-key-credential-get-success-nfc.https.html: Added.
+    * http/wpt/webauthn/resources/util.js:
+    * platform/ios-simulator-wk2/TestExpectations:
+    Skip NFC tests for simulators.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249059 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+            [WebAuthn] Support NFC authenticators for iOS
+            https://bugs.webkit.org/show_bug.cgi?id=188624
+            <rdar://problem/43354214>
+
+            Reviewed by Chris Dumez.
+
+            * wtf/Platform.h:
+            Add a feature flag for NearField.
+
 2019-09-29  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r250345. rdar://problem/55825352

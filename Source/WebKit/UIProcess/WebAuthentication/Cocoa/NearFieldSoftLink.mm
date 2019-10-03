@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+
+#import <wtf/SoftLinking.h>
 
 #if ENABLE(WEB_AUTHN)
 
-#include "Authenticator.h"
-#include <WebCore/AuthenticatorGetInfoResponse.h>
+SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(WebKit, NearField);
 
-namespace WebKit {
+SOFT_LINK_CLASS_FOR_SOURCE(WebKit, NearField, NFTag);
+SOFT_LINK_CLASS_FOR_SOURCE(WebKit, NearField, NFSession);
+SOFT_LINK_CLASS_FOR_SOURCE(WebKit, NearField, NFReaderSession);
 
-class CtapDriver;
-
-class CtapAuthenticator final : public Authenticator {
-public:
-    static Ref<CtapAuthenticator> create(std::unique_ptr<CtapDriver>&& driver, fido::AuthenticatorGetInfoResponse&& info)
-    {
-        return adoptRef(*new CtapAuthenticator(WTFMove(driver), WTFMove(info)));
-    }
-
-private:
-    explicit CtapAuthenticator(std::unique_ptr<CtapDriver>&&, fido::AuthenticatorGetInfoResponse&&);
-
-    void makeCredential() final;
-    void continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&&) const;
-    void getAssertion() final;
-    void continueGetAssertionAfterResponseReceived(Vector<uint8_t>&&);
-
-    bool tryDowngrade();
-
-    std::unique_ptr<CtapDriver> m_driver;
-    fido::AuthenticatorGetInfoResponse m_info;
-    bool m_isDowngraded { false };
-};
-
-} // namespace WebKit
+#if PLATFORM(MAC)
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebKit, NearField, NFHardwareManager);
+#else
+SOFT_LINK_CLASS_FOR_SOURCE(WebKit, NearField, NFHardwareManager);
+#endif
 
 #endif // ENABLE(WEB_AUTHN)

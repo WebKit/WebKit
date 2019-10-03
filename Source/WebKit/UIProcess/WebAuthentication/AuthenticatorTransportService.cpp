@@ -32,6 +32,8 @@
 #include "LocalService.h"
 #include "MockHidService.h"
 #include "MockLocalService.h"
+#include "MockNfcService.h"
+#include "NfcService.h"
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
@@ -45,6 +47,8 @@ UniqueRef<AuthenticatorTransportService> AuthenticatorTransportService::create(W
     case WebCore::AuthenticatorTransport::Usb:
         return makeUniqueRef<HidService>(observer);
 #endif
+    case WebCore::AuthenticatorTransport::Nfc:
+        return makeUniqueRef<NfcService>(observer);
     default:
         ASSERT_NOT_REACHED();
         return makeUniqueRef<LocalService>(observer);
@@ -60,6 +64,8 @@ UniqueRef<AuthenticatorTransportService> AuthenticatorTransportService::createMo
     case WebCore::AuthenticatorTransport::Usb:
         return makeUniqueRef<MockHidService>(observer, configuration);
 #endif
+    case WebCore::AuthenticatorTransport::Nfc:
+        return makeUniqueRef<MockNfcService>(observer, configuration);
     default:
         ASSERT_NOT_REACHED();
         return makeUniqueRef<MockLocalService>(observer, configuration);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,37 +25,18 @@
 
 #pragma once
 
-#if ENABLE(WEB_AUTHN)
+#if ENABLE(WEB_AUTHN) && HAVE(NEAR_FIELD)
 
-#include "Authenticator.h"
-#include <WebCore/AuthenticatorGetInfoResponse.h>
+#import "NearFieldSPI.h"
 
 namespace WebKit {
+class NfcConnection;
+}
 
-class CtapDriver;
+@interface WKNFReaderSessionDelegate : NSObject <NFReaderSessionDelegate>
 
-class CtapAuthenticator final : public Authenticator {
-public:
-    static Ref<CtapAuthenticator> create(std::unique_ptr<CtapDriver>&& driver, fido::AuthenticatorGetInfoResponse&& info)
-    {
-        return adoptRef(*new CtapAuthenticator(WTFMove(driver), WTFMove(info)));
-    }
+- (instancetype)initWithConnection:(WebKit::NfcConnection&)connection;
 
-private:
-    explicit CtapAuthenticator(std::unique_ptr<CtapDriver>&&, fido::AuthenticatorGetInfoResponse&&);
+@end
 
-    void makeCredential() final;
-    void continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&&) const;
-    void getAssertion() final;
-    void continueGetAssertionAfterResponseReceived(Vector<uint8_t>&&);
-
-    bool tryDowngrade();
-
-    std::unique_ptr<CtapDriver> m_driver;
-    fido::AuthenticatorGetInfoResponse m_info;
-    bool m_isDowngraded { false };
-};
-
-} // namespace WebKit
-
-#endif // ENABLE(WEB_AUTHN)
+#endif // ENABLE(WEB_AUTHN) && HAVE(NEAR_FIELD)

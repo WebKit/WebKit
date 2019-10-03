@@ -89,3 +89,10 @@ webkit.org/b/182849 imported/w3c/web-platform-tests/xhr/event-upload-progress-cr
 imported/w3c/web-platform-tests/IndexedDB/keypath-special-identifiers.htm [ Slow ]
 
 webkit.org/b/172001 scrollingcoordinator/ios/sync-layer-positions-after-scroll.html [ Pass Failure ]
+
+# NearField.framework doesn't present in the simulator, and therefore skip all WebAuthn NFC tests
+http/wpt/webauthn/ctap-nfc-failure.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-create-failure-nfc.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-create-success-nfc.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-get-failure-nfc.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-get-success-nfc.https.html [ Skip ]

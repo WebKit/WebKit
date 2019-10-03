@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,37 +25,39 @@
 
 #pragma once
 
-#if ENABLE(WEB_AUTHN)
+#if ENABLE(WEB_AUTHN) && HAVE(NEAR_FIELD)
 
-#include "Authenticator.h"
-#include <WebCore/AuthenticatorGetInfoResponse.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/WeakPtr.h>
+
+OBJC_CLASS NFReaderSession;
+OBJC_CLASS NSArray;
+OBJC_CLASS WKNFReaderSessionDelegate;
 
 namespace WebKit {
 
-class CtapDriver;
+class NfcService;
 
-class CtapAuthenticator final : public Authenticator {
+class NfcConnection : public CanMakeWeakPtr<NfcConnection> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(NfcConnection);
 public:
-    static Ref<CtapAuthenticator> create(std::unique_ptr<CtapDriver>&& driver, fido::AuthenticatorGetInfoResponse&& info)
-    {
-        return adoptRef(*new CtapAuthenticator(WTFMove(driver), WTFMove(info)));
-    }
+    NfcConnection(RetainPtr<NFReaderSession>&&, NfcService&);
+    ~NfcConnection();
+
+    Vector<uint8_t> transact(Vector<uint8_t>&& data) const;
+
+    // For WKNFReaderSessionDelegate
+    void didDetectTags(NSArray *) const;
 
 private:
-    explicit CtapAuthenticator(std::unique_ptr<CtapDriver>&&, fido::AuthenticatorGetInfoResponse&&);
-
-    void makeCredential() final;
-    void continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&&) const;
-    void getAssertion() final;
-    void continueGetAssertionAfterResponseReceived(Vector<uint8_t>&&);
-
-    bool tryDowngrade();
-
-    std::unique_ptr<CtapDriver> m_driver;
-    fido::AuthenticatorGetInfoResponse m_info;
-    bool m_isDowngraded { false };
+    RetainPtr<NFReaderSession> m_session;
+    RetainPtr<WKNFReaderSessionDelegate> m_delegate;
+    WeakPtr<NfcService> m_service;
 };
 
 } // namespace WebKit
 
-#endif // ENABLE(WEB_AUTHN)
+#endif // ENABLE(WEB_AUTHN) && HAVE(NEAR_FIELD)

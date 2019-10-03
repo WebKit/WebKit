@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "WKNFReaderSessionDelegate.h"
 
-#if ENABLE(WEB_AUTHN)
+#if ENABLE(WEB_AUTHN) && HAVE(NEAR_FIELD)
 
-#include "Authenticator.h"
-#include <WebCore/AuthenticatorGetInfoResponse.h>
+#import "NfcConnection.h"
+#import <wtf/RunLoop.h>
+#import <wtf/WeakPtr.h>
 
-namespace WebKit {
+#import "NearFieldSoftLink.h"
 
-class CtapDriver;
+@implementation WKNFReaderSessionDelegate {
+    WeakPtr<WebKit::NfcConnection> _connection;
+}
 
-class CtapAuthenticator final : public Authenticator {
-public:
-    static Ref<CtapAuthenticator> create(std::unique_ptr<CtapDriver>&& driver, fido::AuthenticatorGetInfoResponse&& info)
-    {
-        return adoptRef(*new CtapAuthenticator(WTFMove(driver), WTFMove(info)));
-    }
+- (instancetype)initWithConnection:(WebKit::NfcConnection&)connection
+{
+    if ((self = [super init]))
+        _connection = makeWeakPtr(connection);
+    return self;
+}
 
-private:
-    explicit CtapAuthenticator(std::unique_ptr<CtapDriver>&&, fido::AuthenticatorGetInfoResponse&&);
+// Executed in a different thread.
+- (void)readerSession:(NFReaderSession*)theSession didDetectTags:(NSArray<NFTag *> *)tags
+{
+    ASSERT(!RunLoop::isMain());
 
-    void makeCredential() final;
-    void continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&&) const;
-    void getAssertion() final;
-    void continueGetAssertionAfterResponseReceived(Vector<uint8_t>&&);
+    RunLoop::main().dispatch([connection = _connection, tags = retainPtr(tags)] {
+        if (!connection)
+            return;
+        connection->didDetectTags(tags.get());
+    });
+}
 
-    bool tryDowngrade();
+@end
 
-    std::unique_ptr<CtapDriver> m_driver;
-    fido::AuthenticatorGetInfoResponse m_info;
-    bool m_isDowngraded { false };
-};
-
-} // namespace WebKit
-
-#endif // ENABLE(WEB_AUTHN)
+#endif // ENABLE(WEB_AUTHN) && HAVE(NEAR_FIELD)
