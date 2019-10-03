@@ -43,7 +43,7 @@ class ScriptExecutionContext;
 class FetchLoader final : public ThreadableLoaderClient {
 public:
     FetchLoader(FetchLoaderClient&, FetchBodyConsumer*);
-    ~FetchLoader();
+    WEBCORE_EXPORT ~FetchLoader();
 
     RefPtr<SharedBuffer> startStreaming();
 

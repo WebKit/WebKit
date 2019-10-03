@@ -56,7 +56,7 @@ class TileController final : public TiledBacking {
     friend class TileGrid;
 public:
     WEBCORE_EXPORT explicit TileController(PlatformCALayer*);
-    ~TileController();
+    WEBCORE_EXPORT ~TileController();
     
     WEBCORE_EXPORT static String tileGridContainerLayerName();
     static String zoomedOutTileGridContainerLayerName();

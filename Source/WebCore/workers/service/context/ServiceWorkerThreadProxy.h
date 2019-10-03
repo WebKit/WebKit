@@ -55,7 +55,7 @@ public:
     {
         return adoptRef(*new ServiceWorkerThreadProxy(std::forward<Args>(args)...));
     }
-    ~ServiceWorkerThreadProxy();
+    WEBCORE_EXPORT ~ServiceWorkerThreadProxy();
 
     ServiceWorkerIdentifier identifier() const { return m_serviceWorkerThread->identifier(); }
     ServiceWorkerThread& thread() { return m_serviceWorkerThread.get(); }

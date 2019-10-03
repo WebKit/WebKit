@@ -59,6 +59,8 @@ public:
     WEBCORE_EXPORT static Ref<InProcessIDBServer> create(PAL::SessionID);
     WEBCORE_EXPORT static Ref<InProcessIDBServer> create(PAL::SessionID, const String& databaseDirectoryPath);
 
+    WEBCORE_EXPORT virtual ~InProcessIDBServer();
+
     WEBCORE_EXPORT IDBClient::IDBConnectionToServer& connectionToServer() const;
     IDBServer::IDBConnectionToClient& connectionToClient() const;
     IDBServer::IDBServer& server() { return m_server.get(); }

@@ -59,6 +59,8 @@ Ref<InProcessIDBServer> InProcessIDBServer::create(PAL::SessionID sessionID, con
     return server;
 }
 
+InProcessIDBServer::~InProcessIDBServer() = default;
+
 StorageQuotaManager* InProcessIDBServer::quotaManager(const ClientOrigin& origin)
 {
     return m_quotaManagers.ensure(origin, [] {

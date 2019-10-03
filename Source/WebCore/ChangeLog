@@ -1,5 +1,25 @@
 2019-10-03  Tim Horton  <timothy_horton@apple.com>
 
+        WebKit doesn't build with trunk clang
+        https://bugs.webkit.org/show_bug.cgi?id=202511
+
+        Reviewed by Anders Carlsson.
+
+        * Modules/fetch/FetchLoader.h:
+        * Modules/geolocation/Geolocation.h:
+        * Modules/indexeddb/IDBTransaction.h:
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        * Modules/indexeddb/shared/InProcessIDBServer.h:
+        * Modules/notifications/Notification.cpp:
+        * Modules/notifications/Notification.h:
+        * platform/graphics/ca/TileController.h:
+        * workers/service/context/ServiceWorkerThreadProxy.h:
+        Fix the build by exporting destructors and custom delete operators.
+        I don't know why this changed, but trunk clang insists.
+        There are also some new warnings; this only fixes the hard errors.
+
+2019-10-03  Tim Horton  <timothy_horton@apple.com>
+
         Yet another build fix
 
         * css/typedom/TypedOMCSSImageValue.h:

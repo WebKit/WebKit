@@ -47,7 +47,7 @@ class Document;
 class NotificationPermissionCallback;
 
 class Notification final : public RefCounted<Notification>, public ActiveDOMObject, public EventTargetWithInlineData {
-    WTF_MAKE_ISO_ALLOCATED(Notification);
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(Notification, WEBCORE_EXPORT);
 public:
     using Permission = NotificationPermission;
     using Direction = NotificationDirection;
@@ -61,7 +61,7 @@ public:
     };
     static Ref<Notification> create(Document&, const String& title, const Options&);
     
-    virtual ~Notification();
+    WEBCORE_EXPORT virtual ~Notification();
 
     void show();
     void close();
