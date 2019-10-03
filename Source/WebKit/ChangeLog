@@ -1,3 +1,17 @@
+2019-10-03  Konstantin Tokarev  <annulen@yandex.ru>
+
+        CMake-built WebKit.framework should launch XPC services successfully
+        https://bugs.webkit.org/show_bug.cgi?id=202490
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        target_link_options() requires CMake 3.10, however we can avoid
+        raising required CMake version by moving it to PlatformMac.cmake,
+        also avoid introduction of new CMake variable.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+
 2019-10-03  Jiewen Tan  <jiewen_tan@apple.com>
 
         Support googleLegacyAppidSupport extension

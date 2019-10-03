@@ -435,7 +435,7 @@ target_include_directories(SecItemShim PRIVATE
 file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/WKImageCG.h "#import <WebKit/Shared/API/c/cg/WKImageCG.h>")
 
 set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION}")
-set(WebKit_LINK_OPTIONS -weak_framework SafariSafeBrowsing -lsandbox -framework AuthKit)
+target_link_options(WebKit PRIVATE -weak_framework SafariSafeBrowsing -lsandbox -framework AuthKit)
 
 set(WebKit_OUTPUT_NAME WebKit)
 
