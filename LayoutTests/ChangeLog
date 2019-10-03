@@ -1,3 +1,21 @@
+2019-10-03  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r249107. rdar://problem/55927255
+
+    Unreviewed, test gardening
+    
+    * platform/mac-wk2/TestExpectations:
+    Skip WebAuthn tests for HighSierra and Mojave.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249107 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-26  Jiewen Tan  <jiewen_tan@apple.com>
+
+            Unreviewed, test gardening
+
+            * platform/mac-wk2/TestExpectations:
+            Skip WebAuthn tests for HighSierra and Mojave.
+
 2019-09-30  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r250488. rdar://problem/55826334
