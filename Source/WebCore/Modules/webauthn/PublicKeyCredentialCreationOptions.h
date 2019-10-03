@@ -86,7 +86,7 @@ struct PublicKeyCredentialCreationOptions {
     Vector<PublicKeyCredentialDescriptor> excludeCredentials;
     Optional<AuthenticatorSelectionCriteria> authenticatorSelection;
     AttestationConveyancePreference attestation;
-    Optional<AuthenticationExtensionsClientInputs> extensions; // A place holder, but never used.
+    mutable Optional<AuthenticationExtensionsClientInputs> extensions;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<PublicKeyCredentialCreationOptions> decode(Decoder&);
@@ -144,7 +144,7 @@ void PublicKeyCredentialCreationOptions::encode(Encoder& encoder) const
     encoder << rp.id << rp.name << rp.icon;
     encoder << static_cast<uint64_t>(user.id.length());
     encoder.encodeFixedLengthData(user.id.data(), user.id.length(), 1);
-    encoder << user.displayName << user.name << user.icon << pubKeyCredParams << timeout << excludeCredentials << authenticatorSelection << attestation;
+    encoder << user.displayName << user.name << user.icon << pubKeyCredParams << timeout << excludeCredentials << authenticatorSelection << attestation << extensions;
 }
 
 template<class Decoder>
@@ -189,29 +189,18 @@ Optional<PublicKeyCredentialCreationOptions> PublicKeyCredentialCreationOptions:
         return WTF::nullopt;
     result.attestation = WTFMove(*attestation);
 
+    Optional<Optional<AuthenticationExtensionsClientInputs>> extensions;
+    decoder >> extensions;
+    if (!extensions)
+        return WTF::nullopt;
+    result.extensions = WTFMove(*extensions);
+
     return result;
 }
 
 } // namespace WebCore
 
 namespace WTF {
-// Not every member is copied.
-template<> struct CrossThreadCopierBase<false, false, WebCore::PublicKeyCredentialCreationOptions> {
-    typedef WebCore::PublicKeyCredentialCreationOptions Type;
-    static Type copy(const Type& source)
-    {
-        Type result;
-        result.rp.name = source.rp.name.isolatedCopy();
-        result.rp.icon = source.rp.icon.isolatedCopy();
-        result.rp.id = source.rp.id.isolatedCopy();
-
-        result.user.name = source.user.name.isolatedCopy();
-        result.user.icon = source.user.icon.isolatedCopy();
-        result.user.displayName = source.user.displayName.isolatedCopy();
-        result.user.idVector = source.user.idVector;
-        return result;
-    }
-};
 
 template<> struct EnumTraits<WebCore::PublicKeyCredentialCreationOptions::AuthenticatorAttachment> {
     using values = EnumValues<

@@ -50,6 +50,7 @@ private:
     void continueGetAssertionAfterResponseReceived(Vector<uint8_t>&&);
 
     bool tryDowngrade();
+    bool processGoogleLegacyAppIdSupportExtension();
 
     std::unique_ptr<CtapDriver> m_driver;
     fido::AuthenticatorGetInfoResponse m_info;

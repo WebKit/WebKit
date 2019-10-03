@@ -59,11 +59,22 @@ PublicKeyCredentialCreationOptions constructMakeCredentialRequest()
     params.type = PublicKeyCredentialType::PublicKey;
     params.alg = COSE::ES256;
 
+    AuthenticationExtensionsClientInputs extensions;
+    extensions.googleLegacyAppidSupport = false;
+
     PublicKeyCredentialCreationOptions options;
     options.rp = WTFMove(rp);
     options.user = WTFMove(user);
     options.pubKeyCredParams.append(WTFMove(params));
+    options.extensions = WTFMove(extensions);
 
+    return options;
+}
+
+PublicKeyCredentialCreationOptions constructMakeCredentialRequestWithGoogleLegacyAppidSupport()
+{
+    auto options = constructMakeCredentialRequest();
+    options.extensions->googleLegacyAppidSupport = true;
     return options;
 }
 
@@ -83,6 +94,17 @@ TEST(U2fCommandConstructorTest, TestConvertCtapMakeCredentialToU2fRegister)
     const auto u2fRegisterCommand = convertToU2fRegisterCommand(convertBytesToVector(TestData::kClientDataHash, sizeof(TestData::kClientDataHash)), makeCredentialParam);
     ASSERT_TRUE(u2fRegisterCommand);
     EXPECT_EQ(*u2fRegisterCommand, convertBytesToVector(TestData::kU2fRegisterCommandApdu, sizeof(TestData::kU2fRegisterCommandApdu)));
+}
+
+TEST(U2fCommandConstructorTest, TestConvertCtapMakeCredentialToU2fRegisterWithGoogleLegacyAppidSupport)
+{
+    const auto makeCredentialParam = constructMakeCredentialRequestWithGoogleLegacyAppidSupport();
+
+    EXPECT_TRUE(isConvertibleToU2fRegisterCommand(makeCredentialParam));
+
+    const auto u2fRegisterCommand = convertToU2fRegisterCommand(convertBytesToVector(TestData::kClientDataHash, sizeof(TestData::kClientDataHash)), makeCredentialParam);
+    ASSERT_TRUE(u2fRegisterCommand);
+    EXPECT_EQ(*u2fRegisterCommand, convertBytesToVector(TestData::kU2fRegisterCommandApduWithGoogleLegacyAppidSupport, sizeof(TestData::kU2fRegisterCommandApduWithGoogleLegacyAppidSupport)));
 }
 
 TEST(U2fCommandConstructorTest, TestConvertCtapMakeCredentialToU2fCheckOnlySign)

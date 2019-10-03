@@ -33,6 +33,7 @@ namespace WebCore {
 
 struct AuthenticationExtensionsClientInputs {
     String appid;
+    bool googleLegacyAppidSupport;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<AuthenticationExtensionsClientInputs> decode(Decoder&);
@@ -41,7 +42,7 @@ struct AuthenticationExtensionsClientInputs {
 template<class Encoder>
 void AuthenticationExtensionsClientInputs::encode(Encoder& encoder) const
 {
-    encoder << appid;
+    encoder << appid << googleLegacyAppidSupport;
 }
 
 template<class Decoder>
@@ -54,6 +55,12 @@ Optional<AuthenticationExtensionsClientInputs> AuthenticationExtensionsClientInp
     if (!appid)
         return WTF::nullopt;
     result.appid = WTFMove(*appid);
+
+    Optional<bool> googleLegacyAppidSupport;
+    decoder >> googleLegacyAppidSupport;
+    if (!googleLegacyAppidSupport)
+        return WTF::nullopt;
+    result.googleLegacyAppidSupport = WTFMove(*googleLegacyAppidSupport);
 
     return result;
 }

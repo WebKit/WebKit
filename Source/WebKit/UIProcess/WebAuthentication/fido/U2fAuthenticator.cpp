@@ -155,7 +155,9 @@ void U2fAuthenticator::continueRegisterCommandAfterResponseReceived(ApduResponse
 {
     switch (apduResponse.status()) {
     case ApduResponse::Status::SW_NO_ERROR: {
-        auto response = readU2fRegisterResponse(WTF::get<PublicKeyCredentialCreationOptions>(requestData().options).rp.id, apduResponse.data(), WTF::get<PublicKeyCredentialCreationOptions>(requestData().options).attestation);
+        auto& options = WTF::get<PublicKeyCredentialCreationOptions>(requestData().options);
+        auto appId = processGoogleLegacyAppIdSupportExtension(options.extensions);
+        auto response = readU2fRegisterResponse(!appId ? options.rp.id : appId, apduResponse.data(), options.attestation);
         if (!response) {
             receiveRespond(ExceptionData { UnknownError, "Couldn't parse the U2F register response."_s });
             return;

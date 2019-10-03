@@ -1,5 +1,100 @@
 2019-10-03  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r250659. rdar://problem/55954229
+
+    Support googleLegacyAppidSupport extension
+    https://bugs.webkit.org/show_bug.cgi?id=202427
+    <rdar://problem/55887473>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebCore:
+    
+    This patch adds support for googleLegacyAppidSupport extension, when set:
+    1) user agent should only use the U2F transport protocol,
+    2) should only communicate with roaming authenticators, and
+    3) should use a hard-coded appID of https://www.gstatic.com/securitykey/origins.json.
+    To be noticed as the name implies, this extension is exclusively for RP ID = google.com.
+    
+    Implementation wise, all operations are captured in methods with name processGoogleLegacyAppIdSupportExtension.
+    1) AuthenticatorCoordinator takes care of setting the value.
+    2) U2fCommandConstructor takes care of hard coding the AppID.
+    3) AuthenticatorManager takes care of removing AuthenticatorTransport::Internal from TransportSet, so startDiscovery
+    will not poke platform authenticators.
+    4) CtapAuthenticator takes care of downgrading to U2fAuthenticator.
+    5) U2fAuthenticator takes care of setting the AppID in the response.
+    
+    Partially covered by new test cases in existing tests, and remaining will be covered by manual tests.
+    
+    * Modules/webauthn/AuthenticationExtensionsClientInputs.h:
+    (WebCore::AuthenticationExtensionsClientInputs::encode const):
+    (WebCore::AuthenticationExtensionsClientInputs::decode):
+    * Modules/webauthn/AuthenticationExtensionsClientInputs.idl:
+    * Modules/webauthn/AuthenticatorCoordinator.cpp:
+    (WebCore::AuthenticatorCoordinatorInternal::processGoogleLegacyAppIdSupportExtension):
+    (WebCore::AuthenticatorCoordinator::create const):
+    * Modules/webauthn/PublicKeyCredentialCreationOptions.h:
+    (WebCore::PublicKeyCredentialCreationOptions::encode const):
+    (WebCore::PublicKeyCredentialCreationOptions::decode):
+    * Modules/webauthn/fido/U2fCommandConstructor.cpp:
+    (fido::convertToU2fRegisterCommand):
+    (fido::processGoogleLegacyAppIdSupportExtension):
+    * Modules/webauthn/fido/U2fCommandConstructor.h:
+    
+    Source/WebKit:
+    
+    * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+    (WebKit::AuthenticatorManagerInternal::collectTransports):
+    (WebKit::AuthenticatorManagerInternal::processGoogleLegacyAppIdSupportExtension):
+    (WebKit::AuthenticatorManager::handleRequest):
+    * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+    (WebKit::CtapAuthenticator::makeCredential):
+    (WebKit::CtapAuthenticator::processGoogleLegacyAppIdSupportExtension):
+    * UIProcess/WebAuthentication/fido/CtapAuthenticator.h:
+    * UIProcess/WebAuthentication/fido/U2fAuthenticator.cpp:
+    (WebKit::U2fAuthenticator::continueRegisterCommandAfterResponseReceived):
+    
+    Tools:
+    
+    Adds an API test for googleLegacyAppidSupport extension.
+    
+    * TestWebKitAPI/Tests/WebCore/FidoTestData.h:
+    * TestWebKitAPI/Tests/WebCore/U2fCommandConstructorTest.cpp:
+    (TestWebKitAPI::constructMakeCredentialRequest):
+    (TestWebKitAPI::constructMakeCredentialRequestWithGoogleLegacyAppidSupport):
+    (TestWebKitAPI::TEST):
+    
+    LayoutTests:
+    
+    Add tests to confirm the googleLegacyAppidSupport extension is ignored for RP ID != google.com.
+    
+    * http/wpt/webauthn/public-key-credential-create-success-hid.https-expected.txt:
+    * http/wpt/webauthn/public-key-credential-create-success-hid.https.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250659 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-10-03  Jiewen Tan  <jiewen_tan@apple.com>
+
+            Support googleLegacyAppidSupport extension
+            https://bugs.webkit.org/show_bug.cgi?id=202427
+            <rdar://problem/55887473>
+
+            Reviewed by Brent Fulgham.
+
+            * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+            (WebKit::AuthenticatorManagerInternal::collectTransports):
+            (WebKit::AuthenticatorManagerInternal::processGoogleLegacyAppIdSupportExtension):
+            (WebKit::AuthenticatorManager::handleRequest):
+            * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+            (WebKit::CtapAuthenticator::makeCredential):
+            (WebKit::CtapAuthenticator::processGoogleLegacyAppIdSupportExtension):
+            * UIProcess/WebAuthentication/fido/CtapAuthenticator.h:
+            * UIProcess/WebAuthentication/fido/U2fAuthenticator.cpp:
+            (WebKit::U2fAuthenticator::continueRegisterCommandAfterResponseReceived):
+
+2019-10-03  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r249949. rdar://problem/55964883
 
     [WebAuthn] Use WebPreferences instead of RuntimeEnabledFeatures in UIProcess

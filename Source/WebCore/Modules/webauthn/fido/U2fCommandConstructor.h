@@ -34,6 +34,7 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
+struct AuthenticationExtensionsClientInputs;
 struct PublicKeyCredentialCreationOptions;
 struct PublicKeyCredentialDescriptor;
 struct PublicKeyCredentialRequestOptions;
@@ -65,6 +66,9 @@ WEBCORE_EXPORT Optional<Vector<uint8_t>> convertToU2fCheckOnlySignCommand(const 
 WEBCORE_EXPORT Optional<Vector<uint8_t>> convertToU2fSignCommand(const Vector<uint8_t>& clientDataHash, const WebCore::PublicKeyCredentialRequestOptions&, const Vector<uint8_t>& keyHandle, bool isAppId = false);
 
 WEBCORE_EXPORT Vector<uint8_t> constructBogusU2fRegistrationCommand();
+
+// Returns "https://www.gstatic.com/securitykey/origins.json" as an AppID when googleLegacyAppidSupport is true.
+WEBCORE_EXPORT String processGoogleLegacyAppIdSupportExtension(const Optional<WebCore::AuthenticationExtensionsClientInputs>&);
 
 } // namespace fido
 
