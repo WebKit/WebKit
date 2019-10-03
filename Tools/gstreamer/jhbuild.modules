@@ -70,6 +70,7 @@
     </dependencies>
     <branch hash="sha256:4093aa7b51e28fb24dfd603893fead8d1b7782f088b05ed0f22a21ef176fb5ae" module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" repo="gstreamer" version="1.16.0" >
       <patch file="base-0001-playbin-Handle-error-message-with-redirection-indica.patch" strip="1"/>
+      <patch file="base-0001-glupload-Add-VideoMetas-and-GLSyncMeta-to-the-raw-up.patch" strip="1"/> <!-- Merged upstream, should be shipped in 1.16.2 -->
     </branch>
   </meson>
 
@@ -82,7 +83,7 @@
     <branch hash="sha256:654adef33380d604112f702c2927574cfc285e31307b79e584113858838bb0fd" module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" repo="gstreamer" version="1.16.0">
       <patch file="gst-plugins-good-scaletempo-Advertise-interleaved-layout-in-caps-temp.patch" strip="1"/> <!-- Merged upstream, should be shipped in 1.16.1 -->
       <patch file="gst-plugins-good-glibc-2.30-compat.patch" strip="1"/> <!-- Merged upstream, should be shipped in 1.16.1 -->
-      <patch file="good-0001-qtdemux-Specify-REDIRECT-information-in-error-messag.patch" strip="1"/> <!-- Merged upstream, should be shipped in 1.16.1 -->
+      <patch file="good-0001-qtdemux-Specify-REDIRECT-information-in-error-messag.patch" strip="1"/> <!-- Merged upstream, should be shipped in 1.16.2 -->
     </branch>
   </meson>
 

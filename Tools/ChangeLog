@@ -1,3 +1,15 @@
+2019-10-03  Thibault Saunier  <tsaunier@igalia.com>
+
+        REGRESSION(r249428): [GStreamer] VP9 video rendered green
+        https://bugs.webkit.org/show_bug.cgi?id=201422
+
+        Adding patches in -base to fix the issue.
+
+        Reviewed by Philippe Normand.
+
+        * gstreamer/jhbuild.modules:
+        * gstreamer/patches/base-0001-glupload-Add-VideoMetas-and-GLSyncMeta-to-the-raw-up.patch: Added.
+
 2019-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Make PSON optional
