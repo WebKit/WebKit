@@ -1,5 +1,31 @@
 2019-10-03  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r249068. rdar://problem/55927255
+
+    Unreviewed, build fix after r249059
+    
+    Source/WebKit:
+    
+    * UIProcess/WebAuthentication/Cocoa/NfcConnection.mm:
+    (WebKit::NfcConnection::NfcConnection):
+    Remove the HAVE() macro.
+    
+    Source/WTF:
+    
+    * wtf/Platform.h:
+    Make HAVE_NEAR_FIELD available only on iOS 13+ and macOS Catalina+.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249068 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-23  Jiewen Tan  <jiewen_tan@apple.com>
+
+            Unreviewed, build fix after r249059
+
+            * wtf/Platform.h:
+            Make HAVE_NEAR_FIELD available only on iOS 13+ and macOS Catalina+.
+
+2019-10-03  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r249059. rdar://problem/55927255
 
     [WebAuthn] Support NFC authenticators for iOS
