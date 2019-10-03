@@ -511,6 +511,7 @@ add_custom_command(
 WEBKIT_BUILD_INSPECTOR_GRESOURCES(${DERIVED_SOURCES_WEBKIT2GTK_DIR})
 
 set(WebKitResources
+    "        <file alias=\"css/gtk-theme.css\">gtk-theme.css</file>\n"
     "        <file alias=\"images/missingImage\">missingImage.png</file>\n"
     "        <file alias=\"images/missingImage@2x\">missingImage@2x.png</file>\n"
     "        <file alias=\"images/panIcon\">panIcon.png</file>\n"
@@ -536,7 +537,7 @@ file(WRITE ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKitResourcesGResourceBundle.xml
 add_custom_command(
     OUTPUT ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKitResourcesGResourceBundle.c
     DEPENDS ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKitResourcesGResourceBundle.xml
-    COMMAND glib-compile-resources --generate --sourcedir=${CMAKE_SOURCE_DIR}/Source/WebCore/Resources --sourcedir=${CMAKE_SOURCE_DIR}/Source/WebCore/platform/audio/resources --target=${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKitResourcesGResourceBundle.c ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKitResourcesGResourceBundle.xml
+    COMMAND glib-compile-resources --generate --sourcedir=${CMAKE_SOURCE_DIR}/Source/WebCore/Resources --sourcedir=${CMAKE_SOURCE_DIR}/Source/WebCore/platform/audio/resources --sourcedir=${CMAKE_SOURCE_DIR}/Source/WebKit/Resources/gtk --target=${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKitResourcesGResourceBundle.c ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKitResourcesGResourceBundle.xml
     VERBATIM
 )
 

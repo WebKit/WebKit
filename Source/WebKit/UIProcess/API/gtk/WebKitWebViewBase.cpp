@@ -1444,6 +1444,8 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
     // Usually starting a context triggers InitializeWebKit2, but in case
     // we create a view without asking before for a default_context we get a crash.
     WebKit::InitializeWebKit2();
+
+    gtk_widget_class_set_css_name(widgetClass, "webkitwebview");
 }
 
 WebKitWebViewBase* webkitWebViewBaseCreate(const API::PageConfiguration& configuration)

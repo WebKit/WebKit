@@ -1,3 +1,52 @@
+2019-10-03  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK] Don't hardcode swipe navigation gesture style
+        https://bugs.webkit.org/show_bug.cgi?id=202447
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use GTK foreign drawing to draw swipe gesture dimming and shadow instead of
+        hardcoded opacity and gradient values.
+
+        Have separate elements for dimming and shadow. Additionally, add border
+        and outline. Dimming layer opacity always matches progress, shadow opacity
+        is 1 except when the page is almost completely retracted. Border and outline
+        opacity is always 1. Outline is drawn above the top page. For determining
+        shadow, border and outline width, 'min-width' property is used.
+
+        Each element also has .right or .left style class depending on text direction.
+
+        Creating patterns is relatively expensive, so do it once a gesture
+        starts and clear them once it ends. Style changes are currently not
+        handled, since it's unlikely anything would change while the gesture
+        is done. Dimming layer is created with the same width as webview and is
+        clipped when drawing.
+
+        Translate existing dimming and shadow into css as is, add subtle border and
+        outline. Since it's controlled via css, downstreams can override the style.
+
+        Set WebKitWebView css name to 'webkitwebview', and only apply styles for
+        elements directly preceded by it, otherwise the selectors are too generic.
+
+        * PlatformGTK.cmake: Add gtk.css to gresource bundle.
+        * Resources/gtk/gtk-theme.css: Added.
+        (webkitwebview > dimming):
+        (webkitwebview > shadow):
+        (webkitwebview > shadow.right):
+        (webkitwebview > shadow.left):
+        (webkitwebview > border):
+        (webkitwebview > outline):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkit_web_view_base_class_init): Set css name to 'webkitwebview'.
+        * UIProcess/ViewGestureController.h:
+        * UIProcess/gtk/ViewGestureControllerGtk.cpp:
+        (WebKit::ViewGestureController::createStyleContext):
+        (WebKit::createElementPattern):
+        (WebKit::elementWidth):
+        (WebKit::ViewGestureController::beginSwipeGesture): Create helper patterns.
+        (WebKit::ViewGestureController::draw): Rework drawing to use the patterns.
+        (WebKit::ViewGestureController::removeSwipeSnapshot): Clear the patterns.
+
 2019-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Make PSON optional

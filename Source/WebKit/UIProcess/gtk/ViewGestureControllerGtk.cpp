@@ -28,6 +28,7 @@
 
 #include "DrawingAreaProxy.h"
 #include "WebBackForwardList.h"
+#include <WebCore/GRefPtrGtk.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -45,12 +46,6 @@ static const double swipeAnimationDurationMultiplier = 3;
 
 static const double swipeCancelArea = 0.5;
 static const double swipeCancelVelocityThreshold = 0.001;
-
-static const double swipeOverlayShadowOpacity = 0.06;
-static const double swipeOverlayDimmingOpacity = 0.12;
-static const double swipeOverlayShadowWidth = 81;
-static const double swipeOverlayShadowGradientOffsets[] = { 0, 0.03125, 0.0625, 0.0938, 0.125, 0.1875, 0.25, 0.375, 0.4375, 0.5, 0.5625, 0.625, 0.6875, 0.75, 0.875, 1. };
-static const double swipeOverlayShadowGradientAlpha[] = { 1, 0.99, 0.98, 0.95, 0.92, 0.82, 0.71, 0.46, 0.35, 0.25, 0.17, 0.11, 0.07, 0.04, 0.01, 0. };
 
 static bool isEventStop(GdkEventScroll* event)
 {
@@ -283,6 +278,45 @@ void ViewGestureController::SwipeProgressTracker::endAnimation()
     m_viewGestureController.endSwipeGesture(m_targetItem.get(), m_cancelled);
 }
 
+GRefPtr<GtkStyleContext> ViewGestureController::createStyleContext(const char* name)
+{
+    bool isRTL = m_webPageProxy.userInterfaceLayoutDirection() == WebCore::UserInterfaceLayoutDirection::RTL;
+    GtkWidget* widget = m_webPageProxy.viewWidget();
+
+    GRefPtr<GtkWidgetPath> path = adoptGRef(gtk_widget_path_copy(gtk_widget_get_path(widget)));
+
+    int position = gtk_widget_path_append_type(path.get(), GTK_TYPE_WIDGET);
+    gtk_widget_path_iter_set_object_name(path.get(), position, name);
+    gtk_widget_path_iter_add_class(path.get(), position, isRTL ? "left" : "right");
+
+    GtkStyleContext* context = gtk_style_context_new();
+    gtk_style_context_set_path(context, path.get());
+    gtk_style_context_set_parent(context, gtk_widget_get_style_context(widget));
+
+    gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(m_cssProvider.get()), GTK_STYLE_PROVIDER_PRIORITY_FALLBACK);
+
+    return adoptGRef(context);
+}
+
+static RefPtr<cairo_pattern_t> createElementPattern(GtkStyleContext* context, int width, int height)
+{
+    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height));
+    RefPtr<cairo_t> cr = adoptRef(cairo_create(surface.get()));
+
+    gtk_render_background(context, cr.get(), 0, 0, width, height);
+    gtk_render_frame(context, cr.get(), 0, 0, width, height);
+
+    return adoptRef(cairo_pattern_create_for_surface(surface.get()));
+}
+
+static int elementWidth(GtkStyleContext* context)
+{
+    int width;
+    gtk_style_context_get(context, gtk_style_context_get_state(context), "min-width", &width, nullptr);
+
+    return width;
+}
+
 void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem, SwipeDirection direction)
 {
     ASSERT(targetItem);
@@ -318,6 +352,31 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
 
     if (!m_currentSwipeSnapshotPattern)
         m_currentSwipeSnapshotPattern = adoptRef(cairo_pattern_create_rgb(1, 1, 1));
+
+    auto size = m_webPageProxy.drawingArea()->size();
+
+    if (!m_cssProvider) {
+        m_cssProvider = adoptGRef(gtk_css_provider_new());
+        gtk_css_provider_load_from_resource(m_cssProvider.get(), "/org/webkitgtk/resources/css/gtk-theme.css");
+    }
+
+    GRefPtr<GtkStyleContext> context = createStyleContext("dimming");
+    m_swipeDimmingPattern = createElementPattern(context.get(), size.width(), size.height());
+
+    context = createStyleContext("shadow");
+    m_swipeShadowSize = elementWidth(context.get());
+    if (m_swipeShadowSize)
+        m_swipeShadowPattern = createElementPattern(context.get(), m_swipeShadowSize, size.height());
+
+    context = createStyleContext("border");
+    m_swipeBorderSize = elementWidth(context.get());
+    if (m_swipeBorderSize)
+        m_swipeBorderPattern = createElementPattern(context.get(), m_swipeBorderSize, size.height());
+
+    context = createStyleContext("outline");
+    m_swipeOutlineSize = elementWidth(context.get());
+    if (m_swipeOutlineSize)
+        m_swipeOutlinePattern = createElementPattern(context.get(), m_swipeOutlineSize, size.height());
 }
 
 void ViewGestureController::handleSwipeGesture(WebBackForwardListItem*, double, SwipeDirection)
@@ -342,8 +401,9 @@ void ViewGestureController::draw(cairo_t* cr, cairo_pattern_t* pageGroup)
     bool isRTL = m_webPageProxy.userInterfaceLayoutDirection() == WebCore::UserInterfaceLayoutDirection::RTL;
     float progress = m_swipeProgressTracker.progress();
 
-    double width = m_webPageProxy.drawingArea()->size().width();
-    double height = m_webPageProxy.drawingArea()->size().height();
+    auto size = m_webPageProxy.drawingArea()->size();
+    int width = size.width();
+    int height = size.height();
 
     double swipingLayerOffset = (swipingLeft ? 0 : width) + floor(width * progress);
 
@@ -352,18 +412,10 @@ void ViewGestureController::draw(cairo_t* cr, cairo_pattern_t* pageGroup)
         dimmingProgress = 1 - dimmingProgress;
 
     double remainingSwipeDistance = dimmingProgress * width;
-    double shadowFadeDistance = swipeOverlayShadowWidth;
 
-    double shadowOpacity = swipeOverlayShadowOpacity;
-    if (remainingSwipeDistance < shadowFadeDistance)
-        shadowOpacity = (remainingSwipeDistance / shadowFadeDistance) * swipeOverlayShadowOpacity;
-
-    RefPtr<cairo_pattern_t> shadowPattern = adoptRef(cairo_pattern_create_linear(0, 0, swipeOverlayShadowWidth, 0));
-    for (int i = 0; i < 16; i++) {
-        double offset = swipeOverlayShadowGradientOffsets[i];
-        double alpha = swipeOverlayShadowGradientAlpha[i] * shadowOpacity;
-        cairo_pattern_add_color_stop_rgba(shadowPattern.get(), offset, 0, 0, 0, alpha);
-    }
+    double shadowOpacity = 1;
+    if (remainingSwipeDistance < m_swipeShadowSize)
+        shadowOpacity = remainingSwipeDistance / m_swipeShadowSize;
 
     cairo_save(cr);
 
@@ -374,19 +426,38 @@ void ViewGestureController::draw(cairo_t* cr, cairo_pattern_t* pageGroup)
     cairo_set_source(cr, swipingBack ? m_currentSwipeSnapshotPattern.get() : pageGroup);
     cairo_fill_preserve(cr);
 
-    cairo_set_source_rgba(cr, 0, 0, 0, dimmingProgress * swipeOverlayDimmingOpacity);
-    cairo_fill(cr);
+    cairo_save(cr);
+    cairo_clip(cr);
+    cairo_set_source(cr, m_swipeDimmingPattern.get());
+    cairo_paint_with_alpha(cr, dimmingProgress);
+    cairo_restore(cr);
 
     cairo_translate(cr, swipingLayerOffset, 0);
 
     if (progress) {
-        cairo_save(cr);
-        if (!isRTL)
-            cairo_scale(cr, -1, 1);
-        cairo_rectangle(cr, 0, 0, swipeOverlayShadowWidth, height);
-        cairo_set_source(cr, shadowPattern.get());
-        cairo_fill(cr);
-        cairo_restore(cr);
+        if (m_swipeShadowPattern) {
+            cairo_save(cr);
+            if (!isRTL)
+                cairo_translate(cr, -m_swipeShadowSize, 0);
+
+            cairo_rectangle(cr, 0, 0, m_swipeShadowSize, height);
+            cairo_clip(cr);
+            cairo_set_source(cr, m_swipeShadowPattern.get());
+            cairo_paint_with_alpha(cr, shadowOpacity);
+            cairo_restore(cr);
+        }
+
+        if (m_swipeBorderPattern) {
+            cairo_save(cr);
+            if (!isRTL)
+                cairo_translate(cr, -m_swipeBorderSize, 0);
+
+            cairo_rectangle(cr, 0, 0, m_swipeBorderSize, height);
+            cairo_set_source(cr, m_swipeBorderPattern.get());
+            cairo_fill(cr);
+
+            cairo_restore(cr);
+        }
     }
 
     if (isRTL) {
@@ -396,6 +467,19 @@ void ViewGestureController::draw(cairo_t* cr, cairo_pattern_t* pageGroup)
         cairo_rectangle(cr, 0, 0, width - swipingLayerOffset, height);
     cairo_set_source(cr, swipingBack ? pageGroup : m_currentSwipeSnapshotPattern.get());
     cairo_fill(cr);
+
+    if (progress && m_swipeOutlinePattern) {
+        cairo_save(cr);
+
+        if (isRTL)
+            cairo_translate(cr, width - m_swipeOutlineSize, 0);
+
+        cairo_rectangle(cr, 0, 0, m_swipeOutlineSize, height);
+        cairo_set_source(cr, m_swipeOutlinePattern.get());
+        cairo_fill(cr);
+
+        cairo_restore(cr);
+    }
 
     cairo_restore(cr);
 }
@@ -410,6 +494,10 @@ void ViewGestureController::removeSwipeSnapshot()
         return;
 
     m_currentSwipeSnapshotPattern = nullptr;
+    m_swipeDimmingPattern = nullptr;
+    m_swipeShadowPattern = nullptr;
+    m_swipeBorderPattern = nullptr;
+    m_swipeOutlinePattern = nullptr;
 
     m_currentSwipeSnapshot = nullptr;
 
