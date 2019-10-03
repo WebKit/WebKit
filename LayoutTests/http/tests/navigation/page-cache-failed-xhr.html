@@ -1,0 +1,47 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description('Tests that a page with a failed XMLHttpRequest goes into the page cache.');
+window.jsTestIsAsync = true;
+
+function iframeIsLoading()
+{
+    frames[0].stop();
+
+    setTimeout(function() {
+      // Force a back navigation back to this page.
+      window.location.href = "resources/page-cache-helper.html";
+    }, 0);
+}
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the page cache");
+        setTimeout(finishJSTest, 0);
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        let iframe = document.createElement("iframe");
+        iframe.src = "resources/page-cache-failed-xhr-frame.html";
+        document.body.appendChild(iframe);
+    }, 0);
+}, false);
+
+</script>
+</body>
+</html>

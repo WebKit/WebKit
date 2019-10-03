@@ -1146,7 +1146,7 @@ bool XMLHttpRequest::canSuspendForDocumentSuspension() const
     // If the load event has not fired yet, cancelling the load in suspend() may cause
     // the load event to be fired and arbitrary JS execution, which would be unsafe.
     // Therefore, we prevent suspending in this case.
-    return document()->loadEventFinished();
+    return !m_loader || document()->loadEventFinished();
 }
 
 const char* XMLHttpRequest::activeDOMObjectName() const

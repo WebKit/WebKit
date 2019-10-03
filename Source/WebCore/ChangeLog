@@ -1,3 +1,24 @@
+2019-10-03  Chris Dumez  <cdumez@apple.com>
+
+        XMLHttpRequest sometimes prevents pages from entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=202434
+        <rdar://problem/55890340>
+
+        Reviewed by Geoffrey Garen.
+
+        XMLHttpRequest::canSuspendForDocumentSuspension() was returning false if the document has not fired
+        the window's load event, with a comment explaining that cancelling the XHR in the upon suspension
+        may cause the load event to get fired and thus run script when forbidden. However, we should only
+        return false if the XMLHttpRequest is actually loading (m_loader is not null). XHRs that are not
+        loading should never prevent page caching.
+
+        I saw failures to enter the back/forward cache on yandex.ru and taobao.com because of this.
+
+        Test: http/tests/navigation/page-cache-failed-xhr.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::canSuspendForDocumentSuspension const):
+
 2019-10-03  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Downgrade document.referrer for all third-party iframes

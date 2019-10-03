@@ -1,3 +1,17 @@
+2019-10-03  Chris Dumez  <cdumez@apple.com>
+
+        XMLHttpRequest sometimes prevents pages from entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=202434
+        <rdar://problem/55890340>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * http/tests/navigation/page-cache-failed-xhr-expected.txt: Added.
+        * http/tests/navigation/page-cache-failed-xhr.html: Added.
+        * http/tests/navigation/resources/page-cache-failed-xhr-frame.html: Added.
+
 2019-10-03  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Downgrade document.referrer for all third-party iframes
