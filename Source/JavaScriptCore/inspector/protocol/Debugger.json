@@ -28,8 +28,8 @@
             "description": "Location in the source code.",
             "properties": [
                 { "name": "scriptId", "$ref": "ScriptId", "description": "Script identifier as reported in the <code>Debugger.scriptParsed</code>." },
-                { "name": "lineNumber", "type": "integer", "description": "Line number in the script." },
-                { "name": "columnNumber", "type": "integer", "optional": true, "description": "Column number in the script." }
+                { "name": "lineNumber", "type": "integer", "description": "Line number in the script (0-based)." },
+                { "name": "columnNumber", "type": "integer", "optional": true, "description": "Column number in the script (0-based)." }
             ]
         },
         {

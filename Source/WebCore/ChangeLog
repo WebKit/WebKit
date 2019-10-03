@@ -1,3 +1,32 @@
+2019-10-03  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: tests under LayoutTests/inspector/debugger are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=137131
+        <rdar://problem/18461335>
+
+        Reviewed by Devin Rousso.
+
+        Fix debugger tests on GTK. All tests that pause on breakpoint didn't work because
+        in layout tests InspectorFrontendClientLocal was using Timer to dispatch commands
+        sent from the local front-end page to the inspected one. When paused inside a script
+        triggered by the front-end nested timer event would be scheduled but never fired
+        because in glib implementation of RunLoop::TimerBase uses event source which doesn't
+        allow recursion (g_source_set_can_recurse is not called on the source), so dispatching
+        Debugger.resume command didn't work when paused inside another inspector command (e.g.
+        eval). RunLoop itself uses event source which does allow recursion. So instead of using
+        a timer for asynchronous command dispatching with delay=0 we now schedule a task in
+        RunLoop's queue.
+
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorBackendDispatchTask::dispatch):
+        (WebCore::InspectorBackendDispatchTask::reset):
+        (WebCore::InspectorBackendDispatchTask::InspectorBackendDispatchTask):
+        (WebCore::InspectorBackendDispatchTask::scheduleOneShot): ensures that there is one inspector
+        dispatch task in the queue.
+        (WebCore::InspectorBackendDispatchTask::dispatchOneMessage): this is mostly the same behavior
+        as was with timerFired, we should be able to dispatch all accumulated messages from the queue
+        in one batch but for now I'd like to keep it one per iteration.
+
 2019-10-03  Joonghun Park  <pjh0718@gmail.com>
 
         CSS ellipse() doesn't accept single <shape-radius>

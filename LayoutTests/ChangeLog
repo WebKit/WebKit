@@ -1,3 +1,17 @@
+2019-10-03  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: tests under LayoutTests/inspector/debugger are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=137131
+        <rdar://problem/18461335>
+
+        Reviewed by Devin Rousso.
+
+        Enable inspector/debugger tests on GTK.
+
+        * inspector/debugger/breakpoints/resolved-dump-all-pause-locations-expected.txt: Rebaselined the test
+        after changes in the breakpoint resolution code. Now the output on GTK is the same as on Mac.
+        * platform/gtk/TestExpectations:
+
 2019-10-03  Joonghun Park  <pjh0718@gmail.com>
 
         CSS ellipse() doesn't accept single <shape-radius>

@@ -1,3 +1,41 @@
+2019-10-03  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: tests under LayoutTests/inspector/debugger are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=137131
+        <rdar://problem/18461335>
+
+        Reviewed by Devin Rousso.
+
+        Changed breakpoint resolution logic to make it consistent across platforms and
+        better handle the case when there are several DebuggerPausePositions at the same
+        offset (but with different types).
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::hasOpDebugForLineAndColumn):
+        * bytecode/CodeBlock.h:
+        * debugger/Breakpoint.h: Removed Breakpoint::unspecifiedColumn, Optional<unsigned>
+        is used instead where needed. It allows to avoid code that relies on (int)UINT_MAX => -1
+        conversion.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::resolveBreakpoint): clarified that in the map columns are 0-based.
+        * debugger/DebuggerParseData.cpp:
+        (JSC::DebuggerPausePositions::breakpointLocationForLineColumn): replaced custom
+        binary search with std::lower_bound. If there are several pause positions at the
+        same offset they will be sorted by the type and the algorithm is guaranteed to see
+        leftmost one first.
+
+        (JSC::DebuggerPausePositions::sort): use type as secondary ordering component.
+        * debugger/DebuggerParseData.h: Rearranged type constants so that Enter < Pause < Leave
+        this change along with sorting by type should guarantee that in case of several pause
+        positions at the same line Enter goes before Pause before Leave and the breakpoint
+        resolution will yield result similar to that when each pause locations has different
+        position.
+
+        * inspector/protocol/Debugger.json: clarified that positions are 0-based.
+        * parser/ParserTokens.h:
+        (JSC::JSTextPosition::column const): added helper method for computing column.
+
 2019-10-03  Keith Miller  <keith_miller@apple.com>
 
         Fix assembler on ARM64E

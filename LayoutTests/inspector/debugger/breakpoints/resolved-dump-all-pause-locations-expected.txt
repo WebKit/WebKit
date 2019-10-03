@@ -2166,7 +2166,7 @@ PAUSES AT: 89:7
      92        x
 
 INSERTING AT: 89:8
-PAUSES AT: 94:0
+PAUSES AT: 98:0
      86    
      87    x => x;
      88    () => 1;
@@ -2175,10 +2175,14 @@ PAUSES AT: 94:0
      91    (x) => {
      92        x
      93    };
- =>  94    |() => {
+     94    () => {
      95        var x;
      96    };
      97    
+ =>  98    |var fObj = {
+     99        f1: function() {
+    100            var x;
+    101        },
 
 INSERTING AT: 90:0
 PAUSES AT: 90:0
@@ -2242,6 +2246,16 @@ PAUSES AT: 93:0
      95        var x;
      96    };
 
+INSERTING AT: 94:0
+PAUSES AT: 94:0
+     91    (x) => {
+     92        x
+     93    };
+-=>  94    |() => {
+     95        var x;
+     96    };
+     97    
+
 INSERTING AT: 94:1
 PAUSES AT: 95:4
      91    (x) => {
@@ -2263,18 +2277,6 @@ PAUSES AT: 96:0
      97    
      98    var fObj = {
      99        f1: function() {
-
-INSERTING AT: 96:1
-PAUSES AT: 98:0
-     93    };
-     94    () => {
-     95        var x;
- ->  96    }#;
-     97    
- =>  98    |var fObj = {
-     99        f1: function() {
-    100            var x;
-    101        },
 
 INSERTING AT: 99:0
 PAUSES AT: 100:8

@@ -81,43 +81,54 @@ public:
         ASSERT_ARG(message, !message.isEmpty());
 
         m_messages.append(message);
-        if (!m_timer.isActive())
-            m_timer.startOneShot(0_s);
+        scheduleOneShot();
     }
 
     void reset()
     {
         m_messages.clear();
-        m_timer.stop();
         m_inspectedPageController = nullptr;
-    }
-
-    void timerFired()
-    {
-        ASSERT(m_inspectedPageController);
-
-        // Dispatching a message can possibly close the frontend and destroy
-        // the owning frontend client, so keep a protector reference here.
-        Ref<InspectorBackendDispatchTask> protectedThis(*this);
-
-        if (!m_messages.isEmpty())
-            m_inspectedPageController->dispatchMessageFromFrontend(m_messages.takeFirst());
-
-        if (!m_messages.isEmpty() && m_inspectedPageController)
-            m_timer.startOneShot(0_s);
     }
 
 private:
     InspectorBackendDispatchTask(InspectorController* inspectedPageController)
         : m_inspectedPageController(inspectedPageController)
-        , m_timer(*this, &InspectorBackendDispatchTask::timerFired)
     {
         ASSERT_ARG(inspectedPageController, inspectedPageController);
     }
 
+    void scheduleOneShot()
+    {
+        if (m_hasScheduledTask)
+            return;
+        m_hasScheduledTask = true;
+
+        // The frontend can be closed and destroy the owning frontend client before or in the
+        // process of dispatching the task, so keep a protector reference here.
+        RunLoop::current().dispatch([this, protectedThis = makeRef(*this)] {
+            m_hasScheduledTask = false;
+            dispatchOneMessage();
+        });
+    }
+
+    void dispatchOneMessage()
+    {
+        // Owning frontend client may have been destroyed after the task was scheduled.
+        if (!m_inspectedPageController) {
+            ASSERT(m_messages.isEmpty());
+            return;
+        }
+
+        if (!m_messages.isEmpty())
+            m_inspectedPageController->dispatchMessageFromFrontend(m_messages.takeFirst());
+
+        if (!m_messages.isEmpty() && m_inspectedPageController)
+            scheduleOneShot();
+    }
+
     InspectorController* m_inspectedPageController { nullptr };
-    Timer m_timer;
     Deque<String> m_messages;
+    bool m_hasScheduledTask { false };
 };
 
 String InspectorFrontendClientLocal::Settings::getProperty(const String&)

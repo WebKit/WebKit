@@ -33,9 +33,11 @@ namespace JSC {
 class SourceProvider;
 class VM;
 
-enum class DebuggerPausePositionType { Enter, Leave, Pause };
+// The order of the constants here matters as it is used for
+// sorting pause positions that have same offset.
+enum class DebuggerPausePositionType { Invalid, Enter, Pause, Leave };
 struct DebuggerPausePosition {
-    DebuggerPausePositionType type;
+    DebuggerPausePositionType type { DebuggerPausePositionType::Invalid };
     JSTextPosition position;
 };
 

@@ -217,6 +217,8 @@ struct JSTextPosition {
         return !(*this == other);
     }
 
+    int column() const { return offset - lineStartOffset; }
+
     int line { 0 };
     int offset { 0 };
     int lineStartOffset { 0 };

@@ -268,9 +268,6 @@ void Debugger::toggleBreakpoint(CodeBlock* codeBlock, Breakpoint& breakpoint, Br
     if (breakpoint.sourceID != sourceID)
         return;
 
-    unsigned line = breakpoint.line;
-    unsigned column = breakpoint.column;
-
     unsigned startLine = executable->firstLine();
     unsigned startColumn = executable->startColumn();
     unsigned endLine = executable->lastLine();
@@ -278,12 +275,14 @@ void Debugger::toggleBreakpoint(CodeBlock* codeBlock, Breakpoint& breakpoint, Br
 
     // Inspector breakpoint line and column values are zero-based but the executable
     // and CodeBlock line and column values are one-based.
-    line += 1;
-    column = column ? column + 1 : Breakpoint::unspecifiedColumn;
+    unsigned line = breakpoint.line + 1;
+    Optional<unsigned> column;
+    if (breakpoint.column)
+        column = breakpoint.column + 1;
 
     if (line < startLine || line > endLine)
         return;
-    if (column != Breakpoint::unspecifiedColumn) {
+    if (column) {
         if (line == startLine && column < startColumn)
             return;
         if (line == endLine && column > endColumn)
@@ -359,35 +358,35 @@ void Debugger::resolveBreakpoint(Breakpoint& breakpoint, SourceProvider* sourceP
 
     // FIXME: <https://webkit.org/b/162771> Web Inspector: Adopt TextPosition in Inspector to avoid oneBasedInt/zeroBasedInt ambiguity
     // Inspector breakpoint line and column values are zero-based but the executable
-    // and CodeBlock line and column values are one-based.
-    unsigned line = breakpoint.line + 1;
-    unsigned column = breakpoint.column ? breakpoint.column : Breakpoint::unspecifiedColumn;
+    // and CodeBlock line values are one-based while column is zero-based.
+    int line = breakpoint.line + 1;
+    int column = breakpoint.column;
 
     // Account for a <script>'s start position on the first line only.
-    unsigned providerStartLine = sourceProvider->startPosition().m_line.oneBasedInt(); // One based to match the already adjusted line.
-    unsigned providerStartColumn = sourceProvider->startPosition().m_column.zeroBasedInt(); // Zero based so column zero is zero.
-    if (line == providerStartLine && column != Breakpoint::unspecifiedColumn) {
+    int providerStartLine = sourceProvider->startPosition().m_line.oneBasedInt(); // One based to match the already adjusted line.
+    int providerStartColumn = sourceProvider->startPosition().m_column.zeroBasedInt(); // Zero based so column zero is zero.
+    if (line == providerStartLine && breakpoint.column) {
         ASSERT(providerStartColumn <= column);
         if (providerStartColumn)
             column -= providerStartColumn;
     }
 
     DebuggerParseData& parseData = debuggerParseData(breakpoint.sourceID, sourceProvider);
-    Optional<JSTextPosition> resolvedPosition = parseData.pausePositions.breakpointLocationForLineColumn((int)line, (int)column);
+    Optional<JSTextPosition> resolvedPosition = parseData.pausePositions.breakpointLocationForLineColumn(line, column);
     if (!resolvedPosition)
         return;
 
-    unsigned resolvedLine = resolvedPosition->line;
-    unsigned resolvedColumn = resolvedPosition->offset - resolvedPosition->lineStartOffset + 1;
+    int resolvedLine = resolvedPosition->line;
+    int resolvedColumn = resolvedPosition->column();
 
     // Re-account for a <script>'s start position on the first line only.
-    if (resolvedLine == providerStartLine && column != Breakpoint::unspecifiedColumn) {
+    if (resolvedLine == providerStartLine && breakpoint.column) {
         if (providerStartColumn)
             resolvedColumn += providerStartColumn;
     }
 
     breakpoint.line = resolvedLine - 1;
-    breakpoint.column = resolvedColumn - 1;
+    breakpoint.column = resolvedColumn;
     breakpoint.resolved = true;
 }
 

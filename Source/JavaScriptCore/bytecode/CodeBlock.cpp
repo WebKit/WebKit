@@ -1869,7 +1869,7 @@ void CodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& d
     line += ownerExecutable()->firstLine();
 }
 
-bool CodeBlock::hasOpDebugForLineAndColumn(unsigned line, unsigned column)
+bool CodeBlock::hasOpDebugForLineAndColumn(unsigned line, Optional<unsigned> column)
 {
     const InstructionStream& instructionStream = instructions();
     for (const auto& it : instructionStream) {
@@ -1878,7 +1878,7 @@ bool CodeBlock::hasOpDebugForLineAndColumn(unsigned line, unsigned column)
             unsigned opDebugLine;
             unsigned opDebugColumn;
             expressionRangeForBytecodeOffset(it.offset(), unused, unused, unused, opDebugLine, opDebugColumn);
-            if (line == opDebugLine && (column == Breakpoint::unspecifiedColumn || column == opDebugColumn))
+            if (line == opDebugLine && (!column || column == opDebugColumn))
                 return true;
         }
     }

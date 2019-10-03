@@ -57,8 +57,6 @@ struct Breakpoint : public DoublyLinkedListNode<Breakpoint> {
     unsigned hitCount { 0 };
     bool resolved { false };
 
-    static constexpr unsigned unspecifiedColumn = UINT_MAX;
-
 private:
     Breakpoint* m_prev;
     Breakpoint* m_next;
