@@ -1045,8 +1045,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             break;
         case CSSSelector::PseudoClassLang:
             {
-                ASSERT(selector.langArgumentList() && !selector.langArgumentList()->isEmpty());
-                return matchesLangPseudoClass(element, *selector.langArgumentList());
+                ASSERT(selector.argumentList() && !selector.argumentList()->isEmpty());
+                return matchesLangPseudoClass(element, *selector.argumentList());
             }
 #if ENABLE(FULLSCREEN_API)
         case CSSSelector::PseudoClassFullScreen:
@@ -1150,8 +1150,11 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return is<HTMLSlotElement>(element);
 
         case CSSSelector::PseudoElementPart:
-            // FIXME: Support ::part() with multiple parts.
-            return element.partNames().contains(selector.argument());
+            for (auto& part : *selector.argumentList()) {
+                if (!element.partNames().contains(part))
+                    return false;
+            }
+            return true;
 
         default:
             return true;

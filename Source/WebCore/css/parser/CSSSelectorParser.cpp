@@ -568,7 +568,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             auto argumentList = makeUnique<Vector<AtomString>>();
             if (!consumeLangArgumentList(argumentList, block))
                 return nullptr;
-            selector->setLangArgumentList(WTFMove(argumentList));
+            selector->setArgumentList(WTFMove(argumentList));
             return selector;
         }
         case CSSSelector::PseudoClassMatches: {
@@ -620,11 +620,15 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
         case CSSSelector::PseudoElementPart: {
             DisallowPseudoElementsScope scope(this);
 
-            // FIXME: Parse a list of parts.
-            const CSSParserToken& ident = block.consumeIncludingWhitespace();
-            if (ident.type() != IdentToken || !block.atEnd())
-                return nullptr;
-            selector->setArgument(ident.value().toAtomString());
+            auto argumentList = makeUnique<Vector<AtomString>>();
+            do {
+                auto& ident = block.consumeIncludingWhitespace();
+                if (ident.type() != IdentToken)
+                    return nullptr;
+                argumentList->append(ident.value().toAtomString());
+            } while (!block.atEnd());
+
+            selector->setArgumentList(WTFMove(argumentList));
             return selector;
         }
         case CSSSelector::PseudoElementSlotted: {

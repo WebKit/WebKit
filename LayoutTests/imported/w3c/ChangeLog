@@ -1,5 +1,14 @@
 2019-10-02  Antti Koivisto  <antti@apple.com>
 
+        [CSS Shadow Parts] Support multiple arguments for ::part()
+        https://bugs.webkit.org/show_bug.cgi?id=202482
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/css/css-shadow-parts/multiple-parts-expected.txt:
+
+2019-10-02  Antti Koivisto  <antti@apple.com>
+
         [CSS Shadow Parts] Basic ::part() pseudo element support
         https://bugs.webkit.org/show_bug.cgi?id=202456
 

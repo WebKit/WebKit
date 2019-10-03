@@ -122,10 +122,10 @@ void CSSParserSelector::adoptSelectorVector(Vector<std::unique_ptr<CSSParserSele
     m_selector->setSelectorList(makeUnique<CSSSelectorList>(WTFMove(selectorVector)));
 }
 
-void CSSParserSelector::setLangArgumentList(std::unique_ptr<Vector<AtomString>> argumentList)
+void CSSParserSelector::setArgumentList(std::unique_ptr<Vector<AtomString>> argumentList)
 {
     ASSERT_WITH_MESSAGE(!argumentList->isEmpty(), "No CSS Selector takes an empty argument list.");
-    m_selector->setLangArgumentList(WTFMove(argumentList));
+    m_selector->setArgumentList(WTFMove(argumentList));
 }
 
 void CSSParserSelector::setSelectorList(std::unique_ptr<CSSSelectorList> selectorList)
