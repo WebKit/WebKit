@@ -573,6 +573,8 @@ Internals::Internals(Document& document)
         frame->page()->setPaymentCoordinator(makeUnique<PaymentCoordinator>(*mockPaymentCoordinator));
     }
 #endif
+
+    m_unsuspendableActiveDOMObject = nullptr;
 }
 
 Document* Internals::contextDocument() const
@@ -924,6 +926,27 @@ void Internals::clearPageCache()
 unsigned Internals::pageCacheSize() const
 {
     return PageCache::singleton().pageCount();
+}
+
+class UnsuspendableActiveDOMObject final : public ActiveDOMObject, public RefCounted<UnsuspendableActiveDOMObject> {
+public:
+    static Ref<UnsuspendableActiveDOMObject> create(ScriptExecutionContext& context) { return adoptRef(*new UnsuspendableActiveDOMObject { &context }); }
+
+private:
+    explicit UnsuspendableActiveDOMObject(ScriptExecutionContext* context)
+        : ActiveDOMObject(context)
+    {
+        suspendIfNeeded();
+    }
+
+    bool canSuspendForDocumentSuspension() const final { return false; }
+    const char* activeDOMObjectName() const { return "UnsuspendableActiveDOMObject"; }
+};
+
+void Internals::preventDocumentForEnteringPageCache()
+{
+    if (auto* context = contextDocument())
+        m_unsuspendableActiveDOMObject = UnsuspendableActiveDOMObject::create(*context);
 }
 
 void Internals::disableTileSizeUpdateDelay()

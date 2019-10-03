@@ -43,7 +43,7 @@ enum class ReasonForSuspension {
     PageWillBeSuspended,
 };
 
-class ActiveDOMObject : public ContextDestructionObserver {
+class WEBCORE_EXPORT ActiveDOMObject : public ContextDestructionObserver {
 public:
     // The suspendIfNeeded must be called exactly once after object construction to update
     // the suspended state to match that of the ScriptExecutionContext.

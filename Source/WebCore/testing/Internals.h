@@ -108,6 +108,8 @@ class TextTrackCueGeneric;
 class ServiceWorker;
 #endif
 
+class UnsuspendableActiveDOMObject;
+
 class Internals final : public RefCounted<Internals>, private ContextDestructionObserver
 #if ENABLE(MEDIA_STREAM)
     , private RealtimeMediaSource::Observer
@@ -165,6 +167,7 @@ public:
 
     void clearPageCache();
     unsigned pageCacheSize() const;
+    void preventDocumentForEnteringPageCache();
 
     void disableTileSizeUpdateDelay();
 
@@ -899,6 +902,8 @@ private:
 
     std::unique_ptr<InspectorStubFrontend> m_inspectorFrontend;
     RefPtr<CacheStorageConnection> m_cacheStorageConnection;
+
+    RefPtr<UnsuspendableActiveDOMObject> m_unsuspendableActiveDOMObject;
 };
 
 } // namespace WebCore

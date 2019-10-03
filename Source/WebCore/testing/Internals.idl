@@ -209,6 +209,7 @@ enum CompositingPolicy {
 
     void clearPageCache();
     unsigned long pageCacheSize();
+    void preventDocumentForEnteringPageCache();
 
     CSSStyleDeclaration computedStyleIncludingVisitedInfo(Element element);
 

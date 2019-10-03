@@ -22,8 +22,8 @@ cache_frame.src = victim_url;
 
 function runTest()
 {
-  if (window.testRunner && !testRunner.isWebKit2) {
-    // This test does not run (times out) on WebKit1.
+  if (window.testRunner && !testRunner.isWebKit2 && !window.internals) {
+    // This test does not run (times out) on WebKit1 and requires internals API.
     testRunner.notifyDone();
     return;
   }
@@ -62,9 +62,9 @@ function runTest()
           clearInterval(interval_id);
 
           // Prevent entering PageCache.
-          peerConnection = new w.RTCPeerConnection();
-          peerConnection.addEventListener('onicecandidate', (e) => { });
-          
+          if (w.internals)
+            w.internals.preventDocumentForEnteringPageCache();
+
           child_frame = w.document.body.appendChild(document.createElement('iframe'));
           child_frame.contentWindow.onunload = () => {
             child_frame.contentWindow.onunload = null;
