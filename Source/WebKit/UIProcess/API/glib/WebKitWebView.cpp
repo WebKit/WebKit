@@ -190,7 +190,8 @@ enum {
     PROP_IS_PLAYING_AUDIO,
     PROP_IS_EPHEMERAL,
     PROP_IS_CONTROLLED_BY_AUTOMATION,
-    PROP_EDITABLE
+    PROP_EDITABLE,
+    PROP_PAGE_ID
 };
 
 typedef HashMap<uint64_t, GRefPtr<WebKitWebResource> > LoadingResourcesMap;
@@ -436,6 +437,11 @@ private:
     void willStartLoad(WKWPE::View&) override
     {
         webkitWebViewWillStartLoad(m_webView);
+    }
+
+    void didChangePageID(WKWPE::View&) override
+    {
+        webkitWebViewDidChangePageID(m_webView);
     }
 
     WebKitWebView* m_webView;
@@ -856,6 +862,9 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
     case PROP_EDITABLE:
         g_value_set_boolean(value, webkit_web_view_is_editable(webView));
         break;
+    case PROP_PAGE_ID:
+        g_value_set_uint64(value, webkit_web_view_get_page_id(webView));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
     }
@@ -1186,6 +1195,23 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             _("Whether the content can be modified by the user."),
             FALSE,
             WEBKIT_PARAM_READWRITE));
+
+    /**
+     * WebKitWebView:page-id:
+     *
+     * The identifier of the #WebKitWebPage corresponding to the #WebKitWebView.
+     *
+     * Since: 2.28
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_PAGE_ID,
+        g_param_spec_uint64(
+            "page-id",
+            _("Page Identifier"),
+            _("The page identifier."),
+            0, G_MAXUINT64, 0,
+            WEBKIT_PARAM_READABLE));
 
     /**
      * WebKitWebView::load-changed:
@@ -2554,6 +2580,11 @@ bool webkitWebViewShowOptionMenu(WebKitWebView* webView, const IntRect& rect, We
     return handled;
 }
 #endif
+
+void webkitWebViewDidChangePageID(WebKitWebView* webView)
+{
+    g_object_notify(G_OBJECT(webView), "page-id");
+}
 
 #if PLATFORM(WPE)
 /**

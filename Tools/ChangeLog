@@ -1,3 +1,19 @@
+2019-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add WebKitWebView:page-id property
+        https://bugs.webkit.org/show_bug.cgi?id=201642
+
+        Reviewed by Michael Catanzaro.
+
+        Add a test case to check the new property.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebExtensions.cpp:
+        (checkTitle):
+        (testWebExtensionGetTitle):
+        (webViewPageIDChanged):
+        (testWebExtensionPageID):
+        (beforeAll):
+
 2019-10-02  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Only automatically search when multiple lines are pasted

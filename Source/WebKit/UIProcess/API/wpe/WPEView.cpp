@@ -204,6 +204,11 @@ void View::willStartLoad()
     m_client->willStartLoad(*this);
 }
 
+void View::didChangePageID()
+{
+    m_client->didChangePageID(*this);
+}
+
 void View::setSize(const WebCore::IntSize& size)
 {
     m_size = size;

@@ -67,6 +67,7 @@ public:
     void frameDisplayed();
     void handleDownloadRequest(WebKit::DownloadProxy&);
     void willStartLoad();
+    void didChangePageID();
 
     WebKit::WebPageProxy& page() { return *m_pageProxy; }
 

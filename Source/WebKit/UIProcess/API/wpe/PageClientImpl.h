@@ -160,6 +160,8 @@ private:
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
 
+    void didChangeWebPageID() const override;
+
     WKWPE::View& m_view;
 
     std::unique_ptr<ScrollGestureController> m_scrollGestureController;

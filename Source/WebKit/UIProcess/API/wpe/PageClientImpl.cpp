@@ -420,4 +420,9 @@ AtkObject* PageClientImpl::accessible()
 }
 #endif
 
+void PageClientImpl::didChangeWebPageID() const
+{
+    m_view.didChangePageID();
+}
+
 } // namespace WebKit

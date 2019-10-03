@@ -100,3 +100,4 @@ bool webkitWebViewShowOptionMenu(WebKitWebView*, const WebCore::IntRect&, WebKit
 gboolean webkitWebViewAuthenticate(WebKitWebView*, WebKitAuthenticationRequest*);
 gboolean webkitWebViewScriptDialog(WebKitWebView*, WebKitScriptDialog*);
 gboolean webkitWebViewRunFileChooser(WebKitWebView*, WebKitFileChooserRequest*);
+void webkitWebViewDidChangePageID(WebKitWebView*);

@@ -579,4 +579,10 @@ IPC::Attachment PageClientImpl::hostFileDescriptor()
 }
 #endif
 
+void PageClientImpl::didChangeWebPageID() const
+{
+    if (WEBKIT_IS_WEB_VIEW(m_viewWidget))
+        webkitWebViewDidChangePageID(WEBKIT_WEB_VIEW(m_viewWidget));
+}
+
 } // namespace WebKit

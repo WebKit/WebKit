@@ -805,6 +805,7 @@ void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, PageIdentifi
 
     m_process = WTFMove(process);
     m_webPageID = webPageID;
+    pageClient().didChangeWebPageID();
     m_websiteDataStore = m_process->websiteDataStore();
 
     if (m_logger)

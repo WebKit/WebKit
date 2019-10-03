@@ -30,14 +30,10 @@ static GUniquePtr<char> scriptDialogResult;
 
 #define FORM_SUBMISSION_TEST_ID "form-submission-test-id"
 
-static void testWebExtensionGetTitle(WebViewTest* test, gconstpointer)
+static void checkTitle(WebViewTest* test, GDBusProxy* proxy, const char* expectedTitle)
 {
-    test->loadHtml("<html><head><title>WebKitGTK Web Extensions Test</title></head><body></body></html>", "http://bar.com");
-    test->waitUntilLoadFinished();
-
-    auto proxy = test->extensionProxy();
     GRefPtr<GVariant> result = adoptGRef(g_dbus_proxy_call_sync(
-        proxy.get(),
+        proxy,
         "GetTitle",
         g_variant_new("(t)", webkit_web_view_get_page_id(test->m_webView)),
         G_DBUS_CALL_FLAGS_NONE,
@@ -46,7 +42,16 @@ static void testWebExtensionGetTitle(WebViewTest* test, gconstpointer)
 
     const char* title;
     g_variant_get(result.get(), "(&s)", &title);
-    g_assert_cmpstr(title, ==, "WebKitGTK Web Extensions Test");
+    g_assert_cmpstr(title, ==, expectedTitle);
+}
+
+static void testWebExtensionGetTitle(WebViewTest* test, gconstpointer)
+{
+    test->loadHtml("<html><head><title>WebKitGTK Web Extensions Test</title></head><body></body></html>", "http://bar.com");
+    test->waitUntilLoadFinished();
+
+    auto proxy = test->extensionProxy();
+    checkTitle(test, proxy.get(), "WebKitGTK Web Extensions Test");
 }
 
 #if PLATFORM(GTK)
@@ -442,6 +447,49 @@ static void testWebExtensionFormSubmissionSteps(FormSubmissionTest* test, gconst
     test->waitUntilLoadFinished();
 }
 
+static void webViewPageIDChanged(WebKitWebView* webView, GParamSpec*, bool* pageIDChangedEmitted)
+{
+    *pageIDChangedEmitted = true;
+    g_assert_nonnull(Test::s_dbusConnectionPageMap.get(webkit_web_view_get_page_id(webView)));
+}
+
+static void testWebExtensionPageID(WebViewTest* test, gconstpointer)
+{
+    auto pageID = webkit_web_view_get_page_id(test->m_webView);
+    g_assert_cmpuint(pageID, >=, 1);
+
+    bool pageIDChangedEmitted = false;
+    g_signal_connect(test->m_webView, "notify::page-id", G_CALLBACK(webViewPageIDChanged), &pageIDChangedEmitted);
+
+    test->loadHtml("<html><head><title>Title1</title></head><body></body></html>", "http://foo.com");
+    test->waitUntilLoadFinished();
+    g_assert_false(pageIDChangedEmitted);
+    g_assert_cmpuint(pageID, ==, webkit_web_view_get_page_id(test->m_webView));
+    auto proxy = test->extensionProxy();
+    checkTitle(test, proxy.get(), "Title1");
+
+    test->loadHtml("<html><head><title>Title2</title></head><body></body></html>", "http://foo.com/bar");
+    test->waitUntilLoadFinished();
+    g_assert_false(pageIDChangedEmitted);
+    g_assert_cmpuint(pageID, ==, webkit_web_view_get_page_id(test->m_webView));
+    checkTitle(test, proxy.get(), "Title2");
+
+    test->loadHtml("<html><head><title>Title3</title></head><body></body></html>", "http://bar.com");
+    test->waitUntilLoadFinished();
+    g_assert_true(pageIDChangedEmitted);
+    pageIDChangedEmitted = false;
+    g_assert_cmpuint(pageID, <, webkit_web_view_get_page_id(test->m_webView));
+    pageID = webkit_web_view_get_page_id(test->m_webView);
+    proxy = test->extensionProxy();
+    checkTitle(test, proxy.get(), "Title3");
+
+    test->loadHtml("<html><head><title>Title4</title></head><body></body></html>", "http://bar.com/foo");
+    test->waitUntilLoadFinished();
+    g_assert_false(pageIDChangedEmitted);
+    g_assert_cmpuint(pageID, ==, webkit_web_view_get_page_id(test->m_webView));
+    checkTitle(test, proxy.get(), "Title4");
+}
+
 void beforeAll()
 {
     WebViewTest::add("WebKitWebExtension", "dom-document-title", testWebExtensionGetTitle);
@@ -457,6 +505,7 @@ void beforeAll()
 #endif
     WebViewTest::add("WebKitWebExtension", "form-controls-associated-signal", testWebExtensionFormControlsAssociated);
     FormSubmissionTest::add("WebKitWebExtension", "form-submission-steps", testWebExtensionFormSubmissionSteps);
+    WebViewTest::add("WebKitWebExtension", "page-id", testWebExtensionPageID);
 }
 
 void afterAll()

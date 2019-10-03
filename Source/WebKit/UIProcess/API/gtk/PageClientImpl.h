@@ -172,6 +172,8 @@ private:
     IPC::Attachment hostFileDescriptor() override;
 #endif
 
+    void didChangeWebPageID() const override;
+
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;
     DefaultUndoController m_undoController;
