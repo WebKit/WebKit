@@ -218,6 +218,8 @@ function SearchBar(callback, suites) {
                     tests.add(str);
                 });
                 tests = [...tests];
+                if (tests.length <= 1)
+                    return;
 
                 let pairs = [];
                 let outstanding = suites.length;

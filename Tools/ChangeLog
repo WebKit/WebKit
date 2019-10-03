@@ -1,5 +1,16 @@
 2019-10-02  Jonathan Bedard  <jbedard@apple.com>
 
+        results.webkit.org: Only automatically search when multiple lines are pasted
+        https://bugs.webkit.org/show_bug.cgi?id=202496
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/static/js/search.js:
+        (SearchBar): If only a single line has been pasted, do not automatically dispatch
+        the search.
+
+2019-10-02  Jonathan Bedard  <jbedard@apple.com>
+
         Python 3: Add test-webkitpy for Python 3 (Follow-up fix)
         https://bugs.webkit.org/show_bug.cgi?id=201954
 
