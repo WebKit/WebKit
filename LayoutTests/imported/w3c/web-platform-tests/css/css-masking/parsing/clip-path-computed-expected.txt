@@ -1,0 +1,6 @@
+
+FAIL Property clip-path value 'circle(calc(10px + 0.5em) at -50% 50%)' computes to 'circle(30px at -50% 50%)' assert_equals: expected "circle(30px at -50% 50%)" but got "none"
+FAIL Property clip-path value 'circle(calc(10px - 0.5em) at 50% -50%)' computes to 'circle(0px at 50% -50%)' assert_equals: expected "circle(0px at 50% -50%)" but got "none"
+FAIL Property clip-path value 'ellipse(at 50% 50%)' computes to 'ellipse(at 50% 50%)' assert_equals: expected "ellipse(at 50% 50%)" but got "none"
+FAIL Property clip-path value 'ellipse(60% closest-side at 50% 50%)' computes to 'ellipse(60% closest-side at 50% 50%)' assert_equals: expected "ellipse(60% closest-side at 50% 50%)" but got "none"
+

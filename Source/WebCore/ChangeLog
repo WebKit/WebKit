@@ -1,3 +1,26 @@
+2019-10-03  Joonghun Park  <pjh0718@gmail.com>
+
+        CSS ellipse() doesn't accept single <shape-radius>
+        https://bugs.webkit.org/show_bug.cgi?id=181745
+
+        CSS ellipse() should only accept 0 or 2 radii.
+        The corresponding csswg discussion is
+        https://github.com/w3c/csswg-drafts/issues/2175.
+
+        Reviewed by Antti Koivisto.
+
+        Tests: imported/w3c/web-platform-tests/css/css-masking/parsing/clip-path-computed.html
+               imported/w3c/web-platform-tests/css/css-masking/parsing/clip-path-invalid.html
+               imported/w3c/web-platform-tests/css/css-masking/parsing/clip-path-valid.html
+               imported/w3c/web-platform-tests/css/css-masking/parsing/shape-outside-computed.html
+               imported/w3c/web-platform-tests/css/css-masking/parsing/shape-outside-invalid.html
+               imported/w3c/web-platform-tests/css/css-masking/parsing/shape-outside-valid.html
+
+        * css/CSSBasicShapes.cpp:
+        (WebCore::CSSBasicShapeEllipse::cssText const):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeBasicShapeEllipse):
+
 2019-10-03  Zan Dobersek  <zdobersek@igalia.com>
 
         [Nicosia] Enable runtime checks and triggers for async non-main-frame scrolling

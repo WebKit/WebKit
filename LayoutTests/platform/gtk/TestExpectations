@@ -2958,7 +2958,6 @@ webkit.org/b/180581 css3/shapes/shape-outside/values/shape-margin-001.html [ Fai
 webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-circle-004.html [ Failure ]
 webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-circle-005.html [ Failure ]
 webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-ellipse-004.html [ Failure ]
-webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-ellipse-005.html [ Failure ]
 webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-inset-003.html [ Failure ]
 webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
 webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-shape-arguments-000.html [ Failure ]

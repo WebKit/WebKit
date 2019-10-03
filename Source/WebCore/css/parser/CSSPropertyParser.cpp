@@ -2383,11 +2383,13 @@ static RefPtr<CSSBasicShapeEllipse> consumeBasicShapeEllipse(CSSParserTokenRange
 {
     // spec: https://drafts.csswg.org/css-shapes/#supported-basic-shapes
     // ellipse( [<shape-radius>{2}]? [at <position>]? )
-    RefPtr<CSSBasicShapeEllipse> shape = CSSBasicShapeEllipse::create();
-    if (RefPtr<CSSPrimitiveValue> radiusX = consumeShapeRadius(args, context.mode)) {
+    auto shape = CSSBasicShapeEllipse::create();
+    if (auto radiusX = consumeShapeRadius(args, context.mode)) {
+        auto radiusY = consumeShapeRadius(args, context.mode);
+        if (!radiusY)
+            return nullptr;
         shape->setRadiusX(radiusX.releaseNonNull());
-        if (RefPtr<CSSPrimitiveValue> radiusY = consumeShapeRadius(args, context.mode))
-            shape->setRadiusY(radiusY.releaseNonNull());
+        shape->setRadiusY(radiusY.releaseNonNull());
     }
     if (consumeIdent<CSSValueAt>(args)) {
         RefPtr<CSSPrimitiveValue> centerX;

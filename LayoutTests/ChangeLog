@@ -1,3 +1,32 @@
+2019-10-03  Joonghun Park  <pjh0718@gmail.com>
+
+        CSS ellipse() doesn't accept single <shape-radius>
+        https://bugs.webkit.org/show_bug.cgi?id=181745
+
+        CSS ellipse() should only accept 0 or 2 radii.
+        The corresponding csswg discussion is
+        https://github.com/w3c/csswg-drafts/issues/2175.
+        Remove the layout tests duplicated with the wpt ported version ones.
+
+        Reviewed by Antti Koivisto.
+
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-015-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-015.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-017-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-017.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-001-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-001.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-005-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-005.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-010-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-010.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-011-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-011.html: Removed.
+        * fast/shapes/parsing/parsing-shape-outside-expected.txt:
+        * fast/shapes/parsing/parsing-test-utils.js:
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2019-10-03  Miguel Gomez  <magomez@igalia.com>
 
         [WPE] Unreviewed WPE gardening after r250642

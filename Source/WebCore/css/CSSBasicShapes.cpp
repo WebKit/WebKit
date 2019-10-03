@@ -156,16 +156,13 @@ String CSSBasicShapeEllipse::cssText() const
     String radiusX;
     String radiusY;
     if (m_radiusX) {
-        bool shouldSerializeRadiusXValue = m_radiusX->valueID() != CSSValueClosestSide;
-        bool shouldSerializeRadiusYValue = false;
-
-        if (m_radiusY) {
-            shouldSerializeRadiusYValue = m_radiusY->valueID() != CSSValueClosestSide;
-            if (shouldSerializeRadiusYValue)
-                radiusY = m_radiusY->cssText();
-        }
-        if (shouldSerializeRadiusXValue || (!shouldSerializeRadiusXValue && shouldSerializeRadiusYValue))
+        ASSERT(m_radiusY);
+        bool radiusXClosestSide = m_radiusX->valueID() == CSSValueClosestSide;
+        bool radiusYClosestSide = m_radiusY->valueID() == CSSValueClosestSide;
+        if (!radiusXClosestSide || !radiusYClosestSide) {
             radiusX = m_radiusX->cssText();
+            radiusY = m_radiusY->cssText();
+        }
     }
     return buildEllipseString(radiusX, radiusY,
         serializePositionOffset(*normalizedCX->pairValue(), *normalizedCY->pairValue()),

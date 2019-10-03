@@ -1,3 +1,35 @@
+2019-10-03  Joonghun Park  <pjh0718@gmail.com>
+
+        CSS ellipse() doesn't accept single <shape-radius>
+        https://bugs.webkit.org/show_bug.cgi?id=181745
+
+        CSS ellipse() should only accept 0 or 2 radii.
+        The corresponding csswg discussion is
+        https://github.com/w3c/csswg-drafts/issues/2175.
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/css/css-masking/parsing/clip-path-computed-expected.txt: Added.
+        * web-platform-tests/css/css-masking/parsing/clip-path-computed.html: Added.
+        * web-platform-tests/css/css-masking/parsing/clip-path-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-masking/parsing/clip-path-invalid.html: Added.
+        * web-platform-tests/css/css-masking/parsing/clip-path-valid-expected.txt: Added.
+        * web-platform-tests/css/css-masking/parsing/clip-path-valid.html: Added.
+        * web-platform-tests/css/css-masking/parsing/shape-outside-computed-expected.txt: Added.
+        * web-platform-tests/css/css-masking/parsing/shape-outside-computed.html: Added.
+        * web-platform-tests/css/css-masking/parsing/shape-outside-invalid-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/parsing/shape-outside-invalid-expected.txt.
+        * web-platform-tests/css/css-masking/parsing/shape-outside-invalid.html: Added.
+        * web-platform-tests/css/css-masking/parsing/shape-outside-valid-expected.txt: Added.
+        * web-platform-tests/css/css-masking/parsing/shape-outside-valid.html: Added.
+        * web-platform-tests/css/css-shapes/parsing/shape-outside-invalid-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-001-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-005-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-010-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-010.html:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-011-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-011.html:
+        * web-platform-tests/css/css-shapes/shape-outside/values/support/parsing-utils.js:
+
 2019-10-02  Antti Koivisto  <antti@apple.com>
 
         [CSS Shadow Parts] Support multiple arguments for ::part()
