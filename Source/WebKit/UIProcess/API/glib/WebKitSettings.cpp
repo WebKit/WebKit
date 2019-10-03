@@ -3549,6 +3549,7 @@ void webkit_settings_set_hardware_acceleration_policy(WebKitSettings* settings, 
         }
         if (!priv->preferences->forceCompositingMode()) {
             priv->preferences->setForceCompositingMode(true);
+            priv->preferences->setThreadedScrollingEnabled(true);
             changed = true;
         }
         break;
@@ -3562,6 +3563,7 @@ void webkit_settings_set_hardware_acceleration_policy(WebKitSettings* settings, 
 
         if (priv->preferences->forceCompositingMode()) {
             priv->preferences->setForceCompositingMode(false);
+            priv->preferences->setThreadedScrollingEnabled(false);
             changed = true;
         }
         break;
@@ -3573,6 +3575,7 @@ void webkit_settings_set_hardware_acceleration_policy(WebKitSettings* settings, 
 
         if (priv->preferences->forceCompositingMode() && !HardwareAccelerationManager::singleton().forceHardwareAcceleration()) {
             priv->preferences->setForceCompositingMode(false);
+            priv->preferences->setThreadedScrollingEnabled(false);
             changed = true;
         }
         break;

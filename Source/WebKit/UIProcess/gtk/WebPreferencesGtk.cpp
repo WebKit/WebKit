@@ -34,10 +34,19 @@ namespace WebKit {
 
 void WebPreferences::platformInitializeStore()
 {
+    struct {
+        bool acceleratedCompositingEnabled { true };
+        bool forceCompositingMode { false };
+    } compositingState;
+
     if (!HardwareAccelerationManager::singleton().canUseHardwareAcceleration())
-        setAcceleratedCompositingEnabled(false);
+        compositingState = { false, false };
     else if (HardwareAccelerationManager::singleton().forceHardwareAcceleration())
-        setForceCompositingMode(true);
+        compositingState = { true, true };
+
+    setAcceleratedCompositingEnabled(compositingState.acceleratedCompositingEnabled);
+    setForceCompositingMode(compositingState.forceCompositingMode);
+    setThreadedScrollingEnabled(compositingState.forceCompositingMode);
 }
 
 void WebPreferences::platformUpdateStringValueForKey(const String&, const String&)

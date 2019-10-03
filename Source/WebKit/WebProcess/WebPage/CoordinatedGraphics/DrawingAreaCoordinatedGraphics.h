@@ -65,6 +65,8 @@ private:
     void didChangeViewportAttributes(WebCore::ViewportAttributes&&) override;
 #endif
 
+    bool supportsAsyncScrolling() override;
+
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
     void scheduleInitialDeferredPaint() override { };
@@ -143,7 +145,8 @@ private:
     // web process won't paint more frequent than the UI process can handle.
     bool m_isWaitingForDidUpdate { false };
 
-    bool m_alwaysUseCompositing {false };
+    bool m_alwaysUseCompositing { false };
+    bool m_supportsAsyncScrolling { true };
     bool m_forceRepaintAfterBackingStoreStateUpdate { false };
 
     RunLoop::Timer<DrawingAreaCoordinatedGraphics> m_displayTimer;

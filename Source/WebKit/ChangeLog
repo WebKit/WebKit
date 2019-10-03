@@ -1,5 +1,35 @@
 2019-10-03  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GTK][WPE] Enable async scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=202449
+
+        Reviewed by Carlos Garcia Campos.
+
+        For WPE, explicitly enable the threaded scrolling preference on the
+        WebPreferences object. For GTK, the same preference is enabled in
+        parallel with the forced-compositing preference, as the async scrolling
+        feature depends on always-on AC mode.
+
+        To help with quick evaluation of potential issues around async scrolling
+        the feature can still be disabled via the WEBKIT_DISABLE_ASYNC_SCROLLING
+        environment variable, though this only works in DEVELOPER_MODE builds.
+
+        * Shared/WebPreferencesDefaultValues.h: Default-enable async frame and
+        overflow scrolling on Nicosia-using ports.
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webkit_settings_set_hardware_acceleration_policy):
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::m_backend):
+        * UIProcess/gtk/WebPreferencesGtk.cpp:
+        (WebKit::WebPreferences::platformInitializeStore):
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::DrawingAreaCoordinatedGraphics):
+        (WebKit::DrawingAreaCoordinatedGraphics::updatePreferences):
+        (WebKit::DrawingAreaCoordinatedGraphics::supportsAsyncScrolling):
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.h:
+
+2019-10-03  Zan Dobersek  <zdobersek@igalia.com>
+
         [Nicosia] Enable runtime checks and triggers for async non-main-frame scrolling
         https://bugs.webkit.org/show_bug.cgi?id=202509
 
