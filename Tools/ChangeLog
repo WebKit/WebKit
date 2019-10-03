@@ -1,3 +1,23 @@
+2019-10-03  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r248325. rdar://problem/55964805
+
+    Unreviewed, a build fix after r248308
+    
+    Don't use WK_ENGINEERING_CODE_SIGN_IDENTITY for Production build.
+    
+    * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248325 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+            Unreviewed, a build fix after r248308
+
+            Don't use WK_ENGINEERING_CODE_SIGN_IDENTITY for Production build.
+
+            * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig:
+
 2019-08-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, a build fix after r248319
