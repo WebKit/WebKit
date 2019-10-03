@@ -1,3 +1,14 @@
+2019-10-02  Tim Horton  <timothy_horton@apple.com>
+
+        Provide TAPI the full target triple instead of just the arch
+        https://bugs.webkit.org/show_bug.cgi?id=202486
+
+        Reviewed by Simon Fraser.
+
+        * MigrateHeaders.make:
+        For accuracy and consistency's sake, pass the whole target identifier
+        instead of just one piece.
+
 2019-10-01  Tim Horton  <timothy_horton@apple.com>
 
         Clean up some includes to make the build a bit faster
