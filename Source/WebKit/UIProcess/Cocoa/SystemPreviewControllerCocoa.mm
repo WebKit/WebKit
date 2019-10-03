@@ -304,7 +304,7 @@ void SystemPreviewController::triggerSystemPreviewAction()
 
 void SystemPreviewController::triggerSystemPreviewActionWithTargetForTesting(uint64_t frameID, uint64_t pageID)
 {
-    m_systemPreviewInfo.globalFrameID.frameID = makeObjectIdentifier<WebCore::FrameIdentifierType>(frameID);
+    m_systemPreviewInfo.globalFrameID.frameID = frameID;
     m_systemPreviewInfo.globalFrameID.pageID = makeObjectIdentifier<WebCore::PageIdentifierType>(pageID);
     triggerSystemPreviewAction();
 }

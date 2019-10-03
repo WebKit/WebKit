@@ -2465,7 +2465,7 @@ bool Internals::isDocumentAlive(uint64_t documentIdentifier) const
 uint64_t Internals::frameIdentifier(const Document& document) const
 {
     if (auto* page = document.page())
-        return page->mainFrame().loader().client().frameID().valueOr(FrameIdentifier { }).toUInt64();
+        return page->mainFrame().loader().client().frameID().valueOr(0);
     return 0;
 }
 

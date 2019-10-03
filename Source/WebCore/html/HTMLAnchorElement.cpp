@@ -481,7 +481,7 @@ void HTMLAnchorElement::handleClick(Event& event)
     systemPreviewInfo.isPreview = isSystemPreviewLink() && RuntimeEnabledFeatures::sharedFeatures().systemPreviewEnabled();
 
     if (systemPreviewInfo.isPreview) {
-        systemPreviewInfo.globalFrameID.frameID = document().frame()->loader().client().frameID().valueOr(FrameIdentifier { });
+        systemPreviewInfo.globalFrameID.frameID = document().frame()->loader().client().frameID().valueOr(0);
         systemPreviewInfo.globalFrameID.pageID = document().frame()->loader().client().pageID().valueOr(PageIdentifier { });
         if (auto* child = firstElementChild())
             systemPreviewInfo.previewRect = child->boundsInRootViewSpace();
