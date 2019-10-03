@@ -43,10 +43,8 @@ UniqueRef<AuthenticatorTransportService> AuthenticatorTransportService::create(W
     switch (transport) {
     case WebCore::AuthenticatorTransport::Internal:
         return makeUniqueRef<LocalService>(observer);
-#if PLATFORM(MAC)
     case WebCore::AuthenticatorTransport::Usb:
         return makeUniqueRef<HidService>(observer);
-#endif
     case WebCore::AuthenticatorTransport::Nfc:
         return makeUniqueRef<NfcService>(observer);
     default:
@@ -60,10 +58,8 @@ UniqueRef<AuthenticatorTransportService> AuthenticatorTransportService::createMo
     switch (transport) {
     case WebCore::AuthenticatorTransport::Internal:
         return makeUniqueRef<MockLocalService>(observer, configuration);
-#if PLATFORM(MAC)
     case WebCore::AuthenticatorTransport::Usb:
         return makeUniqueRef<MockHidService>(observer, configuration);
-#endif
     case WebCore::AuthenticatorTransport::Nfc:
         return makeUniqueRef<MockNfcService>(observer, configuration);
     default:

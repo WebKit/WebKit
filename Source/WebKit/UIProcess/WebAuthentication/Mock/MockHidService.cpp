@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MockHidService.h"
 
-#if ENABLE(WEB_AUTHN) && PLATFORM(MAC)
+#if ENABLE(WEB_AUTHN)
 
 #include "MockHidConnection.h"
 #include <wtf/RunLoop.h>
@@ -55,4 +55,4 @@ UniqueRef<HidConnection> MockHidService::createHidConnection(IOHIDDeviceRef devi
 
 } // namespace WebKit
 
-#endif // ENABLE(WEB_AUTHN) && PLATFORM(MAC)
+#endif // ENABLE(WEB_AUTHN)
