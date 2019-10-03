@@ -37,7 +37,6 @@
 
 namespace WebCore {
 
-class InspectorInstrumentationCookie;
 class ScriptExecutionContext;
 
 class JSExecState {
@@ -119,8 +118,8 @@ public:
         return returnValue;
     }
 
-    static InspectorInstrumentationCookie instrumentFunctionCall(ScriptExecutionContext*, JSC::CallType, const JSC::CallData&);
-    static InspectorInstrumentationCookie instrumentFunctionConstruct(ScriptExecutionContext*, JSC::ConstructType, const JSC::ConstructData&);
+    static void instrumentFunctionCall(ScriptExecutionContext*, JSC::CallType, const JSC::CallData&);
+    static void instrumentFunctionConstruct(ScriptExecutionContext*, JSC::ConstructType, const JSC::ConstructData&);
 
 private:
     explicit JSExecState(JSC::ExecState* exec)
@@ -150,7 +149,7 @@ private:
         threadGlobalData().setCurrentState(state);
     }
 
-    template<typename Type, Type jsType, typename DataType> static InspectorInstrumentationCookie instrumentFunctionInternal(ScriptExecutionContext*, Type, const DataType&);
+    template<typename Type, Type jsType, typename DataType> static void instrumentFunctionInternal(ScriptExecutionContext*, Type, const DataType&);
 
     JSC::ExecState* m_previousState;
     JSC::JSLockHolder m_lock;

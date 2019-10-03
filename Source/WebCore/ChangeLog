@@ -1,3 +1,119 @@
+2019-10-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: remove `InspectorInstrumentationCookie`
+        https://bugs.webkit.org/show_bug.cgi?id=202487
+
+        Reviewed by Matt Baker.
+
+        All it does is create a shallow-copy of the `InstrumentingAgents` (it copies a pointer to
+        the `InstrumentingAgents` object, so any of the pointers to the `InspectorAgent` that are
+        contained therein are shared between each instance) and save the tracking
+        `InspectorTimelineAgent`'s id (monotonically increasing integer).
+
+        All uses of `InspectorInstrumentationCookie` are local values, so there's no way that the
+        `InspectorTimelineAgent` (or the id) could change in between an
+        `InspectorInstrumentation::will*` and an `InspectorInstrumentation::did*`, as both the
+        tracking state and id are controlled by the frontend and cannot "interrupt".
+
+        Removing `InspectorInstrumentationCookie` _can_ cause issues is in situations where the
+        `ScriptExecutionContext` (or `Page`) changes between the `InspectorInstrumentation::will*`
+        and the `InspectorInstrumentation::did*`, but this can be avoided so long as a pointer to
+        the "context" used for `InspectorInstrumentation::will*` is saved.
+
+        Covered by existing tests: inspector/timeline/*
+
+        * inspector/InspectorInstrumentationCookie.h: Removed.
+        * inspector/InspectorInstrumentationCookie.cpp: Removed.
+
+        * inspector/agents/InspectorTimelineAgent.h:
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::internalStop):
+        (WebCore::InspectorTimelineAgent::didDispatchEvent):
+        (WebCore::InspectorTimelineAgent::didPaint):
+        (WebCore::InspectorTimelineAgent::clearRecordStack): Deleted.
+
+        * bindings/js/JSCallbackData.cpp:
+        (WebCore::JSCallbackData::invokeCallback):
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::constructCustomElementSynchronously):
+        (WebCore::JSCustomElementInterface::upgradeElement):
+        (WebCore::JSCustomElementInterface::invokeCallback):
+        * bindings/js/JSErrorHandler.cpp:
+        (WebCore::JSErrorHandler::handleEvent):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSExecState.h:
+        * bindings/js/JSExecStateInstrumentation.h:
+        (WebCore::JSExecState::instrumentFunctionInternal):
+        (WebCore::JSExecState::instrumentFunctionCall):
+        (WebCore::JSExecState::instrumentFunctionConstruct):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::executeFunctionInContext):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld):
+        (WebCore::ScriptController::evaluateModule):
+        * dom/Document.cpp:
+        (WebCore::Document::resolveStyle):
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::innerInvokeEventListeners):
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::deliver):
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::serviceRequestAnimationFrameCallbacks):
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::fired):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchEvent):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::layout):
+        * page/IntersectionObserver.cpp:
+        (WebCore::IntersectionObserver::notify):
+        * page/PerformanceObserver.cpp:
+        (WebCore::PerformanceObserver::deliver):
+
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willCallFunction):
+        (WebCore::InspectorInstrumentation::didCallFunction):
+        (WebCore::InspectorInstrumentation::willDispatchEvent):
+        (WebCore::InspectorInstrumentation::didDispatchEvent):
+        (WebCore::InspectorInstrumentation::willDispatchEventOnWindow):
+        (WebCore::InspectorInstrumentation::didDispatchEventOnWindow):
+        (WebCore::InspectorInstrumentation::willEvaluateScript):
+        (WebCore::InspectorInstrumentation::didEvaluateScript):
+        (WebCore::InspectorInstrumentation::willFireTimer):
+        (WebCore::InspectorInstrumentation::didFireTimer):
+        (WebCore::InspectorInstrumentation::willLayout):
+        (WebCore::InspectorInstrumentation::didLayout):
+        (WebCore::InspectorInstrumentation::willRecalculateStyle):
+        (WebCore::InspectorInstrumentation::didRecalculateStyle):
+        (WebCore::InspectorInstrumentation::willFireAnimationFrame):
+        (WebCore::InspectorInstrumentation::didFireAnimationFrame):
+        (WebCore::InspectorInstrumentation::willFireObserverCallback):
+        (WebCore::InspectorInstrumentation::didFireObserverCallback):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willCallFunctionImpl):
+        (WebCore::InspectorInstrumentation::didCallFunctionImpl):
+        (WebCore::InspectorInstrumentation::willDispatchEventImpl):
+        (WebCore::InspectorInstrumentation::didDispatchEventImpl):
+        (WebCore::InspectorInstrumentation::willDispatchEventOnWindowImpl):
+        (WebCore::InspectorInstrumentation::didDispatchEventOnWindowImpl):
+        (WebCore::InspectorInstrumentation::willEvaluateScriptImpl):
+        (WebCore::InspectorInstrumentation::didEvaluateScriptImpl):
+        (WebCore::InspectorInstrumentation::willFireTimerImpl):
+        (WebCore::InspectorInstrumentation::didFireTimerImpl):
+        (WebCore::InspectorInstrumentation::willLayoutImpl):
+        (WebCore::InspectorInstrumentation::didLayoutImpl):
+        (WebCore::InspectorInstrumentation::willRecalculateStyleImpl):
+        (WebCore::InspectorInstrumentation::didRecalculateStyleImpl):
+        (WebCore::InspectorInstrumentation::willFireAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::didFireAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::willFireObserverCallbackImpl):
+        (WebCore::InspectorInstrumentation::didFireObserverCallbackImpl):
+        (WebCore::InspectorInstrumentation::retrieveTimelineAgent): Deleted.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-10-03  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: add size estimate for key path when estimate task size

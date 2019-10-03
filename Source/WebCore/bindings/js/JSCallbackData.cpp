@@ -83,12 +83,12 @@ JSValue JSCallbackData::invokeCallback(JSDOMGlobalObject& globalObject, JSObject
     if (!context)
         return JSValue();
 
-    InspectorInstrumentationCookie cookie = JSExecState::instrumentFunctionCall(context, callType, callData);
+    JSExecState::instrumentFunctionCall(context, callType, callData);
 
     returnedException = nullptr;
     JSValue result = JSExecState::profiledCall(exec, JSC::ProfilingReason::Other, function, callType, callData, thisValue, args, returnedException);
 
-    InspectorInstrumentation::didCallFunction(cookie, context);
+    InspectorInstrumentation::didCallFunction(context);
 
     return result;
 }

@@ -168,13 +168,13 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
 
     VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : globalObject);
 
-    InspectorInstrumentationCookie cookie = JSExecState::instrumentFunctionCall(&scriptExecutionContext, callType, callData);
+    JSExecState::instrumentFunctionCall(&scriptExecutionContext, callType, callData);
 
     JSValue thisValue = handleEventFunction == jsFunction ? toJS(exec, globalObject, event.currentTarget()) : jsFunction;
     NakedPtr<JSC::Exception> exception;
     JSValue retval = JSExecState::profiledCall(exec, JSC::ProfilingReason::Other, handleEventFunction, callType, callData, thisValue, args, exception);
 
-    InspectorInstrumentation::didCallFunction(cookie, &scriptExecutionContext);
+    InspectorInstrumentation::didCallFunction(&scriptExecutionContext);
 
     globalObject->setCurrentEvent(savedEvent);
 

@@ -124,11 +124,11 @@ static RefPtr<Element> constructCustomElementSynchronously(Document& document, V
         return nullptr;
     }
 
-    InspectorInstrumentationCookie cookie = JSExecState::instrumentFunctionConstruct(&document, constructType, constructData);
+    JSExecState::instrumentFunctionConstruct(&document, constructType, constructData);
     MarkedArgumentBuffer args;
     ASSERT(!args.hasOverflowed());
     JSValue newElement = construct(&state, constructor, constructType, constructData, args);
-    InspectorInstrumentation::didCallFunction(cookie, &document);
+    InspectorInstrumentation::didCallFunction(&document);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     ASSERT(!newElement.isEmpty());
@@ -199,9 +199,9 @@ void JSCustomElementInterface::upgradeElement(Element& element)
 
     MarkedArgumentBuffer args;
     ASSERT(!args.hasOverflowed());
-    InspectorInstrumentationCookie cookie = JSExecState::instrumentFunctionConstruct(context, constructType, constructData);
+    JSExecState::instrumentFunctionConstruct(context, constructType, constructData);
     JSValue returnedElement = construct(state, m_constructor.get(), constructType, constructData, args);
-    InspectorInstrumentation::didCallFunction(cookie, context);
+    InspectorInstrumentation::didCallFunction(context);
 
     m_constructionStack.removeLast();
 
@@ -248,12 +248,12 @@ void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callba
     addArguments(state, globalObject, args);
     RELEASE_ASSERT(!args.hasOverflowed());
 
-    InspectorInstrumentationCookie cookie = JSExecState::instrumentFunctionCall(context, callType, callData);
+    JSExecState::instrumentFunctionCall(context, callType, callData);
 
     NakedPtr<JSC::Exception> exception;
     JSExecState::call(state, callback, callType, callData, jsElement, args, exception);
 
-    InspectorInstrumentation::didCallFunction(cookie, context);
+    InspectorInstrumentation::didCallFunction(context);
 
     if (exception)
         reportException(state, exception);

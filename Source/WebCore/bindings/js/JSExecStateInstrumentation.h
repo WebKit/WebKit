@@ -33,10 +33,11 @@
 namespace WebCore {
 
 template<typename Type, Type jsType, class DataType>
-inline InspectorInstrumentationCookie JSExecState::instrumentFunctionInternal(ScriptExecutionContext* context, Type callType, const DataType& callData)
+inline void JSExecState::instrumentFunctionInternal(ScriptExecutionContext* context, Type callType, const DataType& callData)
 {
     if (!InspectorInstrumentation::timelineAgentTracking(context))
-        return InspectorInstrumentationCookie();
+        return;
+
     String resourceName;
     int lineNumber = 1;
     int columnNumber = 1;
@@ -46,17 +47,17 @@ inline InspectorInstrumentationCookie JSExecState::instrumentFunctionInternal(Sc
         columnNumber = callData.js.functionExecutable->startColumn();
     } else
         resourceName = "undefined";
-    return InspectorInstrumentation::willCallFunction(context, resourceName, lineNumber, columnNumber);
+    InspectorInstrumentation::willCallFunction(context, resourceName, lineNumber, columnNumber);
 }
 
-inline InspectorInstrumentationCookie JSExecState::instrumentFunctionCall(ScriptExecutionContext* context, JSC::CallType type, const JSC::CallData& data)
+inline void JSExecState::instrumentFunctionCall(ScriptExecutionContext* context, JSC::CallType type, const JSC::CallData& data)
 {
-    return instrumentFunctionInternal<JSC::CallType, JSC::CallType::JS, JSC::CallData>(context, type, data);
+    instrumentFunctionInternal<JSC::CallType, JSC::CallType::JS, JSC::CallData>(context, type, data);
 }
 
-inline InspectorInstrumentationCookie JSExecState::instrumentFunctionConstruct(ScriptExecutionContext* context, JSC::ConstructType type, const JSC::ConstructData& data)
+inline void JSExecState::instrumentFunctionConstruct(ScriptExecutionContext* context, JSC::ConstructType type, const JSC::ConstructData& data)
 {
-    return instrumentFunctionInternal<JSC::ConstructType, JSC::ConstructType::JS, JSC::ConstructData>(context, type, data);
+    instrumentFunctionInternal<JSC::ConstructType, JSC::ConstructType::JS, JSC::ConstructData>(context, type, data);
 }
 
 } // namespace WebCore

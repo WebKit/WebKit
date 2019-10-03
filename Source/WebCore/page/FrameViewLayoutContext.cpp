@@ -155,7 +155,7 @@ void FrameViewLayoutContext::layout()
     Ref<FrameView> protectView(view());
     LayoutScope layoutScope(*this);
     TraceScope tracingScope(LayoutStart, LayoutEnd);
-    InspectorInstrumentationCookie inspectorLayoutScope(InspectorInstrumentation::willLayout(view().frame()));
+    InspectorInstrumentation::willLayout(view().frame());
     AnimationUpdateBlock animationUpdateBlock(&view().frame().animation());
     WeakPtr<RenderElement> layoutRoot;
     
@@ -232,7 +232,7 @@ void FrameViewLayoutContext::layout()
         view().didLayout(layoutRoot);
         runOrScheduleAsynchronousTasks();
     }
-    InspectorInstrumentation::didLayout(inspectorLayoutScope, *layoutRoot);
+    InspectorInstrumentation::didLayout(view().frame(), *layoutRoot);
     DebugPageOverlays::didLayout(view().frame());
 }
 

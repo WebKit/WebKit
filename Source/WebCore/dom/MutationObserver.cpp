@@ -250,9 +250,9 @@ void MutationObserver::deliver()
         if (!context)
             return;
 
-        InspectorInstrumentationCookie cookie = InspectorInstrumentation::willFireObserverCallback(*context, "MutationObserver"_s);
+        InspectorInstrumentation::willFireObserverCallback(*context, "MutationObserver"_s);
         m_callback->handleEvent(*this, records, *this);
-        InspectorInstrumentation::didFireObserverCallback(cookie);
+        InspectorInstrumentation::didFireObserverCallback(*context);
     }
 }
 

@@ -212,9 +212,10 @@ void ScriptedAnimationController::serviceRequestAnimationFrameCallbacks(DOMHighR
         if (callback->m_firedOrCancelled)
             continue;
         callback->m_firedOrCancelled = true;
-        InspectorInstrumentationCookie cookie = InspectorInstrumentation::willFireAnimationFrame(protectedDocument, callback->m_id);
+
+        InspectorInstrumentation::willFireAnimationFrame(protectedDocument, callback->m_id);
         callback->handleEvent(highResNowMs);
-        InspectorInstrumentation::didFireAnimationFrame(cookie);
+        InspectorInstrumentation::didFireAnimationFrame(protectedDocument);
     }
 
     // Remove any callbacks we fired from the list of pending callbacks.

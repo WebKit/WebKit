@@ -1898,7 +1898,7 @@ void Document::resolveStyle(ResolveStyleType type)
         frameView.willRecalcStyle();
     }
 
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRecalculateStyle(*this);
+    InspectorInstrumentation::willRecalculateStyle(*this);
 
     bool updatedCompositingLayers = false;
     {
@@ -1976,7 +1976,7 @@ void Document::resolveStyle(ResolveStyleType type)
         implicitClose();
     }
 
-    InspectorInstrumentation::didRecalculateStyle(cookie);
+    InspectorInstrumentation::didRecalculateStyle(*this);
 
     // Some animated images may now be inside the viewport due to style recalc,
     // resume them if necessary if there is no layout pending. Otherwise, we'll

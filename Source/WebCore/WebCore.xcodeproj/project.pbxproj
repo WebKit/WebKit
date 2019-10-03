@@ -3065,7 +3065,6 @@
 		A578F43C1DE01423003DFC6A /* JSPromiseRejectionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A578F43A1DE013FB003DFC6A /* JSPromiseRejectionEvent.h */; };
 		A578F43F1DE0B630003DFC6A /* RejectedPromiseTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = A578F43E1DE0B62B003DFC6A /* RejectedPromiseTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A581ED131FB288CF00CED4EC /* ServiceWorkerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A581ED101FB288C800CED4EC /* ServiceWorkerAgent.h */; };
-		A5840E1D187B74D500843B10 /* InspectorInstrumentationCookie.h in Headers */ = {isa = PBXBuildFile; fileRef = A5840E1B187B74D500843B10 /* InspectorInstrumentationCookie.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5840E25187B8AC200843B10 /* WebInjectedScriptHost.h in Headers */ = {isa = PBXBuildFile; fileRef = A5840E23187B8AC200843B10 /* WebInjectedScriptHost.h */; };
 		A584FE2618637DAB00843B10 /* CommandLineAPIModuleSource.h in Headers */ = {isa = PBXBuildFile; fileRef = A584FE2518637DAB00843B10 /* CommandLineAPIModuleSource.h */; };
 		A584FE2C1863870F00843B10 /* CommandLineAPIModule.h in Headers */ = {isa = PBXBuildFile; fileRef = A584FE2A1863870F00843B10 /* CommandLineAPIModule.h */; };
@@ -11450,8 +11449,6 @@
 		A578F43E1DE0B62B003DFC6A /* RejectedPromiseTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RejectedPromiseTracker.h; sourceTree = "<group>"; };
 		A581ED101FB288C800CED4EC /* ServiceWorkerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerAgent.h; sourceTree = "<group>"; };
 		A581ED121FB288C900CED4EC /* ServiceWorkerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerAgent.cpp; sourceTree = "<group>"; };
-		A5840E1A187B74D500843B10 /* InspectorInstrumentationCookie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorInstrumentationCookie.cpp; sourceTree = "<group>"; };
-		A5840E1B187B74D500843B10 /* InspectorInstrumentationCookie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorInstrumentationCookie.h; sourceTree = "<group>"; };
 		A5840E22187B8AC200843B10 /* WebInjectedScriptHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInjectedScriptHost.cpp; sourceTree = "<group>"; };
 		A5840E23187B8AC200843B10 /* WebInjectedScriptHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInjectedScriptHost.h; sourceTree = "<group>"; };
 		A584FE2518637DAB00843B10 /* CommandLineAPIModuleSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLineAPIModuleSource.h; sourceTree = "<group>"; };
@@ -17117,8 +17114,6 @@
 				7A54857E14E02D51006AE05A /* InspectorHistory.h */,
 				20D629241253690B00081543 /* InspectorInstrumentation.cpp */,
 				20D629251253690B00081543 /* InspectorInstrumentation.h */,
-				A5840E1A187B74D500843B10 /* InspectorInstrumentationCookie.cpp */,
-				A5840E1B187B74D500843B10 /* InspectorInstrumentationCookie.h */,
 				A5860E6A230DE2E100461AAE /* InspectorInstrumentationPublic.cpp */,
 				A5860E6B230DE2E100461AAE /* InspectorInstrumentationPublic.h */,
 				A5860E6C230DE2E200461AAE /* InspectorInstrumentationWebKit.cpp */,
@@ -29795,7 +29790,6 @@
 				7A54858014E02D51006AE05A /* InspectorHistory.h in Headers */,
 				A5B81CAE1FAA44620037D1E6 /* InspectorIndexedDBAgent.h in Headers */,
 				20D629271253690B00081543 /* InspectorInstrumentation.h in Headers */,
-				A5840E1D187B74D500843B10 /* InspectorInstrumentationCookie.h in Headers */,
 				A5860E6D230DE30300461AAE /* InspectorInstrumentationPublic.h in Headers */,
 				A5860E6E230DE30A00461AAE /* InspectorInstrumentationWebKit.h in Headers */,
 				A5B81CAF1FAA44620037D1E6 /* InspectorLayerTreeAgent.h in Headers */,

@@ -148,8 +148,6 @@ public:
     void startFromConsole(JSC::ExecState*, const String& title);
     void stopFromConsole(JSC::ExecState*, const String& title);
 
-    int id() const { return m_id; }
-
 private:
     void startProgrammaticCapture();
     void stopProgrammaticCapture();
@@ -200,7 +198,6 @@ private:
     void didCompleteCurrentRecord(TimelineRecordType);
 
     void addRecordToTimeline(RefPtr<JSON::Object>&&, TimelineRecordType);
-    void clearRecordStack();
 
     void localToPageQuad(const RenderObject&, const LayoutRect&, FloatQuad*);
 
@@ -211,7 +208,6 @@ private:
     Vector<TimelineRecordEntry> m_recordStack;
     Vector<TimelineRecordEntry> m_pendingConsoleProfileRecords;
 
-    int m_id { 1 };
     int m_maxCallStackDepth { 5 };
 
     bool m_tracking { false };

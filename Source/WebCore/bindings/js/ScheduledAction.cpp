@@ -112,12 +112,12 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
         return;
     }
 
-    InspectorInstrumentationCookie cookie = JSExecState::instrumentFunctionCall(&context, callType, callData);
+    JSExecState::instrumentFunctionCall(&context, callType, callData);
 
     NakedPtr<JSC::Exception> exception;
     JSExecState::profiledCall(exec, JSC::ProfilingReason::Other, m_function.get(), callType, callData, thisValue, arguments, exception);
 
-    InspectorInstrumentation::didCallFunction(cookie, &context);
+    InspectorInstrumentation::didCallFunction(&context);
 
     if (exception)
         reportException(exec, exception);

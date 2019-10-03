@@ -2168,11 +2168,14 @@ void DOMWindow::dispatchEvent(Event& event, EventTarget* target)
     event.setCurrentTarget(this);
     event.setEventPhase(Event::AT_TARGET);
     event.resetBeforeDispatch();
-    auto cookie = InspectorInstrumentation::willDispatchEventOnWindow(frame(), event, *this);
+
+    auto* protectedFrame = frame();
+    InspectorInstrumentation::willDispatchEventOnWindow(protectedFrame, event, *this);
     // FIXME: We should use EventDispatcher everywhere.
     fireEventListeners(event, EventInvokePhase::Capturing);
     fireEventListeners(event, EventInvokePhase::Bubbling);
-    InspectorInstrumentation::didDispatchEventOnWindow(cookie, event.defaultPrevented());
+    InspectorInstrumentation::didDispatchEventOnWindow(protectedFrame, event.defaultPrevented());
+
     event.resetAfterDispatch();
 }
 

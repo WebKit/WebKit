@@ -108,9 +108,9 @@ void PerformanceObserver::deliver()
     Vector<RefPtr<PerformanceEntry>> entries = WTFMove(m_entriesToDeliver);
     auto list = PerformanceObserverEntryList::create(WTFMove(entries));
 
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willFireObserverCallback(*context, "PerformanceObserver"_s);
+    InspectorInstrumentation::willFireObserverCallback(*context, "PerformanceObserver"_s);
     m_callback->handleEvent(list, *this);
-    InspectorInstrumentation::didFireObserverCallback(cookie);
+    InspectorInstrumentation::didFireObserverCallback(*context);
 }
 
 Vector<String> PerformanceObserver::supportedEntryTypes()

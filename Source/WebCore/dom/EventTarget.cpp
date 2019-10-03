@@ -282,9 +282,8 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
 
     auto& context = *scriptExecutionContext();
     bool contextIsDocument = is<Document>(context);
-    InspectorInstrumentationCookie willDispatchEventCookie;
     if (contextIsDocument)
-        willDispatchEventCookie = InspectorInstrumentation::willDispatchEvent(downcast<Document>(context), event, true);
+        InspectorInstrumentation::willDispatchEvent(downcast<Document>(context), event, true);
 
     for (auto& registeredListener : listeners) {
         if (UNLIKELY(registeredListener->wasRemoved()))
@@ -323,7 +322,7 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
     }
 
     if (contextIsDocument)
-        InspectorInstrumentation::didDispatchEvent(willDispatchEventCookie, event.defaultPrevented());
+        InspectorInstrumentation::didDispatchEvent(downcast<Document>(context), event.defaultPrevented());
 }
 
 Vector<AtomString> EventTarget::eventTypes()

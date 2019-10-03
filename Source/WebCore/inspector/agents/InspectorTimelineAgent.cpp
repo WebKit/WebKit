@@ -252,7 +252,7 @@ void InspectorTimelineAgent::internalStop()
         didCompleteCurrentRecord(m_recordStack.last().type);
 #endif
 
-    clearRecordStack();
+    m_recordStack.clear();
 
     m_tracking = false;
     m_startedComposite = false;
@@ -337,6 +337,9 @@ void InspectorTimelineAgent::willDispatchEvent(const Event& event, Frame* frame)
 
 void InspectorTimelineAgent::didDispatchEvent(bool defaultPrevented)
 {
+    if (m_recordStack.isEmpty())
+        return;
+
     auto& entry = m_recordStack.last();
     ASSERT(entry.type == TimelineRecordType::EventDispatch);
     entry.data->setBoolean("defaultPrevented"_s, defaultPrevented);
@@ -405,6 +408,9 @@ void InspectorTimelineAgent::willPaint(Frame& frame)
 
 void InspectorTimelineAgent::didPaint(RenderObject& renderer, const LayoutRect& clipRect)
 {
+    if (m_recordStack.isEmpty())
+        return;
+
     TimelineRecordEntry& entry = m_recordStack.last();
     ASSERT(entry.type == TimelineRecordType::Paint);
     FloatQuad quad;
@@ -793,12 +799,6 @@ InspectorTimelineAgent::TimelineRecordEntry InspectorTimelineAgent::createRecord
 void InspectorTimelineAgent::pushCurrentRecord(RefPtr<JSON::Object>&& data, TimelineRecordType type, bool captureCallStack, Frame* frame)
 {
     pushCurrentRecord(createRecordEntry(WTFMove(data), type, captureCallStack, frame));
-}
-
-void InspectorTimelineAgent::clearRecordStack()
-{
-    m_recordStack.clear();
-    m_id++;
 }
 
 void InspectorTimelineAgent::localToPageQuad(const RenderObject& renderer, const LayoutRect& rect, FloatQuad* quad)

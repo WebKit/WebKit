@@ -99,12 +99,12 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
         VM& vm = globalObject->vm();
         VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : globalObject);
 
-        InspectorInstrumentationCookie cookie = JSExecState::instrumentFunctionCall(&scriptExecutionContext, callType, callData);
+        JSExecState::instrumentFunctionCall(&scriptExecutionContext, callType, callData);
 
         NakedPtr<JSC::Exception> exception;
         JSValue returnValue = JSExecState::profiledCall(exec, JSC::ProfilingReason::Other, jsFunction, callType, callData, globalObject, args, exception);
 
-        InspectorInstrumentation::didCallFunction(cookie, &scriptExecutionContext);
+        InspectorInstrumentation::didCallFunction(&scriptExecutionContext);
 
         globalObject->setCurrentEvent(savedEvent);
 
