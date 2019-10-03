@@ -1,5 +1,48 @@
 2019-10-03  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r248319. rdar://problem/55964805
+
+    Unreviewed, a build fix after r248308
+    
+    Use kSecUseDataProtectionKeychain for iOS 13 and macOS Catalina or newer.
+    
+    Source/WebKit:
+    
+    * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+    (WebKit::LocalAuthenticator::makeCredential):
+    (WebKit::LocalAuthenticator::continueMakeCredentialAfterUserConsented):
+    (WebKit::LocalAuthenticator::continueMakeCredentialAfterAttested):
+    (WebKit::LocalAuthenticator::getAssertion):
+    (WebKit::LocalAuthenticator::continueGetAssertionAfterUserConsented):
+    
+    Source/WTF:
+    
+    * wtf/Platform.h:
+    
+    Tools:
+    
+    * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+    (WTR::TestController::addTestKeyToKeychain):
+    (WTR::TestController::cleanUpKeychain):
+    (WTR::TestController::keyExistsInKeychain):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248319 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+            Unreviewed, a build fix after r248308
+
+            Use kSecUseDataProtectionKeychain for iOS 13 and macOS Catalina or newer.
+
+            * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+            (WebKit::LocalAuthenticator::makeCredential):
+            (WebKit::LocalAuthenticator::continueMakeCredentialAfterUserConsented):
+            (WebKit::LocalAuthenticator::continueMakeCredentialAfterAttested):
+            (WebKit::LocalAuthenticator::getAssertion):
+            (WebKit::LocalAuthenticator::continueGetAssertionAfterUserConsented):
+
+2019-10-03  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r248308. rdar://problem/55964805
 
     [WebAuthN] Enable LocalAuthenticator for macOS
