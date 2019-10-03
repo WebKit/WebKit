@@ -1,3 +1,80 @@
+2019-10-03  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r248308. rdar://problem/55964805
+
+    [WebAuthN] Enable LocalAuthenticator for macOS
+    https://bugs.webkit.org/show_bug.cgi?id=182772
+    <rdar://problem/43347920>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebKit:
+    
+    This patch enables LocalAuthenticator for macOS. The majority
+    of this patch is to tweak macOS keychain to use the modern one.
+    
+    * Configurations/WebKit.xcconfig:
+    * Platform/spi/Cocoa/DeviceIdentitySPI.h:
+    * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+    (WebKit::LocalAuthenticatorInternal::toVector):
+    (WebKit::LocalAuthenticator::makeCredential):
+    (WebKit::LocalAuthenticator::continueMakeCredentialAfterUserConsented):
+    (WebKit::LocalAuthenticator::continueMakeCredentialAfterAttested):
+    (WebKit::LocalAuthenticator::getAssertion):
+    (WebKit::LocalAuthenticator::continueGetAssertionAfterUserConsented):
+    * UIProcess/WebAuthentication/Cocoa/LocalConnection.mm:
+    (WebKit::LocalConnection::getUserConsent const):
+    (WebKit::LocalConnection::getAttestation const):
+    * UIProcess/WebAuthentication/Cocoa/LocalService.mm:
+    (WebKit::LocalService::isAvailable):
+    * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
+    (WebKit::MockLocalConnection::getAttestation const):
+    * config.h:
+    
+    Source/WTF:
+    
+    * wtf/Platform.h:
+    Adds HAVE_DEVICE_IDENTITY.
+    * wtf/spi/cocoa/SecuritySPI.h:
+    Adds a SPI for telling macOS keychain to use the modern one.
+    
+    Tools:
+    
+    Add an entitlement file to WebKitTestRunner such that it can access
+    the modern macOS keychain.
+    
+    * WebKitTestRunner/Configurations/WebKitTestRunner.entitlements: Added.
+    * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig:
+    * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+    * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+    (WTR::TestController::addTestKeyToKeychain):
+    (WTR::TestController::cleanUpKeychain):
+    (WTR::TestController::keyExistsInKeychain):
+    
+    LayoutTests:
+    
+    Enable existing local authenticator tests for macOS. Since OpenSource bots
+    don't have the internal setting to include restricted entitlements, tests
+    will fail on OpenSource bots.
+    
+    * platform/mac-wk2/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@248308 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-08-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+            [WebAuthN] Enable LocalAuthenticator for macOS
+            https://bugs.webkit.org/show_bug.cgi?id=182772
+            <rdar://problem/43347920>
+
+            Reviewed by Brent Fulgham.
+
+            Enable existing local authenticator tests for macOS. Since OpenSource bots
+            don't have the internal setting to include restricted entitlements, tests
+            will fail on OpenSource bots.
+
+            * platform/mac-wk2/TestExpectations:
+
 2019-10-03  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r249108. rdar://problem/55927253

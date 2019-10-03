@@ -30,6 +30,7 @@
 #include <Security/SecAccessControlPriv.h>
 #include <Security/SecCertificatePriv.h>
 #include <Security/SecIdentityPriv.h>
+#include <Security/SecItemPriv.h>
 #include <Security/SecKeyPriv.h>
 #include <Security/SecTask.h>
 #include <Security/SecTrustPriv.h>
@@ -62,10 +63,11 @@ OSStatus SecTrustedApplicationCreateFromPath(const char* path, SecTrustedApplica
 #endif
 
 SecSignatureHashAlgorithm SecCertificateGetSignatureHashAlgorithm(SecCertificateRef);
+extern const CFStringRef kSecAttrNoLegacy;
 
 WTF_EXTERN_C_END
 
-#endif
+#endif // USE(APPLE_INTERNAL_SDK)
 
 typedef struct __SecTask *SecTaskRef;
 typedef struct __SecTrust *SecTrustRef;

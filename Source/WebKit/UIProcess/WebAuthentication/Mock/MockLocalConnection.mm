@@ -92,7 +92,7 @@ void MockLocalConnection::getAttestation(const String& rpId, const String& usern
         ASSERT(!errorRef);
 
         // Mock what DeviceIdentity would do.
-        String label = makeString(username, "@", rpId, "-rk");
+        String label = makeString(username, "@", rpId, "-rk-ucrt");
         NSDictionary* addQuery = @{
             (id)kSecValueRef: (id)key.get(),
             (id)kSecClass: (id)kSecClassKey,

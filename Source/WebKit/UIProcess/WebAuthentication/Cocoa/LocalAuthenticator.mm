@@ -41,6 +41,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
+#import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/StringHash.h>
 
 namespace WebKit {
@@ -54,7 +55,6 @@ const uint8_t getAssertionFlags = 0b00000101; // UP and UV are set.
 // Credential ID is currently SHA-1 of the corresponding public key.
 const uint16_t credentialIdLength = 20;
 
-#if PLATFORM(IOS_FAMILY)
 static inline bool emptyTransportsOrContain(const Vector<AuthenticatorTransport>& transports, AuthenticatorTransport target)
 {
     return transports.isEmpty() ? true : transports.contains(target);
@@ -78,7 +78,6 @@ static inline Vector<uint8_t> toVector(NSData *data)
     result.append(reinterpret_cast<const uint8_t*>(data.bytes), data.length);
     return result;
 }
-#endif // !PLATFORM(IOS_FAMILY)
 
 } // LocalAuthenticatorInternal
 
@@ -89,12 +88,10 @@ LocalAuthenticator::LocalAuthenticator(UniqueRef<LocalConnection>&& connection)
 
 void LocalAuthenticator::makeCredential()
 {
-    // FIXME(182772)
     using namespace LocalAuthenticatorInternal;
     ASSERT(m_state == State::Init);
     m_state = State::RequestReceived;
 
-#if PLATFORM(IOS_FAMILY)
     // The following implements https://www.w3.org/TR/webauthn/#op-make-cred as of 5 December 2017.
     // Skip Step 4-5 as requireResidentKey and requireUserVerification are enforced.
     // Skip Step 9 as extensions are not supported yet.
@@ -122,6 +119,7 @@ void LocalAuthenticator::makeCredential()
             (id)kSecAttrLabel: requestData().creationOptions.rp.id,
             (id)kSecReturnAttributes: @YES,
             (id)kSecMatchLimit: (id)kSecMatchLimitAll,
+            (id)kSecAttrNoLegacy: @YES
         };
         CFTypeRef attributesArrayRef = nullptr;
         OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
@@ -152,18 +150,15 @@ void LocalAuthenticator::makeCredential()
         weakThis->continueMakeCredentialAfterUserConsented(consent);
     };
     m_connection->getUserConsent(
-        "Allow " + requestData().creationOptions.rp.id + " to create a public key credential for " + requestData().creationOptions.user.name,
+        "allow " + requestData().creationOptions.rp.id + " to create a public key credential for " + requestData().creationOptions.user.name,
         WTFMove(callback));
-#endif // !PLATFORM(IOS_FAMILY)
 }
 
 void LocalAuthenticator::continueMakeCredentialAfterUserConsented(LocalConnection::UserConsent consent)
 {
-    // FIXME(182772)
     ASSERT(m_state == State::RequestReceived);
     m_state = State::UserConsented;
 
-#if PLATFORM(IOS_FAMILY)
     if (consent == LocalConnection::UserConsent::No) {
         receiveRespond(ExceptionData { NotAllowedError, "Couldn't get user consent."_s });
         return;
@@ -176,6 +171,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserConsented(LocalConnectio
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrLabel: requestData().creationOptions.rp.id,
         (id)kSecAttrApplicationTag: [NSData dataWithBytes:requestData().creationOptions.user.idVector.data() length:requestData().creationOptions.user.idVector.size()],
+        (id)kSecAttrNoLegacy: @YES
     };
     OSStatus status = SecItemDelete((__bridge CFDictionaryRef)deleteQuery);
     if (status && status != errSecItemNotFound) {
@@ -192,18 +188,15 @@ void LocalAuthenticator::continueMakeCredentialAfterUserConsented(LocalConnectio
         weakThis->continueMakeCredentialAfterAttested(privateKey, certificates, error);
     };
     m_connection->getAttestation(requestData().creationOptions.rp.id, requestData().creationOptions.user.name, requestData().hash, WTFMove(callback));
-#endif // !PLATFORM(IOS_FAMILY)
 }
 
 void LocalAuthenticator::continueMakeCredentialAfterAttested(SecKeyRef privateKey, NSArray *certificates, NSError *error)
 {
-    // FIXME(182772)
     using namespace LocalAuthenticatorInternal;
 
     ASSERT(m_state == State::UserConsented);
     m_state = State::Attested;
 
-#if PLATFORM(IOS_FAMILY)
     if (error) {
         LOG_ERROR("Couldn't attest: %@", error);
         receiveRespond(ExceptionData { UnknownError, "Unknown internal error."_s });
@@ -227,13 +220,14 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(SecKeyRef privateKe
     // FIXME(183533): DeviceIdentity.Framework would insert certificates into Keychain as well. We should update those as well.
     Vector<uint8_t> credentialId;
     {
-        // -rk is added by DeviceIdentity.Framework.
-        String label = makeString(requestData().creationOptions.user.name, "@", requestData().creationOptions.rp.id, "-rk");
+        // -rk-ucrt is added by DeviceIdentity.Framework.
+        String label = makeString(requestData().creationOptions.user.name, "@", requestData().creationOptions.rp.id, "-rk-ucrt");
         NSDictionary *credentialIdQuery = @{
             (id)kSecClass: (id)kSecClassKey,
             (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
             (id)kSecAttrLabel: label,
-            (id)kSecReturnAttributes: @YES
+            (id)kSecReturnAttributes: @YES,
+            (id)kSecAttrNoLegacy: @YES
         };
         CFTypeRef attributesRef = nullptr;
         OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)credentialIdQuery, &attributesRef);
@@ -251,6 +245,7 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(SecKeyRef privateKe
             (id)kSecClass: (id)kSecClassKey,
             (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
             (id)kSecAttrApplicationLabel: nsAttributes[(id)kSecAttrApplicationLabel],
+            (id)kSecAttrNoLegacy: @YES
         };
         NSDictionary *updateParams = @{
             (id)kSecAttrLabel: requestData().creationOptions.rp.id,
@@ -327,17 +322,14 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(SecKeyRef privateKe
     auto attestationObject = buildAttestationObject(WTFMove(authData), "Apple", WTFMove(attestationStatementMap), requestData().creationOptions.attestation);
 
     receiveRespond(PublicKeyCredentialData { ArrayBuffer::create(credentialId.data(), credentialId.size()), true, nullptr, ArrayBuffer::create(attestationObject.data(), attestationObject.size()), nullptr, nullptr, nullptr, WTF::nullopt });
-#endif // !PLATFORM(IOS_FAMILY)
 }
 
 void LocalAuthenticator::getAssertion()
 {
-    // FIXME(182772)
     using namespace LocalAuthenticatorInternal;
     ASSERT(m_state == State::Init);
     m_state = State::RequestReceived;
 
-#if PLATFORM(IOS_FAMILY)
     // The following implements https://www.w3.org/TR/webauthn/#op-get-assertion as of 5 December 2017.
     // Skip Step 2 as requireUserVerification is enforced.
     // Skip Step 8 as extensions are not supported yet.
@@ -355,7 +347,8 @@ void LocalAuthenticator::getAssertion()
         (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
         (id)kSecAttrLabel: requestData().requestOptions.rpId,
         (id)kSecReturnAttributes: @YES,
-        (id)kSecMatchLimit: (id)kSecMatchLimitAll
+        (id)kSecMatchLimit: (id)kSecMatchLimitAll,
+        (id)kSecAttrNoLegacy: @YES
     };
     CFTypeRef attributesArrayRef = nullptr;
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
@@ -401,22 +394,19 @@ void LocalAuthenticator::getAssertion()
         weakThis->continueGetAssertionAfterUserConsented(consent, context, credentialId, userhandle);
     };
     NSData *idData = selectedCredentialAttributes[(id)kSecAttrApplicationTag];
-    StringView idStringView { static_cast<const LChar*>([idData bytes]), static_cast<unsigned>([idData length]) };
+    StringView idStringView { static_cast<const UChar*>([idData bytes]), static_cast<unsigned>([idData length]) };
     m_connection->getUserConsent(
-        makeString("Log into ", requestData().requestOptions.rpId, " with ", idStringView, '.'),
+        makeString("log into ", requestData().requestOptions.rpId, " with ", idStringView),
         (__bridge SecAccessControlRef)selectedCredentialAttributes[(id)kSecAttrAccessControl],
         WTFMove(callback));
-#endif // PLATFORM(IOS_FAMILY)
 }
 
 void LocalAuthenticator::continueGetAssertionAfterUserConsented(LocalConnection::UserConsent consent, LAContext *context, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& userhandle)
 {
-    // FIXME(182772)
     using namespace LocalAuthenticatorInternal;
     ASSERT(m_state == State::RequestReceived);
     m_state = State::UserConsented;
 
-#if PLATFORM(IOS_FAMILY)
     if (consent == LocalConnection::UserConsent::No) {
         receiveRespond(ExceptionData { NotAllowedError, "Couldn't get user consent."_s });
         return;
@@ -437,6 +427,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserConsented(LocalConnection:
             (id)kSecAttrApplicationLabel: [NSData dataWithBytes:credentialId.data() length:credentialId.size()],
             (id)kSecUseAuthenticationContext: context,
             (id)kSecReturnRef: @YES,
+            (id)kSecAttrNoLegacy: @YES
         };
         CFTypeRef privateKeyRef = nullptr;
         OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &privateKeyRef);
@@ -464,7 +455,6 @@ void LocalAuthenticator::continueGetAssertionAfterUserConsented(LocalConnection:
 
     // Step 13.
     receiveRespond(PublicKeyCredentialData { ArrayBuffer::create(credentialId.data(), credentialId.size()), false, nullptr, nullptr, ArrayBuffer::create(authData.data(), authData.size()), ArrayBuffer::create(signature.data(), signature.size()), ArrayBuffer::create(userhandle.data(), userhandle.size()), WTF::nullopt });
-#endif // !PLATFORM(IOS_FAMILY)
 }
 
 } // namespace WebKit

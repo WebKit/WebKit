@@ -39,8 +39,6 @@ namespace WebKit {
 
 void LocalConnection::getUserConsent(const String& reason, UserConsentCallback&& completionHandler) const
 {
-    // FIXME(182772)
-#if PLATFORM(IOS_FAMILY)
     auto context = adoptNS([allocLAContextInstance() init]);
     auto reply = makeBlockPtr([completionHandler = WTFMove(completionHandler)] (BOOL success, NSError *error) mutable {
         ASSERT(!RunLoop::isMain());
@@ -55,13 +53,10 @@ void LocalConnection::getUserConsent(const String& reason, UserConsentCallback&&
         });
     });
     [context evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics localizedReason:reason reply:reply.get()];
-#endif
 }
 
 void LocalConnection::getUserConsent(const String& reason, SecAccessControlRef accessControl, UserConsentContextCallback&& completionHandler) const
 {
-    // FIXME(182772)
-#if PLATFORM(IOS_FAMILY)
     auto context = adoptNS([allocLAContextInstance() init]);
     auto reply = makeBlockPtr([context, completionHandler = WTFMove(completionHandler)] (BOOL success, NSError *error) mutable {
         ASSERT(!RunLoop::isMain());
@@ -76,13 +71,11 @@ void LocalConnection::getUserConsent(const String& reason, SecAccessControlRef a
         });
     });
     [context evaluateAccessControl:accessControl operation:LAAccessControlOperationUseKeySign localizedReason:reason reply:reply.get()];
-#endif
 }
 
 void LocalConnection::getAttestation(const String& rpId, const String& username, const Vector<uint8_t>& hash, AttestationCallback&& completionHandler) const
 {
-    // DeviceIdentity.Framework is not avaliable in iOS simulator.
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if HAVE(DEVICE_IDENTITY)
     // Apple Attestation
     ASSERT(hash.size() <= 32);
 
@@ -114,7 +107,7 @@ void LocalConnection::getAttestation(const String& rpId, const String& username,
 
     // FIXME(183652): Reduce prompt for biometrics
     DeviceIdentityIssueClientCertificateWithCompletion(dispatch_get_main_queue(), options, makeBlockPtr(WTFMove(completionHandler)).get());
-#endif
+#endif // HAVE(DEVICE_IDENTITY)
 }
 
 } // namespace WebKit
