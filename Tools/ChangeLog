@@ -1,3 +1,19 @@
+2019-10-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Print the revision number on command "--version" of the MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=202581
+
+        Reviewed by Carlos Garcia Campos.
+
+        When WebKit its build from source repository instead of a tarball
+        we can print the SVN revision to be more precise about the version
+        of WebKit when the option --version is passed to the MiniBrowser.
+
+        * MiniBrowser/gtk/main.c:
+        (main):
+        * MiniBrowser/wpe/main.cpp:
+        (main):
+
 2019-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK distcheck
