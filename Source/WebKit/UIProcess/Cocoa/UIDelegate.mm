@@ -52,6 +52,7 @@
 #import "_WKContextMenuElementInfo.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKHitTestResultInternal.h"
+#import "_WKWebAuthenticationPanelInternal.h"
 #import <WebCore/FontAttributes.h>
 #import <WebCore/SecurityOriginData.h>
 #import <wtf/BlockPtr.h>
@@ -172,6 +173,9 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     
     m_delegateMethods.webViewHasVideoInPictureInPictureDidChange = [delegate respondsToSelector:@selector(_webView:hasVideoInPictureInPictureDidChange:)];
     m_delegateMethods.webViewDidShowSafeBrowsingWarning = [delegate respondsToSelector:@selector(_webViewDidShowSafeBrowsingWarning:)];
+#if ENABLE(WEB_AUTHN)
+    m_delegateMethods.webViewRunWebAuthenticationPanelInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runWebAuthenticationPanel:initiatedByFrame:completionHandler:)];
+#endif
 }
 
 #if ENABLE(CONTEXT_MENUS)
@@ -1260,6 +1264,46 @@ void UIDelegate::UIClient::didShowSafeBrowsingWarning()
 
     [static_cast<id <WKUIDelegatePrivate>>(delegate) _webViewDidShowSafeBrowsingWarning:m_uiDelegate.m_webView];
 }
+
+#if ENABLE(WEB_AUTHN)
+
+static WebAuthenticationPanelResult webAuthenticationPanelResult(_WKWebAuthenticationPanelResult result)
+{
+    switch (result) {
+    case _WKWebAuthenticationPanelResultUnavailable:
+        return WebAuthenticationPanelResult::Unavailable;
+    case _WKWebAuthenticationPanelResultPresented:
+        return WebAuthenticationPanelResult::Presented;
+    case _WKWebAuthenticationPanelResultDidNotPresent:
+        return WebAuthenticationPanelResult::DidNotPresent;
+    }
+    ASSERT_NOT_REACHED();
+    return WebAuthenticationPanelResult::Unavailable;
+}
+
+void UIDelegate::UIClient::runWebAuthenticationPanel(WebPageProxy&, API::WebAuthenticationPanel& panel, CompletionHandler<void(WebAuthenticationPanelResult)>&& completionHandler)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewRunWebAuthenticationPanelInitiatedByFrameCompletionHandler) {
+        completionHandler(WebAuthenticationPanelResult::Unavailable);
+        return;
+    }
+
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate) {
+        completionHandler(WebAuthenticationPanelResult::Unavailable);
+        return;
+    }
+
+    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runWebAuthenticationPanel:initiatedByFrame:completionHandler:));
+    [(id <WKUIDelegatePrivate>)delegate webView:m_uiDelegate.m_webView runWebAuthenticationPanel:wrapper(panel) initiatedByFrame:nil completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (_WKWebAuthenticationPanelResult result) mutable {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
+        completionHandler(webAuthenticationPanelResult(result));
+    }).get()];
+}
+
+#endif // ENABLE(WEB_AUTHN)
 
 void UIDelegate::UIClient::hasVideoInPictureInPictureDidChange(WebPageProxy*, bool hasVideoInPictureInPicture)
 {

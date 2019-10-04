@@ -344,6 +344,8 @@
 		5797FE331EB15AB100B2F4A0 /* navigation-client-default-crypto.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5797FE321EB15A8900B2F4A0 /* navigation-client-default-crypto.html */; };
 		57A79857224AB34E00A7F6F1 /* WebCryptoMasterKey.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57A79856224AB34E00A7F6F1 /* WebCryptoMasterKey.mm */; };
 		57C3FA661F7C248F009D4B80 /* WeakPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CB9BC371A67482300FE5678 /* WeakPtr.cpp */; };
+		57C6244E2346BCFA00383FE7 /* _WKWebAuthenticationPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57C6244D2346BCFA00383FE7 /* _WKWebAuthenticationPanel.mm */; };
+		57C624502346C21E00383FE7 /* web-authentication-get-assertion.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 57C6244F2346C1EC00383FE7 /* web-authentication-get-assertion.html */; };
 		57F4AAA0208FAEF000A68E9E /* SSLKeyGenerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57F4AA9F208FA83D00A68E9E /* SSLKeyGenerator.mm */; };
 		57F56A5C1C7F8CC100F31D7E /* IsNavigationActionTrusted.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 57F56A5B1C7F8A4000F31D7E /* IsNavigationActionTrusted.html */; };
 		5C0160C121A132460077FA32 /* JITEnabled.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C0160C021A132320077FA32 /* JITEnabled.mm */; };
@@ -1434,6 +1436,7 @@
 				CDC8E4971BC6F10800594FEC /* video-without-audio.mp4 in Copy Resources */,
 				2EBD9D0A2134730D002DA758 /* video.html in Copy Resources */,
 				CD577799211CE0E4001B371E /* web-audio-only.html in Copy Resources */,
+				57C624502346C21E00383FE7 /* web-authentication-get-assertion.html in Copy Resources */,
 				1C2B81861C89259D00A5529F /* webfont.html in Copy Resources */,
 				51714EB41CF8C78C004723C4 /* WebProcessKillIDBCleanup-1.html in Copy Resources */,
 				51714EB51CF8C78C004723C4 /* WebProcessKillIDBCleanup-2.html in Copy Resources */,
@@ -1860,6 +1863,8 @@
 		5797FE321EB15A8900B2F4A0 /* navigation-client-default-crypto.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "navigation-client-default-crypto.html"; sourceTree = "<group>"; };
 		5798E2AF1CAF5C2800C5CBA0 /* ProvisionalURLNotChange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProvisionalURLNotChange.mm; sourceTree = "<group>"; };
 		57A79856224AB34E00A7F6F1 /* WebCryptoMasterKey.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCryptoMasterKey.mm; sourceTree = "<group>"; };
+		57C6244D2346BCFA00383FE7 /* _WKWebAuthenticationPanel.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebAuthenticationPanel.mm; sourceTree = "<group>"; };
+		57C6244F2346C1EC00383FE7 /* web-authentication-get-assertion.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "web-authentication-get-assertion.html"; sourceTree = "<group>"; };
 		57D1D75E21DCB7A80093E86A /* U2fCommandConstructorTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = U2fCommandConstructorTest.cpp; sourceTree = "<group>"; };
 		57F10D921C7E7B3800ECDF30 /* IsNavigationActionTrusted.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IsNavigationActionTrusted.mm; sourceTree = "<group>"; };
 		57F4AA9F208FA83D00A68E9E /* SSLKeyGenerator.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SSLKeyGenerator.mm; sourceTree = "<group>"; };
@@ -2725,6 +2730,7 @@
 				A16F66B81C40E9E100BD4D24 /* Resources */,
 				5CEAB5DF1FA937CB00A77FAA /* _WKInputDelegate.mm */,
 				7CEFA9641AC0B9E200B910FD /* _WKUserContentExtensionStore.mm */,
+				57C6244D2346BCFA00383FE7 /* _WKWebAuthenticationPanel.mm */,
 				0746645822FF630500E3451A /* AccessibilityTestPlugin.mm */,
 				0746645722FF62D000E3451A /* AccessibilityTestSupportProtocol.h */,
 				37E7DD631EA06FF2009B396D /* AdditionalReadAccessAllowedURLs.mm */,
@@ -3364,6 +3370,7 @@
 				F4451C751EB8FD7C0020C5DA /* two-paragraph-contenteditable.html */,
 				CD57779B211CE6CE001B371E /* video-with-audio-and-web-audio.html */,
 				CD577798211CDE8F001B371E /* web-audio-only.html */,
+				57C6244F2346C1EC00383FE7 /* web-authentication-get-assertion.html */,
 				51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */,
 				51714EB31CF8C761004723C4 /* WebProcessKillIDBCleanup-2.html */,
 				5120C83B1E674E350025B250 /* WebsiteDataStoreCustomPaths.html */,
@@ -4388,6 +4395,7 @@
 			files = (
 				5CEAB5E11FA939F400A77FAA /* _WKInputDelegate.mm in Sources */,
 				7CEFA9661AC0B9E200B910FD /* _WKUserContentExtensionStore.mm in Sources */,
+				57C6244E2346BCFA00383FE7 /* _WKWebAuthenticationPanel.mm in Sources */,
 				7CCE7EE41A411AE600447C4C /* AboutBlankLoad.cpp in Sources */,
 				7CCE7EB31A411A7E00447C4C /* AcceptsFirstMouse.mm in Sources */,
 				2E205BA41F527746005952DD /* AccessibilityTestsIOS.mm in Sources */,

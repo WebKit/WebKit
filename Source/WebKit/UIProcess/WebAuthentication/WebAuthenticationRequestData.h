@@ -27,18 +27,24 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "WebPreferences.h"
+#include "APIWebAuthenticationPanel.h"
+#include "WebAuthenticationPanelFlags.h"
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/PublicKeyCredentialRequestOptions.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
+
+class WebPageProxy;
 
 struct WebAuthenticationRequestData {
     Vector<uint8_t> hash;
     Variant<WebCore::PublicKeyCredentialCreationOptions, WebCore::PublicKeyCredentialRequestOptions> options;
-    RefPtr<WebPreferences> preferences;
+    WeakPtr<WebPageProxy> page;
+    WebAuthenticationPanelResult panelResult { WebAuthenticationPanelResult::Unavailable };
+    RefPtr<API::WebAuthenticationPanel> panel;
 };
 
 } // namespace WebKit

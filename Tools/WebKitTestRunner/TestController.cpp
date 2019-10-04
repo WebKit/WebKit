@@ -295,6 +295,11 @@ static bool shouldAllowDeviceOrientationAndMotionAccess(WKPageRef, WKSecurityOri
     return TestController::singleton().handleDeviceOrientationAndMotionAccessRequest(origin);
 }
 
+// A placeholder to tell WebKit the client is WebKitTestRunner.
+static void runWebAuthenticationPanel()
+{
+}
+
 WKPageRef TestController::createOtherPage(WKPageRef, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo)
 {
     PlatformWebView* parentView = static_cast<PlatformWebView*>(const_cast<void*>(clientInfo));
@@ -617,8 +622,8 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
     resetPreferencesToConsistentValues(options);
 
     platformCreateWebView(configuration.get(), options);
-    WKPageUIClientV13 pageUIClient = {
-        { 13, m_mainWebView.get() },
+    WKPageUIClientV14 pageUIClient = {
+        { 14, m_mainWebView.get() },
         0, // createNewPage_deprecatedForUseWithV0
         0, // showPage
         0, // close
@@ -690,7 +695,8 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         0, // didExceedBackgroundResourceLimitWhileInForeground
         0, // didResignInputElementStrongPasswordAppearance
         0, // requestStorageAccessConfirm
-        shouldAllowDeviceOrientationAndMotionAccess
+        shouldAllowDeviceOrientationAndMotionAccess,
+        runWebAuthenticationPanel
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient.base);
 

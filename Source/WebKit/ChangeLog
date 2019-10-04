@@ -1,3 +1,102 @@
+2019-10-04  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Implement _WKWebAuthenticationPanel SPI
+        https://bugs.webkit.org/show_bug.cgi?id=202559
+        <rdar://problem/55932094>
+
+        Reviewed by Brent Fulgham.
+
+        This patch implements _WKWebAuthenticationPanel SPI. Here is the structure:
+        1) API::WebAuthenticationPanel is the APIObject of _WKWebAuthenticationPanel. It is owned by AuthenticatorManager.
+        The lifetime of _WKWebAuthenticationPanel on the other hand is managed by clients. This binding is the surface
+        where clients could interact with WebKit's WebAuthentication implementation.
+        2) API::WebAuthenticationPanelClient is a base class representing _WKWebAuthenticationPanelDelegate. Its subclass
+        WebKit::WebAuthenticationPanelClient implements bridges to _WKWebAuthenticationPanelDelegate methods. It is owned by
+        API::WebAuthenticationPanel. A weak pointer of WebKit::WebAuthenticationPanelClient is kept in _WKWebAuthenticationPanel
+        to get the _WKWebAuthenticationPanelDelegate set by clients or nil otherwise. This binding is the surface where WebKit
+        interacts with clients.
+        3) WebAuthenticationPanelFlags is the mirror of enums within _WKWebAuthenticationPanel.
+
+        Implementation wise, this patch implements:
+        1) -[WKUIDelegatePrivate webView:runWebAuthenticationPanel:initiatedByFrame:completionHandler:], this is bridged from
+        the regular UIDelegate route. Noted, WKFrameInfo is nil for now, a follow up on Bug 202563 will take care of it. This
+        will be called from AuthenticatorManager::runPanel() which gates the start of discovery on the callback. For clients
+        that don't implement the delegate, the callback will always be called with _WKWebAuthenticationPanelResultUnavailable
+        to allow WebKit run on non-UI mode. A specific C API hack is added to always return _WKWebAuthenticationPanelResultPresented
+        in WebKitTestRunner for layout tests.
+        2) -[_WKWebAuthenticationPanelDelegate panel:updateWebAuthenticationPanel:] will be implemented in Bug 200932.
+        3) -[_WKWebAuthenticationPanelDelegate panel:dismissWebAuthenticationPanelWithResult:], this is bridged from
+        API::WebAuthenticationPanel/API::WebAuthenticationPanelClient. This will be called whenever AuthenticatorManager::m_pendingCompletionHandler
+        is invoked. Depending on the respond, _WKWebAuthenticationResult will be returned accordingly. To facilitate that,
+        invokePendingCompletionHandler is crafted to bundle those two operations.
+        4) -[_WKWebAuthenticationPanel cancel] will be implemented in Bug 191523.
+
+        Besides the above, this patch also silents the NFC action sheet.
+
+        * Platform/spi/Cocoa/NearFieldSPI.h:
+        * Shared/API/APIObject.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::runWebAuthenticationPanel):
+        * UIProcess/API/APIWebAuthenticationPanel.cpp: Copied from Source/WebKit/UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm.
+        (API::WebAuthenticationPanel::create):
+        (API::WebAuthenticationPanel::WebAuthenticationPanel):
+        (API::WebAuthenticationPanel::setClient):
+        * UIProcess/API/APIWebAuthenticationPanel.h: Copied from Source/WebKit/UIProcess/WebAuthentication/WebAuthenticationRequestData.h.
+        * UIProcess/API/APIWebAuthenticationPanelClient.h: Copied from Source/WebKit/UIProcess/API/Cocoa/_WKWebAuthenticationPanelInternal.h.
+        (API::WebAuthenticationPanelClient::dismissPanel const):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/C/WKPageUIClient.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (-[_WKWebAuthenticationPanel dealloc]):
+        (-[_WKWebAuthenticationPanel relyingPartyID]):
+        (-[_WKWebAuthenticationPanel delegate]):
+        (-[_WKWebAuthenticationPanel setDelegate:]):
+        (-[_WKWebAuthenticationPanel _apiObject]):
+        (-[_WKWebAuthenticationPanel _initWithRelayingPartyID:]): Deleted.
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanelInternal.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::webAuthenticationPanelResult):
+        (WebKit::UIDelegate::UIClient::runWebAuthenticationPanel):
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::WebCore::isFeatureEnabled):
+        (WebKit::WebCore::getRpId):
+        (WebKit::AuthenticatorManager::handleRequest):
+        (WebKit::AuthenticatorManager::respondReceived):
+        (WebKit::AuthenticatorManager::startDiscovery):
+        (WebKit::AuthenticatorManager::initTimeOutTimer):
+        (WebKit::AuthenticatorManager::timeOutTimerFired):
+        (WebKit::AuthenticatorManager::runPanel):
+        (WebKit::AuthenticatorManager::startRequest):
+        (WebKit::AuthenticatorManager::invokePendingCompletionHandler):
+        (WebKit::AuthenticatorManagerInternal::collectTransports): Deleted.
+        (WebKit::AuthenticatorManagerInternal::processGoogleLegacyAppIdSupportExtension): Deleted.
+        * UIProcess/WebAuthentication/AuthenticatorManager.h:
+        (WebKit::AuthenticatorManager::pendingCompletionHandler): Deleted.
+        * UIProcess/WebAuthentication/Cocoa/NfcConnection.mm:
+        (WebKit::NfcConnection::NfcConnection):
+        * UIProcess/WebAuthentication/Cocoa/NfcService.mm:
+        (WebKit::NfcService::platformStartDiscovery):
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.h: Copied from Source/WebKit/UIProcess/WebAuthentication/WebAuthenticationRequestData.h.
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.mm: Copied from Source/WebKit/UIProcess/WebAuthentication/Mock/MockAuthenticatorManager.cpp.
+        (WebKit::WebAuthenticationPanelClient::WebAuthenticationPanelClient):
+        (WebKit::wkWebAuthenticationResult):
+        (WebKit::WebAuthenticationPanelClient::dismissPanel const):
+        * UIProcess/WebAuthentication/Mock/MockAuthenticatorManager.cpp:
+        (WebKit::MockAuthenticatorManager::respondReceivedInternal):
+        * UIProcess/WebAuthentication/WebAuthenticationPanelFlags.h: Copied from Source/WebKit/UIProcess/API/Cocoa/_WKWebAuthenticationPanelInternal.h.
+        * UIProcess/WebAuthentication/WebAuthenticationRequestData.h:
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp:
+        (WebKit::WebAuthenticatorCoordinatorProxy::makeCredential):
+        (WebKit::WebAuthenticatorCoordinatorProxy::getAssertion):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-10-04  Alex Christensen  <achristensen@webkit.org>
 
         Move WKProcessPool._registerURLSchemeServiceWorkersCanHandle to _WKWebsiteDataStoreConfiguration

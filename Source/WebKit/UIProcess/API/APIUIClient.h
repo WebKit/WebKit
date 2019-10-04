@@ -38,6 +38,10 @@ OBJC_CLASS _WKActivatedElementInfo;
 OBJC_CLASS UIViewController;
 #endif
 
+#if ENABLE(WEB_AUTHN)
+#include "WebAuthenticationPanelFlags.h"
+#endif
+
 namespace WebCore {
 class RegistrableDomain;
 class ResourceRequest;
@@ -69,6 +73,9 @@ class Dictionary;
 class Object;
 class OpenPanelParameters;
 class SecurityOrigin;
+#if ENABLE(WEB_AUTHN)
+class WebAuthenticationPanel;
+#endif
 
 class UIClient {
     WTF_MAKE_FAST_ALLOCATED;
@@ -188,6 +195,10 @@ public:
     virtual void didExceedBackgroundResourceLimitWhileInForeground(WebKit::WebPageProxy&, WKResourceLimit) { }
     
     virtual void didShowSafeBrowsingWarning() { }
+
+#if ENABLE(WEB_AUTHN)
+    virtual void runWebAuthenticationPanel(WebKit::WebPageProxy&, WebAuthenticationPanel&, CompletionHandler<void(WebKit::WebAuthenticationPanelResult)>&& completionHandler) { completionHandler(WebKit::WebAuthenticationPanelResult::Unavailable); }
+#endif
 };
 
 } // namespace API

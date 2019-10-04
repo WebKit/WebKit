@@ -91,7 +91,7 @@ void NfcService::platformStartDiscovery()
             m_driver = WTF::makeUnique<CtapNfcDriver>(makeUniqueRef<NfcConnection>(WTFMove(session), *this));
         });
     });
-    [[getNFHardwareManagerClass() sharedHardwareManager] startReaderSessionWithActionSheetUI:callback.get()];
+    [[getNFHardwareManagerClass() sharedHardwareManager] startReaderSession:callback.get()];
 #endif // HAVE(NEAR_FIELD)
 }
 

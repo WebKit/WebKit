@@ -24,29 +24,50 @@
  */
 
 #import "config.h"
+#import "WebAuthenticationPanelClient.h"
 #import "_WKWebAuthenticationPanelInternal.h"
 
 #import <wtf/RetainPtr.h>
 
-@implementation _WKWebAuthenticationPanel  {
-    RetainPtr<NSString> _relyingPartyID;
+@implementation _WKWebAuthenticationPanel {
+    WeakPtr<WebKit::WebAuthenticationPanelClient> _client;
 }
 
-- (instancetype)_initWithRelayingPartyID:(NSString *)relayingPartyID
+- (void)dealloc
 {
-    if (!(self = [super init]))
-        return nil;
-    _relyingPartyID = relayingPartyID;
-    return self;
+    _panel->~WebAuthenticationPanel();
+
+    [super dealloc];
 }
 
 - (NSString *)relyingPartyID
 {
-    return _relyingPartyID.get();
+    return _panel->rpId();
+}
+
+- (id <_WKWebAuthenticationPanelDelegate>)delegate
+{
+    if (!_client)
+        return nil;
+    return _client->delegate().autorelease();
+}
+
+- (void)setDelegate:(id<_WKWebAuthenticationPanelDelegate>)delegate
+{
+    auto client = WTF::makeUniqueRef<WebKit::WebAuthenticationPanelClient>(self, delegate);
+    _client = makeWeakPtr(client.get());
+    _panel->setClient(WTFMove(client));
 }
 
 - (void)cancel
 {
+}
+
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
+{
+    return *_panel;
 }
 
 @end

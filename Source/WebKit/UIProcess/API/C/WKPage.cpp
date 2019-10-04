@@ -116,7 +116,7 @@ template<> struct ClientTraits<WKPagePolicyClientBase> {
 };
 
 template<> struct ClientTraits<WKPageUIClientBase> {
-    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3, WKPageUIClientV4, WKPageUIClientV5, WKPageUIClientV6, WKPageUIClientV7, WKPageUIClientV8, WKPageUIClientV9, WKPageUIClientV10, WKPageUIClientV11, WKPageUIClientV12, WKPageUIClientV13> Versions;
+    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3, WKPageUIClientV4, WKPageUIClientV5, WKPageUIClientV6, WKPageUIClientV7, WKPageUIClientV8, WKPageUIClientV9, WKPageUIClientV10, WKPageUIClientV11, WKPageUIClientV12, WKPageUIClientV13, WKPageUIClientV14> Versions;
 };
 
 #if ENABLE(CONTEXT_MENUS)
@@ -2073,6 +2073,18 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
 
             m_client.handleAutoplayEvent(toAPI(&page), toWKAutoplayEvent(event), toWKAutoplayEventFlags(flags), m_client.base.clientInfo);
         }
+
+#if ENABLE(WEB_AUTHN)
+        // The current method is specialized for WebKitTestRunner.
+        void runWebAuthenticationPanel(WebPageProxy&, API::WebAuthenticationPanel&, CompletionHandler<void(WebKit::WebAuthenticationPanelResult)>&& completionHandler) final
+        {
+            if (!m_client.runWebAuthenticationPanel) {
+                completionHandler(WebKit::WebAuthenticationPanelResult::Unavailable);
+                return;
+            }
+            completionHandler(WebKit::WebAuthenticationPanelResult::Presented);
+        }
+#endif
     };
 
     toImpl(pageRef)->setUIClient(makeUnique<UIClient>(wkClient));

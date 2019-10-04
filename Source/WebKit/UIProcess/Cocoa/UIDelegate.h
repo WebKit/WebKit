@@ -154,6 +154,9 @@ private:
 
         void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) final;
         void didShowSafeBrowsingWarning() final;
+#if ENABLE(WEB_AUTHN)
+        void runWebAuthenticationPanel(WebPageProxy&, API::WebAuthenticationPanel&, CompletionHandler<void(WebAuthenticationPanelResult)>&&) final;
+#endif
 
         UIDelegate& m_uiDelegate;
     };
@@ -234,6 +237,9 @@ private:
 #endif
         bool webViewHasVideoInPictureInPictureDidChange : 1;
         bool webViewDidShowSafeBrowsingWarning : 1;
+#if ENABLE(WEB_AUTHN)
+        bool webViewRunWebAuthenticationPanelInitiatedByFrameCompletionHandler : 1;
+#endif
     } m_delegateMethods;
 };
 

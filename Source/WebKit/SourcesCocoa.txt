@@ -503,6 +503,7 @@ UIProcess/WebAuthentication/Cocoa/NearFieldSoftLink.mm @no-unify
 UIProcess/WebAuthentication/Cocoa/NfcConnection.mm
 UIProcess/WebAuthentication/Cocoa/NfcService.mm
 UIProcess/WebAuthentication/Cocoa/WKNFReaderSessionDelegate.mm
+UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.mm
 
 UIProcess/WebAuthentication/Mock/MockLocalConnection.mm
 UIProcess/WebAuthentication/Mock/MockLocalService.mm

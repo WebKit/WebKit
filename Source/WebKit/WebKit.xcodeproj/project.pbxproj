@@ -1048,6 +1048,8 @@
 		57597EBD218184900037F924 /* CtapAuthenticator.h in Headers */ = {isa = PBXBuildFile; fileRef = 57597EBB2181848F0037F924 /* CtapAuthenticator.h */; };
 		576CA9D722B862180030143C /* SOAuthorizationNSURLExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317322B35148008D0E8B /* SOAuthorizationNSURLExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5772F206217DBD6A0056BF2C /* HidService.h in Headers */ = {isa = PBXBuildFile; fileRef = 5772F204217DBD6A0056BF2C /* HidService.h */; };
+		577FF7822346E81C004EDFB9 /* APIWebAuthenticationPanelClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 577FF7812346E81C004EDFB9 /* APIWebAuthenticationPanelClient.h */; };
+		577FF7852346ECAA004EDFB9 /* WebAuthenticationPanelClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 577FF7832346ECAA004EDFB9 /* WebAuthenticationPanelClient.h */; };
 		578DC2982155A0020074E815 /* LocalAuthenticationSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 578DC2972155A0010074E815 /* LocalAuthenticationSoftLink.h */; };
 		57AC8F50217FEED90055438C /* HidConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 57AC8F4E217FEED90055438C /* HidConnection.h */; };
 		57B4B46020B504AC00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B4B45E20B504AB00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h */; };
@@ -1057,6 +1059,7 @@
 		57B8264823050C5100B72EB0 /* FidoService.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B8264623050C5100B72EB0 /* FidoService.h */; };
 		57B8264C230603C100B72EB0 /* MockNfcService.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B8264A230603C100B72EB0 /* MockNfcService.h */; };
 		57BBEA6D22BC0BFE00273995 /* SOAuthorizationLoadPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 57BBEA6C22BC0BFE00273995 /* SOAuthorizationLoadPolicy.h */; };
+		57C6244B234679A400383FE7 /* WebAuthenticationPanelFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = 57C6244A234679A400383FE7 /* WebAuthenticationPanelFlags.h */; };
 		57DCED6E2142EE5E0016B847 /* WebAuthenticatorCoordinatorMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57DCED6B2142EAE20016B847 /* WebAuthenticatorCoordinatorMessageReceiver.cpp */; };
 		57DCED6F2142EE630016B847 /* WebAuthenticatorCoordinatorMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCED6A2142EAE20016B847 /* WebAuthenticatorCoordinatorMessages.h */; };
 		57DCED702142EE680016B847 /* WebAuthenticatorCoordinatorProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57DCED6C2142EAF90016B847 /* WebAuthenticatorCoordinatorProxyMessageReceiver.cpp */; };
@@ -1075,6 +1078,7 @@
 		57DCEDC7214F18300016B847 /* MockLocalConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCEDC5214F18300016B847 /* MockLocalConnection.h */; };
 		57DCEDCB214F4E420016B847 /* MockAuthenticatorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCEDC9214F4E420016B847 /* MockAuthenticatorManager.h */; };
 		57EB2E3A21E1983E00B89CDF /* U2fAuthenticator.h in Headers */ = {isa = PBXBuildFile; fileRef = 57EB2E3821E1983E00B89CDF /* U2fAuthenticator.h */; };
+		57EBE26A234676C5008D8AF9 /* APIWebAuthenticationPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 57EBE268234676C5008D8AF9 /* APIWebAuthenticationPanel.h */; };
 		57FD318022B35158008D0E8B /* NavigationSOAuthorizationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317822B35149008D0E8B /* NavigationSOAuthorizationSession.h */; };
 		57FD318122B3515B008D0E8B /* PopUpSOAuthorizationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317022B35148008D0E8B /* PopUpSOAuthorizationSession.h */; };
 		57FD318222B3515E008D0E8B /* RedirectSOAuthorizationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317422B35149008D0E8B /* RedirectSOAuthorizationSession.h */; };
@@ -3525,6 +3529,9 @@
 		57608299202BDAE200116678 /* WebAuthenticatorCoordinatorProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebAuthenticatorCoordinatorProxy.messages.in; sourceTree = "<group>"; };
 		5772F204217DBD6A0056BF2C /* HidService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HidService.h; sourceTree = "<group>"; };
 		5772F205217DBD6A0056BF2C /* HidService.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HidService.mm; sourceTree = "<group>"; };
+		577FF7812346E81C004EDFB9 /* APIWebAuthenticationPanelClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIWebAuthenticationPanelClient.h; sourceTree = "<group>"; };
+		577FF7832346ECAA004EDFB9 /* WebAuthenticationPanelClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthenticationPanelClient.h; sourceTree = "<group>"; };
+		577FF7842346ECAA004EDFB9 /* WebAuthenticationPanelClient.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAuthenticationPanelClient.mm; sourceTree = "<group>"; };
 		578DC2972155A0010074E815 /* LocalAuthenticationSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalAuthenticationSoftLink.h; sourceTree = "<group>"; };
 		57AC8F4E217FEED90055438C /* HidConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HidConnection.h; sourceTree = "<group>"; };
 		57AC8F4F217FEED90055438C /* HidConnection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HidConnection.mm; sourceTree = "<group>"; };
@@ -3538,6 +3545,7 @@
 		57B8264A230603C100B72EB0 /* MockNfcService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockNfcService.h; sourceTree = "<group>"; };
 		57B8264B230603C100B72EB0 /* MockNfcService.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MockNfcService.mm; sourceTree = "<group>"; };
 		57BBEA6C22BC0BFE00273995 /* SOAuthorizationLoadPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SOAuthorizationLoadPolicy.h; sourceTree = "<group>"; };
+		57C6244A234679A400383FE7 /* WebAuthenticationPanelFlags.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthenticationPanelFlags.h; sourceTree = "<group>"; };
 		57DCED6A2142EAE20016B847 /* WebAuthenticatorCoordinatorMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAuthenticatorCoordinatorMessages.h; path = DerivedSources/WebKit2/WebAuthenticatorCoordinatorMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		57DCED6B2142EAE20016B847 /* WebAuthenticatorCoordinatorMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAuthenticatorCoordinatorMessageReceiver.cpp; path = DerivedSources/WebKit2/WebAuthenticatorCoordinatorMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		57DCED6C2142EAF90016B847 /* WebAuthenticatorCoordinatorProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAuthenticatorCoordinatorProxyMessageReceiver.cpp; path = DerivedSources/WebKit2/WebAuthenticatorCoordinatorProxyMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3565,6 +3573,8 @@
 		57DCEDCD214F51680016B847 /* MockAuthenticatorManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockAuthenticatorManager.cpp; sourceTree = "<group>"; };
 		57EB2E3821E1983E00B89CDF /* U2fAuthenticator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = U2fAuthenticator.h; sourceTree = "<group>"; };
 		57EB2E3921E1983E00B89CDF /* U2fAuthenticator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = U2fAuthenticator.cpp; sourceTree = "<group>"; };
+		57EBE268234676C5008D8AF9 /* APIWebAuthenticationPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIWebAuthenticationPanel.h; sourceTree = "<group>"; };
+		57EBE269234676C5008D8AF9 /* APIWebAuthenticationPanel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = APIWebAuthenticationPanel.cpp; sourceTree = "<group>"; };
 		57FD317022B35148008D0E8B /* PopUpSOAuthorizationSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopUpSOAuthorizationSession.h; sourceTree = "<group>"; };
 		57FD317122B35148008D0E8B /* WKSOAuthorizationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSOAuthorizationDelegate.h; sourceTree = "<group>"; };
 		57FD317222B35148008D0E8B /* SOAuthorizationCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SOAuthorizationCoordinator.h; sourceTree = "<group>"; };
@@ -7068,6 +7078,7 @@
 				57DCED842147363A0016B847 /* AuthenticatorManager.h */,
 				57DCED9921489F4D0016B847 /* AuthenticatorTransportService.cpp */,
 				57DCED8A214853130016B847 /* AuthenticatorTransportService.h */,
+				57C6244A234679A400383FE7 /* WebAuthenticationPanelFlags.h */,
 				57DCEDA62149F9DA0016B847 /* WebAuthenticationRequestData.h */,
 				57608296202BD8BA00116678 /* WebAuthenticatorCoordinatorProxy.cpp */,
 				57608295202BD8BA00116678 /* WebAuthenticatorCoordinatorProxy.h */,
@@ -7109,6 +7120,8 @@
 				570DAAC12303730300E8FC04 /* NfcConnection.mm */,
 				570DAAAC23026F5C00E8FC04 /* NfcService.h */,
 				570DAAAD23026F5C00E8FC04 /* NfcService.mm */,
+				577FF7832346ECAA004EDFB9 /* WebAuthenticationPanelClient.h */,
+				577FF7842346ECAA004EDFB9 /* WebAuthenticationPanelClient.mm */,
 				570DAAC423037F7E00E8FC04 /* WKNFReaderSessionDelegate.h */,
 				570DAAC523037F7E00E8FC04 /* WKNFReaderSessionDelegate.mm */,
 			);
@@ -7985,6 +7998,9 @@
 				7C89D2921A67122F003A5FDE /* APIUserScript.h */,
 				2D8786211BDB58FF00D02ABB /* APIUserStyleSheet.cpp */,
 				2D8786221BDB58FF00D02ABB /* APIUserStyleSheet.h */,
+				57EBE269234676C5008D8AF9 /* APIWebAuthenticationPanel.cpp */,
+				57EBE268234676C5008D8AF9 /* APIWebAuthenticationPanel.h */,
+				577FF7812346E81C004EDFB9 /* APIWebAuthenticationPanelClient.h */,
 				1AE286811C7F93860069AC4F /* APIWebsiteDataRecord.cpp */,
 				1AE286821C7F93860069AC4F /* APIWebsiteDataRecord.h */,
 				5C8DD37D1FE4501100F2A556 /* APIWebsitePolicies.cpp */,
@@ -9391,6 +9407,8 @@
 				2D8786241BDB58FF00D02ABB /* APIUserStyleSheet.h in Headers */,
 				C5E1AFED16B21017006CC1F2 /* APIWebArchive.h in Headers */,
 				C5E1AFEF16B21029006CC1F2 /* APIWebArchiveResource.h in Headers */,
+				57EBE26A234676C5008D8AF9 /* APIWebAuthenticationPanel.h in Headers */,
+				577FF7822346E81C004EDFB9 /* APIWebAuthenticationPanelClient.h in Headers */,
 				1AE286841C7F93860069AC4F /* APIWebsiteDataRecord.h in Headers */,
 				1A6563E51B7A8C50009CF787 /* APIWindowFeatures.h in Headers */,
 				F48D2A8521583A7E00C6752B /* AppKitSPI.h in Headers */,
@@ -9829,6 +9847,8 @@
 				1AF4CEF018BC481800BC2D34 /* VisitedLinkTableController.h in Headers */,
 				1A8E7D3D18C15149005A702A /* VisitedLinkTableControllerMessages.h in Headers */,
 				CEDA12E3152CD1B300D9E08D /* WebAlternativeTextClient.h in Headers */,
+				577FF7852346ECAA004EDFB9 /* WebAuthenticationPanelClient.h in Headers */,
+				57C6244B234679A400383FE7 /* WebAuthenticationPanelFlags.h in Headers */,
 				57DCEDB2214C604C0016B847 /* WebAuthenticationRequestData.h in Headers */,
 				57DCED6F2142EE630016B847 /* WebAuthenticatorCoordinatorMessages.h in Headers */,
 				57DCEDB3214C60530016B847 /* WebAuthenticatorCoordinatorProxy.h in Headers */,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MockAuthenticatorManager.h"
+#import "config.h"
+#import "WebAuthenticationPanelClient.h"
 
 #if ENABLE(WEB_AUTHN)
 
+#import "WebAuthenticationPanelFlags.h"
+#import "_WKWebAuthenticationPanel.h"
+
 namespace WebKit {
 
-MockAuthenticatorManager::MockAuthenticatorManager(MockWebAuthenticationConfiguration&& configuration)
-    : m_testConfiguration(WTFMove(configuration))
+WebAuthenticationPanelClient::WebAuthenticationPanelClient(_WKWebAuthenticationPanel *panel, id <_WKWebAuthenticationPanelDelegate> delegate)
+    : m_panel(panel)
+    , m_delegate(delegate)
 {
+    m_delegateMethods.panelDismissWebAuthenticationPanelWithResult = [delegate respondsToSelector:@selector(panel:dismissWebAuthenticationPanelWithResult:)];
 }
 
-UniqueRef<AuthenticatorTransportService> MockAuthenticatorManager::createService(WebCore::AuthenticatorTransport transport, AuthenticatorTransportService::Observer& observer) const
+RetainPtr<id <_WKWebAuthenticationPanelDelegate> > WebAuthenticationPanelClient::delegate()
 {
-    return AuthenticatorTransportService::createMock(transport, observer, m_testConfiguration);
+    return m_delegate.get();
 }
 
-void MockAuthenticatorManager::respondReceivedInternal(Respond&& respond)
+static _WKWebAuthenticationResult wkWebAuthenticationResult(WebAuthenticationResult result)
 {
-    if (m_testConfiguration.silentFailure)
+    switch (result) {
+    case WebAuthenticationResult::Succeeded:
+        return _WKWebAuthenticationResultSucceeded;
+    case WebAuthenticationResult::Failed:
+        return _WKWebAuthenticationResultFailed;
+    }
+    ASSERT_NOT_REACHED();
+    return _WKWebAuthenticationResultFailed;
+}
+
+void WebAuthenticationPanelClient::dismissPanel(WebAuthenticationResult result) const
+{
+    if (!m_delegateMethods.panelDismissWebAuthenticationPanelWithResult)
         return;
 
-    invokePendingCompletionHandler(WTFMove(respond));
-    clearStateAsync();
-    requestTimeOutTimer().stop();
+    auto delegate = m_delegate.get();
+    if (!delegate)
+        return;
+
+    [delegate panel:m_panel dismissWebAuthenticationPanelWithResult:wkWebAuthenticationResult(result)];
 }
 
 } // namespace WebKit

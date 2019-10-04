@@ -178,6 +178,10 @@ public:
         MediaSessionMetadata,
 #endif
 
+#if ENABLE(WEB_AUTHN)
+        WebAuthenticationPanel,
+#endif
+
         // Bundle types
         Bundle,
         BundleBackForwardList,
