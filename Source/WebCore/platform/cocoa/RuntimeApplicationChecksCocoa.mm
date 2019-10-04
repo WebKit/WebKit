@@ -214,6 +214,12 @@ bool IOSApplication::isMobileSafari()
     return isMobileSafari;
 }
 
+bool IOSApplication::isSafariViewService()
+{
+    static bool isSafariViewService = applicationBundleIsEqualTo("com.apple.SafariViewService"_s);
+    return isSafariViewService;
+}
+
 bool IOSApplication::isIMDb()
 {
     static bool isIMDb = applicationBundleIsEqualTo("com.imdb.imdb"_s);
