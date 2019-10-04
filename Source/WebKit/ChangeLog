@@ -1,5 +1,20 @@
 2019-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] WebAutomation: make setWindowRect synchronous
+        https://bugs.webkit.org/show_bug.cgi?id=202530
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Move/resize window is asynchronous in GTK, but automation expects it to be synchronous so that get window rect
+        after setting it always returns the value set. Use a nested run loop to wait for the configure events after the
+        move/resize.
+
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+        (UIClient::windowConfigureEventCallback):
+        (UIClient::setWindowFrameTimerFired):
+
+2019-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Address review comments after r250646.
 
         I forgot to include the documentation improvements suggested.

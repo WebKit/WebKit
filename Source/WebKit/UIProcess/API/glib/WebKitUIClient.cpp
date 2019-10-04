@@ -35,6 +35,7 @@
 #include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/RunLoopSourcePriority.h>
 
 #if PLATFORM(GTK)
 #include <WebCore/GtkUtilities.h>
@@ -128,16 +129,45 @@ private:
         webkitWindowPropertiesSetResizable(webkit_web_view_get_window_properties(m_webView), resizable);
     }
 
+#if PLATFORM(GTK)
+    static void windowConfigureEventCallback(GtkWindow* window, GdkEventConfigure*, GdkRectangle* targetGeometry)
+    {
+        GdkRectangle geometry = { 0, 0, 0, 0 };
+        gtk_window_get_position(window, &geometry.x, &geometry.y);
+        gtk_window_get_size(window, &geometry.width, &geometry.height);
+        if (geometry.x == targetGeometry->x && geometry.y == targetGeometry->y && geometry.width == targetGeometry->width && geometry.height == targetGeometry->height)
+            RunLoop::current().stop();
+    }
+
+    void setWindowFrameTimerFired()
+    {
+        RunLoop::current().stop();
+    }
+#endif
+
     void setWindowFrame(WebPageProxy&, const WebCore::FloatRect& frame) final
     {
 #if PLATFORM(GTK)
         GdkRectangle geometry = WebCore::IntRect(frame);
         GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(m_webView));
         if (webkit_web_view_is_controlled_by_automation(m_webView) && WebCore::widgetIsOnscreenToplevelWindow(window) && gtk_widget_get_visible(window)) {
+            if ((geometry.x < 0 || geometry.y < 0) && (geometry.width <= 0 || geometry.height <= 0))
+                return;
+
+            auto signalID = g_signal_connect(window, "configure-event", G_CALLBACK(windowConfigureEventCallback), &geometry);
             if (geometry.x >= 0 && geometry.y >= 0)
                 gtk_window_move(GTK_WINDOW(window), geometry.x, geometry.y);
             if (geometry.width > 0 && geometry.height > 0)
                 gtk_window_resize(GTK_WINDOW(window), geometry.width, geometry.height);
+
+            // We need the move/resize to happen synchronously in automation mode, so we use a nested RunLoop
+            // to wait, up top 1 second, for the configure events.
+            auto timer = makeUnique<RunLoop::Timer<UIClient>>(RunLoop::main(), this, &UIClient::setWindowFrameTimerFired);
+            timer->setPriority(RunLoopSourcePriority::RunLoopTimer);
+            timer->startOneShot(1_s);
+            RunLoop::run();
+            timer = nullptr;
+            g_signal_handler_disconnect(window, signalID);
         } else
             webkitWindowPropertiesSetGeometry(webkit_web_view_get_window_properties(m_webView), &geometry);
 #endif
