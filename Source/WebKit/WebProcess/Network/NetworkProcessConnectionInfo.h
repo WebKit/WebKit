@@ -46,7 +46,18 @@ struct NetworkProcessConnectionInfo {
         return IPC::Connection::Identifier();
 #endif
     }
-    
+
+    IPC::Connection::Identifier releaseIdentifier()
+    {
+#if USE(UNIX_DOMAIN_SOCKETS)
+        auto returnValue = IPC::Connection::Identifier(connection.releaseFileDescriptor());
+#else
+        auto returnValue = identifier();
+#endif
+        connection = { };
+        return returnValue;
+    }
+
     void encode(IPC::Encoder& encoder) const
     {
         encoder << connection;

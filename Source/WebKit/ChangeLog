@@ -1,5 +1,23 @@
 2019-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][WPE] REGRESSION(r250673): connection to network process is broken after r250673
+        https://bugs.webkit.org/show_bug.cgi?id=202575
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        The file descriptor is now closed when the IPC::Attachment is destroyed in NetworkProcessConnectionInfo
+        destructor. In case of unix domain sockets we need to transfer the ownership of the fd to
+        NetworkProcessConnection, but NetworkProcessConnectionInfo is ow keeping the ownership.
+
+        * WebProcess/Network/NetworkProcessConnectionInfo.h:
+        (WebKit::NetworkProcessConnectionInfo::releaseIdentifier): Use IPC::Attachment::releaseFileDescriptor() in case
+        of unix domain sockets.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureNetworkProcessConnection): Use NetworkProcessConnectionInfo::releaseIdentifier() when
+        passing the identifier to NetworkProcessConnection.
+
+2019-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK distcheck
 
         * webkitglib-symbols.map: Remove symbols that are no longer in lib.
