@@ -30,8 +30,12 @@
 #import <wtf/RetainPtr.h>
 
 @implementation _WKWebAuthenticationPanel {
+#if ENABLE(WEB_AUTHN)
     WeakPtr<WebKit::WebAuthenticationPanelClient> _client;
+#endif
 }
+
+#if ENABLE(WEB_AUTHN)
 
 - (void)dealloc
 {
@@ -59,15 +63,19 @@
     _panel->setClient(WTFMove(client));
 }
 
+#endif // ENABLE(WEB_AUTHN)
+
 - (void)cancel
 {
 }
 
+#if ENABLE(WEB_AUTHN)
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
 {
     return *_panel;
 }
+#endif
 
 @end

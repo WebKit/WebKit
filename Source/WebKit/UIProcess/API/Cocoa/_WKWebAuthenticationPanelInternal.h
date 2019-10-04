@@ -27,6 +27,8 @@
 
 #import "_WKWebAuthenticationPanel.h"
 
+#if ENABLE(WEB_AUTHN)
+
 #import "APIWebAuthenticationPanel.h"
 #import "WKObject.h"
 
@@ -43,3 +45,5 @@ template<> struct WrapperTraits<API::WebAuthenticationPanel> {
     API::ObjectStorage<API::WebAuthenticationPanel> _panel;
 }
 @end
+
+#endif // ENABLE(WEB_AUTHN)

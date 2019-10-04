@@ -1,3 +1,10 @@
+2019-10-04  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, build fix after r250729
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanelInternal.h:
+
 2019-10-04  Keith Rollin  <krollin@apple.com>
 
         Fix determination of the top-level resource
