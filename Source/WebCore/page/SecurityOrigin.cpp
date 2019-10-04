@@ -33,6 +33,7 @@
 #include "LegacySchemeRegistry.h"
 #include "OriginAccessEntry.h"
 #include "PublicSuffix.h"
+#include "RuntimeApplicationChecks.h"
 #include "SecurityPolicy.h"
 #include "TextEncoding.h"
 #include "ThreadableBlobRegistry.h"
@@ -353,6 +354,7 @@ static bool isFeedWithNestedProtocolInHTTPFamily(const URL& url)
 
 bool SecurityOrigin::canDisplay(const URL& url) const
 {
+    ASSERT(!isInNetworkProcess());
     if (m_universalAccess)
         return true;
 

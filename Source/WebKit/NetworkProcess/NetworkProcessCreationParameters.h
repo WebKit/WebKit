@@ -89,7 +89,6 @@ struct NetworkProcessCreationParameters {
     Vector<String> urlSchemesRegisteredAsBypassingContentSecurityPolicy;
     Vector<String> urlSchemesRegisteredAsLocal;
     Vector<String> urlSchemesRegisteredAsNoAccess;
-    Vector<String> urlSchemesRegisteredAsDisplayIsolated;
     Vector<String> urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest;
     Vector<String> urlSchemesRegisteredAsCORSEnabled;
 

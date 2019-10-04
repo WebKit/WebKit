@@ -41,6 +41,7 @@ inline bool isInWebProcess() { return true; }
 #if PLATFORM(COCOA)
 
 bool isInWebProcess();
+bool isInNetworkProcess();
 
 WEBCORE_EXPORT void setApplicationSDKVersion(uint32_t);
 WEBCORE_EXPORT uint32_t applicationSDKVersion();
@@ -102,6 +103,10 @@ WEBCORE_EXPORT bool isDataActivation();
 } // IOSApplication
 
 #endif // PLATFORM(IOS_FAMILY)
+
+#else
+
+inline bool isInNetworkProcess() { return false; }
 
 #endif // PLATFORM(COCOA)
 

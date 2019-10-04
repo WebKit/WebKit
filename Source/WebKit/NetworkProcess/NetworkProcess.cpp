@@ -350,9 +350,6 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     for (auto& scheme : parameters.urlSchemesRegisteredAsNoAccess)
         registerURLSchemeAsNoAccess(scheme);
 
-    for (auto& scheme : parameters.urlSchemesRegisteredAsDisplayIsolated)
-        registerURLSchemeAsDisplayIsolated(scheme);
-
     for (auto& scheme : parameters.urlSchemesRegisteredAsCORSEnabled)
         registerURLSchemeAsCORSEnabled(scheme);
 
@@ -2219,11 +2216,6 @@ void NetworkProcess::registerURLSchemeAsLocal(const String& scheme) const
 void NetworkProcess::registerURLSchemeAsNoAccess(const String& scheme) const
 {
     LegacySchemeRegistry::registerURLSchemeAsNoAccess(scheme);
-}
-
-void NetworkProcess::registerURLSchemeAsDisplayIsolated(const String& scheme) const
-{
-    LegacySchemeRegistry::registerURLSchemeAsDisplayIsolated(scheme);
 }
 
 void NetworkProcess::registerURLSchemeAsCORSEnabled(const String& scheme) const

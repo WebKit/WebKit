@@ -521,7 +521,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     parameters.urlSchemesRegisteredAsBypassingContentSecurityPolicy = copyToVector(m_schemesToRegisterAsBypassingContentSecurityPolicy);
     parameters.urlSchemesRegisteredAsLocal = copyToVector(m_schemesToRegisterAsLocal);
     parameters.urlSchemesRegisteredAsNoAccess = copyToVector(m_schemesToRegisterAsNoAccess);
-    parameters.urlSchemesRegisteredAsDisplayIsolated = copyToVector(m_schemesToRegisterAsDisplayIsolated);
     parameters.urlSchemesRegisteredAsCORSEnabled = copyToVector(m_schemesToRegisterAsCORSEnabled);
     parameters.urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest = copyToVector(m_schemesToRegisterAsCanDisplayOnlyIfCanRequest);
 
@@ -1494,7 +1493,6 @@ void WebProcessPool::registerURLSchemeAsDisplayIsolated(const String& urlScheme)
 {
     m_schemesToRegisterAsDisplayIsolated.add(urlScheme);
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsDisplayIsolated(urlScheme));
-    sendToNetworkingProcess(Messages::NetworkProcess::RegisterURLSchemeAsDisplayIsolated(urlScheme));
 }
 
 void WebProcessPool::registerURLSchemeAsCORSEnabled(const String& urlScheme)

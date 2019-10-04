@@ -90,6 +90,12 @@ bool isInWebProcess()
     return mainBundleIsWebProcess;
 }
 
+bool isInNetworkProcess()
+{
+    static bool mainBundleIsNetworkProcess = [[[NSBundle mainBundle] bundleIdentifier] hasPrefix:@"com.apple.WebKit.Networking"];
+    return mainBundleIsNetworkProcess;
+}
+
 static bool applicationBundleIsEqualTo(const String& bundleIdentifierString)
 {
     return applicationBundleIdentifier() == bundleIdentifierString;

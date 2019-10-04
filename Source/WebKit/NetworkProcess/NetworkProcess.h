@@ -439,7 +439,6 @@ private:
     void registerURLSchemeAsBypassingContentSecurityPolicy(const String&) const;
     void registerURLSchemeAsLocal(const String&) const;
     void registerURLSchemeAsNoAccess(const String&) const;
-    void registerURLSchemeAsDisplayIsolated(const String&) const;
     void registerURLSchemeAsCORSEnabled(const String&) const;
     void registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String&) const;
 

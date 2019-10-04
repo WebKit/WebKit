@@ -1,5 +1,25 @@
 2019-10-04  Alex Christensen  <achristensen@webkit.org>
 
+        Stop sending list of display-isolated schemes to NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=202557
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::registerURLSchemeAsDisplayIsolated const): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::registerURLSchemeAsDisplayIsolated):
+
+2019-10-04  Alex Christensen  <achristensen@webkit.org>
+
         Rename SchemeRegistry to LegacySchemeRegistry
         https://bugs.webkit.org/show_bug.cgi?id=202586
 
