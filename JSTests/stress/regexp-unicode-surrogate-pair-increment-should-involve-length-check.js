@@ -1,4 +1,3 @@
-//@ skip if ["arm", "mips"].include?($architecture)
 // This test checks for proper incrementing around / over individual surrogates and surrogate pairs.
 // This test should run without crashing.
 

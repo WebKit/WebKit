@@ -1,3 +1,15 @@
+2019-10-04  Paulo Matos  <pmatos@igalia.com>
+
+        Revert regexp test skip on armv7l and mips
+        https://bugs.webkit.org/show_bug.cgi?id=202310
+
+        Reviewed by Žan Doberšek.
+
+        Test was skipped in bug 202113 on armv7l and mips due to bug 202041.
+        Bug 202041 is fixed and change of bug 202113 can be reverted.
+
+        * stress/regexp-unicode-surrogate-pair-increment-should-involve-length-check.js:
+
 2019-10-02  Mark Lam  <mark.lam@apple.com>
 
         DoubleToStringConverter::ToExponential() should null terminate its string.
