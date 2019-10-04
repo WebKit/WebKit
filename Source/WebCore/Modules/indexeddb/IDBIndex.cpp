@@ -64,7 +64,7 @@ const char* IDBIndex::activeDOMObjectName() const
 
 bool IDBIndex::canSuspendForDocumentSuspension() const
 {
-    return false;
+    return true;
 }
 
 bool IDBIndex::hasPendingActivity() const

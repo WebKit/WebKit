@@ -1,3 +1,22 @@
+2019-10-04  Chris Dumez  <cdumez@apple.com>
+
+        Allow pages using IDBIndex to enter the PageCache
+        https://bugs.webkit.org/show_bug.cgi?id=202430
+        <rdar://problem/55887918>
+
+        Reviewed by Geoffrey Garen.
+
+        There is no reason to prevent PageCaching when an IDBIndex object is alive.
+        No events are fired by IDBIndex and its API returns IDBRequest objects, which
+        are already PageCache-aware.
+
+        I have seen Yahoo.com failing to enter the back/forward cache because of this.
+
+        No new tests, updated existing test.
+
+        * Modules/indexeddb/IDBIndex.cpp:
+        (WebCore::IDBIndex::canSuspendForDocumentSuspension const):
+
 2019-10-04  Heiko Becker  <heirecka@exherbo.org>
 
         Fix build with icu 65.1

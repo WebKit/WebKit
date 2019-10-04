@@ -4,7 +4,7 @@
 <body>
 <script src="../../resources/js-test.js"></script>
 <script>
-description("Tests that an IDBRequest does not prevent page caching.");
+description("Tests that an IDBRequest & IDBIndex does not prevent page caching.");
 jsTestIsAsync = true;
 
 window.addEventListener("pageshow", function(event) {
@@ -34,6 +34,9 @@ window.addEventListener("pageshow", function(event) {
              var db = event.target.result;
              objectStore = db.createObjectStore("customers", { keyPath: "ssn" });
              transaction = objectStore.transaction;
+
+             myIndex = objectStore.createIndex('index', 'x', {unique: true});
+             shouldBeTrue("!!myIndex");
 
              window.location = "../../fast/history/resources/page-cache-helper.html";
          };

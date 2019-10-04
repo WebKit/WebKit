@@ -1,3 +1,16 @@
+2019-10-04  Chris Dumez  <cdumez@apple.com>
+
+        Allow pages using IDBIndex to enter the PageCache
+        https://bugs.webkit.org/show_bug.cgi?id=202430
+        <rdar://problem/55887918>
+
+        Reviewed by Geoffrey Garen.
+
+        Extend layout test coverage.
+
+        * storage/indexeddb/IDBTransaction-page-cache-expected.txt:
+        * storage/indexeddb/IDBTransaction-page-cache.html:
+
 2019-10-04  Truitt Savell  <tsavell@apple.com>
 
         Layout Test imported/w3c/web-platform-tests/2dcontext/line-styles/2d.line.cap.round.html is failing
