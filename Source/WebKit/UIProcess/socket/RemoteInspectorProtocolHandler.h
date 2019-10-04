@@ -57,10 +57,14 @@ private:
     void platformStopTask(WebPageProxy&, WebURLSchemeTask&) final { }
     void platformTaskCompleted(WebURLSchemeTask&) final { }
 
+    void updateTargetList();
+
     void runScript(const String&);
 
     std::unique_ptr<RemoteInspectorClient> m_inspectorClient;
     WebPageProxy& m_page;
+    bool m_pageLoaded { false };
+    String m_targetListsHtml;
 };
 
 } // namespace WebKit

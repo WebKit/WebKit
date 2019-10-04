@@ -28,6 +28,7 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
+#include "APILoaderClient.h"
 #include "APINavigation.h"
 #include "APIUserContentWorld.h"
 #include "WebPageGroup.h"
@@ -65,6 +66,21 @@ private:
     RemoteInspectorProtocolHandler& m_inspectorProtocolHandler;
 };
 
+class LoaderClient final : public API::LoaderClient {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    LoaderClient(Function<void()>&& loadedCallback)
+        : m_loadedCallback { WTFMove(loadedCallback) } { }
+
+    void didFinishLoadForFrame(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::Navigation*, API::Object*) final
+    {
+        m_loadedCallback();
+    }
+
+private:
+    Function<void()> m_loadedCallback;
+};
+
 void RemoteInspectorProtocolHandler::inspect(const String& hostAndPort, ConnectionID connectionID, TargetID targetID, const String& type)
 {
     if (m_inspectorClient)
@@ -99,7 +115,17 @@ void RemoteInspectorProtocolHandler::targetListChanged(RemoteInspectorClient& cl
         }
         html.append("</table>");
     }
-    runScript(makeString("updateTargets('", html.toString(), "');"));
+    m_targetListsHtml = html.toString();
+    if (m_pageLoaded)
+        updateTargetList();
+}
+
+void RemoteInspectorProtocolHandler::updateTargetList()
+{
+    if (!m_targetListsHtml.isEmpty()) {
+        runScript(makeString("updateTargets(`", m_targetListsHtml, "`);"));
+        m_targetListsHtml = { };
+    }
 }
 
 void RemoteInspectorProtocolHandler::platformStartTask(WebPageProxy& pageProxy, WebURLSchemeTask& task)
@@ -113,6 +139,13 @@ void RemoteInspectorProtocolHandler::platformStartTask(WebPageProxy& pageProxy, 
     // Setup target postMessage listener
     auto handler = WebScriptMessageHandler::create(makeUnique<ScriptMessageClient>(*this), "inspector", API::UserContentWorld::normalWorld());
     pageProxy.pageGroup().userContentController().addUserScriptMessageHandler(handler.get());
+
+    // Setup loader client to get notified of page load
+    m_page.setLoaderClient(makeUnique<LoaderClient>([this] {
+        m_pageLoaded = true;
+        updateTargetList();
+    }));
+    m_pageLoaded = false;
 
     StringBuilder htmlBuilder;
     htmlBuilder.append(
