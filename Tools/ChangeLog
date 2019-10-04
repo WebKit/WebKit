@@ -1,3 +1,15 @@
+2019-10-03  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] wincairo queue should use del instead of rm command (follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=202477
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CleanUpGitIndexLock.start): Use regular 'rm' command on windows as it use cygwin.
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestCleanUpGitIndexLock.test_success_windows): Added unit-test for windows.
+
 2019-10-04  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Implement _WKWebAuthenticationPanel SPI

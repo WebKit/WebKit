@@ -124,8 +124,7 @@ class CleanUpGitIndexLock(shell.ShellCommand):
 
     def start(self):
         platform = self.getProperty('platform', '*')
-        platform = platform.split('-')[0]
-        if platform in ('win', 'wincairo'):
+        if platform == 'wincairo':
             self.command = ['del', '.git\index.lock']
         return shell.ShellCommand.start(self)
 
