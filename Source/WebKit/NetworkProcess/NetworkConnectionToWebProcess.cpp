@@ -761,7 +761,7 @@ void NetworkConnectionToWebProcess::resetOriginAccessWhitelists()
     SecurityPolicy::resetOriginAccessWhitelists();
 }
 
-Optional<NetworkActivityTracker> NetworkConnectionToWebProcess::startTrackingResourceLoad(PageIdentifier pageID, ResourceLoadIdentifier resourceID, bool isMainResource)
+Optional<NetworkActivityTracker> NetworkConnectionToWebProcess::startTrackingResourceLoad(PageIdentifier pageID, ResourceLoadIdentifier resourceID, bool isTopResource)
 {
     if (m_sessionID.isEphemeral())
         return WTF::nullopt;
@@ -770,7 +770,7 @@ Optional<NetworkActivityTracker> NetworkConnectionToWebProcess::startTrackingRes
     // new one if this is the main resource.
 
     size_t rootActivityIndex;
-    if (isMainResource) {
+    if (isTopResource) {
         // If we're loading a page from the top, make sure any tracking of
         // previous activity for this page is stopped.
 

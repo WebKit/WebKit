@@ -1,3 +1,30 @@
+2019-10-04  Keith Rollin  <krollin@apple.com>
+
+        Fix determination of the top-level resource
+        https://bugs.webkit.org/show_bug.cgi?id=202491
+        <rdar://problem/50780648>
+
+        Reviewed by Youenn Fablet.
+
+        When loading the resources associated with a page, the Networking
+        process needs to know the main resource for the main frame. It uses
+        this information to keep track of page loads and the resources that
+        are loaded in those pages. By keeping track of this information,
+        WebKit can track and report difficult (slow or incomplete) resource
+        loads and their impact on the overall page.
+
+        The initial determination of the top resource only looked at whether
+        the resource was the "main" resource of a frame or not. However, this
+        determination was insufficient, and would confuse the tracking
+        mechanism when sub-frames also had main frames. Therefore, augment the
+        test by also looking to see if the hosting frame is the main frame.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::startTrackingResourceLoad):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+
 2019-10-04  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed WinCairo build fix for r250717.
