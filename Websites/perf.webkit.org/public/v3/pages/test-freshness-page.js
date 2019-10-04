@@ -280,11 +280,14 @@ class TestFreshnessPage extends PageWithHeading {
             #test-health th.diagonal-head {
                 white-space: nowrap;
                 height: 16rem;
+                width: 2.2rem;
                 border-bottom: 0rem;
+                padding: 0;
             }
             #test-health th.diagonal-head > div {
-                transform: translate(1rem, 7rem) rotate(315deg);
-                width: 2rem;
+                transform: translate(1.1rem, 7.5rem) rotate(315deg);
+                transform-origin: center left;
+                width: 2.2rem;
                 border: 0rem;
             }
             #test-health tbody {
@@ -312,7 +315,7 @@ class TestFreshnessPage extends PageWithHeading {
                 background-color: #F9F9F9;
                 height: 1.6rem;
                 width: 1.6rem;
-                margin: 0.1rem;
+                margin: auto;
                 padding: 0;
                 position: relative;
                 overflow: hidden;

@@ -61,7 +61,7 @@ class FreshnessIndicator extends ComponentBase {
     {
         return `
             div {
-                margin-left: 0;
+                margin: auto;
                 height: 1.8rem;
                 width: 1.8rem;
             }
