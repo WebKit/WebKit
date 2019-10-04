@@ -72,7 +72,7 @@ class ConfigureBuild(buildstep.BuildStep):
     description = ["configuring build"]
     descriptionDone = ["configured build"]
 
-    def __init__(self, platform, configuration, architecture, buildOnly, additionalArguments, SVNMirror, *args, **kwargs):
+    def __init__(self, platform, configuration, architecture, buildOnly, additionalArguments, SVNMirror, device_model, *args, **kwargs):
         buildstep.BuildStep.__init__(self, *args, **kwargs)
         self.platform = platform
         if platform != 'jsc-only':
@@ -83,7 +83,8 @@ class ConfigureBuild(buildstep.BuildStep):
         self.buildOnly = buildOnly
         self.additionalArguments = additionalArguments
         self.SVNMirror = SVNMirror
-        self.addFactoryArguments(platform=platform, configuration=configuration, architecture=architecture, buildOnly=buildOnly, additionalArguments=additionalArguments, SVNMirror=SVNMirror)
+        self.device_model = device_model
+        self.addFactoryArguments(platform=platform, configuration=configuration, architecture=architecture, buildOnly=buildOnly, additionalArguments=additionalArguments, SVNMirror=SVNMirror, device_model=device_model)
 
     def start(self):
         self.setProperty("platform", self.platform)
@@ -93,6 +94,7 @@ class ConfigureBuild(buildstep.BuildStep):
         self.setProperty("buildOnly", self.buildOnly)
         self.setProperty("additionalArguments", self.additionalArguments)
         self.setProperty("SVNMirror", self.SVNMirror)
+        self.setProperty("device_model", self.device_model)
         self.finished(SUCCESS)
         return defer.succeed(None)
 
@@ -192,6 +194,18 @@ def appendCustomBuildFlags(step, platform, fullPlatform):
     elif platform == 'ios':
         platform = 'device'
     step.setCommand(step.command + ['--' + platform])
+
+
+def appendCustomTestingFlags(step, platform, device_model):
+    if platform not in ('gtk', 'wincairo', 'ios', 'jsc-only', 'wpe'):
+        return
+    if device_model == 'iphone':
+        device_model = 'iphone-simulator'
+    if device_model == 'ipad':
+        device_model = 'ipad-simulator'
+    else:
+        device_model = platform
+    step.setCommand(step.command + ['--' + device_model])
 
 
 class CompileWebKit(shell.Compile):
@@ -410,7 +424,7 @@ class RunWebKitTests(shell.Test):
 
     def start(self):
         platform = self.getProperty('platform')
-        appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
+        appendCustomTestingFlags(self, platform, self.getProperty('device_model'))
         additionalArguments = self.getProperty('additionalArguments')
 
         self.setCommand(self.command + ["--results-directory", self.resultDirectory])
@@ -520,7 +534,7 @@ class RunAPITests(TestWithFailureCount):
     failedTestsFormatString = "%d api test%s failed or timed out"
 
     def start(self):
-        appendCustomBuildFlags(self, self.getProperty('platform'), self.getProperty('fullPlatform'))
+        appendCustomTestingFlags(self, self.getProperty('platform'), self.getProperty('device_model'))
         return shell.Test.start(self)
 
     def countFailures(self, cmd):

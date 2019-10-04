@@ -1,3 +1,34 @@
+2019-10-04  Matt Lewis  <jlewis3@apple.com>
+
+        Fix iPad testers platform for downloading build product and fixing tests to run
+        https://bugs.webkit.org/show_bug.cgi?id=202365
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Added device_model.
+        * BuildSlaveSupport/build.webkit.org-config/factories.py: Added device_model property.
+        (Factory.__init__):
+        (BuildFactory.__init__):
+        (TestFactory.__init__):
+        (BuildAndTestFactory.__init__):
+        (BuildAndTestLLINTCLoopFactory.__init__):
+        (BuildAndTest32bitJSCFactory.__init__):
+        (BuildAndRemoteJSCTestsFactory.__init__):
+        (TestWebKit1LeaksFactory.__init__):
+        (TestJSCFactory.__init__):
+        (Test262Factory.__init__):
+        (BuildAndPerfTestFactory.__init__):
+        (DownloadAndPerfTestFactory.__init__):
+        * BuildSlaveSupport/build.webkit.org-config/loadConfig.py: Added device_model to loaded properties.
+        (loadBuilderConfig):
+        * BuildSlaveSupport/build.webkit.org-config/steps.py: Added ability to run based on device_model to
+        WebKit Tests and API tests for iPad and iPhone simulators.
+        (ConfigureBuild.__init__):
+        (ConfigureBuild.start):
+        (appendCustomTestingFlags):
+        (RunWebKitTests.start):
+        (RunAPITests.start):
+
 2019-10-04  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Remove percentages from bubbles

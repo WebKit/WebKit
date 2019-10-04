@@ -43,8 +43,8 @@
                     { "name": "bot682", "platform": "ios-simulator-13" },
                     { "name": "bot694", "platform": "ios-simulator-13" },
                     { "name": "bot695", "platform": "ios-simulator-13" },
-                    { "name": "bot667", "platform": "ipados-simulator-13"},
-                    { "name": "bot664", "platform": "ipados-simulator-13"},
+                    { "name": "bot667", "platform": "ios-simulator-13"},
+                    { "name": "bot664", "platform": "ios-simulator-13"},
 
                     { "name": "bot543", "platform": "win" },
                     { "name": "bot544", "platform": "win" },
@@ -194,25 +194,25 @@
                     },
                     {
                       "name": "Apple iOS 13 Simulator Release WK2 (Tests)", "type": "TestAllButJSC", "builddir": "ios-simulator-13-release-tests-wk2",
-                      "platform": "ios-simulator-13", "configuration": "release", "architectures": ["x86_64"],
+                      "platform": "ios-simulator-13", "configuration": "release", "architectures": ["x86_64"], "device_model": "iphone",
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot651", "bot652"]
                     },
                     {
                       "name": "Apple iOS 13 Simulator Debug WK2 (Tests)", "type": "TestAllButJSC", "builddir": "ios-simulator-13-debug-tests-wk2",
-                      "platform": "ios-simulator-13", "configuration": "debug", "architectures": ["x86_64"],
+                      "platform": "ios-simulator-13", "configuration": "debug", "architectures": ["x86_64"], "device_model": "iphone",
                       "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
                       "slavenames": ["bot653", "bot654"]
                     },
                     {
                       "name": "Apple iPadOS 13 Simulator Release WK2 (Tests)", "type": "TestAllButJSC", "builddir": "ipados-simulator-13-release-tests-wk2",
-                      "platform": "ipados-simulator-13", "configuration": "release", "architectures": ["x86_64"],
+                      "platform": "ios-simulator-13", "configuration": "release", "architectures": ["x86_64"], "device_model": "ipad",
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot667"]
                     },
                     {
                       "name": "Apple iPadOS 13 Simulator Debug WK2 (Tests)", "type": "TestAllButJSC", "builddir": "ipados-simulator-13-debug-tests-wk2",
-                      "platform": "ipados-simulator-13", "configuration": "debug", "architectures": ["x86_64"],
+                      "platform": "ios-simulator-13", "configuration": "debug", "architectures": ["x86_64"], "device_model": "ipad",
                       "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
                       "slavenames": ["bot664"]
                     },
