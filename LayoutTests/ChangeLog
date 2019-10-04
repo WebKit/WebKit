@@ -1,3 +1,17 @@
+2019-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Resync WPT shadow DOM tests
+        https://bugs.webkit.org/show_bug.cgi?id=202497
+
+        Rubber-stamped by Sam Weinig.
+
+        Added a failing expectation. Also skipped focus tests on iOS for now since sending tab key via UIController
+        doesn't seem to move the focus on iOS somehow even though manual testing seems to work.
+
+        * TestExpectations:
+        * platform/ios/TestExpectations:
+        * /platform/mac-highsierra-wk1/imported/w3c/web-platform-tests/mathml/relations/html5-tree/tabindex-002-expected.txt: Added.
+
 2019-10-03  Chris Dumez  <cdumez@apple.com>
 
         Allow pages using FontFaceSet to enter the back/forward cache

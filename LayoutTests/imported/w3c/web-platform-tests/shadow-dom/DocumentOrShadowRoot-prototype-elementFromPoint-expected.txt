@@ -1,3 +1,4 @@
+foo
 
 PASS document.elementFromPoint and shadow.ElementFromPoint must return the shadow host of the hit-tested text node when the hit-tested text node is a direct child of the root and the host has display: inline 
 PASS document.elementFromPoint and shadow.ElementFromPoint must return the shadow host of the hit-tested text node when the hit-tested text node is a direct child of the root and the host has display: block 
@@ -39,4 +40,5 @@ PASS document.elementsFromPoint must return the shadow host and its ancestors an
 PASS document.elementsFromPoint must return the shadow host and its ancestors and shadowRoot.elementsFromPoint must return the slot parent of the fallback text and its non-shadow ancestors when the hit-tested text node is a fallback content and the host has display: block 
 PASS document.elementsFromPoint must return the shadow host and its ancestors and shadowRoot.elementsFromPoint must return the slot parent of the fallback text and its non-shadow ancestors when the hit-tested text node is a fallback content and the host has display: inline-block 
 FAIL shadowRoot.elementsFromPoint must behave the same with document.elementsFromPoint regarding HTML element assert_array_equals: lengths differ, expected 5 got 4
+FAIL elementsFromPoint should return all elements under a point, even when context object is not connected assert_equals: expected 4 but got 3
 

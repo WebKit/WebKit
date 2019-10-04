@@ -1,3 +1,58 @@
+2019-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Resync WPT shadow DOM tests
+        https://bugs.webkit.org/show_bug.cgi?id=202497
+
+        Rubber-stamped by Sam Weinig.
+
+        Sync shadow DOM tests as of e33c216e635b4615e4332953fcb758f698ecd510. Also added enough support for
+        sending key events so that sequential focusing tests would work.
+
+        * web-platform-tests/resources/testdriver-vendor.js:
+        * web-platform-tests/shadow-dom/DocumentOrShadowRoot-prototype-elementFromPoint-expected.txt:
+        * web-platform-tests/shadow-dom/DocumentOrShadowRoot-prototype-elementFromPoint.html:
+        * web-platform-tests/shadow-dom/Element-interface-attachShadow-custom-element.html:
+        * web-platform-tests/shadow-dom/Element-interface-attachShadow-expected.txt:
+        * web-platform-tests/shadow-dom/Element-interface-attachShadow.html:
+        * web-platform-tests/shadow-dom/META.yml: Added.
+        * web-platform-tests/shadow-dom/capturing-and-bubbling-event-listeners-across-shadow-trees-expected.txt: Added.
+        * web-platform-tests/shadow-dom/capturing-and-bubbling-event-listeners-across-shadow-trees.html: Added.
+        * web-platform-tests/shadow-dom/directionality-002.tentative-expected.html: Added.
+        * web-platform-tests/shadow-dom/directionality-002.tentative.html: Added.
+        * web-platform-tests/shadow-dom/focus/DocumentOrShadowRoot-activeElement-expected.txt: Added.
+        * web-platform-tests/shadow-dom/focus/DocumentOrShadowRoot-activeElement.html: Added.
+        * web-platform-tests/shadow-dom/focus/focus-selector-delegatesFocus-expected.txt: Added.
+        * web-platform-tests/shadow-dom/focus/focus-selector-delegatesFocus.html: Added.
+        * web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-negative-expected.txt: Added.
+        * web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-negative.html: Added.
+        * web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-slot-one-expected.txt: Added.
+        * web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-slot-one.html: Added.
+        * web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-varying-tabindex-expected.txt: Added.
+        * web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-varying-tabindex.html: Added.
+        * web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero-expected.txt: Added.
+        * web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero-host-negative-expected.txt: Added.
+        * web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero-host-negative.html: Added.
+        * web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero-host-not-set-expected.txt: Added.
+        * web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero-host-not-set.html: Added.
+        * web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero-host-one-expected.txt: Added.
+        * web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero-host-one.html: Added.
+        * web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero.html: Added.
+        * web-platform-tests/shadow-dom/focus/resources/shadow-utils.js: Added.
+        (prepareDOM):
+        (setTabIndex):
+        (removeTabIndex):
+        (resetFocus):
+        (navigateFocusForward):
+        (async.assertFocusOrder):
+        * web-platform-tests/shadow-dom/focus/resources/w3c-import.log: Added.
+        * web-platform-tests/shadow-dom/focus/w3c-import.log: Added.
+        * web-platform-tests/shadow-dom/offsetParent-across-shadow-boundaries-expected.txt: Added.
+        * web-platform-tests/shadow-dom/offsetParent-across-shadow-boundaries.html: Added.
+        * web-platform-tests/shadow-dom/resources/shadow-dom.js:
+        (createTestTree):
+        * web-platform-tests/shadow-dom/scroll-to-the-fragment-in-shadow-tree.html:
+        * web-platform-tests/shadow-dom/w3c-import.log:
+
 2019-10-03  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Move below's shape-outside-foo wpt tests to its proper place.

@@ -29,8 +29,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/Range-prototype-insertNode.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/ShadowRoot-interface.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/Slotable-interface.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/capturing-and-bubbling-event-listeners-across-shadow-trees.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/directionality-001.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/directionality-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/directionality-002.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/directionality-002.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-composed-path-after-dom-mutation.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-composed-path-with-related-target.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-composed-path.html
@@ -49,6 +52,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/layout-slot-no-longer-assigned.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/layout-slot-no-longer-fallback-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/layout-slot-no-longer-fallback.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/offsetParent-across-shadow-boundaries.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/scroll-to-the-fragment-in-shadow-tree.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slotchange-customelements.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slotchange-event.html
