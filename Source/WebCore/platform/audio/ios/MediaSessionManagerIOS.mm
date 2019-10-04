@@ -190,6 +190,16 @@ void MediaSessionManageriOS::providePresentingApplicationPIDIfNecessary()
 #endif
 }
 
+void MediaSessionManageriOS::sessionWillEndPlayback(PlatformMediaSession& session)
+{
+    MediaSessionManagerCocoa::sessionWillEndPlayback(session);
+
+#if USE(AUDIO_SESSION)
+    if (isApplicationInBackground() && !anyOfSessions([] (auto& session) { return session.state() == PlatformMediaSession::Playing; }))
+        maybeDeactivateAudioSession();
+#endif
+}
+
 void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
