@@ -1,3 +1,15 @@
+2019-10-04  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r250594.
+
+        Broke multiple internal API tests
+
+        Reverted changeset:
+
+        "Unreviewed, fix incorrect assertion"
+        https://bugs.webkit.org/show_bug.cgi?id=202391
+        https://trac.webkit.org/changeset/250594
+
 2019-10-04  Alex Christensen  <achristensen@webkit.org>
 
         Simplify sandbox enabling macros
