@@ -1,0 +1,7 @@
+2d.gradient.object.update
+Actual output:
+Expected output:
+
+
+PASS Canvas test: 2d.gradient.object.update 
+

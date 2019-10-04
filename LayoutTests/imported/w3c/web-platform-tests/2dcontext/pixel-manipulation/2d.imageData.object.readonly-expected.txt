@@ -1,0 +1,6 @@
+2d.imageData.object.readonly
+ImageData objects properties are read-only
+Actual output:
+
+PASS ImageData objects properties are read-only 
+

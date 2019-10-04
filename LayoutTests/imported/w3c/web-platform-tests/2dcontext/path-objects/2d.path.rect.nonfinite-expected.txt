@@ -1,0 +1,8 @@
+2d.path.rect.nonfinite
+rect() with Infinity/NaN is ignored
+Actual output:
+Expected output:
+
+
+PASS rect() with Infinity/NaN is ignored 
+

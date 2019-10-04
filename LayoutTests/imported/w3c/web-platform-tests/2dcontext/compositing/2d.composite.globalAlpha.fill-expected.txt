@@ -1,0 +1,7 @@
+2d.composite.globalAlpha.fill
+Actual output:
+Expected output:
+
+
+PASS Canvas test: 2d.composite.globalAlpha.fill 
+

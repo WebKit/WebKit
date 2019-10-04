@@ -1,0 +1,6 @@
+2d.imageData.create1.type
+createImageData(imgdata) returns an ImageData object containing a Uint8ClampedArray object
+Actual output:
+
+PASS createImageData(imgdata) returns an ImageData object containing a Uint8ClampedArray object 
+

@@ -1,0 +1,8 @@
+2d.shadow.alpha.3
+Shadows are affected by globalAlpha
+Actual output:
+Expected output:
+
+
+PASS Shadows are affected by globalAlpha 
+

@@ -1,0 +1,6 @@
+2d.line.miter.invalid
+Setting miterLimit to invalid values is ignored
+Actual output:
+
+PASS Setting miterLimit to invalid values is ignored 
+

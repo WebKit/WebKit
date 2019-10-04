@@ -1,0 +1,6 @@
+2d.imageData.create2.zero
+createImageData(sw, sh) throws INDEX_SIZE_ERR if size is zero
+Actual output:
+
+FAIL createImageData(sw, sh) throws INDEX_SIZE_ERR if size is zero assert_throws: function "function () { ctx.createImageData(0.99, 10); }" did not throw
+

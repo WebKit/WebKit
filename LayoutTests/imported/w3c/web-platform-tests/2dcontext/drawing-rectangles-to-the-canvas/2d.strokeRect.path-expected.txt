@@ -1,0 +1,8 @@
+2d.strokeRect.path
+strokeRect does not affect the current path
+Actual output:
+Expected output:
+
+
+PASS strokeRect does not affect the current path 
+

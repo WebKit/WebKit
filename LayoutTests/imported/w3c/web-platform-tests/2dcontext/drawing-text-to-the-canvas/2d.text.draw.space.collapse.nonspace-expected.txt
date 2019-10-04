@@ -1,0 +1,8 @@
+2d.text.draw.space.collapse.nonspace
+Non-space characters are not converted to U+0020 and collapsed
+Actual output:
+Expected output:
+
+
+PASS Non-space characters are not converted to U+0020 and collapsed 
+

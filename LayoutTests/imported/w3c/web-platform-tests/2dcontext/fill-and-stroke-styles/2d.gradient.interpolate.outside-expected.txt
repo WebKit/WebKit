@@ -1,0 +1,7 @@
+2d.gradient.interpolate.outside
+Actual output:
+Expected output:
+
+
+PASS Canvas test: 2d.gradient.interpolate.outside 
+

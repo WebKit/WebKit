@@ -1,3 +1,32 @@
+2019-10-04  Chris Lord  <clord@igalia.com>
+
+        Import 2dcontext Web Platform Tests
+        https://bugs.webkit.org/show_bug.cgi?id=179191
+        <rdar://problem/35320416>
+
+        Reviewed by Žan Doberšek.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/ios/imported/w3c/web-platform-tests/2dcontext/drawing-images-to-the-canvas/drawimage_html_image-expected.txt: Added.
+        * platform/mac/TestExpectations:
+        * platform/mac/imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.cone.bottom-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.cone.cylinder-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.cone.front-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.cone.shape1-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.cone.top-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.inside1-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.inside2-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.inside3-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.outside1-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.outside2-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.outside3-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.touch2-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/2dcontext/line-styles/2d.line.cap.round-expected.txt: Added.
+        * platform/win/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2019-10-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         A newly inserted element doesn't get assigned to a named slot if slot assignments had already happened

@@ -1906,6 +1906,12 @@ webkit.org/b/202512 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4
 webkit.org/b/202512 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey.https.html [ Failure ]
 webkit.org/b/202512 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-update.https.html [ Failure ]
 
+webkit.org/b/202457 imported/w3c/web-platform-tests/2dcontext/drawing-images-to-the-canvas/drawimage_canvas.html [ Failure ]
+
+webkit.org/b/202459 imported/w3c/web-platform-tests/2dcontext/compositing/2d.composite.globalAlpha.canvascopy.html [ Failure ]
+
+webkit.org/b/202460 imported/w3c/web-platform-tests/2dcontext/image-smoothing/imagesmoothing.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<
 # Please see guidelines at the top of this file and place new test expectations

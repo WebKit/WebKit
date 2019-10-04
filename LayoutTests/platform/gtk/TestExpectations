@@ -3909,6 +3909,12 @@ webkit.org/b/202245 http/wpt/service-workers/navigation-redirect.https.html [ Fa
 webkit.org/b/202245 http/wpt/service-workers/online.https.html [ Failure ]
 webkit.org/b/202245 imported/w3c/web-platform-tests/service-workers/service-worker/installing.https.html [ Failure ]
 
+webkit.org/b/202457 imported/w3c/web-platform-tests/2dcontext/drawing-images-to-the-canvas/drawimage_canvas.html [ Failure ]
+
+webkit.org/b/202459 imported/w3c/web-platform-tests/2dcontext/compositing/2d.composite.globalAlpha.canvascopy.html [ Failure ]
+
+webkit.org/b/202460 imported/w3c/web-platform-tests/2dcontext/image-smoothing/imagesmoothing.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

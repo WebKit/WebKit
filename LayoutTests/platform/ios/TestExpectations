@@ -3381,3 +3381,29 @@ webkit.org/b/201901 svg/custom/glyph-selection-arabic-forms.svg [ Failure ]
 webkit.org/b/202283 scrollingcoordinator/ios/fixed-scrolling-with-keyboard.html [ Pass Failure ]
 
 webkit.org/b/202328 fast/images/async-image-multiple-clients-repaint.html [ Pass Failure ]
+
+# drawFocusRing without keyboard enabled does nothing
+imported/w3c/web-platform-tests/2dcontext/drawing-paths-to-the-canvas/drawFocusIfNeeded_001.html [ Skip ]
+imported/w3c/web-platform-tests/2dcontext/drawing-paths-to-the-canvas/drawFocusIfNeeded_002.html [ Skip ]
+imported/w3c/web-platform-tests/2dcontext/drawing-paths-to-the-canvas/drawFocusIfNeeded_003.html [ Skip ]
+imported/w3c/web-platform-tests/2dcontext/drawing-paths-to-the-canvas/drawFocusIfNeeded_004.html [ Skip ]
+imported/w3c/web-platform-tests/2dcontext/drawing-paths-to-the-canvas/drawFocusIfNeeded_005.html [ Skip ]
+
+# canvas tests that fail with small antialiasing diffs
+imported/w3c/web-platform-tests/2dcontext/building-paths/canvas_complexshapes_arcto_001.htm [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/2dcontext/building-paths/canvas_complexshapes_beziercurveto_001.htm [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/2dcontext/compositing/canvas_compositing_globalcompositeoperation_001.htm [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/2dcontext/line-styles/canvas_linestyles_linecap_001.htm [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/2dcontext/line-styles/lineto_a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/2dcontext/the-canvas-state/canvas_state_restore_001.htm [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/2dcontext/transformations/canvas_transformations_scale_001.htm [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/2dcontext/transformations/transform_a.html [ ImageOnlyFailure ]
+
+webkit.org/b/202455 imported/w3c/web-platform-tests/2dcontext/drawing-images-to-the-canvas/2d.drawImage.broken.html [ Failure ]
+
+webkit.org/b/202458 imported/w3c/web-platform-tests/2dcontext/imagebitmap/canvas-createImageBitmap-resize.html [ Failure ]
+
+webkit.org/b/202516 imported/w3c/web-platform-tests/2dcontext/path-objects/2d.path.rect.winding.html [ Failure ]
+
+webkit.org/b/202518 imported/w3c/web-platform-tests/2dcontext/drawing-text-to-the-canvas/2d.text.measure.fontBoundingBox.html [ Failure ]
+webkit.org/b/202518 imported/w3c/web-platform-tests/2dcontext/drawing-text-to-the-canvas/2d.text.measure.emHeights.html [ Failure ]

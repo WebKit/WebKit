@@ -1,0 +1,8 @@
+2d.fillRect.negative
+fillRect of negative sizes works
+Actual output:
+Expected output:
+
+
+PASS fillRect of negative sizes works 
+

@@ -1,0 +1,8 @@
+2d.strokeRect.negative
+strokeRect of negative sizes works
+Actual output:
+Expected output:
+
+
+PASS strokeRect of negative sizes works 
+

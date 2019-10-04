@@ -1,0 +1,8 @@
+2d.path.arc.end
+arc() adds the end point of the arc to the subpath
+Actual output:
+Expected output:
+
+
+PASS arc() adds the end point of the arc to the subpath 
+

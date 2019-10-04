@@ -1,0 +1,8 @@
+2d.path.arc.twopie.4
+arc() draws nothing when end = start + 2pi+e and clockwise
+Actual output:
+Expected output:
+
+
+PASS arc() draws nothing when end = start + 2pi+e and clockwise 
+

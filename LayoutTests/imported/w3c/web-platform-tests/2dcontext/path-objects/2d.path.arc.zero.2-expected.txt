@@ -1,0 +1,8 @@
+2d.path.arc.zero.2
+arc() draws nothing when startAngle = endAngle and clockwise
+Actual output:
+Expected output:
+
+
+PASS arc() draws nothing when startAngle = endAngle and clockwise 
+

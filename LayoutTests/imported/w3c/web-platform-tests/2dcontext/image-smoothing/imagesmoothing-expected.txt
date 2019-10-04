@@ -1,0 +1,11 @@
+
+PASS When the canvas context is created, imageSmoothingEnabled must be set to true. 
+PASS On getting imageSmoothingEnabled, the user agent must return the last value it was set to. 
+PASS Test that image smoothing is actually on by default and just the attribute value. 
+PASS Test that image smoothing works when imageSmoothingEnabled is set to true 
+PASS Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with drawImage(). 
+PASS Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with fillRect and createPattern(). 
+PASS Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with fill() and createPattern(). 
+PASS Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with stroke() and createPattern(). 
+PASS Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) still works after repaints. 
+

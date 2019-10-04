@@ -1,0 +1,7 @@
+2d.composite.transparent.source-over
+Actual output:
+Expected output:
+
+
+PASS Canvas test: 2d.composite.transparent.source-over 
+

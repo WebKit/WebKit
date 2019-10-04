@@ -1,0 +1,8 @@
+2d.path.arc.shape.2
+arc() from 0 to pi draws stuff in the right half
+Actual output:
+Expected output:
+
+
+PASS arc() from 0 to pi draws stuff in the right half 
+

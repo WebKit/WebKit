@@ -2027,3 +2027,17 @@ webgpu/whlsl/separate-shader-modules/separate-shader-modules-26.html [ Pass Imag
 
 # rdar://55484256 (REGRESSION: (Catalina) fast/images/async-image-multiple-clients-repaint.html is a flakey failure)
 [ Catalina+ ] fast/images/async-image-multiple-clients-repaint.html [ Pass Failure ]
+
+# Two canvas tests fail with small antialiasing diffs
+imported/w3c/web-platform-tests/2dcontext/building-paths/canvas_complexshapes_arcto_001.htm [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/2dcontext/building-paths/canvas_complexshapes_beziercurveto_001.htm [ ImageOnlyFailure ]
+
+webkit.org/b/202455 imported/w3c/web-platform-tests/2dcontext/drawing-images-to-the-canvas/2d.drawImage.broken.html [ Failure ]
+
+webkit.org/b/202458 imported/w3c/web-platform-tests/2dcontext/imagebitmap/canvas-createImageBitmap-resize.html [ Failure ]
+
+webkit.org/b/202460 imported/w3c/web-platform-tests/2dcontext/image-smoothing/imagesmoothing.html [ Failure ]
+
+webkit.org/b/202516 imported/w3c/web-platform-tests/2dcontext/path-objects/2d.path.rect.winding.html [ Failure ]
+
+webkit.org/b/202523 imported/w3c/web-platform-tests/2dcontext/path-objects/2d.path.stroke.scale2.html [ Failure ]

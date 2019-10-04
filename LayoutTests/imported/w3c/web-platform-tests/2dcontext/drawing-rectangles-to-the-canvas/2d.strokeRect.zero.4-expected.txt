@@ -1,0 +1,8 @@
+2d.strokeRect.zero.4
+strokeRect of Nx0 pixels draws a closed line with no caps
+Actual output:
+Expected output:
+
+
+PASS strokeRect of Nx0 pixels draws a closed line with no caps 
+

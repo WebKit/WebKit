@@ -1,0 +1,8 @@
+2d.clearRect.transform
+clearRect is affected by transforms
+Actual output:
+Expected output:
+
+
+PASS clearRect is affected by transforms 
+

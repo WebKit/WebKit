@@ -1,0 +1,6 @@
+2d.path.isPointInPath.basic.1
+isPointInPath() detects whether the point is inside the path
+Actual output:
+
+PASS isPointInPath() detects whether the point is inside the path 
+

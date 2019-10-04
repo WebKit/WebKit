@@ -1,0 +1,6 @@
+2d.line.join.invalid
+Setting lineJoin to invalid values is ignored
+Actual output:
+
+PASS Setting lineJoin to invalid values is ignored 
+

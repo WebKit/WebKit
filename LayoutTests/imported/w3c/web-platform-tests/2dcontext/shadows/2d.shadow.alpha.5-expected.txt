@@ -1,0 +1,8 @@
+2d.shadow.alpha.5
+Shadows of shapes with alpha components are drawn correctly
+Actual output:
+Expected output:
+
+
+PASS Shadows of shapes with alpha components are drawn correctly 
+

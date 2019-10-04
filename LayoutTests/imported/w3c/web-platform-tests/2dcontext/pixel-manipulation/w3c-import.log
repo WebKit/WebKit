@@ -1,0 +1,77 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.create1.basic.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.create1.initial.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.create1.this.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.create1.type.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.create1.zero.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.create2.basic.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.create2.double.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.create2.initial.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.create2.large.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.create2.negative.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.create2.nonfinite.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.create2.this.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.create2.type.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.create2.zero.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.get.basic.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.get.clamp.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.get.double.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.get.length.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.get.nonfinite.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.get.nonpremul.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.get.order.alpha.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.get.order.cols.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.get.order.rgb.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.get.order.rows.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.get.range.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.get.source.negative.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.get.source.outside.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.get.source.size.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.get.type.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.get.unaffected.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.get.zero.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.object.clamp.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.object.ctor.array.bounds.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.object.ctor.array.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.object.ctor.size.bounds.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.object.ctor.size.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.object.nan.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.object.properties.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.object.readonly.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.object.round.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.object.set.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.object.string.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.object.undefined.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.put.alpha.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.put.alpha.png
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.put.basic.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.put.clip.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.put.created.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.put.cross.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.put.dirty.negative.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.put.dirty.outside.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.put.dirty.rect1.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.put.dirty.rect2.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.put.dirty.zero.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.put.modified.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.put.nonfinite.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.put.null.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.put.path.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.put.unaffected.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.put.unchanged.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/pixel-manipulation/2d.imageData.put.wrongtype.html

@@ -1,0 +1,60 @@
+
+FAIL fillRect should not affect current default path and NotSupportedError should be thrown. assert_throws: fillRect should not affect current default path and NotSupportedError should be thrown. function "function () {
+            var canvas = document.getElementById("canvas");
+            // Reset context
+            canvas.width = canvas.width;
+            var button = document.getElementById("button");
+            var context = canvas.getContext("2d");
+
+            // Shapes are painted without affecting the current default path,
+            // http://www.w3.org/html/wg/drafts/2dcontext/html5_canvas_CR/#drawing-rectangles-to-the-canvas
+            context.fillRect(25, 25, 25, 25);
+
+            // If the specified path has no pixels, throw a NotSupportedError exception and abort these steps.
+            // http://www.w3.org/html/wg/drafts/2dcontext/html5_canvas_CR/#hit-regions
+            context.addHitRegion({ id: "notsupportederror_fillRect", control: button })
+        }" threw object "TypeError: context.addHitRegion is not a function. (In 'context.addHitRegion({ id: "notsupportederror_fillRect", control: button })', 'context.addHitRegion' is undefined)" ("TypeError") expected object "[object Object]" ("NotSupportedError")
+FAIL strokeRect should not affect current default path and NotSupportedError should be thrown. assert_throws: strokeRect should not affect current default path and NotSupportedError should be thrown. function "function () {
+            var canvas = document.getElementById("canvas");
+            // Reset context
+            canvas.width = canvas.width;
+            var button = document.getElementById("button");
+            var context = canvas.getContext("2d");
+
+            // "Shapes are painted without affecting the current default path,"
+            // http://www.w3.org/html/wg/drafts/2dcontext/html5_canvas_CR/#drawing-rectangles-to-the-canvas
+            context.strokeRect(75, 25, 25, 25);
+
+            // "If the specified path has no pixels, throw a NotSupportedError exception and abort these steps."
+            // http://www.w3.org/html/wg/drafts/2dcontext/html5_canvas_CR/#hit-regions
+            context.addHitRegion({ id: "notsupportederror_strokeRect", control: button })
+        }" threw object "TypeError: context.addHitRegion is not a function. (In 'context.addHitRegion({ id: "notsupportederror_strokeRect", control: button })', 'context.addHitRegion' is undefined)" ("TypeError") expected object "[object Object]" ("NotSupportedError")
+FAIL fillText should not affect current default path and NotSupportedError should be thrown. assert_throws: fillText should not affect current default path and NotSupportedError should be thrown. function "function () {
+            var canvas = document.getElementById("canvas");
+            // Reset context
+            canvas.width = canvas.width;
+            var button = document.getElementById("button");
+            var context = canvas.getContext("2d");
+
+            // "These shapes are painted without affecting the current path"
+            // http://www.w3.org/html/wg/drafts/2dcontext/html5_canvas_CR/#drawing-rectangles-to-the-canvas
+            context.fillText("fillText", 25, 100);
+
+            // "If the specified path has no pixels, throw a NotSupportedError exception and abort these steps."
+            // http://www.w3.org/html/wg/drafts/2dcontext/html5_canvas_CR/#drawing-text-to-the-canvas
+            context.addHitRegion({ id: "notsupportederror_fillText", control: button });
+        }" threw object "TypeError: context.addHitRegion is not a function. (In 'context.addHitRegion({ id: "notsupportederror_fillText", control: button })', 'context.addHitRegion' is undefined)" ("TypeError") expected object "[object Object]" ("NotSupportedError")
+FAIL strokeText should not affect current default path and NotSupportedError shuld be thrown. assert_throws: strokeText should not affect current default path and NotSupportedError shuld be thrown. function "function () {
+            var canvas = document.getElementById("canvas");
+            canvas.width = canvas.width;
+            var button = document.getElementById("button");
+            var context = canvas.getContext("2d");
+            // "These shapes are painted without affecting the current path"
+            // http://www.w3.org/html/wg/drafts/2dcontext/html5_canvas_CR/#drawing-rectangles-to-the-canvas
+            context.strokeText("strokeText", 75, 100);
+
+            // "If the specified path has no pixels, throw a NotSupportedError exception and abort these steps."
+            // http://www.w3.org/html/wg/drafts/2dcontext/html5_canvas_CR/#drawing-text-to-the-canvas
+            context.addHitRegion({ id: "notsupportederror_strokeText", control: button });
+        }" threw object "TypeError: context.addHitRegion is not a function. (In 'context.addHitRegion({ id: "notsupportederror_strokeText", control: button })', 'context.addHitRegion' is undefined)" ("TypeError") expected object "[object Object]" ("NotSupportedError")
+

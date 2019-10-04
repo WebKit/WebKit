@@ -1,0 +1,6 @@
+2d.pattern.image.string
+Defined in "Web IDL" (draft)
+Actual output:
+
+PASS Canvas test: 2d.pattern.image.string 
+
