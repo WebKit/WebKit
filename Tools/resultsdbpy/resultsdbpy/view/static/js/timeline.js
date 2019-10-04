@@ -213,6 +213,7 @@ function xAxisFromScale(scale, repository, updatesArray, isTop=false)
 }
 
 const testsRegex = /tests_([a-z])+/;
+const worstRegex = /worst_([a-z])+/;
 
 function inPlaceCombine(out, obj)
 {
@@ -240,7 +241,14 @@ function inPlaceCombine(out, obj)
             }
 
             // Set of special case keys which need to be added together
+            if (key.match(worstRegex))
+                return;
             if (key.match(testsRegex)) {
+                const worstKey = `worst_${key}`;
+                out[worstKey] = Math.max(
+                    out[worstKey] ? out[worstKey] : out[key],
+                    obj[worstKey] ? obj[worstKey] : obj[key],
+                );
                 out[key] += obj[key];
                 return;
             }
@@ -252,8 +260,14 @@ function inPlaceCombine(out, obj)
             }
         });
         Object.keys(obj).forEach(key => {
-            if (key.match(testsRegex) && !(key in out))
+            if (!key.match(testsRegex))
+                return;
+            const worstKey = `worst_${key}`;
+            if (!(key in out)) {
                 out[key] = obj[key];
+                out[worstKey] = obj[key];
+            }
+            out[worstKey] = Math.max(out[worstKey], obj[worstKey] ? obj[worstKey] : obj[key]);
         });
     }
     return out;
@@ -496,15 +510,12 @@ class TimelineFromEndpoint {
                 let color = colorMap.success;
                 let symbol = Expectations.symbolMap.success;
                 if (data.stats) {
-                    tag = data.stats[`tests${willFilterExpected ? '_unexpected_' : '_'}failed`];
-
-                    // If we have failures that are a result of multiple runs, combine them.
-                    if (tag && !data.start_time) {
-                        tag = Math.ceil(tag / data.stats.tests_run * 100 - .5);
-                        if (!tag)
-                            tag = '<1';
-                        tag = `${tag} %`
-                    }
+                    if (data.start_time)
+                        tag = data.stats[`tests${willFilterExpected ? '_unexpected_' : '_'}failed`];
+                    else
+                        tag = data.stats[`worst_tests${willFilterExpected ? '_unexpected_' : '_'}failed`];
+                    if (data.stats.worst_tests_run <= 1)
+                        tag = null;
 
                     Expectations.failureTypes.forEach(type => {
                         if (data.stats[`tests${willFilterExpected ? '_unexpected_' : '_'}${type}`] > 0) {

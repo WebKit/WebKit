@@ -1,3 +1,15 @@
+2019-10-04  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Remove percentages from bubbles
+        https://bugs.webkit.org/show_bug.cgi?id=202591
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (inPlaceCombine): Add 'worst' key to combined results.
+        (TimelineFromEndpoint.constructor): Use the 'worst' key to populate the tag
+        instead of a percentage.
+
 2019-10-04  Aakash Jain  <aakash_jain@apple.com>
 
         [EWS] Assign webkit-misc to various queues
