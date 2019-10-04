@@ -1,3 +1,14 @@
+2019-10-04  Heiko Becker  <heirecka@exherbo.org>
+
+        Fix build with icu 65.1
+        https://bugs.webkit.org/show_bug.cgi?id=202600
+
+        Reviewed by Konstantin Tokarev.
+
+        * dom/Document.cpp:
+        (WebCore::isValidNameNonASCII):
+        (WebCore::Document::parseQualifiedName):
+
 2019-10-04  James Darpinian  <jdarpinian@chromium.org>
 
         Allow using WebGL 2 when USE_ANGLE=1

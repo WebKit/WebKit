@@ -1,3 +1,13 @@
+2019-10-04  Heiko Becker  <heirecka@exherbo.org>
+
+        Fix build with icu 65.1
+        https://bugs.webkit.org/show_bug.cgi?id=202600
+
+        Reviewed by Konstantin Tokarev.
+
+        * wtf/URLHelpers.cpp:
+        (WTF::URLHelpers::allCharactersInIDNScriptWhiteList):
+
 2019-10-04  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r250583.
