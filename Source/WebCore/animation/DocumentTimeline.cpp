@@ -492,8 +492,10 @@ void DocumentTimeline::removeReplacedAnimations()
         }
     }
 
-    for (auto& animation : animationsToRemove)
-        removeAnimation(*animation);
+    for (auto& animation : animationsToRemove) {
+        if (auto* timeline = animation->timeline())
+            timeline->removeAnimation(*animation);
+    }
 }
 
 void DocumentTimeline::transitionDidComplete(RefPtr<CSSTransition> transition)
