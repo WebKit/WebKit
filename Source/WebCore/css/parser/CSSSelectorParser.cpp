@@ -209,6 +209,7 @@ bool isUserActionPseudoClass(CSSSelector::PseudoClassType pseudo)
     case CSSSelector::PseudoClassHover:
     case CSSSelector::PseudoClassFocus:
     case CSSSelector::PseudoClassActive:
+    case CSSSelector::PseudoClassFocusWithin:
         return true;
     default:
         return false;
@@ -218,6 +219,8 @@ bool isUserActionPseudoClass(CSSSelector::PseudoClassType pseudo)
 bool isPseudoClassValidAfterPseudoElement(CSSSelector::PseudoClassType pseudoClass, CSSSelector::PseudoElementType compoundPseudoElement)
 {
     switch (compoundPseudoElement) {
+    case CSSSelector::PseudoElementPart:
+        return !isTreeStructuralPseudoClass(pseudoClass);
     case CSSSelector::PseudoElementResizer:
     case CSSSelector::PseudoElementScrollbar:
     case CSSSelector::PseudoElementScrollbarCorner:
@@ -240,9 +243,10 @@ bool isSimpleSelectorValidAfterPseudoElement(const CSSParserSelector& simpleSele
 {
     if (compoundPseudoElement == CSSSelector::PseudoElementUnknown)
         return true;
-    // FIXME-NEWPARSER: This doesn't exist for us.
-    // if (compoundPseudoElement == CSSSelector::PseudoElementContent)
-    //    return simpleSelector.match() != CSSSelector::PseudoElement;
+    if (compoundPseudoElement == CSSSelector::PseudoElementPart) {
+        if (simpleSelector.match() == CSSSelector::PseudoElement && simpleSelector.pseudoElementType() != CSSSelector::PseudoElementPart)
+            return true;
+    }
     if (simpleSelector.match() != CSSSelector::PseudoClass)
         return false;
     CSSSelector::PseudoClassType pseudo = simpleSelector.pseudoClassType();
@@ -618,8 +622,6 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
         }
 #endif
         case CSSSelector::PseudoElementPart: {
-            DisallowPseudoElementsScope scope(this);
-
             auto argumentList = makeUnique<Vector<AtomString>>();
             do {
                 auto& ident = block.consumeIncludingWhitespace();

@@ -1,3 +1,28 @@
+2019-10-03  Antti Koivisto  <antti@apple.com>
+
+        [CSS Shadow Parts] Correct interaction with other pseudo elements
+        https://bugs.webkit.org/show_bug.cgi?id=202526
+
+        Reviewed by Ryosuke Niwa.
+
+        Cases like foo::part(bar)::before should work.
+
+        This patch doesn't cover ::placeholder which is implemented as PseudoElementWebKitCustom (like internal -webkit-* properties).
+
+        * css/CSSSelector.h:
+        (WebCore::isTreeStructuralPseudoClass):
+
+        Add a helper.
+
+        * css/parser/CSSSelectorParser.cpp:
+
+        Allow non-structural pseudo classes after ::part().
+        Allow other pseudo elements after ::part().
+
+        (WebCore::CSSSelectorParser::consumePseudo):
+
+        No need for DisallowPseudoElementsScope, we are just parsing identifiers.
+
 2019-10-03  James Darpinian  <jdarpinian@chromium.org>
 
         Fix WebGL 1 conformance regressions when USE_ANGLE=1

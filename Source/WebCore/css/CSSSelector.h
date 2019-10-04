@@ -439,6 +439,11 @@ static inline bool pseudoClassIsRelativeToSiblings(CSSSelector::PseudoClassType 
         || type == CSSSelector::PseudoClassNthLastOfType;
 }
 
+static inline bool isTreeStructuralPseudoClass(CSSSelector::PseudoClassType type)
+{
+    return pseudoClassIsRelativeToSiblings(type) || type == CSSSelector::PseudoClassRoot;
+}
+
 inline bool CSSSelector::isSiblingSelector() const
 {
     return relation() == DirectAdjacent
