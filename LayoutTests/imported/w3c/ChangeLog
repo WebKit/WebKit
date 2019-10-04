@@ -1,3 +1,22 @@
+2019-10-04  Joonghun Park  <jh718.park@samsung.com>
+
+        Negative radii in radial gradients should be rejected.
+        https://bugs.webkit.org/show_bug.cgi?id=202412
+
+        Per the spec, https://drafts.csswg.org/css-images-3/#radial-gradients
+        "Negative values are invalid.",
+        we reject negative radii values in radial-gradient.
+
+        This patch rejects negative radii during radial-gradient parsing
+        for both webkit prefixed and non-prefixed ones.
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/compat/webkit-radial-gradient-radii-expected.txt: Added.
+        * web-platform-tests/compat/webkit-radial-gradient-radii.html: Added.
+        * web-platform-tests/css/css-backgrounds/parsing/background-image-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-backgrounds/parsing/background-image-invalid.html: Added.
+
 2019-10-04  Chris Lord  <clord@igalia.com>
 
         ImageBitmap should be serializable

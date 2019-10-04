@@ -995,7 +995,7 @@ static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& args, CSS
     if (!result || !consumeCommaIncludingWhitespace(args))
         return nullptr;
 
-    RefPtr<CSSPrimitiveValue> point = consumeDeprecatedGradientPoint(args, true);
+    auto point = consumeDeprecatedGradientPoint(args, true);
     if (!point)
         return nullptr;
     result->setFirstX(point.copyRef());
@@ -1009,7 +1009,7 @@ static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& args, CSS
 
     // For radial gradients only, we now expect a numeric radius.
     if (isDeprecatedRadialGradient) {
-        RefPtr<CSSPrimitiveValue> radius = consumeNumber(args, ValueRangeAll);
+        auto radius = consumeNumber(args, ValueRangeNonNegative);
         if (!radius || !consumeCommaIncludingWhitespace(args))
             return nullptr;
         downcast<CSSRadialGradientValue>(result.get())->setFirstRadius(radius.copyRef());
@@ -1028,7 +1028,7 @@ static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& args, CSS
     if (isDeprecatedRadialGradient) {
         if (!consumeCommaIncludingWhitespace(args))
             return nullptr;
-        RefPtr<CSSPrimitiveValue> radius = consumeNumber(args, ValueRangeAll);
+        auto radius = consumeNumber(args, ValueRangeNonNegative);
         if (!radius)
             return nullptr;
         downcast<CSSRadialGradientValue>(result.get())->setSecondRadius(radius.copyRef());
@@ -1112,8 +1112,8 @@ static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& arg
     result->setSecondX(centerX.copyRef());
     result->setSecondY(centerY.copyRef());
 
-    RefPtr<CSSPrimitiveValue> shape = consumeIdent<CSSValueCircle, CSSValueEllipse>(args);
-    RefPtr<CSSPrimitiveValue> sizeKeyword = consumeIdent<CSSValueClosestSide, CSSValueClosestCorner, CSSValueFarthestSide, CSSValueFarthestCorner, CSSValueContain, CSSValueCover>(args);
+    auto shape = consumeIdent<CSSValueCircle, CSSValueEllipse>(args);
+    auto sizeKeyword = consumeIdent<CSSValueClosestSide, CSSValueClosestCorner, CSSValueFarthestSide, CSSValueFarthestCorner, CSSValueContain, CSSValueCover>(args);
     if (!shape)
         shape = consumeIdent<CSSValueCircle, CSSValueEllipse>(args);
     result->setShape(shape.copyRef());
@@ -1121,10 +1121,10 @@ static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& arg
 
     // Or, two lengths or percentages
     if (!shape && !sizeKeyword) {
-        RefPtr<CSSPrimitiveValue> horizontalSize = consumeLengthOrPercent(args, cssParserMode, ValueRangeAll);
+        auto horizontalSize = consumeLengthOrPercent(args, cssParserMode, ValueRangeNonNegative);
         RefPtr<CSSPrimitiveValue> verticalSize;
         if (horizontalSize) {
-            verticalSize = consumeLengthOrPercent(args, cssParserMode, ValueRangeAll);
+            verticalSize = consumeLengthOrPercent(args, cssParserMode, ValueRangeNonNegative);
             if (!verticalSize)
                 return nullptr;
             consumeCommaIncludingWhitespace(args);
@@ -1168,13 +1168,13 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& args, CSSPars
                 break;
             }
         } else {
-            RefPtr<CSSPrimitiveValue> center = consumeLengthOrPercent(args, cssParserMode, ValueRangeAll);
+            auto center = consumeLengthOrPercent(args, cssParserMode, ValueRangeNonNegative);
             if (!center)
                 break;
             if (horizontalSize)
                 return nullptr;
             horizontalSize = center;
-            center = consumeLengthOrPercent(args, cssParserMode, ValueRangeAll);
+            center = consumeLengthOrPercent(args, cssParserMode, ValueRangeNonNegative);
             if (center) {
                 verticalSize = center;
                 ++i;

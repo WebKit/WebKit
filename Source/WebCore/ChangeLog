@@ -1,3 +1,26 @@
+2019-10-04  Joonghun Park  <jh718.park@samsung.com>
+
+        Negative radii in radial gradients should be rejected.
+        https://bugs.webkit.org/show_bug.cgi?id=202412
+
+        Per the spec, https://drafts.csswg.org/css-images-3/#radial-gradients
+        "Negative values are invalid.",
+        we reject negative radii values in radial-gradient.
+
+        This patch rejects negative radii during radial-gradient parsing
+        for both webkit prefixed and non-prefixed ones.
+
+        Reviewed by Antti Koivisto.
+
+        Tests: imported/blink/css-parser/webkit-gradient.html
+               imported/w3c/web-platform-tests/compat/webkit-radial-gradient-radii.html
+               imported/w3c/web-platform-tests/css/css-backgrounds/parsing/background-image-invalid.html
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeDeprecatedGradient):
+        (WebCore::CSSPropertyParserHelpers::consumeDeprecatedRadialGradient):
+        (WebCore::CSSPropertyParserHelpers::consumeRadialGradient):
+
 2019-10-04  Alex Christensen  <achristensen@webkit.org>
 
         Move WKProcessPool._registerURLSchemeServiceWorkersCanHandle to _WKWebsiteDataStoreConfiguration
