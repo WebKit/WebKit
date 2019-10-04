@@ -526,7 +526,7 @@ public:
 
     bool hasCommittedAnyProvisionalLoads() const { return m_hasCommittedAnyProvisionalLoads; }
 
-    bool allowsFastClicksEverywhere() const { return m_allowsFastClicksEverywhere; }
+    bool preferFasterClickOverDoubleTap() const { return m_preferFasterClickOverDoubleTap; }
 
     void setIsUsingHighPerformanceWebGL(bool value) { m_isUsingHighPerformanceWebGL = value; }
     bool isUsingHighPerformanceWebGL() const { return m_isUsingHighPerformanceWebGL; }
@@ -2520,7 +2520,7 @@ private:
     bool m_isUsingHighPerformanceWebGL { false };
     bool m_openedByDOM { false };
     bool m_hasCommittedAnyProvisionalLoads { false };
-    bool m_allowsFastClicksEverywhere { false };
+    bool m_preferFasterClickOverDoubleTap { false };
 
     HashMap<String, Ref<WebURLSchemeHandler>> m_urlSchemeHandlersByScheme;
     HashMap<uint64_t, Ref<WebURLSchemeHandler>> m_urlSchemeHandlersByIdentifier;

@@ -1443,7 +1443,7 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
         break;
     }
 
-    m_allowsFastClicksEverywhere = false;
+    m_preferFasterClickOverDoubleTap = false;
 
     if (!useDesktopBrowsingMode) {
         policies.setAllowContentChangeObserverQuirk(true);
@@ -1468,7 +1468,7 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
         policies.setMediaSourcePolicy(WebsiteMediaSourcePolicy::Enable);
         policies.setSimulatedMouseEventsDispatchPolicy(WebsiteSimulatedMouseEventsDispatchPolicy::Allow);
         policies.setLegacyOverflowScrollingTouchPolicy(WebsiteLegacyOverflowScrollingTouchPolicy::Disable);
-        m_allowsFastClicksEverywhere = true;
+        m_preferFasterClickOverDoubleTap = true;
     }
 
     return WebContentMode::Desktop;
