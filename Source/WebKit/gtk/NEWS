@@ -1,4 +1,17 @@
 ================
+WebKitGTK 2.27.1
+================
+
+What's new in WebKitGTK+ 2.27.1?
+
+  - Enable async scrolling when accelerating compositing policy is 'always'.
+  - Add about:gpu to show information about the graphics stack.
+  - Add API to enable Process Swap on (Cross-site) Navigation, that is now disabled by default.
+  - Add WebKitWebView:page-id property.
+  - Improve swipe navigation gesture style.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.25.4
 ================
 
