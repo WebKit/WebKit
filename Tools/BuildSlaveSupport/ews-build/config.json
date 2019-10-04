@@ -2,7 +2,8 @@
   "workers": [
     {
       "name": "webkit-misc",
-      "platform": "*"
+      "platform": "*",
+      "max_builds": 3
     },
     {
       "name": "igalia1-gtk-wk2-ews",
@@ -285,7 +286,7 @@
       "icon": "testOnly",
       "factory": "StyleFactory",
       "platform": "*",
-      "workernames": ["ews151"]
+      "workernames": ["ews151", "webkit-misc"]
     },
     {
       "name": "Apply-WatchList-EWS",
@@ -433,7 +434,7 @@
       "icon": "testOnly",
       "factory": "BindingsFactory",
       "platform": "*",
-      "workernames": ["ews151"]
+      "workernames": ["ews151", "webkit-misc"]
     },
     {
       "name": "WebKitPy-Tests-EWS",
@@ -441,7 +442,7 @@
       "icon": "testOnly",
       "factory": "WebKitPyFactory",
       "platform": "*",
-      "workernames": ["ews151"]
+      "workernames": ["ews151", "webkit-misc"]
     },
     {
       "name": "WebKitPerl-Tests-EWS",
@@ -449,7 +450,7 @@
       "icon": "testOnly",
       "factory": "WebKitPerlFactory",
       "platform": "*",
-      "workernames": ["ews151"]
+      "workernames": ["ews151", "webkit-misc"]
     },
     {
       "name": "API-Tests-iOS-Simulator-EWS",
@@ -473,7 +474,7 @@
       "icon": "testOnly",
       "factory": "ServicesFactory",
       "platform": "*",
-      "workernames": ["ews151"]
+      "workernames": ["ews151", "webkit-misc"]
     }
   ],
   "schedulers": [
