@@ -1,3 +1,45 @@
+2019-10-04  Antti Koivisto  <antti@apple.com>
+
+        [CSS Shadow Parts] Support 'exportparts' attribute
+        https://bugs.webkit.org/show_bug.cgi?id=202520
+
+        Reviewed by Ryosuke Niwa.
+
+        Support 'exportparts' attribute for exporting part mappings from subcomponents.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::matchAuthorRules):
+        (WebCore::ElementRuleCollector::matchPartPseudoElementRules):
+
+        Recurse to containing scopes to collect part rules if there are exported mappings.
+
+        (WebCore::ElementRuleCollector::ruleMatches):
+        * css/ElementRuleCollector.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::matchRecursively const):
+
+        Make ShadowDescendant fake combinator skip directly to the scope where the part rules are coming from.
+
+        (WebCore::SelectorChecker::checkOne const):
+
+        Resolve names via mappings if needed.
+
+        * css/SelectorChecker.h:
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+
+        Invalidate mappings as needed.
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::parsePartMappings):
+
+        Parse the mappings microsyntax.
+
+        (WebCore::ShadowRoot::partMappings const):
+        (WebCore::ShadowRoot::invalidatePartMappings):
+        * dom/ShadowRoot.h:
+        * html/HTMLAttributeNames.in:
+
 2019-10-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         A newly inserted element doesn't get assigned to a named slot if slot assignments had already happened

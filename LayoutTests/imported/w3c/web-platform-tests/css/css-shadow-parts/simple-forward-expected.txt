@@ -1,4 +1,4 @@
 The following text should be green: 
 
-FAIL Part in inner host is forwarded for styling by document style sheet assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS Part in inner host is forwarded for styling by document style sheet 
 

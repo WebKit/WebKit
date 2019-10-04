@@ -30,6 +30,7 @@
 #include "DocumentFragment.h"
 #include "Element.h"
 #include "ShadowRootMode.h"
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
@@ -92,6 +93,9 @@ public:
     void moveShadowRootToNewParentScope(TreeScope&, Document&);
     void moveShadowRootToNewDocument(Document&);
 
+    const HashMap<AtomString, AtomString>& partMappings() const;
+    void invalidatePartMappings();
+
 protected:
     ShadowRoot(Document&, ShadowRootMode);
 
@@ -116,6 +120,7 @@ private:
 
     std::unique_ptr<Style::Scope> m_styleScope;
     std::unique_ptr<SlotAssignment> m_slotAssignment;
+    mutable Optional<HashMap<AtomString, AtomString>> m_partMappings;
 };
 
 inline Element* ShadowRoot::activeElement() const

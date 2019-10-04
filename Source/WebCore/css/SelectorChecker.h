@@ -84,6 +84,7 @@ public:
         ScrollbarPart scrollbarPart { NoPart };
         const ContainerNode* scope { nullptr };
         bool isMatchingHostPseudoClass { false };
+        const Element* shadowHostInPartRuleScope { nullptr };
 
         // FIXME: It would be nicer to have a separate object for return values. This requires some more work in the selector compiler.
         Style::Relations styleRelations;

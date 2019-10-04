@@ -1719,8 +1719,6 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
             document().invalidateAccessKeyCache();
         else if (name == HTMLNames::classAttr)
             classAttributeChanged(newValue);
-        else if (name == HTMLNames::partAttr)
-            partAttributeChanged(newValue);
         else if (name == HTMLNames::idAttr) {
             AtomString oldId = elementData()->idForStyleResolution();
             AtomString newId = makeIdForStyleResolution(newValue, document().inQuirksMode());
@@ -1743,6 +1741,11 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
                 if (auto* shadowRoot = parent->shadowRoot())
                     shadowRoot->hostChildElementDidChangeSlotAttribute(*this, oldValue, newValue);
             }
+        } else if (name == HTMLNames::partAttr)
+            partAttributeChanged(newValue);
+        else if (name == HTMLNames::exportpartsAttr) {
+            if (auto* shadowRoot = this->shadowRoot())
+                shadowRoot->invalidatePartMappings();
         }
     }
 

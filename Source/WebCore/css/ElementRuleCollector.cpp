@@ -205,7 +205,7 @@ void ElementRuleCollector::matchAuthorRules(bool includeEmptyRules)
         matchAuthorShadowPseudoElementRules(includeEmptyRules, ruleRange);
 
         if (!m_element.partNames().isEmpty())
-            matchPartPseudoElementRules(includeEmptyRules, ruleRange);
+            matchPartPseudoElementRules(*m_element.containingShadowRoot(), includeEmptyRules, ruleRange);
     }
 
     sortAndTransferMatchedRules();
@@ -263,14 +263,26 @@ void ElementRuleCollector::matchSlottedPseudoElementRules(bool includeEmptyRules
     }
 }
 
-void ElementRuleCollector::matchPartPseudoElementRules(bool includeEmptyRules, StyleResolver::RuleRange& ruleRange)
+void ElementRuleCollector::matchPartPseudoElementRules(const ShadowRoot& containingShadowRoot, bool includeEmptyRules, StyleResolver::RuleRange& ruleRange)
 {
     ASSERT(m_element.isInShadowTree());
-    auto& shadowRoot = *m_element.containingShadowRoot();
-    auto& hostAuthorRules = Style::Scope::forNode(*shadowRoot.host()).resolver().ruleSets().authorStyle();
+    ASSERT(!m_element.partNames().isEmpty());
 
-    MatchRequest hostAuthorRequest { &hostAuthorRules, includeEmptyRules, Style::ScopeOrdinal::ContainingHost };
-    collectMatchingRulesForList(&hostAuthorRules.partPseudoElementRules(), hostAuthorRequest, ruleRange);
+    auto& shadowHost = *containingShadowRoot.host();
+    {
+        SetForScope<const Element*> partMatchingScope(m_shadowHostInPartRuleScope, &shadowHost);
+
+        auto& hostAuthorRules = Style::Scope::forNode(shadowHost).resolver().ruleSets().authorStyle();
+        MatchRequest hostAuthorRequest { &hostAuthorRules, includeEmptyRules, Style::ScopeOrdinal::ContainingHost };
+        collectMatchingRulesForList(&hostAuthorRules.partPseudoElementRules(), hostAuthorRequest, ruleRange);
+    }
+
+    // Element may be exposed to styling from enclosing scopes via exportparts attributes.
+    if (containingShadowRoot.partMappings().isEmpty())
+        return;
+
+    if (auto* parentShadowRoot = shadowHost.containingShadowRoot())
+        matchPartPseudoElementRules(*parentShadowRoot, includeEmptyRules, ruleRange);
 }
 
 void ElementRuleCollector::collectMatchingShadowPseudoElementRules(const MatchRequest& matchRequest, StyleResolver::RuleRange& ruleRange)
@@ -428,6 +440,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
     context.scrollbar = m_pseudoStyleRequest.scrollbar;
     context.scrollbarPart = m_pseudoStyleRequest.scrollbarPart;
     context.isMatchingHostPseudoClass = m_isMatchingHostPseudoClass;
+    context.shadowHostInPartRuleScope = m_shadowHostInPartRuleScope;
 
     bool selectorMatches;
 #if ENABLE(CSS_SELECTOR_JIT)

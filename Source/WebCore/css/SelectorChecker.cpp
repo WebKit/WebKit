@@ -429,10 +429,11 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
         }
     case CSSSelector::ShadowDescendant:
         {
-            Element* shadowHostNode = context.element->shadowHost();
-            if (!shadowHostNode)
+            // When matching foo::part(bar) we skip directly to the tree of element 'foo'.
+            auto* shadowHost = checkingContext.shadowHostInPartRuleScope ? checkingContext.shadowHostInPartRuleScope : context.element->shadowHost();
+            if (!shadowHost)
                 return MatchResult::fails(Match::SelectorFailsCompletely);
-            nextContext.element = shadowHostNode;
+            nextContext.element = shadowHost;
             nextContext.firstSelectorOfTheFragment = nextContext.selector;
             nextContext.isSubjectOrAdjacentElement = false;
             PseudoIdSet ignoreDynamicPseudo;
@@ -1149,13 +1150,32 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             ASSERT(checkingContext.resolvingMode == Mode::CollectingRules);
             return is<HTMLSlotElement>(element);
 
-        case CSSSelector::PseudoElementPart:
+        case CSSSelector::PseudoElementPart: {
+            auto translatePartNameToRuleScope = [&](AtomString partName) {
+                for (auto* shadowRoot = element.containingShadowRoot(); shadowRoot; shadowRoot = shadowRoot->host()->containingShadowRoot()) {
+                    // Apply mappings up to the scope the rules are coming from.
+                    if (shadowRoot->host() == checkingContext.shadowHostInPartRuleScope)
+                        break;
+                    partName = shadowRoot->partMappings().get(partName);
+                    if (partName.isEmpty())
+                        return AtomString();
+                }
+                return partName;
+            };
+
+            Vector<AtomString, 4> translatedPartNames;
+            for (unsigned i = 0; i < element.partNames().size(); ++i) {
+                auto translatedPartName = translatePartNameToRuleScope(element.partNames()[i]);
+                if (!translatedPartName.isEmpty())
+                    translatedPartNames.append(translatedPartName);
+            }
+
             for (auto& part : *selector.argumentList()) {
-                if (!element.partNames().contains(part))
+                if (!translatedPartNames.contains(part))
                     return false;
             }
             return true;
-
+        }
         default:
             return true;
         }

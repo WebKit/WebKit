@@ -30,6 +30,7 @@
 
 #include "CSSStyleSheet.h"
 #include "ElementTraversal.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLSlotElement.h"
 #include "RenderElement.h"
 #include "RuntimeEnabledFeatures.h"
@@ -50,6 +51,7 @@ struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
     void* styleSheetList;
     void* host;
     void* slotAssignment;
+    Optional<HashMap<AtomString, AtomString>> partMappings;
 };
 
 COMPILE_ASSERT(sizeof(ShadowRoot) == sizeof(SameSizeAsShadowRoot), shadowroot_should_stay_small);
@@ -250,6 +252,92 @@ const Vector<Node*>* ShadowRoot::assignedNodesForSlot(const HTMLSlotElement& slo
     if (!m_slotAssignment)
         return nullptr;
     return m_slotAssignment->assignedNodesForSlot(slot, *this);
+}
+
+static Optional<std::pair<AtomString, AtomString>> parsePartMapping(StringView mappingString)
+{
+    const auto end = mappingString.length();
+
+    auto skipWhitespace = [&] (auto position) {
+        while (position < end && isHTMLSpace(mappingString[position]))
+            ++position;
+        return position;
+    };
+
+    auto collectValue = [&] (auto position) {
+        while (position < end && (!isHTMLSpace(mappingString[position]) && mappingString[position] != ':'))
+            ++position;
+        return position;
+    };
+
+    size_t begin = 0;
+    begin = skipWhitespace(begin);
+
+    auto firstPartEnd = collectValue(begin);
+    if (firstPartEnd == begin)
+        return { };
+
+    auto firstPart = mappingString.substring(begin, firstPartEnd - begin).toAtomString();
+
+    begin = skipWhitespace(firstPartEnd);
+    if (begin == end)
+        return std::make_pair(firstPart, firstPart);
+
+    if (mappingString[begin] != ':')
+        return { };
+
+    begin = skipWhitespace(begin + 1);
+
+    auto secondPartEnd = collectValue(begin);
+    if (secondPartEnd == begin)
+        return { };
+
+    auto secondPart = mappingString.substring(begin, secondPartEnd - begin).toAtomString();
+
+    begin = skipWhitespace(secondPartEnd);
+    if (begin != end)
+        return { };
+
+    return std::make_pair(firstPart, secondPart);
+}
+
+static void parsePartMappingsList(HashMap<AtomString, AtomString>& mappings, StringView mappingsListString)
+{
+    const auto end = mappingsListString.length();
+
+    size_t begin = 0;
+    while (begin < end) {
+        size_t mappingEnd = begin;
+        while (mappingEnd < end && mappingsListString[mappingEnd] != ',')
+            ++mappingEnd;
+
+        auto result = parsePartMapping(mappingsListString.substring(begin, mappingEnd - begin));
+        if (result)
+            mappings.add(result->first, result->second);
+
+        if (mappingEnd == end)
+            break;
+
+        begin = mappingEnd + 1;
+    }
+}
+
+const HashMap<AtomString, AtomString>& ShadowRoot::partMappings() const
+{
+    if (!m_partMappings) {
+        m_partMappings = HashMap<AtomString, AtomString>();
+
+        auto exportpartsValue = host()->attributeWithoutSynchronization(HTMLNames::exportpartsAttr);
+        if (!exportpartsValue.isEmpty() && RuntimeEnabledFeatures::sharedFeatures().cssShadowPartsEnabled())
+            parsePartMappingsList(*m_partMappings, exportpartsValue);
+    }
+
+    return *m_partMappings;
+}
+
+void ShadowRoot::invalidatePartMappings()
+{
+    m_partMappings = { };
 }
 
 Vector<ShadowRoot*> assignedShadowRootsIfSlotted(const Node& node)

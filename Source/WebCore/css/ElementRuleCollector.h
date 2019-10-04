@@ -75,7 +75,7 @@ private:
     void matchAuthorShadowPseudoElementRules(bool includeEmptyRules, StyleResolver::RuleRange&);
     void matchHostPseudoClassRules(bool includeEmptyRules, StyleResolver::RuleRange&);
     void matchSlottedPseudoElementRules(bool includeEmptyRules, StyleResolver::RuleRange&);
-    void matchPartPseudoElementRules(bool includeEmptyRules, StyleResolver::RuleRange&);
+    void matchPartPseudoElementRules(const ShadowRoot& containingShadowRoot, bool includeEmptyRules, StyleResolver::RuleRange&);
 
     void collectMatchingShadowPseudoElementRules(const MatchRequest&, StyleResolver::RuleRange&);
     std::unique_ptr<RuleSet::RuleDataVector> collectSlottedPseudoElementRulesForSlot(bool includeEmptyRules);
@@ -100,6 +100,7 @@ private:
     SelectorChecker::Mode m_mode { SelectorChecker::Mode::ResolvingStyle };
     bool m_isMatchingSlottedPseudoElements { false };
     bool m_isMatchingHostPseudoClass { false };
+    const Element* m_shadowHostInPartRuleScope { nullptr };
     Vector<std::unique_ptr<RuleSet::RuleDataVector>> m_keepAliveSlottedPseudoElementRules;
 
     Vector<MatchedRule, 64> m_matchedRules;
