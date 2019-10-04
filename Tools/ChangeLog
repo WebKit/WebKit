@@ -1,3 +1,12 @@
+2019-10-04  Alex Christensen  <achristensen@webkit.org>
+
+        Simplify sandbox enabling macros
+        https://bugs.webkit.org/show_bug.cgi?id=202536
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2019-10-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Print the revision number on command "--version" of the MiniBrowser

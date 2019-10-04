@@ -1,3 +1,22 @@
+2019-10-04  Alex Christensen  <achristensen@webkit.org>
+
+        Simplify sandbox enabling macros
+        https://bugs.webkit.org/show_bug.cgi?id=202536
+
+        Reviewed by Brent Fulgham.
+
+        ENABLE_WEB_PROCESS_SANDBOX was always on for Cocoa platforms and only used in WebProcessCocoa.mm, so it did nothing.
+        ENABLE_MANUAL_SANDBOXING was on for sdk=macosx* which I made more explicit in the code by using PLATFORM(MAC) || PLATFORM(MAACCATALYST)
+        ENABLE_MANUAL_NETWORK_SANDBOXING was always off and hiding dead code we do not intend to use because iOS sandboxes are always on and never manual.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        (WebKit::NetworkProcess::initializeSandbox):
+        * Shared/ios/AuxiliaryProcessIOS.mm:
+        (WebKit::AuxiliaryProcess::initializeSandbox):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::initializeSandbox):
+
 2019-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.27.1 release

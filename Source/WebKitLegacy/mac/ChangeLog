@@ -1,3 +1,12 @@
+2019-10-04  Alex Christensen  <achristensen@webkit.org>
+
+        Simplify sandbox enabling macros
+        https://bugs.webkit.org/show_bug.cgi?id=202536
+
+        Reviewed by Brent Fulgham.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2019-10-02  Tim Horton  <timothy_horton@apple.com>
 
         Provide TAPI the full target triple instead of just the arch

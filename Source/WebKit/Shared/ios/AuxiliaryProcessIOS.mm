@@ -39,7 +39,7 @@
 #import <sysexits.h>
 #import <wtf/FileSystem.h>
 
-#if ENABLE(MANUAL_SANDBOXING)
+#if PLATFORM(MACCATALYST)
 #import <wtf/spi/darwin/SandboxSPI.h>
 #endif
 
@@ -55,18 +55,13 @@ void AuxiliaryProcess::platformInitialize()
 
 void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
-#if ENABLE(MANUAL_SANDBOXING)
+#if PLATFORM(MACCATALYST)
     NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
     String defaultProfilePath = [webkit2Bundle pathForResource:[[NSBundle mainBundle] bundleIdentifier] ofType:@"sb"];
     if (sandboxParameters.userDirectorySuffix().isNull()) {
         String defaultUserDirectorySuffix = makeString(String([[NSBundle mainBundle] bundleIdentifier]), '+', parameters.clientIdentifier);
         sandboxParameters.setUserDirectorySuffix(defaultUserDirectorySuffix);
     }
-
-#if !PLATFORM(MACCATALYST)
-    String sandboxImportPath = "/usr/local/share/sandbox/imports";
-    sandboxParameters.addPathParameter("IMPORT_DIR", FileSystem::fileSystemRepresentation(sandboxImportPath).data());
-#endif
 
     switch (sandboxParameters.mode()) {
     case SandboxInitializationParameters::UseDefaultSandboxProfilePath:

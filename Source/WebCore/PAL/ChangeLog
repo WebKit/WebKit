@@ -1,3 +1,12 @@
+2019-10-04  Alex Christensen  <achristensen@webkit.org>
+
+        Simplify sandbox enabling macros
+        https://bugs.webkit.org/show_bug.cgi?id=202536
+
+        Reviewed by Brent Fulgham.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2019-10-01  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards a functioning CMake build on Mac
