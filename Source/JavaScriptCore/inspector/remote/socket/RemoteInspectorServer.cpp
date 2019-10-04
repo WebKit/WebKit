@@ -33,7 +33,6 @@
 #include <wtf/JSONValues.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
-#include <wtf/text/Base64.h>
 
 namespace Inspector {
 
@@ -152,7 +151,7 @@ void RemoteInspectorServer::setupInspectorClient(const Event&)
 
     auto backendCommandsEvent = JSON::Object::create();
     backendCommandsEvent->setString("event"_s, "BackendCommands"_s);
-    backendCommandsEvent->setString("message"_s, base64Encode(backendCommands().utf8()));
+    backendCommandsEvent->setString("message"_s, backendCommands());
     sendWebInspectorEvent(m_clientConnection.value(), backendCommandsEvent->toJSONString());
 
     auto setupEvent = JSON::Object::create();

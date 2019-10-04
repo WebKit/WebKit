@@ -1,3 +1,13 @@
+2019-10-04  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Socket-based RWI should base64-encode backend commands on client, not server
+        https://bugs.webkit.org/show_bug.cgi?id=202605
+
+        Reviewed by Don Olmstead.
+
+        * inspector/remote/socket/RemoteInspectorServer.cpp:
+        (Inspector::RemoteInspectorServer::setupInspectorClient):
+
 2019-10-04  Saam Barati  <sbarati@apple.com>
 
         Allow OSR exit to the LLInt

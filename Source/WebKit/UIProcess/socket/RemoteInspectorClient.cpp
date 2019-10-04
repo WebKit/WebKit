@@ -30,6 +30,7 @@
 
 #include "RemoteWebInspectorProxy.h"
 #include <wtf/MainThread.h>
+#include <wtf/text/Base64.h>
 
 namespace WebKit {
 
@@ -193,7 +194,7 @@ void RemoteInspectorClient::setBackendCommands(const Event& event)
     if (!event.message || event.message->isEmpty())
         return;
 
-    m_backendCommandsURL = makeString("data:text/javascript;base64,", event.message.value());
+    m_backendCommandsURL = makeString("data:text/javascript;base64,", base64Encode(event.message->utf8()));
 }
 
 void RemoteInspectorClient::setTargetList(const Event& event)
