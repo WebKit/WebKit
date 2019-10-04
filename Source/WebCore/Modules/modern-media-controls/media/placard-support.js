@@ -80,7 +80,7 @@ class PlacardSupport extends MediaControllerSupport
         
         switch(this.mediaController.host.externalDeviceType) {
             case 'airplay':
-                deviceName = UIString("This video is playing on “%s”.", this.mediaController.host.externalDeviceDisplayName || UIString("Apple TV"));
+                deviceName = UIString("This video is playing on “%s”.", escapeHTML(this.mediaController.host.externalDeviceDisplayName) || UIString("Apple TV"));
                 break;
             case 'tvout':
                 deviceName = UIString("This video is playing on the TV.");
@@ -89,4 +89,11 @@ class PlacardSupport extends MediaControllerSupport
         this.mediaController.controls.airplayPlacard.description = deviceName;
     }
 
+}
+
+function escapeHTML(unsafeString)
+{
+    var div = document.createElement("div");
+    div.textContent = unsafeString;
+    return div.innerHTML;
 }
