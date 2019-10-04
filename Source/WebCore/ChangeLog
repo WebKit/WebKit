@@ -1,5 +1,32 @@
 2019-10-04  youenn fablet  <youenn@apple.com>
 
+        AbortSignal does not always emit the abort signal
+        https://bugs.webkit.org/show_bug.cgi?id=201871
+        <rdar://problem/55451712>
+
+        Reviewed by Chris Dumez.
+
+        Make sure a JSAbortSignal is not GCed until objects that can abort it are gone.
+        This includes a followed signal and an AbortController.
+        Current WebKit implementation only uses following of one signal at a time.
+
+        Test: http/tests/fetch/abort-signal-gc.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSAbortControllerCustom.cpp: Added.
+        (WebCore::JSAbortController::visitAdditionalChildren):
+        * bindings/js/JSAbortSignalCustom.cpp: Added.
+        (WebCore::JSAbortSignalOwner::isReachableFromOpaqueRoots):
+        * bindings/js/JSTypedOMCSSStyleValueCustom.cpp:
+        * dom/AbortController.idl:
+        * dom/AbortSignal.cpp:
+        (WebCore::AbortSignal::follow):
+        * dom/AbortSignal.h:
+        * dom/AbortSignal.idl:
+
+2019-10-04  youenn fablet  <youenn@apple.com>
+
         Allow to suspend RTCPeerConnection when not connected
         https://bugs.webkit.org/show_bug.cgi?id=202403
 

@@ -28,6 +28,7 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
+#include "JSDOMWrapperCache.h"
 #include "JSTypedOMCSSImageValue.h"
 #include "JSTypedOMCSSUnitValue.h"
 #include "JSTypedOMCSSUnparsedValue.h"

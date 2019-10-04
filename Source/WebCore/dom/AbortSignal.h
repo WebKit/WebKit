@@ -53,6 +53,8 @@ public:
 
     void follow(AbortSignal&);
 
+    bool isFollowingSignal() const { return !!m_followingSignal; }
+
 private:
     explicit AbortSignal(ScriptExecutionContext&);
 
@@ -63,6 +65,7 @@ private:
     
     bool m_aborted { false };
     Vector<Algorithm> m_algorithms;
+    WeakPtr<AbortSignal> m_followingSignal;
 };
 
 }

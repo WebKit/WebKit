@@ -27,7 +27,8 @@
     Constructor,
     ConstructorCallWith=ScriptExecutionContext,
     Exposed=(Window,Worker),
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    JSCustomMarkFunction
 ] interface AbortController {
     [SameObject] readonly attribute AbortSignal signal;
 

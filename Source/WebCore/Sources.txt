@@ -453,6 +453,8 @@ bindings/js/DOMGCOutputConstraint.cpp
 bindings/js/DOMWrapperWorld.cpp
 bindings/js/GCController.cpp
 bindings/js/IDBBindingUtilities.cpp
+bindings/js/JSAbortControllerCustom.cpp
+bindings/js/JSAbortSignalCustom.cpp
 bindings/js/JSAuthenticatorResponseCustom.cpp
 bindings/js/JSAnimationEffectCustom.cpp
 bindings/js/JSAnimationTimelineCustom.cpp

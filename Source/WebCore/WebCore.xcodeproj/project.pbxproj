@@ -7173,6 +7173,8 @@
 		3FFFF9AC159D9B060020BBD5 /* ViewportStyleResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewportStyleResolver.h; sourceTree = "<group>"; };
 		410626A72280A22A006D1B59 /* JSAudioNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioNodeCustom.cpp; sourceTree = "<group>"; };
 		4107908A1FC3E4F20061B27A /* ClientOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientOrigin.h; sourceTree = "<group>"; };
+		410938282347799A009428BA /* JSAbortControllerCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAbortControllerCustom.cpp; sourceTree = "<group>"; };
+		4109382C2347850E009428BA /* JSAbortSignalCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSAbortSignalCustom.cpp; sourceTree = "<group>"; };
 		410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessageEventCustom.cpp; sourceTree = "<group>"; };
 		410E445F234373AD000173D4 /* LibWebRTCSocketIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCSocketIdentifier.h; path = libwebrtc/LibWebRTCSocketIdentifier.h; sourceTree = "<group>"; };
 		41103AA71E39790A00769F03 /* RealtimeOutgoingAudioSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeOutgoingAudioSource.cpp; sourceTree = "<group>"; };
@@ -20807,6 +20809,8 @@
 		7C3D8EE41E08BABE0023B084 /* GC / Wrapping Only */ = {
 			isa = PBXGroup;
 			children = (
+				410938282347799A009428BA /* JSAbortControllerCustom.cpp */,
+				4109382C2347850E009428BA /* JSAbortSignalCustom.cpp */,
 				71EFCEDE202B39C700D7C411 /* JSAnimationEffectCustom.cpp */,
 				71025ED51F99F147004A250C /* JSAnimationTimelineCustom.cpp */,
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
@@ -20834,6 +20838,7 @@
 				E34EE49F1DC2D57500EAA9D3 /* JSEventCustom.h */,
 				BC60901E0E91B8EC000C68B5 /* JSEventTargetCustom.cpp */,
 				46B63F6B1C6E8CDF002E914B /* JSEventTargetCustom.h */,
+				4131F3B11F9552810059995A /* JSFetchEventCustom.cpp */,
 				835B680E1F548BDE0071F7F6 /* JSFileSystemEntryCustom.cpp */,
 				BCCBAD3A0C18BFF800CE890F /* JSHTMLCollectionCustom.cpp */,
 				BC51580A0C03D404008BB0EE /* JSHTMLDocumentCustom.cpp */,
@@ -20974,7 +20979,6 @@
 			children = (
 				DEC2975D1B4DEB2A005F5945 /* JSCustomEventCustom.cpp */,
 				831C46C31F9EE5E000EBD450 /* JSExtendableMessageEventCustom.cpp */,
-				4131F3B11F9552810059995A /* JSFetchEventCustom.cpp */,
 				BCE7B1920D4E86960075A539 /* JSHistoryCustom.cpp */,
 				CA6C1537220D1EB30055CBFC /* JSIDBCursorCustom.cpp */,
 				CA6C1538220D1EB30055CBFC /* JSIDBCursorWithValueCustom.cpp */,
