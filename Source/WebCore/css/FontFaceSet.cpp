@@ -56,6 +56,7 @@ FontFaceSet::FontFaceSet(Document& document, const Vector<RefPtr<FontFace>>& ini
     : ActiveDOMObject(document)
     , m_backing(CSSFontFaceSet::create())
     , m_readyPromise(*this, &FontFaceSet::readyPromiseResolve)
+    , m_taskQueue(SuspendableTaskQueue::create(&document))
 {
     m_backing->addClient(*this);
     for (auto& face : initialFaces)
@@ -66,6 +67,7 @@ FontFaceSet::FontFaceSet(Document& document, CSSFontFaceSet& backing)
     : ActiveDOMObject(document)
     , m_backing(backing)
     , m_readyPromise(*this, &FontFaceSet::readyPromiseResolve)
+    , m_taskQueue(SuspendableTaskQueue::create(&document))
 {
     if (document.frame())
         m_isFirstLayoutDone = document.frame()->loader().stateMachine().firstLayoutDone();
@@ -190,7 +192,7 @@ auto FontFaceSet::status() const -> LoadStatus
 
 bool FontFaceSet::canSuspendForDocumentSuspension() const
 {
-    return m_backing->status() == CSSFontFaceSet::Status::Loaded;
+    return true;
 }
 
 void FontFaceSet::startedLoading()
@@ -201,14 +203,20 @@ void FontFaceSet::startedLoading()
 void FontFaceSet::didFirstLayout()
 {
     m_isFirstLayoutDone = true;
-    if (!m_backing->hasActiveFontFaces() && !m_readyPromise.isFulfilled())
-        m_readyPromise.resolve(*this);
+    if (!m_backing->hasActiveFontFaces() && !m_readyPromise.isFulfilled()) {
+        m_taskQueue->enqueueTask([this] {
+            m_readyPromise.resolve(*this);
+        });
+    }
 }
 
 void FontFaceSet::completedLoading()
 {
-    if (m_isFirstLayoutDone && !m_readyPromise.isFulfilled())
-        m_readyPromise.resolve(*this);
+    if (m_isFirstLayoutDone && !m_readyPromise.isFulfilled()) {
+        m_taskQueue->enqueueTask([this] {
+            m_readyPromise.resolve(*this);
+        });
+    }
 }
 
 void FontFaceSet::faceFinished(CSSFontFace& face, CSSFontFace::Status newStatus)
@@ -216,26 +224,26 @@ void FontFaceSet::faceFinished(CSSFontFace& face, CSSFontFace::Status newStatus)
     if (!face.existingWrapper())
         return;
 
-    auto iterator = m_pendingPromises.find(face.existingWrapper());
-    if (iterator == m_pendingPromises.end())
+    auto pendingPromises = m_pendingPromises.take(face.existingWrapper());
+    if (pendingPromises.isEmpty())
         return;
 
-    for (auto& pendingPromise : iterator->value) {
-        if (pendingPromise->hasReachedTerminalState)
-            continue;
-        if (newStatus == CSSFontFace::Status::Success) {
-            if (pendingPromise->hasOneRef()) {
-                pendingPromise->promise.resolve(pendingPromise->faces);
+    m_taskQueue->enqueueTask([pendingPromises = WTFMove(pendingPromises), newStatus] {
+        for (auto& pendingPromise : pendingPromises) {
+            if (pendingPromise->hasReachedTerminalState)
+                continue;
+            if (newStatus == CSSFontFace::Status::Success) {
+                if (pendingPromise->hasOneRef()) {
+                    pendingPromise->promise.resolve(pendingPromise->faces);
+                    pendingPromise->hasReachedTerminalState = true;
+                }
+            } else {
+                ASSERT(newStatus == CSSFontFace::Status::Failure);
+                pendingPromise->promise.reject(NetworkError);
                 pendingPromise->hasReachedTerminalState = true;
             }
-        } else {
-            ASSERT(newStatus == CSSFontFace::Status::Failure);
-            pendingPromise->promise.reject(NetworkError);
-            pendingPromise->hasReachedTerminalState = true;
         }
-    }
-
-    m_pendingPromises.remove(iterator);
+    });
 }
 
 FontFaceSet& FontFaceSet::readyPromiseResolve()

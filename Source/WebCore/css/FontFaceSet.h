@@ -30,6 +30,7 @@
 #include "DOMPromiseProxy.h"
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferred.h"
+#include "SuspendableTaskQueue.h"
 
 namespace WebCore {
 
@@ -116,6 +117,7 @@ private:
     Ref<CSSFontFaceSet> m_backing;
     HashMap<RefPtr<FontFace>, Vector<Ref<PendingPromise>>> m_pendingPromises;
     ReadyPromise m_readyPromise;
+    UniqueRef<SuspendableTaskQueue> m_taskQueue;
     bool m_isFirstLayoutDone { true };
 };
 

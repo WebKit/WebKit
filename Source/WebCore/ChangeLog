@@ -1,5 +1,50 @@
 2019-10-03  Chris Dumez  <cdumez@apple.com>
 
+        Allow pages using FontFaceSet to enter the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=202476
+
+        Reviewed by Myles C. Maxfield.
+
+        Allow pages using FontFaceSet to enter the back/forward cache by updating its
+        implementation to queue all its tasks that run script to a SuspendableTaskQueue.
+        The SuspendableTaskQueue makes sure to properly suspend while in PageCache and
+        run the tasks when resuming from PageCache.
+
+        Test: http/tests/navigation/page-cache-fontfaceset.html
+
+        * PlatformWin.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::fontLoadEventOccurred):
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::FontFaceSet):
+        (WebCore::FontFaceSet::canSuspendForDocumentSuspension const):
+        (WebCore::FontFaceSet::didFirstLayout):
+        (WebCore::FontFaceSet::completedLoading):
+        (WebCore::FontFaceSet::faceFinished):
+        * css/FontFaceSet.h:
+
+        * platform/SuspendableTaskQueue.cpp: Added.
+        (WebCore::SuspendableTaskQueue::SuspendableTaskQueue):
+        (WebCore::SuspendableTaskQueue::close):
+        (WebCore::SuspendableTaskQueue::cancelAllTasks):
+        (WebCore::SuspendableTaskQueue::enqueueTask):
+        (WebCore::SuspendableTaskQueue::runOneTask):
+        (WebCore::SuspendableTaskQueue::activeDOMObjectName const):
+        (WebCore::SuspendableTaskQueue::canSuspendForDocumentSuspension const):
+        (WebCore::SuspendableTaskQueue::stop):
+        (WebCore::SuspendableTaskQueue::suspend):
+        (WebCore::SuspendableTaskQueue::resume):
+        * platform/SuspendableTaskQueue.h: Added.
+        (WebCore::SuspendableTaskQueue::create):
+        (WebCore::SuspendableTaskQueue::isClosed const):
+        (WebCore::SuspendableTaskQueue::hasPendingTasks const):
+        Add a SuspendableTaskQueue class which is Page-Cache aware and can be used to queue
+        generic tasks as WTF::Function<void<>> lambdas.
+
+2019-10-03  Chris Dumez  <cdumez@apple.com>
+
         Provisional / scheduled loads in subframes should not prevent a page from entering the back/forward cache
         https://bugs.webkit.org/show_bug.cgi?id=202474
 

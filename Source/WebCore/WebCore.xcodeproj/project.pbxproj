@@ -1228,6 +1228,7 @@
 		46C696CC1E7205FC00597937 /* CPUMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46C696CA1E7205E400597937 /* CPUMonitor.cpp */; };
 		46C83EFE1A9BBE2900A79A41 /* GeoNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C83EFC1A9BBE2900A79A41 /* GeoNotifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46CA9C441F97BBE9004CFC3A /* VisibilityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 46CA9C411F97BBE7004CFC3A /* VisibilityState.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		46CDC1F023466B2300D2E70E /* SuspendableTaskQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 466907F82346686200EFEFF0 /* SuspendableTaskQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46DBB6501AB8C96F00D9A813 /* PowerObserverMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DBB64E1AB8C96F00D9A813 /* PowerObserverMac.h */; };
 		46DFF4981DC2603100B80B48 /* ShadowRootMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DFF4961DC2601300B80B48 /* ShadowRootMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46DFF49C1DC2620B00B80B48 /* JSShadowRootMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DFF49A1DC261F900B80B48 /* JSShadowRootMode.h */; };
@@ -7602,6 +7603,8 @@
 		465EDD9D222F4EC300B46E16 /* DeviceOrientationOrMotionEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DeviceOrientationOrMotionEvent.idl; sourceTree = "<group>"; };
 		465EDD9F222F4EC300B46E16 /* DeviceOrientationOrMotionPermissionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientationOrMotionPermissionState.h; sourceTree = "<group>"; };
 		465EDDA0222F4EC400B46E16 /* DeviceOrientationOrMotionPermissionState.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DeviceOrientationOrMotionPermissionState.idl; sourceTree = "<group>"; };
+		466907F62346686200EFEFF0 /* SuspendableTaskQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SuspendableTaskQueue.cpp; sourceTree = "<group>"; };
+		466907F82346686200EFEFF0 /* SuspendableTaskQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SuspendableTaskQueue.h; sourceTree = "<group>"; };
 		466DC6AB1EDE021D00746224 /* JSDOMRectList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMRectList.cpp; sourceTree = "<group>"; };
 		466ED8D21EDE0135005E43F6 /* JSDOMRectList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMRectList.h; sourceTree = "<group>"; };
 		4671E0631D67A57B00C6B497 /* CanvasPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasPath.cpp; sourceTree = "<group>"; };
@@ -25595,6 +25598,8 @@
 				F433E9021DBBDBA200EF0D14 /* StaticPasteboard.h */,
 				93B2D8150F9920D2006AE6B2 /* SuddenTermination.h */,
 				97627B9714FB5424002CDCA1 /* Supplementable.h */,
+				466907F62346686200EFEFF0 /* SuspendableTaskQueue.cpp */,
+				466907F82346686200EFEFF0 /* SuspendableTaskQueue.h */,
 				7CC564B618BABEA6001B9652 /* TelephoneNumberDetector.h */,
 				BCE65D310EAD1211007E4533 /* Theme.cpp */,
 				BCE658FE0EA9248A007E4533 /* Theme.h */,
@@ -31850,6 +31855,7 @@
 				97C078501165D5BE003A32EF /* SuffixTree.h in Headers */,
 				97627B9814FB5424002CDCA1 /* Supplementable.h in Headers */,
 				087558C613B4A57D00F49307 /* SurrogatePairAwareTextIterator.h in Headers */,
+				46CDC1F023466B2300D2E70E /* SuspendableTaskQueue.h in Headers */,
 				62C1217D11AB9E77003C462C /* SuspendableTimer.h in Headers */,
 				B22279740D00BF220071B782 /* SVGAElement.h in Headers */,
 				24D912B113CA9A1F00D21915 /* SVGAltGlyphDefElement.h in Headers */,
