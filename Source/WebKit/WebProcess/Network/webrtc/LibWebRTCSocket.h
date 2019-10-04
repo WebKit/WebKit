@@ -52,15 +52,19 @@ class LibWebRTCSocket final : public rtc::AsyncPacketSocket {
 public:
     enum class Type { UDP, ServerTCP, ClientTCP, ServerConnectionTCP };
 
-    LibWebRTCSocket(LibWebRTCSocketFactory&, Type, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress);
+    LibWebRTCSocket(LibWebRTCSocketFactory&, const void* socketGroup, Type, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress);
     ~LibWebRTCSocket();
 
+    const void* socketGroup() const { return m_socketGroup; }
     WebCore::LibWebRTCSocketIdentifier identifier() const { return m_identifier; }
     const rtc::SocketAddress& localAddress() const { return m_localAddress; }
     const rtc::SocketAddress& remoteAddress() const { return m_remoteAddress; }
 
     void setError(int error) { m_error = error; }
     void setState(State state) { m_state = state; }
+
+    void suspend();
+    void resume();
 
 private:
     bool willSend(size_t);
@@ -102,6 +106,8 @@ private:
     Deque<size_t> m_beingSentPacketSizes;
     size_t m_availableSendingBytes { 65536 };
     bool m_shouldSignalReadyToSend { false };
+    bool m_isSuspended { false };
+    const void* m_socketGroup { nullptr };
 };
 
 } // namespace WebKit

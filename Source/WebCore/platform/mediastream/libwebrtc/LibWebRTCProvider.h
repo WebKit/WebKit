@@ -119,7 +119,13 @@ public:
     void setEnableWebRTCEncryption(bool);
     void setUseDTLS10(bool);
 
-    virtual std::unique_ptr<rtc::PacketSocketFactory> createSocketFactory(String&& /* userAgent */) { return nullptr; }
+    class SuspendableSocketFactory : public rtc::PacketSocketFactory {
+    public:
+        virtual ~SuspendableSocketFactory() = default;
+        virtual void suspend() { };
+        virtual void resume() { };
+    };
+    virtual std::unique_ptr<SuspendableSocketFactory> createSocketFactory(String&& /* userAgent */) { return nullptr; }
 
 protected:
     LibWebRTCProvider() = default;

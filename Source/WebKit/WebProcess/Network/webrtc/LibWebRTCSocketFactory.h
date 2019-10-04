@@ -37,16 +37,19 @@
 
 namespace WebKit {
 
+class LibWebRTCSocket;
+
 class LibWebRTCSocketFactory {
 public:
     LibWebRTCSocketFactory() { }
 
-    void detach(LibWebRTCSocket&);
+    void addSocket(LibWebRTCSocket&);
+    void removeSocket(LibWebRTCSocket&);
     LibWebRTCSocket* socket(WebCore::LibWebRTCSocketIdentifier identifier) { return m_sockets.get(identifier); }
 
-    rtc::AsyncPacketSocket* createUdpSocket(const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort);
-    rtc::AsyncPacketSocket* createServerTcpSocket(const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort, int options);
-    rtc::AsyncPacketSocket* createClientTcpSocket(const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, String&& userAgent, int options);
+    rtc::AsyncPacketSocket* createUdpSocket(const void* socketGroup, const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort);
+    rtc::AsyncPacketSocket* createServerTcpSocket(const void* socketGroup, const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort, int options);
+    rtc::AsyncPacketSocket* createClientTcpSocket(const void* socketGroup, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, String&& userAgent, int options);
     rtc::AsyncPacketSocket* createNewConnectionSocket(LibWebRTCSocket&, WebCore::LibWebRTCSocketIdentifier newConnectionSocketIdentifier, const rtc::SocketAddress&);
 
     LibWebRTCResolver* resolver(uint64_t identifier) { return m_resolvers.get(identifier); }
@@ -54,6 +57,8 @@ public:
     rtc::AsyncResolverInterface* createAsyncResolver();
     
     void disableNonLocalhostConnections() { m_disableNonLocalhostConnections = true; }
+
+    void forSocketInGroup(const void* socketGroup, const Function<void(LibWebRTCSocket&)>&);
 
 private:
     // We cannot own sockets, clients of the factory are responsible to free them.

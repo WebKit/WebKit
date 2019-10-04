@@ -98,6 +98,18 @@ bool LibWebRTCMediaEndpoint::setConfiguration(LibWebRTCProvider& client, webrtc:
     return m_backend->SetConfiguration(WTFMove(configuration));
 }
 
+void LibWebRTCMediaEndpoint::suspend()
+{
+    if (m_rtcSocketFactory)
+        m_rtcSocketFactory->suspend();
+}
+
+void LibWebRTCMediaEndpoint::resume()
+{
+    if (m_rtcSocketFactory)
+        m_rtcSocketFactory->resume();
+}
+
 static inline const char* sessionDescriptionType(RTCSdpType sdpType)
 {
     switch (sdpType) {

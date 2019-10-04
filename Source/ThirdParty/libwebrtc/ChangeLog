@@ -1,3 +1,16 @@
+2019-10-04  youenn fablet  <youenn@apple.com>
+
+        Allow to suspend RTCPeerConnection when not connected
+        https://bugs.webkit.org/show_bug.cgi?id=202403
+
+        Reviewed by Chris Dumez.
+
+        Export rtc::TimeMillis()
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+
 2019-09-11  Youenn Fablet  <youenn@apple.com>
 
         Disable DTLS1.0

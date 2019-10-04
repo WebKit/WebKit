@@ -1,3 +1,15 @@
+2019-10-04  youenn fablet  <youenn@apple.com>
+
+        Allow to suspend RTCPeerConnection when not connected
+        https://bugs.webkit.org/show_bug.cgi?id=202403
+
+        Reviewed by Chris Dumez.
+
+        * webrtc/datachannel/datachannel-page-cache-expected.txt: Added.
+        * webrtc/datachannel/datachannel-page-cache-send-expected.txt: Added.
+        * webrtc/datachannel/datachannel-page-cache-send.html: Added.
+        * webrtc/datachannel/datachannel-page-cache.html: Added.
+
 2019-10-04  Chris Lord  <clord@igalia.com>
 
         Import 2dcontext Web Platform Tests

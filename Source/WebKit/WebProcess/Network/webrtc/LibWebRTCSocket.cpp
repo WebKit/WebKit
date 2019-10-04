@@ -40,19 +40,21 @@
 
 namespace WebKit {
 
-LibWebRTCSocket::LibWebRTCSocket(LibWebRTCSocketFactory& factory, Type type, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress)
+LibWebRTCSocket::LibWebRTCSocket(LibWebRTCSocketFactory& factory, const void* socketGroup, Type type, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress)
     : m_factory(factory)
     , m_identifier(WebCore::LibWebRTCSocketIdentifier::generate())
     , m_type(type)
     , m_localAddress(localAddress)
     , m_remoteAddress(remoteAddress)
+    , m_socketGroup(socketGroup)
 {
+    m_factory.addSocket(*this);
 }
 
 LibWebRTCSocket::~LibWebRTCSocket()
 {
     Close();
-    m_factory.detach(*this);
+    m_factory.removeSocket(*this);
 }
 
 void LibWebRTCSocket::sendOnMainThread(Function<void(IPC::Connection&)>&& callback)
@@ -81,12 +83,18 @@ void LibWebRTCSocket::signalAddressReady(const rtc::SocketAddress& address)
 
 void LibWebRTCSocket::signalReadPacket(const WebCore::SharedBuffer& buffer, rtc::SocketAddress&& address, int64_t timestamp)
 {
+    if (m_isSuspended)
+        return;
+
     m_remoteAddress = WTFMove(address);
     SignalReadPacket(this, buffer.data(), buffer.size(), m_remoteAddress, timestamp);
 }
 
 void LibWebRTCSocket::signalSentPacket(int rtcPacketID, int64_t sendTimeMs)
 {
+    if (m_beingSentPacketSizes.isEmpty())
+        return;
+
     m_availableSendingBytes += m_beingSentPacketSizes.takeFirst();
     SignalSentPacket(this, rtc::SentPacket(rtcPacketID, sendTimeMs));
     if (m_shouldSignalReadyToSend) {
@@ -130,10 +138,13 @@ int LibWebRTCSocket::SendTo(const void *value, size_t size, const rtc::SocketAdd
     if (!willSend(size))
         return -1;
 
+    if (m_isSuspended)
+        return size;
+
     auto buffer = WebCore::SharedBuffer::create(static_cast<const uint8_t*>(value), size);
     auto identifier = this->identifier();
 
-    sendOnMainThread([identifier, buffer = WTFMove(buffer), address, options](IPC::Connection& connection) {
+    sendOnMainThread([identifier, buffer = WTFMove(buffer), address, options](auto& connection) {
         IPC::DataReference data(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
         connection.send(Messages::NetworkRTCSocket::SendTo { data, RTCNetwork::SocketAddress { address }, RTCPacketOptions { options } }, identifier);
     });
@@ -146,8 +157,8 @@ int LibWebRTCSocket::Close()
         return 0;
 
     m_state = STATE_CLOSED;
-    auto identifier = this->identifier();
-    sendOnMainThread([identifier](IPC::Connection& connection) {
+
+    sendOnMainThread([identifier = identifier()](auto& connection) {
         connection.send(Messages::NetworkRTCSocket::Close(), identifier);
     });
     return 0;
@@ -169,11 +180,38 @@ int LibWebRTCSocket::SetOption(rtc::Socket::Option option, int value)
 
     m_options[option] = value;
 
-    auto identifier = this->identifier();
-    sendOnMainThread([identifier, option, value](IPC::Connection& connection) {
+    sendOnMainThread([identifier = identifier(), option, value](auto& connection) {
         connection.send(Messages::NetworkRTCSocket::SetOption(option, value), identifier);
     });
     return 0;
+}
+
+void LibWebRTCSocket::resume()
+{
+    m_isSuspended = false;
+
+    // On resume, we notify libwebrtc that TCP sockets are errored.
+    // We notify libwebrtc that all pending UDP packets have been sent even though we actually dropped them.
+    if (m_type != Type::UDP) {
+        signalClose(-1);
+        return;
+    }
+
+    auto currentTime = rtc::TimeMillis();
+    while (!m_beingSentPacketSizes.isEmpty())
+        signalSentPacket(-1, currentTime);
+}
+
+void LibWebRTCSocket::suspend()
+{
+    m_isSuspended = true;
+
+    // On suspend, we close TCP sockets as we cannot make sure packets are delivered reliably.
+    if (m_type != Type::UDP) {
+        sendOnMainThread([identifier = identifier()](auto& connection) {
+            connection.send(Messages::NetworkRTCSocket::Close { }, identifier);
+        });
+    }
 }
 
 } // namespace WebKit

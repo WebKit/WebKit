@@ -50,7 +50,7 @@ public:
     LibWebRTCProvider() { m_useNetworkThreadWithSocketServer = false; }
 
 private:
-    std::unique_ptr<rtc::PacketSocketFactory> createSocketFactory(String&& /* userAgent */) final;
+    std::unique_ptr<SuspendableSocketFactory> createSocketFactory(String&& /* userAgent */) final;
 
     rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, rtc::PacketSocketFactory*, webrtc::PeerConnectionInterface::RTCConfiguration&&) final;
 

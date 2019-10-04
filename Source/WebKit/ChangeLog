@@ -1,3 +1,54 @@
+2019-10-04  youenn fablet  <youenn@apple.com>
+
+        Allow to suspend RTCPeerConnection when not connected
+        https://bugs.webkit.org/show_bug.cgi?id=202403
+
+        Reviewed by Chris Dumez.
+
+        Implement suspend/resume of sockets by doing the following:
+        - For UDP sockets, we simulate as if being sent data is queued when being suspended.
+        the webrtc backend will then stop sending packets until the queue is emptied.
+        At resume time, we do as if the queue is emptied and packets sent (even though packets are not sent).
+        For incoming traffic, we ignore it when being suspended.
+        - For TCP sockets, we close them at suspend time. We then notify at resume time that an error happeneded
+        for these sockets to the webrtc backend. We cannot simulate packet dropping like in the UDP case.
+
+        To manage resume/suspend, each socket now has a isSuspended state and a socket group.
+        The socket group is per peer connection.
+        A peer connection will notify the factory that it is suspended/resumed.
+        The factory will iterate through all sockets and will suspend/resume each socket of the socket group.
+
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::RTCSocketFactory::RTCSocketFactory):
+        (WebKit::RTCSocketFactory::CreateUdpSocket):
+        (WebKit::RTCSocketFactory::CreateServerTcpSocket):
+        (WebKit::RTCSocketFactory::CreateClientTcpSocket):
+        (WebKit::RTCSocketFactory::CreateAsyncResolver):
+        (WebKit::RTCSocketFactory::suspend):
+        (WebKit::RTCSocketFactory::resume):
+        (WebKit::LibWebRTCProvider::createSocketFactory):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.h:
+        * WebProcess/Network/webrtc/LibWebRTCSocket.cpp:
+        (WebKit::LibWebRTCSocket::LibWebRTCSocket):
+        (WebKit::LibWebRTCSocket::~LibWebRTCSocket):
+        (WebKit::LibWebRTCSocket::signalReadPacket):
+        (WebKit::LibWebRTCSocket::signalSentPacket):
+        (WebKit::LibWebRTCSocket::SendTo):
+        (WebKit::LibWebRTCSocket::Close):
+        (WebKit::LibWebRTCSocket::SetOption):
+        (WebKit::LibWebRTCSocket::resume):
+        (WebKit::LibWebRTCSocket::suspend):
+        * WebProcess/Network/webrtc/LibWebRTCSocket.h:
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp:
+        (WebKit::LibWebRTCSocketFactory::createServerTcpSocket):
+        (WebKit::LibWebRTCSocketFactory::createUdpSocket):
+        (WebKit::LibWebRTCSocketFactory::createClientTcpSocket):
+        (WebKit::LibWebRTCSocketFactory::createNewConnectionSocket):
+        (WebKit::LibWebRTCSocketFactory::addSocket):
+        (WebKit::LibWebRTCSocketFactory::removeSocket):
+        (WebKit::LibWebRTCSocketFactory::forSocketInGroup):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.h:
+
 2019-10-04  Alex Christensen  <achristensen@webkit.org>
 
         Simplify sandbox enabling macros

@@ -113,6 +113,9 @@ public:
     void setSenderSourceFromTrack(LibWebRTCRtpSenderBackend&, MediaStreamTrack&);
     void collectTransceivers();
 
+    void suspend();
+    void resume();
+
 private:
     LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend&, LibWebRTCProvider&);
 
@@ -198,7 +201,7 @@ private:
 
     HashMap<String, rtc::scoped_refptr<webrtc::MediaStreamInterface>> m_localStreams;
 
-    std::unique_ptr<rtc::PacketSocketFactory> m_rtcSocketFactory;
+    std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> m_rtcSocketFactory;
 #if !RELEASE_LOG_DISABLED
     int64_t m_statsFirstDeliveredTimestamp { 0 };
     Ref<const Logger> m_logger;
