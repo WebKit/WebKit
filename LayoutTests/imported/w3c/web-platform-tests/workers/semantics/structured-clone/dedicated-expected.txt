@@ -106,12 +106,12 @@ PASS Object with property on prototype
 PASS Object with non-enumerable property 
 PASS Object with non-writable property 
 PASS Object with non-configurable property 
-FAIL ImageBitmap 1x1 transparent black promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL ImageBitmap 1x1 non-transparent non-black promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Array ImageBitmap object, ImageBitmap 1x1 transparent black promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Array ImageBitmap object, ImageBitmap 1x1 transparent non-black promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Object ImageBitmap object, ImageBitmap 1x1 transparent black promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Object ImageBitmap object, ImageBitmap 1x1 transparent non-black promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS ImageBitmap 1x1 transparent black 
+PASS ImageBitmap 1x1 non-transparent non-black 
+PASS Array ImageBitmap object, ImageBitmap 1x1 transparent black 
+PASS Array ImageBitmap object, ImageBitmap 1x1 transparent non-black 
+PASS Object ImageBitmap object, ImageBitmap 1x1 transparent black 
+PASS Object ImageBitmap object, ImageBitmap 1x1 transparent non-black 
 PASS ArrayBuffer 
 PASS MessagePort 
 
