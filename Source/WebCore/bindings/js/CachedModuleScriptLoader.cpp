@@ -31,6 +31,7 @@
 #include "DOMWrapperWorld.h"
 #include "Frame.h"
 #include "JSDOMBinding.h"
+#include "JSDOMPromiseDeferred.h"
 #include "ModuleFetchParameters.h"
 #include "ResourceLoaderOptions.h"
 #include "ScriptController.h"

@@ -36,17 +36,20 @@
 
 #include "ActiveDOMObject.h"
 #include "CaptureDevice.h"
-#include "JSDOMPromiseDeferred.h"
+#include "IDLTypes.h"
 #include "MediaConstraints.h"
 #include "MediaStreamPrivate.h"
 #include "MediaStreamRequest.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
 class MediaStream;
 class SecurityOrigin;
+
+template<typename IDLType> class DOMPromiseDeferred;
 
 enum UserMediaRequestIdentifierType { };
 using UserMediaRequestIdentifier = ObjectIdentifier<UserMediaRequestIdentifierType>;
@@ -91,7 +94,7 @@ private:
     Vector<String> m_videoDeviceUIDs;
     Vector<String> m_audioDeviceUIDs;
 
-    DOMPromiseDeferred<IDLInterface<MediaStream>> m_promise;
+    UniqueRef<DOMPromiseDeferred<IDLInterface<MediaStream>>> m_promise;
     MediaStreamRequest m_request;
 };
 

@@ -30,6 +30,7 @@
 
 #if PLATFORM(MAC)
 
+#import "JSDOMPromiseDeferred.h"
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 
 namespace WebCore {

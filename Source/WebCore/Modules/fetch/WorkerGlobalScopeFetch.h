@@ -29,10 +29,10 @@
 #pragma once
 
 #include "FetchRequest.h"
-#include "JSDOMPromiseDeferred.h"
 
 namespace WebCore {
 
+class DeferredPromise;
 class WorkerGlobalScope;
 
 class WorkerGlobalScopeFetch {

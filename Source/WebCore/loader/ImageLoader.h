@@ -24,13 +24,13 @@
 
 #include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
-#include "JSDOMPromiseDeferred.h"
 #include "Timer.h"
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
+class DeferredPromise;
 class Element;
 class ImageLoader;
 class RenderImageResource;

@@ -31,8 +31,8 @@
 #include "config.h"
 #include "JSHTMLTemplateElement.h"
 
+#include "JSDOMConvert.h"
 #include "JSDocumentFragment.h"
-
 
 namespace WebCore {
 using namespace JSC;

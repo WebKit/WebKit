@@ -26,15 +26,16 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "JSDOMPromiseDeferred.h"
-
 namespace WebCore {
 
 class MediaStreamTrack;
 class RTCDTMFSenderBackend;
 class RTCRtpSender;
-struct RTCRtpSendParameters;
 class ScriptExecutionContext;
+
+struct RTCRtpSendParameters;
+
+template<typename IDLType> class DOMPromiseDeferred;
 
 class RTCRtpSenderBackend {
 public:

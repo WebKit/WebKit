@@ -27,6 +27,7 @@
 #include "NavigatorWebVR.h"
 
 #include "Document.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSVRDisplay.h"
 #include "Navigator.h"
 #include "RuntimeEnabledFeatures.h"

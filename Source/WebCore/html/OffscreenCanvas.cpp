@@ -28,6 +28,7 @@
 
 #include "CanvasRenderingContext.h"
 #include "ImageBitmap.h"
+#include "JSDOMPromiseDeferred.h"
 #include "WebGLRenderingContext.h"
 #include <wtf/IsoMallocInlines.h>
 

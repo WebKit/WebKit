@@ -25,11 +25,10 @@
 
 #pragma once
 
-#include "JSDOMPromiseDeferred.h"
-
 namespace WebCore {
 
 class CachedModuleScriptLoader;
+class DeferredPromise;
 
 class CachedModuleScriptLoaderClient {
 public:

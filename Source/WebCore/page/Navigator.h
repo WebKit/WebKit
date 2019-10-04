@@ -20,7 +20,6 @@
 #pragma once
 
 #include "DOMWindowProperty.h"
-#include "JSDOMPromiseDeferred.h"
 #include "NavigatorBase.h"
 #include "ScriptWrappable.h"
 #include "ShareData.h"
@@ -29,6 +28,7 @@
 
 namespace WebCore {
 
+class DeferredPromise;
 class DOMMimeTypeArray;
 class DOMPluginArray;
 

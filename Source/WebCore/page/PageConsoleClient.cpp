@@ -67,6 +67,7 @@
 #include <JavaScriptCore/ScriptArguments.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
+#include <JavaScriptCore/StrongInlines.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(WEBGL)

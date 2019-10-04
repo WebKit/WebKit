@@ -33,6 +33,7 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "FetchResponse.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSFetchResponse.h"
 
 namespace WebCore {

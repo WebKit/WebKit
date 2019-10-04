@@ -32,6 +32,7 @@
 #include "Element.h"
 #include "ElementTraversal.h"
 #include "JSCustomElementInterface.h"
+#include "JSDOMPromiseDeferred.h"
 #include "MathMLNames.h"
 #include "QualifiedName.h"
 #include "ShadowRoot.h"

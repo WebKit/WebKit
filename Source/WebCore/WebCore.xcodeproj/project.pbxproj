@@ -6631,6 +6631,7 @@
 		2D3EF4451917915C00034184 /* WebActionDisablingCALayerDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebActionDisablingCALayerDelegate.mm; sourceTree = "<group>"; };
 		2D3EF4461917915C00034184 /* WebCoreCALayerExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreCALayerExtras.h; sourceTree = "<group>"; };
 		2D3EF4471917915C00034184 /* WebCoreCALayerExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreCALayerExtras.mm; sourceTree = "<group>"; };
+		2D43EB2D23472BC3002A1ED4 /* ReadableStreamSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReadableStreamSource.cpp; sourceTree = "<group>"; };
 		2D46F04D17B96FBD005647F0 /* IntPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntPoint.cpp; sourceTree = "<group>"; };
 		2D46F04F17B96FD2005647F0 /* IntSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntSize.cpp; sourceTree = "<group>"; };
 		2D4F96F11A1ECC240098BF88 /* TextIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextIndicator.cpp; sourceTree = "<group>"; };
@@ -17938,6 +17939,7 @@
 				4129C9871F58662D009D7403 /* ReadableStreamSink.cpp */,
 				4129C9801F5861C7009D7403 /* ReadableStreamSink.h */,
 				4129C9811F5861C7009D7403 /* ReadableStreamSink.idl */,
+				2D43EB2D23472BC3002A1ED4 /* ReadableStreamSource.cpp */,
 				418C395B1C8F0A610051C8A3 /* ReadableStreamSource.h */,
 				418C395C1C8F0A610051C8A3 /* ReadableStreamSource.idl */,
 				9908B0F11BCACF9100ED0F55 /* StreamInternals.js */,

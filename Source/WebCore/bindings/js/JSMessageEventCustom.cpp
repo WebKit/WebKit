@@ -34,9 +34,7 @@
 
 #include "JSBlob.h"
 #include "JSDOMBinding.h"
-#include "JSDOMConvertBufferSource.h"
-#include "JSDOMConvertInterface.h"
-#include "JSDOMConvertStrings.h"
+#include "JSDOMConvert.h"
 #include "JSDOMWindow.h"
 #include "JSEventTarget.h"
 #include "JSMessagePort.h"

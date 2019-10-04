@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,69 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
 
-#if ENABLE(WEBGPU)
+#include "config.h"
+#include "ReadableStreamSource.h"
 
-#include "IDLTypes.h"
+#include "JSDOMPromiseDeferred.h"
+
+#if ENABLE(STREAMS_API)
 
 namespace WebCore {
 
-class WebGPUAdapter;
+ReadableStreamSource::~ReadableStreamSource() = default;
 
-struct GPURequestAdapterOptions;
+void ReadableStreamSource::start(ReadableStreamDefaultController&& controller, DOMPromiseDeferred<void>&& promise)
+{
+    ASSERT(!m_promise);
+    m_promise = WTF::makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
+    m_controller = WTFMove(controller);
 
-template<typename IDLType> class DOMPromiseDeferred;
+    setActive();
+    doStart();
+}
 
-class WebGPU : public RefCounted<WebGPU> {
-public:
-    static Ref<WebGPU> create();
+void ReadableStreamSource::pull(DOMPromiseDeferred<void>&& promise)
+{
+    ASSERT(!m_promise);
+    ASSERT(m_controller);
 
-    using WebGPUAdapterPromise = DOMPromiseDeferred<IDLInterface<WebGPUAdapter>>;
+    m_promise = WTF::makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
 
-    void requestAdapter(Optional<GPURequestAdapterOptions>&&, WebGPUAdapterPromise&&) const;
+    setActive();
+    doPull();
+}
 
-private:
-    WebGPU() = default;
-};
+void ReadableStreamSource::startFinished()
+{
+    ASSERT(m_promise);
+    m_promise->resolve();
+    m_promise = nullptr;
+    setInactive();
+}
+
+void ReadableStreamSource::pullFinished()
+{
+    ASSERT(m_promise);
+    m_promise->resolve();
+    m_promise = nullptr;
+    setInactive();
+}
+
+void ReadableStreamSource::cancel(JSC::JSValue)
+{
+    clean();
+    doCancel();
+}
+
+void ReadableStreamSource::clean()
+{
+    if (m_promise) {
+        m_promise = nullptr;
+        setInactive();
+    }
+}
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGPU)
+#endif // ENABLE(STREAMS_API)

@@ -30,7 +30,6 @@
 #include "ActiveDOMObject.h"
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
-#include "JSDOMPromiseDeferred.h"
 #include "JSValueInWrappedObject.h"
 #include "PaymentAddress.h"
 #include "PaymentComplete.h"
@@ -41,6 +40,8 @@ namespace WebCore {
 class Document;
 class PaymentRequest;
 struct PaymentValidationErrors;
+
+template<typename IDLType> class DOMPromiseDeferred;
 
 class PaymentResponse final : public ActiveDOMObject, public EventTargetWithInlineData, public RefCounted<PaymentResponse> {
     WTF_MAKE_ISO_ALLOCATED(PaymentResponse);
@@ -123,7 +124,7 @@ private:
     String m_payerEmail;
     String m_payerPhone;
     State m_state { State::Created };
-    Optional<DOMPromiseDeferred<void>> m_retryPromise;
+    std::unique_ptr<DOMPromiseDeferred<void>> m_retryPromise;
     RefPtr<PendingActivity<PaymentResponse>> m_pendingActivity;
 };
 

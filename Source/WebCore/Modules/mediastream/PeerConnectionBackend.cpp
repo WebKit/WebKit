@@ -35,6 +35,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "EventNames.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSRTCSessionDescription.h"
 #include "LibWebRTCCertificateGenerator.h"
 #include "Logging.h"
@@ -82,12 +83,14 @@ PeerConnectionBackend::PeerConnectionBackend(RTCPeerConnection& peerConnection)
 {
 }
 
+PeerConnectionBackend::~PeerConnectionBackend() = default;
+
 void PeerConnectionBackend::createOffer(RTCOfferOptions&& options, PeerConnection::SessionDescriptionPromise&& promise)
 {
     ASSERT(!m_offerAnswerPromise);
     ASSERT(!m_peerConnection.isClosed());
 
-    m_offerAnswerPromise = WTFMove(promise);
+    m_offerAnswerPromise = WTF::makeUnique<PeerConnection::SessionDescriptionPromise>(WTFMove(promise));
     doCreateOffer(WTFMove(options));
 }
 
@@ -124,7 +127,7 @@ void PeerConnectionBackend::createAnswer(RTCAnswerOptions&& options, PeerConnect
     ASSERT(!m_offerAnswerPromise);
     ASSERT(!m_peerConnection.isClosed());
 
-    m_offerAnswerPromise = WTFMove(promise);
+    m_offerAnswerPromise = WTF::makeUnique<PeerConnection::SessionDescriptionPromise>(WTFMove(promise));
     doCreateAnswer(WTFMove(options));
 }
 
@@ -184,7 +187,7 @@ void PeerConnectionBackend::setLocalDescription(RTCSessionDescription& sessionDe
         return;
     }
 
-    m_setDescriptionPromise = WTFMove(promise);
+    m_setDescriptionPromise = WTF::makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
     doSetLocalDescription(sessionDescription);
 }
 
@@ -245,7 +248,7 @@ void PeerConnectionBackend::setRemoteDescription(RTCSessionDescription& sessionD
         return;
     }
 
-    m_setDescriptionPromise = WTFMove(promise);
+    m_setDescriptionPromise = WTF::makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
     doSetRemoteDescription(sessionDescription);
 }
 
@@ -325,7 +328,7 @@ void PeerConnectionBackend::addIceCandidate(RTCIceCandidate* iceCandidate, DOMPr
         promise.reject(Exception { TypeError, "Trying to add a candidate that is missing both sdpMid and sdpMLineIndex"_s });
         return;
     }
-    m_addIceCandidatePromise = WTFMove(promise);
+    m_addIceCandidatePromise = WTF::makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
     doAddIceCandidate(*iceCandidate);
 }
 
@@ -470,6 +473,11 @@ void PeerConnectionBackend::doneGatheringCandidates()
     m_pendingICECandidates.clear();
 }
 
+void PeerConnectionBackend::endOfIceCandidates(DOMPromiseDeferred<void>&& promise)
+{
+    promise.resolve();
+}
+
 void PeerConnectionBackend::registerMDNSName(const String& ipAddress)
 {
     ++m_waitingForMDNSRegistration;
@@ -520,9 +528,9 @@ void PeerConnectionBackend::updateSignalingState(RTCSignalingState newSignalingS
 
 void PeerConnectionBackend::stop()
 {
-    m_offerAnswerPromise = WTF::nullopt;
-    m_setDescriptionPromise = WTF::nullopt;
-    m_addIceCandidatePromise = WTF::nullopt;
+    m_offerAnswerPromise = nullptr;
+    m_setDescriptionPromise = nullptr;
+    m_addIceCandidatePromise = nullptr;
 
     m_pendingTrackEvents.clear();
 

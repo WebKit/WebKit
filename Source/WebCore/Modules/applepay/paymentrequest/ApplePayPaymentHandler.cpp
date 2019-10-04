@@ -41,6 +41,7 @@
 #include "JSApplePayPayment.h"
 #include "JSApplePayPaymentMethod.h"
 #include "JSApplePayRequest.h"
+#include "JSDOMConvert.h"
 #include "LinkIconCollector.h"
 #include "MerchantValidationEvent.h"
 #include "Page.h"
@@ -56,6 +57,7 @@
 #include "PaymentResponse.h"
 #include "PaymentValidationErrors.h"
 #include "Settings.h"
+#include <JavaScriptCore/JSONObject.h>
 
 namespace WebCore {
 

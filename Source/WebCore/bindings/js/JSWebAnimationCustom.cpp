@@ -32,6 +32,7 @@
 #include "JSCSSAnimation.h"
 #include "JSCSSTransition.h"
 #include "JSDOMConstructor.h"
+#include "JSDOMConvert.h"
 
 namespace WebCore {
 

@@ -26,11 +26,11 @@
 #pragma once
 
 #include "GenericTaskQueue.h"
-#include "JSDOMPromiseDeferred.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
+class DeferredPromise;
 class Document;
 struct MediaDecodingConfiguration;
 struct MediaEncodingConfiguration;

@@ -33,6 +33,7 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSOverconstrainedError.h"
 #include "MediaConstraints.h"
 #include "MediaStream.h"
@@ -379,7 +380,7 @@ static MediaConstraints createMediaConstraints(const Optional<MediaTrackConstrai
 
 void MediaStreamTrack::applyConstraints(const Optional<MediaTrackConstraints>& constraints, DOMPromiseDeferred<void>&& promise)
 {
-    m_promise = WTFMove(promise);
+    m_promise = WTF::makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
 
     auto completionHandler = [this, weakThis = makeWeakPtr(*this), constraints](auto&& error) mutable {
         if (!weakThis || !m_promise)

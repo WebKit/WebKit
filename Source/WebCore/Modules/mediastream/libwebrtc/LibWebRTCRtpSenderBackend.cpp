@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
+#include "JSDOMPromiseDeferred.h"
 #include "LibWebRTCDTMFSenderBackend.h"
 #include "LibWebRTCPeerConnectionBackend.h"
 #include "LibWebRTCUtils.h"

@@ -40,6 +40,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSRTCPeerConnection.h"
 #include "Logging.h"
 #include "MediaEndpointConfiguration.h"

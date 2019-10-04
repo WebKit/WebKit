@@ -38,6 +38,7 @@
 #include "HTMLObjectElement.h"
 #include "HTMLParserIdioms.h"
 #include "InspectorInstrumentation.h"
+#include "JSDOMPromiseDeferred.h"
 #include "Page.h"
 #include "RenderImage.h"
 #include "RenderSVGImage.h"

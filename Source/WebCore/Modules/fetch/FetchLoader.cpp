@@ -33,6 +33,7 @@
 #include "CachedResourceRequestInitiators.h"
 #include "ContentSecurityPolicy.h"
 #include "FetchBody.h"
+#include "FetchBodyConsumer.h"
 #include "FetchLoaderClient.h"
 #include "FetchRequest.h"
 #include "ResourceError.h"

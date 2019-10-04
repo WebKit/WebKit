@@ -29,6 +29,7 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUErrorScopes.h"
+#include "JSDOMPromiseDeferred.h"
 #include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {

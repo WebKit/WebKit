@@ -32,7 +32,6 @@
 
 #include "ExceptionOr.h"
 #include "GenericTaskQueue.h"
-#include "JSDOMPromiseDeferred.h"
 #include "MediaKeySessionType.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -44,7 +43,9 @@ class CDM;
 class CDMClient;
 class CDMInstance;
 class BufferSource;
+class DeferredPromise;
 class MediaKeySession;
+class ScriptExecutionContext;
 
 class MediaKeys : public RefCounted<MediaKeys>, public CanMakeWeakPtr<MediaKeys> {
 public:

@@ -31,6 +31,7 @@
 #include "ActiveDOMCallbackMicrotask.h"
 #include "DOMWrapperWorld.h"
 #include "JSDOMGlobalObjectTask.h"
+#include "JSDOMGuardedObject.h"
 #include "JSDedicatedWorkerGlobalScope.h"
 #include "JSMicrotaskCallback.h"
 #include "JSWorkerGlobalScope.h"

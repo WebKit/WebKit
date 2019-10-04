@@ -33,6 +33,7 @@
 #include "AuthenticatorAttestationResponse.h"
 #include "AuthenticatorCoordinatorClient.h"
 #include "JSBasicCredential.h"
+#include "JSDOMPromiseDeferred.h"
 #include "PublicKeyCredential.h"
 #include "PublicKeyCredentialCreationOptions.h"
 #include "PublicKeyCredentialData.h"

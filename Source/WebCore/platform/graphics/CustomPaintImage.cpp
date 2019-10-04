@@ -37,6 +37,7 @@
 #include "ImageBitmap.h"
 #include "ImageBuffer.h"
 #include "JSCSSPaintCallback.h"
+#include "JSDOMExceptionHandling.h"
 #include "PaintRenderingContext2D.h"
 #include "RenderElement.h"
 #include "StylePropertyMap.h"

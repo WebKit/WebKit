@@ -31,6 +31,7 @@
 
 #if ENABLE(STREAMS_API)
 
+#include "JSDOMPromiseDeferred.h"
 
 namespace WebCore {
 using namespace JSC;

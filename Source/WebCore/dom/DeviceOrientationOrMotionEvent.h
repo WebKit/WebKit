@@ -26,11 +26,13 @@
 #pragma once
 
 #include "DeviceOrientationOrMotionPermissionState.h"
-#include "JSDOMPromiseDeferred.h"
+#include "IDLTypes.h"
 
 namespace WebCore {
 
 class Document;
+
+template<typename IDLType> class DOMPromiseDeferred;
 
 class DeviceOrientationOrMotionEvent {
 public:

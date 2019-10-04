@@ -30,6 +30,7 @@
 
 #include "WHLSLCallExpression.h"
 #include "WHLSLParser.h"
+#include "WHLSLProgram.h"
 #include "WHLSLStandardLibrary.h"
 #include "WHLSLStandardLibraryFunctionMap.h"
 #include "WHLSLVisitor.h"

@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "DOMPromiseProxy.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"

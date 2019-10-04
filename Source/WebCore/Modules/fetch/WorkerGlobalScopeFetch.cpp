@@ -30,6 +30,7 @@
 #include "WorkerGlobalScopeFetch.h"
 
 #include "FetchResponse.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSFetchResponse.h"
 #include "WorkerGlobalScope.h"
 

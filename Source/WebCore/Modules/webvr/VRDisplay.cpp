@@ -31,6 +31,7 @@
 #include "DOMException.h"
 #include "DOMWindow.h"
 #include "EventNames.h"
+#include "JSDOMPromiseDeferred.h"
 #include "Page.h"
 #include "ScriptedAnimationController.h"
 #include "UserGestureIndicator.h"

@@ -33,7 +33,7 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "JSDOMPromiseDeferred.h"
+#include "IDLTypes.h"
 #include "LibWebRTCProvider.h"
 #include "RTCRtpSendParameters.h"
 #include "RTCSessionDescription.h"
@@ -43,6 +43,7 @@
 
 namespace WebCore {
 
+class DeferredPromise;
 class Document;
 class MediaStream;
 class MediaStreamTrack;
@@ -56,12 +57,15 @@ class RTCRtpSender;
 class RTCRtpTransceiver;
 class RTCSessionDescription;
 class RTCStatsReport;
+class ScriptExecutionContext;
 
 struct MediaEndpointConfiguration;
 struct RTCAnswerOptions;
 struct RTCDataChannelInit;
 struct RTCOfferOptions;
 struct RTCRtpTransceiverInit;
+
+template<typename IDLType> class DOMPromiseDeferred;
 
 namespace PeerConnection {
 using SessionDescriptionPromise = DOMPromiseDeferred<IDLDictionary<RTCSessionDescription::Init>>;
@@ -83,7 +87,7 @@ public:
     static Optional<RTCRtpCapabilities> senderCapabilities(ScriptExecutionContext&, const String& kind);
 
     explicit PeerConnectionBackend(RTCPeerConnection&);
-    virtual ~PeerConnectionBackend() = default;
+    virtual ~PeerConnectionBackend();
 
     void createOffer(RTCOfferOptions&&, PeerConnection::SessionDescriptionPromise&&);
     void createAnswer(RTCAnswerOptions&&, PeerConnection::SessionDescriptionPromise&&);
@@ -212,7 +216,7 @@ private:
     virtual void doSetLocalDescription(RTCSessionDescription&) = 0;
     virtual void doSetRemoteDescription(RTCSessionDescription&) = 0;
     virtual void doAddIceCandidate(RTCIceCandidate&) = 0;
-    virtual void endOfIceCandidates(DOMPromiseDeferred<void>&& promise) { promise.resolve(); }
+    virtual void endOfIceCandidates(DOMPromiseDeferred<void>&&);
     virtual void doStop() = 0;
 
     void registerMDNSName(const String& ipAddress);
@@ -221,9 +225,9 @@ protected:
     RTCPeerConnection& m_peerConnection;
 
 private:
-    Optional<PeerConnection::SessionDescriptionPromise> m_offerAnswerPromise;
-    Optional<DOMPromiseDeferred<void>> m_setDescriptionPromise;
-    Optional<DOMPromiseDeferred<void>> m_addIceCandidatePromise;
+    std::unique_ptr<PeerConnection::SessionDescriptionPromise> m_offerAnswerPromise;
+    std::unique_ptr<DOMPromiseDeferred<void>> m_setDescriptionPromise;
+    std::unique_ptr<DOMPromiseDeferred<void>> m_addIceCandidatePromise;
 
     bool m_shouldFilterICECandidates { true };
     struct PendingICECandidate {

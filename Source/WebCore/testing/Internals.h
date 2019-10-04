@@ -31,7 +31,7 @@
 #include "Cookie.h"
 #include "ExceptionOr.h"
 #include "HEVCUtilities.h"
-#include "JSDOMPromiseDeferred.h"
+#include "IDLTypes.h"
 #include "OrientationNotifier.h"
 #include "PageConsoleClient.h"
 #include "RealtimeMediaSource.h"
@@ -96,8 +96,10 @@ class StringCallback;
 class StyleSheet;
 class TimeRanges;
 class TypeConversions;
+class UnsuspendableActiveDOMObject;
 class VoidCallback;
 class WebGLRenderingContext;
+class WindowProxy;
 class XMLHttpRequest;
 
 #if ENABLE(VIDEO_TRACK)
@@ -108,7 +110,7 @@ class TextTrackCueGeneric;
 class ServiceWorker;
 #endif
 
-class UnsuspendableActiveDOMObject;
+template<typename IDLType> class DOMPromiseDeferred;
 
 class Internals final : public RefCounted<Internals>, private ContextDestructionObserver
 #if ENABLE(MEDIA_STREAM)
@@ -898,7 +900,7 @@ private:
     unsigned long m_trackVideoSampleCount { 0 };
     unsigned long m_trackAudioSampleCount { 0 };
     RefPtr<MediaStreamTrack> m_track;
-    Optional<TrackFramePromise> m_nextTrackFramePromise;
+    std::unique_ptr<TrackFramePromise> m_nextTrackFramePromise;
 #endif
 
     std::unique_ptr<InspectorStubFrontend> m_inspectorFrontend;

@@ -33,6 +33,7 @@
 
 #include "CDM.h"
 #include "CDMInstance.h"
+#include "DOMPromiseProxy.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "Logging.h"
@@ -63,6 +64,7 @@ MediaKeySession::MediaKeySession(ScriptExecutionContext& context, WeakPtr<MediaK
     : ActiveDOMObject(&context)
     , m_keys(WTFMove(keys))
     , m_expiration(std::numeric_limits<double>::quiet_NaN())
+    , m_closedPromise(makeUniqueRef<ClosedPromise>())
     , m_keyStatuses(MediaKeyStatusMap::create(*this))
     , m_useDistinctiveIdentifier(useDistinctiveIdentifier)
     , m_sessionType(sessionType)
@@ -709,7 +711,7 @@ void MediaKeySession::sessionClosed()
 
     // 5. Let promise be the closed attribute of the session.
     // 6. Resolve promise.
-    m_closedPromise.resolve();
+    m_closedPromise->resolve();
 }
 
 String MediaKeySession::mediaKeysStorageDirectory() const

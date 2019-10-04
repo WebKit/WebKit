@@ -30,7 +30,7 @@
 #include "EventTarget.h"
 #include "GPUDevice.h"
 #include "GPUErrorScopes.h"
-#include "JSDOMPromiseDeferred.h"
+#include "IDLTypes.h"
 #include "WebGPUAdapter.h"
 #include "WebGPUQueue.h"
 #include "WebGPUSwapChainDescriptor.h"
@@ -71,6 +71,8 @@ struct WebGPURenderPipelineDescriptor;
 struct WebGPUShaderModuleDescriptor;
 
 enum class GPUErrorFilter;
+
+template<typename IDLType> class DOMPromiseDeferred;
 
 using ErrorIDLUnion = IDLUnion<IDLInterface<GPUOutOfMemoryError>, IDLInterface<GPUValidationError>>;
 using ErrorPromise = DOMPromiseDeferred<IDLNullable<ErrorIDLUnion>>;

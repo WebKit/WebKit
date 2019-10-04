@@ -33,6 +33,7 @@
 
 #include "CDM.h"
 #include "Document.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSMediaKeySystemAccess.h"
 #include "Logging.h"
 

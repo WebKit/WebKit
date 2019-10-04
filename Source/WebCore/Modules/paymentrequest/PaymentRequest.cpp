@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSPaymentDetailsUpdate.h"
 #include "JSPaymentResponse.h"
 #include "Page.h"
@@ -410,7 +411,7 @@ void PaymentRequest::show(Document& document, RefPtr<DOMPromise>&& detailsPromis
 
     m_state = State::Interactive;
     ASSERT(!m_showPromise);
-    m_showPromise = WTFMove(promise);
+    m_showPromise = WTF::makeUnique<ShowPromise>(WTFMove(promise));
 
     RefPtr<PaymentHandler> selectedPaymentHandler;
     for (auto& paymentMethod : m_serializedMethodData) {
@@ -468,7 +469,7 @@ void PaymentRequest::abortWithException(Exception&& exception)
 
 void PaymentRequest::settleShowPromise(ExceptionOr<PaymentResponse&>&& result)
 {
-    if (auto showPromise = std::exchange(m_showPromise, WTF::nullopt))
+    if (auto showPromise = std::exchange(m_showPromise, nullptr))
         showPromise->settle(WTFMove(result));
 }
 

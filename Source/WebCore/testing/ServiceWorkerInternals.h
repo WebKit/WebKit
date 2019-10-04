@@ -27,7 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "JSDOMPromiseDeferred.h"
+#include "IDLTypes.h"
 #include "ServiceWorkerIdentifier.h"
 #include <wtf/RefCounted.h>
 
@@ -36,6 +36,8 @@ namespace WebCore {
 class FetchEvent;
 class FetchResponse;
 class ScriptExecutionContext;
+
+template<typename IDLType> class DOMPromiseDeferred;
 
 class WEBCORE_TESTSUPPORT_EXPORT ServiceWorkerInternals : public RefCounted<ServiceWorkerInternals> {
 public:

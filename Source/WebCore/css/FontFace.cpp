@@ -35,6 +35,7 @@
 #include "CSSUnicodeRangeValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
+#include "DOMPromiseProxy.h"
 #include "Document.h"
 #include "FontVariantBuilder.h"
 #include "JSFontFace.h"
@@ -126,14 +127,14 @@ Ref<FontFace> FontFace::create(CSSFontFace& face)
 
 FontFace::FontFace(CSSFontSelector& fontSelector)
     : m_backing(CSSFontFace::create(&fontSelector, nullptr, this))
-    , m_loadedPromise(*this, &FontFace::loadedPromiseResolve)
+    , m_loadedPromise(makeUniqueRef<LoadedPromise>(*this, &FontFace::loadedPromiseResolve))
 {
     m_backing->addClient(*this);
 }
 
 FontFace::FontFace(CSSFontFace& face)
     : m_backing(face)
-    , m_loadedPromise(*this, &FontFace::loadedPromiseResolve)
+    , m_loadedPromise(makeUniqueRef<LoadedPromise>(*this, &FontFace::loadedPromiseResolve))
 {
     m_backing->addClient(*this);
 }
@@ -463,15 +464,15 @@ void FontFace::fontStateChanged(CSSFontFace& face, CSSFontFace::Status, CSSFontF
     case CSSFontFace::Status::Success:
         // FIXME: This check should not be needed, but because FontFace's are sometimes adopted after they have already
         // gone through a load cycle, we can sometimes come back through here and try to resolve the promise again.  
-        if (!m_loadedPromise.isFulfilled())
-            m_loadedPromise.resolve(*this);
+        if (!m_loadedPromise->isFulfilled())
+            m_loadedPromise->resolve(*this);
         deref();
         return;
     case CSSFontFace::Status::Failure:
         // FIXME: This check should not be needed, but because FontFace's are sometimes adopted after they have already
         // gone through a load cycle, we can sometimes come back through here and try to resolve the promise again.  
-        if (!m_loadedPromise.isFulfilled())
-            m_loadedPromise.reject(Exception { NetworkError });
+        if (!m_loadedPromise->isFulfilled())
+            m_loadedPromise->reject(Exception { NetworkError });
         deref();
         return;
     case CSSFontFace::Status::Pending:
@@ -483,7 +484,7 @@ void FontFace::fontStateChanged(CSSFontFace& face, CSSFontFace::Status, CSSFontF
 auto FontFace::load() -> LoadedPromise&
 {
     m_backing->load();
-    return m_loadedPromise;
+    return m_loadedPromise.get();
 }
 
 FontFace& FontFace::loadedPromiseResolve()

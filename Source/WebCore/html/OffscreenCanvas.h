@@ -27,10 +27,11 @@
 
 #include "AffineTransform.h"
 #include "CanvasBase.h"
+#include "ContextDestructionObserver.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
+#include "IDLTypes.h"
 #include "IntSize.h"
-#include "JSDOMPromiseDeferred.h"
 #include "ScriptWrappable.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>

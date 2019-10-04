@@ -26,9 +26,9 @@
 #include "config.h"
 #include "JSWorkerGlobalScope.h"
 
+#include "JSDOMExceptionHandling.h"
 #include "WorkerGlobalScope.h"
 #include <JavaScriptCore/JSMicrotask.h>
-
 
 namespace WebCore {
 using namespace JSC;

@@ -33,6 +33,7 @@
 
 #include "CDM.h"
 #include "CDMInstance.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSMediaKeys.h"
 #include "MediaKeys.h"
 #include "MediaKeysRequirement.h"

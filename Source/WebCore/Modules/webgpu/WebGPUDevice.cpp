@@ -51,6 +51,7 @@
 #include "GPUUncapturedErrorEvent.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMConvertBufferSource.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSGPUOutOfMemoryError.h"
 #include "JSGPUValidationError.h"
 #include "JSWebGPUBuffer.h"

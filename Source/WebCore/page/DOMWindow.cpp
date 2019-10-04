@@ -69,6 +69,7 @@
 #include "HTTPParsers.h"
 #include "History.h"
 #include "InspectorInstrumentation.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSDOMWindowBase.h"
 #include "JSExecState.h"
 #include "Location.h"

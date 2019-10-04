@@ -40,6 +40,7 @@
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "IntRect.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSImageBitmap.h"
 #include "LayoutSize.h"
 #include "RenderElement.h"

@@ -32,13 +32,13 @@
 #include "ExceptionOr.h"
 #include "FetchBodyConsumer.h"
 #include "FormData.h"
-#include "JSDOMPromiseDeferred.h"
 #include "ReadableStream.h"
 #include "URLSearchParams.h"
 #include <wtf/Variant.h>
 
 namespace WebCore {
 
+class DeferredPromise;
 class FetchBodyOwner;
 class FetchBodySource;
 class ScriptExecutionContext;
@@ -49,7 +49,7 @@ public:
     void blob(FetchBodyOwner&, Ref<DeferredPromise>&&, const String&);
     void json(FetchBodyOwner&, Ref<DeferredPromise>&&);
     void text(FetchBodyOwner&, Ref<DeferredPromise>&&);
-    void formData(FetchBodyOwner&, Ref<DeferredPromise>&& promise) { promise.get().reject(NotSupportedError); }
+    void formData(FetchBodyOwner&, Ref<DeferredPromise>&&);
 
 #if ENABLE(STREAMS_API)
     void consumeAsStream(FetchBodyOwner&, FetchBodySource&);

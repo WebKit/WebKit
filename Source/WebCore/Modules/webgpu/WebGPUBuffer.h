@@ -30,7 +30,7 @@
 #include "GPUBuffer.h"
 #include "GPUBufferUsage.h"
 #include "GPUObjectBase.h"
-#include "JSDOMPromiseDeferred.h"
+#include "IDLTypes.h"
 #include <wtf/RefPtr.h>
 
 namespace JSC {
@@ -40,6 +40,8 @@ class ArrayBuffer;
 namespace WebCore {
 
 struct GPUBufferDescriptor;
+
+template<typename IDLType> class DOMPromiseDeferred;
 
 class WebGPUBuffer : public GPUObjectBase {
 public:

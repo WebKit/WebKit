@@ -27,6 +27,7 @@
 #include "DeviceOrientationOrMotionEvent.h"
 
 #include "Document.h"
+#include "JSDOMPromiseDeferred.h"
 
 namespace WebCore {
 

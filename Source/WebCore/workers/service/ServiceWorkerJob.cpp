@@ -53,6 +53,11 @@ ServiceWorkerJob::~ServiceWorkerJob()
     ASSERT(m_creationThread.ptr() == &Thread::current());
 }
 
+RefPtr<DeferredPromise> ServiceWorkerJob::takePromise()
+{
+    return WTFMove(m_promise);
+}
+
 void ServiceWorkerJob::failedWithException(const Exception& exception)
 {
     ASSERT(m_creationThread.ptr() == &Thread::current());

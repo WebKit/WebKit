@@ -29,11 +29,11 @@
 #pragma once
 
 #include "FetchRequest.h"
-#include "JSDOMPromiseDeferred.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
+class DeferredPromise;
 class DOMWindow;
 
 class DOMWindowFetch {

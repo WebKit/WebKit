@@ -27,7 +27,6 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
-#include "JSDOMPromiseDeferred.h"
 #include "VREye.h"
 #include "VRLayerInit.h"
 #include "VRPlatformDisplayClient.h"
@@ -36,6 +35,7 @@
 namespace WebCore {
 
 enum ExceptionCode;
+class DeferredPromise;
 class RequestAnimationFrameCallback;
 class ScriptedAnimationController;
 class VRDisplayCapabilities;

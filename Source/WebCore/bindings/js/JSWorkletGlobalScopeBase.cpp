@@ -31,6 +31,7 @@
 
 #include "DOMWrapperWorld.h"
 #include "JSDOMGlobalObjectTask.h"
+#include "JSDOMGuardedObject.h"
 #include "JSWorkletGlobalScope.h"
 #include "WorkletGlobalScope.h"
 #include "WorkletScriptController.h"

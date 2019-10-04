@@ -30,6 +30,7 @@
 
 #include "Document.h"
 #include "InspectorInstrumentation.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSWebGPUDevice.h"
 
 namespace WebCore {

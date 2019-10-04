@@ -33,7 +33,6 @@
 #include "DoubleRange.h"
 #include "EventTarget.h"
 #include "GenericTaskQueue.h"
-#include "JSDOMPromiseDeferred.h"
 #include "LongRange.h"
 #include "MediaProducer.h"
 #include "MediaStreamTrackPrivate.h"
@@ -46,6 +45,8 @@ class AudioSourceProvider;
 class Document;
 
 struct MediaTrackConstraints;
+
+template<typename IDLType> class DOMPromiseDeferred;
 
 class MediaStreamTrack
     : public RefCounted<MediaStreamTrack>
@@ -201,7 +202,7 @@ private:
     Vector<Observer*> m_observers;
 
     MediaTrackConstraints m_constraints;
-    Optional<DOMPromiseDeferred<void>> m_promise;
+    std::unique_ptr<DOMPromiseDeferred<void>> m_promise;
     GenericTaskQueue<ScriptExecutionContext> m_taskQueue;
     GenericTaskQueue<Timer> m_eventTaskQueue;
 

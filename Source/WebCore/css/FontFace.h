@@ -27,7 +27,8 @@
 
 #include "CSSFontFace.h"
 #include "CSSPropertyNames.h"
-#include "DOMPromiseProxy.h"
+#include "IDLTypes.h"
+#include <wtf/UniqueRef.h>
 #include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
 
@@ -37,6 +38,8 @@ class ArrayBufferView;
 }
 
 namespace WebCore {
+
+template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 
 class FontFace final : public RefCounted<FontFace>, public CanMakeWeakPtr<FontFace>, private CSSFontFace::Client {
 public:
@@ -77,7 +80,7 @@ public:
     LoadStatus status() const;
 
     using LoadedPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<FontFace>>;
-    LoadedPromise& loaded() { return m_loadedPromise; }
+    LoadedPromise& loaded() { return m_loadedPromise.get(); }
     LoadedPromise& load();
 
     void adopt(CSSFontFace&);
@@ -99,7 +102,7 @@ private:
     FontFace& loadedPromiseResolve();
 
     Ref<CSSFontFace> m_backing;
-    LoadedPromise m_loadedPromise;
+    UniqueRef<LoadedPromise> m_loadedPromise;
 };
 
 }

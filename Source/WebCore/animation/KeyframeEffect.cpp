@@ -41,6 +41,7 @@
 #include "GeometryUtilities.h"
 #include "JSCompositeOperation.h"
 #include "JSCompositeOperationOrAuto.h"
+#include "JSDOMConvert.h"
 #include "JSKeyframeEffect.h"
 #include "RenderBox.h"
 #include "RenderBoxModelObject.h"

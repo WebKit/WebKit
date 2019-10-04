@@ -27,7 +27,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "JSDOMPromiseDeferred.h"
+#include "IDLTypes.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
@@ -40,6 +40,8 @@ class SecurityOrigin;
 
 struct PublicKeyCredentialCreationOptions;
 struct PublicKeyCredentialRequestOptions;
+
+template<typename IDLType> class DOMPromiseDeferred;
 
 using CredentialPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<BasicCredential>>>;
 

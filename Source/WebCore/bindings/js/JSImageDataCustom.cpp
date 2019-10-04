@@ -26,14 +26,13 @@
 #include "config.h"
 #include "JSImageData.h"
 
-#include "JSDOMConvertBufferSource.h"
+#include "JSDOMConvert.h"
 #include "JSDOMWrapperCache.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/IdentifierInlines.h>
 #include <JavaScriptCore/JSObjectInlines.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
-
 
 namespace WebCore {
 using namespace JSC;

@@ -31,7 +31,6 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "GenericTaskQueue.h"
-#include "JSDOMPromiseDeferred.h"
 #include "MediaKeySystemConfiguration.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -39,6 +38,7 @@
 namespace WebCore {
 
 class CDM;
+class DeferredPromise;
 class MediaKeys;
 
 class MediaKeySystemAccess : public RefCounted<MediaKeySystemAccess> {

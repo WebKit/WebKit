@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "JSDOMBinding.h"
+#include "JSDOMPromiseDeferred.h"
 #include "LoadableModuleScript.h"
 #include "MIMETypeRegistry.h"
 #include "ModuleFetchFailureKind.h"

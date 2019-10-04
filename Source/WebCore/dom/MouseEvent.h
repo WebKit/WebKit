@@ -31,6 +31,11 @@
 #include "PlatformTouchEventIOS.h"
 #endif
 
+namespace JSC {
+class ExecState;
+class JSValue;
+}
+
 namespace WebCore {
 
 class DataTransfer;

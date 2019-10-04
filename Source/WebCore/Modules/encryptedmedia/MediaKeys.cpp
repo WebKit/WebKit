@@ -34,6 +34,7 @@
 #include "CDM.h"
 #include "CDMClient.h"
 #include "CDMInstance.h"
+#include "JSDOMPromiseDeferred.h"
 #include "Logging.h"
 #include "MediaKeySession.h"
 #include "SharedBuffer.h"

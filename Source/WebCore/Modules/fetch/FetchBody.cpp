@@ -35,6 +35,7 @@
 #include "FetchHeaders.h"
 #include "HTTPHeaderValues.h"
 #include "HTTPParsers.h"
+#include "JSDOMPromiseDeferred.h"
 #include "ReadableStreamSource.h"
 #include <JavaScriptCore/ArrayBufferView.h>
 
@@ -127,6 +128,11 @@ void FetchBody::text(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
     }
     m_consumer.setType(FetchBodyConsumer::Type::Text);
     consume(owner, WTFMove(promise));
+}
+
+void FetchBody::formData(FetchBodyOwner&, Ref<DeferredPromise>&& promise)
+{
+    promise.get().reject(NotSupportedError);
 }
 
 void FetchBody::consumeOnceLoadingFinished(FetchBodyConsumer::Type type, Ref<DeferredPromise>&& promise, const String& contentType)

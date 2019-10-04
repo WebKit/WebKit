@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "JSDOMPromiseDeferred.h"
 #include "Logging.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerContainer.h"

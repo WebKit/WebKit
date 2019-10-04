@@ -27,7 +27,6 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "JSDOMPromiseDeferred.h"
 #include "ResourceResponse.h"
 #include "ServiceWorkerJobClient.h"
 #include "ServiceWorkerJobData.h"
@@ -63,7 +62,7 @@ public:
 
     const ServiceWorkerJobData& data() const { return m_jobData; }
     bool hasPromise() const { return !!m_promise; }
-    RefPtr<DeferredPromise> takePromise() { return WTFMove(m_promise); }
+    RefPtr<DeferredPromise> takePromise();
 
     void fetchScriptWithContext(ScriptExecutionContext&, FetchOptions::Cache);
 

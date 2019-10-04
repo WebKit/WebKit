@@ -28,9 +28,9 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "ActiveDOMObject.h"
-#include "DOMPromiseProxy.h"
 #include "EventTarget.h"
 #include "GenericEventQueue.h"
+#include "IDLTypes.h"
 #include "SWClientConnection.h"
 #include "SWServer.h"
 #include "ServiceWorkerJobClient.h"
@@ -47,6 +47,8 @@ class ServiceWorker;
 
 enum class ServiceWorkerUpdateViaCache : uint8_t;
 enum class WorkerType;
+
+template<typename IDLType> class DOMPromiseProxy;
 
 class ServiceWorkerContainer final : public EventTargetWithInlineData, public ActiveDOMObject, public ServiceWorkerJobClient {
     WTF_MAKE_NONCOPYABLE(ServiceWorkerContainer);

@@ -39,6 +39,7 @@
 
 namespace WebCore {
 
+class DeferredPromise;
 class PeerConnectionBackend;
 struct RTCRtpCapabilities;
 

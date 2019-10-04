@@ -29,13 +29,13 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
-#include "JSDOMPromiseDeferred.h"
 #include "SWClientConnection.h"
 #include "ServiceWorkerRegistrationData.h"
 #include "Timer.h"
 
 namespace WebCore {
 
+class DeferredPromise;
 class ScriptExecutionContext;
 class ServiceWorker;
 class ServiceWorkerContainer;

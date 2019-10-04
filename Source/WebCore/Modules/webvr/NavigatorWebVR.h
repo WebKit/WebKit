@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSDOMPromiseDeferred.h"
+#include "IDLTypes.h"
 #include "Supplementable.h"
 #include <wtf/Vector.h>
 
@@ -35,6 +35,8 @@ class Document;
 class Navigator;
 class Page;
 class VRDisplay;
+
+template<typename IDLType> class DOMPromiseDeferred;
 
 class NavigatorWebVR final : public Supplement<Navigator> {
     WTF_MAKE_FAST_ALLOCATED;

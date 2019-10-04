@@ -1,3 +1,120 @@
+2019-10-04  Tim Horton  <timothy_horton@apple.com>
+
+        Clean up some includes to make the build a bit faster: DOMPromise
+        https://bugs.webkit.org/show_bug.cgi?id=202570
+
+        Reviewed by Chris Dumez.
+
+        No new tests, just reorganizing.
+
+        Apply some profile-guided optimizations to our headers.
+
+        Get JSDOMPromiseDeferred.h and DOMPromiseProxy.h out of WebCore headers.
+        One remains (FetchBodyConsumer.h); I leave it as an exercise to the reader.
+        In my testing, this is worth a reliable 5-6% on the WebCore Build Benchmark.
+
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/MediaKeySystemAccess.cpp:
+        * Modules/encryptedmedia/MediaKeySystemAccess.h:
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        * Modules/encryptedmedia/MediaKeys.h:
+        * Modules/encryptedmedia/NavigatorEME.cpp:
+        * Modules/encryptedmedia/NavigatorEME.h:
+        * Modules/fetch/DOMWindowFetch.cpp:
+        * Modules/fetch/DOMWindowFetch.h:
+        * Modules/fetch/FetchBody.cpp:
+        * Modules/fetch/FetchBody.h:
+        * Modules/fetch/FetchLoader.cpp:
+        * Modules/fetch/FetchLoader.h:
+        * Modules/fetch/WorkerGlobalScopeFetch.cpp:
+        * Modules/fetch/WorkerGlobalScopeFetch.h:
+        * Modules/mediacapabilities/MediaCapabilities.cpp:
+        * Modules/mediacapabilities/MediaCapabilities.h:
+        * Modules/mediastream/MediaDevices.cpp:
+        * Modules/mediastream/MediaDevices.h:
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        * Modules/mediastream/RTCRtpReceiver.h:
+        * Modules/mediastream/RTCRtpSenderBackend.h:
+        * Modules/mediastream/UserMediaRequest.cpp:
+        * Modules/mediastream/UserMediaRequest.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpTransceiverBackend.cpp:
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        * Modules/paymentrequest/PaymentRequest.h:
+        * Modules/paymentrequest/PaymentResponse.cpp:
+        * Modules/paymentrequest/PaymentResponse.h:
+        * Modules/streams/ReadableStreamSource.h:
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webauthn/AuthenticatorCoordinator.cpp:
+        * Modules/webauthn/AuthenticatorCoordinator.h:
+        * Modules/webauthn/PublicKeyCredential.h:
+        * Modules/webgpu/WHLSL/WHLSLPreserveVariableLifetimes.cpp:
+        * Modules/webgpu/WHLSL/WHLSLStandardLibraryUtilities.cpp:
+        * Modules/webgpu/WebGPU.cpp:
+        * Modules/webgpu/WebGPU.h:
+        * Modules/webgpu/WebGPUAdapter.cpp:
+        * Modules/webgpu/WebGPUAdapter.h:
+        * Modules/webgpu/WebGPUBuffer.cpp:
+        * Modules/webgpu/WebGPUBuffer.h:
+        * Modules/webgpu/WebGPUDevice.cpp:
+        * Modules/webgpu/WebGPUDevice.h:
+        * Modules/webvr/NavigatorWebVR.cpp:
+        * Modules/webvr/NavigatorWebVR.h:
+        * Modules/webvr/VRDisplay.cpp:
+        * Modules/webvr/VRDisplay.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/KeyframeEffect.cpp:
+        * animation/WebAnimation.cpp:
+        * animation/WebAnimation.h:
+        * bindings/js/CachedModuleScriptLoader.cpp:
+        * bindings/js/CachedModuleScriptLoaderClient.h:
+        * bindings/js/JSDOMPromiseDeferred.h:
+        * bindings/js/JSHTMLTemplateElementCustom.cpp:
+        * bindings/js/JSImageDataCustom.cpp:
+        * bindings/js/JSReadableStreamSourceCustom.cpp:
+        * bindings/js/JSWebAnimationCustom.cpp:
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        * bindings/js/JSWorkerGlobalScopeCustom.cpp:
+        * bindings/js/JSWorkletGlobalScopeBase.cpp:
+        * bindings/js/ScriptModuleLoader.cpp:
+        * css/FontFace.cpp:
+        * css/FontFace.h:
+        * css/FontFaceSet.cpp:
+        * css/FontFaceSet.h:
+        * dom/CustomElementRegistry.cpp:
+        * dom/DeviceOrientationOrMotionEvent.cpp:
+        * dom/DeviceOrientationOrMotionEvent.h:
+        * dom/MouseEvent.cpp:
+        * dom/MouseEvent.h:
+        * html/CustomPaintCanvas.h:
+        * html/ImageBitmap.cpp:
+        * html/ImageBitmap.h:
+        * html/OffscreenCanvas.cpp:
+        * html/OffscreenCanvas.h:
+        * loader/ImageLoader.cpp:
+        * loader/ImageLoader.h:
+        * page/DOMWindow.cpp:
+        * page/Navigator.h:
+        * platform/graphics/CustomPaintImage.cpp:
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        * testing/ServiceWorkerInternals.h:
+        * testing/ServiceWorkerInternals.mm:
+        * workers/service/ServiceWorkerContainer.cpp:
+        * workers/service/ServiceWorkerContainer.h:
+        * workers/service/ServiceWorkerJob.h:
+        * workers/service/ServiceWorkerRegistration.cpp:
+        * workers/service/ServiceWorkerRegistration.h:
+        * worklets/PaintWorkletGlobalScope.cpp:
+
 2019-10-04  Sihui Liu  <sihui_liu@apple.com>
 
         Layout Test imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html is a Flaky Failure
