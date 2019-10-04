@@ -189,11 +189,6 @@ static WKProcessPool *sharedProcessPool;
     _processPool->allowSpecificHTTPSCertificateForHost(WebKit::WebCertificateInfo::create(WebCore::CertificateInfo((__bridge CFArrayRef)certificateChain)).ptr(), host);
 }
 
-- (void)_registerURLSchemeServiceWorkersCanHandle:(NSString *)scheme
-{
-    _processPool->registerURLSchemeServiceWorkersCanHandle(scheme);
-}
-
 - (void)_registerURLSchemeAsCanDisplayOnlyIfCanRequest:(NSString *)scheme
 {
     _processPool->registerURLSchemeAsCanDisplayOnlyIfCanRequest(scheme);

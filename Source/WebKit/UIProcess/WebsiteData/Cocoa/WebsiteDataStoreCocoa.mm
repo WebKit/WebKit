@@ -180,6 +180,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     if (!parameters.serviceWorkerRegistrationDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.serviceWorkerRegistrationDirectory, parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
     parameters.serviceWorkerProcessTerminationDelayEnabled = m_configuration->serviceWorkerProcessTerminationDelayEnabled();
+    parameters.serviceWorkerRegisteredSchemes = m_configuration->serviceWorkerRegisteredSchemes();
 #endif
 
     parameters.localStorageDirectory = resolvedLocalStorageDirectory();

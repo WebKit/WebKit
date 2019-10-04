@@ -117,6 +117,9 @@ public:
     bool serviceWorkerProcessTerminationDelayEnabled() const { return m_serviceWorkerProcessTerminationDelayEnabled; }
     void setServiceWorkerProcessTerminationDelayEnabled(bool enabled) { m_serviceWorkerProcessTerminationDelayEnabled = enabled; }
 
+    const HashSet<String> serviceWorkerRegisteredSchemes() const { return m_serviceWorkerRegisteredSchemes; }
+    void registerServiceWorkerScheme(String&& scheme) { m_serviceWorkerRegisteredSchemes.add(scheme); }
+    
     const String& sourceApplicationBundleIdentifier() const { return m_sourceApplicationBundleIdentifier; }
     void setSourceApplicationBundleIdentifier(String&& identifier) { m_sourceApplicationBundleIdentifier = WTFMove(identifier); }
 
@@ -179,6 +182,7 @@ private:
     bool m_testingSessionEnabled { false };
     bool m_suppressesConnectionTerminationOnSystemChange { false };
     unsigned m_testSpeedMultiplier { 1 };
+    HashSet<String> m_serviceWorkerRegisteredSchemes;
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
 #endif

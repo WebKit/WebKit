@@ -1,3 +1,17 @@
+2019-10-04  Alex Christensen  <achristensen@webkit.org>
+
+        Move WKProcessPool._registerURLSchemeServiceWorkersCanHandle to _WKWebsiteDataStoreConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=202553
+
+        Reviewed by Youenn Fablet.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::SWServer):
+        * workers/service/server/SWServer.h:
+        (WebCore::SWServer::registeredSchemes const):
+        * workers/service/server/SWServerJobQueue.cpp:
+        (WebCore::SWServerJobQueue::runRegisterJob):
+
 2019-10-04  youenn fablet  <youenn@apple.com>
 
         AbortSignal does not always emit the abort signal

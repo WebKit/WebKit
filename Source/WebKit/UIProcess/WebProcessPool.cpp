@@ -544,9 +544,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     if (!parameters.serviceWorkerRegistrationDirectory)
         parameters.serviceWorkerRegistrationDirectory =  WebKit::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory();
     SandboxExtension::createHandleForReadWriteDirectory(parameters.serviceWorkerRegistrationDirectory, parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
-
-    if (!m_schemesServiceWorkersCanHandle.isEmpty())
-        parameters.urlSchemesServiceWorkersCanHandle = copyToVector(m_schemesServiceWorkersCanHandle);
 #endif
 
     auto localStorageDirectory = m_websiteDataStore ? m_websiteDataStore->resolvedLocalStorageDirectory() : nullString();
@@ -924,7 +921,8 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     parameters.urlSchemesRegisteredAsCORSEnabled = copyToVector(m_schemesToRegisterAsCORSEnabled);
     parameters.urlSchemesRegisteredAsAlwaysRevalidated = copyToVector(m_schemesToRegisterAsAlwaysRevalidated);
     parameters.urlSchemesRegisteredAsCachePartitioned = copyToVector(m_schemesToRegisterAsCachePartitioned);
-    parameters.urlSchemesServiceWorkersCanHandle = copyToVector(m_schemesServiceWorkersCanHandle);
+    if (websiteDataStore)
+        parameters.urlSchemesServiceWorkersCanHandle = copyToVector(websiteDataStore->configuration().serviceWorkerRegisteredSchemes());
     parameters.urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest = copyToVector(m_schemesToRegisterAsCanDisplayOnlyIfCanRequest);
 
     parameters.shouldAlwaysUseComplexTextCodePath = m_alwaysUsesComplexTextCodePath;
@@ -1534,14 +1532,6 @@ void WebProcessPool::registerURLSchemeAsCachePartitioned(const String& urlScheme
 {
     m_schemesToRegisterAsCachePartitioned.add(urlScheme);
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsCachePartitioned(urlScheme));
-}
-
-void WebProcessPool::registerURLSchemeServiceWorkersCanHandle(const String& urlScheme)
-{
-    m_schemesServiceWorkersCanHandle.add(urlScheme);
-    sendToAllProcesses(Messages::AuxiliaryProcess::RegisterURLSchemeServiceWorkersCanHandle(urlScheme));
-    if (m_networkProcess)
-        m_networkProcess->send(Messages::AuxiliaryProcess::RegisterURLSchemeServiceWorkersCanHandle(urlScheme), 0);
 }
 
 void WebProcessPool::registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String& urlScheme)

@@ -1,3 +1,47 @@
+2019-10-04  Alex Christensen  <achristensen@webkit.org>
+
+        Move WKProcessPool._registerURLSchemeServiceWorkersCanHandle to _WKWebsiteDataStoreConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=202553
+
+        Reviewed by Youenn Fablet.
+
+        It was only used for testing, and all the tests that use it still pass with the new SPI.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::addWebsiteDataStore):
+        (WebKit::NetworkProcess::swServerForSession):
+        (WebKit::NetworkProcess::addServiceWorkerSession):
+        * NetworkProcess/NetworkProcess.h:
+        * Shared/AuxiliaryProcess.cpp:
+        (WebKit::AuxiliaryProcess::registerURLSchemeServiceWorkersCanHandle const): Deleted.
+        * Shared/AuxiliaryProcess.h:
+        * Shared/AuxiliaryProcess.messages.in:
+        * Shared/WebsiteDataStoreParameters.cpp:
+        (WebKit::WebsiteDataStoreParameters::encode const):
+        (WebKit::WebsiteDataStoreParameters::decode):
+        * Shared/WebsiteDataStoreParameters.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _registerURLSchemeServiceWorkersCanHandle:]): Deleted.
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration registerURLSchemeServiceWorkersCanHandleForTesting:]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        (WebKit::WebProcessPool::registerURLSchemeServiceWorkersCanHandle): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::serviceWorkerRegisteredSchemes const):
+        (WebKit::WebsiteDataStoreConfiguration::registerServiceWorkerScheme):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2019-10-04  youenn fablet  <youenn@apple.com>
 
         Allow to suspend RTCPeerConnection when not connected

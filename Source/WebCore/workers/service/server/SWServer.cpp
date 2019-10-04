@@ -299,10 +299,11 @@ void SWServer::Connection::syncTerminateWorker(ServiceWorkerIdentifier identifie
         m_server.syncTerminateWorker(*worker);
 }
 
-SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID sessionID, CreateContextConnectionCallback&& callback)
+SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, HashSet<String>&& registeredSchemes, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID sessionID, CreateContextConnectionCallback&& callback)
     : m_originStore(WTFMove(originStore))
     , m_sessionID(sessionID)
     , m_isProcessTerminationDelayEnabled(processTerminationDelayEnabled)
+    , m_registeredSchemes(WTFMove(registeredSchemes))
     , m_createContextConnectionCallback(WTFMove(callback))
 {
     ASSERT(!registrationDatabaseDirectory.isEmpty() || m_sessionID.isEphemeral());

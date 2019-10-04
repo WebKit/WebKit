@@ -195,11 +195,6 @@ void AuxiliaryProcess::shutDown()
     terminate();
 }
 
-void AuxiliaryProcess::registerURLSchemeServiceWorkersCanHandle(const String& urlScheme) const
-{
-    WebCore::SchemeRegistry::registerURLSchemeServiceWorkersCanHandle(urlScheme);
-}
-
 #if !PLATFORM(COCOA)
 void AuxiliaryProcess::platformInitialize()
 {

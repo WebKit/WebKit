@@ -400,6 +400,11 @@ static void checkURLArgument(NSURL *url)
     _configuration->setAllLoadsBlockedByDeviceManagementRestrictionsForTesting(blocked);
 }
 
+- (void)registerURLSchemeServiceWorkersCanHandleForTesting:(NSString *)scheme
+{
+    _configuration->registerServiceWorkerScheme(scheme);
+}
+
 - (API::Object&)_apiObject
 {
     return *_configuration;

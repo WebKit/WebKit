@@ -122,7 +122,6 @@
 
 // Test only.
 - (void)_setAllowsAnySSLCertificateForServiceWorker:(BOOL)allows WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
-- (void)_registerURLSchemeServiceWorkersCanHandle:(NSString *)scheme WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 - (void)_getActivePagesOriginsInWebProcessForTesting:(pid_t)pid completionHandler:(void(^)(NSArray<NSString *> *))completionHandler WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 - (BOOL)_networkProcessHasEntitlementForTesting:(NSString *)entitlement WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 - (void)_clearPermanentCredentialsForProtectionSpace:(NSURLProtectionSpace *)protectionSpace WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
