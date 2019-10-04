@@ -62,6 +62,8 @@ exclude Source/cmake/OptionsWPE.cmake$
 exclude Source/WebInspectorUI/Tools
 
 exclude Source/WebKit/Resources
+directory Source/WebKit/Resources/gtk
+
 exclude Source/WebKit/gtk/NEWS$
 
 # We do want to include the NEWS, but we want it to be in the root of the archive.
