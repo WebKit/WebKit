@@ -2120,6 +2120,9 @@ bool WebGLRenderingContextBase::validateVertexAttributes(unsigned elementCount, 
             return false;
         }
     }
+#else
+    UNUSED_PARAM(elementCount);
+    UNUSED_PARAM(primitiveCount);
 #endif
     
     return true;

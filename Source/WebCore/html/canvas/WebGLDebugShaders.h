@@ -40,7 +40,7 @@ public:
 
     ExtensionName getName() const override;
 
-    String getTranslatedShaderSource(WebGLShader*);
+    String getTranslatedShaderSource(WebGLShader&);
 };
 
 } // namespace WebCore

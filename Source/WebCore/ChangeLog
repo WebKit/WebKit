@@ -1,3 +1,29 @@
+2019-10-03  James Darpinian  <jdarpinian@chromium.org>
+
+        Fix WebGL 1 conformance regressions when USE_ANGLE=1
+        https://bugs.webkit.org/show_bug.cgi?id=202545
+
+        Prevent ANGLE from automatically using ES3 when ES2 is requested.
+
+        WEBGL_debug_shaders extension should not accept or return null.
+
+        Enable ANGLE's new support for emulating RGB on RGBA IOSurfaces.
+
+        Reviewed by Alex Christensen.
+
+        * html/canvas/WebGLDebugShaders.cpp:
+        (WebCore::WebGLDebugShaders::getTranslatedShaderSource):
+        * html/canvas/WebGLDebugShaders.h:
+        * html/canvas/WebGLDebugShaders.idl:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::validateVertexAttributes):
+        * platform/graphics/angle/Extensions3DANGLE.cpp:
+        (WebCore::Extensions3DANGLE::getTranslatedShaderSourceANGLE):
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        * platform/graphics/cocoa/WebGLLayer.mm:
+        (-[WebGLLayer allocateIOSurfaceBackingStoreWithSize:usingAlpha:]):
+
 2019-10-03  Jer Noble  <jer.noble@apple.com>
 
     [iOS] WebContent process can be interrupted during suspension; loses "Now Playing" status

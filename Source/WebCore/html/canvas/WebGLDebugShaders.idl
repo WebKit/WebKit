@@ -28,5 +28,5 @@
     GenerateIsReachable=ImplWebGLRenderingContext,
     NoInterfaceObject,
 ] interface WebGLDebugShaders {
-    DOMString? getTranslatedShaderSource(WebGLShader? shader); // FIXME: The return value and the parameter should not be nullable.
+    DOMString getTranslatedShaderSource(WebGLShader shader);
 };
