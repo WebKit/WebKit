@@ -1,3 +1,25 @@
+2019-10-04  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Preserve auto repeat() in getComputedStyle() for non-grids
+        https://bugs.webkit.org/show_bug.cgi?id=202258
+
+        Reviewed by Javier Fernandez.
+
+        Import WPT tests.
+        There are some test failures because integer repeat() is still expanded
+        at computed-value time (https://webkit.org/b/202259).
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-nogrid-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-nogrid.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-computed.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-nogrid-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-nogrid.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-computed.html: Added.
+        * web-platform-tests/css/css-grid/parsing/w3c-import.log:
+
 2019-10-04  Chris Lord  <clord@igalia.com>
 
         Import 2dcontext Web Platform Tests

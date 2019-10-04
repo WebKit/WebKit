@@ -1,3 +1,35 @@
+2019-10-04  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Preserve auto repeat() in getComputedStyle() for non-grids
+        https://bugs.webkit.org/show_bug.cgi?id=202258
+
+        Reviewed by Javier Fernandez.
+
+        Tests: imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-nogrid.html
+               imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-computed.html
+               imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-nogrid.html
+               imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-rows-computed.html
+
+        Usually, the resolved value of grid-template-rows/columns is the used
+        value, expanding the repeat() notation. But for elements with a non-grid
+        display, the resolved value is just the computed value, with repeat(),
+        since the used value doesn't exist.
+        Before this patch, the repeat() was dropped, and line names after it
+        appeared at the wrong position or were also dropped. There was also an
+        assert failure in debug. This patch fixes the serialization for auto
+        repeat(). Integer repeat() is still expanded at computed-value time, so
+        it's not preserved in getComputedStyle().
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::OrderedNamedLinesCollector::OrderedNamedLinesCollector):
+        (WebCore::OrderedNamedLinesCollectorInsideRepeat::OrderedNamedLinesCollectorInsideRepeat):
+        (WebCore::OrderedNamedLinesCollectorInGridLayout::OrderedNamedLinesCollectorInGridLayout):
+        (WebCore::OrderedNamedLinesCollector::collectLineNamesForIndex const):
+        (WebCore::OrderedNamedLinesCollectorInsideRepeat::collectLineNamesForIndex const):
+        (WebCore::OrderedNamedLinesCollectorInGridLayout::collectLineNamesForIndex const):
+        (WebCore::populateGridTrackList):
+        (WebCore::valueForGridTrackList):
+
 2019-10-04  Antti Koivisto  <antti@apple.com>
 
         [CSS Shadow Parts] Support 'exportparts' attribute
