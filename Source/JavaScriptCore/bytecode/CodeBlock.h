@@ -892,6 +892,9 @@ public:
         return m_unlinkedCode->metadataSizeInBytes();
     }
 
+    MetadataTable* metadataTable() { return m_metadata.get(); }
+    const void* instructionsRawPointer() { return m_instructionsRawPointer; }
+
 protected:
     void finalizeLLIntInlineCaches();
 #if ENABLE(JIT)

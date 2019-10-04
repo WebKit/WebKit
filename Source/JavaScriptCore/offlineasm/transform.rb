@@ -259,7 +259,9 @@ class Label
                     match
                 end
             }
-            Label.forName(codeOrigin, name, @definedInFile)
+            result = Label.forName(codeOrigin, name, @definedInFile)
+            result.setGlobal() if @global
+            result
         else
             self
         end
@@ -272,7 +274,9 @@ class Label
                 raise "Unknown variable `#{var.originalName}` in substitution at #{codeOrigin}" unless mapping[var]
                 mapping[var].name
             }
-            Label.forName(codeOrigin, name, @definedInFile)
+            result = Label.forName(codeOrigin, name, @definedInFile)
+            result.setGlobal() if @global
+            result
         else
             self
         end

@@ -106,7 +106,7 @@ private:
 enum class ExtraInitializationLevel;
 
 struct OSRExitState : RefCounted<OSRExitState> {
-    OSRExitState(OSRExitBase& exit, CodeBlock* codeBlock, CodeBlock* baselineCodeBlock, Operands<ValueRecovery>& operands, Vector<UndefinedOperandSpan>&& undefinedOperandSpans, SpeculationRecovery* recovery, ptrdiff_t stackPointerOffset, int32_t activeThreshold, double memoryUsageAdjustedThreshold, void* jumpTarget, ArrayProfile* arrayProfile)
+    OSRExitState(OSRExitBase& exit, CodeBlock* codeBlock, CodeBlock* baselineCodeBlock, Operands<ValueRecovery>& operands, Vector<UndefinedOperandSpan>&& undefinedOperandSpans, SpeculationRecovery* recovery, ptrdiff_t stackPointerOffset, int32_t activeThreshold, double memoryUsageAdjustedThreshold, void* jumpTarget, ArrayProfile* arrayProfile, bool isJumpToLLInt)
         : exit(exit)
         , codeBlock(codeBlock)
         , baselineCodeBlock(baselineCodeBlock)
@@ -118,6 +118,7 @@ struct OSRExitState : RefCounted<OSRExitState> {
         , memoryUsageAdjustedThreshold(memoryUsageAdjustedThreshold)
         , jumpTarget(jumpTarget)
         , arrayProfile(arrayProfile)
+        , isJumpToLLInt(isJumpToLLInt)
     { }
 
     OSRExitBase& exit;
@@ -131,6 +132,7 @@ struct OSRExitState : RefCounted<OSRExitState> {
     double memoryUsageAdjustedThreshold;
     void* jumpTarget;
     ArrayProfile* arrayProfile;
+    bool isJumpToLLInt;
 
     ExtraInitializationLevel extraInitializationLevel;
     Profiler::OSRExit* profilerExit { nullptr };

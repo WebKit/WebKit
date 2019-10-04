@@ -382,7 +382,6 @@ dfg/DFGOSRExitBase.cpp
 dfg/DFGOSRExitCompilerCommon.cpp
 dfg/DFGOSRExitFuzz.cpp
 dfg/DFGOSRExitJumpPlaceholder.cpp
-dfg/DFGOSRExitPreparation.cpp
 dfg/DFGObjectAllocationSinkingPhase.cpp
 dfg/DFGObjectMaterializationData.cpp
 dfg/DFGOperations.cpp

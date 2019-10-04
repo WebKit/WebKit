@@ -1,3 +1,12 @@
+2019-10-04  Saam Barati  <sbarati@apple.com>
+
+        Allow OSR exit to the LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=197993
+
+        Reviewed by Tadeu Zagallo.
+
+        * Scripts/run-jsc-stress-tests:
+
 2019-10-04  Matt Lewis  <jlewis3@apple.com>
 
         Fix iPad testers platform for downloading build product and fixing tests to run

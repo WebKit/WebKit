@@ -495,6 +495,7 @@ B3O1_OPTIONS = ["--defaultB3OptLevel=1"]
 B3O0_OPTIONS = ["--maxDFGNodesInBasicBlockForPreciseAnalysis=100", "--defaultB3OptLevel=0"]
 FTL_OPTIONS = ["--useFTLJIT=true"]
 PROBE_OSR_EXIT_OPTION = ["--useProbeOSRExit=true"]
+FORCE_LLINT_EXIT_OPTIONS = ["--forceOSRExitToLLInt=true"]
 
 require_relative "webkitruby/jsc-stress-test-writer-#{$testWriter}"
 
@@ -708,7 +709,7 @@ def runFTLNoCJIT(*optionalTestSpecificOptions)
 end
 
 def runFTLNoCJITB3O0(*optionalTestSpecificOptions)
-    run("ftl-no-cjit-b3o0", "--useArrayAllocationProfiling=false", "--forcePolyProto=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + B3O0_OPTIONS + optionalTestSpecificOptions))
+    run("ftl-no-cjit-b3o0", "--useArrayAllocationProfiling=false", "--forcePolyProto=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + B3O0_OPTIONS + FORCE_LLINT_EXIT_OPTIONS + optionalTestSpecificOptions))
 end
 
 def runFTLNoCJITValidate(*optionalTestSpecificOptions)
@@ -728,7 +729,7 @@ def runFTLNoCJITOSRValidation(*optionalTestSpecificOptions)
 end
 
 def runDFGEager(*optionalTestSpecificOptions)
-    run("dfg-eager", *(EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + PROBE_OSR_EXIT_OPTION + optionalTestSpecificOptions))
+    run("dfg-eager", *(EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + PROBE_OSR_EXIT_OPTION + FORCE_LLINT_EXIT_OPTIONS + optionalTestSpecificOptions))
 end
 
 def runDFGEagerNoCJITValidate(*optionalTestSpecificOptions)
@@ -745,7 +746,7 @@ def runFTLEagerWatchdog(*optionalTestSpecificOptions)
 end
 
 def runFTLEagerNoCJITValidate(*optionalTestSpecificOptions)
-    run("ftl-eager-no-cjit", "--validateGraph=true", "--airForceIRCAllocator=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
+    run("ftl-eager-no-cjit", "--validateGraph=true", "--airForceIRCAllocator=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + FORCE_LLINT_EXIT_OPTIONS + optionalTestSpecificOptions))
 end
 
 def runFTLEagerNoCJITB3O1(*optionalTestSpecificOptions)

@@ -464,6 +464,7 @@ namespace JSC {
     v(OptionString, dumpJITMemoryPath, nullptr, Restricted, nullptr) \
     v(Double, dumpJITMemoryFlushInterval, 10, Restricted, "Maximum time in between flushes of the JIT memory dump in seconds.") \
     v(Bool, useUnlinkedCodeBlockJettisoning, false, Normal, "If true, UnlinkedCodeBlock can be jettisoned.") \
+    v(Bool, forceOSRExitToLLInt, false, Normal, "If true, we always exit to the LLInt. If false, we exit to whatever is most convenient.") \
 
 enum OptionEquivalence {
     SameOption,
