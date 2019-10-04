@@ -79,12 +79,7 @@ DrawingAreaCoordinatedGraphics::DrawingAreaCoordinatedGraphics(WebPage& webPage,
 #endif
 }
 
-DrawingAreaCoordinatedGraphics::~DrawingAreaCoordinatedGraphics()
-{
-    discardPreviousLayerTreeHost();
-    if (m_layerTreeHost)
-        m_layerTreeHost->invalidate();
-}
+DrawingAreaCoordinatedGraphics::~DrawingAreaCoordinatedGraphics() = default;
 
 void DrawingAreaCoordinatedGraphics::setNeedsDisplay()
 {
@@ -517,10 +512,6 @@ void DrawingAreaCoordinatedGraphics::exitAcceleratedCompositingModeSoon()
 void DrawingAreaCoordinatedGraphics::discardPreviousLayerTreeHost()
 {
     m_discardPreviousLayerTreeHostTimer.stop();
-    if (!m_previousLayerTreeHost)
-        return;
-
-    m_previousLayerTreeHost->invalidate();
     m_previousLayerTreeHost = nullptr;
 }
 

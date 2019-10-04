@@ -891,7 +891,9 @@ GraphicsLayerFactory* WebChromeClient::graphicsLayerFactory() const
 
 RefPtr<DisplayRefreshMonitor> WebChromeClient::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
 {
-    return m_page.drawingArea()->createDisplayRefreshMonitor(displayID);
+    if (auto* drawingArea = m_page.drawingArea())
+        return drawingArea->createDisplayRefreshMonitor(displayID);
+    return nullptr;
 }
 
 #endif

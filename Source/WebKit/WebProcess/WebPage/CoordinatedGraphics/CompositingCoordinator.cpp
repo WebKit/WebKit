@@ -50,20 +50,25 @@
 namespace WebKit {
 using namespace WebCore;
 
-CompositingCoordinator::CompositingCoordinator(Page* page, CompositingCoordinator::Client& client)
+CompositingCoordinator::CompositingCoordinator(WebPage& page, CompositingCoordinator::Client& client)
     : m_page(page)
     , m_client(client)
     , m_paintingEngine(Nicosia::PaintingEngine::create())
 {
     m_nicosia.scene = Nicosia::Scene::create();
     m_state.nicosia.scene = m_nicosia.scene;
+
+    m_rootLayer = GraphicsLayer::create(this, *this);
+#ifndef NDEBUG
+    m_rootLayer->setName("CompositingCoordinator root layer");
+#endif
+    m_rootLayer->setDrawsContent(false);
+    m_rootLayer->setSize(m_page.size());
 }
 
 CompositingCoordinator::~CompositingCoordinator()
 {
-    m_isDestructing = true;
-
-    purgeBackingStores();
+    ASSERT(!m_rootLayer);
 
     for (auto& registeredLayer : m_registeredLayers.values())
         registeredLayer->setCoordinator(nullptr);
@@ -119,7 +124,7 @@ bool CompositingCoordinator::flushPendingLayerChanges()
     if (m_overlayCompositingLayer)
         m_overlayCompositingLayer->flushCompositingState(FloatRect(FloatPoint(), m_rootLayer->size()));
 
-    bool didSync = m_page->mainFrame().view()->flushCompositingStateIncludingSubframes();
+    bool didSync = m_page.corePage()->mainFrame().view()->flushCompositingStateIncludingSubframes();
 
     auto& coordinatedLayer = downcast<CoordinatedGraphicsLayer>(*m_rootLayer);
     coordinatedLayer.updateContentBuffersIncludingSubLayers();
@@ -169,7 +174,7 @@ bool CompositingCoordinator::flushPendingLayerChanges()
 
 double CompositingCoordinator::timestamp() const
 {
-    auto* document = m_page->mainFrame().document();
+    auto* document = m_page.corePage()->mainFrame().document();
     if (!document)
         return 0;
     return document->domWindow() ? document->domWindow()->nowTimestamp() : document->monotonicTimestamp();
@@ -177,7 +182,7 @@ double CompositingCoordinator::timestamp() const
 
 void CompositingCoordinator::syncDisplayState()
 {
-    m_page->mainFrame().view()->updateLayoutAndStyleIfNeededRecursive();
+    m_page.corePage()->mainFrame().view()->updateLayoutAndStyleIfNeededRecursive();
 }
 
 double CompositingCoordinator::nextAnimationServiceTime() const
@@ -198,18 +203,6 @@ void CompositingCoordinator::initializeRootCompositingLayerIfNeeded()
     m_shouldSyncFrame = true;
 }
 
-void CompositingCoordinator::createRootLayer(const IntSize& size)
-{
-    ASSERT(!m_rootLayer);
-    // Create a root layer.
-    m_rootLayer = GraphicsLayer::create(this, *this);
-#ifndef NDEBUG
-    m_rootLayer->setName("CompositingCoordinator root layer");
-#endif
-    m_rootLayer->setDrawsContent(false);
-    m_rootLayer->setSize(size);
-}
-
 void CompositingCoordinator::syncLayerState()
 {
     m_shouldSyncFrame = true;
@@ -217,32 +210,24 @@ void CompositingCoordinator::syncLayerState()
 
 void CompositingCoordinator::notifyFlushRequired(const GraphicsLayer*)
 {
-    if (!m_isDestructing && !isFlushingLayerChanges())
+    if (m_rootLayer && !isFlushingLayerChanges())
         m_client.notifyFlushRequired();
 }
 
 float CompositingCoordinator::deviceScaleFactor() const
 {
-    return m_page->deviceScaleFactor();
+    return m_page.corePage()->deviceScaleFactor();
 }
 
 float CompositingCoordinator::pageScaleFactor() const
 {
-    return m_page->pageScaleFactor();
+    return m_page.corePage()->pageScaleFactor();
 }
 
 Ref<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(GraphicsLayer::Type layerType, GraphicsLayerClient& client)
 {
     auto layer = adoptRef(*new CoordinatedGraphicsLayer(layerType, client));
-    layer->setCoordinator(this);
-    {
-        auto& compositionLayer = layer->compositionLayer();
-        m_nicosia.state.layers.add(compositionLayer);
-        compositionLayer->setSceneIntegration(m_client.sceneIntegration());
-    }
-    m_registeredLayers.add(layer->id(), layer.ptr());
-    layer->setNeedsVisibleRectAdjustment();
-    notifyFlushRequired(layer.ptr());
+    attachLayer(layer.ptr());
     return layer;
 }
 
@@ -261,7 +246,7 @@ void CompositingCoordinator::setVisibleContentsRect(const FloatRect& rect)
             registeredLayer->setNeedsVisibleRectAdjustment();
     }
 
-    FrameView* view = m_page->mainFrame().view();
+    FrameView* view = m_page.corePage()->mainFrame().view();
     if (view->useFixedLayout() && contentsRectDidChange) {
         // Round the rect instead of enclosing it to make sure that its size stays
         // the same while panning. This can have nasty effects on layout.

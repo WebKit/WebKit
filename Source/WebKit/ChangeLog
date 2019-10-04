@@ -1,5 +1,43 @@
 2019-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Crash in WebChromeClient::createDisplayRefreshMonitor
+        https://bugs.webkit.org/show_bug.cgi?id=202551
+
+        Reviewed by Žan Doberšek.
+
+        The crash happens when the drawing area is destroyed due to a page close. The layer tree host is invalidated
+        causing a layer flush that ends up trying to create a display refresh monitor, which requires the drawing
+        area. We need to null-check the drawing area in WebChromeClient::createDisplayRefreshMonitor() but we should
+        also ensure that layer flush is not performed after layer tree host is destroyed.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createDisplayRefreshMonitor const): Null-check drawing area before using it.
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::CompositingCoordinator): Receive a WebPage instead of a WebCore::Page and
+        create the root layer here.
+        (WebKit::CompositingCoordinator::~CompositingCoordinator): Do not purge backing stores again, invalidate should
+        always be called right before the object is destroyed.
+        (WebKit::CompositingCoordinator::flushPendingLayerChanges): Get WebCore::Page from WebPage.
+        (WebKit::CompositingCoordinator::timestamp const): Ditto.
+        (WebKit::CompositingCoordinator::syncDisplayState): Ditto.
+        (WebKit::CompositingCoordinator::notifyFlushRequired): Do not continue if m_rootLayer is nullptr.
+        (WebKit::CompositingCoordinator::deviceScaleFactor const): Get WebCore::Page from WebPage.
+        (WebKit::CompositingCoordinator::pageScaleFactor const): Ditto.
+        (WebKit::CompositingCoordinator::createGraphicsLayer): Call attachLayer() instead of duplicating the code.
+        (WebKit::CompositingCoordinator::setVisibleContentsRect): Get WebCore::Page from WebPage.
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::discardPreviousLayerTreeHost): Do not call LayerTreeHost::invalidate()
+        that has been removed.
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::LayerTreeHost): Construct the coordinator after the sceneIntegration.
+        (WebKit::LayerTreeHost::~LayerTreeHost): Invalidate everything here now. We don't really need invalidate()
+        method since LayerTreeHost is not refcounted and we always called invalidate right before deleting the object.
+        (WebKit::LayerTreeHost::layerFlushTimerFired): This can't happen on invalid state anymore.
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.h:
+
+2019-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] REGRESSION(r250673): connection to network process is broken after r250673
         https://bugs.webkit.org/show_bug.cgi?id=202575
 
