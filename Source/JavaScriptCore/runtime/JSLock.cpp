@@ -28,7 +28,6 @@
 #include "JSCInlines.h"
 #include "MachineStackMarker.h"
 #include "SamplingProfiler.h"
-#include "VM.h"
 #include "WasmCapabilities.h"
 #include "WasmMachineThreads.h"
 #include <thread>
@@ -68,27 +67,13 @@ JSLockHolder::JSLockHolder(VM& vm)
     : m_vm(&vm)
 {
     m_vm->apiLock().lock();
-    m_previousVMInTLS = VM::exchange(m_vm.get());
-}
-
-JSLockHolder::JSLockHolder(LockIfVMIsLiveTag, JSLock& lock)
-{
-    lock.lock();
-    if (lock.m_vm) {
-        m_vm = lock.m_vm;
-        m_previousVMInTLS = VM::exchange(m_vm.get());
-    } else
-        lock.unlock();
 }
 
 JSLockHolder::~JSLockHolder()
 {
-    if (m_vm) {
-        RefPtr<JSLock> apiLock(&m_vm->apiLock());
-        m_vm = nullptr;
-        apiLock->unlock();
-        VM::exchange(m_previousVMInTLS); // Change VM only after unlocking. Otherwise, willReleaseLock will see previous VM.
-    }
+    RefPtr<JSLock> apiLock(&m_vm->apiLock());
+    m_vm = nullptr;
+    apiLock->unlock();
 }
 
 JSLock::JSLock(VM* vm)
@@ -237,6 +222,16 @@ void JSLock::willReleaseLock()
     }
 }
 
+void JSLock::lock(ExecState* exec)
+{
+    exec->vm().apiLock().lock();
+}
+
+void JSLock::unlock(ExecState* exec)
+{
+    exec->vm().apiLock().unlock();
+}
+
 // This function returns the number of locks that were dropped.
 unsigned JSLock::dropAllLocks(DropAllLocks* dropper)
 {
@@ -290,8 +285,6 @@ JSLock::DropAllLocks::DropAllLocks(VM* vm)
         return;
     RELEASE_ASSERT(!m_vm->apiLock().currentThreadIsHoldingLock() || !m_vm->isCollectorBusyOnCurrentThread());
     m_droppedLockCount = m_vm->apiLock().dropAllLocks(this);
-    VM* previousVMInTLS = VM::exchange(nullptr);
-    ASSERT_UNUSED(previousVMInTLS, previousVMInTLS == m_vm.get());
 }
 
 JSLock::DropAllLocks::DropAllLocks(ExecState* exec)
@@ -309,8 +302,6 @@ JSLock::DropAllLocks::~DropAllLocks()
     if (!m_vm)
         return;
     m_vm->apiLock().grabAllLocks(this, m_droppedLockCount);
-    VM* previousVMInTLS = VM::exchange(m_vm.get());
-    ASSERT_UNUSED(previousVMInTLS, previousVMInTLS);
 }
 
 } // namespace JSC

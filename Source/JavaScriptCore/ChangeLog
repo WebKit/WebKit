@@ -1,5 +1,17 @@
 2019-10-04  Truitt Savell  <tsavell@apple.com>
 
+        Unreviewed, rolling out r250583.
+
+        Broke multiple internal API tests
+
+        Reverted changeset:
+
+        "[JSC] Place VM* in TLS"
+        https://bugs.webkit.org/show_bug.cgi?id=202391
+        https://trac.webkit.org/changeset/250583
+
+2019-10-04  Truitt Savell  <tsavell@apple.com>
+
         Unreviewed, rolling out r250594.
 
         Broke multiple internal API tests

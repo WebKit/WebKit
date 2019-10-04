@@ -1379,16 +1379,4 @@ void VM::setCrashOnVMCreation(bool shouldCrash)
     vmCreationShouldCrash = shouldCrash;
 }
 
-
-#if !HAVE(FAST_TLS)
-WTF::ThreadSpecificKey VM::tlsKey { WTF::InvalidThreadSpecificKey };
-#endif
-
-void VM::initializeTLS()
-{
-#if !HAVE(FAST_TLS)
-    WTF::threadSpecificKeyCreate(&tlsKey, nullptr);
-#endif
-}
-
 } // namespace JSC
