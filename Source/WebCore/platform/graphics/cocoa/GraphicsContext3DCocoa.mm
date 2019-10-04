@@ -325,11 +325,16 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     }
 
     std::vector<EGLint> contextAttributes;
-    contextAttributes.push_back(EGL_CONTEXT_CLIENT_VERSION);
-    contextAttributes.push_back(2);
-    // ANGLE will upgrade the context to ES3 automatically unless this is specified.
-    contextAttributes.push_back(EGL_CONTEXT_OPENGL_BACKWARDS_COMPATIBLE_ANGLE);
-    contextAttributes.push_back(EGL_FALSE);
+    if (attrs.isWebGL2) {
+        contextAttributes.push_back(EGL_CONTEXT_CLIENT_VERSION);
+        contextAttributes.push_back(3);
+    } else {
+        contextAttributes.push_back(EGL_CONTEXT_CLIENT_VERSION);
+        contextAttributes.push_back(2);
+        // ANGLE will upgrade the context to ES3 automatically unless this is specified.
+        contextAttributes.push_back(EGL_CONTEXT_OPENGL_BACKWARDS_COMPATIBLE_ANGLE);
+        contextAttributes.push_back(EGL_FALSE);
+    }
     contextAttributes.push_back(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE);
     contextAttributes.push_back(EGL_TRUE);
     if (strstr(displayExtensions, "EGL_ANGLE_power_preference")) {

@@ -1,3 +1,17 @@
+2019-10-04  James Darpinian  <jdarpinian@chromium.org>
+
+        Allow using WebGL 2 when USE_ANGLE=1
+        https://bugs.webkit.org/show_bug.cgi?id=202593
+
+        Reviewed by Alex Christensen.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::create):
+            Disable irrelevant extension check.
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+            Use ES3 ANGLE context when WebGL 2 is requested.
+
 2019-10-04  Alex Christensen  <achristensen@webkit.org>
 
         Stop sending list of display-isolated schemes to NetworkProcess
