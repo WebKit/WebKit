@@ -229,7 +229,7 @@ private:
     void completeNoncursorRequest(IDBRequest&, const IDBResultData&);
     void completeCursorRequest(IDBRequest&, const IDBResultData&);
 
-    void schedulePendingOperationTimer();
+    void trySchedulePendingOperationTimer();
     void scheduleCompletedOperationTimer();
 
     Ref<IDBDatabase> m_database;
