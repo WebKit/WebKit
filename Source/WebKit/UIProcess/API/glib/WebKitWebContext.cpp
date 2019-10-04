@@ -474,6 +474,12 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
      *
      * Whether swap Web processes on cross-site navigations is enabled.
      *
+     * When enabled, pages from each security origin will be handled by
+     * their own separate Web processes, which are started (and
+     * terminated) on demand as the user navigates across different
+     * domains. This is an important security measure which helps prevent
+     * websites stealing data from other visited pages.
+     *
      * Since: 2.28
      */
     g_object_class_install_property(
