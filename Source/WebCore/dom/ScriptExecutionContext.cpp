@@ -37,6 +37,7 @@
 #include "ErrorEvent.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWindow.h"
+#include "LegacySchemeRegistry.h"
 #include "MessagePort.h"
 #include "Navigator.h"
 #include "Page.h"
@@ -45,7 +46,6 @@
 #include "ResourceRequest.h"
 #include "SWClientConnection.h"
 #include "SWContextManager.h"
-#include "SchemeRegistry.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
 #include "ScriptState.h"
@@ -574,7 +574,7 @@ bool ScriptExecutionContext::allowsMediaDevices() const
 bool ScriptExecutionContext::hasServiceWorkerScheme() const
 {
     ASSERT(securityOrigin());
-    return SchemeRegistry::isServiceWorkerContainerCustomScheme(securityOrigin()->protocol());
+    return LegacySchemeRegistry::isServiceWorkerContainerCustomScheme(securityOrigin()->protocol());
 }
 
 #if ENABLE(SERVICE_WORKER)

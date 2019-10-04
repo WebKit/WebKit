@@ -122,6 +122,7 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/JSElement.h>
 #include <WebCore/KeyboardEvent.h>
+#include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/LibWebRTCProvider.h>
 #include <WebCore/LogInitialization.h>
 #include <WebCore/Logging.h>
@@ -151,7 +152,6 @@
 #include <WebCore/ResourceHandleClient.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
-#include <WebCore/SchemeRegistry.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/Scrollbar.h>
 #include <WebCore/ScrollbarTheme.h>
@@ -4240,7 +4240,7 @@ HRESULT WebView::registerURLSchemeAsLocal(_In_ BSTR scheme)
     if (!scheme)
         return E_POINTER;
 
-    SchemeRegistry::registerURLSchemeAsLocal(toString(scheme));
+    LegacySchemeRegistry::registerURLSchemeAsLocal(toString(scheme));
 
     return S_OK;
 }
@@ -7327,13 +7327,13 @@ HRESULT WebView::geolocationDidFailWithError(_In_opt_ IWebError* error)
 
 HRESULT WebView::setDomainRelaxationForbiddenForURLScheme(BOOL forbidden, _In_ BSTR scheme)
 {
-    SchemeRegistry::setDomainRelaxationForbiddenForURLScheme(forbidden, toString(scheme));
+    LegacySchemeRegistry::setDomainRelaxationForbiddenForURLScheme(forbidden, toString(scheme));
     return S_OK;
 }
 
 HRESULT WebView::registerURLSchemeAsSecure(_In_ BSTR scheme)
 {
-    SchemeRegistry::registerURLSchemeAsSecure(toString(scheme));
+    LegacySchemeRegistry::registerURLSchemeAsSecure(toString(scheme));
     return S_OK;
 }
 
@@ -7344,7 +7344,7 @@ HRESULT WebView::registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing(
 
 HRESULT WebView::registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(_In_ BSTR scheme)
 {
-    SchemeRegistry::registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(toString(scheme));
+    LegacySchemeRegistry::registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(toString(scheme));
     return S_OK;
 }
 

@@ -1704,6 +1704,7 @@ platform/FileMonitor.cpp
 platform/FileStream.cpp
 platform/GenericTaskQueue.cpp
 platform/LayoutUnit.cpp
+platform/LegacySchemeRegistry.cpp
 platform/Length.cpp
 platform/LengthBox.cpp
 platform/LengthPoint.cpp
@@ -1726,7 +1727,6 @@ platform/ReferrerPolicy.cpp
 platform/RemoteCommandListener.cpp
 platform/RuntimeApplicationChecks.cpp
 platform/SSLKeyGenerator.cpp
-platform/SchemeRegistry.cpp
 platform/ScrollAnimator.cpp
 platform/ScrollView.cpp
 platform/ScrollableArea.cpp

@@ -1,5 +1,18 @@
 2019-10-04  Alex Christensen  <achristensen@webkit.org>
 
+        Rename SchemeRegistry to LegacySchemeRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=202586
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebView.mm:
+        (+[WebView _setDomainRelaxationForbidden:forURLScheme:]):
+        (+[WebView _registerURLSchemeAsSecure:]):
+        (+[WebView _registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing:]):
+        (+[WebView registerURLSchemeAsLocal:]):
+
+2019-10-04  Alex Christensen  <achristensen@webkit.org>
+
         Simplify sandbox enabling macros
         https://bugs.webkit.org/show_bug.cgi?id=202536
 

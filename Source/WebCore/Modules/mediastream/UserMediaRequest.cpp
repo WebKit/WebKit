@@ -45,7 +45,6 @@
 #include "MediaConstraints.h"
 #include "PlatformMediaSessionManager.h"
 #include "RealtimeMediaSourceCenter.h"
-#include "SchemeRegistry.h"
 #include "Settings.h"
 #include "UserMediaController.h"
 #include <wtf/Scope.h>

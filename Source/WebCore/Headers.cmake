@@ -910,6 +910,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/KeyedCoding.h
     platform/KeypressCommand.h
     platform/LayoutUnit.h
+    platform/LegacySchemeRegistry.h
     platform/Length.h
     platform/LengthBox.h
     platform/LengthPoint.h
@@ -957,7 +958,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/RemoteCommandListener.h
     platform/RuntimeApplicationChecks.h
     platform/SSLKeyGenerator.h
-    platform/SchemeRegistry.h
     platform/ScreenProperties.h
     platform/ScrollAnimator.h
     platform/ScrollTypes.h

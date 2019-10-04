@@ -35,7 +35,7 @@ namespace WebCore {
 // FIXME: Make HashSet<String>::contains(StringView) work and use StringViews here.
 using URLSchemesMap = HashSet<String, ASCIICaseInsensitiveHash>;
 
-class SchemeRegistry {
+class LegacySchemeRegistry {
 public:
     WEBCORE_EXPORT static void registerURLSchemeAsLocal(const String&); // Thread safe.
     static void removeURLSchemeRegisteredAsLocal(const String&); // Thread safe.

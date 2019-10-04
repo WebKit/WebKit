@@ -1,3 +1,47 @@
+2019-10-04  Alex Christensen  <achristensen@webkit.org>
+
+        Rename SchemeRegistry to LegacySchemeRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=202586
+
+        Reviewed by Tim Horton.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::doesNotNeedCORSCheck const):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::registerURLSchemeAsSecure const):
+        (WebKit::NetworkProcess::registerURLSchemeAsBypassingContentSecurityPolicy const):
+        (WebKit::NetworkProcess::registerURLSchemeAsLocal const):
+        (WebKit::NetworkProcess::registerURLSchemeAsNoAccess const):
+        (WebKit::NetworkProcess::registerURLSchemeAsDisplayIsolated const):
+        (WebKit::NetworkProcess::registerURLSchemeAsCORSEnabled const):
+        (WebKit::NetworkProcess::registerURLSchemeAsCanDisplayOnlyIfCanRequest const):
+        * Shared/AuxiliaryProcess.cpp:
+        (WebKit::AuxiliaryProcess::registerURLSchemeServiceWorkersCanHandle const):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (+[WKWebView handlesURLScheme:]):
+        * UIProcess/API/glib/WebKitSecurityManager.cpp:
+        (registerSecurityPolicyForURIScheme):
+        (checkSecurityPolicyForURIScheme):
+        * WebProcess/Plugins/WebPluginInfoProvider.cpp:
+        (WebKit::WebPluginInfoProvider::webVisiblePluginInfo):
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        (WebKit::WebServiceWorkerProvider::handleFetch):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::canHandleRequest):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::registerURLSchemeAsEmptyDocument):
+        (WebKit::WebProcess::registerURLSchemeAsSecure const):
+        (WebKit::WebProcess::registerURLSchemeAsBypassingContentSecurityPolicy const):
+        (WebKit::WebProcess::setDomainRelaxationForbiddenForURLScheme const):
+        (WebKit::WebProcess::registerURLSchemeAsLocal const):
+        (WebKit::WebProcess::registerURLSchemeAsNoAccess const):
+        (WebKit::WebProcess::registerURLSchemeAsDisplayIsolated const):
+        (WebKit::WebProcess::registerURLSchemeAsCORSEnabled const):
+        (WebKit::WebProcess::registerURLSchemeAsAlwaysRevalidated const):
+        (WebKit::WebProcess::registerURLSchemeAsCachePartitioned const):
+        (WebKit::WebProcess::registerURLSchemeAsCanDisplayOnlyIfCanRequest const):
+        * WebProcess/WebStorage/StorageAreaImpl.cpp:
+
 2019-10-04  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Implement _WKWebAuthenticationPanel SPI

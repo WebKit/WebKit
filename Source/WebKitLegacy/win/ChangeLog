@@ -1,3 +1,16 @@
+2019-10-04  Alex Christensen  <achristensen@webkit.org>
+
+        Rename SchemeRegistry to LegacySchemeRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=202586
+
+        Reviewed by Tim Horton.
+
+        * WebView.cpp:
+        (WebView::registerURLSchemeAsLocal):
+        (WebView::setDomainRelaxationForbiddenForURLScheme):
+        (WebView::registerURLSchemeAsSecure):
+        (WebView::registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing):
+
 2019-09-27  Chris Dumez  <cdumez@apple.com>
 
         Pages using WebGLRenderingContext fail to enter the back/forward cache

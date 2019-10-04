@@ -34,8 +34,8 @@
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/Page.h>
-#include <WebCore/SchemeRegistry.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SubframeLoader.h>
 #include <wtf/text/StringHash.h>
@@ -126,7 +126,7 @@ Vector<WebCore::PluginInfo> WebPluginInfoProvider::webVisiblePluginInfo(Page& pa
     });
 
 #if PLATFORM(MAC)
-    if (SchemeRegistry::shouldTreatURLSchemeAsLocal(url.protocol().toString()))
+    if (LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(url.protocol().toString()))
         return plugins;
 
     for (int32_t i = plugins.size() - 1; i >= 0; --i) {

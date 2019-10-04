@@ -30,7 +30,6 @@
 
 #import "PreviewConverter.h"
 #import "ResourceRequest.h"
-#import "SchemeRegistry.h"
 #import <pal/ios/QuickLookSoftLink.h>
 #import <pal/spi/cocoa/NSFileManagerSPI.h>
 #import <wtf/FileSystem.h>

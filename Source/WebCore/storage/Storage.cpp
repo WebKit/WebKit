@@ -28,8 +28,8 @@
 
 #include "Document.h"
 #include "Frame.h"
+#include "LegacySchemeRegistry.h"
 #include "Page.h"
-#include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "StorageArea.h"
 #include "StorageType.h"

@@ -32,7 +32,6 @@
 #include "SWServer.h"
 #include "SWServerRegistration.h"
 #include "SWServerWorker.h"
-#include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorkerFetchResult.h"
 #include "ServiceWorkerRegistrationData.h"

@@ -59,6 +59,7 @@
 #include "HistoryController.h"
 #include "IconLoader.h"
 #include "InspectorInstrumentation.h"
+#include "LegacySchemeRegistry.h"
 #include "LinkIconCollector.h"
 #include "LinkIconType.h"
 #include "LoaderStrategy.h"
@@ -74,7 +75,6 @@
 #include "ResourceLoadObserver.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SWClientConnection.h"
-#include "SchemeRegistry.h"
 #include "ScriptableDocumentParser.h"
 #include "SecurityPolicy.h"
 #include "ServiceWorker.h"
@@ -470,7 +470,7 @@ void DocumentLoader::startDataLoadTimer()
 #if ENABLE(SERVICE_WORKER)
 void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::RegistrationCallback&& callback)
 {
-    auto shouldTryLoadingThroughServiceWorker = !frameLoader()->isReloadingFromOrigin() && m_frame->page() && RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && SchemeRegistry::canServiceWorkersHandleURLScheme(url.protocol().toStringWithoutCopying());
+    auto shouldTryLoadingThroughServiceWorker = !frameLoader()->isReloadingFromOrigin() && m_frame->page() && RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && LegacySchemeRegistry::canServiceWorkersHandleURLScheme(url.protocol().toStringWithoutCopying());
     if (!shouldTryLoadingThroughServiceWorker) {
         callback(WTF::nullopt);
         return;
@@ -861,7 +861,7 @@ bool DocumentLoader::disallowWebArchive() const
     if (m_substituteData.isValid())
         return false;
 
-    if (!SchemeRegistry::shouldTreatURLSchemeAsLocal(m_request.url().protocol().toStringWithoutCopying()))
+    if (!LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(m_request.url().protocol().toStringWithoutCopying()))
         return true;
 
     if (!frame() || (frame()->isMainFrame() && m_allowsWebArchiveForMainFrame))
@@ -1037,7 +1037,7 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
                     m_frame->document()->setActiveServiceWorker(parent->activeServiceWorker());
             }
 
-            if (m_frame->document()->activeServiceWorker() || SchemeRegistry::canServiceWorkersHandleURLScheme(m_frame->document()->url().protocol().toStringWithoutCopying()))
+            if (m_frame->document()->activeServiceWorker() || LegacySchemeRegistry::canServiceWorkersHandleURLScheme(m_frame->document()->url().protocol().toStringWithoutCopying()))
                 m_frame->document()->setServiceWorkerConnection(ServiceWorkerProvider::singleton().existingServiceWorkerConnection());
 
             // We currently unregister the temporary service worker client since we now registered the real document.
@@ -1709,7 +1709,7 @@ bool DocumentLoader::isMultipartReplacingLoad() const
 
 bool DocumentLoader::maybeLoadEmpty()
 {
-    bool shouldLoadEmpty = !m_substituteData.isValid() && (m_request.url().isEmpty() || SchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(m_request.url().protocol().toStringWithoutCopying()));
+    bool shouldLoadEmpty = !m_substituteData.isValid() && (m_request.url().isEmpty() || LegacySchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(m_request.url().protocol().toStringWithoutCopying()));
     if (!shouldLoadEmpty && !frameLoader()->client().representationExistsForURLScheme(m_request.url().protocol().toStringWithoutCopying()))
         return false;
 

@@ -23,7 +23,7 @@
 #include "WebKitSecurityManagerPrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebProcessPool.h"
-#include <WebCore/SchemeRegistry.h>
+#include <WebCore/LegacySchemeRegistry.h>
 #include <wtf/glib/WTFGType.h>
 
 using namespace WebKit;
@@ -72,32 +72,32 @@ static void registerSecurityPolicyForURIScheme(WebKitSecurityManager* manager, c
     String urlScheme = String::fromUTF8(scheme);
     auto& processPool = webkitWebContextGetProcessPool(manager->priv->webContext);
 
-    // We keep the WebCore::SchemeRegistry of the UI process in sync with the
+    // We keep the WebCore::LegacySchemeRegistry of the UI process in sync with the
     // web process one, so that we can return the SecurityPolicy for
     // a given URI scheme synchronously without blocking.
     switch (policy) {
     case SecurityPolicyLocal:
-        WebCore::SchemeRegistry::registerURLSchemeAsLocal(urlScheme);
+        WebCore::LegacySchemeRegistry::registerURLSchemeAsLocal(urlScheme);
         processPool.registerURLSchemeAsLocal(urlScheme);
         break;
     case SecurityPolicyNoAccess:
-        WebCore::SchemeRegistry::registerURLSchemeAsNoAccess(urlScheme);
+        WebCore::LegacySchemeRegistry::registerURLSchemeAsNoAccess(urlScheme);
         processPool.registerURLSchemeAsNoAccess(urlScheme);
         break;
     case SecurityPolicyDisplayIsolated:
-        WebCore::SchemeRegistry::registerURLSchemeAsDisplayIsolated(urlScheme);
+        WebCore::LegacySchemeRegistry::registerURLSchemeAsDisplayIsolated(urlScheme);
         processPool.registerURLSchemeAsDisplayIsolated(urlScheme);
         break;
     case SecurityPolicySecure:
-        WebCore::SchemeRegistry::registerURLSchemeAsSecure(urlScheme);
+        WebCore::LegacySchemeRegistry::registerURLSchemeAsSecure(urlScheme);
         processPool.registerURLSchemeAsSecure(urlScheme);
         break;
     case SecurityPolicyCORSEnabled:
-        WebCore::SchemeRegistry::registerURLSchemeAsCORSEnabled(urlScheme);
+        WebCore::LegacySchemeRegistry::registerURLSchemeAsCORSEnabled(urlScheme);
         processPool.registerURLSchemeAsCORSEnabled(urlScheme);
         break;
     case SecurityPolicyEmptyDocument:
-        WebCore::SchemeRegistry::registerURLSchemeAsEmptyDocument(urlScheme);
+        WebCore::LegacySchemeRegistry::registerURLSchemeAsEmptyDocument(urlScheme);
         processPool.registerURLSchemeAsEmptyDocument(urlScheme);
         break;
     }
@@ -109,17 +109,17 @@ static bool checkSecurityPolicyForURIScheme(const char* scheme, SecurityPolicy p
 
     switch (policy) {
     case SecurityPolicyLocal:
-        return WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal(urlScheme);
+        return WebCore::LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(urlScheme);
     case SecurityPolicyNoAccess:
-        return WebCore::SchemeRegistry::shouldTreatURLSchemeAsNoAccess(urlScheme);
+        return WebCore::LegacySchemeRegistry::shouldTreatURLSchemeAsNoAccess(urlScheme);
     case SecurityPolicyDisplayIsolated:
-        return WebCore::SchemeRegistry::shouldTreatURLSchemeAsDisplayIsolated(urlScheme);
+        return WebCore::LegacySchemeRegistry::shouldTreatURLSchemeAsDisplayIsolated(urlScheme);
     case SecurityPolicySecure:
-        return WebCore::SchemeRegistry::shouldTreatURLSchemeAsSecure(urlScheme);
+        return WebCore::LegacySchemeRegistry::shouldTreatURLSchemeAsSecure(urlScheme);
     case SecurityPolicyCORSEnabled:
-        return WebCore::SchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(urlScheme);
+        return WebCore::LegacySchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(urlScheme);
     case SecurityPolicyEmptyDocument:
-        return WebCore::SchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(urlScheme);
+        return WebCore::LegacySchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(urlScheme);
     }
 
     return false;

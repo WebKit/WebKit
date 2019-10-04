@@ -69,6 +69,7 @@
 #include <WebCore/DNS.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/DiagnosticLoggingClient.h>
+#include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/LogInitialization.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/NetworkStateNotifier.h>
@@ -76,7 +77,6 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
-#include <WebCore/SchemeRegistry.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/StorageQuotaManager.h>
 #include <wtf/Algorithms.h>
@@ -2203,37 +2203,37 @@ void NetworkProcess::setCacheStorageParameters(PAL::SessionID sessionID, String&
 
 void NetworkProcess::registerURLSchemeAsSecure(const String& scheme) const
 {
-    SchemeRegistry::registerURLSchemeAsSecure(scheme);
+    LegacySchemeRegistry::registerURLSchemeAsSecure(scheme);
 }
 
 void NetworkProcess::registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme) const
 {
-    SchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy(scheme);
+    LegacySchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy(scheme);
 }
 
 void NetworkProcess::registerURLSchemeAsLocal(const String& scheme) const
 {
-    SchemeRegistry::registerURLSchemeAsLocal(scheme);
+    LegacySchemeRegistry::registerURLSchemeAsLocal(scheme);
 }
 
 void NetworkProcess::registerURLSchemeAsNoAccess(const String& scheme) const
 {
-    SchemeRegistry::registerURLSchemeAsNoAccess(scheme);
+    LegacySchemeRegistry::registerURLSchemeAsNoAccess(scheme);
 }
 
 void NetworkProcess::registerURLSchemeAsDisplayIsolated(const String& scheme) const
 {
-    SchemeRegistry::registerURLSchemeAsDisplayIsolated(scheme);
+    LegacySchemeRegistry::registerURLSchemeAsDisplayIsolated(scheme);
 }
 
 void NetworkProcess::registerURLSchemeAsCORSEnabled(const String& scheme) const
 {
-    SchemeRegistry::registerURLSchemeAsCORSEnabled(scheme);
+    LegacySchemeRegistry::registerURLSchemeAsCORSEnabled(scheme);
 }
 
 void NetworkProcess::registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String& scheme) const
 {
-    SchemeRegistry::registerAsCanDisplayOnlyIfCanRequest(scheme);
+    LegacySchemeRegistry::registerAsCanDisplayOnlyIfCanRequest(scheme);
 }
 
 void NetworkProcess::didSyncAllCookies()

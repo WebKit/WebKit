@@ -30,7 +30,6 @@
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/Page.h>
-#include <WebCore/SchemeRegistry.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/Settings.h>
 #include <WebCore/StorageType.h>

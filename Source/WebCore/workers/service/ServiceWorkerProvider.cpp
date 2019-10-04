@@ -29,8 +29,8 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "Document.h"
+#include "LegacySchemeRegistry.h"
 #include "SWClientConnection.h"
-#include "SchemeRegistry.h"
 
 namespace WebCore {
 
@@ -64,7 +64,7 @@ void ServiceWorkerProvider::registerServiceWorkerClients()
 {
     setMayHaveRegisteredServiceWorkers();
     for (auto* document : Document::allDocuments()) {
-        if (SchemeRegistry::canServiceWorkersHandleURLScheme(document->url().protocol().toStringWithoutCopying()))
+        if (LegacySchemeRegistry::canServiceWorkersHandleURLScheme(document->url().protocol().toStringWithoutCopying()))
             document->setServiceWorkerConnection(&serviceWorkerConnection());
     }
 }

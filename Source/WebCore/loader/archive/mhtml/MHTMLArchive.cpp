@@ -36,12 +36,12 @@
 
 #include "Document.h"
 #include "Frame.h"
+#include "LegacySchemeRegistry.h"
 #include "MHTMLParser.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "PageSerializer.h"
 #include "QuotedPrintable.h"
-#include "SchemeRegistry.h"
 #include "SharedBuffer.h"
 #include <time.h>
 #include <wtf/CryptographicallyRandomNumber.h>
@@ -109,7 +109,7 @@ Ref<MHTMLArchive> MHTMLArchive::create()
 RefPtr<MHTMLArchive> MHTMLArchive::create(const URL& url, SharedBuffer& data)
 {
     // For security reasons we only load MHTML pages from local URLs.
-    if (!SchemeRegistry::shouldTreatURLSchemeAsLocal(url.protocol().toString()))
+    if (!LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(url.protocol().toString()))
         return nullptr;
 
     MHTMLParser parser(&data);

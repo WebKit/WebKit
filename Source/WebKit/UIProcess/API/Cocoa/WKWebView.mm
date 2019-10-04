@@ -105,11 +105,11 @@
 #import <WebCore/IOSurface.h>
 #import <WebCore/JSDOMBinding.h>
 #import <WebCore/JSDOMExceptionHandling.h>
+#import <WebCore/LegacySchemeRegistry.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SQLiteDatabaseTracker.h>
-#import <WebCore/SchemeRegistry.h>
 #import <WebCore/Settings.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/StringUtilities.h>
@@ -4651,7 +4651,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 + (BOOL)handlesURLScheme:(NSString *)urlScheme
 {
-    return WebCore::SchemeRegistry::isBuiltinScheme(urlScheme);
+    return WebCore::LegacySchemeRegistry::isBuiltinScheme(urlScheme);
 }
 
 - (Optional<BOOL>)_resolutionForShareSheetImmediateCompletionForTesting

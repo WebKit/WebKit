@@ -35,7 +35,7 @@
 #include "Frame.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLParserIdioms.h"
-#include "SchemeRegistry.h"
+#include "LegacySchemeRegistry.h"
 #include "Settings.h"
 #include "UserMediaRequest.h"
 
@@ -66,7 +66,7 @@ static inline bool isSecure(DocumentLoader& documentLoader)
     auto& response = documentLoader.response();
     if (SecurityOrigin::isLocalHostOrLoopbackIPAddress(documentLoader.response().url().host()))
         return true;
-    return SchemeRegistry::shouldTreatURLSchemeAsSecure(response.url().protocol().toStringWithoutCopying())
+    return LegacySchemeRegistry::shouldTreatURLSchemeAsSecure(response.url().protocol().toStringWithoutCopying())
         && response.certificateInfo()
         && !response.certificateInfo()->containsNonRootSHA1SignedCertificate();
 }

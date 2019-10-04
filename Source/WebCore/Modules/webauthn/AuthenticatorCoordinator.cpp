@@ -39,7 +39,7 @@
 #include "PublicKeyCredentialData.h"
 #include "PublicKeyCredentialRequestOptions.h"
 #include "RegistrableDomain.h"
-#include "SchemeRegistry.h"
+#include "LegacySchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/JSONValues.h>
@@ -100,7 +100,7 @@ static bool needsAppIdQuirks(const String& host, const String& appId)
 static String processAppIdExtension(const SecurityOrigin& facetId, const String& appId)
 {
     // Step 1. Skipped since facetId should always be secure origins.
-    ASSERT(SchemeRegistry::shouldTreatURLSchemeAsSecure(facetId.protocol()));
+    ASSERT(LegacySchemeRegistry::shouldTreatURLSchemeAsSecure(facetId.protocol()));
 
     // Step 2. Follow Chrome and Firefox to use the origin directly without adding a trailing slash.
     if (appId.isEmpty())

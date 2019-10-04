@@ -24,7 +24,7 @@
  *
  */
 #include "config.h"
-#include "SchemeRegistry.h"
+#include "LegacySchemeRegistry.h"
 
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
@@ -78,7 +78,7 @@ static const URLSchemesMap& allBuiltinSchemes()
             builtinCORSEnabledSchemes,
         };
 
-        // Other misc schemes that the SchemeRegistry doesn't know about.
+        // Other misc schemes that the LegacySchemeRegistry doesn't know about.
         static const char* const otherSchemes[] = {
             "webkit-fake-url",
 #if PLATFORM(MAC)
@@ -218,7 +218,7 @@ static URLSchemesMap& notAllowingJavascriptURLsSchemes()
     return notAllowingJavascriptURLsSchemes;
 }
 
-void SchemeRegistry::registerURLSchemeAsLocal(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsLocal(const String& scheme)
 {
     if (scheme.isNull())
         return;
@@ -227,7 +227,7 @@ void SchemeRegistry::registerURLSchemeAsLocal(const String& scheme)
     localURLSchemes().add(scheme);
 }
 
-void SchemeRegistry::removeURLSchemeRegisteredAsLocal(const String& scheme)
+void LegacySchemeRegistry::removeURLSchemeRegisteredAsLocal(const String& scheme)
 {
     Locker<Lock> locker(schemeRegistryLock);
     if (builtinLocalURLSchemes().contains(scheme))
@@ -286,7 +286,7 @@ static URLSchemesMap& alwaysRevalidatedSchemes()
     return schemes;
 }
 
-bool SchemeRegistry::shouldTreatURLSchemeAsLocal(const String& scheme)
+bool LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(const String& scheme)
 {
     if (scheme.isNull())
         return false;
@@ -295,7 +295,7 @@ bool SchemeRegistry::shouldTreatURLSchemeAsLocal(const String& scheme)
     return localURLSchemes().contains(scheme);
 }
 
-void SchemeRegistry::registerURLSchemeAsNoAccess(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsNoAccess(const String& scheme)
 {
     if (scheme.isNull())
         return;
@@ -304,7 +304,7 @@ void SchemeRegistry::registerURLSchemeAsNoAccess(const String& scheme)
     schemesWithUniqueOrigins().add(scheme);
 }
 
-bool SchemeRegistry::shouldTreatURLSchemeAsNoAccess(const String& scheme)
+bool LegacySchemeRegistry::shouldTreatURLSchemeAsNoAccess(const String& scheme)
 {
     if (scheme.isNull())
         return false;
@@ -313,7 +313,7 @@ bool SchemeRegistry::shouldTreatURLSchemeAsNoAccess(const String& scheme)
     return schemesWithUniqueOrigins().contains(scheme);
 }
 
-void SchemeRegistry::registerURLSchemeAsDisplayIsolated(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsDisplayIsolated(const String& scheme)
 {
     if (scheme.isNull())
         return;
@@ -322,7 +322,7 @@ void SchemeRegistry::registerURLSchemeAsDisplayIsolated(const String& scheme)
     displayIsolatedURLSchemes().add(scheme);
 }
 
-bool SchemeRegistry::shouldTreatURLSchemeAsDisplayIsolated(const String& scheme)
+bool LegacySchemeRegistry::shouldTreatURLSchemeAsDisplayIsolated(const String& scheme)
 {
     if (scheme.isNull())
         return false;
@@ -331,7 +331,7 @@ bool SchemeRegistry::shouldTreatURLSchemeAsDisplayIsolated(const String& scheme)
     return displayIsolatedURLSchemes().contains(scheme);
 }
 
-void SchemeRegistry::registerURLSchemeAsSecure(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsSecure(const String& scheme)
 {
     if (scheme.isNull())
         return;
@@ -340,7 +340,7 @@ void SchemeRegistry::registerURLSchemeAsSecure(const String& scheme)
     secureSchemes().add(scheme);
 }
 
-bool SchemeRegistry::shouldTreatURLSchemeAsSecure(const String& scheme)
+bool LegacySchemeRegistry::shouldTreatURLSchemeAsSecure(const String& scheme)
 {
     if (scheme.isNull())
         return false;
@@ -349,19 +349,19 @@ bool SchemeRegistry::shouldTreatURLSchemeAsSecure(const String& scheme)
     return secureSchemes().contains(scheme);
 }
 
-void SchemeRegistry::registerURLSchemeAsEmptyDocument(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsEmptyDocument(const String& scheme)
 {
     if (scheme.isNull())
         return;
     emptyDocumentSchemes().add(scheme);
 }
 
-bool SchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(const String& scheme)
+bool LegacySchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(const String& scheme)
 {
     return !scheme.isNull() && emptyDocumentSchemes().contains(scheme);
 }
 
-void SchemeRegistry::setDomainRelaxationForbiddenForURLScheme(bool forbidden, const String& scheme)
+void LegacySchemeRegistry::setDomainRelaxationForbiddenForURLScheme(bool forbidden, const String& scheme)
 {
     if (scheme.isNull())
         return;
@@ -372,12 +372,12 @@ void SchemeRegistry::setDomainRelaxationForbiddenForURLScheme(bool forbidden, co
         schemesForbiddenFromDomainRelaxation().remove(scheme);
 }
 
-bool SchemeRegistry::isDomainRelaxationForbiddenForURLScheme(const String& scheme)
+bool LegacySchemeRegistry::isDomainRelaxationForbiddenForURLScheme(const String& scheme)
 {
     return !scheme.isNull() && schemesForbiddenFromDomainRelaxation().contains(scheme);
 }
 
-bool SchemeRegistry::canDisplayOnlyIfCanRequest(const String& scheme)
+bool LegacySchemeRegistry::canDisplayOnlyIfCanRequest(const String& scheme)
 {
     if (scheme.isNull())
         return false;
@@ -386,7 +386,7 @@ bool SchemeRegistry::canDisplayOnlyIfCanRequest(const String& scheme)
     return canDisplayOnlyIfCanRequestSchemes().contains(scheme);
 }
 
-void SchemeRegistry::registerAsCanDisplayOnlyIfCanRequest(const String& scheme)
+void LegacySchemeRegistry::registerAsCanDisplayOnlyIfCanRequest(const String& scheme)
 {
     if (scheme.isNull())
         return;
@@ -395,43 +395,43 @@ void SchemeRegistry::registerAsCanDisplayOnlyIfCanRequest(const String& scheme)
     canDisplayOnlyIfCanRequestSchemes().add(scheme);
 }
 
-void SchemeRegistry::registerURLSchemeAsNotAllowingJavascriptURLs(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsNotAllowingJavascriptURLs(const String& scheme)
 {
     if (scheme.isNull())
         return;
     notAllowingJavascriptURLsSchemes().add(scheme);
 }
 
-bool SchemeRegistry::shouldTreatURLSchemeAsNotAllowingJavascriptURLs(const String& scheme)
+bool LegacySchemeRegistry::shouldTreatURLSchemeAsNotAllowingJavascriptURLs(const String& scheme)
 {
     return !scheme.isNull() && notAllowingJavascriptURLsSchemes().contains(scheme);
 }
 
-void SchemeRegistry::registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(const String& scheme)
 {
     if (scheme.isNull())
         return;
     schemesAllowingDatabaseAccessInPrivateBrowsing().add(scheme);
 }
 
-bool SchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(const String& scheme)
+bool LegacySchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(const String& scheme)
 {
     return !scheme.isNull() && schemesAllowingDatabaseAccessInPrivateBrowsing().contains(scheme);
 }
 
-void SchemeRegistry::registerURLSchemeAsCORSEnabled(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsCORSEnabled(const String& scheme)
 {
     if (scheme.isNull())
         return;
     CORSEnabledSchemes().add(scheme);
 }
 
-bool SchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(const String& scheme)
+bool LegacySchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(const String& scheme)
 {
     return !scheme.isNull() && CORSEnabledSchemes().contains(scheme);
 }
 
-void SchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme)
 {
     if (scheme.isNull())
         return;
@@ -440,7 +440,7 @@ void SchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy(const Str
     ContentSecurityPolicyBypassingSchemes().add(scheme);
 }
 
-void SchemeRegistry::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const String& scheme)
+void LegacySchemeRegistry::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const String& scheme)
 {
     if (scheme.isNull())
         return;
@@ -449,7 +449,7 @@ void SchemeRegistry::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(c
     ContentSecurityPolicyBypassingSchemes().remove(scheme);
 }
 
-bool SchemeRegistry::schemeShouldBypassContentSecurityPolicy(const String& scheme)
+bool LegacySchemeRegistry::schemeShouldBypassContentSecurityPolicy(const String& scheme)
 {
     if (scheme.isNull())
         return false;
@@ -458,19 +458,19 @@ bool SchemeRegistry::schemeShouldBypassContentSecurityPolicy(const String& schem
     return ContentSecurityPolicyBypassingSchemes().contains(scheme);
 }
 
-void SchemeRegistry::registerURLSchemeAsAlwaysRevalidated(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsAlwaysRevalidated(const String& scheme)
 {
     if (scheme.isNull())
         return;
     alwaysRevalidatedSchemes().add(scheme);
 }
 
-bool SchemeRegistry::shouldAlwaysRevalidateURLScheme(const String& scheme)
+bool LegacySchemeRegistry::shouldAlwaysRevalidateURLScheme(const String& scheme)
 {
     return !scheme.isNull() && alwaysRevalidatedSchemes().contains(scheme);
 }
 
-void SchemeRegistry::registerURLSchemeAsCachePartitioned(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeAsCachePartitioned(const String& scheme)
 {
     if (scheme.isNull())
         return;
@@ -479,7 +479,7 @@ void SchemeRegistry::registerURLSchemeAsCachePartitioned(const String& scheme)
     cachePartitioningSchemes().add(scheme);
 }
 
-bool SchemeRegistry::shouldPartitionCacheForURLScheme(const String& scheme)
+bool LegacySchemeRegistry::shouldPartitionCacheForURLScheme(const String& scheme)
 {
     if (scheme.isNull())
         return false;
@@ -488,7 +488,7 @@ bool SchemeRegistry::shouldPartitionCacheForURLScheme(const String& scheme)
     return cachePartitioningSchemes().contains(scheme);
 }
 
-void SchemeRegistry::registerURLSchemeServiceWorkersCanHandle(const String& scheme)
+void LegacySchemeRegistry::registerURLSchemeServiceWorkersCanHandle(const String& scheme)
 {
     if (scheme.isNull())
         return;
@@ -497,7 +497,7 @@ void SchemeRegistry::registerURLSchemeServiceWorkersCanHandle(const String& sche
     serviceWorkerSchemes().add(scheme);
 }
 
-bool SchemeRegistry::canServiceWorkersHandleURLScheme(const String& scheme)
+bool LegacySchemeRegistry::canServiceWorkersHandleURLScheme(const String& scheme)
 {
     if (scheme.isNull())
         return false;
@@ -513,13 +513,13 @@ bool SchemeRegistry::canServiceWorkersHandleURLScheme(const String& scheme)
     return serviceWorkerSchemes().contains(scheme);
 }
 
-bool SchemeRegistry::isServiceWorkerContainerCustomScheme(const String& scheme)
+bool LegacySchemeRegistry::isServiceWorkerContainerCustomScheme(const String& scheme)
 {
     Locker<Lock> locker(schemeRegistryLock);
     return !scheme.isNull() && serviceWorkerSchemes().contains(scheme);
 }
 
-bool SchemeRegistry::isUserExtensionScheme(const String& scheme)
+bool LegacySchemeRegistry::isUserExtensionScheme(const String& scheme)
 {
 #if PLATFORM(MAC)
     if (scheme == "safari-extension")
@@ -530,7 +530,7 @@ bool SchemeRegistry::isUserExtensionScheme(const String& scheme)
     return false;
 }
 
-bool SchemeRegistry::isBuiltinScheme(const String& scheme)
+bool LegacySchemeRegistry::isBuiltinScheme(const String& scheme)
 {
     return !scheme.isNull() && (allBuiltinSchemes().contains(scheme) || WTF::URLParser::isSpecialScheme(scheme));
 }

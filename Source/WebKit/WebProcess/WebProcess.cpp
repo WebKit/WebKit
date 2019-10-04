@@ -100,6 +100,7 @@
 #include <WebCore/GlyphPage.h>
 #include <WebCore/HTMLMediaElement.h>
 #include <WebCore/JSDOMWindow.h>
+#include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/MemoryRelease.h>
 #include <WebCore/MessagePort.h>
@@ -115,7 +116,6 @@
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
-#include <WebCore/SchemeRegistry.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/Settings.h>
@@ -379,7 +379,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
         registerURLSchemeAsCachePartitioned(scheme);
 
     for (auto& scheme : parameters.urlSchemesServiceWorkersCanHandle)
-        WebCore::SchemeRegistry::registerURLSchemeServiceWorkersCanHandle(scheme);
+        WebCore::LegacySchemeRegistry::registerURLSchemeServiceWorkersCanHandle(scheme);
 
     for (auto& scheme : parameters.urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest)
         registerURLSchemeAsCanDisplayOnlyIfCanRequest(scheme);
@@ -532,57 +532,57 @@ void WebProcess::prewarmWithDomainInformation(const WebCore::PrewarmInformation&
 
 void WebProcess::registerURLSchemeAsEmptyDocument(const String& urlScheme)
 {
-    SchemeRegistry::registerURLSchemeAsEmptyDocument(urlScheme);
+    LegacySchemeRegistry::registerURLSchemeAsEmptyDocument(urlScheme);
 }
 
 void WebProcess::registerURLSchemeAsSecure(const String& urlScheme) const
 {
-    SchemeRegistry::registerURLSchemeAsSecure(urlScheme);
+    LegacySchemeRegistry::registerURLSchemeAsSecure(urlScheme);
 }
 
 void WebProcess::registerURLSchemeAsBypassingContentSecurityPolicy(const String& urlScheme) const
 {
-    SchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy(urlScheme);
+    LegacySchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy(urlScheme);
 }
 
 void WebProcess::setDomainRelaxationForbiddenForURLScheme(const String& urlScheme) const
 {
-    SchemeRegistry::setDomainRelaxationForbiddenForURLScheme(true, urlScheme);
+    LegacySchemeRegistry::setDomainRelaxationForbiddenForURLScheme(true, urlScheme);
 }
 
 void WebProcess::registerURLSchemeAsLocal(const String& urlScheme) const
 {
-    SchemeRegistry::registerURLSchemeAsLocal(urlScheme);
+    LegacySchemeRegistry::registerURLSchemeAsLocal(urlScheme);
 }
 
 void WebProcess::registerURLSchemeAsNoAccess(const String& urlScheme) const
 {
-    SchemeRegistry::registerURLSchemeAsNoAccess(urlScheme);
+    LegacySchemeRegistry::registerURLSchemeAsNoAccess(urlScheme);
 }
 
 void WebProcess::registerURLSchemeAsDisplayIsolated(const String& urlScheme) const
 {
-    SchemeRegistry::registerURLSchemeAsDisplayIsolated(urlScheme);
+    LegacySchemeRegistry::registerURLSchemeAsDisplayIsolated(urlScheme);
 }
 
 void WebProcess::registerURLSchemeAsCORSEnabled(const String& urlScheme) const
 {
-    SchemeRegistry::registerURLSchemeAsCORSEnabled(urlScheme);
+    LegacySchemeRegistry::registerURLSchemeAsCORSEnabled(urlScheme);
 }
 
 void WebProcess::registerURLSchemeAsAlwaysRevalidated(const String& urlScheme) const
 {
-    SchemeRegistry::registerURLSchemeAsAlwaysRevalidated(urlScheme);
+    LegacySchemeRegistry::registerURLSchemeAsAlwaysRevalidated(urlScheme);
 }
 
 void WebProcess::registerURLSchemeAsCachePartitioned(const String& urlScheme) const
 {
-    SchemeRegistry::registerURLSchemeAsCachePartitioned(urlScheme);
+    LegacySchemeRegistry::registerURLSchemeAsCachePartitioned(urlScheme);
 }
 
 void WebProcess::registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String& urlScheme) const
 {
-    SchemeRegistry::registerAsCanDisplayOnlyIfCanRequest(urlScheme);
+    LegacySchemeRegistry::registerAsCanDisplayOnlyIfCanRequest(urlScheme);
 }
 
 void WebProcess::setDefaultRequestTimeoutInterval(double timeoutInterval)

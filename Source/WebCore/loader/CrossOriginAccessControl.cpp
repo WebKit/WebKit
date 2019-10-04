@@ -31,9 +31,9 @@
 #include "CrossOriginPreflightResultCache.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
+#include "LegacySchemeRegistry.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include <mutex>
@@ -129,7 +129,7 @@ CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&& requ
 
 bool isValidCrossOriginRedirectionURL(const URL& redirectURL)
 {
-    return SchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(redirectURL.protocol().toStringWithoutCopying())
+    return LegacySchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(redirectURL.protocol().toStringWithoutCopying())
         && redirectURL.user().isEmpty()
         && redirectURL.pass().isEmpty();
 }
