@@ -26,12 +26,20 @@
 #include "config.h"
 #include "SuspendableTaskQueue.h"
 
+#include "Document.h"
+
 namespace WebCore {
 
 SuspendableTaskQueue::SuspendableTaskQueue(ScriptExecutionContext* context)
     : ActiveDOMObject(context)
     , m_taskQueue(context)
     , m_isClosed(!context)
+{
+}
+
+SuspendableTaskQueue::SuspendableTaskQueue(Document& document)
+    : ActiveDOMObject(document)
+    , m_taskQueue(document)
 {
 }
 

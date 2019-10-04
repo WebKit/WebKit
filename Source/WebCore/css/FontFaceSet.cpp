@@ -56,7 +56,7 @@ FontFaceSet::FontFaceSet(Document& document, const Vector<RefPtr<FontFace>>& ini
     : ActiveDOMObject(document)
     , m_backing(CSSFontFaceSet::create())
     , m_readyPromise(*this, &FontFaceSet::readyPromiseResolve)
-    , m_taskQueue(SuspendableTaskQueue::create(&document))
+    , m_taskQueue(SuspendableTaskQueue::create(document))
 {
     m_backing->addClient(*this);
     for (auto& face : initialFaces)
@@ -67,7 +67,7 @@ FontFaceSet::FontFaceSet(Document& document, CSSFontFaceSet& backing)
     : ActiveDOMObject(document)
     , m_backing(backing)
     , m_readyPromise(*this, &FontFaceSet::readyPromiseResolve)
-    , m_taskQueue(SuspendableTaskQueue::create(&document))
+    , m_taskQueue(SuspendableTaskQueue::create(document))
 {
     if (document.frame())
         m_isFirstLayoutDone = document.frame()->loader().stateMachine().firstLayoutDone();
@@ -205,7 +205,8 @@ void FontFaceSet::didFirstLayout()
     m_isFirstLayoutDone = true;
     if (!m_backing->hasActiveFontFaces() && !m_readyPromise.isFulfilled()) {
         m_taskQueue->enqueueTask([this] {
-            m_readyPromise.resolve(*this);
+            if (!m_readyPromise.isFulfilled())
+                m_readyPromise.resolve(*this);
         });
     }
 }
@@ -214,7 +215,8 @@ void FontFaceSet::completedLoading()
 {
     if (m_isFirstLayoutDone && !m_readyPromise.isFulfilled()) {
         m_taskQueue->enqueueTask([this] {
-            m_readyPromise.resolve(*this);
+            if (!m_readyPromise.isFulfilled())
+                m_readyPromise.resolve(*this);
         });
     }
 }

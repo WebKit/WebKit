@@ -1,3 +1,19 @@
+2019-10-04  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed follow-up fix for r250693 to address assertion hits in debug.
+
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::didFirstLayout):
+        (WebCore::FontFaceSet::completedLoading):
+        Make sure the ready promise is not already resolved before resolving it.
+
+        * platform/SuspendableTaskQueue.cpp:
+        (WebCore::SuspendableTaskQueue::SuspendableTaskQueue):
+        * platform/SuspendableTaskQueue.h:
+        (WebCore::SuspendableTaskQueue::create):
+        Add a new constructor that takes in a Document since the ActiveDOMObject's
+        constructor taking a Document has some useful logic.
+
 2019-10-04  Joonghun Park  <jh718.park@samsung.com>
 
         Negative radii in radial gradients should be rejected.
