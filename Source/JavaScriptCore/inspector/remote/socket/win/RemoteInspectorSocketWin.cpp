@@ -67,6 +67,7 @@ public:
     void close()
     {
         if (isValid(m_socket)) {
+            ::shutdown(m_socket, SD_BOTH);
             ::closesocket(m_socket);
             m_socket = INVALID_SOCKET_VALUE;
         }

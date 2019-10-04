@@ -32,6 +32,7 @@
 #include <wtf/FileSystem.h>
 #include <wtf/JSONValues.h>
 #include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
 #include <wtf/text/Base64.h>
 
 namespace Inspector {
@@ -89,14 +90,12 @@ void RemoteInspectorServer::didClose(ConnectionID id)
 
     if (id == m_clientConnection) {
         // Connection from the remote client closed.
-        callOnMainThread([this] {
-            clientConnectionClosed();
-        });
+        clientConnectionClosed();
         return;
     }
 
     // Connection from WebProcess closed.
-    callOnMainThread([this, id] {
+    RunLoop::main().dispatch([this, id] {
         connectionClosed(id);
     });
 }
@@ -199,13 +198,16 @@ void RemoteInspectorServer::close(const Event& event)
 
 void RemoteInspectorServer::clientConnectionClosed()
 {
-    ASSERT(isMainThread());
+    ASSERT(!isMainThread());
 
-    for (auto connectionTargetPair : m_inspectionTargets)
-        sendCloseEvent(connectionTargetPair.first, connectionTargetPair.second);
-
-    m_inspectionTargets.clear();
     m_clientConnection = WTF::nullopt;
+
+    RunLoop::main().dispatch([this] {
+        LockHolder lock(m_connectionsLock);
+        for (auto connectionTargetPair : m_inspectionTargets)
+            sendCloseEvent(connectionTargetPair.first, connectionTargetPair.second);
+        m_inspectionTargets.clear();
+    });
 }
 
 void RemoteInspectorServer::connectionClosed(ConnectionID clientID)

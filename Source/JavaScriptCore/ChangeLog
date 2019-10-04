@@ -1,3 +1,19 @@
+2019-10-03  Christopher Reid  <chris.reid@sony.com>
+
+        [WinCairo] Remote Inspector doesn't gracefully shutdown
+        https://bugs.webkit.org/show_bug.cgi?id=202546
+
+        Reviewed by Ross Kirsling.
+
+        Call shutdown before closesocket in windows to close the connection gracefully.
+
+        This also fixes some potential threading issues where m_clientConnection 
+        is set on a worker thread but cleared on the main thread.
+        Remove callOnMainThread in the server too since execution gets paused during JS breakpoints.
+
+        * inspector/remote/socket/RemoteInspectorServer.cpp:
+        * inspector/remote/socket/win/RemoteInspectorSocketWin.cpp:
+
 2019-10-03  Mark Lam  <mark.lam@apple.com>
 
         Fix testmasm failure on ASan builds.
