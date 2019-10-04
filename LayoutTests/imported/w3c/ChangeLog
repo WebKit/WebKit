@@ -1,3 +1,14 @@
+2019-10-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Radio button groups are not scoped by shadow boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=199568
+
+        Reviewed by Antti Koivisto.
+
+        Rebaselined a test now that it passes.
+
+        * web-platform-tests/shadow-dom/input-type-radio-expected.txt:
+
 2019-10-03  Antti Koivisto  <antti@apple.com>
 
         [CSS Shadow Parts] Correct interaction with other pseudo elements

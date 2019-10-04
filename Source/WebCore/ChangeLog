@@ -1,3 +1,30 @@
+2019-10-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Radio button groups are not scoped by shadow boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=199568
+
+        Reviewed by Antti Koivisto.
+
+        Fixed the bug that radio button groups are not scoped to each shadow tree by moving
+        RadioButtonGroups from FormController, which is a per-document object, to TreeScope.
+
+        Test: imported/w3c/web-platform-tests/shadow-dom/input-type-radio.html
+
+        * dom/RadioButtonGroups.h:
+        (WebCore::RadioButtonGroups): Made this bmalloc'ed now that it's allocated standalone.
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::radioButtonGroups): Added.
+        * dom/TreeScope.h:
+        * html/FormController.h:
+        (WebCore::FormController::radioButtonGroups): Deleted.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::~HTMLInputElement):
+        (WebCore::HTMLInputElement::removedFromAncestor): Update the radio button group here.
+        (WebCore::HTMLInputElement::didMoveToNewDocument): Removed the code to update radio
+        button group here since it's done in removedFromAncestor now. Note that insertion case
+        is alrady taken care of by HTMLInputElement::didFinishInsertingNode.
+        (WebCore::HTMLInputElement::radioButtonGroups const): Ditto.
+
 2019-10-03  Antti Koivisto  <antti@apple.com>
 
         [CSS Shadow Parts] Correct interaction with other pseudo elements

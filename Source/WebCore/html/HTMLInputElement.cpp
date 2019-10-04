@@ -173,7 +173,7 @@ HTMLInputElement::~HTMLInputElement()
     // actually adds the button to the document groups in the latter case.
     // That is inelegant, but harmless since we remove it here.
     if (isRadioButton())
-        document().formController().radioButtonGroups().removeButton(*this);
+        treeScope().radioButtonGroups().removeButton(*this);
 
 #if ENABLE(TOUCH_EVENTS)
     if (m_hasTouchEventHandler)
@@ -1556,6 +1556,8 @@ void HTMLInputElement::didFinishInsertingNode()
 
 void HTMLInputElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
+    if (removalType.treeScopeChanged && isRadioButton())
+        oldParentOfRemovedTree.treeScope().radioButtonGroups().removeButton(*this);
     if (removalType.disconnectedFromDocument && !form())
         removeFromRadioButtonGroup();
     HTMLTextFormControlElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
@@ -1575,11 +1577,6 @@ void HTMLInputElement::didMoveToNewDocument(Document& oldDocument, Document& new
         oldDocument.unregisterForDocumentSuspensionCallbacks(*this);
         newDocument.registerForDocumentSuspensionCallbacks(*this);
     }
-
-    // We call this even for radio buttons in forms; it's harmless because the
-    // removeButton function is written to be safe for buttons not in any group.
-    if (isRadioButton())
-        oldDocument.formController().radioButtonGroups().removeButton(*this);
 
 #if ENABLE(TOUCH_EVENTS)
     if (m_hasTouchEventHandler) {
@@ -1922,8 +1919,8 @@ RadioButtonGroups* HTMLInputElement::radioButtonGroups() const
         return nullptr;
     if (auto* formElement = form())
         return &formElement->radioButtonGroups();
-    if (isConnected())
-        return &document().formController().radioButtonGroups();
+    if (isInTreeScope())
+        return &treeScope().radioButtonGroups();
     return nullptr;
 }
 

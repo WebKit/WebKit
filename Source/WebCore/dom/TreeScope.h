@@ -44,6 +44,7 @@ class HTMLMapElement;
 class LayoutPoint;
 class IdTargetObserverRegistry;
 class Node;
+class RadioButtonGroups;
 class ShadowRoot;
 
 class TreeScope {
@@ -109,6 +110,8 @@ public:
 
     IdTargetObserverRegistry& idTargetObserverRegistry() const { return *m_idTargetObserverRegistry.get(); }
 
+    RadioButtonGroups& radioButtonGroups();
+
 protected:
     TreeScope(ShadowRoot&, Document&);
     explicit TreeScope(Document&);
@@ -135,6 +138,8 @@ private:
     std::unique_ptr<TreeScopeOrderedMap> m_labelsByForAttribute;
 
     std::unique_ptr<IdTargetObserverRegistry> m_idTargetObserverRegistry;
+    
+    std::unique_ptr<RadioButtonGroups> m_radioButtonGroups;
 };
 
 inline bool TreeScope::hasElementWithId(const AtomStringImpl& id) const
