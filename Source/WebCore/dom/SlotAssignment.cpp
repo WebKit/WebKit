@@ -116,10 +116,7 @@ void SlotAssignment::addSlotElementByName(const AtomString& name, HTMLSlotElemen
 
     auto& slotName = slotNameFromAttributeValue(name);
     auto addResult = m_slots.ensure(slotName, [&] {
-        // Unlike named slots, assignSlots doesn't collect nodes assigned to the default slot
-        // to avoid always having a vector of all child nodes of a shadow host.
-        if (slotName == defaultSlotName())
-            m_slotAssignmentsIsValid = false;
+        m_slotAssignmentsIsValid = false;
         return makeUnique<Slot>();
     });
     auto& slot = *addResult.iterator->value;

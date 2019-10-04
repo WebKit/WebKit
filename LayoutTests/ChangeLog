@@ -1,3 +1,19 @@
+2019-10-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        A newly inserted element doesn't get assigned to a named slot if slot assignments had already happened
+        https://bugs.webkit.org/show_bug.cgi?id=199733
+
+        Reviewed by Antti Koivisto.
+
+        Added ref tests.
+
+        * fast/shadow-dom/add-slotted-element-after-assignment-1-expected.html: Added.
+        * fast/shadow-dom/add-slotted-element-after-assignment-1.html: Added.
+        * fast/shadow-dom/add-slotted-element-after-assignment-2-expected.html: Added.
+        * fast/shadow-dom/add-slotted-element-after-assignment-2.html: Added.
+        * fast/shadow-dom/add-slotted-element-after-assignment-3-expected.html: Added.
+        * fast/shadow-dom/add-slotted-element-after-assignment-3.html: Added.
+
 2019-10-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Resync WPT shadow DOM tests

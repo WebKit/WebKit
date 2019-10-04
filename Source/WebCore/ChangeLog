@@ -1,5 +1,24 @@
 2019-10-04  Ryosuke Niwa  <rniwa@webkit.org>
 
+        A newly inserted element doesn't get assigned to a named slot if slot assignments had already happened
+        https://bugs.webkit.org/show_bug.cgi?id=199733
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by addSlotElementByName not invalidating slot assignments when a new slot element
+        is inserted after corresponding elements with the slot content attribute had already been inserted.
+
+        Fixed the bug by always invalidating the slot assignment when a new slot element is inserted.
+
+        Tests: fast/shadow-dom/add-slotted-element-after-assignment-1.html
+               fast/shadow-dom/add-slotted-element-after-assignment-2.html
+               fast/shadow-dom/add-slotted-element-after-assignment-3.html
+
+        * dom/SlotAssignment.cpp:
+        (WebCore::SlotAssignment::addSlotElementByName):
+
+2019-10-04  Ryosuke Niwa  <rniwa@webkit.org>
+
         Radio button groups are not scoped by shadow boundaries
         https://bugs.webkit.org/show_bug.cgi?id=199568
 
