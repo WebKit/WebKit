@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1210,7 +1210,11 @@ void testMoveDoubleConditionally64()
 static void testCagePreservesPACFailureBit()
 {
 #if GIGACAGE_ENABLED
-    ASSERT(!Gigacage::isDisablingPrimitiveGigacageForbidden());
+    // Placate ASan builds and any environments that disables the Gigacage.
+    if (!Gigacage::shouldBeEnabled())
+        return;
+
+    RELEASE_ASSERT(!Gigacage::isDisablingPrimitiveGigacageForbidden());
     auto cage = compile([] (CCallHelpers& jit) {
         emitFunctionPrologue(jit);
         jit.cageConditionally(Gigacage::Primitive, GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2);
@@ -1221,7 +1225,7 @@ static void testCagePreservesPACFailureBit()
 
     void* ptr = Gigacage::tryMalloc(Gigacage::Primitive, 1);
     void* taggedPtr = tagArrayPtr(ptr, 1);
-    ASSERT(hasOneBitSet(Gigacage::size(Gigacage::Primitive) << 2));
+    RELEASE_ASSERT(hasOneBitSet(Gigacage::size(Gigacage::Primitive) << 2));
     void* notCagedPtr = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(ptr) + (Gigacage::size(Gigacage::Primitive) << 2));
     CHECK_NOT_EQ(Gigacage::caged(Gigacage::Primitive, notCagedPtr), notCagedPtr);
     void* taggedNotCagedPtr = tagArrayPtr(notCagedPtr, 1);

@@ -1,3 +1,19 @@
+2019-10-03  Mark Lam  <mark.lam@apple.com>
+
+        Fix testmasm failure on ASan builds.
+        https://bugs.webkit.org/show_bug.cgi?id=202554
+
+        Reviewed by Yusuke Suzuki.
+
+        Gigacage is disabled on ASan builds.  So testmasm is sad.  Make the relevant test
+        bail gracefully if Gigacage should be disabled.
+
+        Also converted some ASSERTs into RELEASE_ASSERTs.  This is a test.  No reason to
+        not assert always.
+
+        * assembler/testmasm.cpp:
+        (JSC::testCagePreservesPACFailureBit):
+
 2019-10-03  Ross Kirsling  <ross.kirsling@sony.com>
 
         Socket RWI client should acquire backend commands from server
