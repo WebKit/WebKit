@@ -1,5 +1,16 @@
 2019-10-04  Zhifei Fang  <zhifei_fang@apple.com>
 
+        [perf dashboard] Test fressness popover sometimes point to wrong place
+        https://bugs.webkit.org/show_bug.cgi?id=202606
+
+        Reviewed by Ryosuke Niwa.
+
+        * public/v3/pages/test-freshness-page.js: Use a invisable tooltip anchor to cacluate tooltip position. It also helps to get rid of caculation for determine the tooltip table position. 
+        (TestFreshnessPage.prototype._renderTooltip):
+        (TestFreshnessPage.cssTemplate):
+
+2019-10-04  Zhifei Fang  <zhifei_fang@apple.com>
+
         [perf dashboard] Make test fressness head and indicator perfect centered
         https://bugs.webkit.org/show_bug.cgi?id=202602
 

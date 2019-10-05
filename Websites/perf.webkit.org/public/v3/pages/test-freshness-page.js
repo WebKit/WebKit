@@ -152,23 +152,17 @@ class TestFreshnessPage extends PageWithHeading {
     _renderTooltip(indicator, hoveringTooltip, buildSummary, build, commitSet)
     {
         if (!indicator || !buildSummary) {
-            this.content('tooltip-table').style.display = hoveringTooltip ? null : 'none';
+            this.content('tooltip-anchor').style.display = hoveringTooltip ? null : 'none';
             return;
         }
         const element = ComponentBase.createElement;
         const link = ComponentBase.createLink;
 
         const rect = indicator.element().getBoundingClientRect();
-        const tooltipTable = this.content('tooltip-table');
-        tooltipTable.style.display = null;
-
-        const tooltipContainerComputedStyle = getComputedStyle(tooltipTable);
-        const containerMarginTop = parseFloat(tooltipContainerComputedStyle.paddingTop);
-        const containerMarginLeft = parseFloat(tooltipContainerComputedStyle.marginLeft);
-
-        tooltipTable.style.position = 'absolute';
-        tooltipTable.style.top = rect.top - (tooltipTable.offsetHeight + containerMarginTop)  + 'px';
-        tooltipTable.style.left = rect.left + rect.width / 2 - tooltipTable.offsetWidth / 2 + containerMarginLeft + 'px';
+        const tooltipAnchor = this.content('tooltip-anchor');
+        tooltipAnchor.style.display = null;
+        tooltipAnchor.style.top = rect.top + 'px';
+        tooltipAnchor.style.left = rect.left + rect.width / 2 + 'px';
 
         let tableContent = [element('tr', element('td', {colspan: 2}, buildSummary))];
 
@@ -196,7 +190,7 @@ class TestFreshnessPage extends PageWithHeading {
             ]));
         }
 
-        this.renderReplace(tooltipTable,  tableContent);
+        this.renderReplace(this.content("tooltip-table"),  tableContent);
     }
 
     _renderTable(platforms, metrics)
@@ -248,7 +242,12 @@ class TestFreshnessPage extends PageWithHeading {
 
     static htmlTemplate()
     {
-        return `<section class="page-with-heading"><table id="tooltip-table"></table><table id="test-health"></table></section>`;
+        return `<section class="page-with-heading">
+            <div id="tooltip-anchor">
+                <table id="tooltip-table"></table>
+            </div>
+            <table id="test-health"></table>
+        </section>`;
     }
 
     static cssTemplate()
@@ -342,7 +341,13 @@ class TestFreshnessPage extends PageWithHeading {
                 border-right: calc(1.6rem - 1px) solid #F9F9F9;
                 border-top: calc(1.6rem - 1px) solid transparent;
             }
+            #tooltip-anchor {
+                width: 0;
+                height: 0;
+                position: absolute;
+            }
             #tooltip-table {
+                position: absolute;
                 width: 22rem;
                 background-color: #34495E;
                 opacity: 0.9;
@@ -353,6 +358,8 @@ class TestFreshnessPage extends PageWithHeading {
                 text-align: center;
                 display: inline-table;
                 color: white;
+                bottom: 0;
+                left: -11.3rem;
             }
             #tooltip-table td {
                 overflow: hidden;
@@ -364,8 +371,8 @@ class TestFreshnessPage extends PageWithHeading {
                 position: absolute;
                 top: 100%;
                 left: 50%;
-                margin-left: -1rem;
-                border-width: 0.2rem;
+                margin-left: -0.3rem;
+                border-width: 0.3rem;
                 border-style: solid;
                 border-color: #34495E transparent transparent transparent;
             }
