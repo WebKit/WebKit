@@ -1,3 +1,4 @@
 
-FAIL Test skipWaiting while a client is not being controlled promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'document.body.appendChild')"
+PASS Test skipWaiting while a client is not being controlled 
+PASS skipWaiting 
 

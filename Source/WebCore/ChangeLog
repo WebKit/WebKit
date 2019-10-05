@@ -1,5 +1,30 @@
 2019-10-04  Chris Dumez  <cdumez@apple.com>
 
+        ServiceWorkerContainer should never prevent a page from entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=202603
+
+        Reviewed by Geoff Garen.
+
+        Make it so that ServiceWorkerContainer can suspend, even if they have pending promises.
+        We now queue all promise resolutions to a SuspendableTaskQueue to make sure that those
+        promises do not get resolved while in the page cache.
+
+        Test: http/tests/workers/service/page-cache-service-worker-pending-promise.https.html
+
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::ServiceWorkerContainer):
+        (WebCore::ServiceWorkerContainer::ready):
+        (WebCore::ServiceWorkerContainer::getRegistration):
+        (WebCore::ServiceWorkerContainer::getRegistrations):
+        (WebCore::ServiceWorkerContainer::jobFailedWithException):
+        (WebCore::ServiceWorkerContainer::jobResolvedWithRegistration):
+        (WebCore::ServiceWorkerContainer::jobResolvedWithUnregistrationResult):
+        (WebCore::ServiceWorkerContainer::jobFailedLoadingScript):
+        (WebCore::ServiceWorkerContainer::canSuspendForDocumentSuspension const):
+        * workers/service/ServiceWorkerContainer.h:
+
+2019-10-04  Chris Dumez  <cdumez@apple.com>
+
         Allow pages using IDBIndex to enter the PageCache
         https://bugs.webkit.org/show_bug.cgi?id=202430
         <rdar://problem/55887918>

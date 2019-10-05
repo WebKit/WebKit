@@ -36,6 +36,7 @@
 #include "ServiceWorkerJobClient.h"
 #include "ServiceWorkerRegistration.h"
 #include "ServiceWorkerRegistrationOptions.h"
+#include "SuspendableTaskQueue.h"
 #include "WorkerType.h"
 #include <wtf/Threading.h>
 
@@ -144,6 +145,7 @@ private:
     uint64_t m_lastOngoingSettledRegistrationIdentifier { 0 };
     HashMap<uint64_t, ServiceWorkerRegistrationKey> m_ongoingSettledRegistrations;
     UniqueRef<GenericEventQueue> m_messageQueue;
+    UniqueRef<SuspendableTaskQueue> m_taskQueue;
 };
 
 } // namespace WebCore
