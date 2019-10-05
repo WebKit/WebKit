@@ -1,5 +1,42 @@
 2019-10-04  Chris Dumez  <cdumez@apple.com>
 
+        Allow pages using EventSource to enter the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=202370
+        <rdar://problem/55853142>
+
+        Reviewed by Geoffrey Garen.
+
+        Allow pages using EventSource to enter the back/forward cache. If the EventSource is
+        connecting at the time it enters PageCache, it will resume connecting after restoring
+        from PageCache (by making m_connectTimer a SuspendableTimer, which is PageCache-aware).
+        If the EventSource is was open upon navigating, it gets closed upon navigating (since
+        all pending loads get cancelled on navigation). To help the page recover, we fire an
+        error event and attempt to reconnect automatically when restoring the page from page
+        cache. It is allowed by the specification to attempt reconnection in case of non-fatal
+        network errors.
+
+        Tests: http/tests/eventsource/eventsource-page-cache-connected.html
+               http/tests/eventsource/eventsource-page-cache-connecting.html
+
+        * page/EventSource.cpp:
+        (WebCore::EventSource::EventSource):
+        (WebCore::EventSource::scheduleReconnect):
+        (WebCore::EventSource::close):
+        (WebCore::EventSource::didReceiveResponse):
+        (WebCore::EventSource::dispatchErrorEvent):
+        (WebCore::EventSource::didReceiveData):
+        (WebCore::EventSource::didFinishLoading):
+        (WebCore::EventSource::didFail):
+        (WebCore::EventSource::abortConnectionAttempt):
+        (WebCore::EventSource::doExplicitLoadCancellation):
+        (WebCore::EventSource::canSuspendForDocumentSuspension const):
+        (WebCore::EventSource::suspend):
+        (WebCore::EventSource::resume):
+        (WebCore::EventSource::dispatchMessageEvent):
+        * page/EventSource.h:
+
+2019-10-04  Chris Dumez  <cdumez@apple.com>
+
         ServiceWorkerContainer should never prevent a page from entering the back/forward cache
         https://bugs.webkit.org/show_bug.cgi?id=202603
 

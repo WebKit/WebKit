@@ -45,6 +45,7 @@
 #include "TextResourceDecoder.h"
 #include "ThreadableLoader.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -57,8 +58,9 @@ inline EventSource::EventSource(ScriptExecutionContext& context, const URL& url,
     , m_url(url)
     , m_withCredentials(eventSourceInit.withCredentials)
     , m_decoder(TextResourceDecoder::create("text/plain"_s, "UTF-8"))
-    , m_connectTimer(*this, &EventSource::connect)
+    , m_connectTimer(&context, *this, &EventSource::connect)
 {
+    m_connectTimer.suspendIfNeeded();
 }
 
 ExceptionOr<Ref<EventSource>> EventSource::create(ScriptExecutionContext& context, const String& url, const Init& eventSourceInit)
@@ -141,9 +143,10 @@ void EventSource::scheduleInitialConnect()
 
 void EventSource::scheduleReconnect()
 {
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_isSuspendedForPageCache);
     m_state = CONNECTING;
     m_connectTimer.startOneShot(1_ms * m_reconnectDelay);
-    dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    dispatchErrorEvent();
 }
 
 void EventSource::close()
@@ -155,10 +158,10 @@ void EventSource::close()
 
     // Stop trying to connect/reconnect if EventSource was explicitly closed or if ActiveDOMObject::stop() was called.
     if (m_connectTimer.isActive())
-        m_connectTimer.stop();
+        m_connectTimer.cancel();
 
     if (m_requestInFlight)
-        m_loader->cancel();
+        doExplicitLoadCancellation();
     else {
         m_state = CLOSED;
         unsetPendingActivity(*this);
@@ -196,10 +199,11 @@ void EventSource::didReceiveResponse(unsigned long, const ResourceResponse& resp
 {
     ASSERT(m_state == CONNECTING);
     ASSERT(m_requestInFlight);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_isSuspendedForPageCache);
 
     if (!responseIsValid(response)) {
-        m_loader->cancel();
-        dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        doExplicitLoadCancellation();
+        dispatchErrorEvent();
         return;
     }
 
@@ -208,10 +212,16 @@ void EventSource::didReceiveResponse(unsigned long, const ResourceResponse& resp
     dispatchEvent(Event::create(eventNames().openEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
+void EventSource::dispatchErrorEvent()
+{
+    dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
+}
+
 void EventSource::didReceiveData(const char* data, int length)
 {
     ASSERT(m_state == OPEN);
     ASSERT(m_requestInFlight);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_isSuspendedForPageCache);
 
     append(m_receiveBuffer, m_decoder->decode(data, length));
     parseEventStream();
@@ -221,6 +231,7 @@ void EventSource::didFinishLoading(unsigned long)
 {
     ASSERT(m_state == OPEN);
     ASSERT(m_requestInFlight);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_isSuspendedForPageCache);
 
     append(m_receiveBuffer, m_decoder->flush());
     parseEventStream();
@@ -247,6 +258,14 @@ void EventSource::didFail(const ResourceError& error)
 
     ASSERT(m_requestInFlight);
 
+    // This is the case where the load gets cancelled on navigating away. We only fire an error event and attempt to reconnect
+    // if we end up getting resumed from page cache.
+    if (error.isCancellation() && !m_isDoingExplicitCancellation) {
+        m_shouldReconnectOnResume = true;
+        m_requestInFlight = false;
+        return;
+    }
+
     if (error.isCancellation())
         m_state = CLOSED;
 
@@ -258,9 +277,10 @@ void EventSource::didFail(const ResourceError& error)
 void EventSource::abortConnectionAttempt()
 {
     ASSERT(m_state == CONNECTING);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_isSuspendedForPageCache);
 
     if (m_requestInFlight)
-        m_loader->cancel();
+        doExplicitLoadCancellation();
     else {
         m_state = CLOSED;
         unsetPendingActivity(*this);
@@ -268,6 +288,13 @@ void EventSource::abortConnectionAttempt()
 
     ASSERT(m_state == CLOSED);
     dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
+}
+
+void EventSource::doExplicitLoadCancellation()
+{
+    ASSERT(m_requestInFlight);
+    SetForScope<bool> explicitLoadCancellation(m_isDoingExplicitCancellation, true);
+    m_loader->cancel();
 }
 
 void EventSource::parseEventStream()
@@ -378,12 +405,36 @@ const char* EventSource::activeDOMObjectName() const
 
 bool EventSource::canSuspendForDocumentSuspension() const
 {
-    // FIXME: We should return true here when we can because this object is not actually currently active.
-    return false;
+    return true;
+}
+
+void EventSource::suspend(ReasonForSuspension reason)
+{
+    if (reason != ReasonForSuspension::PageCache)
+        return;
+
+    m_isSuspendedForPageCache = true;
+    RELEASE_ASSERT_WITH_MESSAGE(!m_requestInFlight, "Loads get cancelled before entering PageCache.");
+}
+
+void EventSource::resume()
+{
+    if (!m_isSuspendedForPageCache)
+        return;
+
+    m_isSuspendedForPageCache = false;
+    if (std::exchange(m_shouldReconnectOnResume, false)) {
+        scriptExecutionContext()->postTask([this, pendingActivity = makePendingActivity(*this)](ScriptExecutionContext&) {
+            if (!isContextStopped())
+                scheduleReconnect();
+        });
+    }
 }
 
 void EventSource::dispatchMessageEvent()
 {
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_isSuspendedForPageCache);
+
     if (!m_currentlyParsedEventId.isNull())
         m_lastEventId = WTFMove(m_currentlyParsedEventId);
 
