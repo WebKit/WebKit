@@ -32,39 +32,19 @@
 
 namespace WTF {
 
-#if defined(NDEBUG) && !ENABLE(SECURITY_ASSERTIONS)
-#define CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE 0
-#else
-#define CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE 1
-#endif
-
 class ThreadSafeRefCountedBase {
     WTF_MAKE_NONCOPYABLE(ThreadSafeRefCountedBase);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ThreadSafeRefCountedBase() = default;
 
-#if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
-    ~ThreadSafeRefCountedBase()
-    {
-        // When this ThreadSafeRefCounted object is a part of another object, derefBase() is never called on this object.
-        m_deletionHasBegun = true;
-    }
-#endif
-
     void ref() const
     {
-#if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
-        ASSERT_WITH_SECURITY_IMPLICATION(!m_deletionHasBegun);
-#endif
         ++m_refCount;
     }
 
     bool hasOneRef() const
     {
-#if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
-        ASSERT(!m_deletionHasBegun);
-#endif
         return refCount() == 1;
     }
 
@@ -77,31 +57,11 @@ protected:
     // Returns whether the pointer should be freed or not.
     bool derefBase() const
     {
-        ASSERT(m_refCount);
-
-#if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
-        ASSERT_WITH_SECURITY_IMPLICATION(!m_deletionHasBegun);
-#endif
-
-        if (UNLIKELY(!--m_refCount)) {
-            // Setting m_refCount to 1 here prevents double delete within the destructor but not from another thread
-            // since such a thread could have ref'ed this object long after it had been deleted. See webkit.org/b/201576.
-            m_refCount = 1;
-#if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
-            m_deletionHasBegun = true;
-#endif
-            return true;
-        }
-
-        return false;
+        return !--m_refCount;
     }
 
 private:
     mutable std::atomic<unsigned> m_refCount { 1 };
-
-#if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
-    mutable std::atomic<bool> m_deletionHasBegun { false };
-#endif
 };
 
 enum class DestructionThread { Any, Main, MainRunLoop };
