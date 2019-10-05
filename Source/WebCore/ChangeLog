@@ -1,5 +1,30 @@
 2019-10-05  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] LayoutChildtIteratorAdapter -> LayoutChildIteratorAdapter
+        https://bugs.webkit.org/show_bug.cgi?id=202612
+        <rdar://problem/56007611>
+
+        Reviewed by Anders Carlsson.
+
+        * layout/layouttree/LayoutChildIterator.h:
+        (WebCore::Layout::LayoutChildIterator<T>::LayoutChildIterator):
+        (WebCore::Layout::LayoutChildIterator<T>::operator):
+        (WebCore::Layout::LayoutChildIteratorAdapter<T>::LayoutChildIteratorAdapter):
+        (WebCore::Layout::LayoutChildIteratorAdapter<T>::begin const):
+        (WebCore::Layout::LayoutChildIteratorAdapter<T>::end const):
+        (WebCore::Layout::LayoutChildIteratorAdapter<T>::first const):
+        (WebCore::Layout::LayoutChildIteratorAdapter<T>::last const):
+        (WebCore::Layout::childrenOfType):
+        (WebCore::Layout::LayoutChildtIterator<T>::LayoutChildtIterator): Deleted.
+        (WebCore::Layout::LayoutChildtIterator<T>::operator): Deleted.
+        (WebCore::Layout::LayoutChildtIteratorAdapter<T>::LayoutChildtIteratorAdapter): Deleted.
+        (WebCore::Layout::LayoutChildtIteratorAdapter<T>::begin const): Deleted.
+        (WebCore::Layout::LayoutChildtIteratorAdapter<T>::end const): Deleted.
+        (WebCore::Layout::LayoutChildtIteratorAdapter<T>::first const): Deleted.
+        (WebCore::Layout::LayoutChildtIteratorAdapter<T>::last const): Deleted.
+
+2019-10-05  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Remove redundant includes.
         https://bugs.webkit.org/show_bug.cgi?id=202610
         <rdar://problem/56003250>
