@@ -1,3 +1,15 @@
+2019-10-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Change "InvalidStateError" to "NotSupportedError" for attachShadow()
+        https://bugs.webkit.org/show_bug.cgi?id=197948
+
+        Reviewed by Wenson Hsieh.
+
+        Rebaselined the tests.
+
+        * web-platform-tests/shadow-dom/Element-interface-attachShadow-custom-element-expected.txt:
+        * web-platform-tests/shadow-dom/Element-interface-attachShadow-expected.txt:
+
 2019-10-04  Joonghun Park  <jh718.park@samsung.com>
 
         Negative radii in radial gradients should be rejected.

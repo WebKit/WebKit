@@ -2317,7 +2317,7 @@ ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init)
     if (!canAttachAuthorShadowRoot(*this))
         return Exception { NotSupportedError };
     if (shadowRoot())
-        return Exception { InvalidStateError };
+        return Exception { NotSupportedError };
     if (init.mode == ShadowRootMode::UserAgent)
         return Exception { TypeError };
     auto shadow = ShadowRoot::create(document(), init.mode);
