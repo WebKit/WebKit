@@ -27,12 +27,10 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutRect.h"
 #include "LayoutUnits.h"
 
 namespace WebCore {
-
-class RenderStyle;
-
 namespace Display {
 
 class Rect {

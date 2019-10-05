@@ -28,9 +28,6 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "FloatingContext.h"
-#include "FloatingState.h"
-#include "InlineFormattingState.h"
 #include "LayoutBox.h"
 #include "TextUtil.h"
 

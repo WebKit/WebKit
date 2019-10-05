@@ -27,19 +27,14 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayBox.h"
 #include "FormattingContext.h"
-#include "InlineFormattingState.h"
-#include "InlineLine.h"
 #include "InlineLineLayout.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
 namespace Layout {
 
-class FloatingState;
-struct LineContent;
-struct LineInput;
+class InlineFormattingState;
 
 // This class implements the layout logic for inline formatting contexts.
 // https://www.w3.org/TR/CSS22/visuren.html#inline-formatting

@@ -27,22 +27,35 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayBox.h"
-#include "LayoutBox.h"
 #include "LayoutContainer.h"
-#include "LayoutState.h"
+#include "LayoutUnit.h"
+#include "LayoutUnits.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class LayoutPoint;
-class LayoutUnit;
+namespace Display {
+class Box;
+}
+class LayoutSize;
+struct Length;
 
 namespace Layout {
 
 class Container;
+class Box;
 class FormattingState;
+class LayoutState;
+struct ComputedHorizontalMargin;
+struct ComputedVerticalMargin;
+struct Edges;
+struct HeightAndMargin;
+struct HorizontalGeometry;
+struct UsedHorizontalValues;
+struct UsedVerticalValues;
+struct VerticalGeometry;
+struct WidthAndMargin;
 
 class FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(FormattingContext);

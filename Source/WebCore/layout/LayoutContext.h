@@ -27,8 +27,6 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "LayoutContainer.h"
-#include "LayoutState.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/OptionSet.h>
 #include <wtf/WeakHashSet.h>
@@ -41,6 +39,8 @@ namespace Layout {
 
 enum class StyleDiff;
 class Box;
+class Container;
+class LayoutState;
 class FormattingContext;
 
 // LayoutContext is the entry point for layout.

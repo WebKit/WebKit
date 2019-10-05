@@ -31,12 +31,9 @@
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
-
 namespace Layout {
 
 class Box;
-class FloatingState;
-class LayoutState;
 
 class FloatBox : public FloatAvoider {
     WTF_MAKE_ISO_ALLOCATED(FloatBox);

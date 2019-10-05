@@ -29,16 +29,18 @@
 
 #include "DisplayBox.h"
 #include "LayoutBox.h"
-#include "LayoutUnit.h"
+#include "LayoutPoint.h"
+#include "LayoutUnits.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-namespace Layout {
+namespace Display {
+class Rect;
+}
 
-class FloatingState;
-class LayoutState;
+namespace Layout {
 
 class FloatAvoider {
     WTF_MAKE_ISO_ALLOCATED(FloatAvoider);

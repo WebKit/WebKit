@@ -29,7 +29,6 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "BlockFormattingState.h"
-#include "DisplayBox.h"
 #include "FloatingContext.h"
 #include "FloatingState.h"
 #include "LayoutBox.h"

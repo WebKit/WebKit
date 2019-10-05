@@ -33,7 +33,6 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
-
 namespace Layout {
 
 class Container;

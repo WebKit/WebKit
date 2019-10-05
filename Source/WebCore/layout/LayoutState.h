@@ -33,8 +33,6 @@
 
 namespace WebCore {
 
-class RenderView;
-
 namespace Display {
 class Box;
 }

@@ -28,8 +28,6 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "BlockFormattingContext.h"
-#include "LayoutBox.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

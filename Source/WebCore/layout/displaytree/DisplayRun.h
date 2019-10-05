@@ -28,9 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayRect.h"
-#include "InlineItem.h"
 #include "LayoutUnit.h"
-#include "TextFlags.h"
 
 namespace WebCore {
 namespace Display {

@@ -28,7 +28,6 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayBox.h"
-#include "LayoutBox.h"
 #include "LayoutContainer.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
@@ -36,10 +35,14 @@
 
 namespace WebCore {
 
+namespace Display {
+class Box;
+}
+
 namespace Layout {
 
+class Box;
 class FloatingContext;
-class FormattingState;
 class LayoutState;
 
 // FloatingState holds the floating boxes per formatting context.

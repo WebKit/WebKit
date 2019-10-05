@@ -1,3 +1,45 @@
+2019-10-05  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Remove redundant includes.
+        https://bugs.webkit.org/show_bug.cgi?id=202610
+        <rdar://problem/56003250>
+
+        Reviewed by Tim Horton.
+
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        * layout/FormattingContextQuirks.cpp:
+        * layout/FormattingState.h:
+        * layout/LayoutContext.h:
+        * layout/LayoutState.h:
+        * layout/LayoutUnits.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingState.cpp:
+        * layout/blockformatting/BlockFormattingState.h:
+        * layout/blockformatting/BlockInvalidation.h:
+        * layout/displaytree/DisplayRect.h:
+        * layout/displaytree/DisplayRun.h:
+        * layout/floats/FloatAvoider.cpp:
+        * layout/floats/FloatAvoider.h:
+        * layout/floats/FloatBox.h:
+        * layout/floats/FloatingContext.cpp:
+        * layout/floats/FloatingContext.h:
+        * layout/floats/FloatingState.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        * layout/inlineformatting/InlineFormattingContextQuirks.cpp:
+        * layout/inlineformatting/InlineInvalidation.h:
+        * layout/inlineformatting/InlineLine.h:
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        * layout/inlineformatting/InlineLineLayout.cpp:
+        * layout/layouttree/LayoutBox.h:
+        * layout/tableformatting/TableFormattingContext.h:
+        * layout/tableformatting/TableFormattingContextGeometry.cpp:
+        * layout/tableformatting/TableGrid.h:
+        * layout/tableformatting/TableInvalidation.h:
+
 2019-10-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Change "InvalidStateError" to "NotSupportedError" for attachShadow()

@@ -30,14 +30,13 @@
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
-
 namespace Layout {
 
 class Box;
 class Container;
 class InlineFormattingState;
-struct InvalidationResult;
 class LayoutContext;
+struct InvalidationResult;
 enum class StyleDiff;
 
 // This class implements box invalidation for inline formatting context.

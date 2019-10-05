@@ -29,10 +29,8 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FloatingState.h"
-#include "FormattingState.h"
 #include "InlineFormattingState.h"
 #include "TableFormattingState.h"
-#include "TableGrid.h"
 
 namespace WebCore {
 namespace Layout {

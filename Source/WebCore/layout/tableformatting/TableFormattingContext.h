@@ -28,12 +28,13 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingContext.h"
-#include "TableFormattingState.h"
+#include "TableGrid.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
 namespace Layout {
 
+class TableFormattingState;
 // This class implements the layout logic for table formatting contexts.
 // https://www.w3.org/TR/CSS22/tables.html
 class TableFormattingContext : public FormattingContext {

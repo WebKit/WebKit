@@ -34,7 +34,6 @@
 #include "FormattingContext.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
-#include "LayoutState.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

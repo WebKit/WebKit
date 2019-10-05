@@ -31,7 +31,6 @@
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
-
 namespace Layout {
 
 // BlockFormattingState holds the state for a particular block formatting context tree.

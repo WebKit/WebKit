@@ -28,7 +28,6 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "IntPointHash.h"
-#include "LayoutBox.h"
 #include <wtf/HashMap.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/ListHashSet.h>
@@ -36,6 +35,7 @@
 
 namespace WebCore {
 namespace Layout {
+class Box;
 
 class TableGrid {
     WTF_MAKE_ISO_ALLOCATED(TableGrid);

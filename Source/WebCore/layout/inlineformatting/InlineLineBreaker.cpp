@@ -31,7 +31,6 @@
 #include "Hyphenation.h"
 #include "InlineItem.h"
 #include "InlineTextItem.h"
-#include "LayoutState.h"
 
 namespace WebCore {
 namespace Layout {

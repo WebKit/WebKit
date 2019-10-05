@@ -27,19 +27,16 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "FloatingState.h"
 #include "FormattingContext.h"
-#include "LayoutBox.h"
 #include "LayoutState.h"
-#include "LayoutUnit.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
-
 namespace Layout {
 
 class Box;
+class FloatingState;
 enum class StyleDiff;
 
 class FormattingState {

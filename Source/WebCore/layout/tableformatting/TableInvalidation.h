@@ -30,13 +30,12 @@
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
-
 namespace Layout {
 
 class Box;
 class TableFormattingState;
-struct InvalidationResult;
 class LayoutContext;
+struct InvalidationResult;
 enum class StyleDiff;
 
 // This class implements box invalidation for table formatting context.

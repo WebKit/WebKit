@@ -29,7 +29,6 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "InlineFormattingState.h"
-#include "InlineLineBreaker.h"
 #include "InlineTextItem.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"

@@ -29,6 +29,7 @@
 
 #include "DisplayRun.h"
 #include "InlineItem.h"
+#include "InlineLineBox.h"
 #include "InlineTextItem.h"
 #include <wtf/IsoMalloc.h>
 
