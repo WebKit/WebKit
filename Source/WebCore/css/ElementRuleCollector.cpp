@@ -142,25 +142,25 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
     ASSERT(matchRequest.ruleSet);
     ASSERT_WITH_MESSAGE(!(m_mode == SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements && m_pseudoStyleRequest.pseudoId != PseudoId::None), "When in StyleInvalidation or SharingRules, SelectorChecker does not try to match the pseudo ID. While ElementRuleCollector supports matching a particular pseudoId in this case, this would indicate a error at the call site since matching a particular element should be unnecessary.");
 
-    auto* shadowRoot = m_element.containingShadowRoot();
+    auto* shadowRoot = element().containingShadowRoot();
     if (shadowRoot && shadowRoot->mode() == ShadowRootMode::UserAgent)
         collectMatchingShadowPseudoElementRules(matchRequest, ruleRange);
 
     // We need to collect the rules for id, class, tag, and everything else into a buffer and
     // then sort the buffer.
-    auto& id = m_element.idForStyleResolution();
+    auto& id = element().idForStyleResolution();
     if (!id.isNull())
         collectMatchingRulesForList(matchRequest.ruleSet->idRules(id), matchRequest, ruleRange);
-    if (m_element.hasClass()) {
-        for (size_t i = 0; i < m_element.classNames().size(); ++i)
-            collectMatchingRulesForList(matchRequest.ruleSet->classRules(m_element.classNames()[i]), matchRequest, ruleRange);
+    if (element().hasClass()) {
+        for (size_t i = 0; i < element().classNames().size(); ++i)
+            collectMatchingRulesForList(matchRequest.ruleSet->classRules(element().classNames()[i]), matchRequest, ruleRange);
     }
 
-    if (m_element.isLink())
+    if (element().isLink())
         collectMatchingRulesForList(matchRequest.ruleSet->linkPseudoClassRules(), matchRequest, ruleRange);
-    if (SelectorChecker::matchesFocusPseudoClass(m_element))
+    if (SelectorChecker::matchesFocusPseudoClass(element()))
         collectMatchingRulesForList(matchRequest.ruleSet->focusPseudoClassRules(), matchRequest, ruleRange);
-    collectMatchingRulesForList(matchRequest.ruleSet->tagRules(m_element.localName(), m_element.isHTMLElement() && m_element.document().isHTMLDocument()), matchRequest, ruleRange);
+    collectMatchingRulesForList(matchRequest.ruleSet->tagRules(element().localName(), element().isHTMLElement() && element().document().isHTMLDocument()), matchRequest, ruleRange);
     collectMatchingRulesForList(matchRequest.ruleSet->universalRules(), matchRequest, ruleRange);
 }
 
@@ -194,18 +194,18 @@ void ElementRuleCollector::matchAuthorRules(bool includeEmptyRules)
         collectMatchingRules(matchRequest, ruleRange);
     }
 
-    auto* parent = m_element.parentElement();
+    auto* parent = element().parentElement();
     if (parent && parent->shadowRoot())
         matchSlottedPseudoElementRules(includeEmptyRules, ruleRange);
 
-    if (m_element.shadowRoot())
+    if (element().shadowRoot())
         matchHostPseudoClassRules(includeEmptyRules, ruleRange);
 
-    if (m_element.isInShadowTree()) {
+    if (element().isInShadowTree()) {
         matchAuthorShadowPseudoElementRules(includeEmptyRules, ruleRange);
 
-        if (!m_element.partNames().isEmpty())
-            matchPartPseudoElementRules(*m_element.containingShadowRoot(), includeEmptyRules, ruleRange);
+        if (!element().partNames().isEmpty())
+            matchPartPseudoElementRules(*element().containingShadowRoot(), includeEmptyRules, ruleRange);
     }
 
     sortAndTransferMatchedRules();
@@ -213,8 +213,8 @@ void ElementRuleCollector::matchAuthorRules(bool includeEmptyRules)
 
 void ElementRuleCollector::matchAuthorShadowPseudoElementRules(bool includeEmptyRules, StyleResolver::RuleRange& ruleRange)
 {
-    ASSERT(m_element.isInShadowTree());
-    auto& shadowRoot = *m_element.containingShadowRoot();
+    ASSERT(element().isInShadowTree());
+    auto& shadowRoot = *element().containingShadowRoot();
     if (shadowRoot.mode() != ShadowRootMode::UserAgent)
         return;
     // Look up shadow pseudo elements also from the host scope author style as they are web-exposed.
@@ -225,9 +225,9 @@ void ElementRuleCollector::matchAuthorShadowPseudoElementRules(bool includeEmpty
 
 void ElementRuleCollector::matchHostPseudoClassRules(bool includeEmptyRules, StyleResolver::RuleRange& ruleRange)
 {
-    ASSERT(m_element.shadowRoot());
+    ASSERT(element().shadowRoot());
 
-    auto& shadowAuthorStyle = m_element.shadowRoot()->styleScope().resolver().ruleSets().authorStyle();
+    auto& shadowAuthorStyle = element().shadowRoot()->styleScope().resolver().ruleSets().authorStyle();
     auto& shadowHostRules = shadowAuthorStyle.hostPseudoClassRules();
     if (shadowHostRules.isEmpty())
         return;
@@ -240,7 +240,7 @@ void ElementRuleCollector::matchHostPseudoClassRules(bool includeEmptyRules, Sty
 
 void ElementRuleCollector::matchSlottedPseudoElementRules(bool includeEmptyRules, StyleResolver::RuleRange& ruleRange)
 {
-    auto* slot = m_element.assignedSlot();
+    auto* slot = element().assignedSlot();
     auto styleScopeOrdinal = Style::ScopeOrdinal::FirstSlot;
 
     for (; slot; slot = slot->assignedSlot(), ++styleScopeOrdinal) {
@@ -265,12 +265,12 @@ void ElementRuleCollector::matchSlottedPseudoElementRules(bool includeEmptyRules
 
 void ElementRuleCollector::matchPartPseudoElementRules(const ShadowRoot& containingShadowRoot, bool includeEmptyRules, StyleResolver::RuleRange& ruleRange)
 {
-    ASSERT(m_element.isInShadowTree());
-    ASSERT(!m_element.partNames().isEmpty());
+    ASSERT(element().isInShadowTree());
+    ASSERT(!element().partNames().isEmpty());
 
     auto& shadowHost = *containingShadowRoot.host();
     {
-        SetForScope<const Element*> partMatchingScope(m_shadowHostInPartRuleScope, &shadowHost);
+        SetForScope<RefPtr<const Element>> partMatchingScope(m_shadowHostInPartRuleScope, &shadowHost);
 
         auto& hostAuthorRules = Style::Scope::forNode(shadowHost).resolver().ruleSets().authorStyle();
         MatchRequest hostAuthorRequest { &hostAuthorRules, includeEmptyRules, Style::ScopeOrdinal::ContainingHost };
@@ -288,22 +288,22 @@ void ElementRuleCollector::matchPartPseudoElementRules(const ShadowRoot& contain
 void ElementRuleCollector::collectMatchingShadowPseudoElementRules(const MatchRequest& matchRequest, StyleResolver::RuleRange& ruleRange)
 {
     ASSERT(matchRequest.ruleSet);
-    ASSERT(m_element.containingShadowRoot()->mode() == ShadowRootMode::UserAgent);
+    ASSERT(element().containingShadowRoot()->mode() == ShadowRootMode::UserAgent);
 
     auto& rules = *matchRequest.ruleSet;
 #if ENABLE(VIDEO_TRACK)
     // FXIME: WebVTT should not be done by styling UA shadow trees like this.
-    if (m_element.isWebVTTElement())
+    if (element().isWebVTTElement())
         collectMatchingRulesForList(rules.cuePseudoRules(), matchRequest, ruleRange);
 #endif
-    auto& pseudoId = m_element.shadowPseudoId();
+    auto& pseudoId = element().shadowPseudoId();
     if (!pseudoId.isEmpty())
         collectMatchingRulesForList(rules.shadowPseudoElementRules(pseudoId), matchRequest, ruleRange);
 }
 
 std::unique_ptr<RuleSet::RuleDataVector> ElementRuleCollector::collectSlottedPseudoElementRulesForSlot(bool includeEmptyRules)
 {
-    ASSERT(is<HTMLSlotElement>(m_element));
+    ASSERT(is<HTMLSlotElement>(element()));
 
     clearMatchedRules();
 
@@ -350,7 +350,7 @@ void ElementRuleCollector::matchUARules()
     matchUARules(*userAgentStyleSheet);
 
     // In quirks mode, we match rules from the quirks user agent sheet.
-    if (m_element.document().inQuirksMode())
+    if (element().document().inQuirksMode())
         matchUARules(*CSSDefaultStyleSheets::defaultQuirksStyle);
 
     if (m_userAgentMediaQueryStyle)
@@ -385,7 +385,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
     // We know a sufficiently simple single part selector matches simply because we found it from the rule hash when filtering the RuleSet.
     // This is limited to HTML only so we don't need to check the namespace (because of tag name match).
     MatchBasedOnRuleHash matchBasedOnRuleHash = ruleData.matchBasedOnRuleHash();
-    if (matchBasedOnRuleHash != MatchBasedOnRuleHash::None && m_element.isHTMLElement()) {
+    if (matchBasedOnRuleHash != MatchBasedOnRuleHash::None && element().isHTMLElement()) {
         ASSERT_WITH_MESSAGE(m_pseudoStyleRequest.pseudoId == PseudoId::None, "If we match based on the rule hash while collecting for a particular pseudo element ID, we would add incorrect rules for that pseudo element ID. We should never end in ruleMatches() with a pseudo element if the ruleData cannot match any pseudo element.");
 
         switch (matchBasedOnRuleHash) {
@@ -421,12 +421,12 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
         auto selectorChecker = SelectorCompiler::ruleCollectorSimpleSelectorCheckerFunction(compiledSelectorChecker, compiledSelector.status);
 #if !ASSERT_MSG_DISABLED
         unsigned ignoreSpecificity;
-        ASSERT_WITH_MESSAGE(!selectorChecker(&m_element, &ignoreSpecificity) || m_pseudoStyleRequest.pseudoId == PseudoId::None, "When matching pseudo elements, we should never compile a selector checker without context unless it cannot match anything.");
+        ASSERT_WITH_MESSAGE(!selectorChecker(&element(), &ignoreSpecificity) || m_pseudoStyleRequest.pseudoId == PseudoId::None, "When matching pseudo elements, we should never compile a selector checker without context unless it cannot match anything.");
 #endif
 #if CSS_SELECTOR_JIT_PROFILING
         ruleData.compiledSelectorUsed();
 #endif
-        bool selectorMatches = selectorChecker(&m_element, &specificity);
+        bool selectorMatches = selectorChecker(&element(), &specificity);
 
         if (selectorMatches && ruleData.containsUncommonAttributeSelector())
             m_didMatchUncommonAttributeSelector = true;
@@ -440,7 +440,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
     context.scrollbar = m_pseudoStyleRequest.scrollbar;
     context.scrollbarPart = m_pseudoStyleRequest.scrollbarPart;
     context.isMatchingHostPseudoClass = m_isMatchingHostPseudoClass;
-    context.shadowHostInPartRuleScope = m_shadowHostInPartRuleScope;
+    context.shadowHostInPartRuleScope = m_shadowHostInPartRuleScope.get();
 
     bool selectorMatches;
 #if ENABLE(CSS_SELECTOR_JIT)
@@ -452,7 +452,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
 #if CSS_SELECTOR_JIT_PROFILING
         compiledSelector.useCount++;
 #endif
-        selectorMatches = selectorChecker(&m_element, &context, &specificity);
+        selectorMatches = selectorChecker(&element(), &context, &specificity);
     } else
 #endif // ENABLE(CSS_SELECTOR_JIT)
     {
@@ -463,8 +463,8 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
                 return false;
         }
         // Slow path.
-        SelectorChecker selectorChecker(m_element.document());
-        selectorMatches = selectorChecker.match(*selector, m_element, context, specificity);
+        SelectorChecker selectorChecker(element().document());
+        selectorMatches = selectorChecker.match(*selector, element(), context, specificity);
     }
 
     if (ruleData.containsUncommonAttributeSelector()) {
@@ -532,8 +532,8 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
         matchUserRules(false);
 
     // Now check author rules, beginning first with presentational attributes mapped from HTML.
-    if (is<StyledElement>(m_element)) {
-        auto& styledElement = downcast<StyledElement>(m_element);
+    if (is<StyledElement>(element())) {
+        auto& styledElement = downcast<StyledElement>(element());
         addElementStyleProperties(styledElement.presentationAttributeStyle());
 
         // Now we check additional mapped declarations.
@@ -553,8 +553,8 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
     if (matchAuthorAndUserStyles)
         matchAuthorRules(false);
 
-    if (matchAuthorAndUserStyles && is<StyledElement>(m_element)) {
-        auto& styledElement = downcast<StyledElement>(m_element);
+    if (matchAuthorAndUserStyles && is<StyledElement>(element())) {
+        auto& styledElement = downcast<StyledElement>(element());
         // Now check our inline style attribute.
         if (styledElement.inlineStyle()) {
             // Inline style is immutable as long as there is no CSSOM wrapper.

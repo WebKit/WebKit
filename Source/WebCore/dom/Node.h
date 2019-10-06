@@ -477,14 +477,14 @@ public:
     // Perform the default action for an event.
     virtual void defaultEventHandler(Event&);
 
-    void ref();
-    void deref();
+    void ref() const;
+    void deref() const;
     bool hasOneRef() const;
     unsigned refCount() const;
 
 #ifndef NDEBUG
     bool m_deletionHasBegun { false };
-    bool m_inRemovedLastRefFunction { false };
+    mutable bool m_inRemovedLastRefFunction { false };
     bool m_adoptionIsRequired { true };
 #endif
 
@@ -668,7 +668,7 @@ private:
         void operator()(NodeRareData*) const;
     };
 
-    uint32_t m_refCountAndParentBit { s_refCountIncrement };
+    mutable uint32_t m_refCountAndParentBit { s_refCountIncrement };
     mutable uint32_t m_nodeFlags;
 
     ContainerNode* m_parentNode { nullptr };
@@ -690,7 +690,7 @@ inline void adopted(Node* node)
 }
 #endif
 
-ALWAYS_INLINE void Node::ref()
+ALWAYS_INLINE void Node::ref() const
 {
     ASSERT(isMainThread());
     ASSERT(!m_deletionHasBegun);
@@ -699,7 +699,7 @@ ALWAYS_INLINE void Node::ref()
     m_refCountAndParentBit += s_refCountIncrement;
 }
 
-ALWAYS_INLINE void Node::deref()
+ALWAYS_INLINE void Node::deref() const
 {
     ASSERT(isMainThread());
     ASSERT(refCount());
@@ -713,7 +713,7 @@ ALWAYS_INLINE void Node::deref()
 #ifndef NDEBUG
         m_inRemovedLastRefFunction = true;
 #endif
-        removedLastRef();
+        const_cast<Node&>(*this).removedLastRef();
         return;
     }
     m_refCountAndParentBit = updatedRefCount;

@@ -1,3 +1,35 @@
+2019-10-06  Antti Koivisto  <antti@apple.com>
+
+        Node::ref/deref should be const
+        https://bugs.webkit.org/show_bug.cgi?id=202562
+
+        Reviewed by Ryosuke Niwa.
+
+        This enables RefPtr<const Element> and matches RefCounted.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::collectMatchingRules):
+        (WebCore::ElementRuleCollector::matchAuthorRules):
+        (WebCore::ElementRuleCollector::matchAuthorShadowPseudoElementRules):
+        (WebCore::ElementRuleCollector::matchHostPseudoClassRules):
+        (WebCore::ElementRuleCollector::matchSlottedPseudoElementRules):
+        (WebCore::ElementRuleCollector::matchPartPseudoElementRules):
+        (WebCore::ElementRuleCollector::collectMatchingShadowPseudoElementRules):
+        (WebCore::ElementRuleCollector::collectSlottedPseudoElementRulesForSlot):
+        (WebCore::ElementRuleCollector::matchUARules):
+        (WebCore::ElementRuleCollector::ruleMatches):
+        (WebCore::ElementRuleCollector::matchAllRules):
+
+        Use it to ref elements in ElementRuleCollector.
+
+        * css/ElementRuleCollector.h:
+        (WebCore::ElementRuleCollector::element const):
+        * dom/Node.h:
+        (WebCore::Node::ref const):
+        (WebCore::Node::deref const):
+        (WebCore::Node::ref): Deleted.
+        (WebCore::Node::deref): Deleted.
+
 2019-10-05  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] LayoutChildtIteratorAdapter -> LayoutChildIteratorAdapter

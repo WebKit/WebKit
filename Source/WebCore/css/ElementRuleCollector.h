@@ -89,7 +89,9 @@ private:
 
     void addMatchedRule(const RuleData&, unsigned specificity, Style::ScopeOrdinal, StyleResolver::RuleRange&);
 
-    const Element& m_element;
+    const Element& element() const { return m_element.get(); }
+
+    const Ref<const Element> m_element;
     const RuleSet& m_authorStyle;
     const RuleSet* m_userStyle { nullptr };
     const RuleSet* m_userAgentMediaQueryStyle { nullptr };
@@ -100,7 +102,7 @@ private:
     SelectorChecker::Mode m_mode { SelectorChecker::Mode::ResolvingStyle };
     bool m_isMatchingSlottedPseudoElements { false };
     bool m_isMatchingHostPseudoClass { false };
-    const Element* m_shadowHostInPartRuleScope { nullptr };
+    RefPtr<const Element> m_shadowHostInPartRuleScope;
     Vector<std::unique_ptr<RuleSet::RuleDataVector>> m_keepAliveSlottedPseudoElementRules;
 
     Vector<MatchedRule, 64> m_matchedRules;
