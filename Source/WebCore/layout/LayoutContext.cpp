@@ -32,6 +32,7 @@
 #include "BlockFormattingState.h"
 #include "BlockInvalidation.h"
 #include "DisplayBox.h"
+#include "DisplayPainter.h"
 #include "InlineFormattingContext.h"
 #include "InlineFormattingState.h"
 #include "InlineInvalidation.h"
@@ -117,7 +118,7 @@ std::unique_ptr<FormattingContext> LayoutContext::createFormattingContext(const 
     CRASH();
 }
 
-void LayoutContext::run(const RenderView& renderView)
+static void initializeLayoutState(LayoutState& layoutState, const RenderView& renderView)
 {
     auto quirksMode = [&] {
         auto& document = renderView.document();
@@ -128,35 +129,54 @@ void LayoutContext::run(const RenderView& renderView)
         return LayoutState::QuirksMode::No;
     };
 
-    auto initialContainingBlock = TreeBuilder::createLayoutTree(renderView);
-
-    auto layoutState = LayoutState { };
     layoutState.setQuirksMode(quirksMode());
-    layoutState.createFormattingStateForFormattingRootIfNeeded(*initialContainingBlock);
 
-    auto layoutContext = LayoutContext(layoutState);
+    auto& layoutRoot = layoutState.root();
+    layoutState.createFormattingStateForFormattingRootIfNeeded(layoutRoot);
+    // Not efficient, but this is temporary anyway.
+    // Collect the out-of-flow descendants at the formatting root level (as opposed to at the containing block level, though they might be the same).
+    for (auto& descendant : descendantsOfType<Box>(layoutRoot)) {
+        if (!descendant.isOutOfFlowPositioned())
+            continue;
+        auto& formattingState = layoutState.createFormattingStateForFormattingRootIfNeeded(descendant.formattingContextRoot());
+        formattingState.addOutOfFlowBox(descendant);
+    }
+}
 
-    auto& displayBox = layoutState.displayBoxForLayoutBox(*initialContainingBlock);
+void LayoutContext::runLayout(LayoutState& layoutState)
+{
+    auto& layoutRoot = layoutState.root();
+    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutRoot);
     displayBox.setHorizontalMargin({ });
     displayBox.setHorizontalComputedMargin({ });
     displayBox.setVerticalMargin({ });
     displayBox.setBorder({ });
     displayBox.setPadding({ });
     displayBox.setTopLeft({ });
-    displayBox.setContentBoxHeight(LayoutUnit(initialContainingBlock->style().logicalHeight().value()));
-    displayBox.setContentBoxWidth(LayoutUnit(initialContainingBlock->style().logicalWidth().value()));
+    displayBox.setContentBoxHeight(LayoutUnit(layoutRoot.style().logicalHeight().value()));
+    displayBox.setContentBoxWidth(LayoutUnit(layoutRoot.style().logicalWidth().value()));
 
-    // Not efficient, but this is temporary anyway.
-    // Collect the out-of-flow descendants at the formatting root level (as opposed to at the containing block level, though they might be the same).
-    for (auto& descendant : descendantsOfType<Box>(*initialContainingBlock)) {
-        if (!descendant.isOutOfFlowPositioned())
-            continue;
-        auto& formattingState = layoutState.createFormattingStateForFormattingRootIfNeeded(descendant.formattingContextRoot());
-        formattingState.addOutOfFlowBox(descendant);
-    }
-    layoutContext.markNeedsUpdate(*initialContainingBlock);
+    auto layoutContext = LayoutContext(layoutState);
+    layoutContext.markNeedsUpdate(layoutRoot);
     layoutContext.layout();
-    LayoutContext::verifyAndOutputMismatchingLayoutTree(layoutState, renderView, *initialContainingBlock);
+}
+
+void LayoutContext::runLayoutAndVerify(const RenderView& renderView)
+{
+    auto initialContainingBlock = TreeBuilder::createLayoutTree(renderView);
+    auto layoutState = LayoutState { *initialContainingBlock };
+    initializeLayoutState(layoutState, renderView);
+    runLayout(layoutState);
+    LayoutContext::verifyAndOutputMismatchingLayoutTree(layoutState, renderView);
+}
+
+void LayoutContext::runLayoutAndPaint(const RenderView& renderView, GraphicsContext& context)
+{
+    auto initialContainingBlock = TreeBuilder::createLayoutTree(renderView);
+    auto layoutState = LayoutState { *initialContainingBlock };
+    initializeLayoutState(layoutState, renderView);
+    runLayout(layoutState);
+    Display::Painter::paint(layoutState, context);
 }
 
 }

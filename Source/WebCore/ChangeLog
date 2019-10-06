@@ -1,3 +1,38 @@
+2019-10-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Painting] Introduce Display::Painter
+        https://bugs.webkit.org/show_bug.cgi?id=202614
+        <rdar://problem/56010347>
+
+        Reviewed by Antti Koivisto.
+
+        Display::Painter is responsible for rendering the nodes in the display tree. Testing purposes/WK1 only at this point.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::initializeLayoutState):
+        (WebCore::Layout::LayoutContext::runLayout):
+        (WebCore::Layout::LayoutContext::runLayoutAndVerify):
+        (WebCore::Layout::LayoutContext::runLayoutAndPaint):
+        (WebCore::Layout::LayoutContext::run): Deleted.
+        * layout/LayoutContext.h:
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::LayoutState):
+        * layout/LayoutState.h:
+        (WebCore::Layout::LayoutState::root const):
+        * layout/Verification.cpp:
+        (WebCore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree):
+        * layout/displaytree/DisplayPainter.cpp: Added.
+        (WebCore::Display::Painter::paint):
+        * layout/displaytree/DisplayPainter.h: Added.
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::printLayoutTreeForLiveDocuments):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::layoutUsingFormattingContext):
+
 2019-10-06  Antti Koivisto  <antti@apple.com>
 
         Node::ref/deref should be const

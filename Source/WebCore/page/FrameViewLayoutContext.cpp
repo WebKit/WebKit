@@ -54,7 +54,7 @@ static void layoutUsingFormattingContext(const RenderView& renderView)
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextEnabled())
         return;
-    Layout::LayoutContext::run(renderView);
+    Layout::LayoutContext::runLayoutAndVerify(renderView);
 } 
 #endif
 

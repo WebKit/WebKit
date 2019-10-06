@@ -52,8 +52,9 @@ class FormattingContext;
 class LayoutContext {
     WTF_MAKE_ISO_ALLOCATED(LayoutContext);
 public:
-    // FIXME: This is a temporary entry point for LFC layout.
-    static void run(const RenderView&);
+    // FIXME: These are temporary entry points for LFC layout.
+    static void runLayoutAndVerify(const RenderView&);
+    static void runLayoutAndPaint(const RenderView&, GraphicsContext&);
 
     LayoutContext(LayoutState&);
     void layout();
@@ -71,12 +72,13 @@ public:
 
     static std::unique_ptr<FormattingContext> createFormattingContext(const Container& formattingContextRoot, LayoutState&);
 
-    // For testing purposes only
-    static void verifyAndOutputMismatchingLayoutTree(const LayoutState&, const RenderView&, const Container& initialContainingBlock);
-
 private:
     void layoutFormattingContextSubtree(const Container&);
     LayoutState& layoutState() { return m_layoutState; }
+
+    // For testing purposes only
+    static void verifyAndOutputMismatchingLayoutTree(const LayoutState&, const RenderView&);
+    static void runLayout(LayoutState&);
 
     LayoutState& m_layoutState;
     WeakHashSet<const Container> m_formattingContextRootListForLayout;

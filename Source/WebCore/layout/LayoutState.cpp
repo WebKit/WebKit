@@ -38,6 +38,13 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutState);
 
+LayoutState::LayoutState(const Container& root)
+    : m_root(makeWeakPtr(root))
+{
+    // It makes absolutely no sense to construct a dedicated layout state for a non-formatting context root (it would be a no-op).
+    ASSERT(root.establishesFormattingContext());
+}
+
 Display::Box& LayoutState::displayBoxForLayoutBox(const Box& layoutBox) const
 {
     return *m_layoutToDisplayBox.ensure(&layoutBox, [&layoutBox] {

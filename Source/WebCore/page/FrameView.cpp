@@ -128,6 +128,10 @@
 #include "LocalDefaultSystemAppearance.h"
 #endif
 
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+#include "LayoutContext.h"
+#endif
+
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(frame().page() && frame().page()->isAlwaysOnLoggingAllowed(), Layout, "%p - FrameView::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
@@ -4126,6 +4130,13 @@ void FrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect
         LOG_ERROR("called FrameView::paint with nil renderer");
         return;
     }
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextEnabled()) {
+        Layout::LayoutContext::runLayoutAndPaint(*renderView, context);
+        return;
+    }
+#endif
 
     if (!layoutContext().inPaintableState())
         return;
