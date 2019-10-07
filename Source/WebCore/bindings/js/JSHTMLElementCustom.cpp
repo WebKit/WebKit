@@ -41,7 +41,7 @@ namespace WebCore {
 
 using namespace JSC;
 
-EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(JSGlobalObject* globalObject, ExecState& exec)
+EncodedJSValue constructJSHTMLElement(JSGlobalObject* globalObject, ExecState& exec)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
