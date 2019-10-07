@@ -31,7 +31,9 @@ import md5
 def create_mock_slave_passwords_dict():
     with open('config.json', 'r') as config_json:
         config_dict = json.load(config_json)
-    return dict([(slave['name'], '1234') for slave in config_dict['slaves']])
+    result = dict([(slave['name'], '1234') for slave in config_dict['slaves']])
+    result['results-server-api-key'] = 'api-key'
+    return result
 
 if __name__ == '__main__':
     with open('passwords.json', 'w') as passwords_file:
