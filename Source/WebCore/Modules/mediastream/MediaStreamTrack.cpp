@@ -465,22 +465,24 @@ MediaProducer::MediaStateFlags sourceCaptureState(RealtimeMediaSource& source)
 }
 
 #if PLATFORM(IOS_FAMILY)
-MediaProducer::MediaStateFlags MediaStreamTrack::captureState()
+MediaProducer::MediaStateFlags MediaStreamTrack::captureState(Document& document)
 {
     MediaProducer::MediaStateFlags state = MediaProducer::IsNotPlaying;
-    if (auto* source = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().activeSource())
-        state |= sourceCaptureState(*source);
-    if (auto* source = RealtimeMediaSourceCenter::singleton().videoCaptureFactory().activeSource())
-        state |= sourceCaptureState(*source);
+    for (auto* captureTrack : allCaptureTracks()) {
+        if (captureTrack->document() != &document || captureTrack->ended())
+            continue;
+        state |= sourceCaptureState(captureTrack->source());
+    }
     return state;
 }
 
-void MediaStreamTrack::muteCapture()
+void MediaStreamTrack::updateCaptureAccordingToMutedState(Document& document)
 {
-    if (auto* source = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().activeSource())
-        source->setMuted(true);
-    if (auto* source = RealtimeMediaSourceCenter::singleton().videoCaptureFactory().activeSource())
-        source->setMuted(true);
+    for (auto* captureTrack : allCaptureTracks()) {
+        if (captureTrack->document() != &document || captureTrack->ended())
+            continue;
+        captureTrack->setMuted(document.page()->mutedState());
+    }
 }
 #endif
 

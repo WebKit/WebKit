@@ -72,8 +72,8 @@ public:
     static void endCapture(Document&);
 
 #if PLATFORM(IOS_FAMILY)
-    static MediaProducer::MediaStateFlags captureState();
-    static void muteCapture();
+    static MediaProducer::MediaStateFlags captureState(Document&);
+    static void updateCaptureAccordingToMutedState(Document&);
 #endif
 
     virtual bool isCanvas() const { return false; }

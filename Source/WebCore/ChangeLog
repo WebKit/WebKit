@@ -1,3 +1,26 @@
+2019-10-07  youenn fablet  <youenn@apple.com>
+
+        [iOS] Unmuting capture of a page is not working
+        https://bugs.webkit.org/show_bug.cgi?id=202627
+
+        Reviewed by Eric Carlson.
+
+        Before the patch, we were muting the capture tracks but never unmuting them.
+        The patch updates the code to make sure we unmute capture tracks based on the document state.
+        In addition, the iOS code wass process-wide while capture might happen between two documents in the same process.
+        The patch updates the capturestate computation and muting logic to be Document based.
+        A follow-up refactoring will merge back iOS and MacOS code paths.
+        Covered by API test.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::captureState):
+        (WebCore::MediaStreamTrack::updateCaptureAccordingMutedState):
+        (WebCore::MediaStreamTrack::muteCapture): Deleted.
+        * Modules/mediastream/MediaStreamTrack.h:
+        * dom/Document.cpp:
+        (WebCore::Document::updateIsPlayingMedia):
+        (WebCore::Document::pageMutedStateDidChange):
+
 2019-10-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         attachShadow should support attaching a shadow root to a main element
