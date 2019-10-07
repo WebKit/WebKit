@@ -41,6 +41,7 @@
 #import "_WKWebViewPrintFormatterInternal.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <WebCore/DataDetection.h>
+#import <WebCore/ShareData.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
@@ -70,10 +71,16 @@
     RetainPtr<NSString> _suggestedFilename;
     WeakObjCPtr<WKWebView> _webView;
     RetainPtr<WKKeyboardScrollViewAnimator> _keyboardScrollingAnimator;
+    RetainPtr<WKShareSheet> _shareSheet;
 }
 
 - (void)dealloc
 {
+    if (_shareSheet) {
+        [_shareSheet setDelegate:nil];
+        [_shareSheet dismiss];
+        _shareSheet = nil;
+    }
     [_actionSheetAssistant cleanupSheet];
     [[_hostViewController view] removeFromSuperview];
     [_pageNumberIndicator removeFromSuperview];
@@ -543,9 +550,26 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
 
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant shareElementWithURL:(NSURL *)url rect:(CGRect)boundingRect
 {
-    // FIXME: We should use WKShareSheet instead of UIWKSelectionAssistant for this.
-    auto selectionAssistant = adoptNS([[UIWKSelectionAssistant alloc] initWithView:[_hostViewController view]]);
-    [selectionAssistant showShareSheetFor:WTF::userVisibleString(url) fromRect:boundingRect];
+    WKWebView *webView = _webView.getAutoreleased();
+    if (!webView)
+        return;
+
+    WebCore::ShareDataWithParsedURL shareData;
+    shareData.url = { url };
+    
+    [_shareSheet dismiss];
+
+    _shareSheet = adoptNS([[WKShareSheet alloc] initWithView:webView]);
+    [_shareSheet setDelegate:self];
+    [_shareSheet presentWithParameters:shareData inRect: { [[_hostViewController view] convertRect:boundingRect toView:webView] } completionHandler:[] (bool success) { }];
+}
+
+- (void)shareSheetDidDismiss:(WKShareSheet *)shareSheet
+{
+    ASSERT(_shareSheet == shareSheet);
+    
+    [_shareSheet setDelegate:nil];
+    _shareSheet = nil;
 }
 
 #if HAVE(APP_LINKS)

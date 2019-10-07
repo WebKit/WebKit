@@ -1,3 +1,21 @@
+2019-10-07  Megan Gardner  <megan_gardner@apple.com>
+
+        Switch to WKShareSheet for WKPDFView
+        https://bugs.webkit.org/show_bug.cgi?id=202338
+
+        Reviewed by Tim Horton.
+
+        Switch to WKShareSheet from the share sheet in UIWKSelectionAssistant, since this is the only instance
+        of UIWKSelectionAssistant any more. This will keep all our share sheet code together, and allow
+        us to eliminate this class that will be completely unused with this change.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKPDFView.h:
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView dealloc]):
+        (-[WKPDFView actionSheetAssistant:shareElementWithURL:rect:]):
+        (-[WKPDFView shareSheetDidDismiss:]):
+
 2019-10-07  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Layering violation in AuxiliaryProcessProxy::didFinishLaunching

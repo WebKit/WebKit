@@ -26,9 +26,10 @@
 #if ENABLE(WKPDFVIEW)
 
 #import "WKApplicationStateTrackingView.h"
+#import "WKShareSheet.h"
 #import "WKWebViewContentProvider.h"
 
-@interface WKPDFView : WKApplicationStateTrackingView <WKWebViewContentProvider>
+@interface WKPDFView : WKApplicationStateTrackingView <WKShareSheetDelegate, WKWebViewContentProvider>
 
 @end
 

@@ -69,7 +69,6 @@
 #import <UIKit/UIViewController_ViewService.h>
 #import <UIKit/UIView_Private.h>
 #import <UIKit/UIVisualEffect_Private.h>
-#import <UIKit/UIWKSelectionAssistant.h>
 #import <UIKit/UIWKTextInteractionAssistant.h>
 #import <UIKit/UIWebBrowserView.h>
 #import <UIKit/UIWebDocumentView.h>
@@ -589,14 +588,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 };
 
 @interface UIWebSelectionAssistant : NSObject
-@end
-
-@interface UIWKSelectionAssistant : UIWebSelectionAssistant
-@end
-
-@interface UIWKSelectionAssistant ()
-- (id)initWithView:(UIView *)view;
-- (void)showShareSheetFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
 @end
 
 @interface UIWKAutocorrectionRects : NSObject
