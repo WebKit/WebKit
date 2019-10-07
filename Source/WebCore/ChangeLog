@@ -1,3 +1,10 @@
+2019-10-07  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed WinCairo build fix for r250758.
+
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::jobResolvedWithRegistration):
+
 2019-10-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         focus pseudo class should match a shadow host whose shadow tree contains the focused element

@@ -379,7 +379,7 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
     if (!promise)
         return;
 
-    m_taskQueue->enqueueTask([this, promise = WTFMove(promise), jobIdentifier = job.identifier(), data = WTFMove(data), shouldNotifyWhenResolved, notifyIfExitEarly = WTFMove(notifyIfExitEarly)]() mutable {
+    m_taskQueue->enqueueTask([this, protectedThis = makeRef(*this), promise = WTFMove(promise), jobIdentifier = job.identifier(), data = WTFMove(data), shouldNotifyWhenResolved, notifyIfExitEarly = WTFMove(notifyIfExitEarly)]() mutable {
         notifyIfExitEarly.release();
 
         auto registration = ServiceWorkerRegistration::getOrCreate(*scriptExecutionContext(), *this, WTFMove(data));
@@ -388,7 +388,7 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
 
         if (shouldNotifyWhenResolved == ShouldNotifyWhenResolved::Yes) {
             m_ongoingSettledRegistrations.add(++m_lastOngoingSettledRegistrationIdentifier, registration->data().key);
-            promise->whenSettled([this, protectedThis = makeRef(*this), identifier = m_lastOngoingSettledRegistrationIdentifier] {
+            promise->whenSettled([this, protectedThis = WTFMove(protectedThis), identifier = m_lastOngoingSettledRegistrationIdentifier] {
                 notifyRegistrationIsSettled(m_ongoingSettledRegistrations.take(identifier));
             });
         }
