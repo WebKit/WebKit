@@ -1,3 +1,15 @@
+2019-10-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        attachShadow should support attaching a shadow root to a main element
+        https://bugs.webkit.org/show_bug.cgi?id=197726
+
+        Reviewed by Antti Koivisto.
+
+        Added a test for attachShadow.
+
+        * fast/shadow-dom/attach-shadow-to-elements-expected.txt: Added.
+        * fast/shadow-dom/attach-shadow-to-elements.html: Added.
+
 2019-10-04  Chris Dumez  <cdumez@apple.com>
 
         Allow pages using EventSource to enter the back/forward cache

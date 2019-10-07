@@ -1,3 +1,17 @@
+2019-10-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        attachShadow should support attaching a shadow root to a main element
+        https://bugs.webkit.org/show_bug.cgi?id=197726
+
+        Reviewed by Antti Koivisto.
+
+        Added main element to the list of elements that support an author shadow root.
+
+        Test: fast/shadow-dom/attach-shadow-to-elements.html
+
+        * dom/Element.cpp:
+        (WebCore::canAttachAuthorShadowRoot):
+
 2019-10-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Painting] Introduce Display::Painter

@@ -2294,6 +2294,7 @@ static bool canAttachAuthorShadowRoot(const Element& element)
             &h5Tag.get(),
             &h6Tag.get(),
             &headerTag.get(),
+            &mainTag.get(),
             &navTag.get(),
             &pTag.get(),
             &sectionTag.get(),
