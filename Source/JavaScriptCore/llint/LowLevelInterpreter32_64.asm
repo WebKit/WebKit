@@ -1398,13 +1398,6 @@ llintOpWithMetadata(op_get_by_id, OpGetById, macro (size, get, dispatch, metadat
 .opGetByIdSlow:
     callSlowPath(_llint_slow_path_get_by_id)
     dispatch()
-
-# osr return point
-    getterSetterOSRExitReturnPoint(op_get_by_id, size)
-    metadata(t2, t3)
-    valueProfile(OpGetById, t2, r1, r0)
-    return(r1, r0)
-
 end)
 
 
@@ -1467,11 +1460,6 @@ llintOpWithMetadata(op_put_by_id, OpPutById, macro (size, get, dispatch, metadat
 .opPutByIdSlow:
     callSlowPath(_llint_slow_path_put_by_id)
     dispatch()
-
-# osr return point
-    getterSetterOSRExitReturnPoint(op_put_by_id, size)
-    dispatch()
-
 end)
 
 
@@ -1523,17 +1511,10 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
 .opGetByValSlow:
     callSlowPath(_llint_slow_path_get_by_val)
     dispatch()
-
-# osr return point
-    getterSetterOSRExitReturnPoint(op_get_by_val, size)
-    metadata(t2, t3)
-    valueProfile(OpGetByVal, t2, r1, r0)
-    return(r1, r0)
-
 end)
 
 
-macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
+macro putByValOp(opcodeName, opcodeStruct)
     llintOpWithMetadata(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch, metadata, return)
         macro contiguousPutByVal(storeCallback)
             biaeq t3, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], .outOfBounds
@@ -1621,20 +1602,13 @@ macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
     .opPutByValSlow:
         callSlowPath(_llint_slow_path_%opcodeName%)
         dispatch()
-
-    .osrExitPoint:
-        osrExitPoint(size, dispatch)
     end)
 end
 
 
-putByValOp(put_by_val, OpPutByVal, macro (size, dispatch)
-    # osr return point
-    getterSetterOSRExitReturnPoint(op_put_by_val, size)
-    dispatch()
-end)
+putByValOp(put_by_val, OpPutByVal)
 
-putByValOp(put_by_val_direct, OpPutByValDirect, macro (a, b) end)
+putByValOp(put_by_val_direct, OpPutByValDirect)
 
 
 macro llintJumpTrueOrFalseOp(opcodeName, opcodeStruct, conditionOp)
@@ -1901,10 +1875,10 @@ macro commonCallOp(opcodeName, slowPath, opcodeStruct, prepareCall, prologue)
         storei CellTag, Callee + TagOffset[t3]
         move t3, sp
         prepareCall(%opcodeStruct%::Metadata::m_callLinkInfo.m_machineCodeTarget[t5], t2, t3, t4, JSEntryPtrTag)
-        callTargetFunction(opcodeName, size, opcodeStruct, dispatch, %opcodeStruct%::Metadata::m_callLinkInfo.m_machineCodeTarget[t5], JSEntryPtrTag)
+        callTargetFunction(size, opcodeStruct, dispatch, %opcodeStruct%::Metadata::m_callLinkInfo.m_machineCodeTarget[t5], JSEntryPtrTag)
 
     .opCallSlow:
-        slowPathForCall(opcodeName, size, opcodeStruct, dispatch, slowPath, prepareCall)
+        slowPathForCall(size, opcodeStruct, dispatch, slowPath, prepareCall)
     end)
 end
 

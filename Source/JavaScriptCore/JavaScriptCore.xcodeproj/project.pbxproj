@@ -182,6 +182,7 @@
 		0F235BE017178E1C00690C7F /* FTLOSRExitCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F235BCA17178E1C00690C7F /* FTLOSRExitCompiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F235BE217178E1C00690C7F /* FTLThunks.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F235BCC17178E1C00690C7F /* FTLThunks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F235BEC17178E7300690C7F /* DFGOSRExitBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F235BE817178E7300690C7F /* DFGOSRExitBase.h */; };
+		0F235BEE17178E7300690C7F /* DFGOSRExitPreparation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F235BEA17178E7300690C7F /* DFGOSRExitPreparation.h */; };
 		0F24E54117EA9F5900ABB217 /* AssemblyHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E53C17EA9F5900ABB217 /* AssemblyHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E54217EA9F5900ABB217 /* CCallHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E53D17EA9F5900ABB217 /* CCallHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E54317EA9F5900ABB217 /* FPRInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E53E17EA9F5900ABB217 /* FPRInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2295,6 +2296,8 @@
 		0F235BCC17178E1C00690C7F /* FTLThunks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLThunks.h; path = ftl/FTLThunks.h; sourceTree = "<group>"; };
 		0F235BE717178E7300690C7F /* DFGOSRExitBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGOSRExitBase.cpp; path = dfg/DFGOSRExitBase.cpp; sourceTree = "<group>"; };
 		0F235BE817178E7300690C7F /* DFGOSRExitBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOSRExitBase.h; path = dfg/DFGOSRExitBase.h; sourceTree = "<group>"; };
+		0F235BE917178E7300690C7F /* DFGOSRExitPreparation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGOSRExitPreparation.cpp; path = dfg/DFGOSRExitPreparation.cpp; sourceTree = "<group>"; };
+		0F235BEA17178E7300690C7F /* DFGOSRExitPreparation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOSRExitPreparation.h; path = dfg/DFGOSRExitPreparation.h; sourceTree = "<group>"; };
 		0F24E53B17EA9F5900ABB217 /* AssemblyHelpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AssemblyHelpers.cpp; sourceTree = "<group>"; };
 		0F24E53C17EA9F5900ABB217 /* AssemblyHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssemblyHelpers.h; sourceTree = "<group>"; };
 		0F24E53D17EA9F5900ABB217 /* CCallHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCallHelpers.h; sourceTree = "<group>"; };
@@ -7869,6 +7872,8 @@
 				0F392C881B46188400844728 /* DFGOSRExitFuzz.h */,
 				0FEFC9A71681A3B000567F53 /* DFGOSRExitJumpPlaceholder.cpp */,
 				0FEFC9A81681A3B000567F53 /* DFGOSRExitJumpPlaceholder.h */,
+				0F235BE917178E7300690C7F /* DFGOSRExitPreparation.cpp */,
+				0F235BEA17178E7300690C7F /* DFGOSRExitPreparation.h */,
 				0F6237951AE45CA700D402EA /* DFGPhantomInsertionPhase.cpp */,
 				0F6237961AE45CA700D402EA /* DFGPhantomInsertionPhase.h */,
 				0FFFC94F14EF909500C72532 /* DFGPhase.cpp */,
@@ -9234,6 +9239,7 @@
 				0F7025AA1714B0FC00382C0E /* DFGOSRExitCompilerCommon.h in Headers */,
 				0F392C8A1B46188400844728 /* DFGOSRExitFuzz.h in Headers */,
 				0FEFC9AB1681A3B600567F53 /* DFGOSRExitJumpPlaceholder.h in Headers */,
+				0F235BEE17178E7300690C7F /* DFGOSRExitPreparation.h in Headers */,
 				0F6237981AE45CA700D402EA /* DFGPhantomInsertionPhase.h in Headers */,
 				0FFFC95C14EF90AF00C72532 /* DFGPhase.h in Headers */,
 				0F2B9CEB19D0BA7D00B1D1B5 /* DFGPhiChildren.h in Headers */,

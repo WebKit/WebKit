@@ -214,12 +214,10 @@ class Assembler
 
     def putsLabel(labelName, isGlobal)
         raise unless @state == :asm
-        unless isGlobal
-            @deferredNextLabelActions.each {
-                | action |
-                action.call()
-            }
-        end
+        @deferredNextLabelActions.each {
+            | action |
+            action.call()
+        }
         @deferredNextLabelActions = []
         @numGlobalLabels += 1
         putsProcEndIfNeeded if $emitWinAsm and isGlobal
@@ -403,7 +401,7 @@ File.open(outputFlnm, "w") {
             lowLevelAST = lowLevelAST.resolve(buildOffsetsMap(lowLevelAST, offsetsList))
             lowLevelAST.validate
             emitCodeInConfiguration(concreteSettings, lowLevelAST, backend) {
-                $currentSettings = concreteSettings
+                 $currentSettings = concreteSettings
                 $asm.inAsm {
                     lowLevelAST.lower(backend)
                 }
