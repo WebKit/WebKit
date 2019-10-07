@@ -1,3 +1,41 @@
+2019-10-07  Dean Jackson  <dino@apple.com>
+
+        Provide options for DTTZ to happen in more situations
+        https://bugs.webkit.org/show_bug.cgi?id=202634
+        <rdar://problem/55732762>
+
+        Reviewed by Antoine Quint.
+
+        Add two options that can be enabled to trigger double tap zooming 
+        in more places.
+
+        Firstly, an option to keep listening for a double-tap-to-zoom if the
+        first tap found a click handler on the body or document element. The
+        tap will still be dispatched. This is probably the most common case
+        for disabling a DTTZ.
+
+        Secondly, an option to always keep listening for a double-tap-to-zoom,
+        even if there was a clickable (non-root) element under the first tap.
+
+        * Shared/WebPreferences.yaml: Add ZoomOnDoubleTapWhenRoot and AlwaysZoomOnDoubleTap.
+        * UIProcess/PageClient.h: The message from the WebProcess now tells the UIProcess if
+        the tapped element was a root-level (document or body).
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::handleSmartMagnificationInformationForPotentialTap):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _endPotentialTapAndEnableDoubleTapGesturesIfNecessary]):
+        (-[WKContentView _handleSmartMagnificationInformationForPotentialTap:renderRect:fitEntireRect:viewportMinimumScale:viewportMaximumScale:nodeIsRootLevel:]):
+        Handle the two new options.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::handleSmartMagnificationInformationForPotentialTap):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::potentialTapAtPosition): Check if the tap was on a root-level element.
+
 2019-10-07  Matt Mokary  <mmokary@apple.com>
 
         foundStringMatchIndex in FindController::findString gets reset on page scroll
