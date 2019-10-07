@@ -1,3 +1,9 @@
+2019-10-07  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the Windows build
+
+        * html/ImageBitmap.h:
+
 2019-10-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Add const version of LayoutState::displayBoxForLayoutBox

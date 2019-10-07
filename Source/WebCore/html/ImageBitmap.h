@@ -29,6 +29,10 @@
 #include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
 
+namespace JSC {
+class ArrayBuffer;
+}
+
 namespace WebCore {
 
 class Blob;
