@@ -91,7 +91,7 @@ static inline uint64_t estimateSize(const IDBValue& value)
 static inline uint64_t estimateSize(const IDBKeyPath& keyPath)
 {
     return WTF::switchOn(keyPath, [](const String& path) {
-        return path.sizeInBytes();
+        return static_cast<uint64_t>(path.sizeInBytes());
     }, [](const Vector<String>& paths) {
         uint64_t size = 0;
         for (auto path : paths)
