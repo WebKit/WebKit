@@ -1,3 +1,15 @@
+2019-10-07  Rob Buis  <rbuis@igalia.com>
+
+        Change Response's statusText's default
+        https://bugs.webkit.org/show_bug.cgi?id=191879
+
+        Reviewed by Youenn Fablet.
+
+        Update improved test results.
+
+        * web-platform-tests/fetch/api/response/response-clone-expected.txt:
+        * web-platform-tests/fetch/api/response/response-init-001-expected.txt:
+
 2019-10-07  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Sync web-platform-tests/css/css-overflow from upstream

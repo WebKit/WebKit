@@ -53,7 +53,7 @@ public:
 
     struct Init {
         unsigned short status { 200 };
-        String statusText { "OK"_s };
+        String statusText;
         Optional<FetchHeaders::Init> headers;
     };
 

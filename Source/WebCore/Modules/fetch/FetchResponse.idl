@@ -33,7 +33,7 @@ enum FetchResponseType { "basic", "cors", "default", "error", "opaque", "opaquer
 
 dictionary FetchResponseInit {
     unsigned short status = 200;
-    ByteString statusText = "OK";
+    ByteString statusText = "";
     HeadersInit headers;
 };
 
