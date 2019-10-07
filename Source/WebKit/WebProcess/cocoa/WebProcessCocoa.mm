@@ -27,7 +27,6 @@
 #import "WebProcess.h"
 #import "WebProcessCocoa.h"
 
-#import "AssertionServicesSPI.h"
 #import "LegacyCustomProtocolManager.h"
 #import "LogInitialization.h"
 #import "Logging.h"
@@ -90,6 +89,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import "AccessibilitySupportSPI.h"
+#import "AssertionServicesSPI.h"
 #import "WKAccessibilityWebPageObjectIOS.h"
 #import <UIKit/UIAccessibility.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
