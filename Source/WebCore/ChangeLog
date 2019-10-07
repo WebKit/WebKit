@@ -1,3 +1,10 @@
+2019-10-07  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed WinCairo build fix for r250786.
+
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::addAll):
+
 2019-10-07  Tim Horton  <timothy_horton@apple.com>
 
         Fix the Windows build

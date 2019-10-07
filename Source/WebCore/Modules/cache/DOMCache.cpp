@@ -241,14 +241,14 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
         requests.uncheckedAppend(requestOrException.releaseReturnValue());
     }
 
-    auto taskHandler = FetchTasksHandler::create(*this, [this, promise = WTFMove(promise)](ExceptionOr<Vector<Record>>&& result) mutable {
+    auto taskHandler = FetchTasksHandler::create(*this, [this, protectedThis = makeRef(*this), promise = WTFMove(promise)](ExceptionOr<Vector<Record>>&& result) mutable {
         if (result.hasException()) {
             m_taskQueue->enqueueTask([promise = WTFMove(promise), exception = result.releaseException()]() mutable {
                 promise.reject(WTFMove(exception));
             });
             return;
         }
-        batchPutOperation(result.releaseReturnValue(), [this, protectedThis = makeRef(*this), promise = WTFMove(promise)](ExceptionOr<void>&& result) mutable {
+        batchPutOperation(result.releaseReturnValue(), [this, protectedThis = WTFMove(protectedThis), promise = WTFMove(promise)](ExceptionOr<void>&& result) mutable {
             m_taskQueue->enqueueTask([promise = WTFMove(promise), result = WTFMove(result)]() mutable {
                 promise.settle(WTFMove(result));
             });
