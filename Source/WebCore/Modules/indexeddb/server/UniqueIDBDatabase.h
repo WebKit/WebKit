@@ -141,11 +141,11 @@ private:
 
     void scheduleShutdownForClose();
 
-    void createObjectStoreAfterQuotaCheck(uint64_t taskSize, UniqueIDBDatabaseTransaction&, const IDBObjectStoreInfo&, ErrorCallback);
-    void renameObjectStoreAfterQuotaCheck(uint64_t taskSize, UniqueIDBDatabaseTransaction&, uint64_t objectStoreIdentifier, const String& newName, ErrorCallback);
-    void createIndexAfterQuotaCheck(uint64_t taskSize, UniqueIDBDatabaseTransaction&, const IDBIndexInfo&, ErrorCallback);
-    void renameIndexAfterQuotaCheck(uint64_t taskSize, UniqueIDBDatabaseTransaction&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName, ErrorCallback);
-    void putOrAddAfterQuotaCheck(uint64_t taskSize, const IDBRequestData&, const IDBKeyData&, const IDBValue&, IndexedDB::ObjectStoreOverwriteMode, KeyDataCallback);
+    void createObjectStoreAfterQuotaCheck(uint64_t taskSize, UniqueIDBDatabaseTransaction&, const IDBObjectStoreInfo&, ErrorCallback, const IDBError&);
+    void renameObjectStoreAfterQuotaCheck(uint64_t taskSize, UniqueIDBDatabaseTransaction&, uint64_t objectStoreIdentifier, const String& newName, ErrorCallback, const IDBError&);
+    void createIndexAfterQuotaCheck(uint64_t taskSize, UniqueIDBDatabaseTransaction&, const IDBIndexInfo&, ErrorCallback, const IDBError&);
+    void renameIndexAfterQuotaCheck(uint64_t taskSize, UniqueIDBDatabaseTransaction&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName, ErrorCallback, const IDBError&);
+    void putOrAddAfterQuotaCheck(uint64_t taskSize, const IDBRequestData&, const IDBKeyData&, const IDBValue&, IndexedDB::ObjectStoreOverwriteMode, KeyDataCallback, const IDBError&);
     void deleteRecordAfterQuotaCheck(const IDBRequestData&, const IDBKeyRangeData&, ErrorCallback);
 
     void deleteObjectStoreAfterQuotaCheck(UniqueIDBDatabaseTransaction&, const String& objectStoreName, ErrorCallback);
@@ -164,14 +164,14 @@ private:
     void performCommitTransaction(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier);
     void performAbortTransaction(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier);
     void beginTransactionInBackingStore(const IDBTransactionInfo&);
-    void performCreateObjectStore(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&);
+    void performCreateObjectStore(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&, const IDBError&);
     void performDeleteObjectStore(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier);
-    void performRenameObjectStore(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const String& newName);
+    void performRenameObjectStore(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const String& newName, const IDBError&);
     void performClearObjectStore(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier);
-    void performCreateIndex(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, const IDBIndexInfo&);
+    void performCreateIndex(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, const IDBIndexInfo&, const IDBError&);
     void performDeleteIndex(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier);
-    void performRenameIndex(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName);
-    void performPutOrAdd(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData&, const IDBValue&, IndexedDB::ObjectStoreOverwriteMode);
+    void performRenameIndex(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName, const IDBError&);
+    void performPutOrAdd(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData&, const IDBValue&, IndexedDB::ObjectStoreOverwriteMode, const IDBError&);
     void performGetRecord(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData&, IDBGetRecordDataType);
     void performGetAllRecords(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData&);
     void performGetIndexRecord(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, IndexedDB::IndexRecordType, const IDBKeyRangeData&);
@@ -247,8 +247,8 @@ private:
     void maybeFinishHardClose();
     bool isDoneWithHardClose();
 
-    void requestSpace(UniqueIDBDatabaseTransaction&, uint64_t taskSize, const char* errorMessage, CompletionHandler<void(Optional<IDBError>&&)>&&);
-    void waitForRequestSpaceCompletion(UniqueIDBDatabaseTransaction&, CompletionHandler<void(Optional<IDBError>&&)>&&);
+    void requestSpace(UniqueIDBDatabaseTransaction&, uint64_t taskSize, const char* errorMessage, CompletionHandler<void(IDBError&&)>&&);
+    void waitForRequestSpaceCompletion(UniqueIDBDatabaseTransaction&, CompletionHandler<void(IDBError&&)>&&);
     void updateSpaceUsedIfNeeded(Optional<uint64_t> optionalCallbackIdentifier = WTF::nullopt);
 
     Ref<IDBServer> m_server;

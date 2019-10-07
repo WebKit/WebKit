@@ -15,7 +15,19 @@ store = db.createObjectStore('store')
 onOpenSuccess():
 db = event.target.result
 store = db.transaction('store', 'readwrite').objectStore('store')
+addCount = 0
+store.add(new Uint8Array(1), 1).onsuccess = ()=> { ++addCount; }
+store.add(new Uint8Array(1), 2).onsuccess = ()=> { ++addCount; }
+store.add(new Uint8Array(1), 3).onsuccess = ()=> { ++addCount; }
+store.add(new Uint8Array(1), 4).onsuccess = ()=> { ++addCount; }
+store.add(new Uint8Array(1), 5).onsuccess = ()=> { ++addCount; }
+store.add(new Uint8Array(1), 6).onsuccess = ()=> { ++addCount; }
+store.add(new Uint8Array(1), 7).onsuccess = ()=> { ++addCount; }
+store.add(new Uint8Array(1), 8).onsuccess = ()=> { ++addCount; }
+store.add(new Uint8Array(1), 9).onsuccess = ()=> { ++addCount; }
+store.add(new Uint8Array(1), 10).onsuccess = ()=> { ++addCount; }
 request = store.add(new Uint8Array(409601), 0)
+PASS addCount is 10
 PASS 'error' in request is true
 PASS request.error.code is DOMException.QUOTA_EXCEEDED_ERR
 PASS request.error.name is "QuotaExceededError"
