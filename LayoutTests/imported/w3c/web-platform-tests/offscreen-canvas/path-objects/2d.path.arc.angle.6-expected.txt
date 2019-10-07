@@ -1,0 +1,7 @@
+2d.path.arc.angle.6
+
+arc() draws a full circle when anticlockwise and start > end+2pi
+
+
+FAIL arc() draws a full circle when anticlockwise and start > end+2pi null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

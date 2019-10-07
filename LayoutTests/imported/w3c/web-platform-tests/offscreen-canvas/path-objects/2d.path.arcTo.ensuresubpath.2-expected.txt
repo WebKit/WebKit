@@ -1,0 +1,7 @@
+2d.path.arcTo.ensuresubpath.2
+
+If there is no subpath, the first control point is added
+
+
+FAIL If there is no subpath, the first control point is added null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

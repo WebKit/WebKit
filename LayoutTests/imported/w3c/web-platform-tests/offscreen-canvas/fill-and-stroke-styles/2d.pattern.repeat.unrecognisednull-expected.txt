@@ -1,0 +1,5 @@
+2d.pattern.repeat.unrecognisednull
+
+
+FAIL OffscreenCanvas test: 2d.pattern.repeat.unrecognisednull assert_throws: function "function () { ctx.createPattern(offscreenCanvas, "null"); }" threw object "TypeError: null is not an object (evaluating 'ctx.createPattern')" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
+

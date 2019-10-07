@@ -1,0 +1,7 @@
+2d.imageData.get.order.cols
+
+getImageData() returns leftmost columns first
+
+
+FAIL getImageData() returns leftmost columns first null is not an object (evaluating 'ctx.fillStyle = '#fff'')
+

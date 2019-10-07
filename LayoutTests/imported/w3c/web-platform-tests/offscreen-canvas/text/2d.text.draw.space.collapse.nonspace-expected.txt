@@ -1,0 +1,7 @@
+2d.text.draw.space.collapse.nonspace
+
+Non-space characters are not converted to U+0020 and collapsed
+
+
+FAIL Non-space characters are not converted to U+0020 and collapsed null is not an object (evaluating 'ctx.font = '50px CanvasTest'')
+

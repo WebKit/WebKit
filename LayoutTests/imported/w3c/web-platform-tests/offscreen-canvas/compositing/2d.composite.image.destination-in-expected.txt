@@ -1,0 +1,5 @@
+2d.composite.image.destination-in
+
+
+FAIL OffscreenCanvas test: 2d.composite.image.destination-in null is not an object (evaluating 'ctx.fillStyle = 'rgba(0, 255, 255, 0.5)'')
+

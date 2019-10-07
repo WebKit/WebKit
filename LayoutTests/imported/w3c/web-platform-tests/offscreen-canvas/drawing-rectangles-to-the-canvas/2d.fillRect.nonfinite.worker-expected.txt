@@ -1,0 +1,3 @@
+
+FAIL fillRect() with Infinity/NaN is ignored Can't find variable: OffscreenCanvas
+

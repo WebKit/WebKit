@@ -1,0 +1,7 @@
+2d.imageData.get.order.rgb
+
+getImageData() returns R then G then B
+
+
+FAIL getImageData() returns R then G then B null is not an object (evaluating 'ctx.fillStyle = '#48c'')
+

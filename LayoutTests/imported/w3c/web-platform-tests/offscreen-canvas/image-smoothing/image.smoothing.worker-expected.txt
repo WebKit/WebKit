@@ -1,0 +1,11 @@
+
+FAIL When the context is created, imageSmoothingEnabled must be set to true. Can't find variable: OffscreenCanvas
+FAIL On getting imageSmoothingEnabled, the user agent must return the last value it was set to. Can't find variable: OffscreenCanvas
+FAIL Test that image smoothing is actually on by default. Can't find variable: OffscreenCanvas
+FAIL Test that image smoothing works when imageSmoothingEnabled is set to true Can't find variable: OffscreenCanvas
+FAIL Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with drawImage(). Can't find variable: OffscreenCanvas
+FAIL Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with fillRect and createPattern(). Can't find variable: OffscreenCanvas
+FAIL Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with fill() and createPattern(). Can't find variable: OffscreenCanvas
+FAIL Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with stroke() and createPattern(). Can't find variable: OffscreenCanvas
+FAIL Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) still works after repaints. Can't find variable: OffscreenCanvas
+

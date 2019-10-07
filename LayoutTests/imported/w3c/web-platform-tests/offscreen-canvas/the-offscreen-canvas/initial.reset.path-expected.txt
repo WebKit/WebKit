@@ -1,0 +1,7 @@
+initial.reset.path
+
+Resetting the canvas state resets the current path
+
+
+FAIL Resetting the canvas state resets the current path null is not an object (evaluating 'ctx.rect')
+

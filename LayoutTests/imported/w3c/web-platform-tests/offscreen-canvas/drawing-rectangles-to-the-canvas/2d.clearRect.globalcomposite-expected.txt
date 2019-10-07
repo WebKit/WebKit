@@ -1,0 +1,7 @@
+2d.clearRect.globalcomposite
+
+clearRect is not affected by globalCompositeOperation
+
+
+FAIL clearRect is not affected by globalCompositeOperation null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

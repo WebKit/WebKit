@@ -1,0 +1,7 @@
+2d.imageData.put.dirty.outside
+
+putImageData() handles dirty rectangles outside the canvas correctly
+
+
+FAIL putImageData() handles dirty rectangles outside the canvas correctly null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

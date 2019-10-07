@@ -1,0 +1,5 @@
+2d.path.rect.closed
+
+
+FAIL OffscreenCanvas test: 2d.path.rect.closed null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

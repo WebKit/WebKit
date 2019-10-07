@@ -1,0 +1,7 @@
+initial.reset.clip
+
+Resetting the canvas state resets the current clip region
+
+
+FAIL Resetting the canvas state resets the current clip region null is not an object (evaluating 'ctx.rect')
+

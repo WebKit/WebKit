@@ -1,0 +1,3 @@
+
+FAIL Shadows of clipped shapes are still drawn within the clipping region Can't find variable: OffscreenCanvas
+

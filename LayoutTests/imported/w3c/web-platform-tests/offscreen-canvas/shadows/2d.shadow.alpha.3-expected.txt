@@ -1,0 +1,7 @@
+2d.shadow.alpha.3
+
+Shadows are affected by globalAlpha
+
+
+FAIL Shadows are affected by globalAlpha null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

@@ -1,0 +1,7 @@
+2d.state.saverestore.globalCompositeOperation
+
+save()/restore() works for globalCompositeOperation
+
+
+FAIL save()/restore() works for globalCompositeOperation null is not an object (evaluating 'ctx.globalCompositeOperation')
+

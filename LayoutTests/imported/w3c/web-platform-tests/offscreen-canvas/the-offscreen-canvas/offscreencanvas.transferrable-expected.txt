@@ -1,0 +1,9 @@
+
+FAIL Test that offscreenCanvas's size is correct after being transferred to a worker. The object can not be cloned.
+FAIL Test that transfer an OffscreenCanvas that has a context throws exception. assert_throws: function "function () {
+            worker.postMessage({offscreenCanvas}, [offscreenCanvas]);
+        }" threw object "DataCloneError: The object can not be cloned." that is not a DOMException InvalidStateError: property "code" is equal to 25, expected 11
+FAIL Test that transfer an OffscreenCanvas twice throws exception. The object can not be cloned.
+FAIL Test that calling getContext('2d') on a detached OffscreenCanvas throws exception. The object can not be cloned.
+FAIL Test that calling getContext('webgl') on a detached OffscreenCanvas throws exception. The object can not be cloned.
+

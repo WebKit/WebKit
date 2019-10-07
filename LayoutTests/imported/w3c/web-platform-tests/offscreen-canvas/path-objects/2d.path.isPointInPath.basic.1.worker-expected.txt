@@ -1,0 +1,3 @@
+
+FAIL isPointInPath() detects whether the point is inside the path Can't find variable: OffscreenCanvas
+

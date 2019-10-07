@@ -1,0 +1,7 @@
+2d.shadow.offset.positiveX
+
+Shadows can be offset with positive x
+
+
+FAIL Shadows can be offset with positive x null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

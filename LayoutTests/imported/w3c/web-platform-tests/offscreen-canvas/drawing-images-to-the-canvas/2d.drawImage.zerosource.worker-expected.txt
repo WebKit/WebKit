@@ -1,0 +1,3 @@
+
+FAIL drawImage with zero-sized source rectangle throws INDEX_SIZE_ERR Can't find variable: OffscreenCanvas
+

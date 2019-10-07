@@ -1,0 +1,7 @@
+2d.clearRect.negative
+
+clearRect of negative sizes works
+
+
+FAIL clearRect of negative sizes works null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

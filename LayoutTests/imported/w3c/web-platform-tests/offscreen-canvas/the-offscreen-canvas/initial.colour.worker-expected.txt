@@ -1,0 +1,3 @@
+
+FAIL Initial state is transparent black Can't find variable: OffscreenCanvas
+

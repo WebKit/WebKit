@@ -1,0 +1,10 @@
+
+FAIL Test that getContext with un-supported string throws a TypeError. Can't find variable: OffscreenCanvas
+FAIL Test that getContext with supported string returns correct results Can't find variable: OffscreenCanvas
+FAIL Test that getContext twice with different context type returns null the second time Can't find variable: OffscreenCanvas
+FAIL Test that 2dcontext.canvas should return the original OffscreenCanvas Can't find variable: OffscreenCanvas
+FAIL Test that webglcontext.canvas should return the original OffscreenCanvas Can't find variable: OffscreenCanvas
+FAIL Test that OffscreenCanvasRenderingContext2D with alpha disabled makes the OffscreenCanvas opaque Can't find variable: OffscreenCanvas
+FAIL Test that OffscreenCanvasRenderingContext2D with alpha enabled preserves the alpha Can't find variable: OffscreenCanvas
+FAIL Test that 'alpha' context creation attribute is true by default Can't find variable: OffscreenCanvas
+

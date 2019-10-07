@@ -1,0 +1,7 @@
+2d.drawImage.nowrap
+
+Stretched images do not get pixels wrapping around the edges
+
+
+FAIL Stretched images do not get pixels wrapping around the edges null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

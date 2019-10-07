@@ -1,0 +1,7 @@
+2d.shadow.gradient.transparent.2
+
+Shadows are not drawn for transparent parts of gradient fills
+
+
+FAIL Shadows are not drawn for transparent parts of gradient fills null is not an object (evaluating 'ctx.createLinearGradient')
+

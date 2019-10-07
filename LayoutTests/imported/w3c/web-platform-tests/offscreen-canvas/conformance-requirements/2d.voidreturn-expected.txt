@@ -1,0 +1,7 @@
+2d.voidreturn
+
+void methods return undefined
+
+
+FAIL void methods return undefined null is not an object (evaluating 'ctx.save')
+

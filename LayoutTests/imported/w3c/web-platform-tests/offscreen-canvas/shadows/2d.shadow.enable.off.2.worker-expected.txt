@@ -1,0 +1,3 @@
+
+FAIL Shadows are not drawn when only shadowColor is set Can't find variable: OffscreenCanvas
+

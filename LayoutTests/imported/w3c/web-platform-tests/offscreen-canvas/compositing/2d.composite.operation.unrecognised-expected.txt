@@ -1,0 +1,5 @@
+2d.composite.operation.unrecognised
+
+
+FAIL OffscreenCanvas test: 2d.composite.operation.unrecognised null is not an object (evaluating 'ctx.globalCompositeOperation = 'xor'')
+

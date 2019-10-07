@@ -1,0 +1,7 @@
+2d.path.arcTo.transformation
+
+arcTo joins up to the last subpath point correctly
+
+
+FAIL arcTo joins up to the last subpath point correctly null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

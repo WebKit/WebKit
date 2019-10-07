@@ -1,0 +1,3 @@
+
+FAIL getContext('2d') returns objects which share canvas state Can't find variable: OffscreenCanvas
+

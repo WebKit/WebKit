@@ -1,0 +1,7 @@
+2d.imageData.get.nonpremul
+
+getImageData() returns non-premultiplied colours
+
+
+FAIL getImageData() returns non-premultiplied colours null is not an object (evaluating 'ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'')
+

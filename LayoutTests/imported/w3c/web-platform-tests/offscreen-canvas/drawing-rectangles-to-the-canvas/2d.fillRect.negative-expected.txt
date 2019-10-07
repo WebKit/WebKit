@@ -1,0 +1,7 @@
+2d.fillRect.negative
+
+fillRect of negative sizes works
+
+
+FAIL fillRect of negative sizes works null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

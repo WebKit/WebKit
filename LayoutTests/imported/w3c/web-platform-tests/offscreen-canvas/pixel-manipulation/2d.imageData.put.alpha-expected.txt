@@ -1,0 +1,7 @@
+2d.imageData.put.alpha
+
+putImageData() puts non-solid image data correctly
+
+
+FAIL putImageData() puts non-solid image data correctly null is not an object (evaluating 'ctx.fillStyle = 'rgba(0, 255, 0, 0.25)'')
+

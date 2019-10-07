@@ -1,0 +1,7 @@
+2d.shadow.image.alpha
+
+Shadows are drawn correctly for partially-transparent images
+
+
+FAIL Shadows are drawn correctly for partially-transparent images null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

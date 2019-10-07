@@ -1,0 +1,3 @@
+
+FAIL Shadows of shapes with alpha components are drawn correctly Can't find variable: OffscreenCanvas
+

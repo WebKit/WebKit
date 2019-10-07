@@ -1,0 +1,7 @@
+2d.clearRect.basic
+
+clearRect clears to transparent black
+
+
+FAIL clearRect clears to transparent black null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

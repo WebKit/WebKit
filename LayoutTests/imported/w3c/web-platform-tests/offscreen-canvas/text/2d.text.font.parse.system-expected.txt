@@ -1,0 +1,7 @@
+2d.text.font.parse.system
+
+System fonts must be computed to explicit values
+
+
+FAIL System fonts must be computed to explicit values null is not an object (evaluating 'ctx.font = 'message-box'')
+

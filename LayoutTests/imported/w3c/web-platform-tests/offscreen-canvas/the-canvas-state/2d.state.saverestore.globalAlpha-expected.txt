@@ -1,0 +1,7 @@
+2d.state.saverestore.globalAlpha
+
+save()/restore() works for globalAlpha
+
+
+FAIL save()/restore() works for globalAlpha null is not an object (evaluating 'ctx.globalAlpha')
+

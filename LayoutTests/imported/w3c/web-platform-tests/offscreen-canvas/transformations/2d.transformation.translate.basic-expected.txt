@@ -1,0 +1,7 @@
+2d.transformation.translate.basic
+
+translate() works
+
+
+FAIL translate() works null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

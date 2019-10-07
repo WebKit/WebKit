@@ -1,0 +1,7 @@
+2d.shadow.stroke.basic
+
+Shadows are drawn for strokes
+
+
+FAIL Shadows are drawn for strokes null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

@@ -1,0 +1,7 @@
+2d.path.arcTo.nonfinite
+
+arcTo() with Infinity/NaN is ignored
+
+
+FAIL arcTo() with Infinity/NaN is ignored null is not an object (evaluating 'ctx.moveTo')
+

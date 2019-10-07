@@ -1,0 +1,7 @@
+2d.gradient.linear.transform.3
+
+Linear gradient transforms do not experience broken caching effects
+
+
+FAIL Linear gradient transforms do not experience broken caching effects null is not an object (evaluating 'ctx.createLinearGradient')
+

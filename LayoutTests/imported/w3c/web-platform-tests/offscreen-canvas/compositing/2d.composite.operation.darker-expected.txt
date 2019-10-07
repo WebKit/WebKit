@@ -1,0 +1,5 @@
+2d.composite.operation.darker
+
+
+FAIL OffscreenCanvas test: 2d.composite.operation.darker null is not an object (evaluating 'ctx.globalCompositeOperation = 'xor'')
+

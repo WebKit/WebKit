@@ -1,0 +1,7 @@
+2d.path.arc.zero.1
+
+arc() draws nothing when startAngle = endAngle and anticlockwise
+
+
+FAIL arc() draws nothing when startAngle = endAngle and anticlockwise null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

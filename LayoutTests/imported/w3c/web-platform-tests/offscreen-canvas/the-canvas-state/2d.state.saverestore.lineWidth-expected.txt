@@ -1,0 +1,7 @@
+2d.state.saverestore.lineWidth
+
+save()/restore() works for lineWidth
+
+
+FAIL save()/restore() works for lineWidth null is not an object (evaluating 'ctx.lineWidth')
+

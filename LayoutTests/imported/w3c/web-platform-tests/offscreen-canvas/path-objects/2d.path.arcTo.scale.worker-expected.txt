@@ -1,0 +1,3 @@
+
+FAIL arcTo scales the curve, not just the control points Can't find variable: OffscreenCanvas
+

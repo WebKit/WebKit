@@ -1,0 +1,7 @@
+2d.path.lineTo.ensuresubpath.2
+
+If there is no subpath, the point is added and used for subsequent drawing
+
+
+FAIL If there is no subpath, the point is added and used for subsequent drawing null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

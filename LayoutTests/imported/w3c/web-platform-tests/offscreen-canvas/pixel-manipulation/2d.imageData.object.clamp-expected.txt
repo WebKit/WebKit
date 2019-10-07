@@ -1,0 +1,7 @@
+2d.imageData.object.clamp
+
+ImageData.data clamps numbers to [0, 255]
+
+
+FAIL ImageData.data clamps numbers to [0, 255] null is not an object (evaluating 'ctx.getImageData')
+

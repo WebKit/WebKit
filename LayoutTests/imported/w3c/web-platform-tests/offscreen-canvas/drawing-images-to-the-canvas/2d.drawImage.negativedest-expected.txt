@@ -1,0 +1,7 @@
+2d.drawImage.negativedest
+
+Negative destination width/height represents the correct rectangle
+
+
+FAIL Negative destination width/height represents the correct rectangle null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

@@ -1,0 +1,7 @@
+2d.text.draw.stroke.unaffected
+
+strokeText does not start a new path or subpath
+
+
+FAIL strokeText does not start a new path or subpath null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

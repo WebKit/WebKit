@@ -1,0 +1,7 @@
+2d.shadow.enable.off.2
+
+Shadows are not drawn when only shadowColor is set
+
+
+FAIL Shadows are not drawn when only shadowColor is set null is not an object (evaluating 'ctx.globalCompositeOperation = 'destination-atop'')
+

@@ -1,0 +1,7 @@
+2d.path.isPointInPath.basic.2
+
+isPointInPath() detects whether the point is inside the path
+
+
+FAIL isPointInPath() detects whether the point is inside the path null is not an object (evaluating 'ctx.rect')
+

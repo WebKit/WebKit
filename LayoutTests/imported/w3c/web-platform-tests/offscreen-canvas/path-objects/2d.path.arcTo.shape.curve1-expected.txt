@@ -1,0 +1,7 @@
+2d.path.arcTo.shape.curve1
+
+arcTo() curves in the right kind of shape
+
+
+FAIL arcTo() curves in the right kind of shape null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

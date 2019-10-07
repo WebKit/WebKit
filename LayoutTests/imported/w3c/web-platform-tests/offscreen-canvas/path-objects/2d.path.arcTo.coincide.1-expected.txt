@@ -1,0 +1,7 @@
+2d.path.arcTo.coincide.1
+
+arcTo() has no effect if P0 = P1
+
+
+FAIL arcTo() has no effect if P0 = P1 null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

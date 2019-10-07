@@ -1,0 +1,7 @@
+2d.path.stroke.overlap
+
+Stroked subpaths are combined before being drawn
+
+
+FAIL Stroked subpaths are combined before being drawn null is not an object (evaluating 'ctx.fillStyle = '#000'')
+

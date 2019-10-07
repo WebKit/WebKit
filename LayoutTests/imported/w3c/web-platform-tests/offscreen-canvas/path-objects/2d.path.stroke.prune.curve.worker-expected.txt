@@ -1,0 +1,3 @@
+
+FAIL Zero-length line segments from quadraticCurveTo and bezierCurveTo are removed before stroking Can't find variable: OffscreenCanvas
+

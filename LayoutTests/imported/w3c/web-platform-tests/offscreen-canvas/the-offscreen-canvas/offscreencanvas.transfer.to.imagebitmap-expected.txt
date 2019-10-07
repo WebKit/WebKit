@@ -1,0 +1,8 @@
+
+FAIL Test that transferToImageBitmap returns an ImageBitmap with correct width and height null is not an object (evaluating 'image.width')
+FAIL Test that transferToImageBitmap returns an ImageBitmap with correct color null is not an object (evaluating 'ctx.fillStyle = "#0f0"')
+FAIL Test that transferToImageBitmap won't change context's property null is not an object (evaluating 'ctx.lineWidth = 10')
+FAIL Test that transferToImageBitmap preserves transform null is not an object (evaluating 'ctx.rect')
+FAIL Test that call transferToImageBitmap on a detached OffscreenCanvas throws an exception The object can not be cloned.
+FAIL Test that transferToImageBitmap without a context throws an exception assert_throws: function "function () { offscreenCanvas.transferToImageBitmap(); }" did not throw
+

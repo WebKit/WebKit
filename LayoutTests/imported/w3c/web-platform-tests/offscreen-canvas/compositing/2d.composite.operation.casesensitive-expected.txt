@@ -1,0 +1,5 @@
+2d.composite.operation.casesensitive
+
+
+FAIL OffscreenCanvas test: 2d.composite.operation.casesensitive null is not an object (evaluating 'ctx.globalCompositeOperation = 'xor'')
+

@@ -1,0 +1,5 @@
+2d.drawImage.self.1
+
+
+FAIL OffscreenCanvas test: 2d.drawImage.self.1 null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

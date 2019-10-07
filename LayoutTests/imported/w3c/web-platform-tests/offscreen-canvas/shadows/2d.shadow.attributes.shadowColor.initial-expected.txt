@@ -1,0 +1,5 @@
+2d.shadow.attributes.shadowColor.initial
+
+
+FAIL OffscreenCanvas test: 2d.shadow.attributes.shadowColor.initial null is not an object (evaluating 'ctx.shadowColor')
+

@@ -1,0 +1,7 @@
+2d.path.arc.selfintersect.1
+
+arc() with lineWidth > 2*radius is drawn sensibly
+
+
+FAIL arc() with lineWidth > 2*radius is drawn sensibly null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

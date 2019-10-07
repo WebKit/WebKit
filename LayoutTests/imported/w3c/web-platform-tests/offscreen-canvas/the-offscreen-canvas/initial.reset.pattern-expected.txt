@@ -1,0 +1,7 @@
+initial.reset.pattern
+
+Resetting the canvas state does not invalidate any existing patterns
+
+
+FAIL Resetting the canvas state does not invalidate any existing patterns null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

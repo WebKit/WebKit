@@ -1,0 +1,7 @@
+2d.path.stroke.union
+
+Strokes in opposite directions are unioned, not subtracted
+
+
+FAIL Strokes in opposite directions are unioned, not subtracted null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

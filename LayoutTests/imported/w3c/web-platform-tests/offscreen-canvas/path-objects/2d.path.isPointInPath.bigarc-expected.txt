@@ -1,0 +1,7 @@
+2d.path.isPointInPath.bigarc
+
+isPointInPath() works on unclosed arcs larger than 2pi
+
+
+FAIL isPointInPath() works on unclosed arcs larger than 2pi null is not an object (evaluating 'ctx.arc')
+

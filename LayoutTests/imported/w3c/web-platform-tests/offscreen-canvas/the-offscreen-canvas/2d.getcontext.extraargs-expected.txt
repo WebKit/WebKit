@@ -1,0 +1,7 @@
+2d.getcontext.extraargs
+
+The 2D context ignores extra getContext arguments
+
+
+FAIL The 2D context ignores extra getContext arguments assert_not_equals: offscreenCanvas2.getContext('2d', false, {}, [], 1, "2") !== null (got [object], expected not [object]) got disallowed value null
+

@@ -1,0 +1,7 @@
+2d.path.isPointInPath.subpath
+
+isPointInPath() uses the current path, not just the subpath
+
+
+FAIL isPointInPath() uses the current path, not just the subpath null is not an object (evaluating 'ctx.rect')
+

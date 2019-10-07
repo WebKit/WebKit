@@ -1,0 +1,7 @@
+2d.line.cap.closed
+
+Line caps are not drawn at the corners of an unclosed rectangle
+
+
+FAIL Line caps are not drawn at the corners of an unclosed rectangle null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

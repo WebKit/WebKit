@@ -1,0 +1,7 @@
+2d.shadow.pattern.basic
+
+Shadows are drawn for fill patterns
+
+
+PASS Shadows are drawn for fill patterns 
+

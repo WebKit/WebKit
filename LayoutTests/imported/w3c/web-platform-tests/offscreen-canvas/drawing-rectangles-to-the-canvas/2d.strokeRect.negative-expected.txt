@@ -1,0 +1,7 @@
+2d.strokeRect.negative
+
+strokeRect of negative sizes works
+
+
+FAIL strokeRect of negative sizes works null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

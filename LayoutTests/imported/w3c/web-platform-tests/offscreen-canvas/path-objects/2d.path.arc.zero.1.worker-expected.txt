@@ -1,0 +1,3 @@
+
+FAIL arc() draws nothing when startAngle = endAngle and anticlockwise Can't find variable: OffscreenCanvas
+

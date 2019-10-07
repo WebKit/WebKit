@@ -1,0 +1,5 @@
+2d.path.rect.selfintersect
+
+
+FAIL OffscreenCanvas test: 2d.path.rect.selfintersect null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

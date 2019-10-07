@@ -1,0 +1,7 @@
+2d.imageData.object.nan
+
+ImageData.data converts NaN to 0
+
+
+FAIL ImageData.data converts NaN to 0 null is not an object (evaluating 'ctx.getImageData')
+

@@ -1,0 +1,7 @@
+2d.fillRect.clip
+
+fillRect is affected by clipping regions
+
+
+FAIL fillRect is affected by clipping regions null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

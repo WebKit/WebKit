@@ -1,0 +1,7 @@
+2d.path.isPointInPath.unclosed
+
+isPointInPath() works on unclosed subpaths
+
+
+FAIL isPointInPath() works on unclosed subpaths null is not an object (evaluating 'ctx.moveTo')
+

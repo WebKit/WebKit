@@ -1,0 +1,7 @@
+2d.path.arcTo.coincide.2
+
+arcTo() draws a straight line to P1 if P1 = P2
+
+
+FAIL arcTo() draws a straight line to P1 if P1 = P2 null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

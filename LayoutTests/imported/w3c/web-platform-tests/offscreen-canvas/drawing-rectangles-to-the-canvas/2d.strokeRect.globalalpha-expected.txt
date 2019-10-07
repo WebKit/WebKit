@@ -1,0 +1,7 @@
+2d.strokeRect.globalalpha
+
+strokeRect is affected by globalAlpha
+
+
+FAIL strokeRect is affected by globalAlpha null is not an object (evaluating 'ctx.globalAlpha = 0')
+

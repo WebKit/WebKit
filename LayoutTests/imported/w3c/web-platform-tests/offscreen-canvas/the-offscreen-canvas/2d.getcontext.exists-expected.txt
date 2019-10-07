@@ -1,0 +1,7 @@
+2d.getcontext.exists
+
+The 2D context is implemented
+
+
+FAIL The 2D context is implemented assert_not_equals: offscreenCanvas2.getContext('2d') !== null (got [object], expected not [object]) got disallowed value null
+

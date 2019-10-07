@@ -1,0 +1,3 @@
+
+FAIL getImageData() returns values in the range [0, 255] Can't find variable: OffscreenCanvas
+

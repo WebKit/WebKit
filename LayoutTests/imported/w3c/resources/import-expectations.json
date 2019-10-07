@@ -284,7 +284,7 @@
     "web-platform-tests/navigation-timing": "skip", 
     "web-platform-tests/netinfo": "skip", 
     "web-platform-tests/notifications": "import", 
-    "web-platform-tests/offscreen-canvas": "skip", 
+    "web-platform-tests/offscreen-canvas": "import", 
     "web-platform-tests/old-tests": "skip", 
     "web-platform-tests/orientation-event": "skip", 
     "web-platform-tests/orientation-sensor": "skip", 

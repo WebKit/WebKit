@@ -1,0 +1,3 @@
+
+FAIL Stroked and filled text should have exactly the same kerning so it overlaps Can't find variable: OffscreenCanvas
+

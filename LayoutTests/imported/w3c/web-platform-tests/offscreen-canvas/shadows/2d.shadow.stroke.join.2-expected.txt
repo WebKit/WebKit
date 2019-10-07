@@ -1,0 +1,7 @@
+2d.shadow.stroke.join.2
+
+Shadows are drawn for stroke joins
+
+
+FAIL Shadows are drawn for stroke joins null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

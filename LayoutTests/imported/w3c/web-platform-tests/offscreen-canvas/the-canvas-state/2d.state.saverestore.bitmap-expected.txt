@@ -1,0 +1,7 @@
+2d.state.saverestore.bitmap
+
+save()/restore() does not affect the current bitmap
+
+
+FAIL save()/restore() does not affect the current bitmap null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

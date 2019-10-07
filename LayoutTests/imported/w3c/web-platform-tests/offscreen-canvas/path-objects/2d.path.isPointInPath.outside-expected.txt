@@ -1,0 +1,7 @@
+2d.path.isPointInPath.outside
+
+isPointInPath() works on paths outside the canvas
+
+
+FAIL isPointInPath() works on paths outside the canvas null is not an object (evaluating 'ctx.rect')
+

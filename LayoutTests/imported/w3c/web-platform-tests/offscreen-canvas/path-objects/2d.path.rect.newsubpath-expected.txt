@@ -1,0 +1,5 @@
+2d.path.rect.newsubpath
+
+
+FAIL OffscreenCanvas test: 2d.path.rect.newsubpath null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

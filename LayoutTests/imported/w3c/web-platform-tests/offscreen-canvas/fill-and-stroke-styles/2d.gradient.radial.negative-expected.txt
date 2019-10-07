@@ -1,0 +1,7 @@
+2d.gradient.radial.negative
+
+createRadialGradient() throws INDEX_SIZE_ERR if either radius is negative
+
+
+FAIL createRadialGradient() throws INDEX_SIZE_ERR if either radius is negative assert_throws: function "function () { ctx.createRadialGradient(0, 0, -0.1, 0, 0, 1); }" threw object "TypeError: null is not an object (evaluating 'ctx.createRadialGradient')" that is not a DOMException INDEX_SIZE_ERR: property "code" is equal to undefined, expected 1
+

@@ -1,0 +1,7 @@
+2d.path.stroke.unaffected
+
+Stroking does not start a new path or subpath
+
+
+FAIL Stroking does not start a new path or subpath null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

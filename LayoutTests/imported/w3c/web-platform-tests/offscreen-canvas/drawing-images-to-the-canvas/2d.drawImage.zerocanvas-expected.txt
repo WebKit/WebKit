@@ -1,0 +1,5 @@
+2d.drawImage.zerocanvas
+
+
+FAIL OffscreenCanvas test: 2d.drawImage.zerocanvas assert_throws: function "function () { ctx.drawImage(offscreenCanvas2, 0, 0); }" threw object "TypeError: null is not an object (evaluating 'ctx.drawImage')" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
+

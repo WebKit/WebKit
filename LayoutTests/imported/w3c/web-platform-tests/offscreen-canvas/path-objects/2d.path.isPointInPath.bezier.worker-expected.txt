@@ -1,0 +1,3 @@
+
+FAIL isPointInPath() works on Bezier curves Can't find variable: OffscreenCanvas
+

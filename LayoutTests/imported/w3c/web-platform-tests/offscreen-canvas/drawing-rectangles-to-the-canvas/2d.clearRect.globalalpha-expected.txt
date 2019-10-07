@@ -1,0 +1,7 @@
+2d.clearRect.globalalpha
+
+clearRect is not affected by globalAlpha
+
+
+FAIL clearRect is not affected by globalAlpha null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

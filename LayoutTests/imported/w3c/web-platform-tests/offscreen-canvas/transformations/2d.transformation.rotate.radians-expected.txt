@@ -1,0 +1,7 @@
+2d.transformation.rotate.radians
+
+rotate() uses radians
+
+
+FAIL rotate() uses radians null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

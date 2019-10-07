@@ -1,0 +1,7 @@
+2d.path.isPointInPath.bezier
+
+isPointInPath() works on Bezier curves
+
+
+FAIL isPointInPath() works on Bezier curves null is not an object (evaluating 'ctx.moveTo')
+

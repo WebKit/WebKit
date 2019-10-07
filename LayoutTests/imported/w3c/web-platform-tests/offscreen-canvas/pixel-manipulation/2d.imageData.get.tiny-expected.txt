@@ -1,0 +1,7 @@
+2d.imageData.get.tiny
+
+getImageData() works for sizes smaller than one pixel
+
+
+FAIL getImageData() works for sizes smaller than one pixel null is not an object (evaluating 'ctx.getImageData')
+

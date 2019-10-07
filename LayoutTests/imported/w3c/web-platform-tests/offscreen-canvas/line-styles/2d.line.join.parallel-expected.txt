@@ -1,0 +1,7 @@
+2d.line.join.parallel
+
+Line joins are drawn at 180-degree joins
+
+
+FAIL Line joins are drawn at 180-degree joins null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

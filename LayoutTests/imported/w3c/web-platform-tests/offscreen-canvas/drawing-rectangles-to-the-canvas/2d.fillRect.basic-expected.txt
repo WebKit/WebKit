@@ -1,0 +1,7 @@
+2d.fillRect.basic
+
+fillRect works
+
+
+FAIL fillRect works null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

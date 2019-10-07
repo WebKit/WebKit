@@ -1,0 +1,7 @@
+2d.line.join.round
+
+lineJoin 'round' is rendered correctly
+
+
+FAIL lineJoin 'round' is rendered correctly null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

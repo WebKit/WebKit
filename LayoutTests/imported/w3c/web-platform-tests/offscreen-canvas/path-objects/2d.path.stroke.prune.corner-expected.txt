@@ -1,0 +1,7 @@
+2d.path.stroke.prune.corner
+
+Zero-length line segments are removed before stroking with miters
+
+
+FAIL Zero-length line segments are removed before stroking with miters null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

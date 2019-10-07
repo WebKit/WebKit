@@ -3831,3 +3831,8 @@ webkit.org/b/196698 imported/w3c/web-platform-tests/loading/lazyload/iframe-load
 webkit.org/b/149443 imported/w3c/web-platform-tests/css/css-shadow-parts/interaction-with-placeholder.html [ ImageOnlyFailure ]
 
 webkit.org/b/202517 imported/w3c/web-platform-tests/2dcontext/text-styles/2d.text.draw.baseline.ideographic.html [ Skip ]
+
+# Console log lines may appear in a different order so we silence them.
+imported/w3c/web-platform-tests/offscreen-canvas/convert-to-blob/offscreencanvas.convert.to.blob.w.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/offscreen-canvas/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/offscreen-canvas/the-offscreen-canvas/offscreencanvas.transferrable.w.html [ DumpJSConsoleLogInStdErr ]

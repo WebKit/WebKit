@@ -1,0 +1,7 @@
+2d.state.saverestore.clip
+
+save()/restore() affects the clipping path
+
+
+FAIL save()/restore() affects the clipping path null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

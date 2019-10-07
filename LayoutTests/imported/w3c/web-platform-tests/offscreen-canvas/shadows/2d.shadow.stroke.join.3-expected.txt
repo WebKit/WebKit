@@ -1,0 +1,7 @@
+2d.shadow.stroke.join.3
+
+Shadows are drawn for stroke joins respecting miter limit
+
+
+FAIL Shadows are drawn for stroke joins respecting miter limit null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

@@ -1,0 +1,5 @@
+2d.path.clip.empty
+
+
+FAIL OffscreenCanvas test: 2d.path.clip.empty null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

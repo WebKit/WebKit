@@ -1,0 +1,3 @@
+
+FAIL createImageData() throws TypeError if arguments are not finite Can't find variable: OffscreenCanvas
+

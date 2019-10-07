@@ -1,0 +1,7 @@
+2d.path.arcTo.zero.2
+
+arcTo() with zero radius draws a straight line from P0 to P1, even when all points are collinear
+
+
+FAIL arcTo() with zero radius draws a straight line from P0 to P1, even when all points are collinear null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

@@ -1,0 +1,7 @@
+2d.imageData.put.unaffected
+
+putImageData() is not affected by context state
+
+
+FAIL putImageData() is not affected by context state null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

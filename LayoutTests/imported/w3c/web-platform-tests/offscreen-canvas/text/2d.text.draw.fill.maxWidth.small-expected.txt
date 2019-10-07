@@ -1,0 +1,7 @@
+2d.text.draw.fill.maxWidth.small
+
+fillText handles maxWidth correctly
+
+
+FAIL fillText handles maxWidth correctly null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

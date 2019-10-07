@@ -1,0 +1,7 @@
+2d.line.join.valid
+
+Setting lineJoin to valid values works
+
+
+FAIL Setting lineJoin to valid values works null is not an object (evaluating 'ctx.lineJoin = 'bevel'')
+

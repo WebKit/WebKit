@@ -1,0 +1,5 @@
+2d.path.quadraticCurveTo.shape
+
+
+FAIL OffscreenCanvas test: 2d.path.quadraticCurveTo.shape null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

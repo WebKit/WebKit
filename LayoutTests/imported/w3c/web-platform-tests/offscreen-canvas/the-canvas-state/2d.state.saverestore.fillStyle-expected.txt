@@ -1,0 +1,7 @@
+2d.state.saverestore.fillStyle
+
+save()/restore() works for fillStyle
+
+
+FAIL save()/restore() works for fillStyle null is not an object (evaluating 'ctx.fillStyle')
+

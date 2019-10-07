@@ -1,0 +1,7 @@
+2d.strokeRect.zero.2
+
+strokeRect of 0x0 pixels draws nothing, including caps and joins
+
+
+FAIL strokeRect of 0x0 pixels draws nothing, including caps and joins null is not an object (evaluating 'ctx.strokeStyle = '#f00'')
+

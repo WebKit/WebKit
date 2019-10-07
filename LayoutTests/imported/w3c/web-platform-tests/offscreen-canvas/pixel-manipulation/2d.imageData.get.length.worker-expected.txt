@@ -1,0 +1,3 @@
+
+FAIL getImageData() returns a correctly-sized Uint8ClampedArray Can't find variable: OffscreenCanvas
+

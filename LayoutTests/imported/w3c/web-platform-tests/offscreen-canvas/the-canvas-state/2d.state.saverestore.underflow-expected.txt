@@ -1,0 +1,7 @@
+2d.state.saverestore.underflow
+
+restore() with an empty stack has no effect
+
+
+FAIL restore() with an empty stack has no effect null is not an object (evaluating 'ctx.restore')
+

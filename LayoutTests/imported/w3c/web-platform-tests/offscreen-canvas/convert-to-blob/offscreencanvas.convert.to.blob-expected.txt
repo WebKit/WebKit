@@ -1,0 +1,8 @@
+
+FAIL Test that convertToBlob with default type produces correct result null is not an object (evaluating 'ctx.fillStyle = "red"')
+FAIL Test that convertToBlob with png produces correct result null is not an object (evaluating 'ctx.fillStyle = "red"')
+FAIL Test that convertToBlob with jpge produces correct result null is not an object (evaluating 'ctx.fillStyle = "red"')
+FAIL Test that convertToBlob with webp produces correct result null is not an object (evaluating 'ctx.fillStyle = "red"')
+FAIL Test that call convertToBlob on a detached OffscreenCanvas throws exception The object can not be cloned.
+FAIL Test that call convertToBlob on a OffscreenCanvas with size 0 throws exception offscreenCanvas.convertToBlob is not a function. (In 'offscreenCanvas.convertToBlob()', 'offscreenCanvas.convertToBlob' is undefined)
+

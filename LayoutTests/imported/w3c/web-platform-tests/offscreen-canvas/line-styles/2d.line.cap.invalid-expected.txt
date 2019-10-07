@@ -1,0 +1,7 @@
+2d.line.cap.invalid
+
+Setting lineCap to invalid values is ignored
+
+
+FAIL Setting lineCap to invalid values is ignored null is not an object (evaluating 'ctx.lineCap = 'butt'')
+

@@ -1,0 +1,7 @@
+2d.line.join.closed
+
+Line joins are drawn at the corner of a closed rectangle
+
+
+FAIL Line joins are drawn at the corner of a closed rectangle null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

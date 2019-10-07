@@ -1,0 +1,7 @@
+2d.imageData.create2.round
+
+createImageData(w, h) is rounded the same as getImageData(0, 0, w, h)
+
+
+FAIL createImageData(w, h) is rounded the same as getImageData(0, 0, w, h) null is not an object (evaluating 'ctx.createImageData')
+

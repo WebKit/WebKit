@@ -1,0 +1,7 @@
+2d.composite.clip.source-out
+
+fill() does not affect pixels outside the clip region.
+
+
+FAIL fill() does not affect pixels outside the clip region. null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

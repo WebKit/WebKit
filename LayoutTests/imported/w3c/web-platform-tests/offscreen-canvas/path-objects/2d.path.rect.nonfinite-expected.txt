@@ -1,0 +1,7 @@
+2d.path.rect.nonfinite
+
+rect() with Infinity/NaN is ignored
+
+
+FAIL rect() with Infinity/NaN is ignored null is not an object (evaluating 'ctx.moveTo')
+

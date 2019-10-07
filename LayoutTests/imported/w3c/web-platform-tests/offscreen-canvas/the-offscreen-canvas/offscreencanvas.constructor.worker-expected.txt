@@ -1,0 +1,4 @@
+
+FAIL Test that calling OffscreenCanvas's constructor generates correct width and height. Can't find variable: OffscreenCanvas
+FAIL Test that OffscreenCanvas constructor handles invalid arguments correctly in a worker Can't find variable: OffscreenCanvas
+

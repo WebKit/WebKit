@@ -1,0 +1,7 @@
+2d.imageData.object.set
+
+ImageData.data can be modified
+
+
+FAIL ImageData.data can be modified null is not an object (evaluating 'ctx.getImageData')
+

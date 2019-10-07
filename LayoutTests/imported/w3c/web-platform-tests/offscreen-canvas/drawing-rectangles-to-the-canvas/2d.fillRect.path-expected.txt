@@ -1,0 +1,7 @@
+2d.fillRect.path
+
+fillRect does not affect the current path
+
+
+FAIL fillRect does not affect the current path null is not an object (evaluating 'ctx.beginPath')
+

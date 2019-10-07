@@ -1,0 +1,7 @@
+2d.imageData.object.round
+
+ImageData.data rounds numbers with round-to-zero
+
+
+FAIL ImageData.data rounds numbers with round-to-zero null is not an object (evaluating 'ctx.getImageData')
+

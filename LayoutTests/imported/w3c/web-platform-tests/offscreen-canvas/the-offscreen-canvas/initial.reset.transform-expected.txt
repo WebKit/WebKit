@@ -1,0 +1,7 @@
+initial.reset.transform
+
+Resetting the canvas state resets the current transformation matrix
+
+
+FAIL Resetting the canvas state resets the current transformation matrix null is not an object (evaluating 'ctx.scale')
+

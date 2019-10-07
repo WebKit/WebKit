@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 4: ReferenceError: Can't find variable: OffscreenCanvas
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: OffscreenCanvas
+
+TIMEOUT offscreencanvas Test timed out
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: OffscreenCanvas
+
+TIMEOUT offscreencanvas Test timed out
+

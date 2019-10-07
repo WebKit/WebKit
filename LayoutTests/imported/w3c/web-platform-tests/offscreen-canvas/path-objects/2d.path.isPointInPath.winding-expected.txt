@@ -1,0 +1,7 @@
+2d.path.isPointInPath.winding
+
+isPointInPath() uses the non-zero winding number rule
+
+
+FAIL isPointInPath() uses the non-zero winding number rule null is not an object (evaluating 'ctx.moveTo')
+

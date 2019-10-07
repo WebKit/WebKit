@@ -1,0 +1,3 @@
+
+FAIL Shadows are not drawn for transparent parts of fill patterns Can't find variable: OffscreenCanvas
+

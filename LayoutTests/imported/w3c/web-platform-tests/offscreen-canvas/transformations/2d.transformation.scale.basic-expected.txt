@@ -1,0 +1,7 @@
+2d.transformation.scale.basic
+
+scale() works
+
+
+FAIL scale() works null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

@@ -1,0 +1,7 @@
+2d.transformation.translate.nonfinite
+
+translate() with Infinity/NaN is ignored
+
+
+FAIL translate() with Infinity/NaN is ignored null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

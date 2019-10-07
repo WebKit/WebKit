@@ -1,0 +1,3 @@
+
+FAIL Shadows are drawn correctly for partially-transparent images Can't find variable: OffscreenCanvas
+
