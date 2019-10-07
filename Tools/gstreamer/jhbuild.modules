@@ -26,9 +26,9 @@
   <repository type="tarball" name="ffmpeg" href="https://ffmpeg.org/releases/"/>
 
   <meson id="orc" mesonargs="-Dgtk_doc=disabled">
-    <branch module="orc/orc-${version}.tar.xz" version="0.4.29"
+    <branch module="orc/orc-${version}.tar.xz" version="0.4.30"
             repo="gstreamer"
-            hash="sha256:4f8901f9144b5ec17dffdb33548b5f4c7f8049b0d1023be3462cdd64ec5a3ab2"/>
+            hash="sha256:ba41b92146a5691cd102eb79c026757d39e9d3b81a65810d2946a1786a1c4972"/>
   </meson>
 
   <autotools id="openh264" supports-non-srcdir-builds="no" autogen-sh="pseudo-configure">
@@ -57,7 +57,7 @@
     <dependencies>
       <dep package="orc"/>
     </dependencies>
-    <branch hash="sha256:0e8e2f7118be437cba879353970cf83c2acced825ecb9275ba05d9186ef07c00" module="gstreamer/gstreamer-${version}.tar.xz" repo="gstreamer" version="1.16.0">
+    <branch hash="sha256:02211c3447c4daa55919c5c0f43a82a6fbb51740d57fc3af0639d46f1cf4377d" module="gstreamer/gstreamer-${version}.tar.xz" repo="gstreamer" version="1.16.1">
     </branch>
   </meson>
 
@@ -68,7 +68,7 @@
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
-    <branch hash="sha256:4093aa7b51e28fb24dfd603893fead8d1b7782f088b05ed0f22a21ef176fb5ae" module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" repo="gstreamer" version="1.16.0" >
+    <branch hash="sha256:5c3cc489933d0597087c9bc6ba251c93693d64554bcc563539a084fa2d5fcb2b" module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" repo="gstreamer" version="1.16.1">
       <patch file="base-0001-playbin-Handle-error-message-with-redirection-indica.patch" strip="1"/>
       <patch file="base-0001-glupload-Add-VideoMetas-and-GLSyncMeta-to-the-raw-up.patch" strip="1"/> <!-- Merged upstream, should be shipped in 1.16.2 -->
     </branch>
@@ -80,9 +80,7 @@
       <dep package="libvpx"/>
     </dependencies>
 
-    <branch hash="sha256:654adef33380d604112f702c2927574cfc285e31307b79e584113858838bb0fd" module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" repo="gstreamer" version="1.16.0">
-      <patch file="gst-plugins-good-scaletempo-Advertise-interleaved-layout-in-caps-temp.patch" strip="1"/> <!-- Merged upstream, should be shipped in 1.16.1 -->
-      <patch file="gst-plugins-good-glibc-2.30-compat.patch" strip="1"/> <!-- Merged upstream, should be shipped in 1.16.1 -->
+    <branch hash="sha256:9fbabe69018fcec707df0b71150168776040cde6c1a26bb5a82a136755fa8f1f" module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" repo="gstreamer" version="1.16.1">
       <patch file="good-0001-qtdemux-Specify-REDIRECT-information-in-error-messag.patch" strip="1"/> <!-- Merged upstream, should be shipped in 1.16.2 -->
     </branch>
   </meson>
@@ -95,8 +93,7 @@
       <dep package="aom"/>
       <dep package="libsrtp"/>
     </dependencies>
-    <branch hash="sha256:22139de35626ada6090bdfa3423b27b7fc15a0198331d25c95e6b12cb1072b05" module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" repo="gstreamer" version="1.16.0">
-      <patch file="gst-plugins-bad-do-not-retry-downloads-during-shutdown.patch" strip="1"/> <!-- Merged, discussing backporting: https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/merge_requests/427 -->
+    <branch hash="sha256:56481c95339b8985af13bac19b18bc8da7118c2a7d9440ed70e7dcd799c2adb5" module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" repo="gstreamer" version="1.16.1">
       <patch file="gst-plugins-bad-0001-h264parse-Post-a-WARNING-when-data-is-broken.patch" strip="1"/> <!-- Merged, discussing backporting https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/merge_requests/386-->
     </branch>
   </meson>
@@ -110,11 +107,11 @@
       <dep package="gst-plugins-base"/>
       <dep package="ffmpeg"/>
     </dependencies>
-    <branch hash="sha256:dfac119043a9cfdcacd7acde77f674ab172cf2537b5812be52f49e9cddc53d9a" module="gst-libav/gst-libav-${version}.tar.xz" repo="gstreamer" version="1.16.0" />
+    <branch hash="sha256:e8a5748ae9a4a7be9696512182ea9ffa6efe0be9b7976916548e9d4381ca61c4" module="gst-libav/gst-libav-${version}.tar.xz" repo="gstreamer" version="1.16.1" />
   </meson>
 
   <meson id="gstreamer-vaapi" mesonargs="-Dgtk_doc=disabled -Dexamples=disabled">
-    <branch hash="sha256:4e7fce626ee0590dca74b5a8341d25bac76307945131a970b414fc5895f5171f" module="gstreamer-vaapi/gstreamer-vaapi-${version}.tar.xz" repo="gstreamer" version="1.16.0" />
+    <branch hash="sha256:cb570f6f1e78cb364fbe3c4fb8751824ee9db0c942ba61b62380b9b5abb7603a" module="gstreamer-vaapi/gstreamer-vaapi-${version}.tar.xz" repo="gstreamer" version="1.16.1" />
     <dependencies>
       <dep package="gstreamer"/>
       <dep package="gst-plugins-base"/>
