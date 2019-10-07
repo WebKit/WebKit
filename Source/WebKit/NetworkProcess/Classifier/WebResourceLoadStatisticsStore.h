@@ -129,7 +129,8 @@ public:
     bool hasStorageAccessForFrame(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier);
     void requestStorageAccess(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&&);
     void setLastSeen(const RegistrableDomain&, Seconds, CompletionHandler<void()>&&);
-    void mergeStatisticForTesting(const RegistrableDomain&, const TopFrameDomain&, Seconds lastSeen, bool hadUserInteraction, Seconds mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, CompletionHandler<void()>&&);
+    void mergeStatisticForTesting(const RegistrableDomain&, const TopFrameDomain& topFrameDomain1, const TopFrameDomain& topFrameDomain2, Seconds lastSeen, bool hadUserInteraction, Seconds mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, CompletionHandler<void()>&&);
+    void isRelationshipOnlyInDatabaseOnce(const RegistrableDomain& subDomain, const RegistrableDomain& topDomain, CompletionHandler<void(bool)>&&);
     void setPrevalentResource(const RegistrableDomain&, CompletionHandler<void()>&&);
     void setVeryPrevalentResource(const RegistrableDomain&, CompletionHandler<void()>&&);
     void dumpResourceLoadStatistics(CompletionHandler<void(String)>&&);

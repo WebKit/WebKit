@@ -968,11 +968,11 @@ void NetworkProcess::setLastSeen(PAL::SessionID sessionID, const RegistrableDoma
     }
 }
 
-void NetworkProcess::mergeStatisticForTesting(PAL::SessionID sessionID, const RegistrableDomain& domain, const RegistrableDomain& topFrameDomain, Seconds lastSeen, bool hadUserInteraction, Seconds mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::mergeStatisticForTesting(PAL::SessionID sessionID, const RegistrableDomain& domain, const RegistrableDomain& topFrameDomain1, const RegistrableDomain& topFrameDomain2, Seconds lastSeen, bool hadUserInteraction, Seconds mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
-            resourceLoadStatistics->mergeStatisticForTesting(domain, topFrameDomain, lastSeen, hadUserInteraction, mostRecentUserInteraction, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, WTFMove(completionHandler));
+            resourceLoadStatistics->mergeStatisticForTesting(domain, topFrameDomain1, topFrameDomain2, lastSeen, hadUserInteraction, mostRecentUserInteraction, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, WTFMove(completionHandler));
         else
             completionHandler();
     } else {
@@ -1018,6 +1018,19 @@ void NetworkProcess::hadUserInteraction(PAL::SessionID sessionID, const Registra
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->hasHadUserInteraction(domain, WTFMove(completionHandler));
+        else
+            completionHandler(false);
+    } else {
+        ASSERT_NOT_REACHED();
+        completionHandler(false);
+    }
+}
+
+void NetworkProcess::isRelationshipOnlyInDatabaseOnce(PAL::SessionID sessionID, const RegistrableDomain& subDomain, const RegistrableDomain& topDomain, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (auto* networkSession = this->networkSession(sessionID)) {
+        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
+            resourceLoadStatistics->isRelationshipOnlyInDatabaseOnce(subDomain, topDomain, WTFMove(completionHandler));
         else
             completionHandler(false);
     } else {

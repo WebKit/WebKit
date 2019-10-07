@@ -62,57 +62,56 @@ using namespace WebCore;
 #define RELEASE_LOG_ERROR_IF_ALLOWED(sessionID, fmt, ...)  ((void)0)
 #endif
 
+// COUNT Queries
 constexpr auto observedDomainCountQuery = "SELECT COUNT(*) FROM ObservedDomains"_s;
+constexpr auto countSubframeUnderTopFrameQuery = "SELECT COUNT(*) FROM SubframeUnderTopFrameDomains WHERE subFrameDomainID = ? AND topFrameDomainID = ?;"_s;
+constexpr auto countSubresourceUnderTopFrameQuery = "SELECT COUNT(*) FROM SubresourceUnderTopFrameDomains WHERE subresourceDomainID = ? AND topFrameDomainID = ?;"_s;
+constexpr auto countSubresourceUniqueRedirectsToQuery = "SELECT COUNT(*) FROM SubresourceUniqueRedirectsTo WHERE subresourceDomainID = ? AND toDomainID = ?;"_s;
+
+// INSERT Queries
 constexpr auto insertObservedDomainQuery = "INSERT INTO ObservedDomains (registrableDomain, lastSeen, hadUserInteraction,"
     "mostRecentUserInteractionTime, grandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, timesAccessedAsFirstPartyDueToUserInteraction,"
     "timesAccessedAsFirstPartyDueToStorageAccessAPI) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s;
 constexpr auto insertTopLevelDomainQuery = "INSERT INTO TopLevelDomains VALUES (?)"_s;
-constexpr auto domainIDFromStringQuery = "SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?"_s;
-constexpr auto storageAccessUnderTopFrameDomainsQuery = "INSERT INTO StorageAccessUnderTopFrameDomains (domainID, topLevelDomainID) "
-    "SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain == ?"_s;
-constexpr auto storageAccessUnderTopFrameDomainsExistsQuery = "SELECT EXISTS (SELECT 1 FROM StorageAccessUnderTopFrameDomains WHERE domainID = ? "
-"AND topLevelDomainID = (SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?))"_s;
-constexpr auto topFrameUniqueRedirectsToQuery = "INSERT INTO TopFrameUniqueRedirectsTo (sourceDomainID, toDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain == ?"_s;
-constexpr auto topFrameUniqueRedirectsToExistsQuery = "SELECT EXISTS (SELECT 1 FROM TopFrameUniqueRedirectsTo WHERE sourceDomainID = ? "
-    "AND toDomainID = (SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?))"_s;
-constexpr auto topFrameUniqueRedirectsFromQuery = "INSERT INTO TopFrameUniqueRedirectsFrom (targetDomainID, fromDomainID) "
-    "SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain = ?"_s;
-constexpr auto topFrameUniqueRedirectsFromExistsQuery = "SELECT EXISTS (SELECT 1 FROM TopFrameUniqueRedirectsFrom WHERE targetDomainID = ? "
-    "AND fromDomainID = (SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?))"_s;
-constexpr auto topFrameLinkDecorationsFromQuery = "INSERT INTO TopFrameLinkDecorationsFrom (fromDomainID, toDomainID) "
-    "SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain = ?"_s;
-constexpr auto topFrameLinkDecorationsFromExistsQuery = "SELECT EXISTS (SELECT 1 FROM TopFrameLinkDecorationsFrom WHERE fromDomainID = ? "
-    "AND toDomainID = (SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?))"_s;
-constexpr auto subframeUnderTopFrameDomainsQuery = "INSERT INTO SubframeUnderTopFrameDomains (subFrameDomainID, topFrameDomainID) "
-    "SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain = ?"_s;
+constexpr auto storageAccessUnderTopFrameDomainsQuery = "INSERT OR IGNORE INTO StorageAccessUnderTopFrameDomains (domainID, topLevelDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
+constexpr auto topFrameUniqueRedirectsToQuery = "INSERT OR IGNORE into TopFrameUniqueRedirectsTo (sourceDomainID, toDomainID) SELECT ?, domainID FROM ObservedDomains where registrableDomain in ( "_s;
+constexpr auto subframeUnderTopFrameDomainsQuery = "INSERT OR IGNORE into SubframeUnderTopFrameDomains (subFrameDomainID, topFrameDomainID) SELECT ?, domainID FROM ObservedDomains where registrableDomain in ( "_s;
+constexpr auto topFrameUniqueRedirectsFromQuery = "INSERT OR IGNORE INTO TopFrameUniqueRedirectsFrom (targetDomainID, fromDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
+constexpr auto topFrameLinkDecorationsFromQuery = "INSERT OR IGNORE INTO TopFrameLinkDecorationsFrom (fromDomainID, toDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
+constexpr auto subresourceUnderTopFrameDomainsQuery = "INSERT OR IGNORE INTO SubresourceUnderTopFrameDomains (subresourceDomainID, topFrameDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
+constexpr auto subresourceUniqueRedirectsToQuery = "INSERT OR IGNORE INTO SubresourceUniqueRedirectsTo (subresourceDomainID, toDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
+constexpr auto subresourceUniqueRedirectsFromQuery = "INSERT OR IGNORE INTO SubresourceUniqueRedirectsFrom (subresourceDomainID, fromDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
+
+// EXISTS Queries
 constexpr auto subframeUnderTopFrameDomainExistsQuery = "SELECT EXISTS (SELECT 1 FROM SubframeUnderTopFrameDomains WHERE subFrameDomainID = ? "
     "AND topFrameDomainID = (SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?))"_s;
-constexpr auto subresourceUnderTopFrameDomainsQuery = "INSERT INTO SubresourceUnderTopFrameDomains (subresourceDomainID, topFrameDomainID) "
-    "SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto subresourceUnderTopFrameDomainExistsQuery = "SELECT EXISTS (SELECT 1 FROM SubresourceUnderTopFrameDomains "
     "WHERE subresourceDomainID = ? AND topFrameDomainID = (SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?))"_s;
-constexpr auto subresourceUniqueRedirectsToQuery = "INSERT INTO SubresourceUniqueRedirectsTo (subresourceDomainID, toDomainID) "
-    "SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain == ?"_s;
 constexpr auto subresourceUniqueRedirectsToExistsQuery = "SELECT EXISTS (SELECT 1 FROM SubresourceUniqueRedirectsTo WHERE subresourceDomainID = ? "
     "AND toDomainID = (SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?))"_s;
-constexpr auto subresourceUniqueRedirectsFromQuery = "INSERT INTO SubresourceUniqueRedirectsFrom (subresourceDomainID, fromDomainID) "
-    "SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain == ?"_s;
-constexpr auto subresourceUniqueRedirectsFromExistsQuery = "SELECT EXISTS (SELECT 1 FROM SubresourceUniqueRedirectsFrom WHERE subresourceDomainID = ? "
-    "AND fromDomainID = (SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?))"_s;
+constexpr auto topFrameLinkDecorationsFromExistsQuery = "SELECT EXISTS (SELECT 1 FROM TopFrameLinkDecorationsFrom WHERE fromDomainID = ? "
+"AND toDomainID = (SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?))"_s;
+
+// UPDATE Queries
 constexpr auto mostRecentUserInteractionQuery = "UPDATE ObservedDomains SET hadUserInteraction = ?, mostRecentUserInteractionTime = ? "
     "WHERE registrableDomain = ?"_s;
 constexpr auto updateLastSeenQuery = "UPDATE ObservedDomains SET lastSeen = ? WHERE registrableDomain = ?"_s;
 constexpr auto updateDataRecordsRemovedQuery = "UPDATE ObservedDomains SET dataRecordsRemoved = ? WHERE registrableDomain = ?"_s;
 constexpr auto updatePrevalentResourceQuery = "UPDATE ObservedDomains SET isPrevalent = ? WHERE registrableDomain = ?"_s;
-constexpr auto isPrevalentResourceQuery = "SELECT isPrevalent FROM ObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto updateVeryPrevalentResourceQuery = "UPDATE ObservedDomains SET isVeryPrevalent = ? WHERE registrableDomain = ?"_s;
-constexpr auto isVeryPrevalentResourceQuery = "SELECT isVeryPrevalent FROM ObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto clearPrevalentResourceQuery = "UPDATE ObservedDomains SET isPrevalent = 0, isVeryPrevalent = 0 WHERE registrableDomain = ?"_s;
-constexpr auto hadUserInteractionQuery = "SELECT hadUserInteraction, mostRecentUserInteractionTime FROM ObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto updateGrandfatheredQuery = "UPDATE ObservedDomains SET grandfathered = ? WHERE registrableDomain = ?"_s;
+
+
+// SELECT Queries
+constexpr auto domainIDFromStringQuery = "SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?"_s;
+constexpr auto isPrevalentResourceQuery = "SELECT isPrevalent FROM ObservedDomains WHERE registrableDomain = ?"_s;
+constexpr auto isVeryPrevalentResourceQuery = "SELECT isVeryPrevalent FROM ObservedDomains WHERE registrableDomain = ?"_s;
+constexpr auto hadUserInteractionQuery = "SELECT hadUserInteraction, mostRecentUserInteractionTime FROM ObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto isGrandfatheredQuery = "SELECT grandfathered FROM ObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto findExpiredUserInteractionQuery = "SELECT domainID FROM ObservedDomains WHERE hadUserInteraction = 1 AND mostRecentUserInteractionTime < ?"_s;
 
+// CREATE TABLE Queries
 constexpr auto createObservedDomain = "CREATE TABLE ObservedDomains ("
     "domainID INTEGER PRIMARY KEY, registrableDomain TEXT NOT NULL UNIQUE ON CONFLICT FAIL, lastSeen REAL NOT NULL, "
     "hadUserInteraction INTEGER NOT NULL, mostRecentUserInteractionTime REAL NOT NULL, grandfathered INTEGER NOT NULL, "
@@ -176,6 +175,17 @@ constexpr auto createSubresourceUniqueRedirectsFrom = "CREATE TABLE SubresourceU
     "subresourceDomainID INTEGER NOT NULL, fromDomainID INTEGER NOT NULL, "
     "FOREIGN KEY(subresourceDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
     "FOREIGN KEY(fromDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
+
+// CREATE UNIQUE INDEX Queries
+constexpr auto createUniqueIndexStorageAccessUnderTopFrameDomains = "CREATE UNIQUE INDEX IF NOT EXISTS StorageAccessUnderTopFrameDomains_domainID_topLevelDomainID on StorageAccessUnderTopFrameDomains ( domainID, topLevelDomainID );"_s;
+constexpr auto createUniqueIndexTopFrameUniqueRedirectsTo = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameUniqueRedirectsTo_sourceDomainID_toDomainID on TopFrameUniqueRedirectsTo ( sourceDomainID, toDomainID );"_s;
+constexpr auto createUniqueIndexTopFrameUniqueRedirectsFrom = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameUniqueRedirectsFrom_targetDomainID_fromDomainID on TopFrameUniqueRedirectsFrom ( targetDomainID, fromDomainID );"_s;
+constexpr auto createUniqueIndexTopFrameLinkDecorationsFrom = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameLinkDecorationsFrom_fromDomainID_toDomainID on TopFrameLinkDecorationsFrom ( fromDomainID, toDomainID );"_s;
+constexpr auto createUniqueIndexSubframeUnderTopFrameDomains = "CREATE UNIQUE INDEX IF NOT EXISTS SubframeUnderTopFrameDomains_subFrameDomainID_topFrameDomainID on SubframeUnderTopFrameDomains ( subFrameDomainID, topFrameDomainID );"_s;
+constexpr auto createUniqueIndexSubresourceUnderTopFrameDomains = "CREATE UNIQUE INDEX IF NOT EXISTS SubresourceUnderTopFrameDomains_subresourceDomainID_topFrameDomainID on SubresourceUnderTopFrameDomains ( subresourceDomainID, topFrameDomainID );"_s;
+constexpr auto createUniqueIndexSubresourceUniqueRedirectsTo = "CREATE UNIQUE INDEX IF NOT EXISTS SubresourceUniqueRedirectsTo_subresourceDomainID_toDomainID on SubresourceUniqueRedirectsTo ( subresourceDomainID, toDomainID );"_s;
+constexpr auto createUniqueIndexSubresourceUniqueRedirectsFrom = "CREATE UNIQUE INDEX IF NOT EXISTS SubresourceUniqueRedirectsFrom_subresourceDomainID_fromDomainID on SubresourceUnderTopFrameDomains ( subresourceDomainID, fromDomainID );"_s;
+
     
 ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebResourceLoadStatisticsStore& store, WorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID sessionID)
     : ResourceLoadStatisticsStore(store, workQueue, shouldIncludeLocalhost)
@@ -184,22 +194,10 @@ ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebReso
     , m_insertObservedDomainStatement(m_database, insertObservedDomainQuery)
     , m_insertTopLevelDomainStatement(m_database, insertTopLevelDomainQuery)
     , m_domainIDFromStringStatement(m_database, domainIDFromStringQuery)
-    , m_storageAccessUnderTopFrameDomainsStatement(m_database, storageAccessUnderTopFrameDomainsQuery)
-    , m_storageAccessUnderTopFrameDomainsExistsStatement(m_database, storageAccessUnderTopFrameDomainsExistsQuery)
-    , m_topFrameUniqueRedirectsTo(m_database, topFrameUniqueRedirectsToQuery)
-    , m_topFrameUniqueRedirectsToExists(m_database, topFrameUniqueRedirectsToExistsQuery)
-    , m_topFrameUniqueRedirectsFrom(m_database, topFrameUniqueRedirectsFromQuery)
-    , m_topFrameUniqueRedirectsFromExists(m_database, topFrameUniqueRedirectsFromExistsQuery)
-    , m_topFrameLinkDecorationsFrom(m_database, topFrameLinkDecorationsFromQuery)
     , m_topFrameLinkDecorationsFromExists(m_database, topFrameLinkDecorationsFromExistsQuery)
-    , m_subframeUnderTopFrameDomains(m_database, subframeUnderTopFrameDomainsQuery)
     , m_subframeUnderTopFrameDomainExists(m_database, subframeUnderTopFrameDomainExistsQuery)
-    , m_subresourceUnderTopFrameDomains(m_database, subresourceUnderTopFrameDomainsQuery)
     , m_subresourceUnderTopFrameDomainExists(m_database, subresourceUnderTopFrameDomainExistsQuery)
-    , m_subresourceUniqueRedirectsTo(m_database, subresourceUniqueRedirectsToQuery)
     , m_subresourceUniqueRedirectsToExists(m_database, subresourceUniqueRedirectsToExistsQuery)
-    , m_subresourceUniqueRedirectsFrom(m_database, subresourceUniqueRedirectsFromQuery)
-    , m_subresourceUniqueRedirectsFromExists(m_database, subresourceUniqueRedirectsFromExistsQuery)
     , m_mostRecentUserInteractionStatement(m_database, mostRecentUserInteractionQuery)
     , m_updateLastSeenStatement(m_database, updateLastSeenQuery)
     , m_updateDataRecordsRemovedStatement(m_database, updateDataRecordsRemovedQuery)
@@ -262,6 +260,22 @@ bool ResourceLoadStatisticsDatabaseStore::isEmpty() const
     return result;
 }
 
+bool ResourceLoadStatisticsDatabaseStore::createUniqueIndices()
+{
+    if (!m_database.executeCommand(createUniqueIndexStorageAccessUnderTopFrameDomains)
+        || !m_database.executeCommand(createUniqueIndexTopFrameUniqueRedirectsTo)
+        || !m_database.executeCommand(createUniqueIndexTopFrameUniqueRedirectsFrom)
+        || !m_database.executeCommand(createUniqueIndexTopFrameLinkDecorationsFrom)
+        || !m_database.executeCommand(createUniqueIndexSubframeUnderTopFrameDomains)
+        || !m_database.executeCommand(createUniqueIndexSubresourceUnderTopFrameDomains)
+        || !m_database.executeCommand(createUniqueIndexSubresourceUniqueRedirectsTo)
+        || !m_database.executeCommand(createUniqueIndexSubresourceUnderTopFrameDomains)) {
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::createUniqueIndices failed to execute, error message: %{public}s", this, m_database.lastErrorMsg());
+        return false;
+    }
+    return true;
+}
+
 bool ResourceLoadStatisticsDatabaseStore::createSchema()
 {
     ASSERT(!RunLoop::isMain());
@@ -315,6 +329,9 @@ bool ResourceLoadStatisticsDatabaseStore::createSchema()
         LOG_ERROR("Could not create SubresourceUniqueRedirectsFrom table in database (%i) - %s", m_database.lastError(), m_database.lastErrorMsg());
         return false;
     }
+    
+    if (!createUniqueIndices())
+        return false;
 
     return true;
 }
@@ -327,20 +344,9 @@ bool ResourceLoadStatisticsDatabaseStore::prepareStatements()
         || m_insertObservedDomainStatement.prepare() != SQLITE_OK
         || m_insertTopLevelDomainStatement.prepare() != SQLITE_OK
         || m_domainIDFromStringStatement.prepare() != SQLITE_OK
-        || m_storageAccessUnderTopFrameDomainsStatement.prepare() != SQLITE_OK
-        || m_storageAccessUnderTopFrameDomainsExistsStatement.prepare() != SQLITE_OK
-        || m_topFrameUniqueRedirectsTo.prepare() != SQLITE_OK
-        || m_topFrameUniqueRedirectsToExists.prepare() != SQLITE_OK
-        || m_topFrameUniqueRedirectsFrom.prepare() != SQLITE_OK
-        || m_topFrameUniqueRedirectsFromExists.prepare() != SQLITE_OK
-        || m_subframeUnderTopFrameDomains.prepare() != SQLITE_OK
         || m_subframeUnderTopFrameDomainExists.prepare() != SQLITE_OK
-        || m_subresourceUnderTopFrameDomains.prepare() != SQLITE_OK
         || m_subresourceUnderTopFrameDomainExists.prepare() != SQLITE_OK
-        || m_subresourceUniqueRedirectsTo.prepare() != SQLITE_OK
         || m_subresourceUniqueRedirectsToExists.prepare() != SQLITE_OK
-        || m_subresourceUniqueRedirectsFrom.prepare() != SQLITE_OK
-        || m_subresourceUniqueRedirectsFromExists.prepare() != SQLITE_OK
         || m_updateLastSeenStatement.prepare() != SQLITE_OK
         || m_updateDataRecordsRemovedStatement.prepare() != SQLITE_OK
         || m_mostRecentUserInteractionStatement.prepare() != SQLITE_OK
@@ -353,7 +359,6 @@ bool ResourceLoadStatisticsDatabaseStore::prepareStatements()
         || m_updateGrandfatheredStatement.prepare() != SQLITE_OK
         || m_isGrandfatheredStatement.prepare() != SQLITE_OK
         || m_findExpiredUserInteractionStatement.prepare() != SQLITE_OK
-        || m_topFrameLinkDecorationsFrom.prepare() != SQLITE_OK
         || m_topFrameLinkDecorationsFromExists.prepare() != SQLITE_OK) {
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::prepareStatements failed to prepare, error message: %{public}s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -465,6 +470,37 @@ Optional<unsigned> ResourceLoadStatisticsDatabaseStore::domainID(const Registrab
     return domainID;
 }
 
+String ResourceLoadStatisticsDatabaseStore::ensureAndMakeDomainList(const HashSet<RegistrableDomain>& subframeUnderTopFrameDomains)
+{
+    StringBuilder builder;
+    
+    for (auto& topFrameResource : subframeUnderTopFrameDomains) {
+        
+        // Insert query will fail if top frame domain is not already in the database
+        ensureResourceStatisticsForRegistrableDomain(topFrameResource);
+        
+        if (!builder.isEmpty())
+            builder.appendLiteral(", ");
+        builder.append('"');
+        builder.append(topFrameResource.string());
+        builder.append('"');
+    }
+
+    return builder.toString();
+}
+
+void ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList(const String& statement, const HashSet<RegistrableDomain>& subframeUnderTopFrameDomains, unsigned domainID)
+{
+    SQLiteStatement insertRelationshipStatement(m_database, makeString(statement, ensureAndMakeDomainList(subframeUnderTopFrameDomains), " );"));
+    
+    if (insertRelationshipStatement.prepare() != SQLITE_OK
+        || insertRelationshipStatement.bindInt(1, domainID) != SQLITE_OK
+        || insertRelationshipStatement.step() != SQLITE_DONE) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList failed, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+    }
+}
+
 void ResourceLoadStatisticsDatabaseStore::insertDomainRelationships(const ResourceLoadStatistics& loadStatistics)
 {
     ASSERT(!RunLoop::isMain());
@@ -472,41 +508,14 @@ void ResourceLoadStatisticsDatabaseStore::insertDomainRelationships(const Resour
     
     if (!registrableDomainID)
         return;
-    
-    for (auto& topFrameDomain : loadStatistics.storageAccessUnderTopFrameDomains) {
-        if (!relationshipExists(m_storageAccessUnderTopFrameDomainsExistsStatement, registrableDomainID.value(), topFrameDomain))
-            insertDomainRelationship(m_storageAccessUnderTopFrameDomainsStatement, registrableDomainID.value(), topFrameDomain);
-    }
 
-    for (auto& toDomain : loadStatistics.topFrameUniqueRedirectsTo) {
-        if (!relationshipExists(m_topFrameUniqueRedirectsToExists, registrableDomainID.value(), toDomain))
-            insertDomainRelationship(m_topFrameUniqueRedirectsTo, registrableDomainID.value(), toDomain);
-    }
-    
-    for (auto& fromDomain : loadStatistics.topFrameUniqueRedirectsFrom) {
-        if (!relationshipExists(m_topFrameUniqueRedirectsFromExists, registrableDomainID.value(), fromDomain))
-            insertDomainRelationship(m_topFrameUniqueRedirectsFrom, registrableDomainID.value(), fromDomain);
-    }
-    
-    for (auto& topFrameDomain : loadStatistics.subframeUnderTopFrameDomains) {
-        if (!relationshipExists(m_subframeUnderTopFrameDomainExists, registrableDomainID.value(), topFrameDomain))
-            insertDomainRelationship(m_subframeUnderTopFrameDomains, registrableDomainID.value(), topFrameDomain);
-    }
-    
-    for (auto& topFrameDomain : loadStatistics.subresourceUnderTopFrameDomains) {
-        if (!relationshipExists(m_subresourceUnderTopFrameDomainExists, registrableDomainID.value(), topFrameDomain))
-            insertDomainRelationship(m_subresourceUnderTopFrameDomains, registrableDomainID.value(), topFrameDomain);
-    }
-    
-    for (auto& toDomain : loadStatistics.subresourceUniqueRedirectsTo) {
-        if (!relationshipExists(m_subresourceUniqueRedirectsToExists, registrableDomainID.value(), toDomain))
-            insertDomainRelationship(m_subresourceUniqueRedirectsTo, registrableDomainID.value(), toDomain);
-    }
-    
-    for (auto& fromDomain : loadStatistics.subresourceUniqueRedirectsFrom) {
-        if (!relationshipExists(m_subresourceUniqueRedirectsFromExists, registrableDomainID.value(), fromDomain))
-            insertDomainRelationship(m_subresourceUniqueRedirectsFrom, registrableDomainID.value(), fromDomain);
-    }
+    insertDomainRelationshipList(storageAccessUnderTopFrameDomainsQuery, loadStatistics.storageAccessUnderTopFrameDomains, registrableDomainID.value());
+    insertDomainRelationshipList(topFrameUniqueRedirectsToQuery, loadStatistics.topFrameUniqueRedirectsTo, registrableDomainID.value());
+    insertDomainRelationshipList(topFrameUniqueRedirectsFromQuery, loadStatistics.topFrameUniqueRedirectsFrom, registrableDomainID.value());
+    insertDomainRelationshipList(subframeUnderTopFrameDomainsQuery, loadStatistics.subframeUnderTopFrameDomains, registrableDomainID.value());
+    insertDomainRelationshipList(subresourceUnderTopFrameDomainsQuery, loadStatistics.subresourceUnderTopFrameDomains, registrableDomainID.value());
+    insertDomainRelationshipList(subresourceUniqueRedirectsToQuery, loadStatistics.subresourceUniqueRedirectsTo, registrableDomainID.value());
+    insertDomainRelationshipList(subresourceUniqueRedirectsFromQuery, loadStatistics.subresourceUniqueRedirectsFrom, registrableDomainID.value());
 }
 
 void ResourceLoadStatisticsDatabaseStore::populateFromMemoryStore(const ResourceLoadStatisticsMemoryStore& memoryStore)
@@ -917,7 +926,7 @@ void ResourceLoadStatisticsDatabaseStore::grantStorageAccess(SubFrameDomain&& su
         auto subFrameStatus = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
         ASSERT(subFrameStatus.first == AddedRecord::No);
         ASSERT(hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::Long));
-        insertDomainRelationship(m_storageAccessUnderTopFrameDomainsStatement, subFrameStatus.second, topFrameDomain);
+        insertDomainRelationshipList(storageAccessUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), subFrameStatus.second);
     }
 
     grantStorageAccessInternal(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, promptWasShown, WTFMove(completionHandler));
@@ -1002,40 +1011,23 @@ void ResourceLoadStatisticsDatabaseStore::logFrameNavigation(const RegistrableDo
     if (!isMainFrame && !(areTargetAndTopFrameDomainsSameSite || areTargetAndSourceDomainsSameSite)) {
         auto targetResult = ensureResourceStatisticsForRegistrableDomain(targetDomain);
         updateLastSeen(targetDomain, ResourceLoadStatistics::reduceTimeResolution(WallTime::now()));
-        ensureResourceStatisticsForRegistrableDomain(topFrameDomain);
-        if (!relationshipExists(m_subframeUnderTopFrameDomainExists, targetResult.second, topFrameDomain)) {
-            insertDomainRelationship(m_subframeUnderTopFrameDomains, targetResult.second, topFrameDomain);
-            statisticsWereUpdated = true;
-        }
+        insertDomainRelationshipList(subframeUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), targetResult.second);
+        statisticsWereUpdated = true;
     }
 
     if (isRedirect && !areTargetAndSourceDomainsSameSite) {
         if (isMainFrame) {
             auto redirectingDomainResult = ensureResourceStatisticsForRegistrableDomain(sourceDomain);
             auto targetResult = ensureResourceStatisticsForRegistrableDomain(targetDomain);
-
-            if (!relationshipExists(m_topFrameUniqueRedirectsToExists, redirectingDomainResult.second, targetDomain)) {
-                insertDomainRelationship(m_topFrameUniqueRedirectsTo, redirectingDomainResult.second, targetDomain);
-                statisticsWereUpdated = true;
-            }
-
-            if (!relationshipExists(m_topFrameUniqueRedirectsFromExists, targetResult.second, sourceDomain)) {
-                insertDomainRelationship(m_topFrameUniqueRedirectsFrom, targetResult.second, sourceDomain);
-                statisticsWereUpdated = true;
-            }
+            insertDomainRelationshipList(topFrameUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ targetDomain }), redirectingDomainResult.second);
+            insertDomainRelationshipList(topFrameUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ sourceDomain }), targetResult.second);
         } else {
             auto redirectingDomainResult = ensureResourceStatisticsForRegistrableDomain(sourceDomain);
             auto targetResult = ensureResourceStatisticsForRegistrableDomain(targetDomain);
-            if (!relationshipExists(m_subresourceUniqueRedirectsToExists, redirectingDomainResult.second, targetDomain)) {
-                insertDomainRelationship(m_subresourceUniqueRedirectsTo, redirectingDomainResult.second, targetDomain);
-                statisticsWereUpdated = true;
-            }
-
-            if (!relationshipExists(m_subresourceUniqueRedirectsFromExists, targetResult.second, sourceDomain)) {
-                insertDomainRelationship(m_subresourceUniqueRedirectsFrom, targetResult.second, sourceDomain);
-                statisticsWereUpdated = true;
-            }
+            insertDomainRelationshipList(subresourceUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ targetDomain }), redirectingDomainResult.second);
+            insertDomainRelationshipList(subresourceUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ sourceDomain }), targetResult.second);
         }
+        statisticsWereUpdated = true;
     }
 
     if (statisticsWereUpdated)
@@ -1048,11 +1040,8 @@ void ResourceLoadStatisticsDatabaseStore::logCrossSiteLoadWithLinkDecoration(con
     ASSERT(fromDomain != toDomain);
 
     auto fromDomainResult = ensureResourceStatisticsForRegistrableDomain(fromDomain);
-
-    if (!relationshipExists(m_topFrameLinkDecorationsFromExists, fromDomainResult.second, toDomain)) {
-        insertDomainRelationship(m_topFrameLinkDecorationsFrom, fromDomainResult.second, toDomain);
-        scheduleStatisticsProcessingRequestIfNecessary();
-    }
+    insertDomainRelationshipList(topFrameLinkDecorationsFromQuery, HashSet<RegistrableDomain>({ toDomain }), fromDomainResult.second);
+    scheduleStatisticsProcessingRequestIfNecessary();
 }
 
 void ResourceLoadStatisticsDatabaseStore::setUserInteraction(const RegistrableDomain& domain, bool hadUserInteraction, WallTime mostRecentInteraction)
@@ -1299,9 +1288,7 @@ void ResourceLoadStatisticsDatabaseStore::setSubframeUnderTopFrameDomain(const S
     auto result = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
 
     // For consistency, make sure we also have a statistics entry for the top frame domain.
-    ensureResourceStatisticsForRegistrableDomain(topFrameDomain);
-
-    insertDomainRelationship(m_subframeUnderTopFrameDomains, result.second, topFrameDomain);
+    insertDomainRelationshipList(subframeUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), result.second);
 }
 
 void ResourceLoadStatisticsDatabaseStore::setSubresourceUnderTopFrameDomain(const SubResourceDomain& subresourceDomain, const TopFrameDomain& topFrameDomain)
@@ -1311,9 +1298,7 @@ void ResourceLoadStatisticsDatabaseStore::setSubresourceUnderTopFrameDomain(cons
     auto result = ensureResourceStatisticsForRegistrableDomain(subresourceDomain);
 
     // For consistency, make sure we also have a statistics entry for the top frame domain.
-    ensureResourceStatisticsForRegistrableDomain(topFrameDomain);
-
-    insertDomainRelationship(m_subresourceUnderTopFrameDomains, result.second, topFrameDomain);
+    insertDomainRelationshipList(subresourceUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), result.second);
 }
 
 void ResourceLoadStatisticsDatabaseStore::setSubresourceUniqueRedirectTo(const SubResourceDomain& subresourceDomain, const RedirectDomain& redirectDomain)
@@ -1323,9 +1308,7 @@ void ResourceLoadStatisticsDatabaseStore::setSubresourceUniqueRedirectTo(const S
     auto result = ensureResourceStatisticsForRegistrableDomain(subresourceDomain);
 
     // For consistency, make sure we also have a statistics entry for the redirect domain.
-    ensureResourceStatisticsForRegistrableDomain(redirectDomain);
-
-    insertDomainRelationship(m_subresourceUniqueRedirectsTo, result.second, redirectDomain);
+    insertDomainRelationshipList(subresourceUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ redirectDomain }), result.second);
 }
 
 void ResourceLoadStatisticsDatabaseStore::setSubresourceUniqueRedirectFrom(const SubResourceDomain& subresourceDomain, const RedirectDomain& redirectDomain)
@@ -1335,9 +1318,7 @@ void ResourceLoadStatisticsDatabaseStore::setSubresourceUniqueRedirectFrom(const
     auto result = ensureResourceStatisticsForRegistrableDomain(subresourceDomain);
 
     // For consistency, make sure we also have a statistics entry for the redirect domain.
-    ensureResourceStatisticsForRegistrableDomain(redirectDomain);
-
-    insertDomainRelationship(m_subresourceUniqueRedirectsFrom, result.second, redirectDomain);
+    insertDomainRelationshipList(subresourceUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ redirectDomain }), result.second);
 }
 
 void ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectTo(const TopFrameDomain& topFrameDomain, const RedirectDomain& redirectDomain)
@@ -1347,9 +1328,7 @@ void ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectTo(const TopF
     auto result = ensureResourceStatisticsForRegistrableDomain(topFrameDomain);
 
     // For consistency, make sure we also have a statistics entry for the redirect domain.
-    ensureResourceStatisticsForRegistrableDomain(redirectDomain);
-
-    insertDomainRelationship(m_topFrameUniqueRedirectsTo, result.second, redirectDomain);
+    insertDomainRelationshipList(topFrameUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ redirectDomain }), result.second);
 }
 
 void ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectFrom(const TopFrameDomain& topFrameDomain, const RedirectDomain& redirectDomain)
@@ -1359,9 +1338,7 @@ void ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectFrom(const To
     auto result = ensureResourceStatisticsForRegistrableDomain(topFrameDomain);
 
     // For consistency, make sure we also have a statistics entry for the redirect domain.
-    ensureResourceStatisticsForRegistrableDomain(redirectDomain);
-
-    insertDomainRelationship(m_topFrameUniqueRedirectsFrom, result.second, redirectDomain);
+    insertDomainRelationshipList(topFrameUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ redirectDomain }), result.second);
 }
 
 std::pair<ResourceLoadStatisticsDatabaseStore::AddedRecord, unsigned> ResourceLoadStatisticsDatabaseStore::ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain& domain)
@@ -1757,6 +1734,40 @@ void ResourceLoadStatisticsDatabaseStore::updateDataRecordsRemoved(const Registr
     int resetResult = m_updateDataRecordsRemovedStatement.reset();
     ASSERT_UNUSED(resetResult, resetResult == SQLITE_OK);
 }
+
+bool ResourceLoadStatisticsDatabaseStore::isCorrectSubStatisticsCount(const RegistrableDomain& subframeDomain, const TopFrameDomain& topFrameDomain)
+{
+    SQLiteStatement subFrameUnderTopFrameCount(m_database, countSubframeUnderTopFrameQuery);
+    SQLiteStatement subresourceUnderTopFrameCount(m_database, countSubresourceUnderTopFrameQuery);
+    SQLiteStatement subresourceUniqueRedirectsTo(m_database, countSubresourceUniqueRedirectsToQuery);
+    
+    if (subFrameUnderTopFrameCount.prepare() != SQLITE_OK
+        || subresourceUnderTopFrameCount.prepare() != SQLITE_OK
+        || subresourceUniqueRedirectsTo.prepare() != SQLITE_OK) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::countSubStatisticsTesting failed to prepare, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    
+    if (subFrameUnderTopFrameCount.bindInt(1, domainID(subframeDomain).value()) != SQLITE_OK
+        || subFrameUnderTopFrameCount.bindInt(2, domainID(topFrameDomain).value()) != SQLITE_OK
+        || subresourceUnderTopFrameCount.bindInt(1, domainID(subframeDomain).value()) != SQLITE_OK
+        || subresourceUnderTopFrameCount.bindInt(2, domainID(topFrameDomain).value()) != SQLITE_OK
+        || subresourceUniqueRedirectsTo.bindInt(1, domainID(subframeDomain).value()) != SQLITE_OK
+        || subresourceUniqueRedirectsTo.bindInt(2, domainID(topFrameDomain).value()) != SQLITE_OK) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::countSubStatisticsTesting failed to bind, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    
+    if (subFrameUnderTopFrameCount.step() != SQLITE_ROW
+        || subresourceUnderTopFrameCount.step() != SQLITE_ROW
+        || subresourceUniqueRedirectsTo.step() != SQLITE_ROW)
+        return false;
+    
+    return (subFrameUnderTopFrameCount.getColumnInt(0) == 1 && subresourceUnderTopFrameCount.getColumnInt(0) == 1 && subresourceUniqueRedirectsTo.getColumnInt(0) == 1);
+}
+
 
 } // namespace WebKit
 

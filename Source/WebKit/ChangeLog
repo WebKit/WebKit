@@ -1,3 +1,87 @@
+2019-10-07  Kate Cheney  <katherine_cheney@apple.com>
+
+        Domain relationships in the ITP Database should be inserted in a single query and ignore repeat insert attempts. (202604)
+        https://bugs.webkit.org/show_bug.cgi?id=202604
+        <rdar://problem/55995831>
+
+        Reviewed by Chris Dumez. 
+        
+        This patch addresses two clean-ups for the ITP SQLite Database Store.
+        First, by using INSERT OR IGNORE as opposed to INSERT, it eliminates
+        the need to check if a relationship already exists in the database
+        before inserting it. Second, instead of looping through domain lists
+        and inserting each relationship as a separate query, this patch now
+        converts lists to a string which SQLite can use to insert multiple
+        rows into a database using a single query.
+
+        Some Exists queries could not be deleted because they were being
+        used for testing.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::prepareStatements):
+        Removed old insert queries and replaced them with queries able to
+        insert string-lists of domains in a single query. Also reorganized
+        the queries by functionality to make them easier to find and edit.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::createUniqueIndices):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::createSchema):
+        In order to properly take advantage of the INSERT OR IGNORE
+        functionality, unique indices must be established so the SQLite table
+        is aware of what patterns to look for when ignoring a new insert.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ensureAndmakeDomainList):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertDomainRelationships):
+        Looping through the domain list is no longer needed with the new query
+        changes. Additionally, ensuring a domain is in the Observed Domains
+        table of the database must be done before utilizing any inserting of 
+        relationships because the relationship queries rely on fetching the
+        topFrame domainID from the ObservedDomains table.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grantStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::logFrameNavigation):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::logCrossSiteLoadWithLinkDecoration):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setSubframeUnderTopFrameDomain):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setSubresourceUnderTopFrameDomain):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setSubresourceUniqueRedirectTo):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setSubresourceUniqueRedirectFrom):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectTo):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectFrom):
+        With the ensure check being done once in the ensureAndmakeDomainList
+        function, these functions no longer have to make that check before
+        inserting.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::mergeStatisticForTesting):
+        (WebKit::WebResourceLoadStatisticsStore::isRelationshipOnlyInDatabaseOnce):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        Changes in WeResourceLoadStatisticsStore were for testing only. This
+        patch updated the merge statistic testing to also test this change by
+        having a topFrameDomain list with more than one domain.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::mergeStatisticForTesting):
+        (WebKit::NetworkProcess::isRelationshipOnlyInDatabaseOnce):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetStatisticsMergeStatistic):
+        (WKWebsiteDataStoreIsStatisticsOnlyInDatabaseOnce):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::mergeStatisticForTesting):
+        (WebKit::NetworkProcessProxy::isRelationshipOnlyInDatabaseOnce):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::mergeStatisticForTesting):
+        (WebKit::WebsiteDataStore::isRelationshipOnlyInDatabaseOnce):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        Added a new function for testing that there are no repeat inserts
+        into the database. Updated mergeStatistics to test the list-insert
+        functionality.
+
 2019-10-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Change signature of HostFunction to (JSGlobalObject*, CallFrame*)

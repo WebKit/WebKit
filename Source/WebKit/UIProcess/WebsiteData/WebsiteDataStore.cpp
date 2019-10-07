@@ -1551,7 +1551,7 @@ void WebsiteDataStore::setLastSeen(const URL& url, Seconds seconds, CompletionHa
     }
 }
 
-void WebsiteDataStore::mergeStatisticForTesting(const URL& url , const URL& topFrameUrl, Seconds lastSeen, bool hadUserInteraction, Seconds mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, CompletionHandler<void()>&& completionHandler)
+void WebsiteDataStore::mergeStatisticForTesting(const URL& url , const URL& topFrameUrl1, const URL& topFrameUrl2, Seconds lastSeen, bool hadUserInteraction, Seconds mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, CompletionHandler<void()>&& completionHandler)
 {
     if (url.protocolIsAbout() || url.isEmpty()) {
         completionHandler();
@@ -1562,7 +1562,7 @@ void WebsiteDataStore::mergeStatisticForTesting(const URL& url , const URL& topF
 
     for (auto& processPool : processPools()) {
         if (auto* process = processPool->networkProcess())
-            process->mergeStatisticForTesting(m_sessionID, WebCore::RegistrableDomain { url }, WebCore::RegistrableDomain { topFrameUrl }, lastSeen, hadUserInteraction, mostRecentUserInteraction, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
+            process->mergeStatisticForTesting(m_sessionID, WebCore::RegistrableDomain { url }, WebCore::RegistrableDomain { topFrameUrl1 }, WebCore::RegistrableDomain { topFrameUrl2 }, lastSeen, hadUserInteraction, mostRecentUserInteraction, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
 }
 
@@ -1640,6 +1640,24 @@ void WebsiteDataStore::hasHadUserInteraction(const URL& url, CompletionHandler<v
     for (auto& processPool : processPools()) {
         if (auto* process = processPool->networkProcess()) {
             process->hasHadUserInteraction(m_sessionID, WebCore::RegistrableDomain { url }, WTFMove(completionHandler));
+            ASSERT(processPools().size() == 1);
+            break;
+        }
+    }
+}
+
+void WebsiteDataStore::isRelationshipOnlyInDatabaseOnce(const URL& subUrl, const URL& topUrl, CompletionHandler<void(bool)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+    
+    if (subUrl.protocolIsAbout() || subUrl.isEmpty() || topUrl.protocolIsAbout() || topUrl.isEmpty()) {
+        completionHandler(false);
+        return;
+    }
+    
+    for (auto& processPool : processPools()) {
+        if (auto* process = processPool->networkProcess()) {
+            process->isRelationshipOnlyInDatabaseOnce(m_sessionID, WebCore::RegistrableDomain { subUrl }, WebCore::RegistrableDomain { topUrl }, WTFMove(completionHandler));
             ASSERT(processPools().size() == 1);
             break;
         }

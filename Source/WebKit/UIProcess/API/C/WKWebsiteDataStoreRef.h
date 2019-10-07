@@ -50,7 +50,7 @@ WK_EXPORT void WKWebsiteDataStoreSetResourceLoadStatisticsPrevalentResourceForDe
 typedef void (*WKWebsiteDataStoreStatisticsLastSeenFunction)(void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreSetStatisticsLastSeen(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, double seconds, void* context, WKWebsiteDataStoreStatisticsLastSeenFunction completionHandler);
 typedef void (*WKWebsiteDataStoreStatisticsMergeStatisticFunction)(void* functionContext);
-WK_EXPORT void WKWebsiteDataStoreSetStatisticsMergeStatistic(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, WKStringRef topFrameDomain, double lastSeen, bool hadUserInteraction, double mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, void* context, WKWebsiteDataStoreStatisticsMergeStatisticFunction completionHandler);
+WK_EXPORT void WKWebsiteDataStoreSetStatisticsMergeStatistic(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, WKStringRef topFrameDomain1, WKStringRef topFrameDomain2, double lastSeen, bool hadUserInteraction, double mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, void* context, WKWebsiteDataStoreStatisticsMergeStatisticFunction completionHandler);
 typedef void (*WKWebsiteDataStoreStatisticsPrevalentResourceFunction)(void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreSetStatisticsPrevalentResource(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, bool value, void* context, WKWebsiteDataStoreStatisticsPrevalentResourceFunction completionHandler);
 typedef void (*WKWebsiteDataStoreStatisticsVeryPrevalentResourceFunction)(void* functionContext);
@@ -70,6 +70,8 @@ typedef void (*WKWebsiteDataStoreStatisticsHasHadUserInteractionFunction)(void* 
 WK_EXPORT void WKWebsiteDataStoreSetStatisticsHasHadUserInteraction(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, bool value, void* context, WKWebsiteDataStoreStatisticsHasHadUserInteractionFunction completionHandler);
 typedef void (*WKWebsiteDataStoreIsStatisticsHasHadUserInteractionFunction)(bool hasHadUserInteraction, void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreIsStatisticsHasHadUserInteraction(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, void* context, WKWebsiteDataStoreIsStatisticsHasHadUserInteractionFunction callback);
+typedef void (*WKWebsiteDataStoreIsStatisticsOnlyInDatabaseOnceFunction)(bool onlyInDatabaseOnce, void* functionContext);
+WK_EXPORT void WKWebsiteDataStoreIsStatisticsOnlyInDatabaseOnce(WKWebsiteDataStoreRef dataStoreRef, WKStringRef subHost, WKStringRef topHost, void* context, WKWebsiteDataStoreIsStatisticsOnlyInDatabaseOnceFunction callback);
 WK_EXPORT void WKWebsiteDataStoreSetStatisticsGrandfathered(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, bool value);
 typedef void (*WKWebsiteDataStoreIsStatisticsGrandfatheredFunction)(bool isGrandfathered, void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreIsStatisticsGrandfathered(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, void* context, WKWebsiteDataStoreIsStatisticsGrandfatheredFunction callback);

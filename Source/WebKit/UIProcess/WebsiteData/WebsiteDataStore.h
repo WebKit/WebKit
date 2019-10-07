@@ -147,6 +147,7 @@ public:
     void logUserInteraction(const URL&, CompletionHandler<void()>&&);
     void getAllStorageAccessEntries(WebPageProxyIdentifier, CompletionHandler<void(Vector<String>&& domains)>&&);
     void hasHadUserInteraction(const URL&, CompletionHandler<void(bool)>&&);
+    void isRelationshipOnlyInDatabaseOnce(const URL& subUrl, const URL& topUrl, CompletionHandler<void(bool)>&&);
     void isPrevalentResource(const URL&, CompletionHandler<void(bool)>&&);
     void isRegisteredAsRedirectingTo(const URL& hostRedirectedFrom, const URL& hostRedirectedTo, CompletionHandler<void(bool)>&&);
     void isRegisteredAsSubresourceUnder(const URL& subresource, const URL& topFrame, CompletionHandler<void(bool)>&&);
@@ -163,7 +164,7 @@ public:
     void setUseITPDatabase(bool);
     void setGrandfatheringTime(Seconds, CompletionHandler<void()>&&);
     void setLastSeen(const URL&, Seconds, CompletionHandler<void()>&&);
-    void mergeStatisticForTesting(const URL&, const URL& topFrameUrl, Seconds lastSeen, bool hadUserInteraction, Seconds mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, CompletionHandler<void()>&&);
+    void mergeStatisticForTesting(const URL&, const URL& topFrameUrl1, const URL& topFrameUrl2, Seconds lastSeen, bool hadUserInteraction, Seconds mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, CompletionHandler<void()>&&);
     void setNotifyPagesWhenDataRecordsWereScanned(bool, CompletionHandler<void()>&&);
     void setIsRunningResourceLoadStatisticsTest(bool, CompletionHandler<void()>&&);
     void setPruneEntriesDownTo(size_t, CompletionHandler<void()>&&);

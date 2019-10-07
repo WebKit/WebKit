@@ -103,6 +103,7 @@ public:
     bool hasHadUserInteraction(const RegistrableDomain&, OperatingDatesWindow) override;
 
     void setLastSeen(const RegistrableDomain&, Seconds) override;
+    bool isCorrectSubStatisticsCount(const RegistrableDomain&, const TopFrameDomain&);
 
 private:
     void mergeStatistic(const ResourceLoadStatistics&);
@@ -110,6 +111,7 @@ private:
     void clearDatabaseContents();
     bool insertObservedDomain(const ResourceLoadStatistics&);
     void insertDomainRelationships(const ResourceLoadStatistics&);
+    void insertDomainRelationshipList(const String&, const HashSet<RegistrableDomain>&, unsigned);
     bool insertDomainRelationship(WebCore::SQLiteStatement&, unsigned domainID, const RegistrableDomain& topFrameDomain);
     bool relationshipExists(WebCore::SQLiteStatement&, Optional<unsigned> firstDomainID, const RegistrableDomain& secondDomain) const;
     Optional<unsigned> domainID(const RegistrableDomain&) const;
@@ -166,8 +168,11 @@ private:
     Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> registrableDomainsToRemoveWebsiteDataFor() override;
     bool isDatabaseStore() const final { return true; }
 
+    bool createUniqueIndices();
     bool createSchema();
     bool prepareStatements();
+    String ensureAndMakeDomainList(const HashSet<RegistrableDomain>&);
+
     
     const String m_storageDirectoryPath;
     mutable WebCore::SQLiteDatabase m_database;
@@ -175,22 +180,10 @@ private:
     WebCore::SQLiteStatement m_insertObservedDomainStatement;
     WebCore::SQLiteStatement m_insertTopLevelDomainStatement;
     mutable WebCore::SQLiteStatement m_domainIDFromStringStatement;
-    WebCore::SQLiteStatement m_storageAccessUnderTopFrameDomainsStatement;
-    WebCore::SQLiteStatement m_storageAccessUnderTopFrameDomainsExistsStatement;
-    WebCore::SQLiteStatement m_topFrameUniqueRedirectsTo;
-    mutable WebCore::SQLiteStatement m_topFrameUniqueRedirectsToExists;
-    WebCore::SQLiteStatement m_topFrameUniqueRedirectsFrom;
-    mutable WebCore::SQLiteStatement m_topFrameUniqueRedirectsFromExists;
-    WebCore::SQLiteStatement m_topFrameLinkDecorationsFrom;
     mutable WebCore::SQLiteStatement m_topFrameLinkDecorationsFromExists;
-    WebCore::SQLiteStatement m_subframeUnderTopFrameDomains;
     mutable WebCore::SQLiteStatement m_subframeUnderTopFrameDomainExists;
-    WebCore::SQLiteStatement m_subresourceUnderTopFrameDomains;
     mutable WebCore::SQLiteStatement m_subresourceUnderTopFrameDomainExists;
-    WebCore::SQLiteStatement m_subresourceUniqueRedirectsTo;
     mutable WebCore::SQLiteStatement m_subresourceUniqueRedirectsToExists;
-    WebCore::SQLiteStatement m_subresourceUniqueRedirectsFrom;
-    mutable WebCore::SQLiteStatement m_subresourceUniqueRedirectsFromExists;
     WebCore::SQLiteStatement m_mostRecentUserInteractionStatement;
     WebCore::SQLiteStatement m_updateLastSeenStatement;
     mutable WebCore::SQLiteStatement m_updateDataRecordsRemovedStatement;

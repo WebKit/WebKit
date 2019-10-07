@@ -16,7 +16,7 @@
     const newerTimestamp = olderTimestamp + 10;
                                       
     function insertSecondStatistic() {
-      testRunner.setStatisticsMergeStatistic(url, "", olderTimestamp, false, 99, false, false, false, 0, function() {
+      testRunner.setStatisticsMergeStatistic(url, "", "", olderTimestamp, false, 99, false, false, false, 0, function() {
           if (testRunner.isStatisticsPrevalentResource(url))
               testPassed("Host did not overwrite old prevalent resource value.");
           else
@@ -44,7 +44,7 @@
     }
     
     function runTestRunnerTest() {
-        testRunner.setStatisticsMergeStatistic(url, "", newerTimestamp, true, 100, true, true, true, 1, function() {
+        testRunner.setStatisticsMergeStatistic(url, "", "", newerTimestamp, true, 100, true, true, true, 1, function() {
             if (!testRunner.isStatisticsPrevalentResource(url))
                 testFailed("Host got set as prevalent resource.");
 

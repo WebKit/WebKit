@@ -596,11 +596,11 @@ void WebResourceLoadStatisticsStore::setLastSeen(const RegistrableDomain& domain
     });
 }
 
-void WebResourceLoadStatisticsStore::mergeStatisticForTesting(const RegistrableDomain& domain, const RegistrableDomain& topFrameDomain, Seconds lastSeen, bool hadUserInteraction, Seconds mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, CompletionHandler<void()>&& completionHandler)
+void WebResourceLoadStatisticsStore::mergeStatisticForTesting(const RegistrableDomain& domain, const RegistrableDomain& topFrameDomain1, const RegistrableDomain& topFrameDomain2, Seconds lastSeen, bool hadUserInteraction, Seconds mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, domain = domain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), lastSeen, hadUserInteraction, mostRecentUserInteraction, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, domain = domain.isolatedCopy(), topFrameDomain1 = topFrameDomain1.isolatedCopy(), topFrameDomain2 = topFrameDomain2.isolatedCopy(), lastSeen, hadUserInteraction, mostRecentUserInteraction, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_statisticsStore) {
             ResourceLoadStatistics statistic(domain);
             statistic.lastSeen = WallTime::fromRawSeconds(lastSeen.seconds());
@@ -611,17 +611,39 @@ void WebResourceLoadStatisticsStore::mergeStatisticForTesting(const RegistrableD
             statistic.isVeryPrevalentResource = isVeryPrevalent;
             statistic.dataRecordsRemoved = dataRecordsRemoved;
             
-            if (!topFrameDomain.isEmpty()) {
-                HashSet<RegistrableDomain> topFrameDomains;
-                topFrameDomains.add(topFrameDomain);
-                statistic.subframeUnderTopFrameDomains = WTFMove(topFrameDomains);
-            }
+            HashSet<RegistrableDomain> topFrameDomains;
+            
+            if (!topFrameDomain1.isEmpty())
+                topFrameDomains.add(topFrameDomain1);
+            
+            if (!topFrameDomain2.isEmpty())
+                topFrameDomains.add(topFrameDomain2);
+
+            statistic.subframeUnderTopFrameDomains = WTFMove(topFrameDomains);
 
             Vector<ResourceLoadStatistics> statistics;
             statistics.append(WTFMove(statistic));
             m_statisticsStore->mergeStatistics(WTFMove(statistics));
         }
         postTaskReply(WTFMove(completionHandler));
+    });
+}
+
+void WebResourceLoadStatisticsStore::isRelationshipOnlyInDatabaseOnce(const RegistrableDomain& subDomain, const RegistrableDomain& topDomain, CompletionHandler<void(bool)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    postTask([this, subDomain = subDomain.isolatedCopy(), topDomain = topDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+        if (!m_statisticsStore || !is<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore)) {
+            completionHandler(false);
+            return;
+        }
+        
+        bool isRelationshipOnlyInDatabaseOnce = downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore).isCorrectSubStatisticsCount(subDomain, topDomain);
+        
+        postTaskReply([isRelationshipOnlyInDatabaseOnce, completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler(isRelationshipOnlyInDatabaseOnce);
+        });
     });
 }
     

@@ -119,10 +119,10 @@ void WKWebsiteDataStoreSetStatisticsLastSeen(WKWebsiteDataStoreRef dataStoreRef,
 #endif
 }
 
-void WKWebsiteDataStoreSetStatisticsMergeStatistic(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, WKStringRef topFrameDomain, double lastSeen, bool hadUserInteraction, double mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, void* context, WKWebsiteDataStoreStatisticsMergeStatisticFunction completionHandler)
+void WKWebsiteDataStoreSetStatisticsMergeStatistic(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, WKStringRef topFrameDomain1, WKStringRef topFrameDomain2, double lastSeen, bool hadUserInteraction, double mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, void* context, WKWebsiteDataStoreStatisticsMergeStatisticFunction completionHandler)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    WebKit::toImpl(dataStoreRef)->mergeStatisticForTesting(URL(URL(), WebKit::toImpl(host)->string()), URL(URL(), WebKit::toImpl(topFrameDomain)->string()), Seconds { lastSeen }, hadUserInteraction, Seconds { mostRecentUserInteraction }, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, [context, completionHandler] {
+    WebKit::toImpl(dataStoreRef)->mergeStatisticForTesting(URL(URL(), WebKit::toImpl(host)->string()), URL(URL(), WebKit::toImpl(topFrameDomain1)->string()), URL(URL(), WebKit::toImpl(topFrameDomain2)->string()), Seconds { lastSeen }, hadUserInteraction, Seconds { mostRecentUserInteraction }, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, [context, completionHandler] {
         completionHandler(context);
     });
 #else
@@ -255,6 +255,17 @@ void WKWebsiteDataStoreIsStatisticsHasHadUserInteraction(WKWebsiteDataStoreRef d
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     WebKit::toImpl(dataStoreRef)->hasHadUserInteraction(URL(URL(), WebKit::toImpl(host)->string()), [context, callback](bool hasHadUserInteraction) {
         callback(hasHadUserInteraction, context);
+    });
+#else
+    callback(false, context);
+#endif
+}
+
+void WKWebsiteDataStoreIsStatisticsOnlyInDatabaseOnce(WKWebsiteDataStoreRef dataStoreRef, WKStringRef subHost, WKStringRef topHost, void* context, WKWebsiteDataStoreIsStatisticsOnlyInDatabaseOnceFunction callback)
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    WebKit::toImpl(dataStoreRef)->isRelationshipOnlyInDatabaseOnce(URL(URL(), WebKit::toImpl(subHost)->string()), URL(URL(), WebKit::toImpl(topHost)->string()), [context, callback](bool onlyInDatabaseOnce) {
+        callback(onlyInDatabaseOnce, context);
     });
 #else
     callback(false, context);

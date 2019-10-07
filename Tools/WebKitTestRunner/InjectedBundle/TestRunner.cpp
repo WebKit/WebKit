@@ -1454,7 +1454,7 @@ void TestRunner::statisticsCallDidSetLastSeenCallback()
     callTestRunnerCallback(SetStatisticsLastSeenCallbackID);
 }
 
-void TestRunner::setStatisticsMergeStatistic(JSStringRef hostName, JSStringRef topFrameDomain, double lastSeen, bool hadUserInteraction, double mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, JSValueRef completionHandler)
+void TestRunner::setStatisticsMergeStatistic(JSStringRef hostName, JSStringRef topFrameDomain1, JSStringRef topFrameDomain2, double lastSeen, bool hadUserInteraction, double mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, JSValueRef completionHandler)
 {
     cacheTestRunnerCallback(SetStatisticsMergeStatisticCallbackID, completionHandler);
 
@@ -1464,8 +1464,11 @@ void TestRunner::setStatisticsMergeStatistic(JSStringRef hostName, JSStringRef t
     keys.append(adoptWK(WKStringCreateWithUTF8CString("HostName")));
     values.append(adoptWK(WKStringCreateWithJSString(hostName)));
     
-    keys.append(adoptWK(WKStringCreateWithUTF8CString("TopFrameDomain")));
-    values.append(adoptWK(WKStringCreateWithJSString(topFrameDomain)));
+    keys.append(adoptWK(WKStringCreateWithUTF8CString("TopFrameDomain1")));
+    values.append(adoptWK(WKStringCreateWithJSString(topFrameDomain1)));
+    
+    keys.append(adoptWK(WKStringCreateWithUTF8CString("TopFrameDomain2")));
+    values.append(adoptWK(WKStringCreateWithJSString(topFrameDomain2)));
 
     keys.append(adoptWK(WKStringCreateWithUTF8CString("LastSeen")));
     values.append(adoptWK(WKDoubleCreate(lastSeen)));
@@ -1718,6 +1721,34 @@ bool TestRunner::isStatisticsHasHadUserInteraction(JSStringRef hostName)
 {
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("IsStatisticsHasHadUserInteraction"));
     WKRetainPtr<WKStringRef> messageBody = adoptWK(WKStringCreateWithJSString(hostName));
+    WKTypeRef returnData = nullptr;
+    WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get(), &returnData);
+    ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
+    return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
+}
+
+bool TestRunner::isStatisticsOnlyInDatabaseOnce(JSStringRef subHost, JSStringRef topHost)
+{
+    
+    Vector<WKRetainPtr<WKStringRef>> keys;
+    Vector<WKRetainPtr<WKTypeRef>> values;
+
+    keys.append(adoptWK(WKStringCreateWithUTF8CString("SubHost")));
+    values.append(adoptWK(WKStringCreateWithJSString(subHost)));
+    
+    keys.append(adoptWK(WKStringCreateWithUTF8CString("TopHost")));
+    values.append(adoptWK(WKStringCreateWithJSString(topHost)));
+    
+    Vector<WKStringRef> rawKeys(keys.size());
+    Vector<WKTypeRef> rawValues(values.size());
+
+    for (size_t i = 0; i < keys.size(); ++i) {
+        rawKeys[i] = keys[i].get();
+        rawValues[i] = values[i].get();
+    }
+
+    auto messageName = adoptWK(WKStringCreateWithUTF8CString("IsStatisticsOnlyInDatabaseOnce"));
+    auto messageBody = adoptWK(WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
     WKTypeRef returnData = nullptr;
     WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get(), &returnData);
     ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());

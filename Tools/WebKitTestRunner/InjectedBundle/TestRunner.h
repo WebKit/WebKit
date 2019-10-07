@@ -396,7 +396,7 @@ public:
     void statisticsCallDidSetPrevalentResourceForDebugModeCallback();
     void setStatisticsLastSeen(JSStringRef hostName, double seconds, JSValueRef completionHandler);
     void statisticsCallDidSetLastSeenCallback();
-    void setStatisticsMergeStatistic(JSStringRef hostName, JSStringRef topFrameDomain, double lastSeen, bool hadUserInteraction, double mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, JSValueRef completionHandler);
+    void setStatisticsMergeStatistic(JSStringRef hostName, JSStringRef topFrameDomain1, JSStringRef topFrameDomain2, double lastSeen, bool hadUserInteraction, double mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, JSValueRef completionHandler);
     void statisticsCallDidSetMergeStatisticCallback();
     void setStatisticsPrevalentResource(JSStringRef hostName, bool value, JSValueRef completionHandler);
     void statisticsCallDidSetPrevalentResourceCallback();
@@ -410,6 +410,7 @@ public:
     void setStatisticsHasHadUserInteraction(JSStringRef hostName, bool value, JSValueRef completionHandler);
     void statisticsCallDidSetHasHadUserInteractionCallback();
     bool isStatisticsHasHadUserInteraction(JSStringRef hostName);
+    bool isStatisticsOnlyInDatabaseOnce(JSStringRef subHost, JSStringRef topHost);
     void setStatisticsGrandfathered(JSStringRef hostName, bool value);
     bool isStatisticsGrandfathered(JSStringRef hostName);
     void setUseITPDatabase(bool value);

@@ -3267,10 +3267,10 @@ void TestController::setStatisticsLastSeen(WKStringRef host, double seconds)
     m_currentInvocation->didSetLastSeen();
 }
 
-void TestController::setStatisticsMergeStatistic(WKStringRef host, WKStringRef topFrameDomain, double lastSeen, bool hadUserInteraction, double mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, int dataRecordsRemoved)
+void TestController::setStatisticsMergeStatistic(WKStringRef host, WKStringRef topFrameDomain1, WKStringRef topFrameDomain2, double lastSeen, bool hadUserInteraction, double mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, int dataRecordsRemoved)
 {
     ResourceStatisticsCallbackContext context(*this);
-    WKWebsiteDataStoreSetStatisticsMergeStatistic(TestController::websiteDataStore(), host, topFrameDomain, lastSeen, hadUserInteraction, mostRecentUserInteraction, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, &context, resourceStatisticsVoidResultCallback);
+    WKWebsiteDataStoreSetStatisticsMergeStatistic(TestController::websiteDataStore(), host, topFrameDomain1, topFrameDomain2, lastSeen, hadUserInteraction, mostRecentUserInteraction, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, &context, resourceStatisticsVoidResultCallback);
     runUntil(context.done, noTimeout);
     m_currentInvocation->didMergeStatistic();
 }
@@ -3351,6 +3351,14 @@ bool TestController::isStatisticsHasHadUserInteraction(WKStringRef host)
 {
     ResourceStatisticsCallbackContext context(*this);
     WKWebsiteDataStoreIsStatisticsHasHadUserInteraction(TestController::websiteDataStore(), host, &context, resourceStatisticsBooleanResultCallback);
+    runUntil(context.done, noTimeout);
+    return context.result;
+}
+
+bool TestController::isStatisticsOnlyInDatabaseOnce(WKStringRef subHost, WKStringRef topHost)
+{
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreIsStatisticsOnlyInDatabaseOnce(TestController::websiteDataStore(), subHost, topHost, &context, resourceStatisticsBooleanResultCallback);
     runUntil(context.done, noTimeout);
     return context.result;
 }

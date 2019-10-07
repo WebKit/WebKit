@@ -7,7 +7,8 @@ PASS Host overwrote old prevalent resource value.
 PASS Host overwrote old very prevalent resource value.
 PASS Host overwrote old user interaction value.
 PASS Host overwrote old grandfathered value.
-PASS Host set as subframe under top frame.
+PASS Host set as subframe under top frame1.
+PASS Host set as subframe under top frame2.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,3 +1,27 @@
+2019-10-07  Kate Cheney  <katherine_cheney@apple.com>
+
+        Domain relationships in the ITP Database should be inserted in a single query and ignore repeat insert attempts. (202604)
+        https://bugs.webkit.org/show_bug.cgi?id=202604
+        <rdar://problem/55995831>
+
+        Reviewed by Chris Dumez. 
+
+        Updates to testing infrastructure to test successful list-merging of
+        top domains into the ITP SQLite database and test against repeat
+        inserts.
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setStatisticsMergeStatistic):
+        (WTR::TestRunner::isStatisticsHasHadUserInteraction):
+        (WTR::TestRunner::isStatisticsOnlyInDatabaseOnce):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setStatisticsMergeStatistic):
+        (WTR::TestController::isStatisticsOnlyInDatabaseOnce):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2019-10-07  Matt Lewis  <jlewis3@apple.com>
 
         Bring up queues for Catalina
