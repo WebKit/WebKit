@@ -1,0 +1,4 @@
+
+PASS Property text-overflow value 'clip' computes to 'clip' 
+PASS Property text-overflow value 'ellipsis' computes to 'ellipsis' 
+
