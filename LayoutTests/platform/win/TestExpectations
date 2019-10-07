@@ -3798,6 +3798,7 @@ webkit.org/b/93589 svg/dom/SVGScriptElement/script-change-externalResourcesRequi
 # No service worker implementation for WK1
 http/tests/appcache/main-resource-redirect-with-sw.html [ Skip ]
 http/tests/cache-storage [ Skip ]
+http/tests/navigation/page-cache-domcache-pending-promise.html [ Skip ]
 http/tests/inspector/network/resource-response-service-worker.html [ Skip ]
 http/tests/workers/service [ Skip ]
 http/wpt/cache-storage [ Skip ]

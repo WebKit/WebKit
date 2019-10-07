@@ -60,13 +60,13 @@ static void doSequentialMatch(size_t index, Vector<Ref<DOMCache>>&& caches, DOMC
     }
 
     auto& cache = caches[index].get();
-    cache.doMatch(WTFMove(info), WTFMove(options), [caches = WTFMove(caches), info, options, completionHandler = WTFMove(completionHandler), index](ExceptionOr<FetchResponse*>&& result) mutable {
+    cache.doMatch(WTFMove(info), WTFMove(options), [caches = WTFMove(caches), info, options, completionHandler = WTFMove(completionHandler), index](auto&& result) mutable {
         if (result.hasException()) {
             completionHandler(result.releaseException());
             return;
         }
         if (result.returnValue()) {
-            completionHandler(result.returnValue());
+            completionHandler(result.releaseReturnValue());
             return;
         }
         doSequentialMatch(++index, WTFMove(caches), WTFMove(info), WTFMove(options), WTFMove(completionHandler));
@@ -85,7 +85,7 @@ static inline Ref<DOMCache> copyCache(const Ref<DOMCache>& cache)
 
 void DOMCacheStorage::doSequentialMatch(DOMCache::RequestInfo&& info, CacheQueryOptions&& options, Ref<DeferredPromise>&& promise)
 {
-    startSequentialMatch(WTF::map(m_caches, copyCache), WTFMove(info), WTFMove(options), [this, pendingActivity = makePendingActivity(*this), promise = WTFMove(promise)](ExceptionOr<FetchResponse*>&& result) mutable {
+    startSequentialMatch(WTF::map(m_caches, copyCache), WTFMove(info), WTFMove(options), [this, pendingActivity = makePendingActivity(*this), promise = WTFMove(promise)](auto&& result) mutable {
         if (m_isStopped)
             return;
         if (result.hasException()) {

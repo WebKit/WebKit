@@ -1,3 +1,16 @@
+2019-10-07  Chris Dumez  <cdumez@apple.com>
+
+        DOMCache should not prevent pages from entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=202590
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * TestExpectations:
+        * http/tests/navigation/page-cache-domcache-pending-promise-expected.txt: Added.
+        * http/tests/navigation/page-cache-domcache-pending-promise.html: Added.
+
 2019-10-07  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Sync web-platform-tests/css/css-overflow from upstream
