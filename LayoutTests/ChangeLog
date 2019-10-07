@@ -1,3 +1,20 @@
+2019-10-07  Antoine Quint  <graouts@apple.com>
+
+        [macOS WK2 Debug ] Flaky Test: animations/play-state-in-shorthand.html
+        https://bugs.webkit.org/show_bug.cgi?id=192501
+
+        Reviewed by Simon Fraser.
+
+        This test used to rely on timers to check the computed style at various animation times and also to check the "animation-play-state"
+        to "paused" via the "animation" shorthand CSS property. This was flaky by design since timers could not fire with high enough fidelity
+        to ensure the animation time matched the expectation. With the availability of the Web Animations API, we can simply use the "playState"
+        property on the Animation object reflecting the CSS animation to check that the change is accounted for.
+
+        * animations/play-state-in-shorthand-expected.txt:
+        * animations/play-state-in-shorthand.html:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2019-10-07  Dirk Schulze  <krit@webkit.org>
 
         clip-path: <geometry-box> mapping incorrect

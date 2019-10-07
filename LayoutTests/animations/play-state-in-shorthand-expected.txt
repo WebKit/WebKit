@@ -1,4 +1,2 @@
-PASS - "transform" property for "box" element at 0.5s saw something close to: 1,0,0,1,75,0
-PASS - "transform" property for "box" element at 1s saw something close to: 1,0,0,1,150,0
-PASS - "transform" property for "box" element at 2.5s saw something close to: 1,0,0,1,150,0
-
+PASS - animation is running upon receiving animationstart event
+PASS - animation is paused after setting the animation-play-state property to paused through the shorthand

@@ -25,31 +25,26 @@
       to   { transform: translateX(300px); }
     }
   </style>
-  <script src="resources/animation-test-helpers.js" type="text/javascript"></script>
-  <script type="text/javascript">
-    const expectedValues = [
-      // [animation-name, time, element-id, property, expected-value, tolerance]
-      ["move1", 0.5, "box", "transform", [1,0,0,1,75,0], 20],
-      ["move1", 1.0, "box", "transform", [1,0,0,1,150,0], 20],
-      ["move1", 2.5, "box", "transform", [1,0,0,1,150,0], 20],
-    ];
-
-    function pauseAnimation()
-    {
-        document.getElementById("box").classList.add('paused');
-    }
-
-    function setTimers()
-    {
-        setTimeout(pauseAnimation, 1000);
-    }
-
-    runAnimationTest(expectedValues, setTimers, null, true);
-  </script>
 </head>
 <body>
 <div id="box"></div>
 <div id="result"></div>
-</div>
+<script type="text/javascript">
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    document.getElementById("box").addEventListener("animationstart", event => {
+        const animation = event.target.getAnimations()[0];
+        result.innerHTML += `${animation.playState == "running" ? "PASS" : "FAIL"} - animation is running upon receiving animationstart event<br>`;
+        event.target.classList.add("paused");
+        result.innerHTML += `${animation.playState == "paused" ? "PASS" : "FAIL"} - animation is paused after setting the animation-play-state property to paused through the shorthand`;
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+</script>
 </body>
 </html>
