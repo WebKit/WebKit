@@ -558,6 +558,9 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClassDefined:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<CSSOperationPtrTag>(isDefinedElement));
         return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoClassDirectFocus:
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<CSSOperationPtrTag>(SelectorChecker::matchesDirectFocusPseudoClass));
+        return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassFocus:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<CSSOperationPtrTag>(SelectorChecker::matchesFocusPseudoClass));
         return FunctionType::SimpleSelectorChecker;

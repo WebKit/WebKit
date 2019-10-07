@@ -61,6 +61,9 @@ public:
     bool resetStyleInheritance() const { return m_resetStyleInheritance; }
     void setResetStyleInheritance(bool);
 
+    bool containsFocusedElement() const { return m_containsFocusedElement; }
+    void setContainsFocusedElement(bool flag) { m_containsFocusedElement = flag; }
+
     Element* host() const { return m_host; }
     void setHost(Element* host) { m_host = host; }
 
@@ -113,6 +116,7 @@ private:
 
     bool m_resetStyleInheritance { false };
     bool m_hasBegunDeletingDetachedChildren { false };
+    bool m_containsFocusedElement { false };
     ShadowRootMode m_type { ShadowRootMode::UserAgent };
 
     Element* m_host { nullptr };

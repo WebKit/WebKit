@@ -278,6 +278,7 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, unsigned selector
             case CSSSelector::PseudoClassAnyLinkDeprecated:
                 linkSelector = selector;
                 break;
+            case CSSSelector::PseudoClassDirectFocus:
             case CSSSelector::PseudoClassFocus:
                 focusSelector = selector;
                 break;

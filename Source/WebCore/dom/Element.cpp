@@ -677,6 +677,12 @@ void Element::setFocus(bool flag)
     document().userActionElements().setFocused(*this, flag);
     invalidateStyleForSubtree();
 
+    // Shadow host with a slot that contain focused element is not considered focused.
+    for (auto* root = containingShadowRoot(); root; root = root->host()->containingShadowRoot()) {
+        root->setContainsFocusedElement(flag);
+        root->host()->invalidateStyle();
+    }
+
     for (Element* element = this; element; element = element->parentElementInComposedTree())
         element->setHasFocusWithin(flag);
 }

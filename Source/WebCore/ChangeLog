@@ -1,3 +1,53 @@
+2019-10-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        focus pseudo class should match a shadow host whose shadow tree contains the focused element
+        https://bugs.webkit.org/show_bug.cgi?id=202432
+
+        Reviewed by Antti Koivisto.
+
+        Note that focus pseudo class does not match a shadow host when its shadow tree contains a slot element
+        with a focused element or its ancestor assigned since such a shadow host has the actual focused element
+        in the same tree as the shadow host. (e.g. the focused element can be a direct child of the host).
+
+        In order to preserve the behavior of focus ring, which should be only drawn on the currently focused
+        element and not any shadow host which contains such an element, this patch introduces a new pseudo class,
+        -webkit-direct-focus, which is only available in the user agent stylesheet. Putting :host(:focus) rule
+        isn't sufficient because style rules inside shadow trees always has a lower precendence than rules
+        outside the shadow tree (the tree of its shadow host).
+
+        [1] Also see https://github.com/whatwg/html/pull/4731
+
+        Tests: fast/shadow-dom/direct-focus-pseudo-does-not-match-in-author-stylesheet.html
+               fast/shadow-dom/focus-pseudo-matches-on-shadow-host.html
+               fast/shadow-dom/focus-pseudo-on-shadow-host-1.html
+               fast/shadow-dom/focus-pseudo-on-shadow-host-2.html
+               fast/shadow-dom/focus-pseudo-on-shadow-host-3.html
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText const): Added the support for -webkit-direct-focus.
+        * css/CSSSelector.h:
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addRule): Ditto.
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne const):: Ditto.
+        (WebCore::doesShadowTreeContainFocusedElement):: Ditto.
+        (WebCore::SelectorChecker::matchesFocusPseudoClass): Implemented the new behavior.
+        (WebCore::SelectorChecker::matchesDirectFocusPseudoClass): Added. Implements the old behavior for
+        the focus ring via -webkit-direct-focus pseudo class.
+        * css/SelectorChecker.h:
+        * css/SelectorPseudoClassAndCompatibilityElementMap.in: Added -webkit-direct-focus.
+        * css/html.css: Use -webkit-direct-focus pseudo class to preserve the existing behavior of focus ring.
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumePseudo): Ignore -webkit-direct-focus in author and user stylesheets.
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType): Added the support for -webkit-direct-focus.
+        * dom/Element.cpp:
+        (WebCore::Element::setFocus): Invoke setContainsFocusedElement on each shadow ancestor root of
+        the newly focused element. Note that we can't use :focus-within pseudo class since that would also match
+        the host of a shadow root which contains a slotted focused element, causing both the shadow host and
+        the slotted element to match :focus pseudo class in the host's tree.
+        * dom/ShadowRoot.h:
+
 2019-10-07  Rob Buis  <rbuis@igalia.com>
 
         Change Response's statusText's default

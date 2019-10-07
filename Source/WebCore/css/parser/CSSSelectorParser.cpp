@@ -494,10 +494,16 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
     
     if (colons == 1) {
         selector = CSSParserSelector::parsePseudoClassSelector(token.value());
-#if ENABLE(ATTACHMENT_ELEMENT)
-        if (!m_context.attachmentEnabled && selector && selector->match() == CSSSelector::PseudoClass && selector->pseudoClassType() == CSSSelector::PseudoClassHasAttachment)
+        if (!selector)
             return nullptr;
+        if (selector->match() == CSSSelector::PseudoClass) {
+            if (m_context.mode != UASheetMode && selector->pseudoClassType() == CSSSelector::PseudoClassDirectFocus)
+                return nullptr;
+#if ENABLE(ATTACHMENT_ELEMENT)
+            if (!m_context.attachmentEnabled && selector->pseudoClassType() == CSSSelector::PseudoClassHasAttachment)
+                return nullptr;
 #endif
+        }
     } else {
         selector = CSSParserSelector::parsePseudoElementSelector(token.value());
 #if ENABLE(VIDEO_TRACK)
