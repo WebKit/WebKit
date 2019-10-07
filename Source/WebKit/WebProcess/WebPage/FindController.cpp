@@ -146,6 +146,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
             selectedFrame->selection().clear();
 
         hideFindIndicator();
+        resetMatchIndex();
         didFailToFindString();
 
         m_webPage->send(Messages::WebPageProxy::DidFailToFindString(string));
@@ -369,6 +370,7 @@ void FindController::hideFindUI()
         m_webPage->corePage()->unmarkAllTextMatches();
     
     hideFindIndicator();
+    resetMatchIndex();
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -395,8 +397,12 @@ void FindController::hideFindIndicator()
 
     m_webPage->send(Messages::WebPageProxy::ClearTextIndicator());
     m_isShowingFindIndicator = false;
-    m_foundStringMatchIndex = -1;
     didHideFindIndicator();
+}
+
+void FindController::resetMatchIndex()
+{
+    m_foundStringMatchIndex = -1;
 }
 
 void FindController::willFindString()

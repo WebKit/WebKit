@@ -1,3 +1,24 @@
+2019-10-07  Matt Mokary  <mmokary@apple.com>
+
+        foundStringMatchIndex in FindController::findString gets reset on page scroll
+        https://bugs.webkit.org/show_bug.cgi?id=201773
+        <rdar://problem/55351892>
+
+        Reviewed by Tim Horton.
+
+        Decouple hiding of the find indicator from resetting match index, and only reset match index when there is not
+        an active match.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindUIAfterPageScroll):
+        (WebKit::FindController::hideFindUI):
+        (WebKit::FindController::hideFindIndicator):
+        (WebKit::FindController::resetMatchIndex):
+        * WebProcess/WebPage/FindController.h:
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        (WebKit::FindController::hideFindIndicator):
+        (WebKit::FindController::resetMatchIndex):
+
 2019-10-07  youenn fablet  <youenn@apple.com>
 
         WebPageProxy::updatePlayingMediaDidChange should protect from a null m_userMediaPermissionRequestManager

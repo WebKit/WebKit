@@ -66,6 +66,7 @@ public:
     uint32_t replaceMatches(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly);
     
     void hideFindIndicator();
+    void resetMatchIndex();
     void showFindIndicatorInSelection();
 
     bool isShowingOverlay() const { return m_isShowingFindIndicator && m_findPageOverlay; }

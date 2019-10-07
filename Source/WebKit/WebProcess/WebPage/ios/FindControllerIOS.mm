@@ -128,8 +128,12 @@ void FindController::hideFindIndicator()
     m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*m_findIndicatorOverlay, PageOverlay::FadeMode::DoNotFade);
     m_findIndicatorOverlay = nullptr;
     m_isShowingFindIndicator = false;
-    m_foundStringMatchIndex = -1;
     didHideFindIndicator();
+}
+
+void FindController::resetMatchIndex()
+{
+    m_foundStringMatchIndex = -1;
 }
 
 static void setSelectionChangeUpdatesEnabledInAllFrames(WebPage& page, bool enabled)
