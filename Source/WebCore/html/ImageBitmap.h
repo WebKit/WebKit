@@ -33,6 +33,8 @@ namespace JSC {
 class ArrayBuffer;
 }
 
+using JSC::ArrayBuffer;
+
 namespace WebCore {
 
 class Blob;
