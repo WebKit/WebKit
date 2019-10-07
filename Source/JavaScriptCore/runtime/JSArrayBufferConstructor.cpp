@@ -37,8 +37,8 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL arrayBufferFuncIsView(ExecState*);
-static EncodedJSValue JSC_HOST_CALL callArrayBuffer(ExecState*);
+static EncodedJSValue JSC_HOST_CALL arrayBufferFuncIsView(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL callArrayBuffer(JSGlobalObject*, CallFrame*);
 
 template<>
 const ClassInfo JSArrayBufferConstructor::s_info = {
@@ -67,26 +67,26 @@ void JSGenericArrayBufferConstructor<sharingMode>::finishCreation(VM& vm, JSArra
     putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->speciesSymbol, speciesSymbol, PropertyAttribute::Accessor | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 
     if (sharingMode == ArrayBufferSharingMode::Default) {
-        JSGlobalObject* globalObject = this->globalObject(vm);
+        JSGlobalObject* globalObject = this->globalObject();
         JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->isView, arrayBufferFuncIsView, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
         JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().isViewPrivateName(), arrayBufferFuncIsView, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
     }
 }
 
 template<ArrayBufferSharingMode sharingMode>
-EncodedJSValue JSC_HOST_CALL JSGenericArrayBufferConstructor<sharingMode>::constructArrayBuffer(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL JSGenericArrayBufferConstructor<sharingMode>::constructArrayBuffer(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSGenericArrayBufferConstructor* constructor = jsCast<JSGenericArrayBufferConstructor*>(exec->jsCallee());
+    JSGenericArrayBufferConstructor* constructor = jsCast<JSGenericArrayBufferConstructor*>(callFrame->jsCallee());
 
-    Structure* arrayBufferStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), constructor->globalObject(vm)->arrayBufferStructure(sharingMode));
+    Structure* arrayBufferStructure = InternalFunction::createSubclassStructure(callFrame, callFrame->newTarget(), constructor->globalObject()->arrayBufferStructure(sharingMode));
     RETURN_IF_EXCEPTION(scope, { });
 
     unsigned length;
-    if (exec->argumentCount()) {
-        length = exec->uncheckedArgument(0).toIndex(exec, "length");
+    if (callFrame->argumentCount()) {
+        length = callFrame->uncheckedArgument(0).toIndex(callFrame, "length");
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     } else {
         // Although the documentation doesn't say so, it is in fact correct to say
@@ -97,7 +97,7 @@ EncodedJSValue JSC_HOST_CALL JSGenericArrayBufferConstructor<sharingMode>::const
 
     auto buffer = ArrayBuffer::tryCreate(length, 1);
     if (!buffer)
-        return JSValue::encode(throwOutOfMemoryError(exec, scope));
+        return JSValue::encode(throwOutOfMemoryError(callFrame, scope));
     
     if (sharingMode == ArrayBufferSharingMode::Shared)
         buffer->makeShared();
@@ -119,19 +119,19 @@ const ClassInfo* JSGenericArrayBufferConstructor<sharingMode>::info()
     return &JSGenericArrayBufferConstructor<sharingMode>::s_info;
 }
 
-static EncodedJSValue JSC_HOST_CALL callArrayBuffer(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callArrayBuffer(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, scope, "ArrayBuffer"));
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(callFrame, scope, "ArrayBuffer"));
 }
 
 // ------------------------------ Functions --------------------------------
 
 // ECMA 24.1.3.1
-EncodedJSValue JSC_HOST_CALL arrayBufferFuncIsView(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL arrayBufferFuncIsView(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsBoolean(jsDynamicCast<JSArrayBufferView*>(exec->vm(), exec->argument(0))));
+    return JSValue::encode(jsBoolean(jsDynamicCast<JSArrayBufferView*>(globalObject->vm(), callFrame->argument(0))));
 }
 
 // Instantiate JSGenericArrayBufferConstructors.

@@ -53,8 +53,8 @@ private:
     JSWebAssembly(VM&, Structure*);
 };
 
-EncodedJSValue JSC_HOST_CALL webAssemblyCompileStreamingInternal(ExecState*);
-EncodedJSValue JSC_HOST_CALL webAssemblyInstantiateStreamingInternal(ExecState*);
+EncodedJSValue JSC_HOST_CALL webAssemblyCompileStreamingInternal(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL webAssemblyInstantiateStreamingInternal(JSGlobalObject*, CallFrame*);
 
 } // namespace JSC
 

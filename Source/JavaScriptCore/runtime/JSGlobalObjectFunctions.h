@@ -29,35 +29,36 @@
 namespace JSC {
 
 class ArgList;
-class ExecState;
+class CallFrame;
 class JSObject;
+using ExecState = CallFrame;
 
 // FIXME: These functions should really be in JSGlobalObject.cpp, but putting them there
 // is a 0.5% reduction.
 
 extern const ASCIILiteral ObjectProtoCalledOnNullOrUndefinedError;
 
-EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState*);
-EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState*);
-EncodedJSValue JSC_HOST_CALL globalFuncParseFloat(ExecState*);
-EncodedJSValue JSC_HOST_CALL globalFuncDecodeURI(ExecState*);
-EncodedJSValue JSC_HOST_CALL globalFuncDecodeURIComponent(ExecState*);
-EncodedJSValue JSC_HOST_CALL globalFuncEncodeURI(ExecState*);
-EncodedJSValue JSC_HOST_CALL globalFuncEncodeURIComponent(ExecState*);
-EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState*);
-EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState*);
-EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeError(ExecState*);
-EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeErrorArgumentsCalleeAndCaller(ExecState*);
-EncodedJSValue JSC_HOST_CALL globalFuncMakeTypeError(ExecState*);
-EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState*);
-EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState*);
-EncodedJSValue JSC_HOST_CALL globalFuncHostPromiseRejectionTracker(ExecState*);
-EncodedJSValue JSC_HOST_CALL globalFuncBuiltinLog(ExecState*);
-EncodedJSValue JSC_HOST_CALL globalFuncBuiltinDescribe(ExecState*);
-EncodedJSValue JSC_HOST_CALL globalFuncImportModule(ExecState*);
-EncodedJSValue JSC_HOST_CALL globalFuncPropertyIsEnumerable(ExecState*);
-EncodedJSValue JSC_HOST_CALL globalFuncOwnKeys(ExecState*);
-EncodedJSValue JSC_HOST_CALL globalFuncDateTimeFormat(ExecState*);
+EncodedJSValue JSC_HOST_CALL globalFuncEval(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL globalFuncParseInt(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL globalFuncParseFloat(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL globalFuncDecodeURI(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL globalFuncDecodeURIComponent(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL globalFuncEncodeURI(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL globalFuncEncodeURIComponent(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL globalFuncEscape(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL globalFuncUnescape(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeError(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeErrorArgumentsCalleeAndCaller(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL globalFuncMakeTypeError(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL globalFuncHostPromiseRejectionTracker(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL globalFuncBuiltinLog(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL globalFuncBuiltinDescribe(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL globalFuncImportModule(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL globalFuncPropertyIsEnumerable(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL globalFuncOwnKeys(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL globalFuncDateTimeFormat(JSGlobalObject*, CallFrame*);
 
 double jsToNumber(StringView);
 

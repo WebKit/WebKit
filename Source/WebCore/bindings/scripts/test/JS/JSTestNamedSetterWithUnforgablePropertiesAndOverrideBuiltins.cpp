@@ -43,7 +43,7 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsInstanceFunctionUnforgeableOperation(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsInstanceFunctionUnforgeableOperation(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -323,8 +323,9 @@ static inline JSC::EncodedJSValue jsTestNamedSetterWithUnforgablePropertiesAndOv
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsInstanceFunctionUnforgeableOperation(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsInstanceFunctionUnforgeableOperation(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins>::call<jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsInstanceFunctionUnforgeableOperationBody>(*state, "unforgeableOperation");
 }
 

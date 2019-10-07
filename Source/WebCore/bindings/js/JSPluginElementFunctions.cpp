@@ -139,26 +139,26 @@ bool pluginElementCustomPut(JSHTMLElement* element, ExecState* exec, PropertyNam
     return true;
 }
 
-static EncodedJSValue JSC_HOST_CALL callPlugin(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callPlugin(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    JSHTMLElement* element = jsCast<JSHTMLElement*>(exec->jsCallee());
+    JSHTMLElement* element = jsCast<JSHTMLElement*>(callFrame->jsCallee());
 
     // Get the plug-in script object.
-    JSObject* scriptObject = pluginScriptObject(exec, element);
+    JSObject* scriptObject = pluginScriptObject(callFrame, element);
     ASSERT(scriptObject);
 
-    size_t argumentCount = exec->argumentCount();
+    size_t argumentCount = callFrame->argumentCount();
     MarkedArgumentBuffer argumentList;
     for (size_t i = 0; i < argumentCount; i++)
-        argumentList.append(exec->argument(i));
+        argumentList.append(callFrame->argument(i));
     ASSERT(!argumentList.hasOverflowed());
 
     CallData callData;
-    CallType callType = getCallData(exec->vm(), scriptObject, callData);
+    CallType callType = getCallData(globalObject->vm(), scriptObject, callData);
     ASSERT(callType == CallType::Host);
 
     // Call the object.
-    JSValue result = call(exec, scriptObject, callType, callData, exec->thisValue(), argumentList);
+    JSValue result = call(callFrame, scriptObject, callType, callData, callFrame->thisValue(), argumentList);
     return JSValue::encode(result);
 }
 

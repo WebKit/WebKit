@@ -3697,7 +3697,7 @@ bool ByteCodeParser::handleTypedArrayConstructor(
     if (function->classInfo() != constructorClassInfoForType(type))
         return false;
     
-    if (function->globalObject(*m_vm) != m_inlineStackTop->m_codeBlock->globalObject())
+    if (function->globalObject() != m_inlineStackTop->m_codeBlock->globalObject())
         return false;
     
     // We only have an intrinsic for the case where you say:
@@ -3734,7 +3734,7 @@ bool ByteCodeParser::handleTypedArrayConstructor(
     if (argumentCountIncludingThis != 2)
         return false;
     
-    if (!function->globalObject(*m_vm)->typedArrayStructureConcurrently(type))
+    if (!function->globalObject()->typedArrayStructureConcurrently(type))
         return false;
 
     insertChecks();
@@ -3765,7 +3765,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
     }
 
     if (function->classInfo() == ArrayConstructor::info()) {
-        if (function->globalObject(*m_vm) != m_inlineStackTop->m_codeBlock->globalObject())
+        if (function->globalObject() != m_inlineStackTop->m_codeBlock->globalObject())
             return false;
         
         insertChecks();
@@ -3806,7 +3806,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
             resultNode = addToGraph(CallStringConstructor, get(virtualRegisterForArgument(1, registerOffset)));
         
         if (kind == CodeForConstruct)
-            resultNode = addToGraph(NewStringObject, OpInfo(m_graph.registerStructure(function->globalObject(*m_vm)->stringObjectStructure())), resultNode);
+            resultNode = addToGraph(NewStringObject, OpInfo(m_graph.registerStructure(function->globalObject()->stringObjectStructure())), resultNode);
         
         set(result, resultNode);
         return true;
@@ -3832,9 +3832,9 @@ bool ByteCodeParser::handleConstantInternalFunction(
 
         Node* resultNode;
         if (argumentCountIncludingThis <= 1)
-            resultNode = addToGraph(NewObject, OpInfo(m_graph.registerStructure(function->globalObject(*m_vm)->objectStructureForObjectConstructor())));
+            resultNode = addToGraph(NewObject, OpInfo(m_graph.registerStructure(function->globalObject()->objectStructureForObjectConstructor())));
         else
-            resultNode = addToGraph(CallObjectConstructor, OpInfo(m_graph.freeze(function->globalObject(*m_vm))), OpInfo(prediction), get(virtualRegisterForArgument(1, registerOffset)));
+            resultNode = addToGraph(CallObjectConstructor, OpInfo(m_graph.freeze(function->globalObject())), OpInfo(prediction), get(virtualRegisterForArgument(1, registerOffset)));
         set(result, resultNode);
         return true;
     }

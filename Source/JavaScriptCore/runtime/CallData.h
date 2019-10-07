@@ -33,12 +33,13 @@
 
 namespace JSC {
 
+class CallFrame;
 class ArgList;
 class Exception;
-class ExecState;
 class FunctionExecutable;
 class JSObject;
 class JSScope;
+using ExecState = CallFrame;
 
 enum class CallType : unsigned {
     None,

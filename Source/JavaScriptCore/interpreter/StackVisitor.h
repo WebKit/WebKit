@@ -36,16 +36,16 @@ namespace JSC {
 struct EntryFrame;
 struct InlineCallFrame;
 
+class CallFrame;
 class CodeBlock;
 class CodeOrigin;
-class ExecState;
 class JSCell;
 class JSFunction;
 class ClonedArguments;
 class Register;
 class RegisterAtOffsetList;
 
-typedef ExecState CallFrame;
+using ExecState = CallFrame;
 
 class StackVisitor {
 public:

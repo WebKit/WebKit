@@ -40,10 +40,11 @@ OBJC_CLASS WebScriptObject;
 struct NPObject;
 
 namespace JSC {
-class ExecState;
+class CallFrame;
 class JSGlobalObject;
 class JSInternalPromise;
 class JSModuleRecord;
+using ExecState = CallFrame;
 
 namespace Bindings {
 class Instance;

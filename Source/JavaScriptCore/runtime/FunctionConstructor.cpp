@@ -38,17 +38,17 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(FunctionConstructor);
 
 const ClassInfo FunctionConstructor::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(FunctionConstructor) };
 
-static EncodedJSValue JSC_HOST_CALL constructWithFunctionConstructor(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL constructWithFunctionConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    ArgList args(exec);
-    return JSValue::encode(constructFunction(exec, jsCast<InternalFunction*>(exec->jsCallee())->globalObject(exec->vm()), args, FunctionConstructionMode::Function, exec->newTarget()));
+    ArgList args(callFrame);
+    return JSValue::encode(constructFunction(callFrame, globalObject, args, FunctionConstructionMode::Function, callFrame->newTarget()));
 }
 
 // ECMA 15.3.1 The Function Constructor Called as a Function
-static EncodedJSValue JSC_HOST_CALL callFunctionConstructor(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callFunctionConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    ArgList args(exec);
-    return JSValue::encode(constructFunction(exec, jsCast<InternalFunction*>(exec->jsCallee())->globalObject(exec->vm()), args));
+    ArgList args(callFrame);
+    return JSValue::encode(constructFunction(callFrame, globalObject, args));
 }
 
 FunctionConstructor::FunctionConstructor(VM& vm, Structure* structure)
@@ -189,7 +189,7 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
 // ECMA 15.3.2 The Function Constructor
 JSObject* constructFunction(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args, FunctionConstructionMode functionConstructionMode, JSValue newTarget)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     return constructFunction(exec, globalObject, args, vm.propertyNames->anonymous, exec->callerSourceOrigin(), String(), TextPosition(), functionConstructionMode, newTarget);
 }
 

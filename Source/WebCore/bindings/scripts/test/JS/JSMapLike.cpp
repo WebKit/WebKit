@@ -45,15 +45,15 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionGet(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionHas(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionEntries(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionKeys(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionValues(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionForEach(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionAdd(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionClear(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionDelete(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionGet(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionHas(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionEntries(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionKeys(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionValues(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionForEach(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionAdd(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionClear(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionDelete(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -222,8 +222,9 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionGetBody(JSC::ExecSta
     return JSValue::encode(toJS<IDLAny>(forwardGetToMapLike(*state, *castedThis, WTFMove(key))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionGet(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionGet(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionGetBody>(*state, "get");
 }
 
@@ -238,8 +239,9 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionHasBody(JSC::ExecSta
     return JSValue::encode(toJS<IDLAny>(forwardHasToMapLike(*state, *castedThis, WTFMove(key))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionHas(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionHas(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionHasBody>(*state, "has");
 }
 
@@ -250,8 +252,9 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionEntriesBody(JSC::Exe
     return JSValue::encode(toJS<IDLAny>(forwardEntriesToMapLike(*state, *castedThis)));
 }
 
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionEntries(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionEntries(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionEntriesBody>(*state, "entries");
 }
 
@@ -262,8 +265,9 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionKeysBody(JSC::ExecSt
     return JSValue::encode(toJS<IDLAny>(forwardKeysToMapLike(*state, *castedThis)));
 }
 
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionKeys(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionKeys(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionKeysBody>(*state, "keys");
 }
 
@@ -274,8 +278,9 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionValuesBody(JSC::Exec
     return JSValue::encode(toJS<IDLAny>(forwardValuesToMapLike(*state, *castedThis)));
 }
 
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionValues(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionValues(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionValuesBody>(*state, "values");
 }
 
@@ -290,8 +295,9 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionForEachBody(JSC::Exe
     return JSValue::encode(toJS<IDLAny>(forwardForEachToMapLike(*state, *castedThis, WTFMove(callback))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionForEach(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionForEach(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionForEachBody>(*state, "forEach");
 }
 
@@ -306,8 +312,9 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionAddBody(JSC::ExecSta
     return JSValue::encode(toJS<IDLAny>(forwardAddToMapLike(*state, *castedThis, WTFMove(key))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionAdd(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionAdd(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionAddBody>(*state, "add");
 }
 
@@ -319,8 +326,9 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionClearBody(JSC::ExecS
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionClear(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionClear(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionClearBody>(*state, "clear");
 }
 
@@ -335,8 +343,9 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionDeleteBody(JSC::Exec
     return JSValue::encode(toJS<IDLAny>(forwardDeleteToMapLike(*state, *castedThis, WTFMove(key))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionDelete(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionDelete(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSMapLike>::call<jsMapLikePrototypeFunctionDeleteBody>(*state, "delete");
 }
 

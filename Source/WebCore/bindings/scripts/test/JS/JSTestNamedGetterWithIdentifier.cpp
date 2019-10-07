@@ -42,7 +42,7 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedGetterWithIdentifierPrototypeFunctionGetterName(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedGetterWithIdentifierPrototypeFunctionGetterName(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -232,8 +232,9 @@ static inline JSC::EncodedJSValue jsTestNamedGetterWithIdentifierPrototypeFuncti
     return JSValue::encode(toJS<IDLDOMString>(*state, impl.getterName(WTFMove(name))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestNamedGetterWithIdentifierPrototypeFunctionGetterName(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestNamedGetterWithIdentifierPrototypeFunctionGetterName(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestNamedGetterWithIdentifier>::call<jsTestNamedGetterWithIdentifierPrototypeFunctionGetterNameBody>(*state, "getterName");
 }
 

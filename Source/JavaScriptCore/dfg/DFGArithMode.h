@@ -29,7 +29,8 @@
 
 namespace JSC {
 
-class ExecState;
+class CallFrame;
+using ExecState = CallFrame;
 using EncodedJSValue = int64_t;
 
 namespace DFG {

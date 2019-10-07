@@ -37,7 +37,8 @@
 #include <wtf/text/TextPosition.h>
 
 namespace JSC {
-class ExecState;
+class CallFrame;
+using ExecState = CallFrame;
 }
 
 namespace WTF {

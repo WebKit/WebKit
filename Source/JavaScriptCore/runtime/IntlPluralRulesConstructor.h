@@ -46,7 +46,7 @@ public:
 
     DECLARE_INFO;
 
-    Structure* pluralRulesStructure(VM& vm) const { return globalObject(vm)->pluralRulesStructure(); }
+    Structure* pluralRulesStructure(VM&) const { return globalObject()->pluralRulesStructure(); }
 
 protected:
     void finishCreation(VM&, IntlPluralRulesPrototype*);

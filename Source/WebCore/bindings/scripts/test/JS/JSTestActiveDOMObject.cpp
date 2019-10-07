@@ -46,8 +46,8 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunction(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionPostMessage(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunction(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionPostMessage(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -227,8 +227,9 @@ static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionExciting
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunction(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunction(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestActiveDOMObject>::call<jsTestActiveDOMObjectPrototypeFunctionExcitingFunctionBody>(*state, "excitingFunction");
 }
 
@@ -245,8 +246,9 @@ static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionPostMess
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionPostMessage(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionPostMessage(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestActiveDOMObject>::call<jsTestActiveDOMObjectPrototypeFunctionPostMessageBody>(*state, "postMessage");
 }
 

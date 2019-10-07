@@ -47,13 +47,13 @@ const ClassInfo SetPrototype::s_info = { "Set", &Base::s_info, &setPrototypeTabl
 @end
 */
 
-static EncodedJSValue JSC_HOST_CALL setProtoFuncAdd(ExecState*);
-static EncodedJSValue JSC_HOST_CALL setProtoFuncClear(ExecState*);
-static EncodedJSValue JSC_HOST_CALL setProtoFuncDelete(ExecState*);
-static EncodedJSValue JSC_HOST_CALL setProtoFuncHas(ExecState*);
+static EncodedJSValue JSC_HOST_CALL setProtoFuncAdd(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL setProtoFuncClear(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL setProtoFuncDelete(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL setProtoFuncHas(JSGlobalObject*, CallFrame*);
 
 
-static EncodedJSValue JSC_HOST_CALL setProtoFuncSize(ExecState*);
+static EncodedJSValue JSC_HOST_CALL setProtoFuncSize(JSGlobalObject*, CallFrame*);
 
 void SetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
@@ -76,9 +76,9 @@ void SetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->size, setProtoFuncSize, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
 }
 
-ALWAYS_INLINE static JSSet* getSet(CallFrame* callFrame, JSValue thisValue)
+ALWAYS_INLINE static JSSet* getSet(CallFrame* callFrame, JSGlobalObject* globalObject, JSValue thisValue)
 {
-    VM& vm = callFrame->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(!thisValue.isCell())) {
@@ -92,44 +92,44 @@ ALWAYS_INLINE static JSSet* getSet(CallFrame* callFrame, JSValue thisValue)
     return nullptr;
 }
 
-EncodedJSValue JSC_HOST_CALL setProtoFuncAdd(CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL setProtoFuncAdd(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     JSValue thisValue = callFrame->thisValue();
-    JSSet* set = getSet(callFrame, thisValue);
+    JSSet* set = getSet(callFrame, globalObject, thisValue);
     if (!set)
         return JSValue::encode(jsUndefined());
     set->add(callFrame, callFrame->argument(0));
     return JSValue::encode(thisValue);
 }
 
-EncodedJSValue JSC_HOST_CALL setProtoFuncClear(CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL setProtoFuncClear(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    JSSet* set = getSet(callFrame, callFrame->thisValue());
+    JSSet* set = getSet(callFrame, globalObject, callFrame->thisValue());
     if (!set)
         return JSValue::encode(jsUndefined());
     set->clear(callFrame);
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL setProtoFuncDelete(CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL setProtoFuncDelete(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    JSSet* set = getSet(callFrame, callFrame->thisValue());
+    JSSet* set = getSet(callFrame, globalObject, callFrame->thisValue());
     if (!set)
         return JSValue::encode(jsUndefined());
     return JSValue::encode(jsBoolean(set->remove(callFrame, callFrame->argument(0))));
 }
 
-EncodedJSValue JSC_HOST_CALL setProtoFuncHas(CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL setProtoFuncHas(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    JSSet* set = getSet(callFrame, callFrame->thisValue());
+    JSSet* set = getSet(callFrame, globalObject, callFrame->thisValue());
     if (!set)
         return JSValue::encode(jsUndefined());
     return JSValue::encode(jsBoolean(set->has(callFrame, callFrame->argument(0))));
 }
 
-EncodedJSValue JSC_HOST_CALL setProtoFuncSize(CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL setProtoFuncSize(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    JSSet* set = getSet(callFrame, callFrame->thisValue());
+    JSSet* set = getSet(callFrame, globalObject, callFrame->thisValue());
     if (!set)
         return JSValue::encode(jsUndefined());
     return JSValue::encode(jsNumber(set->size()));

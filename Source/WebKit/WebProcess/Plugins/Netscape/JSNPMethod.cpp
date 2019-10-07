@@ -46,7 +46,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSNPMethod);
 
 const ClassInfo JSNPMethod::s_info = { "NPMethod", &InternalFunction::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSNPMethod) };
 
-static EncodedJSValue JSC_HOST_CALL callMethod(ExecState*);
+static EncodedJSValue JSC_HOST_CALL callMethod(JSGlobalObject*, CallFrame*);
 
 JSNPMethod::JSNPMethod(JSGlobalObject* globalObject, Structure* structure, NPIdentifier npIdentifier)
     : InternalFunction(globalObject->vm(), structure, callMethod, nullptr)
@@ -66,31 +66,31 @@ IsoSubspace* JSNPMethod::subspaceForImpl(VM& vm)
     return &perVM.get().forVM(vm);
 }
 
-static EncodedJSValue JSC_HOST_CALL callMethod(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callMethod(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSNPMethod* jsNPMethod = jsCast<JSNPMethod*>(exec->jsCallee());
+    JSNPMethod* jsNPMethod = jsCast<JSNPMethod*>(callFrame->jsCallee());
 
-    JSValue thisValue = exec->thisValue();
+    JSValue thisValue = callFrame->thisValue();
 
     // Check if we're calling a method on the plug-in script object.
     if (thisValue.inherits<JSHTMLElement>(vm)) {
         JSHTMLElement* element = jsCast<JSHTMLElement*>(asObject(thisValue));
 
         // Try to get the script object from the element
-        if (JSObject* scriptObject = pluginScriptObject(exec, element))
+        if (JSObject* scriptObject = pluginScriptObject(callFrame, element))
             thisValue = scriptObject;
     }
 
     if (thisValue.inherits<JSNPObject>(vm)) {
         JSNPObject* jsNPObject = jsCast<JSNPObject*>(asObject(thisValue));
 
-        return JSValue::encode(jsNPObject->callMethod(exec, jsNPMethod->npIdentifier()));
+        return JSValue::encode(jsNPObject->callMethod(callFrame, jsNPMethod->npIdentifier()));
     }
 
-    return throwVMTypeError(exec, scope);
+    return throwVMTypeError(callFrame, scope);
 }
 
 } // namespace WebKit

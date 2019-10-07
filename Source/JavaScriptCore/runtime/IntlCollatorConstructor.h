@@ -46,7 +46,7 @@ public:
 
     DECLARE_INFO;
 
-    Structure* collatorStructure(VM& vm) const { return globalObject(vm)->collatorStructure(); }
+    Structure* collatorStructure(VM&) const { return globalObject()->collatorStructure(); }
 
 protected:
     void finishCreation(VM&, IntlCollatorPrototype*);

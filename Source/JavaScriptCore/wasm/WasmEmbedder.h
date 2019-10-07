@@ -36,7 +36,8 @@
 
 namespace JSC {
 
-class ExecState;
+class CallFrame;
+using ExecState = CallFrame;
 
 namespace Wasm {
 

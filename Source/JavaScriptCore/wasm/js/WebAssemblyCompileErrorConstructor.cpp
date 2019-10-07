@@ -44,21 +44,21 @@ const ClassInfo WebAssemblyCompileErrorConstructor::s_info = { "Function", &Base
  @end
  */
 
-static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyCompileError(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyCompileError(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    auto& vm = exec->vm();
+    auto& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue message = exec->argument(0);
-    auto* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), jsCast<InternalFunction*>(exec->jsCallee())->globalObject(vm)->webAssemblyCompileErrorStructure());
+    JSValue message = callFrame->argument(0);
+    auto* structure = InternalFunction::createSubclassStructure(callFrame, callFrame->newTarget(), globalObject->webAssemblyCompileErrorStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(JSWebAssemblyCompileError::create(exec, vm, structure, message)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(JSWebAssemblyCompileError::create(callFrame, vm, structure, message)));
 }
 
-static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyCompileError(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyCompileError(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    JSValue message = exec->argument(0);
-    Structure* errorStructure = jsCast<InternalFunction*>(exec->jsCallee())->globalObject(exec->vm())->webAssemblyCompileErrorStructure();
-    return JSValue::encode(ErrorInstance::create(exec, errorStructure, message, nullptr, TypeNothing, false));
+    JSValue message = callFrame->argument(0);
+    Structure* errorStructure = globalObject->webAssemblyCompileErrorStructure();
+    return JSValue::encode(ErrorInstance::create(callFrame, errorStructure, message, nullptr, TypeNothing, false));
 }
 
 WebAssemblyCompileErrorConstructor* WebAssemblyCompileErrorConstructor::create(VM& vm, Structure* structure, WebAssemblyCompileErrorPrototype* thisPrototype)

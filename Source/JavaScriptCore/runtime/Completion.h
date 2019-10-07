@@ -31,14 +31,15 @@ namespace JSC {
 
 class BytecodeCacheError;
 class CachedBytecode;
+class CallFrame;
 class Exception;
-class ExecState;
 class JSObject;
 class ParserError;
 class SourceCode;
 class Symbol;
 class VM;
 class JSInternalPromise;
+using ExecState = CallFrame;
 
 JS_EXPORT_PRIVATE bool checkSyntax(VM&, const SourceCode&, ParserError&);
 JS_EXPORT_PRIVATE bool checkSyntax(ExecState*, const SourceCode&, JSValue* exception = 0);

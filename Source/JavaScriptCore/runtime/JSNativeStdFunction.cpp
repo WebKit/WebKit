@@ -57,11 +57,11 @@ void JSNativeStdFunction::finishCreation(VM& vm, NativeExecutable* executable, i
     m_functionCell.set(vm, this, functionCell);
 }
 
-static EncodedJSValue JSC_HOST_CALL runStdFunction(ExecState* state)
+static EncodedJSValue JSC_HOST_CALL runStdFunction(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    JSNativeStdFunction* function = jsCast<JSNativeStdFunction*>(state->jsCallee());
+    JSNativeStdFunction* function = jsCast<JSNativeStdFunction*>(callFrame->jsCallee());
     ASSERT(function);
-    return function->nativeStdFunctionCell()->function()(state);
+    return function->nativeStdFunctionCell()->function()(globalObject, callFrame);
 }
 
 JSNativeStdFunction* JSNativeStdFunction::create(VM& vm, JSGlobalObject* globalObject, int length, const String& name, NativeStdFunction&& nativeStdFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)

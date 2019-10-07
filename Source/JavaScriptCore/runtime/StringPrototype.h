@@ -61,10 +61,10 @@ JSCell* JIT_OPERATION operationStringProtoFuncReplaceRegExpString(
 
 void substituteBackreferences(StringBuilder& result, const String& replacement, StringView source, const int* ovector, RegExp*);
 
-EncodedJSValue JSC_HOST_CALL stringProtoFuncRepeatCharacter(ExecState*);
-EncodedJSValue JSC_HOST_CALL stringProtoFuncSplitFast(ExecState*);
+EncodedJSValue JSC_HOST_CALL stringProtoFuncRepeatCharacter(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL stringProtoFuncSplitFast(JSGlobalObject*, CallFrame*);
 
-EncodedJSValue JSC_HOST_CALL builtinStringSubstrInternal(ExecState*);
-EncodedJSValue JSC_HOST_CALL builtinStringIncludesInternal(ExecState*);
+EncodedJSValue JSC_HOST_CALL builtinStringSubstrInternal(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL builtinStringIncludesInternal(JSGlobalObject*, CallFrame*);
 
 } // namespace JSC

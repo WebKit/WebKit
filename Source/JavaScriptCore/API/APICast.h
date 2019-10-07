@@ -33,11 +33,12 @@
 #include "HeapCellInlines.h"
 
 namespace JSC {
-    class ExecState;
+    class CallFrame;
     class PropertyNameArray;
     class VM;
     class JSObject;
     class JSValue;
+    using ExecState = CallFrame;
 }
 
 typedef const struct OpaqueJSContextGroup* JSContextGroupRef;

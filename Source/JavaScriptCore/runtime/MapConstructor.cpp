@@ -47,62 +47,61 @@ void MapConstructor::finishCreation(VM& vm, MapPrototype* mapPrototype, GetterSe
     putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->speciesSymbol, speciesSymbol, PropertyAttribute::Accessor | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
-static EncodedJSValue JSC_HOST_CALL callMap(ExecState*);
-static EncodedJSValue JSC_HOST_CALL constructMap(ExecState*);
+static EncodedJSValue JSC_HOST_CALL callMap(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL constructMap(JSGlobalObject*, CallFrame*);
 
 MapConstructor::MapConstructor(VM& vm, Structure* structure)
     : Base(vm, structure, callMap, constructMap)
 {
 }
 
-static EncodedJSValue JSC_HOST_CALL callMap(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callMap(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, scope, "Map"));
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(callFrame, scope, "Map"));
 }
 
-static EncodedJSValue JSC_HOST_CALL constructMap(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL constructMap(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSGlobalObject* globalObject = jsCast<InternalFunction*>(exec->jsCallee())->globalObject(vm);
-    Structure* mapStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), globalObject->mapStructure());
+    Structure* mapStructure = InternalFunction::createSubclassStructure(callFrame, callFrame->newTarget(), globalObject->mapStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    JSValue iterable = exec->argument(0);
+    JSValue iterable = callFrame->argument(0);
     if (iterable.isUndefinedOrNull())
-        RELEASE_AND_RETURN(scope, JSValue::encode(JSMap::create(exec, vm, mapStructure)));
+        RELEASE_AND_RETURN(scope, JSValue::encode(JSMap::create(callFrame, vm, mapStructure)));
 
     if (auto* iterableMap = jsDynamicCast<JSMap*>(vm, iterable)) {
         if (iterableMap->canCloneFastAndNonObservable(mapStructure))
-            RELEASE_AND_RETURN(scope, JSValue::encode(iterableMap->clone(exec, vm, mapStructure)));
+            RELEASE_AND_RETURN(scope, JSValue::encode(iterableMap->clone(callFrame, vm, mapStructure)));
     }
 
-    JSMap* map = JSMap::create(exec, vm, mapStructure);
+    JSMap* map = JSMap::create(callFrame, vm, mapStructure);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    JSValue adderFunction = map->JSObject::get(exec, vm.propertyNames->set);
+    JSValue adderFunction = map->JSObject::get(callFrame, vm.propertyNames->set);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     CallData adderFunctionCallData;
     CallType adderFunctionCallType = getCallData(vm, adderFunction, adderFunctionCallData);
     if (adderFunctionCallType == CallType::None)
-        return JSValue::encode(throwTypeError(exec, scope));
+        return JSValue::encode(throwTypeError(callFrame, scope));
 
     scope.release();
-    forEachInIterable(exec, iterable, [&](VM& vm, ExecState* exec, JSValue nextItem) {
+    forEachInIterable(callFrame, iterable, [&](VM& vm, ExecState* callFrame, JSValue nextItem) {
         auto scope = DECLARE_THROW_SCOPE(vm);
         if (!nextItem.isObject()) {
-            throwTypeError(exec, scope);
+            throwTypeError(callFrame, scope);
             return;
         }
 
-        JSValue key = nextItem.get(exec, static_cast<unsigned>(0));
+        JSValue key = nextItem.get(callFrame, static_cast<unsigned>(0));
         RETURN_IF_EXCEPTION(scope, void());
 
-        JSValue value = nextItem.get(exec, static_cast<unsigned>(1));
+        JSValue value = nextItem.get(callFrame, static_cast<unsigned>(1));
         RETURN_IF_EXCEPTION(scope, void());
 
         MarkedArgumentBuffer arguments;
@@ -110,25 +109,25 @@ static EncodedJSValue JSC_HOST_CALL constructMap(ExecState* exec)
         arguments.append(value);
         ASSERT(!arguments.hasOverflowed());
         scope.release();
-        call(exec, adderFunction, adderFunctionCallType, adderFunctionCallData, map, arguments);
+        call(callFrame, adderFunction, adderFunctionCallType, adderFunctionCallData, map, arguments);
     });
 
     return JSValue::encode(map);
 }
 
-EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketHead(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketHead(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    ASSERT(jsDynamicCast<JSMap*>(exec->vm(), exec->argument(0)));
-    JSMap* map = jsCast<JSMap*>(exec->uncheckedArgument(0));
+    ASSERT_UNUSED(globalObject, jsDynamicCast<JSMap*>(globalObject->vm(), callFrame->argument(0)));
+    JSMap* map = jsCast<JSMap*>(callFrame->uncheckedArgument(0));
     auto* head = map->head();
     ASSERT(head);
     return JSValue::encode(head);
 }
 
-EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketNext(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketNext(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    ASSERT(jsDynamicCast<JSMap::BucketType*>(exec->vm(), exec->argument(0)));
-    auto* bucket = jsCast<JSMap::BucketType*>(exec->uncheckedArgument(0));
+    ASSERT(jsDynamicCast<JSMap::BucketType*>(globalObject->vm(), callFrame->argument(0)));
+    auto* bucket = jsCast<JSMap::BucketType*>(callFrame->uncheckedArgument(0));
     ASSERT(bucket);
     bucket = bucket->next();
     while (bucket) {
@@ -136,21 +135,21 @@ EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketNext(ExecState* exec)
             return JSValue::encode(bucket);
         bucket = bucket->next();
     }
-    return JSValue::encode(exec->vm().sentinelMapBucket());
+    return JSValue::encode(globalObject->vm().sentinelMapBucket());
 }
 
-EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketKey(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketKey(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    ASSERT(jsDynamicCast<JSMap::BucketType*>(exec->vm(), exec->argument(0)));
-    auto* bucket = jsCast<JSMap::BucketType*>(exec->uncheckedArgument(0));
+    ASSERT_UNUSED(globalObject, jsDynamicCast<JSMap::BucketType*>(globalObject->vm(), callFrame->argument(0)));
+    auto* bucket = jsCast<JSMap::BucketType*>(callFrame->uncheckedArgument(0));
     ASSERT(bucket);
     return JSValue::encode(bucket->key());
 }
 
-EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketValue(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketValue(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    ASSERT(jsDynamicCast<JSMap::BucketType*>(exec->vm(), exec->argument(0)));
-    auto* bucket = jsCast<JSMap::BucketType*>(exec->uncheckedArgument(0));
+    ASSERT_UNUSED(globalObject, jsDynamicCast<JSMap::BucketType*>(globalObject->vm(), callFrame->argument(0)));
+    auto* bucket = jsCast<JSMap::BucketType*>(callFrame->uncheckedArgument(0));
     ASSERT(bucket);
     return JSValue::encode(bucket->value());
 }

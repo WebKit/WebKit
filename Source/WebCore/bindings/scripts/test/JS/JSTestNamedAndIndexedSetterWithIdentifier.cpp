@@ -44,8 +44,8 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionNamedSetter(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionIndexedSetter(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionNamedSetter(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionIndexedSetter(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -346,8 +346,9 @@ static inline JSC::EncodedJSValue jsTestNamedAndIndexedSetterWithIdentifierProto
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionNamedSetter(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionNamedSetter(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestNamedAndIndexedSetterWithIdentifier>::call<jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionNamedSetterBody>(*state, "namedSetter");
 }
 
@@ -366,8 +367,9 @@ static inline JSC::EncodedJSValue jsTestNamedAndIndexedSetterWithIdentifierProto
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionIndexedSetter(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionIndexedSetter(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestNamedAndIndexedSetterWithIdentifier>::call<jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionIndexedSetterBody>(*state, "indexedSetter");
 }
 

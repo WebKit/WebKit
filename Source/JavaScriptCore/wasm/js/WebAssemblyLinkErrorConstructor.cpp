@@ -44,21 +44,21 @@ const ClassInfo WebAssemblyLinkErrorConstructor::s_info = { "Function", &Base::s
  @end
  */
 
-static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyLinkError(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyLinkError(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    auto& vm = exec->vm();
+    auto& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue message = exec->argument(0);
-    auto* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), jsCast<InternalFunction*>(exec->jsCallee())->globalObject(vm)->webAssemblyLinkErrorStructure());
+    JSValue message = callFrame->argument(0);
+    auto* structure = InternalFunction::createSubclassStructure(callFrame, callFrame->newTarget(), globalObject->webAssemblyLinkErrorStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(JSWebAssemblyLinkError::create(exec, vm, structure, message)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(JSWebAssemblyLinkError::create(callFrame, vm, structure, message)));
 }
 
-static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyLinkError(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyLinkError(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    JSValue message = exec->argument(0);
-    Structure* errorStructure = jsCast<InternalFunction*>(exec->jsCallee())->globalObject(exec->vm())->webAssemblyLinkErrorStructure();
-    return JSValue::encode(ErrorInstance::create(exec, errorStructure, message, nullptr, TypeNothing, false));
+    JSValue message = callFrame->argument(0);
+    Structure* errorStructure = globalObject->webAssemblyLinkErrorStructure();
+    return JSValue::encode(ErrorInstance::create(callFrame, errorStructure, message, nullptr, TypeNothing, false));
 }
 
 WebAssemblyLinkErrorConstructor* WebAssemblyLinkErrorConstructor::create(VM& vm, Structure* structure, WebAssemblyLinkErrorPrototype* thisPrototype)

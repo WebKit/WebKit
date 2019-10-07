@@ -34,7 +34,8 @@ class ScriptArguments;
 
 namespace JSC {
 
-class ExecState;
+class CallFrame;
+using ExecState = CallFrame;
 
 class ConsoleClient {
 public:

@@ -35,10 +35,11 @@
 namespace JSC {
 
 class ArgList;
-class ExecState;
+class CallFrame;
 class FunctionExecutable;
 class JSObject;
 class JSScope;
+using ExecState = CallFrame;
 
 enum class ConstructType : unsigned {
     None,

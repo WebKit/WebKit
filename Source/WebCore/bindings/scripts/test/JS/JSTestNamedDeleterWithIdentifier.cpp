@@ -42,7 +42,7 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedDeleterWithIdentifierPrototypeFunctionNamedDeleter(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedDeleterWithIdentifierPrototypeFunctionNamedDeleter(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -257,8 +257,9 @@ static inline JSC::EncodedJSValue jsTestNamedDeleterWithIdentifierPrototypeFunct
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestNamedDeleterWithIdentifierPrototypeFunctionNamedDeleter(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestNamedDeleterWithIdentifierPrototypeFunctionNamedDeleter(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestNamedDeleterWithIdentifier>::call<jsTestNamedDeleterWithIdentifierPrototypeFunctionNamedDeleterBody>(*state, "namedDeleter");
 }
 

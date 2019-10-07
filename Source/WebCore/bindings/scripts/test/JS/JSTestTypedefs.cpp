@@ -60,21 +60,21 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFunc(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSetShadow(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithSequenceArg(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableSequenceArg(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSequenceOfNullablesArg(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableSequenceOfNullablesArg(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableSequenceOfUnionsArg(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionUnionArg(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClampInTypedef(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionPointFunction(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringSequenceFunction(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringSequenceFunction2(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresInclude(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithException(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFunc(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSetShadow(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithSequenceArg(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableSequenceArg(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSequenceOfNullablesArg(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableSequenceOfNullablesArg(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableSequenceOfUnionsArg(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionUnionArg(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClampInTypedef(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionPointFunction(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringSequenceFunction(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringSequenceFunction2(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresInclude(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithException(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -142,9 +142,9 @@ static const HashTableValue JSTestTypedefsConstructorTableValues[] =
     { "TestSubObj", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsConstructorTestSubObj), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-template<> EncodedJSValue JSC_HOST_CALL JSTestTypedefsConstructor::construct(ExecState* state)
+template<> EncodedJSValue JSC_HOST_CALL JSTestTypedefsConstructor::construct(JSGlobalObject* globalObject, CallFrame* state)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     auto* castedThis = jsCast<JSTestTypedefsConstructor*>(state->jsCallee());
@@ -496,8 +496,9 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionFuncBody(JSC::E
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFunc(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFunc(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionFuncBody>(*state, "func");
 }
 
@@ -522,8 +523,9 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionSetShadowBody(J
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSetShadow(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSetShadow(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionSetShadowBody>(*state, "setShadow");
 }
 
@@ -539,8 +541,9 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionMethodWithSeque
     return JSValue::encode(toJS<IDLUnsignedLongLong>(impl.methodWithSequenceArg(WTFMove(sequenceArg))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithSequenceArg(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithSequenceArg(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionMethodWithSequenceArgBody>(*state, "methodWithSequenceArg");
 }
 
@@ -557,8 +560,9 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionNullableSequenc
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableSequenceArg(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableSequenceArg(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionNullableSequenceArgBody>(*state, "nullableSequenceArg");
 }
 
@@ -575,8 +579,9 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionSequenceOfNulla
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSequenceOfNullablesArg(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSequenceOfNullablesArg(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionSequenceOfNullablesArgBody>(*state, "sequenceOfNullablesArg");
 }
 
@@ -593,8 +598,9 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionNullableSequenc
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableSequenceOfNullablesArg(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableSequenceOfNullablesArg(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionNullableSequenceOfNullablesArgBody>(*state, "nullableSequenceOfNullablesArg");
 }
 
@@ -611,8 +617,9 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionNullableSequenc
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableSequenceOfUnionsArg(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableSequenceOfUnionsArg(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionNullableSequenceOfUnionsArgBody>(*state, "nullableSequenceOfUnionsArg");
 }
 
@@ -629,8 +636,9 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionUnionArgBody(JS
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionUnionArg(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionUnionArg(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionUnionArgBody>(*state, "unionArg");
 }
 
@@ -649,8 +657,9 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionFuncWithClampBo
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionFuncWithClampBody>(*state, "funcWithClamp");
 }
 
@@ -667,8 +676,9 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionFuncWithClampIn
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClampInTypedef(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClampInTypedef(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionFuncWithClampInTypedefBody>(*state, "funcWithClampInTypedef");
 }
 
@@ -680,8 +690,9 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionPointFunctionBo
     return JSValue::encode(toJS<IDLInterface<SVGPoint>>(*state, *castedThis->globalObject(), impl.pointFunction()));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionPointFunction(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionPointFunction(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionPointFunctionBody>(*state, "pointFunction");
 }
 
@@ -697,8 +708,9 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionStringSequenceF
     return JSValue::encode(toJS<IDLSequence<IDLDOMString>>(*state, *castedThis->globalObject(), throwScope, impl.stringSequenceFunction(WTFMove(values))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringSequenceFunction(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringSequenceFunction(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionStringSequenceFunctionBody>(*state, "stringSequenceFunction");
 }
 
@@ -714,8 +726,9 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionStringSequenceF
     return JSValue::encode(toJS<IDLSequence<IDLDOMString>>(*state, *castedThis->globalObject(), throwScope, impl.stringSequenceFunction2(WTFMove(values))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringSequenceFunction2(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringSequenceFunction2(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionStringSequenceFunction2Body>(*state, "stringSequenceFunction2");
 }
 
@@ -731,8 +744,9 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionCallWithSequenc
     return JSValue::encode(toJS<IDLBoolean>(impl.callWithSequenceThatRequiresInclude(WTFMove(sequenceArg))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresInclude(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresInclude(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresIncludeBody>(*state, "callWithSequenceThatRequiresInclude");
 }
 
@@ -745,8 +759,9 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionMethodWithExcep
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithException(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithException(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestTypedefs>::call<jsTestTypedefsPrototypeFunctionMethodWithExceptionBody>(*state, "methodWithException");
 }
 

@@ -33,9 +33,9 @@
 
 namespace JSC {
 
-EncodedJSValue JSC_HOST_CALL esSpecIsConstructor(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL esSpecIsConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    bool isConstructor = exec->uncheckedArgument(0).isConstructor(exec->vm());
+    bool isConstructor = callFrame->uncheckedArgument(0).isConstructor(globalObject->vm());
     return JSValue::encode(jsBoolean(isConstructor));
 }
 

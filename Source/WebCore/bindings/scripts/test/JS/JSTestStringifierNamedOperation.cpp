@@ -41,8 +41,8 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestStringifierNamedOperationPrototypeFunctionIdentifier(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestStringifierNamedOperationPrototypeFunctionToString(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestStringifierNamedOperationPrototypeFunctionIdentifier(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestStringifierNamedOperationPrototypeFunctionToString(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -179,8 +179,9 @@ static inline JSC::EncodedJSValue jsTestStringifierNamedOperationPrototypeFuncti
     return JSValue::encode(toJS<IDLDOMString>(*state, impl.identifier()));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestStringifierNamedOperationPrototypeFunctionIdentifier(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestStringifierNamedOperationPrototypeFunctionIdentifier(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestStringifierNamedOperation>::call<jsTestStringifierNamedOperationPrototypeFunctionIdentifierBody>(*state, "identifier");
 }
 
@@ -192,8 +193,9 @@ static inline JSC::EncodedJSValue jsTestStringifierNamedOperationPrototypeFuncti
     return JSValue::encode(toJS<IDLDOMString>(*state, impl.identifier()));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestStringifierNamedOperationPrototypeFunctionToString(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestStringifierNamedOperationPrototypeFunctionToString(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestStringifierNamedOperation>::call<jsTestStringifierNamedOperationPrototypeFunctionToStringBody>(*state, "toString");
 }
 

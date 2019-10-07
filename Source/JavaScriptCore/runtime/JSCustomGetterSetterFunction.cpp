@@ -35,29 +35,29 @@ namespace JSC {
 
 const ClassInfo JSCustomGetterSetterFunction::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCustomGetterSetterFunction) };
 
-EncodedJSValue JSC_HOST_CALL JSCustomGetterSetterFunction::customGetterSetterFunctionCall(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL JSCustomGetterSetterFunction::customGetterSetterFunctionCall(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSCustomGetterSetterFunction* customGetterSetterFunction = jsCast<JSCustomGetterSetterFunction*>(exec->jsCallee());
+    JSCustomGetterSetterFunction* customGetterSetterFunction = jsCast<JSCustomGetterSetterFunction*>(callFrame->jsCallee());
     CustomGetterSetter* customGetterSetter = customGetterSetterFunction->customGetterSetter();
-    JSValue thisValue = exec->thisValue();
+    JSValue thisValue = callFrame->thisValue();
 
     if (customGetterSetterFunction->isSetter()) {
         CustomGetterSetter::CustomSetter setter = customGetterSetter->setter();
         ASSERT(setter);
-        callCustomSetter(exec, setter, true, thisValue, exec->argument(0));
+        callCustomSetter(callFrame, setter, true, thisValue, callFrame->argument(0));
         return JSValue::encode(jsUndefined());
     }
 
     if (customGetterSetter->inherits<DOMAttributeGetterSetter>(vm)) {
         auto domAttribute = jsCast<DOMAttributeGetterSetter*>(customGetterSetter)->domAttribute();
         if (!thisValue.inherits(vm, domAttribute.classInfo))
-            return throwVMDOMAttributeGetterTypeError(exec, scope, domAttribute.classInfo, customGetterSetterFunction->propertyName());
+            return throwVMDOMAttributeGetterTypeError(callFrame, scope, domAttribute.classInfo, customGetterSetterFunction->propertyName());
     }
 
-    return customGetterSetter->getter()(exec, JSValue::encode(thisValue), customGetterSetterFunction->propertyName());
+    return customGetterSetter->getter()(callFrame, JSValue::encode(thisValue), customGetterSetterFunction->propertyName());
 }
 
 JSCustomGetterSetterFunction::JSCustomGetterSetterFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure, const Type type, const PropertyName& propertyName)

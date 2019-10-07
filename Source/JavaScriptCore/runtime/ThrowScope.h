@@ -29,8 +29,9 @@
 
 namespace JSC {
 
-class ExecState;
+class CallFrame;
 class JSObject;
+using ExecState = CallFrame;
 
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
 

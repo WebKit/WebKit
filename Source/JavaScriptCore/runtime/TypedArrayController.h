@@ -30,9 +30,10 @@
 namespace JSC {
 
 class ArrayBuffer;
-class ExecState;
+class CallFrame;
 class JSArrayBuffer;
 class JSGlobalObject;
+using ExecState = CallFrame;
 
 class TypedArrayController : public RefCounted<TypedArrayController> {
 public:

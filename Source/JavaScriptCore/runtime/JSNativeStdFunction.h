@@ -32,7 +32,7 @@ namespace JSC {
 class JSGlobalObject;
 class NativeStdFunctionCell;
 
-using NativeStdFunction = WTF::Function<EncodedJSValue(ExecState*)>;
+using NativeStdFunction = WTF::Function<EncodedJSValue(JSGlobalObject*, CallFrame*)>;
 
 class JSNativeStdFunction final : public JSFunction {
 public:

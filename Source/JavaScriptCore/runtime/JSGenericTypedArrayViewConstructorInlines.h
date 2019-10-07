@@ -38,10 +38,10 @@
 namespace JSC {
 
 template<typename ViewClass>
-static EncodedJSValue JSC_HOST_CALL callGenericTypedArrayView(ExecState*);
+static EncodedJSValue JSC_HOST_CALL callGenericTypedArrayView(JSGlobalObject*, CallFrame*);
 
 template<typename ViewClass>
-EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState*);
+EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(JSGlobalObject*, CallFrame*);
 
 template<typename ViewClass>
 JSGenericTypedArrayViewConstructor<ViewClass>::JSGenericTypedArrayViewConstructor(VM& vm, Structure* structure)
@@ -206,56 +206,56 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
 }
 
 template<typename ViewClass>
-EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    InternalFunction* function = jsCast<InternalFunction*>(exec->jsCallee());
-    Structure* parentStructure = function->globalObject(vm)->typedArrayStructure(ViewClass::TypedArrayStorageType);
-    Structure* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), parentStructure);
+    InternalFunction* function = jsCast<InternalFunction*>(callFrame->jsCallee());
+    Structure* parentStructure = function->globalObject()->typedArrayStructure(ViewClass::TypedArrayStorageType);
+    Structure* structure = InternalFunction::createSubclassStructure(callFrame, callFrame->newTarget(), parentStructure);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    size_t argCount = exec->argumentCount();
+    size_t argCount = callFrame->argumentCount();
 
     if (!argCount) {
         if (ViewClass::TypedArrayStorageType == TypeDataView)
-            return throwVMTypeError(exec, scope, "DataView constructor requires at least one argument."_s);
+            return throwVMTypeError(callFrame, scope, "DataView constructor requires at least one argument."_s);
 
-        RELEASE_AND_RETURN(scope, JSValue::encode(ViewClass::create(exec, structure, 0)));
+        RELEASE_AND_RETURN(scope, JSValue::encode(ViewClass::create(callFrame, structure, 0)));
     }
 
-    JSValue firstValue = exec->uncheckedArgument(0);
+    JSValue firstValue = callFrame->uncheckedArgument(0);
     unsigned offset = 0;
     Optional<unsigned> length = WTF::nullopt;
     if (jsDynamicCast<JSArrayBuffer*>(vm, firstValue) && argCount > 1) {
-        offset = exec->uncheckedArgument(1).toIndex(exec, "byteOffset");
+        offset = callFrame->uncheckedArgument(1).toIndex(callFrame, "byteOffset");
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
         if (argCount > 2) {
             if (ViewClass::TypedArrayStorageType == TypeDataView) {
                 // If the DataView byteLength is present but undefined, treat it as missing.
-                JSValue byteLengthValue = exec->uncheckedArgument(2);
+                JSValue byteLengthValue = callFrame->uncheckedArgument(2);
                 if (!byteLengthValue.isUndefined()) {
-                    length = byteLengthValue.toIndex(exec, "byteLength");
+                    length = byteLengthValue.toIndex(callFrame, "byteLength");
                     RETURN_IF_EXCEPTION(scope, encodedJSValue());
                 }
             } else {
-                length = exec->uncheckedArgument(2).toIndex(exec, "length");
+                length = callFrame->uncheckedArgument(2).toIndex(callFrame, "length");
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
             }
         }
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(constructGenericTypedArrayViewWithArguments<ViewClass>(exec, structure, JSValue::encode(firstValue), offset, length)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(constructGenericTypedArrayViewWithArguments<ViewClass>(callFrame, structure, JSValue::encode(firstValue), offset, length)));
 }
 
 template<typename ViewClass>
-static EncodedJSValue JSC_HOST_CALL callGenericTypedArrayView(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callGenericTypedArrayView(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, scope, ViewClass::info()->className));
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(callFrame, scope, ViewClass::info()->className));
 }
 
 } // namespace JSC

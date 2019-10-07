@@ -54,15 +54,15 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionGetAttribute(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionGetAttribute(JSC::JSGlobalObject*, JSC::CallFrame*);
 JSC::EncodedJSValue JIT_OPERATION jsTestDOMJITPrototypeFunctionGetAttributeWithoutTypeCheck(JSC::ExecState*, JSTestDOMJIT*, DOMJIT::IDLJSArgumentType<IDLDOMString>);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionItem(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionItem(JSC::JSGlobalObject*, JSC::CallFrame*);
 JSC::EncodedJSValue JIT_OPERATION jsTestDOMJITPrototypeFunctionItemWithoutTypeCheck(JSC::ExecState*, JSTestDOMJIT*, DOMJIT::IDLJSArgumentType<IDLUnsignedShort>, DOMJIT::IDLJSArgumentType<IDLUnsignedShort>);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionHasAttribute(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionHasAttribute(JSC::JSGlobalObject*, JSC::CallFrame*);
 JSC::EncodedJSValue JIT_OPERATION jsTestDOMJITPrototypeFunctionHasAttributeWithoutTypeCheck(JSC::ExecState*, JSTestDOMJIT*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionGetElementById(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionGetElementById(JSC::JSGlobalObject*, JSC::CallFrame*);
 JSC::EncodedJSValue JIT_OPERATION jsTestDOMJITPrototypeFunctionGetElementByIdWithoutTypeCheck(JSC::ExecState*, JSTestDOMJIT*, DOMJIT::IDLJSArgumentType<IDLRequiresExistingAtomStringAdaptor<IDLDOMString>>);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionGetElementsByName(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionGetElementsByName(JSC::JSGlobalObject*, JSC::CallFrame*);
 JSC::EncodedJSValue JIT_OPERATION jsTestDOMJITPrototypeFunctionGetElementsByNameWithoutTypeCheck(JSC::ExecState*, JSTestDOMJIT*, DOMJIT::IDLJSArgumentType<IDLAtomStringAdaptor<IDLDOMString>>);
 
 // Attributes
@@ -1125,8 +1125,9 @@ static inline JSC::EncodedJSValue jsTestDOMJITPrototypeFunctionGetAttributeBody(
     return JSValue::encode(toJS<IDLNullable<IDLDOMString>>(*state, impl.getAttribute(WTFMove(name))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionGetAttribute(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionGetAttribute(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestDOMJIT>::call<jsTestDOMJITPrototypeFunctionGetAttributeBody>(*state, "getAttribute");
 }
 
@@ -1157,8 +1158,9 @@ static inline JSC::EncodedJSValue jsTestDOMJITPrototypeFunctionItemBody(JSC::Exe
     return JSValue::encode(toJS<IDLDOMString>(*state, impl.item(WTFMove(x), WTFMove(y))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionItem(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionItem(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestDOMJIT>::call<jsTestDOMJITPrototypeFunctionItemBody>(*state, "item");
 }
 
@@ -1185,8 +1187,9 @@ static inline JSC::EncodedJSValue jsTestDOMJITPrototypeFunctionHasAttributeBody(
     return JSValue::encode(toJS<IDLBoolean>(impl.hasAttribute()));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionHasAttribute(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionHasAttribute(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestDOMJIT>::call<jsTestDOMJITPrototypeFunctionHasAttributeBody>(*state, "hasAttribute");
 }
 
@@ -1213,8 +1216,9 @@ static inline JSC::EncodedJSValue jsTestDOMJITPrototypeFunctionGetElementByIdBod
     return JSValue::encode(toJS<IDLInterface<Element>>(*state, *castedThis->globalObject(), impl.getElementById(WTFMove(elementId))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionGetElementById(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionGetElementById(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestDOMJIT>::call<jsTestDOMJITPrototypeFunctionGetElementByIdBody>(*state, "getElementById");
 }
 
@@ -1243,8 +1247,9 @@ static inline JSC::EncodedJSValue jsTestDOMJITPrototypeFunctionGetElementsByName
     return JSValue::encode(toJS<IDLInterface<NodeList>>(*state, *castedThis->globalObject(), impl.getElementsByName(WTFMove(elementName))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionGetElementsByName(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionGetElementsByName(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestDOMJIT>::call<jsTestDOMJITPrototypeFunctionGetElementsByNameBody>(*state, "getElementsByName");
 }
 

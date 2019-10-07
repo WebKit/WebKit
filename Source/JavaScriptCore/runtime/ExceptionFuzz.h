@@ -29,8 +29,9 @@
 
 namespace JSC {
 
-class ExecState;
+class CallFrame;
 class ThrowScope;
+using ExecState = CallFrame;
 
 // Call this only if you know that exception fuzzing is enabled.
 void doExceptionFuzzing(ExecState*, ThrowScope&, const char* where, const void* returnPC);

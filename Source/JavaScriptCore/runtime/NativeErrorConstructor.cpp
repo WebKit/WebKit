@@ -50,24 +50,24 @@ void NativeErrorConstructorBase::finishCreation(VM& vm, NativeErrorPrototype* pr
 }
 
 template<ErrorType errorType>
-EncodedJSValue JSC_HOST_CALL NativeErrorConstructor<errorType>::constructNativeErrorConstructor(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL NativeErrorConstructor<errorType>::constructNativeErrorConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue message = exec->argument(0);
-    Structure* errorStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), jsCast<NativeErrorConstructor*>(exec->jsCallee())->errorStructure(vm));
+    JSValue message = callFrame->argument(0);
+    Structure* errorStructure = InternalFunction::createSubclassStructure(callFrame, callFrame->newTarget(), jsCast<NativeErrorConstructor*>(callFrame->jsCallee())->errorStructure(vm));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     ASSERT(errorStructure);
-    RELEASE_AND_RETURN(scope, JSValue::encode(ErrorInstance::create(exec, errorStructure, message, nullptr, TypeNothing, false)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(ErrorInstance::create(callFrame, errorStructure, message, nullptr, TypeNothing, false)));
 }
 
 template<ErrorType errorType>
-EncodedJSValue JSC_HOST_CALL NativeErrorConstructor<errorType>::callNativeErrorConstructor(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL NativeErrorConstructor<errorType>::callNativeErrorConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
-    JSValue message = exec->argument(0);
-    Structure* errorStructure = jsCast<NativeErrorConstructor*>(exec->jsCallee())->errorStructure(vm);
-    return JSValue::encode(ErrorInstance::create(exec, errorStructure, message, nullptr, TypeNothing, false));
+    VM& vm = globalObject->vm();
+    JSValue message = callFrame->argument(0);
+    Structure* errorStructure = jsCast<NativeErrorConstructor*>(callFrame->jsCallee())->errorStructure(vm);
+    return JSValue::encode(ErrorInstance::create(callFrame, errorStructure, message, nullptr, TypeNothing, false));
 }
 
 template class NativeErrorConstructor<ErrorType::EvalError>;

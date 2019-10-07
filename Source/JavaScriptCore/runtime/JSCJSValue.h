@@ -41,7 +41,7 @@ namespace JSC {
 
 class AssemblyHelpers;
 class JSBigInt;
-class ExecState;
+class CallFrame;
 class JSCell;
 class JSValueSource;
 class VM;
@@ -53,6 +53,7 @@ class PropertyName;
 class PropertySlot;
 class PutPropertySlot;
 class Structure;
+using ExecState = CallFrame;
 #if ENABLE(DFG_JIT)
 namespace DFG {
 class JITCompiler;

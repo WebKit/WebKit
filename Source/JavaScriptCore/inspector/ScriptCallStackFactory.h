@@ -35,9 +35,10 @@
 #include <wtf/Forward.h>
 
 namespace JSC {
+class CallFrame;
 class Exception;
-class ExecState;
 class JSValue;
+using ExecState = CallFrame;
 }
 
 namespace Inspector {

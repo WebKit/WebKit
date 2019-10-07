@@ -35,30 +35,28 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL arrayBufferProtoFuncSlice(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL arrayBufferProtoFuncSlice(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSFunction* callee = jsCast<JSFunction*>(exec->jsCallee());
-    
-    JSArrayBuffer* thisObject = jsDynamicCast<JSArrayBuffer*>(vm, exec->thisValue());
+    JSArrayBuffer* thisObject = jsDynamicCast<JSArrayBuffer*>(vm, callFrame->thisValue());
     if (!thisObject || thisObject->impl()->isShared())
-        return throwVMTypeError(exec, scope, "Receiver of slice must be an ArrayBuffer."_s);
+        return throwVMTypeError(callFrame, scope, "Receiver of slice must be an ArrayBuffer."_s);
 
-    double begin = exec->argument(0).toInteger(exec);
+    double begin = callFrame->argument(0).toInteger(callFrame);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     
     double end;
-    if (!exec->argument(1).isUndefined()) {
-        end = exec->uncheckedArgument(1).toInteger(exec);
+    if (!callFrame->argument(1).isUndefined()) {
+        end = callFrame->uncheckedArgument(1).toInteger(callFrame);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     } else
         end = thisObject->impl()->byteLength();
     
     auto newBuffer = thisObject->impl()->slice(begin, end);
     
-    Structure* structure = callee->globalObject(vm)->arrayBufferStructure(newBuffer->sharingMode());
+    Structure* structure = globalObject->arrayBufferStructure(newBuffer->sharingMode());
     
     JSArrayBuffer* result = JSArrayBuffer::create(vm, structure, WTFMove(newBuffer));
     
@@ -66,37 +64,37 @@ static EncodedJSValue JSC_HOST_CALL arrayBufferProtoFuncSlice(ExecState* exec)
 }
 
 // http://tc39.github.io/ecmascript_sharedmem/shmem.html#sec-get-arraybuffer.prototype.bytelength
-static EncodedJSValue JSC_HOST_CALL arrayBufferProtoGetterFuncByteLength(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL arrayBufferProtoGetterFuncByteLength(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue thisValue = exec->thisValue();
+    JSValue thisValue = callFrame->thisValue();
     if (!thisValue.isObject())
-        return throwVMTypeError(exec, scope, "Receiver should be an array buffer but was not an object"_s);
+        return throwVMTypeError(callFrame, scope, "Receiver should be an array buffer but was not an object"_s);
 
     auto* thisObject = jsDynamicCast<JSArrayBuffer*>(vm, thisValue);
     if (!thisObject)
-        return throwVMTypeError(exec, scope, "Receiver should be an array buffer"_s);
+        return throwVMTypeError(callFrame, scope, "Receiver should be an array buffer"_s);
     if (thisObject->isShared())
-        return throwVMTypeError(exec, scope, "Receiver should not be a shared array buffer"_s);
+        return throwVMTypeError(callFrame, scope, "Receiver should not be a shared array buffer"_s);
 
     RELEASE_AND_RETURN(scope, JSValue::encode(jsNumber(thisObject->impl()->byteLength())));
 }
 
 // http://tc39.github.io/ecmascript_sharedmem/shmem.html#StructuredData.SharedArrayBuffer.prototype.get_byteLength
-static EncodedJSValue JSC_HOST_CALL sharedArrayBufferProtoGetterFuncByteLength(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL sharedArrayBufferProtoGetterFuncByteLength(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue thisValue = exec->thisValue();
+    JSValue thisValue = callFrame->thisValue();
     if (!thisValue.isObject())
-        return throwVMTypeError(exec, scope, "Receiver should be an array buffer but was not an object"_s);
+        return throwVMTypeError(callFrame, scope, "Receiver should be an array buffer but was not an object"_s);
 
     auto* thisObject = jsDynamicCast<JSArrayBuffer*>(vm, thisValue);
     if (!thisObject)
-        return throwVMTypeError(exec, scope, "Receiver should be an array buffer"_s);
+        return throwVMTypeError(callFrame, scope, "Receiver should be an array buffer"_s);
     if (!thisObject->isShared())
-        return throwVMTypeError(exec, scope, "Receiver should be a shared array buffer"_s);
+        return throwVMTypeError(callFrame, scope, "Receiver should be a shared array buffer"_s);
 
     RELEASE_AND_RETURN(scope, JSValue::encode(jsNumber(thisObject->impl()->byteLength())));
 }

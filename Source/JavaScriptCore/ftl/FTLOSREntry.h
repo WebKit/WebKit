@@ -29,8 +29,9 @@
 
 namespace JSC {
 
+class CallFrame;
 class CodeBlock;
-class ExecState;
+using ExecState = CallFrame;
 
 namespace FTL {
 

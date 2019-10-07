@@ -36,9 +36,10 @@ typedef struct objc_object* id;
 #endif
 
 namespace JSC {
-    class ExecState;
+    class CallFrame;
     class JSGlobalObject;
     class JSObject;
+    using ExecState = CallFrame;
 }
 
 namespace WebCore {

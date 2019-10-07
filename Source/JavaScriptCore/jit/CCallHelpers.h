@@ -41,8 +41,9 @@ namespace JSC {
 #define POKE_ARGUMENT_OFFSET 0
 #endif
 
-class ExecState;
+class CallFrame;
 class Structure;
+using ExecState = CallFrame;
 namespace DFG {
 class RegisteredStructure;
 };

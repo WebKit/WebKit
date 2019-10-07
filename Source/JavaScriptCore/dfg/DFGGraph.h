@@ -52,7 +52,8 @@ template <typename T> class SingleRootGraph;
 namespace JSC {
 
 class CodeBlock;
-class ExecState;
+class CallFrame;
+using ExecState = CallFrame;
 
 namespace DFG {
 

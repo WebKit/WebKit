@@ -35,8 +35,9 @@
 
 namespace JSC {
 
-class ExecState;
+class CallFrame;
 class Identifier;
+using ExecState = CallFrame;
 
 namespace Bindings {
 

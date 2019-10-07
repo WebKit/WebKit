@@ -31,7 +31,8 @@
 #include <wtf/text/StringHash.h>
 
 namespace JSC {
-class ExecState;
+class CallFrame;
+using ExecState = CallFrame;
 }
 
 namespace WebCore {

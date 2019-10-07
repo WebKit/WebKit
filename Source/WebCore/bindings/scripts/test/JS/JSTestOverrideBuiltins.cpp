@@ -45,7 +45,7 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestOverrideBuiltinsPrototypeFunctionNamedItem(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestOverrideBuiltinsPrototypeFunctionNamedItem(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -235,8 +235,9 @@ static inline JSC::EncodedJSValue jsTestOverrideBuiltinsPrototypeFunctionNamedIt
     return JSValue::encode(toJS<IDLInterface<Node>>(*state, *castedThis->globalObject(), impl.namedItem(WTFMove(name))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestOverrideBuiltinsPrototypeFunctionNamedItem(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestOverrideBuiltinsPrototypeFunctionNamedItem(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestOverrideBuiltins>::call<jsTestOverrideBuiltinsPrototypeFunctionNamedItemBody>(*state, "namedItem");
 }
 

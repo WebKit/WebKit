@@ -34,7 +34,7 @@ namespace JSC {
 
 const ClassInfo WeakObjectRefPrototype::s_info = { "WeakRef", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WeakObjectRefPrototype) };
 
-static EncodedJSValue JSC_HOST_CALL protoFuncWeakRefDeref(ExecState*);
+static EncodedJSValue JSC_HOST_CALL protoFuncWeakRefDeref(JSGlobalObject*, CallFrame*);
 
 void WeakObjectRefPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
@@ -47,9 +47,9 @@ void WeakObjectRefPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(vm, "WeakRef"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 
-ALWAYS_INLINE static JSWeakObjectRef* getWeakRef(CallFrame* callFrame, JSValue value)
+ALWAYS_INLINE static JSWeakObjectRef* getWeakRef(CallFrame* callFrame, JSGlobalObject* globalObject, JSValue value)
 {
-    VM& vm = callFrame->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(!value.isObject())) {
@@ -65,10 +65,10 @@ ALWAYS_INLINE static JSWeakObjectRef* getWeakRef(CallFrame* callFrame, JSValue v
     return nullptr;
 }
 
-EncodedJSValue JSC_HOST_CALL protoFuncWeakRefDeref(CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL protoFuncWeakRefDeref(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = callFrame->vm();
-    auto* ref = getWeakRef(callFrame, callFrame->thisValue());
+    VM& vm = globalObject->vm();
+    auto* ref = getWeakRef(callFrame, globalObject, callFrame->thisValue());
     if (!ref)
         return JSValue::encode(jsUndefined());
 

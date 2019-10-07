@@ -33,8 +33,9 @@
 
 namespace JSC {
 
-class ExecState;
+class CallFrame;
 class CodeBlock;
+using ExecState = CallFrame;
 
 namespace DFG {
 

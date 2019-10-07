@@ -42,7 +42,7 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestSerializationInheritPrototypeFunctionToJSON(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestSerializationInheritPrototypeFunctionToJSON(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -220,8 +220,9 @@ static inline EncodedJSValue jsTestSerializationInheritPrototypeFunctionToJSONBo
     return JSValue::encode(JSTestSerializationInherit::serialize(*state, *thisObject, *thisObject->globalObject(), throwScope));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestSerializationInheritPrototypeFunctionToJSON(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestSerializationInheritPrototypeFunctionToJSON(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestSerializationInherit>::call<jsTestSerializationInheritPrototypeFunctionToJSONBody>(*state, "toJSON");
 }
 

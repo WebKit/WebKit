@@ -40,11 +40,12 @@
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
+class CallFrame;
 class Exception;
-class ExecState;
 class JSPromise;
 class VM;
 template<typename> class Strong;
+using ExecState = CallFrame;
 }
 
 namespace Inspector {

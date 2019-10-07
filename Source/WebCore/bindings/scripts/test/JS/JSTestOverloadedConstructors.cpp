@@ -75,9 +75,9 @@ private:
 
 using JSTestOverloadedConstructorsConstructor = JSDOMConstructor<JSTestOverloadedConstructors>;
 
-static inline EncodedJSValue constructJSTestOverloadedConstructors1(ExecState* state)
+static inline EncodedJSValue constructJSTestOverloadedConstructors1(JSGlobalObject* globalObject, CallFrame* state)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->jsCallee());
@@ -88,9 +88,9 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors1(ExecState* s
     return JSValue::encode(toJSNewlyCreated<IDLInterface<TestOverloadedConstructors>>(*state, *castedThis->globalObject(), WTFMove(object)));
 }
 
-static inline EncodedJSValue constructJSTestOverloadedConstructors2(ExecState* state)
+static inline EncodedJSValue constructJSTestOverloadedConstructors2(JSGlobalObject* globalObject, CallFrame* state)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->jsCallee());
@@ -101,9 +101,9 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors2(ExecState* s
     return JSValue::encode(toJSNewlyCreated<IDLInterface<TestOverloadedConstructors>>(*state, *castedThis->globalObject(), WTFMove(object)));
 }
 
-static inline EncodedJSValue constructJSTestOverloadedConstructors3(ExecState* state)
+static inline EncodedJSValue constructJSTestOverloadedConstructors3(JSGlobalObject* globalObject, CallFrame* state)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->jsCallee());
@@ -114,9 +114,9 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors3(ExecState* s
     return JSValue::encode(toJSNewlyCreated<IDLInterface<TestOverloadedConstructors>>(*state, *castedThis->globalObject(), WTFMove(object)));
 }
 
-static inline EncodedJSValue constructJSTestOverloadedConstructors4(ExecState* state)
+static inline EncodedJSValue constructJSTestOverloadedConstructors4(JSGlobalObject* globalObject, CallFrame* state)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->jsCallee());
@@ -127,9 +127,9 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors4(ExecState* s
     return JSValue::encode(toJSNewlyCreated<IDLInterface<TestOverloadedConstructors>>(*state, *castedThis->globalObject(), WTFMove(object)));
 }
 
-static inline EncodedJSValue constructJSTestOverloadedConstructors5(ExecState* state)
+static inline EncodedJSValue constructJSTestOverloadedConstructors5(JSGlobalObject* globalObject, CallFrame* state)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->jsCallee());
@@ -140,26 +140,26 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors5(ExecState* s
     return JSValue::encode(toJSNewlyCreated<IDLInterface<TestOverloadedConstructors>>(*state, *castedThis->globalObject(), WTFMove(object)));
 }
 
-template<> EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::construct(ExecState* state)
+template<> EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::construct(JSGlobalObject* globalObject, CallFrame* state)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     size_t argsCount = std::min<size_t>(1, state->argumentCount());
     if (argsCount == 0) {
-        return constructJSTestOverloadedConstructors5(state);
+        return constructJSTestOverloadedConstructors5(globalObject, state);
     }
     if (argsCount == 1) {
         JSValue distinguishingArg = state->uncheckedArgument(0);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSArrayBuffer>(vm))
-            return constructJSTestOverloadedConstructors1(state);
+            return constructJSTestOverloadedConstructors1(globalObject, state);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSArrayBufferView>(vm))
-            return constructJSTestOverloadedConstructors2(state);
+            return constructJSTestOverloadedConstructors2(globalObject, state);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSBlob>(vm))
-            return constructJSTestOverloadedConstructors3(state);
+            return constructJSTestOverloadedConstructors3(globalObject, state);
         if (distinguishingArg.isNumber())
-            return constructJSTestOverloadedConstructors5(state);
-        return constructJSTestOverloadedConstructors4(state);
+            return constructJSTestOverloadedConstructors5(globalObject, state);
+        return constructJSTestOverloadedConstructors4(globalObject, state);
     }
     return throwVMTypeError(state, throwScope);
 }

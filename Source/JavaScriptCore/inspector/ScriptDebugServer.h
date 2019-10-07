@@ -38,9 +38,10 @@
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
-class ExecState;
+class CallFrame;
 class JSGlobalObject;
 class VM;
+using ExecState = CallFrame;
 }
 
 namespace Inspector {

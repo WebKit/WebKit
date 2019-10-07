@@ -37,8 +37,9 @@
 #include <wtf/Vector.h>
 
 namespace JSC {
-class ExecState;
+class CallFrame;
 class JSGlobalObject;
+using ExecState = CallFrame;
 }
 
 namespace Inspector {

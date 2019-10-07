@@ -78,8 +78,8 @@ const ClassInfo RegExpConstructor::s_info = { "Function", &InternalFunction::s_i
 */
 
 
-static EncodedJSValue JSC_HOST_CALL callRegExpConstructor(ExecState*);
-static EncodedJSValue JSC_HOST_CALL constructWithRegExpConstructor(ExecState*);
+static EncodedJSValue JSC_HOST_CALL callRegExpConstructor(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL constructWithRegExpConstructor(JSGlobalObject*, CallFrame*);
 
 RegExpConstructor::RegExpConstructor(VM& vm, Structure* structure)
     : InternalFunction(vm, structure, callRegExpConstructor, constructWithRegExpConstructor)
@@ -100,50 +100,43 @@ void RegExpConstructor::finishCreation(VM& vm, RegExpPrototype* regExpPrototype,
 template<int N>
 EncodedJSValue regExpConstructorDollar(ExecState* exec, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = exec->vm();
-    JSGlobalObject* globalObject = jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->globalObject(vm);
+    JSGlobalObject* globalObject = jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->globalObject();
     return JSValue::encode(globalObject->regExpGlobalData().getBackref(exec, globalObject, N));
 }
 
-EncodedJSValue regExpConstructorInput(ExecState* exec, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue regExpConstructorInput(ExecState*, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = exec->vm();
-    JSGlobalObject* globalObject = jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->globalObject(vm);
+    JSGlobalObject* globalObject = jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->globalObject();
     return JSValue::encode(globalObject->regExpGlobalData().input());
 }
 
-EncodedJSValue regExpConstructorMultiline(ExecState* exec, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue regExpConstructorMultiline(ExecState*, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = exec->vm();
-    JSGlobalObject* globalObject = jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->globalObject(vm);
+    JSGlobalObject* globalObject = jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->globalObject();
     return JSValue::encode(jsBoolean(globalObject->regExpGlobalData().multiline()));
 }
 
 EncodedJSValue regExpConstructorLastMatch(ExecState* exec, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = exec->vm();
-    JSGlobalObject* globalObject = jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->globalObject(vm);
+    JSGlobalObject* globalObject = jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->globalObject();
     return JSValue::encode(globalObject->regExpGlobalData().getBackref(exec, globalObject, 0));
 }
 
 EncodedJSValue regExpConstructorLastParen(ExecState* exec, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = exec->vm();
-    JSGlobalObject* globalObject = jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->globalObject(vm);
+    JSGlobalObject* globalObject = jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->globalObject();
     return JSValue::encode(globalObject->regExpGlobalData().getLastParen(exec, globalObject));
 }
 
 EncodedJSValue regExpConstructorLeftContext(ExecState* exec, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = exec->vm();
-    JSGlobalObject* globalObject = jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->globalObject(vm);
+    JSGlobalObject* globalObject = jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->globalObject();
     return JSValue::encode(globalObject->regExpGlobalData().getLeftContext(exec, globalObject));
 }
 
 EncodedJSValue regExpConstructorRightContext(ExecState* exec, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = exec->vm();
-    JSGlobalObject* globalObject = jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->globalObject(vm);
+    JSGlobalObject* globalObject = jsCast<RegExpConstructor*>(JSValue::decode(thisValue))->globalObject();
     return JSValue::encode(globalObject->regExpGlobalData().getRightContext(exec, globalObject));
 }
 
@@ -155,7 +148,7 @@ bool setRegExpConstructorInput(ExecState* exec, EncodedJSValue thisValue, Encode
         auto* string = JSValue::decode(value).toString(exec);
         RETURN_IF_EXCEPTION(scope, { });
         scope.release();
-        JSGlobalObject* globalObject = constructor->globalObject(vm);
+        JSGlobalObject* globalObject = constructor->globalObject();
         globalObject->regExpGlobalData().setInput(exec, globalObject, string);
         return true;
     }
@@ -170,7 +163,7 @@ bool setRegExpConstructorMultiline(ExecState* exec, EncodedJSValue thisValue, En
         bool multiline = JSValue::decode(value).toBoolean(exec);
         RETURN_IF_EXCEPTION(scope, { });
         scope.release();
-        JSGlobalObject* globalObject = constructor->globalObject(vm);
+        JSGlobalObject* globalObject = constructor->globalObject();
         globalObject->regExpGlobalData().setMultiline(multiline);
         return true;
     }
@@ -277,24 +270,23 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
     RELEASE_AND_RETURN(scope, regExpCreate(exec, globalObject, newTarget, patternArg, flagsArg));
 }
 
-EncodedJSValue JSC_HOST_CALL esSpecRegExpCreate(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL esSpecRegExpCreate(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-    JSValue patternArg = exec->argument(0);
-    JSValue flagsArg = exec->argument(1);
-    return JSValue::encode(regExpCreate(exec, globalObject, jsUndefined(), patternArg, flagsArg));
+    JSValue patternArg = callFrame->argument(0);
+    JSValue flagsArg = callFrame->argument(1);
+    return JSValue::encode(regExpCreate(callFrame, globalObject, jsUndefined(), patternArg, flagsArg));
 }
 
-static EncodedJSValue JSC_HOST_CALL constructWithRegExpConstructor(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL constructWithRegExpConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    ArgList args(exec);
-    return JSValue::encode(constructRegExp(exec, jsCast<InternalFunction*>(exec->jsCallee())->globalObject(exec->vm()), args, exec->jsCallee(), exec->newTarget()));
+    ArgList args(callFrame);
+    return JSValue::encode(constructRegExp(callFrame, globalObject, args, callFrame->jsCallee(), callFrame->newTarget()));
 }
 
-static EncodedJSValue JSC_HOST_CALL callRegExpConstructor(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callRegExpConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    ArgList args(exec);
-    return JSValue::encode(constructRegExp(exec, jsCast<InternalFunction*>(exec->jsCallee())->globalObject(exec->vm()), args, exec->jsCallee()));
+    ArgList args(callFrame);
+    return JSValue::encode(constructRegExp(callFrame, globalObject, args, callFrame->jsCallee()));
 }
 
 } // namespace JSC

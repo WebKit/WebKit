@@ -38,11 +38,12 @@ struct NPObject;
 typedef struct _NPVariant NPVariant;
 
 namespace JSC {
-    class ExecState;
+    class CallFrame;
     class VM;
     class JSGlobalObject;
     class JSObject;
     class JSValue;
+    using ExecState = CallFrame;
 }
 
 namespace WebKit {

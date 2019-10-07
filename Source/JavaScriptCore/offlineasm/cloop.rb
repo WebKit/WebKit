@@ -1126,11 +1126,11 @@ class Instruction
 
         # We can't do generic function calls with an arbitrary set of args, but
         # fortunately we don't have to here. All native function calls always
-        # have a fixed prototype of 1 args: the passed ExecState.
+        # have a fixed prototype of 2 args: the passed JSGlobalObject* and CallFrame*.
         when "cloopCallNative"
             $asm.putc "cloopStack.setCurrentStackPointer(sp.vp());"
             $asm.putc "nativeFunc = #{operands[0].clValue(:nativeFunc)};"
-            $asm.putc "functionReturnValue = JSValue::decode(nativeFunc(t0.execState()));"
+            $asm.putc "functionReturnValue = JSValue::decode(nativeFunc(jsCast<JSGlobalObject*>(t0.cell()), t1.callFrame()));"
             $asm.putc "#if USE(JSVALUE32_64)"
             $asm.putc "    t1 = functionReturnValue.tag();"
             $asm.putc "    t0 = functionReturnValue.payload();"

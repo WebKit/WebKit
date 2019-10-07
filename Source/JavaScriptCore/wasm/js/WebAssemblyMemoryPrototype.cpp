@@ -35,8 +35,8 @@
 #include "JSWebAssemblyHelpers.h"
 
 namespace JSC {
-static EncodedJSValue JSC_HOST_CALL webAssemblyMemoryProtoFuncGrow(ExecState*);
-static EncodedJSValue JSC_HOST_CALL webAssemblyMemoryProtoFuncBuffer(ExecState*);
+static EncodedJSValue JSC_HOST_CALL webAssemblyMemoryProtoFuncGrow(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL webAssemblyMemoryProtoFuncBuffer(JSGlobalObject*, CallFrame*);
 }
 
 #include "WebAssemblyMemoryPrototype.lut.h"
@@ -66,31 +66,31 @@ ALWAYS_INLINE JSWebAssemblyMemory* getMemory(ExecState* exec, VM& vm, JSValue va
     return memory;
 }
 
-EncodedJSValue JSC_HOST_CALL webAssemblyMemoryProtoFuncGrow(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL webAssemblyMemoryProtoFuncGrow(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSWebAssemblyMemory* memory = getMemory(exec, vm, exec->thisValue()); 
+    JSWebAssemblyMemory* memory = getMemory(callFrame, vm, callFrame->thisValue()); 
     RETURN_IF_EXCEPTION(throwScope, { });
     
-    uint32_t delta = toNonWrappingUint32(exec, exec->argument(0));
+    uint32_t delta = toNonWrappingUint32(callFrame, callFrame->argument(0));
     RETURN_IF_EXCEPTION(throwScope, { });
 
-    Wasm::PageCount result = memory->grow(vm, exec, delta);
+    Wasm::PageCount result = memory->grow(vm, callFrame, delta);
     RETURN_IF_EXCEPTION(throwScope, { });
 
     return JSValue::encode(jsNumber(result.pageCount()));
 }
 
-EncodedJSValue JSC_HOST_CALL webAssemblyMemoryProtoFuncBuffer(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL webAssemblyMemoryProtoFuncBuffer(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSWebAssemblyMemory* memory = getMemory(exec, vm, exec->thisValue()); 
+    JSWebAssemblyMemory* memory = getMemory(callFrame, vm, callFrame->thisValue()); 
     RETURN_IF_EXCEPTION(throwScope, { });
-    return JSValue::encode(memory->buffer(exec->vm(), exec->lexicalGlobalObject()));
+    return JSValue::encode(memory->buffer(globalObject->vm(), globalObject));
 }
 
 WebAssemblyMemoryPrototype* WebAssemblyMemoryPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)

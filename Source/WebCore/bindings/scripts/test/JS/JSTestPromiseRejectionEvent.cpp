@@ -154,9 +154,9 @@ private:
 
 using JSTestPromiseRejectionEventConstructor = JSDOMConstructor<JSTestPromiseRejectionEvent>;
 
-template<> EncodedJSValue JSC_HOST_CALL JSTestPromiseRejectionEventConstructor::construct(ExecState* state)
+template<> EncodedJSValue JSC_HOST_CALL JSTestPromiseRejectionEventConstructor::construct(JSGlobalObject* globalObject, CallFrame* state)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     auto* castedThis = jsCast<JSTestPromiseRejectionEventConstructor*>(state->jsCallee());

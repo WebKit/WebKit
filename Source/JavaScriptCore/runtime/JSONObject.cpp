@@ -45,8 +45,8 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSONObject);
 
-EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState*);
-EncodedJSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState*);
+EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL JSONProtoFuncStringify(JSGlobalObject*, CallFrame*);
 
 }
 
@@ -797,55 +797,55 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
 }
 
 // ECMA-262 v5 15.12.2
-EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    auto viewWithString = exec->argument(0).toString(exec)->viewWithUnderlyingString(exec);
+    auto viewWithString = callFrame->argument(0).toString(callFrame)->viewWithUnderlyingString(callFrame);
     RETURN_IF_EXCEPTION(scope, { });
     StringView view = viewWithString.view;
 
     JSValue unfiltered;
     if (view.is8Bit()) {
-        LiteralParser<LChar> jsonParser(exec, view.characters8(), view.length(), StrictJSON);
+        LiteralParser<LChar> jsonParser(callFrame, view.characters8(), view.length(), StrictJSON);
         unfiltered = jsonParser.tryLiteralParse();
         EXCEPTION_ASSERT(!scope.exception() || !unfiltered);
         if (!unfiltered) {
             RETURN_IF_EXCEPTION(scope, { });
-            return throwVMError(exec, scope, createSyntaxError(exec, jsonParser.getErrorMessage()));
+            return throwVMError(callFrame, scope, createSyntaxError(callFrame, jsonParser.getErrorMessage()));
         }
     } else {
-        LiteralParser<UChar> jsonParser(exec, view.characters16(), view.length(), StrictJSON);
+        LiteralParser<UChar> jsonParser(callFrame, view.characters16(), view.length(), StrictJSON);
         unfiltered = jsonParser.tryLiteralParse();
         EXCEPTION_ASSERT(!scope.exception() || !unfiltered);
         if (!unfiltered) {
             RETURN_IF_EXCEPTION(scope, { });
-            return throwVMError(exec, scope, createSyntaxError(exec, jsonParser.getErrorMessage()));
+            return throwVMError(callFrame, scope, createSyntaxError(callFrame, jsonParser.getErrorMessage()));
         }
     }
     
-    if (exec->argumentCount() < 2)
+    if (callFrame->argumentCount() < 2)
         return JSValue::encode(unfiltered);
     
-    JSValue function = exec->uncheckedArgument(1);
+    JSValue function = callFrame->uncheckedArgument(1);
     CallData callData;
     CallType callType = getCallData(vm, function, callData);
     if (callType == CallType::None)
         return JSValue::encode(unfiltered);
     scope.release();
-    Walker walker(exec, asObject(function), callType, callData);
+    Walker walker(callFrame, asObject(function), callType, callData);
     return JSValue::encode(walker.walk(unfiltered));
 }
 
 // ECMA-262 v5 15.12.3
-EncodedJSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL JSONProtoFuncStringify(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Stringifier stringifier(exec, exec->argument(1), exec->argument(2));
+    Stringifier stringifier(callFrame, callFrame->argument(1), callFrame->argument(2));
     RETURN_IF_EXCEPTION(scope, { });
-    RELEASE_AND_RETURN(scope, JSValue::encode(stringifier.stringify(exec->argument(0))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(stringifier.stringify(callFrame->argument(0))));
 }
 
 JSValue JSONParse(ExecState* exec, const String& json)

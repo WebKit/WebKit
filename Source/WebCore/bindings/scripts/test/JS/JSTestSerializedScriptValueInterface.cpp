@@ -51,8 +51,8 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFunctionFunction(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturning(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFunctionFunction(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturning(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -323,8 +323,9 @@ static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeF
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFunctionFunction(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFunctionFunction(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestSerializedScriptValueInterface>::call<jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionBody>(*state, "function");
 }
 
@@ -336,8 +337,9 @@ static inline JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePrototypeF
     return JSValue::encode(toJS<IDLSerializedScriptValue<SerializedScriptValue>>(*state, *castedThis->globalObject(), impl.functionReturning()));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturning(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturning(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestSerializedScriptValueInterface>::call<jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturningBody>(*state, "functionReturning");
 }
 

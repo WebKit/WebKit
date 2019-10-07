@@ -45,10 +45,10 @@ public:
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 };
 
-EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncIsTypedArrayView(ExecState*);
-EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncSort(ExecState*);
-EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncLength(ExecState*);
-EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncGetOriginalConstructor(ExecState*);
-EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncSubarrayCreate(ExecState*);
+EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncIsTypedArrayView(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncSort(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncLength(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncGetOriginalConstructor(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncSubarrayCreate(JSGlobalObject*, CallFrame*);
     
 } // namespace JSC

@@ -45,7 +45,7 @@ private:
 
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
     static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
-    static JSC::EncodedJSValue JSC_HOST_CALL construct(JSC::ExecState*);
+    static JSC::EncodedJSValue JSC_HOST_CALL construct(JSC::JSGlobalObject*, JSC::CallFrame*);
 
     JSC::EncodedJSValue callConstructor(JSC::ExecState&, JSC::JSObject&);
     JSC::EncodedJSValue callConstructor(JSC::ExecState&, JSC::JSObject*);
@@ -111,11 +111,11 @@ typename std::enable_if<JSDOMObjectInspector<JSClass>::isComplexWrapper, JSC::JS
     return context ? createWrapper<typename JSClass::DOMWrapped>(constructor.globalObject(), JSClass::DOMWrapped::create(*context)) : nullptr;
 }
 
-template<typename JSClass> inline JSC::EncodedJSValue JSC_HOST_CALL JSDOMBuiltinConstructor<JSClass>::construct(JSC::ExecState* state)
+template<typename JSClass> inline JSC::EncodedJSValue JSC_HOST_CALL JSDOMBuiltinConstructor<JSClass>::construct(JSC::JSGlobalObject*, JSC::CallFrame* callFrame)
 {
-    ASSERT(state);
-    auto* castedThis = JSC::jsCast<JSDOMBuiltinConstructor*>(state->jsCallee());
-    return castedThis->callConstructor(*state, createJSObject(*castedThis));
+    ASSERT(callFrame);
+    auto* castedThis = JSC::jsCast<JSDOMBuiltinConstructor*>(callFrame->jsCallee());
+    return castedThis->callConstructor(*callFrame, createJSObject(*castedThis));
 }
 
 template<typename JSClass> inline JSC::ConstructType JSDOMBuiltinConstructor<JSClass>::getConstructData(JSC::JSCell*, JSC::ConstructData& constructData)

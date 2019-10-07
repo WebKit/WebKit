@@ -55,8 +55,8 @@ private:
     void finishCreation(VM&, SetPrototype*, GetterSetter* speciesSymbol);
 };
 
-EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketHead(ExecState*);
-EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketNext(ExecState*);
-EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketKey(ExecState*);
+EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketHead(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketNext(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketKey(JSGlobalObject*, CallFrame*);
 
 } // namespace JSC

@@ -42,7 +42,7 @@ protected:
     JSGenericArrayBufferConstructor(VM&, Structure*);
     void finishCreation(VM&, JSArrayBufferPrototype*, GetterSetter* speciesSymbol);
 
-    static EncodedJSValue JSC_HOST_CALL constructArrayBuffer(ExecState*);
+    static EncodedJSValue JSC_HOST_CALL constructArrayBuffer(JSGlobalObject*, CallFrame*);
 
 public:
     static JSGenericArrayBufferConstructor* create(VM& vm, Structure* structure, JSArrayBufferPrototype* prototype, GetterSetter* speciesSymbol)

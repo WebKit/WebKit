@@ -38,10 +38,10 @@
 
 namespace JSC {
 
+class CallFrame;
 class CompleteSubspace;
 class CopyVisitor;
 class GCDeferralContext;
-class ExecState;
 class Identifier;
 class JSArrayBufferView;
 class JSDestructibleObject;
@@ -52,6 +52,7 @@ class PropertyName;
 class PropertyNameArray;
 class Structure;
 class JSCellLock;
+using ExecState = CallFrame;
 
 enum class GCDeferralContextArgPresense {
     HasArg,

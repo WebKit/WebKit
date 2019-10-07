@@ -29,7 +29,8 @@
 
 namespace JSC {
 
-class ExecState;
+class CallFrame;
+using ExecState = CallFrame;
 
 class Microtask : public RefCounted<Microtask> {
 public:

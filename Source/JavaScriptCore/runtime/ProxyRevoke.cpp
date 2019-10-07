@@ -42,7 +42,7 @@ ProxyRevoke* ProxyRevoke::create(VM& vm, Structure* structure, ProxyObject* prox
     return revoke;
 }
 
-static EncodedJSValue JSC_HOST_CALL performProxyRevoke(ExecState*);
+static EncodedJSValue JSC_HOST_CALL performProxyRevoke(JSGlobalObject*, CallFrame*);
 
 ProxyRevoke::ProxyRevoke(VM& vm, Structure* structure)
     : Base(vm, structure, performProxyRevoke, nullptr)
@@ -57,15 +57,15 @@ void ProxyRevoke::finishCreation(VM& vm, const char* name, ProxyObject* proxy)
     putDirect(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
-static EncodedJSValue JSC_HOST_CALL performProxyRevoke(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL performProxyRevoke(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    ProxyRevoke* proxyRevoke = jsCast<ProxyRevoke*>(exec->jsCallee());
+    ProxyRevoke* proxyRevoke = jsCast<ProxyRevoke*>(callFrame->jsCallee());
     JSValue proxyValue = proxyRevoke->proxy();
     if (proxyValue.isNull())
         return JSValue::encode(jsUndefined());
 
     ProxyObject* proxy = jsCast<ProxyObject*>(proxyValue);
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     proxy->revoke(vm);
     proxyRevoke->setProxyToNull(vm);
     return JSValue::encode(jsUndefined());

@@ -32,18 +32,18 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(BooleanConstructor);
 const ClassInfo BooleanConstructor::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(BooleanConstructor) };
 
 // ECMA 15.6.1
-static EncodedJSValue JSC_HOST_CALL callBooleanConstructor(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callBooleanConstructor(JSGlobalObject*, CallFrame* callFrame)
 {
-    return JSValue::encode(jsBoolean(exec->argument(0).toBoolean(exec)));
+    return JSValue::encode(jsBoolean(callFrame->argument(0).toBoolean(callFrame)));
 }
 
 // ECMA 15.6.2
-static EncodedJSValue JSC_HOST_CALL constructWithBooleanConstructor(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL constructWithBooleanConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue boolean = jsBoolean(exec->argument(0).toBoolean(exec));
-    Structure* booleanStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), jsCast<InternalFunction*>(exec->jsCallee())->globalObject(vm)->booleanObjectStructure());
+    JSValue boolean = jsBoolean(callFrame->argument(0).toBoolean(callFrame));
+    Structure* booleanStructure = InternalFunction::createSubclassStructure(callFrame, callFrame->newTarget(), globalObject->booleanObjectStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     BooleanObject* obj = BooleanObject::create(vm, booleanStructure);
     obj->setInternalValue(vm, boolean);
@@ -62,9 +62,9 @@ void BooleanConstructor::finishCreation(VM& vm, BooleanPrototype* booleanPrototy
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
-JSObject* constructBooleanFromImmediateBoolean(ExecState* exec, JSGlobalObject* globalObject, JSValue immediateBooleanValue)
+JSObject* constructBooleanFromImmediateBoolean(ExecState*, JSGlobalObject* globalObject, JSValue immediateBooleanValue)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     BooleanObject* obj = BooleanObject::create(vm, globalObject->booleanObjectStructure());
     obj->setInternalValue(vm, immediateBooleanValue);
     return obj;

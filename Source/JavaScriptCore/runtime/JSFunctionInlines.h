@@ -42,6 +42,7 @@ inline JSFunction::JSFunction(VM& vm, FunctionExecutable* executable, JSScope* s
     : Base(vm, scope, structure)
     , m_executable(vm, this, executable)
     , m_rareData()
+    , m_globalObject(vm, this, structure->globalObject())
 {
     assertTypeInfoFlagInvariants();
 }

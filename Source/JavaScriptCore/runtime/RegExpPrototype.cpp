@@ -42,17 +42,17 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState*);
-static EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState*);
-static EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState*);
-static EncodedJSValue JSC_HOST_CALL regExpProtoGetterGlobal(ExecState*);
-static EncodedJSValue JSC_HOST_CALL regExpProtoGetterIgnoreCase(ExecState*);
-static EncodedJSValue JSC_HOST_CALL regExpProtoGetterMultiline(ExecState*);
-static EncodedJSValue JSC_HOST_CALL regExpProtoGetterDotAll(ExecState*);
-static EncodedJSValue JSC_HOST_CALL regExpProtoGetterSticky(ExecState*);
-static EncodedJSValue JSC_HOST_CALL regExpProtoGetterUnicode(ExecState*);
-static EncodedJSValue JSC_HOST_CALL regExpProtoGetterSource(ExecState*);
-static EncodedJSValue JSC_HOST_CALL regExpProtoGetterFlags(ExecState*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoGetterGlobal(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoGetterIgnoreCase(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoGetterMultiline(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoGetterDotAll(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoGetterSticky(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoGetterUnicode(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoGetterSource(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoGetterFlags(JSGlobalObject*, CallFrame*);
 
 const ClassInfo RegExpPrototype::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RegExpPrototype) };
 
@@ -86,83 +86,83 @@ void RegExpPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
 // ------------------------------ Functions ---------------------------
 
-EncodedJSValue JSC_HOST_CALL regExpProtoFuncTestFast(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL regExpProtoFuncTestFast(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = exec->thisValue();
+    JSValue thisValue = callFrame->thisValue();
     auto* regexp = jsDynamicCast<RegExpObject*>(vm, thisValue);
     if (UNLIKELY(!regexp))
-        return throwVMTypeError(exec, scope);
-    JSString* string = exec->argument(0).toStringOrNull(exec);
+        return throwVMTypeError(callFrame, scope);
+    JSString* string = callFrame->argument(0).toStringOrNull(callFrame);
     EXCEPTION_ASSERT(!!scope.exception() == !string);
     if (!string)
         return JSValue::encode(jsUndefined());
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(regexp->test(exec, exec->lexicalGlobalObject(), string))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(regexp->test(callFrame, globalObject, string))));
 }
 
-EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = exec->thisValue();
+    JSValue thisValue = callFrame->thisValue();
     auto* regexp = jsDynamicCast<RegExpObject*>(vm, thisValue);
     if (UNLIKELY(!regexp))
-        return throwVMTypeError(exec, scope, "Builtin RegExp exec can only be called on a RegExp object");
-    JSString* string = exec->argument(0).toStringOrNull(exec);
+        return throwVMTypeError(callFrame, scope, "Builtin RegExp exec can only be called on a RegExp object");
+    JSString* string = callFrame->argument(0).toStringOrNull(callFrame);
     EXCEPTION_ASSERT(!!scope.exception() == !string);
     if (!string)
         return JSValue::encode(jsUndefined());
-    RELEASE_AND_RETURN(scope, JSValue::encode(regexp->exec(exec, exec->lexicalGlobalObject(), string)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(regexp->exec(callFrame, globalObject, string)));
 }
 
-EncodedJSValue JSC_HOST_CALL regExpProtoFuncMatchFast(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL regExpProtoFuncMatchFast(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    RegExpObject* thisObject = jsCast<RegExpObject*>(exec->thisValue());
-    JSString* string = jsCast<JSString*>(exec->uncheckedArgument(0));
+    RegExpObject* thisObject = jsCast<RegExpObject*>(callFrame->thisValue());
+    JSString* string = jsCast<JSString*>(callFrame->uncheckedArgument(0));
     if (!thisObject->regExp()->global())
-        return JSValue::encode(thisObject->exec(exec, exec->lexicalGlobalObject(), string));
-    return JSValue::encode(thisObject->matchGlobal(exec, exec->lexicalGlobalObject(), string));
+        return JSValue::encode(thisObject->exec(callFrame, globalObject, string));
+    return JSValue::encode(thisObject->matchGlobal(callFrame, globalObject, string));
 }
 
-EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = exec->thisValue();
+    JSValue thisValue = callFrame->thisValue();
     auto* thisRegExp = jsDynamicCast<RegExpObject*>(vm, thisValue);
     if (UNLIKELY(!thisRegExp))
-        return throwVMTypeError(exec, scope);
+        return throwVMTypeError(callFrame, scope);
 
     RegExp* regExp;
-    JSValue arg0 = exec->argument(0);
-    JSValue arg1 = exec->argument(1);
+    JSValue arg0 = callFrame->argument(0);
+    JSValue arg1 = callFrame->argument(1);
     
     if (auto* regExpObject = jsDynamicCast<RegExpObject*>(vm, arg0)) {
         if (!arg1.isUndefined())
-            return throwVMTypeError(exec, scope, "Cannot supply flags when constructing one RegExp from another."_s);
+            return throwVMTypeError(callFrame, scope, "Cannot supply flags when constructing one RegExp from another."_s);
         regExp = regExpObject->regExp();
     } else {
-        String pattern = arg0.isUndefined() ? emptyString() : arg0.toWTFString(exec);
+        String pattern = arg0.isUndefined() ? emptyString() : arg0.toWTFString(callFrame);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-        auto flags = arg1.isUndefined() ? makeOptional(OptionSet<Yarr::Flags> { }) : Yarr::parseFlags(arg1.toWTFString(exec));
+        auto flags = arg1.isUndefined() ? makeOptional(OptionSet<Yarr::Flags> { }) : Yarr::parseFlags(arg1.toWTFString(callFrame));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (!flags)
-            return throwVMError(exec, scope, createSyntaxError(exec, "Invalid flags supplied to RegExp constructor."_s));
+            return throwVMError(callFrame, scope, createSyntaxError(callFrame, "Invalid flags supplied to RegExp constructor."_s));
 
         regExp = RegExp::create(vm, pattern, flags.value());
     }
 
     if (!regExp->isValid())
-        return throwVMError(exec, scope, regExp->errorToThrow(exec));
+        return throwVMError(callFrame, scope, regExp->errorToThrow(callFrame));
 
     thisRegExp->setRegExp(vm, regExp);
     scope.release();
-    thisRegExp->setLastIndex(exec, 0);
+    thisRegExp->setLastIndex(callFrame, 0);
     return JSValue::encode(thisRegExp);
 }
 
@@ -207,141 +207,141 @@ static inline FlagsString flagsString(ExecState* exec, JSObject* regexp)
     return string;
 }
 
-EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = exec->thisValue();
+    JSValue thisValue = callFrame->thisValue();
     if (!thisValue.isObject())
-        return throwVMTypeError(exec, scope);
+        return throwVMTypeError(callFrame, scope);
 
     JSObject* thisObject = asObject(thisValue);
 
-    StringRecursionChecker checker(exec, thisObject);
+    StringRecursionChecker checker(callFrame, thisObject);
     EXCEPTION_ASSERT(!scope.exception() || checker.earlyReturnValue());
     if (JSValue earlyReturnValue = checker.earlyReturnValue())
         return JSValue::encode(earlyReturnValue);
 
-    JSValue sourceValue = thisObject->get(exec, vm.propertyNames->source);
+    JSValue sourceValue = thisObject->get(callFrame, vm.propertyNames->source);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    String source = sourceValue.toWTFString(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    JSValue flagsValue = thisObject->get(exec, vm.propertyNames->flags);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    String flags = flagsValue.toWTFString(exec);
+    String source = sourceValue.toWTFString(callFrame);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(exec, '/', source, '/', flags)));
+    JSValue flagsValue = thisObject->get(callFrame, vm.propertyNames->flags);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    String flags = flagsValue.toWTFString(callFrame);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(callFrame, '/', source, '/', flags)));
 }
 
-EncodedJSValue JSC_HOST_CALL regExpProtoGetterGlobal(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL regExpProtoGetterGlobal(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = exec->thisValue();
+    JSValue thisValue = callFrame->thisValue();
     auto* regexp = jsDynamicCast<RegExpObject*>(vm, thisValue);
     if (UNLIKELY(!regexp)) {
         if (thisValue.inherits<RegExpPrototype>(vm))
             return JSValue::encode(jsUndefined());
-        return throwVMTypeError(exec, scope, "The RegExp.prototype.global getter can only be called on a RegExp object"_s);
+        return throwVMTypeError(callFrame, scope, "The RegExp.prototype.global getter can only be called on a RegExp object"_s);
     }
 
     return JSValue::encode(jsBoolean(regexp->regExp()->global()));
 }
 
-EncodedJSValue JSC_HOST_CALL regExpProtoGetterIgnoreCase(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL regExpProtoGetterIgnoreCase(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = exec->thisValue();
+    JSValue thisValue = callFrame->thisValue();
     auto* regexp = jsDynamicCast<RegExpObject*>(vm, thisValue);
     if (UNLIKELY(!regexp)) {
         if (thisValue.inherits<RegExpPrototype>(vm))
             return JSValue::encode(jsUndefined());
-        return throwVMTypeError(exec, scope, "The RegExp.prototype.ignoreCase getter can only be called on a RegExp object"_s);
+        return throwVMTypeError(callFrame, scope, "The RegExp.prototype.ignoreCase getter can only be called on a RegExp object"_s);
     }
 
     return JSValue::encode(jsBoolean(regexp->regExp()->ignoreCase()));
 }
 
-EncodedJSValue JSC_HOST_CALL regExpProtoGetterMultiline(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL regExpProtoGetterMultiline(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = exec->thisValue();
+    JSValue thisValue = callFrame->thisValue();
     auto* regexp = jsDynamicCast<RegExpObject*>(vm, thisValue);
     if (UNLIKELY(!regexp)) {
         if (thisValue.inherits<RegExpPrototype>(vm))
             return JSValue::encode(jsUndefined());
-        return throwVMTypeError(exec, scope, "The RegExp.prototype.multiline getter can only be called on a RegExp object"_s);
+        return throwVMTypeError(callFrame, scope, "The RegExp.prototype.multiline getter can only be called on a RegExp object"_s);
     }
 
     return JSValue::encode(jsBoolean(regexp->regExp()->multiline()));
 }
 
-EncodedJSValue JSC_HOST_CALL regExpProtoGetterDotAll(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL regExpProtoGetterDotAll(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     
-    JSValue thisValue = exec->thisValue();
+    JSValue thisValue = callFrame->thisValue();
     auto* regexp = jsDynamicCast<RegExpObject*>(vm, thisValue);
     if (UNLIKELY(!regexp)) {
         if (thisValue.inherits<RegExpPrototype>(vm))
             return JSValue::encode(jsUndefined());
-        return throwVMTypeError(exec, scope, "The RegExp.prototype.dotAll getter can only be called on a RegExp object"_s);
+        return throwVMTypeError(callFrame, scope, "The RegExp.prototype.dotAll getter can only be called on a RegExp object"_s);
     }
     
     return JSValue::encode(jsBoolean(regexp->regExp()->dotAll()));
 }
     
-EncodedJSValue JSC_HOST_CALL regExpProtoGetterSticky(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL regExpProtoGetterSticky(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = exec->thisValue();
+    JSValue thisValue = callFrame->thisValue();
     auto* regexp = jsDynamicCast<RegExpObject*>(vm, thisValue);
     if (UNLIKELY(!regexp)) {
         if (thisValue.inherits<RegExpPrototype>(vm))
             return JSValue::encode(jsUndefined());
-        return throwVMTypeError(exec, scope, "The RegExp.prototype.sticky getter can only be called on a RegExp object"_s);
+        return throwVMTypeError(callFrame, scope, "The RegExp.prototype.sticky getter can only be called on a RegExp object"_s);
     }
     
     return JSValue::encode(jsBoolean(regexp->regExp()->sticky()));
 }
 
-EncodedJSValue JSC_HOST_CALL regExpProtoGetterUnicode(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL regExpProtoGetterUnicode(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = exec->thisValue();
+    JSValue thisValue = callFrame->thisValue();
     auto* regexp = jsDynamicCast<RegExpObject*>(vm, thisValue);
     if (UNLIKELY(!regexp)) {
         if (thisValue.inherits<RegExpPrototype>(vm))
             return JSValue::encode(jsUndefined());
-        return throwVMTypeError(exec, scope, "The RegExp.prototype.unicode getter can only be called on a RegExp object"_s);
+        return throwVMTypeError(callFrame, scope, "The RegExp.prototype.unicode getter can only be called on a RegExp object"_s);
     }
     
     return JSValue::encode(jsBoolean(regexp->regExp()->unicode()));
 }
 
-EncodedJSValue JSC_HOST_CALL regExpProtoGetterFlags(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL regExpProtoGetterFlags(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = exec->thisValue();
+    JSValue thisValue = callFrame->thisValue();
     if (UNLIKELY(!thisValue.isObject()))
-        return throwVMTypeError(exec, scope, "The RegExp.prototype.flags getter can only be called on an object"_s);
+        return throwVMTypeError(callFrame, scope, "The RegExp.prototype.flags getter can only be called on an object"_s);
 
-    auto flags = flagsString(exec, asObject(thisValue));
+    auto flags = flagsString(callFrame, asObject(thisValue));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     return JSValue::encode(jsString(vm, flags.data()));
@@ -454,37 +454,36 @@ static inline JSValue regExpProtoGetterSourceInternal(ExecState* exec, const Str
     return jsString(vm, result.toString());
 }
 
-EncodedJSValue JSC_HOST_CALL regExpProtoGetterSource(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL regExpProtoGetterSource(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = exec->thisValue();
+    JSValue thisValue = callFrame->thisValue();
     auto* regexp = jsDynamicCast<RegExpObject*>(vm, thisValue);
     if (UNLIKELY(!regexp)) {
         if (thisValue.inherits<RegExpPrototype>(vm))
             return JSValue::encode(jsString(vm, "(?:)"_s));
-        return throwVMTypeError(exec, scope, "The RegExp.prototype.source getter can only be called on a RegExp object"_s);
+        return throwVMTypeError(callFrame, scope, "The RegExp.prototype.source getter can only be called on a RegExp object"_s);
     }
 
     String pattern = regexp->regExp()->pattern();
     if (pattern.is8Bit())
-        return JSValue::encode(regExpProtoGetterSourceInternal(exec, pattern, pattern.characters8(), pattern.length()));
-    return JSValue::encode(regExpProtoGetterSourceInternal(exec, pattern, pattern.characters16(), pattern.length()));
+        return JSValue::encode(regExpProtoGetterSourceInternal(callFrame, pattern, pattern.characters8(), pattern.length()));
+    return JSValue::encode(regExpProtoGetterSourceInternal(callFrame, pattern, pattern.characters16(), pattern.length()));
 }
 
-EncodedJSValue JSC_HOST_CALL regExpProtoFuncSearchFast(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL regExpProtoFuncSearchFast(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue thisValue = exec->thisValue();
+    JSValue thisValue = callFrame->thisValue();
     RegExp* regExp = jsCast<RegExpObject*>(thisValue)->regExp();
 
-    JSString* string = exec->uncheckedArgument(0).toString(exec);
-    String s = string->value(exec);
+    JSString* string = callFrame->uncheckedArgument(0).toString(callFrame);
+    String s = string->value(callFrame);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     MatchResult result = globalObject->regExpGlobalData().performMatch(vm, globalObject, regExp, string, s, 0);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(result ? jsNumber(result.start) : jsNumber(-1));
@@ -578,19 +577,19 @@ void genericSplit(
 }
 
 // ES 21.2.5.11 RegExp.prototype[@@split](string, limit)
-EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 1. [handled by JS builtin] Let rx be the this value.
     // 2. [handled by JS builtin] If Type(rx) is not Object, throw a TypeError exception.
-    JSValue thisValue = exec->thisValue();
+    JSValue thisValue = callFrame->thisValue();
     RegExp* regexp = jsCast<RegExpObject*>(thisValue)->regExp();
 
     // 3. [handled by JS builtin] Let S be ? ToString(string).
-    JSString* inputString = exec->argument(0).toString(exec);
-    String input = inputString->value(exec);
+    JSString* inputString = callFrame->argument(0).toString(callFrame);
+    String input = inputString->value(callFrame);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     ASSERT(!input.isNull());
 
@@ -604,13 +603,13 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
 
     // 11. Let A be ArrayCreate(0).
     // 12. Let lengthA be 0.
-    JSArray* result = constructEmptyArray(exec, 0);
+    JSArray* result = constructEmptyArray(callFrame, 0);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     unsigned resultLength = 0;
 
     // 13. If limit is undefined, let lim be 2^32-1; else let lim be ? ToUint32(limit).
-    JSValue limitValue = exec->argument(1);
-    unsigned limit = limitValue.isUndefined() ? 0xFFFFFFFFu : limitValue.toUInt32(exec);
+    JSValue limitValue = callFrame->argument(1);
+    unsigned limit = limitValue.isUndefined() ? 0xFFFFFFFFu : limitValue.toUInt32(callFrame);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 14. Let size be the number of elements in S.
@@ -630,7 +629,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
         // c. Perform ! CreateDataProperty(A, "0", S).
         // d. Return A.
         if (!regexp->match(vm, input, 0)) {
-            result->putDirectIndex(exec, 0, inputString);
+            result->putDirectIndex(callFrame, 0, inputString);
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
         }
         return JSValue::encode(result);
@@ -652,7 +651,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
             return ContinueSplit;
         },
         [&] (bool isDefined, unsigned start, unsigned length) -> SplitControl {
-            result->putDirectIndex(exec, resultLength++, isDefined ? jsSubstringOfResolved(vm, inputString, start, length) : jsUndefined());
+            result->putDirectIndex(callFrame, resultLength++, isDefined ? jsSubstringOfResolved(vm, inputString, start, length) : jsUndefined());
             RETURN_IF_EXCEPTION(scope, AbortSplit);
             if (resultLength >= limit)
                 return AbortSplit;
@@ -666,7 +665,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
         // 20. Let T be a String value equal to the substring of S consisting of the elements at indices p (inclusive) through size (exclusive).
         // 21. Perform ! CreateDataProperty(A, ! ToString(lengthA), T).
         scope.release();
-        result->putDirectIndex(exec, resultLength, jsSubstringOfResolved(vm, inputString, position, inputSize - position));
+        result->putDirectIndex(callFrame, resultLength, jsSubstringOfResolved(vm, inputString, position, inputSize - position));
         
         // 22. Return A.
         return JSValue::encode(result);
@@ -691,7 +690,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
         });
     
     if (resultLength + dryRunCount > MAX_STORAGE_VECTOR_LENGTH) {
-        throwOutOfMemoryError(exec, scope);
+        throwOutOfMemoryError(callFrame, scope);
         return encodedJSValue();
     }
     
@@ -705,7 +704,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
             return ContinueSplit;
         },
         [&] (bool isDefined, unsigned start, unsigned length) -> SplitControl {
-            result->putDirectIndex(exec, resultLength++, isDefined ? jsSubstringOfResolved(vm, inputString, start, length) : jsUndefined());
+            result->putDirectIndex(callFrame, resultLength++, isDefined ? jsSubstringOfResolved(vm, inputString, start, length) : jsUndefined());
             RETURN_IF_EXCEPTION(scope, AbortSplit);
             if (resultLength >= limit)
                 return AbortSplit;
@@ -719,7 +718,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
     // 20. Let T be a String value equal to the substring of S consisting of the elements at indices p (inclusive) through size (exclusive).
     // 21. Perform ! CreateDataProperty(A, ! ToString(lengthA), T).
     scope.release();
-    result->putDirectIndex(exec, resultLength, jsSubstringOfResolved(vm, inputString, position, inputSize - position));
+    result->putDirectIndex(callFrame, resultLength, jsSubstringOfResolved(vm, inputString, position, inputSize - position));
     // 22. Return A.
     return JSValue::encode(result);
 }

@@ -33,12 +33,13 @@
 
 namespace JSC {
 
-class ExecState;
+class CallFrame;
 class VM;
 class JSGlobalObject;
 class JSObject;
 class SourceCode;
 class Structure;
+using ExecState = CallFrame;
 
 // ExecState wrappers.
 JSObject* createError(ExecState*, const String&, ErrorInstance::SourceAppender);

@@ -41,9 +41,9 @@ namespace WebCore {
 
 using namespace JSC;
 
-EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState& exec)
+EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(JSGlobalObject* globalObject, ExecState& exec)
 {
-    VM& vm = exec.vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto* jsConstructor = jsCast<JSDOMConstructorBase*>(exec.jsCallee());
@@ -56,8 +56,8 @@ EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState& exec)
 
     JSValue newTargetValue = exec.thisValue();
     auto* newTarget = newTargetValue.getObject();
-    auto* globalObject = jsCast<JSDOMGlobalObject*>(newTarget->globalObject(vm));
-    JSValue htmlElementConstructorValue = JSHTMLElement::getConstructor(vm, globalObject);
+    auto* newTargetGlobalObject = jsCast<JSDOMGlobalObject*>(newTarget->globalObject(vm));
+    JSValue htmlElementConstructorValue = JSHTMLElement::getConstructor(vm, newTargetGlobalObject);
     if (newTargetValue == htmlElementConstructorValue)
         return throwVMTypeError(&exec, scope, "new.target is not a valid custom element constructor"_s);
 
@@ -76,14 +76,14 @@ EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState& exec)
         return throwVMTypeError(&exec, scope, "new.target does not define a custom element"_s);
 
     if (!elementInterface->isUpgradingElement()) {
-        Structure* baseStructure = getDOMStructure<JSHTMLElement>(vm, *globalObject);
+        Structure* baseStructure = getDOMStructure<JSHTMLElement>(vm, *newTargetGlobalObject);
         auto* newElementStructure = InternalFunction::createSubclassStructure(&exec, newTargetValue, baseStructure);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
         Ref<HTMLElement> element = HTMLElement::create(elementInterface->name(), document);
         element->setIsDefinedCustomElement(*elementInterface);
-        auto* jsElement = JSHTMLElement::create(newElementStructure, globalObject, element.get());
-        cacheWrapper(globalObject->world(), element.ptr(), jsElement);
+        auto* jsElement = JSHTMLElement::create(newElementStructure, newTargetGlobalObject, element.get());
+        cacheWrapper(newTargetGlobalObject->world(), element.ptr(), jsElement);
         return JSValue::encode(jsElement);
     }
 

@@ -36,8 +36,8 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL IntlPluralRulesPrototypeFuncSelect(ExecState*);
-static EncodedJSValue JSC_HOST_CALL IntlPluralRulesPrototypeFuncResolvedOptions(ExecState*);
+static EncodedJSValue JSC_HOST_CALL IntlPluralRulesPrototypeFuncSelect(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL IntlPluralRulesPrototypeFuncResolvedOptions(JSGlobalObject*, CallFrame*);
 
 }
 
@@ -78,37 +78,37 @@ void IntlPluralRulesPrototype::finishCreation(VM& vm, Structure*)
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(vm, "Object"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 
-EncodedJSValue JSC_HOST_CALL IntlPluralRulesPrototypeFuncSelect(ExecState* state)
+EncodedJSValue JSC_HOST_CALL IntlPluralRulesPrototypeFuncSelect(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 13.4.3 Intl.PluralRules.prototype.select (value)
     // https://tc39.github.io/ecma402/#sec-intl.pluralrules.prototype.select
-    IntlPluralRules* pluralRules = jsDynamicCast<IntlPluralRules*>(vm, state->thisValue());
+    IntlPluralRules* pluralRules = jsDynamicCast<IntlPluralRules*>(vm, callFrame->thisValue());
 
     if (!pluralRules)
-        return JSValue::encode(throwTypeError(state, scope, "Intl.PluralRules.prototype.select called on value that's not an object initialized as a PluralRules"_s));
+        return JSValue::encode(throwTypeError(callFrame, scope, "Intl.PluralRules.prototype.select called on value that's not an object initialized as a PluralRules"_s));
 
-    double value = state->argument(0).toNumber(state);
+    double value = callFrame->argument(0).toNumber(callFrame);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(pluralRules->select(*state, value)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(pluralRules->select(*callFrame, value)));
 }
 
-EncodedJSValue JSC_HOST_CALL IntlPluralRulesPrototypeFuncResolvedOptions(ExecState* state)
+EncodedJSValue JSC_HOST_CALL IntlPluralRulesPrototypeFuncResolvedOptions(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 13.4.4 Intl.PluralRules.prototype.resolvedOptions ()
     // https://tc39.github.io/ecma402/#sec-intl.pluralrules.prototype.resolvedoptions
-    IntlPluralRules* pluralRules = jsDynamicCast<IntlPluralRules*>(vm, state->thisValue());
+    IntlPluralRules* pluralRules = jsDynamicCast<IntlPluralRules*>(vm, callFrame->thisValue());
 
     if (!pluralRules)
-        return JSValue::encode(throwTypeError(state, scope, "Intl.PluralRules.prototype.resolvedOptions called on value that's not an object initialized as a PluralRules"_s));
+        return JSValue::encode(throwTypeError(callFrame, scope, "Intl.PluralRules.prototype.resolvedOptions called on value that's not an object initialized as a PluralRules"_s));
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(pluralRules->resolvedOptions(*state)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(pluralRules->resolvedOptions(*callFrame)));
 }
 
 } // namespace JSC

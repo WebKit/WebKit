@@ -33,8 +33,9 @@
 
 namespace JSC {
 
-class ExecState;
+class CallFrame;
 class VM;
+using ExecState = CallFrame;
 
 class Watchdog : public WTF::ThreadSafeRefCounted<Watchdog> {
     WTF_MAKE_FAST_ALLOCATED;

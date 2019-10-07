@@ -50,10 +50,10 @@ protected:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
-EncodedJSValue JSC_HOST_CALL arrayProtoFuncSpeciesCreate(ExecState*);
-EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState*);
-EncodedJSValue JSC_HOST_CALL arrayProtoFuncValues(ExecState*);
-EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState*);
-EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncAppendMemcpy(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncSpeciesCreate(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncValues(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncAppendMemcpy(JSGlobalObject*, CallFrame*);
 
 } // namespace JSC

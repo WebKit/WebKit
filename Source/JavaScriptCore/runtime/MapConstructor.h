@@ -56,9 +56,9 @@ private:
     void finishCreation(VM&, MapPrototype*, GetterSetter* speciesSymbol);
 };
 
-EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketHead(ExecState*);
-EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketNext(ExecState*);
-EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketKey(ExecState*);
-EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketValue(ExecState*);
+EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketHead(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketNext(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketKey(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketValue(JSGlobalObject*, CallFrame*);
 
 } // namespace JSC

@@ -102,13 +102,13 @@ namespace JSC {
 
 class BuiltinExecutables;
 class BytecodeIntrinsicRegistry;
+class CallFrame;
 class CodeBlock;
 class CodeCache;
 class CommonIdentifiers;
 class CompactVariableMap;
 class CustomGetterSetter;
 class DOMAttributeGetterSetter;
-class ExecState;
 class Exception;
 class ExceptionScope;
 class FastMallocAlignedMemoryAllocator;
@@ -180,7 +180,7 @@ struct HashTable;
 struct Instruction;
 struct ValueProfile;
 
-typedef ExecState CallFrame;
+using ExecState = CallFrame;
 
 struct LocalTimeOffsetCache {
     LocalTimeOffsetCache()

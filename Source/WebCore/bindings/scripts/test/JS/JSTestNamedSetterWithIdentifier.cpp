@@ -42,7 +42,7 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedSetterWithIdentifierPrototypeFunctionNamedSetter(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedSetterWithIdentifierPrototypeFunctionNamedSetter(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -298,8 +298,9 @@ static inline JSC::EncodedJSValue jsTestNamedSetterWithIdentifierPrototypeFuncti
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestNamedSetterWithIdentifierPrototypeFunctionNamedSetter(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestNamedSetterWithIdentifierPrototypeFunctionNamedSetter(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestNamedSetterWithIdentifier>::call<jsTestNamedSetterWithIdentifierPrototypeFunctionNamedSetterBody>(*state, "namedSetter");
 }
 

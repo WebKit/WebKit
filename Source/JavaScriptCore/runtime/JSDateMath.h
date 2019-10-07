@@ -47,8 +47,9 @@
 
 namespace JSC {
 
-class ExecState;
+class CallFrame;
 class VM;
+using ExecState = CallFrame;
 
 JS_EXPORT_PRIVATE void msToGregorianDateTime(VM&, double, WTF::TimeType outputTimeType, GregorianDateTime&);
 JS_EXPORT_PRIVATE double gregorianDateTimeToMS(VM&, const GregorianDateTime&, double, WTF::TimeType inputTimeType);

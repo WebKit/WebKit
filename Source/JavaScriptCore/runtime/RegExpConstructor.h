@@ -75,6 +75,6 @@ ALWAYS_INLINE bool isRegExp(VM& vm, ExecState* exec, JSValue value)
     return object->inherits<RegExpObject>(vm);
 }
 
-EncodedJSValue JSC_HOST_CALL esSpecRegExpCreate(ExecState*);
+EncodedJSValue JSC_HOST_CALL esSpecRegExpCreate(JSGlobalObject*, CallFrame*);
 
 } // namespace JSC

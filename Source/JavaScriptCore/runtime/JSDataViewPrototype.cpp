@@ -61,25 +61,25 @@ namespace JSC {
 @end
 */
 
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt8(ExecState*);
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt16(ExecState*);
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt32(ExecState*);
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint8(ExecState*);
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint16(ExecState*);
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint32(ExecState*);
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetFloat32(ExecState*);
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetFloat64(ExecState*);
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt8(ExecState*);
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt16(ExecState*);
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt32(ExecState*);
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint8(ExecState*);
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint16(ExecState*);
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint32(ExecState*);
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetFloat32(ExecState*);
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetFloat64(ExecState*);
-EncodedJSValue JSC_HOST_CALL dataViewProtoGetterBuffer(ExecState*);
-EncodedJSValue JSC_HOST_CALL dataViewProtoGetterByteLength(ExecState*);
-EncodedJSValue JSC_HOST_CALL dataViewProtoGetterByteOffset(ExecState*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt8(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt16(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt32(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint8(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint16(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint32(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetFloat32(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetFloat64(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt8(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt16(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt32(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint8(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint16(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint32(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetFloat32(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetFloat64(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoGetterBuffer(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoGetterByteLength(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoGetterByteOffset(JSGlobalObject*, CallFrame*);
 
 }
 
@@ -120,9 +120,9 @@ Structure* JSDataViewPrototype::createStructure(
 }
 
 template<typename Adaptor>
-EncodedJSValue getData(ExecState* exec)
+EncodedJSValue getData(JSGlobalObject* globalObject, ExecState* exec)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSDataView* dataView = jsDynamicCast<JSDataView*>(vm, exec->thisValue());
@@ -163,9 +163,9 @@ EncodedJSValue getData(ExecState* exec)
 }
 
 template<typename Adaptor>
-EncodedJSValue setData(ExecState* exec)
+EncodedJSValue setData(JSGlobalObject* globalObject, ExecState* exec)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSDataView* dataView = jsDynamicCast<JSDataView*>(vm, exec->thisValue());
@@ -210,120 +210,120 @@ EncodedJSValue setData(ExecState* exec)
 
 IGNORE_CLANG_WARNINGS_BEGIN("missing-prototypes")
 
-EncodedJSValue JSC_HOST_CALL dataViewProtoGetterBuffer(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoGetterBuffer(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSDataView* view = jsDynamicCast<JSDataView*>(vm, exec->thisValue());
+    JSDataView* view = jsDynamicCast<JSDataView*>(vm, callFrame->thisValue());
     if (!view)
-        return throwVMTypeError(exec, scope, "DataView.prototype.buffer expects |this| to be a DataView object");
+        return throwVMTypeError(callFrame, scope, "DataView.prototype.buffer expects |this| to be a DataView object");
 
-    return JSValue::encode(view->possiblySharedJSBuffer(exec));
+    return JSValue::encode(view->possiblySharedJSBuffer(callFrame));
 }
 
-EncodedJSValue JSC_HOST_CALL dataViewProtoGetterByteLength(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoGetterByteLength(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSDataView* view = jsDynamicCast<JSDataView*>(vm, exec->thisValue());
+    JSDataView* view = jsDynamicCast<JSDataView*>(vm, callFrame->thisValue());
     if (!view)
-        return throwVMTypeError(exec, scope, "DataView.prototype.buffer expects |this| to be a DataView object");
+        return throwVMTypeError(callFrame, scope, "DataView.prototype.buffer expects |this| to be a DataView object");
 
     return JSValue::encode(jsNumber(view->length()));
 }
 
-EncodedJSValue JSC_HOST_CALL dataViewProtoGetterByteOffset(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoGetterByteOffset(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSDataView* view = jsDynamicCast<JSDataView*>(vm, exec->thisValue());
+    JSDataView* view = jsDynamicCast<JSDataView*>(vm, callFrame->thisValue());
     if (!view)
-        return throwVMTypeError(exec, scope, "DataView.prototype.buffer expects |this| to be a DataView object");
+        return throwVMTypeError(callFrame, scope, "DataView.prototype.buffer expects |this| to be a DataView object");
 
     return JSValue::encode(jsNumber(view->byteOffset()));
 }
 
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt8(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt8(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return getData<Int8Adaptor>(exec);
+    return getData<Int8Adaptor>(globalObject, callFrame);
 }
 
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt16(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt16(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return getData<Int16Adaptor>(exec);
+    return getData<Int16Adaptor>(globalObject, callFrame);
 }
 
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt32(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt32(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return getData<Int32Adaptor>(exec);
+    return getData<Int32Adaptor>(globalObject, callFrame);
 }
 
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint8(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint8(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return getData<Uint8Adaptor>(exec);
+    return getData<Uint8Adaptor>(globalObject, callFrame);
 }
 
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint16(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint16(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return getData<Uint16Adaptor>(exec);
+    return getData<Uint16Adaptor>(globalObject, callFrame);
 }
 
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint32(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint32(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return getData<Uint32Adaptor>(exec);
+    return getData<Uint32Adaptor>(globalObject, callFrame);
 }
 
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetFloat32(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetFloat32(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return getData<Float32Adaptor>(exec);
+    return getData<Float32Adaptor>(globalObject, callFrame);
 }
 
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetFloat64(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetFloat64(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return getData<Float64Adaptor>(exec);
+    return getData<Float64Adaptor>(globalObject, callFrame);
 }
 
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt8(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt8(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return setData<Int8Adaptor>(exec);
+    return setData<Int8Adaptor>(globalObject, callFrame);
 }
 
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt16(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt16(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return setData<Int16Adaptor>(exec);
+    return setData<Int16Adaptor>(globalObject, callFrame);
 }
 
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt32(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt32(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return setData<Int32Adaptor>(exec);
+    return setData<Int32Adaptor>(globalObject, callFrame);
 }
 
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint8(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint8(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return setData<Uint8Adaptor>(exec);
+    return setData<Uint8Adaptor>(globalObject, callFrame);
 }
 
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint16(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint16(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return setData<Uint16Adaptor>(exec);
+    return setData<Uint16Adaptor>(globalObject, callFrame);
 }
 
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint32(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint32(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return setData<Uint32Adaptor>(exec);
+    return setData<Uint32Adaptor>(globalObject, callFrame);
 }
 
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetFloat32(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetFloat32(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return setData<Float32Adaptor>(exec);
+    return setData<Float32Adaptor>(globalObject, callFrame);
 }
 
-EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetFloat64(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetFloat64(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return setData<Float64Adaptor>(exec);
+    return setData<Float64Adaptor>(globalObject, callFrame);
 }
 IGNORE_CLANG_WARNINGS_END
 

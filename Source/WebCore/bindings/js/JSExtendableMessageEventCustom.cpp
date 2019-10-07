@@ -36,9 +36,9 @@ namespace WebCore {
 
 using namespace JSC;
 
-JSC::EncodedJSValue constructJSExtendableMessageEvent(JSC::ExecState& state)
+JSC::EncodedJSValue constructJSExtendableMessageEvent(JSC::JSGlobalObject* globalObject, JSC::ExecState& state)
 {
-    VM& vm = state.vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
 

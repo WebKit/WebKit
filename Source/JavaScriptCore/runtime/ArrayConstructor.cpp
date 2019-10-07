@@ -50,8 +50,8 @@ const ClassInfo ArrayConstructor::s_info = { "Function", &InternalFunction::s_in
 @end
 */
 
-static EncodedJSValue JSC_HOST_CALL callArrayConstructor(ExecState*);
-static EncodedJSValue JSC_HOST_CALL constructWithArrayConstructor(ExecState*);
+static EncodedJSValue JSC_HOST_CALL callArrayConstructor(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL constructWithArrayConstructor(JSGlobalObject*, CallFrame*);
 
 ArrayConstructor::ArrayConstructor(VM& vm, Structure* structure)
     : InternalFunction(vm, structure, callArrayConstructor, constructWithArrayConstructor)
@@ -84,11 +84,8 @@ JSArray* constructArrayWithSizeQuirk(ExecState* exec, ArrayAllocationProfile* pr
     RELEASE_AND_RETURN(scope, constructEmptyArray(exec, profile, globalObject, n, newTarget));
 }
 
-static inline JSArray* constructArrayWithSizeQuirk(ExecState* exec, const ArgList& args, JSValue newTarget)
+static inline JSArray* constructArrayWithSizeQuirk(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args, JSValue newTarget)
 {
-    VM& vm = exec->vm();
-    JSGlobalObject* globalObject = jsCast<InternalFunction*>(exec->jsCallee())->globalObject(vm);
-
     // a single numeric argument denotes the array size (!)
     if (args.size() == 1)
         return constructArrayWithSizeQuirk(exec, nullptr, globalObject, args.at(0), newTarget);
@@ -97,16 +94,16 @@ static inline JSArray* constructArrayWithSizeQuirk(ExecState* exec, const ArgLis
     return constructArray(exec, nullptr, globalObject, args, newTarget);
 }
 
-static EncodedJSValue JSC_HOST_CALL constructWithArrayConstructor(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL constructWithArrayConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    ArgList args(exec);
-    return JSValue::encode(constructArrayWithSizeQuirk(exec, args, exec->newTarget()));
+    ArgList args(callFrame);
+    return JSValue::encode(constructArrayWithSizeQuirk(callFrame, globalObject, args, callFrame->newTarget()));
 }
 
-static EncodedJSValue JSC_HOST_CALL callArrayConstructor(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callArrayConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    ArgList args(exec);
-    return JSValue::encode(constructArrayWithSizeQuirk(exec, args, JSValue()));
+    ArgList args(callFrame);
+    return JSValue::encode(constructArrayWithSizeQuirk(callFrame, globalObject, args, JSValue()));
 }
 
 static ALWAYS_INLINE bool isArraySlowInline(ExecState* exec, ProxyObject* proxy)
@@ -140,10 +137,10 @@ bool isArraySlow(ExecState* exec, ProxyObject* argument)
 
 // ES6 7.2.2
 // https://tc39.github.io/ecma262/#sec-isarray
-EncodedJSValue JSC_HOST_CALL arrayConstructorPrivateFuncIsArraySlow(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL arrayConstructorPrivateFuncIsArraySlow(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    ASSERT(jsDynamicCast<ProxyObject*>(exec->vm(), exec->argument(0)));
-    return JSValue::encode(jsBoolean(isArraySlowInline(exec, jsCast<ProxyObject*>(exec->uncheckedArgument(0)))));
+    ASSERT_UNUSED(globalObject, jsDynamicCast<ProxyObject*>(globalObject->vm(), callFrame->argument(0)));
+    return JSValue::encode(jsBoolean(isArraySlowInline(callFrame, jsCast<ProxyObject*>(callFrame->uncheckedArgument(0)))));
 }
 
 } // namespace JSC

@@ -31,10 +31,11 @@
 #include <wtf/TypeCasts.h>
 
 namespace JSC {
-class ExecState;
+class CallFrame;
 class JSObject;
 class JSValue;
 template<typename> class Strong;
+using ExecState = CallFrame;
 }
 
 namespace WebCore {

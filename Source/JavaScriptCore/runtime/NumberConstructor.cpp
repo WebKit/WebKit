@@ -31,8 +31,8 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL numberConstructorFuncIsInteger(ExecState*);
-static EncodedJSValue JSC_HOST_CALL numberConstructorFuncIsSafeInteger(ExecState*);
+static EncodedJSValue JSC_HOST_CALL numberConstructorFuncIsInteger(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL numberConstructorFuncIsSafeInteger(JSGlobalObject*, CallFrame*);
 
 } // namespace JSC
 
@@ -52,8 +52,8 @@ const ClassInfo NumberConstructor::s_info = { "Function", &InternalFunction::s_i
 @end
 */
 
-static EncodedJSValue JSC_HOST_CALL callNumberConstructor(ExecState*);
-static EncodedJSValue JSC_HOST_CALL constructNumberConstructor(ExecState*);
+static EncodedJSValue JSC_HOST_CALL callNumberConstructor(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL constructNumberConstructor(JSGlobalObject*, CallFrame*);
 
 NumberConstructor::NumberConstructor(VM& vm, Structure* structure)
     : InternalFunction(vm, structure, callNumberConstructor, constructNumberConstructor)
@@ -86,13 +86,13 @@ void NumberConstructor::finishCreation(VM& vm, NumberPrototype* numberPrototype)
 }
 
 // ECMA 15.7.1
-static EncodedJSValue JSC_HOST_CALL constructNumberConstructor(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL constructNumberConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    double n = exec->argumentCount() ? exec->uncheckedArgument(0).toNumber(exec) : 0;
+    double n = callFrame->argumentCount() ? callFrame->uncheckedArgument(0).toNumber(callFrame) : 0;
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    Structure* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), exec->lexicalGlobalObject()->numberObjectStructure());
+    Structure* structure = InternalFunction::createSubclassStructure(callFrame, callFrame->newTarget(), globalObject->numberObjectStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     NumberObject* object = NumberObject::create(vm, structure);
@@ -101,21 +101,21 @@ static EncodedJSValue JSC_HOST_CALL constructNumberConstructor(ExecState* exec)
 }
 
 // ECMA 15.7.2
-static EncodedJSValue JSC_HOST_CALL callNumberConstructor(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callNumberConstructor(JSGlobalObject*, CallFrame* callFrame)
 {
-    return JSValue::encode(jsNumber(!exec->argumentCount() ? 0 : exec->uncheckedArgument(0).toNumber(exec)));
+    return JSValue::encode(jsNumber(!callFrame->argumentCount() ? 0 : callFrame->uncheckedArgument(0).toNumber(callFrame)));
 }
 
 // ECMA-262 20.1.2.3
-static EncodedJSValue JSC_HOST_CALL numberConstructorFuncIsInteger(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL numberConstructorFuncIsInteger(JSGlobalObject*, CallFrame* callFrame)
 {
-    return JSValue::encode(jsBoolean(NumberConstructor::isIntegerImpl(exec->argument(0))));
+    return JSValue::encode(jsBoolean(NumberConstructor::isIntegerImpl(callFrame->argument(0))));
 }
 
 // ECMA-262 20.1.2.5
-static EncodedJSValue JSC_HOST_CALL numberConstructorFuncIsSafeInteger(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL numberConstructorFuncIsSafeInteger(JSGlobalObject*, CallFrame* callFrame)
 {
-    JSValue argument = exec->argument(0);
+    JSValue argument = callFrame->argument(0);
     bool isInteger;
     if (argument.isInt32())
         isInteger = true;

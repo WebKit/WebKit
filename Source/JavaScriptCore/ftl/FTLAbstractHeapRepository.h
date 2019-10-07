@@ -81,6 +81,7 @@ namespace JSC { namespace FTL {
     macro(JSCell_usefulBytes, JSCell::indexingTypeAndMiscOffset()) \
     macro(JSDestructibleObject_classInfo, JSDestructibleObject::classInfoOffset()) \
     macro(JSFunction_executable, JSFunction::offsetOfExecutable()) \
+    macro(JSFunction_globalObject, JSFunction::offsetOfGlobalObject()) \
     macro(JSFunction_scope, JSFunction::offsetOfScopeChain()) \
     macro(JSFunction_rareData, JSFunction::offsetOfRareData()) \
     macro(JSGlobalObject_regExpGlobalData_cachedResult_lastRegExp, JSGlobalObject::regExpGlobalDataOffset() + RegExpGlobalData::offsetOfCachedResult() + RegExpCachedResult::offsetOfLastRegExp()) \

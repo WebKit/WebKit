@@ -36,16 +36,16 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(GeneratorFunctionConstructor);
 
 const ClassInfo GeneratorFunctionConstructor::s_info = { "GeneratorFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(GeneratorFunctionConstructor) };
 
-static EncodedJSValue JSC_HOST_CALL callGeneratorFunctionConstructor(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callGeneratorFunctionConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    ArgList args(exec);
-    return JSValue::encode(constructFunction(exec, jsCast<InternalFunction*>(exec->jsCallee())->globalObject(exec->vm()), args, FunctionConstructionMode::Generator));
+    ArgList args(callFrame);
+    return JSValue::encode(constructFunction(callFrame, globalObject, args, FunctionConstructionMode::Generator));
 }
 
-static EncodedJSValue JSC_HOST_CALL constructGeneratorFunctionConstructor(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL constructGeneratorFunctionConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    ArgList args(exec);
-    return JSValue::encode(constructFunction(exec, jsCast<InternalFunction*>(exec->jsCallee())->globalObject(exec->vm()), args, FunctionConstructionMode::Generator, exec->newTarget()));
+    ArgList args(callFrame);
+    return JSValue::encode(constructFunction(callFrame, globalObject, args, FunctionConstructionMode::Generator, callFrame->newTarget()));
 }
 
 GeneratorFunctionConstructor::GeneratorFunctionConstructor(VM& vm, Structure* structure)

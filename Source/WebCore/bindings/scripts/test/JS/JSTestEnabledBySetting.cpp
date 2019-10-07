@@ -50,7 +50,7 @@ using namespace JSC;
 // Functions
 
 #if ENABLE(TEST_FEATURE)
-JSC::EncodedJSValue JSC_HOST_CALL jsTestEnabledBySettingPrototypeFunctionEnabledBySettingOperation(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestEnabledBySettingPrototypeFunctionEnabledBySettingOperation(JSC::JSGlobalObject*, JSC::CallFrame*);
 #endif
 
 // Attributes
@@ -297,8 +297,9 @@ static inline JSC::EncodedJSValue jsTestEnabledBySettingPrototypeFunctionEnabled
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestEnabledBySettingPrototypeFunctionEnabledBySettingOperation(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestEnabledBySettingPrototypeFunctionEnabledBySettingOperation(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestEnabledBySetting>::call<jsTestEnabledBySettingPrototypeFunctionEnabledBySettingOperationBody>(*state, "enabledBySettingOperation");
 }
 

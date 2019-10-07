@@ -244,14 +244,14 @@ bool ObjcFallbackObjectImp::put(JSCell*, ExecState*, PropertyName, JSValue, PutP
     return false;
 }
 
-static EncodedJSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callObjCFallbackObject(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    JSC::VM& vm = exec->vm();
+    JSC::VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = exec->thisValue();
+    JSValue thisValue = callFrame->thisValue();
     if (!thisValue.inherits<ObjCRuntimeObject>(vm))
-        return throwVMTypeError(exec, scope);
+        return throwVMTypeError(callFrame, scope);
 
     JSValue result = jsUndefined();
 
@@ -259,7 +259,7 @@ static EncodedJSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec)
     ObjcInstance* objcInstance = runtimeObject->getInternalObjCInstance();
 
     if (!objcInstance)
-        return JSValue::encode(RuntimeObject::throwInvalidAccessError(exec, scope));
+        return JSValue::encode(RuntimeObject::throwInvalidAccessError(callFrame, scope));
     
     objcInstance->begin();
 
@@ -268,9 +268,9 @@ static EncodedJSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec)
     if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)]){
         ObjcClass* objcClass = static_cast<ObjcClass*>(objcInstance->getClass());
         std::unique_ptr<ObjcMethod> fallbackMethod(makeUnique<ObjcMethod>(objcClass->isa(), @selector(invokeUndefinedMethodFromWebScript:withArguments:)));
-        const String& nameIdentifier = static_cast<ObjcFallbackObjectImp*>(exec->jsCallee())->propertyName();
+        const String& nameIdentifier = static_cast<ObjcFallbackObjectImp*>(callFrame->jsCallee())->propertyName();
         fallbackMethod->setJavaScriptName(nameIdentifier.createCFString().get());
-        result = objcInstance->invokeObjcMethod(exec, fallbackMethod.get());
+        result = objcInstance->invokeObjcMethod(callFrame, fallbackMethod.get());
     }
             
     objcInstance->end();

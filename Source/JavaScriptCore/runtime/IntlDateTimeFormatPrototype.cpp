@@ -41,11 +41,11 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(ExecState*);
+static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(JSGlobalObject*, CallFrame*);
 #if JSC_ICU_HAS_UFIELDPOSITER
-static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncFormatToParts(ExecState*);
+static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncFormatToParts(JSGlobalObject*, CallFrame*);
 #endif
-static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncResolvedOptions(ExecState*);
+static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncResolvedOptions(JSGlobalObject*, CallFrame*);
 
 }
 
@@ -92,48 +92,48 @@ void IntlDateTimeFormatPrototype::finishCreation(VM& vm, JSGlobalObject* globalO
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(vm, "Object"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 
-static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatFuncFormatDateTime(ExecState* state)
+static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatFuncFormatDateTime(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     // 12.1.7 DateTime Format Functions (ECMA-402)
     // https://tc39.github.io/ecma402/#sec-formatdatetime
 
-    IntlDateTimeFormat* format = jsCast<IntlDateTimeFormat*>(state->thisValue());
+    IntlDateTimeFormat* format = jsCast<IntlDateTimeFormat*>(callFrame->thisValue());
 
-    JSValue date = state->argument(0);
+    JSValue date = callFrame->argument(0);
     double value;
 
     if (date.isUndefined())
-        value = JSValue::decode(dateNow(state)).toNumber(state);
+        value = dateNowImpl().toNumber(callFrame);
     else {
-        value = WTF::timeClip(date.toNumber(state));
+        value = WTF::timeClip(date.toNumber(callFrame));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(format->format(*state, value)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(format->format(*callFrame, value)));
 }
 
-EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(ExecState* state)
+EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 12.3.3 Intl.DateTimeFormat.prototype.format (ECMA-402 2.0)
     // 1. Let dtf be this DateTimeFormat object.
-    IntlDateTimeFormat* dtf = jsDynamicCast<IntlDateTimeFormat*>(vm, state->thisValue());
+    IntlDateTimeFormat* dtf = jsDynamicCast<IntlDateTimeFormat*>(vm, callFrame->thisValue());
 
     // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
     // https://bugs.webkit.org/show_bug.cgi?id=153679
     if (!dtf) {
-        JSValue value = state->thisValue().get(state, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName());
+        JSValue value = callFrame->thisValue().get(callFrame, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName());
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         dtf = jsDynamicCast<IntlDateTimeFormat*>(vm, value);
     }
 
     // 2. ReturnIfAbrupt(dtf).
     if (!dtf)
-        return JSValue::encode(throwTypeError(state, scope, "Intl.DateTimeFormat.prototype.format called on value that's not an object initialized as a DateTimeFormat"_s));
+        return JSValue::encode(throwTypeError(callFrame, scope, "Intl.DateTimeFormat.prototype.format called on value that's not an object initialized as a DateTimeFormat"_s));
 
     JSBoundFunction* boundFormat = dtf->boundFormat();
     // 3. If the [[boundFormat]] internal slot of this DateTimeFormat object is undefined,
@@ -143,7 +143,7 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(ExecState* 
         // b. The value of F’s length property is 1. (Note: F’s length property was 0 in ECMA-402 1.0)
         JSFunction* targetObject = JSFunction::create(vm, globalObject, 1, "format"_s, IntlDateTimeFormatFuncFormatDateTime, NoIntrinsic);
         // c. Let bf be BoundFunctionCreate(F, «this value»).
-        boundFormat = JSBoundFunction::create(vm, state, globalObject, targetObject, dtf, nullptr, 1, "format"_s);
+        boundFormat = JSBoundFunction::create(vm, callFrame, globalObject, targetObject, dtf, nullptr, 1, "format"_s);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         // d. Set dtf.[[boundFormat]] to bf.
         dtf->setBoundFormat(vm, boundFormat);
@@ -153,52 +153,52 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(ExecState* 
 }
 
 #if JSC_ICU_HAS_UFIELDPOSITER
-EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncFormatToParts(ExecState* state)
+EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncFormatToParts(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 15.4 Intl.DateTimeFormat.prototype.formatToParts (ECMA-402 4.0)
     // https://tc39.github.io/ecma402/#sec-Intl.DateTimeFormat.prototype.formatToParts
 
-    IntlDateTimeFormat* dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(vm, state->thisValue());
+    IntlDateTimeFormat* dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(vm, callFrame->thisValue());
     if (!dateTimeFormat)
-        return JSValue::encode(throwTypeError(state, scope, "Intl.DateTimeFormat.prototype.formatToParts called on value that's not an object initialized as a DateTimeFormat"_s));
+        return JSValue::encode(throwTypeError(callFrame, scope, "Intl.DateTimeFormat.prototype.formatToParts called on value that's not an object initialized as a DateTimeFormat"_s));
 
-    JSValue date = state->argument(0);
+    JSValue date = callFrame->argument(0);
     double value;
 
     if (date.isUndefined())
-        value = JSValue::decode(dateNow(state)).toNumber(state);
+        value = dateNowImpl().toNumber(callFrame);
     else {
-        value = WTF::timeClip(date.toNumber(state));
+        value = WTF::timeClip(date.toNumber(callFrame));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatToParts(*state, value)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatToParts(*callFrame, value)));
 }
 #endif
 
-EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncResolvedOptions(ExecState* state)
+EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncResolvedOptions(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 12.3.5 Intl.DateTimeFormat.prototype.resolvedOptions() (ECMA-402 2.0)
-    IntlDateTimeFormat* dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(vm, state->thisValue());
+    IntlDateTimeFormat* dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(vm, callFrame->thisValue());
 
     // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
     // https://bugs.webkit.org/show_bug.cgi?id=153679
     if (!dateTimeFormat) {
-        JSValue value = state->thisValue().get(state, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName());
+        JSValue value = callFrame->thisValue().get(callFrame, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName());
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(vm, value);
     }
 
     if (!dateTimeFormat)
-        return JSValue::encode(throwTypeError(state, scope, "Intl.DateTimeFormat.prototype.resolvedOptions called on value that's not an object initialized as a DateTimeFormat"_s));
+        return JSValue::encode(throwTypeError(callFrame, scope, "Intl.DateTimeFormat.prototype.resolvedOptions called on value that's not an object initialized as a DateTimeFormat"_s));
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->resolvedOptions(*state)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->resolvedOptions(*callFrame)));
 }
 
 } // namespace JSC

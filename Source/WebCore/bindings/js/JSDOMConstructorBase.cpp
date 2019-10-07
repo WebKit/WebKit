@@ -29,11 +29,11 @@ using namespace JSC;
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSDOMConstructorBase);
 
-static EncodedJSValue JSC_HOST_CALL callThrowTypeError(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callThrowTypeError(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    throwTypeError(exec, scope, "Constructor requires 'new' operator"_s);
+    throwTypeError(callFrame, scope, "Constructor requires 'new' operator"_s);
     return JSValue::encode(jsNull());
 }
 

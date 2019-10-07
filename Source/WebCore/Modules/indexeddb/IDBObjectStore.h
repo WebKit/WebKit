@@ -34,9 +34,10 @@
 #include "IDBObjectStoreInfo.h"
 
 namespace JSC {
-class ExecState;
+class CallFrame;
 class JSValue;
 class SlotVisitor;
+using ExecState = CallFrame;
 }
 
 namespace WebCore {

@@ -37,7 +37,7 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL constructTypedArrayView(ExecState*);
+static EncodedJSValue JSC_HOST_CALL constructTypedArrayView(JSGlobalObject*, CallFrame*);
 
 JSTypedArrayViewConstructor::JSTypedArrayViewConstructor(VM& vm, Structure* structure)
     : Base(vm, structure, constructTypedArrayView, constructTypedArrayView)
@@ -65,11 +65,11 @@ Structure* JSTypedArrayViewConstructor::createStructure(
 
 
 
-static EncodedJSValue JSC_HOST_CALL constructTypedArrayView(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL constructTypedArrayView(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return throwVMTypeError(exec, scope, "%TypedArray% should not be called directly"_s);
+    return throwVMTypeError(callFrame, scope, "%TypedArray% should not be called directly"_s);
 }
 
 } // namespace JSC

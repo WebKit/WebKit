@@ -29,6 +29,6 @@
 
 namespace JSC {
 
-EncodedJSValue JSC_HOST_CALL esSpecIsConstructor(ExecState*);
+EncodedJSValue JSC_HOST_CALL esSpecIsConstructor(JSGlobalObject*, CallFrame*);
 
 } // namespace JSC

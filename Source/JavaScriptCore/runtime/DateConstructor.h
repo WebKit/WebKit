@@ -54,7 +54,6 @@ private:
 };
 
 JSObject* constructDate(ExecState*, JSGlobalObject*, JSValue newTarget, const ArgList&);
-
-EncodedJSValue JSC_HOST_CALL dateNow(ExecState*);
+JSValue dateNowImpl();
 
 } // namespace JSC

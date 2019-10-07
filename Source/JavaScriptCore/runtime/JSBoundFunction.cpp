@@ -35,13 +35,13 @@ namespace JSC {
 
 const ClassInfo JSBoundFunction::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSBoundFunction) };
 
-EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionCall(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionCall(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(exec->jsCallee());
+    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(callFrame->jsCallee());
 
     MarkedArgumentBuffer args;
-    for (unsigned i = 0; i < exec->argumentCount(); ++i)
-        args.append(exec->uncheckedArgument(i));
+    for (unsigned i = 0; i < callFrame->argumentCount(); ++i)
+        args.append(callFrame->uncheckedArgument(i));
     RELEASE_ASSERT(!args.hasOverflowed());
 
     JSFunction* targetFunction = jsCast<JSFunction*>(boundFunction->targetFunction());
@@ -51,16 +51,16 @@ EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionCall(ExecState* exec)
         executable->entrypointFor(CodeForCall, MustCheckArity);
     }
     CallData callData;
-    CallType callType = getCallData(exec->vm(), targetFunction, callData);
+    CallType callType = getCallData(globalObject->vm(), targetFunction, callData);
     ASSERT(callType != CallType::None);
-    return JSValue::encode(call(exec, targetFunction, callType, callData, boundFunction->boundThis(), args));
+    return JSValue::encode(call(callFrame, targetFunction, callType, callData, boundFunction->boundThis(), args));
 }
 
-EncodedJSValue JSC_HOST_CALL boundFunctionCall(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL boundFunctionCall(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(exec->jsCallee());
+    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(callFrame->jsCallee());
 
     JSArray* boundArgs = boundFunction->boundArgs();
 
@@ -69,10 +69,10 @@ EncodedJSValue JSC_HOST_CALL boundFunctionCall(ExecState* exec)
         for (unsigned i = 0; i < boundArgs->length(); ++i)
             args.append(boundArgs->getIndexQuickly(i));
     }
-    for (unsigned i = 0; i < exec->argumentCount(); ++i)
-        args.append(exec->uncheckedArgument(i));
+    for (unsigned i = 0; i < callFrame->argumentCount(); ++i)
+        args.append(callFrame->uncheckedArgument(i));
     if (UNLIKELY(args.hasOverflowed())) {
-        throwOutOfMemoryError(exec, scope);
+        throwOutOfMemoryError(callFrame, scope);
         return encodedJSValue();
     }
 
@@ -80,30 +80,30 @@ EncodedJSValue JSC_HOST_CALL boundFunctionCall(ExecState* exec)
     CallData callData;
     CallType callType = getCallData(vm, targetFunction, callData);
     ASSERT(callType != CallType::None);
-    RELEASE_AND_RETURN(scope, JSValue::encode(call(exec, targetFunction, callType, callData, boundFunction->boundThis(), args)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(call(callFrame, targetFunction, callType, callData, boundFunction->boundThis(), args)));
 }
 
-EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionConstruct(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionConstruct(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(exec->jsCallee());
+    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(callFrame->jsCallee());
 
     MarkedArgumentBuffer args;
-    for (unsigned i = 0; i < exec->argumentCount(); ++i)
-        args.append(exec->uncheckedArgument(i));
+    for (unsigned i = 0; i < callFrame->argumentCount(); ++i)
+        args.append(callFrame->uncheckedArgument(i));
     RELEASE_ASSERT(!args.hasOverflowed());
 
     JSFunction* targetFunction = jsCast<JSFunction*>(boundFunction->targetFunction());
     ConstructData constructData;
-    ConstructType constructType = getConstructData(exec->vm(), targetFunction, constructData);
+    ConstructType constructType = getConstructData(globalObject->vm(), targetFunction, constructData);
     ASSERT(constructType != ConstructType::None);
-    return JSValue::encode(construct(exec, targetFunction, constructType, constructData, args));
+    return JSValue::encode(construct(callFrame, targetFunction, constructType, constructData, args));
 }
 
-EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(exec->jsCallee());
+    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(callFrame->jsCallee());
 
     JSArray* boundArgs = boundFunction->boundArgs();
 
@@ -112,10 +112,10 @@ EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(ExecState* exec)
         for (unsigned i = 0; i < boundArgs->length(); ++i)
             args.append(boundArgs->getIndexQuickly(i));
     }
-    for (unsigned i = 0; i < exec->argumentCount(); ++i)
-        args.append(exec->uncheckedArgument(i));
+    for (unsigned i = 0; i < callFrame->argumentCount(); ++i)
+        args.append(callFrame->uncheckedArgument(i));
     if (UNLIKELY(args.hasOverflowed())) {
-        throwOutOfMemoryError(exec, scope);
+        throwOutOfMemoryError(callFrame, scope);
         return encodedJSValue();
     }
 
@@ -123,20 +123,20 @@ EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(ExecState* exec)
     ConstructData constructData;
     ConstructType constructType = getConstructData(vm, targetFunction, constructData);
     ASSERT(constructType != ConstructType::None);
-    RELEASE_AND_RETURN(scope, JSValue::encode(construct(exec, targetFunction, constructType, constructData, args)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(construct(callFrame, targetFunction, constructType, constructData, args)));
 }
 
-EncodedJSValue JSC_HOST_CALL isBoundFunction(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL isBoundFunction(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(JSValue(static_cast<bool>(jsDynamicCast<JSBoundFunction*>(exec->vm(), exec->uncheckedArgument(0)))));
+    return JSValue::encode(JSValue(static_cast<bool>(jsDynamicCast<JSBoundFunction*>(globalObject->vm(), callFrame->uncheckedArgument(0)))));
 }
 
-EncodedJSValue JSC_HOST_CALL hasInstanceBoundFunction(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL hasInstanceBoundFunction(JSGlobalObject*, CallFrame* callFrame)
 {
-    JSBoundFunction* boundObject = jsCast<JSBoundFunction*>(exec->uncheckedArgument(0));
-    JSValue value = exec->uncheckedArgument(1);
+    JSBoundFunction* boundObject = jsCast<JSBoundFunction*>(callFrame->uncheckedArgument(0));
+    JSValue value = callFrame->uncheckedArgument(1);
 
-    return JSValue::encode(jsBoolean(boundObject->targetFunction()->hasInstance(exec, value)));
+    return JSValue::encode(jsBoolean(boundObject->targetFunction()->hasInstance(callFrame, value)));
 }
 
 inline Structure* getBoundFunctionStructure(VM& vm, ExecState* exec, JSGlobalObject* globalObject, JSObject* targetFunction)
@@ -210,7 +210,7 @@ JSArray* JSBoundFunction::boundArgsCopy(ExecState* exec)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSArray* result = constructEmptyArray(exec, nullptr, globalObject(vm));
+    JSArray* result = constructEmptyArray(exec, nullptr, globalObject());
     RETURN_IF_EXCEPTION(scope, nullptr);
     for (unsigned i = 0; i < m_boundArgs->length(); ++i) {
         result->push(exec, m_boundArgs->getIndexQuickly(i));

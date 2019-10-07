@@ -52,11 +52,11 @@
 
 namespace JSC {
 
-EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return throwVMError(exec, scope, createNotAConstructorError(exec, exec->jsCallee()));
+    return throwVMError(callFrame, scope, createNotAConstructorError(callFrame, callFrame->jsCallee()));
 }
 
 const ClassInfo JSFunction::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFunction) };
@@ -115,6 +115,7 @@ JSFunction* JSFunction::createFunctionThatMasqueradesAsUndefined(VM& vm, JSGloba
 JSFunction::JSFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     : Base(vm, globalObject, structure)
     , m_executable()
+    , m_globalObject(vm, this, structure->globalObject())
 {
     assertTypeInfoFlagInvariants();
 }
@@ -163,7 +164,7 @@ JSObject* JSFunction::prototypeForConstruction(VM& vm, ExecState* exec)
     if (LIKELY(prototype.isObject()))
         return asObject(prototype);
 
-    JSGlobalObject* globalObject = this->globalObject(vm);
+    JSGlobalObject* globalObject = this->globalObject();
     if (!isHostOrBuiltinFunction()) {
         // https://tc39.github.io/ecma262/#sec-generator-function-definitions-runtime-semantics-evaluatebody
         if (isGeneratorWrapperParseMode(jsExecutable()->parseMode()))
@@ -183,7 +184,7 @@ FunctionRareData* JSFunction::allocateAndInitializeRareData(ExecState* exec, siz
     VM& vm = exec->vm();
     JSObject* prototype = prototypeForConstruction(vm, exec);
     FunctionRareData* rareData = FunctionRareData::create(vm, this);
-    rareData->initializeObjectAllocationProfile(vm, globalObject(vm), prototype, inlineCapacity, this);
+    rareData->initializeObjectAllocationProfile(vm, globalObject(), prototype, inlineCapacity, this);
 
     // A DFG compilation thread may be trying to read the rare data
     // We want to ensure that it sees it properly allocated
@@ -199,7 +200,7 @@ FunctionRareData* JSFunction::initializeRareData(ExecState* exec, size_t inlineC
     ASSERT(canUseAllocationProfile());
     VM& vm = exec->vm();
     JSObject* prototype = prototypeForConstruction(vm, exec);
-    m_rareData->initializeObjectAllocationProfile(vm, globalObject(vm), prototype, inlineCapacity, this);
+    m_rareData->initializeObjectAllocationProfile(vm, globalObject(), prototype, inlineCapacity, this);
     return m_rareData.get();
 }
 
@@ -437,9 +438,9 @@ bool JSFunction::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
                 // Unlike function instances, the object that is the value of the a GeneratorFunction's prototype
                 // property does not have a constructor property whose value is the GeneratorFunction instance.
                 // https://tc39.github.io/ecma262/#sec-generatorfunction-instances-prototype
-                prototype = constructEmptyObject(exec, thisObject->globalObject(vm)->generatorPrototype());
+                prototype = constructEmptyObject(exec, thisObject->globalObject()->generatorPrototype());
             } else if (isAsyncGeneratorWrapperParseMode(thisObject->jsExecutable()->parseMode()))
-                prototype = constructEmptyObject(exec, thisObject->globalObject(vm)->asyncGeneratorPrototype());
+                prototype = constructEmptyObject(exec, thisObject->globalObject()->asyncGeneratorPrototype());
             else {
                 prototype = constructEmptyObject(exec);
                 prototype->putDirect(vm, vm.propertyNames->constructor, thisObject, static_cast<unsigned>(PropertyAttribute::DontEnum));

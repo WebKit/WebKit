@@ -1,3 +1,435 @@
+2019-10-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Change signature of HostFunction to (JSGlobalObject*, CallFrame*)
+        https://bugs.webkit.org/show_bug.cgi?id=202569
+
+        Reviewed by Saam Barati.
+
+        No behavior change.
+
+        While signature is changed, we still use `state` name for CallFrame* variable since changing this involves massive channge in
+        CodeGeneratorJS.pm. When replacing `ExecState*` to `JSGlobalObject*`, we just remove these `state` variable and use `globalObject`
+        instead.
+
+        * Modules/applepay/ApplePaySession.h:
+        * Modules/applepay/PaymentMerchantSession.h:
+        * Modules/fetch/FetchResponse.h:
+        * Modules/indexeddb/IDBFactory.h:
+        * Modules/indexeddb/IDBIndex.h:
+        * Modules/indexeddb/IDBKeyRange.h:
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/server/IDBSerializationContext.h:
+        * bindings/js/IDBBindingUtilities.h:
+        * bindings/js/JSDOMBindingSecurity.h:
+        * bindings/js/JSDOMBuiltinConstructor.h:
+        (WebCore::JSDOMBuiltinConstructor<JSClass>::construct):
+        * bindings/js/JSDOMConstructor.h:
+        * bindings/js/JSDOMConstructorBase.cpp:
+        (WebCore::callThrowTypeError):
+        * bindings/js/JSDOMConstructorNotConstructable.h:
+        (WebCore::JSDOMConstructorNotConstructable::callThrowTypeError):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::makeThisTypeErrorForBuiltins):
+        (WebCore::makeGetterTypeErrorForBuiltins):
+        (WebCore::isReadableByteStreamAPIEnabled):
+        * bindings/js/JSDOMIterator.h:
+        (WebCore::IteratorTraits>::next):
+        * bindings/js/JSDOMNamedConstructor.h:
+        * bindings/js/JSDOMPromise.cpp:
+        (WebCore::DOMPromise::whenPromiseIsSettled):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::jsDOMWindowInstanceFunctionOpenDatabase):
+        * bindings/js/JSExtendableMessageEventCustom.cpp:
+        (WebCore::constructJSExtendableMessageEvent):
+        * bindings/js/JSHTMLElementCustom.cpp:
+        (WebCore::constructJSHTMLElement):
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::callPlugin):
+        * bindings/js/JSWebAnimationCustom.cpp:
+        (WebCore::constructJSWebAnimation):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::setupModuleScriptHandlers):
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptModuleLoader.h:
+        * bindings/js/ScriptState.h:
+        * bindings/js/StructuredClone.cpp:
+        (WebCore::cloneArrayBufferImpl):
+        (WebCore::cloneArrayBuffer):
+        (WebCore::structuredCloneArrayBuffer):
+        (WebCore::structuredCloneArrayBufferView):
+        * bindings/js/StructuredClone.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateOperationTrampolineDefinition):
+        (GenerateSerializerDefinition):
+        (GenerateLegacyCallerDefinitions):
+        (GenerateLegacyCallerDefinition):
+        (GenerateIterableDefinition):
+        (GenerateConstructorDefinitions):
+        (GenerateConstructorDefinition):
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        (WebCore::jsMapLikePrototypeFunctionGet):
+        (WebCore::jsMapLikePrototypeFunctionHas):
+        (WebCore::jsMapLikePrototypeFunctionEntries):
+        (WebCore::jsMapLikePrototypeFunctionKeys):
+        (WebCore::jsMapLikePrototypeFunctionValues):
+        (WebCore::jsMapLikePrototypeFunctionForEach):
+        (WebCore::jsMapLikePrototypeFunctionAdd):
+        (WebCore::jsMapLikePrototypeFunctionClear):
+        (WebCore::jsMapLikePrototypeFunctionDelete):
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+        (WebCore::jsReadOnlyMapLikePrototypeFunctionGet):
+        (WebCore::jsReadOnlyMapLikePrototypeFunctionHas):
+        (WebCore::jsReadOnlyMapLikePrototypeFunctionEntries):
+        (WebCore::jsReadOnlyMapLikePrototypeFunctionKeys):
+        (WebCore::jsReadOnlyMapLikePrototypeFunctionValues):
+        (WebCore::jsReadOnlyMapLikePrototypeFunctionForEach):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::jsTestActiveDOMObjectPrototypeFunctionExcitingFunction):
+        (WebCore::jsTestActiveDOMObjectPrototypeFunctionPostMessage):
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        (WebCore::jsTestCEReactionsPrototypeFunctionMethodWithCEReactions):
+        (WebCore::jsTestCEReactionsPrototypeFunctionMethodWithCEReactionsNotNeeded):
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        (WebCore::jsTestCEReactionsStringifierPrototypeFunctionToString):
+        * bindings/scripts/test/JS/JSTestCallTracer.cpp:
+        (WebCore::jsTestCallTracerPrototypeFunctionTestOperationInterface):
+        (WebCore::jsTestCallTracerPrototypeFunctionTestOperationSpecified):
+        (WebCore::jsTestCallTracerPrototypeFunctionTestOperationWithArguments):
+        (WebCore::jsTestCallTracerPrototypeFunctionTestOperationWithNullableArgument):
+        (WebCore::jsTestCallTracerPrototypeFunctionTestOperationWithVariantArgument):
+        (WebCore::jsTestCallTracerPrototypeFunctionTestOperationWithNullableVariantArgument):
+        (WebCore::jsTestCallTracerPrototypeFunctionTestOperationWithOptionalVariantArgument):
+        (WebCore::jsTestCallTracerPrototypeFunctionTestOperationWithDefaultVariantArgument):
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        (WebCore::jsTestDOMJITPrototypeFunctionGetAttribute):
+        (WebCore::jsTestDOMJITPrototypeFunctionItem):
+        (WebCore::jsTestDOMJITPrototypeFunctionHasAttribute):
+        (WebCore::jsTestDOMJITPrototypeFunctionGetElementById):
+        (WebCore::jsTestDOMJITPrototypeFunctionGetElementsByName):
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+        (WebCore::jsTestEnabledBySettingPrototypeFunctionEnabledBySettingOperation):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructorConstructor::construct):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::jsTestEventTargetPrototypeFunctionItem):
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::jsTestGlobalObjectInstanceFunctionRegularOperation):
+        (WebCore::jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation):
+        (WebCore::jsTestGlobalObjectConstructorFunctionEnabledAtRuntimeOperationStatic):
+        (WebCore::jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorld):
+        (WebCore::jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabled):
+        (WebCore::jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeaturesEnabled):
+        (WebCore::jsTestGlobalObjectInstanceFunctionTestPrivateFunction):
+        (WebCore::jsTestGlobalObjectInstanceFunctionCalculateSecretResult):
+        (WebCore::jsTestGlobalObjectInstanceFunctionGetSecretBoolean):
+        (WebCore::jsTestGlobalObjectInstanceFunctionTestFeatureGetSecretBoolean):
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.cpp:
+        (WebCore::jsTestIndexedSetterWithIdentifierPrototypeFunctionIndexedSetter):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::construct):
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod1):
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod2):
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod3):
+        (WebCore::jsTestInterfaceConstructorFunctionImplementsMethod4):
+        (WebCore::jsTestInterfacePrototypeFunctionTakeNodes):
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod1):
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod2):
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod3):
+        (WebCore::jsTestInterfaceConstructorFunctionSupplementalMethod4):
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        (WebCore::jsTestIterablePrototypeFunctionEntries):
+        (WebCore::jsTestIterablePrototypeFunctionKeys):
+        (WebCore::jsTestIterablePrototypeFunctionValues):
+        (WebCore::jsTestIterablePrototypeFunctionForEach):
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        (WebCore::jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunction):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::jsTestMediaQueryListListenerPrototypeFunctionMethod):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+        (WebCore::jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionNamedSetter):
+        (WebCore::jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionIndexedSetter):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructorNamedConstructor::construct):
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.cpp:
+        (WebCore::jsTestNamedDeleterWithIdentifierPrototypeFunctionNamedDeleter):
+        * bindings/scripts/test/JS/JSTestNamedGetterWithIdentifier.cpp:
+        (WebCore::jsTestNamedGetterWithIdentifierPrototypeFunctionGetterName):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+        (WebCore::jsTestNamedSetterWithIdentifierPrototypeFunctionNamedSetter):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.cpp:
+        (WebCore::jsTestNamedSetterWithIndexedGetterPrototypeFunctionNamedSetter):
+        (WebCore::jsTestNamedSetterWithIndexedGetterPrototypeFunctionIndexedSetter):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.cpp:
+        (WebCore::jsTestNamedSetterWithIndexedGetterAndSetterPrototypeFunctionNamedSetter):
+        (WebCore::jsTestNamedSetterWithIndexedGetterAndSetterPrototypeFunctionIndexedSetter):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.cpp:
+        (WebCore::jsTestNamedSetterWithUnforgablePropertiesInstanceFunctionUnforgeableOperation):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.cpp:
+        (WebCore::jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsInstanceFunctionUnforgeableOperation):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNodeConstructor::construct):
+        (WebCore::jsTestNodePrototypeFunctionTestWorkerPromise):
+        (WebCore::jsTestNodePrototypeFunctionCalculateSecretResult):
+        (WebCore::jsTestNodePrototypeFunctionGetSecretBoolean):
+        (WebCore::jsTestNodePrototypeFunctionTestFeatureGetSecretBoolean):
+        (WebCore::jsTestNodePrototypeFunctionEntries):
+        (WebCore::jsTestNodePrototypeFunctionKeys):
+        (WebCore::jsTestNodePrototypeFunctionValues):
+        (WebCore::jsTestNodePrototypeFunctionForEach):
+        (WebCore::jsTestNodePrototypeFunctionToJSON):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::construct):
+        (WebCore::callJSTestObj1):
+        (WebCore::callJSTestObj2):
+        (WebCore::callJSTestObj3):
+        (WebCore::callJSTestObj):
+        (WebCore::jsTestObjPrototypeFunctionEnabledAtRuntimeOperation):
+        (WebCore::jsTestObjConstructorFunctionEnabledAtRuntimeOperationStatic):
+        (WebCore::jsTestObjPrototypeFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabled):
+        (WebCore::jsTestObjPrototypeFunctionWorldSpecificMethod):
+        (WebCore::jsTestObjPrototypeFunctionCalculateSecretResult):
+        (WebCore::jsTestObjPrototypeFunctionGetSecretBoolean):
+        (WebCore::jsTestObjPrototypeFunctionTestFeatureGetSecretBoolean):
+        (WebCore::jsTestObjPrototypeFunctionVoidMethod):
+        (WebCore::jsTestObjPrototypeFunctionVoidMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionByteMethod):
+        (WebCore::jsTestObjPrototypeFunctionByteMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionOctetMethod):
+        (WebCore::jsTestObjPrototypeFunctionOctetMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionLongMethod):
+        (WebCore::jsTestObjPrototypeFunctionLongMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionObjMethod):
+        (WebCore::jsTestObjPrototypeFunctionObjMethodWithArgs):
+        (WebCore::jsTestObjInstanceFunctionUnforgeableMethod):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithArgTreatingNullAsEmptyString):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithXPathNSResolverParameter):
+        (WebCore::jsTestObjPrototypeFunctionNullableStringMethod):
+        (WebCore::jsTestObjConstructorFunctionNullableStringStaticMethod):
+        (WebCore::jsTestObjPrototypeFunctionNullableStringSpecialMethod):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithEnumArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithStandaloneEnumArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalEnumArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalEnumArgAndDefaultValue):
+        (WebCore::jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithUSVStringArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNullableUSVStringArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithUSVStringArgTreatingNullAsEmptyString):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithByteStringArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNullableByteStringArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithByteStringArgTreatingNullAsEmptyString):
+        (WebCore::jsTestObjPrototypeFunctionSerializedValue):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithRecord):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithException):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithExceptionReturningLong):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithExceptionReturningObject):
+        (WebCore::jsTestObjPrototypeFunctionCustomMethod):
+        (WebCore::jsTestObjPrototypeFunctionCustomMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionPrivateMethod):
+        (WebCore::jsTestObjPrototypeFunctionPublicAndPrivateMethod):
+        (WebCore::jsTestObjPrototypeFunctionAddEventListener):
+        (WebCore::jsTestObjPrototypeFunctionRemoveEventListener):
+        (WebCore::jsTestObjPrototypeFunctionWithExecStateVoid):
+        (WebCore::jsTestObjPrototypeFunctionWithExecStateObj):
+        (WebCore::jsTestObjPrototypeFunctionWithExecStateVoidException):
+        (WebCore::jsTestObjPrototypeFunctionWithExecStateObjException):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContext):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndExecState):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndExecStateObjException):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndExecStateWithSpaces):
+        (WebCore::jsTestObjPrototypeFunctionWithDocumentArgument):
+        (WebCore::jsTestObjPrototypeFunctionWithCallerDocumentArgument):
+        (WebCore::jsTestObjPrototypeFunctionWithCallerWindowArgument):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalArgAndDefaultValue):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalString):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalUSVString):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalAtomString):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalStringAndDefaultValue):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalAtomStringAndDefaultValue):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalStringIsNull):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalStringIsUndefined):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalAtomStringIsNull):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalStringIsEmptyString):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalUSVStringIsEmptyString):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalAtomStringIsEmptyString):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalDoubleIsNaN):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalFloatIsNaN):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalLongLong):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalLongLongIsZero):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLong):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLongIsZero):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalSequence):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalSequenceIsEmpty):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalBoolean):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalBooleanIsFalse):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalAny):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalObject):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapper):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapperIsNull):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalXPathNSResolver):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalRecord):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalPromise):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackFunctionArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackFunctionArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackFunctionAndOptionalArg):
+        (WebCore::jsTestObjConstructorFunctionStaticMethodWithCallbackAndOptionalArg):
+        (WebCore::jsTestObjConstructorFunctionStaticMethodWithCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionConditionalMethod1):
+        (WebCore::jsTestObjPrototypeFunctionConditionalMethod2):
+        (WebCore::jsTestObjPrototypeFunctionConditionalMethod3):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion):
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithNullableUnion):
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithOptionalUnion):
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter):
+        (WebCore::jsTestObjConstructorFunctionClassMethod):
+        (WebCore::jsTestObjConstructorFunctionClassMethodWithOptional):
+        (WebCore::jsTestObjConstructorFunctionClassMethod2):
+        (WebCore::jsTestObjConstructorFunctionOverloadedMethod1):
+        (WebCore::jsTestObjPrototypeFunctionClassMethodWithClamp):
+        (WebCore::jsTestObjPrototypeFunctionClassMethodWithClampOnOptional):
+        (WebCore::jsTestObjPrototypeFunctionClassMethodWithEnforceRange):
+        (WebCore::jsTestObjPrototypeFunctionClassMethodWithEnforceRangeOnOptional):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithUnsignedLongSequence):
+        (WebCore::jsTestObjPrototypeFunctionStringArrayFunction):
+        (WebCore::jsTestObjPrototypeFunctionDomStringListFunction):
+        (WebCore::jsTestObjPrototypeFunctionOperationWithOptionalUnionParameter):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithAndWithoutNullableSequence):
+        (WebCore::jsTestObjPrototypeFunctionGetElementById):
+        (WebCore::jsTestObjPrototypeFunctionGetSVGDocument):
+        (WebCore::jsTestObjPrototypeFunctionConvert1):
+        (WebCore::jsTestObjPrototypeFunctionConvert2):
+        (WebCore::jsTestObjPrototypeFunctionConvert3):
+        (WebCore::jsTestObjPrototypeFunctionConvert4):
+        (WebCore::jsTestObjPrototypeFunctionMutablePointFunction):
+        (WebCore::jsTestObjPrototypeFunctionOrange):
+        (WebCore::jsTestObjPrototypeFunctionVariadicStringMethod):
+        (WebCore::jsTestObjPrototypeFunctionVariadicDoubleMethod):
+        (WebCore::jsTestObjPrototypeFunctionVariadicNodeMethod):
+        (WebCore::jsTestObjPrototypeFunctionVariadicUnionMethod):
+        (WebCore::jsTestObjPrototypeFunctionAny):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseFunction):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgument):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseFunctionWithException):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgument):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseOverloadedFunction):
+        (WebCore::jsTestObjConstructorFunctionTestStaticPromiseFunction):
+        (WebCore::jsTestObjConstructorFunctionTestStaticPromiseFunctionWithException):
+        (WebCore::jsTestObjPrototypeFunctionTestCustomPromiseFunction):
+        (WebCore::jsTestObjConstructorFunctionTestStaticCustomPromiseFunction):
+        (WebCore::jsTestObjPrototypeFunctionTestCustomReturnsOwnPromiseFunction):
+        (WebCore::jsTestObjPrototypeFunctionTestReturnsOwnPromiseAndPromiseProxyFunction):
+        (WebCore::jsTestObjPrototypeFunctionConditionalOverload):
+        (WebCore::jsTestObjPrototypeFunctionSingleConditionalOverload):
+        (WebCore::jsTestObjPrototypeFunctionAttachShadowRoot):
+        (WebCore::jsTestObjPrototypeFunctionOperationWithExternalDictionaryParameter):
+        (WebCore::jsTestObjPrototypeFunctionBufferSourceParameter):
+        (WebCore::jsTestObjPrototypeFunctionLegacyCallerNamed):
+        (WebCore::jsTestObjPrototypeFunctionTestReturnValueOptimization):
+        (WebCore::jsTestObjPrototypeFunctionTestReturnValueOptimizationWithException):
+        (WebCore::jsTestObjPrototypeFunctionConditionallyExposedToWindowFunction):
+        (WebCore::jsTestObjPrototypeFunctionConditionallyExposedToWorkerFunction):
+        (WebCore::jsTestObjPrototypeFunctionConditionallyExposedToWindowAndWorkerFunction):
+        (WebCore::jsTestObjPrototypeFunctionToString):
+        (WebCore::jsTestObjPrototypeFunctionToJSON):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::constructJSTestOverloadedConstructors1):
+        (WebCore::constructJSTestOverloadedConstructors2):
+        (WebCore::constructJSTestOverloadedConstructors3):
+        (WebCore::constructJSTestOverloadedConstructors4):
+        (WebCore::constructJSTestOverloadedConstructors5):
+        (WebCore::JSTestOverloadedConstructorsConstructor::construct):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        (WebCore::constructJSTestOverloadedConstructorsWithSequence1):
+        (WebCore::constructJSTestOverloadedConstructorsWithSequence2):
+        (WebCore::JSTestOverloadedConstructorsWithSequenceConstructor::construct):
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        (WebCore::jsTestOverrideBuiltinsPrototypeFunctionNamedItem):
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        (WebCore::JSTestPromiseRejectionEventConstructor::construct):
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        (WebCore::jsTestSerializationPrototypeFunctionToJSON):
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        (WebCore::jsTestSerializationInheritPrototypeFunctionToJSON):
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        (WebCore::jsTestSerializationInheritFinalPrototypeFunctionToJSON):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::jsTestSerializedScriptValueInterfacePrototypeFunctionFunction):
+        (WebCore::jsTestSerializedScriptValueInterfacePrototypeFunctionFunctionReturning):
+        * bindings/scripts/test/JS/JSTestStringifier.cpp:
+        (WebCore::jsTestStringifierPrototypeFunctionToString):
+        * bindings/scripts/test/JS/JSTestStringifierAnonymousOperation.cpp:
+        (WebCore::jsTestStringifierAnonymousOperationPrototypeFunctionToString):
+        * bindings/scripts/test/JS/JSTestStringifierNamedOperation.cpp:
+        (WebCore::jsTestStringifierNamedOperationPrototypeFunctionIdentifier):
+        (WebCore::jsTestStringifierNamedOperationPrototypeFunctionToString):
+        * bindings/scripts/test/JS/JSTestStringifierOperationImplementedAs.cpp:
+        (WebCore::jsTestStringifierOperationImplementedAsPrototypeFunctionIdentifier):
+        (WebCore::jsTestStringifierOperationImplementedAsPrototypeFunctionToString):
+        * bindings/scripts/test/JS/JSTestStringifierOperationNamedToString.cpp:
+        (WebCore::jsTestStringifierOperationNamedToStringPrototypeFunctionToString):
+        * bindings/scripts/test/JS/JSTestStringifierReadOnlyAttribute.cpp:
+        (WebCore::jsTestStringifierReadOnlyAttributePrototypeFunctionToString):
+        * bindings/scripts/test/JS/JSTestStringifierReadWriteAttribute.cpp:
+        (WebCore::jsTestStringifierReadWriteAttributePrototypeFunctionToString):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefsConstructor::construct):
+        (WebCore::jsTestTypedefsPrototypeFunctionFunc):
+        (WebCore::jsTestTypedefsPrototypeFunctionSetShadow):
+        (WebCore::jsTestTypedefsPrototypeFunctionMethodWithSequenceArg):
+        (WebCore::jsTestTypedefsPrototypeFunctionNullableSequenceArg):
+        (WebCore::jsTestTypedefsPrototypeFunctionSequenceOfNullablesArg):
+        (WebCore::jsTestTypedefsPrototypeFunctionNullableSequenceOfNullablesArg):
+        (WebCore::jsTestTypedefsPrototypeFunctionNullableSequenceOfUnionsArg):
+        (WebCore::jsTestTypedefsPrototypeFunctionUnionArg):
+        (WebCore::jsTestTypedefsPrototypeFunctionFuncWithClamp):
+        (WebCore::jsTestTypedefsPrototypeFunctionFuncWithClampInTypedef):
+        (WebCore::jsTestTypedefsPrototypeFunctionPointFunction):
+        (WebCore::jsTestTypedefsPrototypeFunctionStringSequenceFunction):
+        (WebCore::jsTestTypedefsPrototypeFunctionStringSequenceFunction2):
+        (WebCore::jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresInclude):
+        (WebCore::jsTestTypedefsPrototypeFunctionMethodWithException):
+        * bridge/c/c_utility.h:
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::callObjCFallbackObject):
+        * bridge/runtime_method.cpp:
+        (JSC::callRuntimeMethod):
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::callRuntimeObject):
+        (JSC::Bindings::callRuntimeConstructor):
+        * crypto/SubtleCrypto.h:
+        * css/CSSFontFace.h:
+        * dom/CustomElementReactionQueue.h:
+        * dom/Document.h:
+        * dom/MessagePort.h:
+        * dom/MouseEvent.h:
+        * dom/ScriptExecutionContext.h:
+        * html/HTMLFrameElementBase.h:
+        * html/canvas/WebGLAny.h:
+        * inspector/agents/InspectorDOMAgent.h:
+        * inspector/agents/page/PageRuntimeAgent.h:
+        * page/DOMWindow.h:
+        * page/PageConsoleClient.h:
+        * page/RemoteDOMWindow.h:
+        * page/csp/ContentSecurityPolicy.h:
+        * platform/ThreadGlobalData.h:
+        * plugins/PluginViewBase.h:
+        * workers/DedicatedWorkerGlobalScope.h:
+        * workers/Worker.h:
+        * workers/WorkerConsoleClient.h:
+        * workers/service/ExtendableMessageEvent.h:
+        * worklets/WorkletConsoleClient.h:
+
 2019-10-07  Sihui Liu  <sihui_liu@apple.com>
 
         ASSERTION FAILED: m_transactionOperationsInProgressQueue.first() == &operation in IDBTransaction::operationCompletedOnClient

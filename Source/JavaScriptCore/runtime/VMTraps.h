@@ -36,8 +36,9 @@
 
 namespace JSC {
 
-class ExecState;
+class CallFrame;
 class VM;
+using ExecState = CallFrame;
 
 class VMTraps {
     typedef uint8_t BitField;

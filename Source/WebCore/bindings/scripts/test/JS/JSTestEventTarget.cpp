@@ -45,7 +45,7 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -246,8 +246,9 @@ static inline JSC::EncodedJSValue jsTestEventTargetPrototypeFunctionItemBody(JSC
     return JSValue::encode(toJS<IDLInterface<Node>>(*state, *castedThis->globalObject(), impl.item(WTFMove(index))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestEventTarget>::call<jsTestEventTargetPrototypeFunctionItemBody>(*state, "item");
 }
 

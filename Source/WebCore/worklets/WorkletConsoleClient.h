@@ -32,7 +32,8 @@
 #include <wtf/Forward.h>
 
 namespace JSC {
-class ExecState;
+class CallFrame;
+using ExecState = CallFrame;
 }
 
 namespace WebCore {

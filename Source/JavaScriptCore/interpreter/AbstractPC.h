@@ -29,8 +29,9 @@
 
 namespace JSC {
 
+class CallFrame;
 class VM;
-class ExecState;
+using ExecState = CallFrame;
 struct Instruction;
 
 class AbstractPC {

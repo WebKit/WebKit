@@ -64,8 +64,8 @@
 namespace WebCore {
 using namespace JSC;
 
-EncodedJSValue JSC_HOST_CALL jsDOMWindowInstanceFunctionShowModalDialog(ExecState*);
-EncodedJSValue JSC_HOST_CALL jsDOMWindowInstanceFunctionOpenDatabase(ExecState*);
+EncodedJSValue JSC_HOST_CALL jsDOMWindowInstanceFunctionShowModalDialog(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL jsDOMWindowInstanceFunctionOpenDatabase(JSGlobalObject*, CallFrame*);
 
 void JSDOMWindow::visitAdditionalChildren(SlotVisitor& visitor)
 {
@@ -631,9 +631,9 @@ template<> inline JSDOMWindow* IDLOperation<JSDOMWindow>::cast(ExecState& state)
     return toJSDOMWindow(state.vm(), state.thisValue().toThis(&state, NotStrictMode));
 }
 
-EncodedJSValue JSC_HOST_CALL jsDOMWindowInstanceFunctionOpenDatabase(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsDOMWindowInstanceFunctionOpenDatabase(JSGlobalObject*, CallFrame* callFrame)
 {
-    return IDLOperation<JSDOMWindow>::call<jsDOMWindowInstanceFunctionOpenDatabaseBody>(*state, "openDatabase");
+    return IDLOperation<JSDOMWindow>::call<jsDOMWindowInstanceFunctionOpenDatabaseBody>(*callFrame, "openDatabase");
 }
 
 JSValue JSDOMWindow::openDatabase(JSC::ExecState& state) const

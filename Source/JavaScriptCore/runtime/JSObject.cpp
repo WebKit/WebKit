@@ -2302,12 +2302,12 @@ bool JSObject::defaultHasInstance(ExecState* exec, JSValue value, JSValue proto)
     ASSERT_NOT_REACHED();
 }
 
-EncodedJSValue JSC_HOST_CALL objectPrivateFuncInstanceOf(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL objectPrivateFuncInstanceOf(JSGlobalObject*, CallFrame* callFrame)
 {
-    JSValue value = exec->uncheckedArgument(0);
-    JSValue proto = exec->uncheckedArgument(1);
+    JSValue value = callFrame->uncheckedArgument(0);
+    JSValue proto = callFrame->uncheckedArgument(1);
 
-    return JSValue::encode(jsBoolean(JSObject::defaultHasInstance(exec, value, proto)));
+    return JSValue::encode(jsBoolean(JSObject::defaultHasInstance(callFrame, value, proto)));
 }
 
 void JSObject::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)

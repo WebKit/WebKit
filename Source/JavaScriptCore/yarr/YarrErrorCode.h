@@ -27,8 +27,9 @@
 
 namespace JSC {
 
-class ExecState;
+class CallFrame;
 class JSObject;
+using ExecState = CallFrame;
 
 namespace Yarr {
 

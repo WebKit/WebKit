@@ -32,8 +32,9 @@
 #include <pal/SessionID.h>
 
 namespace JSC {
-class ExecState;
+class CallFrame;
 class VM;
+using ExecState = CallFrame;
 }
 
 namespace WebCore {

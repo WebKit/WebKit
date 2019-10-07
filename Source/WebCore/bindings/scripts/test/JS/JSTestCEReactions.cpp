@@ -47,8 +47,8 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestCEReactionsPrototypeFunctionMethodWithCEReactions(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestCEReactionsPrototypeFunctionMethodWithCEReactionsNotNeeded(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestCEReactionsPrototypeFunctionMethodWithCEReactions(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestCEReactionsPrototypeFunctionMethodWithCEReactionsNotNeeded(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -416,8 +416,9 @@ static inline JSC::EncodedJSValue jsTestCEReactionsPrototypeFunctionMethodWithCE
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestCEReactionsPrototypeFunctionMethodWithCEReactions(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestCEReactionsPrototypeFunctionMethodWithCEReactions(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestCEReactions>::call<jsTestCEReactionsPrototypeFunctionMethodWithCEReactionsBody>(*state, "methodWithCEReactions");
 }
 
@@ -431,8 +432,9 @@ static inline JSC::EncodedJSValue jsTestCEReactionsPrototypeFunctionMethodWithCE
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestCEReactionsPrototypeFunctionMethodWithCEReactionsNotNeeded(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestCEReactionsPrototypeFunctionMethodWithCEReactionsNotNeeded(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestCEReactions>::call<jsTestCEReactionsPrototypeFunctionMethodWithCEReactionsNotNeededBody>(*state, "methodWithCEReactionsNotNeeded");
 }
 

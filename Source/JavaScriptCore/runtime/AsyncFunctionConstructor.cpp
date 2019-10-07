@@ -36,16 +36,16 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(AsyncFunctionConstructor);
 
 const ClassInfo AsyncFunctionConstructor::s_info = { "AsyncFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AsyncFunctionConstructor) };
 
-static EncodedJSValue JSC_HOST_CALL callAsyncFunctionConstructor(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callAsyncFunctionConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    ArgList args(exec);
-    return JSValue::encode(constructFunction(exec, jsCast<InternalFunction*>(exec->jsCallee())->globalObject(exec->vm()), args, FunctionConstructionMode::Async));
+    ArgList args(callFrame);
+    return JSValue::encode(constructFunction(callFrame, globalObject, args, FunctionConstructionMode::Async));
 }
 
-static EncodedJSValue JSC_HOST_CALL constructAsyncFunctionConstructor(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL constructAsyncFunctionConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    ArgList args(exec);
-    return JSValue::encode(constructFunction(exec, jsCast<InternalFunction*>(exec->jsCallee())->globalObject(exec->vm()), args, FunctionConstructionMode::Async));
+    ArgList args(callFrame);
+    return JSValue::encode(constructFunction(callFrame, globalObject, args, FunctionConstructionMode::Async));
 }
 
 AsyncFunctionConstructor::AsyncFunctionConstructor(VM& vm, Structure* structure)

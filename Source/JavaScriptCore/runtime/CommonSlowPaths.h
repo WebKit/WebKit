@@ -306,7 +306,8 @@ inline JSArray* allocateNewArrayBuffer(VM& vm, Structure* structure, JSImmutable
 
 } // namespace CommonSlowPaths
 
-class ExecState;
+class CallFrame;
+using ExecState = CallFrame;
 struct Instruction;
 
 #define SLOW_PATH

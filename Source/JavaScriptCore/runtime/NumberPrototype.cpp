@@ -44,11 +44,11 @@ typedef WTF::double_conversion::StringBuilder DoubleConversionStringBuilder;
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState*);
-static EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState*);
-static EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState*);
-static EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState*);
-static EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState*);
+static EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(JSGlobalObject*, CallFrame*);
 
 }
 
@@ -386,18 +386,18 @@ String toStringWithRadix(double doubleValue, int32_t radix)
 // This method takes an optional argument specifying a number of *decimal places*
 // to round the significand to (or, put another way, this method optionally rounds
 // to argument-plus-one significant figures).
-EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     double x;
-    if (!toThisNumber(vm, exec->thisValue(), x))
-        return throwVMToThisNumberError(exec, scope, exec->thisValue());
+    if (!toThisNumber(vm, callFrame->thisValue(), x))
+        return throwVMToThisNumberError(callFrame, scope, callFrame->thisValue());
 
-    JSValue arg = exec->argument(0);
+    JSValue arg = callFrame->argument(0);
     // Perform ToInteger on the argument before remaining steps.
-    int decimalPlaces = static_cast<int>(arg.toInteger(exec));
+    int decimalPlaces = static_cast<int>(arg.toInteger(callFrame));
     RETURN_IF_EXCEPTION(scope, { });
 
     // Handle NaN and Infinity.
@@ -405,7 +405,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
         return JSValue::encode(jsNontrivialString(vm, String::number(x)));
 
     if (decimalPlaces < 0 || decimalPlaces > 100)
-        return throwVMRangeError(exec, scope, "toExponential() argument must be between 0 and 100"_s);
+        return throwVMRangeError(callFrame, scope, "toExponential() argument must be between 0 and 100"_s);
 
     // Round if the argument is not undefined, always format as exponential.
     NumberToStringBuffer buffer;
@@ -423,19 +423,19 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
 // This method takes an argument specifying a number of decimal places to round the
 // significand to. However when converting large values (1e+21 and above) this
 // method will instead fallback to calling ToString. 
-EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     double x;
-    if (!toThisNumber(vm, exec->thisValue(), x))
-        return throwVMToThisNumberError(exec, scope, exec->thisValue());
+    if (!toThisNumber(vm, callFrame->thisValue(), x))
+        return throwVMToThisNumberError(callFrame, scope, callFrame->thisValue());
 
-    int decimalPlaces = static_cast<int>(exec->argument(0).toInteger(exec));
+    int decimalPlaces = static_cast<int>(callFrame->argument(0).toInteger(callFrame));
     RETURN_IF_EXCEPTION(scope, { });
     if (decimalPlaces < 0 || decimalPlaces > 100)
-        return throwVMRangeError(exec, scope, "toFixed() argument must be between 0 and 100"_s);
+        return throwVMRangeError(callFrame, scope, "toFixed() argument must be between 0 and 100"_s);
 
     // 15.7.4.5.7 states "If x >= 10^21, then let m = ToString(x)"
     // This also covers Ininity, and structure the check so that NaN
@@ -457,22 +457,22 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
 // decimal, whilst 1000 is converted to the exponential representation 1.00e+3.
 // For negative exponents values >= 1e-6 are formated as decimal fractions,
 // with smaller values converted to exponential representation.
-EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     double x;
-    if (!toThisNumber(vm, exec->thisValue(), x))
-        return throwVMToThisNumberError(exec, scope, exec->thisValue());
+    if (!toThisNumber(vm, callFrame->thisValue(), x))
+        return throwVMToThisNumberError(callFrame, scope, callFrame->thisValue());
 
-    JSValue arg = exec->argument(0);
+    JSValue arg = callFrame->argument(0);
     // To precision called with no argument is treated as ToString.
     if (arg.isUndefined())
         return JSValue::encode(jsString(vm, String::number(x)));
 
     // Perform ToInteger on the argument before remaining steps.
-    int significantFigures = static_cast<int>(arg.toInteger(exec));
+    int significantFigures = static_cast<int>(arg.toInteger(callFrame));
     RETURN_IF_EXCEPTION(scope, { });
 
     // Handle NaN and Infinity.
@@ -480,7 +480,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
         return JSValue::encode(jsNontrivialString(vm, String::number(x)));
 
     if (significantFigures < 1 || significantFigures > 100)
-        return throwVMRangeError(exec, scope, "toPrecision() argument must be between 1 and 100"_s);
+        return throwVMRangeError(callFrame, scope, "toPrecision() argument must be between 1 and 100"_s);
 
     return JSValue::encode(jsString(vm, String::numberToStringFixedPrecision(x, significantFigures, KeepTrailingZeros)));
 }
@@ -553,50 +553,49 @@ JSString* numberToString(VM& vm, double doubleValue, int32_t radix)
     return numberToStringInternal(vm, doubleValue, radix);
 }
 
-EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* state)
+EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     double doubleValue;
-    if (!toThisNumber(vm, state->thisValue(), doubleValue))
-        return throwVMToThisNumberError(state, scope, state->thisValue());
+    if (!toThisNumber(vm, callFrame->thisValue(), doubleValue))
+        return throwVMToThisNumberError(callFrame, scope, callFrame->thisValue());
 
-    auto radix = extractToStringRadixArgument(state, state->argument(0), scope);
+    auto radix = extractToStringRadixArgument(callFrame, callFrame->argument(0), scope);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     return JSValue::encode(numberToStringInternal(vm, doubleValue, radix));
 }
 
-EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     double x;
-    if (!toThisNumber(vm, exec->thisValue(), x))
-        return throwVMToThisNumberError(exec, scope, exec->thisValue());
+    if (!toThisNumber(vm, callFrame->thisValue(), x))
+        return throwVMToThisNumberError(callFrame, scope, callFrame->thisValue());
 
 #if ENABLE(INTL)
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     IntlNumberFormat* numberFormat = IntlNumberFormat::create(vm, globalObject->numberFormatStructure());
-    numberFormat->initializeNumberFormat(*exec, exec->argument(0), exec->argument(1));
+    numberFormat->initializeNumberFormat(*callFrame, callFrame->argument(0), callFrame->argument(1));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatNumber(*exec, x)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatNumber(*callFrame, x)));
 #else
-    return JSValue::encode(jsNumber(x).toString(exec));
+    return JSValue::encode(jsNumber(x).toString(callFrame));
 #endif
 }
 
-EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     double x;
-    JSValue thisValue = exec->thisValue();
+    JSValue thisValue = callFrame->thisValue();
     if (!toThisNumber(vm, thisValue, x))
-        return throwVMToThisNumberError(exec, scope, exec->thisValue());
+        return throwVMToThisNumberError(callFrame, scope, callFrame->thisValue());
     return JSValue::encode(jsNumber(x));
 }
 

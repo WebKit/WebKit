@@ -2976,7 +2976,7 @@ sub GenerateHeader
             my $conditionalString = $conditionalAttribute ? $codeGenerator->GenerateConditionalStringFromAttributeValue($conditionalAttribute) : undef;
             push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             my $functionName = GetFunctionName($interface, $className, $operation);
-            push(@headerContent, "JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::ExecState*);\n");
+            push(@headerContent, "JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::JSGlobalObject*, JSC::CallFrame*);\n");
             push(@headerContent, "#endif\n") if $conditionalString;
         }
 
@@ -3028,7 +3028,7 @@ sub GenerateHeader
 
     if (HasCustomConstructor($interface)) {
         push(@headerContent, "// Custom constructor\n");
-        push(@headerContent, "JSC::EncodedJSValue JSC_HOST_CALL construct${className}(JSC::ExecState&);\n\n");
+        push(@headerContent, "JSC::EncodedJSValue construct${className}(JSC::JSGlobalObject*, JSC::CallFrame&);\n\n");
     }
 
     if (NeedsImplementationClass($interface)) {
@@ -3970,7 +3970,7 @@ sub GenerateImplementation
             my $conditionalString = $conditionalAttribute ? $codeGenerator->GenerateConditionalStringFromAttributeValue($conditionalAttribute) : undef;
             push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
             my $functionName = GetFunctionName($interface, $className, $operation);
-            push(@implContent, "JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::ExecState*);\n");
+            push(@implContent, "JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::JSGlobalObject*, JSC::CallFrame*);\n");
             if ($operation->extendedAttributes->{DOMJIT}) {
                 $implIncludes{"DOMJITIDLType.h"} = 1;
                 my $nameOfFunctionWithoutTypeCheck = $codeGenerator->WK_lcfirst($functionName) . "WithoutTypeCheck";
@@ -5186,8 +5186,9 @@ sub GenerateOperationTrampolineDefinition
     push(@callFunctionTemplateArguments, "PromiseExecutionScope::${exposureScope}") if $hasPromiseReturnType && !$operation->extendedAttributes->{ReturnsOwnPromise};
     push(@callFunctionTemplateArguments, "CastedThisErrorBehavior::Assert") if ($operation->extendedAttributes->{PrivateIdentifier} and not $operation->extendedAttributes->{PublicIdentifier});
 
-    push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${functionName}(ExecState* state)\n");
+    push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${functionName}(JSGlobalObject* globalObject, CallFrame* state)\n");
     push(@$outputArray, "{\n");
+    push(@$outputArray, "    UNUSED_PARAM(globalObject);\n");
     push(@$outputArray, "    return ${idlOperationType}<${className}>::${callFunctionName}<" . join(", ", @callFunctionTemplateArguments) . ">(*state, \"" . $operation->name . "\");\n");
     push(@$outputArray, "}\n\n");
 }
@@ -5474,8 +5475,9 @@ sub GenerateSerializerDefinition
     push(@implContent, "    return JSValue::encode(JS${interfaceName}::serialize(*state, *thisObject, *thisObject->globalObject(), throwScope));\n");
     push(@implContent, "}\n");
     push(@implContent, "\n");
-    push(@implContent, "EncodedJSValue JSC_HOST_CALL ${serializerNativeFunctionName}(ExecState* state)\n");
+    push(@implContent, "EncodedJSValue JSC_HOST_CALL ${serializerNativeFunctionName}(JSGlobalObject* globalObject, CallFrame* state)\n");
     push(@implContent, "{\n");
+    push(@implContent, "    UNUSED_PARAM(globalObject);\n");
     push(@implContent, "    return IDLOperation<JS${interfaceName}>::call<${serializerNativeFunctionName}Body>(*state, \"${serializerFunctionName}\");\n");
     push(@implContent, "}\n");
     push(@implContent, "\n");
@@ -5522,13 +5524,13 @@ sub GenerateLegacyCallerDefinitions
 
         my $overloadFunctionPrefix = "call${className}";
 
-        push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${overloadFunctionPrefix}(ExecState* state)\n");
+        push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${overloadFunctionPrefix}(JSGlobalObject* globalObject, CallFrame* state)\n");
         push(@$outputArray, "{\n");
-        push(@$outputArray, "    VM& vm = state->vm();\n");
+        push(@$outputArray, "    VM& vm = globalObject->vm();\n");
         push(@$outputArray, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
         push(@$outputArray, "    UNUSED_PARAM(throwScope);\n");
 
-        GenerateOverloadDispatcher($legacyCallers[0], $interface, $overloadFunctionPrefix, "", "state");
+        GenerateOverloadDispatcher($legacyCallers[0], $interface, $overloadFunctionPrefix, "", "globalObject, state");
 
         push(@$outputArray, "}\n\n");
     } else {
@@ -5549,13 +5551,13 @@ sub GenerateLegacyCallerDefinition
 
     my $isOverloaded = $operation->{overloads} && @{$operation->{overloads}} > 1;
     if ($isOverloaded) {
-        push(@$outputArray, "static inline EncodedJSValue call${className}$operation->{overloadIndex}(ExecState* state)\n");
+        push(@$outputArray, "static inline EncodedJSValue call${className}$operation->{overloadIndex}(JSGlobalObject* globalObject, CallFrame* state)\n");
     } else {
-        push(@$outputArray, "static EncodedJSValue JSC_HOST_CALL call${className}(ExecState* state)\n");
+        push(@$outputArray, "static EncodedJSValue JSC_HOST_CALL call${className}(JSGlobalObject* globalObject, CallFrame* state)\n");
     }
 
     push(@$outputArray, "{\n");
-    push(@$outputArray, "    VM& vm = state->vm();\n");
+    push(@$outputArray, "    VM& vm = globalObject->vm();\n");
     push(@$outputArray, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
     push(@$outputArray, "    UNUSED_PARAM(throwScope);\n");
 
@@ -6423,8 +6425,9 @@ END
         }
 
         push(@implContent,  <<END);
-JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::ExecState* state)
+JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::JSGlobalObject* globalObject, JSC::CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<${className}>::call<${functionName}Caller>(*state, "${propertyName}");
 }
 
@@ -7186,13 +7189,13 @@ sub GenerateConstructorDefinitions
 
             my $overloadFunctionPrefix = "construct${className}";
 
-            push(@implContent, "template<> EncodedJSValue JSC_HOST_CALL ${className}Constructor::construct(ExecState* state)\n");
+            push(@implContent, "template<> EncodedJSValue JSC_HOST_CALL ${className}Constructor::construct(JSGlobalObject* globalObject, CallFrame* state)\n");
             push(@implContent, "{\n");
-            push(@implContent, "    VM& vm = state->vm();\n");
+            push(@implContent, "    VM& vm = globalObject->vm();\n");
             push(@implContent, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
             push(@implContent, "    UNUSED_PARAM(throwScope);\n");
 
-            GenerateOverloadDispatcher(@{$interface->constructors}[0], $interface, $overloadFunctionPrefix, "", "state");
+            GenerateOverloadDispatcher(@{$interface->constructors}[0], $interface, $overloadFunctionPrefix, "", "globalObject, state");
 
             push(@implContent, "}\n\n");
         } elsif (@constructors == 1) {
@@ -7216,21 +7219,22 @@ sub GenerateConstructorDefinition
 
     if (IsConstructable($interface)) {
         if ($interface->extendedAttributes->{CustomConstructor}) {
-            push(@$outputArray, "template<> JSC::EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct(JSC::ExecState* exec)\n");
+            push(@$outputArray, "template<> JSC::EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct(JSC::JSGlobalObject* globalObject, JSC::CallFrame* state)\n");
             push(@$outputArray, "{\n");
-            push(@$outputArray, "    ASSERT(exec);\n");
-            push(@$outputArray, "    return construct${className}(*exec);\n");
+            push(@$outputArray, "    ASSERT(state);\n");
+            push(@$outputArray, "    UNUSED_PARAM(globalObject);\n");
+            push(@$outputArray, "    return construct${className}(globalObject, *state);\n");
             push(@$outputArray, "}\n\n");
          } elsif (!HasCustomConstructor($interface) && (!$interface->extendedAttributes->{NamedConstructor} || $generatingNamedConstructor)) {
             my $isOverloaded = $operation->{overloads} && @{$operation->{overloads}} > 1;
             if ($isOverloaded) {
-                push(@$outputArray, "static inline EncodedJSValue construct${className}$operation->{overloadIndex}(ExecState* state)\n");
+                push(@$outputArray, "static inline EncodedJSValue construct${className}$operation->{overloadIndex}(JSGlobalObject* globalObject, CallFrame* state)\n");
             } else {
-                push(@$outputArray, "template<> EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct(ExecState* state)\n");
+                push(@$outputArray, "template<> EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct(JSGlobalObject* globalObject, CallFrame* state)\n");
             }
 
             push(@$outputArray, "{\n");
-            push(@$outputArray, "    VM& vm = state->vm();\n");
+            push(@$outputArray, "    VM& vm = globalObject->vm();\n");
             push(@$outputArray, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
             push(@$outputArray, "    UNUSED_PARAM(throwScope);\n");
             push(@$outputArray, "    auto* castedThis = jsCast<${constructorClassName}*>(state->jsCallee());\n");

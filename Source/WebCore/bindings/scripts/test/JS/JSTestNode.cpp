@@ -48,18 +48,18 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestWorkerPromise(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionCalculateSecretResult(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionGetSecretBoolean(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestWorkerPromise(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionCalculateSecretResult(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionGetSecretBoolean(JSC::JSGlobalObject*, JSC::CallFrame*);
 #if ENABLE(TEST_FEATURE)
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestFeatureGetSecretBoolean(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestFeatureGetSecretBoolean(JSC::JSGlobalObject*, JSC::CallFrame*);
 #endif
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionSymbolIterator(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionEntries(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionKeys(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionValues(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionForEach(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionToJSON(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionSymbolIterator(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionEntries(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionKeys(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionValues(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionForEach(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionToJSON(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -95,9 +95,9 @@ private:
 
 using JSTestNodeConstructor = JSDOMConstructor<JSTestNode>;
 
-template<> EncodedJSValue JSC_HOST_CALL JSTestNodeConstructor::construct(ExecState* state)
+template<> EncodedJSValue JSC_HOST_CALL JSTestNodeConstructor::construct(JSGlobalObject* globalObject, CallFrame* state)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     auto* castedThis = jsCast<JSTestNodeConstructor*>(state->jsCallee());
@@ -300,8 +300,9 @@ static inline JSC::EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromiseBo
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestWorkerPromise(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestWorkerPromise(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperationReturningPromise<JSTestNode>::call<jsTestNodePrototypeFunctionTestWorkerPromiseBody, PromiseExecutionScope::WindowOrWorker>(*state, "testWorkerPromise");
 }
 
@@ -314,8 +315,9 @@ static inline JSC::EncodedJSValue jsTestNodePrototypeFunctionCalculateSecretResu
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionCalculateSecretResult(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionCalculateSecretResult(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperationReturningPromise<JSTestNode>::call<jsTestNodePrototypeFunctionCalculateSecretResultBody, PromiseExecutionScope::WindowOrWorker>(*state, "calculateSecretResult");
 }
 
@@ -327,8 +329,9 @@ static inline JSC::EncodedJSValue jsTestNodePrototypeFunctionGetSecretBooleanBod
     return JSValue::encode(toJS<IDLBoolean>(impl.getSecretBoolean()));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionGetSecretBoolean(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionGetSecretBoolean(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionGetSecretBooleanBody>(*state, "getSecretBoolean");
 }
 
@@ -341,8 +344,9 @@ static inline JSC::EncodedJSValue jsTestNodePrototypeFunctionTestFeatureGetSecre
     return JSValue::encode(toJS<IDLBoolean>(impl.testFeatureGetSecretBoolean()));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestFeatureGetSecretBoolean(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestFeatureGetSecretBoolean(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionTestFeatureGetSecretBooleanBody>(*state, "testFeatureGetSecretBoolean");
 }
 
@@ -368,8 +372,9 @@ static inline EncodedJSValue jsTestNodePrototypeFunctionEntriesCaller(ExecState*
     return JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, IterationKind::Value));
 }
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionEntries(JSC::ExecState* state)
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionEntries(JSC::JSGlobalObject* globalObject, JSC::CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionEntriesCaller>(*state, "entries");
 }
 
@@ -378,8 +383,9 @@ static inline EncodedJSValue jsTestNodePrototypeFunctionKeysCaller(ExecState*, J
     return JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, IterationKind::Key));
 }
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionKeys(JSC::ExecState* state)
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionKeys(JSC::JSGlobalObject* globalObject, JSC::CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionKeysCaller>(*state, "keys");
 }
 
@@ -388,8 +394,9 @@ static inline EncodedJSValue jsTestNodePrototypeFunctionValuesCaller(ExecState*,
     return JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, IterationKind::Value));
 }
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionValues(JSC::ExecState* state)
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionValues(JSC::JSGlobalObject* globalObject, JSC::CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionValuesCaller>(*state, "values");
 }
 
@@ -398,8 +405,9 @@ static inline EncodedJSValue jsTestNodePrototypeFunctionForEachCaller(ExecState*
     return JSValue::encode(iteratorForEach<TestNodeIterator>(*state, *thisObject, throwScope));
 }
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionForEach(JSC::ExecState* state)
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionForEach(JSC::JSGlobalObject* globalObject, JSC::CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionForEachCaller>(*state, "forEach");
 }
 
@@ -420,8 +428,9 @@ static inline EncodedJSValue jsTestNodePrototypeFunctionToJSONBody(ExecState* st
     return JSValue::encode(JSTestNode::serialize(*state, *thisObject, *thisObject->globalObject(), throwScope));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionToJSON(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionToJSON(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionToJSONBody>(*state, "toJSON");
 }
 

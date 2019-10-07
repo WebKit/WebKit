@@ -34,11 +34,12 @@
 
 namespace JSC {
 
-class ExecState;
+class CallFrame;
 class JSGlobalObject;
 class JSInternalPromise;
 class JSModuleLoader;
 class SourceOrigin;
+using ExecState = CallFrame;
 
 }
 

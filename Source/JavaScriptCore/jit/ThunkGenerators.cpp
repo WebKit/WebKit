@@ -244,6 +244,9 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
 {
     // FIXME: This should be able to log ShadowChicken prologue packets.
     // https://bugs.webkit.org/show_bug.cgi?id=155689
+
+    // FIXME: We should clean up by removing per-architecture code.
+    // https://bugs.webkit.org/show_bug.cgi?id=202657
     
     int executableOffsetToFunction = NativeExecutable::offsetOfNativeFunctionFor(kind);
     
@@ -271,32 +274,39 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
 #if CPU(X86_64)
 #if !OS(WINDOWS)
     // Calling convention:      f(edi, esi, edx, ecx, ...);
-    // Host function signature: f(ExecState*);
-    jit.move(JSInterfaceJIT::callFrameRegister, X86Registers::edi);
+    // Host function signature: f(JSGlobalObject*, CallFrame*);
+    jit.move(JSInterfaceJIT::callFrameRegister, X86Registers::esi);
 
-    jit.emitGetFromCallFrameHeaderPtr(CallFrameSlot::callee, X86Registers::esi);
+    jit.emitGetFromCallFrameHeaderPtr(CallFrameSlot::callee, X86Registers::edi);
     if (thunkFunctionType == ThunkFunctionType::JSFunction) {
-        jit.loadPtr(JSInterfaceJIT::Address(X86Registers::esi, JSFunction::offsetOfExecutable()), X86Registers::r9);
+        jit.loadPtr(JSInterfaceJIT::Address(X86Registers::edi, JSFunction::offsetOfExecutable()), X86Registers::r9);
+        jit.loadPtr(JSInterfaceJIT::Address(X86Registers::edi, JSFunction::offsetOfGlobalObject()), X86Registers::edi);
         jit.loadPtr(JSInterfaceJIT::Address(X86Registers::r9, executableOffsetToFunction), X86Registers::r9);
-    } else
-        jit.loadPtr(JSInterfaceJIT::Address(X86Registers::esi, InternalFunction::offsetOfNativeFunctionFor(kind)), X86Registers::r9);
+    } else {
+        jit.loadPtr(JSInterfaceJIT::Address(X86Registers::edi, InternalFunction::offsetOfNativeFunctionFor(kind)), X86Registers::r9);
+        jit.loadPtr(JSInterfaceJIT::Address(X86Registers::edi, InternalFunction::offsetOfGlobalObject()), X86Registers::edi);
+    }
     jit.call(X86Registers::r9, JSEntryPtrTag);
 
 #else
     // Calling convention:      f(ecx, edx, r8, r9, ...);
-    // Host function signature: f(ExecState*);
-    jit.move(JSInterfaceJIT::callFrameRegister, X86Registers::ecx);
+    // Host function signature: f(JSGlobalObject*, CallFrame*);
+    jit.move(JSInterfaceJIT::callFrameRegister, X86Registers::edx);
 
     // Leave space for the callee parameter home addresses.
     // At this point the stack is aligned to 16 bytes, but if this changes at some point, we need to emit code to align it.
     jit.subPtr(JSInterfaceJIT::TrustedImm32(4 * sizeof(int64_t)), JSInterfaceJIT::stackPointerRegister);
 
-    jit.emitGetFromCallFrameHeaderPtr(CallFrameSlot::callee, X86Registers::edx);
+    jit.emitGetFromCallFrameHeaderPtr(CallFrameSlot::callee, X86Registers::ecx);
     if (thunkFunctionType == ThunkFunctionType::JSFunction) {
-        jit.loadPtr(JSInterfaceJIT::Address(X86Registers::edx, JSFunction::offsetOfExecutable()), X86Registers::r9);
-        jit.call(JSInterfaceJIT::Address(X86Registers::r9, executableOffsetToFunction), JSEntryPtrTag);
-    } else
-        jit.call(JSInterfaceJIT::Address(X86Registers::edx, InternalFunction::offsetOfNativeFunctionFor(kind)), JSEntryPtrTag);
+        jit.loadPtr(JSInterfaceJIT::Address(X86Registers::ecx, JSFunction::offsetOfExecutable()), X86Registers::r9);
+        jit.loadPtr(JSInterfaceJIT::Address(X86Registers::ecx, JSFunction::offsetOfGlobalObject()), X86Registers::ecx);
+        jit.loadPtr(JSInterfaceJIT::Address(X86Registers::r9, executableOffsetToFunction), X86Registers::r9);
+    } else {
+        jit.loadPtr(JSInterfaceJIT::Address(X86Registers::ecx, InternalFunction::offsetOfNativeFunctionFor(kind)), X86Registers::r9);
+        jit.loadPtr(JSInterfaceJIT::Address(X86Registers::ecx, InternalFunction::offsetOfGlobalObject()), X86Registers::ecx);
+    }
+    jit.call(X86Registers::r9, JSEntryPtrTag);
 
     jit.addPtr(JSInterfaceJIT::TrustedImm32(4 * sizeof(int64_t)), JSInterfaceJIT::stackPointerRegister);
 #endif
@@ -306,15 +316,18 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
     COMPILE_ASSERT(ARM64Registers::x1 != JSInterfaceJIT::regT3, T3_not_trampled_by_arg_1);
     COMPILE_ASSERT(ARM64Registers::x2 != JSInterfaceJIT::regT3, T3_not_trampled_by_arg_2);
 
-    // Host function signature: f(ExecState*);
-    jit.move(JSInterfaceJIT::callFrameRegister, ARM64Registers::x0);
+    // Host function signature: f(JSGlobalObject*, CallFrame*);
+    jit.move(JSInterfaceJIT::callFrameRegister, ARM64Registers::x1);
 
-    jit.emitGetFromCallFrameHeaderPtr(CallFrameSlot::callee, ARM64Registers::x1);
+    jit.emitGetFromCallFrameHeaderPtr(CallFrameSlot::callee, ARM64Registers::x0);
     if (thunkFunctionType == ThunkFunctionType::JSFunction) {
-        jit.loadPtr(JSInterfaceJIT::Address(ARM64Registers::x1, JSFunction::offsetOfExecutable()), ARM64Registers::x2);
+        jit.loadPtr(JSInterfaceJIT::Address(ARM64Registers::x0, JSFunction::offsetOfExecutable()), ARM64Registers::x2);
+        jit.loadPtr(JSInterfaceJIT::Address(ARM64Registers::x0, JSFunction::offsetOfGlobalObject()), ARM64Registers::x0);
         jit.loadPtr(JSInterfaceJIT::Address(ARM64Registers::x2, executableOffsetToFunction), ARM64Registers::x2);
-    } else
-        jit.loadPtr(JSInterfaceJIT::Address(ARM64Registers::x1, InternalFunction::offsetOfNativeFunctionFor(kind)), ARM64Registers::x2);
+    } else {
+        jit.loadPtr(JSInterfaceJIT::Address(ARM64Registers::x0, InternalFunction::offsetOfNativeFunctionFor(kind)), ARM64Registers::x2);
+        jit.loadPtr(JSInterfaceJIT::Address(ARM64Registers::x0, InternalFunction::offsetOfGlobalObject()), ARM64Registers::x0);
+    }
     jit.call(ARM64Registers::x2, JSEntryPtrTag);
 
 #elif CPU(ARM_THUMB2) || CPU(MIPS)
@@ -323,16 +336,24 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
     jit.subPtr(JSInterfaceJIT::TrustedImm32(16), JSInterfaceJIT::stackPointerRegister);
 #endif
 
-    // Calling convention is f(argumentGPR0, argumentGPR1, ...).
-    // Host function signature is f(ExecState*).
-    jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::argumentGPR0);
+    static_assert(GPRInfo::regT2 != GPRInfo::argumentGPR0);
+    static_assert(GPRInfo::regT2 != GPRInfo::argumentGPR1);
 
-    jit.emitGetFromCallFrameHeaderPtr(CallFrameSlot::callee, JSInterfaceJIT::argumentGPR1);
+    // Calling convention is f(argumentGPR0, argumentGPR1, ...).
+    // Host function signature: f(JSGlobalObject*, CallFrame*);
+    jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::argumentGPR1);
+
+    jit.emitGetFromCallFrameHeaderPtr(CallFrameSlot::callee, JSInterfaceJIT::argumentGPR0);
     if (thunkFunctionType == ThunkFunctionType::JSFunction) {
-        jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::argumentGPR1, JSFunction::offsetOfExecutable()), JSInterfaceJIT::regT2);
-        jit.call(JSInterfaceJIT::Address(JSInterfaceJIT::regT2, executableOffsetToFunction), JSEntryPtrTag);
-    } else
-        jit.call(JSInterfaceJIT::Address(JSInterfaceJIT::argumentGPR1, InternalFunction::offsetOfNativeFunctionFor(kind)), JSEntryPtrTag);
+        jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::argumentGPR0, JSFunction::offsetOfExecutable()), JSInterfaceJIT::regT2);
+        jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::argumentGPR0, JSFunction::offsetOfGlobalObject()), JSInterfaceJIT::argumentGPR0);
+        jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::regT2, executableOffsetToFunction), JSInterfaceJIT::regT2);
+    } else {
+        jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::argumentGPR0, InternalFunction::offsetOfNativeFunctionFor(kind)), JSInterfaceJIT::regT2);
+        jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::argumentGPR0, InternalFunction::offsetOfGlobalObject()), JSInterfaceJIT::argumentGPR0);
+    }
+
+    jit.call(JSInterfaceJIT::regT2, JSEntryPtrTag);
 
 #if CPU(MIPS)
     // Restore stack space

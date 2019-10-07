@@ -81,8 +81,9 @@
 #endif
 
 namespace JSC {
-class ExecState;
+class CallFrame;
 class InputCursor;
+using ExecState = CallFrame;
 }
 
 namespace WebCore {

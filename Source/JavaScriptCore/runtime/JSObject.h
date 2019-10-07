@@ -1184,7 +1184,7 @@ private:
     }
 };
 
-JS_EXPORT_PRIVATE EncodedJSValue JSC_HOST_CALL objectPrivateFuncInstanceOf(ExecState*);
+JS_EXPORT_PRIVATE EncodedJSValue JSC_HOST_CALL objectPrivateFuncInstanceOf(JSGlobalObject*, CallFrame*);
 
 inline JSObject* JSObject::createRawObject(
     ExecState* exec, Structure* structure, Butterfly* butterfly)

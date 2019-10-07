@@ -36,11 +36,12 @@
 #include <wtf/RetainPtr.h>
 
 namespace JSC {
+    class CallFrame;
     class DebuggerCallFrame;
-    class ExecState;
     class JSGlobalObject;
     class JSObject;
     class ArgList;
+    using ExecState = CallFrame;
 }
 
 @class WebScriptCallFrame;

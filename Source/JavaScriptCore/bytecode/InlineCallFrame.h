@@ -37,8 +37,9 @@
 namespace JSC {
 
 struct InlineCallFrame;
-class ExecState;
+class CallFrame;
 class JSFunction;
+using ExecState = CallFrame;
 
 struct InlineCallFrame {
     enum Kind {

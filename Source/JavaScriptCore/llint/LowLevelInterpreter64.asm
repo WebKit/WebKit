@@ -255,7 +255,7 @@ macro doVMEntry(makeCall)
 
     checkStackPointerAlignment(extraTempReg, 0xbad0dc02)
 
-    makeCall(entry, t3, t4)
+    makeCall(entry, protoCallFrame, t3, t4)
 
     # We may have just made a call into a JS function, so we can't rely on sp
     # for anything but the fact that our own locals (ie the VMEntryRecord) are
@@ -297,7 +297,8 @@ macro doVMEntry(makeCall)
 end
 
 
-macro makeJavaScriptCall(entry, temp, unused)
+# a0, a2, t3, t4
+macro makeJavaScriptCall(entry, protoCallFrame, temp1, temp2)
     addp 16, sp
     if C_LOOP or C_LOOP_WIN
         cloopCallJSFunction entry
@@ -307,20 +308,22 @@ macro makeJavaScriptCall(entry, temp, unused)
     subp 16, sp
 end
 
-macro makeHostFunctionCall(entry, temp, unused)
-    move entry, temp
+# a0, a2, t3, t4
+macro makeHostFunctionCall(entry, protoCallFrame, temp1, temp2)
+    move entry, temp1
     storep cfr, [sp]
-    move sp, a0
+    loadp ProtoCallFrame::globalObject[protoCallFrame], a0
+    move sp, a1
     if C_LOOP or C_LOOP_WIN
         storep lr, 8[sp]
-        cloopCallNative temp
+        cloopCallNative temp1
     elsif X86_64_WIN
         # We need to allocate 32 bytes on the stack for the shadow space.
         subp 32, sp
-        call temp, JSEntryPtrTag
+        call temp1, JSEntryPtrTag
         addp 32, sp
     else
-        call temp, JSEntryPtrTag
+        call temp1, JSEntryPtrTag
     end
 end
 
@@ -2123,19 +2126,20 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     if ARM64 or ARM64E or C_LOOP or C_LOOP_WIN
         storep lr, ReturnPC[cfr]
     end
-    move cfr, a0
-    loadp Callee[cfr], t1
-    loadp JSFunction::m_executable[t1], t1
+    move cfr, a1
+    loadp Callee[cfr], a0
+    loadp JSFunction::m_executable[a0], a2
+    loadp JSFunction::m_globalObject[a0], a0
     checkStackPointerAlignment(t3, 0xdead0001)
     if C_LOOP or C_LOOP_WIN
-        cloopCallNative executableOffsetToFunction[t1]
+        cloopCallNative executableOffsetToFunction[a2]
     else
         if X86_64_WIN
             subp 32, sp
-            call executableOffsetToFunction[t1], JSEntryPtrTag
+            call executableOffsetToFunction[a2], JSEntryPtrTag
             addp 32, sp
         else
-            call executableOffsetToFunction[t1], JSEntryPtrTag
+            call executableOffsetToFunction[a2], JSEntryPtrTag
         end
     end
 
@@ -2163,18 +2167,19 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
     if ARM64 or ARM64E or C_LOOP or C_LOOP_WIN
         storep lr, ReturnPC[cfr]
     end
-    move cfr, a0
-    loadp Callee[cfr], t1
+    move cfr, a1
+    loadp Callee[cfr], a2
+    loadp InternalFunction::m_globalObject[a2], a0
     checkStackPointerAlignment(t3, 0xdead0001)
     if C_LOOP or C_LOOP_WIN
-        cloopCallNative offsetOfFunction[t1]
+        cloopCallNative offsetOfFunction[a2]
     else
         if X86_64_WIN
             subp 32, sp
-            call offsetOfFunction[t1], JSEntryPtrTag
+            call offsetOfFunction[a2], JSEntryPtrTag
             addp 32, sp
         else
-            call offsetOfFunction[t1], JSEntryPtrTag
+            call offsetOfFunction[a2], JSEntryPtrTag
         end
     end
 

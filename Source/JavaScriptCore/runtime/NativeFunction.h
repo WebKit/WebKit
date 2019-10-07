@@ -30,9 +30,9 @@
 
 namespace JSC {
 
-class ExecState;
+class CallFrame;
 
-typedef EncodedJSValue (JSC_HOST_CALL *RawNativeFunction)(ExecState*);
+typedef EncodedJSValue (JSC_HOST_CALL *RawNativeFunction)(JSGlobalObject*, CallFrame*);
 
 class NativeFunction {
 public:
@@ -47,7 +47,7 @@ public:
     bool operator==(NativeFunction other) const { return m_ptr == other.m_ptr; }
     bool operator!=(NativeFunction other) const { return m_ptr == other.m_ptr; }
 
-    EncodedJSValue operator()(ExecState* exec) { return m_ptr(exec); }
+    EncodedJSValue operator()(JSGlobalObject* globalObject, CallFrame* callFrame) { return m_ptr(globalObject, callFrame); }
 
     void* rawPointer() const { return reinterpret_cast<void*>(m_ptr); }
 
@@ -81,7 +81,7 @@ public:
     bool operator==(TaggedNativeFunction other) const { return m_ptr == other.m_ptr; }
     bool operator!=(TaggedNativeFunction other) const { return m_ptr != other.m_ptr; }
 
-    EncodedJSValue operator()(ExecState* exec) { return NativeFunction(*this)(exec); }
+    EncodedJSValue operator()(JSGlobalObject* globalObject, CallFrame* callFrame) { return NativeFunction(*this)(globalObject, callFrame); }
 
     explicit operator NativeFunction()
     {

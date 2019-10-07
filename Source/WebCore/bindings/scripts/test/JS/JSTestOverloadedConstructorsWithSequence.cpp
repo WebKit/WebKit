@@ -74,9 +74,9 @@ private:
 
 using JSTestOverloadedConstructorsWithSequenceConstructor = JSDOMConstructor<JSTestOverloadedConstructorsWithSequence>;
 
-static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence1(ExecState* state)
+static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence1(JSGlobalObject* globalObject, CallFrame* state)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     auto* castedThis = jsCast<JSTestOverloadedConstructorsWithSequenceConstructor*>(state->jsCallee());
@@ -87,9 +87,9 @@ static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence1(
     return JSValue::encode(toJSNewlyCreated<IDLInterface<TestOverloadedConstructorsWithSequence>>(*state, *castedThis->globalObject(), WTFMove(object)));
 }
 
-static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence2(ExecState* state)
+static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence2(JSGlobalObject* globalObject, CallFrame* state)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     auto* castedThis = jsCast<JSTestOverloadedConstructorsWithSequenceConstructor*>(state->jsCallee());
@@ -100,22 +100,22 @@ static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence2(
     return JSValue::encode(toJSNewlyCreated<IDLInterface<TestOverloadedConstructorsWithSequence>>(*state, *castedThis->globalObject(), WTFMove(object)));
 }
 
-template<> EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsWithSequenceConstructor::construct(ExecState* state)
+template<> EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsWithSequenceConstructor::construct(JSGlobalObject* globalObject, CallFrame* state)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     size_t argsCount = std::min<size_t>(1, state->argumentCount());
     if (argsCount == 0) {
-        return constructJSTestOverloadedConstructorsWithSequence1(state);
+        return constructJSTestOverloadedConstructorsWithSequence1(globalObject, state);
     }
     if (argsCount == 1) {
         JSValue distinguishingArg = state->uncheckedArgument(0);
         if (distinguishingArg.isUndefined())
-            return constructJSTestOverloadedConstructorsWithSequence1(state);
+            return constructJSTestOverloadedConstructorsWithSequence1(globalObject, state);
         if (hasIteratorMethod(*state, distinguishingArg))
-            return constructJSTestOverloadedConstructorsWithSequence1(state);
-        return constructJSTestOverloadedConstructorsWithSequence2(state);
+            return constructJSTestOverloadedConstructorsWithSequence1(globalObject, state);
+        return constructJSTestOverloadedConstructorsWithSequence2(globalObject, state);
     }
     return throwVMTypeError(state, throwScope);
 }

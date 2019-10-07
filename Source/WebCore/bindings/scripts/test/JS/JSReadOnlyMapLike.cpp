@@ -45,12 +45,12 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionGet(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionHas(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionEntries(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionKeys(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionValues(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionForEach(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionGet(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionHas(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionEntries(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionKeys(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionValues(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionForEach(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -216,8 +216,9 @@ static inline JSC::EncodedJSValue jsReadOnlyMapLikePrototypeFunctionGetBody(JSC:
     return JSValue::encode(toJS<IDLAny>(forwardGetToMapLike(*state, *castedThis, WTFMove(key))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionGet(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionGet(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSReadOnlyMapLike>::call<jsReadOnlyMapLikePrototypeFunctionGetBody>(*state, "get");
 }
 
@@ -232,8 +233,9 @@ static inline JSC::EncodedJSValue jsReadOnlyMapLikePrototypeFunctionHasBody(JSC:
     return JSValue::encode(toJS<IDLAny>(forwardHasToMapLike(*state, *castedThis, WTFMove(key))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionHas(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionHas(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSReadOnlyMapLike>::call<jsReadOnlyMapLikePrototypeFunctionHasBody>(*state, "has");
 }
 
@@ -244,8 +246,9 @@ static inline JSC::EncodedJSValue jsReadOnlyMapLikePrototypeFunctionEntriesBody(
     return JSValue::encode(toJS<IDLAny>(forwardEntriesToMapLike(*state, *castedThis)));
 }
 
-EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionEntries(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionEntries(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSReadOnlyMapLike>::call<jsReadOnlyMapLikePrototypeFunctionEntriesBody>(*state, "entries");
 }
 
@@ -256,8 +259,9 @@ static inline JSC::EncodedJSValue jsReadOnlyMapLikePrototypeFunctionKeysBody(JSC
     return JSValue::encode(toJS<IDLAny>(forwardKeysToMapLike(*state, *castedThis)));
 }
 
-EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionKeys(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionKeys(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSReadOnlyMapLike>::call<jsReadOnlyMapLikePrototypeFunctionKeysBody>(*state, "keys");
 }
 
@@ -268,8 +272,9 @@ static inline JSC::EncodedJSValue jsReadOnlyMapLikePrototypeFunctionValuesBody(J
     return JSValue::encode(toJS<IDLAny>(forwardValuesToMapLike(*state, *castedThis)));
 }
 
-EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionValues(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionValues(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSReadOnlyMapLike>::call<jsReadOnlyMapLikePrototypeFunctionValuesBody>(*state, "values");
 }
 
@@ -284,8 +289,9 @@ static inline JSC::EncodedJSValue jsReadOnlyMapLikePrototypeFunctionForEachBody(
     return JSValue::encode(toJS<IDLAny>(forwardForEachToMapLike(*state, *castedThis, WTFMove(callback))));
 }
 
-EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionForEach(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionForEach(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSReadOnlyMapLike>::call<jsReadOnlyMapLikePrototypeFunctionForEachBody>(*state, "forEach");
 }
 

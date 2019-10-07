@@ -42,7 +42,7 @@ using namespace Bindings;
 
 WEBCORE_EXPORT const ClassInfo RuntimeMethod::s_info = { "RuntimeMethod", &InternalFunction::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RuntimeMethod) };
 
-static EncodedJSValue JSC_HOST_CALL callRuntimeMethod(ExecState*);
+static EncodedJSValue JSC_HOST_CALL callRuntimeMethod(JSGlobalObject*, CallFrame*);
 
 RuntimeMethod::RuntimeMethod(JSGlobalObject* globalObject, Structure* structure, Method* method)
     // Callers will need to pass in the right global object corresponding to this native object "method".
@@ -85,35 +85,35 @@ IsoSubspace* RuntimeMethod::subspaceForImpl(VM& vm)
     return &static_cast<JSVMClientData*>(vm.clientData)->runtimeMethodSpace();
 }
 
-static EncodedJSValue JSC_HOST_CALL callRuntimeMethod(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callRuntimeMethod(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    RuntimeMethod* method = static_cast<RuntimeMethod*>(exec->jsCallee());
+    RuntimeMethod* method = static_cast<RuntimeMethod*>(callFrame->jsCallee());
 
     if (!method->method())
         return JSValue::encode(jsUndefined());
 
     RefPtr<Instance> instance;
 
-    JSValue thisValue = exec->thisValue();
+    JSValue thisValue = callFrame->thisValue();
     if (thisValue.inherits<RuntimeObject>(vm)) {
         RuntimeObject* runtimeObject = static_cast<RuntimeObject*>(asObject(thisValue));
         instance = runtimeObject->getInternalInstance();
         if (!instance) 
-            return JSValue::encode(RuntimeObject::throwInvalidAccessError(exec, scope));
+            return JSValue::encode(RuntimeObject::throwInvalidAccessError(callFrame, scope));
     } else {
         // Calling a runtime object of a plugin element?
         if (thisValue.inherits<JSHTMLElement>(vm))
             instance = pluginInstance(jsCast<JSHTMLElement*>(asObject(thisValue))->wrapped());
         if (!instance)
-            return throwVMTypeError(exec, scope);
+            return throwVMTypeError(callFrame, scope);
     }
     ASSERT(instance);
 
     instance->begin();
-    JSValue result = instance->invokeMethod(exec, method);
+    JSValue result = instance->invokeMethod(callFrame, method);
     instance->end();
     return JSValue::encode(result);
 }

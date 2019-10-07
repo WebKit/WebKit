@@ -41,9 +41,9 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToString(ExecState*);
-static EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToLocaleString(ExecState*);
-static EncodedJSValue JSC_HOST_CALL bigIntProtoFuncValueOf(ExecState*);
+static EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToString(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToLocaleString(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL bigIntProtoFuncValueOf(JSGlobalObject*, CallFrame*);
 
 }
 
@@ -90,42 +90,47 @@ static ALWAYS_INLINE JSBigInt* toThisBigIntValue(VM& vm, JSValue thisValue)
     return nullptr;
 }
 
-EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToString(ExecState* state)
+static JSValue bigIntProtoFuncToStringImpl(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSBigInt* value = toThisBigIntValue(vm, state->thisValue());
+    JSBigInt* value = toThisBigIntValue(vm, callFrame->thisValue());
     if (!value)
-        return throwVMTypeError(state, scope, "'this' value must be a BigInt or BigIntObject"_s);
-    
+        return throwTypeError(callFrame, scope, "'this' value must be a BigInt or BigIntObject"_s);
+
     ASSERT(value);
 
-    int32_t radix = extractToStringRadixArgument(state, state->argument(0), scope);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    int32_t radix = extractToStringRadixArgument(callFrame, callFrame->argument(0), scope);
+    RETURN_IF_EXCEPTION(scope, { });
 
-    String resultString = value->toString(state, radix);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    String resultString = value->toString(callFrame, radix);
+    RETURN_IF_EXCEPTION(scope, { });
     scope.release();
     if (resultString.length() == 1)
-        return JSValue::encode(vm.smallStrings.singleCharacterString(resultString[0]));
+        return vm.smallStrings.singleCharacterString(resultString[0]);
 
-    return JSValue::encode(jsNontrivialString(vm, resultString));
+    return jsNontrivialString(vm, resultString);
 }
 
-EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToLocaleString(ExecState* state)
+EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToString(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return bigIntProtoFuncToString(state);
+    return JSValue::encode(bigIntProtoFuncToStringImpl(globalObject, callFrame));
 }
 
-EncodedJSValue JSC_HOST_CALL bigIntProtoFuncValueOf(ExecState* state)
+EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToLocaleString(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = state->vm();
-    if (JSBigInt* value = toThisBigIntValue(vm, state->thisValue()))
+    return JSValue::encode(bigIntProtoFuncToStringImpl(globalObject, callFrame));
+}
+
+EncodedJSValue JSC_HOST_CALL bigIntProtoFuncValueOf(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    VM& vm = globalObject->vm();
+    if (JSBigInt* value = toThisBigIntValue(vm, callFrame->thisValue()))
         return JSValue::encode(value);
     
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return throwVMTypeError(state, scope, "'this' value must be a BigInt or BigIntObject"_s);
+    return throwVMTypeError(callFrame, scope, "'this' value must be a BigInt or BigIntObject"_s);
 }
 
 } // namespace JSC

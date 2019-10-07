@@ -43,7 +43,7 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -184,8 +184,9 @@ static inline JSC::EncodedJSValue jsTestMediaQueryListListenerPrototypeFunctionM
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestMediaQueryListListener>::call<jsTestMediaQueryListListenerPrototypeFunctionMethodBody>(*state, "method");
 }
 

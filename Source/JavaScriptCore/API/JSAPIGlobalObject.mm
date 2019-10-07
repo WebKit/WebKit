@@ -177,17 +177,17 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalOb
         return deferred->reject(exec, createError(exec, "No module loader provided."));
 
     auto deferredPromise = Strong<JSInternalPromiseDeferred>(vm, deferred);
-    auto* resolve = JSNativeStdFunction::create(vm, globalObject, 1, "resolve", [=] (ExecState* exec) {
+    auto* resolve = JSNativeStdFunction::create(vm, globalObject, 1, "resolve", [=] (JSGlobalObject* globalObject, CallFrame* callFrame) {
         // This captures the globalObject but that's ok because our structure keeps it alive anyway.
-        VM& vm = exec->vm();
+        VM& vm = globalObject->vm();
         JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(globalObject->globalExec())];
-        id script = valueToObject(context, toRef(exec, exec->argument(0)));
+        id script = valueToObject(context, toRef(callFrame, callFrame->argument(0)));
 
         MarkedArgumentBuffer args;
 
         auto rejectPromise = [&] (String message) {
-            args.append(createTypeError(exec, message));
-            call(exec, deferredPromise->JSPromiseDeferred::reject(), args, "This should never be seen...");
+            args.append(createTypeError(callFrame, message));
+            call(callFrame, deferredPromise->JSPromiseDeferred::reject(), args, "This should never be seen...");
             return encodedJSUndefined();
         };
 
@@ -206,15 +206,15 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalOb
             return rejectPromise(makeString("The same JSScript was provided for two different identifiers, previously: ", oldModuleKey, " and now: ", moduleKey.string()));
 
         args.append(source);
-        call(exec, deferredPromise->JSPromiseDeferred::resolve(), args, "This should never be seen...");
+        call(callFrame, deferredPromise->JSPromiseDeferred::resolve(), args, "This should never be seen...");
         return encodedJSUndefined();
     });
 
-    auto* reject = JSNativeStdFunction::create(vm, globalObject, 1, "reject", [=] (ExecState* exec) {
+    auto* reject = JSNativeStdFunction::create(vm, globalObject, 1, "reject", [=] (JSGlobalObject*, CallFrame* callFrame) {
         MarkedArgumentBuffer args;
-        args.append(exec->argument(0));
+        args.append(callFrame->argument(0));
 
-        call(exec, deferredPromise->JSPromiseDeferred::reject(), args, "This should never be seen...");
+        call(callFrame, deferredPromise->JSPromiseDeferred::reject(), args, "This should never be seen...");
         return encodedJSUndefined();
     });
 

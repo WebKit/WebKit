@@ -36,72 +36,72 @@ namespace JSC {
 
 struct APICallbackFunction {
 
-template <typename T> static EncodedJSValue JSC_HOST_CALL call(ExecState*);
-template <typename T> static EncodedJSValue JSC_HOST_CALL construct(ExecState*);
+template <typename T> static EncodedJSValue JSC_HOST_CALL call(JSGlobalObject*, CallFrame*);
+template <typename T> static EncodedJSValue JSC_HOST_CALL construct(JSGlobalObject*, CallFrame*);
 
 };
 
 template <typename T>
-EncodedJSValue JSC_HOST_CALL APICallbackFunction::call(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL APICallbackFunction::call(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSContextRef execRef = toRef(exec);
-    JSObjectRef functionRef = toRef(exec->jsCallee());
-    JSObjectRef thisObjRef = toRef(jsCast<JSObject*>(exec->thisValue().toThis(exec, NotStrictMode)));
+    JSContextRef execRef = toRef(callFrame);
+    JSObjectRef functionRef = toRef(callFrame->jsCallee());
+    JSObjectRef thisObjRef = toRef(jsCast<JSObject*>(callFrame->thisValue().toThis(callFrame, NotStrictMode)));
 
-    int argumentCount = static_cast<int>(exec->argumentCount());
+    int argumentCount = static_cast<int>(callFrame->argumentCount());
     Vector<JSValueRef, 16> arguments;
     arguments.reserveInitialCapacity(argumentCount);
     for (int i = 0; i < argumentCount; i++)
-        arguments.uncheckedAppend(toRef(exec, exec->uncheckedArgument(i)));
+        arguments.uncheckedAppend(toRef(callFrame, callFrame->uncheckedArgument(i)));
 
     JSValueRef exception = 0;
     JSValueRef result;
     {
-        JSLock::DropAllLocks dropAllLocks(exec);
+        JSLock::DropAllLocks dropAllLocks(callFrame);
         result = jsCast<T*>(toJS(functionRef))->functionCallback()(execRef, functionRef, thisObjRef, argumentCount, arguments.data(), &exception);
     }
     if (exception)
-        throwException(exec, scope, toJS(exec, exception));
+        throwException(callFrame, scope, toJS(callFrame, exception));
 
     // result must be a valid JSValue.
     if (!result)
         return JSValue::encode(jsUndefined());
 
-    return JSValue::encode(toJS(exec, result));
+    return JSValue::encode(toJS(callFrame, result));
 }
 
 template <typename T>
-EncodedJSValue JSC_HOST_CALL APICallbackFunction::construct(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL APICallbackFunction::construct(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSObject* constructor = exec->jsCallee();
-    JSContextRef ctx = toRef(exec);
+    JSObject* constructor = callFrame->jsCallee();
+    JSContextRef ctx = toRef(callFrame);
     JSObjectRef constructorRef = toRef(constructor);
 
     JSObjectCallAsConstructorCallback callback = jsCast<T*>(constructor)->constructCallback();
     if (callback) {
-        size_t argumentCount = exec->argumentCount();
+        size_t argumentCount = callFrame->argumentCount();
         Vector<JSValueRef, 16> arguments;
         arguments.reserveInitialCapacity(argumentCount);
         for (size_t i = 0; i < argumentCount; ++i)
-            arguments.uncheckedAppend(toRef(exec, exec->uncheckedArgument(i)));
+            arguments.uncheckedAppend(toRef(callFrame, callFrame->uncheckedArgument(i)));
 
         JSValueRef exception = 0;
         JSObjectRef result;
         {
-            JSLock::DropAllLocks dropAllLocks(exec);
+            JSLock::DropAllLocks dropAllLocks(callFrame);
             result = callback(ctx, constructorRef, argumentCount, arguments.data(), &exception);
         }
         if (exception) {
-            throwException(exec, scope, toJS(exec, exception));
-            return JSValue::encode(toJS(exec, exception));
+            throwException(callFrame, scope, toJS(callFrame, exception));
+            return JSValue::encode(toJS(callFrame, exception));
         }
         // result must be a valid JSValue.
         if (!result)
-            return throwVMTypeError(exec, scope);
+            return throwVMTypeError(callFrame, scope);
         return JSValue::encode(toJS(result));
     }
     

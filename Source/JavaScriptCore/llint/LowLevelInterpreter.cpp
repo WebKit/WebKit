@@ -144,7 +144,6 @@ public:
     ALWAYS_INLINE void* vp() const { return bitwise_cast<void*>(m_value); }
     ALWAYS_INLINE const void* cvp() const { return bitwise_cast<const void*>(m_value); }
     ALWAYS_INLINE CallFrame* callFrame() const { return bitwise_cast<CallFrame*>(m_value); }
-    ALWAYS_INLINE ExecState* execState() const { return bitwise_cast<ExecState*>(m_value); }
     ALWAYS_INLINE const void* instruction() const { return bitwise_cast<const void*>(m_value); }
     ALWAYS_INLINE VM* vm() const { return bitwise_cast<VM*>(m_value); }
     ALWAYS_INLINE JSCell* cell() const { return bitwise_cast<JSCell*>(m_value); }

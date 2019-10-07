@@ -39,9 +39,9 @@ typedef int64_t EncodedJSValue;
 class ArrayAllocationProfile;
 class ArrayProfile;
 class Butterfly;
+class CallFrame;
 class CallLinkInfo;
 class CodeBlock;
-class ExecState;
 class JSArray;
 class JSCell;
 class JSFunction;
@@ -66,7 +66,7 @@ struct InlineCallFrame;
 struct Instruction;
 struct ArithProfile;
 
-typedef ExecState CallFrame;
+using ExecState = CallFrame;
 
 extern "C" {
 

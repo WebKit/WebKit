@@ -38,6 +38,7 @@ InternalFunction::InternalFunction(VM& vm, Structure* structure, NativeFunction 
     : JSDestructibleObject(vm, structure)
     , m_functionForCall(functionForCall)
     , m_functionForConstruct(functionForConstruct ? functionForConstruct : callHostFunctionAsConstructor)
+    , m_globalObject(vm, this, structure->globalObject())
 {
     // exec->vm() wants callees to not be large allocations.
     RELEASE_ASSERT(!isLargeAllocation());

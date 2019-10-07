@@ -39,7 +39,7 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunction(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunction(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -226,8 +226,9 @@ static inline JSC::EncodedJSValue jsTestJSBuiltinConstructorPrototypeFunctionTes
     return JSValue::encode(castedThis->testCustomFunction(*state));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunction(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunction(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestJSBuiltinConstructor>::call<jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunctionBody>(*state, "testCustomFunction");
 }
 

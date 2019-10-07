@@ -42,11 +42,11 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionSymbolIterator(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionEntries(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionKeys(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionValues(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionForEach(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionSymbolIterator(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionEntries(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionKeys(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionValues(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionForEach(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -198,8 +198,9 @@ static inline EncodedJSValue jsTestIterablePrototypeFunctionEntriesCaller(ExecSt
     return JSValue::encode(iteratorCreate<TestIterableIterator>(*thisObject, IterationKind::Value));
 }
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionEntries(JSC::ExecState* state)
+JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionEntries(JSC::JSGlobalObject* globalObject, JSC::CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunctionEntriesCaller>(*state, "entries");
 }
 
@@ -208,8 +209,9 @@ static inline EncodedJSValue jsTestIterablePrototypeFunctionKeysCaller(ExecState
     return JSValue::encode(iteratorCreate<TestIterableIterator>(*thisObject, IterationKind::Key));
 }
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionKeys(JSC::ExecState* state)
+JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionKeys(JSC::JSGlobalObject* globalObject, JSC::CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunctionKeysCaller>(*state, "keys");
 }
 
@@ -218,8 +220,9 @@ static inline EncodedJSValue jsTestIterablePrototypeFunctionValuesCaller(ExecSta
     return JSValue::encode(iteratorCreate<TestIterableIterator>(*thisObject, IterationKind::Value));
 }
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionValues(JSC::ExecState* state)
+JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionValues(JSC::JSGlobalObject* globalObject, JSC::CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunctionValuesCaller>(*state, "values");
 }
 
@@ -228,8 +231,9 @@ static inline EncodedJSValue jsTestIterablePrototypeFunctionForEachCaller(ExecSt
     return JSValue::encode(iteratorForEach<TestIterableIterator>(*state, *thisObject, throwScope));
 }
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionForEach(JSC::ExecState* state)
+JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionForEach(JSC::JSGlobalObject* globalObject, JSC::CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestIterable>::call<jsTestIterablePrototypeFunctionForEachCaller>(*state, "forEach");
 }
 

@@ -34,14 +34,14 @@
 
 namespace JSC {
 
+class CallFrame;
 class CodeBlock;
 class Exception;
-class ExecState;
 class JSGlobalObject;
 class SourceProvider;
 class VM;
 
-typedef ExecState CallFrame;
+using ExecState = CallFrame;
 
 class JS_EXPORT_PRIVATE Debugger {
     WTF_MAKE_FAST_ALLOCATED;

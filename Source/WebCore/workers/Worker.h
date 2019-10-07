@@ -38,9 +38,10 @@
 #include <wtf/text/AtomStringHash.h>
 
 namespace JSC {
-class ExecState;
+class CallFrame;
 class JSObject;
 class JSValue;
+using ExecState = CallFrame;
 }
 
 namespace WebCore {

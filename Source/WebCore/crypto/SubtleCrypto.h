@@ -39,7 +39,8 @@
 namespace JSC {
 class ArrayBufferView;
 class ArrayBuffer;
-class ExecState;
+class CallFrame;
+using ExecState = CallFrame;
 }
 
 namespace WebCore {

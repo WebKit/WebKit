@@ -153,9 +153,9 @@ private:
 
 using JSTestEventConstructorConstructor = JSDOMConstructor<JSTestEventConstructor>;
 
-template<> EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::construct(ExecState* state)
+template<> EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::construct(JSGlobalObject* globalObject, CallFrame* state)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     auto* castedThis = jsCast<JSTestEventConstructorConstructor*>(state->jsCallee());

@@ -64,7 +64,7 @@ public:
         return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 
-    static JSC::EncodedJSValue JSC_HOST_CALL next(JSC::ExecState*);
+    static JSC::EncodedJSValue JSC_HOST_CALL next(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 private:
     JSDOMIteratorPrototype(JSC::VM& vm, JSC::Structure* structure) : Base(vm, structure) { }
@@ -246,16 +246,16 @@ JSC::JSValue JSDOMIterator<JSWrapper, IteratorTraits>::next(JSC::ExecState& stat
 }
 
 template<typename JSWrapper, typename IteratorTraits>
-JSC::EncodedJSValue JSC_HOST_CALL JSDOMIteratorPrototype<JSWrapper, IteratorTraits>::next(JSC::ExecState* state)
+JSC::EncodedJSValue JSC_HOST_CALL JSDOMIteratorPrototype<JSWrapper, IteratorTraits>::next(JSC::JSGlobalObject* globalObject, JSC::CallFrame* callFrame)
 {
-    JSC::VM& vm = state->vm();
+    JSC::VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto iterator = JSC::jsDynamicCast<JSDOMIterator<JSWrapper, IteratorTraits>*>(vm, state->thisValue());
+    auto iterator = JSC::jsDynamicCast<JSDOMIterator<JSWrapper, IteratorTraits>*>(vm, callFrame->thisValue());
     if (!iterator)
-        return JSC::JSValue::encode(throwTypeError(state, scope, "Cannot call next() on a non-Iterator object"_s));
+        return JSC::JSValue::encode(throwTypeError(callFrame, scope, "Cannot call next() on a non-Iterator object"_s));
 
-    return JSC::JSValue::encode(iterator->next(*state));
+    return JSC::JSValue::encode(iterator->next(*callFrame));
 }
 
 template<typename JSWrapper, typename IteratorTraits>

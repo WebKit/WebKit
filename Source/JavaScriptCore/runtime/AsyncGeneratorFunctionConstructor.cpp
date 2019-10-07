@@ -36,16 +36,16 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(AsyncGeneratorFunctionConstructor);
 
 const ClassInfo AsyncGeneratorFunctionConstructor::s_info = { "AsyncGeneratorFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AsyncGeneratorFunctionConstructor) };
 
-static EncodedJSValue JSC_HOST_CALL callAsyncGeneratorFunctionConstructor(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callAsyncGeneratorFunctionConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    ArgList args(exec);
-    return JSValue::encode(constructFunction(exec, jsCast<InternalFunction*>(exec->jsCallee())->globalObject(exec->vm()), args, FunctionConstructionMode::AsyncGenerator));
+    ArgList args(callFrame);
+    return JSValue::encode(constructFunction(callFrame, globalObject, args, FunctionConstructionMode::AsyncGenerator));
 }
 
-static EncodedJSValue JSC_HOST_CALL constructAsyncGeneratorFunctionConstructor(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL constructAsyncGeneratorFunctionConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    ArgList args(exec);
-    return JSValue::encode(constructFunction(exec, jsCast<InternalFunction*>(exec->jsCallee())->globalObject(exec->vm()), args, FunctionConstructionMode::AsyncGenerator));
+    ArgList args(callFrame);
+    return JSValue::encode(constructFunction(callFrame, globalObject, args, FunctionConstructionMode::AsyncGenerator));
 }
 
 AsyncGeneratorFunctionConstructor::AsyncGeneratorFunctionConstructor(VM& vm, Structure* structure)

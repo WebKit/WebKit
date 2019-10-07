@@ -38,16 +38,16 @@ namespace JSC {
 
 const ClassInfo WebAssemblyWrapperFunction::s_info = { "WebAssemblyWrapperFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyWrapperFunction) };
 
-static EncodedJSValue JSC_HOST_CALL callWebAssemblyWrapperFunction(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callWebAssemblyWrapperFunction(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    WebAssemblyWrapperFunction* wasmFunction = jsCast<WebAssemblyWrapperFunction*>(exec->jsCallee());
+    WebAssemblyWrapperFunction* wasmFunction = jsCast<WebAssemblyWrapperFunction*>(callFrame->jsCallee());
     CallData callData;
     JSObject* function = wasmFunction->function();
     CallType callType = function->methodTable(vm)->getCallData(function, callData);
     RELEASE_ASSERT(callType != CallType::None);
-    RELEASE_AND_RETURN(scope, JSValue::encode(call(exec, function, callType, callData, jsUndefined(), ArgList(exec))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(call(callFrame, function, callType, callData, jsUndefined(), ArgList(callFrame))));
 }
 
 WebAssemblyWrapperFunction::WebAssemblyWrapperFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure, Wasm::WasmToWasmImportableFunction importableFunction)

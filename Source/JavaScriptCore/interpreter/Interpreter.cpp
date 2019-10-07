@@ -838,7 +838,7 @@ failedJSONP:
     ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
 
     ProtoCallFrame protoCallFrame;
-    protoCallFrame.init(codeBlock, JSCallee::create(vm, globalObject, scope), thisObj, 1);
+    protoCallFrame.init(codeBlock, globalObject, JSCallee::create(vm, globalObject, scope), thisObj, 1);
 
     // Execute the code:
     throwScope.release();
@@ -894,7 +894,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     }
 
     ProtoCallFrame protoCallFrame;
-    protoCallFrame.init(newCodeBlock, function, thisValue, argsCount, args.data());
+    protoCallFrame.init(newCodeBlock, globalObject, function, thisValue, argsCount, args.data());
 
     JSValue result;
     {
@@ -965,7 +965,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     }
 
     ProtoCallFrame protoCallFrame;
-    protoCallFrame.init(newCodeBlock, constructor, newTarget, argsCount, args.data());
+    protoCallFrame.init(newCodeBlock, globalObject, constructor, newTarget, argsCount, args.data());
 
     JSValue result;
     {
@@ -1004,7 +1004,7 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
 
     size_t argsCount = argumentCountIncludingThis;
 
-    protoCallFrame->init(newCodeBlock, function, jsUndefined(), argsCount, args.data());
+    protoCallFrame->init(newCodeBlock, function->globalObject(), function, jsUndefined(), argsCount, args.data());
     // Return the successful closure:
     CallFrameClosure result = { callFrame, protoCallFrame, function, functionExecutable, &vm, scope, newCodeBlock->numParameters(), argumentCountIncludingThis };
     return result;
@@ -1149,8 +1149,9 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
 
     ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
 
+    JSGlobalObject* globalObject = scope->globalObject(vm);
     ProtoCallFrame protoCallFrame;
-    protoCallFrame.init(codeBlock, JSCallee::create(vm, scope->globalObject(vm), scope), thisValue, 1);
+    protoCallFrame.init(codeBlock, globalObject, JSCallee::create(vm, globalObject, scope), thisValue, 1);
 
     // Execute the code:
     throwScope.release();
@@ -1199,8 +1200,9 @@ JSValue Interpreter::executeModuleProgram(ModuleProgramExecutable* executable, C
     // The |this| of the module is always `undefined`.
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-environment-records-hasthisbinding
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-environment-records-getthisbinding
+    JSGlobalObject* globalObject = scope->globalObject(vm);
     ProtoCallFrame protoCallFrame;
-    protoCallFrame.init(codeBlock, JSCallee::create(vm, scope->globalObject(vm), scope), jsUndefined(), 1);
+    protoCallFrame.init(codeBlock, globalObject, JSCallee::create(vm, globalObject, scope), jsUndefined(), 1);
 
     // Execute the code:
     throwScope.release();

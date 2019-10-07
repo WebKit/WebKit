@@ -45,14 +45,22 @@ public:
     uint32_t paddedArgCount;
     bool hasArityMismatch;
     JSValue *args;
+    JSGlobalObject* globalObject;
 
-    void init(CodeBlock*, JSObject*, JSValue, int, JSValue* otherArgs = 0);
+    void init(CodeBlock*, JSGlobalObject*, JSObject*, JSValue, int, JSValue* otherArgs = 0);
 
     CodeBlock* codeBlock() const { return codeBlockValue.Register::codeBlock(); }
     void setCodeBlock(CodeBlock* codeBlock) { codeBlockValue = codeBlock; }
 
     JSObject* callee() const { return calleeValue.Register::object(); }
-    void setCallee(JSObject* callee) { calleeValue = callee; }
+    void setCallee(JSObject* callee)
+    {
+        calleeValue = callee;
+    }
+    void setGlobalObject(JSGlobalObject* object)
+    {
+        globalObject = object;
+    }
 
     int argumentCountIncludingThis() const { return argCountAndCodeOriginValue.payload(); }
     int argumentCount() const { return argumentCountIncludingThis() - 1; }
@@ -78,11 +86,12 @@ public:
     }
 };
 
-inline void ProtoCallFrame::init(CodeBlock* codeBlock, JSObject* callee, JSValue thisValue, int argCountIncludingThis, JSValue* otherArgs)
+inline void ProtoCallFrame::init(CodeBlock* codeBlock, JSGlobalObject* globalObject, JSObject* callee, JSValue thisValue, int argCountIncludingThis, JSValue* otherArgs)
 {
     this->args = otherArgs;
     this->setCodeBlock(codeBlock);
     this->setCallee(callee);
+    this->setGlobalObject(globalObject);
     this->setArgumentCountIncludingThis(argCountIncludingThis);
     if (codeBlock && argCountIncludingThis < codeBlock->numParameters())
         this->hasArityMismatch = true;

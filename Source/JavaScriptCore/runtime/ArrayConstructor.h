@@ -58,7 +58,7 @@ private:
 
 JSArray* constructArrayWithSizeQuirk(ExecState*, ArrayAllocationProfile*, JSGlobalObject*, JSValue length, JSValue prototype = JSValue());
 
-EncodedJSValue JSC_HOST_CALL arrayConstructorPrivateFuncIsArraySlow(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayConstructorPrivateFuncIsArraySlow(JSGlobalObject*, CallFrame*);
 bool isArraySlow(ExecState*, ProxyObject* argument);
 
 // ES6 7.2.2

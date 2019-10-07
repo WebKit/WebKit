@@ -41,7 +41,7 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestStringifierOperationNamedToStringPrototypeFunctionToString(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestStringifierOperationNamedToStringPrototypeFunctionToString(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -177,8 +177,9 @@ static inline JSC::EncodedJSValue jsTestStringifierOperationNamedToStringPrototy
     return JSValue::encode(toJS<IDLDOMString>(*state, impl.toString()));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestStringifierOperationNamedToStringPrototypeFunctionToString(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestStringifierOperationNamedToStringPrototypeFunctionToString(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestStringifierOperationNamedToString>::call<jsTestStringifierOperationNamedToStringPrototypeFunctionToStringBody>(*state, "toString");
 }
 

@@ -32,8 +32,9 @@
 #endif
 
 namespace JSC {
-class ExecState;
+class CallFrame;
 class JSValue;
+using ExecState = CallFrame;
 }
 
 namespace WebCore {

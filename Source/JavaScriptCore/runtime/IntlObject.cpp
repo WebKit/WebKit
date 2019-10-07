@@ -57,7 +57,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(IntlObject);
 
-static EncodedJSValue JSC_HOST_CALL intlObjectFuncGetCanonicalLocales(ExecState*);
+static EncodedJSValue JSC_HOST_CALL intlObjectFuncGetCanonicalLocales(JSGlobalObject*, CallFrame*);
 
 static JSValue createCollatorConstructor(VM& vm, JSObject* object)
 {
@@ -917,27 +917,26 @@ Vector<String> numberingSystemsForLocale(const String& locale)
     return numberingSystems;
 }
 
-EncodedJSValue JSC_HOST_CALL intlObjectFuncGetCanonicalLocales(ExecState* state)
+EncodedJSValue JSC_HOST_CALL intlObjectFuncGetCanonicalLocales(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     // Intl.getCanonicalLocales(locales)
     // https://tc39.github.io/ecma402/#sec-intl.getcanonicallocales
 
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Vector<String> localeList = canonicalizeLocaleList(*state, state->argument(0));
+    Vector<String> localeList = canonicalizeLocaleList(*callFrame, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     auto length = localeList.size();
 
-    JSGlobalObject* globalObject = state->jsCallee()->globalObject(vm);
     JSArray* localeArray = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), length);
     if (!localeArray) {
-        throwOutOfMemoryError(state, scope);
+        throwOutOfMemoryError(callFrame, scope);
         return encodedJSValue();
     }
 
     for (size_t i = 0; i < length; ++i) {
-        localeArray->putDirectIndex(state, i, jsString(vm, localeList[i]));
+        localeArray->putDirectIndex(callFrame, i, jsString(vm, localeList[i]));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     return JSValue::encode(localeArray);

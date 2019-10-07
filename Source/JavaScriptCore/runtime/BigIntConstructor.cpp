@@ -37,8 +37,8 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL bigIntConstructorFuncAsUintN(ExecState*);
-static EncodedJSValue JSC_HOST_CALL bigIntConstructorFuncAsIntN(ExecState*);
+static EncodedJSValue JSC_HOST_CALL bigIntConstructorFuncAsUintN(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL bigIntConstructorFuncAsIntN(JSGlobalObject*, CallFrame*);
 
 } // namespace JSC
 
@@ -57,7 +57,7 @@ const ClassInfo BigIntConstructor::s_info = { "Function", &Base::s_info, &bigInt
 @end
 */
 
-static EncodedJSValue JSC_HOST_CALL callBigIntConstructor(ExecState*);
+static EncodedJSValue JSC_HOST_CALL callBigIntConstructor(JSGlobalObject*, CallFrame*);
 
 BigIntConstructor::BigIntConstructor(VM& vm, Structure* structure)
     : InternalFunction(vm, structure, callBigIntConstructor, nullptr)
@@ -110,18 +110,18 @@ static EncodedJSValue toBigInt(ExecState& state, JSValue argument)
     }));
 }
 
-static EncodedJSValue JSC_HOST_CALL callBigIntConstructor(ExecState* state)
+static EncodedJSValue JSC_HOST_CALL callBigIntConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     
-    JSValue value = state->argument(0);
-    JSValue primitive = value.toPrimitive(state);
+    JSValue value = callFrame->argument(0);
+    JSValue primitive = value.toPrimitive(callFrame);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (primitive.isNumber()) {
         if (!isSafeInteger(primitive))
-            return throwVMError(state, scope, createRangeError(state, "Not safe integer"_s));
+            return throwVMError(callFrame, scope, createRangeError(callFrame, "Not safe integer"_s));
         
         scope.release();
         if (primitive.isInt32())
@@ -133,12 +133,12 @@ static EncodedJSValue JSC_HOST_CALL callBigIntConstructor(ExecState* state)
         return JSValue::encode(JSBigInt::createFrom(vm, static_cast<int64_t>(primitive.asDouble())));
     }
     
-    EncodedJSValue result = toBigInt(*state, primitive);
+    EncodedJSValue result = toBigInt(*callFrame, primitive);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return result;
 }
 
-EncodedJSValue JSC_HOST_CALL bigIntConstructorFuncAsUintN(ExecState*)
+EncodedJSValue JSC_HOST_CALL bigIntConstructorFuncAsUintN(JSGlobalObject*, CallFrame*)
 {
     // FIXME: [ESNext][BigInt] Implement BigInt.asIntN and BigInt.asUintN
     // https://bugs.webkit.org/show_bug.cgi?id=181144
@@ -146,7 +146,7 @@ EncodedJSValue JSC_HOST_CALL bigIntConstructorFuncAsUintN(ExecState*)
     return JSValue::encode(JSValue());
 }
 
-EncodedJSValue JSC_HOST_CALL bigIntConstructorFuncAsIntN(ExecState*)
+EncodedJSValue JSC_HOST_CALL bigIntConstructorFuncAsIntN(JSGlobalObject*, CallFrame*)
 {
     // FIXME: [ESNext][BigInt] Implement BigInt.asIntN and BigInt.asUintN
     // https://bugs.webkit.org/show_bug.cgi?id=181144

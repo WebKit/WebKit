@@ -52,7 +52,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(AtomicsObject);
     macro(xor, Xor, 3)
 
 #define DECLARE_FUNC_PROTO(lowerName, upperName, count)                 \
-    EncodedJSValue JSC_HOST_CALL atomicsFunc ## upperName(ExecState*);
+    EncodedJSValue JSC_HOST_CALL atomicsFunc ## upperName(JSGlobalObject*, CallFrame*);
 FOR_EACH_ATOMICS_FUNC(DECLARE_FUNC_PROTO)
 #undef DECLARE_FUNC_PROTO
 
@@ -186,12 +186,12 @@ EncodedJSValue atomicOperationWithArgs(VM& vm, ExecState* exec, const JSValue* a
 }
 
 template<typename Func>
-EncodedJSValue atomicOperationWithArgs(ExecState* exec, const Func& func)
+EncodedJSValue atomicOperationWithArgs(CallFrame* callFrame, JSGlobalObject* globalObject, const Func& func)
 {
     JSValue args[2 + Func::numExtraArgs];
     for (unsigned i = 2 + Func::numExtraArgs; i--;)
-        args[i] = exec->argument(i);
-    return atomicOperationWithArgs(exec->vm(), exec, args, func);
+        args[i] = callFrame->argument(i);
+    return atomicOperationWithArgs(globalObject->vm(), callFrame, args, func);
 }
 
 struct AddFunc {
@@ -313,80 +313,80 @@ EncodedJSValue isLockFree(ExecState* exec, JSValue arg)
 
 } // anonymous namespace
 
-EncodedJSValue JSC_HOST_CALL atomicsFuncAdd(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL atomicsFuncAdd(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return atomicOperationWithArgs(exec, AddFunc());
+    return atomicOperationWithArgs(callFrame, globalObject, AddFunc());
 }
 
-EncodedJSValue JSC_HOST_CALL atomicsFuncAnd(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL atomicsFuncAnd(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return atomicOperationWithArgs(exec, AndFunc());
+    return atomicOperationWithArgs(callFrame, globalObject, AndFunc());
 }
 
-EncodedJSValue JSC_HOST_CALL atomicsFuncCompareExchange(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL atomicsFuncCompareExchange(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return atomicOperationWithArgs(exec, CompareExchangeFunc());
+    return atomicOperationWithArgs(callFrame, globalObject, CompareExchangeFunc());
 }
 
-EncodedJSValue JSC_HOST_CALL atomicsFuncExchange(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL atomicsFuncExchange(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return atomicOperationWithArgs(exec, ExchangeFunc());
+    return atomicOperationWithArgs(callFrame, globalObject, ExchangeFunc());
 }
 
-EncodedJSValue JSC_HOST_CALL atomicsFuncIsLockFree(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL atomicsFuncIsLockFree(JSGlobalObject*, CallFrame* callFrame)
 {
-    return isLockFree(exec, exec->argument(0));
+    return isLockFree(callFrame, callFrame->argument(0));
 }
 
-EncodedJSValue JSC_HOST_CALL atomicsFuncLoad(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL atomicsFuncLoad(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return atomicOperationWithArgs(exec, LoadFunc());
+    return atomicOperationWithArgs(callFrame, globalObject, LoadFunc());
 }
 
-EncodedJSValue JSC_HOST_CALL atomicsFuncOr(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL atomicsFuncOr(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return atomicOperationWithArgs(exec, OrFunc());
+    return atomicOperationWithArgs(callFrame, globalObject, OrFunc());
 }
 
-EncodedJSValue JSC_HOST_CALL atomicsFuncStore(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL atomicsFuncStore(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return atomicOperationWithArgs(exec, StoreFunc());
+    return atomicOperationWithArgs(callFrame, globalObject, StoreFunc());
 }
 
-EncodedJSValue JSC_HOST_CALL atomicsFuncSub(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL atomicsFuncSub(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return atomicOperationWithArgs(exec, SubFunc());
+    return atomicOperationWithArgs(callFrame, globalObject, SubFunc());
 }
 
-EncodedJSValue JSC_HOST_CALL atomicsFuncWait(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL atomicsFuncWait(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     
-    JSInt32Array* typedArray = jsDynamicCast<JSInt32Array*>(vm, exec->argument(0));
+    JSInt32Array* typedArray = jsDynamicCast<JSInt32Array*>(vm, callFrame->argument(0));
     if (!typedArray) {
-        throwTypeError(exec, scope, "Typed array for wait/wake must be an Int32Array."_s);
+        throwTypeError(callFrame, scope, "Typed array for wait/wake must be an Int32Array."_s);
         return JSValue::encode(jsUndefined());
     }
     
     if (!typedArray->isShared()) {
-        throwTypeError(exec, scope, "Typed array for wait/wake must wrap a SharedArrayBuffer."_s);
+        throwTypeError(callFrame, scope, "Typed array for wait/wake must wrap a SharedArrayBuffer."_s);
         return JSValue::encode(jsUndefined());
     }
 
-    unsigned accessIndex = validatedAccessIndex(vm, exec, exec->argument(1), typedArray);
+    unsigned accessIndex = validatedAccessIndex(vm, callFrame, callFrame->argument(1), typedArray);
     RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
     
     int32_t* ptr = typedArray->typedVector() + accessIndex;
     
-    int32_t expectedValue = exec->argument(2).toInt32(exec);
+    int32_t expectedValue = callFrame->argument(2).toInt32(callFrame);
     RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
     
-    double timeoutInMilliseconds = exec->argument(3).toNumber(exec);
+    double timeoutInMilliseconds = callFrame->argument(3).toNumber(callFrame);
     RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
     
     if (!vm.m_typedArrayController->isAtomicsWaitAllowedOnCurrentThread()) {
-        throwTypeError(exec, scope, "Atomics.wait cannot be called from the current thread."_s);
+        throwTypeError(callFrame, scope, "Atomics.wait cannot be called from the current thread."_s);
         return JSValue::encode(jsUndefined());
     }
     
@@ -398,7 +398,7 @@ EncodedJSValue JSC_HOST_CALL atomicsFuncWait(ExecState* exec)
     //     a. Let q be ? ToNumber(timeout).
     //     b. If q is NaN then let t be +inf, otherwise let t be max(0, q).
     //
-    // exec->argument(3) returns undefined if it's not provided and ToNumber(undefined) returns NaN,
+    // callFrame->argument(3) returns undefined if it's not provided and ToNumber(undefined) returns NaN,
     // so NaN is the only special case.
     if (!std::isnan(timeout))
         timeout = std::max(0_s, timeout);
@@ -428,31 +428,31 @@ EncodedJSValue JSC_HOST_CALL atomicsFuncWait(ExecState* exec)
     return JSValue::encode(jsString(vm, resultString));
 }
 
-EncodedJSValue JSC_HOST_CALL atomicsFuncWake(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL atomicsFuncWake(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     
-    JSInt32Array* typedArray = jsDynamicCast<JSInt32Array*>(vm, exec->argument(0));
+    JSInt32Array* typedArray = jsDynamicCast<JSInt32Array*>(vm, callFrame->argument(0));
     if (!typedArray) {
-        throwTypeError(exec, scope, "Typed array for wait/wake must be an Int32Array."_s);
+        throwTypeError(callFrame, scope, "Typed array for wait/wake must be an Int32Array."_s);
         return JSValue::encode(jsUndefined());
     }
     
     if (!typedArray->isShared()) {
-        throwTypeError(exec, scope, "Typed array for wait/wake must wrap a SharedArrayBuffer."_s);
+        throwTypeError(callFrame, scope, "Typed array for wait/wake must wrap a SharedArrayBuffer."_s);
         return JSValue::encode(jsUndefined());
     }
 
-    unsigned accessIndex = validatedAccessIndex(vm, exec, exec->argument(1), typedArray);
+    unsigned accessIndex = validatedAccessIndex(vm, callFrame, callFrame->argument(1), typedArray);
     RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
     
     int32_t* ptr = typedArray->typedVector() + accessIndex;
     
-    JSValue countValue = exec->argument(2);
+    JSValue countValue = callFrame->argument(2);
     unsigned count = UINT_MAX;
     if (!countValue.isUndefined()) {
-        int32_t countInt = countValue.toInt32(exec);
+        int32_t countInt = countValue.toInt32(callFrame);
         RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
         count = std::max(0, countInt);
     }
@@ -460,9 +460,9 @@ EncodedJSValue JSC_HOST_CALL atomicsFuncWake(ExecState* exec)
     return JSValue::encode(jsNumber(ParkingLot::unparkCount(ptr, count)));
 }
 
-EncodedJSValue JSC_HOST_CALL atomicsFuncXor(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL atomicsFuncXor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return atomicOperationWithArgs(exec, XorFunc());
+    return atomicOperationWithArgs(callFrame, globalObject, XorFunc());
 }
 
 EncodedJSValue JIT_OPERATION operationAtomicsAdd(ExecState* exec, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand)

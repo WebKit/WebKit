@@ -33,7 +33,7 @@
 namespace JSC  {
 
     class Arguments;
-    class ExecState;
+    class CallFrame;
     class Interpreter;
     class JSCallee;
     class JSScope;
@@ -41,7 +41,7 @@ namespace JSC  {
 
     struct Instruction;
 
-    typedef ExecState CallFrame;
+    using ExecState = CallFrame;
 
     class CallSiteIndex {
     public:
@@ -98,7 +98,7 @@ namespace JSC  {
 
     // Represents the current state of script execution.
     // Passed as the first argument to most functions.
-    class ExecState : private Register {
+    class CallFrame : private Register {
     public:
         static const int headerSizeInRegisters = CallFrameSlot::argumentCount + 1;
 
@@ -202,7 +202,7 @@ namespace JSC  {
         void setCallerFrame(CallFrame* frame) { callerFrameAndPC().callerFrame = frame; }
         void setScope(int scopeRegisterOffset, JSScope* scope) { static_cast<Register*>(this)[scopeRegisterOffset] = scope; }
 
-        static void initGlobalExec(ExecState* globalExec, JSCallee* globalCallee);
+        static void initGlobalExec(CallFrame* globalExec, JSCallee* globalCallee);
 
         // Read a register from the codeframe (or constant from the CodeBlock).
         Register& r(int);
@@ -303,8 +303,8 @@ namespace JSC  {
 
     private:
 
-        ExecState();
-        ~ExecState();
+        CallFrame();
+        ~CallFrame();
 
         Register* topOfFrameInternal();
 

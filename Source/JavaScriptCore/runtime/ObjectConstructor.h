@@ -26,11 +26,11 @@
 
 namespace JSC {
 
-EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState*);
-EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptors(ExecState*);
-EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertySymbols(ExecState*);
-EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(ExecState*);
-EncodedJSValue JSC_HOST_CALL objectConstructorKeys(ExecState*);
+EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptors(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertySymbols(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL objectConstructorKeys(JSGlobalObject*, CallFrame*);
 
 class ObjectPrototype;
 

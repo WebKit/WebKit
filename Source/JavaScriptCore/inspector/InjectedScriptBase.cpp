@@ -108,15 +108,16 @@ void InjectedScriptBase::makeAsyncCall(Deprecated::ScriptFunctionCall& function,
     auto* scriptState = m_injectedScriptObject.scriptState();
     JSC::VM& vm = scriptState->vm();
 
-    JSC::JSNativeStdFunction* jsFunction;
-
+    JSC::JSNativeStdFunction* jsFunction = nullptr;
+    JSC::JSGlobalObject* globalObject = nullptr;
     {
         JSC::JSLockHolder locker(vm);
 
-        jsFunction = JSC::JSNativeStdFunction::create(vm, scriptState->lexicalGlobalObject(), 1, String(), [&, callback = WTFMove(callback)] (JSC::ExecState* exec) {
-            if (!exec)
+        globalObject = scriptState->lexicalGlobalObject();
+        jsFunction = JSC::JSNativeStdFunction::create(vm, globalObject, 1, String(), [&, callback = WTFMove(callback)] (JSC::JSGlobalObject*, JSC::CallFrame* callFrame) {
+            if (!callFrame)
                 checkAsyncCallResult(JSON::Value::create("Exception while making a call."), callback);
-            else if (auto resultJSONValue = toInspectorValue(*exec, exec->argument(0)))
+            else if (auto resultJSONValue = toInspectorValue(*callFrame, callFrame->argument(0)))
                 checkAsyncCallResult(resultJSONValue, callback);
             else
                 checkAsyncCallResult(JSON::Value::create(makeString("Object has too long reference chain (must not be longer than ", JSON::Value::maxDepth, ')')), callback);
@@ -133,7 +134,7 @@ void InjectedScriptBase::makeAsyncCall(Deprecated::ScriptFunctionCall& function,
     if (!result) {
         // Since `callback` is moved above, we can't call it if there's an exception while trying to
         // execute the `JSNativeStdFunction` inside InjectedScriptSource.js.
-        jsFunction->nativeStdFunctionCell()->function()(nullptr);
+        jsFunction->nativeStdFunctionCell()->function()(globalObject, nullptr);
     }
 }
 

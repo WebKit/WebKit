@@ -34,13 +34,13 @@
 
 namespace JSC {
 
+    class CallFrame;
     class CodeBlock;
-    class ExecState;
     class JSLexicalEnvironment;
     class JSObject;
     class JSScope;
 
-    typedef ExecState CallFrame;
+    using ExecState = CallFrame;
 
     class Register {
         WTF_MAKE_FAST_ALLOCATED;

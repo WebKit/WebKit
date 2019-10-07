@@ -49,7 +49,7 @@ class Signature;
 }
 
 
-JS_EXPORT_PRIVATE EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState*);
+JS_EXPORT_PRIVATE EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(JSGlobalObject*, CallFrame*);
 
 JS_EXPORT_PRIVATE String getCalculatedDisplayName(VM&, JSObject*);
 
@@ -124,6 +124,11 @@ public:
         return OBJECT_OFFSETOF(JSFunction, m_rareData);
     }
 
+    static inline ptrdiff_t offsetOfGlobalObject()
+    {
+        return OBJECT_OFFSETOF(JSFunction, m_globalObject);
+    }
+
     FunctionRareData* rareData(VM& vm)
     {
         if (UNLIKELY(!m_rareData))
@@ -143,6 +148,8 @@ public:
 
         return rareData;
     }
+
+    JSGlobalObject* globalObject() const { return m_globalObject.get(); }
 
     bool isHostOrBuiltinFunction() const;
     bool isBuiltinFunction() const;
@@ -224,6 +231,7 @@ private:
 
     WriteBarrier<ExecutableBase> m_executable;
     WriteBarrier<FunctionRareData> m_rareData;
+    WriteBarrier<JSGlobalObject> m_globalObject;
 };
 
 class JSStrictFunction final : public JSFunction {

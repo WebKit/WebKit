@@ -47,74 +47,73 @@ void SetConstructor::finishCreation(VM& vm, SetPrototype* setPrototype, GetterSe
     putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->speciesSymbol, speciesSymbol, PropertyAttribute::Accessor | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
-static EncodedJSValue JSC_HOST_CALL callSet(ExecState*);
-static EncodedJSValue JSC_HOST_CALL constructSet(ExecState*);
+static EncodedJSValue JSC_HOST_CALL callSet(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL constructSet(JSGlobalObject*, CallFrame*);
 
 SetConstructor::SetConstructor(VM& vm, Structure* structure)
     : Base(vm, structure, callSet, constructSet)
 {
 }
 
-static EncodedJSValue JSC_HOST_CALL callSet(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callSet(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, scope, "Set"));
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(callFrame, scope, "Set"));
 }
 
-static EncodedJSValue JSC_HOST_CALL constructSet(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL constructSet(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSGlobalObject* globalObject = jsCast<InternalFunction*>(exec->jsCallee())->globalObject(vm);
-    Structure* setStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), globalObject->setStructure());
+    Structure* setStructure = InternalFunction::createSubclassStructure(callFrame, callFrame->newTarget(), globalObject->setStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    JSValue iterable = exec->argument(0);
+    JSValue iterable = callFrame->argument(0);
     if (iterable.isUndefinedOrNull()) 
-        RELEASE_AND_RETURN(scope, JSValue::encode(JSSet::create(exec, vm, setStructure)));
+        RELEASE_AND_RETURN(scope, JSValue::encode(JSSet::create(callFrame, vm, setStructure)));
 
     if (auto* iterableSet = jsDynamicCast<JSSet*>(vm, iterable)) {
         if (iterableSet->canCloneFastAndNonObservable(setStructure)) 
-            RELEASE_AND_RETURN(scope, JSValue::encode(iterableSet->clone(exec, vm, setStructure)));
+            RELEASE_AND_RETURN(scope, JSValue::encode(iterableSet->clone(callFrame, vm, setStructure)));
     }
 
-    JSSet* set = JSSet::create(exec, vm, setStructure);
+    JSSet* set = JSSet::create(callFrame, vm, setStructure);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    JSValue adderFunction = set->JSObject::get(exec, vm.propertyNames->add);
+    JSValue adderFunction = set->JSObject::get(callFrame, vm.propertyNames->add);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     CallData adderFunctionCallData;
     CallType adderFunctionCallType = getCallData(vm, adderFunction, adderFunctionCallData);
     if (UNLIKELY(adderFunctionCallType == CallType::None))
-        return JSValue::encode(throwTypeError(exec, scope));
+        return JSValue::encode(throwTypeError(callFrame, scope));
 
     scope.release();
-    forEachInIterable(exec, iterable, [&](VM&, ExecState* exec, JSValue nextValue) {
+    forEachInIterable(callFrame, iterable, [&](VM&, ExecState* callFrame, JSValue nextValue) {
         MarkedArgumentBuffer arguments;
         arguments.append(nextValue);
         ASSERT(!arguments.hasOverflowed());
-        call(exec, adderFunction, adderFunctionCallType, adderFunctionCallData, set, arguments);
+        call(callFrame, adderFunction, adderFunctionCallType, adderFunctionCallData, set, arguments);
     });
 
     return JSValue::encode(set);
 }
 
-EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketHead(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketHead(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    ASSERT(jsDynamicCast<JSSet*>(exec->vm(), exec->argument(0)));
-    JSSet* set = jsCast<JSSet*>(exec->uncheckedArgument(0));
+    ASSERT_UNUSED(globalObject, jsDynamicCast<JSSet*>(globalObject->vm(), callFrame->argument(0)));
+    JSSet* set = jsCast<JSSet*>(callFrame->uncheckedArgument(0));
     auto* head = set->head();
     ASSERT(head);
     return JSValue::encode(head);
 }
 
-EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketNext(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketNext(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    ASSERT(jsDynamicCast<JSSet::BucketType*>(exec->vm(), exec->argument(0)));
-    auto* bucket = jsCast<JSSet::BucketType*>(exec->uncheckedArgument(0));
+    ASSERT(jsDynamicCast<JSSet::BucketType*>(globalObject->vm(), callFrame->argument(0)));
+    auto* bucket = jsCast<JSSet::BucketType*>(callFrame->uncheckedArgument(0));
     ASSERT(bucket);
     bucket = bucket->next();
     while (bucket) {
@@ -122,13 +121,13 @@ EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketNext(ExecState* exec)
             return JSValue::encode(bucket);
         bucket = bucket->next();
     }
-    return JSValue::encode(exec->vm().sentinelSetBucket());
+    return JSValue::encode(globalObject->vm().sentinelSetBucket());
 }
 
-EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketKey(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketKey(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    ASSERT(jsDynamicCast<JSSet::BucketType*>(exec->vm(), exec->argument(0)));
-    auto* bucket = jsCast<JSSet::BucketType*>(exec->uncheckedArgument(0));
+    ASSERT_UNUSED(globalObject, jsDynamicCast<JSSet::BucketType*>(globalObject->vm(), callFrame->argument(0)));
+    auto* bucket = jsCast<JSSet::BucketType*>(callFrame->uncheckedArgument(0));
     ASSERT(bucket);
     return JSValue::encode(bucket->key());
 }

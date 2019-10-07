@@ -53,7 +53,7 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestSerializationPrototypeFunctionToJSON(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestSerializationPrototypeFunctionToJSON(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -665,8 +665,9 @@ static inline EncodedJSValue jsTestSerializationPrototypeFunctionToJSONBody(Exec
     return JSValue::encode(JSTestSerialization::serialize(*state, *thisObject, *thisObject->globalObject(), throwScope));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestSerializationPrototypeFunctionToJSON(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestSerializationPrototypeFunctionToJSON(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestSerialization>::call<jsTestSerializationPrototypeFunctionToJSONBody>(*state, "toJSON");
 }
 

@@ -63,7 +63,7 @@ private:
     JSCustomGetterSetterFunction(VM&, JSGlobalObject*, Structure*, Type, const PropertyName&);
     void finishCreation(VM&, NativeExecutable*, CustomGetterSetter*, const String&);
 
-    static EncodedJSValue JSC_HOST_CALL customGetterSetterFunctionCall(ExecState*);
+    static EncodedJSValue JSC_HOST_CALL customGetterSetterFunctionCall(JSGlobalObject*, CallFrame*);
 
     CustomGetterSetter* customGetterSetter() const { return m_getterSetter.get(); }
     bool isSetter() const { return m_type == Type::Setter; }

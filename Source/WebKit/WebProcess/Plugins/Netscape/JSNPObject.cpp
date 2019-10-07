@@ -239,12 +239,12 @@ JSValue JSNPObject::callConstructor(ExecState* exec)
     return value;
 }
 
-static EncodedJSValue JSC_HOST_CALL callNPJSObject(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callNPJSObject(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    JSObject* object = exec->jsCallee();
-    ASSERT(object->inherits<JSNPObject>(exec->vm()));
+    JSObject* object = callFrame->jsCallee();
+    ASSERT_UNUSED(globalObject, object->inherits<JSNPObject>(globalObject->vm()));
 
-    return JSValue::encode(jsCast<JSNPObject*>(object)->callObject(exec));
+    return JSValue::encode(jsCast<JSNPObject*>(object)->callObject(callFrame));
 }
 
 JSC::CallType JSNPObject::getCallData(JSC::JSCell* cell, JSC::CallData& callData)
@@ -258,12 +258,12 @@ JSC::CallType JSNPObject::getCallData(JSC::JSCell* cell, JSC::CallData& callData
     return CallType::Host;
 }
 
-static EncodedJSValue JSC_HOST_CALL constructWithConstructor(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL constructWithConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    JSObject* constructor = exec->jsCallee();
-    ASSERT(constructor->inherits<JSNPObject>(exec->vm()));
+    JSObject* constructor = callFrame->jsCallee();
+    ASSERT_UNUSED(globalObject, constructor->inherits<JSNPObject>(globalObject->vm()));
 
-    return JSValue::encode(jsCast<JSNPObject*>(constructor)->callConstructor(exec));
+    return JSValue::encode(jsCast<JSNPObject*>(constructor)->callConstructor(callFrame));
 }
 
 ConstructType JSNPObject::getConstructData(JSCell* cell, ConstructData& constructData)

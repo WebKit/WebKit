@@ -120,23 +120,23 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionRegularOperation(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionRegularOperation(JSC::JSGlobalObject*, JSC::CallFrame*);
 #if ENABLE(TEST_FEATURE)
-JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation(JSC::JSGlobalObject*, JSC::CallFrame*);
 #endif
 #if ENABLE(TEST_FEATURE)
-JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectConstructorFunctionEnabledAtRuntimeOperationStatic(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectConstructorFunctionEnabledAtRuntimeOperationStatic(JSC::JSGlobalObject*, JSC::CallFrame*);
 #endif
-JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorld(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabled(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeaturesEnabled(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorld(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabled(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeaturesEnabled(JSC::JSGlobalObject*, JSC::CallFrame*);
 #if ENABLE(TEST_FEATURE)
-JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionTestPrivateFunction(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionTestPrivateFunction(JSC::JSGlobalObject*, JSC::CallFrame*);
 #endif
-JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionCalculateSecretResult(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionGetSecretBoolean(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionCalculateSecretResult(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionGetSecretBoolean(JSC::JSGlobalObject*, JSC::CallFrame*);
 #if ENABLE(TEST_FEATURE)
-JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionTestFeatureGetSecretBoolean(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionTestFeatureGetSecretBoolean(JSC::JSGlobalObject*, JSC::CallFrame*);
 #endif
 
 // Attributes
@@ -2508,8 +2508,9 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionRegularOpera
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionRegularOperation(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionRegularOperation(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestGlobalObject>::call<jsTestGlobalObjectInstanceFunctionRegularOperationBody>(*state, "regularOperation");
 }
 
@@ -2563,8 +2564,9 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRun
     return argsCount < 1 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestGlobalObject>::call<jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperationOverloadDispatcher>(*state, "enabledAtRuntimeOperation");
 }
 
@@ -2583,8 +2585,9 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectConstructorFunctionEnabledAt
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectConstructorFunctionEnabledAtRuntimeOperationStatic(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectConstructorFunctionEnabledAtRuntimeOperationStatic(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestGlobalObject>::callStatic<jsTestGlobalObjectConstructorFunctionEnabledAtRuntimeOperationStaticBody>(*state, "enabledAtRuntimeOperationStatic");
 }
 
@@ -2603,8 +2606,9 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledInSpe
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorld(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorld(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestGlobalObject>::call<jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldBody>(*state, "enabledInSpecificWorld");
 }
 
@@ -2621,8 +2625,9 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledInSpe
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabled(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabled(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestGlobalObject>::call<jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabledBody>(*state, "enabledInSpecificWorldWhenRuntimeFeatureEnabled");
 }
 
@@ -2639,8 +2644,9 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledInSpe
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeaturesEnabled(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeaturesEnabled(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestGlobalObject>::call<jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeaturesEnabledBody>(*state, "enabledInSpecificWorldWhenRuntimeFeaturesEnabled");
 }
 
@@ -2654,8 +2660,9 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionTestPrivateF
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionTestPrivateFunction(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionTestPrivateFunction(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestGlobalObject>::call<jsTestGlobalObjectInstanceFunctionTestPrivateFunctionBody, CastedThisErrorBehavior::Assert>(*state, "testPrivateFunction");
 }
 
@@ -2670,8 +2677,9 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionCalculateSec
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionCalculateSecretResult(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionCalculateSecretResult(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperationReturningPromise<JSTestGlobalObject>::call<jsTestGlobalObjectInstanceFunctionCalculateSecretResultBody, PromiseExecutionScope::WindowOnly>(*state, "calculateSecretResult");
 }
 
@@ -2683,8 +2691,9 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionGetSecretBoo
     return JSValue::encode(toJS<IDLBoolean>(impl.getSecretBoolean()));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionGetSecretBoolean(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionGetSecretBoolean(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestGlobalObject>::call<jsTestGlobalObjectInstanceFunctionGetSecretBooleanBody>(*state, "getSecretBoolean");
 }
 
@@ -2697,8 +2706,9 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionTestFeatureG
     return JSValue::encode(toJS<IDLBoolean>(impl.testFeatureGetSecretBoolean()));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionTestFeatureGetSecretBoolean(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionTestFeatureGetSecretBoolean(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestGlobalObject>::call<jsTestGlobalObjectInstanceFunctionTestFeatureGetSecretBooleanBody>(*state, "testFeatureGetSecretBoolean");
 }
 

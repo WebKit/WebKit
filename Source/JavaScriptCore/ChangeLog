@@ -1,3 +1,997 @@
+2019-10-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Change signature of HostFunction to (JSGlobalObject*, CallFrame*)
+        https://bugs.webkit.org/show_bug.cgi?id=202569
+
+        Reviewed by Saam Barati.
+
+        This patch changes JSC host-functions's signature from `CallFrame*` to `JSGlobalObject*, CallFrame*`.
+        We would like to replace the current `ExecState*` use with `JSGlobalObject*` to fix many issues, remove
+        globalExec() hack, and remove `ExecState::vm()` hack. This is important since this hack prevents us from
+        implementing scalable IsoSubspace optimization, which leads to putting all JS cells in each IsoSubspace.
+
+        To get lexical JSGlobalObject in a super fast way, we put it in JSFunction/InternalFunction's field.
+        And trampoline gets JSGlobalObject from callee, and passes it as its argument. Since this trampoline already
+        accesses to the field of callee to get executable address, getting another field is fairly cheap.
+        The memory increase does not matter in this case. The sizeof(JSFunction) is 40. Since our allocation size of
+        JSCells are rounded by 16, increasing one field does not change the actual allocation size. And # of InternalFunction
+        is very limited since it is only used for constructors in JSC.
+
+        This patch changes the signature. And for the ExecState* -> JSGlobalObject* preparation, we use `CallFrame*` name
+        instead of `ExecState*` in the host-functions. And use `callFrame` variable name instead of `state` or `exec`.
+        And we also get VM& from `JSGlobalObject*` instead of `CallFrame*` since it is faster.
+
+        * API/APICallbackFunction.h:
+        (JSC::APICallbackFunction::call):
+        (JSC::APICallbackFunction::construct):
+        * API/APICast.h:
+        * API/JSAPIGlobalObject.mm:
+        (JSC::JSAPIGlobalObject::moduleLoaderFetch):
+        * API/JSBaseInternal.h:
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::construct):
+        (JSC::JSCallbackObject<Parent>::call):
+        * bytecode/InlineCallFrame.h:
+        * debugger/Debugger.h:
+        * dfg/DFGArithMode.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleTypedArrayConstructor):
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        * dfg/DFGGraph.h:
+        * dfg/DFGOSREntry.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionCommon):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+        * ftl/FTLOSREntry.h:
+        * inspector/ConsoleMessage.h:
+        * inspector/InjectedScriptBase.cpp:
+        (Inspector::InjectedScriptBase::makeAsyncCall):
+        * inspector/InjectedScriptManager.h:
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        (Inspector::jsInjectedScriptHostPrototypeAttributeEvaluate):
+        (Inspector::jsInjectedScriptHostPrototypeAttributeSavedResultAlias):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionInternalConstructorName):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionIsHTMLAllCollection):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionIsPromiseRejectedWithNativeGetterTypeError):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionProxyTargetValue):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionWeakMapSize):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionWeakMapEntries):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionWeakSetSize):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionWeakSetEntries):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionIteratorEntries):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionQueryInstances):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionQueryHolders):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionEvaluateWithScopeExtension):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionSubtype):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionFunctionDetails):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionGetInternalProperties):
+        * inspector/JSJavaScriptCallFramePrototype.cpp:
+        (Inspector::jsJavaScriptCallFramePrototypeFunctionEvaluateWithScopeExtension):
+        (Inspector::jsJavaScriptCallFramePrototypeFunctionScopeDescriptions):
+        (Inspector::jsJavaScriptCallFrameAttributeCaller):
+        (Inspector::jsJavaScriptCallFrameAttributeSourceID):
+        (Inspector::jsJavaScriptCallFrameAttributeLine):
+        (Inspector::jsJavaScriptCallFrameAttributeColumn):
+        (Inspector::jsJavaScriptCallFrameAttributeFunctionName):
+        (Inspector::jsJavaScriptCallFrameAttributeScopeChain):
+        (Inspector::jsJavaScriptCallFrameAttributeThisObject):
+        (Inspector::jsJavaScriptCallFrameAttributeType):
+        (Inspector::jsJavaScriptCallFrameIsTailDeleted):
+        * inspector/ScriptArguments.h:
+        * inspector/ScriptCallStackFactory.h:
+        * inspector/ScriptDebugServer.h:
+        * inspector/agents/InspectorConsoleAgent.h:
+        * interpreter/AbstractPC.h:
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::guaranteedJSValueCallee const): Deleted.
+        (JSC::ExecState::jsCallee const): Deleted.
+        (JSC::ExecState::callee const): Deleted.
+        (JSC::ExecState::unsafeCallee const): Deleted.
+        (JSC::ExecState::codeBlock const): Deleted.
+        (JSC::ExecState::addressOfCodeBlock const): Deleted.
+        (JSC::ExecState::unsafeCodeBlock const): Deleted.
+        (JSC::ExecState::scope const): Deleted.
+        (JSC::ExecState::create): Deleted.
+        (JSC::ExecState::registers): Deleted.
+        (JSC::ExecState::registers const): Deleted.
+        (JSC::ExecState::operator=): Deleted.
+        (JSC::ExecState::callerFrame const): Deleted.
+        (JSC::ExecState::callerFrameOrEntryFrame const): Deleted.
+        (JSC::ExecState::unsafeCallerFrameOrEntryFrame const): Deleted.
+        (JSC::ExecState::callerFrameOffset): Deleted.
+        (JSC::ExecState::returnPC const): Deleted.
+        (JSC::ExecState::hasReturnPC const): Deleted.
+        (JSC::ExecState::clearReturnPC): Deleted.
+        (JSC::ExecState::returnPCOffset): Deleted.
+        (JSC::ExecState::abstractReturnPC): Deleted.
+        (JSC::ExecState::topOfFrame): Deleted.
+        (JSC::ExecState::setCallerFrame): Deleted.
+        (JSC::ExecState::setScope): Deleted.
+        (JSC::ExecState::argumentCount const): Deleted.
+        (JSC::ExecState::argumentCountIncludingThis const): Deleted.
+        (JSC::ExecState::argumentOffset): Deleted.
+        (JSC::ExecState::argumentOffsetIncludingThis): Deleted.
+        (JSC::ExecState::addressOfArgumentsStart const): Deleted.
+        (JSC::ExecState::argument): Deleted.
+        (JSC::ExecState::uncheckedArgument): Deleted.
+        (JSC::ExecState::setArgument): Deleted.
+        (JSC::ExecState::getArgumentUnsafe): Deleted.
+        (JSC::ExecState::thisArgumentOffset): Deleted.
+        (JSC::ExecState::thisValue): Deleted.
+        (JSC::ExecState::setThisValue): Deleted.
+        (JSC::ExecState::newTarget): Deleted.
+        (JSC::ExecState::offsetFor): Deleted.
+        (JSC::ExecState::noCaller): Deleted.
+        (JSC::ExecState::isGlobalExec const): Deleted.
+        (JSC::ExecState::setArgumentCountIncludingThis): Deleted.
+        (JSC::ExecState::setCallee): Deleted.
+        (JSC::ExecState::setCodeBlock): Deleted.
+        (JSC::ExecState::setReturnPC): Deleted.
+        (JSC::ExecState::iterate): Deleted.
+        (JSC::ExecState::argIndexForRegister): Deleted.
+        (JSC::ExecState::callerFrameAndPC): Deleted.
+        (JSC::ExecState::callerFrameAndPC const): Deleted.
+        (JSC::ExecState::unsafeCallerFrameAndPC const): Deleted.
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeProgram):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeModuleProgram):
+        * interpreter/ProtoCallFrame.h:
+        (JSC::ProtoCallFrame::init):
+        * interpreter/Register.h:
+        * interpreter/ShadowChicken.h:
+        * interpreter/StackVisitor.h:
+        * interpreter/VMEntryRecord.h:
+        (JSC::VMEntryRecord::prevTopCallFrame):
+        (JSC::VMEntryRecord::unsafePrevTopCallFrame):
+        * jit/CCallHelpers.h:
+        * jit/JITExceptions.h:
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionPrintStdOut):
+        (functionPrintStdErr):
+        (functionDebug):
+        (functionDescribe):
+        (functionDescribeArray):
+        (functionSleepSeconds):
+        (functionJSCStack):
+        (functionGCAndSweep):
+        (functionFullGC):
+        (functionEdenGC):
+        (functionHeapSize):
+        (functionResetMemoryPeak):
+        (functionAddressOf):
+        (functionVersion):
+        (functionRun):
+        (functionRunString):
+        (functionLoad):
+        (functionLoadString):
+        (functionReadFile):
+        (functionCheckSyntax):
+        (functionSetSamplingFlags):
+        (functionClearSamplingFlags):
+        (functionGetRandomSeed):
+        (functionSetRandomSeed):
+        (functionIsRope):
+        (functionCallerSourceOrigin):
+        (functionReadline):
+        (functionPreciseTime):
+        (functionNeverInlineFunction):
+        (functionNoDFG):
+        (functionNoFTL):
+        (functionNoOSRExitFuzzing):
+        (functionOptimizeNextInvocation):
+        (functionNumberOfDFGCompiles):
+        (functionCallerIsOMGCompiled):
+        (functionDollarCreateRealm):
+        (functionDollarEvalScript):
+        (functionDollarAgentStart):
+        (functionDollarAgentReceiveBroadcast):
+        (functionDollarAgentReport):
+        (functionDollarAgentSleep):
+        (functionDollarAgentBroadcast):
+        (functionDollarAgentGetReport):
+        (functionDollarAgentLeaving):
+        (functionDollarAgentMonotonicNow):
+        (functionWaitForReport):
+        (functionHeapCapacity):
+        (functionFlashHeapAccess):
+        (functionDisableRichSourceInfo):
+        (functionMallocInALoop):
+        (functionTotalCompileTime):
+        (functionJSCOptions):
+        (functionReoptimizationRetryCount):
+        (functionTransferArrayBuffer):
+        (functionFailNextNewCodeBlock):
+        (functionQuit):
+        (functionFalse):
+        (functionUndefined1):
+        (functionUndefined2):
+        (functionIsInt32):
+        (functionIsPureNaN):
+        (functionIdentity):
+        (functionEffectful42):
+        (functionMakeMasquerader):
+        (functionHasCustomProperties):
+        (functionDumpTypesForAllVariables):
+        (functionDrainMicrotasks):
+        (functionReleaseWeakRefs):
+        (functionIs32BitPlatform):
+        (functionCreateGlobalObject):
+        (functionCheckModuleSyntax):
+        (functionPlatformSupportsSamplingProfiler):
+        (functionGenerateHeapSnapshot):
+        (functionGenerateHeapSnapshotForGCDebugging):
+        (functionResetSuperSamplerState):
+        (functionEnsureArrayStorage):
+        (functionStartSamplingProfiler):
+        (functionSamplingProfilerStackTraces):
+        (functionMaxArguments):
+        (functionAsyncTestStart):
+        (functionAsyncTestPassed):
+        (functionWebAssemblyMemoryMode):
+        (functionSetUnhandledRejectionCallback):
+        (runWithOptions):
+        (functionDollarDetachArrayBuffer): Deleted.
+        * llint/LLIntExceptions.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::handleHostCall):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoopRegister::callFrame const):
+        (JSC::CLoopRegister::execState const): Deleted.
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/cloop.rb:
+        * runtime/ArrayBufferView.h:
+        * runtime/ArrayConstructor.cpp:
+        (JSC::constructArrayWithSizeQuirk):
+        (JSC::constructWithArrayConstructor):
+        (JSC::callArrayConstructor):
+        (JSC::arrayConstructorPrivateFuncIsArraySlow):
+        * runtime/ArrayConstructor.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSpeciesCreate):
+        (JSC::arrayProtoFuncToString):
+        (JSC::arrayProtoFuncToLocaleString):
+        (JSC::arrayProtoFuncJoin):
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        (JSC::arrayProtoFuncIndexOf):
+        (JSC::arrayProtoFuncLastIndexOf):
+        (JSC::arrayProtoPrivateFuncConcatMemcpy):
+        (JSC::arrayProtoPrivateFuncAppendMemcpy):
+        * runtime/ArrayPrototype.h:
+        * runtime/AsyncFunctionConstructor.cpp:
+        (JSC::callAsyncFunctionConstructor):
+        (JSC::constructAsyncFunctionConstructor):
+        * runtime/AsyncGeneratorFunctionConstructor.cpp:
+        (JSC::callAsyncGeneratorFunctionConstructor):
+        (JSC::constructAsyncGeneratorFunctionConstructor):
+        * runtime/AtomicsObject.cpp:
+        (JSC::atomicsFuncAdd):
+        (JSC::atomicsFuncAnd):
+        (JSC::atomicsFuncCompareExchange):
+        (JSC::atomicsFuncExchange):
+        (JSC::atomicsFuncIsLockFree):
+        (JSC::atomicsFuncLoad):
+        (JSC::atomicsFuncOr):
+        (JSC::atomicsFuncStore):
+        (JSC::atomicsFuncSub):
+        (JSC::atomicsFuncWait):
+        (JSC::atomicsFuncWake):
+        (JSC::atomicsFuncXor):
+        * runtime/BigIntConstructor.cpp:
+        (JSC::callBigIntConstructor):
+        (JSC::bigIntConstructorFuncAsUintN):
+        (JSC::bigIntConstructorFuncAsIntN):
+        * runtime/BigIntPrototype.cpp:
+        (JSC::bigIntProtoFuncToStringImpl):
+        (JSC::bigIntProtoFuncToString):
+        (JSC::bigIntProtoFuncToLocaleString):
+        (JSC::bigIntProtoFuncValueOf):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::callBooleanConstructor):
+        (JSC::constructWithBooleanConstructor):
+        (JSC::constructBooleanFromImmediateBoolean):
+        * runtime/BooleanPrototype.cpp:
+        (JSC::booleanProtoFuncToString):
+        (JSC::booleanProtoFuncValueOf):
+        * runtime/CallData.h:
+        * runtime/CommonSlowPaths.h:
+        * runtime/Completion.h:
+        * runtime/ConsoleClient.h:
+        * runtime/ConsoleObject.cpp:
+        (JSC::consoleLogWithLevel):
+        (JSC::consoleProtoFuncDebug):
+        (JSC::consoleProtoFuncError):
+        (JSC::consoleProtoFuncLog):
+        (JSC::consoleProtoFuncInfo):
+        (JSC::consoleProtoFuncWarn):
+        (JSC::consoleProtoFuncClear):
+        (JSC::consoleProtoFuncDir):
+        (JSC::consoleProtoFuncDirXML):
+        (JSC::consoleProtoFuncTable):
+        (JSC::consoleProtoFuncTrace):
+        (JSC::consoleProtoFuncAssert):
+        (JSC::consoleProtoFuncCount):
+        (JSC::consoleProtoFuncCountReset):
+        (JSC::consoleProtoFuncProfile):
+        (JSC::consoleProtoFuncProfileEnd):
+        (JSC::consoleProtoFuncTakeHeapSnapshot):
+        (JSC::consoleProtoFuncTime):
+        (JSC::consoleProtoFuncTimeLog):
+        (JSC::consoleProtoFuncTimeEnd):
+        (JSC::consoleProtoFuncTimeStamp):
+        (JSC::consoleProtoFuncGroup):
+        (JSC::consoleProtoFuncGroupCollapsed):
+        (JSC::consoleProtoFuncGroupEnd):
+        (JSC::consoleProtoFuncRecord):
+        (JSC::consoleProtoFuncRecordEnd):
+        (JSC::consoleProtoFuncScreenshot):
+        * runtime/ConstructData.h:
+        * runtime/DateConstructor.cpp:
+        (JSC::constructWithDateConstructor):
+        (JSC::callDate):
+        (JSC::dateParse):
+        (JSC::dateNowImpl):
+        (JSC::dateNow):
+        (JSC::dateUTC):
+        * runtime/DateConstructor.h:
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncToString):
+        (JSC::dateProtoFuncToUTCString):
+        (JSC::dateProtoFuncToISOString):
+        (JSC::dateProtoFuncToDateString):
+        (JSC::dateProtoFuncToTimeString):
+        (JSC::dateProtoFuncToLocaleString):
+        (JSC::dateProtoFuncToLocaleDateString):
+        (JSC::dateProtoFuncToLocaleTimeString):
+        (JSC::dateProtoFuncToPrimitiveSymbol):
+        (JSC::dateProtoFuncGetTime):
+        (JSC::dateProtoFuncGetFullYear):
+        (JSC::dateProtoFuncGetUTCFullYear):
+        (JSC::dateProtoFuncGetMonth):
+        (JSC::dateProtoFuncGetUTCMonth):
+        (JSC::dateProtoFuncGetDate):
+        (JSC::dateProtoFuncGetUTCDate):
+        (JSC::dateProtoFuncGetDay):
+        (JSC::dateProtoFuncGetUTCDay):
+        (JSC::dateProtoFuncGetHours):
+        (JSC::dateProtoFuncGetUTCHours):
+        (JSC::dateProtoFuncGetMinutes):
+        (JSC::dateProtoFuncGetUTCMinutes):
+        (JSC::dateProtoFuncGetSeconds):
+        (JSC::dateProtoFuncGetUTCSeconds):
+        (JSC::dateProtoFuncGetMilliSeconds):
+        (JSC::dateProtoFuncGetUTCMilliseconds):
+        (JSC::dateProtoFuncGetTimezoneOffset):
+        (JSC::dateProtoFuncSetTime):
+        (JSC::dateProtoFuncSetMilliSeconds):
+        (JSC::dateProtoFuncSetUTCMilliseconds):
+        (JSC::dateProtoFuncSetSeconds):
+        (JSC::dateProtoFuncSetUTCSeconds):
+        (JSC::dateProtoFuncSetMinutes):
+        (JSC::dateProtoFuncSetUTCMinutes):
+        (JSC::dateProtoFuncSetHours):
+        (JSC::dateProtoFuncSetUTCHours):
+        (JSC::dateProtoFuncSetDate):
+        (JSC::dateProtoFuncSetUTCDate):
+        (JSC::dateProtoFuncSetMonth):
+        (JSC::dateProtoFuncSetUTCMonth):
+        (JSC::dateProtoFuncSetFullYear):
+        (JSC::dateProtoFuncSetUTCFullYear):
+        (JSC::dateProtoFuncSetYear):
+        (JSC::dateProtoFuncGetYear):
+        (JSC::dateProtoFuncToJSON):
+        * runtime/DatePrototype.h:
+        * runtime/ECMAScriptSpecInternalFunctions.cpp:
+        (JSC::esSpecIsConstructor):
+        * runtime/ECMAScriptSpecInternalFunctions.h:
+        * runtime/Error.h:
+        * runtime/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::finishCreation):
+        (JSC::constructErrorConstructor):
+        (JSC::callErrorConstructor):
+        (JSC::ErrorConstructor::put):
+        (JSC::ErrorConstructor::deleteProperty):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::errorProtoFuncToString):
+        * runtime/ExceptionFuzz.h:
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructWithFunctionConstructor):
+        (JSC::callFunctionConstructor):
+        (JSC::constructFunction):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::callFunctionPrototype):
+        (JSC::functionProtoFuncToString):
+        * runtime/GeneratorFunctionConstructor.cpp:
+        (JSC::callGeneratorFunctionConstructor):
+        (JSC::constructGeneratorFunctionConstructor):
+        * runtime/Identifier.h:
+        * runtime/InspectorInstrumentationObject.cpp:
+        (JSC::inspectorInstrumentationObjectLog):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::InternalFunction):
+        * runtime/InternalFunction.h:
+        (JSC::InternalFunction::offsetOfGlobalObject):
+        (JSC::InternalFunction::globalObject const):
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::constructIntlCollator):
+        (JSC::callIntlCollator):
+        (JSC::IntlCollatorConstructorFuncSupportedLocalesOf):
+        * runtime/IntlCollatorConstructor.h:
+        * runtime/IntlCollatorPrototype.cpp:
+        (JSC::IntlCollatorFuncCompare):
+        (JSC::IntlCollatorPrototypeGetterCompare):
+        (JSC::IntlCollatorPrototypeFuncResolvedOptions):
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::constructIntlDateTimeFormat):
+        (JSC::callIntlDateTimeFormat):
+        (JSC::IntlDateTimeFormatConstructorFuncSupportedLocalesOf):
+        * runtime/IntlDateTimeFormatConstructor.h:
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatFuncFormatDateTime):
+        (JSC::IntlDateTimeFormatPrototypeGetterFormat):
+        (JSC::IntlDateTimeFormatPrototypeFuncFormatToParts):
+        (JSC::IntlDateTimeFormatPrototypeFuncResolvedOptions):
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::constructIntlNumberFormat):
+        (JSC::callIntlNumberFormat):
+        (JSC::IntlNumberFormatConstructorFuncSupportedLocalesOf):
+        * runtime/IntlNumberFormatConstructor.h:
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatFuncFormatNumber):
+        (JSC::IntlNumberFormatPrototypeGetterFormat):
+        (JSC::IntlNumberFormatPrototypeFuncFormatToParts):
+        (JSC::IntlNumberFormatPrototypeFuncResolvedOptions):
+        * runtime/IntlObject.cpp:
+        (JSC::intlObjectFuncGetCanonicalLocales):
+        * runtime/IntlPluralRulesConstructor.cpp:
+        (JSC::constructIntlPluralRules):
+        (JSC::callIntlPluralRules):
+        (JSC::IntlPluralRulesConstructorFuncSupportedLocalesOf):
+        * runtime/IntlPluralRulesConstructor.h:
+        * runtime/IntlPluralRulesPrototype.cpp:
+        (JSC::IntlPluralRulesPrototypeFuncSelect):
+        (JSC::IntlPluralRulesPrototypeFuncResolvedOptions):
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::JSGenericArrayBufferConstructor<sharingMode>::finishCreation):
+        (JSC::JSGenericArrayBufferConstructor<sharingMode>::constructArrayBuffer):
+        (JSC::callArrayBuffer):
+        (JSC::arrayBufferFuncIsView):
+        * runtime/JSArrayBufferConstructor.h:
+        * runtime/JSArrayBufferPrototype.cpp:
+        (JSC::arrayBufferProtoFuncSlice):
+        (JSC::arrayBufferProtoGetterFuncByteLength):
+        (JSC::sharedArrayBufferProtoGetterFuncByteLength):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::boundThisNoArgsFunctionCall):
+        (JSC::boundFunctionCall):
+        (JSC::boundThisNoArgsFunctionConstruct):
+        (JSC::boundFunctionConstruct):
+        (JSC::isBoundFunction):
+        (JSC::hasInstanceBoundFunction):
+        (JSC::JSBoundFunction::boundArgsCopy):
+        * runtime/JSBoundFunction.h:
+        * runtime/JSCJSValue.h:
+        * runtime/JSCell.h:
+        * runtime/JSCustomGetterSetterFunction.cpp:
+        (JSC::JSCustomGetterSetterFunction::customGetterSetterFunctionCall):
+        * runtime/JSCustomGetterSetterFunction.h:
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::getData):
+        (JSC::setData):
+        (JSC::dataViewProtoGetterBuffer):
+        (JSC::dataViewProtoGetterByteLength):
+        (JSC::dataViewProtoGetterByteOffset):
+        (JSC::dataViewProtoFuncGetInt8):
+        (JSC::dataViewProtoFuncGetInt16):
+        (JSC::dataViewProtoFuncGetInt32):
+        (JSC::dataViewProtoFuncGetUint8):
+        (JSC::dataViewProtoFuncGetUint16):
+        (JSC::dataViewProtoFuncGetUint32):
+        (JSC::dataViewProtoFuncGetFloat32):
+        (JSC::dataViewProtoFuncGetFloat64):
+        (JSC::dataViewProtoFuncSetInt8):
+        (JSC::dataViewProtoFuncSetInt16):
+        (JSC::dataViewProtoFuncSetInt32):
+        (JSC::dataViewProtoFuncSetUint8):
+        (JSC::dataViewProtoFuncSetUint16):
+        (JSC::dataViewProtoFuncSetUint32):
+        (JSC::dataViewProtoFuncSetFloat32):
+        (JSC::dataViewProtoFuncSetFloat64):
+        * runtime/JSDateMath.h:
+        * runtime/JSFunction.cpp:
+        (JSC::callHostFunctionAsConstructor):
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::prototypeForConstruction):
+        (JSC::JSFunction::allocateAndInitializeRareData):
+        (JSC::JSFunction::initializeRareData):
+        (JSC::JSFunction::getOwnPropertySlot):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::offsetOfGlobalObject):
+        (JSC::JSFunction::globalObject const):
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::JSFunction):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayView):
+        (JSC::callGenericTypedArrayView):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncSlice):
+        (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::makeBoundFunction):
+        (JSC::hasOwnLengthProperty):
+        (JSC::assertCall):
+        (JSC::enqueueJob):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        (JSC::globalFuncParseInt):
+        (JSC::globalFuncParseFloat):
+        (JSC::globalFuncDecodeURI):
+        (JSC::globalFuncDecodeURIComponent):
+        (JSC::globalFuncEncodeURI):
+        (JSC::globalFuncEncodeURIComponent):
+        (JSC::globalFuncEscape):
+        (JSC::globalFuncUnescape):
+        (JSC::globalFuncThrowTypeError):
+        (JSC::globalFuncThrowTypeErrorArgumentsCalleeAndCaller):
+        (JSC::globalFuncMakeTypeError):
+        (JSC::globalFuncProtoGetter):
+        (JSC::globalFuncProtoSetter):
+        (JSC::globalFuncHostPromiseRejectionTracker):
+        (JSC::globalFuncBuiltinLog):
+        (JSC::globalFuncBuiltinDescribe):
+        (JSC::globalFuncImportModule):
+        (JSC::globalFuncPropertyIsEnumerable):
+        (JSC::globalFuncOwnKeys):
+        (JSC::globalFuncDateTimeFormat):
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/JSLock.h:
+        * runtime/JSModuleLoader.cpp:
+        (JSC::moduleLoaderParseModule):
+        (JSC::moduleLoaderRequestedModules):
+        (JSC::moduleLoaderModuleDeclarationInstantiation):
+        (JSC::moduleLoaderResolve):
+        (JSC::moduleLoaderResolveSync):
+        (JSC::moduleLoaderFetch):
+        (JSC::moduleLoaderGetModuleNamespaceObject):
+        (JSC::moduleLoaderEvaluate):
+        * runtime/JSNativeStdFunction.cpp:
+        (JSC::runStdFunction):
+        * runtime/JSNativeStdFunction.h:
+        * runtime/JSONObject.cpp:
+        (JSC::JSONProtoFuncParse):
+        (JSC::JSONProtoFuncStringify):
+        * runtime/JSObject.cpp:
+        (JSC::objectPrivateFuncInstanceOf):
+        * runtime/JSObject.h:
+        * runtime/JSTypedArrayViewConstructor.cpp:
+        (JSC::constructTypedArrayView):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::typedArrayViewPrivateFuncIsTypedArrayView):
+        (JSC::typedArrayViewPrivateFuncLength):
+        (JSC::typedArrayViewPrivateFuncGetOriginalConstructor):
+        (JSC::typedArrayViewPrivateFuncSort):
+        (JSC::typedArrayViewProtoFuncSet):
+        (JSC::typedArrayViewProtoFuncCopyWithin):
+        (JSC::typedArrayViewProtoFuncIncludes):
+        (JSC::typedArrayViewProtoFuncLastIndexOf):
+        (JSC::typedArrayViewProtoFuncIndexOf):
+        (JSC::typedArrayViewProtoFuncJoin):
+        (JSC::typedArrayViewProtoGetterFuncBuffer):
+        (JSC::typedArrayViewProtoGetterFuncLength):
+        (JSC::typedArrayViewProtoGetterFuncByteLength):
+        (JSC::typedArrayViewProtoGetterFuncByteOffset):
+        (JSC::typedArrayViewProtoFuncReverse):
+        (JSC::typedArrayViewPrivateFuncSubarrayCreate):
+        (JSC::typedArrayViewProtoFuncSlice):
+        (JSC::typedArrayViewProtoGetterFuncToStringTag):
+        * runtime/JSTypedArrayViewPrototype.h:
+        * runtime/MapConstructor.cpp:
+        (JSC::callMap):
+        (JSC::constructMap):
+        (JSC::mapPrivateFuncMapBucketHead):
+        (JSC::mapPrivateFuncMapBucketNext):
+        (JSC::mapPrivateFuncMapBucketKey):
+        (JSC::mapPrivateFuncMapBucketValue):
+        * runtime/MapConstructor.h:
+        * runtime/MapPrototype.cpp:
+        (JSC::getMap):
+        (JSC::mapProtoFuncClear):
+        (JSC::mapProtoFuncDelete):
+        (JSC::mapProtoFuncGet):
+        (JSC::mapProtoFuncHas):
+        (JSC::mapProtoFuncSet):
+        (JSC::mapProtoFuncSize):
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncAbs):
+        (JSC::mathProtoFuncACos):
+        (JSC::mathProtoFuncASin):
+        (JSC::mathProtoFuncATan):
+        (JSC::mathProtoFuncATan2):
+        (JSC::mathProtoFuncCeil):
+        (JSC::mathProtoFuncClz32):
+        (JSC::mathProtoFuncCos):
+        (JSC::mathProtoFuncExp):
+        (JSC::mathProtoFuncFloor):
+        (JSC::mathProtoFuncHypot):
+        (JSC::mathProtoFuncLog):
+        (JSC::mathProtoFuncMax):
+        (JSC::mathProtoFuncMin):
+        (JSC::mathProtoFuncPow):
+        (JSC::mathProtoFuncRandom):
+        (JSC::mathProtoFuncRound):
+        (JSC::mathProtoFuncSign):
+        (JSC::mathProtoFuncSin):
+        (JSC::mathProtoFuncSqrt):
+        (JSC::mathProtoFuncTan):
+        (JSC::mathProtoFuncIMul):
+        (JSC::mathProtoFuncACosh):
+        (JSC::mathProtoFuncASinh):
+        (JSC::mathProtoFuncATanh):
+        (JSC::mathProtoFuncCbrt):
+        (JSC::mathProtoFuncCosh):
+        (JSC::mathProtoFuncExpm1):
+        (JSC::mathProtoFuncFround):
+        (JSC::mathProtoFuncLog1p):
+        (JSC::mathProtoFuncLog10):
+        (JSC::mathProtoFuncLog2):
+        (JSC::mathProtoFuncSinh):
+        (JSC::mathProtoFuncTanh):
+        (JSC::mathProtoFuncTrunc):
+        * runtime/MathObject.h:
+        * runtime/Microtask.h:
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor<errorType>::constructNativeErrorConstructor):
+        (JSC::NativeErrorConstructor<errorType>::callNativeErrorConstructor):
+        * runtime/NativeErrorConstructor.h:
+        * runtime/NativeFunction.h:
+        (JSC::NativeFunction::operator()):
+        (JSC::TaggedNativeFunction::operator()):
+        * runtime/NullGetterFunction.cpp:
+        (JSC::NullGetterFunctionInternal::callReturnUndefined):
+        * runtime/NullSetterFunction.cpp:
+        (JSC::NullSetterFunctionInternal::callReturnUndefined):
+        * runtime/NumberConstructor.cpp:
+        (JSC::constructNumberConstructor):
+        (JSC::callNumberConstructor):
+        (JSC::numberConstructorFuncIsInteger):
+        (JSC::numberConstructorFuncIsSafeInteger):
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToExponential):
+        (JSC::numberProtoFuncToFixed):
+        (JSC::numberProtoFuncToPrecision):
+        (JSC::numberProtoFuncToString):
+        (JSC::numberProtoFuncToLocaleString):
+        (JSC::numberProtoFuncValueOf):
+        * runtime/NumberPrototype.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::constructObjectWithNewTarget):
+        (JSC::constructWithObjectConstructor):
+        (JSC::callObjectConstructor):
+        (JSC::objectConstructorGetPrototypeOf):
+        (JSC::objectConstructorSetPrototypeOf):
+        (JSC::objectConstructorGetOwnPropertyDescriptor):
+        (JSC::objectConstructorGetOwnPropertyDescriptors):
+        (JSC::objectConstructorGetOwnPropertyNames):
+        (JSC::objectConstructorGetOwnPropertySymbols):
+        (JSC::objectConstructorKeys):
+        (JSC::objectConstructorAssign):
+        (JSC::objectConstructorValues):
+        (JSC::objectConstructorDefineProperty):
+        (JSC::objectConstructorDefineProperties):
+        (JSC::objectConstructorCreate):
+        (JSC::objectConstructorSeal):
+        (JSC::objectConstructorFreeze):
+        (JSC::objectConstructorPreventExtensions):
+        (JSC::objectConstructorIsSealed):
+        (JSC::objectConstructorIsFrozen):
+        (JSC::objectConstructorIsExtensible):
+        (JSC::objectConstructorIs):
+        (JSC::constructObject): Deleted.
+        * runtime/ObjectConstructor.h:
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncValueOf):
+        (JSC::objectProtoFuncHasOwnProperty):
+        (JSC::objectProtoFuncIsPrototypeOf):
+        (JSC::objectProtoFuncDefineGetter):
+        (JSC::objectProtoFuncDefineSetter):
+        (JSC::objectProtoFuncLookupGetter):
+        (JSC::objectProtoFuncLookupSetter):
+        (JSC::objectProtoFuncPropertyIsEnumerable):
+        (JSC::objectProtoFuncToLocaleString):
+        (JSC::objectProtoFuncToString):
+        * runtime/ObjectPrototype.h:
+        * runtime/ProxyConstructor.cpp:
+        (JSC::makeRevocableProxy):
+        (JSC::proxyRevocableConstructorThrowError):
+        (JSC::constructProxyObject):
+        (JSC::callProxy):
+        * runtime/ProxyObject.cpp:
+        (JSC::performProxyCall):
+        (JSC::performProxyConstruct):
+        * runtime/ProxyRevoke.cpp:
+        (JSC::performProxyRevoke):
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectConstruct):
+        (JSC::reflectObjectDefineProperty):
+        (JSC::reflectObjectGet):
+        (JSC::reflectObjectGetOwnPropertyDescriptor):
+        (JSC::reflectObjectGetPrototypeOf):
+        (JSC::reflectObjectIsExtensible):
+        (JSC::reflectObjectOwnKeys):
+        (JSC::reflectObjectPreventExtensions):
+        (JSC::reflectObjectSet):
+        (JSC::reflectObjectSetPrototypeOf):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::regExpConstructorDollar):
+        (JSC::regExpConstructorInput):
+        (JSC::regExpConstructorMultiline):
+        (JSC::regExpConstructorLastMatch):
+        (JSC::regExpConstructorLastParen):
+        (JSC::regExpConstructorLeftContext):
+        (JSC::regExpConstructorRightContext):
+        (JSC::setRegExpConstructorInput):
+        (JSC::setRegExpConstructorMultiline):
+        (JSC::esSpecRegExpCreate):
+        (JSC::constructWithRegExpConstructor):
+        (JSC::callRegExpConstructor):
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncTestFast):
+        (JSC::regExpProtoFuncExec):
+        (JSC::regExpProtoFuncMatchFast):
+        (JSC::regExpProtoFuncCompile):
+        (JSC::regExpProtoFuncToString):
+        (JSC::regExpProtoGetterGlobal):
+        (JSC::regExpProtoGetterIgnoreCase):
+        (JSC::regExpProtoGetterMultiline):
+        (JSC::regExpProtoGetterDotAll):
+        (JSC::regExpProtoGetterSticky):
+        (JSC::regExpProtoGetterUnicode):
+        (JSC::regExpProtoGetterFlags):
+        (JSC::regExpProtoGetterSource):
+        (JSC::regExpProtoFuncSearchFast):
+        (JSC::regExpProtoFuncSplitFast):
+        * runtime/RegExpPrototype.h:
+        * runtime/SetConstructor.cpp:
+        (JSC::callSet):
+        (JSC::constructSet):
+        (JSC::setPrivateFuncSetBucketHead):
+        (JSC::setPrivateFuncSetBucketNext):
+        (JSC::setPrivateFuncSetBucketKey):
+        * runtime/SetConstructor.h:
+        * runtime/SetPrototype.cpp:
+        (JSC::getSet):
+        (JSC::setProtoFuncAdd):
+        (JSC::setProtoFuncClear):
+        (JSC::setProtoFuncDelete):
+        (JSC::setProtoFuncHas):
+        (JSC::setProtoFuncSize):
+        * runtime/StringConstructor.cpp:
+        (JSC::stringFromCharCode):
+        (JSC::stringFromCodePoint):
+        (JSC::constructWithStringConstructor):
+        (JSC::callStringConstructor):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncRepeatCharacter):
+        (JSC::stringProtoFuncReplaceUsingRegExp):
+        (JSC::stringProtoFuncReplaceUsingStringSearch):
+        (JSC::stringProtoFuncToString):
+        (JSC::stringProtoFuncCharAt):
+        (JSC::stringProtoFuncCharCodeAt):
+        (JSC::stringProtoFuncCodePointAt):
+        (JSC::stringProtoFuncIndexOf):
+        (JSC::stringProtoFuncLastIndexOf):
+        (JSC::stringProtoFuncSlice):
+        (JSC::stringProtoFuncSplitFast):
+        (JSC::stringProtoFuncSubstrImpl):
+        (JSC::stringProtoFuncSubstr):
+        (JSC::builtinStringSubstrInternal):
+        (JSC::stringProtoFuncSubstring):
+        (JSC::stringProtoFuncToLowerCase):
+        (JSC::stringProtoFuncToUpperCase):
+        (JSC::stringProtoFuncLocaleCompare):
+        (JSC::toLocaleCase):
+        (JSC::stringProtoFuncToLocaleLowerCase):
+        (JSC::stringProtoFuncToLocaleUpperCase):
+        (JSC::stringProtoFuncTrim):
+        (JSC::stringProtoFuncTrimStart):
+        (JSC::stringProtoFuncTrimEnd):
+        (JSC::stringProtoFuncStartsWith):
+        (JSC::stringProtoFuncEndsWith):
+        (JSC::stringIncludesImpl):
+        (JSC::stringProtoFuncIncludes):
+        (JSC::builtinStringIncludesInternal):
+        (JSC::stringProtoFuncIterator):
+        (JSC::stringProtoFuncNormalize):
+        * runtime/StringPrototype.h:
+        * runtime/SymbolConstructor.cpp:
+        (JSC::callSymbol):
+        (JSC::symbolConstructorFor):
+        (JSC::symbolConstructorKeyFor):
+        * runtime/SymbolPrototype.cpp:
+        (JSC::symbolProtoGetterDescription):
+        (JSC::symbolProtoFuncToString):
+        (JSC::symbolProtoFuncValueOf):
+        * runtime/ThrowScope.h:
+        * runtime/TypedArrayController.h:
+        * runtime/VM.h:
+        * runtime/VMTraps.h:
+        * runtime/Watchdog.h:
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::callWeakMap):
+        (JSC::constructWeakMap):
+        * runtime/WeakMapPrototype.cpp:
+        (JSC::getWeakMap):
+        (JSC::protoFuncWeakMapDelete):
+        (JSC::protoFuncWeakMapGet):
+        (JSC::protoFuncWeakMapHas):
+        (JSC::protoFuncWeakMapSet):
+        * runtime/WeakObjectRefConstructor.cpp:
+        (JSC::callWeakRef):
+        (JSC::constructWeakRef):
+        * runtime/WeakObjectRefPrototype.cpp:
+        (JSC::getWeakRef):
+        (JSC::protoFuncWeakRefDeref):
+        * runtime/WeakSetConstructor.cpp:
+        (JSC::callWeakSet):
+        (JSC::constructWeakSet):
+        * runtime/WeakSetPrototype.cpp:
+        (JSC::getWeakSet):
+        (JSC::protoFuncWeakSetDelete):
+        (JSC::protoFuncWeakSetHas):
+        (JSC::protoFuncWeakSetAdd):
+        * tools/JSDollarVM.cpp:
+        (JSC::DOMJITGetterComplex::functionEnableException):
+        (JSC::DOMJITFunctionObject::functionWithTypeCheck):
+        (JSC::DOMJITCheckSubClassObject::functionWithTypeCheck):
+        (JSC::functionWasmStreamingParserAddBytes):
+        (JSC::functionWasmStreamingParserFinalize):
+        (JSC::functionCrash):
+        (JSC::functionBreakpoint):
+        (JSC::functionDFGTrue):
+        (JSC::functionFTLTrue):
+        (JSC::functionCpuMfence):
+        (JSC::functionCpuRdtsc):
+        (JSC::functionCpuCpuid):
+        (JSC::functionCpuPause):
+        (JSC::functionCpuClflush):
+        (JSC::functionLLintTrue):
+        (JSC::functionJITTrue):
+        (JSC::functionNoInline):
+        (JSC::functionGC):
+        (JSC::functionEdenGC):
+        (JSC::functionDumpSubspaceHashes):
+        (JSC::functionCallFrame):
+        (JSC::functionCodeBlockForFrame):
+        (JSC::codeBlockFromArg):
+        (JSC::functionCodeBlockFor):
+        (JSC::functionDumpSourceFor):
+        (JSC::functionDumpBytecodeFor):
+        (JSC::doPrint):
+        (JSC::functionDataLog):
+        (JSC::functionPrint):
+        (JSC::functionDumpCallFrame):
+        (JSC::functionDumpStack):
+        (JSC::functionDumpRegisters):
+        (JSC::functionDumpCell):
+        (JSC::functionIndexingMode):
+        (JSC::functionInlineCapacity):
+        (JSC::functionValue):
+        (JSC::functionGetPID):
+        (JSC::functionHaveABadTime):
+        (JSC::functionIsHavingABadTime):
+        (JSC::functionCreateGlobalObject):
+        (JSC::functionCreateProxy):
+        (JSC::functionCreateRuntimeArray):
+        (JSC::functionCreateNullRopeString):
+        (JSC::functionCreateImpureGetter):
+        (JSC::functionCreateCustomGetterObject):
+        (JSC::functionCreateDOMJITNodeObject):
+        (JSC::functionCreateDOMJITGetterObject):
+        (JSC::functionCreateDOMJITGetterComplexObject):
+        (JSC::functionCreateDOMJITFunctionObject):
+        (JSC::functionCreateDOMJITCheckSubClassObject):
+        (JSC::functionCreateDOMJITGetterBaseJSObject):
+        (JSC::functionCreateWasmStreamingParser):
+        (JSC::functionCreateStaticCustomAccessor):
+        (JSC::functionSetImpureGetterDelegate):
+        (JSC::functionCreateBuiltin):
+        (JSC::functionGetPrivateProperty):
+        (JSC::functionCreateRoot):
+        (JSC::functionCreateElement):
+        (JSC::functionGetElement):
+        (JSC::functionCreateSimpleObject):
+        (JSC::functionGetHiddenValue):
+        (JSC::functionSetHiddenValue):
+        (JSC::functionShadowChickenFunctionsOnStack):
+        (JSC::functionSetGlobalConstRedeclarationShouldNotThrow):
+        (JSC::functionFindTypeForExpression):
+        (JSC::functionReturnTypeFor):
+        (JSC::functionFlattenDictionaryObject):
+        (JSC::functionDumpBasicBlockExecutionRanges):
+        (JSC::functionHasBasicBlockExecuted):
+        (JSC::functionBasicBlockExecutionCount):
+        (JSC::functionEnableExceptionFuzz):
+        (JSC::functionEnableDebuggerModeWhenIdle):
+        (JSC::functionDisableDebuggerModeWhenIdle):
+        (JSC::functionDeleteAllCodeWhenIdle):
+        (JSC::functionGlobalObjectCount):
+        (JSC::functionGlobalObjectForObject):
+        (JSC::functionGetGetterSetter):
+        (JSC::functionLoadGetterFromGetterSetter):
+        (JSC::functionCreateCustomTestGetterSetter):
+        (JSC::functionDeltaBetweenButterflies):
+        (JSC::functionTotalGCTime):
+        (JSC::functionParseCount):
+        (JSC::functionIsWasmSupported):
+        * wasm/WasmEmbedder.h:
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::webAssemblyCompileFunc):
+        (JSC::webAssemblyInstantiateFunc):
+        (JSC::webAssemblyValidateFunc):
+        (JSC::webAssemblyCompileStreamingInternal):
+        (JSC::webAssemblyInstantiateStreamingInternal):
+        * wasm/js/JSWebAssembly.h:
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        (JSC::constructJSWebAssemblyCompileError):
+        (JSC::callJSWebAssemblyCompileError):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        (JSC::callJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyInstancePrototype.cpp:
+        (JSC::webAssemblyInstanceProtoFuncExports):
+        * wasm/js/WebAssemblyLinkErrorConstructor.cpp:
+        (JSC::constructJSWebAssemblyLinkError):
+        (JSC::callJSWebAssemblyLinkError):
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::constructJSWebAssemblyMemory):
+        (JSC::callJSWebAssemblyMemory):
+        * wasm/js/WebAssemblyMemoryPrototype.cpp:
+        (JSC::webAssemblyMemoryProtoFuncGrow):
+        (JSC::webAssemblyMemoryProtoFuncBuffer):
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::webAssemblyModuleCustomSections):
+        (JSC::webAssemblyModuleImports):
+        (JSC::webAssemblyModuleExports):
+        (JSC::constructJSWebAssemblyModule):
+        (JSC::callJSWebAssemblyModule):
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        (JSC::constructJSWebAssemblyRuntimeError):
+        (JSC::callJSWebAssemblyRuntimeError):
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::constructJSWebAssemblyTable):
+        (JSC::callJSWebAssemblyTable):
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+        (JSC::webAssemblyTableProtoFuncLength):
+        (JSC::webAssemblyTableProtoFuncGrow):
+        (JSC::webAssemblyTableProtoFuncGet):
+        (JSC::webAssemblyTableProtoFuncSet):
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::callWebAssemblyWrapperFunction):
+        * yarr/YarrErrorCode.h:
+
 2019-10-07  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r250750.

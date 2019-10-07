@@ -43,7 +43,7 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestIndexedSetterWithIdentifierPrototypeFunctionIndexedSetter(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestIndexedSetterWithIdentifierPrototypeFunctionIndexedSetter(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -276,8 +276,9 @@ static inline JSC::EncodedJSValue jsTestIndexedSetterWithIdentifierPrototypeFunc
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestIndexedSetterWithIdentifierPrototypeFunctionIndexedSetter(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestIndexedSetterWithIdentifierPrototypeFunctionIndexedSetter(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestIndexedSetterWithIdentifier>::call<jsTestIndexedSetterWithIdentifierPrototypeFunctionIndexedSetterBody>(*state, "indexedSetter");
 }
 

@@ -44,8 +44,8 @@ using namespace JSC;
 
 // Functions
 
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedSetterWithIndexedGetterAndSetterPrototypeFunctionNamedSetter(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedSetterWithIndexedGetterAndSetterPrototypeFunctionIndexedSetter(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedSetterWithIndexedGetterAndSetterPrototypeFunctionNamedSetter(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedSetterWithIndexedGetterAndSetterPrototypeFunctionIndexedSetter(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -346,8 +346,9 @@ static inline JSC::EncodedJSValue jsTestNamedSetterWithIndexedGetterAndSetterPro
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestNamedSetterWithIndexedGetterAndSetterPrototypeFunctionNamedSetter(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestNamedSetterWithIndexedGetterAndSetterPrototypeFunctionNamedSetter(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestNamedSetterWithIndexedGetterAndSetter>::call<jsTestNamedSetterWithIndexedGetterAndSetterPrototypeFunctionNamedSetterBody>(*state, "namedSetter");
 }
 
@@ -390,8 +391,9 @@ static inline JSC::EncodedJSValue jsTestNamedSetterWithIndexedGetterAndSetterPro
     return argsCount < 1 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestNamedSetterWithIndexedGetterAndSetterPrototypeFunctionIndexedSetter(ExecState* state)
+EncodedJSValue JSC_HOST_CALL jsTestNamedSetterWithIndexedGetterAndSetterPrototypeFunctionIndexedSetter(JSGlobalObject* globalObject, CallFrame* state)
 {
+    UNUSED_PARAM(globalObject);
     return IDLOperation<JSTestNamedSetterWithIndexedGetterAndSetter>::call<jsTestNamedSetterWithIndexedGetterAndSetterPrototypeFunctionIndexedSetterOverloadDispatcher>(*state, "indexedSetter");
 }
 

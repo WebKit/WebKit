@@ -36,7 +36,8 @@ namespace JSC {
 
 class JSArrayBufferView;
 class JSGlobalObject;
-class ExecState;
+class CallFrame;
+using ExecState = CallFrame;
 
 class ArrayBufferView : public RefCounted<ArrayBufferView> {
 public:

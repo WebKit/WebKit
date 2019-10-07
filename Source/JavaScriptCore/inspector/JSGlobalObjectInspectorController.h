@@ -38,10 +38,11 @@
 #endif
 
 namespace JSC {
+class CallFrame;
 class ConsoleClient;
 class Exception;
-class ExecState;
 class JSGlobalObject;
+using ExecState = CallFrame;
 }
 
 namespace Inspector {

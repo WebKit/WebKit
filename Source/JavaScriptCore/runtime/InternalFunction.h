@@ -76,6 +76,13 @@ public:
         return OBJECT_OFFSETOF(InternalFunction, m_functionForConstruct);
     }
 
+    static ptrdiff_t offsetOfGlobalObject()
+    {
+        return OBJECT_OFFSETOF(InternalFunction, m_globalObject);
+    }
+
+    JSGlobalObject* globalObject() const { return m_globalObject.get(); }
+
 protected:
     JS_EXPORT_PRIVATE InternalFunction(VM&, Structure*, NativeFunction functionForCall, NativeFunction functionForConstruct);
 
@@ -91,6 +98,7 @@ protected:
     TaggedNativeFunction m_functionForCall;
     TaggedNativeFunction m_functionForConstruct;
     WriteBarrier<JSString> m_originalName;
+    WriteBarrier<JSGlobalObject> m_globalObject;
 };
 
 ALWAYS_INLINE Structure* InternalFunction::createSubclassStructure(ExecState* exec, JSValue newTarget, Structure* baseClass)

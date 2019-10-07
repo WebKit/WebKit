@@ -52,9 +52,9 @@ JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, WebAnimation& va
     return wrap(state, globalObject, value);
 }
 
-EncodedJSValue JSC_HOST_CALL constructJSWebAnimation(ExecState& state)
+EncodedJSValue JSC_HOST_CALL constructJSWebAnimation(JSGlobalObject* globalObject, ExecState& state)
 {
-    VM& vm = state.vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     auto* jsConstructor = jsCast<JSDOMConstructorBase*>(state.jsCallee());
