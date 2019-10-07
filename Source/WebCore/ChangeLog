@@ -1,3 +1,18 @@
+2019-10-07  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add const version of LayoutState::displayBoxForLayoutBox
+        https://bugs.webkit.org/show_bug.cgi?id=202623
+        <rdar://problem/56025259>
+
+        Reviewed by Antti Koivisto.
+
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::displayBoxForLayoutBox):
+        (WebCore::Layout::LayoutState::displayBoxForLayoutBox const):
+        * layout/LayoutState.h:
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::outputLayoutTree):
+
 2019-10-07  youenn fablet  <youenn@apple.com>
 
         [iOS] Unmuting capture of a page is not working

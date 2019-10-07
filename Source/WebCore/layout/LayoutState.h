@@ -60,7 +60,8 @@ public:
     void deregisterFormattingContext(const FormattingContext& formattingContext) { m_formattingContextList.remove(&formattingContext); }
 #endif
 
-    Display::Box& displayBoxForLayoutBox(const Box& layoutBox) const;
+    Display::Box& displayBoxForLayoutBox(const Box& layoutBox);
+    const Display::Box& displayBoxForLayoutBox(const Box& layoutBox) const;
     bool hasDisplayBox(const Box& layoutBox) const { return m_layoutToDisplayBox.contains(&layoutBox); }
 
     enum class QuirksMode { No, Limited, Yes };
@@ -77,7 +78,7 @@ private:
 #ifndef NDEBUG
     HashSet<const FormattingContext*> m_formattingContextList;
 #endif
-    mutable HashMap<const Box*, std::unique_ptr<Display::Box>> m_layoutToDisplayBox;
+    HashMap<const Box*, std::unique_ptr<Display::Box>> m_layoutToDisplayBox;
     QuirksMode m_quirksMode { QuirksMode::No };
 };
 

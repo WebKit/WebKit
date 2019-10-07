@@ -45,11 +45,17 @@ LayoutState::LayoutState(const Container& root)
     ASSERT(root.establishesFormattingContext());
 }
 
-Display::Box& LayoutState::displayBoxForLayoutBox(const Box& layoutBox) const
+Display::Box& LayoutState::displayBoxForLayoutBox(const Box& layoutBox)
 {
     return *m_layoutToDisplayBox.ensure(&layoutBox, [&layoutBox] {
         return makeUnique<Display::Box>(layoutBox.style());
     }).iterator->value;
+}
+
+const Display::Box& LayoutState::displayBoxForLayoutBox(const Box& layoutBox) const
+{
+    ASSERT(hasDisplayBox(layoutBox));
+    return *m_layoutToDisplayBox.get(&layoutBox);
 }
 
 FormattingState& LayoutState::formattingStateForBox(const Box& layoutBox) const
