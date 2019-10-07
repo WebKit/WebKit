@@ -1,3 +1,22 @@
+2019-10-07  youenn fablet  <youenn@apple.com>
+
+        WebPageProxy::updatePlayingMediaDidChange should protect from a null m_userMediaPermissionRequestManager
+        https://bugs.webkit.org/show_bug.cgi?id=202628
+        <rdar://problem/55935091>
+
+        Reviewed by Eric Carlson.
+
+        On process swap on navigation or process crash, m_userMediaPermissionRequestManager is made null.
+        At the same time, the media state is set back to not playing.
+        Future calls of updatePlayingMediaDidChange should not have any capture state change until getUserMedia/getDisplayMedia
+        is called, which would create m_userMediaPermissionRequestManager.
+        But this assumption is not always true given that the media state is computed as process-wide in MediaStreamTrack::captureState on iOS.
+        The above behavior is fixed as part of https://bugs.webkit.org/show_bug.cgi?id=202627.
+        Since the call to updatePlayingMediaDidChange is triggered straight from IPC, it should not be trusted and a null check should be added.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updatePlayingMediaDidChange):
+
 2019-10-04  Dean Jackson  <dino@apple.com>
 
         Use a better name than allowFastClicksEverywhere
