@@ -1,3 +1,23 @@
+2019-10-07  Dirk Schulze  <krit@webkit.org>
+
+        clip-path: <geometry-box> mapping incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=202075
+
+        Reviewed by Simon Fraser.
+
+        For HTML elements:
+        - stroke-box, view-box consistently compute to border-box
+        - fill-box computes to content-box
+
+        Tests: css3/masking/clip-path-border-radius-fill-box-001.html
+               css3/masking/clip-path-border-radius-stroke-box-000.html
+               css3/masking/clip-path-border-radius-view-box-000.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/shapes/BoxShape.cpp:
+        (WebCore::computeRoundedRectForBoxShape):
+
 2019-10-07  Tim Horton  <timothy_horton@apple.com>
 
         Fix the Windows build
