@@ -45,9 +45,11 @@
 #include "LayoutSize.h"
 #include "RenderElement.h"
 #include "SharedBuffer.h"
+#include "SuspendableTimer.h"
 #include "TypedOMCSSImageValue.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Optional.h>
+#include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Variant.h>
 
@@ -525,6 +527,7 @@ private:
 };
 
 class PendingImageBitmap final : public ActiveDOMObject, public FileReaderLoaderClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static void fetch(ScriptExecutionContext& scriptExecutionContext, RefPtr<Blob>&& blob, ImageBitmapOptions&& options, Optional<IntRect> rect, ImageBitmap::Promise&& promise)
     {
@@ -540,8 +543,10 @@ private:
         , m_options(WTFMove(options))
         , m_rect(WTFMove(rect))
         , m_promise(WTFMove(promise))
+        , m_createImageBitmapTimer(&scriptExecutionContext, *this, &PendingImageBitmap::createImageBitmapAndResolvePromise)
     {
         suspendIfNeeded();
+        m_createImageBitmapTimer.suspendIfNeeded();
     }
 
     void start(ScriptExecutionContext& scriptExecutionContext)
@@ -551,15 +556,19 @@ private:
 
     // ActiveDOMObject
 
-    const char* activeDOMObjectName() const override
+    const char* activeDOMObjectName() const final
     {
         return "PendingImageBitmap";
     }
 
-    bool canSuspendForDocumentSuspension() const override
+    bool canSuspendForDocumentSuspension() const final
     {
-        // FIXME: Deal with suspension.
-        return false;
+        return true;
+    }
+
+    void stop() final
+    {
+        delete this;
     }
 
     // FileReaderLoaderClient
@@ -574,24 +583,33 @@ private:
 
     void didFinishLoading() override
     {
-        createImageBitmap(m_blobLoader.arrayBufferResult());
-        delete this;
+        createImageBitmapAndResolvePromiseSoon(m_blobLoader.arrayBufferResult());
     }
 
     void didFail(int) override
     {
-        createImageBitmap(nullptr);
-        delete this;
+        createImageBitmapAndResolvePromiseSoon(nullptr);
     }
 
-    void createImageBitmap(RefPtr<ArrayBuffer>&& arrayBuffer)
+    void createImageBitmapAndResolvePromiseSoon(RefPtr<ArrayBuffer>&& arrayBuffer)
     {
-        if (!arrayBuffer) {
+        ASSERT(!m_createImageBitmapTimer.isActive());
+        m_arrayBufferToProcess = WTFMove(arrayBuffer);
+        m_createImageBitmapTimer.startOneShot(0_s);
+    }
+
+    void createImageBitmapAndResolvePromise()
+    {
+        auto destroyOnExit = makeScopeExit([this] {
+            delete this;
+        });
+
+        if (!m_arrayBufferToProcess) {
             m_promise.reject(InvalidStateError, "An error occured reading the Blob argument to createImageBitmap");
             return;
         }
 
-        ImageBitmap::createFromBuffer(arrayBuffer.releaseNonNull(), m_blob->type(), m_blob->size(), m_blobLoader.url(), WTFMove(m_options), WTFMove(m_rect), WTFMove(m_promise));
+        ImageBitmap::createFromBuffer(m_arrayBufferToProcess.releaseNonNull(), m_blob->type(), m_blob->size(), m_blobLoader.url(), WTFMove(m_options), WTFMove(m_rect), WTFMove(m_promise));
     }
 
     FileReaderLoader m_blobLoader;
@@ -599,6 +617,8 @@ private:
     ImageBitmapOptions m_options;
     Optional<IntRect> m_rect;
     ImageBitmap::Promise m_promise;
+    SuspendableTimer m_createImageBitmapTimer;
+    RefPtr<ArrayBuffer> m_arrayBufferToProcess;
 };
 
 void ImageBitmap::createFromBuffer(

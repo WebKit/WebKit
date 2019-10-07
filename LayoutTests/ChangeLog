@@ -1,3 +1,16 @@
+2019-10-07  Chris Dumez  <cdumez@apple.com>
+
+        PendingImageBitmap should not prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=202585
+
+        Reviewed by Tim Horton.
+
+        Add layout test coverage.
+
+        * TestExpectations:
+        * fast/history/page-cache-createImageBitmap-expected.txt: Added.
+        * fast/history/page-cache-createImageBitmap.html: Added.
+
 2019-10-07  Antoine Quint  <graouts@apple.com>
 
         [macOS WK2 Debug ] Flaky Test: animations/play-state-in-shorthand.html

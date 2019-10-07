@@ -1,3 +1,17 @@
+2019-10-07  Chris Dumez  <cdumez@apple.com>
+
+        PendingImageBitmap should not prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=202585
+
+        Reviewed by Tim Horton.
+
+        Add PageCache support to PendingImageBitmap by doing the promise resolution on a
+        SuspendableTimer (which properly gets paused while in PageCache).
+
+        Test: fast/history/page-cache-createImageBitmap.html
+
+        * html/ImageBitmap.cpp:
+
 2019-10-07  Dirk Schulze  <krit@webkit.org>
 
         clip-path: <geometry-box> mapping incorrect
