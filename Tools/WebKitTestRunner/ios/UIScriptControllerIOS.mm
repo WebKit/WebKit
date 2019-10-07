@@ -43,6 +43,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/Vector.h>
 
@@ -425,12 +426,14 @@ void UIScriptControllerIOS::sendEventStream(JSStringRef eventsJSON, JSValueRef c
         WTFLogAlways("JSON is not convertible to a dictionary");
         return;
     }
-    
-    [[HIDEventGenerator sharedHIDEventGenerator] sendEventStream:eventInfo completionBlock:^{
+
+    auto completion = makeBlockPtr([this, protectedThis = makeRefPtr(*this), callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
-    }];
+    });
+
+    [[HIDEventGenerator sharedHIDEventGenerator] sendEventStream:eventInfo completionBlock:completion.get()];
 }
 
 void UIScriptControllerIOS::dragFromPointToPoint(long startX, long startY, long endX, long endY, double durationSeconds, JSValueRef callback)
