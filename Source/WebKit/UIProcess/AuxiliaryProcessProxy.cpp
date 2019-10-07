@@ -27,9 +27,7 @@
 #include "AuxiliaryProcessProxy.h"
 
 #include "AuxiliaryProcessMessages.h"
-#include "LoadParameters.h"
 #include "Logging.h"
-#include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <wtf/RunLoop.h>
@@ -211,26 +209,10 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection
     m_connection->open();
 
     for (auto&& pendingMessage : std::exchange(m_pendingMessages, { })) {
+        if (!shouldSendPendingMessage(pendingMessage))
+            continue;
         auto encoder = WTFMove(pendingMessage.encoder);
         auto sendOptions = pendingMessage.sendOptions;
-#if HAVE(SANDBOX_ISSUE_MACH_EXTENSION_TO_PROCESS_BY_PID)
-        if (encoder->messageName() == "LoadRequestWaitingForPID") {
-            auto buffer = encoder->buffer();
-            auto bufferSize = encoder->bufferSize();
-            std::unique_ptr<IPC::Decoder> decoder = makeUnique<IPC::Decoder>(buffer, bufferSize, nullptr, Vector<IPC::Attachment> { });
-            LoadParameters loadParameters;
-            URL resourceDirectoryURL;
-            WebPageProxyIdentifier pageID;
-            if (decoder->decode(loadParameters) && decoder->decode(resourceDirectoryURL) && decoder->decode(pageID)) {
-                if (auto* page = WebProcessProxy::webPage(pageID)) {
-                    page->maybeInitializeSandboxExtensionHandle(static_cast<WebProcessProxy&>(*this), loadParameters.request.url(), resourceDirectoryURL, loadParameters.sandboxExtensionHandle);
-                    send(Messages::WebPage::LoadRequest(loadParameters), decoder->destinationID());
-                }
-            } else
-                ASSERT_NOT_REACHED();
-            continue;
-        }
-#endif
         if (pendingMessage.asyncReplyInfo)
             IPC::addAsyncReplyHandler(*connection(), pendingMessage.asyncReplyInfo->second, WTFMove(pendingMessage.asyncReplyInfo->first));
         m_connection->sendMessage(WTFMove(encoder), sendOptions);

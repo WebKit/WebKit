@@ -31,6 +31,7 @@
 #include "APIPageHandle.h"
 #include "DataReference.h"
 #include "DownloadProxyMap.h"
+#include "LoadParameters.h"
 #include "Logging.h"
 #include "PluginInfoStore.h"
 #include "PluginProcessManager.h"
@@ -43,6 +44,7 @@
 #include "WebNavigationDataStore.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebPageGroup.h"
+#include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebPasteboardProxy.h"
 #include "WebProcessCache.h"
@@ -301,6 +303,29 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
 {
 }
 #endif
+
+bool WebProcessProxy::shouldSendPendingMessage(const PendingMessage& message)
+{
+#if HAVE(SANDBOX_ISSUE_MACH_EXTENSION_TO_PROCESS_BY_PID)
+    if (message.encoder->messageName() == "LoadRequestWaitingForPID") {
+        auto buffer = message.encoder->buffer();
+        auto bufferSize = message.encoder->bufferSize();
+        std::unique_ptr<IPC::Decoder> decoder = makeUnique<IPC::Decoder>(buffer, bufferSize, nullptr, Vector<IPC::Attachment> { });
+        LoadParameters loadParameters;
+        URL resourceDirectoryURL;
+        WebPageProxyIdentifier pageID;
+        if (decoder->decode(loadParameters) && decoder->decode(resourceDirectoryURL) && decoder->decode(pageID)) {
+            if (auto* page = WebProcessProxy::webPage(pageID)) {
+                page->maybeInitializeSandboxExtensionHandle(static_cast<WebProcessProxy&>(*this), loadParameters.request.url(), resourceDirectoryURL, loadParameters.sandboxExtensionHandle);
+                send(Messages::WebPage::LoadRequest(loadParameters), decoder->destinationID());
+            }
+        } else
+            ASSERT_NOT_REACHED();
+        return false;
+    }
+#endif
+    return true;
+}
 
 void WebProcessProxy::connectionWillOpen(IPC::Connection& connection)
 {

@@ -1,3 +1,24 @@
+2019-10-07  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Layering violation in AuxiliaryProcessProxy::didFinishLaunching
+        https://bugs.webkit.org/show_bug.cgi?id=201617
+
+        Reviewed by Brent Fulgham.
+
+        The commit <https://trac.webkit.org/changeset/249649> introduced a layering violation in AuxiliaryProcessProxy::didFinishLaunching
+        where we inspect the pending message queue looking for a local file load message which needs the PID to create a sandbox extension
+        for the WebContent process. The layering violation can be fixed by creating a virtual method in AuxiliaryProcessProxy and override
+        the method in the WebProcessProxy to do the work needed to replace the message with a load request message containing a sandbox
+        extension created using the PID of the WebContent process. No new tests have been created, since this is covered by existing tests.
+
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::didFinishLaunching):
+        * UIProcess/AuxiliaryProcessProxy.h:
+        (WebKit::AuxiliaryProcessProxy::shouldSendPendingMessage):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::shouldSendPendingMessage):
+        * UIProcess/WebProcessProxy.h:
+
 2019-10-07  Dean Jackson  <dino@apple.com>
 
         Provide options for DTTZ to happen in more situations

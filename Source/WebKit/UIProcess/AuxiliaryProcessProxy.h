@@ -122,16 +122,18 @@ protected:
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&);
     virtual void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&) { };
 
-private:
-    virtual void connectionWillOpen(IPC::Connection&);
-    virtual void processWillShutDown(IPC::Connection&) = 0;
-
     struct PendingMessage {
         std::unique_ptr<IPC::Encoder> encoder;
         OptionSet<IPC::SendOption> sendOptions;
         Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>> asyncReplyInfo;
     };
-    
+
+    virtual bool shouldSendPendingMessage(const PendingMessage&) { return true; }
+
+private:
+    virtual void connectionWillOpen(IPC::Connection&);
+    virtual void processWillShutDown(IPC::Connection&) = 0;
+
     Vector<PendingMessage> m_pendingMessages;
     RefPtr<ProcessLauncher> m_processLauncher;
     RefPtr<IPC::Connection> m_connection;
