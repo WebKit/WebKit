@@ -1238,5 +1238,13 @@ op :llint_native_construct_trampoline
 op :llint_internal_function_call_trampoline
 op :llint_internal_function_construct_trampoline
 op :handleUncaughtException
+op :op_call_return_location
+op :op_construct_return_location
+op :op_call_varargs_slow_return_location
+op :op_construct_varargs_slow_return_location
+op :op_get_by_id_return_location
+op :op_get_by_val_return_location
+op :op_put_by_id_return_location
+op :op_put_by_val_return_location
 
 end_section :NativeHelpers

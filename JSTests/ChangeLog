@@ -1,3 +1,13 @@
+2019-10-07  Saam Barati  <sbarati@apple.com>
+
+        Allow OSR exit to the LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=197993
+
+        Reviewed by Tadeu Zagallo.
+
+        * stress/exit-from-getter-by-val.js: Added.
+        * stress/exit-from-setter-by-val.js: Added.
+
 2019-10-07  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r250750.

@@ -34,7 +34,6 @@
 #include "DFGGraph.h"
 #include "DFGMayExit.h"
 #include "DFGOSRExitCompilerCommon.h"
-#include "DFGOSRExitPreparation.h"
 #include "DFGOperations.h"
 #include "DFGSpeculativeJIT.h"
 #include "DirectArguments.h"
@@ -372,11 +371,8 @@ void OSRExit::executeOSRExit(Context& context)
         // results will be cached in the OSRExitState record for use of the rest of the
         // exit ramp code.
 
-        // Ensure we have baseline codeBlocks to OSR exit to.
-        prepareCodeOriginForOSRExit(exec, exit.m_codeOrigin);
-
         CodeBlock* baselineCodeBlock = codeBlock->baselineAlternative();
-        ASSERT(baselineCodeBlock->jitType() == JITType::BaselineJIT);
+        ASSERT(JITCode::isBaselineCode(baselineCodeBlock->jitType()));
 
         SpeculationRecovery* recovery = nullptr;
         if (exit.m_recoveryIndex != UINT_MAX) {
@@ -406,11 +402,19 @@ void OSRExit::executeOSRExit(Context& context)
         adjustedThreshold = BaselineExecutionCounter::clippedThreshold(codeBlock->globalObject(), adjustedThreshold);
 
         CodeBlock* codeBlockForExit = baselineCodeBlockForOriginAndBaselineCodeBlock(exit.m_codeOrigin, baselineCodeBlock);
-        const JITCodeMap& codeMap = codeBlockForExit->jitCodeMap();
-        CodeLocationLabel<JSEntryPtrTag> codeLocation = codeMap.find(exit.m_codeOrigin.bytecodeIndex());
-        ASSERT(codeLocation);
-
-        void* jumpTarget = codeLocation.executableAddress();
+        bool exitToLLInt = Options::forceOSRExitToLLInt() || codeBlockForExit->jitType() == JITType::InterpreterThunk;
+        void* jumpTarget;
+        if (exitToLLInt) {
+            unsigned bytecodeOffset = exit.m_codeOrigin.bytecodeIndex();
+            const Instruction& currentInstruction = *codeBlockForExit->instructions().at(bytecodeOffset).ptr();
+            MacroAssemblerCodePtr<JSEntryPtrTag> destination = LLInt::getCodePtr<JSEntryPtrTag>(currentInstruction);
+            jumpTarget = destination.executableAddress();    
+        } else {
+            const JITCodeMap& codeMap = codeBlockForExit->jitCodeMap();
+            CodeLocationLabel<JSEntryPtrTag> codeLocation = codeMap.find(exit.m_codeOrigin.bytecodeIndex());
+            ASSERT(codeLocation);
+            jumpTarget = codeLocation.executableAddress();
+        }
 
         // Compute the value recoveries.
         Operands<ValueRecovery> operands;
@@ -418,7 +422,7 @@ void OSRExit::executeOSRExit(Context& context)
         dfgJITCode->variableEventStream.reconstruct(codeBlock, exit.m_codeOrigin, dfgJITCode->minifiedDFG, exit.m_streamIndex, operands, &undefinedOperandSpans);
         ptrdiff_t stackPointerOffset = -static_cast<ptrdiff_t>(codeBlock->jitCode()->dfgCommon()->requiredRegisterCountForExit) * sizeof(Register);
 
-        exit.exitState = adoptRef(new OSRExitState(exit, codeBlock, baselineCodeBlock, operands, WTFMove(undefinedOperandSpans), recovery, stackPointerOffset, activeThreshold, adjustedThreshold, jumpTarget, arrayProfile));
+        exit.exitState = adoptRef(new OSRExitState(exit, codeBlock, baselineCodeBlock, operands, WTFMove(undefinedOperandSpans), recovery, stackPointerOffset, activeThreshold, adjustedThreshold, jumpTarget, arrayProfile, exitToLLInt));
 
         if (UNLIKELY(vm.m_perBytecodeProfiler && codeBlock->jitCode()->dfgCommon()->compilation)) {
             Profiler::Database& database = *vm.m_perBytecodeProfiler;
@@ -446,7 +450,7 @@ void OSRExit::executeOSRExit(Context& context)
 
     OSRExitState& exitState = *exit.exitState.get();
     CodeBlock* baselineCodeBlock = exitState.baselineCodeBlock;
-    ASSERT(baselineCodeBlock->jitType() == JITType::BaselineJIT);
+    ASSERT(JITCode::isBaselineCode(baselineCodeBlock->jitType()));
 
     Operands<ValueRecovery>& operands = exitState.operands;
     Vector<UndefinedOperandSpan>& undefinedOperandSpans = exitState.undefinedOperandSpans;
@@ -757,7 +761,7 @@ static void reifyInlinedCallFrames(Context& context, CodeBlock* outermostBaselin
     // FIXME: We shouldn't leave holes on the stack when performing an OSR exit
     // in presence of inlined tail calls.
     // https://bugs.webkit.org/show_bug.cgi?id=147511
-    ASSERT(outermostBaselineCodeBlock->jitType() == JITType::BaselineJIT);
+    ASSERT(JITCode::isBaselineCode(outermostBaselineCodeBlock->jitType()));
     frame.setOperand<CodeBlock*>(CallFrameSlot::codeBlock, outermostBaselineCodeBlock);
 
     const CodeOrigin* codeOrigin;
@@ -767,6 +771,8 @@ static void reifyInlinedCallFrames(Context& context, CodeBlock* outermostBaselin
         InlineCallFrame::Kind trueCallerCallKind;
         CodeOrigin* trueCaller = inlineCallFrame->getCallerSkippingTailCalls(&trueCallerCallKind);
         void* callerFrame = cpu.fp();
+
+        bool callerIsLLInt = false;
 
         if (!trueCaller) {
             ASSERT(inlineCallFrame->isTail());
@@ -781,46 +787,16 @@ static void reifyInlinedCallFrames(Context& context, CodeBlock* outermostBaselin
         } else {
             CodeBlock* baselineCodeBlockForCaller = baselineCodeBlockForOriginAndBaselineCodeBlock(*trueCaller, outermostBaselineCodeBlock);
             unsigned callBytecodeIndex = trueCaller->bytecodeIndex();
-            MacroAssemblerCodePtr<JSInternalPtrTag> jumpTarget;
-
-            switch (trueCallerCallKind) {
-            case InlineCallFrame::Call:
-            case InlineCallFrame::Construct:
-            case InlineCallFrame::CallVarargs:
-            case InlineCallFrame::ConstructVarargs:
-            case InlineCallFrame::TailCall:
-            case InlineCallFrame::TailCallVarargs: {
-                CallLinkInfo* callLinkInfo =
-                    baselineCodeBlockForCaller->getCallLinkInfoForBytecodeIndex(callBytecodeIndex);
-                RELEASE_ASSERT(callLinkInfo);
-
-                jumpTarget = callLinkInfo->callReturnLocation();
-                break;
-            }
-
-            case InlineCallFrame::GetterCall:
-            case InlineCallFrame::SetterCall: {
-                StructureStubInfo* stubInfo =
-                    baselineCodeBlockForCaller->findStubInfo(CodeOrigin(callBytecodeIndex));
-                RELEASE_ASSERT(stubInfo);
-
-                jumpTarget = stubInfo->doneLocation();
-                break;
-            }
-
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-            }
+            void* jumpTarget = callerReturnPC(baselineCodeBlockForCaller, callBytecodeIndex, trueCallerCallKind, callerIsLLInt);
 
             if (trueCaller->inlineCallFrame())
                 callerFrame = cpu.fp<uint8_t*>() + trueCaller->inlineCallFrame()->stackOffset * sizeof(EncodedJSValue);
 
-            void* targetAddress = jumpTarget.executableAddress();
 #if CPU(ARM64E)
             void* newEntrySP = cpu.fp<uint8_t*>() + inlineCallFrame->returnPCOffset() + sizeof(void*);
-            targetAddress = retagCodePtr(targetAddress, JSInternalPtrTag, bitwise_cast<PtrTag>(newEntrySP));
+            jumpTarget = tagCodePtr(jumpTarget, bitwise_cast<PtrTag>(newEntrySP));
 #endif
-            frame.set<void*>(inlineCallFrame->returnPCOffset(), targetAddress);
+            frame.set<void*>(inlineCallFrame->returnPCOffset(), jumpTarget);
         }
 
         frame.setOperand<void*>(inlineCallFrame->stackOffset + CallFrameSlot::codeBlock, baselineCodeBlock);
@@ -829,6 +805,14 @@ static void reifyInlinedCallFrames(Context& context, CodeBlock* outermostBaselin
         // If this inlined frame is a tail call that will return back to the original caller, we need to
         // copy the prior contents of the tag registers already saved for the outer frame to this frame.
         saveOrCopyCalleeSavesFor(context, baselineCodeBlock, VirtualRegister(inlineCallFrame->stackOffset), !trueCaller);
+
+        if (callerIsLLInt) {
+            CodeBlock* baselineCodeBlockForCaller = baselineCodeBlockForOriginAndBaselineCodeBlock(*trueCaller, outermostBaselineCodeBlock);
+            frame.set<const void*>(calleeSaveSlot(inlineCallFrame, baselineCodeBlock, LLInt::Registers::metadataTableGPR).offset, baselineCodeBlockForCaller->metadataTable());
+#if USE(JSVALUE64)
+            frame.set<const void*>(calleeSaveSlot(inlineCallFrame, baselineCodeBlock, LLInt::Registers::pbGPR).offset, baselineCodeBlockForCaller->instructionsRawPointer());
+#endif
+        }
 
         if (!inlineCallFrame->isVarargs())
             frame.setOperand<uint32_t>(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount, PayloadOffset, inlineCallFrame->argumentCountIncludingThis);
@@ -894,6 +878,24 @@ static void adjustAndJumpToTarget(Context& context, VM& vm, CodeBlock* codeBlock
     }
 
     vm.topCallFrame = context.fp<ExecState*>();
+
+    if (exitState->isJumpToLLInt) {
+        CodeBlock* codeBlockForExit = baselineCodeBlockForOriginAndBaselineCodeBlock(exit.m_codeOrigin, baselineCodeBlock);
+        unsigned bytecodeOffset = exit.m_codeOrigin.bytecodeIndex();
+        const Instruction& currentInstruction = *codeBlockForExit->instructions().at(bytecodeOffset).ptr();
+
+        context.gpr(LLInt::Registers::metadataTableGPR) = bitwise_cast<uintptr_t>(codeBlockForExit->metadataTable());
+#if USE(JSVALUE64)
+        context.gpr(LLInt::Registers::pbGPR) = bitwise_cast<uintptr_t>(codeBlockForExit->instructionsRawPointer());
+        context.gpr(LLInt::Registers::pcGPR) = static_cast<uintptr_t>(exit.m_codeOrigin.bytecodeIndex());
+#else
+        context.gpr(LLInt::Registers::pcGPR) = bitwise_cast<uintptr_t>(&currentInstruction);
+#endif
+
+        if (exit.isExceptionHandler())
+            vm.targetInterpreterPCForThrow = &currentInstruction;
+    }
+
     context.pc() = untagCodePtr<JSEntryPtrTag>(jumpTarget);
 }
 
@@ -1052,8 +1054,6 @@ void JIT_OPERATION OSRExit::compileOSRExit(ExecState* exec)
     ASSERT(!vm.callFrameForCatch || exit.m_kind == GenericUnwind);
     EXCEPTION_ASSERT_UNUSED(scope, !!scope.exception() || !exit.isExceptionHandler());
     
-    prepareCodeOriginForOSRExit(exec, exit.m_codeOrigin);
-
     // Compute the value recoveries.
     Operands<ValueRecovery> operands;
     codeBlock->jitCode()->dfg()->variableEventStream.reconstruct(codeBlock, exit.m_codeOrigin, codeBlock->jitCode()->dfg()->minifiedDFG, exit.m_streamIndex, operands);

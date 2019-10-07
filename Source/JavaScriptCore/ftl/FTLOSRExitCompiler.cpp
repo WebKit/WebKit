@@ -30,7 +30,6 @@
 
 #include "BytecodeStructs.h"
 #include "DFGOSRExitCompilerCommon.h"
-#include "DFGOSRExitPreparation.h"
 #include "FTLExitArgumentForOperand.h"
 #include "FTLJITCode.h"
 #include "FTLLocation.h"
@@ -543,8 +542,6 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
                 dataLog("        ", pointerDump(materialization), "\n");
         }
     }
-
-    prepareCodeOriginForOSRExit(exec, exit.m_codeOrigin);
 
     compileStub(exitID, jitCode, exit, &vm, codeBlock);
 

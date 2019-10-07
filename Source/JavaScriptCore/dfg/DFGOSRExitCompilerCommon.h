@@ -39,6 +39,8 @@ namespace JSC { namespace DFG {
 void handleExitCounts(CCallHelpers&, const OSRExitBase&);
 void reifyInlinedCallFrames(CCallHelpers&, const OSRExitBase&);
 void adjustAndJumpToTarget(VM&, CCallHelpers&, const OSRExitBase&);
+void* callerReturnPC(CodeBlock* baselineCodeBlockForCaller, unsigned callBytecodeOffset, InlineCallFrame::Kind callerKind, bool& callerIsLLInt);
+CCallHelpers::Address calleeSaveSlot(InlineCallFrame*, CodeBlock* baselineCodeBlock, GPRReg calleeSave);
 
 template <typename JITCodeType>
 void adjustFrameAndStackInOSRExitCompilerThunk(MacroAssembler& jit, VM& vm, JITType jitType)

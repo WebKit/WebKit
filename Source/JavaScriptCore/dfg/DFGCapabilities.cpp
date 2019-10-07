@@ -306,6 +306,14 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case llint_internal_function_call_trampoline:
     case llint_internal_function_construct_trampoline:
     case handleUncaughtException:
+    case op_call_return_location:
+    case op_construct_return_location:
+    case op_call_varargs_slow_return_location:
+    case op_construct_varargs_slow_return_location:
+    case op_get_by_id_return_location:
+    case op_get_by_val_return_location:
+    case op_put_by_id_return_location:
+    case op_put_by_val_return_location:
         return CannotCompile;
     }
     return CannotCompile;

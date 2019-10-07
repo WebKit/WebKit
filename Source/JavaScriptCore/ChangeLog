@@ -1,3 +1,75 @@
+2019-10-07  Saam Barati  <sbarati@apple.com>
+
+        Allow OSR exit to the LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=197993
+
+        Reviewed by Tadeu Zagallo.
+
+        This patch makes it so we can OSR exit to the LLInt.
+        Here are the interesting implementation details:
+        
+        1. We no longer baseline compile everything in the inline stack.
+        
+        2. When the top frame is a LLInt frame, we exit to the corresponding
+        LLInt bytecode. However, we need to materialize the LLInt registers
+        for PC, PB, and metadata.
+        
+        3. When dealing with inline call frames where the caller is LLInt, we
+        need to return to the appropriate place. Let's consider we're exiting
+        at a place A->B (A calls B), where A is LLInt. If A is a normal call,
+        we place the return PC in the frame we materialize to B to be right
+        after the LLInt's inline cache for calls. If A is a varargs call, we place
+        it at the return location for vararg calls. The interesting scenario here
+        is where A is a getter/setter. This means that A might be get_by_id,
+        get_by_val, put_by_id, or put_by_val. Since the LLInt does not have any
+        form of IC for getters/setters, we make this work by creating new LLInt
+        "return location" stubs for these opcodes.
+        
+        4. We need to update what callee saves we store in the callee if the caller frame
+        is a LLInt frame. Let's consider an inline stack A->B->C, where A is a LLInt frame.
+        When we materialize the stack frame for B, we need to ensure that the LLInt callee
+        saves that A uses is stored into B's preserved callee saves. Specifically, this
+        is just the PB/metadata registers.
+        
+        This patch also fixes offlineasm's macro expansion to allow us to
+        use computed label names for global labels.
+        
+        In a future bug, I'm going to investigate some kind of control system for
+        throwing away baseline code when we tier up:
+        https://bugs.webkit.org/show_bug.cgi?id=202503
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::metadataTable):
+        (JSC::CodeBlock::instructionsRawPointer):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::executeOSRExit):
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::adjustAndJumpToTarget):
+        (JSC::DFG::OSRExit::compileOSRExit):
+        * dfg/DFGOSRExit.h:
+        (JSC::DFG::OSRExitState::OSRExitState):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::callerReturnPC):
+        (JSC::DFG::calleeSaveSlot):
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGOSRExitCompilerCommon.h:
+        * dfg/DFGOSRExitPreparation.cpp:
+        (JSC::DFG::prepareCodeOriginForOSRExit): Deleted.
+        * dfg/DFGOSRExitPreparation.h:
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileFTLOSRExit):
+        * llint/LLIntData.h:
+        (JSC::LLInt::getCodePtr):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/asm.rb:
+        * offlineasm/transform.rb:
+        * runtime/OptionsList.h:
+
 2019-10-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Change signature of HostFunction to (JSGlobalObject*, CallFrame*)

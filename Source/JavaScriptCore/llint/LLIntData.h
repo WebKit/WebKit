@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "GPRInfo.h"
+#include "Instruction.h"
 #include "JSCJSValue.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Opcode.h"
@@ -32,7 +34,6 @@
 namespace JSC {
 
 class VM;
-struct Instruction;
 
 #if ENABLE(C_LOOP)
 typedef OpcodeID LLIntCode;
@@ -145,6 +146,16 @@ ALWAYS_INLINE MacroAssemblerCodePtr<tag> getWide32CodePtr(OpcodeID opcodeID)
 }
 
 template<PtrTag tag>
+ALWAYS_INLINE MacroAssemblerCodePtr<tag> getCodePtr(const Instruction& instruction)
+{
+    if (instruction.isWide16())
+        return getWide16CodePtr<tag>(instruction.opcodeID());
+    if (instruction.isWide32())
+        return getWide32CodePtr<tag>(instruction.opcodeID());
+    return getCodePtr<tag>(instruction.opcodeID());
+}
+
+template<PtrTag tag>
 ALWAYS_INLINE MacroAssemblerCodeRef<tag> getCodeRef(OpcodeID opcodeID)
 {
     return MacroAssemblerCodeRef<tag>::createSelfManagedCodeRef(getCodePtr<tag>(opcodeID));
@@ -183,5 +194,24 @@ ALWAYS_INLINE void* getCodePtr(JSC::EncodedJSValue glueHelper())
 {
     return bitwise_cast<void*>(glueHelper);
 }
+
+#if ENABLE(JIT)
+struct Registers {
+    static const GPRReg pcGPR = GPRInfo::regT4;
+
+#if CPU(X86_64) && !OS(WINDOWS)
+    static const GPRReg metadataTableGPR = GPRInfo::regCS1;
+    static const GPRReg pbGPR = GPRInfo::regCS2;
+#elif CPU(X86_64) && OS(WINDOWS)
+    static const GPRReg metadataTableGPR = GPRInfo::regCS3;
+    static const GPRReg pbGPR = GPRInfo::regCS4;
+#elif CPU(ARM64)
+    static const GPRReg metadataTableGPR = GPRInfo::regCS6;
+    static const GPRReg pbGPR = GPRInfo::regCS7;
+#elif CPU(MIPS) || CPU(ARM_THUMB2)
+    static const GPRReg metadataTableGPR = GPRInfo::regCS0;
+#endif
+};
+#endif
 
 } } // namespace JSC::LLInt

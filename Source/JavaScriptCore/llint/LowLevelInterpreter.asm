@@ -929,12 +929,30 @@ macro traceExecution()
     end
 end
 
-macro callTargetFunction(size, opcodeStruct, dispatch, callee, callPtrTag)
+macro defineOSRExitReturnLabel(opcodeName, size)
+    macro defineNarrow()
+        _%opcodeName%_return_location:
+    end
+
+    macro defineWide16()
+        _%opcodeName%_return_location_wide16:
+    end
+
+    macro defineWide32()
+        _%opcodeName%_return_location_wide32:
+    end
+
+    size(defineNarrow, defineWide16, defineWide32, macro (f) f() end)
+end
+
+macro callTargetFunction(opcodeName, size, opcodeStruct, dispatch, callee, callPtrTag)
     if C_LOOP or C_LOOP_WIN
         cloopCallJSFunction callee
     else
         call callee, callPtrTag
     end
+
+    defineOSRExitReturnLabel(opcodeName, size)
     restoreStackPointerAfterCall()
     dispatchAfterCall(size, opcodeStruct, dispatch)
 end
@@ -1004,7 +1022,7 @@ macro prepareForTailCall(callee, temp1, temp2, temp3, callPtrTag)
     jmp callee, callPtrTag
 end
 
-macro slowPathForCall(size, opcodeStruct, dispatch, slowPath, prepareCall)
+macro slowPathForCall(opcodeName, size, opcodeStruct, dispatch, slowPath, prepareCall)
     callCallSlowPath(
         slowPath,
         # Those are r0 and r1
@@ -1013,8 +1031,17 @@ macro slowPathForCall(size, opcodeStruct, dispatch, slowPath, prepareCall)
             move calleeFramePtr, sp
             prepareCall(callee, t2, t3, t4, SlowPathPtrTag)
         .dontUpdateSP:
-            callTargetFunction(size, opcodeStruct, dispatch, callee, SlowPathPtrTag)
+            callTargetFunction(%opcodeName%_slow, size, opcodeStruct, dispatch, callee, SlowPathPtrTag)
         end)
+end
+
+macro getterSetterOSRExitReturnPoint(opName, size)
+    crash() # We don't reach this in straight line code. We only reach it via returning to the code below when reconstructing stack frames during OSR exit.
+
+    defineOSRExitReturnLabel(opName, size)
+
+    restoreStackPointerAfterCall()
+    loadi ArgumentCount + TagOffset[cfr], PC
 end
 
 macro arrayProfile(offset, cellAndIndexingType, metadata, scratch)
@@ -1741,7 +1768,7 @@ end)
 callOp(construct, OpConstruct, prepareForRegularCall, macro (getu, metadata) end)
 
 
-macro doCallVarargs(size, opcodeStruct, dispatch, frameSlowPath, slowPath, prepareCall)
+macro doCallVarargs(opcodeName, size, opcodeStruct, dispatch, frameSlowPath, slowPath, prepareCall)
     callSlowPath(frameSlowPath)
     branchIfException(_llint_throw_from_slow_path_trampoline)
     # calleeFrame in r1
@@ -1756,19 +1783,19 @@ macro doCallVarargs(size, opcodeStruct, dispatch, frameSlowPath, slowPath, prepa
             subp r1, CallerFrameAndPCSize, sp
         end
     end
-    slowPathForCall(size, opcodeStruct, dispatch, slowPath, prepareCall)
+    slowPathForCall(opcodeName, size, opcodeStruct, dispatch, slowPath, prepareCall)
 end
 
 
 llintOp(op_call_varargs, OpCallVarargs, macro (size, get, dispatch)
-    doCallVarargs(size, OpCallVarargs, dispatch, _llint_slow_path_size_frame_for_varargs, _llint_slow_path_call_varargs, prepareForRegularCall)
+    doCallVarargs(op_call_varargs, size, OpCallVarargs, dispatch, _llint_slow_path_size_frame_for_varargs, _llint_slow_path_call_varargs, prepareForRegularCall)
 end)
 
 llintOp(op_tail_call_varargs, OpTailCallVarargs, macro (size, get, dispatch)
     checkSwitchToJITForEpilogue()
     # We lie and perform the tail call instead of preparing it since we can't
     # prepare the frame for a call opcode
-    doCallVarargs(size, OpTailCallVarargs, dispatch, _llint_slow_path_size_frame_for_varargs, _llint_slow_path_tail_call_varargs, prepareForTailCall)
+    doCallVarargs(op_tail_call_varargs, size, OpTailCallVarargs, dispatch, _llint_slow_path_size_frame_for_varargs, _llint_slow_path_tail_call_varargs, prepareForTailCall)
 end)
 
 
@@ -1776,12 +1803,12 @@ llintOp(op_tail_call_forward_arguments, OpTailCallForwardArguments, macro (size,
     checkSwitchToJITForEpilogue()
     # We lie and perform the tail call instead of preparing it since we can't
     # prepare the frame for a call opcode
-    doCallVarargs(size, OpTailCallForwardArguments, dispatch, _llint_slow_path_size_frame_for_forward_arguments, _llint_slow_path_tail_call_forward_arguments, prepareForTailCall)
+    doCallVarargs(op_tail_call_forward_arguments, size, OpTailCallForwardArguments, dispatch, _llint_slow_path_size_frame_for_forward_arguments, _llint_slow_path_tail_call_forward_arguments, prepareForTailCall)
 end)
 
 
 llintOp(op_construct_varargs, OpConstructVarargs, macro (size, get, dispatch)
-    doCallVarargs(size, OpConstructVarargs, dispatch, _llint_slow_path_size_frame_for_varargs, _llint_slow_path_construct_varargs, prepareForRegularCall)
+    doCallVarargs(op_construct_varargs, size, OpConstructVarargs, dispatch, _llint_slow_path_size_frame_for_varargs, _llint_slow_path_construct_varargs, prepareForRegularCall)
 end)
 
 
@@ -1820,6 +1847,7 @@ end)
 
 _llint_op_call_eval:
     slowPathForCall(
+        op_call_eval_narrow,
         narrow,
         OpCallEval,
         macro () dispatchOp(narrow, op_call_eval) end,
@@ -1828,6 +1856,7 @@ _llint_op_call_eval:
 
 _llint_op_call_eval_wide16:
     slowPathForCall(
+        op_call_eval_wide16,
         wide16,
         OpCallEval,
         macro () dispatchOp(wide16, op_call_eval) end,
@@ -1836,6 +1865,7 @@ _llint_op_call_eval_wide16:
 
 _llint_op_call_eval_wide32:
     slowPathForCall(
+        op_call_eval_wide32,
         wide32,
         OpCallEval,
         macro () dispatchOp(wide32, op_call_eval) end,
