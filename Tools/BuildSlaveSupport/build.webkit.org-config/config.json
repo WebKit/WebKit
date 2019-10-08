@@ -423,6 +423,24 @@
                                        "JSCOnly Linux MIPS32el Release", "WinCairo 64-bit WKL Release (Build)", "WinCairo 64-bit WKL Debug (Build)",
                                        "WPE Linux 64-bit Release (Build)", "WPE Linux 64-bit Debug (Build)"]
                     },
+                    { "type": "PlatformSpecificScheduler", "platform": "mac-catalina", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple Catalina Release (Build)", "Apple Catalina Debug (Build)"]
+                    },
+                    { "type": "Triggerable", "name": "catalina-release-tests-wk1",
+                      "builderNames": ["Apple Catalina Release WK1 (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "catalina-release-tests-wk2",
+                      "builderNames": ["Apple Catalina Release WK2 (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "catalina-debug-tests-wk1",
+                      "builderNames": ["Apple Catalina Debug WK1 (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "catalina-debug-tests-wk2",
+                      "builderNames": ["Apple Mojave Debug WK2 (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "catalina-leaks",
+                      "builderNames": ["Apple Catalina (Leaks)"]
+                    },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-mojave", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple Mojave Release (Build)", "Apple Mojave Debug (Build)"]
                     },
@@ -437,9 +455,6 @@
                     },
                     { "type": "Triggerable", "name": "mojave-debug-tests-wk2",
                       "builderNames": ["Apple Mojave Debug WK2 (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "mojave-leaks",
-                      "builderNames": ["Apple Mojave (Leaks)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-highsierra", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple High Sierra Release (Build)", "Apple High Sierra Debug (Build)", "Apple High Sierra LLINT CLoop (BuildAndTest)"]

@@ -1,3 +1,12 @@
+2019-10-08  Matt Lewis  <jlewis3@apple.com>
+
+        Fixing the triggerable templates in the config for catalina.
+        https://bugs.webkit.org/show_bug.cgi?id=202652
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2019-10-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add IDL for requestIdleCallback
