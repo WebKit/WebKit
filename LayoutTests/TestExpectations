@@ -396,6 +396,7 @@ imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/002.
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/combination_history_002.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/combination_history_003.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/058.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/update-the-rendering.html [ Failure Pass ]
 
 imported/w3c/web-platform-tests/fetch/api/basic/mode-same-origin.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.html [ DumpJSConsoleLogInStdErr ]
