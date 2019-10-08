@@ -166,9 +166,6 @@ enum SerializationTag {
 #if ENABLE(WEB_RTC)
     RTCCertificateTag = 44,
 #endif
-#if ENABLE(WEB_CRYPTO)
-    UnwrappedCryptoKeyTag = 46,
-#endif
     ErrorTag = 255
 };
 
@@ -351,7 +348,6 @@ static const unsigned StringDataIs8BitFlag = 0x80000000;
  *    | DOMQuad
  *    | ImageBitmapTransferTag <value:uint32_t>
  *    | RTCCertificateTag
- *    | UnwrappedCryptoKeyTag <unwrappedKeyLength:uint32_t> <factor:byte{unwrappedKeyLength}>
  *
  * Inside certificate, data is serialized in this format as per spec:
  *
@@ -1059,10 +1055,7 @@ private:
             }
 #if ENABLE(WEB_CRYPTO)
             if (auto* key = JSCryptoKey::toWrapped(vm, obj)) {
-                if (key->isWrappingRequired())
-                    write(CryptoKeyTag);
-                else
-                    write(UnwrappedCryptoKeyTag);
+                write(CryptoKeyTag);
                 Vector<uint8_t> serializedKey;
                 Vector<String> dummyBlobURLs;
                 PAL::SessionID dummySessionID;
@@ -1078,14 +1071,10 @@ private:
 #endif
                     dummyBlobURLs, dummySessionID, serializedKey, SerializationContext::Default, dummySharedBuffers);
                 rawKeySerializer.write(key);
-                if (key->isWrappingRequired()) {
-                    Vector<uint8_t> wrappedKey;
-                    if (!wrapCryptoKey(m_exec, serializedKey, wrappedKey))
-                        return false;
-                    write(wrappedKey);
-                    return true;
-                }
-                write(serializedKey);
+                Vector<uint8_t> wrappedKey;
+                if (!wrapCryptoKey(m_exec, serializedKey, wrappedKey))
+                    return false;
+                write(wrappedKey);
                 return true;
             }
 #endif
@@ -3044,28 +3033,6 @@ private:
         case RTCCertificateTag:
             return readRTCCertificate();
 
-#endif
-#if ENABLE(WEB_CRYPTO)
-        case UnwrappedCryptoKeyTag: {
-            Vector<uint8_t> serializedKey;
-            if (!read(serializedKey)) {
-                fail();
-                return JSValue();
-            }
-            JSValue cryptoKey;
-            Vector<RefPtr<MessagePort>> dummyMessagePorts;
-            CloneDeserializer rawKeyDeserializer(m_exec, m_globalObject, dummyMessagePorts, nullptr, { },
-#if ENABLE(WEBASSEMBLY)
-                nullptr,
-#endif
-                serializedKey);
-            if (!rawKeyDeserializer.readCryptoKey(cryptoKey)) {
-                fail();
-                return JSValue();
-            }
-            m_gcBuffer.appendWithCrashOnOverflow(cryptoKey);
-            return cryptoKey;
-        }
 #endif
         default:
             m_ptr--; // Push the tag back

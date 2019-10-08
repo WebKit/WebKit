@@ -72,8 +72,6 @@ public:
     CryptoKeyUsageBitmap usagesBitmap() const { return m_usages; }
     void setUsagesBitmap(CryptoKeyUsageBitmap usage) { m_usages = usage; };
     bool allows(CryptoKeyUsageBitmap usage) const { return usage == (m_usages & usage); }
-    bool isWrappingRequired() const { return m_isWrappingRequired; }
-    void setIsWrappingRequired() { m_isWrappingRequired = true; }
 
     static Vector<uint8_t> randomData(size_t);
 
@@ -82,7 +80,6 @@ private:
     Type m_type;
     bool m_extractable;
     CryptoKeyUsageBitmap m_usages;
-    bool m_isWrappingRequired { false };
 };
 
 inline auto CryptoKey::type() const -> Type

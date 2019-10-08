@@ -225,7 +225,6 @@ public:
     void setDatabaseContext(DatabaseContext*);
 
 #if ENABLE(WEB_CRYPTO)
-    // These two methods are used when CryptoKeys are serialized into IndexedDB.
     virtual bool wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) = 0;
     virtual bool unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) = 0;
 #endif

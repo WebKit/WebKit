@@ -43,10 +43,6 @@ public:
     explicit WorkerMessagingProxy(Worker&);
     virtual ~WorkerMessagingProxy();
 
-    // Implementation of WorkerLoaderProxy.
-    // This method is used in the main thread to post task back to the worker thread.
-    bool postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&&, const String& mode) final;
-
 private:
     // Implementations of WorkerGlobalScopeProxy.
     // (Only use these functions in the worker object thread.)
@@ -74,8 +70,8 @@ private:
     // Implementation of WorkerLoaderProxy.
     // These functions are called on different threads to schedule loading
     // requests and to send callbacks back to WorkerGlobalScope.
-    bool isWorkerMessagingProxy() const final { return true; }
     void postTaskToLoader(ScriptExecutionContext::Task&&) final;
+    bool postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&&, const String& mode) final;
     Ref<CacheStorageConnection> createCacheStorageConnection() final;
 
     void workerThreadCreated(DedicatedWorkerThread&);
@@ -102,7 +98,3 @@ private:
 };
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WorkerMessagingProxy)
-    static bool isType(const WebCore::WorkerLoaderProxy& proxy) { return proxy.isWorkerMessagingProxy(); }
-SPECIALIZE_TYPE_TRAITS_END()
