@@ -1,5 +1,17 @@
 2019-10-08  Antti Koivisto  <antti@apple.com>
 
+        [CSS Shadow Parts] Add test for exportparts list syntax
+        https://bugs.webkit.org/show_bug.cgi?id=202695
+
+        Reviewed by Ryosuke Niwa.
+
+        The test shows that we don't handle exporting same part under multiple names correctly.
+
+        * fast/css/shadow-parts/exportparts-syntax-expected.txt: Added.
+        * fast/css/shadow-parts/exportparts-syntax.html: Added.
+
+2019-10-08  Antti Koivisto  <antti@apple.com>
+
         [CSS Shadow Parts] Fix style invalidation with class selector and ::before and ::after
         https://bugs.webkit.org/show_bug.cgi?id=202694
 
