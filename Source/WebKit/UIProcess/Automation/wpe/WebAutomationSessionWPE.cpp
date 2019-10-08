@@ -32,6 +32,7 @@
 namespace WebKit {
 using namespace WebCore;
 
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 static uint32_t modifiersToEventState(OptionSet<WebEvent::Modifier> modifiers)
 {
     uint32_t state = 0;
@@ -121,7 +122,9 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
         break;
     }
 }
+#endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 
+#if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
 static void doKeyStrokeEvent(struct wpe_view_backend* viewBackend, bool pressed, uint32_t keyCode, uint32_t modifiers, bool doReleaseAfterPress = false)
 {
     struct wpe_input_xkb_keymap_entry* entries;
@@ -309,6 +312,7 @@ void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const
         p = g_utf8_next_char(p);
     } while (*p);
 }
+#endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
 
 } // namespace WebKit
 
