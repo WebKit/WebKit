@@ -320,8 +320,13 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
             nextContext.visitedMatchType = VisitedMatchType::Disabled;
 
         nextContext.pseudoId = PseudoId::None;
+
+        bool nextIsPart = leftSelector->match() == CSSSelector::PseudoElement && leftSelector->pseudoElementType() == CSSSelector::PseudoElementPart;
+        bool allowMultiplePseudoElements = relation == CSSSelector::ShadowDescendant && nextIsPart;
         // Virtual pseudo element is only effective in the rightmost fragment.
-        nextContext.pseudoElementEffective = false;
+        if (!allowMultiplePseudoElements)
+            nextContext.pseudoElementEffective = false;
+
         nextContext.isMatchElement = false;
     }
 
@@ -430,7 +435,8 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
     case CSSSelector::ShadowDescendant:
         {
             // When matching foo::part(bar) we skip directly to the tree of element 'foo'.
-            auto* shadowHost = checkingContext.shadowHostInPartRuleScope ? checkingContext.shadowHostInPartRuleScope : context.element->shadowHost();
+            bool isPart = context.selector->match() == CSSSelector::PseudoElement && context.selector->pseudoElementType() == CSSSelector::PseudoElementPart;
+            auto* shadowHost = isPart ? checkingContext.shadowHostInPartRuleScope : context.element->shadowHost();
             if (!shadowHost)
                 return MatchResult::fails(Match::SelectorFailsCompletely);
             nextContext.element = shadowHost;

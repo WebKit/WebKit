@@ -1,3 +1,34 @@
+2019-10-08  Antti Koivisto  <antti@apple.com>
+
+        [CSS Shadow Parts] Internal shadow pseudo elements should work with ::part
+        https://bugs.webkit.org/show_bug.cgi?id=202620
+
+        Reviewed by Ryosuke Niwa.
+
+        Selectors like ::part(foo)::placeholder should work.
+
+        This involves hop out of a UA shadow tree and then from an author shadow tree.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::matchAuthorRules):
+        (WebCore::ElementRuleCollector::matchPartPseudoElementRules):
+
+        If we are matching a pseudo element in a UA shadow tree, see if part rules can match is the surrounding scope.
+
+        (WebCore::ElementRuleCollector::matchPartPseudoElementRulesForScope):
+        * css/ElementRuleCollector.h:
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addRule):
+
+        Sort rules with both internal pseudo element and ::part to the part bucket.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::matchRecursively const):
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::splitCompoundAtImplicitShadowCrossingCombinator):
+
+        Allow multiple ShadowDescendant relations for ::part.
+
 2019-10-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add IDL for requestIdleCallback

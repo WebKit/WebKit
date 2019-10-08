@@ -329,6 +329,14 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, unsigned selector
     if (customPseudoElementSelector) {
         // FIXME: Custom pseudo elements are handled by the shadow tree's selector filter. It doesn't know about the main DOM.
         ruleData.disableSelectorFiltering();
+
+        auto* nextSelector = customPseudoElementSelector->tagHistory();
+        if (nextSelector && nextSelector->match() == CSSSelector::PseudoElement && nextSelector->pseudoElementType() == CSSSelector::PseudoElementPart) {
+            // Handle selectors like ::part(foo)::placeholder with the part codepath.
+            m_partPseudoElementRules.append(ruleData);
+            return;
+        }
+
         addToRuleSet(customPseudoElementSelector->value(), m_shadowPseudoElementRules, ruleData);
         return;
     }

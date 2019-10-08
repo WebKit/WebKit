@@ -874,10 +874,18 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::splitCompoundAtImplicitSha
     if (!splitAfter || !splitAfter->tagHistory())
         return compoundSelector;
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=161747
-    // We have to recur, since we have rules in media controls like video::a::b. This should not be allowed, and
-    // we should remove this recursion once those rules are gone.
-    std::unique_ptr<CSSParserSelector> secondCompound = context.mode != UASheetMode ? splitAfter->releaseTagHistory() : splitCompoundAtImplicitShadowCrossingCombinator(splitAfter->releaseTagHistory(), context);
+    // ::part() combines with other pseudo elements.
+    bool isPart = splitAfter->tagHistory()->match() == CSSSelector::PseudoElement && splitAfter->tagHistory()->pseudoElementType() == CSSSelector::PseudoElementPart;
+
+    std::unique_ptr<CSSParserSelector> secondCompound;
+    if (context.mode == UASheetMode || isPart) {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=161747
+        // We have to recur, since we have rules in media controls like video::a::b. This should not be allowed, and
+        // we should remove this recursion once those rules are gone.
+        secondCompound = splitCompoundAtImplicitShadowCrossingCombinator(splitAfter->releaseTagHistory(), context);
+    } else
+        secondCompound = splitAfter->releaseTagHistory();
+
     secondCompound->appendTagHistory(CSSSelector::ShadowDescendant, WTFMove(compoundSelector));
     return secondCompound;
 }

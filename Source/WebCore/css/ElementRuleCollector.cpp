@@ -203,9 +203,7 @@ void ElementRuleCollector::matchAuthorRules(bool includeEmptyRules)
 
     if (element().isInShadowTree()) {
         matchAuthorShadowPseudoElementRules(includeEmptyRules, ruleRange);
-
-        if (!element().partNames().isEmpty())
-            matchPartPseudoElementRules(*element().containingShadowRoot(), includeEmptyRules, ruleRange);
+        matchPartPseudoElementRules(includeEmptyRules, ruleRange);
     }
 
     sortAndTransferMatchedRules();
@@ -263,12 +261,22 @@ void ElementRuleCollector::matchSlottedPseudoElementRules(bool includeEmptyRules
     }
 }
 
-void ElementRuleCollector::matchPartPseudoElementRules(const ShadowRoot& containingShadowRoot, bool includeEmptyRules, StyleResolver::RuleRange& ruleRange)
+void ElementRuleCollector::matchPartPseudoElementRules(bool includeEmptyRules, StyleResolver::RuleRange& ruleRange)
 {
     ASSERT(element().isInShadowTree());
-    ASSERT(!element().partNames().isEmpty());
 
-    auto& shadowHost = *containingShadowRoot.host();
+    bool isUAShadowPseudoElement = element().containingShadowRoot()->mode() == ShadowRootMode::UserAgent && !element().shadowPseudoId().isNull();
+
+    auto& partMatchingElement = isUAShadowPseudoElement ? *element().shadowHost() : element();
+    if (partMatchingElement.partNames().isEmpty() || !partMatchingElement.isInShadowTree())
+        return;
+
+    matchPartPseudoElementRulesForScope(*partMatchingElement.containingShadowRoot(), includeEmptyRules, ruleRange);
+}
+
+void ElementRuleCollector::matchPartPseudoElementRulesForScope(const ShadowRoot& scopeShadowRoot, bool includeEmptyRules, StyleResolver::RuleRange& ruleRange)
+{
+    auto& shadowHost = *scopeShadowRoot.host();
     {
         SetForScope<RefPtr<const Element>> partMatchingScope(m_shadowHostInPartRuleScope, &shadowHost);
 
@@ -278,11 +286,11 @@ void ElementRuleCollector::matchPartPseudoElementRules(const ShadowRoot& contain
     }
 
     // Element may be exposed to styling from enclosing scopes via exportparts attributes.
-    if (containingShadowRoot.partMappings().isEmpty())
+    if (scopeShadowRoot.partMappings().isEmpty())
         return;
 
-    if (auto* parentShadowRoot = shadowHost.containingShadowRoot())
-        matchPartPseudoElementRules(*parentShadowRoot, includeEmptyRules, ruleRange);
+    if (auto* parentScopeShadowRoot = shadowHost.containingShadowRoot())
+        matchPartPseudoElementRulesForScope(*parentScopeShadowRoot, includeEmptyRules, ruleRange);
 }
 
 void ElementRuleCollector::collectMatchingShadowPseudoElementRules(const MatchRequest& matchRequest, StyleResolver::RuleRange& ruleRange)
