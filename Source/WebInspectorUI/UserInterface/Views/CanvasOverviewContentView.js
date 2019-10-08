@@ -70,7 +70,7 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
         this._refreshButtonNavigationItem.enabled = false;
         this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._refreshPreviews, this);
 
-        this._showGridButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-grid", WI.UIString("Show transparency grid"), WI.UIString("Hide Grid"), "Images/NavigationItemCheckers.svg", 13, 13);
+        this._showGridButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-grid", WI.UIString("Show transparency grid"), WI.UIString("Hide transparency grid"), "Images/NavigationItemCheckers.svg", 13, 13);
         this._showGridButtonNavigationItem.activated = !!WI.settings.showImageGrid.value;
         this._showGridButtonNavigationItem.enabled = false;
         this._showGridButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._showGridButtonClicked, this);

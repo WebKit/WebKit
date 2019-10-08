@@ -171,7 +171,7 @@ WI.settings = {
     showAllTimeoutsBreakpoint: new WI.Setting("show-all-timeouts-breakpoint", false),
     showAssertionFailuresBreakpoint: new WI.Setting("show-assertion-failures-breakpoint", true),
     showCanvasPath: new WI.Setting("show-canvas-path", false),
-    showImageGrid: new WI.Setting("show-image-grid", false),
+    showImageGrid: new WI.Setting("show-image-grid", true),
     showInvisibleCharacters: new WI.Setting("show-invisible-characters", !!WI.Setting.migrateValue("show-invalid-characters")),
     showJavaScriptTypeInformation: new WI.Setting("show-javascript-type-information", false),
     showPaintRects: new WI.Setting("show-paint-rects", false),

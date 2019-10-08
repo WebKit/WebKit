@@ -257,6 +257,10 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         sourcesSettingsView.addSetting(WI.UIString("Source Maps:"), WI.settings.sourceMapsEnabled, WI.UIString("Enable source maps"));
 
+        sourcesSettingsView.addSeparator();
+
+        sourcesSettingsView.addSetting(WI.UIString("Images:"), WI.settings.showImageGrid, WI.UIString("Show transparency grid"));
+
         this.addSettingsView(sourcesSettingsView);
     }
 

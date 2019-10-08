@@ -31,8 +31,8 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
 
         this._imageElement = null;
 
-        const toolTip = WI.UIString("Show Grid");
-        const activatedToolTip = WI.UIString("Hide Grid");
+        const toolTip = WI.UIString("Show transparency grid");
+        const activatedToolTip = WI.UIString("Hide transparency grid");
         this._showGridButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-grid", toolTip, activatedToolTip, "Images/NavigationItemCheckers.svg", 13, 13);
         this._showGridButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._showGridButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._showGridButtonClicked, this);
