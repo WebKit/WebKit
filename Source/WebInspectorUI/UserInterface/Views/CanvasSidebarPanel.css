@@ -103,4 +103,8 @@
     .sidebar > .panel.navigation.canvas > .navigation-bar > .item.record-start-stop.disabled > .glyph {
         filter: grayscale() invert();
     }
+
+    .sidebar > .panel.navigation.canvas > .content > .tree-outline .item.canvas .icon {
+        filter: invert();
+    }
 }

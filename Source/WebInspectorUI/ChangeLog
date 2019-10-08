@@ -1,3 +1,18 @@
+2019-10-08  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: the navigation sidebar icon isn't inverted in dark mode
+        https://bugs.webkit.org/show_bug.cgi?id=202681
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/CanvasSidebarPanel.css:
+        (@media (prefers-color-scheme: dark) .sidebar > .panel.navigation.canvas > .content > .tree-outline .item.canvas .icon): Added.
+
+        * UserInterface/Views/CanvasTabContentView.css:
+        (@media (prefers-color-scheme: dark) .content-view.tab.canvas .navigation-bar > .item .canvas-overview .icon):
+        Drive-by: slightly darken the Canvas Overview hierarchical path component icon so it better
+                  matches the colors of the nearby canvas icons.
+
 2019-10-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Settings: enable the image transparency grid by default and create a checkbox for it
