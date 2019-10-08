@@ -844,6 +844,9 @@ class RunJavaScriptCoreTests(shell.Test):
     logfiles = {'json': jsonFileName}
     command = ['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(jsonFileName), WithProperties('--%(configuration)s')]
 
+    def __init__(self, **kwargs):
+        shell.Test.__init__(self, logEnviron=False, **kwargs)
+
     def start(self):
         appendCustomBuildFlags(self, self.getProperty('platform'), self.getProperty('fullPlatform'))
         return shell.Test.start(self)
@@ -1508,7 +1511,7 @@ class ExtractTestResults(master.MasterShellCommand):
         self.resultDirectory = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:patch_id)s-%(prop:buildnumber)s{}'.format(identifier))
         self.command = ['unzip', self.zipFile, '-d', self.resultDirectory]
 
-        super(ExtractTestResults, self).__init__(self.command)
+        master.MasterShellCommand.__init__(self, command=self.command, logEnviron=False)
 
     def resultDirectoryURL(self):
         return self.resultDirectory.replace('public_html/', '/') + '/'

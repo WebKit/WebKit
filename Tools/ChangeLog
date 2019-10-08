@@ -1,3 +1,15 @@
+2019-10-08  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Do not print worker environment variables in each build step [part 3]
+        https://bugs.webkit.org/show_bug.cgi?id=202698
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunJavaScriptCoreTests.__init__): Disabled logging of environment variables.
+        (ExtractTestResults.__init__): Ditto.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Updated unit-tests.
+
 2019-10-08  Matt Lewis  <jlewis3@apple.com>
 
         Fixing the triggerable templates in the config for catalina.

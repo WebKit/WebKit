@@ -966,6 +966,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release'],
                         logfiles={'json': self.jsonFileName},
                         )
@@ -980,6 +981,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'],
                         logfiles={'json': self.jsonFileName},
                         )
@@ -1005,6 +1007,7 @@ class TestReRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release'],
                         logfiles={'json': self.jsonFileName},
                         )
@@ -1019,6 +1022,7 @@ class TestReRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'],
                         logfiles={'json': self.jsonFileName},
                         )
@@ -1044,6 +1048,7 @@ class TestRunJavaScriptCoreTestsToT(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release'],
                         logfiles={'json': self.jsonFileName},
                         )
@@ -1058,6 +1063,7 @@ class TestRunJavaScriptCoreTestsToT(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
+                        logEnviron=False,
                         command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'],
                         logfiles={'json': self.jsonFileName},
                         )
