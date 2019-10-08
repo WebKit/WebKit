@@ -5,7 +5,7 @@
 description: AwaitExpression TemplateLiteral (Valid syntax for top level await in for-of statements.)
 esid: prod-AwaitExpression
 features: [top-level-await]
-flags: [generated]
+flags: [generated, module]
 info: |
     ModuleItem:
       StatementListItem[~Yield, +Await, ~Return]

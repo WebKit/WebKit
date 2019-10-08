@@ -51,12 +51,12 @@ emptyCells().then(function() {
   assert.throws(Test262Error, function() {
     fg.cleanupSome(poisoned);
   });
-  
+
   assert.sameValue(called, 1);
 
   assert.sameValue(typeof iterator, 'object');
-  assert.sameValue(typeof iteraror.next, 'function');
+  assert.sameValue(typeof iterator.next, 'function');
   assert.throws(TypeError, function() {
     iterator.next();
-  }, 'iterator.next throws a TypeError if IsFinalizationGroupCleanupJobActive is false');  
+  }, 'iterator.next throws a TypeError if IsFinalizationGroupCleanupJobActive is false');
 }).then($DONE, resolveAsyncGC);

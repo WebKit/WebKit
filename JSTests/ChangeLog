@@ -1,3 +1,15 @@
+2019-10-08  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Update test262 (2019.10.08).
+
+        Rubber-stamped by Keith Miller.
+
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+        * test262/latest-changes-summary.txt:
+        * test262/test/:
+        * test262/test262-Revision.txt:
+
 2019-10-07  Saam Barati  <sbarati@apple.com>
 
         Allow OSR exit to the LLInt

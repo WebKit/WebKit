@@ -5,7 +5,7 @@
 description: AwaitExpression new MemberExpression (Valid syntax for top level await in for-in statements.)
 esid: prod-AwaitExpression
 features: [top-level-await]
-flags: [generated]
+flags: [generated, module]
 info: |
     ModuleItem:
       StatementListItem[~Yield, +Await, ~Return]

@@ -21,6 +21,7 @@ skip:
     - class-static-fields-public
     - class-static-fields-private
     - class-static-methods-private
+    - top-level-await
     - Intl.DateTimeFormat-datetimestyle
     - Intl.DateTimeFormat-formatRange
     - Intl.ListFormat
