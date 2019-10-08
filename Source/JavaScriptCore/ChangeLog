@@ -1,3 +1,16 @@
+2019-10-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Clean up ThunkGenerator's nativeCallTrampoline generator code
+        https://bugs.webkit.org/show_bug.cgi?id=202657
+
+        Reviewed by Saam Barati.
+
+        ThunkGenerator has per-architecture JIT code for nativeForGenerator, but this is unnecessary.
+        This patch cleans up it and unifies the implementations.
+
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+
 2019-10-07  Saam Barati  <sbarati@apple.com>
 
         Allow OSR exit to the LLInt
