@@ -373,6 +373,8 @@ WI.Resource = class Resource extends WI.SourceCode
     {
         if (this.isLocalResourceOverride)
             return false;
+        if (!this.finished || this.failed)
+            return false;
         return super.supportsScriptBlackboxing;
     }
 

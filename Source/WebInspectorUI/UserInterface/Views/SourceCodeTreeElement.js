@@ -168,7 +168,8 @@ WI.SourceCodeTreeElement = class SourceCodeTreeElement extends WI.FolderizedTree
 
             this.status = this._toggleBlackboxedImageElement;
             this._updateToggleBlackboxImageElementState();
-        }
+        } else if (this.status === this._toggleBlackboxedImageElement)
+            this.status = null;
     }
 
     // Protected (ResourceTreeElement calls this when its Resource changes dynamically for Frames)
