@@ -1,5 +1,17 @@
 2019-10-08  Matt Lewis  <jlewis3@apple.com>
 
+        Unreviewed, rolling out r250784.
+
+        Broke running layout tests.
+
+        Reverted changeset:
+
+        "results.webkit.org: Start reporting results"
+        https://bugs.webkit.org/show_bug.cgi?id=202639
+        https://trac.webkit.org/changeset/250784
+
+2019-10-08  Matt Lewis  <jlewis3@apple.com>
+
         Make iPhone simulators pass --iPhone-simulator instead of --iOS
         https://bugs.webkit.org/show_bug.cgi?id=202701
 
