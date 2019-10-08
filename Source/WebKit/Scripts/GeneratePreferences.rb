@@ -140,8 +140,8 @@ class Preferences
 
     @preferencesNotDebug = @preferences.select { |p| !p.category }
     @preferencesDebug = @preferences.select { |p| p.category == "debug" }
-    @experimentalFeatures = @preferences.select { |p| p.category == "experimental" }
-    @internalDebugFeatures = @preferences.select { |p| p.category == "internal" }
+    @experimentalFeatures = @preferences.select { |p| p.category == "experimental" }.sort! { |x, y| x.humanReadableName <=> y.humanReadableName }
+    @internalDebugFeatures = @preferences.select { |p| p.category == "internal" }.sort! { |x, y| x.humanReadableName <=> y.humanReadableName }
 
     @preferencesBoundToSetting = @preferences.select { |p| !p.webcoreBinding }
     @preferencesBoundToDeprecatedGlobalSettings = @preferences.select { |p| p.webcoreBinding == "DeprecatedGlobalSettings" }

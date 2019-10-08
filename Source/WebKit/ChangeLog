@@ -1,3 +1,17 @@
+2019-10-08  Dean Jackson  <dino@apple.com>
+
+        Sort Internal and Experimental features by human readable name
+        https://bugs.webkit.org/show_bug.cgi?id=202667
+
+        Reviewed by Zalan Bujtas.
+
+        Sort the statically generated vectors of internal and
+        experimental features by their human readable name, rather than
+        the feature key, so that looking at them in the Settings app
+        doesn't make people who like alphabetical order angry.
+
+        * Scripts/GeneratePreferences.rb: Add an extra sort call to the list generation.
+
 2019-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Introduce bindings for the async Clipboard API
