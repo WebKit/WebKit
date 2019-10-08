@@ -35,12 +35,13 @@
     flex-grow: 0;
     margin: var(--item-margin);
     width: 400px;
-    background-color: white;
-}
-
-.content-view.canvas-overview .content-view.canvas {
     border: 1px solid var(--border-color);
     cursor: pointer;
+}
+
+.content-view.canvas-overview .content-view.canvas,
+.content-view.canvas-overview .content-view.canvas > .preview > img {
+    background-color: white;
 }
 
 .content-view.canvas-overview .content-view.canvas.recording-active {
@@ -124,6 +125,12 @@
 .content-view.canvas-overview .content-view.canvas.recording-active > .progress-view,
 .content-view.canvas-overview .content-view.canvas > .preview {
     height: 280px;
+    transition: background-color 200ms ease-in-out;
+}
+
+.content-view.canvas-overview .content-view.canvas.recording-active > .progress-view:hover,
+.content-view.canvas-overview .content-view.canvas > .preview:hover {
+    background-color: hsl(0, 0%, 96%);
 }
 
 .content-view.canvas-overview .content-view.canvas.recording-active > .preview {
@@ -206,8 +213,14 @@
         background-color: unset;
     }
 
-    .content-view.canvas-overview .content-view.canvas {
+    .content-view.canvas-overview .content-view.canvas,
+    .content-view.canvas-overview .content-view.canvas > .preview > img {
         background-color: var(--background-color-secondary);
+    }
+
+    .content-view.canvas-overview .content-view.canvas.recording-active > .progress-view:hover,
+    .content-view.canvas-overview .content-view.canvas > .preview:hover {
+        background-color: var(--background-color-tertiary);
     }
 
     .content-view.canvas-overview .content-view.canvas.recording-active {

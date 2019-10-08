@@ -1,5 +1,23 @@
 2019-10-08  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Canvas: make it more obvious that the cards in the overview are clickable
+        https://bugs.webkit.org/show_bug.cgi?id=202680
+
+        Reviewed by Matt Baker.
+
+        Add a slight darkening (or lightening when in dark mode) of the background behind the
+        content preview in the overview.
+
+        * UserInterface/Views/CanvasOverviewContentView.css:
+        (.content-view.canvas-overview .content-view.canvas):
+        (.content-view.canvas-overview .content-view.canvas, .content-view.canvas-overview .content-view.canvas > .preview > img): Added.
+        (.content-view.canvas-overview .content-view.canvas.recording-active > .progress-view, .content-view.canvas-overview .content-view.canvas > .preview):
+        (.content-view.canvas-overview .content-view.canvas.recording-active > .progress-view:hover, .content-view.canvas-overview .content-view.canvas > .preview:hover): Added.
+        (@media (prefers-color-scheme: dark) .content-view.canvas-overview .content-view.canvas, .content-view.canvas-overview .content-view.canvas > .preview > img): Added.
+        (@media (prefers-color-scheme: dark) .content-view.canvas-overview .content-view.canvas.recording-active > .progress-view:hover, .content-view.canvas-overview .content-view.canvas > .preview:hover): Added.
+
+2019-10-08  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Canvas: don't show an empty preview for WebGPU devices
         https://bugs.webkit.org/show_bug.cgi?id=202679
 
