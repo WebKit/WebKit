@@ -17,7 +17,6 @@
             "status": "In Development"
         },
         "url": "https://www.w3.org/TR/clipboard-apis/#async-clipboard-api",
-        "specification": "Clipboard API",
         "category": "webapps",
         "description": "An API that allows reading from and writing to the system clipboard.",
         "contact": {
