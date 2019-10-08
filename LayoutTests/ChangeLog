@@ -1,3 +1,16 @@
+2019-10-08  Antoine Quint  <graouts@apple.com>
+
+        fast/events/touch/ios/mouse-events-dispatch-with-touch.html is timing out on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=202688
+        <rdar://problem/52700396>
+
+        Reviewed by Dean Jackson.
+
+        Since this test was originally added, the behavior of simulated mouse events changed to not dispatch any event when there is more than a
+        single active touch on the screen. This test needs to be adapted to this new behavior.
+
+        * fast/events/touch/ios/mouse-events-dispatch-with-touch.html:
+
 2019-10-08  Youenn Fablet  <youenn@apple.com>
 
         Simplify data channel buffer amount low tests
