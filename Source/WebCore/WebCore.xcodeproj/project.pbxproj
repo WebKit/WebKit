@@ -2852,6 +2852,10 @@
 		9B69D3B91B99100700E3512B /* JSHTMLSlotElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B69D3B71B99100700E3512B /* JSHTMLSlotElement.h */; };
 		9B6C41531344949000085B62 /* StringWithDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B6C41521344949000085B62 /* StringWithDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B714E211C91166900AC0E92 /* EventPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B714E1F1C91166900AC0E92 /* EventPath.h */; };
+		9B742605234BE95600DB52E9 /* IdleRequestCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B742603234BE95600DB52E9 /* IdleRequestCallback.h */; };
+		9B74260B234BEA6E00DB52E9 /* IdleDeadline.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B742608234BEA6E00DB52E9 /* IdleDeadline.h */; };
+		9B864F02234C028A006D10EB /* IdleRequestOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B864F00234C028A006D10EB /* IdleRequestOptions.h */; };
+		9B864F06234C0893006D10EB /* IdleCallbackController.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B864F05234C0893006D10EB /* IdleCallbackController.h */; };
 		9BA273F4172206BB0097CE47 /* LogicalSelectionOffsetCaches.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BA273F3172206BB0097CE47 /* LogicalSelectionOffsetCaches.h */; };
 		9BAAC45C21520128003D4A98 /* GCReachableRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BAAC4562151E39E003D4A98 /* GCReachableRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9BAB6C6C12550631001626D4 /* EditingStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BAB6C6A12550631001626D4 /* EditingStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11068,7 +11072,16 @@
 		9B6C41521344949000085B62 /* StringWithDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringWithDirection.h; sourceTree = "<group>"; };
 		9B714E1E1C91166900AC0E92 /* EventPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventPath.cpp; sourceTree = "<group>"; };
 		9B714E1F1C91166900AC0E92 /* EventPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventPath.h; sourceTree = "<group>"; };
+		9B742603234BE95600DB52E9 /* IdleRequestCallback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IdleRequestCallback.h; sourceTree = "<group>"; };
+		9B742604234BE95600DB52E9 /* IdleRequestCallback.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = IdleRequestCallback.idl; sourceTree = "<group>"; };
+		9B742608234BEA6E00DB52E9 /* IdleDeadline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IdleDeadline.h; sourceTree = "<group>"; };
+		9B742609234BEA6E00DB52E9 /* IdleDeadline.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IdleDeadline.cpp; sourceTree = "<group>"; };
+		9B74260A234BEA6E00DB52E9 /* IdleDeadline.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = IdleDeadline.idl; sourceTree = "<group>"; };
 		9B85530520E733B5009EEF4F /* EventTargetFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EventTargetFactory.cpp; path = DerivedSources/WebCore/EventTargetFactory.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B864F00234C028A006D10EB /* IdleRequestOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IdleRequestOptions.h; sourceTree = "<group>"; };
+		9B864F01234C028A006D10EB /* IdleRequestOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = IdleRequestOptions.idl; sourceTree = "<group>"; };
+		9B864F05234C0893006D10EB /* IdleCallbackController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IdleCallbackController.h; sourceTree = "<group>"; };
+		9B864F07234C08A3006D10EB /* IdleCallbackController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IdleCallbackController.cpp; sourceTree = "<group>"; };
 		9B9299B01F6796A4006723C2 /* WebContentReaderCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContentReaderCocoa.mm; sourceTree = "<group>"; };
 		9B9CADA72165DC7600E8D858 /* JSMutationRecordCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutationRecordCustom.cpp; sourceTree = "<group>"; };
 		9BA273F3172206BB0097CE47 /* LogicalSelectionOffsetCaches.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogicalSelectionOffsetCaches.h; sourceTree = "<group>"; };
@@ -27667,6 +27680,15 @@
 				E3BF19E622AF302A009C9926 /* HashChangeEvent.cpp */,
 				2442BBF81194C9D300D49469 /* HashChangeEvent.h */,
 				8482B7441198C32E00BFB005 /* HashChangeEvent.idl */,
+				9B864F07234C08A3006D10EB /* IdleCallbackController.cpp */,
+				9B864F05234C0893006D10EB /* IdleCallbackController.h */,
+				9B742609234BEA6E00DB52E9 /* IdleDeadline.cpp */,
+				9B742608234BEA6E00DB52E9 /* IdleDeadline.h */,
+				9B74260A234BEA6E00DB52E9 /* IdleDeadline.idl */,
+				9B742603234BE95600DB52E9 /* IdleRequestCallback.h */,
+				9B742604234BE95600DB52E9 /* IdleRequestCallback.idl */,
+				9B864F00234C028A006D10EB /* IdleRequestOptions.h */,
+				9B864F01234C028A006D10EB /* IdleRequestOptions.idl */,
 				C3CF17A015B0063F00276D39 /* IdTargetObserver.cpp */,
 				C3CF17A115B0063F00276D39 /* IdTargetObserver.h */,
 				C3CF17A215B0063F00276D39 /* IdTargetObserverRegistry.cpp */,
@@ -29699,6 +29721,10 @@
 				1A71D57C0F33819000F9CE4E /* IdentifierRep.h in Headers */,
 				49E911C50EF86D47009D0CAF /* IdentityTransformOperation.h in Headers */,
 				7CE9A12B1EA2F1DB00651AD1 /* IDLAttributes.json in Headers */,
+				9B864F06234C0893006D10EB /* IdleCallbackController.h in Headers */,
+				9B74260B234BEA6E00DB52E9 /* IdleDeadline.h in Headers */,
+				9B742605234BE95600DB52E9 /* IdleRequestCallback.h in Headers */,
+				9B864F02234C028A006D10EB /* IdleRequestOptions.h in Headers */,
 				C0C054CD1118C8E400CE2636 /* IDLParser.pm in Headers */,
 				7C5222961E1DAE03002CB8F7 /* IDLTypes.h in Headers */,
 				C3CF17A515B0063F00276D39 /* IdTargetObserver.h in Headers */,

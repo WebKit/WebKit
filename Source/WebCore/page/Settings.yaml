@@ -337,6 +337,8 @@ wantsBalancedSetDefersLoadingBehavior:
   initial: false
 requestAnimationFrameEnabled:
   initial: true
+requestIdleCallbackEnabled:
+  initial: false
 
 HTTPSUpgradeEnabled:
   initial: false

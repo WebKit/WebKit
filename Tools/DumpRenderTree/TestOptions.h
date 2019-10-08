@@ -51,6 +51,7 @@ struct TestOptions {
     bool adClickAttributionEnabled { false };
     bool enableResizeObserver { false };
     bool enableCoreMathML { false };
+    bool enableRequestIdleCallback { false };
     std::string jscOptions;
     std::string additionalSupportedImageTypes;
 

@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:RequestIdleCallbackEnabled=true ] -->
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+
+description('This tests that when requestIdleCallback is enabled, requestIdleCallback and IdleDeadline are defined.');
+
+shouldBeEqualToString('typeof window.requestIdleCallback', 'function');
+shouldBe('window.requestIdleCallback.length', '1');
+shouldBeEqualToString('typeof window.cancelIdleCallback', 'function');
+shouldBe('window.cancelIdleCallback.length', '1');
+shouldBeDefined('window.IdleDeadline');
+shouldBe('idleDeadlineProperties = Object.getOwnPropertyNames(window.IdleDeadline.prototype); idleDeadlineProperties.length', '3');
+shouldBeEqualToString('JSON.stringify(idleDeadlineProperties.sort())', '["constructor","didTimeout","timeRemaining"]');
+shouldBeDefined('didTimeoutDescriptor = Object.getOwnPropertyDescriptor(window.IdleDeadline.prototype, "didTimeout"); didTimeoutDescriptor.get');
+shouldBeUndefined('didTimeoutDescriptor.set');
+shouldBeEqualToString('typeof window.IdleDeadline.prototype.timeRemaining', 'function');
+
+</script>
+</body>
+</html>

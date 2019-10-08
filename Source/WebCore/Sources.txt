@@ -886,6 +886,8 @@ dom/GenericEventQueue.cpp
 dom/HashChangeEvent.cpp
 dom/IdTargetObserver.cpp
 dom/IdTargetObserverRegistry.cpp
+dom/IdleDeadline.cpp
+dom/IdleCallbackController.cpp
 dom/InlineClassicScript.cpp
 dom/InlineStyleSheetOwner.cpp
 dom/InputEvent.cpp
@@ -2965,6 +2967,9 @@ JSIDBRequest.cpp
 JSIDBTransaction.cpp
 JSIDBTransactionMode.cpp
 JSIDBVersionChangeEvent.cpp
+JSIdleRequestCallback.cpp
+JSIdleRequestOptions.cpp
+JSIdleDeadline.cpp
 JSImageBitmap.cpp
 JSImageBitmapOptions.cpp
 JSImageBitmapRenderingContext.cpp

@@ -362,6 +362,13 @@ RequestAnimationFrameEnabled:
   type: bool
   defaultValue: true
 
+RequestIdleCallbackEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "requestIdleCallback"
+  humanReadableDescription: "Enable requestIdleCallback support"
+  category: experimental
+
 DiagnosticLoggingEnabled:
   type: bool
   defaultValue: false

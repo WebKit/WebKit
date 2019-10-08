@@ -1,3 +1,49 @@
+2019-10-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add IDL for requestIdleCallback
+        https://bugs.webkit.org/show_bug.cgi?id=202653
+
+        Reviewed by Geoffrey Garen.
+
+        Added the basic scaffolding for implementing requestIdleCallback disabled by default:
+        https://w3c.github.io/requestidlecallback/
+
+        This patch just adds the support for calling requestIdleCallback which generates a monotonically increasing number.
+        The callback is never called for now.
+
+        Tests: requestidlecallback/requestidlecallback-enabled.html
+               requestidlecallback/requestidlecallback-id.html
+               requestidlecallback/requestidlecallback-not-enabled.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/Document.cpp:
+        (WebCore::Document::requestIdleCallback):
+        (WebCore::Document::cancelIdleCallback):
+        * dom/Document.h:
+        * dom/IdleCallbackController.cpp: Added.
+        (WebCore::IdleCallbackController::queueIdleCallback):
+        (WebCore::IdleCallbackController::removeIdleCallback):
+        * dom/IdleCallbackController.h: Added.
+        * dom/IdleDeadline.cpp: Added.
+        (WebCore::IdleDeadline::timeRemaining const):
+        (WebCore::IdleDeadline::didTimeout const):
+        * dom/IdleDeadline.h: Added.
+        * dom/IdleDeadline.idl: Added.
+        * dom/IdleRequestCallback.h: Added.
+        * dom/IdleRequestCallback.idl: Added.
+        * dom/IdleRequestOptions.h: Added.
+        * dom/IdleRequestOptions.idl: Added.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::requestIdleCallback):
+        (WebCore::DOMWindow::cancelIdleCallback):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * page/Settings.yaml:
+
 2019-10-07  Jiewen Tan  <jiewen_tan@apple.com>
 
         Only wrapping CryptoKeys for IDB during serialization

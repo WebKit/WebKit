@@ -612,6 +612,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setCoreMathMLEnabled:(BOOL)flag;
 - (BOOL)coreMathMLEnabled;
 
+- (void)setRequestIdleCallbackEnabled:(BOOL)flag;
+- (BOOL)requestIdleCallbackEnabled;
+
 - (void)setLinkPreloadResponsiveImagesEnabled:(BOOL)flag;
 - (BOOL)linkPreloadResponsiveImagesEnabled;
 
@@ -652,6 +655,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL referrerPolicyAttributeEnabled;
 @property (nonatomic) BOOL resizeObserverEnabled;
 @property (nonatomic) BOOL coreMathMLEnabled;
+@property (nonatomic) BOOL requestIdleCallbackEnabled;
 @property (nonatomic) BOOL linkPreloadResponsiveImagesEnabled;
 
 #if TARGET_OS_IPHONE

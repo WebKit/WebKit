@@ -1,0 +1,23 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:RequestIdleCallbackEnabled=true ] -->
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+
+description('This tests that requestIdleCallback identifier starts from 1 in each document.');
+
+shouldBe('requestIdleCallback(() => { })', '1');
+shouldBe('requestIdleCallback(() => { })', '2');
+
+const iframe1 = document.body.appendChild(document.createElement('iframe'));
+const iframe2 = document.body.appendChild(document.createElement('iframe'));
+
+shouldBe('iframe1.contentWindow.requestIdleCallback(() => { })', '1');
+shouldBe('iframe2.contentWindow.requestIdleCallback(() => { })', '1');
+shouldBe('iframe1.contentWindow.requestIdleCallback(() => { })', '2');
+shouldBe('iframe1.contentWindow.requestIdleCallback(() => { })', '3');
+shouldBe('iframe2.contentWindow.requestIdleCallback(() => { })', '2');
+
+</script>
+</body>
+</html>

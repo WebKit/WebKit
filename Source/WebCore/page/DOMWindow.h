@@ -65,6 +65,7 @@ class Element;
 class EventListener;
 class FloatRect;
 class History;
+class IdleRequestCallback;
 class Location;
 class MediaQueryList;
 class Navigator;
@@ -75,6 +76,7 @@ class PageConsoleClient;
 class Performance;
 class PostMessageTimer;
 class RequestAnimationFrameCallback;
+class RequestIdleCallback;
 class ScheduledAction;
 class Screen;
 class Storage;
@@ -88,6 +90,7 @@ class DeviceMotionController;
 class DeviceOrientationController;
 #endif
 
+struct IdleRequestOptions;
 struct ImageBitmapOptions;
 struct WindowFeatures;
 
@@ -275,6 +278,9 @@ public:
     int requestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);
     int webkitRequestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);
     void cancelAnimationFrame(int id);
+
+    int requestIdleCallback(Ref<IdleRequestCallback>&&, const IdleRequestOptions&);
+    void cancelIdleCallback(int id);
 
     // ImageBitmap
     void createImageBitmap(ImageBitmap::Source&&, ImageBitmapOptions&&, ImageBitmap::Promise&&);

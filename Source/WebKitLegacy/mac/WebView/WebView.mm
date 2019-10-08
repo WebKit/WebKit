@@ -3235,6 +3235,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setMediaCapabilitiesEnabled([preferences mediaCapabilitiesEnabled]);
 
     settings.setCoreMathMLEnabled([preferences coreMathMLEnabled]);
+    settings.setRequestIdleCallbackEnabled([preferences requestIdleCallbackEnabled]);
 
     RuntimeEnabledFeatures::sharedFeatures().setServerTimingEnabled([preferences serverTimingEnabled]);
 

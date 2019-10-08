@@ -690,6 +690,7 @@ public:
         @NO, WebKitResizeObserverEnabledPreferenceKey,
 #endif
         @NO, WebKitCoreMathMLEnabledPreferenceKey,
+        @NO, WebKitRequestIdleCallbackEnabledPreferenceKey,
         @NO, WebKitLinkPreloadResponsiveImagesEnabledPreferenceKey,
         @NO, WebKitCSSShadowPartsEnabledPreferenceKey,
         nil];
@@ -3496,6 +3497,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setCoreMathMLEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitCoreMathMLEnabledPreferenceKey];
+}
+
+- (BOOL)requestIdleCallbackEnabled
+{
+    return [self _boolValueForKey:WebKitRequestIdleCallbackEnabledPreferenceKey];
+}
+
+- (void)setRequestIdleCallbackEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitRequestIdleCallbackEnabledPreferenceKey];
 }
 
 - (BOOL)linkPreloadResponsiveImagesEnabled
