@@ -1,3 +1,49 @@
+2019-10-08  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r250694. rdar://problem/56061133
+
+    [iOS] WebContent process can be interrupted during suspension; loses "Now Playing" status
+        https://bugs.webkit.org/show_bug.cgi?id=202537
+        <rdar://problem/55952707>
+    
+        Reviewed by Eric Carlson.
+    
+        Always deactivate the AVAudioSession when the last playing PlatformAudioSession ends playback and the application is in the background.
+    
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::removeSession):
+        (WebCore::PlatformMediaSessionManager::processWillSuspend):
+        (WebCore::PlatformMediaSessionManager::maybeDeactivateAudioSession):
+        * platform/audio/PlatformMediaSessionManager.h:
+        (WebCore::PlatformMediaSessionManager::isApplicationInBackground const):
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::sessionWillEndPlayback):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250694 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-10-03  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] WebContent process can be interrupted during suspension; loses "Now Playing" status
+        https://bugs.webkit.org/show_bug.cgi?id=202537
+        <rdar://problem/55952707>
+
+        Reviewed by Eric Carlson.
+
+        Always deactivate the AVAudioSession when the last playing PlatformAudioSession ends playback and the application is in the background.
+
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::removeSession):
+        (WebCore::PlatformMediaSessionManager::processWillSuspend):
+        (WebCore::PlatformMediaSessionManager::maybeDeactivateAudioSession):
+        * platform/audio/PlatformMediaSessionManager.h:
+        (WebCore::PlatformMediaSessionManager::isApplicationInBackground const):
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::sessionWillEndPlayback):
+
 2019-10-03  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r250642. rdar://problem/55947639
