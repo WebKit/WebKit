@@ -1,5 +1,15 @@
 2019-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed, try to fix the open source macOS build after r250824
+
+        * bindings/js/JSDOMConvertRecord.h:
+
+        Add a missing #include for JSDOMGlobalObject. This file utilizes methods on JSDOMGlobalObject, but only ensures
+        that it has a forward declaration of JSDOMGlobalObject (by way of including JSDOMExceptionHandling.h through
+        JSDOMConvertBase.h).
+
+2019-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Unreviewed, update DerivedSources xcfilelists after r250816
 
         * DerivedSources-input.xcfilelist:

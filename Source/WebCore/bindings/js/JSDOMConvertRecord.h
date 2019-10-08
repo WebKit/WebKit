@@ -27,6 +27,7 @@
 
 #include "IDLTypes.h"
 #include "JSDOMConvertStrings.h"
+#include "JSDOMGlobalObject.h"
 #include <JavaScriptCore/ObjectConstructor.h>
 
 namespace WebCore {
