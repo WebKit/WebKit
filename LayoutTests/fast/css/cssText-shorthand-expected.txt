@@ -19,7 +19,7 @@ PASS normalizeCssText(element.style.cssText) is "font-family: sans-serif; font-s
 PASS normalizeCssText(element.style.cssText) is "list-style: circle inside"
 PASS normalizeCssText(element.style.cssText) is "margin: 1px 2px 3px 4px"
 PASS normalizeCssText(element.style.cssText) is "outline: blue dotted 2px"
-FAIL normalizeCssText(element.style.cssText) should be overflow: scroll hidden. Was overflow-x: scroll; overflow-y: hidden.
+PASS normalizeCssText(element.style.cssText) is "overflow: scroll hidden"
 PASS normalizeCssText(element.style.cssText) is "overflow: scroll"
 PASS normalizeCssText(element.style.cssText) is "padding: 1px 2px 3px 4px"
 PASS normalizeCssText(element.style.cssText) is "list-style-type: lower-alpha"

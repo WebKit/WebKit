@@ -93,7 +93,7 @@
         "setting the inherited value, it will not fallback to using the parent's",
         "\"color\" property if the inherited color is invalid.",
         "",
-        "* fone-property:",
+        "* font-property:",
         "Indicates that this CSS property is font-related. It must have corresponding",
         "methods on the FontDescription class.",
         "",
@@ -3236,8 +3236,8 @@
                 ]
             },
             "specification": {
-                "category": "css-22",
-                "url": "https://www.w3.org/TR/CSS22/visufx.html#propdef-overflow"
+                "category": "css-overflow",
+                "url": "https://www.w3.org/TR/css-overflow-3/#propdef-overflow"
             }
         },
         "overflow-wrap": {

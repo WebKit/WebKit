@@ -1,3 +1,18 @@
+2019-10-08  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Accept two values in the overflow shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=184691
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/cssText-shorthand-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-overflow-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-overflow.html:
+        * platform/ios/fast/css/invalidation-errors-2-expected.txt:
+        * platform/ios/fast/css/invalidation-errors-expected.txt:
+        * platform/mac/fast/css/invalidation-errors-2-expected.txt:
+        * platform/mac/fast/css/invalidation-errors-expected.txt:
+
 2019-10-08  Ali Juma  <ajuma@chromium.org>
 
         Unreviewed test gardening

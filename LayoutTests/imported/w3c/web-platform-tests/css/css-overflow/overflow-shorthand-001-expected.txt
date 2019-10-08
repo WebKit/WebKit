@@ -1,18 +1,18 @@
 
-FAIL overflow: auto auto works assert_equals: expected "auto" but got ""
-FAIL overflow: auto hidden works assert_equals: expected "auto hidden" but got ""
-FAIL overflow: auto scroll works assert_equals: expected "auto scroll" but got ""
-FAIL overflow: auto visible works assert_equals: expected "auto visible" but got ""
-FAIL overflow: hidden auto works assert_equals: expected "hidden auto" but got ""
-FAIL overflow: hidden hidden works assert_equals: expected "hidden" but got ""
-FAIL overflow: hidden scroll works assert_equals: expected "hidden scroll" but got ""
-FAIL overflow: hidden visible works assert_equals: expected "hidden visible" but got ""
-FAIL overflow: scroll auto works assert_equals: expected "scroll auto" but got ""
-FAIL overflow: scroll hidden works assert_equals: expected "scroll hidden" but got ""
-FAIL overflow: scroll scroll works assert_equals: expected "scroll" but got ""
-FAIL overflow: scroll visible works assert_equals: expected "scroll visible" but got ""
-FAIL overflow: visible auto works assert_equals: expected "visible auto" but got ""
-FAIL overflow: visible hidden works assert_equals: expected "visible hidden" but got ""
-FAIL overflow: visible scroll works assert_equals: expected "visible scroll" but got ""
-FAIL overflow: visible visible works assert_equals: expected "visible" but got ""
+PASS overflow: auto auto works 
+PASS overflow: auto hidden works 
+PASS overflow: auto scroll works 
+PASS overflow: auto visible works 
+PASS overflow: hidden auto works 
+PASS overflow: hidden hidden works 
+PASS overflow: hidden scroll works 
+PASS overflow: hidden visible works 
+PASS overflow: scroll auto works 
+PASS overflow: scroll hidden works 
+PASS overflow: scroll scroll works 
+PASS overflow: scroll visible works 
+PASS overflow: visible auto works 
+PASS overflow: visible hidden works 
+PASS overflow: visible scroll works 
+PASS overflow: visible visible works 
 

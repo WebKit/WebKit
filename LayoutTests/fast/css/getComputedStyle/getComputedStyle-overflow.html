@@ -27,9 +27,6 @@ const tests = [
     [ 'visible', 'visible' ],
     [ 'hidden', 'hidden' ],
     [ 'overlay', 'auto' ],
-
-    [ 'hidden visible', 'auto' ], // WebKit doesn't support different values of overflow on different axes.
-    [ 'hidden hidden', 'auto' ], // WebKit doesn't support different values of overflow on different axes, and thus only accepts a single value for overflow.
 ];
 
 for (let test of tests) {
@@ -46,8 +43,8 @@ debug('Paged tests');
 
 const pagedTests = [
     // shorthand, expected-x, expected-y, expected-shorthand
-    [ '-webkit-paged-x', 'auto', '-webkit-paged-x', '-webkit-paged-x' ],
-    [ '-webkit-paged-y', 'auto', '-webkit-paged-y', '-webkit-paged-y' ],
+    [ '-webkit-paged-x', 'auto', '-webkit-paged-x', 'auto -webkit-paged-x' ],
+    [ '-webkit-paged-y', 'auto', '-webkit-paged-y', 'auto -webkit-paged-y' ],
 ];
 
 for (let test of pagedTests) {
@@ -69,36 +66,36 @@ const longhandTests = [
         'scroll', 'scroll', 'scroll'],
 
     [ 'scroll', 'auto',
-        'scroll', 'auto', 'auto',
-        'scroll', 'auto', ''],
+        'scroll', 'auto', 'scroll auto',
+        'scroll', 'auto', 'scroll auto'],
 
     [ 'auto', 'scroll',
-        'auto', 'scroll', 'auto',
-        'auto', 'scroll', ''],
+        'auto', 'scroll', 'auto scroll',
+        'auto', 'scroll', 'auto scroll'],
 
     [ 'visible', 'hidden',
-        'auto', 'hidden', 'auto',
-        'visible', 'hidden', ''],
+        'auto', 'hidden', 'auto hidden',
+        'visible', 'hidden', 'visible hidden'],
 
     [ 'overlay', 'hidden',
-        'auto','hidden', 'auto',
-        'overlay', 'hidden', ''],
+        'auto', 'hidden', 'auto hidden',
+        'overlay', 'hidden', 'overlay hidden'],
 
     [ 'visible', '-webkit-paged-y',
-        'auto', '-webkit-paged-y', '-webkit-paged-y',
-        'visible', '-webkit-paged-y', ''],
+        'auto', '-webkit-paged-y', 'auto -webkit-paged-y',
+        'visible', '-webkit-paged-y', 'visible -webkit-paged-y'],
 
     [ 'auto', '-webkit-paged-x',
-        'auto', '-webkit-paged-x', '-webkit-paged-x',
-        'auto', '-webkit-paged-x', ''],
+        'auto', '-webkit-paged-x', 'auto -webkit-paged-x',
+        'auto', '-webkit-paged-x', 'auto -webkit-paged-x'],
 
     [ '-webkit-paged-x', '-webkit-paged-x',
-        'auto', '-webkit-paged-x', '-webkit-paged-x',
-        'auto', '-webkit-paged-x', ''],
+        'auto', '-webkit-paged-x', 'auto -webkit-paged-x',
+        'auto', '-webkit-paged-x', 'auto -webkit-paged-x'],
 
     [ '-webkit-paged-y', '-webkit-paged-x',
-        'auto', '-webkit-paged-x', '-webkit-paged-x',
-        'auto', '-webkit-paged-x', ''],
+        'auto', '-webkit-paged-x', 'auto -webkit-paged-x',
+        'auto', '-webkit-paged-x', 'auto -webkit-paged-x'],
 ];
 
 for (let test of longhandTests) {

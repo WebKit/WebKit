@@ -243,7 +243,7 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyWebkitMarginCollapse:
         return getShorthandValue(webkitMarginCollapseShorthand());
     case CSSPropertyOverflow:
-        return getCommonValue(overflowShorthand());
+        return get2Values(overflowShorthand());
     case CSSPropertyPadding:
         return get4Values(paddingShorthand());
     case CSSPropertyPaddingBlock:

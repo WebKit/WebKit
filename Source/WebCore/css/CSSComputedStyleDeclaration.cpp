@@ -3406,7 +3406,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyOutlineWidth:
             return zoomAdjustedPixelValue(style.outlineWidth(), style);
         case CSSPropertyOverflow:
-            return cssValuePool.createValue(std::max(style.overflowX(), style.overflowY()));
+            return getCSSPropertyValuesFor2SidesShorthand(overflowShorthand());
         case CSSPropertyOverflowWrap:
             return cssValuePool.createValue(style.overflowWrap());
         case CSSPropertyOverflowX:

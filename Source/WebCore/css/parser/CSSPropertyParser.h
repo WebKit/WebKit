@@ -79,6 +79,7 @@ private:
     // Legacy parsing allows <string>s for animation-name
     bool consumeAnimationShorthand(const StylePropertyShorthand&, bool important);
     bool consumeBackgroundShorthand(const StylePropertyShorthand&, bool important);
+    bool consumeOverflowShorthand(bool important);
 
     bool consumeColumns(bool important);
 
