@@ -71,6 +71,8 @@ public:
     bool highlighted() const { return m_highlighted; }
     void setHighlighted(bool value) { m_highlighted = value; }
 
+    Ref<Inspector::Protocol::Canvas::ShaderProgram> buildObjectForShaderProgram();
+
 private:
 #if ENABLE(WEBGL)
     InspectorShaderProgram(WebGLProgram&, InspectorCanvas&);

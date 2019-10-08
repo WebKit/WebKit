@@ -1,5 +1,41 @@
 2019-10-08  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Canvas: modifications to shader modules can be shared between vertex/fragment shaders
+        https://bugs.webkit.org/show_bug.cgi?id=202031
+
+        Reviewed by Dean Jackson.
+
+        If the vertex and fragment shaders share the same source module for a WebGPU shader pipeline,
+        only display a single editable content view for that shader pipeline in the Canvas Tab.
+
+        * UserInterface/Models/ShaderProgram.js:
+        (WI.ShaderProgram):
+        (WI.ShaderProgram.prototype.get sharesVertexFragmentShader): Added.
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager.prototype.programCreated):
+        * UserInterface/Protocol/CanvasObserver.js:
+        (WI.CanvasObserver.prototype.programCreated):
+
+        * UserInterface/Views/ShaderProgramContentView.js:
+        (WI.ShaderProgramContentView):
+        (WI.ShaderProgramContentView.prototype.shown):
+        (WI.ShaderProgramContentView.prototype.hidden):
+        (WI.ShaderProgramContentView.prototype._refreshContent):
+        * UserInterface/Views/ShaderProgramContentView.css:
+        (.content-view.shader-program > .shader.compute, .content-view.shader-program > .shader.vertex.shares-vertex-fragment-shader): Added.
+        (body[dir=ltr] .content-view.shader-program > .shader.vertex:not(.shares-vertex-fragment-shader), body[dir=rtl] .content-view.shader-program > .shader.fragment): Added.
+        (body[dir=ltr] .content-view.shader-program > .shader.fragment, body[dir=rtl] .content-view.shader-program > .shader.vertex:not(.shares-vertex-fragment-shader)): Added.
+        (.content-view.shader-program > .shader.compute): Deleted.
+        (body[dir=ltr] .content-view.shader-program > .shader.vertex, body[dir=rtl] .content-view.shader-program > .shader.fragment): Deleted.
+        (body[dir=ltr] .content-view.shader-program > .shader.fragment, body[dir=rtl] .content-view.shader-program > .shader.vertex): Deleted.
+
+        * UserInterface/Views/CodeMirrorAdditions.js:
+        Replace the vertex/fragment specific MIME types with a more general "render" MIME type.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-10-08  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Canvas: make it more obvious that the cards in the overview are clickable
         https://bugs.webkit.org/show_bug.cgi?id=202680
 

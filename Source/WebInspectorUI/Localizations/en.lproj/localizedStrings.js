@@ -1231,6 +1231,7 @@ localizedStrings["Verbose"] = "Verbose";
 localizedStrings["Version"] = "Version";
 localizedStrings["Vertex"] = "Vertex";
 localizedStrings["Vertex Shader"] = "Vertex Shader";
+localizedStrings["Vertex/Fragment Shader"] = "Vertex/Fragment Shader";
 localizedStrings["Very High"] = "Very High";
 localizedStrings["View Image"] = "View Image";
 localizedStrings["View Recording"] = "View Recording";

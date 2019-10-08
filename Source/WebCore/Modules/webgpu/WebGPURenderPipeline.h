@@ -50,6 +50,7 @@ public:
     Optional<WebGPUPipeline::ShaderData> vertexShader() const { return m_vertexShader; }
     Optional<WebGPUPipeline::ShaderData> fragmentShader() const { return m_fragmentShader; }
 
+    bool cloneShaderModules(const WebGPUDevice&);
     bool recompile(const WebGPUDevice&);
 
 private:

@@ -31,19 +31,20 @@
     bottom: 0;
 }
 
-.content-view.shader-program > .shader.compute {
+.content-view.shader-program > .shader.compute,
+.content-view.shader-program > .shader.vertex.shares-vertex-fragment-shader {
     right: 0;
     left: 0;
 }
 
-body[dir=ltr] .content-view.shader-program > .shader.vertex,
+body[dir=ltr] .content-view.shader-program > .shader.vertex:not(.shares-vertex-fragment-shader),
 body[dir=rtl] .content-view.shader-program > .shader.fragment {
     width: calc(50% - 1px);
     left: 0;
 }
 
 body[dir=ltr] .content-view.shader-program > .shader.fragment,
-body[dir=rtl] .content-view.shader-program > .shader.vertex {
+body[dir=rtl] .content-view.shader-program > .shader.vertex:not(.shares-vertex-fragment-shader) {
     width: calc(50% + 1px);
     right: 0;
 }

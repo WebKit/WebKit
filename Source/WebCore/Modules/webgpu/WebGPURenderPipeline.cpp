@@ -32,7 +32,10 @@
 #include "GPUPipeline.h"
 #include "GPUProgrammableStageDescriptor.h"
 #include "GPURenderPipeline.h"
+#include "GPUShaderModule.h"
+#include "GPUShaderModuleDescriptor.h"
 #include "WebGPUDevice.h"
+#include "WebGPUShaderModule.h"
 #include <wtf/Optional.h>
 #include <wtf/Ref.h>
 
@@ -52,6 +55,32 @@ WebGPURenderPipeline::WebGPURenderPipeline(WebGPUDevice& device, RefPtr<GPURende
 }
 
 WebGPURenderPipeline::~WebGPURenderPipeline() = default;
+
+bool WebGPURenderPipeline::cloneShaderModules(const WebGPUDevice& device)
+{
+    if (m_vertexShader) {
+        if (auto& webGPUVertexShaderModule = m_vertexShader.value().module) {
+            bool sharesVertexFragmentShaderModule = m_fragmentShader && m_fragmentShader.value().module == webGPUVertexShaderModule;
+
+            const auto& vertexSource = webGPUVertexShaderModule->source();
+            webGPUVertexShaderModule = WebGPUShaderModule::create(GPUShaderModule::tryCreate(device.device(), { vertexSource }), vertexSource);
+
+            if (!m_fragmentShader)
+                return true;
+
+            if (auto& webGPUFragmentShaderModule = m_fragmentShader.value().module) {
+                if (sharesVertexFragmentShaderModule)
+                    webGPUFragmentShaderModule = webGPUVertexShaderModule;
+                else {
+                    const auto& fragmentSource = webGPUFragmentShaderModule->source();
+                    webGPUFragmentShaderModule = WebGPUShaderModule::create(GPUShaderModule::tryCreate(device.device(), { fragmentSource }), fragmentSource);
+                }
+                return true;
+            }
+        }
+    }
+    return false;
+}
 
 bool WebGPURenderPipeline::recompile(const WebGPUDevice& device)
 {

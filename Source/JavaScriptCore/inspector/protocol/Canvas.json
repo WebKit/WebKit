@@ -57,6 +57,17 @@
                 { "name": "memoryCost", "type": "number", "optional": true, "description": "Memory usage of the canvas in bytes." },
                 { "name": "backtrace", "type": "array", "items": { "$ref": "Console.CallFrame" }, "optional": true, "description": "Backtrace that was captured when this canvas context was created." }
             ]
+        },
+        {
+            "id": "ShaderProgram",
+            "type": "object",
+            "description": "Information about a WebGL/WebGL2 shader program or WebGPU shader pipeline.",
+            "properties": [
+                { "name": "programId", "$ref": "ProgramId" },
+                { "name": "programType", "$ref": "ProgramType" },
+                { "name": "canvasId", "$ref": "CanvasId"} ,
+                { "name": "sharesVertexFragmentShader", "type": "boolean", "optional": true, "description": "Indicates whether the vertex and fragment shader modules are the same object for a render shader pipleine for a WebGPU device." }
+            ]
         }
     ],
     "commands": [
@@ -227,9 +238,7 @@
         {
             "name": "programCreated",
             "parameters": [
-                { "name": "canvasId", "$ref": "CanvasId"} ,
-                { "name": "programId", "$ref": "ProgramId" },
-                { "name": "programType", "$ref": "ProgramType" }
+                { "name": "shaderProgram", "$ref": "ShaderProgram" }
             ]
         },
         {

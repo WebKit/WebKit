@@ -1,3 +1,15 @@
+2019-10-08  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: modifications to shader modules can be shared between vertex/fragment shaders
+        https://bugs.webkit.org/show_bug.cgi?id=202031
+
+        Reviewed by Dean Jackson.
+
+        * inspector/protocol/Canvas.json:
+        Create a distinct `ShaderProgram` type so that additional data can be bundled and sent to
+        the frontend as part of the `programCreated` event without having to worry about having too
+        many arguments.
+
 2019-10-08  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         JSON.parse incorrectly handles array proxies

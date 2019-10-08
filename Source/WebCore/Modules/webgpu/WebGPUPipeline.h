@@ -56,6 +56,7 @@ public:
         String entryPoint;
     };
 
+    virtual bool cloneShaderModules(const WebGPUDevice&) = 0;
     virtual bool recompile(const WebGPUDevice&) = 0;
 
 protected:

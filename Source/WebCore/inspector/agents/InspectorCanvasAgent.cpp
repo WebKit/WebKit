@@ -568,10 +568,10 @@ void InspectorCanvasAgent::didCreateWebGLProgram(WebGLRenderingContextBase& cont
     if (!inspectorCanvas)
         return;
 
-    auto inspectorProgram = InspectorShaderProgram::create(program, *inspectorCanvas);
-    String programIdentifier = inspectorProgram->identifier();
-    m_identifierToInspectorProgram.set(programIdentifier, WTFMove(inspectorProgram));
-    m_frontendDispatcher->programCreated(inspectorCanvas->identifier(), programIdentifier, Inspector::Protocol::Canvas::ProgramType::Render);
+    auto inspectorProgramRef = InspectorShaderProgram::create(program, *inspectorCanvas);
+    auto& inspectorProgram = inspectorProgramRef.get();
+    m_identifierToInspectorProgram.set(inspectorProgram.identifier(), WTFMove(inspectorProgramRef));
+    m_frontendDispatcher->programCreated(inspectorProgram.buildObjectForShaderProgram());
 }
 
 void InspectorCanvasAgent::willDestroyWebGLProgram(WebGLProgram& program)
@@ -651,18 +651,10 @@ void InspectorCanvasAgent::didCreateWebGPUPipeline(WebGPUDevice& device, WebGPUP
 
     ASSERT(pipeline.isValid());
 
-    auto inspectorProgram = InspectorShaderProgram::create(pipeline, *inspectorCanvas);
-    String programIdentifier = inspectorProgram->identifier();
-    m_identifierToInspectorProgram.set(programIdentifier, WTFMove(inspectorProgram));
-
-    Optional<Inspector::Protocol::Canvas::ProgramType> programType;
-    if (is<WebGPUComputePipeline>(pipeline))
-        programType = Inspector::Protocol::Canvas::ProgramType::Compute;
-    else if (is<WebGPURenderPipeline>(pipeline))
-        programType = Inspector::Protocol::Canvas::ProgramType::Render;
-    ASSERT(programType);
-
-    m_frontendDispatcher->programCreated(inspectorCanvas->identifier(), programIdentifier, programType.value());
+    auto inspectorProgramRef = InspectorShaderProgram::create(pipeline, *inspectorCanvas);
+    auto& inspectorProgram = inspectorProgramRef.get();
+    m_identifierToInspectorProgram.set(inspectorProgram.identifier(), WTFMove(inspectorProgramRef));
+    m_frontendDispatcher->programCreated(inspectorProgram.buildObjectForShaderProgram());
 }
 
 void InspectorCanvasAgent::willDestroyWebGPUPipeline(WebGPUPipeline& pipeline)

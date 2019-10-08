@@ -1,3 +1,32 @@
+2019-10-08  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: modifications to shader modules can be shared between vertex/fragment shaders
+        https://bugs.webkit.org/show_bug.cgi?id=202031
+
+        Reviewed by Dean Jackson.
+
+        Test: inspector/canvas/updateShader-webgpu-sharedVertexFragment.html
+
+        * Modules/webgpu/WebGPUPipeline.h:
+        * Modules/webgpu/WebGPUComputePipeline.cpp:
+        (WebCore::WebGPUComputePipeline::cloneShaderModules): Added.
+        (WebCore::WebGPUComputePipeline::recompile):
+        * Modules/webgpu/WebGPURenderPipeline.cpp:
+        (WebCore::WebGPURenderPipeline::cloneShaderModules): Added.
+        (WebCore::WebGPURenderPipeline::recompile):
+        Recreate the vertex/fragment/compute shader module(s) when recompiling so that modifications
+        to it via this pipeline don't affect other pipelines that also use the same shader module.
+
+        * inspector/InspectorShaderProgram.h:
+        * inspector/InspectorShaderProgram.cpp:
+        (WebCore::InspectorShaderProgram::updateShader):
+        (WebCore::InspectorShaderProgram::buildObjectForShaderProgram): Added.
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::didCreateWebGLProgram):
+        (WebCore::InspectorCanvasAgent::didCreateWebGPUPipeline):
+        Include as part of the `Canvas.event.programCreated` payload a flag indicating whether the
+        vertex shader module and fragment shader module are the same for `WebGPURenderPipeline`s.
+
 2019-10-08  Timothy Hatcher  <timothy@apple.com>
 
         Copying white text from dark mode WebKit apps and pasting in a light mode app results in white (invisible) text.

@@ -1153,6 +1153,7 @@ webkit.org/b/191005 inspector/canvas/requestShaderSource-webgpu.html [ Skip ]
 webkit.org/b/191005 inspector/canvas/resolveContext-webgpu.html [ Skip ]
 webkit.org/b/191005 inspector/canvas/shaderProgram-add-remove-webgpu.html [ Skip ]
 webkit.org/b/191005 inspector/canvas/updateShader-webgpu.html [ Skip ]
+webkit.org/b/191005 inspector/canvas/updateShader-webgpu-sharedVertexFragment.html [ Skip ]
 
 # No support for resource load statistics yet
 http/tests/resourceLoadStatistics/ [ Skip ]

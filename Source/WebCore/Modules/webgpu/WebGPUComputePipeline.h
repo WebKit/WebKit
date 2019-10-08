@@ -49,6 +49,7 @@ public:
     const GPUComputePipeline* computePipeline() const { return m_computePipeline.get(); }
     Optional<WebGPUPipeline::ShaderData> computeShader() const { return m_computeShader; }
 
+    bool cloneShaderModules(const WebGPUDevice&);
     bool recompile(const WebGPUDevice&);
 
 private:
