@@ -45,7 +45,7 @@ static const double swipeTouchpadBaseWidth = 400;
 static const double swipeAnimationDurationMultiplier = 3;
 
 static const double swipeCancelArea = 0.5;
-static const double swipeCancelVelocityThreshold = 0.001;
+static const double swipeCancelVelocityThreshold = 0.4;
 
 static bool isEventStop(GdkEventScroll* event)
 {
@@ -141,6 +141,7 @@ void ViewGestureController::SwipeProgressTracker::reset()
     m_endTime = 0_ms;
     m_prevTime = 0_ms;
     m_velocity = 0;
+    m_distance = 0;
     m_cancelled = false;
 }
 
@@ -178,10 +179,13 @@ bool ViewGestureController::SwipeProgressTracker::handleEvent(GdkEventScroll* ev
     gdk_event_get_scroll_deltas(reinterpret_cast<GdkEvent*>(event), &eventDeltaX, nullptr);
 
     double deltaX = -eventDeltaX;
-    if (isTouchEvent(event))
-        deltaX *= (double) Scrollbar::pixelsPerLineStep() / m_webPageProxy.viewSize().width();
-    else
-        deltaX *= gtkScrollDeltaMultiplier / swipeTouchpadBaseWidth;
+    if (isTouchEvent(event)) {
+        m_distance = m_webPageProxy.viewSize().width();
+        deltaX *= static_cast<double>(Scrollbar::pixelsPerLineStep()) / m_distance;
+    } else {
+        m_distance = swipeTouchpadBaseWidth;
+        deltaX *= gtkScrollDeltaMultiplier / m_distance;
+    }
 
     Seconds time = Seconds::fromMilliseconds(eventTime);
     if (time != m_prevTime)
@@ -203,14 +207,12 @@ bool ViewGestureController::SwipeProgressTracker::handleEvent(GdkEventScroll* ev
 bool ViewGestureController::SwipeProgressTracker::shouldCancel()
 {
     bool swipingLeft = m_viewGestureController.isPhysicallySwipingLeft(m_direction);
+    double relativeVelocity = m_velocity * (swipingLeft ? 1 : -1);
 
-    if (swipingLeft && m_velocity < 0)
-        return true;
+    if (abs(m_progress) > swipeCancelArea)
+        return (relativeVelocity * m_distance < -swipeCancelVelocityThreshold);
 
-    if (!swipingLeft && m_velocity > 0)
-        return true;
-
-    return (abs(m_progress) < swipeCancelArea && abs(m_velocity) < swipeCancelVelocityThreshold);
+    return (relativeVelocity * m_distance < swipeCancelVelocityThreshold);
 }
 
 void ViewGestureController::SwipeProgressTracker::startAnimation()
@@ -404,8 +406,9 @@ void ViewGestureController::draw(cairo_t* cr, cairo_pattern_t* pageGroup)
     auto size = m_webPageProxy.drawingArea()->size();
     int width = size.width();
     int height = size.height();
+    double scale = m_webPageProxy.deviceScaleFactor();
 
-    double swipingLayerOffset = (swipingLeft ? 0 : width) + floor(width * progress);
+    double swipingLayerOffset = (swipingLeft ? 0 : width) + floor(width * progress * scale) / scale;
 
     double dimmingProgress = swipingLeft ? 1 - progress : -progress;
     if (isRTL)

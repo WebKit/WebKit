@@ -399,6 +399,7 @@ private:
 
         Seconds m_prevTime;
         double m_velocity { 0 };
+        double m_distance { 0 };
 
         Seconds m_startTime;
         Seconds m_endTime;
