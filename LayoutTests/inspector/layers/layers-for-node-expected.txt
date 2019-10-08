@@ -126,6 +126,10 @@ PASS
 
 PASS
 
+=== Wait for requestAnimationFrame ===
+
+PASS
+
 === Get the modified layer tree ===
 
 PASS

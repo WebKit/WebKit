@@ -12,49 +12,6 @@ PASS: Capturing started.
   "children": [
     {
       "startTime": "<filtered>",
-      "stackTrace": [
-        {
-          "functionName": "click",
-          "url": "[native code]",
-          "scriptId": "<filtered>",
-          "lineNumber": 0,
-          "columnNumber": 0
-        },
-        {
-          "functionName": "willCallFunctionTest",
-          "url": "timeline/line-column.html",
-          "scriptId": "<filtered>",
-          "lineNumber": 26,
-          "columnNumber": 44
-        },
-        {
-          "functionName": "global code",
-          "url": "",
-          "scriptId": "<filtered>",
-          "lineNumber": 1,
-          "columnNumber": 21
-        },
-        {
-          "functionName": "evaluateWithScopeExtension",
-          "url": "[native code]",
-          "scriptId": "<filtered>",
-          "lineNumber": 0,
-          "columnNumber": 0
-        },
-        {
-          "functionName": "",
-          "url": "",
-          "scriptId": "<filtered>",
-          "lineNumber": 140,
-          "columnNumber": 97
-        }
-      ],
-      "data": {},
-      "frameId": "<filtered>",
-      "type": "ScheduleStyleRecalculation"
-    },
-    {
-      "startTime": "<filtered>",
       "frameId": "<filtered>",
       "data": {
         "type": "click",

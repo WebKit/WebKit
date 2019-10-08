@@ -9,31 +9,24 @@ function addCompositedLayer()
     element.className = "composited";
     element.id = "last-element";
     document.body.appendChild(element);
+    return new Promise(resolve => requestAnimationFrame(resolve));
 };
 
 function test()
 {
-    var documentNode;
-    var initialLayers;
-    var eventsCount = 0;
+    let documentNode;
+    let initialLayers;
 
-    InspectorProtocol.eventHandler["LayerTree.layerTreeDidChange"] = function (messageObject) {
-        eventsCount++;
-    };
+    step({
+        name: "Enable the LayerTree agent",
+        command: "LayerTree.enable",
+        parameters: {},
+        callback: () => {}
+    });
 
-    enableLayerTreeAgent();
+    InspectorProtocol.awaitEvent({event: "LayerTree.layerTreeDidChange"}).then(getDocument);
 
-    function enableLayerTreeAgent(result)
-    {
-        step({
-            name: "Enable the LayerTree agent",
-            command: "LayerTree.enable",
-            parameters: {},
-            callback: getDocument
-        });
-    };
-    
-    function getDocument(result)
+    function getDocument()
     {
         step({
             name: "Get the Document",
@@ -64,6 +57,16 @@ function test()
             name: "Message the page to add a new composited layer",
             command: "Runtime.evaluate",
             parameters: {"expression": "addCompositedLayer()"},
+            callback: awaitRequestAnimationFrame
+        });
+    };
+
+    function awaitRequestAnimationFrame(result)
+    {
+        step({
+            name: "Wait for requestAnimationFrame",
+            command: "Runtime.awaitPromise",
+            parameters: {"promiseObjectId": result.result.objectId},
             callback: getModifiedLayerTree
         });
     };
@@ -106,11 +109,7 @@ function test()
 
     function finishTest()
     {
-        if (!eventsCount)
-            ProtocolTest.log("FAIL: Did not receive layerTreeDidChange events.");
-        else
-            ProtocolTest.log("\n=== Test complete, all expected conditions met ===");
-
+        ProtocolTest.log("\n=== Test complete, all expected conditions met ===");
         ProtocolTest.completeTest();
     };
 

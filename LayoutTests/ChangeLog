@@ -1,3 +1,26 @@
+2019-10-08  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: inspector/layers/layers-for-node.html and  inspector/timeline/line-column.html are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=202649
+
+        Reviewed by Devin Rousso.
+
+        Unflake a couple of inspector protocol tests. r250655 replaced Timer-based queue
+        with RunLoop-based one for inspector message dispatching. The tests apparently relied
+        on the timing of the message delivery and had been less flaky before. Updated the tests
+        to wait for explicit signals rather than relying on event timing.
+
+        * inspector/layers/layers-for-node-expected.txt:
+        * inspector/layers/layers-for-node.html: Updated the test to wait for the first
+        LayerTree.layerTreeDidChange event before requesting initial layer tree.
+
+        Also after adding a node wait for next RAF to avoid flakiness.
+
+        * inspector/timeline/line-column-expected.txt:
+        * inspector/timeline/line-column.html: There a style recalc event
+        which appears intermittently in the recorded profile making the test
+        flaky. To avoid that dump only events that are always present.
+
 2019-10-08  Kate Cheney  <katherine_cheney@apple.com>
 
         Implement Telemetry and Dumping Routines for SQLite backend (195088)
