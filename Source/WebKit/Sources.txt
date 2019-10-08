@@ -121,6 +121,7 @@ Shared/CacheModel.cpp
 Shared/ContextMenuContextData.cpp
 Shared/EditingRange.cpp
 Shared/EditorState.cpp
+Shared/ElementContext.cpp
 Shared/FontInfo.cpp
 Shared/FrameInfoData.cpp
 Shared/LayerTreeContext.cpp
@@ -138,7 +139,6 @@ Shared/SharedStringHashStore.cpp
 Shared/SharedStringHashTableReadOnly.cpp
 Shared/SharedStringHashTable.cpp
 Shared/StatisticsData.cpp
-Shared/TextInputContext.cpp
 Shared/TouchBarMenuData.cpp
 Shared/TouchBarMenuItemData.cpp
 Shared/URLSchemeTaskParameters.cpp

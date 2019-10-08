@@ -26,11 +26,11 @@
 #import "config.h"
 #import "_WKTextInputContext.h"
 
-#import "TextInputContext.h"
+#import "ElementContext.h"
 #import "_WKTextInputContextInternal.h"
 
 @implementation _WKTextInputContext {
-    WebKit::TextInputContext _textInputContext;
+    WebKit::ElementContext _textInputContext;
 }
 
 - (instancetype)init
@@ -38,7 +38,7 @@
     return nil;
 }
 
-- (instancetype)_initWithTextInputContext:(const WebKit::TextInputContext&)context
+- (instancetype)_initWithTextInputContext:(const WebKit::ElementContext&)context
 {
     self = [super init];
     if (!self)
@@ -54,7 +54,7 @@
     return _textInputContext.boundingRect;
 }
 
-- (const WebKit::TextInputContext&)_textInputContext
+- (const WebKit::ElementContext&)_textInputContext
 {
     return _textInputContext;
 }

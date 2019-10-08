@@ -1,3 +1,71 @@
+2019-10-08  Andy Estes  <aestes@apple.com>
+
+        [iOS] Add a fast path that avoids hit testing during context menu interactions on elements
+        https://bugs.webkit.org/show_bug.cgi?id=202510
+        <rdar://problem/55939313>
+
+        Reviewed by Tim Horton.
+
+        When computing position information for an element, we can store sufficient context
+        information in InteractionInformationAtPosition such that the same element could be
+        retrieved again without hit testing. The existing TextInputContext can already store an
+        element's page identifier, document identifier, and element identifier, which is sufficient
+        context for such a task.
+
+        This patch renames TextInputContext to ElementContext and uses it when populating new
+        InteractionInformationAtPosition structs in elementPositionInformation(). When a context
+        menu interaction occurs, WebPage::startInteractionWithElementContextOrPosition() uses this
+        context to look up the interaction element by its identifier triplet, falling back to hit
+        testing if this lookup fails.
+
+        * Scripts/webkit/messages.py:
+        * Shared/DocumentEditingContext.h:
+        * Shared/DocumentEditingContext.mm:
+        (IPC::ArgumentCoder<WebKit::DocumentEditingContextRequest>::decode):
+        * Shared/ElementContext.cpp: Renamed from Source/WebKit/Shared/TextInputContext.cpp.
+        (IPC::ArgumentCoder<WebKit::ElementContext>::encode):
+        (IPC::ArgumentCoder<WebKit::ElementContext>::decode):
+        * Shared/ElementContext.h: Renamed from Source/WebKit/Shared/TextInputContext.h.
+        (WebKit::operator==):
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * Sources.txt:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _requestTextInputContextsInRect:completionHandler:]):
+        * UIProcess/API/Cocoa/_WKTextInputContext.mm:
+        (-[_WKTextInputContext _initWithTextInputContext:]):
+        (-[_WKTextInputContext _textInputContext]):
+        * UIProcess/API/Cocoa/_WKTextInputContextInternal.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::textInputContextsInRect):
+        (WebKit::WebPageProxy::focusTextInputContext):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView actionSheetAssistant:willStartInteractionWithElement:]):
+        (-[WKContentView assignLegacyDataForContextMenuInteraction]):
+        (-[WKContentView continueContextMenuInteraction:]):
+        (-[WKContentView continueContextMenuInteractionWithDataDetectors:]):
+        (-[WKContentView _presentedViewControllerForPreviewItemController:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::startInteractionWithPositionInformation):
+        (WebKit::WebPageProxy::startInteractionWithElementAtPosition): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::textInputContextsInRect):
+        (WebKit::WebPage::focusTextInputContext):
+        (WebKit::WebPage::elementForContext const):
+        (WebKit::WebPage::contextForElement const):
+        (WebKit::WebPage::elementForTextInputContext): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::elementPositionInformation):
+        (WebKit::WebPage::startInteractionWithElementContextOrPosition):
+        (WebKit::WebPage::requestDocumentEditingContext):
+        (WebKit::WebPage::startInteractionWithElementAtPosition): Deleted.
+
 2019-10-08  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.27.1 release

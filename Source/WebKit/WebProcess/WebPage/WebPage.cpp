@@ -6749,9 +6749,9 @@ static bool isEditableTextInputElement(Element& element)
     return element.isRootEditableElement();
 }
 
-void WebPage::textInputContextsInRect(WebCore::FloatRect searchRect, CompletionHandler<void(const Vector<TextInputContext>&)>&& completionHandler)
+void WebPage::textInputContextsInRect(WebCore::FloatRect searchRect, CompletionHandler<void(const Vector<ElementContext>&)>&& completionHandler)
 {
-    Vector<WebKit::TextInputContext> textInputContexts;
+    Vector<WebKit::ElementContext> textInputContexts;
 
     for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         Document* document = frame->document();
@@ -6777,7 +6777,7 @@ void WebPage::textInputContextsInRect(WebCore::FloatRect searchRect, CompletionH
             if (!searchRect.intersects(elementRect))
                 continue;
 
-            WebKit::TextInputContext context;
+            WebKit::ElementContext context;
             context.webPageIdentifier = m_identifier;
             context.documentIdentifier = document->identifier();
             context.elementIdentifier = document->identifierForElement(element);
@@ -6790,9 +6790,9 @@ void WebPage::textInputContextsInRect(WebCore::FloatRect searchRect, CompletionH
     completionHandler(textInputContexts);
 }
 
-void WebPage::focusTextInputContext(const TextInputContext& textInputContext, CompletionHandler<void(bool)>&& completionHandler)
+void WebPage::focusTextInputContext(const ElementContext& textInputContext, CompletionHandler<void(bool)>&& completionHandler)
 {
-    RefPtr<Element> element = elementForTextInputContext(textInputContext);
+    RefPtr<Element> element = elementForContext(textInputContext);
 
     if (element)
         element->focus();
@@ -6800,19 +6800,32 @@ void WebPage::focusTextInputContext(const TextInputContext& textInputContext, Co
     completionHandler(element);
 }
 
-Element* WebPage::elementForTextInputContext(const TextInputContext& textInputContext)
+Element* WebPage::elementForContext(const ElementContext& elementContext) const
 {
-    if (textInputContext.webPageIdentifier != m_identifier)
+    if (elementContext.webPageIdentifier != m_identifier)
         return nullptr;
 
-    auto* document = Document::allDocumentsMap().get(textInputContext.documentIdentifier);
+    auto* document = Document::allDocumentsMap().get(elementContext.documentIdentifier);
     if (!document)
         return nullptr;
 
     if (document->page() != m_page.get())
         return nullptr;
 
-    return document->searchForElementByIdentifier(textInputContext.elementIdentifier);
+    return document->searchForElementByIdentifier(elementContext.elementIdentifier);
+}
+
+Optional<ElementContext> WebPage::contextForElement(WebCore::Element& element) const
+{
+    auto& document = element.document();
+    if (!m_page || document.page() != m_page.get())
+        return WTF::nullopt;
+
+    auto frame = document.frame();
+    if (!frame)
+        return WTF::nullopt;
+
+    return ElementContext { elementRectInRootViewCoordinates(element, *frame), m_identifier, document.identifier(), document.identifierForElement(element) };
 }
 
 PAL::SessionID WebPage::sessionID() const

@@ -6516,7 +6516,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant willStartInteractionWithElement:(_WKActivatedElementInfo *)element
 {
-    _page->startInteractionWithElementAtPosition(_positionInformation.request.point);
+    _page->startInteractionWithPositionInformation(_positionInformation);
 }
 
 - (void)actionSheetAssistantDidStopInteraction:(WKActionSheetAssistant *)assistant
@@ -8093,7 +8093,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
     const auto& url = _positionInformation.url;
 
-    _page->startInteractionWithElementAtPosition(_positionInformation.request.point);
+    _page->startInteractionWithPositionInformation(_positionInformation);
 
     UIViewController *previewViewController = nil;
 
@@ -8266,7 +8266,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
             return strongSelf->_contextMenuLegacyPreviewController.get();
         };
 
-        _page->startInteractionWithElementAtPosition(_positionInformation.request.point);
+        _page->startInteractionWithPositionInformation(_positionInformation);
 
         continueWithContextMenuConfiguration([UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:contentPreviewProvider actionProvider:actionMenuProvider]);
         return;
@@ -8288,7 +8288,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         }
 
         if (configurationFromWKUIDelegate) {
-            strongSelf->_page->startInteractionWithElementAtPosition(strongSelf->_positionInformation.request.point);
+            strongSelf->_page->startInteractionWithPositionInformation(strongSelf->_positionInformation);
             strongSelf->_contextMenuActionProviderDelegateNeedsOverride = YES;
             continueWithContextMenuConfiguration(configurationFromWKUIDelegate);
             return;
@@ -8383,7 +8383,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         NSDictionary *context = [self dataDetectionContextForPositionInformation:_positionInformation];
         UIContextMenuConfiguration *configurationFromDD = [ddContextMenuActionClass contextMenuConfigurationForURL:linkURL identifier:_positionInformation.dataDetectorIdentifier selectedText:[self selectedText] results:_positionInformation.dataDetectorResults.get() inView:self context:context menuIdentifier:nil];
         _contextMenuActionProviderDelegateNeedsOverride = YES;
-        _page->startInteractionWithElementAtPosition(_positionInformation.request.point);
+        _page->startInteractionWithPositionInformation(_positionInformation);
         continueWithContextMenuConfiguration(configurationFromDD);
         return YES;
     }
@@ -8816,7 +8816,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
 
     if ([_previewItemController type] == UIPreviewItemTypeLink) {
         _longPressCanClick = NO;
-        _page->startInteractionWithElementAtPosition(_positionInformation.request.point);
+        _page->startInteractionWithPositionInformation(_positionInformation);
 
         // Treat animated images like a link preview
         if (isValidURLForImagePreview && _positionInformation.isAnimatedImage) {
@@ -8876,7 +8876,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
         }
 
         RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:alternateURL.get() imageURL:nil location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:_positionInformation.image.get() userInfo:imageInfo.get()]);
-        _page->startInteractionWithElementAtPosition(_positionInformation.request.point);
+        _page->startInteractionWithPositionInformation(_positionInformation);
 
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([uiDelegate respondsToSelector:@selector(_webView:willPreviewImageWithURL:)])

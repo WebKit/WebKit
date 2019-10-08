@@ -2715,6 +2715,8 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
             imagePositionInformation(page, element, request, info);
         boundsPositionInformation(*renderer, info);
     }
+
+    info.elementContext = page.contextForElement(element);
 }
     
 static void selectionPositionInformation(WebPage& page, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
@@ -2813,14 +2815,14 @@ void WebPage::requestPositionInformation(const InteractionInformationRequest& re
     send(Messages::WebPageProxy::DidReceivePositionInformation(positionInformation(request)));
 }
 
-void WebPage::startInteractionWithElementAtPosition(const WebCore::IntPoint& point)
+void WebPage::startInteractionWithElementContextOrPosition(Optional<ElementContext>&& elementContext, WebCore::IntPoint&& point)
 {
-    // FIXME: We've already performed a hit test when the long-press gesture was recognized and we
-    // used that result to generate the targeted preview, but now we are hit testing again in order
-    // to perform the selected action. Since an arbitrary amount of time can elapse between
-    // generating the targeted preview and the user selecting an action, it's possible that this
-    // second hit test will find a different element than the first one, leading to bugs like
-    // <rdar://problem/54723131>. We should re-use the results of the first hit test instead.
+    if (elementContext) {
+        m_interactionNode = elementForContext(*elementContext);
+        if (m_interactionNode)
+            return;
+    }
+
     FloatPoint adjustedPoint;
     m_interactionNode = m_page->mainFrame().nodeRespondingToInteraction(point, adjustedPoint);
 }
@@ -3935,7 +3937,7 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
     bool wantsRects = request.options.contains(DocumentEditingContextRequest::Options::Rects);
 
     if (auto textInputContext = request.textInputContext) {
-        RefPtr<Element> element = elementForTextInputContext(*textInputContext);
+        RefPtr<Element> element = elementForContext(*textInputContext);
         if (!element) {
             completionHandler({ });
             return;

@@ -624,9 +624,9 @@ void WebPageProxy::requestPositionInformation(const InteractionInformationReques
     m_process->send(Messages::WebPage::RequestPositionInformation(request), m_webPageID);
 }
 
-void WebPageProxy::startInteractionWithElementAtPosition(const WebCore::IntPoint& point)
+void WebPageProxy::startInteractionWithPositionInformation(const InteractionInformationAtPosition& positionInformation)
 {
-    m_process->send(Messages::WebPage::StartInteractionWithElementAtPosition(point), m_webPageID);
+    m_process->send(Messages::WebPage::StartInteractionWithElementContextOrPosition(positionInformation.elementContext, positionInformation.request.point), m_webPageID);
 }
 
 void WebPageProxy::stopInteraction()

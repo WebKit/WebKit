@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #include "ArgumentCoders.h"
+#include "ElementContext.h"
 #include "InteractionInformationRequest.h"
 #include "ShareableBitmap.h"
 #include <WebCore/IntPoint.h>
@@ -88,6 +89,8 @@ struct InteractionInformationAtPosition {
     String dataDetectorIdentifier;
     RetainPtr<NSArray> dataDetectorResults;
 #endif
+
+    Optional<ElementContext> elementContext;
 
     // Copy compatible optional bits forward (for example, if we have a InteractionInformationAtPosition
     // with snapshots in it, and perform another request for the same point without requesting the snapshots,

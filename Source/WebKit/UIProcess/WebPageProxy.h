@@ -288,6 +288,7 @@ struct DocumentEditingContext;
 struct DocumentEditingContextRequest;
 struct EditingRange;
 struct EditorState;
+struct ElementContext;
 struct FontInfo;
 struct FrameInfoData;
 struct InsertTextOptions;
@@ -295,7 +296,6 @@ struct InteractionInformationRequest;
 struct LoadParameters;
 struct PlatformPopupMenuData;
 struct PrintInfo;
-struct TextInputContext;
 struct WebAutocorrectionData;
 struct WebPopupItem;
 struct URLSchemeTaskParameters;
@@ -645,8 +645,8 @@ public:
     void requestFontAttributesAtSelectionStart(Function<void(const WebCore::FontAttributes&, CallbackBase::Error)>&&);
     void fontAttributesCallback(const WebCore::FontAttributes&, CallbackID);
 
-    void textInputContextsInRect(WebCore::FloatRect, CompletionHandler<void(const Vector<TextInputContext>&)>&&);
-    void focusTextInputContext(const TextInputContext&, CompletionHandler<void(bool)>&&);
+    void textInputContextsInRect(WebCore::FloatRect, CompletionHandler<void(const Vector<ElementContext>&)>&&);
+    void focusTextInputContext(const ElementContext&, CompletionHandler<void(bool)>&&);
 
 #if PLATFORM(IOS_FAMILY)
     double displayedContentScale() const { return m_lastVisibleContentRectUpdate.scale(); }
@@ -703,7 +703,7 @@ public:
     void replaceSelectedText(const String& oldText, const String& newText);
     void didReceivePositionInformation(const InteractionInformationAtPosition&);
     void requestPositionInformation(const InteractionInformationRequest&);
-    void startInteractionWithElementAtPosition(const WebCore::IntPoint&);
+    void startInteractionWithPositionInformation(const InteractionInformationAtPosition&);
     void stopInteraction();
     void performActionOnElement(uint32_t action);
     void saveImageToLibrary(const SharedMemory::Handle& imageHandle, uint64_t imageSize);

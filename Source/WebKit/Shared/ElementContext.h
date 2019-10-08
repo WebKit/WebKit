@@ -33,17 +33,17 @@
 
 namespace WebKit {
 
-struct TextInputContext {
+struct ElementContext {
     WebCore::FloatRect boundingRect;
 
     WebCore::PageIdentifier webPageIdentifier;
     WebCore::DocumentIdentifier documentIdentifier;
     WebCore::ElementIdentifier elementIdentifier;
 
-    ~TextInputContext();
+    ~ElementContext();
 };
 
-inline bool operator==(const TextInputContext& a, const TextInputContext& b)
+inline bool operator==(const ElementContext& a, const ElementContext& b)
 {
     return a.boundingRect == b.boundingRect
         && a.webPageIdentifier == b.webPageIdentifier
@@ -54,8 +54,8 @@ inline bool operator==(const TextInputContext& a, const TextInputContext& b)
 }
 
 namespace IPC {
-template<> struct ArgumentCoder<WebKit::TextInputContext> {
-    static void encode(Encoder&, const WebKit::TextInputContext&);
-    static Optional<WebKit::TextInputContext> decode(Decoder&);
+template<> struct ArgumentCoder<WebKit::ElementContext> {
+    static void encode(Encoder&, const WebKit::ElementContext&);
+    static Optional<WebKit::ElementContext> decode(Decoder&);
 };
 }

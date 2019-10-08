@@ -24,20 +24,20 @@
  */
 
 #include "config.h"
-#include "TextInputContext.h"
+#include "ElementContext.h"
 
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/Element.h>
 
 namespace WebKit {
 
-TextInputContext::~TextInputContext() = default;
+ElementContext::~ElementContext() = default;
 
 }
 
 namespace IPC {
 
-void ArgumentCoder<WebKit::TextInputContext>::encode(Encoder& encoder, const WebKit::TextInputContext& context)
+void ArgumentCoder<WebKit::ElementContext>::encode(Encoder& encoder, const WebKit::ElementContext& context)
 {
     encoder << context.boundingRect;
     encoder << context.webPageIdentifier;
@@ -45,9 +45,9 @@ void ArgumentCoder<WebKit::TextInputContext>::encode(Encoder& encoder, const Web
     encoder << context.elementIdentifier;
 }
 
-Optional<WebKit::TextInputContext> ArgumentCoder<WebKit::TextInputContext>::decode(Decoder& decoder)
+Optional<WebKit::ElementContext> ArgumentCoder<WebKit::ElementContext>::decode(Decoder& decoder)
 {
-    WebKit::TextInputContext context;
+    WebKit::ElementContext context;
     if (!decoder.decode(context.boundingRect))
         return WTF::nullopt;
     if (!decoder.decode(context.webPageIdentifier))
