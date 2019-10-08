@@ -1,3 +1,100 @@
+2019-10-08  Kate Cheney  <katherine_cheney@apple.com>
+
+        Implement Telemetry and Dumping Routines for SQLite backend (195088)
+        https://bugs.webkit.org/show_bug.cgi?id=195088
+        <rdar://problem/54213407>
+
+        Reviewed by John Wilander.
+
+        Implemented database telemetry calculating for ITP. Mimicked
+        ResourceLoadStatisticsMemoryStore telemetry logging behavior using
+        SQLite Queries as opposed to vector sorting/manipulation. Once fully
+        integrated, this will simplify analysis of ITP data by transitioning
+        ITP data storage from a plist to a SQLite database.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore):
+        Added SQL queries to be initialized in the constructor. These queries
+        are needed to mimic the telemetry calculations done in
+        ResourceLoadStatisticsMemoryStore.
+        
+        (WebKit::resetStatement):
+        To reduce code duplication, this function holds common code to reset
+        a SQL query.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::prepareStatements):
+        Added SQL queries needed for telemetry calculations to be prepared.
+        
+        (WebKit::joinSubStatisticsForSorting):
+        This function returns the query string for sorting resources that is
+        shared by many queries.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction const):
+        Implemented a function to take the median days since user interaction
+        from all prevalent resources in the database with user interaction
+        (sorted by max count of subframes, subresources and unique redirects under
+        the top frame domain).
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResources const):
+        Executes a SQL query to get the number of prevalent resources to log as
+        telemetry.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResourcesWithUI const):
+        Executes a SQL query to get the number of prevalent resources with user
+        interaction to log as telemetry.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::getTopPrevelentResourceDaysSinceUI const):
+        Prepares and executes a SQL query to get the days since user
+        interaction from the top prevalent resource to be recorded as
+        telemetry data.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::getMedianStatisticOfPrevalentResourceWithoutUserInteraction const):
+        Implemented a function which takes a statistic and returns the value
+        of that statistic for the median prevalent resource without user
+        interaction to be recorded as telemetry data.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResourcesInTopResources const):
+        Returns the count of prevalent resources in the top x resources
+        sorted by sum of substatistics again to be logged as telemetry.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::calculateTelemetryData const):
+        Function which executes all functions which populate the struct with
+        telemetry data. This struct will then be passed to
+        WebResourceLoadStatisticsTelemetry to be logged.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::calculateAndSubmitTelemetry const):
+        Initializes the telemetry struct and calls the function to populate
+        it, then passes it to the WebResourceLoadStatisticsTelemetry object
+        to be recorded.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        Describe PrevalentResourceDatabaseTelemetry Struct to be passed and
+        logged as telemetry data.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.cpp:
+        (WebKit::databaseSubmitTopLists):
+        Logging telemetry data by looping through 2D array of statistics for
+        the top 1, 3, 10, 50, and 100 prevalent resources sorted by the sum
+        of substatistics under the top frame domain. This matches the logging
+        already done in ResourceLoadStatisticsMemoryStore.
+
+        (WebKit::WebResourceLoadStatisticsTelemetry::submitTelemetry):
+        Submits data to the webPageProxy logs and plists.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.h:
+        Added new submitTopList function to accomodate database telemetry
+        logging.
+        
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::notifyPageStatisticsTelemetryFinished):
+        * NetworkProcess/NetworkSession.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::notifyResourceLoadStatisticsTelemetryFinished):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        Updated the current testing for telemetry which only tested 3
+        statistics. With this patch it now tests 10 statistics.
+
 2019-10-08  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Fix non-unified builds after r250486

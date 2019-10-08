@@ -440,15 +440,29 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
     if (WKStringIsEqualToUTF8CString(messageName, "ResourceLoadStatisticsTelemetryFinished")) {
         WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
 
-        WKRetainPtr<WKStringRef> totalPrevalentResourcesKey = adoptWK(WKStringCreateWithUTF8CString("TotalPrevalentResources"));
-        WKRetainPtr<WKStringRef> totalPrevalentResourcesWithUserInteractionKey = adoptWK(WKStringCreateWithUTF8CString("TotalPrevalentResourcesWithUserInteraction"));
-        WKRetainPtr<WKStringRef> top3SubframeUnderTopFrameOriginsKey = adoptWK(WKStringCreateWithUTF8CString("Top3SubframeUnderTopFrameOrigins"));
+        WKRetainPtr<WKStringRef> numberOfPrevalentResourcesKey = adoptWK(WKStringCreateWithUTF8CString("NumberOfPrevalentResources"));
+        WKRetainPtr<WKStringRef> numberOfPrevalentResourcesWithUserInteractionKey = adoptWK(WKStringCreateWithUTF8CString("NumberOfPrevalentResourcesWithUserInteraction"));
+        WKRetainPtr<WKStringRef> numberOfPrevalentResourcesWithoutUserInteractionKey = adoptWK(WKStringCreateWithUTF8CString("NumberOfPrevalentResourcesWithoutUserInteraction"));
+        WKRetainPtr<WKStringRef> topPrevalentResourceWithUserInteractionDaysSinceUserInteractionKey = adoptWK(WKStringCreateWithUTF8CString("TopPrevalentResourceWithUserInteractionDaysSinceUserInteraction"));
+        WKRetainPtr<WKStringRef> medianDaysSinceUserInteractionPrevalentResourceWithUserInteractionKey = adoptWK(WKStringCreateWithUTF8CString("MedianDaysSinceUserInteractionPrevalentResourceWithUserInteraction"));
+        WKRetainPtr<WKStringRef> top3NumberOfPrevalentResourcesWithUIKey = adoptWK(WKStringCreateWithUTF8CString("Top3NumberOfPrevalentResourcesWithUI"));
+        WKRetainPtr<WKStringRef> top3MedianSubFrameWithoutUIKey = adoptWK(WKStringCreateWithUTF8CString("Top3MedianSubFrameWithoutUI"));
+        WKRetainPtr<WKStringRef> top3MedianSubResourceWithoutUIKey = adoptWK(WKStringCreateWithUTF8CString("Top3MedianSubResourceWithoutUI"));
+        WKRetainPtr<WKStringRef> top3MedianUniqueRedirectsWithoutUIKey = adoptWK(WKStringCreateWithUTF8CString("Top3MedianUniqueRedirectsWithoutUI"));
+        WKRetainPtr<WKStringRef> top3MedianDataRecordsRemovedWithoutUIKey = adoptWK(WKStringCreateWithUTF8CString("Top3MedianDataRecordsRemovedWithoutUI"));
+        
+        unsigned numberOfPrevalentResources = (unsigned)WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, numberOfPrevalentResourcesKey.get())));
+        unsigned numberOfPrevalentResourcesWithUserInteraction = (unsigned)WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, numberOfPrevalentResourcesWithUserInteractionKey.get())));
+        unsigned numberOfPrevalentResourcesWithoutUserInteraction = (unsigned)WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, numberOfPrevalentResourcesWithoutUserInteractionKey.get())));
+        unsigned topPrevalentResourceWithUserInteractionDaysSinceUserInteraction = (unsigned)WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, topPrevalentResourceWithUserInteractionDaysSinceUserInteractionKey.get())));
+        unsigned medianDaysSinceUserInteractionPrevalentResourceWithUserInteraction = (unsigned)WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, medianDaysSinceUserInteractionPrevalentResourceWithUserInteractionKey.get())));
+        unsigned top3NumberOfPrevalentResourcesWithUI = (unsigned)WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, top3NumberOfPrevalentResourcesWithUIKey.get())));
+        unsigned top3MedianSubFrameWithoutUI = (unsigned)WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, top3MedianSubFrameWithoutUIKey.get())));
+        unsigned top3MedianSubResourceWithoutUI = (unsigned)WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, top3MedianSubResourceWithoutUIKey.get())));
+        unsigned top3MedianUniqueRedirectsWithoutUI = (unsigned)WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, top3MedianUniqueRedirectsWithoutUIKey.get())));
+        unsigned top3MedianDataRecordsRemovedWithoutUI = (unsigned)WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, top3MedianDataRecordsRemovedWithoutUIKey.get())));
 
-        unsigned totalPrevalentResources = (unsigned)WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, totalPrevalentResourcesKey.get())));
-        unsigned totalPrevalentResourcesWithUserInteraction = (unsigned)WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, totalPrevalentResourcesWithUserInteractionKey.get())));
-        unsigned top3SubframeUnderTopFrameOrigins = (unsigned)WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, top3SubframeUnderTopFrameOriginsKey.get())));
-
-        m_testRunner->statisticsDidRunTelemetryCallback(totalPrevalentResources, totalPrevalentResourcesWithUserInteraction, top3SubframeUnderTopFrameOrigins);
+        m_testRunner->statisticsDidRunTelemetryCallback(numberOfPrevalentResources, numberOfPrevalentResourcesWithUserInteraction, numberOfPrevalentResourcesWithoutUserInteraction, topPrevalentResourceWithUserInteractionDaysSinceUserInteraction, medianDaysSinceUserInteractionPrevalentResourceWithUserInteraction, top3NumberOfPrevalentResourcesWithUI, top3MedianSubFrameWithoutUI, top3MedianSubResourceWithoutUI, top3MedianUniqueRedirectsWithoutUI, top3MedianDataRecordsRemovedWithoutUI);
         return;
     }
     

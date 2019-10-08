@@ -67,6 +67,10 @@ constexpr auto observedDomainCountQuery = "SELECT COUNT(*) FROM ObservedDomains"
 constexpr auto countSubframeUnderTopFrameQuery = "SELECT COUNT(*) FROM SubframeUnderTopFrameDomains WHERE subFrameDomainID = ? AND topFrameDomainID = ?;"_s;
 constexpr auto countSubresourceUnderTopFrameQuery = "SELECT COUNT(*) FROM SubresourceUnderTopFrameDomains WHERE subresourceDomainID = ? AND topFrameDomainID = ?;"_s;
 constexpr auto countSubresourceUniqueRedirectsToQuery = "SELECT COUNT(*) FROM SubresourceUniqueRedirectsTo WHERE subresourceDomainID = ? AND toDomainID = ?;"_s;
+constexpr auto countPrevalentResourcesQuery = "SELECT COUNT(DISTINCT registrableDomain) FROM ObservedDomains WHERE isPrevalent = 1;"_s;
+constexpr auto countPrevalentResourcesWithUserInteractionQuery = "SELECT COUNT(DISTINCT registrableDomain) FROM ObservedDomains WHERE isPrevalent = 1 AND hadUserInteraction = 1;"_s;
+
+constexpr auto countPrevalentResourcesWithoutUserInteractionQuery = "SELECT COUNT(DISTINCT registrableDomain) FROM ObservedDomains WHERE isPrevalent = 1 AND hadUserInteraction = 0;"_s;
 
 // INSERT Queries
 constexpr auto insertObservedDomainQuery = "INSERT INTO ObservedDomains (registrableDomain, lastSeen, hadUserInteraction,"
@@ -186,7 +190,8 @@ constexpr auto createUniqueIndexSubresourceUnderTopFrameDomains = "CREATE UNIQUE
 constexpr auto createUniqueIndexSubresourceUniqueRedirectsTo = "CREATE UNIQUE INDEX IF NOT EXISTS SubresourceUniqueRedirectsTo_subresourceDomainID_toDomainID on SubresourceUniqueRedirectsTo ( subresourceDomainID, toDomainID );"_s;
 constexpr auto createUniqueIndexSubresourceUniqueRedirectsFrom = "CREATE UNIQUE INDEX IF NOT EXISTS SubresourceUniqueRedirectsFrom_subresourceDomainID_fromDomainID on SubresourceUnderTopFrameDomains ( subresourceDomainID, fromDomainID );"_s;
 
-    
+const unsigned minimumPrevalentResourcesForTelemetry = 3;
+
 ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebResourceLoadStatisticsStore& store, WorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID sessionID)
     : ResourceLoadStatisticsStore(store, workQueue, shouldIncludeLocalhost)
     , m_storageDirectoryPath(storageDirectoryPath + "/observations.db")
@@ -210,6 +215,9 @@ ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebReso
     , m_updateGrandfatheredStatement(m_database, updateGrandfatheredQuery)
     , m_isGrandfatheredStatement(m_database, isGrandfatheredQuery)
     , m_findExpiredUserInteractionStatement(m_database, findExpiredUserInteractionQuery)
+    , m_countPrevalentResourcesStatement(m_database, countPrevalentResourcesQuery)
+    , m_countPrevalentResourcesWithUserInteractionStatement(m_database, countPrevalentResourcesWithUserInteractionQuery)
+    , m_countPrevalentResourcesWithoutUserInteractionStatement(m_database, countPrevalentResourcesWithoutUserInteractionQuery)
     , m_sessionID(sessionID)
 {
     ASSERT(!RunLoop::isMain());
@@ -244,6 +252,12 @@ ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebReso
         if (weakThis)
             weakThis->calculateAndSubmitTelemetry();
     });
+}
+
+static void resetStatement(SQLiteStatement& statement)
+{
+    int resetResult = statement.reset();
+    ASSERT_UNUSED(resetResult, resetResult == SQLITE_OK);
 }
 
 bool ResourceLoadStatisticsDatabaseStore::isEmpty() const
@@ -359,7 +373,11 @@ bool ResourceLoadStatisticsDatabaseStore::prepareStatements()
         || m_updateGrandfatheredStatement.prepare() != SQLITE_OK
         || m_isGrandfatheredStatement.prepare() != SQLITE_OK
         || m_findExpiredUserInteractionStatement.prepare() != SQLITE_OK
-        || m_topFrameLinkDecorationsFromExists.prepare() != SQLITE_OK) {
+        || m_topFrameLinkDecorationsFromExists.prepare() != SQLITE_OK
+        || m_countPrevalentResourcesStatement.prepare() != SQLITE_OK
+        || m_countPrevalentResourcesWithUserInteractionStatement.prepare() != SQLITE_OK
+        || m_countPrevalentResourcesWithoutUserInteractionStatement.prepare() != SQLITE_OK
+        ) {
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::prepareStatements failed to prepare, error message: %{public}s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return false;
@@ -602,11 +620,286 @@ void ResourceLoadStatisticsDatabaseStore::mergeStatistics(Vector<ResourceLoadSta
         insertDomainRelationships(statistic);
 }
 
+static const StringView joinSubStatisticsForSorting()
+{
+    return R"query(
+        domainID,
+        (cnt1 + cnt2 + cnt3) as sum
+        FROM (
+        SELECT
+            domainID,
+            COUNT(DISTINCT f.topFrameDomainID) as cnt1,
+            COUNT(DISTINCT r.topFrameDomainID) as cnt2,
+            COUNT(DISTINCT toDomainID) as cnt3
+        FROM
+        ObservedDomains o
+        LEFT JOIN SubframeUnderTopFrameDomains f ON o.domainID = f.subFrameDomainID
+        LEFT JOIN SubresourceUnderTopFrameDomains r ON o.domainID = r.subresourceDomainID
+        LEFT JOIN SubresourceUniqueRedirectsTo u ON o.domainID = u.subresourceDomainID
+        WHERE isPrevalent = 1
+        and hadUserInteraction LIKE ?
+        GROUP BY domainID) ORDER BY sum DESC
+        )query";
+}
+
+static SQLiteStatement makeMedianWithUIQuery(SQLiteDatabase& database)
+{
+    return SQLiteStatement(database, makeString("SELECT mostRecentUserInteractionTime FROM ObservedDomains INNER JOIN (SELECT ", joinSubStatisticsForSorting(), ") as q ON ObservedDomains.domainID = q.domainID LIMIT 1 OFFSET ?"));
+}
+
+static std::pair<StringView, StringView> buildQueryStartAndEnd(PrevalentResourceDatabaseTelemetry::Statistic statistic)
+{
+    switch (statistic) {
+    case PrevalentResourceDatabaseTelemetry::Statistic::MedianSubFrameWithoutUI:
+        return std::make_pair("SELECT cnt1 FROM ObservedDomains o INNER JOIN(SELECT cnt1, ", ") as q ON o.domainID = q.domainID LIMIT 1 OFFSET ?");
+    case PrevalentResourceDatabaseTelemetry::Statistic::MedianSubResourceWithoutUI:
+        return std::make_pair("SELECT cnt2 FROM ObservedDomains o INNER JOIN(SELECT cnt2, ", ") as q ON o.domainID = q.domainID LIMIT 1 OFFSET ?");
+    case PrevalentResourceDatabaseTelemetry::Statistic::MedianUniqueRedirectsWithoutUI:
+        return std::make_pair("SELECT cnt3 FROM ObservedDomains o INNER JOIN(SELECT cnt3, ", ") as q ON o.domainID = q.domainID LIMIT 1 OFFSET ?");
+    case PrevalentResourceDatabaseTelemetry::Statistic::MedianDataRecordsRemovedWithoutUI:
+        return std::make_pair("SELECT dataRecordsRemoved FROM (SELECT * FROM ObservedDomains o INNER JOIN(SELECT ", ") as q ON o.domainID = q.domainID) LIMIT 1 OFFSET ?");
+    case PrevalentResourceDatabaseTelemetry::Statistic::MedianTimesAccessedDueToUserInteractionWithoutUI:
+        return std::make_pair("SELECT timesAccessedAsFirstPartyDueToUserInteraction FROM (SELECT * FROM ObservedDomains o INNER JOIN(SELECT ", ") as q ON o.domainID = q.domainID) LIMIT 1 OFFSET ?");
+    case PrevalentResourceDatabaseTelemetry::Statistic::MedianTimesAccessedDueToStorageAccessAPIWithoutUI:
+        return std::make_pair("SELECT timesAccessedAsFirstPartyDueToStorageAccessAPI FROM (SELECT * FROM ObservedDomains o INNER JOIN(SELECT ", ") as q ON o.domainID = q.domainID) LIMIT 1 OFFSET ?");
+    case PrevalentResourceDatabaseTelemetry::Statistic::NumberOfPrevalentResourcesWithUI:
+        LOG_ERROR("ResourceLoadStatisticsDatabaseStore::makeMedianWithoutUIQuery was called for an incorrect statistic, undetermined query behavior will result.");
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+static SQLiteStatement makeMedianWithoutUIQuery(SQLiteDatabase& database, PrevalentResourceDatabaseTelemetry::Statistic statistic)
+{
+    auto[queryStart, queryEnd] = buildQueryStartAndEnd(statistic);
+
+    return SQLiteStatement(database, makeString(queryStart, joinSubStatisticsForSorting(), queryEnd));
+}
+
+static unsigned getMedianOfPrevalentResourcesWithUserInteraction(SQLiteDatabase& database, unsigned prevalentResourcesWithUserInteractionCount)
+{
+    SQLiteStatement medianDaysSinceUIStatement = makeMedianWithUIQuery(database);
+
+    // Prepare
+    if (medianDaysSinceUIStatement.prepare() != SQLITE_OK) {
+        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %{public}s", database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
+    // Bind
+    if (medianDaysSinceUIStatement.bindInt(1, 1) != SQLITE_OK || medianDaysSinceUIStatement.bindInt(2, (prevalentResourcesWithUserInteractionCount / 2) != SQLITE_OK)) {
+        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %{public}s", database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
+    // Step
+    if (medianDaysSinceUIStatement.step() != SQLITE_ROW) {
+        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %{public}s", database.lastErrorMsg());
+        return 0;
+    }
+
+    double rawSeconds = medianDaysSinceUIStatement.getColumnDouble(0);
+    WallTime wallTime = WallTime::fromRawSeconds(rawSeconds);
+    unsigned median = wallTime <= WallTime() ? 0 : std::floor((WallTime::now() - wallTime) / 24_h);
+
+    if (prevalentResourcesWithUserInteractionCount & 1)
+        return median;
+
+    SQLiteStatement lowerMedianDaysSinceUIStatement = makeMedianWithUIQuery(database);
+
+    // Prepare
+    if (lowerMedianDaysSinceUIStatement.prepare() != SQLITE_OK) {
+        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %{public}s", database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
+    // Bind
+    if (lowerMedianDaysSinceUIStatement.bindInt(1, 1) != SQLITE_OK || lowerMedianDaysSinceUIStatement.bindInt(2, ((prevalentResourcesWithUserInteractionCount - 1) / 2)) != SQLITE_OK) {
+        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %{public}s", database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
+    // Step
+    if (lowerMedianDaysSinceUIStatement.step() != SQLITE_ROW) {
+        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %{public}s", database.lastErrorMsg());
+        return 0;
+    }
+
+    double rawSecondsLower = lowerMedianDaysSinceUIStatement.getColumnDouble(0);
+    WallTime wallTimeLower = WallTime::fromRawSeconds(rawSecondsLower);
+    return ((wallTimeLower <= WallTime() ? 0 : std::floor((WallTime::now() - wallTimeLower) / 24_h)) + median) / 2;
+}
+
+unsigned ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResources() const
+{
+    if (m_countPrevalentResourcesStatement.step() == SQLITE_ROW) {
+        unsigned prevalentResourceCount = m_countPrevalentResourcesStatement.getColumnInt(0);
+        if (prevalentResourceCount >= minimumPrevalentResourcesForTelemetry) {
+            resetStatement(m_countPrevalentResourcesStatement);
+            return prevalentResourceCount;
+        }
+    }
+    resetStatement(m_countPrevalentResourcesStatement);
+    return 0;
+}
+
+unsigned ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResourcesWithUI() const
+{
+    if (m_countPrevalentResourcesWithUserInteractionStatement.step() == SQLITE_ROW) {
+        int count = m_countPrevalentResourcesWithUserInteractionStatement.getColumnInt(0);
+        resetStatement(m_countPrevalentResourcesWithUserInteractionStatement);
+        return count;
+    }
+    resetStatement(m_countPrevalentResourcesWithUserInteractionStatement);
+    return 0;
+}
+
+unsigned ResourceLoadStatisticsDatabaseStore::getTopPrevelentResourceDaysSinceUI() const
+{
+    SQLiteStatement topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement(m_database, makeString("SELECT mostRecentUserInteractionTime FROM ObservedDomains INNER JOIN (SELECT ", joinSubStatisticsForSorting(), " LIMIT 1) as q ON ObservedDomains.domainID = q.domainID;"));
+    
+    // Prepare
+    if (topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement.prepare() != SQLITE_OK) {
+        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement query failed to prepare, error message: %{public}s", m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+    
+    // Bind
+    if (topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement.bindInt(1, 1) != SQLITE_OK) {
+        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement query failed to bind, error message: %{public}s", m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+    
+    // Step
+    if (topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement.step() != SQLITE_ROW) {
+        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement query failed to step, error message: %{public}s", m_database.lastErrorMsg());
+        return 0;
+    }
+    
+    double rawSeconds = topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement.getColumnDouble(0);
+    WallTime wallTime = WallTime::fromRawSeconds(rawSeconds);
+    
+    return wallTime <= WallTime() ? 0 : std::floor((WallTime::now() - wallTime) / 24_h);
+}
+
+static unsigned getMedianOfPrevalentResourceWithoutUserInteraction(SQLiteDatabase& database, unsigned bucketSize, PrevalentResourceDatabaseTelemetry::Statistic statistic, unsigned numberOfPrevalentResourcesWithoutUI)
+{
+    if (numberOfPrevalentResourcesWithoutUI < bucketSize)
+        return 0;
+
+    unsigned median;
+    SQLiteStatement getMedianStatistic = makeMedianWithoutUIQuery(database, statistic);
+
+    if (getMedianStatistic.prepare() == SQLITE_OK) {
+        if (getMedianStatistic.bindInt(1, 0) != SQLITE_OK
+            || getMedianStatistic.bindInt(2, (bucketSize / 2)) != SQLITE_OK) {
+            RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::makeMedianWithoutUIQuery, error message: %{public}s", database.lastErrorMsg());
+            ASSERT_NOT_REACHED();
+            return 0;
+        }
+        if (getMedianStatistic.step() == SQLITE_ROW)
+            median = getMedianStatistic.getColumnDouble(0);
+    }
+
+    if (bucketSize & 1)
+        return median;
+
+    SQLiteStatement getLowerMedianStatistic = makeMedianWithoutUIQuery(database, statistic);
+
+    if (getLowerMedianStatistic.prepare() == SQLITE_OK) {
+        if (getLowerMedianStatistic.bindInt(1, 0) != SQLITE_OK
+            || getLowerMedianStatistic.bindInt(2, ((bucketSize-1) / 2)) != SQLITE_OK) {
+            RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::makeMedianWithoutUIQuery, error message: %{public}s", database.lastErrorMsg());
+            ASSERT_NOT_REACHED();
+            return 0;
+        }
+        if (getLowerMedianStatistic.step() == SQLITE_ROW)
+            return (getLowerMedianStatistic.getColumnDouble(0) + median) / 2;
+    }
+
+    return 0;
+}
+
+static unsigned getNumberOfPrevalentResourcesInTopResources(SQLiteDatabase& database, unsigned bucketSize)
+{
+    SQLiteStatement prevalentResourceCountInTop(database, makeString("SELECT COUNT(*) FROM (SELECT * FROM ObservedDomains o INNER JOIN(SELECT ", joinSubStatisticsForSorting(), ") as q on q.domainID = o.domainID LIMIT ?) as p WHERE p.hadUserInteraction = 1;"));
+
+    if (prevalentResourceCountInTop.prepare() == SQLITE_OK) {
+        if (prevalentResourceCountInTop.bindText(1, "%") != SQLITE_OK
+            || prevalentResourceCountInTop.bindInt(2, bucketSize) != SQLITE_OK) {
+            RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResourcesInTopResources, error message: %{public}s", database.lastErrorMsg());
+            ASSERT_NOT_REACHED();
+            return 0;
+        }
+
+        if (prevalentResourceCountInTop.step() == SQLITE_ROW)
+            return prevalentResourceCountInTop.getColumnInt(0);
+    }
+
+    return 0;
+}
+
+static unsigned makeStatisticQuery(SQLiteDatabase& database, PrevalentResourceDatabaseTelemetry::Statistic statistic, int bucketSize, unsigned totalWithUI, unsigned totalWithoutUI)
+{
+    switch (statistic) {
+    case PrevalentResourceDatabaseTelemetry::Statistic::NumberOfPrevalentResourcesWithUI:
+        return getNumberOfPrevalentResourcesInTopResources(database, bucketSize);
+    case PrevalentResourceDatabaseTelemetry::Statistic::MedianSubFrameWithoutUI:
+    case PrevalentResourceDatabaseTelemetry::Statistic::MedianSubResourceWithoutUI:
+    case PrevalentResourceDatabaseTelemetry::Statistic::MedianUniqueRedirectsWithoutUI:
+    case PrevalentResourceDatabaseTelemetry::Statistic::MedianDataRecordsRemovedWithoutUI:
+    case PrevalentResourceDatabaseTelemetry::Statistic::MedianTimesAccessedDueToUserInteractionWithoutUI:
+    case PrevalentResourceDatabaseTelemetry::Statistic::MedianTimesAccessedDueToStorageAccessAPIWithoutUI:
+        return getMedianOfPrevalentResourceWithoutUserInteraction(database, bucketSize, statistic, totalWithoutUI);
+    }
+}
+
+unsigned ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResourcesWithoutUI() const
+{
+    if (m_countPrevalentResourcesWithoutUserInteractionStatement.step() == SQLITE_ROW) {
+        int count = m_countPrevalentResourcesWithoutUserInteractionStatement.getColumnInt(0);
+        resetStatement(m_countPrevalentResourcesWithoutUserInteractionStatement);
+        return count;
+    }
+    resetStatement(m_countPrevalentResourcesWithoutUserInteractionStatement);
+    return 0;
+}
+
+void ResourceLoadStatisticsDatabaseStore::calculateTelemetryData(PrevalentResourceDatabaseTelemetry& data) const
+{
+    data.numberOfPrevalentResources = getNumberOfPrevalentResources();
+    data.numberOfPrevalentResourcesWithUserInteraction = getNumberOfPrevalentResourcesWithUI();
+    data.numberOfPrevalentResourcesWithoutUserInteraction = getNumberOfPrevalentResourcesWithoutUI();
+    data.topPrevalentResourceWithUserInteractionDaysSinceUserInteraction = getTopPrevelentResourceDaysSinceUI();
+    data.medianDaysSinceUserInteractionPrevalentResourceWithUserInteraction = getMedianOfPrevalentResourcesWithUserInteraction(m_database, data.numberOfPrevalentResourcesWithUserInteraction);
+
+    for (unsigned bucketIndex = 0; bucketIndex < bucketSizes.size(); bucketIndex++) {
+        unsigned bucketSize = bucketSizes[bucketIndex];
+
+        if (data.numberOfPrevalentResourcesWithoutUserInteraction < bucketSize)
+            return;
+
+        for (unsigned statisticIndex = 0; statisticIndex < numberOfStatistics; statisticIndex++) {
+            auto statistic = static_cast<PrevalentResourceDatabaseTelemetry::Statistic>(statisticIndex);
+            data.statistics[statisticIndex][bucketIndex] = makeStatisticQuery(m_database, statistic, bucketSize, data.numberOfPrevalentResourcesWithUserInteraction, data.numberOfPrevalentResourcesWithoutUserInteraction);
+        }
+    }
+}
+
 void ResourceLoadStatisticsDatabaseStore::calculateAndSubmitTelemetry() const
 {
     ASSERT(!RunLoop::isMain());
 
-    // FIXME(195088): Implement for Database version.
+    if (parameters().shouldSubmitTelemetry) {
+        PrevalentResourceDatabaseTelemetry prevalentResourceDatabaseTelemetry;
+        calculateTelemetryData(prevalentResourceDatabaseTelemetry);
+        WebResourceLoadStatisticsTelemetry::submitTelemetry(*this, prevalentResourceDatabaseTelemetry);
+    }
 }
 
 static String domainsToString(const HashSet<RegistrableDomain>& domains)

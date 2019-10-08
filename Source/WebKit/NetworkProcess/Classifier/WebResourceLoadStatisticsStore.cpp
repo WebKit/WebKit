@@ -492,9 +492,13 @@ void WebResourceLoadStatisticsStore::submitTelemetry(CompletionHandler<void()>&&
     ASSERT(RunLoop::isMain());
 
     postTask([this, completionHandler = WTFMove(completionHandler)]() mutable  {
-        if (m_statisticsStore && is<ResourceLoadStatisticsMemoryStore>(*m_statisticsStore))
+        if (!m_statisticsStore)
+            return;
+        
+        if (is<ResourceLoadStatisticsMemoryStore>(*m_statisticsStore))
             WebResourceLoadStatisticsTelemetry::calculateAndSubmit(downcast<ResourceLoadStatisticsMemoryStore>(*m_statisticsStore));
-
+        else
+            m_statisticsStore->calculateAndSubmitTelemetry();
         postTaskReply(WTFMove(completionHandler));
     });
 }
@@ -1077,11 +1081,11 @@ void WebResourceLoadStatisticsStore::sendDiagnosticMessageWithValue(const String
         const_cast<WebResourceLoadStatisticsStore*>(this)->networkSession()->logDiagnosticMessageWithValue(message, description, value, sigDigits, shouldSample);
 }
 
-void WebResourceLoadStatisticsStore::notifyPageStatisticsTelemetryFinished(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins) const
+void WebResourceLoadStatisticsStore::notifyPageStatisticsTelemetryFinished(unsigned numberOfPrevalentResources, unsigned numberOfPrevalentResourcesWithUserInteraction, unsigned numberOfPrevalentResourcesWithoutUserInteraction, unsigned topPrevalentResourceWithUserInteractionDaysSinceUserInteraction, unsigned medianDaysSinceUserInteractionPrevalentResourceWithUserInteraction, unsigned top3NumberOfPrevalentResourcesWithUI, unsigned top3MedianSubFrameWithoutUI, unsigned top3MedianSubResourceWithoutUI, unsigned top3MedianUniqueRedirectsWithoutUI, unsigned top3MedianDataRecordsRemovedWithoutUI) const
 {
     ASSERT(RunLoop::isMain());
     if (m_networkSession)
-        const_cast<WebResourceLoadStatisticsStore*>(this)->networkSession()->notifyPageStatisticsTelemetryFinished(totalPrevalentResources, totalPrevalentResourcesWithUserInteraction, top3SubframeUnderTopFrameOrigins);
+        const_cast<WebResourceLoadStatisticsStore*>(this)->networkSession()->notifyPageStatisticsTelemetryFinished(numberOfPrevalentResources, numberOfPrevalentResourcesWithUserInteraction, numberOfPrevalentResourcesWithoutUserInteraction, topPrevalentResourceWithUserInteractionDaysSinceUserInteraction, medianDaysSinceUserInteractionPrevalentResourceWithUserInteraction, top3NumberOfPrevalentResourcesWithUI, top3MedianSubFrameWithoutUI, top3MedianSubResourceWithoutUI, top3MedianUniqueRedirectsWithoutUI, top3MedianDataRecordsRemovedWithoutUI);
 }
 
 } // namespace WebKit

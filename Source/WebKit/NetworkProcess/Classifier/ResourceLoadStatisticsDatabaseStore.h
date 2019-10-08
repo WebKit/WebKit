@@ -47,6 +47,32 @@ struct ResourceLoadStatistics;
 
 namespace WebKit {
 
+static constexpr size_t numberOfBucketsPerStatistic = 5;
+static constexpr size_t numberOfStatistics = 7;
+static constexpr std::array<unsigned, numberOfBucketsPerStatistic> bucketSizes {{ 1, 3, 10, 50, 100 }};
+
+struct PrevalentResourceDatabaseTelemetry {
+    using Buckets = std::array<unsigned, numberOfBucketsPerStatistic>;
+
+    enum class Statistic {
+        NumberOfPrevalentResourcesWithUI,
+        MedianSubFrameWithoutUI,
+        MedianSubResourceWithoutUI,
+        MedianUniqueRedirectsWithoutUI,
+        MedianDataRecordsRemovedWithoutUI,
+        MedianTimesAccessedDueToUserInteractionWithoutUI,
+        MedianTimesAccessedDueToStorageAccessAPIWithoutUI
+    };
+
+    unsigned numberOfPrevalentResources;
+    unsigned numberOfPrevalentResourcesWithUserInteraction;
+    unsigned numberOfPrevalentResourcesWithoutUserInteraction;
+    unsigned topPrevalentResourceWithUserInteractionDaysSinceUserInteraction;
+    unsigned medianDaysSinceUserInteractionPrevalentResourceWithUserInteraction;
+
+    std::array<Buckets, numberOfStatistics> statistics;
+};
+
 class ResourceLoadStatisticsMemoryStore;
 
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
@@ -110,6 +136,13 @@ private:
     void mergeStatistic(const ResourceLoadStatistics&);
     void merge(WebCore::SQLiteStatement&, const ResourceLoadStatistics&);
     void clearDatabaseContents();
+    unsigned getNumberOfPrevalentResources() const;
+    unsigned getNumberOfPrevalentResourcesWithUI() const;
+    unsigned getNumberOfPrevalentResourcesWithoutUI() const;
+    unsigned getTopPrevelentResourceDaysSinceUI() const;
+    void resetTelemetryPreparedStatements() const;
+    void resetTelemetryStatements() const;
+    void calculateTelemetryData(PrevalentResourceDatabaseTelemetry&) const;
     bool insertObservedDomain(const ResourceLoadStatistics&);
     void insertDomainRelationships(const ResourceLoadStatistics&);
     void insertDomainRelationshipList(const String&, const HashSet<RegistrableDomain>&, unsigned);
@@ -197,6 +230,9 @@ private:
     WebCore::SQLiteStatement m_updateGrandfatheredStatement;
     mutable WebCore::SQLiteStatement m_isGrandfatheredStatement;
     mutable WebCore::SQLiteStatement m_findExpiredUserInteractionStatement;
+    mutable WebCore::SQLiteStatement m_countPrevalentResourcesStatement;
+    mutable WebCore::SQLiteStatement m_countPrevalentResourcesWithUserInteractionStatement;
+    mutable WebCore::SQLiteStatement m_countPrevalentResourcesWithoutUserInteractionStatement;
     PAL::SessionID m_sessionID;
 };
 
