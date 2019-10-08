@@ -1,3 +1,131 @@
+2019-10-08  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r250811. rdar://problem/56075033
+
+    Only wrapping CryptoKeys for IDB during serialization
+    https://bugs.webkit.org/show_bug.cgi?id=202500
+    <rdar://problem/52445927>
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebCore:
+    
+    Wrapping CryptoKeys during IDB serialization is a legacy request from Netflix when WebKit was an
+    early adopter. It is not necessary for other kinds of serialization. However, given existing keys
+    stored in users' idb are wrapped, the wrapping/unwrapping mechanism cannot be easily discarded.
+    Therefore, this patch restricts the wrapping/unwrapping mechanism to idb only.
+    
+    To do so, a isWrappingRequired flag is added to CryptoKey such that whenever idb sees a CryptoKey,
+    it can set it. SerializedScriptValue will then only wrap a CryptoKey when this flag is set. Otherwise,
+    a new tag UnwrappedCryptoKeyTag is used to store unwrapped CryptoKeys in order to keep the old CryptoKeyTag
+    binaries intact. For deserialization, each type will be deserialized differently.
+    
+    Besides the above, this patch also hardens WorkerGlobalScope::wrapCryptoKey/unwrapCryptoKey for
+    any potential racy issues. CryptoBooleanContainer is introduced to capture boolean in the lambda.
+    workerGlobalScope is replaced with workerMessagingProxy. Now, every variables captured in the lambdas
+    should be either a copy or a thread safe ref of the original object.
+    
+    Test: crypto/workers/subtle/aes-indexeddb.html
+    
+    * Modules/indexeddb/IDBObjectStore.cpp:
+    (WebCore::JSC::setIsWrappingRequiredForCryptoKey):
+    (WebCore::IDBObjectStore::putOrAdd):
+    * bindings/js/SerializedScriptValue.cpp:
+    (WebCore::CloneSerializer::dumpIfTerminal):
+    (WebCore::CloneDeserializer::readTerminal):
+    * crypto/CryptoKey.h:
+    (WebCore::CryptoKey::isWrappingRequired const):
+    (WebCore::CryptoKey::setIsWrappingRequired):
+    * dom/ScriptExecutionContext.h:
+    * workers/WorkerGlobalScope.cpp:
+    (WebCore::CryptoBooleanContainer::create):
+    (WebCore::CryptoBooleanContainer::boolean const):
+    (WebCore::CryptoBooleanContainer::setBoolean):
+    (WebCore::WorkerGlobalScope::wrapCryptoKey):
+    (WebCore::WorkerGlobalScope::unwrapCryptoKey):
+    * workers/WorkerGlobalScope.h:
+    * workers/WorkerLoaderProxy.h:
+    (WebCore::WorkerLoaderProxy::isWorkerMessagingProxy const):
+    * workers/WorkerMessagingProxy.h:
+    (isType):
+    
+    Tools:
+    
+    Modifies IndexedDB.StructuredCloneBackwardCompatibility test to include CryptoKeys.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBStructuredCloneBackwardCompatibility.mm:
+    (-[StructuredCloneBackwardCompatibilityNavigationDelegate _webCryptoMasterKeyForWebView:]):
+    (TEST):
+    * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBStructuredCloneBackwardCompatibility.sqlite3:
+    * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBStructuredCloneBackwardCompatibility.sqlite3-shm:
+    * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBStructuredCloneBackwardCompatibility.sqlite3-wal:
+    * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBStructuredCloneBackwardCompatibilityRead.html:
+    * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBStructuredCloneBackwardCompatibilityWrite.html:
+    
+    LayoutTests:
+    
+    Adds a new test aes-indexeddb.html to do idb in workers and makes
+    other tests more deterministic.
+    
+    * crypto/workers/subtle/aes-indexeddb-expected.txt: Added.
+    * crypto/workers/subtle/aes-indexeddb.html: Added.
+    * crypto/workers/subtle/ec-postMessage-worker-expected.txt:
+    * crypto/workers/subtle/ec-postMessage-worker.html:
+    * crypto/workers/subtle/hrsa-postMessage-worker-expected.txt:
+    * crypto/workers/subtle/hrsa-postMessage-worker.html:
+    * crypto/workers/subtle/resources/aes-indexeddb.js: Added.
+    * crypto/workers/subtle/rsa-postMessage-worker-expected.txt:
+    * crypto/workers/subtle/rsa-postMessage-worker.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250811 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-10-07  Jiewen Tan  <jiewen_tan@apple.com>
+
+            Only wrapping CryptoKeys for IDB during serialization
+            https://bugs.webkit.org/show_bug.cgi?id=202500
+            <rdar://problem/52445927>
+
+            Reviewed by Chris Dumez.
+
+            Wrapping CryptoKeys during IDB serialization is a legacy request from Netflix when WebKit was an
+            early adopter. It is not necessary for other kinds of serialization. However, given existing keys
+            stored in users' idb are wrapped, the wrapping/unwrapping mechanism cannot be easily discarded.
+            Therefore, this patch restricts the wrapping/unwrapping mechanism to idb only.
+
+            To do so, a isWrappingRequired flag is added to CryptoKey such that whenever idb sees a CryptoKey,
+            it can set it. SerializedScriptValue will then only wrap a CryptoKey when this flag is set. Otherwise,
+            a new tag UnwrappedCryptoKeyTag is used to store unwrapped CryptoKeys in order to keep the old CryptoKeyTag
+            binaries intact. For deserialization, each type will be deserialized differently.
+
+            Besides the above, this patch also hardens WorkerGlobalScope::wrapCryptoKey/unwrapCryptoKey for
+            any potential racy issues. CryptoBooleanContainer is introduced to capture boolean in the lambda.
+            workerGlobalScope is replaced with workerMessagingProxy. Now, every variables captured in the lambdas
+            should be either a copy or a thread safe ref of the original object.
+
+            Test: crypto/workers/subtle/aes-indexeddb.html
+
+            * Modules/indexeddb/IDBObjectStore.cpp:
+            (WebCore::JSC::setIsWrappingRequiredForCryptoKey):
+            (WebCore::IDBObjectStore::putOrAdd):
+            * bindings/js/SerializedScriptValue.cpp:
+            (WebCore::CloneSerializer::dumpIfTerminal):
+            (WebCore::CloneDeserializer::readTerminal):
+            * crypto/CryptoKey.h:
+            (WebCore::CryptoKey::isWrappingRequired const):
+            (WebCore::CryptoKey::setIsWrappingRequired):
+            * dom/ScriptExecutionContext.h:
+            * workers/WorkerGlobalScope.cpp:
+            (WebCore::CryptoBooleanContainer::create):
+            (WebCore::CryptoBooleanContainer::boolean const):
+            (WebCore::CryptoBooleanContainer::setBoolean):
+            (WebCore::WorkerGlobalScope::wrapCryptoKey):
+            (WebCore::WorkerGlobalScope::unwrapCryptoKey):
+            * workers/WorkerGlobalScope.h:
+            * workers/WorkerLoaderProxy.h:
+            (WebCore::WorkerLoaderProxy::isWorkerMessagingProxy const):
+            * workers/WorkerMessagingProxy.h:
+            (isType):
+
 2019-10-03  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r250642. rdar://problem/55947639
