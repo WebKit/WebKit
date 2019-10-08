@@ -42,12 +42,12 @@ static bool isSiblingOrSubject(MatchElement matchElement)
     case MatchElement::IndirectSibling:
     case MatchElement::DirectSibling:
     case MatchElement::AnySibling:
+    case MatchElement::Host:
         return true;
     case MatchElement::Parent:
     case MatchElement::Ancestor:
     case MatchElement::ParentSibling:
     case MatchElement::AncestorSibling:
-    case MatchElement::Host:
         return false;
     }
     ASSERT_NOT_REACHED();

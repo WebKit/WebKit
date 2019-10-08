@@ -1,3 +1,14 @@
+2019-10-08  Antti Koivisto  <antti@apple.com>
+
+        [CSS Shadow Parts] Implement style invalidation
+        https://bugs.webkit.org/show_bug.cgi?id=202632
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/css/css-shadow-parts/invalidation-change-exportparts-forward-expected.txt:
+        * web-platform-tests/css/css-shadow-parts/invalidation-change-part-name-expected.txt:
+        * web-platform-tests/css/css-shadow-parts/invalidation-change-part-name-forward-expected.txt:
+
 2019-10-07  Rob Buis  <rbuis@igalia.com>
 
         Change Response's statusText's default

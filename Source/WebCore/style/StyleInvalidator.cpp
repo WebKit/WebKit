@@ -31,6 +31,7 @@
 #include "ElementIterator.h"
 #include "ElementRuleCollector.h"
 #include "HTMLSlotElement.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SelectorFilter.h"
 #include "ShadowRoot.h"
 #include "StyleRuleImport.h"
@@ -88,23 +89,24 @@ Invalidator::Invalidator(const Vector<StyleSheetContents*>& sheets, const MediaQ
     m_ownedRuleSet->disableAutoShrinkToFit();
     for (auto& sheet : sheets)
         m_ownedRuleSet->addRulesFromSheet(*sheet, mediaQueryEvaluator);
-
-    m_hasShadowPseudoElementRulesInAuthorSheet = m_ruleSet.hasShadowPseudoElementRules();
 }
 
 Invalidator::Invalidator(const RuleSet& ruleSet)
     : m_ruleSet(ruleSet)
-    , m_hasShadowPseudoElementRulesInAuthorSheet(ruleSet.hasShadowPseudoElementRules())
 {
 }
 
 Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, const SelectorFilter* filter)
 {
-    if (m_hasShadowPseudoElementRulesInAuthorSheet) {
+    if (m_ruleSet.hasShadowPseudoElementRules()) {
         // FIXME: This could do actual rule matching too.
         if (element.shadowRoot())
             element.invalidateStyleForSubtreeInternal();
     }
+
+    // FIXME: More fine-grained invalidation for ::part()
+    if (!m_ruleSet.partPseudoElementRules().isEmpty() && element.shadowRoot())
+        invalidateShadowParts(*element.shadowRoot());
 
     bool shouldCheckForSlots = !m_ruleSet.slottedPseudoElementRules().isEmpty() && !m_didInvalidateHostChildren;
     if (shouldCheckForSlots && is<HTMLSlotElement>(element)) {
@@ -259,6 +261,25 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
     case MatchElement::Host:
         // FIXME: Handle this here as well.
         break;
+    }
+}
+
+void Invalidator::invalidateShadowParts(ShadowRoot& shadowRoot)
+{
+    if (!RuntimeEnabledFeatures::sharedFeatures().cssShadowPartsEnabled())
+        return;
+
+    if (shadowRoot.mode() == ShadowRootMode::UserAgent)
+        return;
+
+    for (auto& descendant : descendantsOfType<Element>(shadowRoot)) {
+        // FIXME: We could only invalidate part names that actually show up in rules.
+        if (!descendant.partNames().isEmpty())
+            descendant.invalidateStyleInternal();
+
+        auto* nestedShadowRoot = descendant.shadowRoot();
+        if (nestedShadowRoot && !nestedShadowRoot->partMappings().isEmpty())
+            invalidateShadowParts(*nestedShadowRoot);
     }
 }
 

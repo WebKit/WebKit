@@ -1,3 +1,43 @@
+2019-10-08  Antti Koivisto  <antti@apple.com>
+
+        [CSS Shadow Parts] Implement style invalidation
+        https://bugs.webkit.org/show_bug.cgi?id=202632
+
+        Reviewed by Ryosuke Niwa.
+
+        Tests: fast/css/shadow-parts/invalidation-class-descendant-combinator-export.html
+               fast/css/shadow-parts/invalidation-class-descendant-combinator.html
+               fast/css/shadow-parts/invalidation-class-sibling-combinator-export.html
+               fast/css/shadow-parts/invalidation-class-sibling-combinator.html
+
+        * css/RuleFeature.cpp:
+        (WebCore::isSiblingOrSubject):
+
+        Don't treat crossing to host as moving to ancestor when computing elements impacted by a selector.
+        StyleInvalidator expects these relations to be about the host element, shadow tree invalidation in handled separately.
+
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+
+        Invalidate parts in shadow tree on 'exportparts' attribute mutation.
+
+        (WebCore::Element::partAttributeChanged):
+
+        Invalidate element on 'part' attribute mutation.
+
+        * style/StyleInvalidator.cpp:
+        (WebCore::Style::Invalidator::Invalidator):
+        (WebCore::Style::Invalidator::invalidateIfNeeded):
+
+        Invalidate parts in shadow tree during class and attribute mutation invalidation.
+
+        (WebCore::Style::Invalidator::invalidateShadowParts):
+        * style/StyleInvalidator.h:
+        (WebCore::Style::Invalidator::dirtiesAllStyle const):
+        (WebCore::Style::Invalidator::hasShadowPseudoElementRulesInAuthorSheet const): Deleted.
+
+        Remove an unncessary bool.
+
 2019-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Remove unused WebKitSoupRequestGeneric after r250597

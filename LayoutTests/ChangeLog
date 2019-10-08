@@ -1,5 +1,23 @@
 2019-10-08  Antti Koivisto  <antti@apple.com>
 
+        [CSS Shadow Parts] Implement style invalidation
+        https://bugs.webkit.org/show_bug.cgi?id=202632
+
+        Reviewed by Ryosuke Niwa.
+
+        Add some tests to verify class mutations and combinators with ::part and exportpart.
+
+        * fast/css/shadow-parts/invalidation-class-descendant-combinator-expected.txt: Added.
+        * fast/css/shadow-parts/invalidation-class-descendant-combinator-export-expected.txt: Added.
+        * fast/css/shadow-parts/invalidation-class-descendant-combinator-export.html: Added.
+        * fast/css/shadow-parts/invalidation-class-descendant-combinator.html: Added.
+        * fast/css/shadow-parts/invalidation-class-sibling-combinator-expected.txt: Added.
+        * fast/css/shadow-parts/invalidation-class-sibling-combinator-export-expected.txt: Added.
+        * fast/css/shadow-parts/invalidation-class-sibling-combinator-export.html: Added.
+        * fast/css/shadow-parts/invalidation-class-sibling-combinator.html: Added.
+
+2019-10-08  Antti Koivisto  <antti@apple.com>
+
         [CSS Shadow Parts] Internal shadow pseudo elements should work with ::part
         https://bugs.webkit.org/show_bug.cgi?id=202620
 

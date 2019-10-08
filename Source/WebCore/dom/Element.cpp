@@ -103,6 +103,7 @@
 #include "Settings.h"
 #include "SimulatedClick.h"
 #include "SlotAssignment.h"
+#include "StyleInvalidator.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
@@ -1750,8 +1751,10 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
         } else if (name == HTMLNames::partAttr)
             partAttributeChanged(newValue);
         else if (name == HTMLNames::exportpartsAttr) {
-            if (auto* shadowRoot = this->shadowRoot())
+            if (auto* shadowRoot = this->shadowRoot()) {
                 shadowRoot->invalidatePartMappings();
+                Style::Invalidator::invalidateShadowParts(*shadowRoot);
+            }
         }
     }
 
@@ -1835,6 +1838,9 @@ void Element::partAttributeChanged(const AtomString& newValue)
         if (auto* partList = elementRareData()->partList())
             partList->associatedAttributeValueChanged(newValue);
     }
+
+    if (needsStyleInvalidation() && isInShadowTree())
+        invalidateStyleInternal();
 }
 
 URL Element::absoluteLinkURL() const
