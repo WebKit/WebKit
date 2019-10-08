@@ -855,15 +855,18 @@ Element* HTMLConverter::_blockLevelElementForNode(Node* node)
     return element;
 }
 
-static Color normalizedColor(Color color, bool ignoreBlack)
+static Color normalizedColor(Color color, bool ignoreDefaultColor, Element& element)
 {
-    const double ColorEpsilon = 1 / (2 * (double)255.0);
-    
-    double red, green, blue, alpha;
-    color.getRGBA(red, green, blue, alpha);
-    if (red < ColorEpsilon && green < ColorEpsilon && blue < ColorEpsilon && (ignoreBlack || alpha < ColorEpsilon))
+    if (!ignoreDefaultColor)
+        return color;
+
+    bool useDarkAppearance = element.document().useDarkAppearance(element.existingComputedStyle());
+    if (useDarkAppearance && Color::isWhiteColor(color))
         return Color();
-    
+
+    if (!useDarkAppearance && Color::isBlackColor(color))
+        return Color();
+
     return color;
 }
 
@@ -875,16 +878,18 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, CSSPropertyID p
         return Color();
     }
 
+    bool ignoreDefaultColor = propertyId == CSSPropertyColor;
+
     Element& element = downcast<Element>(node);
     if (RefPtr<CSSValue> value = computedStylePropertyForElement(element, propertyId)) {
         if (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isRGBColor())
-            return normalizedColor(Color(downcast<CSSPrimitiveValue>(*value).color().rgb()), propertyId == CSSPropertyColor);
+            return normalizedColor(Color(downcast<CSSPrimitiveValue>(*value).color().rgb()), ignoreDefaultColor, element);
     }
 
     bool inherit = false;
     if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyId)) {
         if (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isRGBColor())
-            return normalizedColor(Color(downcast<CSSPrimitiveValue>(*value).color().rgb()), propertyId == CSSPropertyColor);
+            return normalizedColor(Color(downcast<CSSPrimitiveValue>(*value).color().rgb()), ignoreDefaultColor, element);
         if (value->isInheritedValue())
             inherit = true;
     }

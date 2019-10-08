@@ -1,3 +1,19 @@
+2019-10-08  Timothy Hatcher  <timothy@apple.com>
+
+        Copying white text from dark mode WebKit apps and pasting in a light mode app results in white (invisible) text.
+        https://bugs.webkit.org/show_bug.cgi?id=202662
+        rdar://problem/48677354
+
+        Reviewed by Megan Gardner.
+
+        Covered by new API tests.
+
+        HTMLConverter needs to strip white text colors when the document is in dark mode, like it does for black in light mode.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (normalizedColor): Handle dark mode and ignore white.
+        (HTMLConverterCaches::colorPropertyValueForNode): Pass element to normalizedColor.
+
 2019-10-08  Antti Koivisto  <antti@apple.com>
 
         [CSS Shadow Parts] Fix style invalidation with class selector and ::before and ::after
