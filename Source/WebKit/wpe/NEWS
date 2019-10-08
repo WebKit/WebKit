@@ -1,4 +1,16 @@
 =================
+WPE WebKit 2.27.1
+=================
+
+What's new in WPE WebKit 2.27.1?
+
+  - Enable asynchronous scrolling.
+  - Add about:gpu to show information about the graphics stack.
+  - Add WebKitWebView:page-id property.
+  - Fix the build with ENABLE_WEBDRIVER=OFF.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.25.1
 =================
 
