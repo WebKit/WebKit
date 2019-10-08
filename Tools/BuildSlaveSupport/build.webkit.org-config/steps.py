@@ -203,7 +203,7 @@ def appendCustomTestingFlags(step, platform, device_model):
         return
     if device_model == 'iphone':
         device_model = 'iphone-simulator'
-    if device_model == 'ipad':
+    elif device_model == 'ipad':
         device_model = 'ipad-simulator'
     else:
         device_model = platform

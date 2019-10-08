@@ -1,3 +1,13 @@
+2019-10-08  Matt Lewis  <jlewis3@apple.com>
+
+        Make iPhone simulators pass --iPhone-simulator instead of --iOS
+        https://bugs.webkit.org/show_bug.cgi?id=202701
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (appendCustomTestingFlags):
+
 2019-10-08  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Do not print worker environment variables in each build step [part 3]
