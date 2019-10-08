@@ -1,3 +1,13 @@
+2019-10-08  Antti Koivisto  <antti@apple.com>
+
+        [CSS Shadow Parts] Fix style invalidation with class selector and ::before and ::after
+        https://bugs.webkit.org/show_bug.cgi?id=202694
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/css/shadow-parts/invalidation-class-before-after-expected.txt: Added.
+        * fast/css/shadow-parts/invalidation-class-before-after.html: Added.
+
 2019-10-08  youenn fablet  <youenn@apple.com>
 
         MediaStreamTrack should be a PlatformMediaSessionClient instead of MediaStream

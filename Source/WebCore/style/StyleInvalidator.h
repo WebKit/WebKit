@@ -58,6 +58,7 @@ private:
     CheckDescendants invalidateIfNeeded(Element&, const SelectorFilter*);
     void invalidateStyleForTree(Element&, SelectorFilter*);
     void invalidateStyleForDescendants(Element&, SelectorFilter*);
+    void invalidateInShadowTreeIfNeeded(Element&);
 
     std::unique_ptr<RuleSet> m_ownedRuleSet;
     const RuleSet& m_ruleSet;

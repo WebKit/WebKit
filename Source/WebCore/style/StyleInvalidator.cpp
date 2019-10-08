@@ -98,15 +98,7 @@ Invalidator::Invalidator(const RuleSet& ruleSet)
 
 Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, const SelectorFilter* filter)
 {
-    if (m_ruleSet.hasShadowPseudoElementRules()) {
-        // FIXME: This could do actual rule matching too.
-        if (element.shadowRoot())
-            element.invalidateStyleForSubtreeInternal();
-    }
-
-    // FIXME: More fine-grained invalidation for ::part()
-    if (!m_ruleSet.partPseudoElementRules().isEmpty() && element.shadowRoot())
-        invalidateShadowParts(*element.shadowRoot());
+    invalidateInShadowTreeIfNeeded(element);
 
     bool shouldCheckForSlots = !m_ruleSet.slottedPseudoElementRules().isEmpty() && !m_didInvalidateHostChildren;
     if (shouldCheckForSlots && is<HTMLSlotElement>(element)) {
@@ -259,7 +251,7 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
         break;
     }
     case MatchElement::Host:
-        // FIXME: Handle this here as well.
+        invalidateInShadowTreeIfNeeded(element);
         break;
     }
 }
@@ -282,6 +274,23 @@ void Invalidator::invalidateShadowParts(ShadowRoot& shadowRoot)
             invalidateShadowParts(*nestedShadowRoot);
     }
 }
+
+void Invalidator::invalidateInShadowTreeIfNeeded(Element& element)
+{
+    auto* shadowRoot = element.shadowRoot();
+    if (!shadowRoot)
+        return;
+
+    if (m_ruleSet.hasShadowPseudoElementRules()) {
+        // FIXME: This could do actual rule matching too.
+        element.invalidateStyleForSubtreeInternal();
+    }
+
+    // FIXME: More fine-grained invalidation for ::part()
+    if (!m_ruleSet.partPseudoElementRules().isEmpty())
+        invalidateShadowParts(*shadowRoot);
+}
+
 
 }
 }

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CSS Shadow Parts - Invalidation of before/after with class selector</title>
+    <link href="http://www.apple.com/" rel="author" title="Apple">
+    <link href="https://drafts.csswg.org/css-shadow-parts/" rel="help">
+    <script src="../../../resources/testharness.js"></script>
+    <script src="../../../resources/testharnessreport.js"></script>
+    <script src="../../../imported/w3c/web-platform-tests/css/css-shadow-parts/support/shadow-helper.js"></script>
+  </head>
+  <body>
+    <style>
+    .enable-self::part(partp) { color: green; }
+    .enable-before::part(partp)::before { color: green; }
+    .enable-after::part(partp)::after { color: green; }
+    </style>
+    <script>installCustomElement("custom-element", "custom-element-template");</script>
+    <template id="custom-element-template">
+      <style>
+        span::before { content: "Before text"; color: red; }
+        span::after { content: "After text"; color: red; }
+      </style>
+      <span id="part" part="partp">Main text</span>
+    </template>
+    The following text should be green:
+    <div><custom-element id="c-e"></custom-element></div>
+    <script>
+      "use strict";
+      test(function() {
+        const part = getElementByShadowIds(document, ["c-e", "part"]);
+        const oldColor = window.getComputedStyle(part).color;
+        document.querySelector("#c-e").classList.add("enable-self");
+        const newColor = window.getComputedStyle(part).color;
+        assert_not_equals(oldColor, newColor);
+      }, "Part in selected host changed color");
+      test(function() {
+        const part = getElementByShadowIds(document, ["c-e", "part"]);
+        const oldColor = window.getComputedStyle(part, "::before").color;
+        document.querySelector("#c-e").classList.add("enable-before");
+        const newColor = window.getComputedStyle(part, "::before").color;
+        assert_not_equals(oldColor, newColor);
+      }, "Before pseudo element of part in selected host changed color");
+      test(function() {
+        const part = getElementByShadowIds(document, ["c-e", "part"]);
+        const oldColor = window.getComputedStyle(part, "::after").color;
+        document.querySelector("#c-e").classList.add("enable-after");
+        const newColor = window.getComputedStyle(part, "::after").color;
+        assert_not_equals(oldColor, newColor);
+      }, "After pseudo element of part in selected host changed color");
+    </script>
+  </body>
+</html>
