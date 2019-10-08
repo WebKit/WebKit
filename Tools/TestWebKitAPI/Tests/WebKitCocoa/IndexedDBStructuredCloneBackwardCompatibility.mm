@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,6 +53,18 @@ static Deque<RetainPtr<WKScriptMessage>> scriptMessages;
 
 @end
 
+@interface StructuredCloneBackwardCompatibilityNavigationDelegate : NSObject <WKNavigationDelegate>
+@end
+
+@implementation StructuredCloneBackwardCompatibilityNavigationDelegate
+
+- (NSData *)_webCryptoMasterKeyForWebView:(WKWebView *)webView
+{
+    return [NSData dataWithBytes:(const uint8_t*)"\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f" length:16];
+}
+
+@end
+
 static WKScriptMessage *getNextMessage()
 {
     if (scriptMessages.isEmpty()) {
@@ -92,6 +104,8 @@ TEST(IndexedDB, StructuredCloneBackwardCompatibility)
 
     // Run the test
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto delegate = adoptNS([[StructuredCloneBackwardCompatibilityNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBStructuredCloneBackwardCompatibilityRead" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
 
