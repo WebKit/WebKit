@@ -1,3 +1,14 @@
+2019-10-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Build failure in WebHTMLView.mm with the public SDK (Xcode 11 and Mojave)
+        https://bugs.webkit.org/show_bug.cgi?id=199705
+
+        Patch by Dan Bernstein and Kenneth Russell.
+        Reviewed by Alexey Proskuryakov.
+
+        * pal/spi/mac/NSViewSPI.h: Declare _subviews when we are not using the
+        replacement SPI, but the SDK doesn't declare the ivar (because the SDK is too new).
+
 2019-10-04  Alex Christensen  <achristensen@webkit.org>
 
         Simplify sandbox enabling macros
