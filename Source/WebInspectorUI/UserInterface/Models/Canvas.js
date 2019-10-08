@@ -117,6 +117,16 @@ WI.Canvas = class Canvas extends WI.Object
         Canvas._nextDeviceUniqueDisplayNameNumber = 1;
     }
 
+    static supportsRequestContentForContextType(contextType)
+    {
+        switch (contextType) {
+        case Canvas.ContextType.WebGPU:
+        case Canvas.ContextType.WebMetal:
+            return false;
+        }
+        return true;
+    }
+
     // Public
 
     get identifier() { return this._identifier; }
@@ -199,6 +209,8 @@ WI.Canvas = class Canvas extends WI.Object
 
     requestContent()
     {
+        if (!Canvas.supportsRequestContentForContextType(this._contextType))
+            return Promise.resolve(null);
         return CanvasAgent.requestContent(this._identifier).then((result) => result.content).catch((error) => console.error(error));
     }
 

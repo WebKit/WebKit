@@ -1,5 +1,25 @@
 2019-10-08  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Canvas: don't show an empty preview for WebGPU devices
+        https://bugs.webkit.org/show_bug.cgi?id=202679
+
+        Reviewed by Matt Baker.
+
+        `HTMLCanvasElement.prototype.toDataURL` hasn't been hooked up for `GPUCanvasContext` yet, so
+        calling `Canvas.requestContent` with a `WebGPUDevice` won't give us any good results.
+
+        As such, the Web Inspector frontend should show something slightly more actionable, such as
+        a more generic non-error "No Preview Available" message.
+
+        * UserInterface/Models/Canvas.js:
+        (WI.Canvas.supportsRequestContentForContextType): Added.
+        (WI.Canvas.prototype.requestContent):
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView.prototype._showError):
+
+2019-10-08  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Canvas: unable to click on overview path component when jumping directly to a shader
         https://bugs.webkit.org/show_bug.cgi?id=202682
 
