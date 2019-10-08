@@ -1,3 +1,14 @@
+2019-10-08  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/55920073
+
+    2019-10-08  youenn fablet  <youenn@apple.com>
+
+            Remove the protection to spin more than one service worker process at a time.
+            rdar://problem/55044713
+
+            * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2019-09-29  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r250345. rdar://problem/55825352

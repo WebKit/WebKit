@@ -1622,6 +1622,44 @@ TEST(ServiceWorkers, ProcessPerSite)
     EXPECT_EQ(0U, processPool._serviceWorkerProcessCount);
 }
 
+TEST(ServiceWorkers, ParallelProcessLaunch)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto messageHandler = adoptNS([[SWMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    auto handler1 = adoptNS([[SWSchemes alloc] init]);
+    handler1->resources.set("sw1://host/main.html", ResourceInfo { @"text/html", mainBytes });
+    handler1->resources.set("sw1://host/sw.js", ResourceInfo { @"application/javascript", scriptBytes });
+    handler1->resources.set("sw1://host2/main.html", ResourceInfo { @"text/html", mainBytes });
+    handler1->resources.set("sw1://host2/sw.js", ResourceInfo { @"application/javascript", scriptBytes });
+    [configuration setURLSchemeHandler:handler1.get() forURLScheme:@"sw1"];
+
+    auto *processPool = configuration.get().processPool;
+    [processPool _registerURLSchemeServiceWorkersCanHandle:@"sw1"];
+
+    auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    NSURLRequest *request1 = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw1://host/main.html"]];
+
+    auto webView3 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    NSURLRequest *request2 = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw1://host2/main.html"]];
+
+    [webView1 loadRequest:request1];
+    [webView3 loadRequest:request2];
+
+    waitUntilServiceWorkerProcessCount(processPool, 2);
+}
+
 TEST(ServiceWorkers, ThrottleCrash)
 {
     ASSERT(mainBytes);

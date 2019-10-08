@@ -430,12 +430,9 @@ void NetworkProcess::createNetworkConnectionToWebProcess(bool isServiceWorkerPro
 #if ENABLE(SERVICE_WORKER)
     if (isServiceWorkerProcess && !m_webProcessConnections.isEmpty()) {
         ASSERT(parentProcessHasServiceWorkerEntitlement());
-        ASSERT(m_waitingForServerToContextProcessConnection);
         auto contextConnection = WebSWServerToContextConnection::create(*this, registrableDomain, m_webProcessConnections.last()->connection());
         auto addResult = m_serverToContextConnections.add(WTFMove(registrableDomain), contextConnection.copyRef());
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
-
-        m_waitingForServerToContextProcessConnection = false;
 
         for (auto* server : SWServer::allServers())
             server->serverToContextConnectionCreated(contextConnection);
@@ -2442,10 +2439,6 @@ WebSWServerToContextConnection* NetworkProcess::serverToContextConnectionForRegi
 
 void NetworkProcess::createServerToContextConnection(const RegistrableDomain& registrableDomain, Optional<PAL::SessionID> sessionID)
 {
-    if (m_waitingForServerToContextProcessConnection)
-        return;
-    
-    m_waitingForServerToContextProcessConnection = true;
     if (sessionID)
         parentProcessConnection()->send(Messages::NetworkProcessProxy::EstablishWorkerContextConnectionToNetworkProcessForExplicitSession(registrableDomain, *sessionID), 0);
     else
