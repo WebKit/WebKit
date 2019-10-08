@@ -138,17 +138,25 @@ for (my $previousLine = "", my $line = <>; $line; $previousLine = $line, $line =
         $buildFinished = 1;
     } elsif ($line =~ /^===/) {
         printLine($line, STYLE_HEADER);
+    } elsif ($line =~ /^note: using/) {
+        printLine($line, STYLE_HEADER);
     } elsif ($line =~ /Checking Dependencies|Check dependencies|Create product structure|Write auxiliary files|LinkStoryboards/) {
         printLine($line, STYLE_PLAIN);
     } elsif ($line =~ /\*\* BUILD SUCCEEDED \*\*/) {
         printLine("Build Succeeded", STYLE_SUCCESS);
-    } elsif ($line =~ /^(\e\[1m)?(PhaseScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Preprocess|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|AnalyzeShallow|ProcessProductPackaging|CodeSign|Validate|SymLink|Updating|CompileDTraceScript|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile|GenerateTAPI|CompileStoryboard|ExternalBuildToolExecution)(\e\[0m)? ("[^"]+"|(\\|(?<=\\)\s|\S)+)?/) {
+    } elsif ($line =~ /^(\e\[1m)?(PhaseScriptExecution|RuleScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Preprocess|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|AnalyzeShallow|ProcessProductPackaging|CodeSign|Validate|SymLink|Updating|CompileDTraceScript|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile|GenerateTAPI|CompileStoryboard|ExternalBuildToolExecution)(\e\[0m)? ("[^"]+"|(\\|(?<=\\)\s|\S)+)?/) {
         my ($command, $path) = ($2, basename($4));
         $path =~ s/("|\\|\.[ah]$)//g;
         printLine("$command $path", STYLE_PLAIN);
     } elsif ($line =~ /^\S+mkdir .*?(\S+)$/) {
         my $path = basename($1);
         printLine("mkdir $path", STYLE_PLAIN);
+    } elsif ($line =~ /^\S+\/usr\/bin\/tapi reexport .*?(\S+)$/) {
+        my $path = basename($1);
+        printLine("tapi $path", STYLE_PLAIN);
+    } elsif ($line =~ /^plutil .*?(\S+)$/) {
+        my $path = basename($1);
+        printLine("plutil $path", STYLE_PLAIN);
     } elsif ($line =~ /^cp (\S+)/) {
         my $path = basename($1);
         printLine("cp $path", STYLE_PLAIN);
@@ -167,7 +175,13 @@ for (my $previousLine = "", my $line = <>; $line; $previousLine = $line, $line =
         printLine("Generating $command $path", STYLE_PLAIN);
     } elsif ($line =~ /^(Generating|Merging) (\S+) (from|for) (\S+)/) {
         printLine($line, STYLE_PLAIN);
+    } elsif ($line =~ /^Postprocessed ANGLE header/) {
+        printLine($line, STYLE_PLAIN);
+    } elsif ($line =~ /^Prepare build/) {
+        printLine($line, STYLE_PLAIN);
     } elsif ($line =~ /^GXCF:/) {
+        printLine($line, STYLE_PLAIN);
+    } elsif ($line =~ /^Signing Identity:/) {
         printLine($line, STYLE_PLAIN);
     } elsif ($line =~ /^Pre-processing (\S+) sandbox profile/) {
         printLine($line, STYLE_PLAIN);
