@@ -1,5 +1,32 @@
 2019-10-08  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Canvas: unable to click on overview path component when jumping directly to a shader
+        https://bugs.webkit.org/show_bug.cgi?id=202682
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView):
+        The `WI.TreeOutline` used for the hierarchical path components is actually held by the
+        Canvas Tab, not the Canvas navigation sidebar panel. As a result, if the hierarchical path
+        is changed by anything other than the hierarchical path itself (e.g. a selection in the
+        navigation sidebar, or clicking on the [gl] shader or [o_o] recording buttons in the
+        overview preview tile), the selection state of the `WI.TreeOutline` can get out of sync. In
+        this case, the `WI.TreeOutline` still thinks that "Overview" is selected because the change
+        in content view was triggered by something unrelated to the `WI.TreeOutline` (see above for
+        specific examples). The simple solution is to just allow repeat selection, as this is only
+        an issue here because the canvas navigation sidebar isn't always visible, as well as to
+        allow the "Overview" to be listed as the root path item.
+
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel.prototype.updateRepresentedObjects):
+        If a `WI.Canvas` is one of the current represented objects, attempt to select it, even if
+        it matches the currently shown `WI.Canvas`. This covers the situation where the `WI.Canvas`
+        is selected via its hierarchical path component, ensuring that the selected item in the
+        navigation sidebar always matches the hierarchical path components.
+
+2019-10-08  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Canvas: the navigation sidebar icon isn't inverted in dark mode
         https://bugs.webkit.org/show_bug.cgi?id=202681
 

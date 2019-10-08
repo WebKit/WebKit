@@ -39,6 +39,7 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
         this._canvasCollection = new WI.CanvasCollection;
 
         this._canvasTreeOutline = new WI.TreeOutline;
+        this._canvasTreeOutline.allowsRepeatSelection = true;
         this._canvasTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._canvasTreeOutlineSelectionDidChange, this);
 
         this._overviewTreeElement = new WI.GeneralTreeElement("canvas-overview", WI.UIString("Overview"), null, this._canvasCollection);
