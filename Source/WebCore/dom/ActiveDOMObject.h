@@ -116,14 +116,17 @@ public:
 
 protected:
     explicit ActiveDOMObject(ScriptExecutionContext*);
-    explicit ActiveDOMObject(Document*) = delete;
-    explicit ActiveDOMObject(Document&); // Implemented in Document.h
+    explicit ActiveDOMObject(Document*);
+    explicit ActiveDOMObject(Document&);
     virtual ~ActiveDOMObject();
 
 private:
-    unsigned m_pendingActivityCount;
+    enum CheckedScriptExecutionContextType { CheckedScriptExecutionContext };
+    ActiveDOMObject(ScriptExecutionContext*, CheckedScriptExecutionContextType);
+
+    unsigned m_pendingActivityCount { 0 };
 #if !ASSERT_DISABLED
-    bool m_suspendIfNeededWasCalled;
+    bool m_suspendIfNeededWasCalled { false };
     Ref<Thread> m_creationThread { Thread::current() };
 #endif
 };

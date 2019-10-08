@@ -32,19 +32,36 @@
 
 namespace WebCore {
 
-ActiveDOMObject::ActiveDOMObject(ScriptExecutionContext* scriptExecutionContext)
-    : ContextDestructionObserver(scriptExecutionContext)
-    , m_pendingActivityCount(0)
-#if !ASSERT_DISABLED
-    , m_suspendIfNeededWasCalled(false)
-#endif
+static inline ScriptExecutionContext* suitableScriptExecutionContext(ScriptExecutionContext* scriptExecutionContext)
 {
-    ASSERT(!is<Document>(m_scriptExecutionContext) || &downcast<Document>(m_scriptExecutionContext)->contextDocument() == downcast<Document>(m_scriptExecutionContext));
-    if (!m_scriptExecutionContext)
+    // For detached documents, make sure we observe their context document instead.
+    return is<Document>(scriptExecutionContext) ? &downcast<Document>(*scriptExecutionContext).contextDocument() : scriptExecutionContext;
+}
+
+inline ActiveDOMObject::ActiveDOMObject(ScriptExecutionContext* context, CheckedScriptExecutionContextType)
+    : ContextDestructionObserver(context)
+{
+    ASSERT(!is<Document>(context) || &downcast<Document>(context)->contextDocument() == downcast<Document>(context));
+    if (!context)
         return;
 
-    ASSERT(m_scriptExecutionContext->isContextThread());
-    m_scriptExecutionContext->didCreateActiveDOMObject(*this);
+    ASSERT(context->isContextThread());
+    context->didCreateActiveDOMObject(*this);
+}
+
+ActiveDOMObject::ActiveDOMObject(ScriptExecutionContext* scriptExecutionContext)
+    : ActiveDOMObject(suitableScriptExecutionContext(scriptExecutionContext), CheckedScriptExecutionContext)
+{
+}
+
+ActiveDOMObject::ActiveDOMObject(Document* document)
+    : ActiveDOMObject(document ? &document->contextDocument() : nullptr, CheckedScriptExecutionContext)
+{
+}
+
+ActiveDOMObject::ActiveDOMObject(Document& document)
+    : ActiveDOMObject(&document.contextDocument(), CheckedScriptExecutionContext)
+{
 }
 
 ActiveDOMObject::~ActiveDOMObject()
@@ -89,11 +106,6 @@ void ActiveDOMObject::assertSuspendIfNeededWasCalled() const
 bool ActiveDOMObject::hasPendingActivity() const
 {
     return m_pendingActivityCount;
-}
-
-bool ActiveDOMObject::canSuspendForDocumentSuspension() const
-{
-    return false;
 }
 
 void ActiveDOMObject::suspend(ReasonForSuspension)
