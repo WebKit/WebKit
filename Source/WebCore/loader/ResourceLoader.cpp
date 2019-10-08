@@ -285,7 +285,7 @@ void ResourceLoader::loadDataURL()
         dataResponse.setHTTPHeaderField(HTTPHeaderName::ContentType, result.contentType);
         dataResponse.setSource(ResourceResponse::Source::Network);
         this->didReceiveResponse(dataResponse, [this, protectedThis = WTFMove(protectedThis), dataSize, data = result.data.releaseNonNull()]() mutable {
-            if (!this->reachedTerminalState() && dataSize)
+            if (!this->reachedTerminalState() && dataSize && m_request.httpMethod() != "HEAD")
                 this->didReceiveBuffer(WTFMove(data), dataSize, DataPayloadWholeResource);
 
             if (!this->reachedTerminalState()) {
