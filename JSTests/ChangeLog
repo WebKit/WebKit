@@ -1,3 +1,18 @@
+2019-10-08  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        JSON.parse incorrectly handles array proxies
+        https://bugs.webkit.org/show_bug.cgi?id=199292
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/json-parse-array-reviver-same-value.js: Added.
+        * microbenchmarks/json-parse-array-reviver.js: Added.
+        * microbenchmarks/json-parse-object-reviver-same-value.js: Added.
+        * microbenchmarks/json-parse-object-reviver.js: Added.
+        * stress/json-parse-reviver-array-proxy.js: Added.
+        * stress/json-parse-reviver-revoked-proxy.js: Added.
+        * test262/expectations.yaml: Mark 6 test cases as passing.
+
 2019-10-08  Ross Kirsling  <ross.kirsling@sony.com>
 
         Update test262 (2019.10.08).

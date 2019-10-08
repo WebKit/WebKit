@@ -32,6 +32,7 @@
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "JSArray.h"
+#include "JSArrayInlines.h"
 #include "JSGlobalObject.h"
 #include "LiteralParser.h"
 #include "Lookup.h"
@@ -663,19 +664,21 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             arrayStartState:
             case ArrayStartState: {
                 ASSERT(inValue.isObject());
-                ASSERT(asObject(inValue)->inherits<JSArray>(vm));
+                ASSERT(isJSArray(inValue) || inValue.inherits<ProxyObject>(vm));
                 if (markedStack.size() > maximumFilterRecursion)
                     return throwStackOverflowError(m_exec, scope);
 
-                JSArray* array = asArray(inValue);
+                JSObject* array = asObject(inValue);
                 markedStack.appendWithCrashOnOverflow(array);
-                arrayLengthStack.append(array->length());
+                unsigned length = toLength(m_exec, array);
+                RETURN_IF_EXCEPTION(scope, { });
+                arrayLengthStack.append(length);
                 indexStack.append(0);
             }
             arrayStartVisitMember:
             FALLTHROUGH;
             case ArrayStartVisitMember: {
-                JSArray* array = jsCast<JSArray*>(markedStack.last());
+                JSObject* array = asObject(markedStack.last());
                 uint32_t index = indexStack.last();
                 unsigned arrayLength = arrayLengthStack.last();
                 if (index == arrayLength) {
@@ -704,7 +707,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 FALLTHROUGH;
             }
             case ArrayEndVisitMember: {
-                JSArray* array = jsCast<JSArray*>(markedStack.last());
+                JSObject* array = asObject(markedStack.last());
                 JSValue filteredValue = callReviver(array, jsString(vm, String::number(indexStack.last())), outValue);
                 RETURN_IF_EXCEPTION(scope, { });
                 if (filteredValue.isUndefined())
@@ -718,7 +721,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             objectStartState:
             case ObjectStartState: {
                 ASSERT(inValue.isObject());
-                ASSERT(!asObject(inValue)->inherits<JSArray>(vm));
+                ASSERT(!isJSArray(inValue));
                 if (markedStack.size() > maximumFilterRecursion)
                     return throwStackOverflowError(m_exec, scope);
 
@@ -778,8 +781,9 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     outValue = inValue;
                     break;
                 }
-                JSObject* object = asObject(inValue);
-                if (object->inherits<JSArray>(vm))
+                bool valueIsArray = isArray(m_exec, inValue);
+                RETURN_IF_EXCEPTION(scope, { });
+                if (valueIsArray)
                     goto arrayStartState;
                 goto objectStartState;
         }

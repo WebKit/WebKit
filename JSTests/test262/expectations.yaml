@@ -1206,15 +1206,6 @@ test/built-ins/Function/prototype/toString/unicode.js:
 test/built-ins/GeneratorFunction/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object GeneratorFunction]Â», Â«[object GeneratorFunction]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object GeneratorFunction]Â», Â«[object GeneratorFunction]Â») to be true'
-test/built-ins/JSON/parse/revived-proxy.js:
-  default: 'Test262Error: proxy for array Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
-  strict mode: 'Test262Error: proxy for array Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
-test/built-ins/JSON/parse/reviver-array-length-coerce-err.js:
-  default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
-test/built-ins/JSON/parse/reviver-array-length-get-err.js:
-  default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
 test/built-ins/Map/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object Map]Â», Â«[object Map]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object Map]Â», Â«[object Map]Â») to be true'
