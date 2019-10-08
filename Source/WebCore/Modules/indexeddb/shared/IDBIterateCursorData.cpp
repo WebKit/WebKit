@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "IDBIterateCursorData.h"
+#include <wtf/text/StringConcatenateNumbers.h>
 
 #if ENABLE(INDEXED_DATABASE)
 

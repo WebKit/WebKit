@@ -32,6 +32,7 @@
 #if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
 #include "FrameView.h"
+#include "Logging.h"
 #include "NicosiaPlatformLayer.h"
 #include "ScrollingStateFrameScrollingNode.h"
 #include "ScrollingTree.h"

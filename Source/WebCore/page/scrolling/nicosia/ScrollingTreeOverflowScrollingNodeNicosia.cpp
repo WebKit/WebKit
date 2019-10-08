@@ -33,6 +33,7 @@
 
 #include "NicosiaPlatformLayer.h"
 #include "ScrollingStateOverflowScrollingNode.h"
+#include "ScrollingTree.h"
 
 namespace WebCore {
 

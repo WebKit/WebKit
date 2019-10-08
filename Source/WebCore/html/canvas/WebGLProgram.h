@@ -30,6 +30,8 @@
 #include "ContextDestructionObserver.h"
 #include "WebGLSharedObject.h"
 #include <wtf/HashMap.h>
+#include <wtf/HashFunctions.h>
+#include <wtf/Lock.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -43,7 +45,7 @@ public:
     static Ref<WebGLProgram> create(WebGLRenderingContextBase&);
     virtual ~WebGLProgram();
 
-    static HashMap<WebGLProgram*, WebGLRenderingContextBase*>& instances(const LockHolder&);
+    static HashMap<WebGLProgram*, WebGLRenderingContextBase*>& instances(const WTF::LockHolder&);
     static Lock& instancesMutex();
 
     void contextDestroyed() final;

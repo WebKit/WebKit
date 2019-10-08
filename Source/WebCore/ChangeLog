@@ -1,3 +1,56 @@
+2019-10-08  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Fix non-unified builds after r250486
+        https://bugs.webkit.org/show_bug.cgi?id=202636
+
+        Reviewed by Youenn Fablet.
+
+        No new tests needed.
+
+        * Modules/fetch/FetchLoader.h: Add missing forward declaration of WebCore::SharedBuffer.
+        * Modules/indexeddb/shared/IDBGetAllRecordsData.cpp: Add missing inclusion of header
+        wtf/text/StringConcatenateNumbers.h
+        * Modules/indexeddb/shared/IDBIterateCursorData.cpp: Ditto.
+        * animation/DocumentTimeline.cpp: Add missing inclusion of the EventNames.h and
+        JavaScriptCore/VM.h headers.
+        * bindings/js/JSDOMWindowCustom.cpp: Add missing inclusion of the JSDOMConvertCallbacks.h
+        header.
+        * bindings/js/JSIDBRequestCustom.cpp: Add missing inclusion of the JSDOMConvertIndexedDB.h
+        and JSDOMConvertSequences.h headers.
+        * bindings/js/JSRemoteDOMWindowCustom.cpp: Add missing inclusion of the
+        JSDOMExceptionHandling.h header.
+        * bindings/js/ScriptController.cpp: Add missing inclusion of the
+        JavaScriptCore/WeakGCMapInlines.h header to avoid missing symbols during linking.
+        * bindings/js/ScriptModuleLoader.h: Add missing inclusion of the wtf/HashSet.h header
+        and add a forward declaration for the JSC::JSModuleRecord type.
+        * bindings/js/WindowProxy.cpp: Add missing inclusion of the JavaScriptCore/StrongInlines.h
+        header to avoid missing symbols during linking.
+        * css/FontFaceSet.cpp: Add missing inclusion of the DOMPromiseProxy.h header.
+        * css/FontFaceSet.h: Add missing inclusion of the IDLTypes.h header.
+        * dom/IdleDeadline.h: Add missing inclusion of the wtf/Ref.h header.
+        * history/CachedPage.h: Add missing inclusion of the wtf/MonotonicTime.h header.
+        * html/canvas/WebGLBuffer.h: Add missing inclusion of the wtf/RefPtr.h header.
+        * html/canvas/WebGLFramebuffer.h: Add missing inclusion of the wtf/HashMap.h and
+        wtf/Vector.h headers.
+        * html/canvas/WebGLProgram.h: Add missing inclusion of the wtf/HashFunctions.h, wtf/Lock.h,
+        and wtf/Vector.h headers; add the missing namespace to an usage of WTF::LockHolder.
+        * html/canvas/WebGLShader.h: Add missing inclusion of the wtf/text/WTFString.h header.
+        * inspector/InspectorController.cpp: Add missing inclusion of the SharedBuffer.h header.
+        * inspector/agents/InspectorCanvasAgent.cpp: Add missing inclusion of the ImageBitmap.h
+        header.
+        * page/DOMWindowExtension.cpp: Add missing inclusion of the Document.h header.
+        * page/scrolling/nicosia/ScrollingTreeFixedNode.cpp: Add missing inclusion of the
+        ScrollingTreeFrameScrollingNode.h header.
+        * page/scrolling/nicosia/ScrollingTreeFrameScrollingNodeNicosia.cpp: Add missing inclusion
+        of the Logging.h header.
+        * page/scrolling/nicosia/ScrollingTreeOverflowScrollingNodeNicosia.cpp: Add missing
+        inclusion of the ScrollingTree.h header.
+        * page/scrolling/nicosia/ScrollingTreeStickyNode.cpp: Add missing inclusion of the
+        ScrollingTreeOverflowScrollProxyNode.h header.
+        * platform/SuspendableTaskQueue.cpp: Add missing inclusion of the ScriptExecutionContext.h
+        header.
+        * workers/Worker.cpp: Add missing inclusion of the JavaScriptCore/ScriptCallStack.h header.
+
 2019-10-08  youenn fablet  <youenn@apple.com>
 
         MediaStreamTrack should be a PlatformMediaSessionClient instead of MediaStream

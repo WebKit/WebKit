@@ -29,9 +29,11 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmSignatureInlines.h"
+#include <wtf/CommaPrinter.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/PrintStream.h>
+#include <wtf/StringPrintStream.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC { namespace Wasm {

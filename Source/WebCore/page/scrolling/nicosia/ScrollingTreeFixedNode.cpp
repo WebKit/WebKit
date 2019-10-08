@@ -35,6 +35,7 @@
 #include "NicosiaPlatformLayer.h"
 #include "ScrollingStateFixedNode.h"
 #include "ScrollingTree.h"
+#include "ScrollingTreeFrameScrollingNode.h"
 #include "ScrollingTreeOverflowScrollingNode.h"
 #include <wtf/text/TextStream.h>
 

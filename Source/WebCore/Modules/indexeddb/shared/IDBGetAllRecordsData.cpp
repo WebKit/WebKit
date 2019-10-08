@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBKeyRangeData.h"
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 

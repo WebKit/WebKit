@@ -30,6 +30,7 @@
 
 #include "WasmOps.h"
 #include "WasmSectionParser.h"
+#include "WasmSignatureInlines.h"
 #include <wtf/Optional.h>
 #include <wtf/UnalignedAccess.h>
 

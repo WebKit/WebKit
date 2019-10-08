@@ -27,6 +27,7 @@
 #include "SuspendableTaskQueue.h"
 
 #include "Document.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
