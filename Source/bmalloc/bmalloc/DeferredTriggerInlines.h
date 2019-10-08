@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BAssert.h"
 #include "DeferredTrigger.h"
 
 namespace bmalloc {
