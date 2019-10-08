@@ -35,6 +35,7 @@ namespace WebCore {
 namespace Layout {
 
 class FloatAvoider;
+class FloatBox;
 class FormattingContext;
 class Box;
 class LayoutState;

@@ -1,3 +1,24 @@
+2019-10-08  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Painting] Add very basic block and inline painting
+        https://bugs.webkit.org/show_bug.cgi?id=202697
+        <rdar://problem/56076562>
+
+        Reviewed by Antti Koivisto.
+
+        This is a very basic border/background painting with simple text. No phases/z-index/layers of any kind.
+
+        * layout/displaytree/DisplayBox.h: This seems to be getting out of hand.
+        (WebCore::Display::Box::moveBy):
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::paintBlockLevelBoxDecoration):
+        (WebCore::Display::paintInlineContent):
+        (WebCore::Display::Painter::paint):
+        * layout/floats/FloatingContext.h:
+        * layout/inlineformatting/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::inlineRuns const):
+        (WebCore::Layout::InlineFormattingState::lineBoxes const):
+
 2019-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, try to fix the WinCairo build after r250824
