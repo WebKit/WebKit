@@ -167,6 +167,9 @@ enum SerializationTag {
     RTCCertificateTag = 44,
 #endif
     ImageBitmapTag = 45,
+#if ENABLE(WEB_CRYPTO)
+    UnwrappedCryptoKeyTag = 46,
+#endif
     ErrorTag = 255
 };
 
@@ -350,6 +353,7 @@ static const unsigned StringDataIs8BitFlag = 0x80000000;
  *    | ImageBitmapTransferTag <value:uint32_t>
  *    | RTCCertificateTag
  *    | ImageBitmapTag <originClean:uint8_t> <logicalWidth:int32_t> <logicalHeight:int32_t> <resolutionScale:double> <byteLength:uint32_t>(<imageByteData:uint8_t>)
+ *    | UnwrappedCryptoKeyTag <unwrappedKeyLength:uint32_t> <factor:byte{unwrappedKeyLength}>
  *
  * Inside certificate, data is serialized in this format as per spec:
  *
@@ -1083,7 +1087,10 @@ private:
             }
 #if ENABLE(WEB_CRYPTO)
             if (auto* key = JSCryptoKey::toWrapped(vm, obj)) {
-                write(CryptoKeyTag);
+                if (key->isWrappingRequired())
+                    write(CryptoKeyTag);
+                else
+                    write(UnwrappedCryptoKeyTag);
                 Vector<uint8_t> serializedKey;
                 Vector<String> dummyBlobURLs;
                 Vector<RefPtr<MessagePort>> dummyMessagePorts;
@@ -1098,10 +1105,14 @@ private:
 #endif
                     dummyBlobURLs, serializedKey, SerializationContext::Default, dummySharedBuffers);
                 rawKeySerializer.write(key);
-                Vector<uint8_t> wrappedKey;
-                if (!wrapCryptoKey(m_exec, serializedKey, wrappedKey))
-                    return false;
-                write(wrappedKey);
+                if (key->isWrappingRequired()) {
+                    Vector<uint8_t> wrappedKey;
+                    if (!wrapCryptoKey(m_exec, serializedKey, wrappedKey))
+                        return false;
+                    write(wrappedKey);
+                    return true;
+                }
+                write(serializedKey);
                 return true;
             }
 #endif
@@ -3092,6 +3103,28 @@ private:
 #endif
         case ImageBitmapTag:
             return readImageBitmap();
+#if ENABLE(WEB_CRYPTO)
+        case UnwrappedCryptoKeyTag: {
+            Vector<uint8_t> serializedKey;
+            if (!read(serializedKey)) {
+                fail();
+                return JSValue();
+            }
+            JSValue cryptoKey;
+            Vector<RefPtr<MessagePort>> dummyMessagePorts;
+            CloneDeserializer rawKeyDeserializer(m_exec, m_globalObject, dummyMessagePorts, nullptr, { },
+#if ENABLE(WEBASSEMBLY)
+                nullptr,
+#endif
+                serializedKey);
+            if (!rawKeyDeserializer.readCryptoKey(cryptoKey)) {
+                fail();
+                return JSValue();
+            }
+            m_gcBuffer.appendWithCrashOnOverflow(cryptoKey);
+            return cryptoKey;
+        }
+#endif
         default:
             m_ptr--; // Push the tag back
             return JSValue();

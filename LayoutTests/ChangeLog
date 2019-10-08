@@ -1,3 +1,24 @@
+2019-10-07  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Only wrapping CryptoKeys for IDB during serialization
+        https://bugs.webkit.org/show_bug.cgi?id=202500
+        <rdar://problem/52445927>
+
+        Reviewed by Chris Dumez.
+
+        Adds a new test aes-indexeddb.html to do idb in workers and makes
+        other tests more deterministic.
+
+        * crypto/workers/subtle/aes-indexeddb-expected.txt: Added.
+        * crypto/workers/subtle/aes-indexeddb.html: Added.
+        * crypto/workers/subtle/ec-postMessage-worker-expected.txt:
+        * crypto/workers/subtle/ec-postMessage-worker.html:
+        * crypto/workers/subtle/hrsa-postMessage-worker-expected.txt:
+        * crypto/workers/subtle/hrsa-postMessage-worker.html:
+        * crypto/workers/subtle/resources/aes-indexeddb.js: Added.
+        * crypto/workers/subtle/rsa-postMessage-worker-expected.txt:
+        * crypto/workers/subtle/rsa-postMessage-worker.html:
+
 2019-10-07  Kate Cheney  <katherine_cheney@apple.com>
 
         Domain relationships in the ITP Database should be inserted in a single query and ignore repeat insert attempts. (202604)
