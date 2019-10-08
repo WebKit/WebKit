@@ -35,6 +35,7 @@
 #include "EventNames.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSOverconstrainedError.h"
+#include "Logging.h"
 #include "MediaConstraints.h"
 #include "MediaStream.h"
 #include "MediaStreamPrivate.h"

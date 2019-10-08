@@ -1,3 +1,77 @@
+2019-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Introduce bindings for the async Clipboard API
+        https://bugs.webkit.org/show_bug.cgi?id=202622
+        <rdar://problem/56038126>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds IDL for the async clipboard API (with the exception of delayed item generation interfaces, which
+        I'll iterate on and introduce separately). See: https://w3c.github.io/clipboard-apis/#async-clipboard-api for
+        more information.
+
+        Tests: editing/async-clipboard/clipboard-interfaces.html
+               editing/async-clipboard/clipboard-wrapper-stays-alive.html
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/async-clipboard/Clipboard.cpp:
+        (WebCore::Clipboard::create):
+        (WebCore::Clipboard::Clipboard):
+        (WebCore::Clipboard::navigator):
+        (WebCore::Clipboard::eventTargetInterface const):
+        (WebCore::Clipboard::scriptExecutionContext const):
+        (WebCore::Clipboard::readText):
+        (WebCore::Clipboard::writeText):
+        (WebCore::Clipboard::read):
+        (WebCore::Clipboard::write):
+
+        Stub out these API calls for now by immediately rejecting the given promise.
+
+        * Modules/async-clipboard/Clipboard.h:
+        * Modules/async-clipboard/Clipboard.idl:
+        * Modules/async-clipboard/ClipboardItem.cpp:
+        (WebCore::ClipboardItem::ClipboardItem):
+        (WebCore::ClipboardItem::create):
+        (WebCore::ClipboardItem::types const):
+        (WebCore::ClipboardItem::getType):
+
+        Stub out these API calls for now by immediately rejecting the given promise.
+
+        (WebCore::navigator):
+        * Modules/async-clipboard/ClipboardItem.h:
+        (WebCore::ClipboardItem::presentationStyle const):
+        * Modules/async-clipboard/ClipboardItem.idl:
+        * Modules/async-clipboard/NavigatorClipboard.cpp:
+        (WebCore::NavigatorClipboard::NavigatorClipboard):
+        (WebCore::NavigatorClipboard::clipboard):
+        (WebCore::NavigatorClipboard::from):
+        (WebCore::NavigatorClipboard::supplementName):
+        * Modules/async-clipboard/NavigatorClipboard.h:
+        * Modules/async-clipboard/NavigatorClipboard.idl:
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        * Modules/mediastream/RTCDTMFSender.cpp:
+        * Modules/mediastream/RTCRtpSender.cpp:
+        * Modules/webgpu/WebGPUPipeline.h:
+
+        More unified sources-related build fixes.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/DeviceOrientationOrMotionEvent.cpp:
+
+        Unified sources-related build fix.
+
+        * dom/EventTargetFactory.in:
+        * features.json:
+
+        Add Async Clipboard API as a feature in development on webkit.org.
+
+        * page/Settings.yaml:
+
 2019-10-08  Rob Buis  <rbuis@igalia.com>
 
         Fetch: data: URL HEAD request should result in empty response body

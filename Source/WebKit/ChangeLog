@@ -1,3 +1,15 @@
+2019-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Introduce bindings for the async Clipboard API
+        https://bugs.webkit.org/show_bug.cgi?id=202622
+        <rdar://problem/56038126>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds a new experimental feature flag. See WebCore ChangeLog for more details.
+
+        * Shared/WebPreferences.yaml:
+
 2019-10-08  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK] Navigation gesture improvements

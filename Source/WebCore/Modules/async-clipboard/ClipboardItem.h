@@ -25,50 +25,40 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
-
-#include "GPUObjectBase.h"
-#include "WebGPUShaderModule.h"
-#include <wtf/Forward.h>
-#include <wtf/Lock.h>
+#include <wtf/KeyValuePair.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class ScriptExecutionContext;
-class GPUErrorScopes;
-class WebGPUDevice;
+class DeferredPromise;
+class DOMPromise;
+class Navigator;
 
-class WebGPUPipeline : public GPUObjectBase {
+class ClipboardItem : public RefCounted<ClipboardItem> {
 public:
-    virtual ~WebGPUPipeline();
+    ~ClipboardItem();
 
-    static HashMap<WebGPUPipeline*, WebGPUDevice*>& instances(const LockHolder&);
-    static Lock& instancesMutex();
+    enum class PresentationStyle : uint8_t { Unspecified, Inline, Attachment };
 
-    virtual bool isRenderPipeline() const { return false; }
-    virtual bool isComputePipeline() const { return false; }
-
-    ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
-    virtual bool isValid() const = 0;
-
-    struct ShaderData {
-        RefPtr<WebGPUShaderModule> module;
-        String entryPoint;
+    struct Options {
+        PresentationStyle presentationStyle { PresentationStyle::Unspecified };
     };
 
-    virtual bool recompile(const WebGPUDevice&) = 0;
+    static Ref<ClipboardItem> create(Vector<KeyValuePair<String, RefPtr<DOMPromise>>>&&, const Options&);
 
-protected:
-    WebGPUPipeline(WebGPUDevice&, GPUErrorScopes&);
+    Vector<String> types() const;
+    void getType(const String&, Ref<DeferredPromise>&&);
 
-    ScriptExecutionContext* m_scriptExecutionContext;
+    PresentationStyle presentationStyle() const { return m_presentationStyle; };
+    Navigator* navigator();
+
+private:
+    ClipboardItem(Vector<KeyValuePair<String, RefPtr<DOMPromise>>>&&, const Options&);
+
+    PresentationStyle m_presentationStyle { PresentationStyle::Unspecified };
 };
 
 } // namespace WebCore
-
-#define SPECIALIZE_TYPE_TRAITS_WEBGPUPIPELINE(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
-    static bool isType(const WebCore::WebGPUPipeline& pipeline) { return pipeline.predicate; } \
-SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // ENABLE(WEBGPU)

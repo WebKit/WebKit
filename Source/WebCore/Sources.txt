@@ -33,6 +33,10 @@ loader/cache/CachedApplicationManifest.cpp
 
 #endif
 
+Modules/async-clipboard/Clipboard.cpp
+Modules/async-clipboard/ClipboardItem.cpp
+Modules/async-clipboard/NavigatorClipboard.cpp
+
 Modules/beacon/NavigatorBeacon.cpp
 
 Modules/cache/CacheStorageConnection.cpp
@@ -2690,7 +2694,9 @@ JSChannelMergerNode.cpp
 JSChannelSplitterNode.cpp
 JSCharacterData.cpp
 JSChildNode.cpp
+JSClipboard.cpp
 JSClipboardEvent.cpp
+JSClipboardItem.cpp
 JSCloseEvent.cpp
 JSCommandLineAPIHost.cpp
 JSComment.cpp
@@ -3034,6 +3040,7 @@ JSMutationRecord.cpp
 JSNamedNodeMap.cpp
 JSNavigator.cpp
 JSNavigatorBeacon.cpp
+JSNavigatorClipboard.cpp
 JSNavigatorCredentials.cpp
 JSNavigatorGeolocation.cpp
 JSNavigatorGPU.cpp

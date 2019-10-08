@@ -31,6 +31,7 @@ VPATH = \
     $(WebCore)/Modules/airplay \
     $(WebCore)/Modules/applepay \
     $(WebCore)/Modules/applepay/paymentrequest \
+    $(WebCore)/Modules/async-clipboard \
     $(WebCore)/Modules/beacon \
     $(WebCore)/Modules/cache \
     $(WebCore)/Modules/credentialmanagement \
@@ -122,6 +123,9 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/applepay/ApplePayValidateMerchantEvent.idl \
     $(WebCore)/Modules/applepay/paymentrequest/ApplePayModifier.idl \
     $(WebCore)/Modules/applepay/paymentrequest/ApplePayRequest.idl \
+    $(WebCore)/Modules/async-clipboard/Clipboard.idl \
+    $(WebCore)/Modules/async-clipboard/ClipboardItem.idl \
+    $(WebCore)/Modules/async-clipboard/NavigatorClipboard.idl \
     $(WebCore)/Modules/beacon/NavigatorBeacon.idl \
     $(WebCore)/Modules/cache/CacheQueryOptions.idl \
     $(WebCore)/Modules/cache/DOMCache.idl \

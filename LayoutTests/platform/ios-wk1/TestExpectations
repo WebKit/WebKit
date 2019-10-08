@@ -15,6 +15,9 @@ http/tests/navigation/page-cache-domcache-pending-promise.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/request/destination [ Skip ]
 imported/w3c/web-platform-tests/fetch/cross-origin-resource-policy [ Skip ]
 
+# Async Clipboard API is not supported in WebKit1 yet.
+webkit.org/b/202654 editing/async-clipboard [ Skip ]
+
 # Skip WebRTC for now in WK1
 imported/w3c/web-platform-tests/webrtc [ Skip ]
 webrtc [ Skip ]

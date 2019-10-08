@@ -25,50 +25,29 @@
 
 #pragma once
 
-#if ENABLE(WEBGPU)
-
-#include "GPUObjectBase.h"
-#include "WebGPUShaderModule.h"
+#include "Supplementable.h"
 #include <wtf/Forward.h>
-#include <wtf/Lock.h>
 
 namespace WebCore {
 
-class ScriptExecutionContext;
-class GPUErrorScopes;
-class WebGPUDevice;
+class Clipboard;
+class Navigator;
 
-class WebGPUPipeline : public GPUObjectBase {
+class NavigatorClipboard final : public Supplement<Navigator> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~WebGPUPipeline();
+    explicit NavigatorClipboard(Navigator&);
+    ~NavigatorClipboard();
 
-    static HashMap<WebGPUPipeline*, WebGPUDevice*>& instances(const LockHolder&);
-    static Lock& instancesMutex();
+    static RefPtr<Clipboard> clipboard(Navigator&);
+    RefPtr<Clipboard> clipboard();
 
-    virtual bool isRenderPipeline() const { return false; }
-    virtual bool isComputePipeline() const { return false; }
+private:
+    static NavigatorClipboard* from(Navigator&);
+    static const char* supplementName();
 
-    ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
-    virtual bool isValid() const = 0;
-
-    struct ShaderData {
-        RefPtr<WebGPUShaderModule> module;
-        String entryPoint;
-    };
-
-    virtual bool recompile(const WebGPUDevice&) = 0;
-
-protected:
-    WebGPUPipeline(WebGPUDevice&, GPUErrorScopes&);
-
-    ScriptExecutionContext* m_scriptExecutionContext;
+    RefPtr<Clipboard> m_clipboard;
+    Navigator& m_navigator;
 };
 
-} // namespace WebCore
-
-#define SPECIALIZE_TYPE_TRAITS_WEBGPUPIPELINE(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
-    static bool isType(const WebCore::WebGPUPipeline& pipeline) { return pipeline.predicate; } \
-SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // ENABLE(WEBGPU)
+}

@@ -1,0 +1,29 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ experimental:asyncClipboardAPIEnabled=true ] -->
+<html>
+    <head>
+        <script src="../../resources/js-test.js"></script>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+
+        addEventListener("load", async function() {
+            description("Verifies that the wrapper for Navigator's Clipboard remains consistent across GC passes. This test must be run using WebKitTestRunner.");
+
+            subframe = document.querySelector("iframe");
+            subframeNavigator = subframe.contentWindow.navigator;
+            subframeNavigator.clipboard.foo = "bar";
+            subframe.remove();
+            subframe = null;
+
+            if (window.GCController)
+                GCController.collect();
+
+            await new Promise(resolve => setTimeout(resolve, 50));
+            shouldBeEqualToString("subframeNavigator.clipboard.foo", "bar");
+            finishJSTest();
+        });
+    </script>
+    <body>
+        <iframe srcdoc="Hello world"></iframe>
+    </body>
+</html>

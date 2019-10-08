@@ -118,6 +118,8 @@ shouldPrintBackgrounds:
 clipboardAccessPolicy:
   type: ClipboardAccessPolicy
   initial: ClipboardAccessPolicy::RequiresUserGesture
+asyncClipboardAPIEnabled:
+  initial: false
 
 textAreasAreResizable:
   initial: false

@@ -23,52 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "NavigatorClipboard.h"
 
-#if ENABLE(WEBGPU)
-
-#include "GPUObjectBase.h"
-#include "WebGPUShaderModule.h"
-#include <wtf/Forward.h>
-#include <wtf/Lock.h>
+#include "Clipboard.h"
+#include "Navigator.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
-class ScriptExecutionContext;
-class GPUErrorScopes;
-class WebGPUDevice;
+NavigatorClipboard::NavigatorClipboard(Navigator& navigator)
+    : m_navigator(navigator)
+{
+}
 
-class WebGPUPipeline : public GPUObjectBase {
-public:
-    virtual ~WebGPUPipeline();
+NavigatorClipboard::~NavigatorClipboard() = default;
 
-    static HashMap<WebGPUPipeline*, WebGPUDevice*>& instances(const LockHolder&);
-    static Lock& instancesMutex();
+RefPtr<Clipboard> NavigatorClipboard::clipboard(Navigator& navigator)
+{
+    return NavigatorClipboard::from(navigator)->clipboard();
+}
 
-    virtual bool isRenderPipeline() const { return false; }
-    virtual bool isComputePipeline() const { return false; }
+RefPtr<Clipboard> NavigatorClipboard::clipboard()
+{
+    if (!m_clipboard)
+        m_clipboard = Clipboard::create(m_navigator);
+    return m_clipboard;
+}
 
-    ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
-    virtual bool isValid() const = 0;
+NavigatorClipboard* NavigatorClipboard::from(Navigator& navigator)
+{
+    auto* supplement = static_cast<NavigatorClipboard*>(Supplement<Navigator>::from(&navigator, supplementName()));
+    if (!supplement) {
+        auto newSupplement = makeUnique<NavigatorClipboard>(navigator);
+        supplement = newSupplement.get();
+        provideTo(&navigator, supplementName(), WTFMove(newSupplement));
+    }
+    return supplement;
+}
 
-    struct ShaderData {
-        RefPtr<WebGPUShaderModule> module;
-        String entryPoint;
-    };
+const char* NavigatorClipboard::supplementName()
+{
+    return "NavigatorClipboard";
+}
 
-    virtual bool recompile(const WebGPUDevice&) = 0;
-
-protected:
-    WebGPUPipeline(WebGPUDevice&, GPUErrorScopes&);
-
-    ScriptExecutionContext* m_scriptExecutionContext;
-};
-
-} // namespace WebCore
-
-#define SPECIALIZE_TYPE_TRAITS_WEBGPUPIPELINE(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
-    static bool isType(const WebCore::WebGPUPipeline& pipeline) { return pipeline.predicate; } \
-SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // ENABLE(WEBGPU)
+}

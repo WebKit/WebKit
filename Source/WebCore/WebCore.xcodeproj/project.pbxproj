@@ -4875,6 +4875,9 @@
 		F3ABFE0C130E9DA000E7F7D1 /* InstrumentingAgents.h in Headers */ = {isa = PBXBuildFile; fileRef = F3ABFE0B130E9DA000E7F7D1 /* InstrumentingAgents.h */; };
 		F3D461491161D53200CA0D09 /* JSErrorHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = F3D461471161D53200CA0D09 /* JSErrorHandler.h */; };
 		F433E9031DBBDBA200EF0D14 /* StaticPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = F433E9021DBBDBA200EF0D14 /* StaticPasteboard.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F440E77A233D94D70063F9AB /* NavigatorClipboard.h in Headers */ = {isa = PBXBuildFile; fileRef = F440E76F233D94D30063F9AB /* NavigatorClipboard.h */; };
+		F440E77B233D94D70063F9AB /* ClipboardItem.h in Headers */ = {isa = PBXBuildFile; fileRef = F440E770233D94D40063F9AB /* ClipboardItem.h */; };
+		F440E77D233D94D70063F9AB /* Clipboard.h in Headers */ = {isa = PBXBuildFile; fileRef = F440E772233D94D50063F9AB /* Clipboard.h */; };
 		F44A5F591FED38F2007F5944 /* LegacyNSPasteboardTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = F44A5F571FED3830007F5944 /* LegacyNSPasteboardTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F44EBBD91DB5D21400277334 /* StaticRange.h in Headers */ = {isa = PBXBuildFile; fileRef = F44EBBD81DB5D21400277334 /* StaticRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F45C231E1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h in Headers */ = {isa = PBXBuildFile; fileRef = F45C231C1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10093,7 +10096,11 @@
 		836D032B1DA8A13200FFD96B /* JSEventInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEventInit.cpp; sourceTree = "<group>"; };
 		836D032C1DA8A13200FFD96B /* JSEventInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEventInit.h; sourceTree = "<group>"; };
 		836D032D1DA8A13200FFD96B /* JSClipboardEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSClipboardEvent.cpp; sourceTree = "<group>"; };
+		836D032D1DA8A13200FFD96C /* JSClipboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSClipboard.cpp; sourceTree = "<group>"; };
+		836D032D1DA8A13200FFD96D /* JSClipboardItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSClipboardItem.cpp; sourceTree = "<group>"; };
 		836D032E1DA8A13200FFD96B /* JSClipboardEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSClipboardEvent.h; sourceTree = "<group>"; };
+		836D032E1DA8A13200FFD96C /* JSClipboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSClipboard.h; sourceTree = "<group>"; };
+		836D032E1DA8A13200FFD96D /* JSClipboardItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSClipboardItem.h; sourceTree = "<group>"; };
 		836DAA051CEAB7CD00A2B707 /* RenderDescendantIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderDescendantIterator.h; sourceTree = "<group>"; };
 		837056881F50915000D93425 /* JSFileCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileCallback.cpp; sourceTree = "<group>"; };
 		837056891F50915000D93425 /* JSFileSystemEntryCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileSystemEntryCallback.h; sourceTree = "<group>"; };
@@ -15170,6 +15177,15 @@
 		F42CEB54214031EE002DCA72 /* FontAttributeChangesCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FontAttributeChangesCocoa.mm; sourceTree = "<group>"; };
 		F433E9021DBBDBA200EF0D14 /* StaticPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticPasteboard.h; sourceTree = "<group>"; };
 		F433E9041DBBDBC200EF0D14 /* StaticPasteboard.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StaticPasteboard.cpp; sourceTree = "<group>"; };
+		F440E76E233D94D30063F9AB /* Clipboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Clipboard.cpp; sourceTree = "<group>"; };
+		F440E76F233D94D30063F9AB /* NavigatorClipboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorClipboard.h; sourceTree = "<group>"; };
+		F440E770233D94D40063F9AB /* ClipboardItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClipboardItem.h; sourceTree = "<group>"; };
+		F440E771233D94D40063F9AB /* NavigatorClipboard.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorClipboard.idl; sourceTree = "<group>"; };
+		F440E772233D94D50063F9AB /* Clipboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Clipboard.h; sourceTree = "<group>"; };
+		F440E773233D94D50063F9AB /* NavigatorClipboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorClipboard.cpp; sourceTree = "<group>"; };
+		F440E774233D94D60063F9AB /* Clipboard.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Clipboard.idl; sourceTree = "<group>"; };
+		F440E775233D94D60063F9AB /* ClipboardItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClipboardItem.cpp; sourceTree = "<group>"; };
+		F440E777233D94D70063F9AB /* ClipboardItem.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ClipboardItem.idl; sourceTree = "<group>"; };
 		F442850B2140412500CCDA22 /* FontAttributeChanges.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FontAttributeChanges.cpp; sourceTree = "<group>"; };
 		F44A5F571FED3830007F5944 /* LegacyNSPasteboardTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyNSPasteboardTypes.h; sourceTree = "<group>"; };
 		F44EBBD61DB5D1B600277334 /* StaticRange.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StaticRange.idl; sourceTree = "<group>"; };
@@ -16588,6 +16604,7 @@
 				1221E0581C02B409006A1A00 /* Animation */,
 				1AE96A791D1A0A5C00B86768 /* ApplePay */,
 				41FB27881F34461B00795488 /* CacheAPI */,
+				F440E769233D93620063F9AB /* Clipboard */,
 				A83B79100CCB001B000B0825 /* Core */,
 				57C7A68D1E569A8400C67D71 /* CredentialManagement */,
 				E1FF8F61180745C600132674 /* Crypto */,
@@ -21936,6 +21953,7 @@
 				CE26169D187E6554007955F3 /* airplay */,
 				1A58E8611D19D37300C0EA73 /* applepay */,
 				63BD4A5C1F778E8400438722 /* applicationmanifest */,
+				F440E76A233D93C80063F9AB /* async-clipboard */,
 				832150791F27E96B0095B136 /* beacon */,
 				41380C1E1F34366000155FDA /* cache */,
 				57C7A6881E56946D00C67D71 /* credentialmanagement */,
@@ -26793,6 +26811,33 @@
 			path = mac;
 			sourceTree = "<group>";
 		};
+		F440E769233D93620063F9AB /* Clipboard */ = {
+			isa = PBXGroup;
+			children = (
+				836D032D1DA8A13200FFD96C /* JSClipboard.cpp */,
+				836D032E1DA8A13200FFD96C /* JSClipboard.h */,
+				836D032D1DA8A13200FFD96D /* JSClipboardItem.cpp */,
+				836D032E1DA8A13200FFD96D /* JSClipboardItem.h */,
+			);
+			name = Clipboard;
+			sourceTree = "<group>";
+		};
+		F440E76A233D93C80063F9AB /* async-clipboard */ = {
+			isa = PBXGroup;
+			children = (
+				F440E76E233D94D30063F9AB /* Clipboard.cpp */,
+				F440E772233D94D50063F9AB /* Clipboard.h */,
+				F440E774233D94D60063F9AB /* Clipboard.idl */,
+				F440E775233D94D60063F9AB /* ClipboardItem.cpp */,
+				F440E770233D94D40063F9AB /* ClipboardItem.h */,
+				F440E777233D94D70063F9AB /* ClipboardItem.idl */,
+				F440E773233D94D50063F9AB /* NavigatorClipboard.cpp */,
+				F440E76F233D94D30063F9AB /* NavigatorClipboard.h */,
+				F440E771233D94D40063F9AB /* NavigatorClipboard.idl */,
+			);
+			path = "async-clipboard";
+			sourceTree = "<group>";
+		};
 		F48389791E1DD23A0076B7EA /* EditingHistory */ = {
 			isa = PBXGroup;
 			children = (
@@ -28757,8 +28802,10 @@
 				E4A814D41C6DEC4000BF85AC /* ClassChangeInvalidation.h in Headers */,
 				8348BFAC1B85729800912F36 /* ClassCollection.h in Headers */,
 				4107908C1FC3F0330061B27A /* ClientOrigin.h in Headers */,
+				F440E77D233D94D70063F9AB /* Clipboard.h in Headers */,
 				7C3A91E61C963B8800D1A7E3 /* ClipboardAccessPolicy.h in Headers */,
 				85031B400A44EFC700F992E0 /* ClipboardEvent.h in Headers */,
+				F440E77B233D94D70063F9AB /* ClipboardItem.h in Headers */,
 				FB92DF4B15FED08700994433 /* ClipPathOperation.h in Headers */,
 				580371621A66F00A00BAF519 /* ClipRect.h in Headers */,
 				97AABD1314FA09D5007457AE /* CloseEvent.h in Headers */,
@@ -31003,6 +31050,7 @@
 				A9C6E5A60D746458006442E9 /* Navigator.h in Headers */,
 				E12719C70EEEC16800F61213 /* NavigatorBase.h in Headers */,
 				8321507E1F27EA1B0095B136 /* NavigatorBeacon.h in Headers */,
+				F440E77A233D94D70063F9AB /* NavigatorClipboard.h in Headers */,
 				372D3E57216578AE00C5E021 /* NavigatorCredentials.h in Headers */,
 				9711460414EF009A00674FD9 /* NavigatorGeolocation.h in Headers */,
 				5EA725D61ACABD5700EAD17B /* NavigatorMediaDevices.h in Headers */,

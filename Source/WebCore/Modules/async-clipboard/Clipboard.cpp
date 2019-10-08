@@ -23,52 +23,64 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "Clipboard.h"
 
-#if ENABLE(WEBGPU)
-
-#include "GPUObjectBase.h"
-#include "WebGPUShaderModule.h"
-#include <wtf/Forward.h>
-#include <wtf/Lock.h>
+#include "ClipboardItem.h"
+#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
+#include "Navigator.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
-class ScriptExecutionContext;
-class GPUErrorScopes;
-class WebGPUDevice;
+WTF_MAKE_ISO_ALLOCATED_IMPL(Clipboard);
 
-class WebGPUPipeline : public GPUObjectBase {
-public:
-    virtual ~WebGPUPipeline();
+Ref<Clipboard> Clipboard::create(Navigator& navigator)
+{
+    return adoptRef(*new Clipboard(navigator));
+}
 
-    static HashMap<WebGPUPipeline*, WebGPUDevice*>& instances(const LockHolder&);
-    static Lock& instancesMutex();
+Clipboard::Clipboard(Navigator& navigator)
+    : m_navigator(makeWeakPtr(navigator))
+{
+}
 
-    virtual bool isRenderPipeline() const { return false; }
-    virtual bool isComputePipeline() const { return false; }
+Navigator* Clipboard::navigator()
+{
+    return m_navigator.get();
+}
 
-    ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
-    virtual bool isValid() const = 0;
+EventTargetInterface Clipboard::eventTargetInterface() const
+{
+    return ClipboardEventTargetInterfaceType;
+}
 
-    struct ShaderData {
-        RefPtr<WebGPUShaderModule> module;
-        String entryPoint;
-    };
+ScriptExecutionContext* Clipboard::scriptExecutionContext() const
+{
+    return m_navigator ? m_navigator->scriptExecutionContext() : nullptr;
+}
 
-    virtual bool recompile(const WebGPUDevice&) = 0;
+void Clipboard::readText(Ref<DeferredPromise>&& promise)
+{
+    promise->reject(NotSupportedError);
+}
 
-protected:
-    WebGPUPipeline(WebGPUDevice&, GPUErrorScopes&);
+void Clipboard::writeText(const String& data, Ref<DeferredPromise>&& promise)
+{
+    UNUSED_PARAM(data);
+    promise->reject(NotSupportedError);
+}
 
-    ScriptExecutionContext* m_scriptExecutionContext;
-};
+void Clipboard::read(Ref<DeferredPromise>&& promise)
+{
+    promise->reject(NotSupportedError);
+}
 
-} // namespace WebCore
+void Clipboard::write(const Vector<RefPtr<ClipboardItem>>& items, Ref<DeferredPromise>&& promise)
+{
+    UNUSED_PARAM(items);
+    promise->reject(NotSupportedError);
+}
 
-#define SPECIALIZE_TYPE_TRAITS_WEBGPUPIPELINE(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
-    static bool isType(const WebCore::WebGPUPipeline& pipeline) { return pipeline.predicate; } \
-SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // ENABLE(WEBGPU)
+}

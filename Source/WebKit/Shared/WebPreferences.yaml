@@ -853,6 +853,13 @@ CustomPasteboardDataEnabled:
   humanReadableDescription: "Enable custom clipboard types and better security model for clipboard API."
   webcoreBinding: RuntimeEnabledFeatures
 
+AsyncClipboardAPIEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Async clipboard API"
+  humanReadableDescription: "Enable the async clipboard API"
+  category: experimental
+
 WebShareEnabled:
   type: bool
   defaultValue: DEFAULT_WEB_SHARE_ENABLED

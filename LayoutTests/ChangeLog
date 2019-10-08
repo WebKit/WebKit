@@ -1,3 +1,33 @@
+2019-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Introduce bindings for the async Clipboard API
+        https://bugs.webkit.org/show_bug.cgi?id=202622
+        <rdar://problem/56038126>
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/async-clipboard/clipboard-interfaces-expected.txt: Added.
+        * editing/async-clipboard/clipboard-interfaces.html: Added.
+
+        Add a new test to sanity check the new clipboard API interfaces and interface extensions.
+
+        * editing/async-clipboard/clipboard-wrapper-stays-alive-expected.txt: Added.
+        * editing/async-clipboard/clipboard-wrapper-stays-alive.html: Added.
+
+        Add a new test to make sure that the clipboard wrapper stays alive between GC passes, even when the clipboard's
+        navigator is kept alive, independently of its window object.
+
+        * fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/ios-wk1/TestExpectations:
+        * platform/mac-highsierra/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/mac/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/win/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/wincairo/fast/dom/navigator-detached-no-crash-expected.txt:
+
+        Update an existing layout test to include "navigator.clipboard".
+
 2019-10-08  Ali Juma  <ajuma@chromium.org>
 
         Import autofocus Web Platform Tests

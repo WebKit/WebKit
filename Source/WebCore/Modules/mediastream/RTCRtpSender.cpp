@@ -33,6 +33,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "JSDOMPromiseDeferred.h"
 #include "RTCDTMFSender.h"
 #include "RTCDTMFSenderBackend.h"
 #include "RTCRtpCapabilities.h"

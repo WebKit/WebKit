@@ -1,0 +1,51 @@
+Tests the interfaces of the async clipboard API, which include Clipboard, ClipboardItem, and extensions to Navigator.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Testing Clipboard:
+PASS Clipboard instanceof Function is true
+PASS typeof Clipboard is "function"
+PASS navigator.clipboard instanceof Clipboard is true
+PASS Object.getPrototypeOf(navigator.clipboard) === Clipboard.prototype is true
+PASS Clipboard.prototype.readText instanceof Function is true
+PASS Clipboard.prototype.writeText instanceof Function is true
+PASS Clipboard.prototype.read instanceof Function is true
+PASS Clipboard.prototype.write instanceof Function is true
+PASS Clipboard() threw exception TypeError: Illegal constructor.
+PASS new Clipboard() threw exception TypeError: function is not a constructor (evaluating 'new Clipboard()').
+PASS Clipboard.toString() is "function Clipboard() {\n    [native code]\n}"
+PASS navigator.clipboard.toString() is "[object Clipboard]"
+PASS navigator.clipboard.writeText('foo') instanceof Promise is true
+PASS navigator.clipboard.write([ ]) instanceof Promise is true
+PASS navigator.clipboard.read() instanceof Promise is true
+PASS navigator.clipboard.readText() instanceof Promise is true
+PASS navigator.clipboard.write() rejected with TypeError: Not enough arguments
+PASS navigator.clipboard.writeText() rejected with TypeError: Not enough arguments
+PASS navigator.clipboard.write('foo') rejected with TypeError: Value is not a sequence
+PASS navigator.clipboard.write([1, 2, 3]) rejected with TypeError: Type error
+PASS navigator.clipboard.write(new ClipboardItem({ })) rejected with TypeError: Type error
+
+Testing ClipboardItem:
+PASS ClipboardItem instanceof Function is true
+PASS typeof ClipboardItem is "function"
+PASS ClipboardItem.prototype.getType instanceof Function is true
+PASS ClipboardItem() threw exception TypeError: Constructor requires 'new' operator.
+PASS new ClipboardItem() threw exception TypeError: Not enough arguments.
+PASS new ClipboardItem('foo') threw exception TypeError: Type error.
+PASS new ClipboardItem({ }) instanceof ClipboardItem is true
+PASS Object.getPrototypeOf(new ClipboardItem({ })) === ClipboardItem.prototype is true
+PASS new ClipboardItem({ }).types instanceof Array is true
+PASS ClipboardItem.toString() is "function ClipboardItem() {\n    [native code]\n}"
+PASS new ClipboardItem({ }).toString() is "[object ClipboardItem]"
+PASS new ClipboardItem({ }, { foo: 'attachment' }).presentationStyle is "unspecified"
+PASS new ClipboardItem({ }, { presentationStyle: 'AttaCHmenT' }).presentationStyle threw exception TypeError: Type error.
+PASS new ClipboardItem({ }, { presentationStyle: 'unspecified' }).presentationStyle is "unspecified"
+PASS new ClipboardItem({ }, { presentationStyle: 'attachment' }).presentationStyle is "attachment"
+PASS new ClipboardItem({ }, { presentationStyle: 'inline' }).presentationStyle is "inline"
+PASS new ClipboardItem({ }, 'inline') threw exception TypeError: Type error.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

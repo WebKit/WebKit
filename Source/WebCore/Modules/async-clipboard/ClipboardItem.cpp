@@ -23,52 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ClipboardItem.h"
 
-#if ENABLE(WEBGPU)
-
-#include "GPUObjectBase.h"
-#include "WebGPUShaderModule.h"
-#include <wtf/Forward.h>
-#include <wtf/Lock.h>
+#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
+#include "Navigator.h"
 
 namespace WebCore {
 
-class ScriptExecutionContext;
-class GPUErrorScopes;
-class WebGPUDevice;
+ClipboardItem::~ClipboardItem() = default;
 
-class WebGPUPipeline : public GPUObjectBase {
-public:
-    virtual ~WebGPUPipeline();
+ClipboardItem::ClipboardItem(Vector<KeyValuePair<String, RefPtr<DOMPromise>>>&& items, const Options& options)
+    : m_presentationStyle(options.presentationStyle)
+{
+    UNUSED_PARAM(items);
+}
 
-    static HashMap<WebGPUPipeline*, WebGPUDevice*>& instances(const LockHolder&);
-    static Lock& instancesMutex();
+Ref<ClipboardItem> ClipboardItem::create(Vector<KeyValuePair<String, RefPtr<DOMPromise>>>&& data, const Options& options)
+{
+    return adoptRef(*new ClipboardItem(WTFMove(data), options));
+}
 
-    virtual bool isRenderPipeline() const { return false; }
-    virtual bool isComputePipeline() const { return false; }
+Vector<String> ClipboardItem::types() const
+{
+    return { };
+}
 
-    ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
-    virtual bool isValid() const = 0;
+void ClipboardItem::getType(const String& type, Ref<DeferredPromise>&& promise)
+{
+    UNUSED_PARAM(type);
+    promise->reject(NotSupportedError);
+}
 
-    struct ShaderData {
-        RefPtr<WebGPUShaderModule> module;
-        String entryPoint;
-    };
-
-    virtual bool recompile(const WebGPUDevice&) = 0;
-
-protected:
-    WebGPUPipeline(WebGPUDevice&, GPUErrorScopes&);
-
-    ScriptExecutionContext* m_scriptExecutionContext;
-};
+Navigator* ClipboardItem::navigator()
+{
+    // FIXME: When support for Clipboard.read() is implemented, this should instead return the associated Clipboard
+    // object's navigator, if it is associated with a Clipboard.
+    return nullptr;
+}
 
 } // namespace WebCore
-
-#define SPECIALIZE_TYPE_TRAITS_WEBGPUPIPELINE(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
-    static bool isType(const WebCore::WebGPUPipeline& pipeline) { return pipeline.predicate; } \
-SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // ENABLE(WEBGPU)

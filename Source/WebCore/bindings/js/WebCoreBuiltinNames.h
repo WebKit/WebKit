@@ -55,6 +55,8 @@ namespace WebCore {
     macro(CacheStorage) \
     macro(Client) \
     macro(Clients) \
+    macro(Clipboard) \
+    macro(ClipboardItem) \
     macro(Credential) \
     macro(CredentialsContainer) \
     macro(CSSAnimation) \
