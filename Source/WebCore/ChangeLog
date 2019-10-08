@@ -1,3 +1,15 @@
+2019-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Remove unused WebKitSoupRequestGeneric after r250597
+
+        * platform/Soup.cmake:
+        * platform/SourcesSoup.txt:
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::updateSoupRequest const):
+        * platform/network/soup/WebKitSoupRequestGeneric.cpp: Removed.
+        * platform/network/soup/WebKitSoupRequestGeneric.h: Removed.
+        * platform/network/soup/WebKitSoupRequestGenericClient.h: Removed.
+
 2019-10-08  Antti Koivisto  <antti@apple.com>
 
         [CSS Shadow Parts] Internal shadow pseudo elements should work with ::part

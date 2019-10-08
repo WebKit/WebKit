@@ -37,7 +37,6 @@ platform/network/soup/ResourceResponseSoup.cpp
 platform/network/soup/SoupNetworkSession.cpp
 platform/network/soup/SynchronousLoaderClientSoup.cpp
 platform/network/soup/URLSoup.cpp
-platform/network/soup/WebKitSoupRequestGeneric.cpp
 
 platform/soup/PublicSuffixSoup.cpp
 platform/soup/SharedBufferSoup.cpp

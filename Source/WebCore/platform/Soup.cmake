@@ -19,8 +19,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/soup/SoupNetworkProxySettings.h
     platform/network/soup/SoupNetworkSession.h
     platform/network/soup/URLSoup.h
-    platform/network/soup/WebKitSoupRequestGeneric.h
-    platform/network/soup/WebKitSoupRequestGenericClient.h
 )
 
 list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES

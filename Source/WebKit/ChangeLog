@@ -1,3 +1,9 @@
+2019-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Remove unused WebKitSoupRequestGeneric after r250597
+
+        * NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.h:
+
 2019-10-08  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][GTK] Build fails with ENABLE_WEBDRIVER=OFF
