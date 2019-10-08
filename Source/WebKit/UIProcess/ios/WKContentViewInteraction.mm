@@ -1722,14 +1722,29 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     [self _setDoubleTapGesturesEnabled:NO];
 }
 
-- (void)_handleSmartMagnificationInformationForPotentialTap:(uint64_t)requestID renderRect:(const WebCore::FloatRect&)renderRect fitEntireRect:(BOOL)fitEntireRect viewportMinimumScale:(double)viewportMinimumScale viewportMaximumScale:(double)viewportMaximumScale
+- (void)_handleSmartMagnificationInformationForPotentialTap:(uint64_t)requestID renderRect:(const WebCore::FloatRect&)renderRect fitEntireRect:(BOOL)fitEntireRect viewportMinimumScale:(double)viewportMinimumScale viewportMaximumScale:(double)viewportMaximumScale nodeIsRootLevel:(BOOL)nodeIsRootLevel
 {
-    ASSERT(_page->preferences().fasterClicksEnabled());
+    const auto& preferences = _page->preferences();
+
+    ASSERT(preferences.fasterClicksEnabled());
     if (!_potentialTapInProgress)
         return;
 
-    if (_page->preferences().preferFasterClickOverDoubleTap() && _page->preferFasterClickOverDoubleTap()) {
+    // We check both the system preference and the page preference, because we only want this
+    // to apply in "desktop" mode.
+    if (preferences.preferFasterClickOverDoubleTap() && _page->preferFasterClickOverDoubleTap()) {
         RELEASE_LOG(ViewGestures, "Potential tap found an element and fast taps are preferred. Trigger click. (%p)", self);
+        if (preferences.zoomOnDoubleTapWhenRoot() && nodeIsRootLevel) {
+            RELEASE_LOG(ViewGestures, "The click handler was on a root-level element, so don't disable double-tap. (%p)", self);
+            return;
+        }
+
+        if (preferences.alwaysZoomOnDoubleTap()) {
+            RELEASE_LOG(ViewGestures, "DTTZ is forced on, so don't disable double-tap. (%p)", self);
+            return;
+        }
+
+        RELEASE_LOG(ViewGestures, "Give preference to click by disabling double-tap. (%p)", self);
         [self _setDoubleTapGesturesEnabled:NO];
         return;
     }
@@ -2534,8 +2549,13 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (void)_endPotentialTapAndEnableDoubleTapGesturesIfNecessary
 {
-    if (_webView._allowsDoubleTapGestures)
+    if (_webView._allowsDoubleTapGestures) {
+        RELEASE_LOG(ViewGestures, "ending potential tap - double taps are back. (%p)", self);
+
         [self _setDoubleTapGesturesEnabled:YES];
+    }
+
+    RELEASE_LOG(ViewGestures, "Ending potential tap. (%p)", self);
 
     _potentialTapInProgress = NO;
 }

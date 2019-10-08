@@ -1543,8 +1543,26 @@ PreferFasterClickOverDoubleTap:
   type: bool
   defaultValue: DEFAULT_PREFER_FASTER_CLICK_OVER_DOUBLE_TAP
   condition: PLATFORM(IOS_FAMILY)
-  humanReadableName: "Use fast clicks before double tap"
+  humanReadableName: "Fast clicks beat DTTZ"
   humanReadableDescription: "Prefer a faster click over a double tap"
+  webcoreBinding: none
+  category: internal
+
+ZoomOnDoubleTapWhenRoot:
+  type: bool
+  defaultValue: false
+  condition: PLATFORM(IOS_FAMILY)
+  humanReadableName: "DTTZ also when root"
+  humanReadableDescription: "Double taps zoom, even if we dispatched a click on the root nodes"
+  webcoreBinding: none
+  category: internal
+
+AlwaysZoomOnDoubleTap:
+  type: bool
+  defaultValue: false
+  condition: PLATFORM(IOS_FAMILY)
+  humanReadableName: "DTTZ always"
+  humanReadableDescription: "Double taps zoom, even if we dispatched a click anywhere"
   webcoreBinding: none
   category: internal
 
