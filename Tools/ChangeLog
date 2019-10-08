@@ -1,3 +1,11 @@
+2019-10-08  Yury Semikhatsky  <yurys@chromium.org>
+
+        Restore my committer status.
+
+        Uneviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2019-10-08  Kate Cheney  <katherine_cheney@apple.com>
 
         Implement Telemetry and Dumping Routines for SQLite backend (195088)
