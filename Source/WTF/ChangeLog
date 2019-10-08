@@ -1,3 +1,24 @@
+2019-10-08  Robin Morisset  <rmorisset@apple.com>
+
+        dataLogIf should be ALWAYS_INLINE
+        https://bugs.webkit.org/show_bug.cgi?id=202703
+
+        Reviewed by Saam Barati.
+
+        We often have the following pattern:
+        ```
+        static constexpr bool verbose = false;
+        ...
+        dataLogLnIf(verbose, "Something is happening");
+        ```
+        To make sure that these are always properly eliminated I'd like to make dataLogIf/dataLogLnIf ALWAYS_INLINE.
+        
+        We may as well mark the branch as UNLIKELY too, for the cases where the condition comes from Options::verboseSomething() and is only known at runtime.
+
+        * wtf/DataLog.h:
+        (WTF::dataLogIf):
+        (WTF::dataLogLnIf):
+
 2019-10-07  Alexey Proskuryakov  <ap@apple.com>
 
         Build failure in WebHTMLView.mm with the public SDK (Xcode 11 and Mojave)

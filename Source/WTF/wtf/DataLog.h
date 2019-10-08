@@ -52,16 +52,16 @@ void dataLogLn(const Types&... values)
 }
 
 template<typename... Types>
-void dataLogIf(bool shouldLog, const Types&... values)
+ALWAYS_INLINE void dataLogIf(bool shouldLog, const Types&... values)
 {
-    if (shouldLog)
+    if (UNLIKELY(shouldLog))
         dataLog(values...);
 }
 
 template<typename... Types>
-void dataLogLnIf(bool shouldLog, const Types&... values)
+ALWAYS_INLINE void dataLogLnIf(bool shouldLog, const Types&... values)
 {
-    if (shouldLog)
+    if (UNLIKELY(shouldLog))
         dataLogLn(values...);
 }
 
