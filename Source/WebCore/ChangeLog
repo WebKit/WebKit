@@ -1,5 +1,13 @@
 2019-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed, try to fix the WinCairo build after r250824
+
+        * dom/IdleDeadline.h:
+
+        Add a missing include for <wtf/Ref.h>, such that the adoptRef function is defined.
+
+2019-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Unreviewed, try to fix the open source macOS build after r250824
 
         * bindings/js/JSDOMConvertRecord.h:
