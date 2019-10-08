@@ -128,6 +128,7 @@ class Executive(AbstractExecutive):
             while child_process.poll() is None:
                 output_line = child_process.stdout.readline()
                 teed_output.write(unicode_compatibility.decode_for(output_line, str))
+            return child_process.poll()
 
     # FIXME: Remove this deprecated method and move callers to run_command.
     # FIXME: This method is a hack to allow running command which both
