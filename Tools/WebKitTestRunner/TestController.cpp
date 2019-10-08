@@ -964,6 +964,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     WKContextClearCachedCredentials(TestController::singleton().context());
 
+    WKContextResetServiceWorkerFetchTimeoutForTesting(TestController::singleton().context());
+
     WKWebsiteDataStoreClearAllDeviceOrientationPermissions(TestController::websiteDataStore());
 
     clearIndexedDatabases();
@@ -3612,6 +3614,11 @@ void TestController::setAllowedMenuActions(const Vector<String>&)
 void TestController::sendDisplayConfigurationChangedMessageForTesting()
 {
     WKSendDisplayConfigurationChangedMessageForTesting(platformContext());
+}
+
+void TestController::setServiceWorkerFetchTimeoutForTesting(double seconds)
+{
+    WKContextSetServiceWorkerFetchTimeoutForTesting(platformContext(), seconds);
 }
 
 void TestController::setWebAuthenticationMockConfiguration(WKDictionaryRef configuration)

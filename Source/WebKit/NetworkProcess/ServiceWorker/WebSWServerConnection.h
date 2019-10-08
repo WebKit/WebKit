@@ -35,6 +35,7 @@
 #include <WebCore/SWServer.h>
 #include <pal/SessionID.h>
 #include <wtf/HashMap.h>
+#include <wtf/WeakPtr.h>
 
 namespace IPC {
 class FormDataReference;

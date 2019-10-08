@@ -490,6 +490,8 @@ public:
 
     void sendDisplayConfigurationChangedMessageForTesting();
 
+    void setServiceWorkerFetchTimeout(double seconds);
+    
     // WebAuthN
     void setWebAuthenticationMockConfiguration(JSValueRef);
     // FIXME(189876)

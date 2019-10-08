@@ -2628,6 +2628,13 @@ void TestRunner::sendDisplayConfigurationChangedMessageForTesting()
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr, nullptr);
 }
 
+void TestRunner::setServiceWorkerFetchTimeout(double seconds)
+{
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("SetServiceWorkerFetchTimeout"));
+    WKRetainPtr<WKDoubleRef> messageBody = adoptWK(WKDoubleCreate(seconds));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
 // WebAuthN
 void TestRunner::setWebAuthenticationMockConfiguration(JSValueRef configurationValue)
 {

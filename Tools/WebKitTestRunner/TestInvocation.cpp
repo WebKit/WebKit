@@ -1611,6 +1611,13 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetServiceWorkerFetchTimeout")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDoubleGetTypeID());
+        WKDoubleRef seconds = static_cast<WKDoubleRef>(messageBody);
+        TestController::singleton().setServiceWorkerFetchTimeoutForTesting(WKDoubleGetValue(seconds));
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "TerminateNetworkProcess")) {
         ASSERT(!messageBody);
         TestController::singleton().terminateNetworkProcess();

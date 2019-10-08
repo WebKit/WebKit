@@ -1,3 +1,22 @@
+2019-10-08  Brady Eidson  <beidson@apple.com>
+
+        Service Worker Fetch events should time out.
+        https://bugs.webkit.org/show_bug.cgi?id=202188
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/workers/service/basic-timeout.https-expected.txt: Added.
+        * http/tests/workers/service/basic-timeout.https.html: Added.
+        * http/tests/workers/service/resources/basic-timeout-worker.js: Added.
+        (event.event.request.url.indexOf):
+        * http/tests/workers/service/resources/basic-timeout.js: Added.
+        (async.test.finishThisTest):
+        (async.test.try):
+        (async.test.try.checkSuccessAgain):
+        (async.test):
+        * http/tests/workers/service/resources/succeed-fallback-check.php: Added.
+        * http/tests/workers/service/resources/timeout-fallback.html: Added.
+
 2019-10-08  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Accept two values in the overflow shorthand

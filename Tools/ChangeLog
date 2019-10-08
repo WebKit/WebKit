@@ -1,3 +1,21 @@
+2019-10-08  Brady Eidson  <beidson@apple.com>
+
+        Service Worker Fetch events should time out.
+        https://bugs.webkit.org/show_bug.cgi?id=202188
+
+        Reviewed by Alex Christensen.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setServiceWorkerFetchTimeout):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::setServiceWorkerFetchTimeoutForTesting):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2019-10-08  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r250784.

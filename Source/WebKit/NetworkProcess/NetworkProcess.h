@@ -344,6 +344,10 @@ public:
     NetworkConnectionToWebProcess* webProcessConnection(WebCore::ProcessIdentifier) const;
     WebCore::MessagePortChannelRegistry& messagePortChannelRegistry() { return m_messagePortChannelRegistry; }
 
+    void setServiceWorkerFetchTimeoutForTesting(Seconds, CompletionHandler<void()>&&);
+    void resetServiceWorkerFetchTimeoutForTesting(CompletionHandler<void()>&&);
+    Seconds serviceWorkerFetchTimeout() const { return m_serviceWorkerFetchTimeout; }
+
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
     std::unique_ptr<WebCore::NetworkStorageSession> platformCreateDefaultStorageSession() const;
@@ -561,6 +565,9 @@ private:
 
     OptionSet<NetworkCache::CacheOption> m_cacheOptions;
     WebCore::MessagePortChannelRegistry m_messagePortChannelRegistry;
+
+    static const Seconds defaultServiceWorkerFetchTimeout;
+    Seconds m_serviceWorkerFetchTimeout { defaultServiceWorkerFetchTimeout };
 };
 
 } // namespace WebKit

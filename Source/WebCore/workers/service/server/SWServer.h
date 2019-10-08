@@ -148,7 +148,7 @@ public:
 
     void updateWorker(Connection&, const ServiceWorkerJobDataIdentifier&, SWServerRegistration&, const URL&, const String& script, const ContentSecurityPolicyResponseHeaders&, const String& referrerPolicy, WorkerType, HashMap<URL, ServiceWorkerContextData::ImportedScript>&&);
     void terminateWorker(SWServerWorker&);
-    void syncTerminateWorker(SWServerWorker&);
+    WEBCORE_EXPORT void syncTerminateWorker(SWServerWorker&);
     void fireInstallEvent(SWServerWorker&);
     void fireActivateEvent(SWServerWorker&);
 

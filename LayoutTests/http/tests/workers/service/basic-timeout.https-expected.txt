@@ -1,0 +1,14 @@
+
+URL 0 - https://127.0.0.1:8443/workers/service/resources/timeout-fallback.html
+Status code 0 - 200
+Source' header 0 - null
+URL 1 - https://127.0.0.1:8443/workers/service/resources/timeout-no-fallback.html
+Status code 1 - 404
+Source' header 1 - null
+URL 2 - https://127.0.0.1:8443/workers/service/resources/succeed-fallback-check.php
+Status code 2 - 200
+Source' header 2 - network
+URL 3 - https://127.0.0.1:8443/workers/service/resources/succeed-fallback-check.php
+Status code 3 - 200
+Source' header 3 - network
+

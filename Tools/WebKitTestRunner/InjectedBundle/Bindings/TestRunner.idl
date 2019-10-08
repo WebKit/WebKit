@@ -390,6 +390,8 @@ interface TestRunner {
 
     void sendDisplayConfigurationChangedMessageForTesting();
 
+    void setServiceWorkerFetchTimeout(double seconds);
+
     // WebAuthN
     void setWebAuthenticationMockConfiguration(object configuration);
     void addTestKeyToKeychain(DOMString privateKeyBase64, DOMString attrLabel, DOMString applicationTagBase64);

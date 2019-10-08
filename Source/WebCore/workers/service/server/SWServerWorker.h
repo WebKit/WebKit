@@ -116,6 +116,9 @@ public:
     
     SWServerRegistration* registration() const;
 
+    void setHasTimedOutAnyFetchTasks() { m_hasTimedOutAnyFetchTasks = true; }
+    bool hasTimedOutAnyFetchTasks() const { return m_hasTimedOutAnyFetchTasks; }
+
 private:
     SWServerWorker(SWServer&, SWServerRegistration&, const URL&, const String& script, const ContentSecurityPolicyResponseHeaders&, String&& referrerPolicy, WorkerType, ServiceWorkerIdentifier, HashMap<URL, ServiceWorkerContextData::ImportedScript>&&);
 
@@ -136,6 +139,7 @@ private:
     Vector<Function<void(bool)>> m_whenActivatedHandlers;
     HashMap<URL, ServiceWorkerContextData::ImportedScript> m_scriptResourceMap;
     bool m_shouldSkipHandleFetch;
+    bool m_hasTimedOutAnyFetchTasks { false };
 };
 
 } // namespace WebCore

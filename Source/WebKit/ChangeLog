@@ -1,3 +1,57 @@
+2019-10-08  Brady Eidson  <beidson@apple.com>
+
+        Service Worker Fetch events should time out.
+        https://bugs.webkit.org/show_bug.cgi?id=202188
+
+        Reviewed by Alex Christensen.
+
+        When we start a fetch task in the server, we also start a timeout on that fetch task.
+        
+        "Time out" means the fetch task must continue to make progress at the given frequency (once every 60 seconds by default)
+
+        If any given fetch task times out in a service worker instance, that instance loses the right to handle fetches.
+        
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setServiceWorkerFetchTimeoutForTesting):
+        (WebKit::NetworkProcess::resetServiceWorkerFetchTimeoutForTesting):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::serviceWorkerFetchTimeout const):
+        * NetworkProcess/NetworkProcess.messages.in:
+
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::ServiceWorkerFetchTask):
+        (WebKit::ServiceWorkerFetchTask::didReceiveRedirectResponse): 
+        (WebKit::ServiceWorkerFetchTask::didReceiveResponse): 
+        (WebKit::ServiceWorkerFetchTask::didReceiveData): 
+        (WebKit::ServiceWorkerFetchTask::didReceiveFormData): 
+        (WebKit::ServiceWorkerFetchTask::didFinish): 
+        (WebKit::ServiceWorkerFetchTask::didFail): 
+        (WebKit::ServiceWorkerFetchTask::didNotHandle): 
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.h:
+        (WebKit::ServiceWorkerFetchTask::create):
+        (WebKit::ServiceWorkerFetchTask::serviceWorkerIdentifier const):
+        (WebKit::ServiceWorkerFetchTask::wasHandled const):
+        (WebKit::ServiceWorkerFetchTask::ServiceWorkerFetchTask): Deleted.
+
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::startFetch):
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::startFetch):
+        (WebKit::WebSWServerToContextConnection::fetchTaskTimedOut):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetServiceWorkerFetchTimeoutForTesting):
+        (WKContextResetServiceWorkerFetchTimeoutForTesting):
+        * UIProcess/API/C/WKContext.h:
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setServiceWorkerTimeoutForTesting):
+        (WebKit::WebProcessPool::resetServiceWorkerTimeoutForTesting):
+        * UIProcess/WebProcessPool.h:
+
 2019-10-08  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed. Restabilize non-unified build.
