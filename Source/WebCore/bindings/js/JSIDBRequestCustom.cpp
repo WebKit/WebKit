@@ -29,7 +29,9 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBBindingUtilities.h"
+#include "JSDOMConvertIndexedDB.h"
 #include "JSDOMConvertInterface.h"
+#include "JSDOMConvertSequences.h"
 #include "JSIDBCursor.h"
 #include "JSIDBDatabase.h"
 

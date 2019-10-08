@@ -29,6 +29,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTTPParsers.h"
 #include "JSDOMBindingSecurity.h"
+#include "JSDOMConvertCallbacks.h"
 #include "JSDOMConvertNullable.h"
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMConvertStrings.h"

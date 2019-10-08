@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CachedFrame.h"
+#include <wtf/MonotonicTime.h>
 
 namespace WebCore {
 

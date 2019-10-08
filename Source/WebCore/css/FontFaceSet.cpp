@@ -26,10 +26,10 @@
 #include "config.h"
 #include "FontFaceSet.h"
 
+#include "DOMPromiseProxy.h"
 #include "Document.h"
 #include "FontFace.h"
 #include "FrameLoader.h"
-#include "IDLTypes.h"
 #include "JSDOMBinding.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSFontFace.h"

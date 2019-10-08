@@ -28,7 +28,7 @@
 #if ENABLE(WEBGL)
 
 #include "WebGLSharedObject.h"
-#include <wtf/Forward.h>
+#include <wtf/RefPtr.h>
 
 namespace JSC {
 class ArrayBuffer;

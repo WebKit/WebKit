@@ -1,3 +1,30 @@
+2019-10-08  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed. Restabilize non-unified build.
+
+        * Modules/fetch/FetchLoader.h:
+        * animation/DocumentTimeline.cpp:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/js/JSIDBRequestCustom.cpp:
+        * bindings/js/JSRemoteDOMWindowCustom.cpp:
+        * bindings/js/ScriptModuleLoader.h:
+        * bindings/js/WindowProxy.cpp:
+        * css/FontFaceSet.cpp:
+        * css/FontFaceSet.h:
+        * css/typedom/StylePropertyMapReadOnly.cpp:
+        * history/CachedPage.h:
+        * html/canvas/WebGLBuffer.cpp:
+        * html/canvas/WebGLBuffer.h:
+        * html/canvas/WebGLFramebuffer.h:
+        * html/canvas/WebGLProgram.cpp:
+        * html/canvas/WebGLProgram.h:
+        * html/canvas/WebGLShader.h:
+        * inspector/InspectorController.cpp:
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        * workers/Worker.cpp:
+        * workers/service/ServiceWorkerContainer.cpp:
+        * workers/service/ServiceWorkerGlobalScope.cpp:
+
 2019-10-08  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Painting] Add very basic block and inline painting

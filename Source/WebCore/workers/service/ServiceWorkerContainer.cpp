@@ -40,6 +40,7 @@
 #include "Logging.h"
 #include "MessageEvent.h"
 #include "NavigatorBase.h"
+#include "Page.h"
 #include "ResourceError.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"

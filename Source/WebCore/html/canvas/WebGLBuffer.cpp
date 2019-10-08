@@ -30,6 +30,7 @@
 
 #include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
+#include <JavaScriptCore/ArrayBuffer.h>
 
 namespace WebCore {
 

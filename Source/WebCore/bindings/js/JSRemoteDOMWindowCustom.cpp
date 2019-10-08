@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSRemoteDOMWindow.h"
 
+#include "JSDOMExceptionHandling.h"
 #include "JSDOMWindowCustom.h"
 #include "WebCoreJSClientData.h"
 

@@ -39,6 +39,7 @@ class FetchBodyConsumer;
 class FetchLoaderClient;
 class FetchRequest;
 class ScriptExecutionContext;
+class SharedBuffer;
 
 class FetchLoader final : public ThreadableLoaderClient {
 public:

@@ -32,8 +32,12 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
+#include "CSSCustomPropertyValue.h"
 #include "CSSImageValue.h"
+#include "CSSPrimitiveValue.h"
+#include "Document.h"
 #include "TypedOMCSSImageValue.h"
+#include "TypedOMCSSStyleValue.h"
 #include "TypedOMCSSUnitValue.h"
 #include "TypedOMCSSUnparsedValue.h"
 #include <wtf/HashMap.h>

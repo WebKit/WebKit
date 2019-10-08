@@ -33,6 +33,7 @@
 #include "Element.h"
 #include "Frame.h"
 #include "HTMLCanvasElement.h"
+#include "ImageBitmap.h"
 #include "ImageBitmapRenderingContext.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorShaderProgram.h"

@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL)
 
 #include "WebGLSharedObject.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

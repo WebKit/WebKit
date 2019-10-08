@@ -29,6 +29,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "ExtendableEvent.h"
+#include "JSDOMPromiseDeferred.h"
 #include "SWContextManager.h"
 #include "ServiceWorkerClient.h"
 #include "ServiceWorkerClients.h"

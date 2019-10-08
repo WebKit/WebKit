@@ -33,6 +33,7 @@
 #include "DOMWindow.h"
 #include "DeclarativeAnimation.h"
 #include "Document.h"
+#include "EventNames.h"
 #include "GraphicsLayer.h"
 #include "KeyframeEffect.h"
 #include "Microtasks.h"
@@ -42,6 +43,7 @@
 #include "RenderElement.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
+#include <JavaScriptCore/VM.h>
 
 static const Seconds defaultAnimationInterval { 15_ms };
 static const Seconds throttledAnimationInterval { 30_ms };
