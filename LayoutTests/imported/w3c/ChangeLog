@@ -1,3 +1,30 @@
+2019-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Import web-platform-tests/clipboard-apis
+        https://bugs.webkit.org/show_bug.cgi?id=202642
+
+        Reviewed by Ryosuke Niwa.
+
+        Upstream tests and current test expectations from `web-platform-tests/clipboard-apis/`.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/clipboard-apis/META.yml: Added.
+        * web-platform-tests/clipboard-apis/async-interfaces.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/async-interfaces.https.html: Added.
+        * web-platform-tests/clipboard-apis/async-navigator-clipboard-basics.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/async-navigator-clipboard-basics.https.html: Added.
+        * web-platform-tests/clipboard-apis/async-write-dttext-read-dttext-manual.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/async-write-dttext-read-dttext-manual.https.html: Added.
+        * web-platform-tests/clipboard-apis/async-write-dttext-read-text-manual.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/async-write-dttext-read-text-manual.https.html: Added.
+        * web-platform-tests/clipboard-apis/async-write-text-read-dttext-manual.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/async-write-text-read-dttext-manual.https.html: Added.
+        * web-platform-tests/clipboard-apis/async-write-text-read-text-manual.https-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/async-write-text-read-text-manual.https.html: Added.
+        * web-platform-tests/clipboard-apis/clipboard-events-synthetic-expected.txt: Added.
+        * web-platform-tests/clipboard-apis/clipboard-events-synthetic.html: Added.
+        * web-platform-tests/clipboard-apis/w3c-import.log: Added.
+
 2019-10-08  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Accept two values in the overflow shorthand

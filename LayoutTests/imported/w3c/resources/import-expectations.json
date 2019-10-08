@@ -40,7 +40,7 @@
     "web-platform-tests/browser-payment-api": "skip", 
     "web-platform-tests/clear-site-data": "skip", 
     "web-platform-tests/clipboard": "skip", 
-    "web-platform-tests/clipboard-apis": "skip", 
+    "web-platform-tests/clipboard-apis": "import", 
     "web-platform-tests/common": "import", 
     "web-platform-tests/compat": "skip", 
     "web-platform-tests/console": "skip", 

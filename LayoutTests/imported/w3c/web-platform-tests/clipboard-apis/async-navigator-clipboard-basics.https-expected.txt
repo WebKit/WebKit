@@ -1,0 +1,11 @@
+
+PASS navigator.clipboard exists 
+FAIL navigator.clipboard.write(DataTransfer) succeeds function is not a constructor (evaluating 'new DataTransfer()')
+PASS navigator.clipboard.write() fails (expect DataTransfer) 
+PASS navigator.clipboard.write(null) fails (expect DataTransfer) 
+PASS navigator.clipboard.write(DOMString) fails (expect DataTransfer) 
+FAIL navigator.clipboard.writeText(DOMString) succeeds promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS navigator.clipboard.writeText() fails (expect DOMString) 
+FAIL navigator.clipboard.read() succeeds promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL navigator.clipboard.readText() succeeds promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+

@@ -1,0 +1,6 @@
+Note: This is a manual test because it writes/reads to the shared system clipboard and thus cannot be run async with other tests that might interact with the clipboard.
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Verify write and read clipboard (DOMString) Test timed out
+
