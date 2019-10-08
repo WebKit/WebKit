@@ -14,11 +14,9 @@ window.addEventListener("unhandledrejection", event => {
 });
 
 var localChannel;
-var remoteChannel;
 
 function closeDataChannels() {
     localChannel.close();
-    remoteChannel.close();
     closeConnections();
 }
 
@@ -32,14 +30,7 @@ function sendMessages(channel)
         channel.send(longString);
 }
 
-function receiveMessages(event) {
-    if (++counter === 1)
-        return;
-}
-
 promise_test((test) => {
-    counter = 0;
-    var gotEvent = false;
     return new Promise((resolve, reject) => {
         createConnections((localConnection) => {
             localChannel = localConnection.createDataChannel('sendDataChannel');
@@ -49,10 +40,6 @@ promise_test((test) => {
             }
             assert_equals(localChannel.bufferedAmountLowThreshold, 0, "default bufferedAmountLowThreshold value");
         }, (remoteConnection) => {
-            remoteConnection.ondatachannel = (event) => {
-                remoteChannel = event.channel;
-                remoteChannel.onmessage = receiveMessages;
-            };
         });
         setTimeout(() => reject('timed out'), 5000);
     }).then (() => {

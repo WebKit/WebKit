@@ -1,3 +1,16 @@
+2019-10-08  Youenn Fablet  <youenn@apple.com>
+
+        Simplify data channel buffer amount low tests
+        https://bugs.webkit.org/show_bug.cgi?id=202693
+
+        Reviewed by Eric Carlson.
+
+        Neither of these tests need to handle a remoteChannel.
+        Remove the related code and remove variables that are also unneeded.
+
+        * webrtc/datachannel/bufferedAmountLowThreshold-default.html:
+        * webrtc/datachannel/bufferedAmountLowThreshold.html:
+
 2019-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Introduce bindings for the async Clipboard API
