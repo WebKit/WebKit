@@ -33,28 +33,6 @@ from webkitpy.thirdparty import AutoinstallImportHook
 
 
 class ThirdpartyTest(unittest.TestCase):
-    def test_import_hook(self):
-        # Add another import hook and make sure we get called.
-        class MockImportHook(AutoinstallImportHook):
-            def __init__(self):
-                AutoinstallImportHook.__init__(self)
-                self.buildbot_installed = False
-
-            def _install_buildbot(self):
-                self.buildbot_installed = True
-
-        mock_import_hook = MockImportHook()
-        try:
-            # The actual AutoinstallImportHook should be installed before us,
-            # so these modules will get installed before MockImportHook runs.
-            sys.meta_path.append(mock_import_hook)
-            # unused-variable, import failures - pylint: disable-msg=W0612,E0611,F0401
-            from webkitpy.thirdparty.autoinstalled import buildbot
-            self.assertTrue(mock_import_hook.buildbot_installed)
-
-        finally:
-            sys.meta_path.remove(mock_import_hook)
-
     def test_imports(self):
         # This method tests that we can actually import everything.
         # unused-variable, import failures - pylint: disable-msg=W0612,E0611,F0401

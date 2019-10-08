@@ -75,6 +75,9 @@ def main():
     if suite.countTestCases() == 0:
         raise RuntimeError('No matching tests found.')
 
+    from webkitpy.thirdparty import autoinstall_everything
+    autoinstall_everything()
+
     result = unittest.TextTestRunner(verbosity=int(options.verbose) + 1, failfast=options.stop_on_fail, buffer=not options.verbose).run(suite)
     return len(result.errors)
 

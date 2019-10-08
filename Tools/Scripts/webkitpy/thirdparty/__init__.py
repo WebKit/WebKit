@@ -31,7 +31,12 @@ import json
 import os
 import re
 import sys
-import urllib2
+
+if sys.version_info > (3, 0):
+    from urllib.error import URLError
+    from urllib.request import urlopen
+else:
+    from urllib2 import URLError, urlopen
 
 from collections import namedtuple
 from distutils import spawn
@@ -80,7 +85,7 @@ class AutoinstallImportHook(object):
         if not _AUTOINSTALLED_DIR in sys.path:
             sys.path.insert(0, _AUTOINSTALLED_DIR)
 
-    def find_module(self, fullname, _):
+    def find_module(self, fullname, path=None):
         # This method will run before each import. See http://www.python.org/dev/peps/pep-0302/
         if '.autoinstalled' not in fullname:
             return
@@ -121,8 +126,13 @@ class AutoinstallImportHook(object):
             self._install_requests()
 
     def _install_mechanize(self):
-        self._install("https://files.pythonhosted.org/packages/source/m/mechanize/mechanize-0.2.5.tar.gz",
-                             "mechanize-0.2.5/mechanize")
+        self._ensure_autoinstalled_dir_is_in_sys_path()
+        self._install("https://files.pythonhosted.org/packages/0b/02/ae6ceac1baeda530866a85075641cec12989bd8d31af6d5ab4a3e8c92f47/webencodings-0.5.1.tar.gz",
+                             "webencodings-0.5.1/webencodings")
+        self._install("https://files.pythonhosted.org/packages/85/3e/cf449cf1b5004e87510b9368e7a5f1acd8831c2d6691edd3c62a0823f98f/html5lib-1.0.1.tar.gz",
+                             "html5lib-1.0.1/html5lib")
+        self._install("https://files.pythonhosted.org/packages/64/f1/1aa4c96dea14e17a955019b0fc4ac1b8dfbc50e3c90970c1fb8882e74a7b/mechanize-0.4.3.tar.gz",
+                             "mechanize-0.4.3/mechanize")
 
     def _install_keyring(self):
         self._install("https://files.pythonhosted.org/packages/7d/a9/8c6bf60710781ce13a9987c0debda8adab35eb79c6b5525f7fe5240b7a8a/keyring-7.3.1.tar.gz",
@@ -175,14 +185,12 @@ class AutoinstallImportHook(object):
                       "certifi-2019.3.9/certifi")
         self._install("https://files.pythonhosted.org/packages/fc/bb/a5768c230f9ddb03acc9ef3f0d4a3cf93462473795d18e9535498c8f929d/chardet-3.0.4.tar.gz",
                       "chardet-3.0.4/chardet")
-        self._install("https://files.pythonhosted.org/packages/fc/bb/a5768c230f9ddb03acc9ef3f0d4a3cf93462473795d18e9535498c8f929d/chardet-3.0.4.tar.gz",
-                      "chardet-3.0.4/chardet")
         self._install("https://files.pythonhosted.org/packages/ad/13/eb56951b6f7950cadb579ca166e448ba77f9d24efc03edd7e55fa57d04b7/idna-2.8.tar.gz",
                       "idna-2.8/idna")
-        self._install("https://files.pythonhosted.org/packages/b1/53/37d82ab391393565f2f831b8eedbffd57db5a718216f82f1a8b4d381a1c1/urllib3-1.24.1.tar.gz",
-                      "urllib3-1.24.1/src/urllib3")
-        self._install("https://files.pythonhosted.org/packages/52/2c/514e4ac25da2b08ca5a464c50463682126385c4272c18193876e91f4bc38/requests-2.21.0.tar.gz",
-                      "requests-2.21.0/requests")
+        self._install("https://files.pythonhosted.org/packages/ff/44/29655168da441dff66de03952880c6e2d17b252836ff1aa4421fba556424/urllib3-1.25.6.tar.gz",
+                      "urllib3-1.25.6/src/urllib3")
+        self._install("https://files.pythonhosted.org/packages/01/62/ddcf76d1d19885e8579acb1b1df26a852b03472c0e46d2b959a714c90608/requests-2.22.0.tar.gz",
+                      "requests-2.22.0/requests")
 
     def _install_pylint(self):
         self._ensure_autoinstalled_dir_is_in_sys_path()
@@ -223,7 +231,7 @@ class AutoinstallImportHook(object):
 
     def _install_coverage(self):
         self._ensure_autoinstalled_dir_is_in_sys_path()
-        self._install(url="https://files.pythonhosted.org/packages/source/c/coverage/coverage-3.5.1.tar.gz", url_subpath="coverage-3.5.1/coverage")
+        self._install(url="https://files.pythonhosted.org/packages/85/d5/818d0e603685c4a613d56f065a721013e942088047ff1027a632948bdae6/coverage-4.5.4.tar.gz", url_subpath="coverage-4.5.4/coverage")
 
     def _install_twisted_15_5_0(self):
         twisted_dir = self._fs.join(_AUTOINSTALLED_DIR, "twisted_15_5_0")
@@ -233,7 +241,7 @@ class AutoinstallImportHook(object):
 
     @staticmethod
     def greater_than_equal_to_version(minimum, version):
-        for i in xrange(len(minimum.split('.'))):
+        for i in range(len(minimum.split('.'))):
             if int(version.split('.')[i]) > int(minimum.split('.')[i]):
                 return True
             if int(version.split('.')[i]) < int(minimum.split('.')[i]):
@@ -244,7 +252,7 @@ class AutoinstallImportHook(object):
         self._ensure_autoinstalled_dir_is_in_sys_path()
 
         installer = AutoInstaller(prepend_to_search_path=True, target_dir=self._fs.join(_AUTOINSTALLED_DIR, "urllib3"))
-        installer.install(url="https://files.pythonhosted.org/packages/b1/53/37d82ab391393565f2f831b8eedbffd57db5a718216f82f1a8b4d381a1c1/urllib3-1.24.1.tar.gz", url_subpath="urllib3-1.24.1")
+        installer.install(url="https://files.pythonhosted.org/packages/ff/44/29655168da441dff66de03952880c6e2d17b252836ff1aa4421fba556424/urllib3-1.25.6.tar.gz", url_subpath="urllib3-1.25.6")
 
         minimum_version = '3.5.0'
         if os.path.isfile(os.path.join(_AUTOINSTALLED_DIR, 'selenium', '__init__.py')):
@@ -254,7 +262,7 @@ class AutoinstallImportHook(object):
 
         try:
             url, url_subpath = self.get_latest_pypi_url('selenium')
-        except urllib2.URLError:
+        except URLError:
             # URL for installing the minimum required version.
             url = 'https://files.pythonhosted.org/packages/ac/d7/1928416439d066c60f26c87a8d1b78a8edd64c7d05a0aa917fa97a8ee02d/selenium-3.5.0.tar.gz'
             url_subpath = 'selenium-{}/selenium'.format(minimum_version)
@@ -264,14 +272,14 @@ class AutoinstallImportHook(object):
     def install_chromedriver(self):
         filename_postfix = get_driver_filename().chrome
         if filename_postfix != "unsupported":
-            version = urllib2.urlopen(CHROME_DRIVER_URL + 'LATEST_RELEASE').read().strip()
+            version = urlopen(CHROME_DRIVER_URL + 'LATEST_RELEASE').read().strip()
             full_chrome_url = "{base_url}{version}/chromedriver_{os}.zip".format(base_url=CHROME_DRIVER_URL, version=version, os=filename_postfix)
             self.install_binary(full_chrome_url, 'chromedriver')
 
     def install_geckodriver(self):
         filename_postfix = get_driver_filename().firefox
         if filename_postfix != "unsupported":
-            firefox_releases_blob = urllib2.urlopen(FIREFOX_RELEASES_URL)
+            firefox_releases_blob = urlopen(FIREFOX_RELEASES_URL)
             firefox_releases_line_separated = json.dumps(json.load(firefox_releases_blob), indent=0).strip()
             all_firefox_release_urls = "\n".join(re.findall(r'.*browser_download_url.*', firefox_releases_line_separated))
             full_firefox_url = re.findall(r'.*%s.*' % filename_postfix, all_firefox_release_urls)[0].split('"')[3]
@@ -283,7 +291,7 @@ class AutoinstallImportHook(object):
 
     def get_latest_pypi_url(self, package_name, url_subpath_format='{name}-{version}/{lname}'):
         json_url = "https://pypi.org/pypi/%s/json" % package_name
-        response = urllib2.urlopen(json_url, timeout=30)
+        response = urlopen(json_url, timeout=30)
         data = json.load(response)
         url = data['urls'][1]['url']
         subpath = url_subpath_format.format(name=package_name, version=data['info']['version'], lname=package_name.lower())
@@ -292,12 +300,12 @@ class AutoinstallImportHook(object):
     def install_binary(self, url, name):
         self._install(url=url, target_name=name)
         directory = os.path.join(_AUTOINSTALLED_DIR, name)
-        os.chmod(os.path.join(directory, name), 0755)
+        os.chmod(os.path.join(directory, name), 0o755)
         open(os.path.join(directory, '__init__.py'), 'w+').close()
 
 
 _hook = AutoinstallImportHook()
-sys.meta_path.append(_hook)
+sys.meta_path.insert(0, _hook)
 
 
 def autoinstall_everything():
