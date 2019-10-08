@@ -1,3 +1,51 @@
+2019-10-08  youenn fablet  <youenn@apple.com>
+
+        MediaStreamTrack should be a PlatformMediaSessionClient instead of MediaStream
+        https://bugs.webkit.org/show_bug.cgi?id=202631
+
+        Reviewed by Eric Carlson.
+
+        Make MediaStreamTrack a PlatformMediaSessionClient, which allows tracking tracks that are not owned by a stream.
+        MediaStream is no longer a PlatformMediaSessionClient so we move some of MediaStream API implementation to MediaStreamTrack.
+
+        Covered by updated test.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::MediaStream):
+        (WebCore::MediaStream::startProducingData):
+        (WebCore::MediaStream::stopProducingData):
+        (WebCore::MediaStream::statusDidChange):
+        (WebCore::MediaStream::mediaType const): Deleted.
+        (WebCore::MediaStream::presentationType const): Deleted.
+        (WebCore::MediaStream::characteristics const): Deleted.
+        (WebCore::MediaStream::mayResumePlayback): Deleted.
+        (WebCore::MediaStream::suspendPlayback): Deleted.
+        (WebCore::MediaStream::sourceApplicationIdentifier const): Deleted.
+        (WebCore::MediaStream::canProduceAudio const): Deleted.
+        (WebCore::MediaStream::processingUserGestureForMedia const): Deleted.
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::MediaStreamTrack):
+        (WebCore::MediaStreamTrack::configureTrackRendering):
+        (WebCore::MediaStreamTrack::mediaType const):
+        (WebCore::MediaStreamTrack::presentationType const):
+        (WebCore::MediaStreamTrack::characteristics const):
+        (WebCore::MediaStreamTrack::mayResumePlayback):
+        (WebCore::MediaStreamTrack::suspendPlayback):
+        (WebCore::MediaStreamTrack::sourceApplicationIdentifier const):
+        (WebCore::MediaStreamTrack::canProduceAudio const):
+        (WebCore::MediaStreamTrack::processingUserGestureForMedia const):
+        * Modules/mediastream/MediaStreamTrack.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::load):
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::hasVideo const):
+        (WebCore::MediaStreamPrivate::hasAudio const):
+        (WebCore::MediaStreamPrivate::hasCaptureVideoSource const): Deleted.
+        (WebCore::MediaStreamPrivate::hasCaptureAudioSource const): Deleted.
+        * platform/mediastream/MediaStreamPrivate.h:
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+
 2019-10-08  Brady Eidson  <beidson@apple.com>
 
         Service Worker Fetch events should time out.

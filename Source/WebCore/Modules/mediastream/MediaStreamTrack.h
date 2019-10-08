@@ -37,6 +37,7 @@
 #include "MediaProducer.h"
 #include "MediaStreamTrackPrivate.h"
 #include "MediaTrackConstraints.h"
+#include "PlatformMediaSession.h"
 #include <wtf/LoggerHelper.h>
 
 namespace WebCore {
@@ -54,6 +55,7 @@ class MediaStreamTrack
     , public EventTargetWithInlineData
     , public MediaProducer
     , private MediaStreamTrackPrivate::Observer
+    , private PlatformMediaSessionClient
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
@@ -194,6 +196,22 @@ private:
     void trackSettingsChanged(MediaStreamTrackPrivate&) final;
     void trackEnabledChanged(MediaStreamTrackPrivate&) final;
 
+    // PlatformMediaSessionClient
+    PlatformMediaSession::MediaType mediaType() const final;
+    PlatformMediaSession::MediaType presentationType() const final;
+    PlatformMediaSession::CharacteristicsFlags characteristics() const final;
+    void mayResumePlayback(bool shouldResume) final;
+    void suspendPlayback() final;
+    bool canReceiveRemoteControlCommands() const final { return false; }
+    void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*) final { }
+    bool supportsSeeking() const final { return false; }
+    bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const final { return false; }
+    String sourceApplicationIdentifier() const final;
+    bool canProduceAudio() const final;
+    Document* hostingDocument() const final { return document(); }
+    bool processingUserGestureForMedia() const final;
+    bool shouldOverridePauseDuringRouteChange() const final { return true; }
+
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "MediaStreamTrack"; }
     WTFLogChannel& logChannel() const final;
@@ -208,6 +226,7 @@ private:
 
     bool m_ended { false };
     const bool m_isCaptureTrack { false };
+    std::unique_ptr<PlatformMediaSession> m_mediaSession;
 };
 
 typedef Vector<RefPtr<MediaStreamTrack>> MediaStreamTrackVector;

@@ -328,9 +328,7 @@ void MediaPlayerPrivateGStreamer::load(MediaStreamPrivate& stream)
 {
     m_streamPrivate = &stream;
     static Atomic<uint32_t> pipelineId;
-    auto pipelineName = makeString("mediastream-",
-        (stream.hasCaptureVideoSource() || stream.hasCaptureAudioSource()) ? "local" : "remote",
-        "-", pipelineId.exchangeAdd(1));
+    auto pipelineName = makeString("mediastream-", pipelineId.exchangeAdd(1));
 
     loadFull(String("mediastream://") + stream.id(), pipelineName);
     syncOnClock(false);

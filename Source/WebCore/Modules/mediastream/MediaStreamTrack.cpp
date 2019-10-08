@@ -70,6 +70,7 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
     , m_private(WTFMove(privateTrack))
     , m_taskQueue(context)
     , m_isCaptureTrack(m_private->isCaptureTrack())
+    , m_mediaSession(PlatformMediaSession::create(*this))
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     suspendIfNeeded();
@@ -555,6 +556,9 @@ void MediaStreamTrack::trackEnabledChanged(MediaStreamTrackPrivate&)
 void MediaStreamTrack::configureTrackRendering()
 {
     m_taskQueue.enqueueTask([this] {
+        if (m_mediaSession && m_private->type() == RealtimeMediaSource::Type::Audio)
+            m_mediaSession->canProduceAudioChanged();
+
         if (auto document = this->document())
             document->updateIsPlayingMedia();
     });
@@ -592,6 +596,55 @@ AudioSourceProvider* MediaStreamTrack::audioSourceProvider()
 Document* MediaStreamTrack::document() const
 {
     return downcast<Document>(scriptExecutionContext());
+}
+
+PlatformMediaSession::MediaType MediaStreamTrack::mediaType() const
+{
+    return (isCaptureTrack() && canProduceAudio()) ? PlatformMediaSession::MediaStreamCapturingAudio : PlatformMediaSession::None;
+}
+
+PlatformMediaSession::MediaType MediaStreamTrack::presentationType() const
+{
+    return mediaType();
+}
+
+PlatformMediaSession::CharacteristicsFlags MediaStreamTrack::characteristics() const
+{
+    if (!m_private->isActive())
+        return PlatformMediaSession::HasNothing;
+
+    return m_private->type() == RealtimeMediaSource::Type::Audio ? PlatformMediaSession::HasAudio : PlatformMediaSession::HasVideo;
+}
+
+void MediaStreamTrack::mayResumePlayback(bool)
+{
+    // FIXME: should a media stream track pay attention to this directly, or only when attached to a media element?
+}
+
+void MediaStreamTrack::suspendPlayback()
+{
+    // FIXME: should a media stream track pay attention to this directly, or only when attached to a media element?
+}
+
+String MediaStreamTrack::sourceApplicationIdentifier() const
+{
+    auto* document = this->document();
+    if (document && document->frame()) {
+        if (auto* networkingContext = document->frame()->loader().networkingContext())
+            return networkingContext->sourceApplicationIdentifier();
+    }
+
+    return emptyString();
+}
+
+bool MediaStreamTrack::canProduceAudio() const
+{
+    return m_private->type() == RealtimeMediaSource::Type::Audio && !ended() && !muted();
+}
+
+bool MediaStreamTrack::processingUserGestureForMedia() const
+{
+    return document() ? document()->processingUserGestureForMedia() : false;
 }
 
 #if !RELEASE_LOG_DISABLED

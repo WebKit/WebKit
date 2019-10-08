@@ -202,7 +202,7 @@ bool MediaStreamPrivate::isProducingData() const
 bool MediaStreamPrivate::hasVideo() const
 {
     for (auto& track : m_trackSet.values()) {
-        if (track->type() == RealtimeMediaSource::Type::Video && track->enabled() && !track->ended())
+        if (track->type() == RealtimeMediaSource::Type::Video && track->isActive())
             return true;
     }
     return false;
@@ -211,25 +211,7 @@ bool MediaStreamPrivate::hasVideo() const
 bool MediaStreamPrivate::hasAudio() const
 {
     for (auto& track : m_trackSet.values()) {
-        if (track->type() == RealtimeMediaSource::Type::Audio && track->enabled() && !track->ended())
-            return true;
-    }
-    return false;
-}
-
-bool MediaStreamPrivate::hasCaptureVideoSource() const
-{
-    for (auto& track : m_trackSet.values()) {
-        if (track->type() == RealtimeMediaSource::Type::Video && track->isCaptureTrack())
-            return true;
-    }
-    return false;
-}
-
-bool MediaStreamPrivate::hasCaptureAudioSource() const
-{
-    for (auto& track : m_trackSet.values()) {
-        if (track->type() == RealtimeMediaSource::Type::Audio && track->isCaptureTrack() && !track->ended() && !track->muted())
+        if (track->type() == RealtimeMediaSource::Type::Audio && track->isActive())
             return true;
     }
     return false;

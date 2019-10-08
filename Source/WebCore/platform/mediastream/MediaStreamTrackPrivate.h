@@ -75,6 +75,8 @@ public:
     const String& id() const { return m_id; }
     const String& label() const;
 
+    bool isActive() const { return enabled() && !ended() && !muted(); }
+
     bool ended() const { return m_isEnded; }
 
     enum class HintValue { Empty, Speech, Music, Motion, Detail, Text };
