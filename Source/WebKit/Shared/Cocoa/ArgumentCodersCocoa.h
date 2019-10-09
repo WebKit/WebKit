@@ -84,7 +84,7 @@ Optional<RetainPtr<T>> decode(Decoder& decoder, NSArray<Class> *allowedClasses)
 template<typename T, typename>
 Optional<RetainPtr<T>> decode(Decoder& decoder, Class allowedClass)
 {
-    return decode<T>(decoder, @[ allowedClass ]);
+    return decode<T>(decoder, allowedClass ? @[ allowedClass ] : @[ ]);
 }
 
 template<typename T> struct ArgumentCoder<T *> {

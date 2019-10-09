@@ -1,3 +1,26 @@
+2019-10-09  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] IPC::decode should gracefully handle a nil allowed class
+        https://bugs.webkit.org/show_bug.cgi?id=202753
+
+        Reviewed by Geoffrey Garen.
+
+        If IPC::decode is called with a nil allowed class, an NSInvalidArgumentException will be
+        thrown when trying to create an NSArray literal with a nil value. Depending on who calls
+        IPC::decode, this exception might or might not be caught, leading to dropped messages or
+        crashes.
+
+        One case of this happening is tracked by rdar://problem/55839467. In this case, the nil
+        allowed class was due to a build misconfiguration, and the exception caused the UI process
+        to not respond to a synchronous IPC message, hanging the WebContent process.
+
+        rdar://problem/55839467 was resolved by fixing the build misconfiguration, but this patch
+        improves IPC::decode so that a nil allowed class results in a message decoding failure
+        rather than a maybe-caught NSException.
+
+        * Shared/Cocoa/ArgumentCodersCocoa.h:
+        (IPC::decode):
+
 2019-10-09  youenn fablet  <youenn@apple.com>
 
         Remove testRunner.setWebRTCUnifiedPlanEnabled
