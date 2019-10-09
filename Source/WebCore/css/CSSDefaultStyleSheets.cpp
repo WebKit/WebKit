@@ -80,13 +80,20 @@ StyleSheetContents* CSSDefaultStyleSheets::dataListStyleSheet;
 StyleSheetContents* CSSDefaultStyleSheets::colorInputStyleSheet;
 #endif
 
-// FIXME: It would be nice to use some mechanism that guarantees this is in sync with the real UA stylesheet.
-#if HAVE(OS_DARK_MODE_SUPPORT)
-// The only difference in the simple style sheet for dark mode is the addition of html{color:text}.
-static const char* simpleUserAgentStyleSheet = "html,body,div{display:block}html{color:text}head{display:none}body{margin:8px}div:focus,span:focus,a:focus{outline:auto 5px -webkit-focus-ring-color}a:any-link{color:-webkit-link;text-decoration:underline}a:any-link:active{color:-webkit-activelink}";
+#if PLATFORM(IOS_FAMILY)
+#define DEFAULT_OUTLINE_WIDTH "3px"
 #else
-static const char* simpleUserAgentStyleSheet = "html,body,div{display:block}head{display:none}body{margin:8px}div:focus,span:focus,a:focus{outline:auto 5px -webkit-focus-ring-color}a:any-link{color:-webkit-link;text-decoration:underline}a:any-link:active{color:-webkit-activelink}";
+#define DEFAULT_OUTLINE_WIDTH "5px"
 #endif
+
+#if HAVE(OS_DARK_MODE_SUPPORT)
+#define CSS_DARK_MODE_ADDITION "html{color:text}"
+#else
+#define CSS_DARK_MODE_ADDITION ""
+#endif
+
+// FIXME: It would be nice to use some mechanism that guarantees this is in sync with the real UA stylesheet.
+static const char* simpleUserAgentStyleSheet = "html,body,div{display:block}" CSS_DARK_MODE_ADDITION "head{display:none}body{margin:8px}div:focus,span:focus,a:focus{outline:auto " DEFAULT_OUTLINE_WIDTH " -webkit-focus-ring-color}a:any-link{color:-webkit-link;text-decoration:underline}a:any-link:active{color:-webkit-activelink}";
 
 static inline bool elementCanUseSimpleDefaultStyle(const Element& element)
 {

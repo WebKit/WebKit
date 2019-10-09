@@ -1,3 +1,21 @@
+2019-10-09  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] REGRESSION (r250398) Layout Test fast/history/page-cache-element-state-focused.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=202712
+        <rdar://problem/56082428>
+
+        Reviewed by Antti Koivisto.
+
+        The test was failing depending on the order in which the tests were executed. The reason is that
+        elements would either use the full UA stylesheet (html.css) or the simple one in CSSDefaultStyleSheets.cpp.
+        Unfortunately, the outline-width was different on iOS between the simple stylesheet and the full one, causing
+        the test output to look different depending on which stylesheet was used.
+
+        Address the issue by making sure that the outline-width is 3px on IOS_FAMILY in the simple stylesheet, to
+        be consistent with the value in the full stylesheet (html.css).
+
+        * css/CSSDefaultStyleSheets.cpp:
+
 2019-10-09  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Painting] Decouple content and decoration painting
