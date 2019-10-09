@@ -45,6 +45,8 @@ class WorkerLoaderProxy {
 public:
     virtual ~WorkerLoaderProxy() = default;
 
+    virtual bool isWorkerMessagingProxy() const { return false; }
+
     // Creates a cache storage connection to be used on the main thread. Method must be called on the main thread.
     virtual Ref<CacheStorageConnection> createCacheStorageConnection() = 0;
 

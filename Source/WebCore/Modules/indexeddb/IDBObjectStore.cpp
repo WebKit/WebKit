@@ -51,8 +51,25 @@
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/Locker.h>
 
+#if ENABLE(WEB_CRYPTO)
+#include "JSCryptoKey.h"
+#endif
+
 namespace WebCore {
 using namespace JSC;
+
+#if ENABLE(WEB_CRYPTO)
+namespace {
+static inline void setIsWrappingRequiredForCryptoKey(VM& vm, const JSValue& value)
+{
+    if (!value.isObject())
+        return;
+    auto* obj = asObject(value);
+    if (auto* key = JSCryptoKey::toWrapped(vm, obj))
+        key->setIsWrappingRequired();
+}
+}
+#endif
 
 IDBObjectStore::IDBObjectStore(ScriptExecutionContext& context, const IDBObjectStoreInfo& info, IDBTransaction& transaction)
     : ActiveDOMObject(&context)
@@ -339,6 +356,9 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::putOrAdd(ExecState& state, JSValue 
     if (m_transaction.isReadOnly())
         return Exception { ReadonlyError, "Failed to store record in an IDBObjectStore: The transaction is read-only."_s };
 
+#if ENABLE(WEB_CRYPTO)
+    setIsWrappingRequiredForCryptoKey(vm, value);
+#endif
     auto serializedValue = SerializedScriptValue::create(state, value);
     if (UNLIKELY(scope.exception()))
         return Exception { DataCloneError, "Failed to store record in an IDBObjectStore: An object could not be cloned."_s };
