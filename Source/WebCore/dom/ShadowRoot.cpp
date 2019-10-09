@@ -258,13 +258,13 @@ static Optional<std::pair<AtomString, AtomString>> parsePartMapping(StringView m
 {
     const auto end = mappingString.length();
 
-    auto skipWhitespace = [&] (auto position) {
+    auto skipWhitespace = [&](auto position) {
         while (position < end && isHTMLSpace(mappingString[position]))
             ++position;
         return position;
     };
 
-    auto collectValue = [&] (auto position) {
+    auto collectValue = [&](auto position) {
         while (position < end && (!isHTMLSpace(mappingString[position]) && mappingString[position] != ':'))
             ++position;
         return position;
@@ -301,8 +301,13 @@ static Optional<std::pair<AtomString, AtomString>> parsePartMapping(StringView m
     return std::make_pair(firstPart, secondPart);
 }
 
-static void parsePartMappingsList(ShadowRoot::PartMappings& mappings, StringView mappingsListString)
+static ShadowRoot::PartMappings parsePartMappingsList(StringView mappingsListString)
 {
+    if (!RuntimeEnabledFeatures::sharedFeatures().cssShadowPartsEnabled())
+        return { };
+
+    ShadowRoot::PartMappings mappings;
+
     const auto end = mappingsListString.length();
 
     size_t begin = 0;
@@ -320,16 +325,15 @@ static void parsePartMappingsList(ShadowRoot::PartMappings& mappings, StringView
 
         begin = mappingEnd + 1;
     }
+
+    return mappings;
 }
 
 const ShadowRoot::PartMappings& ShadowRoot::partMappings() const
 {
     if (!m_partMappings) {
-        m_partMappings = PartMappings();
-
         auto exportpartsValue = host()->attributeWithoutSynchronization(HTMLNames::exportpartsAttr);
-        if (!exportpartsValue.isEmpty() && RuntimeEnabledFeatures::sharedFeatures().cssShadowPartsEnabled())
-            parsePartMappingsList(*m_partMappings, exportpartsValue);
+        m_partMappings = parsePartMappingsList(exportpartsValue);
     }
 
     return *m_partMappings;
