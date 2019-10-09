@@ -29,7 +29,7 @@ from resultsdbpy.flask_support.util import AssertRequest, query_as_kwargs, limit
 
 
 class TestController(HasCommitContext):
-    DEFAULT_LIMIT = 100
+    DEFAULT_LIMIT = 5000
 
     def __init__(self, test_context):
         super(TestController, self).__init__(test_context.commit_context)

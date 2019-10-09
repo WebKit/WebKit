@@ -191,7 +191,7 @@ function BranchSelector(callback) {
         </div>`;
 }
 
-function LimitSlider(callback, max = 10000, defaultValue = 1000) {
+function LimitSlider(callback, max = 50000, defaultValue = 5000) {
     const limitModifier = new QueryModifier('limit');
     const startingValue = limitModifier.current().length ? limitModifier.current()[limitModifier.current().length -1]:defaultValue;
 

@@ -50,7 +50,7 @@ def time_range_for_query():
 
 
 class SuiteController(HasCommitContext):
-    DEFAULT_LIMIT = 100
+    DEFAULT_LIMIT = 5000
 
     def __init__(self, suite_context):
         super(SuiteController, self).__init__(suite_context.commit_context)

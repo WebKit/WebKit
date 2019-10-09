@@ -1,3 +1,19 @@
+2019-10-09  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Increase default limit for test results
+        https://bugs.webkit.org/show_bug.cgi?id=202757
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/controller/suite_controller.py:
+        (SuiteController): Increase DEFAULT_LIMIT.
+        * resultsdbpy/resultsdbpy/controller/test_controller.py:
+        (TestController): Ditto.
+        * resultsdbpy/resultsdbpy/view/static/js/commit.js:
+        (_CommitBank.prototype._load): Make commit shards larger.
+        * resultsdbpy/resultsdbpy/view/static/js/drawer.js: Increase default slider size.
+        * resultsdbpy/resultsdbpy/view/templates/commits.html: Keep smaller slider size.
+
 2019-10-09  Dean Jackson  <dino@apple.com>
 
         Provide an alternate command-line flag for timeout in run-webkit-tests

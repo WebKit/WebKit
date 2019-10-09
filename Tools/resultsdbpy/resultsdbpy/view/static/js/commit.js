@@ -248,7 +248,7 @@ class _CommitBank {
         if (endUuid <= beginUuid)
             return;
 
-        const limit = 250;
+        const limit = 2500;
         const query = paramsToQuery({
             branch: [...this._branches],
             limit: [limit],
