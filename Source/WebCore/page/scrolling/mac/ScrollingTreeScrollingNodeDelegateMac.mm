@@ -312,7 +312,7 @@ void ScrollingTreeScrollingNodeDelegateMac::deferTestsForReason(WheelEventTestTr
     if (!scrollingNode().expectsWheelEventTestTrigger())
         return;
 
-    LOG(WheelEventTestTriggers, "  ScrollingTreeScrollingNodeDelegateMac::deferTestsForReason: STARTING deferral for %p because of %d", identifier, reason);
+    LOG_WITH_STREAM(WheelEventTestTriggers, stream << isMainThread() << "  ScrollingTreeScrollingNodeDelegateMac::deferTestsForReason: STARTING deferral for " << identifier << " because of " << reason);
     scrollingTree().deferTestsForReason(identifier, reason);
 }
     
@@ -321,7 +321,7 @@ void ScrollingTreeScrollingNodeDelegateMac::removeTestDeferralForReason(WheelEve
     if (!scrollingNode().expectsWheelEventTestTrigger())
         return;
     
-    LOG(WheelEventTestTriggers, "   ScrollingTreeScrollingNodeDelegateMac::deferTestsForReason: ENDING deferral for %p because of %d", identifier, reason);
+    LOG_WITH_STREAM(WheelEventTestTriggers, stream << isMainThread() << "  ScrollingTreeScrollingNodeDelegateMac::deferTestsForReason: ENDING deferral for " << identifier << " because of " << reason);
     scrollingTree().removeTestDeferralForReason(identifier, reason);
 }
 

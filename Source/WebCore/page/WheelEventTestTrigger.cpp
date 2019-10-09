@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "WheelEventTestTrigger.h"
 
 #include "Logging.h"
+#include <wtf/text/TextStream.h>
 
 #if !LOG_DISABLED
 #include <wtf/text/CString.h>
@@ -49,7 +50,7 @@ void WheelEventTestTrigger::clearAllTestDeferrals()
     m_deferTestTriggerReasons.clear();
     m_testNotificationCallback = nullptr;
     m_testTriggerTimer.stop();
-    LOG(WheelEventTestTriggers, "      (=) WheelEventTestTrigger::clearAllTestDeferrals: cleared all test state.");
+    LOG_WITH_STREAM(WheelEventTestTriggers, stream << "      (=) WheelEventTestTrigger::clearAllTestDeferrals: cleared all test state.");
 }
 
 void WheelEventTestTrigger::setTestCallbackAndStartNotificationTimer(WTF::Function<void()>&& functionCallback)
@@ -66,12 +67,11 @@ void WheelEventTestTrigger::setTestCallbackAndStartNotificationTimer(WTF::Functi
 void WheelEventTestTrigger::deferTestsForReason(ScrollableAreaIdentifier identifier, DeferTestTriggerReason reason)
 {
     std::lock_guard<Lock> lock(m_testTriggerMutex);
-    auto it = m_deferTestTriggerReasons.find(identifier);
-    if (it == m_deferTestTriggerReasons.end())
-        it = m_deferTestTriggerReasons.add(identifier, DeferTestTriggerReasonSet()).iterator;
+    m_deferTestTriggerReasons.ensure(identifier, [] {
+        return OptionSet<DeferTestTriggerReason>();
+    }).iterator->value.add(reason);
     
-    LOG(WheelEventTestTriggers, "      (=) WheelEventTestTrigger::deferTestsForReason: id=%p, reason=%d", identifier, reason);
-    it->value.insert(reason);
+    LOG_WITH_STREAM(WheelEventTestTriggers, stream << "      (=) WheelEventTestTrigger::deferTestsForReason: id=" << identifier << ", reason=" << reason);
 }
 
 void WheelEventTestTrigger::removeTestDeferralForReason(ScrollableAreaIdentifier identifier, DeferTestTriggerReason reason)
@@ -81,31 +81,12 @@ void WheelEventTestTrigger::removeTestDeferralForReason(ScrollableAreaIdentifier
     if (it == m_deferTestTriggerReasons.end())
         return;
 
-    LOG(WheelEventTestTriggers, "      (=) WheelEventTestTrigger::removeTestDeferralForReason: id=%p, reason=%d", identifier, reason);
-    it->value.erase(reason);
+    LOG_WITH_STREAM(WheelEventTestTriggers, stream << "      (=) WheelEventTestTrigger::removeTestDeferralForReason: id=" << identifier << ", reason=" << reason);
+    it->value.remove(reason);
     
-    if (it->value.empty())
+    if (it->value.isEmpty())
         m_deferTestTriggerReasons.remove(it);
 }
-
-#if !LOG_DISABLED
-
-static void dumpState(WTF::HashMap<WheelEventTestTrigger::ScrollableAreaIdentifier, WheelEventTestTrigger::DeferTestTriggerReasonSet> reasons)
-{
-    LOG(WheelEventTestTriggers, "   WheelEventTestTrigger::dumpState:");
-    for (const auto& scrollRegion : reasons) {
-        LOG(WheelEventTestTriggers, "   For scroll region %p", scrollRegion.key);
-        StringBuilder reasons;
-        for (const auto& reason : scrollRegion.value) {
-            if (!reasons.isEmpty())
-                reasons.appendLiteral(", ");
-            reasons.appendNumber(static_cast<unsigned>(reason));
-        }
-        LOG(WheelEventTestTriggers, "     Reasons: %s", reasons.toString().utf8().data());
-    }
-}
-
-#endif
     
 void WheelEventTestTrigger::triggerTestTimerFired()
 {
@@ -114,10 +95,7 @@ void WheelEventTestTrigger::triggerTestTimerFired()
     {
         std::lock_guard<Lock> lock(m_testTriggerMutex);
         if (!m_deferTestTriggerReasons.isEmpty()) {
-#if !LOG_DISABLED
-            if (isLogChannelEnabled("WheelEventTestTriggers"))
-                dumpState(m_deferTestTriggerReasons);
-#endif
+            LOG_WITH_STREAM(WheelEventTestTriggers, stream << "  WheelEventTestTrigger::triggerTestTimerFired - scrolling still active, reasons " << m_deferTestTriggerReasons);
             return;
         }
 
@@ -126,9 +104,28 @@ void WheelEventTestTrigger::triggerTestTimerFired()
 
     m_testTriggerTimer.stop();
 
-    LOG(WheelEventTestTriggers, "  WheelEventTestTrigger::triggerTestTimerFired: FIRING TEST");
+    LOG_WITH_STREAM(WheelEventTestTriggers, stream << "  WheelEventTestTrigger::triggerTestTimerFired: scrolling is idle, FIRING TEST");
     if (functionCallback)
         functionCallback();
 }
 
+TextStream& operator<<(TextStream& ts, WheelEventTestTrigger::DeferTestTriggerReason reason)
+{
+    switch (reason) {
+    case WheelEventTestTrigger::RubberbandInProgress: ts << "rubberbanding"; break;
+    case WheelEventTestTrigger::ScrollSnapInProgress: ts << "scroll-snapping"; break;
+    case WheelEventTestTrigger::ScrollingThreadSyncNeeded: ts << "scrolling thread sync needed"; break;
+    case WheelEventTestTrigger::ContentScrollInProgress: ts << "content scrolling"; break;
+    }
+    return ts;
 }
+
+TextStream& operator<<(TextStream& ts, const WheelEventTestTrigger::ScrollableAreaReasonMap& reasonMap)
+{
+    for (const auto& regionReasonsPair : reasonMap)
+        ts << "   scroll region: " << regionReasonsPair.key << " reasons: " << regionReasonsPair.value;
+
+    return ts;
+}
+
+} // namespace WebCore

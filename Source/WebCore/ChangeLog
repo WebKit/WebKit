@@ -640,6 +640,32 @@
         * dom/ActiveDOMObject.h:
         * dom/Document.h:
 
+2019-10-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up WheelEventTestTriggers logging
+        https://bugs.webkit.org/show_bug.cgi?id=202764
+
+        Reviewed by Tim Horton.
+
+        Make DeferTestTriggerReason a bit set, and use OptionSet<> rather than StdSet. Make
+        DeferTestTriggerReason and ScrollableAreaReasonMap loggable, and simplify the logging.
+
+        * page/WheelEventTestTrigger.cpp:
+        (WebCore::WheelEventTestTrigger::clearAllTestDeferrals):
+        (WebCore::WheelEventTestTrigger::deferTestsForReason):
+        (WebCore::WheelEventTestTrigger::removeTestDeferralForReason):
+        (WebCore::WheelEventTestTrigger::triggerTestTimerFired):
+        (WebCore::operator<<):
+        (WebCore::dumpState): Deleted.
+        * page/WheelEventTestTrigger.h:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+        (WebCore::AsyncScrollingCoordinator::deferTestsForReason const):
+        (WebCore::AsyncScrollingCoordinator::removeTestDeferralForReason const):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::deferTestsForReason const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::removeTestDeferralForReason const):
+
 2019-10-08  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed. Restabilize non-unified build.

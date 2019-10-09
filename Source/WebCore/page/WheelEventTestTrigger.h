@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,22 +47,29 @@ public:
     WEBCORE_EXPORT void clearAllTestDeferrals();
     
     enum DeferTestTriggerReason {
-        RubberbandInProgress,
-        ScrollSnapInProgress,
-        ScrollingThreadSyncNeeded,
-        ContentScrollInProgress
+        RubberbandInProgress        = 1 << 0,
+        ScrollSnapInProgress        = 1 << 1,
+        ScrollingThreadSyncNeeded   = 1 << 2,
+        ContentScrollInProgress     = 1 << 3
     };
-    using DeferTestTriggerReasonSet = StdSet<DeferTestTriggerReason>;
     typedef const void* ScrollableAreaIdentifier;
-    void WEBCORE_EXPORT deferTestsForReason(ScrollableAreaIdentifier, DeferTestTriggerReason);
-    void WEBCORE_EXPORT removeTestDeferralForReason(ScrollableAreaIdentifier, DeferTestTriggerReason);
+
+    WEBCORE_EXPORT void deferTestsForReason(ScrollableAreaIdentifier, DeferTestTriggerReason);
+    WEBCORE_EXPORT void removeTestDeferralForReason(ScrollableAreaIdentifier, DeferTestTriggerReason);
+    
     void triggerTestTimerFired();
+
+    using ScrollableAreaReasonMap = WTF::HashMap<ScrollableAreaIdentifier, OptionSet<DeferTestTriggerReason>>;
 
 private:
     WTF::Function<void()> m_testNotificationCallback;
     RunLoop::Timer<WheelEventTestTrigger> m_testTriggerTimer;
     mutable Lock m_testTriggerMutex;
-    WTF::HashMap<ScrollableAreaIdentifier, DeferTestTriggerReasonSet> m_deferTestTriggerReasons;
+    
+    ScrollableAreaReasonMap m_deferTestTriggerReasons;
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, WheelEventTestTrigger::DeferTestTriggerReason);
+WTF::TextStream& operator<<(WTF::TextStream&, const WheelEventTestTrigger::ScrollableAreaReasonMap&);
 
 } // namespace WebCore

@@ -138,7 +138,7 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView& frameView)
 
     auto* page = frameView.frame().page();
     if (page && page->expectsWheelEventTriggers()) {
-        LOG(WheelEventTestTriggers, "    AsyncScrollingCoordinator::frameViewLayoutUpdated: Expects wheel event test trigger=%d", page->expectsWheelEventTriggers());
+        LOG_WITH_STREAM(WheelEventTestTriggers, stream << "    AsyncScrollingCoordinator::frameViewLayoutUpdated: Expects wheel event test trigger: " << page->expectsWheelEventTriggers());
 
         auto* node = m_scrollingStateTree->stateNodeForID(frameView.scrollingNodeID());
         if (!is<ScrollingStateFrameScrollingNode>(node))
@@ -861,7 +861,7 @@ void AsyncScrollingCoordinator::deferTestsForReason(WheelEventTestTrigger::Scrol
         return;
 
     if (const auto& trigger = m_page->testTrigger()) {
-        LOG(WheelEventTestTriggers, "    (!) AsyncScrollingCoordinator::deferTestsForReason: Deferring %p for reason %d.", identifier, reason);
+        LOG_WITH_STREAM(WheelEventTestTriggers, stream << "    (!) AsyncScrollingCoordinator::deferTestsForReason: Deferring " << identifier << " for reason " << reason);
         trigger->deferTestsForReason(identifier, reason);
     }
 }
@@ -873,7 +873,7 @@ void AsyncScrollingCoordinator::removeTestDeferralForReason(WheelEventTestTrigge
         return;
 
     if (const auto& trigger = m_page->testTrigger()) {
-        LOG(WheelEventTestTriggers, "    (!) AsyncScrollingCoordinator::removeTestDeferralForReason: Deferring %p for reason %d.", identifier, reason);
+        LOG_WITH_STREAM(WheelEventTestTriggers, stream << "    (!) AsyncScrollingCoordinator::removeTestDeferralForReason: Deferring " << identifier << " for reason " << reason);
         trigger->removeTestDeferralForReason(identifier, reason);
     }
 }
