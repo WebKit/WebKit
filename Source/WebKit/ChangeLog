@@ -1,3 +1,13 @@
+2019-10-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE][GTK] WebKitSecurityManager should consider webkit:// to be a local URI scheme
+        https://bugs.webkit.org/show_bug.cgi?id=202638
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/API/glib/WebKitProtocolHandler.cpp:
+        (WebKit::WebKitProtocolHandler::WebKitProtocolHandler):
+
 2019-10-08  Antti Koivisto  <antti@apple.com>
 
         [CSS Shadow Parts] Enable by default

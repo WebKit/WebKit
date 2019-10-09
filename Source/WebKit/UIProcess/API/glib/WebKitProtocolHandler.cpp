@@ -78,6 +78,7 @@ WebKitProtocolHandler::WebKitProtocolHandler(WebKitWebContext* context)
 
     auto* manager = webkit_web_context_get_security_manager(context);
     webkit_security_manager_register_uri_scheme_as_display_isolated(manager, "webkit");
+    webkit_security_manager_register_uri_scheme_as_local(manager, "webkit");
 }
 
 void WebKitProtocolHandler::handleRequest(WebKitURISchemeRequest* request)
