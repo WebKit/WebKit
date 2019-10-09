@@ -1,3 +1,23 @@
+2019-10-09  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Painting] Decouple content and decoration painting
+        https://bugs.webkit.org/show_bug.cgi?id=202718
+        <rdar://problem/56104661>
+
+        Reviewed by Antti Koivisto.
+
+        This patch adds support for individual run painting <div><span style="background-color: red">red</span>black</div>.
+        This is pretty much all we can do with the current data structures (lack of context).
+
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::paintBoxDecoration):
+        (WebCore::Display::paintInlineContent):
+        (WebCore::Display::Painter::paint):
+        (WebCore::Display::paintBlockLevelBoxDecoration): Deleted.
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::appendInlineContainerStart):
+        (WebCore::Layout::Line::appendInlineContainerEnd):
+
 2019-10-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed build fix for Windows ports

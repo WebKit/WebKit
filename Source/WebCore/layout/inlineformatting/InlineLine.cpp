@@ -290,9 +290,8 @@ void Line::appendNonBreakableSpace(const InlineItem& inlineItem, const Display::
 
 void Line::appendInlineContainerStart(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
-    auto logicalRect = Display::Rect { };
-    logicalRect.setLeft(contentLogicalWidth());
-    logicalRect.setWidth(logicalWidth);
+    // This is really just a placeholder to mark the start of the inline level container <span>.
+    auto logicalRect = Display::Rect { 0, contentLogicalWidth(), logicalWidth, 0 };
 
     if (!m_skipAlignment) {
         auto logicalHeight = inlineItemContentHeight(inlineItem);
@@ -304,8 +303,8 @@ void Line::appendInlineContainerStart(const InlineItem& inlineItem, LayoutUnit l
 
 void Line::appendInlineContainerEnd(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
-    // This is really just a placeholder to mark the end of the inline level container.
-    auto logicalRect = Display::Rect { 0, contentLogicalRight(), logicalWidth, 0 };
+    // This is really just a placeholder to mark the end of the inline level container </span>.
+    auto logicalRect = Display::Rect { 0, contentLogicalRight(), logicalWidth, inlineItemContentHeight(inlineItem) };
     appendNonBreakableSpace(inlineItem, logicalRect);
 }
 

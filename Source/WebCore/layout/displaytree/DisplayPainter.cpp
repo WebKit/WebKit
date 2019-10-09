@@ -32,6 +32,7 @@
 #include "DisplayBox.h"
 #include "GraphicsContext.h"
 #include "InlineFormattingState.h"
+#include "InlineTextItem.h"
 #include "LayoutContainer.h"
 #include "LayoutDescendantIterator.h"
 #include "LayoutState.h"
@@ -41,7 +42,7 @@
 namespace WebCore {
 namespace Display {
 
-static void paintBlockLevelBoxDecoration(GraphicsContext& context, const Box& absoluteDisplayBox, const RenderStyle& style)
+static void paintBoxDecoration(GraphicsContext& context, const Box& absoluteDisplayBox, const RenderStyle& style)
 {
     auto borderBoxAbsoluteTopLeft = absoluteDisplayBox.topLeft();
     // Background color
@@ -96,19 +97,41 @@ static void paintBlockLevelBoxDecoration(GraphicsContext& context, const Box& ab
     }
 }
 
-static void paintInlineContent(GraphicsContext& context, const Box& absoluteDisplayBox, const RenderStyle& style, const String& content, const Layout::InlineFormattingState& formattingState)
+static void paintInlineContent(GraphicsContext& context, const Box& rootAbsoluteDisplayBox, const Layout::InlineFormattingState& formattingState)
 {
-    // FIXME: Only very simple text painting for now.
-    auto& lineBox = formattingState.lineBoxes()[0];
-    for (auto& run : formattingState.inlineRuns()) {
-        if (!run.textContext())
-            continue;
+    auto& inlineRuns = formattingState.inlineRuns();
+    if (inlineRuns.isEmpty())
+        return;
+    // FIXME: We should be able to paint runs independently from inline items.
+    unsigned runIndex = 0;
+    for (auto& inlineItem : formattingState.inlineItems()) {
+        auto& style = inlineItem->style();
         context.setStrokeColor(style.color());
         context.setFillColor(style.color());
-        auto logicalTopLeft = absoluteDisplayBox.topLeft() + run.logicalTopLeft();
-        auto textContext = run.textContext().value();
-        auto runContent = content.substring(textContext.start(), textContext.length());
-        context.drawText(style.fontCascade(), TextRun { runContent }, { logicalTopLeft.x(), logicalTopLeft.y() + lineBox.baselineOffset() });
+
+        if (inlineItem->isText()) {
+            auto& inlineTextItem = downcast<Layout::InlineTextItem>(*inlineItem);
+            auto inlineContent = inlineTextItem.layoutBox().textContent();
+            while (true) {
+                auto& run = inlineRuns[runIndex++];
+                auto textContext = run.textContext().value();
+                auto runContent = inlineContent.substring(textContext.start(), textContext.length());
+                auto logicalTopLeft = rootAbsoluteDisplayBox.topLeft() + run.logicalTopLeft();
+                context.drawText(style.fontCascade(), TextRun { runContent }, { logicalTopLeft.x(), logicalTopLeft.y() + formattingState.lineBoxes()[0].baselineOffset() });
+                if (inlineTextItem.end() == textContext.end())
+                    break;
+                if (runIndex == inlineRuns.size())
+                    return;
+            }
+            continue;
+        }
+
+        if (inlineItem->isBox()) {
+            auto& run = inlineRuns[runIndex++];
+            auto logicalTopLeft = rootAbsoluteDisplayBox.topLeft() + run.logicalTopLeft();
+            context.fillRect({ logicalTopLeft, FloatSize { run.logicalWidth(), run.logicalHeight() } });
+            continue;
+        }
     }
 }
 
@@ -125,19 +148,19 @@ void Painter::paint(const Layout::LayoutState& layoutState, GraphicsContext& con
     auto& rootDisplayBox = layoutState.displayBoxForLayoutBox(layoutRoot);
     context.fillRect({ FloatPoint { }, FloatSize { rootDisplayBox.borderBoxWidth(), rootDisplayBox.borderBoxHeight() } }, Color::white);
 
+    // 1. Paint box decoration (both block and inline).
     for (auto& layoutBox : Layout::descendantsOfType<Layout::Box>(layoutRoot)) {
-        if (layoutBox.isBlockLevelBox()) {
-            paintBlockLevelBoxDecoration(context, absoluteDisplayBox(layoutBox), layoutBox.style());
+        if (layoutBox.isAnonymous())
             continue;
-        }
-        // FIXME: This only covers the most simple cases like <div>inline content</div>
-        // Find a way to conect inline runs and the inline content.
-        if (layoutBox.isInlineLevelBox() && layoutBox.isAnonymous()) {
-            ASSERT(layoutBox.hasTextContent());
-            auto& containingBlock = *layoutBox.containingBlock();
-            auto& inlineFormattingState = downcast<Layout::InlineFormattingState>(layoutState.establishedFormattingState(containingBlock));
-            paintInlineContent(context, absoluteDisplayBox(containingBlock), layoutBox.style(), layoutBox.textContent(), inlineFormattingState);
+        paintBoxDecoration(context, absoluteDisplayBox(layoutBox), layoutBox.style());
+    }
 
+    // 2. Paint content
+    for (auto& layoutBox : Layout::descendantsOfType<Layout::Box>(layoutRoot)) {
+        if (layoutBox.establishesInlineFormattingContext()) {
+            auto& container = downcast<Layout::Container>(layoutBox);
+            paintInlineContent(context, absoluteDisplayBox(container), downcast<Layout::InlineFormattingState>(layoutState.establishedFormattingState(container)));
+            continue;
         }
     }
 }
