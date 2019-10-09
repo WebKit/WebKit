@@ -1,3 +1,15 @@
+2019-10-09  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (r250755): fast/events/ios/ipad/fast-click-not-always.html is Failing
+        https://bugs.webkit.org/show_bug.cgi?id=202760
+        <rdar://56079585>
+
+        Reviewed by Antoine Quint.
+
+        Update the preference name.
+
+        * fast/events/ios/ipad/fast-click-not-always.html:
+
 2019-10-09  Alicia Boya García  <aboya@igalia.com>
 
         Unreviewed minor WinCairo test gardening
