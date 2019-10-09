@@ -1,3 +1,16 @@
+2019-10-09  Daniel Bates  <dabates@apple.com>
+
+        Clean up: Remove pre-macOS Sierra workaround for missing kVK_RightCommand
+        https://bugs.webkit.org/show_bug.cgi?id=202597
+
+        Reviewed by Anders Carlsson.
+
+        kVK_RightCommand has been defined in HIToolbox/Events.h since macOS Sierra. We no longer
+        need to maintain code to manually define it.
+
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::keyForKeyEvent):
+
 2019-10-09  Antti Koivisto  <antti@apple.com>
 
         [CSS Shadow Parts] Minor exportparts attribute parsing cleanups

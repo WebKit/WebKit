@@ -222,10 +222,6 @@ static inline String unmodifiedTextFromEvent(NSEvent* event)
 
 String keyForKeyEvent(NSEvent *event)
 {
-    // This constant was missing before OS X Sierra.
-#ifndef kVK_RightCommand
-#define kVK_RightCommand 0x36
-#endif
     switch ([event keyCode]) {
     case kVK_RightCommand:
     case kVK_Command:
