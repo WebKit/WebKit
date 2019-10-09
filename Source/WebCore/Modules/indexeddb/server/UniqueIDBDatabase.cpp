@@ -1228,6 +1228,11 @@ void UniqueIDBDatabase::putOrAdd(UniqueIDBDatabaseTransaction& transaction, cons
     LOG(IndexedDB, "(main) UniqueIDBDatabase::putOrAdd");
 
     auto taskSize = defaultWriteOperationCost + estimateSize(keyData) + estimateSize(value);
+    ASSERT(m_databaseInfo);
+    auto* objectStore = m_databaseInfo->infoForExistingObjectStore(requestData.objectStoreIdentifier());
+    if (objectStore)
+        taskSize += objectStore->indexNames().size() * taskSize;
+
     requestSpace(transaction, taskSize, "putOrAdd", [this, taskSize, requestData, keyData, value, callback = WTFMove(callback), overwriteMode](auto error) mutable {
         if (!error.isNull() && *error.code() != QuotaExceededError) {
             callback(WTFMove(error), { });

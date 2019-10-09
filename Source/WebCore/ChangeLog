@@ -1,3 +1,22 @@
+2019-10-09  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: include size of index records in size estimate of put/add task
+        https://bugs.webkit.org/show_bug.cgi?id=202483
+
+        Reviewed by Geoffrey Garen.
+
+        SQLiteIDBBackingStore has two tables IndexRecords and Records. For add operation add(VALUE, KEY), we add a new 
+        record to Records table. If we can extract index value from VALUE for some index, we would add a new record to
+        IndexRecords table.
+
+        We estimated the task szie of add task with (KEY_SIZE + VALUE_SIZE), but we didn't count the size that could be
+        added to the IndexRecords table. This could lead to storage abuse.
+
+        Test: storage/indexeddb/request-size-estimate.html
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::putOrAdd):
+
 2019-10-09  Chris Dumez  <cdumez@apple.com>
 
         Youtube.com is unable to enter the back/forward cache on macOS

@@ -1471,6 +1471,7 @@ storage/indexeddb/modern/idbtransaction-objectstore-failures.html [ Failure Pass
 storage/indexeddb/objectstore-basics.html [ Failure Pass ]
 storage/indexeddb/objectstore-cursor.html [ Pass Timeout ]
 storage/indexeddb/storage-limit.html [ Failure ]
+storage/indexeddb/request-size-estimate.html [ Failure ]
 storage/indexeddb/structured-clone.html [ Pass Timeout ]
 storage/indexeddb/version-change-abort.html [ Failure Pass ]
 storage/indexeddb/wasm-exceptions.html [ Failure ]

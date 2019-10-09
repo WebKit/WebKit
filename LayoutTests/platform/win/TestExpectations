@@ -2417,6 +2417,7 @@ http/tests/xmlhttprequest/web-apps/012.html
 http/tests/xmlhttprequest/web-apps/013.html
 
 storage/indexeddb/storage-limit.html [ Skip ]
+storage/indexeddb/request-size-estimate.html [ Skip ]
 http/tests/IndexedDB/storage-limit.https.html [ Skip ]
 http/tests/IndexedDB/storage-limit-1.https.html [ Skip ]
 http/tests/IndexedDB/storage-limit-2.https.html [ Skip ]
