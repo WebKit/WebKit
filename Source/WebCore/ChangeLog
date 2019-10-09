@@ -1,3 +1,11 @@
+2019-10-09  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, address Darin's post-landing comments for r250912.
+
+        The array should be const.
+
+        * css/CSSDefaultStyleSheets.cpp:
+
 2019-10-09  Daniel Bates  <dabates@apple.com>
 
         Clean up: Remove pre-macOS Sierra workaround for missing kVK_RightCommand
