@@ -47,6 +47,7 @@
 #include "DFGJITCode.h"
 #include "FunctionCodeBlock.h"
 #include "GetByIdStatus.h"
+#include "GetterSetter.h"
 #include "Heap.h"
 #include "InByIdStatus.h"
 #include "InstanceOfStatus.h"
