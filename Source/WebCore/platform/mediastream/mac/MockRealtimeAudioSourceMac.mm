@@ -123,7 +123,11 @@ void MockRealtimeAudioSourceMac::emitSampleBuffers(uint32_t frameCount)
 void MockRealtimeAudioSourceMac::reconfigure()
 {
     ASSERT(!isMainThread());
-    m_maximiumFrameCount = WTF::roundUpToPowerOfTwo(renderInterval().seconds() * sampleRate() * 2);
+
+    auto rate = sampleRate();
+    ASSERT(rate);
+
+    m_maximiumFrameCount = WTF::roundUpToPowerOfTwo(renderInterval().seconds() * rate * 2);
     ASSERT(m_maximiumFrameCount);
 
     const int bytesPerFloat = sizeof(Float32);
@@ -132,19 +136,30 @@ void MockRealtimeAudioSourceMac::reconfigure()
     const bool isFloat = true;
     const bool isBigEndian = false;
     const bool isNonInterleaved = true;
-    FillOutASBDForLPCM(m_streamFormat, sampleRate(), channelCount, bitsPerByte * bytesPerFloat, bitsPerByte * bytesPerFloat, isFloat, isBigEndian, isNonInterleaved);
+    FillOutASBDForLPCM(m_streamFormat, rate, channelCount, bitsPerByte * bytesPerFloat, bitsPerByte * bytesPerFloat, isFloat, isBigEndian, isNonInterleaved);
 
     m_audioBufferList = makeUnique<WebAudioBufferList>(m_streamFormat, m_streamFormat.mBytesPerFrame * m_maximiumFrameCount);
 
     CMFormatDescriptionRef formatDescription;
     CMAudioFormatDescriptionCreate(NULL, &m_streamFormat, 0, NULL, 0, NULL, NULL, &formatDescription);
     m_formatDescription = adoptCF(formatDescription);
+
+    size_t sampleCount = 2 * rate;
+    m_bipBopBuffer.resize(sampleCount);
+    m_bipBopBuffer.fill(0);
+
+    size_t bipBopSampleCount = ceil(BipBopDuration * rate);
+    size_t bipStart = 0;
+    size_t bopStart = rate;
+
+    addHum(BipBopVolume, BipFrequency, rate, 0, m_bipBopBuffer.data() + bipStart, bipBopSampleCount);
+    addHum(BipBopVolume, BopFrequency, rate, 0, m_bipBopBuffer.data() + bopStart, bipBopSampleCount);
 }
 
 void MockRealtimeAudioSourceMac::render(Seconds delta)
 {
     ASSERT(!isMainThread());
-    if (!m_audioBufferList)
+    if (!m_audioBufferList || !m_bipBopBuffer.size())
         reconfigure();
 
     uint32_t totalFrameCount = alignTo16Bytes(delta.seconds() * sampleRate());
@@ -173,21 +188,7 @@ void MockRealtimeAudioSourceMac::settingsDidChange(OptionSet<RealtimeMediaSource
 {
     if (settings.contains(RealtimeMediaSourceSettings::Flag::SampleRate)) {
         m_workQueue->dispatch([this, protectedThis = makeRef(*this)] {
-            m_formatDescription = nullptr;
-            m_audioBufferList = nullptr;
-
-            auto rate = sampleRate();
-            size_t sampleCount = 2 * rate;
-
-            m_bipBopBuffer.grow(sampleCount);
-            m_bipBopBuffer.fill(0);
-
-            size_t bipBopSampleCount = ceil(BipBopDuration * rate);
-            size_t bipStart = 0;
-            size_t bopStart = rate;
-
-            addHum(BipBopVolume, BipFrequency, rate, 0, m_bipBopBuffer.data() + bipStart, bipBopSampleCount);
-            addHum(BipBopVolume, BopFrequency, rate, 0, m_bipBopBuffer.data() + bopStart, bipBopSampleCount);
+            reconfigure();
         });
     }
 

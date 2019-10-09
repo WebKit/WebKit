@@ -68,6 +68,8 @@ MockRealtimeAudioSource::MockRealtimeAudioSource(String&& deviceID, String&& nam
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(persistentID());
     ASSERT(device);
     m_device = *device;
+
+    setSampleRate(WTF::get<MockMicrophoneProperties>(m_device.properties).defaultSampleRate);
 }
 
 MockRealtimeAudioSource::~MockRealtimeAudioSource()

@@ -1,3 +1,14 @@
+2019-10-09  Eric Carlson  <eric.carlson@apple.com>
+
+        [ Mac WK2 ] Layout Test fast/mediastream/MediaStreamTrack-getSettings.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=196400
+        <rdar://problem/49567579>
+
+        Reviewed by Youenn Fablet.
+
+        * fast/mediastream/MediaStreamTrack-getSettings.html: Cleanup test.
+        * platform/mac-wk2/TestExpectations: Unskip test.
+
 2019-10-09  Dean Jackson  <dino@apple.com>
 
         Layout Test webgl/2.0.0/conformance/glsl/misc/shaders-with-invariance.html is failing since ANGLE roll

@@ -1,3 +1,23 @@
+2019-10-09  Eric Carlson  <eric.carlson@apple.com>
+
+        [ Mac WK2 ] Layout Test fast/mediastream/MediaStreamTrack-getSettings.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=196400
+        <rdar://problem/49567579>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, this fixes a broken test.
+
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.h:
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.mm:
+        (WebCore::MockRealtimeAudioSourceMac::reconfigure): Reconfigure buffers as well.
+        (WebCore::MockRealtimeAudioSourceMac::render): Call reconfigure if the buffer isn't
+        configured correctly.
+        (WebCore::MockRealtimeAudioSourceMac::settingsDidChange): Call reconfigure.
+
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::MockRealtimeAudioSource): Set sample rate to default.
+
 2019-10-09  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, address Darin's post-landing comments for r250912.
