@@ -17,8 +17,8 @@ Test: ../../../resources/webgl_test_files/conformance/glsl/misc/shaders-with-inv
 [ 14: PASS ] vertex shader with invariant gl_PointSize and fragment shader with variant gl_PointCoord must succeed
 [ 15: PASS ] fragment shader with variant gl_FrontFacing must succeed compilation
 [ 16: PASS ] fragment shader with invariant gl_FrontFacing must fail compilation
-[ 17: FAIL ] [unexpected fragment shader compile status] (expected: true) vertex shader with variant varying and fragment shader with invariant (global setting) varying must fail
-[ 18: FAIL ] [unexpected fragment shader compile status] (expected: true) vertex shader with invariant varying and fragment shader with invariant (global setting) varying must succeed
+[ 17: FAIL ] [unexpected fragment shader compile status] (expected: true) vertex shader with variant varying and fragment shader with invariant (global setting) varying must succeed
+[ 18: FAIL ] [unexpected fragment shader compile status] (expected: true) vertex shader with invariant varying and fragment shader with invariant (global setting) varying must fail
 [ 19: PASS ] successfullyParsed is true
 [ FAIL ] 7 failures reported
 
