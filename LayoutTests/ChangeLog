@@ -1,3 +1,11 @@
+2019-10-09  Alicia Boya García  <aboya@igalia.com>
+
+        Unreviewed minor WinCairo test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=187762
+
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2019-10-09  Eric Carlson  <eric.carlson@apple.com>
 
         [ Mac WK2 ] Layout Test fast/mediastream/MediaStreamTrack-getSettings.html is a flaky failure
