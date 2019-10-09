@@ -577,7 +577,7 @@ private:
 
     bool m_lazyImageLoadingEnabled { false };
     bool m_secureContextChecksEnabled { true };
-    bool m_isCSSShadowPartsEnabled { false };
+    bool m_isCSSShadowPartsEnabled { true };
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };

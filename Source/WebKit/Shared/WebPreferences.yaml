@@ -1457,7 +1457,7 @@ FetchAPIKeepAliveEnabled:
 
 CSSShadowPartsEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   humanReadableName: "CSS Shadow Parts"
   humanReadableDescription: "Enable CSS Shadow Parts"
   category: experimental

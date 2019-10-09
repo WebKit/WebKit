@@ -692,7 +692,7 @@ public:
         @NO, WebKitCoreMathMLEnabledPreferenceKey,
         @NO, WebKitRequestIdleCallbackEnabledPreferenceKey,
         @NO, WebKitLinkPreloadResponsiveImagesEnabledPreferenceKey,
-        @NO, WebKitCSSShadowPartsEnabledPreferenceKey,
+        @YES, WebKitCSSShadowPartsEnabledPreferenceKey,
         nil];
 
 #if !PLATFORM(IOS_FAMILY)

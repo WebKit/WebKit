@@ -1,3 +1,14 @@
+2019-10-08  Antti Koivisto  <antti@apple.com>
+
+        [CSS Shadow Parts] Enable by default
+        https://bugs.webkit.org/show_bug.cgi?id=202644
+
+        Reviewed by Ryosuke Niwa.
+
+        * Shared/WebPreferences.yaml:
+
+        Flip the switch.
+
 2019-10-08  Andy Estes  <aestes@apple.com>
 
         [iOS] Add a fast path that avoids hit testing during context menu interactions on elements
