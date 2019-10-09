@@ -25,11 +25,11 @@ async function test() {
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
 
-    let rect = doubleTapThis.getBoundingClientRect();
-    let x = rect.left + rect.width / 2;
-    let y = rect.top + rect.height / 2;
+    await UIHelper.activateElement(doubleTapThis);
+    await UIHelper.waitForDoubleTapDelay();
 
-    await UIHelper.humanSpeedDoubleTapAt(x, y);
+    let rect = newDoubleTapThis.getBoundingClientRect();
+    await UIHelper.humanSpeedDoubleTapAt(rect.left, rect.top);
 }
 </script>
 </head>

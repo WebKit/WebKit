@@ -1,3 +1,16 @@
+2019-10-09  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] LayoutTest fast/events/touch/ios/double-tap-for-double-click2.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=202765
+        <rdar://problem/56123067>
+
+        Reviewed by Wenson Hsieh.
+
+        Currently when a dblclick handler is dynamically registered while executing the click handler, we don't always pick up the newly added handler (see webkit.org/b/202766).
+        Modify the test so that it passes consistently (and still preserve the dynamic behavior).
+
+        * fast/events/touch/ios/double-tap-for-double-click2.html:
+
 2019-10-09  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Move the mock testing entrance to Internals
