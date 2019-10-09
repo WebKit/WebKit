@@ -1191,9 +1191,6 @@ webkit.org/b/161312 imported/w3c/web-platform-tests/html/semantics/document-meta
 
 imported/w3c/web-platform-tests/fetch/http-cache/partial.html [ Failure Pass ]
 
-# Flaky tests due to always changing assertion error message
-imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/url-encoded.html [ Failure ]
-
 # New W3C ref tests that are failing.
 webkit.org/b/148856 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/svg/intrinsicsize/intrinsicsize-svg-image.tentative.html [ ImageOnlyFailure ]
@@ -2046,7 +2043,6 @@ webkit.org/b/182087 imported/w3c/web-platform-tests/css/css-multicol/multicol-sp
 
 webkit.org/b/148884 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection.html [ Pass Failure ]
 
-webkit.org/b/190626 imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element/datalistoptions.html [ Failure ]
 webkit.org/b/190613 imported/blink/fast/forms/datalist/slider-appearance-with-ticks-crash.html [ Skip ]
 
 # Tests require WTR and disabling of user installed fonts. Reenabling them in supported platforms
@@ -3619,9 +3615,6 @@ webkit.org/b/187183 http/tests/security/pasteboard-file-url.html [ Skip ]
 
 [ Debug ] fast/multicol/crash-in-vertical-writing-mode.html [ Skip ]
 
-webkit.org/b/187762 http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party.html [ Failure ]
-webkit.org/b/187762 http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Failure ]
-
 webkit.org/b/187269 [ Debug ] imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_abort.html [ Skip ]
 
 webkit.org/b/185308 legacy-animation-engine/animations/combo-transform-translate+scale.html [ Pass Failure ]
@@ -3631,10 +3624,8 @@ webkit.org/b/189917 imported/w3c/web-platform-tests/html/webappapis/dynamic-mark
 
 # These tests started to time out or fail because of our experiment to have target=_blank on anchors imply rel=noopener (https://bugs.webkit.org/show_bug.cgi?id=190481).
 imported/w3c/web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts/opener-closed.html [ Skip ]
-imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/002.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping-2.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_nonescaping-2.html [ Skip ]
-imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/choose-_blank-003.html [ Failure ]
 
 http/wpt/css/css-images-4/conic-gradient-parsing.html [ Skip ]
 fast/gradients/conic-repeating.html [ Skip ]

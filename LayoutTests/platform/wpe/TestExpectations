@@ -1954,6 +1954,8 @@ webkit.org/b/202736 storage/indexeddb/storage-limit.html [ Failure ]
 webkit.org/b/202738 storage/indexeddb/cursor-leak-private.html [ Failure ]
 webkit.org/b/202738 storage/indexeddb/cursor-leak.html [ Failure ]
 
+webkit.org/b/190626 imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element/datalistoptions.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<
 # Please see guidelines at the top of this file and place new test expectations

@@ -1,3 +1,15 @@
+2019-10-09  Alicia Boya García  <aboya@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=202751
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/gtk/xml-roles-exposed-expected.txt: Added.
+        * platform/gtk/accessibility/roles-exposed-expected.txt:
+        * platform/gtk/fast/tokenizer/script_extra_close-expected.txt:
+        * platform/wpe/TestExpectations:
+
 2019-10-09  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed WPE gardening after r250889.
