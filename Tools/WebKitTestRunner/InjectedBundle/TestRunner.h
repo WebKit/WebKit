@@ -490,9 +490,7 @@ public:
     void sendDisplayConfigurationChangedMessageForTesting();
 
     void setServiceWorkerFetchTimeout(double seconds);
-    
-    // WebAuthN
-    void setWebAuthenticationMockConfiguration(JSValueRef);
+
     // FIXME(189876)
     void addTestKeyToKeychain(JSStringRef privateKeyBase64, JSStringRef attrLabel, JSStringRef applicationTagBase64);
     void cleanUpKeychain(JSStringRef attrLabel, JSStringRef applicationTagBase64);

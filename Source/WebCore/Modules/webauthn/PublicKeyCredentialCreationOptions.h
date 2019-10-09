@@ -33,7 +33,6 @@
 #include "PublicKeyCredentialDescriptor.h"
 #include "PublicKeyCredentialType.h"
 #include "UserVerificationRequirement.h"
-#include <wtf/CrossThreadCopier.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

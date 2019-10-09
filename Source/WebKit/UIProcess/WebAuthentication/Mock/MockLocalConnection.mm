@@ -36,7 +36,7 @@
 
 namespace WebKit {
 
-MockLocalConnection::MockLocalConnection(const MockWebAuthenticationConfiguration& configuration)
+MockLocalConnection::MockLocalConnection(const WebCore::MockWebAuthenticationConfiguration& configuration)
     : m_configuration(configuration)
 {
 }

@@ -64,6 +64,8 @@ class HTTPCookieStore;
 namespace WebCore {
 class RegistrableDomain;
 class SecurityOrigin;
+
+struct MockWebAuthenticationConfiguration;
 }
 
 namespace WebKit {
@@ -78,7 +80,6 @@ class WebProcessProxy;
 class WebResourceLoadStatisticsStore;
 enum class WebsiteDataFetchOption;
 enum class WebsiteDataType;
-struct MockWebAuthenticationConfiguration;
 struct WebsiteDataRecord;
 struct WebsiteDataStoreParameters;
 
@@ -252,7 +253,7 @@ public:
 
 #if ENABLE(WEB_AUTHN)
     AuthenticatorManager& authenticatorManager() { return m_authenticatorManager.get(); }
-    void setMockWebAuthenticationConfiguration(MockWebAuthenticationConfiguration&&);
+    void setMockWebAuthenticationConfiguration(WebCore::MockWebAuthenticationConfiguration&&);
 #endif
 
     void didCreateNetworkProcess();

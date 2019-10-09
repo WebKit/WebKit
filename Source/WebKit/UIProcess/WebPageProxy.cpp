@@ -9392,6 +9392,13 @@ void WebPageProxy::decidePolicyForSOAuthorizationLoad(const String& extension, C
 }
 #endif
 
+#if ENABLE(WEB_AUTHN)
+void WebPageProxy::setMockWebAuthenticationConfiguration(MockWebAuthenticationConfiguration&& configuration)
+{
+    m_websiteDataStore->setMockWebAuthenticationConfiguration(WTFMove(configuration));
+}
+#endif
+
 } // namespace WebKit
 
 #undef MERGE_WHEEL_EVENTS

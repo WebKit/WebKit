@@ -1738,6 +1738,10 @@
 		57152B6E21CD995D000C37CA /* U2fCommandConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 57152B6C21CD995C000C37CA /* U2fCommandConstructor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57152B7C21DD8BA1000C37CA /* U2fResponseConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 57152B7A21DD8BA1000C37CA /* U2fResponseConverter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57152B8021DDA581000C37CA /* WebAuthenticationUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 57152B7E21DDA581000C37CA /* WebAuthenticationUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5715610B234C1B49008FC7AB /* MockWebAuthenticationConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 57156108234C1B31008FC7AB /* MockWebAuthenticationConfiguration.h */; };
+		5715610C234C1CA1008FC7AB /* MockWebAuthenticationConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 57156108234C1B31008FC7AB /* MockWebAuthenticationConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		57156114234C7FD6008FC7AB /* JSMockWebAuthenticationConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57156111234C7FBC008FC7AB /* JSMockWebAuthenticationConfiguration.cpp */; };
+		57156115234C7FDC008FC7AB /* JSMockWebAuthenticationConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 57156110234C7FBC008FC7AB /* JSMockWebAuthenticationConfiguration.h */; };
 		571F21891DA57C54005C9EFD /* JSSubtleCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 571F21881DA57C54005C9EFD /* JSSubtleCrypto.h */; };
 		572093D31DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcCfbParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 572093D21DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcCfbParams.h */; };
 		5721A9871ECE53B10081295A /* CryptoDigestAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 5721A9861ECE53B10081295A /* CryptoDigestAlgorithm.h */; };
@@ -8605,6 +8609,10 @@
 		57152B7B21DD8BA1000C37CA /* U2fResponseConverter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = U2fResponseConverter.cpp; sourceTree = "<group>"; };
 		57152B7E21DDA581000C37CA /* WebAuthenticationUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthenticationUtils.h; sourceTree = "<group>"; };
 		57152B7F21DDA581000C37CA /* WebAuthenticationUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebAuthenticationUtils.cpp; sourceTree = "<group>"; };
+		57156108234C1B31008FC7AB /* MockWebAuthenticationConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockWebAuthenticationConfiguration.h; sourceTree = "<group>"; };
+		5715610D234C7481008FC7AB /* MockWebAuthenticationConfiguration.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MockWebAuthenticationConfiguration.idl; sourceTree = "<group>"; };
+		57156110234C7FBC008FC7AB /* JSMockWebAuthenticationConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMockWebAuthenticationConfiguration.h; sourceTree = "<group>"; };
+		57156111234C7FBC008FC7AB /* JSMockWebAuthenticationConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMockWebAuthenticationConfiguration.cpp; sourceTree = "<group>"; };
 		571F21881DA57C54005C9EFD /* JSSubtleCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSubtleCrypto.h; sourceTree = "<group>"; };
 		571F218A1DA57C7A005C9EFD /* JSSubtleCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSubtleCrypto.cpp; sourceTree = "<group>"; };
 		572093D11DDCEA4B00310AB0 /* AesCbcCfbParams.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AesCbcCfbParams.idl; sourceTree = "<group>"; };
@@ -17892,6 +17900,8 @@
 				A1CBEF631F9F11290028DE7C /* MockPaymentMethod.h */,
 				A14061891E2ECA0A0032B34E /* MockPreviewLoaderClient.cpp */,
 				A140618A1E2ECA0A0032B34E /* MockPreviewLoaderClient.h */,
+				57156108234C1B31008FC7AB /* MockWebAuthenticationConfiguration.h */,
+				5715610D234C7481008FC7AB /* MockWebAuthenticationConfiguration.idl */,
 				417F0D801FFEE14F008EF303 /* ServiceWorkerInternals.cpp */,
 				417F0D7E1FFEE14E008EF303 /* ServiceWorkerInternals.h */,
 				417F0D811FFEE150008EF303 /* ServiceWorkerInternals.idl */,
@@ -17932,6 +17942,8 @@
 				A146D3181F99BCBA00D29196 /* JSMockPaymentCoordinator.h */,
 				A1BB85B42159B3890067E07D /* JSMockPaymentError.cpp */,
 				A1BB85B52159B38A0067E07D /* JSMockPaymentError.h */,
+				57156111234C7FBC008FC7AB /* JSMockWebAuthenticationConfiguration.cpp */,
+				57156110234C7FBC008FC7AB /* JSMockWebAuthenticationConfiguration.h */,
 				427DA71B13735DFA007C57FB /* JSServiceWorkerInternals.cpp */,
 				427DA71C13735DFA007C57FB /* JSServiceWorkerInternals.h */,
 				EBF5121A1696496C0056BD25 /* JSTypeConversions.cpp */,
@@ -28425,6 +28437,7 @@
 				A104EC5E220A3E4E00CBF67A /* JSMockPaymentContactFields.h in Headers */,
 				A146D31B1F99BCFB00D29196 /* JSMockPaymentCoordinator.h in Headers */,
 				A1BB85B92159B3AE0067E07D /* JSMockPaymentError.h in Headers */,
+				57156115234C7FDC008FC7AB /* JSMockWebAuthenticationConfiguration.h in Headers */,
 				427DA71E13735DFA007C57FB /* JSServiceWorkerInternals.h in Headers */,
 				EBF5121D1696496C0056BD25 /* JSTypeConversions.h in Headers */,
 				CDC26B41160A8CCE0026757B /* LegacyMockCDM.h in Headers */,
@@ -28442,6 +28455,7 @@
 				A1AFEDE61F8BFF6D0087013F /* MockPaymentCoordinator.h in Headers */,
 				A1CBEF641F9F11290028DE7C /* MockPaymentMethod.h in Headers */,
 				A140618C1E2ECA0A0032B34E /* MockPreviewLoaderClient.h in Headers */,
+				5715610B234C1B49008FC7AB /* MockWebAuthenticationConfiguration.h in Headers */,
 				AA5F3B8D16CC33D100455EB0 /* PlatformSpeechSynthesizerMock.h in Headers */,
 				A1763F3F1E205234001D58DE /* WebArchiveDumpSupport.h in Headers */,
 				41815C1F138319830057AAA4 /* WebCoreTestSupport.h in Headers */,
@@ -31021,6 +31035,7 @@
 				07EE76EF1BEA619800F89133 /* MockRealtimeVideoSourceMac.h in Headers */,
 				CDF2B0171820540700F2B424 /* MockSourceBufferPrivate.h in Headers */,
 				CDF2B0191820540700F2B424 /* MockTracks.h in Headers */,
+				5715610C234C1CA1008FC7AB /* MockWebAuthenticationConfiguration.h in Headers */,
 				C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */,
 				709A01FE1E3D0BDD006B0D4C /* ModuleFetchFailureKind.h in Headers */,
 				E3201C1A1F8E82130076A032 /* ModuleFetchParameters.h in Headers */,
@@ -32984,6 +32999,7 @@
 				A104EC5D220A3E4B00CBF67A /* JSMockPaymentContactFields.cpp in Sources */,
 				A146D31A1F99BCF800D29196 /* JSMockPaymentCoordinator.cpp in Sources */,
 				A1BB85B82159B3A40067E07D /* JSMockPaymentError.cpp in Sources */,
+				57156114234C7FD6008FC7AB /* JSMockWebAuthenticationConfiguration.cpp in Sources */,
 				427DA71D13735DFA007C57FB /* JSServiceWorkerInternals.cpp in Sources */,
 				EBF5121C1696496C0056BD25 /* JSTypeConversions.cpp in Sources */,
 				CDC26B40160A8CC60026757B /* LegacyMockCDM.cpp in Sources */,

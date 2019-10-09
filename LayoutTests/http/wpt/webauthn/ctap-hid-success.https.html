@@ -20,8 +20,8 @@
     };
 
     promise_test(function(t) {
-        if (window.testRunner)
-            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "request", subStage: "msg", error: "success", payloadBase64: [testCreationMessageBase64], keepAlive: true } });
+        if (window.internals)
+            internals.setMockWebAuthenticationConfiguration({ hid: { stage: "request", subStage: "msg", error: "success", payloadBase64: [testCreationMessageBase64], keepAlive: true } });
         return navigator.credentials.create(defaultOptions).then(credential => {
             assert_not_equals(credential, undefined);
             assert_not_equals(credential, null);
@@ -29,8 +29,8 @@
     }, "CTAP HID with keep alive message in a mock hid authenticator.");
 
     promise_test(function(t) {
-        if (window.testRunner)
-            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "request", subStage: "msg", error: "success", payloadBase64: [testCreationMessageBase64], fastDataArrival: true } });
+        if (window.internals)
+            internals.setMockWebAuthenticationConfiguration({ hid: { stage: "request", subStage: "msg", error: "success", payloadBase64: [testCreationMessageBase64], fastDataArrival: true } });
         return navigator.credentials.create(defaultOptions).then(credential => {
             assert_not_equals(credential, undefined);
             assert_not_equals(credential, null);
@@ -38,8 +38,8 @@
     }, "CTAP HID with fast data arrival in a mock hid authenticator.");
 
     promise_test(function(t) {
-        if (window.testRunner)
-            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "info", subStage: "init", error: "empty-report", payloadBase64: [testCreationMessageBase64], continueAfterErrorData: true } });
+        if (window.internals)
+            internals.setMockWebAuthenticationConfiguration({ hid: { stage: "info", subStage: "init", error: "empty-report", payloadBase64: [testCreationMessageBase64], continueAfterErrorData: true } });
         return navigator.credentials.create(defaultOptions).then(credential => {
             assert_not_equals(credential, undefined);
             assert_not_equals(credential, null);
@@ -47,8 +47,8 @@
     }, "CTAP HID with continue after empty report in a mock hid authenticator.");
 
     promise_test(function(t) {
-        if (window.testRunner)
-            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "info", subStage: "init", error: "wrong-channel-id", payloadBase64: [testCreationMessageBase64], continueAfterErrorData: true } });
+        if (window.internals)
+            internals.setMockWebAuthenticationConfiguration({ hid: { stage: "info", subStage: "init", error: "wrong-channel-id", payloadBase64: [testCreationMessageBase64], continueAfterErrorData: true } });
         return navigator.credentials.create(defaultOptions).then(credential => {
             assert_not_equals(credential, undefined);
             assert_not_equals(credential, null);
@@ -56,8 +56,8 @@
     }, "CTAP HID with continue after wrong channel id in a mock hid authenticator.");
 
     promise_test(function(t) {
-        if (window.testRunner)
-            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "info", subStage: "init", error: "wrong-nonce", payloadBase64: [testCreationMessageBase64], continueAfterErrorData: true } });
+        if (window.internals)
+            internals.setMockWebAuthenticationConfiguration({ hid: { stage: "info", subStage: "init", error: "wrong-nonce", payloadBase64: [testCreationMessageBase64], continueAfterErrorData: true } });
         return navigator.credentials.create(defaultOptions).then(credential => {
             assert_not_equals(credential, undefined);
             assert_not_equals(credential, null);

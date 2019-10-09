@@ -1,3 +1,40 @@
+2019-10-09  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Move the mock testing entrance to Internals
+        https://bugs.webkit.org/show_bug.cgi?id=202560
+        <rdar://problem/55973793>
+
+        Reviewed by Chris Dumez.
+
+        This patch moves TestRunner.setWebAuthenticationMockConfiguration to
+        Internals.setMockWebAuthenticationConfiguration and removes the old
+        entrance. The purpose of this patch is to allow API tests to use
+        the same mock infrastructure that is used by layout tests.
+
+        No new tests, covered by updates on existing tests.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webauthn/PublicKeyCredentialCreationOptions.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::setMockWebAuthenticationConfiguration):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMockWebAuthenticationConfiguration):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * testing/MockWebAuthenticationConfiguration.h: Added.
+        (WebCore::MockWebAuthenticationConfiguration::LocalConfiguration::encode const):
+        (WebCore::MockWebAuthenticationConfiguration::LocalConfiguration::decode):
+        (WebCore::MockWebAuthenticationConfiguration::HidConfiguration::encode const):
+        (WebCore::MockWebAuthenticationConfiguration::HidConfiguration::decode):
+        (WebCore::MockWebAuthenticationConfiguration::NfcConfiguration::encode const):
+        (WebCore::MockWebAuthenticationConfiguration::NfcConfiguration::decode):
+        (WebCore::MockWebAuthenticationConfiguration::encode const):
+        (WebCore::MockWebAuthenticationConfiguration::decode):
+        * testing/MockWebAuthenticationConfiguration.idl: Added.
+
 2019-10-09  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: update size to actual disk usage only when estimated increase is bigger than space available

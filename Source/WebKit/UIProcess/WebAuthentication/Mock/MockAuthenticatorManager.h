@@ -28,22 +28,22 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "AuthenticatorManager.h"
-#include "MockWebAuthenticationConfiguration.h"
+#include <WebCore/MockWebAuthenticationConfiguration.h>
 
 namespace WebKit {
 
 class MockAuthenticatorManager final : public AuthenticatorManager {
 public:
-    explicit MockAuthenticatorManager(MockWebAuthenticationConfiguration&&);
+    explicit MockAuthenticatorManager(WebCore::MockWebAuthenticationConfiguration&&);
 
     bool isMock() const final { return true; }
-    void setTestConfiguration(MockWebAuthenticationConfiguration&& configuration) { m_testConfiguration = WTFMove(configuration); }
+    void setTestConfiguration(WebCore::MockWebAuthenticationConfiguration&& configuration) { m_testConfiguration = WTFMove(configuration); }
 
 private:
     UniqueRef<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportService::Observer&) const final;
     void respondReceivedInternal(Respond&&) final;
 
-    MockWebAuthenticationConfiguration m_testConfiguration;
+    WebCore::MockWebAuthenticationConfiguration m_testConfiguration;
 };
 
 } // namespace WebKit

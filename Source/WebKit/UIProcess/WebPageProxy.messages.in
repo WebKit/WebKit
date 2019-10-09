@@ -574,4 +574,8 @@ messages -> WebPageProxy {
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     DidCreateContextForVisibilityPropagation(WebKit::LayerHostingContextID contextID);
 #endif
+
+#if ENABLE(WEB_AUTHN)
+    SetMockWebAuthenticationConfiguration(struct WebCore::MockWebAuthenticationConfiguration configuration);
+#endif
 }

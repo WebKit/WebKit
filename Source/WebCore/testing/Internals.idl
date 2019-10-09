@@ -794,4 +794,6 @@ enum CompositingPolicy {
     TextIndicatorInfo textIndicatorForRange(Range range, TextIndicatorOptions options);
 
     void addPrefetchLoadEventListener(HTMLLinkElement link, EventListener? callback);
+
+    [Conditional=WEB_AUTHN] void setMockWebAuthenticationConfiguration(MockWebAuthenticationConfiguration configuration);
 };

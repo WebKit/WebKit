@@ -108,7 +108,7 @@
 
 namespace WebKit {
 using namespace fido;
-using MockNfc = MockWebAuthenticationConfiguration::Nfc;
+using Mock = WebCore::MockWebAuthenticationConfiguration;
 
 #if HAVE(NEAR_FIELD)
 
@@ -143,7 +143,7 @@ static NSData* NFReaderSessionTransceive(id, SEL, NSData *)
 
 #endif // HAVE(NEAR_FIELD)
 
-MockNfcService::MockNfcService(Observer& observer, const MockWebAuthenticationConfiguration& configuration)
+MockNfcService::MockNfcService(Observer& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
     : NfcService(observer)
     , m_configuration(configuration)
 {
@@ -169,7 +169,7 @@ void MockNfcService::platformStartDiscovery()
         method_setImplementation(methodToSwizzle1, (IMP)NFReaderSessionSetDelegate);
 
         Method methodToSwizzle2 = class_getInstanceMethod(getNFReaderSessionClass(), @selector(connectTag:));
-        if (m_configuration.nfc->error == MockNfc::Error::NoConnections)
+        if (m_configuration.nfc->error == Mock::NfcError::NoConnections)
             method_setImplementation(methodToSwizzle2, (IMP)NFReaderSessionConnectTagFail);
         else
             method_setImplementation(methodToSwizzle2, (IMP)NFReaderSessionConnectTag);
@@ -194,12 +194,12 @@ void MockNfcService::platformStartDiscovery()
 void MockNfcService::detectTags() const
 {
 #if HAVE(NEAR_FIELD)
-    if (m_configuration.nfc->error == MockNfc::Error::NoTags)
+    if (m_configuration.nfc->error == Mock::NfcError::NoTags)
         return;
 
     auto callback = makeBlockPtr([configuration = m_configuration] {
         auto tags = adoptNS([[NSMutableArray alloc] init]);
-        if (configuration.nfc->error == MockNfc::Error::WrongTagType || configuration.nfc->multipleTags)
+        if (configuration.nfc->error == Mock::NfcError::WrongTagType || configuration.nfc->multipleTags)
             [tags addObject:adoptNS([[WKMockNFTag alloc] initWithType:NFTagTypeUnknown]).get()];
         else
             [tags addObject:adoptNS([[WKMockNFTag alloc] initWithType:NFTagTypeGeneric4A]).get()];

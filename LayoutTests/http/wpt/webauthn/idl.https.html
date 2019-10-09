@@ -52,8 +52,8 @@ promise_test(async () => {
         }
     };
     // A mock attestation object
-    if (window.testRunner)
-        testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "request", subStage: "msg", error: "success", payloadBase64: [testCreationMessageBase64] } });
+    if (window.internals)
+        internals.setMockWebAuthenticationConfiguration({ hid: { stage: "request", subStage: "msg", error: "success", payloadBase64: [testCreationMessageBase64] } });
     createdCredential = await navigator.credentials.create(creationOptions);
 
     const requestOptions = {
@@ -61,8 +61,8 @@ promise_test(async () => {
             challenge: Base64URL.parse("MTIzNDU2"),
         }
     };
-    if (window.testRunner)
-        testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "request", subStage: "msg", error: "success", payloadBase64: [testAssertionMessageBase64] } });
+    if (window.internals)
+        internals.setMockWebAuthenticationConfiguration({ hid: { stage: "request", subStage: "msg", error: "success", payloadBase64: [testAssertionMessageBase64] } });
     requestedCredential = await navigator.credentials.get(requestOptions);
 
     idlArray.add_objects({"PublicKeyCredential": ["createdCredential"], "AuthenticatorAttestationResponse": ["createdCredential.response"], "AuthenticatorAssertionResponse": ["requestedCredential.response"]});

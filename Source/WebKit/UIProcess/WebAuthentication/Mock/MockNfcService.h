@@ -27,18 +27,16 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "MockWebAuthenticationConfiguration.h"
 #include "NfcService.h"
+#include <WebCore/MockWebAuthenticationConfiguration.h>
 
 OBJC_CLASS NSData;
 
 namespace WebKit {
 
-struct MockWebAuthenticationConfiguration;
-
 class MockNfcService final : public NfcService {
 public:
-    MockNfcService(Observer&, const MockWebAuthenticationConfiguration&);
+    MockNfcService(Observer&, const WebCore::MockWebAuthenticationConfiguration&);
 
     NSData* transceive();
 
@@ -47,7 +45,7 @@ private:
 
     void detectTags() const;
 
-    MockWebAuthenticationConfiguration m_configuration;
+    WebCore::MockWebAuthenticationConfiguration m_configuration;
 };
 
 } // namespace WebKit

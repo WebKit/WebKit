@@ -28,7 +28,6 @@
 
 #include "APIArray.h"
 #include "APIHTTPCookieStore.h"
-#include "MockWebAuthenticationConfiguration.h"
 #include "ShouldGrandfatherStatistics.h"
 #include "WKAPICast.h"
 #include "WKDictionary.h"
@@ -655,108 +654,6 @@ void WKWebsiteDataStoreClearAllDeviceOrientationPermissions(WKWebsiteDataStoreRe
 {
 #if ENABLE(DEVICE_ORIENTATION)
     WebKit::toImpl(dataStoreRef)->deviceOrientationAndMotionAccessController().clearPermissions();
-#endif
-}
-
-void WKWebsiteDataStoreSetWebAuthenticationMockConfiguration(WKWebsiteDataStoreRef dataStoreRef, WKDictionaryRef configurationRef)
-{
-#if ENABLE(WEB_AUTHN)
-    WebKit::MockWebAuthenticationConfiguration configuration;
-
-    if (auto silentFailureRef = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(configurationRef, adoptWK(WKStringCreateWithUTF8CString("SilentFailure")).get())))
-        configuration.silentFailure = WKBooleanGetValue(silentFailureRef);
-
-    if (auto localRef = static_cast<WKDictionaryRef>(WKDictionaryGetItemForKey(configurationRef, adoptWK(WKStringCreateWithUTF8CString("Local")).get()))) {
-        WebKit::MockWebAuthenticationConfiguration::Local local;
-        local.acceptAuthentication = WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(localRef, adoptWK(WKStringCreateWithUTF8CString("AcceptAuthentication")).get())));
-        local.acceptAttestation = WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(localRef, adoptWK(WKStringCreateWithUTF8CString("AcceptAttestation")).get())));
-        if (local.acceptAttestation) {
-            local.privateKeyBase64 = WebKit::toImpl(static_cast<WKStringRef>(WKDictionaryGetItemForKey(localRef, adoptWK(WKStringCreateWithUTF8CString("PrivateKeyBase64")).get())))->string();
-            local.userCertificateBase64 = WebKit::toImpl(static_cast<WKStringRef>(WKDictionaryGetItemForKey(localRef, adoptWK(WKStringCreateWithUTF8CString("UserCertificateBase64")).get())))->string();
-            local.intermediateCACertificateBase64 = WebKit::toImpl(static_cast<WKStringRef>(WKDictionaryGetItemForKey(localRef, adoptWK(WKStringCreateWithUTF8CString("IntermediateCACertificateBase64")).get())))->string();
-        }
-        if (auto preferredUserhandleBase64Ref = static_cast<WKStringRef>(WKDictionaryGetItemForKey(localRef, adoptWK(WKStringCreateWithUTF8CString("PreferredUserhandleBase64")).get())))
-            local.preferredUserhandleBase64 = WebKit::toImpl(preferredUserhandleBase64Ref)->string();
-        configuration.local = WTFMove(local);
-    }
-
-    if (auto hidRef = static_cast<WKDictionaryRef>(WKDictionaryGetItemForKey(configurationRef, adoptWK(WKStringCreateWithUTF8CString("Hid")).get()))) {
-        WebKit::MockWebAuthenticationConfiguration::Hid hid;
-
-        auto stage = WebKit::toImpl(static_cast<WKStringRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("Stage")).get())))->string();
-        if (stage == "info")
-            hid.stage = WebKit::MockWebAuthenticationConfiguration::Hid::Stage::Info;
-        else if (stage == "request")
-            hid.stage = WebKit::MockWebAuthenticationConfiguration::Hid::Stage::Request;
-
-        auto subStage = WebKit::toImpl(static_cast<WKStringRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("SubStage")).get())))->string();
-        if (subStage == "init")
-            hid.subStage = WebKit::MockWebAuthenticationConfiguration::Hid::SubStage::Init;
-        else if (subStage == "msg")
-            hid.subStage = WebKit::MockWebAuthenticationConfiguration::Hid::SubStage::Msg;
-
-        auto error = WebKit::toImpl(static_cast<WKStringRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("Error")).get())))->string();
-        if (error == "success")
-            hid.error = WebKit::MockWebAuthenticationConfiguration::Hid::Error::Success;
-        else if (error == "data-not-sent")
-            hid.error = WebKit::MockWebAuthenticationConfiguration::Hid::Error::DataNotSent;
-        else if (error == "empty-report")
-            hid.error = WebKit::MockWebAuthenticationConfiguration::Hid::Error::EmptyReport;
-        else if (error == "wrong-channel-id")
-            hid.error = WebKit::MockWebAuthenticationConfiguration::Hid::Error::WrongChannelId;
-        else if (error == "malicious-payload")
-            hid.error = WebKit::MockWebAuthenticationConfiguration::Hid::Error::MaliciousPayload;
-        else if (error == "unsupported-options")
-            hid.error = WebKit::MockWebAuthenticationConfiguration::Hid::Error::UnsupportedOptions;
-        else if (error == "wrong-nonce")
-            hid.error = WebKit::MockWebAuthenticationConfiguration::Hid::Error::WrongNonce;
-
-        if (auto payloadBase64 = static_cast<WKArrayRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("PayloadBase64")).get())))
-            hid.payloadBase64 = WebKit::toImpl(payloadBase64)->toStringVector();
-
-        if (auto isU2f = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("IsU2f")).get())))
-            hid.isU2f = WKBooleanGetValue(isU2f);
-
-        if (auto keepAlive = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("KeepAlive")).get())))
-            hid.keepAlive = WKBooleanGetValue(keepAlive);
-
-        if (auto fastDataArrival = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("FastDataArrival")).get())))
-            hid.fastDataArrival = WKBooleanGetValue(fastDataArrival);
-
-        if (auto continueAfterErrorData = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("ContinueAfterErrorData")).get())))
-            hid.continueAfterErrorData = WKBooleanGetValue(continueAfterErrorData);
-
-        if (auto canDowngrade = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(hidRef, adoptWK(WKStringCreateWithUTF8CString("CanDowngrade")).get())))
-            hid.canDowngrade = WKBooleanGetValue(canDowngrade);
-
-        configuration.hid = WTFMove(hid);
-    }
-
-    if (auto nfcRef = static_cast<WKDictionaryRef>(WKDictionaryGetItemForKey(configurationRef, adoptWK(WKStringCreateWithUTF8CString("Nfc")).get()))) {
-        WebKit::MockWebAuthenticationConfiguration::Nfc nfc;
-
-        auto error = WebKit::toImpl(static_cast<WKStringRef>(WKDictionaryGetItemForKey(nfcRef, adoptWK(WKStringCreateWithUTF8CString("Error")).get())))->string();
-        if (error == "success")
-            nfc.error = WebKit::MockWebAuthenticationConfiguration::Nfc::Error::Success;
-        else if (error == "no-tags")
-            nfc.error = WebKit::MockWebAuthenticationConfiguration::Nfc::Error::NoTags;
-        else if (error == "wrong-tag-type")
-            nfc.error = WebKit::MockWebAuthenticationConfiguration::Nfc::Error::WrongTagType;
-        else if (error == "no-connections")
-            nfc.error = WebKit::MockWebAuthenticationConfiguration::Nfc::Error::NoConnections;
-        else if (error == "malicious-payload")
-            nfc.error = WebKit::MockWebAuthenticationConfiguration::Nfc::Error::MaliciousPayload;
-
-        if (auto payloadBase64 = static_cast<WKArrayRef>(WKDictionaryGetItemForKey(nfcRef, adoptWK(WKStringCreateWithUTF8CString("PayloadBase64")).get())))
-            nfc.payloadBase64 = WebKit::toImpl(payloadBase64)->toStringVector();
-
-        if (auto multipleTags = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(nfcRef, adoptWK(WKStringCreateWithUTF8CString("MultipleTags")).get())))
-            nfc.multipleTags = WKBooleanGetValue(multipleTags);
-
-        configuration.nfc = WTFMove(nfc);
-    }
-
-    WebKit::toImpl(dataStoreRef)->setMockWebAuthenticationConfiguration(WTFMove(configuration));
 #endif
 }
 

@@ -1076,6 +1076,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/testing/MockPaymentContactFields.idl \
     $(WebCore)/testing/MockPaymentCoordinator.idl \
     $(WebCore)/testing/MockPaymentError.idl \
+    $(WebCore)/testing/MockWebAuthenticationConfiguration.idl \
     $(WebCore)/testing/ServiceWorkerInternals.idl \
     $(WebCore)/testing/TypeConversions.idl \
     $(WebCore)/workers/AbstractWorker.idl \

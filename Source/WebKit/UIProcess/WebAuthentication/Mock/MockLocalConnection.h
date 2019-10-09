@@ -28,13 +28,13 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "LocalConnection.h"
-#include "MockWebAuthenticationConfiguration.h"
+#include <WebCore/MockWebAuthenticationConfiguration.h>
 
 namespace WebKit {
 
 class MockLocalConnection final : public LocalConnection {
 public:
-    explicit MockLocalConnection(const MockWebAuthenticationConfiguration&);
+    explicit MockLocalConnection(const WebCore::MockWebAuthenticationConfiguration&);
 
 private:
     void getUserConsent(const String& reason, UserConsentCallback&&) const final;
@@ -42,7 +42,7 @@ private:
     void getAttestation(const String& rpId, const String& username, const Vector<uint8_t>& hash, AttestationCallback&&) const final;
     NSDictionary *selectCredential(const NSArray *) const final;
 
-    MockWebAuthenticationConfiguration m_configuration;
+    WebCore::MockWebAuthenticationConfiguration m_configuration;
 };
 
 } // namespace WebKit

@@ -110,6 +110,7 @@ class MediaPlayerRequestInstallMissingPluginsCallback;
 struct ContentRuleListResults;
 struct DateTimeChooserParameters;
 struct GraphicsDeviceAdapter;
+struct MockWebAuthenticationConfiguration;
 struct ShareDataWithParsedURL;
 struct ViewportArguments;
 struct WindowFeatures;
@@ -509,6 +510,10 @@ public:
 
     virtual bool userIsInteracting() const { return false; }
     virtual void setUserIsInteracting(bool) { }
+
+#if ENABLE(WEB_AUTHN)
+    virtual void setMockWebAuthenticationConfiguration(const MockWebAuthenticationConfiguration&) { }
+#endif
 
 protected:
     virtual ~ChromeClient() = default;

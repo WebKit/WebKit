@@ -112,6 +112,8 @@ class ServiceWorker;
 
 template<typename IDLType> class DOMPromiseDeferred;
 
+struct MockWebAuthenticationConfiguration;
+
 class Internals final : public RefCounted<Internals>, private ContextDestructionObserver
 #if ENABLE(MEDIA_STREAM)
     , private RealtimeMediaSource::Observer
@@ -883,6 +885,10 @@ public:
     TextIndicatorInfo textIndicatorForRange(const Range&, TextIndicatorOptions);
 
     void addPrefetchLoadEventListener(HTMLLinkElement&, RefPtr<EventListener>&&);
+
+#if ENABLE(WEB_AUTHN)
+    void setMockWebAuthenticationConfiguration(const MockWebAuthenticationConfiguration&);
+#endif
 
 private:
     explicit Internals(Document&);

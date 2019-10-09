@@ -1630,12 +1630,6 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "SetWebAuthenticationMockConfiguration")) {
-        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
-        TestController::singleton().setWebAuthenticationMockConfiguration(static_cast<WKDictionaryRef>(messageBody));
-        return nullptr;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "AddTestKeyToKeychain")) {
         ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
         WKDictionaryRef testKeyDictionary = static_cast<WKDictionaryRef>(messageBody);

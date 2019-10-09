@@ -3621,11 +3621,6 @@ void TestController::setServiceWorkerFetchTimeoutForTesting(double seconds)
     WKContextSetServiceWorkerFetchTimeoutForTesting(platformContext(), seconds);
 }
 
-void TestController::setWebAuthenticationMockConfiguration(WKDictionaryRef configuration)
-{
-    WKWebsiteDataStoreSetWebAuthenticationMockConfiguration(TestController::websiteDataStore(), configuration);
-}
-
 struct AdClickAttributionStringResultCallbackContext {
     explicit AdClickAttributionStringResultCallbackContext(TestController& controller)
         : testController(controller)

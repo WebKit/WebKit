@@ -391,8 +391,7 @@ interface TestRunner {
 
     void setServiceWorkerFetchTimeout(double seconds);
 
-    // WebAuthN
-    void setWebAuthenticationMockConfiguration(object configuration);
+    // WebAuthn
     void addTestKeyToKeychain(DOMString privateKeyBase64, DOMString attrLabel, DOMString applicationTagBase64);
     void cleanUpKeychain(DOMString attrLabel, optional DOMString applicationTagBase64);
     boolean keyExistsInKeychain(DOMString attrLabel, DOMString applicationTagBase64);

@@ -1073,7 +1073,6 @@
 		57DCEDB1214C60480016B847 /* Authenticator.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCED8B21485BD70016B847 /* Authenticator.h */; };
 		57DCEDB2214C604C0016B847 /* WebAuthenticationRequestData.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCEDA62149F9DA0016B847 /* WebAuthenticationRequestData.h */; };
 		57DCEDB3214C60530016B847 /* WebAuthenticatorCoordinatorProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 57608295202BD8BA00116678 /* WebAuthenticatorCoordinatorProxy.h */; };
-		57DCEDBF214F0DCF0016B847 /* MockWebAuthenticationConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCEDBE214CA01B0016B847 /* MockWebAuthenticationConfiguration.h */; };
 		57DCEDC3214F114C0016B847 /* MockLocalService.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCEDC1214F114C0016B847 /* MockLocalService.h */; };
 		57DCEDC7214F18300016B847 /* MockLocalConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCEDC5214F18300016B847 /* MockLocalConnection.h */; };
 		57DCEDCB214F4E420016B847 /* MockAuthenticatorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCEDC9214F4E420016B847 /* MockAuthenticatorManager.h */; };
@@ -3564,7 +3563,6 @@
 		57DCEDA7214A568B0016B847 /* LocalConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalConnection.h; sourceTree = "<group>"; };
 		57DCEDA8214A568B0016B847 /* LocalConnection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalConnection.mm; sourceTree = "<group>"; };
 		57DCEDAA214B9B430016B847 /* DeviceIdentitySPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceIdentitySPI.h; sourceTree = "<group>"; };
-		57DCEDBE214CA01B0016B847 /* MockWebAuthenticationConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockWebAuthenticationConfiguration.h; sourceTree = "<group>"; };
 		57DCEDC1214F114C0016B847 /* MockLocalService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockLocalService.h; sourceTree = "<group>"; };
 		57DCEDC2214F114C0016B847 /* MockLocalService.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MockLocalService.mm; sourceTree = "<group>"; };
 		57DCEDC5214F18300016B847 /* MockLocalConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockLocalConnection.h; sourceTree = "<group>"; };
@@ -7143,7 +7141,6 @@
 				57DCEDC2214F114C0016B847 /* MockLocalService.mm */,
 				57B8264A230603C100B72EB0 /* MockNfcService.h */,
 				57B8264B230603C100B72EB0 /* MockNfcService.mm */,
-				57DCEDBE214CA01B0016B847 /* MockWebAuthenticationConfiguration.h */,
 			);
 			path = Mock;
 			sourceTree = "<group>";
@@ -9583,7 +9580,6 @@
 				57DCEDC7214F18300016B847 /* MockLocalConnection.h in Headers */,
 				57DCEDC3214F114C0016B847 /* MockLocalService.h in Headers */,
 				57B8264C230603C100B72EB0 /* MockNfcService.h in Headers */,
-				57DCEDBF214F0DCF0016B847 /* MockWebAuthenticationConfiguration.h in Headers */,
 				C0E3AA7C1209E83C00A49D01 /* Module.h in Headers */,
 				2D50366B1BCDE17900E20BB3 /* NativeWebGestureEvent.h in Headers */,
 				263172CF18B469490065B9C3 /* NativeWebTouchEvent.h in Headers */,
