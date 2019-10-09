@@ -1,3 +1,25 @@
+2019-10-09  Antti Koivisto  <antti@apple.com>
+
+        [CSS Shadow Parts] Allow exporting single part with multiple names using exportparts attribute
+        https://bugs.webkit.org/show_bug.cgi?id=202719
+
+        Reviewed by Ryosuke Niwa.
+
+        Cases like exportparts="part:export1, part:export2" should work.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne const):
+
+        Allow one part name to expand into multiple names for matching.
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::parsePartMappingsList):
+
+        Allow multiple names per mapping.
+
+        (WebCore::ShadowRoot::partMappings const):
+        * dom/ShadowRoot.h:
+
 2019-10-09  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r246399): [GStreamer] Problems playing AAC streams

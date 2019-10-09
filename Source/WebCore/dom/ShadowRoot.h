@@ -96,7 +96,8 @@ public:
     void moveShadowRootToNewParentScope(TreeScope&, Document&);
     void moveShadowRootToNewDocument(Document&);
 
-    const HashMap<AtomString, AtomString>& partMappings() const;
+    using PartMappings = HashMap<AtomString, Vector<AtomString, 1>>;
+    const PartMappings& partMappings() const;
     void invalidatePartMappings();
 
 protected:
@@ -124,7 +125,7 @@ private:
 
     std::unique_ptr<Style::Scope> m_styleScope;
     std::unique_ptr<SlotAssignment> m_slotAssignment;
-    mutable Optional<HashMap<AtomString, AtomString>> m_partMappings;
+    mutable Optional<PartMappings> m_partMappings;
 };
 
 inline Element* ShadowRoot::activeElement() const

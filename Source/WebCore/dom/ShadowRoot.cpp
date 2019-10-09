@@ -301,7 +301,7 @@ static Optional<std::pair<AtomString, AtomString>> parsePartMapping(StringView m
     return std::make_pair(firstPart, secondPart);
 }
 
-static void parsePartMappingsList(HashMap<AtomString, AtomString>& mappings, StringView mappingsListString)
+static void parsePartMappingsList(ShadowRoot::PartMappings& mappings, StringView mappingsListString)
 {
     const auto end = mappingsListString.length();
 
@@ -313,7 +313,7 @@ static void parsePartMappingsList(HashMap<AtomString, AtomString>& mappings, Str
 
         auto result = parsePartMapping(mappingsListString.substring(begin, mappingEnd - begin));
         if (result)
-            mappings.add(result->first, result->second);
+            mappings.add(result->first, Vector<AtomString, 1>()).iterator->value.append(result->second);
 
         if (mappingEnd == end)
             break;
@@ -322,10 +322,10 @@ static void parsePartMappingsList(HashMap<AtomString, AtomString>& mappings, Str
     }
 }
 
-const HashMap<AtomString, AtomString>& ShadowRoot::partMappings() const
+const ShadowRoot::PartMappings& ShadowRoot::partMappings() const
 {
     if (!m_partMappings) {
-        m_partMappings = HashMap<AtomString, AtomString>();
+        m_partMappings = PartMappings();
 
         auto exportpartsValue = host()->attributeWithoutSynchronization(HTMLNames::exportpartsAttr);
         if (!exportpartsValue.isEmpty() && RuntimeEnabledFeatures::sharedFeatures().cssShadowPartsEnabled())

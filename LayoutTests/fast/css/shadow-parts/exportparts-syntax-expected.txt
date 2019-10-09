@@ -4,5 +4,5 @@ PASS Shortcut notation
 PASS Full notation 
 PASS Skip bad entries 
 PASS Mapping multiple parts to a single export 
-FAIL Multiple exports for a single part assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 255)"
+PASS Multiple exports for a single part 
 

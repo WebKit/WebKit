@@ -1160,23 +1160,26 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
 
         case CSSSelector::PseudoElementPart: {
             auto translatePartNameToRuleScope = [&](AtomString partName) {
+                Vector<AtomString, 1> mappedNames { partName };
                 for (auto* shadowRoot = element.containingShadowRoot(); shadowRoot; shadowRoot = shadowRoot->host()->containingShadowRoot()) {
                     // Apply mappings up to the scope the rules are coming from.
                     if (shadowRoot->host() == checkingContext.shadowHostInPartRuleScope)
                         break;
-                    partName = shadowRoot->partMappings().get(partName);
-                    if (partName.isEmpty())
-                        return AtomString();
+                    
+                    Vector<AtomString, 1> newMappedNames;
+                    for (auto& name : mappedNames)
+                        newMappedNames.appendVector(shadowRoot->partMappings().get(name));
+                    mappedNames = newMappedNames;
+
+                    if (mappedNames.isEmpty())
+                        break;
                 }
-                return partName;
+                return mappedNames;
             };
 
             Vector<AtomString, 4> translatedPartNames;
-            for (unsigned i = 0; i < element.partNames().size(); ++i) {
-                auto translatedPartName = translatePartNameToRuleScope(element.partNames()[i]);
-                if (!translatedPartName.isEmpty())
-                    translatedPartNames.append(translatedPartName);
-            }
+            for (unsigned i = 0; i < element.partNames().size(); ++i)
+                translatedPartNames.appendVector(translatePartNameToRuleScope(element.partNames()[i]));
 
             for (auto& part : *selector.argumentList()) {
                 if (!translatedPartNames.contains(part))
