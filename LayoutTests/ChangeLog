@@ -1,3 +1,12 @@
+2019-10-09  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed WPE gardening after r250889.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/reflection-embedded-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/reflection-forms-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/reflection-text-expected.txt:
+
 2019-10-09  youenn fablet  <youenn@apple.com>
 
         Remove testRunner.setWebRTCUnifiedPlanEnabled

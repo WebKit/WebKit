@@ -487,6 +487,7 @@ webkit.org/b/200162 http/tests/websocket/tests/hybi/inspector/ [ Skip ]
 # Server cookie not handled with platform WebSockets API
 webkit.org/b/200165 imported/w3c/web-platform-tests/websockets/cookies/002.html [ Failure ]
 webkit.org/b/200165 imported/w3c/web-platform-tests/websockets/cookies/007.html [ Failure ]
+webkit.org/b/200165 imported/w3c/web-platform-tests/websockets/cookies/004.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
@@ -987,9 +988,11 @@ webkit.org/b/201981 http/tests/workers/service/Client-properties-subframe.html [
 webkit.org/b/201981 http/tests/workers/service/client-removed-from-clients-while-in-page-cache.html [ Timeout Pass ]
 webkit.org/b/201981 http/tests/workers/service/registration-clear-redundant-worker.html [ Timeout Pass ]
 webkit.org/b/201981 http/tests/workers/service/service-worker-download-async-delegates.https.html [ Timeout Pass ]
+webkit.org/b/201981 http/tests/workers/service/service-worker-request-with-body.https.html [ Failure Pass ]
 webkit.org/b/201981 http/wpt/resource-timing/rt-resources-per-worker.html [ Failure Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-frame-resource.https.html [ Failure Crash Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/multi-globals/url-parsing.https.html [ Failure Pass ]
+webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-add.https.html [ Failure Pass ]
 
 webkit.org/b/202514 imported/w3c/web-platform-tests/svg/import/animate-elem-09-t-manual.svg [ Failure Pass ]
 webkit.org/b/202514 imported/w3c/web-platform-tests/svg/import/animate-elem-10-t-manual.svg [ Failure Pass ]
@@ -999,6 +1002,25 @@ webkit.org/b/202514 imported/w3c/web-platform-tests/svg/import/animate-elem-33-t
 webkit.org/b/202514 imported/w3c/web-platform-tests/svg/import/animate-elem-34-t-manual.svg [ Failure Pass ]
 webkit.org/b/202514 imported/w3c/web-platform-tests/svg/import/animate-elem-78-t-manual.svg [ Failure Pass ]
 webkit.org/b/202514 imported/w3c/web-platform-tests/svg/import/animate-elem-86-t-manual.svg [ Failure Pass ]
+webkit.org/b/202514 imported/w3c/web-platform-tests/svg/import/animate-elem-07-t-manual.svg [ Failure Pass ]
+webkit.org/b/202514 imported/w3c/web-platform-tests/svg/import/animate-elem-38-t-manual.svg [ Failure Pass ]
+webkit.org/b/202514 imported/w3c/web-platform-tests/svg/import/animate-elem-82-t-manual.svg [ Failure Pass ]
+
+webkit.org/b/202732 http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html [ Failure Crash ]
+webkit.org/b/202732 http/tests/adClickAttribution/send-attribution-conversion-request.html [ Failure Crash ]
+webkit.org/b/202732 http/tests/adClickAttribution/expired-attributions-removed.html [ Crash Pass ]
+webkit.org/b/202732 http/tests/adClickAttribution/second-attribution-converted-with-higher-priority.html [ Crash Pass ]
+webkit.org/b/202732 http/tests/adClickAttribution/second-attribution-converted-with-lower-priority.html [ Crash Pass ]
+webkit.org/b/202732 http/tests/adClickAttribution/store-disabled-in-ephemeral-session.html [ Crash Pass]
+
+webkit.org/b/202736 http/tests/appcache/document-cookie-http-only.php [ Failure Pass ]
+webkit.org/b/202736 http/tests/appcache/history-test.html [ Failure Pass ]
+webkit.org/b/202736 http/tests/appcache/remove-cache.html [ Timeout Pass ]
+webkit.org/b/202736 http/tests/cache-storage/cache-clearing-all.https.html [ Failure Pass ]
+webkit.org/b/202736 http/tests/cache-storage/cache-clearing-origin.https.html [ Failure Pass ]
+webkit.org/b/202736 http/tests/cache-storage/cache-origins.https.html [ Failure Pass ]
+webkit.org/b/202736 http/tests/cache-storage/cache-persistency.https.html [ Failure Pass ]
+webkit.org/b/202736 http/wpt/cache-storage/quota-third-party.https.html [ Failure Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS
@@ -1048,6 +1070,9 @@ webkit.org/b/142292 fast/images/animated-gif-window-resizing.html [ Timeout ]
 
 webkit.org/b/133148 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Timeout ]
 webkit.org/b/182107 accessibility/aria-combobox-control-owns-elements.html [ Timeout ]
+
+webkit.org/b/202736 storage/indexeddb/modern/handle-user-delete.html [ Timeout ]
+webkit.org/b/202736 storage/indexeddb/modern/new-database-after-user-delete.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 9. TESTS FAILING
@@ -1447,6 +1472,11 @@ webkit.org/b/173419 fast/events/touch/multi-touch-inside-nested-iframes.html [ T
 webkit.org/b/173419 fast/events/touch/page-scaled-touch-gesture-click.html [ Timeout ]
 webkit.org/b/173419 fast/events/touch/touch-target-limited.html [ Timeout ]
 webkit.org/b/173419 fast/events/touch/touch-target.html [ Timeout ]
+webkit.org/b/173419 fast/events/wheel-event-destroys-frame.html [ Timeout ]
+webkit.org/b/173419 fast/events/wheel-event-destroys-overflow.html [ Timeout ]
+webkit.org/b/173419 fast/events/wheelevent-basic.html [ Timeout ]
+webkit.org/b/173419 fast/events/wheelevent-in-text-node.html [ Timeout ]
+webkit.org/b/173419 fast/events/wheelevent-mousewheel-interaction.html [ Timeout ]
 
 webkit.org/b/163858 fast/events/touch/touch-constructor.html [ Skip ]
 webkit.org/b/173411 fast/events/touch/frame-hover-update.html [ Failure ]
@@ -1912,6 +1942,17 @@ webkit.org/b/202457 imported/w3c/web-platform-tests/2dcontext/drawing-images-to-
 webkit.org/b/202459 imported/w3c/web-platform-tests/2dcontext/compositing/2d.composite.globalAlpha.canvascopy.html [ Failure ]
 
 webkit.org/b/202460 imported/w3c/web-platform-tests/2dcontext/image-smoothing/imagesmoothing.html [ Failure ]
+
+webkit.org/b/202732 http/tests/adClickAttribution/clear-through-website-data-removal.html [ Failure ]
+
+webkit.org/b/202736 http/wpt/cache-storage/cache-quota-add.any.html [ Failure ]
+webkit.org/b/202736 http/wpt/cache-storage/cache-quota-after-restart.any.html [ Failure ]
+webkit.org/b/202736 http/tests/IndexedDB/storage-limit-2.https.html [ Failure ]
+webkit.org/b/202736 http/tests/IndexedDB/storage-limit.https.html [ Failure ]
+webkit.org/b/202736 storage/indexeddb/storage-limit.html [ Failure ]
+
+webkit.org/b/202738 storage/indexeddb/cursor-leak-private.html [ Failure ]
+webkit.org/b/202738 storage/indexeddb/cursor-leak.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<
