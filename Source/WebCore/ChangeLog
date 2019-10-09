@@ -1,5 +1,67 @@
 2019-10-09  Sihui Liu  <sihui_liu@apple.com>
 
+        IndexedDB: update size to actual disk usage only when estimated increase is bigger than space available
+        https://bugs.webkit.org/show_bug.cgi?id=201957
+
+        Reviewed by Youenn Fablet.
+
+        For better performance.
+
+        Covered by existing tests.
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::QuotaUser::resetSpaceUsed): m_estimatedSpaceIncrease will be updated when task
+        is finished, so no need to clear it when doing reset.
+        (WebCore::IDBServer::IDBServer::QuotaUser::computeSpaceUsed):
+        * Modules/indexeddb/server/IDBServer.h:
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp: instead of reading file size after each task, just add the 
+        task size to known usage and get an estimated usage.
+        (WebCore::IDBServer::UniqueIDBDatabase::startSpaceIncreaseTask):
+        (WebCore::IDBServer::UniqueIDBDatabase::finishSpaceIncreaseTask):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentOpenOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::shutdownForClose):
+        (WebCore::IDBServer::UniqueIDBDatabase::didShutdownForClose):
+        (WebCore::IDBServer::UniqueIDBDatabase::didDeleteBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::generateUniqueCallbackIdentifier):
+        (WebCore::IDBServer::UniqueIDBDatabase::storeCallbackOrFireError):
+        (WebCore::IDBServer::UniqueIDBDatabase::openBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::didOpenBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::createObjectStoreAfterQuotaCheck):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformCreateObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::renameObjectStoreAfterQuotaCheck):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformRenameObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::createIndexAfterQuotaCheck):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformCreateIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::renameIndexAfterQuotaCheck):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformRenameIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::putOrAddAfterQuotaCheck):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformPutOrAdd):
+        (WebCore::IDBServer::UniqueIDBDatabase::postDatabaseTaskReply):
+        (WebCore::IDBServer::UniqueIDBDatabase::immediateCloseForUserDelete):
+        (WebCore::IDBServer::UniqueIDBDatabase::performErrorCallback):
+        (WebCore::IDBServer::UniqueIDBDatabase::performKeyDataCallback):
+        (WebCore::IDBServer::UniqueIDBDatabase::forgetErrorCallback):
+        (WebCore::IDBServer::generateUniqueCallbackIdentifier): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::updateSpaceUsedIfNeeded): Deleted.
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
+        * storage/StorageQuotaManager.cpp: use m_state to decide what action to take on next request. Previously when a 
+        request asked for size bigger than space available, we would go to ask for more space directly. Now because IDB
+        can be reporting estimated usage, we first ask IDB to compute its actual disk usage and ask for more space if 
+        actual space available is smaller than requested size.
+        (WebCore::StorageQuotaManager::askUserToInitialize):
+        (WebCore::StorageQuotaManager::removeUser):
+        (WebCore::StorageQuotaManager::requestSpace):
+        (WebCore::StorageQuotaManager::askForMoreSpace):
+        (WebCore::StorageQuotaManager::processPendingRequests):
+        * storage/StorageQuotaManager.h:
+        * storage/StorageQuotaUser.h:
+        (WebCore::StorageQuotaUser::computeSpaceUsed):
+
+2019-10-09  Sihui Liu  <sihui_liu@apple.com>
+
         IndexedDB: include size of index records in size estimate of put/add task
         https://bugs.webkit.org/show_bug.cgi?id=202483
 

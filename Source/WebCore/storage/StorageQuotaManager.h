@@ -70,23 +70,30 @@ private:
     void initializeUsersIfNeeded();
     void askUserToInitialize(StorageQuotaUser&);
 
-    enum class ShouldDequeueFirstPendingRequest { No, Yes };
-    void processPendingRequests(Optional<uint64_t>, ShouldDequeueFirstPendingRequest);
+    void processPendingRequests(Optional<uint64_t>);
 
     uint64_t m_quota { 0 };
 
-    bool m_isWaitingForSpaceIncreaseResponse { false };
     SpaceIncreaseRequester m_spaceIncreaseRequester;
 
     enum class WhenInitializedCalled { No, Yes };
     HashMap<StorageQuotaUser*, WhenInitializedCalled> m_pendingInitializationUsers;
-    HashSet<const StorageQuotaUser*> m_users;
+    HashSet<StorageQuotaUser*> m_users;
 
     struct PendingRequest {
         uint64_t spaceIncrease;
         RequestCallback callback;
     };
     Deque<PendingRequest> m_pendingRequests;
+
+    enum class State {
+        Uninitialized,
+        ComputingSpaceUsed,
+        WaitingForSpaceIncreaseResponse,
+        AskingForMoreSpace,
+        MakingDecisionForRequest,
+    };
+    State m_state { State::Uninitialized };
 };
 
 } // namespace WebCore

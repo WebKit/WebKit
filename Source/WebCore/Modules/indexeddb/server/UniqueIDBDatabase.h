@@ -116,8 +116,6 @@ public:
 
     bool hardClosedForUserDelete() const { return m_hardClosedForUserDelete; }
 
-    uint64_t spaceUsed() const;
-
     void finishActiveTransactions();
 
 private:
@@ -160,7 +158,7 @@ private:
 
     // Database thread operations
     void deleteBackingStore(const IDBDatabaseIdentifier&);
-    void openBackingStore(const IDBDatabaseIdentifier&);
+    void openBackingStore(const IDBDatabaseIdentifier&, uint64_t taskIdentifier);
     void performCommitTransaction(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier);
     void performAbortTransaction(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier);
     void beginTransactionInBackingStore(const IDBTransactionInfo&);
@@ -188,7 +186,7 @@ private:
 
     // Main thread callbacks
     void didDeleteBackingStore(uint64_t deletedVersion);
-    void didOpenBackingStore(const IDBDatabaseInfo&, const IDBError&);
+    void didOpenBackingStore(const IDBDatabaseInfo&, const IDBError&, uint64_t taskIdentifier);
     void didPerformCreateObjectStore(uint64_t callbackIdentifier, const IDBError&, const IDBObjectStoreInfo&);
     void didPerformDeleteObjectStore(uint64_t callbackIdentifier, const IDBError&, uint64_t objectStoreIdentifier);
     void didPerformRenameObjectStore(uint64_t callbackIdentifier, const IDBError&, uint64_t objectStoreIdentifier, const String& newName);
@@ -211,8 +209,8 @@ private:
     void didPerformUnconditionalDeleteBackingStore();
     void didShutdownForClose();
 
-    uint64_t storeCallbackOrFireError(ErrorCallback&&, uint64_t taskSize = 0);
-    uint64_t storeCallbackOrFireError(KeyDataCallback&&, uint64_t taskSize = 0);
+    uint64_t storeCallbackOrFireError(ErrorCallback&&);
+    uint64_t storeCallbackOrFireError(KeyDataCallback&&);
     uint64_t storeCallbackOrFireError(GetAllResultsCallback&&);
     uint64_t storeCallbackOrFireError(GetResultCallback&&);
     uint64_t storeCallbackOrFireError(CountCallback&&);
@@ -249,7 +247,10 @@ private:
 
     void requestSpace(UniqueIDBDatabaseTransaction&, uint64_t taskSize, const char* errorMessage, CompletionHandler<void(IDBError&&)>&&);
     void waitForRequestSpaceCompletion(UniqueIDBDatabaseTransaction&, CompletionHandler<void(IDBError&&)>&&);
-    void updateSpaceUsedIfNeeded(Optional<uint64_t> optionalCallbackIdentifier = WTF::nullopt);
+    void startSpaceIncreaseTask(uint64_t identifier, uint64_t taskSize);
+    void finishSpaceIncreaseTask(uint64_t identifier, bool isTaskSuccessful);
+
+    static uint64_t generateUniqueCallbackIdentifier();
 
     Ref<IDBServer> m_server;
     IDBDatabaseIdentifier m_identifier;
@@ -302,9 +303,7 @@ private:
 
     HashSet<IDBResourceIdentifier> m_cursorPrefetches;
 
-    HashMap<uint64_t, uint64_t> m_pendingSpaceIncreasingTasks;
-    uint64_t m_currentDatabaseSize { 0 };
-    uint64_t m_newDatabaseSize { 0 };
+    HashMap<uint64_t, uint64_t> m_pendingSpaceIncreaseTasks;
 };
 
 } // namespace IDBServer

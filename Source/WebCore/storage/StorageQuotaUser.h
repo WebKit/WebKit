@@ -34,6 +34,7 @@ public:
     virtual ~StorageQuotaUser() = default;
 
     virtual uint64_t spaceUsed() const = 0;
+    virtual void computeSpaceUsed() { };
     virtual void whenInitialized(CompletionHandler<void()>&& callback) { callback(); }
 };
 

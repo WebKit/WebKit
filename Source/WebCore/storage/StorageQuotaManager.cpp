@@ -84,8 +84,13 @@ void StorageQuotaManager::askUserToInitialize(StorageQuotaUser& user)
         if (!m_pendingInitializationUsers.isEmpty())
             return;
 
-        updateQuotaBasedOnSpaceUsage();
-        processPendingRequests({ }, ShouldDequeueFirstPendingRequest::No);
+        // Make sure quota is set before handling first request.
+        if (m_state == State::Uninitialized) {
+            updateQuotaBasedOnSpaceUsage();
+            m_state = State::MakingDecisionForRequest;
+        }
+
+        processPendingRequests({ });
     });
 }
 
@@ -119,7 +124,7 @@ void StorageQuotaManager::removeUser(StorageQuotaUser& user)
                 return;
 
             if (m_pendingInitializationUsers.isEmpty())
-                this->processPendingRequests({ }, ShouldDequeueFirstPendingRequest::No);
+                this->processPendingRequests({ });
         });
     }
 }
@@ -145,32 +150,43 @@ void StorageQuotaManager::requestSpace(uint64_t spaceIncrease, RequestCallback&&
 
     if (shouldAskForMoreSpace(spaceIncrease)) {
         m_pendingRequests.append({ spaceIncrease, WTFMove(callback) });
+
+        // Try processing request again after making sure usage is accurate.
+        m_state = State::ComputingSpaceUsed;
+        for (auto& user : copyToVector(m_users))
+            user->computeSpaceUsed();
+
+        if (!m_pendingInitializationUsers.isEmpty())
+            return;
+
+        m_state = State::AskingForMoreSpace;
         askForMoreSpace(spaceIncrease);
         return;
     }
 
+    m_state = State::MakingDecisionForRequest;
     callback(Decision::Grant);
 }
 
 void StorageQuotaManager::askForMoreSpace(uint64_t spaceIncrease)
 {
     ASSERT(shouldAskForMoreSpace(spaceIncrease));
-    ASSERT(!m_isWaitingForSpaceIncreaseResponse);
+    ASSERT(m_state == State::AskingForMoreSpace);
 
     RELEASE_LOG(Storage, "%p - StorageQuotaManager::askForMoreSpace %" PRIu64, this, spaceIncrease);
-    m_isWaitingForSpaceIncreaseResponse = true;
+    m_state = State::WaitingForSpaceIncreaseResponse;
     m_spaceIncreaseRequester(m_quota, spaceUsage(), spaceIncrease, [this, weakThis = makeWeakPtr(*this)](Optional<uint64_t> newQuota) {
         if (!weakThis)
             return;
 
         RELEASE_LOG(Storage, "%p - StorageQuotaManager::askForMoreSpace received response %" PRIu64, this, newQuota ? *newQuota : 0);
 
-        m_isWaitingForSpaceIncreaseResponse = false;
-        processPendingRequests(newQuota, ShouldDequeueFirstPendingRequest::Yes);
+        m_state = State::AskingForMoreSpace;
+        processPendingRequests(newQuota);
     });
 }
 
-void StorageQuotaManager::processPendingRequests(Optional<uint64_t> newQuota, ShouldDequeueFirstPendingRequest shouldDequeueFirstPendingRequest)
+void StorageQuotaManager::processPendingRequests(Optional<uint64_t> newQuota)
 {
     if (m_pendingRequests.isEmpty())
         return;
@@ -178,18 +194,19 @@ void StorageQuotaManager::processPendingRequests(Optional<uint64_t> newQuota, Sh
     if (newQuota)
         m_quota = *newQuota;
 
-    if (m_isWaitingForSpaceIncreaseResponse)
+    if (m_state == State::WaitingForSpaceIncreaseResponse)
         return;
 
     if (!m_pendingInitializationUsers.isEmpty())
         return;
 
-    if (shouldDequeueFirstPendingRequest == ShouldDequeueFirstPendingRequest::Yes) {
+    if (m_state == State::AskingForMoreSpace) {
         auto request = m_pendingRequests.takeFirst();
         bool shouldAllowRequest = !shouldAskForMoreSpace(request.spaceIncrease);
 
         RELEASE_LOG(Storage, "%p - StorageQuotaManager::processPendingRequests first request decision is %d", this, shouldAllowRequest);
 
+        m_state = State::MakingDecisionForRequest;
         request.callback(shouldAllowRequest ? Decision::Grant : Decision::Deny);
     }
 
@@ -197,13 +214,24 @@ void StorageQuotaManager::processPendingRequests(Optional<uint64_t> newQuota, Sh
         auto& request = m_pendingRequests.first();
 
         if (shouldAskForMoreSpace(request.spaceIncrease)) {
+            if (m_state == State::MakingDecisionForRequest) {
+                m_state = State::ComputingSpaceUsed;
+                for (auto& user : copyToVector(m_users))
+                    user->computeSpaceUsed();
+
+                if (!m_pendingInitializationUsers.isEmpty())
+                    return;
+            }
+
+            m_state = State::AskingForMoreSpace;
             uint64_t spaceIncrease = 0;
-            for (auto& request : m_pendingRequests)
-                spaceIncrease += request.spaceIncrease;
+            for (auto& pendingRequest : m_pendingRequests)
+                spaceIncrease += pendingRequest.spaceIncrease;
             askForMoreSpace(spaceIncrease);
             return;
         }
 
+        m_state = State::MakingDecisionForRequest;
         m_pendingRequests.takeFirst().callback(Decision::Grant);
     }
 }

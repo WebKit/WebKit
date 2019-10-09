@@ -167,7 +167,12 @@ private:
         void initializeSpaceUsed(uint64_t spaceUsed);
 
     private:
-        uint64_t spaceUsed() const final { return m_spaceUsed + m_estimatedSpaceIncrease; }
+        uint64_t spaceUsed() const final
+        {
+            ASSERT(m_isInitialized);
+            return m_spaceUsed + m_estimatedSpaceIncrease;
+        }
+        void computeSpaceUsed() final;
         void whenInitialized(CompletionHandler<void()>&&) final;
 
         IDBServer& m_server;

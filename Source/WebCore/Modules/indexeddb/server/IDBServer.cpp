@@ -712,7 +712,6 @@ IDBServer::QuotaUser::~QuotaUser()
 void IDBServer::QuotaUser::resetSpaceUsed()
 {
     m_spaceUsed = 0;
-    m_estimatedSpaceIncrease = 0;
 
     if (!m_manager)
         return;
@@ -730,6 +729,11 @@ void IDBServer::QuotaUser::resetSpaceUsed()
     // Do add/remove to trigger call to whenInitialized.
     m_manager->removeUser(*this);
     m_manager->addUser(*this);
+}
+
+void IDBServer::QuotaUser::computeSpaceUsed()
+{
+    resetSpaceUsed();
 }
 
 void IDBServer::QuotaUser::increaseSpaceUsed(uint64_t size)
