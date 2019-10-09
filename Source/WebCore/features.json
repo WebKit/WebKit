@@ -230,7 +230,8 @@
     {
         "name": "CSS Shadow Parts",
         "status": {
-            "status": "Under Consideration"
+            "status": "Supported",
+            "enabled-by-default": true
         },
         "url": "https://drafts.csswg.org/css-shadow-parts/",
         "webkit-url": "https://webkit.org/b/149443",
