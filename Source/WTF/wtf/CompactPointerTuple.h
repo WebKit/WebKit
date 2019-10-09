@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2018 Yusuke Suzuki <utatane.tea@gmail.com>.
- * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,35 +26,21 @@
 #pragma once
 
 #include <type_traits>
-#include <wtf/OptionSet.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
-
-template <typename T>
-struct IsOptionSet : public std::integral_constant<bool, WTF::IsTemplate<std::decay_t<T>, OptionSet>::value> { };
-
-template<typename T> struct ByteValueTypeAdapter {
-    static constexpr uint8_t toByte(T value) { return value; }
-    static constexpr T fromByte(uint8_t value) { return static_cast<T>(value); }
-};
-
-template<typename U> struct ByteValueTypeAdapter<OptionSet<U>> {
-    static constexpr uint8_t toByte(OptionSet<U> value) { return value.toRaw(); }
-    static constexpr OptionSet<U> fromByte(uint8_t value) { return OptionSet<U>::fromRaw(value); }
-};
 
 // The goal of this class is folding a pointer and 1 byte value into 8 bytes in both 32bit and 64bit architectures.
 // 32bit architecture just has a pair of byte and pointer, which should be 8 bytes.
 // In 64bit, we use the upper 5 bits and lower 3 bits (zero due to alignment) since these bits are safe to use even
 // with 5-level page tables where the effective pointer width is 57bits.
-template<typename PointerType, typename Type, typename Adapter = ByteValueTypeAdapter<Type>>
+template<typename PointerType, typename Type>
 class CompactPointerTuple final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static_assert(sizeof(Type) == 1, "");
     static_assert(std::is_pointer<PointerType>::value, "");
-    static_assert(std::is_integral<Type>::value || std::is_enum<Type>::value || IsOptionSet<Type>::value, "");
+    static_assert(std::is_integral<Type>::value || std::is_enum<Type>::value, "");
 
     CompactPointerTuple() = default;
 
@@ -77,7 +62,7 @@ public:
     static constexpr uint64_t pointerMask = ~typeMask;
 
     CompactPointerTuple(PointerType pointer, Type type)
-        : m_data { bitwise_cast<uint64_t>(pointer) | encodeType(Adapter::toByte(type)) }
+        : m_data(bitwise_cast<uint64_t>(pointer) | encodeType(static_cast<uint8_t>(type)))
     {
         ASSERT((bitwise_cast<uint64_t>(pointer) & 0b111) == 0x0);
     }
@@ -90,7 +75,7 @@ public:
         m_data = CompactPointerTuple(pointer, type()).m_data;
     }
 
-    Type type() const { return Adapter::fromByte(decodeType(m_data)); }
+    Type type() const { return static_cast<Type>(decodeType(m_data)); }
     void setType(Type type)
     {
         m_data = CompactPointerTuple(pointer(), type).m_data;
