@@ -1,3 +1,16 @@
+2019-10-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] GetterSetter should be JSCell, not JSObject
+        https://bugs.webkit.org/show_bug.cgi?id=202656
+
+        Reviewed by Tadeu Zagallo and Saam Barati.
+
+        * stress/getter-setter-should-be-cell.js: Added.
+        (foo.with.):
+        (foo.with.get for):
+        (foo.with.bar):
+        (foo):
+
 2019-10-08  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         JSON.parse incorrectly handles array proxies
