@@ -907,6 +907,8 @@ webkit.org/b/194826 http/tests/resourceLoadStatistics/do-not-block-top-level-nav
 
 webkit.org/b/194916 fast/mediastream/MediaStream-video-element.html [ Pass Failure ]
 
+webkit.org/b/196400 fast/mediastream/MediaStreamTrack-getSettings.html [ Pass Failure ]
+
 webkit.org/b/196403 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-stop.html [ Pass Failure ]
 
 webkit.org/b/187391 accessibility/mac/async-increment-decrement-action.html [ Skip ]
@@ -952,3 +954,5 @@ webkit.org/b/195635 scrollingcoordinator/mac/multiple-fixed.html [ Pass Timeout 
 webkit.org/b/199651 [ Mojave Debug ] webgpu/whlsl/builtin-vectors-2.html [ Slow ]
 
 webkit.org/b/199089 [ Mojave+ Debug ] plugins/window-open.html [ Skip ]
+
+webkit.org/b/202500 [ Mojave ] crypto/workers/subtle/aes-indexeddb.html [ Timeout ]
