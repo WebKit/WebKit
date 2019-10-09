@@ -1,3 +1,22 @@
+2019-10-09  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r246399): [GStreamer] Problems playing AAC streams
+        https://bugs.webkit.org/show_bug.cgi?id=202204
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Push the EOS event in the WebKitWebSrc element when the internal
+        queue is empty only for non-live resources. In the live case the
+        queue might drain temporarily but that's OK because data would
+        still be queued in downstream elements.
+
+        No new tests, the EOS event was pushed too early because of this
+        regression but there's no way to differentiate it from an expected
+        event in a layout test.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcCreate):
+
 2019-10-09  youenn fablet  <youenn@apple.com>
 
         MediaStreamTrack does not need to be a Document audio producer
