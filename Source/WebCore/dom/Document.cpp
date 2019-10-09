@@ -3987,7 +3987,9 @@ void Document::updateIsPlayingMedia(uint64_t sourceElementID)
     for (auto& audioProducer : m_audioProducers)
         state |= audioProducer.mediaState();
 
+#if ENABLE(MEDIA_STREAM)
     state |= MediaStreamTrack::captureState(*this);
+#endif
 
 #if ENABLE(MEDIA_SESSION)
     if (HTMLMediaElement* sourceElement = HTMLMediaElement::elementWithID(sourceElementID)) {

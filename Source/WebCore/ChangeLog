@@ -1,3 +1,15 @@
+2019-10-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed build fix for Windows ports
+        https://bugs.webkit.org/show_bug.cgi?id=202630
+        <rdar://problem/56107907>
+
+        dom/Document.cpp(3990): error C2653: 'MediaStreamTrack': is not a class or namespace name
+        dom/Document.cpp(3990): error C3861: 'captureState': identifier not found
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateIsPlayingMedia): Restored #if ENABLE(MEDIA_STREAM).
+
 2019-10-09  Antti Koivisto  <antti@apple.com>
 
         [CSS Shadow Parts] Mark as supported in features.json
