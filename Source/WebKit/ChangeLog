@@ -1,5 +1,19 @@
 2019-10-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        CustomProtocols: convert log messages in WebURLSchemeTaskProxy to RELEASE_LOG
+        https://bugs.webkit.org/show_bug.cgi?id=202686
+
+        Reviewed by Alex Christensen.
+
+        Instead of using WTFLogAlways, since those messages are confusing on stdout.
+
+        * WebProcess/WebPage/WebURLSchemeTaskProxy.cpp:
+        (WebKit::WebURLSchemeTaskProxy::didPerformRedirection):
+        (WebKit::WebURLSchemeTaskProxy::didReceiveResponse):
+        (WebKit::WebURLSchemeTaskProxy::didReceiveData):
+
+2019-10-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [WPE][GTK] WebKitSecurityManager should consider webkit:// to be a local URI scheme
         https://bugs.webkit.org/show_bug.cgi?id=202638
 

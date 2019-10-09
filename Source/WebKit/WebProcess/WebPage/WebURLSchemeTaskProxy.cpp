@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebURLSchemeTaskProxy.h"
 
+#include "Logging.h"
 #include "URLSchemeTaskParameters.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
@@ -73,13 +74,13 @@ void WebURLSchemeTaskProxy::didPerformRedirection(WebCore::ResourceResponse&& re
         // We do not inform the UIProcess of WebKit's new request with the given suggested request.
         // We do want to know if WebKit would have generated a request that differs from the suggested request, though.
         if (request.url() != originalRequest.url())
-            WTFLogAlways("Redirected scheme task would have been sent to a different URL.");
+            RELEASE_LOG(Loading, "Redirected scheme task would have been sent to a different URL.");
 
         processNextPendingTask();
     };
     
     if (m_waitingForCompletionHandler) {
-        WTFLogAlways("Received redirect during previous redirect processing, queuing it.");
+        RELEASE_LOG(Loading, "Received redirect during previous redirect processing, queuing it.");
         queueTask([this, protectedThis = makeRef(*this), redirectResponse = WTFMove(redirectResponse), request = WTFMove(request)]() mutable {
             didPerformRedirection(WTFMove(redirectResponse), WTFMove(request));
         });
@@ -93,7 +94,7 @@ void WebURLSchemeTaskProxy::didPerformRedirection(WebCore::ResourceResponse&& re
 void WebURLSchemeTaskProxy::didReceiveResponse(const ResourceResponse& response)
 {
     if (m_waitingForCompletionHandler) {
-        WTFLogAlways("Received response during redirect processing, queuing it.");
+        RELEASE_LOG(Loading, "Received response during redirect processing, queuing it.");
         queueTask([this, protectedThis = makeRef(*this), response] {
             didReceiveResponse(response);
         });
@@ -116,7 +117,7 @@ void WebURLSchemeTaskProxy::didReceiveData(size_t size, const uint8_t* data)
         return;
 
     if (m_waitingForCompletionHandler) {
-        WTFLogAlways("Received data during response processing, queuing it.");
+        RELEASE_LOG(Loading, "Received data during response processing, queuing it.");
         Vector<uint8_t> dataVector;
         dataVector.append(data, size);
         queueTask([this, protectedThis = makeRef(*this), dataVector = WTFMove(dataVector)] {
