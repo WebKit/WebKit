@@ -1,5 +1,65 @@
 2019-10-09  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r250887. rdar://problem/56105002
+
+    Partially undo r250811
+    https://bugs.webkit.org/show_bug.cgi?id=202715
+    <rdar://problem/56084287>
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebCore:
+    
+    This patch changes the SerializedScriptValue to always wrap CryptoKey objects again.
+    CryptoKey objects could belong to an array or another object. In those cases, IDBObjectStore
+    cannot set the flag for the embedded Cryptokey objects. Neither can postMessage to unset
+    the flag. Therefore, there is no way to separate the serialization process into two and
+    this patch restores the old behaviour. However, the hardening part of r250811 is kept
+    and therefore the crash should still be prevented.
+    
+    No new test, updated existing test
+    
+    * Modules/indexeddb/IDBObjectStore.cpp:
+    (WebCore::IDBObjectStore::putOrAdd):
+    (WebCore::JSC::setIsWrappingRequiredForCryptoKey): Deleted.
+    * bindings/js/SerializedScriptValue.cpp:
+    (WebCore::CloneSerializer::dumpIfTerminal):
+    (WebCore::CloneDeserializer::readTerminal):
+    * crypto/CryptoKey.h:
+    (WebCore::CryptoKey::allows const):
+    (WebCore::CryptoKey::isWrappingRequired const): Deleted.
+    (WebCore::CryptoKey::setIsWrappingRequired): Deleted.
+    (): Deleted.
+    * dom/ScriptExecutionContext.h:
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKit/navigation-client-default-crypto.html:
+    Modified to crash if SerializedScriptValue doesn't wrap CryptoKey objects.
+    
+    LayoutTests:
+    
+    Some rebaselines.
+    
+    * crypto/workers/subtle/ec-postMessage-worker-expected.txt:
+    * crypto/workers/subtle/hrsa-postMessage-worker-expected.txt:
+    * crypto/workers/subtle/rsa-postMessage-worker-expected.txt:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250887 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-10-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+            Partially undo r250811
+            https://bugs.webkit.org/show_bug.cgi?id=202715
+            <rdar://problem/56084287>
+
+            Reviewed by Chris Dumez.
+
+            * TestWebKitAPI/Tests/WebKit/navigation-client-default-crypto.html:
+            Modified to crash if SerializedScriptValue doesn't wrap CryptoKey objects.
+
+2019-10-09  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r250811. rdar://problem/56061124
 
     Only wrapping CryptoKeys for IDB during serialization

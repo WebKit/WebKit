@@ -32,6 +32,7 @@
 
 static bool receivedMessage = false;
 static String gMessage;
+static bool masterKeyCalled = false;
 
 @interface WebCryptoMasterKeyNavigationDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
 @end
@@ -40,6 +41,7 @@ static String gMessage;
 
 - (NSData *)_webCryptoMasterKeyForWebView:(WKWebView *)webView
 {
+    masterKeyCalled = true;
     return nil;
 }
 
@@ -66,6 +68,7 @@ TEST(WebKit, WebCryptoNilMasterKey)
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&receivedMessage);
     EXPECT_WK_STREQ("DataCloneError", gMessage);
+    EXPECT_TRUE(masterKeyCalled);
 }
 
 } // namespace TestWebKitAPI
