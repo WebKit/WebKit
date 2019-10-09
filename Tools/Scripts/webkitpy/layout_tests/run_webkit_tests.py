@@ -249,8 +249,8 @@ def parse_args(args):
         optparse.make_option("--force", action="store_true", default=False,
             help="Run all tests with PASS as expected result, even those marked SKIP in the test list or " + \
                  "those which are device-specific (implies --skipped=ignore)"),
-        optparse.make_option("--time-out-ms",
-            help="Set the timeout for each test"),
+        optparse.make_option("--time-out-ms", "--timeout",
+            help="Set the timeout for each test in milliseconds"),
         optparse.make_option("--order", action="store", default="natural",
             help=("determine the order in which the test cases will be run. "
                   "'none' == use the order in which the tests were listed either in arguments or test list, "
