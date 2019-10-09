@@ -27,6 +27,7 @@
 #include "WebKitWebView.h"
 #include "WebPageProxy.h"
 #include <WebCore/GUniquePtrSoup.h>
+#include <WebCore/HTTPParsers.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/URLSoup.h>
 #include <libsoup/soup.h>
@@ -69,7 +70,7 @@ struct _WebKitURISchemeRequestPrivate {
     GRefPtr<GCancellable> cancellable;
     char readBuffer[gReadBufferSize];
     uint64_t bytesRead;
-    CString mimeType;
+    CString contentType;
 };
 
 WEBKIT_DEFINE_TYPE(WebKitURISchemeRequest, webkit_uri_scheme_request, G_TYPE_OBJECT)
@@ -178,7 +179,8 @@ static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsync
         return;
 
     if (!priv->bytesRead) {
-        ResourceResponse response(priv->task->request().url(), String::fromUTF8(priv->mimeType.data()), priv->streamLength, emptyString());
+        ResourceResponse response(priv->task->request().url(), extractMIMETypeFromMediaType(priv->contentType.data()), priv->streamLength, emptyString());
+        response.setTextEncodingName(extractCharsetFromMediaType(priv->contentType.data()));
         priv->task->didReceiveResponse(response);
     }
 
@@ -198,11 +200,11 @@ static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsync
  * @request: a #WebKitURISchemeRequest
  * @stream: a #GInputStream to read the contents of the request
  * @stream_length: the length of the stream or -1 if not known
- * @mime_type: (allow-none): the content type of the stream or %NULL if not known
+ * @content_type: (allow-none): the content type of the stream or %NULL if not known
  *
  * Finish a #WebKitURISchemeRequest by setting the contents of the request and its mime type.
  */
-void webkit_uri_scheme_request_finish(WebKitURISchemeRequest* request, GInputStream* inputStream, gint64 streamLength, const gchar* mimeType)
+void webkit_uri_scheme_request_finish(WebKitURISchemeRequest* request, GInputStream* inputStream, gint64 streamLength, const gchar* contentType)
 {
     g_return_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request));
     g_return_if_fail(G_IS_INPUT_STREAM(inputStream));
@@ -213,7 +215,7 @@ void webkit_uri_scheme_request_finish(WebKitURISchemeRequest* request, GInputStr
     request->priv->streamLength = streamLength == -1 ? 0 : streamLength;
     request->priv->cancellable = adoptGRef(g_cancellable_new());
     request->priv->bytesRead = 0;
-    request->priv->mimeType = mimeType;
+    request->priv->contentType = contentType;
     g_input_stream_read_async(inputStream, request->priv->readBuffer, gReadBufferSize, RunLoopSourcePriority::AsyncIONetwork, request->priv->cancellable.get(),
         reinterpret_cast<GAsyncReadyCallback>(webkitURISchemeRequestReadCallback), g_object_ref(request));
 }

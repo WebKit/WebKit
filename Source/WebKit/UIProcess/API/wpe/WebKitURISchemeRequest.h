@@ -76,7 +76,7 @@ WEBKIT_API void
 webkit_uri_scheme_request_finish       (WebKitURISchemeRequest *request,
                                         GInputStream           *stream,
                                         gint64                  stream_length,
-                                        const gchar            *mime_type);
+                                        const gchar            *content_type);
 
 WEBKIT_API void
 webkit_uri_scheme_request_finish_error (WebKitURISchemeRequest *request,

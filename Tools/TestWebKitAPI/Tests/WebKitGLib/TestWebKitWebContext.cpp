@@ -305,6 +305,21 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     test->waitUntilLoadFinished();
     g_assert_true(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
 
+    static const char* charsetHTML = "<html><body><p id='emoji'>🙂</p></body></html>";
+    test->registerURISchemeHandler("charset", charsetHTML, -1, "text/html; charset=\"UTF-8\"");
+    test->loadURI("charset:test");
+    test->waitUntilLoadFinished();
+    mainResourceDataSize = 0;
+    mainResourceData = test->mainResourceData(mainResourceDataSize);
+    g_assert_cmpint(mainResourceDataSize, ==, strlen(charsetHTML));
+    g_assert_cmpint(strncmp(mainResourceData, charsetHTML, mainResourceDataSize), ==, 0);
+    GUniqueOutPtr<GError> error;
+    auto* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementById('emoji').innerText", &error.outPtr());
+    g_assert_nonnull(javascriptResult);
+    g_assert_no_error(error.get());
+    GUniquePtr<char> emoji(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(emoji.get(), ==, "🙂");
+
     test->registerURISchemeHandler("empty", nullptr, 0, "text/html");
     test->m_loadEvents.clear();
     test->loadURI("empty:nothing");

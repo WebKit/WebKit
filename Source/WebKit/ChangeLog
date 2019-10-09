@@ -1,5 +1,23 @@
 2019-10-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r250597): [GTK][WPE] 2.27.1 shows HTML content as text/plain in custom protocols when passing a charset in content type
+        https://bugs.webkit.org/show_bug.cgi?id=202633
+
+        Reviewed by Žan Doberšek.
+
+        This is a regression of the switch to use the new custom protocols implementation. Before r250597, we extracted
+        the mime type and charset from content type in the network process, but we are now sending the response directly
+        from the UI process, so we need to do that when building our response. Rename the mime_type parameter as
+        content_type to avoid confusion, since it's documented as the content type.
+
+        * UIProcess/API/glib/WebKitURISchemeRequest.cpp:
+        (webkitURISchemeRequestReadCallback):
+        (webkit_uri_scheme_request_finish):
+        * UIProcess/API/gtk/WebKitURISchemeRequest.h:
+        * UIProcess/API/wpe/WebKitURISchemeRequest.h:
+
+2019-10-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] about:gpu should also show the client EGL extensions
         https://bugs.webkit.org/show_bug.cgi?id=202690
 
