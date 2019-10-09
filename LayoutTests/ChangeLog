@@ -1,3 +1,17 @@
+2019-10-09  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Fix video sometimes not appearing
+        https://bugs.webkit.org/show_bug.cgi?id=201401
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Added an exact expectation picture to avoid errors in the test runner
+        (only a fuzzy match is expected, and different platforms render video
+        with slightly different colors).
+
+        * platform/mac/imported/w3c/web-platform-tests/media-source/mediasource-video-is-visible-expected.html: Added.
+        * platform/mac/TestExpectations:
+
 2019-10-09  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r250755): fast/events/ios/ipad/fast-click-not-always.html is Failing

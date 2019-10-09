@@ -1,3 +1,26 @@
+2019-10-09  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Fix video sometimes not appearing
+        https://bugs.webkit.org/show_bug.cgi?id=201401
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Added a test that reproduces the sequence of operations that was
+        causing the video to not appear in WebKitGTK and checks that this time
+        there is visible output.
+
+        * web-platform-tests/lint.whitelist:
+        * web-platform-tests/media-source/mediasource-video-is-visible-expected.html: Added.
+        * web-platform-tests/media-source/mediasource-video-is-visible.html: Added.
+        * web-platform-tests/media-source/mp4/test-a-1s.mp4: Added.
+        * web-platform-tests/media-source/mp4/test-a-1s.mp4-manifest.json: Added.
+        * web-platform-tests/media-source/mp4/test-v-1s-blue.mp4: Added.
+        * web-platform-tests/media-source/mp4/test-v-1s-blue.mp4-manifest.json: Added.
+        * web-platform-tests/media-source/webm/test-a-1s.webm: Added.
+        * web-platform-tests/media-source/webm/test-a-1s.webm-manifest.json: Added.
+        * web-platform-tests/media-source/webm/test-v-1s-blue.webm: Added.
+        * web-platform-tests/media-source/webm/test-v-1s-blue.webm-manifest.json: Added.
+
 2019-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Import web-platform-tests/clipboard-apis

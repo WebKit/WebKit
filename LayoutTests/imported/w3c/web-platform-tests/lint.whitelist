@@ -879,3 +879,4 @@ CONSOLE:payment-request/payment-request-response-id.html
 LAYOUTTESTS APIS: css/css-regions-1/interactivity/*
 LAYOUTTESTS APIS: css/work-in-progress/opera/css-device-adapt/template.blink.html
 LAYOUTTESTS APIS: webgl/conformance-1.0.3/*
+LAYOUTTESTS APIS: media-source/mediasource-video-is-visible.html

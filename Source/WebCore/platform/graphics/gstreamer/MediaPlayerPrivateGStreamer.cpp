@@ -421,7 +421,7 @@ bool MediaPlayerPrivateGStreamer::changePipelineState(GstState newState)
         gst_element_state_get_name(currentState), gst_element_state_get_name(pending));
 
 #if USE(GSTREAMER_GL)
-    if (currentState == GST_STATE_READY && newState == GST_STATE_PAUSED)
+    if (currentState <= GST_STATE_READY && newState >= GST_STATE_PAUSED)
         ensureGLVideoSinkContext();
 #endif
 
