@@ -53,7 +53,6 @@ class MediaStreamTrack
     : public RefCounted<MediaStreamTrack>
     , public ActiveDOMObject
     , public EventTargetWithInlineData
-    , public MediaProducer
     , private MediaStreamTrackPrivate::Observer
     , private PlatformMediaSessionClient
 #if !RELEASE_LOG_DISABLED
@@ -73,10 +72,8 @@ public:
 
     static void endCapture(Document&);
 
-#if PLATFORM(IOS_FAMILY)
     static MediaProducer::MediaStateFlags captureState(Document&);
     static void updateCaptureAccordingToMutedState(Document&);
-#endif
 
     virtual bool isCanvas() const { return false; }
 
@@ -145,9 +142,7 @@ public:
 
     AudioSourceProvider* audioSourceProvider();
 
-    // MediaProducer
-    void pageMutedStateDidChange() final;
-    MediaProducer::MediaStateFlags mediaState() const final;
+    MediaProducer::MediaStateFlags mediaState() const;
 
     void addObserver(Observer&);
     void removeObserver(Observer&);

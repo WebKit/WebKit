@@ -3987,9 +3987,7 @@ void Document::updateIsPlayingMedia(uint64_t sourceElementID)
     for (auto& audioProducer : m_audioProducers)
         state |= audioProducer.mediaState();
 
-#if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
     state |= MediaStreamTrack::captureState(*this);
-#endif
 
 #if ENABLE(MEDIA_SESSION)
     if (HTMLMediaElement* sourceElement = HTMLMediaElement::elementWithID(sourceElementID)) {
@@ -4033,7 +4031,7 @@ void Document::pageMutedStateDidChange()
     for (auto& audioProducer : m_audioProducers)
         audioProducer.pageMutedStateDidChange();
 
-#if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
+#if ENABLE(MEDIA_STREAM)
     MediaStreamTrack::updateCaptureAccordingToMutedState(*this);
 #endif
 }
