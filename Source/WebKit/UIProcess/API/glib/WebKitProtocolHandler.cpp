@@ -452,8 +452,9 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
         g_string_append_printf(html,
             " <tbody><tr>"
             "  <td><div class=\"titlename\">EGL_EXTENSIONS</div></td>"
-            "  <td>%s</td>"
+            "  <td>%s %s</td>"
             " </tbody></tr>",
+            eglQueryString(nullptr, EGL_EXTENSIONS),
             eglQueryString(eglDisplay, EGL_EXTENSIONS));
     }
 #endif

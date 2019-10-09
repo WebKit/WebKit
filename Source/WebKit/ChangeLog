@@ -1,5 +1,17 @@
 2019-10-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][WPE] about:gpu should also show the client EGL extensions
+        https://bugs.webkit.org/show_bug.cgi?id=202690
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        We are showing the extensions supported by the display.
+
+        * UIProcess/API/glib/WebKitProtocolHandler.cpp:
+        (WebKit::WebKitProtocolHandler::handleGPU):
+
+2019-10-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         CustomProtocols: convert log messages in WebURLSchemeTaskProxy to RELEASE_LOG
         https://bugs.webkit.org/show_bug.cgi?id=202686
 
