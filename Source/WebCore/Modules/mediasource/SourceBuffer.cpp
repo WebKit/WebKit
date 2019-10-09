@@ -540,7 +540,7 @@ void SourceBuffer::stop()
 
 bool SourceBuffer::canSuspendForDocumentSuspension() const
 {
-    return !hasPendingActivity();
+    return true;
 }
 
 const char* SourceBuffer::activeDOMObjectName() const

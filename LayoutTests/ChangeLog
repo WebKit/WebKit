@@ -1,3 +1,16 @@
+2019-10-09  Chris Dumez  <cdumez@apple.com>
+
+        Youtube.com is unable to enter the back/forward cache on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=202754
+        <rdar://problem/56117666>
+
+        Reviewed by Eric Carlson.
+
+        Add layout test coverage.
+
+        * media/media-source/media-source-page-cache-expected.txt: Added.
+        * media/media-source/media-source-page-cache.html: Added.
+
 2019-10-09  Truitt Savell  <tsavell@apple.com>
 
         Mark crypto/workers/subtle/aes-indexeddb.html as a timeout on Mojave Release wk2

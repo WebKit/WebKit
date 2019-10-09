@@ -1,0 +1,11 @@
+
+RUN(video.src = URL.createObjectURL(source))
+pageshow - not from cache
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+EXPECTED (source.sourceBuffers[0] == '[object SourceBuffer]') OK
+pagehide - entering cache
+pageshow - from cache
+PASS: Page was restored from Page Cache
+END OF TEST
+

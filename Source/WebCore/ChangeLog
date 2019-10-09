@@ -1,3 +1,27 @@
+2019-10-09  Chris Dumez  <cdumez@apple.com>
+
+        Youtube.com is unable to enter the back/forward cache on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=202754
+        <rdar://problem/56117666>
+
+        Reviewed by Eric Carlson.
+
+        As of r250542, the MainThreadGenericEventQueue used by both MediaSource and
+        SourceBuffer to fire event is PageCache-aware. As a result, both these
+        ActiveDOMObjects can now safety suspend without risking running script while
+        in the page cache. I did have to update some logic in MediaSource::removeSourceBuffer()
+        to make sure we do not unnecessarily construct new ActiveDOMObjects while
+        suspending, as this is not allowed.
+
+        Test: media/media-source/media-source-page-cache.html
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::removeSourceBuffer):
+        (WebCore::MediaSource::canSuspendForDocumentSuspension const):
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::canSuspendForDocumentSuspension const):
+        * Modules/mediasource/SourceBuffer.h:
+
 2019-10-09  Daniel Bates  <dabates@apple.com>
 
         Add support for CompactPointerTuple<..., OptionSet<...>>
