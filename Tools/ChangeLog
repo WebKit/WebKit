@@ -1,3 +1,14 @@
+2019-10-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Partially undo r250811
+        https://bugs.webkit.org/show_bug.cgi?id=202715
+        <rdar://problem/56084287>
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKit/navigation-client-default-crypto.html:
+        Modified to crash if SerializedScriptValue doesn't wrap CryptoKey objects.
+
 2019-10-08  Jonathan Bedard  <jbedard@apple.com>
 
         REGRESSION (r250375): [old EWS] JSC EWS is always marking Patches as success
