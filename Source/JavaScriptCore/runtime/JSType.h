@@ -29,7 +29,6 @@ enum JSType : uint8_t {
     SymbolType,
     BigIntType,
 
-    GetterSetterType,
     CustomGetterSetterType,
     APIValueWrapperType,
 
@@ -88,6 +87,8 @@ enum JSType : uint8_t {
     Float64ArrayType,
     DataViewType,
     // End JSArrayBufferView types.
+
+    GetterSetterType,
 
     // JSScope <- JSWithScope
     //         <- StrictEvalActivation

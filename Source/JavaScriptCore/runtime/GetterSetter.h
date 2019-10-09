@@ -40,12 +40,12 @@ class JSObject;
 // that if a property holding a GetterSetter reference is constant-inferred and
 // that constant is observed to have a non-null setter (or getter) then we can
 // constant fold that setter (or getter).
-class GetterSetter final : public JSCell {
+class GetterSetter final : public JSNonFinalObject {
     friend class JIT;
-    using Base = JSCell;
+    typedef JSNonFinalObject Base;
 private:
     GetterSetter(VM& vm, JSGlobalObject* globalObject, JSObject* getter, JSObject* setter)
-        : Base(vm, vm.getterSetterStructure.get())
+        : Base(vm, globalObject->getterSetterStructure())
     {
         WTF::storeStoreFence();
         m_getter.set(vm, this, getter ? getter : globalObject->nullGetterFunction());

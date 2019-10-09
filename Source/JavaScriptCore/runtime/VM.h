@@ -504,7 +504,6 @@ public:
     Strong<Structure> terminatedExecutionErrorStructure;
     Strong<Structure> stringStructure;
     Strong<Structure> propertyNameEnumeratorStructure;
-    Strong<Structure> getterSetterStructure;
     Strong<Structure> customGetterSetterStructure;
     Strong<Structure> domAttributeGetterSetterStructure;
     Strong<Structure> scopedArgumentsTableStructure;
