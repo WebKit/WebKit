@@ -1,3 +1,15 @@
+2019-10-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Wayland: do not use EGL_PLATFORM_WAYLAND_KHR with eglGetPlatformDisplayEXT
+        https://bugs.webkit.org/show_bug.cgi?id=202689
+
+        Reviewed by Žan Doberšek.
+
+        Use EGL_PLATFORM_WAYLAND_EXT instead. It shouldn't really matter because both are the same value.
+
+        * platform/graphics/wayland/PlatformDisplayWayland.cpp:
+        (WebCore::PlatformDisplayWayland::initialize):
+
 2019-10-09  Antti Koivisto  <antti@apple.com>
 
         [CSS Shadow Parts] Allow exporting single part with multiple names using exportparts attribute
