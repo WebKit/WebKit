@@ -11,11 +11,201 @@
     <video id="high" playsinline autoplay width="320"></video>
 </div>
 <script>
-if (window.testRunner)
-    testRunner.setWebRTCUnifiedPlanEnabled(false);
+// Code taken from Chrome/Firefox tests and/or simulcast playground.
+function splitUnifiedPlanOffer(offer) {
+  let sdpLines = offer.sdp.split("\r\n");
+
+  mSectionStart = sdpLines.findIndex(line => line.startsWith("m="));
+  mSection = sdpLines.splice(mSectionStart);
+
+  let ssrcs = mSection.filter((line) => {
+    return line.startsWith("a=ssrc");
+  });
+
+  let layerRIDS = mSection.filter(line => line.startsWith("a=simulcast:")).map(
+      line => line.replace("a=simulcast:send ", "").split(";")
+    )[0];
+
+  let midExtmapId = mSection.filter(line => line.includes("urn:ietf:params:rtp-hdrext:sdes:mid")).map(line =>
+    line.replace("a=extmap:", "").split(" ")[0]
+  )[0];
+
+  let ridExtmapId = mSection.filter(line => line.includes("urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id")).map(line =>
+    line.replace("a=extmap:", "").split(" ")[0]
+  )[0];
+
+  mSection = mSection.filter((line) => {
+    return !line.startsWith("a=ssrc") && !line.startsWith("a=simulcast");
+  });
+
+  sdpLines = sdpLines.map(line => {
+    if (line.startsWith("a=group:BUNDLE"))
+      return "a=group:BUNDLE " + layerRIDS.join(" ");
+
+    return line;
+  });
+
+  let counter = 0;
+  for (let layerName of layerRIDS) {
+    sdpLines = sdpLines.concat(mSection.map(line => {
+      if (line.match(/a=msid:/)) {
+        return "a=msid:" + layerName + " " + layerName;
+      }
+
+      if (line.startsWith("a=mid:"))
+        return "a=mid:" + layerName;
+
+      if (line.startsWith("a=extmap:" + midExtmapId + " "))
+        return "a=extmap:" + midExtmapId + " urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id";
+
+      if (line.startsWith("a=extmap:" + ridExtmapId + " "))
+        return "a=extmap:" + ridExtmapId + " urn:ietf:params:rtp-hdrext:sdes:mid";
+
+      if (line.startsWith("a=rid:") || line.startsWith("a=simulcast:"))
+        return null;
+
+      return line;
+    }));
+    sdpLines = sdpLines.concat([ssrcs[counter]]);
+    sdpLines = sdpLines.concat([ssrcs[8 * counter + 4]]);
+    sdpLines = sdpLines.concat([ssrcs[8 * counter + 4 + 1]]);
+    sdpLines = sdpLines.concat([ssrcs[8 * counter + 4 + 2]]);
+    sdpLines = sdpLines.concat([ssrcs[8 * counter + 4 + 3]]);
+    sdpLines = sdpLines.concat([ssrcs[8 * counter + 4 + 4]]);
+    sdpLines = sdpLines.concat([ssrcs[8 * counter + 4 + 5]]);
+    sdpLines = sdpLines.concat([ssrcs[8 * counter + 4 + 6]]);
+    sdpLines = sdpLines.concat([ssrcs[8 * counter + 4 + 7]]);
+    counter = counter + 1;
+  }
+
+  offer.sdp = sdpLines
+    .filter(line => line && line.length > 0)
+    .join("\r\n") + "\r\n";
+}
+
+function splitUnifiedPlanAnswer(answer) {
+  let sdpLines = answer.sdp.split("\r\n");
+
+  let mSectionStart = sdpLines.findIndex(line => line.startsWith("m="));
+  let mSection = sdpLines.splice(mSectionStart);
+
+  // Remove extra m= sections
+  mSectionStart = mSection.slice(1).findIndex(line => line.startsWith("m="));
+  if (mSectionStart != -1)
+    mSection.splice(mSectionStart);
+
+  let midExtmapId = mSection.filter(line => line.includes("urn:ietf:params:rtp-hdrext:sdes:mid")).map(line =>
+    line.replace("a=extmap:", "").split(" ")[0]
+  )[0];
+
+  let ridExtmapId = mSection.filter(line => line.includes("urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id")).map(line =>
+    line.replace("a=extmap:", "").split(" ")[0]
+  )[0];
+
+  sdpLines = sdpLines.map(line => {
+    if (line.startsWith("a=group:BUNDLE"))
+      return "a=group:BUNDLE 0";
+
+    return line;
+  });
+
+  mSection = mSection.map(line => {
+    if (line.startsWith("a=mid:"))
+      return "a=mid:0";
+
+    if (line.startsWith("a=extmap:" + midExtmapId + " "))
+      return "a=extmap:" + midExtmapId + " urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id";
+
+    if (line.startsWith("a=extmap:" + ridExtmapId + " "))
+      return "a=extmap:" + ridExtmapId + " urn:ietf:params:rtp-hdrext:sdes:mid";
+
+    return line;
+  });
+
+  let params = ["0", "1", "2"];
+  for(let r in params) {
+    mSection.push("a=rid:" + r + " recv");
+  }
+  mSection.push("a=simulcast:recv " + params.join(";"));
+
+  answer.sdp = sdpLines.concat(mSection)
+    .filter(line => line && line.length > 0).join("\r\n") + "\r\n";
+}
+
+function enableSimulcastThroughSDP(offer)
+{
+  match = offer.sdp.match(/a=ssrc:(\d+) cname:(.*)\r\n/);
+  msid = offer.sdp.match(/a=ssrc:(\d+) msid:(.*)\r\n/);
+  var lines = offer.sdp.trim().split('\r\n');
+  var removed = lines.splice(lines.length - 4, 4);
+  var videoSSRC1 = parseInt(match[1]);
+  rtxSSRC1 = offer.sdp.split('\r\n').filter((line) => { return line.startsWith('a=ssrc-group:FID ')})[0].split(' ')[2];
+  var videoSSRC2 = videoSSRC1 + 1;
+  var rtxSSRC2 = videoSSRC1 + 2;
+  var videoSSRC3 = videoSSRC1 + 3;
+  var rtxSSRC3 = videoSSRC1 + 4;
+  lines.push(removed[0]);
+  lines.push(removed[1]);
+  lines.push('a=ssrc:' + videoSSRC2 + ' cname:' + match[2]);
+  lines.push('a=ssrc:' + videoSSRC2 + ' msid:' + msid[2]);
+  lines.push('a=ssrc:' + rtxSSRC2 + ' cname:' + match[2]);
+  lines.push('a=ssrc:' + rtxSSRC2 + ' msid:' + msid[2]);
+
+  lines.push('a=ssrc:' + videoSSRC3 + ' cname:' + match[2]);
+  lines.push('a=ssrc:' + videoSSRC3 + ' msid:' + msid[2]);
+  lines.push('a=ssrc:' + rtxSSRC3 + ' cname:' + match[2]);
+  lines.push('a=ssrc:' + rtxSSRC3 + ' msid:' + msid[2]);
+
+  lines.push('a=ssrc-group:FID ' + videoSSRC2 + ' ' + rtxSSRC2);
+  lines.push('a=ssrc-group:FID ' + videoSSRC3 + ' ' + rtxSSRC3);
+  lines.push('a=ssrc-group:SIM ' + videoSSRC1 + ' ' + videoSSRC2 + ' ' + videoSSRC3);
+
+  offer.sdp = lines.join('\r\n') + '\r\n';
+}
+
+function enableSimulcastThroughSDP2(offer)
+{
+  var lines = offer.sdp.trim().split('\r\n');
+
+  lines.push('a=simulcast:send 0;1;2');
+
+  offer.sdp = lines.join('\r\n') + '\r\n';
+}
+
+</script>
+<script>
+async function setupCall(pc1, pc2)
+{
+    let pc1Offer = await pc1.createOffer();
+    enableSimulcastThroughSDP(pc1Offer);
+    await pc1.setLocalDescription(pc1Offer);
+
+    let pc2Offer = {
+      type: 'offer',
+      sdp: pc1.localDescription.sdp,
+    };
+    enableSimulcastThroughSDP2(pc2Offer);
+
+    splitUnifiedPlanOffer(pc2Offer);
+    await pc2.setRemoteDescription(pc2Offer);
+
+    let answer = await pc2.createAnswer();
+    await pc2.setLocalDescription(answer);
+    let pc1Answer = {
+      type: "answer",
+      sdp: pc2.localDescription.sdp,
+    }
+    splitUnifiedPlanAnswer(pc1Answer);
+
+    await pc1.setRemoteDescription(pc1Answer).then(() => {}, (e) => console.log(e));
+}
+
 var state;
 var finished = false;
-// This test is largely inspired from Chrome/Firefox/Simulcast playground tests.
+
+const pc1 = new RTCPeerConnection();
+const pc2 = new RTCPeerConnection();
+
 promise_test(async (test) => {
     if (window.testRunner && testRunner.timeout) {
         setTimeout(() => {
@@ -26,10 +216,33 @@ promise_test(async (test) => {
 
     state = "start";
 
-    const pc1 = new RTCPeerConnection();
-    const pc2 = new RTCPeerConnection();
-    pc1.onicecandidate = (e) => pc2.addIceCandidate(e.candidate);
-    pc2.onicecandidate = (e) => pc1.addIceCandidate(e.candidate);
+    pc1.onicecandidate = e => {
+        if (e.candidate) {
+            for(let layerIndex in ["0", "1", "2"]) {
+                let newCandidate = new RTCIceCandidate({
+                    candidate: e.candidate.candidate,
+                    sdpMid: layerIndex,
+                    sdpMLineIndex: layerIndex,
+                    usernameFragment: e.candidate.usernameFragment,
+                });
+                setTimeout(() => pc2.addIceCandidate(newCandidate), 5);
+            }
+        } else
+            setTimeout(() => pc1.addIceCandidate(e.candidate), 5);
+    };
+
+    pc2.onicecandidate = e => {
+        if (e.candidate) {
+            let newCandidate = new RTCIceCandidate({
+                candidate: e.candidate.candidate,
+                sdpMid: "0", //e.candidate.sdpMid,
+                sdpMLineIndex: e.candidate.sdpMLineIndex,
+                usernameFragment: e.candidate.usernameFragment,
+            });
+            setTimeout(() => pc1.addIceCandidate(newCandidate), 5);
+        } else
+            setTimeout(() => pc1.addIceCandidate(e.candidate), 5);
+    };
 
     let counter = 0;
     pc2.ontrack = (e) => {
@@ -44,68 +257,8 @@ promise_test(async (test) => {
 
     const localStream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } });
     pc1.addTrack(localStream.getVideoTracks()[0], localStream);
-    const offer = await pc1.createOffer();
 
-    state = "got offer";
-
-    match = offer.sdp.match(/a=ssrc:(\d+) cname:(.*)\r\n/);
-    msid = offer.sdp.match(/a=ssrc:(\d+) msid:(.*)\r\n/);
-    var lines = offer.sdp.trim().split('\r\n');
-    var removed = lines.splice(lines.length - 4, 4);
-    var videoSSRC1 = parseInt(match[1]);
-    rtxSSRC1 = offer.sdp.split('\r\n').filter((line) => { return line.startsWith('a=ssrc-group:FID ')})[0].split(' ')[2];
-    var videoSSRC2 = videoSSRC1 + 1;
-    var rtxSSRC2 = videoSSRC1 + 2;
-    var videoSSRC3 = videoSSRC1 + 3;
-    var rtxSSRC3 = videoSSRC1 + 4;
-    lines.push(removed[0]);
-    lines.push(removed[1]);
-    lines.push('a=ssrc:' + videoSSRC2 + ' cname:' + match[2]);
-    lines.push('a=ssrc:' + videoSSRC2 + ' msid:' + msid[2]);
-    lines.push('a=ssrc:' + rtxSSRC2 + ' cname:' + match[2]);
-    lines.push('a=ssrc:' + rtxSSRC2 + ' msid:' + msid[2]);
-
-    lines.push('a=ssrc:' + videoSSRC3 + ' cname:' + match[2]);
-    lines.push('a=ssrc:' + videoSSRC3 + ' msid:' + msid[2]);
-    lines.push('a=ssrc:' + rtxSSRC3 + ' cname:' + match[2]);
-    lines.push('a=ssrc:' + rtxSSRC3 + ' msid:' + msid[2]);
-
-    lines.push('a=ssrc-group:FID ' + videoSSRC2 + ' ' + rtxSSRC2);
-    lines.push('a=ssrc-group:FID ' + videoSSRC3 + ' ' + rtxSSRC3);
-    lines.push('a=ssrc-group:SIM ' + videoSSRC1 + ' ' + videoSSRC2 + ' ' + videoSSRC3);
-    offer.sdp = lines.join('\r\n') + '\r\n';
-
-    var offer2 = {
-        type: 'offer',
-        sdp: offer.sdp,
-    };
-    offer2.sdp = offer2.sdp.replace('a=ssrc-group:SIM ' + videoSSRC1 + ' ' + videoSSRC2 + ' ' + videoSSRC3 + '\r\n', '');
-
-    offer2.sdp = offer2.sdp.replace('a=ssrc:' + videoSSRC1 + ' msid:' + msid[2], 'a=ssrc:' + videoSSRC1 + ' msid:low low');
-    offer2.sdp = offer2.sdp.replace('a=ssrc:' + rtxSSRC1 + ' msid:' + msid[2], 'a=ssrc:' + rtxSSRC1 + ' msid:low low');
-
-    offer2.sdp = offer2.sdp.replace('a=ssrc:' + videoSSRC2 + ' msid:' + msid[2], 'a=ssrc:' + videoSSRC2 + ' msid:mid mid');
-    offer2.sdp = offer2.sdp.replace('a=ssrc:' + rtxSSRC2 + ' msid:' + msid[2], 'a=ssrc:' + rtxSSRC2 + ' msid:mid mid');
-
-    offer2.sdp = offer2.sdp.replace('a=ssrc:' + videoSSRC3 + ' msid:' + msid[2], 'a=ssrc:' + videoSSRC3 + ' msid:hi hi');
-    offer2.sdp = offer2.sdp.replace('a=ssrc:' + rtxSSRC3 + ' msid:' + msid[2], 'a=ssrc:' + rtxSSRC3 + ' msid:hi hi');
-    await Promise.all([
-        pc1.setLocalDescription(offer),
-        pc2.setRemoteDescription(offer2),
-    ]);
-
-    state = "set description";
-
-    const answer = await pc2.createAnswer();
-
-    state = "got answer";
-
-    await Promise.all([
-        pc2.setLocalDescription(answer),
-        pc1.setRemoteDescription(answer),
-    ]);
-
-    state = "set description 2";
+    await setupCall(pc1, pc2);
 
     await low.play();
     state = "video low plays";

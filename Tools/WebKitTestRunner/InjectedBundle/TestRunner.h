@@ -131,7 +131,6 @@ public:
     void setEncryptedMediaAPIEnabled(bool);
     void setMediaDevicesEnabled(bool);
     void setWebRTCMDNSICECandidatesEnabled(bool);
-    void setWebRTCUnifiedPlanEnabled(bool);
     void setCustomUserAgent(JSStringRef);
     void setWebAPIStatisticsEnabled(bool);
 

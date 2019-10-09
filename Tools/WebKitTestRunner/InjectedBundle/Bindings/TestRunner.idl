@@ -360,7 +360,6 @@ interface TestRunner {
     void abortModal();
 
     void setWebRTCMDNSICECandidatesEnabled(boolean value);
-    void setWebRTCUnifiedPlanEnabled(boolean value);
     void setCustomUserAgent(DOMString userAgent);
 
     void setWebAPIStatisticsEnabled(boolean value);
