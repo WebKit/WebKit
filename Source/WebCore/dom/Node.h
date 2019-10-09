@@ -36,6 +36,7 @@
 #include <wtf/IsoMalloc.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/MainThread.h>
+#include <wtf/OptionSet.h>
 #include <wtf/URLHash.h>
 
 // This needs to be here because Document.h also depends on it.
@@ -615,9 +616,9 @@ protected:
         ChildrenAffectedByPropertyBasedBackwardPositionalRules = 1 << 7,
     };
 
-    bool hasStyleFlag(ElementStyleFlag state) const { return m_rendererWithStyleFlags.type() & static_cast<uint8_t>(state); }
-    void setStyleFlag(ElementStyleFlag state) { m_rendererWithStyleFlags.setType(m_rendererWithStyleFlags.type() | static_cast<uint8_t>(state)); }
-    void clearStyleFlags() { m_rendererWithStyleFlags.setType(0); }
+    bool hasStyleFlag(ElementStyleFlag state) const { return m_rendererWithStyleFlags.type().contains(state); }
+    void setStyleFlag(ElementStyleFlag state) { m_rendererWithStyleFlags.setType(m_rendererWithStyleFlags.type() | state); }
+    void clearStyleFlags() { m_rendererWithStyleFlags.setType(OptionSet<ElementStyleFlag>()); }
 
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const { }
 
@@ -675,7 +676,7 @@ private:
     TreeScope* m_treeScope { nullptr };
     Node* m_previous { nullptr };
     Node* m_next { nullptr };
-    CompactPointerTuple<RenderObject*, uint8_t> m_rendererWithStyleFlags;
+    CompactPointerTuple<RenderObject*, OptionSet<ElementStyleFlag>> m_rendererWithStyleFlags;
     std::unique_ptr<NodeRareData, NodeRareDataDeleter> m_rareData;
 };
 
