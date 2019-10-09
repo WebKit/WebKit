@@ -392,6 +392,7 @@ public:
     template<typename Function, typename... Args>
     LValue callWithoutSideEffects(B3::Type type, Function function, LValue arg1, Args... args)
     {
+        static_assert(!std::is_same<Function, LValue>::value);
         return m_block->appendNew<B3::CCallValue>(m_proc, type, origin(), B3::Effects::none(),
             constIntPtr(tagCFunctionPtr<void*>(function, B3CCallPtrTag)), arg1, args...);
     }

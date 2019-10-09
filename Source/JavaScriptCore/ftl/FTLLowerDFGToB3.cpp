@@ -2052,9 +2052,9 @@ private:
         ValueFromBlock slowResult;
         if (m_node->op() == ToObject) {
             auto* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
-            slowResult = m_out.anchor(vmCall(Int64, m_out.operation(operationToObject), m_callFrame, weakPointer(globalObject), value, m_out.constIntPtr(m_graph.identifiers()[m_node->identifierNumber()])));
+            slowResult = m_out.anchor(vmCall(Int64, operationToObject, m_callFrame, weakPointer(globalObject), value, m_out.constIntPtr(m_graph.identifiers()[m_node->identifierNumber()])));
         } else
-            slowResult = m_out.anchor(vmCall(Int64, m_out.operation(operationCallObjectConstructor), m_callFrame, frozenPointer(m_node->cellOperand()), value));
+            slowResult = m_out.anchor(vmCall(Int64, operationCallObjectConstructor, m_callFrame, frozenPointer(m_node->cellOperand()), value));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -2087,7 +2087,7 @@ private:
         else
             function = operationToThis;
         ValueFromBlock slowResult = m_out.anchor(
-            vmCall(Int64, m_out.operation(function), m_callFrame, value));
+            vmCall(Int64, function, m_callFrame, value));
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
@@ -2100,7 +2100,7 @@ private:
             LValue left = lowBigInt(m_node->child1());
             LValue right = lowBigInt(m_node->child2());
 
-            LValue result = vmCall(pointerType(), m_out.operation(operationAddBigInt), m_callFrame, left, right);
+            LValue result = vmCall(pointerType(), operationAddBigInt, m_callFrame, left, right);
             setJSValue(result);
             return;
         }
@@ -2119,7 +2119,7 @@ private:
             LValue left = lowBigInt(m_node->child1());
             LValue right = lowBigInt(m_node->child2());
             
-            LValue result = vmCall(pointerType(), m_out.operation(operationSubBigInt), m_callFrame, left, right);
+            LValue result = vmCall(pointerType(), operationSubBigInt, m_callFrame, left, right);
             setJSValue(result);
             return;
         }
@@ -2138,7 +2138,7 @@ private:
             LValue left = lowBigInt(m_node->child1());
             LValue right = lowBigInt(m_node->child2());
             
-            LValue result = vmCall(Int64, m_out.operation(operationMulBigInt), m_callFrame, left, right);
+            LValue result = vmCall(Int64, operationMulBigInt, m_callFrame, left, right);
             setJSValue(result);
             return;
         }
@@ -2338,13 +2338,13 @@ private:
         LValue result;
         if (m_node->child3()) {
             result = vmCall(
-                Int64, m_out.operation(operationStrCat3), m_callFrame,
+                Int64, operationStrCat3, m_callFrame,
                 lowJSValue(m_node->child1(), ManualOperandSpeculation),
                 lowJSValue(m_node->child2(), ManualOperandSpeculation),
                 lowJSValue(m_node->child3(), ManualOperandSpeculation));
         } else {
             result = vmCall(
-                Int64, m_out.operation(operationStrCat2), m_callFrame,
+                Int64, operationStrCat2, m_callFrame,
                 lowJSValue(m_node->child1(), ManualOperandSpeculation),
                 lowJSValue(m_node->child2(), ManualOperandSpeculation));
         }
@@ -2428,7 +2428,7 @@ private:
         }
         DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse, m_node->child1().useKind());
         LValue argument = lowJSValue(m_node->child1());
-        LValue result = vmCall(Int32, m_out.operation(operationArithClz32), m_callFrame, argument);
+        LValue result = vmCall(Int32, operationArithClz32, m_callFrame, argument);
         setInt32(result);
     }
     
@@ -2511,7 +2511,7 @@ private:
             LValue left = lowBigInt(m_node->child1());
             LValue right = lowBigInt(m_node->child2());
             
-            LValue result = vmCall(pointerType(), m_out.operation(operationDivBigInt), m_callFrame, left, right);
+            LValue result = vmCall(pointerType(), operationDivBigInt, m_callFrame, left, right);
             setJSValue(result);
             return;
         }
@@ -2589,7 +2589,7 @@ private:
             LValue left = lowBigInt(m_node->child1());
             LValue right = lowBigInt(m_node->child2());
 
-            LValue result = vmCall(pointerType(), m_out.operation(operationModBigInt), m_callFrame, left, right);
+            LValue result = vmCall(pointerType(), operationModBigInt, m_callFrame, left, right);
             setJSValue(result);
             return;
         }
@@ -2597,7 +2597,7 @@ private:
         DFG_ASSERT(m_graph, m_node, m_node->binaryUseKind() == UntypedUse, m_node->binaryUseKind());
         LValue left = lowJSValue(m_node->child1());
         LValue right = lowJSValue(m_node->child2());
-        LValue result = vmCall(Int64, m_out.operation(operationValueMod), m_callFrame, left, right);
+        LValue result = vmCall(Int64, operationValueMod, m_callFrame, left, right);
         setJSValue(result);
     }
 
@@ -2738,7 +2738,7 @@ private:
         default: {
             DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse, m_node->child1().useKind());
             LValue argument = lowJSValue(m_node->child1());
-            LValue result = vmCall(Double, m_out.operation(operationArithAbs), m_callFrame, argument);
+            LValue result = vmCall(Double, operationArithAbs, m_callFrame, argument);
             setDouble(result);
             break;
         }
@@ -2752,7 +2752,7 @@ private:
             return;
         }
         LValue argument = lowJSValue(m_node->child1());
-        LValue result = vmCall(Double, m_out.operation(DFG::arithUnaryOperation(m_node->arithUnaryType())), m_callFrame, argument);
+        LValue result = vmCall(Double, DFG::arithUnaryOperation(m_node->arithUnaryType()), m_callFrame, argument);
         setDouble(result);
     }
 
@@ -2762,14 +2762,14 @@ private:
             LValue base = lowBigInt(m_node->child1());
             LValue exponent = lowBigInt(m_node->child2());
             
-            LValue result = vmCall(pointerType(), m_out.operation(operationPowBigInt), m_callFrame, base, exponent);
+            LValue result = vmCall(pointerType(), operationPowBigInt, m_callFrame, base, exponent);
             setJSValue(result);
             return;
         }
 
         LValue base = lowJSValue(m_node->child1());
         LValue exponent = lowJSValue(m_node->child2());
-        LValue result = vmCall(Int64, m_out.operation(operationValuePow), m_callFrame, base, exponent);
+        LValue result = vmCall(Int64, operationValuePow, m_callFrame, base, exponent);
         setJSValue(result);
     }
 
@@ -2994,7 +2994,7 @@ private:
 
         DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse, m_node->child1().useKind());
         LValue argument = lowJSValue(m_node->child1());
-        setJSValue(vmCall(Int64, m_out.operation(operationArithRound), m_callFrame, argument));
+        setJSValue(vmCall(Int64, operationArithRound, m_callFrame, argument));
     }
 
     void compileArithFloor()
@@ -3010,7 +3010,7 @@ private:
         }
         DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse, m_node->child1().useKind());
         LValue argument = lowJSValue(m_node->child1());
-        setJSValue(vmCall(Int64, m_out.operation(operationArithFloor), m_callFrame, argument));
+        setJSValue(vmCall(Int64, operationArithFloor, m_callFrame, argument));
     }
 
     void compileArithCeil()
@@ -3026,7 +3026,7 @@ private:
         }
         DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse, m_node->child1().useKind());
         LValue argument = lowJSValue(m_node->child1());
-        setJSValue(vmCall(Int64, m_out.operation(operationArithCeil), m_callFrame, argument));
+        setJSValue(vmCall(Int64, operationArithCeil, m_callFrame, argument));
     }
 
     void compileArithTrunc()
@@ -3042,7 +3042,7 @@ private:
         }
         DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse, m_node->child1().useKind());
         LValue argument = lowJSValue(m_node->child1());
-        setJSValue(vmCall(Int64, m_out.operation(operationArithTrunc), m_callFrame, argument));
+        setJSValue(vmCall(Int64, operationArithTrunc, m_callFrame, argument));
     }
 
     void compileArithSqrt()
@@ -3052,7 +3052,7 @@ private:
             return;
         }
         LValue argument = lowJSValue(m_node->child1());
-        LValue result = vmCall(Double, m_out.operation(operationArithSqrt), m_callFrame, argument);
+        LValue result = vmCall(Double, operationArithSqrt, m_callFrame, argument);
         setDouble(result);
     }
 
@@ -3063,7 +3063,7 @@ private:
             return;
         }
         LValue argument = lowJSValue(m_node->child1());
-        LValue result = vmCall(Double, m_out.operation(operationArithFRound), m_callFrame, argument);
+        LValue result = vmCall(Double, operationArithFRound, m_callFrame, argument);
         setDouble(result);
     }
 
@@ -3135,13 +3135,13 @@ private:
     {
         if (m_node->child1().useKind() == BigIntUse) {
             LValue operand = lowBigInt(m_node->child1());
-            LValue result = vmCall(pointerType(), m_out.operation(operationBitNotBigInt), m_callFrame, operand);
+            LValue result = vmCall(pointerType(), operationBitNotBigInt, m_callFrame, operand);
             setJSValue(result);
             return;
         }
 
         LValue operand = lowJSValue(m_node->child1());
-        LValue result = vmCall(Int64, m_out.operation(operationValueBitNot), m_callFrame, operand);
+        LValue result = vmCall(Int64, operationValueBitNot, m_callFrame, operand);
         setJSValue(result);
     }
 
@@ -3156,7 +3156,7 @@ private:
             LValue left = lowBigInt(m_node->child1());
             LValue right = lowBigInt(m_node->child2());
             
-            LValue result = vmCall(pointerType(), m_out.operation(operationBitAndBigInt), m_callFrame, left, right);
+            LValue result = vmCall(pointerType(), operationBitAndBigInt, m_callFrame, left, right);
             setJSValue(result);
             return;
         }
@@ -3175,7 +3175,7 @@ private:
             LValue left = lowBigInt(m_node->child1());
             LValue right = lowBigInt(m_node->child2());
 
-            LValue result = vmCall(pointerType(), m_out.operation(operationBitOrBigInt), m_callFrame, left, right);
+            LValue result = vmCall(pointerType(), operationBitOrBigInt, m_callFrame, left, right);
             setJSValue(result);
             return;
         }
@@ -3194,7 +3194,7 @@ private:
             LValue left = lowBigInt(m_node->child1());
             LValue right = lowBigInt(m_node->child2());
 
-            LValue result = vmCall(pointerType(), m_out.operation(operationBitXorBigInt), m_callFrame, left, right);
+            LValue result = vmCall(pointerType(), operationBitXorBigInt, m_callFrame, left, right);
             setJSValue(result);
             return;
         }
@@ -3213,7 +3213,7 @@ private:
             LValue left = lowBigInt(m_node->child1());
             LValue right = lowBigInt(m_node->child2());
 
-            LValue result = vmCall(pointerType(), m_out.operation(operationBitRShiftBigInt), m_callFrame, left, right);
+            LValue result = vmCall(pointerType(), operationBitRShiftBigInt, m_callFrame, left, right);
             setJSValue(result);
             return;
         }
@@ -3241,7 +3241,7 @@ private:
             LValue left = lowBigInt(m_node->child1());
             LValue right = lowBigInt(m_node->child2());
             
-            LValue result = vmCall(pointerType(), m_out.operation(operationBitLShiftBigInt), m_callFrame, left, right);
+            LValue result = vmCall(pointerType(), operationBitLShiftBigInt, m_callFrame, left, right);
             setJSValue(result);
             return;
         }
@@ -3449,17 +3449,17 @@ private:
         
         switch (m_node->arrayMode().type()) {
         case Array::Int32:
-            vmCall(Void, m_out.operation(operationEnsureInt32), m_callFrame, cell);
+            vmCall(Void, operationEnsureInt32, m_callFrame, cell);
             break;
         case Array::Double:
-            vmCall(Void, m_out.operation(operationEnsureDouble), m_callFrame, cell);
+            vmCall(Void, operationEnsureDouble, m_callFrame, cell);
             break;
         case Array::Contiguous:
-            vmCall(Void, m_out.operation(operationEnsureContiguous), m_callFrame, cell);
+            vmCall(Void, operationEnsureContiguous, m_callFrame, cell);
             break;
         case Array::ArrayStorage:
         case Array::SlowPutArrayStorage:
-            vmCall(Void, m_out.operation(operationEnsureArrayStorage), m_callFrame, cell);
+            vmCall(Void, operationEnsureArrayStorage, m_callFrame, cell);
             break;
         default:
             DFG_CRASH(m_graph, m_node, "Bad array type");
@@ -3518,7 +3518,7 @@ private:
 
             m_out.appendTo(notCellCase, continuation);
             ValueFromBlock notCellResult = m_out.anchor(vmCall(
-                Int64, m_out.operation(getByIdFunction),
+                Int64, getByIdFunction,
                 m_callFrame, value,
                 m_out.constIntPtr(m_graph.identifiers()[m_node->identifierNumber()])));
             m_out.jump(continuation);
@@ -3561,7 +3561,7 @@ private:
 
             m_out.appendTo(notCellCase, continuation);
             ValueFromBlock notCellResult = m_out.anchor(vmCall(
-                Int64, m_out.operation(operationGetByIdWithThisGeneric),
+                Int64, operationGetByIdWithThisGeneric,
                 m_callFrame, base, thisValue,
                 m_out.constIntPtr(m_graph.identifiers()[m_node->identifierNumber()])));
             m_out.jump(continuation);
@@ -3578,7 +3578,7 @@ private:
         LValue thisValue = lowJSValue(m_node->child2());
         LValue subscript = lowJSValue(m_node->child3());
 
-        LValue result = vmCall(Int64, m_out.operation(operationGetByValWithThis), m_callFrame, base, thisValue, subscript);
+        LValue result = vmCall(Int64, operationGetByValWithThis, m_callFrame, base, thisValue, subscript);
         setJSValue(result);
     }
 
@@ -3588,7 +3588,7 @@ private:
         LValue thisValue = lowJSValue(m_node->child2());
         LValue value = lowJSValue(m_node->child3());
 
-        vmCall(Void, m_out.operation(m_graph.isStrictModeFor(m_node->origin.semantic) ? operationPutByIdWithThisStrict : operationPutByIdWithThis),
+        vmCall(Void, m_graph.isStrictModeFor(m_node->origin.semantic) ? operationPutByIdWithThisStrict : operationPutByIdWithThis,
             m_callFrame, base, thisValue, value, m_out.constIntPtr(m_graph.identifiers()[m_node->identifierNumber()]));
     }
 
@@ -3599,7 +3599,7 @@ private:
         LValue property = lowJSValue(m_graph.varArgChild(m_node, 2));
         LValue value = lowJSValue(m_graph.varArgChild(m_node, 3));
 
-        vmCall(Void, m_out.operation(m_graph.isStrictModeFor(m_node->origin.semantic) ? operationPutByValWithThisStrict : operationPutByValWithThis),
+        vmCall(Void, m_graph.isStrictModeFor(m_node->origin.semantic) ? operationPutByValWithThisStrict : operationPutByValWithThis,
             m_callFrame, base, thisValue, property, value);
     }
     
@@ -3614,40 +3614,54 @@ private:
             argEdges[i] = m_graph.child(m_node, 2 + i);
         Edge storageEdge = m_graph.child(m_node, 2 + numExtraArgs);
         
-        auto operation = [&] () -> LValue {
+        if (!storageEdge) {
+            auto callWith0 = [&] (auto* operation) {
+                ASSERT(numExtraArgs == 0);
+                return vmCall(Int64, operation, m_callFrame, lowJSValue(baseEdge), lowJSValue(indexEdge));
+            };
+
+            auto callWith1 = [&] (auto* operation) {
+                ASSERT(numExtraArgs == 1);
+                return vmCall(Int64, operation, m_callFrame, lowJSValue(baseEdge), lowJSValue(indexEdge), lowJSValue(argEdges[0]));
+            };
+
+            auto callWith2 = [&] (auto* operation) {
+                ASSERT(numExtraArgs == 2);
+                return vmCall(Int64, operation, m_callFrame, lowJSValue(baseEdge), lowJSValue(indexEdge), lowJSValue(argEdges[0]), lowJSValue(argEdges[1]));
+            };
+
+            LValue result;
             switch (m_node->op()) {
             case AtomicsAdd:
-                return m_out.operation(operationAtomicsAdd);
+                result = callWith1(operationAtomicsAdd);
+                break;
             case AtomicsAnd:
-                return m_out.operation(operationAtomicsAnd);
+                result = callWith1(operationAtomicsAnd);
+                break;
             case AtomicsCompareExchange:
-                return m_out.operation(operationAtomicsCompareExchange);
+                result = callWith2(operationAtomicsCompareExchange);
+                break;
             case AtomicsExchange:
-                return m_out.operation(operationAtomicsExchange);
+                result = callWith1(operationAtomicsExchange);
+                break;
             case AtomicsLoad:
-                return m_out.operation(operationAtomicsLoad);
+                result = callWith0(operationAtomicsLoad);
+                break;
             case AtomicsOr:
-                return m_out.operation(operationAtomicsOr);
+                result = callWith1(operationAtomicsOr);
+                break;
             case AtomicsStore:
-                return m_out.operation(operationAtomicsStore);
+                result = callWith1(operationAtomicsStore);
+                break;
             case AtomicsSub:
-                return m_out.operation(operationAtomicsSub);
+                result = callWith1(operationAtomicsSub);
+                break;
             case AtomicsXor:
-                return m_out.operation(operationAtomicsXor);
+                result = callWith1(operationAtomicsXor);
+                break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
-                break;
             }
-        };
-        
-        if (!storageEdge) {
-            Vector<LValue> args;
-            args.append(m_callFrame);
-            args.append(lowJSValue(baseEdge));
-            args.append(lowJSValue(indexEdge));
-            for (unsigned i = 0; i < numExtraArgs; ++i)
-                args.append(lowJSValue(argEdges[i]));
-            LValue result = vmCall(Int64, operation(), args);
             setJSValue(result);
             return;
         }
@@ -3735,7 +3749,7 @@ private:
     void compileAtomicsIsLockFree()
     {
         if (m_node->child1().useKind() != Int32Use) {
-            setJSValue(vmCall(Int64, m_out.operation(operationAtomicsIsLockFree), m_callFrame, lowJSValue(m_node->child1())));
+            setJSValue(vmCall(Int64, operationAtomicsIsLockFree, m_callFrame, lowJSValue(m_node->child1())));
             return;
         }
         
@@ -3773,22 +3787,22 @@ private:
         switch (propertyEdge.useKind()) {
         case StringUse: {
             LValue property = lowString(propertyEdge);
-            vmCall(Void, m_out.operation(operationDefineDataPropertyString), m_callFrame, base, property, value, attributes);
+            vmCall(Void, operationDefineDataPropertyString, m_callFrame, base, property, value, attributes);
             break;
         }
         case StringIdentUse: {
             LValue property = lowStringIdent(propertyEdge);
-            vmCall(Void, m_out.operation(operationDefineDataPropertyStringIdent), m_callFrame, base, property, value, attributes);
+            vmCall(Void, operationDefineDataPropertyStringIdent, m_callFrame, base, property, value, attributes);
             break;
         }
         case SymbolUse: {
             LValue property = lowSymbol(propertyEdge);
-            vmCall(Void, m_out.operation(operationDefineDataPropertySymbol), m_callFrame, base, property, value, attributes);
+            vmCall(Void, operationDefineDataPropertySymbol, m_callFrame, base, property, value, attributes);
             break;
         }
         case UntypedUse: {
             LValue property = lowJSValue(propertyEdge);
-            vmCall(Void, m_out.operation(operationDefineDataProperty), m_callFrame, base, property, value, attributes);
+            vmCall(Void, operationDefineDataProperty, m_callFrame, base, property, value, attributes);
             break;
         }
         default:
@@ -3806,22 +3820,22 @@ private:
         switch (propertyEdge.useKind()) {
         case StringUse: {
             LValue property = lowString(propertyEdge);
-            vmCall(Void, m_out.operation(operationDefineAccessorPropertyString), m_callFrame, base, property, getter, setter, attributes);
+            vmCall(Void, operationDefineAccessorPropertyString, m_callFrame, base, property, getter, setter, attributes);
             break;
         }
         case StringIdentUse: {
             LValue property = lowStringIdent(propertyEdge);
-            vmCall(Void, m_out.operation(operationDefineAccessorPropertyStringIdent), m_callFrame, base, property, getter, setter, attributes);
+            vmCall(Void, operationDefineAccessorPropertyStringIdent, m_callFrame, base, property, getter, setter, attributes);
             break;
         }
         case SymbolUse: {
             LValue property = lowSymbol(propertyEdge);
-            vmCall(Void, m_out.operation(operationDefineAccessorPropertySymbol), m_callFrame, base, property, getter, setter, attributes);
+            vmCall(Void, operationDefineAccessorPropertySymbol, m_callFrame, base, property, getter, setter, attributes);
             break;
         }
         case UntypedUse: {
             LValue property = lowJSValue(propertyEdge);
-            vmCall(Void, m_out.operation(operationDefineAccessorProperty), m_callFrame, base, property, getter, setter, attributes);
+            vmCall(Void, operationDefineAccessorProperty, m_callFrame, base, property, getter, setter, attributes);
             break;
         }
         default:
@@ -3925,8 +3939,7 @@ private:
             
             LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);
             
-            ValueFromBlock slowResult = m_out.anchor(
-                vmCall(pointerType(), m_out.operation(operationResolveRope), m_callFrame, cell));
+            ValueFromBlock slowResult = m_out.anchor(vmCall(pointerType(), operationResolveRope, m_callFrame, cell));
             
             m_out.jump(continuation);
             
@@ -4063,11 +4076,11 @@ private:
             return;
         }
         case ObjectUse: {
-            setJSValue(vmCall(Int64, m_out.operation(operationGetPrototypeOfObject), m_callFrame, lowObject(m_node->child1())));
+            setJSValue(vmCall(Int64, operationGetPrototypeOfObject, m_callFrame, lowObject(m_node->child1())));
             return;
         }
         default: {
-            setJSValue(vmCall(Int64, m_out.operation(operationGetPrototypeOf), m_callFrame, lowJSValue(m_node->child1())));
+            setJSValue(vmCall(Int64, operationGetPrototypeOf, m_callFrame, lowJSValue(m_node->child1())));
             return;
         }
         }
@@ -4212,8 +4225,7 @@ private:
                 m_out.isZero64(fastResultValue), rarely(slowCase), usually(continuation));
             
             m_out.appendTo(slowCase, continuation);
-            ValueFromBlock slowResult = m_out.anchor(
-                vmCall(Int64, m_out.operation(operationGetByValObjectInt), m_callFrame, base, index));
+            ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, operationGetByValObjectInt, m_callFrame, base, index));
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);
@@ -4263,8 +4275,7 @@ private:
             m_out.jump(continuation);
             
             m_out.appendTo(slowCase, continuation);
-            ValueFromBlock slowResult = m_out.anchor(
-                vmCall(Int64, m_out.operation(operationGetByValObjectInt), m_callFrame, base, index));
+            ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, operationGetByValObjectInt, m_callFrame, base, index));
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);
@@ -4313,8 +4324,7 @@ private:
             m_out.jump(continuation);
 
             m_out.appendTo(slowCase, continuation);
-            ValueFromBlock slowResult = m_out.anchor(
-                vmCall(Int64, m_out.operation(operationGetByValObjectInt), m_callFrame, base, index));
+            ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, operationGetByValObjectInt, m_callFrame, base, index));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -4384,20 +4394,20 @@ private:
             if (m_graph.varArgChild(m_node, 0).useKind() == ObjectUse) {
                 if (m_graph.varArgChild(m_node, 1).useKind() == StringUse) {
                     setJSValue(vmCall(
-                        Int64, m_out.operation(operationGetByValObjectString), m_callFrame,
+                        Int64, operationGetByValObjectString, m_callFrame,
                         lowObject(m_graph.varArgChild(m_node, 0)), lowString(m_graph.varArgChild(m_node, 1))));
                     return;
                 }
 
                 if (m_graph.varArgChild(m_node, 1).useKind() == SymbolUse) {
                     setJSValue(vmCall(
-                        Int64, m_out.operation(operationGetByValObjectSymbol), m_callFrame,
+                        Int64, operationGetByValObjectSymbol, m_callFrame,
                         lowObject(m_graph.varArgChild(m_node, 0)), lowSymbol(m_graph.varArgChild(m_node, 1))));
                     return;
                 }
             }
             setJSValue(vmCall(
-                Int64, m_out.operation(operationGetByVal), m_callFrame,
+                Int64, operationGetByVal, m_callFrame,
                 lowJSValue(m_graph.varArgChild(m_node, 0)), lowJSValue(m_graph.varArgChild(m_node, 1))));
             return;
         }
@@ -4434,7 +4444,7 @@ private:
 
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(
-                vmCall(Int64, m_out.operation(operationGetByValObjectInt), m_callFrame, base, index));
+                vmCall(Int64, operationGetByValObjectInt, m_callFrame, base, index));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -4593,7 +4603,7 @@ private:
                         else
                             operation = operationPutByValCellStringNonStrict;
                     }
-                    vmCall(Void, m_out.operation(operation), m_callFrame, lowCell(child1), lowString(child2), lowJSValue(child3));
+                    vmCall(Void, operation, m_callFrame, lowCell(child1), lowString(child2), lowJSValue(child3));
                     return;
                 }
 
@@ -4609,7 +4619,7 @@ private:
                         else
                             operation = operationPutByValCellSymbolNonStrict;
                     }
-                    vmCall(Void, m_out.operation(operation), m_callFrame, lowCell(child1), lowSymbol(child2), lowJSValue(child3));
+                    vmCall(Void, operation, m_callFrame, lowCell(child1), lowSymbol(child2), lowJSValue(child3));
                     return;
                 }
             }
@@ -4628,7 +4638,7 @@ private:
             }
                 
             vmCall(
-                Void, m_out.operation(operation), m_callFrame,
+                Void, operation, m_callFrame,
                 lowJSValue(child1), lowJSValue(child2), lowJSValue(child3));
             return;
         }
@@ -4752,7 +4762,7 @@ private:
 
             LBasicBlock lastNext = m_out.appendTo(slowCase, inBoundCase);
             vmCall(
-                Void, m_out.operation(slowPathFunction),
+                Void, slowPathFunction,
                 m_callFrame, base, index, value);
             m_out.jump(continuation);
 
@@ -4877,7 +4887,7 @@ private:
         auto uid = m_graph.identifiers()[m_node->identifierNumber()];
         vmCall(
             Void,
-            m_out.operation(m_node->op() == PutGetterById ? operationPutGetterById : operationPutSetterById),
+            m_node->op() == PutGetterById ? operationPutGetterById : operationPutSetterById,
             m_callFrame, base, m_out.constIntPtr(uid), m_out.constInt32(m_node->accessorAttributes()), accessor);
     }
 
@@ -4888,7 +4898,7 @@ private:
         LValue setter = lowJSValue(m_node->child3());
         auto uid = m_graph.identifiers()[m_node->identifierNumber()];
         vmCall(
-            Void, m_out.operation(operationPutGetterSetter),
+            Void, operationPutGetterSetter,
             m_callFrame, base, m_out.constIntPtr(uid), m_out.constInt32(m_node->accessorAttributes()), getter, setter);
 
     }
@@ -4900,7 +4910,7 @@ private:
         LValue accessor = lowCell(m_node->child3());
         vmCall(
             Void,
-            m_out.operation(m_node->op() == PutGetterByVal ? operationPutGetterByVal : operationPutSetterByVal),
+            m_node->op() == PutGetterByVal ? operationPutGetterByVal : operationPutSetterByVal,
             m_callFrame, base, subscript, m_out.constInt32(m_node->accessorAttributes()), accessor);
     }
 
@@ -4908,14 +4918,14 @@ private:
     {
         LValue base = lowJSValue(m_node->child1());
         auto uid = m_graph.identifiers()[m_node->identifierNumber()];
-        setBoolean(m_out.notZero64(vmCall(Int64, m_out.operation(operationDeleteById), m_callFrame, base, m_out.constIntPtr(uid))));
+        setBoolean(m_out.notZero64(vmCall(Int64, operationDeleteById, m_callFrame, base, m_out.constIntPtr(uid))));
     }
 
     void compileDeleteByVal()
     {
         LValue base = lowJSValue(m_node->child1());
         LValue subscript = lowJSValue(m_node->child2());
-        setBoolean(m_out.notZero64(vmCall(Int64, m_out.operation(operationDeleteByVal), m_callFrame, base, subscript)));
+        setBoolean(m_out.notZero64(vmCall(Int64, operationDeleteByVal, m_callFrame, base, subscript)));
     }
     
     void compileArrayPush()
@@ -4966,13 +4976,12 @@ private:
                 m_out.jump(continuation);
                 
                 m_out.appendTo(slowPath, continuation);
-                LValue operation;
+                LValue result;
                 if (m_node->arrayMode().type() != Array::Double)
-                    operation = m_out.operation(operationArrayPush);
+                    result = vmCall(Int64, operationArrayPush, m_callFrame, value, base);
                 else
-                    operation = m_out.operation(operationArrayPushDouble);
-                ValueFromBlock slowResult = m_out.anchor(
-                    vmCall(Int64, operation, m_callFrame, value, base));
+                    result = vmCall(Int64, operationArrayPushDouble, m_callFrame, value, base);
+                ValueFromBlock slowResult = m_out.anchor(result);
                 m_out.jump(continuation);
                 
                 m_out.appendTo(continuation, lastNext);
@@ -5034,11 +5043,9 @@ private:
             m_out.branch(beyondVectorLength, unsure(slowCallPath), unsure(continuation));
 
             m_out.appendTo(slowCallPath, continuation);
-            LValue operation;
-            if (m_node->arrayMode().type() != Array::Double)
-                operation = m_out.operation(operationArrayPushMultiple);
-            else
-                operation = m_out.operation(operationArrayPushDoubleMultiple);
+            auto* operation = &operationArrayPushMultiple;
+            if (m_node->arrayMode().type() == Array::Double)
+                operation = &operationArrayPushDoubleMultiple;
             ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, operation, m_callFrame, base, buffer, m_out.constInt32(elementCount)));
             m_out.storePtr(m_out.constIntPtr(0), m_out.absolute(scratchBuffer->addressOfActiveLength()));
             m_out.jump(continuation);
@@ -5084,7 +5091,7 @@ private:
 
                 m_out.appendTo(slowPath, continuation);
                 ValueFromBlock slowResult = m_out.anchor(
-                    vmCall(Int64, m_out.operation(operationArrayPush), m_callFrame, value, base));
+                    vmCall(Int64, operationArrayPush, m_callFrame, value, base));
                 m_out.jump(continuation);
 
                 m_out.appendTo(continuation, lastNext);
@@ -5133,7 +5140,7 @@ private:
             m_out.branch(beyondVectorLength, rarely(slowCallPath), usually(continuation));
 
             m_out.appendTo(slowCallPath, continuation);
-            ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, m_out.operation(operationArrayPushMultiple), m_callFrame, base, buffer, m_out.constInt32(elementCount)));
+            ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, operationArrayPushMultiple, m_callFrame, base, buffer, m_out.constInt32(elementCount)));
             m_out.storePtr(m_out.constIntPtr(0), m_out.absolute(scratchBuffer->addressOfActiveLength()));
             m_out.jump(continuation);
 
@@ -5352,17 +5359,17 @@ private:
 
         case StringUse:
             ASSERT(m_node->arrayMode().type() == Array::Contiguous);
-            setInt32(vmCall(Int32, m_out.operation(operationArrayIndexOfString), m_callFrame, storage, lowString(searchElementEdge), startIndex));
+            setInt32(vmCall(Int32, operationArrayIndexOfString, m_callFrame, storage, lowString(searchElementEdge), startIndex));
             break;
 
         case UntypedUse:
             switch (m_node->arrayMode().type()) {
             case Array::Double:
-                setInt32(vmCall(Int32, m_out.operation(operationArrayIndexOfValueDouble), m_callFrame, storage, lowJSValue(searchElementEdge), startIndex));
+                setInt32(vmCall(Int32, operationArrayIndexOfValueDouble, m_callFrame, storage, lowJSValue(searchElementEdge), startIndex));
                 break;
             case Array::Int32:
             case Array::Contiguous:
-                setInt32(vmCall(Int32, m_out.operation(operationArrayIndexOfValueInt32OrContiguous), m_callFrame, storage, lowJSValue(searchElementEdge), startIndex));
+                setInt32(vmCall(Int32, operationArrayIndexOfValueInt32OrContiguous, m_callFrame, storage, lowJSValue(searchElementEdge), startIndex));
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -5420,7 +5427,7 @@ private:
             
             m_out.appendTo(slowCase, continuation);
             results.append(m_out.anchor(vmCall(
-                Int64, m_out.operation(operationArrayPopAndRecoverLength), m_callFrame, base)));
+                Int64, operationArrayPopAndRecoverLength, m_callFrame, base)));
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);
@@ -5462,8 +5469,7 @@ private:
             m_out.jump(continuation);
 
             m_out.appendTo(slowCase, continuation);
-            results.append(m_out.anchor(vmCall(
-                Int64, m_out.operation(operationArrayPop), m_callFrame, base)));
+            results.append(m_out.anchor(vmCall(Int64, operationArrayPop, m_callFrame, base)));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -5483,12 +5489,12 @@ private:
         auto objectEdge = m_node->child2();
         if (objectEdge.useKind() == ObjectUse) {
             LValue object = lowNonNullObject(objectEdge);
-            LValue result = vmCall(Int64, m_out.operation(operationPushWithScopeObject), m_callFrame, parentScope, object);
+            LValue result = vmCall(Int64, operationPushWithScopeObject, m_callFrame, parentScope, object);
             setJSValue(result);
         } else {
             ASSERT(objectEdge.useKind() == UntypedUse);
             LValue object = lowJSValue(m_node->child2());
-            LValue result = vmCall(Int64, m_out.operation(operationPushWithScope), m_callFrame, parentScope, object);
+            LValue result = vmCall(Int64, operationPushWithScope, m_callFrame, parentScope, object);
             setJSValue(result);
         }
     }
@@ -5503,7 +5509,7 @@ private:
         if (table->singleton().isStillValid()) {
             LValue callResult = vmCall(
                 Int64,
-                m_out.operation(operationCreateActivationDirect), m_callFrame, weakStructure(structure),
+                operationCreateActivationDirect, m_callFrame, weakStructure(structure),
                 scope, weakPointer(table), m_out.constInt64(JSValue::encode(initializationValue)));
             setJSValue(callResult);
             return;
@@ -5563,10 +5569,10 @@ private:
         FunctionExecutable* executable = m_node->castOperand<FunctionExecutable*>();
         if (executable->singleton().isStillValid()) {
             LValue callResult =
-                isGeneratorFunction ? vmCall(Int64, m_out.operation(operationNewGeneratorFunction), m_callFrame, scope, weakPointer(executable)) :
-                isAsyncFunction ? vmCall(Int64, m_out.operation(operationNewAsyncFunction), m_callFrame, scope, weakPointer(executable)) :
-                isAsyncGeneratorFunction ? vmCall(Int64, m_out.operation(operationNewAsyncGeneratorFunction), m_callFrame, scope, weakPointer(executable)) :
-                vmCall(Int64, m_out.operation(operationNewFunction), m_callFrame, scope, weakPointer(executable));
+                isGeneratorFunction ? vmCall(Int64, operationNewGeneratorFunction, m_callFrame, scope, weakPointer(executable)) :
+                isAsyncFunction ? vmCall(Int64, operationNewAsyncFunction, m_callFrame, scope, weakPointer(executable)) :
+                isAsyncGeneratorFunction ? vmCall(Int64, operationNewAsyncGeneratorFunction, m_callFrame, scope, weakPointer(executable)) :
+                vmCall(Int64, operationNewFunction, m_callFrame, scope, weakPointer(executable));
             setJSValue(callResult);
             return;
         }
@@ -5750,7 +5756,7 @@ private:
         LValue scope = lowCell(m_node->child1());
         
         LValue result = vmCall(
-            Int64, m_out.operation(operationCreateScopedArguments), m_callFrame,
+            Int64, operationCreateScopedArguments, m_callFrame,
             weakPointer(
                 m_graph.globalObjectFor(m_node->origin.semantic)->scopedArgumentsStructure()),
             getArgumentsStart(), getArgumentsLength().value, getCurrentCallee(), scope);
@@ -5761,7 +5767,7 @@ private:
     void compileCreateClonedArguments()
     {
         LValue result = vmCall(
-            Int64, m_out.operation(operationCreateClonedArguments), m_callFrame,
+            Int64, operationCreateClonedArguments, m_callFrame,
             weakPointer(
                 m_graph.globalObjectFor(m_node->origin.semantic)->clonedArgumentsStructure()),
             getArgumentsStart(), getArgumentsLength().value, getCurrentCallee());
@@ -5804,7 +5810,7 @@ private:
         LValue argumentStart = getArgumentsStart();
         LValue numberOfArgumentsToSkip = m_out.constInt32(m_node->numberOfArgumentsToSkip());
         setJSValue(vmCall(
-            Int64, m_out.operation(operationCreateRest), m_callFrame, argumentStart, numberOfArgumentsToSkip, arrayLength));
+            Int64, operationCreateRest, m_callFrame, argumentStart, numberOfArgumentsToSkip, arrayLength));
     }
 
     void compileGetRestLength()
@@ -5862,7 +5868,7 @@ private:
                 m_out.jump(continuation);
 
                 m_out.appendTo(slowButArrayBufferCase, slowCase);
-                LValue slowArray = vmCall(Int64, m_out.operation(operationNewArrayBuffer), m_callFrame, weakStructure(arrayStructure), cachedOwnKeys);
+                LValue slowArray = vmCall(Int64, operationNewArrayBuffer, m_callFrame, weakStructure(arrayStructure), cachedOwnKeys);
                 ValueFromBlock slowButArrayBufferResult = m_out.anchor(slowArray);
                 m_out.jump(continuation);
 
@@ -5881,11 +5887,11 @@ private:
                 setJSValue(m_out.phi(pointerType(), fastResult, slowButArrayBufferResult, slowResult));
                 break;
             }
-            setJSValue(vmCall(Int64, m_out.operation(operationObjectKeysObject), m_callFrame, lowObject(m_node->child1())));
+            setJSValue(vmCall(Int64, operationObjectKeysObject, m_callFrame, lowObject(m_node->child1())));
             break;
         }
         case UntypedUse:
-            setJSValue(vmCall(Int64, m_out.operation(operationObjectKeys), m_callFrame, lowJSValue(m_node->child1())));
+            setJSValue(vmCall(Int64, operationObjectKeys, m_callFrame, lowJSValue(m_node->child1())));
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -5897,10 +5903,10 @@ private:
     {
         switch (m_node->child1().useKind()) {
         case ObjectUse:
-            setJSValue(vmCall(Int64, m_out.operation(operationObjectCreateObject), m_callFrame, lowObject(m_node->child1())));
+            setJSValue(vmCall(Int64, operationObjectCreateObject, m_callFrame, lowObject(m_node->child1())));
             break;
         case UntypedUse:
-            setJSValue(vmCall(Int64, m_out.operation(operationObjectCreate), m_callFrame, lowJSValue(m_node->child1())));
+            setJSValue(vmCall(Int64, operationObjectCreate, m_callFrame, lowJSValue(m_node->child1())));
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -5933,7 +5939,7 @@ private:
         m_out.jump(continuation);
 
         m_out.appendTo(slowCase, continuation);
-        ValueFromBlock slowResult = m_out.anchor(vmCall(pointerType(), m_out.operation(m_node->isInternalPromise() ? operationNewInternalPromise : operationNewPromise), m_callFrame, frozenPointer(m_graph.freezeStrong(m_node->structure().get()))));
+        ValueFromBlock slowResult = m_out.anchor(vmCall(pointerType(), m_node->isInternalPromise() ? operationNewInternalPromise : operationNewPromise, m_callFrame, frozenPointer(m_graph.freezeStrong(m_node->structure().get()))));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -5958,7 +5964,7 @@ private:
         m_out.jump(continuation);
 
         m_out.appendTo(slowCase, continuation);
-        ValueFromBlock slowResult = m_out.anchor(vmCall(pointerType(), m_out.operation(operation), m_callFrame, frozenPointer(m_graph.freezeStrong(m_node->structure().get()))));
+        ValueFromBlock slowResult = m_out.anchor(vmCall(pointerType(), operation, m_callFrame, frozenPointer(m_graph.freezeStrong(m_node->structure().get()))));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -6011,11 +6017,11 @@ private:
     void compileNewSymbol()
     {
         if (!m_node->child1()) {
-            setJSValue(vmCall(pointerType(), m_out.operation(operationNewSymbol), m_callFrame));
+            setJSValue(vmCall(pointerType(), operationNewSymbol, m_callFrame));
             return;
         }
         ASSERT(m_node->child1().useKind() == KnownStringUse);
-        setJSValue(vmCall(pointerType(), m_out.operation(operationNewSymbolWithDescription), m_callFrame, lowString(m_node->child1())));
+        setJSValue(vmCall(pointerType(), operationNewSymbolWithDescription, m_callFrame, lowString(m_node->child1())));
     }
 
     void compileNewArray()
@@ -6076,7 +6082,7 @@ private:
         
         if (!m_node->numChildren()) {
             setJSValue(vmCall(
-                Int64, m_out.operation(operationNewEmptyArray), m_callFrame,
+                Int64, operationNewEmptyArray, m_callFrame,
                 weakStructure(structure)));
             return;
         }
@@ -6104,7 +6110,7 @@ private:
             m_out.constIntPtr(scratchSize), m_out.absolute(scratchBuffer->addressOfActiveLength()));
         
         LValue result = vmCall(
-            Int64, m_out.operation(operationNewArray), m_callFrame,
+            Int64, operationNewArray, m_callFrame,
             weakStructure(structure), m_out.constIntPtr(buffer),
             m_out.constIntPtr(m_node->numChildren()));
         
@@ -6293,7 +6299,7 @@ private:
         }
 
         m_out.storePtr(m_out.constIntPtr(scratchSize), m_out.absolute(scratchBuffer->addressOfActiveLength()));
-        LValue result = vmCall(Int64, m_out.operation(operationNewArrayWithSpreadSlow), m_callFrame, m_out.constIntPtr(buffer), m_out.constInt32(m_node->numChildren()));
+        LValue result = vmCall(Int64, operationNewArrayWithSpreadSlow, m_callFrame, m_out.constIntPtr(buffer), m_out.constInt32(m_node->numChildren()));
         m_out.storePtr(m_out.constIntPtr(0), m_out.absolute(scratchBuffer->addressOfActiveLength()));
 
         setJSValue(result);
@@ -6323,7 +6329,7 @@ private:
 
         m_out.appendTo(slowPath, continuation);
         ValueFromBlock slowResult = m_out.anchor(vmCall(
-            Int64, m_out.operation(operationCreateThis), m_callFrame, callee, m_out.constInt32(m_node->inlineCapacity())));
+            Int64, operationCreateThis, m_callFrame, callee, m_out.constInt32(m_node->inlineCapacity())));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -6382,7 +6388,7 @@ private:
         m_out.jump(continuation);
 
         m_out.appendTo(slowCase, continuation);
-        ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, m_out.operation(m_node->isInternalPromise() ? operationCreateInternalPromise : operationCreatePromise), m_callFrame, callee, weakPointer(globalObject)));
+        ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, m_node->isInternalPromise() ? operationCreateInternalPromise : operationCreatePromise, m_callFrame, callee, weakPointer(globalObject)));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -6433,7 +6439,7 @@ private:
         m_out.jump(continuation);
 
         m_out.appendTo(slowCase, continuation);
-        ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, m_out.operation(operation), m_callFrame, callee, weakPointer(globalObject)));
+        ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, operation, m_callFrame, callee, weakPointer(globalObject)));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -6468,7 +6474,7 @@ private:
             m_out.jump(continuation);
 
             LBasicBlock lastNext = m_out.appendTo(slowAllocation, continuation);
-            ValueFromBlock slowFixedArray = m_out.anchor(vmCall(pointerType(), m_out.operation(operationCreateFixedArray), m_callFrame, m_out.constInt32(immutableButterfly->length())));
+            ValueFromBlock slowFixedArray = m_out.anchor(vmCall(pointerType(), operationCreateFixedArray, m_callFrame, m_out.constInt32(immutableButterfly->length())));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -6513,7 +6519,7 @@ private:
             m_out.jump(loopHeader);
 
             m_out.appendTo(slowAllocation, loopHeader);
-            ValueFromBlock slowArray = m_out.anchor(vmCall(pointerType(), m_out.operation(operationCreateFixedArray), m_callFrame, length));
+            ValueFromBlock slowArray = m_out.anchor(vmCall(pointerType(), operationCreateFixedArray, m_callFrame, length));
             m_out.jump(loopHeader);
 
             m_out.appendTo(loopHeader, loopBody);
@@ -6615,14 +6621,14 @@ private:
             }
 
             m_out.appendTo(slowPath, continuation);
-            ValueFromBlock slowResult = m_out.anchor(vmCall(pointerType(), m_out.operation(operationSpreadFastArray), m_callFrame, argument));
+            ValueFromBlock slowResult = m_out.anchor(vmCall(pointerType(), operationSpreadFastArray, m_callFrame, argument));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
             result = m_out.phi(pointerType(), fastResult, slowResult);
             mutatorFence();
         } else
-            result = vmCall(pointerType(), m_out.operation(operationSpreadGeneric), m_callFrame, argument);
+            result = vmCall(pointerType(), operationSpreadGeneric, m_callFrame, argument);
 
         setJSValue(result);
     }
@@ -6643,7 +6649,7 @@ private:
             m_out.jump(continuation);
 
             m_out.appendTo(slowPath, continuation);
-            LValue slowArray = vmCall(Int64, m_out.operation(operationNewArrayBuffer), m_callFrame, weakStructure(structure), frozenPointer(m_node->cellOperand()));
+            LValue slowArray = vmCall(Int64, operationNewArrayBuffer, m_callFrame, weakStructure(structure), frozenPointer(m_node->cellOperand()));
             ValueFromBlock slowResult = m_out.anchor(slowArray);
             m_out.jump(continuation);
 
@@ -6655,7 +6661,7 @@ private:
         }
         
         setJSValue(vmCall(
-            Int64, m_out.operation(operationNewArrayBuffer), m_callFrame,
+            Int64, operationNewArrayBuffer, m_callFrame,
             weakStructure(structure), frozenPointer(m_node->cellOperand())));
     }
 
@@ -6680,7 +6686,7 @@ private:
             m_out.aboveOrEqual(publicLength, m_out.constInt32(MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH)),
             weakStructure(m_graph.registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithArrayStorage))),
             weakStructure(structure));
-        setJSValue(vmCall(Int64, m_out.operation(operationNewArrayWithSize), m_callFrame, structureValue, publicLength, m_out.intPtrZero));
+        setJSValue(vmCall(Int64, operationNewArrayWithSize, m_callFrame, structureValue, publicLength, m_out.intPtrZero));
     }
 
     void compileNewTypedArray()
@@ -6775,7 +6781,7 @@ private:
             LValue argument = lowJSValue(m_node->child1());
 
             LValue result = vmCall(
-                pointerType(), m_out.operation(operationNewTypedArrayWithOneArgumentForType(typedArrayType)),
+                pointerType(), operationNewTypedArrayWithOneArgumentForType(typedArrayType),
                 m_callFrame, weakPointer(globalObject->typedArrayStructureConcurrently(typedArrayType)), argument);
 
             setJSValue(result);
@@ -6815,7 +6821,7 @@ private:
         LValue value = lowJSValue(m_node->child1());
 
         if (!(abstractValue(m_node->child1()).m_type & SpecBytecodeNumber))
-            setJSValue(vmCall(Int64, m_out.operation(operationToNumber), m_callFrame, value));
+            setJSValue(vmCall(Int64, operationToNumber, m_callFrame, value));
         else {
             LBasicBlock notNumber = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
@@ -6828,7 +6834,7 @@ private:
             // We have several attempts to remove ToNumber. But ToNumber still exists.
             // It means that converting non-numbers to numbers by this ToNumber is not rare.
             // Instead of the lazy slow path generator, we call the operation here.
-            ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, m_out.operation(operationToNumber), m_callFrame, value));
+            ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, operationToNumber, m_callFrame, value));
             m_out.jump(continuation);
 
             // continuation case.
@@ -6909,16 +6915,17 @@ private:
             m_out.branch(isStringPredicate, unsure(continuation), unsure(notString));
             
             m_out.appendTo(notString, continuation);
-            LValue operation;
+            LValue result;
             if (m_node->child1().useKind() == CellUse) {
                 ASSERT(m_node->op() != StringValueOf);
-                operation = m_out.operation(m_node->op() == ToString ? operationToStringOnCell : operationCallStringConstructorOnCell);
+                result = vmCall(Int64, m_node->op() == ToString ? operationToStringOnCell : operationCallStringConstructorOnCell, m_callFrame, value);
             } else {
-                operation = m_out.operation(m_node->op() == ToString
+                auto* operation = m_node->op() == ToString
                     ? operationToString : m_node->op() == StringValueOf
-                    ? operationStringValueOf : operationCallStringConstructor);
+                    ? operationStringValueOf : operationCallStringConstructor;
+                result = vmCall(Int64, operation, m_callFrame, value);
             }
-            ValueFromBlock convertedResult = m_out.anchor(vmCall(Int64, operation, m_callFrame, value));
+            ValueFromBlock convertedResult = m_out.anchor(result);
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);
@@ -6927,15 +6934,15 @@ private:
         }
 
         case Int32Use:
-            setJSValue(vmCall(Int64, m_out.operation(operationInt32ToStringWithValidRadix), m_callFrame, lowInt32(m_node->child1()), m_out.constInt32(10)));
+            setJSValue(vmCall(Int64, operationInt32ToStringWithValidRadix, m_callFrame, lowInt32(m_node->child1()), m_out.constInt32(10)));
             return;
 
         case Int52RepUse:
-            setJSValue(vmCall(Int64, m_out.operation(operationInt52ToStringWithValidRadix), m_callFrame, lowStrictInt52(m_node->child1()), m_out.constInt32(10)));
+            setJSValue(vmCall(Int64, operationInt52ToStringWithValidRadix, m_callFrame, lowStrictInt52(m_node->child1()), m_out.constInt32(10)));
             return;
 
         case DoubleRepUse:
-            setJSValue(vmCall(Int64, m_out.operation(operationDoubleToStringWithValidRadix), m_callFrame, lowDouble(m_node->child1()), m_out.constInt32(10)));
+            setJSValue(vmCall(Int64, operationDoubleToStringWithValidRadix, m_callFrame, lowDouble(m_node->child1()), m_out.constInt32(10)));
             return;
             
         default:
@@ -6966,7 +6973,7 @@ private:
         
         m_out.appendTo(isObjectCase, continuation);
         results.append(m_out.anchor(vmCall(
-            Int64, m_out.operation(operationToPrimitive), m_callFrame, value)));
+            Int64, operationToPrimitive, m_callFrame, value)));
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
@@ -7162,7 +7169,7 @@ private:
             
         Vector<ValueFromBlock, 4> results;
         results.append(m_out.anchor(vmCall(
-            Int64, m_out.operation(operationSingleCharacterString),
+            Int64, operationSingleCharacterString,
             m_callFrame, char16BitValue)));
         m_out.jump(continuation);
             
@@ -7207,7 +7214,7 @@ private:
             }
                 
             results.append(m_out.anchor(vmCall(
-                Int64, m_out.operation(operationGetByValStringInt), m_callFrame, base, index)));
+                Int64, operationGetByValStringInt, m_callFrame, base, index)));
         }
             
         m_out.jump(continuation);
@@ -7326,7 +7333,7 @@ private:
         
         if (childEdge.useKind() == UntypedUse) {
             LValue result = vmCall(
-                Int64, m_out.operation(operationStringFromCharCodeUntyped), m_callFrame,
+                Int64, operationStringFromCharCodeUntyped, m_callFrame,
                 lowJSValue(childEdge));
             setJSValue(result);
             return;
@@ -7355,7 +7362,7 @@ private:
         m_out.appendTo(slowCase, continuation);
 
         LValue slowResultValue = vmCall(
-            pointerType(), m_out.operation(operationStringFromCharCode), m_callFrame, value);
+            pointerType(), operationStringFromCharCode, m_callFrame, value);
         ValueFromBlock slowResult = m_out.anchor(slowResultValue);
         m_out.jump(continuation);
 
@@ -7879,7 +7886,7 @@ private:
             LBasicBlock lastNext = m_out.appendTo(notTriviallyEqualCase, continuation);
 
             ValueFromBlock slowResult = m_out.anchor(m_out.notNull(vmCall(
-                pointerType(), m_out.operation(operationCompareStrictEq), m_callFrame, left, right)));
+                pointerType(), operationCompareStrictEq, m_callFrame, left, right)));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -8111,7 +8118,7 @@ private:
         }
 
         ASSERT(m_node->isBinaryUseKind(UntypedUse));
-        setBoolean(vmCall(Int32, m_out.operation(operationSameValue), m_callFrame, lowJSValue(m_node->child1()), lowJSValue(m_node->child2())));
+        setBoolean(vmCall(Int32, operationSameValue, m_callFrame, lowJSValue(m_node->child1()), lowJSValue(m_node->child2())));
     }
     
     void compileLogicalNot()
@@ -9223,7 +9230,7 @@ private:
         LValue jsArguments = lowJSValue(m_node->child1());
         
         LValue length = vmCall(
-            Int32, m_out.operation(operationSizeOfVarargs), m_callFrame, jsArguments,
+            Int32, operationSizeOfVarargs, m_callFrame, jsArguments,
             m_out.constInt32(data->offset));
         
         // FIXME: There is a chance that we will call an effectful length property twice. This is safe
@@ -9252,7 +9259,7 @@ private:
             m_out.constIntPtr(3));
         
         vmCall(
-            Void, m_out.operation(operationLoadVarargs), m_callFrame,
+            Void, operationLoadVarargs, m_callFrame,
             m_out.castToInt32(machineStart), jsArguments, m_out.constInt32(data->offset),
             length, m_out.constInt32(data->mandatoryMinimum));
     }
@@ -9650,7 +9657,7 @@ private:
 
             LBasicBlock lastNext = m_out.appendTo(needResolution, resolved);
             ValueFromBlock slowValue = m_out.anchor(
-                vmCall(pointerType(), m_out.operation(operationResolveRope), m_callFrame, stringValue));
+                vmCall(pointerType(), operationResolveRope, m_callFrame, stringValue));
             m_out.jump(resolved);
 
             m_out.appendTo(resolved, lengthIs1);
@@ -9838,7 +9845,7 @@ private:
     void compileThrow()
     {
         LValue error = lowJSValue(m_node->child1());
-        vmCall(Void, m_out.operation(operationThrowDFG), m_callFrame, error); 
+        vmCall(Void, operationThrowDFG, m_callFrame, error); 
         // vmCall() does an exception check so we should never reach this.
         m_out.unreachable();
     }
@@ -9847,7 +9854,7 @@ private:
     {
         LValue errorMessage = lowString(m_node->child1());
         LValue errorType = m_out.constInt32(m_node->errorType());
-        vmCall(Void, m_out.operation(operationThrowStaticError), m_callFrame, errorMessage, errorType);
+        vmCall(Void, operationThrowStaticError, m_callFrame, errorMessage, errorType);
         // vmCall() does an exception check so we should never reach this.
         m_out.unreachable();
     }
@@ -10080,7 +10087,7 @@ private:
 
         m_out.appendTo(slowCase, continuation);
         ValueFromBlock slowResult = m_out.anchor(
-            vmCall(Int32, m_out.operation(operationMapHash), m_callFrame, string));
+            vmCall(Int32, operationMapHash, m_callFrame, string));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -10167,7 +10174,7 @@ private:
 
         m_out.appendTo(slowCase, continuation);
         ValueFromBlock slowResult = m_out.anchor(
-            vmCall(Int32, m_out.operation(operationMapHash), m_callFrame, value));
+            vmCall(Int32, operationMapHash, m_callFrame, value));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -10344,7 +10351,7 @@ private:
 
         m_out.appendTo(slowPath, notPresentInTable);
         ValueFromBlock slowPathResult = m_out.anchor(vmCall(pointerType(),
-            m_out.operation(m_node->child1().useKind() == MapObjectUse ? operationJSMapFindBucket : operationJSSetFindBucket), m_callFrame, map, key, hash));
+            m_node->child1().useKind() == MapObjectUse ? operationJSMapFindBucket : operationJSSetFindBucket, m_callFrame, map, key, hash));
         m_out.jump(continuation);
 
         m_out.appendTo(notPresentInTable, continuation);
@@ -10443,7 +10450,7 @@ private:
         LValue key = lowJSValue(m_node->child2());
         LValue hash = lowInt32(m_node->child3());
 
-        setJSValue(vmCall(pointerType(), m_out.operation(operationSetAdd), m_callFrame, set, key, hash));
+        setJSValue(vmCall(pointerType(), operationSetAdd, m_callFrame, set, key, hash));
     }
 
     void compileMapSet()
@@ -10453,7 +10460,7 @@ private:
         LValue value = lowJSValue(m_graph.varArgChild(m_node, 2));
         LValue hash = lowInt32(m_graph.varArgChild(m_node, 3));
 
-        setJSValue(vmCall(pointerType(), m_out.operation(operationMapSet), m_callFrame, map, key, value, hash));
+        setJSValue(vmCall(pointerType(), operationMapSet, m_callFrame, map, key, value, hash));
     }
 
     void compileWeakMapGet()
@@ -10520,7 +10527,7 @@ private:
         LValue key = lowObject(m_node->child2());
         LValue hash = lowInt32(m_node->child3());
 
-        vmCall(Void, m_out.operation(operationWeakSetAdd), m_callFrame, set, key, hash);
+        vmCall(Void, operationWeakSetAdd, m_callFrame, set, key, hash);
     }
 
     void compileWeakMapSet()
@@ -10530,7 +10537,7 @@ private:
         LValue value = lowJSValue(m_graph.varArgChild(m_node, 2));
         LValue hash = lowInt32(m_graph.varArgChild(m_node, 3));
 
-        vmCall(Void, m_out.operation(operationWeakMapSet), m_callFrame, map, key, value, hash);
+        vmCall(Void, operationWeakMapSet, m_callFrame, map, key, value, hash);
     }
 
     void compileIsObjectOrNull()
@@ -10676,7 +10683,7 @@ private:
     
     void compileInByVal()
     {
-        setJSValue(vmCall(Int64, m_out.operation(operationInByVal), m_callFrame, lowCell(m_node->child1()), lowJSValue(m_node->child2())));
+        setJSValue(vmCall(Int64, operationInByVal, m_callFrame, lowCell(m_node->child1()), lowJSValue(m_node->child2())));
     }
 
     void compileInById()
@@ -10835,7 +10842,7 @@ private:
 
         m_out.appendTo(slowCase, continuation);
         ValueFromBlock slowResult;
-        slowResult = m_out.anchor(vmCall(Int32, m_out.operation(operationHasOwnProperty), m_callFrame, object, keyAsValue));
+        slowResult = m_out.anchor(vmCall(Int32, operationHasOwnProperty, m_callFrame, object, keyAsValue));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -10849,14 +10856,14 @@ private:
         if (m_node->child2()) {
             LValue radix = lowInt32(m_node->child2());
             if (m_node->child1().useKind() == UntypedUse)
-                result = vmCall(Int64, m_out.operation(operationParseIntGeneric), m_callFrame, lowJSValue(m_node->child1()), radix);
+                result = vmCall(Int64, operationParseIntGeneric, m_callFrame, lowJSValue(m_node->child1()), radix);
             else
-                result = vmCall(Int64, m_out.operation(operationParseIntString), m_callFrame, lowString(m_node->child1()), radix);
+                result = vmCall(Int64, operationParseIntString, m_callFrame, lowString(m_node->child1()), radix);
         } else {
             if (m_node->child1().useKind() == UntypedUse)
-                result = vmCall(Int64, m_out.operation(operationParseIntNoRadixGeneric), m_callFrame, lowJSValue(m_node->child1()));
+                result = vmCall(Int64, operationParseIntNoRadixGeneric, m_callFrame, lowJSValue(m_node->child1()));
             else
-                result = vmCall(Int64, m_out.operation(operationParseIntStringNoRadix), m_callFrame, lowString(m_node->child1()));
+                result = vmCall(Int64, operationParseIntStringNoRadix, m_callFrame, lowString(m_node->child1()));
         }
         setJSValue(result);
     }
@@ -11010,7 +11017,7 @@ private:
         LValue constructor = lowCell(m_node->child2());
         LValue hasInstance = lowJSValue(m_node->child3());
 
-        setBoolean(m_out.logicalNot(m_out.equal(m_out.constInt32(0), vmCall(Int32, m_out.operation(operationInstanceOfCustom), m_callFrame, value, constructor, hasInstance))));
+        setBoolean(m_out.logicalNot(m_out.equal(m_out.constInt32(0), vmCall(Int32, operationInstanceOfCustom, m_callFrame, value, constructor, hasInstance))));
     }
     
     void compileCountExecution()
@@ -11071,7 +11078,7 @@ private:
 
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(
-                m_out.notZero64(vmCall(Int64, m_out.operation(operationHasIndexedPropertyByInt), m_callFrame, base, index, internalMethodType)));
+                m_out.notZero64(vmCall(Int64, operationHasIndexedPropertyByInt, m_callFrame, base, index, internalMethodType)));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -11105,7 +11112,7 @@ private:
             
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(
-                m_out.notZero64(vmCall(Int64, m_out.operation(operationHasIndexedPropertyByInt), m_callFrame, base, index, internalMethodType)));
+                m_out.notZero64(vmCall(Int64, operationHasIndexedPropertyByInt, m_callFrame, base, index, internalMethodType)));
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);
@@ -11138,7 +11145,7 @@ private:
 
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(
-                m_out.notZero64(vmCall(Int64, m_out.operation(operationHasIndexedPropertyByInt), m_callFrame, base, index, internalMethodType)));
+                m_out.notZero64(vmCall(Int64, operationHasIndexedPropertyByInt, m_callFrame, base, index, internalMethodType)));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -11148,7 +11155,7 @@ private:
 
         default: {
             LValue internalMethodType = m_out.constInt32(static_cast<int32_t>(m_node->internalMethodType()));
-            setBoolean(m_out.notZero64(vmCall(Int64, m_out.operation(operationHasIndexedPropertyByInt), m_callFrame, base, index, internalMethodType)));
+            setBoolean(m_out.notZero64(vmCall(Int64, operationHasIndexedPropertyByInt, m_callFrame, base, index, internalMethodType)));
             break;
         }
         }
@@ -11158,7 +11165,7 @@ private:
     {
         LValue base = lowJSValue(m_node->child1());
         LValue property = lowCell(m_node->child2());
-        setJSValue(vmCall(Int64, m_out.operation(operationHasGenericProperty), m_callFrame, base, property));
+        setJSValue(vmCall(Int64, operationHasGenericProperty, m_callFrame, base, property));
     }
 
     void compileHasStructureProperty()
@@ -11184,7 +11191,7 @@ private:
         ValueFromBlock wrongStructureResult = m_out.anchor(
             m_out.equal(
                 m_out.constInt64(JSValue::encode(jsBoolean(true))), 
-                vmCall(Int64, m_out.operation(operationHasGenericProperty), m_callFrame, base, property)));
+                vmCall(Int64, operationHasGenericProperty, m_callFrame, base, property)));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -11230,7 +11237,7 @@ private:
 
         m_out.appendTo(slowCase, continuation);
         ValueFromBlock slowCaseResult = m_out.anchor(
-            vmCall(Int64, m_out.operation(operationGetByVal), m_callFrame, base, property));
+            vmCall(Int64, operationGetByVal, m_callFrame, base, property));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -11246,9 +11253,9 @@ private:
     void compileGetPropertyEnumerator()
     {
         if (m_node->child1().useKind() == CellUse)
-            setJSValue(vmCall(Int64, m_out.operation(operationGetPropertyEnumeratorCell), m_callFrame, lowCell(m_node->child1())));
+            setJSValue(vmCall(Int64, operationGetPropertyEnumeratorCell, m_callFrame, lowCell(m_node->child1())));
         else
-            setJSValue(vmCall(Int64, m_out.operation(operationGetPropertyEnumerator), m_callFrame, lowJSValue(m_node->child1())));
+            setJSValue(vmCall(Int64, operationGetPropertyEnumerator, m_callFrame, lowJSValue(m_node->child1())));
     }
 
     void compileGetEnumeratorStructurePname()
@@ -11306,7 +11313,7 @@ private:
     void compileToIndexString()
     {
         LValue index = lowInt32(m_node->child1());
-        setJSValue(vmCall(Int64, m_out.operation(operationToIndexString), m_callFrame, index));
+        setJSValue(vmCall(Int64, operationToIndexString, m_callFrame, index));
     }
     
     void compileCheckStructureImmediate()
@@ -11723,7 +11730,7 @@ private:
             if (m_node->child3().useKind() == StringUse) {
                 LValue argument = lowString(m_node->child3());
                 LValue result = vmCall(
-                    Int64, m_out.operation(operationRegExpExecString), m_callFrame, globalObject,
+                    Int64, operationRegExpExecString, m_callFrame, globalObject,
                     base, argument);
                 setJSValue(result);
                 return;
@@ -11731,7 +11738,7 @@ private:
             
             LValue argument = lowJSValue(m_node->child3());
             LValue result = vmCall(
-                Int64, m_out.operation(operationRegExpExec), m_callFrame, globalObject, base,
+                Int64, operationRegExpExec, m_callFrame, globalObject, base,
                 argument);
             setJSValue(result);
             return;
@@ -11740,7 +11747,7 @@ private:
         LValue base = lowJSValue(m_node->child2());
         LValue argument = lowJSValue(m_node->child3());
         LValue result = vmCall(
-            Int64, m_out.operation(operationRegExpExecGeneric), m_callFrame, globalObject, base,
+            Int64, operationRegExpExecGeneric, m_callFrame, globalObject, base,
             argument);
         setJSValue(result);
     }
@@ -11750,7 +11757,7 @@ private:
         LValue globalObject = lowCell(m_node->child1());
         LValue argument = lowString(m_node->child2());
         LValue result = vmCall(
-            Int64, m_out.operation(operationRegExpExecNonGlobalOrSticky), m_callFrame, globalObject, frozenPointer(m_node->cellOperand()), argument);
+            Int64, operationRegExpExecNonGlobalOrSticky, m_callFrame, globalObject, frozenPointer(m_node->cellOperand()), argument);
         setJSValue(result);
     }
 
@@ -11759,7 +11766,7 @@ private:
         LValue globalObject = lowCell(m_node->child1());
         LValue argument = lowString(m_node->child2());
         LValue result = vmCall(
-            Int64, m_out.operation(operationRegExpMatchFastGlobalString), m_callFrame, globalObject, frozenPointer(m_node->cellOperand()), argument);
+            Int64, operationRegExpMatchFastGlobalString, m_callFrame, globalObject, frozenPointer(m_node->cellOperand()), argument);
         setJSValue(result);
     }
 
@@ -11773,7 +11780,7 @@ private:
             if (m_node->child3().useKind() == StringUse) {
                 LValue argument = lowString(m_node->child3());
                 LValue result = vmCall(
-                    Int32, m_out.operation(operationRegExpTestString), m_callFrame, globalObject,
+                    Int32, operationRegExpTestString, m_callFrame, globalObject,
                     base, argument);
                 setBoolean(result);
                 return;
@@ -11781,7 +11788,7 @@ private:
 
             LValue argument = lowJSValue(m_node->child3());
             LValue result = vmCall(
-                Int32, m_out.operation(operationRegExpTest), m_callFrame, globalObject, base,
+                Int32, operationRegExpTest, m_callFrame, globalObject, base,
                 argument);
             setBoolean(result);
             return;
@@ -11790,7 +11797,7 @@ private:
         LValue base = lowJSValue(m_node->child2());
         LValue argument = lowJSValue(m_node->child3());
         LValue result = vmCall(
-            Int32, m_out.operation(operationRegExpTestGeneric), m_callFrame, globalObject, base,
+            Int32, operationRegExpTestGeneric, m_callFrame, globalObject, base,
             argument);
         setBoolean(result);
     }
@@ -11801,7 +11808,7 @@ private:
         LValue base = lowRegExpObject(m_node->child2());
         LValue argument = lowString(m_node->child3());
         LValue result = vmCall(
-            Int64, m_out.operation(operationRegExpMatchFastString), m_callFrame, globalObject,
+            Int64, operationRegExpMatchFastString, m_callFrame, globalObject,
             base, argument);
         setJSValue(result);
     }
@@ -11843,7 +11850,7 @@ private:
 
     void compileSetFunctionName()
     {
-        vmCall(Void, m_out.operation(operationSetFunctionName), m_callFrame,
+        vmCall(Void, operationSetFunctionName, m_callFrame,
             lowCell(m_node->child1()), lowJSValue(m_node->child2()));
     }
     
@@ -11859,7 +11866,7 @@ private:
                     LValue regExp = lowRegExpObject(m_node->child2());
 
                     LValue result = vmCall(
-                        pointerType(), m_out.operation(operationStringProtoFuncReplaceRegExpEmptyStr),
+                        pointerType(), operationStringProtoFuncReplaceRegExpEmptyStr,
                         m_callFrame, string, regExp);
 
                     setJSValue(result);
@@ -11872,7 +11879,7 @@ private:
             LValue replace = lowString(m_node->child3());
 
             LValue result = vmCall(
-                pointerType(), m_out.operation(operationStringProtoFuncReplaceRegExpString),
+                pointerType(), operationStringProtoFuncReplaceRegExpString,
                 m_callFrame, string, regExp, replace);
 
             setJSValue(result);
@@ -11886,7 +11893,7 @@ private:
             search = lowJSValue(m_node->child2());
 
         LValue result = vmCall(
-            pointerType(), m_out.operation(operationStringProtoFuncReplaceGeneric), m_callFrame,
+            pointerType(), operationStringProtoFuncReplaceGeneric, m_callFrame,
             lowJSValue(m_node->child1()), search,
             lowJSValue(m_node->child3()));
 
@@ -12230,7 +12237,7 @@ private:
         if (previousStructure->couldHaveIndexingHeader()) {
             return vmCall(
                 pointerType(),
-                m_out.operation(operationAllocateComplexPropertyStorageWithInitialCapacity),
+                operationAllocateComplexPropertyStorageWithInitialCapacity,
                 m_callFrame, object);
         }
         
@@ -12254,7 +12261,7 @@ private:
         
         if (previous->couldHaveIndexingHeader()) {
             LValue newAllocSize = m_out.constIntPtr(newSize);                    
-            return vmCall(pointerType(), m_out.operation(operationAllocateComplexPropertyStorage), m_callFrame, object, newAllocSize);
+            return vmCall(pointerType(), operationAllocateComplexPropertyStorage, m_callFrame, object, newAllocSize);
         }
         
         LValue result = allocatePropertyStorageWithSizeImpl(newSize);
@@ -12515,7 +12522,7 @@ private:
             speculateString(m_node->child2(), right);
 
             LValue result = vmCall(
-                Int32, m_out.operation(stringFunction),
+                Int32, stringFunction,
                 m_callFrame, left, right);
             setBoolean(result);
             return;
@@ -12587,7 +12594,7 @@ private:
 
         m_out.appendTo(bigCharacter, bitsContinuation);
         results.append(m_out.anchor(vmCall(
-            Int64, m_out.operation(operationSingleCharacterString),
+            Int64, operationSingleCharacterString,
             m_callFrame, char16BitValue)));
         m_out.jump(continuation);
 
@@ -12599,11 +12606,11 @@ private:
         m_out.jump(continuation);
 
         m_out.appendTo(slowCase, ropeSlowCase);
-        results.append(m_out.anchor(vmCall(pointerType(), m_out.operation(operationStringSubstr), m_callFrame, string, from, span)));
+        results.append(m_out.anchor(vmCall(pointerType(), operationStringSubstr, m_callFrame, string, from, span)));
         m_out.jump(continuation);
 
         m_out.appendTo(ropeSlowCase, continuation);
-        results.append(m_out.anchor(vmCall(pointerType(), m_out.operation(operationStringSlice), m_callFrame, string, start, end)));
+        results.append(m_out.anchor(vmCall(pointerType(), operationStringSlice, m_callFrame, string, start, end)));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -12658,7 +12665,7 @@ private:
 
         m_out.appendTo(slowPath, continuation);
         LValue slowPathIndex = m_out.phi(Int32, startIndexForCall, indexFromBlock);
-        ValueFromBlock slowResult = m_out.anchor(vmCall(pointerType(), m_out.operation(operationToLowerCase), m_callFrame, string, slowPathIndex));
+        ValueFromBlock slowResult = m_out.anchor(vmCall(pointerType(), operationToLowerCase, m_callFrame, string, slowPathIndex));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -12676,13 +12683,13 @@ private:
 
         switch (m_node->child1().useKind()) {
         case Int32Use:
-            setJSValue(vmCall(pointerType(), m_out.operation(validRadixIsGuaranteed ? operationInt32ToStringWithValidRadix : operationInt32ToString), m_callFrame, lowInt32(m_node->child1()), lowInt32(m_node->child2())));
+            setJSValue(vmCall(pointerType(), validRadixIsGuaranteed ? operationInt32ToStringWithValidRadix : operationInt32ToString, m_callFrame, lowInt32(m_node->child1()), lowInt32(m_node->child2())));
             break;
         case Int52RepUse:
-            setJSValue(vmCall(pointerType(), m_out.operation(validRadixIsGuaranteed ? operationInt52ToStringWithValidRadix : operationInt52ToString), m_callFrame, lowStrictInt52(m_node->child1()), lowInt32(m_node->child2())));
+            setJSValue(vmCall(pointerType(), validRadixIsGuaranteed ? operationInt52ToStringWithValidRadix : operationInt52ToString, m_callFrame, lowStrictInt52(m_node->child1()), lowInt32(m_node->child2())));
             break;
         case DoubleRepUse:
-            setJSValue(vmCall(pointerType(), m_out.operation(validRadixIsGuaranteed ? operationDoubleToStringWithValidRadix : operationDoubleToString), m_callFrame, lowDouble(m_node->child1()), lowInt32(m_node->child2())));
+            setJSValue(vmCall(pointerType(), validRadixIsGuaranteed ? operationDoubleToStringWithValidRadix : operationDoubleToString, m_callFrame, lowDouble(m_node->child1()), lowInt32(m_node->child2())));
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -12693,13 +12700,13 @@ private:
     {
         switch (m_node->child1().useKind()) {
         case Int32Use:
-            setJSValue(vmCall(pointerType(), m_out.operation(operationInt32ToStringWithValidRadix), m_callFrame, lowInt32(m_node->child1()), m_out.constInt32(m_node->validRadixConstant())));
+            setJSValue(vmCall(pointerType(), operationInt32ToStringWithValidRadix, m_callFrame, lowInt32(m_node->child1()), m_out.constInt32(m_node->validRadixConstant())));
             break;
         case Int52RepUse:
-            setJSValue(vmCall(pointerType(), m_out.operation(operationInt52ToStringWithValidRadix), m_callFrame, lowStrictInt52(m_node->child1()), m_out.constInt32(m_node->validRadixConstant())));
+            setJSValue(vmCall(pointerType(), operationInt52ToStringWithValidRadix, m_callFrame, lowStrictInt52(m_node->child1()), m_out.constInt32(m_node->validRadixConstant())));
             break;
         case DoubleRepUse:
-            setJSValue(vmCall(pointerType(), m_out.operation(operationDoubleToStringWithValidRadix), m_callFrame, lowDouble(m_node->child1()), m_out.constInt32(m_node->validRadixConstant())));
+            setJSValue(vmCall(pointerType(), operationDoubleToStringWithValidRadix, m_callFrame, lowDouble(m_node->child1()), m_out.constInt32(m_node->validRadixConstant())));
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -12709,27 +12716,27 @@ private:
     void compileResolveScopeForHoistingFuncDeclInEval()
     {
         UniquedStringImpl* uid = m_graph.identifiers()[m_node->identifierNumber()];
-        setJSValue(vmCall(pointerType(), m_out.operation(operationResolveScopeForHoistingFuncDeclInEval), m_callFrame, lowCell(m_node->child1()), m_out.constIntPtr(uid)));
+        setJSValue(vmCall(pointerType(), operationResolveScopeForHoistingFuncDeclInEval, m_callFrame, lowCell(m_node->child1()), m_out.constIntPtr(uid)));
     }
 
     void compileResolveScope()
     {
         UniquedStringImpl* uid = m_graph.identifiers()[m_node->identifierNumber()];
-        setJSValue(vmCall(pointerType(), m_out.operation(operationResolveScope),
+        setJSValue(vmCall(pointerType(), operationResolveScope,
             m_callFrame, lowCell(m_node->child1()), m_out.constIntPtr(uid)));
     }
 
     void compileGetDynamicVar()
     {
         UniquedStringImpl* uid = m_graph.identifiers()[m_node->identifierNumber()];
-        setJSValue(vmCall(Int64, m_out.operation(operationGetDynamicVar),
+        setJSValue(vmCall(Int64, operationGetDynamicVar,
             m_callFrame, lowCell(m_node->child1()), m_out.constIntPtr(uid), m_out.constInt32(m_node->getPutInfo())));
     }
 
     void compilePutDynamicVar()
     {
         UniquedStringImpl* uid = m_graph.identifiers()[m_node->identifierNumber()];
-        setJSValue(vmCall(Void, m_out.operation(m_graph.isStrictModeFor(m_node->origin.semantic) ? operationPutDynamicVarStrict : operationPutDynamicVarNonStrict),
+        setJSValue(vmCall(Void, m_graph.isStrictModeFor(m_node->origin.semantic) ? operationPutDynamicVarStrict : operationPutDynamicVarNonStrict,
             m_callFrame, lowCell(m_node->child1()), lowJSValue(m_node->child2()), m_out.constIntPtr(uid), m_out.constInt32(m_node->getPutInfo())));
     }
     
@@ -12861,13 +12868,13 @@ private:
         auto function = CFunctionPtr(signature->functionWithoutTypeCheck);
         switch (argumentCountIncludingThis) {
         case 1:
-            result = vmCall(Int64, m_out.operation(reinterpret_cast<J_JITOperation_EP>(function.get())), m_callFrame, operands[0]);
+            result = vmCall(Int64, reinterpret_cast<J_JITOperation_EP>(function.get()), m_callFrame, operands[0]);
             break;
         case 2:
-            result = vmCall(Int64, m_out.operation(reinterpret_cast<J_JITOperation_EPP>(function.get())), m_callFrame, operands[0], operands[1]);
+            result = vmCall(Int64, reinterpret_cast<J_JITOperation_EPP>(function.get()), m_callFrame, operands[0], operands[1]);
             break;
         case 3:
-            result = vmCall(Int64, m_out.operation(reinterpret_cast<J_JITOperation_EPPP>(function.get())), m_callFrame, operands[0], operands[1], operands[2]);
+            result = vmCall(Int64, reinterpret_cast<J_JITOperation_EPPP>(function.get()), m_callFrame, operands[0], operands[1], operands[2]);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -12885,7 +12892,7 @@ private:
             // Since the getter does not have code setting topCallFrame, As is the same to IC, we should set topCallFrame in caller side.
             m_out.storePtr(m_callFrame, m_out.absolute(&vm().topCallFrame));
             setJSValue(
-                vmCall(Int64, m_out.operation(m_node->callDOMGetterData()->customAccessorGetter.retaggedExecutableAddress<CFunctionPtrTag>()),
+                vmCall(Int64, bitwise_cast<CustomGetterSetter::CustomGetter>(m_node->callDOMGetterData()->customAccessorGetter.retaggedExecutableAddress<CFunctionPtrTag>()),
                     m_callFrame, lowCell(m_node->child1()), m_out.constIntPtr(m_graph.identifiers()[m_node->callDOMGetterData()->identifierNumber])));
             return;
         }
@@ -13390,7 +13397,7 @@ private:
         
         m_out.appendTo(slowPath, continuation);
         ValueFromBlock slowResult = m_out.anchor(m_out.notNull(vmCall(
-            pointerType(), m_out.operation(helperFunction), m_callFrame, left, right)));
+            pointerType(), helperFunction, m_callFrame, left, right)));
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
@@ -13482,7 +13489,7 @@ private:
         m_out.appendTo(slowCase, continuation);
 
         LValue slowResultValue = vmCall(
-            Int64, m_out.operation(operationCompareStringEq), m_callFrame,
+            Int64, operationCompareStringEq, m_callFrame,
             leftJSString, rightJSString);
         ValueFromBlock slowResult = m_out.anchor(unboxBoolean(slowResultValue));
         m_out.jump(continuation);
@@ -14127,7 +14134,7 @@ private:
         
         LBasicBlock lastNext = m_out.appendTo(slowCase, continuation);
         
-        vmCall(Void, m_out.operation(operationProcessShadowChickenLog), m_callFrame);
+        vmCall(Void, operationProcessShadowChickenLog, m_callFrame);
         
         ValueFromBlock slowResult = m_out.anchor(m_out.loadPtr(addressOfLogCursor));
         m_out.jump(continuation);
@@ -14418,7 +14425,7 @@ private:
                 LBasicBlock innerLastNext = m_out.appendTo(outOfBoundsCase, holeCase);
                     
                 vmCall(
-                    Void, m_out.operation(slowPathFunction),
+                    Void, slowPathFunction,
                     m_callFrame, base, index, value);
                     
                 m_out.jump(continuation);
@@ -14790,7 +14797,7 @@ private:
         // https://bugs.webkit.org/show_bug.cgi?id=144369
         
         LValue branchOffset = vmCall(
-            Int32, m_out.operation(operationSwitchStringAndGetBranchOffset),
+            Int32, operationSwitchStringAndGetBranchOffset,
             m_callFrame, m_out.constIntPtr(data->switchTableIndex), string);
         
         StringJumpTable& table = codeBlock()->stringSwitchJumpTable(data->switchTableIndex);
@@ -17024,7 +17031,7 @@ private:
 
         m_out.appendTo(slowPath, continuation);
         
-        LValue call = vmCall(Void, m_out.operation(operationWriteBarrierSlowPath), m_callFrame, base);
+        LValue call = vmCall(Void, operationWriteBarrierSlowPath, m_callFrame, base);
         m_heaps.decorateCCallRead(&m_heaps.root, call);
         m_heaps.decorateCCallWrite(&m_heaps.JSCell_cellState, call);
         
@@ -17117,11 +17124,13 @@ private:
         return preciseIndexMask64(value, m_out.zeroExt(index, Int64), m_out.zeroExt(limit, Int64));
     }
     
-    template<typename... Args>
-    LValue vmCall(LType type, LValue function, Args&&... args)
+    template<typename OperationType, typename... Args>
+    LValue vmCall(LType type, OperationType function, Args&&... args)
     {
+        static_assert(!std::is_same<OperationType, LValue>::value);
+        static_assert(FunctionTraits<OperationType>::cCallArity() == sizeof...(Args), "Sanity check");
         callPreflight();
-        LValue result = m_out.call(type, function, std::forward<Args>(args)...);
+        LValue result = m_out.call(type, m_out.operation(function), std::forward<Args>(args)...);
         if (mayExit(m_graph, m_node))
             callCheck();
         else {
