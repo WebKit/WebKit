@@ -1,3 +1,15 @@
+2019-10-08  Justin Fan  <justin_fan@apple.com>
+
+        WebGPU tests are skipped on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=192889
+
+        Unreviewed test expectation updates.
+
+        Unskip WebGPU tests on iOS devices while skipping on simulator.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2019-10-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Make fast/text/complex-initial-advance.html more robust
