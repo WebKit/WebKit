@@ -540,7 +540,6 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
 
 - (WebVisiblePosition *)startPosition
 {
-#if USE(UIKIT_EDITING)
     // When in editable content, we need to calculate the startPosition from the beginning of the
     // editable area.
     Node* node = core(self);
@@ -548,13 +547,11 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
         VisiblePosition vp(createLegacyEditingPosition(node, 0), VP_DEFAULT_AFFINITY);
         return [WebVisiblePosition _wrapVisiblePosition:startOfEditableContent(vp)];
     }
-#endif
     return [[self rangeOfContents] startPosition];
 }
 
 - (WebVisiblePosition *)endPosition
 {
-#if USE(UIKIT_EDITING)
     // When in editable content, we need to calculate the endPosition from the end of the
     // editable area.
     Node* node = core(self);
@@ -562,7 +559,6 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
         VisiblePosition vp(createLegacyEditingPosition(node, 0), VP_DEFAULT_AFFINITY);
         return [WebVisiblePosition _wrapVisiblePosition:endOfEditableContent(vp)];
     }
-#endif
     return [[self rangeOfContents] endPosition];
 }
 

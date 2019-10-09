@@ -268,10 +268,6 @@ bool Frame::hitTestResultAtViewportLocation(const FloatPoint& viewportLocation, 
 
 Node* Frame::qualifyingNodeAtViewportLocation(const FloatPoint& viewportLocation, FloatPoint& adjustedViewportLocation, const NodeQualifier& nodeQualifierFunction, ShouldApproximate shouldApproximate, ShouldFindRootEditableElement shouldFindRootEditableElement)
 {
-#if !USE(UIKIT_EDITING)
-    UNUSED_PARAM(shouldFindRootEditableElement);
-#endif
-
     adjustedViewportLocation = viewportLocation;
 
     IntPoint testCenter;
@@ -285,7 +281,6 @@ Node* Frame::qualifyingNodeAtViewportLocation(const FloatPoint& viewportLocation
     // the qualifier function, which typically checks if the node responds to a particular event type.
     Node* approximateNode = nodeQualifierFunction(candidateInfo, 0, 0);
 
-#if USE(UIKIT_EDITING)
     if (shouldFindRootEditableElement == ShouldFindRootEditableElement::Yes && approximateNode && approximateNode->isContentEditable()) {
         // If we are in editable content, we look for the root editable element.
         approximateNode = approximateNode->rootEditableElement();
@@ -293,8 +288,6 @@ Node* Frame::qualifyingNodeAtViewportLocation(const FloatPoint& viewportLocation
         if (approximateNode)
             shouldApproximate = ShouldApproximate::No;
     }
-#endif
-
 
     float scale = page() ? page()->pageScaleFactor() : 1;
     float ppiFactor = screenPPIFactor();
@@ -370,13 +363,11 @@ Node* Frame::qualifyingNodeAtViewportLocation(const FloatPoint& viewportLocation
     if (approximateNode) {
         IntPoint p = m_view->contentsToWindow(bestPoint);
         adjustedViewportLocation = p;
-#if USE(UIKIT_EDITING)
         if (shouldFindRootEditableElement == ShouldFindRootEditableElement::Yes && approximateNode->isContentEditable()) {
             // When in editable content, look for the root editable node again,
             // since this could be the node found with the approximation.
             approximateNode = approximateNode->rootEditableElement();
         }
-#endif
     }
 
     return approximateNode;
@@ -410,11 +401,9 @@ Node* Frame::approximateNodeAtViewportLocationLegacy(const FloatPoint& viewportL
         for (; node && node != terminationNode; node = node->parentInComposedTree()) {
             // We only accept pointer nodes before reaching the body tag.
             if (node->hasTagName(HTMLNames::bodyTag)) {
-#if USE(UIKIT_EDITING)
                 // Make sure we cover the case of an empty editable body.
                 if (!pointerCursorNode && node->isContentEditable())
                     pointerCursorNode = node;
-#endif
                 bodyHasBeenReached = true;
                 pointerCursorStillValid = false;
             }

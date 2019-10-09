@@ -1,3 +1,14 @@
+2019-10-09  Andy Estes  <aestes@apple.com>
+
+        [iOS] Remove redundant uses of USE(UIKIT_EDITING)
+        https://bugs.webkit.org/show_bug.cgi?id=202717
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebVisiblePosition.mm:
+        (-[DOMNode startPosition]):
+        (-[DOMNode endPosition]):
+
 2019-08-23  Chris Dumez  <cdumez@apple.com>
 
         [geolocation] Rename interfaces and remove [NoInterfaceObject]
