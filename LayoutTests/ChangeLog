@@ -1,3 +1,18 @@
+2019-10-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make fast/text/complex-initial-advance.html more robust
+        https://bugs.webkit.org/show_bug.cgi?id=202708
+        <rdar://problem/49539493>
+
+        Reviewed by Tim Horton.
+
+        We are hitting floating point precision issues. Fortunately, the part of the text that is
+        hitting these issues isn't actually necessary for the test.
+
+        * fast/text/complex-initial-advance-expected.html:
+        * fast/text/complex-initial-advance.html:
+        * platform/mac/TestExpectations:
+
 2019-10-08  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: modifications to shader modules can be shared between vertex/fragment shaders
