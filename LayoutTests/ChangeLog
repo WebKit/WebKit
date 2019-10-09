@@ -1,3 +1,17 @@
+2019-10-09  Antoine Quint  <graouts@apple.com>
+
+        [iOS] Layout Test fast/events/touch/ios/touchstart-and-touchend-outside-touchmove-target.html is Timing Out
+        https://bugs.webkit.org/show_bug.cgi?id=202759
+        <rdar://problem/56122388>
+
+        Reviewed by Dean Jackson.
+
+        This test would be run after fast/events/touch/ios/touchmove-cancelable-after-touchstart.html which does not
+        cleanly finish its simulated touch gesture with a touchend. Now that it does both tests can run one after the
+        other reliably.
+
+        * fast/events/touch/ios/touchmove-cancelable-after-touchstart.html:
+
 2019-10-09  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Fix video sometimes not appearing

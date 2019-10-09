@@ -38,7 +38,6 @@ const getUIScript = (startX, startY, endX, endY) => `
                     id: 1,
                     x: ${startX},
                     y: ${startY},
-                    pressure: 0
                 }]
             },
             endEvent: {
@@ -50,10 +49,20 @@ const getUIScript = (startX, startY, endX, endY) => `
                     id: 1,
                     x: ${endX},
                     y: ${endY},
-                    pressure : 500
                 }]
             }
-        }]
+        },
+        {
+            inputType: "hand",
+            touches: [{
+                inputType: "finger",
+                phase: "ended",
+                id: 1,
+                x: ${endX},
+                y: ${endY},
+            }]
+        }
+        ]
     };
 
     uiController.sendEventStream(JSON.stringify(eventStream), function() {
