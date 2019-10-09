@@ -1,3 +1,16 @@
+2019-10-09  Dean Jackson  <dino@apple.com>
+
+        Layout test fast/events/touch/ios/passive-by-default-overridden-on-document-and-window.html is a flaky failure on Internal iOS testers
+        https://bugs.webkit.org/show_bug.cgi?id=202770
+        <rdar://51715312>
+
+        Reviewed by Megan Gardner.
+
+        Remove the touchmove listeners after firing once, because we can't
+        tell exactly how many we'll get for a drag.
+
+        * fast/events/touch/ios/passive-by-default-overridden-on-document-and-window.html:
+
 2019-10-09  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: include size of index records in size estimate of put/add task

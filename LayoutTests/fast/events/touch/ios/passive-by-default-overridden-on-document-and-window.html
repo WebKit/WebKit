@@ -25,7 +25,7 @@ function runTest()
     window.addEventListener("touchmove", function(event) {
         event.preventDefault();
         output += `touchmove on window - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
-    }, { "passive": false });
+    }, { "passive": false, "once": true });
 
     window.addEventListener("touchend", function(event) {
         event.preventDefault();
@@ -40,7 +40,7 @@ function runTest()
     document.addEventListener("touchmove", function(event) {
         event.preventDefault();
         output += `touchmove on document - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
-    }, { "passive": false });
+    }, { "passive": false, "once": true });
 
     document.addEventListener("touchend", function(event) {
         event.preventDefault();
@@ -55,7 +55,7 @@ function runTest()
     document.documentElement.addEventListener("touchmove", function(event) {
         event.preventDefault();
         output += `touchmove on documentElement - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
-    }, { "passive": false });
+    }, { "passive": false, "once": true });
 
     document.documentElement.addEventListener("touchend", function(event) {
         event.preventDefault();
@@ -72,7 +72,7 @@ function runTest()
     body.addEventListener("touchmove", function(event) {
         event.preventDefault();
         output += `touchmove on body - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
-    }, { "passive": false });
+    }, { "passive": false, "once": true });
 
     body.addEventListener("touchend", function(event) {
         event.preventDefault();
