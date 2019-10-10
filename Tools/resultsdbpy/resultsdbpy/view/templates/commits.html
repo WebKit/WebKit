@@ -100,7 +100,7 @@ function OneLineSwitch() {
 
 var table = new Table();
 DOM.inject(document.getElementById('app'), `${Drawer([
-    LimitSlider(() => {table.reload()}, 1000, 10000),
+    LimitSlider(() => {table.reload()}, 10000, 1000),
     OneLineSwitch(),
     BranchSelector(() => {table.reload()}),
 ])}
