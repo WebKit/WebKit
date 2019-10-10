@@ -170,7 +170,7 @@ static void webkit_uri_response_class_init(WebKitURIResponseClass* responseClass
         g_param_spec_boxed(
             "http-headers",
             _("HTTP Headers"),
-            _("The The HTTP headers of the response"),
+            _("The HTTP headers of the response"),
             SOUP_TYPE_MESSAGE_HEADERS,
             WEBKIT_PARAM_READABLE));
 }

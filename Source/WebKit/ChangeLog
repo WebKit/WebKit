@@ -1,3 +1,13 @@
+2019-10-10  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Remove a "The " in "The The HTTP headers of the response"
+        https://bugs.webkit.org/show_bug.cgi?id=194851
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Shared/API/glib/WebKitURIResponse.cpp:
+        (webkit_uri_response_class_init): Fix typo in description of the WebKitURIResponse::http-headers property.
+
 2019-10-10  youenn fablet  <youenn@apple.com>
 
         [Mac] Allow SYS___pthread_markcancel call
