@@ -26,13 +26,13 @@
 WebKitBuildbot = function()
 {
     const queueInfo = {
-        "Apple Catalina Debug (Build)": {platform: Dashboard.Platform.macOSCatalina, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
-        "Apple Catalina Release (Build)": {platform: Dashboard.Platform.macOSCatalina, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
-        "Apple Catalina Debug WK1 (Tests)": {platform: Dashboard.Platform.macOSCatalina, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
-        "Apple Catalina Debug WK2 (Tests)": {platform: Dashboard.Platform.macOSCatalina, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
-        "Apple Catalina Release WK1 (Tests)": {platform: Dashboard.Platform.macOSCatalina, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
-        "Apple Catalina Release WK2 (Tests)": {platform: Dashboard.Platform.macOSCatalina, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
-        "Apple Catalina (Leaks)": {platform: Dashboard.Platform.macOSCatalina, debug: false, leaks: true},
+        "Apple-Catalina-Debug-Build": {platform: Dashboard.Platform.macOSCatalina, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
+        "Apple-Catalina-Release-Build": {platform: Dashboard.Platform.macOSCatalina, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
+        "Apple-Catalina-Debug-WK1-Tests": {platform: Dashboard.Platform.macOSCatalina, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
+        "Apple-Catalina-Debug-WK2-Tests": {platform: Dashboard.Platform.macOSCatalina, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
+        "Apple-Catalina-Release-WK1-Tests": {platform: Dashboard.Platform.macOSCatalina, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
+        "Apple-Catalina-Release-WK2-Tests": {platform: Dashboard.Platform.macOSCatalina, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
+        "Apple-Catalina-Leaks": {platform: Dashboard.Platform.macOSCatalina, debug: false, leaks: true},
         "Apple Mojave Debug (Build)": {platform: Dashboard.Platform.macOSMojave, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple Mojave Release (Build)": {platform: Dashboard.Platform.macOSMojave, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple Mojave Debug WK1 (Tests)": {platform: Dashboard.Platform.macOSMojave, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},

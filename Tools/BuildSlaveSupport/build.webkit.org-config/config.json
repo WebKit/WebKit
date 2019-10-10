@@ -99,37 +99,37 @@
                   ],
 
     "builders":   [ 
-                    { "name": "Apple Catalina Debug (Build)", "type": "Build", "builddir": "catalina-debug",
+                    { "name": "Apple-Catalina-Debug-Build", "type": "Build", "builddir": "catalina-debug",
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["catalina-debug-tests-wk1", "catalina-debug-tests-wk2"],
                       "slavenames": ["bot687", "bot688"]
                     },
-                    { "name": "Apple Catalina Debug WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "catalina-debug-tests-wk1",
+                    { "name": "Apple-Catalina-Debug-WK1-Tests", "type": "TestWebKit1AllButJSC", "builddir": "catalina-debug-tests-wk1",
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot241", "bot242"]
                     },
-                    { "name": "Apple Catalina Debug WK2 (Tests)", "type": "TestAllButJSC", "builddir": "catalina-debug-tests-wk2",
+                    { "name": "Apple-Catalina-Debug-WK2-Tests", "type": "TestAllButJSC", "builddir": "catalina-debug-tests-wk2",
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot243", "bot244"]
                     },
-                    { "name": "Apple Catalina Release (Build)", "type": "Build", "builddir": "catalina-release",
+                    { "name": "Apple-Catalina-Release-Build", "type": "Build", "builddir": "catalina-release",
                       "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["catalina-release-tests-wk1", "catalina-release-tests-wk2", "catalina-leaks"],
                       "slavenames": ["bot683", "bot674"]
                     },
-                    { "name": "Apple Catalina Release WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "catalina-release-tests-wk1",
+                    { "name": "Apple-Catalina-Release-WK1-Tests", "type": "TestWebKit1AllButJSC", "builddir": "catalina-release-tests-wk1",
                       "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot245", "bot246"]
                     },
-                    { "name": "Apple Catalina Release WK2 (Tests)", "type": "TestAllButJSC", "builddir": "catalina-release-tests-wk2",
+                    { "name": "Apple-Catalina-Release-WK2-Tests", "type": "TestAllButJSC", "builddir": "catalina-release-tests-wk2",
                       "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot247", "bot248"]
                     },
-                    { "name": "Apple Catalina (Leaks)", "type": "TestWebKit1Leaks", "builddir": "catalina-leaks",
+                    { "name": "Apple-Catalina-Leaks", "type": "TestWebKit1Leaks", "builddir": "catalina-leaks",
                       "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
                       "slavenames": ["bot121"]
@@ -424,22 +424,22 @@
                                        "WPE Linux 64-bit Release (Build)", "WPE Linux 64-bit Debug (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-catalina", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple Catalina Release (Build)", "Apple Catalina Debug (Build)"]
+                      "builderNames": ["Apple-Catalina-Release-Build", "Apple-Catalina-Debug-Build"]
                     },
                     { "type": "Triggerable", "name": "catalina-release-tests-wk1",
-                      "builderNames": ["Apple Catalina Release WK1 (Tests)"]
+                      "builderNames": ["Apple-Catalina-Release-WK1-Tests"]
                     },
                     { "type": "Triggerable", "name": "catalina-release-tests-wk2",
-                      "builderNames": ["Apple Catalina Release WK2 (Tests)"]
+                      "builderNames": ["Apple-Catalina-Release-WK2-Tests"]
                     },
                     { "type": "Triggerable", "name": "catalina-debug-tests-wk1",
-                      "builderNames": ["Apple Catalina Debug WK1 (Tests)"]
+                      "builderNames": ["Apple-Catalina-Debug-WK1-Tests"]
                     },
                     { "type": "Triggerable", "name": "catalina-debug-tests-wk2",
-                      "builderNames": ["Apple Catalina Debug WK2 (Tests)"]
+                      "builderNames": ["Apple-Catalina-Debug-WK2-Tests"]
                     },
                     { "type": "Triggerable", "name": "catalina-leaks",
-                      "builderNames": ["Apple Catalina (Leaks)"]
+                      "builderNames": ["Apple-Catalina-Leaks"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-mojave", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple Mojave Release (Build)", "Apple Mojave Debug (Build)"]

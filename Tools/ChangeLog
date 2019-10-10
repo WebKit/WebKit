@@ -1,3 +1,14 @@
+2019-10-10  Aakash Jain  <aakash_jain@apple.com>
+
+        Updated new Catalina queues names as per new Buildbot naming scheme
+        https://bugs.webkit.org/show_bug.cgi?id=202816
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Renamed builder name and removed spaces.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js: Ditto.
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py: Ditto.
+
 2019-10-10  Matt Lewis  <jlewis3@apple.com>
 
         Fixing build scheduling for Catalina queues.
