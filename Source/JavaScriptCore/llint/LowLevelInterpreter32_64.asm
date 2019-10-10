@@ -322,13 +322,13 @@ end
 # a0, a2, t3, t4
 macro makeJavaScriptCall(entry, protoCallFrame, temp1, temp2)
     addp CallerFrameAndPCSize, sp
-    checkStackPointerAlignment(temp, 0xbad0dc02)
+    checkStackPointerAlignment(temp1, 0xbad0dc02)
     if C_LOOP or C_LOOP_WIN
         cloopCallJSFunction entry
     else
         call entry
     end
-    checkStackPointerAlignment(temp, 0xbad0dc03)
+    checkStackPointerAlignment(temp1, 0xbad0dc03)
     subp CallerFrameAndPCSize, sp
 end
 
