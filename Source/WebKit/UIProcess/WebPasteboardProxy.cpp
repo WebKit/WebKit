@@ -26,9 +26,11 @@
 #include "config.h"
 #include "WebPasteboardProxy.h"
 
+#include "SharedMemory.h"
 #include "WebPasteboardProxyMessages.h"
 #include "WebProcessProxy.h"
 #include <mutex>
+#include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
@@ -73,6 +75,40 @@ void WebPasteboardProxy::writeCustomData(const WebCore::PasteboardCustomData&, c
     completionHandler(0);
 }
 
-#endif
+void WebPasteboardProxy::allPasteboardItemInfo(const String&, CompletionHandler<void(Vector<PasteboardItemInfo>&&)>&& completionHandler)
+{
+    completionHandler({ });
+}
+
+void WebPasteboardProxy::informationForItemAtIndex(size_t, const String&, CompletionHandler<void(PasteboardItemInfo&&)>&& completionHandler)
+{
+    completionHandler({ });
+}
+
+void WebPasteboardProxy::getPasteboardItemsCount(const String&, CompletionHandler<void(uint64_t)>&& completionHandler)
+{
+    completionHandler(0);
+}
+
+void WebPasteboardProxy::readURLFromPasteboard(size_t, const String&, CompletionHandler<void(String&& url, String&& title)>&& completionHandler)
+{
+    completionHandler({ }, { });
+}
+
+void WebPasteboardProxy::readBufferFromPasteboard(size_t, const String&, const String&, CompletionHandler<void(SharedMemory::Handle&&, uint64_t size)>&& completionHandler)
+{
+    completionHandler({ }, 0);
+}
+
+#if !PLATFORM(WPE)
+
+void WebPasteboardProxy::readStringFromPasteboard(size_t, const String&, const String&, CompletionHandler<void(String&&)>&& completionHandler)
+{
+    completionHandler({ });
+}
+
+#endif // !PLATFORM(WPE)
+
+#endif // !PLATFORM(COCOA)
 
 } // namespace WebKit

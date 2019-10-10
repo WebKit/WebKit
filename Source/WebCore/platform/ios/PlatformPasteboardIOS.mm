@@ -116,17 +116,9 @@ static PasteboardItemPresentationStyle pasteboardItemPresentationStyle(UIPreferr
 
 #endif // PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA
 
-Vector<PasteboardItemInfo> PlatformPasteboard::allPasteboardItemInfo()
+PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(size_t index)
 {
-    Vector<PasteboardItemInfo> itemInfo;
-    for (NSInteger itemIndex = 0; itemIndex < [m_pasteboard numberOfItems]; ++itemIndex)
-        itemInfo.append(informationForItemAtIndex(itemIndex));
-    return itemInfo;
-}
-
-PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(int index)
-{
-    if (index >= [m_pasteboard numberOfItems])
+    if (index >= static_cast<NSUInteger>([m_pasteboard numberOfItems]))
         return { };
 
     PasteboardItemInfo info;
@@ -140,15 +132,15 @@ PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(int index)
         for (NSURL *url in urls)
             info.pathsForFileUpload.uncheckedAppend(url.path);
 
-        info.contentTypesForFileUpload.reserveInitialCapacity(fileTypes.count);
+        info.platformTypesForFileUpload.reserveInitialCapacity(fileTypes.count);
         for (NSString *fileType in fileTypes)
-            info.contentTypesForFileUpload.uncheckedAppend(fileType);
+            info.platformTypesForFileUpload.uncheckedAppend(fileType);
     } else {
         NSArray *fileTypes = itemProvider.web_fileUploadContentTypes;
-        info.contentTypesForFileUpload.reserveInitialCapacity(fileTypes.count);
+        info.platformTypesForFileUpload.reserveInitialCapacity(fileTypes.count);
         info.pathsForFileUpload.reserveInitialCapacity(fileTypes.count);
         for (NSString *fileType in fileTypes) {
-            info.contentTypesForFileUpload.uncheckedAppend(fileType);
+            info.platformTypesForFileUpload.uncheckedAppend(fileType);
             info.pathsForFileUpload.uncheckedAppend({ });
         }
     }
@@ -168,9 +160,9 @@ PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(int index)
     info.containsFileURLAndFileUploadContent = itemProvider.web_containsFileURLAndFileUploadContent;
     info.suggestedFileName = itemProvider.suggestedName;
     NSArray<NSString *> *registeredTypeIdentifiers = itemProvider.registeredTypeIdentifiers;
-    info.contentTypesByFidelity.reserveInitialCapacity(registeredTypeIdentifiers.count);
+    info.platformTypesByFidelity.reserveInitialCapacity(registeredTypeIdentifiers.count);
     for (NSString *typeIdentifier in registeredTypeIdentifiers) {
-        info.contentTypesByFidelity.uncheckedAppend(typeIdentifier);
+        info.platformTypesByFidelity.uncheckedAppend(typeIdentifier);
         CFStringRef cfTypeIdentifier = (CFStringRef)typeIdentifier;
         if (!UTTypeIsDeclared(cfTypeIdentifier))
             continue;
@@ -190,17 +182,14 @@ PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(int index)
         info.isNonTextType = true;
     }
 
+    info.changeCount = changeCount();
+
     return info;
 }
 
 #else
 
-PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(int)
-{
-    return { };
-}
-
-Vector<PasteboardItemInfo> PlatformPasteboard::allPasteboardItemInfo()
+PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(size_t)
 {
     return { };
 }
@@ -656,7 +645,7 @@ Vector<String> PlatformPasteboard::allStringsForType(const String& type) const
     return strings;
 }
 
-RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(int index, const String& type) const
+RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(size_t index, const String& type) const
 {
     NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:index];
 
@@ -667,7 +656,7 @@ RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(int index, const String& typ
     return SharedBuffer::create([pasteboardItem.get() objectAtIndex:0]);
 }
 
-String PlatformPasteboard::readString(int index, const String& type) const
+String PlatformPasteboard::readString(size_t index, const String& type) const
 {
     if (type == String(kUTTypeURL)) {
         String title;
@@ -697,7 +686,7 @@ String PlatformPasteboard::readString(int index, const String& type) const
     return String();
 }
 
-URL PlatformPasteboard::readURL(int index, String& title) const
+URL PlatformPasteboard::readURL(size_t index, String& title) const
 {
     id value = [m_pasteboard valuesForPasteboardType:(__bridge NSString *)kUTTypeURL inItemSet:[NSIndexSet indexSetWithIndex:index]].firstObject;
     if (!value)

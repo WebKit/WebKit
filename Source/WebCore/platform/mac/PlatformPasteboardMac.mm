@@ -384,6 +384,116 @@ long PlatformPasteboard::setStringForType(const String& string, const String& pa
     return changeCount();
 }
 
+static NSPasteboardType modernPasteboardTypeForWebSafeMIMEType(const String& webSafeType)
+{
+    if (webSafeType == "text/plain"_s)
+        return NSPasteboardTypeString;
+    if (webSafeType == "text/html"_s)
+        return NSPasteboardTypeHTML;
+    if (webSafeType == "text/uri-list"_s)
+        return NSPasteboardTypeURL;
+    if (webSafeType == "image/png"_s)
+        return NSPasteboardTypePNG;
+    return nil;
+}
+
+enum class ContainsFileURL { No, Yes };
+static String webSafeMIMETypeForModernPasteboardType(NSPasteboardType platformType, ContainsFileURL containsFileURL)
+{
+    if ([platformType isEqual:NSPasteboardTypeString] && containsFileURL == ContainsFileURL::No)
+        return "text/plain"_s;
+    if ([platformType isEqual:NSPasteboardTypeHTML] || [platformType isEqual:NSPasteboardTypeRTF] || [platformType isEqual:NSPasteboardTypeRTFD])
+        return "text/html"_s;
+    if ([platformType isEqual:NSPasteboardTypeURL] && containsFileURL == ContainsFileURL::No)
+        return "text/uri-list"_s;
+    if ([platformType isEqual:NSPasteboardTypePNG] || [platformType isEqual:NSPasteboardTypeTIFF])
+        return "image/png"_s;
+    return { };
+}
+
+RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(size_t index, const String& type) const
+{
+    NSPasteboardItem *item = itemAtIndex(index);
+    if (!item)
+        return { };
+
+    auto platformType = modernPasteboardTypeForWebSafeMIMEType(type);
+    if (!platformType)
+        return nullptr;
+
+    if (NSData *data = [item dataForType:platformType]) {
+        auto nsData = adoptNS(data.copy);
+        return SharedBuffer::create(nsData.get());
+    }
+
+    return nullptr;
+}
+
+String PlatformPasteboard::readString(size_t index, const String& type) const
+{
+    NSPasteboardItem *item = itemAtIndex(index);
+    if (!item)
+        return { };
+
+    auto platformType = modernPasteboardTypeForWebSafeMIMEType(type);
+    if (!platformType)
+        return { };
+
+    return [item stringForType:platformType];
+}
+
+URL PlatformPasteboard::readURL(size_t index, String& title) const
+{
+    title = emptyString();
+
+    NSPasteboardItem *item = itemAtIndex(index);
+    if (!item)
+        return { };
+
+    RetainPtr<NSURL> url;
+    if (id propertyList = [item propertyListForType:NSPasteboardTypeURL])
+        url = adoptNS([[NSURL alloc] initWithPasteboardPropertyList:propertyList ofType:NSPasteboardTypeURL]);
+    else if (NSString *absoluteString = [item stringForType:NSPasteboardTypeURL])
+        url = [NSURL URLWithString:absoluteString];
+    return { [url isFileURL] ? nil : url.get() };
+}
+
+int PlatformPasteboard::count() const
+{
+    return [m_pasteboard pasteboardItems].count;
+}
+
+PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(size_t index)
+{
+    NSPasteboardItem *item = itemAtIndex(index);
+    if (!item)
+        return { };
+
+    PasteboardItemInfo info;
+    NSArray<NSPasteboardType> *platformTypes = [item types];
+    auto containsFileURL = [platformTypes containsObject:NSPasteboardTypeFileURL] ? ContainsFileURL::Yes : ContainsFileURL::No;
+    ListHashSet<String> webSafeTypes;
+    info.platformTypesByFidelity.reserveInitialCapacity(platformTypes.count);
+    for (NSPasteboardType type in platformTypes) {
+        info.platformTypesByFidelity.uncheckedAppend(type);
+        auto webSafeType = webSafeMIMETypeForModernPasteboardType(type, containsFileURL);
+        if (webSafeType.isEmpty())
+            continue;
+
+        webSafeTypes.add(WTFMove(webSafeType));
+    }
+    info.containsFileURLAndFileUploadContent = containsFileURL == ContainsFileURL::Yes;
+    info.webSafeTypesByFidelity = copyToVector(webSafeTypes);
+    info.changeCount = changeCount();
+    return info;
+}
+
+NSPasteboardItem *PlatformPasteboard::itemAtIndex(size_t index) const
+{
+    NSArray<NSPasteboardItem *> *items = [m_pasteboard pasteboardItems];
+    return index >= items.count ? nil : items[index];
+}
+
 }
 
 #endif // PLATFORM(MAC)

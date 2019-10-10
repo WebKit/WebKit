@@ -1,3 +1,100 @@
+2019-10-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Refactor Pasteboard item reading functions to work on both iOS and macOS
+        https://bugs.webkit.org/show_bug.cgi?id=202647
+
+        Reviewed by Tim Horton.
+
+        Moves some pasteboard helper functions out of iOS-specific code, and into platform-agnostic code. See below for
+        more details. There is no change in behavior, as nothing exercises these new pasteboard functions on macOS yet.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/Pasteboard.cpp:
+        (WebCore::Pasteboard::allPasteboardItemInfo const):
+        (WebCore::Pasteboard::pasteboardItemInfo const):
+        (WebCore::Pasteboard::readString):
+        (WebCore::Pasteboard::readBuffer):
+        (WebCore::Pasteboard::readURL):
+
+        Add some new helpers on Pasteboard to read Strings, data, and URLs from the platform pasteboard. These forward
+        to the platform strategy which, in WebKit2, are currently implemented using sync IPC, but could be changed in
+        the future to be fully asynchronous.
+
+        * platform/Pasteboard.h:
+        (WebCore::Pasteboard::name const):
+
+        Expose a cross-platform name() getter on Pasteboard. On non-Cocoa platforms, this simply returns the empty
+        string, but on macOS and iOS, this returns the platform pasteboard name, which is stored in m_pasteboardName.
+
+        * platform/PasteboardItemInfo.h:
+        (WebCore::PasteboardItemInfo::pathForContentType const):
+        (WebCore::PasteboardItemInfo::contentTypeForHighestFidelityItem const):
+        (WebCore::PasteboardItemInfo::encode const):
+        (WebCore::PasteboardItemInfo::decode):
+
+        Adds a couple of new members to PasteboardItemInfo (which represents metadata about a given item in the platform
+        pasteboard). These are changeCount (which is self explanatory), and webSafeTypesByFidelity, which is a list of
+        types in fidelity order which contains the list of pasteboard types that are safe to expose to bindings. These
+        may include types such as "text/plain", "text/html", "text/uri-list", and "image/png".
+
+        To distinguish this list from the existing contentTypesByFidelity list, I've also renamed contentTypesByFidelity
+        to platformTypesByFidelity, to make it more obvious that this other list of types are platform-specific, and not
+        generally safe to expose to the web.
+
+        * platform/PasteboardStrategy.h:
+        * platform/PlatformPasteboard.h:
+
+        Move several helpers out into platform-agnostic code.
+
+        * platform/cocoa/PasteboardCocoa.mm:
+        (WebCore::Pasteboard::fileContentState):
+        * platform/cocoa/PlatformPasteboardCocoa.mm: Added.
+
+        Add a new file to contain the implementation of PlatformPasteboard::allPasteboardItemInfo, which is the same
+        across Cocoa platforms.
+
+        (WebCore::PlatformPasteboard::allPasteboardItemInfo):
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::readRespectingUTIFidelities):
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::informationForItemAtIndex):
+        (WebCore::PlatformPasteboard::readBuffer const):
+        (WebCore::PlatformPasteboard::readString const):
+        (WebCore::PlatformPasteboard::readURL const):
+
+        Additionally refactor all methods on PlatformPasteboard that take pasteboard item indices as signed integers
+        (`int`) to receive `size_t` values instead.
+
+        (WebCore::PlatformPasteboard::allPasteboardItemInfo): Deleted.
+        * platform/libwpe/PasteboardLibWPE.cpp:
+        (WebCore::Pasteboard::readString):
+        (WebCore::Pasteboard::read):
+        * platform/libwpe/PlatformPasteboardLibWPE.cpp:
+        (WebCore::PlatformPasteboard::readString const):
+
+        Add an implementation stub for WPE.
+
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::modernPasteboardTypeForWebSafeMIMEType):
+        (WebCore::webSafeMIMETypeForModernPasteboardType):
+
+        Add helpers to convert between modern NSPasteboardTypes and web-safe types. While some logic exists today on
+        macOS to convert between legacy pasteboard types and web-safe types, conversion between the modern pasteboard
+        types and web-safe types are needed since NSPasteboardItem's types only support NSPasteboardTypes and
+        dynamically declared types that match the format of a universal type identfier (for instance, "com.foo.bar").
+
+        (WebCore::PlatformPasteboard::readBuffer const):
+        (WebCore::PlatformPasteboard::readString const):
+        (WebCore::PlatformPasteboard::readURL const):
+        (WebCore::PlatformPasteboard::count const):
+        (WebCore::PlatformPasteboard::informationForItemAtIndex):
+
+        Implement all of these helpers by looking up the NSPasteboardItem at the given item index and querying it for
+        data for non-legacy pasteboard types.
+
+        (WebCore::PlatformPasteboard::itemAtIndex const):
+
 2019-10-09  Daniel Bates  <dabates@apple.com>
 
         Add support for CompactPointerTuple<..., OptionSet<...>>

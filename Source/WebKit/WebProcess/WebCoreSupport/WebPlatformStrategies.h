@@ -50,12 +50,6 @@ private:
     void writeToPasteboard(const WebCore:: PasteboardURL&, const String& pasteboardName) override;
     void writeToPasteboard(const WebCore::PasteboardImage&, const String& pasteboardName) override;
     void writeToPasteboard(const String& pasteboardType, const String&, const String& pasteboardName) override;
-    int getPasteboardItemsCount(const String& pasteboardName) override;
-    String readStringFromPasteboard(int index, const String& pasteboardType, const String& pasteboardName) override;
-    RefPtr<WebCore::SharedBuffer> readBufferFromPasteboard(int index, const String& pasteboardType, const String& pasteboardName) override;
-    URL readURLFromPasteboard(int index, const String& pasteboardName, String& title) override;
-    Vector<WebCore::PasteboardItemInfo> allPasteboardItemInfo(const String& pasteboardName) override;
-    WebCore::PasteboardItemInfo informationForItemAtIndex(int index, const String& pasteboardName) override;
     void updateSupportedTypeIdentifiers(const Vector<String>& identifiers, const String& pasteboardName) override;
 #endif
 #if PLATFORM(COCOA)
@@ -83,11 +77,16 @@ private:
 #endif
 #if USE(LIBWPE)
     void getTypes(Vector<String>& types) override;
-    String readStringFromPasteboard(int index, const String& pasteboardType) override;
     void writeToPasteboard(const WebCore::PasteboardWebContent&) override;
     void writeToPasteboard(const String& pasteboardType, const String&) override;
 #endif
 
+    String readStringFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName) override;
+    RefPtr<WebCore::SharedBuffer> readBufferFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName) override;
+    URL readURLFromPasteboard(size_t index, const String& pasteboardName, String& title) override;
+    int getPasteboardItemsCount(const String& pasteboardName) override;
+    WebCore::PasteboardItemInfo informationForItemAtIndex(size_t index, const String& pasteboardName) override;
+    Vector<WebCore::PasteboardItemInfo> allPasteboardItemInfo(const String& pasteboardName) override;
     Vector<String> typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin) override;
     long writeCustomData(const WebCore::PasteboardCustomData&, const String&) override;
 };

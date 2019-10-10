@@ -26,17 +26,17 @@ messages -> WebPasteboardProxy {
     WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content, String pasteboardName)
     WriteImageToPasteboard(struct WebCore::PasteboardImage pasteboardImage, String pasteboardName)
     WriteStringToPasteboard(String pasteboardType, String text, String pasteboardName)
-    ReadStringFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (String string) Synchronous
-    ReadURLFromPasteboard(uint64_t index, String pasteboardName) -> (String url, String title) Synchronous
-    ReadBufferFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (WebKit::SharedMemory::Handle handle, uint64_t size) Synchronous
-    GetPasteboardItemsCount(String pasteboardName) -> (uint64_t itemsCount) Synchronous
-    AllPasteboardItemInfo(String pasteboardName) -> (Vector<WebCore::PasteboardItemInfo> allInfo) Synchronous
-    InformationForItemAtIndex(uint64_t index, String pasteboardName) -> (struct WebCore::PasteboardItemInfo info) Synchronous
     UpdateSupportedTypeIdentifiers(Vector<String> identifiers, String pasteboardName)
 #endif
 
     WriteCustomData(struct WebCore::PasteboardCustomData data, String pasteboardName) -> (uint64_t changeCount) Synchronous
     TypesSafeForDOMToReadAndWrite(String pasteboardName, String origin) -> (Vector<String> types) Synchronous
+    AllPasteboardItemInfo(String pasteboardName) -> (Vector<WebCore::PasteboardItemInfo> allInfo) Synchronous
+    InformationForItemAtIndex(uint64_t index, String pasteboardName) -> (struct WebCore::PasteboardItemInfo info) Synchronous
+    GetPasteboardItemsCount(String pasteboardName) -> (uint64_t itemsCount) Synchronous
+    ReadStringFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (String string) Synchronous
+    ReadURLFromPasteboard(uint64_t index, String pasteboardName) -> (String url, String title) Synchronous
+    ReadBufferFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (WebKit::SharedMemory::Handle handle, uint64_t size) Synchronous
 
 #if PLATFORM(COCOA)
     # Pasteboard messages.
@@ -66,7 +66,6 @@ messages -> WebPasteboardProxy {
 
 #if USE(LIBWPE)
     GetPasteboardTypes() -> (Vector<String> types) Synchronous
-    ReadStringFromPasteboard(uint64_t index, String pasteboardType) -> (String string) Synchronous
     WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content)
     WriteStringToPasteboard(String pasteboardType, String text)
 #endif

@@ -33,6 +33,7 @@
 
 #if PLATFORM(MAC)
 OBJC_CLASS NSPasteboard;
+OBJC_CLASS NSPasteboardItem;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -59,10 +60,10 @@ public:
     WEBCORE_EXPORT explicit PlatformPasteboard(const String& pasteboardName);
 #if PLATFORM(IOS_FAMILY) || USE(LIBWPE)
     WEBCORE_EXPORT PlatformPasteboard();
-    WEBCORE_EXPORT Vector<PasteboardItemInfo> allPasteboardItemInfo();
-    WEBCORE_EXPORT PasteboardItemInfo informationForItemAtIndex(int index);
     WEBCORE_EXPORT void updateSupportedTypeIdentifiers(const Vector<String>& types);
 #endif
+    WEBCORE_EXPORT PasteboardItemInfo informationForItemAtIndex(size_t index);
+    WEBCORE_EXPORT Vector<PasteboardItemInfo> allPasteboardItemInfo();
     WEBCORE_EXPORT static String uniqueName();
 
     WEBCORE_EXPORT static String platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(const String& domType);
@@ -90,9 +91,9 @@ public:
     WEBCORE_EXPORT void write(const PasteboardImage&);
     WEBCORE_EXPORT void write(const String& pasteboardType, const String&);
     WEBCORE_EXPORT void write(const PasteboardURL&);
-    WEBCORE_EXPORT RefPtr<SharedBuffer> readBuffer(int index, const String& pasteboardType) const;
-    WEBCORE_EXPORT String readString(int index, const String& pasteboardType) const;
-    WEBCORE_EXPORT URL readURL(int index, String& title) const;
+    WEBCORE_EXPORT RefPtr<SharedBuffer> readBuffer(size_t index, const String& pasteboardType) const;
+    WEBCORE_EXPORT String readString(size_t index, const String& pasteboardType) const;
+    WEBCORE_EXPORT URL readURL(size_t index, String& title) const;
     WEBCORE_EXPORT int count() const;
     WEBCORE_EXPORT int numberOfFiles() const;
 
@@ -107,6 +108,10 @@ public:
 private:
 #if PLATFORM(IOS_FAMILY)
     bool allowReadingURLAtIndex(const URL&, int index) const;
+#endif
+
+#if PLATFORM(MAC)
+    NSPasteboardItem *itemAtIndex(size_t index) const;
 #endif
 
 #if PLATFORM(MAC)

@@ -72,7 +72,7 @@ String Pasteboard::readOrigin()
 
 String Pasteboard::readString(const String& type)
 {
-    return platformStrategies()->pasteboardStrategy()->readStringFromPasteboard(0, type);
+    return platformStrategies()->pasteboardStrategy()->readStringFromPasteboard(0, type, name());
 }
 
 String Pasteboard::readStringInCustomData(const String&)
@@ -96,7 +96,7 @@ void Pasteboard::clear(const String&)
 
 void Pasteboard::read(PasteboardPlainText& text)
 {
-    text.text = platformStrategies()->pasteboardStrategy()->readStringFromPasteboard(0, "text/plain;charset=utf-8");
+    text.text = platformStrategies()->pasteboardStrategy()->readStringFromPasteboard(0, "text/plain;charset=utf-8", name());
 }
 
 void Pasteboard::read(PasteboardWebContentReader&, WebContentReadingPolicy)

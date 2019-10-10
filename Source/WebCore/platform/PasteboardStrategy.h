@@ -46,12 +46,6 @@ public:
     virtual void writeToPasteboard(const PasteboardWebContent&, const String& pasteboardName) = 0;
     virtual void writeToPasteboard(const PasteboardImage&, const String& pasteboardName) = 0;
     virtual void writeToPasteboard(const String& pasteboardType, const String&, const String& pasteboardName) = 0;
-    virtual int getPasteboardItemsCount(const String& pasteboardName) = 0;
-    virtual String readStringFromPasteboard(int index, const String& pasteboardType, const String& pasteboardName) = 0;
-    virtual RefPtr<SharedBuffer> readBufferFromPasteboard(int index, const String& pasteboardType, const String& pasteboardName) = 0;
-    virtual URL readURLFromPasteboard(int index, const String& pasteboardName, String& title) = 0;
-    virtual Vector<PasteboardItemInfo> allPasteboardItemInfo(const String& pasteboardName) = 0;
-    virtual PasteboardItemInfo informationForItemAtIndex(int index, const String& pasteboardName) = 0;
     virtual void updateSupportedTypeIdentifiers(const Vector<String>& identifiers, const String& pasteboardName) = 0;
 #endif // PLATFORM(IOS_FAMILY)
 #if PLATFORM(COCOA)
@@ -73,6 +67,12 @@ public:
     virtual long setColor(const Color&, const String& pasteboardName) = 0;
     virtual long setStringForType(const String&, const String& pasteboardType, const String& pasteboardName) = 0;
 #endif
+    virtual String readStringFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName) = 0;
+    virtual RefPtr<SharedBuffer> readBufferFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName) = 0;
+    virtual URL readURLFromPasteboard(size_t index, const String& pasteboardName, String& title) = 0;
+    virtual PasteboardItemInfo informationForItemAtIndex(size_t index, const String& pasteboardName) = 0;
+    virtual Vector<PasteboardItemInfo> allPasteboardItemInfo(const String& pasteboardName) = 0;
+    virtual int getPasteboardItemsCount(const String& pasteboardName) = 0;
 
     virtual Vector<String> typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin) = 0;
     virtual long writeCustomData(const PasteboardCustomData&, const String& pasteboardName) = 0;
@@ -84,7 +84,6 @@ public:
 
 #if USE(LIBWPE)
     virtual void getTypes(Vector<String>& types) = 0;
-    virtual String readStringFromPasteboard(int index, const String& pasteboardType) = 0;
     virtual void writeToPasteboard(const PasteboardWebContent&) = 0;
     virtual void writeToPasteboard(const String& pasteboardType, const String&) = 0;
 #endif

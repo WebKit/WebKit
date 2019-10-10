@@ -148,7 +148,7 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
         // If the item can't be treated as an attachment, it's very likely that the content being dropped is just
         // an inline piece of text, with no files in the pasteboard (and therefore, no risk of leaking file paths
         // to web content). In cases such as these, we should not suppress DataTransfer access.
-        auto items = platformStrategies()->pasteboardStrategy()->allPasteboardItemInfo(m_pasteboardName);
+        auto items = allPasteboardItemInfo();
         mayContainFilePaths = items.size() != 1 || notFound != items.findMatching([] (auto& item) {
             return item.canBeTreatedAsAttachmentOrFile() || item.isNonTextType || item.containsFileURLAndFileUploadContent;
         });

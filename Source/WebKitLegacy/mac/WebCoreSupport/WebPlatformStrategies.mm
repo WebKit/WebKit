@@ -173,6 +173,36 @@ long WebPlatformStrategies::writeCustomData(const WebCore::PasteboardCustomData&
     return PlatformPasteboard(pasteboardName).write(data);
 }
 
+WebCore::PasteboardItemInfo WebPlatformStrategies::informationForItemAtIndex(size_t index, const String& pasteboardName)
+{
+    return PlatformPasteboard(pasteboardName).informationForItemAtIndex(index);
+}
+
+Vector<WebCore::PasteboardItemInfo> WebPlatformStrategies::allPasteboardItemInfo(const String& pasteboardName)
+{
+    return PlatformPasteboard(pasteboardName).allPasteboardItemInfo();
+}
+
+int WebPlatformStrategies::getPasteboardItemsCount(const String& pasteboardName)
+{
+    return PlatformPasteboard(pasteboardName).count();
+}
+
+RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(size_t index, const String& type, const String& pasteboardName)
+{
+    return PlatformPasteboard(pasteboardName).readBuffer(index, type);
+}
+
+URL WebPlatformStrategies::readURLFromPasteboard(size_t index, const String& pasteboardName, String& title)
+{
+    return PlatformPasteboard(pasteboardName).readURL(index, title);
+}
+
+String WebPlatformStrategies::readStringFromPasteboard(size_t index, const String& type, const String& pasteboardName)
+{
+    return PlatformPasteboard(pasteboardName).readString(index, type);
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 void WebPlatformStrategies::writeToPasteboard(const PasteboardURL& url, const String& pasteboardName)
@@ -195,38 +225,8 @@ void WebPlatformStrategies::writeToPasteboard(const String& pasteboardType, cons
     PlatformPasteboard(pasteboardName).write(pasteboardType, text);
 }
 
-int WebPlatformStrategies::getPasteboardItemsCount(const String& pasteboardName)
-{
-    return PlatformPasteboard(pasteboardName).count();
-}
-
 void WebPlatformStrategies::updateSupportedTypeIdentifiers(const Vector<String>& identifiers, const String& pasteboardName)
 {
     PlatformPasteboard(pasteboardName).updateSupportedTypeIdentifiers(identifiers);
-}
-
-RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(int index, const String& type, const String& pasteboardName)
-{
-    return PlatformPasteboard(pasteboardName).readBuffer(index, type);
-}
-
-URL WebPlatformStrategies::readURLFromPasteboard(int index, const String& pasteboardName, String& title)
-{
-    return PlatformPasteboard(pasteboardName).readURL(index, title);
-}
-
-String WebPlatformStrategies::readStringFromPasteboard(int index, const String& type, const String& pasteboardName)
-{
-    return PlatformPasteboard(pasteboardName).readString(index, type);
-}
-
-Vector<WebCore::PasteboardItemInfo> WebPlatformStrategies::allPasteboardItemInfo(const String& pasteboardName)
-{
-    return PlatformPasteboard(pasteboardName).allPasteboardItemInfo();
-}
-
-WebCore::PasteboardItemInfo WebPlatformStrategies::informationForItemAtIndex(int index, const String& pasteboardName)
-{
-    return PlatformPasteboard(pasteboardName).informationForItemAtIndex(index);
 }
 #endif // PLATFORM(IOS_FAMILY)

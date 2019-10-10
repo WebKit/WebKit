@@ -98,4 +98,29 @@ Vector<String> Pasteboard::readAllStrings(const String& type)
 
 #endif
 
+Vector<PasteboardItemInfo> Pasteboard::allPasteboardItemInfo() const
+{
+    return platformStrategies()->pasteboardStrategy()->allPasteboardItemInfo(name());
+}
+
+PasteboardItemInfo Pasteboard::pasteboardItemInfo(size_t index) const
+{
+    return platformStrategies()->pasteboardStrategy()->informationForItemAtIndex(index, name());
+}
+
+String Pasteboard::readString(size_t index, const String& type)
+{
+    return platformStrategies()->pasteboardStrategy()->readStringFromPasteboard(index, type, name());
+}
+
+RefPtr<WebCore::SharedBuffer> Pasteboard::readBuffer(size_t index, const String& type)
+{
+    return platformStrategies()->pasteboardStrategy()->readBufferFromPasteboard(index, type, name());
+}
+
+URL Pasteboard::readURL(size_t index, String& title)
+{
+    return platformStrategies()->pasteboardStrategy()->readURLFromPasteboard(index, name(), title);
+}
+
 };

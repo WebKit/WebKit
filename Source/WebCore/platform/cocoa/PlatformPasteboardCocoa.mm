@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Igalia S.L.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebPasteboardProxy.h"
+#import "config.h"
+#import "PlatformPasteboard.h"
 
-#include <WebCore/PlatformPasteboard.h>
-#include <wtf/CompletionHandler.h>
-#include <wtf/text/WTFString.h>
+#import "PasteboardItemInfo.h"
 
-namespace WebKit {
-using namespace WebCore;
+namespace WebCore {
 
-void WebPasteboardProxy::getPasteboardTypes(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+Vector<PasteboardItemInfo> PlatformPasteboard::allPasteboardItemInfo()
 {
-    Vector<String> pasteboardTypes;
-    PlatformPasteboard().getTypes(pasteboardTypes);
-    completionHandler(WTFMove(pasteboardTypes));
+    Vector<PasteboardItemInfo> itemInfo;
+    int numberOfItems = count();
+    itemInfo.reserveInitialCapacity(numberOfItems);
+    for (NSInteger itemIndex = 0; itemIndex < numberOfItems; ++itemIndex)
+        itemInfo.uncheckedAppend(informationForItemAtIndex(itemIndex));
+    return itemInfo;
 }
 
-void WebPasteboardProxy::readStringFromPasteboard(size_t index, const String& pasteboardType, const String&, CompletionHandler<void(String&&)>&& completionHandler)
-{
-    completionHandler(PlatformPasteboard().readString(index, pasteboardType));
-}
-
-void WebPasteboardProxy::writeWebContentToPasteboard(const WebCore::PasteboardWebContent& content)
-{
-    PlatformPasteboard().write(content);
-}
-
-void WebPasteboardProxy::writeStringToPasteboard(const String& pasteboardType, const String& text)
-{
-    PlatformPasteboard().write(pasteboardType, text);
-}
-
-} // namespace WebKit
+} // namespace WebCore

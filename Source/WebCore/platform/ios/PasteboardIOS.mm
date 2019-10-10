@@ -355,7 +355,7 @@ void Pasteboard::readRespectingUTIFidelities(PasteboardWebContentReader& reader,
         // Try to read data from each type identifier that this pasteboard item supports, and WebKit also recognizes. Type identifiers are
         // read in order of fidelity, as specified by each pasteboard item.
         ReaderResult result = ReaderResult::DidNotReadType;
-        for (auto& type : info.contentTypesByFidelity) {
+        for (auto& type : info.platformTypesByFidelity) {
             if (!isTypeAllowedByReadingPolicy(type, policy))
                 continue;
 
