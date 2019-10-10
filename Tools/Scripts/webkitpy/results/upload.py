@@ -22,6 +22,7 @@
 
 import webkitpy.thirdparty.autoinstalled.requests
 
+import os
 import json
 import requests
 import sys
@@ -31,6 +32,7 @@ import platform as host_platform
 
 
 class Upload(object):
+    API_KEY = os.getenv('RESULTS_SERVER_API_KEY')
     UPLOAD_ENDPOINT = '/api/upload'
     ARCHIVE_UPLOAD_ENDPOINT = '/api/upload/archive'
     BUILDBOT_DETAILS = ['buildbot-master', 'builder-name', 'build-number', 'buildbot-worker']
@@ -169,7 +171,14 @@ class Upload(object):
 
     def upload(self, hostname, log_line_func=lambda val: sys.stdout.write(val + '\n')):
         try:
-            response = requests.post('{}{}'.format(hostname, self.UPLOAD_ENDPOINT), data=json.dumps(self, cls=Upload.Encoder))
+            data = Upload.Encoder().default(self)
+            if self.API_KEY:
+                data['api_key'] = self.API_KEY
+            response = requests.post(
+                '{}{}'.format(hostname, self.UPLOAD_ENDPOINT),
+                headers={'Content-type': 'application/json'},
+                data=json.dumps(data),
+            )
         except requests.exceptions.ConnectionError:
             log_line_func(' ' * 4 + 'Failed to upload to {}, results server not online'.format(hostname))
             return False
@@ -179,7 +188,11 @@ class Upload(object):
 
         if response.status_code != 200:
             log_line_func(' ' * 4 + 'Error uploading to {}'.format(hostname))
-            log_line_func(' ' * 8 + response.json().get('description'))
+            try:
+                log_line_func(' ' * 8 + response.json().get('description'))
+            except ValueError:
+                for line in response.text.splitlines():
+                    log_line_func(' ' * 8 + line)
             return False
 
         log_line_func(' ' * 4 + 'Uploaded results to {}'.format(hostname))
@@ -195,6 +208,9 @@ class Upload(object):
             )
             if self.timestamp:
                 meta_data['timestamp'] = self.timestamp
+            if self.API_KEY:
+                meta_data['api_key'] = self.API_KEY
+            meta_data['Content-type'] = 'application/octet-stream'
             response = requests.post(
                 '{}{}'.format(hostname, self.ARCHIVE_UPLOAD_ENDPOINT),
                 data=meta_data,
@@ -208,9 +224,14 @@ class Upload(object):
             log_line_func(' ' * 4 + 'Failed to encode archive reference data: {}'.format(e))
             return False
 
-        if response.status_code != 200:
+        # FIXME: <rdar://problem/56154412> do not fail test runs because of 403 errors
+        if response.status_code not in [200, 403]:
             log_line_func(' ' * 4 + 'Error uploading archive to {}'.format(hostname))
-            log_line_func(' ' * 8 + response.json().get('description'))
+            try:
+                log_line_func(' ' * 8 + response.json().get('description'))
+            except ValueError:
+                for line in response.text.splitlines():
+                    log_line_func(' ' * 8 + line)
             return False
 
         log_line_func(' ' * 4 + 'Uploaded test archive to {}'.format(hostname))
