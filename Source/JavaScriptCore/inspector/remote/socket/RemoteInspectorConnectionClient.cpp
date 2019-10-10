@@ -46,12 +46,6 @@ Optional<ConnectionID> RemoteInspectorConnectionClient::connectInet(const char* 
     return endpoint.connectInet(serverAddr, serverPort, *this);
 }
 
-Optional<ConnectionID> RemoteInspectorConnectionClient::listenInet(const char* address, uint16_t port)
-{
-    auto& endpoint = Inspector::RemoteInspectorSocketEndpoint::singleton();
-    return endpoint.listenInet(address, port, *this);
-}
-
 Optional<ConnectionID> RemoteInspectorConnectionClient::createClient(PlatformSocketType socket)
 {
     auto& endpoint = Inspector::RemoteInspectorSocketEndpoint::singleton();

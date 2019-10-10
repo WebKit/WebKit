@@ -28,66 +28,27 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "RemoteInspector.h"
-
-#include "RemoteInspectorConnectionClient.h"
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/Lock.h>
+#include "RemoteInspectorSocketEndpoint.h"
 
 namespace Inspector {
 
-class RemoteInspectorServer : public RemoteInspectorConnectionClient {
+class RemoteInspectorServer final : public RemoteInspectorSocketEndpoint::Listener {
 public:
+    ~RemoteInspectorServer();
+
     JS_EXPORT_PRIVATE static RemoteInspectorServer& singleton();
 
     JS_EXPORT_PRIVATE bool start(const char* address, uint16_t port);
     bool isRunning() const { return !!m_server; }
 
-    JS_EXPORT_PRIVATE Optional<uint16_t> listenForTargets();
-    JS_EXPORT_PRIVATE Optional<PlatformSocketType> connect();
-
-    void setBackendCommandsPath(const String& backendCommandsPath) { m_backendCommandsPath = backendCommandsPath; }
-
 private:
     friend class NeverDestroyed<RemoteInspectorServer>;
     RemoteInspectorServer() { Socket::init(); }
 
-    void connectionClosed(ConnectionID);
-
-    void setTargetList(const Event&);
-    void setupInspectorClient(const Event&);
-    void setup(const Event&);
-    void close(const Event&);
-    void sendMessageToFrontend(const Event&);
-    void sendMessageToBackend(const Event&);
-
-    void sendCloseEvent(ConnectionID, TargetID);
-    void clientConnectionClosed();
-
-    void didAccept(ConnectionID acceptedID, ConnectionID listenerID, Socket::Domain) override;
-    void didClose(ConnectionID) override;
-
-    void sendWebInspectorEvent(ConnectionID, const String&);
-
-    String backendCommands() const;
-
-    HashMap<String, CallHandler>& dispatchMap() override;
-
-    HashSet<std::pair<ConnectionID, TargetID>> m_inspectionTargets;
+    bool didAccept(ConnectionID acceptedID, ConnectionID listenerID, Socket::Domain) override;
+    void didClose(ConnectionID) override { }
 
     Optional<ConnectionID> m_server;
-
-    // Connections to the WebProcess.
-    Vector<ConnectionID> m_inspectorConnections;
-    Lock m_connectionsLock;
-
-    // Listener for targets.
-    Optional<ConnectionID> m_inspectorListener;
-
-    // Connection from RemoteInspectorClient.
-    Optional<ConnectionID> m_clientConnection;
-
-    String m_backendCommandsPath;
 };
 
 } // namespace Inspector

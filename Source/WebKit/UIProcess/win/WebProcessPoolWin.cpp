@@ -65,7 +65,7 @@ static void initializeRemoteInspectorServer(StringView address)
     if (!port)
         return;
 
-    Inspector::RemoteInspectorServer::singleton().setBackendCommandsPath(backendCommandsPath());
+    Inspector::RemoteInspector::singleton().setBackendCommandsPath(backendCommandsPath());
     Inspector::RemoteInspectorServer::singleton().start(host.utf8().data(), port.value());
 }
 #endif
@@ -73,11 +73,8 @@ static void initializeRemoteInspectorServer(StringView address)
 void WebProcessPool::platformInitialize()
 {
 #if ENABLE(REMOTE_INSPECTOR)
-    if (const char* address = getenv("WEBKIT_INSPECTOR_SERVER")) {
+    if (const char* address = getenv("WEBKIT_INSPECTOR_SERVER"))
         initializeRemoteInspectorServer(address);
-        auto port = Inspector::RemoteInspectorServer::singleton().listenForTargets();
-        Inspector::RemoteInspector::setServerPort(port.valueOr(0));
-    }
 #endif
 }
 

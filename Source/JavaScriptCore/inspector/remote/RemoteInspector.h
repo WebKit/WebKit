@@ -57,7 +57,6 @@ typedef struct _GDBusInterfaceVTable GDBusInterfaceVTable;
 #include "RemoteConnectionToTarget.h"
 #include "RemoteInspectorConnectionClient.h"
 #include <wtf/JSONValues.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace Inspector {
@@ -150,8 +149,12 @@ public:
     void sendMessageToTarget(TargetID, const char* message);
 #endif
 #if USE(INSPECTOR_SOCKET_SERVER)
-    static void setConnectionIdentifier(PlatformSocketType);
-    static void setServerPort(uint16_t);
+    void requestAutomationSession(String&& sessionID, const Client::SessionCapabilities&);
+
+    bool isConnected() const { return !!m_clientConnection; }
+    void connect(ConnectionID);
+
+    void setBackendCommandsPath(const String& backendCommandsPath) { m_backendCommandsPath = backendCommandsPath; }
 #endif
 
 private:
@@ -214,10 +217,12 @@ private:
 
     void sendWebInspectorEvent(const String&);
 
-    void receivedGetTargetListMessage(const Event&);
-    void receivedSetupMessage(const Event&);
-    void receivedDataMessage(const Event&);
-    void receivedCloseMessage(const Event&);
+    void setupInspectorClient(const Event&);
+    void setupTarget(const Event&);
+    void frontendDidClose(const Event&);
+    void sendMessageToBackend(const Event&);
+
+    String backendCommands() const;
 #endif
     static bool startEnabled;
 
@@ -240,9 +245,11 @@ private:
 #endif
 
 #if USE(INSPECTOR_SOCKET_SERVER)
-    static PlatformSocketType s_connectionIdentifier;
-    static uint16_t s_serverPort;
-    Optional<ConnectionID> m_clientID;
+    // Connection from RemoteInspectorClient or WebDriver.
+    Optional<ConnectionID> m_clientConnection;
+    bool m_readyToPushListings { false };
+
+    String m_backendCommandsPath;
 #endif
 
     RemoteInspector::Client* m_client { nullptr };

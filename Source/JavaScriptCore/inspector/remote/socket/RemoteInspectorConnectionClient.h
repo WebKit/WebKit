@@ -43,12 +43,10 @@ public:
     virtual ~RemoteInspectorConnectionClient();
 
     Optional<ConnectionID> connectInet(const char* serverAddr, uint16_t serverPort);
-    Optional<ConnectionID> listenInet(const char* address, uint16_t port);
     Optional<ConnectionID> createClient(PlatformSocketType);
     void send(ConnectionID, const uint8_t* data, size_t);
 
     void didReceive(ConnectionID, Vector<uint8_t>&&) override;
-    void didAccept(ConnectionID, ConnectionID, Socket::Domain) override { }
 
     struct Event {
         String methodName;

@@ -1,3 +1,16 @@
+2019-10-10  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [WinCairo] Move remote communication handling from RemoteInspectorServer to RemoteInspector.
+        https://bugs.webkit.org/show_bug.cgi?id=202763
+
+        Reviewed by Ross Kirsling.
+
+        Remove deleted method invocations.
+
+        * UIProcess/win/WebProcessPoolWin.cpp:
+        (WebKit::initializeRemoteInspectorServer):
+        (WebKit::WebProcessPool::platformInitialize):
+
 2019-10-10  Youenn Fablet  <youenn@apple.com>
 
         Do not timeout a load intercepted by service worker that receives a response

@@ -29,95 +29,9 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "RemoteInspectorMessageParser.h"
-#include <wtf/FileSystem.h>
-#include <wtf/JSONValues.h>
 #include <wtf/MainThread.h>
-#include <wtf/RunLoop.h>
 
 namespace Inspector {
-
-Optional<PlatformSocketType> RemoteInspectorServer::connect()
-{
-    if (auto sockets = Socket::createPair()) {
-        if (auto id = createClient(sockets->at(0))) {
-            LockHolder lock(m_connectionsLock);
-            m_inspectorConnections.append(id.value());
-
-            return sockets->at(1);
-        }
-    }
-
-    return WTF::nullopt;
-}
-
-Optional<uint16_t> RemoteInspectorServer::listenForTargets()
-{
-    if (m_inspectorListener) {
-        LOG_ERROR("Inspector server is already listening for targets.");
-        return WTF::nullopt;
-    }
-
-    if (auto connection = listenInet("127.0.0.1", 0)) {
-        m_inspectorListener = connection;
-
-        auto& endpoint = RemoteInspectorSocketEndpoint::singleton();
-        return endpoint.getPort(*connection);
-    }
-
-    return WTF::nullopt;
-}
-
-void RemoteInspectorServer::didAccept(ConnectionID acceptedID, ConnectionID listenerID, Socket::Domain type)
-{
-    ASSERT(!isMainThread());
-
-    if (type == Socket::Domain::Local || (m_inspectorListener && listenerID == *m_inspectorListener)) {
-        LockHolder lock(m_connectionsLock);
-        m_inspectorConnections.append(acceptedID);
-    } else if (type == Socket::Domain::Network) {
-        if (m_clientConnection) {
-            LOG_ERROR("Inspector server can accept only 1 client");
-            return;
-        }
-        m_clientConnection = acceptedID;
-    }
-}
-
-void RemoteInspectorServer::didClose(ConnectionID id)
-{
-    ASSERT(!isMainThread());
-
-    if (id == m_clientConnection) {
-        // Connection from the remote client closed.
-        clientConnectionClosed();
-        return;
-    }
-
-    // Connection from WebProcess closed.
-    RunLoop::main().dispatch([this, id] {
-        connectionClosed(id);
-    });
-}
-
-HashMap<String, RemoteInspectorConnectionClient::CallHandler>& RemoteInspectorServer::dispatchMap()
-{
-    static NeverDestroyed<HashMap<String, CallHandler>> dispatchMap = HashMap<String, CallHandler>({
-        { "SetTargetList"_s, static_cast<CallHandler>(&RemoteInspectorServer::setTargetList) },
-        { "SetupInspectorClient"_s, static_cast<CallHandler>(&RemoteInspectorServer::setupInspectorClient) },
-        { "Setup"_s, static_cast<CallHandler>(&RemoteInspectorServer::setup) },
-        { "FrontendDidClose"_s, static_cast<CallHandler>(&RemoteInspectorServer::close) },
-        { "SendMessageToFrontend"_s, static_cast<CallHandler>(&RemoteInspectorServer::sendMessageToFrontend) },
-        { "SendMessageToBackend"_s, static_cast<CallHandler>(&RemoteInspectorServer::sendMessageToBackend) },
-    });
-
-    return dispatchMap;
-}
-
-void RemoteInspectorServer::sendWebInspectorEvent(ConnectionID id, const String& event)
-{
-    const CString message = event.utf8();
-    send(id, reinterpret_cast<const uint8_t*>(message.data()), message.length());
-}
 
 RemoteInspectorServer& RemoteInspectorServer::singleton()
 {
@@ -125,155 +39,31 @@ RemoteInspectorServer& RemoteInspectorServer::singleton()
     return server;
 }
 
+RemoteInspectorServer::~RemoteInspectorServer()
+{
+    auto& endpoint = Inspector::RemoteInspectorSocketEndpoint::singleton();
+    endpoint.invalidateListener(*this);
+}
+
 bool RemoteInspectorServer::start(const char* address, uint16_t port)
 {
-    m_server = listenInet(address, port);
+    auto& endpoint = Inspector::RemoteInspectorSocketEndpoint::singleton();
+    m_server = endpoint.listenInet(address, port, *this, RemoteInspector::singleton());
     return isRunning();
 }
 
-void RemoteInspectorServer::setTargetList(const Event& event)
-{
-    ASSERT(isMainThread());
-
-    if (!m_clientConnection || !event.message)
-        return;
-
-    auto targetListEvent = JSON::Object::create();
-    targetListEvent->setString("event"_s, "SetTargetList"_s);
-    targetListEvent->setInteger("connectionID"_s, event.clientID);
-    targetListEvent->setString("message"_s, event.message.value());
-    sendWebInspectorEvent(m_clientConnection.value(), targetListEvent->toJSONString());
-}
-
-void RemoteInspectorServer::setupInspectorClient(const Event&)
-{
-    ASSERT(isMainThread());
-
-    auto backendCommandsEvent = JSON::Object::create();
-    backendCommandsEvent->setString("event"_s, "BackendCommands"_s);
-    backendCommandsEvent->setString("message"_s, backendCommands());
-    sendWebInspectorEvent(m_clientConnection.value(), backendCommandsEvent->toJSONString());
-
-    auto setupEvent = JSON::Object::create();
-    setupEvent->setString("event"_s, "GetTargetList"_s);
-
-    LockHolder lock(m_connectionsLock);
-    for (auto connection : m_inspectorConnections)
-        sendWebInspectorEvent(connection, setupEvent->toJSONString());
-}
-
-void RemoteInspectorServer::setup(const Event& event)
-{
-    ASSERT(isMainThread());
-
-    if (!event.targetID || !event.connectionID)
-        return;
-
-    m_inspectionTargets.add(std::make_pair(event.connectionID.value(), event.targetID.value()));
-
-    auto setupEvent = JSON::Object::create();
-    setupEvent->setString("event"_s, "Setup"_s);
-    setupEvent->setInteger("targetID"_s, event.targetID.value());
-    sendWebInspectorEvent(event.connectionID.value(), setupEvent->toJSONString());
-}
-
-void RemoteInspectorServer::sendCloseEvent(ConnectionID connectionID, TargetID targetID)
-{
-    ASSERT(isMainThread());
-
-    auto closeEvent = JSON::Object::create();
-    closeEvent->setString("event"_s, "FrontendDidClose"_s);
-    closeEvent->setInteger("targetID"_s, targetID);
-    sendWebInspectorEvent(connectionID, closeEvent->toJSONString());
-}
-
-void RemoteInspectorServer::close(const Event& event)
-{
-    ASSERT(isMainThread());
-
-    sendCloseEvent(event.connectionID.value(), event.targetID.value());
-    m_inspectionTargets.remove(std::make_pair(event.connectionID.value(), event.targetID.value()));
-}
-
-void RemoteInspectorServer::clientConnectionClosed()
+bool RemoteInspectorServer::didAccept(ConnectionID acceptedID, ConnectionID, Socket::Domain)
 {
     ASSERT(!isMainThread());
 
-    m_clientConnection = WTF::nullopt;
+    auto& inspector = RemoteInspector::singleton();
+    if (inspector.isConnected()) {
+        LOG_ERROR("RemoteInspector can accept only 1 client");
 
-    RunLoop::main().dispatch([this] {
-        LockHolder lock(m_connectionsLock);
-        for (auto connectionTargetPair : m_inspectionTargets)
-            sendCloseEvent(connectionTargetPair.first, connectionTargetPair.second);
-        m_inspectionTargets.clear();
-    });
-}
-
-void RemoteInspectorServer::connectionClosed(ConnectionID clientID)
-{
-    ASSERT(isMainThread());
-
-    LockHolder lock(m_connectionsLock);
-    if (m_inspectorConnections.removeFirst(clientID) && m_clientConnection) {
-        auto closedEvent = JSON::Object::create();
-        closedEvent->setString("event"_s, "SetTargetList"_s);
-        closedEvent->setInteger("connectionID"_s, clientID);
-        auto targetList = JSON::Array::create();
-        closedEvent->setString("message"_s, targetList->toJSONString());
-        sendWebInspectorEvent(m_clientConnection.value(), closedEvent->toJSONString());
+        return false;
     }
-}
-
-void RemoteInspectorServer::sendMessageToBackend(const Event& event)
-{
-    ASSERT(isMainThread());
-
-    if (!event.connectionID || !event.targetID || !event.message)
-        return;
-
-    auto sendEvent = JSON::Object::create();
-    sendEvent->setString("event"_s, "SendMessageToTarget"_s);
-    sendEvent->setInteger("targetID"_s, event.targetID.value());
-    sendEvent->setString("message"_s, event.message.value());
-    sendWebInspectorEvent(event.connectionID.value(), sendEvent->toJSONString());
-}
-
-void RemoteInspectorServer::sendMessageToFrontend(const Event& event)
-{
-    if (!m_clientConnection)
-        return;
-
-    ASSERT(isMainThread());
-
-    if (!event.targetID || !event.message)
-        return;
-
-    auto sendEvent = JSON::Object::create();
-    sendEvent->setString("event"_s, "SendMessageToFrontend"_s);
-    sendEvent->setInteger("targetID"_s, event.targetID.value());
-    sendEvent->setInteger("connectionID"_s, event.clientID);
-    sendEvent->setString("message"_s, event.message.value());
-    sendWebInspectorEvent(m_clientConnection.value(), sendEvent->toJSONString());
-}
-
-String RemoteInspectorServer::backendCommands() const
-{
-    if (m_backendCommandsPath.isEmpty())
-        return { };
-
-    auto handle = FileSystem::openFile(m_backendCommandsPath, FileSystem::FileOpenMode::Read);
-    if (!FileSystem::isHandleValid(handle))
-        return { };
-
-    String result;
-    long long size;
-    if (FileSystem::getFileSize(handle, size)) {
-        Vector<LChar> buffer(size);
-        if (FileSystem::readFromFile(handle, reinterpret_cast<char*>(buffer.data()), size) == size)
-            result = String::adopt(WTFMove(buffer));
-    }
-    FileSystem::closeFile(handle);
-    return result;
+    inspector.connect(acceptedID);
+    return true;
 }
 
 } // namespace Inspector

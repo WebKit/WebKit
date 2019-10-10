@@ -30,6 +30,7 @@
 
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -64,6 +65,8 @@ RemoteInspectorSocketEndpoint::~RemoteInspectorSocketEndpoint()
     Socket::close(m_wakeupReceiveSocket);
     for (const auto& connection : m_connections.values())
         Socket::close(connection->socket);
+    for (const auto& connection : m_listeners.values())
+        Socket::close(connection->socket);
 }
 
 void RemoteInspectorSocketEndpoint::wakeupWorkerThread()
@@ -79,10 +82,10 @@ Optional<ConnectionID> RemoteInspectorSocketEndpoint::connectInet(const char* se
     return WTF::nullopt;
 }
 
-Optional<ConnectionID> RemoteInspectorSocketEndpoint::listenInet(const char* address, uint16_t port, Client& client)
+Optional<ConnectionID> RemoteInspectorSocketEndpoint::listenInet(const char* address, uint16_t port, Listener& listener, Client& client)
 {
     if (auto socket = Socket::listen(address, port))
-        return createClient(*socket, client);
+        return createListener(*socket, listener, client);
 
     return WTF::nullopt;
 }
@@ -90,8 +93,8 @@ Optional<ConnectionID> RemoteInspectorSocketEndpoint::listenInet(const char* add
 bool RemoteInspectorSocketEndpoint::isListening(ConnectionID id)
 {
     LockHolder lock(m_connectionsLock);
-    if (const auto& connection = m_connections.get(id))
-        return Socket::isListening(connection->socket);
+    if (m_listeners.contains(id))
+        return true;
     return false;
 }
 
@@ -100,11 +103,19 @@ void RemoteInspectorSocketEndpoint::workerThread()
     PollingDescriptor wakeup = Socket::preparePolling(m_wakeupReceiveSocket);
 
     while (!m_shouldAbortWorkerThread) {
+#if USE(GENERIC_EVENT_LOOP) || USE(WINDOWS_EVENT_LOOP)
+        RunLoop::iterate();
+#endif
+
         Vector<PollingDescriptor> pollfds;
         Vector<ConnectionID> ids;
         {
             LockHolder lock(m_connectionsLock);
             for (const auto& connection : m_connections) {
+                pollfds.append(connection.value->poll);
+                ids.append(connection.key);
+            }
+            for (const auto& connection : m_listeners) {
                 pollfds.append(connection.value->poll);
                 ids.append(connection.key);
             }
@@ -123,14 +134,42 @@ void RemoteInspectorSocketEndpoint::workerThread()
         for (size_t i = 0; i < ids.size(); i++) {
             auto id = ids[i];
 
-            if (Socket::isReadable(pollfds[i]) && isListening(id))
-                acceptInetSocketIfEnabled(id);
-            else if (Socket::isReadable(pollfds[i]))
-                recvIfEnabled(id);
-            else if (Socket::isWritable(pollfds[i]))
+            if (Socket::isReadable(pollfds[i])) {
+                if (isListening(id))
+                    acceptInetSocketIfEnabled(id);
+                else
+                    recvIfEnabled(id);
+            } else if (Socket::isWritable(pollfds[i]))
                 sendIfEnabled(id);
         }
     }
+}
+
+ConnectionID RemoteInspectorSocketEndpoint::generateConnectionID()
+{
+    ASSERT(m_connectionsLock.isLocked());
+
+    ConnectionID id;
+    do {
+        id = cryptographicallyRandomNumber();
+    } while (!id || m_connections.contains(id) || m_listeners.contains(id));
+
+    return id;
+}
+
+std::unique_ptr<RemoteInspectorSocketEndpoint::Connection> RemoteInspectorSocketEndpoint::makeConnection(PlatformSocketType socket, Client& client)
+{
+    ASSERT(m_connectionsLock.isLocked());
+
+    Socket::setup(socket);
+
+    auto connection = makeUnique<Connection>(client);
+
+    connection->id = generateConnectionID();
+    connection->poll = Socket::preparePolling(socket);
+    connection->socket = socket;
+
+    return connection;
 }
 
 Optional<ConnectionID> RemoteInspectorSocketEndpoint::createClient(PlatformSocketType socket, Client& client)
@@ -139,20 +178,27 @@ Optional<ConnectionID> RemoteInspectorSocketEndpoint::createClient(PlatformSocke
         return WTF::nullopt;
 
     LockHolder lock(m_connectionsLock);
+    auto connection = makeConnection(socket, client);
+    auto id = connection->id;
+    m_connections.add(id, WTFMove(connection));
+    wakeupWorkerThread();
 
-    ConnectionID id;
-    do {
-        id = cryptographicallyRandomNumber();
-    } while (!id || m_connections.contains(id));
+    return id;
+}
+
+Optional<ConnectionID> RemoteInspectorSocketEndpoint::createListener(PlatformSocketType socket, Listener& listener, Client& client)
+{
+    if (!Socket::isValid(socket))
+        return WTF::nullopt;
+
+    LockHolder lock(m_connectionsLock);
 
     Socket::setup(socket);
 
-    auto connection = makeUnique<Connection>(client);
-
-    connection->id = id;
-    connection->poll = Socket::preparePolling(socket);
-    connection->socket = socket;
-    m_connections.add(id, WTFMove(connection));
+    auto connection = makeConnection(socket, client);
+    auto id = connection->id;
+    connection->listener = &listener;
+    m_listeners.add(id, WTFMove(connection));
     wakeupWorkerThread();
 
     return id;
@@ -173,9 +219,26 @@ void RemoteInspectorSocketEndpoint::invalidateClient(Client& client)
     });
 }
 
+void RemoteInspectorSocketEndpoint::invalidateListener(Listener& listener)
+{
+    LockHolder lock(m_connectionsLock);
+    m_listeners.removeIf([&listener](auto& keyValue) {
+        const auto& connection = keyValue.value;
+
+        if (connection->listener == &listener) {
+            Socket::close(connection->socket);
+            return true;
+        }
+
+        return false;
+    });
+}
+
 Optional<uint16_t> RemoteInspectorSocketEndpoint::getPort(ConnectionID id) const
 {
     LockHolder lock(m_connectionsLock);
+    if (const auto& connection = m_listeners.get(id))
+        return Socket::getPort(connection->socket);
     if (const auto& connection = m_connections.get(id))
         return Socket::getPort(connection->socket);
 
@@ -254,17 +317,18 @@ void RemoteInspectorSocketEndpoint::send(ConnectionID id, const uint8_t* data, s
 
 void RemoteInspectorSocketEndpoint::acceptInetSocketIfEnabled(ConnectionID id)
 {
-    if (!isListening(id))
-        return;
+    ASSERT(isListening(id));
 
     LockHolder lock(m_connectionsLock);
-    if (const auto& connection = m_connections.get(id)) {
+    if (const auto& connection = m_listeners.get(id)) {
         if (auto socket = Socket::accept(connection->socket)) {
             // Need to unlock before calling createClient as it also attempts to lock.
             lock.unlockEarly();
             if (auto newID = createClient(*socket, connection->client)) {
-                connection->client.didAccept(newID.value(), id, Socket::Domain::Network);
-                return;
+                if (connection->listener->didAccept(newID.value(), connection->id, Socket::Domain::Network))
+                    return;
+
+                m_connections.remove(id);
             }
 
             Socket::close(*socket);
