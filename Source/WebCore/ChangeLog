@@ -1,3 +1,9 @@
+2019-10-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the internal iOS build
+
+        * page/PointerCaptureController.h: Add some missing forward declarations.
+
 2019-10-09  Sihui Liu  <sihui_liu@apple.com>
 
         Unreviewed, fix an asserition after r250937.

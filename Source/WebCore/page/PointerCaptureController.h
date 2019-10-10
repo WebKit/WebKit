@@ -38,7 +38,9 @@ class EventTarget;
 class IntPoint;
 class MouseEvent;
 class Page;
+class PlatformTouchEvent;
 class PointerEvent;
+class WindowProxy;
 
 class PointerCaptureController {
     WTF_MAKE_NONCOPYABLE(PointerCaptureController);
