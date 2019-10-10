@@ -83,8 +83,7 @@ LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend& p
 
 bool LibWebRTCMediaEndpoint::setConfiguration(LibWebRTCProvider& client, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
 {
-    if (RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled())
-        configuration.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
+    configuration.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
 
     if (!m_backend) {
         if (!m_rtcSocketFactory) {
@@ -221,15 +220,6 @@ bool LibWebRTCMediaEndpoint::addTrack(LibWebRTCRtpSenderBackend& sender, MediaSt
 {
     ASSERT(m_backend);
 
-    if (!RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled()) {
-        String mediaStreamId = mediaStreamIds.isEmpty() ? createCanonicalUUIDString() : mediaStreamIds[0];
-        m_localStreams.ensure(mediaStreamId, [&] {
-            auto mediaStream = m_peerConnectionFactory.CreateLocalMediaStream(mediaStreamId.utf8().data());
-            m_backend->AddStream(mediaStream);
-            return mediaStream;
-        });
-    }
-
     LibWebRTCRtpSenderBackend::Source source;
     rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> rtcTrack;
     switch (track.privateTrack().type()) {
@@ -283,12 +273,6 @@ void LibWebRTCMediaEndpoint::doCreateOffer(const RTCOfferOptions& options)
     rtcOptions.ice_restart = options.iceRestart;
     rtcOptions.voice_activity_detection = options.voiceActivityDetection;
 
-    if (!RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled()) {
-        if (m_peerConnectionBackend.shouldOfferAllowToReceive("audio"_s))
-            rtcOptions.offer_to_receive_audio = webrtc::PeerConnectionInterface::RTCOfferAnswerOptions::kOfferToReceiveMediaTrue;
-        if (m_peerConnectionBackend.shouldOfferAllowToReceive("video"_s))
-            rtcOptions.offer_to_receive_video = webrtc::PeerConnectionInterface::RTCOfferAnswerOptions::kOfferToReceiveMediaTrue;
-    }
     m_backend->CreateOffer(&m_createSessionDescriptionObserver, rtcOptions);
 }
 
@@ -476,9 +460,6 @@ void LibWebRTCMediaEndpoint::collectTransceivers()
     if (!m_backend)
         return;
 
-    if (!RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled())
-        return;
-
     for (auto& rtcTransceiver : m_backend->GetTransceivers()) {
         auto* existingTransceiver = m_peerConnectionBackend.existingTransceiver([&](auto& transceiverBackend) {
             return rtcTransceiver.get() == transceiverBackend.rtcTransceiver();
@@ -519,10 +500,6 @@ void LibWebRTCMediaEndpoint::newTransceiver(rtc::scoped_refptr<webrtc::RtpTransc
 
 void LibWebRTCMediaEndpoint::removeRemoteTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface>&& receiver)
 {
-    // FIXME: Support plan B code path.
-    if (!RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled())
-        return;
-
     auto* transceiver = m_peerConnectionBackend.existingTransceiver([&receiver](auto& transceiverBackend) {
         auto* rtcTransceiver = transceiverBackend.rtcTransceiver();
         return rtcTransceiver && receiver.get() == rtcTransceiver->receiver().get();
@@ -630,23 +607,8 @@ void LibWebRTCMediaEndpoint::OnRemoveStream(rtc::scoped_refptr<webrtc::MediaStre
     });
 }
 
-void LibWebRTCMediaEndpoint::OnAddTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver, const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>& streams)
-{
-    if (RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled())
-        return;
-
-    callOnMainThread([protectedThis = makeRef(*this), receiver = WTFMove(receiver), streams]() mutable {
-        if (protectedThis->isStopped())
-            return;
-        protectedThis->addRemoteTrack(WTFMove(receiver), streams);
-    });
-}
-
 void LibWebRTCMediaEndpoint::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> transceiver)
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled())
-        return;
-
     callOnMainThread([protectedThis = makeRef(*this), transceiver = WTFMove(transceiver)]() mutable {
         if (protectedThis->isStopped())
             return;

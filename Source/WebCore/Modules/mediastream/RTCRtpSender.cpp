@@ -63,7 +63,7 @@ RTCRtpSender::RTCRtpSender(PeerConnectionBackend& connection, String&& trackKind
     , m_backend(WTFMove(backend))
     , m_connection(makeWeakPtr(&connection))
 {
-    ASSERT(!RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled() || m_backend);
+    ASSERT(m_backend);
 }
 
 RTCRtpSender::~RTCRtpSender() = default;

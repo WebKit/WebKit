@@ -124,7 +124,6 @@ private:
     void OnAddStream(rtc::scoped_refptr<webrtc::MediaStreamInterface>) final;
     void OnRemoveStream(rtc::scoped_refptr<webrtc::MediaStreamInterface>) final;
     void OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface>) final;
-    void OnAddTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface>, const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>&) final;
     void OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface>) final;
     void OnRemoveTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface>) final;
 

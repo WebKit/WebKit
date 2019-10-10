@@ -1468,7 +1468,6 @@ void Internals::emulateRTCPeerConnectionPlatformEvent(RTCPeerConnection& connect
 
 void Internals::useMockRTCPeerConnectionFactory(const String& testCase)
 {
-    ASSERT(RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled());
     if (!LibWebRTCProvider::webRTCAvailable())
         return;
 

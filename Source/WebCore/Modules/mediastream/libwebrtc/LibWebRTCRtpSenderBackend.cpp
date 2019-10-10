@@ -98,18 +98,8 @@ void LibWebRTCRtpSenderBackend::replaceTrack(ScriptExecutionContext& context, RT
             return;
         }
 
-        if (RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled()) {
-            m_source = nullptr;
-            m_peerConnectionBackend->setSenderSourceFromTrack(*this, *protectedSender->track());
-            promise.resolve();
-            return;
-        }
-
-        auto result = m_peerConnectionBackend->addTrack(*protectedSender->track(), { });
-        if (result.hasException()) {
-            promise.reject(result.releaseException());
-            return;
-        }
+        m_source = nullptr;
+        m_peerConnectionBackend->setSenderSourceFromTrack(*this, *protectedSender->track());
         promise.resolve();
     });
 }

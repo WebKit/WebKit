@@ -556,15 +556,6 @@ InterruptAudioOnPageVisibilityChangeEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(MEDIA_STREAM)
 
-WebRTCUnifiedPlanEnabled:
-  type: bool
-  defaultValue: true
-  webcoreBinding: RuntimeEnabledFeatures
-  condition: ENABLE(WEB_RTC)
-  humanReadableName: "WebRTC Unified Plan"
-  humanReadableDescription: "Use WebRTC Unified Plan"
-  category: internal
-
 WebRTCVP8CodecEnabled:
   type: bool
   defaultValue: true

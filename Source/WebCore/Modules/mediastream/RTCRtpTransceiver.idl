@@ -40,7 +40,7 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
     [SameObject] readonly attribute RTCRtpReceiver receiver;
     readonly attribute boolean stopped;
     attribute RtpTransceiverDirection direction;
-    [EnabledAtRuntime=WebRTCUnifiedPlan] readonly attribute RTCRtpTransceiverDirection? currentDirection;
+    readonly attribute RTCRtpTransceiverDirection? currentDirection;
     void stop();
     // FIXME 169662: missing setCodecPreferences
 };
