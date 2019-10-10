@@ -40,7 +40,7 @@ void ScaleRowDown2_NEON(const uint8_t* src_ptr,
         "+r"(dst_width)  // %2
       :
       : "q0", "q1"  // Clobber List
-      );
+  );
 }
 
 // Read 32x1 average down and write 16x1.
@@ -61,7 +61,7 @@ void ScaleRowDown2Linear_NEON(const uint8_t* src_ptr,
         "+r"(dst_width)  // %2
       :
       : "q0", "q1"  // Clobber List
-      );
+  );
 }
 
 // Read 32x2 average down and write 16x1.
@@ -92,7 +92,7 @@ void ScaleRowDown2Box_NEON(const uint8_t* src_ptr,
         "+r"(dst_width)    // %3
       :
       : "q0", "q1", "q2", "q3"  // Clobber List
-      );
+  );
 }
 
 void ScaleRowDown4_NEON(const uint8_t* src_ptr,
@@ -523,7 +523,7 @@ void ScaleAddRow_NEON(const uint8_t* src_ptr,
         "+r"(src_width)  // %2
       :
       : "memory", "cc", "q0", "q1", "q2"  // Clobber List
-      );
+  );
 }
 
 // TODO(Yang Zhang): Investigate less load instructions for
@@ -705,7 +705,7 @@ void ScaleARGBRowDown2_NEON(const uint8_t* src_ptr,
         "+r"(dst_width)  // %2
       :
       : "memory", "cc", "q0", "q1", "q2", "q3"  // Clobber List
-      );
+  );
 }
 
 //  46:  f964 018d   vld4.32  {d16,d18,d20,d22}, [r4]!
@@ -734,7 +734,7 @@ void ScaleARGBRowDown2Linear_NEON(const uint8_t* src_argb,
         "+r"(dst_width)  // %2
       :
       : "memory", "cc", "q0", "q1", "q2", "q3"  // Clobber List
-      );
+  );
 }
 
 void ScaleARGBRowDown2Box_NEON(const uint8_t* src_ptr,

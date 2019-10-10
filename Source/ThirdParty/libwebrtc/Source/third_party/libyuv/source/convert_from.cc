@@ -670,7 +670,7 @@ static int I420ToRGB24Matrix(const uint8_t* src_y,
 #if defined(HAS_I422TORGB24ROW_SSSE3)
   if (TestCpuFlag(kCpuHasSSSE3)) {
     I422ToRGB24Row = I422ToRGB24Row_Any_SSSE3;
-    if (IS_ALIGNED(width, 8)) {
+    if (IS_ALIGNED(width, 16)) {
       I422ToRGB24Row = I422ToRGB24Row_SSSE3;
     }
   }
@@ -678,7 +678,7 @@ static int I420ToRGB24Matrix(const uint8_t* src_y,
 #if defined(HAS_I422TORGB24ROW_AVX2)
   if (TestCpuFlag(kCpuHasAVX2)) {
     I422ToRGB24Row = I422ToRGB24Row_Any_AVX2;
-    if (IS_ALIGNED(width, 16)) {
+    if (IS_ALIGNED(width, 32)) {
       I422ToRGB24Row = I422ToRGB24Row_AVX2;
     }
   }

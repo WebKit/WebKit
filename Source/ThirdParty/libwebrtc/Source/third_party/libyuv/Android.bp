@@ -69,6 +69,7 @@ cc_library {
 // with libyuv (b/37646797)
 cc_library_static {
     name: "libyuv_static",
+    vendor_available: true,
     whole_static_libs: ["libyuv"],
 }
 

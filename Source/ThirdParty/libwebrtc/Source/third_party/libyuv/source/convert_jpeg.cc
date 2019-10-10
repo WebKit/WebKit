@@ -89,12 +89,12 @@ static void JpegI400ToI420(void* opaque,
 
 // Query size of MJPG in pixels.
 LIBYUV_API
-int MJPGSize(const uint8_t* sample,
-             size_t sample_size,
+int MJPGSize(const uint8_t* src_mjpg,
+             size_t src_size_mjpg,
              int* width,
              int* height) {
   MJpegDecoder mjpeg_decoder;
-  LIBYUV_BOOL ret = mjpeg_decoder.LoadFrame(sample, sample_size);
+  LIBYUV_BOOL ret = mjpeg_decoder.LoadFrame(src_mjpg, src_size_mjpg);
   if (ret) {
     *width = mjpeg_decoder.GetWidth();
     *height = mjpeg_decoder.GetHeight();
@@ -107,8 +107,8 @@ int MJPGSize(const uint8_t* sample,
 // TODO(fbarchard): review src_width and src_height requirement. dst_width and
 // dst_height may be enough.
 LIBYUV_API
-int MJPGToI420(const uint8_t* sample,
-               size_t sample_size,
+int MJPGToI420(const uint8_t* src_mjpg,
+               size_t src_size_mjpg,
                uint8_t* dst_y,
                int dst_stride_y,
                uint8_t* dst_u,
@@ -119,14 +119,14 @@ int MJPGToI420(const uint8_t* sample,
                int src_height,
                int dst_width,
                int dst_height) {
-  if (sample_size == kUnknownDataSize) {
+  if (src_size_mjpg == kUnknownDataSize) {
     // ERROR: MJPEG frame size unknown
     return -1;
   }
 
   // TODO(fbarchard): Port MJpeg to C.
   MJpegDecoder mjpeg_decoder;
-  LIBYUV_BOOL ret = mjpeg_decoder.LoadFrame(sample, sample_size);
+  LIBYUV_BOOL ret = mjpeg_decoder.LoadFrame(src_mjpg, src_size_mjpg);
   if (ret && (mjpeg_decoder.GetWidth() != src_width ||
               mjpeg_decoder.GetHeight() != src_height)) {
     // ERROR: MJPEG frame has unexpected dimensions
@@ -180,9 +180,9 @@ int MJPGToI420(const uint8_t* sample,
       ret = mjpeg_decoder.DecodeToCallback(&JpegI400ToI420, &bufs, dst_width,
                                            dst_height);
     } else {
-      // TODO(fbarchard): Implement conversion for any other colorspace/sample
-      // factors that occur in practice.
-      // ERROR: Unable to convert MJPEG frame because format is not supported
+      // TODO(fbarchard): Implement conversion for any other
+      // colorspace/subsample factors that occur in practice. ERROR: Unable to
+      // convert MJPEG frame because format is not supported
       mjpeg_decoder.UnloadFrame();
       return 1;
     }
@@ -249,8 +249,8 @@ static void JpegI400ToNV21(void* opaque,
 
 // MJPG (Motion JPeg) to NV21
 LIBYUV_API
-int MJPGToNV21(const uint8_t* sample,
-               size_t sample_size,
+int MJPGToNV21(const uint8_t* src_mjpg,
+               size_t src_size_mjpg,
                uint8_t* dst_y,
                int dst_stride_y,
                uint8_t* dst_vu,
@@ -259,14 +259,14 @@ int MJPGToNV21(const uint8_t* sample,
                int src_height,
                int dst_width,
                int dst_height) {
-  if (sample_size == kUnknownDataSize) {
+  if (src_size_mjpg == kUnknownDataSize) {
     // ERROR: MJPEG frame size unknown
     return -1;
   }
 
   // TODO(fbarchard): Port MJpeg to C.
   MJpegDecoder mjpeg_decoder;
-  LIBYUV_BOOL ret = mjpeg_decoder.LoadFrame(sample, sample_size);
+  LIBYUV_BOOL ret = mjpeg_decoder.LoadFrame(src_mjpg, src_size_mjpg);
   if (ret && (mjpeg_decoder.GetWidth() != src_width ||
               mjpeg_decoder.GetHeight() != src_height)) {
     // ERROR: MJPEG frame has unexpected dimensions
@@ -382,22 +382,22 @@ static void JpegI400ToARGB(void* opaque,
 // TODO(fbarchard): review src_width and src_height requirement. dst_width and
 // dst_height may be enough.
 LIBYUV_API
-int MJPGToARGB(const uint8_t* sample,
-               size_t sample_size,
+int MJPGToARGB(const uint8_t* src_mjpg,
+               size_t src_size_mjpg,
                uint8_t* dst_argb,
                int dst_stride_argb,
                int src_width,
                int src_height,
                int dst_width,
                int dst_height) {
-  if (sample_size == kUnknownDataSize) {
+  if (src_size_mjpg == kUnknownDataSize) {
     // ERROR: MJPEG frame size unknown
     return -1;
   }
 
   // TODO(fbarchard): Port MJpeg to C.
   MJpegDecoder mjpeg_decoder;
-  LIBYUV_BOOL ret = mjpeg_decoder.LoadFrame(sample, sample_size);
+  LIBYUV_BOOL ret = mjpeg_decoder.LoadFrame(src_mjpg, src_size_mjpg);
   if (ret && (mjpeg_decoder.GetWidth() != src_width ||
               mjpeg_decoder.GetHeight() != src_height)) {
     // ERROR: MJPEG frame has unexpected dimensions
@@ -450,9 +450,9 @@ int MJPGToARGB(const uint8_t* sample,
       ret = mjpeg_decoder.DecodeToCallback(&JpegI400ToARGB, &bufs, dst_width,
                                            dst_height);
     } else {
-      // TODO(fbarchard): Implement conversion for any other colorspace/sample
-      // factors that occur in practice.
-      // ERROR: Unable to convert MJPEG frame because format is not supported
+      // TODO(fbarchard): Implement conversion for any other
+      // colorspace/subsample factors that occur in practice. ERROR: Unable to
+      // convert MJPEG frame because format is not supported
       mjpeg_decoder.UnloadFrame();
       return 1;
     }

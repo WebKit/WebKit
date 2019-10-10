@@ -36,4 +36,7 @@ default_args = {
 
   # LibYUV relies on Chromium's Android test infrastructure.
   use_cxx11_on_android = false
+
+  # https://bugs.chromium.org/p/libyuv/issues/detail?id=826
+  ios_deployment_target = "10.0"
 }

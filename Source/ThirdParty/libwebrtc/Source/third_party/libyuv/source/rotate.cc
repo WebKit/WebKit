@@ -482,6 +482,66 @@ int I420Rotate(const uint8_t* src_y,
 }
 
 LIBYUV_API
+int I444Rotate(const uint8_t* src_y,
+               int src_stride_y,
+               const uint8_t* src_u,
+               int src_stride_u,
+               const uint8_t* src_v,
+               int src_stride_v,
+               uint8_t* dst_y,
+               int dst_stride_y,
+               uint8_t* dst_u,
+               int dst_stride_u,
+               uint8_t* dst_v,
+               int dst_stride_v,
+               int width,
+               int height,
+               enum libyuv::RotationMode mode) {
+  if (!src_y || !src_u || !src_v || width <= 0 || height == 0 || !dst_y ||
+      !dst_u || !dst_v) {
+    return -1;
+  }
+
+  // Negative height means invert the image.
+  if (height < 0) {
+    height = -height;
+    src_y = src_y + (height - 1) * src_stride_y;
+    src_u = src_u + (height - 1) * src_stride_u;
+    src_v = src_v + (height - 1) * src_stride_v;
+    src_stride_y = -src_stride_y;
+    src_stride_u = -src_stride_u;
+    src_stride_v = -src_stride_v;
+  }
+
+  switch (mode) {
+    case libyuv::kRotate0:
+      // copy frame
+      CopyPlane(src_y, src_stride_y, dst_y, dst_stride_y, width, height);
+      CopyPlane(src_u, src_stride_u, dst_u, dst_stride_u, width, height);
+      CopyPlane(src_v, src_stride_v, dst_v, dst_stride_v, width, height);
+      return 0;
+    case libyuv::kRotate90:
+      RotatePlane90(src_y, src_stride_y, dst_y, dst_stride_y, width, height);
+      RotatePlane90(src_u, src_stride_u, dst_u, dst_stride_u, width, height);
+      RotatePlane90(src_v, src_stride_v, dst_v, dst_stride_v, width, height);
+      return 0;
+    case libyuv::kRotate270:
+      RotatePlane270(src_y, src_stride_y, dst_y, dst_stride_y, width, height);
+      RotatePlane270(src_u, src_stride_u, dst_u, dst_stride_u, width, height);
+      RotatePlane270(src_v, src_stride_v, dst_v, dst_stride_v, width, height);
+      return 0;
+    case libyuv::kRotate180:
+      RotatePlane180(src_y, src_stride_y, dst_y, dst_stride_y, width, height);
+      RotatePlane180(src_u, src_stride_u, dst_u, dst_stride_u, width, height);
+      RotatePlane180(src_v, src_stride_v, dst_v, dst_stride_v, width, height);
+      return 0;
+    default:
+      break;
+  }
+  return -1;
+}
+
+LIBYUV_API
 int NV12ToI420Rotate(const uint8_t* src_y,
                      int src_stride_y,
                      const uint8_t* src_uv,

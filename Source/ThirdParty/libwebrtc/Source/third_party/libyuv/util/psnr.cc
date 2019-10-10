@@ -189,7 +189,7 @@ static uint32_t SumSquareError_SSE2(const uint8_t* src_a,
         ,
         "xmm0", "xmm1", "xmm2", "xmm3", "xmm5"
 #endif
-      );  // NOLINT
+  );  // NOLINT
   return sse;
 }
 #endif  // LIBYUV_DISABLE_X86 etc

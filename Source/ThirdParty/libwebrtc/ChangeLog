@@ -1,3 +1,14 @@
+2019-10-10  Youenn Fablet  <youenn@apple.com>
+
+        Update libwebrtc third-arty libyuv to M78
+        https://bugs.webkit.org/show_bug.cgi?id=202727
+
+        Reviewed by Alex Christensen.
+
+        libyuv
+
+        * Source/third_party/libyuv: Updated.
+
 2019-10-04  youenn fablet  <youenn@apple.com>
 
         Allow to suspend RTCPeerConnection when not connected

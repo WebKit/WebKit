@@ -12,6 +12,7 @@ pin-log.txt
 /native_client
 /net
 /out
+/source/out
 /sde-avx-sse-transition-out.txt
 /testing
 /third_party

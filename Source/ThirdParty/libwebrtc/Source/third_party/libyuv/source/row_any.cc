@@ -286,7 +286,12 @@ ANY21(MergeUVRow_Any_MSA, MergeUVRow_MSA, 0, 1, 1, 2, 15)
 #ifdef HAS_MERGEUVROW_MMI
 ANY21(MergeUVRow_Any_MMI, MergeUVRow_MMI, 0, 1, 1, 2, 7)
 #endif
-
+#ifdef HAS_NV21TOYUV24ROW_NEON
+ANY21(NV21ToYUV24Row_Any_NEON, NV21ToYUV24Row_NEON, 1, 1, 2, 3, 15)
+#endif
+#ifdef HAS_NV21TOYUV24ROW_AVX2
+ANY21(NV21ToYUV24Row_Any_AVX2, NV21ToYUV24Row_AVX2, 1, 1, 2, 3, 31)
+#endif
 // Math functions.
 #ifdef HAS_ARGBMULTIPLYROW_SSE2
 ANY21(ARGBMultiplyRow_Any_SSE2, ARGBMultiplyRow_SSE2, 0, 4, 4, 4, 3)
@@ -701,6 +706,12 @@ ANY11(UYVYToYRow_Any_MSA, UYVYToYRow_MSA, 1, 4, 1, 31)
 #endif
 #ifdef HAS_UYVYTOYROW_MMI
 ANY11(UYVYToYRow_Any_MMI, UYVYToYRow_MMI, 1, 4, 1, 15)
+#endif
+#ifdef HAS_AYUVTOYROW_NEON
+ANY11(AYUVToYRow_Any_NEON, AYUVToYRow_NEON, 0, 4, 1, 15)
+#endif
+#ifdef HAS_SWAPUVROW_NEON
+ANY11(SwapUVRow_Any_NEON, SwapUVRow_NEON, 0, 2, 2, 15)
 #endif
 #ifdef HAS_RGB24TOARGBROW_NEON
 ANY11(RGB24ToARGBRow_Any_NEON, RGB24ToARGBRow_NEON, 0, 3, 4, 7)
@@ -1380,6 +1391,37 @@ ANY12S(UYVYToUVRow_Any_MSA, UYVYToUVRow_MSA, 1, 4, 31)
 ANY12S(UYVYToUVRow_Any_MMI, UYVYToUVRow_MMI, 1, 4, 15)
 #endif
 #undef ANY12S
+
+// Any 1 to 1 with source stride (2 rows of source).  Outputs UV plane.
+// 128 byte row allows for 32 avx ARGB pixels.
+#define ANY11S(NAMEANY, ANY_SIMD, UVSHIFT, BPP, MASK)                        \
+  void NAMEANY(const uint8_t* src_ptr, int src_stride_ptr, uint8_t* dst_vu,  \
+               int width) {                                                  \
+    SIMD_ALIGNED(uint8_t temp[128 * 3]);                                     \
+    memset(temp, 0, 128 * 2); /* for msan */                                 \
+    int r = width & MASK;                                                    \
+    int n = width & ~MASK;                                                   \
+    if (n > 0) {                                                             \
+      ANY_SIMD(src_ptr, src_stride_ptr, dst_vu, n);                          \
+    }                                                                        \
+    memcpy(temp, src_ptr + (n >> UVSHIFT) * BPP, SS(r, UVSHIFT) * BPP);      \
+    memcpy(temp + 128, src_ptr + src_stride_ptr + (n >> UVSHIFT) * BPP,      \
+           SS(r, UVSHIFT) * BPP);                                            \
+    if ((width & 1) && UVSHIFT == 0) { /* repeat last pixel for subsample */ \
+      memcpy(temp + SS(r, UVSHIFT) * BPP, temp + SS(r, UVSHIFT) * BPP - BPP, \
+             BPP);                                                           \
+      memcpy(temp + 128 + SS(r, UVSHIFT) * BPP,                              \
+             temp + 128 + SS(r, UVSHIFT) * BPP - BPP, BPP);                  \
+    }                                                                        \
+    ANY_SIMD(temp, 128, temp + 256, MASK + 1);                               \
+    memcpy(dst_vu + (n >> 1) * 2, temp + 256, SS(r, 1) * 2);                 \
+  }
+
+#ifdef HAS_AYUVTOVUROW_NEON
+ANY11S(AYUVToUVRow_Any_NEON, AYUVToUVRow_NEON, 0, 4, 15)
+ANY11S(AYUVToVURow_Any_NEON, AYUVToVURow_NEON, 0, 4, 15)
+#endif
+#undef ANY11S
 
 #ifdef __cplusplus
 }  // extern "C"

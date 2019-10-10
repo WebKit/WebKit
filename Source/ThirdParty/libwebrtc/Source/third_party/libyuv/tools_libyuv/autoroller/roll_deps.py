@@ -298,9 +298,6 @@ def GenerateCommitMessage(current_cr_rev, new_cr_rev, current_commit_pos,
   commit_msg.append('Change log: %s' % (CHROMIUM_LOG_TEMPLATE % rev_interval))
   commit_msg.append('Full diff: %s\n' % (CHROMIUM_COMMIT_TEMPLATE %
                                          rev_interval))
-  # TBR field will be empty unless in some custom cases, where some engineers
-  # are added.
-  tbr_authors = ''
   if changed_deps_list:
     commit_msg.append('Changed dependencies:')
 
@@ -322,7 +319,11 @@ def GenerateCommitMessage(current_cr_rev, new_cr_rev, current_commit_pos,
   else:
     commit_msg.append('No update to Clang.\n')
 
-  commit_msg.append('TBR=%s' % tbr_authors)
+  # TBR needs to be non-empty for Gerrit to process it.
+  git_author = _RunCommand(['git', 'config', 'user.email'],
+                           working_dir=CHECKOUT_SRC_DIR)[0].strip()
+  commit_msg.append('TBR=%s' % git_author)
+
   commit_msg.append('BUG=None')
   return '\n'.join(commit_msg)
 

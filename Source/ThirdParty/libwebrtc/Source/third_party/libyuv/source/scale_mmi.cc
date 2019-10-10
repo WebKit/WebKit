@@ -26,6 +26,8 @@ extern "C" {
 // This module is for Mips MMI.
 #if !defined(LIBYUV_DISABLE_MMI) && defined(_MIPS_ARCH_LOONGSON3A)
 
+// clang-format off
+
 // CPU agnostic row functions
 void ScaleRowDown2_MMI(const uint8_t* src_ptr,
                        ptrdiff_t src_stride,
@@ -1100,6 +1102,8 @@ void ScaleRowUp2_16_MMI(const uint16_t* src_ptr,
         [mask2] "f"(mask2), [mask3] "f"(mask3), [shift] "f"(shift), [ph] "f"(ph)
       : "memory");
 }
+
+// clang-format on
 
 #endif  // !defined(LIBYUV_DISABLE_MMI) && defined(_MIPS_ARCH_LOONGSON3A)
 

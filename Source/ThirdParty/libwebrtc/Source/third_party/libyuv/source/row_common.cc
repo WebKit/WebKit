@@ -3231,6 +3231,106 @@ void GaussCol_C(const uint16_t* src0,
   }
 }
 
+// Convert biplanar NV21 to packed YUV24
+void NV21ToYUV24Row_C(const uint8_t* src_y,
+                      const uint8_t* src_vu,
+                      uint8_t* dst_yuv24,
+                      int width) {
+  int x;
+  for (x = 0; x < width - 1; x += 2) {
+    dst_yuv24[0] = src_vu[0];  // V
+    dst_yuv24[1] = src_vu[1];  // U
+    dst_yuv24[2] = src_y[0];   // Y0
+    dst_yuv24[3] = src_vu[0];  // V
+    dst_yuv24[4] = src_vu[1];  // U
+    dst_yuv24[5] = src_y[1];   // Y1
+    src_y += 2;
+    src_vu += 2;
+    dst_yuv24 += 6;  // Advance 2 pixels.
+  }
+  if (width & 1) {
+    dst_yuv24[0] = src_vu[0];  // V
+    dst_yuv24[1] = src_vu[1];  // U
+    dst_yuv24[2] = src_y[0];   // Y0
+  }
+}
+
+// Filter 2 rows of AYUV UV's (444) into UV (420).
+void AYUVToUVRow_C(const uint8_t* src_ayuv,
+                   int src_stride_ayuv,
+                   uint8_t* dst_uv,
+                   int width) {
+  // Output a row of UV values, filtering 2x2 rows of AYUV.
+  int x;
+  for (x = 0; x < width; x += 2) {
+    dst_uv[0] = (src_ayuv[1] + src_ayuv[5] + src_ayuv[src_stride_ayuv + 1] +
+                 src_ayuv[src_stride_ayuv + 5] + 2) >>
+                2;
+    dst_uv[1] = (src_ayuv[0] + src_ayuv[4] + src_ayuv[src_stride_ayuv + 0] +
+                 src_ayuv[src_stride_ayuv + 4] + 2) >>
+                2;
+    src_ayuv += 8;
+    dst_uv += 2;
+  }
+  if (width & 1) {
+    dst_uv[0] = (src_ayuv[0] + src_ayuv[0] + src_ayuv[src_stride_ayuv + 0] +
+                 src_ayuv[src_stride_ayuv + 0] + 2) >>
+                2;
+    dst_uv[1] = (src_ayuv[1] + src_ayuv[1] + src_ayuv[src_stride_ayuv + 1] +
+                 src_ayuv[src_stride_ayuv + 1] + 2) >>
+                2;
+  }
+}
+
+// Filter 2 rows of AYUV UV's (444) into VU (420).
+void AYUVToVURow_C(const uint8_t* src_ayuv,
+                   int src_stride_ayuv,
+                   uint8_t* dst_vu,
+                   int width) {
+  // Output a row of VU values, filtering 2x2 rows of AYUV.
+  int x;
+  for (x = 0; x < width; x += 2) {
+    dst_vu[0] = (src_ayuv[0] + src_ayuv[4] + src_ayuv[src_stride_ayuv + 0] +
+                 src_ayuv[src_stride_ayuv + 4] + 2) >>
+                2;
+    dst_vu[1] = (src_ayuv[1] + src_ayuv[5] + src_ayuv[src_stride_ayuv + 1] +
+                 src_ayuv[src_stride_ayuv + 5] + 2) >>
+                2;
+    src_ayuv += 8;
+    dst_vu += 2;
+  }
+  if (width & 1) {
+    dst_vu[0] = (src_ayuv[0] + src_ayuv[0] + src_ayuv[src_stride_ayuv + 0] +
+                 src_ayuv[src_stride_ayuv + 0] + 2) >>
+                2;
+    dst_vu[1] = (src_ayuv[1] + src_ayuv[1] + src_ayuv[src_stride_ayuv + 1] +
+                 src_ayuv[src_stride_ayuv + 1] + 2) >>
+                2;
+  }
+}
+
+// Copy row of AYUV Y's into Y
+void AYUVToYRow_C(const uint8_t* src_ayuv, uint8_t* dst_y, int width) {
+  // Output a row of Y values.
+  int x;
+  for (x = 0; x < width; ++x) {
+    dst_y[x] = src_ayuv[2];  // v,u,y,a
+    src_ayuv += 4;
+  }
+}
+
+void SwapUVRow_C(const uint8_t* src_uv, uint8_t* dst_vu, int width) {
+  int x;
+  for (x = 0; x < width; ++x) {
+    uint8_t u = src_uv[0];
+    uint8_t v = src_uv[1];
+    dst_vu[0] = v;
+    dst_vu[1] = u;
+    src_uv += 2;
+    dst_vu += 2;
+  }
+}
+
 #ifdef __cplusplus
 }  // extern "C"
 }  // namespace libyuv

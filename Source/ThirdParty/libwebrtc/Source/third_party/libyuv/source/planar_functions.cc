@@ -440,7 +440,6 @@ void MergeUVPlane(const uint8_t* src_u,
   int y;
   void (*MergeUVRow)(const uint8_t* src_u, const uint8_t* src_v,
                      uint8_t* dst_uv, int width) = MergeUVRow_C;
-  // Coalesce rows.
   // Negative height means invert the image.
   if (height < 0) {
     height = -height;
@@ -502,6 +501,63 @@ void MergeUVPlane(const uint8_t* src_u,
     src_v += src_stride_v;
     dst_uv += dst_stride_uv;
   }
+}
+
+// Convert NV21 to NV12.
+LIBYUV_API
+int NV21ToNV12(const uint8_t* src_y,
+               int src_stride_y,
+               const uint8_t* src_vu,
+               int src_stride_vu,
+               uint8_t* dst_y,
+               int dst_stride_y,
+               uint8_t* dst_uv,
+               int dst_stride_uv,
+               int width,
+               int height) {
+  int y;
+  void (*SwapUVRow)(const uint8_t* src_uv, uint8_t* dst_vu, int width) =
+      SwapUVRow_C;
+
+  int halfwidth = (width + 1) >> 1;
+  int halfheight = (height + 1) >> 1;
+  if (!src_vu || !dst_uv || width <= 0 || height == 0) {
+    return -1;
+  }
+  // Negative height means invert the image.
+  if (height < 0) {
+    height = -height;
+    halfheight = (height + 1) >> 1;
+    src_y = src_y + (height - 1) * src_stride_y;
+    src_vu = src_vu + (halfheight - 1) * src_stride_vu;
+    src_stride_y = -src_stride_y;
+    src_stride_vu = -src_stride_vu;
+  }
+  // Coalesce rows.
+  if (src_stride_vu == halfwidth * 2 && dst_stride_uv == halfwidth * 2) {
+    halfwidth *= halfheight;
+    halfheight = 1;
+    src_stride_vu = dst_stride_uv = 0;
+  }
+
+#if defined(HAS_SWAPUVROW_NEON)
+  if (TestCpuFlag(kCpuHasNEON)) {
+    SwapUVRow = SwapUVRow_Any_NEON;
+    if (IS_ALIGNED(halfwidth, 16)) {
+      SwapUVRow = SwapUVRow_NEON;
+    }
+  }
+#endif
+  if (dst_y) {
+    CopyPlane(src_y, src_stride_y, dst_y, dst_stride_y, width, height);
+  }
+
+  for (y = 0; y < halfheight; ++y) {
+    SwapUVRow(src_vu, dst_uv, halfwidth);
+    src_vu += src_stride_vu;
+    dst_uv += dst_stride_uv;
+  }
+  return 0;
 }
 
 // Support function for NV12 etc RGB channels.

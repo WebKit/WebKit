@@ -483,7 +483,7 @@ void ScaleRowDown34_SSSE3(const uint8_t* src_ptr,
       : "m"(kShuf0),  // %0
         "m"(kShuf1),  // %1
         "m"(kShuf2)   // %2
-      );
+  );
   asm volatile(
 
       LABELALIGN
@@ -521,7 +521,7 @@ void ScaleRowDown34_1_Box_SSSE3(const uint8_t* src_ptr,
       : "m"(kShuf01),  // %0
         "m"(kShuf11),  // %1
         "m"(kShuf21)   // %2
-      );
+  );
   asm volatile(
       "movdqa    %0,%%xmm5                       \n"  // kMadd01
       "movdqa    %1,%%xmm0                       \n"  // kMadd11
@@ -530,7 +530,7 @@ void ScaleRowDown34_1_Box_SSSE3(const uint8_t* src_ptr,
       : "m"(kMadd01),  // %0
         "m"(kMadd11),  // %1
         "m"(kRound34)  // %2
-      );
+  );
   asm volatile(
 
       LABELALIGN
@@ -587,7 +587,7 @@ void ScaleRowDown34_0_Box_SSSE3(const uint8_t* src_ptr,
       : "m"(kShuf01),  // %0
         "m"(kShuf11),  // %1
         "m"(kShuf21)   // %2
-      );
+  );
   asm volatile(
       "movdqa    %0,%%xmm5                       \n"  // kMadd01
       "movdqa    %1,%%xmm0                       \n"  // kMadd11
@@ -596,7 +596,7 @@ void ScaleRowDown34_0_Box_SSSE3(const uint8_t* src_ptr,
       : "m"(kMadd01),  // %0
         "m"(kMadd11),  // %1
         "m"(kRound34)  // %2
-      );
+  );
 
   asm volatile(
 
@@ -690,7 +690,7 @@ void ScaleRowDown38_2_Box_SSSE3(const uint8_t* src_ptr,
         "m"(kShufAb1),  // %1
         "m"(kShufAb2),  // %2
         "m"(kScaleAb2)  // %3
-      );
+  );
   asm volatile(
 
       LABELALIGN
@@ -734,7 +734,7 @@ void ScaleRowDown38_3_Box_SSSE3(const uint8_t* src_ptr,
       : "m"(kShufAc),    // %0
         "m"(kShufAc3),   // %1
         "m"(kScaleAc33)  // %2
-      );
+  );
   asm volatile(
 
       LABELALIGN
@@ -1272,7 +1272,7 @@ void ScaleARGBFilterCols_SSSE3(uint8_t* dst_argb,
       :
       : "m"(kShuffleColARGB),   // %0
         "m"(kShuffleFractions)  // %1
-      );
+  );
 
   asm volatile(
       "movd      %5,%%xmm2                       \n"

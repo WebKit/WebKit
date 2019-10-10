@@ -3186,7 +3186,8 @@ TEST_F(LibYUVPlanarTest, TestGaussRow_Opt) {
   }
   GaussRow_C(&orig_pixels[0], &dst_pixels_c[0], 640);
   for (int i = 0; i < benchmark_pixels_div1280_ * 2; ++i) {
-#if !defined(LIBYUV_DISABLE_NEON) && defined(__aarch64__)
+#if !defined(LIBYUV_DISABLE_NEON) && \
+    (defined(__aarch64__) || defined(__ARM_NEON__) || defined(LIBYUV_NEON))
     int has_neon = TestCpuFlag(kCpuHasNEON);
     if (has_neon) {
       GaussRow_NEON(&orig_pixels[0], &dst_pixels_opt[0], 640);
@@ -3239,7 +3240,8 @@ TEST_F(LibYUVPlanarTest, TestGaussCol_Opt) {
              &orig_pixels[640 * 3], &orig_pixels[640 * 4], &dst_pixels_c[0],
              640);
   for (int i = 0; i < benchmark_pixels_div1280_ * 2; ++i) {
-#if !defined(LIBYUV_DISABLE_NEON) && defined(__aarch64__)
+#if !defined(LIBYUV_DISABLE_NEON) && \
+    (defined(__aarch64__) || defined(__ARM_NEON__) || defined(LIBYUV_NEON))
     int has_neon = TestCpuFlag(kCpuHasNEON);
     if (has_neon) {
       GaussCol_NEON(&orig_pixels[0], &orig_pixels[640], &orig_pixels[640 * 2],
@@ -3265,6 +3267,25 @@ TEST_F(LibYUVPlanarTest, TestGaussCol_Opt) {
             static_cast<uint32_t>(0 * 1 + 640 * 4 + 640 * 2 * 6 + 640 * 3 * 4 +
                                   640 * 4 * 1));
   EXPECT_EQ(dst_pixels_c[639], static_cast<uint32_t>(30704));
+}
+
+TEST_F(LibYUVPlanarTest, SwapUVRow) {
+  const int kPixels = benchmark_width_ * benchmark_height_;
+  align_buffer_page_end(src_pixels_vu, kPixels * 2);
+  align_buffer_page_end(dst_pixels_uv, kPixels * 2);
+
+  MemRandomize(src_pixels_vu, kPixels * 2);
+  memset(dst_pixels_uv, 1, kPixels * 2);
+
+  SwapUVRow_C(src_pixels_vu, dst_pixels_uv, kPixels);
+
+  for (int i = 0; i < kPixels; ++i) {
+    EXPECT_EQ(dst_pixels_uv[i * 2 + 0], src_pixels_vu[i * 2 + 1]);
+    EXPECT_EQ(dst_pixels_uv[i * 2 + 1], src_pixels_vu[i * 2 + 0]);
+  }
+
+  free_aligned_buffer_page_end(src_pixels_vu);
+  free_aligned_buffer_page_end(dst_pixels_uv);
 }
 
 }  // namespace libyuv

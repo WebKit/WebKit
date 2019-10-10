@@ -4222,7 +4222,7 @@ __declspec(naked) void ARGBBlendRow_SSSE3(const uint8_t* src_argb0,
     add        ecx, 4 - 1
     jl         convertloop1b
 
-        // 1 pixel loop.
+            // 1 pixel loop.
   convertloop1:
     movd       xmm3, [eax]  // src argb
     lea        eax, [eax + 4]
@@ -5360,7 +5360,7 @@ void CumulativeSumToAverageRow_SSE2(const int32_t* topleft,
     add        ecx, 4 - 1
     jl         l1b
 
-        // 1 pixel loop
+            // 1 pixel loop
   l1:
     movdqu     xmm0, [eax]
     psubd      xmm0, [eax + edx * 4]
@@ -5448,9 +5448,9 @@ void ComputeCumulativeSumRow_SSE2(const uint8_t* row,
     add        ecx, 4 - 1
     jl         l1b
 
-        // 1 pixel loop
+            // 1 pixel loop
   l1:
-    movd       xmm2, dword ptr [eax]  // 1 argb pixel 4 bytes.
+    movd       xmm2, dword ptr [eax]  // 1 argb pixel
     lea        eax, [eax + 4]
     punpcklbw  xmm2, xmm1
     punpcklwd  xmm2, xmm1
@@ -5534,7 +5534,7 @@ __declspec(naked) LIBYUV_API void ARGBAffineRow_SSE2(const uint8_t* src_argb,
     add        ecx, 4 - 1
     jl         l1b
 
-        // 1 pixel loop
+            // 1 pixel loop
   l1:
     cvttps2dq  xmm0, xmm2  // x, y float to int
     packssdw   xmm0, xmm0  // x, y as shorts

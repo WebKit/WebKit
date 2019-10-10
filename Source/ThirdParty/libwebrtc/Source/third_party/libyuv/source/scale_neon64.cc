@@ -38,7 +38,7 @@ void ScaleRowDown2_NEON(const uint8_t* src_ptr,
         "+r"(dst_width)  // %2
       :
       : "v0", "v1"  // Clobber List
-      );
+  );
 }
 
 // Read 32x1 average down and write 16x1.
@@ -60,7 +60,7 @@ void ScaleRowDown2Linear_NEON(const uint8_t* src_ptr,
         "+r"(dst_width)  // %2
       :
       : "v0", "v1"  // Clobber List
-      );
+  );
 }
 
 // Read 32x2 average down and write 16x1.
@@ -89,7 +89,7 @@ void ScaleRowDown2Box_NEON(const uint8_t* src_ptr,
         "+r"(dst_width)    // %3
       :
       : "v0", "v1", "v2", "v3"  // Clobber List
-      );
+  );
 }
 
 void ScaleRowDown4_NEON(const uint8_t* src_ptr,
@@ -534,7 +534,7 @@ void ScaleAddRow_NEON(const uint8_t* src_ptr,
         "+r"(src_width)  // %2
       :
       : "memory", "cc", "v0", "v1", "v2"  // Clobber List
-      );
+  );
 }
 
 // TODO(Yang Zhang): Investigate less load instructions for
@@ -719,7 +719,7 @@ void ScaleARGBRowDown2_NEON(const uint8_t* src_ptr,
         "+r"(dst_width)  // %2
       :
       : "memory", "cc", "v0", "v1", "v2", "v3"  // Clobber List
-      );
+  );
 }
 
 void ScaleARGBRowDown2Linear_NEON(const uint8_t* src_argb,
@@ -742,7 +742,7 @@ void ScaleARGBRowDown2Linear_NEON(const uint8_t* src_argb,
         "+r"(dst_width)  // %2
       :
       : "memory", "cc", "v0", "v1", "v2", "v3"  // Clobber List
-      );
+  );
 }
 
 void ScaleARGBRowDown2Box_NEON(const uint8_t* src_ptr,
@@ -991,7 +991,7 @@ void ScaleRowDown2Box_16_NEON(const uint16_t* src_ptr,
         "+r"(dst_width)    // %3
       :
       : "v0", "v1", "v2", "v3"  // Clobber List
-      );
+  );
 }
 
 // Read 8x2 upsample with filtering and write 16x1.
@@ -1041,7 +1041,7 @@ void ScaleRowUp2_16_NEON(const uint16_t* src_ptr,
         "r"(14LL)          // %5
       : "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v16", "v17", "v18",
         "v19"  // Clobber List
-      );
+  );
 }
 
 #endif  // !defined(LIBYUV_DISABLE_NEON) && defined(__aarch64__)

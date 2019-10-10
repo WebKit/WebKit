@@ -1793,8 +1793,9 @@ int NV21ToARGB(const uint8_t* src_y,
 }
 
 // Convert NV12 to ABGR.
-// To output ABGR instead of ARGB swap the UV and use a mirrrored yuc matrix.
+// To output ABGR instead of ARGB swap the UV and use a mirrored yuv matrix.
 // To swap the UV use NV12 instead of NV21.LIBYUV_API
+LIBYUV_API
 int NV12ToABGR(const uint8_t* src_y,
                int src_stride_y,
                const uint8_t* src_uv,
@@ -1996,6 +1997,54 @@ int NV21ToRAW(const uint8_t* src_y,
               int height) {
   return NV12ToRGB24Matrix(src_y, src_stride_y, src_vu, src_stride_vu, dst_raw,
                            dst_stride_raw, &kYvuI601Constants, width, height);
+}
+
+// Convert NV21 to YUV24
+int NV21ToYUV24(const uint8_t* src_y,
+                int src_stride_y,
+                const uint8_t* src_vu,
+                int src_stride_vu,
+                uint8_t* dst_yuv24,
+                int dst_stride_yuv24,
+                int width,
+                int height) {
+  int y;
+  void (*NV21ToYUV24Row)(const uint8_t* src_y, const uint8_t* src_vu,
+                         uint8_t* dst_yuv24, int width) = NV21ToYUV24Row_C;
+  if (!src_y || !src_vu || !dst_yuv24 || width <= 0 || height == 0) {
+    return -1;
+  }
+  // Negative height means invert the image.
+  if (height < 0) {
+    height = -height;
+    dst_yuv24 = dst_yuv24 + (height - 1) * dst_stride_yuv24;
+    dst_stride_yuv24 = -dst_stride_yuv24;
+  }
+#if defined(HAS_NV21TOYUV24ROW_NEON)
+  if (TestCpuFlag(kCpuHasNEON)) {
+    NV21ToYUV24Row = NV21ToYUV24Row_Any_NEON;
+    if (IS_ALIGNED(width, 16)) {
+      NV21ToYUV24Row = NV21ToYUV24Row_NEON;
+    }
+  }
+#endif
+#if defined(HAS_NV21TOYUV24ROW_AVX2)
+  if (TestCpuFlag(kCpuHasAVX2)) {
+    NV21ToYUV24Row = NV21ToYUV24Row_Any_AVX2;
+    if (IS_ALIGNED(width, 32)) {
+      NV21ToYUV24Row = NV21ToYUV24Row_AVX2;
+    }
+  }
+#endif
+  for (y = 0; y < height; ++y) {
+    NV21ToYUV24Row(src_y, src_vu, dst_yuv24, width);
+    dst_yuv24 += dst_stride_yuv24;
+    src_y += src_stride_y;
+    if (y & 1) {
+      src_vu += src_stride_vu;
+    }
+  }
+  return 0;
 }
 
 // Convert M420 to ARGB.
