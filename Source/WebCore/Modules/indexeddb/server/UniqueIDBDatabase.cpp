@@ -229,13 +229,11 @@ void UniqueIDBDatabase::startSpaceIncreaseTask(uint64_t identifier, uint64_t tas
 void UniqueIDBDatabase::finishSpaceIncreaseTask(uint64_t identifier, bool isTaskSuccessful)
 {
     auto iterator = m_pendingSpaceIncreaseTasks.find(identifier);
-    ASSERT(iterator != m_pendingSpaceIncreaseTasks.end() || !isTaskSuccessful);
-    if (iterator != m_pendingSpaceIncreaseTasks.end()) {
-        m_server->decreasePotentialSpaceUsed(m_identifier.origin(), iterator->value);
-        if (isTaskSuccessful)
-            m_server->increaseSpaceUsed(m_identifier.origin(), iterator->value);
-        m_pendingSpaceIncreaseTasks.remove(iterator);
-    }
+    ASSERT(iterator != m_pendingSpaceIncreaseTasks.end());
+    m_server->decreasePotentialSpaceUsed(m_identifier.origin(), iterator->value);
+    if (isTaskSuccessful)
+        m_server->increaseSpaceUsed(m_identifier.origin(), iterator->value);
+    m_pendingSpaceIncreaseTasks.remove(iterator);
 }
 
 void UniqueIDBDatabase::performCurrentOpenOperation()
@@ -2207,10 +2205,6 @@ void UniqueIDBDatabase::immediateCloseForUserDelete()
     LOG(IndexedDB, "UniqueIDBDatabase::immediateCloseForUserDelete - Cancelling (%i, %i, %i, %i) callbacks", m_errorCallbacks.size(), m_keyDataCallbacks.size(), m_getResultCallbacks.size(), m_countCallbacks.size());
 
     ASSERT(isMainThread());
-
-    for (auto size : m_pendingSpaceIncreaseTasks.values())
-        m_server->decreasePotentialSpaceUsed(m_identifier.origin(), size);
-    m_pendingSpaceIncreaseTasks.clear();
 
     // Error out all transactions
     for (auto& identifier : copyToVector(m_inProgressTransactions.keys()))

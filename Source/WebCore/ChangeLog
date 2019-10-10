@@ -1,3 +1,13 @@
+2019-10-09  Sihui Liu  <sihui_liu@apple.com>
+
+        Unreviewed, fix an asserition after r250937.
+
+        Space increase tasks will be finished once it's started.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::finishSpaceIncreaseTask):
+        (WebCore::IDBServer::UniqueIDBDatabase::immediateCloseForUserDelete):
+
 2019-10-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Refactor Pasteboard item reading functions to work on both iOS and macOS
