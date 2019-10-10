@@ -29,6 +29,7 @@
 #import "AnimationUtilities.h"
 #import "GraphicsContext.h"
 #import "GraphicsLayerCA.h"
+#import "IOSurface.h"
 #import "LengthFunctions.h"
 #import "PlatformCAAnimationCocoa.h"
 #import "PlatformCAFilters.h"
@@ -1037,7 +1038,7 @@ GraphicsLayer::EmbeddedViewID PlatformCALayerCocoa::embeddedViewID() const
 
 static NSString *layerContentsFormat(bool acceleratesDrawing, bool wantsDeepColor, bool supportsSubpixelAntialiasedFonts)
 {
-#if PLATFORM(IOS_FAMILY)
+#if HAVE(IOSURFACE_RGB10)
     if (wantsDeepColor)
         return kCAContentsFormatRGBA10XR;
 #else

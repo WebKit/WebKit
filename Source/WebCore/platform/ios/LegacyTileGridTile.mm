@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #include "Color.h"
+#include "IOSurface.h"
 #include "LegacyTileCache.h"
 #include "LegacyTileGrid.h"
 #include "LegacyTileLayer.h"
@@ -61,8 +62,10 @@ LegacyTileGridTile::LegacyTileGridTile(LegacyTileGrid* tileGrid, const IntRect& 
         m_tileLayer = adoptNS([[LegacyTileLayer alloc] init]);
     }
     LegacyTileLayer* layer = m_tileLayer.get();
+#if HAVE(IOSURFACE_RGB10)
     if (screenSupportsExtendedColor())
         layer.contentsFormat = kCAContentsFormatRGBA10XR;
+#endif
 
     [layer setTileGrid:tileGrid];
     [layer setOpaque:m_tileGrid->tileCache().tilesOpaque()];

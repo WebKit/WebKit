@@ -1,3 +1,15 @@
+2019-10-10  Tim Horton  <timothy_horton@apple.com>
+
+        Use HAVE(IOSURFACE_RGB10) instead of PLATFORM(IOS_FAMILY) where appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=202823
+
+        Reviewed by Wenson Hsieh.
+
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::layerContentsFormat):
+        * platform/ios/LegacyTileGridTile.mm:
+        (WebCore::LegacyTileGridTile::LegacyTileGridTile):
+
 2019-10-10  Jer Noble  <jer.noble@apple.com>
 
         [Catalina] LayoutTest fast/canvas/webgl/texImage2D-mse-flip-{true,false}.html failing
