@@ -1,3 +1,10 @@
+2019-10-10  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, tweak test to address flakiness on WK1.
+
+        * media/media-source/media-source-page-cache-expected.txt:
+        * media/media-source/media-source-page-cache.html:
+
 2019-10-10  Youenn Fablet  <youenn@apple.com>
 
         Do not timeout a load intercepted by service worker that receives a response

@@ -28,23 +28,27 @@
         }
     });
 
-    function runTest() {
-        findMediaElement();
+    onload = () => {
+        setTimeout(() => {
+            findMediaElement();
 
-        source = new MediaSource();
-        waitForEvent('sourceopen', sourceOpen, false, false, source);
-        run('video.src = URL.createObjectURL(source)');
+            source = new MediaSource();
+            waitForEvent('sourceopen', sourceOpen, false, false, source);
+            run('video.src = URL.createObjectURL(source)');
+        }, 0);
     }
 
     function sourceOpen() {
         run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
         testExpected('source.sourceBuffers[0]', sourceBuffer);
-        testLink.click(); 
+        setTimeout(() => {
+            testLink.click();
+        }, 0);
     }
     
     </script>
 </head>
-<body onload="runTest()">
+<body>
     <video></video>
     <a id="testLink" href="../../fast/history/resources/page-cache-helper.html" style="display: none">Link</a>
 </body>
