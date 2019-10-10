@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -39,9 +39,9 @@ class RandomDeviceSeedSeq {
 
 }  // namespace
 
-std::mt19937_64* GetThreadLocalRng() {
+std::mt19937_64* GetSharedRng() {
   RandomDeviceSeedSeq seed_seq;
-  thread_local auto* rng = new std::mt19937_64(seed_seq);
+  static auto* rng = new std::mt19937_64(seed_seq);
   return rng;
 }
 
@@ -51,7 +51,7 @@ std::string Generator<std::string>::operator()() const {
   std::string res;
   res.resize(32);
   std::generate(res.begin(), res.end(),
-                [&]() { return chars(*GetThreadLocalRng()); });
+                [&]() { return chars(*GetSharedRng()); });
   return res;
 }
 
@@ -63,7 +63,7 @@ absl::string_view Generator<absl::string_view>::operator()() const {
   auto& res = arena->back();
   res.resize(32);
   std::generate(res.begin(), res.end(),
-                [&]() { return chars(*GetThreadLocalRng()); });
+                [&]() { return chars(*GetSharedRng()); });
   return res;
 }
 

@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -84,7 +84,7 @@ struct hash_policy_traits {
   }
 
   // Transfers the `old_slot` to `new_slot`. Any memory allocated by the
-  // allocator inside `old_slot` to `new_slot` can be transfered.
+  // allocator inside `old_slot` to `new_slot` can be transferred.
   //
   // OPTIONAL: defaults to:
   //

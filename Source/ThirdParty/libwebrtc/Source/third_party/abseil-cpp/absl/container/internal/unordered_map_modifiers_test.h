@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,7 +26,7 @@ namespace container_internal {
 template <class UnordMap>
 class ModifiersTest : public ::testing::Test {};
 
-TYPED_TEST_CASE_P(ModifiersTest);
+TYPED_TEST_SUITE_P(ModifiersTest);
 
 TYPED_TEST_P(ModifiersTest, Clear) {
   using T = hash_internal::GeneratedType<TypeParam>;
@@ -269,4 +269,5 @@ REGISTER_TYPED_TEST_CASE_P(ModifiersTest, Clear, Insert, InsertHint,
 
 }  // namespace container_internal
 }  // namespace absl
+
 #endif  // ABSL_CONTAINER_INTERNAL_UNORDERED_MAP_MODIFIERS_TEST_H_

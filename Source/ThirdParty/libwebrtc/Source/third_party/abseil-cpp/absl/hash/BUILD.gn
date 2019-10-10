@@ -4,8 +4,15 @@
 
 import("//build_overrides/build.gni")
 
+# Usage of Abseil in Chromium is guarded by an explicit opt-in list, before
+# adding projects to this list please reach out to cxx@chromium.org and CC:
+# - https://cs.chromium.org/chromium/src/third_party/abseil-cpp/OWNERS
+#
+# More information can be found at:
+# https://docs.google.com/document/d/1DgS1-A3rzboTLjpf4m1sqkJgWjnY_Ru2dokk1X1vBDU
 if (build_with_chromium) {
   visibility = [
+    "//libassistant/*",
     "//third_party/webrtc/*",
     "//third_party/abseil-cpp/*",
     "//third_party/googletest:gtest",
@@ -91,7 +98,6 @@ source_set("city") {
   public_configs = [ "//third_party/abseil-cpp:absl_include_config" ]
   public = [
     "internal/city.h",
-    "internal/city_crc.h",
   ]
   sources = [
     "internal/city.cc",

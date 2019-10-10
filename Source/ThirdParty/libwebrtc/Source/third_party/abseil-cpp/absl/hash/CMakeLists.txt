@@ -5,7 +5,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
+#      https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,67 +14,102 @@
 # limitations under the License.
 #
 
-list(APPEND HASH_PUBLIC_HEADERS
-  "hash.h"
-)
-
-list(APPEND HASH_INTERNAL_HEADERS
-  "internal/city.h"
-  "internal/city_crc.h"
-  "internal/hash.h"
-)
-
-# absl_hash library
-list(APPEND HASH_SRC
-  "internal/city.cc"
-  "internal/hash.cc"
-  ${HASH_PUBLIC_HEADERS}
-  ${HASH_INTERNAL_HEADERS}
-)
-
-set(HASH_PUBLIC_LIBRARIES absl::hash absl::container absl::strings absl::str_format absl::utility)
-
-absl_library(
-  TARGET
-    absl_hash
-  SOURCES
-    ${HASH_SRC}
-  PUBLIC_LIBRARIES
-    ${HASH_PUBLIC_LIBRARIES}
-  EXPORT_NAME
+absl_cc_library(
+  NAME
     hash
+  HDRS
+    "hash.h"
+  SRCS
+    "internal/hash.cc"
+    "internal/hash.h"
+  COPTS
+    ${ABSL_DEFAULT_COPTS}
+  DEPS
+    absl::core_headers
+    absl::endian
+    absl::fixed_array
+    absl::meta
+    absl::int128
+    absl::strings
+    absl::optional
+    absl::variant
+    absl::utility
+    absl::city
+  PUBLIC
 )
 
-#
-## TESTS
-#
+absl_cc_library(
+  NAME
+    hash_testing
+  HDRS
+    "hash_testing.h"
+  COPTS
+    ${ABSL_TEST_COPTS}
+  DEPS
+    absl::spy_hash_state
+    absl::meta
+    absl::strings
+    absl::variant
+    gmock
+  TESTONLY
+)
 
-# testing support
-set(HASH_TEST_HEADERS hash_testing.h internal/spy_hash_state.h)
-set(HASH_TEST_PUBLIC_LIBRARIES absl::hash absl::container absl::numeric absl::strings absl::str_format)
-
-# hash_test
-set(HASH_TEST_SRC "hash_test.cc" ${HASH_TEST_HEADERS})
-
-absl_test(
-  TARGET
+absl_cc_test(
+  NAME
     hash_test
-  SOURCES
-    ${HASH_TEST_SRC}
-  PUBLIC_LIBRARIES
-    ${HASH_TEST_PUBLIC_LIBRARIES}
+  SRCS
+    "hash_test.cc"
+  COPTS
+    ${ABSL_TEST_COPTS}
+  DEPS
+    absl::hash
+    absl::hash_testing
+    absl::core_headers
+    absl::flat_hash_set
+    absl::spy_hash_state
+    absl::meta
+    absl::int128
+    gmock_main
 )
 
-# hash_test
-set(CITY_TEST_SRC "internal/city_test.cc")
+absl_cc_library(
+  NAME
+    spy_hash_state
+  HDRS
+    "internal/spy_hash_state.h"
+  COPTS
+    ${ABSL_DEFAULT_COPTS}
+  DEPS
+    absl::hash
+    absl::strings
+    absl::str_format
+  TESTONLY
+)
 
-absl_test(
-  TARGET
+absl_cc_library(
+  NAME
+    city
+  HDRS
+    "internal/city.h"
+  SRCS
+    "internal/city.cc"
+  COPTS
+    ${ABSL_DEFAULT_COPTS}
+  DEPS
+    absl::config
+    absl::core_headers
+    absl::endian
+)
+
+absl_cc_test(
+  NAME
     city_test
-  SOURCES
-    ${CITY_TEST_SRC}
-  PUBLIC_LIBRARIES
-    ${HASH_TEST_PUBLIC_LIBRARIES}
+  SRCS
+    "internal/city_test.cc"
+  COPTS
+    ${ABSL_TEST_COPTS}
+  DEPS
+    absl::city
+    gmock_main
 )
-
 

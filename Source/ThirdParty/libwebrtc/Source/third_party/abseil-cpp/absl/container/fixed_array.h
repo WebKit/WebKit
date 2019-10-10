@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -188,7 +188,7 @@ class FixedArray {
   // `FixedArray<T>`. This is equivalent to the most possible addressable bytes
   // over the number of bytes taken by T.
   constexpr size_type max_size() const {
-    return std::numeric_limits<difference_type>::max() / sizeof(value_type);
+    return (std::numeric_limits<difference_type>::max)() / sizeof(value_type);
   }
 
   // FixedArray::empty()
@@ -515,4 +515,5 @@ void FixedArray<T, N, A>::NonEmptyInlinedStorage::AnnotateDestruct(
   static_cast<void>(n);  // Mark used when not in asan mode
 }
 }  // namespace absl
+
 #endif  // ABSL_CONTAINER_FIXED_ARRAY_H_

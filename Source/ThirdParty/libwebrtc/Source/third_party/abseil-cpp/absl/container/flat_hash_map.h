@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,6 +35,7 @@
 #include <type_traits>
 #include <utility>
 
+#include "absl/algorithm/container.h"
 #include "absl/container/internal/container_memory.h"
 #include "absl/container/internal/hash_function_defaults.h"  // IWYU pragma: export
 #include "absl/container/internal/raw_hash_map.h"  // IWYU pragma: export
@@ -69,14 +70,14 @@ struct FlatHashMapPolicy;
 // By default, `flat_hash_map` uses the `absl::Hash` hashing framework.
 // All fundamental and Abseil types that support the `absl::Hash` framework have
 // a compatible equality operator for comparing insertions into `flat_hash_map`.
-// If your type is not yet supported by the `asbl::Hash` framework, see
+// If your type is not yet supported by the `absl::Hash` framework, see
 // absl/hash/hash.h for information on extending Abseil hashing to user-defined
 // types.
 //
 // NOTE: A `flat_hash_map` stores its value types directly inside its
 // implementation array to avoid memory indirection. Because a `flat_hash_map`
 // is designed to move data when rehashed, map values will not retain pointer
-// stability. If you require pointer stability, or your values are large,
+// stability. If you require pointer stability, or if your values are large,
 // consider using `absl::flat_hash_map<Key, std::unique_ptr<Value>>` instead.
 // If your types are not moveable or you require pointer stability for keys,
 // consider `absl::node_hash_map`.
@@ -109,6 +110,46 @@ class flat_hash_map : public absl::container_internal::raw_hash_map<
   using Base = typename flat_hash_map::raw_hash_map;
 
  public:
+  // Constructors and Assignment Operators
+  //
+  // A flat_hash_map supports the same overload set as `std::unordered_map`
+  // for construction and assignment:
+  //
+  // *  Default constructor
+  //
+  //    // No allocation for the table's elements is made.
+  //    absl::flat_hash_map<int, std::string> map1;
+  //
+  // * Initializer List constructor
+  //
+  //   absl::flat_hash_map<int, std::string> map2 =
+  //       {{1, "huey"}, {2, "dewey"}, {3, "louie"},};
+  //
+  // * Copy constructor
+  //
+  //   absl::flat_hash_map<int, std::string> map3(map2);
+  //
+  // * Copy assignment operator
+  //
+  //  // Hash functor and Comparator are copied as well
+  //  absl::flat_hash_map<int, std::string> map4;
+  //  map4 = map3;
+  //
+  // * Move constructor
+  //
+  //   // Move is guaranteed efficient
+  //   absl::flat_hash_map<int, std::string> map5(std::move(map4));
+  //
+  // * Move assignment operator
+  //
+  //   // May be efficient if allocators are compatible
+  //   absl::flat_hash_map<int, std::string> map6;
+  //   map6 = std::move(map5);
+  //
+  // * Range constructor
+  //
+  //   std::vector<std::pair<int, std::string>> v = {{1, "a"}, {2, "b"}};
+  //   absl::flat_hash_map<int, std::string> map7(v.begin(), v.end());
   flat_hash_map() {}
   using Base::Base;
 
@@ -178,8 +219,12 @@ class flat_hash_map : public absl::container_internal::raw_hash_map<
   //   Erases the element at `position` of the `flat_hash_map`, returning
   //   `void`.
   //
-  //   NOTE: this return behavior is different than that of STL containers in
-  //   general and `std::unordered_map` in particular.
+  //   NOTE: returning `void` in this case is different than that of STL
+  //   containers in general and `std::unordered_map` in particular (which
+  //   return an iterator to the element following the erased element). If that
+  //   iterator is needed, simply post increment the iterator:
+  //
+  //     map.erase(it++);
   //
   // iterator erase(const_iterator first, const_iterator last):
   //
@@ -486,25 +531,26 @@ namespace container_internal {
 
 template <class K, class V>
 struct FlatHashMapPolicy {
-  using slot_type = container_internal::slot_type<K, V>;
+  using slot_policy = container_internal::map_slot_policy<K, V>;
+  using slot_type = typename slot_policy::slot_type;
   using key_type = K;
   using mapped_type = V;
   using init_type = std::pair</*non const*/ key_type, mapped_type>;
 
   template <class Allocator, class... Args>
   static void construct(Allocator* alloc, slot_type* slot, Args&&... args) {
-    slot_type::construct(alloc, slot, std::forward<Args>(args)...);
+    slot_policy::construct(alloc, slot, std::forward<Args>(args)...);
   }
 
   template <class Allocator>
   static void destroy(Allocator* alloc, slot_type* slot) {
-    slot_type::destroy(alloc, slot);
+    slot_policy::destroy(alloc, slot);
   }
 
   template <class Allocator>
   static void transfer(Allocator* alloc, slot_type* new_slot,
                        slot_type* old_slot) {
-    slot_type::transfer(alloc, new_slot, old_slot);
+    slot_policy::transfer(alloc, new_slot, old_slot);
   }
 
   template <class F, class... Args>
@@ -524,5 +570,16 @@ struct FlatHashMapPolicy {
 };
 
 }  // namespace container_internal
+
+namespace container_algorithm_internal {
+
+// Specialization of trait in absl/algorithm/container.h
+template <class Key, class T, class Hash, class KeyEqual, class Allocator>
+struct IsUnorderedContainer<
+    absl::flat_hash_map<Key, T, Hash, KeyEqual, Allocator>> : std::true_type {};
+
+}  // namespace container_algorithm_internal
+
 }  // namespace absl
+
 #endif  // ABSL_CONTAINER_FLAT_HASH_MAP_H_

@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <iomanip>
 #include <limits>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <type_traits>
@@ -35,12 +36,14 @@ struct HasUserDefinedConvert<
     T, void_t<decltype(AbslFormatConvert(
            std::declval<const T&>(), std::declval<ConversionSpec>(),
            std::declval<FormatSink*>()))>> : std::true_type {};
+
 template <typename T>
 class StreamedWrapper;
 
 // If 'v' can be converted (in the printf sense) according to 'conv',
 // then convert it, appending to `sink` and return `true`.
 // Otherwise fail and return `false`.
+
 // Raw pointers.
 struct VoidPtr {
   VoidPtr() = default;
@@ -54,7 +57,8 @@ ConvertResult<Conv::p> FormatConvertImpl(VoidPtr v, ConversionSpec conv,
                                          FormatSinkImpl* sink);
 
 // Strings.
-ConvertResult<Conv::s> FormatConvertImpl(const std::string& v, ConversionSpec conv,
+ConvertResult<Conv::s> FormatConvertImpl(const std::string& v,
+                                         ConversionSpec conv,
                                          FormatSinkImpl* sink);
 ConvertResult<Conv::s> FormatConvertImpl(string_view v, ConversionSpec conv,
                                          FormatSinkImpl* sink);
@@ -80,7 +84,7 @@ ConvertResult<Conv::s> FormatConvertImpl(const AbslCord& value,
 
   int precision = conv.precision();
   if (precision >= 0)
-    to_write = std::min(to_write, static_cast<size_t>(precision));
+    to_write = (std::min)(to_write, static_cast<size_t>(precision));
 
   space_remaining = Excess(to_write, space_remaining);
 
@@ -289,7 +293,7 @@ class FormatArgImpl {
   struct Manager<T, ByPointer> {
     static Data SetValue(const T& value) {
       Data data;
-      data.ptr = &value;
+      data.ptr = std::addressof(value);
       return data;
     }
 
@@ -335,12 +339,12 @@ class FormatArgImpl {
     using CommonType = typename std::conditional<std::is_signed<T>::value,
                                                  int64_t, uint64_t>::type;
     if (static_cast<CommonType>(val) >
-        static_cast<CommonType>(std::numeric_limits<int>::max())) {
-      return std::numeric_limits<int>::max();
+        static_cast<CommonType>((std::numeric_limits<int>::max)())) {
+      return (std::numeric_limits<int>::max)();
     } else if (std::is_signed<T>::value &&
                static_cast<CommonType>(val) <
-                   static_cast<CommonType>(std::numeric_limits<int>::min())) {
-      return std::numeric_limits<int>::min();
+                   static_cast<CommonType>((std::numeric_limits<int>::min)())) {
+      return (std::numeric_limits<int>::min)();
     }
     return static_cast<int>(val);
   }
@@ -409,7 +413,7 @@ class FormatArgImpl {
   ABSL_INTERNAL_FORMAT_DISPATCH_INSTANTIATE_(double, __VA_ARGS__);             \
   ABSL_INTERNAL_FORMAT_DISPATCH_INSTANTIATE_(long double, __VA_ARGS__);        \
   ABSL_INTERNAL_FORMAT_DISPATCH_INSTANTIATE_(const char*, __VA_ARGS__);        \
-  ABSL_INTERNAL_FORMAT_DISPATCH_INSTANTIATE_(std::string, __VA_ARGS__);             \
+  ABSL_INTERNAL_FORMAT_DISPATCH_INSTANTIATE_(std::string, __VA_ARGS__);        \
   ABSL_INTERNAL_FORMAT_DISPATCH_INSTANTIATE_(string_view, __VA_ARGS__)
 
 ABSL_INTERNAL_FORMAT_DISPATCH_OVERLOADS_EXPAND_(extern);

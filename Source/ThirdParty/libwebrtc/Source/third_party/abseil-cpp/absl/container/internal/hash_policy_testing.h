@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -139,7 +139,7 @@ struct Alloc : std::allocator<T> {
   friend bool operator!=(const Alloc& a, const Alloc& b) { return !(a == b); }
 
  private:
-  size_t id_ = std::numeric_limits<size_t>::max();
+  size_t id_ = (std::numeric_limits<size_t>::max)();
 };
 
 template <class Map>
@@ -169,7 +169,11 @@ auto keys(const Set& s)
 // take allocator arguments. This test is defined ad-hoc for the platforms
 // we care about (notably Crosstool 17) because libstdcxx's useless
 // versioning scheme precludes a more principled solution.
-#if defined(__GLIBCXX__) && __GLIBCXX__ <= 20140425
+// From GCC-4.9 Changelog: (src: https://gcc.gnu.org/gcc-4.9/changes.html)
+// "the unordered associative containers in <unordered_map> and <unordered_set>
+// meet the allocator-aware container requirements;"
+#if (defined(__GLIBCXX__) && __GLIBCXX__ <= 20140425 ) || \
+( __GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 9 ))
 #define ABSL_UNORDERED_SUPPORTS_ALLOC_CTORS 0
 #else
 #define ABSL_UNORDERED_SUPPORTS_ALLOC_CTORS 1

@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,7 +19,9 @@
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
+#include "absl/strings/internal/pow10_helper.h"
 #include "absl/strings/str_cat.h"
+#include "absl/strings/str_format.h"
 
 #ifdef _MSC_FULL_VER
 #define ABSL_COMPILER_DOES_EXACT_ROUNDING 0
@@ -30,6 +32,8 @@
 #endif
 
 namespace {
+
+using absl::strings_internal::Pow10;
 
 #if ABSL_COMPILER_DOES_EXACT_ROUNDING
 
@@ -275,7 +279,8 @@ void TestHalfwayValue(const std::string& mantissa, int exponent,
   absl::from_chars(low_rep.data(), low_rep.data() + low_rep.size(), actual_low);
   EXPECT_EQ(expected_low, actual_low);
 
-  std::string high_rep = absl::StrCat(mantissa, std::string(1000, '0'), "1e", exponent);
+  std::string high_rep =
+      absl::StrCat(mantissa, std::string(1000, '0'), "1e", exponent);
   FloatType actual_high = 0;
   absl::from_chars(high_rep.data(), high_rep.data() + high_rep.size(),
                    actual_high);
@@ -678,7 +683,8 @@ void TestOverflowAndUnderflow(
     auto result =
         absl::from_chars(input.data(), input.data() + input.size(), actual);
     EXPECT_EQ(result.ec, std::errc());
-    EXPECT_EQ(expected, actual);
+    EXPECT_EQ(expected, actual)
+        << absl::StrFormat("%a vs %a", expected, actual);
   }
   // test legal values near upper_bound
   for (index = upper_bound, step = 1; index > lower_bound;
@@ -690,7 +696,8 @@ void TestOverflowAndUnderflow(
     auto result =
         absl::from_chars(input.data(), input.data() + input.size(), actual);
     EXPECT_EQ(result.ec, std::errc());
-    EXPECT_EQ(expected, actual);
+    EXPECT_EQ(expected, actual)
+        << absl::StrFormat("%a vs %a", expected, actual);
   }
   // Test underflow values below lower_bound
   for (index = lower_bound - 1, step = 1; index > -1000000;
@@ -747,7 +754,7 @@ TEST(FromChars, HexdecimalFloatLimits) {
 // acceptable exponents in this test.
 TEST(FromChars, DecimalDoubleLimits) {
   auto input_gen = [](int index) { return absl::StrCat("1.0e", index); };
-  auto expected_gen = [](int index) { return std::pow(10.0, index); };
+  auto expected_gen = [](int index) { return Pow10(index); };
   TestOverflowAndUnderflow<double>(input_gen, expected_gen, -323, 308);
 }
 
@@ -759,7 +766,7 @@ TEST(FromChars, DecimalDoubleLimits) {
 // acceptable exponents in this test.
 TEST(FromChars, DecimalFloatLimits) {
   auto input_gen = [](int index) { return absl::StrCat("1.0e", index); };
-  auto expected_gen = [](int index) { return std::pow(10.0, index); };
+  auto expected_gen = [](int index) { return Pow10(index); };
   TestOverflowAndUnderflow<float>(input_gen, expected_gen, -45, 38);
 }
 

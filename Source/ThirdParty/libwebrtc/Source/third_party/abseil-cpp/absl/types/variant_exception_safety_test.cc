@@ -4,13 +4,14 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 #include "absl/types/variant.h"
 
 #include <iostream>
@@ -20,8 +21,12 @@
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
+#include "absl/base/config.h"
 #include "absl/base/internal/exception_safety_testing.h"
 #include "absl/memory/memory.h"
+
+// See comment in absl/base/config.h
+#if !defined(ABSL_INTERNAL_MSVC_2017_DBG_MODE)
 
 namespace absl {
 namespace {
@@ -311,6 +316,12 @@ TEST(VariantExceptionSafetyTest, MoveAssign) {
     EXPECT_FALSE(tester.WithContracts(strong_guarantee).Test());
   }
   {
+    // libstdc++ introduced a regression between 2018-09-25 and 2019-01-06.
+    // The fix is targeted for gcc-9.
+    // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=87431#c7
+    // https://gcc.gnu.org/viewcvs/gcc?view=revision&revision=267614
+#if !(defined(ABSL_HAVE_STD_VARIANT) && \
+      defined(_GLIBCXX_RELEASE) && _GLIBCXX_RELEASE == 8)
     // - otherwise (index() != j), equivalent to
     // emplace<j>(get<j>(std::move(rhs)))
     // - If an exception is thrown during the call to Tj's move construction
@@ -326,6 +337,8 @@ TEST(VariantExceptionSafetyTest, MoveAssign) {
                       auto copy = rhs;
                       *lhs = std::move(copy);
                     }));
+#endif  // !(defined(ABSL_HAVE_STD_VARIANT) &&
+        //   defined(_GLIBCXX_RELEASE) && _GLIBCXX_RELEASE == 8)
   }
 }
 
@@ -506,3 +519,5 @@ TEST(VariantExceptionSafetyTest, Swap) {
 
 }  // namespace
 }  // namespace absl
+
+#endif  // !defined(ABSL_INTERNAL_MSVC_2017_DBG_MODE)

@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -768,6 +768,18 @@ TEST(ExceptionCheckTest, ModifyingChecker) {
                   .WithInitialValue(HasReset{})
                   .WithContracts(CheckHasResetContracts)
                   .Test(invoker));
+}
+
+TEST(ExceptionSafetyTesterTest, ResetsCountdown) {
+  auto test =
+      testing::MakeExceptionSafetyTester()
+          .WithInitialValue(ThrowingValue<>())
+          .WithContracts([](ThrowingValue<>*) { return AssertionSuccess(); })
+          .WithOperation([](ThrowingValue<>*) {});
+  ASSERT_TRUE(test.Test());
+  // If the countdown isn't reset because there were no exceptions thrown, then
+  // this will fail with a termination from an unhandled exception
+  EXPECT_TRUE(test.Test());
 }
 
 struct NonCopyable : public NonNegative {

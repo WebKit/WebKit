@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -39,8 +39,7 @@ namespace hash_internal {
 template <typename T>
 class SpyHashStateImpl : public HashStateBase<SpyHashStateImpl<T>> {
  public:
-  SpyHashStateImpl()
-      : error_(std::make_shared<absl::optional<std::string>>()) {
+  SpyHashStateImpl() : error_(std::make_shared<absl::optional<std::string>>()) {
     static_assert(std::is_void<T>::value, "");
   }
 
@@ -170,7 +169,6 @@ class SpyHashStateImpl : public HashStateBase<SpyHashStateImpl<T>> {
   // AbslHashValue directly (because the hash state type does not match).
   static bool direct_absl_hash_value_error_;
 
-
   std::vector<std::string> hash_representation_;
   // This is a shared_ptr because we want all instances of the particular
   // SpyHashState run to share the field. This way we can set the error for
@@ -200,7 +198,7 @@ bool RunOnStartup<f>::run = (f(), true);
 template <
     typename T, typename U,
     // Only trigger for when (T != U),
-    absl::enable_if_t<!std::is_same<T, U>::value, int> = 0,
+    typename = absl::enable_if_t<!std::is_same<T, U>::value>,
     // This statement works in two ways:
     //  - First, it instantiates RunOnStartup and forces the initialization of
     //    `run`, which set the global variable.

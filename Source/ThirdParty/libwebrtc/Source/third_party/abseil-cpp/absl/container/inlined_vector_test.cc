@@ -1,10 +1,10 @@
-// Copyright 2017 The Abseil Authors.
+// Copyright 2019 The Abseil Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,6 +30,7 @@
 #include "absl/base/internal/exception_testing.h"
 #include "absl/base/internal/raw_logging.h"
 #include "absl/base/macros.h"
+#include "absl/container/internal/counting_allocator.h"
 #include "absl/container/internal/test_instance_tracker.h"
 #include "absl/hash/hash_testing.h"
 #include "absl/memory/memory.h"
@@ -37,6 +38,7 @@
 
 namespace {
 
+using absl::container_internal::CountingAllocator;
 using absl::test_internal::CopyableMovableInstance;
 using absl::test_internal::CopyableOnlyInstance;
 using absl::test_internal::InstanceTracker;
@@ -68,18 +70,15 @@ MATCHER_P(ValueIs, e, "") {
 // test_instance_tracker.h.
 template <typename T>
 class InstanceTest : public ::testing::Test {};
-TYPED_TEST_CASE_P(InstanceTest);
+TYPED_TEST_SUITE_P(InstanceTest);
 
 // A simple reference counted class to make sure that the proper elements are
 // destroyed in the erase(begin, end) test.
 class RefCounted {
  public:
-  RefCounted(int value, int* count) : value_(value), count_(count) {
-    Ref();
-  }
+  RefCounted(int value, int* count) : value_(value), count_(count) { Ref(); }
 
-  RefCounted(const RefCounted& v)
-      : value_(v.value_), count_(v.count_) {
+  RefCounted(const RefCounted& v) : value_(v.value_), count_(v.count_) {
     Ref();
   }
 
@@ -138,57 +137,6 @@ static IntVec Fill(int len, int offset = 0) {
   return v;
 }
 
-// This is a stateful allocator, but the state lives outside of the
-// allocator (in whatever test is using the allocator). This is odd
-// but helps in tests where the allocator is propagated into nested
-// containers - that chain of allocators uses the same state and is
-// thus easier to query for aggregate allocation information.
-template <typename T>
-class CountingAllocator : public std::allocator<T> {
- public:
-  using Alloc = std::allocator<T>;
-  using pointer = typename Alloc::pointer;
-  using size_type = typename Alloc::size_type;
-
-  CountingAllocator() : bytes_used_(nullptr) {}
-  explicit CountingAllocator(int64_t* b) : bytes_used_(b) {}
-
-  template <typename U>
-  CountingAllocator(const CountingAllocator<U>& x)
-      : Alloc(x), bytes_used_(x.bytes_used_) {}
-
-  pointer allocate(size_type n,
-                   std::allocator<void>::const_pointer hint = nullptr) {
-    assert(bytes_used_ != nullptr);
-    *bytes_used_ += n * sizeof(T);
-    return Alloc::allocate(n, hint);
-  }
-
-  void deallocate(pointer p, size_type n) {
-    Alloc::deallocate(p, n);
-    assert(bytes_used_ != nullptr);
-    *bytes_used_ -= n * sizeof(T);
-  }
-
-  template<typename U>
-  class rebind {
-   public:
-    using other = CountingAllocator<U>;
-  };
-
-  friend bool operator==(const CountingAllocator& a,
-                         const CountingAllocator& b) {
-    return a.bytes_used_ == b.bytes_used_;
-  }
-
-  friend bool operator!=(const CountingAllocator& a,
-                         const CountingAllocator& b) {
-    return !(a == b);
-  }
-
-  int64_t* bytes_used_;
-};
-
 TEST(IntVec, SimpleOps) {
   for (int len = 0; len < 20; len++) {
     IntVec v;
@@ -237,6 +185,12 @@ TEST(IntVec, SimpleOps) {
       }
     }
   }
+}
+
+TEST(IntVec, PopBackNoOverflow) {
+  IntVec v = {1};
+  v.pop_back();
+  EXPECT_EQ(v.size(), 0);
 }
 
 TEST(IntVec, AtThrows) {
@@ -333,7 +287,7 @@ TEST(RefCountedVec, EraseBeginEnd) {
         }
 
         // Check that the elements at the end are preserved.
-        for (int i = erase_end; i< len; ++i) {
+        for (int i = erase_end; i < len; ++i) {
           EXPECT_EQ(1, counts[i]);
         }
       }
@@ -595,10 +549,10 @@ TEST(IntVec, Resize) {
     static const int kResizeElem = 1000000;
     for (int k = 0; k < 10; k++) {
       // Enlarging resize
-      v.resize(len+k, kResizeElem);
-      EXPECT_EQ(len+k, v.size());
-      EXPECT_LE(len+k, v.capacity());
-      for (int i = 0; i < len+k; i++) {
+      v.resize(len + k, kResizeElem);
+      EXPECT_EQ(len + k, v.size());
+      EXPECT_LE(len + k, v.capacity());
+      for (int i = 0; i < len + k; i++) {
         if (i < len) {
           EXPECT_EQ(i, v[i]);
         } else {
@@ -906,8 +860,10 @@ TYPED_TEST_P(InstanceTest, Swap) {
       InstanceTracker tracker;
       InstanceVec a, b;
       const size_t inlined_capacity = a.capacity();
+      auto min_len = std::min(l1, l2);
+      auto max_len = std::max(l1, l2);
       for (int i = 0; i < l1; i++) a.push_back(Instance(i));
-      for (int i = 0; i < l2; i++) b.push_back(Instance(100+i));
+      for (int i = 0; i < l2; i++) b.push_back(Instance(100 + i));
       EXPECT_EQ(tracker.instances(), l1 + l2);
       tracker.ResetCopiesMovesSwaps();
       {
@@ -919,15 +875,15 @@ TYPED_TEST_P(InstanceTest, Swap) {
         EXPECT_EQ(tracker.swaps(), 0);  // Allocations are swapped.
         EXPECT_EQ(tracker.moves(), 0);
       } else if (a.size() <= inlined_capacity && b.size() <= inlined_capacity) {
-        EXPECT_EQ(tracker.swaps(), std::min(l1, l2));
-        // TODO(bsamwel): This should use moves when the type is movable.
-        EXPECT_EQ(tracker.copies(), std::max(l1, l2) - std::min(l1, l2));
+        EXPECT_EQ(tracker.swaps(), min_len);
+        EXPECT_EQ((tracker.moves() ? tracker.moves() : tracker.copies()),
+                  max_len - min_len);
       } else {
         // One is allocated and the other isn't. The allocation is transferred
         // without copying elements, and the inlined instances are copied/moved.
         EXPECT_EQ(tracker.swaps(), 0);
-        // TODO(bsamwel): This should use moves when the type is movable.
-        EXPECT_EQ(tracker.copies(), std::min(l1, l2));
+        EXPECT_EQ((tracker.moves() ? tracker.moves() : tracker.copies()),
+                  min_len);
       }
 
       EXPECT_EQ(l1, b.size());
@@ -975,7 +931,7 @@ TEST(IntVec, EqualAndNotEqual) {
     EXPECT_FALSE(a == b);
     EXPECT_TRUE(a != b);
 
-    b[i] = b[i] - 1;    // Back to before
+    b[i] = b[i] - 1;  // Back to before
     EXPECT_TRUE(a == b);
     EXPECT_FALSE(a != b);
   }
@@ -1042,7 +998,7 @@ TYPED_TEST_P(InstanceTest, CountConstructorsDestructors) {
 
     // reserve() must not increase the number of initialized objects
     SCOPED_TRACE("reserve");
-    v.reserve(len+1000);
+    v.reserve(len + 1000);
     EXPECT_EQ(tracker.instances(), len);
     EXPECT_EQ(tracker.copies() + tracker.moves(), len);
 
@@ -1288,9 +1244,8 @@ void InstanceCountElemAssignWithAllocationTest() {
     absl::InlinedVector<Instance, 2> v(original_contents.begin(),
                                        original_contents.end());
     v.assign(3, Instance(123));
-    EXPECT_THAT(v,
-                AllOf(SizeIs(3),
-                      ElementsAre(ValueIs(123), ValueIs(123), ValueIs(123))));
+    EXPECT_THAT(v, AllOf(SizeIs(3), ElementsAre(ValueIs(123), ValueIs(123),
+                                                ValueIs(123))));
     EXPECT_LE(v.size(), v.capacity());
   }
 }
@@ -1569,8 +1524,8 @@ TYPED_TEST_P(InstanceTest, InitializerListAssign) {
     SCOPED_TRACE(original_size);
     absl::InlinedVector<Instance, 2> v(original_size, Instance(12345));
     v.assign({Instance(3), Instance(4), Instance(5)});
-    EXPECT_THAT(v, AllOf(SizeIs(3),
-                         ElementsAre(ValueIs(3), ValueIs(4), ValueIs(5))));
+    EXPECT_THAT(
+        v, AllOf(SizeIs(3), ElementsAre(ValueIs(3), ValueIs(4), ValueIs(5))));
     EXPECT_LE(3, v.capacity());
   }
 }
@@ -1595,7 +1550,7 @@ TEST(DynamicVec, DynamicVecCompiles) {
 TEST(AllocatorSupportTest, Constructors) {
   using MyAlloc = CountingAllocator<int>;
   using AllocVec = absl::InlinedVector<int, 4, MyAlloc>;
-  const int ia[] = { 0, 1, 2, 3, 4, 5, 6, 7 };
+  const int ia[] = {0, 1, 2, 3, 4, 5, 6, 7};
   int64_t allocated = 0;
   MyAlloc alloc(&allocated);
   { AllocVec ABSL_ATTRIBUTE_UNUSED v; }
@@ -1611,7 +1566,7 @@ TEST(AllocatorSupportTest, Constructors) {
 TEST(AllocatorSupportTest, CountAllocations) {
   using MyAlloc = CountingAllocator<int>;
   using AllocVec = absl::InlinedVector<int, 4, MyAlloc>;
-  const int ia[] = { 0, 1, 2, 3, 4, 5, 6, 7 };
+  const int ia[] = {0, 1, 2, 3, 4, 5, 6, 7};
   int64_t allocated = 0;
   MyAlloc alloc(&allocated);
   {
@@ -1675,8 +1630,8 @@ TEST(AllocatorSupportTest, SwapBothAllocated) {
   int64_t allocated1 = 0;
   int64_t allocated2 = 0;
   {
-    const int ia1[] = { 0, 1, 2, 3, 4, 5, 6, 7 };
-    const int ia2[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+    const int ia1[] = {0, 1, 2, 3, 4, 5, 6, 7};
+    const int ia2[] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
     MyAlloc a1(&allocated1);
     MyAlloc a2(&allocated2);
     AllocVec v1(ia1, ia1 + ABSL_ARRAYSIZE(ia1), a1);
@@ -1700,8 +1655,8 @@ TEST(AllocatorSupportTest, SwapOneAllocated) {
   int64_t allocated1 = 0;
   int64_t allocated2 = 0;
   {
-    const int ia1[] = { 0, 1, 2, 3, 4, 5, 6, 7 };
-    const int ia2[] = { 0, 1, 2, 3 };
+    const int ia1[] = {0, 1, 2, 3, 4, 5, 6, 7};
+    const int ia2[] = {0, 1, 2, 3};
     MyAlloc a1(&allocated1);
     MyAlloc a2(&allocated2);
     AllocVec v1(ia1, ia1 + ABSL_ARRAYSIZE(ia1), a1);
@@ -1720,48 +1675,53 @@ TEST(AllocatorSupportTest, SwapOneAllocated) {
   EXPECT_THAT(allocated2, 0);
 }
 
-TEST(AllocatorSupportTest, ScopedAllocatorWorks) {
+TEST(AllocatorSupportTest, ScopedAllocatorWorksInlined) {
   using StdVector = std::vector<int, CountingAllocator<int>>;
-  using MyAlloc =
-      std::scoped_allocator_adaptor<CountingAllocator<StdVector>>;
-  using AllocVec = absl::InlinedVector<StdVector, 4, MyAlloc>;
+  using Alloc = CountingAllocator<StdVector>;
+  using ScopedAlloc = std::scoped_allocator_adaptor<Alloc>;
+  using AllocVec = absl::InlinedVector<StdVector, 1, ScopedAlloc>;
 
-  int64_t allocated = 0;
-  AllocVec vec(MyAlloc{CountingAllocator<StdVector>{&allocated}});
-  EXPECT_EQ(allocated, 0);
+  int64_t total_allocated_byte_count = 0;
 
-  // This default constructs a vector<int>, but the allocator should pass itself
-  // into the vector<int>.
-  // The absl::InlinedVector does not allocate any memory.
-  // The vector<int> does not allocate any memory.
-  vec.resize(1);
-  EXPECT_EQ(allocated, 0);
+  AllocVec inlined_case(ScopedAlloc(Alloc(+&total_allocated_byte_count)));
 
-  // We make vector<int> allocate memory.
-  // It must go through the allocator even though we didn't construct the
-  // vector directly.
-  vec[0].push_back(1);
-  EXPECT_EQ(allocated, sizeof(int) * 1);
+  // Called only once to remain inlined
+  inlined_case.emplace_back();
 
-  // Another allocating vector.
-  vec.push_back(vec[0]);
-  EXPECT_EQ(allocated, sizeof(int) * 2);
+  int64_t absl_responsible_for_count = total_allocated_byte_count;
+  EXPECT_EQ(absl_responsible_for_count, 0);
 
-  // Overflow the inlined memory.
-  // The absl::InlinedVector will now allocate.
-  vec.resize(5);
-  EXPECT_EQ(allocated, sizeof(int) * 2 + sizeof(StdVector) * 8);
+  inlined_case[0].emplace_back();
+  EXPECT_GT(total_allocated_byte_count, absl_responsible_for_count);
 
-  // Adding one more in external mode should also work.
-  vec.push_back(vec[0]);
-  EXPECT_EQ(allocated, sizeof(int) * 3 + sizeof(StdVector) * 8);
+  inlined_case.clear();
+  inlined_case.shrink_to_fit();
+  EXPECT_EQ(total_allocated_byte_count, 0);
+}
 
-  // And extending these should still work.
-  vec[0].push_back(1);
-  EXPECT_EQ(allocated, sizeof(int) * 4 + sizeof(StdVector) * 8);
+TEST(AllocatorSupportTest, ScopedAllocatorWorksAllocated) {
+  using StdVector = std::vector<int, CountingAllocator<int>>;
+  using Alloc = CountingAllocator<StdVector>;
+  using ScopedAlloc = std::scoped_allocator_adaptor<Alloc>;
+  using AllocVec = absl::InlinedVector<StdVector, 1, ScopedAlloc>;
 
-  vec.clear();
-  EXPECT_EQ(allocated, 0);
+  int64_t total_allocated_byte_count = 0;
+
+  AllocVec allocated_case(ScopedAlloc(Alloc(+&total_allocated_byte_count)));
+
+  // Called twice to force into being allocated
+  allocated_case.emplace_back();
+  allocated_case.emplace_back();
+
+  int64_t absl_responsible_for_count = total_allocated_byte_count;
+  EXPECT_GT(absl_responsible_for_count, 0);
+
+  allocated_case[1].emplace_back();
+  EXPECT_GT(total_allocated_byte_count, absl_responsible_for_count);
+
+  allocated_case.clear();
+  allocated_case.shrink_to_fit();
+  EXPECT_EQ(total_allocated_byte_count, 0);
 }
 
 TEST(AllocatorSupportTest, SizeAllocConstructor) {
@@ -1788,6 +1748,25 @@ TEST(AllocatorSupportTest, SizeAllocConstructor) {
     EXPECT_THAT(allocated, len * sizeof(int));
     EXPECT_THAT(v, AllOf(SizeIs(len), Each(0)));
   }
+}
+
+TEST(InlinedVectorTest, AbslHashValueWorks) {
+  using V = absl::InlinedVector<int, 4>;
+  std::vector<V> cases;
+
+  // Generate a variety of vectors some of these are small enough for the inline
+  // space but are stored out of line.
+  for (int i = 0; i < 10; ++i) {
+    V v;
+    for (int j = 0; j < i; ++j) {
+      v.push_back(j);
+    }
+    cases.push_back(v);
+    v.resize(i % 4);
+    cases.push_back(v);
+  }
+
+  EXPECT_TRUE(absl::VerifyTypeImplementsAbslHashCorrectly(cases));
 }
 
 }  // anonymous namespace

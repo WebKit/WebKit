@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -49,6 +49,10 @@
 //
 // Arithmetic overflows/underflows to +/- infinity and saturates.
 
+#if defined(_MSC_VER)
+#include <winsock2.h>  // for timeval
+#endif
+
 #include <algorithm>
 #include <cassert>
 #include <cctype>
@@ -78,8 +82,14 @@ constexpr int64_t kint64min = std::numeric_limits<int64_t>::min();
 
 // Can't use std::isinfinite() because it doesn't exist on windows.
 inline bool IsFinite(double d) {
+  if (std::isnan(d)) return false;
   return d != std::numeric_limits<double>::infinity() &&
          d != -std::numeric_limits<double>::infinity();
+}
+
+inline bool IsValidDivisor(double d) {
+  if (std::isnan(d)) return false;
+  return d != 0.0;
 }
 
 // Can't use std::round() because it is only available in C++11.
@@ -455,7 +465,7 @@ Duration& Duration::operator/=(int64_t r) {
 }
 
 Duration& Duration::operator/=(double r) {
-  if (time_internal::IsInfiniteDuration(*this) || r == 0.0) {
+  if (time_internal::IsInfiniteDuration(*this) || !IsValidDivisor(r)) {
     const bool is_neg = (std::signbit(r) != 0) != (rep_hi_ < 0);
     return *this = is_neg ? -InfiniteDuration() : InfiniteDuration();
   }
@@ -743,9 +753,9 @@ void AppendNumberUnit(std::string* out, double n, DisplayUnit unit) {
 
 }  // namespace
 
-// From Go's doc at http://golang.org/pkg/time/#Duration.String
+// From Go's doc at https://golang.org/pkg/time/#Duration.String
 //   [FormatDuration] returns a string representing the duration in the
-//   form "72h3m0.5s".  Leading zero units are omitted.  As a special
+//   form "72h3m0.5s". Leading zero units are omitted.  As a special
 //   case, durations less than one second format use a smaller unit
 //   (milli-, micro-, or nanoseconds) to ensure that the leading digit
 //   is non-zero.  The zero duration formats as 0, with no unit.
@@ -849,8 +859,8 @@ bool ConsumeDurationUnit(const char** start, Duration* unit) {
 
 }  // namespace
 
-// From Go's doc at http://golang.org/pkg/time/#ParseDuration
-//   [ParseDuration] parses a duration string.  A duration string is
+// From Go's doc at https://golang.org/pkg/time/#ParseDuration
+//   [ParseDuration] parses a duration string. A duration string is
 //   a possibly signed sequence of decimal numbers, each with optional
 //   fraction and a unit suffix, such as "300ms", "-1.5h" or "2h45m".
 //   Valid time units are "ns", "us" "ms", "s", "m", "h".
@@ -895,6 +905,7 @@ bool ParseDuration(const std::string& dur_string, Duration* d) {
   *d = dur;
   return true;
 }
+
 bool ParseFlag(const std::string& text, Duration* dst, std::string* ) {
   return ParseDuration(text, dst);
 }

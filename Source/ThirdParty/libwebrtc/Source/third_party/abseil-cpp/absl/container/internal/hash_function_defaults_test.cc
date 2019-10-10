@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -77,14 +77,14 @@ struct EqString : ::testing::Test {
   hash_default_eq<T> key_eq;
 };
 
-TYPED_TEST_CASE(EqString, StringTypes);
+TYPED_TEST_SUITE(EqString, StringTypes);
 
 template <class T>
 struct HashString : ::testing::Test {
   hash_default_hash<T> hasher;
 };
 
-TYPED_TEST_CASE(HashString, StringTypes);
+TYPED_TEST_SUITE(HashString, StringTypes);
 
 TYPED_TEST(EqString, Works) {
   auto eq = this->key_eq;
@@ -121,14 +121,14 @@ struct EqPointer : ::testing::Test {
   hash_default_eq<T> key_eq;
 };
 
-TYPED_TEST_CASE(EqPointer, PointerTypes);
+TYPED_TEST_SUITE(EqPointer, PointerTypes);
 
 template <class T>
 struct HashPointer : ::testing::Test {
   hash_default_hash<T> hasher;
 };
 
-TYPED_TEST_CASE(HashPointer, PointerTypes);
+TYPED_TEST_SUITE(HashPointer, PointerTypes);
 
 TYPED_TEST(EqPointer, Works) {
   int dummy;
@@ -202,14 +202,10 @@ TYPED_TEST(HashPointer, Works) {
   EXPECT_NE(hash(&dummy), hash(cuptr));
 }
 
-// Cartesian product of (string, std::string, absl::string_view)
-// with (string, std::string, absl::string_view, const char*).
+// Cartesian product of (std::string, absl::string_view)
+// with (std::string, absl::string_view, const char*).
 using StringTypesCartesianProduct = Types<
     // clang-format off
-
-    std::pair<std::string, std::string>,
-    std::pair<std::string, absl::string_view>,
-    std::pair<std::string, const char*>,
 
     std::pair<absl::string_view, std::string>,
     std::pair<absl::string_view, absl::string_view>,
@@ -248,7 +244,7 @@ TYPED_TEST_P(StringLikeTest, HashEq) {
   EXPECT_NE(this->hash(this->a1), this->hash(this->b2));
 }
 
-TYPED_TEST_CASE(StringLikeTest, StringTypesCartesianProduct);
+TYPED_TEST_SUITE(StringLikeTest, StringTypesCartesianProduct);
 
 }  // namespace
 }  // namespace container_internal

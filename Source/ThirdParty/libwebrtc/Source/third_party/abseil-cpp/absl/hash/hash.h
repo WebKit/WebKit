@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,8 +25,8 @@
 //   * `AbslHashValue`, an extension point that allows you to extend types to
 //     support Abseil hashing without requiring you to define a hashing
 //     algorithm.
-//   * `HashState`, a type-erased class which implement the manipulation of the
-//     hash state (H) itself. containing member functions `combine()` and
+//   * `HashState`, a type-erased class which implements the manipulation of the
+//     hash state (H) itself, contains member functions `combine()` and
 //     `combine_contiguous()`, which you can use to contribute to an existing
 //     hash state when hashing your types.
 //
@@ -36,25 +36,34 @@
 // framework by simply combining its state with the state of known, hashable
 // types. Hashing of that combined state is separately done by `absl::Hash`.
 //
+// One should assume that a hash algorithm is chosen randomly at the start of
+// each process.  E.g., absl::Hash<int>()(9) in one process and
+// absl::Hash<int>()(9) in another process are likely to differ.
+//
 // Example:
 //
-//   // Suppose we have a class `Circle` for which we want to add hashing
+//   // Suppose we have a class `Circle` for which we want to add hashing:
 //   class Circle {
-//     public:
-//       ...
-//     private:
-//       std::pair<int, int> center_;
-//       int radius_;
-//     };
+//    public:
+//     ...
+//    private:
+//     std::pair<int, int> center_;
+//     int radius_;
+//   };
 //
-//   // To add hashing support to `Circle`, we simply need to add an ordinary
-//   // function `AbslHashValue()`, and return the combined hash state of the
-//   // existing hash state and the class state:
-//
+//   // To add hashing support to `Circle`, we simply need to add a free
+//   // (non-member) function `AbslHashValue()`, and return the combined hash
+//   // state of the existing hash state and the class state. You can add such a
+//   // free function using a friend declaration within the body of the class:
+//   class Circle {
+//    public:
+//     ...
 //     template <typename H>
 //     friend H AbslHashValue(H h, const Circle& c) {
 //       return H::combine(std::move(h), c.center_, c.radius_);
 //     }
+//     ...
+//   };
 //
 // For more information, see Adding Type Support to `absl::Hash` below.
 //
@@ -69,7 +78,7 @@ namespace absl {
 // `absl::Hash`
 // -----------------------------------------------------------------------------
 //
-// `absl::Hash<T>` is a convenient general-purpose hash functor for a type `T`
+// `absl::Hash<T>` is a convenient general-purpose hash functor for any type `T`
 // satisfying any of the following conditions (in order):
 //
 //  * T is an arithmetic or pointer type
@@ -98,7 +107,7 @@ namespace absl {
 //    * absl::string_view
 //    * absl::InlinedVector
 //    * absl::FixedArray
-//    * absl::unit128
+//    * absl::uint128
 //    * absl::Time, absl::Duration, and absl::TimeZone
 //
 // Note: the list above is not meant to be exhaustive. Additional type support
@@ -142,7 +151,7 @@ namespace absl {
 //
 // The "hash state" concept contains two member functions for mixing hash state:
 //
-// * `H::combine()`
+// * `H::combine(state, values...)`
 //
 //   Combines an arbitrary number of values into a hash state, returning the
 //   updated state. Note that the existing hash state is move-only and must be
@@ -160,7 +169,7 @@ namespace absl {
 //     state = H::combine(std::move(state), value2);
 //     state = H::combine(std::move(state), value3);
 //
-// * `H::combine_contiguous()`
+// * `H::combine_contiguous(state, data, size)`
 //
 //    Combines a contiguous array of `size` elements into a hash state,
 //    returning the updated state. Note that the existing hash state is
@@ -235,7 +244,7 @@ using Hash = absl::hash_internal::Hash<T>;
 //     }
 //    private:
 //     virtual void HashValue(absl::HashState state) const = 0;
-//  };
+//   };
 //
 //   class Impl : Interface {
 //    private:
@@ -243,7 +252,7 @@ using Hash = absl::hash_internal::Hash<T>;
 //       absl::HashState::combine(std::move(state), v1_, v2_);
 //     }
 //     int v1_;
-//     string v2_;
+//     std::string v2_;
 //   };
 class HashState : public hash_internal::HashStateBase<HashState> {
  public:
@@ -309,4 +318,5 @@ class HashState : public hash_internal::HashStateBase<HashState> {
 };
 
 }  // namespace absl
+
 #endif  // ABSL_HASH_HASH_H_

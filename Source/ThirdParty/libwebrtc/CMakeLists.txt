@@ -31,7 +31,6 @@ set(webrtc_SOURCES
     Source/third_party/abseil-cpp/absl/strings/string_view.cc
     Source/third_party/abseil-cpp/absl/types/bad_optional_access.cc
     Source/third_party/abseil-cpp/absl/types/bad_variant_access.cc
-    Source/third_party/abseil-cpp/absl/types/optional.cc
     Source/third_party/boringssl/err_data.c
     Source/third_party/boringssl/src/crypto/asn1/a_bitstr.c
     Source/third_party/boringssl/src/crypto/asn1/a_bool.c

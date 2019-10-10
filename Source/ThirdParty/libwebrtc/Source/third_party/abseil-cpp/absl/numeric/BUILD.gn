@@ -6,6 +6,7 @@ import("//build_overrides/build.gni")
 
 if (build_with_chromium) {
   visibility = [
+    "//libassistant/*",
     "//third_party/webrtc/*",
     "//third_party/abseil-cpp/*",
     "//third_party/googletest:gtest",

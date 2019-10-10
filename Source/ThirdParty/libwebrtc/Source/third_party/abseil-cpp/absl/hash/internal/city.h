@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// http://code.google.com/p/cityhash/
+// https://code.google.com/p/cityhash/
 //
 // This file provides a few functions for hashing strings.  All of them are
 // high-quality functions in the sense that they pass standard tests such
@@ -22,15 +22,6 @@
 // CityHash64 that is of comparable quality.  We believe our nearest competitor
 // is Murmur3.  For 64-bit x86 code, CityHash64 is an excellent choice for hash
 // tables and most other hashing (excluding cryptography).
-//
-// For 64-bit x86 code, on long strings, the picture is more complicated.
-// On many recent Intel CPUs, such as Nehalem, Westmere, Sandy Bridge, etc.,
-// CityHashCrc128 appears to be faster than all competitors of comparable
-// quality.  CityHash128 is also good but not quite as fast.  We believe our
-// nearest competitor is Bob Jenkins' Spooky.  We don't have great data for
-// other 64-bit CPUs, but for long strings we know that Spooky is slightly
-// faster than CityHash on some relatively recent AMD x86-64 CPUs, for example.
-// Note that CityHashCrc128 is declared in citycrc.h.
 //
 // For 32-bit x86 code, we don't know of anything faster than CityHash32 that
 // is of comparable quality.  We believe our nearest competitor is Murmur3A.
@@ -58,7 +49,6 @@
 #include <stdlib.h>  // for size_t.
 #include <utility>
 
-
 namespace absl {
 namespace hash_internal {
 
@@ -78,13 +68,6 @@ uint64_t CityHash64WithSeed(const char *s, size_t len, uint64_t seed);
 // hashed into the result.
 uint64_t CityHash64WithSeeds(const char *s, size_t len, uint64_t seed0,
                            uint64_t seed1);
-
-// Hash function for a byte array.
-uint128 CityHash128(const char *s, size_t len);
-
-// Hash function for a byte array.  For convenience, a 128-bit seed is also
-// hashed into the result.
-uint128 CityHash128WithSeed(const char *s, size_t len, uint128 seed);
 
 // Hash function for a byte array.  Most useful in 32-bit binaries.
 uint32_t CityHash32(const char *s, size_t len);
