@@ -49,6 +49,8 @@ SystemFontDatabaseCoreText::SystemFontDatabaseCoreText()
 
 RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createSystemUIFont(const CascadeListParameters& parameters, CFStringRef locale)
 {
+    if (locale && !CFStringGetLength(locale))
+        locale = nullptr;
     auto result = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, parameters.size, locale));
     ASSERT(result);
     return createFontByApplyingWeightItalicsAndFallbackBehavior(result.get(), parameters.weight, parameters.italic, parameters.size, parameters.allowUserInstalledFonts);

@@ -1,5 +1,21 @@
 2019-10-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [Cocoa] font-family:system-ui on Chinese systems don't get Chinese quote marks
+        https://bugs.webkit.org/show_bug.cgi?id=202778
+        <rdar://problem/52594556>
+
+        Reviewed by Simon Fraser.
+
+        This was caught by fast/text/international/system-language/han-quotes.html,
+        but we didn't have time to fix it until now.
+
+        Test: fast/text/international/system-language/han-quotes.html
+
+        * platform/graphics/cocoa/SystemFontDatabaseCoreText.cpp:
+        (WebCore::SystemFontDatabaseCoreText::createSystemUIFont):
+
+2019-10-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
         FontFaceSet's ready promise is not always resolved
         https://bugs.webkit.org/show_bug.cgi?id=202548
 
