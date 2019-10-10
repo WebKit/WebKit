@@ -103,7 +103,7 @@ void SourceBufferList::scheduleEvent(const AtomString& eventName)
 
 bool SourceBufferList::canSuspendForDocumentSuspension() const
 {
-    return !m_asyncEventQueue->hasPendingEvents();
+    return true;
 }
 
 const char* SourceBufferList::activeDOMObjectName() const

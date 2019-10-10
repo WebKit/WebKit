@@ -1,3 +1,19 @@
+2019-10-10  Chris Dumez  <cdumez@apple.com>
+
+        Flaky Test: media/media-source/media-source-page-cache.html
+        https://bugs.webkit.org/show_bug.cgi?id=202775
+
+        Reviewed by Eric Carlson.
+
+        SourceBufferList should never prevent entering the page cache, even if it has
+        pending events in its queue. Its queue is a MainThreadGenericEventQueue, which
+        is Page Cache-aware and will properly suspend the firing of events when needed.
+
+        No new tests, covered by flaky test which should no longer be.
+
+        * Modules/mediasource/SourceBufferList.cpp:
+        (WebCore::SourceBufferList::canSuspendForDocumentSuspension const):
+
 2019-10-10  Sihui Liu  <sihui_liu@apple.com>
 
         Add a unit test for StorageQuotaManager
