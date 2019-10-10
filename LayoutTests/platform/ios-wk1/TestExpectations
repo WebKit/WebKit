@@ -12,6 +12,7 @@ http/wpt/service-workers [ Skip ]
 http/wpt/cache-storage [ Skip ]
 http/tests/cache-storage [ Skip ]
 http/tests/navigation/page-cache-domcache-pending-promise.html [ Skip ]
+http/tests/navigation/page-cache-domcachestorage-pending-promise.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/request/destination [ Skip ]
 imported/w3c/web-platform-tests/fetch/cross-origin-resource-policy [ Skip ]
 

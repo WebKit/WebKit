@@ -1,3 +1,15 @@
+2019-10-10  Chris Dumez  <cdumez@apple.com>
+
+        DOMCacheStorage should not prevent pages from entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=202608
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * http/tests/navigation/page-cache-domcachestorage-pending-promise-expected.txt: Added.
+        * http/tests/navigation/page-cache-domcachestorage-pending-promise.html: Added.
+
 2019-10-10  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK and WPE gardening after r250954.

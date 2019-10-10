@@ -1,0 +1,46 @@
+<!-- webkit-test-runner [ enablePageCache=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description('Tests that a page with pending DOMCacheStorage activity goes into the page cache.');
+jsTestIsAsync = true;
+let restoredFromPageCache = false;
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+    if (event.persisted) {
+        testPassed("Page was restored from Page Cache");
+        restoredFromPageCache = true;
+    }
+});
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page failed to enter the Page Cache");
+        finishJSTest();
+    }
+
+    caches.open('test').then(() => {
+       testPassed("Opened the cache");
+       shouldBeTrue("!!restoredFromPageCache");
+       finishJSTest();
+    }, () => {
+       testFailed("Failed to open the cache");
+       finishJSTest();
+    });
+});
+
+onload = () => {
+    setTimeout(() => {
+        testLink.click();
+    }, 0);
+}
+</script>
+<a id="testLink" href="resources/page-cache-helper.html" style="display: none">Link</a>
+</body>
+</html>
