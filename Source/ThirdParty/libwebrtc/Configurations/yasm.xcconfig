@@ -1,6 +1,6 @@
 PRODUCT_NAME = yasm;
 
-HEADER_SEARCH_PATHS = Source/third_party/yasm-1.3.0;
+HEADER_SEARCH_PATHS = Source/third_party/yasm;
 
 SKIP_INSTALL = YES;
 PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include/libwebrtc;

@@ -5552,9 +5552,9 @@
 		41FE8647215C526000B62C07 /* nasm-preproc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "nasm-preproc.c"; sourceTree = "<group>"; };
 		41FE8648215C526000B62C07 /* nasm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nasm.h; sourceTree = "<group>"; };
 		41FE8650215C530600B62C07 /* nasm-listfmt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "nasm-listfmt.c"; sourceTree = "<group>"; };
-		41FE8657215C534E00B62C07 /* nasm-parse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "nasm-parse.c"; path = "Source/third_party/yasm-1.3.0/modules/parsers/nasm/nasm-parse.c"; sourceTree = SOURCE_ROOT; };
-		41FE8658215C534E00B62C07 /* nasm-parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "nasm-parser.c"; path = "Source/third_party/yasm-1.3.0/modules/parsers/nasm/nasm-parser.c"; sourceTree = SOURCE_ROOT; };
-		41FE8659215C534E00B62C07 /* nasm-parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "nasm-parser.h"; path = "Source/third_party/yasm-1.3.0/modules/parsers/nasm/nasm-parser.h"; sourceTree = SOURCE_ROOT; };
+		41FE8657215C534E00B62C07 /* nasm-parse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "nasm-parse.c"; path = "Source/third_party/yasm/modules/parsers/nasm/nasm-parse.c"; sourceTree = SOURCE_ROOT; };
+		41FE8658215C534E00B62C07 /* nasm-parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "nasm-parser.c"; path = "Source/third_party/yasm/modules/parsers/nasm/nasm-parser.c"; sourceTree = SOURCE_ROOT; };
+		41FE8659215C534E00B62C07 /* nasm-parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "nasm-parser.h"; path = "Source/third_party/yasm/modules/parsers/nasm/nasm-parser.h"; sourceTree = SOURCE_ROOT; };
 		41FE865C215C538900B62C07 /* nasm-token.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "nasm-token.c"; sourceTree = "<group>"; };
 		41FE8660215C53AE00B62C07 /* gas-parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gas-parser.h"; sourceTree = "<group>"; };
 		41FE8661215C53AE00B62C07 /* gas-parse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "gas-parse.c"; sourceTree = "<group>"; };
@@ -10013,7 +10013,7 @@
 			name = vp8;
 			sourceTree = "<group>";
 		};
-		41F773FE215BE33300E72967 /* yasm-1.3.0 */ = {
+		41F773FE215BE33300E72967 /* yasm */ = {
 			isa = PBXGroup;
 			children = (
 				41F77D26215BE6C500E72967 /* frontends */,
@@ -10027,7 +10027,7 @@
 				41FE866C215C542100B62C07 /* x86cpu.c */,
 				419EA205215C4B790082BFD2 /* x86regtmod.c */,
 			);
-			path = "yasm-1.3.0";
+			path = "yasm";
 			sourceTree = "<group>";
 		};
 		41F77D24215BE6AD00E72967 /* libyasm */ = {
@@ -11172,7 +11172,7 @@
 				5C4B4A901E42C4C8002651C8 /* opus */,
 				419241912127583900634FCF /* rnnnoise */,
 				5C4B4AC81E42C980002651C8 /* usrsctp */,
-				41F773FE215BE33300E72967 /* yasm-1.3.0 */,
+				41F773FE215BE33300E72967 /* yasm */,
 			);
 			path = third_party;
 			sourceTree = "<group>";
