@@ -1,3 +1,17 @@
+2019-10-09  Daniel Bates  <dabates@apple.com>
+
+        Add support for CompactPointerTuple<..., OptionSet<...>>
+        https://bugs.webkit.org/show_bug.cgi?id=201316
+
+        Reviewed by Yusuke Suzuki.
+
+        Add a test to ensure we encode and decode a compact pointer tuple correctly when an uint8_t and
+        a OptionSet<> as the byte value portion of the tuple.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/CompactPointerTuple.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2019-10-09  Russell Epstein  <repstein@apple.com>
 
         Unreviewed, rolling out r250930.
