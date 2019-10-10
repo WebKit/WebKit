@@ -71,6 +71,7 @@
     "web-platform-tests/css/css-grid/grid-definition/": "import", 
     "web-platform-tests/css/css-grid/layout-algorithm/": "import", 
     "web-platform-tests/css/css-grid/parsing/": "import", 
+    "web-platform-tests/css/css-images": "import", 
     "web-platform-tests/css/css-lists/": "import", 
     "web-platform-tests/css/css-logical": "import", 
     "web-platform-tests/css/css-multicol": "import", 

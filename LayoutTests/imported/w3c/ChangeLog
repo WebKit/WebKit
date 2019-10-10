@@ -1,3 +1,153 @@
+2019-10-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Import css/css-images WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=200210
+
+        Reviewed by Simon Fraser.
+
+        Imported css/css-images tests from WPT ToT (a879756282) and generated expectations for the non ref-tests.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-images/META.yml: Added.
+        * web-platform-tests/css/css-images/css-image-fallbacks-and-annotations-expected.html: Added.
+        * web-platform-tests/css/css-images/css-image-fallbacks-and-annotations.html: Added.
+        * web-platform-tests/css/css-images/css-image-fallbacks-and-annotations002-expected.html: Added.
+        * web-platform-tests/css/css-images/css-image-fallbacks-and-annotations002.html: Added.
+        * web-platform-tests/css/css-images/css-image-fallbacks-and-annotations003-expected.html: Added.
+        * web-platform-tests/css/css-images/css-image-fallbacks-and-annotations003.html: Added.
+        * web-platform-tests/css/css-images/css-image-fallbacks-and-annotations004-expected.html: Added.
+        * web-platform-tests/css/css-images/css-image-fallbacks-and-annotations004.html: Added.
+        * web-platform-tests/css/css-images/css-image-fallbacks-and-annotations005-expected.html: Added.
+        * web-platform-tests/css/css-images/css-image-fallbacks-and-annotations005.html: Added.
+        * web-platform-tests/css/css-images/gradient-border-box-expected.html: Added.
+        * web-platform-tests/css/css-images/gradient-border-box.html: Added.
+        * web-platform-tests/css/css-images/gradient-button-expected.html: Added.
+        * web-platform-tests/css/css-images/gradient-button.html: Added.
+        * web-platform-tests/css/css-images/gradient-content-box-expected.html: Added.
+        * web-platform-tests/css/css-images/gradient-content-box.html: Added.
+        * web-platform-tests/css/css-images/gradient-crash-expected.html: Added.
+        * web-platform-tests/css/css-images/gradient-crash.html: Added.
+        * web-platform-tests/css/css-images/gradient-move-stops-expected.html: Added.
+        * web-platform-tests/css/css-images/gradient-move-stops.html: Added.
+        * web-platform-tests/css/css-images/gradient/color-stops-parsing-expected.txt: Added.
+        * web-platform-tests/css/css-images/gradient/color-stops-parsing.html: Added.
+        * web-platform-tests/css/css-images/gradient/w3c-import.log: Added.
+        * web-platform-tests/css/css-images/gradients-with-border-expected.html: Added.
+        * web-platform-tests/css/css-images/gradients-with-border.html: Added.
+        * web-platform-tests/css/css-images/gradients-with-transparent-expected.html: Added.
+        * web-platform-tests/css/css-images/gradients-with-transparent.html: Added.
+        * web-platform-tests/css/css-images/idlharness-expected.txt: Added.
+        * web-platform-tests/css/css-images/idlharness.html: Added.
+        * web-platform-tests/css/css-images/image-fit-001.xht: Added.
+        * web-platform-tests/css/css-images/image-fit-006.xht: Added.
+        * web-platform-tests/css/css-images/inheritance-expected.txt: Added.
+        * web-platform-tests/css/css-images/inheritance.html: Added.
+        * web-platform-tests/css/css-images/linear-gradient-1-expected.html: Added.
+        * web-platform-tests/css/css-images/linear-gradient-1.html: Added.
+        * web-platform-tests/css/css-images/linear-gradient-2-expected.html: Added.
+        * web-platform-tests/css/css-images/linear-gradient-2.html: Added.
+        * web-platform-tests/css/css-images/multiple-position-color-stop-conic-expected.html: Added.
+        * web-platform-tests/css/css-images/multiple-position-color-stop-conic.html: Added.
+        * web-platform-tests/css/css-images/multiple-position-color-stop-linear-2-expected.html: Added.
+        * web-platform-tests/css/css-images/multiple-position-color-stop-linear-2.html: Added.
+        * web-platform-tests/css/css-images/multiple-position-color-stop-linear-expected.html: Added.
+        * web-platform-tests/css/css-images/multiple-position-color-stop-linear.html: Added.
+        * web-platform-tests/css/css-images/multiple-position-color-stop-radial-2-expected.html: Added.
+        * web-platform-tests/css/css-images/multiple-position-color-stop-radial-2.html: Added.
+        * web-platform-tests/css/css-images/multiple-position-color-stop-radial-expected.html: Added.
+        * web-platform-tests/css/css-images/multiple-position-color-stop-radial.html: Added.
+        * web-platform-tests/css/css-images/parsing/gradient-position-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-images/parsing/gradient-position-invalid.html: Added.
+        * web-platform-tests/css/css-images/parsing/gradient-position-valid-expected.txt: Added.
+        * web-platform-tests/css/css-images/parsing/gradient-position-valid.html: Added.
+        * web-platform-tests/css/css-images/parsing/image-orientation-computed-expected.txt: Added.
+        * web-platform-tests/css/css-images/parsing/image-orientation-computed.html: Added.
+        * web-platform-tests/css/css-images/parsing/image-orientation-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-images/parsing/image-orientation-invalid.html: Added.
+        * web-platform-tests/css/css-images/parsing/image-orientation-valid-expected.txt: Added.
+        * web-platform-tests/css/css-images/parsing/image-orientation-valid.html: Added.
+        * web-platform-tests/css/css-images/parsing/image-rendering-computed-expected.txt: Added.
+        * web-platform-tests/css/css-images/parsing/image-rendering-computed.html: Added.
+        * web-platform-tests/css/css-images/parsing/image-rendering-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-images/parsing/image-rendering-invalid.html: Added.
+        * web-platform-tests/css/css-images/parsing/image-rendering-valid-expected.txt: Added.
+        * web-platform-tests/css/css-images/parsing/image-rendering-valid.html: Added.
+        * web-platform-tests/css/css-images/parsing/image-resolution-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-images/parsing/image-resolution-invalid.html: Added.
+        * web-platform-tests/css/css-images/parsing/image-resolution-valid-expected.txt: Added.
+        * web-platform-tests/css/css-images/parsing/image-resolution-valid.html: Added.
+        * web-platform-tests/css/css-images/parsing/object-fit-computed-expected.txt: Added.
+        * web-platform-tests/css/css-images/parsing/object-fit-computed.html: Added.
+        * web-platform-tests/css/css-images/parsing/object-fit-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-images/parsing/object-fit-invalid.html: Added.
+        * web-platform-tests/css/css-images/parsing/object-fit-valid-expected.txt: Added.
+        * web-platform-tests/css/css-images/parsing/object-fit-valid.html: Added.
+        * web-platform-tests/css/css-images/parsing/object-position-computed-expected.txt: Added.
+        * web-platform-tests/css/css-images/parsing/object-position-computed.html: Added.
+        * web-platform-tests/css/css-images/parsing/object-position-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-images/parsing/object-position-invalid.html: Added.
+        * web-platform-tests/css/css-images/parsing/object-position-valid-expected.txt: Added.
+        * web-platform-tests/css/css-images/parsing/object-position-valid.html: Added.
+        * web-platform-tests/css/css-images/parsing/w3c-import.log: Added.
+        * web-platform-tests/css/css-images/support/1x1-green.gif: Added.
+        * web-platform-tests/css/css-images/support/1x1-green.png: Added.
+        * web-platform-tests/css/css-images/support/1x1-green.svg: Added.
+        * web-platform-tests/css/css-images/support/1x1-lime.png: Added.
+        * web-platform-tests/css/css-images/support/1x1-maroon.png: Added.
+        * web-platform-tests/css/css-images/support/1x1-navy.png: Added.
+        * web-platform-tests/css/css-images/support/1x1-red.png: Added.
+        * web-platform-tests/css/css-images/support/1x1-white.png: Added.
+        * web-platform-tests/css/css-images/support/60x60-gg-rr.png: Added.
+        * web-platform-tests/css/css-images/support/60x60-green.png: Added.
+        * web-platform-tests/css/css-images/support/60x60-red.png: Added.
+        * web-platform-tests/css/css-images/support/a-green.css: Added.
+        (.a):
+        * web-platform-tests/css/css-images/support/b-green.css: Added.
+        (.b):
+        * web-platform-tests/css/css-images/support/c-red.css: Added.
+        (.c):
+        * web-platform-tests/css/css-images/support/cat.png: Added.
+        * web-platform-tests/css/css-images/support/import-green.css: Added.
+        (.import):
+        * web-platform-tests/css/css-images/support/import-red.css: Added.
+        (.import):
+        * web-platform-tests/css/css-images/support/intrinsic-size.jpg: Added.
+        * web-platform-tests/css/css-images/support/intrinsic-size.png: Added.
+        * web-platform-tests/css/css-images/support/pattern-grg-rgr-grg.png: Added.
+        * web-platform-tests/css/css-images/support/pattern-grg-rrg-rgg.png: Added.
+        * web-platform-tests/css/css-images/support/pattern-rgr-grg-rgr.png: Added.
+        * web-platform-tests/css/css-images/support/pattern-tr.png: Added.
+        * web-platform-tests/css/css-images/support/ruler-h-50%.png: Added.
+        * web-platform-tests/css/css-images/support/ruler-h-50px.png: Added.
+        * web-platform-tests/css/css-images/support/ruler-v-100px.png: Added.
+        * web-platform-tests/css/css-images/support/ruler-v-50px.png: Added.
+        * web-platform-tests/css/css-images/support/square-purple.png: Added.
+        * web-platform-tests/css/css-images/support/square-teal.png: Added.
+        * web-platform-tests/css/css-images/support/square-white.png: Added.
+        * web-platform-tests/css/css-images/support/support/swatch-green.png: Added.
+        * web-platform-tests/css/css-images/support/support/swatch-red.png: Added.
+        * web-platform-tests/css/css-images/support/support/w3c-import.log: Added.
+        * web-platform-tests/css/css-images/support/swatch-blue.png: Added.
+        * web-platform-tests/css/css-images/support/swatch-green.png: Added.
+        * web-platform-tests/css/css-images/support/swatch-lime.png: Added.
+        * web-platform-tests/css/css-images/support/swatch-orange.png: Added.
+        * web-platform-tests/css/css-images/support/swatch-red.png: Added.
+        * web-platform-tests/css/css-images/support/swatch-white.png: Added.
+        * web-platform-tests/css/css-images/support/swatch-yellow.png: Added.
+        * web-platform-tests/css/css-images/support/test-bl.png: Added.
+        * web-platform-tests/css/css-images/support/test-br.png: Added.
+        * web-platform-tests/css/css-images/support/test-inner-half-size.png: Added.
+        * web-platform-tests/css/css-images/support/test-outer.png: Added.
+        * web-platform-tests/css/css-images/support/test-tl.png: Added.
+        * web-platform-tests/css/css-images/support/test-tr.png: Added.
+        * web-platform-tests/css/css-images/support/w3c-import.log: Added.
+        * web-platform-tests/css/css-images/tiled-gradients-expected.html: Added.
+        * web-platform-tests/css/css-images/tiled-gradients.html: Added.
+        * web-platform-tests/css/css-images/tiled-radial-gradients-expected.html: Added.
+        * web-platform-tests/css/css-images/tiled-radial-gradients.html: Added.
+        * web-platform-tests/css/css-images/w3c-import.log: Added.
+
 2019-10-09  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Fix video sometimes not appearing

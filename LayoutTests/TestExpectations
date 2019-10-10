@@ -3862,3 +3862,14 @@ webkit.org/b/202782 imported/w3c/web-platform-tests/offscreen-canvas/compositing
 webkit.org/b/202782 imported/w3c/web-platform-tests/offscreen-canvas/drawing-images-to-the-canvas/2d.drawImage.3arg.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/202782 imported/w3c/web-platform-tests/offscreen-canvas/drawing-images-to-the-canvas/2d.drawImage.broken.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/202782 imported/w3c/web-platform-tests/offscreen-canvas/drawing-images-to-the-canvas/2d.drawImage.floatsource.html [ DumpJSConsoleLogInStdErr ]
+
+# wpt css-images failures
+webkit.org/b/200206 imported/w3c/web-platform-tests/css/css-images/gradient/color-stops-parsing.html [ Crash ]
+webkit.org/b/200207 imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations002.html [ ImageOnlyFailure ]
+webkit.org/b/200207 imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations003.html [ ImageOnlyFailure ]
+webkit.org/b/200207 imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations004.html [ ImageOnlyFailure ]
+webkit.org/b/200207 imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations005.html [ ImageOnlyFailure ]
+webkit.org/b/200207 imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations.html [ ImageOnlyFailure ]
+webkit.org/b/200208 imported/w3c/web-platform-tests/css/css-images/gradients-with-transparent.html [ ImageOnlyFailure ]
+webkit.org/b/200209 imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-radial.html [ ImageOnlyFailure ]
+webkit.org/b/202813 imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic.html [ ImageOnlyFailure ]
