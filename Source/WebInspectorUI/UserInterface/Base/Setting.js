@@ -188,7 +188,6 @@ WI.settings = {
     // Experimental
     experimentalEnableLayersTab: new WI.Setting("experimental-enable-layers-tab", false),
     experimentalEnableNewTabBar: new WI.Setting("experimental-enable-new-tab-bar", false),
-    experimentalEnableSourcesTab: new WI.Setting("experimental-enable-sources-tab", false),
     experimentalEnableStylesIcons: new WI.Setting("experimental-styles-icons", false),
     experimentalEnableStylesJumpToEffective: new WI.Setting("experimental-styles-jump-to-effective", false),
 

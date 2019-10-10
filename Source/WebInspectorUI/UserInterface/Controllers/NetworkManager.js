@@ -50,7 +50,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this._saveLocalResourceOverridesDebouncer = null;
 
         // FIXME: Provide dedicated UI to toggle Network Interception globally?
-        this._interceptionEnabled = WI.settings.experimentalEnableSourcesTab.value || !!window.InspectorTest;
+        this._interceptionEnabled = !!window.InspectorTest;
 
         WI.notifications.addEventListener(WI.Notification.ExtraDomainsActivated, this._extraDomainsActivated, this);
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._handleFrameMainResourceDidChange, this);
@@ -85,9 +85,6 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     static supportsLocalResourceOverrides()
     {
-        if (!WI.settings.experimentalEnableSourcesTab.value)
-            return false;
-
         return window.NetworkAgent && InspectorBackend.domains.Network && InspectorBackend.domains.Network.setInterceptionEnabled;
     }
 

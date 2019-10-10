@@ -365,8 +365,6 @@
     <None Include="..\UserInterface\DataGrid.js" />
     <None Include="..\UserInterface\DebuggerManager.js" />
     <None Include="..\UserInterface\DebuggerObserver.js" />
-    <None Include="..\UserInterface\DebuggerSidebarPanel.css" />
-    <None Include="..\UserInterface\DebuggerSidebarPanel.js" />
     <None Include="..\UserInterface\DetailsSection.css" />
     <None Include="..\UserInterface\DetailsSection.js" />
     <None Include="..\UserInterface\DetailsSectionDataGridRow.js" />
@@ -725,8 +723,6 @@
     <None Include="..\UserInterface\ResourceContentView.js" />
     <None Include="..\UserInterface\ResourceDetailsSidebarPanel.js" />
     <None Include="..\UserInterface\ResourceIcons.css" />
-    <None Include="..\UserInterface\ResourceSidebarPanel.css" />
-    <None Include="..\UserInterface\ResourceSidebarPanel.js" />
     <None Include="..\UserInterface\ResourceTimelineDataGridNode.js" />
     <None Include="..\UserInterface\ResourceTimelineDataGridNodePathComponent.js" />
     <None Include="..\UserInterface\ResourceTimelineRecord.js" />

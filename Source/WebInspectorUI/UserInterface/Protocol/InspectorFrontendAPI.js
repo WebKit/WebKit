@@ -101,11 +101,7 @@ InspectorFrontendAPI = {
 
     showResources: function()
     {
-        if (WI.settings.experimentalEnableSourcesTab.value)
-            WI.showSourcesTab();
-        else
-            WI.showResourcesTab();
-
+        WI.showSourcesTab();
     },
 
     // COMPATIBILITY (iOS 13): merged into InspectorFrontendAPI.setTimelineProfilingEnabled.

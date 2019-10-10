@@ -1257,20 +1257,11 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         if (breakpoints.length === 1) {
             WI.breakpointPopoverController.appendContextMenuItems(contextMenu, breakpoints[0], event.target);
 
-            if (WI.settings.experimentalEnableSourcesTab.value) {
-                if (!WI.isShowingSourcesTab()) {
-                    contextMenu.appendSeparator();
-                    contextMenu.appendItem(WI.UIString("Reveal in Sources Tab"), () => {
-                        WI.showSourcesTab({breakpointToSelect: breakpoints[0]});
-                    });
-                }
-            } else {
-                if (!WI.isShowingDebuggerTab()) {
-                    contextMenu.appendSeparator();
-                    contextMenu.appendItem(WI.UIString("Reveal in Debugger Tab"), () => {
-                        WI.showDebuggerTab({breakpointToSelect: breakpoints[0]});
-                    });
-                }
+            if (!WI.isShowingSourcesTab()) {
+                contextMenu.appendSeparator();
+                contextMenu.appendItem(WI.UIString("Reveal in Sources Tab"), () => {
+                    WI.showSourcesTab({breakpointToSelect: breakpoints[0]});
+                });
             }
 
             return;

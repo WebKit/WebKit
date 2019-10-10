@@ -42,11 +42,6 @@ WI.SourcesTabContentView = class SourcesTabContentView extends WI.ContentBrowser
         };
     }
 
-    static isTabAllowed()
-    {
-        return !!WI.settings.experimentalEnableSourcesTab.value;
-    }
-
     // Public
 
     get type()

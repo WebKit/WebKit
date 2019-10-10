@@ -557,11 +557,8 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             let sourceCode = this._style.ownerRule.sourceCodeLocation.displaySourceCode;
             if (sourceCode instanceof WI.CSSStyleSheet || (sourceCode instanceof WI.Resource && sourceCode.type === WI.Resource.Type.StyleSheet))
                 label = WI.UIString("Reveal in Style Sheet");
-            else if (WI.settings.experimentalEnableSourcesTab.value)
-                label = WI.UIString("Reveal in Sources Tab");
             else
-                label = WI.UIString("Reveal in Resources Tab");
-
+                label = WI.UIString("Reveal in Sources Tab");
             contextMenu.appendItem(label, () => {
                 WI.showSourceCodeLocation(this._style.ownerRule.sourceCodeLocation, {
                     ignoreNetworkTab: true,

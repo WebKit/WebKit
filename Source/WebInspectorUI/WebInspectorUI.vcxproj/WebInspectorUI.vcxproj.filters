@@ -345,12 +345,6 @@
     <None Include="..\UserInterface\DebuggerObserver.js">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\DebuggerSidebarPanel.css">
-      <Filter>UserInterface</Filter>
-    </None>
-    <None Include="..\UserInterface\DebuggerSidebarPanel.js">
-      <Filter>UserInterface</Filter>
-    </None>
     <None Include="..\UserInterface\DetailsSection.css">
       <Filter>UserInterface</Filter>
     </None>
@@ -787,12 +781,6 @@
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\ResourceIcons.css">
-      <Filter>UserInterface</Filter>
-    </None>
-    <None Include="..\UserInterface\ResourceSidebarPanel.css">
-      <Filter>UserInterface</Filter>
-    </None>
-    <None Include="..\UserInterface\ResourceSidebarPanel.js">
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\ResourceTimelineDataGridNode.js">

@@ -167,18 +167,10 @@ WI.appendContextMenuItemsForURL = function(contextMenu, url, options = {})
     }
 
     if (WI.networkManager.resourceForURL(url)) {
-        if (WI.settings.experimentalEnableSourcesTab.value) {
-            if (!WI.isShowingSourcesTab()) {
-                contextMenu.appendItem(WI.UIString("Reveal in Sources Tab"), () => {
-                    showResourceWithOptions({preferredTabType: WI.SourcesTabContentView.Type});
-                });
-            }
-        } else {
-            if (!WI.isShowingResourcesTab()) {
-                contextMenu.appendItem(WI.UIString("Reveal in Resources Tab"), () => {
-                    showResourceWithOptions({preferredTabType: WI.ResourcesTabContentView.Type});
-                });
-            }
+        if (!WI.isShowingSourcesTab()) {
+            contextMenu.appendItem(WI.UIString("Reveal in Sources Tab"), () => {
+                showResourceWithOptions({preferredTabType: WI.SourcesTabContentView.Type});
+            });
         }
 
         if (!WI.isShowingNetworkTab()) {

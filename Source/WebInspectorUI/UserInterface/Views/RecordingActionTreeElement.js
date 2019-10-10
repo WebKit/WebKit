@@ -430,12 +430,7 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         }
 
         if (sourceCodeLocation) {
-            let label = null;
-            if (WI.settings.experimentalEnableSourcesTab.value)
-                label = WI.UIString("Reveal in Sources Tab");
-            else
-                label = WI.UIString("Reveal in Resources Tab");
-            contextMenu.appendItem(label, () => {
+            contextMenu.appendItem(WI.UIString("Reveal in Sources Tab"), () => {
                 WI.showSourceCodeLocation(sourceCodeLocation, {
                     ignoreNetworkTab: true,
                     ignoreSearchTab: true,
