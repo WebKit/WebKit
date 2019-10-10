@@ -1,3 +1,15 @@
+2019-10-10  Sihui Liu  <sihui_liu@apple.com>
+
+        Add a unit test for StorageQuotaManager
+        https://bugs.webkit.org/show_bug.cgi?id=202755
+
+        Reviewed by Youenn Fablet.
+
+        Expose state of StorageQuotaManager for newly added unit test.
+
+        * storage/StorageQuotaManager.h:
+        (WebCore::StorageQuotaManager::state const):
+
 2019-10-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Support programmatic paste requests on macOS

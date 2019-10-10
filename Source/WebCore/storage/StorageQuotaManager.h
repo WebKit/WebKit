@@ -62,6 +62,15 @@ public:
 
     WEBCORE_EXPORT void updateQuotaBasedOnSpaceUsage();
 
+    enum class State {
+        Uninitialized,
+        ComputingSpaceUsed,
+        WaitingForSpaceIncreaseResponse,
+        AskingForMoreSpace,
+        MakingDecisionForRequest,
+    };
+    State state() const { return m_state; }
+
 private:
     uint64_t spaceUsage() const;
     bool shouldAskForMoreSpace(uint64_t spaceIncrease) const;
@@ -86,13 +95,6 @@ private:
     };
     Deque<PendingRequest> m_pendingRequests;
 
-    enum class State {
-        Uninitialized,
-        ComputingSpaceUsed,
-        WaitingForSpaceIncreaseResponse,
-        AskingForMoreSpace,
-        MakingDecisionForRequest,
-    };
     State m_state { State::Uninitialized };
 };
 
