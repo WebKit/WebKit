@@ -286,8 +286,8 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/ssl/tls_method.cc
     Source/third_party/boringssl/src/ssl/tls_record.cc
     Source/third_party/boringssl/src/third_party/fiat/curve25519.c
-    Source/third_party/jsoncpp/overrides/src/lib_json/json_reader.cpp
-    Source/third_party/jsoncpp/overrides/src/lib_json/json_value.cpp
+    Source/third_party/jsoncpp/source/src/lib_json/json_reader.cpp
+    Source/third_party/jsoncpp/source/src/lib_json/json_value.cpp
     Source/third_party/jsoncpp/source/src/lib_json/json_writer.cpp
     Source/third_party/libyuv/source/compare.cc
     Source/third_party/libyuv/source/compare_common.cc
@@ -1414,6 +1414,7 @@ target_include_directories(webrtc PRIVATE
     Source
     Source/third_party/abseil-cpp
     Source/third_party/boringssl/src/include
+    Source/third_party/jsoncpp/generated
     Source/third_party/jsoncpp/overrides/include
     Source/third_party/jsoncpp/source/include
     Source/third_party/jsoncpp/source/src/lib_json
