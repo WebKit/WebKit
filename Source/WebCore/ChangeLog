@@ -1,3 +1,20 @@
+2019-10-09  youenn fablet  <youenn@apple.com>
+
+        A service worker process should not be created when enqueuing a service worker job
+        https://bugs.webkit.org/show_bug.cgi?id=202578
+        <rdar://problem/55979690>
+
+        Reviewed by Chris Dumez.
+
+        Ask for a service worker context connection when planning to install or run a service worker.
+        This allows to not spin unnecessarily service worker processes for jobs that do not end up installing a service worker.
+
+        Covered by existing tests.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::tryInstallContextData):
+        (WebCore::SWServer::runServiceWorkerIfNecessary):
+
 2019-10-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the internal iOS build

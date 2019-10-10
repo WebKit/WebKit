@@ -540,9 +540,11 @@ void SWServer::tryInstallContextData(ServiceWorkerContextData&& data)
     RegistrableDomain registrableDomain(data.scriptURL);
     auto* connection = contextConnectionForRegistrableDomain(registrableDomain);
     if (!connection) {
-        m_pendingContextDatas.ensure(WTFMove(registrableDomain), [] {
+        m_pendingContextDatas.ensure(registrableDomain, [] {
             return Vector<ServiceWorkerContextData> { };
         }).iterator->value.append(WTFMove(data));
+
+        createContextConnection(registrableDomain);
         return;
     }
     
@@ -619,6 +621,8 @@ void SWServer::runServiceWorkerIfNecessary(ServiceWorkerIdentifier identifier, R
         serviceWorkerRunRequestsForOrigin.ensure(identifier, [&] {
             return Vector<RunServiceWorkerCallback> { };
         }).iterator->value.append(WTFMove(callback));
+
+        createContextConnection(worker->registrableDomain());
         return;
     }
 

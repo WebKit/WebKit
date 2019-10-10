@@ -179,9 +179,6 @@ void WebSWServerConnection::startFetch(ServiceWorkerRegistrationIdentifier servi
             return;
         }
 
-        if (!worker->contextConnection())
-            server().createContextConnection(worker->registrableDomain());
-
         server().runServiceWorkerIfNecessary(serviceWorkerIdentifier, [weakThis = WTFMove(weakThis), this, fetchIdentifier, serviceWorkerIdentifier, request = WTFMove(request), options = WTFMove(options), formData = WTFMove(formData), referrer = WTFMove(referrer), shouldSkipFetchEvent = worker->shouldSkipFetchEvent()](auto* contextConnection) {
             if (!weakThis)
                 return;
@@ -230,9 +227,6 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
     if (!sourceData)
         return;
 
-    if (!destinationWorker->contextConnection())
-        server().createContextConnection(destinationWorker->registrableDomain());
-
     // It's possible this specific worker cannot be re-run (e.g. its registration has been removed)
     server().runServiceWorkerIfNecessary(destinationIdentifier, [destinationIdentifier, message = WTFMove(message), sourceData = WTFMove(*sourceData)](auto* contextConnection) mutable {
         if (contextConnection)
@@ -242,10 +236,6 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
 
 void WebSWServerConnection::scheduleJobInServer(ServiceWorkerJobData&& jobData)
 {
-    RegistrableDomain registrableDomain(jobData.scopeURL);
-    if (!server().contextConnectionForRegistrableDomain(registrableDomain))
-        server().createContextConnection(registrableDomain);
-
     SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED("Scheduling ServiceWorker job %s in server", jobData.identifier().loggingString().utf8().data());
     ASSERT(identifier() == jobData.connectionIdentifier());
 

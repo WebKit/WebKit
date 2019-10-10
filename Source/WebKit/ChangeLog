@@ -1,3 +1,19 @@
+2019-10-09  youenn fablet  <youenn@apple.com>
+
+        A service worker process should not be created when enqueuing a service worker job
+        https://bugs.webkit.org/show_bug.cgi?id=202578
+        <rdar://problem/55979690>
+
+        Reviewed by Chris Dumez.
+
+        Remove the calls to create service worker context connection.
+        They are now done at SWServer level when trying to either run a service worker or install one.
+
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::startFetch):
+        (WebKit::WebSWServerConnection::postMessageToServiceWorker):
+        (WebKit::WebSWServerConnection::scheduleJobInServer):
+
 2019-10-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Refactor Pasteboard item reading functions to work on both iOS and macOS
