@@ -1,3 +1,17 @@
+2019-10-10  Mark Lam  <mark.lam@apple.com>
+
+        Modify JSTests/stress/string-overflow-createError-*.js tests to allow an OOME result.
+        https://bugs.webkit.org/show_bug.cgi?id=202828
+
+        Reviewed by Yusuke Suzuki.
+
+        The tests intentionally allocate a very large string.  Hence, for some memory
+        limited configurations, it is perfectly reasonable for the test to throw an Out
+        Of Memory error.
+
+        * stress/string-overflow-createError-builder.js:
+        * stress/string-overflow-createError-fit.js:
+
 2019-10-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, roll out r250878

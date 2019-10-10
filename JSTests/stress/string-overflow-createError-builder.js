@@ -11,5 +11,6 @@ try {
 
 // when the StringBuilder for the error message overflows,
 // "object is not a function" is used as message for the TypeError.
-if (exception.message != "object is not a function.")
+if (exception.message != "object is not a function."
+    && exception != "Error: Out of memory")
     throw "FAILED";

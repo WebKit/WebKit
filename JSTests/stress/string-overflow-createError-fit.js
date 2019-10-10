@@ -12,5 +12,6 @@ try {
 // Although the message of the TypeError is quite long,
 // it still fits into String::MaxLength. Check the start
 // of the error message.
-if (!exception.message.startsWith("foo is not a function"))
+if (!exception.message.startsWith("foo is not a function")
+    && exception != "Error: Out of memory")
     throw "FAILED";
