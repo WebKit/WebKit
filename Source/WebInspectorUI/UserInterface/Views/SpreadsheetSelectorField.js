@@ -39,6 +39,7 @@ WI.SpreadsheetSelectorField = class SpreadsheetSelectorField extends WI.Object
         this._element.addEventListener("keydown", this._handleKeyDown.bind(this));
 
         this._editing = false;
+        this._valueBeforeEditing = "";
         this._handledMouseDown = false;
     }
 
@@ -52,6 +53,7 @@ WI.SpreadsheetSelectorField = class SpreadsheetSelectorField extends WI.Object
             return;
 
         this._editing = true;
+        this._valueBeforeEditing = this._element.textContent;
 
         let element = this._element;
         element.classList.add("editing");
@@ -73,6 +75,7 @@ WI.SpreadsheetSelectorField = class SpreadsheetSelectorField extends WI.Object
             return;
 
         this._editing = false;
+        this._valueBeforeEditing = "";
         this._element.classList.remove("editing");
         this._element.contentEditable = false;
 
@@ -107,10 +110,12 @@ WI.SpreadsheetSelectorField = class SpreadsheetSelectorField extends WI.Object
         if (document.activeElement === this._element)
             return;
 
-        this.stopEditing();
+        if (this._delegate && typeof this._delegate.spreadsheetSelectorFieldDidCommit === "function") {
+            if (this._element.textContent !== this._valueBeforeEditing)
+                this._delegate.spreadsheetSelectorFieldDidCommit();
+        }
 
-        if (this._delegate && typeof this._delegate.spreadsheetSelectorFieldDidChange === "function")
-            this._delegate.spreadsheetSelectorFieldDidChange(null);
+        this.stopEditing();
     }
 
     _handleKeyDown(event)
@@ -128,13 +133,11 @@ WI.SpreadsheetSelectorField = class SpreadsheetSelectorField extends WI.Object
         if (event.key === "Enter" || event.key === "Tab") {
             event.stop();
 
-            this.stopEditing();
-
-            if (this._delegate && typeof this._delegate.spreadsheetSelectorFieldDidChange === "function") {
+            if (this._delegate && typeof this._delegate.spreadsheetSelectorFieldWillNavigate === "function") {
                 let direction = (event.shiftKey && event.key === "Tab") ? "backward" : "forward";
-                this._delegate.spreadsheetSelectorFieldDidChange(direction);
+                this._delegate.spreadsheetSelectorFieldWillNavigate(direction);
             }
-
+            this.stopEditing();
             return;
         }
 

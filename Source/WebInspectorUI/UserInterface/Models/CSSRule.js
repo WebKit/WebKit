@@ -68,11 +68,6 @@ WI.CSSRule = class CSSRule extends WI.Object
         if (!this.editable)
             return;
 
-        if (this._selectorText === selectorText) {
-            this._selectorResolved(true);
-            return;
-        }
-
         this._nodeStyles.changeRuleSelector(this, selectorText).then(this._selectorResolved.bind(this), this._selectorRejected.bind(this));
     }
 

@@ -1,3 +1,36 @@
+2019-10-09  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Modifying CSS selector by pressing Enter or Tab causes 2 CSS.setRuleSelector backend calls
+        https://bugs.webkit.org/show_bug.cgi?id=202769
+        <rdar://problem/56132166>
+
+        Reviewed by Matt Baker.
+
+        Previously, spreadsheetSelectorFieldDidChange would get called twice:
+        1. On Enter or Tab key press.
+        2. On blur event.
+
+        With this patch, it only gets called on blur event.
+
+        * UserInterface/Models/CSSRule.js:
+        (WI.CSSRule.prototype.set selectorText):
+        Remove dead code. Calling `_selectorResolved(true)` would cause an uncaught exception.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.spreadsheetSelectorFieldDidChange): Removed.
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.spreadsheetSelectorFieldDidCommit): Added.
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.spreadsheetSelectorFieldWillNavigate): Added.
+        Split spreadsheetSelectorFieldDidChange into spreadsheetSelectorFieldDidCommit and spreadsheetSelectorFieldWillNavigate.
+
+        * UserInterface/Views/SpreadsheetSelectorField.js:
+        (WI.SpreadsheetSelectorField):
+        (WI.SpreadsheetSelectorField.prototype.startEditing):
+        (WI.SpreadsheetSelectorField.prototype.stopEditing):
+        (WI.SpreadsheetSelectorField.prototype._handleBlur):
+        (WI.SpreadsheetSelectorField.prototype._handleKeyDown):
+        Add `_valueBeforeEditing` to check if the value was modified before the blur event.
+        Similar logic exists in SpreadsheetTextField.
+
 2019-10-08  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: modifications to shader modules can be shared between vertex/fragment shaders

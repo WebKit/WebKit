@@ -226,23 +226,20 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
     // SpreadsheetSelectorField delegate
 
-    spreadsheetSelectorFieldDidChange(direction)
+    spreadsheetSelectorFieldDidCommit()
     {
         let selectorText = this._selectorElement.textContent.trim();
-
-        if (!selectorText || selectorText === this._style.ownerRule.selectorText)
-            this._discardSelectorChange();
-        else {
+        if (selectorText) {
             this.dispatchEventToListeners(WI.SpreadsheetCSSStyleDeclarationSection.Event.SelectorWillChange);
             this._style.ownerRule.singleFireEventListener(WI.CSSRule.Event.SelectorChanged, this._renderSelector, this);
             this._style.ownerRule.selectorText = selectorText;
-        }
+        } else
+            this._discardSelectorChange();
+    }
 
-        if (!direction) {
-            // Don't do anything when it's a blur event.
-            return;
-        }
-
+    spreadsheetSelectorFieldWillNavigate(direction)
+    {
+        console.assert(direction);
         if (direction === "forward")
             this._propertiesEditor.startEditingFirstProperty();
         else if (direction === "backward") {
