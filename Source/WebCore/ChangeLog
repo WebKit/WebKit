@@ -1,3 +1,19 @@
+2019-10-10  youenn fablet  <youenn@apple.com>
+
+        Add asserts to MediaStreamPrivate observer routines
+        https://bugs.webkit.org/show_bug.cgi?id=202724
+
+        Reviewed by Alex Christensen.
+
+        These methods are only to be called in main thread.
+        Add asserts to validate this.
+        No change of behavior.
+
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::addObserver):
+        (WebCore::MediaStreamPrivate::removeObserver):
+        (WebCore::MediaStreamPrivate::forEachObserver const):
+
 2019-10-09  youenn fablet  <youenn@apple.com>
 
         A service worker process should not be created when enqueuing a service worker job

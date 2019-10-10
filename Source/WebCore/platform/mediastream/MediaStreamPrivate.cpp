@@ -91,16 +91,19 @@ MediaStreamPrivate::~MediaStreamPrivate()
 
 void MediaStreamPrivate::addObserver(MediaStreamPrivate::Observer& observer)
 {
+    RELEASE_ASSERT(isMainThread());
     m_observers.add(&observer);
 }
 
 void MediaStreamPrivate::removeObserver(MediaStreamPrivate::Observer& observer)
 {
+    RELEASE_ASSERT(isMainThread());
     m_observers.remove(&observer);
 }
 
 void MediaStreamPrivate::forEachObserver(const WTF::Function<void(Observer&)>& apply) const
 {
+    RELEASE_ASSERT(isMainThread());
     for (auto* observer : copyToVector(m_observers)) {
         if (!m_observers.contains(observer))
             continue;
