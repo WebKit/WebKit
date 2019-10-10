@@ -40,6 +40,7 @@ class ShouldBuildTest(unittest.TestCase):
         (["LayoutTests/platform/mac-sierra/foo"], ["mac-yosemite", "mac-elcapitan", "mac-sierra"]),
         (["LayoutTests/platform/mac-highsierra/foo"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra"]),
         (["LayoutTests/platform/mac-mojave/foo"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave"]),
+        (["LayoutTests/platform/mac-catalina/foo"], ["mac-mojave", "mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave"]),
         (["LayoutTests/platform/ios-simulator/foo"], ["ios-13", "ios-simulator-13"]),
         (["LayoutTests/platform/ios-simulator-wk1/foo"], ["ios-13", "ios-simulator-13"]),
         (["LayoutTests/platform/ios-simulator-wk2/foo"], ["ios-13", "ios-simulator-13"]),

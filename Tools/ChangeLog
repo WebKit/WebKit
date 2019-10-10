@@ -1,3 +1,12 @@
+2019-10-10  Matt Lewis  <jlewis3@apple.com>
+
+        Emergency unittest fix for wkbuild.
+
+        Unreviewed test fix.
+
+        * BuildSlaveSupport/build.webkit.org-config/wkbuild_unittest.py:
+        (ShouldBuildTest):
+
 2019-10-10  Aakash Jain  <aakash_jain@apple.com>
 
         Updated new Catalina queues names as per new Buildbot naming scheme
