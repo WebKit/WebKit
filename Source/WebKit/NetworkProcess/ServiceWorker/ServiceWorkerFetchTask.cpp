@@ -59,6 +59,7 @@ ServiceWorkerFetchTask::ServiceWorkerFetchTask(PAL::SessionID sessionID, WebSWSe
 void ServiceWorkerFetchTask::didReceiveRedirectResponse(const ResourceResponse& response)
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveRedirectResponse: %s", m_identifier.fetchIdentifier.loggingString().utf8().data());
+    m_timeoutTimer.stop();
     m_wasHandled = true;
     if (m_connection)
         m_connection->send(Messages::ServiceWorkerClientFetch::DidReceiveRedirectResponse { response }, m_identifier.fetchIdentifier);
@@ -67,6 +68,7 @@ void ServiceWorkerFetchTask::didReceiveRedirectResponse(const ResourceResponse& 
 void ServiceWorkerFetchTask::didReceiveResponse(const ResourceResponse& response, bool needsContinueDidReceiveResponseMessage)
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveResponse: %s", m_identifier.fetchIdentifier.loggingString().utf8().data());
+    m_timeoutTimer.stop();
     m_wasHandled = true;
     if (m_connection)
         m_connection->send(Messages::ServiceWorkerClientFetch::DidReceiveResponse { response, needsContinueDidReceiveResponseMessage }, m_identifier.fetchIdentifier);
@@ -74,51 +76,47 @@ void ServiceWorkerFetchTask::didReceiveResponse(const ResourceResponse& response
 
 void ServiceWorkerFetchTask::didReceiveData(const IPC::DataReference& data, int64_t encodedDataLength)
 {
+    ASSERT(!m_timeoutTimer.isActive());
     if (m_connection)
         m_connection->send(Messages::ServiceWorkerClientFetch::DidReceiveData { data, encodedDataLength }, m_identifier.fetchIdentifier);
 }
 
 void ServiceWorkerFetchTask::didReceiveFormData(const IPC::FormDataReference& formData)
 {
+    ASSERT(!m_timeoutTimer.isActive());
     if (m_connection)
         m_connection->send(Messages::ServiceWorkerClientFetch::DidReceiveFormData { formData }, m_identifier.fetchIdentifier);
 }
 
 void ServiceWorkerFetchTask::didFinish()
 {
+    ASSERT(!m_timeoutTimer.isActive());
     RELEASE_LOG_IF_ALLOWED("didFinishFetch: fetchIdentifier: %s", m_identifier.fetchIdentifier.loggingString().utf8().data());
     m_timeoutTimer.stop();
-    if (!m_didReachTerminalState && m_connection)
+    if (m_connection)
         m_connection->send(Messages::ServiceWorkerClientFetch::DidFinish { }, m_identifier.fetchIdentifier);
-    m_didReachTerminalState = true;
 }
 
 void ServiceWorkerFetchTask::didFail(const ResourceError& error)
 {
     RELEASE_LOG_ERROR_IF_ALLOWED("didFailFetch: fetchIdentifier: %s", m_identifier.fetchIdentifier.loggingString().utf8().data());
     m_timeoutTimer.stop();
-    if (!m_didReachTerminalState && m_connection)
+    if (m_connection)
         m_connection->send(Messages::ServiceWorkerClientFetch::DidFail { error }, m_identifier.fetchIdentifier);
-    m_didReachTerminalState = true;
 }
 
 void ServiceWorkerFetchTask::didNotHandle()
 {
     RELEASE_LOG_IF_ALLOWED("didNotHandleFetch: fetchIdentifier: %s", m_identifier.fetchIdentifier.loggingString().utf8().data());
     m_timeoutTimer.stop();
-    if (!m_didReachTerminalState && m_connection)
+    if (m_connection)
         m_connection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, m_identifier.fetchIdentifier);
-    m_didReachTerminalState = true;
 }
 
 void ServiceWorkerFetchTask::timeoutTimerFired()
 {
     RELEASE_LOG_IF_ALLOWED("timeoutTimerFired: fetchIdentifier: %s", m_identifier.fetchIdentifier.loggingString().utf8().data());
-    if (!m_wasHandled)
-        didNotHandle();
-    else
-        didFail({ errorDomainWebKitInternal, 0, { }, "Service Worker fetch timed out"_s });
-
+    didNotHandle();
     m_contextConnection.fetchTaskTimedOut(*this);
 }
 

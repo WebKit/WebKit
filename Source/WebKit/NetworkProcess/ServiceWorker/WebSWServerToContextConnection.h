@@ -103,7 +103,7 @@ private:
     WeakPtr<WebCore::SWServer> m_server;
 
     HashMap<ServiceWorkerFetchTask::Identifier, WebCore::FetchIdentifier> m_ongoingFetchIdentifiers;
-    HashMap<WebCore::FetchIdentifier, Ref<ServiceWorkerFetchTask>> m_ongoingFetches;
+    HashMap<WebCore::FetchIdentifier, std::unique_ptr<ServiceWorkerFetchTask>> m_ongoingFetches;
     bool m_isThrottleable { true };
 }; // class WebSWServerToContextConnection
 

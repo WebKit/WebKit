@@ -31,7 +31,6 @@
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/Timer.h>
 #include <pal/SessionID.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 class ResourceError;
@@ -50,12 +49,10 @@ namespace WebKit {
 class WebSWServerConnection;
 class WebSWServerToContextConnection;
 
-class ServiceWorkerFetchTask : public RefCounted<ServiceWorkerFetchTask> {
+class ServiceWorkerFetchTask {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    template<typename... Args> static Ref<ServiceWorkerFetchTask> create(Args&&... args)
-    {
-        return adoptRef(*new ServiceWorkerFetchTask(std::forward<Args>(args)...));
-    }
+    ServiceWorkerFetchTask(PAL::SessionID, WebSWServerConnection&, WebSWServerToContextConnection&, WebCore::FetchIdentifier, WebCore::ServiceWorkerIdentifier, Seconds timeout);
 
     void didNotHandle();
     void fail(const WebCore::ResourceError& error) { didFail(error); }
@@ -79,8 +76,6 @@ public:
     bool wasHandled() const { return m_wasHandled; }
 
 private:
-    ServiceWorkerFetchTask(PAL::SessionID, WebSWServerConnection&, WebSWServerToContextConnection&, WebCore::FetchIdentifier, WebCore::ServiceWorkerIdentifier, Seconds timeout);
-
     void didReceiveRedirectResponse(const WebCore::ResourceResponse&);
     void didReceiveResponse(const WebCore::ResourceResponse&, bool needsContinueDidReceiveResponseMessage);
     void didReceiveData(const IPC::DataReference&, int64_t encodedDataLength);
@@ -97,7 +92,6 @@ private:
     Seconds m_timeout;
     WebCore::Timer m_timeoutTimer;
     bool m_wasHandled { false };
-    bool m_didReachTerminalState { false };
 };
 
 inline bool operator==(const ServiceWorkerFetchTask::Identifier& a, const ServiceWorkerFetchTask::Identifier& b)

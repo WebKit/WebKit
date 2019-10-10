@@ -1,3 +1,37 @@
+2019-10-10  Youenn Fablet  <youenn@apple.com>
+
+        Do not timeout a load intercepted by service worker that receives a response
+        https://bugs.webkit.org/show_bug.cgi?id=202787
+
+        Reviewed by Chris Dumez.
+
+        Stop making ServiceWorkerFetchTask ref counted since it is not needed and
+        can potentially make ServiceWorkerFetchTask oulive its WebSWServerToContextConnection member.
+
+        Stop the ServiceWorkerFetchTask timeout timer whenever receiving a response so that the load will not timeout in that case.
+        This ensures that a load that is starting in a service worker will not be failing.
+        Instead the load will go to network process.
+
+        Removed m_didReachTerminalState which is not needed as WebSWServerToContextConnection unregisters the ServiceWorkerFetchTask
+        as an IPC listener for all terminating messages.
+
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::didReceiveRedirectResponse):
+        (WebKit::ServiceWorkerFetchTask::didReceiveResponse):
+        (WebKit::ServiceWorkerFetchTask::didReceiveData):
+        (WebKit::ServiceWorkerFetchTask::didReceiveFormData):
+        (WebKit::ServiceWorkerFetchTask::didFinish):
+        (WebKit::ServiceWorkerFetchTask::didFail):
+        (WebKit::ServiceWorkerFetchTask::didNotHandle):
+        (WebKit::ServiceWorkerFetchTask::timeoutTimerFired):
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.h:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::startFetch):
+        (WebKit::WebSWServerToContextConnection::fetchTaskTimedOut):
+        Use a Vector instead of a HasSet for performance reasons.
+        Update according fetch map using unique_ptr instead of Ref<>.
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+
 2019-10-10  Rob Buis  <rbuis@igalia.com>
 
         SpeculativeLoad should use CompletionHandler

@@ -157,7 +157,7 @@ void WebSWServerToContextConnection::startFetch(PAL::SessionID sessionID, WebSWS
     auto serverConnectionIdentifier = contentConnection.identifier();
     auto fetchIdentifier = FetchIdentifier::generate();
 
-    auto result = m_ongoingFetches.add(fetchIdentifier, ServiceWorkerFetchTask::create(sessionID, contentConnection, *this, contentFetchIdentifier, serviceWorkerIdentifier, m_networkProcess->serviceWorkerFetchTimeout()));
+    auto result = m_ongoingFetches.add(fetchIdentifier, makeUnique<ServiceWorkerFetchTask>(sessionID, contentConnection, *this, contentFetchIdentifier, serviceWorkerIdentifier, m_networkProcess->serviceWorkerFetchTimeout()));
 
     ASSERT(!m_ongoingFetchIdentifiers.contains({ serverConnectionIdentifier, contentFetchIdentifier }));
     m_ongoingFetchIdentifiers.add({ serverConnectionIdentifier, contentFetchIdentifier }, fetchIdentifier);
@@ -215,17 +215,17 @@ void WebSWServerToContextConnection::fetchTaskTimedOut(ServiceWorkerFetchTask& t
     ASSERT(m_ongoingFetches.contains(takenIdentifier));
     auto takenTask = m_ongoingFetches.take(takenIdentifier);
     ASSERT(takenTask);
-    ASSERT(takenTask->ptr() == &task);
+    ASSERT(takenTask.get() == &task);
 
     // Gather all other fetches in this service worker
-    HashSet<Ref<ServiceWorkerFetchTask>> otherFetches;
+    Vector<ServiceWorkerFetchTask*> otherFetches;
     for (auto& fetchTask : m_ongoingFetches.values()) {
         if (fetchTask->serviceWorkerIdentifier() == task.serviceWorkerIdentifier())
-            otherFetches.add(fetchTask.copyRef());
+            otherFetches.append(fetchTask.get());
     }
 
     // Signal load failure for them
-    for (auto& fetchTask : otherFetches) {
+    for (auto* fetchTask : otherFetches) {
         if (fetchTask->wasHandled())
             fetchTask->fail({ errorDomainWebKitInternal, 0, { }, "Service Worker context closed"_s });
         else
