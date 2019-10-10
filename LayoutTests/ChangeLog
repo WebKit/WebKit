@@ -1,3 +1,10 @@
+2019-10-10  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK and WPE gardening after r250954.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2019-10-09  Yury Semikhatsky  <yurys@chromium.org>
 
         LayoutTest inspector/dom-debugger/node-removed.html is flaky
