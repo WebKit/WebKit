@@ -1,3 +1,29 @@
+2019-10-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        W3C test importer breaks svg files.
+        https://bugs.webkit.org/show_bug.cgi?id=202806
+
+        Reviewed by Jonathan Bedard.
+
+        The WebKit W3C importer tries to rewrite the xml/html/css files
+        when importing the tests to rewrite paths and such.
+
+        The issue is that to decide if rewrite the file or not uses the
+        mimetype and the current code was comparing for something like
+        if "xml" in str(mimetype[0])
+
+        But svg files have mimetype "image/svg+xml" so the previous code
+        was trying to rewrite svg files, breaking them.
+
+        This patches changes that code to only rewrite if the mimetype
+        also contains the "application/" or "text/" string.
+
+        It also adds an info log (printed when verbose enabled) to tell
+        that a file has been rewritten.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.import_tests):
+
 2019-10-10  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Serve correct exit codes when aborting
