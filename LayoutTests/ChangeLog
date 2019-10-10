@@ -1,5 +1,32 @@
 2019-10-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        pointerevents/ios/touch-action-pinch-zoom-allows-zooming.html is failing after r250361
+        https://bugs.webkit.org/show_bug.cgi?id=202777
+        <rdar://problem/56128421>
+
+        Reviewed by Tim Horton.
+
+        This layout test is intended to verify that pinching to zoom out in an element with `touch-action: pinch-zoom`
+        will cause the page scale to change (i.e. decrease). This test works on iPhone, where the initial-scale meta
+        viewport property is respected. However, a desktop viewport configuration is used by default on iPad, which
+        ignores the initial-scale property by default.
+
+        Prior to r250361, we would always try and scale down content to fit within the viewport, such that the initial
+        scale in this layout test on iPad would be approximately 0.384; this meant that the test would pass, regardless
+        of whether it even attempted to pinch zoom at all, since it would always pass the `pageScale != 1` assertion.
+
+        However, after r250361, we now no longer attempt to scale down to fit the viewport when the content width is
+        excessively large (the maximum width breakpoint is 1920px), which makes the initial scale 1. This layout test
+        makes the content width 2000px, which exceeds this maximum width limit and causes us to avoid shrinking to fit.
+        This means that we'll end up failing the pageScale assertion and timing out as a result.
+
+        To fix this, simply mark the test as `contentMode=mobile`, such that even on iPad, we'll respect the
+        initial-scale meta viewport property, and the test will actually pinch to zoom the page out as expected.
+
+        * pointerevents/ios/touch-action-pinch-zoom-allows-zooming.html:
+
+2019-10-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Support programmatic paste requests on macOS
         https://bugs.webkit.org/show_bug.cgi?id=202773
         <rdar://problem/48957166>
