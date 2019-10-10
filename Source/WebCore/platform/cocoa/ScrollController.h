@@ -31,7 +31,7 @@
 #include "FloatPoint.h"
 #include "FloatSize.h"
 #include "ScrollTypes.h"
-#include "WheelEventTestTrigger.h"
+#include "WheelEventTestMonitor.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/RunLoop.h>
 
@@ -45,7 +45,7 @@ namespace WebCore {
 class LayoutSize;
 class PlatformWheelEvent;
 class ScrollableArea;
-class WheelEventTestTrigger;
+class WheelEventTestMonitor;
 
 class ScrollControllerClient {
 protected:
@@ -79,8 +79,8 @@ public:
     virtual void adjustScrollPositionToBoundsIfNecessary() = 0;
 #endif
 
-    virtual void deferTestsForReason(WheelEventTestTrigger::ScrollableAreaIdentifier, WheelEventTestTrigger::DeferTestTriggerReason) const { /* Do nothing */ }
-    virtual void removeTestDeferralForReason(WheelEventTestTrigger::ScrollableAreaIdentifier, WheelEventTestTrigger::DeferTestTriggerReason) const { /* Do nothing */ }
+    virtual void deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const { /* Do nothing */ }
+    virtual void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const { /* Do nothing */ }
 
 #if ENABLE(CSS_SCROLL_SNAP)
     virtual FloatPoint scrollOffset() const = 0;
@@ -166,9 +166,10 @@ private:
 
     bool shouldOverrideInertialScrolling() const;
     void statelessSnapTransitionTimerFired();
-    void startDeferringTestsDueToScrollSnapping();
-    void stopDeferringTestsDueToScrollSnapping();
     void scheduleStatelessScrollSnap();
+
+    void startDeferringWheelEventTestCompletionDueToScrollSnapping();
+    void stopDeferringWheelEventTestCompletionDueToScrollSnapping();
 #endif
 #endif
 

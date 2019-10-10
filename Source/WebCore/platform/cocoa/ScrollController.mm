@@ -28,7 +28,7 @@
 
 #import "LayoutSize.h"
 #import "PlatformWheelEvent.h"
-#import "WheelEventTestTrigger.h"
+#import "WheelEventTestMonitor.h"
 #import <sys/sysctl.h>
 #import <sys/time.h>
 
@@ -390,7 +390,7 @@ void ScrollController::startSnapRubberbandTimer()
     m_client.startSnapRubberbandTimer();
     m_snapRubberbandTimer.startRepeating(1_s / 60.);
 
-    m_client.deferTestsForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(this), WheelEventTestTrigger::RubberbandInProgress);
+    m_client.deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::RubberbandInProgress);
 }
 
 void ScrollController::stopSnapRubberbandTimer()
@@ -399,7 +399,7 @@ void ScrollController::stopSnapRubberbandTimer()
     m_snapRubberbandTimer.stop();
     m_snapRubberbandTimerIsActive = false;
     
-    m_client.removeTestDeferralForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(this), WheelEventTestTrigger::RubberbandInProgress);
+    m_client.removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::RubberbandInProgress);
 }
 
 void ScrollController::snapRubberBand()
@@ -493,7 +493,7 @@ void ScrollController::scheduleStatelessScrollSnap()
 
     static const Seconds statelessScrollSnapDelay = 750_ms;
     m_statelessSnapTransitionTimer.startOneShot(statelessScrollSnapDelay);
-    startDeferringTestsDueToScrollSnapping();
+    startDeferringWheelEventTestCompletionDueToScrollSnapping();
 }
 
 void ScrollController::statelessSnapTransitionTimerFired()
@@ -505,14 +505,14 @@ void ScrollController::statelessSnapTransitionTimerFired()
     startScrollSnapTimer();
 }
 
-void ScrollController::startDeferringTestsDueToScrollSnapping()
+void ScrollController::startDeferringWheelEventTestCompletionDueToScrollSnapping()
 {
-    m_client.deferTestsForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(this), WheelEventTestTrigger::ScrollSnapInProgress);
+    m_client.deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::ScrollSnapInProgress);
 }
 
-void ScrollController::stopDeferringTestsDueToScrollSnapping()
+void ScrollController::stopDeferringWheelEventTestCompletionDueToScrollSnapping()
 {
-    m_client.removeTestDeferralForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(this), WheelEventTestTrigger::ScrollSnapInProgress);
+    m_client.removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::ScrollSnapInProgress);
 }
 
 bool ScrollController::processWheelEventForScrollSnap(const PlatformWheelEvent& wheelEvent)
@@ -562,7 +562,7 @@ void ScrollController::startScrollSnapTimer()
     if (m_scrollSnapTimer.isActive())
         return;
 
-    startDeferringTestsDueToScrollSnapping();
+    startDeferringWheelEventTestCompletionDueToScrollSnapping();
     m_client.startScrollSnapTimer();
     m_scrollSnapTimer.startRepeating(1_s / 60.);
 }
@@ -572,7 +572,7 @@ void ScrollController::stopScrollSnapTimer()
     if (!m_scrollSnapTimer.isActive())
         return;
 
-    stopDeferringTestsDueToScrollSnapping();
+    stopDeferringWheelEventTestCompletionDueToScrollSnapping();
     m_client.stopScrollSnapTimer();
     m_scrollSnapTimer.stop();
 }

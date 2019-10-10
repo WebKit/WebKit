@@ -1912,7 +1912,7 @@ static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& option
 
 #if !PLATFORM(IOS_FAMILY)
     if (WebCore::Frame* frame = [webView _mainCoreFrame])
-        WebCoreTestSupport::clearWheelEventTestTrigger(*frame);
+        WebCoreTestSupport::clearWheelEventTestMonitor(*frame);
 #endif
 
 #if !PLATFORM(IOS_FAMILY)

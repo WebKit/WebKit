@@ -187,7 +187,7 @@ public:
     String synchronousScrollingReasonsAsText() const;
 
     EventTrackingRegions absoluteEventTrackingRegions() const;
-    virtual void updateExpectsWheelEventTestTriggerWithFrameView(const FrameView&) { }
+    virtual void updateIsMonitoringWheelEventsForFrameView(const FrameView&) { }
 
 protected:
     explicit ScrollingCoordinator(Page*);

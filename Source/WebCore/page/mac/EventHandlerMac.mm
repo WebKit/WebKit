@@ -64,7 +64,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "WheelEventDeltaFilter.h"
-#include "WheelEventTestTrigger.h"
+#include "WheelEventTestMonitor.h"
 #include <wtf/BlockObjCExceptions.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
@@ -956,8 +956,8 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
     }
     
     Page* page = m_frame.page();
-    if (scrollableArea && page && page->expectsWheelEventTriggers())
-        scrollableArea->scrollAnimator().setWheelEventTestTrigger(page->testTrigger());
+    if (scrollableArea && page && page->isMonitoringWheelEvents())
+        scrollableArea->scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
 
     ScrollLatchingState* latchingState = page ? page->latchingState() : nullptr;
     if (wheelEvent.shouldConsiderLatching()) {

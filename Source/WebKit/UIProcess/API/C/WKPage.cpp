@@ -2858,9 +2858,9 @@ WKMediaState WKPageGetMediaState(WKPageRef page)
     return state;
 }
 
-void WKPageClearWheelEventTestTrigger(WKPageRef pageRef)
+void WKPageClearWheelEventTestMonitor(WKPageRef pageRef)
 {
-    toImpl(pageRef)->clearWheelEventTestTrigger();
+    toImpl(pageRef)->clearWheelEventTestMonitor();
 }
 
 void WKPageCallAfterNextPresentationUpdate(WKPageRef pageRef, void* context, WKPagePostPresentationUpdateFunction callback)

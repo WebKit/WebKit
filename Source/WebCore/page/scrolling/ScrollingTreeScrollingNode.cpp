@@ -97,8 +97,8 @@ void ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateN
     if (state.hasChangedProperty(ScrollingStateScrollingNode::ScrollableAreaParams))
         m_scrollableAreaParameters = state.scrollableAreaParameters();
 
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::ExpectsWheelEventTestTrigger))
-        m_expectsWheelEventTestTrigger = state.expectsWheelEventTestTrigger();
+    if (state.hasChangedProperty(ScrollingStateScrollingNode::IsMonitoringWheelEvents))
+        m_isMonitoringWheelEvents = state.isMonitoringWheelEvents();
 
     if (state.hasChangedProperty(ScrollingStateScrollingNode::ScrollContainerLayer))
         m_scrollContainerLayer = state.scrollContainerLayer();

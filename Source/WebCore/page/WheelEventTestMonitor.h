@@ -38,15 +38,15 @@
 
 namespace WebCore {
 
-class WheelEventTestTrigger : public ThreadSafeRefCounted<WheelEventTestTrigger> {
-    WTF_MAKE_NONCOPYABLE(WheelEventTestTrigger); WTF_MAKE_FAST_ALLOCATED;
+class WheelEventTestMonitor : public ThreadSafeRefCounted<WheelEventTestMonitor> {
+    WTF_MAKE_NONCOPYABLE(WheelEventTestMonitor); WTF_MAKE_FAST_ALLOCATED;
 public:
-    WheelEventTestTrigger();
+    WheelEventTestMonitor();
 
     WEBCORE_EXPORT void setTestCallbackAndStartNotificationTimer(WTF::Function<void()>&&);
     WEBCORE_EXPORT void clearAllTestDeferrals();
     
-    enum DeferTestTriggerReason {
+    enum DeferReason {
         RubberbandInProgress        = 1 << 0,
         ScrollSnapInProgress        = 1 << 1,
         ScrollingThreadSyncNeeded   = 1 << 2,
@@ -54,22 +54,22 @@ public:
     };
     typedef const void* ScrollableAreaIdentifier;
 
-    WEBCORE_EXPORT void deferTestsForReason(ScrollableAreaIdentifier, DeferTestTriggerReason);
-    WEBCORE_EXPORT void removeTestDeferralForReason(ScrollableAreaIdentifier, DeferTestTriggerReason);
+    WEBCORE_EXPORT void deferForReason(ScrollableAreaIdentifier, DeferReason);
+    WEBCORE_EXPORT void removeDeferralForReason(ScrollableAreaIdentifier, DeferReason);
     
     void triggerTestTimerFired();
 
-    using ScrollableAreaReasonMap = WTF::HashMap<ScrollableAreaIdentifier, OptionSet<DeferTestTriggerReason>>;
+    using ScrollableAreaReasonMap = WTF::HashMap<ScrollableAreaIdentifier, OptionSet<DeferReason>>;
 
 private:
-    WTF::Function<void()> m_testNotificationCallback;
-    RunLoop::Timer<WheelEventTestTrigger> m_testTriggerTimer;
-    mutable Lock m_testTriggerMutex;
-    
-    ScrollableAreaReasonMap m_deferTestTriggerReasons;
+    WTF::Function<void()> m_completionCallback;
+    RunLoop::Timer<WheelEventTestMonitor> m_testForCompletionTimer;
+
+    mutable Lock m_reasonsLock;
+    ScrollableAreaReasonMap m_deferCompletionReasons;
 };
 
-WTF::TextStream& operator<<(WTF::TextStream&, WheelEventTestTrigger::DeferTestTriggerReason);
-WTF::TextStream& operator<<(WTF::TextStream&, const WheelEventTestTrigger::ScrollableAreaReasonMap&);
+WTF::TextStream& operator<<(WTF::TextStream&, WheelEventTestMonitor::DeferReason);
+WTF::TextStream& operator<<(WTF::TextStream&, const WheelEventTestMonitor::ScrollableAreaReasonMap&);
 
 } // namespace WebCore

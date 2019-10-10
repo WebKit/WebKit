@@ -567,19 +567,19 @@ int RenderBox::scrollTop() const
     return hasOverflowClip() && layer() ? layer()->scrollPosition().y() : 0;
 }
 
-static void setupWheelEventTestTrigger(RenderLayer& layer)
+static void setupWheelEventMonitor(RenderLayer& layer)
 {
     Page& page = layer.renderer().page();
-    if (!page.expectsWheelEventTriggers())
+    if (!page.isMonitoringWheelEvents())
         return;
-    layer.scrollAnimator().setWheelEventTestTrigger(page.testTrigger());
+    layer.scrollAnimator().setWheelEventTestMonitor(page.wheelEventTestMonitor());
 }
 
 void RenderBox::setScrollLeft(int newLeft, ScrollType scrollType, ScrollClamping clamping)
 {
     if (!hasOverflowClip() || !layer())
         return;
-    setupWheelEventTestTrigger(*layer());
+    setupWheelEventMonitor(*layer());
     layer()->scrollToXPosition(newLeft, scrollType, clamping);
 }
 
@@ -587,7 +587,7 @@ void RenderBox::setScrollTop(int newTop, ScrollType scrollType, ScrollClamping c
 {
     if (!hasOverflowClip() || !layer())
         return;
-    setupWheelEventTestTrigger(*layer());
+    setupWheelEventMonitor(*layer());
     layer()->scrollToYPosition(newTop, scrollType, clamping);
 }
 

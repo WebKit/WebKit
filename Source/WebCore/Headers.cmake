@@ -842,7 +842,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/WebCoreKeyboardUIMode.h
     page/WebKitNamespace.h
     page/WheelEventDeltaFilter.h
-    page/WheelEventTestTrigger.h
+    page/WheelEventTestMonitor.h
     page/WindowFeatures.h
 
     page/animation/AnimationBase.h

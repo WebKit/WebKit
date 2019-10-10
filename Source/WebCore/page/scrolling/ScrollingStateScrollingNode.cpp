@@ -56,7 +56,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
 #endif
     , m_scrollableAreaParameters(stateNode.scrollableAreaParameters())
     , m_requestedScrollPositionRepresentsProgrammaticScroll(stateNode.requestedScrollPositionRepresentsProgrammaticScroll())
-    , m_expectsWheelEventTestTrigger(stateNode.expectsWheelEventTestTrigger())
+    , m_isMonitoringWheelEvents(stateNode.isMonitoringWheelEvents())
 {
     if (hasChangedProperty(ScrollContainerLayer))
         setScrollContainerLayer(stateNode.scrollContainerLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
@@ -90,7 +90,7 @@ void ScrollingStateScrollingNode::setPropertyChangedBitsAfterReattach()
     setPropertyChangedBit(CurrentHorizontalSnapOffsetIndex);
     setPropertyChangedBit(CurrentVerticalSnapOffsetIndex);
 #endif
-    setPropertyChangedBit(ExpectsWheelEventTestTrigger);
+    setPropertyChangedBit(IsMonitoringWheelEvents);
     setPropertyChangedBit(ScrollContainerLayer);
     setPropertyChangedBit(ScrolledContentsLayer);
     setPropertyChangedBit(HorizontalScrollbarLayer);
@@ -226,13 +226,13 @@ void ScrollingStateScrollingNode::setRequestedScrollPosition(const FloatPoint& r
     setPropertyChanged(RequestedScrollPosition);
 }
 
-void ScrollingStateScrollingNode::setExpectsWheelEventTestTrigger(bool expectsTestTrigger)
+void ScrollingStateScrollingNode::setIsMonitoringWheelEvents(bool isMonitoringWheelEvents)
 {
-    if (expectsTestTrigger == m_expectsWheelEventTestTrigger)
+    if (isMonitoringWheelEvents == m_isMonitoringWheelEvents)
         return;
 
-    m_expectsWheelEventTestTrigger = expectsTestTrigger;
-    setPropertyChanged(ExpectsWheelEventTestTrigger);
+    m_isMonitoringWheelEvents = isMonitoringWheelEvents;
+    setPropertyChanged(IsMonitoringWheelEvents);
 }
 
 void ScrollingStateScrollingNode::setScrollContainerLayer(const LayerRepresentation& layerRepresentation)
@@ -336,8 +336,8 @@ void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, ScrollingStateT
 
     ts.dumpProperty("scrollable area parameters", m_scrollableAreaParameters);
 
-    if (m_expectsWheelEventTestTrigger)
-        ts.dumpProperty("expects wheel event test trigger", m_expectsWheelEventTestTrigger);
+    if (m_isMonitoringWheelEvents)
+        ts.dumpProperty("expects wheel event test trigger", m_isMonitoringWheelEvents);
 
     if (behavior & ScrollingStateTreeAsTextBehaviorIncludeLayerIDs) {
         if (m_scrollContainerLayer.layerID())

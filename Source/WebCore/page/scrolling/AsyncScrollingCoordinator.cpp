@@ -50,7 +50,7 @@
 #include "ScrollingStateStickyNode.h"
 #include "ScrollingStateTree.h"
 #include "Settings.h"
-#include "WheelEventTestTrigger.h"
+#include "WheelEventTestMonitor.h"
 #include <wtf/ProcessID.h>
 #include <wtf/text/TextStream.h>
 
@@ -137,15 +137,15 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView& frameView)
         return;
 
     auto* page = frameView.frame().page();
-    if (page && page->expectsWheelEventTriggers()) {
-        LOG_WITH_STREAM(WheelEventTestTriggers, stream << "    AsyncScrollingCoordinator::frameViewLayoutUpdated: Expects wheel event test trigger: " << page->expectsWheelEventTriggers());
+    if (page && page->isMonitoringWheelEvents()) {
+        LOG_WITH_STREAM(WheelEventTestMonitor, stream << "    AsyncScrollingCoordinator::frameViewLayoutUpdated: Expects wheel event test trigger: " << page->isMonitoringWheelEvents());
 
         auto* node = m_scrollingStateTree->stateNodeForID(frameView.scrollingNodeID());
         if (!is<ScrollingStateFrameScrollingNode>(node))
             return;
 
         auto& frameScrollingNode = downcast<ScrollingStateFrameScrollingNode>(*node);
-        frameScrollingNode.setExpectsWheelEventTestTrigger(page->expectsWheelEventTriggers());
+        frameScrollingNode.setIsMonitoringWheelEvents(page->isMonitoringWheelEvents());
     }
 #else
     UNUSED_PARAM(frameView);
@@ -175,7 +175,7 @@ void AsyncScrollingCoordinator::frameViewVisualViewportChanged(FrameView& frameV
     frameScrollingNode.setVisualViewportIsSmallerThanLayoutViewport(visualViewportIsSmallerThanLayoutViewport(frameView));
 }
 
-void AsyncScrollingCoordinator::updateExpectsWheelEventTestTriggerWithFrameView(const FrameView& frameView)
+void AsyncScrollingCoordinator::updateIsMonitoringWheelEventsForFrameView(const FrameView& frameView)
 {
     auto* page = frameView.frame().page();
     if (!page)
@@ -185,7 +185,7 @@ void AsyncScrollingCoordinator::updateExpectsWheelEventTestTriggerWithFrameView(
     if (!node)
         return;
 
-    node->setExpectsWheelEventTestTrigger(page->expectsWheelEventTriggers());
+    node->setIsMonitoringWheelEvents(page->isMonitoringWheelEvents());
 }
 
 void AsyncScrollingCoordinator::frameViewEventTrackingRegionsChanged(FrameView& frameView)
@@ -352,10 +352,10 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
         reconcileScrollingState(frameView, scrollPosition, layoutViewportOrigin, scrollType, ViewportRectStability::Stable, scrollingLayerPositionAction);
 
 #if PLATFORM(COCOA)
-        if (m_page->expectsWheelEventTriggers()) {
-            frameView.scrollAnimator().setWheelEventTestTrigger(m_page->testTrigger());
-            if (const auto& trigger = m_page->testTrigger())
-                trigger->removeTestDeferralForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(scrollingNodeID), WheelEventTestTrigger::ScrollingThreadSyncNeeded);
+        if (m_page->isMonitoringWheelEvents()) {
+            frameView.scrollAnimator().setWheelEventTestMonitor(m_page->wheelEventTestMonitor());
+            if (const auto& monitor = m_page->wheelEventTestMonitor())
+                monitor->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(scrollingNodeID), WheelEventTestMonitor::ScrollingThreadSyncNeeded);
         }
 #endif
         
@@ -373,10 +373,10 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
             m_page->editorClient().overflowScrollPositionChanged();
 
 #if PLATFORM(COCOA)
-        if (m_page->expectsWheelEventTriggers()) {
-            frameView.scrollAnimator().setWheelEventTestTrigger(m_page->testTrigger());
-            if (const auto& trigger = m_page->testTrigger())
-                trigger->removeTestDeferralForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(scrollingNodeID), WheelEventTestTrigger::ScrollingThreadSyncNeeded);
+        if (m_page->isMonitoringWheelEvents()) {
+            frameView.scrollAnimator().setWheelEventTestMonitor(m_page->wheelEventTestMonitor());
+            if (const auto& monitor = m_page->wheelEventTestMonitor())
+                monitor->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(scrollingNodeID), WheelEventTestMonitor::ScrollingThreadSyncNeeded);
         }
 #endif
     }
@@ -854,27 +854,27 @@ void AsyncScrollingCoordinator::setActiveScrollSnapIndices(ScrollingNodeID scrol
     }
 }
 
-void AsyncScrollingCoordinator::deferTestsForReason(WheelEventTestTrigger::ScrollableAreaIdentifier identifier, WheelEventTestTrigger::DeferTestTriggerReason reason) const
+void AsyncScrollingCoordinator::deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason) const
 {
     ASSERT(isMainThread());
-    if (!m_page || !m_page->expectsWheelEventTriggers())
+    if (!m_page || !m_page->isMonitoringWheelEvents())
         return;
 
-    if (const auto& trigger = m_page->testTrigger()) {
-        LOG_WITH_STREAM(WheelEventTestTriggers, stream << "    (!) AsyncScrollingCoordinator::deferTestsForReason: Deferring " << identifier << " for reason " << reason);
-        trigger->deferTestsForReason(identifier, reason);
+    if (const auto& trigger = m_page->wheelEventTestMonitor()) {
+        LOG_WITH_STREAM(WheelEventTestMonitor, stream << "    (!) AsyncScrollingCoordinator::deferForReason: Deferring " << identifier << " for reason " << reason);
+        trigger->deferForReason(identifier, reason);
     }
 }
 
-void AsyncScrollingCoordinator::removeTestDeferralForReason(WheelEventTestTrigger::ScrollableAreaIdentifier identifier, WheelEventTestTrigger::DeferTestTriggerReason reason) const
+void AsyncScrollingCoordinator::removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason) const
 {
     ASSERT(isMainThread());
-    if (!m_page || !m_page->expectsWheelEventTriggers())
+    if (!m_page || !m_page->isMonitoringWheelEvents())
         return;
 
-    if (const auto& trigger = m_page->testTrigger()) {
-        LOG_WITH_STREAM(WheelEventTestTriggers, stream << "    (!) AsyncScrollingCoordinator::removeTestDeferralForReason: Deferring " << identifier << " for reason " << reason);
-        trigger->removeTestDeferralForReason(identifier, reason);
+    if (const auto& trigger = m_page->wheelEventTestMonitor()) {
+        LOG_WITH_STREAM(WheelEventTestMonitor, stream << "    (!) AsyncScrollingCoordinator::removeWheelEventTestCompletionDeferralForReason: Deferring " << identifier << " for reason " << reason);
+        trigger->removeDeferralForReason(identifier, reason);
     }
 }
 #endif

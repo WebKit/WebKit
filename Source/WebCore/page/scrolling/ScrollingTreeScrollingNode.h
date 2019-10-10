@@ -126,7 +126,7 @@ protected:
     bool hasEnabledHorizontalScrollbar() const { return m_scrollableAreaParameters.hasEnabledHorizontalScrollbar; }
     bool hasEnabledVerticalScrollbar() const { return m_scrollableAreaParameters.hasEnabledVerticalScrollbar; }
 
-    bool expectsWheelEventTestTrigger() const { return m_expectsWheelEventTestTrigger; }
+    bool isMonitoringWheelEvents() const { return m_isMonitoringWheelEvents; }
 
     LayoutPoint parentToLocalPoint(LayoutPoint) const override;
     LayoutPoint localToContentsPoint(LayoutPoint) const override;
@@ -148,7 +148,7 @@ private:
     unsigned m_currentVerticalSnapPointIndex { 0 };
 #endif
     ScrollableAreaParameters m_scrollableAreaParameters;
-    bool m_expectsWheelEventTestTrigger { false };
+    bool m_isMonitoringWheelEvents { false };
     bool m_isFirstCommit { true };
 
     LayerRepresentation m_scrollContainerLayer;

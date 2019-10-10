@@ -2150,7 +2150,7 @@
 		7AABA25A14BC613300AA9A11 /* DOMEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AABA25814BC613300AA9A11 /* DOMEditor.h */; };
 		7AAFE8D019CB8672000F56D8 /* ScrollLatchingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AAFE8CE19CB8672000F56D8 /* ScrollLatchingState.h */; };
 		7ADE722610CBBB9B006B3B3A /* ContextMenuProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ADE722510CBBB9B006B3B3A /* ContextMenuProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7AE335F21ACB09E200E401EF /* WheelEventTestTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AE335F01ACB09E200E401EF /* WheelEventTestTrigger.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7AE335F21ACB09E200E401EF /* WheelEventTestMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AE335F01ACB09E200E401EF /* WheelEventTestMonitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7AE6C93C1BE0C60100E19E03 /* MainThreadSharedTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AE6C93A1BE0C60100E19E03 /* MainThreadSharedTimer.h */; };
 		7AF9B20218CFB2DF00C64BEF /* VTTRegion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF9B1FC18CFB2DF00C64BEF /* VTTRegion.cpp */; };
 		7AF9B20318CFB2DF00C64BEF /* VTTRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AF9B1FD18CFB2DF00C64BEF /* VTTRegion.h */; };
@@ -9597,8 +9597,8 @@
 		7AAFE8CD19CB8672000F56D8 /* ScrollLatchingState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollLatchingState.cpp; sourceTree = "<group>"; };
 		7AAFE8CE19CB8672000F56D8 /* ScrollLatchingState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollLatchingState.h; sourceTree = "<group>"; };
 		7ADE722510CBBB9B006B3B3A /* ContextMenuProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextMenuProvider.h; sourceTree = "<group>"; };
-		7AE335EF1ACB09E200E401EF /* WheelEventTestTrigger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WheelEventTestTrigger.cpp; sourceTree = "<group>"; };
-		7AE335F01ACB09E200E401EF /* WheelEventTestTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WheelEventTestTrigger.h; sourceTree = "<group>"; };
+		7AE335EF1ACB09E200E401EF /* WheelEventTestMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WheelEventTestMonitor.cpp; sourceTree = "<group>"; };
+		7AE335F01ACB09E200E401EF /* WheelEventTestMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WheelEventTestMonitor.h; sourceTree = "<group>"; };
 		7AE6C9371BE0C5C800E19E03 /* MainThreadSharedTimerCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainThreadSharedTimerCF.cpp; sourceTree = "<group>"; };
 		7AE6C9391BE0C60100E19E03 /* MainThreadSharedTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainThreadSharedTimer.cpp; sourceTree = "<group>"; };
 		7AE6C93A1BE0C60100E19E03 /* MainThreadSharedTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainThreadSharedTimer.h; sourceTree = "<group>"; };
@@ -20579,8 +20579,8 @@
 				494BD7940F55C8EE00747828 /* WebKitPoint.idl */,
 				2E19516A1B6598D200DF6EEF /* WheelEventDeltaFilter.cpp */,
 				2EBBC3D71B65988300F5253D /* WheelEventDeltaFilter.h */,
-				7AE335EF1ACB09E200E401EF /* WheelEventTestTrigger.cpp */,
-				7AE335F01ACB09E200E401EF /* WheelEventTestTrigger.h */,
+				7AE335EF1ACB09E200E401EF /* WheelEventTestMonitor.cpp */,
+				7AE335F01ACB09E200E401EF /* WheelEventTestMonitor.h */,
 				7C4189AC1B07CBF2000FA757 /* WindowEventHandlers.idl */,
 				BC8243E60D0CFD7500460C8F /* WindowFeatures.cpp */,
 				BC8243E70D0CFD7500460C8F /* WindowFeatures.h */,
@@ -32517,7 +32517,7 @@
 				85031B510A44EFC700F992E0 /* WheelEvent.h in Headers */,
 				2EBBC3D81B65988300F5253D /* WheelEventDeltaFilter.h in Headers */,
 				2E9B5D8F1B66A94E008C6A24 /* WheelEventDeltaFilterMac.h in Headers */,
-				7AE335F21ACB09E200E401EF /* WheelEventTestTrigger.h in Headers */,
+				7AE335F21ACB09E200E401EF /* WheelEventTestMonitor.h in Headers */,
 				A1956F252331AD530057E9D2 /* WHLSLFunctionDefinition.h in Headers */,
 				A1956F242331AD210057E9D2 /* WHLSLProgram.h in Headers */,
 				A1956F232331ACF20057E9D2 /* WHLSLReplaceWith.h in Headers */,

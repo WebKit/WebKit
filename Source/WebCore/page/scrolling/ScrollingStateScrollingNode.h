@@ -59,7 +59,7 @@ public:
         CurrentHorizontalSnapOffsetIndex,
         CurrentVerticalSnapOffsetIndex,
 #endif
-        ExpectsWheelEventTestTrigger,
+        IsMonitoringWheelEvents,
         ScrollContainerLayer,
         ScrolledContentsLayer,
         HorizontalScrollbarLayer,
@@ -113,8 +113,8 @@ public:
     bool requestedScrollPositionRepresentsProgrammaticScroll() const { return m_requestedScrollPositionRepresentsProgrammaticScroll; }
     WEBCORE_EXPORT void setRequestedScrollPosition(const FloatPoint&, bool representsProgrammaticScroll);
 
-    bool expectsWheelEventTestTrigger() const { return m_expectsWheelEventTestTrigger; }
-    WEBCORE_EXPORT void setExpectsWheelEventTestTrigger(bool);
+    bool isMonitoringWheelEvents() const { return m_isMonitoringWheelEvents; }
+    WEBCORE_EXPORT void setIsMonitoringWheelEvents(bool);
 
     const LayerRepresentation& scrollContainerLayer() const { return m_scrollContainerLayer; }
     WEBCORE_EXPORT void setScrollContainerLayer(const LayerRepresentation&);
@@ -171,7 +171,7 @@ private:
     ScrollableAreaParameters m_scrollableAreaParameters;
 
     bool m_requestedScrollPositionRepresentsProgrammaticScroll { false };
-    bool m_expectsWheelEventTestTrigger { false };
+    bool m_isMonitoringWheelEvents { false };
 };
 
 } // namespace WebCore

@@ -39,7 +39,7 @@
 #include "Page.h"
 #include "SWContextManager.h"
 #include "ServiceWorkerGlobalScope.h"
-#include "WheelEventTestTrigger.h"
+#include "WheelEventTestMonitor.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/CallFrame.h>
 #include <JavaScriptCore/IdentifierInlines.h>
@@ -85,30 +85,30 @@ void monitorWheelEvents(WebCore::Frame& frame)
     if (!page)
         return;
 
-    page->ensureTestTrigger();
+    page->ensureWheelEventTestMonitor();
 }
 
 void setTestCallbackAndStartNotificationTimer(WebCore::Frame& frame, JSContextRef context, JSObjectRef jsCallbackFunction)
 {
     Page* page = frame.page();
-    if (!page || !page->expectsWheelEventTriggers())
+    if (!page || !page->isMonitoringWheelEvents())
         return;
 
     JSValueProtect(context, jsCallbackFunction);
     
-    page->ensureTestTrigger().setTestCallbackAndStartNotificationTimer([=](void) {
+    page->ensureWheelEventTestMonitor().setTestCallbackAndStartNotificationTimer([=](void) {
         JSObjectCallAsFunction(context, jsCallbackFunction, nullptr, 0, nullptr, nullptr);
         JSValueUnprotect(context, jsCallbackFunction);
     });
 }
 
-void clearWheelEventTestTrigger(WebCore::Frame& frame)
+void clearWheelEventTestMonitor(WebCore::Frame& frame)
 {
     Page* page = frame.page();
     if (!page)
         return;
     
-    page->clearTrigger();
+    page->clearWheelEventTestMonitor();
 }
 
 void setLogChannelToAccumulate(const String& name)

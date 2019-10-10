@@ -1413,7 +1413,7 @@ public:
     void didLayoutForCustomContentProvider();
 
     // For testing
-    void clearWheelEventTestTrigger();
+    void clearWheelEventTestMonitor();
     void callAfterNextPresentationUpdate(WTF::Function<void (CallbackBase::Error)>&&);
 
     void didReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>);

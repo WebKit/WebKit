@@ -40,7 +40,7 @@
 #include "UserInterfaceLayoutDirection.h"
 #include "ViewportArguments.h"
 #include "VisibilityState.h"
-#include "WheelEventTestTrigger.h"
+#include "WheelEventTestMonitor.h"
 #include <memory>
 #include <pal/SessionID.h>
 #include <wtf/Assertions.h>
@@ -644,10 +644,10 @@ public:
     WEBCORE_EXPORT void setShouldPlayToPlaybackTarget(uint64_t, bool);
 #endif
 
-    RefPtr<WheelEventTestTrigger> testTrigger() const { return m_testTrigger; }
-    WEBCORE_EXPORT WheelEventTestTrigger& ensureTestTrigger();
-    void clearTrigger() { m_testTrigger = nullptr; }
-    bool expectsWheelEventTriggers() const { return !!m_testTrigger; }
+    RefPtr<WheelEventTestMonitor> wheelEventTestMonitor() const { return m_wheelEventTestMonitor; }
+    WEBCORE_EXPORT WheelEventTestMonitor& ensureWheelEventTestMonitor();
+    void clearWheelEventTestMonitor() { m_wheelEventTestMonitor = nullptr; }
+    bool isMonitoringWheelEvents() const { return !!m_wheelEventTestMonitor; }
 
     void setIsForSanitizingWebContent() { m_isForSanitizingWebContent = true; }
     bool isForSanitizingWebContent() const { return m_isForSanitizingWebContent; }
@@ -926,7 +926,7 @@ private:
     Ref<StorageNamespaceProvider> m_storageNamespaceProvider;
     Ref<UserContentProvider> m_userContentProvider;
     Ref<VisitedLinkStore> m_visitedLinkStore;
-    RefPtr<WheelEventTestTrigger> m_testTrigger;
+    RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;
 
     HashSet<ActivityStateChangeObserver*> m_activityStateChangeObservers;
 

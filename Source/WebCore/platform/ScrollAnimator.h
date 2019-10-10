@@ -34,7 +34,7 @@
 #include "FloatPoint.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollTypes.h"
-#include "WheelEventTestTrigger.h"
+#include "WheelEventTestMonitor.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 
@@ -48,7 +48,7 @@ class FloatPoint;
 class PlatformTouchEvent;
 class ScrollableArea;
 class Scrollbar;
-class WheelEventTestTrigger;
+class WheelEventTestMonitor;
 
 #if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
 class ScrollAnimator : private ScrollControllerClient {
@@ -121,10 +121,11 @@ public:
     virtual bool isRubberBandInProgress() const { return false; }
     virtual bool isScrollSnapInProgress() const { return false; }
 
-    void setWheelEventTestTrigger(RefPtr<WheelEventTestTrigger>&& testTrigger) { m_wheelEventTestTrigger = testTrigger; }
+    void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&& testMonitor) { m_wheelEventTestMonitor = testMonitor; }
+
 #if (ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)) && PLATFORM(MAC)
-    void deferTestsForReason(WheelEventTestTrigger::ScrollableAreaIdentifier, WheelEventTestTrigger::DeferTestTriggerReason) const override;
-    void removeTestDeferralForReason(WheelEventTestTrigger::ScrollableAreaIdentifier, WheelEventTestTrigger::DeferTestTriggerReason) const override;
+    void deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const override;
+    void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const override;
 #endif
     
 #if ENABLE(CSS_SCROLL_SNAP)
@@ -145,7 +146,7 @@ protected:
     void updateActiveScrollSnapIndexForOffset();
 
     ScrollableArea& m_scrollableArea;
-    RefPtr<WheelEventTestTrigger> m_wheelEventTestTrigger;
+    RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;
 #if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
     ScrollController m_scrollController;
 #endif

@@ -228,20 +228,20 @@ FloatSize ScrollAnimator::viewportSize() const
 #endif
 
 #if (ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)) && PLATFORM(MAC)
-void ScrollAnimator::deferTestsForReason(WheelEventTestTrigger::ScrollableAreaIdentifier identifier, WheelEventTestTrigger::DeferTestTriggerReason reason) const
+void ScrollAnimator::deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason) const
 {
-    if (!m_wheelEventTestTrigger)
+    if (!m_wheelEventTestMonitor)
         return;
 
-    m_wheelEventTestTrigger->deferTestsForReason(identifier, reason);
+    m_wheelEventTestMonitor->deferForReason(identifier, reason);
 }
 
-void ScrollAnimator::removeTestDeferralForReason(WheelEventTestTrigger::ScrollableAreaIdentifier identifier, WheelEventTestTrigger::DeferTestTriggerReason reason) const
+void ScrollAnimator::removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason) const
 {
-    if (!m_wheelEventTestTrigger)
+    if (!m_wheelEventTestMonitor)
         return;
     
-    m_wheelEventTestTrigger->removeTestDeferralForReason(identifier, reason);
+    m_wheelEventTestMonitor->removeDeferralForReason(identifier, reason);
 }
 #endif
 

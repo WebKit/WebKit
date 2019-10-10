@@ -2569,18 +2569,18 @@ void Page::setShouldPlayToPlaybackTarget(uint64_t clientId, bool shouldPlay)
 }
 #endif
 
-WheelEventTestTrigger& Page::ensureTestTrigger()
+WheelEventTestMonitor& Page::ensureWheelEventTestMonitor()
 {
-    if (!m_testTrigger) {
-        m_testTrigger = adoptRef(new WheelEventTestTrigger());
+    if (!m_wheelEventTestMonitor) {
+        m_wheelEventTestMonitor = adoptRef(new WheelEventTestMonitor());
         // We need to update the scrolling coordinator so that the mainframe scrolling node can expect wheel event test triggers.
         if (auto* frameView = mainFrame().view()) {
             if (m_scrollingCoordinator)
-                m_scrollingCoordinator->updateExpectsWheelEventTestTriggerWithFrameView(*frameView);
+                m_scrollingCoordinator->updateIsMonitoringWheelEventsForFrameView(*frameView);
         }
     }
 
-    return *m_testTrigger;
+    return *m_wheelEventTestMonitor;
 }
 
 #if ENABLE(VIDEO)

@@ -1649,7 +1649,7 @@ page/UserContentURLPattern.cpp
 page/VisitedLinkStore.cpp
 page/VisualViewport.cpp
 page/WheelEventDeltaFilter.cpp
-page/WheelEventTestTrigger.cpp
+page/WheelEventTestMonitor.cpp
 page/WindowFeatures.cpp
 page/WindowFocusAllowedIndicator.cpp
 page/WorkerNavigator.cpp

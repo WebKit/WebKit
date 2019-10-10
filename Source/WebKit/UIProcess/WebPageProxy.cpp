@@ -8586,12 +8586,12 @@ void WebPageProxy::didChangeBackgroundColor()
     pageClient().didChangeBackgroundColor();
 }
 
-void WebPageProxy::clearWheelEventTestTrigger()
+void WebPageProxy::clearWheelEventTestMonitor()
 {
     if (!hasRunningProcess())
         return;
     
-    m_process->send(Messages::WebPage::ClearWheelEventTestTrigger(), m_webPageID);
+    m_process->send(Messages::WebPage::clearWheelEventTestMonitor(), m_webPageID);
 }
 
 void WebPageProxy::callAfterNextPresentationUpdate(WTF::Function<void (CallbackBase::Error)>&& callback)

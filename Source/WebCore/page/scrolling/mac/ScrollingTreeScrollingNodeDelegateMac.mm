@@ -90,11 +90,11 @@ bool ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent(const PlatformWheel
     }
 
 #if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
-    if (scrollingNode().expectsWheelEventTestTrigger()) {
+    if (scrollingNode().isMonitoringWheelEvents()) {
         if (scrollingTree().shouldHandleWheelEventSynchronously(wheelEvent))
-            removeTestDeferralForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(scrollingNode().scrollingNodeID()), WheelEventTestTrigger::ScrollingThreadSyncNeeded);
+            removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(scrollingNode().scrollingNodeID()), WheelEventTestMonitor::ScrollingThreadSyncNeeded);
         else
-            deferTestsForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(scrollingNode().scrollingNodeID()), WheelEventTestTrigger::ScrollingThreadSyncNeeded);
+            deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(scrollingNode().scrollingNodeID()), WheelEventTestMonitor::ScrollingThreadSyncNeeded);
     }
 #endif
 
@@ -307,22 +307,22 @@ FloatSize ScrollingTreeScrollingNodeDelegateMac::viewportSize() const
 }
 #endif
 
-void ScrollingTreeScrollingNodeDelegateMac::deferTestsForReason(WheelEventTestTrigger::ScrollableAreaIdentifier identifier, WheelEventTestTrigger::DeferTestTriggerReason reason) const
+void ScrollingTreeScrollingNodeDelegateMac::deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason) const
 {
-    if (!scrollingNode().expectsWheelEventTestTrigger())
+    if (!scrollingNode().isMonitoringWheelEvents())
         return;
 
-    LOG_WITH_STREAM(WheelEventTestTriggers, stream << isMainThread() << "  ScrollingTreeScrollingNodeDelegateMac::deferTestsForReason: STARTING deferral for " << identifier << " because of " << reason);
-    scrollingTree().deferTestsForReason(identifier, reason);
+    LOG_WITH_STREAM(WheelEventTestMonitor, stream << isMainThread() << "  ScrollingTreeScrollingNodeDelegateMac::deferForReason: STARTING deferral for " << identifier << " because of " << reason);
+    scrollingTree().deferWheelEventTestCompletionForReason(identifier, reason);
 }
     
-void ScrollingTreeScrollingNodeDelegateMac::removeTestDeferralForReason(WheelEventTestTrigger::ScrollableAreaIdentifier identifier, WheelEventTestTrigger::DeferTestTriggerReason reason) const
+void ScrollingTreeScrollingNodeDelegateMac::removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason) const
 {
-    if (!scrollingNode().expectsWheelEventTestTrigger())
+    if (!scrollingNode().isMonitoringWheelEvents())
         return;
     
-    LOG_WITH_STREAM(WheelEventTestTriggers, stream << isMainThread() << "  ScrollingTreeScrollingNodeDelegateMac::deferTestsForReason: ENDING deferral for " << identifier << " because of " << reason);
-    scrollingTree().removeTestDeferralForReason(identifier, reason);
+    LOG_WITH_STREAM(WheelEventTestMonitor, stream << isMainThread() << "  ScrollingTreeScrollingNodeDelegateMac::deferForReason: ENDING deferral for " << identifier << " because of " << reason);
+    scrollingTree().removeWheelEventTestCompletionDeferralForReason(identifier, reason);
 }
 
 void ScrollingTreeScrollingNodeDelegateMac::updateScrollbarPainters()

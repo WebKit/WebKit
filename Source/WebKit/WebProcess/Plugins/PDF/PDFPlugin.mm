@@ -81,7 +81,7 @@
 #import <WebCore/ScrollbarTheme.h>
 #import <WebCore/Settings.h>
 #import <WebCore/WebAccessibilityObjectWrapperMac.h>
-#import <WebCore/WheelEventTestTrigger.h>
+#import <WebCore/WheelEventTestMonitor.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/UUID.h>
@@ -724,8 +724,8 @@ Ref<Scrollbar> PDFPlugin::createScrollbar(ScrollbarOrientation orientation)
     didAddScrollbar(widget.ptr(), orientation);
     if (Frame* frame = webFrame()->coreFrame()) {
         if (Page* page = frame->page()) {
-            if (page->expectsWheelEventTriggers())
-                scrollAnimator().setWheelEventTestTrigger(page->testTrigger());
+            if (page->isMonitoringWheelEvents())
+                scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
         }
     }
     pluginView()->frame()->view()->addChild(widget);

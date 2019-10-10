@@ -125,7 +125,7 @@
 #include "StyleResolver.h"
 #include "TransformationMatrix.h"
 #include "TranslateTransformOperation.h"
-#include "WheelEventTestTrigger.h"
+#include "WheelEventTestMonitor.h"
 #include <stdio.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/StdLibExtras.h>
@@ -3336,8 +3336,8 @@ Ref<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientation)
     else {
         widget = Scrollbar::createNativeScrollbar(*this, orientation, RegularScrollbar);
         didAddScrollbar(widget.get(), orientation);
-        if (page().expectsWheelEventTriggers())
-            scrollAnimator().setWheelEventTestTrigger(page().testTrigger());
+        if (page().isMonitoringWheelEvents())
+            scrollAnimator().setWheelEventTestMonitor(page().wheelEventTestMonitor());
     }
     renderer().view().frameView().addChild(*widget);
     return widget.releaseNonNull();

@@ -65,7 +65,7 @@
 #include <WebCore/RenderLayerCompositor.h>
 #include <WebCore/ScriptExecutionContext.h>
 #include <WebCore/SecurityOriginData.h>
-#include <WebCore/WheelEventTestTrigger.h>
+#include <WebCore/WheelEventTestMonitor.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 
@@ -644,7 +644,7 @@ void WKBundlePageStartMonitoringScrollOperations(WKBundlePageRef pageRef)
     if (!page)
         return;
 
-    page->ensureTestTrigger();
+    page->ensureWheelEventTestMonitor();
 }
 
 bool WKBundlePageRegisterScrollOperationCompletionCallback(WKBundlePageRef pageRef, WKBundlePageTestNotificationCallback callback, void* context)
@@ -654,10 +654,10 @@ bool WKBundlePageRegisterScrollOperationCompletionCallback(WKBundlePageRef pageR
     
     WebKit::WebPage* webPage = WebKit::toImpl(pageRef);
     WebCore::Page* page = webPage ? webPage->corePage() : nullptr;
-    if (!page || !page->expectsWheelEventTriggers())
+    if (!page || !page->isMonitoringWheelEvents())
         return false;
     
-    page->ensureTestTrigger().setTestCallbackAndStartNotificationTimer([=]() {
+    page->ensureWheelEventTestMonitor().setTestCallbackAndStartNotificationTimer([=]() {
         callback(context);
     });
     return true;

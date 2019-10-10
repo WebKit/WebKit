@@ -1568,7 +1568,7 @@ private:
     void setShouldPlayToPlaybackTarget(uint64_t, bool);
 #endif
 
-    void clearWheelEventTestTrigger();
+    void clearWheelEventTestMonitor();
 
     void setShouldScaleViewToFitDocument(bool);
 
