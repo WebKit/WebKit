@@ -226,10 +226,10 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
     // SpreadsheetSelectorField delegate
 
-    spreadsheetSelectorFieldDidCommit()
+    spreadsheetSelectorFieldDidCommit(changed)
     {
         let selectorText = this._selectorElement.textContent.trim();
-        if (selectorText) {
+        if (selectorText && changed) {
             this.dispatchEventToListeners(WI.SpreadsheetCSSStyleDeclarationSection.Event.SelectorWillChange);
             this._style.ownerRule.singleFireEventListener(WI.CSSRule.Event.SelectorChanged, this._renderSelector, this);
             this._style.ownerRule.selectorText = selectorText;

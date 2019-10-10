@@ -111,8 +111,8 @@ WI.SpreadsheetSelectorField = class SpreadsheetSelectorField extends WI.Object
             return;
 
         if (this._delegate && typeof this._delegate.spreadsheetSelectorFieldDidCommit === "function") {
-            if (this._element.textContent !== this._valueBeforeEditing)
-                this._delegate.spreadsheetSelectorFieldDidCommit();
+            let changed = this._element.textContent !== this._valueBeforeEditing;
+            this._delegate.spreadsheetSelectorFieldDidCommit(changed);
         }
 
         this.stopEditing();

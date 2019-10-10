@@ -1,5 +1,23 @@
 2019-10-09  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        REGRESSION(r250948): Web Inspector: Styles: CSS selector becomes gray after stopping editing without modifying it
+        https://bugs.webkit.org/show_bug.cgi?id=202781
+
+        Reviewed by Matt Baker.
+
+        When not editing, CSS selectors that match the selected node are highlighted (black in the light mode,
+        white in the dark mode). When editing starts, span elements that provide highlighting get removed.
+        When editing stops, active selectors should get highlighted.
+
+        r250948 stopped calling `_renderSelector` when selector wasn't modified.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.spreadsheetSelectorFieldDidCommit):
+        * UserInterface/Views/SpreadsheetSelectorField.js:
+        (WI.SpreadsheetSelectorField.prototype._handleBlur):
+
+2019-10-09  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Modifying CSS selector by pressing Enter or Tab causes 2 CSS.setRuleSelector backend calls
         https://bugs.webkit.org/show_bug.cgi?id=202769
         <rdar://problem/56132166>
