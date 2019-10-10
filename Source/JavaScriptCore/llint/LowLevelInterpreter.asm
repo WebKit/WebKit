@@ -931,15 +931,21 @@ end
 
 macro defineOSRExitReturnLabel(opcodeName, size)
     macro defineNarrow()
-        _%opcodeName%_return_location:
+        if not C_LOOP_WIN
+            _%opcodeName%_return_location:
+        end
     end
 
     macro defineWide16()
-        _%opcodeName%_return_location_wide16:
+        if not C_LOOP_WIN
+            _%opcodeName%_return_location_wide16:
+        end
     end
 
     macro defineWide32()
-        _%opcodeName%_return_location_wide32:
+        if not C_LOOP_WIN
+            _%opcodeName%_return_location_wide32:
+        end
     end
 
     size(defineNarrow, defineWide16, defineWide32, macro (f) f() end)

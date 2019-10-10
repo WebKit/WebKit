@@ -1,3 +1,9 @@
+2019-10-09  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Try to fix build for Windows C_LOOP
+
+        * llint/LowLevelInterpreter.asm:
+
 2019-10-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, roll out r250878
