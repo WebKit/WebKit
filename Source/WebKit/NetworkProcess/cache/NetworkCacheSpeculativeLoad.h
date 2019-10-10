@@ -33,6 +33,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/CompletionHandler.h>
 
 namespace WebKit {
 
@@ -43,7 +44,7 @@ namespace NetworkCache {
 class SpeculativeLoad final : public NetworkLoadClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef Function<void (std::unique_ptr<NetworkCache::Entry>)> RevalidationCompletionHandler;
+    using RevalidationCompletionHandler = CompletionHandler<void(std::unique_ptr<NetworkCache::Entry>)>;
     SpeculativeLoad(Cache&, const GlobalFrameID&, const WebCore::ResourceRequest&, std::unique_ptr<NetworkCache::Entry>, RevalidationCompletionHandler&&);
 
     virtual ~SpeculativeLoad();
