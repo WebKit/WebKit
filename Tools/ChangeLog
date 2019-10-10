@@ -1,3 +1,13 @@
+2019-10-10  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Serve correct exit codes when aborting
+        https://bugs.webkit.org/show_bug.cgi?id=202817
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/view_routes.py:
+        (ViewRoutes.error): Return exit code along with html string.
+
 2019-10-10  Matt Lewis  <jlewis3@apple.com>
 
         Emergency unittest fix for wkbuild.

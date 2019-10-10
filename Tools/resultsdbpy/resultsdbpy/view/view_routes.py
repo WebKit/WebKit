@@ -126,7 +126,7 @@ class ViewRoutes(AuthedBlueprint):
             title=f'{self.title}: {error.code}',
             name=error.name, description=error.description,
             **kwargs)
-        return response
+        return response, error.code
 
     @SiteMenu.render_with_site_menu()
     def documentation(self, **kwargs):
