@@ -26,8 +26,14 @@
 #pragma once
 
 #import "UIScriptControllerCocoa.h"
+#import <wtf/BlockPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
+
+namespace WebCore {
+class FloatPoint;
+class FloatRect;
+}
 
 namespace WTR {
 
@@ -66,6 +72,8 @@ public:
     void enterText(JSStringRef text) override;
     void typeCharacterUsingHardwareKeyboard(JSStringRef character, JSValueRef) override;
     void keyDown(JSStringRef character, JSValueRef modifierArray) override;
+
+    void activateAtPoint(long x, long y, JSValueRef callback) override;
 
     void rawKeyDown(JSStringRef) override;
     void rawKeyUp(JSStringRef) override;
@@ -112,7 +120,7 @@ public:
     JSObjectRef rectForMenuAction(JSStringRef) const override;
     JSObjectRef menuRect() const override;
     bool isDismissingMenu() const override;
-    bool isShowingMenu() const override;
+    void chooseMenuAction(JSStringRef, JSValueRef) override;
     void setSafeAreaInsets(double top, double right, double bottom, double left) override;
     void beginBackSwipe(JSValueRef) override;
     void completeBackSwipe(JSValueRef) override;
@@ -135,8 +143,6 @@ public:
     void setDidEndZoomingCallback(JSValueRef) override;
     void setDidShowKeyboardCallback(JSValueRef) override;
     void setDidHideKeyboardCallback(JSValueRef) override;
-    void setDidShowMenuCallback(JSValueRef) override;
-    void setDidHideMenuCallback(JSValueRef) override;
     void setWillPresentPopoverCallback(JSValueRef) override;
     void setDidDismissPopoverCallback(JSValueRef) override;
     void setDidEndScrollingCallback(JSValueRef) override;
@@ -144,6 +150,8 @@ public:
 
 private:
     void waitForSingleTapToReset() const;
+    WebCore::FloatRect rectForMenuAction(CFStringRef) const;
+    void singleTapAtPointWithModifiers(WebCore::FloatPoint location, Vector<String>&& modifierFlags, BlockPtr<void()>&&);
 };
 
 }

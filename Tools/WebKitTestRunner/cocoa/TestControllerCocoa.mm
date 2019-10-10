@@ -262,6 +262,8 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
         // Toggle on before the test, and toggle off after the test.
         if (options.shouldShowSpellCheckingDots)
             [platformView toggleContinuousSpellChecking:nil];
+
+        [platformView resetInteractionCallbacks];
     }
 
     [globalWebsiteDataStoreDelegateClient setAllowRaisingQuota: true];

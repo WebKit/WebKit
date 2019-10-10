@@ -31,6 +31,7 @@
 #include "ShareableBitmap.h"
 #include "WKLayoutMode.h"
 #include "_WKOverlayScrollbarStyle.h"
+#include <WebCore/DOMPasteAccess.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/TextIndicatorWindow.h>
@@ -38,6 +39,7 @@
 #include <WebKit/WKDragDestinationAction.h>
 #include <pal/spi/cocoa/AVKitSPI.h>
 #include <wtf/BlockPtr.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakObjCPtr.h>
 #include <wtf/WeakPtr.h>
@@ -47,10 +49,12 @@ using _WKRectEdge = NSUInteger;
 
 OBJC_CLASS NSAccessibilityRemoteUIElement;
 OBJC_CLASS NSImmediateActionGestureRecognizer;
+OBJC_CLASS NSMenu;
 OBJC_CLASS NSTextInputContext;
 OBJC_CLASS NSView;
 OBJC_CLASS WKAccessibilitySettingsObserver;
 OBJC_CLASS WKBrowsingContextController;
+OBJC_CLASS WKDOMPasteMenuDelegate;
 OBJC_CLASS WKEditorUndoTarget;
 OBJC_CLASS WKFullScreenWindowController;
 OBJC_CLASS WKImmediateActionController;
@@ -113,6 +117,8 @@ struct ShareDataWithParsedURL;
 - (WKDragDestinationAction)_web_dragDestinationActionForDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
 - (void)_web_didPerformDragOperation:(BOOL)handled;
 #endif
+
+- (void)_web_grantDOMPasteAccess;
 
 @optional
 - (void)_web_didAddMediaControlsManager:(id)controlsManager;
@@ -600,6 +606,10 @@ public:
     void takeFocus(WebCore::FocusDirection);
     void clearPromisedDragImage();
 
+    void requestDOMPasteAccess(const WebCore::IntRect&, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&);
+    void handleDOMPasteRequestWithResult(WebCore::DOMPasteAccessResponse);
+    NSMenu *domPasteMenu() const { return m_domPasteMenu.get(); }
+
 private:
 #if HAVE(TOUCH_BAR)
     void setUpTextTouchBar(NSTouchBar *);
@@ -794,6 +804,9 @@ private:
     NSInteger m_initialNumberOfValidItemsForDrop { 0 };
 #endif
 
+    RetainPtr<NSMenu> m_domPasteMenu;
+    RetainPtr<WKDOMPasteMenuDelegate> m_domPasteMenuDelegate;
+    CompletionHandler<void(WebCore::DOMPasteAccessResponse)> m_domPasteRequestHandler;
 };
     
 } // namespace WebKit

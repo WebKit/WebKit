@@ -1,3 +1,46 @@
+2019-10-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support programmatic paste requests on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=202773
+        <rdar://problem/48957166>
+
+        Reviewed by Tim Horton.
+
+        Adds support for programmatic paste requests on macOS. See below for more details.
+
+        Tests: editing/pasteboard/dom-paste/dom-paste-confirmation.html
+               editing/pasteboard/dom-paste/dom-paste-consecutive-confirmations.html
+               editing/pasteboard/dom-paste/dom-paste-rejection.html
+               editing/pasteboard/dom-paste/dom-paste-requires-user-gesture.html
+               editing/pasteboard/dom-paste/dom-paste-same-origin.html
+
+        * editing/EditorCommand.cpp:
+        (WebCore::defaultValueForSupportedPaste):
+        (WebCore::supportedPaste):
+        (WebCore::allowPasteFromDOM):
+        (WebCore::enabledPaste):
+
+        Fixes an existing bug uncovered by the layout test editing/execCommand/clipboard-access.html, which tests the
+        results of `document.queryCommandEnabled("copy")` and `document.queryCommandEnabled("paste")`. The problem here
+        is that document.queryCommandEnabled("paste") returns true if DOM paste access requests are enabled, regardless
+        of whether or not there is an active user gesture. This is inconsistent with the behavior of "copy" and "cut",
+        which return false in the case where there is no user gesture (and the clipboard access policy is also equal to
+        ClipboardAccessPolicy::RequiresUserGesture -- refer to `allowCopyCutFromDOM`).
+
+        When pasting, we only DOM paste access requests to be triggered only in the case where there is a user gesture.
+        This means that enabledPaste should additionally be gated on a user gesture check. For consistency with the
+        implementation of `enabledCopy`, we introduce a `allowPasteFromDOM` helper that is similar to
+        `allowCopyCutFromDOM`, and additionally check this constraint when the paste command's source is the DOM (as
+        opposed to a menu or key binding).
+
+        This adjustment also adds a missing canDHTMLPaste() check prior to consulting canPaste(). This ensures that when
+        evaluating document.queryCommandEnabled("Paste"), we'll dispatch a "beforepaste" event, similar to how
+        evaluating document.queryCommandEnabled("Copy") dispatches a "beforecopy" event.
+
+        * platform/LocalizedStrings.h:
+
+        Mark a function as WEBCORE_EXPORT.
+
 2019-10-10  Eric Carlson  <eric.carlson@apple.com>
 
         [GTK][WPE] Lots of media related tests crashing or flaky after r250918 - [ Mac WK2 ] Layout Test fast/mediastream/MediaStreamTrack-getSettings.html is a flaky failure

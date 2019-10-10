@@ -105,6 +105,9 @@ public:
     virtual void becomeFirstResponder() { notImplemented(); }
     virtual void resignFirstResponder() { notImplemented(); }
 
+    virtual void chooseMenuAction(JSStringRef, JSValueRef);
+    virtual void dismissMenu();
+
     virtual void firstResponderSuppressionForWebView(bool) { notImplemented(); }
     virtual void makeWindowContentViewFirstResponder() { notImplemented(); }
     virtual bool isWindowContentViewFirstResponder() const { notImplemented(); return false; }
@@ -141,6 +144,8 @@ public:
     virtual void doubleTapAtPoint(long x, long y, float delay, JSValueRef callback) { notImplemented(); }
     virtual void dragFromPointToPoint(long startX, long startY, long endX, long endY, double durationSeconds, JSValueRef callback) { notImplemented(); }
     virtual void longPressAtPoint(long x, long y, JSValueRef callback) { notImplemented(); }
+
+    virtual void activateAtPoint(long x, long y, JSValueRef callback) { notImplemented(); }
 
     // Keyboard
 

@@ -26,6 +26,7 @@
 #import "config.h"
 #import "UIScriptControllerMac.h"
 
+#import "EventSenderProxy.h"
 #import "EventSerializerMac.h"
 #import "PlatformWebView.h"
 #import "SharedEventStreamsMac.h"
@@ -118,6 +119,36 @@ static void playBackEvents(WKWebView *webView, UIScriptContext *context, NSStrin
     }];
 }
 
+void UIScriptControllerMac::clearAllCallbacks()
+{
+    [webView() resetInteractionCallbacks];
+}
+
+void UIScriptControllerMac::chooseMenuAction(JSStringRef jsAction, JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    auto action = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, jsAction));
+    __block NSUInteger matchIndex = NSNotFound;
+    auto activeMenu = retainPtr(webView()._activeMenu);
+    [[activeMenu itemArray] enumerateObjectsUsingBlock:^(NSMenuItem *item, NSUInteger index, BOOL *stop) {
+        if ([item.title isEqualToString:(__bridge NSString *)action.get()])
+            matchIndex = index;
+    }];
+
+    if (matchIndex != NSNotFound) {
+        [activeMenu performActionForItemAtIndex:matchIndex];
+        [activeMenu removeAllItems];
+        [activeMenu update];
+        [activeMenu cancelTracking];
+    }
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (m_context)
+            m_context->asyncTaskComplete(callbackID);
+    });
+}
+
 void UIScriptControllerMac::beginBackSwipe(JSValueRef callback)
 {
     playBackEvents(webView(), m_context, beginSwipeBackEventStream(), callback);
@@ -172,6 +203,26 @@ void UIScriptControllerMac::toggleCapsLock(JSValueRef callback)
 NSView *UIScriptControllerMac::platformContentView() const
 {
     return webView();
+}
+
+void UIScriptControllerMac::activateAtPoint(long x, long y, JSValueRef callback)
+{
+    auto* eventSender = TestController::singleton().eventSenderProxy();
+    if (!eventSender) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    eventSender->mouseMoveTo(x, y);
+    eventSender->mouseDown(0, 0);
+    eventSender->mouseUp(0, 0);
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (m_context)
+            m_context->asyncTaskComplete(callbackID);
+    });
 }
 
 } // namespace WTR

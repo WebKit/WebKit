@@ -1235,13 +1235,21 @@ static bool supportedCopyCut(Frame* frame)
     return client ? client->canCopyCut(frame, defaultValue) : defaultValue;
 }
 
+static bool defaultValueForSupportedPaste(Frame& frame)
+{
+    auto& settings = frame.settings();
+    if (settings.javaScriptCanAccessClipboard() && settings.DOMPasteAllowed())
+        return true;
+
+    return settings.domPasteAccessRequestsEnabled();
+}
+
 static bool supportedPaste(Frame* frame)
 {
     if (!frame)
         return false;
 
-    auto& settings = frame->settings();
-    bool defaultValue = (settings.javaScriptCanAccessClipboard() && settings.DOMPasteAllowed()) || settings.domPasteAccessRequestsEnabled();
+    bool defaultValue = defaultValueForSupportedPaste(*frame);
 
     EditorClient* client = frame->editor().client();
     return client ? client->canPaste(frame, defaultValue) : defaultValue;
@@ -1370,9 +1378,26 @@ static bool enabledInRichlyEditableText(Frame& frame, Event*, EditorCommandSourc
     return selection.isCaretOrRange() && selection.isContentRichlyEditable() && selection.rootEditableElement();
 }
 
-static bool enabledPaste(Frame& frame, Event*, EditorCommandSource)
+static bool allowPasteFromDOM(Frame& frame)
 {
-    return frame.editor().canPaste();
+    auto& settings = frame.settings();
+    if (settings.javaScriptCanAccessClipboard() && settings.DOMPasteAllowed())
+        return true;
+
+    return settings.domPasteAccessRequestsEnabled() && UserGestureIndicator::processingUserGesture();
+}
+
+static bool enabledPaste(Frame& frame, Event*, EditorCommandSource source)
+{
+    switch (source) {
+    case CommandFromMenuOrKeyBinding:
+        return frame.editor().canDHTMLPaste() || frame.editor().canPaste();
+    case CommandFromDOM:
+    case CommandFromDOMWithUserInterface:
+        return allowPasteFromDOM(frame) && (frame.editor().canDHTMLPaste() || frame.editor().canPaste());
+    }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 static bool enabledRangeInEditableText(Frame& frame, Event*, EditorCommandSource)

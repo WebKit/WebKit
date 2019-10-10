@@ -1,3 +1,64 @@
+2019-10-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support programmatic paste requests on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=202773
+        <rdar://problem/48957166>
+
+        Reviewed by Tim Horton.
+
+        Adds support for programmatic paste requests on macOS, as well as some testing SPI in WKWebView to allow
+        WebKitTestRunner to grab the NSMenu used for the DOM paste request. This patch adopts the same strategy taken to
+        allow programmatic paste on iOS, by allowing programmatic pastes coming from the page to show platform UI which
+        the user must then interact with in order to proceed with the paste. See below for more details.
+
+        * Shared/WebPreferencesDefaultValues.h:
+
+        Make this available on both iOS and macOS (iOS family is omitted for now, since callout bar UI is not generally
+        present on non-iOS iOS-family platforms such as Apple Watch).
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _web_grantDOMPasteAccess]):
+
+        This selector is called when the user taps the Paste option in the presented NSMenu.
+
+        (-[WKWebView _activeMenu]):
+
+        Returns the currently active NSMenu. Only for testing purposes.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _web_grantDOMPasteAccess]):
+
+        Same exercise as above, only for WKView instead of WKWebView.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        (WebKit::WebViewImpl::domPasteMenu const):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKDOMPasteMenuDelegate initWithWebViewImpl:]):
+        (-[WKDOMPasteMenuDelegate menuDidClose:]):
+        (-[WKDOMPasteMenuDelegate numberOfItemsInMenu:]):
+        (-[WKDOMPasteMenuDelegate confinementRectForMenu:onScreen:]):
+
+        Adds a new object, whose purpose is to be a delegate for the NSMenu that is presented when requesting DOM paste
+        access. This object is used instead of WKWebView, since API clients may end up making the WKWebView the delegate
+        for a different menu, in which case some implementations (either theirs or ours) of NSMenuDelegate methods would
+        not be called. Avoiding this would require the client to be aware that WKWebView conforms to NSMenuDelegate,
+        which is only declared privately.
+
+        (WebKit::WebViewImpl::handleProcessSwapOrExit):
+
+        On process swap or exit, automatically bail out of any pending DOM paste request by denying it.
+
+        (WebKit::WebViewImpl::requestDOMPasteAccess):
+        (WebKit::WebViewImpl::handleDOMPasteRequestWithResult):
+
+        Handle the DOM paste request by showing an NSMenu near the mouse cursor with a single option to paste.
+
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::requestDOMPasteAccess):
+
 2019-10-10  youenn fablet  <youenn@apple.com>
 
         Remove unified plan runtime flag

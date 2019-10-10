@@ -68,7 +68,7 @@ namespace WebCore {
     String contextMenuItemTagStop();
     String contextMenuItemTagReload();
     String contextMenuItemTagCut();
-    String contextMenuItemTagPaste();
+    WEBCORE_EXPORT String contextMenuItemTagPaste();
 #if PLATFORM(GTK)
     String contextMenuItemTagDelete();
     String contextMenuItemTagInputMethods();

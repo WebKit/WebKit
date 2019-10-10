@@ -21,7 +21,7 @@ fast/web-share [ Pass ]
 editing/caret/ios [ Pass ]
 editing/find [ Pass ]
 editing/input/ios [ Pass ]
-editing/pasteboard/ios [ Pass ]
+editing/pasteboard/dom-paste [ Pass ]
 editing/undo-manager [ Pass ]
 
 accessibility/set-selected-text-range-after-newline.html [ Pass ]
@@ -1363,7 +1363,6 @@ fast/viewport/ios/ignore-minimum-device-width-for-page-with-viewport-device-widt
 # problem with blur handling
 mathml/focus-event-handling.html [ Failure ]
 
-webkit.org/b/201898 editing/pasteboard/ios/dom-paste-same-origin.html [ Failure ]
 # <rdar://problem/51756254>REGRESSION (r244582-r244596) Layout tests fast/scrolling/ios/touch-scroll-visibility-hidden.html fast/scrolling/ios/touch-scroll-pointer-events-none.html are failing
 fast/scrolling/ios/touch-scroll-pointer-events-none.html [ Failure ]
 fast/scrolling/ios/touch-scroll-visibility-hidden.html [ Failure ]

@@ -891,6 +891,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return _data->_impl->namesOfPromisedFilesDroppedAtDestination(dropDestination);
 }
 
+- (void)_web_grantDOMPasteAccess
+{
+    _data->_impl->handleDOMPasteRequestWithResult(WebCore::DOMPasteAccessResponse::GrantedForGesture);
+}
+
 - (void)maybeInstallIconLoadingClient
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN

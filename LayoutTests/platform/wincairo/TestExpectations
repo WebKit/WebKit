@@ -1306,7 +1306,7 @@ fast/dom/HTMLInputElement/change-type-in-input-event-listener.html [ Skip ]
 editing/pasteboard/ [ Pass Failure ImageOnlyFailure ]
 editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Skip ]
 editing/pasteboard/drag-and-drop-color-input-events.html [ Skip ]
-editing/pasteboard/ios/ [ Skip ]
+editing/pasteboard/dom-paste/ [ Skip ]
 editing/pasteboard/paste-image-as-blob-url.html [ Skip ]
 # TODO eventSender.contextClick() needs to return a JS array of the context menu items.
 webkit.org/b/62597 editing/pasteboard/copy-standalone-image-crash.html [ Skip ]

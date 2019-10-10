@@ -84,11 +84,14 @@ IGNORE_WARNINGS_END
 }
 #endif
 
-#if PLATFORM(IOS_FAMILY)
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
 {
     if (self = [super initWithFrame:frame configuration:configuration]) {
         NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
+#if PLATFORM(MAC)
+        [center addObserver:self selector:@selector(_didShowMenu) name:NSMenuDidBeginTrackingNotification object:nil];
+        [center addObserver:self selector:@selector(_didHideMenu) name:NSMenuDidEndTrackingNotification object:nil];
+#else
         [center addObserver:self selector:@selector(_invokeShowKeyboardCallbackIfNecessary) name:UIKeyboardDidShowNotification object:nil];
         [center addObserver:self selector:@selector(_invokeHideKeyboardCallbackIfNecessary) name:UIKeyboardDidHideNotification object:nil];
         [center addObserver:self selector:@selector(_didShowMenu) name:UIMenuControllerDidShowMenuNotification object:nil];
@@ -97,6 +100,7 @@ IGNORE_WARNINGS_END
         [center addObserver:self selector:@selector(_willPresentPopover) name:@"UIPopoverControllerWillPresentPopoverNotification" object:nil];
         [center addObserver:self selector:@selector(_didDismissPopover) name:@"UIPopoverControllerDidDismissPopoverNotification" object:nil];
         self.UIDelegate = self;
+#endif
     }
     return self;
 }
@@ -111,6 +115,69 @@ IGNORE_WARNINGS_END
     self.retrieveSpeakSelectionContentCompletionHandler = nil;
 
     [super dealloc];
+}
+
+- (void)_didShowMenu
+{
+    if (self.showingMenu)
+        return;
+
+    self.showingMenu = YES;
+    if (self.didShowMenuCallback)
+        self.didShowMenuCallback();
+}
+
+- (void)_didHideMenu
+{
+#if PLATFORM(IOS_FAMILY)
+    self.dismissingMenu = NO;
+#endif
+
+    if (!self.showingMenu)
+        return;
+
+    self.showingMenu = NO;
+    if (self.didHideMenuCallback)
+        self.didHideMenuCallback();
+}
+
+- (void)dismissActiveMenu
+{
+#if PLATFORM(IOS_FAMILY)
+    [self resignFirstResponder];
+#else
+    auto menu = retainPtr(self._activeMenu);
+    [menu removeAllItems];
+    [menu update];
+    [menu cancelTracking];
+#endif
+}
+
+- (void)resetInteractionCallbacks
+{
+    self.didShowMenuCallback = nil;
+    self.didHideMenuCallback = nil;
+#if PLATFORM(IOS_FAMILY)
+    self.didStartFormControlInteractionCallback = nil;
+    self.didEndFormControlInteractionCallback = nil;
+    self.didShowForcePressPreviewCallback = nil;
+    self.didDismissForcePressPreviewCallback = nil;
+    self.willBeginZoomingCallback = nil;
+    self.didEndZoomingCallback = nil;
+    self.didShowKeyboardCallback = nil;
+    self.didHideKeyboardCallback = nil;
+    self.willPresentPopoverCallback = nil;
+    self.didDismissPopoverCallback = nil;
+    self.didEndScrollingCallback = nil;
+    self.rotationDidEndCallback = nil;
+#endif // PLATFORM(IOS_FAMILY)
+}
+
+#if PLATFORM(IOS_FAMILY)
+
+- (void)_willHideMenu
+{
+    self.dismissingMenu = YES;
 }
 
 - (void)didStartFormControlInteraction
@@ -228,24 +295,6 @@ IGNORE_WARNINGS_END
     return canPerformActionByDefault;
 }
 
-- (void)resetInteractionCallbacks
-{
-    self.didStartFormControlInteractionCallback = nil;
-    self.didEndFormControlInteractionCallback = nil;
-    self.didShowForcePressPreviewCallback = nil;
-    self.didDismissForcePressPreviewCallback = nil;
-    self.willBeginZoomingCallback = nil;
-    self.didEndZoomingCallback = nil;
-    self.didShowKeyboardCallback = nil;
-    self.didHideKeyboardCallback = nil;
-    self.didShowMenuCallback = nil;
-    self.didHideMenuCallback = nil;
-    self.willPresentPopoverCallback = nil;
-    self.didDismissPopoverCallback = nil;
-    self.didEndScrollingCallback = nil;
-    self.rotationDidEndCallback = nil;
-}
-
 - (void)zoomToScale:(double)scale animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler
 {
     ASSERT(!self.zoomToScaleCompletionHandler);
@@ -279,33 +328,6 @@ IGNORE_WARNINGS_END
     self.showingKeyboard = NO;
     if (self.didHideKeyboardCallback)
         self.didHideKeyboardCallback();
-}
-
-- (void)_didShowMenu
-{
-    if (self.showingMenu)
-        return;
-
-    self.showingMenu = YES;
-    if (self.didShowMenuCallback)
-        self.didShowMenuCallback();
-}
-
-- (void)_willHideMenu
-{
-    self.dismissingMenu = YES;
-}
-
-- (void)_didHideMenu
-{
-    self.dismissingMenu = NO;
-
-    if (!self.showingMenu)
-        return;
-
-    self.showingMenu = NO;
-    if (self.didHideMenuCallback)
-        self.didHideMenuCallback();
 }
 
 - (void)_willPresentPopover

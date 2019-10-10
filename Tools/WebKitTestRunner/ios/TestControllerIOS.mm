@@ -167,7 +167,6 @@ void TestController::platformResetStateToConsistentValues(const TestOptions& opt
         webView.overrideSafeAreaInsets = UIEdgeInsetsZero;
         [webView _clearOverrideLayoutParameters];
         [webView _clearInterfaceOrientationOverride];
-        [webView resetInteractionCallbacks];
         [webView resetCustomMenuAction];
         [webView setAllowedMenuActions:nil];
 

@@ -189,6 +189,10 @@ struct PrintInfo;
 - (WKPageRef)_pageForTesting;
 - (WebKit::WebPageProxy*)_page;
 
+#if PLATFORM(MAC)
+- (void)_web_grantDOMPasteAccess;
+#endif
+
 @end
 
 WKWebView* fromWebPageProxy(WebKit::WebPageProxy&);

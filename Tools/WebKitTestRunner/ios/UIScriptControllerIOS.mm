@@ -39,6 +39,7 @@
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <JavaScriptCore/OpaqueJSString.h>
 #import <UIKit/UIKit.h>
+#import <WebCore/FloatPoint.h>
 #import <WebCore/FloatRect.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
@@ -264,6 +265,11 @@ void UIScriptControllerIOS::singleTapAtPoint(long x, long y, JSValueRef callback
     singleTapAtPointWithModifiers(x, y, nullptr, callback);
 }
 
+void UIScriptControllerIOS::activateAtPoint(long x, long y, JSValueRef callback)
+{
+    singleTapAtPoint(x, y, callback);
+}
+
 void UIScriptControllerIOS::waitForSingleTapToReset() const
 {
     bool doneWaitingForSingleTapToReset = false;
@@ -288,25 +294,28 @@ void UIScriptControllerIOS::twoFingerSingleTapAtPoint(long x, long y, JSValueRef
 void UIScriptControllerIOS::singleTapAtPointWithModifiers(long x, long y, JSValueRef modifierArray, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    singleTapAtPointWithModifiers(WebCore::FloatPoint(x, y), parseModifierArray(m_context->jsContext(), modifierArray), makeBlockPtr([this, protectedThis = makeRefPtr(*this), callbackID] {
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }));
+}
 
+void UIScriptControllerIOS::singleTapAtPointWithModifiers(WebCore::FloatPoint location, Vector<String>&& modifierFlags, BlockPtr<void()>&& block)
+{
     waitForSingleTapToReset();
 
-    auto modifierFlags = parseModifierArray(m_context->jsContext(), modifierArray);
     for (auto& modifierFlag : modifierFlags)
         [[HIDEventGenerator sharedHIDEventGenerator] keyDown:modifierFlag];
 
-    [[HIDEventGenerator sharedHIDEventGenerator] tap:globalToContentCoordinates(webView(), x, y) completionBlock:^{
+    [[HIDEventGenerator sharedHIDEventGenerator] tap:globalToContentCoordinates(webView(), location.x(), location.y()) completionBlock:[this, protectedThis = makeRefPtr(*this), modifierFlags = WTFMove(modifierFlags), block = WTFMove(block)] () mutable {
         if (!m_context)
             return;
         for (size_t i = modifierFlags.size(); i; ) {
             --i;
             [[HIDEventGenerator sharedHIDEventGenerator] keyUp:modifierFlags[i]];
         }
-        [[HIDEventGenerator sharedHIDEventGenerator] sendMarkerHIDEventWithCompletionBlock:^{
-            if (!m_context)
-                return;
-            m_context->asyncTaskComplete(callbackID);
-        }];
+        [[HIDEventGenerator sharedHIDEventGenerator] sendMarkerHIDEventWithCompletionBlock:block.get()];
     }];
 }
 
@@ -924,24 +933,18 @@ void UIScriptControllerIOS::setDidHideKeyboardCallback(JSValueRef callback)
     };
 }
 
-void UIScriptControllerIOS::setDidShowMenuCallback(JSValueRef callback)
+void UIScriptControllerIOS::chooseMenuAction(JSStringRef jsAction, JSValueRef callback)
 {
-    UIScriptController::setDidShowMenuCallback(callback);
-    webView().didShowMenuCallback = ^{
-        if (!m_context)
-            return;
-        m_context->fireCallback(CallbackTypeDidShowMenu);
-    };
-}
+    auto action = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, jsAction));
+    auto rect = rectForMenuAction(action.get());
+    if (rect.isEmpty())
+        return;
 
-void UIScriptControllerIOS::setDidHideMenuCallback(JSValueRef callback)
-{
-    UIScriptController::setDidHideMenuCallback(callback);
-    webView().didHideMenuCallback = ^{
-        if (!m_context)
-            return;
-        m_context->fireCallback(CallbackTypeDidHideMenu);
-    };
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    singleTapAtPointWithModifiers(rect.center(), { }, makeBlockPtr([this, protectedThis = makeRef(*this), callbackID] {
+        if (m_context)
+            m_context->asyncTaskComplete(callbackID);
+    }));
 }
 
 bool UIScriptControllerIOS::isShowingPopover() const
@@ -972,19 +975,27 @@ void UIScriptControllerIOS::setDidDismissPopoverCallback(JSValueRef callback)
 JSObjectRef UIScriptControllerIOS::rectForMenuAction(JSStringRef jsAction) const
 {
     auto action = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, jsAction));
+    auto rect = rectForMenuAction(action.get());
+    if (rect.isEmpty())
+        return nullptr;
 
+    return m_context->objectFromRect(rect);
+}
+
+WebCore::FloatRect UIScriptControllerIOS::rectForMenuAction(CFStringRef action) const
+{
     UIWindow *windowForButton = nil;
     UIButton *buttonForAction = nil;
     UIView *calloutBar = UICalloutBar.activeCalloutBar;
     if (!calloutBar.window)
-        return nullptr;
+        return { };
 
     for (UIButton *button in findAllViewsInHierarchyOfType(calloutBar, UIButton.class)) {
         NSString *buttonTitle = [button titleForState:UIControlStateNormal];
         if (!buttonTitle.length)
             continue;
 
-        if (![buttonTitle isEqualToString:(__bridge NSString *)action.get()])
+        if (![buttonTitle isEqualToString:(__bridge NSString *)action])
             continue;
 
         buttonForAction = button;
@@ -993,10 +1004,10 @@ JSObjectRef UIScriptControllerIOS::rectForMenuAction(JSStringRef jsAction) const
     }
 
     if (!buttonForAction)
-        return nullptr;
+        return { };
 
     CGRect rectInRootViewCoordinates = [buttonForAction convertRect:buttonForAction.bounds toView:platformContentView()];
-    return m_context->objectFromRect(WebCore::FloatRect(rectInRootViewCoordinates.origin.x, rectInRootViewCoordinates.origin.y, rectInRootViewCoordinates.size.width, rectInRootViewCoordinates.size.height));
+    return WebCore::FloatRect(rectInRootViewCoordinates.origin.x, rectInRootViewCoordinates.origin.y, rectInRootViewCoordinates.size.width, rectInRootViewCoordinates.size.height);
 }
 
 JSObjectRef UIScriptControllerIOS::menuRect() const
@@ -1012,11 +1023,6 @@ JSObjectRef UIScriptControllerIOS::menuRect() const
 bool UIScriptControllerIOS::isDismissingMenu() const
 {
     return webView().dismissingMenu;
-}
-
-bool UIScriptControllerIOS::isShowingMenu() const
-{
-    return webView().showingMenu;
 }
 
 void UIScriptControllerIOS::setDidEndScrollingCallback(JSValueRef callback)

@@ -41,30 +41,28 @@ jsTestIsAsync = true;
 
 const editor = document.getElementById("editor");
 
-description("Verifies that no callout is shown when the page programmatically triggers paste outside the scope of user interaction. This test requires WebKitTestRunner.");
+description("Verifies that a menu is shown when the page programmatically triggers paste, and that selecting Paste in the menu allows the paste to happen. To manually test, click or tap the text on the bottom, click or tap the editable area above, and then select 'Paste' in the resulting menu. The text 'Click here to copy' should be pasted <strong><em>twice</em></strong> in the editable area.");
 
-function checkDone() {
-    if (!window.doneCount)
-        doneCount = 0;
-
-    if (++doneCount == 2)
-        finishJSTest();
-}
-
+editor.addEventListener("paste", event => shouldBeEqualToString("event.clipboardData.getData('text/plain')", "Click here to copy"));
 editor.addEventListener("click", event => {
-    editor.focus();
+    getSelection().setPosition(editor);
+    shouldBe("document.queryCommandSupported('Paste')", "true");
+    shouldBe("document.queryCommandEnabled('Paste')", "true");
     shouldBe("document.execCommand('Paste')", "true");
-    requestAnimationFrame(() => {
-        shouldBe("document.execCommand('Paste')", "false")
-        shouldBeEqualToString("editor.textContent", "Click here to copy");
-        checkDone();
-    });
+    document.execCommand('InsertParagraph');
+    shouldBe("document.execCommand('Paste')", "true");
+    shouldBeEqualToString("editor.textContent", "Click here to copyClick here to copy");
+    event.preventDefault();
+    editor.blur();
 });
 
 addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
     await UIHelper.activateAt(160, 125);
-    await triggerPasteMenuAfterTapAt(160, 50);
-    checkDone();
+    await triggerPasteMenuAfterActivatingLocation(160, 50);
+    finishJSTest();
 });
 </script>
 </body>

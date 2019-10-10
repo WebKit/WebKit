@@ -543,6 +543,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (void)_insertText:(id)string replacementRange:(NSRange)replacementRange WK_API_AVAILABLE(macos(10.12.3));
 - (NSRect)_candidateRect WK_API_AVAILABLE(macos(10.13));
 @property (nonatomic, readwrite, setter=_setUseSystemAppearance:) BOOL _useSystemAppearance WK_API_AVAILABLE(macos(10.14));
+@property (nonatomic, readonly) NSMenu *_activeMenu WK_API_AVAILABLE(macos(WK_MAC_TBA));
 
 - (void)_setHeaderBannerHeight:(int)height WK_API_AVAILABLE(macos(10.12.3));
 - (void)_setFooterBannerHeight:(int)height WK_API_AVAILABLE(macos(10.12.3));

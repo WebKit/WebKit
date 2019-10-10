@@ -41,8 +41,6 @@
 @property (nonatomic, copy) void (^didEndZoomingCallback)(void);
 @property (nonatomic, copy) void (^didShowKeyboardCallback)(void);
 @property (nonatomic, copy) void (^didHideKeyboardCallback)(void);
-@property (nonatomic, copy) void (^didShowMenuCallback)(void);
-@property (nonatomic, copy) void (^didHideMenuCallback)(void);
 @property (nonatomic, copy) void (^willPresentPopoverCallback)(void);
 @property (nonatomic, copy) void (^didDismissPopoverCallback)(void);
 @property (nonatomic, copy) void (^didEndScrollingCallback)(void);
@@ -54,7 +52,6 @@
 - (void)resetCustomMenuAction;
 - (void)installCustomMenuAction:(NSString *)name dismissesAutomatically:(BOOL)dismissesAutomatically callback:(dispatch_block_t)callback;
 
-- (void)resetInteractionCallbacks;
 - (void)zoomToScale:(double)scale animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler;
 - (void)accessibilityRetrieveSpeakSelectionContentWithCompletionHandler:(void (^)(void))completionHandler;
 - (void)_didEndRotation;
@@ -62,7 +59,6 @@
 @property (nonatomic, assign) UIEdgeInsets overrideSafeAreaInsets;
 
 @property (nonatomic, readonly, getter=isShowingKeyboard) BOOL showingKeyboard;
-@property (nonatomic, readonly, getter=isShowingMenu) BOOL showingMenu;
 @property (nonatomic, readonly, getter=isDismissingMenu) BOOL dismissingMenu;
 @property (nonatomic, readonly, getter=isShowingPopover) BOOL showingPopover;
 @property (nonatomic, assign) BOOL usesSafariLikeRotation;
@@ -70,7 +66,13 @@
 
 #endif
 
+@property (nonatomic, readonly, getter=isShowingMenu) BOOL showingMenu;
+@property (nonatomic, copy) void (^didShowMenuCallback)(void);
+@property (nonatomic, copy) void (^didHideMenuCallback)(void);
 @property (nonatomic, retain, setter=_setStableStateOverride:) NSNumber *_stableStateOverride;
 @property (nonatomic, setter=_setScrollingUpdatesDisabledForTesting:) BOOL _scrollingUpdatesDisabledForTesting;
+
+- (void)dismissActiveMenu;
+- (void)resetInteractionCallbacks;
 
 @end

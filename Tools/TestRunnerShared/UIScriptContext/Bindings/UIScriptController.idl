@@ -63,6 +63,8 @@ interface UIScriptController {
     void doubleTapAtPoint(long x, long y, float delay, object callback);
     void dragFromPointToPoint(long startX, long startY, long endX, long endY, double durationSeconds, object callback);
 
+    void activateAtPoint(long x, long y, object callback);
+
     void longPressAtPoint(long x, long y, object callback);
 
     void stylusDownAtPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, object callback);
@@ -238,6 +240,8 @@ interface UIScriptController {
     readonly attribute boolean isShowingMenu;
     readonly attribute object menuRect;
     object rectForMenuAction(DOMString action);
+    void chooseMenuAction(DOMString action, object callback);
+    void dismissMenu();
 
     readonly attribute boolean isShowingPopover;
     attribute object willPresentPopoverCallback;

@@ -51,6 +51,11 @@ public:
     bool isWindowContentViewFirstResponder() const override;
     void toggleCapsLock(JSValueRef) override;
     NSView *platformContentView() const override;
+    void clearAllCallbacks() override;
+
+    void chooseMenuAction(JSStringRef, JSValueRef) override;
+
+    void activateAtPoint(long x, long y, JSValueRef callback) override;
 };
 
 } // namespace WTR

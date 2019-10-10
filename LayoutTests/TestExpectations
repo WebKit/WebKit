@@ -56,7 +56,7 @@ http/tests/ssl/curl [ Skip ]
 system-preview [ Skip ]
 editing/images [ Skip ]
 pointerevents/ios [ Skip ]
-editing/pasteboard/ios [ Skip ]
+editing/pasteboard/dom-paste [ Skip ]
 editing/pasteboard/mac [ Skip ]
 fast/media/ios [ Skip ]
 

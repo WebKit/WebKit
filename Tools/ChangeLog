@@ -1,3 +1,85 @@
+2019-10-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support programmatic paste requests on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=202773
+        <rdar://problem/48957166>
+
+        Reviewed by Tim Horton.
+
+        Adds new testing support to enable us to test programmatic paste requests on macOS.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+
+        Add a few new UIScriptController methods:
+        - activateAtPoint(x, y, callback): used to activate content underneath at (x, y), in root view coordinates
+          (WKWebView on macOS, and WKContentView on iOS). On macOS, this moves the mouse to the given location and
+          clicks.
+        - chooseMenuAction(action, callback): used to select a menu item with the given title.
+        - dismissMenu(): dismisses the platform menu.
+
+        Note that dismissMenu and chooseMenuAction currently only work for the DOM paste menu, but could be extended in
+        the future to handle the system context menu.
+
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::dismissMenu):
+        (WTR::UIScriptController::chooseMenuAction):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::activateAtPoint):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::cocoaResetStateToConsistentValues):
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView initWithFrame:configuration:]):
+        (-[TestRunnerWKWebView _didShowMenu]):
+        (-[TestRunnerWKWebView _didHideMenu]):
+
+        Make these present across both macOS and iOS. On macOS, we listen for NSMenuDidBeginTrackingNotification and
+        NSMenuDidEndTrackingNotification to know when a menu has been shown or dismissed.
+
+        (-[TestRunnerWKWebView dismissActiveMenu]):
+        (-[TestRunnerWKWebView resetInteractionCallbacks]):
+
+        Make these available on both iOS and macOS. The only interaction callbacks on macOS are currently
+        didShowMenuCallback and didHideMenuCallback.
+
+        (-[TestRunnerWKWebView _willHideMenu]):
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.h:
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptControllerCocoa::setDidShowMenuCallback):
+        (WTR::UIScriptControllerCocoa::setDidHideMenuCallback):
+        (WTR::UIScriptControllerCocoa::dismissMenu):
+        (WTR::UIScriptControllerCocoa::isShowingMenu const):
+
+        Move these implementations into UIScriptControllerCocoa, from UIScriptControllerIOS.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+
+        Instead of clearing all interaction callbacks in TestControllerIOS, do it in TestControllerCocoa where it
+        affects both macOS and iOS.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::activateAtPoint):
+        (WTR::UIScriptControllerIOS::singleTapAtPointWithModifiers):
+        (WTR::UIScriptControllerIOS::chooseMenuAction):
+        (WTR::UIScriptControllerIOS::rectForMenuAction const):
+        (WTR::UIScriptControllerIOS::setDidShowMenuCallback): Deleted.
+        (WTR::UIScriptControllerIOS::setDidHideMenuCallback): Deleted.
+        (WTR::UIScriptControllerIOS::isShowingMenu const): Deleted.
+
+        Abstract rectForMenuAction and singleTapAtPointWithModifiers out into private helper methods, such that they can
+        be used from within other script controller methods.
+
+        * WebKitTestRunner/mac/UIScriptControllerMac.h:
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+
+        Implement the new script controller hooks on macOS.
+
+        (WTR::UIScriptControllerMac::clearAllCallbacks):
+        (WTR::UIScriptControllerMac::chooseMenuAction):
+        (WTR::UIScriptControllerMac::activateAtPoint):
+
 2019-10-10  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Increase default limit for test results (Follow-up fix)

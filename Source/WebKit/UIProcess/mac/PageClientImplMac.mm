@@ -955,6 +955,11 @@ void PageClientImpl::takeFocus(WebCore::FocusDirection direction)
     m_impl->takeFocus(direction);
 }
 
+void PageClientImpl::requestDOMPasteAccess(const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completion)
+{
+    m_impl->requestDOMPasteAccess(elementRect, originIdentifier, WTFMove(completion));
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

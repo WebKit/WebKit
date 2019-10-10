@@ -231,4 +231,12 @@ void UIScriptController::uiScriptComplete(JSStringRef result)
     clearAllCallbacks();
 }
 
+void UIScriptController::dismissMenu()
+{
+}
+
+void UIScriptController::chooseMenuAction(JSStringRef, JSValueRef)
+{
+}
+
 }

@@ -1,3 +1,57 @@
+2019-10-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support programmatic paste requests on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=202773
+        <rdar://problem/48957166>
+
+        Reviewed by Tim Horton.
+
+        Refactors existing layout tests for programmatic paste requests on iOS, such that they now run in both iOS and
+        macOS. See below for more details.
+
+        * TestExpectations:
+        * editing/pasteboard/dom-paste/dom-paste-confirmation-expected.txt: Renamed from LayoutTests/editing/pasteboard/ios/dom-paste-confirmation-expected.txt.
+        * editing/pasteboard/dom-paste/dom-paste-confirmation.html: Renamed from LayoutTests/editing/pasteboard/ios/dom-paste-confirmation.html.
+        * editing/pasteboard/dom-paste/dom-paste-consecutive-confirmations-expected.txt: Added.
+        * editing/pasteboard/dom-paste/dom-paste-consecutive-confirmations.html: Renamed from LayoutTests/editing/pasteboard/ios/dom-paste-consecutive-confirmations.html.
+        * editing/pasteboard/dom-paste/dom-paste-rejection-expected.txt: Added.
+        * editing/pasteboard/dom-paste/dom-paste-rejection.html: Renamed from LayoutTests/editing/pasteboard/ios/dom-paste-rejection.html.
+        * editing/pasteboard/dom-paste/dom-paste-requires-user-gesture-expected.txt: Renamed from LayoutTests/editing/pasteboard/ios/dom-paste-requires-user-gesture-expected.txt.
+        * editing/pasteboard/dom-paste/dom-paste-requires-user-gesture.html: Renamed from LayoutTests/editing/pasteboard/ios/dom-paste-requires-user-gesture.html.
+        * editing/pasteboard/dom-paste/dom-paste-same-origin-expected.txt: Renamed from LayoutTests/editing/pasteboard/ios/dom-paste-same-origin-expected.txt.
+        * editing/pasteboard/dom-paste/dom-paste-same-origin.html: Renamed from LayoutTests/editing/pasteboard/ios/dom-paste-same-origin.html.
+        * editing/pasteboard/dom-paste/resources/dom-paste-helper.js: Added.
+
+        Re-word some of these layout tests' descriptions to reference "clicks or taps", instead of just "taps", and also
+        replace mentions of "callout bars" with platform-agnostic "menus".
+
+        (return.new.Promise.):
+        (async._waitForOrTriggerPasteMenu):
+        (async.triggerPasteMenuAfterActivatingLocation):
+        (async.waitForPasteMenu):
+
+        Refactor these testing helpers to support both iOS and macOS:
+
+        (1) Replace code that finds callout bar menu items and synthesizes taps on iOS, with code that instead chooses a
+        menu item with the given title (in this case, "Paste"). This is supported on both macOS and iOS, where we invoke
+        the NSMenuItem's action and dismiss the menu item, and find and tap the callout bar menu item, respectively.
+
+        (2) Implement UIScriptController::activateAtPoint, which is used as a cross-platform way of activating an
+        element at the given point. On iOS, this taps the given location, and on macOS, this moves the mouse to that
+        location and then simulates a click (mouse down and mouse up). In a subsequent patch, we should additionally use
+        this in the implementation of UIHelper.activateAt().
+
+        * editing/pasteboard/ios/dom-paste-consecutive-confirmations-expected.txt: Removed.
+        * editing/pasteboard/ios/dom-paste-rejection-expected.txt: Removed.
+        * editing/pasteboard/ios/resources/dom-paste-helper.js: Removed.
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
+        Skip editing/pasteboard/dom-paste everywhere for now, except for macOS and iOS WebKit2.
+
 2019-10-10  Chris Lord  <clord@igalia.com>
 
         Flaky Test: imported/w3c/web-platform-tests/offscreen-canvas/drawing-images-to-the-canvas/2d.drawImage.floatsource.html

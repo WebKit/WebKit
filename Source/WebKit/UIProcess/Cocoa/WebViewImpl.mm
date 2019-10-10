@@ -92,6 +92,7 @@
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LoaderNSURLExtras.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/Pasteboard.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/PromisedAttachmentInfo.h>
 #import <WebCore/TextAlternativeWithRange.h>
@@ -879,6 +880,45 @@ static const NSUInteger orderedListSegment = 2;
 
 @end
 
+@interface WKDOMPasteMenuDelegate : NSObject<NSMenuDelegate>
+- (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl&)impl;
+@end
+
+@implementation WKDOMPasteMenuDelegate {
+    WeakPtr<WebKit::WebViewImpl> _impl;
+}
+
+- (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl&)impl
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _impl = makeWeakPtr(impl);
+    return self;
+}
+
+- (void)menuDidClose:(NSMenu *)menu
+{
+    dispatch_async(dispatch_get_main_queue(), [impl = _impl] {
+        if (impl)
+            impl->handleDOMPasteRequestWithResult(WebCore::DOMPasteAccessResponse::DeniedForGesture);
+    });
+}
+
+- (NSInteger)numberOfItemsInMenu:(NSMenu *)menu
+{
+    return 1;
+}
+
+- (NSRect)confinementRectForMenu:(NSMenu *)menu onScreen:(NSScreen *)screen
+{
+    auto confinementRect = WebCore::enclosingIntRect(NSRect { NSEvent.mouseLocation, menu.size });
+    confinementRect.move(0, -confinementRect.height());
+    return confinementRect;
+}
+
+@end
+
 namespace WebKit {
 
 NSTouchBar *WebViewImpl::makeTouchBar()
@@ -1417,6 +1457,8 @@ void WebViewImpl::handleProcessSwapOrExit()
 
     updateRemoteAccessibilityRegistration(false);
     flushPendingMouseEventCallbacks();
+
+    handleDOMPasteRequestWithResult(WebCore::DOMPasteAccessResponse::DeniedForGesture);
 }
 
 void WebViewImpl::processWillSwap()
@@ -4261,6 +4303,39 @@ NSArray *WebViewImpl::namesOfPromisedFilesDroppedAtDestination(NSURL *dropDestin
         FileSystem::setMetadataURL(String(path), m_promisedURL);
     
     return [NSArray arrayWithObject:[path lastPathComponent]];
+}
+
+void WebViewImpl::requestDOMPasteAccess(const WebCore::IntRect&, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completion)
+{
+    ASSERT(!m_domPasteRequestHandler);
+    handleDOMPasteRequestWithResult(WebCore::DOMPasteAccessResponse::DeniedForGesture);
+
+    NSData *data = [NSPasteboard.generalPasteboard dataForType:@(WebCore::PasteboardCustomData::cocoaType())];
+    auto buffer = WebCore::SharedBuffer::create(data);
+    if (WebCore::PasteboardCustomData::fromSharedBuffer(buffer.get()).origin == originIdentifier) {
+        completion(WebCore::DOMPasteAccessResponse::GrantedForGesture);
+        return;
+    }
+
+    m_domPasteMenuDelegate = adoptNS([[WKDOMPasteMenuDelegate alloc] initWithWebViewImpl:*this]);
+    m_domPasteRequestHandler = WTFMove(completion);
+    m_domPasteMenu = adoptNS([[NSMenu alloc] initWithTitle:WebCore::contextMenuItemTagPaste()]);
+
+    [m_domPasteMenu setDelegate:m_domPasteMenuDelegate.get()];
+    [m_domPasteMenu setAllowsContextMenuPlugIns:NO];
+    [m_domPasteMenu insertItemWithTitle:WebCore::contextMenuItemTagPaste() action:@selector(_web_grantDOMPasteAccess) keyEquivalent:emptyString() atIndex:0];
+    [NSMenu popUpContextMenu:m_domPasteMenu.get() withEvent:m_lastMouseDownEvent.get() forView:m_view.getAutoreleased()];
+}
+
+void WebViewImpl::handleDOMPasteRequestWithResult(WebCore::DOMPasteAccessResponse response)
+{
+    if (auto handler = std::exchange(m_domPasteRequestHandler, { }))
+        handler(response);
+    [m_domPasteMenu removeAllItems];
+    [m_domPasteMenu update];
+    [m_domPasteMenu cancelTracking];
+    m_domPasteMenu = nil;
+    m_domPasteMenuDelegate = nil;
 }
 
 static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captureAtNominalResolution)

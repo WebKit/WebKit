@@ -37,7 +37,7 @@ jsTestIsAsync = true;
 const copy = document.getElementById("copy");
 const editor = document.getElementById("editor");
 
-description("Verifies that programmatic paste is allowed when copied data is from the same origin. To manually test, tap the text on the bottom to programmatically copy, and then tap the editable area and check that the text is pasted <em>twice</em>.");
+description("Verifies that programmatic paste is allowed when copied data is from the same origin. To manually test, click or tap the text on the bottom to programmatically copy, and then click or tap the editable area and check that the text is pasted <em>twice</em>.");
 
 copy.addEventListener('click', () => {
     getSelection().selectAllChildren(copy);

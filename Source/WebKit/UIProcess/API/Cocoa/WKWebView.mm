@@ -3640,6 +3640,11 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _impl->setFrameSize(NSSizeToCGSize(size));
 }
 
+- (void)_web_grantDOMPasteAccess
+{
+    _impl->handleDOMPasteRequestWithResult(WebCore::DOMPasteAccessResponse::GrantedForGesture);
+}
+
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)renewGState
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
@@ -7312,6 +7317,13 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 - (void)_doAfterProcessingAllPendingMouseEvents:(dispatch_block_t)action
 {
     _impl->doAfterProcessingAllPendingMouseEvents(action);
+}
+
+- (NSMenu *)_activeMenu
+{
+    // FIXME: Only the DOM paste access menu is supported for now. In the future, it could be
+    // extended to recognize the regular context menu as well.
+    return _impl->domPasteMenu();
 }
 
 #endif // PLATFORM(MAC)
