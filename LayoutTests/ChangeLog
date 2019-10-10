@@ -1,3 +1,15 @@
+2019-10-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make fast/text/complex-initial-advance.html more robust
+        https://bugs.webkit.org/show_bug.cgi?id=202708
+
+        Unreviewed follow up to r250884.
+
+        Makes test robust enough to pass on Mojave.
+
+        * fast/text/complex-initial-advance-expected.html:
+        * fast/text/complex-initial-advance.html:
+
 2019-10-09  John Wilander  <wilander@apple.com>
 
         IsLoggedIn: Add as experimental feature
