@@ -395,11 +395,8 @@ void InspectorInstrumentation::didCallFunctionImpl(InstrumentingAgents& instrume
         timelineAgent->didCallFunction(frameForScriptExecutionContext(context));
 }
 
-void InspectorInstrumentation::willDispatchEventImpl(InstrumentingAgents& instrumentingAgents, Document& document, const Event& event, bool hasEventListeners)
+void InspectorInstrumentation::willDispatchEventImpl(InstrumentingAgents& instrumentingAgents, Document& document, const Event& event)
 {
-    if (!hasEventListeners)
-        return;
-
     if (auto* timelineAgent = instrumentingAgents.trackingInspectorTimelineAgent())
         timelineAgent->willDispatchEvent(event, document.frame());
 }
@@ -422,25 +419,22 @@ void InspectorInstrumentation::didHandleEventImpl(InstrumentingAgents& instrumen
         domDebuggerAgent->didHandleEvent();
 }
 
-void InspectorInstrumentation::didDispatchEventImpl(InstrumentingAgents& instrumentingAgents, bool defaultPrevented)
+void InspectorInstrumentation::didDispatchEventImpl(InstrumentingAgents& instrumentingAgents, const Event& event)
 {
     if (auto* timelineAgent = instrumentingAgents.trackingInspectorTimelineAgent())
-        timelineAgent->didDispatchEvent(defaultPrevented);
+        timelineAgent->didDispatchEvent(event.defaultPrevented());
 }
 
 void InspectorInstrumentation::willDispatchEventOnWindowImpl(InstrumentingAgents& instrumentingAgents, const Event& event, DOMWindow& window)
 {
-    if (!window.hasEventListeners(event.type()))
-        return;
-
     if (auto* timelineAgent = instrumentingAgents.trackingInspectorTimelineAgent())
         timelineAgent->willDispatchEvent(event, window.frame());
 }
 
-void InspectorInstrumentation::didDispatchEventOnWindowImpl(InstrumentingAgents& instrumentingAgents, bool defaultPrevented)
+void InspectorInstrumentation::didDispatchEventOnWindowImpl(InstrumentingAgents& instrumentingAgents, const Event& event)
 {
     if (auto* timelineAgent = instrumentingAgents.trackingInspectorTimelineAgent())
-        timelineAgent->didDispatchEvent(defaultPrevented);
+        timelineAgent->didDispatchEvent(event.defaultPrevented());
 }
 
 void InspectorInstrumentation::eventDidResetAfterDispatchImpl(InstrumentingAgents& instrumentingAgents, const Event& event)

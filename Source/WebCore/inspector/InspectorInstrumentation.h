@@ -161,12 +161,12 @@ public:
     static void didAddEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     static void willRemoveEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     static bool isEventListenerDisabled(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
-    static void willDispatchEvent(Document&, const Event&, bool hasEventListeners);
-    static void didDispatchEvent(Document&, bool defaultPrevented);
+    static void willDispatchEvent(Document&, const Event&);
+    static void didDispatchEvent(Document&, const Event&);
     static void willHandleEvent(ScriptExecutionContext&, Event&, const RegisteredEventListener&);
     static void didHandleEvent(ScriptExecutionContext&);
     static void willDispatchEventOnWindow(Frame*, const Event&, DOMWindow&);
-    static void didDispatchEventOnWindow(Frame*, bool defaultPrevented);
+    static void didDispatchEventOnWindow(Frame*, const Event&);
     static void eventDidResetAfterDispatch(const Event&);
     static void willEvaluateScript(Frame&, const String& url, int lineNumber, int columnNumber);
     static void didEvaluateScript(Frame&);
@@ -371,12 +371,12 @@ private:
     static void didAddEventListenerImpl(InstrumentingAgents&, EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     static void willRemoveEventListenerImpl(InstrumentingAgents&, EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     static bool isEventListenerDisabledImpl(InstrumentingAgents&, EventTarget&, const AtomString& eventType, EventListener&, bool capture);
-    static void willDispatchEventImpl(InstrumentingAgents&, Document&, const Event&, bool hasEventListeners);
+    static void willDispatchEventImpl(InstrumentingAgents&, Document&, const Event&);
     static void willHandleEventImpl(InstrumentingAgents&, Event&, const RegisteredEventListener&);
     static void didHandleEventImpl(InstrumentingAgents&);
-    static void didDispatchEventImpl(InstrumentingAgents&, bool defaultPrevented);
+    static void didDispatchEventImpl(InstrumentingAgents&, const Event&);
     static void willDispatchEventOnWindowImpl(InstrumentingAgents&, const Event&, DOMWindow&);
-    static void didDispatchEventOnWindowImpl(InstrumentingAgents&, bool defaultPrevented);
+    static void didDispatchEventOnWindowImpl(InstrumentingAgents&, const Event&);
     static void eventDidResetAfterDispatchImpl(InstrumentingAgents&, const Event&);
     static void willEvaluateScriptImpl(InstrumentingAgents&, Frame&, const String& url, int lineNumber, int columnNumber);
     static void didEvaluateScriptImpl(InstrumentingAgents&, Frame&);
@@ -829,18 +829,18 @@ inline void InspectorInstrumentation::didCallFunction(ScriptExecutionContext* co
         didCallFunctionImpl(*instrumentingAgents, context);
 }
 
-inline void InspectorInstrumentation::willDispatchEvent(Document& document, const Event& event, bool hasEventListeners)
+inline void InspectorInstrumentation::willDispatchEvent(Document& document, const Event& event)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* instrumentingAgents = instrumentingAgentsForDocument(document))
-        willDispatchEventImpl(*instrumentingAgents, document, event, hasEventListeners);
+        willDispatchEventImpl(*instrumentingAgents, document, event);
 }
 
-inline void InspectorInstrumentation::didDispatchEvent(Document& document, bool defaultPrevented)
+inline void InspectorInstrumentation::didDispatchEvent(Document& document, const Event& event)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* instrumentingAgents = instrumentingAgentsForDocument(document))
-        didDispatchEventImpl(*instrumentingAgents, defaultPrevented);
+        didDispatchEventImpl(*instrumentingAgents, event);
 }
 
 inline void InspectorInstrumentation::willHandleEvent(ScriptExecutionContext& context, Event& event, const RegisteredEventListener& listener)
@@ -864,11 +864,11 @@ inline void InspectorInstrumentation::willDispatchEventOnWindow(Frame* frame, co
         willDispatchEventOnWindowImpl(*instrumentingAgents, event, window);
 }
 
-inline void InspectorInstrumentation::didDispatchEventOnWindow(Frame* frame, bool defaultPrevented)
+inline void InspectorInstrumentation::didDispatchEventOnWindow(Frame* frame, const Event& event)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        didDispatchEventOnWindowImpl(*instrumentingAgents, defaultPrevented);
+        didDispatchEventOnWindowImpl(*instrumentingAgents, event);
 }
 
 inline void InspectorInstrumentation::eventDidResetAfterDispatch(const Event& event)
