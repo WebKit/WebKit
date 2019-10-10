@@ -32,6 +32,7 @@
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "EventTarget.h"
+#include "HitTestResult.h"
 #include "Page.h"
 #include "PointerEvent.h"
 #include <wtf/CheckedArithmetic.h>

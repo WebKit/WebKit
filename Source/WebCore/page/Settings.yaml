@@ -870,6 +870,9 @@ webRTCEncryptionEnabled:
 isITPSessionSwitchingEnabled:
   initial: true
 
+isLoggedInAPIEnabled:
+  initial: false
+
 # Deprecated
 
 iceCandidateFilteringEnabled:

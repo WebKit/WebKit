@@ -879,6 +879,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/page/Location.idl \
     $(WebCore)/page/Navigator.idl \
     $(WebCore)/page/NavigatorID.idl \
+    $(WebCore)/page/NavigatorIsLoggedIn.idl \
     $(WebCore)/page/NavigatorLanguage.idl \
     $(WebCore)/page/NavigatorOnLine.idl \
     $(WebCore)/page/NavigatorServiceWorker.idl \

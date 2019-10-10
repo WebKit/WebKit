@@ -1,3 +1,17 @@
+2019-10-09  John Wilander  <wilander@apple.com>
+
+        IsLoggedIn: Add as experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=202707
+        <rdar://problem/56095064>
+
+        Reviewed by Brent Fulgham and Chris Dumez.
+
+        IsLoggedIn was proposed to the WebAppSec WG at TPAC 2019.
+        So far there is only an explainer posted to the mailing list:
+        https://lists.w3.org/Archives/Public/public-webappsec/2019Sep/0004.html
+
+        * Shared/WebPreferences.yaml:
+
 2019-10-09  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Move the mock testing entrance to Internals

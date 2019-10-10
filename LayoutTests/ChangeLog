@@ -1,3 +1,27 @@
+2019-10-09  John Wilander  <wilander@apple.com>
+
+        IsLoggedIn: Add as experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=202707
+        <rdar://problem/56095064>
+
+        Reviewed by Brent Fulgham and Chris Dumez.
+
+        IsLoggedIn was proposed to the WebAppSec WG at TPAC 2019.
+        So far there is only an explainer posted to the mailing list:
+        https://lists.w3.org/Archives/Public/public-webappsec/2019Sep/0004.html
+
+        * http/tests/is-logged-in/available-in-secure-contexts.https-expected.txt: Added.
+        * http/tests/is-logged-in/available-in-secure-contexts.https.html: Added.
+        * http/tests/is-logged-in/unavailable-in-insecure-contexts-expected.txt: Added.
+        * http/tests/is-logged-in/unavailable-in-insecure-contexts.html: Added.
+        * platform/ios-device-wk1/TestExpectations:
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/mac-highsierra/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/wincairo-wk1/TestExpectations:
+
 2019-10-09  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] LayoutTest fast/events/touch/ios/double-tap-for-double-click2.html is timing out

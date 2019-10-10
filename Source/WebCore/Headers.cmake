@@ -791,6 +791,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/MediaCanStartListener.h
     page/MediaProducer.h
     page/MemoryRelease.h
+    page/NavigatorIsLoggedIn.h
     page/Page.h
     page/PageConfiguration.h
     page/PageConsoleClient.h

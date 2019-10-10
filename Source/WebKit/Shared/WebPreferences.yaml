@@ -1782,6 +1782,13 @@ IsITPSessionSwitchingEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   category: internal
 
+IsLoggedInAPIEnabled:
+    type: bool
+    defaultValue: false
+    humanReadableName: "IsLoggedIn web API"
+    humanReadableDescription: "Enable the proposed IsLoggedIn web API"
+    category: experimental
+
 # Deprecated
 
 ICECandidateFilteringEnabled:

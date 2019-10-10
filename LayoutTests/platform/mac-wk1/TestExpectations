@@ -797,3 +797,6 @@ webkit.org/b/199242 [ Debug ] http/tests/performance/performance-resource-timing
 [ Mojave+ ] fast/images/animated-heics-verify.html [ Skip ]
 
 webkit.org/b/200002 [ Mojave+ Debug ] imported/blink/storage/indexeddb/blob-basics-metadata.html [ Timeout ]
+
+# Skip IsLoggedIn
+http/tests/is-logged-in/ [ Skip ]

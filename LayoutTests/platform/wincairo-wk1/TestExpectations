@@ -335,3 +335,6 @@ resize-observer/multi-frames.html [ Skip ]
 # WinCairo wk1 doesn't support inspector tests.
 webkit.org/b/191498 http/tests/inspector/network/resource-security-certificate.html [ Skip ]
 webkit.org/b/191498 http/tests/inspector/network/getSerializedCertificate.html [ Skip ]
+
+# Skip IsLoggedIn
+http/tests/is-logged-in/ [ Skip ]

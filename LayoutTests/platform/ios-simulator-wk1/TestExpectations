@@ -16,3 +16,6 @@ editing/pasteboard/data-transfer-item-list-add-file-multiple-times.html [ Pass ]
 editing/pasteboard/data-transfer-items-add-custom-data.html [ Pass ]
 
 webkit.org/b/196286 fast/events/touch/ios/content-observation/remove-subframe-while-observing.html [ Failure ]
+
+# Skip IsLoggedIn
+http/tests/is-logged-in/ [ Skip ]
