@@ -1,3 +1,15 @@
+2019-10-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        FontFaceSet's ready promise is not always resolved
+        https://bugs.webkit.org/show_bug.cgi?id=202548
+
+        Reviewed by Youenn Fablet.
+
+        * fast/text/fontfaceset-ready-not-fired-expected.txt: Added.
+        * fast/text/fontfaceset-ready-not-fired.html: Added.
+        * fast/text/fontfaceset-ready-not-fired-2-expected.txt: Added.
+        * fast/text/fontfaceset-ready-not-fired-2.html: Added.
+
 2019-10-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         pointerevents/ios/touch-action-pinch-zoom-allows-zooming.html is failing after r250361

@@ -1,3 +1,27 @@
+2019-10-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        FontFaceSet's ready promise is not always resolved
+        https://bugs.webkit.org/show_bug.cgi?id=202548
+
+        Reviewed by Youenn Fablet.
+
+        When we do layout on an element, FontRanges::glyphDataForCharacter() will cause the first
+        available font to start loading, but will continue looking at subsequent fonts to see if
+        there's a good one we can render while the load is happening. When looking for a fallback
+        font, it calls FontRanges::Range::font() with a ExternalResourceDownloadPolicy set to
+        Forbid. This is fine, except that a side effect of calling this function is that the
+        CSSFontFace marks itself as Loading, which means document.fonts.ready is deferred. Then,
+        the load finishes, and the subsequent CSSFontFace is never actually used, meaning it never
+        exits the Loading state, which means document.fonts.ready never fires.
+
+        The solution to this is to just only allow the font to enter the Loading state if it's not
+        one of these "subsequent" fonts.
+
+        Test: fast/text/fontfaceset-ready-not-fired.html
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::pump):
+
 2019-10-10  youenn fablet  <youenn@apple.com>
 
         MockRealtimeVideoSource::setFrameRateWithPreset should not use preset after moving it
