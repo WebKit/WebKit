@@ -912,6 +912,7 @@
         (syscall-number SYS_process_policy)
         (syscall-number SYS_issetugid)
         (syscall-number SYS___pthread_kill)
+        (syscall-number SYS___pthread_markcancel)
         (syscall-number SYS___pthread_sigmask)
         (syscall-number SYS___disable_threadsignal)
         (syscall-number SYS___semwait_signal)

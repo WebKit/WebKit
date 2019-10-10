@@ -1,3 +1,14 @@
+2019-10-10  youenn fablet  <youenn@apple.com>
+
+        [Mac] Allow SYS___pthread_markcancel call
+        https://bugs.webkit.org/show_bug.cgi?id=202723
+
+        Reviewed by Alex Christensen.
+
+        Allow this pthread call as libwebrtc uses it on the Mac as well.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-10-09  youenn fablet  <youenn@apple.com>
 
         A service worker process should not be created when enqueuing a service worker job
