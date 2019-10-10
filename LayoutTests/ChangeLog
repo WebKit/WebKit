@@ -1,3 +1,16 @@
+2019-10-10  Chris Lord  <clord@igalia.com>
+
+        Flaky Test: imported/w3c/web-platform-tests/offscreen-canvas/drawing-images-to-the-canvas/2d.drawImage.floatsource.html
+        https://bugs.webkit.org/show_bug.cgi?id=202782
+
+        Reviewed by Youenn Fablet.
+
+        Some OffscreenCanvas tests are failing due to unhandled Promise
+        rejection from unimplemented API. Mark this, and other tests that are
+        affected with DumpJSConsoleLogInStdErr.
+
+        * TestExpectations:
+
 2019-10-10  Chris Dumez  <cdumez@apple.com>
 
         DOMCacheStorage should not prevent pages from entering the back/forward cache
