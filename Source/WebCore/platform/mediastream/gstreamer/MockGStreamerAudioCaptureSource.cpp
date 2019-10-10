@@ -73,6 +73,9 @@ public:
     {
         ASSERT(m_src);
 
+        if (!m_bipBopBuffer.size())
+            reconfigure();
+
         uint32_t totalFrameCount = GST_ROUND_UP_16(static_cast<size_t>(delta.seconds() * sampleRate()));
         uint32_t frameCount = std::min(totalFrameCount, m_maximiumFrameCount);
         while (frameCount) {
@@ -98,30 +101,34 @@ public:
         }
     }
 
+    void reconfigure()
+    {
+        GstAudioInfo info;
+        auto rate = sampleRate();
+        size_t sampleCount = 2 * rate;
+
+        m_maximiumFrameCount = WTF::roundUpToPowerOfTwo(renderInterval().seconds() * sampleRate());
+        gst_audio_info_set_format(&info, GST_AUDIO_FORMAT_F32LE, rate, 1, nullptr);
+        m_streamFormat = GStreamerAudioStreamDescription(info);
+
+        if (m_src)
+            gst_app_src_set_caps(GST_APP_SRC(m_src.get()), m_streamFormat->caps());
+
+        m_bipBopBuffer.resize(sampleCount);
+        m_bipBopBuffer.fill(0);
+
+        size_t bipBopSampleCount = ceil(s_BipBopDuration * rate);
+        size_t bipStart = 0;
+        size_t bopStart = rate;
+
+        addHum(s_BipBopVolume, s_BipFrequency, rate, 0, static_cast<float*>(m_bipBopBuffer.data() + bipStart), bipBopSampleCount);
+        addHum(s_BipBopVolume, s_BopFrequency, rate, 0, static_cast<float*>(m_bipBopBuffer.data() + bopStart), bipBopSampleCount);
+    }
+
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
     {
-        if (settings.contains(RealtimeMediaSourceSettings::Flag::SampleRate)) {
-            GstAudioInfo info;
-            auto rate = sampleRate();
-            size_t sampleCount = 2 * rate;
-
-            m_maximiumFrameCount = WTF::roundUpToPowerOfTwo(renderInterval().seconds() * sampleRate());
-            gst_audio_info_set_format(&info, GST_AUDIO_FORMAT_F32LE, rate, 1, nullptr);
-            m_streamFormat = GStreamerAudioStreamDescription(info);
-
-            if (m_src)
-                gst_app_src_set_caps(GST_APP_SRC(m_src.get()), m_streamFormat->caps());
-
-            m_bipBopBuffer.grow(sampleCount);
-            m_bipBopBuffer.fill(0);
-
-            size_t bipBopSampleCount = ceil(s_BipBopDuration * rate);
-            size_t bipStart = 0;
-            size_t bopStart = rate;
-
-            addHum(s_BipBopVolume, s_BipFrequency, rate, 0, static_cast<float*>(m_bipBopBuffer.data() + bipStart), bipBopSampleCount);
-            addHum(s_BipBopVolume, s_BopFrequency, rate, 0, static_cast<float*>(m_bipBopBuffer.data() + bopStart), bipBopSampleCount);
-        }
+        if (settings.contains(RealtimeMediaSourceSettings::Flag::SampleRate))
+            reconfigure();
 
         MockRealtimeAudioSource::settingsDidChange(settings);
     }
