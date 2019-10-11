@@ -46,11 +46,18 @@
             window.addEventListener('click', fail);
             window.addEventListener('scroll', fail);
 
+            let seenMoveListeners = [];
+
             let output = '';
             function getLogEvent(listener, shouldPreventDefault = false) {
                 return function logEvent(event) {
+                    if (event.type == 'touchmove') {
+                        if (seenMoveListeners.includes(listener))
+                            return;
+                        seenMoveListeners.push(listener);
+                    }
                     output += 'Listener ' + listener + ' received' + (event.cancelable ? ' cancelable' : '') + ' event ' + event.type + ' targetting ' + event.target.id;
-                    if (event.touches[0] && event.touches[0].clientX) {
+                    if (event.type != 'touchmove' && event.touches[0] && event.touches[0].clientX) {
                         output += ' at ' + event.touches[0].clientX + ', ' + event.touches[0].clientY;
                     }
                     output +=  '<br>';
@@ -80,12 +87,15 @@
             testRunner.runUIScript(getDragUIScript(50, 50, 100, 100), function(result) {
                 output += result;
                 output += "<h1>Cancelled drag on Target2 (red)</h1>";
+                seenMoveListeners = [];
                 testRunner.runUIScript(getDragUIScript(150, 50, 200, 100), function(result) {
                     output += result;
                     output += "<h1>Cancelled drag on Target3 (blue)</h1>";
+                    seenMoveListeners = [];
                     testRunner.runUIScript(getDragUIScript(250, 50, 300, 100), function(result) {
                         output += result;
                         output += "<h1>Useless Click in the document, should be passive</h1>";
+                        seenMoveListeners = [];
                         testRunner.runUIScript(getClickUIScript(300, 300), function(result) {
                             document.getElementById('output').innerHTML = output;
                             testRunner.notifyDone();

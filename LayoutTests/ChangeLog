@@ -1,3 +1,21 @@
+2019-10-11  Dean Jackson  <dino@apple.com>
+
+        Layout test fast/events/touch/ios/tap-with-active-listener-inside-window-with-passive-listener.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=202863
+        <rdar://51724211>
+
+        Reviewed by Tim Horton.
+
+        Another case where we are getting more touchmoves during a drag than we expected.
+        However, this time we still want to listen, and we can't use { once: true } because
+        there are multiple sequential drags. Instead, keep a list of the moves we've seen and
+        only output the first one.
+
+        Also, remove the coordinate logging for the move, since it might not be consistent.
+
+        * fast/events/touch/ios/tap-with-active-listener-inside-window-with-passive-listener-expected.txt:
+        * fast/events/touch/ios/tap-with-active-listener-inside-window-with-passive-listener.html:
+
 2019-10-11  Chris Dumez  <cdumez@apple.com>
 
         Pages frequently fail to enter the back/forward cache due to frames with a quick redirect coming
