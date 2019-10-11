@@ -1,3 +1,16 @@
+2019-10-10  Kenneth Russell  <kbr@chromium.org>
+
+        New html5lib requires newer version of six.py than that shipped in macOS 10.14.6
+        https://bugs.webkit.org/show_bug.cgi?id=202830
+
+        Autoinstall six along with html5lib.
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook._install_mechanize):
+        (AutoinstallImportHook._install_pytest):
+
 2019-10-10  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Sort out certificates on Catalina
