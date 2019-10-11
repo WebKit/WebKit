@@ -27,7 +27,7 @@ from buildbot.steps import trigger
 from steps import (ApplyPatch, ApplyWatchList, CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance,
                    CheckStyle, CompileJSC, CompileWebKit, ConfigureBuild,
                    DownloadBuiltProduct, ExtractBuiltProduct, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
-                   PrintConfiguration, RunAPITests, RunBindingsTests, RunEWSBuildbotCheckConfig, RunEWSUnitTests,
+                   PrintConfiguration, RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunEWSBuildbotCheckConfig, RunEWSUnitTests,
                    RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests,
                    RunWebKitPyTests, RunWebKitTests, UpdateWorkingDirectory, ValidatePatch)
 
@@ -183,3 +183,4 @@ class ServicesFactory(Factory):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, checkRelevance=True)
         self.addStep(RunEWSUnitTests())
         self.addStep(RunEWSBuildbotCheckConfig())
+        self.addStep(RunBuildWebKitOrgUnitTests())

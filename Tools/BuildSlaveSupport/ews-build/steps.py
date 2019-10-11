@@ -225,7 +225,9 @@ class CheckPatchRelevance(buildstep.BuildStep):
     ]
 
     services_paths = [
+        'Tools/BuildSlaveSupport/build.webkit.org-config',
         'Tools/BuildSlaveSupport/ews-build',
+        'Tools/BuildSlaveSupport/Shared',
     ]
 
     jsc_paths = [
@@ -600,6 +602,20 @@ class RunWebKitPerlTests(shell.ShellCommand):
 
     def __init__(self, **kwargs):
         super(RunWebKitPerlTests, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
+
+
+class RunBuildWebKitOrgUnitTests(shell.ShellCommand):
+    name = 'build-webkit-org-unit-tests'
+    description = ['build-webkit-unit-tests running']
+    command = ['python', 'steps_unittest.py']
+
+    def __init__(self, **kwargs):
+        shell.ShellCommand.__init__(self, workdir='build/Tools/BuildSlaveSupport/build.webkit.org-config', timeout=2 * 60, logEnviron=False, **kwargs)
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {u'step': u'Passed build.webkit.org unit tests'}
+        return {u'step': u'Failed build.webkit.org unit tests'}
 
 
 class RunEWSUnitTests(shell.ShellCommand):

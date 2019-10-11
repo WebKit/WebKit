@@ -1,3 +1,19 @@
+2019-10-11  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Services EWS should also run build.webkit.org unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=202864
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+        (ServicesFactory.__init__): Added new RunBuildWebKitUnitTests step.
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CheckPatchRelevance): Added paths for build.webkit.org code.
+        (RunBuildWebKitUnitTests): Build step to run build.webkit.org unit tests.
+        (RunBuildWebKitUnitTests.__init__): Set workdir, timeout and logEnviron.
+        (RunBuildWebKitUnitTests.getResultSummary): Customize Buildbot messages for this build step.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+
 2019-10-11  Chris Dumez  <cdumez@apple.com>
 
         Move SuspendedPage logic from WebProcessPool to new WebBackForwardCache class
