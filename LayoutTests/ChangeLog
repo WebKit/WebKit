@@ -1,3 +1,19 @@
+2019-10-11  Bjorn Melinder  <bjornm@spotify.com>
+
+        OfflineAudioContext does not validate allocation of destination buffer
+        https://bugs.webkit.org/show_bug.cgi?id=177259
+
+        Reviewed by Eric Carlson.
+
+        Moved the allocation of the destination buffer to the static
+        OfflineAudioContext::create method where we are able to handle a failed
+        allocation properly and return an Exception. This change handles both
+        negative lengths as well as too large lengths where the memory cannot
+        be allocated.
+
+        * webaudio/offlineaudiocontext-constructor-expected.txt:
+        * webaudio/offlineaudiocontext-constructor.html:
+
 2019-10-11  Chris Lord  <clord@igalia.com>
 
         Flaky test: imported/w3c/web-platform-tests/offscreen-canvas/compositing/2d.composite.canvas.destination-in.html

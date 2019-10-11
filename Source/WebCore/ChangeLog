@@ -1,3 +1,24 @@
+2019-10-11  Bjorn Melinder  <bjornm@spotify.com>
+
+        OfflineAudioContext does not validate allocation of destination buffer
+        https://bugs.webkit.org/show_bug.cgi?id=177259
+
+        Reviewed by Eric Carlson.
+
+        Moved the allocation of the destination buffer to the static
+        OfflineAudioContext::create method where we are able to handle a failed
+        allocation properly and return an Exception. This change handles both
+        negative lengths as well as too large lengths where the memory cannot
+        be allocated.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::AudioContext):
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        (WebCore::OfflineAudioContext::OfflineAudioContext):
+        (WebCore::OfflineAudioContext::create):
+        * Modules/webaudio/OfflineAudioContext.h:
+
 2019-10-10  Konstantin Tokarev  <annulen@yandex.ru>
 
         Guard GCrypt-specific code with USE(GCRYPT) instead of PLATFORM macros

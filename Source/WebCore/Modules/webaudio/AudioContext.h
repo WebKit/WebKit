@@ -296,7 +296,7 @@ public:
 
 protected:
     explicit AudioContext(Document&);
-    AudioContext(Document&, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
+    AudioContext(Document&, AudioBuffer* renderTarget);
     
     static bool isSampleRateRangeGood(float sampleRate);
     void clearPendingActivity();

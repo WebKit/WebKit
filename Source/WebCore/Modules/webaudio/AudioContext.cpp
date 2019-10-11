@@ -158,7 +158,7 @@ AudioContext::AudioContext(Document& document)
 }
 
 // Constructor for offline (non-realtime) rendering.
-AudioContext::AudioContext(Document& document, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
+AudioContext::AudioContext(Document& document, AudioBuffer* renderTarget)
     : ActiveDOMObject(document)
 #if !RELEASE_LOG_DISABLED
     , m_logger(document.logger())
@@ -167,11 +167,11 @@ AudioContext::AudioContext(Document& document, unsigned numberOfChannels, size_t
     , m_isOfflineContext(true)
     , m_mediaSession(PlatformMediaSession::create(*this))
     , m_eventQueue(MainThreadGenericEventQueue::create(*this))
+    , m_renderTarget(renderTarget)
 {
     constructCommon();
 
     // Create a new destination for offline rendering.
-    m_renderTarget = AudioBuffer::create(numberOfChannels, numberOfFrames, sampleRate);
     m_destinationNode = OfflineAudioDestinationNode::create(*this, m_renderTarget.get());
 }
 
