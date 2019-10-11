@@ -594,6 +594,8 @@ String MediaTime::toString() const
         builder.appendLiteral(" = ");
     }
     builder.appendFixedPrecisionNumber(toDouble());
+    if (isInvalid())
+        builder.appendLiteral(", invalid");
     builder.append('}');
     return builder.toString();
 }
@@ -607,7 +609,9 @@ Ref<JSON::Object> MediaTime::toJSONObject() const
         return object;
     }
 
-    if (isInvalid() || isIndefinite())
+    if (isInvalid())
+        object->setBoolean("invalid"_s, true);
+    else if (isIndefinite())
         object->setString("value"_s, "NaN"_s);
     else if (isPositiveInfinite())
         object->setString("value"_s, "POSITIVE_INFINITY"_s);
