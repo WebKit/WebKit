@@ -1,3 +1,23 @@
+2019-10-11  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [cmake] Use HINTS instead of PATHS when searching in paths from pkg-config
+        https://bugs.webkit.org/show_bug.cgi?id=202831
+
+        Reviewed by Carlos Garcia Campos.
+
+        HINTS and PATHS sections are similar, however HINTS is processed before
+        default system locations, while PATHS - after. If target file can be found
+        in the system, pkg-config results are ignored in case of PATHS, making it
+        impossible to override system version of library with PKG_CONFIG_PATH.
+
+        Note that CMake documentation recommends using PATHS for hard-coded guesses.
+
+        * Source/cmake/FindEnchant.cmake:
+        * Source/cmake/FindFontconfig.cmake:
+        * Source/cmake/FindLibEpoxy.cmake:
+        * Source/cmake/FindLibtasn1.cmake:
+        * Source/cmake/FindSqlite.cmake:
+
 2019-10-08  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.27.1 release

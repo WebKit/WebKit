@@ -49,16 +49,12 @@ else (FONTCONFIG_LIBRARIES AND FONTCONFIG_INCLUDE_DIR)
     endif (NOT WIN32)
 
     find_path(FONTCONFIG_INCLUDE_DIR fontconfig/fontconfig.h
-        PATHS
-        ${PC_FONTCONFIG_INCLUDEDIR}
-        ${PC_FONTCONFIG_INCLUDE_DIRS}
-        /usr/X11/include
+        HINTS ${PC_FONTCONFIG_INCLUDEDIR} ${PC_FONTCONFIG_INCLUDE_DIRS}
+        PATHS /usr/X11/include
     )
 
     find_library(FONTCONFIG_LIBRARIES NAMES fontconfig
-        PATHS
-        ${PC_FONTCONFIG_LIBDIR}
-        ${PC_FONTCONFIG_LIBRARY_DIRS}
+        HINTS ${PC_FONTCONFIG_LIBDIR} ${PC_FONTCONFIG_LIBRARY_DIRS}
     )
 
     include(FindPackageHandleStandardArgs)

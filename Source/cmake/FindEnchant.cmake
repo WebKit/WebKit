@@ -37,13 +37,13 @@ foreach (ENCHANT_NAME enchant-2 enchant)
 
     find_path(ENCHANT_INCLUDE_DIRS
         NAMES enchant.h
-        PATHS ${PC_ENCHANT_INCLUDEDIR}
+        HINTS ${PC_ENCHANT_INCLUDEDIR}
               ${PC_ENCHANT_INCLUDE_DIRS}
     )
 
     find_library(ENCHANT_LIBRARIES
         NAMES ${ENCHANT_NAME}
-        PATHS ${PC_ENCHANT_LIBDIR}
+        HINTS ${PC_ENCHANT_LIBDIR}
               ${PC_ENCHANT_LIBRARY_DIRS}
     )
 
