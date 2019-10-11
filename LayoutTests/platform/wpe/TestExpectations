@@ -81,8 +81,8 @@ webkit.org/b/186933 webrtc/audio-muted-stats.html
 webkit.org/b/186933 webrtc/getUserMedia-webaudio-autoplay.html
 
 # The MediaStream implementation is still not completed
-webkit.org/b/79203 fast/mediastream/mock-media-source-webaudio.html [ Pass Timeout Crash ]
-webkit.org/b/79203 fast/mediastream/getUserMedia-webaudio.html [ Pass Timeout Crash ]
+webkit.org/b/79203 fast/mediastream/mock-media-source-webaudio.html [ Pass Timeout ]
+webkit.org/b/79203 fast/mediastream/getUserMedia-webaudio.html [ Pass Timeout ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-track-stop.html [ Timeout Failure Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Pass Failure Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Pass Failure Crash ]
@@ -111,7 +111,7 @@ webkit.org/b/169811 fast/mediastream/captureStream/ [ Failure ]
 webkit.org/b/169811 fast/mediastream/captureStream/canvas2d.html [ Crash Timeout ]
 webkit.org/b/169811 fast/mediastream/captureStream/canvas3d.html [ Crash Timeout ]
 
-webkit.org/b/190576 fast/mediastream/get-user-media-device-id.html [ Failure Crash ]
+webkit.org/b/190576 fast/mediastream/get-user-media-device-id.html [ Failure ]
 
 # MediaRecorder is not currently implemented
 http/wpt/mediarecorder [ Skip ]
@@ -753,6 +753,8 @@ webkit.org/b/188162 [ Debug ] fast/canvas/webgl/texImage2D-video-flipY-true.html
 
 webkit.org/b/199440 fast/mediastream/mediastreamtrack-video-clone.html [ Failure Timeout Crash ]
 
+webkit.org/b/200534 fast/events/focus-anchor-with-tabindex-hang.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 6. FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -890,6 +892,7 @@ webkit.org/b/201981 http/tests/workers/service/serviceworkerclients-matchAll.htt
 webkit.org/b/201981 http/tests/workers/service/shift-reload-navigation.html [ Failure Pass ]
 webkit.org/b/201981 http/wpt/service-workers/fetchEvent.https.html [ Failure Pass ]
 webkit.org/b/201981 http/wpt/service-workers/navigation-redirect.https.html [ Failure Pass ]
+webkit.org/b/201981 http/wpt/service-workers/header-filtering.https.html [ Failure Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-add.https.html [ Failure Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/about-blank-replacement.https.html [ Failure Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/activation-after-registration.https.html [ Failure Pass ]
@@ -1008,6 +1011,8 @@ webkit.org/b/202514 imported/w3c/web-platform-tests/svg/import/animate-elem-86-t
 webkit.org/b/202514 imported/w3c/web-platform-tests/svg/import/animate-elem-07-t-manual.svg [ Failure Pass ]
 webkit.org/b/202514 imported/w3c/web-platform-tests/svg/import/animate-elem-38-t-manual.svg [ Failure Pass ]
 webkit.org/b/202514 imported/w3c/web-platform-tests/svg/import/animate-elem-82-t-manual.svg [ Failure Pass ]
+webkit.org/b/202514 imported/w3c/web-platform-tests/svg/import/animate-elem-89-t-manual.svg [ Failure Pass ]
+webkit.org/b/202514 imported/w3c/web-platform-tests/svg/import/animate-elem-41-t-manual.svg [ Failure Pass ]
 
 webkit.org/b/202732 http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html [ Failure Crash ]
 webkit.org/b/202732 http/tests/adClickAttribution/send-attribution-conversion-request.html [ Failure Crash ]
@@ -1024,28 +1029,6 @@ webkit.org/b/202736 http/tests/cache-storage/cache-clearing-origin.https.html [ 
 webkit.org/b/202736 http/tests/cache-storage/cache-origins.https.html [ Failure Pass ]
 webkit.org/b/202736 http/tests/cache-storage/cache-persistency.https.html [ Failure Pass ]
 webkit.org/b/202736 http/wpt/cache-storage/quota-third-party.https.html [ Failure Timeout Pass ]
-
-webkit.org/b/202784 fast/mediastream/MediaDevices-addEventListener.html [ Crash Pass ]
-webkit.org/b/202784 fast/mediastream/MediaDevices-getUserMedia.html [ Crash Pass ]
-webkit.org/b/202784 fast/mediastream/MediaStream-video-element-remove-track.html [ Crash Pass ]
-webkit.org/b/202784 fast/mediastream/MediaStream-video-element.html [ Crash Pass ]
-webkit.org/b/202784 fast/mediastream/MediaStreamTrack-getSettings.html [ Crash Pass ]
-webkit.org/b/202784 fast/mediastream/RTCPeerConnection-addTrack-reuse-sender.html [ Crash Pass ]
-webkit.org/b/202784 fast/mediastream/RTCPeerConnection-stable.html [ Crash Pass ]
-webkit.org/b/202784 fast/mediastream/apply-constraints-advanced.html [ Crash Pass ]
-webkit.org/b/202784 fast/mediastream/constraint-intrinsic-size.html [ Crash Pass ]
-webkit.org/b/202784 fast/mediastream/getUserMedia-default.html [ Crash Pass ]
-webkit.org/b/202784 fast/mediastream/getUserMedia-deny-persistency4.html [ Crash Pass ]
-webkit.org/b/202784 fast/mediastream/getUserMedia-grant-persistency2.html [ Crash Pass ]
-webkit.org/b/202784 fast/mediastream/media-stream-page-muted.html [ Crash Timeout ]
-webkit.org/b/202784 fast/mediastream/media-stream-track-muted.html [ Crash Pass ]
-webkit.org/b/202784 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-different-mediakeys.https.html [ Crash Pass ]
-webkit.org/b/202784 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none.https.html [ Crash Pass ]
-webkit.org/b/202784 webrtc/filtering-ice-candidate-after-reload.html [ Crash Pass Timeout ]
-webkit.org/b/202784 webrtc/negotiatedneeded-event-addStream.html [ Crash Pass ]
-webkit.org/b/202784 webrtc/rtcpeerconnection-error-messages.html [ Crash Pass ]
-webkit.org/b/202784 webrtc/video-update-often.html [ Crash Pass ]
-webkit.org/b/202784 fast/mediastream/device-change-event-2.html [ Failure Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS
@@ -1323,7 +1306,7 @@ webkit.org/b/172099 imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttpreque
 webkit.org/b/169572 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash.html [ Pass Failure ]
 webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-height.html [ Failure ]
 webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-innerheight.html [ Failure ]
-webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-innerwidth.html [ Failure Crash ]
+webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-innerwidth.html [ Failure ]
 webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-left.html [ Failure ]
 webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-screenx.html [ Failure ]
 webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-screeny.html [ Failure ]

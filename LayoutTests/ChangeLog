@@ -1,3 +1,11 @@
+2019-10-11  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK and WPE gardening after r251001. Removing crash expectations after
+        bug 202784 was fixed.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2019-10-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Import css/css-images WPT tests
