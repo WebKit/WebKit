@@ -3225,8 +3225,6 @@ webkit.org/b/191707 imported/w3c/web-platform-tests/webrtc/simplecall.https.html
 
 webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Pass Failure ]
 
-webkit.org/b/175678 media/W3C/video/events/event_progress.html [ Pass Failure ]
-
 # These tests depend on the implementation of "modern compatibility mode" in WebKitAdditions.
 platform/ipad/fast/css/webkit-overflow-scrolling-parsing-modern-compatibility-mode.html [ Skip ]
 

@@ -3,7 +3,6 @@
  <head>
   <title>video events - loadstart, then progress</title>
   <script src="../../w3cwrapper.js"></script>
-  <script src="../../../Microsoft/common/media.js"></script>
  </head>
  <body>
   <p><a href="http://dev.w3.org/html5/spec/Overview.html#mediaevents">spec reference</a></p>
@@ -17,14 +16,19 @@ var found_loadstart = false;
 a.addEventListener("loadstart", function() {
   found_loadstart = true;
 });
+
+var firstProgressEvent = true;
 a.addEventListener("progress", function() {
+  if (!firstProgressEvent) return;
+  firstProgressEvent = false;
+
   t.step(function() {
    assert_true(found_loadstart);
   });
   t.done();
   a.pause();
 });
-a.src = getAudioURI("http://media.w3.org/2010/05/sound/sound_5") + "?" + new Date() + Math.random();
+a.src = getAudioURI();
   </script>
  </body>
 </html>

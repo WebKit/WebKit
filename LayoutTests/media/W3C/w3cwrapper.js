@@ -53,7 +53,6 @@ function async_test(title, options) {
 
 document.write("<p id=description></p><div id=console></div>");
 document.write("<scr" + "ipt src='../../../../resources/js-test-pre.js'></" + "script>");
-document.write("<scr" + "ipt src='../../../../resources/js-test-post-function.js'></" + "script>");
 
 assert_equals = function(a, b) { shouldBe('"' + a + '"', '"' + b + '"'); }
 assert_true = function(a) { shouldBeTrue("" + a); }

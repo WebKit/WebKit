@@ -1,3 +1,31 @@
+2019-10-11  Peng Liu  <peng.liu6@apple.com>
+
+        Layout Test media/W3C/audio/events/event_progress.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=181966
+
+        Reviewed by Eric Carlson.
+
+        It is possible that video/audio elements fire "progress" event again
+        when the event handler is still processing the previous "progress" event.
+        We need to ignore all the events except the first one to make sure
+        the test cases generate consistent output.
+
+        In addition, this patch fixes some errors in JS file names and function parameters.
+
+        * http/tests/resources/js-test-pre.js:
+        (isSuccessfullyParsed):
+        * media/W3C/audio/events/event_order_loadstart_progress.html:
+        * media/W3C/audio/events/event_progress.html:
+        * media/W3C/audio/events/event_progress_manual.html:
+        * media/W3C/video/events/event_order_loadstart_progress.html:
+        * media/W3C/video/events/event_progress.html:
+        * media/W3C/video/events/event_progress_manual.html:
+        * media/W3C/w3cwrapper.js:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * resources/js-test-pre.js:
+        (isSuccessfullyParsed):
+
 2019-10-11  Bjorn Melinder  <bjornm@spotify.com>
 
         OfflineAudioContext does not validate allocation of destination buffer
