@@ -1,3 +1,19 @@
+2019-10-11  Dean Jackson  <dino@apple.com>
+
+        Layout Test fast/events/touch/ios/tap-with-passive-listener-inside-active-listener.html is a Flaky Failure
+        https://bugs.webkit.org/show_bug.cgi?id=202867
+        <rdar://52968736>
+
+        Reviewed by Wenson Hsieh.
+
+        From the failing results, it looks like the event listener for touchend was firing
+        after the uiScriptController returned its result, which is strange.
+        I was unable to reproduce this, so I rewrote the test to use UIHelper, which
+        hopefully will improve the situation (although... is basically the same code).
+
+        * fast/events/touch/ios/tap-with-passive-listener-inside-active-listener-expected.txt:
+        * fast/events/touch/ios/tap-with-passive-listener-inside-active-listener.html:
+
 2019-10-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Local Resource Overrides: UI for overriding image and font resource content

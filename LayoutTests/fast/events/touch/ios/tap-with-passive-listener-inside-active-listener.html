@@ -2,23 +2,14 @@
 
 <html>
 <head>
+    <script src="../../../../resources/ui-helper.js"></script>
     <script>
         if (window.testRunner) {
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
         }
 
-        function getUIScript(x, y)
-        {
-            return `
-            (function() {
-                uiController.singleTapAtPoint(${x}, ${y}, function() {
-                    uiController.uiScriptComplete("Done");
-                });
-            })();`
-        }
-
-        function runTest()
+        async function runTest()
         {
             if (!testRunner.runUIScript)
                 return;
@@ -61,18 +52,16 @@
             target3.addEventListener('touchcancel', getLogEvent("target3"), { 'passive': true });
 
             output += "<h1>Tap on Target1 (green)</h1>";
-            testRunner.runUIScript(getUIScript(50, 50), function(result) {
-                output += result;
-                output += "<h1>Tap on Target2 (red)</h1>";
-                testRunner.runUIScript(getUIScript(150, 50), function(result) {
-                    output += result;
-                    output += "<h1>Tap on Target3 (blue)</h1>";
-                    testRunner.runUIScript(getUIScript(250, 50), function(result) {
-                        document.getElementById('output').innerHTML = output;
-                        testRunner.notifyDone();
-                    });
-                });
-            });
+            await UIHelper.tapAt(50, 50);
+
+            output += "<br><h1>Tap on Target2 (red)</h1>";
+            await UIHelper.tapAt(150, 50);
+
+            output += "<br><h1>Tap on Target3 (blue)</h1>";
+            await UIHelper.tapAt(250, 50);
+
+            document.getElementById('output').innerHTML = output;
+            testRunner.notifyDone();
         }
 
         window.addEventListener('load', runTest, false);
