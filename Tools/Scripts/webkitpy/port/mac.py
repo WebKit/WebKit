@@ -183,10 +183,6 @@ class MacPort(DarwinPort):
     def operating_system(self):
         return 'mac'
 
-    # Belongs on a Platform object.
-    def is_mavericks(self):
-        return self._version == 'mavericks'
-
     def default_child_processes(self, **kwargs):
         default_count = super(MacPort, self).default_child_processes()
 
@@ -215,18 +211,6 @@ class MacPort(DarwinPort):
             _log.warning("Cannot determine available memory for child processes, using default child process count of %s." % default_count)
             supportable_instances = default_count
         return min(supportable_instances, default_count)
-
-    def _build_java_test_support(self):
-        # FIXME: This is unused. Remove.
-        java_tests_path = self._filesystem.join(self.layout_tests_dir(), "java")
-        build_java = [self.make_command(), "-C", java_tests_path]
-        if self._executive.run_command(build_java, return_exit_code=True):  # Paths are absolute, so we don't need to set a cwd.
-            _log.error("Failed to build Java support files: %s" % build_java)
-            return False
-        return True
-
-    def _check_port_build(self):
-        return not self.get_option('java') or self._build_java_test_support()
 
     def start_helper(self, pixel_tests=False):
         helper_path = self._path_to_helper()
@@ -267,9 +251,6 @@ class MacPort(DarwinPort):
 
     def logging_patterns_to_strip(self):
         logging_patterns = []
-
-        # FIXME: Remove this after <rdar://problem/15605007> is fixed.
-        logging_patterns.append((re.compile('(AVF|GVA) info:.*\n'), ''))
 
         # FIXME: Remove this after <rdar://problem/35954459> is fixed.
         logging_patterns.append(('AVDCreateGPUAccelerator: Error loading GPU renderer\n', ''))

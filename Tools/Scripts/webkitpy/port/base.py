@@ -240,8 +240,6 @@ class Port(object):
             return False
         if self.get_option('install') and not self._check_driver():
             return False
-        if self.get_option('install') and not self._check_port_build():
-            return False
         if not self.check_image_diff():
             if self.get_option('build'):
                 return self._build_image_diff()
@@ -253,8 +251,6 @@ class Port(object):
         if not canonicalized_binaries:
             canonicalized_binaries = self.path_to_api_test_binaries().keys()
         if not self._root_was_set and self.get_option('build') and not self._build_api_tests(wtf_only=(canonicalized_binaries == ['TestWTF'])):
-            return False
-        if self.get_option('install') and not self._check_port_build():
             return False
 
         for binary, path in self.path_to_api_test_binaries().iteritems():
@@ -278,10 +274,6 @@ class Port(object):
         if not self._filesystem.exists(driver_path):
             _log.error("%s was not found at %s" % (self.driver_name(), driver_path))
             return False
-        return True
-
-    def _check_port_build(self):
-        # Ports can override this method to do additional checks.
         return True
 
     def check_sys_deps(self):

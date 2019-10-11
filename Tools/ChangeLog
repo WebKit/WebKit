@@ -1,3 +1,28 @@
+2019-10-11  Brian Burg  <bburg@apple.com>
+
+        Remove some dead code in webkitpy's mac.py
+        https://bugs.webkit.org/show_bug.cgi?id=202853
+
+        Reviewed by Alexey Proskuryakov.
+
+        - Remove _build_java_test_support as it no longer does anything.
+        - Remove _check_port_build as it's only used to build Java test support.
+        - Remove unused is_mavericks() function.
+        - Remove a log stripping pattern that was fixed several releases ago.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.check_build):
+        (Port.check_api_test_build):
+        (Port._check_driver):
+        (Port._check_port_build): Deleted.
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.operating_system):
+        (MacPort.default_child_processes):
+        (MacPort.logging_patterns_to_strip):
+        (MacPort.is_mavericks): Deleted.
+        (MacPort._build_java_test_support): Deleted.
+        (MacPort._check_port_build): Deleted.
+
 2019-10-11  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] API tests should output result summary in json format
