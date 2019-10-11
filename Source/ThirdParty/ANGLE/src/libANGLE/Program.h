@@ -321,7 +321,7 @@ class ProgramState final : angle::NonCopyable
     {
         return mActiveUniformBlockBindings;
     }
-    const std::vector<sh::ShaderVariable> &getAttributes() const { return mAttributes; }
+    const std::vector<sh::ShaderVariable> &getProgramInputs() const { return mProgramInputs; }
     const AttributesMask &getActiveAttribLocationsMask() const
     {
         return mActiveAttribLocationsMask;
@@ -400,6 +400,8 @@ class ProgramState final : angle::NonCopyable
     {
         return mActiveSamplerFormats[textureUnitIndex];
     }
+    ShaderType getFirstAttachedShaderStageType() const;
+    ShaderType getLastAttachedShaderStageType() const;
 
   private:
     friend class MemoryProgramCache;
@@ -408,6 +410,8 @@ class ProgramState final : angle::NonCopyable
     void updateTransformFeedbackStrides();
     void updateActiveSamplers();
     void updateActiveImages();
+    void updateProgramInterfaceInputs();
+    void updateProgramInterfaceOutputs();
 
     // Scans the sampler bindings for type conflicts with sampler 'textureUnitIndex'.
     void setSamplerUniformTextureTypeAndFormat(size_t textureUnitIndex);
@@ -425,7 +429,8 @@ class ProgramState final : angle::NonCopyable
     // For faster iteration on the blocks currently being bound.
     UniformBlockBindingMask mActiveUniformBlockBindings;
 
-    std::vector<sh::ShaderVariable> mAttributes;
+    // Vertex attributes, Fragment input varyings, etc.
+    std::vector<sh::ShaderVariable> mProgramInputs;
     angle::BitSet<MAX_VERTEX_ATTRIBS> mActiveAttribLocationsMask;
     unsigned int mMaxActiveAttribLocation;
     ComponentTypeMask mAttributesTypeMask;
@@ -531,6 +536,25 @@ class ProgramBindings final : angle::NonCopyable
     int getBindingByName(const std::string &name) const;
     int getBinding(const sh::ShaderVariable &variable) const;
 
+    using const_iterator = std::unordered_map<std::string, GLuint>::const_iterator;
+    const_iterator begin() const;
+    const_iterator end() const;
+
+  private:
+    std::unordered_map<std::string, GLuint> mBindings;
+};
+
+// Uniforms and Fragment Outputs require special treatment due to array notation (e.g., "[0]")
+class ProgramAliasedBindings final : angle::NonCopyable
+{
+  public:
+    ProgramAliasedBindings();
+    ~ProgramAliasedBindings();
+
+    void bindLocation(GLuint index, const std::string &name);
+    int getBindingByName(const std::string &name) const;
+    int getBinding(const sh::ShaderVariable &variable) const;
+
     using const_iterator = std::unordered_map<std::string, ProgramBinding>::const_iterator;
     const_iterator begin() const;
     const_iterator end() const;
@@ -541,10 +565,10 @@ class ProgramBindings final : angle::NonCopyable
 
 struct ProgramVaryingRef
 {
-    const sh::ShaderVariable *get() const { return vertex ? vertex : fragment; }
+    const sh::ShaderVariable *get() const { return frontShader ? frontShader : backShader; }
 
-    const sh::ShaderVariable *vertex   = nullptr;
-    const sh::ShaderVariable *fragment = nullptr;
+    const sh::ShaderVariable *frontShader = nullptr;
+    const sh::ShaderVariable *backShader  = nullptr;
 };
 
 using ProgramMergedVaryings = std::map<std::string, ProgramVaryingRef>;
@@ -879,12 +903,21 @@ class Program final : angle::NonCopyable, public LabeledObject
                                        GLsizei bufSize,
                                        GLsizei *length,
                                        GLchar *name) const;
-    const sh::ShaderVariable &getInputResource(GLuint index) const;
-    const sh::ShaderVariable &getOutputResource(GLuint index) const;
+    const sh::ShaderVariable &getInputResource(size_t index) const;
+    GLuint getResourceMaxNameSize(const sh::ShaderVariable &resource, GLint max) const;
+    GLuint getInputResourceMaxNameSize() const;
+    GLuint getOutputResourceMaxNameSize() const;
+    GLuint getResourceLocation(const GLchar *name, const sh::ShaderVariable &variable) const;
+    GLuint getInputResourceLocation(const GLchar *name) const;
+    GLuint getOutputResourceLocation(const GLchar *name) const;
+    const std::string getResourceName(const sh::ShaderVariable &resource) const;
+    const std::string getInputResourceName(GLuint index) const;
+    const std::string getOutputResourceName(GLuint index) const;
+    const sh::ShaderVariable &getOutputResource(size_t index) const;
 
     const ProgramBindings &getAttributeBindings() const;
-    const ProgramBindings &getUniformLocationBindings() const;
     const ProgramBindings &getFragmentInputBindings() const;
+    const ProgramAliasedBindings &getUniformLocationBindings() const;
 
     int getNumViews() const
     {
@@ -958,7 +991,7 @@ class Program final : angle::NonCopyable, public LabeledObject
 
     bool linkUniforms(const Caps &caps,
                       InfoLog &infoLog,
-                      const ProgramBindings &uniformLocationBindings,
+                      const ProgramAliasedBindings &uniformLocationBindings,
                       GLuint *combinedImageUniformsCount,
                       std::vector<UnusedUniform> *unusedUniforms);
     void linkSamplerAndImageBindings(GLuint *combinedImageUniformsCount);
@@ -1024,12 +1057,10 @@ class Program final : angle::NonCopyable, public LabeledObject
                             GLenum nativeType,
                             int components) const;
 
-    template <typename T>
-    void getResourceName(GLuint index,
-                         const std::vector<T> &resources,
+    void getResourceName(const std::string name,
                          GLsizei bufSize,
                          GLsizei *length,
-                         GLchar *name) const;
+                         GLchar *dest) const;
 
     template <typename T>
     GLint getActiveInterfaceBlockMaxNameLength(const std::vector<T> &resources) const;
@@ -1053,14 +1084,14 @@ class Program final : angle::NonCopyable, public LabeledObject
 
     // Note that this has nothing to do with binding layout qualifiers that can be set for some
     // uniforms in GLES3.1+. It is used to pre-set the location of uniforms.
-    ProgramBindings mUniformLocationBindings;
+    ProgramAliasedBindings mUniformLocationBindings;
 
     // CHROMIUM_path_rendering
     ProgramBindings mFragmentInputBindings;
 
     // EXT_blend_func_extended
-    ProgramBindings mFragmentOutputLocations;
-    ProgramBindings mFragmentOutputIndexes;
+    ProgramAliasedBindings mFragmentOutputLocations;
+    ProgramAliasedBindings mFragmentOutputIndexes;
 
     bool mLinked;
     bool mLinkResolved;

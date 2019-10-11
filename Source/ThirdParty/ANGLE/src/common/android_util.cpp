@@ -7,6 +7,7 @@
 // android_util.cpp: Utilities for the using the Android platform
 
 #include "common/android_util.h"
+#include "common/debug.h"
 
 #include <cstdint>
 
@@ -159,6 +160,14 @@ enum {
      *   OpenGL ES: GL_STENCIL_INDEX8
      */
     AHARDWAREBUFFER_FORMAT_S8_UINT                  = 0x35,
+
+    /**
+     * YUV 420 888 format.
+     * Must have an even width and height. Can be accessed in OpenGL
+     * shaders through an external sampler. Does not support mip-maps
+     * cube-maps or multi-layered textures.
+     */
+    AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420             = 0x23,
 };
 // clang-format on
 
@@ -247,8 +256,13 @@ GLenum NativePixelFormatToGLInternalFormat(int pixelFormat)
             return GL_DEPTH32F_STENCIL8;
         case AHARDWAREBUFFER_FORMAT_S8_UINT:
             return GL_STENCIL_INDEX8;
+        case AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420:
+            return GL_RGB8;
         default:
-            return GL_NONE;
+            // Treat unknown formats as RGB. They are vendor-specific YUV formats that would sample
+            // as RGB.
+            WARN() << "Unknown pixelFormat: " << pixelFormat << ". Treating as RGB8";
+            return GL_RGB8;
     }
 }
 

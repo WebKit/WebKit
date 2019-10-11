@@ -837,6 +837,8 @@ set(libangle_gl_egl_android_sources
 set(libangle_gl_cgl_sources
     src/libANGLE/renderer/gl/cgl/ContextCGL.cpp
     src/libANGLE/renderer/gl/cgl/ContextCGL.h
+    src/libANGLE/renderer/gl/cgl/DeviceCGL.cpp
+    src/libANGLE/renderer/gl/cgl/DeviceCGL.h
     src/libANGLE/renderer/gl/cgl/DisplayCGL.mm
     src/libANGLE/renderer/gl/cgl/DisplayCGL.h
     src/libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.mm

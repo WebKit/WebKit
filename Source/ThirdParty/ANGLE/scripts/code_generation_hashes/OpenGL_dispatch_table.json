@@ -2,7 +2,7 @@
   "scripts/gl.xml":
     "b470cb06b06cbbe7adb2c8129ec85708",
   "src/libANGLE/renderer/angle_format.py":
-    "eefe6befdc925574207746fa531165fd",
+    "32ba71942c0fd00e6807104f1bb80a3c",
   "src/libANGLE/renderer/gl/DispatchTableGL_autogen.cpp":
     "7ebaa7f7525a0fe13f163ec076a8eace",
   "src/libANGLE/renderer/gl/DispatchTableGL_autogen.h":

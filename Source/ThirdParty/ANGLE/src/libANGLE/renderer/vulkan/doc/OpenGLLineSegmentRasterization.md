@@ -18,7 +18,7 @@ The OpenGL spec defines a "diamond-exit" rule to select fragments on a line. Ple
 spec section 3.4.1 "Basic Line Segment Rasterization" spec for more details. To implement this rule
 we inject a small computation to test if a pixel falls within the diamond in the start of the pixel
 shader. If the pixel fails the diamond test we discard the fragment. Note that we only perform this
-test when drawing lines. See the section on [Shader Compilation](#shader-module-compilation) for
+test when drawing lines. See the section on [Shader Compilation](ShaderModuleCompilation.md) for
 more info. See the below diagram for an illustration of the diamond rule:
 
 ![OpenGL Diamond Rule Example][DiamondRule]
@@ -46,7 +46,8 @@ to correct for cases when the line segment is perfectly parallel or perpendicula
 code please see [TranslatorVulkan.cpp][TranslatorVulkan.cpp] under
 `AddLineSegmentRasterizationEmulation`.
 
-[VulkanLineRaster]: https://www.khronos.org/registry/vulkan/specs/1.1/html/chap24.html#primsrast-lines-basic
 [Bresenham]: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
-[VulkanVsGLLineRaster]: img/LineRasterComparison.gif
 [DiamondRule]: img/LineRasterPixelExample.png
+[TranslatorVulkan.cpp]: https://chromium.googlesource.com/angle/angle/+/refs/heads/master/src/compiler/translator/TranslatorVulkan.cpp
+[VulkanLineRaster]: https://www.khronos.org/registry/vulkan/specs/1.1/html/chap24.html#primsrast-lines-basic
+[VulkanVsGLLineRaster]: img/LineRasterComparison.gif

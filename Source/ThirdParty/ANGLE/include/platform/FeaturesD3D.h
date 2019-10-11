@@ -35,9 +35,9 @@ struct FeaturesD3D : FeatureSetBase
     // We can fix this by optimizing those out of the shader. At the same time, we can
     // work around a bug on some nVidia drivers that they ignore "null" render targets
     // in D3D11, by compacting the active color attachments list to omit null entries.
-    Feature mrtPerfWorkaround = {
-        "mrt_perf_workaround", FeatureCategory::D3DWorkarounds,
-        "Some NVIDIA D3D11 drivers have a bug where they ignore null render targets", &members};
+    Feature mrtPerfWorkaround = {"mrt_perf_workaround", FeatureCategory::D3DWorkarounds,
+                                 "Some drivers have a bug where they ignore null render targets",
+                                 &members};
 
     Feature setDataFasterThanImageUpload = {"set_data_faster_than_image_upload",
                                             FeatureCategory::D3DWorkarounds,
@@ -50,9 +50,9 @@ struct FeaturesD3D : FeatureSetBase
     // application creates a mipmapped texture2D, but sets GL_TEXTURE_MIN_FILTER to GL_NEAREST
     // (i.e disables mipmaps). To work around this, D3D11 FL9_3 has to create two copies of the
     // texture. The textures' level zeros are identical, but only one texture has mips.
-    Feature zeroMaxLodWorkaround = {
-        "zero_max_lod", FeatureCategory::D3DWorkarounds,
-        "D3D11 is missing an option to disable mipmaps on a mipmapped texture", &members};
+    Feature zeroMaxLodWorkaround = {"zero_max_lod", FeatureCategory::D3DWorkarounds,
+                                    "Missing an option to disable mipmaps on a mipmapped texture",
+                                    &members};
 
     // Some renderers do not support Geometry Shaders so the Geometry Shader-based PointSprite
     // emulation will not work. To work around this, D3D11 FL9_3 has to use a different pointsprite
@@ -68,8 +68,8 @@ struct FeaturesD3D : FeatureSetBase
     // (See: http://anglebug.com/1452)
     Feature depthStencilBlitExtraCopy = {
         "depth_stencil_blit_extra_copy", FeatureCategory::D3DWorkarounds,
-        "Bug in NVIDIA D3D11 Driver version <=347.88 and >368.81 triggers a TDR when using "
-        "CopySubresourceRegion from a staging texture to a depth/stencil",
+        "Bug in some drivers triggers a TDR when using CopySubresourceRegion from a staging "
+        "texture to a depth/stencil",
         &members, "http://anglebug.com/1452"};
 
     // The HLSL optimizer has a bug with optimizing "pow" in certain integer-valued expressions.
@@ -84,7 +84,7 @@ struct FeaturesD3D : FeatureSetBase
     // feedback is used to repeatedly write to the same buffer positions.
     Feature flushAfterEndingTransformFeedback = {
         "flush_after_ending_transform_feedback", FeatureCategory::D3DWorkarounds,
-        "NVIDIA drivers sometimes write out-of-order results to StreamOut buffers when transform "
+        "Some drivers sometimes write out-of-order results to StreamOut buffers when transform "
         "feedback is used to repeatedly write to the same buffer positions",
         &members};
 
@@ -92,7 +92,7 @@ struct FeaturesD3D : FeatureSetBase
     // of the HLSL GetDimensions builtin.
     Feature getDimensionsIgnoresBaseLevel = {
         "get_dimensions_ignores_base_level", FeatureCategory::D3DWorkarounds,
-        "Some NVIDIA drivers do not take into account the base level of the "
+        "Some drivers do not take into account the base level of the "
         "texture in the results of the HLSL GetDimensions builtin",
         &members};
 
@@ -104,8 +104,8 @@ struct FeaturesD3D : FeatureSetBase
     // by adding Offset directly to Location before reading the texture.
     Feature preAddTexelFetchOffsets = {
         "pre_add_texel_fetch_offsets", FeatureCategory::D3DWorkarounds,
-        "On some Intel drivers, HLSL's function texture.Load returns 0 when the parameter Location "
-        "is negative, even if the sum of Offset and Location is in range",
+        "HLSL's function texture.Load returns 0 when the parameter Location is negative, even if "
+        "the sum of Offset and Location is in range",
         &members};
 
     // On some AMD drivers, 1x1 and 2x2 mips of depth/stencil textures aren't sampled correctly.
@@ -113,8 +113,7 @@ struct FeaturesD3D : FeatureSetBase
     // before we sample.
     Feature emulateTinyStencilTextures = {
         "emulate_tiny_stencil_textures", FeatureCategory::D3DWorkarounds,
-        "On some AMD drivers, 1x1 and 2x2 mips of depth/stencil textures aren't sampled correctly",
-        &members};
+        "1x1 and 2x2 mips of depth/stencil textures aren't sampled correctly", &members};
 
     // In Intel driver, the data with format DXGI_FORMAT_B5G6R5_UNORM will be parsed incorrectly.
     // This workaroud will disable B5G6R5 support when it's Intel driver. By default, it will use
@@ -122,7 +121,7 @@ struct FeaturesD3D : FeatureSetBase
     // On older AMD drivers, the data in DXGI_FORMAT_B5G6R5_UNORM becomes corrupted for unknown
     // reasons.
     Feature disableB5G6R5Support = {"disable_b5g6r5_support", FeatureCategory::D3DWorkarounds,
-                                    "On Intel and AMD drivers, textures with the format "
+                                    "Textures with the format "
                                     "DXGI_FORMAT_B5G6R5_UNORM have incorrect data",
                                     &members};
 
@@ -131,35 +130,33 @@ struct FeaturesD3D : FeatureSetBase
     // This driver bug is fixed in 20.19.15.4624.
     Feature rewriteUnaryMinusOperator = {
         "rewrite_unary_minus_operator", FeatureCategory::D3DWorkarounds,
-        "On some Intel drivers, evaluating unary minus operator on integer may "
-        "get wrong answer in vertex shaders",
+        "Evaluating unary minus operator on integer may get wrong answer in vertex shaders",
         &members};
 
     // On some Intel drivers, using isnan() on highp float will get wrong answer. To work around
     // this bug, we use an expression to emulate function isnan().
     // Tracking bug: https://crbug.com/650547
     // This driver bug is fixed in 21.20.16.4542.
-    Feature emulateIsnanFloat = {
-        "emulate_isnan_float", FeatureCategory::D3DWorkarounds,
-        "On some Intel drivers, using isnan() on highp float will get wrong answer", &members,
-        "https://crbug.com/650547"};
+    Feature emulateIsnanFloat = {"emulate_isnan_float", FeatureCategory::D3DWorkarounds,
+                                 "Using isnan() on highp float will get wrong answer", &members,
+                                 "https://crbug.com/650547"};
 
     // On some Intel drivers, using clear() may not take effect. To work around this bug, we call
     // clear() twice on these platforms.
     // Tracking bug: https://crbug.com/655534
     Feature callClearTwice = {"call_clear_twice", FeatureCategory::D3DWorkarounds,
-                              "On some Intel drivers, using clear() may not take effect", &members,
+                              "Using clear() may not take effect", &members,
                               "https://crbug.com/655534"};
 
     // On some Intel drivers, copying from staging storage to constant buffer storage does not
     // seem to work. Work around this by keeping system memory storage as a canonical reference
     // for buffer data.
     // D3D11-only workaround. See http://crbug.com/593024.
-    Feature useSystemMemoryForConstantBuffers = {
-        "use_system_memory_for_constant_buffers", FeatureCategory::D3DWorkarounds,
-        "On some Intel drivers, copying from staging storage to constant buffer "
-        "storage does not work",
-        &members, "https://crbug.com/593024"};
+    Feature useSystemMemoryForConstantBuffers = {"use_system_memory_for_constant_buffers",
+                                                 FeatureCategory::D3DWorkarounds,
+                                                 "Copying from staging storage to constant buffer "
+                                                 "storage does not work",
+                                                 &members, "https://crbug.com/593024"};
 
     // This workaround is for the ANGLE_multiview extension. If enabled the viewport or render
     // target slice will be selected in the geometry shader stage. The workaround flag is added to
@@ -181,8 +178,7 @@ struct FeaturesD3D : FeatureSetBase
     // So we add a dummy texture as render target in such case. See http://anglebug.com/2152
     Feature addDummyTextureNoRenderTarget = {
         "add_dummy_texture_no_render_target", FeatureCategory::D3DWorkarounds,
-        "On D3D ntel drivers <4815 when rendering with no render target, two "
-        "bugs lead to incorrect behavior",
+        "On some drivers when rendering with no render target, two bugs lead to incorrect behavior",
         &members, "http://anglebug.com/2152"};
 
     // Don't use D3D constant register zero when allocating space for uniforms in the vertex shader.
@@ -190,9 +186,7 @@ struct FeaturesD3D : FeatureSetBase
     // specific cases the driver would not handle constant register zero correctly.
     Feature skipVSConstantRegisterZero = {
         "skip_vs_constant_register_zero", FeatureCategory::D3DWorkarounds,
-        "On NVIDIA D3D driver v388.59 in specific cases the driver doesn't "
-        "handle constant register zero correctly",
-        &members};
+        "In specific cases the driver doesn't handle constant register zero correctly", &members};
 
     // Forces the value returned from an atomic operations to be always be resolved. This is
     // targeted to workaround a bug in NVIDIA D3D driver where the return value from
@@ -201,8 +195,8 @@ struct FeaturesD3D : FeatureSetBase
     // http://anglebug.com/3246
     Feature forceAtomicValueResolution = {
         "force_atomic_value_resolution", FeatureCategory::D3DWorkarounds,
-        "On an NVIDIA D3D driver, the return value from RWByteAddressBuffer.InterlockedAdd does "
-        "not resolve when used in the .yzw components of a RWByteAddressBuffer.Store operation",
+        "On some drivers the return value from RWByteAddressBuffer.InterlockedAdd does not resolve "
+        "when used in the .yzw components of a RWByteAddressBuffer.Store operation",
         &members, "http://anglebug.com/3246"};
 
     // Match chromium's robust resource init behaviour by always prefering to upload texture data

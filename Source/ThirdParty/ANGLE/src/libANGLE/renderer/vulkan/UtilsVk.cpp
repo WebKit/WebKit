@@ -82,16 +82,28 @@ uint32_t GetConvertVertexFlags(const UtilsVk::ConvertVertexParameters &params)
     bool srcIsA2BGR10 =
         ((params.srcFormat->vertexAttribType == gl::VertexAttribType::UnsignedInt2101010) ||
          (params.srcFormat->vertexAttribType == gl::VertexAttribType::Int2101010));
+    bool srcIsRGB10A2 =
+        ((params.srcFormat->vertexAttribType == gl::VertexAttribType::UnsignedInt1010102) ||
+         params.srcFormat->vertexAttribType == gl::VertexAttribType::Int1010102) &&
+        params.srcFormat->alphaBits;
+    bool srcIsRGB10X2 =
+        ((params.srcFormat->vertexAttribType == gl::VertexAttribType::UnsignedInt1010102) ||
+         params.srcFormat->vertexAttribType == gl::VertexAttribType::Int1010102) &&
+        !params.srcFormat->alphaBits;
+    bool srcIsHalfFloat = params.srcFormat->isVertexTypeHalfFloat();
 
-    bool destIsSint  = params.destFormat->isSint();
-    bool destIsUint  = params.destFormat->isUint();
-    bool destIsFloat = params.destFormat->isFloat();
+    bool destIsSint      = params.destFormat->isSint();
+    bool destIsUint      = params.destFormat->isUint();
+    bool destIsFloat     = params.destFormat->isFloat();
+    bool destIsHalfFloat = params.destFormat->isVertexTypeHalfFloat();
 
     // Assert on the types to make sure the shader supports its.  These are based on
     // ConvertVertex_comp::Conversion values.
-    ASSERT(!destIsSint || srcIsSint);    // If destination is sint, src must be sint too
-    ASSERT(!destIsUint || srcIsUint);    // If destination is uint, src must be uint too
-    ASSERT(!srcIsFixed || destIsFloat);  // If source is fixed, dest must be float
+    ASSERT(!destIsSint || srcIsSint);           // If destination is sint, src must be sint too
+    ASSERT(!destIsUint || srcIsUint);           // If destination is uint, src must be uint too
+    ASSERT(!srcIsFixed || destIsFloat);         // If source is fixed, dest must be float
+    ASSERT(srcIsHalfFloat == destIsHalfFloat);  // Both src and dest are half float or neither
+
     // One of each bool set must be true
     ASSERT(srcIsSint || srcIsUint || srcIsSnorm || srcIsUnorm || srcIsFixed || srcIsFloat);
     ASSERT(destIsSint || destIsUint || destIsFloat);
@@ -133,6 +145,56 @@ uint32_t GetConvertVertexFlags(const UtilsVk::ConvertVertexParameters &params)
         {
             UNREACHABLE();
         }
+    }
+    else if (srcIsRGB10A2)
+    {
+        if (srcIsSint)
+        {
+            flags |= ConvertVertex_comp::kRGB10A2SintToFloat;
+        }
+        else if (srcIsUint)
+        {
+            flags |= ConvertVertex_comp::kRGB10A2UintToFloat;
+        }
+        else if (srcIsSnorm)
+        {
+            flags |= ConvertVertex_comp::kRGB10A2SnormToFloat;
+        }
+        else if (srcIsUnorm)
+        {
+            flags |= ConvertVertex_comp::kRGB10A2UnormToFloat;
+        }
+        else
+        {
+            UNREACHABLE();
+        }
+    }
+    else if (srcIsRGB10X2)
+    {
+        if (srcIsSint)
+        {
+            flags |= ConvertVertex_comp::kRGB10X2SintToFloat;
+        }
+        else if (srcIsUint)
+        {
+            flags |= ConvertVertex_comp::kRGB10X2UintToFloat;
+        }
+        else if (srcIsSnorm)
+        {
+            flags |= ConvertVertex_comp::kRGB10X2SnormToFloat;
+        }
+        else if (srcIsUnorm)
+        {
+            flags |= ConvertVertex_comp::kRGB10X2UnormToFloat;
+        }
+        else
+        {
+            UNREACHABLE();
+        }
+    }
+    else if (srcIsHalfFloat && destIsHalfFloat)
+    {
+        flags |= ConvertVertex_comp::kHalfFloatToHalfFloat;
     }
     else if (srcIsSint && destIsSint)
     {
@@ -444,6 +506,43 @@ angle::Result UtilsVk::ensureConvertIndexResourcesInitialized(ContextVk *context
 
     return ensureResourcesInitialized(contextVk, Function::ConvertIndexBuffer, setSizes,
                                       ArraySize(setSizes), sizeof(ConvertIndexShaderParams));
+}
+
+angle::Result UtilsVk::ensureConvertIndexIndirectResourcesInitialized(ContextVk *contextVk)
+{
+    if (mPipelineLayouts[Function::ConvertIndexIndirectBuffer].valid())
+    {
+        return angle::Result::Continue;
+    }
+
+    VkDescriptorPoolSize setSizes[3] = {
+        {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1},  // source index buffer
+        {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1},  // dest index buffer
+        {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1},  // cmd buffer
+    };
+
+    return ensureResourcesInitialized(contextVk, Function::ConvertIndexIndirectBuffer, setSizes,
+                                      ArraySize(setSizes),
+                                      sizeof(ConvertIndexIndirectShaderParams));
+}
+
+angle::Result UtilsVk::ensureConvertIndexIndirectLineLoopResourcesInitialized(ContextVk *contextVk)
+{
+    if (mPipelineLayouts[Function::ConvertIndexIndirectLineLoopBuffer].valid())
+    {
+        return angle::Result::Continue;
+    }
+
+    VkDescriptorPoolSize setSizes[4] = {
+        {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1},  // cmd buffer
+        {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1},  // dest cmd buffer
+        {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1},  // source index buffer
+        {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1},  // dest index buffer
+    };
+
+    return ensureResourcesInitialized(contextVk, Function::ConvertIndexIndirectLineLoopBuffer,
+                                      setSizes, ArraySize(setSizes),
+                                      sizeof(ConvertIndexIndirectLineLoopShaderParams));
 }
 
 angle::Result UtilsVk::ensureConvertVertexResourcesInitialized(ContextVk *contextVk)
@@ -777,6 +876,142 @@ angle::Result UtilsVk::convertIndexBuffer(ContextVk *contextVk,
     return angle::Result::Continue;
 }
 
+angle::Result UtilsVk::convertIndexIndirectBuffer(ContextVk *contextVk,
+                                                  vk::BufferHelper *cmdBuffer,
+                                                  vk::BufferHelper *dest,
+                                                  vk::BufferHelper *src,
+                                                  const ConvertIndexIndirectParameters &params)
+{
+    ANGLE_TRY(ensureConvertIndexIndirectResourcesInitialized(contextVk));
+
+    vk::CommandBuffer *commandBuffer;
+    ANGLE_TRY(dest->recordCommands(contextVk, &commandBuffer));
+
+    // Tell src we are going to read from it and dest it's being written to.
+    src->onReadByBuffer(contextVk, dest, VK_ACCESS_SHADER_READ_BIT, VK_ACCESS_SHADER_WRITE_BIT);
+    cmdBuffer->onReadByBuffer(contextVk, dest, VK_ACCESS_SHADER_READ_BIT,
+                              VK_ACCESS_SHADER_WRITE_BIT);
+
+    VkDescriptorSet descriptorSet;
+    vk::RefCountedDescriptorPoolBinding descriptorPoolBinding;
+    ANGLE_TRY(allocateDescriptorSet(contextVk, Function::ConvertIndexIndirectBuffer,
+                                    &descriptorPoolBinding, &descriptorSet));
+
+    std::array<VkDescriptorBufferInfo, 3> buffers = {{
+        {dest->getBuffer().getHandle(), 0, VK_WHOLE_SIZE},
+        {src->getBuffer().getHandle(), 0, VK_WHOLE_SIZE},
+        {cmdBuffer->getBuffer().getHandle(), 0, VK_WHOLE_SIZE},
+    }};
+
+    VkWriteDescriptorSet writeInfo = {};
+    writeInfo.sType                = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    writeInfo.dstSet               = descriptorSet;
+    writeInfo.dstBinding           = kConvertIndexDestinationBinding;
+    writeInfo.descriptorCount      = 3;
+    writeInfo.descriptorType       = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    writeInfo.pBufferInfo          = buffers.data();
+
+    vkUpdateDescriptorSets(contextVk->getDevice(), 1, &writeInfo, 0, nullptr);
+
+    ConvertIndexIndirectShaderParams shaderParams = {params.indirectBufferOffset >> 2,
+                                                     params.dstOffset >> 2, params.maxIndex, 0};
+
+    uint32_t flags = vk::InternalShader::ConvertIndex_comp::kIsIndirect;
+    if (contextVk->getState().isPrimitiveRestartEnabled())
+    {
+        flags |= vk::InternalShader::ConvertIndex_comp::kIsPrimitiveRestartEnabled;
+    }
+
+    vk::RefCounted<vk::ShaderAndSerial> *shader = nullptr;
+    ANGLE_TRY(contextVk->getShaderLibrary().getConvertIndex_comp(contextVk, flags, &shader));
+
+    ANGLE_TRY(setupProgram(contextVk, Function::ConvertIndexIndirectBuffer, shader, nullptr,
+                           &mConvertIndexPrograms[flags], nullptr, descriptorSet, &shaderParams,
+                           sizeof(ConvertIndexIndirectShaderParams), commandBuffer));
+
+    constexpr uint32_t kInvocationsPerGroup = 64;
+    constexpr uint32_t kInvocationsPerIndex = 2;
+    const uint32_t kIndexCount              = params.maxIndex;
+    const uint32_t kGroupCount =
+        UnsignedCeilDivide(kIndexCount * kInvocationsPerIndex, kInvocationsPerGroup);
+    commandBuffer->dispatch(kGroupCount, 1, 1);
+
+    descriptorPoolBinding.reset();
+
+    return angle::Result::Continue;
+}
+
+angle::Result UtilsVk::convertLineLoopIndexIndirectBuffer(
+    ContextVk *contextVk,
+    vk::BufferHelper *srcIndirectBuffer,
+    vk::BufferHelper *destIndirectBuffer,
+    vk::BufferHelper *destIndexBuffer,
+    vk::BufferHelper *srcIndexBuffer,
+    const ConvertLineLoopIndexIndirectParameters &params)
+{
+    ANGLE_TRY(ensureConvertIndexIndirectLineLoopResourcesInitialized(contextVk));
+
+    vk::CommandBuffer *commandBuffer;
+    ANGLE_TRY(destIndexBuffer->recordCommands(contextVk, &commandBuffer));
+
+    // Tell src we are going to read from it and dest it's being written to.
+    srcIndexBuffer->onReadByBuffer(contextVk, destIndexBuffer, VK_ACCESS_SHADER_READ_BIT,
+                                   VK_ACCESS_SHADER_WRITE_BIT);
+    srcIndirectBuffer->onReadByBuffer(contextVk, destIndexBuffer, VK_ACCESS_SHADER_READ_BIT,
+                                      VK_ACCESS_SHADER_WRITE_BIT);
+
+    ANGLE_TRY(destIndirectBuffer->recordCommands(contextVk, &commandBuffer));
+
+    srcIndirectBuffer->onReadByBuffer(contextVk, destIndirectBuffer, VK_ACCESS_SHADER_READ_BIT,
+                                      VK_ACCESS_SHADER_WRITE_BIT);
+
+    VkDescriptorSet descriptorSet;
+    vk::RefCountedDescriptorPoolBinding descriptorPoolBinding;
+    ANGLE_TRY(allocateDescriptorSet(contextVk, Function::ConvertIndexIndirectLineLoopBuffer,
+                                    &descriptorPoolBinding, &descriptorSet));
+
+    std::array<VkDescriptorBufferInfo, 4> buffers = {{
+        {srcIndirectBuffer->getBuffer().getHandle(), 0, VK_WHOLE_SIZE},
+        {destIndirectBuffer->getBuffer().getHandle(), 0, VK_WHOLE_SIZE},
+        {destIndexBuffer->getBuffer().getHandle(), 0, VK_WHOLE_SIZE},
+        {srcIndexBuffer->getBuffer().getHandle(), 0, VK_WHOLE_SIZE},
+    }};
+
+    VkWriteDescriptorSet writeInfo = {};
+    writeInfo.sType                = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    writeInfo.dstSet               = descriptorSet;
+    writeInfo.dstBinding           = kConvertIndexDestinationBinding;
+    writeInfo.descriptorCount      = 4;
+    writeInfo.descriptorType       = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    writeInfo.pBufferInfo          = buffers.data();
+
+    vkUpdateDescriptorSets(contextVk->getDevice(), 1, &writeInfo, 0, nullptr);
+
+    ConvertIndexIndirectLineLoopShaderParams shaderParams = {
+        params.indirectBufferOffset >> 2, params.dstIndirectBufferOffset >> 2,
+        params.dstIndexBufferOffset >> 2, contextVk->getState().isPrimitiveRestartEnabled()};
+
+    uint32_t flags = 0;
+    if (params.is32Bit)
+    {
+        flags |= vk::InternalShader::ConvertIndexIndirectLineLoop_comp::kIs32Bit;
+    }
+
+    vk::RefCounted<vk::ShaderAndSerial> *shader = nullptr;
+    ANGLE_TRY(contextVk->getShaderLibrary().getConvertIndexIndirectLineLoop_comp(contextVk, flags,
+                                                                                 &shader));
+
+    ANGLE_TRY(setupProgram(contextVk, Function::ConvertIndexIndirectLineLoopBuffer, shader, nullptr,
+                           &mConvertIndexPrograms[flags], nullptr, descriptorSet, &shaderParams,
+                           sizeof(ConvertIndexIndirectLineLoopShaderParams), commandBuffer));
+
+    commandBuffer->dispatch(1, 1, 1);
+
+    descriptorPoolBinding.reset();
+
+    return angle::Result::Continue;
+}
+
 angle::Result UtilsVk::convertVertexBuffer(ContextVk *contextVk,
                                            vk::BufferHelper *dest,
                                            vk::BufferHelper *src,
@@ -888,7 +1123,7 @@ angle::Result UtilsVk::startRenderPass(ContextVk *contextVk,
     ANGLE_TRY(image->beginRenderPass(contextVk, framebuffer, renderArea, renderPassDesc,
                                      renderPassAttachmentOps, clearValues, commandBufferOut));
 
-    contextVk->releaseObject(contextVk->getCurrentQueueSerial(), &framebuffer);
+    contextVk->addGarbage(&framebuffer);
 
     return angle::Result::Continue;
 }
@@ -902,8 +1137,8 @@ angle::Result UtilsVk::clearFramebuffer(ContextVk *contextVk,
     const gl::Rectangle &scissoredRenderArea = params.clearArea;
 
     vk::CommandBuffer *commandBuffer;
-    if (!framebuffer->appendToStartedRenderPass(contextVk->getCurrentQueueSerial(),
-                                                scissoredRenderArea, &commandBuffer))
+    if (!framebuffer->appendToStartedRenderPass(contextVk->getCommandGraph(), scissoredRenderArea,
+                                                &commandBuffer))
     {
         ANGLE_TRY(framebuffer->startNewRenderPass(contextVk, scissoredRenderArea, &commandBuffer));
     }
@@ -1131,14 +1366,14 @@ angle::Result UtilsVk::blitResolveImpl(ContextVk *contextVk,
     }
 
     vk::CommandBuffer *commandBuffer;
-    if (!framebuffer->appendToStartedRenderPass(contextVk->getCurrentQueueSerial(), params.blitArea,
+    if (!framebuffer->appendToStartedRenderPass(contextVk->getCommandGraph(), params.blitArea,
                                                 &commandBuffer))
     {
         ANGLE_TRY(framebuffer->startNewRenderPass(contextVk, params.blitArea, &commandBuffer));
     }
 
     // Source's layout change should happen before rendering
-    src->addReadDependency(framebuffer->getFramebuffer());
+    src->addReadDependency(contextVk, framebuffer->getFramebuffer());
 
     VkDescriptorImageInfo imageInfos[2] = {};
 
@@ -1226,7 +1461,7 @@ angle::Result UtilsVk::stencilBlitResolveNoShaderExport(ContextVk *contextVk,
                                     &descriptorPoolBinding, &descriptorSet));
 
     // Create a temporary buffer to blit/resolve stencil into.
-    vk::ContextScoped<vk::BufferHelper> blitBuffer(contextVk);
+    vk::RendererScoped<vk::BufferHelper> blitBuffer(contextVk->getRenderer());
 
     uint32_t bufferRowLengthInUints = UnsignedCeilDivide(params.blitArea.width, sizeof(uint32_t));
     VkDeviceSize bufferSize = bufferRowLengthInUints * sizeof(uint32_t) * params.blitArea.height;
@@ -1242,7 +1477,7 @@ angle::Result UtilsVk::stencilBlitResolveNoShaderExport(ContextVk *contextVk,
 
     ANGLE_TRY(
         blitBuffer.get().init(contextVk, blitBufferInfo, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
-    blitBuffer.get().updateQueueSerial(contextVk->getCurrentQueueSerial());
+    blitBuffer.get().onGraphAccess(contextVk->getCommandGraph());
 
     BlitResolveStencilNoExportShaderParams shaderParams;
     if (isResolve)
@@ -1285,7 +1520,7 @@ angle::Result UtilsVk::stencilBlitResolveNoShaderExport(ContextVk *contextVk,
     vk::CommandBuffer *commandBuffer;
     ANGLE_TRY(framebuffer->getFramebuffer()->recordCommands(contextVk, &commandBuffer));
 
-    src->addReadDependency(framebuffer->getFramebuffer());
+    src->addReadDependency(contextVk, framebuffer->getFramebuffer());
 
     // Blit/resolve stencil into the buffer.
     VkDescriptorImageInfo imageInfo = {};
@@ -1471,7 +1706,7 @@ angle::Result UtilsVk::copyImage(ContextVk *contextVk,
         startRenderPass(contextVk, dest, destView, renderPassDesc, renderArea, &commandBuffer));
 
     // Source's layout change should happen before rendering
-    src->addReadDependency(dest);
+    src->addReadDependency(contextVk, dest);
 
     VkDescriptorImageInfo imageInfo = {};
     imageInfo.imageView             = srcView->getHandle();
@@ -1537,7 +1772,7 @@ angle::Result UtilsVk::cullOverlayWidgets(ContextVk *contextVk,
     dest->changeLayout(VK_IMAGE_ASPECT_COLOR_BIT, vk::ImageLayout::ComputeShaderWrite,
                        commandBuffer);
 
-    enabledWidgetsBuffer->onRead(dest, VK_ACCESS_SHADER_READ_BIT);
+    enabledWidgetsBuffer->onRead(contextVk, dest, VK_ACCESS_SHADER_READ_BIT);
 
     VkDescriptorImageInfo imageInfo = {};
     imageInfo.imageView             = destView->getHandle();
@@ -1612,10 +1847,10 @@ angle::Result UtilsVk::drawOverlay(ContextVk *contextVk,
     dest->changeLayout(VK_IMAGE_ASPECT_COLOR_BIT, vk::ImageLayout::ComputeShaderWrite,
                        commandBuffer);
 
-    culledWidgets->addReadDependency(dest);
-    font->addReadDependency(dest);
-    textWidgetsBuffer->onRead(dest, VK_ACCESS_SHADER_READ_BIT);
-    graphWidgetsBuffer->onRead(dest, VK_ACCESS_SHADER_READ_BIT);
+    culledWidgets->addReadDependency(contextVk, dest);
+    font->addReadDependency(contextVk, dest);
+    textWidgetsBuffer->onRead(contextVk, dest, VK_ACCESS_SHADER_READ_BIT);
+    graphWidgetsBuffer->onRead(contextVk, dest, VK_ACCESS_SHADER_READ_BIT);
 
     VkDescriptorImageInfo imageInfos[3] = {};
     imageInfos[0].imageView             = destView->getHandle();

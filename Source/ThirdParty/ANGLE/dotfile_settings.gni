@@ -8,9 +8,10 @@
 angle_dotfile_settings = {
   exec_script_whitelist = [
     get_path_info("BUILD.gn", "abspath"),
-    get_path_info("third_party/vulkan-headers/BUILD.gn", "abspath"),
-    get_path_info("third_party/vulkan-loader/BUILD.gn", "abspath"),
-    get_path_info("third_party/vulkan-tools/BUILD.gn", "abspath"),
-    get_path_info("third_party/vulkan-validation-layers/BUILD.gn", "abspath"),
+    get_path_info("third_party/vulkan-headers/src/BUILD.gn", "abspath"),
+    get_path_info("third_party/vulkan-loader/src/BUILD.gn", "abspath"),
+    get_path_info("third_party/vulkan-tools/src/BUILD.gn", "abspath"),
+    get_path_info("third_party/vulkan-validation-layers/src/BUILD.gn",
+                  "abspath"),
   ]
 }

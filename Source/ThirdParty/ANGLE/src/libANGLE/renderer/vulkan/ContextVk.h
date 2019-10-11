@@ -29,6 +29,74 @@ namespace rx
 class RendererVk;
 class WindowSurfaceVk;
 
+struct CommandBatch final : angle::NonCopyable
+{
+    CommandBatch();
+    ~CommandBatch();
+    CommandBatch(CommandBatch &&other);
+    CommandBatch &operator=(CommandBatch &&other);
+
+    void destroy(VkDevice device);
+
+    vk::PrimaryCommandBuffer primaryCommands;
+    // commandPool is for secondary CommandBuffer allocation
+    vk::CommandPool commandPool;
+    vk::Shared<vk::Fence> fence;
+    Serial serial;
+};
+
+class CommandQueue final : angle::NonCopyable
+{
+  public:
+    CommandQueue();
+    ~CommandQueue();
+
+    angle::Result init(vk::Context *context);
+    void destroy(VkDevice device);
+    void handleDeviceLost(RendererVk *renderer);
+
+    bool hasInFlightCommands() const;
+
+    angle::Result allocatePrimaryCommandBuffer(vk::Context *context,
+                                               const vk::CommandPool &commandPool,
+                                               vk::PrimaryCommandBuffer *commandBufferOut);
+    angle::Result releasePrimaryCommandBuffer(vk::Context *context,
+                                              vk::PrimaryCommandBuffer &&commandBuffer);
+
+    void clearAllGarbage(VkDevice device);
+
+    angle::Result finishToSerialOrTimeout(vk::Context *context,
+                                          Serial serial,
+                                          uint64_t timeout,
+                                          bool *outTimedOut);
+
+    angle::Result submitFrame(vk::Context *context,
+                              const VkSubmitInfo &submitInfo,
+                              const vk::Shared<vk::Fence> &sharedFence,
+                              vk::GarbageList *currentGarbage,
+                              vk::CommandPool *commandPool,
+                              vk::PrimaryCommandBuffer &&commandBuffer);
+
+    vk::Shared<vk::Fence> getLastSubmittedFence(const vk::Context *context) const;
+
+    // Check to see which batches have finished completion (forward progress for
+    // mLastCompletedQueueSerial, for example for when the application busy waits on a query
+    // result). It would be nice if we didn't have to expose this for QueryVk::getResult.
+    angle::Result checkCompletedCommands(vk::Context *context);
+
+  private:
+    angle::Result releaseToCommandBatch(vk::Context *context,
+                                        vk::PrimaryCommandBuffer &&commandBuffer,
+                                        vk::CommandPool *commandPool,
+                                        CommandBatch *batch);
+
+    vk::GarbageQueue mGarbageQueue;
+    std::vector<CommandBatch> mInFlightCommands;
+
+    // Keeps a free list of reusable primary command buffers.
+    vk::PersistentCommandPool mPrimaryCommandPool;
+};
+
 class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassOwner
 {
   public:
@@ -213,9 +281,10 @@ class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassO
                                               GLuint relativeOffset)
     {
         invalidateVertexAndIndexBuffers();
-        mGraphicsPipelineDesc->updateVertexInput(&mGraphicsPipelineTransition,
-                                                 static_cast<uint32_t>(attribIndex), stride,
-                                                 divisor, format, relativeOffset);
+        // Set divisor to 1 for attribs with emulated divisor
+        mGraphicsPipelineDesc->updateVertexInput(
+            &mGraphicsPipelineTransition, static_cast<uint32_t>(attribIndex), stride,
+            divisor > mRenderer->getMaxVertexAttribDivisor() ? 1 : divisor, format, relativeOffset);
     }
 
     void invalidateDefaultAttribute(size_t attribIndex);
@@ -255,6 +324,7 @@ class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassO
 
     void insertWaitSemaphore(const vk::Semaphore *waitSemaphore);
 
+    bool shouldFlush();
     angle::Result flushImpl(const vk::Semaphore *semaphore);
     angle::Result finishImpl();
 
@@ -262,28 +332,22 @@ class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassO
 
     const vk::CommandPool &getCommandPool() const;
 
-    Serial getCurrentQueueSerial() const { return mCurrentQueueSerial; }
-    Serial getLastSubmittedQueueSerial() const { return mLastSubmittedQueueSerial; }
-    Serial getLastCompletedQueueSerial() const { return mLastCompletedQueueSerial; }
+    Serial getCurrentQueueSerial() const { return mRenderer->getCurrentQueueSerial(); }
+    Serial getLastSubmittedQueueSerial() const { return mRenderer->getLastSubmittedQueueSerial(); }
+    Serial getLastCompletedQueueSerial() const { return mRenderer->getLastCompletedQueueSerial(); }
 
     bool isSerialInUse(Serial serial) const;
 
     template <typename T>
-    void releaseObject(Serial resourceSerial, T *object)
+    void addGarbage(T *object)
     {
-        if (!isSerialInUse(resourceSerial))
+        if (object->valid())
         {
-            object->destroy(getDevice());
-        }
-        else
-        {
-            object->dumpResources(resourceSerial, &mGarbage);
+            mCurrentGarbage.emplace_back(vk::GetGarbage(object));
         }
     }
 
-    // Check to see which batches have finished completion (forward progress for
-    // mLastCompletedQueueSerial, for example for when the application busy waits on a query
-    // result).
+    // It would be nice if we didn't have to expose this for QueryVk::getResult.
     angle::Result checkCompletedCommands();
 
     // Wait for completion of batches until (at least) batch with given serial is finished.
@@ -302,7 +366,7 @@ class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassO
     vk::Shared<vk::Fence> getLastSubmittedFence() const;
 
     // This should only be called from ResourceVk.
-    vk::CommandGraph *getCommandGraph();
+    vk::CommandGraph *getCommandGraph() { return &mCommandGraph; }
 
     vk::ShaderLibrary &getShaderLibrary() { return mShaderLibrary; }
     UtilsVk &getUtils() { return mUtils; }
@@ -362,8 +426,20 @@ class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassO
     using DirtyBitHandler = angle::Result (ContextVk::*)(const gl::Context *,
                                                          vk::CommandBuffer *commandBuffer);
 
-    std::array<DirtyBitHandler, DIRTY_BIT_MAX> mGraphicsDirtyBitHandlers;
-    std::array<DirtyBitHandler, DIRTY_BIT_MAX> mComputeDirtyBitHandlers;
+    struct DriverUniformsDescriptorSet
+    {
+        vk::DynamicBuffer dynamicBuffer;
+        VkDescriptorSet descriptorSet;
+        uint32_t dynamicOffset;
+        vk::BindingPointer<vk::DescriptorSetLayout> descriptorSetLayout;
+        vk::RefCountedDescriptorPoolBinding descriptorPoolBinding;
+
+        DriverUniformsDescriptorSet();
+        ~DriverUniformsDescriptorSet();
+
+        void init(RendererVk *rendererVk);
+        void destroy(VkDevice device);
+    };
 
     enum class PipelineType
     {
@@ -374,9 +450,46 @@ class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassO
         EnumCount   = 2,
     };
 
+    // The GpuEventQuery struct holds together a timestamp query and enough data to create a
+    // trace event based on that. Use traceGpuEvent to insert such queries.  They will be readback
+    // when the results are available, without inserting a GPU bubble.
+    //
+    // - eventName will be the reported name of the event
+    // - phase is either 'B' (duration begin), 'E' (duration end) or 'i' (instant // event).
+    //   See Google's "Trace Event Format":
+    //   https://docs.google.com/document/d/1CvAClvFfyA5R-PhYUmn5OOQtYMH4h6I0nSsKchNAySU
+    // - serial is the serial of the batch the query was submitted on.  Until the batch is
+    //   submitted, the query is not checked to avoid incuring a flush.
+    struct GpuEventQuery final
+    {
+        const char *name;
+        char phase;
+
+        uint32_t queryIndex;
+        size_t queryPoolIndex;
+
+        Serial serial;
+    };
+
+    // Once a query result is available, the timestamp is read and a GpuEvent object is kept until
+    // the next clock sync, at which point the clock drift is compensated in the results before
+    // handing them off to the application.
+    struct GpuEvent final
+    {
+        uint64_t gpuTimestampCycles;
+        const char *name;
+        char phase;
+    };
+
+    struct GpuClockSyncInfo
+    {
+        double gpuTimestampS;
+        double cpuTimestampS;
+    };
+
     angle::Result setupDraw(const gl::Context *context,
                             gl::PrimitiveMode mode,
-                            GLint firstVertex,
+                            GLint firstVertexOrInvalid,
                             GLsizei vertexOrIndexCount,
                             GLsizei instanceCount,
                             gl::DrawElementsType indexTypeOrInvalid,
@@ -390,6 +503,31 @@ class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassO
                                    gl::DrawElementsType indexType,
                                    const void *indices,
                                    vk::CommandBuffer **commandBufferOut);
+    angle::Result setupIndirectDraw(const gl::Context *context,
+                                    gl::PrimitiveMode mode,
+                                    DirtyBits dirtyBitMask,
+                                    vk::CommandBuffer **commandBufferOut,
+                                    vk::Buffer **indirectBufferOut);
+    angle::Result setupIndirectDrawHelper(const gl::Context *context,
+                                          gl::PrimitiveMode mode,
+                                          DirtyBits dirtyBitMask,
+                                          vk::CommandBuffer **commandBufferOut);
+    angle::Result setupIndexedIndirectDraw(const gl::Context *context,
+                                           gl::PrimitiveMode mode,
+                                           gl::DrawElementsType indexType,
+                                           vk::CommandBuffer **commandBufferOut,
+                                           vk::Buffer **indirectBufferOut);
+
+    angle::Result setupLineLoopIndexedIndirectDraw(const gl::Context *context,
+                                                   gl::PrimitiveMode mode,
+                                                   gl::DrawElementsType indexType,
+                                                   const gl::Buffer *indirectBuffer,
+                                                   VkDeviceSize indirectBufferOffset,
+                                                   const gl::Buffer *indexBuffer,
+                                                   vk::CommandBuffer **commandBufferOut,
+                                                   vk::Buffer **indirectBufferOut,
+                                                   VkDeviceSize *indirectBufferOffsetOut);
+
     angle::Result setupLineLoopDraw(const gl::Context *context,
                                     gl::PrimitiveMode mode,
                                     GLint firstVertex,
@@ -469,7 +607,6 @@ class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassO
     angle::Result handleDirtyShaderResourcesImpl(const gl::Context *context,
                                                  vk::CommandBuffer *commandBuffer,
                                                  vk::CommandGraphResource *recorder);
-    struct DriverUniformsDescriptorSet;
     angle::Result handleDirtyDescriptorSetsImpl(vk::CommandBuffer *commandBuffer,
                                                 VkPipelineBindPoint bindPoint,
                                                 const DriverUniformsDescriptorSet &driverUniforms);
@@ -495,14 +632,15 @@ class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassO
                                     const char *name);
     angle::Result checkCompletedGpuEvents();
     void flushGpuEvents(double nextSyncGpuTimestampS, double nextSyncCpuTimestampS);
-
     void handleDeviceLost();
-
     void waitForSwapchainImageIfNecessary();
-
     bool shouldEmulateSeamfulCubeMapSampling() const;
-
     bool shouldUseOldRewriteStructSamplers() const;
+    void clearAllGarbage();
+    angle::Result ensureSubmitFenceInitialized();
+
+    std::array<DirtyBitHandler, DIRTY_BIT_MAX> mGraphicsDirtyBitHandlers;
+    std::array<DirtyBitHandler, DIRTY_BIT_MAX> mComputeDirtyBitHandlers;
 
     vk::PipelineHelper *mCurrentGraphicsPipeline;
     vk::PipelineAndSerial *mCurrentComputePipeline;
@@ -572,21 +710,6 @@ class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassO
     // RewriteStructSamplers pass.
     bool mUseOldRewriteStructSamplers;
 
-    struct DriverUniformsDescriptorSet
-    {
-        vk::DynamicBuffer dynamicBuffer;
-        VkDescriptorSet descriptorSet;
-        uint32_t dynamicOffset;
-        vk::BindingPointer<vk::DescriptorSetLayout> descriptorSetLayout;
-        vk::RefCountedDescriptorPoolBinding descriptorPoolBinding;
-
-        DriverUniformsDescriptorSet();
-        ~DriverUniformsDescriptorSet();
-
-        void init(RendererVk *rendererVk);
-        void destroy(VkDevice device);
-    };
-
     angle::PackedEnumMap<PipelineType, DriverUniformsDescriptorSet> mDriverUniforms;
 
     // This cache should also probably include the texture index (shader location) and array
@@ -604,35 +727,8 @@ class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassO
     vk::CommandPool mCommandPool;
     std::vector<vk::CommandPool> mCommandPoolFreeList;
 
-    // We use a Persistent CommandPool with pre-allocated buffers for primary CommandBuffer
-    vk::PersistentCommandPool mPrimaryCommandPool;
-
-    Serial mLastCompletedQueueSerial;
-    Serial mLastSubmittedQueueSerial;
-    Serial mCurrentQueueSerial;
-
-    struct CommandBatch final : angle::NonCopyable
-    {
-        CommandBatch();
-        ~CommandBatch();
-        CommandBatch(CommandBatch &&other);
-        CommandBatch &operator=(CommandBatch &&other);
-
-        void destroy(VkDevice device);
-
-        vk::PrimaryCommandBuffer primaryCommands;
-        // commandPool is for secondary CommandBuffer allocation
-        vk::CommandPool commandPool;
-        vk::Shared<vk::Fence> fence;
-        Serial serial;
-    };
-
-    angle::Result releaseToCommandBatch(vk::PrimaryCommandBuffer &&commandBuffer,
-                                        CommandBatch *batch);
-    angle::Result recycleCommandBatch(CommandBatch *batch);
-
-    std::vector<CommandBatch> mInFlightCommands;
-    std::vector<vk::GarbageObject> mGarbage;
+    CommandQueue mCommandQueue;
+    vk::GarbageList mCurrentGarbage;
 
     RenderPassCache mRenderPassCache;
 
@@ -654,37 +750,6 @@ class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassO
     vk::ShaderLibrary mShaderLibrary;
     UtilsVk mUtils;
 
-    // The GpuEventQuery struct holds together a timestamp query and enough data to create a
-    // trace event based on that. Use traceGpuEvent to insert such queries.  They will be readback
-    // when the results are available, without inserting a GPU bubble.
-    //
-    // - eventName will be the reported name of the event
-    // - phase is either 'B' (duration begin), 'E' (duration end) or 'i' (instant // event).
-    //   See Google's "Trace Event Format":
-    //   https://docs.google.com/document/d/1CvAClvFfyA5R-PhYUmn5OOQtYMH4h6I0nSsKchNAySU
-    // - serial is the serial of the batch the query was submitted on.  Until the batch is
-    //   submitted, the query is not checked to avoid incuring a flush.
-    struct GpuEventQuery final
-    {
-        const char *name;
-        char phase;
-
-        uint32_t queryIndex;
-        size_t queryPoolIndex;
-
-        Serial serial;
-    };
-
-    // Once a query result is available, the timestamp is read and a GpuEvent object is kept until
-    // the next clock sync, at which point the clock drift is compensated in the results before
-    // handing them off to the application.
-    struct GpuEvent final
-    {
-        uint64_t gpuTimestampCycles;
-        const char *name;
-        char phase;
-    };
-
     bool mGpuEventsEnabled;
     vk::DynamicQueryPool mGpuEventQueryPool;
     // A list of queries that have yet to be turned into an event (their result is not yet
@@ -698,11 +763,6 @@ class ContextVk : public ContextImpl, public vk::Context, public vk::RenderPassO
     std::vector<VkPipelineStageFlags> mWaitSemaphoreStageMasks;
 
     // Hold information from the last gpu clock sync for future gpu-to-cpu timestamp conversions.
-    struct GpuClockSyncInfo
-    {
-        double gpuTimestampS;
-        double cpuTimestampS;
-    };
     GpuClockSyncInfo mGpuClockSync;
 
     // The very first timestamp queried for a GPU event is used as origin, so event timestamps would

@@ -24,7 +24,7 @@ class SamplerImpl;
 namespace gl
 {
 
-class Sampler final : public RefCountObject, public LabeledObject, public angle::Subject
+class Sampler final : public RefCountObject<SamplerID>, public LabeledObject, public angle::Subject
 {
   public:
     Sampler(rx::GLImplFactory *factory, SamplerID id);

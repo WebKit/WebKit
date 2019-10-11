@@ -238,7 +238,7 @@ if (!is_android) {
     configs += [ "//build/config/compiler:no_chromium_code" ]
     configs += [ ":vulkan_internal_config" ]
     public_configs = [
-      "$angle_root:vulkan_config",
+      "$angle_root/src/libANGLE/renderer/vulkan:vulkan_config",
       ":vulkan_loader_config",
     ]
     configs -= vulkan_undefine_configs

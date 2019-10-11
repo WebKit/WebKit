@@ -16,8 +16,6 @@
 #include "libANGLE/entry_points_utils.h"
 #include "libANGLE/frame_capture_utils_autogen.h"
 
-#include <tuple>
-
 namespace gl
 {
 enum class GLenumGroup;
@@ -149,6 +147,21 @@ class ReplayContext
     gl::AttribArray<std::vector<uint8_t>> mClientArraysBuffer;
 };
 
+// Helper to use unique IDs for each local data variable.
+class DataCounters final : angle::NonCopyable
+{
+  public:
+    DataCounters();
+    ~DataCounters();
+
+    int getAndIncrement(gl::EntryPoint entryPoint, const std::string &paramName);
+
+  private:
+    // <CallName, ParamName>
+    using Counter = std::pair<gl::EntryPoint, std::string>;
+    std::map<Counter, int> mData;
+};
+
 class FrameCapture final : angle::NonCopyable
 {
   public:
@@ -161,42 +174,23 @@ class FrameCapture final : angle::NonCopyable
     void replay(gl::Context *context);
 
   private:
-    // <CallName, ParamName>
-    using Counter = std::tuple<gl::EntryPoint, std::string>;
-
     void captureClientArraySnapshot(const gl::Context *context,
                                     size_t vertexCount,
                                     size_t instanceCount);
 
-    void writeCallReplay(const CallCapture &call,
-                         std::ostream &out,
-                         std::ostream &header,
-                         std::vector<uint8_t> *binaryData);
     void reset();
-    int getAndIncrementCounter(gl::EntryPoint entryPoint, const std::string &paramName);
-    bool anyClientArray() const;
-    void saveCapturedFrameAsCpp(int contextId);
-    void writeStringPointerParamReplay(std::ostream &out,
-                                       std::ostream &header,
-                                       const CallCapture &call,
-                                       const ParamCapture &param);
-    void writeRenderbufferIDPointerParamReplay(std::ostream &out,
-                                               std::ostream &header,
-                                               const CallCapture &call,
-                                               const ParamCapture &param);
-    void writeBinaryParamReplay(std::ostream &out,
-                                std::ostream &header,
-                                const CallCapture &call,
-                                const ParamCapture &param,
-                                std::vector<uint8_t> *binaryData);
     void maybeCaptureClientData(const gl::Context *context, const CallCapture &call);
     void maybeUpdateResourceIDs(const gl::Context *context, const CallCapture &call);
 
+    template <typename IDType>
+    void captureUpdateResourceIDs(const gl::Context *context,
+                                  const CallCapture &call,
+                                  const ParamCapture &param);
+
     std::vector<CallCapture> mCalls;
     gl::AttribArray<int> mClientVertexArrayMap;
-    size_t mFrameIndex;
+    uint32_t mFrameIndex;
     gl::AttribArray<size_t> mClientArraySizes;
-    std::map<Counter, int> mDataCounters;
     size_t mReadBufferSize;
 
     static void ReplayCall(gl::Context *context,
@@ -243,6 +237,13 @@ std::ostream &operator<<(std::ostream &os, const ParamCapture &capture);
 // Pointer capture helpers.
 void CaptureMemory(const void *source, size_t size, ParamCapture *paramCapture);
 void CaptureString(const GLchar *str, ParamCapture *paramCapture);
+void CaptureGenHandlesImpl(GLsizei n, GLuint *handles, ParamCapture *paramCapture);
+
+template <typename T>
+void CaptureGenHandles(GLsizei n, T *handles, ParamCapture *paramCapture)
+{
+    CaptureGenHandlesImpl(n, reinterpret_cast<GLuint *>(handles), paramCapture);
+}
 
 template <ParamType ParamT, typename T>
 void WriteParamValueToStream(std::ostream &os, T value);

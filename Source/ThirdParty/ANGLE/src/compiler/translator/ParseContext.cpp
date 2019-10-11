@@ -169,7 +169,8 @@ TParseContext::TParseContext(TSymbolTable &symt,
                              ShCompileOptions options,
                              bool checksPrecErrors,
                              TDiagnostics *diagnostics,
-                             const ShBuiltInResources &resources)
+                             const ShBuiltInResources &resources,
+                             ShShaderOutput outputType)
     : symbolTable(symt),
       mDeferredNonEmptyDeclarationErrorCheck(false),
       mShaderType(type),
@@ -217,7 +218,8 @@ TParseContext::TParseContext(TSymbolTable &symt,
       mGeometryShaderMaxVertices(-1),
       mMaxGeometryShaderInvocations(resources.MaxGeometryShaderInvocations),
       mMaxGeometryShaderMaxVertices(resources.MaxGeometryOutputVertices),
-      mFunctionBodyNewScope(false)
+      mFunctionBodyNewScope(false),
+      mOutputType(outputType)
 {}
 
 TParseContext::~TParseContext() {}
@@ -1014,15 +1016,18 @@ unsigned int TParseContext::checkIsValidArraySize(const TSourceLoc &line, TInter
         return 1u;
     }
 
-    // The size of arrays is restricted here to prevent issues further down the
-    // compiler/translator/driver stack. Shader Model 5 generation hardware is limited to
-    // 4096 registers so this should be reasonable even for aggressively optimizable code.
-    const unsigned int sizeLimit = 65536;
-
-    if (size > sizeLimit)
+    if (IsOutputHLSL(getOutputType()))
     {
-        error(line, "array size too large", "");
-        return 1u;
+        // The size of arrays is restricted here to prevent issues further down the
+        // compiler/translator/driver stack. Shader Model 5 generation hardware is limited to
+        // 4096 registers so this should be reasonable even for aggressively optimizable code.
+        const unsigned int sizeLimit = 65536;
+
+        if (size > sizeLimit)
+        {
+            error(line, "array size too large", "");
+            return 1u;
+        }
     }
 
     return size;
@@ -3364,10 +3369,9 @@ TFunction *TParseContext::parseFunctionDeclarator(const TSourceLoc &location, TF
 
     if (getShaderVersion() >= 300)
     {
-        const UnmangledBuiltIn *builtIn =
-            symbolTable.getUnmangledBuiltInForShaderVersion(function->name(), getShaderVersion());
-        if (builtIn &&
-            (builtIn->extension == TExtension::UNDEFINED || isExtensionEnabled(builtIn->extension)))
+
+        if (symbolTable.isUnmangledBuiltInName(function->name(), getShaderVersion(),
+                                               extensionBehavior()))
         {
             // With ESSL 3.00 and above, names of built-in functions cannot be redeclared as
             // functions. Therefore overloading or redefining builtin functions is an error.

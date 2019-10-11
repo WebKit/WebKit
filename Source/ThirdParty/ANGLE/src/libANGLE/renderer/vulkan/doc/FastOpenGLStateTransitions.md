@@ -13,7 +13,7 @@ cache reduces pipeline recompilation time significantly. But even cached
 pipeline recompilations are orders of manitude slower than OpenGL state changes.
 
 The second level cache is an ANGLE-owned hash map from OpenGL state vectors to compiled pipelines.
-See [GraphicsPipelineCache][GraphicsPipelineCache] in [vk_cache_utils.h](vk_cache_utils.h). ANGLE's
+See [GraphicsPipelineCache][GraphicsPipelineCache] in [vk_cache_utils.h](../vk_cache_utils.h). ANGLE's
 [GraphicsPipelineDesc][GraphicsPipelineDesc] class is a tightly packed 256-byte description of the
 current OpenGL rendering state. We also use a [xxHash](https://github.com/Cyan4973/xxHash) for the
 fastest possible hash computation. The hash map speeds up state changes considerably. But it is

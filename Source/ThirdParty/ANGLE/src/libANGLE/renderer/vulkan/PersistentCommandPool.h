@@ -27,10 +27,10 @@ class PersistentCommandPool final
     PersistentCommandPool();
     ~PersistentCommandPool();
 
-    void destroy(const vk::Context *context);
+    void destroy(VkDevice device);
     angle::Result init(vk::Context *context, uint32_t queueFamilyIndex);
 
-    angle::Result alloc(vk::Context *context, vk::PrimaryCommandBuffer *bufferOutput);
+    angle::Result allocate(vk::Context *context, vk::PrimaryCommandBuffer *commandBufferOut);
     angle::Result collect(vk::Context *context, vk::PrimaryCommandBuffer &&buffer);
 
     bool valid() const { return mCommandPool.valid(); }

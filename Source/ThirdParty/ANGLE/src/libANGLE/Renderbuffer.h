@@ -61,7 +61,9 @@ class RenderbufferState final : angle::NonCopyable
     InitState mInitState;
 };
 
-class Renderbuffer final : public RefCountObject, public egl::ImageSibling, public LabeledObject
+class Renderbuffer final : public RefCountObject<RenderbufferID>,
+                           public egl::ImageSibling,
+                           public LabeledObject
 {
   public:
     Renderbuffer(rx::GLImplFactory *implFactory, RenderbufferID id);

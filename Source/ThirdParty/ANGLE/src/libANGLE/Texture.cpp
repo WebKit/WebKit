@@ -616,7 +616,7 @@ void TextureState::clearImageDescs()
 }
 
 Texture::Texture(rx::GLImplFactory *factory, TextureID id, TextureType type)
-    : RefCountObject(id.value),
+    : RefCountObject(id),
       mState(type),
       mTexture(factory->createTexture(mState)),
       mImplObserver(this, rx::kTextureImageImplObserverMessageIndex),
@@ -1266,10 +1266,11 @@ angle::Result Texture::setStorage(Context *context,
     ANGLE_TRY(releaseTexImageInternal(context));
     ANGLE_TRY(orphanImages(context));
 
-    ANGLE_TRY(mTexture->setStorage(context, type, levels, internalFormat, size));
-
     mState.mImmutableFormat = true;
     mState.mImmutableLevels = static_cast<GLuint>(levels);
+
+    ANGLE_TRY(mTexture->setStorage(context, type, levels, internalFormat, size));
+
     mState.clearImageDescs();
     mState.setImageDescChain(0, static_cast<GLuint>(levels - 1), size, Format(internalFormat),
                              InitState::MayNeedInit);
@@ -1673,7 +1674,7 @@ void Texture::onDetach(const Context *context)
 
 GLuint Texture::getId() const
 {
-    return id();
+    return id().value;
 }
 
 GLuint Texture::getNativeID() const

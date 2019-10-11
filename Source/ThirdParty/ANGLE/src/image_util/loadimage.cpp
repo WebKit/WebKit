@@ -1236,6 +1236,86 @@ void LoadD24S8ToD32FS8X24(size_t width,
     }
 }
 
+void LoadD24S8ToD32F(size_t width,
+                     size_t height,
+                     size_t depth,
+                     const uint8_t *input,
+                     size_t inputRowPitch,
+                     size_t inputDepthPitch,
+                     uint8_t *output,
+                     size_t outputRowPitch,
+                     size_t outputDepthPitch)
+{
+    for (size_t z = 0; z < depth; z++)
+    {
+        for (size_t y = 0; y < height; y++)
+        {
+            const uint32_t *source =
+                priv::OffsetDataPointer<uint32_t>(input, y, z, inputRowPitch, inputDepthPitch);
+            float *destDepth =
+                priv::OffsetDataPointer<float>(output, y, z, outputRowPitch, outputDepthPitch);
+            for (size_t x = 0; x < width; x++)
+            {
+                uint32_t sourcePixel = (source[x] >> 8) & 0xFFFFFF;
+                destDepth[x]         = sourcePixel / static_cast<float>(0xFFFFFF);
+            }
+        }
+    }
+}
+
+void LoadD32ToD32FX32(size_t width,
+                      size_t height,
+                      size_t depth,
+                      const uint8_t *input,
+                      size_t inputRowPitch,
+                      size_t inputDepthPitch,
+                      uint8_t *output,
+                      size_t outputRowPitch,
+                      size_t outputDepthPitch)
+{
+    for (size_t z = 0; z < depth; z++)
+    {
+        for (size_t y = 0; y < height; y++)
+        {
+            const uint32_t *source =
+                priv::OffsetDataPointer<uint32_t>(input, y, z, inputRowPitch, inputDepthPitch);
+            float *destDepth =
+                priv::OffsetDataPointer<float>(output, y, z, outputRowPitch, outputDepthPitch);
+            for (size_t x = 0; x < width; x++)
+            {
+                destDepth[x * 2] = source[x] / static_cast<float>(0xFFFFFFFF);
+            }
+        }
+    }
+}
+
+void LoadD32ToD32F(size_t width,
+                   size_t height,
+                   size_t depth,
+                   const uint8_t *input,
+                   size_t inputRowPitch,
+                   size_t inputDepthPitch,
+                   uint8_t *output,
+                   size_t outputRowPitch,
+                   size_t outputDepthPitch)
+{
+    for (size_t z = 0; z < depth; z++)
+    {
+        for (size_t y = 0; y < height; y++)
+        {
+            const uint32_t *source =
+                priv::OffsetDataPointer<uint32_t>(input, y, z, inputRowPitch, inputDepthPitch);
+            float *destDepth =
+                priv::OffsetDataPointer<float>(output, y, z, outputRowPitch, outputDepthPitch);
+            for (size_t x = 0; x < width; x++)
+            {
+                uint32_t sourcePixel = source[x];
+                destDepth[x]         = sourcePixel / static_cast<float>(0xFFFFFFFF);
+            }
+        }
+    }
+}
+
 void LoadD32FToD32F(size_t width,
                     size_t height,
                     size_t depth,

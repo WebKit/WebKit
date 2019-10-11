@@ -193,8 +193,8 @@ inline void CopyTo32FVertexData(const uint8_t *input, size_t stride, size_t coun
             {
                 if (NL::is_signed)
                 {
-                    const float divisor = 1.0f / (2 * static_cast<float>(NL::max()) + 1);
-                    offsetOutput[j]     = (2 * static_cast<float>(offsetInput[j]) + 1) * divisor;
+                    offsetOutput[j] = static_cast<float>(offsetInput[j]) / NL::max();
+                    offsetOutput[j] = (offsetOutput[j] >= -1.0f) ? (offsetOutput[j]) : (-1.0f);
                 }
                 else
                 {
@@ -476,4 +476,68 @@ inline void CopyXYZ10W2ToXYZW32FVertexData(const uint8_t *input,
     }
 }
 
+template <bool isSigned, bool normalized>
+inline void CopyXYZ10ToXYZW32FVertexData(const uint8_t *input,
+                                         size_t stride,
+                                         size_t count,
+                                         uint8_t *output)
+{
+    const size_t outputComponentSize = 4;
+    const size_t componentCount      = 4;
+
+    const uint32_t rgbMask  = 0x3FF;  // 1 set in bits 0 through 9
+    const size_t redShift   = 22;     // red is bits 22 through 31
+    const size_t greenShift = 12;     // green is bits 12 through 21
+    const size_t blueShift  = 2;      // blue is bits 2 through 11
+
+    const uint32_t alphaDefaultValueBits = normalized ? (isSigned ? 0x1 : 0x3) : 0x1;
+
+    for (size_t i = 0; i < count; i++)
+    {
+        GLuint packedValue    = *reinterpret_cast<const GLuint *>(input + (i * stride));
+        uint8_t *offsetOutput = output + (i * outputComponentSize * componentCount);
+
+        priv::CopyPackedRGB<isSigned, normalized, true>((packedValue >> redShift) & rgbMask,
+                                                        offsetOutput + (0 * outputComponentSize));
+        priv::CopyPackedRGB<isSigned, normalized, true>((packedValue >> greenShift) & rgbMask,
+                                                        offsetOutput + (1 * outputComponentSize));
+        priv::CopyPackedRGB<isSigned, normalized, true>((packedValue >> blueShift) & rgbMask,
+                                                        offsetOutput + (2 * outputComponentSize));
+        priv::CopyPackedAlpha<isSigned, normalized, true>(alphaDefaultValueBits,
+                                                          offsetOutput + (3 * outputComponentSize));
+    }
+}
+
+template <bool isSigned, bool normalized>
+inline void CopyW2XYZ10ToXYZW32FVertexData(const uint8_t *input,
+                                           size_t stride,
+                                           size_t count,
+                                           uint8_t *output)
+{
+    const size_t outputComponentSize = 4;
+    const size_t componentCount      = 4;
+
+    const uint32_t rgbMask  = 0x3FF;  // 1 set in bits 0 through 9
+    const size_t redShift   = 22;     // red is bits 22 through 31
+    const size_t greenShift = 12;     // green is bits 12 through 21
+    const size_t blueShift  = 2;      // blue is bits 2 through 11
+
+    const uint32_t alphaMask = 0x3;  // 1 set in bits 0 and 1
+    const size_t alphaShift  = 0;    // Alpha is the 30 and 31 bits
+
+    for (size_t i = 0; i < count; i++)
+    {
+        GLuint packedValue    = *reinterpret_cast<const GLuint *>(input + (i * stride));
+        uint8_t *offsetOutput = output + (i * outputComponentSize * componentCount);
+
+        priv::CopyPackedRGB<isSigned, normalized, true>((packedValue >> redShift) & rgbMask,
+                                                        offsetOutput + (0 * outputComponentSize));
+        priv::CopyPackedRGB<isSigned, normalized, true>((packedValue >> greenShift) & rgbMask,
+                                                        offsetOutput + (1 * outputComponentSize));
+        priv::CopyPackedRGB<isSigned, normalized, true>((packedValue >> blueShift) & rgbMask,
+                                                        offsetOutput + (2 * outputComponentSize));
+        priv::CopyPackedAlpha<isSigned, normalized, true>((packedValue >> alphaShift) & alphaMask,
+                                                          offsetOutput + (3 * outputComponentSize));
+    }
+}
 }  // namespace rx

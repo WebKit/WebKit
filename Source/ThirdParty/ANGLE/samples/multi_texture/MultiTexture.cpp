@@ -17,7 +17,7 @@
 
 #include "tga_utils.h"
 #include "util/shader_utils.h"
-#include "util/system_utils.h"
+#include "util/test_utils.h"
 
 class MultiTextureSample : public SampleApplication
 {

@@ -229,8 +229,11 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
         std::vector<std::string> transformFeedbackVaryingMappedNames;
         for (const auto &tfVarying : mState.getTransformFeedbackVaryingNames())
         {
+            gl::ShaderType tfShaderType = mState.hasLinkedShaderStage(gl::ShaderType::Geometry)
+                                              ? gl::ShaderType::Geometry
+                                              : gl::ShaderType::Vertex;
             std::string tfVaryingMappedName =
-                mState.getAttachedShader(gl::ShaderType::Vertex)
+                mState.getAttachedShader(tfShaderType)
                     ->getTransformFeedbackVaryingMappedName(tfVarying);
             transformFeedbackVaryingMappedNames.push_back(tfVaryingMappedName);
         }
@@ -267,7 +270,7 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
         }
 
         // Bind attribute locations to match the GL layer.
-        for (const sh::ShaderVariable &attribute : mState.getAttributes())
+        for (const sh::ShaderVariable &attribute : mState.getProgramInputs())
         {
             if (!attribute.active || attribute.isBuiltIn())
             {

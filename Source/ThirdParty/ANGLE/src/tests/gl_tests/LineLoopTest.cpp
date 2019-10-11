@@ -43,6 +43,27 @@ class LineLoopTest : public ANGLETest
 
     void testTearDown() override { glDeleteProgram(mProgram); }
 
+    void checkPixels()
+    {
+        std::vector<GLubyte> pixels(getWindowWidth() * getWindowHeight() * 4);
+        glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+                     &pixels[0]);
+
+        ASSERT_GL_NO_ERROR();
+
+        for (int y = 0; y < getWindowHeight(); y++)
+        {
+            for (int x = 0; x < getWindowWidth(); x++)
+            {
+                const GLubyte *pixel = &pixels[0] + ((y * getWindowWidth() + x) * 4);
+
+                EXPECT_EQ(pixel[0], 0);
+                EXPECT_EQ(pixel[1], pixel[2]);
+                ASSERT_EQ(pixel[3], 255);
+            }
+        }
+    }
+
     void runTest(GLenum indexType, GLuint indexBuffer, const void *indexPtr)
     {
         glClear(GL_COLOR_BUFFER_BIT);
@@ -67,23 +88,7 @@ class LineLoopTest : public ANGLETest
         glUniform4f(mColorLocation, 0, 1, 0, 1);
         glDrawElements(GL_LINE_STRIP, 5, GL_UNSIGNED_BYTE, stripIndices);
 
-        std::vector<GLubyte> pixels(getWindowWidth() * getWindowHeight() * 4);
-        glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
-                     &pixels[0]);
-
-        ASSERT_GL_NO_ERROR();
-
-        for (int y = 0; y < getWindowHeight(); y++)
-        {
-            for (int x = 0; x < getWindowWidth(); x++)
-            {
-                const GLubyte *pixel = &pixels[0] + ((y * getWindowWidth() + x) * 4);
-
-                EXPECT_EQ(pixel[0], 0);
-                EXPECT_EQ(pixel[1], pixel[2]);
-                EXPECT_EQ(pixel[3], 255);
-            }
-        }
+        checkPixels();
     }
 
     GLuint mProgram;
@@ -197,6 +202,112 @@ TEST_P(LineLoopTest, DISABLED_DrawArraysWithLargeCount)
     EXPECT_GL_NO_ERROR();
 }
 
+class LineLoopIndirectTest : public LineLoopTest
+{
+  protected:
+    void runTest(GLenum indexType, const void *indices, GLuint indicesSize, GLuint firstIndex)
+    {
+        struct DrawCommand
+        {
+            GLuint count;
+            GLuint primCount;
+            GLuint firstIndex;
+            GLint baseVertex;
+            GLuint reservedMustBeZero;
+        };
+
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        static const GLfloat loopPositions[] = {0.0f,  0.0f, 0.0f, 0.0f, 0.0f, 0.0f,  0.0f,
+                                                0.0f,  0.0f, 0.0f, 0.0f, 0.0f, -0.5f, -0.5f,
+                                                -0.5f, 0.5f, 0.5f, 0.5f, 0.5f, -0.5f};
+
+        static const GLfloat stripPositions[] = {-0.5f, -0.5f, -0.5f, 0.5f,
+                                                 0.5f,  0.5f,  0.5f,  -0.5f};
+        static const GLubyte stripIndices[]   = {1, 0, 3, 2, 1};
+
+        glUseProgram(mProgram);
+
+        GLuint vertexArray = 0;
+        glGenVertexArrays(1, &vertexArray);
+        glBindVertexArray(vertexArray);
+
+        ASSERT_GL_NO_ERROR();
+
+        GLuint vertBuffer = 0;
+        glGenBuffers(1, &vertBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, vertBuffer);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(loopPositions), loopPositions, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(mPositionLocation);
+        glVertexAttribPointer(mPositionLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+        glUniform4f(mColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+
+        ASSERT_GL_NO_ERROR();
+
+        GLuint buf;
+        glGenBuffers(1, &buf);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buf);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize, indices, GL_STATIC_DRAW);
+
+        DrawCommand cmdBuffer = {};
+        cmdBuffer.count       = 4;
+        cmdBuffer.firstIndex  = firstIndex;
+        cmdBuffer.primCount   = 1;
+        GLuint indirectBuf    = 0;
+        glGenBuffers(1, &indirectBuf);
+        glBindBuffer(GL_DRAW_INDIRECT_BUFFER, indirectBuf);
+        glBufferData(GL_DRAW_INDIRECT_BUFFER, sizeof(DrawCommand), &cmdBuffer, GL_STATIC_DRAW);
+
+        ASSERT_GL_NO_ERROR();
+
+        glDrawElementsIndirect(GL_LINE_LOOP, indexType, nullptr);
+        ASSERT_GL_NO_ERROR();
+
+        glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
+        glDeleteBuffers(1, &indirectBuf);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glDeleteBuffers(1, &buf);
+
+        glBindVertexArray(0);
+        glDeleteVertexArrays(1, &vertexArray);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glDeleteBuffers(1, &vertBuffer);
+
+        glEnableVertexAttribArray(mPositionLocation);
+        glVertexAttribPointer(mPositionLocation, 2, GL_FLOAT, GL_FALSE, 0, stripPositions);
+        glUniform4f(mColorLocation, 0, 1, 0, 1);
+        glDrawElements(GL_LINE_STRIP, 5, GL_UNSIGNED_BYTE, stripIndices);
+
+        checkPixels();
+    }
+};
+
+TEST_P(LineLoopIndirectTest, UByteIndexIndirectBuffer)
+{
+
+    // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
+    ignoreD3D11SDKLayersWarnings();
+
+    static const GLubyte indices[] = {0, 7, 6, 9, 8, 0};
+
+    // Start at index 1.
+    runTest(GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(indices), sizeof(indices), 1);
+}
+
+TEST_P(LineLoopIndirectTest, UShortIndexIndirectBuffer)
+{
+
+    // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
+    ignoreD3D11SDKLayersWarnings();
+
+    static const GLushort indices[] = {0, 7, 6, 9, 8, 0};
+
+    // Start at index 1.
+    runTest(GL_UNSIGNED_SHORT, reinterpret_cast<const void *>(indices), sizeof(indices), 1);
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST(LineLoopTest,
@@ -205,3 +316,5 @@ ANGLE_INSTANTIATE_TEST(LineLoopTest,
                        ES2_OPENGL(),
                        ES2_OPENGLES(),
                        ES2_VULKAN());
+
+ANGLE_INSTANTIATE_TEST(LineLoopIndirectTest, ES31_OPENGLES(), ES31_VULKAN());

@@ -32,8 +32,13 @@ void FillTextureFormatCaps(RendererVk *renderer, VkFormat format, gl::TextureCap
         renderer->hasImageFormatFeatureBits(format, VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT);
     outTextureCaps->filterable = renderer->hasImageFormatFeatureBits(
         format, VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT);
+
+    // For renderbuffer and texture attachments we require transfer and sampling for
+    // GLES 2.0 CopyTexImage support. Sampling is also required for other features like
+    // blits and EGLImages.
     outTextureCaps->textureAttachment =
-        hasColorAttachmentFeatureBit || hasDepthAttachmentFeatureBit;
+        outTextureCaps->texturable &&
+        (hasColorAttachmentFeatureBit || hasDepthAttachmentFeatureBit);
     outTextureCaps->renderbuffer = outTextureCaps->textureAttachment;
 
     if (outTextureCaps->renderbuffer)
@@ -342,55 +347,51 @@ void MapSwizzleState(const ContextVk *contextVk,
 
     gl::SwizzleState internalSwizzle;
 
-    switch (format.internalFormat)
+    if (angleFormat.isLUMA())
     {
-        case GL_LUMINANCE8_OES:
-            internalSwizzle.swizzleRed   = GL_RED;
-            internalSwizzle.swizzleGreen = GL_RED;
-            internalSwizzle.swizzleBlue  = GL_RED;
-            internalSwizzle.swizzleAlpha = GL_ONE;
-            break;
-        case GL_LUMINANCE8_ALPHA8_OES:
-            internalSwizzle.swizzleRed   = GL_RED;
-            internalSwizzle.swizzleGreen = GL_RED;
-            internalSwizzle.swizzleBlue  = GL_RED;
-            internalSwizzle.swizzleAlpha = GL_GREEN;
-            break;
-        case GL_ALPHA8_OES:
-            internalSwizzle.swizzleRed   = GL_ZERO;
-            internalSwizzle.swizzleGreen = GL_ZERO;
-            internalSwizzle.swizzleBlue  = GL_ZERO;
-            internalSwizzle.swizzleAlpha = GL_RED;
-            break;
-        default:
-            if (angleFormat.hasDepthOrStencilBits())
-            {
-                bool hasRed = angleFormat.depthBits > 0;
-                // In OES_depth_texture/ARB_depth_texture, depth
-                // textures are treated as luminance.
-                // If the internalformat was not sized, use OES_depth_texture behavior
-                bool hasGB = hasRed && !sized;
+        GLenum swizzleRGB, swizzleA;
+        if (angleFormat.luminanceBits > 0)
+        {
+            swizzleRGB = GL_RED;
+            swizzleA   = (angleFormat.alphaBits > 0 ? GL_GREEN : GL_ONE);
+        }
+        else
+        {
+            swizzleRGB = GL_ZERO;
+            swizzleA   = GL_RED;
+        }
+        internalSwizzle.swizzleRed   = swizzleRGB;
+        internalSwizzle.swizzleGreen = swizzleRGB;
+        internalSwizzle.swizzleBlue  = swizzleRGB;
+        internalSwizzle.swizzleAlpha = swizzleA;
+    }
+    else
+    {
+        if (angleFormat.hasDepthOrStencilBits())
+        {
+            bool hasRed = angleFormat.depthBits > 0;
+            // In OES_depth_texture/ARB_depth_texture, depth
+            // textures are treated as luminance.
+            // If the internalformat was not sized, use OES_depth_texture behavior
+            bool hasGB = hasRed && !sized;
 
-                internalSwizzle.swizzleRed   = hasRed ? GL_RED : GL_ZERO;
-                internalSwizzle.swizzleGreen = hasGB ? GL_RED : GL_ZERO;
-                internalSwizzle.swizzleBlue  = hasGB ? GL_RED : GL_ZERO;
-                internalSwizzle.swizzleAlpha = GL_ONE;
-            }
-            else
+            internalSwizzle.swizzleRed   = hasRed ? GL_RED : GL_ZERO;
+            internalSwizzle.swizzleGreen = hasGB ? GL_RED : GL_ZERO;
+            internalSwizzle.swizzleBlue  = hasGB ? GL_RED : GL_ZERO;
+            internalSwizzle.swizzleAlpha = GL_ONE;
+        }
+        else
+        {
+            // Color bits are all zero for blocked formats
+            if (!angleFormat.isBlock)
             {
-                if (angleFormat.isBlock)
-                {
-                    // Color bits are all zero for blocked formats, so the
-                    // below will erroneously set swizzle to (0, 0, 0, 1).
-                    break;
-                }
                 // Set any missing channel to default in case the emulated format has that channel.
                 internalSwizzle.swizzleRed   = angleFormat.redBits > 0 ? GL_RED : GL_ZERO;
                 internalSwizzle.swizzleGreen = angleFormat.greenBits > 0 ? GL_GREEN : GL_ZERO;
                 internalSwizzle.swizzleBlue  = angleFormat.blueBits > 0 ? GL_BLUE : GL_ZERO;
                 internalSwizzle.swizzleAlpha = angleFormat.alphaBits > 0 ? GL_ALPHA : GL_ONE;
             }
-            break;
+        }
     }
     ComposeSwizzleState(internalSwizzle, swizzleState, swizzleStateOut);
 }

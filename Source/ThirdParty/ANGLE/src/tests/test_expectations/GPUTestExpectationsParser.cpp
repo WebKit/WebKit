@@ -70,6 +70,7 @@ enum Token
     kConfigGLDesktop,
     kConfigGLES,
     kConfigVulkan,
+    kConfigSwiftShader,
     // Android devices
     kConfigNexus5X,
     kConfigPixel2,
@@ -144,6 +145,7 @@ const TokenInfo kTokenData[kNumberOfTokens] = {
     {"opengl", GPUTestConfig::kConditionGLDesktop},
     {"gles", GPUTestConfig::kConditionGLES},
     {"vulkan", GPUTestConfig::kConditionVulkan},
+    {"swiftshader", GPUTestConfig::kConditionSwiftShader},
     {"nexus5x", GPUTestConfig::kConditionNexus5X},
     {"pixel2", GPUTestConfig::kConditionPixel2},
     {"quadrop400", GPUTestConfig::kConditionNVIDIAQuadroP400},
@@ -392,6 +394,7 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig &config,
             case kConfigGLDesktop:
             case kConfigGLES:
             case kConfigVulkan:
+            case kConfigSwiftShader:
             case kConfigNexus5X:
             case kConfigPixel2:
             case kConfigNVIDIAQuadroP400:

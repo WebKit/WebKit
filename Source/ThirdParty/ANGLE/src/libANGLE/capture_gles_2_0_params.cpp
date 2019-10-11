@@ -100,7 +100,7 @@ void CaptureDeleteBuffers_buffersPacked(const Context *context,
                                         const BufferID *buffers,
                                         ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureMemory(buffers, sizeof(BufferID) * n, paramCapture);
 }
 
 void CaptureDeleteFramebuffers_framebuffersPacked(const Context *context,
@@ -109,7 +109,7 @@ void CaptureDeleteFramebuffers_framebuffersPacked(const Context *context,
                                                   const FramebufferID *framebuffers,
                                                   ParamCapture *paramCapture)
 {
-    CaptureMemory(framebuffers, sizeof(GLuint) * n, paramCapture);
+    CaptureMemory(framebuffers, sizeof(FramebufferID) * n, paramCapture);
 }
 
 void CaptureDeleteRenderbuffers_renderbuffersPacked(const Context *context,
@@ -127,7 +127,7 @@ void CaptureDeleteTextures_texturesPacked(const Context *context,
                                           const TextureID *textures,
                                           ParamCapture *paramCapture)
 {
-    CaptureMemory(textures, sizeof(GLuint) * n, paramCapture);
+    CaptureMemory(textures, sizeof(TextureID) * n, paramCapture);
 }
 
 void CaptureDrawElements_indices(const Context *context,
@@ -156,7 +156,7 @@ void CaptureGenBuffers_buffersPacked(const Context *context,
                                      BufferID *buffers,
                                      ParamCapture *paramCapture)
 {
-    paramCapture->readBufferSizeBytes = sizeof(GLuint) * n;
+    CaptureGenHandles(n, buffers, paramCapture);
 }
 
 void CaptureGenFramebuffers_framebuffersPacked(const Context *context,
@@ -165,7 +165,7 @@ void CaptureGenFramebuffers_framebuffersPacked(const Context *context,
                                                FramebufferID *framebuffers,
                                                ParamCapture *paramCapture)
 {
-    paramCapture->readBufferSizeBytes = sizeof(GLuint) * n;
+    CaptureGenHandles(n, framebuffers, paramCapture);
 }
 
 void CaptureGenRenderbuffers_renderbuffersPacked(const Context *context,
@@ -174,8 +174,7 @@ void CaptureGenRenderbuffers_renderbuffersPacked(const Context *context,
                                                  RenderbufferID *renderbuffers,
                                                  ParamCapture *paramCapture)
 {
-    paramCapture->readBufferSizeBytes = sizeof(RenderbufferID) * n;
-    CaptureMemory(renderbuffers, paramCapture->readBufferSizeBytes, paramCapture);
+    CaptureGenHandles(n, renderbuffers, paramCapture);
 }
 
 void CaptureGenTextures_texturesPacked(const Context *context,
@@ -184,7 +183,7 @@ void CaptureGenTextures_texturesPacked(const Context *context,
                                        TextureID *textures,
                                        ParamCapture *paramCapture)
 {
-    paramCapture->readBufferSizeBytes = sizeof(GLuint) * n;
+    CaptureGenHandles(n, textures, paramCapture);
 }
 
 void CaptureGetActiveAttrib_length(const Context *context,
@@ -643,10 +642,11 @@ void CaptureShaderSource_string(const Context *context,
 {
     for (GLsizei index = 0; index < count; ++index)
     {
+        size_t len = ((length && length[index] >= 0) ? length[index] : strlen(string[index]));
         // includes the '\0' suffix
-        size_t len = (length ? length[index] : strlen(string[index])) + 1;
-        CaptureMemory(string[index], len, paramCapture);
-        paramCapture->data[paramCapture->data.size() - 1][len] = '\0';
+        std::vector<uint8_t> data(len + 1, 0);
+        memcpy(data.data(), string[index], len);
+        paramCapture->data.emplace_back(std::move(data));
     }
 }
 

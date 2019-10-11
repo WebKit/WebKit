@@ -805,15 +805,15 @@ void MakeValidSize(bool isImage,
 
 void InitializeFeatures(angle::FeaturesD3D *features)
 {
-    features->mrtPerfWorkaround.enabled                = true;
-    features->setDataFasterThanImageUpload.enabled     = false;
-    features->useInstancedPointSpriteEmulation.enabled = false;
+    ANGLE_FEATURE_CONDITION(features, mrtPerfWorkaround, true)
+    ANGLE_FEATURE_CONDITION(features, setDataFasterThanImageUpload, false)
+    ANGLE_FEATURE_CONDITION(features, useInstancedPointSpriteEmulation, false)
 
     // TODO(jmadill): Disable workaround when we have a fixed compiler DLL.
-    features->expandIntegerPowExpressions.enabled = true;
+    ANGLE_FEATURE_CONDITION(features, expandIntegerPowExpressions, true)
 
     // Never clear for robust resource init.  This matches Chrome's texture clearning behaviour.
-    features->allowClearForRobustResourceInit.enabled = false;
+    ANGLE_FEATURE_CONDITION(features, allowClearForRobustResourceInit, false)
 
     // Call platform hooks for testing overrides.
     auto *platform = ANGLEPlatformCurrent();

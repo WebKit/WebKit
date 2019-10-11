@@ -11,10 +11,11 @@
 
 #include "ANGLEPerfTestArgs.h"
 #include "common/platform.h"
+#include "common/system_utils.h"
 #include "third_party/perf/perf_test.h"
 #include "third_party/trace_event/trace_event.h"
 #include "util/shader_utils.h"
-#include "util/system_utils.h"
+#include "util/test_utils.h"
 
 #include <cassert>
 #include <cmath>

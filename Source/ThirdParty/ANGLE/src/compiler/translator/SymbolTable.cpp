@@ -21,6 +21,38 @@
 
 namespace sh
 {
+namespace
+{
+bool CheckShaderType(Shader expected, GLenum actual)
+{
+    switch (expected)
+    {
+        case Shader::ALL:
+            return true;
+        case Shader::FRAGMENT:
+            return actual == GL_FRAGMENT_SHADER;
+        case Shader::VERTEX:
+            return actual == GL_VERTEX_SHADER;
+        case Shader::COMPUTE:
+            return actual == GL_COMPUTE_SHADER;
+        case Shader::GEOMETRY:
+            return actual == GL_GEOMETRY_SHADER;
+        case Shader::GEOMETRY_EXT:
+            return actual == GL_GEOMETRY_SHADER_EXT;
+        case Shader::NOT_COMPUTE:
+            return actual != GL_COMPUTE_SHADER;
+        default:
+            UNREACHABLE();
+            return false;
+    }
+}
+
+bool CheckExtension(uint32_t extensionIndex, const ShBuiltInResources &resources)
+{
+    const int *resourcePtr = reinterpret_cast<const int *>(&resources);
+    return resourcePtr[extensionIndex] > 0;
+}
+}  // namespace
 
 class TSymbolTable::TSymbolTableLevel
 {
@@ -133,7 +165,7 @@ bool TSymbolTable::setGlInArraySize(unsigned int inputArraySize)
     {
         return mGlInVariableWithArraySize->getType().getOutermostArraySize() == inputArraySize;
     }
-    const TInterfaceBlock *glPerVertex = static_cast<const TInterfaceBlock *>(mVar_gl_PerVertex);
+    const TInterfaceBlock *glPerVertex = static_cast<const TInterfaceBlock *>(m_gl_PerVertex);
     TType *glInType = new TType(glPerVertex, EvqPerVertexIn, TLayoutQualifier::Create());
     glInType->makeArray(inputArraySize);
     mGlInVariableWithArraySize =
@@ -149,12 +181,12 @@ TVariable *TSymbolTable::getGlInVariableWithArraySize() const
 
 const TVariable *TSymbolTable::gl_FragData() const
 {
-    return static_cast<const TVariable *>(mVar_gl_FragData);
+    return static_cast<const TVariable *>(m_gl_FragData);
 }
 
 const TVariable *TSymbolTable::gl_SecondaryFragDataEXT() const
 {
-    return static_cast<const TVariable *>(mVar_gl_SecondaryFragDataEXT);
+    return static_cast<const TVariable *>(m_gl_SecondaryFragDataEXT);
 }
 
 TSymbolTable::VariableMetadata *TSymbolTable::getOrCreateVariableMetadata(const TVariable &variable)
@@ -416,4 +448,87 @@ void TSymbolTable::initSamplerDefaultPrecision(TBasicType samplerType)
 TSymbolTable::VariableMetadata::VariableMetadata()
     : staticRead(false), staticWrite(false), invariant(false)
 {}
+
+const TSymbol *SymbolRule::get(ShShaderSpec shaderSpec,
+                               int shaderVersion,
+                               sh::GLenum shaderType,
+                               const ShBuiltInResources &resources,
+                               const TSymbolTableBase &symbolTable) const
+{
+    if (IsDesktopGLSpec(shaderSpec) != (mIsDesktop == 1))
+        return nullptr;
+
+    if (mVersion == kESSL1Only && shaderVersion != static_cast<int>(kESSL1Only))
+        return nullptr;
+
+    if (mVersion > shaderVersion)
+        return nullptr;
+
+    if (!CheckShaderType(static_cast<Shader>(mShaders), shaderType))
+        return nullptr;
+
+    if (mExtensionIndex != 0 && !CheckExtension(mExtensionIndex, resources))
+        return nullptr;
+
+    return mIsVar > 0 ? symbolTable.*(mSymbolOrVar.var) : mSymbolOrVar.symbol;
+}
+
+const TSymbol *FindMangledBuiltIn(ShShaderSpec shaderSpec,
+                                  int shaderVersion,
+                                  sh::GLenum shaderType,
+                                  const ShBuiltInResources &resources,
+                                  const TSymbolTableBase &symbolTable,
+                                  const SymbolRule *rules,
+                                  uint16_t startIndex,
+                                  uint16_t endIndex)
+{
+    for (uint32_t ruleIndex = startIndex; ruleIndex < endIndex; ++ruleIndex)
+    {
+        const TSymbol *symbol =
+            rules[ruleIndex].get(shaderSpec, shaderVersion, shaderType, resources, symbolTable);
+        if (symbol)
+        {
+            return symbol;
+        }
+    }
+
+    return nullptr;
+}
+
+bool UnmangledEntry::matches(const ImmutableString &name,
+                             ShShaderSpec shaderSpec,
+                             int shaderVersion,
+                             sh::GLenum shaderType,
+                             const TExtensionBehavior &extensions) const
+{
+    if (name != mName)
+        return false;
+
+    if (!CheckShaderType(static_cast<Shader>(mShaderType), shaderType))
+        return false;
+
+    if (IsDesktopGLSpec(shaderSpec))
+    {
+        if (mGLSLVersion > shaderVersion)
+            return false;
+
+        if (static_cast<TExtension>(mGLSLExtension) == TExtension::UNDEFINED)
+            return true;
+
+        return IsExtensionEnabled(extensions, static_cast<TExtension>(mGLSLExtension));
+    }
+    else
+    {
+        if (mESSLVersion == kESSL1Only && shaderVersion != static_cast<int>(kESSL1Only))
+            return false;
+
+        if (mESSLVersion > shaderVersion)
+            return false;
+
+        if (static_cast<TExtension>(mESSLExtension) == TExtension::UNDEFINED)
+            return true;
+
+        return IsExtensionEnabled(extensions, static_cast<TExtension>(mESSLExtension));
+    }
+}
 }  // namespace sh

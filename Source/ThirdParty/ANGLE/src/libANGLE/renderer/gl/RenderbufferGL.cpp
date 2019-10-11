@@ -23,27 +23,20 @@
 
 namespace rx
 {
-RenderbufferGL::RenderbufferGL(const gl::RenderbufferState &state,
-                               const FunctionsGL *functions,
-                               const angle::FeaturesGL &features,
-                               StateManagerGL *stateManager,
-                               BlitGL *blitter,
-                               const gl::TextureCapsMap &textureCaps)
-    : RenderbufferImpl(state),
-      mFunctions(functions),
-      mFeatures(features),
-      mStateManager(stateManager),
-      mBlitter(blitter),
-      mTextureCaps(textureCaps),
-      mRenderbufferID(0)
+RenderbufferGL::RenderbufferGL(const gl::RenderbufferState &state, GLuint id)
+    : RenderbufferImpl(state), mRenderbufferID(id)
 {
-    mFunctions->genRenderbuffers(1, &mRenderbufferID);
-    mStateManager->bindRenderbuffer(GL_RENDERBUFFER, mRenderbufferID);
 }
 
 RenderbufferGL::~RenderbufferGL()
 {
-    mStateManager->deleteRenderbuffer(mRenderbufferID);
+    ASSERT(mRenderbufferID == 0);
+}
+
+void RenderbufferGL::onDestroy(const gl::Context *context)
+{
+    StateManagerGL *stateManager = GetStateManagerGL(context);
+    stateManager->deleteRenderbuffer(mRenderbufferID);
     mRenderbufferID = 0;
 }
 
@@ -52,12 +45,18 @@ angle::Result RenderbufferGL::setStorage(const gl::Context *context,
                                          size_t width,
                                          size_t height)
 {
-    mStateManager->bindRenderbuffer(GL_RENDERBUFFER, mRenderbufferID);
+    const FunctionsGL *functions      = GetFunctionsGL(context);
+    StateManagerGL *stateManager      = GetStateManagerGL(context);
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
+
+    stateManager->bindRenderbuffer(GL_RENDERBUFFER, mRenderbufferID);
 
     nativegl::RenderbufferFormat renderbufferFormat =
-        nativegl::GetRenderbufferFormat(mFunctions, mFeatures, internalformat);
-    mFunctions->renderbufferStorage(GL_RENDERBUFFER, renderbufferFormat.internalFormat,
-                                    static_cast<GLsizei>(width), static_cast<GLsizei>(height));
+        nativegl::GetRenderbufferFormat(functions, features, internalformat);
+    ANGLE_GL_TRY_ALWAYS_CHECK(
+        context,
+        functions->renderbufferStorage(GL_RENDERBUFFER, renderbufferFormat.internalFormat,
+                                       static_cast<GLsizei>(width), static_cast<GLsizei>(height)));
 
     mNativeInternalFormat = renderbufferFormat.internalFormat;
 
@@ -70,28 +69,19 @@ angle::Result RenderbufferGL::setStorageMultisample(const gl::Context *context,
                                                     size_t width,
                                                     size_t height)
 {
-    mStateManager->bindRenderbuffer(GL_RENDERBUFFER, mRenderbufferID);
+    const FunctionsGL *functions      = GetFunctionsGL(context);
+    StateManagerGL *stateManager      = GetStateManagerGL(context);
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
+
+    stateManager->bindRenderbuffer(GL_RENDERBUFFER, mRenderbufferID);
 
     nativegl::RenderbufferFormat renderbufferFormat =
-        nativegl::GetRenderbufferFormat(mFunctions, mFeatures, internalformat);
-    mFunctions->renderbufferStorageMultisample(
-        GL_RENDERBUFFER, static_cast<GLsizei>(samples), renderbufferFormat.internalFormat,
-        static_cast<GLsizei>(width), static_cast<GLsizei>(height));
-
-    const gl::TextureCaps &formatCaps = mTextureCaps.get(internalformat);
-    if (samples > formatCaps.getMaxSamples())
-    {
-        // Before version 4.2, it is unknown if the specific internal format can support the
-        // requested number of samples.  It is expected that GL_OUT_OF_MEMORY is returned if the
-        // renderbuffer cannot be created.
-        GLenum error = GL_NO_ERROR;
-        do
-        {
-            error = mFunctions->getError();
-            ANGLE_CHECK_GL_ALLOC(GetImplAs<ContextGL>(context), error != GL_OUT_OF_MEMORY);
-            ASSERT(error == GL_NO_ERROR);
-        } while (error != GL_NO_ERROR);
-    }
+        nativegl::GetRenderbufferFormat(functions, features, internalformat);
+    ANGLE_GL_TRY_ALWAYS_CHECK(
+        context,
+        functions->renderbufferStorageMultisample(
+            GL_RENDERBUFFER, static_cast<GLsizei>(samples), renderbufferFormat.internalFormat,
+            static_cast<GLsizei>(width), static_cast<GLsizei>(height)));
 
     mNativeInternalFormat = renderbufferFormat.internalFormat;
 
@@ -113,7 +103,8 @@ GLuint RenderbufferGL::getRenderbufferID() const
 angle::Result RenderbufferGL::initializeContents(const gl::Context *context,
                                                  const gl::ImageIndex &imageIndex)
 {
-    return mBlitter->clearRenderbuffer(this, mNativeInternalFormat);
+    BlitGL *blitter = GetBlitGL(context);
+    return blitter->clearRenderbuffer(context, this, mNativeInternalFormat);
 }
 
 GLenum RenderbufferGL::getNativeInternalFormat() const

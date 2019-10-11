@@ -242,6 +242,8 @@ class ContextGL : public ContextImpl
 
     void invalidateTexture(gl::TextureType target) override;
 
+    void validateState() const;
+
   private:
     angle::Result setDrawArraysState(const gl::Context *context,
                                      GLint first,
@@ -254,6 +256,10 @@ class ContextGL : public ContextImpl
                                        const void *indices,
                                        GLsizei instanceCount,
                                        const void **outIndices);
+
+    gl::AttributesMask updateAttributesForBaseInstance(const gl::Program *program,
+                                                       GLuint baseInstance);
+    void resetUpdatedAttributes(gl::AttributesMask attribMask);
 
   protected:
     std::shared_ptr<RendererGL> mRenderer;

@@ -82,15 +82,17 @@ void RendererVk::ensureCapsInitialized() const
 
     mNativeExtensions.vertexHalfFloat = true;
 
-    // TODO: Enable this always and emulate instanced draws if any divisor exceeds the maximum
-    // supported.  http://anglebug.com/2672
-    mNativeExtensions.instancedArraysANGLE = mMaxVertexAttribDivisor > 1;
-    mNativeExtensions.instancedArraysEXT   = mMaxVertexAttribDivisor > 1;
+    // Enabled in HW if VK_EXT_vertex_attribute_divisor available, otherwise emulated
+    mNativeExtensions.instancedArraysANGLE = true;
+    mNativeExtensions.instancedArraysEXT   = true;
 
     // Only expose robust buffer access if the physical device supports it.
-    mNativeExtensions.robustBufferAccessBehavior = mPhysicalDeviceFeatures.robustBufferAccess;
+    mNativeExtensions.robustBufferAccessBehavior =
+        (mPhysicalDeviceFeatures.robustBufferAccess == VK_TRUE);
 
     mNativeExtensions.eglSync = true;
+
+    mNativeExtensions.vertexAttribType1010102 = true;
 
     // We use secondary command buffers almost everywhere and they require a feature to be
     // able to execute in the presence of queries.  As a result, we won't support queries
@@ -214,10 +216,6 @@ void RendererVk::ensureCapsInitialized() const
         mNativeCaps.maxShaderUniformComponents[shaderType] = maxUniformComponents;
     }
     mNativeCaps.maxUniformLocations                                  = maxUniformVectors;
-
-    // Pass through min/max texel gather offsets
-    mNativeCaps.minProgramTextureGatherOffset = limitsVk.minTexelGatherOffset;
-    mNativeCaps.maxProgramTextureGatherOffset = limitsVk.maxTexelGatherOffset;
 
     // Every stage has 1 reserved uniform buffer for the default uniforms, and 1 for the driver
     // uniforms.
@@ -358,8 +356,10 @@ void RendererVk::ensureCapsInitialized() const
     mNativeCaps.maxCombinedImageUniforms = maxCombinedImages;
     mNativeCaps.maxImageUnits            = maxCombinedImages;
 
-    mNativeCaps.minProgramTexelOffset = mPhysicalDeviceProperties.limits.minTexelOffset;
-    mNativeCaps.maxProgramTexelOffset = mPhysicalDeviceProperties.limits.maxTexelOffset;
+    mNativeCaps.minProgramTexelOffset         = limitsVk.minTexelOffset;
+    mNativeCaps.maxProgramTexelOffset         = limitsVk.maxTexelOffset;
+    mNativeCaps.minProgramTextureGatherOffset = limitsVk.minTexelGatherOffset;
+    mNativeCaps.maxProgramTextureGatherOffset = limitsVk.maxTexelGatherOffset;
 
     // There is no additional limit to the combined number of components.  We can have up to a
     // maximum number of uniform buffers, each having the maximum number of components.  Note that
@@ -429,6 +429,25 @@ void RendererVk::ensureCapsInitialized() const
 
     // Enable GL_NV_pixel_buffer_object extension.
     mNativeExtensions.pixelBufferObject = true;
+
+    // Geometry shader is optional.
+    if (mPhysicalDeviceFeatures.geometryShader)
+    {
+        // TODO : Remove below comment when http://anglebug.com/3571 will be completed
+        // mNativeExtensions.geometryShader = true;
+        mNativeCaps.maxFramebufferLayers = limitsVk.maxFramebufferLayers;
+        mNativeCaps.layerProvokingVertex = GL_LAST_VERTEX_CONVENTION_EXT;
+
+        mNativeCaps.maxGeometryInputComponents       = limitsVk.maxGeometryInputComponents;
+        mNativeCaps.maxGeometryOutputComponents      = limitsVk.maxGeometryOutputComponents;
+        mNativeCaps.maxGeometryOutputVertices        = limitsVk.maxGeometryOutputVertices;
+        mNativeCaps.maxGeometryTotalOutputComponents = limitsVk.maxGeometryTotalOutputComponents;
+        mNativeCaps.maxShaderStorageBlocks[gl::ShaderType::Geometry] =
+            mNativeCaps.maxCombinedShaderOutputResources;
+        mNativeCaps.maxShaderAtomicCounterBuffers[gl::ShaderType::Geometry] =
+            maxCombinedAtomicCounterBuffers;
+        mNativeCaps.maxGeometryShaderInvocations = limitsVk.maxGeometryShaderInvocations;
+    }
 }
 
 namespace egl_vk

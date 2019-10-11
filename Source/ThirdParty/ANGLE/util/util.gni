@@ -12,10 +12,11 @@ util_sources = [
   "util/random_utils.h",
   "util/shader_utils.cpp",
   "util/shader_utils.h",
-  "util/system_utils.h",
+  "util/test_utils.h",
   "util/util_export.h",
   "util/util_gl.h",
   "util/Event.h",
+  "util/EGLPlatformParameters.h",
   "util/EGLWindow.cpp",
   "util/EGLWindow.h",
   "util/Matrix.cpp",
@@ -28,20 +29,22 @@ util_sources = [
 ]
 
 util_win_sources = [
-  "util/windows/win32/Win32_system_utils.cpp",
+  "util/windows/test_utils_win.cpp",
+  "util/windows/win32/test_utils_win32.cpp",
   "util/windows/win32/Win32Pixmap.cpp",
   "util/windows/win32/Win32Pixmap.h",
   "util/windows/win32/Win32Window.cpp",
   "util/windows/win32/Win32Window.h",
-  "util/windows/Windows_system_utils.cpp",
   "util/windows/WGLWindow.h",
 ]
 
-util_win_shared_sources = [ "util/windows/WGLWindow.cpp" ]
+if (current_os != "winuwp") {
+  util_win_shared_sources = [ "util/windows/WGLWindow.cpp" ]
+}
 
 util_posix_sources = [
-  "util/posix/Posix_crash_handler.cpp",
-  "util/posix/Posix_system_utils.cpp",
+  "util/posix/crash_handler_posix.cpp",
+  "util/posix/test_utils_posix.cpp",
 ]
 
 util_linux_sources = util_posix_sources
@@ -64,14 +67,12 @@ util_ozone_sources = [
   "util/ozone/OzoneWindow.h",
 ]
 
-util_osx_sources = [
-  "util/osx/OSXPixmap.mm",
-  "util/osx/OSXPixmap.h",
-  "util/osx/OSXWindow.mm",
-  "util/osx/OSXWindow.h",
-  "util/posix/Posix_crash_handler.cpp",
-  "util/posix/Posix_system_utils.cpp",
-]
+util_osx_sources = util_posix_sources + [
+                     "util/osx/OSXPixmap.mm",
+                     "util/osx/OSXPixmap.h",
+                     "util/osx/OSXWindow.mm",
+                     "util/osx/OSXWindow.h",
+                   ]
 
 util_android_sources = util_posix_sources + [
                          "util/android/AndroidPixmap.cpp",

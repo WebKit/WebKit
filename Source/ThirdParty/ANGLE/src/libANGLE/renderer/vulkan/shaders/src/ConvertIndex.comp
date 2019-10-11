@@ -10,6 +10,7 @@
 //  - Flags:
 //    * IsPrimitiveRestartEnabled: enables conversion from 0xFF to 0xFFFF,
 //                                 the restart indices for 8-bit and 16-bit indices.
+//    * IsIndirect: Use indirect buffer for index info
 //
 
 #version 450 core
@@ -28,6 +29,28 @@ layout (set = 0, binding = 1) readonly buffer src
     uint srcData[];
 };
 
+#if IsIndirect
+layout (set = 0, binding = 2) readonly buffer cmd
+{
+    // Shader invocations read from the cmdData buffer to determine what indices to convert
+    // The command data starts at offset cmdOffsetDiv4 of the cmdData buffer.
+    uint cmdData[];
+};
+
+layout (push_constant) uniform PushConstants
+{
+    // Read offset in bytes into the cmdData array, divided by four.
+    uint cmdOffsetDiv4;
+    // Write offset in bytes into the dstData array, divided by four.
+    uint dstOffsetDiv4;
+    // Maximum size of the read buffer. The highest index value we will convert.
+    uint maxIndex;
+    // Not used in the shader. Kept to pad "PushConstants" to the size of a vec4.
+    uint _padding;
+};
+
+#else
+
 layout (push_constant) uniform PushConstants
 {
     // Read offset in bytes into the srcData array.
@@ -39,10 +62,15 @@ layout (push_constant) uniform PushConstants
     // Not used in the shader. Kept to pad "PushConstants" to the size of a vec4.
     uint _padding;
 };
+#endif
 
 uint PullIndex(uint index)
 {
+#if IsIndirect
+    uint srcIndex = index;
+#else
     uint srcIndex = index + srcOffset;
+#endif
     uint srcBlock = srcData[srcIndex >> 2];
     uint srcComponent = (srcIndex & 3);
 
@@ -64,21 +92,37 @@ void PackIndexValue(uint srcValue, uint indexIndex, inout uint dstValue)
 
 void main()
 {
-    // The element index is simply the invocation ID times two.
-    uint index = (gl_GlobalInvocationID.x << 1);
+#if IsIndirect
+    uint indexCount = cmdData[cmdOffsetDiv4];
+    uint firstIndex = cmdData[cmdOffsetDiv4 + 2];
+    uint endIndex = firstIndex + indexCount;
+#else
+    uint firstIndex = 0;
+    uint endIndex = firstIndex + maxIndex;
+#endif
+
+    // The element index is invocation ID times two plus
+    // the firstIndex / 2.
+    // This way the first indexCount/2 invocations will transform
+    // the data and any additional invocations will be a no-op
+    uint index = ((gl_GlobalInvocationID.x + (firstIndex >> 1)) << 1);
 
     // Don't write anything to dest if we're entirely past the end of the buffer.
     // We assume buffer size is uint-aligned.
-    if (index >= maxIndex)
+    if (index >= endIndex)
         return;
 
     uint dstValue = 0;
 
-    uint srcValue = PullIndex(index);
-    PackIndexValue(srcValue, 0, dstValue);
+    // Skip packing the first index if we're before the first element.
+    if (index >= firstIndex)
+    {
+        uint srcValue = PullIndex(index);
+        PackIndexValue(srcValue, 0, dstValue);
+    }
 
     // Skip packing the second index if we're after the last element.
-    if (index + 1 < maxIndex)
+    if (index + 1 < endIndex)
     {
         uint srcValue = PullIndex(index + 1);
         PackIndexValue(srcValue, 1, dstValue);

@@ -41,7 +41,9 @@ namespace angle
 #    define WARN(...) printf(__VA_ARGS__)
 #    define INFO(...) printf(__VA_ARGS__)
 #    define DEBUG(...) printf(__VA_ARGS__)
-#    define VERBOSE(...) printf(__VA_ARGS__)
+// Uncomment for debugging.
+//#    define VERBOSE(...) printf(__VA_ARGS__)
+#    define VERBOSE(...)
 #endif  // defined(ANDROID)
 
 // JSON values are generally composed of either:

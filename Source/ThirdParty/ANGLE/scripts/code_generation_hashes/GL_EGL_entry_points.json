@@ -6,13 +6,13 @@
   "scripts/entry_point_packed_gl_enums.json":
     "5550f249db54a698036d5d9aa65e043b",
   "scripts/generate_entry_points.py":
-    "00dc8410ad87e122314ac58579445188",
+    "29fd14951357959ad8e562867c0b12f6",
   "scripts/gl.xml":
     "b470cb06b06cbbe7adb2c8129ec85708",
   "scripts/gl_angle_ext.xml":
     "82d1e91d75d8935a44312da31adca77c",
   "scripts/registry_xml.py":
-    "cdf43c79a91f68bf8678b4c2cb75e9f1",
+    "a002559d0c36f3c78c08ba99f9849c6c",
   "scripts/wgl.xml":
     "aa96419c582af2f6673430e2847693f4",
   "src/libANGLE/Context_gl_1_0_autogen.h":
@@ -90,9 +90,9 @@
   "src/libANGLE/frame_capture_replay_autogen.cpp":
     "1e4e55ea044ff8fc3764622a2f1cf240",
   "src/libANGLE/frame_capture_utils_autogen.cpp":
-    "7465f826ea0196541bddd95540b0f599",
+    "f0a704d60de3f1f175a7799b49c45408",
   "src/libANGLE/frame_capture_utils_autogen.h":
-    "4d16f676a1f5f70a882161fcb585db5b",
+    "cc6e5b6c49d51da1cebea6ea48422511",
   "src/libANGLE/validationES1_autogen.h":
     "8d3131d2bf2e6f521f46b44e64a6bff9",
   "src/libANGLE/validationES2_autogen.h":

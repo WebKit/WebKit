@@ -101,11 +101,12 @@ EGLLabelKHR Device::getLabel() const
     return mLabel;
 }
 
-Error Device::getDevice(EGLAttrib *value)
+Error Device::getAttribute(EGLint attribute, EGLAttrib *value)
 {
-    void *nativeDevice = nullptr;
-    egl::Error error   = getImplementation()->getDevice(&nativeDevice);
-    *value             = reinterpret_cast<EGLAttrib>(nativeDevice);
+    void *nativeAttribute = nullptr;
+    egl::Error error =
+        getImplementation()->getAttribute(getOwningDisplay(), attribute, &nativeAttribute);
+    *value = reinterpret_cast<EGLAttrib>(nativeAttribute);
     return error;
 }
 

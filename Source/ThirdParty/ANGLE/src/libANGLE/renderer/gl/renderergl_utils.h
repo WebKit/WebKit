@@ -96,6 +96,7 @@ void InitializeFrontendFeatures(const FunctionsGL *functions, angle::FrontendFea
 
 namespace nativegl
 {
+bool SupportsCompute(const FunctionsGL *functions);
 bool SupportsFenceSync(const FunctionsGL *functions);
 bool SupportsOcclusionQueries(const FunctionsGL *functions);
 bool SupportsNativeRendering(const FunctionsGL *functions,
@@ -105,6 +106,8 @@ bool SupportsTexImage(gl::TextureType type);
 bool UseTexImage2D(gl::TextureType textureType);
 bool UseTexImage3D(gl::TextureType textureType);
 GLenum GetTextureBindingQuery(gl::TextureType textureType);
+GLenum GetBufferBindingQuery(gl::BufferBinding bufferBinding);
+std::string GetBufferBindingString(gl::BufferBinding bufferBinding);
 }  // namespace nativegl
 
 bool CanMapBufferForRead(const FunctionsGL *functions);

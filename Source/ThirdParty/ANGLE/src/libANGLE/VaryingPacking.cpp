@@ -287,8 +287,8 @@ bool VaryingPacking::collectAndPackUserVaryings(gl::InfoLog &infoLog,
 
     for (const auto &ref : mergedVaryings)
     {
-        const sh::ShaderVariable *input  = ref.second.vertex;
-        const sh::ShaderVariable *output = ref.second.fragment;
+        const sh::ShaderVariable *input  = ref.second.frontShader;
+        const sh::ShaderVariable *output = ref.second.backShader;
 
         // Only pack statically used varyings that have a matched input or output, plus special
         // builtins. Note that we pack all statically used user-defined varyings even if they are
@@ -313,7 +313,7 @@ bool VaryingPacking::collectAndPackUserVaryings(gl::InfoLog &infoLog,
                 // variable is taken from the fragment shader.
                 if (varying->isStruct())
                 {
-                    ASSERT(!varying->isArray());
+                    ASSERT(!(varying->isArray() && varying == input));
                     for (GLuint fieldIndex = 0; fieldIndex < varying->fields.size(); ++fieldIndex)
                     {
                         const sh::ShaderVariable &field = varying->fields[fieldIndex];
@@ -406,7 +406,6 @@ bool VaryingPacking::collectAndPackUserVaryings(gl::InfoLog &infoLog,
 bool VaryingPacking::packUserVaryings(gl::InfoLog &infoLog,
                                       const std::vector<PackedVarying> &packedVaryings)
 {
-
     // "Variables are packed into the registers one at a time so that they each occupy a contiguous
     // subrectangle. No splitting of variables is permitted."
     for (const PackedVarying &packedVarying : packedVaryings)

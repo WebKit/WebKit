@@ -48,7 +48,7 @@ class FenceNV final : angle::NonCopyable
     GLenum mCondition;
 };
 
-class Sync final : public RefCountObject, public LabeledObject
+class Sync final : public RefCountObject<GLuint>, public LabeledObject
 {
   public:
     Sync(rx::SyncImpl *impl, GLuint id);

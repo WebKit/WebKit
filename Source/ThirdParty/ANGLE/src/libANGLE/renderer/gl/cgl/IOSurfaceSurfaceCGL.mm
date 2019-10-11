@@ -319,7 +319,8 @@ angle::Result IOSurfaceSurfaceCGL::initializeAlphaChannel(const gl::Context *con
     }
 
     BlitGL *blitter = GetBlitGL(context);
-    ANGLE_TRY(blitter->clearRenderableTextureAlphaToOne(texture, gl::TextureTarget::Rectangle, 0));
+    ANGLE_TRY(blitter->clearRenderableTextureAlphaToOne(context, texture,
+                                                        gl::TextureTarget::Rectangle, 0));
     mAlphaInitialized = true;
     return angle::Result::Continue;
 }

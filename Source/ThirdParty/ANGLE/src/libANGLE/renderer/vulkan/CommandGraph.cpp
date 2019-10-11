@@ -241,44 +241,45 @@ float CalculateSecondaryCommandBufferPoolWaste(const std::vector<CommandGraphNod
 // CommandGraphResource implementation.
 CommandGraphResource::CommandGraphResource(CommandGraphResourceType resourceType)
     : mCurrentWritingNode(nullptr), mResourceType(resourceType)
-{}
-
-CommandGraphResource::~CommandGraphResource() = default;
-
-bool CommandGraphResource::isResourceInUse(ContextVk *context) const
 {
-    return context->isSerialInUse(mStoredQueueSerial);
+    mUse.init();
 }
 
-void CommandGraphResource::resetQueueSerial()
+CommandGraphResource::~CommandGraphResource()
 {
-    mCurrentWritingNode = nullptr;
-    mCurrentReadingNodes.clear();
-    mStoredQueueSerial = Serial();
+    mUse.release();
 }
 
-angle::Result CommandGraphResource::recordCommands(ContextVk *context,
+bool CommandGraphResource::isResourceInUse(ContextVk *contextVk) const
+{
+    return mUse.isCurrentlyInGraph() || contextVk->isSerialInUse(mUse.getSerial());
+}
+
+angle::Result CommandGraphResource::recordCommands(ContextVk *contextVk,
                                                    CommandBuffer **commandBufferOut)
 {
-    updateQueueSerial(context->getCurrentQueueSerial());
+    updateCurrentAccessNodes();
 
     if (!hasChildlessWritingNode() || hasStartedRenderPass())
     {
-        startNewCommands(context);
+        startNewCommands(contextVk);
         return mCurrentWritingNode->beginOutsideRenderPassRecording(
-            context, context->getCommandPool(), commandBufferOut);
+            contextVk, contextVk->getCommandPool(), commandBufferOut);
     }
 
     CommandBuffer *outsideRenderPassCommands = mCurrentWritingNode->getOutsideRenderPassCommands();
     if (!outsideRenderPassCommands->valid())
     {
         ANGLE_TRY(mCurrentWritingNode->beginOutsideRenderPassRecording(
-            context, context->getCommandPool(), commandBufferOut));
+            contextVk, contextVk->getCommandPool(), commandBufferOut));
     }
     else
     {
         *commandBufferOut = outsideRenderPassCommands;
     }
+
+    // Store reference to usage in graph.
+    contextVk->getCommandGraph()->onResourceUse(mUse);
 
     return angle::Result::Continue;
 }
@@ -306,17 +307,19 @@ angle::Result CommandGraphResource::beginRenderPass(
     return mCurrentWritingNode->beginInsideRenderPassRecording(contextVk, commandBufferOut);
 }
 
-void CommandGraphResource::addWriteDependency(CommandGraphResource *writingResource)
+void CommandGraphResource::addWriteDependency(ContextVk *contextVk,
+                                              CommandGraphResource *writingResource)
 {
     CommandGraphNode *writingNode = writingResource->mCurrentWritingNode;
     ASSERT(writingNode);
 
-    onWriteImpl(writingNode, writingResource->getStoredQueueSerial());
+    onWriteImpl(contextVk, writingNode);
 }
 
-void CommandGraphResource::addReadDependency(CommandGraphResource *readingResource)
+void CommandGraphResource::addReadDependency(ContextVk *contextVk,
+                                             CommandGraphResource *readingResource)
 {
-    updateQueueSerial(readingResource->getStoredQueueSerial());
+    onGraphAccess(contextVk->getCommandGraph());
 
     CommandGraphNode *readingNode = readingResource->mCurrentWritingNode;
     ASSERT(readingNode);
@@ -341,12 +344,12 @@ void CommandGraphResource::startNewCommands(ContextVk *contextVk)
     CommandGraphNode *newCommands =
         contextVk->getCommandGraph()->allocateNode(CommandGraphNodeFunction::Generic);
     newCommands->setDiagnosticInfo(mResourceType, reinterpret_cast<uintptr_t>(this));
-    onWriteImpl(newCommands, contextVk->getCurrentQueueSerial());
+    onWriteImpl(contextVk, newCommands);
 }
 
-void CommandGraphResource::onWriteImpl(CommandGraphNode *writingNode, Serial currentSerial)
+void CommandGraphResource::onWriteImpl(ContextVk *contextVk, CommandGraphNode *writingNode)
 {
-    updateQueueSerial(currentSerial);
+    onGraphAccess(contextVk->getCommandGraph());
 
     // Make sure any open reads and writes finish before we execute 'writingNode'.
     if (!mCurrentReadingNodes.empty())
@@ -822,6 +825,42 @@ void CommandGraphNode::getMemoryUsageStatsForDiagnostics(size_t *usedMemoryOut,
     *allocatedMemoryOut += commandBufferAllocated;
 }
 
+// SharedGarbage implementation.
+SharedGarbage::SharedGarbage() = default;
+
+SharedGarbage::SharedGarbage(SharedGarbage &&other)
+{
+    *this = std::move(other);
+}
+
+SharedGarbage::SharedGarbage(SharedResourceUse &&use, std::vector<GarbageObject> &&garbage)
+    : mLifetime(std::move(use)), mGarbage(std::move(garbage))
+{}
+
+SharedGarbage::~SharedGarbage() = default;
+
+SharedGarbage &SharedGarbage::operator=(SharedGarbage &&rhs)
+{
+    std::swap(mLifetime, rhs.mLifetime);
+    std::swap(mGarbage, rhs.mGarbage);
+    return *this;
+}
+
+bool SharedGarbage::destroyIfComplete(VkDevice device, Serial completedSerial)
+{
+    if (mLifetime.isCurrentlyInGraph() || mLifetime.getSerial() > completedSerial)
+        return false;
+
+    mLifetime.release();
+
+    for (GarbageObject &object : mGarbage)
+    {
+        object.destroy(device);
+    }
+
+    return true;
+}
+
 // CommandGraph implementation.
 CommandGraph::CommandGraph(bool enableGraphDiagnostics, angle::PoolAllocator *poolAllocator)
     : mEnableGraphDiagnostics(enableGraphDiagnostics),
@@ -835,6 +874,7 @@ CommandGraph::CommandGraph(bool enableGraphDiagnostics, angle::PoolAllocator *po
 CommandGraph::~CommandGraph()
 {
     ASSERT(empty());
+    ASSERT(mResourceUses.empty());
 }
 
 CommandGraphNode *CommandGraph::allocateNode(CommandGraphNodeFunction function)
@@ -901,6 +941,8 @@ angle::Result CommandGraph::submitCommands(ContextVk *context,
     {
         dumpGraphDotFile(std::cout);
     }
+
+    releaseResourceUsesAndUpdateSerials(serial);
 
     std::vector<CommandGraphNode *> nodeStack;
 
@@ -1226,5 +1268,24 @@ void CommandGraph::addDependenciesToNextBarrier(size_t begin,
     }
 }
 
+void CommandGraph::releaseResourceUses()
+{
+    for (SharedResourceUse &use : mResourceUses)
+    {
+        use.release();
+    }
+
+    mResourceUses.clear();
+}
+
+void CommandGraph::releaseResourceUsesAndUpdateSerials(Serial serial)
+{
+    for (SharedResourceUse &use : mResourceUses)
+    {
+        use.releaseAndUpdateSerial(serial);
+    }
+
+    mResourceUses.clear();
+}
 }  // namespace vk
 }  // namespace rx

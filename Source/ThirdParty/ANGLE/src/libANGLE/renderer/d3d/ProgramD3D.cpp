@@ -1557,7 +1557,7 @@ angle::Result ProgramD3D::getVertexExecutableForCachedInputLayout(
 
     // Generate new dynamic layout with attribute conversions
     std::string finalVertexHLSL = mDynamicHLSL->generateVertexShaderForInputLayout(
-        mShaderHLSL[gl::ShaderType::Vertex], mCachedInputLayout, mState.getAttributes());
+        mShaderHLSL[gl::ShaderType::Vertex], mCachedInputLayout, mState.getProgramInputs());
 
     // Generate new vertex executable
     ShaderExecutableD3D *vertexExecutable = nullptr;

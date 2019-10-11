@@ -4,24 +4,28 @@
 // found in the LICENSE file.
 //
 
-// Posix_system_utils.cpp: Implementation of OS-specific functions for Posix systems
+// test_utils_posix.cpp: Implementation of OS-specific functions for Posix systems
 
-#include "util/system_utils.h"
+#include "util/test_utils.h"
 
+#include <errno.h>
 #include <sched.h>
 #include <time.h>
 #include <unistd.h>
+#include <cstdarg>
+
+#include "common/platform.h"
 
 #if !defined(ANGLE_PLATFORM_FUCHSIA)
 #    include <dlfcn.h>
 #    include <sys/resource.h>
+#    include <sys/stat.h>
+#    include <sys/types.h>
+#    include <sys/wait.h>
 #endif
-
-#include "common/platform.h"
 
 namespace angle
 {
-
 void Sleep(unsigned int milliseconds)
 {
     // On Windows Sleep(0) yields while it isn't guaranteed by Posix's sleep

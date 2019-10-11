@@ -12,6 +12,7 @@
 #include <memory>
 #include <string>
 
+#include "common/system_utils.h"
 #include "util/EGLPlatformParameters.h"
 #include "util/OSWindow.h"
 #include "util/Timer.h"

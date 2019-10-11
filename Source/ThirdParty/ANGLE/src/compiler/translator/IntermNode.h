@@ -963,7 +963,7 @@ enum class PreprocessorDirective
     Endif,
 };
 
-class TIntermPreprocessorDirective : public TIntermNode
+class TIntermPreprocessorDirective final : public TIntermNode
 {
   public:
     // This could also take an ImmutableString as an argument.

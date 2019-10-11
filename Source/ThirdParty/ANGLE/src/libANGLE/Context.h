@@ -122,6 +122,7 @@ enum class VertexAttribTypeCase
     Invalid        = 0,
     Valid          = 1,
     ValidSize4Only = 2,
+    ValidSize3or4  = 3,
 };
 
 // Helper class for managing cache variables and state changes.
@@ -714,6 +715,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     angle::ObserverBinding mReadFramebufferObserverBinding;
     std::vector<angle::ObserverBinding> mUniformBufferObserverBindings;
     std::vector<angle::ObserverBinding> mSamplerObserverBindings;
+    std::vector<angle::ObserverBinding> mImageObserverBindings;
 
     // Not really a property of context state. The size and contexts change per-api-call.
     mutable angle::ScratchBuffer mScratchBuffer;

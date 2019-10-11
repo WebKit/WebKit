@@ -329,6 +329,7 @@ MSG kInvalidVaryingLocation = "Location exceeds max varying.";
 MSG kInvalidVertexArray = "Vertex array does not exist.";
 MSG kInvalidVertexArrayName = "name is not a valid vertex array.";
 MSG kInvalidVertexAttribSize2101010 = "Type is INT_2_10_10_10_REV or UNSIGNED_INT_2_10_10_10_REV and size is not 4.";
+MSG kInvalidVertexAttribSize1010102 = "Type is INT_10_10_10_2_OES or UNSIGNED_INT_10_10_10_2_OES and size is not 3 or 4.";
 MSG kInvalidVertexAttrSize = "Vertex attribute size must be 1 = 2 = 3 = or 4.";
 MSG kInvalidVertexPointerSize = "Size for built-in vertex attribute is outside allowed range.";
 MSG kInvalidVertexPointerStride = "Invalid stride for built-in vertex attribute.";

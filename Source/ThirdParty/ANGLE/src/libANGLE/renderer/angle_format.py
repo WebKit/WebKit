@@ -135,6 +135,9 @@ def gl_format_channels(internal_format):
         return 'rgba'
     if internal_format == 'GL_RGB10_UNORM_ANGLEX':
         return 'rgb'
+    # signed/unsigned int_10_10_10_2 for vertex format
+    if internal_format.find('INT_10_10_10_2_OES') == 0:
+        return 'rgba'
 
     channels_pattern = re.compile('GL_(COMPRESSED_)?(SIGNED_)?(ETC\d_)?([A-Z]+)')
     match = re.search(channels_pattern, internal_format)
@@ -242,6 +245,16 @@ def get_vertex_copy_function(src_format, dst_format):
     num_channel = len(get_channel_tokens(src_format))
     if num_channel < 1 or num_channel > 4:
         return "nullptr"
+
+    if src_format.endswith('_VERTEX'):
+        assert 'FLOAT' in dst_format, (
+            'get_vertex_copy_function: can only convert to float,' + ' not to ' + dst_format)
+        is_signed = 'true' if 'SINT' in src_format or 'SNORM' in src_format or 'SSCALED' in src_format else 'false'
+        is_normal = 'true' if 'NORM' in src_format else 'false'
+        if 'A2' in src_format:
+            return 'CopyW2XYZ10ToXYZW32FVertexData<%s, %s>' % (is_signed, is_normal)
+        else:
+            return 'CopyXYZ10ToXYZW32FVertexData<%s, %s>' % (is_signed, is_normal)
 
     if 'FIXED' in src_format:
         assert 'FLOAT' in dst_format, (

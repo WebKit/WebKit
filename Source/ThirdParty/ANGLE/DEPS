@@ -5,6 +5,7 @@
 vars = {
   'android_git': 'https://android.googlesource.com',
   'chromium_git': 'https://chromium.googlesource.com',
+  'swiftshader_git': 'https://swiftshader.googlesource.com',
 
   # This variable is set on the Chrome infra for compatiblity with gclient.
   'angle_root': '.',
@@ -20,46 +21,46 @@ vars = {
   'deqp_revision': 'd3eef28e67ce6795ba3a2124aaa977819729d45f',
 
   # Current revision of glslang, the Khronos SPIRV compiler.
-  'glslang_revision': '664ad418f8455159fb066e9e27d159f191f976a9',
+  'glslang_revision': '4b97a1108114107a8082a55e9e0721a40f9536d3',
 
   # Current revision fo the SPIRV-Headers Vulkan support library.
-  'spirv_headers_revision': '123dc278f204f8e833e1a88d31c46d0edf81d4b2',
+  'spirv_headers_revision': '842ec90674627ed2ffef609e3cd79d1562eded01',
 
   # Current revision of SPIRV-Tools for Vulkan.
-  'spirv_tools_revision': '7f7236f1eba0afae2669ea777896f0435be4c96d',
+  'spirv_tools_revision': '3c7ff8d4f0a1c0f27328871fe64879170a4f0930',
 
   # Current revision of Khronos Vulkan-Headers.
-  'vulkan_headers_revision': '982f0f84dccf6f281b48318c77261a9028000126',
+  'vulkan_headers_revision': '5b44df19e040fca0048ab30c553a8c2d2cb9623e',
 
   # Current revision of Khronos Vulkan-Loader.
-  'vulkan_loader_revision': '2f0abfcf9eb04018e6e92125a70bc28665aa17fe',
+  'vulkan_loader_revision': 'b5a0995324fa9fb2a6152197b442400e7d7be5b6',
 
   # Current revision of Khronos Vulkan-Tools.
-  'vulkan_tools_revision': 'f392e71b994036c92b896c2a62cc63d042b7f9b1',
+  'vulkan_tools_revision': '40cd2166a44647a4283517e31af4589410c654eb',
 
   # Current revision of Khronos Vulkan-ValidationLayers.
-  'vulkan_validation_revision': 'ff80a937c8a505abbdddb95d8ffaa446820c8391',
+  'vulkan_validation_revision': '9fba37afae13a11bd49ae942bf82e5bf1098e381',
 }
 
 deps = {
 
   '{angle_root}/angle-internal': {
-    'url': 'https://chrome-internal.googlesource.com/angle/angle-internal.git@05522f9eb159afbbe35a246d5027893c56926a76',
+    'url': 'https://chrome-internal.googlesource.com/angle/angle-internal.git@f682552d8131422e91f45661a7af83e885ff70ce',
     'condition': 'checkout_src_internal',
   },
 
   '{angle_root}/build': {
-    'url': '{chromium_git}/chromium/src/build.git@af1bbc9483aed572f1ea1a32e43bb504c3edb357',
+    'url': '{chromium_git}/chromium/src/build.git@fd0d28db8039e2aaf9fa35e53e3af6dc9ead8055',
     'condition': 'not build_with_chromium',
   },
 
   '{angle_root}/buildtools': {
-    'url': '{chromium_git}/chromium/src/buildtools.git@74cfb57006f83cfe050817526db359d5c8a11628',
+    'url': '{chromium_git}/chromium/src/buildtools.git@cf454b247c611167388742c7a31ef138a6031172',
     'condition': 'not build_with_chromium',
   },
 
   '{angle_root}/testing': {
-    'url': '{chromium_git}/chromium/src/testing@78e8d947158ba72b0e457abc9ea3fb30c2252646',
+    'url': '{chromium_git}/chromium/src/testing@9d2d0dad367ac7e98e64cc6881044c482e1c7eb8',
     'condition': 'not build_with_chromium',
   },
 
@@ -94,7 +95,7 @@ deps = {
   },
 
   '{angle_root}/third_party/googletest/src': {
-    'url': '{chromium_git}/external/github.com/google/googletest.git@3f5b5b8f8493a03fa25f1e4a7eae7678514a431d',
+    'url': '{chromium_git}/external/github.com/google/googletest.git@cd17fa2abda2a2e4111cdabd62a87aea16835014',
     'condition': 'not build_with_chromium',
   },
 
@@ -160,6 +161,11 @@ deps = {
     'condition': 'not build_with_chromium',
   },
 
+  '{angle_root}/third_party/SwiftShader': {
+    'url': '{swiftshader_git}/SwiftShader@036463457e5f11a9257553fadb5e8c193bec6f7e',
+    'condition': 'not build_with_chromium',
+  },
+
   '{angle_root}/third_party/vulkan-headers/src': {
     'url': '{chromium_git}/external/github.com/KhronosGroup/Vulkan-Headers@{vulkan_headers_revision}',
   },
@@ -177,7 +183,7 @@ deps = {
   },
 
   '{angle_root}/third_party/yasm': {
-    'url': '{chromium_git}/chromium/src/third_party/yasm@15439370afd9df5359a0ff12244c2ccb2111c787',
+    'url': '{chromium_git}/chromium/src/third_party/yasm@cc10bc0f1d96a4bae0e775f2ac2b6ac5b08078c6',
     'condition': 'not build_with_chromium',
   },
 
@@ -187,12 +193,12 @@ deps = {
   },
 
   '{angle_root}/third_party/zlib': {
-    'url': '{chromium_git}/chromium/src/third_party/zlib@0044d0424c7f7d15436541ed1ecc89479b8bfda4',
+    'url': '{chromium_git}/chromium/src/third_party/zlib@ddebad26cfadeb4ecdfe3da8beb396a85cf90c91',
     'condition': 'not build_with_chromium',
   },
 
   '{angle_root}/tools/clang': {
-    'url': '{chromium_git}/chromium/src/tools/clang.git@2fef805e5b05b26a8c87c47865590b5f43218611',
+    'url': '{chromium_git}/chromium/src/tools/clang.git@6bc727d9d80f2c3a97587676bb38c5472afe7e60',
     'condition': 'not build_with_chromium',
   },
 

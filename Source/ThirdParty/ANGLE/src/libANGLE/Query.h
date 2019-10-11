@@ -26,7 +26,7 @@ class QueryImpl;
 namespace gl
 {
 
-class Query final : public RefCountObject, public LabeledObject
+class Query final : public RefCountObject<QueryID>, public LabeledObject
 {
   public:
     Query(rx::QueryImpl *impl, QueryID id);

@@ -8,7 +8,7 @@ shader translator][translator]. The translator compiles application shaders into
 GLSL. Vulkan-compatible GLSL matches the [GL_KHR_vulkan_glsl][GL_KHR_vulkan_glsl] extension spec
 with some additional workarounds and emulation. We emulate OpenGL's different depth range, viewport
 y flipping, default uniforms, and OpenGL [line segment
-rasterization](#opengl-line-segment-rasterization). For more info see
+rasterization](OpenGLLineSegmentRasterization.md). For more info see
 [TranslatorVulkan.cpp][TranslatorVulkan.cpp]. After initial compilation the shaders are not
 complete. They are templated with markers that are filled in later at link time.
 
@@ -16,7 +16,7 @@ complete. They are templated with markers that are filled in later at link time.
 necessary locations and properties to write to connect the shader stage interfaces. We get the
 completed shader source using ANGLE's [GlslangWrapper][GlslangWrapper.cpp] helper class. We still
 cannot generate `VkShaderModules` since some ANGLE features like [OpenGL line
-rasterization](#opengl-line-segment-rasterization) emulation depend on draw-time information.
+rasterization](OpenGLLineSegmentRasterization.md) emulation depend on draw-time information.
 
 1. **Draw-time SPIR-V Generation**: Once the application records a draw call we use Khronos'
 [glslang][glslang] to convert the Vulkan-compatible GLSL into SPIR-V with the correct draw-time
@@ -74,10 +74,10 @@ Note right of "Vulkan Back-end": We init VkShaderModules\nand VkPipeline then\nr
 
 ![Vulkan Shader Translation Flow](https://raw.githubusercontent.com/google/angle/master/src/libANGLE/renderer/vulkan/doc/img/VulkanShaderTranslation.svg?sanitize=true)
 
-[VkShaderModule]: https://www.khronos.org/registry/vulkan/specs/1.1-extensions/man/html/VkShaderModule.html
-[translator]: https://chromium.googlesource.com/angle/angle/+/refs/heads/master/src/compiler/translator/
 [GL_KHR_vulkan_glsl]: https://github.com/KhronosGroup/GLSL/blob/master/extensions/khr/GL_KHR_vulkan_glsl.txt
-[TranslatorVulkan.cpp]: https://chromium.googlesource.com/angle/angle/+/refs/heads/master/src/compiler/translator/TranslatorVulkan.cpp
 [glslang]: https://github.com/KhronosGroup/glslang
 [GlslangWrapper.cpp]: https://chromium.googlesource.com/angle/angle/+/refs/heads/master/src/libANGLE/renderer/vulkan/GlslangWrapper.cpp
 [SPIRV-Tools]: https://github.com/KhronosGroup/SPIRV-Tools
+[translator]: https://chromium.googlesource.com/angle/angle/+/refs/heads/master/src/compiler/translator/
+[TranslatorVulkan.cpp]: https://chromium.googlesource.com/angle/angle/+/refs/heads/master/src/compiler/translator/TranslatorVulkan.cpp
+[VkShaderModule]: https://www.khronos.org/registry/vulkan/specs/1.1-extensions/man/html/VkShaderModule.html

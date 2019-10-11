@@ -691,4 +691,131 @@ const char *ParamTypeToString(ParamType paramType)
             return "unknown";
     }
 }
+
+ResourceIDType GetResourceIDTypeFromParamType(ParamType paramType)
+{
+    switch (paramType)
+    {
+        case ParamType::TBufferID:
+            return ResourceIDType::Buffer;
+        case ParamType::TBufferIDConstPointer:
+            return ResourceIDType::Buffer;
+        case ParamType::TBufferIDPointer:
+            return ResourceIDType::Buffer;
+        case ParamType::TFenceNVID:
+            return ResourceIDType::FenceNV;
+        case ParamType::TFenceNVIDConstPointer:
+            return ResourceIDType::FenceNV;
+        case ParamType::TFenceNVIDPointer:
+            return ResourceIDType::FenceNV;
+        case ParamType::TFramebufferID:
+            return ResourceIDType::Framebuffer;
+        case ParamType::TFramebufferIDConstPointer:
+            return ResourceIDType::Framebuffer;
+        case ParamType::TFramebufferIDPointer:
+            return ResourceIDType::Framebuffer;
+        case ParamType::TMemoryObjectID:
+            return ResourceIDType::MemoryObject;
+        case ParamType::TMemoryObjectIDConstPointer:
+            return ResourceIDType::MemoryObject;
+        case ParamType::TMemoryObjectIDPointer:
+            return ResourceIDType::MemoryObject;
+        case ParamType::TPathID:
+            return ResourceIDType::Path;
+        case ParamType::TProgramPipelineID:
+            return ResourceIDType::ProgramPipeline;
+        case ParamType::TProgramPipelineIDConstPointer:
+            return ResourceIDType::ProgramPipeline;
+        case ParamType::TProgramPipelineIDPointer:
+            return ResourceIDType::ProgramPipeline;
+        case ParamType::TQueryID:
+            return ResourceIDType::Query;
+        case ParamType::TQueryIDConstPointer:
+            return ResourceIDType::Query;
+        case ParamType::TQueryIDPointer:
+            return ResourceIDType::Query;
+        case ParamType::TRenderbufferID:
+            return ResourceIDType::Renderbuffer;
+        case ParamType::TRenderbufferIDConstPointer:
+            return ResourceIDType::Renderbuffer;
+        case ParamType::TRenderbufferIDPointer:
+            return ResourceIDType::Renderbuffer;
+        case ParamType::TSamplerID:
+            return ResourceIDType::Sampler;
+        case ParamType::TSamplerIDConstPointer:
+            return ResourceIDType::Sampler;
+        case ParamType::TSamplerIDPointer:
+            return ResourceIDType::Sampler;
+        case ParamType::TSemaphoreID:
+            return ResourceIDType::Semaphore;
+        case ParamType::TSemaphoreIDConstPointer:
+            return ResourceIDType::Semaphore;
+        case ParamType::TSemaphoreIDPointer:
+            return ResourceIDType::Semaphore;
+        case ParamType::TShaderProgramID:
+            return ResourceIDType::ShaderProgram;
+        case ParamType::TShaderProgramIDConstPointer:
+            return ResourceIDType::ShaderProgram;
+        case ParamType::TShaderProgramIDPointer:
+            return ResourceIDType::ShaderProgram;
+        case ParamType::TTextureID:
+            return ResourceIDType::Texture;
+        case ParamType::TTextureIDConstPointer:
+            return ResourceIDType::Texture;
+        case ParamType::TTextureIDPointer:
+            return ResourceIDType::Texture;
+        case ParamType::TTransformFeedbackID:
+            return ResourceIDType::TransformFeedback;
+        case ParamType::TTransformFeedbackIDConstPointer:
+            return ResourceIDType::TransformFeedback;
+        case ParamType::TTransformFeedbackIDPointer:
+            return ResourceIDType::TransformFeedback;
+        case ParamType::TVertexArrayID:
+            return ResourceIDType::VertexArray;
+        case ParamType::TVertexArrayIDConstPointer:
+            return ResourceIDType::VertexArray;
+        case ParamType::TVertexArrayIDPointer:
+            return ResourceIDType::VertexArray;
+        default:
+            return ResourceIDType::InvalidEnum;
+    }
+}
+
+const char *GetResourceIDTypeName(ResourceIDType resourceIDType)
+{
+    switch (resourceIDType)
+    {
+        case ResourceIDType::Buffer:
+            return "Buffer";
+        case ResourceIDType::FenceNV:
+            return "FenceNV";
+        case ResourceIDType::Framebuffer:
+            return "Framebuffer";
+        case ResourceIDType::MemoryObject:
+            return "MemoryObject";
+        case ResourceIDType::Path:
+            return "Path";
+        case ResourceIDType::ProgramPipeline:
+            return "ProgramPipeline";
+        case ResourceIDType::Query:
+            return "Query";
+        case ResourceIDType::Renderbuffer:
+            return "Renderbuffer";
+        case ResourceIDType::Sampler:
+            return "Sampler";
+        case ResourceIDType::Semaphore:
+            return "Semaphore";
+        case ResourceIDType::ShaderProgram:
+            return "ShaderProgram";
+        case ResourceIDType::Texture:
+            return "Texture";
+        case ResourceIDType::TransformFeedback:
+            return "TransformFeedback";
+        case ResourceIDType::VertexArray:
+            return "VertexArray";
+        default:
+            UNREACHABLE();
+            return "GetResourceIDTypeName error";
+    }
+}
 }  // namespace angle

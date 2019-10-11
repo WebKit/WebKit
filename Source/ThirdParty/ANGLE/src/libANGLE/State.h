@@ -234,7 +234,7 @@ class State : angle::NonCopyable
         return mSamplerTextures[type][sampler].get();
     }
 
-    GLuint getSamplerTextureId(unsigned int sampler, TextureType type) const;
+    TextureID getSamplerTextureId(unsigned int sampler, TextureType type) const;
     void detachTexture(const Context *context, const TextureMap &zeroTextures, TextureID texture);
     void initializeZeroTextures(const Context *context, const TextureMap &zeroTextures);
 
@@ -242,7 +242,7 @@ class State : angle::NonCopyable
 
     // Sampler object binding manipulation
     void setSamplerBinding(const Context *context, GLuint textureUnit, Sampler *sampler);
-    GLuint getSamplerId(GLuint textureUnit) const
+    SamplerID getSamplerId(GLuint textureUnit) const
     {
         ASSERT(textureUnit < mSamplers.size());
         return mSamplers[textureUnit].id();
@@ -257,7 +257,7 @@ class State : angle::NonCopyable
 
     // Renderbuffer binding manipulation
     void setRenderbufferBinding(const Context *context, Renderbuffer *renderbuffer);
-    GLuint getRenderbufferId() const { return mRenderbuffer.id(); }
+    RenderbufferID getRenderbufferId() const { return mRenderbuffer.id(); }
     Renderbuffer *getCurrentRenderbuffer() const { return mRenderbuffer.get(); }
     void detachRenderbuffer(const Context *context, RenderbufferID renderbuffer);
 
@@ -323,7 +323,7 @@ class State : angle::NonCopyable
     bool isQueryActive(QueryType type) const;
     bool isQueryActive(Query *query) const;
     void setActiveQuery(const Context *context, QueryType type, Query *query);
-    GLuint getActiveQueryId(QueryType type) const;
+    QueryID getActiveQueryId(QueryType type) const;
     Query *getActiveQuery(QueryType type) const;
 
     // Program Pipeline binding manipulation
@@ -586,6 +586,7 @@ class State : angle::NonCopyable
         DIRTY_OBJECT_DRAW_FRAMEBUFFER,
         DIRTY_OBJECT_VERTEX_ARRAY,
         DIRTY_OBJECT_TEXTURES,  // Top-level dirty bit. Also see mDirtyTextures.
+        DIRTY_OBJECT_IMAGES,    // Top-level dirty bit. Also see mDirtyImages.
         DIRTY_OBJECT_SAMPLERS,  // Top-level dirty bit. Also see mDirtySamplers.
         DIRTY_OBJECT_PROGRAM,
         DIRTY_OBJECT_UNKNOWN,
@@ -702,6 +703,7 @@ class State : angle::NonCopyable
     angle::Result syncDrawFramebuffer(const Context *context);
     angle::Result syncVertexArray(const Context *context);
     angle::Result syncTextures(const Context *context);
+    angle::Result syncImages(const Context *context);
     angle::Result syncSamplers(const Context *context);
     angle::Result syncProgram(const Context *context);
 
@@ -709,8 +711,8 @@ class State : angle::NonCopyable
     static constexpr DirtyObjectHandler kDirtyObjectHandlers[DIRTY_OBJECT_MAX] = {
         &State::syncTexturesInit,    &State::syncImagesInit,      &State::syncReadAttachments,
         &State::syncDrawAttachments, &State::syncReadFramebuffer, &State::syncDrawFramebuffer,
-        &State::syncVertexArray,     &State::syncTextures,        &State::syncSamplers,
-        &State::syncProgram,
+        &State::syncVertexArray,     &State::syncTextures,        &State::syncImages,
+        &State::syncSamplers,        &State::syncProgram,
     };
 
     // Robust init must happen before Framebuffer init for the Vulkan back-end.
@@ -727,8 +729,9 @@ class State : angle::NonCopyable
     static_assert(DIRTY_OBJECT_DRAW_FRAMEBUFFER == 5, "check DIRTY_OBJECT_DRAW_FRAMEBUFFER index");
     static_assert(DIRTY_OBJECT_VERTEX_ARRAY == 6, "check DIRTY_OBJECT_VERTEX_ARRAY index");
     static_assert(DIRTY_OBJECT_TEXTURES == 7, "check DIRTY_OBJECT_TEXTURES index");
-    static_assert(DIRTY_OBJECT_SAMPLERS == 8, "check DIRTY_OBJECT_SAMPLERS index");
-    static_assert(DIRTY_OBJECT_PROGRAM == 9, "check DIRTY_OBJECT_PROGRAM index");
+    static_assert(DIRTY_OBJECT_IMAGES == 8, "check DIRTY_OBJECT_IMAGES index");
+    static_assert(DIRTY_OBJECT_SAMPLERS == 9, "check DIRTY_OBJECT_SAMPLERS index");
+    static_assert(DIRTY_OBJECT_PROGRAM == 10, "check DIRTY_OBJECT_PROGRAM index");
 
     // Dispatch table for buffer update functions.
     static const angle::PackedEnumMap<BufferBinding, BufferBindingSetter> kBufferSetters;

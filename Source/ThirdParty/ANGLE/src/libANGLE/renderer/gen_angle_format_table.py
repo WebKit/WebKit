@@ -92,6 +92,11 @@ const Format *GetFormatInfoTable()
 """
 
 
+def ceil_int(value, mod):
+    assert mod > 0 and value > 0, 'integer modulation should be larger than 0'
+    return (value + mod - 1) / mod
+
+
 def is_depth_stencil(angle_format):
     if not 'channels' in angle_format or not angle_format['channels']:
         return False
@@ -111,6 +116,9 @@ def get_channel_struct(angle_format):
         return None
     if 'BLOCK' in angle_format['id']:
         return None
+    if 'VERTEX' in angle_format['id']:
+        return None
+
     bits = angle_format['bits']
 
     if 'channelStruct' in angle_format:
@@ -145,7 +153,8 @@ def get_channel_struct(angle_format):
 
 def get_mip_generation_function(angle_format):
     channel_struct = get_channel_struct(angle_format)
-    if is_depth_stencil(angle_format) or channel_struct == None or "BLOCK" in angle_format["id"]:
+    if is_depth_stencil(angle_format) or channel_struct == None \
+            or "BLOCK" in angle_format["id"] or "VERTEX" in angle_format["id"]:
         return 'nullptr'
     return 'GenerateMip<' + channel_struct + '>'
 
@@ -239,6 +248,7 @@ def get_vertex_attrib_type(format_id):
     has_r16 = "R16" in format_id
     has_r32 = "R32" in format_id
     has_r10 = "R10" in format_id
+    has_vertex = "VERTEX" in format_id
 
     if has_fixed:
         return "Fixed"
@@ -250,7 +260,10 @@ def get_vertex_attrib_type(format_id):
         return "Byte" if has_s else "UnsignedByte"
 
     if has_r10:
-        return "Int2101010" if has_s else "UnsignedInt2101010"
+        if has_vertex:
+            return "Int1010102" if has_s else "UnsignedInt1010102"
+        else:
+            return "Int2101010" if has_s else "UnsignedInt2101010"
 
     if has_r16:
         return "Short" if has_s else "UnsignedShort"
@@ -317,7 +330,7 @@ def json_to_table_data(format_id, json, angle_to_gl):
         sum_of_bits = 0
         for channel in angle_format.kChannels:
             sum_of_bits += int(parsed[channel])
-        pixel_bytes = sum_of_bits / 8
+        pixel_bytes = ceil_int(sum_of_bits, 8)
     parsed["pixelBytes"] = pixel_bytes
     parsed["componentAlignmentMask"] = get_component_alignment_mask(parsed["channels"],
                                                                     parsed["bits"])

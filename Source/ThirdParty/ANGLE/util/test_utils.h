@@ -4,14 +4,14 @@
 // found in the LICENSE file.
 //
 
-// system_utils.h: declaration of OS-specific utility functions
+// test_utils.h: declaration of OS-specific utility functions
 
-#ifndef UTIL_SYSTEM_UTILS_H_
-#define UTIL_SYSTEM_UTILS_H_
+#ifndef UTIL_TEST_UTILS_H_
+#define UTIL_TEST_UTILS_H_
 
 #include <string>
+#include <vector>
 
-#include "common/system_utils.h"
 #include "util/util_export.h"
 
 namespace angle
@@ -33,6 +33,7 @@ ANGLE_UTIL_EXPORT void TerminateCrashHandler();
 
 // Print a stack back trace.
 ANGLE_UTIL_EXPORT void PrintStackBacktrace();
+
 }  // namespace angle
 
-#endif  // UTIL_SYSTEM_UTILS_H_
+#endif  // UTIL_TEST_UTILS_H_

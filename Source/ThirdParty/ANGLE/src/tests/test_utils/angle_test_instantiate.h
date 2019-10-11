@@ -23,6 +23,7 @@ bool IsLinux();
 bool IsOSX();
 bool IsOzone();
 bool IsWindows();
+bool IsWindows7();
 bool IsFuchsia();
 
 // Android devices
@@ -138,15 +139,5 @@ extern std::string gSelectedConfig;
 // multiple APIs/windows/etc in the same process.
 extern bool gSeparateProcessPerConfig;
 }  // namespace angle
-
-#define ANGLE_SKIP_TEST_IF(COND)                                  \
-    do                                                            \
-    {                                                             \
-        if (COND)                                                 \
-        {                                                         \
-            std::cout << "Test skipped: " #COND "." << std::endl; \
-            return;                                               \
-        }                                                         \
-    } while (0)
 
 #endif  // ANGLE_TEST_INSTANTIATE_H_

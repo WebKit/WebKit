@@ -82,7 +82,7 @@ void CaptureDeleteQueries_idsPacked(const Context *context,
                                     const QueryID *ids,
                                     ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureMemory(ids, sizeof(QueryID) * n, paramCapture);
 }
 
 void CaptureDeleteSamplers_samplersPacked(const Context *context,
@@ -91,7 +91,7 @@ void CaptureDeleteSamplers_samplersPacked(const Context *context,
                                           const SamplerID *samplers,
                                           ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureMemory(samplers, sizeof(SamplerID) * count, paramCapture);
 }
 
 void CaptureDeleteTransformFeedbacks_idsPacked(const Context *context,
@@ -100,7 +100,7 @@ void CaptureDeleteTransformFeedbacks_idsPacked(const Context *context,
                                                const TransformFeedbackID *ids,
                                                ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureMemory(ids, sizeof(TransformFeedbackID) * n, paramCapture);
 }
 
 void CaptureDeleteVertexArrays_arraysPacked(const Context *context,
@@ -109,7 +109,7 @@ void CaptureDeleteVertexArrays_arraysPacked(const Context *context,
                                             const VertexArrayID *arrays,
                                             ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureMemory(arrays, sizeof(VertexArrayID) * n, paramCapture);
 }
 
 void CaptureDrawBuffers_bufs(const Context *context,
@@ -152,7 +152,7 @@ void CaptureGenQueries_idsPacked(const Context *context,
                                  QueryID *ids,
                                  ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureGenHandles(n, ids, paramCapture);
 }
 
 void CaptureGenSamplers_samplersPacked(const Context *context,
@@ -161,7 +161,7 @@ void CaptureGenSamplers_samplersPacked(const Context *context,
                                        SamplerID *samplers,
                                        ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureGenHandles(count, samplers, paramCapture);
 }
 
 void CaptureGenTransformFeedbacks_idsPacked(const Context *context,
@@ -170,7 +170,7 @@ void CaptureGenTransformFeedbacks_idsPacked(const Context *context,
                                             TransformFeedbackID *ids,
                                             ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureGenHandles(n, ids, paramCapture);
 }
 
 void CaptureGenVertexArrays_arraysPacked(const Context *context,
@@ -179,7 +179,7 @@ void CaptureGenVertexArrays_arraysPacked(const Context *context,
                                          VertexArrayID *arrays,
                                          ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureGenHandles(n, arrays, paramCapture);
 }
 
 void CaptureGetActiveUniformBlockName_length(const Context *context,

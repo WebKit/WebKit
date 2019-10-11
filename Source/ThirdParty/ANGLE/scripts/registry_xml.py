@@ -113,6 +113,7 @@ supported_egl_extensions = [
     "EGL_KHR_debug",
     "EGL_KHR_fence_sync",
     "EGL_KHR_image",
+    "EGL_KHR_no_config_context",
     "EGL_KHR_stream",
     "EGL_KHR_stream_consumer_gltexture",
     "EGL_KHR_swap_buffers_with_damage",

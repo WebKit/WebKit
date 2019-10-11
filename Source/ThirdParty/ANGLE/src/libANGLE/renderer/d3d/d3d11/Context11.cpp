@@ -268,7 +268,7 @@ angle::Result Context11::drawArrays(const gl::Context *context,
     ASSERT(count > 0);
     ANGLE_TRY(mRenderer->getStateManager()->updateState(
         context, mode, first, count, gl::DrawElementsType::InvalidEnum, nullptr, 0, 0));
-    return mRenderer->drawArrays(context, mode, first, count, 0);
+    return mRenderer->drawArrays(context, mode, first, count, 0, 0);
 }
 
 angle::Result Context11::drawArraysInstanced(const gl::Context *context,
@@ -280,7 +280,7 @@ angle::Result Context11::drawArraysInstanced(const gl::Context *context,
     ASSERT(count > 0);
     ANGLE_TRY(mRenderer->getStateManager()->updateState(
         context, mode, first, count, gl::DrawElementsType::InvalidEnum, nullptr, instanceCount, 0));
-    return mRenderer->drawArrays(context, mode, first, count, instanceCount);
+    return mRenderer->drawArrays(context, mode, first, count, instanceCount, 0);
 }
 
 angle::Result Context11::drawArraysInstancedBaseInstance(const gl::Context *context,
@@ -290,7 +290,10 @@ angle::Result Context11::drawArraysInstancedBaseInstance(const gl::Context *cont
                                                          GLsizei instanceCount,
                                                          GLuint baseInstance)
 {
-    return drawArraysInstanced(context, mode, first, count, instanceCount);
+    ASSERT(count > 0);
+    ANGLE_TRY(mRenderer->getStateManager()->updateState(
+        context, mode, first, count, gl::DrawElementsType::InvalidEnum, nullptr, instanceCount, 0));
+    return mRenderer->drawArrays(context, mode, first, count, instanceCount, baseInstance);
 }
 
 ANGLE_INLINE angle::Result Context11::drawElementsImpl(const gl::Context *context,
@@ -380,7 +383,8 @@ angle::Result Context11::drawArraysIndirect(const gl::Context *context,
         ANGLE_TRY(mRenderer->getStateManager()->updateState(context, mode, cmd->first, cmd->count,
                                                             gl::DrawElementsType::InvalidEnum,
                                                             nullptr, cmd->instanceCount, 0));
-        return mRenderer->drawArrays(context, mode, cmd->first, cmd->count, cmd->instanceCount);
+        return mRenderer->drawArrays(context, mode, cmd->first, cmd->count, cmd->instanceCount,
+                                     cmd->baseInstance);
     }
     else
     {

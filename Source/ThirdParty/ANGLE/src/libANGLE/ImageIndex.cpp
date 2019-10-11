@@ -54,6 +54,19 @@ GLint TextureTargetToLayer(TextureTarget target)
     }
 }
 
+bool IsArrayTarget(TextureTarget target)
+{
+    switch (target)
+    {
+        case TextureTarget::_2DArray:
+        case TextureTarget::_2DMultisampleArray:
+            return true;
+        default:
+            return false;
+    }
+}
+}  // anonymous namespace
+
 TextureTarget TextureTypeToTarget(TextureType type, GLint layerIndex)
 {
     if (type == TextureType::CubeMap)
@@ -68,19 +81,6 @@ TextureTarget TextureTypeToTarget(TextureType type, GLint layerIndex)
         return NonCubeTextureTypeToTarget(type);
     }
 }
-
-bool IsArrayTarget(TextureTarget target)
-{
-    switch (target)
-    {
-        case TextureTarget::_2DArray:
-        case TextureTarget::_2DMultisampleArray:
-            return true;
-        default:
-            return false;
-    }
-}
-}  // anonymous namespace
 
 ImageIndex::ImageIndex()
     : mType(TextureType::InvalidEnum), mLevelIndex(0), mLayerIndex(0), mLayerCount(kEntireLevel)

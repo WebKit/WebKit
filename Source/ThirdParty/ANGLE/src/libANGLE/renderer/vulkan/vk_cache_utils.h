@@ -38,7 +38,7 @@ using RefCountedPipelineLayout      = RefCounted<PipelineLayout>;
 // fewer bits. For example, boolean values could be represented by a single bit instead
 // of a uint8_t. However at the current time there are concerns about the portability
 // of bitfield operators, and complexity issues with using bit mask operations. This is
-// something likely we will want to investigate as the Vulkan implementation progresses.
+// something we will likely want to investigate as the Vulkan implementation progresses.
 //
 // Second implementation note: the struct packing is also a bit fragile, and some of the
 // packing requirements depend on using alignas and field ordering to get the result of
@@ -164,8 +164,6 @@ static_assert(sizeof(AttachmentOpsArray) == 20, "Size check failed");
 struct PackedAttribDesc final
 {
     uint8_t format;
-
-    // TODO(http://anglebug.com/2672): Emulate divisors greater than UBYTE_MAX.
     uint8_t divisor;
 
     // Can only take 11 bits on NV.
@@ -315,9 +313,9 @@ constexpr size_t kPackedInputAssemblyAndColorBlendStateSize =
 static_assert(kPackedInputAssemblyAndColorBlendStateSize == 56, "Size check failed");
 
 constexpr size_t kGraphicsPipelineDescSumOfSizes =
-    kVertexInputAttributesSize + kPackedInputAssemblyAndColorBlendStateSize +
-    kPackedRasterizationAndMultisampleStateSize + kPackedDepthStencilStateSize +
-    kRenderPassDescSize + sizeof(VkViewport) + sizeof(VkRect2D);
+    kVertexInputAttributesSize + kRenderPassDescSize + kPackedRasterizationAndMultisampleStateSize +
+    kPackedDepthStencilStateSize + kPackedInputAssemblyAndColorBlendStateSize + sizeof(VkViewport) +
+    sizeof(VkRect2D);
 
 // Number of dirty bits in the dirty bit set.
 constexpr size_t kGraphicsPipelineDirtyBitBytes = 4;
@@ -356,7 +354,7 @@ class GraphicsPipelineDesc final
         return reinterpret_cast<const T *>(this);
     }
 
-    angle::Result initializePipeline(vk::Context *context,
+    angle::Result initializePipeline(ContextVk *contextVk,
                                      const vk::PipelineCache &pipelineCacheVk,
                                      const RenderPass &compatibleRenderPass,
                                      const PipelineLayout &pipelineLayout,
@@ -364,6 +362,7 @@ class GraphicsPipelineDesc final
                                      const gl::ComponentTypeMask &programAttribsTypeMask,
                                      const ShaderModule *vertexModule,
                                      const ShaderModule *fragmentModule,
+                                     const ShaderModule *geometryModule,
                                      Pipeline *pipelineOut) const;
 
     // Vertex input state. For ES 3.1 this should be separated into binding and attribute.
@@ -768,7 +767,7 @@ class RenderPassCache final : angle::NonCopyable
 
     void destroy(VkDevice device);
 
-    ANGLE_INLINE angle::Result getCompatibleRenderPass(vk::Context *context,
+    ANGLE_INLINE angle::Result getCompatibleRenderPass(ContextVk *contextVk,
                                                        Serial serial,
                                                        const vk::RenderPassDesc &desc,
                                                        vk::RenderPass **renderPassOut)
@@ -785,7 +784,7 @@ class RenderPassCache final : angle::NonCopyable
             return angle::Result::Continue;
         }
 
-        return addRenderPass(context, serial, desc, renderPassOut);
+        return addRenderPass(contextVk, serial, desc, renderPassOut);
     }
 
     angle::Result getRenderPassWithOps(vk::Context *context,
@@ -795,7 +794,7 @@ class RenderPassCache final : angle::NonCopyable
                                        vk::RenderPass **renderPassOut);
 
   private:
-    angle::Result addRenderPass(vk::Context *context,
+    angle::Result addRenderPass(ContextVk *contextVk,
                                 Serial serial,
                                 const vk::RenderPassDesc &desc,
                                 vk::RenderPass **renderPassOut);
@@ -820,7 +819,7 @@ class GraphicsPipelineCache final : angle::NonCopyable
 
     void populate(const vk::GraphicsPipelineDesc &desc, vk::Pipeline &&pipeline);
 
-    ANGLE_INLINE angle::Result getPipeline(vk::Context *context,
+    ANGLE_INLINE angle::Result getPipeline(ContextVk *contextVk,
                                            const vk::PipelineCache &pipelineCacheVk,
                                            const vk::RenderPass &compatibleRenderPass,
                                            const vk::PipelineLayout &pipelineLayout,
@@ -828,6 +827,7 @@ class GraphicsPipelineCache final : angle::NonCopyable
                                            const gl::ComponentTypeMask &programAttribsTypeMask,
                                            const vk::ShaderModule *vertexModule,
                                            const vk::ShaderModule *fragmentModule,
+                                           const vk::ShaderModule *geometryModule,
                                            const vk::GraphicsPipelineDesc &desc,
                                            const vk::GraphicsPipelineDesc **descPtrOut,
                                            vk::PipelineHelper **pipelineOut)
@@ -840,13 +840,13 @@ class GraphicsPipelineCache final : angle::NonCopyable
             return angle::Result::Continue;
         }
 
-        return insertPipeline(context, pipelineCacheVk, compatibleRenderPass, pipelineLayout,
+        return insertPipeline(contextVk, pipelineCacheVk, compatibleRenderPass, pipelineLayout,
                               activeAttribLocationsMask, programAttribsTypeMask, vertexModule,
-                              fragmentModule, desc, descPtrOut, pipelineOut);
+                              fragmentModule, geometryModule, desc, descPtrOut, pipelineOut);
     }
 
   private:
-    angle::Result insertPipeline(vk::Context *context,
+    angle::Result insertPipeline(ContextVk *contextVk,
                                  const vk::PipelineCache &pipelineCacheVk,
                                  const vk::RenderPass &compatibleRenderPass,
                                  const vk::PipelineLayout &pipelineLayout,
@@ -854,6 +854,7 @@ class GraphicsPipelineCache final : angle::NonCopyable
                                  const gl::ComponentTypeMask &programAttribsTypeMask,
                                  const vk::ShaderModule *vertexModule,
                                  const vk::ShaderModule *fragmentModule,
+                                 const vk::ShaderModule *geometryModule,
                                  const vk::GraphicsPipelineDesc &desc,
                                  const vk::GraphicsPipelineDesc **descPtrOut,
                                  vk::PipelineHelper **pipelineOut);
@@ -919,10 +920,10 @@ constexpr uint32_t kDriverUniformsDescriptorSetIndex = 3;
 
 // Only 1 driver uniform binding is used.
 constexpr uint32_t kReservedDriverUniformBindingCount = 1;
-// There is 1 default uniform binding used per stage.  Currently, a maxium of two stages are
+// There is 1 default uniform binding used per stage.  Currently, a maxium of three stages are
 // supported.
 constexpr uint32_t kReservedPerStageDefaultUniformBindingCount = 1;
-constexpr uint32_t kReservedDefaultUniformBindingCount         = 2;
+constexpr uint32_t kReservedDefaultUniformBindingCount         = 3;
 // Binding index start for transform feedback buffers:
 constexpr uint32_t kXfbBindingIndexStart = kReservedDefaultUniformBindingCount;
 }  // namespace rx

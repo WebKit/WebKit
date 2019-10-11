@@ -181,6 +181,9 @@ ANGLENativeDisplay::ANGLENativeDisplay(std::vector<EGLAttrib> attribs)
 NativePixmap::NativePixmap(EGLNativeDisplayType display, int width, int height, int bitDepth)
     : eglu::NativePixmap(kBitmapCapabilities), mPixmap(CreateOSPixmap())
 {
+#if (DE_OS != DE_OS_UNIX)
+    throw tcu::NotSupportedError("Pixmap not supported");
+#else
     if (!mPixmap)
     {
         throw ResourceError("Failed to create pixmap", DE_NULL, __FILE__, __LINE__);
@@ -190,6 +193,7 @@ NativePixmap::NativePixmap(EGLNativeDisplayType display, int width, int height, 
     {
         throw ResourceError("Failed to initialize pixmap", DE_NULL, __FILE__, __LINE__);
     }
+#endif
 }
 
 NativePixmap::~NativePixmap()

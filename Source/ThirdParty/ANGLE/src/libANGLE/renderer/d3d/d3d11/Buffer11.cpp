@@ -684,8 +684,9 @@ angle::Result Buffer11::getConstantBufferRange(const gl::Context *context,
                                                UINT *numConstantsOut)
 {
     NativeStorage *bufferStorage = nullptr;
-
-    if (offset == 0 || mRenderer->getRenderer11DeviceCaps().supportsConstantBufferOffsets)
+    if ((offset == 0 &&
+         size < static_cast<GLsizeiptr>(mRenderer->getNativeCaps().maxUniformBlockSize)) ||
+        mRenderer->getRenderer11DeviceCaps().supportsConstantBufferOffsets)
     {
         ANGLE_TRY(getBufferStorage(context, BUFFER_USAGE_UNIFORM, &bufferStorage));
         CalculateConstantBufferParams(offset, size, firstConstantOut, numConstantsOut);
@@ -1217,9 +1218,12 @@ void Buffer11::NativeStorage::FillBufferDesc(D3D11_BUFFER_DESC *bufferDesc,
 
             // Note: it seems that D3D11 allows larger buffers on some platforms, but not all.
             // (Windows 10 seems to allow larger constant buffers, but not Windows 7)
-            bufferDesc->ByteWidth =
-                std::min<UINT>(bufferDesc->ByteWidth,
-                               static_cast<UINT>(renderer->getNativeCaps().maxUniformBlockSize));
+            if (!renderer->getRenderer11DeviceCaps().supportsConstantBufferOffsets)
+            {
+                bufferDesc->ByteWidth = std::min<UINT>(
+                    bufferDesc->ByteWidth,
+                    static_cast<UINT>(renderer->getNativeCaps().maxUniformBlockSize));
+            }
             break;
 
         case BUFFER_USAGE_RAW_UAV:

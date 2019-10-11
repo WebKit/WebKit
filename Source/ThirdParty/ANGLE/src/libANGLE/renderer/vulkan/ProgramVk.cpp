@@ -22,8 +22,8 @@ namespace rx
 
 namespace
 {
-
-constexpr size_t kUniformBlockDynamicBufferMinSize = 256 * 128;
+// This size is picked according to the required maxUniformBufferRange in the Vulkan spec.
+constexpr size_t kUniformBlockDynamicBufferMinSize = 16384u;
 
 // Identical to Std140 encoder in all aspects, except it ignores opaque uniform types.
 class VulkanDefaultBlockEncoder : public sh::Std140BlockEncoder
@@ -446,15 +446,17 @@ void ProgramVk::reset(ContextVk *contextVk)
     }
     mPipelineLayout.reset();
 
+    RendererVk *renderer = contextVk->getRenderer();
+
     for (auto &uniformBlock : mDefaultUniformBlocks)
     {
-        uniformBlock.storage.release(contextVk);
+        uniformBlock.storage.release(renderer);
     }
 
     mDefaultShaderInfo.release(contextVk);
     mLineRasterShaderInfo.release(contextVk);
 
-    mEmptyBuffer.release(contextVk);
+    mEmptyBuffer.release(renderer);
 
     mDescriptorSets.clear();
     mEmptyDescriptorSets.fill(VK_NULL_HANDLE);
@@ -470,6 +472,7 @@ void ProgramVk::reset(ContextVk *contextVk)
     }
 
     mTextureDescriptorsCache.clear();
+    mDescriptorBuffersCache.clear();
 }
 
 std::unique_ptr<rx::LinkEvent> ProgramVk::load(const gl::Context *context,
@@ -795,6 +798,7 @@ void ProgramVk::initDefaultUniformLayoutMapping(gl::ShaderMap<sh::BlockLayoutMap
                 {
                     // Gets the uniform name without the [0] at the end.
                     uniformName = gl::StripLastArrayIndex(uniformName);
+                    ASSERT(uniformName.size() != uniform.name.size());
                 }
 
                 bool found = false;
@@ -1219,6 +1223,8 @@ void ProgramVk::updateDefaultUniformsDescriptorSet(ContextVk *contextVk)
 
     uint32_t bindingIndex = 0;
 
+    mDescriptorBuffersCache.clear();
+
     // Write default uniforms for each shader type.
     for (const gl::ShaderType shaderType : mState.getLinkedShaderStages())
     {
@@ -1228,13 +1234,15 @@ void ProgramVk::updateDefaultUniformsDescriptorSet(ContextVk *contextVk)
 
         if (!uniformBlock.uniformData.empty())
         {
-            const vk::BufferHelper *bufferHelper = uniformBlock.storage.getCurrentBuffer();
-            bufferInfo.buffer                    = bufferHelper->getBuffer().getHandle();
+            vk::BufferHelper *bufferHelper = uniformBlock.storage.getCurrentBuffer();
+            bufferInfo.buffer              = bufferHelper->getBuffer().getHandle();
+            mDescriptorBuffersCache.emplace_back(bufferHelper);
         }
         else
         {
-            mEmptyBuffer.updateQueueSerial(contextVk->getCurrentQueueSerial());
+            mEmptyBuffer.onGraphAccess(contextVk->getCommandGraph());
             bufferInfo.buffer = mEmptyBuffer.getBuffer().getHandle();
+            mDescriptorBuffersCache.emplace_back(&mEmptyBuffer);
         }
 
         bufferInfo.offset = 0;
@@ -1333,7 +1341,7 @@ void ProgramVk::updateBuffersDescriptorSet(ContextVk *contextVk,
         }
         else
         {
-            bufferHelper.onRead(recorder, VK_ACCESS_UNIFORM_READ_BIT);
+            bufferHelper.onRead(contextVk, recorder, VK_ACCESS_UNIFORM_READ_BIT);
         }
 
         ++writeCount;
@@ -1398,7 +1406,7 @@ void ProgramVk::updateAtomicCounterBuffersDescriptorSet(ContextVk *contextVk,
     }
 
     // Bind the empty buffer to every array slot that's unused.
-    mEmptyBuffer.updateQueueSerial(contextVk->getCurrentQueueSerial());
+    mEmptyBuffer.onGraphAccess(contextVk->getCommandGraph());
     for (size_t binding : ~writtenBindings)
     {
         VkDescriptorBufferInfo &bufferInfo = descriptorBufferInfo[binding];
@@ -1465,7 +1473,7 @@ angle::Result ProgramVk::updateImagesDescriptorSet(ContextVk *contextVk,
             const vk::ImageView *imageView = nullptr;
 
             ANGLE_TRY(textureVk->getLayerLevelStorageImageView(
-                contextVk, binding.layered, binding.layer, binding.level, &imageView));
+                contextVk, (binding.layered == GL_TRUE), binding.layer, binding.level, &imageView));
 
             // Note: binding.access is unused because it is implied by the shader.
 
@@ -1533,7 +1541,7 @@ angle::Result ProgramVk::updateTransformFeedbackDescriptorSet(ContextVk *context
 
 void ProgramVk::updateTransformFeedbackDescriptorSetImpl(ContextVk *contextVk)
 {
-    const gl::State &glState = contextVk->getState();
+    const gl::State &glState                 = contextVk->getState();
     gl::TransformFeedback *transformFeedback = glState.getCurrentTransformFeedback();
 
     if (!hasTransformFeedbackOutput())
@@ -1749,6 +1757,11 @@ angle::Result ProgramVk::updateDescriptorSets(ContextVk *contextVk,
         commandBuffer->bindDescriptorSets(mPipelineLayout.get(), pipelineBindPoint,
                                           descriptorSetIndex, 1, &descSet, uniformBlockOffsetCount,
                                           mDynamicBufferOffsets.data());
+    }
+
+    for (vk::BufferHelper *buffer : mDescriptorBuffersCache)
+    {
+        buffer->onGraphAccess(contextVk->getCommandGraph());
     }
 
     return angle::Result::Continue;

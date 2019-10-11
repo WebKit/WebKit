@@ -138,6 +138,7 @@ angle_end2end_tests_sources = [
   "egl_tests/EGLContextSharingTest.cpp",
   "egl_tests/EGLCreateContextAttribsTest.cpp",
   "egl_tests/EGLDebugTest.cpp",
+  "egl_tests/EGLNoConfigContextTest.cpp",
   "egl_tests/EGLProgramCacheControlTest.cpp",
   "egl_tests/EGLQueryContextTest.cpp",
   "egl_tests/EGLRecordableTest.cpp",
@@ -157,8 +158,10 @@ angle_end2end_tests_sources = [
   "test_utils/angle_test_instantiate.h",
   "test_utils/gl_raii.h",
 ]
-angle_end2end_tests_mac_sources =
-    [ "egl_tests/EGLIOSurfaceClientBufferTest.cpp" ]
+angle_end2end_tests_mac_sources = [
+  "egl_tests/EGLDeviceCGLTest.cpp",
+  "egl_tests/EGLIOSurfaceClientBufferTest.cpp",
+]
 angle_end2end_tests_win_sources = [
   "gl_tests/D3DImageFormatConversionTest.cpp",
   "egl_tests/EGLDeviceTest.cpp",

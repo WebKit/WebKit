@@ -2,14 +2,32 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import("//build/config/dcheck_always_on.gni")
-import("//build/config/sanitizers/sanitizers.gni")
-import("//build/config/ui.gni")  # import the use_x11 variable
 import("//build_overrides/angle.gni")
-import("//build_overrides/build.gni")
-import("//testing/test.gni")
-if (is_android) {
-  import("//build/config/android/config.gni")
+
+if (angle_has_build) {
+  import("//build/config/dcheck_always_on.gni")
+  import("//build/config/sanitizers/sanitizers.gni")
+  import("//build/config/ui.gni")  # import the use_x11 variable
+  import("//build_overrides/build.gni")
+  import("//testing/test.gni")
+  if (is_android) {
+    import("//build/config/android/config.gni")
+  }
+
+  if (is_win) {
+    import("//build/config/win/visual_studio_version.gni")
+  }
+} else {
+  declare_args() {
+    is_ubsan = false
+    is_tsan = false
+    is_asan = false
+    build_with_chromium = false
+    dcheck_always_on = false
+    use_x11 = is_linux
+    use_ozone = false
+    use_fuzzing_engine = false
+  }
 }
 
 if (build_with_chromium) {
@@ -47,6 +65,9 @@ declare_args() {
   }
   angle_shared_libvulkan = false
 
+  # There's no "is_winuwp" helper in BUILDCONFIG.gn, so we define one ourselves
+  angle_is_winuwp = is_win && current_os == "winuwp"
+
   # Default to using "_angle" suffix on Android
   if (is_android) {
     angle_libs_suffix = "_angle"
@@ -56,16 +77,19 @@ declare_args() {
 }
 
 declare_args() {
-  angle_enable_d3d9 = is_win
+  angle_enable_d3d9 = is_win && !angle_is_winuwp
   angle_enable_d3d11 = is_win
-  angle_enable_gl = (ozone_platform_gbm || !is_linux ||
-                     (use_x11 && !is_chromeos)) && !is_fuchsia
+  angle_enable_gl =
+      (ozone_platform_gbm || !is_linux || (use_x11 && !is_chromeos)) &&
+      !is_fuchsia && !angle_is_winuwp
 
   # ANGLE Vulkan backend on Android requires API level 26, i.e. Oreo, due to
   # Vulkan Validation Layers compatibility issues, see http://crrev/c/1405714.
   # Otherwise, API level 24 would have been enough.
-  angle_enable_vulkan = is_win || (is_linux && use_x11 && !is_chromeos) ||
-                        (is_android && ndk_api_level_at_least_26) || is_fuchsia
+  angle_enable_vulkan =
+      angle_has_build &&
+      ((is_win && !angle_is_winuwp) || (is_linux && use_x11 && !is_chromeos) ||
+       (is_android && ndk_api_level_at_least_26) || is_fuchsia)
   angle_enable_null = true
   angle_enable_essl = true
   angle_enable_glsl = true
@@ -81,20 +105,8 @@ declare_args() {
       angle_enable_vulkan && !is_ubsan && !is_tsan && !is_asan &&
       (is_debug || dcheck_always_on)
 
-  if (angle_enable_vulkan) {
-    # Enable Vulkan GPU trace event capability
-    angle_enable_vulkan_gpu_trace_events = false
-
-    # Enable custom (cpu-side) secondary command buffers
-    angle_enable_custom_vulkan_cmd_buffers = true
-  }
-
   # Disable overlay by default
   angle_enable_overlay = false
-}
-
-if (is_win) {
-  import("//build/config/win/visual_studio_version.gni")
 }
 
 angle_common_configs = [
@@ -103,11 +115,15 @@ angle_common_configs = [
   angle_root + ":internal_config",
 ]
 
-angle_remove_configs = [ "//build/config/compiler:default_include_dirs" ]
+angle_remove_configs = []
+
+if (angle_has_build) {
+  angle_remove_configs += [ "//build/config/compiler:default_include_dirs" ]
+}
 angle_better_stack_traces =
     (is_debug || dcheck_always_on) && is_linux && !is_asan && !is_cfi
 
-if (is_clang) {
+if (angle_has_build && is_clang) {
   angle_remove_configs += [ "//build/config/clang:find_bad_constructs" ]
 
   # Disabled to enable better stack traces.
@@ -143,7 +159,16 @@ set_defaults("angle_static_library") {
 set_defaults("angle_test") {
   configs = angle_common_configs
   public_configs = []
+  public_deps = []
+  sources = []
+  data = []
+  main = ""
   suppressed_configs = angle_remove_configs
+
+  # TODO(jmadill): Migrate to standalone harness. http://anglebug.com/3162
+  if (build_with_chromium) {
+    suppressed_configs -= [ "//build/config/compiler:default_include_dirs" ]
+  }
 }
 
 template("angle_executable") {
@@ -226,6 +251,18 @@ template("angle_static_library") {
 }
 
 template("angle_test") {
+  _googletest_deps = [
+    "//testing/gmock",
+    "//testing/gtest",
+    "//third_party/googletest:gmock",
+    "//third_party/googletest:gtest",
+  ]
+
+  # TODO(jmadill): Migrate to standalone harness. http://anglebug.com/3162
+  if (build_with_chromium) {
+    _googletest_deps += [ "//base/test:test_support" ]
+  }
+
   test(target_name) {
     forward_variables_from(invoker,
                            "*",
@@ -250,6 +287,17 @@ template("angle_test") {
     if (is_android) {
       configs += [ angle_root + ":build_id_config" ]
       configs -= [ "//build/config/android:hide_all_but_jni" ]
+    }
+
+    deps += _googletest_deps + [
+              "$angle_root:angle_common",
+              "$angle_root:includes",
+            ]
+
+    if (build_with_chromium) {
+      sources += [ "//gpu/${invoker.main}.cc" ]
+    } else {
+      sources += [ "${invoker.main}.cpp" ]
     }
   }
 }

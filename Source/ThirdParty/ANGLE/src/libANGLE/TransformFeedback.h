@@ -57,7 +57,7 @@ class TransformFeedbackState final : angle::NonCopyable
     std::vector<OffsetBindingPointer<Buffer>> mIndexedBuffers;
 };
 
-class TransformFeedback final : public RefCountObject, public LabeledObject
+class TransformFeedback final : public RefCountObject<TransformFeedbackID>, public LabeledObject
 {
   public:
     TransformFeedback(rx::GLImplFactory *implFactory, TransformFeedbackID id, const Caps &caps);
@@ -101,7 +101,7 @@ class TransformFeedback final : public RefCountObject, public LabeledObject
     // Returns true if any buffer bound to this object is also bound to another target.
     bool buffersBoundForOtherUse() const;
 
-    angle::Result detachBuffer(const Context *context, GLuint bufferName);
+    angle::Result detachBuffer(const Context *context, BufferID bufferID);
 
     rx::TransformFeedbackImpl *getImplementation() const;
 

@@ -123,6 +123,9 @@ class ImageIndexIterator
 
     ImageIndex mCurrentIndex;
 };
+
+TextureTarget TextureTypeToTarget(TextureType type, GLint layerIndex);
+
 }  // namespace gl
 
 #endif  // LIBANGLE_IMAGE_INDEX_H_

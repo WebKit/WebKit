@@ -512,6 +512,12 @@ AttributesMask GLES1State::getVertexArraysAttributeMask() const
     return attribsMask;
 }
 
+AttributesMask GLES1State::getActiveAttributesMask() const
+{
+    // The program always has 8 attributes enabled.
+    return AttributesMask(0xFF);
+}
+
 void GLES1State::setHint(GLenum target, GLenum mode)
 {
     setDirty(DIRTY_GLES1_HINT_SETTING);

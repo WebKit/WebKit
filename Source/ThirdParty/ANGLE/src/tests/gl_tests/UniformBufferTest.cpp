@@ -1515,11 +1515,10 @@ TEST_P(UniformBufferTest, DependentBufferChange)
 
 // Recreate WebGL conformance test conformance2/uniforms/large-uniform-buffers.html to test
 // regression in http://anglebug.com/3388
-TEST_P(UniformBufferTest, SizeOver65535)
+TEST_P(UniformBufferTest, SizeOverMaxBlockSize)
 {
-    // UBOs sized above 65535 do not appear to work on D3D11
-    // http://anglebug.com/3388
-    ANGLE_SKIP_TEST_IF(IsD3D11());
+    // Test crashes on Windows AMD OpenGL
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsOpenGL());
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFragmentShader);
 
@@ -1546,10 +1545,14 @@ TEST_P(UniformBufferTest, SizeOver65535)
     glGetActiveUniformBlockiv(program, uboIndex, GL_UNIFORM_BLOCK_DATA_SIZE, &uboDataSize);
     EXPECT_NE(uboDataSize, 0);  // uniform block data size invalid
 
-    GLBuffer uboBuf;
-    std::array<GLfloat, 0x20000> uboData;
+    GLint64 maxUniformBlockSize;
+    glGetInteger64v(GL_MAX_UNIFORM_BLOCK_SIZE, &maxUniformBlockSize);
 
-    GLint offs0 = 0x00000;
+    GLBuffer uboBuf;
+    std::vector<GLfloat> uboData;
+    uboData.resize(maxUniformBlockSize * 2);  // underlying data is twice the max block size
+
+    GLint offs0 = 0;
 
     // Red
     uboData[offs0 + 0] = 1;
@@ -1557,7 +1560,7 @@ TEST_P(UniformBufferTest, SizeOver65535)
     uboData[offs0 + 2] = 0;
     uboData[offs0 + 3] = 1;
 
-    GLint offs1     = 0x10000;
+    GLint offs1     = maxUniformBlockSize;
     GLint alignment = 0;
     glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &alignment);
     EXPECT_EQ(offs1 % alignment, 0);

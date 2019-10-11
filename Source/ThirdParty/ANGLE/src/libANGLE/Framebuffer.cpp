@@ -1974,7 +1974,7 @@ bool Framebuffer::formsRenderingFeedbackLoopWith(const Context *context) const
         // Regardless of if enabled or masked.
         if (checkDepth)
         {
-            if (texture->id() == depth->id())
+            if (texture->getId() == depth->id())
             {
                 return true;
             }
@@ -1982,7 +1982,7 @@ bool Framebuffer::formsRenderingFeedbackLoopWith(const Context *context) const
 
         if (checkStencil)
         {
-            if (texture->id() == stencil->id())
+            if (texture->getId() == stencil->id())
             {
                 return true;
             }
@@ -2005,7 +2005,7 @@ bool Framebuffer::formsRenderingFeedbackLoopWith(const Context *context) const
     return false;
 }
 
-bool Framebuffer::formsCopyingFeedbackLoopWith(GLuint copyTextureID,
+bool Framebuffer::formsCopyingFeedbackLoopWith(TextureID copyTextureID,
                                                GLint copyTextureLevel,
                                                GLint copyTextureLayer) const
 {

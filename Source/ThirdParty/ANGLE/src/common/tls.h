@@ -14,7 +14,7 @@
 #ifdef ANGLE_PLATFORM_WINDOWS
 
 // TLS does not exist for Windows Store and needs to be emulated
-#    ifdef ANGLE_ENABLE_WINDOWS_STORE
+#    ifdef ANGLE_ENABLE_WINDOWS_UWP
 #        ifndef TLS_OUT_OF_INDEXES
 #            define TLS_OUT_OF_INDEXES static_cast<DWORD>(0xFFFFFFFF)
 #        endif

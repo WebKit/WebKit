@@ -19,10 +19,11 @@
 #include "tga_utils.h"
 #include "util/random_utils.h"
 #include "util/shader_utils.h"
-#include "util/system_utils.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
+
+#include <string>
 
 using namespace angle;
 

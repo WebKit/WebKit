@@ -522,6 +522,8 @@ enum class ParamType
     {param_types}
 }};
 
+constexpr uint32_t kParamTypeCount = {param_type_count};
+
 union ParamValue
 {{
     {param_union_values}
@@ -531,7 +533,6 @@ template <ParamType PType, typename T>
 T GetParamVal(const ParamValue &value);
 
 {get_param_val_specializations}
-
 
 template <ParamType PType, typename T>
 T GetParamVal(const ParamValue &value)
@@ -571,6 +572,14 @@ void InitParamValue(ParamType paramType, T valueIn, ParamValue *valueOut)
 
 void WriteParamTypeToStream(std::ostream &os, ParamType paramType, const ParamValue& paramValue);
 const char *ParamTypeToString(ParamType paramType);
+
+enum class ResourceIDType
+{{
+    {resource_id_types}
+}};
+
+ResourceIDType GetResourceIDTypeFromParamType(ParamType paramType);
+const char *GetResourceIDTypeName(ResourceIDType resourceIDType);
 }}  // namespace angle
 
 #endif  // LIBANGLE_FRAME_CAPTURE_UTILS_AUTOGEN_H_
@@ -613,6 +622,27 @@ const char *ParamTypeToString(ParamType paramType)
             return "unknown";
     }}
 }}
+
+ResourceIDType GetResourceIDTypeFromParamType(ParamType paramType)
+{{
+    switch (paramType)
+    {{
+{param_type_resource_id_cases}
+        default:
+            return ResourceIDType::InvalidEnum;
+    }}
+}}
+
+const char *GetResourceIDTypeName(ResourceIDType resourceIDType)
+{{
+    switch (resourceIDType)
+    {{
+{resource_id_type_name_cases}
+        default:
+            UNREACHABLE();
+            return "GetResourceIDTypeName error";
+    }}
+}}
 }}  // namespace angle
 """
 
@@ -641,6 +671,12 @@ template_write_param_type_to_stream_case = """        case ParamType::T{enum}:
 
 template_param_type_to_string_case = """        case ParamType::T{enum}:
             return "{type}";"""
+
+template_param_type_to_resource_id_type_case = """        case ParamType::T{enum}:
+            return ResourceIDType::{resource_id_type};"""
+
+template_resource_id_type_name_case = """        case ResourceIDType::{resource_id_type}:
+            return "{resource_id_type}";"""
 
 
 def script_relative(path):
@@ -1314,6 +1350,17 @@ def format_write_param_type_to_stream_case(param_type):
         enum=param_type, union_name=get_param_type_union_name(param_type))
 
 
+def get_resource_id_types(all_param_types):
+    return [t[:-2] for t in filter(lambda t: t.endswith("ID"), all_param_types)]
+
+
+def format_resource_id_types(all_param_types):
+    resource_id_types = get_resource_id_types(all_param_types)
+    resource_id_types += ["EnumCount", "InvalidEnum = EnumCount"]
+    resource_id_types = ",\n    ".join(resource_id_types)
+    return resource_id_types
+
+
 def write_capture_helper_header(all_param_types):
 
     param_types = "\n    ".join(["T%s," % t for t in all_param_types])
@@ -1325,17 +1372,20 @@ def write_capture_helper_header(all_param_types):
     set_param_val_specializations = "\n\n".join(
         [format_set_param_val_specialization(t) for t in all_param_types])
     init_param_value_cases = "\n".join([format_init_param_value_case(t) for t in all_param_types])
+    resource_id_types = format_resource_id_types(all_param_types)
 
     content = template_frame_capture_utils_header.format(
         script_name=os.path.basename(sys.argv[0]),
         data_source_name="gl.xml and gl_angle_ext.xml",
         year=date.today().year,
         param_types=param_types,
+        param_type_count=len(all_param_types),
         param_union_values=param_union_values,
         get_param_val_specializations=get_param_val_specializations,
         access_param_value_cases=access_param_value_cases,
         set_param_val_specializations=set_param_val_specializations,
-        init_param_value_cases=init_param_value_cases)
+        init_param_value_cases=init_param_value_cases,
+        resource_id_types=resource_id_types)
 
     path = path_to("libANGLE", "frame_capture_utils_autogen.h")
 
@@ -1349,6 +1399,30 @@ def format_param_type_to_string_case(param_type):
         enum=param_type, type=get_gl_param_type_type(param_type))
 
 
+def get_resource_id_type_from_param_type(param_type):
+    if param_type.endswith("ConstPointer"):
+        return param_type.replace("ConstPointer", "")[:-2]
+    if param_type.endswith("Pointer"):
+        return param_type.replace("Pointer", "")[:-2]
+    return param_type[:-2]
+
+
+def format_param_type_to_resource_id_type_case(param_type):
+    return template_param_type_to_resource_id_type_case.format(
+        enum=param_type, resource_id_type=get_resource_id_type_from_param_type(param_type))
+
+
+def format_param_type_resource_id_cases(all_param_types):
+    id_types = filter(
+        lambda t: t.endswith("ID") or t.endswith("IDConstPointer") or t.endswith("IDPointer"),
+        all_param_types)
+    return "\n".join([format_param_type_to_resource_id_type_case(t) for t in id_types])
+
+
+def format_resource_id_type_name_case(resource_id_type):
+    return template_resource_id_type_name_case.format(resource_id_type=resource_id_type)
+
+
 def write_capture_helper_source(all_param_types):
 
     write_param_type_to_stream_cases = "\n".join(
@@ -1356,12 +1430,20 @@ def write_capture_helper_source(all_param_types):
     param_type_to_string_cases = "\n".join(
         [format_param_type_to_string_case(t) for t in all_param_types])
 
+    param_type_resource_id_cases = format_param_type_resource_id_cases(all_param_types)
+
+    resource_id_types = get_resource_id_types(all_param_types)
+    resource_id_type_name_cases = "\n".join(
+        [format_resource_id_type_name_case(t) for t in resource_id_types])
+
     content = template_frame_capture_utils_source.format(
         script_name=os.path.basename(sys.argv[0]),
         data_source_name="gl.xml and gl_angle_ext.xml",
         year=date.today().year,
         write_param_type_to_stream_cases=write_param_type_to_stream_cases,
-        param_type_to_string_cases=param_type_to_string_cases)
+        param_type_to_string_cases=param_type_to_string_cases,
+        param_type_resource_id_cases=param_type_resource_id_cases,
+        resource_id_type_name_cases=resource_id_type_name_cases)
 
     path = path_to("libANGLE", "frame_capture_utils_autogen.cpp")
 

@@ -22,6 +22,7 @@
 #include "libANGLE/renderer/d3d/d3d11/converged/CompositorNativeWindow11.h"
 #include "util/OSWindow.h"
 #include "util/com_utils.h"
+#include "util/test_utils.h"
 
 using namespace angle;
 using namespace ABI::Windows::System;

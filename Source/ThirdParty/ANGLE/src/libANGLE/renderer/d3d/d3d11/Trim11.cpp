@@ -10,7 +10,7 @@
 #include "libANGLE/renderer/d3d/d3d11/Renderer11.h"
 #include "libANGLE/renderer/d3d/d3d11/renderer11_utils.h"
 
-#if defined(ANGLE_ENABLE_WINDOWS_STORE)
+#if defined(ANGLE_ENABLE_WINDOWS_UWP)
 #    include <windows.applicationmodel.core.h>
 #    include <wrl.h>
 #    include <wrl/wrappers/corewrappers.h>
@@ -44,7 +44,7 @@ void Trim11::trim()
         return;
     }
 
-#if defined(ANGLE_ENABLE_WINDOWS_STORE)
+#if defined(ANGLE_ENABLE_WINDOWS_UWP)
     ID3D11Device *device      = mRenderer->getDevice();
     IDXGIDevice3 *dxgiDevice3 = d3d11::DynamicCastComObject<IDXGIDevice3>(device);
     if (dxgiDevice3)
@@ -57,7 +57,7 @@ void Trim11::trim()
 
 bool Trim11::registerForRendererTrimRequest()
 {
-#if defined(ANGLE_ENABLE_WINDOWS_STORE)
+#if defined(ANGLE_ENABLE_WINDOWS_UWP)
     ICoreApplication *coreApplication = nullptr;
     HRESULT result                    = GetActivationFactory(
         HStringReference(RuntimeClass_Windows_ApplicationModel_Core_CoreApplication).Get(),
@@ -84,7 +84,7 @@ bool Trim11::registerForRendererTrimRequest()
 
 void Trim11::unregisterForRendererTrimRequest()
 {
-#if defined(ANGLE_ENABLE_WINDOWS_STORE)
+#if defined(ANGLE_ENABLE_WINDOWS_UWP)
     if (mApplicationSuspendedEventToken.value != 0)
     {
         ICoreApplication *coreApplication = nullptr;

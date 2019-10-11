@@ -22,7 +22,9 @@ class DeviceVk : public DeviceImpl
     ~DeviceVk() override;
 
     egl::Error initialize() override;
-    egl::Error getDevice(void **outValue) override;
+    egl::Error getAttribute(const egl::Display *display,
+                            EGLint attribute,
+                            void **outValue) override;
     EGLint getType() override;
     void generateExtensions(egl::DeviceExtensions *outExtensions) const override;
 };

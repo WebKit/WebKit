@@ -172,6 +172,18 @@
         "A32_FLOAT": {
             "image": "R32_FLOAT"
         },
+        "L16_FLOAT": {
+            "image": "R16_FLOAT"
+        },
+        "L32_FLOAT": {
+            "image": "R32_FLOAT"
+        },
+        "L16A16_FLOAT": {
+            "image": "R16G16_FLOAT"
+        },
+        "L32A32_FLOAT": {
+            "image": "R32G32_FLOAT"
+        },
         "A8_UNORM": {
             "image": "R8_UNORM"
         },
@@ -272,6 +284,54 @@
         "R10G10B10X2_UNORM": {
             "buffer": "NONE",
             "image": "R10G10B10A2_UNORM"
+        },
+        "A2R10G10B10_SINT_VERTEX": {
+            "image": "NONE",
+            "buffer": "R32G32B32A32_FLOAT"
+        },
+        "A2R10G10B10_UINT_VERTEX": {
+            "image": "NONE",
+            "buffer": "R32G32B32A32_FLOAT"
+        },
+        "A2R10G10B10_SSCALED_VERTEX": {
+            "image": "NONE",
+            "buffer": "R32G32B32A32_FLOAT"
+        },
+        "A2R10G10B10_USCALED_VERTEX": {
+            "image": "NONE",
+            "buffer": "R32G32B32A32_FLOAT"
+        },
+        "A2R10G10B10_SNORM_VERTEX": {
+            "image": "NONE",
+            "buffer": "R32G32B32A32_FLOAT"
+        },
+        "A2R10G10B10_UNORM_VERTEX": {
+            "image": "NONE",
+            "buffer": "R32G32B32A32_FLOAT"
+        },
+        "X2R10G10B10_SINT_VERTEX": {
+            "image": "NONE",
+            "buffer": "R32G32B32A32_FLOAT"
+        },
+        "X2R10G10B10_USCALED_VERTEX": {
+            "image": "NONE",
+            "buffer": "R32G32B32A32_FLOAT"
+        },
+        "X2R10G10B10_SSCALED_VERTEX": {
+            "image": "NONE",
+            "buffer": "R32G32B32A32_FLOAT"
+        },
+        "X2R10G10B10_UINT_VERTEX": {
+            "image": "NONE",
+            "buffer": "R32G32B32A32_FLOAT"
+        },
+        "X2R10G10B10_SNORM_VERTEX": {
+            "image": "NONE",
+            "buffer": "R32G32B32A32_FLOAT"
+        },
+        "X2R10G10B10_UNORM_VERTEX": {
+            "image": "NONE",
+            "buffer": "R32G32B32A32_FLOAT"
         }
     },
     "fallbacks": {

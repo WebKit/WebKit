@@ -13,6 +13,10 @@
 #include <string>
 #include <vector>
 
+#define ANGLE_FEATURE_CONDITION(set, feature, cond) \
+    set->feature.enabled   = cond;                  \
+    set->feature.condition = ANGLE_STRINGIFY(cond);
+
 namespace angle
 {
 
@@ -110,6 +114,9 @@ struct Feature
     // Whether the workaround is enabled or not. Determined by heuristics like vendor ID and
     // version, but may be overriden to any value.
     bool enabled = false;
+
+    // A stingified version of the condition used to set 'enabled'. ie "IsNvidia() && IsApple()"
+    const char *condition;
 };
 
 inline Feature::Feature(const Feature &other) = default;
@@ -118,7 +125,12 @@ inline Feature::Feature(const char *name,
                         const char *description,
                         FeatureMap *const mapPtr,
                         const char *bug = "")
-    : name(name), category(category), description(description), bug(bug), enabled(false)
+    : name(name),
+      category(category),
+      description(description),
+      bug(bug),
+      enabled(false),
+      condition(nullptr)
 {
     if (mapPtr != nullptr)
     {

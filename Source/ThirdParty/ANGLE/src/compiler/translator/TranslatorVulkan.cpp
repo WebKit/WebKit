@@ -920,6 +920,14 @@ bool TranslatorVulkan::translate(TIntermBlock *root,
             return false;
         }
     }
+    else if (getShaderType() == GL_GEOMETRY_SHADER)
+    {
+        AddANGLEPositionVarying(root, &getSymbolTable());
+
+        WriteGeometryShaderLayoutQualifiers(
+            sink, getGeometryShaderInputPrimitiveType(), getGeometryShaderInvocations(),
+            getGeometryShaderOutputPrimitiveType(), getGeometryShaderMaxVertices());
+    }
     else
     {
         ASSERT(getShaderType() == GL_COMPUTE_SHADER);

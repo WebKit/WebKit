@@ -71,6 +71,7 @@ class DisplayCGL : public DisplayGL
     gl::Version getMaxSupportedESVersion() const override;
 
     CGLContextObj getCGLContext() const;
+    CGLPixelFormatObj getCGLPixelFormat() const;
 
     WorkerContext *createWorkerContext(std::string *infoLog);
 

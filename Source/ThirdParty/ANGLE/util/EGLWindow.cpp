@@ -12,9 +12,9 @@
 
 #include <string.h>
 
+#include "common/system_utils.h"
 #include "platform/Platform.h"
 #include "util/OSWindow.h"
-#include "util/system_utils.h"
 
 // ConfigParameters implementation.
 ConfigParameters::ConfigParameters()

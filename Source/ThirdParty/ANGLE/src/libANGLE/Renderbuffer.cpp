@@ -64,7 +64,7 @@ void RenderbufferState::update(GLsizei width,
 
 // Renderbuffer implementation.
 Renderbuffer::Renderbuffer(rx::GLImplFactory *implFactory, RenderbufferID id)
-    : RefCountObject(id.value),
+    : RefCountObject(id),
       mState(),
       mImplementation(implFactory->createRenderbuffer(mState)),
       mLabel()
@@ -223,7 +223,7 @@ void Renderbuffer::onDetach(const Context *context)
 
 GLuint Renderbuffer::getId() const
 {
-    return id();
+    return id().value;
 }
 
 Extents Renderbuffer::getAttachmentSize(const gl::ImageIndex & /*imageIndex*/) const

@@ -299,13 +299,17 @@ EGLBoolean EGLAPIENTRY EGL_QueryDeviceAttribEXT(EGLDeviceEXT device,
                                  GetDeviceIfValid(dev));
                 return EGL_FALSE;
             }
-            error = dev->getDevice(value);
-            if (error.isError())
+            error = dev->getAttribute(attribute, value);
+            break;
+        case EGL_CGL_CONTEXT_ANGLE:
+        case EGL_CGL_PIXEL_FORMAT_ANGLE:
+            if (!dev->getExtensions().deviceCGL)
             {
-                thread->setError(error, GetDebug(), "eglQueryDeviceAttribEXT",
+                thread->setError(EglBadAttribute(), GetDebug(), "eglQueryDeviceAttribEXT",
                                  GetDeviceIfValid(dev));
                 return EGL_FALSE;
             }
+            error = dev->getAttribute(attribute, value);
             break;
         default:
             thread->setError(EglBadAttribute(), GetDebug(), "eglQueryDeviceAttribEXT",
@@ -313,6 +317,11 @@ EGLBoolean EGLAPIENTRY EGL_QueryDeviceAttribEXT(EGLDeviceEXT device,
             return EGL_FALSE;
     }
 
+    if (error.isError())
+    {
+        thread->setError(error, GetDebug(), "eglQueryDeviceAttribEXT", GetDeviceIfValid(dev));
+        return EGL_FALSE;
+    }
     thread->setSuccess();
     return EGL_TRUE;
 }

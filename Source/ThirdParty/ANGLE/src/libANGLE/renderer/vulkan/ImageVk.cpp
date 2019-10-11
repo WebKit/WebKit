@@ -32,33 +32,19 @@ void ImageVk::onDestroy(const egl::Display *display)
     DisplayVk *displayVk = vk::GetImpl(display);
     RendererVk *renderer = displayVk->getRenderer();
 
-    std::vector<vk::GarbageObjectBase> garbage;
-
     if (mImage != nullptr && mOwnsImage)
     {
-        mImage->releaseImage(displayVk, &garbage);
-        mImage->releaseStagingBuffer(displayVk, &garbage);
-        delete mImage;
+        mImage->releaseImage(renderer);
+        mImage->releaseStagingBuffer(renderer);
+        SafeDelete(mImage);
     }
     else if (egl::IsExternalImageTarget(mState.target))
     {
         ASSERT(mState.source != nullptr);
         ExternalImageSiblingVk *externalImageSibling =
             GetImplAs<ExternalImageSiblingVk>(GetAs<egl::ExternalImageSibling>(mState.source));
-        externalImageSibling->release(displayVk, &garbage);
-    }
-    mImage = nullptr;
-
-    if (!garbage.empty())
-    {
-        renderer->addGarbage(std::move(mImageLastUseFences), std::move(garbage));
-    }
-    else
-    {
-        for (vk::Shared<vk::Fence> &fence : mImageLastUseFences)
-        {
-            fence.reset(displayVk->getDevice());
-        }
+        externalImageSibling->release(renderer);
+        mImage = nullptr;
     }
 }
 
@@ -159,12 +145,6 @@ angle::Result ImageVk::orphan(const gl::Context *context, egl::ImageSibling *sib
 
     // Flush the context to make sure the fence has been submitted.
     ANGLE_TRY(contextVk->flushImpl(nullptr));
-
-    vk::Shared<vk::Fence> fence = contextVk->getLastSubmittedFence();
-    if (fence.isReferenced())
-    {
-        mImageLastUseFences.push_back(std::move(fence));
-    }
 
     return angle::Result::Continue;
 }

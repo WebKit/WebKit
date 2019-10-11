@@ -10,8 +10,8 @@
 #include "util/windows/WGLWindow.h"
 
 #include "common/string_utils.h"
+#include "common/system_utils.h"
 #include "util/OSWindow.h"
-#include "util/system_utils.h"
 
 #include <iostream>
 

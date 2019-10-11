@@ -323,6 +323,15 @@ inline bool GetGPUTestSystemInfo(SystemInfo **sysInfo)
         }
         else
         {
+            // On dual-GPU Macs we want the active GPU to always appear to be the
+            // high-performance GPU for tests.
+            // We can call the generic GPU info collector which selects the
+            // non-Intel GPU as the active one on dual-GPU machines.
+            // See https://anglebug.com/3701.
+            if (IsMac())
+            {
+                GetDualGPUInfo(sSystemInfo);
+            }
             sPopulated = true;
         }
     }
@@ -500,7 +509,12 @@ inline bool IsGLES(const GPUTestConfig::API &api)
 // Check whether the backend API has been set to Vulkan in the constructor
 inline bool IsVulkan(const GPUTestConfig::API &api)
 {
-    return (api == GPUTestConfig::kAPIVulkan);
+    return (api == GPUTestConfig::kAPIVulkan) || (api == GPUTestConfig::kAPISwiftShader);
+}
+
+inline bool IsSwiftShader(const GPUTestConfig::API &api)
+{
+    return (api == GPUTestConfig::kAPISwiftShader);
 }
 
 }  // anonymous namespace
@@ -540,6 +554,7 @@ GPUTestConfig::GPUTestConfig()
     mConditions[kConditionGLDesktop] = true;
     mConditions[kConditionGLES]      = true;
     mConditions[kConditionVulkan]    = true;
+    mConditions[kConditionSwiftShader] = true;
 
     mConditions[kConditionNexus5X]          = IsNexus5X();
     mConditions[kConditionPixel2]           = IsPixel2();
@@ -554,6 +569,7 @@ GPUTestConfig::GPUTestConfig(const API &api) : GPUTestConfig()
     mConditions[kConditionGLDesktop] = IsGLDesktop(api);
     mConditions[kConditionGLES]      = IsGLES(api);
     mConditions[kConditionVulkan]    = IsVulkan(api);
+    mConditions[kConditionSwiftShader] = IsSwiftShader(api);
 }
 
 // Return a const reference to the list of all pre-calculated conditions.

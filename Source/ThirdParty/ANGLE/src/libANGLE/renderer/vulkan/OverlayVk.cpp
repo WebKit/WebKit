@@ -81,7 +81,7 @@ void OverlayVk::onDestroy(const gl::Context *context)
 
 angle::Result OverlayVk::createFont(ContextVk *contextVk)
 {
-    RendererVk *rendererVk = contextVk->getRenderer();
+    RendererVk *renderer = contextVk->getRenderer();
 
     // Create a buffer to stage font data upload.
     VkBufferCreateInfo bufferCreateInfo = {};
@@ -91,7 +91,7 @@ angle::Result OverlayVk::createFont(ContextVk *contextVk)
     bufferCreateInfo.usage       = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
     bufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-    vk::ContextScoped<vk::BufferHelper> fontDataBuffer(contextVk);
+    vk::RendererScoped<vk::BufferHelper> fontDataBuffer(renderer);
 
     ANGLE_TRY(fontDataBuffer.get().init(contextVk, bufferCreateInfo,
                                         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT));
@@ -107,12 +107,13 @@ angle::Result OverlayVk::createFont(ContextVk *contextVk)
     fontDataBuffer.get().onExternalWrite(VK_ACCESS_HOST_WRITE_BIT);
 
     // Create the font image.
-    ANGLE_TRY(mFontImage.init(
-        contextVk, gl::TextureType::_2D,
-        VkExtent3D{gl::overlay::kFontImageWidth, gl::overlay::kFontImageHeight, 1},
-        rendererVk->getFormat(angle::FormatID::R8_UNORM), 1,
-        VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, 1, gl::overlay::kFontCount));
-    ANGLE_TRY(mFontImage.initMemory(contextVk, rendererVk->getMemoryProperties(),
+    ANGLE_TRY(
+        mFontImage.init(contextVk, gl::TextureType::_2D,
+                        VkExtent3D{gl::overlay::kFontImageWidth, gl::overlay::kFontImageHeight, 1},
+                        renderer->getFormat(angle::FormatID::R8_UNORM), 1,
+                        VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, 0, 0, 1,
+                        gl::overlay::kFontCount));
+    ANGLE_TRY(mFontImage.initMemory(contextVk, renderer->getMemoryProperties(),
                                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
     ANGLE_TRY(mFontImage.initImageView(contextVk, gl::TextureType::_2DArray,
                                        VK_IMAGE_ASPECT_COLOR_BIT, gl::SwizzleState(),
@@ -122,7 +123,7 @@ angle::Result OverlayVk::createFont(ContextVk *contextVk)
     vk::CommandBuffer *fontDataUpload;
     ANGLE_TRY(mFontImage.recordCommands(contextVk, &fontDataUpload));
 
-    fontDataBuffer.get().onRead(&mFontImage, VK_ACCESS_TRANSFER_READ_BIT);
+    fontDataBuffer.get().onRead(contextVk, &mFontImage, VK_ACCESS_TRANSFER_READ_BIT);
 
     mFontImage.changeLayout(VK_IMAGE_ASPECT_COLOR_BIT, vk::ImageLayout::TransferDst,
                             fontDataUpload);
@@ -148,12 +149,11 @@ angle::Result OverlayVk::createFont(ContextVk *contextVk)
 
 angle::Result OverlayVk::cullWidgets(ContextVk *contextVk)
 {
-    RendererVk *rendererVk = contextVk->getRenderer();
+    RendererVk *renderer = contextVk->getRenderer();
 
     // Release old culledWidgets image
-    Serial currentSerial = contextVk->getCurrentQueueSerial();
-    contextVk->releaseObject(currentSerial, &mCulledWidgets);
-    contextVk->releaseObject(currentSerial, &mCulledWidgetsView);
+    mCulledWidgets.releaseImage(renderer);
+    contextVk->addGarbage(&mCulledWidgetsView);
 
     // Create a buffer to contain coordinates of enabled text and graph widgets.  This buffer will
     // be used to perform tiled culling and can be discarded immediately after.
@@ -163,7 +163,7 @@ angle::Result OverlayVk::cullWidgets(ContextVk *contextVk)
     bufferCreateInfo.usage              = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
     bufferCreateInfo.sharingMode        = VK_SHARING_MODE_EXCLUSIVE;
 
-    vk::ContextScoped<vk::BufferHelper> enabledWidgetsBuffer(contextVk);
+    vk::RendererScoped<vk::BufferHelper> enabledWidgetsBuffer(renderer);
 
     ANGLE_TRY(enabledWidgetsBuffer.get().init(contextVk, bufferCreateInfo,
                                               VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT));
@@ -186,9 +186,10 @@ angle::Result OverlayVk::cullWidgets(ContextVk *contextVk)
         UnsignedCeilDivide(mPresentImageExtent.height, mSubgroupSize[1]), 1};
 
     ANGLE_TRY(mCulledWidgets.init(contextVk, gl::TextureType::_2D, culledWidgetsExtent,
-                                  rendererVk->getFormat(angle::FormatID::R32G32_UINT), 1,
-                                  VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, 1, 1));
-    ANGLE_TRY(mCulledWidgets.initMemory(contextVk, rendererVk->getMemoryProperties(),
+                                  renderer->getFormat(angle::FormatID::R32G32_UINT), 1,
+                                  VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, 0, 0, 1,
+                                  1));
+    ANGLE_TRY(mCulledWidgets.initMemory(contextVk, renderer->getMemoryProperties(),
                                         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
     ANGLE_TRY(mCulledWidgets.initImageView(contextVk, gl::TextureType::_2D,
                                            VK_IMAGE_ASPECT_COLOR_BIT, gl::SwizzleState(),
@@ -213,10 +214,10 @@ angle::Result OverlayVk::onPresent(ContextVk *contextVk,
         return angle::Result::Continue;
     }
 
-    RendererVk *rendererVk = contextVk->getRenderer();
+    RendererVk *renderer = contextVk->getRenderer();
 
     // If the swapchain image doesn't support storage image, we can't output to it.
-    VkFormatFeatureFlags featureBits = rendererVk->getImageFormatFeatureBits(
+    VkFormatFeatureFlags featureBits = renderer->getImageFormatFeatureBits(
         imageToPresent->getFormat().vkImageFormat, VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT);
     if ((featureBits & VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT) == 0)
     {
@@ -239,8 +240,8 @@ angle::Result OverlayVk::onPresent(ContextVk *contextVk,
         mRefreshCulledWidgets = false;
     }
 
-    vk::ContextScoped<vk::BufferHelper> textDataBuffer(contextVk);
-    vk::ContextScoped<vk::BufferHelper> graphDataBuffer(contextVk);
+    vk::RendererScoped<vk::BufferHelper> textDataBuffer(renderer);
+    vk::RendererScoped<vk::BufferHelper> graphDataBuffer(renderer);
 
     VkBufferCreateInfo textBufferCreateInfo = {};
     textBufferCreateInfo.sType              = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;

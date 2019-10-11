@@ -1693,7 +1693,7 @@ void GenerateCaps(ID3D11Device *device,
     // D3D11 does not support vertex attribute aliasing
     limitations->noVertexAttributeAliasing = true;
 
-#ifdef ANGLE_ENABLE_WINDOWS_STORE
+#ifdef ANGLE_ENABLE_WINDOWS_UWP
     // Setting a non-zero divisor on attribute zero doesn't work on certain Windows Phone 8-era
     // devices. We should prevent developers from doing this on ALL Windows Store devices. This will
     // maintain consistency across all Windows devices. We allow non-zero divisors on attribute zero
@@ -2382,84 +2382,91 @@ void InitializeFeatures(const Renderer11DeviceCaps &deviceCaps,
                         const DXGI_ADAPTER_DESC &adapterDesc,
                         angle::FeaturesD3D *features)
 {
-    bool is9_3 = (deviceCaps.featureLevel <= D3D_FEATURE_LEVEL_9_3);
-
-    features->mrtPerfWorkaround.enabled                = true;
-    features->setDataFasterThanImageUpload.enabled     = true;
-    features->zeroMaxLodWorkaround.enabled             = is9_3;
-    features->useInstancedPointSpriteEmulation.enabled = is9_3;
-
-    // TODO(jmadill): Narrow problematic driver range.
-    if (IsNvidia(adapterDesc.VendorId))
+    bool isNvidia                  = IsNvidia(adapterDesc.VendorId);
+    bool isIntel                   = IsIntel(adapterDesc.VendorId);
+    bool isSkylake                 = false;
+    bool isBroadwell               = false;
+    bool isHaswell                 = false;
+    bool isAMD                     = IsAMD(adapterDesc.VendorId);
+    bool isFeatureLevel9_3         = (deviceCaps.featureLevel <= D3D_FEATURE_LEVEL_9_3);
+    IntelDriverVersion capsVersion = IntelDriverVersion(0);
+    if (isIntel)
     {
-        if (deviceCaps.driverVersion.valid())
+        capsVersion = d3d11_gl::GetIntelDriverVersion(deviceCaps.driverVersion);
+
+        isSkylake   = IsSkylake(adapterDesc.DeviceId);
+        isBroadwell = IsBroadwell(adapterDesc.DeviceId);
+        isHaswell   = IsHaswell(adapterDesc.DeviceId);
+    }
+
+    if (isNvidia)
+    {
+        // TODO(jmadill): Narrow problematic driver range.
+        bool driverVersionValid = deviceCaps.driverVersion.valid();
+        if (driverVersionValid)
         {
             WORD part1 = HIWORD(deviceCaps.driverVersion.value().LowPart);
             WORD part2 = LOWORD(deviceCaps.driverVersion.value().LowPart);
 
             // Disable the workaround to fix a second driver bug on newer NVIDIA.
-            features->depthStencilBlitExtraCopy.enabled = (part1 <= 13u && part2 < 6881);
+            ANGLE_FEATURE_CONDITION(
+                features, depthStencilBlitExtraCopy,
+                (part1 <= 13u && part2 < 6881) && isNvidia && driverVersionValid)
         }
         else
         {
-            features->depthStencilBlitExtraCopy.enabled = true;
+            ANGLE_FEATURE_CONDITION(features, depthStencilBlitExtraCopy,
+                                    isNvidia && !driverVersionValid)
         }
     }
+
+    ANGLE_FEATURE_CONDITION(features, mrtPerfWorkaround, true)
+    ANGLE_FEATURE_CONDITION(features, zeroMaxLodWorkaround, isFeatureLevel9_3)
+    ANGLE_FEATURE_CONDITION(features, useInstancedPointSpriteEmulation, isFeatureLevel9_3)
 
     // TODO(jmadill): Disable workaround when we have a fixed compiler DLL.
-    features->expandIntegerPowExpressions.enabled = true;
+    ANGLE_FEATURE_CONDITION(features, expandIntegerPowExpressions, true)
 
-    features->flushAfterEndingTransformFeedback.enabled = IsNvidia(adapterDesc.VendorId);
-    features->getDimensionsIgnoresBaseLevel.enabled     = IsNvidia(adapterDesc.VendorId);
-    features->skipVSConstantRegisterZero.enabled        = IsNvidia(adapterDesc.VendorId);
-    features->forceAtomicValueResolution.enabled        = IsNvidia(adapterDesc.VendorId);
+    ANGLE_FEATURE_CONDITION(features, flushAfterEndingTransformFeedback, isNvidia)
+    ANGLE_FEATURE_CONDITION(features, getDimensionsIgnoresBaseLevel, isNvidia)
+    ANGLE_FEATURE_CONDITION(features, skipVSConstantRegisterZero, isNvidia)
+    ANGLE_FEATURE_CONDITION(features, forceAtomicValueResolution, isNvidia)
 
-    if (IsIntel(adapterDesc.VendorId))
-    {
-        IntelDriverVersion capsVersion = d3d11_gl::GetIntelDriverVersion(deviceCaps.driverVersion);
+    ANGLE_FEATURE_CONDITION(features, preAddTexelFetchOffsets, isIntel)
+    ANGLE_FEATURE_CONDITION(features, useSystemMemoryForConstantBuffers, isIntel)
 
-        features->preAddTexelFetchOffsets.enabled           = true;
-        features->useSystemMemoryForConstantBuffers.enabled = true;
-        features->disableB5G6R5Support.enabled          = capsVersion < IntelDriverVersion(4539);
-        features->addDummyTextureNoRenderTarget.enabled = capsVersion < IntelDriverVersion(4815);
-        if (IsSkylake(adapterDesc.DeviceId))
-        {
-            features->callClearTwice.enabled    = capsVersion < IntelDriverVersion(4771);
-            features->emulateIsnanFloat.enabled = capsVersion < IntelDriverVersion(4542);
-        }
-        else if (IsBroadwell(adapterDesc.DeviceId) || IsHaswell(adapterDesc.DeviceId))
-        {
-            features->rewriteUnaryMinusOperator.enabled = capsVersion < IntelDriverVersion(4624);
+    ANGLE_FEATURE_CONDITION(features, callClearTwice,
+                            isIntel && isSkylake && capsVersion < IntelDriverVersion(4771))
+    ANGLE_FEATURE_CONDITION(features, emulateIsnanFloat,
+                            isIntel && isSkylake && capsVersion < IntelDriverVersion(4542))
+    ANGLE_FEATURE_CONDITION(
+        features, rewriteUnaryMinusOperator,
+        isIntel && (isBroadwell || isHaswell) && capsVersion < IntelDriverVersion(4624))
 
-            // Haswell drivers occasionally corrupt (small?) (vertex?) texture data uploads.
-            features->setDataFasterThanImageUpload.enabled = false;
-        }
-    }
+    ANGLE_FEATURE_CONDITION(features, addDummyTextureNoRenderTarget,
+                            isIntel && capsVersion < IntelDriverVersion(4815))
 
-    if (IsAMD(adapterDesc.VendorId))
-    {
-        features->disableB5G6R5Support.enabled = true;
-    }
+    // Haswell drivers occasionally corrupt (small?) (vertex?) texture data uploads.
+    ANGLE_FEATURE_CONDITION(features, setDataFasterThanImageUpload, !(isBroadwell || isHaswell))
+
+    ANGLE_FEATURE_CONDITION(features, disableB5G6R5Support,
+                            (isIntel && capsVersion < IntelDriverVersion(4539)) || isAMD)
 
     // TODO(jmadill): Disable when we have a fixed driver version.
-    features->emulateTinyStencilTextures.enabled = IsAMD(adapterDesc.VendorId);
-
     // The tiny stencil texture workaround involves using CopySubresource or UpdateSubresource on a
     // depth stencil texture.  This is not allowed until feature level 10.1 but since it is not
     // possible to support ES3 on these devices, there is no need for the workaround to begin with
     // (anglebug.com/1572).
-    if (deviceCaps.featureLevel < D3D_FEATURE_LEVEL_10_1)
-    {
-        features->emulateTinyStencilTextures.enabled = false;
-    }
+    ANGLE_FEATURE_CONDITION(features, emulateTinyStencilTextures,
+                            isAMD && !(deviceCaps.featureLevel < D3D_FEATURE_LEVEL_10_1))
 
     // If the VPAndRTArrayIndexFromAnyShaderFeedingRasterizer feature is not available, we have to
     // select the viewport / RT array index in the geometry shader.
-    features->selectViewInGeometryShader.enabled =
-        (deviceCaps.supportsVpRtIndexWriteFromVertexShader == false);
+    ANGLE_FEATURE_CONDITION(features, selectViewInGeometryShader,
+                            !deviceCaps.supportsVpRtIndexWriteFromVertexShader)
 
     // Never clear for robust resource init.  This matches Chrome's texture clearning behaviour.
-    features->allowClearForRobustResourceInit.enabled = false;
+    ANGLE_FEATURE_CONDITION(features, allowClearForRobustResourceInit, false)
 
     // Call platform hooks for testing overrides.
     auto *platform = ANGLEPlatformCurrent();

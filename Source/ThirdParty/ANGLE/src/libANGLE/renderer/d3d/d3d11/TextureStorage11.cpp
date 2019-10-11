@@ -391,7 +391,7 @@ angle::Result TextureStorage11::getSRVForImage(const gl::Context *context,
                                                const d3d11::SharedSRV **outSRV)
 {
     // TODO(Xinghua.cao@intel.com): Add solution to handle swizzle required.
-    ImageKey key(imageUnit.level, imageUnit.layered, imageUnit.layer, imageUnit.access,
+    ImageKey key(imageUnit.level, (imageUnit.layered == GL_TRUE), imageUnit.layer, imageUnit.access,
                  imageUnit.format);
     ANGLE_TRY(getCachedOrCreateSRVForImage(context, key, outSRV));
     return angle::Result::Continue;
@@ -423,7 +423,7 @@ angle::Result TextureStorage11::getUAVForImage(const gl::Context *context,
                                                const d3d11::SharedUAV **outUAV)
 {
     // TODO(Xinghua.cao@intel.com): Add solution to handle swizzle required.
-    ImageKey key(imageUnit.level, imageUnit.layered, imageUnit.layer, imageUnit.access,
+    ImageKey key(imageUnit.level, (imageUnit.layered == GL_TRUE), imageUnit.layer, imageUnit.access,
                  imageUnit.format);
     ANGLE_TRY(getCachedOrCreateUAVForImage(context, key, outUAV));
     return angle::Result::Continue;

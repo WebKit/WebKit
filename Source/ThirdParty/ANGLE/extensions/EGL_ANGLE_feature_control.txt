@@ -74,6 +74,7 @@ New Tokens
         EGL_FEATURE_DESCRIPTION_ANGLE   0x3462
         EGL_FEATURE_BUG_ANGLE           0x3463
         EGL_FEATURE_STATUS_ANGLE        0x3464
+        EGL_FEATURE_CONDITION_ANGLE     0x3468
 
     Accepted as a queried <attribute> in eglQueryDisplayAttribANGLE
 
@@ -122,6 +123,9 @@ Add the following to the end of section 3.3 "EGL Queries":
     with corresponding indices to the array of names. Each string has
     the value "enabled" if the feature is currently enabled, or
     "disabled" if the feature is currently disabled.
+        The EGL_FEATURE_CONDITION_ANGLE array contains strings that
+    describe to the condition that sets the corresponding value in
+    the EGL_FEATURE_STATUS_ANGLE array.
 
     Errors
 

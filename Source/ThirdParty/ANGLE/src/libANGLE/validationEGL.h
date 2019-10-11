@@ -233,11 +233,9 @@ Error ValidateChooseConfig(const Display *display,
 Error ValidateGetConfigs(const Display *display, EGLint configSize, EGLint *numConfig);
 
 // Other validation
-Error ValidateCompatibleConfigs(const Display *display,
-                                const Config *config1,
-                                const Surface *surface,
-                                const Config *config2,
-                                EGLint surfaceType);
+Error ValidateCompatibleSurface(const Display *display,
+                                gl::Context *context,
+                                const Surface *surface);
 
 Error ValidateGetPlatformDisplay(EGLenum platform,
                                  void *native_display,

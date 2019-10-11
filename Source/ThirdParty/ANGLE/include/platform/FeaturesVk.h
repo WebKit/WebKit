@@ -49,8 +49,7 @@ struct FeaturesVk : FeatureSetBase
     // to have a bug where the last region is ignored.
     Feature extraCopyBufferRegion = {
         "extra_copy_buffer_region", FeatureCategory::VulkanWorkarounds,
-        "Windows Intel driver seems to have a bug where the last copy region in "
-        "vkCmdCopyBuffer is ignored",
+        "Some drivers seem to have a bug where the last copy region in vkCmdCopyBuffer is ignored",
         &members};
 
     // This flag is added for the sole purpose of end2end tests, to test the correctness
@@ -64,8 +63,7 @@ struct FeaturesVk : FeatureSetBase
     // Tracked in http://anglebug.com/2970.
     Feature clampPointSize = {
         "clamp_point_size", FeatureCategory::VulkanWorkarounds,
-        "On some NVIDIA drivers, the point size range reported from the API is "
-        "inconsistent with the actual behavior",
+        "The point size range reported from the API is inconsistent with the actual behavior",
         &members, "http://anglebug.com/2970"};
 
     // On some android devices, the memory barrier between the compute shader that converts vertex
@@ -73,8 +71,8 @@ struct FeaturesVk : FeatureSetBase
     // to perform a flush after the conversion.  http://anglebug.com/3016
     Feature flushAfterVertexConversion = {
         "flush_after_vertex_conversion", FeatureCategory::VulkanWorkarounds,
-        "On some android devices, the memory barrier between the compute shader that converts "
-        "vertex attributes and the vertex shader that reads from it is ineffective",
+        "The memory barrier between the compute shader that converts vertex attributes and the "
+        "vertex shader that reads from it is ineffective",
         &members, "http://anglebug.com/3016"};
 
     // Whether the VkDevice supports the VK_KHR_incremental_present extension, on which the
@@ -88,8 +86,7 @@ struct FeaturesVk : FeatureSetBase
     // textures.
     Feature forceCPUPathForCubeMapCopy = {
         "force_cpu_path_for_cube_map_copy", FeatureCategory::VulkanWorkarounds,
-        "Some Intel Windows drivers have an issue with creating single-layer "
-        "views on cube map textures",
+        "Some drivers have an issue with creating single-layer views on cube map textures",
         &members};
 
     // Whether the VkDevice supports the VK_ANDROID_external_memory_android_hardware_buffer
@@ -128,15 +125,13 @@ struct FeaturesVk : FeatureSetBase
     // VK_PRESENT_MODE_FIFO_KHR causes random timeouts on Linux Intel. http://anglebug.com/3153
     Feature disableFifoPresentMode = {
         "disable_fifo_present_mode", FeatureCategory::VulkanWorkarounds,
-        "On Linux Intel, VK_PRESENT_MODE_FIFO_KHR causes random timeouts", &members,
-        "http://anglebug.com/3153"};
+        "VK_PRESENT_MODE_FIFO_KHR causes random timeouts", &members, "http://anglebug.com/3153"};
 
     // On Qualcomm, a bug is preventing us from using loadOp=Clear with inline commands in the
     // render pass.  http://anglebug.com/2361
     Feature restartRenderPassAfterLoadOpClear = {
         "restart_render_pass_after_load_op_clear", FeatureCategory::VulkanWorkarounds,
-        "On Qualcomm, a bug is preventing us from using loadOp=Clear with inline "
-        "commands in the render pass",
+        "A bug is preventing us from using loadOp=Clear with inline commands in the render pass",
         &members, "http://anglebug.com/2361"};
 
     // On Qualcomm, gaps in bound descriptor set indices causes the post-gap sets to misbehave.
@@ -145,35 +140,34 @@ struct FeaturesVk : FeatureSetBase
     // unused descriptor set to work around this issue.  http://anglebug.com/2727
     Feature bindEmptyForUnusedDescriptorSets = {
         "bind_empty_for_unused_descriptor_sets", FeatureCategory::VulkanWorkarounds,
-        "On Qualcomm, gaps in bound descriptor set indices causes the post-gap sets to misbehave",
-        &members, "http://anglebug.com/2727"};
+        "Gaps in bound descriptor set indices causes the post-gap sets to misbehave", &members,
+        "http://anglebug.com/2727"};
 
     // When the scissor is (0,0,0,0) on Windows Intel, the driver acts as if the scissor was
     // disabled.  Work-around this by setting the scissor to just outside of the render area
     // (e.g. (renderArea.x, renderArea.y, 1, 1)). http://anglebug.com/3407
     Feature forceNonZeroScissor = {
         "force_non_zero_scissor", FeatureCategory::VulkanWorkarounds,
-        "On Windows Intel, when the scissor is (0,0,0,0), the driver acts as if the "
-        "scissor was disabled",
-        &members, "http://anglebug.com/3407"};
+        "When the scissor is (0,0,0,0), the driver acts as if the scissor was disabled", &members,
+        "http://anglebug.com/3407"};
 
     // OES_depth_texture is a commonly expected feature on Android. However it
     // requires that D16_UNORM support texture filtering
     // (e.g. VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT) and some devices
     // do not. Work-around this by setting saying D16_UNORM supports filtering
     // anyway.
-    Feature forceD16TexFilter = {"force_D16_texture_filter", FeatureCategory::VulkanWorkarounds,
-                                 "On some Android devices, VK_FORMAT_D16_UNORM does not support "
-                                 "VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT, "
-                                 "which prevents OES_depth_texture from being supported.",
-                                 &members, "http://anglebug.com/3452"};
+    Feature forceD16TexFilter = {
+        "force_D16_texture_filter", FeatureCategory::VulkanWorkarounds,
+        "VK_FORMAT_D16_UNORM does not support VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT, "
+        "which prevents OES_depth_texture from being supported.",
+        &members, "http://anglebug.com/3452"};
 
     // On some android devices, vkCmdBlitImage with flipped coordinates blits incorrectly.  This
     // workaround makes sure this path is avoided.  http://anglebug.com/3498
     Feature disableFlippingBlitWithCommand = {
         "disable_flipping_blit_with_command", FeatureCategory::VulkanWorkarounds,
-        "On some android devices, vkCmdBlitImage with flipped coordinates blits incorrectly.",
-        &members, "http://anglebug.com/3498"};
+        "vkCmdBlitImage with flipped coordinates blits incorrectly.", &members,
+        "http://anglebug.com/3498"};
 
     // On platform with Intel or AMD GPU, a window resizing would not trigger the vulkan driver to
     // return VK_ERROR_OUT_OF_DATE on swapchain present.  Work-around by query current window extent
@@ -181,9 +175,8 @@ struct FeaturesVk : FeatureSetBase
     // http://anglebug.com/3623, http://anglebug.com/3624, http://anglebug.com/3625
     Feature perFrameWindowSizeQuery = {
         "per_frame_window_size_query", FeatureCategory::VulkanWorkarounds,
-        "On platform with Intel or AMD gpu, vulkan swapchain is not returning VK_ERROR_OUT_OF_DATE"
-        "when window resizing",
-        &members, "http://anglebug.com/3623, http://anglebug.com/3624, http://anglebug.com/3625"};
+        "Vulkan swapchain is not returning VK_ERROR_OUT_OF_DATE when window resizing", &members,
+        "http://anglebug.com/3623, http://anglebug.com/3624, http://anglebug.com/3625"};
 
     // On Pixel1XL and Pixel2, reset a vkCommandBuffer seems to have side effects on binding
     // descriptor sets to it afterwards, Work-around by keep using transient vkCommandBuffer on
@@ -191,22 +184,22 @@ struct FeaturesVk : FeatureSetBase
     // http://b/135763283
     Feature transientCommandBuffer = {
         "transient_command_buffer", FeatureCategory::VulkanWorkarounds,
-        "On Pixel2, keep using transient vkCommandBuffer to work around driver issue in reseting"
+        "Keep using transient vkCommandBuffer to work around driver issue in reseting"
         "vkCommandBuffer",
         &members, "http://b/135763283"};
 
     // Seamful cube map emulation misbehaves on the AMD windows driver, so it's disallowed.
     Feature disallowSeamfulCubeMapEmulation = {
         "disallow_seamful_cube_map_emulation", FeatureCategory::VulkanWorkarounds,
-        "Seamful cube map emulation misbehaves on the AMD windows driver, so it's disallowed",
-        &members, "http://anglebug.com/3243"};
+        "Seamful cube map emulation misbehaves on some drivers, so it's disallowed", &members,
+        "http://anglebug.com/3243"};
 
     // Qualcomm shader compiler doesn't support sampler arrays as parameters, so
     // revert to old RewriteStructSamplers behavior, which produces fewer.
     Feature forceOldRewriteStructSamplers = {
         "force_old_rewrite_struct_samplers", FeatureCategory::VulkanWorkarounds,
-        "Qualcomm shader compiler doesn't support sampler arrays as parameters, so "
-        "revert to old RewriteStructSamplers behavior, which produces fewer.",
+        "Some shader compilers don't support sampler arrays as parameters, so revert to old "
+        "RewriteStructSamplers behavior, which produces fewer.",
         &members, "http://anglebug.com/2703"};
 };
 

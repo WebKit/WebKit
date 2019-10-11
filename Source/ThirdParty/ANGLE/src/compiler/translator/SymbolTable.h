@@ -30,6 +30,7 @@
 //   are tracked in the intermediate representation, not the symbol table.
 //
 
+#include <limits>
 #include <memory>
 #include <set>
 
@@ -62,106 +63,149 @@ struct UnmangledBuiltIn
     TExtension extension;
 };
 
-using VarPointer = TSymbol *(TSymbolTableBase::*);
-
+using VarPointer        = TSymbol *(TSymbolTableBase::*);
 using ValidateExtension = int(ShBuiltInResources::*);
 
-struct SymbolEntry
+enum class Spec
 {
-    constexpr SymbolEntry(ImmutableString &&name,
-                          const TSymbol *symbol,
-                          VarPointer var,
-                          int esslVersion,
-                          int glslVersion,
-                          Shader shaderType,
-                          const TSymbol *esslExtSymbol,
-                          VarPointer esslExtVar,
-                          int esslExtVersion,
-                          Shader esslExtShaderType,
-                          ValidateExtension esslExtension,
-                          const TSymbol *glslExtSymbol,
-                          VarPointer glslExtVar,
-                          int glslExtVersion,
-                          Shader glslExtShaderType,
-                          ValidateExtension glslExtension,
-                          const TSymbol *esslExtSymbol2    = nullptr,
-                          VarPointer esslExtVar2           = nullptr,
-                          int esslExtVersion2              = -1,
-                          Shader esslExtShaderType2        = Shader::ALL,
-                          ValidateExtension esslExtension2 = nullptr)
-        : name(std::move(name)),
-          symbol(symbol),
-          var(var),
-          esslVersion(esslVersion),
-          glslVersion(glslVersion),
-          shaderType(shaderType),
-          esslExtSymbol(esslExtSymbol),
-          esslExtVar(esslExtVar),
-          esslExtVersion(esslExtVersion),
-          esslExtShaderType(esslExtShaderType),
-          esslExtension(esslExtension),
-          glslExtSymbol(glslExtSymbol),
-          glslExtVar(glslExtVar),
-          glslExtVersion(glslExtVersion),
-          glslExtShaderType(glslExtShaderType),
-          glslExtension(glslExtension),
-          esslExtSymbol2(esslExtSymbol2),
-          esslExtVar2(esslExtVar2),
-          esslExtVersion2(esslExtVersion2),
-          esslExtShaderType2(esslExtShaderType2),
-          esslExtension2(esslExtension2)
-    {}
-
-    ImmutableString name;
-
-    const TSymbol *symbol;
-    VarPointer var;
-    int esslVersion;
-    int glslVersion;
-    Shader shaderType;
-
-    const TSymbol *esslExtSymbol;
-    VarPointer esslExtVar;
-    int esslExtVersion;
-    Shader esslExtShaderType;
-    ValidateExtension esslExtension;
-
-    const TSymbol *glslExtSymbol;
-    VarPointer glslExtVar;
-    int glslExtVersion;
-    Shader glslExtShaderType;
-    ValidateExtension glslExtension;
-
-    const TSymbol *esslExtSymbol2;
-    VarPointer esslExtVar2;
-    int esslExtVersion2;
-    Shader esslExtShaderType2;
-    ValidateExtension esslExtension2;
+    GLSL,
+    ESSL
 };
 
-struct UnmangledEntry
+constexpr uint16_t kESSL1Only = 100;
+
+static_assert(offsetof(ShBuiltInResources, OES_standard_derivatives) != 0,
+              "Update SymbolTable extension logic");
+
+#define EXT_INDEX(Ext) (offsetof(ShBuiltInResources, Ext) / sizeof(int))
+
+class SymbolRule
 {
-    constexpr UnmangledEntry(ImmutableString &&name,
-                             const UnmangledBuiltIn *esslUnmangled,
-                             const UnmangledBuiltIn *glslUnmangled,
+  public:
+    const TSymbol *get(ShShaderSpec shaderSpec,
+                       int shaderVersion,
+                       sh::GLenum shaderType,
+                       const ShBuiltInResources &resources,
+                       const TSymbolTableBase &symbolTable) const;
+
+    template <Spec spec, int version, Shader shaders, size_t extensionIndex, typename T>
+    constexpr static SymbolRule Get(T value);
+
+  private:
+    constexpr SymbolRule(Spec spec,
+                         int version,
+                         Shader shaders,
+                         size_t extensionIndex,
+                         const TSymbol *symbol);
+
+    constexpr SymbolRule(Spec spec,
+                         int version,
+                         Shader shaders,
+                         size_t extensionIndex,
+                         VarPointer resourceVar);
+
+    union SymbolOrVar
+    {
+        constexpr SymbolOrVar(const TSymbol *symbolIn) : symbol(symbolIn) {}
+        constexpr SymbolOrVar(VarPointer varIn) : var(varIn) {}
+
+        const TSymbol *symbol;
+        VarPointer var;
+    };
+
+    uint16_t mIsDesktop : 1;
+    uint16_t mIsVar : 1;
+    uint16_t mVersion : 14;
+    uint8_t mShaders;
+    uint8_t mExtensionIndex;
+    SymbolOrVar mSymbolOrVar;
+};
+
+constexpr SymbolRule::SymbolRule(Spec spec,
+                                 int version,
+                                 Shader shaders,
+                                 size_t extensionIndex,
+                                 const TSymbol *symbol)
+    : mIsDesktop(spec == Spec::GLSL ? 1u : 0u),
+      mIsVar(0u),
+      mVersion(static_cast<uint16_t>(version)),
+      mShaders(static_cast<uint8_t>(shaders)),
+      mExtensionIndex(extensionIndex),
+      mSymbolOrVar(symbol)
+{}
+
+constexpr SymbolRule::SymbolRule(Spec spec,
+                                 int version,
+                                 Shader shaders,
+                                 size_t extensionIndex,
+                                 VarPointer resourceVar)
+    : mIsDesktop(spec == Spec::GLSL ? 1u : 0u),
+      mIsVar(1u),
+      mVersion(static_cast<uint16_t>(version)),
+      mShaders(static_cast<uint8_t>(shaders)),
+      mExtensionIndex(extensionIndex),
+      mSymbolOrVar(resourceVar)
+{}
+
+template <Spec spec, int version, Shader shaders, size_t extensionIndex, typename T>
+// static
+constexpr SymbolRule SymbolRule::Get(T value)
+{
+    static_assert(version < 0x4000u, "version OOR");
+    static_assert(static_cast<uint8_t>(shaders) < 0xFFu, "shaders OOR");
+    static_assert(static_cast<uint8_t>(extensionIndex) < 0xFF, "extensionIndex OOR");
+    return SymbolRule(spec, version, shaders, extensionIndex, value);
+}
+
+const TSymbol *FindMangledBuiltIn(ShShaderSpec shaderSpec,
+                                  int shaderVersion,
+                                  sh::GLenum shaderType,
+                                  const ShBuiltInResources &resources,
+                                  const TSymbolTableBase &symbolTable,
+                                  const SymbolRule *rules,
+                                  uint16_t startIndex,
+                                  uint16_t endIndex);
+
+class UnmangledEntry
+{
+  public:
+    constexpr UnmangledEntry(const char *name,
+                             TExtension esslExtension,
+                             TExtension glslExtension,
                              int esslVersion,
                              int glslVersion,
-                             Shader shaderType)
-        : name(std::move(name)),
-          esslUnmangled(esslUnmangled),
-          glslUnmangled(glslUnmangled),
-          esslVersion(esslVersion),
-          glslVersion(glslVersion),
-          shaderType(shaderType)
-    {}
+                             Shader shaderType);
 
-    ImmutableString name;
-    const UnmangledBuiltIn *esslUnmangled;
-    const UnmangledBuiltIn *glslUnmangled;
-    int esslVersion;
-    int glslVersion;
-    Shader shaderType;
+    bool matches(const ImmutableString &name,
+                 ShShaderSpec shaderSpec,
+                 int shaderVersion,
+                 sh::GLenum shaderType,
+                 const TExtensionBehavior &extensions) const;
+
+  private:
+    const char *mName;
+    uint8_t mESSLExtension;
+    uint8_t mGLSLExtension;
+    uint8_t mShaderType;
+    uint16_t mESSLVersion;
+    uint16_t mGLSLVersion;
 };
+
+constexpr UnmangledEntry::UnmangledEntry(const char *name,
+                                         TExtension esslExtension,
+                                         TExtension glslExtension,
+                                         int esslVersion,
+                                         int glslVersion,
+                                         Shader shaderType)
+    : mName(name),
+      mESSLExtension(static_cast<uint8_t>(esslExtension)),
+      mGLSLExtension(static_cast<uint8_t>(glslExtension)),
+      mShaderType(static_cast<uint8_t>(shaderType)),
+      mESSLVersion(esslVersion < 0 ? std::numeric_limits<uint16_t>::max()
+                                   : static_cast<uint16_t>(esslVersion)),
+      mGLSLVersion(glslVersion < 0 ? std::numeric_limits<uint16_t>::max()
+                                   : static_cast<uint16_t>(glslVersion))
+{}
 
 class TSymbolTable : angle::NonCopyable, TSymbolTableBase
 {
@@ -242,8 +286,9 @@ class TSymbolTable : angle::NonCopyable, TSymbolTableBase
     const TSymbolUniqueId nextUniqueId() { return TSymbolUniqueId(this); }
 
     // Gets the built-in accessible by a shader with the specified version, if any.
-    const UnmangledBuiltIn *getUnmangledBuiltInForShaderVersion(const ImmutableString &name,
-                                                                int shaderVersion);
+    bool isUnmangledBuiltInName(const ImmutableString &name,
+                                int shaderVersion,
+                                const TExtensionBehavior &extensions) const;
 
     void initializeBuiltIns(sh::GLenum type,
                             ShShaderSpec spec,
@@ -272,12 +317,6 @@ class TSymbolTable : angle::NonCopyable, TSymbolTableBase
                                     const ShBuiltInResources &resources);
 
     VariableMetadata *getOrCreateVariableMetadata(const TVariable &variable);
-
-    const TSymbol *getSymbol(SymbolEntry entry, const ImmutableString &name, int version) const;
-
-    const UnmangledBuiltIn *getUnmangled(UnmangledEntry entry,
-                                         const ImmutableString &name,
-                                         int version) const;
 
     std::vector<std::unique_ptr<TSymbolTableLevel>> mTable;
 

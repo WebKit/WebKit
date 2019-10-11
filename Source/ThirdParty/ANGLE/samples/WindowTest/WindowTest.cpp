@@ -10,7 +10,7 @@
 #include <iostream>
 
 #include "util/OSWindow.h"
-#include "util/system_utils.h"
+#include "util/test_utils.h"
 
 int main(int argc, char *argv[])
 {

@@ -24,7 +24,7 @@ namespace gl
 {
 class Context;
 
-class MemoryObject final : public RefCountObject
+class MemoryObject final : public RefCountObject<MemoryObjectID>
 {
   public:
     MemoryObject(rx::GLImplFactory *factory, MemoryObjectID id);

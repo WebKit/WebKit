@@ -1,3 +1,1286 @@
+2019-10-11  Kenneth Russell  <kbr@chromium.org>
+
+        Roll ANGLE for ETC extensions and EGL_ANGLE_device_cgl
+        https://bugs.webkit.org/show_bug.cgi?id=202780
+
+        Roll ANGLE to c5e0ac757a112a24a0118d434e652fd7b558e6a8 via new
+        update-angle.sh script.
+
+        Reviewed by Alex Christensen.
+
+        * .gitignore:
+        * ANGLE.plist:
+        * ANGLE.xcodeproj/project.pbxproj:
+        * BUILD.gn:
+        * CMakeLists.txt:
+        * CONTRIBUTORS:
+        * DEPS:
+        * GLESv2.cmake:
+        * OWNERS:
+        * PRESUBMIT.py:
+        (_CheckExportValidity):
+        (CheckChangeOnUpload):
+        (CheckChangeOnCommit):
+        * README.md:
+        * android/angle_apk.gni:
+        * build_overrides/angle.gni:
+        * changes.diff:
+        * doc/DevSetup.md:
+        * dotfile_settings.gni:
+        * extensions/ANGLE_compressed_texture_etc.txt: Added.
+        * extensions/EGL_ANGLE_device_cgl.txt: Added.
+        * extensions/EGL_ANGLE_feature_control.txt:
+        * extensions/EGL_ANGLE_platform_angle_d3d11on12.txt: Added.
+        * extensions/EGL_ANGLE_platform_angle_device_type_swiftshader.txt: Added.
+        * extensions/EGL_ANGLE_platform_angle_metal.txt: Added.
+        * gni/angle.gni:
+        * include/EGL/eglext_angle.h:
+        * include/platform/Feature.h:
+        (angle::Feature::Feature):
+        * include/platform/FeaturesD3D.h:
+        * include/platform/FeaturesGL.h:
+        * include/platform/FeaturesVk.h:
+        * include/platform/FrontendFeatures.h:
+        * samples/WindowTest/WindowTest.cpp:
+        * samples/gles1/DrawTexture.cpp:
+        * samples/multi_texture/MultiTexture.cpp:
+        * samples/multiple_draw_buffers/MultipleDrawBuffers.cpp:
+        * samples/particle_system/ParticleSystem.cpp:
+        * samples/sample_util/SampleApplication.cpp:
+        (SampleApplication::SampleApplication):
+        * samples/sample_util/SampleApplication.h:
+        * scripts/code_generation_hashes/ANGLE_format.json:
+        * scripts/code_generation_hashes/ANGLE_load_functions_table.json:
+        * scripts/code_generation_hashes/D3D11_format.json:
+        * scripts/code_generation_hashes/DXGI_format.json:
+        * scripts/code_generation_hashes/GL_EGL_WGL_loader.json:
+        * scripts/code_generation_hashes/GL_EGL_entry_points.json:
+        * scripts/code_generation_hashes/OpenGL_dispatch_table.json:
+        * scripts/code_generation_hashes/Static_builtins.json:
+        * scripts/code_generation_hashes/Vulkan_format.json:
+        * scripts/code_generation_hashes/Vulkan_internal_shader_programs.json:
+        * scripts/code_generation_hashes/Vulkan_mandatory_format_support_table.json:
+        * scripts/code_generation_hashes/proc_table.json:
+        * scripts/export_targets.py:
+        (has_all_includes):
+        * scripts/generate_entry_points.py:
+        (get_resource_id_types):
+        (format_resource_id_types):
+        (write_capture_helper_header):
+        (get_resource_id_type_from_param_type):
+        (format_param_type_to_resource_id_type_case):
+        (format_param_type_resource_id_cases):
+        (format_resource_id_type_name_case):
+        (write_capture_helper_source):
+        * scripts/generate_vulkan_layers_json.py:
+        (main):
+        * scripts/registry_xml.py:
+        * src/common/PackedEnums.cpp:
+        (gl::operator<<):
+        * src/common/PackedEnums.h:
+        (angle::EnumSize<E>):
+        (gl::FromGLenum<VertexAttribType>):
+        (gl::ToGLenum):
+        (gl::ValueEquals):
+        (gl::operator==):
+        (gl::operator!=):
+        * src/common/android_util.cpp:
+        (angle::android::NativePixelFormatToGLInternalFormat):
+        * src/common/angleutils.h:
+        * src/common/debug.h:
+        * src/common/platform.h:
+        * src/common/system_utils_winuwp.cpp: Added.
+        (angle::SetEnvironmentVar):
+        (angle::GetEnvironmentVar):
+        (angle::GetSharedLibraryExtension):
+        (angle::GetPathSeparator):
+        (angle::GetCurrentTime):
+        (angle::UwpLibrary::UwpLibrary):
+        (angle::OpenSharedLibrary):
+        (angle::IsDebuggerAttached):
+        (angle::BreakDebugger):
+        * src/common/tls.cpp:
+        (CreateTLSIndex):
+        (DestroyTLSIndex):
+        (SetTLSValue):
+        (GetTLSValue):
+        * src/common/tls.h:
+        * src/common/utilities.cpp:
+        (gl::StripLastArrayIndex):
+        * src/common/utilities.h:
+        * src/compiler.gni:
+        * src/compiler/translator/Compiler.cpp:
+        (sh::TCompiler::compileTreeImpl):
+        * src/compiler/translator/ImmutableString_ESSL_autogen.cpp:
+        * src/compiler/translator/ImmutableString_autogen.cpp:
+        * src/compiler/translator/IntermNode.h:
+        (sh::TIntermPreprocessorDirective::getDirective const): Deleted.
+        (sh::TIntermPreprocessorDirective::getCommand const): Deleted.
+        * src/compiler/translator/ParseContext.cpp:
+        (sh::TParseContext::TParseContext):
+        (sh::TParseContext::checkIsValidArraySize):
+        (sh::TParseContext::parseFunctionDeclarator):
+        * src/compiler/translator/ParseContext.h:
+        (sh::TParseContext::getOutputType const):
+        * src/compiler/translator/ShaderVars.cpp:
+        (sh::ShaderVariable::operator=):
+        * src/compiler/translator/SymbolTable.cpp:
+        (sh::TSymbolTable::setGlInArraySize):
+        (sh::TSymbolTable::gl_FragData const):
+        (sh::TSymbolTable::gl_SecondaryFragDataEXT const):
+        (sh::SymbolRule::get const):
+        (sh::FindMangledBuiltIn):
+        (sh::UnmangledEntry::matches const):
+        * src/compiler/translator/SymbolTable.h:
+        (sh::SymbolRule::SymbolRule):
+        (sh::SymbolRule::Get):
+        (sh::UnmangledEntry::UnmangledEntry):
+        (sh::SymbolEntry::SymbolEntry): Deleted.
+        * src/compiler/translator/SymbolTable_ESSL_autogen.cpp:
+        (sh::BuiltInVariable::angle_BaseInstance):
+        (sh::BuiltInVariable::angle_BaseVertex):
+        (sh::BuiltInVariable::gl_BaseInstance):
+        (sh::BuiltInVariable::gl_BaseVertex):
+        (sh::BuiltInVariable::gl_DrawID):
+        (sh::BuiltInVariable::gl_FragColor):
+        (sh::BuiltInVariable::gl_FragCoord):
+        (sh::BuiltInVariable::gl_FragDepth):
+        (sh::BuiltInVariable::gl_FrontFacing):
+        (sh::BuiltInVariable::gl_GlobalInvocationID):
+        (sh::BuiltInVariable::gl_InstanceID):
+        (sh::BuiltInVariable::gl_InstanceIndex):
+        (sh::BuiltInVariable::gl_InvocationID):
+        (sh::BuiltInVariable::gl_LastFragColor):
+        (sh::BuiltInVariable::gl_LastFragColorARM):
+        (sh::BuiltInVariable::gl_Layer):
+        (sh::BuiltInVariable::gl_LayerGS):
+        (sh::BuiltInVariable::gl_LayerVS):
+        (sh::BuiltInVariable::gl_LocalInvocationID):
+        (sh::BuiltInVariable::gl_LocalInvocationIndex):
+        (sh::BuiltInVariable::gl_NumWorkGroups):
+        (sh::BuiltInVariable::gl_PointCoord):
+        (sh::BuiltInVariable::gl_PointSize):
+        (sh::BuiltInVariable::gl_Position):
+        (sh::BuiltInVariable::gl_PrimitiveID):
+        (sh::BuiltInVariable::gl_PrimitiveIDGS):
+        (sh::BuiltInVariable::gl_PrimitiveIDIn):
+        (sh::BuiltInVariable::gl_SecondaryFragColorEXT):
+        (sh::BuiltInVariable::gl_VertexID):
+        (sh::BuiltInVariable::gl_VertexIndex):
+        (sh::BuiltInVariable::gl_ViewID_OVR):
+        (sh::BuiltInVariable::gl_ViewportIndex):
+        (sh::BuiltInVariable::gl_WorkGroupID):
+        (sh::BuiltInVariable::gl_WorkGroupSize):
+        (sh::TSymbolTable::initializeBuiltInVariables):
+        (sh::TSymbolTable::findBuiltIn const):
+        (sh::TSymbolTable::isUnmangledBuiltInName const):
+        (sh::TSymbolTable::getSymbol const): Deleted.
+        (sh::TSymbolTable::getUnmangled const): Deleted.
+        (sh::TSymbolTable::getUnmangledBuiltInForShaderVersion): Deleted.
+        * src/compiler/translator/SymbolTable_autogen.cpp:
+        (sh::BuiltInVariable::angle_BaseInstance):
+        (sh::BuiltInVariable::angle_BaseVertex):
+        (sh::BuiltInVariable::gl_BaseInstance):
+        (sh::BuiltInVariable::gl_BaseVertex):
+        (sh::BuiltInVariable::gl_DrawID):
+        (sh::BuiltInVariable::gl_FragColor):
+        (sh::BuiltInVariable::gl_FragCoord):
+        (sh::BuiltInVariable::gl_FragDepth):
+        (sh::BuiltInVariable::gl_FrontFacing):
+        (sh::BuiltInVariable::gl_GlobalInvocationID):
+        (sh::BuiltInVariable::gl_InstanceID):
+        (sh::BuiltInVariable::gl_InstanceIndex):
+        (sh::BuiltInVariable::gl_InvocationID):
+        (sh::BuiltInVariable::gl_LastFragColor):
+        (sh::BuiltInVariable::gl_LastFragColorARM):
+        (sh::BuiltInVariable::gl_Layer):
+        (sh::BuiltInVariable::gl_LayerGS):
+        (sh::BuiltInVariable::gl_LayerVS):
+        (sh::BuiltInVariable::gl_LocalInvocationID):
+        (sh::BuiltInVariable::gl_LocalInvocationIndex):
+        (sh::BuiltInVariable::gl_NumWorkGroups):
+        (sh::BuiltInVariable::gl_PointCoord):
+        (sh::BuiltInVariable::gl_PointSize):
+        (sh::BuiltInVariable::gl_Position):
+        (sh::BuiltInVariable::gl_PrimitiveID):
+        (sh::BuiltInVariable::gl_PrimitiveIDGS):
+        (sh::BuiltInVariable::gl_PrimitiveIDIn):
+        (sh::BuiltInVariable::gl_SecondaryFragColorEXT):
+        (sh::BuiltInVariable::gl_VertexID):
+        (sh::BuiltInVariable::gl_VertexIndex):
+        (sh::BuiltInVariable::gl_ViewID_OVR):
+        (sh::BuiltInVariable::gl_ViewportIndex):
+        (sh::BuiltInVariable::gl_WorkGroupID):
+        (sh::BuiltInVariable::gl_WorkGroupSize):
+        (sh::TSymbolTable::initializeBuiltInVariables):
+        (sh::TSymbolTable::findBuiltIn const):
+        (sh::TSymbolTable::isUnmangledBuiltInName const):
+        (sh::TSymbolTable::getSymbol const): Deleted.
+        (sh::TSymbolTable::getUnmangled const): Deleted.
+        (sh::TSymbolTable::getUnmangledBuiltInForShaderVersion): Deleted.
+        * src/compiler/translator/SymbolTable_autogen.h:
+        * src/compiler/translator/TranslatorVulkan.cpp:
+        (sh::TranslatorVulkan::translate):
+        * src/compiler/translator/gen_builtin_symbols.py:
+        (get_shader_version_for_level):
+        (GroupedList.__init__):
+        (GroupedList.add_entry):
+        (GroupedList.format_rule):
+        (GroupedList):
+        (GroupedList.format_rules):
+        (GroupedList.get_rules):
+        (GroupedList.get_names):
+        (GroupedList.get_offsets):
+        (GroupedList.update_arrays):
+        (GroupedList.update_arrays.add_rule):
+        (UnmangledGroupedList.add_entry):
+        (UnmangledGroupedList.get_array):
+        (define_constexpr_variable):
+        (process_single_function_group):
+        (process_function_group):
+        (process_single_variable_group):
+        (GroupedList.add_obj): Deleted.
+        (GroupedList.get_array): Deleted.
+        (UnmangledGroupedList.add_obj): Deleted.
+        * src/feature_support_util/feature_support_util.cpp:
+        * src/gpu_info_util/SystemInfo_win.cpp:
+        (angle::GetSystemInfo):
+        * src/image_util/loadimage.cpp:
+        (angle::LoadD24S8ToD32F):
+        (angle::LoadD32ToD32FX32):
+        (angle::LoadD32ToD32F):
+        * src/image_util/loadimage.h:
+        * src/libANGLE/Buffer.cpp:
+        (gl::Buffer::Buffer):
+        * src/libANGLE/Buffer.h:
+        * src/libANGLE/Caps.cpp:
+        (gl::DetermineHalfFloatTextureFilteringSupport):
+        (gl::DetermineFloatTextureFilteringSupport):
+        (gl::Extensions::setTextureExtensionSupport):
+        (gl::GetExtensionInfoMap):
+        (egl::DisplayExtensions::getStrings const):
+        (egl::DeviceExtensions::getStrings const):
+        (egl::ClientExtensions::getStrings const):
+        * src/libANGLE/Caps.h:
+        * src/libANGLE/Constants.h:
+        * src/libANGLE/Context.cpp:
+        (gl::Context::Context):
+        (gl::Context::initialize):
+        (gl::Context::onDestroy):
+        (gl::Context::bindImageTexture):
+        (gl::Context::getQueryiv):
+        (gl::Context::detachTexture):
+        (gl::Context::generateSupportedExtensions const):
+        (gl::Context::initCaps):
+        (gl::Context::onSubjectStateChange):
+        (gl::StateCache::updateActiveAttribsMask):
+        (gl::StateCache::updateVertexAttribTypesValidation):
+        * src/libANGLE/Context.h:
+        * src/libANGLE/Device.cpp:
+        (egl::Device::getAttribute):
+        (egl::Device::getDevice): Deleted.
+        * src/libANGLE/Device.h:
+        * src/libANGLE/Display.cpp:
+        (egl::Display::createContext):
+        (egl::GenerateClientExtensions):
+        (egl::Display::isValidNativeDisplay):
+        (egl::Display::initializeFrontendFeatures):
+        (egl::Display::queryStringi):
+        * src/libANGLE/ErrorStrings.h:
+        * src/libANGLE/Fence.h:
+        * src/libANGLE/FrameCapture.cpp:
+        (angle::ParamCapture::ParamCapture):
+        (angle::ParamCapture::operator=):
+        (angle::ParamBuffer::ParamBuffer):
+        (angle::ParamBuffer::operator=):
+        (angle::ParamBuffer::getParam):
+        (angle::ParamBuffer::getParam const):
+        (angle::ParamBuffer::addParam):
+        (angle::ParamBuffer::addReturnValue):
+        (angle::ParamBuffer::getClientArrayPointerParameter):
+        (angle::CallCapture::CallCapture):
+        (angle::CallCapture::operator=):
+        (angle::CallCapture::name const):
+        (angle::ReplayContext::ReplayContext):
+        (angle::ReplayContext::~ReplayContext):
+        (angle::FrameCapture::FrameCapture):
+        (angle::FrameCapture::maybeCaptureClientData):
+        (angle::FrameCapture::captureCall):
+        (angle::FrameCapture::captureUpdateResourceIDs):
+        (angle::FrameCapture::maybeUpdateResourceIDs):
+        (angle::FrameCapture::captureClientArraySnapshot):
+        (angle::FrameCapture::onEndFrame):
+        (angle::DataCounters::getAndIncrement):
+        (angle::FrameCapture::reset):
+        (angle::CaptureGenHandlesImpl):
+        (angle::WriteParamValueToStream<ParamType::TBufferID>):
+        (angle::WriteParamValueToStream<ParamType::TFenceNVID>):
+        (angle::WriteParamValueToStream<ParamType::TFramebufferID>):
+        (angle::WriteParamValueToStream<ParamType::TMemoryObjectID>):
+        (angle::WriteParamValueToStream<ParamType::TPathID>):
+        (angle::WriteParamValueToStream<ParamType::TProgramPipelineID>):
+        (angle::WriteParamValueToStream<ParamType::TQueryID>):
+        (angle::WriteParamValueToStream<ParamType::TRenderbufferID>):
+        (angle::WriteParamValueToStream<ParamType::TSamplerID>):
+        (angle::WriteParamValueToStream<ParamType::TSemaphoreID>):
+        (angle::WriteParamValueToStream<ParamType::TShaderProgramID>):
+        (angle::WriteParamValueToStream<ParamType::TTextureID>):
+        (angle::WriteParamValueToStream<ParamType::TTransformFeedbackID>):
+        (angle::WriteParamValueToStream<ParamType::TVertexArrayID>):
+        (angle::CallCapture::~CallCapture): Deleted.
+        (angle::ParamBuffer::~ParamBuffer): Deleted.
+        (angle::ParamCapture::~ParamCapture): Deleted.
+        (angle::FrameCapture::~FrameCapture): Deleted.
+        (angle::FrameCapture::anyClientArray const): Deleted.
+        (angle::FrameCapture::saveCapturedFrameAsCpp): Deleted.
+        (angle::FrameCapture::getAndIncrementCounter): Deleted.
+        (angle::FrameCapture::writeStringPointerParamReplay): Deleted.
+        (angle::FrameCapture::writeRenderbufferIDPointerParamReplay): Deleted.
+        (angle::FrameCapture::writeBinaryParamReplay): Deleted.
+        (angle::FrameCapture::writeCallReplay): Deleted.
+        * src/libANGLE/FrameCapture.h:
+        (angle::CaptureGenHandles):
+        * src/libANGLE/FrameCapture_mock.cpp: Added.
+        (angle::CallCapture::~CallCapture):
+        (angle::ParamBuffer::~ParamBuffer):
+        (angle::ParamCapture::~ParamCapture):
+        (angle::FrameCapture::FrameCapture):
+        (angle::FrameCapture::~FrameCapture):
+        (angle::FrameCapture::onEndFrame):
+        (angle::FrameCapture::replay):
+        * src/libANGLE/Framebuffer.cpp:
+        (gl::Framebuffer::formsRenderingFeedbackLoopWith const):
+        (gl::Framebuffer::formsCopyingFeedbackLoopWith const):
+        * src/libANGLE/Framebuffer.h:
+        * src/libANGLE/FramebufferAttachment.cpp:
+        (gl::FramebufferAttachment::getRedSize const):
+        (gl::FramebufferAttachment::getGreenSize const):
+        (gl::FramebufferAttachment::getBlueSize const):
+        (gl::FramebufferAttachment::getAlphaSize const):
+        (gl::FramebufferAttachment::getDepthSize const):
+        (gl::FramebufferAttachment::getStencilSize const):
+        * src/libANGLE/FramebufferAttachment.h:
+        * src/libANGLE/GLES1State.cpp:
+        (gl::GLES1State::getActiveAttributesMask const):
+        * src/libANGLE/GLES1State.h:
+        * src/libANGLE/ImageIndex.cpp:
+        * src/libANGLE/ImageIndex.h:
+        * src/libANGLE/MemoryObject.cpp:
+        (gl::MemoryObject::MemoryObject):
+        * src/libANGLE/MemoryObject.h:
+        * src/libANGLE/MemoryProgramCache.cpp:
+        * src/libANGLE/Program.cpp:
+        (gl::ProgramBindings::bindLocation):
+        (gl::ProgramBindings::getBindingByName const):
+        (gl::ProgramBindings::getBinding const):
+        (gl::ProgramBindings::begin const):
+        (gl::ProgramBindings::end const):
+        (gl::ProgramAliasedBindings::ProgramAliasedBindings):
+        (gl::ProgramAliasedBindings::~ProgramAliasedBindings):
+        (gl::ProgramAliasedBindings::bindLocation):
+        (gl::ProgramAliasedBindings::getBindingByName const):
+        (gl::ProgramAliasedBindings::getBinding const):
+        (gl::ProgramAliasedBindings::begin const):
+        (gl::ProgramAliasedBindings::end const):
+        (gl::ProgramState::getAttributeLocation const):
+        (gl::ProgramState::getFirstAttachedShaderStageType const):
+        (gl::ProgramState::getLastAttachedShaderStageType const):
+        (gl::Program::getFragmentInputBindingInfo const):
+        (gl::Program::link):
+        (gl::ProgramState::updateProgramInterfaceInputs):
+        (gl::ProgramState::updateProgramInterfaceOutputs):
+        (gl::Program::unlink):
+        (gl::Program::getActiveAttribute const):
+        (gl::Program::getActiveAttributeCount const):
+        (gl::Program::getActiveAttributeMaxLength const):
+        (gl::Program::getAttributes const):
+        (gl::Program::getInputResource const):
+        (gl::Program::getInputResourceIndex const):
+        (gl::Program::getResourceMaxNameSize const):
+        (gl::Program::getInputResourceMaxNameSize const):
+        (gl::Program::getOutputResourceMaxNameSize const):
+        (gl::Program::getResourceLocation const):
+        (gl::Program::getInputResourceLocation const):
+        (gl::Program::getOutputResourceLocation const):
+        (gl::Program::getOutputResourceIndex const):
+        (gl::Program::getResourceName const):
+        (gl::Program::getInputResourceName const):
+        (gl::Program::getOutputResourceName const):
+        (gl::Program::getUniformResourceName const):
+        (gl::Program::getBufferVariableResourceName const):
+        (gl::Program::getOutputResource const):
+        (gl::Program::getUniformLocationBindings const):
+        (gl::Program::linkUniforms):
+        (gl::Program::linkAttributes):
+        (gl::Program::linkValidateGlobalNames const):
+        (gl::Program::getMergedVaryings const):
+        (gl::Program::linkOutputVariables):
+        (gl::Program::serialize const):
+        (gl::Program::deserialize):
+        * src/libANGLE/Program.h:
+        (gl::ProgramVaryingRef::get const):
+        * src/libANGLE/ProgramLinkedResources.cpp:
+        (gl::UniformLinker::link):
+        (gl::UniformLinker::indexUniforms):
+        (gl::UniformLinker::gatherUniformLocationsAndCheckConflicts):
+        * src/libANGLE/ProgramLinkedResources.h:
+        * src/libANGLE/ProgramPipeline.cpp:
+        (gl::ProgramPipeline::ProgramPipeline):
+        * src/libANGLE/ProgramPipeline.h:
+        * src/libANGLE/Query.cpp:
+        (gl::Query::Query):
+        * src/libANGLE/Query.h:
+        * src/libANGLE/RefCountObject.h:
+        (gl::RefCountObject::RefCountObject):
+        (gl::RefCountObject::id const):
+        (gl::BindingPointer::id const):
+        * src/libANGLE/Renderbuffer.cpp:
+        (gl::Renderbuffer::Renderbuffer):
+        (gl::Renderbuffer::getId const):
+        * src/libANGLE/Renderbuffer.h:
+        * src/libANGLE/Sampler.cpp:
+        (gl::Sampler::Sampler):
+        * src/libANGLE/Sampler.h:
+        * src/libANGLE/Semaphore.cpp:
+        (gl::Semaphore::Semaphore):
+        * src/libANGLE/Semaphore.h:
+        * src/libANGLE/Shader.cpp:
+        (gl::Shader::resolveCompile):
+        (gl::Shader::getTransformFeedbackVaryingMappedName):
+        * src/libANGLE/State.cpp:
+        (gl::State::getSamplerTextureId const):
+        (gl::State::detachTexture):
+        (gl::State::detachSampler):
+        (gl::State::detachRenderbuffer):
+        (gl::State::removeTransformFeedbackBinding):
+        (gl::State::getActiveQueryId const):
+        (gl::State::detachBuffer):
+        (gl::State::getIntegerv):
+        (gl::State::getIntegeri_v):
+        (gl::State::syncImages):
+        (gl::State::onImageStateChange):
+        * src/libANGLE/State.h:
+        (gl::State::getSamplerId const):
+        (gl::State::getRenderbufferId const):
+        * src/libANGLE/Texture.cpp:
+        (gl::Texture::Texture):
+        (gl::Texture::setStorage):
+        (gl::Texture::getId const):
+        * src/libANGLE/Texture.h:
+        * src/libANGLE/TransformFeedback.cpp:
+        (gl::TransformFeedback::TransformFeedback):
+        (gl::TransformFeedback::detachBuffer):
+        * src/libANGLE/TransformFeedback.h:
+        * src/libANGLE/VaryingPacking.cpp:
+        (gl::VaryingPacking::collectAndPackUserVaryings):
+        (gl::VaryingPacking::packUserVaryings):
+        * src/libANGLE/VertexArray.cpp:
+        (gl::VertexArray::detachBuffer):
+        (gl::VertexArray::bindVertexBufferImpl):
+        * src/libANGLE/VertexArray.h:
+        * src/libANGLE/capture_gles_2_0_params.cpp:
+        (gl::CaptureDeleteBuffers_buffersPacked):
+        (gl::CaptureDeleteFramebuffers_framebuffersPacked):
+        (gl::CaptureDeleteTextures_texturesPacked):
+        (gl::CaptureGenBuffers_buffersPacked):
+        (gl::CaptureGenFramebuffers_framebuffersPacked):
+        (gl::CaptureGenRenderbuffers_renderbuffersPacked):
+        (gl::CaptureGenTextures_texturesPacked):
+        (gl::CaptureShaderSource_string):
+        * src/libANGLE/capture_gles_3_0_params.cpp:
+        (gl::CaptureDeleteQueries_idsPacked):
+        (gl::CaptureDeleteSamplers_samplersPacked):
+        (gl::CaptureDeleteTransformFeedbacks_idsPacked):
+        (gl::CaptureDeleteVertexArrays_arraysPacked):
+        (gl::CaptureGenQueries_idsPacked):
+        (gl::CaptureGenSamplers_samplersPacked):
+        (gl::CaptureGenTransformFeedbacks_idsPacked):
+        (gl::CaptureGenVertexArrays_arraysPacked):
+        * src/libANGLE/capture_gles_3_1_params.cpp:
+        (gl::CaptureDeleteProgramPipelines_pipelinesPacked):
+        (gl::CaptureGenProgramPipelines_pipelinesPacked):
+        * src/libANGLE/capture_gles_ext_params.cpp:
+        (gl::CaptureDeleteQueriesEXT_idsPacked):
+        (gl::CaptureGenQueriesEXT_idsPacked):
+        * src/libANGLE/features.h:
+        * src/libANGLE/formatutils.cpp:
+        (gl::UnsizedHalfFloatOESRGBATextureAttachmentSupport):
+        (gl::BuildInternalFormatInfoMap):
+        (gl::InternalFormat::computeDepthPitch const):
+        (gl::GetVertexFormatID):
+        (gl::GetVertexFormatFromID):
+        (gl::GetVertexFormatSize):
+        * src/libANGLE/frame_capture_utils_autogen.cpp:
+        (angle::GetResourceIDTypeFromParamType):
+        (angle::GetResourceIDTypeName):
+        * src/libANGLE/frame_capture_utils_autogen.h:
+        * src/libANGLE/queryutils.cpp:
+        (gl::GetBufferVariableResourceProperty):
+        (gl::QueryProgramResourceLocation):
+        (gl::QueryProgramResourceiv):
+        (egl::QueryContextAttrib):
+        * src/libANGLE/renderer/DeviceImpl.h:
+        * src/libANGLE/renderer/Format.h:
+        (angle::Format::isVertexTypeHalfFloat const):
+        * src/libANGLE/renderer/FormatID_autogen.h:
+        * src/libANGLE/renderer/Format_table_autogen.cpp:
+        (angle::Format::InternalFormatToID):
+        * src/libANGLE/renderer/angle_format.py:
+        (gl_format_channels):
+        (get_vertex_copy_function):
+        * src/libANGLE/renderer/angle_format_map.json:
+        * src/libANGLE/renderer/copyvertex.h:
+        * src/libANGLE/renderer/copyvertex.inc.h:
+        (rx::CopyTo32FVertexData):
+        (rx::CopyXYZ10ToXYZW32FVertexData):
+        (rx::CopyW2XYZ10ToXYZW32FVertexData):
+        * src/libANGLE/renderer/d3d/DeviceD3D.cpp:
+        (rx::DeviceD3D::getAttribute):
+        (rx::DeviceD3D::getDevice): Deleted.
+        * src/libANGLE/renderer/d3d/DeviceD3D.h:
+        * src/libANGLE/renderer/d3d/HLSLCompiler.cpp:
+        (rx::HLSLCompiler::ensureInitialized):
+        (rx::HLSLCompiler::compileToBinary):
+        * src/libANGLE/renderer/d3d/ProgramD3D.cpp:
+        (rx::ProgramD3D::getVertexExecutableForCachedInputLayout):
+        * src/libANGLE/renderer/d3d/RendererD3D.cpp:
+        (rx::DefaultGLErrorCode):
+        * src/libANGLE/renderer/d3d/ShaderD3D.cpp:
+        (rx::ShaderD3D::compile):
+        * src/libANGLE/renderer/d3d/d3d11/Buffer11.cpp:
+        (rx::Buffer11::getConstantBufferRange):
+        (rx::Buffer11::NativeStorage::FillBufferDesc):
+        * src/libANGLE/renderer/d3d/d3d11/Context11.cpp:
+        (rx::Context11::drawArrays):
+        (rx::Context11::drawArraysInstanced):
+        (rx::Context11::drawArraysInstancedBaseInstance):
+        (rx::Context11::drawArraysIndirect):
+        * src/libANGLE/renderer/d3d/d3d11/DebugAnnotator11.cpp:
+        (rx::DebugAnnotator11::initialize):
+        * src/libANGLE/renderer/d3d/d3d11/Renderer11.cpp:
+        (rx::Renderer11::Renderer11):
+        (rx::Renderer11::initialize):
+        (rx::Renderer11::callD3D11On12CreateDevice):
+        (rx::Renderer11::initializeD3DDevice):
+        (rx::Renderer11::generateDisplayExtensions const):
+        (rx::Renderer11::isValidNativeWindow const):
+        (rx::Renderer11::createNativeWindow const):
+        (rx::Renderer11::drawArrays):
+        (rx::Renderer11::release):
+        (rx::Renderer11::getShareHandleSupport const):
+        (rx::Renderer11::copyImageInternal):
+        * src/libANGLE/renderer/d3d/d3d11/Renderer11.h:
+        * src/libANGLE/renderer/d3d/d3d11/TextureStorage11.cpp:
+        (rx::TextureStorage11::getSRVForImage):
+        (rx::TextureStorage11::getUAVForImage):
+        * src/libANGLE/renderer/d3d/d3d11/Trim11.cpp:
+        (rx::Trim11::trim):
+        (rx::Trim11::registerForRendererTrimRequest):
+        (rx::Trim11::unregisterForRendererTrimRequest):
+        * src/libANGLE/renderer/d3d/d3d11/Trim11.h:
+        * src/libANGLE/renderer/d3d/d3d11/converged/CompositorNativeWindow11.cpp:
+        (rx::RoHelper::SupportedWindowsRelease):
+        * src/libANGLE/renderer/d3d/d3d11/renderer11_utils.cpp:
+        (rx::d3d11_gl::GenerateCaps):
+        (rx::d3d11::InitializeFeatures):
+        * src/libANGLE/renderer/d3d/d3d11/winrt/CoreWindowNativeWindow.h:
+        * src/libANGLE/renderer/d3d/d3d11/winrt/NativeWindow11WinRT.cpp:
+        (rx::NativeWindow11WinRT::createSwapChain):
+        * src/libANGLE/renderer/d3d/d3d11/winrt/NativeWindow11WinRT.h:
+        * src/libANGLE/renderer/d3d/d3d11/winrt/SwapChainPanelNativeWindow.h:
+        * src/libANGLE/renderer/d3d/d3d9/renderer9_utils.cpp:
+        (rx::d3d9::InitializeFeatures):
+        * src/libANGLE/renderer/gen_angle_format_table.py:
+        (ceil_int):
+        (get_channel_struct):
+        (get_mip_generation_function):
+        * src/libANGLE/renderer/gl/BlitGL.cpp:
+        (rx::BlitGL::copyImageToLUMAWorkaroundTexture):
+        (rx::BlitGL::copySubImageToLUMAWorkaroundTexture):
+        (rx::BlitGL::blitColorBufferWithShader):
+        (rx::BlitGL::copySubTexture):
+        (rx::BlitGL::copySubTextureCPUReadback):
+        (rx::BlitGL::copyTexSubImage):
+        (rx::BlitGL::clearRenderableTexture):
+        (rx::BlitGL::clearRenderbuffer):
+        (rx::BlitGL::clearFramebuffer):
+        (rx::BlitGL::clearRenderableTextureAlphaToOne):
+        (rx::BlitGL::initializeResources):
+        (rx::BlitGL::orphanScratchTextures):
+        (rx::BlitGL::setScratchTextureParameter):
+        (rx::BlitGL::getBlitProgram):
+        (rx::BlitGL::getBlitProgramType): Deleted.
+        * src/libANGLE/renderer/gl/BlitGL.h:
+        * src/libANGLE/renderer/gl/ContextGL.cpp:
+        (rx::ContextGL::createRenderbuffer):
+        (rx::ContextGL::setDrawArraysState):
+        (rx::ContextGL::setDrawElementsState):
+        (rx::ContextGL::drawArrays):
+        (rx::ContextGL::updateAttributesForBaseInstance):
+        (rx::ContextGL::resetUpdatedAttributes):
+        (rx::ContextGL::drawArraysInstancedBaseInstance):
+        (rx::ContextGL::drawElements):
+        (rx::ContextGL::drawElementsInstancedBaseVertexBaseInstance):
+        (rx::ContextGL::validateState const):
+        * src/libANGLE/renderer/gl/ContextGL.h:
+        * src/libANGLE/renderer/gl/ProgramGL.cpp:
+        (rx::ProgramGL::link):
+        * src/libANGLE/renderer/gl/RenderbufferGL.cpp:
+        (rx::RenderbufferGL::RenderbufferGL):
+        (rx::RenderbufferGL::~RenderbufferGL):
+        (rx::RenderbufferGL::onDestroy):
+        (rx::RenderbufferGL::setStorage):
+        (rx::RenderbufferGL::setStorageMultisample):
+        (rx::RenderbufferGL::initializeContents):
+        * src/libANGLE/renderer/gl/RenderbufferGL.h:
+        * src/libANGLE/renderer/gl/ShaderGL.cpp:
+        (rx::ShaderGL::compile):
+        * src/libANGLE/renderer/gl/StateManagerGL.cpp:
+        (rx::StateManagerGL::bindBufferBase):
+        (rx::StateManagerGL::bindBufferRange):
+        (rx::StateManagerGL::validateState const):
+        * src/libANGLE/renderer/gl/StateManagerGL.h:
+        * src/libANGLE/renderer/gl/SurfaceGL.cpp:
+        (rx::SurfaceGL::initializeContents):
+        * src/libANGLE/renderer/gl/TextureGL.cpp:
+        (rx::TextureGL::setImageHelper):
+        (rx::TextureGL::setSubImage):
+        (rx::TextureGL::setCompressedImage):
+        (rx::TextureGL::setCompressedSubImage):
+        (rx::TextureGL::copyImage):
+        (rx::TextureGL::copySubTextureHelper):
+        (rx::TextureGL::setStorage):
+        (rx::TextureGL::setImageExternal):
+        (rx::TextureGL::setStorageMultisample):
+        (rx::TextureGL::setStorageExternalMemory):
+        (rx::TextureGL::setEGLImageTarget):
+        (rx::TextureGL::setLevelInfo):
+        (rx::TextureGL::initializeContents):
+        * src/libANGLE/renderer/gl/VertexArrayGL.cpp:
+        (rx::VertexArrayGL::streamAttributes const):
+        (rx::VertexArrayGL::validateState const):
+        * src/libANGLE/renderer/gl/VertexArrayGL.h:
+        * src/libANGLE/renderer/gl/cgl/DeviceCGL.cpp: Added.
+        (rx::DeviceCGL::DeviceCGL):
+        (rx::DeviceCGL::~DeviceCGL):
+        (rx::DeviceCGL::initialize):
+        (rx::DeviceCGL::getAttribute):
+        (rx::DeviceCGL::getType):
+        (rx::DeviceCGL::generateExtensions const):
+        * src/libANGLE/renderer/gl/cgl/DeviceCGL.h: Added.
+        * src/libANGLE/renderer/gl/cgl/DisplayCGL.h:
+        * src/libANGLE/renderer/gl/cgl/DisplayCGL.mm:
+        (rx::DisplayCGL::createDevice):
+        (rx::DisplayCGL::getCGLPixelFormat const):
+        (rx::DisplayCGL::generateExtensions const):
+        * src/libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.mm:
+        (rx::IOSurfaceSurfaceCGL::initializeAlphaChannel):
+        * src/libANGLE/renderer/gl/egl/DisplayEGL.cpp:
+        (rx::DisplayEGL::generateExtensions const):
+        * src/libANGLE/renderer/gl/glx/DisplayGLX.cpp:
+        (rx::DisplayGLX::makeCurrent):
+        * src/libANGLE/renderer/gl/glx/WindowSurfaceGLX.cpp:
+        (rx::WindowSurfaceGLX::initialize):
+        * src/libANGLE/renderer/gl/renderergl_utils.cpp:
+        (rx::nativegl_gl::GenerateCaps):
+        (rx::nativegl_gl::InitializeFeatures):
+        (rx::nativegl_gl::InitializeFrontendFeatures):
+        (rx::nativegl::SupportsCompute):
+        (rx::nativegl::GetBufferBindingQuery):
+        (rx::nativegl::GetBufferBindingString):
+        * src/libANGLE/renderer/gl/renderergl_utils.h:
+        * src/libANGLE/renderer/load_functions_data.json:
+        * src/libANGLE/renderer/load_functions_table_autogen.cpp:
+        (angle::GetLoadFunctionsMap):
+        * src/libANGLE/renderer/null/DeviceNULL.cpp:
+        (rx::DeviceNULL::getAttribute):
+        (rx::DeviceNULL::getDevice): Deleted.
+        * src/libANGLE/renderer/null/DeviceNULL.h:
+        * src/libANGLE/renderer/renderer_utils.cpp:
+        (rx::ShouldUseDebugLayers):
+        * src/libANGLE/renderer/vulkan/BufferVk.cpp:
+        (rx::BufferVk::release):
+        (rx::BufferVk::mapRangeImpl):
+        (rx::BufferVk::setDataImpl):
+        * src/libANGLE/renderer/vulkan/CommandGraph.cpp:
+        (rx::vk::CommandGraphResource::CommandGraphResource):
+        (rx::vk::CommandGraphResource::~CommandGraphResource):
+        (rx::vk::CommandGraphResource::isResourceInUse const):
+        (rx::vk::CommandGraphResource::recordCommands):
+        (rx::vk::CommandGraphResource::addWriteDependency):
+        (rx::vk::CommandGraphResource::addReadDependency):
+        (rx::vk::CommandGraphResource::startNewCommands):
+        (rx::vk::CommandGraphResource::onWriteImpl):
+        (rx::vk::SharedGarbage::SharedGarbage):
+        (rx::vk::SharedGarbage::operator=):
+        (rx::vk::SharedGarbage::destroyIfComplete):
+        (rx::vk::CommandGraph::~CommandGraph):
+        (rx::vk::CommandGraph::submitCommands):
+        (rx::vk::CommandGraph::releaseResourceUses):
+        (rx::vk::CommandGraph::releaseResourceUsesAndUpdateSerials):
+        (rx::vk::CommandGraphResource::resetQueueSerial): Deleted.
+        * src/libANGLE/renderer/vulkan/CommandGraph.h:
+        (rx::vk::CommandGraphResource::getLatestSerial const):
+        (rx::vk::CommandGraphResource::hasStartedRenderPass const):
+        (rx::vk::CommandGraphResource::updateCurrentAccessNodes):
+        (rx::vk::CommandGraphResource::onGraphAccess):
+        (rx::vk::CommandGraphResource::appendToStartedRenderPass):
+        (rx::vk::CommandGraphResource::renderPassStartedButEmpty const):
+        (rx::vk::CommandGraphResource::clearRenderPassColorAttachment):
+        (rx::vk::CommandGraphResource::clearRenderPassDepthAttachment):
+        (rx::vk::CommandGraphResource::clearRenderPassStencilAttachment):
+        (rx::vk::CommandGraphResource::invalidateRenderPassColorAttachment):
+        (rx::vk::CommandGraphResource::invalidateRenderPassDepthAttachment):
+        (rx::vk::CommandGraphResource::invalidateRenderPassStencilAttachment):
+        (rx::vk::CommandGraphResource::getRenderPassRenderArea const):
+        (rx::vk::CommandGraphResource::addGlobalMemoryBarrier):
+        (rx::vk::CommandGraphResource::hasChildlessWritingNode const):
+        (rx::vk::CommandGraph::onResourceUse):
+        (rx::vk::CommandGraphResource::getStoredQueueSerial const): Deleted.
+        (rx::vk::CommandGraphResource::updateQueueSerial): Deleted.
+        * src/libANGLE/renderer/vulkan/ContextVk.cpp:
+        (rx::CommandBatch::CommandBatch):
+        (rx::CommandBatch::operator=):
+        (rx::CommandBatch::destroy):
+        (rx::CommandQueue::destroy):
+        (rx::CommandQueue::init):
+        (rx::CommandQueue::checkCompletedCommands):
+        (rx::CommandQueue::releaseToCommandBatch):
+        (rx::CommandQueue::clearAllGarbage):
+        (rx::CommandQueue::allocatePrimaryCommandBuffer):
+        (rx::CommandQueue::releasePrimaryCommandBuffer):
+        (rx::CommandQueue::handleDeviceLost):
+        (rx::CommandQueue::hasInFlightCommands const):
+        (rx::CommandQueue::finishToSerialOrTimeout):
+        (rx::CommandQueue::submitFrame):
+        (rx::CommandQueue::getLastSubmittedFence const):
+        (rx::ContextVk::ContextVk):
+        (rx::ContextVk::onDestroy):
+        (rx::ContextVk::initialize):
+        (rx::ContextVk::setupDraw):
+        (rx::ContextVk::setupIndirectDraw):
+        (rx::ContextVk::setupIndexedIndirectDraw):
+        (rx::ContextVk::setupLineLoopIndexedIndirectDraw):
+        (rx::ContextVk::handleDirtyGraphicsVertexBuffers):
+        (rx::ContextVk::handleDirtyGraphicsIndexBuffer):
+        (rx::ContextVk::submitFrame):
+        (rx::ContextVk::flushCommandGraph):
+        (rx::ContextVk::synchronizeCpuGpuTime):
+        (rx::ContextVk::traceGpuEventImpl):
+        (rx::ContextVk::checkCompletedGpuEvents):
+        (rx::ContextVk::flushGpuEvents):
+        (rx::ContextVk::clearAllGarbage):
+        (rx::ContextVk::handleDeviceLost):
+        (rx::ContextVk::drawArraysIndirect):
+        (rx::ContextVk::drawElementsIndirect):
+        (rx::ContextVk::syncState):
+        (rx::ContextVk::onMakeCurrent):
+        (rx::ContextVk::dispatchComputeIndirect):
+        (rx::ContextVk::memoryBarrier):
+        (rx::ContextVk::writeAtomicCounterBufferDriverUniformOffsets):
+        (rx::ContextVk::updateActiveTextures):
+        (rx::ContextVk::updateActiveImages):
+        (rx::ContextVk::shouldFlush):
+        (rx::ContextVk::flushImpl):
+        (rx::ContextVk::finishImpl):
+        (rx::ContextVk::isSerialInUse const):
+        (rx::ContextVk::checkCompletedCommands):
+        (rx::ContextVk::finishToSerial):
+        (rx::ContextVk::finishToSerialOrTimeout):
+        (rx::ContextVk::getCompatibleRenderPass):
+        (rx::ContextVk::getRenderPassWithOps):
+        (rx::ContextVk::ensureSubmitFenceInitialized):
+        (rx::ContextVk::getNextSubmitFence):
+        (rx::ContextVk::getLastSubmittedFence const):
+        (rx::ContextVk::getTimestamp):
+        (rx::ContextVk::updateDefaultAttribute):
+        (rx::ContextVk::waitForSwapchainImageIfNecessary):
+        (rx::ContextVk::CommandBatch::CommandBatch): Deleted.
+        (rx::ContextVk::CommandBatch::operator=): Deleted.
+        (rx::ContextVk::CommandBatch::destroy): Deleted.
+        (rx::ContextVk::releaseToCommandBatch): Deleted.
+        (rx::ContextVk::recycleCommandBatch): Deleted.
+        (rx::ContextVk::getCommandGraph): Deleted.
+        * src/libANGLE/renderer/vulkan/ContextVk.h:
+        (rx::ContextVk::onVertexAttributeChange):
+        (rx::ContextVk::getCurrentQueueSerial const):
+        (rx::ContextVk::getLastSubmittedQueueSerial const):
+        (rx::ContextVk::getLastCompletedQueueSerial const):
+        (rx::ContextVk::addGarbage):
+        (rx::ContextVk::getCommandGraph):
+        (rx::ContextVk::releaseObject): Deleted.
+        * src/libANGLE/renderer/vulkan/DeviceVk.cpp:
+        (rx::DeviceVk::getAttribute):
+        (rx::DeviceVk::getDevice): Deleted.
+        * src/libANGLE/renderer/vulkan/DeviceVk.h:
+        * src/libANGLE/renderer/vulkan/DisplayVk.cpp:
+        (rx::DisplayVk::generateExtensions const):
+        * src/libANGLE/renderer/vulkan/FramebufferVk.cpp:
+        (rx::FramebufferVk::destroy):
+        (rx::FramebufferVk::invalidate):
+        (rx::FramebufferVk::invalidateSub):
+        (rx::FramebufferVk::clearImpl):
+        (rx::FramebufferVk::getImplementationColorReadType const):
+        (rx::FramebufferVk::blitWithCommand):
+        (rx::FramebufferVk::blit):
+        (rx::FramebufferVk::resolveColorWithCommand):
+        (rx::FramebufferVk::readPixelsImpl):
+        (rx::FramebufferVk::onScissorChange):
+        * src/libANGLE/renderer/vulkan/FramebufferVk.h:
+        (rx::FramebufferVk::appendToStartedRenderPass):
+        * src/libANGLE/renderer/vulkan/GlslangWrapper.cpp:
+        * src/libANGLE/renderer/vulkan/ImageVk.cpp:
+        (rx::ImageVk::onDestroy):
+        (rx::ImageVk::orphan):
+        * src/libANGLE/renderer/vulkan/ImageVk.h:
+        * src/libANGLE/renderer/vulkan/MemoryObjectVk.cpp:
+        (rx::MemoryObjectVk::createImage):
+        * src/libANGLE/renderer/vulkan/OverlayVk.cpp:
+        (rx::OverlayVk::createFont):
+        (rx::OverlayVk::cullWidgets):
+        (rx::OverlayVk::onPresent):
+        * src/libANGLE/renderer/vulkan/PersistentCommandPool.cpp:
+        (rx::vk::PersistentCommandPool::destroy):
+        (rx::vk::PersistentCommandPool::allocate):
+        (rx::vk::PersistentCommandPool::alloc): Deleted.
+        * src/libANGLE/renderer/vulkan/PersistentCommandPool.h:
+        * src/libANGLE/renderer/vulkan/ProgramVk.cpp:
+        (rx::ProgramVk::reset):
+        (rx::ProgramVk::initDefaultUniformLayoutMapping):
+        (rx::ProgramVk::updateDefaultUniformsDescriptorSet):
+        (rx::ProgramVk::updateBuffersDescriptorSet):
+        (rx::ProgramVk::updateAtomicCounterBuffersDescriptorSet):
+        (rx::ProgramVk::updateImagesDescriptorSet):
+        (rx::ProgramVk::updateTransformFeedbackDescriptorSetImpl):
+        (rx::ProgramVk::updateDescriptorSets):
+        * src/libANGLE/renderer/vulkan/ProgramVk.h:
+        (rx::ProgramVk::getGraphicsPipeline):
+        * src/libANGLE/renderer/vulkan/README.md:
+        * src/libANGLE/renderer/vulkan/RenderTargetVk.cpp:
+        (rx::RenderTargetVk::RenderTargetVk):
+        (rx::RenderTargetVk::init):
+        (rx::RenderTargetVk::reset):
+        (rx::RenderTargetVk::onColorDraw):
+        (rx::RenderTargetVk::onDepthStencilDraw):
+        (rx::RenderTargetVk::updateSwapchainImage):
+        (rx::RenderTargetVk::getImageForRead):
+        (rx::RenderTargetVk::getImageForWrite const):
+        (rx::RenderTargetVk::getFetchImageView const): Deleted.
+        * src/libANGLE/renderer/vulkan/RenderTargetVk.h:
+        * src/libANGLE/renderer/vulkan/RenderbufferVk.cpp:
+        (rx::RenderbufferVk::setStorageImpl):
+        (rx::RenderbufferVk::setStorageEGLImageTarget):
+        (rx::RenderbufferVk::releaseImage):
+        * src/libANGLE/renderer/vulkan/RenderbufferVk.h:
+        * src/libANGLE/renderer/vulkan/RendererVk.cpp:
+        (rx::RendererVk::~RendererVk):
+        (rx::RendererVk::onDestroy):
+        (rx::RendererVk::notifyDeviceLost):
+        (rx::RendererVk::initialize):
+        (rx::RendererVk::initializeDevice):
+        (rx::RendererVk::initFeatures):
+        (rx::RendererVk::queueSubmit):
+        (rx::RendererVk::cleanupGarbage):
+        (rx::RendererVk::getMaxFenceWaitTimeNs const):
+        (rx::RendererVk::onCompletedSerial):
+        (rx::RendererVk::nextSerial): Deleted.
+        (rx::RendererVk::addGarbage): Deleted.
+        * src/libANGLE/renderer/vulkan/RendererVk.h:
+        (rx::CollectGarbage):
+        (rx::RendererVk::getMaxVertexAttribDivisor const):
+        (rx::RendererVk::collectGarbageAndReinit):
+        (rx::RendererVk::getCurrentQueueSerial const):
+        (rx::RendererVk::getLastSubmittedQueueSerial const):
+        (rx::RendererVk::getLastCompletedQueueSerial const):
+        (rx::RendererVk::shouldCleanupGarbage):
+        * src/libANGLE/renderer/vulkan/SamplerVk.cpp:
+        (rx::SamplerVk::onDestroy):
+        (rx::SamplerVk::syncState):
+        * src/libANGLE/renderer/vulkan/SecondaryCommandBuffer.cpp:
+        (rx::vk::priv::SecondaryCommandBuffer::executeCommands):
+        (rx::vk::priv::SecondaryCommandBuffer::dumpCommands const):
+        * src/libANGLE/renderer/vulkan/SecondaryCommandBuffer.h:
+        (rx::vk::priv::SecondaryCommandBuffer::drawIndirect):
+        (rx::vk::priv::SecondaryCommandBuffer::drawIndexedIndirect):
+        * src/libANGLE/renderer/vulkan/SemaphoreVk.cpp:
+        (rx::SemaphoreVk::onDestroy):
+        * src/libANGLE/renderer/vulkan/SurfaceVk.cpp:
+        (rx::OffscreenSurfaceVk::AttachmentImage::initialize):
+        (rx::OffscreenSurfaceVk::AttachmentImage::destroy):
+        (rx::OffscreenSurfaceVk::OffscreenSurfaceVk):
+        (rx::WindowSurfaceVk::WindowSurfaceVk):
+        (rx::WindowSurfaceVk::createSwapChain):
+        (rx::WindowSurfaceVk::releaseSwapchainImages):
+        (rx::WindowSurfaceVk::destroySwapChainImages):
+        (rx::WindowSurfaceVk::present):
+        (rx::WindowSurfaceVk::nextSwapchainImage):
+        * src/libANGLE/renderer/vulkan/SyncVk.cpp:
+        (rx::vk::SyncHelper::SyncHelper):
+        (rx::vk::SyncHelper::~SyncHelper):
+        (rx::vk::SyncHelper::releaseToRenderer):
+        (rx::vk::SyncHelper::initialize):
+        (rx::vk::SyncHelper::clientWait):
+        (rx::vk::SyncHelper::serverWait):
+        (rx::vk::SyncHelper::getStatus):
+        (rx::SyncVk::onDestroy):
+        (rx::SyncVk::serverWait):
+        (rx::EGLSyncVk::onDestroy):
+        (rx::EGLSyncVk::serverWait):
+        (rx::FenceSyncVk::FenceSyncVk): Deleted.
+        (rx::FenceSyncVk::~FenceSyncVk): Deleted.
+        (rx::FenceSyncVk::onDestroy): Deleted.
+        (rx::FenceSyncVk::initialize): Deleted.
+        (rx::FenceSyncVk::clientWait): Deleted.
+        (rx::FenceSyncVk::serverWait): Deleted.
+        (rx::FenceSyncVk::getStatus): Deleted.
+        * src/libANGLE/renderer/vulkan/SyncVk.h:
+        * src/libANGLE/renderer/vulkan/TextureVk.cpp:
+        (rx::TextureVk::onDestroy):
+        (rx::TextureVk::copySubImageImpl):
+        (rx::TextureVk::copySubTextureImpl):
+        (rx::TextureVk::copySubImageImplWithTransfer):
+        (rx::TextureVk::copySubImageImplWithDraw):
+        (rx::TextureVk::setStorageExternalMemory):
+        (rx::TextureVk::setEGLImageTarget):
+        (rx::TextureVk::ensureImageAllocated):
+        (rx::TextureVk::setImageHelper):
+        (rx::TextureVk::copyImageDataToBufferAndGetData):
+        (rx::TextureVk::copyImageDataToBuffer):
+        (rx::TextureVk::generateMipmapsWithCPU):
+        (rx::TextureVk::generateMipmap):
+        (rx::TextureVk::setBaseLevel):
+        (rx::TextureVk::changeLevels):
+        (rx::TextureVk::bindTexImage):
+        (rx::TextureVk::getAttachmentRenderTarget):
+        (rx::TextureVk::ensureImageInitialized):
+        (rx::TextureVk::initLayerRenderTargets):
+        (rx::TextureVk::syncState):
+        (rx::TextureVk::getReadImageView const):
+        (rx::TextureVk::getFetchImageView const):
+        (rx::TextureVk::getLayerLevelDrawImageView):
+        (rx::TextureVk::getLayerLevelStorageImageView):
+        (rx::TextureVk::initImage):
+        (rx::TextureVk::initImageViews):
+        (rx::TextureVk::releaseImage):
+        (rx::TextureVk::releaseImageViews):
+        (rx::TextureVk::releaseStagingBuffer):
+        (rx::TextureVk::getLevelCount const):
+        (rx::TextureVk::generateMipmapLevelsWithCPU):
+        (rx::TextureVk::TextureVkViews::TextureVkViews): Deleted.
+        (rx::TextureVk::TextureVkViews::~TextureVkViews): Deleted.
+        (rx::TextureVk::TextureVkViews::release): Deleted.
+        (rx::TextureVk::init3DRenderTargets): Deleted.
+        (rx::TextureVk::initCubeMapRenderTargets): Deleted.
+        (rx::TextureVk::getTextureViews const): Deleted.
+        (rx::TextureVk::initImageViewImpl): Deleted.
+        * src/libANGLE/renderer/vulkan/TextureVk.h:
+        (): Deleted.
+        * src/libANGLE/renderer/vulkan/TransformFeedbackVk.cpp:
+        (rx::TransformFeedbackVk::onBeginOrEnd):
+        * src/libANGLE/renderer/vulkan/UtilsVk.cpp:
+        (rx::UtilsVk::ensureConvertIndexIndirectResourcesInitialized):
+        (rx::UtilsVk::ensureConvertIndexIndirectLineLoopResourcesInitialized):
+        (rx::UtilsVk::convertIndexIndirectBuffer):
+        (rx::UtilsVk::convertLineLoopIndexIndirectBuffer):
+        (rx::UtilsVk::startRenderPass):
+        (rx::UtilsVk::clearFramebuffer):
+        (rx::UtilsVk::blitResolveImpl):
+        (rx::UtilsVk::stencilBlitResolveNoShaderExport):
+        (rx::UtilsVk::copyImage):
+        (rx::UtilsVk::cullOverlayWidgets):
+        (rx::UtilsVk::drawOverlay):
+        * src/libANGLE/renderer/vulkan/UtilsVk.h:
+        * src/libANGLE/renderer/vulkan/VertexArrayVk.cpp:
+        (rx::VertexArrayVk::destroy):
+        (rx::VertexArrayVk::convertIndexBufferIndirectGPU):
+        (rx::VertexArrayVk::handleLineLoopIndirect):
+        (rx::VertexArrayVk::convertVertexBufferCPU):
+        (rx::VertexArrayVk::syncDirtyAttrib):
+        (rx::VertexArrayVk::updateStreamedAttribs):
+        (rx::VertexArrayVk::updateDefaultAttrib):
+        (rx::VertexArrayVk::updateClientAttribs): Deleted.
+        * src/libANGLE/renderer/vulkan/VertexArrayVk.h:
+        (rx::VertexArrayVk::getStreamingVertexAttribsMask const):
+        * src/libANGLE/renderer/vulkan/android/HardwareBufferImageSiblingVkAndroid.cpp:
+        (rx::HardwareBufferImageSiblingVkAndroid::initImpl):
+        (rx::HardwareBufferImageSiblingVkAndroid::release):
+        * src/libANGLE/renderer/vulkan/android/HardwareBufferImageSiblingVkAndroid.h:
+        * src/libANGLE/renderer/vulkan/doc/FastOpenGLStateTransitions.md:
+        * src/libANGLE/renderer/vulkan/doc/FormatTablesAndEmulation.md:
+        * src/libANGLE/renderer/vulkan/doc/OpenGLLineSegmentRasterization.md:
+        * src/libANGLE/renderer/vulkan/doc/ShaderModuleCompilation.md:
+        * src/libANGLE/renderer/vulkan/gen_vk_internal_shaders.py:
+        (shader_path):
+        * src/libANGLE/renderer/vulkan/shaders/gen/ConvertIndex.comp.00000000.inc:
+        * src/libANGLE/renderer/vulkan/shaders/gen/ConvertIndex.comp.00000001.inc:
+        * src/libANGLE/renderer/vulkan/shaders/gen/ConvertVertex.comp.00000008.inc:
+        * src/libANGLE/renderer/vulkan/shaders/gen/ConvertVertex.comp.00000009.inc:
+        * src/libANGLE/renderer/vulkan/shaders/gen/ConvertVertex.comp.00000018.inc:
+        * src/libANGLE/renderer/vulkan/shaders/gen/ConvertVertex.comp.00000019.inc:
+        * src/libANGLE/renderer/vulkan/shaders/src/ConvertIndex.comp:
+        * src/libANGLE/renderer/vulkan/shaders/src/ConvertIndex.comp.json:
+        * src/libANGLE/renderer/vulkan/shaders/src/ConvertVertex.comp:
+        * src/libANGLE/renderer/vulkan/shaders/src/ConvertVertex.comp.json:
+        * src/libANGLE/renderer/vulkan/vk_cache_utils.cpp:
+        (rx::vk::GraphicsPipelineDesc::initializePipeline const):
+        (rx::vk::GraphicsPipelineDesc::updateVertexInput):
+        (rx::vk::PipelineLayoutDesc::updatePushConstantRange):
+        (rx::RenderPassCache::addRenderPass):
+        (rx::GraphicsPipelineCache::release):
+        (rx::GraphicsPipelineCache::insertPipeline):
+        * src/libANGLE/renderer/vulkan/vk_cache_utils.h:
+        * src/libANGLE/renderer/vulkan/vk_caps_utils.cpp:
+        (rx::RendererVk::ensureCapsInitialized const):
+        * src/libANGLE/renderer/vulkan/vk_format_map.json:
+        * src/libANGLE/renderer/vulkan/vk_format_table_autogen.cpp:
+        (rx::vk::Format::initialize):
+        * src/libANGLE/renderer/vulkan/vk_format_utils.cpp:
+        (rx::MapSwizzleState):
+        * src/libANGLE/renderer/vulkan/vk_helpers.cpp:
+        (rx::vk::DynamicBuffer::allocate):
+        (rx::vk::DynamicBuffer::releaseBufferListToRenderer):
+        (rx::vk::DynamicBuffer::release):
+        (rx::vk::DynamicBuffer::releaseInFlightBuffers):
+        (rx::vk::DescriptorPoolHelper::release):
+        (rx::vk::LineLoopHelper::LineLoopHelper):
+        (rx::vk::LineLoopHelper::streamIndicesIndirect):
+        (rx::vk::LineLoopHelper::release):
+        (rx::vk::LineLoopHelper::destroy):
+        (rx::vk::BufferHelper::init):
+        (rx::vk::BufferHelper::release):
+        (rx::vk::ImageHelper::ImageHelper):
+        (rx::vk::ImageHelper::init):
+        (rx::vk::ImageHelper::initExternal):
+        (rx::vk::ImageHelper::releaseImage):
+        (rx::vk::ImageHelper::releaseStagingBuffer):
+        (rx::vk::ImageHelper::destroy):
+        (rx::vk::ImageHelper::getBaseLevel):
+        (rx::vk::ImageHelper::setBaseAndMaxLevels):
+        (rx::vk::ImageHelper::generateMipmapsWithBlit):
+        (rx::vk::ImageHelper::removeStagedUpdates):
+        (rx::vk::ImageHelper::stageSubresourceUpdate):
+        (rx::vk::ImageHelper::stageSubresourceUpdateAndGetData):
+        (rx::vk::ImageHelper::stageSubresourceUpdateFromBuffer):
+        (rx::vk::ImageHelper::stageSubresourceUpdateFromFramebuffer):
+        (rx::vk::ImageHelper::allocateStagingMemory):
+        (rx::vk::ImageHelper::flushStagedUpdates):
+        (rx::vk::ImageHelper::isUpdateStaged):
+        (rx::vk::ImageHelper::SubresourceUpdate::SubresourceUpdate):
+        (rx::vk::ImageHelper::SubresourceUpdate::release):
+        (rx::vk::FramebufferHelper::release):
+        (rx::vk::ShaderProgramHelper::release):
+        (rx::vk::DynamicBuffer::releaseBufferListToContext): Deleted.
+        (rx::vk::DynamicBuffer::releaseBufferListToDisplay): Deleted.
+        (rx::vk::ImageHelper::dumpResources): Deleted.
+        * src/libANGLE/renderer/vulkan/vk_helpers.h:
+        (rx::vk::ShaderProgramHelper::getShader):
+        (rx::vk::ShaderProgramHelper::getGraphicsPipeline):
+        * src/libANGLE/renderer/vulkan/vk_internal_shaders_autogen.cpp:
+        (rx::vk::ShaderLibrary::destroy):
+        (rx::vk::ShaderLibrary::getConvertIndexIndirectLineLoop_comp):
+        * src/libANGLE/renderer/vulkan/vk_internal_shaders_autogen.gni:
+        * src/libANGLE/renderer/vulkan/vk_internal_shaders_autogen.h:
+        * src/libANGLE/renderer/vulkan/vk_utils.cpp:
+        (rx::HasKhronosValidationLayer):
+        (rx::HasStandardValidationLayer):
+        (rx::GetAvailableValidationLayers):
+        (rx::vk::StagingBuffer::init):
+        (rx::vk::StagingBuffer::release):
+        (rx::vk::GarbageObject::GarbageObject):
+        (rx::vk::GarbageObject::operator=):
+        (rx::vk::GarbageObject::destroy):
+        (rx::gl_vk::GetSamplerMipmapMode):
+        (rx::vk::StagingBuffer::dumpResources): Deleted.
+        (rx::vk::GarbageObjectBase::GarbageObjectBase): Deleted.
+        (rx::vk::GarbageObjectBase::destroy): Deleted.
+        (rx::vk::GarbageObject::destroyIfComplete): Deleted.
+        * src/libANGLE/renderer/vulkan/vk_utils.h:
+        (rx::vk::GarbageObject::valid const):
+        (rx::vk::GarbageObject::Get):
+        (rx::vk::GetGarbage):
+        (rx::vk::GarbageObjectBase::GarbageObjectBase): Deleted.
+        * src/libANGLE/renderer/vulkan/vk_wrapper.h:
+        (rx::vk::WrappedObject::getHandle const):
+        (rx::vk::WrappedObject::valid const):
+        (rx::vk::WrappedObject::ptr const):
+        (rx::vk::WrappedObject::release):
+        (rx::vk::WrappedObject::WrappedObject):
+        (rx::vk::WrappedObject::~WrappedObject):
+        (rx::vk::WrappedObject::operator=):
+        (rx::vk::priv::CommandBuffer::SupportsQueries):
+        (rx::vk::priv::CommandBuffer::getMemoryUsageStats const):
+        (rx::vk::priv::CommandBuffer::drawIndexedIndirect):
+        (rx::vk::priv::CommandBuffer::drawIndirect):
+        (rx::vk::WrappedObject::dumpResources): Deleted.
+        (rx::vk::priv::CommandBuffer::getMemoryUsageStats): Deleted.
+        * src/libANGLE/validationEGL.cpp:
+        (egl::ValidateCreateContext):
+        (egl::ValidateMakeCurrent):
+        (egl::ValidateCompatibleSurface):
+        (egl::ValidateStreamConsumerGLTextureExternalKHR):
+        (egl::ValidateStreamConsumerGLTextureExternalAttribsNV):
+        (egl::ValidateQueryStringiANGLE):
+        (egl::ValidateCompatibleConfigs): Deleted.
+        * src/libANGLE/validationEGL.h:
+        * src/libANGLE/validationES.cpp:
+        (gl::ValidateRenderbufferStorageParametersBase):
+        (gl::ValidateTexStorageMultisample):
+        * src/libANGLE/validationES.h:
+        (gl::ValidateVertexFormat):
+        * src/libANGLE/validationES2.cpp:
+        (gl::ValidateES2TexStorageParameters):
+        * src/libANGLE/validationES3.cpp:
+        (gl::ValidateES3TexStorageParametersBase):
+        * src/libANGLE/validationES31.cpp:
+        (gl::err::ValidateProgramResourceIndex):
+        * src/libGLESv2.gni:
+        * src/libGLESv2/entry_points_egl_ext.cpp:
+        * src/tests/BUILD.gn:
+        * src/tests/angle_deqp_tests_main.cpp:
+        (main):
+        * src/tests/angle_end2end_tests.gni:
+        * src/tests/compiler_tests/DebugShaderPrecision_test.cpp:
+        (TEST_F):
+        * src/tests/compiler_tests/ImmutableString_test_ESSL_autogen.cpp:
+        (sh::TEST):
+        * src/tests/compiler_tests/ImmutableString_test_autogen.cpp:
+        (sh::TEST):
+        * src/tests/compiler_tests/QualificationOrder_test.cpp:
+        (TEST_F):
+        * src/tests/deqp_support/angle_deqp_gtest.cpp:
+        (angle::InitTestHarness):
+        * src/tests/deqp_support/angle_deqp_libtester_main.cpp:
+        * src/tests/deqp_support/deqp_egl_TestExpectations: Removed.
+        * src/tests/deqp_support/deqp_gles2_TestExpectations: Removed.
+        * src/tests/deqp_support/deqp_gles31_TestExpectations: Removed.
+        * src/tests/deqp_support/deqp_gles3_TestExpectations: Removed.
+        * src/tests/deqp_support/deqp_khr_gles2_TestExpectations: Removed.
+        * src/tests/deqp_support/deqp_khr_gles31_TestExpectations: Removed.
+        * src/tests/deqp_support/deqp_khr_gles3_TestExpectations: Removed.
+        * src/tests/deqp_support/tcuANGLENativeDisplayFactory.cpp:
+        * src/tests/deqp_support/tcuANGLEPlatform.cpp:
+        (tcu::ANGLEPlatform::ANGLEPlatform):
+        * src/tests/deqp_support/tes31Context_override.cpp:
+        (deqp::gles31::Context::Context):
+        (deqp::gles31::Context::~Context):
+        (deqp::gles31::Context::createRenderContext):
+        (deqp::gles31::Context::destroyRenderContext):
+        (deqp::gles31::Context::getRenderTarget const):
+        * src/tests/egl_tests/EGLDeviceCGLTest.cpp: Added.
+        (EGLDeviceCGLQueryTest::EGLDeviceCGLQueryTest):
+        (TEST_P):
+        * src/tests/egl_tests/EGLDirectCompositionTest.cpp:
+        * src/tests/egl_tests/EGLFeatureControlTest.cpp:
+        (TEST_P):
+        * src/tests/egl_tests/EGLNoConfigContextTest.cpp: Added.
+        (EGLNoConfigContextTest::EGLNoConfigContextTest):
+        (TEST_P):
+        * src/tests/gl_tests/BlendFuncExtendedTest.cpp:
+        (angle::EXTBlendFuncExtendedDrawTestES3::LinkProgram):
+        * src/tests/gl_tests/ComputeShaderTest.cpp:
+        * src/tests/gl_tests/CopyTexImageTest.cpp:
+        (angle::TEST_P):
+        * src/tests/gl_tests/CopyTextureTest.cpp:
+        (angle::CopyTextureVariationsTest::initializeSourceTexture):
+        (angle::CopyTextureVariationsTest::testCopyTexture):
+        (angle::CopyTextureVariationsTest::testCopySubTexture):
+        (angle::TEST_P):
+        * src/tests/gl_tests/DrawBaseVertexBaseInstanceTest.cpp:
+        (angle::DrawBaseVertexBaseInstanceTest::DrawBaseVertexBaseInstanceTest):
+        (angle::DrawBaseVertexBaseInstanceTest::vertexShaderSource300):
+        * src/tests/gl_tests/FramebufferTest.cpp:
+        (TEST_P):
+        * src/tests/gl_tests/GLSLTest.cpp:
+        * src/tests/gl_tests/IndexBufferOffsetTest.cpp:
+        * src/tests/gl_tests/InstancingTest.cpp:
+        * src/tests/gl_tests/LineLoopTest.cpp:
+        (LineLoopTest::checkPixels):
+        (LineLoopTest::runTest):
+        (LineLoopIndirectTest::runTest):
+        (TEST_P):
+        * src/tests/gl_tests/LinkAndRelinkTest.cpp:
+        (angle::TEST_P):
+        * src/tests/gl_tests/MipmapTest.cpp:
+        * src/tests/gl_tests/OcclusionQueriesTest.cpp:
+        * src/tests/gl_tests/ParallelShaderCompileTest.cpp:
+        (angle::ParallelShaderCompileTest::TaskRunner::run):
+        * src/tests/gl_tests/ProgramInterfaceTest.cpp:
+        * src/tests/gl_tests/SimpleOperationTest.cpp:
+        * src/tests/gl_tests/StateChangeTest.cpp:
+        * src/tests/gl_tests/TextureTest.cpp:
+        (angle::SliceFormatColor):
+        (angle::SliceFormatColor32F):
+        * src/tests/gl_tests/TimerQueriesTest.cpp:
+        * src/tests/gl_tests/UniformBufferTest.cpp:
+        * src/tests/gl_tests/VertexAttributeTest.cpp:
+        (angle::TypeStride):
+        (angle::Normalize10):
+        (angle::Normalize2):
+        (angle::Pack1010102):
+        (angle::VertexAttributeTest::checkPixels):
+        (angle::VertexAttributeTest::checkRGBPixels):
+        (angle::VertexAttributeTest::runTest):
+        (angle::TEST_P):
+        * src/tests/gles1_conformance_tests/ConformanceTests.cpp:
+        (angle::TEST_P):
+        * src/tests/perf_tests/ANGLEPerfTest.cpp:
+        * src/tests/perf_tests/DrawCallPerf.cpp:
+        (angle::DrawArraysPerfParams::DrawArraysPerfParams): Deleted.
+        (angle::DrawArraysPerfParams::story const): Deleted.
+        (angle::operator<<): Deleted.
+        (angle::CreateSimpleTexture2D): Deleted.
+        (angle::DrawCallPerfBenchmark::DrawCallPerfBenchmark): Deleted.
+        (angle::DrawCallPerfBenchmark::initializeBenchmark): Deleted.
+        (): Deleted.
+        * src/tests/perf_tests/EGLMakeCurrentPerf.cpp:
+        * src/tests/perf_tests/LinkProgramPerfTest.cpp:
+        (angle::TEST_P):
+        * src/tests/perf_tests/MultiviewPerf.cpp:
+        (angle::MultiviewCPUBoundBenchmark::initializeBenchmark):
+        (angle::MultiviewGPUBoundBenchmark::initializeBenchmark):
+        (angle::TEST_P):
+        * src/tests/perf_tests/UniformsPerf.cpp:
+        (TEST_P):
+        * src/tests/perf_tests/VulkanPipelineCachePerf.cpp:
+        (rx::VulkanPipelineCachePerfTest::step):
+        * src/tests/perf_tests/glmark2Benchmark.cpp:
+        * src/tests/test_expectations/GPUTestConfig.cpp:
+        (angle::GPUTestConfig::GPUTestConfig):
+        * src/tests/test_expectations/GPUTestConfig.h:
+        * src/tests/test_expectations/GPUTestExpectationsParser.cpp:
+        (angle::GPUTestExpectationsParser::parseLine):
+        * src/tests/test_utils/ANGLETest.cpp:
+        * src/tests/test_utils/ANGLETest.h:
+        * src/tests/test_utils/angle_test_configs.cpp:
+        (angle::PlatformParameters::initDefaultParameters):
+        (angle::operator<<):
+        (angle::egl_platform::VULKAN_SWIFTSHADER):
+        (angle::ES2_VULKAN_SWIFTSHADER):
+        * src/tests/test_utils/angle_test_configs.h:
+        * src/tests/test_utils/angle_test_instantiate.cpp:
+        (angle::IsWindows7):
+        * src/tests/test_utils/angle_test_instantiate.h:
+        * src/third_party/compiler/README.chromium:
+        * third_party/vulkan-headers/BUILD.gn: Removed.
+        * third_party/vulkan-headers/vulkan_headers_script_deps.gni: Removed.
+        * third_party/vulkan-loader/BUILD.gn:
+        * third_party/vulkan-tools/BUILD.gn: Removed.
+        * third_party/vulkan-validation-layers/BUILD.gn: Removed.
+        * third_party/vulkan-validation-layers/dummy_spirv_tools_commit_id.h: Removed.
+        * util/EGLWindow.cpp:
+        * util/fuchsia/ScenicWindow.cpp:
+        (ScenicWindow::resetNativeWindow):
+        * util/posix/crash_handler_posix.cpp: Renamed from Source/ThirdParty/ANGLE/util/posix/Posix_crash_handler.cpp.
+        * util/posix/test_utils_posix.cpp: Renamed from Source/ThirdParty/ANGLE/util/posix/Posix_system_utils.cpp.
+        * util/test_utils.h: Renamed from Source/ThirdParty/ANGLE/util/system_utils.h.
+        * util/util.gni:
+        * util/util_gl.h:
+        * util/windows/WGLWindow.cpp:
+        * util/windows/test_utils_win.cpp: Renamed from Source/ThirdParty/ANGLE/util/windows/Windows_system_utils.cpp.
+        (angle::PrintStackBacktrace):
+        * util/windows/win32/test_utils_win32.cpp: Renamed from Source/ThirdParty/ANGLE/util/windows/win32/Win32_system_utils.cpp.
+        * util/x11/X11Window.cpp:
+
 2019-10-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][Clang][ANGLE] global_state.cpp(39,1): error: static_assert failed due to requirement 'std::is_trivially_constructible<std::atomic<std::mutex *>>::value' "global mutex is not trivially constructible"

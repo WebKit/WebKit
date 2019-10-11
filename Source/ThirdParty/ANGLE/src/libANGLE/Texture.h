@@ -212,7 +212,9 @@ class TextureState final : private angle::NonCopyable
 bool operator==(const TextureState &a, const TextureState &b);
 bool operator!=(const TextureState &a, const TextureState &b);
 
-class Texture final : public RefCountObject, public egl::ImageSibling, public LabeledObject
+class Texture final : public RefCountObject<TextureID>,
+                      public egl::ImageSibling,
+                      public LabeledObject
 {
   public:
     Texture(rx::GLImplFactory *factory, TextureID id, TextureType type);
@@ -438,7 +440,10 @@ class Texture final : public RefCountObject, public egl::ImageSibling, public La
 
     void onAttach(const Context *context) override;
     void onDetach(const Context *context) override;
+
+    // Used specifically for FramebufferAttachmentObject.
     GLuint getId() const override;
+
     GLuint getNativeID() const;
 
     // Needed for robust resource init.

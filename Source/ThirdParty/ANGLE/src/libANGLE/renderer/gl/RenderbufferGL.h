@@ -31,13 +31,10 @@ class StateManagerGL;
 class RenderbufferGL : public RenderbufferImpl
 {
   public:
-    RenderbufferGL(const gl::RenderbufferState &state,
-                   const FunctionsGL *functions,
-                   const angle::FeaturesGL &features,
-                   StateManagerGL *stateManager,
-                   BlitGL *blitter,
-                   const gl::TextureCapsMap &textureCaps);
+    RenderbufferGL(const gl::RenderbufferState &state, GLuint id);
     ~RenderbufferGL() override;
+
+    void onDestroy(const gl::Context *context) override;
 
     angle::Result setStorage(const gl::Context *context,
                              GLenum internalformat,
@@ -57,12 +54,6 @@ class RenderbufferGL : public RenderbufferImpl
     GLenum getNativeInternalFormat() const;
 
   private:
-    const FunctionsGL *mFunctions;
-    const angle::FeaturesGL &mFeatures;
-    StateManagerGL *mStateManager;
-    BlitGL *mBlitter;
-    const gl::TextureCapsMap &mTextureCaps;
-
     GLuint mRenderbufferID;
 
     GLenum mNativeInternalFormat;

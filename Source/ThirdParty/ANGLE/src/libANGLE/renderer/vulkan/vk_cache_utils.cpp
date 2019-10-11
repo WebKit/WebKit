@@ -16,6 +16,7 @@
 #include "libANGLE/renderer/vulkan/FramebufferVk.h"
 #include "libANGLE/renderer/vulkan/ProgramVk.h"
 #include "libANGLE/renderer/vulkan/RendererVk.h"
+#include "libANGLE/renderer/vulkan/VertexArrayVk.h"
 #include "libANGLE/renderer/vulkan/vk_format_utils.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
 
@@ -180,6 +181,19 @@ void UnpackBlendAttachmentState(const vk::PackedColorBlendAttachmentState &packe
     stateOut->srcAlphaBlendFactor = static_cast<VkBlendFactor>(packedState.srcAlphaBlendFactor);
     stateOut->dstAlphaBlendFactor = static_cast<VkBlendFactor>(packedState.dstAlphaBlendFactor);
     stateOut->alphaBlendOp        = static_cast<VkBlendOp>(packedState.alphaBlendOp);
+}
+
+void SetPipelineShaderStageInfo(const VkStructureType type,
+                                const VkShaderStageFlagBits stage,
+                                const VkShaderModule module,
+                                VkPipelineShaderStageCreateInfo *shaderStage)
+{
+    shaderStage->sType               = type;
+    shaderStage->flags               = 0;
+    shaderStage->stage               = stage;
+    shaderStage->module              = module;
+    shaderStage->pName               = "main";
+    shaderStage->pSpecializationInfo = nullptr;
 }
 
 angle::Result InitializeRenderPassFromDesc(vk::Context *context,
@@ -593,7 +607,7 @@ void GraphicsPipelineDesc::initDefaults()
 }
 
 angle::Result GraphicsPipelineDesc::initializePipeline(
-    vk::Context *context,
+    ContextVk *contextVk,
     const vk::PipelineCache &pipelineCacheVk,
     const RenderPass &compatibleRenderPass,
     const PipelineLayout &pipelineLayout,
@@ -601,9 +615,10 @@ angle::Result GraphicsPipelineDesc::initializePipeline(
     const gl::ComponentTypeMask &programAttribsTypeMask,
     const ShaderModule *vertexModule,
     const ShaderModule *fragmentModule,
+    const ShaderModule *geometryModule,
     Pipeline *pipelineOut) const
 {
-    angle::FixedVector<VkPipelineShaderStageCreateInfo, 2> shaderStages;
+    angle::FixedVector<VkPipelineShaderStageCreateInfo, 3> shaderStages;
     VkPipelineVertexInputStateCreateInfo vertexInputState     = {};
     VkPipelineInputAssemblyStateCreateInfo inputAssemblyState = {};
     VkPipelineViewportStateCreateInfo viewportState           = {};
@@ -618,25 +633,27 @@ angle::Result GraphicsPipelineDesc::initializePipeline(
     // Vertex shader is always expected to be present.
     ASSERT(vertexModule != nullptr);
     VkPipelineShaderStageCreateInfo vertexStage = {};
-    vertexStage.sType               = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    vertexStage.flags               = 0;
-    vertexStage.stage               = VK_SHADER_STAGE_VERTEX_BIT;
-    vertexStage.module              = vertexModule->getHandle();
-    vertexStage.pName               = "main";
-    vertexStage.pSpecializationInfo = nullptr;
+    SetPipelineShaderStageInfo(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+                               VK_SHADER_STAGE_VERTEX_BIT, vertexModule->getHandle(), &vertexStage);
     shaderStages.push_back(vertexStage);
+
+    if (geometryModule)
+    {
+        VkPipelineShaderStageCreateInfo geometryStage = {};
+        SetPipelineShaderStageInfo(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+                                   VK_SHADER_STAGE_GEOMETRY_BIT, geometryModule->getHandle(),
+                                   &geometryStage);
+        shaderStages.push_back(geometryStage);
+    }
 
     // Fragment shader is optional.
     // anglebug.com/3509 - Don't compile the fragment shader if rasterizationDiscardEnable = true
     if (fragmentModule && !mRasterizationAndMultisampleStateInfo.bits.rasterizationDiscardEnable)
     {
         VkPipelineShaderStageCreateInfo fragmentStage = {};
-        fragmentStage.sType               = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        fragmentStage.flags               = 0;
-        fragmentStage.stage               = VK_SHADER_STAGE_FRAGMENT_BIT;
-        fragmentStage.module              = fragmentModule->getHandle();
-        fragmentStage.pName               = "main";
-        fragmentStage.pSpecializationInfo = nullptr;
+        SetPipelineShaderStageInfo(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+                                   VK_SHADER_STAGE_FRAGMENT_BIT, fragmentModule->getHandle(),
+                                   &fragmentStage);
         shaderStages.push_back(fragmentStage);
     }
 
@@ -657,7 +674,6 @@ angle::Result GraphicsPipelineDesc::initializePipeline(
     VkPipelineVertexInputDivisorStateCreateInfoEXT divisorState = {};
     divisorState.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_EXT;
     divisorState.pVertexBindingDivisors = divisorDesc.data();
-
     for (size_t attribIndexSizeT : activeAttribLocationsMask)
     {
         const uint32_t attribIndex = static_cast<uint32_t>(attribIndexSizeT);
@@ -682,7 +698,7 @@ angle::Result GraphicsPipelineDesc::initializePipeline(
 
         // Get the corresponding VkFormat for the attrib's format.
         angle::FormatID formatID         = static_cast<angle::FormatID>(packedAttrib.format);
-        const vk::Format &format         = context->getRenderer()->getFormat(formatID);
+        const vk::Format &format         = contextVk->getRenderer()->getFormat(formatID);
         const angle::Format &angleFormat = format.angleFormat();
         VkFormat vkFormat                = format.vkBufferFormat;
 
@@ -855,8 +871,8 @@ angle::Result GraphicsPipelineDesc::initializePipeline(
     createInfo.basePipelineHandle  = VK_NULL_HANDLE;
     createInfo.basePipelineIndex   = 0;
 
-    ANGLE_VK_TRY(context,
-                 pipelineOut->initGraphics(context->getDevice(), createInfo, pipelineCacheVk));
+    ANGLE_VK_TRY(contextVk,
+                 pipelineOut->initGraphics(contextVk->getDevice(), createInfo, pipelineCacheVk));
     return angle::Result::Continue;
 }
 
@@ -868,10 +884,6 @@ void GraphicsPipelineDesc::updateVertexInput(GraphicsPipelineTransitionBits *tra
                                              GLuint relativeOffset)
 {
     vk::PackedAttribDesc &packedAttrib = mVertexInputAttribs.attribs[attribIndex];
-
-    // TODO: Handle the case where the divisor overflows the field that holds it.
-    // http://anglebug.com/2672
-    ASSERT(divisor <= std::numeric_limits<decltype(packedAttrib.divisor)>::max());
 
     SetBitField(packedAttrib.stride, stride);
     SetBitField(packedAttrib.divisor, divisor);
@@ -1494,7 +1506,7 @@ void PipelineLayoutDesc::updatePushConstantRange(gl::ShaderType shaderType,
                                                  uint32_t size)
 {
     ASSERT(shaderType == gl::ShaderType::Vertex || shaderType == gl::ShaderType::Fragment ||
-           shaderType == gl::ShaderType::Compute);
+           shaderType == gl::ShaderType::Geometry || shaderType == gl::ShaderType::Compute);
     PackedPushConstantRange &packed = mPushConstantRanges[shaderType];
     packed.offset                   = offset;
     packed.size                     = size;
@@ -1592,7 +1604,7 @@ void RenderPassCache::destroy(VkDevice device)
     mPayload.clear();
 }
 
-angle::Result RenderPassCache::addRenderPass(vk::Context *context,
+angle::Result RenderPassCache::addRenderPass(ContextVk *contextVk,
                                              Serial serial,
                                              const vk::RenderPassDesc &desc,
                                              vk::RenderPass **renderPassOut)
@@ -1623,7 +1635,7 @@ angle::Result RenderPassCache::addRenderPass(vk::Context *context,
                         VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
     }
 
-    return getRenderPassWithOps(context, serial, desc, ops, renderPassOut);
+    return getRenderPassWithOps(contextVk, serial, desc, ops, renderPassOut);
 }
 
 angle::Result RenderPassCache::getRenderPassWithOps(vk::Context *context,
@@ -1690,14 +1702,14 @@ void GraphicsPipelineCache::release(ContextVk *context)
     for (auto &item : mPayload)
     {
         vk::PipelineHelper &pipeline = item.second;
-        context->releaseObject(pipeline.getSerial(), &pipeline.getPipeline());
+        context->addGarbage(&pipeline.getPipeline());
     }
 
     mPayload.clear();
 }
 
 angle::Result GraphicsPipelineCache::insertPipeline(
-    vk::Context *context,
+    ContextVk *contextVk,
     const vk::PipelineCache &pipelineCacheVk,
     const vk::RenderPass &compatibleRenderPass,
     const vk::PipelineLayout &pipelineLayout,
@@ -1705,6 +1717,7 @@ angle::Result GraphicsPipelineCache::insertPipeline(
     const gl::ComponentTypeMask &programAttribsTypeMask,
     const vk::ShaderModule *vertexModule,
     const vk::ShaderModule *fragmentModule,
+    const vk::ShaderModule *geometryModule,
     const vk::GraphicsPipelineDesc &desc,
     const vk::GraphicsPipelineDesc **descPtrOut,
     vk::PipelineHelper **pipelineOut)
@@ -1712,13 +1725,13 @@ angle::Result GraphicsPipelineCache::insertPipeline(
     vk::Pipeline newPipeline;
 
     // This "if" is left here for the benefit of VulkanPipelineCachePerfTest.
-    if (context != nullptr)
+    if (contextVk != nullptr)
     {
-        context->getRenderer()->onNewGraphicsPipeline();
-        ANGLE_TRY(desc.initializePipeline(context, pipelineCacheVk, compatibleRenderPass,
+        contextVk->getRenderer()->onNewGraphicsPipeline();
+        ANGLE_TRY(desc.initializePipeline(contextVk, pipelineCacheVk, compatibleRenderPass,
                                           pipelineLayout, activeAttribLocationsMask,
                                           programAttribsTypeMask, vertexModule, fragmentModule,
-                                          &newPipeline));
+                                          geometryModule, &newPipeline));
     }
 
     // The Serial will be updated outside of this query.

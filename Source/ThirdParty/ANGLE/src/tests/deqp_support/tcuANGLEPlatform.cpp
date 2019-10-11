@@ -26,7 +26,7 @@
 #include "egluGLContextFactory.hpp"
 #include "tcuANGLENativeDisplayFactory.h"
 #include "tcuNullContextFactory.hpp"
-#include "util/system_utils.h"
+#include "util/test_utils.h"
 
 static_assert(EGL_DONT_CARE == -1, "Unexpected value for EGL_DONT_CARE");
 
@@ -94,6 +94,15 @@ ANGLEPlatform::ANGLEPlatform(angle::LogErrorFunc logErrorFunc)
         auto *vkFactory = new ANGLENativeDisplayFactory("angle-vulkan", "ANGLE Vulkan Display",
                                                         vkAttribs, &mEvents);
         m_nativeDisplayFactoryRegistry.registerFactory(vkFactory);
+    }
+#endif
+
+#if (DE_OS == DE_OS_WIN32) || (DE_OS == DE_OS_UNIX)
+    {
+        std::vector<eglw::EGLAttrib> swsAttribs = initAttribs(
+            EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_SWIFTSHADER_ANGLE);
+        m_nativeDisplayFactoryRegistry.registerFactory(new ANGLENativeDisplayFactory(
+            "angle-swiftshader", "ANGLE SwiftShader Display", swsAttribs, &mEvents));
     }
 #endif
 

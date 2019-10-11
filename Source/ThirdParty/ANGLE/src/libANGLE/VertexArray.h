@@ -179,7 +179,7 @@ class VertexArray final : public angle::ObserverInterface,
     }
 
     // Returns true if the function finds and detaches a bound buffer.
-    bool detachBuffer(const Context *context, GLuint bufferName);
+    bool detachBuffer(const Context *context, BufferID bufferID);
 
     void setVertexAttribDivisor(const Context *context, size_t index, GLuint divisor);
     void enableAttribute(size_t attribIndex, bool enabledState);

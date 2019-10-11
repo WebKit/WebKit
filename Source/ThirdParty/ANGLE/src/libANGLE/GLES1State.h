@@ -215,6 +215,7 @@ class GLES1State final : angle::NonCopyable
     const PointParameters &pointParameters() const;
 
     AttributesMask getVertexArraysAttributeMask() const;
+    AttributesMask getActiveAttributesMask() const;
 
     void setHint(GLenum target, GLenum mode);
     GLenum getHint(GLenum target);

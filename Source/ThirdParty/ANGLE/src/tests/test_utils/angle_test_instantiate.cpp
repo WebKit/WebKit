@@ -14,13 +14,15 @@
 
 #include "angle_gl.h"
 #include "common/platform.h"
+#include "common/system_utils.h"
 #include "gpu_info_util/SystemInfo.h"
 #include "test_utils/angle_test_configs.h"
 #include "util/EGLWindow.h"
 #include "util/OSWindow.h"
-#include "util/system_utils.h"
+#include "util/test_utils.h"
 
 #if defined(ANGLE_PLATFORM_WINDOWS)
+#    include <VersionHelpers.h>
 #    include "util/windows/WGLWindow.h"
 #endif  // defined(ANGLE_PLATFORM_WINDOWS)
 
@@ -172,6 +174,15 @@ bool IsWindows()
 {
 #if defined(ANGLE_PLATFORM_WINDOWS)
     return true;
+#else
+    return false;
+#endif
+}
+
+bool IsWindows7()
+{
+#if defined(ANGLE_PLATFORM_WINDOWS)
+    return ::IsWindows7OrGreater() && !::IsWindows8OrGreater();
 #else
     return false;
 #endif

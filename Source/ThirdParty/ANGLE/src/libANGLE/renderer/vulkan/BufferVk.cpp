@@ -78,11 +78,12 @@ void BufferVk::destroy(const gl::Context *context)
 
 void BufferVk::release(ContextVk *contextVk)
 {
-    mBuffer.release(contextVk);
+    RendererVk *renderer = contextVk->getRenderer();
+    mBuffer.release(renderer);
 
     for (ConversionBuffer &buffer : mVertexConversionBuffers)
     {
-        buffer.data.release(contextVk);
+        buffer.data.release(renderer);
     }
 }
 
@@ -222,7 +223,9 @@ angle::Result BufferVk::mapRangeImpl(ContextVk *contextVk,
             ANGLE_TRY(contextVk->flushImpl(nullptr));
         }
         // Make sure the GPU is done with the buffer.
-        ANGLE_TRY(contextVk->finishToSerial(mBuffer.getStoredQueueSerial()));
+        ANGLE_TRY(contextVk->finishToSerial(mBuffer.getLatestSerial()));
+
+        ASSERT(!mBuffer.isResourceInUse(contextVk));
     }
 
     ANGLE_VK_TRY(contextVk, mBuffer.getDeviceMemory().map(contextVk->getDevice(), offset, length, 0,
@@ -317,7 +320,7 @@ angle::Result BufferVk::setDataImpl(ContextVk *contextVk,
                                          VK_ACCESS_HOST_WRITE_BIT, copyRegion));
 
         // Immediately release staging buffer. We should probably be using a DynamicBuffer here.
-        contextVk->releaseObject(contextVk->getCurrentQueueSerial(), &stagingBuffer);
+        stagingBuffer.release(contextVk);
     }
     else
     {

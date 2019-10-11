@@ -4,9 +4,9 @@
 // found in the LICENSE file.
 //
 
-// Win32_system_utils.cpp: Implementation of OS-specific functions for Win32 (Windows)
+// test_utils_win32.cpp: Implementation of OS-specific functions for Win32 (Windows)
 
-#include "util/system_utils.h"
+#include "util/test_utils.h"
 
 #include <windows.h>
 #include <array>

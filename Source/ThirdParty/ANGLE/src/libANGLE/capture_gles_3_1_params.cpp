@@ -29,7 +29,7 @@ void CaptureDeleteProgramPipelines_pipelinesPacked(const Context *context,
                                                    const ProgramPipelineID *pipelines,
                                                    ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureMemory(pipelines, sizeof(ProgramPipelineID) * n, paramCapture);
 }
 
 void CaptureDrawArraysIndirect_indirect(const Context *context,
@@ -57,7 +57,7 @@ void CaptureGenProgramPipelines_pipelinesPacked(const Context *context,
                                                 ProgramPipelineID *pipelines,
                                                 ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureGenHandles(n, pipelines, paramCapture);
 }
 
 void CaptureGetBooleani_v_data(const Context *context,

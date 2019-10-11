@@ -551,8 +551,6 @@ TEST_P(CopyTexImageTestES3, 2DArraySubImage)
 {
     // Seems to fail on AMD OpenGL Windows.
     ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL() & IsWindows());
-    // TODO(anglebug.com/3189): Need full 2D-array texture support
-    ANGLE_SKIP_TEST_IF(IsVulkan());
 
     GLTexture tex;
     glBindTexture(GL_TEXTURE_2D_ARRAY, tex);

@@ -13,6 +13,7 @@
 #define LIBANGLE_REFCOUNTOBJECT_H_
 
 #include "angle_gl.h"
+#include "common/PackedEnums.h"
 #include "common/debug.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/Observer.h"
@@ -135,18 +136,19 @@ class BindingPointer;
 
 using RefCountObjectNoID = angle::RefCountObject<Context, angle::Result>;
 
+template <typename IDType>
 class RefCountObject : public gl::RefCountObjectNoID
 {
   public:
-    explicit RefCountObject(GLuint id) : mId(id) {}
+    explicit RefCountObject(IDType id) : mId(id) {}
 
-    GLuint id() const { return mId; }
+    IDType id() const { return mId; }
 
   protected:
     ~RefCountObject() override {}
 
   private:
-    GLuint mId;
+    IDType mId;
 };
 
 template <class ObjectType>
@@ -160,10 +162,12 @@ class BindingPointer : public angle::BindingPointer<ObjectType, Context>
 
     BindingPointer(ObjectType *object) : angle::BindingPointer<ObjectType, Context>(object) {}
 
-    GLuint id() const
+    typename ResourceTypeToID<ObjectType>::IDType id() const
     {
         ObjectType *obj = this->get();
-        return obj ? obj->id() : 0;
+        if (obj)
+            return obj->id();
+        return {0};
     }
 };
 

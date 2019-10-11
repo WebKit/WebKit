@@ -144,14 +144,14 @@ const std::string &VertexArray::getLabel() const
     return mState.mLabel;
 }
 
-bool VertexArray::detachBuffer(const Context *context, GLuint bufferName)
+bool VertexArray::detachBuffer(const Context *context, BufferID bufferID)
 {
     bool isBound           = context->isCurrentVertexArray(this);
     bool anyBufferDetached = false;
     for (uint32_t bindingIndex = 0; bindingIndex < gl::MAX_VERTEX_ATTRIB_BINDINGS; ++bindingIndex)
     {
         VertexBinding &binding = mState.mVertexBindings[bindingIndex];
-        if (binding.getBuffer().id() == bufferName)
+        if (binding.getBuffer().id() == bufferID)
         {
             if (isBound)
             {
@@ -180,7 +180,7 @@ bool VertexArray::detachBuffer(const Context *context, GLuint bufferName)
         }
     }
 
-    if (mState.mElementArrayBuffer.get() && mState.mElementArrayBuffer->id() == bufferName)
+    if (mState.mElementArrayBuffer.get() && mState.mElementArrayBuffer->id() == bufferID)
     {
         if (isBound && mState.mElementArrayBuffer.get())
             mState.mElementArrayBuffer->onNonTFBindingChanged(-1);
@@ -315,7 +315,8 @@ bool VertexArray::bindVertexBufferImpl(const Context *context,
         mCachedTransformFeedbackConflictedBindingsMask.set(
             bindingIndex, boundBuffer->isBoundForTransformFeedbackAndOtherUse());
         mState.mClientMemoryAttribsMask &= ~binding->getBoundAttributesMask();
-        updateCachedMappedArrayBuffers(boundBuffer->isMapped(), binding->getBoundAttributesMask());
+        updateCachedMappedArrayBuffers((boundBuffer->isMapped() == GL_TRUE),
+                                       binding->getBoundAttributesMask());
     }
     else
     {

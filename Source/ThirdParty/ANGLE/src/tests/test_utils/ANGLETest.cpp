@@ -13,6 +13,7 @@
 #include "gpu_info_util/SystemInfo.h"
 #include "util/EGLWindow.h"
 #include "util/OSWindow.h"
+#include "util/test_utils.h"
 
 #if defined(ANGLE_PLATFORM_WINDOWS)
 #    include <VersionHelpers.h>

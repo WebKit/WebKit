@@ -35,14 +35,15 @@ class VertexArrayVk : public VertexArrayImpl
     void updateDefaultAttrib(ContextVk *contextVk,
                              size_t attribIndex,
                              VkBuffer bufferHandle,
+                             vk::BufferHelper *buffer,
                              uint32_t offset);
 
-    angle::Result updateClientAttribs(const gl::Context *context,
-                                      GLint firstVertex,
-                                      GLsizei vertexOrIndexCount,
-                                      GLsizei instanceCount,
-                                      gl::DrawElementsType indexTypeOrInvalid,
-                                      const void *indices);
+    angle::Result updateStreamedAttribs(const gl::Context *context,
+                                        GLint firstVertex,
+                                        GLsizei vertexOrIndexCount,
+                                        GLsizei instanceCount,
+                                        gl::DrawElementsType indexTypeOrInvalid,
+                                        const void *indices);
 
     angle::Result handleLineLoop(ContextVk *contextVk,
                                  GLint firstVertex,
@@ -50,6 +51,13 @@ class VertexArrayVk : public VertexArrayImpl
                                  gl::DrawElementsType indexTypeOrInvalid,
                                  const void *indices,
                                  uint32_t *indexCountOut);
+
+    angle::Result handleLineLoopIndirect(ContextVk *contextVk,
+                                         BufferVk *indirectBufferVk,
+                                         gl::DrawElementsType glIndexType,
+                                         VkDeviceSize indirectBufferOffset,
+                                         vk::BufferHelper **indirectBufferOut,
+                                         VkDeviceSize *indirectBufferOffsetOut);
 
     const gl::AttribArray<VkBuffer> &getCurrentArrayBufferHandles() const
     {
@@ -82,10 +90,20 @@ class VertexArrayVk : public VertexArrayImpl
                                         BufferVk *bufferVk,
                                         const void *indices);
 
+    angle::Result convertIndexBufferIndirectGPU(ContextVk *contextVk,
+                                                BufferVk *cmdBufferVk,
+                                                BufferVk *indexBufferVk,
+                                                const void *indices);
+
     angle::Result convertIndexBufferCPU(ContextVk *contextVk,
                                         gl::DrawElementsType indexType,
                                         size_t indexCount,
                                         const void *sourcePointer);
+
+    const gl::AttributesMask &getStreamingVertexAttribsMask() const
+    {
+        return mStreamingVertexAttribsMask;
+    }
 
   private:
     void setDefaultPackedInput(ContextVk *contextVk, size_t attribIndex);
@@ -128,6 +146,9 @@ class VertexArrayVk : public VertexArrayImpl
 
     // Vulkan does not allow binding a null vertex buffer. We use a dummy as a placeholder.
     vk::BufferHelper mTheNullBuffer;
+
+    // Track client and/or emulated attribs that we have to stream their buffer contents
+    gl::AttributesMask mStreamingVertexAttribsMask;
 };
 }  // namespace rx
 

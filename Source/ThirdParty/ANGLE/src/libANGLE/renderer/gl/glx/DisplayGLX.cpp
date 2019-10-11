@@ -380,17 +380,15 @@ egl::Error DisplayGLX::makeCurrent(egl::Surface *drawSurface,
                                    egl::Surface *readSurface,
                                    gl::Context *context)
 {
-    if (drawSurface)
+    glx::Drawable drawable =
+        (drawSurface ? GetImplAs<SurfaceGLX>(drawSurface)->getDrawable() : mDummyPbuffer);
+    if (drawable != mCurrentDrawable)
     {
-        glx::Drawable drawable = GetImplAs<SurfaceGLX>(drawSurface)->getDrawable();
-        if (drawable != mCurrentDrawable)
+        if (mGLX.makeCurrent(drawable, mContext) != True)
         {
-            if (mGLX.makeCurrent(drawable, mContext) != True)
-            {
-                return egl::EglContextLost() << "Failed to make the GLX context current";
-            }
-            mCurrentDrawable = drawable;
+            return egl::EglContextLost() << "Failed to make the GLX context current";
         }
+        mCurrentDrawable = drawable;
     }
 
     return DisplayGL::makeCurrent(drawSurface, readSurface, context);

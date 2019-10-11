@@ -77,4 +77,5 @@ View the [Dev setup instructions](doc/DevSetup.md).
 * Learn about the past, present, and future of the ANGLE implementation in [this presentation](https://docs.google.com/presentation/d/1CucIsdGVDmdTWRUbg68IxLE5jXwCb2y1E9YVhQo0thg/pub?start=false&loop=false).
 * Watch a [short presentation](https://youtu.be/QrIKdjmpmaA) on the Vulkan back-end.
 * Track the [dEQP test conformance](doc/dEQP-Charts.md)
+* Read design docs on the [Vulkan back-end](src/libANGLE/renderer/vulkan/README.md)
 * If you use ANGLE in your own project, we'd love to hear about it!

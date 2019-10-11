@@ -156,6 +156,46 @@ TEST_P(LinkAndRelinkTest, RenderingProgramFailsWithProgramInstalled)
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
+// Tests uniform default values.
+TEST_P(LinkAndRelinkTest, UniformDefaultValues)
+{
+    // TODO(anglebug.com/3969): Understand why rectangle texture CLs made this fail.
+    ANGLE_SKIP_TEST_IF(IsOzone() && IsIntel());
+    constexpr char kFS[] = R"(precision mediump float;
+uniform vec4 u_uniform;
+
+bool isZero(vec4 value) {
+    return value == vec4(0,0,0,0);
+}
+
+void main()
+{
+    gl_FragColor = isZero(u_uniform) ? vec4(0, 1, 0, 1) : vec4(1, 0, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    GLint loc = glGetUniformLocation(program, "u_uniform");
+    ASSERT_NE(-1, loc);
+    glUniform4f(loc, 0.1f, 0.2f, 0.3f, 0.4f);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    glLinkProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
 // When program link fails and no valid compute program is installed in the GL
 // state before the link, it should report an error for UseProgram and
 // DispatchCompute.

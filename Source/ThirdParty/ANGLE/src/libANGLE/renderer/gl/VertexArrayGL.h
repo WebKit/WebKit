@@ -56,6 +56,8 @@ class VertexArrayGL : public VertexArrayImpl
     void applyNumViewsToDivisor(int numViews);
     void applyActiveAttribLocationsMask(const gl::AttributesMask &activeMask);
 
+    void validateState() const;
+
   private:
     angle::Result syncDrawState(const gl::Context *context,
                                 const gl::AttributesMask &activeAttributesMask,

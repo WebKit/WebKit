@@ -41,7 +41,7 @@ angle::Result SurfaceGL::initializeContents(const gl::Context *context,
     ASSERT(framebufferGL->isDefault());
 
     BlitGL *blitter = GetBlitGL(context);
-    ANGLE_TRY(blitter->clearFramebuffer(framebufferGL));
+    ANGLE_TRY(blitter->clearFramebuffer(context, framebufferGL));
 
     return angle::Result::Continue;
 }

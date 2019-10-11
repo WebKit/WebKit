@@ -253,6 +253,11 @@ std::ostream &FmtHex(std::ostream &os, T value)
 #    define EVENT(message, ...) (void(0))
 #endif
 
+// The state tracked by ANGLE will be validated with the driver state before each call
+#if defined(ANGLE_ENABLE_ASSERTS)
+#    define ANGLE_STATE_VALIDATION_ENABLED
+#endif
+
 #if defined(__GNUC__)
 #    define ANGLE_CRASH() __builtin_trap()
 #else

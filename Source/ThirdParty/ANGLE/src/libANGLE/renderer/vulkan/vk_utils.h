@@ -108,6 +108,7 @@ enum class ICD
 {
     Default,
     Mock,
+    SwiftShader,
 };
 
 // Abstracts error handling. Implemented by both ContextVk for GL and DisplayVk for EGL errors.
@@ -186,83 +187,6 @@ inline OverlayVk *GetImpl(const gl::DummyOverlay *glObject)
     return nullptr;
 }
 
-class GarbageObjectBase
-{
-  public:
-    template <typename ObjectT>
-    GarbageObjectBase(const ObjectT &object)
-        : mHandleType(HandleTypeHelper<ObjectT>::kHandleType),
-          mHandle(reinterpret_cast<VkDevice>(object.getHandle()))
-    {}
-    GarbageObjectBase();
-
-    void destroy(VkDevice device);
-
-  private:
-    HandleType mHandleType;
-    VkDevice mHandle;
-};
-
-class GarbageObject final : public GarbageObjectBase
-{
-  public:
-    template <typename ObjectT>
-    GarbageObject(Serial serial, const ObjectT &object) : GarbageObjectBase(object), mSerial(serial)
-    {}
-
-    GarbageObject();
-    GarbageObject(const GarbageObject &other);
-    GarbageObject &operator=(const GarbageObject &other);
-
-    bool destroyIfComplete(VkDevice device, Serial completedSerial);
-
-  private:
-    // TODO(jmadill): Since many objects will have the same serial, it might be more efficient to
-    // store the serial outside of the garbage object itself. We could index ranges of garbage
-    // objects in the Renderer, using a circular buffer.
-    Serial mSerial;
-};
-
-class MemoryProperties final : angle::NonCopyable
-{
-  public:
-    MemoryProperties();
-
-    void init(VkPhysicalDevice physicalDevice);
-    angle::Result findCompatibleMemoryIndex(Context *context,
-                                            const VkMemoryRequirements &memoryRequirements,
-                                            VkMemoryPropertyFlags requestedMemoryPropertyFlags,
-                                            VkMemoryPropertyFlags *memoryPropertyFlagsOut,
-                                            uint32_t *indexOut) const;
-    void destroy();
-
-  private:
-    VkPhysicalDeviceMemoryProperties mMemoryProperties;
-};
-
-// Similar to StagingImage, for Buffers.
-class StagingBuffer final : angle::NonCopyable
-{
-  public:
-    StagingBuffer();
-    void destroy(VkDevice device);
-
-    angle::Result init(Context *context, VkDeviceSize size, StagingUsage usage);
-
-    Buffer &getBuffer() { return mBuffer; }
-    const Buffer &getBuffer() const { return mBuffer; }
-    DeviceMemory &getDeviceMemory() { return mDeviceMemory; }
-    const DeviceMemory &getDeviceMemory() const { return mDeviceMemory; }
-    size_t getSize() const { return mSize; }
-
-    void dumpResources(Serial serial, std::vector<GarbageObject> *garbageQueue);
-
-  private:
-    Buffer mBuffer;
-    DeviceMemory mDeviceMemory;
-    size_t mSize;
-};
-
 template <typename ObjT>
 class ObjectAndSerial final : angle::NonCopyable
 {
@@ -300,19 +224,101 @@ class ObjectAndSerial final : angle::NonCopyable
     Serial mSerial;
 };
 
-angle::Result AllocateBufferMemory(vk::Context *context,
+// Reference to a deleted object. The object is due to be destroyed at some point in the future.
+// |mHandleType| determines the type of the object and which destroy function should be called.
+class GarbageObject
+{
+  public:
+    GarbageObject();
+    GarbageObject(GarbageObject &&other);
+    GarbageObject &operator=(GarbageObject &&rhs);
+
+    bool valid() const { return mHandle != VK_NULL_HANDLE; }
+    void destroy(VkDevice device);
+
+    template <typename DerivedT, typename HandleT>
+    static GarbageObject Get(WrappedObject<DerivedT, HandleT> *object)
+    {
+        return GarbageObject(HandleTypeHelper<DerivedT>::kHandleType,
+                             reinterpret_cast<GarbageHandle>(object->release()));
+    }
+
+  private:
+    VK_DEFINE_HANDLE(GarbageHandle)
+    GarbageObject(HandleType handleType, GarbageHandle handle);
+
+    HandleType mHandleType;
+    GarbageHandle mHandle;
+};
+
+template <typename T>
+GarbageObject GetGarbage(T *obj)
+{
+    return GarbageObject::Get(obj);
+}
+
+// A list of garbage objects. Has no object lifetime information.
+using GarbageList = std::vector<GarbageObject>;
+
+// A list of garbage objects and the associated serial after which the objects can be destroyed.
+using GarbageAndSerial = ObjectAndSerial<GarbageList>;
+
+// Houses multiple lists of garbage objects. Each sub-list has a different lifetime. They should
+// be sorted such that later-living garbage is ordered later in the list.
+using GarbageQueue = std::vector<GarbageAndSerial>;
+
+class MemoryProperties final : angle::NonCopyable
+{
+  public:
+    MemoryProperties();
+
+    void init(VkPhysicalDevice physicalDevice);
+    angle::Result findCompatibleMemoryIndex(Context *context,
+                                            const VkMemoryRequirements &memoryRequirements,
+                                            VkMemoryPropertyFlags requestedMemoryPropertyFlags,
+                                            VkMemoryPropertyFlags *memoryPropertyFlagsOut,
+                                            uint32_t *indexOut) const;
+    void destroy();
+
+  private:
+    VkPhysicalDeviceMemoryProperties mMemoryProperties;
+};
+
+// Similar to StagingImage, for Buffers.
+class StagingBuffer final : angle::NonCopyable
+{
+  public:
+    StagingBuffer();
+    void release(ContextVk *contextVk);
+    void destroy(VkDevice device);
+
+    angle::Result init(ContextVk *context, VkDeviceSize size, StagingUsage usage);
+
+    Buffer &getBuffer() { return mBuffer; }
+    const Buffer &getBuffer() const { return mBuffer; }
+    DeviceMemory &getDeviceMemory() { return mDeviceMemory; }
+    const DeviceMemory &getDeviceMemory() const { return mDeviceMemory; }
+    size_t getSize() const { return mSize; }
+
+  private:
+    Buffer mBuffer;
+    DeviceMemory mDeviceMemory;
+    size_t mSize;
+};
+
+angle::Result AllocateBufferMemory(Context *context,
                                    VkMemoryPropertyFlags requestedMemoryPropertyFlags,
                                    VkMemoryPropertyFlags *memoryPropertyFlagsOut,
                                    const void *extraAllocationInfo,
                                    Buffer *buffer,
                                    DeviceMemory *deviceMemoryOut);
 
-angle::Result AllocateImageMemory(vk::Context *context,
+angle::Result AllocateImageMemory(Context *context,
                                   VkMemoryPropertyFlags memoryPropertyFlags,
                                   const void *extraAllocationInfo,
                                   Image *image,
                                   DeviceMemory *deviceMemoryOut);
-angle::Result AllocateImageMemoryWithRequirements(vk::Context *context,
+angle::Result AllocateImageMemoryWithRequirements(Context *context,
                                                   VkMemoryPropertyFlags memoryPropertyFlags,
                                                   const VkMemoryRequirements &memoryRequirements,
                                                   const void *extraAllocationInfo,
@@ -369,6 +375,23 @@ class ContextScoped final : angle::NonCopyable
 
   private:
     ContextVk *mContextVk;
+    T mVar;
+};
+
+template <typename T>
+class RendererScoped final : angle::NonCopyable
+{
+  public:
+    RendererScoped(RendererVk *renderer) : mRenderer(renderer) {}
+    ~RendererScoped() { mVar.release(mRenderer); }
+
+    const T &get() const { return mVar; }
+    T &get() { return mVar; }
+
+    T &&release() { return std::move(mVar); }
+
+  private:
+    RendererVk *mRenderer;
     T mVar;
 };
 
@@ -571,7 +594,7 @@ bool SamplerNameContainsNonZeroArrayElement(const std::string &name);
 std::string GetMappedSamplerName(const std::string &originalName);
 
 // A vector of image views, such as one per level or one per layer.
-using ImageViewVector = std::vector<vk::ImageView>;
+using ImageViewVector = std::vector<ImageView>;
 // A vector of vector of image views.  Primary index is layer, secondary index is level.
 using LayerLevelImageViewVector = std::vector<ImageViewVector>;
 

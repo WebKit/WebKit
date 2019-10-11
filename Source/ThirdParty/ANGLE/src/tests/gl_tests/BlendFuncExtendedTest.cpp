@@ -231,6 +231,16 @@ class EXTBlendFuncExtendedDrawTestES3 : public EXTBlendFuncExtendedDrawTest
         }
     }
 
+    void LinkProgram()
+    {
+        glLinkProgram(mProgram);
+        GLint linked = 0;
+        glGetProgramiv(mProgram, GL_LINK_STATUS, &linked);
+        EXPECT_NE(0, linked);
+        glUseProgram(mProgram);
+        return;
+    }
+
   private:
     bool mIsES31OrNewer;
 };
@@ -421,6 +431,121 @@ void main() {
     drawTest();
 }
 
+// Ported from TranslatorVariants/EXTBlendFuncExtendedES3DrawTest
+// Test that tests glBindFragDataLocationEXT, glBindFragDataLocationIndexedEXT,
+// glGetFragDataLocation, glGetFragDataIndexEXT work correctly with
+// GLSL array output variables. The output variable can be bound by
+// referring to the variable name with or without the first element array
+// accessor. The getters can query location of the individual elements in
+// the array. The test does not actually use the base test drawing,
+// since the drivers at the time of writing do not support multiple
+// buffers and dual source blending.
+TEST_P(EXTBlendFuncExtendedDrawTestES3, ES3GettersArray)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_blend_func_extended"));
+
+    // TODO(zmo): Figure out why this fails on AMD. crbug.com/585132.
+    // Also fails on the Intel Mesa driver, see
+    // https://bugs.freedesktop.org/show_bug.cgi?id=96765
+    ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD());
+    ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel());
+
+    const GLint kTestArraySize     = 2;
+    const GLint kFragData0Location = 2;
+    const GLint kFragData1Location = 1;
+    const GLint kUnusedLocation    = 5;
+
+    // The test binds kTestArraySize -sized array to location 1 for test purposes.
+    // The GL_MAX_DRAW_BUFFERS must be > kTestArraySize, since an
+    // array will be bound to continuous locations, starting from the first
+    // location.
+    GLint maxDrawBuffers = 0;
+    glGetIntegerv(GL_MAX_DRAW_BUFFERS_EXT, &maxDrawBuffers);
+    EXPECT_LT(kTestArraySize, maxDrawBuffers);
+
+    constexpr char kFragColorShader[] = R"(#version 300 es
+#extension GL_EXT_blend_func_extended : require
+precision mediump float;
+uniform vec4 src;
+uniform vec4 src1;
+out vec4 FragData[2];
+void main() {
+    FragData[0] = src;
+    FragData[1] = src1;
+})";
+
+    struct testCase
+    {
+        std::string unusedLocationName;
+        std::string fragData0LocationName;
+        std::string fragData1LocationName;
+    };
+
+    testCase testCases[4]{{"FragData[0]", "FragData", "FragData[1]"},
+                          {"FragData", "FragData[0]", "FragData[1]"},
+                          {"FragData[0]", "FragData", "FragData[1]"},
+                          {"FragData", "FragData[0]", "FragData[1]"}};
+
+    for (const testCase &test : testCases)
+    {
+        mProgram =
+            CompileProgram(essl3_shaders::vs::Simple(), kFragColorShader, [&](GLuint program) {
+                glBindFragDataLocationEXT(program, kUnusedLocation,
+                                          test.unusedLocationName.c_str());
+                glBindFragDataLocationEXT(program, kFragData0Location,
+                                          test.fragData0LocationName.c_str());
+                glBindFragDataLocationEXT(program, kFragData1Location,
+                                          test.fragData1LocationName.c_str());
+            });
+
+        EXPECT_EQ(static_cast<GLenum>(GL_NO_ERROR), glGetError());
+        LinkProgram();
+        EXPECT_EQ(kFragData0Location, glGetFragDataLocation(mProgram, "FragData"));
+        EXPECT_EQ(0, glGetFragDataIndexEXT(mProgram, "FragData"));
+        EXPECT_EQ(kFragData0Location, glGetFragDataLocation(mProgram, "FragData[0]"));
+        EXPECT_EQ(0, glGetFragDataIndexEXT(mProgram, "FragData[0]"));
+        EXPECT_EQ(kFragData1Location, glGetFragDataLocation(mProgram, "FragData[1]"));
+        EXPECT_EQ(0, glGetFragDataIndexEXT(mProgram, "FragData[1]"));
+        // Index bigger than the GLSL variable array length does not find anything.
+        EXPECT_EQ(-1, glGetFragDataLocation(mProgram, "FragData[3]"));
+    }
+}
+
+// Ported from TranslatorVariants/EXTBlendFuncExtendedES3DrawTest
+TEST_P(EXTBlendFuncExtendedDrawTestES3, ESSL3BindSimpleVarAsArrayNoBind)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_blend_func_extended"));
+
+    constexpr char kFragDataShader[] = R"(#version 300 es
+#extension GL_EXT_blend_func_extended : require
+precision mediump float;
+uniform vec4 src;
+uniform vec4 src1;
+out vec4 FragData;
+out vec4 SecondaryFragData;
+void main() {
+    FragData = src;
+    SecondaryFragData = src1;
+})";
+
+    mProgram = CompileProgram(essl3_shaders::vs::Simple(), kFragDataShader, [](GLuint program) {
+        glBindFragDataLocationEXT(program, 0, "FragData[0]");
+        glBindFragDataLocationIndexedEXT(program, 0, 1, "SecondaryFragData[0]");
+    });
+
+    LinkProgram();
+
+    EXPECT_EQ(-1, glGetFragDataLocation(mProgram, "FragData[0]"));
+    EXPECT_EQ(0, glGetFragDataLocation(mProgram, "FragData"));
+    EXPECT_EQ(1, glGetFragDataLocation(mProgram, "SecondaryFragData"));
+    // Did not bind index.
+    EXPECT_EQ(0, glGetFragDataIndexEXT(mProgram, "SecondaryFragData"));
+
+    glBindFragDataLocationEXT(mProgram, 0, "FragData");
+    glBindFragDataLocationIndexedEXT(mProgram, 0, 1, "SecondaryFragData");
+    LinkProgram();
+}
+
 // Test an ESSL 3.00 program with a link-time fragment output location conflict.
 TEST_P(EXTBlendFuncExtendedTestES3, FragmentOutputLocationConflict)
 {
@@ -592,7 +717,9 @@ ANGLE_INSTANTIATE_TEST(EXTBlendFuncExtendedTestES3,
                        ES3_OPENGL(),
                        ES3_OPENGLES(),
                        ES31_OPENGL(),
-                       ES31_OPENGLES());
+                       ES31_OPENGLES(),
+                       ES3_VULKAN(),
+                       ES31_VULKAN());
 ANGLE_INSTANTIATE_TEST(EXTBlendFuncExtendedDrawTest,
                        ES2_OPENGL(),
                        ES2_OPENGLES(),
@@ -603,4 +730,6 @@ ANGLE_INSTANTIATE_TEST(EXTBlendFuncExtendedDrawTestES3,
                        ES3_OPENGL(),
                        ES3_OPENGLES(),
                        ES31_OPENGL(),
-                       ES31_OPENGLES());
+                       ES31_OPENGLES(),
+                       ES3_VULKAN(),
+                       ES31_VULKAN());

@@ -341,7 +341,7 @@ bool RoHelper::SupportedWindowsRelease()
 
     if (FAILED(hr))
     {
-        return isSupported;
+        return !!isSupported;
     }
 
     Microsoft::WRL::ComPtr<ABI::Windows::Foundation::Metadata::IApiInformationStatics> api;
@@ -351,19 +351,19 @@ bool RoHelper::SupportedWindowsRelease()
 
     if (FAILED(hr))
     {
-        return isSupported;
+        return !!isSupported;
     }
 
     hr = GetStringReference(L"Windows.Foundation.UniversalApiContract", &contractName,
                             &contractNameHeader);
     if (FAILED(hr))
     {
-        return isSupported;
+        return !!isSupported;
     }
 
     api->IsApiContractPresentByMajor(contractName, 6, &isSupported);
 
-    return isSupported;
+    return !!isSupported;
 }
 
 HRESULT RoHelper::GetStringReference(PCWSTR source, HSTRING *act, HSTRING_HEADER *header)

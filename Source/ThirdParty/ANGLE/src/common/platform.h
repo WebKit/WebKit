@@ -46,7 +46,7 @@
 #    include <windows.h>
 
 #    if defined(WINAPI_FAMILY) && (WINAPI_FAMILY != WINAPI_FAMILY_DESKTOP_APP)
-#        define ANGLE_ENABLE_WINDOWS_STORE 1
+#        define ANGLE_ENABLE_WINDOWS_UWP 1
 #    endif
 
 #    if defined(ANGLE_ENABLE_D3D9)
@@ -59,16 +59,19 @@
 #        include <d3d10_1.h>
 #        include <d3d11.h>
 #        include <d3d11_3.h>
+#        include <d3d11on12.h>
+#        include <d3d12.h>
 #        include <d3dcompiler.h>
 #        include <dxgi.h>
 #        include <dxgi1_2.h>
+#        include <dxgi1_4.h>
 #    endif
 
 #    if defined(ANGLE_ENABLE_D3D9) || defined(ANGLE_ENABLE_D3D11)
 #        include <wrl.h>
 #    endif
 
-#    if defined(ANGLE_ENABLE_WINDOWS_STORE)
+#    if defined(ANGLE_ENABLE_WINDOWS_UWP)
 #        include <dxgi1_3.h>
 #        if defined(_DEBUG)
 #            include <DXProgrammableCapture.h>

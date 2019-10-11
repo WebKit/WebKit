@@ -3,12 +3,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// system_utils_crash_handler:
+// crash_handler_posix:
 //    ANGLE's crash handling and stack walking code. Modified from Skia's:
 //     https://github.com/google/skia/blob/master/tools/CrashHandler.cpp
 //
 
-#include "util/system_utils.h"
+#include "util/test_utils.h"
 
 #include "common/angleutils.h"
 

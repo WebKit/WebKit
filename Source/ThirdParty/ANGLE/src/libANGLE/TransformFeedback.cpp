@@ -87,7 +87,7 @@ GLsizeiptr TransformFeedbackState::getPrimitivesDrawn() const
 TransformFeedback::TransformFeedback(rx::GLImplFactory *implFactory,
                                      TransformFeedbackID id,
                                      const Caps &caps)
-    : RefCountObject(id.value),
+    : RefCountObject(id),
       mState(caps.maxTransformFeedbackSeparateAttributes),
       mImplementation(implFactory->createTransformFeedback(mState))
 {
@@ -242,12 +242,12 @@ bool TransformFeedback::hasBoundProgram(ShaderProgramID program) const
     return mState.mProgram != nullptr && mState.mProgram->id().value == program.value;
 }
 
-angle::Result TransformFeedback::detachBuffer(const Context *context, GLuint bufferName)
+angle::Result TransformFeedback::detachBuffer(const Context *context, BufferID bufferID)
 {
     bool isBound = context->isCurrentTransformFeedback(this);
     for (size_t index = 0; index < mState.mIndexedBuffers.size(); index++)
     {
-        if (mState.mIndexedBuffers[index].id() == bufferName)
+        if (mState.mIndexedBuffers[index].id() == bufferID)
         {
             if (isBound)
             {

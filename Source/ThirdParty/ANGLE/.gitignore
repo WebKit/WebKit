@@ -44,6 +44,7 @@
 /third_party/rapidjson/src
 /third_party/spirv-headers/src
 /third_party/spirv-tools/src
+/third_party/SwiftShader
 /third_party/vulkan-headers/src
 /third_party/vulkan-loader/src
 /third_party/vulkan-tools/src

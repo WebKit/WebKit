@@ -292,7 +292,9 @@ enum SubjectIndexes : angle::SubjectIndex
 {
     kTexture0SubjectIndex       = 0,
     kTextureMaxSubjectIndex     = kTexture0SubjectIndex + IMPLEMENTATION_MAX_ACTIVE_TEXTURES,
-    kUniformBuffer0SubjectIndex = kTextureMaxSubjectIndex,
+    kImage0SubjectIndex         = kTextureMaxSubjectIndex,
+    kImageMaxSubjectIndex       = kImage0SubjectIndex + IMPLEMENTATION_MAX_IMAGE_UNITS,
+    kUniformBuffer0SubjectIndex = kImageMaxSubjectIndex,
     kUniformBufferMaxSubjectIndex =
         kUniformBuffer0SubjectIndex + IMPLEMENTATION_MAX_UNIFORM_BUFFER_BINDINGS,
     kSampler0SubjectIndex    = kUniformBufferMaxSubjectIndex,
@@ -366,6 +368,12 @@ Context::Context(egl::Display *display,
          samplerIndex < kSamplerMaxSubjectIndex; ++samplerIndex)
     {
         mSamplerObserverBindings.emplace_back(this, samplerIndex);
+    }
+
+    for (angle::SubjectIndex imageIndex = kImage0SubjectIndex; imageIndex < kImageMaxSubjectIndex;
+         ++imageIndex)
+    {
+        mImageObserverBindings.emplace_back(this, imageIndex);
     }
 }
 
@@ -535,6 +543,7 @@ void Context::initialize()
     mComputeDirtyBits.set(State::DIRTY_BIT_DISPATCH_INDIRECT_BUFFER_BINDING);
     mComputeDirtyObjects.set(State::DIRTY_OBJECT_TEXTURES);
     mComputeDirtyObjects.set(State::DIRTY_OBJECT_PROGRAM);
+    mComputeDirtyObjects.set(State::DIRTY_OBJECT_IMAGES);
     mComputeDirtyObjects.set(State::DIRTY_OBJECT_SAMPLERS);
 
     mCopyImageDirtyBits.set(State::DIRTY_BIT_READ_FRAMEBUFFER_BINDING);
@@ -548,6 +557,9 @@ void Context::initialize()
 
 egl::Error Context::onDestroy(const egl::Display *display)
 {
+    // Dump frame capture if enabled.
+    mFrameCapture->onEndFrame(this);
+
     if (mGLES1Renderer)
     {
         mGLES1Renderer->onDestroy(this, &mState);
@@ -1163,6 +1175,7 @@ void Context::bindImageTexture(GLuint unit,
 {
     Texture *tex = mState.mTextureManager->getTexture(texture);
     mState.setImageUnit(this, unit, tex, level, layered, layer, access, format);
+    mImageObserverBindings[unit].bind(tex);
 }
 
 void Context::useProgram(ShaderProgramID program)
@@ -1234,7 +1247,7 @@ void Context::getQueryiv(QueryType target, GLenum pname, GLint *params)
     switch (pname)
     {
         case GL_CURRENT_QUERY_EXT:
-            params[0] = mState.getActiveQueryId(target);
+            params[0] = mState.getActiveQueryId(target).value;
             break;
         case GL_QUERY_COUNTER_BITS_EXT:
             switch (target)
@@ -2793,6 +2806,16 @@ bool Context::isTransformFeedbackGenerated(TransformFeedbackID transformFeedback
 
 void Context::detachTexture(TextureID texture)
 {
+    // The State cannot unbind image observers itself, they are owned by the Context
+    Texture *tex = mState.mTextureManager->getTexture(texture);
+    for (auto &imageBinding : mImageObserverBindings)
+    {
+        if (imageBinding.getSubject() == tex)
+        {
+            imageBinding.reset();
+        }
+    }
+
     // Simple pass-through to State's detachTexture method, as textures do not require
     // allocation map management either here or in the resource manager at detach time.
     // Zero textures are held by the Context, and we don't attempt to request them from
@@ -3271,6 +3294,20 @@ Extensions Context::generateSupportedExtensions() const
         {
             supportedExtensions.textureSRGBDecode = false;
         }
+
+        // Don't expose GL_OES_texture_float_linear without full legacy float texture support
+        // The renderer may report OES_texture_float_linear without OES_texture_float
+        // This is valid in a GLES 3.0 context, but not in a GLES 2.0 context
+        if (!(supportedExtensions.textureFloat && supportedExtensions.textureHalfFloat))
+        {
+            supportedExtensions.textureFloatLinear     = false;
+            supportedExtensions.textureHalfFloatLinear = false;
+        }
+
+        // Because of the difference in the SNORM to FLOAT conversion formula
+        // between GLES 2.0 and 3.0, vertex type 10_10_10_2 is disabled
+        // when the context version is lower than 3.0
+        supportedExtensions.vertexAttribType1010102 = false;
     }
 
     if (getClientVersion() < ES_3_1)
@@ -3287,6 +3324,25 @@ Extensions Context::generateSupportedExtensions() const
     {
         // FIXME(geofflang): Don't support EXT_sRGB in non-ES2 contexts
         // supportedExtensions.sRGB = false;
+
+        // If colorBufferFloat is disabled but colorBufferHalfFloat is enabled, then we will expose
+        // some floating-point formats as color buffer targets but reject blits between fixed-point
+        // and floating-point formats (this behavior is only enabled in colorBufferFloat, and must
+        // be rejected if only colorBufferHalfFloat is enabled).
+        // dEQP does not check for this, and will assume that floating-point and fixed-point formats
+        // can be blit onto each other if the format is available.
+        // We require colorBufferFloat to be present in order to enable colorBufferHalfFloat, so
+        // that blitting is always allowed if the requested formats are exposed and have the correct
+        // feature capabilities
+        if (!supportedExtensions.colorBufferFloat)
+        {
+            supportedExtensions.colorBufferHalfFloat = false;
+        }
+
+        // Disable support for CHROMIUM_color_buffer_float_rgb[a] in ES 3.0+, these extensions are
+        // non-conformant in ES 3.0 and superseded by EXT_color_buffer_float.
+        supportedExtensions.colorBufferFloatRGB  = false;
+        supportedExtensions.colorBufferFloatRGBA = false;
     }
 
     // Some extensions are always available because they are implemented in the GL layer.
@@ -3404,6 +3460,14 @@ void Context::initCaps()
 
     LimitCap(&mState.mCaps.maxShaderUniformBlocks[ShaderType::Vertex],
              IMPLEMENTATION_MAX_VERTEX_SHADER_UNIFORM_BUFFERS);
+    LimitCap(&mState.mCaps.maxShaderUniformBlocks[ShaderType::Geometry],
+             IMPLEMENTATION_MAX_GEOMETRY_SHADER_UNIFORM_BUFFERS);
+    LimitCap(&mState.mCaps.maxShaderUniformBlocks[ShaderType::Fragment],
+             IMPLEMENTATION_MAX_FRAGMENT_SHADER_UNIFORM_BUFFERS);
+    LimitCap(&mState.mCaps.maxShaderUniformBlocks[ShaderType::Compute],
+             IMPLEMENTATION_MAX_COMPUTE_SHADER_UNIFORM_BUFFERS);
+    LimitCap(&mState.mCaps.maxCombinedUniformBlocks,
+             IMPLEMENTATION_MAX_COMBINED_SHADER_UNIFORM_BUFFERS);
     LimitCap(&mState.mCaps.maxUniformBufferBindings, IMPLEMENTATION_MAX_UNIFORM_BUFFER_BINDINGS);
 
     LimitCap(&mState.mCaps.maxVertexOutputComponents, IMPLEMENTATION_MAX_VARYING_VECTORS * 4);
@@ -8795,6 +8859,14 @@ void Context::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMess
                     mStateCache.onActiveTextureChange(this);
                 }
             }
+            else if (index < kImageMaxSubjectIndex)
+            {
+                mState.onImageStateChange(this, index - kImage0SubjectIndex);
+                if (message == angle::SubjectMessage::ContentsChanged)
+                {
+                    mState.mDirtyBits.set(State::DirtyBitType::DIRTY_BIT_IMAGE_BINDINGS);
+                }
+            }
             else if (index < kUniformBufferMaxSubjectIndex)
             {
                 mState.onUniformBufferStateChange(index - kUniformBuffer0SubjectIndex);
@@ -9021,7 +9093,7 @@ void StateCache::updateActiveAttribsMask(Context *context)
         return;
     }
 
-    AttributesMask activeAttribs = isGLES1 ? glState.gles1().getVertexArraysAttributeMask()
+    AttributesMask activeAttribs = isGLES1 ? glState.gles1().getActiveAttributesMask()
                                            : glState.getProgram()->getActiveAttribLocationsMask();
 
     const VertexArray *vao = glState.getVertexArray();
@@ -9308,6 +9380,14 @@ void StateCache::updateTransformFeedbackActiveUnpaused(Context *context)
 
 void StateCache::updateVertexAttribTypesValidation(Context *context)
 {
+    VertexAttribTypeCase halfFloatValidity = (context->getExtensions().vertexHalfFloat)
+                                                 ? VertexAttribTypeCase::Valid
+                                                 : VertexAttribTypeCase::Invalid;
+
+    VertexAttribTypeCase vertexType1010102Validity =
+        (context->getExtensions().vertexAttribType1010102) ? VertexAttribTypeCase::ValidSize3or4
+                                                           : VertexAttribTypeCase::Invalid;
+
     if (context->getClientMajorVersion() <= 2)
     {
         mCachedVertexAttribTypesValidation = {{
@@ -9317,6 +9397,7 @@ void StateCache::updateVertexAttribTypesValidation(Context *context)
             {VertexAttribType::UnsignedShort, VertexAttribTypeCase::Valid},
             {VertexAttribType::Float, VertexAttribTypeCase::Valid},
             {VertexAttribType::Fixed, VertexAttribTypeCase::Valid},
+            {VertexAttribType::HalfFloatOES, halfFloatValidity},
         }};
     }
     else
@@ -9332,7 +9413,10 @@ void StateCache::updateVertexAttribTypesValidation(Context *context)
             {VertexAttribType::HalfFloat, VertexAttribTypeCase::Valid},
             {VertexAttribType::Fixed, VertexAttribTypeCase::Valid},
             {VertexAttribType::Int2101010, VertexAttribTypeCase::ValidSize4Only},
+            {VertexAttribType::HalfFloatOES, halfFloatValidity},
             {VertexAttribType::UnsignedInt2101010, VertexAttribTypeCase::ValidSize4Only},
+            {VertexAttribType::Int1010102, vertexType1010102Validity},
+            {VertexAttribType::UnsignedInt1010102, vertexType1010102Validity},
         }};
 
         mCachedIntegerVertexAttribTypesValidation = {{

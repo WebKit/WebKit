@@ -19,56 +19,6 @@ namespace rx
 {
 namespace vk
 {
-// Base class for all wrapped vulkan objects. Implements several common helper routines.
-template <typename DerivedT, typename HandleT>
-class WrappedObject : angle::NonCopyable
-{
-  public:
-    HandleT getHandle() const { return mHandle; }
-    bool valid() const { return (mHandle != VK_NULL_HANDLE); }
-
-    const HandleT *ptr() const { return &mHandle; }
-
-    template <typename ResourceOutType>
-    void dumpResources(Serial serial, std::vector<ResourceOutType> *outQueue)
-    {
-        if (valid())
-        {
-            outQueue->emplace_back(serial, *static_cast<DerivedT *>(this));
-            mHandle = VK_NULL_HANDLE;
-        }
-    }
-
-    template <typename ResourceOutType>
-    void dumpResources(std::vector<ResourceOutType> *outQueue)
-    {
-        if (valid())
-        {
-            outQueue->emplace_back(*static_cast<DerivedT *>(this));
-            mHandle = VK_NULL_HANDLE;
-        }
-    }
-
-  protected:
-    WrappedObject() : mHandle(VK_NULL_HANDLE) {}
-    ~WrappedObject() { ASSERT(!valid()); }
-
-    WrappedObject(WrappedObject &&other) : mHandle(other.mHandle)
-    {
-        other.mHandle = VK_NULL_HANDLE;
-    }
-
-    // Only works to initialize empty objects, since we don't have the device handle.
-    WrappedObject &operator=(WrappedObject &&other)
-    {
-        ASSERT(!valid());
-        std::swap(mHandle, other.mHandle);
-        return *this;
-    }
-
-    HandleT mHandle;
-};
-
 // Helper macros that apply to all the wrapped object types.
 // Unimplemented handle types:
 // Instance
@@ -137,6 +87,43 @@ struct HandleTypeHelper<priv::CommandBuffer>
 
 #undef ANGLE_HANDLE_TYPE_HELPER_FUNC
 
+// Base class for all wrapped vulkan objects. Implements several common helper routines.
+template <typename DerivedT, typename HandleT>
+class WrappedObject : angle::NonCopyable
+{
+  public:
+    HandleT getHandle() const { return mHandle; }
+    bool valid() const { return (mHandle != VK_NULL_HANDLE); }
+
+    const HandleT *ptr() const { return &mHandle; }
+
+    HandleT release()
+    {
+        HandleT handle = mHandle;
+        mHandle        = VK_NULL_HANDLE;
+        return handle;
+    }
+
+  protected:
+    WrappedObject() : mHandle(VK_NULL_HANDLE) {}
+    ~WrappedObject() { ASSERT(!valid()); }
+
+    WrappedObject(WrappedObject &&other) : mHandle(other.mHandle)
+    {
+        other.mHandle = VK_NULL_HANDLE;
+    }
+
+    // Only works to initialize empty objects, since we don't have the device handle.
+    WrappedObject &operator=(WrappedObject &&other)
+    {
+        ASSERT(!valid());
+        std::swap(mHandle, other.mHandle);
+        return *this;
+    }
+
+    HandleT mHandle;
+};
+
 class CommandPool final : public WrappedObject<CommandPool, VkCommandPool>
 {
   public:
@@ -189,7 +176,7 @@ class CommandBuffer : public WrappedObject<CommandBuffer, VkCommandBuffer>
 
     static bool SupportsQueries(const VkPhysicalDeviceFeatures &features)
     {
-        return features.inheritedQueries;
+        return (features.inheritedQueries == VK_TRUE);
     }
 
     // Vulkan command buffers are executed as secondary command buffers within a primary command
@@ -290,13 +277,21 @@ class CommandBuffer : public WrappedObject<CommandBuffer, VkCommandBuffer>
                                                     uint32_t firstIndex,
                                                     int32_t vertexOffset,
                                                     uint32_t firstInstance);
+    void drawIndexedIndirect(const Buffer &buffer,
+                             VkDeviceSize offset,
+                             uint32_t drawCount,
+                             uint32_t stride);
+    void drawIndirect(const Buffer &buffer,
+                      VkDeviceSize offset,
+                      uint32_t drawCount,
+                      uint32_t stride);
 
     VkResult end();
     void endQuery(VkQueryPool queryPool, uint32_t query);
     void endRenderPass();
     void executeCommands(uint32_t commandBufferCount, const CommandBuffer *commandBuffers);
 
-    void getMemoryUsageStats(size_t *usedMemoryOut, size_t *allocatedMemoryOut);
+    void getMemoryUsageStats(size_t *usedMemoryOut, size_t *allocatedMemoryOut) const;
 
     void executionBarrier(VkPipelineStageFlags stageMask);
 
@@ -817,7 +812,7 @@ ANGLE_INLINE void CommandBuffer::executeCommands(uint32_t commandBufferCount,
 }
 
 ANGLE_INLINE void CommandBuffer::getMemoryUsageStats(size_t *usedMemoryOut,
-                                                     size_t *allocatedMemoryOut)
+                                                     size_t *allocatedMemoryOut) const
 {
     // No data available.
     *usedMemoryOut      = 0;
@@ -977,6 +972,24 @@ ANGLE_INLINE void CommandBuffer::drawIndexedInstancedBaseVertexBaseInstance(uint
 {
     ASSERT(valid());
     vkCmdDrawIndexed(mHandle, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
+}
+
+ANGLE_INLINE void CommandBuffer::drawIndexedIndirect(const Buffer &buffer,
+                                                     VkDeviceSize offset,
+                                                     uint32_t drawCount,
+                                                     uint32_t stride)
+{
+    ASSERT(valid());
+    vkCmdDrawIndexedIndirect(mHandle, buffer.getHandle(), offset, drawCount, stride);
+}
+
+ANGLE_INLINE void CommandBuffer::drawIndirect(const Buffer &buffer,
+                                              VkDeviceSize offset,
+                                              uint32_t drawCount,
+                                              uint32_t stride)
+{
+    ASSERT(valid());
+    vkCmdDrawIndirect(mHandle, buffer.getHandle(), offset, drawCount, stride);
 }
 
 ANGLE_INLINE void CommandBuffer::dispatch(uint32_t groupCountX,

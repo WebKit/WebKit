@@ -57,6 +57,7 @@ struct Format final : private angle::NonCopyable
     constexpr bool isSnorm() const;
     constexpr bool isUnorm() const;
     constexpr bool isFloat() const;
+    constexpr bool isVertexTypeHalfFloat() const;
 
     constexpr bool isInt() const { return isSint() || isUint(); }
     constexpr bool isNorm() const { return isSnorm() || isUnorm(); }
@@ -207,6 +208,11 @@ constexpr bool Format::isUnorm() const
 constexpr bool Format::isFloat() const
 {
     return componentType == GL_FLOAT;
+}
+
+constexpr bool Format::isVertexTypeHalfFloat() const
+{
+    return vertexAttribType == gl::VertexAttribType::HalfFloat;
 }
 
 }  // namespace angle

@@ -27,7 +27,7 @@ namespace gl
 {
 class Context;
 
-class Semaphore final : public RefCountObject
+class Semaphore final : public RefCountObject<SemaphoreID>
 {
   public:
     Semaphore(rx::GLImplFactory *factory, SemaphoreID id);

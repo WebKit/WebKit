@@ -11,7 +11,7 @@
 
 namespace gl
 {
-Query::Query(rx::QueryImpl *impl, QueryID id) : RefCountObject(id.value), mQuery(impl), mLabel() {}
+Query::Query(rx::QueryImpl *impl, QueryID id) : RefCountObject(id), mQuery(impl), mLabel() {}
 
 Query::~Query()
 {

@@ -22,7 +22,7 @@ SemaphoreVk::~SemaphoreVk() = default;
 void SemaphoreVk::onDestroy(const gl::Context *context)
 {
     ContextVk *contextVk = vk::GetImpl(context);
-    contextVk->releaseObject(contextVk->getCurrentQueueSerial(), &mSemaphore);
+    contextVk->addGarbage(&mSemaphore);
 }
 
 angle::Result SemaphoreVk::importFd(gl::Context *context, gl::HandleType handleType, GLint fd)

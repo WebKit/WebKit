@@ -50,6 +50,18 @@ void CopyXYZ10W2ToXYZW32FVertexData(const uint8_t *input,
                                     size_t count,
                                     uint8_t *output);
 
+template <bool isSigned, bool normalized>
+void CopyXYZ10ToXYZW32FVertexData(const uint8_t *input,
+                                  size_t stride,
+                                  size_t count,
+                                  uint8_t *output);
+
+template <bool isSigned, bool normalized>
+void CopyW2XYZ10ToXYZW32FVertexData(const uint8_t *input,
+                                    size_t stride,
+                                    size_t count,
+                                    uint8_t *output);
+
 }  // namespace rx
 
 #include "copyvertex.inc.h"

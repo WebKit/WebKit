@@ -472,7 +472,7 @@ void Shader::resolveCompile()
         {
             mState.mAllAttributes    = GetShaderVariables(sh::GetAttributes(compilerHandle));
             mState.mActiveAttributes = GetActiveShaderVariables(&mState.mAllAttributes);
-            mState.mInputVaryings = GetShaderVariables(sh::GetInputVaryings(compilerHandle));
+            mState.mInputVaryings    = GetShaderVariables(sh::GetInputVaryings(compilerHandle));
             // TODO(jmadill): Figure out why we only sort in the FS, and if we need to.
             std::sort(mState.mInputVaryings.begin(), mState.mInputVaryings.end(), CompareShaderVar);
             mState.mActiveOutputVariables =
@@ -610,7 +610,8 @@ const std::vector<sh::ShaderVariable> &Shader::getActiveOutputVariables()
 std::string Shader::getTransformFeedbackVaryingMappedName(const std::string &tfVaryingName)
 {
     // TODO(jiawei.shao@intel.com): support transform feedback on geometry shader.
-    ASSERT(mState.getShaderType() == ShaderType::Vertex);
+    ASSERT(mState.getShaderType() == ShaderType::Vertex ||
+           mState.getShaderType() == ShaderType::Geometry);
     const auto &varyings = getOutputVaryings();
     auto bracketPos      = tfVaryingName.find("[");
     if (bracketPos != std::string::npos)

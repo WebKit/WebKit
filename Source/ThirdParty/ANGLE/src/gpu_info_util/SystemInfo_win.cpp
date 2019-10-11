@@ -14,7 +14,6 @@
 // Windows.h needs to be included first
 #include <windows.h>
 
-#include <d3d10.h>
 #include <dxgi.h>
 
 #include <array>
@@ -28,11 +27,20 @@ namespace
 
 bool GetDevicesFromDXGI(std::vector<GPUDeviceInfo> *devices)
 {
+#if defined(ANGLE_ENABLE_WINDOWS_UWP)
+    IDXGIFactory1 *factory;
+    if (!SUCCEEDED(
+            CreateDXGIFactory1(__uuidof(IDXGIFactory1), reinterpret_cast<void **>(&factory))))
+    {
+        return false;
+    }
+#else
     IDXGIFactory *factory;
     if (!SUCCEEDED(CreateDXGIFactory(__uuidof(IDXGIFactory), reinterpret_cast<void **>(&factory))))
     {
         return false;
     }
+#endif
 
     UINT i                = 0;
     IDXGIAdapter *adapter = nullptr;
@@ -42,7 +50,7 @@ bool GetDevicesFromDXGI(std::vector<GPUDeviceInfo> *devices)
         adapter->GetDesc(&desc);
 
         LARGE_INTEGER umdVersion;
-        if (adapter->CheckInterfaceSupport(__uuidof(ID3D10Device), &umdVersion) ==
+        if (adapter->CheckInterfaceSupport(__uuidof(IDXGIDevice), &umdVersion) ==
             DXGI_ERROR_UNSUPPORTED)
         {
             adapter->Release();
@@ -53,11 +61,11 @@ bool GetDevicesFromDXGI(std::vector<GPUDeviceInfo> *devices)
         uint64_t intVersion = umdVersion.QuadPart;
         std::ostringstream o;
 
-        const uint64_t kMask = 0xFF;
-        o << ((intVersion >> 48) & kMask) << ".";
-        o << ((intVersion >> 32) & kMask) << ".";
-        o << ((intVersion >> 16) & kMask) << ".";
-        o << (intVersion & kMask);
+        constexpr uint64_t kMask16 = std::numeric_limits<uint16_t>::max();
+        o << ((intVersion >> 48) & kMask16) << ".";
+        o << ((intVersion >> 32) & kMask16) << ".";
+        o << ((intVersion >> 16) & kMask16) << ".";
+        o << (intVersion & kMask16);
 
         GPUDeviceInfo device;
         device.vendorId      = desc.VendorId;
@@ -95,9 +103,11 @@ bool GetSystemInfo(SystemInfo *info)
     // can override the heuristic to find the active GPU
     info->activeGPUIndex = 0;
 
+#if !defined(ANGLE_ENABLE_WINDOWS_UWP)
     // Override isOptimus. nvd3d9wrap.dll is loaded into all processes when Optimus is enabled.
     HMODULE nvd3d9wrap = GetModuleHandleW(L"nvd3d9wrap.dll");
     info->isOptimus    = nvd3d9wrap != nullptr;
+#endif
 
     return true;
 }

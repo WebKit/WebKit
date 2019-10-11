@@ -4,15 +4,15 @@
 // found in the LICENSE file.
 //
 
-// Windows_system_utils.cpp: Implementation of OS-specific functions for Windows
+// test_utils_win.cpp: Implementation of OS-specific functions for Windows
 
-#include "util/system_utils.h"
+#include "util/test_utils.h"
 
 #include <stdarg.h>
 #include <windows.h>
 #include <array>
-#include <vector>
 
+#include "common/angleutils.h"
 #include "util/windows/third_party/StackWalker/src/StackWalker.h"
 
 namespace angle
@@ -144,5 +144,4 @@ void PrintStackBacktrace()
     RtlCaptureContext(&context);
     PrintBacktrace(&context);
 }
-
 }  // namespace angle

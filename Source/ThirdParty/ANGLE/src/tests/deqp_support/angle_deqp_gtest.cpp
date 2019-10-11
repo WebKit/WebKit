@@ -19,10 +19,11 @@
 #include "common/debug.h"
 #include "common/platform.h"
 #include "common/string_utils.h"
+#include "common/system_utils.h"
 #include "platform/Platform.h"
 #include "tests/test_expectations/GPUTestConfig.h"
 #include "tests/test_expectations/GPUTestExpectationsParser.h"
-#include "util/system_utils.h"
+#include "util/test_utils.h"
 
 namespace angle
 {
@@ -90,15 +91,19 @@ const char *gTestExpectationsFiles[] = {
 
 using APIInfo = std::pair<const char *, GPUTestConfig::API>;
 
-const APIInfo gEGLDisplayAPIs[] = {
-    {"angle-d3d9", GPUTestConfig::kAPID3D9},    {"angle-d3d11", GPUTestConfig::kAPID3D11},
-    {"angle-gl", GPUTestConfig::kAPIGLDesktop}, {"angle-gles", GPUTestConfig::kAPIGLES},
-    {"angle-null", GPUTestConfig::kAPIUnknown}, {"angle-vulkan", GPUTestConfig::kAPIVulkan},
+constexpr APIInfo kEGLDisplayAPIs[] = {
+    {"angle-d3d9", GPUTestConfig::kAPID3D9},
+    {"angle-d3d11", GPUTestConfig::kAPID3D11},
+    {"angle-gl", GPUTestConfig::kAPIGLDesktop},
+    {"angle-gles", GPUTestConfig::kAPIGLES},
+    {"angle-null", GPUTestConfig::kAPIUnknown},
+    {"angle-vulkan", GPUTestConfig::kAPIVulkan},
+    {"angle-swiftshader", GPUTestConfig::kAPISwiftShader},
 };
 
-const char *gdEQPEGLString  = "--deqp-egl-display-type=";
-const char *gANGLEEGLString = "--use-angle=";
-const char *gdEQPCaseString = "--deqp-case=";
+constexpr char kdEQPEGLString[]  = "--deqp-egl-display-type=";
+constexpr char kANGLEEGLString[] = "--use-angle=";
+constexpr char kdEQPCaseString[] = "--deqp-case=";
 
 std::array<char, 500> gCaseStringBuffer;
 
@@ -125,7 +130,7 @@ const char *GetDefaultAPIName()
 
 const APIInfo *FindAPIInfo(const std::string &arg)
 {
-    for (auto &displayAPI : gEGLDisplayAPIs)
+    for (auto &displayAPI : kEGLDisplayAPIs)
     {
         if (arg == displayAPI.first)
         {
@@ -487,7 +492,7 @@ void dEQPTest<TestModuleIndex>::SetUpTestCase()
 
     // Add init api.
     const char *targetApi    = gInitAPI ? gInitAPI->first : GetDefaultAPIName();
-    std::string apiArgString = std::string(gdEQPEGLString) + targetApi;
+    std::string apiArgString = std::string(kdEQPEGLString) + targetApi;
     argv.push_back(apiArgString.c_str());
 
     // Add config name
@@ -616,14 +621,14 @@ void InitTestHarness(int *argc, char **argv)
     int argIndex = 0;
     while (argIndex < *argc)
     {
-        if (strncmp(argv[argIndex], gdEQPEGLString, strlen(gdEQPEGLString)) == 0)
+        if (strncmp(argv[argIndex], kdEQPEGLString, strlen(kdEQPEGLString)) == 0)
         {
-            HandleDisplayType(argv[argIndex] + strlen(gdEQPEGLString));
+            HandleDisplayType(argv[argIndex] + strlen(kdEQPEGLString));
             DeleteArg(argc, argIndex, argv);
         }
-        else if (strncmp(argv[argIndex], gANGLEEGLString, strlen(gANGLEEGLString)) == 0)
+        else if (strncmp(argv[argIndex], kANGLEEGLString, strlen(kANGLEEGLString)) == 0)
         {
-            HandleDisplayType(argv[argIndex] + strlen(gANGLEEGLString));
+            HandleDisplayType(argv[argIndex] + strlen(kANGLEEGLString));
             DeleteArg(argc, argIndex, argv);
         }
         else if (strncmp(argv[argIndex], gdEQPEGLConfigNameString,
@@ -632,9 +637,9 @@ void InitTestHarness(int *argc, char **argv)
             HandleEGLConfigName(argv[argIndex] + strlen(gdEQPEGLConfigNameString));
             DeleteArg(argc, argIndex, argv);
         }
-        else if (strncmp(argv[argIndex], gdEQPCaseString, strlen(gdEQPCaseString)) == 0)
+        else if (strncmp(argv[argIndex], kdEQPCaseString, strlen(kdEQPCaseString)) == 0)
         {
-            HandleCaseName(argv[argIndex] + strlen(gdEQPCaseString), argc, argIndex, argv);
+            HandleCaseName(argv[argIndex] + strlen(kdEQPCaseString), argc, argIndex, argv);
             argIndex++;
         }
         else

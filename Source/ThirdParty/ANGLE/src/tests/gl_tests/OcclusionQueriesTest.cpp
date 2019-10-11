@@ -7,7 +7,7 @@
 #include "test_utils/ANGLETest.h"
 #include "util/EGLWindow.h"
 #include "util/random_utils.h"
-#include "util/system_utils.h"
+#include "util/test_utils.h"
 
 using namespace angle;
 

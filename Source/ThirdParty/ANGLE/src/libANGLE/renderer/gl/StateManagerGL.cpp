@@ -34,6 +34,28 @@
 namespace rx
 {
 
+namespace
+{
+
+static void ValidateStateHelper(const FunctionsGL *functions,
+                                const GLuint localValue,
+                                const GLenum pname,
+                                const char *localName,
+                                const char *driverName)
+{
+    GLint queryValue;
+    functions->getIntegerv(pname, &queryValue);
+    if (localValue != static_cast<GLuint>(queryValue))
+    {
+        WARN() << localName << " (" << localValue << ") != " << driverName << " (" << queryValue
+               << ")";
+        // Re-add ASSERT: http://anglebug.com/3900
+        // ASSERT(false);
+    }
+}
+
+}  // anonymous namespace
+
 StateManagerGL::IndexedBufferBinding::IndexedBufferBinding() : offset(0), size(0), buffer(0) {}
 
 StateManagerGL::StateManagerGL(const FunctionsGL *functions,
@@ -356,6 +378,9 @@ void StateManagerGL::bindBuffer(gl::BufferBinding target, GLuint buffer)
 
 void StateManagerGL::bindBufferBase(gl::BufferBinding target, size_t index, GLuint buffer)
 {
+    // Transform feedback buffer bindings are tracked in TransformFeedbackGL
+    ASSERT(target != gl::BufferBinding::TransformFeedback);
+
     ASSERT(index < mIndexedBuffers[target].size());
     auto &binding = mIndexedBuffers[target][index];
     if (binding.buffer != buffer || binding.offset != static_cast<size_t>(-1) ||
@@ -364,6 +389,7 @@ void StateManagerGL::bindBufferBase(gl::BufferBinding target, size_t index, GLui
         binding.buffer = buffer;
         binding.offset = static_cast<size_t>(-1);
         binding.size   = static_cast<size_t>(-1);
+        mBuffers[target] = buffer;
         mFunctions->bindBufferBase(gl::ToGLenum(target), static_cast<GLuint>(index), buffer);
     }
 }
@@ -374,12 +400,16 @@ void StateManagerGL::bindBufferRange(gl::BufferBinding target,
                                      size_t offset,
                                      size_t size)
 {
+    // Transform feedback buffer bindings are tracked in TransformFeedbackGL
+    ASSERT(target != gl::BufferBinding::TransformFeedback);
+
     auto &binding = mIndexedBuffers[target][index];
     if (binding.buffer != buffer || binding.offset != offset || binding.size != size)
     {
         binding.buffer = buffer;
         binding.offset = offset;
         binding.size   = size;
+        mBuffers[target] = buffer;
         mFunctions->bindBufferRange(gl::ToGLenum(target), static_cast<GLuint>(index), buffer,
                                     offset, size);
     }
@@ -2113,4 +2143,41 @@ void StateManagerGL::syncTransformFeedbackState(const gl::Context *context)
         mCurrentTransformFeedback = nullptr;
     }
 }
+
+void StateManagerGL::validateState() const
+{
+    // Current program
+    ValidateStateHelper(mFunctions, mProgram, GL_CURRENT_PROGRAM, "mProgram", "GL_CURRENT_PROGRAM");
+
+    // Buffers
+    for (gl::BufferBinding bindingType : angle::AllEnums<gl::BufferBinding>())
+    {
+        // These binding types need compute support to be queried
+        if (bindingType == gl::BufferBinding::AtomicCounter ||
+            bindingType == gl::BufferBinding::DispatchIndirect ||
+            bindingType == gl::BufferBinding::ShaderStorage)
+        {
+            if (!nativegl::SupportsCompute(mFunctions))
+            {
+                continue;
+            }
+        }
+
+        // Transform feedback buffer bindings are tracked in TransformFeedbackGL
+        if (bindingType == gl::BufferBinding::TransformFeedback)
+        {
+            continue;
+        }
+
+        GLenum bindingTypeGL  = nativegl::GetBufferBindingQuery(bindingType);
+        std::string localName = "mBuffers[" + ToString(bindingType) + "]";
+        ValidateStateHelper(mFunctions, mBuffers[bindingType], bindingTypeGL, localName.c_str(),
+                            nativegl::GetBufferBindingString(bindingType).c_str());
+    }
+
+    // Vertex array object
+    ValidateStateHelper(mFunctions, mVAO, GL_VERTEX_ARRAY_BINDING, "mVAO",
+                        "GL_VERTEX_ARRAY_BINDING");
+}
+
 }  // namespace rx

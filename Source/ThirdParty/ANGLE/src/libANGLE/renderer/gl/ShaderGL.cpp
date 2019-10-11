@@ -338,6 +338,11 @@ std::shared_ptr<WaitableCompileEvent> ShaderGL::compile(const gl::Context *conte
         additionalOptions |= SH_ADD_BASE_VERTEX_TO_VERTEX_ID;
     }
 
+    if (features.unfoldShortCircuits.enabled)
+    {
+        additionalOptions |= SH_UNFOLD_SHORT_CIRCUIT;
+    }
+
     options |= additionalOptions;
 
     auto workerThreadPool = context->getWorkerThreadPool();

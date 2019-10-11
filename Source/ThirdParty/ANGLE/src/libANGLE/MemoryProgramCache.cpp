@@ -59,6 +59,15 @@ HashStream &operator<<(HashStream &stream, const ProgramBindings &bindings)
 {
     for (const auto &binding : bindings)
     {
+        stream << binding.first << binding.second;
+    }
+    return stream;
+}
+
+HashStream &operator<<(HashStream &stream, const ProgramAliasedBindings &bindings)
+{
+    for (const auto &binding : bindings)
+    {
         stream << binding.first << binding.second.location;
     }
     return stream;

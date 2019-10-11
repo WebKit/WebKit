@@ -57,7 +57,9 @@ set(ANGLE_SOURCES
     ${angle_translator_essl_sources}
     ${angle_translator_glsl_sources}
     ${angle_translator_sources}
-    ${libangle_capture_sources}
+    # Add this in if frame capture is desired, and add the appropriate
+    # definitions.
+    # ${libangle_capture_sources}
 )
 
 if (UNIX)

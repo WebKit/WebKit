@@ -42,11 +42,13 @@ angle::Result PersistentCommandPool::init(vk::Context *context, uint32_t queueFa
     return angle::Result::Continue;
 }
 
-void PersistentCommandPool::destroy(const vk::Context *context)
+void PersistentCommandPool::destroy(VkDevice device)
 {
+    if (!valid())
+        return;
+
     ASSERT(mCommandPool.valid());
 
-    VkDevice device = context->getDevice();
     for (vk::PrimaryCommandBuffer &cmdBuf : mFreeBuffers)
     {
         cmdBuf.destroy(device, mCommandPool);
@@ -56,8 +58,8 @@ void PersistentCommandPool::destroy(const vk::Context *context)
     mCommandPool.destroy(device);
 }
 
-angle::Result PersistentCommandPool::alloc(vk::Context *context,
-                                           vk::PrimaryCommandBuffer *bufferOutput)
+angle::Result PersistentCommandPool::allocate(vk::Context *context,
+                                              vk::PrimaryCommandBuffer *commandBufferOut)
 {
     if (mFreeBuffers.empty())
     {
@@ -65,7 +67,7 @@ angle::Result PersistentCommandPool::alloc(vk::Context *context,
         ASSERT(!mFreeBuffers.empty());
     }
 
-    *bufferOutput = std::move(mFreeBuffers.back());
+    *commandBufferOut = std::move(mFreeBuffers.back());
     mFreeBuffers.pop_back();
 
     return angle::Result::Continue;

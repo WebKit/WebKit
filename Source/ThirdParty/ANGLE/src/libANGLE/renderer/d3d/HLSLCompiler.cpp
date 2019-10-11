@@ -121,7 +121,7 @@ angle::Result HLSLCompiler::ensureInitialized(d3d::Context *context)
     }
 
     ANGLE_TRACE_EVENT0("gpu.angle", "HLSLCompiler::initialize");
-#if !defined(ANGLE_ENABLE_WINDOWS_STORE)
+#if !defined(ANGLE_ENABLE_WINDOWS_UWP)
 #    if defined(ANGLE_PRELOADED_D3DCOMPILER_MODULE_NAMES)
     // Find a D3DCompiler module that had already been loaded based on a predefined list of
     // versions.
@@ -214,12 +214,12 @@ angle::Result HLSLCompiler::compileToBinary(d3d::Context *context,
 {
     ASSERT(mInitialized);
 
-#if !defined(ANGLE_ENABLE_WINDOWS_STORE)
+#if !defined(ANGLE_ENABLE_WINDOWS_UWP)
     ASSERT(mD3DCompilerModule);
 #endif
     ASSERT(mD3DCompileFunc);
 
-#if !defined(ANGLE_ENABLE_WINDOWS_STORE) && defined(ANGLE_ENABLE_DEBUG_TRACE)
+#if !defined(ANGLE_ENABLE_WINDOWS_UWP) && defined(ANGLE_ENABLE_DEBUG_TRACE)
     std::string sourcePath = getTempPath();
     std::ostringstream stream;
     stream << "#line 2 \"" << sourcePath << "\"\n\n" << hlsl;

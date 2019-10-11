@@ -10,7 +10,7 @@
 
 #include <assert.h>
 
-#ifdef ANGLE_ENABLE_WINDOWS_STORE
+#ifdef ANGLE_ENABLE_WINDOWS_UWP
 #    include <map>
 #    include <mutex>
 #    include <set>
@@ -39,7 +39,7 @@ TLSIndex CreateTLSIndex()
     TLSIndex index;
 
 #ifdef ANGLE_PLATFORM_WINDOWS
-#    ifdef ANGLE_ENABLE_WINDOWS_STORE
+#    ifdef ANGLE_ENABLE_WINDOWS_UWP
     if (!freeTlsIndices.empty())
     {
         DWORD result = freeTlsIndices.back();
@@ -76,7 +76,7 @@ bool DestroyTLSIndex(TLSIndex index)
     }
 
 #ifdef ANGLE_PLATFORM_WINDOWS
-#    ifdef ANGLE_ENABLE_WINDOWS_STORE
+#    ifdef ANGLE_ENABLE_WINDOWS_UWP
     assert(index < nextTlsIndex);
     assert(find(freeTlsIndices.begin(), freeTlsIndices.end(), index) == freeTlsIndices.end());
 
@@ -106,7 +106,7 @@ bool SetTLSValue(TLSIndex index, void *value)
     }
 
 #ifdef ANGLE_PLATFORM_WINDOWS
-#    ifdef ANGLE_ENABLE_WINDOWS_STORE
+#    ifdef ANGLE_ENABLE_WINDOWS_UWP
     ThreadLocalData *threadData = currentThreadData;
     if (!threadData)
     {
@@ -138,7 +138,7 @@ void *GetTLSValue(TLSIndex index)
     }
 
 #ifdef ANGLE_PLATFORM_WINDOWS
-#    ifdef ANGLE_ENABLE_WINDOWS_STORE
+#    ifdef ANGLE_ENABLE_WINDOWS_UWP
     ThreadLocalData *threadData = currentThreadData;
     if (threadData && threadData->size() > index)
     {

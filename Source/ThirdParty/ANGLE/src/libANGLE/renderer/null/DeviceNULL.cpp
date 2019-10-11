@@ -23,7 +23,7 @@ egl::Error DeviceNULL::initialize()
     return egl::NoError();
 }
 
-egl::Error DeviceNULL::getDevice(void **outValue)
+egl::Error DeviceNULL::getAttribute(const egl::Display *display, EGLint attribute, void **outValue)
 {
     UNIMPLEMENTED();
     return egl::EglBadAccess();

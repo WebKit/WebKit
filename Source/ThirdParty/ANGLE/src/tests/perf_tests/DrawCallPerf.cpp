@@ -12,8 +12,6 @@
 #include "test_utils/draw_call_perf_utils.h"
 #include "util/shader_utils.h"
 
-using namespace angle;
-
 namespace
 {
 enum class StateChange
@@ -328,8 +326,6 @@ void DrawCallPerfBenchmark::drawBenchmark()
 
 TEST_P(DrawCallPerfBenchmark, Run)
 {
-    // TODO(crbug.com/997674) crashes on Win10 FYI x64 Exp Release (Intel HD 630)
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel());
     run();
 }
 

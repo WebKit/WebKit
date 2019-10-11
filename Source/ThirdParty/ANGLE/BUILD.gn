@@ -3,15 +3,18 @@
 # found in the LICENSE file.
 
 # import the use_x11 variable
-import("//build/config/linux/pkg_config.gni")
-import("//build/config/ui.gni")
-import("//testing/libfuzzer/fuzzer_test.gni")
 import("gni/angle.gni")
-if (is_android) {
-  # android/rules.gni can only be imported for Android targets
-  import("//build/config/android/config.gni")
-  import("//build/config/android/rules.gni")
-  import("android/angle_apk.gni")
+if (angle_has_build) {
+  import("//build/config/linux/pkg_config.gni")
+  import("//build/config/ui.gni")
+  import("//testing/libfuzzer/fuzzer_test.gni")
+
+  if (is_android) {
+    # android/rules.gni can only be imported for Android targets
+    import("//build/config/android/config.gni")
+    import("//build/config/android/rules.gni")
+    import("android/angle_apk.gni")
+  }
 }
 
 declare_args() {
@@ -25,9 +28,13 @@ declare_args() {
   # Defaults to capture building to $root_out_dir/angle_libs/with_capture.
   # Switch on to build capture to $root_out_dir.
   angle_with_capture_by_default = false
+
+  # Don't build extra (test, samples etc) for Windows UWP. We don't have
+  # infrastructure (e.g. windowing helper functions) in place to run them.
+  angle_build_all = !angle_is_winuwp && angle_has_build
 }
 
-if (!build_with_chromium) {
+if (!build_with_chromium && angle_build_all) {
   group("all") {
     testonly = true
     deps = [
@@ -96,12 +103,6 @@ config("internal_config") {
     defines += [ "ANGLE_IS_32_BIT_CPU" ]
   }
 
-  if (angle_enable_vulkan) {
-    if (angle_enable_vulkan_gpu_trace_events) {
-      defines += [ "ANGLE_ENABLE_VULKAN_GPU_TRACE_EVENTS=1" ]
-    }
-  }
-
   if (angle_enable_trace) {
     defines += [ "ANGLE_ENABLE_DEBUG_TRACE=1" ]
   }
@@ -139,6 +140,10 @@ config("extra_warnings") {
       "-Wshorten-64-to-32",
     ]
   }
+
+  if (angle_is_winuwp) {
+    cflags += [ "/wd4447" ]  # 'main' signature found without threading model.
+  }
 }
 
 # This config adds build-ids to the associated library.
@@ -157,9 +162,11 @@ config("better_linux_stack_traces") {
   }
 }
 
+_use_copy_compiler_dll = angle_has_build && is_win && target_cpu != "arm64"
+
 # Windows ARM64 is available since 10.0.16299 so no need to copy
 # d3dcompiler_47.dll because this file is available as inbox.
-if (is_win && target_cpu != "arm64") {
+if (_use_copy_compiler_dll) {
   # We also ship an older DLL for compatiblity with Windows 7 machines without
   # the UCRT. This DLL isn't available in the standard SDK distribution.
   _old_compiler = "$windows_sdk_path/Redist/D3D/$target_cpu/d3dcompiler_old.dll"
@@ -196,6 +203,7 @@ angle_static_library("preprocessor") {
 
   public_deps = [
     ":angle_common",
+    ":angle_translator_headers",
   ]
 }
 
@@ -222,7 +230,7 @@ config("angle_common_config") {
   }
 }
 
-if (is_win) {
+if (is_win && !angle_is_winuwp) {
   angle_source_set("angle_stack_walker") {
     sources = [
       "util/windows/third_party/StackWalker/src/StackWalker.cpp",
@@ -250,13 +258,15 @@ angle_source_set("xxhash") {
   configs -= [ "${angle_root}:extra_warnings" ]
 }
 
-fuzzer_test("xxhash_fuzzer") {
-  sources = [
-    "src/common/third_party/xxhash/xxhash_fuzzer.cpp",
-  ]
-  deps = [
-    ":xxhash",
-  ]
+if (angle_has_build) {
+  fuzzer_test("xxhash_fuzzer") {
+    sources = [
+      "src/common/third_party/xxhash/xxhash_fuzzer.cpp",
+    ]
+    deps = [
+      ":xxhash",
+    ]
+  }
 }
 
 angle_static_library("angle_common") {
@@ -278,7 +288,7 @@ angle_static_library("angle_common") {
   ]
   public_configs += [ ":angle_common_config" ]
   all_dependent_configs = [ ":angle_release_asserts_config" ]
-  if (use_fuzzing_engine) {
+  if (angle_has_build && use_fuzzing_engine) {
     all_dependent_configs += [ ":angle_disable_pool_alloc" ]
   }
 }
@@ -290,11 +300,18 @@ config("angle_image_util_config") {
   ]
 }
 
+angle_source_set("angle_image_util_headers") {
+  sources = libangle_image_util_headers
+  public_deps = [
+    ":angle_common",
+  ]
+}
+
 angle_static_library("angle_image_util") {
   sources = libangle_image_util_sources
   public_configs += [ ":angle_image_util_config" ]
   public_deps = [
-    ":angle_common",
+    ":angle_image_util_headers",
   ]
 }
 
@@ -338,7 +355,9 @@ angle_static_library("angle_gpu_info_util") {
 
   if (is_win) {
     sources += libangle_gpu_info_util_win_sources
-    libs += [ "setupapi.lib" ]
+    if (!angle_is_winuwp) {
+      libs += [ "setupapi.lib" ]
+    }
     libs += [ "dxgi.lib" ]
   }
 
@@ -374,6 +393,13 @@ angle_static_library("angle_gpu_info_util") {
   }
 }
 
+angle_source_set("angle_translator_headers") {
+  sources = angle_translator_exported_headers
+  public_deps = [
+    ":includes",
+  ]
+}
+
 angle_static_library("translator") {
   sources = angle_translator_sources
   defines = []
@@ -407,6 +433,7 @@ angle_static_library("translator") {
 
   public_deps = [
     ":angle_common",
+    ":angle_translator_headers",
   ]
 
   if (is_win) {
@@ -493,14 +520,12 @@ config("angle_backend_config") {
       defines += [ "ANGLE_ENABLE_OPENGL_NULL" ]
     }
   }
-  if (angle_enable_vulkan) {
-    defines += [ "ANGLE_ENABLE_VULKAN" ]
-    if (angle_enable_custom_vulkan_cmd_buffers) {
-      defines += [ "ANGLE_USE_CUSTOM_VULKAN_CMD_BUFFERS=1" ]
-    }
-  }
   if (angle_enable_null) {
     defines += [ "ANGLE_ENABLE_NULL" ]
+  }
+
+  if (angle_enable_vulkan) {
+    configs = [ "src/libANGLE/renderer/vulkan:angle_vulkan_backend_config" ]
   }
 }
 
@@ -533,53 +558,12 @@ config("libANGLE_config") {
   }
 }
 
-if (angle_enable_vulkan) {
-  config("vulkan_config") {
-    defines = [
-      "ANGLE_VK_LAYERS_DIR=\"$angle_data_dir\"",
-      "ANGLE_VK_MOCK_ICD_JSON=\"$angle_data_dir/VkICD_mock_icd.json\"",
-    ]
-    if (is_android) {
-      libs = [ "vulkan" ]
-    }
-  }
-
-  # Use this target to include everything ANGLE needs for Vulkan.
-  group("angle_vulkan") {
-    public_deps = [
-      "$angle_root/third_party/vulkan-headers:vulkan_headers",
-    ]
-    public_configs = [ ":vulkan_config" ]
-    data_deps = []
-    if (!is_android && !is_fuchsia) {
-      deps = [
-        "$angle_root/third_party/vulkan-loader:libvulkan",
-      ]
-      data_deps += [ "$angle_root/third_party/vulkan-tools:VkICD_mock_icd" ]
-      public_configs +=
-          [ "$angle_root/third_party/vulkan-loader:vulkan_loader_config" ]
-    }
-    if (is_fuchsia) {
-      public_deps += [
-        "$angle_root/src/common/fuchsia_egl",
-        "//third_party/fuchsia-sdk:vulkan_base",
-        "//third_party/fuchsia-sdk/sdk:vulkan",
-      ]
-    }
-
-    if (angle_enable_vulkan_validation_layers) {
-      if (is_fuchsia) {
-        deps = [
-          "//third_party/fuchsia-sdk:vulkan_validation",
-        ]
-      } else {
-        data_deps += [ "$angle_root/third_party/vulkan-validation-layers:vulkan_validation_layers" ]
-        if (!is_android) {
-          data_deps += [ "$angle_root/third_party/vulkan-validation-layers:vulkan_gen_json_files" ]
-        }
-      }
-    }
-  }
+angle_source_set("libANGLE_headers") {
+  sources = libangle_headers
+  public_deps = [
+    ":angle_common",
+    ":angle_translator_headers",
+  ]
 }
 
 angle_source_set("libANGLE_base") {
@@ -596,12 +580,17 @@ angle_source_set("libANGLE_base") {
     ":angle_common",
     ":angle_gpu_info_util",
     ":angle_version",
+    ":libANGLE_headers",
     ":translator",
   ]
   deps = [
     ":angle_image_util",
     ":includes",
   ]
+
+  if (angle_enable_vulkan) {
+    public_deps += [ "src/libANGLE/renderer/vulkan:angle_vulkan_backend" ]
+  }
 
   # Enable extra Chromium style warnings for libANGLE.
   if (is_clang) {
@@ -622,7 +611,13 @@ angle_source_set("libANGLE_base") {
 
   if (angle_enable_d3d11) {
     sources += libangle_d3d11_sources
-    sources += libangle_d3d11_win32_sources
+
+    if (angle_is_winuwp) {
+      sources += libangle_d3d11_winuwp_sources
+    } else {
+      sources += libangle_d3d11_win32_sources
+    }
+
     libs += [ "dxguid.lib" ]
     import("src/libANGLE/renderer/d3d/d3d11/d3d11_blit_shaders_autogen.gni")
     sources += libangle_d3d11_blit_shaders
@@ -671,38 +666,6 @@ angle_source_set("libANGLE_base") {
     }
   }
 
-  if (angle_enable_vulkan) {
-    sources += libangle_vulkan_sources
-    if (is_win) {
-      sources += libangle_vulkan_win32_sources
-    }
-    if (is_linux) {
-      sources += libangle_vulkan_xcb_sources
-    }
-    if (is_fuchsia) {
-      sources += libangle_vulkan_fuchsia_sources
-      deps += [
-        "$angle_root/src/common/fuchsia_egl",
-        "$angle_root/src/common/fuchsia_egl:backend",
-      ]
-    }
-    if (is_android) {
-      sources += libangle_vulkan_android_sources
-      libs += [ "vulkan" ]
-    }
-    deps += [
-      ":angle_vulkan",
-      "${angle_glslang_dir}:glslang_default_resource_limits_sources",
-      "${angle_glslang_dir}:glslang_sources",
-      "${angle_spirv_tools_dir}:spvtools_val",
-    ]
-    public_deps += [ "$angle_root/third_party/vulkan-headers:vulkan_headers" ]
-
-    # Include generated shaders.
-    import("src/libANGLE/renderer/vulkan/vk_internal_shaders_autogen.gni")
-    sources += angle_vulkan_internal_shaders
-  }
-
   if (angle_enable_null) {
     sources += libangle_null_sources
   }
@@ -727,7 +690,7 @@ angle_source_set("libANGLE_base") {
 
   # Windows ARM64 is available since 10.0.16299 so no need to copy
   # d3dcompiler_47.dll because this file is available as inbox.
-  if (is_win && target_cpu != "arm64") {
+  if (_use_copy_compiler_dll) {
     data_deps = [
       ":copy_compiler_dll",
     ]
@@ -748,7 +711,7 @@ angle_source_set("libANGLE") {
   ]
   public_configs = [ ":angle_frame_capture_disabled" ]
   sources = [
-    "src/libANGLE/FrameCapture.cpp",
+    "src/libANGLE/FrameCapture_mock.cpp",
   ]
 
   # gl_enum_utils defaults included in with_capture build
@@ -852,7 +815,7 @@ angle_libGLESv2("libGLESv2_capture_complement") {
   }
 }
 
-if (is_win) {
+if (is_win && !angle_is_winuwp) {
   angle_shared_library("libGL") {
     sources = libgl_sources
 
@@ -1006,7 +969,7 @@ angle_source_set("angle_util_loader_headers") {
     "util/util_export.h",
   ]
 
-  if (is_win) {
+  if (is_win && !angle_is_winuwp) {
     sources += [ "util/windows/wgl_loader_autogen.h" ]
   }
 
@@ -1023,7 +986,7 @@ angle_source_set("angle_util_loader") {
     "util/gles_loader_autogen.cpp",
   ]
 
-  if (is_win) {
+  if (is_win && !angle_is_winuwp) {
     sources += [ "util/windows/wgl_loader_autogen.cpp" ]
   }
 
@@ -1069,7 +1032,7 @@ foreach(is_shared_library,
     public_deps = []
     libs = []
 
-    if (is_win) {
+    if (is_win && !angle_is_winuwp) {
       sources += util_win_sources
       deps += [ ":angle_stack_walker" ]
     }
@@ -1112,6 +1075,7 @@ foreach(is_shared_library,
       sources += util_fuchsia_sources
       public_deps += [
         "$angle_root/src/common/fuchsia_egl",
+        "src/libANGLE/renderer/vulkan:angle_vulkan",
         "//third_party/fuchsia-sdk/sdk:async_loop_cpp",
         "//third_party/fuchsia-sdk/sdk:async_loop_default",
         "//third_party/fuchsia-sdk/sdk:fdio",
@@ -1128,7 +1092,7 @@ foreach(is_shared_library,
     if (is_shared_library) {
       defines = [ "LIBANGLE_UTIL_IMPLEMENTATION" ]
 
-      if (is_win) {
+      if (is_win && !angle_is_winuwp) {
         sources += util_win_shared_sources
       }
 
@@ -1164,45 +1128,47 @@ angle_executable("angle_shader_translator") {
   ]
 }
 
-config("angle_feature_support_config") {
-  include_dirs = [
-    "include",
-    "src",
-  ]
-  defines = [ "LIBFEATURE_SUPPORT_IMPLEMENTATION" ]
-  if (is_debug) {
-    defines += [ "ANGLE_FEATURE_UTIL_LOG_VERBOSE" ]
-  }
-}
-
-angle_shared_library("libfeature_support") {
-  output_name = "libfeature_support${angle_libs_suffix}"
-
-  if (is_android) {
-    libs = [ "log" ]
+if (angle_has_build) {
+  config("angle_feature_support_config") {
+    include_dirs = [
+      "include",
+      "src",
+    ]
+    defines = [ "LIBFEATURE_SUPPORT_IMPLEMENTATION" ]
+    if (is_debug) {
+      defines += [ "ANGLE_FEATURE_UTIL_LOG_VERBOSE" ]
+    }
   }
 
-  public_configs += [
-    ":angle_feature_support_config",
-    "${angle_jsoncpp_dir}:jsoncpp_config",
-  ]
+  angle_shared_library("libfeature_support") {
+    output_name = "libfeature_support${angle_libs_suffix}"
 
-  if (is_mac && !is_component_build) {
-    ldflags = [
-      "-install_name",
-      "@rpath/${target_name}.dylib",
+    if (is_android) {
+      libs = [ "log" ]
+    }
+
+    public_configs += [
+      ":angle_feature_support_config",
+      "${angle_jsoncpp_dir}:jsoncpp_config",
+    ]
+
+    if (is_mac && !is_component_build) {
+      ldflags = [
+        "-install_name",
+        "@rpath/${target_name}.dylib",
+      ]
+    }
+
+    sources = [
+      "src/feature_support_util/feature_support_util.cpp",
+      "src/feature_support_util/feature_support_util.h",
+    ]
+
+    deps = [
+      ":angle_gpu_info_util",
+      "${angle_jsoncpp_dir}:jsoncpp",
     ]
   }
-
-  sources = [
-    "src/feature_support_util/feature_support_util.cpp",
-    "src/feature_support_util/feature_support_util.h",
-  ]
-
-  deps = [
-    ":angle_gpu_info_util",
-    "${angle_jsoncpp_dir}:jsoncpp",
-  ]
 }
 
 if (!is_component_build && is_android && symbol_level != 0) {
@@ -1227,8 +1193,9 @@ if (!is_component_build && is_android && symbol_level != 0) {
 
     if (angle_enable_vulkan_validation_layers) {
       foreach(_layer, vulkan_validation_layers) {
-        deps +=
-            [ "${angle_root}/third_party/vulkan-validation-layers:${_layer}" ]
+        deps += [
+          "${angle_root}/third_party/vulkan-validation-layers/src:${_layer}",
+        ]
       }
     }
 
@@ -1267,4 +1234,12 @@ if (!is_component_build && is_android &&
       ":angle_chromium_apk",
     ]
   }
+}
+
+# Note: libGLESv1_CM is not presently included because most Chrome users don't care about it.
+group("angle") {
+  data_deps = [
+    ":libGLESv2",
+    ":libEGL",
+  ]
 }

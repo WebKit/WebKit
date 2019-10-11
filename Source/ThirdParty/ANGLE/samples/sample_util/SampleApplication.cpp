@@ -9,7 +9,7 @@
 #include "util/EGLWindow.h"
 #include "util/gles_loader_autogen.h"
 #include "util/random_utils.h"
-#include "util/system_utils.h"
+#include "util/test_utils.h"
 
 #include <string.h>
 #include <iostream>
@@ -22,9 +22,14 @@ const char *kUseAngleArg = "--use-angle=";
 using DisplayTypeInfo = std::pair<const char *, EGLint>;
 
 const DisplayTypeInfo kDisplayTypes[] = {
-    {"d3d9", EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE}, {"d3d11", EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE},
-    {"gl", EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE}, {"gles", EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE},
-    {"null", EGL_PLATFORM_ANGLE_TYPE_NULL_ANGLE}, {"vulkan", EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE}};
+    {"d3d9", EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE},
+    {"d3d11", EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE},
+    {"gl", EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE},
+    {"gles", EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE},
+    {"null", EGL_PLATFORM_ANGLE_TYPE_NULL_ANGLE},
+    {"vulkan", EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE},
+    {"swiftshader", EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE},
+};
 
 EGLint GetDisplayTypeFromArg(const char *displayTypeArg)
 {
@@ -39,6 +44,18 @@ EGLint GetDisplayTypeFromArg(const char *displayTypeArg)
 
     std::cout << "Unknown ANGLE back-end API: " << displayTypeArg << std::endl;
     return EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE;
+}
+
+EGLint GetDeviceTypeFromArg(const char *displayTypeArg)
+{
+    if (strcmp(displayTypeArg, "swiftshader") == 0)
+    {
+        return EGL_PLATFORM_ANGLE_DEVICE_TYPE_SWIFTSHADER_ANGLE;
+    }
+    else
+    {
+        return EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE;
+    }
 }
 }  // anonymous namespace
 
@@ -60,7 +77,9 @@ SampleApplication::SampleApplication(std::string name,
 
     if (argc > 1 && strncmp(argv[1], kUseAngleArg, strlen(kUseAngleArg)) == 0)
     {
-        mPlatformParams.renderer = GetDisplayTypeFromArg(argv[1] + strlen(kUseAngleArg));
+        const char *arg            = argv[1] + strlen(kUseAngleArg);
+        mPlatformParams.renderer   = GetDisplayTypeFromArg(arg);
+        mPlatformParams.deviceType = GetDeviceTypeFromArg(arg);
     }
 
     // Load EGL library so we can initialize the display.

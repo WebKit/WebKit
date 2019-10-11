@@ -12,8 +12,7 @@
 
 #include "libANGLE/renderer/EGLSyncImpl.h"
 #include "libANGLE/renderer/SyncImpl.h"
-
-#include "libANGLE/renderer/vulkan/vk_utils.h"
+#include "libANGLE/renderer/vulkan/CommandGraph.h"
 
 namespace egl
 {
@@ -22,34 +21,38 @@ class AttributeMap;
 
 namespace rx
 {
+namespace vk
+{
 // The behaviors of SyncImpl and EGLSyncImpl as fence syncs (only supported type) are currently
 // identical for the Vulkan backend, and this class implements both interfaces.
-class FenceSyncVk
+class SyncHelper
 {
   public:
-    FenceSyncVk();
-    ~FenceSyncVk();
+    SyncHelper();
+    ~SyncHelper();
 
-    void onDestroy(ContextVk *contextVk);
-    void onDestroy(DisplayVk *display);
+    void releaseToRenderer(RendererVk *renderer);
 
     angle::Result initialize(ContextVk *contextVk);
-    angle::Result clientWait(vk::Context *context,
+    angle::Result clientWait(Context *context,
                              ContextVk *contextVk,
                              bool flushCommands,
                              uint64_t timeout,
                              VkResult *outResult);
-    angle::Result serverWait(vk::Context *context, ContextVk *contextVk);
-    angle::Result getStatus(vk::Context *context, bool *signaled);
+    void serverWait(ContextVk *contextVk);
+    angle::Result getStatus(Context *context, bool *signaled);
 
   private:
     // The vkEvent that's signaled on `init` and can be waited on in `serverWait`, or queried with
     // `getStatus`.
-    vk::Event mEvent;
-    // The first fence in the list is signaled once the CB including the `init` signal is executed.
-    // `clientWait` waits on this fence. The other fences are referenced to prevent deletion.
-    std::vector<vk::Shared<vk::Fence>> mFences;
+    Event mEvent;
+    // The fence is signaled once the CB including the `init` signal is executed.
+    // `clientWait` waits on this fence.
+    Shared<Fence> mFence;
+
+    SharedResourceUse mUse;
 };
+}  // namespace vk
 
 class SyncVk final : public SyncImpl
 {
@@ -70,7 +73,7 @@ class SyncVk final : public SyncImpl
     angle::Result getStatus(const gl::Context *context, GLint *outResult) override;
 
   private:
-    FenceSyncVk mFenceSync;
+    vk::SyncHelper mFenceSync;
 };
 
 class EGLSyncVk final : public EGLSyncImpl
@@ -97,7 +100,7 @@ class EGLSyncVk final : public EGLSyncImpl
     egl::Error dupNativeFenceFD(const egl::Display *display, EGLint *result) const override;
 
   private:
-    FenceSyncVk mFenceSync;
+    vk::SyncHelper mFenceSync;
 };
 }  // namespace rx
 

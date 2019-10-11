@@ -67,12 +67,14 @@ bool DebugAnnotator11::loggingEnabledForThisThread() const
 
 void DebugAnnotator11::initialize(ID3D11DeviceContext *context)
 {
+#if !defined(ANGLE_ENABLE_WINDOWS_UWP)
     // ID3DUserDefinedAnnotation.GetStatus only works on Windows10 or greater.
     // Returning true unconditionally from DebugAnnotator11::getStatus() means
     // writing out all compiled shaders to temporary files even if debugging
     // tools are not attached. See rx::ShaderD3D::prepareSourceAndReturnOptions.
     // If you want debug annotations, you must use Windows 10.
     if (IsWindows10OrGreater())
+#endif
     {
         mAnnotationThread = std::this_thread::get_id();
         mUserDefinedAnnotation.Attach(

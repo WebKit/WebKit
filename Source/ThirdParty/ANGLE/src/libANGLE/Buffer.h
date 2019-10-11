@@ -64,7 +64,7 @@ class BufferState final : angle::NonCopyable
     int mTransformFeedbackGenericBindingCount;
 };
 
-class Buffer final : public RefCountObject,
+class Buffer final : public RefCountObject<BufferID>,
                      public LabeledObject,
                      public angle::ObserverInterface,
                      public angle::Subject

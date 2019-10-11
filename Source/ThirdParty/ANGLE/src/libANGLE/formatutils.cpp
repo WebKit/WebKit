@@ -144,6 +144,15 @@ static bool RequireExtOrExtOrExt(const Version &, const Extensions &extensions)
     return extensions.*bool1 || extensions.*bool2 || extensions.*bool3;
 }
 
+static bool UnsizedHalfFloatOESRGBATextureAttachmentSupport(const Version &clientVersion,
+                                                            const Extensions &extensions)
+{
+    // dEQP requires ES3 + EXT_color_buffer_half_float for rendering to RGB[A] + HALF_FLOAT_OES
+    // textures but WebGL allows it with just ES 2.0
+    return (clientVersion.major >= 3 || extensions.webglCompatibility) &&
+           extensions.colorBufferHalfFloat;
+}
+
 // R8, RG8
 static bool SizedRGSupport(const Version &clientVersion, const Extensions &extensions)
 {
@@ -1004,8 +1013,8 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
     AddRGBAFormat(&map, GL_RGBA,         false, 16, 16, 16, 16, 0, GL_RGBA, GL_HALF_FLOAT,                   GL_FLOAT, false, NeverSupported,                                                          NeverSupported,                                  NeverSupported,                                 NeverSupported);
     AddRGBAFormat(&map, GL_RED,          false, 16,  0,  0,  0, 0, GL_RED,  GL_HALF_FLOAT_OES,               GL_FLOAT, false, RequireExtAndExt<&Extensions::textureHalfFloat, &Extensions::textureRG>, RequireExt<&Extensions::textureHalfFloatLinear>, AlwaysSupported,                                NeverSupported);
     AddRGBAFormat(&map, GL_RG,           false, 16, 16,  0,  0, 0, GL_RG,   GL_HALF_FLOAT_OES,               GL_FLOAT, false, RequireExtAndExt<&Extensions::textureHalfFloat, &Extensions::textureRG>, RequireExt<&Extensions::textureHalfFloatLinear>, AlwaysSupported,                                NeverSupported);
-    AddRGBAFormat(&map, GL_RGB,          false, 16, 16, 16,  0, 0, GL_RGB,  GL_HALF_FLOAT_OES,               GL_FLOAT, false, RequireExt<&Extensions::textureHalfFloat>,                               RequireExt<&Extensions::textureHalfFloatLinear>, RequireExt<&Extensions::colorBufferHalfFloat>,  NeverSupported);
-    AddRGBAFormat(&map, GL_RGBA,         false, 16, 16, 16, 16, 0, GL_RGBA, GL_HALF_FLOAT_OES,               GL_FLOAT, false, RequireExt<&Extensions::textureHalfFloat>,                               RequireExt<&Extensions::textureHalfFloatLinear>, RequireExt<&Extensions::colorBufferHalfFloat>,  NeverSupported);
+    AddRGBAFormat(&map, GL_RGB,          false, 16, 16, 16,  0, 0, GL_RGB,  GL_HALF_FLOAT_OES,               GL_FLOAT, false, RequireExt<&Extensions::textureHalfFloat>,                               RequireExt<&Extensions::textureHalfFloatLinear>, UnsizedHalfFloatOESRGBATextureAttachmentSupport, NeverSupported);
+    AddRGBAFormat(&map, GL_RGBA,         false, 16, 16, 16, 16, 0, GL_RGBA, GL_HALF_FLOAT_OES,               GL_FLOAT, false, RequireExt<&Extensions::textureHalfFloat>,                               RequireExt<&Extensions::textureHalfFloatLinear>, UnsizedHalfFloatOESRGBATextureAttachmentSupport, NeverSupported);
     AddRGBAFormat(&map, GL_RED,          false, 32,  0,  0,  0, 0, GL_RED,  GL_FLOAT,                        GL_FLOAT, false, RequireExtAndExt<&Extensions::textureFloat, &Extensions::textureRG>,     RequireExt<&Extensions::textureFloatLinear>,     AlwaysSupported,                                NeverSupported);
     AddRGBAFormat(&map, GL_RG,           false, 32, 32,  0,  0, 0, GL_RG,   GL_FLOAT,                        GL_FLOAT, false, RequireExtAndExt<&Extensions::textureFloat, &Extensions::textureRG>,     RequireExt<&Extensions::textureFloatLinear>,     AlwaysSupported,                                NeverSupported);
     AddRGBAFormat(&map, GL_RGB,          false, 32, 32, 32,  0, 0, GL_RGB,  GL_FLOAT,                        GL_FLOAT, false, RequireExt<&Extensions::textureFloat>,                                   RequireExt<&Extensions::textureFloatLinear>,     NeverSupported,                                 NeverSupported);
@@ -1203,11 +1212,23 @@ bool InternalFormat::computeDepthPitch(GLsizei height,
                                        GLuint rowPitch,
                                        GLuint *resultOut) const
 {
-    GLuint rows =
-        (imageHeight > 0 ? static_cast<GLuint>(imageHeight) : static_cast<GLuint>(height));
+    CheckedNumeric<GLuint> pixelsHeight(imageHeight > 0 ? static_cast<GLuint>(imageHeight)
+                                                        : static_cast<GLuint>(height));
+
+    CheckedNumeric<GLuint> rowCount;
+    if (compressed)
+    {
+        CheckedNumeric<GLuint> checkedBlockHeight(compressedBlockHeight);
+        rowCount = (pixelsHeight + checkedBlockHeight - 1u) / checkedBlockHeight;
+    }
+    else
+    {
+        rowCount = pixelsHeight;
+    }
+
     CheckedNumeric<GLuint> checkedRowPitch(rowPitch);
 
-    return CheckedMathResult(checkedRowPitch * rows, resultOut);
+    return CheckedMathResult(checkedRowPitch * rowCount, resultOut);
 }
 
 bool InternalFormat::computeDepthPitch(GLenum formatType,
@@ -1612,6 +1633,7 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
 #endif
             }
         case VertexAttribType::HalfFloat:
+        case VertexAttribType::HalfFloatOES:
             switch (components)
             {
                 case 1:
@@ -1657,6 +1679,49 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
             if (normalized)
                 return angle::FormatID::R10G10B10A2_UNORM;
             return angle::FormatID::R10G10B10A2_USCALED;
+        case VertexAttribType::Int1010102:
+            switch (components)
+            {
+                case 3:
+                    if (pureInteger)
+                        return angle::FormatID::X2R10G10B10_SINT_VERTEX;
+                    if (normalized)
+                        return angle::FormatID::X2R10G10B10_SNORM_VERTEX;
+                    return angle::FormatID::X2R10G10B10_SSCALED_VERTEX;
+                case 4:
+                    if (pureInteger)
+                        return angle::FormatID::A2R10G10B10_SINT_VERTEX;
+                    if (normalized)
+                        return angle::FormatID::A2R10G10B10_SNORM_VERTEX;
+                    return angle::FormatID::A2R10G10B10_SSCALED_VERTEX;
+                default:
+                    UNREACHABLE();
+#if !UNREACHABLE_IS_NORETURN
+                    return angle::FormatID::NONE;
+#endif
+            }
+        case VertexAttribType::UnsignedInt1010102:
+            switch (components)
+            {
+                case 3:
+                    if (pureInteger)
+                        return angle::FormatID::X2R10G10B10_UINT_VERTEX;
+                    if (normalized)
+                        return angle::FormatID::X2R10G10B10_UNORM_VERTEX;
+                    return angle::FormatID::X2R10G10B10_USCALED_VERTEX;
+
+                case 4:
+                    if (pureInteger)
+                        return angle::FormatID::A2R10G10B10_UINT_VERTEX;
+                    if (normalized)
+                        return angle::FormatID::A2R10G10B10_UNORM_VERTEX;
+                    return angle::FormatID::A2R10G10B10_USCALED_VERTEX;
+                default:
+                    UNREACHABLE();
+#if !UNREACHABLE_IS_NORETURN
+                    return angle::FormatID::NONE;
+#endif
+            }
         default:
             UNREACHABLE();
 #if !UNREACHABLE_IS_NORETURN
@@ -2144,6 +2209,61 @@ const VertexFormat &GetVertexFormatFromID(angle::FormatID vertexFormatID)
             static const VertexFormat format(GL_UNSIGNED_INT_2_10_10_10_REV, GL_FALSE, 4, true);
             return format;
         }
+        case angle::FormatID::A2R10G10B10_SSCALED_VERTEX:
+        {
+            static const VertexFormat format(GL_INT_10_10_10_2_OES, GL_FALSE, 4, false);
+            return format;
+        }
+        case angle::FormatID::A2R10G10B10_USCALED_VERTEX:
+        {
+            static const VertexFormat format(GL_UNSIGNED_INT_10_10_10_2_OES, GL_FALSE, 4, false);
+            return format;
+        }
+        case angle::FormatID::A2R10G10B10_SNORM_VERTEX:
+        {
+            static const VertexFormat format(GL_INT_10_10_10_2_OES, GL_TRUE, 4, false);
+            return format;
+        }
+        case angle::FormatID::A2R10G10B10_UNORM_VERTEX:
+        {
+            static const VertexFormat format(GL_UNSIGNED_INT_10_10_10_2_OES, GL_TRUE, 4, false);
+            return format;
+        }
+        case angle::FormatID::A2R10G10B10_SINT_VERTEX:
+        {
+            static const VertexFormat format(GL_INT_10_10_10_2_OES, GL_FALSE, 4, true);
+            return format;
+        }
+        case angle::FormatID::A2R10G10B10_UINT_VERTEX:
+        {
+            static const VertexFormat format(GL_UNSIGNED_INT_10_10_10_2_OES, GL_FALSE, 4, true);
+            return format;
+        }
+        case angle::FormatID::X2R10G10B10_SSCALED_VERTEX:
+        {
+            static const VertexFormat format(GL_INT_10_10_10_2_OES, GL_FALSE, 4, false);
+            return format;
+        }
+        case angle::FormatID::X2R10G10B10_USCALED_VERTEX:
+        {
+            static const VertexFormat format(GL_UNSIGNED_INT_10_10_10_2_OES, GL_FALSE, 4, false);
+            return format;
+        }
+        case angle::FormatID::X2R10G10B10_SNORM_VERTEX:
+        {
+            static const VertexFormat format(GL_INT_10_10_10_2_OES, GL_TRUE, 4, false);
+            return format;
+        }
+        case angle::FormatID::X2R10G10B10_UNORM_VERTEX:
+        {
+            static const VertexFormat format(GL_UNSIGNED_INT_10_10_10_2_OES, GL_TRUE, 4, false);
+            return format;
+        }
+        case angle::FormatID::X2R10G10B10_SINT_VERTEX:
+        {
+            static const VertexFormat format(GL_INT_10_10_10_2_OES, GL_FALSE, 4, true);
+            return format;
+        }
         default:
         {
             static const VertexFormat format(GL_NONE, GL_FALSE, 0, false);
@@ -2214,6 +2334,18 @@ size_t GetVertexFormatSize(angle::FormatID vertexFormatID)
         case angle::FormatID::R10G10B10A2_UNORM:
         case angle::FormatID::R10G10B10A2_SINT:
         case angle::FormatID::R10G10B10A2_UINT:
+        case angle::FormatID::A2R10G10B10_SSCALED_VERTEX:
+        case angle::FormatID::A2R10G10B10_USCALED_VERTEX:
+        case angle::FormatID::A2R10G10B10_SINT_VERTEX:
+        case angle::FormatID::A2R10G10B10_UINT_VERTEX:
+        case angle::FormatID::A2R10G10B10_SNORM_VERTEX:
+        case angle::FormatID::A2R10G10B10_UNORM_VERTEX:
+        case angle::FormatID::X2R10G10B10_SSCALED_VERTEX:
+        case angle::FormatID::X2R10G10B10_USCALED_VERTEX:
+        case angle::FormatID::X2R10G10B10_SINT_VERTEX:
+        case angle::FormatID::X2R10G10B10_UINT_VERTEX:
+        case angle::FormatID::X2R10G10B10_SNORM_VERTEX:
+        case angle::FormatID::X2R10G10B10_UNORM_VERTEX:
             return 4;
 
         case angle::FormatID::R16G16B16_SSCALED:

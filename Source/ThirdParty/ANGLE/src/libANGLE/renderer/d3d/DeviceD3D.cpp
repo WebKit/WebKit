@@ -7,7 +7,6 @@
 // DeviceD3D.cpp: D3D implementation of egl::Device
 
 #include "libANGLE/renderer/d3d/DeviceD3D.h"
-#include "libANGLE/renderer/d3d/RendererD3D.h"
 
 #include "libANGLE/Device.h"
 #include "libANGLE/Display.h"
@@ -33,9 +32,12 @@ DeviceD3D::~DeviceD3D()
 #endif
 }
 
-egl::Error DeviceD3D::getDevice(void **outValue)
+egl::Error DeviceD3D::getAttribute(const egl::Display *display, EGLint attribute, void **outValue)
 {
     ASSERT(mIsInitialized);
+    ANGLE_UNUSED_VARIABLE(display);
+    // Validated at higher levels.
+    ASSERT(getType() == attribute);
     *outValue = mDevice;
     return egl::NoError();
 }

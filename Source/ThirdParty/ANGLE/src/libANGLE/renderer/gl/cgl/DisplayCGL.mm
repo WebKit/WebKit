@@ -18,6 +18,7 @@
 #    include "gpu_info_util/SystemInfo.h"
 #    include "libANGLE/Display.h"
 #    include "libANGLE/renderer/gl/cgl/ContextCGL.h"
+#    include "libANGLE/renderer/gl/cgl/DeviceCGL.h"
 #    include "libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.h"
 #    include "libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.h"
 #    include "libANGLE/renderer/gl/cgl/RendererCGL.h"
@@ -209,8 +210,7 @@ ContextImpl *DisplayCGL::createContext(const gl::State &state,
 
 DeviceImpl *DisplayCGL::createDevice()
 {
-    UNIMPLEMENTED();
-    return nullptr;
+    return new DeviceCGL();
 }
 
 egl::ConfigSet DisplayCGL::generateConfigs()
@@ -323,10 +323,16 @@ CGLContextObj DisplayCGL::getCGLContext() const
     return mContext;
 }
 
+CGLPixelFormatObj DisplayCGL::getCGLPixelFormat() const
+{
+    return mPixelFormat;
+}
+
 void DisplayCGL::generateExtensions(egl::DisplayExtensions *outExtensions) const
 {
     outExtensions->iosurfaceClientBuffer = true;
     outExtensions->surfacelessContext    = true;
+    outExtensions->deviceQuery           = true;
 
     // Contexts are virtualized so textures can be shared globally
     outExtensions->displayTextureShareGroup = true;

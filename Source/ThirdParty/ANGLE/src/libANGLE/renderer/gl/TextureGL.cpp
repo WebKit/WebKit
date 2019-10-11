@@ -68,13 +68,22 @@ bool GetDepthStencilWorkaround(GLenum format)
     return format == GL_DEPTH_COMPONENT || format == GL_DEPTH_STENCIL;
 }
 
-LevelInfoGL GetLevelInfo(GLenum originalInternalFormat, GLenum destinationInternalFormat)
+bool GetEmulatedAlphaChannel(const angle::FeaturesGL &features, GLenum internalFormat)
+{
+    return features.rgbDXT1TexturesSampleZeroAlpha.enabled &&
+           internalFormat == GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+}
+
+LevelInfoGL GetLevelInfo(const angle::FeaturesGL &features,
+                         GLenum originalInternalFormat,
+                         GLenum destinationInternalFormat)
 {
     GLenum originalFormat    = gl::GetUnsizedFormat(originalInternalFormat);
     GLenum destinationFormat = gl::GetUnsizedFormat(destinationInternalFormat);
     return LevelInfoGL(originalFormat, destinationInternalFormat,
                        GetDepthStencilWorkaround(originalFormat),
-                       GetLUMAWorkaroundInfo(originalFormat, destinationFormat), false);
+                       GetLUMAWorkaroundInfo(originalFormat, destinationFormat),
+                       GetEmulatedAlphaChannel(features, originalFormat));
 }
 
 gl::Texture::DirtyBits GetLevelWorkaroundDirtyBits()
@@ -257,7 +266,7 @@ angle::Result TextureGL::setImageHelper(const gl::Context *context,
     }
 
     setLevelInfo(context, target, level, 1,
-                 GetLevelInfo(internalFormat, texImageFormat.internalFormat));
+                 GetLevelInfo(features, internalFormat, texImageFormat.internalFormat));
 
     return angle::Result::Continue;
 }
@@ -298,7 +307,7 @@ angle::Result TextureGL::setSubImage(const gl::Context *context,
     size_t level             = static_cast<size_t>(index.getLevelIndex());
 
     ASSERT(getLevelInfo(target, level).lumaWorkaround.enabled ==
-           GetLevelInfo(format, texSubImageFormat.format).lumaWorkaround.enabled);
+           GetLevelInfo(features, format, texSubImageFormat.format).lumaWorkaround.enabled);
 
     stateManager->bindTexture(getType(), mTextureID);
     if (features.unpackOverlappingRowsSeparatelyUnpackBuffer.enabled && unpackBuffer &&
@@ -541,7 +550,8 @@ angle::Result TextureGL::setCompressedImage(const gl::Context *context,
                                                      static_cast<GLsizei>(imageSize), pixels));
     }
 
-    LevelInfoGL levelInfo = GetLevelInfo(internalFormat, compressedTexImageFormat.internalFormat);
+    LevelInfoGL levelInfo =
+        GetLevelInfo(features, internalFormat, compressedTexImageFormat.internalFormat);
     ASSERT(!levelInfo.lumaWorkaround.enabled);
     setLevelInfo(context, target, level, 1, levelInfo);
 
@@ -586,8 +596,9 @@ angle::Result TextureGL::setCompressedSubImage(const gl::Context *context,
                          static_cast<GLsizei>(imageSize), pixels));
     }
 
-    ASSERT(!getLevelInfo(target, level).lumaWorkaround.enabled &&
-           !GetLevelInfo(format, compressedTexSubImageFormat.format).lumaWorkaround.enabled);
+    ASSERT(
+        !getLevelInfo(target, level).lumaWorkaround.enabled &&
+        !GetLevelInfo(features, format, compressedTexSubImageFormat.format).lumaWorkaround.enabled);
 
     return angle::Result::Continue;
 }
@@ -676,7 +687,8 @@ angle::Result TextureGL::copyImage(const gl::Context *context,
             }
         }
 
-        LevelInfoGL levelInfo = GetLevelInfo(internalFormat, copyTexImageFormat.internalFormat);
+        LevelInfoGL levelInfo =
+            GetLevelInfo(features, internalFormat, copyTexImageFormat.internalFormat);
         gl::Offset destOffset(clippedArea.x - sourceArea.x, clippedArea.y - sourceArea.y, 0);
 
         if (levelInfo.lumaWorkaround.enabled)
@@ -867,8 +879,8 @@ angle::Result TextureGL::copySubTextureHelper(const gl::Context *context,
         !destSRGB && sourceGL->getType() == gl::TextureType::_2D)
     {
         bool copySucceeded = false;
-        ANGLE_TRY(blitter->copyTexSubImage(sourceGL, sourceLevel, this, target, level, sourceArea,
-                                           destOffset, &copySucceeded));
+        ANGLE_TRY(blitter->copyTexSubImage(context, sourceGL, sourceLevel, this, target, level,
+                                           sourceArea, destOffset, &copySucceeded));
         if (copySucceeded)
         {
             return angle::Result::Continue;
@@ -1077,7 +1089,7 @@ angle::Result TextureGL::setStorage(const gl::Context *context,
     }
 
     setLevelInfo(context, type, 0, levels,
-                 GetLevelInfo(internalFormat, texStorageFormat.internalFormat));
+                 GetLevelInfo(features, internalFormat, texStorageFormat.internalFormat));
 
     return angle::Result::Continue;
 }
@@ -1098,7 +1110,7 @@ angle::Result TextureGL::setImageExternal(const gl::Context *context,
         nativegl::GetTexImageFormat(functions, features, internalFormat, format, type);
 
     setLevelInfo(context, target, level, 1,
-                 GetLevelInfo(internalFormat, texImageFormat.internalFormat));
+                 GetLevelInfo(features, internalFormat, texImageFormat.internalFormat));
     return angle::Result::Continue;
 }
 
@@ -1149,7 +1161,7 @@ angle::Result TextureGL::setStorageMultisample(const gl::Context *context,
     }
 
     setLevelInfo(context, type, 0, 1,
-                 GetLevelInfo(internalformat, texStorageFormat.internalFormat));
+                 GetLevelInfo(features, internalformat, texStorageFormat.internalFormat));
 
     return angle::Result::Continue;
 }
@@ -1191,7 +1203,7 @@ angle::Result TextureGL::setStorageExternalMemory(const gl::Context *context,
     }
 
     setLevelInfo(context, type, 0, levels,
-                 GetLevelInfo(internalFormat, texStorageFormat.internalFormat));
+                 GetLevelInfo(features, internalFormat, texStorageFormat.internalFormat));
 
     return angle::Result::Continue;
 }
@@ -1263,13 +1275,16 @@ angle::Result TextureGL::setEGLImageTarget(const gl::Context *context,
                                            gl::TextureType type,
                                            egl::Image *image)
 {
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
+
     ImageGL *imageGL = GetImplAs<ImageGL>(image);
 
     GLenum imageNativeInternalFormat = GL_NONE;
     ANGLE_TRY(imageGL->setTexture2D(context, type, this, &imageNativeInternalFormat));
 
-    setLevelInfo(context, type, 0, 1,
-                 GetLevelInfo(image->getFormat().info->internalFormat, imageNativeInternalFormat));
+    setLevelInfo(
+        context, type, 0, 1,
+        GetLevelInfo(features, image->getFormat().info->internalFormat, imageNativeInternalFormat));
 
     return angle::Result::Continue;
 }
@@ -1707,7 +1722,8 @@ void TextureGL::setLevelInfo(const gl::Context *context,
 {
     ASSERT(levelCount > 0);
 
-    bool updateWorkarounds = levelInfo.depthStencilWorkaround || levelInfo.lumaWorkaround.enabled;
+    bool updateWorkarounds = levelInfo.depthStencilWorkaround || levelInfo.lumaWorkaround.enabled ||
+                             levelInfo.emulatedAlphaChannel;
 
     for (size_t i = level; i < level + levelCount; i++)
     {
@@ -1717,6 +1733,7 @@ void TextureGL::setLevelInfo(const gl::Context *context,
 
         updateWorkarounds |= curLevelInfo.depthStencilWorkaround;
         updateWorkarounds |= curLevelInfo.lumaWorkaround.enabled;
+        updateWorkarounds |= curLevelInfo.emulatedAlphaChannel;
 
         curLevelInfo = levelInfo;
     }
@@ -1785,7 +1802,7 @@ angle::Result TextureGL::initializeContents(const gl::Context *context,
         int levelDepth = mState.getImageDesc(imageIndex).size.depth;
 
         bool clearSucceeded = false;
-        ANGLE_TRY(blitter->clearRenderableTexture(this, nativeInternalFormat, levelDepth,
+        ANGLE_TRY(blitter->clearRenderableTexture(context, this, nativeInternalFormat, levelDepth,
                                                   imageIndex, &clearSucceeded));
         if (clearSucceeded)
         {

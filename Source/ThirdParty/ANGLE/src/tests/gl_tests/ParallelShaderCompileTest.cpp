@@ -10,6 +10,7 @@
 #include "test_utils/gl_raii.h"
 
 #include "util/random_utils.h"
+#include "util/test_utils.h"
 
 using namespace angle;
 
@@ -157,7 +158,7 @@ class ParallelShaderCompileTest : public ANGLETest
                     }
                     ++i;
                 }
-                Sleep(kPollInterval);
+                angle::Sleep(kPollInterval);
             }
 
             while (!linkTasks.empty())
@@ -174,7 +175,7 @@ class ParallelShaderCompileTest : public ANGLETest
                     }
                     ++i;
                 }
-                Sleep(kPollInterval);
+                angle::Sleep(kPollInterval);
             }
         }
     };

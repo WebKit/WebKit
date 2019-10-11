@@ -41,8 +41,12 @@ EGLint PlatformParameters::getRenderer() const
 
 void PlatformParameters::initDefaultParameters()
 {
+#if defined(ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS_BY_DEFAULT)
     // Default debug layers to enabled in tests.
     eglParameters.debugLayersEnabled = EGL_TRUE;
+#else
+    eglParameters.debugLayersEnabled = EGL_FALSE;
+#endif  // defined(ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS_BY_DEFAULT)
 }
 
 bool operator<(const PlatformParameters &a, const PlatformParameters &b)
@@ -139,6 +143,10 @@ std::ostream &operator<<(std::ostream &stream, const PlatformParameters &pp)
 
         case EGL_PLATFORM_ANGLE_DEVICE_TYPE_D3D_WARP_ANGLE:
             stream << "_Warp";
+            break;
+
+        case EGL_PLATFORM_ANGLE_DEVICE_TYPE_SWIFTSHADER_ANGLE:
+            stream << "_SwiftShader";
             break;
 
         default:
@@ -394,6 +402,11 @@ EGLPlatformParameters VULKAN_NULL()
                                  EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE);
 }
 
+EGLPlatformParameters VULKAN_SWIFTSHADER()
+{
+    return EGLPlatformParameters(EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE, EGL_DONT_CARE, EGL_DONT_CARE,
+                                 EGL_PLATFORM_ANGLE_DEVICE_TYPE_SWIFTSHADER_ANGLE);
+}
 }  // namespace egl_platform
 
 // ANGLE tests platforms
@@ -655,6 +668,11 @@ PlatformParameters ES2_VULKAN()
 PlatformParameters ES2_VULKAN_NULL()
 {
     return PlatformParameters(2, 0, egl_platform::VULKAN_NULL());
+}
+
+PlatformParameters ES2_VULKAN_SWIFTSHADER()
+{
+    return PlatformParameters(2, 0, egl_platform::VULKAN_SWIFTSHADER());
 }
 
 PlatformParameters ES3_VULKAN()

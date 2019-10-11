@@ -10,6 +10,7 @@
 
 #include "angle_deqp_libtester.h"
 #include "common/angleutils.h"
+#include "common/system_utils.h"
 #include "deMath.h"
 #include "deUniquePtr.hpp"
 #include "platform/Platform.h"
@@ -20,7 +21,6 @@
 #include "tcuRandomOrderExecutor.h"
 #include "tcuResource.hpp"
 #include "tcuTestLog.hpp"
-#include "util/system_utils.h"
 
 tcu::Platform *CreateANGLEPlatform(angle::LogErrorFunc logErrorFunc);
 

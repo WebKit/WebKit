@@ -13,11 +13,14 @@ using namespace angle;
 namespace
 {
 
-constexpr unsigned int kPixelTolerance = 1u;
+constexpr GLuint kPixelTolerance     = 1u;
+constexpr GLfloat kPixelTolerance32F = 0.01f;
 
 // Take a pixel, and reset the components not covered by the format to default
 // values. In particular, the default value for the alpha component is 255
 // (1.0 as unsigned normalized fixed point value).
+// For legacy formats, the components may be reordered to match the color that
+// would be created if a pixel of that format was initialized from the given color
 GLColor SliceFormatColor(GLenum format, GLColor full)
 {
     switch (format)
@@ -30,9 +33,40 @@ GLColor SliceFormatColor(GLenum format, GLColor full)
             return GLColor(full.R, full.G, full.B, 255u);
         case GL_RGBA:
             return full;
+        case GL_LUMINANCE:
+            return GLColor(full.R, full.R, full.R, 255u);
+        case GL_ALPHA:
+            return GLColor(0, 0, 0, full.R);
+        case GL_LUMINANCE_ALPHA:
+            return GLColor(full.R, full.R, full.R, full.G);
         default:
             EXPECT_TRUE(false);
             return GLColor::white;
+    }
+}
+
+// As above, for 32F colors
+GLColor32F SliceFormatColor32F(GLenum format, GLColor32F full)
+{
+    switch (format)
+    {
+        case GL_RED:
+            return GLColor32F(full.R, 0.0f, 0.0f, 1.0f);
+        case GL_RG:
+            return GLColor32F(full.R, full.G, 0.0f, 1.0f);
+        case GL_RGB:
+            return GLColor32F(full.R, full.G, full.B, 1.0f);
+        case GL_RGBA:
+            return full;
+        case GL_LUMINANCE:
+            return GLColor32F(full.R, full.R, full.R, 1.0f);
+        case GL_ALPHA:
+            return GLColor32F(0.0f, 0.0f, 0.0f, full.R);
+        case GL_LUMINANCE_ALPHA:
+            return GLColor32F(full.R, full.R, full.R, full.G);
+        default:
+            EXPECT_TRUE(false);
+            return GLColor32F(1.0f, 1.0f, 1.0f, 1.0f);
     }
 }
 
@@ -1754,7 +1788,7 @@ TEST_P(Texture2DTest, TexStorageWithPBO)
     }
 }
 
-// See description on testFloatCopySubImage
+// Tests CopySubImage for float formats
 TEST_P(Texture2DTest, CopySubImageFloat_R_R)
 {
     testFloatCopySubImage(1, 1);
@@ -1783,7 +1817,7 @@ TEST_P(Texture2DTest, CopySubImageFloat_RGB_RG)
 TEST_P(Texture2DTest, CopySubImageFloat_RGB_RGB)
 {
     // TODO(cwallez): Fix on Linux Intel drivers (http://anglebug.com/1346)
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux());
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
     // Ignore SDK layers messages on D3D11 FL 9.3 (http://anglebug.com/1284)
     ANGLE_SKIP_TEST_IF(IsD3D11_FL93());
@@ -1811,10 +1845,6 @@ TEST_P(Texture2DTest, CopySubImageFloat_RGBA_RGB)
 
 TEST_P(Texture2DTest, CopySubImageFloat_RGBA_RGBA)
 {
-    // TODO(lucferron): This test fails only on linux and intel.
-    // http://anglebug.com/2726
-    ANGLE_SKIP_TEST_IF(IsVulkan() && IsLinux() && IsIntel());
-
     // Ignore SDK layers messages on D3D11 FL 9.3 (http://anglebug.com/1284)
     ANGLE_SKIP_TEST_IF(IsD3D11_FL93());
 
@@ -1940,6 +1970,8 @@ TEST_P(Texture2DTestES3, TextureImplPropogatesDirtyBits)
     ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsOpenGL());
     // D3D Debug device reports an error. http://anglebug.com/3501
     ANGLE_SKIP_TEST_IF(IsWindows() && IsD3D11());
+    // TODO(cnorthrop): Needs triage on Vulkan backend. http://anglebug.com/3950
+    ANGLE_SKIP_TEST_IF(IsVulkan());
 
     // The workaround in the GL backend required to trigger this bug generates driver warning
     // messages.
@@ -1984,6 +2016,9 @@ TEST_P(Texture2DTestES3, FramebufferTextureChangingBaselevel)
 {
     // TODO(geofflang): Investigate on D3D11. http://anglebug.com/2291
     ANGLE_SKIP_TEST_IF(IsD3D11());
+
+    // TODO(cnorthrop): Framebuffer level support. http://anglebug.com/3184
+    ANGLE_SKIP_TEST_IF(IsVulkan());
 
     setUpProgram();
 
@@ -2642,6 +2677,9 @@ TEST_P(ShadowSamplerPlusSampler3DTestES3, ShadowSamplerPlusSampler3DDraw)
 // samplerCubeShadow: TextureCube + SamplerComparisonState
 TEST_P(SamplerTypeMixTestES3, SamplerTypeMixDraw)
 {
+    // TODO(cnorthrop): Requires non-color staging buffer support. http://anglebug.com/3949
+    ANGLE_SKIP_TEST_IF(IsVulkan());
+
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mTexture2D);
     GLubyte texData[4];
@@ -4028,11 +4066,11 @@ class Texture2DRGTest : public Texture2DTest
         glGenRenderbuffers(1, &mRenderbuffer);
 
         glBindTexture(GL_TEXTURE_2D, mRenderableTexture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glBindTexture(GL_TEXTURE_2D, mTestTexture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
         glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -4139,7 +4177,7 @@ TEST_P(Texture2DRGTest, TextureRGFloatTest)
 }
 
 // Test half-float texture formats enabled by the GL_EXT_texture_rg extension.
-TEST_P(Texture2DRGTest, TextureRGFHalfFloatTest)
+TEST_P(Texture2DRGTest, TextureRGHalfFloatTest)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_rg"));
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_half_float"));
@@ -4156,6 +4194,452 @@ TEST_P(Texture2DRGTest, TextureRGFHalfFloatTest)
 
     setupFormatTextures(GL_RG_EXT, GL_RG_EXT, GL_HALF_FLOAT_OES, imageData);
     testRGTexture(SliceFormatColor(GL_RG_EXT, expectedColor));
+}
+
+class Texture2DFloatTest : public Texture2DTest
+{
+  protected:
+    Texture2DFloatTest()
+        : Texture2DTest(), mRenderableTexture(0), mTestTexture(0), mFBO(0), mRenderbuffer(0)
+    {}
+
+    void testSetUp() override
+    {
+        Texture2DTest::testSetUp();
+
+        glActiveTexture(GL_TEXTURE0);
+        glGenTextures(1, &mRenderableTexture);
+        glGenTextures(1, &mTestTexture);
+        glGenFramebuffers(1, &mFBO);
+        glGenRenderbuffers(1, &mRenderbuffer);
+
+        setUpProgram();
+        glUseProgram(mProgram);
+        glUniform1i(mTexture2DUniformLocation, 0);
+
+        glBindTexture(GL_TEXTURE_2D, mRenderableTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                               mRenderableTexture, 0);
+
+        ASSERT_GL_NO_ERROR();
+    }
+
+    void testTearDown() override
+    {
+        glDeleteTextures(1, &mRenderableTexture);
+        glDeleteTextures(1, &mTestTexture);
+        glDeleteFramebuffers(1, &mFBO);
+        glDeleteRenderbuffers(1, &mRenderbuffer);
+
+        Texture2DTest::testTearDown();
+    }
+
+    void testFloatTextureSample(GLenum internalFormat, GLenum format, GLenum type)
+    {
+        constexpr GLfloat imageDataFloat[] = {
+            0.2f,
+            0.3f,
+            0.4f,
+            0.5f,
+        };
+        constexpr GLhalf imageDataHalf[] = {
+            0x3266,
+            0x34CD,
+            0x3666,
+            0x3800,
+        };
+        GLColor expectedValue;
+        for (int i = 0; i < 4; i++)
+        {
+            expectedValue[i] = static_cast<GLubyte>(imageDataFloat[i] * 255.0f);
+        }
+
+        const GLvoid *imageData;
+        switch (type)
+        {
+            case GL_FLOAT:
+                imageData = imageDataFloat;
+                break;
+            case GL_HALF_FLOAT:
+            case GL_HALF_FLOAT_OES:
+                imageData = imageDataHalf;
+                break;
+            default:
+                imageData = nullptr;
+        }
+        ASSERT(imageData != nullptr);
+
+        glBindTexture(GL_TEXTURE_2D, mTestTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, 1, 1, 0, format, type, imageData);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+        drawQuad(mProgram, "position", 0.5f);
+
+        EXPECT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_NEAR(0, 0, SliceFormatColor(format, expectedValue), kPixelTolerance);
+    }
+
+    void testFloatTextureLinear(GLenum internalFormat, GLenum format, GLenum type)
+    {
+        int numComponents;
+        switch (format)
+        {
+            case GL_RGBA:
+                numComponents = 4;
+                break;
+            case GL_RGB:
+                numComponents = 3;
+                break;
+            case GL_LUMINANCE_ALPHA:
+                numComponents = 2;
+                break;
+            case GL_LUMINANCE:
+            case GL_ALPHA:
+                numComponents = 1;
+                break;
+            default:
+                numComponents = 0;
+        }
+        ASSERT(numComponents > 0);
+
+        constexpr GLfloat pixelIntensitiesFloat[] = {0.0f, 1.0f, 0.0f, 1.0f};
+        constexpr GLhalf pixelIntensitiesHalf[]   = {0x0000, 0x3C00, 0x0000, 0x3C00};
+
+        GLfloat imageDataFloat[16];
+        GLhalf imageDataHalf[16];
+        for (int i = 0; i < 4; i++)
+        {
+            for (int c = 0; c < numComponents; c++)
+            {
+                imageDataFloat[i * numComponents + c] = pixelIntensitiesFloat[i];
+                imageDataHalf[i * numComponents + c]  = pixelIntensitiesHalf[i];
+            }
+        }
+
+        const GLvoid *imageData;
+        switch (type)
+        {
+            case GL_FLOAT:
+                imageData = imageDataFloat;
+                break;
+            case GL_HALF_FLOAT:
+            case GL_HALF_FLOAT_OES:
+                imageData = imageDataHalf;
+                break;
+            default:
+                imageData = nullptr;
+        }
+        ASSERT(imageData != nullptr);
+
+        glBindTexture(GL_TEXTURE_2D, mTestTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, 2, 2, 0, format, type, imageData);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+        drawQuad(mProgram, "position", 0.5f);
+
+        EXPECT_GL_NO_ERROR();
+        // Source texture contains 2 black pixels and 2 white pixels, we sample in the center so we
+        // should expect the final value to be gray (halfway in-between)
+        EXPECT_PIXEL_COLOR_NEAR(0, 0, SliceFormatColor(format, GLColor(127u, 127u, 127u, 127u)),
+                                kPixelTolerance);
+    }
+
+    bool performFloatTextureRender(GLenum internalFormat,
+                                   GLenum renderBufferFormat,
+                                   GLenum format,
+                                   GLenum type)
+    {
+        glBindTexture(GL_TEXTURE_2D, mTestTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, 1, 1, 0, format, type, nullptr);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        glBindRenderbuffer(GL_RENDERBUFFER, mRenderbuffer);
+        glRenderbufferStorage(GL_RENDERBUFFER, renderBufferFormat, 1, 1);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                                  mRenderbuffer);
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        EXPECT_GL_NO_ERROR();
+
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        {
+            return false;
+        }
+
+        glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        EXPECT_GL_NO_ERROR();
+        return true;
+    }
+
+    GLuint mRenderableTexture;
+    GLuint mTestTexture;
+    GLuint mFBO;
+    GLuint mRenderbuffer;
+};
+
+class Texture2DFloatTestES3 : public Texture2DFloatTest
+{
+  protected:
+    void testFloatTextureRender(GLenum internalFormat, GLenum format, GLenum type)
+    {
+        bool framebufferComplete =
+            performFloatTextureRender(internalFormat, internalFormat, format, type);
+        EXPECT_TRUE(framebufferComplete);
+        EXPECT_PIXEL_COLOR32F_NEAR(0, 0,
+                                   SliceFormatColor32F(format, GLColor32F(1.0f, 1.0f, 1.0f, 1.0f)),
+                                   kPixelTolerance32F);
+    }
+};
+
+class Texture2DFloatTestES2 : public Texture2DFloatTest
+{
+  protected:
+    bool checkFloatTextureRender(GLenum renderBufferFormat, GLenum format, GLenum type)
+    {
+        bool framebufferComplete =
+            performFloatTextureRender(format, renderBufferFormat, format, type);
+
+        if (!framebufferComplete)
+        {
+            return false;
+        }
+
+        EXPECT_PIXEL_COLOR32F_NEAR(0, 0,
+                                   SliceFormatColor32F(format, GLColor32F(1.0f, 1.0f, 1.0f, 1.0f)),
+                                   kPixelTolerance32F);
+        return true;
+    }
+};
+
+// Test texture sampling for ES3 float texture formats
+TEST_P(Texture2DFloatTestES3, TextureFloatSampleBasicTest)
+{
+    testFloatTextureSample(GL_RGBA32F, GL_RGBA, GL_FLOAT);
+    testFloatTextureSample(GL_RGB32F, GL_RGB, GL_FLOAT);
+}
+
+// Test texture sampling for ES2 float texture formats
+TEST_P(Texture2DFloatTestES2, TextureFloatSampleBasicTest)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float"));
+    testFloatTextureSample(GL_RGBA, GL_RGBA, GL_FLOAT);
+    testFloatTextureSample(GL_RGB, GL_RGB, GL_FLOAT);
+}
+
+// Test texture sampling for ES3 half float texture formats
+TEST_P(Texture2DFloatTestES3, TextureHalfFloatSampleBasicTest)
+{
+    testFloatTextureSample(GL_RGBA16F, GL_RGBA, GL_HALF_FLOAT);
+    testFloatTextureSample(GL_RGB16F, GL_RGB, GL_HALF_FLOAT);
+}
+
+// Test texture sampling for ES2 half float texture formats
+TEST_P(Texture2DFloatTestES2, TextureHalfFloatSampleBasicTest)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_half_float"));
+    testFloatTextureSample(GL_RGBA, GL_RGBA, GL_HALF_FLOAT_OES);
+    testFloatTextureSample(GL_RGB, GL_RGB, GL_HALF_FLOAT_OES);
+}
+
+// Test texture sampling for legacy GLES 2.0 float texture formats in ES3
+TEST_P(Texture2DFloatTestES3, TextureFloatSampleLegacyTest)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float"));
+
+    testFloatTextureSample(GL_LUMINANCE, GL_LUMINANCE, GL_FLOAT);
+    testFloatTextureSample(GL_ALPHA, GL_ALPHA, GL_FLOAT);
+    testFloatTextureSample(GL_LUMINANCE_ALPHA, GL_LUMINANCE_ALPHA, GL_FLOAT);
+
+    if (IsGLExtensionEnabled("GL_EXT_texture_storage"))
+    {
+        testFloatTextureSample(GL_LUMINANCE32F_EXT, GL_LUMINANCE, GL_FLOAT);
+        testFloatTextureSample(GL_ALPHA32F_EXT, GL_ALPHA, GL_FLOAT);
+        testFloatTextureSample(GL_LUMINANCE_ALPHA32F_EXT, GL_LUMINANCE_ALPHA, GL_FLOAT);
+    }
+}
+
+// Test texture sampling for legacy GLES 2.0 float texture formats in ES2
+TEST_P(Texture2DFloatTestES2, TextureFloatSampleLegacyTest)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float"));
+
+    testFloatTextureSample(GL_LUMINANCE, GL_LUMINANCE, GL_FLOAT);
+    testFloatTextureSample(GL_ALPHA, GL_ALPHA, GL_FLOAT);
+    testFloatTextureSample(GL_LUMINANCE_ALPHA, GL_LUMINANCE_ALPHA, GL_FLOAT);
+}
+
+// Test texture sampling for legacy GLES 2.0 half float texture formats in ES3
+TEST_P(Texture2DFloatTestES3, TextureHalfFloatSampleLegacyTest)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_half_float"));
+
+    testFloatTextureSample(GL_LUMINANCE, GL_LUMINANCE, GL_HALF_FLOAT_OES);
+    testFloatTextureSample(GL_ALPHA, GL_ALPHA, GL_HALF_FLOAT_OES);
+    testFloatTextureSample(GL_LUMINANCE_ALPHA, GL_LUMINANCE_ALPHA, GL_HALF_FLOAT_OES);
+
+    if (IsGLExtensionEnabled("GL_EXT_texture_storage"))
+    {
+        testFloatTextureSample(GL_LUMINANCE16F_EXT, GL_LUMINANCE, GL_HALF_FLOAT);
+        testFloatTextureSample(GL_ALPHA16F_EXT, GL_ALPHA, GL_HALF_FLOAT);
+        testFloatTextureSample(GL_LUMINANCE_ALPHA16F_EXT, GL_LUMINANCE_ALPHA, GL_HALF_FLOAT);
+    }
+}
+// Test texture sampling for legacy GLES 2.0 half float texture formats in ES2
+TEST_P(Texture2DFloatTestES2, TextureHalfFloatSampleLegacyTest)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_half_float"));
+
+    testFloatTextureSample(GL_LUMINANCE, GL_LUMINANCE, GL_HALF_FLOAT_OES);
+    testFloatTextureSample(GL_ALPHA, GL_ALPHA, GL_HALF_FLOAT_OES);
+    testFloatTextureSample(GL_LUMINANCE_ALPHA, GL_LUMINANCE_ALPHA, GL_HALF_FLOAT_OES);
+}
+
+// Test linear sampling for ES3 32F formats
+TEST_P(Texture2DFloatTestES3, TextureFloatLinearTest)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float_linear"));
+
+    testFloatTextureLinear(GL_RGBA32F, GL_RGBA, GL_FLOAT);
+    testFloatTextureLinear(GL_RGB32F, GL_RGB, GL_FLOAT);
+}
+// Test linear sampling for ES2 32F formats
+TEST_P(Texture2DFloatTestES2, TextureFloatLinearTest)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float_linear"));
+
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float"));
+
+    testFloatTextureLinear(GL_RGBA, GL_RGBA, GL_FLOAT);
+}
+
+// Test linear sampling for ES3 16F formats
+TEST_P(Texture2DFloatTestES3, TextureHalfFloatLinearTest)
+{
+    // Half float formats must be linearly filterable in GLES 3.0 core
+    testFloatTextureLinear(GL_RGBA16F, GL_RGBA, GL_HALF_FLOAT);
+    testFloatTextureLinear(GL_RGB16F, GL_RGB, GL_HALF_FLOAT);
+}
+// Test linear sampling for ES2 16F formats
+TEST_P(Texture2DFloatTestES2, TextureHalfFloatLinearTest)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_half_float_linear"));
+    testFloatTextureLinear(GL_RGBA, GL_RGBA, GL_HALF_FLOAT_OES);
+    testFloatTextureLinear(GL_RGB, GL_RGB, GL_HALF_FLOAT_OES);
+}
+
+// Test linear sampling for legacy GLES 2.0 32F formats in ES3
+TEST_P(Texture2DFloatTestES3, TextureFloatLinearLegacyTest)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float_linear"));
+
+    testFloatTextureLinear(GL_LUMINANCE, GL_LUMINANCE, GL_FLOAT);
+    testFloatTextureLinear(GL_ALPHA, GL_ALPHA, GL_FLOAT);
+    testFloatTextureLinear(GL_LUMINANCE_ALPHA, GL_LUMINANCE_ALPHA, GL_FLOAT);
+
+    if (IsGLExtensionEnabled("GL_EXT_texture_storage"))
+    {
+        testFloatTextureLinear(GL_LUMINANCE32F_EXT, GL_LUMINANCE, GL_FLOAT);
+        testFloatTextureLinear(GL_ALPHA32F_EXT, GL_ALPHA, GL_FLOAT);
+        testFloatTextureLinear(GL_LUMINANCE_ALPHA32F_EXT, GL_LUMINANCE_ALPHA, GL_FLOAT);
+    }
+}
+// Test linear sampling for legacy GLES 2.0 32F formats in ES2
+TEST_P(Texture2DFloatTestES2, TextureFloatLinearLegacyTest)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_float_linear"));
+
+    testFloatTextureLinear(GL_LUMINANCE, GL_LUMINANCE, GL_FLOAT);
+    testFloatTextureLinear(GL_ALPHA, GL_ALPHA, GL_FLOAT);
+    testFloatTextureLinear(GL_LUMINANCE_ALPHA, GL_LUMINANCE_ALPHA, GL_FLOAT);
+}
+
+// Test linear sampling for legacy GLES 2.0 16F formats in ES3
+TEST_P(Texture2DFloatTestES3, TextureHalfFloatLinearLegacyTest)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_half_float"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_half_float_linear"));
+
+    testFloatTextureLinear(GL_LUMINANCE, GL_LUMINANCE, GL_HALF_FLOAT_OES);
+    testFloatTextureLinear(GL_ALPHA, GL_ALPHA, GL_HALF_FLOAT_OES);
+    testFloatTextureLinear(GL_LUMINANCE_ALPHA, GL_LUMINANCE_ALPHA, GL_HALF_FLOAT_OES);
+
+    if (IsGLExtensionEnabled("GL_EXT_texture_storage"))
+    {
+        testFloatTextureLinear(GL_LUMINANCE16F_EXT, GL_LUMINANCE, GL_HALF_FLOAT);
+        testFloatTextureLinear(GL_ALPHA16F_EXT, GL_ALPHA, GL_HALF_FLOAT);
+        testFloatTextureLinear(GL_LUMINANCE_ALPHA16F_EXT, GL_LUMINANCE_ALPHA, GL_HALF_FLOAT);
+    }
+}
+// Test linear sampling for legacy GLES 2.0 16F formats in ES2
+TEST_P(Texture2DFloatTestES2, TextureHalfFloatLinearLegacyTest)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_half_float"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_half_float_linear"));
+
+    testFloatTextureLinear(GL_LUMINANCE, GL_LUMINANCE, GL_HALF_FLOAT_OES);
+    testFloatTextureLinear(GL_ALPHA, GL_ALPHA, GL_HALF_FLOAT_OES);
+    testFloatTextureLinear(GL_LUMINANCE_ALPHA, GL_LUMINANCE_ALPHA, GL_HALF_FLOAT_OES);
+}
+
+// Test color-renderability for ES3 float and half float textures
+TEST_P(Texture2DFloatTestES3, TextureFloatRenderTest)
+{
+    // EXT_color_buffer_float covers float, half float, and 11-11-10 float formats
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_color_buffer_float"));
+
+    testFloatTextureRender(GL_R32F, GL_RED, GL_FLOAT);
+    testFloatTextureRender(GL_RG32F, GL_RG, GL_FLOAT);
+    testFloatTextureRender(GL_RGBA32F, GL_RGBA, GL_FLOAT);
+
+    testFloatTextureRender(GL_R16F, GL_RED, GL_HALF_FLOAT);
+    testFloatTextureRender(GL_RG16F, GL_RG, GL_HALF_FLOAT);
+    testFloatTextureRender(GL_RGBA16F, GL_RGBA, GL_HALF_FLOAT);
+
+    testFloatTextureRender(GL_R11F_G11F_B10F, GL_RGB, GL_FLOAT);
+}
+
+// Test color-renderability for ES2 half float textures
+TEST_P(Texture2DFloatTestES2, TextureFloatRenderTest)
+{
+    // EXT_color_buffer_half_float requires at least one format to be renderable, but does not
+    // require a specific one
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_color_buffer_half_float"));
+    // https://crbug.com/1003971
+    ANGLE_SKIP_TEST_IF(IsOzone());
+
+    bool atLeastOneSupported = false;
+
+    if (IsGLExtensionEnabled("GL_OES_texture_half_float") ||
+        IsGLExtensionEnabled("GL_OES_texture_half_float"))
+    {
+        atLeastOneSupported |= checkFloatTextureRender(GL_R16F_EXT, GL_RED_EXT, GL_HALF_FLOAT_OES);
+        atLeastOneSupported |= checkFloatTextureRender(GL_RG16F_EXT, GL_RG_EXT, GL_HALF_FLOAT_OES);
+    }
+    if (IsGLExtensionEnabled("GL_OES_texture_half_float"))
+    {
+        atLeastOneSupported |= checkFloatTextureRender(GL_RGB16F_EXT, GL_RGB, GL_HALF_FLOAT_OES);
+
+        // If OES_texture_half_float is supported, then RGBA half float textures must be renderable
+        bool rgbaSupported = checkFloatTextureRender(GL_RGBA16F_EXT, GL_RGBA, GL_HALF_FLOAT_OES);
+        EXPECT_TRUE(rgbaSupported);
+        atLeastOneSupported |= rgbaSupported;
+    }
+
+    EXPECT_TRUE(atLeastOneSupported);
 }
 
 // Test that UNPACK_SKIP_IMAGES doesn't have an effect on 2D texture uploads.
@@ -4294,6 +4778,9 @@ TEST_P(Texture2DTestES3, DepthTexturesWithMipmaps)
 
     // Seems to fail on AMD D3D11. Possibly driver bug. http://anglebug.com/3342
     ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsD3D11());
+
+    // TODO(cnorthrop): Also failing on Vulkan/Windows/AMD. http://anglebug.com/3950
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsVulkan());
 
     const int size = getWindowWidth();
 
@@ -4916,6 +5403,9 @@ TEST_P(Texture2DTestES3, GenerateMipmapAndBaseLevelLUMA)
 // this led to not sampling your texture data when minification occurred.
 TEST_P(Texture2DTestES3, MinificationWithSamplerNoMipmapping)
 {
+    // TODO: Triage this failure on Vulkan: http://anglebug.com/3950
+    ANGLE_SKIP_TEST_IF(IsVulkan());
+
     constexpr char kVS[] =
         "#version 300 es\n"
         "out vec2 texcoord;\n"
@@ -5183,8 +5673,8 @@ ANGLE_INSTANTIATE_TEST(SamplerArrayAsFunctionParameterTest,
                        ES2_OPENGL(),
                        ES2_OPENGLES(),
                        ES2_VULKAN());
-ANGLE_INSTANTIATE_TEST(Texture2DTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
-ANGLE_INSTANTIATE_TEST(Texture3DTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
+ANGLE_INSTANTIATE_TEST(Texture2DTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES(), ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST(Texture3DTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES(), ES3_VULKAN());
 ANGLE_INSTANTIATE_TEST(Texture2DIntegerAlpha1TestES3,
                        ES3_D3D11(),
                        ES3_OPENGL(),
@@ -5204,8 +5694,12 @@ ANGLE_INSTANTIATE_TEST(SamplerTypeMixTestES3,
                        ES3_OPENGL(),
                        ES3_OPENGLES(),
                        ES3_VULKAN());
-ANGLE_INSTANTIATE_TEST(Texture2DArrayTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
-ANGLE_INSTANTIATE_TEST(TextureSizeTextureArrayTest, ES3_D3D11(), ES3_OPENGL());
+ANGLE_INSTANTIATE_TEST(Texture2DArrayTestES3,
+                       ES3_D3D11(),
+                       ES3_OPENGL(),
+                       ES3_OPENGLES(),
+                       ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST(TextureSizeTextureArrayTest, ES3_D3D11(), ES3_OPENGL(), ES3_VULKAN());
 ANGLE_INSTANTIATE_TEST(SamplerInStructTest,
                        ES2_D3D11(),
                        ES2_D3D9(),
@@ -5261,13 +5755,26 @@ ANGLE_INSTANTIATE_TEST(Texture2DRGTest,
                        ES3_OPENGLES(),
                        ES2_VULKAN(),
                        ES3_VULKAN());
-ANGLE_INSTANTIATE_TEST(TextureCubeTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
-ANGLE_INSTANTIATE_TEST(Texture2DIntegerTestES3, ES3_D3D11(), ES3_OPENGL());
-ANGLE_INSTANTIATE_TEST(TextureCubeIntegerTestES3, ES3_D3D11(), ES3_OPENGL());
+ANGLE_INSTANTIATE_TEST(Texture2DFloatTestES3,
+                       ES3_D3D11(),
+                       ES3_OPENGL(),
+                       ES3_OPENGLES(),
+                       ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST(Texture2DFloatTestES2,
+                       ES2_D3D11(),
+                       ES2_OPENGL(),
+                       ES2_OPENGLES(),
+                       ES2_VULKAN());
+ANGLE_INSTANTIATE_TEST(TextureCubeTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES(), ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST(Texture2DIntegerTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST(TextureCubeIntegerTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_VULKAN());
 ANGLE_INSTANTIATE_TEST(TextureCubeIntegerEdgeTestES3, ES3_D3D11(), ES3_OPENGL());
-ANGLE_INSTANTIATE_TEST(Texture2DIntegerProjectiveOffsetTestES3, ES3_D3D11(), ES3_OPENGL());
-ANGLE_INSTANTIATE_TEST(Texture2DArrayIntegerTestES3, ES3_D3D11(), ES3_OPENGL());
-ANGLE_INSTANTIATE_TEST(Texture3DIntegerTestES3, ES3_D3D11(), ES3_OPENGL());
+ANGLE_INSTANTIATE_TEST(Texture2DIntegerProjectiveOffsetTestES3,
+                       ES3_D3D11(),
+                       ES3_OPENGL(),
+                       ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST(Texture2DArrayIntegerTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_VULKAN());
+ANGLE_INSTANTIATE_TEST(Texture3DIntegerTestES3, ES3_D3D11(), ES3_OPENGL(), ES3_VULKAN());
 ANGLE_INSTANTIATE_TEST(Texture2DDepthTest,
                        ES2_D3D9(),
                        ES2_D3D11(),

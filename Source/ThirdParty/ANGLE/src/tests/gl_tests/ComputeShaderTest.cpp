@@ -1415,7 +1415,7 @@ void main()
 TEST_P(ComputeShaderTest, BindImageTextureWithOneLayerTexture3D)
 {
     // Vulkan validation error creating a 2D image view of a 3D image layer.
-    // http://anglebug.com/3188
+    // http://anglebug.com/3886
     ANGLE_SKIP_TEST_IF(IsVulkan());
 
     GLTexture texture[2];
@@ -2736,6 +2736,8 @@ TEST_P(ComputeShaderTest, UniformDirty)
 {
     // glReadPixels is getting the result of the first dispatch call.  http://anglebug.com/3879
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsWindows() && (IsAMD() || IsNVIDIA()));
+    // Flaky on Linux FYI Release (Intel HD 630).  http://anglebug.com/3934
+    ANGLE_SKIP_TEST_IF(IsVulkan() && IsLinux() && IsIntel());
 
     GLTexture texture[2];
     GLFramebuffer framebuffer;
@@ -3010,7 +3012,7 @@ TEST_P(ComputeShaderTest, ImageStoreMipmapSlice)
     // TODO(xinghua.cao@intel.com): http://anglebug.com/3101
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
-    // Non-zero-level render target attachments are not yet supported.  http://anglebug.com/3148
+    // Non-zero-level render target attachments are not yet supported.  http://anglebug.com/3184
     ANGLE_SKIP_TEST_IF(IsVulkan());
 
     GLTexture texture[2];
@@ -3070,6 +3072,8 @@ void main()
 // pipeline input. It works well. See http://anglebug.com/3658
 TEST_P(ComputeShaderTest, DrawTexture1DispatchTexture2)
 {
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_color_buffer_float"));
+
     const char kCSSource[] = R"(#version 310 es
 layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
 precision highp sampler2D;
@@ -3454,6 +3458,57 @@ void main(void)
     EXPECT_EQ(2u, ptr[0]);
     EXPECT_EQ(2u, ptr[1]);
     EXPECT_EQ(3u, ptr[2]);
+
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+}
+
+// Create a 'very large' array inside of a function in a compute shader.
+TEST_P(ComputeShaderTest, VeryLargeArrayInsideFunction)
+{
+    constexpr char kComputeShader[] = R"(#version 310 es
+layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+layout(binding = 0, std430) buffer Output {
+  int value[1];
+} output_data;
+
+void main()
+{
+    int values[1000];
+    for (int i = 0; i < values.length(); i++)
+    {
+        values[i] = 0;
+    }
+
+    int total = 0;
+    for (int i = 0; i < values.length(); i++)
+    {
+        total += i;
+        values[i] = total;
+    }
+    output_data.value[0u] = values[1000-1];
+})";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kComputeShader);
+    EXPECT_GL_NO_ERROR();
+
+    glUseProgram(program);
+
+    constexpr unsigned int kBytesPerComponent = sizeof(GLint);
+
+    GLBuffer shaderStorageBuffer;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, 1 * kBytesPerComponent, nullptr, GL_STATIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, shaderStorageBuffer);
+    EXPECT_GL_NO_ERROR();
+
+    glDispatchCompute(1, 1, 1);
+    glFinish();
+    EXPECT_GL_NO_ERROR();
+
+    // read back
+    const GLint *ptr = reinterpret_cast<const GLint *>(
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, 1 * kBytesPerComponent, GL_MAP_READ_BIT));
+    EXPECT_EQ(499500, ptr[0]);
 
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 }

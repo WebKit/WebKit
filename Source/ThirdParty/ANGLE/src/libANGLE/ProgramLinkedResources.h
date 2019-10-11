@@ -40,6 +40,7 @@ enum class LinkMismatchError;
 struct LinkedUniform;
 class ProgramState;
 class ProgramBindings;
+class ProgramAliasedBindings;
 class Shader;
 struct ShaderVariableBuffer;
 struct UnusedUniform;
@@ -53,7 +54,9 @@ class UniformLinker final : angle::NonCopyable
     UniformLinker(const ProgramState &state);
     ~UniformLinker();
 
-    bool link(const Caps &caps, InfoLog &infoLog, const ProgramBindings &uniformLocationBindings);
+    bool link(const Caps &caps,
+              InfoLog &infoLog,
+              const ProgramAliasedBindings &uniformLocationBindings);
 
     void getResults(std::vector<LinkedUniform> *uniforms,
                     std::vector<UnusedUniform> *unusedUniforms,
@@ -73,11 +76,12 @@ class UniformLinker final : angle::NonCopyable
     bool flattenUniformsAndCheckCaps(const Caps &caps, InfoLog &infoLog);
     bool checkMaxCombinedAtomicCounters(const Caps &caps, InfoLog &infoLog);
 
-    bool indexUniforms(InfoLog &infoLog, const ProgramBindings &uniformLocationBindings);
-    bool gatherUniformLocationsAndCheckConflicts(InfoLog &infoLog,
-                                                 const ProgramBindings &uniformLocationBindings,
-                                                 std::set<GLuint> *ignoredLocations,
-                                                 int *maxUniformLocation);
+    bool indexUniforms(InfoLog &infoLog, const ProgramAliasedBindings &uniformLocationBindings);
+    bool gatherUniformLocationsAndCheckConflicts(
+        InfoLog &infoLog,
+        const ProgramAliasedBindings &uniformLocationBindings,
+        std::set<GLuint> *ignoredLocations,
+        int *maxUniformLocation);
     void pruneUnusedUniforms();
 
     const ProgramState &mState;

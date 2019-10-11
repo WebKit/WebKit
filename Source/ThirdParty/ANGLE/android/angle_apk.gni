@@ -5,13 +5,7 @@
 import("//build/config/android/rules.gni")
 import("//third_party/angle/gni/angle.gni")
 
-vulkan_validation_layers = [
-  "VkLayer_core_validation",
-  "VkLayer_object_lifetimes",
-  "VkLayer_stateless_validation",
-  "VkLayer_thread_safety",
-  "VkLayer_unique_objects",
-]
+vulkan_validation_layers = [ "VkLayer_khronos_validation" ]
 
 angle_libraries = [
   "libEGL",

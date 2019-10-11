@@ -1178,7 +1178,7 @@ bool ValidateES3TexStorageParametersBase(Context *context,
     }
 
     gl::Texture *texture = context->getTextureByType(target);
-    if (!texture || texture->id() == 0)
+    if (!texture || texture->id().value == 0)
     {
         context->validationError(GL_INVALID_OPERATION, kMissingTexture);
         return false;

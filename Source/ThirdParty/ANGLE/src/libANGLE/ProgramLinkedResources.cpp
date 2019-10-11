@@ -670,7 +670,7 @@ void UniformLinker::getResults(std::vector<LinkedUniform> *uniforms,
 
 bool UniformLinker::link(const Caps &caps,
                          InfoLog &infoLog,
-                         const ProgramBindings &uniformLocationBindings)
+                         const ProgramAliasedBindings &uniformLocationBindings)
 {
     if (mState.getAttachedShader(ShaderType::Vertex) &&
         mState.getAttachedShader(ShaderType::Fragment))
@@ -735,7 +735,8 @@ bool UniformLinker::validateGraphicsUniforms(InfoLog &infoLog) const
     return true;
 }
 
-bool UniformLinker::indexUniforms(InfoLog &infoLog, const ProgramBindings &uniformLocationBindings)
+bool UniformLinker::indexUniforms(InfoLog &infoLog,
+                                  const ProgramAliasedBindings &uniformLocationBindings)
 {
     // Locations which have been allocated for an unused uniform.
     std::set<GLuint> ignoredLocations;
@@ -830,7 +831,7 @@ bool UniformLinker::indexUniforms(InfoLog &infoLog, const ProgramBindings &unifo
 
 bool UniformLinker::gatherUniformLocationsAndCheckConflicts(
     InfoLog &infoLog,
-    const ProgramBindings &uniformLocationBindings,
+    const ProgramAliasedBindings &uniformLocationBindings,
     std::set<GLuint> *ignoredLocations,
     int *maxUniformLocation)
 {

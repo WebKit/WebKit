@@ -101,7 +101,7 @@ ShaderVariable &ShaderVariable::operator=(const ShaderVariable &other)
     offset                        = other.offset;
     readonly                      = other.readonly;
     writeonly                     = other.writeonly;
-    writeonly                     = other.index;
+    index                         = other.index;
     interpolation                 = other.interpolation;
     isInvariant                   = other.isInvariant;
     return *this;

@@ -34,6 +34,7 @@ class NativeWindow11WinRT : public NativeWindow11
                             DXGI_FORMAT format,
                             UINT width,
                             UINT height,
+                            UINT samples,
                             IDXGISwapChain **swapChain) override;
 
     void commitChange() override;

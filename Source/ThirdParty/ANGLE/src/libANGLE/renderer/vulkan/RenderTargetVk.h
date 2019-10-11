@@ -45,7 +45,6 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
 
     void init(vk::ImageHelper *image,
               const vk::ImageView *imageView,
-              const vk::ImageView *cubeImageFetchView,
               uint32_t levelIndex,
               uint32_t layerIndex);
     void reset();
@@ -62,17 +61,15 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
     const vk::ImageHelper &getImage() const;
 
     // getImageForRead will also transition the resource to the given layout.
-    vk::ImageHelper *getImageForRead(vk::CommandGraphResource *readingResource,
+    vk::ImageHelper *getImageForRead(ContextVk *contextVk,
+                                     vk::CommandGraphResource *readingResource,
                                      vk::ImageLayout layout,
                                      vk::CommandBuffer *commandBuffer);
-    vk::ImageHelper *getImageForWrite(vk::CommandGraphResource *writingResource) const;
+    vk::ImageHelper *getImageForWrite(ContextVk *contextVk,
+                                      vk::CommandGraphResource *writingResource) const;
 
     const vk::ImageView *getDrawImageView() const;
     const vk::ImageView *getReadImageView() const;
-    // GLSL's texelFetch() needs a 2D array view to read from cube maps.  This function returns the
-    // same view as `getReadImageView()`, except for cubemaps, in which case it returns a 2D array
-    // view of it.
-    const vk::ImageView *getFetchImageView() const;
 
     const vk::Format &getImageFormat() const;
     gl::Extents getExtents() const;
@@ -88,10 +85,8 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
   private:
     vk::ImageHelper *mImage;
     // Note that the draw and read image views are the same, given the requirements of a render
-    // target.
+    // target. Note that for cube maps we use 2D array views.
     const vk::ImageView *mImageView;
-    // For cubemaps, a 2D-array view is also created to be used with shaders that use texelFetch().
-    const vk::ImageView *mCubeImageFetchView;
     uint32_t mLevelIndex;
     uint32_t mLayerIndex;
 };

@@ -3086,10 +3086,6 @@ TEST_P(SimpleStateChangeTestES31, RebindImageTextureDispatchAgain)
 // and then dispatch again correctly.
 TEST_P(SimpleStateChangeTestES31, DispatchWithImageTextureTexSubImageThenDispatchAgain)
 {
-    // The change to the texture between the dispatch calls is not flushed in the Vulkan backend.
-    // http://anglebug.com/3539
-    ANGLE_SKIP_TEST_IF(IsVulkan());
-
     std::array<GLColor, 4> colors    = {{GLColor::red, GLColor::red, GLColor::red, GLColor::red}};
     std::array<GLColor, 4> subColors = {
         {GLColor::green, GLColor::green, GLColor::green, GLColor::green}};

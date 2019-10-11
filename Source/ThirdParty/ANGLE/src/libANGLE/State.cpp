@@ -1163,7 +1163,7 @@ Texture *State::getTargetTexture(TextureType type) const
     return getSamplerTexture(static_cast<unsigned int>(mActiveSampler), type);
 }
 
-GLuint State::getSamplerTextureId(unsigned int sampler, TextureType type) const
+TextureID State::getSamplerTextureId(unsigned int sampler, TextureType type) const
 {
     ASSERT(sampler < mSamplerTextures[type].size());
     return mSamplerTextures[type][sampler].id();
@@ -1187,7 +1187,7 @@ void State::detachTexture(const Context *context, const TextureMap &zeroTextures
         for (size_t bindingIndex = 0; bindingIndex < textureVector.size(); ++bindingIndex)
         {
             BindingPointer<Texture> &binding = textureVector[bindingIndex];
-            if (binding.id() == texture.value)
+            if (binding.id() == texture)
             {
                 // Zero textures are the "default" textures instead of NULL
                 Texture *zeroTexture = zeroTextures[type].get();
@@ -1203,7 +1203,7 @@ void State::detachTexture(const Context *context, const TextureMap &zeroTextures
 
     for (auto &bindingImageUnit : mImageUnits)
     {
-        if (bindingImageUnit.texture.id() == texture.value)
+        if (bindingImageUnit.texture.id() == texture)
         {
             bindingImageUnit.texture.set(context, nullptr);
             bindingImageUnit.level   = 0;
@@ -1265,7 +1265,7 @@ void State::detachSampler(const Context *context, SamplerID sampler)
     // which the sampler is bound, with unit set to the texture unit and sampler set to zero.
     for (size_t i = 0; i < mSamplers.size(); i++)
     {
-        if (mSamplers[i].id() == sampler.value)
+        if (mSamplers[i].id() == sampler)
         {
             setSamplerBinding(context, static_cast<GLuint>(i), nullptr);
         }
@@ -1284,7 +1284,7 @@ void State::detachRenderbuffer(const Context *context, RenderbufferID renderbuff
     // If a renderbuffer that is currently bound to RENDERBUFFER is deleted, it is as though
     // BindRenderbuffer had been executed with the target RENDERBUFFER and name of zero.
 
-    if (mRenderbuffer.id() == renderbuffer.value)
+    if (mRenderbuffer.id() == renderbuffer)
     {
         setRenderbufferBinding(context, nullptr);
     }
@@ -1493,7 +1493,7 @@ void State::setTransformFeedbackBinding(const Context *context,
 bool State::removeTransformFeedbackBinding(const Context *context,
                                            TransformFeedbackID transformFeedback)
 {
-    if (mTransformFeedback.id() == transformFeedback.value)
+    if (mTransformFeedback.id() == transformFeedback)
     {
         if (mTransformFeedback.get())
             mTransformFeedback->onBindingChanged(context, false);
@@ -1550,10 +1550,14 @@ void State::setActiveQuery(const Context *context, QueryType type, Query *query)
     mActiveQueries[type].set(context, query);
 }
 
-GLuint State::getActiveQueryId(QueryType type) const
+QueryID State::getActiveQueryId(QueryType type) const
 {
     const Query *query = getActiveQuery(type);
-    return (query ? query->id() : 0u);
+    if (query)
+    {
+        return query->id();
+    }
+    return {0};
 }
 
 Query *State::getActiveQuery(QueryType type) const
@@ -1620,10 +1624,10 @@ angle::Result State::detachBuffer(Context *context, const Buffer *buffer)
     {
         return angle::Result::Continue;
     }
-    GLuint bufferName = buffer->id();
-    for (auto target : angle::AllEnums<BufferBinding>())
+    BufferID bufferID = buffer->id();
+    for (gl::BufferBinding target : angle::AllEnums<BufferBinding>())
     {
-        if (mBoundBuffers[target].id() == bufferName)
+        if (mBoundBuffers[target].id() == bufferID)
         {
             UpdateBufferBinding(context, &mBoundBuffers[target], nullptr, target);
         }
@@ -1632,10 +1636,10 @@ angle::Result State::detachBuffer(Context *context, const Buffer *buffer)
     TransformFeedback *curTransformFeedback = getCurrentTransformFeedback();
     if (curTransformFeedback)
     {
-        ANGLE_TRY(curTransformFeedback->detachBuffer(context, bufferName));
+        ANGLE_TRY(curTransformFeedback->detachBuffer(context, bufferID));
     }
 
-    if (getVertexArray()->detachBuffer(context, bufferName))
+    if (getVertexArray()->detachBuffer(context, bufferID))
     {
         mDirtyObjects.set(DIRTY_OBJECT_VERTEX_ARRAY);
         context->getStateCache().onVertexArrayStateChange(context);
@@ -1643,7 +1647,7 @@ angle::Result State::detachBuffer(Context *context, const Buffer *buffer)
 
     for (auto &buf : mUniformBuffers)
     {
-        if (buf.id() == bufferName)
+        if (buf.id() == bufferID)
         {
             UpdateIndexedBufferBinding(context, &buf, nullptr, BufferBinding::Uniform, 0, 0);
         }
@@ -1651,7 +1655,7 @@ angle::Result State::detachBuffer(Context *context, const Buffer *buffer)
 
     for (auto &buf : mAtomicCounterBuffers)
     {
-        if (buf.id() == bufferName)
+        if (buf.id() == bufferID)
         {
             UpdateIndexedBufferBinding(context, &buf, nullptr, BufferBinding::AtomicCounter, 0, 0);
         }
@@ -1659,7 +1663,7 @@ angle::Result State::detachBuffer(Context *context, const Buffer *buffer)
 
     for (auto &buf : mShaderStorageBuffers)
     {
-        if (buf.id() == bufferName)
+        if (buf.id() == bufferID)
         {
             UpdateIndexedBufferBinding(context, &buf, nullptr, BufferBinding::ShaderStorage, 0, 0);
         }
@@ -2067,15 +2071,15 @@ angle::Result State::getIntegerv(const Context *context, GLenum pname, GLint *pa
     switch (pname)
     {
         case GL_ARRAY_BUFFER_BINDING:
-            *params = mBoundBuffers[BufferBinding::Array].id();
+            *params = mBoundBuffers[BufferBinding::Array].id().value;
             break;
         case GL_DRAW_INDIRECT_BUFFER_BINDING:
-            *params = mBoundBuffers[BufferBinding::DrawIndirect].id();
+            *params = mBoundBuffers[BufferBinding::DrawIndirect].id().value;
             break;
         case GL_ELEMENT_ARRAY_BUFFER_BINDING:
         {
             Buffer *elementArrayBuffer = getVertexArray()->getElementArrayBuffer();
-            *params                    = elementArrayBuffer ? elementArrayBuffer->id() : 0;
+            *params                    = elementArrayBuffer ? elementArrayBuffer->id().value : 0;
             break;
         }
         case GL_DRAW_FRAMEBUFFER_BINDING:
@@ -2089,7 +2093,7 @@ angle::Result State::getIntegerv(const Context *context, GLenum pname, GLint *pa
             *params = mReadFramebuffer->id().value;
             break;
         case GL_RENDERBUFFER_BINDING:
-            *params = mRenderbuffer.id();
+            *params = mRenderbuffer.id().value;
             break;
         case GL_VERTEX_ARRAY_BINDING:
             *params = mVertexArray->id().value;
@@ -2326,70 +2330,78 @@ angle::Result State::getIntegerv(const Context *context, GLenum pname, GLint *pa
         case GL_TEXTURE_BINDING_2D:
             ASSERT(mActiveSampler < mMaxCombinedTextureImageUnits);
             *params =
-                getSamplerTextureId(static_cast<unsigned int>(mActiveSampler), TextureType::_2D);
+                getSamplerTextureId(static_cast<unsigned int>(mActiveSampler), TextureType::_2D)
+                    .value;
             break;
         case GL_TEXTURE_BINDING_RECTANGLE_ANGLE:
             ASSERT(mActiveSampler < mMaxCombinedTextureImageUnits);
             *params = getSamplerTextureId(static_cast<unsigned int>(mActiveSampler),
-                                          TextureType::Rectangle);
+                                          TextureType::Rectangle)
+                          .value;
             break;
         case GL_TEXTURE_BINDING_CUBE_MAP:
             ASSERT(mActiveSampler < mMaxCombinedTextureImageUnits);
-            *params = getSamplerTextureId(static_cast<unsigned int>(mActiveSampler),
-                                          TextureType::CubeMap);
+            *params =
+                getSamplerTextureId(static_cast<unsigned int>(mActiveSampler), TextureType::CubeMap)
+                    .value;
             break;
         case GL_TEXTURE_BINDING_3D:
             ASSERT(mActiveSampler < mMaxCombinedTextureImageUnits);
             *params =
-                getSamplerTextureId(static_cast<unsigned int>(mActiveSampler), TextureType::_3D);
+                getSamplerTextureId(static_cast<unsigned int>(mActiveSampler), TextureType::_3D)
+                    .value;
             break;
         case GL_TEXTURE_BINDING_2D_ARRAY:
             ASSERT(mActiveSampler < mMaxCombinedTextureImageUnits);
             *params = getSamplerTextureId(static_cast<unsigned int>(mActiveSampler),
-                                          TextureType::_2DArray);
+                                          TextureType::_2DArray)
+                          .value;
             break;
         case GL_TEXTURE_BINDING_2D_MULTISAMPLE:
             ASSERT(mActiveSampler < mMaxCombinedTextureImageUnits);
             *params = getSamplerTextureId(static_cast<unsigned int>(mActiveSampler),
-                                          TextureType::_2DMultisample);
+                                          TextureType::_2DMultisample)
+                          .value;
             break;
         case GL_TEXTURE_BINDING_2D_MULTISAMPLE_ARRAY:
             ASSERT(mActiveSampler < mMaxCombinedTextureImageUnits);
             *params = getSamplerTextureId(static_cast<unsigned int>(mActiveSampler),
-                                          TextureType::_2DMultisampleArray);
+                                          TextureType::_2DMultisampleArray)
+                          .value;
             break;
         case GL_TEXTURE_BINDING_EXTERNAL_OES:
             ASSERT(mActiveSampler < mMaxCombinedTextureImageUnits);
             *params = getSamplerTextureId(static_cast<unsigned int>(mActiveSampler),
-                                          TextureType::External);
+                                          TextureType::External)
+                          .value;
             break;
         case GL_UNIFORM_BUFFER_BINDING:
-            *params = mBoundBuffers[BufferBinding::Uniform].id();
+            *params = mBoundBuffers[BufferBinding::Uniform].id().value;
             break;
         case GL_TRANSFORM_FEEDBACK_BINDING:
-            *params = mTransformFeedback.id();
+            *params = mTransformFeedback.id().value;
             break;
         case GL_TRANSFORM_FEEDBACK_BUFFER_BINDING:
-            *params = mBoundBuffers[BufferBinding::TransformFeedback].id();
+            *params = mBoundBuffers[BufferBinding::TransformFeedback].id().value;
             break;
         case GL_COPY_READ_BUFFER_BINDING:
-            *params = mBoundBuffers[BufferBinding::CopyRead].id();
+            *params = mBoundBuffers[BufferBinding::CopyRead].id().value;
             break;
         case GL_COPY_WRITE_BUFFER_BINDING:
-            *params = mBoundBuffers[BufferBinding::CopyWrite].id();
+            *params = mBoundBuffers[BufferBinding::CopyWrite].id().value;
             break;
         case GL_PIXEL_PACK_BUFFER_BINDING:
-            *params = mBoundBuffers[BufferBinding::PixelPack].id();
+            *params = mBoundBuffers[BufferBinding::PixelPack].id().value;
             break;
         case GL_PIXEL_UNPACK_BUFFER_BINDING:
-            *params = mBoundBuffers[BufferBinding::PixelUnpack].id();
+            *params = mBoundBuffers[BufferBinding::PixelUnpack].id().value;
             break;
         case GL_READ_BUFFER:
             *params = mReadFramebuffer->getReadBufferState();
             break;
         case GL_SAMPLER_BINDING:
             ASSERT(mActiveSampler < mMaxCombinedTextureImageUnits);
-            *params = getSamplerId(static_cast<GLuint>(mActiveSampler));
+            *params = getSamplerId(static_cast<GLuint>(mActiveSampler)).value;
             break;
         case GL_DEBUG_LOGGED_MESSAGES:
             *params = static_cast<GLint>(mDebug.getMessageCount());
@@ -2410,13 +2422,13 @@ angle::Result State::getIntegerv(const Context *context, GLenum pname, GLint *pa
             *params = static_cast<GLint>(mCoverageModulation);
             break;
         case GL_ATOMIC_COUNTER_BUFFER_BINDING:
-            *params = mBoundBuffers[BufferBinding::AtomicCounter].id();
+            *params = mBoundBuffers[BufferBinding::AtomicCounter].id().value;
             break;
         case GL_SHADER_STORAGE_BUFFER_BINDING:
-            *params = mBoundBuffers[BufferBinding::ShaderStorage].id();
+            *params = mBoundBuffers[BufferBinding::ShaderStorage].id().value;
             break;
         case GL_DISPATCH_INDIRECT_BUFFER_BINDING:
-            *params = mBoundBuffers[BufferBinding::DispatchIndirect].id();
+            *params = mBoundBuffers[BufferBinding::DispatchIndirect].id().value;
             break;
         case GL_ALPHA_TEST_FUNC:
             *params = ToGLenum(mGLES1State.mAlphaTestFunc);
@@ -2495,23 +2507,23 @@ void State::getIntegeri_v(GLenum target, GLuint index, GLint *data)
     {
         case GL_TRANSFORM_FEEDBACK_BUFFER_BINDING:
             ASSERT(static_cast<size_t>(index) < mTransformFeedback->getIndexedBufferCount());
-            *data = mTransformFeedback->getIndexedBuffer(index).id();
+            *data = mTransformFeedback->getIndexedBuffer(index).id().value;
             break;
         case GL_UNIFORM_BUFFER_BINDING:
             ASSERT(static_cast<size_t>(index) < mUniformBuffers.size());
-            *data = mUniformBuffers[index].id();
+            *data = mUniformBuffers[index].id().value;
             break;
         case GL_ATOMIC_COUNTER_BUFFER_BINDING:
             ASSERT(static_cast<size_t>(index) < mAtomicCounterBuffers.size());
-            *data = mAtomicCounterBuffers[index].id();
+            *data = mAtomicCounterBuffers[index].id().value;
             break;
         case GL_SHADER_STORAGE_BUFFER_BINDING:
             ASSERT(static_cast<size_t>(index) < mShaderStorageBuffers.size());
-            *data = mShaderStorageBuffers[index].id();
+            *data = mShaderStorageBuffers[index].id().value;
             break;
         case GL_VERTEX_BINDING_BUFFER:
             ASSERT(static_cast<size_t>(index) < mVertexArray->getMaxBindings());
-            *data = mVertexArray->getVertexBinding(index).getBuffer().id();
+            *data = mVertexArray->getVertexBinding(index).getBuffer().id().value;
             break;
         case GL_VERTEX_BINDING_DIVISOR:
             ASSERT(static_cast<size_t>(index) < mVertexArray->getMaxBindings());
@@ -2531,7 +2543,7 @@ void State::getIntegeri_v(GLenum target, GLuint index, GLint *data)
             break;
         case GL_IMAGE_BINDING_NAME:
             ASSERT(static_cast<size_t>(index) < mImageUnits.size());
-            *data = mImageUnits[index].texture.id();
+            *data = mImageUnits[index].texture.id().value;
             break;
         case GL_IMAGE_BINDING_LEVEL:
             ASSERT(static_cast<size_t>(index) < mImageUnits.size());
@@ -2685,6 +2697,24 @@ angle::Result State::syncTextures(const Context *context)
     }
 
     mDirtyTextures.reset();
+    return angle::Result::Continue;
+}
+
+angle::Result State::syncImages(const Context *context)
+{
+    if (mDirtyImages.none())
+        return angle::Result::Continue;
+
+    for (size_t imageUnitIndex : mDirtyImages)
+    {
+        Texture *texture = mImageUnits[imageUnitIndex].texture.get();
+        if (texture && texture->hasAnyDirtyBit())
+        {
+            ANGLE_TRY(texture->syncState(context));
+        }
+    }
+
+    mDirtyImages.reset();
     return angle::Result::Continue;
 }
 
@@ -2891,6 +2921,12 @@ void State::onImageStateChange(const Context *context, size_t unit)
     {
         const ImageUnit &image = mImageUnits[unit];
         ASSERT(image.texture.get());
+        if (image.texture->hasAnyDirtyBit())
+        {
+            mDirtyImages.set(unit);
+            mDirtyObjects.set(DIRTY_OBJECT_IMAGES);
+        }
+
         if (mRobustResourceInit && image.texture->initState() == InitState::MayNeedInit)
         {
             mDirtyObjects.set(DIRTY_OBJECT_IMAGES_INIT);

@@ -16,7 +16,7 @@
 
 #include <set>
 
-#if defined(ANGLE_ENABLE_WINDOWS_STORE)
+#if defined(ANGLE_ENABLE_WINDOWS_UWP)
 #    include <windows.applicationmodel.core.h>
 #    include <windows.graphics.display.h>
 #    include <wrl.h>
@@ -790,8 +790,11 @@ std::string ParseResourceName(const std::string &name, std::vector<unsigned int>
 std::string StripLastArrayIndex(const std::string &name)
 {
     size_t strippedNameLength = name.find_last_of('[');
-    ASSERT(strippedNameLength != std::string::npos && name.back() == ']');
-    return name.substr(0, strippedNameLength);
+    if (strippedNameLength != std::string::npos && name.back() == ']')
+    {
+        return name.substr(0, strippedNameLength);
+    }
+    return name;
 }
 
 const sh::ShaderVariable *FindShaderVarField(const sh::ShaderVariable &var,
@@ -1081,7 +1084,7 @@ EGLClientBuffer GLObjectHandleToEGLClientBuffer(GLuint handle)
 
 }  // namespace gl_egl
 
-#if !defined(ANGLE_ENABLE_WINDOWS_STORE)
+#if !defined(ANGLE_ENABLE_WINDOWS_UWP)
 std::string getTempPath()
 {
 #    ifdef ANGLE_PLATFORM_WINDOWS
@@ -1119,7 +1122,7 @@ void writeFile(const char *path, const void *content, size_t size)
     fwrite(content, sizeof(char), size, file);
     fclose(file);
 }
-#endif  // !ANGLE_ENABLE_WINDOWS_STORE
+#endif  // !ANGLE_ENABLE_WINDOWS_UWP
 
 #if defined(ANGLE_PLATFORM_WINDOWS)
 

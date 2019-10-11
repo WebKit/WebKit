@@ -42,7 +42,7 @@ class ProgramPipelineState final : angle::NonCopyable
     std::string mLabel;
 };
 
-class ProgramPipeline final : public RefCountObject, public LabeledObject
+class ProgramPipeline final : public RefCountObject<ProgramPipelineID>, public LabeledObject
 {
   public:
     ProgramPipeline(rx::GLImplFactory *factory, ProgramPipelineID handle);

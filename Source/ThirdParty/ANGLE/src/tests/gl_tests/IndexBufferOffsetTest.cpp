@@ -7,7 +7,7 @@
 // IndexBufferOffsetTest.cpp: Test glDrawElements with an offset and an index buffer
 
 #include "test_utils/ANGLETest.h"
-#include "util/system_utils.h"
+#include "util/test_utils.h"
 
 using namespace angle;
 

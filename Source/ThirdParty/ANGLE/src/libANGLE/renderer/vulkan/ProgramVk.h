@@ -141,7 +141,7 @@ class ProgramVk : public ProgramImpl
         vk::ShaderProgramHelper *shaderProgram;
         ANGLE_TRY(initGraphicsShaders(contextVk, mode, &shaderProgram));
         ASSERT(shaderProgram->isGraphicsProgram());
-        RendererVk *renderer = contextVk->getRenderer();
+        RendererVk *renderer             = contextVk->getRenderer();
         vk::PipelineCache *pipelineCache = nullptr;
         ANGLE_TRY(renderer->getPipelineCache(&pipelineCache));
         return shaderProgram->getGraphicsPipeline(
@@ -282,6 +282,7 @@ class ProgramVk : public ProgramImpl
     // Descriptor sets for uniform blocks and textures for this program.
     std::vector<VkDescriptorSet> mDescriptorSets;
     vk::DescriptorSetLayoutArray<VkDescriptorSet> mEmptyDescriptorSets;
+    std::vector<vk::BufferHelper *> mDescriptorBuffersCache;
 
     std::unordered_map<vk::TextureDescriptorDesc, VkDescriptorSet> mTextureDescriptorsCache;
 

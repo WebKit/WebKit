@@ -16,11 +16,7 @@ namespace gl
 {
 
 Sampler::Sampler(rx::GLImplFactory *factory, SamplerID id)
-    : RefCountObject(id.value),
-      mState(),
-      mDirty(true),
-      mSampler(factory->createSampler(mState)),
-      mLabel()
+    : RefCountObject(id), mState(), mDirty(true), mSampler(factory->createSampler(mState)), mLabel()
 {}
 
 Sampler::~Sampler()

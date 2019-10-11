@@ -139,6 +139,8 @@ enum class ParamType
     TvoidPointerPointer,
 };
 
+constexpr uint32_t kParamTypeCount = 120;
+
 union ParamValue
 {
     gl::AlphaTestFunc AlphaTestFuncVal;
@@ -2470,6 +2472,29 @@ void InitParamValue(ParamType paramType, T valueIn, ParamValue *valueOut)
 
 void WriteParamTypeToStream(std::ostream &os, ParamType paramType, const ParamValue &paramValue);
 const char *ParamTypeToString(ParamType paramType);
+
+enum class ResourceIDType
+{
+    Buffer,
+    FenceNV,
+    Framebuffer,
+    MemoryObject,
+    Path,
+    ProgramPipeline,
+    Query,
+    Renderbuffer,
+    Sampler,
+    Semaphore,
+    ShaderProgram,
+    Texture,
+    TransformFeedback,
+    VertexArray,
+    EnumCount,
+    InvalidEnum = EnumCount
+};
+
+ResourceIDType GetResourceIDTypeFromParamType(ParamType paramType);
+const char *GetResourceIDTypeName(ResourceIDType resourceIDType);
 }  // namespace angle
 
 #endif  // LIBANGLE_FRAME_CAPTURE_UTILS_AUTOGEN_H_

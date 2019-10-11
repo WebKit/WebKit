@@ -117,6 +117,7 @@ egl::Error WindowSurfaceGLX::initialize(const egl::Display *display)
     mGLXWindow = mGLX.createWindow(mFBConfig, mWindow, nullptr);
 
     XMapWindow(mDisplay, mWindow);
+    XSelectInput(mDisplay, mWindow, ExposureMask);  // For XExposeEvent forwarding from child window
     XFlush(mDisplay);
 
     XFree(visualInfo);

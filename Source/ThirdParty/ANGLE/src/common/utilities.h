@@ -245,7 +245,7 @@ EGLenum GLComponentTypeToEGLColorComponentType(GLenum glComponentType);
 EGLClientBuffer GLObjectHandleToEGLClientBuffer(GLuint handle);
 }  // namespace gl_egl
 
-#if !defined(ANGLE_ENABLE_WINDOWS_STORE)
+#if !defined(ANGLE_ENABLE_WINDOWS_UWP)
 std::string getTempPath();
 void writeFile(const char *path, const void *data, size_t size);
 #endif

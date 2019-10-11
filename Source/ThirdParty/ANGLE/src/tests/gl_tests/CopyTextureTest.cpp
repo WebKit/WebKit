@@ -380,7 +380,8 @@ class CopyTextureVariationsTest : public ANGLETestWithParam<CopyTextureVariation
         }
     }
 
-    void initializeSourceTexture(GLenum sourceFormat,
+    void initializeSourceTexture(GLenum target,
+                                 GLenum sourceFormat,
                                  const uint8_t *srcColors,
                                  uint8_t componentCount)
     {
@@ -398,12 +399,13 @@ class CopyTextureVariationsTest : public ANGLETestWithParam<CopyTextureVariation
                    srcRowPitch - inputRowPitch);
         }
 
-        glBindTexture(GL_TEXTURE_2D, mTextures[0]);
-        glTexImage2D(GL_TEXTURE_2D, 0, sourceFormat, 2, 2, 0, sourceFormat, GL_UNSIGNED_BYTE,
+        glBindTexture(target, mTextures[0]);
+        glTexImage2D(target, 0, sourceFormat, 2, 2, 0, sourceFormat, GL_UNSIGNED_BYTE,
                      srcColorsPadded);
     }
 
-    void testCopyTexture(GLenum sourceFormat,
+    void testCopyTexture(GLenum sourceTarget,
+                         GLenum sourceFormat,
                          GLenum destFormat,
                          bool flipY,
                          bool premultiplyAlpha,
@@ -427,7 +429,8 @@ class CopyTextureVariationsTest : public ANGLETestWithParam<CopyTextureVariation
 
         for (size_t i = 0; i < colorCount - 3; ++i)
         {
-            initializeSourceTexture(sourceFormat, &srcColors[i * componentCount], componentCount);
+            initializeSourceTexture(sourceTarget, sourceFormat, &srcColors[i * componentCount],
+                                    componentCount);
 
             glCopyTextureCHROMIUM(mTextures[0], 0, GL_TEXTURE_2D, mTextures[1], 0, destFormat,
                                   GL_UNSIGNED_BYTE, flipY, premultiplyAlpha, unmultiplyAlpha);
@@ -456,7 +459,8 @@ class CopyTextureVariationsTest : public ANGLETestWithParam<CopyTextureVariation
         }
     }
 
-    void testCopySubTexture(GLenum sourceFormat,
+    void testCopySubTexture(GLenum sourceTarget,
+                            GLenum sourceFormat,
                             GLenum destFormat,
                             bool flipY,
                             bool premultiplyAlpha,
@@ -480,7 +484,8 @@ class CopyTextureVariationsTest : public ANGLETestWithParam<CopyTextureVariation
 
         for (size_t i = 0; i < colorCount - 3; ++i)
         {
-            initializeSourceTexture(sourceFormat, &srcColors[i * componentCount], componentCount);
+            initializeSourceTexture(sourceTarget, sourceFormat, &srcColors[i * componentCount],
+                                    componentCount);
 
             glBindTexture(GL_TEXTURE_2D, mTextures[1]);
             glTexImage2D(GL_TEXTURE_2D, 0, destFormat, 2, 2, 0, destFormat, GL_UNSIGNED_BYTE,
@@ -862,14 +867,30 @@ constexpr GLenum kCopyTextureVariationsDstFormats[] = {GL_RGB, GL_RGBA, GL_BGRA_
 
 TEST_P(CopyTextureVariationsTest, CopyTexture)
 {
-    testCopyTexture(std::get<1>(GetParam()), std::get<2>(GetParam()), std::get<3>(GetParam()),
-                    std::get<4>(GetParam()), std::get<5>(GetParam()));
+    testCopyTexture(GL_TEXTURE_2D, std::get<1>(GetParam()), std::get<2>(GetParam()),
+                    std::get<3>(GetParam()), std::get<4>(GetParam()), std::get<5>(GetParam()));
 }
 
 TEST_P(CopyTextureVariationsTest, CopySubTexture)
 {
-    testCopySubTexture(std::get<1>(GetParam()), std::get<2>(GetParam()), std::get<3>(GetParam()),
-                       std::get<4>(GetParam()), std::get<5>(GetParam()));
+    testCopySubTexture(GL_TEXTURE_2D, std::get<1>(GetParam()), std::get<2>(GetParam()),
+                       std::get<3>(GetParam()), std::get<4>(GetParam()), std::get<5>(GetParam()));
+}
+
+TEST_P(CopyTextureVariationsTest, CopyTextureRectangle)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_texture_rectangle"));
+
+    testCopyTexture(GL_TEXTURE_RECTANGLE_ANGLE, std::get<1>(GetParam()), std::get<2>(GetParam()),
+                    std::get<3>(GetParam()), std::get<4>(GetParam()), std::get<5>(GetParam()));
+}
+
+TEST_P(CopyTextureVariationsTest, CopySubTextureRectangle)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_texture_rectangle"));
+
+    testCopySubTexture(GL_TEXTURE_RECTANGLE_ANGLE, std::get<1>(GetParam()), std::get<2>(GetParam()),
+                       std::get<3>(GetParam()), std::get<4>(GetParam()), std::get<5>(GetParam()));
 }
 
 // Test that copying to cube maps works

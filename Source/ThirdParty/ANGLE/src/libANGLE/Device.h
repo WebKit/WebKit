@@ -32,7 +32,7 @@ class Device final : public LabeledObject, angle::NonCopyable
     void setLabel(EGLLabelKHR label) override;
     EGLLabelKHR getLabel() const override;
 
-    Error getDevice(EGLAttrib *value);
+    Error getAttribute(EGLint attribute, EGLAttrib *value);
     Display *getOwningDisplay() { return mOwningDisplay; }
     EGLint getType();
 

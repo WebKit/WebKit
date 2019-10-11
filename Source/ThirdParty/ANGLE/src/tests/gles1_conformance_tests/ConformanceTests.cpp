@@ -103,7 +103,9 @@ extern long TexCombineExec(void);
 extern long MatrixPaletteExec(void);
 
 // Test driver setup
-extern void ExtTestDriverSetup(void);
+void BufferSetup(void);
+void EpsilonSetup(void);
+void StateSetup(void);
 
 #define CONFORMANCE_TEST_ERROR (-1)
 
@@ -128,7 +130,12 @@ class GLES1ConformanceTest : public ANGLETest
         setConfigStencilBits(8);
     }
 
-    void testSetUp() override { ExtTestDriverSetup(); }
+    void testSetUp() override
+    {
+        BufferSetup();
+        EpsilonSetup();
+        StateSetup();
+    }
 };
 
 TEST_P(GLES1ConformanceTest, AmbLight)
@@ -342,7 +349,7 @@ TEST_P(GLES1ConformanceTest, RescaleNormal)
 TEST_P(GLES1ConformanceTest, Scissor)
 {
     // http://g.co/anglebug/3867
-    ANGLE_SKIP_TEST_IF(IsVulkan());
+    ANGLE_SKIP_TEST_IF(IsVulkan() && IsWindows() && IsIntel());
     ASSERT_NE(CONFORMANCE_TEST_ERROR, ScissorExec());
 }
 

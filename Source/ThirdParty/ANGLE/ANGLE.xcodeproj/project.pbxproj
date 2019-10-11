@@ -571,6 +571,8 @@
 		5CCD81B01DBFEA5C006066B8 /* ConstantUnion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD81991DBFEA5C006066B8 /* ConstantUnion.cpp */; };
 		5CCD81B51DBFEA5C006066B8 /* QualifierTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD819E1DBFEA5C006066B8 /* QualifierTypes.cpp */; };
 		5CCD81B61DBFEA5C006066B8 /* QualifierTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD819F1DBFEA5C006066B8 /* QualifierTypes.h */; };
+		6E31A0A3234EEED400C84784 /* DeviceCGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E31A0A1234EEED400C84784 /* DeviceCGL.cpp */; };
+		6E31A0A4234EEED400C84784 /* DeviceCGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E31A0A2234EEED400C84784 /* DeviceCGL.h */; };
 		6E344AB222BC35C3001DDB2C /* entry_points_gles_ext_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E344AAE22BC35C3001DDB2C /* entry_points_gles_ext_autogen.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E344AB322BC35C3001DDB2C /* entry_points_gles_ext_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E344AAF22BC35C3001DDB2C /* entry_points_gles_ext_autogen.cpp */; };
 		6E344AB622BC57C8001DDB2C /* entry_points_gles_1_0_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E344AB422BC57C8001DDB2C /* entry_points_gles_1_0_autogen.cpp */; };
@@ -693,7 +695,6 @@
 		A30307942305F959002DA972 /* proc_table_egl.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307902305F959002DA972 /* proc_table_egl.h */; };
 		A30307952305F959002DA972 /* proc_table_egl_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30307912305F959002DA972 /* proc_table_egl_autogen.cpp */; };
 		A303079923060253002DA972 /* angle_gl.h in Headers */ = {isa = PBXBuildFile; fileRef = A303079823060253002DA972 /* angle_gl.h */; };
-		A303079B230624F7002DA972 /* FrameCapture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A303079A230624F7002DA972 /* FrameCapture.cpp */; };
 		A303079D23062565002DA972 /* driver_utils_mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A303079C23062564002DA972 /* driver_utils_mac.mm */; };
 		A30307A0230625C6002DA972 /* android_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A303079E230625C6002DA972 /* android_util.cpp */; };
 		A30307A1230625C6002DA972 /* android_util.h in Headers */ = {isa = PBXBuildFile; fileRef = A303079F230625C6002DA972 /* android_util.h */; };
@@ -718,6 +719,8 @@
 			compilerSpec = com.apple.compilers.proxy.script;
 			filePatterns = "*.h";
 			fileType = pattern.proxy;
+			inputFiles = (
+			);
 			isEditable = 1;
 			name = "Files '*.h' using Script";
 			outputFiles = (
@@ -1320,6 +1323,8 @@
 		5D7C59C51208C68B001C873E /* ANGLE.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ANGLE.xcconfig; sourceTree = "<group>"; };
 		5D7C59C61208C68B001C873E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
+		6E31A0A1234EEED400C84784 /* DeviceCGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceCGL.cpp; sourceTree = "<group>"; };
+		6E31A0A2234EEED400C84784 /* DeviceCGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceCGL.h; sourceTree = "<group>"; };
 		6E344AAE22BC35C3001DDB2C /* entry_points_gles_ext_autogen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = entry_points_gles_ext_autogen.h; sourceTree = "<group>"; };
 		6E344AAF22BC35C3001DDB2C /* entry_points_gles_ext_autogen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = entry_points_gles_ext_autogen.cpp; sourceTree = "<group>"; };
 		6E344AB422BC57C8001DDB2C /* entry_points_gles_1_0_autogen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = entry_points_gles_1_0_autogen.cpp; sourceTree = "<group>"; };
@@ -1443,7 +1448,6 @@
 		A30307902305F959002DA972 /* proc_table_egl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = proc_table_egl.h; sourceTree = "<group>"; };
 		A30307912305F959002DA972 /* proc_table_egl_autogen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = proc_table_egl_autogen.cpp; sourceTree = "<group>"; };
 		A303079823060253002DA972 /* angle_gl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = angle_gl.h; path = include/angle_gl.h; sourceTree = "<group>"; };
-		A303079A230624F7002DA972 /* FrameCapture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameCapture.cpp; sourceTree = "<group>"; };
 		A303079C23062564002DA972 /* driver_utils_mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = driver_utils_mac.mm; sourceTree = "<group>"; };
 		A303079E230625C6002DA972 /* android_util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = android_util.cpp; sourceTree = "<group>"; };
 		A303079F230625C6002DA972 /* android_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = android_util.h; sourceTree = "<group>"; };
@@ -1774,7 +1778,6 @@
 				5C1DBC6B1B0438D200235552 /* Framebuffer.h */,
 				5C1DBC6C1B0438D200235552 /* FramebufferAttachment.cpp */,
 				5C1DBC6D1B0438D200235552 /* FramebufferAttachment.h */,
-				A303079A230624F7002DA972 /* FrameCapture.cpp */,
 				5CCD595D2284F7960018F2D8 /* GLES1Renderer.cpp */,
 				5CCD59522284F7940018F2D8 /* GLES1Renderer.h */,
 				5CCD59552284F7950018F2D8 /* GLES1State.cpp */,
@@ -2113,6 +2116,8 @@
 			children = (
 				5CCD59722284FA820018F2D8 /* ContextCGL.cpp */,
 				5CCD59752284FA820018F2D8 /* ContextCGL.h */,
+				6E31A0A1234EEED400C84784 /* DeviceCGL.cpp */,
+				6E31A0A2234EEED400C84784 /* DeviceCGL.h */,
 				5CB301491DE39F4700D2C405 /* DisplayCGL.h */,
 				5CB3014A1DE39F4700D2C405 /* DisplayCGL.mm */,
 				5CCD59712284FA820018F2D8 /* IOSurfaceSurfaceCGL.h */,
@@ -2549,6 +2554,7 @@
 				5C55D65E22826B9F00B5BA2C /* DeclareAndInitBuiltinsForInstancedMultiview.h in Headers */,
 				5C55D68922826B9F00B5BA2C /* DeferGlobalInitializers.h in Headers */,
 				5C1DBDE71B0438D300235552 /* Device.h in Headers */,
+				6E31A0A4234EEED400C84784 /* DeviceCGL.h in Headers */,
 				5CB304E01DE4164800D2C405 /* DeviceImpl.h in Headers */,
 				31012E2718B97B9B0039062F /* Diagnostics.h in Headers */,
 				A264F8AD16974DED006FAA5A /* DiagnosticsBase.h in Headers */,
@@ -3007,6 +3013,7 @@
 				5C55D6AE22826BC800B5BA2C /* DeclareAndInitBuiltinsForInstancedMultiview.cpp in Sources */,
 				5C55D6AF22826BC800B5BA2C /* DeferGlobalInitializers.cpp in Sources */,
 				5C1DBDE61B0438D300235552 /* Device.cpp in Sources */,
+				6E31A0A3234EEED400C84784 /* DeviceCGL.cpp in Sources */,
 				5CB304DF1DE4164800D2C405 /* DeviceImpl.cpp in Sources */,
 				31012E2618B97B9B0039062F /* Diagnostics.cpp in Sources */,
 				A264F8AC16974DED006FAA5A /* DiagnosticsBase.cpp in Sources */,
@@ -3057,7 +3064,6 @@
 				5C1DBDF31B0438D300235552 /* Framebuffer.cpp in Sources */,
 				5C1DBDF51B0438D300235552 /* FramebufferAttachment.cpp in Sources */,
 				5CB301271DE39F1A00D2C405 /* FramebufferGL.cpp in Sources */,
-				A303079B230624F7002DA972 /* FrameCapture.cpp in Sources */,
 				5C55D6E422826C7900B5BA2C /* FunctionLookup.cpp in Sources */,
 				5CB3012B1DE39F1A00D2C405 /* FunctionsGL.cpp in Sources */,
 				A303070F2305F705002DA972 /* generatemip.inc in Sources */,

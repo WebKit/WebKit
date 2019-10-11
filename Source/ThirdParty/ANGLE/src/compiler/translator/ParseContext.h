@@ -40,7 +40,8 @@ class TParseContext : angle::NonCopyable
                   ShCompileOptions options,
                   bool checksPrecErrors,
                   TDiagnostics *diagnostics,
-                  const ShBuiltInResources &resources);
+                  const ShBuiltInResources &resources,
+                  ShShaderOutput outputType);
     ~TParseContext();
 
     bool anyMultiviewExtensionAvailable();
@@ -459,6 +460,8 @@ class TParseContext : angle::NonCopyable
         return mGeometryShaderOutputPrimitiveType;
     }
 
+    ShShaderOutput getOutputType() const { return mOutputType; }
+
     // TODO(jmadill): make this private
     TSymbolTable &symbolTable;  // symbol table that goes with the language currently being parsed
 
@@ -655,6 +658,8 @@ class TParseContext : angle::NonCopyable
 
     // Track when we add new scope for func body in ESSL 1.00 spec
     bool mFunctionBodyNewScope;
+
+    ShShaderOutput mOutputType;
 };
 
 int PaParseStrings(size_t count,
