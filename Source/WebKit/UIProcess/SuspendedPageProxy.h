@@ -35,8 +35,11 @@
 
 namespace WebKit {
 
+class WebBackForwardCache;
 class WebPageProxy;
+class WebProcessPool;
 class WebProcessProxy;
+class WebsiteDataStore;
 
 enum class ShouldDelayClosingUntilEnteringAcceleratedCompositingMode : bool { No, Yes };
 
@@ -46,10 +49,18 @@ public:
     SuspendedPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, WebCore::FrameIdentifier mainFrameID, ShouldDelayClosingUntilEnteringAcceleratedCompositingMode);
     ~SuspendedPageProxy();
 
+    static RefPtr<WebProcessProxy> findReusableSuspendedPageProcess(WebProcessPool&, const WebCore::RegistrableDomain&, WebsiteDataStore&);
+
     WebPageProxy& page() const { return m_page; }
     WebCore::PageIdentifier webPageID() const { return m_webPageID; }
-    WebProcessProxy& process() { return m_process.get(); }
+    WebProcessProxy& process() const { return m_process.get(); }
     WebCore::FrameIdentifier mainFrameID() const { return m_mainFrameID; }
+
+    void setBackForwardListItem(WebBackForwardListItem&);
+    void clearBackForwardListItem();
+
+    WebBackForwardListItem* backForwardListItem() { return m_backForwardListItem; }
+    WebBackForwardCache& backForwardCache() const;
 
     bool pageIsClosedOrClosing() const;
 
@@ -77,6 +88,7 @@ private:
     WebPageProxy& m_page;
     WebCore::PageIdentifier m_webPageID;
     Ref<WebProcessProxy> m_process;
+    WebBackForwardListItem* m_backForwardListItem { nullptr };
     WebCore::FrameIdentifier m_mainFrameID;
     bool m_isClosed { false };
     ShouldDelayClosingUntilEnteringAcceleratedCompositingMode m_shouldDelayClosingUntilEnteringAcceleratedCompositingMode { ShouldDelayClosingUntilEnteringAcceleratedCompositingMode::No };

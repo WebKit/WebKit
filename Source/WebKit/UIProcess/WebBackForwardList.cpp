@@ -29,6 +29,7 @@
 #include "APIArray.h"
 #include "Logging.h"
 #include "SessionState.h"
+#include "WebBackForwardCache.h"
 #include "WebPageProxy.h"
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
@@ -467,9 +468,10 @@ Vector<BackForwardListItemState> WebBackForwardList::itemStates() const
 
 void WebBackForwardList::didRemoveItem(WebBackForwardListItem& backForwardListItem)
 {
+    backForwardListItem.wasRemovedFromBackForwardList();
+
     m_page->backForwardRemovedItem(backForwardListItem.itemID());
 
-    backForwardListItem.setSuspendedPage(nullptr);
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     backForwardListItem.setSnapshot(nullptr);
 #endif

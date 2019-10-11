@@ -3197,6 +3197,8 @@
 		4459984122833E6000E61373 /* SyntheticEditingCommandType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyntheticEditingCommandType.h; sourceTree = "<group>"; };
 		449D90D821FD63FE00F677C0 /* LocalAuthenticationSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalAuthenticationSoftLink.mm; sourceTree = "<group>"; };
 		44A481C621F2D27B00F2F919 /* ClientCertificateAuthenticationXPCConstants.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ClientCertificateAuthenticationXPCConstants.cpp; sourceTree = "<group>"; };
+		4603011A234BE31D009C8217 /* WebBackForwardCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebBackForwardCache.cpp; sourceTree = "<group>"; };
+		4603011B234BE31E009C8217 /* WebBackForwardCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardCache.h; sourceTree = "<group>"; };
 		460F488D1F996F6C00CF4B87 /* WebSWContextManagerConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSWContextManagerConnectionMessageReceiver.cpp; path = DerivedSources/WebKit2/WebSWContextManagerConnectionMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		460F488E1F996F6C00CF4B87 /* WebSWContextManagerConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSWContextManagerConnectionMessages.h; path = DerivedSources/WebKit2/WebSWContextManagerConnectionMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		462107D71F38DBD300DD7810 /* PingLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PingLoad.cpp; sourceTree = "<group>"; };
@@ -7822,6 +7824,8 @@
 				1A0F29E1120B44420053D1B9 /* VisitedLinkStore.cpp */,
 				1A0F29E2120B44420053D1B9 /* VisitedLinkStore.h */,
 				1A60224918C16B0800C3E8C9 /* VisitedLinkStore.messages.in */,
+				4603011A234BE31D009C8217 /* WebBackForwardCache.cpp */,
+				4603011B234BE31E009C8217 /* WebBackForwardCache.h */,
 				BC72BA1B11E64907001EB4EA /* WebBackForwardList.cpp */,
 				BC72BA1C11E64907001EB4EA /* WebBackForwardList.h */,
 				F036978715F4BF0500C3A80E /* WebColorPicker.cpp */,

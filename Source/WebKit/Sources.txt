@@ -260,6 +260,7 @@ UIProcess/UserMediaPermissionRequestManagerProxy.cpp
 UIProcess/UserMediaPermissionRequestProxy.cpp
 UIProcess/UserMediaProcessManager.cpp
 UIProcess/VisitedLinkStore.cpp
+UIProcess/WebBackForwardCache.cpp
 UIProcess/WebBackForwardList.cpp
 UIProcess/WebColorPicker.cpp
 UIProcess/WebConnectionToWebProcess.cpp

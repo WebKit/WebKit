@@ -30,6 +30,7 @@
 
 #include "RemoteScrollingTree.h"
 #include "ScrollerPairMac.h"
+#include <WebCore/ScrollingStateOverflowScrollingNode.h>
 
 namespace WebKit {
 using namespace WebCore;

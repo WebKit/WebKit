@@ -56,6 +56,7 @@
 #include "UIGamepadProvider.h"
 #include "WKContextPrivate.h"
 #include "WebAutomationSession.h"
+#include "WebBackForwardCache.h"
 #include "WebBackForwardList.h"
 #include "WebBackForwardListItem.h"
 #include "WebCertificateInfo.h"
@@ -236,6 +237,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_foregroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
     , m_backgroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
 #endif
+    , m_backForwardCache(makeUniqueRef<WebBackForwardCache>())
     , m_webProcessCache(makeUniqueRef<WebProcessCache>(*this))
 {
     static std::once_flag onceFlag;
@@ -287,7 +289,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 
     notifyThisWebProcessPoolWasCreated();
 
-    updateMaxSuspendedPageCount();
+    updateBackForwardCacheCapacity();
 }
 
 WebProcessPool::~WebProcessPool()
@@ -1091,9 +1093,7 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
     if (m_processWithPageCache == process)
         m_processWithPageCache = nullptr;
 
-    m_suspendedPages.removeAllMatching([process](auto& suspendedPage) {
-        return &suspendedPage->process() == process;
-    });
+    m_backForwardCache->removeEntriesForProcess(*process);
 
 #if ENABLE(SERVICE_WORKER)
     if (process->isRunningServiceWorkers()) {
@@ -1131,7 +1131,7 @@ WebProcessProxy& WebProcessPool::processForRegistrableDomain(WebsiteDataStore& w
             return *process;
 
         // Check if we have a suspended page for the given registrable domain and use its process if we do, for performance reasons.
-        if (auto process = page ? findReusableSuspendedPageProcess(registrableDomain, *page, websiteDataStore) : nullptr) {
+        if (auto process = SuspendedPageProxy::findReusableSuspendedPageProcess(*this, registrableDomain, websiteDataStore)) {
             RELEASE_LOG(ProcessSwapping, "Using WebProcess %i from a SuspendedPage", process->processIdentifier());
             return *process;
         }
@@ -1388,7 +1388,7 @@ void WebProcessPool::handleMemoryPressureWarning(Critical)
     RELEASE_LOG(PerformanceLogging, "%p - WebProcessPool::handleMemoryPressureWarning", this);
 
 
-    clearSuspendedPages(AllowProcessCaching::No);
+    m_backForwardCache->clear(AllowProcessCaching::No);
     m_webProcessCache->clear();
 
     if (m_prewarmedProcess)
@@ -1549,25 +1549,22 @@ void WebProcessPool::registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String&
     sendToNetworkingProcess(Messages::NetworkProcess::RegisterURLSchemeAsCanDisplayOnlyIfCanRequest(urlScheme));
 }
 
-void WebProcessPool::updateMaxSuspendedPageCount()
+void WebProcessPool::updateBackForwardCacheCapacity()
 {
     if (!m_configuration->usesPageCache())
         return;
 
     unsigned dummy = 0;
     Seconds dummyInterval;
-    unsigned pageCacheSize = 0;
-    calculateMemoryCacheSizes(LegacyGlobalSettings::singleton().cacheModel(), dummy, dummy, dummy, dummyInterval, pageCacheSize);
+    unsigned backForwardCacheCapacity = 0;
+    calculateMemoryCacheSizes(LegacyGlobalSettings::singleton().cacheModel(), dummy, dummy, dummy, dummyInterval, backForwardCacheCapacity);
 
-    m_maxSuspendedPageCount = pageCacheSize;
-
-    while (m_suspendedPages.size() > m_maxSuspendedPageCount)
-        m_suspendedPages.removeFirst();
+    m_backForwardCache->setCapacity(backForwardCacheCapacity);
 }
 
 void WebProcessPool::setCacheModel(CacheModel cacheModel)
 {
-    updateMaxSuspendedPageCount();
+    updateBackForwardCacheCapacity();
 
     sendToAllProcesses(Messages::WebProcess::SetCacheModel(cacheModel));
 
@@ -2256,67 +2253,6 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
     }
 
     return completionHandler(createNewProcess(), nullptr, reason);
-}
-
-RefPtr<WebProcessProxy> WebProcessPool::findReusableSuspendedPageProcess(const WebCore::RegistrableDomain& registrableDomain, WebPageProxy& page, WebsiteDataStore& dataStore)
-{
-    auto it = m_suspendedPages.findIf([&](auto& suspendedPage) {
-        return suspendedPage->process().registrableDomain() == registrableDomain && &suspendedPage->process().websiteDataStore() == &dataStore;
-    });
-    return it == m_suspendedPages.end() ? nullptr : &(*it)->process();
-}
-
-void WebProcessPool::addSuspendedPage(std::unique_ptr<SuspendedPageProxy>&& suspendedPage)
-{
-    if (!m_maxSuspendedPageCount)
-        return;
-
-    if (m_suspendedPages.size() >= m_maxSuspendedPageCount)
-        m_suspendedPages.removeFirst();
-
-    m_suspendedPages.append(WTFMove(suspendedPage));
-}
-
-void WebProcessPool::removeAllSuspendedPagesForPage(WebPageProxy& page, WebProcessProxy* process)
-{
-    m_suspendedPages.removeAllMatching([&page, process](auto& suspendedPage) {
-        return &suspendedPage->page() == &page && (!process || &suspendedPage->process() == process);
-    });
-}
-
-std::unique_ptr<SuspendedPageProxy> WebProcessPool::takeSuspendedPage(SuspendedPageProxy& suspendedPage)
-{
-    return m_suspendedPages.takeFirst([&suspendedPage](auto& item) {
-        return item.get() == &suspendedPage;
-    });
-}
-
-void WebProcessPool::removeSuspendedPage(SuspendedPageProxy& suspendedPage)
-{
-    auto it = m_suspendedPages.findIf([&suspendedPage](auto& item) {
-        return item.get() == &suspendedPage;
-    });
-    if (it != m_suspendedPages.end())
-        m_suspendedPages.remove(it);
-}
-
-bool WebProcessPool::hasSuspendedPageFor(WebProcessProxy& process, WebPageProxy& page) const
-{
-    return m_suspendedPages.findIf([&process, &page](auto& suspendedPage) {
-        return &suspendedPage->process() == &process && &suspendedPage->page() == &page;
-    }) != m_suspendedPages.end();
-}
-
-void WebProcessPool::clearSuspendedPages(AllowProcessCaching allowProcessCaching)
-{
-    HashSet<RefPtr<WebProcessProxy>> processes;
-    for (auto& suspendedPage : m_suspendedPages)
-        processes.add(&suspendedPage->process());
-
-    m_suspendedPages.clear();
-
-    for (auto& process : processes)
-        process->maybeShutDown(allowProcessCaching);
 }
 
 void WebProcessPool::addMockMediaDevice(const MockMediaDevice& device)

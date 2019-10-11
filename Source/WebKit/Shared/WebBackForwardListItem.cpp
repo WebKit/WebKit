@@ -27,6 +27,7 @@
 #include "WebBackForwardListItem.h"
 
 #include "SuspendedPageProxy.h"
+#include "WebBackForwardCache.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <wtf/DebugUtilities.h>
@@ -53,8 +54,6 @@ WebBackForwardListItem::~WebBackForwardListItem()
 {
     ASSERT(allItems().get(m_itemState.identifier) == this);
     allItems().remove(m_itemState.identifier);
-
-    removeSuspendedPageFromProcessPool();
 }
 
 HashMap<BackForwardItemIdentifier, WebBackForwardListItem*>& WebBackForwardListItem::allItems()
@@ -159,27 +158,34 @@ bool WebBackForwardListItem::itemIsClone(const WebBackForwardListItem& other)
     return hasSameFrames(mainFrameState, otherMainFrameState);
 }
 
-void WebBackForwardListItem::setSuspendedPage(SuspendedPageProxy* page)
+void WebBackForwardListItem::wasRemovedFromBackForwardList()
 {
-    if (m_suspendedPage == page)
-        return;
+    if (m_suspendedPage)
+        m_suspendedPage->backForwardCache().removeEntry(*this);
+    ASSERT(!m_suspendedPage);
+}
 
-    removeSuspendedPageFromProcessPool();
-    m_suspendedPage = makeWeakPtr(page);
+void WebBackForwardListItem::setSuspendedPage(std::unique_ptr<SuspendedPageProxy>&& suspendedPage)
+{
+    if (m_suspendedPage)
+        m_suspendedPage->clearBackForwardListItem();
+
+    m_suspendedPage = WTFMove(suspendedPage);
+
+    if (m_suspendedPage)
+        m_suspendedPage->setBackForwardListItem(*this);
+}
+
+std::unique_ptr<SuspendedPageProxy> WebBackForwardListItem::takeSuspendedPage()
+{
+    if (m_suspendedPage)
+        m_suspendedPage->clearBackForwardListItem();
+    return std::exchange(m_suspendedPage, nullptr);
 }
 
 SuspendedPageProxy* WebBackForwardListItem::suspendedPage() const
 {
     return m_suspendedPage.get();
-}
-
-void WebBackForwardListItem::removeSuspendedPageFromProcessPool()
-{
-    if (!m_suspendedPage)
-        return;
-
-    m_suspendedPage->process().processPool().removeSuspendedPage(*m_suspendedPage);
-    ASSERT(!m_suspendedPage);
 }
 
 #if !LOG_DISABLED

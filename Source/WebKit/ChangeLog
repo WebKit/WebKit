@@ -1,3 +1,80 @@
+2019-10-11  Chris Dumez  <cdumez@apple.com>
+
+        Move SuspendedPage logic from WebProcessPool to new WebBackForwardCache class
+        https://bugs.webkit.org/show_bug.cgi?id=202660
+
+        Reviewed by Antti Koivisto.
+
+        Move SuspendedPage logic from WebProcessPool to new WebBackForwardCache class. This is
+        a first step towards implementing back / forward cache handling in the UIProcess.
+
+        The following changes were made:
+        1. SuspendedPageProxy objects are now normally owned by their associated WebBackForwardListItem
+           (Similarly to CachedPage objects being owned by their HistoryItem in WebCore) instead of the
+           WebProcessPool.
+        2. A new WebBackForwardCache class is introduced to cap the number of cached pages and clear
+           them (similary to the PageCache in WebCore).
+
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::~WebBackForwardListItem):
+        (WebKit::WebBackForwardListItem::wasRemovedFromBackForwardList):
+        (WebKit::WebBackForwardListItem::setSuspendedPage):
+        (WebKit::WebBackForwardListItem::takeSuspendedPage):
+        (WebKit::WebBackForwardListItem::suspendedPage const):
+        * Shared/WebBackForwardListItem.h:
+        * Sources.txt:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _maximumSuspendedPageCount]):
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeOverflowScrollingNodeRemoteMac.cpp:
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::findReusableSuspendedPageProcess):
+        (WebKit::SuspendedPageProxy::SuspendedPageProxy):
+        (WebKit::SuspendedPageProxy::~SuspendedPageProxy):
+        (WebKit::SuspendedPageProxy::setBackForwardListItem):
+        (WebKit::SuspendedPageProxy::clearBackForwardListItem):
+        (WebKit::SuspendedPageProxy::backForwardCache const):
+        (WebKit::SuspendedPageProxy::suspensionTimedOut):
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/WebAuthentication/Mock/MockHidConnection.h:
+        * UIProcess/WebAuthentication/Mock/MockHidService.h:
+        * UIProcess/WebBackForwardCache.cpp: Added.
+        (WebKit::WebBackForwardCache::removeOldestEntry):
+        (WebKit::WebBackForwardCache::setCapacity):
+        (WebKit::WebBackForwardCache::addEntry):
+        (WebKit::WebBackForwardCache::removeEntry):
+        (WebKit::WebBackForwardCache::takeEntry):
+        (WebKit::WebBackForwardCache::removeEntriesForProcess):
+        (WebKit::WebBackForwardCache::removeEntriesForPage):
+        (WebKit::WebBackForwardCache::removeEntriesMatching):
+        (WebKit::WebBackForwardCache::clear):
+        * UIProcess/WebBackForwardCache.h: Copied from Source/WebKit/UIProcess/WebAuthentication/Mock/MockHidService.h.
+        (WebKit::WebBackForwardCache::capacity const):
+        (WebKit::WebBackForwardCache::size const):
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::didRemoveItem):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::suspendCurrentPageIfPossible):
+        (WebKit::WebPageProxy::backForwardCache const):
+        (WebKit::WebPageProxy::shouldUseBackForwardCache const):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::enterAcceleratedCompositingMode):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::process const):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::m_webProcessCache):
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::processForRegistrableDomain):
+        (WebKit::WebProcessPool::handleMemoryPressureWarning):
+        (WebKit::WebProcessPool::updateBackForwardCacheCapacity):
+        (WebKit::WebProcessPool::setCacheModel):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeData):
+        (WebKit::WebsiteDataStore::setMockWebAuthenticationConfiguration):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-10-11  Alex Christensen  <achristensen@webkit.org>
 
         Only use CFNetwork SPI for metrics where needed

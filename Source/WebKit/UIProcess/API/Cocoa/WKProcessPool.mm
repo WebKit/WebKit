@@ -36,6 +36,7 @@
 #import "WKObject.h"
 #import "WKWebViewInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
+#import "WebBackForwardCache.h"
 #import "WebCertificateInfo.h"
 #import "WebCookieManagerProxy.h"
 #import "WebProcessCache.h"
@@ -526,7 +527,7 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 
 - (NSUInteger)_maximumSuspendedPageCount
 {
-    return _processPool->maxSuspendedPageCount();
+    return _processPool->backForwardCache().capacity();
 }
 
 - (NSUInteger)_processCacheCapacity

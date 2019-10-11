@@ -62,8 +62,8 @@ private:
 
     WebCore::MockWebAuthenticationConfiguration m_configuration;
     Optional<fido::FidoHidMessage> m_requestMessage;
-    WebCore::MockWebAuthenticationConfiguration::HidStage m_stage { MockWebAuthenticationConfiguration::HidStage::Info };
-    WebCore::MockWebAuthenticationConfiguration::HidSubStage m_subStage { MockWebAuthenticationConfiguration::HidSubStage::Init };
+    WebCore::MockWebAuthenticationConfiguration::HidStage m_stage { WebCore::MockWebAuthenticationConfiguration::HidStage::Info };
+    WebCore::MockWebAuthenticationConfiguration::HidSubStage m_subStage { WebCore::MockWebAuthenticationConfiguration::HidSubStage::Init };
     uint32_t m_currentChannel { fido::kHidBroadcastChannel };
     bool m_requireResidentKey { false };
     bool m_requireUserVerification  { false };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +25,41 @@
 
 #pragma once
 
-#if ENABLE(WEB_AUTHN)
-
-#include "HidService.h"
-#include <WebCore/MockWebAuthenticationConfiguration.h>
+#include <wtf/Forward.h>
+#include <wtf/ListHashSet.h>
 
 namespace WebKit {
 
-class MockHidService final : public HidService {
+class SuspendedPageProxy;
+class WebBackForwardListItem;
+class WebPageProxy;
+class WebProcessProxy;
+enum class AllowProcessCaching;
+
+class WebBackForwardCache {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    MockHidService(Observer&, const WebCore::MockWebAuthenticationConfiguration&);
+    WebBackForwardCache();
+    ~WebBackForwardCache();
+
+    void setCapacity(unsigned);
+    unsigned capacity() const { return m_capacity; }
+    unsigned size() const { return m_itemsWithCachedPage.size(); }
+
+    void clear(AllowProcessCaching);
+    void removeEntriesForProcess(WebProcessProxy&);
+    void removeEntriesForPage(WebPageProxy&);
+
+    void addEntry(WebBackForwardListItem&, std::unique_ptr<SuspendedPageProxy>&&);
+    void removeEntry(WebBackForwardListItem&);
+    std::unique_ptr<SuspendedPageProxy> takeEntry(WebBackForwardListItem&);
 
 private:
-    void platformStartDiscovery() final;
-    UniqueRef<HidConnection> createHidConnection(IOHIDDeviceRef) const final;
+    void removeOldestEntry();
+    void removeEntriesMatching(const Function<bool(WebBackForwardListItem&)>&);
 
-    WebCore::MockWebAuthenticationConfiguration m_configuration;
+    unsigned m_capacity { 0 };
+    ListHashSet<WebBackForwardListItem*> m_itemsWithCachedPage;
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(WEB_AUTHN)

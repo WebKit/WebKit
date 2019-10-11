@@ -92,6 +92,7 @@
 #include "UserMediaProcessManager.h"
 #include "WKContextPrivate.h"
 #include "WebAutomationSession.h"
+#include "WebBackForwardCache.h"
 #include "WebBackForwardList.h"
 #include "WebBackForwardListItem.h"
 #include "WebCertificateInfo.h"
@@ -750,6 +751,7 @@ void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain, Pro
 
 bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Optional<FrameIdentifier> mainFrameID, ProcessSwapRequestedByClient processSwapRequestedByClient, ShouldDelayClosingUntilEnteringAcceleratedCompositingMode shouldDelayClosingUntilEnteringAcceleratedCompositingMode)
 {
+    m_suspendedPageKeptToPreventFlashing = nullptr;
     m_lastSuspendedPage = nullptr;
 
     if (!mainFrameID)
@@ -780,6 +782,15 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Opt
         return false;
     }
 
+    bool needsSuspendedPageToPreventFlashing = shouldDelayClosingUntilEnteringAcceleratedCompositingMode == ShouldDelayClosingUntilEnteringAcceleratedCompositingMode::Yes;
+    if (!needsSuspendedPageToPreventFlashing && (!fromItem || !shouldUseBackForwardCache())) {
+        if (!fromItem)
+            RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i there is no associated WebBackForwardListItem", m_process->processIdentifier());
+        else
+            RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i the back / forward cache is disabled", m_process->processIdentifier());
+        return false;
+    }
+
     RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "suspendCurrentPageIfPossible: Suspending current page for process pid %i", m_process->processIdentifier());
     auto suspendedPage = makeUnique<SuspendedPageProxy>(*this, m_process.copyRef(), *mainFrameID, shouldDelayClosingUntilEnteringAcceleratedCompositingMode);
 
@@ -790,12 +801,26 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Opt
     if (processSwapRequestedByClient == ProcessSwapRequestedByClient::Yes)
         suspendedPage->closeWithoutFlashing();
 
-    if (fromItem && m_preferences->usesPageCache())
-        fromItem->setSuspendedPage(suspendedPage.get());
-
     m_lastSuspendedPage = makeWeakPtr(*suspendedPage);
-    m_process->processPool().addSuspendedPage(WTFMove(suspendedPage));
+
+    if (fromItem && shouldUseBackForwardCache())
+        backForwardCache().addEntry(*fromItem, WTFMove(suspendedPage));
+    else {
+        ASSERT(needsSuspendedPageToPreventFlashing);
+        m_suspendedPageKeptToPreventFlashing = WTFMove(suspendedPage);
+    }
+
     return true;
+}
+
+WebBackForwardCache& WebPageProxy::backForwardCache() const
+{
+    return process().processPool().backForwardCache();
+}
+
+bool WebPageProxy::shouldUseBackForwardCache() const
+{
+    return m_preferences->usesPageCache() && backForwardCache().capacity() > 0;
 }
 
 void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, std::unique_ptr<DrawingAreaProxy>&& drawingArea, RefPtr<WebFrameProxy>&& mainFrame)
@@ -1027,7 +1052,7 @@ void WebPageProxy::close()
     m_fullscreenClient = makeUnique<API::FullscreenClient>();
 #endif
 
-    m_process->processPool().removeAllSuspendedPagesForPage(*this);
+    m_process->processPool().backForwardCache().removeEntriesForPage(*this);
 
     m_process->send(Messages::WebPage::Close(), m_webPageID);
     m_process->removeWebPage(*this, WebProcessProxy::EndsUsingDataStore::Yes);
@@ -2929,7 +2954,7 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
             RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "decidePolicyForNavigationAction: keep using process %i for navigation, reason: %{public}s", processIdentifier(), reason.utf8().data());
 
         if (shouldProcessSwap) {
-            auto suspendedPage = destinationSuspendedPage ? process().processPool().takeSuspendedPage(*destinationSuspendedPage) : nullptr;
+            auto suspendedPage = destinationSuspendedPage ? backForwardCache().takeEntry(*destinationSuspendedPage->backForwardListItem()) : nullptr;
             if (suspendedPage && suspendedPage->pageIsClosedOrClosing())
                 suspendedPage = nullptr;
 
@@ -7026,6 +7051,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_mainFrame = nullptr;
     m_focusedFrame = nullptr;
     m_frameSetLargestFrame = nullptr;
+    m_suspendedPageKeptToPreventFlashing = nullptr;
     m_lastSuspendedPage = nullptr;
 
 #if PLATFORM(COCOA)
@@ -7355,6 +7381,7 @@ void WebPageProxy::enterAcceleratedCompositingMode(const LayerTreeContext& layer
 
     if (m_lastSuspendedPage)
         m_lastSuspendedPage->pageEnteredAcceleratedCompositingMode();
+    m_suspendedPageKeptToPreventFlashing = nullptr;
 }
 
 void WebPageProxy::exitAcceleratedCompositingMode()

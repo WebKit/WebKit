@@ -1,3 +1,18 @@
+2019-10-11  Chris Dumez  <cdumez@apple.com>
+
+        Move SuspendedPage logic from WebProcessPool to new WebBackForwardCache class
+        https://bugs.webkit.org/show_bug.cgi?id=202660
+
+        Reviewed by Antti Koivisto.
+
+        Drop test that relied on reusing a SuspendedPage's process from a loadHTMLStringLoad (optimization).
+        This no longer works now that SuspendedPages are owned by their associated back/forward item because
+        we currently do not create a back/forward item for loadHTMLString requests. Suspending a page for a
+        loadHTMLString was also wasteful since there was no way to restore that page (given that there was
+        no WebBackForwardListItem to go back to).
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-10-11  Brian Burg  <bburg@apple.com>
 
         Remove some dead code in webkitpy's mac.py

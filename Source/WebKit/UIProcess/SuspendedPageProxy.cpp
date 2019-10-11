@@ -28,6 +28,7 @@
 
 #include "DrawingAreaProxy.h"
 #include "Logging.h"
+#include "WebBackForwardCache.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
@@ -42,6 +43,22 @@ namespace WebKit {
 using namespace WebCore;
 
 static const Seconds suspensionTimeout { 10_s };
+
+static HashSet<SuspendedPageProxy*>& allSuspendedPages()
+{
+    static NeverDestroyed<HashSet<SuspendedPageProxy*>> map;
+    return map;
+}
+
+RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(WebProcessPool& processPool, const RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore)
+{
+    for (auto* suspendedPage : allSuspendedPages()) {
+        auto& process = suspendedPage->process();
+        if (&process.processPool() == &processPool && process.registrableDomain() == registrableDomain && &process.websiteDataStore() == &dataStore)
+            return &process;
+    }
+    return nullptr;
+}
 
 #if !LOG_DISABLED
 static const HashSet<IPC::StringReference>& messageNamesToIgnoreWhileSuspended()
@@ -89,6 +106,7 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&
     , m_suspensionToken(m_process->throttler().backgroundActivityToken())
 #endif
 {
+    allSuspendedPages().add(this);
     m_process->incrementSuspendedPageCount();
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
 
@@ -99,6 +117,7 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&
 SuspendedPageProxy::~SuspendedPageProxy()
 {
     m_process->decrementSuspendedPageCount();
+    allSuspendedPages().remove(this);
 
     if (m_readyToUnsuspendHandler) {
         RunLoop::main().dispatch([readyToUnsuspendHandler = WTFMove(m_readyToUnsuspendHandler)]() mutable {
@@ -121,6 +140,23 @@ SuspendedPageProxy::~SuspendedPageProxy()
     RunLoop::main().dispatch([process = m_process.copyRef()] {
         process->maybeShutDown();
     });
+}
+
+void SuspendedPageProxy::setBackForwardListItem(WebBackForwardListItem& item)
+{
+    ASSERT(!m_backForwardListItem);
+    m_backForwardListItem = &item;
+}
+
+void SuspendedPageProxy::clearBackForwardListItem()
+{
+    ASSERT(m_backForwardListItem);
+    m_backForwardListItem = nullptr;
+}
+
+WebBackForwardCache& SuspendedPageProxy::backForwardCache() const
+{
+    return process().processPool().backForwardCache();
 }
 
 void SuspendedPageProxy::waitUntilReadyToUnsuspend(CompletionHandler<void(SuspendedPageProxy*)>&& completionHandler)
@@ -215,8 +251,12 @@ void SuspendedPageProxy::didProcessRequestToSuspend(SuspensionState newSuspensio
 
 void SuspendedPageProxy::suspensionTimedOut()
 {
+    if (!m_backForwardListItem)
+        return;
+
     RELEASE_LOG_ERROR(ProcessSwapping, "%p - SuspendedPageProxy::suspensionTimedOut() destroying the suspended page because it failed to suspend in time", this);
-    m_process->processPool().removeSuspendedPage(*this); // Will destroy |this|.
+    ASSERT(m_backForwardListItem->suspendedPage() == this);
+    backForwardCache().removeEntry(*m_backForwardListItem); // Will destroy |this|.
 }
 
 void SuspendedPageProxy::didReceiveMessage(IPC::Connection&, IPC::Decoder& decoder)

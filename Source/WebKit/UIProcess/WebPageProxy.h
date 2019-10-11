@@ -270,6 +270,7 @@ class PlaybackSessionManagerProxy;
 class WebNavigationState;
 class VideoFullscreenManagerProxy;
 class WebAuthenticatorCoordinatorProxy;
+class WebBackForwardCache;
 class WebKeyboardEvent;
 class WebURLSchemeHandler;
 class WebMouseEvent;
@@ -1114,8 +1115,10 @@ public:
 #endif
 
     WebProcessProxy& ensureRunningProcess();
-    WebProcessProxy& process() { return m_process; }
+    WebProcessProxy& process() const { return m_process; }
     ProcessID processIdentifier() const;
+
+    WebBackForwardCache& backForwardCache() const;
 
     WebPreferences& preferences() { return m_preferences; }
     void setPreferences(WebPreferences&);
@@ -1597,6 +1600,7 @@ private:
     void platformInitialize();
 
     void notifyProcessPoolToPrewarm();
+    bool shouldUseBackForwardCache() const;
 
     RefPtr<API::Navigation> goToBackForwardItem(WebBackForwardListItem&, WebCore::FrameLoadType);
 
@@ -2551,6 +2555,7 @@ private:
     bool m_mayHaveUniversalFileReadSandboxExtension { false };
 
     std::unique_ptr<ProvisionalPageProxy> m_provisionalPage;
+    std::unique_ptr<SuspendedPageProxy> m_suspendedPageKeptToPreventFlashing;
     WeakPtr<SuspendedPageProxy> m_lastSuspendedPage;
 
 #if HAVE(PENCILKIT)

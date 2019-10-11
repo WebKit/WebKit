@@ -35,6 +35,7 @@
 #include "NetworkProcessMessages.h"
 #include "ShouldGrandfatherStatistics.h"
 #include "StorageAccessStatus.h"
+#include "WebBackForwardCache.h"
 #include "WebKit2Initialize.h"
 #include "WebPageProxy.h"
 #include "WebProcessCache.h"
@@ -725,7 +726,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
     auto webProcessAccessType = computeWebProcessAccessTypeForDataRemoval(dataTypes, !isPersistent());
     if (webProcessAccessType != ProcessAccessType::None) {
         for (auto& processPool : processPools()) {
-            processPool->clearSuspendedPages(AllowProcessCaching::No);
+            processPool->backForwardCache().clear(AllowProcessCaching::No);
             processPool->webProcessCache().clear();
         }
 
@@ -2077,7 +2078,7 @@ void WebsiteDataStore::addSecKeyProxyStore(Ref<SecKeyProxyStore>&& store)
 #endif
 
 #if ENABLE(WEB_AUTHN)
-void WebsiteDataStore::setMockWebAuthenticationConfiguration(MockWebAuthenticationConfiguration&& configuration)
+void WebsiteDataStore::setMockWebAuthenticationConfiguration(WebCore::MockWebAuthenticationConfiguration&& configuration)
 {
     if (!m_authenticatorManager->isMock()) {
         m_authenticatorManager = makeUniqueRef<MockAuthenticatorManager>(WTFMove(configuration));

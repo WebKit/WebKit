@@ -95,6 +95,7 @@ struct MockMediaDevice;
 
 namespace WebKit {
 
+class WebBackForwardCache;
 class HighPerformanceGraphicsUsageSampler;
 class UIGamepad;
 class PerActivityStateCPUUsageSampler;
@@ -149,6 +150,8 @@ public:
     void addMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID, IPC::MessageReceiver&);
     void removeMessageReceiver(IPC::StringReference messageReceiverName);
     void removeMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID);
+
+    WebBackForwardCache& backForwardCache() { return m_backForwardCache.get(); }
     
     template <typename T>
     void addMessageReceiver(IPC::StringReference messageReceiverName, ObjectIdentifier<T> destinationID, IPC::MessageReceiver& receiver)
@@ -476,17 +479,6 @@ public:
 
     void processForNavigation(WebPageProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, const String&)>&&);
 
-    // SuspendedPageProxy management.
-    void addSuspendedPage(std::unique_ptr<SuspendedPageProxy>&&);
-    void removeAllSuspendedPagesForPage(WebPageProxy&, WebProcessProxy* = nullptr);
-    std::unique_ptr<SuspendedPageProxy> takeSuspendedPage(SuspendedPageProxy&);
-    void removeSuspendedPage(SuspendedPageProxy&);
-    bool hasSuspendedPageFor(WebProcessProxy&, WebPageProxy&) const;
-    unsigned maxSuspendedPageCount() const { return m_maxSuspendedPageCount; }
-    RefPtr<WebProcessProxy> findReusableSuspendedPageProcess(const WebCore::RegistrableDomain&, WebPageProxy&, WebsiteDataStore&);
-
-    void clearSuspendedPages(AllowProcessCaching);
-
     void didReachGoodTimeToPrewarm();
 
     void didCollectPrewarmInformation(const WebCore::RegistrableDomain&, const WebCore::PrewarmInformation&);
@@ -592,7 +584,7 @@ private:
 
     void tryPrewarmWithDomainInformation(WebProcessProxy&, const WebCore::RegistrableDomain&);
 
-    void updateMaxSuspendedPageCount();
+    void updateBackForwardCacheCapacity();
 
 #if PLATFORM(IOS)
     static float displayBrightness();
@@ -773,8 +765,7 @@ private:
 #endif
 #endif
 
-    Deque<std::unique_ptr<SuspendedPageProxy>> m_suspendedPages;
-    unsigned m_maxSuspendedPageCount { 0 };
+    UniqueRef<WebBackForwardCache> m_backForwardCache;
 
     UniqueRef<WebProcessCache> m_webProcessCache;
     HashMap<WebCore::RegistrableDomain, RefPtr<WebProcessProxy>> m_swappedProcessesPerRegistrableDomain;
