@@ -656,7 +656,7 @@ WI.CSSManager = class CSSManager extends WI.Object
                 resource.__ignoreNextUpdateResourceContent = true;
 
                 let revision = styleSheet.currentRevision;
-                revision.content = resource.content;
+                revision.updateRevisionContent(resource.content);
             }
 
             this._lookupStyleSheetForResource(resource, styleSheetFound.bind(this));
@@ -701,10 +701,10 @@ WI.CSSManager = class CSSManager extends WI.Object
 
             let revision = representedObject.currentRevision;
             if (styleSheet.isInspectorStyleSheet()) {
-                revision.content = representedObject.content;
+                revision.updateRevisionContent(representedObject.content);
                 styleSheet.dispatchEventToListeners(WI.SourceCode.Event.ContentDidChange);
             } else
-                revision.content = parameters.content;
+                revision.updateRevisionContent(parameters.content);
 
             this._ignoreResourceContentDidChangeEventForResource = null;
         }

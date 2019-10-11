@@ -117,7 +117,7 @@ WI.Script = class Script extends WI.SourceCode
 
     get mimeType()
     {
-        return this._resource.mimeType;
+        return this._resource ? this._resource.mimeType : "text/javascript";
     }
 
     get isScript()

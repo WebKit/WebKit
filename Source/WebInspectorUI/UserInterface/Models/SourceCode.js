@@ -29,7 +29,7 @@ WI.SourceCode = class SourceCode extends WI.Object
     {
         super();
 
-        this._originalRevision = new WI.SourceCodeRevision(this, null, false);
+        this._originalRevision = new WI.SourceCodeRevision(this);
         this._currentRevision = this._originalRevision;
 
         this._sourceMaps = null;
@@ -231,17 +231,22 @@ WI.SourceCode = class SourceCode extends WI.Object
     {
         // Different backend APIs return one of `content, `body`, `text`, or `scriptSource`.
         let rawContent = parameters.content || parameters.body || parameters.text || parameters.scriptSource;
+        let rawBase64Encoded = !!parameters.base64Encoded;
         let content = rawContent;
         let error = parameters.error;
         let message = parameters.message;
 
         if (parameters.base64Encoded)
-            content = content ? decodeBase64ToBlob(content, this.mimeType) : "";
+            content = content ? WI.BlobUtilities.decodeBase64ToBlob(content, this.mimeType) : "";
 
         let revision = this.revisionForRequestedContent;
 
         this._ignoreRevisionContentDidChangeEvent = true;
-        revision.content = content || null;
+        revision.updateRevisionContent(rawContent, {
+            base64Encoded: rawBase64Encoded,
+            mimeType: this.mimeType,
+            blobContent: content instanceof Blob ? content : null,
+        });
         this._ignoreRevisionContentDidChangeEvent = false;
 
         this._initializeCurrentRevisionIfNeeded();
@@ -249,6 +254,8 @@ WI.SourceCode = class SourceCode extends WI.Object
         // FIXME: Returning the content in this promise is misleading. It may not be current content
         // now, and it may become out-dated later on. We should drop content from this promise
         // and require clients to ask for the current contents from the sourceCode in the result.
+        // That would also avoid confusion around `content` being a Blob and eliminate the work
+        // of creating the Blob if it is not used.
 
         return Promise.resolve({
             error,
@@ -256,7 +263,7 @@ WI.SourceCode = class SourceCode extends WI.Object
             sourceCode: this,
             content,
             rawContent,
-            rawBase64Encoded: parameters.base64Encoded,
+            rawBase64Encoded,
         });
     }
 };

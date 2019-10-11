@@ -74,10 +74,6 @@ WI.LocalResource = class LocalResource extends WI.Resource
         this._responseBodyTransferSize = !isNaN(metrics.responseBodyBytesReceived) ? metrics.responseBodyBytesReceived : NaN;
         this._responseBodySize = !isNaN(metrics.responseBodyDecodedSize) ? metrics.responseBodyDecodedSize : NaN;
 
-        // Access to the content.
-        this._localContent = response.content;
-        this._localContentIsBase64Encoded = response.base64Encoded;
-
         // LocalResource specific.
         this._isLocalResourceOverride = isLocalResourceOverride || false;
 
@@ -87,7 +83,9 @@ WI.LocalResource = class LocalResource extends WI.Resource
         this._cached = false; // FIXME: How should we denote cached? Assume from response source?
 
         // Finalize WI.SourceCode.
-        this._originalRevision = new WI.SourceCodeRevision(this, this._localContent);
+        let content = response.content;
+        let base64Encoded = response.base64Encoded;
+        this._originalRevision = new WI.SourceCodeRevision(this, content, base64Encoded, this._mimeType);
         this._currentRevision = this._originalRevision;
     }
 
@@ -223,8 +221,8 @@ WI.LocalResource = class LocalResource extends WI.Resource
                 mimeType: this.mimeType,
                 statusCode: this.statusCode,
                 statusText: this.statusText,
-                content: this._localContent,
-                base64Encoded: this._localContentIsBase64Encoded,
+                content: this.currentRevision.content,
+                base64Encoded: this.currentRevision.base64Encoded,
             },
             isLocalResourceOverride: this._isLocalResourceOverride,
         };
@@ -232,49 +230,9 @@ WI.LocalResource = class LocalResource extends WI.Resource
 
     // Public
 
-    get localContent() { return this._localContent; }
-    get localContentIsBase64Encoded() { return this._localContentIsBase64Encoded; }
-
     get isLocalResourceOverride()
     {
         return this._isLocalResourceOverride;
-    }
-
-    hasContent()
-    {
-        return !!this._localContent;
-    }
-
-    setContent(content, base64Encoded)
-    {
-        console.assert(!this._localContent);
-
-        // The backend may send base64 encoded data for text resources.
-        // If that is the case decode them here and treat as text.
-        if (base64Encoded && WI.shouldTreatMIMETypeAsText(this._mimeType)) {
-            content = atob(content);
-            base64Encoded = false;
-        }
-
-        this._localContent = content;
-        this._localContentIsBase64Encoded = base64Encoded;
-    }
-
-    updateOverrideContent(content, base64Encoded, mimeType, options = {})
-    {
-        console.assert(this._isLocalResourceOverride);
-
-        if (content !== undefined && this._localContent !== content)
-            this._localContent = content;
-
-        if (base64Encoded !== undefined && this._localContentIsBase64Encoded !== base64Encoded)
-            this._localContentIsBase64Encoded = base64Encoded;
-
-        if (mimeType !== undefined && mimeType !== this._mimeType) {
-            let oldMIMEType = this._mimeType;
-            this._mimeType = mimeType;
-            this.dispatchEventToListeners(WI.Resource.Event.MIMETypeDidChange, {oldMIMEType});
-        }
     }
 
     // Protected
@@ -282,8 +240,17 @@ WI.LocalResource = class LocalResource extends WI.Resource
     requestContentFromBackend()
     {
         return Promise.resolve({
-            content: this._localContent,
-            base64Encoded: this._localContentIsBase64Encoded,
+            content: this._originalRevision.content,
+            base64Encoded: this._originalRevision.base64Encoded,
         });
+    }
+
+    handleCurrentRevisionContentChange()
+    {
+        if (this._mimeType !== this.currentRevision.mimeType) {
+            let oldMIMEType = this._mimeType;
+            this._mimeType = this.currentRevision.mimeType;
+            this.dispatchEventToListeners(WI.Resource.Event.MIMETypeDidChange, {oldMIMEType});
+        }
     }
 };

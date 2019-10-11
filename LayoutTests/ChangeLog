@@ -1,3 +1,19 @@
+2019-10-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Local Resource Overrides: UI for overriding image and font resource content
+        https://bugs.webkit.org/show_bug.cgi?id=202016
+        <rdar://problem/55541475>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/unit-tests/mimetype-utilities-expected.txt:
+        * inspector/unit-tests/mimetype-utilities.html:
+        Test new utilities.
+
+        * http/tests/inspector/network/fetch-response-body.html:
+        * http/tests/inspector/network/xhr-response-body.html:
+        Renamed utilities.
+
 2019-10-11  Dean Jackson  <dino@apple.com>
 
         Layout test fast/events/touch/ios/tap-with-active-listener-inside-window-with-passive-listener.html is a flaky failure

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,9 +27,12 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
 {
     constructor(resource)
     {
+        console.assert(resource instanceof WI.Resource);
+
         super(resource, "image");
 
         this._imageElement = null;
+        this._draggingInternalImageElement = false;
 
         const toolTip = WI.UIString("Show transparency grid");
         const activatedToolTip = WI.UIString("Hide transparency grid");
@@ -37,13 +40,20 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
         this._showGridButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._showGridButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._showGridButtonClicked, this);
         this._showGridButtonNavigationItem.activated = !!WI.settings.showImageGrid.value;
+
+        if (this.showingLocalResourceOverride)
+            this._dropZoneView = new WI.DropZoneView(this, {text: WI.UIString("Drop Image")});
     }
 
     // Public
 
     get navigationItems()
     {
-        return [this._showGridButtonNavigationItem];
+        let items = super.navigationItems;
+
+        items.push(this._showGridButtonNavigationItem);
+
+        return items;
     }
 
     contentAvailable(content, base64Encoded)
@@ -61,13 +71,28 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
             return;
         }
 
-        this._imageElement = document.createElement("img");
+        let imageContainer = this.element.appendChild(document.createElement("div"));
+        imageContainer.className = "img-container";
+
+        this._imageElement = imageContainer.appendChild(document.createElement("img"));
         this._imageElement.addEventListener("load", function() { URL.revokeObjectURL(objectURL); });
         this._imageElement.src = objectURL;
         this._imageElement.setAttribute("filename", this.resource.urlComponents.lastPathComponent || "");
         this._updateImageGrid();
 
-        this.element.appendChild(this._imageElement);
+        this._imageElement.addEventListener("dragstart", (event) => {
+            console.assert(!this._draggingInternalImageElement);
+            this._draggingInternalImageElement = true;
+        });
+        this._imageElement.addEventListener("dragend", (event) => {
+            console.assert(this._draggingInternalImageElement);
+            this._draggingInternalImageElement = false;
+        });
+
+        if (this._dropZoneView) {
+            this._dropZoneView.targetElement = imageContainer;
+            this.addSubview(this._dropZoneView);
+        }
     }
 
     // Protected
@@ -86,6 +111,58 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
         WI.settings.showImageGrid.removeEventListener(WI.Setting.Event.Changed, this._updateImageGrid, this);
 
         super.hidden();
+    }
+
+    closed()
+    {
+        WI.networkManager.removeEventListener(null, null, this);
+
+        super.closed();
+    }
+
+    // DropZoneView delegate
+
+    dropZoneShouldAppearForDragEvent(dropZone, event)
+    {
+        // Do not appear if the drag is the current image inside this view.
+        if (this._draggingInternalImageElement)
+            return false;
+
+        // Appear if the drop contains a file.
+        return event.dataTransfer.types.includes("Files");
+    }
+
+    dropZoneHandleDrop(dropZone, event)
+    {
+        let files = event.dataTransfer.files;
+        let file = files.length === 1 ? files[0] : null;
+        if (!file) {
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        let fileReader = new FileReader;
+        fileReader.addEventListener("loadend", (event) => {
+            let localResourceOverride = WI.networkManager.localResourceOverrideForURL(this.resource.url);
+            if (!localResourceOverride)
+                return;
+
+            let dataURL = fileReader.result;
+            this._imageElement.src = dataURL;
+
+            let {base64, data, mimeType} = parseDataURL(dataURL);
+
+            // In case no mime type was determined, try to derive one from the file extension.
+            if (!mimeType || mimeType === "text/plain") {
+                let extension = WI.fileExtensionForFilename(file.name);
+                if (extension)
+                    mimeType = WI.mimeTypeForFileExtension(extension);
+            }
+
+            let revision = localResourceOverride.localResource.currentRevision;
+            revision.updateRevisionContent(data, {base64Encoded: base64, mimeType});
+        });
+        fileReader.readAsDataURL(file);
     }
 
     // Private

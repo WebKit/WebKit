@@ -42,7 +42,7 @@ function test()
                 resolve(content)
                 return;
             }
-            blobAsText(content, (text) => {
+            WI.BlobUtilities.blobAsText(content, (text) => {
                 resolve(text);
             });
         });

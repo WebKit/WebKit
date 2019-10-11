@@ -23,20 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.fileExtensionForURL = function(url)
+WI.fileExtensionForFilename = function(filename)
 {
-    let lastPathComponent = parseURL(url).lastPathComponent;
-    if (!lastPathComponent)
+    if (!filename)
         return null;
 
-    let index = lastPathComponent.lastIndexOf(".");
+    let index = filename.lastIndexOf(".");
     if (index === -1)
         return null;
 
-    if (index === lastPathComponent.length - 1)
+    if (index === filename.length - 1)
         return null;
 
-    return lastPathComponent.substr(index + 1);
+    return filename.substr(index + 1);
+};
+
+WI.fileExtensionForURL = function(url)
+{
+    let lastPathComponent = parseURL(url).lastPathComponent;
+    return WI.fileExtensionForFilename(lastPathComponent);
 };
 
 WI.mimeTypeForFileExtension = function(extension)

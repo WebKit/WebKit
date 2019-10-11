@@ -56,27 +56,6 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
         this._codeCoverageButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         WI.settings.enableControlFlowProfiler.addEventListener(WI.Setting.Event.Changed, this._enableControlFlowProfilerSettingChanged, this);
 
-        this._showingLocalResourceOverride = false;
-
-        if (WI.NetworkManager.supportsLocalResourceOverrides()) {
-            if (resource instanceof WI.Resource && resource.isLocalResourceOverride) {
-                this._showingLocalResourceOverride = true;
-                this._localResourceOverrideBannerView = new WI.LocalResourceOverrideLabelView(resource);
-
-                this._removeLocalResourceOverrideButtonNavigationItem = new WI.ButtonNavigationItem("remove-local-resource-override", WI.UIString("Remove Local Override"), "Images/NavigationItemTrash.svg", 15, 15);
-                this._removeLocalResourceOverrideButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleRemoveLocalResourceOverride, this);
-                this._removeLocalResourceOverrideButtonNavigationItem.enabled = true;
-                this._removeLocalResourceOverrideButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-            } else {
-                this._localResourceOverrideBannerView = new WI.LocalResourceOverrideWarningView(resource);
-
-                this._createLocalResourceOverrideButtonNavigationItem = new WI.ButtonNavigationItem("create-local-resource-override", WI.UIString("Create Local Override"), "Images/NavigationItemNetworkOverride.svg", 13, 14);
-                this._createLocalResourceOverrideButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleCreateLocalResourceOverride, this);
-                this._createLocalResourceOverrideButtonNavigationItem.enabled = false; // Enabled when the text editor is populated with content.
-                this._createLocalResourceOverrideButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-            }
-        }
-
         this._textEditor = new WI.SourceCodeTextEditor(resource);
         this._textEditor.addEventListener(WI.TextEditor.Event.ExecutionLineNumberDidChange, this._executionLineNumberDidChange, this);
         this._textEditor.addEventListener(WI.TextEditor.Event.NumberOfSearchResultsDidChange, this._numberOfSearchResultsDidChange, this);
@@ -89,27 +68,17 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
 
         WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ProbeSetAdded, this._probeSetsChanged, this);
         WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ProbeSetRemoved, this._probeSetsChanged, this);
-
-        if (WI.NetworkManager.supportsLocalResourceOverrides()) {
-            WI.networkManager.addEventListener(WI.NetworkManager.Event.LocalResourceOverrideAdded, this._handleLocalResourceOverrideChanged, this);
-            WI.networkManager.addEventListener(WI.NetworkManager.Event.LocalResourceOverrideRemoved, this._handleLocalResourceOverrideChanged, this);
-        }
     }
 
     // Public
 
     get navigationItems()
     {
-        let items = [];
-
-        if (this._removeLocalResourceOverrideButtonNavigationItem)
-            items.push(this._removeLocalResourceOverrideButtonNavigationItem);
-        if (this._createLocalResourceOverrideButtonNavigationItem)
-            items.push(this._createLocalResourceOverrideButtonNavigationItem);
+        let items = super.navigationItems;
 
         items.push(this._prettyPrintButtonNavigationItem);
 
-        if (!this._showingLocalResourceOverride)
+        if (!this.showingLocalResourceOverride)
             items.push(this._showTypesButtonNavigationItem, this._codeCoverageButtonNavigationItem);
 
         return items;
@@ -173,6 +142,11 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
     contentAvailable(content, base64Encoded)
     {
         // Do nothing.
+    }
+
+    localResourceOverrideInitialContent()
+    {
+        return {initialContent: this._textEditor.string};
     }
 
     get supportsSave()
@@ -243,17 +217,11 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
 
         this.removeLoadingIndicator();
 
-        if (this._localResourceOverrideBannerView)
-            this.addSubview(this._localResourceOverrideBannerView);
-
         this.addSubview(this._textEditor);
     }
 
     _contentDidPopulate(event)
     {
-        if (this._createLocalResourceOverrideButtonNavigationItem)
-            this._createLocalResourceOverrideButtonNavigationItem.enabled = WI.networkManager.canBeOverridden(this.resource);
-
         this._prettyPrintButtonNavigationItem.enabled = this._textEditor.canBeFormatted();
 
         this._showTypesButtonNavigationItem.enabled = this._textEditor.canShowTypeAnnotations();
@@ -261,21 +229,6 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
 
         this._codeCoverageButtonNavigationItem.enabled = this._textEditor.canShowCoverageHints();
         this._codeCoverageButtonNavigationItem.activated = WI.settings.enableControlFlowProfiler.value;
-    }
-
-    async _handleCreateLocalResourceOverride(event)
-    {
-        let localResourceOverride = await this.resource.createLocalResourceOverride(this._textEditor.string);
-        WI.networkManager.addLocalResourceOverride(localResourceOverride);
-        WI.showLocalResourceOverride(localResourceOverride);
-    }
-
-    _handleRemoveLocalResourceOverride(event)
-    {
-        console.assert(this._showingLocalResourceOverride);
-
-        let localResourceOverride = WI.networkManager.localResourceOverrideForURL(this.resource.url);
-        WI.networkManager.removeLocalResourceOverride(localResourceOverride);
     }
 
     _togglePrettyPrint(event)
@@ -320,15 +273,6 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
         this._prettyPrintButtonNavigationItem.enabled = this._textEditor.canBeFormatted();
     }
 
-    _handleLocalResourceOverrideChanged(event)
-    {
-        if (this.resource.url !== event.data.localResourceOverride.url)
-            return;
-
-        if (this._createLocalResourceOverrideButtonNavigationItem)
-            this._createLocalResourceOverrideButtonNavigationItem.enabled = WI.networkManager.canBeOverridden(this.resource);
-    }
-
     _sourceCodeContentDidChange(event)
     {
         if (this._ignoreSourceCodeContentDidChangeEvent)
@@ -340,7 +284,7 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
     _textEditorContentDidChange(event)
     {
         this._ignoreSourceCodeContentDidChangeEvent = true;
-        this.resource.currentRevision.content = this._textEditor.string;
+        this.resource.currentRevision.updateRevisionContent(this._textEditor.string);
         this._ignoreSourceCodeContentDidChangeEvent = false;
     }
 
@@ -374,7 +318,7 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
         if (this.resource.urlComponents.scheme === "file")
             return true;
 
-        if (this._showingLocalResourceOverride)
+        if (this.showingLocalResourceOverride)
             return true;
 
         return false;

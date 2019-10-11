@@ -111,7 +111,6 @@
         // Utilities
         "appendWebInspectorConsoleEvaluationSourceURL": true,
         "appendWebInspectorSourceURL": true,
-        "blobAsText": true,
         "clamp": true,
         "doubleQuotedString": true,
         "ellipsis": true,
@@ -132,7 +131,6 @@
         "parseMIMEType": true,
         "resolveDotsInPath": true,
         "simpleGlobStringToRegExp": true,
-        "textToBlob": true,
         "timestamp": true,
         "zeroWidthSpace": true,
 
@@ -141,7 +139,6 @@
 
         // URL Utilities
         "absoluteURL": true,
-        "decodeBase64ToBlob": true,
         "parseDataURL": true,
         "parseLocationQueryParameters": true,
         "parseQueryString": true,

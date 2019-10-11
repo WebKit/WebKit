@@ -422,21 +422,14 @@ WI.Resource = class Resource extends WI.SourceCode
 
     createObjectURL()
     {
+        let revision = this.currentRevision;
+        let blobContent = revision.blobContent;
+        if (blobContent)
+            return URL.createObjectURL(blobContent)
+
         // If content is not available, fallback to using original URL.
         // The client may try to revoke it, but nothing will happen.
-        let content = this.content;
-        if (!content)
-            return this._url;
-
-        if (content instanceof Blob)
-            return URL.createObjectURL(content);
-
-        if (typeof content === "string") {
-            let blob = textToBlob(content, this._mimeType);
-            return URL.createObjectURL(blob);
-        }
-
-        return null;
+        return this._url;
     }
 
     isMainResource()
@@ -1065,7 +1058,7 @@ WI.Resource = class Resource extends WI.SourceCode
         cookie[WI.Resource.MainResourceCookieKey] = this.isMainResource();
     }
 
-    async createLocalResourceOverride(initialContent)
+    async createLocalResourceOverride({initialContent} = {})
     {
         console.assert(!this.isLocalResourceOverride);
         console.assert(WI.NetworkManager.supportsLocalResourceOverrides());

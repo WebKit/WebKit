@@ -118,7 +118,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
         if (!statusCode || statusCode === "NaN")
             statusCode = "200";
         if (!statusText)
-            statusText = WI.HTTPUtilities.statusTextForStatusCode(statusCode);
+            statusText = WI.HTTPUtilities.statusTextForStatusCode(parseInt(statusCode));
 
         let popoverContentElement = document.createElement("div");
         popoverContentElement.className = "local-resource-override-popover-content";

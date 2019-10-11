@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,36 +25,56 @@
 
 WI.SourceCodeRevision = class SourceCodeRevision extends WI.Revision
 {
-    constructor(sourceCode, content)
+    constructor(sourceCode, content, base64Encoded, mimeType)
     {
         super();
 
         console.assert(sourceCode instanceof WI.SourceCode);
+        console.assert(content === undefined || typeof content === "string");
+        console.assert(base64Encoded === undefined || typeof base64Encoded === "boolean");
+        console.assert(mimeType === undefined || typeof mimeType === "string");
 
         this._sourceCode = sourceCode;
+
         this._content = content || "";
+        this._base64Encoded = !!base64Encoded;
+        this._mimeType = mimeType;
+        this._blobContent = null;
     }
 
     // Public
 
-    get sourceCode()
+    get sourceCode() { return this._sourceCode; }
+    get content() { return this._content; }
+    get base64Encoded() { return this._base64Encoded; }
+    get mimeType() { return this._mimeType; }
+
+    get blobContent()
     {
-        return this._sourceCode;
+        if (!this._blobContent && this._content)
+            this._blobContent = WI.BlobUtilities.blobForContent(this._content, this._base64Encoded, this._mimeType);
+
+        console.assert(!this._blobContent || this._blobContent instanceof Blob);
+        return this._blobContent;
     }
 
-    get content()
+    updateRevisionContent(content, {base64Encoded, mimeType, blobContent} = {})
     {
-        return this._content;
-    }
+        console.assert(content === undefined || typeof content === "string");
+        this._content = content || "";
 
-    set content(content)
-    {
-        content = content || "";
+        if (base64Encoded !== undefined) {
+            console.assert(typeof base64Encoded === "boolean");
+            this._base64Encoded = !!base64Encoded;
+        }
 
-        if (this._content === content)
-            return;
+        if (mimeType !== undefined) {
+            console.assert(typeof mimeType === "string");
+            this._mimeType = mimeType;
+        }
 
-        this._content = content;
+        console.assert(!blobContent || blobContent instanceof Blob);
+        this._blobContent = blobContent !== undefined ? blobContent : null;
 
         this._sourceCode.revisionContentDidChange(this);
     }
@@ -71,6 +91,6 @@ WI.SourceCodeRevision = class SourceCodeRevision extends WI.Revision
 
     copy()
     {
-        return new WI.SourceCodeRevision(this._sourceCode, this._content);
+        return new WI.SourceCodeRevision(this._sourceCode, this._content, this._base64Encoded, this._mimeType);
     }
 };

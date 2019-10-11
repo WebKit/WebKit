@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -816,9 +816,15 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         }
 
         let localResource = localResourceOverride.localResource;
-        let content = localResource.localContent;
-        let base64Encoded = localResource.localContentIsBase64Encoded;
-        let {mimeType, statusCode, statusText, responseHeaders} = localResource;
+        let revision = localResource.currentRevision;
+
+        let content = revision.content;
+        let base64Encoded = revision.base64Encoded;
+        let mimeType = revision.mimeType;
+        let statusCode = localResource.statusCode;
+        let statusText = localResource.statusText;
+        let responseHeaders = localResource.responseHeaders;
+        console.assert(revision.mimeType === localResource.mimeType);
 
         if (isNaN(statusCode))
             statusCode = undefined;
@@ -1244,17 +1250,6 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         if (!localResourceOverride)
             return;
 
-        let localResource = localResourceOverride.localResource;
-        let content = localResource.content;
-        let base64Encoded = localResource.localContentIsBase64Encoded;
-        let mimeType = localResource.mimeType;
-        localResource.updateOverrideContent(content, base64Encoded, mimeType, {suppressEvent: true});
-
-        this._persistLocalResourceOverrideSoonAfterContentChange(localResourceOverride);
-    }
-
-    _persistLocalResourceOverrideSoonAfterContentChange(localResourceOverride)
-    {
         if (!this._saveLocalResourceOverridesDebouncer) {
             this._pendingLocalResourceOverrideSaves = new Set;
             this._saveLocalResourceOverridesDebouncer = new Debouncer(() => {

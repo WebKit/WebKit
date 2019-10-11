@@ -1,3 +1,178 @@
+2019-10-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Local Resource Overrides: UI for overriding image and font resource content
+        https://bugs.webkit.org/show_bug.cgi?id=202016
+        <rdar://problem/55541475>
+
+        Reviewed by Devin Rousso.
+
+        Extend SourceCodeRevision to be a (content, base64Encoded, mimeType) tuple and
+        make clients update the revision content more explicitly (`updateRevisionContent`).
+        This also includes `blobContent` as a more explicit way to get the content as
+        a Blob, which may not always be desired.
+
+        Switch LocalResource use the originalRevision / currentRevision instead of
+        keeping its own localContent / localContentIsBase64Encoded properties.
+
+        Introduce a `DropZoneView` to simplify handling of presenting a drop zone
+        over a specific element. And use it for the ImageResourceContentView for local
+        resource overrides to accept new content.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        New strings and resources.
+
+        * .eslintrc:
+        * UserInterface/Base/BlobUtilities.js: Added.
+        (WI.BlobUtilities.blobForContent):
+        (WI.BlobUtilities.decodeBase64ToBlob):
+        (WI.BlobUtilities.textToBlob):
+        (WI.BlobUtilities.blobAsText):
+        (WI.BlobUtilities):
+        * UserInterface/Base/FileUtilities.js:
+        (WI.FileUtilities.async.readDataURL):
+        (WI.FileUtilities):
+        * UserInterface/Base/MIMETypeUtilities.js:
+        (WI.fileExtensionForFilename):
+        (WI.fileExtensionForURL):
+        * UserInterface/Base/Utilities.js:
+        Move around or introduce some minor utilities.
+
+        * UserInterface/Models/SourceCodeRevision.js:
+        (WI.SourceCodeRevision):
+        (WI.SourceCodeRevision.prototype.get sourceCode):
+        (WI.SourceCodeRevision.prototype.get content):
+        (WI.SourceCodeRevision.prototype.get base64Encoded):
+        (WI.SourceCodeRevision.prototype.get mimeType):
+        (WI.SourceCodeRevision.prototype.get blobContent):
+        (WI.SourceCodeRevision.prototype.updateRevisionContent):
+        (WI.SourceCodeRevision.prototype.copy):
+        (WI.SourceCodeRevision.prototype.set content): Deleted.
+        Data is now a (content, base64Encoded, mimeType) tuple.
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype.responseIntercepted):
+        (WI.NetworkManager.prototype._handleResourceContentDidChange):
+        (WI.NetworkManager.prototype._persistLocalResourceOverrideSoonAfterContentChange): Deleted.
+        This is now a unified resource content change path without anything special for
+        local resource overrides.
+
+        * UserInterface/Models/LocalResource.js:
+        (WI.LocalResource.prototype.toJSON):
+        (WI.LocalResource.prototype.requestContentFromBackend):
+        (WI.LocalResource.prototype.handleCurrentRevisionContentChange):
+        (WI.LocalResource):
+        (WI.LocalResource.prototype.get localContent): Deleted.
+        (WI.LocalResource.prototype.get localContentIsBase64Encoded): Deleted.
+        (WI.LocalResource.prototype.hasContent): Deleted.
+        (WI.LocalResource.prototype.setContent): Deleted.
+        (WI.LocalResource.prototype.updateOverrideContent): Deleted.
+        Use originalRevision / currentRevision as appropriate.
+
+        * UserInterface/Views/DropZoneView.css: Added.
+        (.drop-zone):
+        (.drop-zone.visible):
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/DropZoneView.js: Added.
+        (WI.DropZoneView):
+        (WI.DropZoneView.prototype.get delegate):
+        (WI.DropZoneView.prototype.get targetElement):
+        (WI.DropZoneView.prototype.set targetElement):
+        (WI.DropZoneView.prototype.initialLayout):
+        (WI.DropZoneView.prototype._startActiveDrag):
+        (WI.DropZoneView.prototype._stopActiveDrag):
+        (WI.DropZoneView.prototype._handleDragEnter):
+        (WI.DropZoneView.prototype._handleDragLeave):
+        (WI.DropZoneView.prototype._handleDragOver):
+        (WI.DropZoneView.prototype._handleDrop):
+        Simplified handling of a drop zone.
+
+        * UserInterface/Views/ResourceContentView.js:
+        (WI.ResourceContentView.prototype.removeLoadingIndicator):
+        More safely remove children and subviews.
+
+        (WI.ResourceContentView):
+        (WI.ResourceContentView.prototype.get resource):
+        (WI.ResourceContentView.prototype.get navigationItems):
+        (WI.ResourceContentView.prototype.localResourceOverrideInitialContent):
+        (WI.ResourceContentView.prototype.closed):
+        (WI.ResourceContentView.prototype.removeLoadingIndicator):
+        (WI.ResourceContentView.prototype._contentAvailable):
+        (WI.ResourceContentView.prototype._issueWasAdded):
+        (WI.ResourceContentView.prototype.async._handleCreateLocalResourceOverride):
+        (WI.ResourceContentView.prototype._handleRemoveLocalResourceOverride):
+        (WI.ResourceContentView.prototype._handleLocalResourceOverrideChanged):
+        (WI.ResourceContentView.prototype._mouseWasClicked):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WI.TextResourceContentView):
+        (WI.TextResourceContentView.prototype.get navigationItems):
+        (WI.TextResourceContentView.prototype.localResourceOverrideInitialContent):
+        (WI.TextResourceContentView.prototype._contentWillPopulate):
+        (WI.TextResourceContentView.prototype._contentDidPopulate):
+        (WI.TextResourceContentView.prototype._textEditorContentDidChange):
+        (WI.TextResourceContentView.prototype._shouldBeEditable):
+        (WI.TextResourceContentView.prototype.async._handleCreateLocalResourceOverride): Deleted.
+        (WI.TextResourceContentView.prototype._handleRemoveLocalResourceOverride): Deleted.
+        (WI.TextResourceContentView.prototype._handleLocalResourceOverrideChanged): Deleted.
+        Extract generalized local resource override properties into the ResourceContentView base class.
+
+        * UserInterface/Views/FontResourceContentView.css:
+        (.content-view.resource.font):
+        (.content-view.resource.font > .drop-zone):
+        (.content-view.resource.font > .preview-container):
+        (.content-view.resource.font .preview):
+        * UserInterface/Views/FontResourceContentView.js:
+        (WI.FontResourceContentView):
+        (WI.FontResourceContentView.prototype.contentAvailable):
+        (WI.FontResourceContentView.prototype.shown):
+        (WI.FontResourceContentView.prototype.hidden):
+        (WI.FontResourceContentView.prototype.closed):
+        (WI.FontResourceContentView.prototype.layout):
+        (WI.FontResourceContentView.prototype._updatePreviewElement.createMetricElement):
+        (WI.FontResourceContentView.prototype._updatePreviewElement):
+        (WI.FontResourceContentView.prototype.dropZoneShouldAppearForDragEvent):
+        (WI.FontResourceContentView.prototype.dropZoneHandleDrop):
+        Create a drop zone that will update the font local resource override content.
+
+        * UserInterface/Views/ImageResourceContentView.css:
+        (.content-view.resource.image):
+        (.content-view.resource.image > .drop-zone):
+        (.content-view.resource.image > .img-container):
+        (.content-view.resource.image img):
+        * UserInterface/Views/ImageResourceContentView.js:
+        (WI.ImageResourceContentView):
+        (WI.ImageResourceContentView.prototype.get navigationItems):
+        (WI.ImageResourceContentView.prototype.contentAvailable):
+        (WI.ImageResourceContentView.prototype.closed):
+        (WI.ImageResourceContentView.prototype.dropZoneShouldAppearForDragEvent):
+        (WI.ImageResourceContentView.prototype.dropZoneHandleDrop):
+        Create a drop zone that will update the image local resource override content.
+
+        * UserInterface/Models/Script.js:
+        (WI.Script.prototype.get mimeType):
+        Seems like this should have a default value given there may not be a resource.
+
+        * UserInterface/Views/LocalResourceOverridePopover.js:
+        (WI.LocalResourceOverridePopover.prototype.show):
+        Better handling here, since the utilities expects a number not a string.
+
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.prototype.createObjectURL):
+        * UserInterface/Views/LocalResourceOverrideTreeElement.js:
+        (WI.LocalResourceOverrideTreeElement.prototype.willDismissPopover):
+        Use currentRevision more appropriately.
+
+        * UserInterface/Models/SourceCode.js:
+        (WI.SourceCode.prototype._processContent):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WI.TextResourceContentView.prototype._textEditorContentDidChange):
+        * UserInterface/Controllers/CSSManager.js:
+        (WI.CSSManager.prototype._resourceContentDidChange.applyStyleSheetChanges.styleSheetFound):
+        (WI.CSSManager.prototype._resourceContentDidChange.applyStyleSheetChanges):
+        (WI.CSSManager.prototype._resourceContentDidChange):
+        (WI.CSSManager.prototype._updateResourceContent.fetchedStyleSheetContent):
+        Update revision content more explicitly.
+
 2019-10-10  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Sources: enable tab by default

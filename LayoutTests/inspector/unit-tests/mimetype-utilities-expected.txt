@@ -1,5 +1,15 @@
 
 == Running test suite: MIMETypeUtilities
+-- Running test case: fileExtensionForFilename
+PASS: File extension for null filename should be null.
+PASS: File extension for filename without a period should be null.
+PASS: File extension for filename ending in a period should be null.
+PASS: File extension for "foo.xyz" should be "xyz".
+PASS: File extension for "image.png" should be "png".
+PASS: File extension for "image.png" should be "gif".
+PASS: File extension for "script.js" should be "js".
+PASS: File extension for "script.min.js" should be "js".
+
 -- Running test case: fileExtensionForURL
 PASS: File extension for null URL should be null.
 PASS: File extension for invalid URL should be null.

@@ -8,9 +8,26 @@ function test()
     let suite = InspectorTest.createSyncSuite("MIMETypeUtilities");
 
     suite.addTestCase({
+        name: "fileExtensionForFilename",
+        test() {
+            InspectorTest.expectNull(WI.fileExtensionForFilename(null), `File extension for null filename should be null.`);
+            InspectorTest.expectEqual(WI.fileExtensionForURL("test"), null, `File extension for filename without a period should be null.`);
+            InspectorTest.expectEqual(WI.fileExtensionForURL("test."), null, `File extension for filename ending in a period should be null.`);
+
+            InspectorTest.expectEqual(WI.fileExtensionForFilename("foo.xyz"), "xyz", `File extension for "foo.xyz" should be "xyz".`);
+            InspectorTest.expectEqual(WI.fileExtensionForFilename("image.png"), "png", `File extension for "image.png" should be "png".`);
+            InspectorTest.expectEqual(WI.fileExtensionForFilename("image.gif"), "gif", `File extension for "image.png" should be "gif".`);
+            InspectorTest.expectEqual(WI.fileExtensionForFilename("script.js"), "js", `File extension for "script.js" should be "js".`);
+            InspectorTest.expectEqual(WI.fileExtensionForFilename("script.min.js"), "js", `File extension for "script.min.js" should be "js".`);
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
         name: "fileExtensionForURL",
         test() {
-            InspectorTest.expectEqual(WI.fileExtensionForURL(null), null, `File extension for null URL should be null.`);
+            InspectorTest.expectNull(WI.fileExtensionForURL(null), `File extension for null URL should be null.`);
             InspectorTest.expectEqual(WI.fileExtensionForURL("invalid-url"), null, `File extension for invalid URL should be null.`);
             InspectorTest.expectEqual(WI.fileExtensionForURL("https://example.com"), null, `File extension for URL without last path component should be null.`);
             InspectorTest.expectEqual(WI.fileExtensionForURL("https://example.com/"), null, `File extension for URL without last path component should be null.`);

@@ -31,14 +31,13 @@ WI.FontResourceContentView = class FontResourceContentView extends WI.ResourceCo
 
         this._styleElement = null;
         this._previewElement = null;
+        this._previewContainer = null;
+
+        if (this.showingLocalResourceOverride)
+            this._dropZoneView = new WI.DropZoneView(this, {text: WI.UIString("Drop Font")});
     }
 
     // Public
-
-    get previewElement()
-    {
-        return this._previewElement;
-    }
 
     sizeToFit()
     {
@@ -56,68 +55,29 @@ WI.FontResourceContentView = class FontResourceContentView extends WI.ResourceCo
     contentAvailable(content, base64Encoded)
     {
         this._fontObjectURL = this.resource.createObjectURL();
+
         if (!this._fontObjectURL) {
             this.showGenericErrorMessage();
             return;
         }
 
-        const uniqueFontName = "WebInspectorFontPreview" + (++WI.FontResourceContentView._uniqueFontIdentifier);
-
-        var format = "";
-
-        // We need to specify a format when loading SVG fonts to make them work.
-        if (this.resource.mimeTypeComponents.type === "image/svg+xml")
-            format = " format(\"svg\")";
-
-        if (this._styleElement && this._styleElement.parentNode)
-            this._styleElement.parentNode.removeChild(this._styleElement);
-
         this.removeLoadingIndicator();
 
-        this._styleElement = document.createElement("style");
-        this._styleElement.textContent = "@font-face { font-family: \"" + uniqueFontName + "\"; src: url(" + this._fontObjectURL + ")" + format + "; }";
+        this._previewContainer = this.element.appendChild(document.createElement("div"));
+        this._previewContainer.className = "preview-container";
 
-        // The style element will be added when shown later if we are not visible now.
-        if (this.visible)
-            document.head.appendChild(this._styleElement);
+        this._updatePreviewElement();
 
-        this._previewElement = document.createElement("div");
-        this._previewElement.className = "preview";
-        this._previewElement.style.fontFamily = uniqueFontName;
-
-        function createMetricElement(className)
-        {
-            var metricElement = document.createElement("div");
-            metricElement.className = "metric " + className;
-            return metricElement;
+        if (this._dropZoneView) {
+            this._dropZoneView.targetElement = this._previewContainer;
+            this.addSubview(this._dropZoneView);
         }
-
-        var lines = WI.FontResourceContentView.PreviewLines;
-        for (var i = 0; i < lines.length; ++i) {
-            var lineElement = document.createElement("div");
-            lineElement.className = "line";
-
-            lineElement.appendChild(createMetricElement("top"));
-            lineElement.appendChild(createMetricElement("xheight"));
-            lineElement.appendChild(createMetricElement("middle"));
-            lineElement.appendChild(createMetricElement("baseline"));
-            lineElement.appendChild(createMetricElement("bottom"));
-
-            var contentElement = document.createElement("div");
-            contentElement.className = "content";
-            contentElement.textContent = lines[i];
-            lineElement.appendChild(contentElement);
-
-            this._previewElement.appendChild(lineElement);
-        }
-
-        this.element.appendChild(this._previewElement);
-
-        this.sizeToFit();
     }
 
     shown()
     {
+        super.shown();
+
         // Add the style element since it is removed when hidden.
         if (this._styleElement)
             document.head.appendChild(this._styleElement);
@@ -126,8 +86,10 @@ WI.FontResourceContentView = class FontResourceContentView extends WI.ResourceCo
     hidden()
     {
         // Remove the style element so it will not stick around when this content view is destroyed.
-        if (this._styleElement && this._styleElement.parentNode)
-            this._styleElement.parentNode.removeChild(this._styleElement);
+        if (this._styleElement)
+            this._styleElement.remove();
+
+        super.hidden();
     }
 
     closed()
@@ -138,12 +100,112 @@ WI.FontResourceContentView = class FontResourceContentView extends WI.ResourceCo
         // the object URL to be resolved again.
         if (this._fontObjectURL)
             URL.revokeObjectURL(this._fontObjectURL);
+
+        super.closed();
     }
 
     // Protected
 
     layout()
     {
+        this.sizeToFit();
+    }
+
+    // DropZoneView delegate
+
+    dropZoneShouldAppearForDragEvent(dropZone, event)
+    {
+        return event.dataTransfer.types.includes("Files");
+    }
+
+    dropZoneHandleDrop(dropZone, event)
+    {
+        let files = event.dataTransfer.files;
+        let file = files.length === 1 ? files[0] : null;
+        if (!file) {
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        let fileReader = new FileReader;
+        fileReader.addEventListener("loadend", (event) => {
+            let localResourceOverride = WI.networkManager.localResourceOverrideForURL(this.resource.url);
+            if (!localResourceOverride)
+                return;
+
+            let dataURL = fileReader.result;
+            let {base64, data, mimeType} = parseDataURL(dataURL);
+
+            // In case no mime type was determined, try to derive one from the file extension.
+            if (!mimeType || mimeType === "text/plain") {
+                let extension = WI.fileExtensionForFilename(file.name);
+                if (extension)
+                    mimeType = WI.mimeTypeForFileExtension(extension);
+            }
+
+            let revision = localResourceOverride.localResource.currentRevision;
+            revision.updateRevisionContent(data, {base64Encoded: base64, mimeType});
+
+            this._fontObjectURL = this.resource.createObjectURL();
+            this._updatePreviewElement();
+        });
+        fileReader.readAsDataURL(file);
+    }
+
+    // Private
+
+    _updatePreviewElement()
+    {
+        if (this._styleElement)
+            this._styleElement.remove();
+        if (this._previewElement)
+            this._previewElement.remove();
+
+        const uniqueFontName = "WebInspectorFontPreview" + (++WI.FontResourceContentView._uniqueFontIdentifier);
+
+        let format = "";
+
+        // We need to specify a format when loading SVG fonts to make them work.
+        if (this.resource.mimeTypeComponents.type === "image/svg+xml")
+            format = " format(\"svg\")";
+
+        this._styleElement = document.createElement("style");
+        this._styleElement.textContent = `@font-face { font-family: "${uniqueFontName}"; src: url(${this._fontObjectURL}) ${format}; }`;
+
+        // The style element will be added when shown later if we are not visible now.
+        if (this.visible)
+            document.head.appendChild(this._styleElement);
+
+        this._previewElement = document.createElement("div");
+        this._previewElement.className = "preview";
+        this._previewElement.style.fontFamily = uniqueFontName;
+
+        function createMetricElement(className) {
+            let metricElement = document.createElement("div");
+            metricElement.className = "metric " + className;
+            return metricElement;
+        }
+
+        for (let line of WI.FontResourceContentView.PreviewLines) {
+            let lineElement = document.createElement("div");
+            lineElement.className = "line";
+
+            lineElement.appendChild(createMetricElement("top"));
+            lineElement.appendChild(createMetricElement("xheight"));
+            lineElement.appendChild(createMetricElement("middle"));
+            lineElement.appendChild(createMetricElement("baseline"));
+            lineElement.appendChild(createMetricElement("bottom"));
+
+            let contentElement = document.createElement("div");
+            contentElement.className = "content";
+            contentElement.textContent = line;
+            lineElement.appendChild(contentElement);
+
+            this._previewElement.appendChild(lineElement);
+        }
+
+        this._previewContainer.appendChild(this._previewElement);
+
         this.sizeToFit();
     }
 };

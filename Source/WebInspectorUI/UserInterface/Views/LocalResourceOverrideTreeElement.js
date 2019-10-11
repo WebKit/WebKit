@@ -125,14 +125,15 @@ WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement ext
 
         let wasSelected = this.selected;
 
+        let revision = this._localResourceOverride.localResource.currentRevision;
         let newLocalResourceOverride = WI.LocalResourceOverride.create({
             url,
             mimeType,
             statusCode,
             statusText,
             headers,
-            content: this._localResourceOverride.localResource.localContent,
-            base64Encoded: this._localResourceOverride.localResource.localContentIsBase64Encoded,
+            content: revision.content,
+            base64Encoded: revision.base64Encoded,
         });
 
         WI.networkManager.removeLocalResourceOverride(this._localResourceOverride);
