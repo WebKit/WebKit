@@ -111,6 +111,68 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
 }
 
 #if HAVE(CFNETWORK_NEGOTIATED_SSL_PROTOCOL_CIPHER)
+#if HAVE(CFNETWORK_METRICS_APIS_V4)
+static String stringForTLSProtocolVersion(tls_protocol_version_t protocol)
+{
+    switch (protocol) {
+    case tls_protocol_version_TLSv10:
+        return "TLS 1.0"_s;
+    case tls_protocol_version_TLSv11:
+        return "TLS 1.1"_s;
+    case tls_protocol_version_TLSv12:
+        return "TLS 1.2"_s;
+    case tls_protocol_version_TLSv13:
+        return "TLS 1.3"_s;
+    case tls_protocol_version_DTLSv10:
+        return "DTLS 1.0"_s;
+    case tls_protocol_version_DTLSv12:
+        return "DTLS 1.2"_s;
+    }
+    return { };
+}
+
+static String stringForTLSCipherSuite(tls_ciphersuite_t suite)
+{
+#define STRINGIFY_CIPHER(cipher) \
+    case tls_ciphersuite_##cipher: \
+        return "" #cipher ""_s
+
+    switch (suite) {
+        STRINGIFY_CIPHER(RSA_WITH_3DES_EDE_CBC_SHA);
+        STRINGIFY_CIPHER(RSA_WITH_AES_128_CBC_SHA);
+        STRINGIFY_CIPHER(RSA_WITH_AES_256_CBC_SHA);
+        STRINGIFY_CIPHER(RSA_WITH_AES_128_GCM_SHA256);
+        STRINGIFY_CIPHER(RSA_WITH_AES_256_GCM_SHA384);
+        STRINGIFY_CIPHER(RSA_WITH_AES_128_CBC_SHA256);
+        STRINGIFY_CIPHER(RSA_WITH_AES_256_CBC_SHA256);
+        STRINGIFY_CIPHER(ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA);
+        STRINGIFY_CIPHER(ECDHE_ECDSA_WITH_AES_128_CBC_SHA);
+        STRINGIFY_CIPHER(ECDHE_ECDSA_WITH_AES_256_CBC_SHA);
+        STRINGIFY_CIPHER(ECDHE_RSA_WITH_3DES_EDE_CBC_SHA);
+        STRINGIFY_CIPHER(ECDHE_RSA_WITH_AES_128_CBC_SHA);
+        STRINGIFY_CIPHER(ECDHE_RSA_WITH_AES_256_CBC_SHA);
+        STRINGIFY_CIPHER(ECDHE_ECDSA_WITH_AES_128_CBC_SHA256);
+        STRINGIFY_CIPHER(ECDHE_ECDSA_WITH_AES_256_CBC_SHA384);
+        STRINGIFY_CIPHER(ECDHE_RSA_WITH_AES_128_CBC_SHA256);
+        STRINGIFY_CIPHER(ECDHE_RSA_WITH_AES_256_CBC_SHA384);
+        STRINGIFY_CIPHER(ECDHE_ECDSA_WITH_AES_128_GCM_SHA256);
+        STRINGIFY_CIPHER(ECDHE_ECDSA_WITH_AES_256_GCM_SHA384);
+        STRINGIFY_CIPHER(ECDHE_RSA_WITH_AES_128_GCM_SHA256);
+        STRINGIFY_CIPHER(ECDHE_RSA_WITH_AES_256_GCM_SHA384);
+        STRINGIFY_CIPHER(ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256);
+        STRINGIFY_CIPHER(ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256);
+        STRINGIFY_CIPHER(AES_128_GCM_SHA256);
+        STRINGIFY_CIPHER(AES_256_GCM_SHA384);
+        STRINGIFY_CIPHER(CHACHA20_POLY1305_SHA256);
+    }
+
+    return { };
+
+#undef STRINGIFY_CIPHER
+}
+
+#else // HAVE(CFNETWORK_METRICS_APIS_V4)
+
 static String stringForSSLProtocol(SSLProtocol protocol)
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -325,7 +387,8 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
 
 #undef STRINGIFY_CIPHER
 }
-#endif
+#endif // HAVE(CFNETWORK_METRICS_APIS_V4)
+#endif // HAVE(CFNETWORK_NEGOTIATED_SSL_PROTOCOL_CIPHER)
 
 @interface WKNetworkSessionDelegate : NSObject <NSURLSessionDataDelegate
 #if HAVE(NSURLSESSION_WEBSOCKET)
@@ -669,16 +732,27 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
         networkLoadMetrics.markComplete();
         networkLoadMetrics.protocol = String(m.networkProtocolName);
 
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (networkDataTask->shouldCaptureExtraNetworkLoadMetrics()) {
             networkLoadMetrics.priority = toNetworkLoadPriority(task.priority);
 
+#if HAVE(CFNETWORK_METRICS_APIS_V4)
+            if (auto port = [m.remotePort unsignedIntValue])
+                networkLoadMetrics.remoteAddress = makeString(String(m.remoteAddress), ':', port);
+            else
+                networkLoadMetrics.remoteAddress = m.remoteAddress;
+#else
             networkLoadMetrics.remoteAddress = String(m._remoteAddressAndPort);
+#endif
             networkLoadMetrics.connectionIdentifier = String([m._connectionIdentifier UUIDString]);
 
 #if HAVE(CFNETWORK_NEGOTIATED_SSL_PROTOCOL_CIPHER)
+#if HAVE(CFNETWORK_METRICS_APIS_V4)
+            networkLoadMetrics.tlsProtocol = stringForTLSProtocolVersion((tls_protocol_version_t)[m.negotiatedTLSProtocolVersion unsignedShortValue]);
+            networkLoadMetrics.tlsCipher = stringForTLSCipherSuite((tls_ciphersuite_t)[m.negotiatedTLSCipherSuite unsignedShortValue]);
+#else
             networkLoadMetrics.tlsProtocol = stringForSSLProtocol(m._negotiatedTLSProtocol);
             networkLoadMetrics.tlsCipher = stringForSSLCipher(m._negotiatedTLSCipher);
+#endif
 #endif
 
             __block WebCore::HTTPHeaderMap requestHeaders;
@@ -693,10 +767,17 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
             uint64_t responseBodyDecodedSize = 0;
 
             for (NSURLSessionTaskTransactionMetrics *transactionMetrics in metrics.transactionMetrics) {
+#if HAVE(CFNETWORK_METRICS_APIS_V4)
+                requestHeaderBytesSent += transactionMetrics.countOfRequestHeaderBytesSent;
+                responseHeaderBytesReceived += transactionMetrics.countOfResponseHeaderBytesReceived;
+                responseBodyBytesReceived += transactionMetrics.countOfResponseBodyBytesReceived;
+                responseBodyDecodedSize += transactionMetrics.countOfResponseBodyBytesAfterDecoding ? transactionMetrics.countOfResponseBodyBytesAfterDecoding : transactionMetrics.countOfResponseBodyBytesReceived;
+#else
                 requestHeaderBytesSent += transactionMetrics._requestHeaderBytesSent;
                 responseHeaderBytesReceived += transactionMetrics._responseHeaderBytesReceived;
                 responseBodyBytesReceived += transactionMetrics._responseBodyBytesReceived;
                 responseBodyDecodedSize += transactionMetrics._responseBodyBytesDecoded ? transactionMetrics._responseBodyBytesDecoded : transactionMetrics._responseBodyBytesReceived;
+#endif
             }
 
             networkLoadMetrics.requestHeaderBytesSent = requestHeaderBytesSent;
@@ -705,7 +786,6 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
             networkLoadMetrics.responseBodyBytesReceived = responseBodyBytesReceived;
             networkLoadMetrics.responseBodyDecodedSize = responseBodyDecodedSize;
         }
-        ALLOW_DEPRECATED_DECLARATIONS_END
     }
 }
 

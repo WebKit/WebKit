@@ -176,8 +176,8 @@ public:
 
     HTTPHeaderMap requestHeaders;
 
-    uint32_t requestHeaderBytesSent;
-    uint32_t responseHeaderBytesReceived;
+    uint64_t requestHeaderBytesSent;
+    uint64_t responseHeaderBytesReceived;
     uint64_t requestBodyBytesSent;
     uint64_t responseBodyBytesReceived;
     uint64_t responseBodyDecodedSize;

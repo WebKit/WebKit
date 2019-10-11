@@ -1,3 +1,14 @@
+2019-10-11  Alex Christensen  <achristensen@webkit.org>
+
+        Only use CFNetwork SPI for metrics where needed
+        https://bugs.webkit.org/show_bug.cgi?id=202825
+
+        Reviewed by Joseph Pecoraro.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (stringForSSLProtocolVersion):
+        (-[WKNetworkSessionDelegate URLSession:task:didFinishCollectingMetrics:]):
+
 2019-10-11  Kate Cheney  <katherine_cheney@apple.com>
 
         Get StorageAccess API features working on SQLite database implementation (195422)
