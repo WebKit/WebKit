@@ -1,3 +1,41 @@
+2019-10-11  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Improve test freshness page interaction experience.
+        https://bugs.webkit.org/show_bug.cgi?id=202684
+
+        Reviewed by Ryosuke Niwa.
+
+        Change test freshness page show tooltip on click instead of popuping on mouse hover.
+        And clicking anywhere in 'page-with-heading' section except the tooltip can dismiss tooltip.
+        Add keyboard support to move focus around including 'Tab' key support.
+        Add support to use 'Enter' key to show or dismiss tooltip.
+        Add support to use 'Escape' key to dismiss tooltip.
+
+        * public/shared/common-component-base.js: Added support for link to specify 'tabindex'.
+        (CommonComponentBase.prototype.createLink):
+        (CommonComponentBase.createLink):
+        (CommonComponentBase):
+        * public/v3/components/base.js: Added support for customizing whether or not prevent default and stop propagation
+        while creating event handler.
+        (ComponentBase.prototype.createEventHandler):
+        (ComponentBase.createEventHandler):
+        (ComponentBase):
+        * public/v3/components/freshness-indicator.js:
+        (FreshnessIndicator): Removed 'url' property and removed customization for mouse event.
+        (FreshnessIndicator.prototype.update):
+        (FreshnessIndicator.prototype.didConstructShadowTree): Deleted.
+        * public/v3/pages/test-freshness-page.js:
+        (TestFreshnessPage): Changed to show tooltip on click and added key board event.
+        (TestFreshnessPage.prototype.didConstructShadowTree): Added key event support.
+        (TestFreshnessPage.prototype._findClosestIndicatorAnchorForCoordinate):
+        (TestFreshnessPage.prototype.render):
+        (TestFreshnessPage.prototype._renderTooltip):
+        (TestFreshnessPage.prototype._constructTableCell): Added tabIndex for each cell that contains freshness indicator.
+        (TestFreshnessPage.prototype._configureAnchorForIndicator):
+        (TestFreshnessPage.prototype._clearIndicatorState): Changed the color of links in tooltip to a more readable color.
+        Added styles when anchor for status cell and links on tooltip are focused.
+        (TestFreshnessPage.cssTemplate):
+
 2019-10-04  Zhifei Fang  <zhifei_fang@apple.com>
 
         [perf dashboard] Test fressness popover sometimes point to wrong place

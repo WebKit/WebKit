@@ -9,25 +9,20 @@ class TestFreshnessPage extends PageWithHeading {
         this._lastDataPointByConfiguration = null;
         this._indicatorByConfiguration = null;
         this._renderTableLazily = new LazilyEvaluatedFunction(this._renderTable.bind(this));
-        this._currentlyHighlightedIndicator = null;
-        this._hoveringTooltip = false;
+        this._hoveringIndicator = null;
+        this._indicatorForTooltip = null;
+        this._firstIndicatorAnchor = null;
+        this._showTooltip = false;
         this._builderByIndicator = null;
+        this._tabIndexForIndicator = null;
+        this._coordinateForIndicator = null;
+        this._indicatorAnchorGrid = null;
+        this._skipNextClick = false;
+        this._skipNextStateCleanOnScroll = false;
+        this._lastFocusedCell = null;
         this._renderTooltipLazily = new LazilyEvaluatedFunction(this._renderTooltip.bind(this));
 
         this._loadConfig(summaryPageConfiguration);
-    }
-
-    didConstructShadowTree()
-    {
-        const tooltipTable = this.content('tooltip-table');
-        tooltipTable.addEventListener('mouseenter', () => {
-            this._hoveringTooltip = true;
-            this.enqueueToRender();
-        });
-        tooltipTable.addEventListener('mouseleave', () => {
-            this._hoveringTooltip = false;
-            this.enqueueToRender();
-        });
     }
 
     name() { return 'Test-Freshness'; }
@@ -66,6 +61,86 @@ class TestFreshnessPage extends PageWithHeading {
     {
         this._fetchTestResults();
         super.open(state);
+    }
+
+    didConstructShadowTree()
+    {
+        super.didConstructShadowTree();
+
+        const tooltipTable = this.content('tooltip-table');
+        this.content().addEventListener('click', (event) => {
+            if (!tooltipTable.contains(event.target))
+                this._clearIndicatorState(false);
+        });
+
+        tooltipTable.onkeydown = this.createEventHandler((event) => {
+            if (event.code == 'Escape') {
+                event.preventDefault();
+                event.stopPropagation();
+                this._lastFocusedCell.focus({preventScroll: true});
+            }
+        }, {preventDefault: false, stopPropagation: false});
+
+        window.addEventListener('keydown', (event) => {
+            if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.code))
+                return;
+
+            event.preventDefault();
+            if (!this._indicatorForTooltip && !this._hoveringIndicator) {
+                if (this._firstIndicatorAnchor)
+                    this._firstIndicatorAnchor.focus({preventScroll: true});
+                return;
+            }
+
+            let [row, column] = this._coordinateForIndicator.get(this._indicatorForTooltip || this._hoveringIndicator);
+            let direction = null;
+
+            switch (event.code) {
+                case 'ArrowUp':
+                    row -= 1;
+                    break;
+                case 'ArrowDown':
+                    row += 1;
+                    break;
+                case 'ArrowLeft':
+                    column -= 1;
+                    direction = 'leftOnly'
+                    break;
+                case 'ArrowRight':
+                    column += 1;
+                    direction = 'rightOnly'
+            }
+
+            const closestIndicatorAnchor = this._findClosestIndicatorAnchorForCoordinate(column, row, this._indicatorAnchorGrid, direction);
+            if (closestIndicatorAnchor)
+                closestIndicatorAnchor.focus({preventScroll: true});
+        });
+    }
+
+    _findClosestIndicatorAnchorForCoordinate(columnIndex, rowIndex, grid, direction)
+    {
+        rowIndex = Math.min(Math.max(rowIndex, 0), grid.length - 1);
+        const row = grid[rowIndex];
+        if (!row.length)
+            return null;
+
+        const start = Math.min(Math.max(columnIndex, 0), row.length - 1);
+        if (row[start])
+            return row[start];
+
+        let offset = 1;
+        while (true) {
+            const leftIndex = start - offset;
+            if (leftIndex >= 0 && row[leftIndex] && direction != 'rightOnly')
+                return row[leftIndex];
+            const rightIndex = start + offset;
+            if (rightIndex < row.length && row[rightIndex] && direction != 'leftOnly')
+                return row[rightIndex];
+            if (leftIndex < 0 && rightIndex >= row.length)
+                break;
+            offset += 1;
+        }
+        return null;
     }
 
     _fetchTestResults()
@@ -123,36 +198,45 @@ class TestFreshnessPage extends PageWithHeading {
 
         this._renderTableLazily.evaluate(this._platforms, this._metrics);
 
-        let buildSummaryForCurrentlyHighlightedIndicator = null;
-        let buildForCurrentlyHighlightedIndicator = null;
-        let commitSetForCurrentHighlightedIndicator = null;
-        const builderForCurrentlyHighlightedIndicator = this._currentlyHighlightedIndicator ? this._builderByIndicator.get(this._currentlyHighlightedIndicator) : null;
+        let buildSummaryForFocusingIndicator = null;
+        let buildForFocusingIndicator = null;
+        let commitSetForFocusingdIndicator = null;
+        let chartURLForFocusingIndicator = null;
+        let platformForFocusingIndicator = null;
+        let metricForFocusingIndicator = null;
+        const builderForFocusingIndicator = this._indicatorForTooltip ? this._builderByIndicator.get(this._indicatorForTooltip) : null;
+        const builderForHoveringIndicator = this._hoveringIndicator ? this._builderByIndicator.get(this._hoveringIndicator) : null;
         for (const [platform, lastDataPointByMetric] of this._lastDataPointByConfiguration.entries()) {
             for (const [metric, lastDataPoint] of lastDataPointByMetric.entries()) {
                 const timeDuration = this._measurementSetFetchTime - lastDataPoint.time;
                 const timeDurationSummaryPrefix = lastDataPoint.hasCurrentDataPoint ? '' : 'More than ';
                 const timeDurationSummary = BuildRequest.formatTimeInterval(timeDuration);
                 const summary = `${timeDurationSummaryPrefix}${timeDurationSummary} since latest data point.`;
-                const url = this._router.url('charts', ChartsPage.createStateForDashboardItem(platform.id(), metric.id(),
-                    this._measurementSetFetchTime - this._timeDuration));
 
                 const indicator = this._indicatorByConfiguration.get(platform).get(metric);
-                if (this._currentlyHighlightedIndicator && this._currentlyHighlightedIndicator === indicator) {
-                    buildSummaryForCurrentlyHighlightedIndicator = summary;
-                    buildForCurrentlyHighlightedIndicator = lastDataPoint.lastBuild;
-                    commitSetForCurrentHighlightedIndicator = lastDataPoint.commitSetOfLastPoint;
+                if (this._indicatorForTooltip && this._indicatorForTooltip === indicator) {
+                    buildSummaryForFocusingIndicator = summary;
+                    buildForFocusingIndicator = lastDataPoint.lastBuild;
+                    commitSetForFocusingdIndicator = lastDataPoint.commitSetOfLastPoint;
+                    chartURLForFocusingIndicator =  this._router.url('charts', ChartsPage.createStateForDashboardItem(platform.id(), metric.id(),
+                        this._measurementSetFetchTime - this._timeDuration));
+                    platformForFocusingIndicator = platform;
+                    metricForFocusingIndicator = metric;
                 }
                 this._builderByIndicator.set(indicator, lastDataPoint.builder);
-                indicator.update(timeDuration, this._testAgeTolerance, url, builderForCurrentlyHighlightedIndicator && builderForCurrentlyHighlightedIndicator === lastDataPoint.builder);
+                const highlighted = builderForFocusingIndicator && builderForFocusingIndicator == lastDataPoint.builder
+                    || builderForHoveringIndicator && builderForHoveringIndicator === lastDataPoint.builder;
+                indicator.update(timeDuration, this._testAgeTolerance, highlighted);
             }
         }
-        this._renderTooltipLazily.evaluate(this._currentlyHighlightedIndicator, this._hoveringTooltip, buildSummaryForCurrentlyHighlightedIndicator, buildForCurrentlyHighlightedIndicator, commitSetForCurrentHighlightedIndicator);
+        this._renderTooltipLazily.evaluate(this._indicatorForTooltip, this._showTooltip, buildSummaryForFocusingIndicator, buildForFocusingIndicator,
+            commitSetForFocusingdIndicator, chartURLForFocusingIndicator, platformForFocusingIndicator, metricForFocusingIndicator, this._tabIndexForIndicator.get(this._indicatorForTooltip));
     }
 
-    _renderTooltip(indicator, hoveringTooltip, buildSummary, build, commitSet)
+    _renderTooltip(indicator, showTooltip, buildSummary, build, commitSet, chartURL, platform, metric, tabIndex)
     {
-        if (!indicator || !buildSummary) {
-            this.content('tooltip-anchor').style.display = hoveringTooltip ? null : 'none';
+        if (!indicator || !buildSummary || !showTooltip) {
+            this.content('tooltip-anchor').style.display =  showTooltip ? null : 'none';
             return;
         }
         const element = ComponentBase.createElement;
@@ -166,6 +250,14 @@ class TestFreshnessPage extends PageWithHeading {
 
         let tableContent = [element('tr', element('td', {colspan: 2}, buildSummary))];
 
+        if (chartURL) {
+            const linkDescription = `${metric.test().name()} on ${platform.name()}`;
+            tableContent.push(element('tr', [
+                element('td', 'Chart'),
+                element('td', {colspan: 2}, link(linkDescription, linkDescription, chartURL, true, tabIndex))
+            ]));
+        }
+
         if (commitSet) {
             if (commitSet.repositories().length)
                 tableContent.push(element('tr', element('th', {colspan: 2}, 'Latest build information')));
@@ -174,7 +266,7 @@ class TestFreshnessPage extends PageWithHeading {
                 const commit = commitSet.commitForRepository(repository);
                 return element('tr', [
                     element('td', repository.name()),
-                    element('td', commit.url() ? link(commit.label(), commit.label(), commit.url(), true) : commit.label())
+                    element('td', commit.url() ? link(commit.label(), commit.label(), commit.url(), true, tabIndex) : commit.label())
                 ]);
             }));
         }
@@ -185,7 +277,7 @@ class TestFreshnessPage extends PageWithHeading {
             tableContent.push(element('tr', [
                 element('td', 'Build'),
                 element('td', {colspan: 2}, [
-                    url ? link(buildNumber, build.label(), url, true) : buildNumber
+                    url ? link(buildNumber, build.label(), url, true, tabIndex) : buildNumber
                 ]),
             ]));
         }
@@ -196,21 +288,50 @@ class TestFreshnessPage extends PageWithHeading {
     _renderTable(platforms, metrics)
     {
         const element = ComponentBase.createElement;
-        const tableBodyElement = [];
         const tableHeadElements = [element('th',  {class: 'table-corner row-head'}, 'Platform \\ Test')];
 
         for (const metric of metrics)
             tableHeadElements.push(element('th', {class: 'diagonal-head'}, element('div', metric.test().fullName())));
 
         this._indicatorByConfiguration = new Map;
-        for (const platform of platforms) {
+        this._coordinateForIndicator = new Map;
+        this._tabIndexForIndicator = new Map;
+        this._indicatorAnchorGrid = [];
+        this._firstIndicatorAnchor = null;
+        let currentTabIndex = 1;
+
+        const tableBodyElement = platforms.map((platform, rowIndex) =>  {
             const indicatorByMetric = new Map;
             this._indicatorByConfiguration.set(platform, indicatorByMetric);
-            tableBodyElement.push(element('tr',
-                [element('th', {class: 'row-head'}, platform.label()), ...metrics.map((metric) => this._constructTableCell(platform, metric, indicatorByMetric))]));
-        }
 
-        this.renderReplace(this.content('test-health'), [element('thead', tableHeadElements), element('tbody', tableBodyElement)]);
+            let indicatorAnchorsInCurrentRow = [];
+
+            const cells = metrics.map((metric, columnIndex) => {
+                const [cell, anchor, indicator] = this._constructTableCell(platform, metric, currentTabIndex);
+
+                indicatorAnchorsInCurrentRow.push(anchor);
+                if (!indicator)
+                    return cell;
+
+                indicatorByMetric.set(metric, indicator);
+                this._tabIndexForIndicator.set(indicator, currentTabIndex);
+                this._coordinateForIndicator.set(indicator, [rowIndex, columnIndex]);
+
+                ++currentTabIndex;
+                if (!this._firstIndicatorAnchor)
+                    this._firstIndicatorAnchor = anchor;
+                return cell;
+            });
+            this._indicatorAnchorGrid.push(indicatorAnchorsInCurrentRow);
+
+            const row = element('tr', [element('th', {class: 'row-head'}, platform.label()), ...cells]);
+            return row;
+        });
+
+        const tableBody = element('tbody', tableBodyElement);
+        tableBody.onscroll = this.createEventHandler(() => this._clearIndicatorState(true));
+
+        this.renderReplace(this.content('test-health'), [element('thead', tableHeadElements), tableBody]);
     }
 
     _isValidPlatformMetricCombination(platform, metric)
@@ -220,33 +341,74 @@ class TestFreshnessPage extends PageWithHeading {
             && platform.hasMetric(metric);
     }
 
-    _constructTableCell(platform, metric, indicatorByMetric)
+    _constructTableCell(platform, metric, tabIndex)
     {
         const element = ComponentBase.createElement;
-
+        const link = ComponentBase.createLink;
         if (!this._isValidPlatformMetricCombination(platform, metric))
-            return element('td', {class: 'blank-cell'}, element('div'));
+            return [element('td', {class: 'blank-cell'}, element('div')), null, null];
 
         const indicator = new FreshnessIndicator;
-        indicator.listenToAction('select', (originator) => {
-            this._currentlyHighlightedIndicator = originator;
+        const anchor = link(indicator, '', () => {
+            if (this._skipNextClick) {
+                this._skipNextClick = false;
+                return;
+            }
+            this._showTooltip = !this._showTooltip;
+            this.enqueueToRender();
+        }, false, tabIndex);
+
+        const cell = element('td', {class: 'status-cell'}, anchor);
+        this._configureAnchorForIndicator(anchor, indicator);
+        return [cell, anchor, indicator];
+    }
+
+    _configureAnchorForIndicator(anchor, indicator)
+    {
+        anchor.onmouseover = this.createEventHandler(() => {
+            this._hoveringIndicator = indicator;
             this.enqueueToRender();
         });
-        indicator.listenToAction('unselect', () => {
-            this._currentlyHighlightedIndicator = null;
+        anchor.onmousedown = this.createEventHandler(() =>
+            this._skipNextClick = this._indicatorForTooltip != indicator, {preventDefault: false, stopPropagation: false});
+        anchor.onfocus = this.createEventHandler(() => {
+            this._showTooltip = this._indicatorForTooltip != indicator;
+            this._hoveringIndicator = indicator;
+            this._indicatorForTooltip = indicator;
+            this._lastFocusedCell = anchor;
+            this._skipNextStateCleanOnScroll = true;
             this.enqueueToRender();
         });
-        indicatorByMetric.set(metric, indicator);
-        return element('td', {class: 'status-cell'}, indicator);
+        anchor.onkeydown = this.createEventHandler((event) => {
+            if (event.code == 'Escape') {
+                event.preventDefault();
+                event.stopPropagation();
+                this._showTooltip = event.code == 'Enter' ? !this._showTooltip : false;
+                this.enqueueToRender();
+            }
+        }, {preventDefault: false, stopPropagation: false});
+    }
+
+    _clearIndicatorState(dueToScroll)
+    {
+        if (this._skipNextStateCleanOnScroll) {
+            this._skipNextStateCleanOnScroll = false;
+            if (dueToScroll)
+                return;
+        }
+        this._showTooltip = false;
+        this._indicatorForTooltip = null;
+        this._hoveringIndicator = null;
+        this.enqueueToRender();
     }
 
     static htmlTemplate()
     {
         return `<section class="page-with-heading">
+            <table id="test-health"></table>
             <div id="tooltip-anchor">
                 <table id="tooltip-table"></table>
             </div>
-            <table id="test-health"></table>
         </section>`;
     }
 
@@ -295,12 +457,31 @@ class TestFreshnessPage extends PageWithHeading {
                 height: calc(100vh - 24rem);
             }
             #test-health td.status-cell {
+                position: relative;
                 margin: 0;
                 padding: 0;
                 max-width: 2.2rem;
                 max-height: 2.2rem;
                 min-width: 2.2rem;
                 min-height: 2.2rem;
+            }
+            #test-health td.status-cell>a {
+                display: block;
+            }
+            #test-health td.status-cell>a:focus {
+                outline: none;
+            }
+            #test-health td.status-cell>a:focus::after {
+                position: absolute;
+                content: "";
+                bottom: -0.1rem;
+                left: 50%;
+                margin-left: -0.2rem;
+                height: 0rem;
+                border-width: 0.2rem;
+                border-style: solid;
+                border-color: transparent transparent red transparent;
+                outline: none;
             }
             #test-health td.blank-cell {
                 margin: 0;
@@ -349,8 +530,8 @@ class TestFreshnessPage extends PageWithHeading {
             #tooltip-table {
                 position: absolute;
                 width: 22rem;
-                background-color: #34495E;
-                opacity: 0.9;
+                background-color: #696969;
+                opacity: 0.96;
                 margin: 0.3rem;
                 padding: 0.3rem;
                 border-radius: 0.4rem;
@@ -374,11 +555,15 @@ class TestFreshnessPage extends PageWithHeading {
                 margin-left: -0.3rem;
                 border-width: 0.3rem;
                 border-style: solid;
-                border-color: #34495E transparent transparent transparent;
+                border-color: #696969 transparent transparent transparent;
             }
             #tooltip-table a {
-                color: #B03A2E;
+                color: white;
                 font-weight: bold;
+            }
+            #tooltip-table a:focus {
+                background-color: #AAB7B8;
+                outline: none;
             }
         `;
     }

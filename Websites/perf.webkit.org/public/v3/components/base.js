@@ -249,12 +249,14 @@ class ComponentBase extends CommonComponentBase {
         customElements.define(name, elementClass);
     }
 
-    createEventHandler(callback) { return ComponentBase.createEventHandler(callback); }
-    static createEventHandler(callback)
+    createEventHandler(callback, options={}) { return ComponentBase.createEventHandler(callback, options); }
+    static createEventHandler(callback, options={})
     {
         return function (event) {
-            event.preventDefault();
-            event.stopPropagation();
+            if (!('preventDefault' in options) || options['preventDefault'])
+                event.preventDefault();
+            if (!('stopPropagation' in options) || options['stopPropagation'])
+                event.stopPropagation();
             callback.call(this, event);
         };
     }
