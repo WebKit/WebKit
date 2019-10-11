@@ -367,7 +367,7 @@ class AutoInstaller(object):
         failures = 0
         while True:
             try:
-                netstream = urllib2.urlopen(url, timeout=30)
+                netstream = urlopen(url, timeout=30)
                 break
             except IOError as err:
                 # Try multiple times

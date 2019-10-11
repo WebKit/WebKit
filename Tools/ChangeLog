@@ -1,3 +1,13 @@
+2019-10-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] auto-installing raises exception "Inner message: global name 'urllib2' is not defined" since r250869
+        https://bugs.webkit.org/show_bug.cgi?id=202839
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/common/system/autoinstall.py:
+        (AutoInstaller._download_to_stream): Replaced urllib2.urlopen with urlopen.
+
 2019-10-10  Kenneth Russell  <kbr@chromium.org>
 
         New html5lib requires newer version of six.py than that shipped in macOS 10.14.6
