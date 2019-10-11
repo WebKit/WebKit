@@ -54,7 +54,7 @@ class JS_EXPORT_PRIVATE InspectorConsoleAgent : public InspectorAgentBase, publi
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorConsoleAgent(AgentContext&);
-    virtual ~InspectorConsoleAgent();
+    ~InspectorConsoleAgent() override;
 
     // InspectorAgentBase
     void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) final;

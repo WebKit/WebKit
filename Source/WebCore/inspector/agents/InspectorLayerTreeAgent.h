@@ -49,17 +49,17 @@ class InspectorLayerTreeAgent final : public InspectorAgentBase, public Inspecto
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorLayerTreeAgent(WebAgentContext&);
-    virtual ~InspectorLayerTreeAgent();
+    ~InspectorLayerTreeAgent() override;
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     // LayerTreeBackendDispatcherHandler
-    void enable(ErrorString&);
-    void disable(ErrorString&);
-    void layersForNode(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>>&);
-    void reasonsForCompositingLayer(ErrorString&, const String& layerId, RefPtr<Inspector::Protocol::LayerTree::CompositingReasons>&);
+    void enable(ErrorString&) override;
+    void disable(ErrorString&) override;
+    void layersForNode(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>>&) override;
+    void reasonsForCompositingLayer(ErrorString&, const String& layerId, RefPtr<Inspector::Protocol::LayerTree::CompositingReasons>&) override;
 
     // InspectorInstrumentation
     void layerTreeDidChange();

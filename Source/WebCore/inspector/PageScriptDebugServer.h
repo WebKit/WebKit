@@ -39,7 +39,7 @@ class PageScriptDebugServer final : public Inspector::ScriptDebugServer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PageScriptDebugServer(Page&);
-    virtual ~PageScriptDebugServer() = default;
+    ~PageScriptDebugServer() override = default;
 
     void recompileAllJSFunctions() override;
 

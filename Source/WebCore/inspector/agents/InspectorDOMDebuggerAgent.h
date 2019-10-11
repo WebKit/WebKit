@@ -53,12 +53,12 @@ class InspectorDOMDebuggerAgent : public InspectorAgentBase, public Inspector::D
     WTF_MAKE_NONCOPYABLE(InspectorDOMDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~InspectorDOMDebuggerAgent();
+    ~InspectorDOMDebuggerAgent() override;
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
-    void discardAgent();
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
+    void discardAgent() override;
     virtual bool enabled() const;
 
     // DOMDebuggerBackendDispatcherHandler
@@ -68,8 +68,8 @@ public:
     void removeEventBreakpoint(ErrorString&, const String& breakpointType, const String* eventName) final;
 
     // InspectorDebuggerAgent::Listener
-    void debuggerWasEnabled();
-    void debuggerWasDisabled();
+    void debuggerWasEnabled() override;
+    void debuggerWasDisabled() override;
 
     // InspectorInstrumentation
     void willSendXMLHttpRequest(const String& url);

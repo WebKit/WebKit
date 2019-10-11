@@ -46,18 +46,18 @@ class InspectorApplicationCacheAgent final : public InspectorAgentBase, public I
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorApplicationCacheAgent(PageAgentContext&);
-    virtual ~InspectorApplicationCacheAgent();
+    ~InspectorApplicationCacheAgent() override;
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     // ApplicationCacheBackendDispatcherHandler
-    void enable(ErrorString&);
-    void disable(ErrorString&);
-    void getFramesWithManifests(ErrorString&, RefPtr<JSON::ArrayOf<Inspector::Protocol::ApplicationCache::FrameWithManifest>>& result);
-    void getManifestForFrame(ErrorString&, const String& frameId, String* manifestURL);
-    void getApplicationCacheForFrame(ErrorString&, const String& frameId, RefPtr<Inspector::Protocol::ApplicationCache::ApplicationCache>&);
+    void enable(ErrorString&) override;
+    void disable(ErrorString&) override;
+    void getFramesWithManifests(ErrorString&, RefPtr<JSON::ArrayOf<Inspector::Protocol::ApplicationCache::FrameWithManifest>>& result) override;
+    void getManifestForFrame(ErrorString&, const String& frameId, String* manifestURL) override;
+    void getApplicationCacheForFrame(ErrorString&, const String& frameId, RefPtr<Inspector::Protocol::ApplicationCache::ApplicationCache>&) override;
 
     // InspectorInstrumentation
     void updateApplicationCacheStatus(Frame*);

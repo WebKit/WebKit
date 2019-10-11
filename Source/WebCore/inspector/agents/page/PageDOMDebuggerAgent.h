@@ -38,13 +38,13 @@ typedef String ErrorString;
 class PageDOMDebuggerAgent final : public InspectorDOMDebuggerAgent {
 public:
     PageDOMDebuggerAgent(PageAgentContext&, Inspector::InspectorDebuggerAgent*);
-    virtual ~PageDOMDebuggerAgent();
+    ~PageDOMDebuggerAgent() override;
 
-    bool enabled() const;
+    bool enabled() const override;
 
     // DOMDebuggerBackendDispatcherHandler
-    void setDOMBreakpoint(ErrorString&, int nodeId, const String& type);
-    void removeDOMBreakpoint(ErrorString&, int nodeId, const String& type);
+    void setDOMBreakpoint(ErrorString&, int nodeId, const String& type) override;
+    void removeDOMBreakpoint(ErrorString&, int nodeId, const String& type) override;
 
     // InspectorInstrumentation
     void frameDocumentUpdated(Frame&);
@@ -57,10 +57,10 @@ public:
     void willFireAnimationFrame();
 
 private:
-    void enable();
-    void disable();
+    void enable() override;
+    void disable() override;
 
-    void setAnimationFrameBreakpoint(ErrorString&, bool enabled);
+    void setAnimationFrameBreakpoint(ErrorString&, bool enabled) override;
 
     void descriptionForDOMEvent(Node&, int breakpointType, bool insertion, JSON::Object& description);
     void updateSubtreeBreakpoints(Node*, uint32_t rootMask, bool set);

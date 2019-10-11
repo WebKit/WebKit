@@ -47,7 +47,7 @@ class JS_EXPORT_PRIVATE InspectorHeapAgent : public InspectorAgentBase, public H
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorHeapAgent(AgentContext&);
-    virtual ~InspectorHeapAgent();
+    ~InspectorHeapAgent() override;
 
     // InspectorAgentBase
     void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) final;

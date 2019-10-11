@@ -68,7 +68,7 @@ class InspectorNetworkAgent : public InspectorAgentBase, public Inspector::Netwo
     WTF_MAKE_NONCOPYABLE(InspectorNetworkAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~InspectorNetworkAgent();
+    ~InspectorNetworkAgent() override;
 
     static bool shouldTreatAsText(const String& mimeType);
     static Ref<TextResourceDecoder> createTextDecoder(const String& mimeType, const String& textEncodingName);

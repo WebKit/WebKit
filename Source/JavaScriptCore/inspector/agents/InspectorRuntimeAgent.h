@@ -51,7 +51,7 @@ class JS_EXPORT_PRIVATE InspectorRuntimeAgent : public InspectorAgentBase, publi
     WTF_MAKE_NONCOPYABLE(InspectorRuntimeAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~InspectorRuntimeAgent();
+    ~InspectorRuntimeAgent() override;
 
     // InspectorAgentBase
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) final;

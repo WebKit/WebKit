@@ -49,7 +49,7 @@ class JS_EXPORT_PRIVATE InjectedScript : public InjectedScriptBase {
 public:
     InjectedScript();
     InjectedScript(Deprecated::ScriptObject, InspectorEnvironment*);
-    virtual ~InjectedScript();
+    ~InjectedScript() override;
 
     struct ExecuteOptions {
         String objectGroup;

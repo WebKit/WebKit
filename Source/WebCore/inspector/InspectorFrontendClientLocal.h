@@ -60,7 +60,7 @@ public:
     };
 
     WEBCORE_EXPORT InspectorFrontendClientLocal(InspectorController* inspectedPageController, Page* frontendPage, std::unique_ptr<Settings>);
-    WEBCORE_EXPORT virtual ~InspectorFrontendClientLocal();
+    WEBCORE_EXPORT ~InspectorFrontendClientLocal() override;
 
     WEBCORE_EXPORT void resetState() override;
 

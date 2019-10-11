@@ -48,17 +48,17 @@ class InspectorDatabaseAgent final : public InspectorAgentBase, public Inspector
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorDatabaseAgent(WebAgentContext&);
-    virtual ~InspectorDatabaseAgent();
+    ~InspectorDatabaseAgent() override;
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     // DatabaseBackendDispatcherHandler
-    void enable(ErrorString&);
-    void disable(ErrorString&);
-    void getDatabaseTableNames(ErrorString&, const String& databaseId, RefPtr<JSON::ArrayOf<String>>& names);
-    void executeSQL(const String& databaseId, const String& query, Ref<ExecuteSQLCallback>&&);
+    void enable(ErrorString&) override;
+    void disable(ErrorString&) override;
+    void getDatabaseTableNames(ErrorString&, const String& databaseId, RefPtr<JSON::ArrayOf<String>>& names) override;
+    void executeSQL(const String& databaseId, const String& query, Ref<ExecuteSQLCallback>&&) override;
 
     // InspectorInstrumentation
     void didCommitLoad();

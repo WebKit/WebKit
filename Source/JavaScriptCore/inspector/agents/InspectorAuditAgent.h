@@ -43,7 +43,7 @@ class JS_EXPORT_PRIVATE InspectorAuditAgent : public InspectorAgentBase, public 
     WTF_MAKE_NONCOPYABLE(InspectorAuditAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~InspectorAuditAgent();
+    ~InspectorAuditAgent() override;
 
     // InspectorAgentBase
     void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) final;

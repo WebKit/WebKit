@@ -41,15 +41,15 @@ class InspectorCPUProfilerAgent final : public InspectorAgentBase, public Inspec
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorCPUProfilerAgent(PageAgentContext&);
-    virtual ~InspectorCPUProfilerAgent();
+    ~InspectorCPUProfilerAgent() override;
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     // CPUProfilerBackendDispatcherHandler
-    void startTracking(ErrorString&);
-    void stopTracking(ErrorString&);
+    void startTracking(ErrorString&) override;
+    void stopTracking(ErrorString&) override;
 
 private:
     void collectSample(const ResourceUsageData&);

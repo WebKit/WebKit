@@ -40,7 +40,7 @@ class WebConsoleAgent : public Inspector::InspectorConsoleAgent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WebConsoleAgent(WebAgentContext&);
-    virtual ~WebConsoleAgent();
+    ~WebConsoleAgent() override;
 
     // InspectorInstrumentation
     void frameWindowDiscarded(DOMWindow*);

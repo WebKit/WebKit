@@ -53,7 +53,7 @@ class JS_EXPORT_PRIVATE InspectorDebuggerAgent : public InspectorAgentBase, publ
     WTF_MAKE_NONCOPYABLE(InspectorDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~InspectorDebuggerAgent();
+    ~InspectorDebuggerAgent() override;
 
     static const char* backtraceObjectGroup;
 

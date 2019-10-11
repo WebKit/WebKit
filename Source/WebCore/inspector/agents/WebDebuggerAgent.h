@@ -41,7 +41,7 @@ class WebDebuggerAgent : public Inspector::InspectorDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(WebDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~WebDebuggerAgent();
+    ~WebDebuggerAgent() override;
     bool enabled() const override;
 
     // InspectorInstrumentation

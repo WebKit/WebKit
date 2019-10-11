@@ -39,7 +39,7 @@ public:
         : m_workerGlobalScope(workerGlobalScope)
     {
     }
-    ~WorkerToPageFrontendChannel() = default;
+    ~WorkerToPageFrontendChannel() override = default;
 
 private:
     ConnectionType connectionType() const override { return ConnectionType::Local; }

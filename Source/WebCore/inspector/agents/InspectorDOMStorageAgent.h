@@ -52,18 +52,18 @@ class InspectorDOMStorageAgent final : public InspectorAgentBase, public Inspect
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorDOMStorageAgent(PageAgentContext&);
-    virtual ~InspectorDOMStorageAgent();
+    ~InspectorDOMStorageAgent() override;
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     // DOMStorageBackendDispatcherHandler
-    void enable(ErrorString&);
-    void disable(ErrorString&);
-    void getDOMStorageItems(ErrorString&, const JSON::Object& storageId, RefPtr<JSON::ArrayOf<JSON::ArrayOf<String>>>& items);
-    void setDOMStorageItem(ErrorString&, const JSON::Object& storageId, const String& key, const String& value);
-    void removeDOMStorageItem(ErrorString&, const JSON::Object& storageId, const String& key);
+    void enable(ErrorString&) override;
+    void disable(ErrorString&) override;
+    void getDOMStorageItems(ErrorString&, const JSON::Object& storageId, RefPtr<JSON::ArrayOf<JSON::ArrayOf<String>>>& items) override;
+    void setDOMStorageItem(ErrorString&, const JSON::Object& storageId, const String& key, const String& value) override;
+    void removeDOMStorageItem(ErrorString&, const JSON::Object& storageId, const String& key) override;
 
     // InspectorInstrumentation
     void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*);

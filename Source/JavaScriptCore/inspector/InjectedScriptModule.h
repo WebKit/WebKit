@@ -45,7 +45,7 @@ class InjectedScriptManager;
 
 class JS_EXPORT_PRIVATE InjectedScriptModule : public InjectedScriptBase {
 public:
-    virtual ~InjectedScriptModule();
+    ~InjectedScriptModule() override;
     virtual String source() const = 0;
     virtual JSC::JSValue host(InjectedScriptManager*, JSC::ExecState*) const = 0;
 

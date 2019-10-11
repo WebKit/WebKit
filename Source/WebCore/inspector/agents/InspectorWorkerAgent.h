@@ -42,20 +42,20 @@ class InspectorWorkerAgent final : public InspectorAgentBase, public Inspector::
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorWorkerAgent(PageAgentContext&);
-    virtual ~InspectorWorkerAgent();
+    ~InspectorWorkerAgent() override;
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     // WorkerBackendDispatcherHandler
-    void enable(ErrorString&);
-    void disable(ErrorString&);
-    void initialized(ErrorString&, const String& workerId);
-    void sendMessageToWorker(ErrorString&, const String& workerId, const String& message);
+    void enable(ErrorString&) override;
+    void disable(ErrorString&) override;
+    void initialized(ErrorString&, const String& workerId) override;
+    void sendMessageToWorker(ErrorString&, const String& workerId, const String& message) override;
 
     // WorkerInspectorProxy::PageChannel
-    void sendMessageFromWorkerToFrontend(WorkerInspectorProxy*, const String& message);
+    void sendMessageFromWorkerToFrontend(WorkerInspectorProxy*, const String& message) override;
 
     // InspectorInstrumentation
     bool shouldWaitForDebuggerOnStart() const;

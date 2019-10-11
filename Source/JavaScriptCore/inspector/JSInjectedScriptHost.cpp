@@ -786,7 +786,7 @@ public:
 
     HashSet<JSCell*>& holders() { return m_holders; }
 
-    void analyzeEdge(JSCell* from, JSCell* to, SlotVisitor::RootMarkReason reason)
+    void analyzeEdge(JSCell* from, JSCell* to, SlotVisitor::RootMarkReason reason) override
     {
         ASSERT(to);
         ASSERT(to->vm().heapProfiler()->activeHeapAnalyzer() == this);
@@ -811,14 +811,14 @@ public:
         else if (!from || reason != SlotVisitor::RootMarkReason::None)
             m_rootsToInclude.add(to);
     }
-    void analyzePropertyNameEdge(JSCell* from, JSCell* to, UniquedStringImpl*) { analyzeEdge(from, to, SlotVisitor::RootMarkReason::None); }
-    void analyzeVariableNameEdge(JSCell* from, JSCell* to, UniquedStringImpl*) { analyzeEdge(from, to, SlotVisitor::RootMarkReason::None); }
-    void analyzeIndexEdge(JSCell* from, JSCell* to, uint32_t) { analyzeEdge(from, to, SlotVisitor::RootMarkReason::None); }
+    void analyzePropertyNameEdge(JSCell* from, JSCell* to, UniquedStringImpl*) override { analyzeEdge(from, to, SlotVisitor::RootMarkReason::None); }
+    void analyzeVariableNameEdge(JSCell* from, JSCell* to, UniquedStringImpl*) override { analyzeEdge(from, to, SlotVisitor::RootMarkReason::None); }
+    void analyzeIndexEdge(JSCell* from, JSCell* to, uint32_t) override { analyzeEdge(from, to, SlotVisitor::RootMarkReason::None); }
 
-    void analyzeNode(JSCell*) { }
-    void setOpaqueRootReachabilityReasonForCell(JSCell*, const char*) { }
-    void setWrappedObjectForCell(JSCell*, void*) { }
-    void setLabelForCell(JSCell*, const String&) { }
+    void analyzeNode(JSCell*) override { }
+    void setOpaqueRootReachabilityReasonForCell(JSCell*, const char*) override { }
+    void setWrappedObjectForCell(JSCell*, void*) override { }
+    void setLabelForCell(JSCell*, const String&) override { }
 
 #ifndef NDEBUG
     void dump(PrintStream& out) const

@@ -44,14 +44,14 @@ class WorkerRuntimeAgent final : public Inspector::InspectorRuntimeAgent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WorkerRuntimeAgent(WorkerAgentContext&);
-    virtual ~WorkerRuntimeAgent();
+    ~WorkerRuntimeAgent() override;
 
 private:
-    Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId);
+    Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
 
     // We don't need to mute console for workers.
-    void muteConsole() { }
-    void unmuteConsole() { }
+    void muteConsole() override { }
+    void unmuteConsole() override { }
 
     RefPtr<Inspector::RuntimeBackendDispatcher> m_backendDispatcher;
     WorkerGlobalScope& m_workerGlobalScope;

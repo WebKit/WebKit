@@ -42,7 +42,7 @@ class WorkerScriptDebugServer final : public Inspector::ScriptDebugServer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WorkerScriptDebugServer(WorkerGlobalScope&);
-    ~WorkerScriptDebugServer() = default;
+    ~WorkerScriptDebugServer() override = default;
 
     void recompileAllJSFunctions() override;
 

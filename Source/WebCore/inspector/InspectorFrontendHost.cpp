@@ -86,7 +86,7 @@ private:
     {
     }
 
-    virtual ~FrontendMenuProvider()
+    ~FrontendMenuProvider() override
     {
         contextMenuCleared();
     }

@@ -68,7 +68,7 @@ class JSGlobalObjectInspectorController final
     WTF_MAKE_FAST_ALLOCATED;
 public:
     JSGlobalObjectInspectorController(JSC::JSGlobalObject&);
-    ~JSGlobalObjectInspectorController();
+    ~JSGlobalObjectInspectorController() override;
 
     void connectFrontend(FrontendChannel&, bool isAutomaticInspection, bool immediatelyPause);
     void disconnectFrontend(FrontendChannel&);

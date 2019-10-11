@@ -54,7 +54,7 @@ public:
 #else
     RemoteConnectionToTarget(RemoteControllableTarget&);
 #endif
-    virtual ~RemoteConnectionToTarget();
+    ~RemoteConnectionToTarget() override;
 
     // Main API.
     bool setup(bool isAutomaticInspection = false, bool automaticallyPause = false);

@@ -44,20 +44,20 @@ class JS_EXPORT_PRIVATE InspectorScriptProfilerAgent final : public InspectorAge
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorScriptProfilerAgent(AgentContext&);
-    virtual ~InspectorScriptProfilerAgent();
+    ~InspectorScriptProfilerAgent() override;
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*);
-    void willDestroyFrontendAndBackend(DisconnectReason);
+    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) override;
+    void willDestroyFrontendAndBackend(DisconnectReason) override;
 
     // ScriptProfilerBackendDispatcherHandler
-    void startTracking(ErrorString&, const bool* includeSamples);
-    void stopTracking(ErrorString&);
+    void startTracking(ErrorString&, const bool* includeSamples) override;
+    void stopTracking(ErrorString&) override;
 
     // JSC::Debugger::ProfilingClient
-    bool isAlreadyProfiling() const;
-    Seconds willEvaluateScript();
-    void didEvaluateScript(Seconds, JSC::ProfilingReason);
+    bool isAlreadyProfiling() const override;
+    Seconds willEvaluateScript() override;
+    void didEvaluateScript(Seconds, JSC::ProfilingReason) override;
 
 private:
     void addEvent(Seconds startTime, Seconds endTime, JSC::ProfilingReason);

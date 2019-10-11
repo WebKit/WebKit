@@ -34,14 +34,14 @@ typedef String ErrorString;
 class WorkerDOMDebuggerAgent final : public InspectorDOMDebuggerAgent {
 public:
     WorkerDOMDebuggerAgent(WorkerAgentContext&, Inspector::InspectorDebuggerAgent*);
-    virtual ~WorkerDOMDebuggerAgent();
+    ~WorkerDOMDebuggerAgent() override;
 
     // DOMDebuggerBackendDispatcherHandler
-    void setDOMBreakpoint(ErrorString&, int nodeId, const String& type);
-    void removeDOMBreakpoint(ErrorString&, int nodeId, const String& type);
+    void setDOMBreakpoint(ErrorString&, int nodeId, const String& type) override;
+    void removeDOMBreakpoint(ErrorString&, int nodeId, const String& type) override;
 
 private:
-    void setAnimationFrameBreakpoint(ErrorString&, bool enabled);
+    void setAnimationFrameBreakpoint(ErrorString&, bool enabled) override;
 };
 
 } // namespace WebCore

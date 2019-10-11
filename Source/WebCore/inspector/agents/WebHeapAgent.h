@@ -41,7 +41,7 @@ class WebHeapAgent : public Inspector::InspectorHeapAgent {
     friend class SendGarbageCollectionEventsTask;
 public:
     WebHeapAgent(WebAgentContext&);
-    virtual ~WebHeapAgent();
+    ~WebHeapAgent() override;
 
     // HeapBackendDispatcherHandler
     void enable(ErrorString&) override;

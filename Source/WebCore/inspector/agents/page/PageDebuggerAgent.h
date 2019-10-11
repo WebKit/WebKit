@@ -43,14 +43,14 @@ class PageDebuggerAgent final : public WebDebuggerAgent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PageDebuggerAgent(PageAgentContext&);
-    virtual ~PageDebuggerAgent();
+    ~PageDebuggerAgent() override;
     bool enabled() const final;
 
     // DebuggerBackendDispatcherHandler
-    void evaluateOnCallFrame(ErrorString&, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, const bool* emulateUserGesture, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex);
+    void evaluateOnCallFrame(ErrorString&, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, const bool* emulateUserGesture, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex) override;
 
     // ScriptDebugListener
-    void breakpointActionLog(JSC::ExecState&, const String&);
+    void breakpointActionLog(JSC::ExecState&, const String&) override;
 
     // InspectorInstrumentation
     void didClearMainFrameWindowObject();
@@ -62,15 +62,15 @@ public:
     void didCancelAnimationFrame(int callbackId);
 
 private:
-    void enable();
-    void disable(bool isBeingDestroyed);
+    void enable() override;
+    void disable(bool isBeingDestroyed) override;
 
-    String sourceMapURLForScript(const Script&);
+    String sourceMapURLForScript(const Script&) override;
 
-    void muteConsole();
-    void unmuteConsole();
+    void muteConsole() override;
+    void unmuteConsole() override;
 
-    Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId);
+    Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
 
     Page& m_inspectedPage;
 };

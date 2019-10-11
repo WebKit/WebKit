@@ -49,7 +49,7 @@ class WorkerInspectorController final : public Inspector::InspectorEnvironment {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WorkerInspectorController(WorkerGlobalScope&);
-    virtual ~WorkerInspectorController();
+    ~WorkerInspectorController() override;
 
     void workerTerminating();
 

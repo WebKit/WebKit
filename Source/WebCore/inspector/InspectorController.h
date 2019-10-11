@@ -67,7 +67,7 @@ class InspectorController final : public Inspector::InspectorEnvironment {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorController(Page&, InspectorClient*);
-    virtual ~InspectorController();
+    ~InspectorController() override;
 
     void inspectedPageDestroyed();
 

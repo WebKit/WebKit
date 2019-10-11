@@ -105,7 +105,7 @@ public:
     {
     }
 
-    virtual ~InspectorThreadableLoaderClient() = default;
+    ~InspectorThreadableLoaderClient() override = default;
 
     void didReceiveResponse(unsigned long, const ResourceResponse& response) override
     {

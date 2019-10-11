@@ -52,20 +52,20 @@ class PageRuntimeAgent final : public Inspector::InspectorRuntimeAgent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PageRuntimeAgent(PageAgentContext&);
-    virtual ~PageRuntimeAgent();
+    ~PageRuntimeAgent() override;
 
     // RuntimeBackendDispatcherHandler
-    void enable(ErrorString&);
-    void disable(ErrorString&);
-    void evaluate(ErrorString&, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, const bool* emulateUserGesture, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex);
+    void enable(ErrorString&) override;
+    void disable(ErrorString&) override;
+    void evaluate(ErrorString&, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, const bool* emulateUserGesture, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex) override;
 
     // InspectorInstrumentation
     void didCreateMainWorldContext(Frame&);
 
 private:
-    Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId);
-    void muteConsole();
-    void unmuteConsole();
+    Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
+    void muteConsole() override;
+    void unmuteConsole() override;
     void reportExecutionContextCreation();
     void notifyContextCreated(const String& frameId, JSC::ExecState*, SecurityOrigin*, bool isPageContext);
 

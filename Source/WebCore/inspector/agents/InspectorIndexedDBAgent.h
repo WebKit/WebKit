@@ -52,19 +52,19 @@ class InspectorIndexedDBAgent final : public InspectorAgentBase, public Inspecto
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorIndexedDBAgent(PageAgentContext&);
-    virtual ~InspectorIndexedDBAgent();
+    ~InspectorIndexedDBAgent() override;
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
+    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     // IndexedDBBackendDispatcherHandler
-    void enable(ErrorString&);
-    void disable(ErrorString&);
-    void requestDatabaseNames(const String& securityOrigin, Ref<RequestDatabaseNamesCallback>&&);
-    void requestDatabase(const String& securityOrigin, const String& databaseName, Ref<RequestDatabaseCallback>&&);
-    void requestData(const String& securityOrigin, const String& databaseName, const String& objectStoreName, const String& indexName, int skipCount, int pageSize, const JSON::Object* keyRange, Ref<RequestDataCallback>&&);
-    void clearObjectStore(const String& securityOrigin, const String& databaseName, const String& objectStoreName, Ref<ClearObjectStoreCallback>&&);
+    void enable(ErrorString&) override;
+    void disable(ErrorString&) override;
+    void requestDatabaseNames(const String& securityOrigin, Ref<RequestDatabaseNamesCallback>&&) override;
+    void requestDatabase(const String& securityOrigin, const String& databaseName, Ref<RequestDatabaseCallback>&&) override;
+    void requestData(const String& securityOrigin, const String& databaseName, const String& objectStoreName, const String& indexName, int skipCount, int pageSize, const JSON::Object* keyRange, Ref<RequestDataCallback>&&) override;
+    void clearObjectStore(const String& securityOrigin, const String& databaseName, const String& objectStoreName, Ref<ClearObjectStoreCallback>&&) override;
 
 private:
     Inspector::InjectedScriptManager& m_injectedScriptManager;
