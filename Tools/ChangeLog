@@ -1,3 +1,20 @@
+2019-10-10  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Sort out certificates on Catalina
+        https://bugs.webkit.org/show_bug.cgi?id=202837
+
+        Unreviewed infrastructure repair.
+
+        This is a temporary strategy until we sort out our certificates on the newly
+        deployed Catalina bots.
+
+        * Scripts/webkitpy/results/upload.py:
+        (Upload.upload):
+        (Upload.upload_archive):
+        * Scripts/webkitpy/results/upload_unittest.py:
+        (UploadTest.test_upload):
+        (UploadTest.test_archive_upload):
+
 2019-10-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         W3C test importer breaks svg files.

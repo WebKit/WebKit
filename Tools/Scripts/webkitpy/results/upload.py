@@ -178,6 +178,7 @@ class Upload(object):
                 '{}{}'.format(hostname, self.UPLOAD_ENDPOINT),
                 headers={'Content-type': 'application/json'},
                 data=json.dumps(data),
+                verify=False,
             )
         except requests.exceptions.ConnectionError:
             log_line_func(' ' * 4 + 'Failed to upload to {}, results server not online'.format(hostname))
@@ -215,6 +216,7 @@ class Upload(object):
                 '{}{}'.format(hostname, self.ARCHIVE_UPLOAD_ENDPOINT),
                 data=meta_data,
                 files=dict(file=archive),
+                verify=False,
             )
 
         except requests.exceptions.ConnectionError:

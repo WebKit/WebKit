@@ -126,15 +126,15 @@ class UploadTest(unittest.TestCase):
             )],
         )
 
-        with mock.patch('requests.post', new=lambda url, headers={}, data={}: self.MockResponse()):
+        with mock.patch('requests.post', new=lambda url, headers={}, data={}, verify=True: self.MockResponse()):
             self.assertTrue(upload.upload('https://results.webkit.org', log_line_func=lambda _: None))
 
-        with mock.patch('requests.post', new=lambda url, headers={}, data={}: self.raise_requests_ConnectionError()):
+        with mock.patch('requests.post', new=lambda url, headers={}, data={}, verify=True: self.raise_requests_ConnectionError()):
             lines = []
             self.assertFalse(upload.upload('https://results.webkit.org', log_line_func=lambda line: lines.append(line)))
             self.assertEqual([' ' * 4 + 'Failed to upload to https://results.webkit.org, results server not online'], lines)
 
-        mock_404 = mock.patch('requests.post', new=lambda url, headers={}, data={}: self.MockResponse(
+        mock_404 = mock.patch('requests.post', new=lambda url, headers={}, data={}, verify=True: self.MockResponse(
             status_code=404,
             text=json.dumps(dict(description='No such address')),
         ))
@@ -227,15 +227,15 @@ class UploadTest(unittest.TestCase):
             )],
         )
 
-        with mock.patch('requests.post', new=lambda url, headers={}, data={}, files={}: self.MockResponse()):
+        with mock.patch('requests.post', new=lambda url, headers={}, data={}, files={}, verify=True: self.MockResponse()):
             self.assertTrue(upload.upload_archive('https://results.webkit.org', archive='content', log_line_func=lambda _: None))
 
-        with mock.patch('requests.post', new=lambda url, headers={}, data={}, files={}: self.raise_requests_ConnectionError()):
+        with mock.patch('requests.post', new=lambda url, headers={}, data={}, files={}, verify=True: self.raise_requests_ConnectionError()):
             lines = []
             self.assertFalse(upload.upload_archive('https://results.webkit.org', archive='content', log_line_func=lambda line: lines.append(line)))
             self.assertEqual([' ' * 4 + 'Failed to upload test archive to https://results.webkit.org, results server not online'], lines)
 
-        mock_404 = mock.patch('requests.post', new=lambda url, headers={}, data={}, files={}: self.MockResponse(
+        mock_404 = mock.patch('requests.post', new=lambda url, headers={}, data={}, files={}, verify=True: self.MockResponse(
             status_code=404,
             text=json.dumps(dict(description='No such address')),
         ))
