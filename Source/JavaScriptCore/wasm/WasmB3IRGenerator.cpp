@@ -97,7 +97,7 @@ public:
         {
             if (type == BlockType::Loop) {
                 for (unsigned i = 0; i < signature->argumentCount(); ++i)
-                    phis.append(proc.add<Value>(Phi, toB3Type(signature->returnType(i)), origin));
+                    phis.append(proc.add<Value>(Phi, toB3Type(signature->argument(i)), origin));
             } else {
                 for (unsigned i = 0; i < signature->returnCount(); ++i)
                     phis.append(proc.add<Value>(Phi, toB3Type(signature->returnType(i)), origin));
