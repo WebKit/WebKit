@@ -1,3 +1,24 @@
+2019-10-10  Keith Miller  <keith_miller@apple.com>
+
+        GenerateAndAllocateRegisters can trivially elide self moves at end of liveness
+        https://bugs.webkit.org/show_bug.cgi?id=202833
+
+        Reviewed by Saam Barati.
+
+        This also fixes a bug where if a tmp is moved to itself at the end of its lifetime
+        we would mess up the accounting for the tmp.
+
+        In order to catch these bugs earlier during generation I added a
+        checkConsistency function that if a tmp is in a reg that reg is
+        not available and that reg thinks the tmp is also allocated in it.
+
+        * b3/B3Bank.h:
+        (JSC::B3::bankForReg):
+        * b3/air/AirAllocateRegistersAndStackAndGenerateCode.cpp:
+        (JSC::B3::Air::GenerateAndAllocateRegisters::checkConsistency):
+        (JSC::B3::Air::GenerateAndAllocateRegisters::generate):
+        * b3/air/AirAllocateRegistersAndStackAndGenerateCode.h:
+
 2019-10-10  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: use more C++ keywords for defining agents

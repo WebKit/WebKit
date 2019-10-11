@@ -45,6 +45,34 @@ GenerateAndAllocateRegisters::GenerateAndAllocateRegisters(Code& code)
     , m_map(code)
 { }
 
+ALWAYS_INLINE void GenerateAndAllocateRegisters::checkConsistency()
+{
+#if !ASSERT_DISABLED
+    m_code.forEachTmp([&] (Tmp tmp) {
+        Reg reg = m_map[tmp].reg;
+        if (!reg)
+            return;
+
+        ASSERT(!m_availableRegs[tmp.bank()].contains(reg));
+        ASSERT(m_currentAllocation->at(reg) == tmp);
+    });
+
+    for (Reg reg : RegisterSet::allRegisters()) {
+        if (isDisallowedRegister(reg))
+            continue;
+
+        Tmp tmp = m_currentAllocation->at(reg);
+        if (!tmp) {
+            ASSERT(m_availableRegs[bankForReg(reg)].contains(reg));
+            continue;
+        }
+
+        ASSERT(!m_availableRegs[tmp.bank()].contains(reg));
+        ASSERT(m_map[tmp].reg == reg);
+    }
+#endif
+}
+
 void GenerateAndAllocateRegisters::buildLiveRanges(UnifiedTmpLiveness& liveness)
 {
     m_liveRangeEnd = TmpMap<size_t>(m_code, 0);
@@ -416,6 +444,8 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 
         bool isReplayingSameInst = false;
         for (size_t instIndex = 0; instIndex < block->size(); ++instIndex) {
+            checkConsistency();
+
             if (instIndex && !isReplayingSameInst)
                 startLabel = m_jit->labelIgnoringWatchpoints();
 
@@ -444,6 +474,10 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                 if (source.isReg() || m_liveRangeEnd[source.tmp()] != m_globalInstIndex)
                     return true;
 
+                // If we are doing a self move at the end of the temps liveness we can trivially elide the move.
+                if (source == dest)
+                    return false;
+
                 Reg sourceReg = m_map[source.tmp()].reg;
                 // If the value is not already materialized into a register we may still move it into one so let the normal generation code run.
                 if (!sourceReg)
@@ -462,6 +496,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                 m_map[source.tmp()].reg = Reg();
                 return false;
             })();
+            checkConsistency();
 
             inst.forEachArg([&] (Arg& arg, Arg::Role role, Bank, Width) {
                 if (!arg.isTmp())

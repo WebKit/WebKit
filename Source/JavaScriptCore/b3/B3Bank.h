@@ -28,6 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "B3Type.h"
+#include "Reg.h"
 
 namespace JSC { namespace B3 {
 
@@ -61,6 +62,11 @@ inline Bank bankForType(Type type)
     }
     ASSERT_NOT_REACHED();
     return GP;
+}
+
+inline Bank bankForReg(Reg reg)
+{
+    return reg.isGPR() ? GP : FP;
 }
 
 } } // namespace JSC::B3

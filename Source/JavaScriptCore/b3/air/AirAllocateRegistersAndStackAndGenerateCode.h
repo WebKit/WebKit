@@ -64,6 +64,8 @@ private:
     void buildLiveRanges(UnifiedTmpLiveness&);
     bool isDisallowedRegister(Reg);
 
+    void checkConsistency();
+
     Code& m_code;
     CCallHelpers* m_jit { nullptr };
 
