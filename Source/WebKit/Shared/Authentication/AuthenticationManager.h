@@ -74,8 +74,6 @@ public:
 
     void completeAuthenticationChallenge(uint64_t challengeID, AuthenticationChallengeDisposition, WebCore::Credential&&);
 
-    uint64_t outstandingAuthenticationChallengeCount() const { return m_challenges.size(); }
-
 private:
     struct Challenge {
         WebPageProxyIdentifier pageID;

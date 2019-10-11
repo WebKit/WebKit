@@ -541,7 +541,6 @@ private:
     void initializeNewWebProcess(WebProcessProxy&, WebsiteDataStore*, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No);
 
     void requestWebContentStatistics(StatisticsRequest&);
-    void requestNetworkingStatistics(StatisticsRequest&);
 
     void platformInitializeNetworkProcess(NetworkProcessCreationParameters&);
 

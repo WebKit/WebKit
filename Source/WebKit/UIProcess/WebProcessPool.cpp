@@ -1801,26 +1801,11 @@ void WebProcessPool::getStatistics(uint32_t statisticsMask, Function<void (API::
 
     if (statisticsMask & StatisticsRequestTypeWebContent)
         requestWebContentStatistics(request.get());
-    
-    if (statisticsMask & StatisticsRequestTypeNetworking)
-        requestNetworkingStatistics(request.get());
 }
 
 void WebProcessPool::requestWebContentStatistics(StatisticsRequest& request)
 {
     // FIXME (Multi-WebProcess) <rdar://problem/13200059>: Make getting statistics from multiple WebProcesses work.
-}
-
-void WebProcessPool::requestNetworkingStatistics(StatisticsRequest& request)
-{
-    if (!m_networkProcess) {
-        LOG_ERROR("Attempt to get NetworkProcess statistics but the NetworkProcess is unavailable");
-        return;
-    }
-
-    uint64_t requestID = request.addOutstandingRequest();
-    m_statisticsRequests.set(requestID, &request);
-    m_networkProcess->send(Messages::NetworkProcess::GetNetworkProcessStatistics(requestID), 0);
 }
 
 static WebProcessProxy* webProcessProxyFromConnection(IPC::Connection& connection, const Vector<RefPtr<WebProcessProxy>>& processes)

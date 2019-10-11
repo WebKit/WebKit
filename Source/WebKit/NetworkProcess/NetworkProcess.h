@@ -417,7 +417,6 @@ private:
 
     void setCacheModel(CacheModel, String overrideCacheStorageDirectory);
     void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
-    void getNetworkProcessStatistics(uint64_t callbackID);
     void clearCacheForAllOrigins(uint32_t cachesToClear);
     void setAllowsAnySSLCertificateForWebSocket(bool, CompletionHandler<void()>&&);
     

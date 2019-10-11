@@ -2020,16 +2020,6 @@ void NetworkProcess::setCacheModel(CacheModel cacheModel, String cacheStorageDir
     });
 }
 
-void NetworkProcess::getNetworkProcessStatistics(uint64_t callbackID)
-{
-    StatisticsData data;
-
-    data.statisticsNumbers.set("DownloadsActiveCount", downloadManager().activeDownloadCount());
-    data.statisticsNumbers.set("OutstandingAuthenticationChallengesCount", authenticationManager().outstandingAuthenticationChallengeCount());
-
-    parentProcessConnection()->send(Messages::WebProcessPool::DidGetStatistics(data, callbackID), 0);
-}
-
 void NetworkProcess::setAllowsAnySSLCertificateForWebSocket(bool allows, CompletionHandler<void()>&& completionHandler)
 {
     DeprecatedGlobalSettings::setAllowsAnySSLCertificate(allows);
