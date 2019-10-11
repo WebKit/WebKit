@@ -927,7 +927,6 @@
 		CE6E81A020A6935F00E2C80F /* SetTimeoutFunction.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE6E819F20A6935F00E2C80F /* SetTimeoutFunction.mm */; };
 		CE6E81A420A933D500E2C80F /* set-timeout-function.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CE6E81A320A933B800E2C80F /* set-timeout-function.html */; };
 		CE78705F2107AB980053AC67 /* MoveOnlyLifecycleLogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE78705D2107AB8C0053AC67 /* MoveOnlyLifecycleLogger.cpp */; };
-		CE9B07F2231889E300A09BC7 /* CompactPointerTuple.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE9B07F1231889E300A09BC7 /* CompactPointerTuple.cpp */; };
 		CEA6CF2819CCF69D0064F5A7 /* open-and-close-window.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CEA6CF2719CCF69D0064F5A7 /* open-and-close-window.html */; };
 		CEA7F57D2089624B0078EF6E /* DidResignInputElementStrongPasswordAppearance.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEA7F57B20895F5B0078EF6E /* DidResignInputElementStrongPasswordAppearance.mm */; };
 		CEBABD491B71687C0051210A /* should-open-external-schemes.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CEBABD481B71687C0051210A /* should-open-external-schemes.html */; };
@@ -2404,7 +2403,6 @@
 		CE6E81A320A933B800E2C80F /* set-timeout-function.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = "set-timeout-function.html"; path = "ios/set-timeout-function.html"; sourceTree = SOURCE_ROOT; };
 		CE78705C2107AB8C0053AC67 /* MoveOnlyLifecycleLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoveOnlyLifecycleLogger.h; sourceTree = "<group>"; };
 		CE78705D2107AB8C0053AC67 /* MoveOnlyLifecycleLogger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoveOnlyLifecycleLogger.cpp; sourceTree = "<group>"; };
-		CE9B07F1231889E300A09BC7 /* CompactPointerTuple.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CompactPointerTuple.cpp; sourceTree = "<group>"; };
 		CEA6CF2219CCF5BD0064F5A7 /* OpenAndCloseWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenAndCloseWindow.mm; sourceTree = "<group>"; };
 		CEA6CF2719CCF69D0064F5A7 /* open-and-close-window.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "open-and-close-window.html"; sourceTree = "<group>"; };
 		CEA7F57B20895F5B0078EF6E /* DidResignInputElementStrongPasswordAppearance.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DidResignInputElementStrongPasswordAppearance.mm; sourceTree = "<group>"; };
@@ -3622,7 +3620,6 @@
 				26F1B44215CA434F00D1E4BF /* AtomString.cpp */,
 				E40019301ACE9B5C001B0A2A /* BloomFilter.cpp */,
 				A7A966DA140ECCC8005EF9B4 /* CheckedArithmeticOperations.cpp */,
-				CE9B07F1231889E300A09BC7 /* CompactPointerTuple.cpp */,
 				0F30CB5B1FCE1792004B5323 /* ConcurrentPtrHashSet.cpp */,
 				0FEAE3671B7D19CB00CE17F2 /* Condition.cpp */,
 				278DE64B22B8D611004E0E7A /* CrossThreadCopier.cpp */,
@@ -4314,7 +4311,6 @@
 				1ADAD1501D77A9F600212586 /* BlockPtr.mm in Sources */,
 				7C83DE9C1D0A590C00FEBCF3 /* BloomFilter.cpp in Sources */,
 				7C83DEA01D0A590C00FEBCF3 /* CheckedArithmeticOperations.cpp in Sources */,
-				CE9B07F2231889E300A09BC7 /* CompactPointerTuple.cpp in Sources */,
 				0F30CB5C1FCE1796004B5323 /* ConcurrentPtrHashSet.cpp in Sources */,
 				7C83DEC31D0A590C00FEBCF3 /* Condition.cpp in Sources */,
 				7C83DEA61D0A590C00FEBCF3 /* Counters.cpp in Sources */,
