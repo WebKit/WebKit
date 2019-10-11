@@ -1,3 +1,88 @@
+2019-10-11  Kate Cheney  <katherine_cheney@apple.com>
+
+        Get StorageAccess API features working on SQLite database implementation (195422)
+        https://bugs.webkit.org/show_bug.cgi?id=195422
+        <rdar://problem/54213519>
+
+        Reviewed by Brent Fulgham.
+
+        This patch migrates tests in http/tests/storageAccess to use the ITP
+        SQLite Database to ensure the storageAccess API features are working.
+        Additionally, the Safari UI flow was manually tested for the database
+        using tlstestwebkit.org (no automated tests exist for this).
+
+        It also updates the test expectations for two tests that consistently
+        timeout on the flakiness dashboard and will be looked into in a
+        separate radar.
+
+        Most storageAccess tests are skipped on ios because of incompatibility
+        with recognizing user interaction.
+
+        * http/tests/storageAccess/deny-storage-access-under-opener-database-expected.txt: Added.
+        * http/tests/storageAccess/deny-storage-access-under-opener-database.html: Added.
+        * http/tests/storageAccess/deny-storage-access-under-opener-if-auto-dismiss-database-expected.txt: Added.
+        * http/tests/storageAccess/deny-storage-access-under-opener-if-auto-dismiss-database.html: Added.
+        * http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture-database-expected.txt: Added.
+        * http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture-database.html: Added.
+        * http/tests/storageAccess/deny-without-prompt-preserves-gesture-database-expected.txt: Added.
+        * http/tests/storageAccess/deny-without-prompt-preserves-gesture-database.html: Added.
+        * http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture-database-expected.txt: Added.
+        * http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture-database.html: Added.
+        * http/tests/storageAccess/grant-with-prompt-preserves-gesture-database-expected.txt: Added.
+        * http/tests/storageAccess/grant-with-prompt-preserves-gesture-database.html: Added.
+        * http/tests/storageAccess/has-storage-access-crash-database-expected.txt: Added.
+        * http/tests/storageAccess/has-storage-access-crash-database.html: Added.
+        * http/tests/storageAccess/has-storage-access-false-by-default-database-expected.txt: Added.
+        * http/tests/storageAccess/has-storage-access-false-by-default-database.html: Added.
+        * http/tests/storageAccess/has-storage-access-false-by-default-ephemeral-database-expected.txt: Added.
+        * http/tests/storageAccess/has-storage-access-false-by-default-ephemeral-database.html: Added.
+        * http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-user-interaction-database-expected.txt: Added.
+        * http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-user-interaction-database.html: Added.
+        * http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-database-expected.txt: Added.
+        * http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-database.html: Added.
+        * http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral-database-expected.txt: Added.
+        * http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral-database.html: Added.
+        * http/tests/storageAccess/remove-requesting-iframe-database-expected.txt: Added.
+        * http/tests/storageAccess/remove-requesting-iframe-database.html: Added.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe-database-expected.txt: Added.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe-database.html: Added.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-database-expected.txt: Added.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-database.html: Added.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-and-access-from-right-frame-database-expected.txt: Added.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-and-access-from-right-frame-database.html: Added.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame-database-expected.txt: Added.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame-database.html: Added.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-database-expected.txt: Added.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-database.html: Added.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-without-user-interaction-database-expected.txt: Added.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-without-user-interaction-database.html: Added.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-nested-iframe-database-expected.txt: Added.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-nested-iframe-database.html: Added.
+        * http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access-database-expected.txt: Added.
+        * http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access-database.html: Added.
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access-database-expected.txt: Added.
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access-database.html: Added.
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access-database-expected.txt: Added.
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access-database.html: Added.
+        * http/tests/storageAccess/request-storage-access-crash-database-expected.txt: Added.
+        * http/tests/storageAccess/request-storage-access-crash-database.html: Added.
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-with-unique-origin-database-expected.txt: Added.
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-with-unique-origin-database.html: Added.
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-without-allow-token-database-expected.txt: Added.
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-without-allow-token-database.html: Added.
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-without-user-gesture-database-expected.txt: Added.
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-without-user-gesture-database.html: Added.
+        * http/tests/storageAccess/request-storage-access-same-origin-iframe-database-expected.txt: Added.
+        * http/tests/storageAccess/request-storage-access-same-origin-iframe-database.html: Added.
+        * http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe-database-expected.txt: Added.
+        * http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe-database.html: Added.
+        * http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe-without-allow-token-database-expected.txt: Added.
+        * http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe-without-allow-token-database.html: Added.
+        * http/tests/storageAccess/request-storage-access-top-frame-database-expected.txt: Added.
+        * http/tests/storageAccess/request-storage-access-top-frame-database.html: Added.
+        * platform/ios/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2019-10-11  Antti Koivisto  <antti@apple.com>
 
         Position::upstream/downstream should not need to call ensureLineBoxes

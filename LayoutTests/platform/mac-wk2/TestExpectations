@@ -686,36 +686,11 @@ webkit.org/b/172397 legacy-animation-engine/animations/needs-layout.html [ Pass 
 # Touch events are not available on open source bots, thus only tested on Mac.
 http/tests/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html [ Pass ]
 http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-removal.html [ Pass ]
-
-[ HighSierra+ ] http/tests/storageAccess/has-storage-access-crash.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/request-storage-access-crash.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-with-unique-origin.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-without-allow-token.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/request-storage-access-same-origin-iframe.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe-without-allow-token.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-nested-iframe.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-and-access-from-right-frame.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-without-user-interaction.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/request-storage-access-top-frame.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-without-user-gesture.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-user-interaction.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access.html [ Pass ]
+[ HighSierra+ ] http/tests/storageAccess/ [ Pass ]
 webkit.org/b/198670 [ HighSierra+ ] http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html [ Pass Timeout ]
-[ HighSierra+ ] http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/deny-storage-access-under-opener.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/deny-storage-access-under-opener-if-auto-dismiss.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/grant-with-prompt-preserves-gesture.html [ Pass ]
+[ HighSierra+ ] http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access-database.html [ Pass Timeout ]
 [ HighSierra+ ] http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture.html [ Skip ]
-[ HighSierra+ ] http/tests/storageAccess/deny-without-prompt-preserves-gesture.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/has-storage-access-false-by-default.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/has-storage-access-false-by-default-ephemeral.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies.html [ Pass ]
+[ HighSierra+ ] http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture-database.html [ Skip ]
 
 # As of https://trac.webkit.org/changeset/227762 the timestampResolution is just 5 seconds which makes this test flaky
 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Skip ]
@@ -915,6 +890,7 @@ webkit.org/b/196403 imported/w3c/web-platform-tests/mediacapture-record/MediaRec
 webkit.org/b/187391 accessibility/mac/async-increment-decrement-action.html [ Skip ]
 
 webkit.org/b/194164 http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame.html [ Pass Timeout ]
+http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame-database.html [ Pass Timeout ]
 
 webkit.org/b/197068 [ Debug ] fast/selectors/matches-backtracking.html [ Pass Timeout ]
 
