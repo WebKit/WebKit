@@ -1,12 +1,16 @@
+import os
 
 from twisted.application import service
 from buildbot.master import BuildMaster
 
-basedir = r'/var/buildbot'
+basedir = '.'
 configfile = r'master.cfg'
-rotateLength = 10000000
-maxRotatedFiles = 100
+rotateLength = 50000000
+maxRotatedFiles = 20
 umask = 022
+
+if basedir == '.':
+    basedir = os.path.abspath(os.path.dirname(__file__))
 
 application = service.Application('buildmaster')
 try:
