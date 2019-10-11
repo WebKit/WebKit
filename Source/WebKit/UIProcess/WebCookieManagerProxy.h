@@ -65,20 +65,20 @@ public:
 
     void initializeClient(const WKCookieManagerClientBase*);
     
-    void getHostnamesWithCookies(PAL::SessionID, Function<void (API::Array*, CallbackBase::Error)>&&);
-    void deleteCookie(PAL::SessionID, const WebCore::Cookie&, Function<void (CallbackBase::Error)>&&);
+    void getHostnamesWithCookies(PAL::SessionID, CompletionHandler<void(Vector<String>&&)>&&);
+    void deleteCookie(PAL::SessionID, const WebCore::Cookie&, CompletionHandler<void()>&&);
     void deleteCookiesForHostnames(PAL::SessionID, const Vector<String>&);
     void deleteAllCookies(PAL::SessionID);
-    void deleteAllCookiesModifiedSince(PAL::SessionID, WallTime, Function<void (CallbackBase::Error)>&&);
+    void deleteAllCookiesModifiedSince(PAL::SessionID, WallTime, CompletionHandler<void()>&&);
 
-    void setCookies(PAL::SessionID, const Vector<WebCore::Cookie>&, Function<void(CallbackBase::Error)>&&);
-    void setCookies(PAL::SessionID, const Vector<WebCore::Cookie>&, const URL&, const URL& mainDocumentURL, Function<void(CallbackBase::Error)>&&);
+    void setCookies(PAL::SessionID, const Vector<WebCore::Cookie>&, CompletionHandler<void()>&&);
+    void setCookies(PAL::SessionID, const Vector<WebCore::Cookie>&, const URL&, const URL& mainDocumentURL, CompletionHandler<void()>&&);
 
-    void getAllCookies(PAL::SessionID, Function<void (const Vector<WebCore::Cookie>&, CallbackBase::Error)>&& completionHandler);
-    void getCookies(PAL::SessionID, const URL&, Function<void(const Vector<WebCore::Cookie>&, CallbackBase::Error)>&& completionHandler);
+    void getAllCookies(PAL::SessionID, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
+    void getCookies(PAL::SessionID, const URL&, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
 
-    void setHTTPCookieAcceptPolicy(PAL::SessionID, HTTPCookieAcceptPolicy, Function<void (CallbackBase::Error)>&&);
-    void getHTTPCookieAcceptPolicy(PAL::SessionID, Function<void (HTTPCookieAcceptPolicy, CallbackBase::Error)>&&);
+    void setHTTPCookieAcceptPolicy(PAL::SessionID, HTTPCookieAcceptPolicy, CompletionHandler<void()>&&);
+    void getHTTPCookieAcceptPolicy(PAL::SessionID, CompletionHandler<void(HTTPCookieAcceptPolicy)>&&);
 
     void startObservingCookieChanges(PAL::SessionID);
     void stopObservingCookieChanges(PAL::SessionID);
@@ -106,14 +106,6 @@ public:
 private:
     WebCookieManagerProxy(WebProcessPool*);
 
-    void didGetHostnamesWithCookies(const Vector<String>&, WebKit::CallbackID);
-    void didGetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy, WebKit::CallbackID);
-
-    void didSetHTTPCookieAcceptPolicy(WebKit::CallbackID);
-    void didSetCookies(WebKit::CallbackID);
-    void didGetCookies(const Vector<WebCore::Cookie>&, WebKit::CallbackID);
-    void didDeleteCookies(WebKit::CallbackID);
-
     void cookiesDidChange(PAL::SessionID);
 
     // WebContextSupplement
@@ -129,8 +121,6 @@ private:
 #if PLATFORM(COCOA)
     void persistHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
 #endif
-
-    CallbackMap m_callbacks;
 
     HashMap<PAL::SessionID, WTF::Function<void ()>> m_legacyCookieObservers;
     HashMap<PAL::SessionID, HashSet<Observer*>> m_cookieObservers;

@@ -21,13 +21,5 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebCookieManagerProxy {
-    DidGetHostnamesWithCookies(Vector<String> hostnames, WebKit::CallbackID callbackID);
-    DidGetHTTPCookieAcceptPolicy(enum:uint8_t WebKit::HTTPCookieAcceptPolicy policy, WebKit::CallbackID callbackID);
-
-    DidSetHTTPCookieAcceptPolicy(WebKit::CallbackID callbackID);
-    DidDeleteCookies(WebKit::CallbackID callbackID);
-    DidSetCookies(WebKit::CallbackID callbackID);
-    DidGetCookies(Vector<WebCore::Cookie> cookies, WebKit::CallbackID callbackID);
-
     CookiesDidChange(PAL::SessionID sessionID)
 }

@@ -69,8 +69,6 @@ void WebCookieManagerProxy::initializeClient(const WKCookieManagerClientBase* cl
 
 void WebCookieManagerProxy::processPoolDestroyed()
 {
-    m_callbacks.invalidate(CallbackBase::Error::OwnerWasInvalidated);
-
     Vector<Observer*> observers;
     for (auto& observerSet : m_cookieObservers.values()) {
         for (auto* observer : observerSet)
@@ -85,12 +83,10 @@ void WebCookieManagerProxy::processPoolDestroyed()
 
 void WebCookieManagerProxy::processDidClose(WebProcessProxy*)
 {
-    m_callbacks.invalidate(CallbackBase::Error::ProcessExited);
 }
 
 void WebCookieManagerProxy::processDidClose(NetworkProcessProxy*)
 {
-    m_callbacks.invalidate(CallbackBase::Error::ProcessExited);
 }
 
 void WebCookieManagerProxy::refWebContextSupplement()
@@ -103,21 +99,12 @@ void WebCookieManagerProxy::derefWebContextSupplement()
     API::Object::deref();
 }
 
-void WebCookieManagerProxy::getHostnamesWithCookies(PAL::SessionID sessionID, Function<void (API::Array*, CallbackBase::Error)>&& callbackFunction)
+void WebCookieManagerProxy::getHostnamesWithCookies(PAL::SessionID sessionID, CompletionHandler<void(Vector<String>&&)>&& callbackFunction)
 {
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), processPool()->ensureNetworkProcess().throttler().backgroundActivityToken());
-    processPool()->sendToNetworkingProcess(Messages::WebCookieManager::GetHostnamesWithCookies(sessionID, callbackID));
-}
-
-void WebCookieManagerProxy::didGetHostnamesWithCookies(const Vector<String>& hostnames, WebKit::CallbackID callbackID)
-{
-    auto callback = m_callbacks.take<ArrayCallback>(callbackID);
-    if (!callback) {
-        // FIXME: Log error or assert.
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(API::Array::createStringArray(hostnames).ptr());
+    auto& networkProcess = processPool()->ensureNetworkProcess();
+    networkProcess.sendWithAsyncReply(Messages::WebCookieManager::GetHostnamesWithCookies(sessionID), [callbackFunction = WTFMove(callbackFunction), token = networkProcess.throttler().backgroundActivityToken()](Vector<String>&& hostnames) mutable {
+        callbackFunction(WTFMove(hostnames));
+    });
 }
 
 void WebCookieManagerProxy::deleteCookiesForHostnames(PAL::SessionID sessionID, const Vector<String>& hostnames)
@@ -130,55 +117,52 @@ void WebCookieManagerProxy::deleteAllCookies(PAL::SessionID sessionID)
     processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::DeleteAllCookies(sessionID));
 }
 
-void WebCookieManagerProxy::deleteCookie(PAL::SessionID sessionID, const Cookie& cookie, Function<void (CallbackBase::Error)>&& callbackFunction)
+void WebCookieManagerProxy::deleteCookie(PAL::SessionID sessionID, const Cookie& cookie, CompletionHandler<void()>&& callbackFunction)
 {
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), processPool()->ensureNetworkProcess().throttler().backgroundActivityToken());
-    processPool()->sendToNetworkingProcess(Messages::WebCookieManager::DeleteCookie(sessionID, cookie, callbackID));
+    auto& networkProcess = processPool()->ensureNetworkProcess();
+    networkProcess.sendWithAsyncReply(Messages::WebCookieManager::DeleteCookie(sessionID, cookie), [callbackFunction = WTFMove(callbackFunction), token = networkProcess.throttler().backgroundActivityToken()]() mutable {
+        callbackFunction();
+    });
 }
 
-void WebCookieManagerProxy::deleteAllCookiesModifiedSince(PAL::SessionID sessionID, WallTime time, Function<void (CallbackBase::Error)>&& callbackFunction)
+void WebCookieManagerProxy::deleteAllCookiesModifiedSince(PAL::SessionID sessionID, WallTime time, CompletionHandler<void()>&& callbackFunction)
 {
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), processPool()->ensureNetworkProcess().throttler().backgroundActivityToken());
-    processPool()->sendToNetworkingProcess(Messages::WebCookieManager::DeleteAllCookiesModifiedSince(sessionID, time, callbackID));
+    auto& networkProcess = processPool()->ensureNetworkProcess();
+    networkProcess.sendWithAsyncReply(Messages::WebCookieManager::DeleteAllCookiesModifiedSince(sessionID, time), [callbackFunction = WTFMove(callbackFunction), token = networkProcess.throttler().backgroundActivityToken()]() mutable {
+        callbackFunction();
+    });
 }
 
-void WebCookieManagerProxy::setCookies(PAL::SessionID sessionID, const Vector<Cookie>& cookies, Function<void(CallbackBase::Error)>&& callbackFunction)
+void WebCookieManagerProxy::setCookies(PAL::SessionID sessionID, const Vector<Cookie>& cookies, CompletionHandler<void()>&& callbackFunction)
 {
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), processPool()->ensureNetworkProcess().throttler().backgroundActivityToken());
-    processPool()->sendToNetworkingProcess(Messages::WebCookieManager::SetCookie(sessionID, cookies, callbackID));
+    auto& networkProcess = processPool()->ensureNetworkProcess();
+    networkProcess.sendWithAsyncReply(Messages::WebCookieManager::SetCookie(sessionID, cookies), [callbackFunction = WTFMove(callbackFunction), token = networkProcess.throttler().backgroundActivityToken()]() mutable {
+        callbackFunction();
+    });
 }
 
-void WebCookieManagerProxy::setCookies(PAL::SessionID sessionID, const Vector<Cookie>& cookies, const URL& url, const URL& mainDocumentURL, Function<void (CallbackBase::Error)>&& callbackFunction)
+void WebCookieManagerProxy::setCookies(PAL::SessionID sessionID, const Vector<Cookie>& cookies, const URL& url, const URL& mainDocumentURL, CompletionHandler<void()>&& callbackFunction)
 {
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), processPool()->ensureNetworkProcess().throttler().backgroundActivityToken());
-    processPool()->sendToNetworkingProcess(Messages::WebCookieManager::SetCookies(sessionID, cookies, url, mainDocumentURL, callbackID));
+    auto& networkProcess = processPool()->ensureNetworkProcess();
+    networkProcess.sendWithAsyncReply(Messages::WebCookieManager::SetCookies(sessionID, cookies, url, mainDocumentURL), [callbackFunction = WTFMove(callbackFunction), token = networkProcess.throttler().backgroundActivityToken()]() mutable {
+        callbackFunction();
+    });
 }
 
-void WebCookieManagerProxy::getAllCookies(PAL::SessionID sessionID, Function<void (const Vector<Cookie>&, CallbackBase::Error)>&& callbackFunction)
+void WebCookieManagerProxy::getAllCookies(PAL::SessionID sessionID, CompletionHandler<void(Vector<Cookie>&&)>&& callbackFunction)
 {
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), processPool()->ensureNetworkProcess().throttler().backgroundActivityToken());
-    processPool()->sendToNetworkingProcess(Messages::WebCookieManager::GetAllCookies(sessionID, callbackID));
+    auto& networkProcess = processPool()->ensureNetworkProcess();
+    networkProcess.sendWithAsyncReply(Messages::WebCookieManager::GetAllCookies(sessionID), [callbackFunction = WTFMove(callbackFunction), token = networkProcess.throttler().backgroundActivityToken()](Vector<Cookie>&& cookies) mutable {
+        callbackFunction(WTFMove(cookies));
+    });
 }
 
-void WebCookieManagerProxy::getCookies(PAL::SessionID sessionID, const URL& url, Function<void (const Vector<Cookie>&, CallbackBase::Error)>&& callbackFunction)
+void WebCookieManagerProxy::getCookies(PAL::SessionID sessionID, const URL& url, CompletionHandler<void(Vector<Cookie>&&)>&& callbackFunction)
 {
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), processPool()->ensureNetworkProcess().throttler().backgroundActivityToken());
-    processPool()->sendToNetworkingProcess(Messages::WebCookieManager::GetCookies(sessionID, url, callbackID));
-}
-
-void WebCookieManagerProxy::didSetCookies(WebKit::CallbackID callbackID)
-{
-    m_callbacks.take<VoidCallback>(callbackID)->performCallback();
-}
-
-void WebCookieManagerProxy::didGetCookies(const Vector<Cookie>& cookies, WebKit::CallbackID callbackID)
-{
-    m_callbacks.take<GetCookiesCallback>(callbackID)->performCallbackWithReturnValue(cookies);
-}
-
-void WebCookieManagerProxy::didDeleteCookies(WebKit::CallbackID callbackID)
-{
-    m_callbacks.take<VoidCallback>(callbackID)->performCallback();
+    auto& networkProcess = processPool()->ensureNetworkProcess();
+    networkProcess.sendWithAsyncReply(Messages::WebCookieManager::GetCookies(sessionID, url), [callbackFunction = WTFMove(callbackFunction), token = networkProcess.throttler().backgroundActivityToken()](Vector<Cookie>&& cookies) mutable {
+        callbackFunction(WTFMove(cookies));
+    });
 }
 
 void WebCookieManagerProxy::startObservingCookieChanges(PAL::SessionID sessionID)
@@ -190,7 +174,6 @@ void WebCookieManagerProxy::stopObservingCookieChanges(PAL::SessionID sessionID)
 {
     processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::StopObservingCookieChanges(sessionID));
 }
-
 
 void WebCookieManagerProxy::setCookieObserverCallback(PAL::SessionID sessionID, WTF::Function<void ()>&& callback)
 {
@@ -238,7 +221,7 @@ void WebCookieManagerProxy::cookiesDidChange(PAL::SessionID sessionID)
         observer->cookiesDidChange();
 }
 
-void WebCookieManagerProxy::setHTTPCookieAcceptPolicy(PAL::SessionID, HTTPCookieAcceptPolicy policy, Function<void (CallbackBase::Error)>&& callbackFunction)
+void WebCookieManagerProxy::setHTTPCookieAcceptPolicy(PAL::SessionID, HTTPCookieAcceptPolicy policy, CompletionHandler<void()>&& callbackFunction)
 {
 #if PLATFORM(COCOA)
     if (!processPool()->isUsingTestingNetworkSession())
@@ -248,24 +231,18 @@ void WebCookieManagerProxy::setHTTPCookieAcceptPolicy(PAL::SessionID, HTTPCookie
     processPool()->setInitialHTTPCookieAcceptPolicy(policy);
 #endif
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), processPool()->ensureNetworkProcess().throttler().backgroundActivityToken());
-    processPool()->sendToNetworkingProcess(Messages::WebCookieManager::SetHTTPCookieAcceptPolicy(policy, OptionalCallbackID(callbackID)));
+    auto& networkProcess = processPool()->ensureNetworkProcess();
+    networkProcess.sendWithAsyncReply(Messages::WebCookieManager::SetHTTPCookieAcceptPolicy(policy), [callbackFunction = WTFMove(callbackFunction), token = networkProcess.throttler().backgroundActivityToken()]() mutable {
+        callbackFunction();
+    });
 }
 
-void WebCookieManagerProxy::getHTTPCookieAcceptPolicy(PAL::SessionID, Function<void (HTTPCookieAcceptPolicy, CallbackBase::Error)>&& callbackFunction)
+void WebCookieManagerProxy::getHTTPCookieAcceptPolicy(PAL::SessionID, CompletionHandler<void(HTTPCookieAcceptPolicy)>&& callbackFunction)
 {
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), processPool()->ensureNetworkProcess().throttler().backgroundActivityToken());
-    processPool()->sendToNetworkingProcess(Messages::WebCookieManager::GetHTTPCookieAcceptPolicy(callbackID));
-}
-
-void WebCookieManagerProxy::didGetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy, WebKit::CallbackID callbackID)
-{
-    m_callbacks.take<HTTPCookieAcceptPolicyCallback>(callbackID)->performCallbackWithReturnValue(policy);
-}
-
-void WebCookieManagerProxy::didSetHTTPCookieAcceptPolicy(WebKit::CallbackID callbackID)
-{
-    m_callbacks.take<VoidCallback>(callbackID)->performCallback();
+    auto& networkProcess = processPool()->ensureNetworkProcess();
+    networkProcess.sendWithAsyncReply(Messages::WebCookieManager::GetHTTPCookieAcceptPolicy(), [callbackFunction = WTFMove(callbackFunction), token = networkProcess.throttler().backgroundActivityToken()](HTTPCookieAcceptPolicy policy) mutable {
+        callbackFunction(policy);
+    });
 }
 
 } // namespace WebKit

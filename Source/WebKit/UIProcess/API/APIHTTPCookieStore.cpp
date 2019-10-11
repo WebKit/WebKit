@@ -69,7 +69,7 @@ void HTTPCookieStore::cookies(CompletionHandler<void(const Vector<WebCore::Cooki
     }
 
     auto* cookieManager = pool->supplement<WebKit::WebCookieManagerProxy>();
-    cookieManager->getAllCookies(m_owningDataStore->sessionID(), [pool = WTFMove(pool), completionHandler = WTFMove(completionHandler)] (const Vector<WebCore::Cookie>& cookies, CallbackBase::Error error) mutable {
+    cookieManager->getAllCookies(m_owningDataStore->sessionID(), [pool = WTFMove(pool), completionHandler = WTFMove(completionHandler)] (const Vector<WebCore::Cookie>& cookies) mutable {
         completionHandler(cookies);
     });
 }
@@ -91,7 +91,7 @@ void HTTPCookieStore::setCookies(const Vector<WebCore::Cookie>& cookies, Complet
     }
 
     auto* cookieManager = pool->supplement<WebKit::WebCookieManagerProxy>();
-    cookieManager->setCookies(m_owningDataStore->sessionID(), cookies, [pool = WTFMove(pool), completionHandler = WTFMove(completionHandler)] (CallbackBase::Error error) mutable {
+    cookieManager->setCookies(m_owningDataStore->sessionID(), cookies, [pool = WTFMove(pool), completionHandler = WTFMove(completionHandler)] () mutable {
         completionHandler();
     });
 }
@@ -112,7 +112,7 @@ void HTTPCookieStore::deleteCookie(const WebCore::Cookie& cookie, CompletionHand
     }
 
     auto* cookieManager = pool->supplement<WebKit::WebCookieManagerProxy>();
-    cookieManager->deleteCookie(m_owningDataStore->sessionID(), cookie, [pool = WTFMove(pool), completionHandler = WTFMove(completionHandler)](CallbackBase::Error error) mutable {
+    cookieManager->deleteCookie(m_owningDataStore->sessionID(), cookie, [pool = WTFMove(pool), completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler();
     });
 }
@@ -144,7 +144,7 @@ void HTTPCookieStore::setHTTPCookieAcceptPolicy(WebKit::HTTPCookieAcceptPolicy p
     }
 
     auto* cookieManager = pool->supplement<WebKit::WebCookieManagerProxy>();
-    cookieManager->setHTTPCookieAcceptPolicy(m_owningDataStore->sessionID(), policy, [completionHandler = WTFMove(completionHandler)] (CallbackBase::Error) mutable {
+    cookieManager->setHTTPCookieAcceptPolicy(m_owningDataStore->sessionID(), policy, [completionHandler = WTFMove(completionHandler)] () mutable {
         completionHandler();
     });
 }

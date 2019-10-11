@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebCookieManager.h"
 
+#import "HTTPCookieAcceptPolicy.h"
 #import "NetworkProcess.h"
 #import "NetworkSession.h"
 #import <WebCore/NetworkStorageSession.h>

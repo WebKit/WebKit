@@ -23,20 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
  
- messages -> WebCookieManager {
-    void GetHostnamesWithCookies(PAL::SessionID sessionID, WebKit::CallbackID callbackID)
+messages -> WebCookieManager {
+    void GetHostnamesWithCookies(PAL::SessionID sessionID) -> (Vector<String> hostnames) Async
     void DeleteCookiesForHostnames(PAL::SessionID sessionID, Vector<String> hostnames)
     void DeleteAllCookies(PAL::SessionID sessionID)
 
-    void SetCookie(PAL::SessionID sessionID, Vector<WebCore::Cookie> cookie, WebKit::CallbackID callbackID)
-    void SetCookies(PAL::SessionID sessionID, Vector<WebCore::Cookie> cookies, URL url, URL mainDocumentURL, WebKit::CallbackID callbackID)
-    void GetAllCookies(PAL::SessionID sessionID, WebKit::CallbackID callbackID)
-    void GetCookies(PAL::SessionID sessionID, URL url, WebKit::CallbackID callbackID)
-    void DeleteCookie(PAL::SessionID sessionID, struct WebCore::Cookie cookie, WebKit::CallbackID callbackID)
-    void DeleteAllCookiesModifiedSince(PAL::SessionID sessionID, WallTime time, WebKit::CallbackID callbackID)
+    void SetCookie(PAL::SessionID sessionID, Vector<WebCore::Cookie> cookie) -> () Async
+    void SetCookies(PAL::SessionID sessionID, Vector<WebCore::Cookie> cookies, URL url, URL mainDocumentURL) -> () Async
+    void GetAllCookies(PAL::SessionID sessionID) -> (Vector<WebCore::Cookie> cookies) Async
+    void GetCookies(PAL::SessionID sessionID, URL url) -> (Vector<WebCore::Cookie> cookies) Async
+    void DeleteCookie(PAL::SessionID sessionID, struct WebCore::Cookie cookie) -> () Async
+    void DeleteAllCookiesModifiedSince(PAL::SessionID sessionID, WallTime time) -> () Async
 
-    void SetHTTPCookieAcceptPolicy(enum:uint8_t WebKit::HTTPCookieAcceptPolicy policy, WebKit::OptionalCallbackID callbackID)
-    void GetHTTPCookieAcceptPolicy(WebKit::CallbackID callbackID)
+    void SetHTTPCookieAcceptPolicy(enum:uint8_t WebKit::HTTPCookieAcceptPolicy policy) -> () Async
+    void GetHTTPCookieAcceptPolicy() -> (enum:uint8_t WebKit::HTTPCookieAcceptPolicy policy) Async
     
     void StartObservingCookieChanges(PAL::SessionID sessionID)
     void StopObservingCookieChanges(PAL::SessionID sessionID)

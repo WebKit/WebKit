@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebCookieManager.h"
 
+#include "HTTPCookieAcceptPolicy.h"
 #include "NetworkProcess.h"
 #include <WebCore/NetworkStorageSession.h>
 

@@ -131,7 +131,7 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
     g_resolver_set_default(cachedResolver.get());
 
     m_cacheOptions = { NetworkCache::CacheOption::RegisterNotify };
-    supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(parameters.cookieAcceptPolicy, OptionalCallbackID());
+    supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(parameters.cookieAcceptPolicy, []() { });
 
     if (!parameters.languages.isEmpty())
         userPreferredLanguagesChanged(parameters.languages);

@@ -190,7 +190,7 @@ void webkit_cookie_manager_set_accept_policy(WebKitCookieManager* manager, WebKi
     g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
 
     for (auto* processPool : webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager))
-        processPool->supplement<WebCookieManagerProxy>()->setHTTPCookieAcceptPolicy(manager->priv->sessionID(), toHTTPCookieAcceptPolicy(policy), [](CallbackBase::Error) { });
+        processPool->supplement<WebCookieManagerProxy>()->setHTTPCookieAcceptPolicy(manager->priv->sessionID(), toHTTPCookieAcceptPolicy(policy), []() { });
 }
 
 /**
@@ -218,7 +218,7 @@ void webkit_cookie_manager_get_accept_policy(WebKitCookieManager* manager, GCanc
         return;
     }
 
-    processPools[0]->supplement<WebCookieManagerProxy>()->getHTTPCookieAcceptPolicy(manager->priv->sessionID(), [task = WTFMove(task)](HTTPCookieAcceptPolicy policy, CallbackBase::Error) {
+    processPools[0]->supplement<WebCookieManagerProxy>()->getHTTPCookieAcceptPolicy(manager->priv->sessionID(), [task = WTFMove(task)](HTTPCookieAcceptPolicy policy) {
         g_task_return_int(task.get(), toWebKitCookieAcceptPolicy(policy));
     });
 }
@@ -267,14 +267,7 @@ void webkit_cookie_manager_add_cookie(WebKitCookieManager* manager, SoupCookie* 
     // Cookies are read/written from/to the same SQLite database on disk regardless
     // of the process we access them from, so just use the first process pool.
     const auto& processPools = webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager);
-    processPools[0]->supplement<WebCookieManagerProxy>()->setCookies(manager->priv->sessionID(), { WebCore::Cookie(cookie) }, [task = WTFMove(task)](CallbackBase::Error error) {
-        if (error != CallbackBase::Error::None) {
-            // This can only happen in cases where the web process is not available,
-            // consider the operation "cancelled" from the point of view of the client.
-            g_task_return_new_error(task.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED, _("Operation was cancelled"));
-            return;
-        }
-
+    processPools[0]->supplement<WebCookieManagerProxy>()->setCookies(manager->priv->sessionID(), { WebCore::Cookie(cookie) }, [task = WTFMove(task)]() {
         g_task_return_boolean(task.get(), TRUE);
     });
 }
@@ -325,14 +318,7 @@ void webkit_cookie_manager_get_cookies(WebKitCookieManager* manager, const gchar
     // Cookies are read/written from/to the same SQLite database on disk regardless
     // of the process we access them from, so just use the first process pool.
     const auto& processPools = webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager);
-    processPools[0]->supplement<WebCookieManagerProxy>()->getCookies(manager->priv->sessionID(), URL(URL(), String::fromUTF8(uri)), [task = WTFMove(task)](const Vector<WebCore::Cookie>& cookies, CallbackBase::Error error) {
-        if (error != CallbackBase::Error::None) {
-            // This can only happen in cases where the web process is not available,
-            // consider the operation "cancelled" from the point of view of the client.
-            g_task_return_new_error(task.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED, _("Operation was cancelled"));
-            return;
-        }
-
+    processPools[0]->supplement<WebCookieManagerProxy>()->getCookies(manager->priv->sessionID(), URL(URL(), String::fromUTF8(uri)), [task = WTFMove(task)](const Vector<WebCore::Cookie>& cookies) {
         GList* cookiesList = nullptr;
         for (auto& cookie : cookies)
             cookiesList = g_list_prepend(cookiesList, cookie.toSoupCookie());
@@ -390,14 +376,7 @@ void webkit_cookie_manager_delete_cookie(WebKitCookieManager* manager, SoupCooki
     // Cookies are read/written from/to the same SQLite database on disk regardless
     // of the process we access them from, so just use the first process pool.
     const auto& processPools = webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager);
-    processPools[0]->supplement<WebCookieManagerProxy>()->deleteCookie(manager->priv->sessionID(), WebCore::Cookie(cookie), [task = WTFMove(task)](CallbackBase::Error error) {
-        if (error != CallbackBase::Error::None) {
-            // This can only happen in cases where the web process is not available,
-            // consider the operation "cancelled" from the point of view of the client.
-            g_task_return_new_error(task.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED, _("Operation was cancelled"));
-            return;
-        }
-
+    processPools[0]->supplement<WebCookieManagerProxy>()->deleteCookie(manager->priv->sessionID(), WebCore::Cookie(cookie), [task = WTFMove(task)]() {
         g_task_return_boolean(task.get(), TRUE);
     });
 }

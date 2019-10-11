@@ -1358,11 +1358,8 @@ void WebAutomationSession::addSingleCookie(const String& browsingContextHandle, 
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'httpOnly' was not found.");
 
     WebCookieManagerProxy* cookieManager = m_processPool->supplement<WebCookieManagerProxy>();
-    cookieManager->setCookies(page->websiteDataStore().sessionID(), { cookie }, [callback = callback.copyRef()](CallbackBase::Error error) {
-        if (error == CallbackBase::Error::None)
-            callback->sendSuccess();
-        else
-            callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError));
+    cookieManager->setCookies(page->websiteDataStore().sessionID(), { cookie }, [callback = callback.copyRef()]() {
+        callback->sendSuccess();
     });
 }
 
