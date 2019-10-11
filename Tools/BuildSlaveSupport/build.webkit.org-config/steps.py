@@ -541,10 +541,13 @@ class RunAPITests(TestWithFailureCount):
     name = "run-api-tests"
     description = ["api tests running"]
     descriptionDone = ["api-tests"]
+    jsonFileName = "api_test_results.json"
+    logfiles = {"json": jsonFileName}
     command = [
         "python",
         "./Tools/Scripts/run-api-tests",
         "--no-build",
+        "--json-output={0}".format(jsonFileName),
         WithProperties("--%(configuration)s"),
         "--verbose",
         "--buildbot-master", "build.webkit.org",
