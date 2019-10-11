@@ -1863,7 +1863,8 @@ void FrameLoader::stopForPageCache()
     for (RefPtr<Frame> child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling())
         child->loader().stopForPageCache();
 
-    // Make sure there are no scheduled loads or policy checks.
+    // We cancel pending navigations & policy checks *after* cancelling loads because cancelling loads might end up
+    // running script, which could schedule new navigations.
     policyChecker().stopCheck();
     m_frame.navigationScheduler().cancel();
 }

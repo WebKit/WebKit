@@ -1,3 +1,12 @@
+2019-10-11  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, address post-landing feedback from Darin for r251019.
+
+        Added a new comment for clarity.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopForPageCache):
+
 2019-10-11  Alex Christensen  <achristensen@webkit.org>
 
         Only use CFNetwork SPI for metrics where needed
