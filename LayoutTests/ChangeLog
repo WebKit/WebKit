@@ -1,3 +1,15 @@
+2019-10-11  Chris Lord  <clord@igalia.com>
+
+        Flaky test: imported/w3c/web-platform-tests/offscreen-canvas/compositing/2d.composite.canvas.destination-in.html
+        https://bugs.webkit.org/show_bug.cgi?id=202801
+
+        Reviewed by Alexey Proskuryakov.
+
+        More OffscreenCanvas tests failing due to unhandled Promise rejection.
+        See also bug #202782.
+
+        * TestExpectations:
+
 2019-10-11  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK and WPE gardening after r251001. Removing crash expectations after

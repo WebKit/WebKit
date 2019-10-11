@@ -3859,9 +3859,14 @@ webkit.org/b/202648 [ Debug ] crypto/workers/subtle/aes-indexeddb.html [ Skip ]
 
 # OffscreenCanvas tests that are flaky due to console output from unhandled Promise rejections due to unimplemented API
 webkit.org/b/202782 imported/w3c/web-platform-tests/offscreen-canvas/compositing/2d.composite.canvas.destination-atop.html [ DumpJSConsoleLogInStdErr ]
+webkit.org/b/202801 imported/w3c/web-platform-tests/offscreen-canvas/compositing/2d.composite.canvas.destination-in.html [ DumpJSConsoleLogInStdErr ]
+webkit.org/b/202801 imported/w3c/web-platform-tests/offscreen-canvas/compositing/2d.composite.canvas.lighter.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/202782 imported/w3c/web-platform-tests/offscreen-canvas/drawing-images-to-the-canvas/2d.drawImage.3arg.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/202782 imported/w3c/web-platform-tests/offscreen-canvas/drawing-images-to-the-canvas/2d.drawImage.broken.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/202782 imported/w3c/web-platform-tests/offscreen-canvas/drawing-images-to-the-canvas/2d.drawImage.floatsource.html [ DumpJSConsoleLogInStdErr ]
+webkit.org/b/202801 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.repeat.coord3.html [ DumpJSConsoleLogInStdErr ]
+webkit.org/b/202801 imported/w3c/web-platform-tests/offscreen-canvas/shadows/2d.shadow.pattern.transparent.1.html [ DumpJSConsoleLogInStdErr ]
+webkit.org/b/202801 imported/w3c/web-platform-tests/offscreen-canvas/shadows/2d.shadow.pattern.transparent.2.html [ DumpJSConsoleLogInStdErr ]
 
 # wpt css-images failures
 webkit.org/b/200206 imported/w3c/web-platform-tests/css/css-images/gradient/color-stops-parsing.html [ Crash ]
