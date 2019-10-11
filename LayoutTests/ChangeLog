@@ -1,3 +1,16 @@
+2019-10-11  Chris Dumez  <cdumez@apple.com>
+
+        Pages frequently fail to enter the back/forward cache due to frames with a quick redirect coming
+        https://bugs.webkit.org/show_bug.cgi?id=202768
+        <rdar://problem/56132022>
+
+        Reviewed by Alex Christensen.
+
+        Add lauout test coverage.
+
+        * fast/history/page-cache-iframe-js-url-expected.txt: Added.
+        * fast/history/page-cache-iframe-js-url.html: Added.
+
 2019-10-11  Kate Cheney  <katherine_cheney@apple.com>
 
         Get StorageAccess API features working on SQLite database implementation (195422)

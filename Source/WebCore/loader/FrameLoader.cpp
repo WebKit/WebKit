@@ -395,8 +395,10 @@ void FrameLoader::urlSelected(FrameLoadRequest&& frameRequest, Event* triggering
 
     Ref<Frame> protect(m_frame);
 
-    if (m_frame.script().executeIfJavaScriptURL(frameRequest.resourceRequest().url(), frameRequest.shouldReplaceDocumentIfJavaScriptURL()))
+    if (m_frame.script().executeIfJavaScriptURL(frameRequest.resourceRequest().url(), frameRequest.shouldReplaceDocumentIfJavaScriptURL())) {
+        m_quickRedirectComing = false;
         return;
+    }
 
     if (frameRequest.frameName().isEmpty())
         frameRequest.setFrameName(m_frame.document()->baseTarget());
@@ -1847,10 +1849,6 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItem
 
 void FrameLoader::stopForPageCache()
 {
-    // Make sure there are no scheduled loads or policy checks.
-    policyChecker().stopCheck();
-    m_frame.navigationScheduler().cancel();
-
     // Stop provisional loads in subframes (The one in the main frame is about to be committed).
     if (!m_frame.isMainFrame()) {
         if (m_provisionalDocumentLoader)
@@ -1864,6 +1862,10 @@ void FrameLoader::stopForPageCache()
 
     for (RefPtr<Frame> child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling())
         child->loader().stopForPageCache();
+
+    // Make sure there are no scheduled loads or policy checks.
+    policyChecker().stopCheck();
+    m_frame.navigationScheduler().cancel();
 }
 
 void FrameLoader::stopAllLoadersAndCheckCompleteness()

@@ -1,3 +1,28 @@
+2019-10-11  Chris Dumez  <cdumez@apple.com>
+
+        Pages frequently fail to enter the back/forward cache due to frames with a quick redirect coming
+        https://bugs.webkit.org/show_bug.cgi?id=202768
+        <rdar://problem/56132022>
+
+        Reviewed by Alex Christensen.
+
+        When a quick redirect is scheduled with the navigation scheduler, we set the m_quickRedirectComing flag.
+        This flag is supposed to get unset if the navigation gets cancelled and when the navigation actually
+        happens. However, for a navigation to a javascript: URL, we would return early after executing the JS
+        and fail to reset the m_quickRedirectComing flag. Later on, we would fail to enter the page cache because
+        we would think that the iframe still has a quick redirect scheduled.
+
+        Test: fast/history/page-cache-iframe-js-url.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::urlSelected):
+        Reset the m_quickRedirectComing flag if we return early after executing
+        the javascript URL.
+
+        (WebCore::FrameLoader::stopForPageCache):
+        Stop policy checks & cancel scheduled navigations after stopping loads. Stopping loads may
+        run script which may in theory schedule new navigations. This is hardening.
+
 2019-10-11  Antti Koivisto  <antti@apple.com>
 
         Position::upstream/downstream should not need to call ensureLineBoxes
