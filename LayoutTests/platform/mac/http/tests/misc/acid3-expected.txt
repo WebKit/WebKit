@@ -54,7 +54,7 @@ layer at (20,20) size 644x433
                       text run at (0,90) width 8: "Y"
                       text run at (0,105) width 8: "P"
                       text run at (0,120) width 8: "E"
-                      text run at (0,135) width 8: " "
+                      text run at (0,135) width 0: " "
                       text run at (0,150) width 8: "h"
                       text run at (0,165) width 8: "t"
                       text run at (0,180) width 8: "m"

@@ -1,3 +1,27 @@
+2019-10-11  Antti Koivisto  <antti@apple.com>
+
+        Position::upstream/downstream should not need to call ensureLineBoxes
+        https://bugs.webkit.org/show_bug.cgi?id=202203
+
+        Reviewed by Zalan Bujtas.
+
+        Some additional end of line whitespaces.
+
+        * TestExpectations:
+
+        Skip imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-013.html.
+
+        This test starts failing because soft linebreak clears the trailing whitespace run.
+        The failing behavior aligns simple path with the complex path. The existing textarea-pre-wrap-013.html
+        test (which takes the complex path) is already skipped because of this.
+
+        * platform/mac/fast/forms/targeted-frame-submission-expected.txt:
+        * platform/mac/fast/forms/textarea-scroll-height-expected.txt:
+        * platform/mac/fast/loader/text-document-wrapping-expected.txt:
+        * platform/mac/fast/parser/open-comment-in-textarea-expected.txt:
+        * platform/mac/http/tests/misc/acid3-expected.txt:
+        * platform/mac/http/tests/navigation/javascriptlink-frames-expected.txt:
+
 2019-10-11  Dean Jackson  <dino@apple.com>
 
         Layout test fast/events/touch/ios/passive-by-default-on-document-and-window.html is a flaky failure on Internal iOS Testers

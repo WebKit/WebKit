@@ -24,4 +24,5 @@ layer at (0,0) size 800x600
                 RenderBlock {PRE} at (0,0) size 284x15
                   RenderText {#text} at (0,0) size 55x15
                     text run at (0,0) width 55: "SUCCESS"
+                    text run at (54,0) width 1: " "
         RenderText {#text} at (0,0) size 0x0

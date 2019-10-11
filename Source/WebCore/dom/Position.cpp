@@ -657,13 +657,6 @@ static bool isStreamer(const PositionIterator& pos)
     return pos.atStartOfNode();
 }
 
-static void ensureLineBoxesIfNeeded(RenderObject& renderer)
-{
-    if (!is<RenderText>(renderer) && !is<RenderLineBreak>(renderer))
-        return;
-    is<RenderText>(renderer) ? downcast<RenderText>(renderer).ensureLineBoxes() : downcast<RenderLineBreak>(renderer).ensureLineBoxes();
-}
-
 // This function and downstream() are used for moving back and forth between visually equivalent candidates.
 // For example, for the text node "foo     bar" where whitespace is collapsible, there are two candidates 
 // that map to the VisiblePosition between 'b' and the space.  This function will return the left candidate 
@@ -709,9 +702,6 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
         RenderObject* renderer = currentNode.renderer();
         if (!renderer || renderer->style().visibility() != Visibility::Visible)
             continue;
-
-        // FIXME: The code below doesn't need line boxes.
-        ensureLineBoxesIfNeeded(*renderer);
 
         if (rule == CanCrossEditingBoundary && boundaryCrossed) {
             lastVisible = currentPosition;
@@ -824,9 +814,6 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
         auto* renderer = currentNode.renderer();
         if (!renderer || renderer->style().visibility() != Visibility::Visible)
             continue;
-
-        // FIXME: The code below doesn't need line boxes.
-        ensureLineBoxesIfNeeded(*renderer);
 
         if (rule == CanCrossEditingBoundary && boundaryCrossed) {
             lastVisible = currentPosition;

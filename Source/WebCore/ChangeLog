@@ -1,3 +1,50 @@
+2019-10-11  Antti Koivisto  <antti@apple.com>
+
+        Position::upstream/downstream should not need to call ensureLineBoxes
+        https://bugs.webkit.org/show_bug.cgi?id=202203
+
+        Reviewed by Zalan Bujtas.
+
+        This avoids forced switch to complex text layout path by Position constructor and will allow future cleanups.
+
+        Currently simple line path strips end of line whitespace when white-space:pre-wrap is set.
+        These are don't affect rendering but they are needed for editing positions.
+        This patch makes simple line path match the complex path by generating runs for these whitespaces.
+
+        * dom/Position.cpp:
+        (WebCore::Position::upstream const):
+        (WebCore::Position::downstream const):
+        (WebCore::ensureLineBoxesIfNeeded): Deleted.
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::LineState::appendFragmentAndCreateRunIfNeeded):
+
+        Create a new run if isLineBreak bit is set.
+
+        (WebCore::SimpleLineLayout::LineState::removeTrailingWhitespace):
+        (WebCore::SimpleLineLayout::LineState::trailingWhitespaceWidth const):
+        (WebCore::SimpleLineLayout::computeLineLeft):
+
+        Also compute width of the hanging whitespace when aligning the line. This matches the code
+        in updateLogicalWidthForLeft/Right/CenterAlignedBlock in the complex path.
+
+        (WebCore::SimpleLineLayout::preWrap):
+
+        breakSpaces implies preWrap is off.
+
+        (WebCore::SimpleLineLayout::firstFragment):
+        (WebCore::SimpleLineLayout::createLineRuns):
+
+        Crete runs also for soft linebreaks in pre-wrap.
+        Add whitespace runs to the end of the line in pre-wrap.
+
+        (WebCore::SimpleLineLayout::closeLineEndingAndAdjustRuns):
+
+        Hang the whitespace run when wrapping.
+
+        (WebCore::SimpleLineLayout::removeTrailingWhitespace): Deleted.
+
+        Remainging logic moved to the callsite.
+
 2019-10-11  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed, rolling out r250945.

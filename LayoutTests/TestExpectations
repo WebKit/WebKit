@@ -2463,6 +2463,7 @@ webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-039.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-103.html [ ImageOnlyFailure Pass ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-104.html [ ImageOnlyFailure Pass ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-013.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-012.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-013.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-004.html [ ImageOnlyFailure ]

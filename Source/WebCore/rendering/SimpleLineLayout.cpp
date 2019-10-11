@@ -355,30 +355,6 @@ bool canUseFor(const RenderBlockFlow& flow)
     return canUseForWithReason(flow, IncludeReasons::First) == NoReason;
 }
 
-static float computeLineLeft(TextAlignMode textAlign, float availableWidth, float committedWidth, float logicalLeftOffset)
-{
-    float remainingWidth = availableWidth - committedWidth;
-    float left = logicalLeftOffset;
-    switch (textAlign) {
-    case TextAlignMode::Left:
-    case TextAlignMode::WebKitLeft:
-    case TextAlignMode::Start:
-        return left;
-    case TextAlignMode::Right:
-    case TextAlignMode::WebKitRight:
-    case TextAlignMode::End:
-        return left + std::max<float>(remainingWidth, 0);
-    case TextAlignMode::Center:
-    case TextAlignMode::WebKitCenter:
-        return left + std::max<float>(remainingWidth / 2, 0);
-    case TextAlignMode::Justify:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
 static void revertAllRunsOnCurrentLine(Layout::RunVector& runs)
 {
     while (!runs.isEmpty() && !runs.last().isEndOfLine)
@@ -491,10 +467,10 @@ public:
                 // This fragment is collapsed completely. No run is needed.
                 return;
             }
-            if (m_lastFragment.isLastInRenderer() || m_lastFragment.isCollapsed())
+            Run& lastRun = runs.last();
+            if (m_lastFragment.isLastInRenderer() || m_lastFragment.isCollapsed() || fragment.isLineBreak() || lastRun.isLineBreak)
                 runs.append(Run(fragment.start(), endPosition, m_runsWidth, m_runsWidth + fragment.width(), false, fragment.hasHyphen(), fragment.isLineBreak()));
             else {
-                Run& lastRun = runs.last();
                 lastRun.end = endPosition;
                 lastRun.logicalRight += fragment.width();
                 ASSERT(!lastRun.hasHyphen);
@@ -534,7 +510,7 @@ public:
 
     void removeTrailingWhitespace(Layout::RunVector& runs)
     {
-        if (m_lastFragment.type() != TextFragmentIterator::TextFragment::Whitespace)
+        if (!hasTrailingWhitespace())
             return;
         if (m_lastNonWhitespaceFragment) {
             auto needsReverting = m_lastNonWhitespaceFragment->end() != m_lastFragment.end();
@@ -555,6 +531,8 @@ public:
         // FIXME: Make m_lastFragment optional.
         m_lastFragment = TextFragmentIterator::TextFragment();
     }
+
+    float trailingWhitespaceWidth() const { return m_trailingWhitespaceWidth; }
 
 private:
     bool expansionOpportunity(TextFragmentIterator::TextFragment::Type currentFragmentType, TextFragmentIterator::TextFragment::Type previousFragmentType) const
@@ -581,24 +559,37 @@ private:
     Optional<Vector<TextFragmentIterator::TextFragment, 30>> m_fragments;
 };
 
+static float computeLineLeft(const LineState& line, TextAlignMode textAlign, float& hangingWhitespaceWidth)
+{
+    float totalWidth = line.width() - hangingWhitespaceWidth;
+    float remainingWidth = line.availableWidth() - totalWidth;
+    float left = line.logicalLeftOffset();
+    switch (textAlign) {
+    case TextAlignMode::Left:
+    case TextAlignMode::WebKitLeft:
+    case TextAlignMode::Start:
+        hangingWhitespaceWidth = std::max(0.f, std::min(hangingWhitespaceWidth, remainingWidth));
+        return left;
+    case TextAlignMode::Right:
+    case TextAlignMode::WebKitRight:
+    case TextAlignMode::End:
+        hangingWhitespaceWidth = 0;
+        return left + std::max<float>(remainingWidth, 0);
+    case TextAlignMode::Center:
+    case TextAlignMode::WebKitCenter:
+        hangingWhitespaceWidth = std::max(0.f, std::min(hangingWhitespaceWidth, (remainingWidth + 1) / 2));
+        return left + std::max<float>(remainingWidth / 2, 0);
+    case TextAlignMode::Justify:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 static bool preWrap(const TextFragmentIterator::Style& style)
 {
-    return style.wrapLines && !style.collapseWhitespace;
-}
-    
-static void removeTrailingWhitespace(LineState& lineState, Layout::RunVector& runs, const TextFragmentIterator& textFragmentIterator)
-{
-    if (!lineState.hasTrailingWhitespace())
-        return;
-    // Remove collapsed whitespace, or non-collapsed pre-wrap whitespace, unless it's the only content on the line -so removing the whitesapce
-    // would produce an empty line.
-    const auto& style = textFragmentIterator.style();
-    bool collapseWhitespace = style.collapseWhitespace || (!style.breakSpaces && preWrap(style));
-    if (!collapseWhitespace)
-        return;
-    if (preWrap(style) && lineState.isWhitespaceOnly())
-        return;
-    lineState.removeTrailingWhitespace(runs);
+    return style.wrapLines && !style.collapseWhitespace && !style.breakSpaces;
 }
 
 static void updateLineConstrains(const RenderBlockFlow& flow, LineState& line, const LineState& previousLine, unsigned& numberOfPrecedingLinesWithHyphen, const TextFragmentIterator::Style& style, bool isFirstLine)
@@ -758,11 +749,10 @@ static TextFragmentIterator::TextFragment firstFragment(TextFragmentIterator& te
     }
     // Special overflow pre-wrap whitespace handling: skip the overflowed whitespace (even when style says not-collapsible)
     // if we manage to fit at least one character on the previous line.
-    auto preWrapIsOn = preWrap(style);
-    if ((style.collapseWhitespace || preWrapIsOn) && previousLine.firstCharacterFits()) {
+    if ((style.collapseWhitespace || style.wrapLines) && previousLine.firstCharacterFits()) {
         // If skipping the whitespace puts us on a newline, skip the newline too as we already wrapped the line.
         auto firstFragmentCandidate = consumeLineBreakIfNeeded(textFragmentIterator.nextTextFragment(), textFragmentIterator, currentLine, runs,
-            preWrapIsOn ? PreWrapLineBreakRule::Ignore : PreWrapLineBreakRule::Preserve);
+            preWrap(style) ? PreWrapLineBreakRule::Ignore : PreWrapLineBreakRule::Preserve);
         return skipWhitespaceIfNeeded(firstFragmentCandidate, textFragmentIterator);
     }
     return skipWhitespaceIfNeeded(overflowedFragment, textFragmentIterator);
@@ -799,7 +789,7 @@ static bool createLineRuns(LineState& line, const LineState& previousLine, Layou
         // Hard and soft linebreaks.
         if (fragment.isLineBreak()) {
             // Add the new line fragment only if there's nothing on the line. (otherwise the extra new line character would show up at the end of the content.)
-            if (line.isEmpty() || fragment.type() == TextFragmentIterator::TextFragment::HardLineBreak) {
+            if (line.isEmpty() || fragment.type() == TextFragmentIterator::TextFragment::HardLineBreak || preWrap(style)) {
                 if (style.textAlign == TextAlignMode::Right || style.textAlign == TextAlignMode::WebKitRight)
                     line.removeTrailingWhitespace(runs);
                 line.appendFragmentAndCreateRunIfNeeded(fragment, runs);
@@ -824,6 +814,14 @@ static bool createLineRuns(LineState& line, const LineState& previousLine, Layou
                 if (style.breakSpaces && line.hasWhitespaceFragments() && fragment.length() == 1) {
                     // Breaking before the first space after a word is not allowed if there are previous breaking opportunities in the line.
                     textFragmentIterator.revertToEndOfFragment(line.revertToLastCompleteFragment(runs));
+                    break;
+                }
+                if (preWrap(style)) {
+                    line.appendFragmentAndCreateRunIfNeeded(fragment, runs);
+                    fragment = textFragmentIterator.nextTextFragment(line.width());
+                    if (fragment.isLineBreak())
+                        continue;
+                    line.setOverflowedFragment(fragment);
                     break;
                 }
                 // Split the whitespace; left part stays on this line, right is pushed to next line.
@@ -931,22 +929,38 @@ static void closeLineEndingAndAdjustRuns(LineState& line, Layout::RunVector& run
 {
     if (!runs.size() || (lastRunIndexOfPreviousLine && runs.size() - 1 == lastRunIndexOfPreviousLine.value()))
         return;
-    removeTrailingWhitespace(line, runs, textFragmentIterator);
+
+    const auto& style = textFragmentIterator.style();
+
+    if (style.collapseWhitespace)
+        line.removeTrailingWhitespace(runs);
+
     if (!runs.size())
         return;
+
     // Adjust runs' position by taking line's alignment into account.
-    const auto& style = textFragmentIterator.style();
     auto firstRunIndex = lastRunIndexOfPreviousLine ? lastRunIndexOfPreviousLine.value() + 1 : 0;
     auto lineLogicalLeft = line.logicalLeftOffset();
     auto textAlign = textAlignForLine(style, lastLineInFlow || (line.lastFragment().isValid() && line.lastFragment().type() == TextFragmentIterator::TextFragment::HardLineBreak));
-    if (textAlign == TextAlignMode::Justify)
+
+    // https://www.w3.org/TR/css-text-3/#white-space-phase-2
+    bool shouldHangTrailingWhitespace = style.wrapLines && line.trailingWhitespaceWidth();
+    auto hangingWhitespaceWidth = shouldHangTrailingWhitespace ? line.trailingWhitespaceWidth() : 0;
+
+    if (textAlign == TextAlignMode::Justify) {
         justifyRuns(line, runs, firstRunIndex);
-    else
-        lineLogicalLeft = computeLineLeft(textAlign, line.availableWidth(), line.width(), line.logicalLeftOffset());
+        hangingWhitespaceWidth = 0;
+    } else
+        lineLogicalLeft = computeLineLeft(line, textAlign, hangingWhitespaceWidth);
+
     for (auto i = firstRunIndex; i < runs.size(); ++i) {
         runs[i].logicalLeft += lineLogicalLeft;
         runs[i].logicalRight += lineLogicalLeft;
     }
+
+    if (shouldHangTrailingWhitespace && hangingWhitespaceWidth < line.trailingWhitespaceWidth())
+        runs.last().logicalRight = runs.last().logicalRight - (line.trailingWhitespaceWidth() - hangingWhitespaceWidth);
+
     runs.last().isEndOfLine = true;
     ++lineCount;
 }
