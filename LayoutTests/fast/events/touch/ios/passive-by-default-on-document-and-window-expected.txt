@@ -2,10 +2,6 @@ touchstart on body - cancelable: true defaultPrevented: true
 touchstart on documentElement - cancelable: true defaultPrevented: true 
 touchstart on document - cancelable: true defaultPrevented: true 
 touchstart on window - cancelable: true defaultPrevented: true 
-touchmove on body - cancelable: true defaultPrevented: true 
-touchmove on documentElement - cancelable: true defaultPrevented: true 
-touchmove on document - cancelable: true defaultPrevented: true 
-touchmove on window - cancelable: true defaultPrevented: true 
 touchend on body - cancelable: true defaultPrevented: true 
 touchend on documentElement - cancelable: true defaultPrevented: true 
 touchend on document - cancelable: true defaultPrevented: true 

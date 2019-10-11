@@ -1,5 +1,22 @@
 2019-10-11  Dean Jackson  <dino@apple.com>
 
+        Layout test fast/events/touch/ios/passive-by-default-on-document-and-window.html is a flaky failure on Internal iOS Testers
+        https://bugs.webkit.org/show_bug.cgi?id=202858
+        <rdar://51829520>
+
+        Reviewed by Tim Horton.
+
+        We can't guarantee how many touchmove events we'll get for a drag, so
+        this was flaky. Easiest thing to do is remove the listeners, since they
+        aren't an important part of the test. (We could have removed them on
+        firing too, which we do for the similar test that exercises the case
+        where we don't use the default options)
+
+        * fast/events/touch/ios/passive-by-default-on-document-and-window-expected.txt:
+        * fast/events/touch/ios/passive-by-default-on-document-and-window.html:
+
+2019-10-11  Dean Jackson  <dino@apple.com>
+
         REGRESSION: fast/events/touch/ios/long-press-on-image.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=202845
         <rdar://51717197>

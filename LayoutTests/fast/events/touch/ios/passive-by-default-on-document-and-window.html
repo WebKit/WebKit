@@ -22,11 +22,6 @@ function runTest()
         output += `touchstart on window - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
     }, false);
 
-    window.addEventListener("touchmove", function(event) {
-        event.preventDefault();
-        output += `touchmove on window - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
-    }, false);
-
     window.addEventListener("touchend", function(event) {
         event.preventDefault();
         output += `touchend on window - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
@@ -35,11 +30,6 @@ function runTest()
     document.addEventListener("touchstart", function(event) {
         event.preventDefault();
         output += `touchstart on document - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
-    }, false);
-
-    document.addEventListener("touchmove", function(event) {
-        event.preventDefault();
-        output += `touchmove on document - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
     }, false);
 
     document.addEventListener("touchend", function(event) {
@@ -52,11 +42,6 @@ function runTest()
         output += `touchstart on documentElement - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
     }, false);
 
-    document.documentElement.addEventListener("touchmove", function(event) {
-        event.preventDefault();
-        output += `touchmove on documentElement - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
-    }, false);
-
     document.documentElement.addEventListener("touchend", function(event) {
         event.preventDefault();
         output += `touchend on documentElement - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
@@ -67,11 +52,6 @@ function runTest()
     body.addEventListener("touchstart", function(event) {
         event.preventDefault();
         output += `touchstart on body - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
-    }, false);
-
-    body.addEventListener("touchmove", function(event) {
-        event.preventDefault();
-        output += `touchmove on body - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
     }, false);
 
     body.addEventListener("touchend", function(event) {
