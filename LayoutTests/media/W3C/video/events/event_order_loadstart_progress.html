@@ -17,16 +17,13 @@ v.addEventListener("loadstart", function() {
   found_loadstart = true;
 });
 
-var firstProgressEvent = true;
 v.addEventListener("progress", function() {
-  if (!firstProgressEvent) return;
-  firstProgressEvent = false;
   t.step(function() {
    assert_true(found_loadstart);
   });
   t.done();
   v.pause();
-});
+}, { once: true });
 v.src = getVideoURI();
   </script>
  </body>

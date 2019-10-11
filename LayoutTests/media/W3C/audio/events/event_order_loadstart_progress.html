@@ -17,17 +17,13 @@ a.addEventListener("loadstart", function() {
   found_loadstart = true;
 });
 
-var firstProgressEvent = true;
 a.addEventListener("progress", function() {
-  if (!firstProgressEvent) return;
-  firstProgressEvent = false;
-
   t.step(function() {
    assert_true(found_loadstart);
   });
   t.done();
   a.pause();
-});
+}, { once: true });
 a.src = getAudioURI();
   </script>
  </body>

@@ -12,17 +12,12 @@
   <script>
 var t = async_test("setting src attribute on non-autoplay video should trigger progress event", {timeout:30000});
 var a = document.getElementById("a");
-
-var firstProgressEvent = true;
 a.addEventListener("progress", function() {
-  if (!firstProgressEvent) return;
-  firstProgressEvent = false;
-
   t.step(function() {
    assert_true(true);
   });
   t.done();
-});
+}, { once: true});
 a.src = getAudioURI();
   </script>
  </body>
