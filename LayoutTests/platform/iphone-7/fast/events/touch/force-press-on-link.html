@@ -52,7 +52,7 @@
                 uiController.sendEventStream(JSON.stringify(eventStream), function() {});
              
                 uiController.didShowForcePressPreviewCallback = function() {
-                    uiController.uiScriptComplete(JSON.stringify(uiController.contentsOfUserInterfaceItem('linkPreviewPopoverContents')));
+                    uiController.uiScriptComplete(JSON.stringify(uiController.contentsOfUserInterfaceItem('contextMenu')));
                 };
              
             })();`
@@ -78,9 +78,8 @@
             
             if (testRunner.runUIScript) {
                 testRunner.runUIScript(getUIScript(), function(result) {
-                    var uiContentsDictionary = JSON.parse(result);
-                    var pageURL = uiContentsDictionary.linkPreviewPopoverContents.pageURL;
-                    if (pageURL = 'http://localhost:54321')
+                    var results = JSON.parse(result).contextMenu;
+                    if (results.url == 'http://localhost:54321' && results.isLink)
                         output += 'PASS: correct page loaded in popover';
                     document.getElementById('target').innerHTML = output;
                                        

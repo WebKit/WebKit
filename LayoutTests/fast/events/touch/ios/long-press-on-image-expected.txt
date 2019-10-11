@@ -1,6 +1,1 @@
-Available Actions: 
-Share…
-Add to Photos
-Copy
-Cancel
-PASS
+PASS: context menu triggered on image

@@ -7895,12 +7895,22 @@ static WebEventFlags webEventFlagsForUIKeyModifierFlags(UIKeyModifierFlags flags
         return @{ userInterfaceItem: [_actionSheetAssistant currentAvailableActionTitles] };
 
 #if HAVE(LINK_PREVIEW)
-    if ([userInterfaceItem isEqualToString:@"linkPreviewPopoverContents"]) {
+    if ([userInterfaceItem isEqualToString:@"contextMenu"]) {
         if (self._shouldUseContextMenus)
-            return @{ userInterfaceItem: @{ @"pageURL": WTF::userVisibleString(_positionInformation.url) } };
+            return @{ userInterfaceItem: @{
+                @"url": _positionInformation.url.isValid() ? WTF::userVisibleString(_positionInformation.url) : @"",
+                @"isLink": [NSNumber numberWithBool:_positionInformation.isLink],
+                @"isImage": [NSNumber numberWithBool:_positionInformation.isImage],
+                @"imageURL": _positionInformation.imageURL.isValid() ? WTF::userVisibleString(_positionInformation.imageURL) : @""
+            } };
 
         NSString *url = [_previewItemController previewData][UIPreviewDataLink];
-        return @{ userInterfaceItem: @{ @"pageURL": url } };
+        return @{ userInterfaceItem: @{
+            @"url": url,
+            @"isLink": [NSNumber numberWithBool:_positionInformation.isLink],
+            @"isImage": [NSNumber numberWithBool:_positionInformation.isImage],
+            @"imageURL": _positionInformation.imageURL.isValid() ? WTF::userVisibleString(_positionInformation.imageURL) : @""
+        } };
     }
 #endif
 

@@ -1,3 +1,26 @@
+2019-10-11  Dean Jackson  <dino@apple.com>
+
+        REGRESSION: fast/events/touch/ios/long-press-on-image.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=202845
+        <rdar://51717197>
+
+        Reviewed by Antoine Quint.
+
+        This test failed because images no longer pop up action sheets, but
+        instead use context menus.
+
+        We no longer need to test the actions in the context menu here, since
+        it is covered by the TestWebKitAPI/Tests/WebKitCocoa/ContextMenus test.
+
+        However, we can still use this test to ensure we are getting a
+        context menu on the correct element.
+
+        * fast/events/touch/ios/long-press-on-image-expected.txt:
+        * fast/events/touch/ios/long-press-on-image.html:
+        * platform/iphone-7/fast/events/touch/force-press-on-link.html: This
+        test currently fails and needs to be rewritten (rdar://problem/52699530),
+        but at least update it to use the new data from the Internal API.
+
 2019-10-11  Peng Liu  <peng.liu6@apple.com>
 
         Layout Test media/W3C/audio/events/event_progress.html is flaky

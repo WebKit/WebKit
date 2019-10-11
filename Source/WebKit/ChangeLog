@@ -1,3 +1,16 @@
+2019-10-11  Dean Jackson  <dino@apple.com>
+
+        REGRESSION: fast/events/touch/ios/long-press-on-image.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=202845
+
+        Reviewed by Antoine Quint.
+
+        Update _contentsOfUserInterfaceItem so that it returns more information
+        on a context menu.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _contentsOfUserInterfaceItem:]):
+
 2019-10-11  Alex Christensen  <achristensen@webkit.org>
 
         Use sendWithAsyncReply for cookie getting/clearing functions

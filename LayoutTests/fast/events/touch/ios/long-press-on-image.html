@@ -14,7 +14,7 @@
             return `
             (function() {
                 uiController.longPressAtPoint(30, 20, function() {
-                    uiController.uiScriptComplete(JSON.stringify(uiController.contentsOfUserInterfaceItem('actionSheet')));
+                    uiController.uiScriptComplete(JSON.stringify(uiController.contentsOfUserInterfaceItem('contextMenu')));
                 });
              })();`
         }
@@ -27,21 +27,12 @@
             var target = document.getElementById('target');
             if (testRunner.runUIScript) {
                 testRunner.runUIScript(getUIScript(), function(result) {
-                    var actionDictionary = JSON.parse(result);
-                    var actionStrings = actionDictionary.actionSheet;
+                    var results = JSON.parse(result).contextMenu;
                     var output = '';
-                    if (actionStrings[0] == 'Share…' && actionStrings[1] == 'Add to Photos' && actionStrings[2] == 'Copy' && actionStrings[3] == 'Cancel') {
-                        output += 'Available Actions: <br>';
-                        output +=  actionStrings.join('<br>');
-                        output += '<br>';
-                        output += 'PASS';
-                    }
-                    else {
-                        output += 'Available Actions: <br>';
-                        output += actionStrings.join('<br>');
-                        output += '<br>';
-                        output += 'FAIL'
-                    }
+                    if (results.imageURL.includes("dice.png") && results.isImage && !results.isLink)
+                        output += 'PASS: context menu triggered on image';
+                    else
+                        output += 'FAIL: context menu was not triggered on image';
 
                     document.getElementById('target').innerHTML = output;
                     testRunner.notifyDone();
