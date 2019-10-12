@@ -1,3 +1,25 @@
+2019-10-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make it safe to store a ThreadSafeRefCounted object in Ref & RefPtr safe inside its destructor
+        https://bugs.webkit.org/show_bug.cgi?id=201576
+
+        Reviewed by Geoffrey Garen and Mark Lam.
+
+        This patch leaves m_refCount 1 inside the last deref call to ThreadSafeRefCounted
+        so that storing an instance of this object in Ref or RefPtr would not trigger a recursive delete.
+
+        Note: this patch does not try to fix a race condition by which another thread tries to ref()
+        this object after the "last" call to deref had happened since such a code would ref() this object
+        long after it had been removed (UAF), nor some code calling deref() before calling ref() inside
+        a destructor since there is no way to defend against unpaired calls to ref() & deref() like that.
+
+        Also added m_deletionHasBegun like RefCounted.
+
+        * wtf/ThreadSafeRefCounted.h:
+        (WTF::ThreadSafeRefCountedBase::ref const):
+        (WTF::ThreadSafeRefCountedBase::hasOneRef const):
+        (WTF::ThreadSafeRefCountedBase::derefBase const):
+
 2019-10-11  Alex Christensen  <achristensen@webkit.org>
 
         Only use CFNetwork SPI for metrics where needed

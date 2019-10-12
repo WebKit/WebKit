@@ -1,3 +1,17 @@
+2019-10-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make it safe to store a ThreadSafeRefCounted object in Ref & RefPtr safe inside its destructor
+        https://bugs.webkit.org/show_bug.cgi?id=201576
+        <rdar://problem/56001847>
+
+        Reviewed by Geoffrey Garen and Mark Lam.
+
+        Made DropAllLocks::DropAllLocks check Heap::isShuttingDown instead of VM's refCount being 0 to detect
+        when VM is getting destroyed.
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::DropAllLocks::DropAllLocks):
+
 2019-10-11  Keith Miller  <keith_miller@apple.com>
 
         Wasm B3IRGenerator should use arguments for control data.
