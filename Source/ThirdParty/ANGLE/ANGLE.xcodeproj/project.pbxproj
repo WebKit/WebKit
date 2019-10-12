@@ -577,6 +577,7 @@
 		6E344AB322BC35C3001DDB2C /* entry_points_gles_ext_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E344AAF22BC35C3001DDB2C /* entry_points_gles_ext_autogen.cpp */; };
 		6E344AB622BC57C8001DDB2C /* entry_points_gles_1_0_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E344AB422BC57C8001DDB2C /* entry_points_gles_1_0_autogen.cpp */; };
 		6E344AB722BC57C8001DDB2C /* entry_points_gles_1_0_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E344AB522BC57C8001DDB2C /* entry_points_gles_1_0_autogen.h */; };
+		6EA0D69323515A5C00B8651F /* FrameCapture_mock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EA0D69223515A5C00B8651F /* FrameCapture_mock.cpp */; };
 		6ED70A0C22CD630E008688CE /* gl.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED70A0922CD630E008688CE /* gl.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6ED70A0D22CD630E008688CE /* glext.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED70A0A22CD630E008688CE /* glext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6ED70A0E22CD630E008688CE /* glplatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED70A0B22CD630E008688CE /* glplatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1329,6 +1330,7 @@
 		6E344AAF22BC35C3001DDB2C /* entry_points_gles_ext_autogen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = entry_points_gles_ext_autogen.cpp; sourceTree = "<group>"; };
 		6E344AB422BC57C8001DDB2C /* entry_points_gles_1_0_autogen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = entry_points_gles_1_0_autogen.cpp; sourceTree = "<group>"; };
 		6E344AB522BC57C8001DDB2C /* entry_points_gles_1_0_autogen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = entry_points_gles_1_0_autogen.h; sourceTree = "<group>"; };
+		6EA0D69223515A5C00B8651F /* FrameCapture_mock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameCapture_mock.cpp; sourceTree = "<group>"; };
 		6ED70A0922CD630E008688CE /* gl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl.h; path = include/GLES/gl.h; sourceTree = "<group>"; };
 		6ED70A0A22CD630E008688CE /* glext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glext.h; path = include/GLES/glext.h; sourceTree = "<group>"; };
 		6ED70A0B22CD630E008688CE /* glplatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glplatform.h; path = include/GLES/glplatform.h; sourceTree = "<group>"; };
@@ -1778,6 +1780,7 @@
 				5C1DBC6B1B0438D200235552 /* Framebuffer.h */,
 				5C1DBC6C1B0438D200235552 /* FramebufferAttachment.cpp */,
 				5C1DBC6D1B0438D200235552 /* FramebufferAttachment.h */,
+				6EA0D69223515A5C00B8651F /* FrameCapture_mock.cpp */,
 				5CCD595D2284F7960018F2D8 /* GLES1Renderer.cpp */,
 				5CCD59522284F7940018F2D8 /* GLES1Renderer.h */,
 				5CCD59552284F7950018F2D8 /* GLES1State.cpp */,
@@ -3064,6 +3067,7 @@
 				5C1DBDF31B0438D300235552 /* Framebuffer.cpp in Sources */,
 				5C1DBDF51B0438D300235552 /* FramebufferAttachment.cpp in Sources */,
 				5CB301271DE39F1A00D2C405 /* FramebufferGL.cpp in Sources */,
+				6EA0D69323515A5C00B8651F /* FrameCapture_mock.cpp in Sources */,
 				5C55D6E422826C7900B5BA2C /* FunctionLookup.cpp in Sources */,
 				5CB3012B1DE39F1A00D2C405 /* FunctionsGL.cpp in Sources */,
 				A303070F2305F705002DA972 /* generatemip.inc in Sources */,

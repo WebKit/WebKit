@@ -1,5 +1,18 @@
 2019-10-11  Kenneth Russell  <kbr@chromium.org>
 
+        USE_ANGLE=1 build broken with last ANGLE roll
+        https://bugs.webkit.org/show_bug.cgi?id=202872
+
+        Add FrameCapture_mock.cpp to Xcode and CMake builds.
+
+        Reviewed by Alex Christensen.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * CMakeLists.txt:
+        * GLESv2.cmake:
+
+2019-10-11  Kenneth Russell  <kbr@chromium.org>
+
         Roll ANGLE for ETC extensions and EGL_ANGLE_device_cgl
         https://bugs.webkit.org/show_bug.cgi?id=202780
 

@@ -928,7 +928,11 @@ set(libangle_vulkan_sources
 )
 
 set(libangle_capture_sources
-    src/libANGLE/FrameCapture.cpp
+    # If frame capture support is desired, uncomment this, comment out
+    # FrameCapture_mock.cpp, and set ANGLE_CAPTURE_ENABLED=1 in
+    # ANGLE_DEFINITIONS.
+    # src/libANGLE/FrameCapture.cpp
+    src/libANGLE/FrameCapture_mock.cpp
     src/libANGLE/capture_gles_1_0_autogen.cpp
     src/libANGLE/capture_gles_1_0_params.cpp
     src/libANGLE/capture_gles_2_0_autogen.cpp
