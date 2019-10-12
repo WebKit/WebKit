@@ -34,6 +34,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class CSSValue;
@@ -335,5 +339,29 @@ private:
     StyleLayoutData();
     StyleLayoutData(const StyleLayoutData&);
 };
+
+
+WTF::TextStream& operator<<(WTF::TextStream&, AlignmentBaseline);
+WTF::TextStream& operator<<(WTF::TextStream&, BaselineShift);
+WTF::TextStream& operator<<(WTF::TextStream&, BufferedRendering);
+WTF::TextStream& operator<<(WTF::TextStream&, ColorInterpolation);
+WTF::TextStream& operator<<(WTF::TextStream&, ColorRendering);
+WTF::TextStream& operator<<(WTF::TextStream&, DominantBaseline);
+WTF::TextStream& operator<<(WTF::TextStream&, GlyphOrientation);
+WTF::TextStream& operator<<(WTF::TextStream&, MaskType);
+WTF::TextStream& operator<<(WTF::TextStream&, SVGPaintType);
+WTF::TextStream& operator<<(WTF::TextStream&, ShapeRendering);
+WTF::TextStream& operator<<(WTF::TextStream&, TextAnchor);
+WTF::TextStream& operator<<(WTF::TextStream&, VectorEffect);
+
+WTF::TextStream& operator<<(WTF::TextStream&, const StyleFillData&);
+WTF::TextStream& operator<<(WTF::TextStream&, const StyleStrokeData&);
+WTF::TextStream& operator<<(WTF::TextStream&, const StyleStopData&);
+WTF::TextStream& operator<<(WTF::TextStream&, const StyleTextData&);
+WTF::TextStream& operator<<(WTF::TextStream&, const StyleMiscData&);
+WTF::TextStream& operator<<(WTF::TextStream&, const StyleShadowSVGData&);
+WTF::TextStream& operator<<(WTF::TextStream&, const StyleResourceData&);
+WTF::TextStream& operator<<(WTF::TextStream&, const StyleInheritedResourceData&);
+WTF::TextStream& operator<<(WTF::TextStream&, const StyleLayoutData&);
 
 } // namespace WebCore

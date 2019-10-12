@@ -98,4 +98,14 @@ void ShadowData::adjustRectForShadow(FloatRect& rect, int additionalOutlineSize)
     rect.setHeight(rect.height() - shadowTop + shadowBottom);
 }
 
+TextStream& operator<<(TextStream& ts, const ShadowData& data)
+{
+    ts.dumpProperty("location", data.location());
+    ts.dumpProperty("radius", data.radius());
+    ts.dumpProperty("spread", data.spread());
+    ts.dumpProperty("color", data.color());
+
+    return ts;
+}
+
 } // namespace WebCore

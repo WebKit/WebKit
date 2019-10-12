@@ -99,4 +99,6 @@ private:
     std::unique_ptr<ShadowData> m_next;
 };
 
+WTF::TextStream& operator<<(WTF::TextStream&, const ShadowData&);
+
 } // namespace WebCore

@@ -32,6 +32,7 @@
 #include "RenderStyle.h"
 #include "SVGRenderStyle.h"
 #include <wtf/PointerComparison.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -305,4 +306,231 @@ bool StyleLayoutData::operator==(const StyleLayoutData& other) const
         && y == other.y;
 }
 
+
+TextStream& operator<<(TextStream& ts, AlignmentBaseline value)
+{
+    switch (value) {
+    case AlignmentBaseline::Auto: ts << "auto"; break;
+    case AlignmentBaseline::Baseline: ts << "baseline"; break;
+    case AlignmentBaseline::BeforeEdge: ts << "before-edge"; break;
+    case AlignmentBaseline::TextBeforeEdge: ts << "text-before-edge"; break;
+    case AlignmentBaseline::Middle: ts << "middle"; break;
+    case AlignmentBaseline::Central: ts << "central"; break;
+    case AlignmentBaseline::AfterEdge: ts << "after-edge"; break;
+    case AlignmentBaseline::TextAfterEdge: ts << "text-after-edge"; break;
+    case AlignmentBaseline::Ideographic: ts << "ideographic"; break;
+    case AlignmentBaseline::Alphabetic: ts << "alphabetic"; break;
+    case AlignmentBaseline::Hanging: ts << "hanging"; break;
+    case AlignmentBaseline::Mathematical: ts << "mathematical"; break;
+    }
+    return ts;
 }
+
+TextStream& operator<<(TextStream& ts, BaselineShift value)
+{
+    switch (value) {
+    case BaselineShift::Baseline: ts << "baseline"; break;
+    case BaselineShift::Sub: ts << "sub"; break;
+    case BaselineShift::Super: ts << "super"; break;
+    case BaselineShift::Length: ts << "length"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, BufferedRendering value)
+{
+    switch (value) {
+    case BufferedRendering::Auto: ts << "auto"; break;
+    case BufferedRendering::Dynamic: ts << "dynamic"; break;
+    case BufferedRendering::Static: ts << "static"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, ColorInterpolation value)
+{
+    switch (value) {
+    case ColorInterpolation::Auto: ts << "auto"; break;
+    case ColorInterpolation::SRGB: ts << "sRGB"; break;
+    case ColorInterpolation::LinearRGB: ts << "linearRGB"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, ColorRendering value)
+{
+    switch (value) {
+    case ColorRendering::Auto: ts << "auto"; break;
+    case ColorRendering::OptimizeSpeed: ts << "optimizeSpeed"; break;
+    case ColorRendering::OptimizeQuality: ts << "optimizeQuality"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, DominantBaseline value)
+{
+    switch (value) {
+    case DominantBaseline::Auto: ts << "auto"; break;
+    case DominantBaseline::UseScript: ts << "use-script"; break;
+    case DominantBaseline::NoChange: ts << "no-change"; break;
+    case DominantBaseline::ResetSize: ts << "reset-size"; break;
+    case DominantBaseline::Ideographic: ts << "ideographic"; break;
+    case DominantBaseline::Alphabetic: ts << "alphabetic"; break;
+    case DominantBaseline::Hanging: ts << "hanging"; break;
+    case DominantBaseline::Mathematical: ts << "mathematical"; break;
+    case DominantBaseline::Central: ts << "central"; break;
+    case DominantBaseline::Middle: ts << "middle"; break;
+    case DominantBaseline::TextAfterEdge: ts << "text-after-edge"; break;
+    case DominantBaseline::TextBeforeEdge: ts << "text-before-edge"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, GlyphOrientation value)
+{
+    switch (value) {
+    case GlyphOrientation::Degrees0: ts << "0"; break;
+    case GlyphOrientation::Degrees90: ts << "90"; break;
+    case GlyphOrientation::Degrees180: ts << "180"; break;
+    case GlyphOrientation::Degrees270: ts << "270"; break;
+    case GlyphOrientation::Auto: ts << "Auto"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, MaskType value)
+{
+    switch (value) {
+    case MaskType::Luminance: ts << "luminance"; break;
+    case MaskType::Alpha: ts << "alpha"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, SVGPaintType paintType)
+{
+    switch (paintType) {
+    case SVGPaintType::RGBColor: ts << "rgb-color"; break;
+    case SVGPaintType::None: ts << "none"; break;
+    case SVGPaintType::CurrentColor: ts << "current-color"; break;
+    case SVGPaintType::URINone: ts << "uri-none"; break;
+    case SVGPaintType::URICurrentColor: ts << "uri-current-color"; break;
+    case SVGPaintType::URIRGBColor: ts << "uri-rgb-color"; break;
+    case SVGPaintType::URI: ts << "uri"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, ShapeRendering value)
+{
+    switch (value) {
+    case ShapeRendering::Auto: ts << "auto"; break;
+    case ShapeRendering::OptimizeSpeed: ts << "optimizeSpeed"; break;
+    case ShapeRendering::CrispEdges: ts << "crispEdges"; break;
+    case ShapeRendering::GeometricPrecision: ts << "geometricPrecision"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, TextAnchor value)
+{
+    switch (value) {
+    case TextAnchor::Start: ts << "start"; break;
+    case TextAnchor::Middle: ts << "middle"; break;
+    case TextAnchor::End: ts << "end"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, VectorEffect value)
+{
+    switch (value) {
+    case VectorEffect::None: ts << "none"; break;
+    case VectorEffect::NonScalingStroke: ts << "non-scaling-stroke"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const StyleFillData& data)
+{
+    ts.dumpProperty("opacity", data.opacity);
+    ts.dumpProperty("paint-color", data.paintColor);
+    ts.dumpProperty("visited link paint-color", data.visitedLinkPaintColor);
+    ts.dumpProperty("paint uri", data.paintUri);
+    ts.dumpProperty("visited link paint uri", data.visitedLinkPaintUri);
+    ts.dumpProperty("visited link paint type", data.paintType);
+    ts.dumpProperty("visited link paint type", data.visitedLinkPaintType);
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const StyleStrokeData& data)
+{
+    ts.dumpProperty("opacity", data.opacity);
+    ts.dumpProperty("paint-color", data.paintColor);
+    ts.dumpProperty("visited link paint-color", data.visitedLinkPaintColor);
+    ts.dumpProperty("paint uri", data.paintUri);
+    ts.dumpProperty("visited link paint uri", data.visitedLinkPaintUri);
+    ts.dumpProperty("dashOffset", data.dashOffset);
+    ts.dumpProperty("dash array", data.dashArray);
+    ts.dumpProperty("visited link paint type", data.paintType);
+    ts.dumpProperty("visited link paint type", data.visitedLinkPaintType);
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const StyleStopData& data)
+{
+    ts.dumpProperty("opacity", data.opacity);
+    ts.dumpProperty("color", data.color);
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const StyleTextData& data)
+{
+    ts.dumpProperty("kerning", data.kerning);
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const StyleMiscData& data)
+{
+    ts.dumpProperty("flood-opacity", data.floodOpacity);
+    ts.dumpProperty("flood-color", data.floodColor);
+    ts.dumpProperty("lighting-color", data.lightingColor);
+    ts.dumpProperty("baseline-shift", data.baselineShiftValue);
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const StyleShadowSVGData& data)
+{
+    if (data.shadow)
+        ts.dumpProperty("shadow", *data.shadow);
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const StyleResourceData& data)
+{
+    ts.dumpProperty("clipper", data.clipper);
+    ts.dumpProperty("masker", data.masker);
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const StyleInheritedResourceData& data)
+{
+    ts.dumpProperty("marker-start", data.markerStart);
+    ts.dumpProperty("marker-mid", data.markerMid);
+    ts.dumpProperty("marker-end", data.markerEnd);
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const StyleLayoutData& data)
+{
+    ts.dumpProperty("cx", data.cx);
+    ts.dumpProperty("cy", data.cy);
+    ts.dumpProperty("r", data.r);
+    ts.dumpProperty("rx", data.rx);
+    ts.dumpProperty("ry", data.ry);
+    ts.dumpProperty("x", data.x);
+    ts.dumpProperty("y", data.y);
+    return ts;
+}
+
+} // namespace WebCore
