@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WKAccessibilityWebPageObjectBase.h"
 
+#import "AccessibilityPrivSPI.h"
 #import "WebFrame.h"
 #import "WebPage.h"
 #import "WKArray.h"
@@ -96,7 +97,7 @@
 {
     if (isMainThread()) {
         if (auto cache = [self axObjectCache]) {
-            auto tree = AXIsolatedTree::initializeTreeForPageId(m_pageID, *cache);
+            auto tree = cache->generateIsolatedAccessibilityTree();
 
             // Now that we have created our tree, initialize the secondary thread,
             // so future requests come in on the other thread.
@@ -105,7 +106,7 @@
                 return rootNode->wrapper();
         }
     } else {
-        auto tree = AXIsolatedTree::treeForPageID(m_pageID);
+        auto tree = WebCore::AXIsolatedTree::treeForPageID(m_pageID);
         tree->applyPendingChanges();
         if (auto rootNode = tree->rootNode())
             return rootNode->wrapper();

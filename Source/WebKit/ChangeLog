@@ -1,3 +1,14 @@
+2019-10-12  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Make AXIsolatedTree compile again
+        https://bugs.webkit.org/show_bug.cgi?id=202702
+        <rdar://problem/56084968>
+
+        Reviewed by Joanmarie Diggs.
+
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm:
+        (-[WKAccessibilityWebPageObjectBase isolatedTreeRootObject]):
+
 2019-10-11  Rob Buis  <rbuis@igalia.com>
 
         Cleanup RuntimeEnabledFeatures includes

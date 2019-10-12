@@ -1,3 +1,31 @@
+2019-10-12  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Make AXIsolatedTree compile again
+        https://bugs.webkit.org/show_bug.cgi?id=202702
+        <rdar://problem/56084968>
+
+        Reviewed by Joanmarie Diggs.
+
+        Fix compilation and runtime issues when building with ACCESSIBILITY_ISOLATED_TREE.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored const):
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::treePageCache):
+        (WebCore::AXIsolatedTree::nodeForID const):
+            - Remove release assert here because the initial request that comes through happens on the main thread.
+              We need to handle that case specific case.
+        (WebCore::AXIsolatedTree::applyPendingChanges):
+        (WebCore::AXIsolatedTree::initializePageTreeForID): Deleted.
+        (WebCore::AXIsolatedTree::setInitialRequestInProgress): Deleted.
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+        * accessibility/isolatedtree/AXIsolatedTreeNode.cpp:
+        (WebCore::AXIsolatedTreeNode::rectAttributeValue const):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (convertToNSArray):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper childrenVectorArray]):
+
 2019-10-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Windows build fix attempt after r251043.

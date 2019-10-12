@@ -280,7 +280,7 @@ NSArray *convertToNSArray(const Vector<RefPtr<WebCore::AXIsolatedTreeNode>>& chi
 {
     NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:children.size()];
     for (auto& child : children)
-        addChildToArray(*child, result)
+        addChildToArray(*child, result);
     return [result autorelease];
 }
 #endif

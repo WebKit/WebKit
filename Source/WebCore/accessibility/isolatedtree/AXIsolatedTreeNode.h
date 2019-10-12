@@ -45,7 +45,7 @@ namespace WebCore {
 class AXIsolatedTree;
 class AccessibilityObject;
 
-class AXIsolatedTreeNode final : public AccessibilityObjectInterface, public ThreadSafeRefCounted<AXIsolatedTreeNode>, public CanMakeWeakPtr<AXIsolatedTreeNode> {
+class AXIsolatedTreeNode final : public AccessibilityObjectInterface, public ThreadSafeRefCounted<AXIsolatedTreeNode> {
 
 public:
     enum class AXPropertyName : uint8_t {
@@ -131,7 +131,7 @@ private:
     AXID m_identifier;
     bool m_initialized { false };
     AXIsolatedTreeID m_treeIdentifier;
-    WeakPtr<AXIsolatedTree> m_cachedTree;
+    RefPtr<AXIsolatedTree> m_cachedTree;
     Vector<AXID> m_children;
 
 #if PLATFORM(COCOA)
