@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSTestCallTracer.h"
 
+#include "ActiveDOMObject.h"
 #include "CallTracer.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
@@ -163,6 +164,8 @@ void JSTestCallTracer::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
+
+    static_assert(!std::is_base_of<ActiveDOMObject, TestCallTracer>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 }
 

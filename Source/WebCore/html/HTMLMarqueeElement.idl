@@ -17,7 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLMarqueeElement : HTMLElement {
+[
+    ActiveDOMObject,
+] interface HTMLMarqueeElement : HTMLElement {
     void start();
     void stop();
     

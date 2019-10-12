@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSTestClassWithJSBuiltinConstructor.h"
 
+#include "ActiveDOMObject.h"
 #include "JSDOMBinding.h"
 #include "JSDOMBuiltinConstructor.h"
 #include "JSDOMExceptionHandling.h"
@@ -116,6 +117,8 @@ void JSTestClassWithJSBuiltinConstructor::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
+
+    static_assert(!std::is_base_of<ActiveDOMObject, TestClassWithJSBuiltinConstructor>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 }
 

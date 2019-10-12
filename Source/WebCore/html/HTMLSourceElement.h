@@ -32,7 +32,7 @@ namespace WebCore {
 
 class MediaQuerySet;
 
-class HTMLSourceElement final : public HTMLElement, private ActiveDOMObject {
+class HTMLSourceElement final : public HTMLElement, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(HTMLSourceElement);
 public:
     static Ref<HTMLSourceElement> create(Document&);

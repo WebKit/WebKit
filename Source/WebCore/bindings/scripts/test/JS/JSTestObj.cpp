@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSTestObj.h"
 
+#include "ActiveDOMObject.h"
 #include "DOMPromiseProxy.h"
 #include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
@@ -2442,6 +2443,8 @@ void JSTestObj::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
+
+    static_assert(!std::is_base_of<ActiveDOMObject, TestObj>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 }
 

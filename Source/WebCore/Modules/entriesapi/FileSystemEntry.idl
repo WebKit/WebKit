@@ -24,6 +24,7 @@
  */
 
 [
+    ActiveDOMObject,
     CustomToJSObject,
     EnabledAtRuntime=DirectoryUpload,
 ] interface FileSystemEntry {

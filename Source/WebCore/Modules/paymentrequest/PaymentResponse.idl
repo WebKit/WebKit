@@ -24,6 +24,7 @@
  */
 
 [
+    ActiveDOMObject,
     Conditional=PAYMENT_REQUEST,
     EnabledBySetting=PaymentRequest,
     Exposed=Window,

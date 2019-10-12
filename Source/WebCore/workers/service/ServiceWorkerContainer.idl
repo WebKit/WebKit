@@ -27,6 +27,7 @@
 // We don't currently support nested workers.
 
 [
+    ActiveDOMObject,
     SecureContext,
     Exposed=(Window,ServiceWorker),
     Conditional=SERVICE_WORKER,

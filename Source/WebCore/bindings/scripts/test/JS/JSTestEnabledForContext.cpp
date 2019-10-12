@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSTestEnabledForContext.h"
 
+#include "ActiveDOMObject.h"
 #include "Document.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
@@ -117,6 +118,8 @@ void JSTestEnabledForContext::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
+
+    static_assert(!std::is_base_of<ActiveDOMObject, TestEnabledForContext>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
     if ((downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settings().testSettingEnabled() && TestSubObjEnabledForContext::enabledForContext(*jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())))
         putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().TestSubObjEnabledForContextPublicName(), CustomGetterSetter::create(vm, jsTestEnabledForContextTestSubObjEnabledForContextConstructor, setJSTestEnabledForContextTestSubObjEnabledForContextConstructor), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)));
