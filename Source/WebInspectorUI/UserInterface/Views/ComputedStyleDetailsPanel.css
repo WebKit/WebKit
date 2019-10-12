@@ -24,29 +24,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+.sidebar > .panel.details.css-style > .content > .computed > .details-section {
+    --disclosure-button-size: 15px;
+}
+
 .sidebar > .panel.details.css-style > .content > .computed > .details-section:not(.collapsed) > :matches(.header, .content) {
     background-color: var(--background-color);
 }
 
-.sidebar > .panel.details.css-style > .content > .computed .details-section:matches(.computed-style-properties, .computed-style-variables) {
-    --disclosure-button-size: 15px;
+.sidebar > .panel.details.css-style > .content > .computed > .details-section > .content {
+    font: 12px -webkit-system-font, sans-serif;
 }
 
-.sidebar > .panel.details.css-style > .content > .computed .details-section:matches(.computed-style-properties, .computed-style-variables) .property {
+.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-properties > .header > .options.filter {
+    width: 13px;
+    height: 13px;
+}
+
+.sidebar > .panel.details.css-style > .content > .computed .spreadsheet-style-declaration-editor {
+    padding-bottom: 3px;
+}
+
+.sidebar > .panel.details.css-style > .content > .computed .property {
     position: relative;
 }
 
-.sidebar > .panel.details.css-style > .content > .computed .details-section:matches(.computed-style-properties, .computed-style-variables) .property .go-to-arrow {
+.sidebar > .panel.details.css-style > .content > .computed .property .go-to-arrow {
     position: absolute;
     bottom: 0;
     width: var(--disclosure-button-size);
     height: var(--disclosure-button-size);
 }
 
-.sidebar > .panel.details.css-style > .content > .computed .details-section:matches(.computed-style-properties, .computed-style-variables) .property:not(:hover) .go-to-arrow {
+.sidebar > .panel.details.css-style > .content > .computed .property:not(:hover) .go-to-arrow {
     display: none;
-}
-
-.sidebar > .panel.details.css-style > .content > .computed .details-section:matches(.computed-style-properties, .computed-style-variables) > .content {
-    font: 12px -webkit-system-font, sans-serif;
 }

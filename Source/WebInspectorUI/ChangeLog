@@ -1,3 +1,52 @@
+2019-10-11  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Elements: Computed: show shorthand properties in addition to longhand ones
+        https://bugs.webkit.org/show_bug.cgi?id=200554
+
+        Reviewed by Matt Baker.
+
+        Replace the "Show All [ ]" checkbox header option in the "Properties" section with a filter
+        icon that controls both "Show All" and "Prefer Shorthands", the latter of which will cause
+        any longhand properties to be hidden and their respective shorthands to be shown.
+
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty):
+        (WI.CSSProperty.prototype.update):
+        (WI.CSSProperty.prototype.get isVariable): Added.
+        (WI.CSSProperty.prototype.get isShorthand): Added.
+        (WI.CSSProperty.prototype.get shorthandPropertyNames): Added.
+        (WI.CSSProperty.prototype.get variable): Deleted.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WI.ComputedStyleDetailsPanel):
+        (WI.ComputedStyleDetailsPanel.prototype.applyFilter):
+        (WI.ComputedStyleDetailsPanel.prototype.initialLayout):
+        (WI.ComputedStyleDetailsPanel.prototype._computedStyleShowAllCheckboxValueChanged): Deleted.
+        * UserInterface/Views/ComputedStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style > .content > .computed > .details-section): Added.
+        (.sidebar > .panel.details.css-style > .content > .computed > .details-section > .content): Added.
+        (.sidebar > .panel.details.css-style > .content > .computed .spreadsheet-style-declaration-editor): Added.
+        (.sidebar > .panel.details.css-style > .content > .computed .property): Added.
+        (.sidebar > .panel.details.css-style > .content > .computed .property .go-to-arrow): Added.
+        (.sidebar > .panel.details.css-style > .content > .computed .property:not(:hover) .go-to-arrow): Added.
+        (.sidebar > .panel.details.css-style > .content > .computed .details-section:matches(.computed-style-properties, .computed-style-variables)): Deleted.
+        (.sidebar > .panel.details.css-style > .content > .computed .details-section:matches(.computed-style-properties, .computed-style-variables) .property): Deleted.
+        (.sidebar > .panel.details.css-style > .content > .computed .details-section:matches(.computed-style-properties, .computed-style-variables) .property .go-to-arrow): Deleted.
+        (.sidebar > .panel.details.css-style > .content > .computed .details-section:matches(.computed-style-properties, .computed-style-variables) .property:not(:hover) .go-to-arrow): Deleted.
+        (.sidebar > .panel.details.css-style > .content > .computed .details-section:matches(.computed-style-properties, .computed-style-variables) > .content): Deleted.
+
+        * UserInterface/Views/ComputedStyleSection.js:
+        (WI.ComputedStyleSection):
+        (WI.ComputedStyleSection.prototype.set showsShorthandsInsteadOfLonghands): Added.
+        (WI.ComputedStyleSection.prototype.get propertiesToRender):
+        (WI.ComputedStyleSection.prototype.set propertyVisibilityMode): Deleted.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.update):
+        (WI.SpreadsheetStyleProperty.prototype._replaceSpecialTokens):
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-10-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Local Resource Overrides: UI for overriding image and font resource content

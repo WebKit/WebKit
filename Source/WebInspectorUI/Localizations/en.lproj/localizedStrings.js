@@ -822,6 +822,7 @@ localizedStrings["Port"] = "Port";
 localizedStrings["Power Efficient Playback"] = "Power Efficient Playback";
 localizedStrings["Power Efficient Playback Started"] = "Power Efficient Playback Started";
 localizedStrings["Power Efficient Playback Stopped"] = "Power Efficient Playback Stopped";
+localizedStrings["Prefer Shorthands"] = "Prefer Shorthands";
 localizedStrings["Prefer indent using:"] = "Prefer indent using:";
 localizedStrings["Preserve Log"] = "Preserve Log";
 localizedStrings["Press %s to import a test or result file"] = "Press %s to import a test or result file";

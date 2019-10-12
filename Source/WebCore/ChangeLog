@@ -1,3 +1,22 @@
+2019-10-11  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Elements: Computed: show shorthand properties in addition to longhand ones
+        https://bugs.webkit.org/show_bug.cgi?id=200554
+
+        Reviewed by Matt Baker.
+
+        Test: inspector/css/getComputedStyleForNode.html
+
+        Include additional `CSS.CSSComputedStyleProperty` items for shorthand CSS properties when
+        calling `CSS.getComputedStyleForNode`.
+
+        * inspector/InspectorStyleSheet.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::buildArrayForComputedStyle const):
+        (WebCore::InspectorStyle::collectProperties const): Added.
+        (WebCore::InspectorStyle::styleWithProperties const):
+        (WebCore::InspectorStyle::populateAllProperties const): Deleted.
+
 2019-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make WebInspector's remote debug EventLoop code into RunLoop

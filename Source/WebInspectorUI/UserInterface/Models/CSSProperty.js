@@ -115,8 +115,11 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         this._anonymous = anonymous;
         this._inherited = WI.CSSProperty.isInheritedPropertyName(name);
         this._valid = valid;
-        this._variable = name.startsWith("--");
+        this._isVariable = name.startsWith("--");
         this._styleSheetTextRange = styleSheetTextRange || null;
+
+        this._isShorthand = undefined;
+        this._shorthandPropertyNames = undefined;
 
         this._relatedShorthandProperty = null;
         this._relatedLonghandProperties = [];
@@ -324,7 +327,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
     get anonymous() { return this._anonymous; }
     get inherited() { return this._inherited; }
     get valid() { return this._valid; }
-    get variable() { return this._variable; }
+    get isVariable() { return this._isVariable; }
     get styleSheetTextRange() { return this._styleSheetTextRange; }
 
     get initialState()
@@ -381,6 +384,28 @@ WI.CSSProperty = class CSSProperty extends WI.Object
     clearRelatedLonghandProperties(property)
     {
         this._relatedLonghandProperties = [];
+    }
+
+    get isShorthand()
+    {
+        if (this._isShorthand === undefined) {
+            this._isShorthand = WI.CSSCompletions.cssNameCompletions.isShorthandPropertyName(this._name);
+            if (this._isShorthand) {
+                let longhands = WI.CSSKeywordCompletions.LonghandNamesForShorthandProperty.get(this._name);
+                if (longhands && longhands.length === 1)
+                    this._isShorthand = false;
+            }
+        }
+        return this._isShorthand;
+    }
+
+    get shorthandPropertyNames()
+    {
+        if (!this._shorthandPropertyNames) {
+            this._shorthandPropertyNames = WI.CSSCompletions.cssNameCompletions.shorthandsForLonghand(this._name);
+            this._shorthandPropertyNames.remove("all");
+        }
+        return this._shorthandPropertyNames;
     }
 
     hasOtherVendorNameOrKeyword()

@@ -541,10 +541,7 @@ RefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::buildObjectForStyle()
 Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSComputedStyleProperty>> InspectorStyle::buildArrayForComputedStyle() const
 {
     auto result = JSON::ArrayOf<Inspector::Protocol::CSS::CSSComputedStyleProperty>::create();
-    Vector<InspectorStyleProperty> properties;
-    populateAllProperties(&properties);
-
-    for (auto& property : properties) {
+    for (auto& property : collectProperties(true)) {
         const CSSPropertySourceData& propertyEntry = property.sourceData;
         auto entry = Inspector::Protocol::CSS::CSSComputedStyleProperty::create()
             .setName(propertyEntry.name)
@@ -552,7 +549,6 @@ Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSComputedStyleProperty>> Inspector
             .release();
         result->addItem(WTFMove(entry));
     }
-
     return result;
 }
 
@@ -579,8 +575,9 @@ static String lowercasePropertyName(const String& name)
     return name.convertToASCIILowercase();
 }
 
-void InspectorStyle::populateAllProperties(Vector<InspectorStyleProperty>* result) const
+Vector<InspectorStyleProperty> InspectorStyle::collectProperties(bool includeAll) const
 {
+    Vector<InspectorStyleProperty> result;
     HashSet<String> sourcePropertyNames;
 
     auto sourceData = extractSourceData();
@@ -592,7 +589,7 @@ void InspectorStyle::populateAllProperties(Vector<InspectorStyleProperty>* resul
         for (auto& sourceData : *sourcePropertyData) {
             InspectorStyleProperty p(sourceData, true, sourceData.disabled);
             p.setRawTextFromStyleDeclaration(styleDeclaration);
-            result->append(p);
+            result.append(p);
             sourcePropertyNames.add(lowercasePropertyName(sourceData.name));
         }
     }
@@ -600,14 +597,33 @@ void InspectorStyle::populateAllProperties(Vector<InspectorStyleProperty>* resul
     for (int i = 0, size = m_style->length(); i < size; ++i) {
         String name = m_style->item(i);
         if (sourcePropertyNames.add(lowercasePropertyName(name)))
-            result->append(InspectorStyleProperty(CSSPropertySourceData(name, m_style->getPropertyValue(name), !m_style->getPropertyPriority(name).isEmpty(), false, true, SourceRange()), false, false));
+            result.append(InspectorStyleProperty(CSSPropertySourceData(name, m_style->getPropertyValue(name), !m_style->getPropertyPriority(name).isEmpty(), false, true, SourceRange()), false, false));
     }
+
+    if (includeAll) {
+        for (auto i = firstCSSProperty; i < lastCSSProperty; ++i) {
+            auto id = convertToCSSPropertyID(i);
+            if (isInternalCSSProperty(id) || !isEnabledCSSProperty(id))
+                continue;
+
+            auto name = getPropertyNameString(id);
+            if (!sourcePropertyNames.add(lowercasePropertyName(name)))
+                continue;
+
+            auto value = m_style->getPropertyValue(name);
+            if (value.isEmpty())
+                continue;
+
+            result.append(InspectorStyleProperty(CSSPropertySourceData(name, value, !m_style->getPropertyPriority(name).isEmpty(), false, true, SourceRange()), false, false));
+        }
+    }
+
+    return result;
 }
 
 Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties() const
 {
-    Vector<InspectorStyleProperty> properties;
-    populateAllProperties(&properties);
+    auto properties = collectProperties(false);
 
     auto propertiesObject = JSON::ArrayOf<Inspector::Protocol::CSS::CSSProperty>::create();
     auto shorthandEntries = ArrayOf<Inspector::Protocol::CSS::ShorthandEntry>::create();

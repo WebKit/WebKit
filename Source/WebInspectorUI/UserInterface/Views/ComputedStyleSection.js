@@ -38,8 +38,8 @@ WI.ComputedStyleSection = class ComputedStyleSection extends WI.View
         this._propertyViews = [];
 
         this._showsImplicitProperties = false;
+        this._showsShorthandsInsteadOfLonghands = false;
         this._alwaysShowPropertyNames = new Set;
-        this._propertyVisibilityMode = WI.ComputedStyleSection.PropertyVisibilityMode.ShowAll;
         this._hideFilterNonMatchingProperties = false;
         this._filterText = null;
     }
@@ -91,19 +91,19 @@ WI.ComputedStyleSection = class ComputedStyleSection extends WI.View
         this.needsLayout();
     }
 
-    set alwaysShowPropertyNames(propertyNames)
+    set showsShorthandsInsteadOfLonghands(value)
     {
-        this._alwaysShowPropertyNames = new Set(propertyNames);
+        if (value === this._showsShorthandsInsteadOfLonghands)
+            return;
+
+        this._showsShorthandsInsteadOfLonghands = value;
 
         this.needsLayout();
     }
 
-    set propertyVisibilityMode(propertyVisibilityMode)
+    set alwaysShowPropertyNames(propertyNames)
     {
-        if (this._propertyVisibilityMode === propertyVisibilityMode)
-            return;
-
-        this._propertyVisibilityMode = propertyVisibilityMode;
+        this._alwaysShowPropertyNames = new Set(propertyNames);
 
         this.needsLayout();
     }
@@ -132,13 +132,19 @@ WI.ComputedStyleSection = class ComputedStyleSection extends WI.View
         properties.sort((a, b) => a.name.extendedLocaleCompare(b.name));
 
         return properties.filter((property) => {
-            if (!property.variable && this._propertyVisibilityMode === WI.ComputedStyleSection.PropertyVisibilityMode.HideNonVariables)
+            if (this._alwaysShowPropertyNames.has(property.canonicalName))
+                return true;
+
+            if (property.implicit && !this._showsImplicitProperties)
                 return false;
 
-            if (property.variable && this._propertyVisibilityMode === WI.ComputedStyleSection.PropertyVisibilityMode.HideVariables)
+            if (this._showsShorthandsInsteadOfLonghands) {
+                if (property.shorthandPropertyNames.length)
+                    return false;
+            } else if (property.isShorthand)
                 return false;
 
-            return !property.implicit || this._showsImplicitProperties || this._alwaysShowPropertyNames.has(property.canonicalName);
+            return true;
         });
     }
 
@@ -265,9 +271,3 @@ WI.ComputedStyleSection.Event = {
 };
 
 WI.ComputedStyleSection.StyleClassName = "computed-style-section";
-
-WI.ComputedStyleSection.PropertyVisibilityMode = {
-    ShowAll: Symbol("variable-visibility-show-all"),
-    HideVariables: Symbol("variable-visibility-hide-variables"),
-    HideNonVariables: Symbol("variable-visibility-hide-non-variables"),
-};
