@@ -35,6 +35,7 @@
 #include "ChromeClient.h"
 #include "ClassChangeInvalidation.h"
 #include "ComposedTreeAncestorIterator.h"
+#include "ComposedTreeIterator.h"
 #include "ContainerNodeAlgorithms.h"
 #include "CustomElementReactionQueue.h"
 #include "CustomElementRegistry.h"
@@ -278,7 +279,13 @@ void Element::setTabIndexForBindings(int value)
 
 bool Element::isKeyboardFocusable(KeyboardEvent*) const
 {
-    return isFocusable() && !shouldBeIgnoredInSequentialFocusNavigation() && tabIndexSetExplicitly().valueOr(0) >= 0;
+    if (!(isFocusable() && !shouldBeIgnoredInSequentialFocusNavigation() && tabIndexSetExplicitly().valueOr(0) >= 0))
+        return false;
+    if (auto* root = shadowRoot()) {
+        if (root->delegatesFocus())
+            return false;
+    }
+    return true;
 }
 
 bool Element::isMouseFocusable() const
@@ -2333,7 +2340,7 @@ ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init)
         return Exception { NotSupportedError };
     if (init.mode == ShadowRootMode::UserAgent)
         return Exception { TypeError };
-    auto shadow = ShadowRoot::create(document(), init.mode);
+    auto shadow = ShadowRoot::create(document(), init.mode, init.delegatesFocus ? ShadowRoot::DelegatesFocus::Yes : ShadowRoot::DelegatesFocus::No);
     auto& result = shadow.get();
     addShadowRoot(WTFMove(shadow));
     return result;
@@ -2881,41 +2888,76 @@ bool Element::hasAttributeNS(const AtomString& namespaceURI, const AtomString& l
     return elementData()->findAttributeByName(qName);
 }
 
+static bool isProgramaticallyFocusable(Element& element)
+{
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+    // If the stylesheets have already been loaded we can reliably check isFocusable.
+    // If not, we continue and set the focused node on the focus controller below so that it can be updated soon after attach.
+    if (element.document().haveStylesheetsLoaded()) {
+        if (!element.isFocusable())
+            return false;
+    }
+    return element.supportsFocus();
+}
+
+static RefPtr<Element> findFirstProgramaticallyFocusableElementInComposedTree(Element& host)
+{
+    ASSERT(host.shadowRoot());
+    for (auto& node : composedTreeDescendants(host)) {
+        if (!is<Element>(node))
+            continue;
+        auto& element = downcast<Element>(node);
+        if (isProgramaticallyFocusable(element))
+            return &element;
+    }
+    return nullptr;
+}
+
 void Element::focus(bool restorePreviousSelection, FocusDirection direction)
 {
     if (!isConnected())
         return;
 
-    if (document().focusedElement() == this) {
-        if (document().page())
-            document().page()->chrome().client().elementDidRefocus(*this);
-
+    auto document = makeRef(this->document());
+    if (document->focusedElement() == this) {
+        if (document->page())
+            document->page()->chrome().client().elementDidRefocus(*this);
         return;
     }
 
-    // If the stylesheets have already been loaded we can reliably check isFocusable.
-    // If not, we continue and set the focused node on the focus controller below so
-    // that it can be updated soon after attach. 
-    if (document().haveStylesheetsLoaded()) {
-        document().updateStyleIfNeeded();
-        if (!isFocusable())
-            return;
-    }
+    RefPtr<Element> newTarget = this;
+    if (document->haveStylesheetsLoaded())
+        document->updateStyleIfNeeded();
 
-    if (!supportsFocus())
+    if (&newTarget->document() != document.ptr())
         return;
 
-    RefPtr<Node> protect;
-    if (Page* page = document().page()) {
-        auto& frame = *document().frame();
-        if (!frame.hasHadUserInteraction() && !frame.isMainFrame() && !document().topDocument().securityOrigin().canAccess(document().securityOrigin()))
+    if (auto root = makeRefPtr(shadowRoot())) {
+        if (root->delegatesFocus()) {
+            newTarget = findFirstProgramaticallyFocusableElementInComposedTree(*this);            
+            if (!newTarget)
+                return;
+        }
+    }
+
+    if (document->focusedElement() == newTarget) {
+        if (document->page())
+            document->page()->chrome().client().elementDidRefocus(*newTarget);
+        return;
+    }
+
+    if (!isProgramaticallyFocusable(*newTarget))
+        return;
+
+    if (Page* page = document->page()) {
+        auto& frame = *document->frame();
+        if (!frame.hasHadUserInteraction() && !frame.isMainFrame() && !document->topDocument().securityOrigin().canAccess(document->securityOrigin()))
             return;
 
         // Focus and change event handlers can cause us to lose our last ref.
         // If a focus event handler changes the focus to a different node it
         // does not make sense to continue and update appearence.
-        protect = this;
-        if (!page->focusController().setFocusedElement(this, *document().frame(), direction))
+        if (!page->focusController().setFocusedElement(newTarget.get(), *document->frame(), direction))
             return;
     }
 
@@ -2924,7 +2966,7 @@ void Element::focus(bool restorePreviousSelection, FocusDirection direction)
     // Focusing a form element triggers animation in UIKit to scroll to the right position.
     // Calling updateFocusAppearance() would generate an unnecessary call to ScrollView::setScrollPosition(),
     // which would jump us around during this animation. See <rdar://problem/6699741>.
-    bool isFormControl = is<HTMLFormControlElement>(*this);
+    bool isFormControl = is<HTMLFormControlElement>(newTarget);
     if (isFormControl)
         revealMode = SelectionRevealMode::RevealUpToMainFrame;
 #endif
@@ -2936,6 +2978,7 @@ void Element::focus(bool restorePreviousSelection, FocusDirection direction)
     target->updateFocusAppearance(restorePreviousSelection ? SelectionRestorationMode::Restore : SelectionRestorationMode::SetDefault, revealMode);
 }
 
+// https://html.spec.whatwg.org/#focus-processing-model
 RefPtr<Element> Element::focusAppearanceUpdateTarget()
 {
     return this;

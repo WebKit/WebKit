@@ -56,9 +56,10 @@ struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
 
 COMPILE_ASSERT(sizeof(ShadowRoot) == sizeof(SameSizeAsShadowRoot), shadowroot_should_stay_small);
 
-ShadowRoot::ShadowRoot(Document& document, ShadowRootMode type)
+ShadowRoot::ShadowRoot(Document& document, ShadowRootMode type, DelegatesFocus delegatesFocus)
     : DocumentFragment(document, CreateShadowRoot)
     , TreeScope(*this, document)
+    , m_delegatesFocus(delegatesFocus == DelegatesFocus::Yes)
     , m_type(type)
     , m_styleScope(makeUnique<Style::Scope>(*this))
 {

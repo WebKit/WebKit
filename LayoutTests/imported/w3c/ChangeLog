@@ -1,3 +1,29 @@
+2019-10-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add the support for ShadowRoot.delegateFocus
+        https://bugs.webkit.org/show_bug.cgi?id=166484
+        <rdar://problem/29816058>
+
+        Reviewed by Antti Koivisto.
+
+        Import W3C tests from https://github.com/web-platform-tests/wpt/pull/18035/commits/a8a89f224f2170723170a452cb18b46cafb723b6.
+
+        * web-platform-tests/resources/testdriver-vendor.js:
+        * web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-click-method-expected.txt: Added.
+        * web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-click-method.html: Added.
+        * web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-tabindex-varies-expected.txt: Added.
+        * web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-tabindex-varies.html: Added.
+        * web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-tabindex-zero-expected.txt: Added.
+        * web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-tabindex-zero.html: Added.
+        * web-platform-tests/shadow-dom/focus/focus-method-delegatesFocus-expected.txt: Added.
+        * web-platform-tests/shadow-dom/focus/focus-method-delegatesFocus.html: Added.
+        * web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-negative-delegatesFocus-expected.txt: Added.
+        * web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-negative-delegatesFocus.html: Added.
+        * web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-varying-delegatesFocus-expected.txt: Added.
+        * web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-varying-delegatesFocus.html: Added.
+        * web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero-delegatesFocus-expected.txt: Added.
+        * web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero-delegatesFocus.html: Added.
+
 2019-10-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Import css/css-images WPT tests

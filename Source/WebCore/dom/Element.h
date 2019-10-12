@@ -290,6 +290,7 @@ public:
 
     struct ShadowRootInit {
         ShadowRootMode mode;
+        bool delegatesFocus { false };
     };
     ExceptionOr<ShadowRoot&> attachShadow(const ShadowRootInit&);
 

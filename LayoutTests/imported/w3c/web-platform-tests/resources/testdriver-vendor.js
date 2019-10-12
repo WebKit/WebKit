@@ -178,6 +178,27 @@ window.test_driver_internal.send_keys = function(element, keys)
     return Promise.resolve();
 }
 
+window.test_driver_internal.click = function (element, coords)
+{
+    if (!window.eventSender)
+        return Promise.reject(new Error("window.eventSender is undefined."));
+
+    if (testRunner.isIOSFamily && testRunner.isWebKit2) {
+        return new Promise((resolve) => {
+            testRunner.runUIScript(`
+                uiController.singleTapAtPoint(${coords.x}, ${coords.y}, function() {
+                    uiController.uiScriptComplete();
+                });`, resolve);
+        });
+    }
+
+    eventSender.mouseMoveTo(coords.x, coords.y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
+    return Promise.resolve();
+}
+
 window.test_driver_internal.action_sequence = function(sources)
 {
     // https://w3c.github.io/webdriver/#processing-actions    

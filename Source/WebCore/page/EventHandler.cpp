@@ -34,6 +34,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ComposedTreeAncestorIterator.h"
+#include "ComposedTreeIterator.h"
 #include "CursorList.h"
 #include "DocumentMarkerController.h"
 #include "DragController.h"
@@ -2619,6 +2620,19 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
     }
 }
 
+static RefPtr<Element> findFirstMouseFocusableElementInComposedTree(Element& host)
+{
+    ASSERT(host.shadowRoot());
+    for (auto& node : composedTreeDescendants(host)) {
+        if (!is<Element>(node))
+            continue;
+        auto& element = downcast<Element>(node);
+        if (element.isMouseFocusable())
+            return &element;
+    }
+    return nullptr;
+}
+
 bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetNode, bool /*cancelable*/, int clickCount, const PlatformMouseEvent& platformMouseEvent, bool setUnder)
 {
     Ref<Frame> protectedFrame(m_frame);
@@ -2650,6 +2664,12 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
     // Walk up the DOM tree to search for an element to focus.
     RefPtr<Element> element;
     for (element = m_elementUnderMouse.get(); element; element = element->parentElementInComposedTree()) {
+        if (auto* shadowRoot = element->shadowRoot()) {
+            if (shadowRoot->delegatesFocus()) {
+                element = findFirstMouseFocusableElementInComposedTree(*element);
+                break;
+            }
+        }
         if (element->isMouseFocusable())
             break;
     }

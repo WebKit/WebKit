@@ -1,3 +1,49 @@
+2019-10-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add the support for ShadowRoot.delegateFocus
+        https://bugs.webkit.org/show_bug.cgi?id=166484
+        <rdar://problem/29816058>
+
+        Reviewed by Antti Koivisto.
+
+        Implement delegatesFocus as specified in https://github.com/whatwg/html/pull/4796
+
+        When the shadow root of an element has delegates focus flag set, focusing on the shadow host would automatically
+        "delegates" focus to the first focusable element in the shadow tree instead.
+
+        The first focusable element is determined as the first element that is programatically focusable or mouse focusable
+        in the flat tree (composed tree in WebKit's terminology) in the case of the element getting focused via DOM API,
+        Element.prototype.focus, by via mouse down. In the case of sequential focus navigation (via tab key), it's the
+        first keyboard focusable element in the tabIndex order.
+
+        Tests: imported/w3c/web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-click-method.html
+               imported/w3c/web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-tabindex-varies.html
+               imported/w3c/web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-tabindex-zero.html
+               imported/w3c/web-platform-tests/shadow-dom/focus/focus-method-delegatesFocus.html
+               imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-negative-delegatesFocus.html
+               imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-varying-delegatesFocus.html
+               imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero-delegatesFocus.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::isKeyboardFocusable const): A shadow host with the delegates focus flag is not considered as
+        keyboard focusable. The rest is taken care of by the existing logic in FocusController.
+        (WebCore::isProgramaticallyFocusable): Extracted from Element::focus.
+        (WebCore::findFirstProgramaticallyFocusableElementInComposedTree): Added.
+        (WebCore::Element::focus): Added the support for delegatesFocus.
+        * dom/Element.h:
+        (WebCore::ShadowRootInit::delegatesFocus): Added.
+        * dom/Element.idl: Ditto.
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::ShadowRoot): Added delegatesFocus to the constructor.
+        * dom/ShadowRoot.h:
+        * page/EventHandler.cpp:
+        (WebCore::findFirstMouseFocusableElementInComposedTree): Added.
+        (WebCore::EventHandler::dispatchMouseEvent): Added the support for delegatesFocus. Uses the first mouse focusable
+        element in the flat tree (composed tree) order.
+        * page/FocusController.cpp:
+        (WebCore::FocusController::findFirstFocusableElementInShadowRoot):
+        * page/FocusController.h:
+
 2019-10-11  Rob Buis  <rbuis@igalia.com>
 
         Cleanup RuntimeEnabledFeatures includes
