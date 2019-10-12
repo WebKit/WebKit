@@ -2,80 +2,305 @@ Tests Debugger.setShouldBlackboxURL.
 
 
 == Running test suite: Debugger.setShouldBlackboxURL
--- Running test case: Debugger.setShouldBlackboxURL.stepOver
-Evaluating 'createScripts("stepOver")'...
-Blackboxing 'stepOverMiddle.js'...
-Setting breakpoint in 'stepOverInner.js'...
-Evaluating 'stepOverOuter(10)'...
+-- Running test case: Debugger.setShouldBlackboxURL.String.stepOver
+Evaluating 'createScripts("String_StepOver")'...
+Blackboxing 'string_stepover_middle.js'...
+Setting breakpoint in 'String_StepOver_Inner.js'...
+Evaluating 'String_StepOver_Outer(10)'...
 
-Paused in 'stepOverInner:3:1'.
-Reason: 'Breakpoint'
+PAUSED: 'Breakpoint' at 'String_StepOver_Inner:3:1'.
 {
-  "breakpointId": "stepOverInner.js:3:0"
+  "breakpointId": "String_StepOver_Inner.js:3:0"
 }
 Stepping over...
 
-Paused in 'stepOverOuter:3:1'.
-Reason: 'BlackboxedScript'
+PAUSED: 'BlackboxedScript' at 'String_StepOver_Outer:3:1'.
 {
   "originalReason": "other",
   "originalData": {
-    "breakpointId": "stepOverInner.js:3:0"
+    "breakpointId": "String_StepOver_Inner.js:3:0"
   }
 }
 Stepping over...
 
 Resuming...
 PASS: Resumed.
-PASS: Should not pause in 'stepOverMiddle'.
+PASS: Should not pause in 'String_StepOver_Middle'.
 
--- Running test case: Debugger.setShouldBlackboxURL.PauseInCaller
-Evaluating 'createScripts("pauseInCaller")'...
-Blackboxing 'pauseInCallerInner.js'...
-Setting breakpoint in 'pauseInCallerInner.js'...
-Evaluating 'pauseInCallerOuter(10)'...
 
-Paused in 'pauseInCallerMiddle:3:1'.
-Reason: 'BlackboxedScript'
+-- Running test case: Debugger.setShouldBlackboxURL.String.PauseInCaller
+Evaluating 'createScripts("String_PauseInCaller")'...
+Blackboxing 'string_pauseincaller_inner.js'...
+Setting breakpoint in 'String_PauseInCaller_Inner.js'...
+Evaluating 'String_PauseInCaller_Outer(10)'...
+
+PAUSED: 'BlackboxedScript' at 'String_PauseInCaller_Middle:3:1'.
 {
   "originalReason": "Breakpoint",
   "originalData": {
-    "breakpointId": "pauseInCallerInner.js:2:0"
+    "breakpointId": "String_PauseInCaller_Inner.js:2:0"
   }
 }
 Stepping over...
 
-Paused in 'pauseInCallerOuter:3:1'.
-Reason: 'other'
+PAUSED: 'other' at 'String_PauseInCaller_Outer:3:1'.
 Stepping over...
 
 Resuming...
 PASS: Resumed.
-PASS: Should not pause in 'pauseInCallerInner'.
+PASS: Should not pause in 'String_PauseInCaller_Inner'.
 
--- Running test case: Debugger.setShouldBlackboxURL.PauseInCallee
-Evaluating 'createScripts("pauseInCallee")'...
-Blackboxing 'pauseInCalleeOuter.js'...
-Setting breakpoint in 'pauseInCalleeOuter.js'...
-Evaluating 'pauseInCalleeOuter(10)'...
 
-Paused in 'pauseInCalleeMiddle:2:4'.
-Reason: 'BlackboxedScript'
+-- Running test case: Debugger.setShouldBlackboxURL.String.PauseInCallee
+Evaluating 'createScripts("String_PauseInCallee")'...
+Blackboxing 'string_pauseincallee_outer.js'...
+Setting breakpoint in 'String_PauseInCallee_Outer.js'...
+Evaluating 'String_PauseInCallee_Outer(10)'...
+
+PAUSED: 'BlackboxedScript' at 'String_PauseInCallee_Middle:2:4'.
 {
   "originalReason": "Breakpoint",
   "originalData": {
-    "breakpointId": "pauseInCalleeOuter.js:2:0"
+    "breakpointId": "String_PauseInCallee_Outer.js:2:0"
   }
 }
 Stepping over...
 
-Paused in 'pauseInCalleeMiddle:3:1'.
-Reason: 'other'
+PAUSED: 'other' at 'String_PauseInCallee_Middle:3:1'.
 Stepping over...
 
 Resuming...
 PASS: Resumed.
-PASS: Should not pause in 'pauseInCalleeOuter'.
+PASS: Should not pause in 'String_PauseInCallee_Outer'.
+
+
+-- Running test case: Debugger.setShouldBlackboxURL.CaseSensitiveString.stepOver
+Evaluating 'createScripts("CaseSensitiveString_StepOver")'...
+Blackboxing (case sensitive) 'casesensitivestring_stepover_inner.js'...
+Blackboxing (case sensitive) 'CaseSensitiveString_StepOver_Middle.js'...
+Setting breakpoint in 'CaseSensitiveString_StepOver_Inner.js'...
+Evaluating 'CaseSensitiveString_StepOver_Outer(10)'...
+
+PAUSED: 'Breakpoint' at 'CaseSensitiveString_StepOver_Inner:3:1'.
+{
+  "breakpointId": "CaseSensitiveString_StepOver_Inner.js:3:0"
+}
+Stepping over...
+
+PAUSED: 'BlackboxedScript' at 'CaseSensitiveString_StepOver_Outer:3:1'.
+{
+  "originalReason": "other",
+  "originalData": {
+    "breakpointId": "CaseSensitiveString_StepOver_Inner.js:3:0"
+  }
+}
+Stepping over...
+
+Resuming...
+PASS: Resumed.
+PASS: Should pause in 'CaseSensitiveString_StepOver_Inner'.
+PASS: Should not pause in 'CaseSensitiveString_StepOver_Middle'.
+
+
+-- Running test case: Debugger.setShouldBlackboxURL.CaseSensitiveString.PauseInCaller
+Evaluating 'createScripts("CaseSensitiveString_PauseInCaller")'...
+Blackboxing (case sensitive) 'CaseSensitiveString_PauseInCaller_Inner.js'...
+Blackboxing (case sensitive) 'casesensitivestring_pauseincaller_middle.js'...
+Setting breakpoint in 'CaseSensitiveString_PauseInCaller_Inner.js'...
+Evaluating 'CaseSensitiveString_PauseInCaller_Outer(10)'...
+
+PAUSED: 'BlackboxedScript' at 'CaseSensitiveString_PauseInCaller_Middle:3:1'.
+{
+  "originalReason": "Breakpoint",
+  "originalData": {
+    "breakpointId": "CaseSensitiveString_PauseInCaller_Inner.js:2:0"
+  }
+}
+Stepping over...
+
+PAUSED: 'other' at 'CaseSensitiveString_PauseInCaller_Outer:3:1'.
+Stepping over...
+
+Resuming...
+PASS: Resumed.
+PASS: Should not pause in 'CaseSensitiveString_PauseInCaller_Inner'.
+PASS: Should pause in 'CaseSensitiveString_PauseInCaller_Middle'.
+
+
+-- Running test case: Debugger.setShouldBlackboxURL.CaseSensitiveString.PauseInCallee
+Evaluating 'createScripts("CaseSensitiveString_PauseInCallee")'...
+Blackboxing (case sensitive) 'casesensitivestring_pauseincallee_middle.js'...
+Blackboxing (case sensitive) 'CaseSensitiveString_PauseInCallee_Outer.js'...
+Setting breakpoint in 'CaseSensitiveString_PauseInCallee_Outer.js'...
+Evaluating 'CaseSensitiveString_PauseInCallee_Outer(10)'...
+
+PAUSED: 'BlackboxedScript' at 'CaseSensitiveString_PauseInCallee_Middle:2:4'.
+{
+  "originalReason": "Breakpoint",
+  "originalData": {
+    "breakpointId": "CaseSensitiveString_PauseInCallee_Outer.js:2:0"
+  }
+}
+Stepping over...
+
+PAUSED: 'other' at 'CaseSensitiveString_PauseInCallee_Middle:3:1'.
+Stepping over...
+
+Resuming...
+PASS: Resumed.
+PASS: Should pause in 'CaseSensitiveString_PauseInCallee_Middle'.
+PASS: Should not pause in 'CaseSensitiveString_PauseInCallee_Outer'.
+
+
+-- Running test case: Debugger.setShouldBlackboxURL.Regex.stepOver
+Evaluating 'createScripts("Regex_StepOver")'...
+Blackboxing (regex) 'regex[ -_]stepover[ -_]middle\.js$'...
+Setting breakpoint in 'Regex_StepOver_Inner.js'...
+Evaluating 'Regex_StepOver_Outer(10)'...
+
+PAUSED: 'Breakpoint' at 'Regex_StepOver_Inner:3:1'.
+{
+  "breakpointId": "Regex_StepOver_Inner.js:3:0"
+}
+Stepping over...
+
+PAUSED: 'BlackboxedScript' at 'Regex_StepOver_Outer:3:1'.
+{
+  "originalReason": "other",
+  "originalData": {
+    "breakpointId": "Regex_StepOver_Inner.js:3:0"
+  }
+}
+Stepping over...
+
+Resuming...
+PASS: Resumed.
+PASS: Should not pause in 'Regex_StepOver_Middle'.
+
+
+-- Running test case: Debugger.setShouldBlackboxURL.Regex.PauseInCaller
+Evaluating 'createScripts("Regex_PauseInCaller")'...
+Blackboxing (regex) 'regex[ -_]pauseincaller[ -_]inner\.js$'...
+Setting breakpoint in 'Regex_PauseInCaller_Inner.js'...
+Evaluating 'Regex_PauseInCaller_Outer(10)'...
+
+PAUSED: 'BlackboxedScript' at 'Regex_PauseInCaller_Middle:3:1'.
+{
+  "originalReason": "Breakpoint",
+  "originalData": {
+    "breakpointId": "Regex_PauseInCaller_Inner.js:2:0"
+  }
+}
+Stepping over...
+
+PAUSED: 'other' at 'Regex_PauseInCaller_Outer:3:1'.
+Stepping over...
+
+Resuming...
+PASS: Resumed.
+PASS: Should not pause in 'Regex_PauseInCaller_Inner'.
+
+
+-- Running test case: Debugger.setShouldBlackboxURL.Regex.PauseInCallee
+Evaluating 'createScripts("Regex_PauseInCallee")'...
+Blackboxing (regex) 'regex[ -_]pauseincallee[ -_]outer\.js$'...
+Setting breakpoint in 'Regex_PauseInCallee_Outer.js'...
+Evaluating 'Regex_PauseInCallee_Outer(10)'...
+
+PAUSED: 'BlackboxedScript' at 'Regex_PauseInCallee_Middle:2:4'.
+{
+  "originalReason": "Breakpoint",
+  "originalData": {
+    "breakpointId": "Regex_PauseInCallee_Outer.js:2:0"
+  }
+}
+Stepping over...
+
+PAUSED: 'other' at 'Regex_PauseInCallee_Middle:3:1'.
+Stepping over...
+
+Resuming...
+PASS: Resumed.
+PASS: Should not pause in 'Regex_PauseInCallee_Outer'.
+
+
+-- Running test case: Debugger.setShouldBlackboxURL.CaseSensitiveRegex.stepOver
+Evaluating 'createScripts("CaseSensitiveRegex_StepOver")'...
+Blackboxing (case sensitive) (regex) 'casesensitiveregex_stepover_inner\.js$'...
+Blackboxing (case sensitive) (regex) 'CaseSensitiveRegex_StepOver_Middle\.js$'...
+Setting breakpoint in 'CaseSensitiveRegex_StepOver_Inner.js'...
+Evaluating 'CaseSensitiveRegex_StepOver_Outer(10)'...
+
+PAUSED: 'Breakpoint' at 'CaseSensitiveRegex_StepOver_Inner:3:1'.
+{
+  "breakpointId": "CaseSensitiveRegex_StepOver_Inner.js:3:0"
+}
+Stepping over...
+
+PAUSED: 'BlackboxedScript' at 'CaseSensitiveRegex_StepOver_Outer:3:1'.
+{
+  "originalReason": "other",
+  "originalData": {
+    "breakpointId": "CaseSensitiveRegex_StepOver_Inner.js:3:0"
+  }
+}
+Stepping over...
+
+Resuming...
+PASS: Resumed.
+PASS: Should pause in 'CaseSensitiveRegex_StepOver_Inner'.
+PASS: Should not pause in 'CaseSensitiveRegex_StepOver_Middle'.
+
+
+-- Running test case: Debugger.setShouldBlackboxURL.CaseSensitiveRegex.PauseInCaller
+Evaluating 'createScripts("CaseSensitiveRegex_PauseInCaller")'...
+Blackboxing (case sensitive) (regex) 'casesensitiveregex_pauseincaller_inner\.js$'...
+Blackboxing (case sensitive) (regex) 'CaseSensitiveRegex_PauseInCaller_middle\.js$'...
+Setting breakpoint in 'CaseSensitiveRegex_PauseInCaller_Inner.js'...
+Evaluating 'CaseSensitiveRegex_PauseInCaller_Outer(10)'...
+
+PAUSED: 'BlackboxedScript' at 'CaseSensitiveRegex_PauseInCaller_Middle:3:1'.
+{
+  "originalReason": "Breakpoint",
+  "originalData": {
+    "breakpointId": "CaseSensitiveRegex_PauseInCaller_Inner.js:2:0"
+  }
+}
+Stepping over...
+
+PAUSED: 'other' at 'CaseSensitiveRegex_PauseInCaller_Outer:3:1'.
+Stepping over...
+
+Resuming...
+PASS: Resumed.
+PASS: Should not pause in 'CaseSensitiveRegex_PauseInCaller_Inner'.
+PASS: Should pause in 'CaseSensitiveRegex_PauseInCaller_Middle'.
+
+
+-- Running test case: Debugger.setShouldBlackboxURL.CaseSensitiveRegex.PauseInCallee
+Evaluating 'createScripts("CaseSensitiveRegex_PauseInCallee")'...
+Blackboxing (case sensitive) (regex) 'casesensitiveregex_pauseincallee_middle\.js$'...
+Blackboxing (case sensitive) (regex) 'CaseSensitiveRegex_PauseInCallee_Outer\.js$'...
+Setting breakpoint in 'CaseSensitiveRegex_PauseInCallee_Outer.js'...
+Evaluating 'CaseSensitiveRegex_PauseInCallee_Outer(10)'...
+
+PAUSED: 'BlackboxedScript' at 'CaseSensitiveRegex_PauseInCallee_Middle:2:4'.
+{
+  "originalReason": "Breakpoint",
+  "originalData": {
+    "breakpointId": "CaseSensitiveRegex_PauseInCallee_Outer.js:2:0"
+  }
+}
+Stepping over...
+
+PAUSED: 'other' at 'CaseSensitiveRegex_PauseInCallee_Middle:3:1'.
+Stepping over...
+
+Resuming...
+PASS: Resumed.
+PASS: Should pause in 'CaseSensitiveRegex_PauseInCallee_Middle'.
+PASS: Should not pause in 'CaseSensitiveRegex_PauseInCallee_Outer'.
+
 
 -- Running test case: Debugger.setShouldBlackboxURL.Invalid.emptyURL
 PASS: Should produce an exception.

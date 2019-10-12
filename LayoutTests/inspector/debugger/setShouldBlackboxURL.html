@@ -6,28 +6,28 @@
 function createScripts(id) {
     eval(
 `
-window.${id}Inner = function ${id}Inner(x) {
+window.${id}_Inner = function ${id}_Inner(x) {
     return x + 42;
 };
-//# sourceURL=${id}Inner.js
+//# sourceURL=${id}_Inner.js
 `
     );
 
     eval(
 `
-window.${id}Middle = function ${id}Middle(x) {
-    return ${id}Inner(x);
+window.${id}_Middle = function ${id}_Middle(x) {
+    return ${id}_Inner(x);
 };
-//# sourceURL=${id}Middle.js
+//# sourceURL=${id}_Middle.js
 `
     );
 
     eval(
 `
-window.${id}Outer = function ${id}Outer(x) {
-    return ${id}Middle(x);
+window.${id}_Outer = function ${id}_Outer(x) {
+    return ${id}_Middle(x);
 };
-//# sourceURL=${id}Outer.js
+//# sourceURL=${id}_Outer.js
 `
     );
 }
@@ -54,6 +54,8 @@ function test()
     };
 
     InspectorProtocol.eventHandler["Debugger.paused"] = function(message) {
+        ProtocolTest.newline();
+
         let topCallFrame = message.params.callFrames[0];
         let functionName = topCallFrame.functionName;
         if (functionName === "global code") {
@@ -62,14 +64,12 @@ function test()
             return;
         }
 
-        ProtocolTest.log(`Paused in '${functionName}:${topCallFrame.location.lineNumber}:${topCallFrame.location.columnNumber}'.`);
-        ProtocolTest.log(`Reason: '${message.params.reason}'`);
+        ProtocolTest.log(`PAUSED: '${message.params.reason}' at '${functionName}:${topCallFrame.location.lineNumber}:${topCallFrame.location.columnNumber}'.`);
         if (message.params.data)
             ProtocolTest.json(message.params.data);
         pausedFunctionNames.push(functionName);
 
         ProtocolTest.log("Stepping over...");
-        ProtocolTest.newline();
         InspectorProtocol.sendCommand(`Debugger.stepOver`, {}, InspectorProtocol.checkForError);
     };
 
@@ -78,11 +78,14 @@ function test()
         resumeCallback();
     };
 
-    async function setBlackbox(url) {
-        ProtocolTest.log(`Blackboxing '${url}'...`);
+    async function setBlackbox(url, options = {}) {
+        if (!options.caseSensitive)
+            url = url.toLowerCase();
+
+        ProtocolTest.log(`Blackboxing ${options.caseSensitive ? "(case sensitive) " : ""}${options.isRegex ? "(regex) " : ""}'${url}'...`);
         await InspectorProtocol.awaitCommand({
             method: "Debugger.setShouldBlackboxURL",
-            params: {url, shouldBlackbox: true},
+            params: {url, shouldBlackbox: true, ...options},
         });
     }
 
@@ -109,26 +112,26 @@ function test()
     }
 
     suite.addTestCase({
-        name: "Debugger.setShouldBlackboxURL.stepOver",
+        name: "Debugger.setShouldBlackboxURL.String.stepOver",
         description: "Check that stepping through a blackboxed script doesn't pause.",
         async test() {
             let resumePromise = new Promise((resolve, reject) => {
                 resumeCallback = function() {
-                    ProtocolTest.expectThat(!pausedFunctionNames.includes("stepOverMiddle"), "Should not pause in 'stepOverMiddle'.");
+                    ProtocolTest.expectThat(!pausedFunctionNames.includes("String_StepOver_Middle"), "Should not pause in 'String_StepOver_Middle'.");
                     resolve();
                 };
             });
 
-            let [stepOverInnerSourceURL, stepOverMiddleSourceURL] = await Promise.all([
-                listenForSourceParsed(/stepOverInner\.js$/),
-                listenForSourceParsed(/stepOverMiddle\.js$/),
-                listenForSourceParsed(/stepOverOuter\.js$/),
-                evaluate(`createScripts("stepOver")`),
+            let [innerSourceURL, middleSourceURL, outerSourceURL] = await Promise.all([
+                listenForSourceParsed(/String_StepOver_Inner\.js$/),
+                listenForSourceParsed(/String_StepOver_Middle\.js$/),
+                listenForSourceParsed(/String_StepOver_Outer\.js$/),
+                evaluate(`createScripts("String_StepOver")`),
             ]);
 
-            await setBlackbox(stepOverMiddleSourceURL);
-            await setBreakpoint(stepOverInnerSourceURL, 3); // last line of function, so it only pauses once
-            evaluate(`stepOverOuter(10)`);
+            await setBlackbox(middleSourceURL);
+            await setBreakpoint(innerSourceURL, 3); // last line of function, so it only pauses once
+            await evaluate(`String_StepOver_Outer(10)`);
 
             ProtocolTest.newline();
 
@@ -137,26 +140,26 @@ function test()
     });
 
     suite.addTestCase({
-        name: "Debugger.setShouldBlackboxURL.PauseInCaller",
+        name: "Debugger.setShouldBlackboxURL.String.PauseInCaller",
         description: "Check that the debugger will pause in the caller if a breakpoint is set in a blackboxed script.",
         async test() {
             let resumePromise = new Promise((resolve, reject) => {
                 resumeCallback = function() {
-                    ProtocolTest.expectThat(!pausedFunctionNames.includes("pauseInCallerInner"), "Should not pause in 'pauseInCallerInner'.");
+                    ProtocolTest.expectThat(!pausedFunctionNames.includes("String_PauseInCaller_Inner"), "Should not pause in 'String_PauseInCaller_Inner'.");
                     resolve();
                 };
             });
 
-            let [pauseInCallerInnerSourceURL] = await Promise.all([
-                listenForSourceParsed(/pauseInCallerInner\.js$/),
-                listenForSourceParsed(/pauseInCallerMiddle\.js$/),
-                listenForSourceParsed(/pauseInCallerOuter\.js$/),
-                evaluate(`createScripts("pauseInCaller")`),
+            let [innerSourceURL, middleSourceURL, outerSourceURL] = await Promise.all([
+                listenForSourceParsed(/String_PauseInCaller_Inner\.js$/),
+                listenForSourceParsed(/String_PauseInCaller_Middle\.js$/),
+                listenForSourceParsed(/String_PauseInCaller_Outer\.js$/),
+                evaluate(`createScripts("String_PauseInCaller")`),
             ]);
 
-            await setBlackbox(pauseInCallerInnerSourceURL);
-            await setBreakpoint(pauseInCallerInnerSourceURL, 2);
-            evaluate(`pauseInCallerOuter(10)`);
+            await setBlackbox(innerSourceURL);
+            await setBreakpoint(innerSourceURL, 2);
+            await evaluate(`String_PauseInCaller_Outer(10)`);
 
             ProtocolTest.newline();
 
@@ -165,26 +168,290 @@ function test()
     });
 
     suite.addTestCase({
-        name: "Debugger.setShouldBlackboxURL.PauseInCallee",
+        name: "Debugger.setShouldBlackboxURL.String.PauseInCallee",
         description: "Check that the debugger will pause in the callee if a breakpoint is set in a blackboxed script.",
         async test() {
             let resumePromise = new Promise((resolve, reject) => {
                 resumeCallback = function() {
-                    ProtocolTest.expectThat(!pausedFunctionNames.includes("pauseInCalleeOuter"), "Should not pause in 'pauseInCalleeOuter'.");
+                    ProtocolTest.expectThat(!pausedFunctionNames.includes("String_PauseInCallee_Outer"), "Should not pause in 'String_PauseInCallee_Outer'.");
                     resolve();
                 };
             });
 
-            let [pauseInCalleeInnerSourceURL, pauseInCalleeMiddleSourceURL, pauseInCalleeOuterSourceURL] = await Promise.all([
-                listenForSourceParsed(/pauseInCalleeInner\.js$/),
-                listenForSourceParsed(/pauseInCalleeMiddle\.js$/),
-                listenForSourceParsed(/pauseInCalleeOuter\.js$/),
-                evaluate(`createScripts("pauseInCallee")`),
+            let [innerSourceURL, middleSourceURL, outerSourceURL] = await Promise.all([
+                listenForSourceParsed(/String_PauseInCallee_Inner\.js$/),
+                listenForSourceParsed(/String_PauseInCallee_Middle\.js$/),
+                listenForSourceParsed(/String_PauseInCallee_Outer\.js$/),
+                evaluate(`createScripts("String_PauseInCallee")`),
             ]);
 
-            await setBlackbox(pauseInCalleeOuterSourceURL);
-            await setBreakpoint(pauseInCalleeOuterSourceURL, 2);
-            evaluate(`pauseInCalleeOuter(10)`);
+            await setBlackbox(outerSourceURL);
+            await setBreakpoint(outerSourceURL, 2);
+            await evaluate(`String_PauseInCallee_Outer(10)`);
+
+            ProtocolTest.newline();
+
+            await resumePromise;
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.CaseSensitiveString.stepOver",
+        description: "Check that stepping through a blackboxed script doesn't pause.",
+        async test() {
+            let resumePromise = new Promise((resolve, reject) => {
+                resumeCallback = function() {
+                    ProtocolTest.expectThat(pausedFunctionNames.includes("CaseSensitiveString_StepOver_Inner"), "Should pause in 'CaseSensitiveString_StepOver_Inner'.");
+                    ProtocolTest.expectThat(!pausedFunctionNames.includes("CaseSensitiveString_StepOver_Middle"), "Should not pause in 'CaseSensitiveString_StepOver_Middle'.");
+                    resolve();
+                };
+            });
+
+            let [innerSourceURL, middleSourceURL, outerSourceURL] = await Promise.all([
+                listenForSourceParsed(/CaseSensitiveString_StepOver_Inner\.js$/),
+                listenForSourceParsed(/CaseSensitiveString_StepOver_Middle\.js$/),
+                listenForSourceParsed(/CaseSensitiveString_StepOver_Outer\.js$/),
+                evaluate(`createScripts("CaseSensitiveString_StepOver")`),
+            ]);
+
+            await setBlackbox(innerSourceURL.toLowerCase(), {caseSensitive: true});
+            await setBlackbox(middleSourceURL, {caseSensitive: true});
+            await setBreakpoint(innerSourceURL, 3); // last line of function, so it only pauses once
+            await evaluate(`CaseSensitiveString_StepOver_Outer(10)`);
+
+            ProtocolTest.newline();
+
+            await resumePromise;
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.CaseSensitiveString.PauseInCaller",
+        description: "Check that the debugger will pause in the caller if a breakpoint is set in a blackboxed script.",
+        async test() {
+            let resumePromise = new Promise((resolve, reject) => {
+                resumeCallback = function() {
+                    ProtocolTest.expectThat(!pausedFunctionNames.includes("CaseSensitiveString_PauseInCaller_Inner"), "Should not pause in 'CaseSensitiveString_PauseInCaller_Inner'.");
+                    ProtocolTest.expectThat(pausedFunctionNames.includes("CaseSensitiveString_PauseInCaller_Middle"), "Should pause in 'CaseSensitiveString_PauseInCaller_Middle'.");
+                    resolve();
+                };
+            });
+
+            let [innerSourceURL, middleSourceURL, outerSourceURL] = await Promise.all([
+                listenForSourceParsed(/CaseSensitiveString_PauseInCaller_Inner\.js$/),
+                listenForSourceParsed(/CaseSensitiveString_PauseInCaller_Middle\.js$/),
+                listenForSourceParsed(/CaseSensitiveString_PauseInCaller_Outer\.js$/),
+                evaluate(`createScripts("CaseSensitiveString_PauseInCaller")`),
+            ]);
+
+            await setBlackbox(innerSourceURL, {caseSensitive: true});
+            await setBlackbox(middleSourceURL.toLowerCase(), {caseSensitive: true});
+            await setBreakpoint(innerSourceURL, 2);
+            await evaluate(`CaseSensitiveString_PauseInCaller_Outer(10)`);
+
+            ProtocolTest.newline();
+
+            await resumePromise;
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.CaseSensitiveString.PauseInCallee",
+        description: "Check that the debugger will pause in the callee if a breakpoint is set in a blackboxed script.",
+        async test() {
+            let resumePromise = new Promise((resolve, reject) => {
+                resumeCallback = function() {
+                    ProtocolTest.expectThat(pausedFunctionNames.includes("CaseSensitiveString_PauseInCallee_Middle"), "Should pause in 'CaseSensitiveString_PauseInCallee_Middle'.");
+                    ProtocolTest.expectThat(!pausedFunctionNames.includes("CaseSensitiveString_PauseInCallee_Outer"), "Should not pause in 'CaseSensitiveString_PauseInCallee_Outer'.");
+                    resolve();
+                };
+            });
+
+            let [innerSourceURL, middleSourceURL, outerSourceURL] = await Promise.all([
+                listenForSourceParsed(/CaseSensitiveString_PauseInCallee_Inner\.js$/),
+                listenForSourceParsed(/CaseSensitiveString_PauseInCallee_Middle\.js$/),
+                listenForSourceParsed(/CaseSensitiveString_PauseInCallee_Outer\.js$/),
+                evaluate(`createScripts("CaseSensitiveString_PauseInCallee")`),
+            ]);
+
+            await setBlackbox(middleSourceURL.toLowerCase(), {caseSensitive: true});
+            await setBlackbox(outerSourceURL, {caseSensitive: true});
+            await setBreakpoint(outerSourceURL, 2);
+            await evaluate(`CaseSensitiveString_PauseInCallee_Outer(10)`);
+
+            ProtocolTest.newline();
+
+            await resumePromise;
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.Regex.stepOver",
+        description: "Check that stepping through a blackboxed script doesn't pause.",
+        async test() {
+            let resumePromise = new Promise((resolve, reject) => {
+                resumeCallback = function() {
+                    ProtocolTest.expectThat(!pausedFunctionNames.includes("Regex_StepOver_Middle"), "Should not pause in 'Regex_StepOver_Middle'.");
+                    resolve();
+                };
+            });
+
+            let [innerSourceURL, middleSourceURL, outerSourceURL] = await Promise.all([
+                listenForSourceParsed(/Regex_StepOver_Inner\.js$/),
+                listenForSourceParsed(/Regex_StepOver_Middle\.js$/),
+                listenForSourceParsed(/Regex_StepOver_Outer\.js$/),
+                evaluate(`createScripts("Regex_StepOver")`),
+            ]);
+
+            await setBlackbox("Regex[ -_]StepOver[ -_]Middle\\.js$", {isRegex: true});
+            await setBreakpoint(innerSourceURL, 3); // last line of function, so it only pauses once
+            await evaluate(`Regex_StepOver_Outer(10)`);
+
+            ProtocolTest.newline();
+
+            await resumePromise;
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.Regex.PauseInCaller",
+        description: "Check that the debugger will pause in the caller if a breakpoint is set in a blackboxed script.",
+        async test() {
+            let resumePromise = new Promise((resolve, reject) => {
+                resumeCallback = function() {
+                    ProtocolTest.expectThat(!pausedFunctionNames.includes("Regex_PauseInCaller_Inner"), "Should not pause in 'Regex_PauseInCaller_Inner'.");
+                    resolve();
+                };
+            });
+
+            let [innerSourceURL, middleSourceURL, outerSourceURL] = await Promise.all([
+                listenForSourceParsed(/Regex_PauseInCaller_Inner\.js$/),
+                listenForSourceParsed(/Regex_PauseInCaller_Middle\.js$/),
+                listenForSourceParsed(/Regex_PauseInCaller_Outer\.js$/),
+                evaluate(`createScripts("Regex_PauseInCaller")`),
+            ]);
+
+            await setBlackbox("Regex[ -_]PauseInCaller[ -_]Inner\\.js$", {isRegex: true});
+            await setBreakpoint(innerSourceURL, 2);
+            await evaluate(`Regex_PauseInCaller_Outer(10)`);
+
+            ProtocolTest.newline();
+
+            await resumePromise;
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.Regex.PauseInCallee",
+        description: "Check that the debugger will pause in the callee if a breakpoint is set in a blackboxed script.",
+        async test() {
+            let resumePromise = new Promise((resolve, reject) => {
+                resumeCallback = function() {
+                    ProtocolTest.expectThat(!pausedFunctionNames.includes("Regex_PauseInCallee_Outer"), "Should not pause in 'Regex_PauseInCallee_Outer'.");
+                    resolve();
+                };
+            });
+
+            let [innerSourceURL, middleSourceURL, outerSourceURL] = await Promise.all([
+                listenForSourceParsed(/Regex_PauseInCallee_Inner\.js$/),
+                listenForSourceParsed(/Regex_PauseInCallee_Middle\.js$/),
+                listenForSourceParsed(/Regex_PauseInCallee_Outer\.js$/),
+                evaluate(`createScripts("Regex_PauseInCallee")`),
+            ]);
+
+            await setBlackbox("Regex[ -_]PauseInCallee[ -_]Outer\\.js$", {isRegex: true});
+            await setBreakpoint(outerSourceURL, 2);
+            await evaluate(`Regex_PauseInCallee_Outer(10)`);
+
+            ProtocolTest.newline();
+
+            await resumePromise;
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.CaseSensitiveRegex.stepOver",
+        description: "Check that stepping through a blackboxed script doesn't pause.",
+        async test() {
+            let resumePromise = new Promise((resolve, reject) => {
+                resumeCallback = function() {
+                    ProtocolTest.expectThat(pausedFunctionNames.includes("CaseSensitiveRegex_StepOver_Inner"), "Should pause in 'CaseSensitiveRegex_StepOver_Inner'.");
+                    ProtocolTest.expectThat(!pausedFunctionNames.includes("CaseSensitiveRegex_StepOver_Middle"), "Should not pause in 'CaseSensitiveRegex_StepOver_Middle'.");
+                    resolve();
+                };
+            });
+
+            let [innerSourceURL, middleSourceURL, outerSourceURL] = await Promise.all([
+                listenForSourceParsed(/CaseSensitiveRegex_StepOver_Inner\.js$/),
+                listenForSourceParsed(/CaseSensitiveRegex_StepOver_Middle\.js$/),
+                listenForSourceParsed(/CaseSensitiveRegex_StepOver_Outer\.js$/),
+                evaluate(`createScripts("CaseSensitiveRegex_StepOver")`),
+            ]);
+
+            await setBlackbox("casesensitiveregex_stepover_inner\\.js$", {caseSensitive: true, isRegex: true});
+            await setBlackbox("CaseSensitiveRegex_StepOver_Middle\\.js$", {caseSensitive: true, isRegex: true});
+            await setBreakpoint(innerSourceURL, 3); // last line of function, so it only pauses once
+            await evaluate(`CaseSensitiveRegex_StepOver_Outer(10)`);
+
+            ProtocolTest.newline();
+
+            await resumePromise;
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.CaseSensitiveRegex.PauseInCaller",
+        description: "Check that the debugger will pause in the caller if a breakpoint is set in a blackboxed script.",
+        async test() {
+            let resumePromise = new Promise((resolve, reject) => {
+                resumeCallback = function() {
+                    ProtocolTest.expectThat(!pausedFunctionNames.includes("CaseSensitiveRegex_PauseInCaller_Inner"), "Should not pause in 'CaseSensitiveRegex_PauseInCaller_Inner'.");
+                    ProtocolTest.expectThat(pausedFunctionNames.includes("CaseSensitiveRegex_PauseInCaller_Middle"), "Should pause in 'CaseSensitiveRegex_PauseInCaller_Middle'.");
+                    resolve();
+                };
+            });
+
+            let [innerSourceURL, middleSourceURL, outerSourceURL] = await Promise.all([
+                listenForSourceParsed(/CaseSensitiveRegex_PauseInCaller_Inner\.js$/),
+                listenForSourceParsed(/CaseSensitiveRegex_PauseInCaller_Middle\.js$/),
+                listenForSourceParsed(/CaseSensitiveRegex_PauseInCaller_Outer\.js$/),
+                evaluate(`createScripts("CaseSensitiveRegex_PauseInCaller")`),
+            ]);
+
+            await setBlackbox("casesensitiveregex_pauseincaller_inner\\.js$", {caseSensitive: true, isRegex: true});
+            await setBlackbox("CaseSensitiveRegex_PauseInCaller_middle\\.js$", {caseSensitive: true, isRegex: true});
+            await setBreakpoint(innerSourceURL, 2);
+            await evaluate(`CaseSensitiveRegex_PauseInCaller_Outer(10)`);
+
+            ProtocolTest.newline();
+
+            await resumePromise;
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.CaseSensitiveRegex.PauseInCallee",
+        description: "Check that the debugger will pause in the callee if a breakpoint is set in a blackboxed script.",
+        async test() {
+            let resumePromise = new Promise((resolve, reject) => {
+                resumeCallback = function() {
+                    ProtocolTest.expectThat(pausedFunctionNames.includes("CaseSensitiveRegex_PauseInCallee_Middle"), "Should pause in 'CaseSensitiveRegex_PauseInCallee_Middle'.");
+                    ProtocolTest.expectThat(!pausedFunctionNames.includes("CaseSensitiveRegex_PauseInCallee_Outer"), "Should not pause in 'CaseSensitiveRegex_PauseInCallee_Outer'.");
+                    resolve();
+                };
+            });
+
+            let [innerSourceURL, middleSourceURL, outerSourceURL] = await Promise.all([
+                listenForSourceParsed(/CaseSensitiveRegex_PauseInCallee_Inner\.js$/),
+                listenForSourceParsed(/CaseSensitiveRegex_PauseInCallee_Middle\.js$/),
+                listenForSourceParsed(/CaseSensitiveRegex_PauseInCallee_Outer\.js$/),
+                evaluate(`createScripts("CaseSensitiveRegex_PauseInCallee")`),
+            ]);
+
+            await setBlackbox("casesensitiveregex_pauseincallee_middle\\.js$", {caseSensitive: true, isRegex: true});
+            await setBlackbox("CaseSensitiveRegex_PauseInCallee_Outer\\.js$", {caseSensitive: true, isRegex: true});
+            await setBreakpoint(outerSourceURL, 2);
+            await evaluate(`CaseSensitiveRegex_PauseInCallee_Outer(10)`);
 
             ProtocolTest.newline();
 

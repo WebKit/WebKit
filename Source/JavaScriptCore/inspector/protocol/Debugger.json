@@ -300,7 +300,9 @@
             "description": "Sets whether the given URL should be in the list of blackboxed scripts, which are ignored when pausing/stepping/debugging.",
             "parameters": [
                 { "name": "url", "type": "string" },
-                { "name": "shouldBlackbox", "type": "boolean" }
+                { "name": "shouldBlackbox", "type": "boolean" },
+                { "name": "caseSensitive", "type": "boolean", "optional": true, "description": "If true, <code>url</code> is case sensitive." },
+                { "name": "isRegex", "type": "boolean", "optional": true, "description": "If true, treat <code>url</code> as regular expression." }
             ]
         }
     ],

@@ -85,7 +85,7 @@ public:
     void setPauseOnMicrotasks(ErrorString&, bool enabled) final;
     void setPauseForInternalScripts(ErrorString&, bool shouldPause) final;
     void evaluateOnCallFrame(ErrorString&, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, const bool* emulateUserGesture, RefPtr<Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex) override;
-    void setShouldBlackboxURL(ErrorString&, const String& url, bool shouldBlackbox) final;
+    void setShouldBlackboxURL(ErrorString&, const String& url, bool shouldBlackbox, const bool* caseSensitive, const bool* isRegex) final;
 
     // ScriptDebugListener
     void didParseSource(JSC::SourceID, const Script&) final;
@@ -151,10 +151,12 @@ protected:
     virtual void didClearAsyncStackTraceData() { }
 
 private:
+    bool shouldBlackboxURL(const String&) const;
+
     Ref<JSON::ArrayOf<Protocol::Debugger::CallFrame>> currentCallFrames(const InjectedScript&);
 
     void resolveBreakpoint(const Script&, JSC::Breakpoint&);
-    void setBreakpoint(JSC::Breakpoint&, bool& existing);    
+    void setBreakpoint(JSC::Breakpoint&, bool& existing);
     void didSetBreakpoint(const JSC::Breakpoint&, const String&, const ScriptBreakpoint&);
 
     bool assertPaused(ErrorString&);
@@ -185,7 +187,13 @@ private:
     ScriptDebugServer& m_scriptDebugServer;
     InjectedScriptManager& m_injectedScriptManager;
     HashMap<JSC::SourceID, Script> m_scripts;
-    HashSet<String> m_blackboxedURLs;
+
+    struct BlackboxConfig {
+        String url;
+        bool caseSensitive { false };
+        bool isRegex { false };
+    };
+    Vector<BlackboxConfig> m_blackboxedURLs;
 
     HashSet<Listener*> m_listeners;
 

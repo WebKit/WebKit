@@ -89,7 +89,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         this._nextBreakpointActionIdentifier = 1;
 
-        this._blackboxURLsSetting = new WI.Setting("debugger-blackbox-urls", []);
+        this._blackboxedURLsSetting = new WI.Setting("debugger-blackboxed-urls", []);
+        this._blackboxedPatternsSetting = new WI.Setting("debugger-blackboxed-patterns", []);
+        this._blackboxedPatternDataMap = new Map;
 
         this._activeCallFrame = null;
 
@@ -161,8 +163,21 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         // COMPATIBILITY (iOS 13): Debugger.setShouldBlackboxURL did not exist yet.
         if (target.DebuggerAgent.setShouldBlackboxURL) {
-            for (let url of this._blackboxURLsSetting.value)
-                target.DebuggerAgent.setShouldBlackboxURL(url, true);
+            const shouldBlackbox = true;
+
+            {
+                const caseSensitive = true;
+                for (let url of this._blackboxedURLsSetting.value)
+                    target.DebuggerAgent.setShouldBlackboxURL(url, shouldBlackbox, caseSensitive);
+            }
+
+            {
+                const isRegex = true;
+                for (let data of this._blackboxedPatternsSetting.value) {
+                    this._blackboxedPatternDataMap.set(new RegExp(data.url, !data.caseSensitive ? "i" : ""), data);
+                    target.DebuggerAgent.setShouldBlackboxURL(data.url, shouldBlackbox, data.caseSensitive, isRegex);
+                }
+            }
         }
 
         if (WI.isEngineeringBuild) {
@@ -406,9 +421,22 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         return knownScripts;
     }
 
-    isScriptBlackboxed(sourceCode)
+    blackboxDataForSourceCode(sourceCode)
     {
-        return this._blackboxURLsSetting.value.includes(sourceCode.contentIdentifier);
+        for (let regex of this._blackboxedPatternDataMap.keys()) {
+            if (regex.test(sourceCode.contentIdentifier))
+                return {type: DebuggerManager.BlackboxType.Pattern, regex};
+        }
+
+        if (this._blackboxedURLsSetting.value.includes(sourceCode.contentIdentifier))
+            return {type: DebuggerManager.BlackboxType.URL};
+
+        return null;
+    }
+
+    get blackboxPatterns()
+    {
+        return Array.from(this._blackboxedPatternDataMap.keys());
     }
 
     setShouldBlackboxScript(sourceCode, shouldBlackbox)
@@ -417,17 +445,50 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         console.assert(sourceCode instanceof WI.SourceCode);
         console.assert(sourceCode.contentIdentifier);
         console.assert(!isWebKitInjectedScript(sourceCode.contentIdentifier));
+        console.assert(shouldBlackbox !== ((this.blackboxDataForSourceCode(sourceCode) || {}).type === DebuggerManager.BlackboxType.URL));
 
-        this._blackboxURLsSetting.value.toggleIncludes(sourceCode.contentIdentifier, shouldBlackbox);
-        this._blackboxURLsSetting.save();
+        this._blackboxedURLsSetting.value.toggleIncludes(sourceCode.contentIdentifier, shouldBlackbox);
+        this._blackboxedURLsSetting.save();
 
+        const caseSensitive = true;
         for (let target of WI.targets) {
             // COMPATIBILITY (iOS 13): Debugger.setShouldBlackboxURL did not exist yet.
             if (target.DebuggerAgent.setShouldBlackboxURL)
-                target.DebuggerAgent.setShouldBlackboxURL(sourceCode.contentIdentifier, !!shouldBlackbox);
+                target.DebuggerAgent.setShouldBlackboxURL(sourceCode.contentIdentifier, !!shouldBlackbox, caseSensitive);
         }
 
-        this.dispatchEventToListeners(DebuggerManager.Event.BlackboxedURLsChanged);
+        this.dispatchEventToListeners(DebuggerManager.Event.BlackboxChanged);
+    }
+
+    setShouldBlackboxPattern(regex, shouldBlackbox)
+    {
+        console.assert(DebuggerManager.supportsBlackboxingScripts());
+        console.assert(regex instanceof RegExp);
+
+        if (shouldBlackbox) {
+            console.assert(!this._blackboxedPatternDataMap.has(regex));
+
+            let data = {
+                url: regex.source,
+                caseSensitive: !regex.ignoreCase,
+            };
+            this._blackboxedPatternDataMap.set(regex, data);
+            this._blackboxedPatternsSetting.value.push(data);
+        } else {
+            console.assert(this._blackboxedPatternDataMap.has(regex));
+            this._blackboxedPatternsSetting.value.remove(this._blackboxedPatternDataMap.take(regex));
+        }
+
+        this._blackboxedPatternsSetting.save();
+
+        const isRegex = true;
+        for (let target of WI.targets) {
+            // COMPATIBILITY (iOS 13): Debugger.setShouldBlackboxURL did not exist yet.
+            if (target.DebuggerAgent.setShouldBlackboxURL)
+                target.DebuggerAgent.setShouldBlackboxURL(regex.source, !!shouldBlackbox, !regex.ignoreCase, isRegex);
+        }
+
+        this.dispatchEventToListeners(DebuggerManager.Event.BlackboxChanged);
     }
 
     get asyncStackTraceDepth()
@@ -1430,7 +1491,7 @@ WI.DebuggerManager.Event = {
     BreakpointsEnabledDidChange: "debugger-manager-breakpoints-enabled-did-change",
     ProbeSetAdded: "debugger-manager-probe-set-added",
     ProbeSetRemoved: "debugger-manager-probe-set-removed",
-    BlackboxedURLsChanged: "blackboxed-urls-changed",
+    BlackboxChanged: "blackboxed-urls-changed",
 };
 
 WI.DebuggerManager.PauseReason = {
@@ -1456,4 +1517,9 @@ WI.DebuggerManager.PauseReason = {
 
     // COMPATIBILITY (iOS 13): DOMDebugger.EventBreakpointType.EventListener was replaced by DOMDebugger.EventBreakpointType.Listener.
     EventListener: "event-listener",
+};
+
+WI.DebuggerManager.BlackboxType = {
+    Pattern: "pattern",
+    URL: "url",
 };

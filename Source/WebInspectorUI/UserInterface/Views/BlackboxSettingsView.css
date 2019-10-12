@@ -23,47 +23,68 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.tree-outline .item .status > .toggle-script-blackbox,
-.tree-outline:focus .item.selected .status > .toggle-script-blackbox.pattern-blackboxed {
-    content: url(../Images/Hide.svg#white);
+.settings-view.blackbox > :matches(p, table) {
+    width: 100%;
+    max-width: calc(min(50em, 100% - 40px));
+    margin: 1em auto 2em;
 }
 
-.tree-outline .item .status > .toggle-script-blackbox.pattern-blackboxed {
-    content: url(../Images/Hide.svg#black);
+.settings-view.blackbox > p {
+    font-size: 12px;
 }
 
-.tree-outline .item .status > .toggle-script-blackbox {
-    width: 18px;
-    margin-top: 2px;
+.settings-view.blackbox > * + p {
+    margin-top: 2em;
 }
 
-.tree-outline .item .status > .toggle-script-blackbox:not(.pattern-blackboxed) {
-    height: 16px;
-    margin-top: 0;
-    padding: 0 2px;
-    background-color: grey;
-    border-radius: 3px;
+.settings-view.blackbox > p:last-child {
+    margin-bottom: 0;
 }
 
-.tree-outline .item .status > .toggle-script-blackbox:not(.url-blackboxed, .pattern-blackboxed) {
-    opacity: 0.7;
+.settings-view.blackbox > p > .toggle-script-blackbox {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    vertical-align: bottom;
 }
 
-.tree-outline:not(.navigation-sidebar-panel-content-tree-outline) .item .status > .toggle-script-blackbox,
-.tree-outline .item:not(:hover) .status > .toggle-script-blackbox:not(.pattern-blackboxed, .url-blackboxed) {
-    display: none;
+.settings-view.blackbox > table {
+    border-collapse: collapse;
 }
 
-@media (prefers-color-scheme: dark) {
-    .tree-outline .item .status > .toggle-script-blackbox {
-        content: url(../Images/Hide.svg#black);
-    }
+.settings-view.blackbox > table > thead th {
+    padding: 0 4px 4px;
+}
 
-    .tree-outline .item .status > .toggle-script-blackbox.pattern-blackboxed {
-        content: url(../Images/Hide.svg#white);
-    }
+.settings-view.blackbox > table > tbody td {
+    padding: 2px 0;
+}
 
-    .tree-outline .item .status > .toggle-script-blackbox:not(.pattern-blackboxed) {
-        background-color: hsl(0, 0%, 70%);
-    }
+.settings-view.blackbox > table > tbody td:not(.remove-blackbox) {
+    border: 1px solid var(--border-color);
+}
+
+.settings-view.blackbox > table :matches(th, td).url {
+    text-align: start;
+}
+
+.settings-view.blackbox > table > tbody td.url > .CodeMirror {
+    min-width: 110px;
+    height: auto;
+}
+
+.settings-view.blackbox > table :matches(th, td):matches(.case-sensitive, .remove-blackbox) {
+    width: 1px;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.settings-view.blackbox > table > tbody > tr:not(:hover) > td.remove-blackbox {
+    opacity: 0;
+}
+
+.settings-view.blackbox > table > tbody td.remove-blackbox > .remove-blackbox-button {
+    width: 15px;
+    height: 15px;
+    -webkit-margin-start: 4px;
 }

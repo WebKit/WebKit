@@ -103,7 +103,7 @@ void InspectorDebuggerAgent::enable()
         if (isWebKitInjectedScript(script.sourceURL)) {
             if (!m_pauseForInternalScripts)
                 blackboxType = JSC::Debugger::BlackboxType::Ignored;
-        } else if ((!script.sourceURL.isEmpty() && m_blackboxedURLs.contains(script.sourceURL)) || (!script.url.isEmpty() && m_blackboxedURLs.contains(script.url)))
+        } else if (shouldBlackboxURL(script.sourceURL) || shouldBlackboxURL(script.url))
             blackboxType = JSC::Debugger::BlackboxType::Deferred;
         m_scriptDebugServer.setBlackboxType(sourceID, blackboxType);
     }
@@ -890,31 +890,52 @@ void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const
     }
 }
 
-void InspectorDebuggerAgent::setShouldBlackboxURL(ErrorString& errorString, const String& url, bool shouldBlackbox)
+void InspectorDebuggerAgent::setShouldBlackboxURL(ErrorString& errorString, const String& url, bool shouldBlackbox, const bool* optionalCaseSensitive, const bool* optionalIsRegex)
 {
     if (url.isEmpty()) {
         errorString = "URL must not be empty"_s;
         return;
     }
 
-    if (isWebKitInjectedScript(url)) {
+    bool caseSensitive = optionalCaseSensitive && *optionalCaseSensitive;
+    bool isRegex = optionalIsRegex && *optionalIsRegex;
+
+    if (!caseSensitive && !isRegex && isWebKitInjectedScript(url)) {
         errorString = "Blackboxing of internal scripts is controlled by 'Debugger.setPauseForInternalScripts'"_s;
         return;
     }
 
     if (shouldBlackbox)
-        m_blackboxedURLs.add(url);
-    else
-        m_blackboxedURLs.remove(url);
+        m_blackboxedURLs.append({ url, caseSensitive, isRegex });
 
     auto blackboxType = shouldBlackbox ? Optional<JSC::Debugger::BlackboxType>(JSC::Debugger::BlackboxType::Deferred) : WTF::nullopt;
     for (auto& [sourceID, script] : m_scripts) {
         if (isWebKitInjectedScript(script.sourceURL))
             continue;
-        if (script.sourceURL != url && script.url != url)
+        if (!shouldBlackboxURL(script.sourceURL) && !shouldBlackboxURL(script.url))
             continue;
         m_scriptDebugServer.setBlackboxType(sourceID, blackboxType);
     }
+
+    if (!shouldBlackbox) {
+        m_blackboxedURLs.removeAllMatching([&] (const auto& blackboxConfig) {
+            return blackboxConfig.url == url
+                && blackboxConfig.caseSensitive == caseSensitive
+                && blackboxConfig.isRegex == isRegex;
+        });
+    }
+}
+
+bool InspectorDebuggerAgent::shouldBlackboxURL(const String& url) const
+{
+    if (!url.isEmpty()) {
+        for (const auto& blackboxConfig : m_blackboxedURLs) {
+            auto regex = ContentSearchUtilities::createSearchRegex(blackboxConfig.url, blackboxConfig.caseSensitive, blackboxConfig.isRegex);
+            if (regex.match(url) != -1)
+                return true;
+        }
+    }
+    return false;
 }
 
 void InspectorDebuggerAgent::scriptExecutionBlockedByCSP(const String& directiveText)
@@ -971,7 +992,7 @@ void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const Script
     if (isWebKitInjectedScript(sourceURL)) {
         if (!m_pauseForInternalScripts)
             m_scriptDebugServer.setBlackboxType(sourceID, JSC::Debugger::BlackboxType::Ignored);
-    } else if ((hasSourceURL && m_blackboxedURLs.contains(sourceURL)) || (!script.url.isEmpty() && m_blackboxedURLs.contains(script.url)))
+    } else if (shouldBlackboxURL(sourceURL) || shouldBlackboxURL(script.url))
         m_scriptDebugServer.setBlackboxType(sourceID, JSC::Debugger::BlackboxType::Deferred);
 
     String scriptURLForBreakpoints = hasSourceURL ? script.sourceURL : script.url;

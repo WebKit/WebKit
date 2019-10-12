@@ -322,7 +322,7 @@ WI.contentLoaded = function()
 
     WI.settingsTabContentView = new WI.SettingsTabContentView;
 
-    WI._settingsKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, WI.KeyboardShortcut.Key.Comma, WI._showSettingsTab);
+    WI._settingsKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, WI.KeyboardShortcut.Key.Comma, WI._handleSettingsKeyboardShortcut);
 
     // Create the user interface elements.
     WI.toolbar = new WI.Toolbar(document.getElementById("toolbar"));
@@ -714,7 +714,7 @@ WI._openDefaultTab = function(event)
     WI.showNewTabTab({suppressAnimations: true});
 };
 
-WI._showSettingsTab = function(event)
+WI._handleSettingsKeyboardShortcut = function(event)
 {
     if (event.keyIdentifier === "U+002C") // ","
         WI.tabBrowser.showTabForContentView(WI.settingsTabContentView);
@@ -1143,6 +1143,14 @@ WI.showLayersTab = function(options = {})
 WI.isShowingLayersTab = function()
 {
     return WI.tabBrowser.selectedTabContentView instanceof WI.LayersTabContentView;
+};
+
+WI.showSettingsTab = function(options = {})
+{
+    WI.tabBrowser.showTabForContentView(WI.settingsTabContentView);
+
+    if (options.blackboxPatternToSelect)
+        WI.settingsTabContentView.selectBlackboxPattern(options.blackboxPatternToSelect);
 };
 
 WI.indentString = function()

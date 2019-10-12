@@ -85,10 +85,18 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
     contextMenu.appendSeparator();
 
     if (sourceCode.supportsScriptBlackboxing) {
-        let isBlackboxed = WI.debuggerManager.isScriptBlackboxed(sourceCode);
-        contextMenu.appendItem(isBlackboxed ? WI.UIString("Include script when debugging") : WI.UIString("Ignore script when debugging"), () => {
-            WI.debuggerManager.setShouldBlackboxScript(sourceCode, !isBlackboxed);
-        });
+        let blackboxData = WI.debuggerManager.blackboxDataForSourceCode(sourceCode);
+        if (blackboxData && blackboxData.type === WI.DebuggerManager.BlackboxType.Pattern) {
+            contextMenu.appendItem(WI.UIString("Reveal blackbox pattern"), () => {
+                WI.showSettingsTab({
+                    blackboxPatternToSelect: blackboxData.regex,
+                });
+            });
+        } else {
+            contextMenu.appendItem(blackboxData ? WI.UIString("Include script when debugging") : WI.UIString("Ignore script when debugging"), () => {
+                WI.debuggerManager.setShouldBlackboxScript(sourceCode, !blackboxData);
+            });
+        }
     }
 
     contextMenu.appendSeparator();

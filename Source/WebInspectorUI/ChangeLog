@@ -1,5 +1,95 @@
 2019-10-11  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Debugger: support pattern blackboxing
+        https://bugs.webkit.org/show_bug.cgi?id=198855
+
+        Reviewed by Timothy Hatcher.
+
+        Allow scripts to be blackboxed based on URL patterns (in addition to individual URLs) which
+        can be extremely useful when trying to step through unminified library/framework code.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager):
+        (WI.DebuggerManager.prototype.initializeTarget):
+        (WI.DebuggerManager.prototype.blackboxTypeForSourceCode): Added.
+        (WI.DebuggerManager.prototype.get blackboxPatterns): Added.
+        (WI.DebuggerManager.prototype.setShouldBlackboxScript):
+        (WI.DebuggerManager.prototype.setShouldBlackboxPattern): Added.
+        (WI.DebuggerManager.prototype.isScriptBlackboxed): Deleted.
+        Provide a separate path for setting URL pattern blackboxes, rather than an exact/given URL.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView):
+        (WI.SettingsTabContentView.prototype.selectBlackboxPattern): Added.
+        (WI.SettingsTabContentView.prototype.initialLayout):
+        (WI.SettingsTabContentView.prototype._createSourcesSettingsView):
+        * UserInterface/Views/BlackboxSettingsView.js: Added.
+        (WI.BlackboxSettingsView):
+        (WI.BlackboxSettingsView.prototype.selectBlackboxPattern):
+        (WI.BlackboxSettingsView.prototype.initialLayout):
+        (WI.BlackboxSettingsView.prototype._addRow):
+        * UserInterface/Views/BlackboxSettingsView.css: Added.
+        (.settings-view.blackbox > :matches(p, table)):
+        (.settings-view.blackbox > p):
+        (.settings-view.blackbox > * + p):
+        (.settings-view.blackbox > p:last-child):
+        (.settings-view.blackbox > p > .toggle-script-blackbox):
+        (.settings-view.blackbox > table):
+        (.settings-view.blackbox > table > thead th):
+        (.settings-view.blackbox > table > tbody td):
+        (.settings-view.blackbox > table > tbody td:not(.remove-blackbox)):
+        (.settings-view.blackbox > table :matches(th, td).url):
+        (.settings-view.blackbox > table > tbody td.url > .CodeMirror):
+        (.settings-view.blackbox > table :matches(th, td):matches(.case-sensitive, .remove-blackbox)):
+        (.settings-view.blackbox > table > tbody > tr:not(:hover) > td.remove-blackbox):
+        (.settings-view.blackbox > table > tbody td.remove-blackbox > .remove-blackbox-button):
+        Add a "Blackbox" pane that contains an editable table of pattern blackboxes, each having its
+        own row (code mirror for the URL regular expression and a checkbox for case sensitivity).
+
+        * UserInterface/Views/SourceCodeTreeElement.js:
+        (WI.SourceCodeTreeElement.prototype.updateStatus):
+        (WI.SourceCodeTreeElement.prototype._updateSourceCode):
+        (WI.SourceCodeTreeElement.prototype._updateToggleBlackboxImageElementState):
+        (WI.SourceCodeTreeElement.prototype._handleToggleBlackboxedImageElementClicked):
+        * UserInterface/Views/SourceCodeTreeElement.css:
+        (.tree-outline .item .status > .toggle-script-blackbox, .tree-outline:focus .item.selected .status > .toggle-script-blackbox.pattern-blackboxed): Added.
+        (.tree-outline .item .status > .toggle-script-blackbox.pattern-blackboxed): Added.
+        (.tree-outline .item .status > .toggle-script-blackbox): Added.
+        (.tree-outline .item .status > .toggle-script-blackbox:not(.pattern-blackboxed)): Added.
+        (.tree-outline .item .status > .toggle-script-blackbox:not(.url-blackboxed, .pattern-blackboxed)): Added.
+        (.tree-outline:not(.navigation-sidebar-panel-content-tree-outline) .item .status > .toggle-script-blackbox, .tree-outline .item:not(:hover) .status > .toggle-script-blackbox:not(.pattern-blackboxed, .url-blackboxed)): Added.
+        (@media (prefers-color-scheme: dark) .tree-outline .item .status > .toggle-script-blackbox): Added.
+        (@media (prefers-color-scheme: dark) .tree-outline .item .status > .toggle-script-blackbox.pattern-blackboxed): Added.
+        (@media (prefers-color-scheme: dark) .tree-outline .item .status > .toggle-script-blackbox:not(.pattern-blackboxed)): Added.
+        (.tree-outline .item .status > .toggle-script-blackboxed): Deleted.
+        (.tree-outline:not(.navigation-sidebar-panel-content-tree-outline) .item .status > .toggle-script-blackboxed, .tree-outline .item:not(:hover) .status > .toggle-script-blackboxed:not(.blackboxed)): Deleted.
+        (.tree-outline:focus .item.selected .status > .toggle-script-blackboxed): Deleted.
+        (.tree-outline .item .status > .toggle-script-blackboxed.blackboxed): Deleted.
+        (@media (prefers-color-scheme: dark) .tree-outline .item .status > .toggle-script-blackboxed): Deleted.
+        * UserInterface/Views/ShaderProgramTreeElement.css:
+        (.tree-outline .item.shader-program .status > img):
+        (.tree-outline .item.shader-program:not(:hover, .disabled) .status > img): Added.
+        (.tree-outline .item.shader-program:not(.disabled) .status > img): Added.
+        (@media (prefers-color-scheme: dark) .tree-outline .item.shader-program .status > img):
+        (.tree-outline .item.shader-program:not(:hover, .selected, .disabled) .status > img): Deleted.
+        (.tree-outline:focus .item.shader-program.selected .status > img): Deleted.
+        (.tree-outline .item.shader-program.disabled .status > img): Deleted.
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForSourceCode):
+        * UserInterface/Images/Hide.svg:
+        Use a slightly different style for the blackbox icon if the source code's URL matches a
+        blackbox pattern. Clicking on the blackbox icon in this state will show the Settings Tab.
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        (WI._handleSettingsKeyboardShortcut): Added.
+        (WI.showSettingsTab): Added.
+        (WI._showSettingsTab): Deleted.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-10-11  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Elements: Computed: show shorthand properties in addition to longhand ones
         https://bugs.webkit.org/show_bug.cgi?id=200554
 

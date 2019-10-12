@@ -1,3 +1,23 @@
+2019-10-11  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Debugger: support pattern blackboxing
+        https://bugs.webkit.org/show_bug.cgi?id=198855
+
+        Reviewed by Timothy Hatcher.
+
+        Allow scripts to be blackboxed based on URL patterns (in addition to individual URLs) which
+        can be extremely useful when trying to step through unminified library/framework code.
+
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::enable):
+        (Inspector::InspectorDebuggerAgent::setShouldBlackboxURL):
+        (Inspector::InspectorDebuggerAgent::shouldBlackboxURL const): Added.
+        (Inspector::InspectorDebuggerAgent::didParseSource):
+
+        * inspector/protocol/Debugger.json:
+        Add `caseSensitive` and `isRegex` optional boolean parameters to `setShouldBlackboxURL`.
+
 2019-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make WebInspector's remote debug EventLoop code into RunLoop

@@ -153,10 +153,22 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         }
     }
 
+    selectBlackboxPattern(regex)
+    {
+        console.assert(regex instanceof RegExp);
+
+        console.assert(this._blackboxSettingsView);
+        this.selectedSettingsView = this._blackboxSettingsView;
+
+        this._blackboxSettingsView.selectBlackboxPattern(regex);
+    }
+
     // Protected
 
     initialLayout()
     {
+        super.initialLayout();
+
         this._navigationBar = new WI.NavigationBar;
         this._navigationBar.addEventListener(WI.NavigationBar.Event.NavigationItemSelected, this._navigationItemSelected, this);
         this.addSubview(this._navigationBar);
@@ -165,6 +177,12 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         this._createElementsSettingsView();
         this._createSourcesSettingsView();
         this._createConsoleSettingsView();
+
+        if (WI.DebuggerManager.supportsBlackboxingScripts()) {
+            this._blackboxSettingsView = new WI.BlackboxSettingsView;
+            this.addSettingsView(this._blackboxSettingsView);
+        }
+
         this._createExperimentalSettingsView();
 
         if (WI.isEngineeringBuild) {
@@ -251,7 +269,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
     {
         let sourcesSettingsView = new WI.SettingsView("sources", WI.UIString("Sources"));
 
-        sourcesSettingsView.addSetting(WI.UIString("Debugger:"), WI.settings.showScopeChainOnPause, WI.UIString("Show Scope Chain on pause"));
+        sourcesSettingsView.addSetting(WI.UIString("Debugging:"), WI.settings.showScopeChainOnPause, WI.UIString("Show Scope Chain on pause"));
 
         sourcesSettingsView.addSeparator();
 

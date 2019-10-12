@@ -162,7 +162,7 @@ WI.SourceCodeTreeElement = class SourceCodeTreeElement extends WI.FolderizedTree
         if (this._sourceCode.supportsScriptBlackboxing) {
             if (!this._toggleBlackboxedImageElement) {
                 this._toggleBlackboxedImageElement = document.createElement("img");
-                this._toggleBlackboxedImageElement.classList.add("toggle-script-blackboxed");
+                this._toggleBlackboxedImageElement.classList.add("toggle-script-blackbox");
                 this._toggleBlackboxedImageElement.addEventListener("click", this._handleToggleBlackboxedImageElementClicked.bind(this));
             }
 
@@ -195,9 +195,9 @@ WI.SourceCodeTreeElement = class SourceCodeTreeElement extends WI.FolderizedTree
         let newSupportsScriptBlackboxing = this._sourceCode.supportsScriptBlackboxing;
         if (oldSupportsScriptBlackboxing !== newSupportsScriptBlackboxing) {
             if (newSupportsScriptBlackboxing)
-                WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.BlackboxedURLsChanged, this._updateToggleBlackboxImageElementState, this);
+                WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.BlackboxChanged, this._updateToggleBlackboxImageElementState, this);
             else
-                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.BlackboxedURLsChanged, this._updateToggleBlackboxImageElementState, this);
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.BlackboxChanged, this._updateToggleBlackboxImageElementState, this);
         }
 
         this.updateSourceMapResources();
@@ -209,15 +209,38 @@ WI.SourceCodeTreeElement = class SourceCodeTreeElement extends WI.FolderizedTree
 
     _updateToggleBlackboxImageElementState()
     {
-        let isBlackboxed = WI.debuggerManager.isScriptBlackboxed(this._sourceCode);
-        this._toggleBlackboxedImageElement.classList.toggle("blackboxed", isBlackboxed);
-        this._toggleBlackboxedImageElement.title = isBlackboxed ? WI.UIString("Include script when debugging") : WI.UIString("Ignore script when debugging");
+        let blackboxData = WI.debuggerManager.blackboxDataForSourceCode(this._sourceCode);
+
+        this._toggleBlackboxedImageElement.classList.toggle("pattern-blackboxed", blackboxData && blackboxData.type === WI.DebuggerManager.BlackboxType.Pattern);
+        this._toggleBlackboxedImageElement.classList.toggle("url-blackboxed", blackboxData && blackboxData.type === WI.DebuggerManager.BlackboxType.URL);
+
+        if (blackboxData) {
+            switch (blackboxData.type) {
+            case WI.DebuggerManager.BlackboxType.Pattern:
+                this._toggleBlackboxedImageElement.title = WI.UIString("Script ignored when debugging due to previously set blackbox URL pattern");
+                break;
+
+            case WI.DebuggerManager.BlackboxType.URL:
+                this._toggleBlackboxedImageElement.title = WI.UIString("Include script when debugging");
+                break;
+            }
+
+            console.assert(this._toggleBlackboxedImageElement.title);
+        } else
+            this._toggleBlackboxedImageElement.title = WI.UIString("Ignore script when debugging");
     }
 
     _handleToggleBlackboxedImageElementClicked(event)
     {
-        let isBlackboxed = WI.debuggerManager.isScriptBlackboxed(this._sourceCode);
-        WI.debuggerManager.setShouldBlackboxScript(this._sourceCode, !isBlackboxed);
+        let blackboxData = WI.debuggerManager.blackboxDataForSourceCode(this._sourceCode);
+        if (blackboxData && blackboxData.type === WI.DebuggerManager.BlackboxType.Pattern) {
+            WI.showSettingsTab({
+                blackboxPatternToSelect: blackboxData.regex,
+            });
+            return;
+        }
+
+        WI.debuggerManager.setShouldBlackboxScript(this._sourceCode, !blackboxData);
 
         this._updateToggleBlackboxImageElementState();
     }
