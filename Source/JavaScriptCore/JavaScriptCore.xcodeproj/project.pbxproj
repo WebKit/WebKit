@@ -1404,7 +1404,6 @@
 		A5398FAB1C750DA40060A963 /* HeapProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = A5398FAA1C750D950060A963 /* HeapProfiler.h */; };
 		A53CE08A18BC21C300BEDF76 /* ConsoleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A53CE08918BC21C300BEDF76 /* ConsoleClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A53F1AC018C90F8F0072EB6D /* framework.sb in Resources */ = {isa = PBXBuildFile; fileRef = A53F1ABE18C90EC70072EB6D /* framework.sb */; };
-		A54982041891D0B00081E5B8 /* EventLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = A54982021891D0B00081E5B8 /* EventLoop.h */; };
 		A54C2AB11C6544F200A18D78 /* HeapSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = A54C2AAF1C6544D100A18D78 /* HeapSnapshot.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A54CF2F6184EAB2400237F19 /* ScriptValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A54CF2F3184EAB2400237F19 /* ScriptValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A54CF2FA184EAEDA00237F19 /* ScriptObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A54CF2F8184EAEDA00237F19 /* ScriptObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4336,8 +4335,6 @@
 		A5398FAA1C750D950060A963 /* HeapProfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapProfiler.h; sourceTree = "<group>"; };
 		A53CE08918BC21C300BEDF76 /* ConsoleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsoleClient.h; sourceTree = "<group>"; };
 		A53F1ABE18C90EC70072EB6D /* framework.sb */ = {isa = PBXFileReference; lastKnownFileType = text; path = framework.sb; sourceTree = "<group>"; };
-		A54982011891D0B00081E5B8 /* EventLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventLoop.cpp; sourceTree = "<group>"; };
-		A54982021891D0B00081E5B8 /* EventLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventLoop.h; sourceTree = "<group>"; };
 		A54C2AAE1C6544D100A18D78 /* HeapSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapSnapshot.cpp; sourceTree = "<group>"; };
 		A54C2AAF1C6544D100A18D78 /* HeapSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapSnapshot.h; sourceTree = "<group>"; };
 		A54CF2F2184EAB2400237F19 /* ScriptValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptValue.cpp; sourceTree = "<group>"; };
@@ -8413,8 +8410,6 @@
 				A5FD0078189B051000633231 /* ConsoleMessage.h */,
 				A57D23EF1891B5B40031C7FA /* ContentSearchUtilities.cpp */,
 				A57D23F01891B5B40031C7FA /* ContentSearchUtilities.h */,
-				A54982011891D0B00081E5B8 /* EventLoop.cpp */,
-				A54982021891D0B00081E5B8 /* EventLoop.h */,
 				A5FD0072189B038C00633231 /* IdentifiersFactory.cpp */,
 				A5FD0073189B038C00633231 /* IdentifiersFactory.h */,
 				A513E5B5185B8BD3007E95AD /* InjectedScript.cpp */,
@@ -9320,7 +9315,6 @@
 				E3EE137621FBD43500D83C4B /* ErrorType.h in Headers */,
 				14AD910C1DCA92940014F9FE /* EvalCodeBlock.h in Headers */,
 				147341D21DC02E2E00AA29BA /* EvalExecutable.h in Headers */,
-				A54982041891D0B00081E5B8 /* EventLoop.h in Headers */,
 				FE1C0FFD1B193E9800B53FCA /* Exception.h in Headers */,
 				FE6029D91D6E1E4F0030204D /* ExceptionEventLocation.h in Headers */,
 				0F12DE101979D5FD0006FF4E /* ExceptionFuzz.h in Headers */,

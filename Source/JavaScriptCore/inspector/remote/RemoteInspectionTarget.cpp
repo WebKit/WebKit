@@ -28,8 +28,9 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#include "EventLoop.h"
+#include "JSGlobalObjectScriptDebugServer.h"
 #include "RemoteInspector.h"
+#include <wtf/RunLoop.h>
 
 namespace Inspector {
 
@@ -57,9 +58,10 @@ void RemoteInspectionTarget::pauseWaitingForAutomaticInspection()
     ASSERT(m_allowed);
     ASSERT(automaticInspectionAllowed());
 
-    EventLoop loop;
-    while (RemoteInspector::singleton().waitingForAutomaticInspection(targetIdentifier()) && !loop.ended())
-        loop.cycle();
+    while (RemoteInspector::singleton().waitingForAutomaticInspection(targetIdentifier())) {
+        if (RunLoop::cycle(JSGlobalObjectScriptDebugServer::runLoopMode()) == RunLoop::CycleResult::Stop)
+            break;
+    }
 }
 
 void RemoteInspectionTarget::unpauseForInitializedInspector()

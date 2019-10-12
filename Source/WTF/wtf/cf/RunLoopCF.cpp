@@ -62,6 +62,13 @@ void RunLoop::wakeUp()
     CFRunLoopWakeUp(m_runLoop.get());
 }
 
+RunLoop::CycleResult RunLoop::cycle(const String& mode)
+{
+    CFTimeInterval timeInterval = 0.05;
+    CFRunLoopRunInMode(mode.isNull() ? kCFRunLoopDefaultMode : mode.createCFString().get(), timeInterval, true);
+    return CycleResult::Continue;
+}
+
 void RunLoop::run()
 {
     AutodrainedPool pool;

@@ -29,7 +29,6 @@
 
 #include "CommonVM.h"
 #include "Document.h"
-#include "EventLoop.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "InspectorController.h"
@@ -116,9 +115,10 @@ void PageScriptDebugServer::runEventLoopWhilePausedInternal()
 
     m_page.incrementNestedRunLoopCount();
 
-    EventLoop loop;
-    while (!m_doneProcessingDebuggerEvents && !loop.ended())
-        loop.cycle();
+    while (!m_doneProcessingDebuggerEvents) {
+        if (RunLoop::cycle() == RunLoop::CycleResult::Stop)
+            break;
+    }
 
     m_page.decrementNestedRunLoopCount();
 }

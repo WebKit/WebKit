@@ -1,3 +1,23 @@
+2019-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make WebInspector's remote debug EventLoop code into RunLoop
+        https://bugs.webkit.org/show_bug.cgi?id=202716
+
+        Reviewed by Joseph Pecoraro.
+
+        This patch merges WebInspector's EventLoop code into RunLoop as a static function.
+
+        * wtf/RunLoop.h:
+        (WTF::RunLoop::cycle):
+        * wtf/cf/RunLoopCF.cpp:
+        (WTF::RunLoop::cycle): Added.
+        * wtf/generic/RunLoopGeneric.cpp:
+        (WTF::RunLoop::cycle): Added.
+        * wtf/glib/RunLoopGLib.cpp:
+        (WTF::RunLoop::cycle): Added.
+        * wtf/win/RunLoopWin.cpp:
+        (WTF::RunLoop::cycle): Added.
+
 2019-10-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make it safe to store a ThreadSafeRefCounted object in Ref & RefPtr safe inside its destructor

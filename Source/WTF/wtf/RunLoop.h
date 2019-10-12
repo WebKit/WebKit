@@ -35,6 +35,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Seconds.h>
 #include <wtf/ThreadingPrimitives.h>
+#include <wtf/text/WTFString.h>
 
 #if USE(GLIB_EVENT_LOOP)
 #include <wtf/glib/GRefPtr.h>
@@ -59,6 +60,9 @@ public:
     WTF_EXPORT_PRIVATE static void run();
     WTF_EXPORT_PRIVATE void stop();
     WTF_EXPORT_PRIVATE void wakeUp();
+
+    enum class CycleResult { Continue, Stop };
+    WTF_EXPORT_PRIVATE CycleResult static cycle(const String& = { });
 
 #if USE(COCOA_EVENT_LOOP)
     WTF_EXPORT_PRIVATE void runForDuration(Seconds duration);

@@ -38,6 +38,8 @@ public:
 
     JSC::JSGlobalObject& globalObject() const { return m_globalObject; }
 
+    static String runLoopMode();
+
 private:
     void attachDebugger() override;
     void detachDebugger(bool isBeingDestroyed) override;

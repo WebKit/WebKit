@@ -58,7 +58,6 @@ list(APPEND WebCore_SOURCES
     platform/network/playstation/CurlSSLHandlePlayStation.cpp
     platform/network/playstation/NetworkStateNotifierPlayStation.cpp
 
-    platform/playstation/EventLoopPlayStation.cpp
     platform/playstation/MIMETypeRegistryPlayStation.cpp
     platform/playstation/PlatformScreenPlayStation.cpp
     platform/playstation/ScrollbarThemePlayStation.cpp

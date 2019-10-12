@@ -553,7 +553,6 @@ heap/WriteBarrierSupport.cpp
 inspector/AsyncStackTrace.cpp
 inspector/ConsoleMessage.cpp
 inspector/ContentSearchUtilities.cpp
-inspector/EventLoop.cpp
 inspector/IdentifiersFactory.cpp
 inspector/InjectedScript.cpp
 inspector/InjectedScriptBase.cpp

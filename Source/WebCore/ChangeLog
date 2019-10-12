@@ -1,3 +1,24 @@
+2019-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make WebInspector's remote debug EventLoop code into RunLoop
+        https://bugs.webkit.org/show_bug.cgi?id=202716
+
+        Reviewed by Joseph Pecoraro.
+
+        Use RunLoop::cycle.
+
+        * PlatformFTW.cmake:
+        * PlatformPlayStation.cmake:
+        * PlatformWin.cmake:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::runEventLoopWhilePausedInternal):
+        * platform/SourcesGLib.txt:
+        * platform/glib/EventLoopGlib.cpp: Removed.
+        * platform/playstation/EventLoopPlayStation.cpp: Removed.
+        * platform/win/EventLoopWin.cpp: Removed.
+
 2019-10-11  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r244239) Layout Test fast/canvas/canvas-too-large-to-draw.html is failing

@@ -117,7 +117,6 @@ list(APPEND WebCore_SOURCES
     platform/win/DragDataWin.cpp
     platform/win/DragImageDirect2D.cpp
     platform/win/DragImageWin.cpp
-    platform/win/EventLoopWin.cpp
     platform/win/GDIObjectCounter.cpp
     platform/win/GDIUtilities.cpp
     platform/win/ImportedFunctionsEnumerator.cpp

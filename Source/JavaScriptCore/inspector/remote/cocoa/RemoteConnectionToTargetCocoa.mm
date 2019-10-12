@@ -28,12 +28,13 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#import "EventLoop.h"
+#import "JSGlobalObjectScriptDebugServer.h"
 #import "RemoteAutomationTarget.h"
 #import "RemoteInspectionTarget.h"
 #import "RemoteInspector.h"
 #import <dispatch/dispatch.h>
 #import <wtf/Optional.h>
+#import <wtf/RunLoop.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <wtf/ios/WebCoreThread.h>
@@ -87,7 +88,9 @@ static void RemoteTargetInitializeGlobalQueue()
 
         // Add to the default run loop mode for default handling, and the JSContext remote inspector run loop mode when paused.
         CFRunLoopAddSource(CFRunLoopGetMain(), rwiRunLoopSource, kCFRunLoopDefaultMode);
-        CFRunLoopAddSource(CFRunLoopGetMain(), rwiRunLoopSource, EventLoop::remoteInspectorRunLoopMode());
+        auto mode = JSGlobalObjectScriptDebugServer::runLoopMode();
+        if (!mode.isNull())
+            CFRunLoopAddSource(CFRunLoopGetMain(), rwiRunLoopSource, mode.createCFString().get());
     });
 }
 
@@ -258,7 +261,9 @@ void RemoteConnectionToTarget::setupRunLoop()
     m_runLoopSource = adoptCF(CFRunLoopSourceCreate(kCFAllocatorDefault, 1, &runLoopSourceContext));
 
     CFRunLoopAddSource(m_runLoop.get(), m_runLoopSource.get(), kCFRunLoopDefaultMode);
-    CFRunLoopAddSource(m_runLoop.get(), m_runLoopSource.get(), EventLoop::remoteInspectorRunLoopMode());
+    auto mode = JSGlobalObjectScriptDebugServer::runLoopMode();
+    if (!mode.isNull())
+        CFRunLoopAddSource(m_runLoop.get(), m_runLoopSource.get(), mode.createCFString().get());
 }
 
 void RemoteConnectionToTarget::teardownRunLoop()
@@ -267,7 +272,9 @@ void RemoteConnectionToTarget::teardownRunLoop()
         return;
 
     CFRunLoopRemoveSource(m_runLoop.get(), m_runLoopSource.get(), kCFRunLoopDefaultMode);
-    CFRunLoopRemoveSource(m_runLoop.get(), m_runLoopSource.get(), EventLoop::remoteInspectorRunLoopMode());
+    auto mode = JSGlobalObjectScriptDebugServer::runLoopMode();
+    if (!mode.isNull())
+        CFRunLoopRemoveSource(m_runLoop.get(), m_runLoopSource.get(), mode.createCFString().get());
 
     m_runLoop = nullptr;
     m_runLoopSource = nullptr;

@@ -120,6 +120,18 @@ void RunLoop::wakeUp()
     ::PostMessage(m_runLoopMessageWindow, PerformWorkMessage, reinterpret_cast<WPARAM>(this), 0);
 }
 
+RunLoop::CycleResult RunLoop::cycle(const String&)
+{
+    MSG message;
+    if (!::GetMessage(&message, 0, 0, 0))
+        return CycleResult::Stop;
+
+    ::TranslateMessage(&message);
+    ::DispatchMessage(&message);
+
+    return CycleResult::Continue;
+}
+
 // RunLoop::Timer
 
 void RunLoop::TimerBase::timerFired()

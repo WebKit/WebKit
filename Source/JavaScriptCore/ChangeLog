@@ -1,3 +1,30 @@
+2019-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make WebInspector's remote debug EventLoop code into RunLoop
+        https://bugs.webkit.org/show_bug.cgi?id=202716
+
+        Reviewed by Joseph Pecoraro.
+
+        Updated the code to use RunLoop::cycle instead of now deleted EventLoop class.
+
+        The runloop mode used in Apple's port is moved to RemoteInspectionTarget::runLoopMode
+        with a special case for watchOS.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * inspector/JSGlobalObjectScriptDebugServer.cpp:
+        (Inspector::JSGlobalObjectScriptDebugServer::runEventLoopWhilePaused):
+        (Inspector::JSGlobalObjectScriptDebugServer::runLoopMode): Added.
+        * inspector/remote/RemoteInspectionTarget.cpp:
+        (Inspector::RemoteInspectionTarget::pauseWaitingForAutomaticInspection):
+        Invoke CFRunLoopAddSource with the runloop mode only expcet on watchOS where
+        we use the default runloop anyway.
+        * inspector/remote/RemoteInspectionTarget.h:
+        * inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm:
+        (Inspector::RemoteTargetInitializeGlobalQueue):
+        (Inspector::RemoteConnectionToTarget::setupRunLoop):
+        (Inspector::RemoteConnectionToTarget::teardownRunLoop):
+
 2019-10-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make it safe to store a ThreadSafeRefCounted object in Ref & RefPtr safe inside its destructor

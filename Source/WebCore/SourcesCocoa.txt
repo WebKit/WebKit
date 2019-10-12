@@ -386,7 +386,6 @@ platform/ios/Device.cpp
 platform/ios/DeviceMotionClientIOS.mm
 platform/ios/DeviceOrientationClientIOS.mm
 platform/ios/DragImageIOS.mm
-platform/ios/EventLoopIOS.mm
 platform/ios/KeyEventIOS.mm
 platform/ios/LegacyTileCache.mm
 platform/ios/LegacyTileGrid.mm
@@ -436,7 +435,6 @@ platform/mac/BlacklistUpdater.mm
 platform/mac/CursorMac.mm
 platform/mac/DragDataMac.mm
 platform/mac/DragImageMac.mm
-platform/mac/EventLoopMac.mm
 platform/mac/KeyEventMac.mm @no-unify
 platform/mac/PlaybackSessionInterfaceMac.mm @no-unify
 platform/mac/LocalCurrentGraphicsContext.mm
