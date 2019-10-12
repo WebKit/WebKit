@@ -1,3 +1,19 @@
+2019-10-11  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (r244239) Layout Test fast/canvas/canvas-too-large-to-draw.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=202870
+        <rdar://51862629>
+
+        Reviewed by Simon Fraser.
+
+        The output from this test depends on the amount of RAM on the system, so
+        modify it to specify a limit for testing which will give reproducible results.
+
+        * fast/canvas/canvas-too-large-to-draw-expected.txt:
+        * fast/canvas/canvas-too-large-to-draw.html:
+        * platform/ios/fast/canvas/canvas-too-large-to-draw-expected.txt: Removed.
+        * platform/ipad/TestExpectations:
+
 2019-10-11  Peng Liu  <peng.liu6@apple.com>
 
         Layout Test media/W3C/audio/events/event_progress.html is flaky

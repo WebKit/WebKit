@@ -304,6 +304,8 @@ public:
     Vector<String> userPreferredAudioCharacteristics() const;
     void setUserPreferredAudioCharacteristic(const String&);
 
+    void setMaxCanvasPixelMemory(unsigned);
+
     ExceptionOr<unsigned> wheelEventHandlerCount();
     ExceptionOr<unsigned> touchEventHandlerCount();
 

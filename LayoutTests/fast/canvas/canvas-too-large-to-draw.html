@@ -10,30 +10,41 @@
   </style>
 </head>
 <body>
-  <canvas id="canvas1"></canvas>
-  <canvas id="canvas2"></canvas>
-  <script>
-    if (window.testRunner)
-      window.testRunner.dumpAsText();
+<p>This test requires Internals.</p>
+<canvas id="canvas1"></canvas>
+<canvas id="canvas2"></canvas>
+<script>
+    function run() {
+        if (!window.testRunner)
+            return;
 
-    var iOSPlatform = navigator.userAgent.search(/\b(iPhone OS|iPad)\b/) != -1;
-    var OSXYosemiteOrOlder = navigator.userAgent.search(/\bMac OS X 10_(8|9|10)(_[0-9]+)?\b/) != -1;
-    var MAX_WIDTH = iOSPlatform ? Math.pow(2, 12) : (OSXYosemiteOrOlder ? Math.pow(2, 13) : Math.pow(2, 14));
-    var MAX_HEIGHT = MAX_WIDTH;
+        window.testRunner.dumpAsText();
 
-    function fillCanvas(id, width, height) {
-      var canvas = document.getElementById(id);
-      canvas.width = width;
-      canvas.height = height;
+        const MAX_WIDTH = 2000;
+        const MAX_HEIGHT = MAX_WIDTH;
 
-      var ctx = canvas.getContext("2d");
+        window.internals.setMaxCanvasPixelMemory(MAX_WIDTH * MAX_HEIGHT * 4);
 
-      ctx.fillStyle = "lime";
-      ctx.fillRect(0, 0, width, height);
-    }
+        function fillCanvas(id, width, height) {
+            const canvas = document.getElementById(id);
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext("2d");
+            if (!ctx)
+                return;
+
+            ctx.fillStyle = "lime";
+            ctx.fillRect(0, 0, width, height);
+        }
     
-    fillCanvas("canvas1", MAX_WIDTH, MAX_HEIGHT);
-    fillCanvas("canvas2", MAX_WIDTH + 1, MAX_HEIGHT);
-  </script>
+        // This uses up all the available memory.
+        fillCanvas("canvas1", MAX_WIDTH, MAX_HEIGHT);
+
+        // Any new canvas from now on should exceed the memory limit.
+        fillCanvas("canvas2", 10, 10);
+    }
+    run();
+</script>
 </body>
 </html>

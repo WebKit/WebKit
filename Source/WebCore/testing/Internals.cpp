@@ -5246,4 +5246,9 @@ void Internals::setMockWebAuthenticationConfiguration(const MockWebAuthenticatio
 }
 #endif
 
+void Internals::setMaxCanvasPixelMemory(unsigned size)
+{
+    HTMLCanvasElement::setMaxPixelMemoryForTesting(size);
+}
+
 } // namespace WebCore

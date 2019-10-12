@@ -55,9 +55,6 @@ http/tests/paymentrequest/payment-response-retry-method.https.html [ Skip ]
 http/tests/paymentrequest/rejects_if_not_active.https.html [ Skip ]
 http/tests/paymentrequest/updateWith-method-pmi-handling.https.html [ Skip ]
 
-# <rdar://problem/51862629> REGRESSION (r244239) [ iPad Sim ] Layout Test fast/canvas/canvas-too-large-to-draw.html is failing
-fast/canvas/canvas-too-large-to-draw.html [ Failure ]
-
 # <rdar://problem/51863703> [ iPad Sim ] New Layout test fast/events/autoscroll-with-software-keyboard.html is failing on iOS 13 iPad Simulator testers
 fast/events/autoscroll-with-software-keyboard.html [ Failure ]
 

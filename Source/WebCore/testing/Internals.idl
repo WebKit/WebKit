@@ -754,6 +754,8 @@ enum CompositingPolicy {
     void postTask(VoidCallback callback);
     void markContextAsInsecure();
 
+    void setMaxCanvasPixelMemory(unsigned long size);
+
     [Conditional=VIDEO, MayThrowException] readonly attribute NowPlayingState nowPlayingState;
 
     [Conditional=VIDEO] HTMLMediaElement bestMediaElementForShowingPlaybackControlsManager(PlaybackControlsPurpose purpose);

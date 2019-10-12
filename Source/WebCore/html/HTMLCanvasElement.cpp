@@ -113,6 +113,7 @@ const InterpolationQuality defaultInterpolationQuality = InterpolationDefault;
 #endif
 
 static size_t activePixelMemory = 0;
+static size_t maxActivePixelMemoryForTesting = 0;
 
 HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
@@ -194,6 +195,9 @@ ExceptionOr<void> HTMLCanvasElement::setWidth(unsigned value)
 
 static inline size_t maxActivePixelMemory()
 {
+    if (maxActivePixelMemoryForTesting)
+        return maxActivePixelMemoryForTesting;
+
     static size_t maxPixelMemory;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
@@ -203,7 +207,13 @@ static inline size_t maxActivePixelMemory()
         maxPixelMemory = std::max(ramSize() / 4, 2151 * MB);
 #endif
     });
+
     return maxPixelMemory;
+}
+
+void HTMLCanvasElement::setMaxPixelMemoryForTesting(size_t size)
+{
+    maxActivePixelMemoryForTesting = size;
 }
 
 ExceptionOr<Optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::ExecState& state, const String& contextId, Vector<JSC::Strong<JSC::Unknown>>&& arguments)

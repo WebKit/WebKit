@@ -152,6 +152,8 @@ public:
     // It would be better to have the contexts own the buffers.
     void setImageBufferAndMarkDirty(std::unique_ptr<ImageBuffer>&&);
 
+    WEBCORE_EXPORT static void setMaxPixelMemoryForTesting(size_t);
+
 private:
     HTMLCanvasElement(const QualifiedName&, Document&);
 
