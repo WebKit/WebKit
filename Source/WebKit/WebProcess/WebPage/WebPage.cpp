@@ -1491,6 +1491,12 @@ void WebPage::suspendForProcessSwap()
         return;
     }
 
+    // Page cache does not break the opener link for the main frame (only does so for the subframes) because the
+    // main frame is normally re-used for the navigation. However, in the case of process-swapping, the main frame
+    // is now hosted in another process and the one in this process is in the cache.
+    if (m_mainFrame && m_mainFrame->coreFrame())
+        m_mainFrame->coreFrame()->loader().detachFromAllOpenedFrames();
+
     send(Messages::WebPageProxy::DidSuspendAfterProcessSwap());
 }
 

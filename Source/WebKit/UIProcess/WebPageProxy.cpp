@@ -796,11 +796,6 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Opt
 
     LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " created suspended page %s for process pid %i, back/forward item %s" PRIu64, identifier().toUInt64(), suspendedPage->loggingString(), m_process->processIdentifier(), fromItem ? fromItem->itemID().logString() : 0);
 
-    // If the client forced a swap then it may not be web-compatible to keep the previous page because other windows may have an opener link to it. We thus close it as soon as we
-    // can do so without flashing.
-    if (processSwapRequestedByClient == ProcessSwapRequestedByClient::Yes)
-        suspendedPage->closeWithoutFlashing();
-
     m_lastSuspendedPage = makeWeakPtr(*suspendedPage);
 
     if (fromItem && shouldUseBackForwardCache())

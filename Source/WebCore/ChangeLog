@@ -1,3 +1,26 @@
+2019-10-12  Chris Dumez  <cdumez@apple.com>
+
+        Back/Forward cache does not work after doing a favorite navigation
+        https://bugs.webkit.org/show_bug.cgi?id=202762
+        <rdar://problem/56126911>
+
+        Reviewed by Antti Koivisto.
+
+        When a subframe goes into the page cache, make sure we null out the opener
+        link of any windows that were opened by this frame. This matches what would
+        happened if this frame were closed.
+
+        Covered by the following API tests:
+        ProcessSwap.PageCacheAfterProcessSwapByClient
+        ProcessSwap.OpenerLinkAfterAPIControlledProcessSwappingOfOpener
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::~FrameLoader):
+        (WebCore::FrameLoader::detachFromAllOpenedFrames):
+        * loader/FrameLoader.h:
+
 2019-10-12  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Make AXIsolatedTree compile again

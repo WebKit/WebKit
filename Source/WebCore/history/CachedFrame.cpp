@@ -179,6 +179,10 @@ CachedFrame::CachedFrame(Frame& frame)
     // 'DidFirstVisuallyNonEmptyLayout' callback gets called against when restoring from PageCache.
     m_view->resetLayoutMilestones();
 
+    // The main frame is reused for the navigation and the opener link to its should thus persist.
+    if (!frame.isMainFrame())
+        frame.loader().detachFromAllOpenedFrames();
+
     frame.loader().client().savePlatformDataToCachedFrame(this);
 
     // documentWillSuspendForPageCache() can set up a layout timer on the FrameView, so clear timers after that.

@@ -3224,6 +3224,82 @@ TEST(ProcessSwap, PageCache1)
     EXPECT_EQ(2u, seenPIDs.size());
 }
 
+TEST(ProcessSwap, PageCacheAfterProcessSwapByClient)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main1.html" toData:pageCache1Bytes];
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main2.html" toData:pageCache1Bytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto messageHandler = adoptNS([[PSONMessageHandler alloc] init]);
+    [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main1.html"]];
+
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pidAfterLoad1 = [webView _webProcessIdentifier];
+
+    EXPECT_EQ(1u, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
+
+    // We force a proces-swap via client API.
+    delegate->decidePolicyForNavigationAction = ^(WKNavigationAction *, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        decisionHandler(_WKNavigationActionPolicyAllowInNewProcess);
+    };
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main2.html"]];
+
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pidAfterLoad2 = [webView _webProcessIdentifier];
+
+    EXPECT_EQ(2u, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
+    EXPECT_NE(pidAfterLoad1, pidAfterLoad2);
+
+    delegate->decidePolicyForNavigationAction = nil;
+
+    [webView goBack];
+    TestWebKitAPI::Util::run(&receivedMessage);
+    receivedMessage = false;
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pidAfterLoad3 = [webView _webProcessIdentifier];
+
+    EXPECT_EQ(2u, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
+    EXPECT_EQ(pidAfterLoad1, pidAfterLoad3);
+    EXPECT_EQ(1u, [receivedMessages count]);
+    EXPECT_TRUE([receivedMessages.get()[0] isEqualToString:@"Was persisted" ]);
+    EXPECT_EQ(2u, seenPIDs.size());
+
+    [webView goForward];
+    TestWebKitAPI::Util::run(&receivedMessage);
+    receivedMessage = false;
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pidAfterLoad4 = [webView _webProcessIdentifier];
+
+    EXPECT_EQ(2u, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
+    EXPECT_EQ(pidAfterLoad2, pidAfterLoad4);
+    EXPECT_EQ(2u, [receivedMessages count]);
+    EXPECT_TRUE([receivedMessages.get()[1] isEqualToString:@"Was persisted" ]);
+    EXPECT_EQ(2u, seenPIDs.size());
+}
+
 TEST(ProcessSwap, PageCacheWhenNavigatingFromJS)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();

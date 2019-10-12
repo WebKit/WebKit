@@ -1,3 +1,15 @@
+2019-10-12  Chris Dumez  <cdumez@apple.com>
+
+        Back/Forward cache does not work after doing a favorite navigation
+        https://bugs.webkit.org/show_bug.cgi?id=202762
+        <rdar://problem/56126911>
+
+        Reviewed by Antti Koivisto.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-10-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         requestIdleCallback cannot be enabled in DumpRenderTree on Windows

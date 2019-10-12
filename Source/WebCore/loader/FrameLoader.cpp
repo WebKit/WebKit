@@ -297,14 +297,19 @@ FrameLoader::FrameLoader(Frame& frame, FrameLoaderClient& client)
 FrameLoader::~FrameLoader()
 {
     setOpener(nullptr);
-
-    for (auto& frame : m_openedFrames)
-        frame->loader().m_opener = nullptr;
+    detachFromAllOpenedFrames();
 
     m_client.frameLoaderDestroyed();
 
     if (m_networkingContext)
         m_networkingContext->invalidate();
+}
+
+void FrameLoader::detachFromAllOpenedFrames()
+{
+    for (auto& frame : m_openedFrames)
+        frame->loader().m_opener = nullptr;
+    m_openedFrames.clear();
 }
 
 void FrameLoader::init()

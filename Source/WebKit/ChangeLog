@@ -1,5 +1,27 @@
 2019-10-12  Chris Dumez  <cdumez@apple.com>
 
+        Back/Forward cache does not work after doing a favorite navigation
+        https://bugs.webkit.org/show_bug.cgi?id=202762
+        <rdar://problem/56126911>
+
+        Reviewed by Antti Koivisto.
+
+        When a process-swap was forced by the client, we would always close the page in the previous
+        process after navigating. This would prevent leveraging the back/forward cache when navigating
+        back after such a process-swap. The reason we were doing this is that other pages may have
+        opener link to this page and closing the page was an easy way to break this opener link.
+
+        To address the issue, we no longer close the previous page when a process-swap is forced by the
+        client. Instead, we make sure to disconnect the frames' openees from their opener then the opener
+        enters the page cache.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::suspendCurrentPageIfPossible):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::suspendForProcessSwap):
+
+2019-10-12  Chris Dumez  <cdumez@apple.com>
+
         Clearing Website data for a given session should not shut down cached processes for other sessions
         https://bugs.webkit.org/show_bug.cgi?id=202865
         <rdar://problem/56202912>

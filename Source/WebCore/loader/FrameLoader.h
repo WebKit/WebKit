@@ -253,6 +253,7 @@ public:
 
     WEBCORE_EXPORT Frame* opener();
     WEBCORE_EXPORT void setOpener(Frame*);
+    WEBCORE_EXPORT void detachFromAllOpenedFrames();
     bool hasOpenedFrames() const { return !m_openedFrames.isEmpty(); }
 
     void resetMultipleFormSubmissionProtection();
