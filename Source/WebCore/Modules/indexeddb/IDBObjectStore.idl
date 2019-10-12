@@ -28,6 +28,7 @@
 typedef (DOMString or sequence<DOMString>) IDBKeyPath;
 
 [
+    ActiveDOMObject,
     Conditional=INDEXED_DATABASE,
     GenerateIsReachable=Impl,
     JSCustomMarkFunction,

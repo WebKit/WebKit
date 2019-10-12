@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSTestNamedConstructor.h"
 
+#include "ActiveDOMObject.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvertInterface.h"
@@ -148,6 +149,8 @@ void JSTestNamedConstructor::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
+
+    static_assert(std::is_base_of<ActiveDOMObject, TestNamedConstructor>::value, "Interface is marked as [ActiveDOMObject] but implementation class does not subclass ActiveDOMObject.");
 
 }
 

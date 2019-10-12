@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSTestPromiseRejectionEvent.h"
 
+#include "ActiveDOMObject.h"
 #include "DOMPromiseProxy.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
@@ -214,6 +215,8 @@ void JSTestPromiseRejectionEvent::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
+
+    static_assert(!std::is_base_of<ActiveDOMObject, TestPromiseRejectionEvent>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 }
 

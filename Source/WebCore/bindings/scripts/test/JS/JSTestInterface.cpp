@@ -24,6 +24,7 @@
 
 #include "JSTestInterface.h"
 
+#include "ActiveDOMObject.h"
 #include "HTMLNames.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
@@ -416,6 +417,8 @@ void JSTestInterface::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
+
+    static_assert(std::is_base_of<ActiveDOMObject, TestInterface>::value, "Interface is marked as [ActiveDOMObject] but implementation class does not subclass ActiveDOMObject.");
 
 }
 

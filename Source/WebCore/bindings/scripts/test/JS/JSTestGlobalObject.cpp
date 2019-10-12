@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSTestGlobalObject.h"
 
+#include "ActiveDOMObject.h"
 #include "DOMWrapperWorld.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
@@ -700,6 +701,8 @@ void JSTestGlobalObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
+
+    static_assert(!std::is_base_of<ActiveDOMObject, TestGlobalObject>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 #if ENABLE(TEST_FEATURE)
     if (RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())

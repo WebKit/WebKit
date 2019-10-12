@@ -1,3 +1,26 @@
+2019-10-11  Chris Dumez  <cdumez@apple.com>
+
+        Add [ActiveDOMObject] to IDLs of ActiveDOMObjects
+        https://bugs.webkit.org/show_bug.cgi?id=202869
+
+        Reviewed by Ryosuke Niwa.
+
+        Add [ActiveDOMObject] to IDLs of ActiveDOMObjects, this is necessary so that the wrapper
+        stays alive as long as ActiveDOMObject::hasPendingActivity() returns true. We may have
+        subtle lifetime bugs otherwise.
+
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/MediaKeySession.idl:
+        * Modules/entriesapi/FileSystemDirectoryReader.idl:
+        * Modules/entriesapi/FileSystemEntry.idl:
+        * Modules/geolocation/Geolocation.idl:
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/IDBObjectStore.idl:
+        * Modules/paymentrequest/PaymentResponse.idl:
+        * Modules/webvr/VRDisplay.h:
+        * Modules/webvr/VRDisplay.idl:
+        * workers/service/ServiceWorkerContainer.idl:
+
 2019-10-11  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Elements: Computed: show shorthand properties in addition to longhand ones
