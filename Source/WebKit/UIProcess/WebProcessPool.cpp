@@ -1386,8 +1386,9 @@ void WebProcessPool::handleMemoryPressureWarning(Critical)
 {
     RELEASE_LOG(PerformanceLogging, "%p - WebProcessPool::handleMemoryPressureWarning", this);
 
-
-    m_backForwardCache->clear(AllowProcessCaching::No);
+    // Clear back/forward cache first as processes removed from the back/forward cache will likely
+    // be added to the WebProcess cache.
+    m_backForwardCache->clear();
     m_webProcessCache->clear();
 
     if (m_prewarmedProcess)

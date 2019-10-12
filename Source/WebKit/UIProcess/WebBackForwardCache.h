@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <pal/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
 
@@ -34,7 +35,6 @@ class SuspendedPageProxy;
 class WebBackForwardListItem;
 class WebPageProxy;
 class WebProcessProxy;
-enum class AllowProcessCaching;
 
 class WebBackForwardCache {
     WTF_MAKE_FAST_ALLOCATED;
@@ -46,9 +46,10 @@ public:
     unsigned capacity() const { return m_capacity; }
     unsigned size() const { return m_itemsWithCachedPage.size(); }
 
-    void clear(AllowProcessCaching);
+    void clear();
     void removeEntriesForProcess(WebProcessProxy&);
     void removeEntriesForPage(WebPageProxy&);
+    void removeEntriesForSession(PAL::SessionID);
 
     void addEntry(WebBackForwardListItem&, std::unique_ptr<SuspendedPageProxy>&&);
     void removeEntry(WebBackForwardListItem&);

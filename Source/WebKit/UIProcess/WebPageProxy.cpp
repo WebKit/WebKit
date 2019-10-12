@@ -2954,6 +2954,9 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
             RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "decidePolicyForNavigationAction: keep using process %i for navigation, reason: %{public}s", processIdentifier(), reason.utf8().data());
 
         if (shouldProcessSwap) {
+            // Make sure the process to be used for the navigation does not get shutDown now due to destroying SuspendedPageProxy or ProvisionalPageProxy objects.
+            auto preventNavigationProcessShutdown = processForNavigation->makeScopePreventingShutdown();
+
             auto suspendedPage = destinationSuspendedPage ? backForwardCache().takeEntry(*destinationSuspendedPage->backForwardListItem()) : nullptr;
             if (suspendedPage && suspendedPage->pageIsClosedOrClosing())
                 suspendedPage = nullptr;
@@ -3035,10 +3038,11 @@ void WebPageProxy::commitProvisionalPage(FrameIdentifier frameID, uint64_t navig
     m_provisionalPage = nullptr;
 }
 
-void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, std::unique_ptr<SuspendedPageProxy>&& suspendedPageProxy, Ref<WebProcessProxy>&& newProcess, ProcessSwapRequestedByClient processSwapRequestedByClient, Optional<WebsitePoliciesData>&& websitePolicies)
+void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, std::unique_ptr<SuspendedPageProxy>&& suspendedPage, Ref<WebProcessProxy>&& newProcess, ProcessSwapRequestedByClient processSwapRequestedByClient, Optional<WebsitePoliciesData>&& websitePolicies)
 {
-    RELEASE_LOG_IF_ALLOWED(Loading, "continueNavigationInNewProcess: newProcessPID = %i, hasSuspendedPage = %i", newProcess->processIdentifier(), !!suspendedPageProxy);
+    RELEASE_LOG_IF_ALLOWED(Loading, "continueNavigationInNewProcess: newProcessPID = %i, hasSuspendedPage = %i", newProcess->processIdentifier(), !!suspendedPage);
     LOG(Loading, "Continuing navigation %" PRIu64 " '%s' in a new web process", navigation.navigationID(), navigation.loggingString());
+    RELEASE_ASSERT(!newProcess->isInProcessCache());
 
     if (m_provisionalPage) {
         RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "continueNavigationInNewProcess: There is already a pending provisional load, cancelling it (provisonalNavigationID: %llu, navigationID: %llu)", m_provisionalPage->navigationID(), navigation.navigationID());
@@ -3047,7 +3051,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, s
         m_provisionalPage = nullptr;
     }
 
-    m_provisionalPage = makeUnique<ProvisionalPageProxy>(*this, newProcess.copyRef(), WTFMove(suspendedPageProxy), navigation.navigationID(), navigation.currentRequestIsRedirect(), navigation.currentRequest(), processSwapRequestedByClient);
+    m_provisionalPage = makeUnique<ProvisionalPageProxy>(*this, newProcess.copyRef(), WTFMove(suspendedPage), navigation.navigationID(), navigation.currentRequestIsRedirect(), navigation.currentRequest(), processSwapRequestedByClient);
 
     if (auto* item = navigation.targetItem()) {
         LOG(Loading, "WebPageProxy %p continueNavigationInNewProcess to back item URL %s", this, item->url().utf8().data());

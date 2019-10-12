@@ -88,21 +88,16 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
 
 ProvisionalPageProxy::~ProvisionalPageProxy()
 {
+    if (!m_wasCommitted) {
+        if (&m_process->websiteDataStore() != &m_page.websiteDataStore())
+            m_process->processPool().pageEndUsingWebsiteDataStore(m_page.identifier(), m_process->websiteDataStore());
+
+        m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
+        m_process->send(Messages::WebPage::Close(), m_webPageID);
+        m_process->removeVisitedLinkStoreUser(m_page.visitedLinkStore(), m_page.identifier());
+    }
+
     m_process->removeProvisionalPageProxy(*this);
-
-    if (m_wasCommitted)
-        return;
-
-    if (&m_process->websiteDataStore() != &m_page.websiteDataStore())
-        m_process->processPool().pageEndUsingWebsiteDataStore(m_page.identifier(), m_process->websiteDataStore());
-
-    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
-    m_process->send(Messages::WebPage::Close(), m_webPageID);
-    m_process->removeVisitedLinkStoreUser(m_page.visitedLinkStore(), m_page.identifier());
-
-    RunLoop::main().dispatch([process = m_process.copyRef()] {
-        process->maybeShutDown();
-    });
 }
 
 void ProvisionalPageProxy::processDidTerminate()

@@ -116,7 +116,6 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&
 
 SuspendedPageProxy::~SuspendedPageProxy()
 {
-    m_process->decrementSuspendedPageCount();
     allSuspendedPages().remove(this);
 
     if (m_readyToUnsuspendHandler) {
@@ -125,21 +124,16 @@ SuspendedPageProxy::~SuspendedPageProxy()
         });
     }
 
-    if (m_suspensionState == SuspensionState::Resumed)
-        return;
+    if (m_suspensionState != SuspensionState::Resumed) {
+        // If the suspended page was not consumed before getting destroyed, then close the corresponding page
+        // on the WebProcess side.
+        close();
 
-    // If the suspended page was not consumed before getting destroyed, then close the corresponding page
-    // on the WebProcess side.
-    close();
+        if (m_suspensionState == SuspensionState::Suspending)
+            m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
+    }
 
-    if (m_suspensionState == SuspensionState::Suspending)
-        m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
-
-    // We call maybeShutDown() asynchronously since the SuspendedPage is currently being removed from the WebProcessPool
-    // and we want to avoid re-entering WebProcessPool methods.
-    RunLoop::main().dispatch([process = m_process.copyRef()] {
-        process->maybeShutDown();
-    });
+    m_process->decrementSuspendedPageCount();
 }
 
 void SuspendedPageProxy::setBackForwardListItem(WebBackForwardListItem& item)

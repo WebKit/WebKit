@@ -1,3 +1,79 @@
+2019-10-12  Chris Dumez  <cdumez@apple.com>
+
+        Clearing Website data for a given session should not shut down cached processes for other sessions
+        https://bugs.webkit.org/show_bug.cgi?id=202865
+        <rdar://problem/56202912>
+
+        Reviewed by Antti Koivisto.
+
+        When clearing Website data for a given data store, we now only clear cached processes
+        (either if BackForwardCache or WebProcessCache) if they are associated with this
+        particular data store. It is very wasteful otherwise.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::~ProvisionalPageProxy):
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::~SuspendedPageProxy):
+        ProvisionalPageProxy & SuspendedPageProxy's destructors no longer call
+        WebProcessProxy::maybeShutdown() asynchronously. We now call maybeShutdown()
+        synchronously in WebProcessProxy::decrementSuspendedPageCount() and
+        WebProcessProxy::removeProvisionalPageProxy() instead. This makes things a
+        lot more predictable.
+
+        * UIProcess/WebBackForwardCache.cpp:
+        (WebKit::WebBackForwardCache::removeEntriesForSession):
+        Add new removeEntriesForSession() method to clear only back / forward cache
+        entries associated with a particular session.
+
+        (WebKit::WebBackForwardCache::clear):
+        Stop taking a parameter indicating if we allow the processes to enter the
+        process cache. Now that we call maybeShutdown() synchronously when destroying
+        a SuspendedPageProxy, we can simply allow the processes to enter the process
+        cache unconditionally. If the caller does not want this processes in the page
+        cache, they can clear the process cache afterwards.
+
+        * UIProcess/WebBackForwardCache.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        Now that destroying a SuspendedPageProxy or a ProvisionalPageProxy may shutdown
+        their process synchronously, add a scope here to prevent shutdown of the process
+        for the duration of this scope, since we're about to use it for a navigation and
+        we don't want it to get shutdown, even if there is no longer anything using it.
+
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        Add new assertion and rename parameter for consistency.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::handleMemoryPressureWarning):
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::addProvisionalPageProxy):
+        Add new assertion.
+
+        (WebKit::WebProcessProxy::removeProvisionalPageProxy):
+        Call maybeShutDown() if this was the last provisional page.
+
+        (WebKit::WebProcessProxy::maybeShutDown):
+        Drop parameter indicating if we want to allow the process to enter the process
+        cache and allow caching unconditionally.
+
+        (WebKit::WebProcessProxy::canTerminateAuxiliaryProcess):
+        Prevent termination if there is a ScopePreventingShutdown.
+
+        (WebKit::WebProcessProxy::decrementSuspendedPageCount):
+        Call maybeShutDown() if this was the last suspended page.
+
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::ScopePreventingShutdown::ScopePreventingShutdown):
+        (WebKit::WebProcessProxy::ScopePreventingShutdown::~ScopePreventingShutdown):
+        (WebKit::WebProcessProxy::makeScopePreventingShutdown):
+        Add new facility to prevent shutdown of a process for the duration of the scope.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeData):
+        When removing website data, only clear cached processes if they are associated with
+        the current data store.
+
 2019-10-12  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Make AXIsolatedTree compile again

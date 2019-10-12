@@ -30,6 +30,7 @@
 #include "WebBackForwardListItem.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include "WebsiteDataStore.h"
 
 namespace WebKit {
 
@@ -83,6 +84,13 @@ void WebBackForwardCache::removeEntriesForProcess(WebProcessProxy& process)
     });
 }
 
+void WebBackForwardCache::removeEntriesForSession(PAL::SessionID sessionID)
+{
+    removeEntriesMatching([sessionID](auto& item) {
+        return item.suspendedPage()->process().websiteDataStore().sessionID() == sessionID;
+    });
+}
+
 void WebBackForwardCache::removeEntriesForPage(WebPageProxy& page)
 {
     removeEntriesMatching([pageID = page.identifier()](auto& item) {
@@ -102,14 +110,11 @@ void WebBackForwardCache::removeEntriesMatching(const Function<bool(WebBackForwa
     }
 }
 
-void WebBackForwardCache::clear(AllowProcessCaching allowProcessCaching)
+void WebBackForwardCache::clear()
 {
     auto itemsWithCachedPage = WTFMove(m_itemsWithCachedPage);
-    for (auto* item : itemsWithCachedPage) {
-        auto process = makeRef(item->suspendedPage()->process());
+    for (auto* item : itemsWithCachedPage)
         item->setSuspendedPage(nullptr);
-        process->maybeShutDown(allowProcessCaching);
-    }
 }
 
 } // namespace WebKit.

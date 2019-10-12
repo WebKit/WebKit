@@ -94,8 +94,6 @@ typedef RefCounter<BackgroundWebProcessCounterType> BackgroundWebProcessCounter;
 typedef BackgroundWebProcessCounter::Token BackgroundWebProcessToken;
 #endif
 
-enum class AllowProcessCaching { No, Yes };
-
 class WebProcessProxy : public AuxiliaryProcessProxy, public ResponsivenessTimer::Client, public ThreadSafeRefCounted<WebProcessProxy>, public CanMakeWeakPtr<WebProcessProxy>, private ProcessThrottlerClient {
 public:
     typedef HashMap<WebCore::FrameIdentifier, RefPtr<WebFrameProxy>> WebFrameProxyMap;
@@ -272,7 +270,27 @@ public:
     // Called when the web process has crashed or we know that it will terminate soon.
     // Will potentially cause the WebProcessProxy object to be freed.
     void shutDown();
-    void maybeShutDown(AllowProcessCaching = AllowProcessCaching::Yes);
+
+    class ScopePreventingShutdown {
+    public:
+        explicit ScopePreventingShutdown(WebProcessProxy& process)
+            : m_process(process)
+        {
+            ++(m_process->m_shutdownPreventingScopeCount);
+        }
+
+        ~ScopePreventingShutdown()
+        {
+            ASSERT(m_process->m_shutdownPreventingScopeCount);
+            if (!--(m_process->m_shutdownPreventingScopeCount))
+                m_process->maybeShutDown();
+        }
+
+    private:
+        Ref<WebProcessProxy> m_process;
+    };
+
+    ScopePreventingShutdown makeScopePreventingShutdown() { return ScopePreventingShutdown { *this }; }
 
     void didStartProvisionalLoadForMainFrame(const URL&);
 
@@ -404,6 +422,8 @@ private:
     
     void updateRegistrationWithDataStore();
 
+    void maybeShutDown();
+
     enum class IsWeak { No, Yes };
     template<typename T> class WeakOrStrongPtr {
     public:
@@ -482,6 +502,7 @@ private:
 #endif
 
     unsigned m_suspendedPageCount { 0 };
+    unsigned m_shutdownPreventingScopeCount { 0 };
     bool m_hasCommittedAnyProvisionalLoads { false };
     bool m_isPrewarmed;
     bool m_hasAudibleWebPage { false };

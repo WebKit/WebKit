@@ -726,8 +726,10 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
     auto webProcessAccessType = computeWebProcessAccessTypeForDataRemoval(dataTypes, !isPersistent());
     if (webProcessAccessType != ProcessAccessType::None) {
         for (auto& processPool : processPools()) {
-            processPool->backForwardCache().clear(AllowProcessCaching::No);
-            processPool->webProcessCache().clear();
+            // Clear back/forward cache first as processes removed from the back/forward cache will likely
+            // be added to the WebProcess cache.
+            processPool->backForwardCache().removeEntriesForSession(sessionID());
+            processPool->webProcessCache().clearAllProcessesForSession(sessionID());
         }
 
         for (auto& process : processes()) {

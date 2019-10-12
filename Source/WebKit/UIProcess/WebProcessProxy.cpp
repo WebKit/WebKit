@@ -248,6 +248,7 @@ void WebProcessProxy::updateRegistrationWithDataStore()
 
 void WebProcessProxy::addProvisionalPageProxy(ProvisionalPageProxy& provisionalPage)
 {
+    ASSERT(!m_isInProcessCache);
     ASSERT(!m_provisionalPages.contains(&provisionalPage));
     m_provisionalPages.add(&provisionalPage);
     updateRegistrationWithDataStore();
@@ -258,6 +259,8 @@ void WebProcessProxy::removeProvisionalPageProxy(ProvisionalPageProxy& provision
     ASSERT(m_provisionalPages.contains(&provisionalPage));
     m_provisionalPages.remove(&provisionalPage);
     updateRegistrationWithDataStore();
+    if (m_provisionalPages.isEmpty())
+        maybeShutDown();
 }
 
 void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
@@ -937,7 +940,7 @@ bool WebProcessProxy::canBeAddedToWebProcessCache() const
     return true;
 }
 
-void WebProcessProxy::maybeShutDown(AllowProcessCaching allowProcessCaching)
+void WebProcessProxy::maybeShutDown()
 {
     if (processPool().dummyProcessProxy() == this && m_pageMap.isEmpty()) {
         ASSERT(state() == State::Terminated);
@@ -948,7 +951,7 @@ void WebProcessProxy::maybeShutDown(AllowProcessCaching allowProcessCaching)
     if (state() == State::Terminated || !canTerminateAuxiliaryProcess())
         return;
 
-    if (allowProcessCaching == AllowProcessCaching::Yes && canBeAddedToWebProcessCache() && processPool().webProcessCache().addProcessIfPossible(*this))
+    if (canBeAddedToWebProcessCache() && processPool().webProcessCache().addProcessIfPossible(*this))
         return;
 
     shutDown();
@@ -956,7 +959,7 @@ void WebProcessProxy::maybeShutDown(AllowProcessCaching allowProcessCaching)
 
 bool WebProcessProxy::canTerminateAuxiliaryProcess()
 {
-    if (!m_pageMap.isEmpty() || m_suspendedPageCount || !m_provisionalPages.isEmpty() || m_isInProcessCache)
+    if (!m_pageMap.isEmpty() || m_suspendedPageCount || !m_provisionalPages.isEmpty() || m_isInProcessCache || m_shutdownPreventingScopeCount)
         return false;
 
     if (!m_processPool->shouldTerminate(this))
@@ -1483,8 +1486,10 @@ void WebProcessProxy::decrementSuspendedPageCount()
 {
     ASSERT(m_suspendedPageCount);
     --m_suspendedPageCount;
-    if (!m_suspendedPageCount)
+    if (!m_suspendedPageCount) {
         send(Messages::WebProcess::SetHasSuspendedPageProxy(false), 0);
+        maybeShutDown();
+    }
 }
 
 WebProcessPool* WebProcessProxy::processPoolIfExists() const
