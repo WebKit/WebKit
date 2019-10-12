@@ -1,3 +1,15 @@
+2019-10-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        requestIdleCallback cannot be enabled in DumpRenderTree on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=202876
+
+        Reviewed by Wenson Hsieh.
+
+        Added the missing plumbing for Windows port.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (setWebPreferencesForTestOptions):
+
 2019-10-11  Aakash Jain  <aakash_jain@apple.com>
 
         Update build.webkit.org basedir

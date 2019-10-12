@@ -339,6 +339,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitCoreMathMLEnabledPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitRequestIdleCallbackEnabledPreferenceKey), kCFBooleanFalse);
+
     defaultSettings = defaults;
 #endif
 }
@@ -2274,6 +2276,20 @@ HRESULT WebPreferences::coreMathMLEnabled(_Out_ BOOL* enabled)
 HRESULT WebPreferences::setCoreMathMLEnabled(BOOL enabled)
 {
     setBoolValue(WebKitCoreMathMLEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::requestIdleCallbackEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitRequestIdleCallbackEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setRequestIdleCallbackEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitRequestIdleCallbackEnabledPreferenceKey, enabled);
     return S_OK;
 }
 

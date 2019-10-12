@@ -211,3 +211,5 @@
 #define WebKitResizeObserverEnabledPreferenceKey "WebKitResizeObserverEnabled"
 
 #define WebKitCoreMathMLEnabledPreferenceKey "WebKitCoreMathMLEnabled"
+
+#define WebKitRequestIdleCallbackEnabledPreferenceKey "RequestIdleCallbackEnabled"

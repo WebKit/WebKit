@@ -5609,6 +5609,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings.setCoreMathMLEnabled(!!enabled);
 
+    hr = prefsPrivate->requestIdleCallbackEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings.setRequestIdleCallbackEnabled(!!enabled);
+
     return S_OK;
 }
 

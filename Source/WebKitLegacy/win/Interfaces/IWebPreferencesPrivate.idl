@@ -244,4 +244,6 @@ interface IWebPreferencesPrivate7 : IWebPreferencesPrivate6
     HRESULT setResizeObserverEnabled([in] BOOL enabled);
     HRESULT coreMathMLEnabled([out, retval] BOOL* enabled);
     HRESULT setCoreMathMLEnabled([in] BOOL enabled);
+    HRESULT requestIdleCallbackEnabled([out, retval] BOOL* enabled);
+    HRESULT setRequestIdleCallbackEnabled([in] BOOL enabled);
 }

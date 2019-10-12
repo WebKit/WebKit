@@ -903,7 +903,7 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
 
 static void setWebPreferencesForTestOptions(IWebPreferences* preferences, const TestOptions& options)
 {
-    COMPtr<IWebPreferencesPrivate6> prefsPrivate { Query, preferences };
+    COMPtr<IWebPreferencesPrivate7> prefsPrivate { Query, preferences };
 
     prefsPrivate->setWebAnimationsCSSIntegrationEnabled(options.enableWebAnimationsCSSIntegration);
     prefsPrivate->setMenuItemElementEnabled(options.enableMenuItemElement);
@@ -911,6 +911,7 @@ static void setWebPreferencesForTestOptions(IWebPreferences* preferences, const 
     prefsPrivate->setModernMediaControlsEnabled(options.enableModernMediaControls);
     prefsPrivate->setIsSecureContextAttributeEnabled(options.enableIsSecureContextAttribute);
     prefsPrivate->setInspectorAdditionsEnabled(options.enableInspectorAdditions);
+    prefsPrivate->setRequestIdleCallbackEnabled(options.enableRequestIdleCallback);
     preferences->setPrivateBrowsingEnabled(options.useEphemeralSession);
     preferences->setUsesPageCache(options.enablePageCache);
 }
