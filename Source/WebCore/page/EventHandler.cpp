@@ -127,10 +127,6 @@
 #include "PointerLockController.h"
 #endif
 
-#if ENABLE(POINTER_EVENTS)
-#include "RuntimeEnabledFeatures.h"
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 #include "DOMTimerHoldingTank.h"
 #endif

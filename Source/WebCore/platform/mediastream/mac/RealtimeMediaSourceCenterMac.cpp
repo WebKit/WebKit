@@ -38,7 +38,6 @@
 #include "DisplayCaptureManagerCocoa.h"
 #include "Logging.h"
 #include "MediaStreamPrivate.h"
-#include "RuntimeEnabledFeatures.h"
 #include "ScreenDisplayCaptureSourceMac.h"
 #include "WindowDisplayCaptureSourceMac.h"
 #include <wtf/MainThread.h>

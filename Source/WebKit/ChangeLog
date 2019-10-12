@@ -1,3 +1,18 @@
+2019-10-11  Rob Buis  <rbuis@igalia.com>
+
+        Cleanup RuntimeEnabledFeatures includes
+        https://bugs.webkit.org/show_bug.cgi?id=202857
+
+        Reviewed by Eric Carlson.
+
+        These classes must have had made use of runtime flags before
+        but are not using them anymore.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        * UIProcess/WebAuthentication/Cocoa/LocalService.mm:
+        * UIProcess/WebProcessPool.cpp:
+
 2019-10-11  Chris Dumez  <cdumez@apple.com>
 
         Move SuspendedPage logic from WebProcessPool to new WebBackForwardCache class

@@ -1,3 +1,44 @@
+2019-10-11  Rob Buis  <rbuis@igalia.com>
+
+        Cleanup RuntimeEnabledFeatures includes
+        https://bugs.webkit.org/show_bug.cgi?id=202857
+
+        Reviewed by Eric Carlson.
+
+        These classes must have had made use of runtime flags before
+        but are not using them anymore.
+
+        * Modules/mediastream/MediaDevices.cpp:
+        * Modules/mediastream/RTCRtpSender.cpp:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp:
+        * accessibility/AccessibilityObject.cpp:
+        * css/CSSComputedStyleDeclaration.cpp:
+        * css/MediaQueryEvaluator.cpp:
+        * css/MediaQueryExpression.cpp:
+        * css/parser/CSSParser.cpp:
+        * dom/ContainerNode.cpp:
+        * dom/EventTarget.cpp:
+        * dom/Position.cpp:
+        * dom/PseudoElement.cpp:
+        * dom/TreeScope.cpp:
+        * dom/ViewportArguments.cpp:
+        * history/CachedFrame.cpp:
+        * html/HTMLPlugInElement.cpp:
+        * html/HTMLStyleElement.cpp:
+        * html/HTMLTrackElement.cpp:
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        * loader/ResourceLoadNotifier.cpp:
+        * page/DOMWindow.cpp:
+        * page/EventHandler.cpp:
+        * page/PointerLockController.cpp:
+        * page/csp/ContentSecurityPolicy.cpp:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        * rendering/RenderFlexibleBox.cpp:
+        * rendering/style/RenderStyle.cpp:
+        * rendering/updating/RenderTreeUpdater.cpp:
+
 2019-10-11  Chris Dumez  <cdumez@apple.com>
 
         Add [ActiveDOMObject] to IDLs of ActiveDOMObjects

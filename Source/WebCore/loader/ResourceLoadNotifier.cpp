@@ -39,7 +39,6 @@
 #include "Page.h"
 #include "ProgressTracker.h"
 #include "ResourceLoader.h"
-#include "RuntimeEnabledFeatures.h"
 
 #if USE(QUICK_LOOK)
 #include "QuickLook.h"

@@ -30,7 +30,6 @@
 
 #import "LocalAuthenticator.h"
 #import "LocalConnection.h"
-#import <WebCore/RuntimeEnabledFeatures.h>
 
 #import "LocalAuthenticationSoftLink.h"
 

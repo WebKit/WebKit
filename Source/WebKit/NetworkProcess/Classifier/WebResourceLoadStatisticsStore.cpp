@@ -50,7 +50,6 @@
 #include <WebCore/DocumentStorageAccess.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/ResourceLoadStatistics.h>
-#include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/SQLiteDatabase.h>
 #include <WebCore/SQLiteStatement.h>
 #include <wtf/CallbackAggregator.h>

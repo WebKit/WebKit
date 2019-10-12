@@ -90,7 +90,6 @@
 #include <WebCore/RegistrationDatabase.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RuntimeApplicationChecks.h>
-#include <WebCore/RuntimeEnabledFeatures.h>
 #include <pal/SessionID.h>
 #include <wtf/Language.h>
 #include <wtf/MainThread.h>

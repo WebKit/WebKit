@@ -33,7 +33,6 @@
 #include "LibWebRTCUtils.h"
 #include "RTCPeerConnection.h"
 #include "RTCRtpSender.h"
-#include "RuntimeEnabledFeatures.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
