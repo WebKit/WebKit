@@ -37,7 +37,6 @@ typedef unsigned long GPUTextureUsageFlags;
 };
 
 [
-    ActiveDOMObject,
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] interface GPUCanvasContext {

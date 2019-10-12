@@ -92,9 +92,6 @@ public:
     void platformDisplayMounted() override;
     void platformDisplayUnmounted() override;
 
-    // ActiveDOMObject
-    bool hasPendingActivity() const override;
-
 private:
     VRDisplay(ScriptExecutionContext&, WeakPtr<VRPlatformDisplay>&&);
 
@@ -105,6 +102,7 @@ private:
     void derefEventTarget() override { deref(); }
 
     // ActiveDOMObject
+    bool hasPendingActivity() const override;
     const char* activeDOMObjectName() const override;
     bool canSuspendForDocumentSuspension() const override;
     void stop() override;

@@ -1,3 +1,15 @@
+2019-10-12  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r251040.
+
+        Broke IDB tests in Debug
+
+        Reverted changeset:
+
+        "Add [ActiveDOMObject] to IDLs of ActiveDOMObjects"
+        https://bugs.webkit.org/show_bug.cgi?id=202869
+        https://trac.webkit.org/changeset/251040
+
 2019-10-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Invoke callbacks registered by requestIdleCallback

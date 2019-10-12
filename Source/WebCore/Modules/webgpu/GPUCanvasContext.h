@@ -46,9 +46,6 @@ public:
     WebGPUSwapChain* swapChain() const { return m_swapChain.get(); }
     Ref<WebGPUSwapChain> configureSwapChain(const WebGPUSwapChainDescriptor&);
 
-    // FIXME: Stubs.
-    bool hasPendingActivity() const final { return false; }
-
 private:
     GPUCanvasContext(CanvasBase&);
 
@@ -59,6 +56,7 @@ private:
     void markLayerComposited() final;
     const char* activeDOMObjectName() const final { return "GPUCanvasContext"; }
     // FIXME: Stubs.
+    bool hasPendingActivity() const final { return false; }
     void stop() final { }
     bool canSuspendForDocumentSuspension() const final { return false; }
 

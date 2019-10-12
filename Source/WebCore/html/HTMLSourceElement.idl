@@ -23,9 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[
-    ActiveDOMObject,
-] interface HTMLSourceElement : HTMLElement {
+interface HTMLSourceElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect, URL] attribute USVString src;
     [CEReactions=NotNeeded, Reflect] attribute DOMString type;
     [CEReactions=NotNeeded, Reflect] attribute USVString srcset;

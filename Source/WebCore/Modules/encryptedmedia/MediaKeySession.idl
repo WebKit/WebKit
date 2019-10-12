@@ -27,7 +27,6 @@
  */
 
 [
-    ActiveDOMObject,
     Conditional=ENCRYPTED_MEDIA,
     EnabledAtRuntime=EncryptedMediaAPI,
     DisabledByQuirk=hasBrokenEncryptedMediaAPISupport,

@@ -51,7 +51,6 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement) TexI
 #endif
 
 [
-    ActiveDOMObject,
     Conditional=WEBGL2,
     EnabledAtRuntime=WebGL2,
     JSCustomMarkFunction,

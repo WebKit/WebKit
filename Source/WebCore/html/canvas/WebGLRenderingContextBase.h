@@ -365,9 +365,6 @@ public:
     void recycleContext() override;
     void dispatchContextChangedNotification() override;
 
-    // ActiveDOMObject
-    bool hasPendingActivity() const final;
-
 protected:
     WebGLRenderingContextBase(CanvasBase&, WebGLContextAttributes);
     WebGLRenderingContextBase(CanvasBase&, Ref<GraphicsContext3D>&&, WebGLContextAttributes);
@@ -391,6 +388,7 @@ protected:
     void setupFlags();
 
     // ActiveDOMObject
+    bool hasPendingActivity() const override;
     void stop() override;
     const char* activeDOMObjectName() const override;
     bool canSuspendForDocumentSuspension() const override;

@@ -21,7 +21,6 @@
 #include "config.h"
 #include "JSTestNamedAndIndexedSetterNoIdentifier.h"
 
-#include "ActiveDOMObject.h"
 #include "JSDOMAbstractOperations.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
@@ -114,8 +113,6 @@ void JSTestNamedAndIndexedSetterNoIdentifier::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-
-    static_assert(!std::is_base_of<ActiveDOMObject, TestNamedAndIndexedSetterNoIdentifier>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 }
 

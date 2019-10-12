@@ -34,7 +34,6 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement) TexI
 #endif
 
 [
-    ActiveDOMObject,
     Conditional=WEBGL,
     JSCustomMarkFunction,
     JSGenerateToJSObject,

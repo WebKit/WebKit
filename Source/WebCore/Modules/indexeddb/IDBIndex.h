@@ -42,7 +42,7 @@ class IDBKeyRange;
 
 struct IDBKeyRangeData;
 
-class IDBIndex final : public ActiveDOMObject {
+class IDBIndex final : private ActiveDOMObject {
     WTF_MAKE_NONCOPYABLE(IDBIndex);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -87,8 +87,6 @@ public:
 
     void* objectStoreAsOpaqueRoot() { return &m_objectStore; }
 
-    bool hasPendingActivity() const final;
-
 private:
     ExceptionOr<Ref<IDBRequest>> doCount(JSC::ExecState&, const IDBKeyRangeData&);
     ExceptionOr<Ref<IDBRequest>> doGet(JSC::ExecState&, ExceptionOr<IDBKeyRangeData>);
@@ -100,6 +98,7 @@ private:
 
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
+    bool hasPendingActivity() const final;
 
     IDBIndexInfo m_info;
     IDBIndexInfo m_originalInfo;

@@ -21,7 +21,6 @@
 #include "config.h"
 #include "JSTestNamedSetterWithUnforgableProperties.h"
 
-#include "ActiveDOMObject.h"
 #include "JSDOMAbstractOperations.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
@@ -137,8 +136,6 @@ void JSTestNamedSetterWithUnforgableProperties::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-
-    static_assert(!std::is_base_of<ActiveDOMObject, TestNamedSetterWithUnforgableProperties>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 }
 

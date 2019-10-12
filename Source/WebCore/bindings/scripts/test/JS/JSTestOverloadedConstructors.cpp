@@ -21,7 +21,6 @@
 #include "config.h"
 #include "JSTestOverloadedConstructors.h"
 
-#include "ActiveDOMObject.h"
 #include "JSBlob.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
@@ -206,8 +205,6 @@ void JSTestOverloadedConstructors::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-
-    static_assert(!std::is_base_of<ActiveDOMObject, TestOverloadedConstructors>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 }
 

@@ -21,7 +21,6 @@
 #include "config.h"
 #include "JSTestDOMJIT.h"
 
-#include "ActiveDOMObject.h"
 #include "DOMJITAbstractHeapRepository.h"
 #include "DOMJITIDLConvert.h"
 #include "DOMJITIDLType.h"
@@ -573,8 +572,6 @@ void JSTestDOMJIT::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-
-    static_assert(!std::is_base_of<ActiveDOMObject, TestDOMJIT>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 }
 

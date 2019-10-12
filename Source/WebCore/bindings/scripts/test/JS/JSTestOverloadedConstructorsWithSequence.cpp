@@ -21,7 +21,6 @@
 #include "config.h"
 #include "JSTestOverloadedConstructorsWithSequence.h"
 
-#include "ActiveDOMObject.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
 #include "JSDOMConvertInterface.h"
@@ -162,8 +161,6 @@ void JSTestOverloadedConstructorsWithSequence::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-
-    static_assert(!std::is_base_of<ActiveDOMObject, TestOverloadedConstructorsWithSequence>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 }
 

@@ -24,7 +24,6 @@
  */
 
 [
-    ActiveDOMObject,
     EnabledAtRuntime=WebVR,
 ] interface VRDisplay : EventTarget {
     readonly attribute boolean isConnected;

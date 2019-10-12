@@ -21,7 +21,6 @@
 #include "config.h"
 #include "JSTestMediaQueryListListener.h"
 
-#include "ActiveDOMObject.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvertCallbacks.h"
@@ -120,8 +119,6 @@ void JSTestMediaQueryListListener::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-
-    static_assert(!std::is_base_of<ActiveDOMObject, TestMediaQueryListListener>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 }
 

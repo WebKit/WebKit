@@ -21,7 +21,6 @@
 #include "config.h"
 #include "JSTestCEReactions.h"
 
-#include "ActiveDOMObject.h"
 #include "CustomElementReactionQueue.h"
 #include "HTMLNames.h"
 #include "JSDOMAttribute.h"
@@ -144,8 +143,6 @@ void JSTestCEReactions::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-
-    static_assert(!std::is_base_of<ActiveDOMObject, TestCEReactions>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 }
 
