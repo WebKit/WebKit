@@ -204,6 +204,7 @@ class WebAnimation;
 class WebGL2RenderingContext;
 class WebGLRenderingContext;
 class GPUCanvasContext;
+class WindowEventLoop;
 class WindowProxy;
 class Worklet;
 class XPathEvaluator;
@@ -1058,6 +1059,8 @@ public:
 
     WEBCORE_EXPORT void postTask(Task&&) final; // Executes the task on context's thread asynchronously.
 
+    WindowEventLoop& eventLoop();
+
     ScriptedAnimationController* scriptedAnimationController() { return m_scriptedAnimationController.get(); }
     void suspendScriptedAnimationControllerCallbacks();
     void resumeScriptedAnimationControllerCallbacks();
@@ -1210,6 +1213,7 @@ public:
 
     int requestIdleCallback(Ref<IdleRequestCallback>&&, Seconds timeout);
     void cancelIdleCallback(int id);
+    IdleCallbackController* idleCallbackController() { return m_idleCallbackController.get(); }
 
     EventTarget* errorEventTarget() final;
     void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) final;
@@ -2030,6 +2034,8 @@ private:
 
     RefPtr<DocumentTimeline> m_timeline;
     DocumentIdentifier m_identifier;
+
+    RefPtr<WindowEventLoop> m_eventLoop;
 
 #if ENABLE(SERVICE_WORKER)
     RefPtr<SWClientConnection> m_serviceWorkerConnection;

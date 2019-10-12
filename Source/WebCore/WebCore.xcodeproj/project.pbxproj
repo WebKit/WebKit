@@ -2847,6 +2847,7 @@
 		9A528E8417D7F52F00AA9518 /* FloatingObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A528E8217D7F52F00AA9518 /* FloatingObjects.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9AB1F38018E2489A00534743 /* CSSToLengthConversionData.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AB1F37E18E2489A00534743 /* CSSToLengthConversionData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B24DE8E15194B9500C59C27 /* HTMLBDIElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B24DE8C15194B9500C59C27 /* HTMLBDIElement.h */; };
+		9B27FC60234D9ADB00394A46 /* WindowEventLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B27FC5E234D9ADA00394A46 /* WindowEventLoop.h */; };
 		9B2D8A7914997CCF00ECEF3E /* UndoStep.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B2D8A7814997CCF00ECEF3E /* UndoStep.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B32CDA913DF7FA900F34D13 /* RenderedPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B32CDA713DF7FA900F34D13 /* RenderedPosition.h */; };
 		9B417064125662B3006B28FC /* ApplyBlockElementCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B417062125662B3006B28FC /* ApplyBlockElementCommand.h */; };
@@ -11064,6 +11065,8 @@
 		9B19B67E1B964E5200348745 /* ShadowRoot.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ShadowRoot.idl; sourceTree = "<group>"; };
 		9B1AB0791648C69D0051F3F2 /* HTMLFormControlsCollection.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HTMLFormControlsCollection.idl; sourceTree = "<group>"; };
 		9B24DE8C15194B9500C59C27 /* HTMLBDIElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLBDIElement.h; sourceTree = "<group>"; };
+		9B27FC5E234D9ADA00394A46 /* WindowEventLoop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WindowEventLoop.h; sourceTree = "<group>"; };
+		9B27FC5F234D9ADB00394A46 /* WindowEventLoop.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WindowEventLoop.cpp; sourceTree = "<group>"; };
 		9B2D8A7814997CCF00ECEF3E /* UndoStep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UndoStep.h; sourceTree = "<group>"; };
 		9B32CDA713DF7FA900F34D13 /* RenderedPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderedPosition.h; sourceTree = "<group>"; };
 		9B32CDA813DF7FA900F34D13 /* RenderedPosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderedPosition.cpp; sourceTree = "<group>"; };
@@ -28007,6 +28010,8 @@
 				85031B3A0A44EFC700F992E0 /* WheelEvent.cpp */,
 				85031B3B0A44EFC700F992E0 /* WheelEvent.h */,
 				93EEC1F709C2877700C515D1 /* WheelEvent.idl */,
+				9B27FC5F234D9ADB00394A46 /* WindowEventLoop.cpp */,
+				9B27FC5E234D9ADA00394A46 /* WindowEventLoop.h */,
 				0F26A7AC2055C8D70090A141 /* XMLDocument.cpp */,
 				830784B11C52EE1900104D1D /* XMLDocument.h */,
 				830784B01C52EE1900104D1D /* XMLDocument.idl */,
@@ -32520,6 +32525,7 @@
 				939B02EF0EA2DBC400C54570 /* WidthIterator.h in Headers */,
 				0F15ED5C1B7EC7C500EDDFEB /* WillChangeData.h in Headers */,
 				07D60928214C5BFD00E7396C /* WindowDisplayCaptureSourceMac.h in Headers */,
+				9B27FC60234D9ADB00394A46 /* WindowEventLoop.h in Headers */,
 				BC8243E90D0CFD7500460C8F /* WindowFeatures.h in Headers */,
 				7E99AF530B13846468FB01A5 /* WindowFocusAllowedIndicator.h in Headers */,
 				463521AD2081092A00C28922 /* WindowProxy.h in Headers */,

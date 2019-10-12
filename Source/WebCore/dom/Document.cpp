@@ -224,6 +224,7 @@
 #include "VisitedLinkState.h"
 #include "WebAnimation.h"
 #include "WheelEvent.h"
+#include "WindowEventLoop.h"
 #include "WindowFeatures.h"
 #include "Worklet.h"
 #include "XMLDocument.h"
@@ -6124,6 +6125,18 @@ void Document::pendingTasksTimerFired()
         task.performTask(*this);
 }
 
+WindowEventLoop& Document::eventLoop()
+{
+    if (!m_eventLoop) {
+        if (m_contextDocument)
+            m_eventLoop = &m_contextDocument->eventLoop();
+        else // FIXME: Documents of similar origin should share the same event loop.
+            m_eventLoop = WindowEventLoop::create();
+    }
+    return *m_eventLoop;
+
+}
+
 void Document::suspendScheduledTasks(ReasonForSuspension reason)
 {
     if (m_scheduledTasksAreSuspended) {
@@ -6365,7 +6378,7 @@ void Document::clearScriptedAnimationController()
 int Document::requestIdleCallback(Ref<IdleRequestCallback>&& callback, Seconds timeout)
 {
     if (!m_idleCallbackController)
-        m_idleCallbackController = makeUnique<IdleCallbackController>();
+        m_idleCallbackController = makeUnique<IdleCallbackController>(*this);
     return m_idleCallbackController->queueIdleCallback(WTFMove(callback), timeout);
 }
 

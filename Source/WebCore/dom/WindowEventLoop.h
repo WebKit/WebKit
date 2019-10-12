@@ -25,31 +25,41 @@
 
 #pragma once
 
-#include "DOMHighResTimeStamp.h"
-#include <wtf/MonotonicTime.h>
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include "DocumentIdentifier.h"
+#include <memory>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
 class Document;
 
-class IdleDeadline final : public RefCounted<IdleDeadline> {
-public:
-    static Ref<IdleDeadline> create(MonotonicTime deadline)
-    {
-        return adoptRef(*new IdleDeadline(deadline));
-    }
+enum class TaskSource : uint8_t {
+    IdleTask,
+};
 
-    DOMHighResTimeStamp timeRemaining(Document&) const;
-    bool didTimeout(Document&) const;
+// https://html.spec.whatwg.org/multipage/webappapis.html#window-event-loop
+class WindowEventLoop : public RefCounted<WindowEventLoop> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static Ref<WindowEventLoop> create();
+
+    typedef WTF::Function<void ()> TaskFunction;
+
+    void queueTask(TaskSource, Document&, TaskFunction&&);
 
 private:
-    IdleDeadline(MonotonicTime deadline)
-        : m_deadline(deadline)
-    { }
+    WindowEventLoop();
 
-    const MonotonicTime m_deadline;
+    void run();
+
+    struct Task {
+        TaskSource source;
+        TaskFunction task;
+        DocumentIdentifier documentIdentifier;
+    };
+
+    // Use a global queue instead of multiple task queues since HTML5 spec allows UA to pick arbitrary queue.
+    Vector<Task> m_tasks;
 };
 
 } // namespace WebCore

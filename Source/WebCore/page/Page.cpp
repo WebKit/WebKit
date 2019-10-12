@@ -1281,6 +1281,7 @@ void Page::layoutIfNeeded()
         view->updateLayoutAndStyleIfNeededRecursive();
 }
 
+// https://html.spec.whatwg.org/multipage/webappapis.html#update-the-rendering
 void Page::updateRendering()
 {
     // This function is not reentrant, e.g. a rAF callback may force repaint.
@@ -1300,9 +1301,16 @@ void Page::updateRendering()
         documents.append(&document);
     });
 
+    // FIXME: Run the resize steps
+
+    // FIXME: Run the scroll steps
+
+    // FIXME: Evaluate media queries and report changes.
+
     for (auto& document : documents) {
         DOMHighResTimeStamp timestamp = document->domWindow()->nowTimestamp();
         document->updateAnimationsAndSendEvents(timestamp);
+        // FIXME: Run the fullscreen steps.
         document->serviceRequestAnimationFrameCallbacks(timestamp);
     }
 
@@ -1316,6 +1324,9 @@ void Page::updateRendering()
     for (auto& document : documents)
         document->updateResizeObservations(*this);
 #endif
+
+    // FIXME: Flush autofocus candidates
+    // https://github.com/whatwg/html/issues/4992
 
     layoutIfNeeded();
 }

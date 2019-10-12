@@ -23,33 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WindowEventLoop.h"
 
-#include "DOMHighResTimeStamp.h"
-#include <wtf/MonotonicTime.h>
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include "Document.h"
 
 namespace WebCore {
 
-class Document;
+Ref<WindowEventLoop> WindowEventLoop::create()
+{
+    return adoptRef(*new WindowEventLoop);
+}
 
-class IdleDeadline final : public RefCounted<IdleDeadline> {
-public:
-    static Ref<IdleDeadline> create(MonotonicTime deadline)
-    {
-        return adoptRef(*new IdleDeadline(deadline));
+WindowEventLoop::WindowEventLoop()
+{
+}
+
+void WindowEventLoop::queueTask(TaskSource source, Document& document, TaskFunction&& task)
+{
+    if (m_tasks.isEmpty()) {
+        callOnMainThread([eventLoop = makeRef(*this)] () {
+            eventLoop->run();
+        });
     }
+    m_tasks.append(Task { source, WTFMove(task), document.identifier() });
+}
 
-    DOMHighResTimeStamp timeRemaining(Document&) const;
-    bool didTimeout(Document&) const;
-
-private:
-    IdleDeadline(MonotonicTime deadline)
-        : m_deadline(deadline)
-    { }
-
-    const MonotonicTime m_deadline;
-};
+void WindowEventLoop::run()
+{
+    Vector<Task> tasks = WTFMove(m_tasks);
+    ASSERT(m_tasks.isEmpty());
+    for (auto& task : tasks) {
+        auto* document = Document::allDocumentsMap().get(task.documentIdentifier);
+        if (!document || document->activeDOMObjectsAreStopped())
+            continue;
+        // Skip tasks associated with suspended documents.
+        task.task();
+    }
+}
 
 } // namespace WebCore

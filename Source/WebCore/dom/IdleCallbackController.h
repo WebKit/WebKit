@@ -26,8 +26,10 @@
 #pragma once
 
 #include "IdleRequestCallback.h"
+#include <wtf/Deque.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/Seconds.h>
-#include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -35,18 +37,28 @@ class IdleCallbackController {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
+    IdleCallbackController(Document&);
+
     int queueIdleCallback(Ref<IdleRequestCallback>&&, Seconds timeout);
     void removeIdleCallback(int);
 
 private:
+    void queueTaskToStartIdlePeriod();
+    void startIdlePeriod();
+    void queueTaskToInvokeIdleCallbacks(MonotonicTime deadline);
+    void invokeIdleCallbacks(MonotonicTime deadline);
+
     unsigned m_idleCallbackIdentifier { 0 };
+    MonotonicTime m_lastDeadline;
 
     struct IdleRequest {
-        unsigned identifier;
+        unsigned identifier { 0 };
         Ref<IdleRequestCallback> callback;
     };
 
-    Vector<IdleRequest> m_idleRequests;
+    Deque<IdleRequest> m_idleRequestCallbacks;
+    Deque<IdleRequest> m_runnableIdleCallbacks;
+    WeakPtr<Document> m_document;
 };
 
 } // namespace WebCore

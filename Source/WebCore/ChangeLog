@@ -1,3 +1,50 @@
+2019-10-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Invoke callbacks registered by requestIdleCallback
+        https://bugs.webkit.org/show_bug.cgi?id=202824
+
+        Reviewed by Antti Koivisto.
+
+        Invoke callbacks registered by requestIdleCallback unless it's canceled.
+
+        To do this, this patch introduces WindowEventLoop class, which represents the HTML5 event loop:
+        https://html.spec.whatwg.org/multipage/webappapis.html#window-event-loop
+
+        Because each and only each agent cluster is meant to have its own window event loop, this class will be shared
+        across multiple documents of the same registrable domain:
+        https://html.spec.whatwg.org/multipage/webappapis.html#integration-with-the-javascript-agent-cluster-formalism
+
+        Tests: requestidlecallback/requestidlecallback-is-called.html
+               requestidlecallback/requestidlecallback-is-not-called-when-canceled.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::eventLoop): Added.
+        (WebCore::Document::requestIdleCallback): Associate IdleCallbackController with this document.
+        * dom/Document.h:
+        (WebCore::Document::idleCallbackController): Added. Used for release assertions.
+        * dom/IdleCallbackController.cpp:
+        (WebCore::IdleCallbackController::IdleCallbackController): Keeps a weak pointer to Document.
+        (WebCore::IdleCallbackController::queueIdleCallback):
+        (WebCore::IdleCallbackController::removeIdleCallback):
+        (WebCore::IdleCallbackController::queueTaskToStartIdlePeriod): Added.
+        (WebCore::IdleCallbackController::startIdlePeriod): Added. Implements the start an idle period algorithm:
+        https://w3c.github.io/requestidlecallback/#start-an-idle-period-algorithm
+        (WebCore::IdleCallbackController::queueTaskToInvokeIdleCallbacks): Added.
+        (WebCore::IdleCallbackController::invokeIdleCallbacks): Added. The invoke idle callback timeout algorithm:
+        https://w3c.github.io/requestidlecallback/#invoke-idle-callback-timeout-algorithm
+        * dom/IdleCallbackController.h:
+        * dom/IdleDeadline.h:
+        * dom/WindowEventLoop.cpp: Added.
+        (WebCore::WindowEventLoop::create): Added.
+        (WebCore::WindowEventLoop::WindowEventLoop): Added.
+        (WebCore::WindowEventLoop::queueTask): Added.
+        (WebCore::WindowEventLoop::run): Added.
+        * dom/WindowEventLoop.h: Added.
+        * page/Page.cpp:
+        (WebCore::Page::updateRendering): Added comments for the missing pieces.
+
 2019-10-12  Chris Dumez  <cdumez@apple.com>
 
         Back/Forward cache does not work after doing a favorite navigation
