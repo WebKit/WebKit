@@ -26,6 +26,7 @@
 typedef (FetchRequest or USVString) RequestInfo;
 
 [
+    ActiveDOMObject,
     SecureContext,
     Exposed=(Window,Worker),
     EnabledAtRuntime=CacheAPI,

@@ -613,5 +613,10 @@ bool DOMCache::canSuspendForDocumentSuspension() const
     return true;
 }
 
+bool DOMCache::hasPendingActivity() const
+{
+    return m_taskQueue->hasPendingTasks() || ActiveDOMObject::hasPendingActivity();
+}
+
 
 } // namespace WebCore

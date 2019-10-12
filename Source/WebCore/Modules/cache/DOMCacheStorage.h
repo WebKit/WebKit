@@ -47,6 +47,9 @@ public:
     void remove(const String&, DOMPromiseDeferred<IDLBoolean>&&);
     void keys(KeysPromise&&);
 
+    // ActiveDOMObject
+    bool hasPendingActivity() const final;
+
 private:
     DOMCacheStorage(ScriptExecutionContext&, Ref<CacheStorageConnection>&&);
 

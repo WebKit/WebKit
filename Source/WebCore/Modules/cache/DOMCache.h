@@ -63,6 +63,9 @@ public:
 
     CacheStorageConnection& connection() { return m_connection.get(); }
 
+    // ActiveDOMObject
+    bool hasPendingActivity() const final;
+
 private:
     DOMCache(ScriptExecutionContext&, String&& name, uint64_t identifier, Ref<CacheStorageConnection>&&);
 
