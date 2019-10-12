@@ -40,21 +40,6 @@ webkit.org/b/194259 fast/events/ios/rotation/resize-iframe-after-orientation-cha
 webkit.org/b/194259 fast/events/ios/rotation/safari-like-rotation.html [ Skip ]
 webkit.org/b/194259 fast/events/ios/viewport-no-width-value-allows-double-tap.html [ Skip ]
 
-# <rdar://problem/51821914> REGRESSION (iOS 13): iPad Simulator: 13 http/tests/paymentrequest layout tests timing out
-http/tests/paymentrequest/payment-request-abort-method.https.html [ Skip ]
-http/tests/paymentrequest/payment-request-canmakepayment-method.https.html [ Skip ]
-http/tests/paymentrequest/payment-request-merchant-validation.https.html [ Skip ]
-http/tests/paymentrequest/payment-request-show-method.https.html [ Skip ]
-http/tests/paymentrequest/payment-response-complete-method.https.html [ Skip ]
-http/tests/paymentrequest/payment-response-payerEmail-attribute.https.html [ Skip ]
-http/tests/paymentrequest/payment-response-payerName-attribute.https.html [ Skip ]
-http/tests/paymentrequest/payment-response-payerPhone-attribute.https.html [ Skip ]
-http/tests/paymentrequest/payment-response-reference-cycle-leak.https.html [ Skip ]
-http/tests/paymentrequest/payment-response-rejects-if-not-active.https.html [ Skip ]
-http/tests/paymentrequest/payment-response-retry-method.https.html [ Skip ]
-http/tests/paymentrequest/rejects_if_not_active.https.html [ Skip ]
-http/tests/paymentrequest/updateWith-method-pmi-handling.https.html [ Skip ]
-
 # <rdar://problem/51863703> [ iPad Sim ] New Layout test fast/events/autoscroll-with-software-keyboard.html is failing on iOS 13 iPad Simulator testers
 fast/events/autoscroll-with-software-keyboard.html [ Failure ]
 
@@ -74,9 +59,6 @@ media/video-concurrent-visible-playback.html [ Pass Timeout ]
 
 # <rdar://problem/51920910> [ iPad Sim ] Layout test media/video-object-fit-change.html is a flaky timeout
 media/video-concurrent-visible-playback.html [ Pass Timeout ]
-
-# <rdar://problem/52904090> (Layout Test http/tests/paymentrequest/payment-is-showing.https.html is Timing Out on iOS 13)
-http/tests/paymentrequest/payment-is-showing.https.html [ Timeout ]
 
 # <rdar://problem/52914585> (Layout Test fast/forms/file/file-input-reset-using-open-panel.html is Failing)
 fast/forms/file/file-input-reset-using-open-panel.html [ ImageOnlyFailure ]

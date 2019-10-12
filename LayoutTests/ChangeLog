@@ -1,3 +1,11 @@
+2019-10-11  Andy Estes  <aestes@apple.com>
+
+        [iOS] Unreviewed iPad test expectation gardening.
+
+        Un-skip tests in http/tests/paymentrequest/ that no longer time out on iPad.
+
+        * platform/ipad/TestExpectations:
+
 2019-10-11  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r244239) Layout Test fast/canvas/canvas-too-large-to-draw.html is failing
