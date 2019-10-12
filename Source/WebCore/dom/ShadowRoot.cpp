@@ -46,7 +46,8 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(ShadowRoot);
 
 struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
-    unsigned countersAndFlags[1];
+    bool flags[4];
+    uint8_t mode;
     void* styleScope;
     void* styleSheetList;
     void* host;

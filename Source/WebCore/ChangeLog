@@ -1,5 +1,11 @@
 2019-10-11  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Windows build fix attempt after r251043.
+
+        * dom/ShadowRoot.cpp:
+
+2019-10-11  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add the support for ShadowRoot.delegateFocus
         https://bugs.webkit.org/show_bug.cgi?id=166484
         <rdar://problem/29816058>
