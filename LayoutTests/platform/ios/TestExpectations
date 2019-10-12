@@ -3356,9 +3356,6 @@ webkit.org/b/181837 [ Release ] imported/w3c/web-platform-tests/service-workers/
 
 webkit.org/b/201190 imported/w3c/web-platform-tests/service-workers/service-worker/registration-mime-types.https.html [ Pass Failure ]
 
-# <rdar://problem/54325542> quicklook/numbers-09.html is failing
-quicklook/numbers-09.html [ Failure ]
-
 # rdar://53468934
 legacy-animation-engine/fast/text/crash-complex-text-surrogate.html [ Failure ]
 fast/text/crash-complex-text-surrogate.html [ Failure ]

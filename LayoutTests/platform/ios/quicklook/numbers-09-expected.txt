@@ -33,7 +33,7 @@ iframe {
 			<dict>
 				<key>WebResourceData</key>
 				<string>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"&gt;&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;&lt;head&gt;&lt;link rel="stylesheet" type="text/css" href="x-apple-ql-id://resource.css"&gt;&lt;/head&gt;
-&lt;frameset rows="30, *" border="none"&gt;&lt;frame src="x-apple-ql-id://resource.html" name="navPane"&gt;
+&lt;frameset cols="170, *"&gt;&lt;frame src="x-apple-ql-id://resource.html" name="navPane"&gt;
 &lt;frame src="x-apple-ql-id://resource.html" name="sheetPane"&gt;&lt;/frameset&gt;&lt;/html&gt;</string>
 				<key>WebResourceFrameName</key>
 				<string>&lt;!--frame1--&gt;</string>
@@ -70,7 +70,7 @@ div {padding-left: 10px; overflow:hidden; text-overflow:ellipsis;}
 a.navpane-table {padding-left:26px;}
 img {vertical-align: middle;}
 &lt;/style&gt;
-&lt;/head&gt;&lt;body id="body"&gt;&lt;a onclick="javascript:gotoSheet('x-apple-ql-id://resource.html'); return false;" href="#" title="Sheet 1" class="navpane-sheet"&gt;&lt;div id="x-apple-ql-id://resource.html" class="navpane-activesheet"&gt;&lt;img src="" width="35"&gt; Sheet 1&lt;/div&gt;&lt;/a&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/head&gt;&lt;body id="body"&gt;&lt;a onclick="javascript:gotoSheet('x-apple-ql-id://resource.html'); return false;" href="#" title="Sheet 1" class="navpane-sheet"&gt;&lt;div id="x-apple-ql-id://resource.html" class="navpane-activesheet"&gt;&lt;img src="x-apple-ql-id://resource.tiff" width="35"&gt; Sheet 1&lt;/div&gt;&lt;/a&gt;&lt;/body&gt;&lt;/html&gt;</string>
 						<key>WebResourceFrameName</key>
 						<string>navPane</string>
 						<key>WebResourceMIMEType</key>
@@ -753,47 +753,6 @@ position: relative; z-index: 1;
 							<string>UTF-8</string>
 							<key>WebResourceURL</key>
 							<string>x-apple-ql-id://resource.css</string>
-						</dict>
-						<dict>
-							<key>WebResourceData</key>
-							<string>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"&gt;&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;&lt;head&gt;&lt;meta http-equiv="Content-type" content="text/html; charset=UTF-8"&gt;
-&lt;link rel="stylesheet" type="text/css" href="x-apple-ql-id://resource.css"&gt;
-&lt;script type="text/javascript"&gt;var currentSheetUri = 'x-apple-ql-id://resource.html';
-function gotoSheet(sheet)
-{
-    if (sheet != currentSheetUri)
-    {
-        parent.frames['sheetPane'].location = sheet;
-        document.getElementById(currentSheetUri).className = '';
-        document.getElementById(sheet).className = 'navpane-activesheet';
-        currentSheetUri = sheet;
-    }
-}
-&lt;/script&gt;&lt;link rel="stylesheet" type="text/css"&gt;&lt;style&gt;body {background-color: RGB(210,216,226); margin: 0;}
-a {font-size: 11; font-family: "Lucida Grande"; color: black; text-decoration:none; line-height: 1.8; white-space: nowrap;}
-div.navpane-activesheet {background-color: RGB(156,172,198);}
-div {padding-left: 10px; overflow:hidden; text-overflow:ellipsis;}
-a.navpane-table {padding-left:26px;}
-img {vertical-align: middle;}
-&lt;/style&gt;&lt;/link&gt;
-&lt;body id="body"&gt;&lt;a onclick="javascript:gotoSheet('x-apple-ql-id://resource.html'); return false;" href="#" title="Sheet 1" class="navpane-sheet"&gt;&lt;div id="x-apple-ql-id://resource.html" class="navpane-activesheet"&gt;&lt;img src="" width="35"&gt;&amp;ensp;Sheet 1&lt;/div&gt;&lt;/a&gt;&lt;/body&gt;&lt;/head&gt;&lt;/html&gt;</string>
-							<key>WebResourceMIMEType</key>
-							<string>text/html</string>
-							<key>WebResourceResponse</key>
-							<dict>
-								<key>MIMEType</key>
-								<string>text/html</string>
-								<key>URL</key>
-								<string>x-apple-ql-id://resource.html</string>
-								<key>expectedContentLength</key>
-								<integer>-1</integer>
-								<key>textEncodingName</key>
-								<string>UTF-8</string>
-							</dict>
-							<key>WebResourceTextEncodingName</key>
-							<string>UTF-8</string>
-							<key>WebResourceURL</key>
-							<string>x-apple-ql-id://resource.html</string>
 						</dict>
 						<dict>
 							<key>WebResourceData</key>
@@ -3626,6 +3585,324 @@ img {vertical-align: middle;}
 							</dict>
 							<key>WebResourceURL</key>
 							<string>x-apple-ql-id://resource.png</string>
+						</dict>
+						<dict>
+							<key>WebResourceData</key>
+							<data>
+							TU0AKgAABG6AACBQOCQW
+							DQeEQmFQuGQ2HQ+IRGJR
+							OKRWLReMRmNRuORZdLxe
+							P+Cv+RAAAgGBSWTROSQK
+							TwaWyaUQ2YwSXwQEAcDg
+							B/v5/AAf0GZx2Erldrt/
+							kYiESiU2KOqoAB8VMAN+
+							rAAgVmh04AUakUqmRQ0J
+							RvgBMGwQ1yKPW2ABvW8A
+							C25ABgXUAEG8VuOLZcLl
+							/kkjka1YOGWx6gBr4kAD
+							TGQW6sC73m9rhcX8jkeK
+							2Oy2e04SIYYANHRAAdaW
+							Er7UAAh6u9RNaLZbv8lk
+							kkZ7bQbQMrdZEgw3UL7V
+							ayKLNaLV/kwlkrM2SzWj
+							bw7QMXpAAjdWI4/ea2FL
+							FZrN/k4mEzn+N6eUAML0
+							AAej0fAB+v1+e5/SIBTM
+							BfcAA/9ADurMACdADtIK
+							V5Ylkf4oCcJrMkqcCzDW
+							EDxsKtpYQoioawuABsGy
+							bIACfAKGFcWBYn+KMPJ4
+							msIowk6UJIkR7ReABxRk
+							AB5RqAB+RwhIER2AAFR8
+							ABoGkaQAC0LAsQEghWFc
+							V5/imKIoAAnyfpsm6Bxa
+							AA1QYABLQemS9SvFcTpU
+							g0wyuiB8zQAEXnsAB9zd
+							KKfISAc5oKYhjGOAAqCk
+							KMkIGVRWFaf4qimKUbxz
+							MKETMg9EIPMEqoVR0vpb
+							RiDRw+KIPefoAFqW5cAA
+							KwqCnPqBFQVRVn+K4qip
+							Q1LoePpRnKABBi6DcUts
+							ex7zZTpdAALArCrUYAFM
+							VBUn+LIrisAB9WW8dKTE
+							htnIJRUyUfZ6CANbAAFO
+							VJVSILAr2CUthn+LVjqk
+							qlooOP5SnOABAi2DKK0j
+							Z8y0nat5ohaYAR2BFhW2
+							AAtyLYJRFGUp/i6LgtAA
+							e+GVthyIATiIAFIUpTgB
+							hAtWCUJRFIf4vC6Lc1Rh
+							fSEEGVJ1gAPorgrLyRxQ
+							gtnZIgeY3tFmX3rMeWx8
+							BQAYIUoAC+LwuWCT5QFE
+							f4wC+LoADuTiyj6LGWEE
+							VB1ZTldZZOAA/CwCwAan
+							quVZYQhUnZlOo69qmta5
+							tGUa3lmTZRsO0arreu6/
+							tW7bTuu56tt+s73u5FDI
+							EQAFAUJRgAMIwC9YJOk+
+							UJ/jFxYAHnyqE30QpVna
+							AA9iqCeW2ll6EZxluZId
+							mmczCBvVgAT2jAAMYwi/
+							YJOccf4x8kAB4d30CH31
+							1He0hmt6WrfPRIGCHkgA
+							TvXAAMnY2CTRNk6f4yjI
+							MXdd5fCDkMVh3AAPQqAl
+							y/h9CkXgfR4srfKhfkgg
+							AHak8AHrDHYJMk16gzDL
+							7B2/78jqSXu/Xu8cl0AX
+							2EpgOy6ADNoFgAAnA8AD
+							9xOgADQGcMiowBCWEwJo
+							foaQzhlRojZ0a1WxtlD2
+							FZz7pCIOkhZANnKVIGEJ
+							dU6wS4mRNpYDQGYAZA0p
+							gAAEQMBwlhLiaHeGkNEI
+							GHxJImJeDaWIPARIGPIg
+							cOyBAdD4H0P5ZSIkqJmU
+							OF8I4ERcIlF4hRN0xxfI
+							eIQQYgTOgAHGQOH5AgHE
+							DA5ECOESo8EKh7FIgQ5I
+							okHjiACKkPo8yFIdD1TR
+							AoeyGkYU4gIAABABAAAD
+							AAAAAQAjAAABAQADAAAA
+							AQAfAAABAgADAAAABAAA
+							BTQBAwADAAAAAQAFAAAB
+							BgADAAAAAQACAAABEQAE
+							AAAAAQAAAAgBFQADAAAA
+							AQAEAAABFgADAAAAAQA6
+							AAABFwAEAAAAAQAABGUB
+							GgAFAAAAAQAABTwBGwAF
+							AAAAAQAABUQBHAADAAAA
+							AQABAAABKAADAAAAAQAC
+							AAABPQADAAAAAQACAAAB
+							UgADAAAAAQABAACHcwAH
+							AAAMSAAABUwAAAAAAAgA
+							CAAIAAhIAAAAAQAAAEgA
+							AAABAAAAAAAMSExpbm8C
+							EAAAbW50clJHQiBYWVog
+							B84AAgAJAAYAMQAAYWNz
+							cE1TRlQAAAAASUVDIHNS
+							R0IAAAAAAAAAAAAAAAEA
+							APbWAAEAAAAA0y1IUCAg
+							AAAAAAAAAAAAAAAAAAAA
+							AAAAAAAAAAAAAAAAAAAA
+							AAAAAAAAAAAAAAAAAAAA
+							AAARY3BydAAAAVAAAAAz
+							ZGVzYwAAAYQAAABsd3Rw
+							dAAAAfAAAAAUYmtwdAAA
+							AgQAAAAUclhZWgAAAhgA
+							AAAUZ1hZWgAAAiwAAAAU
+							YlhZWgAAAkAAAAAUZG1u
+							ZAAAAlQAAABwZG1kZAAA
+							AsQAAACIdnVlZAAAA0wA
+							AACGdmlldwAAA9QAAAAk
+							bHVtaQAAA/gAAAAUbWVh
+							cwAABAwAAAAkdGVjaAAA
+							BDAAAAAMclRSQwAABDwA
+							AAgMZ1RSQwAABDwAAAgM
+							YlRSQwAABDwAAAgMdGV4
+							dAAAAABDb3B5cmlnaHQg
+							KGMpIDE5OTggSGV3bGV0
+							dC1QYWNrYXJkIENvbXBh
+							bnkAAGRlc2MAAAAAAAAA
+							EnNSR0IgSUVDNjE5NjYt
+							Mi4xAAAAAAAAAAAAAAAS
+							c1JHQiBJRUM2MTk2Ni0y
+							LjEAAAAAAAAAAAAAAAAA
+							AAAAAAAAAAAAAAAAAAAA
+							AAAAAAAAAAAAAAAAAAAA
+							AAAAAAAAAFhZWiAAAAAA
+							AADzUQABAAAAARbMWFla
+							IAAAAAAAAAAAAAAAAAAA
+							AABYWVogAAAAAAAAb6IA
+							ADj1AAADkFhZWiAAAAAA
+							AABimQAAt4UAABjaWFla
+							IAAAAAAAACSgAAAPhAAA
+							ts9kZXNjAAAAAAAAABZJ
+							RUMgaHR0cDovL3d3dy5p
+							ZWMuY2gAAAAAAAAAAAAA
+							ABZJRUMgaHR0cDovL3d3
+							dy5pZWMuY2gAAAAAAAAA
+							AAAAAAAAAAAAAAAAAAAA
+							AAAAAAAAAAAAAAAAAAAA
+							AAAAAAAAAAAAZGVzYwAA
+							AAAAAAAuSUVDIDYxOTY2
+							LTIuMSBEZWZhdWx0IFJH
+							QiBjb2xvdXIgc3BhY2Ug
+							LSBzUkdCAAAAAAAAAAAA
+							AAAuSUVDIDYxOTY2LTIu
+							MSBEZWZhdWx0IFJHQiBj
+							b2xvdXIgc3BhY2UgLSBz
+							UkdCAAAAAAAAAAAAAAAA
+							AAAAAAAAAAAAAGRlc2MA
+							AAAAAAAALFJlZmVyZW5j
+							ZSBWaWV3aW5nIENvbmRp
+							dGlvbiBpbiBJRUM2MTk2
+							Ni0yLjEAAAAAAAAAAAAA
+							ACxSZWZlcmVuY2UgVmll
+							d2luZyBDb25kaXRpb24g
+							aW4gSUVDNjE5NjYtMi4x
+							AAAAAAAAAAAAAAAAAAAA
+							AAAAAAAAAAAAAAB2aWV3
+							AAAAAAATpP4AFF8uABDP
+							FAAD7cwABBMLAANcngAA
+							AAFYWVogAAAAAABMCVYA
+							UAAAAFcf521lYXMAAAAA
+							AAAAAQAAAAAAAAAAAAAA
+							AAAAAAAAAAKPAAAAAnNp
+							ZyAAAAAAQ1JUIGN1cnYA
+							AAAAAAAEAAAAAAUACgAP
+							ABQAGQAeACMAKAAtADIA
+							NwA7AEAARQBKAE8AVABZ
+							AF4AYwBoAG0AcgB3AHwA
+							gQCGAIsAkACVAJoAnwCk
+							AKkArgCyALcAvADBAMYA
+							ywDQANUA2wDgAOUA6wDw
+							APYA+wEBAQcBDQETARkB
+							HwElASsBMgE4AT4BRQFM
+							AVIBWQFgAWcBbgF1AXwB
+							gwGLAZIBmgGhAakBsQG5
+							AcEByQHRAdkB4QHpAfIB
+							+gIDAgwCFAIdAiYCLwI4
+							AkECSwJUAl0CZwJxAnoC
+							hAKOApgCogKsArYCwQLL
+							AtUC4ALrAvUDAAMLAxYD
+							IQMtAzgDQwNPA1oDZgNy
+							A34DigOWA6IDrgO6A8cD
+							0wPgA+wD+QQGBBMEIAQt
+							BDsESARVBGMEcQR+BIwE
+							mgSoBLYExATTBOEE8AT+
+							BQ0FHAUrBToFSQVYBWcF
+							dwWGBZYFpgW1BcUF1QXl
+							BfYGBgYWBicGNwZIBlkG
+							agZ7BowGnQavBsAG0Qbj
+							BvUHBwcZBysHPQdPB2EH
+							dAeGB5kHrAe/B9IH5Qf4
+							CAsIHwgyCEYIWghuCIII
+							lgiqCL4I0gjnCPsJEAkl
+							CToJTwlkCXkJjwmkCboJ
+							zwnlCfsKEQonCj0KVApq
+							CoEKmAquCsUK3ArzCwsL
+							Igs5C1ELaQuAC5gLsAvI
+							C+EL+QwSDCoMQwxcDHUM
+							jgynDMAM2QzzDQ0NJg1A
+							DVoNdA2ODakNww3eDfgO
+							Ew4uDkkOZA5/DpsOtg7S
+							Du4PCQ8lD0EPXg96D5YP
+							sw/PD+wQCRAmEEMQYRB+
+							EJsQuRDXEPURExExEU8R
+							bRGMEaoRyRHoEgcSJhJF
+							EmQShBKjEsMS4xMDEyMT
+							QxNjE4MTpBPFE+UUBhQn
+							FEkUahSLFK0UzhTwFRIV
+							NBVWFXgVmxW9FeAWAxYm
+							FkkWbBaPFrIW1hb6Fx0X
+							QRdlF4kXrhfSF/cYGxhA
+							GGUYihivGNUY+hkgGUUZ
+							axmRGbcZ3RoEGioaURp3
+							Gp4axRrsGxQbOxtjG4ob
+							shvaHAIcKhxSHHscoxzM
+							HPUdHh1HHXAdmR3DHewe
+							Fh5AHmoelB6+HukfEx8+
+							H2kflB+/H+ogFSBBIGwg
+							mCDEIPAhHCFIIXUhoSHO
+							IfsiJyJVIoIiryLdIwoj
+							OCNmI5QjwiPwJB8kTSR8
+							JKsk2iUJJTglaCWXJccl
+							9yYnJlcmhya3JugnGCdJ
+							J3onqyfcKA0oPyhxKKIo
+							1CkGKTgpaymdKdAqAio1
+							KmgqmyrPKwIrNitpK50r
+							0SwFLDksbiyiLNctDC1B
+							LXYtqy3hLhYuTC6CLrcu
+							7i8kL1ovkS/HL/4wNTBs
+							MKQw2zESMUoxgjG6MfIy
+							KjJjMpsy1DMNM0YzfzO4
+							M/E0KzRlNJ402DUTNU01
+							hzXCNf02NzZyNq426Tck
+							N2A3nDfXOBQ4UDiMOMg5
+							BTlCOX85vDn5OjY6dDqy
+							Ou87LTtrO6o76DwnPGU8
+							pDzjPSI9YT2hPeA+ID5g
+							PqA+4D8hP2E/oj/iQCNA
+							ZECmQOdBKUFqQaxB7kIw
+							QnJCtUL3QzpDfUPARANE
+							R0SKRM5FEkVVRZpF3kYi
+							RmdGq0bwRzVHe0fASAVI
+							S0iRSNdJHUljSalJ8Eo3
+							Sn1KxEsMS1NLmkviTCpM
+							cky6TQJNSk2TTdxOJU5u
+							TrdPAE9JT5NP3VAnUHFQ
+							u1EGUVBRm1HmUjFSfFLH
+							UxNTX1OqU/ZUQlSPVNtV
+							KFV1VcJWD1ZcVqlW91dE
+							V5JX4FgvWH1Yy1kaWWlZ
+							uFoHWlZaplr1W0VblVvl
+							XDVchlzWXSddeF3JXhpe
+							bF69Xw9fYV+zYAVgV2Cq
+							YPxhT2GiYfViSWKcYvBj
+							Q2OXY+tkQGSUZOllPWWS
+							ZedmPWaSZuhnPWeTZ+lo
+							P2iWaOxpQ2maafFqSGqf
+							avdrT2una/9sV2yvbQht
+							YG25bhJua27Ebx5veG/R
+							cCtwhnDgcTpxlXHwckty
+							pnMBc11zuHQUdHB0zHUo
+							dYV14XY+dpt2+HdWd7N4
+							EXhueMx5KnmJeed6Rnql
+							ewR7Y3vCfCF8gXzhfUF9
+							oX4BfmJ+wn8jf4R/5YBH
+							gKiBCoFrgc2CMIKSgvSD
+							V4O6hB2EgITjhUeFq4YO
+							hnKG14c7h5+IBIhpiM6J
+							M4mZif6KZIrKizCLlov8
+							jGOMyo0xjZiN/45mjs6P
+							No+ekAaQbpDWkT+RqJIR
+							knqS45NNk7aUIJSKlPSV
+							X5XJljSWn5cKl3WX4JhM
+							mLiZJJmQmfyaaJrVm0Kb
+							r5wcnImc951kndKeQJ6u
+							nx2fi5/6oGmg2KFHobai
+							JqKWowajdqPmpFakx6U4
+							pammGqaLpv2nbqfgqFKo
+							xKk3qamqHKqPqwKrdavp
+							rFys0K1ErbiuLa6hrxav
+							i7AAsHWw6rFgsdayS7LC
+							szizrrQltJy1E7WKtgG2
+							ebbwt2i34LhZuNG5SrnC
+							uju6tbsuu6e8IbybvRW9
+							j74KvoS+/796v/XAcMDs
+							wWfB48JfwtvDWMPUxFHE
+							zsVLxcjGRsbDx0HHv8g9
+							yLzJOsm5yjjKt8s2y7bM
+							Ncy1zTXNtc42zrbPN8+4
+							0DnQutE80b7SP9LB00TT
+							xtRJ1MvVTtXR1lXW2Ndc
+							1+DYZNjo2WzZ8dp22vvb
+							gNwF3IrdEN2W3hzeot8p
+							36/gNuC94UThzOJT4tvj
+							Y+Pr5HPk/OWE5g3mlucf
+							56noMui86Ubp0Opb6uXr
+							cOv77IbtEe2c7ijutO9A
+							78zwWPDl8XLx//KM8xnz
+							p/Q09ML1UPXe9m32+/eK
+							+Bn4qPk4+cf6V/rn+3f8
+							B/yY/Sn9uv5L/tz/bf//
+							</data>
+							<key>WebResourceMIMEType</key>
+							<string>application/octet-stream</string>
+							<key>WebResourceResponse</key>
+							<dict>
+								<key>MIMEType</key>
+								<string>application/octet-stream</string>
+								<key>URL</key>
+								<string>x-apple-ql-id://resource.tiff</string>
+								<key>expectedContentLength</key>
+								<integer>-1</integer>
+							</dict>
+							<key>WebResourceURL</key>
+							<string>x-apple-ql-id://resource.tiff</string>
 						</dict>
 					</array>
 				</dict>

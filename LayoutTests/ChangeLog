@@ -1,5 +1,12 @@
 2019-10-11  Andy Estes  <aestes@apple.com>
 
+        [iOS] Unreviewed test gardening
+
+        * platform/ios/TestExpectations: Removed failing expectation.
+        * platform/ios/quicklook/numbers-09-expected.txt: Reset expected result.
+
+2019-10-11  Andy Estes  <aestes@apple.com>
+
         [iOS] Unreviewed iPad test expectation gardening.
 
         Un-skip tests in http/tests/paymentrequest/ that no longer time out on iPad.
