@@ -212,4 +212,4 @@
 
 #define WebKitCoreMathMLEnabledPreferenceKey "WebKitCoreMathMLEnabled"
 
-#define WebKitRequestIdleCallbackEnabledPreferenceKey "RequestIdleCallbackEnabled"
+#define WebKitRequestIdleCallbackEnabledPreferenceKey "WebKitRequestIdleCallbackEnabled"

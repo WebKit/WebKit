@@ -3,6 +3,15 @@
         requestIdleCallback is not enabled in DumpRenderTree on Windows
         https://bugs.webkit.org/show_bug.cgi?id=202876
 
+        Address the forgotten review comment.
+
+        * WebPreferenceKeysPrivate.h:
+
+2019-10-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        requestIdleCallback is not enabled in DumpRenderTree on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=202876
+
         Reviewed by Wenson Hsieh.
 
         Added the missing plumbing to enable requestIdleCallback.
